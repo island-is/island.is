@@ -1,5 +1,5 @@
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { EmailVerification } from './email-verification.model'
 import * as CryptoJS from 'crypto-js'
@@ -75,6 +75,22 @@ export class VerificationService {
     return record
   }
 
+  async createSmsVerification(
+    createSmsVerification: CreateSmsVerificationDto,
+  ): Promise<SmsVerification | null> {
+    const code = Math.floor(100000 + Math.random() * 900000).toString()
+    const verification = { ...createSmsVerification, smsCode: code }
+
+    const [record] = await this.smsVerificationModel.upsert(verification, {
+      returning: true,
+    })
+    if (record) {
+      this.sendConfirmationSms(record)
+    }
+
+    return record
+  }
+
   async confirmEmail(
     confirmEmailDto: ConfirmEmailDto,
     userProfile: UserProfile,
@@ -109,53 +125,6 @@ export class VerificationService {
       message: 'Email confirmed',
       confirmed: true,
     }
-  }
-
-  async sendConfirmationEmail(verification: EmailVerification) {
-    await this.emailService.sendEmail({
-      from: {
-        name: environment.email.fromName,
-        address: environment.email.fromEmail,
-      },
-      to: [
-        {
-          name: '',
-          address: verification.email,
-        },
-      ],
-      subject: `Staðfesting netfangs á Ísland.is`,
-      html: `Þú hefur skráð ${verification.email} á Mínum síðum á Ísland.is. Til að staðfesta skráninguna þarftu að smella á eftirfarandi hlekk: 
-      <a href="${environment.email.servicePortalBaseUrl}/stillingar/minn-adgangur/stadfesta-netfang/${verification.hash}" target="_blank">Staðfesta</a>
-      <br>Hlekkurinn gildir í tvo daga. Ef hlekkurinn er ekki lengur í gildi biðjum við þig að endurtaka skráninguna á Ísland.is.`,
-    })
-  }
-
-  async removeSmsVerification(nationalId: string) {
-    await this.smsVerificationModel.destroy({
-      where: { nationalId },
-    })
-  }
-
-  async removeEmailVerification(nationalId: string) {
-    await this.emailVerificationModel.destroy({
-      where: { nationalId },
-    })
-  }
-
-  async createSmsVerification(
-    createSmsVerification: CreateSmsVerificationDto,
-  ): Promise<SmsVerification | null> {
-    const code = Math.floor(100000 + Math.random() * 900000).toString()
-    const verification = { ...createSmsVerification, smsCode: code }
-
-    const [record] = await this.smsVerificationModel.upsert(verification, {
-      returning: true,
-    })
-    if (record) {
-      this.sendConfirmationSms(record)
-    }
-
-    return record
   }
 
   async confirmSms(
@@ -193,6 +162,53 @@ export class VerificationService {
     }
   }
 
+  async sendConfirmationEmail(verification: EmailVerification) {
+    try {
+      await this.emailService.sendEmail({
+        from: {
+          name: environment.email.fromName,
+          address: environment.email.fromEmail,
+        },
+        to: [
+          {
+            name: '',
+            address: verification.email,
+          },
+        ],
+        subject: `Staðfesting netfangs á Ísland.is`,
+        html: `Þú hefur skráð ${verification.email} á Mínum síðum á Ísland.is. Til að staðfesta skráninguna þarftu að smella á eftirfarandi hlekk:
+        <a href="${environment.email.servicePortalBaseUrl}/stillingar/minn-adgangur/stadfesta-netfang/${verification.hash}" target="_blank">Staðfesta</a>
+        <br>Hlekkurinn gildir í tvo daga. Ef hlekkurinn er ekki lengur í gildi biðjum við þig að endurtaka skráninguna á Ísland.is.`,
+      })
+    } catch (exception) {
+      this.logger.error(exception)
+    }
+  }
+
+  async sendConfirmationSms(verification: SmsVerification) {
+    try {
+      const response = await this.smsService.sendSms(
+        verification.mobilePhoneNumber,
+        `Staðfestingarkóði fyrir Mínar síður : ${verification.smsCode}`,
+      )
+      return response
+    } catch (exception) {
+      this.logger.error(exception)
+    }
+  }
+
+  async removeSmsVerification(nationalId: string) {
+    await this.smsVerificationModel.destroy({
+      where: { nationalId },
+    })
+  }
+
+  async removeEmailVerification(nationalId: string) {
+    await this.emailVerificationModel.destroy({
+      where: { nationalId },
+    })
+  }
+
   async isPhoneNumberVerified(
     createUserProfileDto: CreateUserProfileDto,
   ): Promise<boolean> {
@@ -205,14 +221,5 @@ export class VerificationService {
       verification.confirmed &&
       verification.mobilePhoneNumber === mobilePhoneNumber
     )
-  }
-
-  async sendConfirmationSms(verification: SmsVerification) {
-    const response = await this.smsService.sendSms(
-      verification.mobilePhoneNumber,
-      `Staðfestingarkóði fyrir Mínar síður : ${verification.smsCode}`,
-    )
-
-    return response
   }
 }

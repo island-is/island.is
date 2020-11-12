@@ -134,6 +134,8 @@
     }
   },
   "processes": {
+    "step": "Step",
+    "outOf": "out of",
     "citizen": {
       "title": "Recycle car",
       "sections": ["Confirm car for recycling", "Handover car to recycle"],
@@ -260,6 +262,7 @@
     "subtitles": {
       "deregistered": "Deregistered"
     },
+    "info": "There are no recycled cars yet",
     "buttons": {
       "export": "Export"
     },
@@ -270,7 +273,7 @@
     "table": ["Reg nr", "Model", "Year", "Company", "Deregistered"]
   },
   "recyclingFundSidenav": {
-    "title": "Skilavottord",
+    "title": "Icelandic Recycling Fund",
     "recycled": "Recycled cars",
     "companies": "Reycling companies"
   },

@@ -86,7 +86,8 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
           <Typography variant="intro" as="p">
             {frontpage.description}
           </Typography>
-          <Content document={frontpage.content} />
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          <Content document={frontpage.content as any} />
         </Stack>
       </ArticleLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>

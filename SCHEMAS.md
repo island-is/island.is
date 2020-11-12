@@ -10,7 +10,7 @@ When you do `yarn install` the scripts will generate all the schemas and types f
 
 We have 4 different types of scripts that can be added inside `workspace.json` to generate schemas and types.
 
-- `schemas/build-open-api`
+- `schemas/build-openapi`
 - `schemas/openapi-generator`
 - `schemas/build-schema`
 - `schemas/codegen`
@@ -19,7 +19,7 @@ Follow the next steps to configure your project:
 
 ---
 
-### Openapi (schemas/build-open-api)
+### Openapi (schemas/build-openapi)
 
 First we need to create an `openApi.ts` file to define the document builder. Add this file at the root of the project along the `index.ts`.
 
@@ -52,7 +52,7 @@ buildOpenApi({
 Finally, we add the script into `workspace.json` for the project.
 
 ```json
-"schemas/build-open-api": {
+"schemas/build-openapi": {
   "builder": "@nrwl/workspace:run-commands",
   "options": {
     "outputPath": "PATH/openapi.yaml",
@@ -115,6 +115,8 @@ buildSchema({
 })
 ```
 
+> IMPORTANT! When adding new resolvers to your modules don't forget to update this array as well.
+
 Then you can add it to the `workspace.json`
 
 ```json
@@ -165,7 +167,7 @@ Finally, you need to add it inside your `workspace.json`
 If you are changing your openapi service, you might need to generate the files again using:
 
 ```bash
-yarn nx run <project>:schemas/build-open-api
+yarn nx run <project>:schemas/build-openapi
 ```
 
 And generate the types fetch client with:
