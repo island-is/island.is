@@ -19,7 +19,7 @@ const EditCompanyInfo = ({ apolloState }) => {
     if (!companyInfo) {
       router.replace(routes.companyInfo.baseRoute)
     }
-  }, [companyInfo])
+  }, [companyInfo, router, routes])
 
   return (
     <>

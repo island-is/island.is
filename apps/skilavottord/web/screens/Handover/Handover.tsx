@@ -94,13 +94,14 @@ const Handover: FC = () => {
           } else {
             setInvalidCar(true)
           }
+          break
         default:
           break
       }
     } else {
       setInvalidCar(true)
     }
-  }, [user, id, activeCar])
+  }, [user, id, activeCar, setRecyclingRequest])
 
   const routeHome = () => {
     localStorage.clear()

@@ -40,7 +40,7 @@ const Confirm = ({ apolloState }) => {
         pathname: routes.myCars,
       })
     }
-  }, [car])
+  }, [car, router, routes])
 
   useEffect(() => {
     if (width < theme.breakpoints.lg) {

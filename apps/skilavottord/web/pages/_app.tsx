@@ -38,7 +38,7 @@ class SupportApplication extends App<Props> {
       ...ctx,
       apolloClient,
     }
-    const pageProps = (await Component.getInitialProps(customContext)) as any
+    const pageProps = await Component.getInitialProps(customContext)
 
     const apolloState = apolloClient.cache.extract()
 
