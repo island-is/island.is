@@ -15,8 +15,9 @@ import {
   Case,
   CaseAppealDecision,
   CaseTransition,
+  NotificationType,
   RequestSignatureResponse,
-  ConfirmSignatureResponse,
+  SignatureConfirmationResponse,
   TransitionCase,
 } from '@island.is/judicial-system/types'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
@@ -26,6 +27,7 @@ import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/share
 import * as style from './Confirmation.treat'
 import {
   CaseQuery,
+  SendNotificationMutation,
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import { gql, useMutation, useQuery } from '@apollo/client'
@@ -40,8 +42,8 @@ export const RequestSignatureMutation = gql`
 `
 
 export const SignatureConfirmationQuery = gql`
-  query ConfirmSignatureQuery($input: SignatureConfirmationQueryInput!) {
-    confirmSignature(input: $input) {
+  query SignatureConfirmationQuery($input: SignatureConfirmationQueryInput!) {
+    signatureConfirmation(input: $input) {
       documentSigned
       code
       message
@@ -59,9 +61,10 @@ const SigningModal: React.FC<SigningModalProps> = (
   props: SigningModalProps,
 ) => {
   const history = useHistory()
-  const [confirmSignatureResponse, setConfirmSignatureResponse] = useState<
-    ConfirmSignatureResponse
-  >()
+  const [
+    signatureConfirmationResponse,
+    setSignatureConfirmationResponse,
+  ] = useState<SignatureConfirmationResponse>()
 
   const { data } = useQuery(SignatureConfirmationQuery, {
     variables: {
@@ -72,13 +75,29 @@ const SigningModal: React.FC<SigningModalProps> = (
     },
     fetchPolicy: 'no-cache',
   })
-  const resSignatureResponse = data?.confirmSignature
+  const resSignatureResponse = data?.signatureConfirmation
+
+  const [sendNotificationMutation] = useMutation(SendNotificationMutation)
 
   useEffect(() => {
-    if (resSignatureResponse) {
-      setConfirmSignatureResponse(resSignatureResponse)
+    const completeSigning = async (
+      resSignatureResponse: SignatureConfirmationResponse,
+    ) => {
+      await sendNotificationMutation({
+        variables: {
+          input: {
+            caseId: props.caseId,
+            type: NotificationType.RULING,
+          },
+        },
+      })
+      setSignatureConfirmationResponse(resSignatureResponse)
     }
-  }, [resSignatureResponse, setConfirmSignatureResponse])
+
+    if (resSignatureResponse) {
+      completeSigning(resSignatureResponse)
+    }
+  }, [resSignatureResponse, props.caseId, sendNotificationMutation])
 
   const renderContolCode = () => {
     return (
@@ -99,36 +118,36 @@ const SigningModal: React.FC<SigningModalProps> = (
   return (
     <Modal
       title={
-        !confirmSignatureResponse
+        !signatureConfirmationResponse
           ? 'Rafræn undirritun'
-          : confirmSignatureResponse.documentSigned
+          : signatureConfirmationResponse.documentSigned
           ? 'Úrskurður hefur verið staðfestur og undirritaður'
-          : confirmSignatureResponse.code === 7023 // User cancelled
+          : signatureConfirmationResponse.code === 7023 // User cancelled
           ? 'Notandi hætti við undirritun'
           : 'Undirritun tókst ekki'
       }
       text={
-        !confirmSignatureResponse
+        !signatureConfirmationResponse
           ? renderContolCode()
-          : confirmSignatureResponse.documentSigned
-          ? 'Tilkynning hefur verið send á ákæranda og dómara sem kvað upp úrskurð.'
+          : signatureConfirmationResponse.documentSigned
+          ? 'Tilkynning hefur verið send á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi.'
           : 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
       }
       secondaryButtonText={
-        !confirmSignatureResponse
+        !signatureConfirmationResponse
           ? null
-          : confirmSignatureResponse.documentSigned
+          : signatureConfirmationResponse.documentSigned
           ? 'Loka glugga'
           : 'Loka og reyna aftur'
       }
       primaryButtonText={
-        !confirmSignatureResponse ? null : 'Gefa endurgjöf á gáttina'
+        !signatureConfirmationResponse ? null : 'Gefa endurgjöf á gáttina'
       }
       handlePrimaryButtonClick={() => {
         history.push(Constants.FEEDBACK_FORM_ROUTE)
       }}
       handleSecondaryButtonClick={async () => {
-        if (confirmSignatureResponse?.documentSigned === true) {
+        if (signatureConfirmationResponse?.documentSigned === true) {
           history.push(Constants.DETENTION_REQUESTS_ROUTE)
         } else {
           props.setModalVisible(false)

@@ -16,7 +16,7 @@ import {
 import {
   Case,
   RequestSignatureResponse,
-  ConfirmSignatureResponse,
+  SignatureConfirmationResponse,
   SendNotificationResponse,
 } from './models'
 
@@ -113,16 +113,16 @@ export class CaseResolver {
     return backendApi.requestSignature(input.caseId)
   }
 
-  @Query(() => ConfirmSignatureResponse, { nullable: true })
-  confirmSignature(
+  @Query(() => SignatureConfirmationResponse, { nullable: true })
+  signatureConfirmation(
     @Args('input', { type: () => SignatureConfirmationQueryInput })
     input: SignatureConfirmationQueryInput,
     @Context('dataSources') { backendApi },
-  ): Promise<ConfirmSignatureResponse> {
+  ): Promise<SignatureConfirmationResponse> {
     const { caseId, documentToken } = input
 
     this.logger.debug(`Confirming signature of ruling for case ${caseId}`)
 
-    return backendApi.confirmSignature(caseId, documentToken)
+    return backendApi.getSignatureConfirmation(caseId, documentToken)
   }
 }
