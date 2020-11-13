@@ -101,7 +101,7 @@ export const BlueBackground = () => {
       <DatePicker
         label="Blue"
         placeholderText="Pick a date"
-        backgroundColor="white"
+        backgroundColor="blue"
         handleChange={(date: Date) => console.log(date)}
       />
     </div>
