@@ -221,6 +221,17 @@ describe('Validation', () => {
       expect(validation.isValid).toEqual(true)
     })
 
+    test('should be valid if email contains - and . characters', () => {
+      // Arrange
+      const validEmail = 'garfield.lasagne-lover@garfield.io'
+
+      // Act
+      const validation = validate('', 'email-format')
+
+      // Assert
+      expect(validation.isValid).toEqual(true)
+    })
+
     test('should be valid if email is valid', () => {
       // Arrange
       const validEmail = 'garfield@garfield.io'
