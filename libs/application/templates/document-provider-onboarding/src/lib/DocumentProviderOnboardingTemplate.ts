@@ -39,7 +39,13 @@ const applicant = z.object({
   zipCode: z.string().nonempty(),
 })
 
+const termsOfAgreement = z.object({
+  userTerms: z.boolean().refine((v) => v),
+  securityTerms: z.boolean().refine((v) => v),
+})
+
 const dataSchema = z.object({
+  termsOfAgreement: termsOfAgreement,
   applicant: applicant,
   administrativeContact: contact,
   technicalContact: contact,

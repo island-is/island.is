@@ -25,6 +25,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
           {
             id: 'termsOfAgreement',
             name: 'Skilmálar',
+            description: m.termsSection,
             component: 'TermsOfAgreement',
           },
           {},
