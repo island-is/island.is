@@ -2209,7 +2209,7 @@ export interface IVidspyrnaFrontpageFields {
   slices: (IVidspyrnaFeaturedNews | IVidspyrnaFlokkur)[]
 }
 
-/** A temporary content type that is used for the "Viðspyrna" information page. Once that site is no longer live this can be deleted. */
+/** Frontpage of /covid-adgerdir */
 
 export interface IVidspyrnaFrontpage extends Entry<IVidspyrnaFrontpageFields> {
   sys: {
@@ -2274,7 +2274,7 @@ export interface IVidspyrnaProcessEntryFields {
   processLink?: string | undefined
 }
 
-/** A temporary content type that is used for the "Viðspyrna" information page. Once that site is no longer live this can be deleted. */
+/** PLEASE DELETE THIS WHEN POSSIBLE */
 
 export interface IVidspyrnaProcessEntry
   extends Entry<IVidspyrnaProcessEntryFields> {
@@ -2337,7 +2337,7 @@ export interface IVidspyrnaFlokkurFields {
   pages: IVidspyrnaPage[]
 }
 
-/** A group of Viðspyrna pages. */
+/** A group of "covid" articles shown in a slider. */
 
 export interface IVidspyrnaFlokkur extends Entry<IVidspyrnaFlokkurFields> {
   sys: {
@@ -2349,49 +2349,6 @@ export interface IVidspyrnaFlokkur extends Entry<IVidspyrnaFlokkurFields> {
     contentType: {
       sys: {
         id: 'vidspyrnaFlokkur'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IVidspyrnaNewsFields {
-  /** Subtitle */
-  subtitle?: string | undefined
-
-  /** Title */
-  title: string
-
-  /** Slug */
-  slug: string
-
-  /** Date */
-  date: string
-
-  /** Introduction */
-  intro: string
-
-  /** Featured image */
-  image?: Asset | undefined
-
-  /** Content */
-  content?: Document | undefined
-
-  /** Pages */
-  pages?: IVidspyrnaPage[] | undefined
-}
-
-export interface IVidspyrnaNews extends Entry<IVidspyrnaNewsFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'vidspyrnaNews'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2425,7 +2382,7 @@ export interface IVidspyrnaPageFields {
   tags: IVidspyrnaTag[]
 }
 
-/** Page for the adgerdir.island.is website. */
+/** A "covid" article, seen on /covid-adgerdir */
 
 export interface IVidspyrnaPage extends Entry<IVidspyrnaPageFields> {
   sys: {
@@ -2449,7 +2406,7 @@ export interface IVidspyrnaTagFields {
   title: string
 }
 
-/** A tag used to tag Viðspyrna pages. */
+/** A tag used to tag "covid" articles */
 
 export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
   sys: {
@@ -2539,7 +2496,6 @@ export type CONTENT_TYPE =
   | 'vidspyrna-process-entry'
   | 'vidspyrnaFeaturedNews'
   | 'vidspyrnaFlokkur'
-  | 'vidspyrnaNews'
   | 'vidspyrnaPage'
   | 'vidspyrnaTag'
 
