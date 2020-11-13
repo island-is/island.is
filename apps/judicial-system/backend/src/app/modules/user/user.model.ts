@@ -76,4 +76,11 @@ export class User extends Model<User> {
   })
   @ApiProperty({ enum: UserRole })
   role: UserRole
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  active: boolean
 }
