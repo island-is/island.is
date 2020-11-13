@@ -1,12 +1,48 @@
 # Schemas
 
-## Adding a new script for your project
-
 We are ignoring all the auto-generated files from the repository to avoid noises, to make reviews easier on PRs and don't notify teams with code reviews when not needed.
 
-We are only tracking file that are coming from an external source, e.g. contentfulTypes.d.ts that depends on contentful to be generated. The same goes for an openapi.yaml file that comes from an external service.
+## Understanding how automatic schemas works
 
-When you do `yarn install` the scripts will generate all the schemas and types for the project. It takes around ~45sec to generate all schemas, definitions types and open api schemas. The output is cached using nx to avoid re-generating all files again when no changes have been detected. It can go down up to ~5sec to run again.
+We are only tracking file that are coming from an external source, e.g. `contentfulTypes.d.ts` that depends on contentful to be generated. The same goes for an `openapi.yaml` file that comes from an external service.
+
+When you do `yarn install` the scripts will generate all the schemas and types for the project. It takes around ~45sec to generate all schemas, definitions types and open api schemas. The output is cached using NX to avoid re-generating all files again when no changes have been detected. It can go down up to ~5sec to run again.
+
+On the GitHub workflow, we are caching theses generated files to avoid to re-generate them at each push. However, theses files have to be updated when some specific files are changed (e.g. `*.resolvers.ts`, `*.dto.ts`, etc).
+
+We defined a hashFiles variable in the GitHub workflow that contains the list of the files patterns that can trigger the schema script. If you follow this naming convention, your files will trigger the script once a change is detected on GitHub.
+
+```text
+'scripts/schemas.js'
+'libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts'
+'apps/air-discount-scheme/web/i18n/withLocale.tsx'
+'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx'
+'apps/air-discount-scheme/web/components/Header/Header.tsx'
+'apps/air-discount-scheme/web/screens/**.tsx'
+'apps/gjafakort/api/src/**.typeDefs.ts'
+'apps/**/codegen.yml'
+'libs/**/codegen.yml'
+'apps/**.model.ts'
+'libs/**.model.ts'
+'apps/**.enum.ts'
+'libs/**.enum.ts'
+'apps/**/queries/**.tsx?'
+'libs/**/queries/**.tsx?'
+'apps/**.resolver.ts'
+'libs/**.resolver.ts'
+'apps/**.service.ts'
+'libs/**.service.ts'
+'apps/**.dto.ts'
+'libs/**.dto.ts'
+'apps/**.input.ts'
+'libs/**.input.ts'
+'apps/**.module.ts'
+'libs/**.module.ts'
+'apps/**.controller.ts'
+'libs/**.controller.ts'
+```
+
+## Adding a new script for your project
 
 We have 4 different types of scripts that can be added inside `workspace.json` to generate schemas and types.
 
