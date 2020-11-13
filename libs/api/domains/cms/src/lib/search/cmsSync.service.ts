@@ -152,10 +152,9 @@ export class CmsSyncService {
 
     // import data from all providers
     const importableData = this.contentSyncProviders.map(
-      ({ processSyncData, doMapping }) => {
-        const data = processSyncData(items)
-
-        return doMapping(data)
+      (contentSyncProvider) => {
+        const data = contentSyncProvider.processSyncData(items)
+        return contentSyncProvider.doMapping(data)
       },
     )
 
