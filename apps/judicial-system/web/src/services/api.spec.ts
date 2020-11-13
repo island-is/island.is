@@ -24,6 +24,15 @@ describe('Judicial system web api endpoints', () => {
 
     it('should redirect the user to the login screen', async () => {
       // Arrange
+
+      /**
+       * See https://remarkablemark.org/blog/2018/11/17/mock-window-location/
+       * for more info.
+       **/
+
+      // @ts-ignore
+      delete window.location
+
       window.location = {
         href: '',
         ancestorOrigins: [] as any,
