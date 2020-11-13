@@ -40,12 +40,13 @@ const CompanyInfo: FC = () => {
   const activePartner = recyclingPartners.filter(
     (partner) => partner.companyId === partnerId,
   )
+  const partnerName = activePartner.length > 0 && activePartner[0].companyName
 
   return (
     <PartnerPageLayout
       side={
         <Sidenav
-          title={user.name}
+          title={partnerName || user?.name}
           sections={[
             {
               icon: 'car',

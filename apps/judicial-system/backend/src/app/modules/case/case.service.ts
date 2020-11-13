@@ -13,7 +13,7 @@ import { environment } from '../../../environments'
 import { generateRulingPdf, writeFile } from '../../formatters'
 import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
-import { Case, ConfirmSignatureResponse } from './models'
+import { Case, SignatureConfirmationResponse } from './models'
 import { TransitionUpdate } from './case.state'
 
 @Injectable()
@@ -148,10 +148,10 @@ export class CaseService {
     }
   }
 
-  async confirmSignature(
+  async getSignatureConfirmation(
     existingCase: Case,
     documentToken: string,
-  ): Promise<ConfirmSignatureResponse> {
+  ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(
       `Confirming signature of ruling for case ${existingCase.id}`,
     )

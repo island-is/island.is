@@ -1,5 +1,6 @@
 import { Inject, Injectable, HttpService } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import format from 'date-fns/format'
 import {
   RecyclingRequestModel,
   RecyclingRequestUnion,
@@ -68,11 +69,7 @@ export class RecyclingRequestService {
       const dateNow = new Date()
       const jsonDeRegBody = JSON.stringify({
         permno: vehiclePermno,
-        deRegisterDate:
-          dateNow.toLocaleDateString() +
-          'T' +
-          dateNow.toTimeString().split(' ')[0] +
-          'Z',
+        deRegisterDate: format(dateNow, "yyyy-MM-dd'T'HH:mm:ss'Z'"),
         subCode: 'U',
         plateCount: 0,
         destroyed: 0,
