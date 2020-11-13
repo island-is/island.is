@@ -42,7 +42,7 @@ export const CasesQuery = gql`
 `
 
 export const DetentionRequests: React.FC = () => {
-  const [cases, setCases] = useState<Case[]>(null)
+  const [cases, setCases] = useState<Case[]>()
   const { user } = useContext(userContext)
 
   const isJudge = user?.role === UserRole.JUDGE
@@ -145,7 +145,7 @@ export const DetentionRequests: React.FC = () => {
                   </Tag>
                 </td>
                 <td>
-                  {c.state === CaseState.ACCEPTED
+                  {c.custodyEndDate && c.state === CaseState.ACCEPTED
                     ? `${formatDate(c.custodyEndDate, 'PP')}`
                     : null}
                 </td>
@@ -156,7 +156,7 @@ export const DetentionRequests: React.FC = () => {
                         ? `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
                         : `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
                     }
-                    style={{ textDecoration: 'none' }}
+                    style={{ textDecoration: 'none', whiteSpace: 'nowrap' }}
                   >
                     <Button icon="arrowRight" variant="text">
                       Opna kröfu

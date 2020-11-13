@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { ApolloError } from 'apollo-server-express'
-
 import {
   IVidspyrnaFrontpage,
   IVidspyrnaFeaturedNews,
   IVidspyrnaFlokkur,
 } from '../generated/contentfulTypes'
 
+import { Slice, mapDocument } from './slice.model'
 import { AdgerdirSlice } from './adgerdirSlice.model'
 import { mapAdgerdirFeaturedNewsSlice } from './adgerdirFeaturedNewsSlice.model'
 import { mapAdgerdirGroupSlice } from './adgerdirGroupSlice.model'
@@ -14,22 +15,22 @@ import { mapAdgerdirGroupSlice } from './adgerdirGroupSlice.model'
 @ObjectType()
 export class AdgerdirFrontpage {
   @Field(() => ID)
-  id: string
+  id: string = ''
 
   @Field()
-  slug: string
+  slug: string = ''
 
   @Field()
-  title: string
+  title: string = ''
 
   @Field({ nullable: true })
   description?: string
 
-  @Field({ nullable: true })
-  content?: string
+  @Field(() => [Slice])
+  content: Array<typeof Slice> = []
 
   @Field(() => [AdgerdirSlice])
-  slices: Array<typeof AdgerdirSlice>
+  slices: Array<typeof AdgerdirSlice> = []
 }
 
 type AdgerdirSliceTypes = IVidspyrnaFeaturedNews | IVidspyrnaFlokkur
@@ -46,7 +47,7 @@ export const mapAdgerdirSlice = (
 
     default:
       throw new ApolloError(
-        `Can not convert to slice: ${(slice as any).sys.contentType.sys.id}`,
+        `Can not convert to slice in mapAdgerdirFrontpage -> mapAdgerdirSlice`,
       )
   }
 }
@@ -59,6 +60,6 @@ export const mapAdgerdirFrontpage = ({
   slug: fields.slug,
   title: fields.title,
   description: fields.description,
-  content: fields.content && JSON.stringify(fields.content),
+  content: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
   slices: fields.slices.map(mapAdgerdirSlice),
 })

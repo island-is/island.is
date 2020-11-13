@@ -1,16 +1,29 @@
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
-import { DataProvider, DataProviderResult } from '@island.is/application/core'
-import { getDataProviderByType } from '@island.is/application/data-providers'
+import {
+  BasicDataProvider,
+  DataProviderResult,
+} from '@island.is/application/core'
 import { ExternalData } from '@island.is/application/core'
+
+class NotImplemented extends BasicDataProvider {
+  provide(): Promise<unknown> {
+    return Promise.reject(
+      `This dataProvider has not been implemented yet: ${this.type}`,
+    )
+  }
+}
 
 export function buildDataProviders(
   externalDataDTO: PopulateExternalDataDto,
-): DataProvider[] {
-  const providers: DataProvider[] = []
+  templateDataProviders: Record<string, new () => BasicDataProvider>,
+): BasicDataProvider[] {
+  const providers: BasicDataProvider[] = []
   externalDataDTO.dataProviders.forEach(({ type }) => {
-    const provider = getDataProviderByType(type)
-    if (provider) {
-      providers.push(provider)
+    const Provider = templateDataProviders[type]
+    if (Provider) {
+      providers.push(new Provider())
+    } else {
+      providers.push(new NotImplemented())
     }
   })
   return providers

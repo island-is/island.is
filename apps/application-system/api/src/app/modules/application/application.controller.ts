@@ -33,7 +33,10 @@ import {
   ApplicationTemplateHelper,
   ExternalData,
 } from '@island.is/application/core'
-import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import {
+  getApplicationDataProviders,
+  getApplicationTemplateByTypeId,
+} from '@island.is/application/template-loader'
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'
@@ -222,8 +225,12 @@ export class ApplicationController {
       externalDataDto,
     )
 
+    const templateDataProviders = await getApplicationDataProviders(
+      (existingApplication as BaseApplication).typeId,
+    )
+
     const results = await callDataProviders(
-      buildDataProviders(externalDataDto),
+      buildDataProviders(externalDataDto, templateDataProviders),
       existingApplication as BaseApplication,
     )
     const {

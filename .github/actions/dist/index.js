@@ -5735,6 +5735,12 @@ function convertBody(buffer, headers) {
 	// html4
 	if (!res && str) {
 		res = /<meta[\s]+?http-equiv=(['"])content-type\1[\s]+?content=(['"])(.+?)\2/i.exec(str);
+		if (!res) {
+			res = /<meta[\s]+?content=(['"])(.+?)\1[\s]+?http-equiv=(['"])content-type\3/i.exec(str);
+			if (res) {
+				res.pop(); // drop last quote
+			}
+		}
 
 		if (res) {
 			res = /charset=(.*)/i.exec(res.pop());
@@ -6742,7 +6748,7 @@ function fetch(url, opts) {
 				// HTTP fetch step 5.5
 				switch (request.redirect) {
 					case 'error':
-						reject(new FetchError(`redirect mode is set to error: ${request.url}`, 'no-redirect'));
+						reject(new FetchError(`uri requested responds with a redirect, redirect mode is set to error: ${request.url}`, 'no-redirect'));
 						finalize();
 						return;
 					case 'manual':
@@ -6781,7 +6787,8 @@ function fetch(url, opts) {
 							method: request.method,
 							body: request.body,
 							signal: request.signal,
-							timeout: request.timeout
+							timeout: request.timeout,
+							size: request.size
 						};
 
 						// HTTP-redirect fetch step 9
@@ -10609,10 +10616,10 @@ const findLastGoodBuild = (shas, branch, base, workflowQueries) => Object(tslib.
     });
     // First we try to find the last successful workflow build on our branch
     // Then try to find the last successful workflow build on our target branch
-    // Failing that, and in case base != master, we try master
+    // Failing that, and in case base != main, we try main
     const branchTargets = [branch, base];
-    if (base != 'master') {
-        branchTargets.push('master');
+    if (base != 'main') {
+        branchTargets.push('main');
     }
     for (const branchTarget of branchTargets) {
         const goodBuild = yield getGoodBuildOnBranch(branchTarget);
@@ -10656,7 +10663,7 @@ rl.on('line', function (line) {
 });
 rl.on('close', function () {
     return Object(tslib.__awaiter)(this, void 0, void 0, function* () {
-        const result = yield findLastGoodBuild(main_shas, process.env.BRANCH, process.env.BASE_BRANCH || 'master', new main_GitHubWorkflowQueries());
+        const result = yield findLastGoodBuild(main_shas, process.env.BRANCH, process.env.BASE_BRANCH || 'main', new main_GitHubWorkflowQueries());
         console.log(JSON.stringify(result));
     });
 });

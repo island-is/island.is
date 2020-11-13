@@ -60,7 +60,7 @@
     "info": "Þegar ökutæki hefur verið samþykkt til úrvinnslu getur þú leitið upplýsinga hjá viðkomandi sveitarfélagi/móttökustöð hvert eigi að fara með ökutækið til að farga því. Umsóknin er ekki bindandi, ökutæki verður einungis endurunnið sé því skilað á móttökustöð.",
     "buttons": {
       "cancel": "Hætta við",
-      "continue": "Samþykkja með íslykli"
+      "continue": "Rafrænt samþykki"
     },
     "checkbox": {
       "label": "Samþykkja",
@@ -70,8 +70,8 @@
   "handover": {
     "titles": {
       "success": "Úrvinnsla ökutækis samþykkt",
-      "error": "We couldn’t mark your car for recycling",
-      "loading": "Signing car for recycling"
+      "error": "Ekki tókst að merkja bifreiðina til förgunar.",
+      "loading": "Merki bíl til förgunar."
     },
     "info": "Ökutæki hefur verið samþykkt til úrvinnslu og er nú tilbúið til afhendingar á móttökustöð.",
     "subTitles": {
@@ -84,15 +84,15 @@
       "close": "Loka"
     },
     "error": {
-      "title": "Problem connecting to database",
-      "message": "We ran into a problem marking your car for recycling. Please try again.",
-      "primaryButton": "Try again",
-      "secondaryButton": "Cancel"
+      "title": "Villa í tengingu við gagnagrunn.",
+      "message": "Það komu upp vandamál við að merkja bíl til förgunar. Vinsamlegast reynið aftur.",
+      "primaryButton": "Reyna aftur",
+      "secondaryButton": "Hætta við"
     },
     "cancelModal": {
       "titles": {
         "info": "Hætta við úrvinnslu ökutækis",
-        "error": "We couldn’t cancel process"
+        "error": "Ekki tókst að hætta við."
       },
       "info": "Þegar hætt er við úrvinnslu ökutækis verður ekki hægt að ganga frá endurnýtingu eða förgun ökutækis hjá móttökustöð. Hægt er að endurtaka ferlið síðar ef þér snýst hugur.",
       "buttons": {
@@ -100,10 +100,10 @@
         "continue": "Já"
       },
       "error": {
-        "title": "Problem connecting to database",
-        "message": "We ran into a problem canceling your car. Please try again.",
-        "primaryButton": "Try again",
-        "secondaryButton": "Cancel"
+        "title": "Vandamál í tengingu við gagnagrunn.",
+        "message": "Það komu upp vandamál við að merkja bíl til förgunar. Vinsamlegast reynið aftur..",
+        "primaryButton": "Reyna aftur",
+        "secondaryButton": "Hætta við"
       }
     }
   },
@@ -114,7 +114,7 @@
       "payment": "Greiðsla"
     },
     "info": {
-      "oldDeregistration": "The car has been successfully recycled, there is no more action needed.",
+      "oldDeregistration": "Bifreiðin hefur verið förguð. Ekki þarf að athafast frekar.",
       "payment": "Útborgun skilagjalds mun liggja fyrir tveimur virkum dögum eftir afhendingu ökutækis.",
       "paymentLinkText": "Fjármál"
     },
@@ -125,25 +125,27 @@
       "fund": "Greiðsla skilagjalds hafin hjá Fjársýslu ríkisins"
     },
     "error": {
-      "title": "Problem connecting to database",
-      "message": "We ran into a problem getting information about your car. Please try again later.",
-      "primaryButton": "Back to my cars"
+      "title": "Vandamál komu upp við tengingu við gagnagrunn.",
+      "message": "Það komu upp vandamál við sækja upplýsingar um bíl. Vinsamlegast reynið aftur.",
+      "primaryButton": "Til baka"
     },
     "buttons": {
       "close": "Loka"
     }
   },
   "processes": {
+    "step": "Skref",
+    "outOf": "af",
     "citizen": {
       "title": "Endurvinna ökutæki",
       "sections": [
         "Samþykkja úrvinnslu ökutækis",
         "Afhenda ökutæki á móttökustöð"
       ],
-      "completed": "Completed"
+      "completed": "Búið"
     },
     "company": {
-      "title": "Deregister car",
+      "title": "Afskrá ökutæki",
       "sections": ["Velja ökutæki", "Afskrá Ökutæki"]
     }
   },
@@ -151,7 +153,7 @@
     "title": "Afskrá bifreið",
     "info": "Ferli fer í gang þar sem bíllinn verður afskráður og greiðsla til eiganda mun fara af stað. Einnig mun förgun á bílnum fara af stað.",
     "subtitles": {
-      "history": "History"
+      "history": "Saga"
     },
     "buttons": {
       "deregister": "Afskrá bifreið"
@@ -167,7 +169,7 @@
     "info": "Þessar upplýsingar hjálpa viðskiptavinum að hafa samband við ykkur þegar hann nýtir sér stafræna endurvinnslu á bíl á island.is.",
     "empty": "Bættu við staðsetningu fyrirtækisins til að auðvelda viðskiptavinum að finna þig á island.is.",
     "subtitles": {
-      "location": "Recycling company location"
+      "location": "Endurvinnslu staðsetning"
     },
     "buttons": {
       "add": "Bæta við staðsetningu",
@@ -236,14 +238,14 @@
     "deregister": {
       "titles": {
         "success": "Afskrá bíl",
-        "error": "Car could not be added",
-        "loading": "Deregistering car",
-        "notfound": "Car not found"
+        "error": "Ekki tókst að bæta við bíl",
+        "loading": "Afskrái bíl",
+        "notfound": "Bíll fannst ekki"
       },
       "info": {
         "success": "Staðfesta afskráningu. Ekki er hægt að fara til baka eftir þetta skref.",
-        "error": "We couldn’t find any car with that registration number",
-        "notfound": "This can be because the owner has not marked it for recycling at"
+        "error": "Enginn bíll fannst með þetta skráningarnúmer",
+        "notfound": "Þetta kann að vera því eigandinn hefur ekki merkt hann til förgunar."
       },
       "buttons": {
         "back": "Til baka",
@@ -251,10 +253,10 @@
       },
       "success": "Afskráning tókst.",
       "error": {
-        "title": "Problem connecting to database",
-        "message": "We ran into a problem marking the car for deregistration. Please try again.",
-        "primaryButton": "Try again",
-        "secondaryButton": "Cancel"
+        "title": "Vandamál við tengingu í gagnagrunn.",
+        "message": "Það komu upp vandamál við að merkja bíl til förgunar. Vinsamlegast reynið aftur.",
+        "primaryButton": "Reyna aftur",
+        "secondaryButton": "Hætta við"
       }
     }
   },
@@ -263,17 +265,18 @@
     "subtitles": {
       "deregistered": "Afskráðir bílar"
     },
+    "info": "There are no recycled cars yet",
     "buttons": {
       "export": "Export"
     },
     "search": {
       "label": "Leita að skráningarnúmeri",
-      "placeholder": "Search for reg nr"
+      "placeholder": "Leita að skráningarnúmeri"
     },
     "table": ["Skráningar nr.", "Undirtegund", "Ár", "Fyrirtæki", "Afskráð"]
   },
   "recyclingFundSidenav": {
-    "title": "Skilavottord",
+    "title": "Úrvinnslusjóður",
     "recycled": "Endurunnir bílar",
     "companies": "Endurvinnslu fyrirtæki"
   },
@@ -302,7 +305,7 @@
     "title": "Villa kom upp",
     "contents": [
       "Eitthvað hefur farið úrskeiðis.",
-      "Vinsamlega <a href='https://island.is/um-island-is/hafa-samband/'>hafðu samband</a> fyrir frekari hjálp"
+      "Vinsamlega <a href='https://island.is/stafraent-island/hafa-samband/'>hafðu samband</a> fyrir frekari hjálp"
     ]
   },
   "routes": {

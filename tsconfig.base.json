@@ -18,7 +18,6 @@
     "baseUrl": ".",
     "strict": true,
     "paths": {
-      "@island.is/adgerdir/*": ["apps/adgerdir/*"],
       "@island.is/air-discount-scheme-web/*": [
         "apps/air-discount-scheme/web/*"
       ],
@@ -182,8 +181,10 @@
       "@island.is/service-portal/settings": [
         "libs/service-portal/settings/src/index.ts"
       ],
+      "@island.is/shared/connected": ["libs/shared/connected/src/index.ts"],
       "@island.is/shared/form-fields": ["libs/shared/form-fields/src/index.ts"],
       "@island.is/shared/mocking": ["libs/shared/mocking/src/index.ts"],
+      "@island.is/shared/table": ["libs/shared/table/src/index.ts"],
       "@island.is/shared/types": ["libs/shared/types/src/index.ts"],
       "@island.is/skilavottord-web/*": ["apps/skilavottord/web/*"],
       "@island.is/skilavottord/consts": [

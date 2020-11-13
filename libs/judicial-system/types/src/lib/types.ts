@@ -81,7 +81,6 @@ export interface Case {
   investigationProgress?: string
   legalArguments?: string
   comments?: string
-  // prosecutorId?: string
   prosecutor?: User
   courtCaseNumber?: string
   courtDate?: string
@@ -102,14 +101,13 @@ export interface Case {
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
-  // judgeId?: string
   judge?: User
-  // notifications?: Notification[]
 }
 
 export enum NotificationType {
   HEADS_UP = 'HEADS_UP',
   READY_FOR_COURT = 'READY_FOR_COURT',
+  COURT_DATE = 'COURT_DATE',
 }
 
 export interface Notification {
@@ -137,6 +135,8 @@ export interface UpdateCase {
   accusedName?: string
   accusedAddress?: string
   accusedGender?: CaseGender
+  requestedDefenderName?: string
+  requestedDefenderEmail?: string
   court?: string
   arrestDate?: string
   requestedCourtDate?: string
@@ -173,12 +173,20 @@ export interface TransitionCase {
   transition: CaseTransition
 }
 
-export interface PendingSignature {
+export interface SendNotification {
+  type: NotificationType
+}
+
+export interface SendNotificationResponse {
+  notificationSent: boolean
+}
+
+export interface RequestSignatureResponse {
   controlCode: string
   documentToken: string
 }
 
-export interface SignatureResponse {
+export interface ConfirmSignatureResponse {
   documentSigned: boolean
   code?: number
   message?: string

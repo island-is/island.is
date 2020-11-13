@@ -15,8 +15,14 @@ type Events =
 
 const Schema = z.object({
   applicant: z.object({
-    institution: z.string().nonempty().max(256),
-    ministry: z.string().nonempty().max(256),
+    institution: z.object({
+      id: z.string(),
+      title: z.string(),
+    }),
+    ministry: z.object({
+      id: z.string(),
+      title: z.string(),
+    }),
     contact: z.string().nonempty().max(256),
     email: z.string().email(),
     phoneNumber: z.string().min(7),
@@ -26,7 +32,7 @@ const Schema = z.object({
     countPerYear: z.string().refine((x) => {
       const asNumber = parseInt(x)
     }),
-    users: z.string().nonempty().max(256),
+    users: z.enum(['companies', 'individuals', 'both']),
     digital: z.enum(['yes', 'no']),
     link: z.string().optional(),
   }),
@@ -54,7 +60,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.META_APPLICATION,
   name: 'Application application',
-  dataProviders: [],
   dataSchema: Schema,
   stateMachineConfig: {
     initial: 'draft',

@@ -76,6 +76,9 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
   )
 
   const dob = getExpectedDateOfBirth(application)
+  if (!dob) {
+    return null
+  }
   const dobDate = new Date(dob)
 
   // TODO: This will also come from somewhere in the external data

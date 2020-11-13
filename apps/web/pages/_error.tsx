@@ -1,12 +1,6 @@
 import React from 'react'
 import * as Sentry from '@sentry/node'
-import {
-  Article,
-  LifeEventPage,
-  News,
-  GetUrlQuery,
-  QueryGetUrlArgs,
-} from '@island.is/web/graphql/schema'
+import { GetUrlQuery, QueryGetUrlArgs } from '@island.is/web/graphql/schema'
 import { GET_URL_QUERY } from '@island.is/web/screens/queries'
 import { ApolloClient } from '@apollo/client/core'
 import { NormalizedCacheObject } from '@apollo/client/cache'
@@ -133,11 +127,10 @@ export default withApollo(ErrorPage)
 
 export interface RedirectProps {
   pageType: string
-  page:
-    | Pick<Article, 'slug'>
-    | Pick<Article, 'slug'>
-    | Pick<News, 'slug'>
-    | Pick<LifeEventPage, 'slug'>
+  page: {
+    slug: string
+    contentType: string
+  }
 }
 
 interface GetRedirectPropsProps {
@@ -165,7 +158,7 @@ const getRedirectProps = async ({
     })
     .then((r) => r)
 
-  const pageType = getUrl?.page?.__typename ?? null
+  const pageType = getUrl?.page?.contentType ?? null
 
   if (!pageType) {
     return null

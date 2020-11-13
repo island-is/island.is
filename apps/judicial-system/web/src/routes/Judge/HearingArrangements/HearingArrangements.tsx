@@ -6,7 +6,7 @@ import {
   Input,
   Text,
 } from '@island.is/island-ui/core'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { isNextDisabled } from '../../../utils/stepHelper'
 import { validate, Validation } from '../../../utils/validate'
@@ -18,11 +18,16 @@ import {
   parseTime,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
-import { useParams } from 'react-router-dom'
-import { Case, UpdateCase } from '@island.is/judicial-system/types'
+import { useHistory, useParams } from 'react-router-dom'
+import {
+  Case,
+  NotificationType,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
+  SendNotificationMutation,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import parseISO from 'date-fns/parseISO'
@@ -34,11 +39,14 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 
+import Modal from '../../../shared-components/Modal/Modal'
+
 interface CaseData {
   case: Case
 }
 
 export const HearingArrangements: React.FC = () => {
+  const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>(null)
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [courtDateErrorMessage, setCourtDateErrorMessage] = useState('')
@@ -48,6 +56,7 @@ export const HearingArrangements: React.FC = () => {
   const courtTimeRef = useRef<HTMLInputElement>()
 
   const { id } = useParams<{ id: string }>()
+  const history = useHistory()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -56,16 +65,34 @@ export const HearingArrangements: React.FC = () => {
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
 
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
-    const { data } = await updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
+  const updateCase = useCallback(
+    async (id: string, updateCase: UpdateCase) => {
+      const { data } = await updateCaseMutation({
+        variables: { input: { id, ...updateCase } },
+      })
+      const resCase = data?.updateCase
+      if (resCase) {
+        // Do something with the result. In particular, we want th modified timestamp passed between
+        // the client and the backend so that we can handle multiple simultanious updates.
+      }
+      return resCase
+    },
+    [updateCaseMutation],
+  )
+
+  const [sendNotificationMutation] = useMutation(SendNotificationMutation)
+
+  const sendNotification = async (id: string) => {
+    const { data } = await sendNotificationMutation({
+      variables: {
+        input: {
+          caseId: id,
+          type: NotificationType.COURT_DATE,
+        },
+      },
     })
-    const resCase = data?.updateCase
-    if (resCase) {
-      // Do something with the result. In particular, we want th modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-    return resCase
+
+    return data?.sendNotification?.notificationSent
   }
 
   useEffect(() => {
@@ -82,6 +109,24 @@ export const HearingArrangements: React.FC = () => {
         updateCase(
           theCase.id,
           parseString('courtDate', theCase.requestedCourtDate),
+        )
+      }
+
+      if (!theCase.defenderName) {
+        theCase = { ...theCase, defenderName: theCase.requestedDefenderName }
+
+        updateCase(
+          theCase.id,
+          parseString('defenderName', theCase.requestedDefenderName),
+        )
+      }
+
+      if (!theCase.defenderEmail) {
+        theCase = { ...theCase, defenderEmail: theCase.requestedDefenderEmail }
+
+        updateCase(
+          theCase.id,
+          parseString('defenderEmail', theCase.requestedDefenderEmail),
         )
       }
 
@@ -309,9 +354,27 @@ export const HearingArrangements: React.FC = () => {
             />
           </Box>
           <FormFooter
-            nextUrl={`${Constants.COURT_RECORD_ROUTE}/${id}`}
             nextIsDisabled={isStepIllegal}
+            onNextButtonClick={async () => {
+              const notificationSent = await sendNotification(workingCase.id)
+              if (notificationSent) {
+                setModalVisible(true)
+              } else {
+                history.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+              }
+            }}
           />
+
+          {modalVisible && (
+            <Modal
+              title="Tilkynning um fyrirtökutíma hefur verið send"
+              text="Tilkynning um fyrirtökutíma hefur verið send á ákæranda, fangelsi og verjanda hafi verjandi verið skráður."
+              handlePrimaryButtonClick={() => {
+                history.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+              }}
+              primaryButtonText="Loka glugga"
+            />
+          )}
         </>
       ) : null}
     </PageLayout>

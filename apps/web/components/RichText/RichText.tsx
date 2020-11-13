@@ -42,7 +42,10 @@ const renderComponent = (
       break
   }
 
-  if (!FULL_WIDTH_SLICE_TYPES.includes(slice.__typename)) {
+  if (
+    config.skipGrid !== true &&
+    !FULL_WIDTH_SLICE_TYPES.includes(slice.__typename)
+  ) {
     // XXX: We assume the component is rendered in a 9 column layout on desktop.
     // If that turns out not to always be the case we need to make this configurable
     children = (

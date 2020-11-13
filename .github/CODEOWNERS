@@ -13,7 +13,6 @@
 # Make sure that team names are correct or everything stops working.
 # Organisation name is @island-is, not @island.is
 
-/apps/adgerdir*/                                          @island-is/kosmos-kaos
 /apps/web*/                                               @island-is/kosmos-kaos @island-is/aranja
 /libs/api/domains/cms/                                    @island-is/kosmos-kaos @island-is/aranja
 

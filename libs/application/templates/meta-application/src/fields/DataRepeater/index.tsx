@@ -1,18 +1,22 @@
-import React, { FC, useEffect } from 'react'
-import { RepeaterProps } from '@island.is/application/core'
-import { ButtonDeprecated as Button, Text } from '@island.is/island-ui/core'
+import React, { FC } from 'react'
+import { formatText, RepeaterProps } from '@island.is/application/core'
+import { Box, ButtonDeprecated as Button } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
-const DataRepeater: FC<RepeaterProps> = ({
-  error,
-  expandRepeater,
-  repeater,
-  application,
-}) => {
+import { m } from '../../forms/messages'
+import DataTable from '../DataTable'
+
+const DataRepeater: FC<RepeaterProps> = ({ expandRepeater, application }) => {
+  const { formatMessage } = useLocale()
+
   return (
     <>
-      <Text as={'p'}>TODO</Text>
-
-      <Button onClick={expandRepeater}>Bæta við</Button>
+      <Box marginY={3}>
+        <DataTable application={application} />
+      </Box>
+      <Button onClick={expandRepeater}>
+        {formatText(m.dataAdd, application, formatMessage)}
+      </Button>
     </>
   )
 }

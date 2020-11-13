@@ -70,7 +70,20 @@ To enable SMS notifications to an on-call judge provide a password for the SMS s
 NOVA_PASSWORD=<SMS password> JUDGE_MOBILE_NUMBER=<judge mobile number> yarn start judicial-system-backend
 ```
 
-Finally, you can enable electronic signatures of judge rulings by providing a Dokobit access token: `DOKOBIT_ACCESS_TOKEN=<Dokobit access token>`
+Similarly, you can enable electronic signatures of judge rulings by providing a Dokobit access token: `DOKOBIT_ACCESS_TOKEN=<Dokobit access token>`
+
+To enable email sending you can modify `emailOptions` in `environment.ts` as follows:
+
+```typescript
+emailOptions: {
+  useTestAccount: false,
+  options: {
+    region: 'eu-west-1',
+  },
+},
+```
+
+Finally, to enable prison email notifications provide a prison email address: `PRISON_EMAIL=<prison email>`
 
 ### Graphql
 

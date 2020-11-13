@@ -3,25 +3,21 @@ import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useMutation } from '@apollo/client'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { Box, Stack, Button, Checkbox, Text } from '@island.is/island-ui/core'
 import {
-  Box,
-  Stack,
-  Typography,
-  Button,
-  Checkbox,
-  Text,
-} from '@island.is/island-ui/core'
-import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import { CarDetailsBox } from './components'
+  ProcessPageLayout,
+  CarDetailsBox,
+} from '@island.is/skilavottord-web/components'
 import { theme } from '@island.is/island-ui/theme'
 import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
-import { formatDate } from '@island.is/skilavottord-web/utils'
+import { formatDate, formatYear } from '@island.is/skilavottord-web/utils'
 import { Car } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import {
   CREATE_VEHICLE_OWNER,
   CREATE_VEHICLE,
 } from '@island.is/skilavottord-web/graphql/mutations'
+import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
 
 const Confirm = ({ apolloState }) => {
   const { user } = useContext(UserContext)
@@ -47,7 +43,7 @@ const Confirm = ({ apolloState }) => {
   }, [car])
 
   useEffect(() => {
-    if (width < theme.breakpoints.md) {
+    if (width < theme.breakpoints.lg) {
       return setIsMobile(true)
     }
     setIsMobile(false)
@@ -77,6 +73,7 @@ const Confirm = ({ apolloState }) => {
         },
       }),
     )
+    localStorage.setItem(ACCEPTED_TERMS_AND_CONDITION, id.toString())
     router.replace(
       `${AUTH_URL['citizen']}/login?returnUrl=${routes.recycleVehicle.baseRoute}/${id}/handover`,
     )
@@ -102,13 +99,17 @@ const Confirm = ({ apolloState }) => {
           activeCar={id.toString()}
         >
           <Stack space={4}>
-            <Typography variant="h1">{t.title}</Typography>
+            <Text variant="h1">{t.title}</Text>
             <Stack space={2}>
-              <Typography variant="h3">{t.subTitles.confirm}</Typography>
-              <Typography variant="p">{t.info}</Typography>
+              <Text variant="h3">{t.subTitles.confirm}</Text>
+              <Text>{t.info}</Text>
             </Stack>
             <Stack space={2}>
-              <CarDetailsBox car={car} />
+              <CarDetailsBox
+                vehicleId={car.permno}
+                vehicleType={car.type}
+                modelYear={formatYear(car.firstRegDate, 'dd.MM.yyyy')}
+              />
               <Box padding={4} background="blue100">
                 <Checkbox
                   name="confirm"

@@ -12,24 +12,16 @@ const getAsDate = (date: Date | string | undefined | null): Date => {
   }
 }
 
-export function formatDate(date: Date, formatPattern: string): string | null
-export function formatDate(date: string, formatPattern: string): string | null
 export function formatDate(
-  date: undefined,
+  date: Date | string | undefined,
   formatPattern: string,
-): string | null
-export function formatDate(date: null, formatPattern: string): string | null
-
-export function formatDate(
-  date: Date | string | undefined | null,
-  formatPattern: string,
-): string | null {
+): string | undefined {
   const theDate: Date = getAsDate(date)
 
   if (isValid(theDate)) {
     return format(theDate, formatPattern, { locale: is })
   } else {
-    return null
+    return undefined
   }
 }
 
@@ -73,7 +65,7 @@ const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
 }
 
 export const formatCustodyRestrictions = (
-  restrictions: CaseCustodyRestrictions[],
+  restrictions?: CaseCustodyRestrictions[],
 ) => {
   return restrictions && restrictions.length > 0
     ? restrictions

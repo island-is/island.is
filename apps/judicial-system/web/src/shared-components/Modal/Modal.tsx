@@ -60,7 +60,7 @@ const Modal: React.FC<ModalProps> = ({
           {primaryButtonText && (
             <Button
               onClick={handlePrimaryButtonClick}
-              icon={isPrimaryButtonLoading ? 'loading' : null}
+              icon={isPrimaryButtonLoading ? 'loading' : undefined}
               loading={isPrimaryButtonLoading}
             >
               {primaryButtonText}
