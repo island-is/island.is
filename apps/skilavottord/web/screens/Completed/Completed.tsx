@@ -22,6 +22,7 @@ import { REQUEST_TYPES } from '@island.is/skilavottord-web/graphql/queries'
 import { useQuery } from '@apollo/client'
 import { RecyclingRequestTypes } from '@island.is/skilavottord-web/types'
 import { getTime, getDate, formatYear } from '@island.is/skilavottord-web/utils'
+import compareDesc from 'date-fns/compareDesc'
 
 const Completed = ({ apolloState }) => {
   const [isMobile, setIsMobile] = useState(false)
@@ -60,7 +61,7 @@ const Completed = ({ apolloState }) => {
   }
 
   const sortedRequests = recyclingRequests.slice().sort((a, b) => {
-    return new Date(a.createdAt).getDate() - new Date(b.createdAt).getDate()
+    return compareDesc(new Date(b.createdAt), new Date(a.createdAt))
   })
 
   const latestUserRequest = sortedRequests.filter(
