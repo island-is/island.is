@@ -212,7 +212,13 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                     >
                       <Stack space={3}>
                         <Text variant="eyebrow" color="purple400">
-                          <span className={styles.textItem}>{subtitle}</span>
+                          <span
+                            className={cn(styles.textItem, {
+                              [styles.textItemVisible]: visible,
+                            })}
+                          >
+                            {subtitle}
+                          </span>
                         </Text>
                         <Text variant="h1" as="h1" id={tabTitleId}>
                           <span
