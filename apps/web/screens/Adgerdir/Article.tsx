@@ -27,6 +27,7 @@ import {
   AdgerdirArticles,
   HeadWithSocialSharing,
   RichText,
+  Intro,
 } from '@island.is/web/components'
 import {
   GET_ADGERDIR_PAGE_QUERY,
@@ -36,7 +37,6 @@ import {
 } from '../queries'
 import { ArticleLayout } from '@island.is/web/screens/Layouts/Layouts'
 import { Screen } from '@island.is/web/types'
-import { Intro } from '@island.is/web/units/Adgerdir'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { CustomNextError } from '@island.is/web/units/errors'

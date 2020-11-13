@@ -11,16 +11,13 @@ import { ContentSlug } from './models/contentSlug.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
 import { Organization } from './models/organization.model'
 import { Organizations } from './models/organizations.model'
-import { AdgerdirNews } from './models/adgerdirNews.model'
 import { AdgerdirPages } from './models/adgerdirPages.model'
 import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { FrontpageSliderList } from './models/frontpageSliderList.model'
 import { News } from './models/news.model'
 import { GetSingleNewsInput } from './dto/getSingleNews.input'
-import { GetAdgerdirNewsListInput } from './dto/getAdgerdirNewsList.input'
 import { GetAdgerdirPageInput } from './dto/getAdgerdirPage.input'
 import { GetOrganizationTagsInput } from './dto/getOrganizationTags.input'
-import { GetAdgerdirNewsInput } from './dto/getAdgerdirNews.input'
 import { GetAdgerdirPagesInput } from './dto/getAdgerdirPages.input'
 import { GetOrganizationsInput } from './dto/getOrganizations.input'
 import { GetOrganizationInput } from './dto/getOrganization.input'
@@ -43,7 +40,6 @@ import { GetMenuInput } from './dto/getMenu.input'
 import { AdgerdirTags } from './models/adgerdirTags.model'
 import { GetAdgerdirTagsInput } from './dto/getAdgerdirTags.input'
 import { LifeEventPage } from './models/lifeEventPage.model'
-import { PaginatedAdgerdirNews } from './models/paginatedAdgerdirNews.model'
 import { environment } from './environments'
 import { OrganizationTags } from './models/organizationTags.model'
 import { CmsContentfulService } from './cms.contentful.service'
@@ -79,14 +75,6 @@ export class CmsResolver {
     private readonly cmsContentfulService: CmsContentfulService,
     private readonly cmsElasticsearchService: CmsElasticsearchService,
   ) {}
-
-  @Directive(cacheControlDirective())
-  @Query(() => PaginatedAdgerdirNews)
-  getAdgerdirNewsList(
-    @Args('input') input: GetAdgerdirNewsListInput,
-  ): Promise<PaginatedAdgerdirNews> {
-    return this.cmsContentfulService.getAdgerdirNewsList(input)
-  }
 
   @Directive(cacheControlDirective())
   @Query(() => Namespace, { nullable: true })
@@ -164,17 +152,6 @@ export class CmsResolver {
     @Args('input') input: GetOrganizationInput,
   ): Promise<Organization | null> {
     return this.cmsContentfulService.getOrganization(
-      input?.slug ?? '',
-      input?.lang ?? 'is-IS',
-    )
-  }
-
-  @Directive(cacheControlDirective())
-  @Query(() => AdgerdirNews, { nullable: true })
-  getAdgerdirNews(
-    @Args('input') input: GetAdgerdirNewsInput,
-  ): Promise<AdgerdirNews | null> {
-    return this.cmsContentfulService.getAdgerdirNews(
       input?.slug ?? '',
       input?.lang ?? 'is-IS',
     )
