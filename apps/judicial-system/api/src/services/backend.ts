@@ -7,7 +7,7 @@ import {
   CreateCase,
   RequestSignatureResponse,
   SendNotification,
-  ConfirmSignatureResponse,
+  SignatureConfirmationResponse,
   TransitionCase,
   UpdateCase,
   User,
@@ -63,10 +63,10 @@ class BackendAPI extends RESTDataSource {
     return this.post(`case/${id}/signature`)
   }
 
-  confirmSignature(
+  getSignatureConfirmation(
     id: string,
     documentToken: string,
-  ): Promise<ConfirmSignatureResponse> {
+  ): Promise<SignatureConfirmationResponse> {
     return this.get(`case/${id}/signature?documentToken=${documentToken}`)
   }
 }
