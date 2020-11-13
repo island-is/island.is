@@ -68,9 +68,12 @@ const Completed = ({ apolloState }) => {
     (request) => request.requestType === 'pendingRecycle',
   )[0]
 
-  const partnerRequests = sortedRequests.filter(
+  const latestHandoverRequest = sortedRequests.filter(
+    (request) => request.requestType === 'handOver',
+  )[0]
+
+  const deregistrationRequests = sortedRequests.filter(
     (request) =>
-      request.requestType === 'handOver' ||
       request.requestType === 'deregistered' ||
       request.requestType === 'paymentInitiated' ||
       request.requestType === 'paymentFailed',
@@ -170,7 +173,24 @@ const Completed = ({ apolloState }) => {
                       </Stack>
                       <Divider />
                       <Stack space={2}>
-                        {partnerRequests.map((request) => (
+                        <GridRow>
+                          <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
+                            <Text>
+                              {`${getConfirmationText(
+                                latestHandoverRequest.requestType,
+                                latestHandoverRequest.nameOfRequestor,
+                              )}`}
+                            </Text>
+                          </GridColumn>
+                          <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
+                            <Text variant="h5">
+                              {`${getDate(
+                                latestHandoverRequest.createdAt,
+                              )} ${getTime(latestHandoverRequest.createdAt)}`}
+                            </Text>
+                          </GridColumn>
+                        </GridRow>
+                        {deregistrationRequests.map((request) => (
                           <GridRow>
                             <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
                               <Text>
