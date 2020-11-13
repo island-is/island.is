@@ -92,7 +92,9 @@ export class RecyclingRequestService {
       const deRegRes = await this.httpService
         .post(restDeRegUrl, jsonDeRegBody, { headers: headerDeRegRequest })
         .toPromise()
-
+      this.logger.debug(`RestUrl: ${restDeRegUrl}`)
+      this.logger.debug(`RestHeader: ${headerDeRegRequest}`)
+      this.logger.debug(`RestBody: ${jsonDeRegBody}`)
       if (deRegRes.status < 300 && deRegRes.status >= 200) {
         this.logger.info(
           `---- Finished deRegisterVehicle call on ${vehiclePermno} ----`,
@@ -106,7 +108,9 @@ export class RecyclingRequestService {
       this.logger.error(
         `Failed on deregistered vehicle ${vehiclePermno} with: ${err}`,
       )
-      throw new Error(`Failed on deregistered vehicle ${vehiclePermno}...`)
+      throw new Error(
+        `Failed on deregistered vehicle ${vehiclePermno} because: ${err}`,
+      )
     }
   }
 
