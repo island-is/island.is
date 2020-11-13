@@ -8,11 +8,6 @@ export type sortableFields = {
   'title.sort'?: sortDirection
 }
 
-export enum SearchIndexes {
-  'is' = 'island-is',
-  'en' = 'island-en',
-}
-
 export type elasticTagField = {
   key: string
   type: string

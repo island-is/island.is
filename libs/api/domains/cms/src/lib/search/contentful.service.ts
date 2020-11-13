@@ -9,9 +9,9 @@ import Bottleneck from 'bottleneck'
 import environment from '../environments/environment'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
-import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
+import { ElasticService } from '@island.is/api/content-search'
 import flatten from 'lodash/flatten'
-import { SyncOptions } from '@island.is/elastic-indexing'
+import { SearchIndexes, SyncOptions } from '@island.is/elastic-indexing/types'
 
 interface SyncerResult {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

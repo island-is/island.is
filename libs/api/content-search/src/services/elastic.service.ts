@@ -13,9 +13,9 @@ import {
   DocumentByMetaDataInput,
   documentByMetaDataQuery,
 } from '../queries/documentByMetaData'
-import { SearchIndexes, TagAggregationResponse } from '../types'
+import { TagAggregationResponse } from '../types'
 import { GetByIdResponse, SearchResponse } from '@island.is/shared/types'
-import { MappedData } from '@island.is/elastic-indexing'
+import { MappedData, SearchIndexes } from '@island.is/elastic-indexing/types'
 import { environment } from '../environments/environment'
 import { WebSearchAutocompleteInput } from '../dto'
 import {

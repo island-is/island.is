@@ -1,5 +1,3 @@
-import { SearchIndexes } from '@island.is/api/content-search'
-
 type tag = {
   key: string
   value?: string
@@ -22,6 +20,11 @@ export interface SyncOptions {
   locale: keyof typeof SearchIndexes
   syncType: 'full' | 'fromLast' | 'initialize'
   elasticIndex?: string
+}
+
+export enum SearchIndexes {
+  'is' = 'island-is',
+  'en' = 'island-en',
 }
 
 export interface SyncResponse<PostSyncOptionsType = any> {
