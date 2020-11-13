@@ -7,9 +7,15 @@ import { AuthUser } from './auth.types'
 @Injectable()
 export class AuthService {
   async validateUser(authUser: AuthUser): Promise<boolean> {
-    const user = await fetch(
+    const res = await fetch(
       `${environment.backendUrl}/api/user/${authUser.nationalId}`,
     )
+
+    if (!res.ok) {
+      return false
+    }
+
+    const user = await res.json()
 
     return Boolean(user)
   }
