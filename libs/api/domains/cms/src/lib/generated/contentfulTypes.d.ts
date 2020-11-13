@@ -1463,24 +1463,8 @@ export interface IParentPluginTestFields {
   /** Slug */
   slug?: string | undefined
 
-<<<<<<< HEAD
-  /** Normal field */
-  normalField?: string | undefined
-
   /** Parent */
   parent?: IArticle | IParentPluginTest | undefined
-=======
-<<<<<<< Updated upstream
-  /** test reference */
-  testReference?: IArticle | undefined
-
-  /** aasdasdasdsa */
-  aasdasdasdsa?: string | undefined
-=======
-  /** Parent */
-  parent?: IArticle | IParentPluginTest | undefined
->>>>>>> Stashed changes
->>>>>>> 639b718f7... Added dynamic importers fix
 }
 
 export interface IParentPluginTest extends Entry<IParentPluginTestFields> {

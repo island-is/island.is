@@ -2,7 +2,11 @@ import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import flatten from 'lodash/flatten'
 import { hashElement } from 'folder-hash'
-import { MappedData, SyncOptions, SyncResponse } from '@island.is/elastic-indexing'
+import {
+  MappedData,
+  SyncOptions,
+  SyncResponse,
+} from '@island.is/elastic-indexing'
 import { ArticleSyncService } from './importers/article.service'
 import { ContentfulService } from './contentful.service'
 import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
@@ -58,10 +62,7 @@ export class CmsSyncService {
     // return last folder hash found in elasticsearch else return empty string
     return this.elasticService
       .findById(elasticIndex, 'cmsImportFolderHashId')
-      .then((document) => {
-        logger.info('Resonse', { document: document.body._source })
-        return ''
-      })
+      .then((document) => document.body._source.title)
       .catch((error) => {
         // we expect this to throw when this does not exist, this might happen if we reindex a fresh elasticsearch index
         logger.warn('Failed to get last folder hash', {

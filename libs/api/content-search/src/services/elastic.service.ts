@@ -13,14 +13,9 @@ import {
   DocumentByMetaDataInput,
   documentByMetaDataQuery,
 } from '../queries/documentByMetaData'
-<<<<<<< HEAD
-import { MappedData, SearchIndexes, TagAggregationResponse } from '../types'
-import { GetByIdResponse, SearchResponse } from '@island.is/shared/types'
-=======
 import { SearchIndexes, TagAggregationResponse } from '../types'
-import { SearchResponse } from '@island.is/shared/types'
+import { GetByIdResponse, SearchResponse } from '@island.is/shared/types'
 import { MappedData } from '@island.is/elastic-indexing'
->>>>>>> 639b718f7... Added dynamic importers fix
 import { environment } from '../environments/environment'
 import { WebSearchAutocompleteInput } from '../dto'
 import {
