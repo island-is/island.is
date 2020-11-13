@@ -24,7 +24,7 @@ export class ElasticService {
    * Tries to delete the index.
    * If the index does not exists it does nothing.
    */
-  async deleteIndex() {
+  async deleteIndex(): Promise<void> {
     logger.info('Deleting index', this.indexName)
 
     const { body } = await this.client.indices.exists({
@@ -80,14 +80,14 @@ export class ElasticService {
   }
 
   async fetchAll(
-    limit: number,
+    limit?: number,
     searchAfter?: string[],
     query?: string,
     pricing?: string[],
     data?: string[],
     type?: string[],
     access?: string[],
-  ) {
+  ): Promise<any> {
     logger.debug('Fetch paginated results')
 
     const requestBody = searchQuery({
@@ -103,7 +103,7 @@ export class ElasticService {
     return this.search<SearchResponse<Service>, typeof requestBody>(requestBody)
   }
 
-  async fetchById(id: string) {
+  async fetchById(id: string): Promise<any> {
     logger.info('Fetch by id')
     return this.search<SearchResponse<Service>, RequestBody>({
       query: { bool: { must: { term: { id: id } } } },
