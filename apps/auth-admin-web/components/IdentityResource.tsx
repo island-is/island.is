@@ -4,8 +4,9 @@ import axios from "axios";
 import StatusBar from "./StatusBar";
 import APIResponse from "../models/APIResponse";
 import { useRouter } from "next/router";
-import { Formik, Field, Form, FormikHelpers } from 'formik';
+import { Formik, Field, Form, FormikHelpers, ErrorMessage } from 'formik';
 import { __asyncValues } from 'tslib';
+import * as Yup from "yup";
 
 type Props = {
   resource: IdentityResourcesDTO;
@@ -15,6 +16,15 @@ class IdentityResource extends React.Component<{ resource: IdentityResourcesDTO 
   resource: IdentityResourcesDTO;
   response: APIResponse;
   state: { response: APIResponse };
+  
+  validation = Yup.object({
+    firstName: Yup.string(),
+    nickName: Yup.string().nullable(),
+    key: Yup
+      .string()
+      .required()
+  });
+  
 
   constructor(props: Props) {
     super(props);
@@ -52,7 +62,7 @@ class IdentityResource extends React.Component<{ resource: IdentityResourcesDTO 
 
   submit = async (e: SyntheticEvent) => {
     e.preventDefault();
-    const response = await axios.post("http://localhost:3333/clients", this.resource).catch((err) => {
+    const response = await axios.post("api/resources/identity-resource", this.resource).catch((err) => {
       console.log(err);
     });
 
@@ -80,6 +90,7 @@ class IdentityResource extends React.Component<{ resource: IdentityResourcesDTO 
               initialValues={{
                 resource: this.resource,
               }}
+              validationSchema={this.validation}
               onSubmit={(
               values: Props,
                 { setSubmitting }: FormikHelpers<Props>
@@ -90,36 +101,45 @@ class IdentityResource extends React.Component<{ resource: IdentityResourcesDTO 
                 }, 500);
               }}
             >
+               {({ errors, touched })  => (
               <Form>
                 <div className="identity-resource__container__fields">
                   <div className="identity-resource__container__field">
-                    <label className="identity-resource__label">
+                    <label htmlFor="key" className="identity-resource__label">
                       Key</label>
                     <Field
+                      id="key"
                       type="text"
                       name="resource.key"
                       className="identity-resource__input"
                     />
+                    {errors.resource.key && touched.resource.key ? (
+ -                  <div>{errors.resource.key}</div>
+ -                    ) : null}
+                    <ErrorMessage name="resource.key" />
                   </div>
                   <div className="identity-resource__container__field">
-                    <label className="identity-resource__label">Name</label>
+                    <label htmlFor="name" className="identity-resource__label">Name</label>
                     <Field
+                      id="name"
                       name="resource.name"
                       type="text"
                       className="identity-resource__input"
                     />
                   </div>
                   <div className="identity-resource__container__field">
-                    <label className="identity-resource__label">Display Name</label>
+                    <label htmlFor="displayName" className="identity-resource__label">Display Name</label>
                     <Field
+                      id="displayName"
                       name="resource.displayName"
                       type="text"
                       className="identity-resource__input"
                     />
                   </div>
                   <div className="identity-resource__container__field">
-                    <label className="identity-resource__label">Description</label>
+                    <label htmlFor="description" className="identity-resource__label">Description</label>
                     <Field
+                      id="description"
                       name="resource.description"
                       type="text"
                       className="identity-resource__input"
@@ -128,8 +148,9 @@ class IdentityResource extends React.Component<{ resource: IdentityResourcesDTO 
                   
 
                   <div className="identity-resource__container__field">
-                    <label className="identity-resource__label">Enabled</label>
+                    <label htmlFor="enabled" className="identity-resource__label">Enabled</label>
                     <Field
+                      id="enabled"
                       name="resource.enabled"
                       type="checkbox"
                       className="identity-resource__checkbox"
@@ -137,8 +158,9 @@ class IdentityResource extends React.Component<{ resource: IdentityResourcesDTO 
                   </div>
 
                   <div className="identity-resource__container__field">
-                    <label className="identity-resource__label">Emphasize</label>
+                    <label htmlFor="emphasize" className="identity-resource__label">Emphasize</label>
                     <Field
+                      id="emphasize"
                       name="resource.emphasize"
                       type="checkbox"
                       className="identity-resource__checkbox"
@@ -147,8 +169,9 @@ class IdentityResource extends React.Component<{ resource: IdentityResourcesDTO 
 
 
                   <div className="identity-resource__container__field">
-                    <label className="identity-resource__label">Required</label>
+                    <label htmlFor="required" className="identity-resource__label">Required</label>
                     <Field
+                      id="required"
                       name="resource.required"
                       type="checkbox"
                       className="identity-resource__checkbox"
@@ -156,8 +179,9 @@ class IdentityResource extends React.Component<{ resource: IdentityResourcesDTO 
                   </div>
 
                   <div className="identity-resource__container__field">
-                    <label className="identity-resource__label">Show In Discovery Document</label>
+                    <label htmlFor="showInDiscoveryDocument" className="identity-resource__label">Show In Discovery Document</label>
                     <Field
+                      id="showInDiscoveryDocument"
                       name="resource.showInDiscoveryDocument"
                       type="checkbox"
                       className="identity-resource__checkbox"
@@ -185,11 +209,14 @@ class IdentityResource extends React.Component<{ resource: IdentityResourcesDTO 
                 </div>
                 </div>
               </Form>
+              )}
+              
               </Formik>
             </div>
           </div>
           </div>
         </div>
+        
     );
   }
 }
