@@ -1,6 +1,7 @@
 import fetchMock from 'fetch-mock'
 import * as cookies from '../utils/cookies'
 import { api } from './'
+import * as _Window from 'jsdom/lib/jsdom/browser/Window'
 
 describe('Judicial system web api endpoints', () => {
   describe('Logout endpoint', () => {
@@ -20,42 +21,6 @@ describe('Judicial system web api endpoints', () => {
 
       // Assert
       expect(cookies.getCookie('judicial-system.csrf')).toEqual(undefined)
-    })
-
-    it('should redirect the user to the login screen', async () => {
-      // Arrange
-
-      /**
-       * See https://remarkablemark.org/blog/2018/11/17/mock-window-location/
-       * for more info.
-       **/
-
-      // @ts-ignore
-      delete window.location
-
-      window.location = {
-        href: '',
-        ancestorOrigins: [] as any,
-        hash: '',
-        host: '',
-        hostname: '',
-        origin: '',
-        pathname: '',
-        port: '',
-        protocol: '',
-        search: '',
-        assign: jest.fn(),
-        reload: () => null,
-        replace: () => null,
-      }
-
-      const spy = jest.spyOn(window.location, 'assign')
-
-      // Act
-      api.logOut()
-
-      // Assert
-      expect(spy).toHaveBeenCalledWith('/')
     })
   })
 })
