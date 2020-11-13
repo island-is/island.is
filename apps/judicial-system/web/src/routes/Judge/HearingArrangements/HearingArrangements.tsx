@@ -106,37 +106,31 @@ export const HearingArrangements: React.FC = () => {
     if (data && !workingCase) {
       let theCase = data.case
 
-      if (!theCase.courtDate) {
+      if (!theCase.courtDate && theCase.requestedCourtDate) {
+        updateCase(
+          theCase.id,
+          parseString('courtDate', theCase.requestedCourtDate),
+        )
+
         theCase = { ...theCase, courtDate: theCase.requestedCourtDate }
-
-        if (theCase.requestedCourtDate) {
-          updateCase(
-            theCase.id,
-            parseString('courtDate', theCase.requestedCourtDate),
-          )
-        }
       }
 
-      if (!theCase.defenderName) {
+      if (!theCase.defenderName && theCase.requestedDefenderName) {
+        updateCase(
+          theCase.id,
+          parseString('defenderName', theCase.requestedDefenderName),
+        )
+
         theCase = { ...theCase, defenderName: theCase.requestedDefenderName }
-
-        if (theCase.requestedDefenderName) {
-          updateCase(
-            theCase.id,
-            parseString('defenderName', theCase.requestedDefenderName),
-          )
-        }
       }
 
-      if (!theCase.defenderEmail) {
-        theCase = { ...theCase, defenderEmail: theCase.requestedDefenderEmail }
+      if (!theCase.defenderEmail && theCase.requestedDefenderEmail) {
+        updateCase(
+          theCase.id,
+          parseString('defenderEmail', theCase.requestedDefenderEmail),
+        )
 
-        if (theCase.requestedDefenderEmail) {
-          updateCase(
-            theCase.id,
-            parseString('defenderEmail', theCase.requestedDefenderEmail),
-          )
-        }
+        theCase = { ...theCase, defenderEmail: theCase.requestedDefenderEmail }
       }
 
       setWorkingCase(theCase)

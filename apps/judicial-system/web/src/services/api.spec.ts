@@ -1,7 +1,6 @@
 import fetchMock from 'fetch-mock'
 import * as cookies from '../utils/cookies'
 import { api } from './'
-import * as _Window from 'jsdom/lib/jsdom/browser/Window'
 
 describe('Judicial system web api endpoints', () => {
   describe('Logout endpoint', () => {
