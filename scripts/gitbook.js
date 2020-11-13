@@ -2,15 +2,12 @@ const fs = require('fs')
 const path = require('path')
 
 /**
- * This script creates a SUMMARY.md file used by GitBook to create its table of contents.
- * We get all the .md files inside the apps and libs folders and sub-folders. When pick by the script,
- * we use the first line of the readme to define the name of the GitBook page.
- * If a README.md is not worth being listed in GitBook, use the HTML comment `<!-- gitbook-ignore -->` on
- * the first line of the file.
+ * Represents the number of common folder/file to go through before finding a `README.md`.
+ * - apps/something/README.md -> 3
  *
- * Below are defined the static pages inside the handbook directory. You can add new pages there.
- * To run this script, do `yarn gitbook`
+ * If more than this, we use the difference to build the sub-README.md hierarchy.
  */
+const ROOT_LEVEL = 3
 
 const content = (
   apps,
@@ -75,10 +72,22 @@ const content = (
 
 ## Projects
 
-${apps.map((item) => `- [${item.name}](${item.path})\n`).join('')}
+${apps
+  .map(({ name, path, fromRoot }) => {
+    const deep = fromRoot ? Array(fromRoot).fill(`  `).join('') : ``
+
+    return `${deep}- [${name}](${path})\n`
+  })
+  .join('')}
 ## Libs
 
-${libs.map((item) => `- [${item.name}](${item.path})\n`).join('')}
+${libs
+  .map(({ name, path, fromRoot }) => {
+    const deep = fromRoot ? Array(fromRoot).fill(`  `).join('') : ``
+
+    return `${deep}- [${name}](${path})\n`
+  })
+  .join('')}
 ## Misc
 
 - [GitBook template](handbook/misc/gitbook-template.md)
@@ -107,9 +116,15 @@ const fromDir = async (startPath, res = []) => {
         return
       }
 
+      const deep = filename.split('/')
+      const { length } = deep
+      const level = length - ROOT_LEVEL
+      const fromRoot = level > 0 ? level : undefined
+
       res.push({
         name: firstLine.replace('# ', ''),
         path: filename,
+        fromRoot,
       })
     }
   }
@@ -117,6 +132,16 @@ const fromDir = async (startPath, res = []) => {
   return res
 }
 
+/**
+ * This script creates a SUMMARY.md file used by GitBook to create its table of contents.
+ * We get all the .md files inside the apps and libs folders and sub-folders. When pick by the script,
+ * we use the first line of the readme to define the name of the GitBook page.
+ * If a README.md is not worth being listed in GitBook, use the HTML comment `<!-- gitbook-ignore -->` on
+ * the first line of the file.
+ *
+ * Below are defined the static pages inside the handbook directory. You can add new pages there.
+ * To run this script, do `yarn gitbook`
+ */
 const generateSummary = async () => {
   const apps = await fromDir('./apps')
   const libs = await fromDir('./libs')

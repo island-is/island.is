@@ -6,8 +6,8 @@ TODO
 
 ## URLs
 
-- Dev: N/A
-- Staging: N/A
+- [Dev](https://umsoknir.dev01.devland.is)
+- [Staging](https://umsoknir.staging01.devland.is)
 - Production: N/A
 
 ## API

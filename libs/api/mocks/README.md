@@ -1,4 +1,4 @@
-# API Mocks
+# Mocks
 
 Provides mocks for the main GraphQL api.
 
