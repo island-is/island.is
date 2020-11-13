@@ -191,7 +191,7 @@ const CustomHeader = ({
     if (locale.localize) {
       return locale.localize.month(i)
     }
-    return
+    return undefined
   })
   return (
     <div className={styles.customHeaderContainer}>
