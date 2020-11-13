@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'shared-types',
+  name: 'elastic-indexing',
   preset: '../../../jest.config.js',
   globals: {
     'ts-jest': {
