@@ -31,7 +31,7 @@ import { defineMessage } from 'react-intl'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 6
-const defaultStartDate = new Date('01.01.2000')
+const defaultStartDate = new Date('2000-01-01')
 const defaultEndDate = startOfTomorrow()
 
 // type FuseItem = {
