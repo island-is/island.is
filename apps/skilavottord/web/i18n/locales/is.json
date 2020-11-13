@@ -84,7 +84,7 @@
       "close": "Loka"
     },
     "error": {
-      "title": "Villa í tengingu við gagnagrunn.",
+      "title": "Tæknileg vandamál komu upp",
       "message": "Það komu upp vandamál við að merkja bíl til förgunar. Vinsamlegast reynið aftur.",
       "primaryButton": "Reyna aftur",
       "secondaryButton": "Hætta við"
@@ -100,7 +100,7 @@
         "continue": "Já"
       },
       "error": {
-        "title": "Vandamál í tengingu við gagnagrunn.",
+        "title": "Tæknileg vandamál komu upp",
         "message": "Það komu upp vandamál við að merkja bíl til förgunar. Vinsamlegast reynið aftur..",
         "primaryButton": "Reyna aftur",
         "secondaryButton": "Hætta við"
@@ -125,7 +125,7 @@
       "fund": "Greiðsla skilagjalds hafin hjá Fjársýslu ríkisins"
     },
     "error": {
-      "title": "Vandamál komu upp við tengingu við gagnagrunn.",
+      "title": "Tæknileg vandamál komu upp",
       "message": "Það komu upp vandamál við sækja upplýsingar um bíl. Vinsamlegast reynið aftur.",
       "primaryButton": "Til baka"
     },
@@ -238,7 +238,7 @@
     "deregister": {
       "titles": {
         "success": "Afskrá bíl",
-        "error": "Ekki tókst að bæta við bíl",
+        "error": "Ekki hægt að afskrá bíl",
         "loading": "Afskrái bíl",
         "notfound": "Bíll fannst ekki"
       },
@@ -253,7 +253,7 @@
       },
       "success": "Afskráning tókst.",
       "error": {
-        "title": "Vandamál við tengingu í gagnagrunn.",
+        "title": "Tæknileg vandamál komu upp",
         "message": "Það komu upp vandamál við að merkja bíl til förgunar. Vinsamlegast reynið aftur.",
         "primaryButton": "Reyna aftur",
         "secondaryButton": "Hætta við"
