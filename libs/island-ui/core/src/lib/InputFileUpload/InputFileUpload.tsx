@@ -130,7 +130,7 @@ export interface InputFileUploadProps {
   multiple?: boolean
   fileList: UploadFile[]
   maxSize?: number
-  onRemove: (file: any) => void
+  onRemove: (file: UploadFile) => void
   onChange?: (files: File[]) => void
   errorMessage?: string
 }
