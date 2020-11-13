@@ -16,15 +16,15 @@ export interface MappedData {
   nextSyncToken?: string
 }
 
+export enum SearchIndexes {
+  'is' = 'island-is',
+  'en' = 'island-en',
+}
+
 export interface SyncOptions {
   locale: keyof typeof SearchIndexes
   syncType: 'full' | 'fromLast' | 'initialize'
   elasticIndex?: string
-}
-
-export enum SearchIndexes {
-  'is' = 'island-is',
-  'en' = 'island-en',
 }
 
 export interface SyncResponse<PostSyncOptionsType = any> {
