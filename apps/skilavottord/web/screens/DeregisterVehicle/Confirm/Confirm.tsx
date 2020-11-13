@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import React, { FC, useContext, useEffect } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import {
@@ -45,15 +45,20 @@ const Confirm: FC = () => {
 
   const [
     setRecyclingRequest,
-    { error: mutationError, loading: mutationLoading },
+    { data: mutationData, error: mutationError, loading: mutationLoading },
   ] = useMutation(CREATE_RECYCLING_REQUEST_COMPANY, {
-    onCompleted() {
-      router.replace(routes.baseRoute).then(() => toast.success(t.success))
-    },
     onError() {
       return mutationError
     },
   })
+
+  const mutationResponse = mutationData?.createSkilavottordRecyclingRequest
+
+  useEffect(() => {
+    if (mutationResponse?.status) {
+      router.replace(routes.baseRoute).then(() => toast.success(t.success))
+    }
+  }, [mutationResponse])
 
   const partnerId = user?.partnerId
 
@@ -77,7 +82,7 @@ const Confirm: FC = () => {
     return <NotFound />
   }
 
-  if (mutationError || mutationLoading) {
+  if (mutationError || mutationLoading || mutationResponse?.message) {
     return (
       <ProcessPageLayout sectionType={'company'} activeSection={1}>
         {mutationLoading ? (
