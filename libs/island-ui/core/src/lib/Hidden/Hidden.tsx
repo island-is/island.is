@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 
-import { Box } from '../Box/Box'
+import { Box, BoxProps } from '../Box/Box'
 import * as styleRefs from './Hidden.treat'
 import {
   resolveResponsiveRangeProps,
@@ -12,6 +12,7 @@ export interface HiddenProps extends ResponsiveRangeProps {
   screen?: boolean
   print?: boolean
   inline?: boolean
+  boxProps?: BoxProps
 }
 
 export const Hidden = ({
@@ -21,6 +22,7 @@ export const Hidden = ({
   screen,
   print,
   inline,
+  boxProps,
 }: HiddenProps) => {
   const hiddenOnScreen = Boolean(screen)
   const hiddenOnPrint = Boolean(print)
@@ -50,6 +52,7 @@ export const Hidden = ({
       }
       className={hiddenOnPrint ? styleRefs.hiddenOnPrint : undefined}
       component={inline ? 'span' : 'div'}
+      {...boxProps}
     >
       {children}
     </Box>
