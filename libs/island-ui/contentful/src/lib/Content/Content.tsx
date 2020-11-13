@@ -162,7 +162,6 @@ const embeddedNodes = {
     processedProps: (node: Node) => {
       const {
         processTitle,
-        processInfo,
         processLink,
         buttonText,
         type,
@@ -193,17 +192,10 @@ const embeddedNodes = {
                 {processTypes[type].title}
               </Text>
             )}
-
             {processTitle && (
               <Text variant="h3" as="h3" paddingBottom={1}>
                 {processTitle}
               </Text>
-            )}
-            {processInfo && (
-              <RichText
-                document={processInfo}
-                renderNode={customProcessEntryRenderNode}
-              />
             )}
             <Box paddingTop={[1, 1, 2]}>
               <Button
