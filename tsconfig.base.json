@@ -18,7 +18,6 @@
     "baseUrl": ".",
     "strict": true,
     "paths": {
-      "@island.is/adgerdir/*": ["apps/adgerdir/*"],
       "@island.is/air-discount-scheme-web/*": [
         "apps/air-discount-scheme/web/*"
       ],

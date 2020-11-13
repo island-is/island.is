@@ -129,7 +129,6 @@ Other projects:
 - [Digital Judicial System](./apps/judicial-system)
 - [Travel Gift](./apps/gjafakort)
 - [Air Discount Scheme](./apps/air-discount-scheme)
-- [COVID Activities](./apps/adgerdir)
 
 ## Working in the monorepo
 
