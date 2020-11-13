@@ -48,9 +48,7 @@ export class ApiCatalogueService {
         body?.hits?.hits.pop()
         //get the sort parameters of the last item to use as the cursor for next search
         searchAfter = body?.hits?.hits[body?.hits?.hits.length - 1].sort
-        /*res.pageInfo!.nextCursor = Buffer.from(searchAfter.toString()).toString(
-          'base64',
-        )*/
+        //Set next cursor values
         res = {...res,  pageInfo: { nextCursor: Buffer.from(searchAfter.toString()).toString(
           'base64',
         )}}
