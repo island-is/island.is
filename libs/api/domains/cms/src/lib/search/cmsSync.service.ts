@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import flatten from 'lodash/flatten'
 import { hashElement } from 'folder-hash'
 import {
+  ContentSearchImporter,
   MappedData,
   SyncOptions,
   SyncResponse,
@@ -35,7 +36,7 @@ export interface CmsSyncProvider<T> {
 }
 
 @Injectable()
-export class CmsSyncService {
+export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
   private contentSyncProviders: CmsSyncProvider<any>[]
   constructor(
     private readonly aboutPageSyncService: AboutPageSyncService,
