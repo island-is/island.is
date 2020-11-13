@@ -49,12 +49,17 @@ export class ApiCatalogueService {
         //get the sort parameters of the last item to use as the cursor for next search
         searchAfter = body?.hits?.hits[body?.hits?.hits.length - 1].sort
         //Set next cursor values
-        res = {...res,  pageInfo: { nextCursor: Buffer.from(searchAfter.toString()).toString(
-          'base64',
-        )}}
+        res = {
+          ...res,
+          pageInfo: {
+            nextCursor: Buffer.from(searchAfter.toString()).toString('base64'),
+          },
+        }
       }
 
-      body?.hits?.hits.forEach((x: { _source: ApiService }) => res.services.push(x._source))
+      body?.hits?.hits.forEach((x: { _source: ApiService }) =>
+        res.services.push(x._source),
+      )
 
       return res
     } catch (exception) {
