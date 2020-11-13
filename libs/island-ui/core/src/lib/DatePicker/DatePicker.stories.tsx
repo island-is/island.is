@@ -95,6 +95,32 @@ export const MinimumDate = () => {
   )
 }
 
+export const BlueBackground = () => {
+  return (
+    <div style={{ height: 600 }}>
+      <DatePicker
+        label="Blue"
+        placeholderText="Pick a date"
+        backgroundColor="blue"
+        handleChange={(date: Date) => console.log(date)}
+      />
+    </div>
+  )
+}
+
+export const SizeSmall = () => {
+  return (
+    <div style={{ height: 600 }}>
+      <DatePicker
+        label="Small"
+        placeholderText="Pick a date"
+        size="sm"
+        handleChange={(date: Date) => console.log(date)}
+      />
+    </div>
+  )
+}
+
 export const WithErrors = () => (
   <>
     <Wrap>

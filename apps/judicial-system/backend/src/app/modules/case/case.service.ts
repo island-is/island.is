@@ -55,6 +55,10 @@ export class CaseService {
           name: existingCase.judge?.name,
           address: existingCase.judge?.email,
         },
+        {
+          name: existingCase.defenderName,
+          address: existingCase.defenderEmail,
+        },
       ],
       subject: `Úrskurður í máli ${existingCase.courtCaseNumber}`,
       text: 'Sjá viðhengi',

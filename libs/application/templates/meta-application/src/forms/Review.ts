@@ -10,6 +10,7 @@ import {
   buildDividerField,
   buildSubmitField,
   FormModes,
+  buildCustomField,
 } from '@island.is/application/core'
 import { m } from './messages'
 
@@ -26,35 +27,31 @@ export const Review: Form = buildForm({
           name: '',
           children: [
             buildDividerField({ name: 'Grunnuppplýingar' }),
-            buildTextField({
-              id: 'applicant.institution',
-              name: m.institution,
-              disabled: false,
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'applicant.ministry',
-              name: m.ministry,
-              disabled: false,
-              width: 'half',
-            }),
+            buildCustomField(
+              {
+                id: 'applicant.institution',
+                name: m.institution,
+                component: 'OrganizationField',
+              },
+              { disabled: true },
+            ),
             buildTextField({
               id: 'applicant.contact',
               name: m.contact,
-              disabled: false,
+              disabled: true,
               width: 'half',
             }),
             buildTextField({
               id: 'applicant.email',
               name: m.email,
-              disabled: false,
+              disabled: true,
               width: 'half',
               variant: 'email',
             }),
             buildTextField({
               id: 'applicant.phoneNumber',
               name: m.phoneNumber,
-              disabled: false,
+              disabled: true,
               width: 'half',
               variant: 'tel',
             }),
@@ -62,25 +59,30 @@ export const Review: Form = buildForm({
             buildTextField({
               id: 'service.name',
               name: m.serviceName,
-              disabled: false,
+              disabled: true,
               width: 'half',
             }),
             buildTextField({
               id: 'service.countPerYEar',
               name: m.serviceCount,
-              disabled: false,
+              disabled: true,
               width: 'half',
               variant: 'number',
             }),
-            buildTextField({
+            buildRadioField({
               id: 'service.users',
               name: m.serviceUsers,
-              disabled: false,
-              width: 'half',
+              disabled: true,
+              options: [
+                { value: 'companies', label: m.companiesOptionLabel },
+                { value: 'individuals', label: m.individualsOptionLabel },
+                { value: 'both', label: m.bothOptionLabel },
+              ],
             }),
             buildRadioField({
               id: 'service.digital',
               name: m.serviceDigital,
+              disabled: true,
               options: [
                 { value: 'yes', label: m.yesOptionLabel },
                 { value: 'no', label: m.noOptionLabel },
@@ -98,11 +100,16 @@ export const Review: Form = buildForm({
               },
             }),
             buildDividerField({ name: 'Gögn' }),
+            buildCustomField({
+              id: 'dataTable',
+              name: '',
+              component: 'DataTable',
+            }),
             buildDividerField({ name: 'Greiðlur' }),
             buildRadioField({
               id: 'payment.radio',
               name: m.paymentRadio,
-              disabled: false,
+              disabled: true,
               options: [
                 { value: 'yes', label: m.yesOptionLabel },
                 { value: 'no', label: m.noOptionLabel },
@@ -111,7 +118,7 @@ export const Review: Form = buildForm({
             buildTextField({
               id: 'payment.tbr',
               name: m.paymentTBR,
-              disabled: false,
+              disabled: true,
               condition: (formValue: FormValue) => {
                 return (
                   (formValue as { payment: { radio: string } })?.payment
@@ -123,7 +130,7 @@ export const Review: Form = buildForm({
               id: 'payment.amount',
               name: m.paymentAmount,
               variant: 'number',
-              disabled: false,
+              disabled: true,
               condition: (formValue: FormValue) => {
                 return (
                   (formValue as { payment: { radio: string } })?.payment
@@ -134,7 +141,7 @@ export const Review: Form = buildForm({
             buildRadioField({
               id: 'payment.charge',
               name: m.paymentCharge,
-              disabled: false,
+              disabled: true,
               options: [
                 { value: 'in advance', label: m.inAdvanceOptionLabel },
                 { value: 'on approval', label: m.onApprovalOptionLabel },
@@ -148,13 +155,15 @@ export const Review: Form = buildForm({
             }),
             buildDividerField({ name: 'Annað' }),
             buildTextField({
-              id: 'other.info',
+              id: 'info',
               name: m.otherInfo,
               variant: 'textarea',
+              disabled: true,
             }),
             buildSubmitField({
               id: 'approvedByReviewer',
               name: m.reviewQuestion,
+              placement: 'screen',
               actions: [
                 { event: 'APPROVE', name: m.approveOption, type: 'primary' },
                 { event: 'REJECT', name: m.declineOption, type: 'reject' },

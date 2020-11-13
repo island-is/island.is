@@ -1460,14 +1460,14 @@ export interface IPageRoot extends Entry<IPageRootFields> {
 }
 
 export interface IParentPluginTestFields {
-  /** Parent test */
-  parentTest?: Record<string, any> | undefined
+  /** Slug */
+  slug?: string | undefined
 
-  /** test reference */
-  testReference?: IArticle | undefined
+  /** Normal field */
+  normalField?: string | undefined
 
-  /** aasdasdasdsa */
-  aasdasdasdsa?: string | undefined
+  /** Parent */
+  parent?: IArticle | IParentPluginTest | undefined
 }
 
 export interface IParentPluginTest extends Entry<IParentPluginTestFields> {
