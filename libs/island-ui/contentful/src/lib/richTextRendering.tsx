@@ -12,7 +12,6 @@ import {
   documentToReactComponents,
   RenderMark,
 } from '@contentful/rich-text-react-renderer'
-import { CompanyList, CompanyListConnected } from '@island.is/shared/connected'
 import { Image, ImageProps } from './Image/Image'
 import FaqList, { FaqListProps } from './FaqList/FaqList'
 import { Statistics, StatisticsProps } from './Statistics/Statistics'
@@ -43,13 +42,6 @@ import { TellUsAStoryFormProps } from './TellUsAStoryForm/TellUsAStoryForm'
 
 type HtmlSlice = { __typename: 'Html'; id: string; document: Document }
 type FaqListSlice = { __typename: 'FaqList'; id: string } & FaqListProps
-type ConnectedComponentSlice = {
-  __typename: 'ConnectedComponent'
-  id: string
-  title: string
-  json: string
-  componentType: string
-}
 type StatisticsSlice = {
   __typename: 'Statistics'
   id: string
@@ -85,7 +77,6 @@ type SectionWithImageSlice = {
 export type Slice =
   | HtmlSlice
   | FaqListSlice
-  | ConnectedComponentSlice
   | StatisticsSlice
   | ImageSlice
   | AssetSlice
@@ -138,29 +129,6 @@ export interface RenderConfig {
   skipGrid?: boolean
 }
 
-const renderConnectedComponent = (slice) => {
-  const data = slice.json
-
-  switch (slice.componentType) {
-    case 'Skilavottord/CompanyList':
-      if (Array.isArray(data)) {
-        return <CompanyList recyclingPartners={data} />
-      }
-
-      break
-    case 'Skilavottord/CompanyListConnected':
-      if (typeof data === 'object') {
-        const { graphqlLink } = data
-
-        return <CompanyListConnected graphqlLink={graphqlLink} />
-      }
-    default:
-      break
-  }
-
-  return null
-}
-
 export const defaultRenderComponent = (
   slice: Slice,
   locale: string,
@@ -173,8 +141,6 @@ export const defaultRenderComponent = (
         renderNode,
       })
 
-    case 'ConnectedComponent':
-      return renderConnectedComponent(slice)
     case 'FaqList':
       return <FaqList {...slice} />
 

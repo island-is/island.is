@@ -154,14 +154,6 @@ export const slices = gql`
     }
   }
 
-  fragment ConnectedComponentFields on ConnectedComponent {
-    __typename
-    id
-    title
-    json
-    componentType: type
-  }
-
   fragment StatisticsFields on Statistics {
     __typename
     id
@@ -340,6 +332,5 @@ export const slices = gql`
     ...ContactUsFields
     ...LocationFields
     ...TellUsAStoryFields
-    ...ConnectedComponentFields
   }
 `

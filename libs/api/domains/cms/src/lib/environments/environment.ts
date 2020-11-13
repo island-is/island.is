@@ -14,7 +14,6 @@ export default {
     'embeddedVideo',
     'author',
     'faqList',
-    'sliceConnectedComponent',
     'link',
     'linkUrl',
     'linkList',

@@ -3980,32 +3980,6 @@
         "docker-express": {}
       }
     },
-    "shared-connected": {
-      "root": "libs/shared/connected",
-      "sourceRoot": "libs/shared/connected/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/shared/connected/tsconfig.lib.json",
-              "libs/shared/connected/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/shared/connected/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/shared/connected/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "shared-form-fields": {
       "root": "libs/shared/form-fields",
       "sourceRoot": "libs/shared/form-fields/src",

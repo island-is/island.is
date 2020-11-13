@@ -181,7 +181,6 @@
       "@island.is/service-portal/settings": [
         "libs/service-portal/settings/src/index.ts"
       ],
-      "@island.is/shared/connected": ["libs/shared/connected/src/index.ts"],
       "@island.is/shared/form-fields": ["libs/shared/form-fields/src/index.ts"],
       "@island.is/shared/mocking": ["libs/shared/mocking/src/index.ts"],
       "@island.is/shared/table": ["libs/shared/table/src/index.ts"],
