@@ -88,9 +88,9 @@ export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
           <Box>{children}</Box>
         </GridColumn>
         <GridColumn hiddenBelow="md" span={['0', '0', '4/12', '4/12', '3/12']}>
-          <Hidden print={true} boxProps={{ height: 'full' }}>
+          <Box printHidden height="full">
             <Sticky>{sidebar}</Sticky>
-          </Hidden>
+          </Box>
         </GridColumn>
       </GridRow>
     </Box>
