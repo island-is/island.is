@@ -28,6 +28,7 @@
   "private": true,
   "dependencies": {
     "document-register-element": "1.13.1",
+    "formik": "^2.2.5",
     "next": "9.5.2",
     "react": "16.13.1",
     "react-dom": "16.13.1"
