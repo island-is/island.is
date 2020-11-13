@@ -89,12 +89,12 @@ export class RecyclingRequestService {
         Authorization: 'Bearer ' + jToken,
       }
 
-      const deRegRes = await this.httpService
-        .post(restDeRegUrl, jsonDeRegBody, { headers: headerDeRegRequest })
-        .toPromise()
       this.logger.info(`RestUrl: ${restDeRegUrl}`)
       this.logger.info(`RestHeader: ${headerDeRegRequest}`)
       this.logger.info(`RestBody: ${jsonDeRegBody}`)
+      const deRegRes = await this.httpService
+        .post(restDeRegUrl, jsonDeRegBody, { headers: headerDeRegRequest })
+        .toPromise()
       if (deRegRes.status < 300 && deRegRes.status >= 200) {
         this.logger.info(
           `---- Finished deRegisterVehicle call on ${vehiclePermno} ----`,
