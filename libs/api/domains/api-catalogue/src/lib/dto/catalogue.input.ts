@@ -5,7 +5,7 @@ import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator'
 export class GetApiServiceInput {
   @Field(() => ID)
   @IsString()
-  id: string
+  id!: string
 }
 
 @InputType()
