@@ -4,6 +4,8 @@ import axios from "axios";
 import StatusBar from "./StatusBar";
 import APIResponse from "../models/APIResponse";
 import { useRouter } from "next/router";
+import { Formik, Field, Form, FormikHelpers } from 'formik';
+import { __asyncValues } from 'tslib';
 
 type Props = {
   resource: IdentityResourcesDTO;
@@ -22,7 +24,9 @@ class IdentityResource extends React.Component<{ resource: IdentityResourcesDTO 
 
     this.resource = this.props.resource;
     if (!this.resource) {
+      
       this.resource = new IdentityResourcesDTO();
+      this.resource.key = "1234";
     }
     this.response = { statusCode: 200, message: null, error: null };
   }
@@ -37,8 +41,9 @@ class IdentityResource extends React.Component<{ resource: IdentityResourcesDTO 
   }
 
   back = () => {
-    const router = useRouter();
-    router.back();
+    // TODO: Go back
+    // const router = useRouter();
+    // router.back();
   };
 
   isValid = (): boolean => {
@@ -47,7 +52,6 @@ class IdentityResource extends React.Component<{ resource: IdentityResourcesDTO 
 
   submit = async (e: SyntheticEvent) => {
     e.preventDefault();
-
     const response = await axios.post("http://localhost:3333/clients", this.resource).catch((err) => {
       console.log(err);
     });
@@ -58,6 +62,7 @@ class IdentityResource extends React.Component<{ resource: IdentityResourcesDTO 
 
   render() {
     return (
+      
       <div className="identity-resource">
         <StatusBar status={this.state.response}></StatusBar>
         <div className="identity-resource__wrapper">
@@ -71,44 +76,52 @@ class IdentityResource extends React.Component<{ resource: IdentityResourcesDTO 
           <div className="identity-resource__container">
             <h1>Create new Identity Resource</h1>
             <div className="identity-resource__container__form">
-              <form onSubmit={this.submit}>
+            <Formik
+              initialValues={{
+                resource: this.resource,
+              }}
+              onSubmit={(
+              values: Props,
+                { setSubmitting }: FormikHelpers<Props>
+              ) => {
+                setTimeout(() => {
+                  alert(JSON.stringify(values, null, 2));
+                  setSubmitting(false);
+                }, 500);
+              }}
+            >
+              <Form>
                 <div className="identity-resource__container__fields">
                   <div className="identity-resource__container__field">
                     <label className="identity-resource__label">
                       Key</label>
-                    <input
+                    <Field
                       type="text"
-                      defaultValue={this.resource.key}
-                      onChange={(e) => (this.resource.key = e.target.value)}
+                      name="resource.key"
                       className="identity-resource__input"
                     />
                   </div>
                   <div className="identity-resource__container__field">
                     <label className="identity-resource__label">Name</label>
-                    <input
+                    <Field
+                      name="resource.name"
                       type="text"
-                      defaultValue={this.resource.name}
-                      onChange={(e) => (this.resource.name = e.target.value)}
                       className="identity-resource__input"
                     />
                   </div>
                   <div className="identity-resource__container__field">
                     <label className="identity-resource__label">Display Name</label>
-                    <input
+                    <Field
+                      name="resource.displayName"
                       type="text"
-                      defaultValue={this.resource.displayName}
-                      onChange={(e) =>
-                        (this.resource.displayName = e.target.value)
-                      }
                       className="identity-resource__input"
                     />
                   </div>
                   <div className="identity-resource__container__field">
                     <label className="identity-resource__label">Description</label>
-                    <input
+                    <Field
+                      name="resource.description"
                       type="text"
-                      defaultValue={this.resource.description ?? ""}
-                      onChange={(e) => (this.resource.description = e.target.value)}
                       className="identity-resource__input"
                     />
                   </div>
@@ -116,43 +129,39 @@ class IdentityResource extends React.Component<{ resource: IdentityResourcesDTO 
 
                   <div className="identity-resource__container__field">
                     <label className="identity-resource__label">Enabled</label>
-                    <input
+                    <Field
+                      name="resource.enabled"
                       type="checkbox"
                       className="identity-resource__checkbox"
-                      defaultChecked={this.resource.enabled}
-                      onChange={(e) => (this.resource.enabled = e.target.checked)}
-                    ></input>
+                    />
                   </div>
 
                   <div className="identity-resource__container__field">
                     <label className="identity-resource__label">Emphasize</label>
-                    <input
+                    <Field
+                      name="resource.emphasize"
                       type="checkbox"
                       className="identity-resource__checkbox"
-                      defaultChecked={this.resource.emphasize}
-                      onChange={(e) => (this.resource.emphasize = e.target.checked)}
-                    ></input>
+                    />
                   </div>
 
 
                   <div className="identity-resource__container__field">
                     <label className="identity-resource__label">Required</label>
-                    <input
+                    <Field
+                      name="resource.required"
                       type="checkbox"
                       className="identity-resource__checkbox"
-                      defaultChecked={this.resource.required}
-                      onChange={(e) => (this.resource.required = e.target.checked)}
-                    ></input>
+                    />
                   </div>
 
                   <div className="identity-resource__container__field">
                     <label className="identity-resource__label">Show In Discovery Document</label>
-                    <input
+                    <Field
+                      name="resource.showInDiscoveryDocument"
                       type="checkbox"
                       className="identity-resource__checkbox"
-                      defaultChecked={this.resource.showInDiscoveryDocument}
-                      onChange={(e) => (this.resource.showInDiscoveryDocument = e.target.checked)}
-                    ></input>
+                    />
                   </div>
 
 
@@ -175,7 +184,8 @@ class IdentityResource extends React.Component<{ resource: IdentityResourcesDTO 
                   </div>
                 </div>
                 </div>
-              </form>
+              </Form>
+              </Formik>
             </div>
           </div>
           </div>
