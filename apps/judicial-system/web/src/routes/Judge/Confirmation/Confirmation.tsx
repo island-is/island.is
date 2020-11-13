@@ -160,7 +160,6 @@ const SigningModal: React.FC<SigningModalProps> = (
 export const Confirmation: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [requestSignatureResponse, setRequestSignatureResponse] = useState<
     RequestSignatureResponse
   >()
@@ -190,7 +189,10 @@ export const Confirmation: React.FC = () => {
     }
   }, [modalVisible, setRequestSignatureResponse])
 
-  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+  const [
+    transitionCaseMutation,
+    { loading: isTransitioningCase },
+  ] = useMutation(TransitionCaseMutation)
 
   const transitionCase = async (id: string, transitionCase: TransitionCase) => {
     const { data } = await transitionCaseMutation({
@@ -207,7 +209,10 @@ export const Confirmation: React.FC = () => {
     return resCase
   }
 
-  const [requestSignatureMutation] = useMutation(RequestSignatureMutation)
+  const [
+    requestSignatureMutation,
+    { loading: isRequestingSignature },
+  ] = useMutation(RequestSignatureMutation)
 
   const requestSignature = async (id: string) => {
     const { data } = await requestSignatureMutation({
@@ -419,9 +424,6 @@ export const Confirmation: React.FC = () => {
             nextUrl={Constants.DETENTION_REQUESTS_ROUTE}
             nextButtonText="Staðfesta úrskurð"
             onNextButtonClick={async () => {
-              // Set loading indicator on the Continue button in the footer
-              setIsLoading(true)
-
               // Transition case from submitted state to either accepted or rejected
               await handleNextButtonClick()
 
@@ -433,10 +435,9 @@ export const Confirmation: React.FC = () => {
               if (requestSignatureResponse) {
                 setRequestSignatureResponse(requestSignatureResponse)
                 setModalVisible(true)
-                setIsLoading(false)
               }
             }}
-            nextIsLoading={isLoading}
+            nextIsLoading={isTransitioningCase || isRequestingSignature}
           />
           {modalVisible && (
             <SigningModal

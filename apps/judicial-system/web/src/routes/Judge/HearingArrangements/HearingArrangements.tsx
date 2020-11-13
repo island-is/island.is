@@ -205,11 +205,9 @@ export const HearingArrangements: React.FC = () => {
                     }
                     handleChange={(date) => {
                       const formattedDate = formatISO(date, {
-                        representation:
-                          workingCase.courtDate &&
-                          workingCase.courtDate.indexOf('T') > -1
-                            ? 'complete'
-                            : 'date',
+                        representation: workingCase.courtDate?.includes('T')
+                          ? 'complete'
+                          : 'date',
                       })
 
                       setWorkingCase({
@@ -239,8 +237,7 @@ export const HearingArrangements: React.FC = () => {
                     errorMessage={courtTimeErrorMessage}
                     hasError={courtTimeErrorMessage !== ''}
                     defaultValue={
-                      workingCase.courtDate &&
-                      workingCase.courtDate.indexOf('T') > -1
+                      workingCase.courtDate?.includes('T')
                         ? formatDate(workingCase.courtDate, TIME_FORMAT)
                         : undefined
                     }

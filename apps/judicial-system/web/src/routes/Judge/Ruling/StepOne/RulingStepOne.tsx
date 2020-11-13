@@ -254,11 +254,9 @@ export const RulingStepOne: React.FC = () => {
                   }
                   handleChange={(date) => {
                     const formattedDate = formatISO(date, {
-                      representation:
-                        workingCase.custodyEndDate &&
-                        workingCase.custodyEndDate.indexOf('T') > -1
-                          ? 'complete'
-                          : 'date',
+                      representation: workingCase.custodyEndDate?.includes('T')
+                        ? 'complete'
+                        : 'date',
                     })
 
                     setWorkingCase({
@@ -281,11 +279,9 @@ export const RulingStepOne: React.FC = () => {
                   label="Tímasetning"
                   ref={custodyEndTimeRef}
                   defaultValue={
-                    workingCase.custodyEndDate &&
-                    workingCase.custodyEndDate.indexOf('T') > -1
+                    workingCase.custodyEndDate?.includes('T')
                       ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
-                      : workingCase.requestedCustodyEndDate &&
-                        workingCase.requestedCustodyEndDate.indexOf('T') > -1
+                      : workingCase.requestedCustodyEndDate?.includes('T')
                       ? formatDate(
                           workingCase.requestedCustodyEndDate,
                           TIME_FORMAT,
@@ -352,22 +348,17 @@ export const RulingStepOne: React.FC = () => {
                           name={restriction.restriction}
                           label={restriction.restriction}
                           value={restriction.value}
-                          checked={
-                            workingCase.custodyRestrictions &&
-                            workingCase.custodyRestrictions.indexOf(
-                              restriction.value,
-                            ) > -1
-                          }
+                          checked={workingCase.custodyRestrictions?.includes(
+                            restriction.value,
+                          )}
                           tooltip={restriction.explination}
                           onChange={({ target }) => {
                             // Create a copy of the state
                             const copyOfState = Object.assign(workingCase, {})
 
-                            const restrictionIsSelected =
-                              copyOfState.custodyRestrictions &&
-                              copyOfState.custodyRestrictions.indexOf(
-                                target.value as CaseCustodyRestrictions,
-                              ) > -1
+                            const restrictionIsSelected = copyOfState.custodyRestrictions?.includes(
+                              target.value as CaseCustodyRestrictions,
+                            )
 
                             // Toggle the checkbox on or off
                             restriction.setCheckbox(!restrictionIsSelected)
