@@ -58,7 +58,6 @@
 
 ## Projects
 
-- [Aðgerðir](apps/adgerdir/README.md)
 - [Air Discount Scheme](apps/air-discount-scheme/README.md)
 - [API](apps/api/README.md)
 - [API catalogue](apps/api-catalogue/README.md)
