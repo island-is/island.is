@@ -140,7 +140,6 @@ export const StepOne: React.FC = () => {
     setRequestedCourtTimeErrorMessage,
   ] = useState<string>('')
   const [modalVisible, setModalVisible] = useState(false)
-  const [isSendingNotification, setIsSendingNotification] = useState(false)
 
   const { id } = useParams<{ id: string }>()
 
@@ -260,7 +259,10 @@ export const StepOne: React.FC = () => {
     return resCase
   }
 
-  const [sendNotificationMutation] = useMutation(SendNotificationMutation)
+  const [
+    sendNotificationMutation,
+    { loading: isSendingNotification },
+  ] = useMutation(SendNotificationMutation)
 
   const sendNotification = async (id: string) => {
     const { data } = await sendNotificationMutation({
@@ -938,9 +940,8 @@ export const StepOne: React.FC = () => {
                 )
               }
               handlePrimaryButtonClick={async () => {
-                setIsSendingNotification(true)
                 await sendNotification(workingCase.id)
-                setIsSendingNotification(false)
+
                 history.push(
                   `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
                 )
