@@ -53,7 +53,7 @@ export const SignatureConfirmationQuery = gql`
 
 interface SigningModalProps {
   caseId: string
-  requestSignatureResponse: RequestSignatureResponse
+  requestSignatureResponse?: RequestSignatureResponse
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>
 }
 
@@ -70,7 +70,7 @@ const SigningModal: React.FC<SigningModalProps> = (
     variables: {
       input: {
         caseId: props.caseId,
-        documentToken: props.requestSignatureResponse.documentToken,
+        documentToken: props.requestSignatureResponse?.documentToken,
       },
     },
     fetchPolicy: 'no-cache',
@@ -104,7 +104,7 @@ const SigningModal: React.FC<SigningModalProps> = (
       <>
         <Box marginBottom={2}>
           <Text variant="h2" color="blue400">
-            {`Öryggistala: ${props.requestSignatureResponse.controlCode}`}
+            {`Öryggistala: ${props.requestSignatureResponse?.controlCode}`}
           </Text>
         </Box>
         <Text>
@@ -135,13 +135,13 @@ const SigningModal: React.FC<SigningModalProps> = (
       }
       secondaryButtonText={
         !signatureConfirmationResponse
-          ? null
+          ? undefined
           : signatureConfirmationResponse.documentSigned
           ? 'Loka glugga'
           : 'Loka og reyna aftur'
       }
       primaryButtonText={
-        !signatureConfirmationResponse ? null : 'Gefa endurgjöf á gáttina'
+        signatureConfirmationResponse ? 'Gefa endurgjöf á gáttina' : ''
       }
       handlePrimaryButtonClick={() => {
         history.push(Constants.FEEDBACK_FORM_ROUTE)
@@ -158,15 +158,15 @@ const SigningModal: React.FC<SigningModalProps> = (
 }
 
 export const Confirmation: React.FC = () => {
-  const [workingCase, setWorkingCase] = useState<Case>(null)
+  const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [requestSignatureResponse, setRequestSignatureResponse] = useState<
     RequestSignatureResponse
   >()
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+
   const { id } = useParams<{ id: string }>()
   const { user } = useContext(userContext)
-  const { data } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
@@ -178,23 +178,21 @@ export const Confirmation: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setIsLoading(true)
+    if (!workingCase && resCase) {
       setWorkingCase(resCase)
-      setIsLoading(false)
     }
-    if (id && !workingCase && resCase) {
-      getCurrentCase()
-    }
-  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
+  }, [workingCase, setWorkingCase, resCase])
 
   useEffect(() => {
     if (!modalVisible) {
-      setRequestSignatureResponse(null)
+      setRequestSignatureResponse(undefined)
     }
   }, [modalVisible, setRequestSignatureResponse])
 
-  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+  const [
+    transitionCaseMutation,
+    { loading: isTransitioningCase },
+  ] = useMutation(TransitionCaseMutation)
 
   const transitionCase = async (id: string, transitionCase: TransitionCase) => {
     const { data } = await transitionCaseMutation({
@@ -204,14 +202,17 @@ export const Confirmation: React.FC = () => {
     const resCase = data?.transitionCase
 
     if (resCase) {
-      // Do smoething with the result. In particular, we want the modified timestamp passed between
+      // Do something with the result. In particular, we want the modified timestamp passed between
       // the client and the backend so that we can handle multiple simultanious updates.
     }
 
     return resCase
   }
 
-  const [requestSignatureMutation] = useMutation(RequestSignatureMutation)
+  const [
+    requestSignatureMutation,
+    { loading: isRequestingSignature },
+  ] = useMutation(RequestSignatureMutation)
 
   const requestSignature = async (id: string) => {
     const { data } = await requestSignatureMutation({
@@ -222,18 +223,22 @@ export const Confirmation: React.FC = () => {
   }
 
   const handleNextButtonClick = async () => {
-    try {
-      // Parse the transition request
-      const transitionRequest = parseTransition(
-        workingCase.modified,
-        workingCase.rejecting ? CaseTransition.REJECT : CaseTransition.ACCEPT,
-      )
+    if (workingCase && workingCase.id && workingCase.modified) {
+      try {
+        // Parse the transition request
+        const transitionRequest = parseTransition(
+          workingCase.modified,
+          workingCase?.rejecting
+            ? CaseTransition.REJECT
+            : CaseTransition.ACCEPT,
+        )
 
-      // Transition the case
-      await transitionCase(workingCase.id, transitionRequest)
-    } catch (e) {
-      // Improve error handling at some point
-      console.log('Transition failing')
+        // Transition the case
+        await transitionCase(workingCase.id, transitionRequest)
+      } catch (e) {
+        // Improve error handling at some point
+        console.log('Transition failing')
+      }
     }
   }
 
@@ -241,7 +246,7 @@ export const Confirmation: React.FC = () => {
     <PageLayout
       activeSubSection={Sections.JUDGE}
       activeSection={JudgeSubsections.CONFIRMATION}
-      isLoading={isLoading}
+      isLoading={loading}
     >
       {workingCase ? (
         <>
@@ -345,7 +350,7 @@ export const Confirmation: React.FC = () => {
               </Text>
             </Box>
             <Box marginBottom={3}>{constructConclusion(workingCase)}</Box>
-            <Text variant="h4" fontWeight="light">
+            <Text>
               Úrskurðarorðið er lesið í heyranda hljóði að viðstöddum kærða,
               verjanda hans, túlki og aðstoðarsaksóknara.
             </Text>
@@ -357,7 +362,7 @@ export const Confirmation: React.FC = () => {
               </Text>
             </Box>
             <Box marginBottom={1}>
-              <Text variant="h4" fontWeight="light">
+              <Text>
                 Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð
                 þennan til Landsréttar innan þriggja sólarhringa. Dómari bendir
                 kærða á að honum sé heimilt að bera atriði er lúta að framkvæmd
@@ -419,9 +424,6 @@ export const Confirmation: React.FC = () => {
             nextUrl={Constants.DETENTION_REQUESTS_ROUTE}
             nextButtonText="Staðfesta úrskurð"
             onNextButtonClick={async () => {
-              // Set loading indicator on the Continue button in the footer
-              setIsLoading(true)
-
               // Transition case from submitted state to either accepted or rejected
               await handleNextButtonClick()
 
@@ -433,14 +435,13 @@ export const Confirmation: React.FC = () => {
               if (requestSignatureResponse) {
                 setRequestSignatureResponse(requestSignatureResponse)
                 setModalVisible(true)
-                setIsLoading(false)
               }
             }}
-            nextIsLoading={isLoading}
+            nextIsLoading={isTransitioningCase || isRequestingSignature}
           />
           {modalVisible && (
             <SigningModal
-              caseId={workingCase?.id}
+              caseId={workingCase.id}
               requestSignatureResponse={requestSignatureResponse}
               setModalVisible={setModalVisible}
             />

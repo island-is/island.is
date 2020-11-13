@@ -36,7 +36,7 @@ interface CaseData {
 }
 
 export const CourtRecord: React.FC = () => {
-  const [workingCase, setWorkingCase] = useState<Case>(null)
+  const [workingCase, setWorkingCase] = useState<Case>()
   const [
     courtDocumentStartErrorMessage,
     setCourtDocumentStartErrorMessage,
@@ -78,8 +78,12 @@ export const CourtRecord: React.FC = () => {
     document.title = 'Þingbók - Réttarvörslugátt'
   }, [])
 
-  const defaultCourtAttendees = (wc: Case) => {
-    let attendees = `${wc.prosecutor.name} ${wc.prosecutor.title}\n${wc.accusedName} kærði`
+  const defaultCourtAttendees = (wc: Case): string => {
+    let attendees = ''
+
+    if (wc.prosecutor && wc.accusedName) {
+      attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${wc.accusedName} kærði`
+    }
 
     if (wc.defenderName) {
       attendees += `\n${wc.defenderName} verjandi kærða`
@@ -95,10 +99,12 @@ export const CourtRecord: React.FC = () => {
       if (!theCase.courtAttendees) {
         theCase = { ...theCase, courtAttendees: defaultCourtAttendees(theCase) }
 
-        updateCase(
-          theCase.id,
-          parseString('courtAttendees', theCase.courtAttendees),
-        )
+        if (theCase.courtAttendees) {
+          updateCase(
+            theCase.id,
+            parseString('courtAttendees', theCase.courtAttendees),
+          )
+        }
       }
 
       setWorkingCase(theCase)
@@ -424,24 +430,25 @@ export const CourtRecord: React.FC = () => {
             nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
             nextIsDisabled={isNextDisabled([
               {
-                value: formatDate(workingCase?.courtStartTime, TIME_FORMAT),
+                value:
+                  formatDate(workingCase.courtStartTime, TIME_FORMAT) || '',
                 validations: ['empty', 'time-format'],
               },
               {
-                value: formatDate(workingCase?.courtEndTime, TIME_FORMAT),
+                value: formatDate(workingCase.courtEndTime, TIME_FORMAT) || '',
                 validations: ['empty', 'time-format'],
               },
               {
-                value: workingCase?.courtAttendees,
+                value: workingCase.courtAttendees || '',
                 validations: ['empty'],
               },
               {
-                value: workingCase?.policeDemands,
+                value: workingCase.policeDemands || '',
                 validations: ['empty'],
               },
-              { value: workingCase?.accusedPlea, validations: ['empty'] },
+              { value: workingCase.accusedPlea || '', validations: ['empty'] },
               {
-                value: workingCase?.litigationPresentations,
+                value: workingCase.litigationPresentations || '',
                 validations: ['empty'],
               },
             ])}
