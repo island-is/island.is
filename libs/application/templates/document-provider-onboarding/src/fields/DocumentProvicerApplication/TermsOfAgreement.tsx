@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { useFormContext, Controller, useForm } from 'react-hook-form'
+import { useFormContext, Controller } from 'react-hook-form'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import {
   Accordion,
@@ -39,13 +39,9 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
   const [userTermsTouched, setuserTermsTouched] = useState(false)
   const [securityTermsTouched, setSecurityTermsTouched] = useState(false)
 
-  //Have to find best way to treat errors...
-  const { setValue } = useFormContext()
+  //Have to find best way to treat errors. Nothing defined onload, after we press "continue" we get the errors...
+  const { setValue, errors } = useFormContext()
 
-  const { errors } = useForm()
-
-  console.log(useForm())
-  console.log(errors)
   return (
     <Box>
       <Box marginBottom={5}>
