@@ -79,25 +79,25 @@ const SigningModal: React.FC<SigningModalProps> = (
 
   const [sendNotificationMutation] = useMutation(SendNotificationMutation)
 
-  const sendNotification = async (id: string) => {
-    const { data } = await sendNotificationMutation({
-      variables: {
-        input: {
-          caseId: id,
-          type: NotificationType.RULING,
-        },
-      },
-    })
-
-    return data?.sendNotification?.notificationSent
-  }
-
   useEffect(() => {
-    if (resSignatureResponse) {
-      sendNotification(props.caseId)
+    const completeSigning = async (
+      resSignatureResponse: SignatureConfirmationResponse,
+    ) => {
+      await sendNotificationMutation({
+        variables: {
+          input: {
+            caseId: props.caseId,
+            type: NotificationType.RULING,
+          },
+        },
+      })
       setSignatureConfirmationResponse(resSignatureResponse)
     }
-  }, [resSignatureResponse, setSignatureConfirmationResponse])
+
+    if (resSignatureResponse) {
+      completeSigning(resSignatureResponse)
+    }
+  }, [resSignatureResponse, props.caseId, sendNotificationMutation])
 
   const renderContolCode = () => {
     return (

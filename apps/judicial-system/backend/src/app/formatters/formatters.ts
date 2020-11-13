@@ -128,7 +128,7 @@ export function formatRestrictions(
 export function formatAppeal(
   appealDecision: CaseAppealDecision,
   stakeholder: string,
-  includeBullet: boolean = true,
+  includeBullet = true,
 ): string {
   switch (appealDecision) {
     case CaseAppealDecision.APPEAL:
