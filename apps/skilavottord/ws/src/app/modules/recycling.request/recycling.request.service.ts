@@ -92,9 +92,9 @@ export class RecyclingRequestService {
       const deRegRes = await this.httpService
         .post(restDeRegUrl, jsonDeRegBody, { headers: headerDeRegRequest })
         .toPromise()
-      this.logger.debug(`RestUrl: ${restDeRegUrl}`)
-      this.logger.debug(`RestHeader: ${headerDeRegRequest}`)
-      this.logger.debug(`RestBody: ${jsonDeRegBody}`)
+      this.logger.info(`RestUrl: ${restDeRegUrl}`)
+      this.logger.info(`RestHeader: ${headerDeRegRequest}`)
+      this.logger.info(`RestBody: ${jsonDeRegBody}`)
       if (deRegRes.status < 300 && deRegRes.status >= 200) {
         this.logger.info(
           `---- Finished deRegisterVehicle call on ${vehiclePermno} ----`,
