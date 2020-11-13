@@ -10,7 +10,7 @@ import {
 } from '@island.is/judicial-system-web/src/shared-components/Logos'
 import {
   AlertMessage,
-  ButtonDeprecated as Button,
+  Button,
   Text,
   Tag,
   TagVariant,
@@ -99,7 +99,7 @@ export const DetentionRequests: React.FC = () => {
               to={Constants.SINGLE_REQUEST_BASE_ROUTE}
               style={{ textDecoration: 'none' }}
             >
-              <Button icon="plus">Stofna nýja kröfu</Button>
+              <Button icon="add">Stofna nýja kröfu</Button>
             </Link>
           )}
         </div>
@@ -158,7 +158,7 @@ export const DetentionRequests: React.FC = () => {
                     }
                     style={{ textDecoration: 'none', whiteSpace: 'nowrap' }}
                   >
-                    <Button icon="arrowRight" variant="text">
+                    <Button icon="arrowForward" variant="text">
                       Opna kröfu
                     </Button>
                   </Link>
