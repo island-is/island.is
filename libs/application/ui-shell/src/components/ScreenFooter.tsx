@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Box, Button, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import * as styles from './Screen.treat'
+import * as styles from './ScreenFooter.treat'
 import {
   Application,
   formatText,
@@ -95,7 +95,13 @@ export const ScreenFooter: FC<FooterProps> = ({
   }
 
   return (
-    <Box marginTop={7} className={styles.buttonContainer}>
+    <Box
+      marginTop={7}
+      className={styles.buttonContainer}
+      onClick={() => {
+        console.log('clickity click?')
+      }}
+    >
       <GridColumn
         span={['12/12', '12/12', '7/9', '7/9']}
         offset={['0', '0', '1/9']}
@@ -106,7 +112,6 @@ export const ScreenFooter: FC<FooterProps> = ({
           alignItems="center"
           justifyContent="spaceBetween"
           paddingTop={[1, 4]}
-          paddingBottom={[1, 5]}
         >
           <Box display="inlineFlex" padding={2} paddingRight="none">
             {hasSubmitField ? (
