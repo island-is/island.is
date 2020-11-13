@@ -47,7 +47,7 @@ interface CaseData {
 }
 
 export const RulingStepOne: React.FC = () => {
-  const custodyEndTimeRef = useRef<HTMLInputElement>()
+  const custodyEndTimeRef = useRef<HTMLInputElement>(null)
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [, setRestrictionCheckboxOne] = useState<boolean>()
@@ -129,7 +129,7 @@ export const RulingStepOne: React.FC = () => {
           theCase.id,
           parseArray(
             'custodyRestrictions',
-            theCase.requestedCustodyRestrictions,
+            theCase.requestedCustodyRestrictions || [],
           ),
         )
       }
@@ -139,10 +139,10 @@ export const RulingStepOne: React.FC = () => {
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
-      { value: workingCase?.ruling, validations: ['empty'] },
-      { value: workingCase?.custodyEndDate, validations: ['empty'] },
+      { value: workingCase?.ruling || '', validations: ['empty'] },
+      { value: workingCase?.custodyEndDate || '', validations: ['empty'] },
       {
-        value: custodyEndTimeRef.current?.value,
+        value: custodyEndTimeRef.current?.value || '',
         validations: ['empty', 'time-format'],
       },
     ]
@@ -254,10 +254,9 @@ export const RulingStepOne: React.FC = () => {
                   }
                   handleChange={(date) => {
                     const formattedDate = formatISO(date, {
-                      representation:
-                        workingCase.custodyEndDate?.indexOf('T') > -1
-                          ? 'complete'
-                          : 'date',
+                      representation: workingCase.custodyEndDate?.includes('T')
+                        ? 'complete'
+                        : 'date',
                     })
 
                     setWorkingCase({
@@ -280,50 +279,52 @@ export const RulingStepOne: React.FC = () => {
                   label="Tímasetning"
                   ref={custodyEndTimeRef}
                   defaultValue={
-                    workingCase.custodyEndDate?.indexOf('T') > -1
+                    workingCase.custodyEndDate?.includes('T')
                       ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
-                      : workingCase.requestedCustodyEndDate?.indexOf('T') > -1
+                      : workingCase.requestedCustodyEndDate?.includes('T')
                       ? formatDate(
                           workingCase.requestedCustodyEndDate,
                           TIME_FORMAT,
                         )
-                      : null
+                      : undefined
                   }
                   hasError={custodyEndTimeErrorMessage !== ''}
                   errorMessage={custodyEndTimeErrorMessage}
                   onFocus={() => setCustodyEndTimeErrorMessage('')}
                   onBlur={(evt) => {
-                    const validateTimeEmpty = validate(
-                      evt.target.value,
-                      'empty',
-                    )
-                    const validateTimeFormat = validate(
-                      evt.target.value,
-                      'time-format',
-                    )
-                    const custodyEndDateMinutes = parseTime(
-                      workingCase.custodyEndDate,
-                      evt.target.value,
-                    )
-
-                    setWorkingCase({
-                      ...workingCase,
-                      custodyEndDate: custodyEndDateMinutes,
-                    })
-
-                    if (
-                      validateTimeEmpty.isValid &&
-                      validateTimeFormat.isValid
-                    ) {
-                      updateCase(
-                        workingCase.id,
-                        parseString('custodyEndDate', custodyEndDateMinutes),
+                    if (workingCase.custodyEndDate) {
+                      const validateTimeEmpty = validate(
+                        evt.target.value,
+                        'empty',
                       )
-                    } else {
-                      setCustodyEndTimeErrorMessage(
-                        validateTimeEmpty.errorMessage ||
-                          validateTimeFormat.errorMessage,
+                      const validateTimeFormat = validate(
+                        evt.target.value,
+                        'time-format',
                       )
+                      const custodyEndDateMinutes = parseTime(
+                        workingCase.custodyEndDate,
+                        evt.target.value,
+                      )
+
+                      setWorkingCase({
+                        ...workingCase,
+                        custodyEndDate: custodyEndDateMinutes,
+                      })
+
+                      if (
+                        validateTimeEmpty.isValid &&
+                        validateTimeFormat.isValid
+                      ) {
+                        updateCase(
+                          workingCase.id,
+                          parseString('custodyEndDate', custodyEndDateMinutes),
+                        )
+                      } else {
+                        setCustodyEndTimeErrorMessage(
+                          validateTimeEmpty.errorMessage ||
+                            validateTimeFormat.errorMessage,
+                        )
+                      }
                     }
                   }}
                   required
@@ -347,20 +348,17 @@ export const RulingStepOne: React.FC = () => {
                           name={restriction.restriction}
                           label={restriction.restriction}
                           value={restriction.value}
-                          checked={
-                            workingCase.custodyRestrictions?.indexOf(
-                              restriction.value,
-                            ) > -1
-                          }
+                          checked={workingCase.custodyRestrictions?.includes(
+                            restriction.value,
+                          )}
                           tooltip={restriction.explination}
                           onChange={({ target }) => {
                             // Create a copy of the state
                             const copyOfState = Object.assign(workingCase, {})
 
-                            const restrictionIsSelected =
-                              copyOfState.custodyRestrictions?.indexOf(
-                                target.value as CaseCustodyRestrictions,
-                              ) > -1
+                            const restrictionIsSelected = copyOfState.custodyRestrictions?.includes(
+                              target.value as CaseCustodyRestrictions,
+                            )
 
                             // Toggle the checkbox on or off
                             restriction.setCheckbox(!restrictionIsSelected)
@@ -371,20 +369,20 @@ export const RulingStepOne: React.FC = () => {
                                 copyOfState.custodyRestrictions = []
                               }
 
-                              copyOfState.custodyRestrictions.push(
-                                target.value as CaseCustodyRestrictions,
-                              )
+                              copyOfState.custodyRestrictions &&
+                                copyOfState.custodyRestrictions.push(
+                                  target.value as CaseCustodyRestrictions,
+                                )
                             }
                             // If the user is unchecking the box, remove the restriction from the state
                             else {
-                              const restrictions =
-                                copyOfState.custodyRestrictions
-                              restrictions.splice(
-                                restrictions?.indexOf(
-                                  target.value as CaseCustodyRestrictions,
-                                ),
-                                1,
-                              )
+                              copyOfState.custodyRestrictions &&
+                                copyOfState.custodyRestrictions.splice(
+                                  copyOfState.custodyRestrictions.indexOf(
+                                    target.value as CaseCustodyRestrictions,
+                                  ),
+                                  1,
+                                )
                             }
 
                             setWorkingCase({
@@ -398,7 +396,7 @@ export const RulingStepOne: React.FC = () => {
                               workingCase.id,
                               parseArray(
                                 'custodyRestrictions',
-                                copyOfState.custodyRestrictions,
+                                copyOfState.custodyRestrictions || [],
                               ),
                             )
                           }}

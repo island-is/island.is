@@ -738,11 +738,9 @@ export const StepOne: React.FC = () => {
                   }
                   handleChange={(date) => {
                     const formattedDate = formatISO(date, {
-                      representation:
-                        workingCase.arrestDate &&
-                        workingCase.arrestDate.indexOf('T') > -1
-                          ? 'complete'
-                          : 'date',
+                      representation: workingCase.arrestDate?.includes('T')
+                        ? 'complete'
+                        : 'date',
                     })
 
                     setWorkingCase({
@@ -774,8 +772,7 @@ export const StepOne: React.FC = () => {
                   errorMessage={arrestTimeErrorMessage}
                   hasError={arrestTimeErrorMessage !== ''}
                   defaultValue={
-                    workingCase.arrestDate &&
-                    workingCase.arrestDate.indexOf('T') > -1
+                    workingCase.arrestDate?.includes('T')
                       ? formatDate(workingCase.arrestDate, TIME_FORMAT)
                       : undefined
                   }
@@ -842,11 +839,11 @@ export const StepOne: React.FC = () => {
                   }
                   handleChange={(date) => {
                     const formattedDate = formatISO(date, {
-                      representation:
-                        workingCase.requestedCourtDate &&
-                        workingCase.requestedCourtDate.indexOf('T') > -1
-                          ? 'complete'
-                          : 'date',
+                      representation: workingCase.requestedCourtDate?.includes(
+                        'T',
+                      )
+                        ? 'complete'
+                        : 'date',
                     })
 
                     setWorkingCase({
@@ -871,8 +868,7 @@ export const StepOne: React.FC = () => {
                   errorMessage={requestedCourtTimeErrorMessage}
                   hasError={requestedCourtTimeErrorMessage !== ''}
                   defaultValue={
-                    workingCase.requestedCourtDate &&
-                    workingCase.requestedCourtDate.indexOf('T') > -1
+                    workingCase.requestedCourtDate?.includes('T')
                       ? formatDate(workingCase.requestedCourtDate, TIME_FORMAT)
                       : undefined
                   }

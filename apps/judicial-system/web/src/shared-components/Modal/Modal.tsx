@@ -52,7 +52,7 @@ const Modal: React.FC<ModalProps> = ({
               </Button>
             </Box>
           )}
-          {primaryButtonText && (
+          {primaryButtonText !== '' && (
             <Button
               onClick={handlePrimaryButtonClick}
               loading={isPrimaryButtonLoading}

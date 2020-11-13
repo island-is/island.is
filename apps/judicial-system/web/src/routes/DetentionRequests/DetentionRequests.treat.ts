@@ -7,7 +7,7 @@ export const detentionRequestsContainer = style({
   gridTemplateColumns: 'repeat(12, 1fr)',
   gridTemplateRows: 'repeat(3, auto)',
   maxWidth: '1440px',
-  margin: `${theme.spacing[12]}px auto 0`,
+  margin: `${theme.spacing[12]}px auto`,
   padding: `0 ${theme.spacing[6]}px`,
 })
 
