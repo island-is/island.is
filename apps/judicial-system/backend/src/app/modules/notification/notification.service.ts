@@ -18,12 +18,13 @@ import {
   formatReadyForCourtSmsNotification,
   generateRequestPdf,
   formatDefenderCourtDateEmailNotification,
+  stripHtmlTags,
+  formatPrisonRulingEmailNotification,
 } from '../../formatters'
 import { User } from '../user'
 import { Case } from '../case'
 import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
-import { stripHtmlTags } from '../../formatters/formatters'
 
 interface Recipient {
   address: string
@@ -137,22 +138,33 @@ export class NotificationService {
     }
   }
 
+  /* HEADS_UP notifications */
+
   private async sendHeadsUpSmsToCourt(
     existingCase: Case,
     user: User,
-  ): Promise<SendNotificationResponse> {
+  ): Promise<Recipient> {
     const smsText = formatHeadsUpSmsNotification(
       existingCase.prosecutor?.name || user.name,
       existingCase.arrestDate,
       existingCase.requestedCourtDate,
     )
 
-    const recipient = await this.sendSms(smsText)
+    return await this.sendSms(smsText)
+  }
+
+  private async sendHeadsUpNotifications(
+    existingCase: Case,
+    user: User,
+  ): Promise<SendNotificationResponse> {
+    const recipient = await this.sendHeadsUpSmsToCourt(existingCase, user)
 
     return this.recordNotification(existingCase.id, NotificationType.HEADS_UP, [
       recipient,
     ])
   }
+
+  /* READY_FOR_COURT notifications */
 
   private sendReadyForCourtSmsToCourt(
     existingCase: Case,
@@ -205,6 +217,8 @@ export class NotificationService {
       recipients,
     )
   }
+
+  /* COURT_DATE notifications */
 
   private sendCourtDateEmailNotificationToProsecutor(
     existingCase: Case,
@@ -309,6 +323,50 @@ export class NotificationService {
     )
   }
 
+  /* RULING notifications */
+
+  private sendRulingEmailNotificationToPrison(
+    existingCase: Case,
+  ): Promise<Recipient> {
+    const subject = 'Úrskurður um gæsluvarðhald'
+    const html = formatPrisonRulingEmailNotification(
+      existingCase.accusedNationalId,
+      existingCase.accusedName,
+      existingCase.court,
+      existingCase.prosecutor?.name,
+      existingCase.courtDate,
+      existingCase.defenderName,
+      existingCase.rejecting,
+      existingCase.custodyEndDate,
+      existingCase.custodyRestrictions,
+      existingCase.accusedAppealDecision,
+      existingCase.prosecutorAppealDecision,
+      existingCase.judge?.name,
+      existingCase.judge?.title,
+    )
+
+    return this.sendEmail(
+      'Gæsluvarðhaldsfangelsi',
+      environment.notifications.prisonEmail,
+      subject,
+      html,
+    )
+  }
+
+  private async sendRulingNotifications(
+    existingCase: Case,
+  ): Promise<SendNotificationResponse> {
+    const recipient = await this.sendRulingEmailNotificationToPrison(
+      existingCase,
+    )
+
+    return this.recordNotification(existingCase.id, NotificationType.RULING, [
+      recipient,
+    ])
+  }
+
+  /* API */
+
   getAllCaseNotifications(existingCase: Case): Promise<Notification[]> {
     this.logger.debug(`Getting all notifications for case ${existingCase.id}`)
 
@@ -329,11 +387,13 @@ export class NotificationService {
 
     switch (notification.type) {
       case NotificationType.HEADS_UP:
-        return this.sendHeadsUpSmsToCourt(existingCase, user)
+        return this.sendHeadsUpNotifications(existingCase, user)
       case NotificationType.READY_FOR_COURT:
         return this.sendReadyForCourtNotifications(existingCase, user)
       case NotificationType.COURT_DATE:
         return this.sendCourtDateNotifications(existingCase)
+      case NotificationType.RULING:
+        return this.sendRulingNotifications(existingCase)
     }
   }
 }

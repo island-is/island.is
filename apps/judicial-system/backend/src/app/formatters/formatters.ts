@@ -128,14 +128,21 @@ export function formatRestrictions(
 export function formatAppeal(
   appealDecision: CaseAppealDecision,
   stakeholder: string,
+  includeBullet = true,
 ): string {
   switch (appealDecision) {
     case CaseAppealDecision.APPEAL:
-      return `  \u2022  ${stakeholder} kærir úrskurðinn.`
+      return `${
+        includeBullet ? '  \u2022  ' : ''
+      }${stakeholder} kærir úrskurðinn.`
     case CaseAppealDecision.ACCEPT:
-      return `  \u2022  ${stakeholder} unir úrskurðinum.`
+      return `${
+        includeBullet ? '  \u2022  ' : ''
+      }${stakeholder} unir úrskurðinum.`
     case CaseAppealDecision.POSTPONE:
-      return `  \u2022  ${stakeholder} tekur sér lögboðinn frest.`
+      return `${
+        includeBullet ? '  \u2022  ' : ''
+      }${stakeholder} tekur sér lögboðinn frest.`
   }
 }
 
@@ -248,6 +255,43 @@ export function formatCourtDateNotificationCondition(
   )},defenderEmail=${defenderEmail}`
 }
 
+export function formatPrisonRulingEmailNotification(
+  accusedNationalId: string,
+  accusedName: string,
+  court: string,
+  prosecutorName: string,
+  courtDate: Date,
+  defenderName: string,
+  rejecting: boolean,
+  custodyEndDate: Date,
+  custodyRestrictions: CaseCustodyRestrictions[],
+  accusedAppealDecision: CaseAppealDecision,
+  prosecutorAppealDecision: CaseAppealDecision,
+  judgeName: string,
+  judgeTitle: string,
+): string {
+  return `<strong>Úrskurður um gæsluvarðhald</strong><br /><br />${court}, ${formatDate(
+    courtDate,
+    'PPP',
+  )}.<br /><br />Ákærandi: ${prosecutorName}<br />Verjandi: ${defenderName}<br /><br /><strong>Úrskurðarorð</strong><br /><br />${formatConclusion(
+    accusedNationalId,
+    accusedName,
+    rejecting,
+    custodyEndDate,
+    custodyRestrictions.includes(CaseCustodyRestrictions.ISOLATION),
+  )}<br /><br /><strong>Ákvörðun um kæru</strong><br />${formatAppeal(
+    accusedAppealDecision,
+    'Kærði',
+    false,
+  )}<br />${formatAppeal(
+    prosecutorAppealDecision,
+    'Sækjandi',
+    false,
+  )}<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${formatRestrictions(
+    custodyRestrictions,
+  )}<br /><br />${judgeName} ${judgeTitle}`
+}
+
 export function stripHtmlTags(html: string): string {
-  return html.replace(/(?:<br \/>)/g, '\n')
+  return html.replace(/(?:<br \/>)/g, '\n').replace(/(?:<\/?strong>)/g, '')
 }

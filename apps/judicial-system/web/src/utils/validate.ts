@@ -46,7 +46,7 @@ export const getRegexByValidation = (validation: Validation) => {
       }
     case 'email-format':
       return {
-        regex: new RegExp(/^$|^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g),
+        regex: new RegExp(/^$|^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g),
         errorMessage: 'Netfang ekki á réttu formi',
       }
   }
