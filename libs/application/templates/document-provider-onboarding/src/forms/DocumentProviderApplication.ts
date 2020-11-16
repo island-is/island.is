@@ -18,7 +18,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'terms and conditions agreement',
+      id: 'termsOfAgreement',
       name: m.termsSection,
       children: [
         buildCustomField(

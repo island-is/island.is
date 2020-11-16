@@ -40,8 +40,14 @@ const applicant = z.object({
 })
 
 const termsOfAgreement = z.object({
-  userTerms: z.boolean().refine((v) => v),
-  securityTerms: z.boolean().refine((v) => v),
+  userTerms: z.boolean().refine((v) => v, {
+    //When to show these ?
+    message: 'Þú verður að samþykkja notendaskilmála',
+  }),
+  securityTerms: z.boolean().refine((v) => v, {
+    //When to show these ?
+    message: 'Þú verður að samþykkja öryggisskilmála ',
+  }),
 })
 
 const dataSchema = z.object({
