@@ -17,7 +17,13 @@ import * as Sentry from '@sentry/node'
 import { RewriteFrames } from '@sentry/integrations'
 import { useRouter } from 'next/router'
 
-import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
+import {
+  Header,
+  PageLoader,
+  FixedNav,
+  SkipToMainContent,
+  ChatPanel,
+} from '../components'
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import {
@@ -330,6 +336,7 @@ const Layout: NextComponentType<
           }
         `}</style>
       </Page>
+      <ChatPanel />
     </GlobalContextProvider>
   )
 }
