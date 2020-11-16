@@ -73,10 +73,9 @@ export const JudgeOverview: React.FC = () => {
 
   useEffect(() => {
     if (!workingCase && data) {
-      let theCase = data.case
-      setWorkingCase(theCase)
+      setWorkingCase(data.case)
     }
-  }, [workingCase, setWorkingCase, data, updateCase])
+  }, [workingCase, setWorkingCase, data])
 
   const hasIsolation = (rass: Case): boolean => {
     const restrictions =
