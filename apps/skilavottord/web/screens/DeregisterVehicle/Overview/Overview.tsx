@@ -26,8 +26,18 @@ import {
 import {
   RecyclingPartner,
   RecyclingRequest,
+  Vehicle,
+  VehicleOwner,
 } from '@island.is/skilavottord-web/types'
 import { getDate, getYear } from '@island.is/skilavottord-web/utils/dateUtils'
+
+export interface DeregisteredVehicle {
+  vehicleId: string
+  vehicleType: string
+  modelYear: string
+  nameOfRequestor: string
+  deregistrationDate: string
+}
 
 const Overview: FC = () => {
   const { user } = useContext(UserContext)
@@ -55,10 +65,15 @@ const Overview: FC = () => {
   )[0]
 
   const getDeregisteredCars = () => {
-    const deregisteredVehicles = []
-    const owners = vehicleOwners?.map(({ vehicles }) =>
+    const deregisteredVehicles = [] as DeregisteredVehicle[]
+    const owners = vehicleOwners?.map(({ vehicles }: VehicleOwner) =>
       vehicles.map(
-        ({ vehicleId, vehicleType, newregDate, recyclingRequests }) => {
+        ({
+          vehicleId,
+          vehicleType,
+          newregDate,
+          recyclingRequests,
+        }: Vehicle) => {
           return recyclingRequests.map((request: RecyclingRequest) => {
             const { requestType, nameOfRequestor, createdAt } = request
             if (requestType === 'deregistered') {

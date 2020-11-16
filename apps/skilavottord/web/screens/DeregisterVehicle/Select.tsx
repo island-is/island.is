@@ -56,7 +56,7 @@ const Select: FC = () => {
   }
 
   return (
-    <ProcessPageLayout sectionType={'company'} activeSection={0}>
+    <ProcessPageLayout processType={'company'} activeSection={0}>
       <Stack space={4}>
         <Text variant="h1">{t.title}</Text>
         <Text variant="intro">{t.info}</Text>

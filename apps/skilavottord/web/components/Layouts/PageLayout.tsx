@@ -16,6 +16,7 @@ import {
   LinkProvider,
 } from '@island.is/skilavottord-web/components'
 import * as styles from './PageLayout.treat'
+import { ProcessType } from '@island.is/skilavottord-web/types'
 
 interface PageProps {
   children: ReactNode
@@ -43,13 +44,13 @@ export const PageLayout: FC<PageProps> = ({ children }) => (
 
 interface ProcessPageProps extends PageProps {
   activeSection: number
-  sectionType: string
+  processType: ProcessType
   activeCar?: string
 }
 
 export const ProcessPageLayout: FC<ProcessPageProps> = ({
   children,
-  sectionType = 'citizen',
+  processType = 'citizen',
   activeSection,
   activeCar,
 }) => {
@@ -59,7 +60,7 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
     t: { processes: t },
   } = useI18n()
 
-  const sections = t[sectionType].sections.map((section) => {
+  const sections = t[processType].sections.map((section) => {
     return { name: section }
   })
   const [isMobile, setIsMobile] = useState(false)
@@ -105,8 +106,8 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
             <GridColumn span={['0', '0', '3/12', '3/12']}>
               {!isMobile && (
                 <FormStepper
-                  title={t[sectionType].title}
-                  completedText={t[sectionType].completed}
+                  title={t[processType].title}
+                  completedText={t[processType].completed}
                   sections={sections}
                   activeSection={activeSection}
                   activeCar={activeCar}

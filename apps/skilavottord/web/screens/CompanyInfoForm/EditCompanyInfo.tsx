@@ -4,8 +4,9 @@ import { FormPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useRouter } from 'next/router'
 import CompanyInfoForm from './components/CompanyInfoForm'
+import { WithApolloProps } from '@island.is/skilavottord-web/types'
 
-const EditCompanyInfo = ({ apolloState }) => {
+const EditCompanyInfo = ({ apolloState }: WithApolloProps) => {
   const {
     t: { companyInfoForm: t, routes },
   } = useI18n()
