@@ -90,7 +90,11 @@ Home.getInitialProps = async (ctx) => {
       },
     })
     .then((res) => JSON.parse(res.data.getNamespace.fields))
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> e36ad26d... Connect app to contentful via Elastic/GraphQL
   return {
     staticContent,
   }
