@@ -79,6 +79,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
   const { activeLocale, t } = useI18n()
   const { makePath } = routeNames(activeLocale as Locale)
+  const { width } = useWindowSize()
 
   const nextSlide = useCallback(() => {
     tab.next()
@@ -122,8 +123,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     }
   }
 
-  const { width } = useWindowSize()
-
   const onResize = useCallback(() => {
     setMinHeight(0)
     let height = 0
@@ -163,10 +162,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     <GridContainer>
       <GridRow className={styles.tabPanelRow}>
         <GridColumn hiddenBelow="lg" span="1/12" />
-        <GridColumn
-          span={['12/12', '12/12', '7/12', '6/12']}
-          position="static"
-        >
+        <GridColumn span={['12/12', '12/12', '7/12', '6/12']} position="static">
           <Box ref={contentRef}>
             <TabList
               {...tab}
