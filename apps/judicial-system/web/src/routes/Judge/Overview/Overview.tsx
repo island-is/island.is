@@ -82,8 +82,11 @@ export const JudgeOverview: React.FC = () => {
   }, [workingCase, setWorkingCase, data, updateCase])
 
   const hasIsolation = (rass: Case): boolean => {
-    const restrictions = rass?.custodyRestrictions !== undefined ? rass.custodyRestrictions : rass.requestedCustodyRestrictions
-    
+    const restrictions =
+      rass?.custodyRestrictions !== undefined
+        ? rass.custodyRestrictions
+        : rass.requestedCustodyRestrictions
+
     return restrictions?.includes(CaseCustodyRestrictions.ISOLATION)
   }
 
