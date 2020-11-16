@@ -77,24 +77,15 @@ export const JudgeOverview: React.FC = () => {
   useEffect(() => {
     if (!workingCase && data) {
       let theCase = data.case
-
-      if (!theCase.custodyRestrictions) {
-        theCase = {
-          ...theCase,
-          custodyRestrictions: theCase.requestedCustodyRestrictions,
-        }
-
-        updateCase(
-          theCase.id,
-          parseArray(
-            'custodyRestrictions',
-            theCase.requestedCustodyRestrictions,
-          ),
-        )
-      }
       setWorkingCase(theCase)
     }
   }, [workingCase, setWorkingCase, data, updateCase])
+
+  const hasIsolation = (rass: Case): boolean => {
+    const restrictions = rass?.custodyRestrictions !== undefined ? rass.custodyRestrictions : rass.requestedCustodyRestrictions
+    
+    return restrictions?.includes(CaseCustodyRestrictions.ISOLATION)
+  }
 
   return (
     <PageLayout
@@ -253,9 +244,7 @@ export const JudgeOverview: React.FC = () => {
                       TIME_FORMAT,
                     )}`}
                   </Text>
-                  {workingCase.custodyRestrictions.includes(
-                    CaseCustodyRestrictions.ISOLATION,
-                  ) ? (
+                  {hasIsolation(workingCase) ? (
                     <>
                       , og verði gert að{' '}
                       <Text as="span" fontWeight="semiBold">
