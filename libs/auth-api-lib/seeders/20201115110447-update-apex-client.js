@@ -14,9 +14,9 @@ module.exports = {
 
   down: (queryInterface, Sequelize) => {
     return queryInterface.bulkUpdate(
-        'client',
-        { require_pkce: false },
-        { client_id: 'apex-auth_client' },
-      )
+      'client',
+      { require_pkce: false },
+      { client_id: 'apex-auth_client' },
+    )
   },
 }
