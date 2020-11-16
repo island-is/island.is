@@ -43,6 +43,7 @@ export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
+
   const { id } = useParams<{ id: string }>()
   const history = useHistory()
   const { user } = useContext(userContext)
@@ -70,7 +71,10 @@ export const Overview: React.FC = () => {
     return resCase
   }
 
-  const [sendNotificationMutation] = useMutation(SendNotificationMutation)
+  const [
+    sendNotificationMutation,
+    { loading: isSendingNotification },
+  ] = useMutation(SendNotificationMutation)
 
   const sendNotification = async (id: string) => {
     const { data } = await sendNotificationMutation({
@@ -348,8 +352,10 @@ export const Overview: React.FC = () => {
           </Box>
           <FormFooter
             nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
+            nextIsLoading={isSendingNotification}
             onNextButtonClick={async () => {
               const notificationSent = await handleNextButtonClick()
+
               if (notificationSent) {
                 setModalVisible(true)
               } else {

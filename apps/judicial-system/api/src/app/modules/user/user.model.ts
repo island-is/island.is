@@ -30,4 +30,7 @@ export class User implements TUser {
 
   @Field(() => String)
   readonly role: UserRole
+
+  @Field()
+  readonly active: boolean
 }

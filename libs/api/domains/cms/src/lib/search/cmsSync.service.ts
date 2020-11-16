@@ -3,17 +3,20 @@ import { Injectable } from '@nestjs/common'
 import flatten from 'lodash/flatten'
 import { hashElement } from 'folder-hash'
 import {
-  ElasticService,
+  ContentSearchImporter,
+  MappedData,
   SearchIndexes,
   SyncOptions,
   SyncResponse,
-} from '@island.is/api/content-search'
+} from '@island.is/elastic-indexing/types'
 import { ArticleSyncService } from './importers/article.service'
 import { ContentfulService } from './contentful.service'
 import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
 import { AboutPageSyncService } from './importers/aboutPage.service'
+import { Entry } from 'contentful'
+import { ElasticService } from '@island.is/api/content-search'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -26,9 +29,16 @@ interface UpdateLastHashOptions {
   folderHash: PostSyncOptions['folderHash']
 }
 
+export type processSyncDataInput<T> = (Entry<any> | T)[]
+export type doMappingInput<T> = T[]
+export interface CmsSyncProvider<T> {
+  processSyncData: (entries: processSyncDataInput<T>) => T[]
+  doMapping: (entries: doMappingInput<T>) => MappedData[]
+}
+
 @Injectable()
-export class CmsSyncService {
-  private contentSyncProviders
+export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
+  private contentSyncProviders: CmsSyncProvider<any>[]
   constructor(
     private readonly aboutPageSyncService: AboutPageSyncService,
     private readonly newsSyncService: NewsSyncService,
@@ -48,7 +58,7 @@ export class CmsSyncService {
   }
 
   private async getLastFolderHash(elasticIndex: string): Promise<string> {
-    logger.info('Getting models hash from index', {
+    logger.info('Getting folder hash from index', {
       index: elasticIndex,
     })
     // return last folder hash found in elasticsearch else return empty string
@@ -94,7 +104,9 @@ export class CmsSyncService {
   }
 
   // this is triggered from ES indexer service
-  async doSync(options: SyncOptions): Promise<SyncResponse<PostSyncOptions>> {
+  async doSync(
+    options: SyncOptions,
+  ): Promise<SyncResponse<PostSyncOptions> | null> {
     logger.info('Doing cms sync', options)
     let cmsSyncOptions: SyncOptions
 
@@ -124,6 +136,7 @@ export class CmsSyncService {
       }
     } else {
       cmsSyncOptions = options
+      folderHash = ''
     }
 
     // gets all data that needs importing
@@ -137,10 +150,9 @@ export class CmsSyncService {
 
     // import data from all providers
     const importableData = this.contentSyncProviders.map(
-      ({ processSyncData, doMapping }) => {
-        const data = processSyncData(items)
-
-        return doMapping(data)
+      (contentSyncProvider) => {
+        const data = contentSyncProvider.processSyncData(items)
+        return contentSyncProvider.doMapping(data)
       },
     )
 
@@ -158,7 +170,10 @@ export class CmsSyncService {
   // write next sync token to elastic after sync to ensure it runs again on failure
   async postSync({ folderHash, elasticIndex, token }: PostSyncOptions) {
     await this.contentfulService.updateNextSyncToken({ elasticIndex, token })
-    await this.updateLastFolderHash({ elasticIndex, folderHash })
+    // we only want to update folder hash if it is set to a non empty string
+    if (folderHash) {
+      await this.updateLastFolderHash({ elasticIndex, folderHash })
+    }
     return true
   }
 }

@@ -7,6 +7,7 @@ export default {
   },
   notifications: {
     judgeMobileNumber: process.env.JUDGE_MOBILE_NUMBER,
+    prisonEmail: process.env.PRISON_EMAIL,
   },
   email: {
     fromEmail: 'gudjon@kolibri.is',

@@ -112,7 +112,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               id: 'applicant',
               read: {
                 answers: ['spread', 'periods'],
-                externalData: ['expectedDateOfBirth', 'salary'],
+                externalData: ['pregnancyStatus', 'parentalLeaves'],
               },
             },
           ],

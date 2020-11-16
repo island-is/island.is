@@ -42,10 +42,10 @@ export const findLastGoodBuild = async (
   }
   // First we try to find the last successful workflow build on our branch
   // Then try to find the last successful workflow build on our target branch
-  // Failing that, and in case base != master, we try master
+  // Failing that, and in case base != main, we try main
   const branchTargets = [branch, base]
-  if (base != 'master') {
-    branchTargets.push('master')
+  if (base != 'main') {
+    branchTargets.push('main')
   }
   for (const branchTarget of branchTargets) {
     const goodBuild = await getGoodBuildOnBranch(branchTarget)

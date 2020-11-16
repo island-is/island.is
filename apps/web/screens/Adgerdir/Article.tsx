@@ -27,6 +27,7 @@ import {
   AdgerdirArticles,
   HeadWithSocialSharing,
   RichText,
+  Intro,
 } from '@island.is/web/components'
 import {
   GET_ADGERDIR_PAGE_QUERY,
@@ -36,7 +37,6 @@ import {
 } from '../queries'
 import { ArticleLayout } from '@island.is/web/screens/Layouts/Layouts'
 import { Screen } from '@island.is/web/types'
-import { Intro } from '@island.is/web/units/Adgerdir'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -65,6 +65,19 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
 
   const description = article.longDescription || article.description
 
+  const renderButton =
+    article.link && article.link.trim().length > 0 ? (
+      <Link href={article.link}>
+        <Button iconType="outline" icon="open" fluid>
+          {article.linkButtonText ?? n('seeMoreDetails')}
+        </Button>
+      </Link>
+    ) : article.linkButtonText && article.linkButtonText.trim().length > 0 ? (
+      <Button iconType="outline" icon="open" disabled fluid>
+        {article.linkButtonText ?? n('seeMoreDetails')}
+      </Button>
+    ) : null
+
   return (
     <>
       <HeadWithSocialSharing
@@ -75,13 +88,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
         sidebar={
           <Box marginBottom={10}>
             <Stack space={3}>
-              {article.link ? (
-                <Link href={article.link}>
-                  <Button iconType="outline" icon="open" fluid>
-                    {article.linkButtonText ?? n('seeMoreDetails')}
-                  </Button>
-                </Link>
-              ) : null}
+              {renderButton}
               <Stack space={1}>
                 <Text variant="tag" color="red600">
                   {n('malefni', 'Málefni')}:
@@ -133,6 +140,14 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
               config={{ defaultPadding: [2, 2, 4], skipGrid: true }}
               locale={activeLocale}
             />
+            <GridRow>
+              <GridColumn
+                paddingTop={4}
+                span={['12/12', '6/12', '6/12', '5/12', '4/12']}
+              >
+                {renderButton}
+              </GridColumn>
+            </GridRow>
           </GridColumn>
         </GridRow>
       </ArticleLayout>

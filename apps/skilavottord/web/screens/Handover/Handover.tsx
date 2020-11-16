@@ -49,7 +49,7 @@ const Handover: FC = () => {
 
   const [
     setRecyclingRequest,
-    { error: mutationError, loading: mutationLoading },
+    { data: mutationData, error: mutationError, loading: mutationLoading },
   ] = useMutation(CREATE_RECYCLING_REQUEST_CITIZEN, {
     onCompleted() {
       if (requestType === 'cancelled') {
@@ -61,6 +61,8 @@ const Handover: FC = () => {
       return mutationError
     },
   })
+
+  const mutationResponse = mutationData?.createSkilavottordRecyclingRequest
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -78,7 +80,9 @@ const Handover: FC = () => {
       switch (activeCar.status) {
         case 'inUse':
         case 'cancelled':
-          if (localStorage.getItem(ACCEPTED_TERMS_AND_CONDITION)) {
+          if (
+            localStorage.getItem(ACCEPTED_TERMS_AND_CONDITION) === id.toString()
+          ) {
             setRequestType('pendingRecycle')
             setRecyclingRequest({
               variables: {
@@ -87,7 +91,6 @@ const Handover: FC = () => {
                 requestType: 'pendingRecycle',
               },
             })
-            localStorage.clear()
           } else {
             setInvalidCar(true)
           }
@@ -100,6 +103,7 @@ const Handover: FC = () => {
   }, [user, id, activeCar])
 
   const routeHome = () => {
+    localStorage.clear()
     router.push(routes.myCars).then(() => window.scrollTo(0, 0))
   }
 
@@ -126,6 +130,7 @@ const Handover: FC = () => {
     (requestType !== 'cancelled' && (mutationError || mutationLoading)) ||
     error ||
     isInvalidCar ||
+    mutationResponse?.message ||
     (loading && !data)
   ) {
     return (

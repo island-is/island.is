@@ -7,6 +7,7 @@ import {
   CaseAppealDecision,
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
+  CaseGender,
 } from '@island.is/judicial-system/types'
 
 export function formatProsecutorDemands(
@@ -127,14 +128,21 @@ export function formatRestrictions(
 export function formatAppeal(
   appealDecision: CaseAppealDecision,
   stakeholder: string,
+  includeBullet = true,
 ): string {
   switch (appealDecision) {
     case CaseAppealDecision.APPEAL:
-      return `  \u2022  ${stakeholder} kærir úrskurðinn.`
+      return `${
+        includeBullet ? '  \u2022  ' : ''
+      }${stakeholder} kærir úrskurðinn.`
     case CaseAppealDecision.ACCEPT:
-      return `  \u2022  ${stakeholder} unir úrskurðinum.`
+      return `${
+        includeBullet ? '  \u2022  ' : ''
+      }${stakeholder} unir úrskurðinum.`
     case CaseAppealDecision.POSTPONE:
-      return `  \u2022  ${stakeholder} tekur sér lögboðinn frest.`
+      return `${
+        includeBullet ? '  \u2022  ' : ''
+      }${stakeholder} tekur sér lögboðinn frest.`
   }
 }
 
@@ -178,17 +186,112 @@ export function formatReadyForCourtSmsNotification(
   return `Gæsluvarðhaldskrafa tilbúin til afgreiðslu.${prosecutorText}${courtText}`
 }
 
-export function formatCourtDateEmailNotification(
+export function formatProsecutorCourtDateEmailNotification(
+  court: string,
+  courtDate: Date,
+  courtRoom: string,
+  defenderName: string,
+): string {
+  const courtDateText = formatDate(courtDate, 'PPPp')
+  const defenderText = defenderName
+    ? `Verjandi sakbornings: ${defenderName}`
+    : 'Verjandi sakbornings hefur ekki verið skráður'
+
+  return `${court} hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />${defenderText}.`
+}
+
+export function formatPrisonCourtDateEmailNotification(
+  court: string,
+  courtDate: Date,
+  accusedGender: CaseGender,
+  requestedCustodyEndDate: Date,
+  isolation: boolean,
+  defenderName: string,
+): string {
+  const courtText = court.replace('dómur', 'dóms')
+  const courtDateText = formatDate(courtDate, 'PPPp')
+  const requestedCustodyEndDateText = formatDate(
+    requestedCustodyEndDate,
+    'PPPp',
+  )
+  const requestText =
+    accusedGender === CaseGender.OTHER
+      ? `Krafist er gæsluvarðhalds til ${requestedCustodyEndDateText}.`
+      : `Sakborningur er ${
+          accusedGender === CaseGender.MALE ? 'karl' : 'kona'
+        } og krafist er gæsluvarðhalds til ${requestedCustodyEndDateText}.`
+  const isolationText = isolation
+    ? 'Farið er fram á einangrun.'
+    : 'Ekki er farið fram á einangrun.'
+  const defenderText = defenderName
+    ? `Verjandi sakbornings: ${defenderName}`
+    : 'Verjandi sakbornings hefur ekki verið skráður'
+
+  return `Krafa um gæsluvarðhald hefur verið send til ${courtText} og verður málið tekið fyrir ${courtDateText}.<br /><br />${requestText}<br /><br />${isolationText}<br /><br />${defenderText}.`
+}
+
+export function formatDefenderCourtDateEmailNotification(
+  accusedNationalId: string,
+  accusedName: string,
   court: string,
   courtDate: Date,
   courtRoom: string,
 ): string {
-  return `${court} hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu. Fyrirtaka mun fara fram ${formatDate(
+  return `${court} hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram ${formatDate(
     courtDate,
     'PPPp',
-  )}. Dómsalur: ${courtRoom}.`
+  )}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />Sakborningur: ${accusedName} ${formatNationalId(
+    accusedNationalId,
+  )}.<br /><br />Dómstóllinn hefur skráð þig sem verjanda sakbornings.`
 }
 
-export function formatCourtDateNotificationCondition(courtDate: Date) {
-  return `courtDate=${formatDate(courtDate, 'Pp')}`
+export function formatCourtDateNotificationCondition(
+  courtDate: Date,
+  defenderEmail: string,
+): string {
+  return `courtDate=${formatDate(
+    courtDate,
+    'Pp',
+  )},defenderEmail=${defenderEmail}`
+}
+
+export function formatPrisonRulingEmailNotification(
+  accusedNationalId: string,
+  accusedName: string,
+  court: string,
+  prosecutorName: string,
+  courtDate: Date,
+  defenderName: string,
+  rejecting: boolean,
+  custodyEndDate: Date,
+  custodyRestrictions: CaseCustodyRestrictions[],
+  accusedAppealDecision: CaseAppealDecision,
+  prosecutorAppealDecision: CaseAppealDecision,
+  judgeName: string,
+  judgeTitle: string,
+): string {
+  return `<strong>Úrskurður um gæsluvarðhald</strong><br /><br />${court}, ${formatDate(
+    courtDate,
+    'PPP',
+  )}.<br /><br />Ákærandi: ${prosecutorName}<br />Verjandi: ${defenderName}<br /><br /><strong>Úrskurðarorð</strong><br /><br />${formatConclusion(
+    accusedNationalId,
+    accusedName,
+    rejecting,
+    custodyEndDate,
+    custodyRestrictions.includes(CaseCustodyRestrictions.ISOLATION),
+  )}<br /><br /><strong>Ákvörðun um kæru</strong><br />${formatAppeal(
+    accusedAppealDecision,
+    'Kærði',
+    false,
+  )}<br />${formatAppeal(
+    prosecutorAppealDecision,
+    'Sækjandi',
+    false,
+  )}<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${formatRestrictions(
+    custodyRestrictions,
+  )}<br /><br />${judgeName} ${judgeTitle}`
+}
+
+export function stripHtmlTags(html: string): string {
+  return html.replace(/(?:<br \/>)/g, '\n').replace(/(?:<\/?strong>)/g, '')
 }

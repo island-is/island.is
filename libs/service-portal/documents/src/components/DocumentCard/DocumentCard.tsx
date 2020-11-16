@@ -48,7 +48,7 @@ const DocumentCard: FC<Props> = ({ document }) => {
   }, [data, error])
 
   const handleOnFetch = () => {
-    if (data?.fileType === 'pdf' && data?.content) {
+    if ((data?.fileType || '').toLowerCase() === 'pdf' && data?.content) {
       downloadAsPdf(data.content, fileName)
       return
     }

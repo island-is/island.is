@@ -65,6 +65,7 @@ export const subArticle = factory<SubArticle>({
 })
 
 export const articleCategory = factory<ArticleCategory>({
+  typename: 'ArticleCategory',
   title: () => title(),
   slug: slugify('title'),
   id: () => faker.random.uuid(),

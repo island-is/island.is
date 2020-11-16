@@ -22,4 +22,4 @@ Attach Screenshots / Gifs to help reviewers understand the scope of the pull req
 - [ ] My changes generate no new warnings
 - [ ] I have added tests that prove my fix is effective or that my feature works
 - [ ] Formatting passes locally with my changes
-- [ ] I have rebased against master before asking for a review
+- [ ] I have rebased against main before asking for a review

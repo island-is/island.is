@@ -24,6 +24,7 @@ describe('User', () => {
         expect(response.body.mobileNumber).toBe(user.mobileNumber)
         expect(response.body.email).toBe(user.email)
         expect(response.body.role).toBe(user.role)
+        expect(response.body.active).toBe(user.active)
       })
   })
 })
