@@ -5,11 +5,13 @@ import { theme } from '@island.is/island-ui/theme'
 interface Props {
   top?: number
   constantSticky?: boolean
+  childOfFlexBox?: boolean
 }
 
 export const Sticky: FC<Props> = ({
   children,
   constantSticky = false,
+  childOfFlexBox = false,
   top = STICKY_NAV_HEIGHT + theme.spacing[1],
 }) => {
   const ref = useRef<HTMLDivElement | null>(null)
@@ -35,6 +37,7 @@ export const Sticky: FC<Props> = ({
     <div
       ref={ref}
       style={{
+        alignSelf: 'flex-start',
         top,
         ...(usesSticky && { position: 'sticky' }),
       }}
