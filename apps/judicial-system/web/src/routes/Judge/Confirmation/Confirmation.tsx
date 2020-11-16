@@ -394,9 +394,7 @@ export const Confirmation: React.FC = () => {
                     <Text variant="eyebrow" color="blue400">
                       Yfirlýsing um kæru kærða
                     </Text>
-                    <Text variant="intro">
-                      {workingCase.accusedAppealAnnouncement}
-                    </Text>
+                    <Text>{workingCase.accusedAppealAnnouncement}</Text>
                   </Box>
                 )}
               {workingCase.prosecutorAppealAnnouncement &&
@@ -406,9 +404,7 @@ export const Confirmation: React.FC = () => {
                     <Text variant="eyebrow" color="blue400">
                       Yfirlýsing um kæru sækjanda
                     </Text>
-                    <Text variant="intro">
-                      {workingCase.prosecutorAppealAnnouncement}
-                    </Text>
+                    <Text>{workingCase.prosecutorAppealAnnouncement}</Text>
                   </Box>
                 )}
             </Box>
