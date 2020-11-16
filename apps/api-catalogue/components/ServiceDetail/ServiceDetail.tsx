@@ -13,10 +13,13 @@ import cn from 'classnames'
 import { ApiService, GetOpenApiInput } from '@island.is/api/schema'
 import { useQuery } from 'react-apollo'
 import { GET_OPEN_API_QUERY } from '../../screens/Queries'
-import { ContentfulString } from '../../services/contentful.types'
 import { OpenApi } from '@island.is/api-catalogue/types'
 import YamlParser from 'js-yaml'
 import { OpenApiView } from '../OpenApiView'
+
+import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import { capitalize } from '../../utils'
 
 type SelectOption = {
   label: string
@@ -25,10 +28,12 @@ type SelectOption = {
 
 export interface ServiceDetailProps {
   service: ApiService
-  strings: Array<ContentfulString>
+  strings: GetNamespaceQuery['getNamespace']
 }
 
 export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
+  const n = useNamespace(strings)
+
   const options: Array<SelectOption> = service.xroadIdentifier.map((x) => ({
     label: x.serviceCode.split('-').pop(),
     value: {
@@ -82,65 +87,41 @@ export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
       <div className={cn(styles.section)}>
         <Box className={cn(styles.categoryContainer)}>
           <Box style={{ width: '100%' }}>
-            <h3>
-              {strings.find((s) => s.id === 'catalog-filter-pricing').text}
-            </h3>
+            <h3>{n('pricing')}</h3>
             <div className={cn([styles.category])}>
               {service.pricing?.map((item, index) => (
                 <div className={cn(styles.categoryItem)} key={index}>
-                  {
-                    strings.find(
-                      (s) =>
-                        s.id === `catalog-filter-pricing-${item.toLowerCase()}`,
-                    ).text
-                  }
+                  {n(`pricing${capitalize(item)}`)}
                 </div>
               ))}
             </div>
           </Box>
           <Box style={{ width: '100%' }}>
-            <h3>{strings.find((s) => s.id === 'catalog-filter-data').text}</h3>
+            <h3>{n('data')}</h3>
             <div className={cn([styles.category])}>
               {service.data?.map((item, index) => (
                 <div className={cn(styles.categoryItem)} key={index}>
-                  {
-                    strings.find(
-                      (s) =>
-                        s.id === `catalog-filter-data-${item.toLowerCase()}`,
-                    ).text
-                  }
+                  {n(`data${capitalize(item)}`)}
                 </div>
               ))}
             </div>
           </Box>
           <Box style={{ width: '100%' }}>
-            <h3>{strings.find((s) => s.id === 'catalog-filter-type').text}</h3>
+            <h3>{n('type')}</h3>
             <div className={cn([styles.category])}>
               {service.type?.map((item, index) => (
                 <div className={cn(styles.categoryItem)} key={index}>
-                  {
-                    strings.find(
-                      (s) =>
-                        s.id === `catalog-filter-type-${item.toLowerCase()}`,
-                    ).text
-                  }
+                  {n(`type${capitalize(item)}`)}
                 </div>
               ))}
             </div>
           </Box>
           <Box style={{ width: '100%' }}>
-            <h3>
-              {strings.find((s) => s.id === 'catalog-filter-access').text}
-            </h3>
+            <h3>{n('access')}</h3>
             <div className={cn([styles.category])}>
               {service.access?.map((item, index) => (
                 <div className={cn(styles.categoryItem)} key={index}>
-                  {
-                    strings.find(
-                      (s) =>
-                        s.id === `catalog-filter-access-${item.toLowerCase()}`,
-                    ).text
-                  }
+                  {n(`access${capitalize(item)}`)}
                 </div>
               ))}
             </div>

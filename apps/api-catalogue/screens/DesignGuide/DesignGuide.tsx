@@ -9,16 +9,23 @@ import {
   Link,
 } from '@island.is/island-ui/core'
 
-import { Page } from '../../services/contentful.types'
+import { useNamespace } from '@island.is/web/hooks'
+import { QueryGetNamespaceArgs } from '@island.is/api/schema'
+import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import { GET_NAMESPACE_QUERY } from '../Queries'
+import { Screen } from '../../types'
+import initApollo from 'apps/api-catalogue/graphql/client'
 
 import cn from 'classnames'
 import * as styles from './DesignGuide.treat'
 
-export interface DesignGuideProps {
-  pageContent: Page
+interface DesignGuideProps {
+  staticContent: GetNamespaceQuery['getNamespace']
 }
 
-export function DesignGuide({ pageContent }: DesignGuideProps) {
+export const DesignGuide: Screen<DesignGuideProps> = ({ staticContent }) => {
+  const n = useNamespace(staticContent)
+
   return (
     <Layout
       left={
@@ -26,39 +33,21 @@ export function DesignGuide({ pageContent }: DesignGuideProps) {
           <Box marginBottom={2}>
             <Breadcrumbs>
               <a href="/">Viskuausan</a>
-              <span>
-                {pageContent.strings.find((s) => s.id === 'dg-title').text}
-              </span>
+              <span>{n('title')}</span>
             </Breadcrumbs>
           </Box>
           <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
             <Stack space={3}>
               <Stack space={1}>
-                <Text variant="h1">
-                  {pageContent.strings.find((s) => s.id === 'dg-title').text}
-                </Text>
-                <Text variant="intro">
-                  {pageContent.strings.find((s) => s.id === 'dg-intro').text}
-                </Text>
+                <Text variant="h1">{n('title')}</Text>
+                <Text variant="intro">{n('intro')}</Text>
               </Stack>
               <Stack space={3}>
-                <Text variant="default">
-                  {pageContent.strings.find((s) => s.id === 'dg-body').text}
-                </Text>
+                <Text variant="default">{n('body')}</Text>
                 <Box className={cn(styles.buttonBox)}>
-                  <Link
-                    href={
-                      pageContent.strings.find(
-                        (s) => s.id === 'dg-view-button-href',
-                      ).text
-                    }
-                  >
+                  <Link href={n('viewButtonHref')}>
                     <Button iconType="outline" variant="primary" icon="open">
-                      {
-                        pageContent.strings.find(
-                          (s) => s.id === 'dg-view-button',
-                        ).text
-                      }
+                      {n('viewButtonText')}
                     </Button>
                   </Link>
                 </Box>
@@ -69,4 +58,27 @@ export function DesignGuide({ pageContent }: DesignGuideProps) {
       }
     />
   )
+}
+
+DesignGuide.getInitialProps = async (ctx) => {
+  if (!ctx.locale) {
+    ctx.locale = 'is-IS'
+  }
+  const client = initApollo({})
+
+  const staticContent = await client
+    .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+      query: GET_NAMESPACE_QUERY,
+      variables: {
+        input: {
+          namespace: 'DesignGuide',
+          lang: ctx.locale,
+        },
+      },
+    })
+    .then((res) => JSON.parse(res.data.getNamespace.fields))
+
+  return {
+    staticContent,
+  }
 }
