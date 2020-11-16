@@ -3,7 +3,6 @@ import { AccordionItem, Box } from '@island.is/island-ui/core'
 import * as styles from './ServiceFilter.treat'
 import cn from 'classnames'
 import { CategoryCheckBox, InputSearch } from '..'
-import { ContentfulString } from '../../services/contentful.types'
 import { GetApiCatalogueInput } from '@island.is/api/schema'
 import {
   AccessCategory,
@@ -11,6 +10,9 @@ import {
   DataCategory,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
+
+import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 
 type IconVariantTypes = 'default' | 'sidebar'
 
@@ -24,10 +26,12 @@ export interface ServiceFilterProps {
   ) => void
   onCheckCategoryChanged: (event: React.ChangeEvent<HTMLInputElement>) => void
   onClear: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void
-  strings: Array<ContentfulString>
+  strings: GetNamespaceQuery['getNamespace']
 }
 
 export const ServiceFilter = (props: ServiceFilterProps) => {
+  const n = useNamespace(props.strings)
+
   return (
     <Box className={props.rootClasses + ' filterX'}>
       <Box className={cn(styles.inputSearch)}>
@@ -40,9 +44,7 @@ export const ServiceFilter = (props: ServiceFilterProps) => {
             props.parameters?.query === null ? '' : props.parameters?.query
           }
           loading={props.isLoading}
-          placeholder={
-            props.strings.find((s) => s.id === 'catalog-filter-search').text
-          }
+          placeholder={n('search')}
           colored={props.parameters.query?.length < 1}
           onChange={props.onInputChange}
         />
@@ -50,27 +52,19 @@ export const ServiceFilter = (props: ServiceFilterProps) => {
       <div className={cn(styles.filterItem)}>
         <AccordionItem
           id="pricing_category"
-          label={
-            props.strings.find((s) => s.id === 'catalog-filter-pricing').text
-          }
+          label={n('pricing')}
           labelVariant="h5"
           iconVariant={props.iconVariant}
         >
           <CategoryCheckBox
-            label={
-              props.strings.find((s) => s.id === 'catalog-filter-pricing-free')
-                .text
-            }
+            label={n('pricingFree')}
             name="pricing"
             value={PricingCategory.FREE}
             checked={props.parameters.pricing.includes(PricingCategory.FREE)}
             onChange={props.onCheckCategoryChanged}
           />
           <CategoryCheckBox
-            label={
-              props.strings.find((s) => s.id === 'catalog-filter-pricing-paid')
-                .text
-            }
+            label={n('pricingPaid')}
             name="pricing"
             value={PricingCategory.PAID}
             checked={props.parameters.pricing.includes(PricingCategory.PAID)}
@@ -81,56 +75,40 @@ export const ServiceFilter = (props: ServiceFilterProps) => {
       <div className={cn(styles.filterItem)}>
         <AccordionItem
           id="data_category"
-          label={props.strings.find((s) => s.id === 'catalog-filter-data').text}
+          label={n('data')}
           labelVariant="h5"
           iconVariant={props.iconVariant}
         >
           <CategoryCheckBox
-            label={
-              props.strings.find((s) => s.id === 'catalog-filter-data-public')
-                .text
-            }
+            label={n('dataPublic')}
             name="data"
             value={DataCategory.PUBLIC}
             checked={props.parameters.data.includes(DataCategory.PUBLIC)}
             onChange={props.onCheckCategoryChanged}
           />
           <CategoryCheckBox
-            label={
-              props.strings.find((s) => s.id === 'catalog-filter-data-official')
-                .text
-            }
+            label={n('dataOfficial')}
             name="data"
             value={DataCategory.OFFICIAL}
             checked={props.parameters.data.includes(DataCategory.OFFICIAL)}
             onChange={props.onCheckCategoryChanged}
           />
           <CategoryCheckBox
-            label={
-              props.strings.find((s) => s.id === 'catalog-filter-data-personal')
-                .text
-            }
+            label={n('dataPersonal')}
             name="data"
             value={DataCategory.PERSONAL}
             checked={props.parameters.data.includes(DataCategory.PERSONAL)}
             onChange={props.onCheckCategoryChanged}
           />
           <CategoryCheckBox
-            label={
-              props.strings.find((s) => s.id === 'catalog-filter-data-health')
-                .text
-            }
+            label={n('dataHealth')}
             name="data"
             value={DataCategory.HEALTH}
             checked={props.parameters.data.includes(DataCategory.HEALTH)}
             onChange={props.onCheckCategoryChanged}
           />
           <CategoryCheckBox
-            label={
-              props.strings.find(
-                (s) => s.id === 'catalog-filter-data-financial',
-              ).text
-            }
+            label={n('dataFinancial')}
             name="data"
             value={DataCategory.FINANCIAL}
             checked={props.parameters.data.includes(DataCategory.FINANCIAL)}
@@ -141,35 +119,26 @@ export const ServiceFilter = (props: ServiceFilterProps) => {
       <div className={cn(styles.filterItem)}>
         <AccordionItem
           id="type_category"
-          label={props.strings.find((s) => s.id === 'catalog-filter-type').text}
+          label={n('type')}
           labelVariant="h5"
           iconVariant={props.iconVariant}
         >
           <CategoryCheckBox
-            label={
-              props.strings.find((s) => s.id === 'catalog-filter-type-rest')
-                .text
-            }
+            label={n('typeRest')}
             name="type"
             value={TypeCategory.REST}
             checked={props.parameters.type.includes(TypeCategory.REST)}
             onChange={props.onCheckCategoryChanged}
           />
           <CategoryCheckBox
-            label={
-              props.strings.find((s) => s.id === 'catalog-filter-type-soap')
-                .text
-            }
+            label={n('typeSoap')}
             name="type"
             value={TypeCategory.SOAP}
             checked={props.parameters.type.includes(TypeCategory.SOAP)}
             onChange={props.onCheckCategoryChanged}
           />
           <CategoryCheckBox
-            label={
-              props.strings.find((s) => s.id === 'catalog-filter-type-graphql')
-                .text
-            }
+            label={n('typeGraphql')}
             name="type"
             value={TypeCategory.GRAPHQL}
             checked={props.parameters.type.includes(TypeCategory.GRAPHQL)}
@@ -180,27 +149,19 @@ export const ServiceFilter = (props: ServiceFilterProps) => {
       <div className={cn(styles.filterItem)}>
         <AccordionItem
           id="access_category"
-          label={
-            props.strings.find((s) => s.id === 'catalog-filter-access').text
-          }
+          label={n('access')}
           labelVariant="h5"
           iconVariant={props.iconVariant}
         >
           <CategoryCheckBox
-            label={
-              props.strings.find((s) => s.id === 'catalog-filter-access-xroad')
-                .text
-            }
+            label={n('accessXroad')}
             name="access"
             value={AccessCategory.XROAD}
             checked={props.parameters.access.includes(AccessCategory.XROAD)}
             onChange={props.onCheckCategoryChanged}
           />
           <CategoryCheckBox
-            label={
-              props.strings.find((s) => s.id === 'catalog-filter-access-apigw')
-                .text
-            }
+            label={n('accessApigw')}
             name="access"
             value={AccessCategory.APIGW}
             checked={props.parameters.access.includes(AccessCategory.APIGW)}

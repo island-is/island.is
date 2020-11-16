@@ -4,15 +4,23 @@ import { Card } from '../../components'
 import { Box, Stack, Text, Breadcrumbs } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { HomeLayout } from '../../components'
+
 import * as styles from './Home.treat'
 import cn from 'classnames'
-import { Page } from '../../services/contentful.types'
 
-export interface HomeProps {
-  pageContent: Page
+import { useNamespace } from '@island.is/web/hooks'
+import { QueryGetNamespaceArgs } from '@island.is/api/schema'
+import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import { GET_NAMESPACE_QUERY } from '../Queries'
+import { Screen } from '../../types'
+import initApollo from 'apps/api-catalogue/graphql/client'
+
+interface HomeProps {
+  staticContent: GetNamespaceQuery['getNamespace']
 }
 
-export function Home({ pageContent }: HomeProps) {
+export const Home: Screen<HomeProps> = ({ staticContent }) => {
+  const n = useNamespace(staticContent)
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = React.useState(false)
 
@@ -33,12 +41,8 @@ export function Home({ pageContent }: HomeProps) {
             </Box>
             <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
               <Stack space={1}>
-                <Text variant="h1">
-                  {pageContent.strings.find((s) => s.id === 'home-title').text}
-                </Text>
-                <Text variant="intro">
-                  {pageContent.strings.find((s) => s.id === 'home-intro').text}
-                </Text>
+                <Text variant="h1">{n('title')}</Text>
+                <Text variant="intro">{n('intro')}</Text>
               </Stack>
             </Box>
           </Box>
@@ -55,24 +59,39 @@ export function Home({ pageContent }: HomeProps) {
         marginBottom={[3, 3, 3, 12]}
       >
         <Card
-          title={
-            pageContent.strings.find((s) => s.id === 'home-catalog-button').text
-          }
+          title={n('cataButtonTitle')}
           slug="services"
-          text={
-            pageContent.strings.find((s) => s.id === 'home-cata-btn-txt').text
-          }
+          text={n('cataButtonText')}
         />
         <Card
-          title={
-            pageContent.strings.find((s) => s.id === 'home-dg-button').text
-          }
+          title={n('dgButtonTitle')}
           slug="design-guide"
-          text={
-            pageContent.strings.find((s) => s.id === 'home-dg-btn-txt').text
-          }
+          text={n('dgButtonText')}
         />
       </Box>
     </Box>
   )
+}
+
+Home.getInitialProps = async (ctx) => {
+  if (!ctx.locale) {
+    ctx.locale = 'is-IS'
+  }
+  const client = initApollo({})
+
+  const staticContent = await client
+    .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+      query: GET_NAMESPACE_QUERY,
+      variables: {
+        input: {
+          namespace: 'ViskuausanHome',
+          lang: ctx.locale,
+        },
+      },
+    })
+    .then((res) => JSON.parse(res.data.getNamespace.fields))
+
+  return {
+    staticContent,
+  }
 }
