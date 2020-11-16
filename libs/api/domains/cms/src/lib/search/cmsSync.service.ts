@@ -3,12 +3,12 @@ import { Injectable } from '@nestjs/common'
 import flatten from 'lodash/flatten'
 import { hashElement } from 'folder-hash'
 import {
-  ElasticService,
-  SearchIndexes,
+  ContentSearchImporter,
   MappedData,
+  SearchIndexes,
   SyncOptions,
   SyncResponse,
-} from '@island.is/api/content-search'
+} from '@island.is/elastic-indexing/types'
 import { ArticleSyncService } from './importers/article.service'
 import { ContentfulService } from './contentful.service'
 import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
@@ -16,6 +16,7 @@ import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
 import { AboutPageSyncService } from './importers/aboutPage.service'
 import { Entry } from 'contentful'
+import { ElasticService } from '@island.is/api/content-search'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -36,7 +37,7 @@ export interface CmsSyncProvider<T> {
 }
 
 @Injectable()
-export class CmsSyncService {
+export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
   private contentSyncProviders: CmsSyncProvider<any>[]
   constructor(
     private readonly aboutPageSyncService: AboutPageSyncService,
@@ -63,10 +64,7 @@ export class CmsSyncService {
     // return last folder hash found in elasticsearch else return empty string
     return this.elasticService
       .findById(elasticIndex, 'cmsImportFolderHashId')
-      .then((document) => {
-        logger.info('Resonse', { document: document.body._source })
-        return ''
-      })
+      .then((document) => document.body._source.title)
       .catch((error) => {
         // we expect this to throw when this does not exist, this might happen if we reindex a fresh elasticsearch index
         logger.warn('Failed to get last folder hash', {
