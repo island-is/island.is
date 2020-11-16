@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'elastic-indexing',
+  name: 'content-search-indexer',
   preset: '../../../jest.config.js',
   globals: {
     'ts-jest': {
@@ -10,5 +10,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/elastic-indexing/types',
+  coverageDirectory: '../../../coverage/libs/content-search-indexer/types',
 }

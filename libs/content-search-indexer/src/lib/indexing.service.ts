@@ -6,7 +6,7 @@ import {
   ContentSearchImporter,
   SearchIndexes,
   SyncOptions,
-} from '@island.is/elastic-indexing/types'
+} from '@island.is/content-search-indexer/types'
 
 @Injectable()
 export class IndexingService {

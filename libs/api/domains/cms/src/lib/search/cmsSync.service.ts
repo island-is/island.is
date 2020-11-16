@@ -8,7 +8,7 @@ import {
   SearchIndexes,
   SyncOptions,
   SyncResponse,
-} from '@island.is/elastic-indexing/types'
+} from '@island.is/content-search-indexer/types'
 import { ArticleSyncService } from './importers/article.service'
 import { ContentfulService } from './contentful.service'
 import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'

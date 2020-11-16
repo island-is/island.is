@@ -11,7 +11,10 @@ import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { ElasticService } from '@island.is/api/content-search'
 import flatten from 'lodash/flatten'
-import { SearchIndexes, SyncOptions } from '@island.is/elastic-indexing/types'
+import {
+  SearchIndexes,
+  SyncOptions,
+} from '@island.is/content-search-indexer/types'
 
 interface SyncerResult {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

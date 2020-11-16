@@ -11,7 +11,7 @@ import { GetNewsInput } from './dto/getNews.input'
 import { GetArticlesInput } from './dto/getArticles.input'
 import { NewsList } from './models/newsList.model'
 import { GetNewsDatesInput } from './dto/getNewsDates.input'
-import { SearchIndexes } from '@island.is/elastic-indexing/types'
+import { SearchIndexes } from '@island.is/content-search-indexer/types'
 
 @Injectable()
 export class CmsElasticsearchService {
