@@ -168,6 +168,9 @@
     "elastic-indexing": {
       "tags": []
     },
+    "elastic-indexing-types": {
+      "tags": []
+    },
     "email-service": {
       "tags": []
     },

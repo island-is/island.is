@@ -111,6 +111,9 @@
       "@island.is/cache": ["libs/cache/src/index.ts"],
       "@island.is/dokobit-signing": ["libs/dokobit-signing/src/index.ts"],
       "@island.is/elastic-indexing": ["libs/elastic-indexing/src/index.ts"],
+      "@island.is/elastic-indexing/types": [
+        "libs/elastic-indexing/types/src/index.ts"
+      ],
       "@island.is/email-service": ["libs/email-service/src/index.ts"],
       "@island.is/file-storage": ["libs/file-storage/src/index.ts"],
       "@island.is/gjafakort-web/*": ["apps/gjafakort/web/*"],

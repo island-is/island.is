@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common'
 import {
   dateResolution,
   ElasticService,
-  SearchIndexes,
   sortDirection,
 } from '@island.is/api/content-search'
 import { ArticleCategory } from './models/articleCategory.model'
@@ -12,6 +11,7 @@ import { GetNewsInput } from './dto/getNews.input'
 import { GetArticlesInput } from './dto/getArticles.input'
 import { NewsList } from './models/newsList.model'
 import { GetNewsDatesInput } from './dto/getNewsDates.input'
+import { SearchIndexes } from '@island.is/elastic-indexing/types'
 
 @Injectable()
 export class CmsElasticsearchService {
