@@ -295,3 +295,14 @@ export function formatPrisonRulingEmailNotification(
 export function stripHtmlTags(html: string): string {
   return html.replace(/(?:<br \/>)/g, '\n').replace(/(?:<\/?strong>)/g, '')
 }
+
+export function formatGender(gender: CaseGender): string {
+  switch (gender) {
+    case CaseGender.MALE:
+      return 'Karl'
+    case CaseGender.FEMALE:
+      return 'Kona'
+    case CaseGender.OTHER:
+      return 'Annað'
+  }
+}
