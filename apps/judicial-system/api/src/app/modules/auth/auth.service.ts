@@ -17,6 +17,6 @@ export class AuthService {
 
     const user = await res.json()
 
-    return Boolean(user)
+    return user?.active
   }
 }

@@ -14,6 +14,7 @@ export interface User {
   mobileNumber: string
   email: string
   role: UserRole
+  active: boolean
 }
 
 export enum CaseState {

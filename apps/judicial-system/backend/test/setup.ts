@@ -17,6 +17,7 @@ export const user = {
   mobileNumber: '6904031',
   email: 'ivaro@kolibri.is',
   role: 'JUDGE',
+  active: true,
 }
 
 jest.mock('pdfkit', function () {
