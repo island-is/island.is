@@ -117,25 +117,9 @@ export const RulingStepOne: React.FC = () => {
 
   useEffect(() => {
     if (!workingCase && data) {
-      let theCase = data.case
-
-      if (!theCase.custodyRestrictions) {
-        theCase = {
-          ...theCase,
-          custodyRestrictions: theCase.requestedCustodyRestrictions,
-        }
-
-        updateCase(
-          theCase.id,
-          parseArray(
-            'custodyRestrictions',
-            theCase.requestedCustodyRestrictions,
-          ),
-        )
-      }
-      setWorkingCase(theCase)
+      setWorkingCase(data.case)
     }
-  }, [workingCase, setWorkingCase, data, updateCase])
+  }, [workingCase, setWorkingCase, data])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [

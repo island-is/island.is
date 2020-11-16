@@ -8,6 +8,7 @@ import {
   CaseTransition,
   NotificationType,
   TransitionCase,
+  CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
 
 import Modal from '../../../shared-components/Modal/Modal'
@@ -118,6 +119,8 @@ export const Overview: React.FC = () => {
     const getCurrentCase = async () => {
       setIsLoading(true)
       setWorkingCase(resCase)
+
+      console.log(workingCase?.custodyRestrictions)
       setIsLoading(false)
     }
     if (id && !workingCase && resCase) {
@@ -213,16 +216,39 @@ export const Overview: React.FC = () => {
             <Accordion>
               <AccordionItem labelVariant="h3" id="id_1" label="Dómkröfur">
                 <Text>
-                  Gæsluvarðhald til
+                  Þess er krafist að
+                  <Text as="span" fontWeight="semiBold">
+                    {` ${workingCase?.accusedName} 
+                    ${formatNationalId(workingCase.accusedNationalId)}`}
+                  </Text>
+                  , verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta
+                  gæsluvarðhaldi til
                   <Text as="span" fontWeight="semiBold">
                     {` ${formatDate(
+                      workingCase.requestedCourtDate,
+                      'EEEE',
+                    ).replace('dagur', 'dagsins')} 
+                    ${formatDate(
                       workingCase?.requestedCustodyEndDate,
                       'PPP',
-                    )} kl. ${formatDate(
+                    )},  kl. ${formatDate(
                       workingCase?.requestedCustodyEndDate,
                       TIME_FORMAT,
                     )}`}
                   </Text>
+                  {workingCase?.requestedCustodyRestrictions.includes(
+                    CaseCustodyRestrictions.ISOLATION,
+                  ) ? (
+                    <>
+                      , og verði gert að{' '}
+                      <Text as="span" fontWeight="semiBold">
+                        sæta einangrun
+                      </Text>{' '}
+                      á meðan gæsluvarðhaldinu stendur.
+                    </>
+                  ) : (
+                    '.'
+                  )}
                 </Text>
               </AccordionItem>
               <AccordionItem labelVariant="h3" id="id_2" label="Lagaákvæði">
