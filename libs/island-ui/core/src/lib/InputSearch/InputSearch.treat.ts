@@ -40,6 +40,10 @@ export const input = style({
   ':hover': {
     borderColor: theme.color.blue400,
   },
+  '::placeholder': {
+    color: theme.color.dark400,
+    fontWeight: theme.typography.light,
+  },
   selectors: {
     [`&:focus:hover`]: {
       borderColor: theme.color.transparent,
@@ -60,6 +64,11 @@ export const iconWrapper = style({
 })
 export const colored = style({
   backgroundColor: theme.color.blue100,
+})
+export const outlined = style({
+  borderStyle: 'solid',
+  borderColor: theme.color.blue200,
+  borderRadius:8
 })
 
 export const sizes = styleMap({

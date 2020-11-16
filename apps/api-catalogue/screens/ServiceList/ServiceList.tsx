@@ -64,7 +64,7 @@ function ServiceLayout({
       <div className={cn(isMobile? styles.bottomRootMobile : styles.bottomRoot)}>
       <h4 className={cn(styles.bottomHeading)}>API Vörulisti</h4>
       <div className={cn(isMobile? styles.leftAndRightMobile : styles.leftAndRight)}>
-        <div className={cn(isMobile? style({width:'100%'}) : style({width:200, borderStyle:'solid', borderWidth:20, borderColor:'blue'}))}>
+        <div className={cn(isMobile? style({width:'100%'}) : {})}>
               {left}
         </div>
         <div>
@@ -197,10 +197,14 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
         <FilterSearch
           id="filter-search-box"
           label="Sýna flokka"
+          labelCloseButton = "Sía API vörulista"
+          labelResultButton={data?.getApiCatalogue.services.length > 0? 
+                                  `Skoða niðurstöður (${data?.getApiCatalogue.services.length})`:
+                                  'Ekkert fannst'}
           inputValues={{
             value: parameters?.query === null ? '' : parameters?.query,
             placeholder: filterStrings.strings.find((s) => s.id === 'catalog-filter-search').text,
-            colored: parameters.query.length < 1,
+            colored: false,
             isLoading: loading,
             onChange: (event) => onSearchChange(event.target.value)
           }}
@@ -214,12 +218,14 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
             label={filterStrings.strings.find((s) => s.id === 'catalog-filter-pricing').text}
           >
             <Checkbox
+              id="pricing-free"
               name="pricing"
               value={PricingCategory.FREE}
               label={filterStrings.strings.find((s) => s.id === 'catalog-filter-pricing-free').text}
               checked={parameters.pricing.includes(PricingCategory.FREE)}
               onChange={({ target }) => { updateCategoryCheckBox(target) }} />
             <Checkbox
+              id="pricing-paid"
               name="pricing"
               label={filterStrings.strings.find((s) => s.id === 'catalog-filter-pricing-paid').text}
               value={PricingCategory.PAID}
@@ -232,30 +238,35 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
             label={filterStrings.strings.find((s) => s.id === 'catalog-filter-data').text}
           >
             <Checkbox
+              id="data-public"
               name="data"
               label={filterStrings.strings.find((s) => s.id === 'catalog-filter-data-public').text}
               value={DataCategory.PUBLIC}
               checked={parameters.data.includes(DataCategory.PUBLIC)}
               onChange={({ target }) => { updateCategoryCheckBox(target) }} />
             <Checkbox
+              id="data-official"
               name="data"
               label={filterStrings.strings.find((s) => s.id === 'catalog-filter-data-official').text}
               value={DataCategory.OFFICIAL}
               checked={parameters.data.includes(DataCategory.OFFICIAL)}
               onChange={({ target }) => { updateCategoryCheckBox(target) }} />
             <Checkbox
+            id="data-personal"
               name="data"
               label={filterStrings.strings.find((s) => s.id === 'catalog-filter-data-personal').text}
               value={DataCategory.PERSONAL}
               checked={parameters.data.includes(DataCategory.PERSONAL)}
               onChange={({ target }) => { updateCategoryCheckBox(target) }} />
             <Checkbox
+            id="data-health"
               name="data"
               label={filterStrings.strings.find((s) => s.id === 'catalog-filter-data-health').text}
               value={DataCategory.HEALTH}
               checked={parameters.data.includes(DataCategory.HEALTH)}
               onChange={({ target }) => { updateCategoryCheckBox(target) }} />
             <Checkbox
+            id="data-financial"
               name="data"
               label={filterStrings.strings.find((s) => s.id === 'catalog-filter-data-financial').text}
               value={DataCategory.FINANCIAL}
@@ -267,18 +278,21 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
             label={filterStrings.strings.find((s) => s.id === 'catalog-filter-type').text}
           >
             <Checkbox
+              id="type-rest"
               name="type"
               label={filterStrings.strings.find((s) => s.id === 'catalog-filter-type-rest').text}
               value={TypeCategory.REST}
               checked={parameters.type.includes(TypeCategory.REST)}
               onChange={({ target }) => { updateCategoryCheckBox(target) }} />
             <Checkbox
+              id="type-soap"
               name="type"
               label={filterStrings.strings.find((s) => s.id === 'catalog-filter-type-soap').text}
               value={TypeCategory.SOAP}
               checked={parameters.type.includes(TypeCategory.SOAP)}
               onChange={({ target }) => { updateCategoryCheckBox(target) }} />
             <Checkbox
+              id="type-graphql"
               name="type"
               label={filterStrings.strings.find((s) => s.id === 'catalog-filter-type-graphql').text}
               value={TypeCategory.GRAPHQL}
@@ -290,12 +304,14 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
             label={filterStrings.strings.find((s) => s.id === 'catalog-filter-access').text}
           >
             <Checkbox
+              id="access-xroad"
               name="access"
               label={filterStrings.strings.find((s) => s.id === 'catalog-filter-access-xroad').text}
               value={AccessCategory.XROAD}
               checked={parameters.access.includes(AccessCategory.XROAD)}
               onChange={({ target }) => { updateCategoryCheckBox(target) }} />
             <Checkbox
+              id="access-apigw"
               name="access"
               label={filterStrings.strings.find((s) => s.id === 'catalog-filter-access-apigw').text}
               value={AccessCategory.APIGW}

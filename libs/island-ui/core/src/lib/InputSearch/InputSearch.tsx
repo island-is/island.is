@@ -25,7 +25,7 @@ export const InputSearch = (givenValues: InputSearchProps, ...props) => {
       className={cn(styles.wrapper, ...props, hasFocus ? styles.focused : {})}
     >
       <input
-        className={cn(styles.input, givenValues.colored ? styles.colored : {})}
+        className={cn(styles.input, givenValues.colored ? styles.colored : styles.outlined)}
         id={givenValues.id}
         type="text"
         value={givenValues.value}

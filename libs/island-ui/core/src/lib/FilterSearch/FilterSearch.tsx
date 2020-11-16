@@ -2,10 +2,9 @@ import React, { Component } from 'react'
 import * as styles from './FilterSearch.treat'
 import cn from 'classnames'
 
-import { AccordionItem, Box, Icon, InputSearch } from '@island.is/island-ui/core'
+import { Box, Button, Icon, IconProps, InputSearch,Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useIsomorphicLayoutEffect, useWindowSize } from 'react-use'
-import { TextVariants } from '../Text/Text.treat'
 
 
 export type IconVariantTypes = 'default' | 'sidebar'
@@ -35,13 +34,13 @@ export type FilterSearchType = 'default' | 'noStyles'
 export interface FilterSearchProps  {
   id:string,
   label:string,
+  labelCloseButton:string,
+  labelResultButton:string,
   type?:FilterSearchType
   inputValues?:InputValues,
   clearValues?:ClearValues,
   className?: string
   searchInput?:Component,
-  iconVariant?:IconVariantTypes,
-  labelVariant?:TextVariants,
   children?: JSX.Element | JSX.Element[];
 }
 
@@ -49,18 +48,19 @@ export interface FilterSearchProps  {
 export const FilterSearch: React.FC<FilterSearchProps> = ({
   id,
   label,
+  labelCloseButton = 'Close filter',
+  labelResultButton = 'View Results',
   type = 'default',
-  iconVariant = 'default',
-  labelVariant="default",
   inputValues,
   clearValues,
-  className,
+  className= null,
   children,
 }) => {
 
 
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = React.useState(false)
+  const [isVisalbe, setIsVisible] = React.useState(false)
 
   useIsomorphicLayoutEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -69,12 +69,12 @@ export const FilterSearch: React.FC<FilterSearchProps> = ({
     setIsMobile(false)
   }, [width])
   
-  const showContent = () => {
+  const showDesktopFilter = () => {
     return (
       <Box className={
         type === 'default'
-          ? `${className ? className : ""} ${isMobile? cn(styles.rootMobile): cn(styles.root)}  filter-search`
-          : `${className ? className : ""} filter-search`
+          ? `filter-search ${isMobile? cn(styles.rootMobile): cn(styles.root)} ${className}`
+          : `filter-search ${className}`
       } >
       { inputValues?
         (<Box className={cn(styles.inputSearch)}>
@@ -89,13 +89,25 @@ export const FilterSearch: React.FC<FilterSearchProps> = ({
           </Box>):""
         }
   
-      <div className={cn(styles.filterItem)}>
+      <div className={cn(styles.groupContainer)}>
       {children}
       </div>
       {clearValues?
         (
-          <span onClick={clearValues.onClick} className={cn(styles.clear)}>
-            {clearValues.text} <Icon icon="home" size="small" className={cn(styles.clearIcon)} />
+          <span className={cn(styles.clear)}>
+            <Button
+              colorScheme="default"
+              icon="ellipse"
+              iconType="outline"
+              onBlur={function noRefCheck(){}}
+              onClick={clearValues.onClick}
+              onFocus={function noRefCheck(){}}
+              size="default"
+              type="button"
+              variant="text"
+            >
+              {clearValues.text}
+            </Button>
           </span>
         ):("")
       }
@@ -104,17 +116,124 @@ export const FilterSearch: React.FC<FilterSearchProps> = ({
   }
 
 
-  return (
-    isMobile?
-      <AccordionItem
-              id={id}
-              label={label}
-              labelVariant={labelVariant}
-              iconVariant={iconVariant}
+  const makeWideIconButton = (
+    label: string,
+    onItemClick: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void,
+    iconProps: IconProps) => {
+    return (
+
+      <span className={cn(styles.wideIconButton)}
+        onClick={onItemClick}
+      >
+        <Text variant="h4" color="blue600">{label}</Text>
+        <Icon
+          color={iconProps.color}
+          icon={iconProps.icon}
+          size="large"
+          type="filled"
+        />
+      </span>
+    )
+  }
+  const showMobileFilter = () => {
+    return (
+      <Box className={
+        type === 'default'
+          ? `${className ? className : ""} ${cn(styles.filterContentMobile)} filter-search`
+          : `${className ? className : ""} filter-search`
+      } >
+        <div className={styles.mobileCloseButton}>
+          {makeWideIconButton(
+            labelCloseButton,
+            () => { setIsVisible(false) },
+            {
+              color: "blue400",
+              icon: "closeCircle"
+            },
+          )
+          }
+        </div>
+
+        { inputValues ?
+          (<Box className={cn(styles.inputSearch)}>
+
+            <InputSearch
+              placeholder={inputValues.placeholder}
+              value={inputValues?.value}
+              loading={inputValues.isLoading}
+              colored={inputValues.colored}
+              onChange={inputValues?.onChange}
+            />
+          </Box>) : ""
+        }
+
+        <div className={cn(styles.groupContainerMobile)}>
+          {children}
+        </div>
+        {clearValues ?
+          (
+            <span className={cn(styles.clear)}>
+            <Button
+              colorScheme="default"
+              icon="ellipse"
+              iconType="outline"
+              onBlur={function noRefCheck(){}}
+              onClick={clearValues.onClick}
+              onFocus={function noRefCheck(){}}
+              size="default"
+              type="button"
+              variant="text"
             >
-              {showContent()}
-      </AccordionItem>
-    :
-    showContent()
+              {clearValues.text}
+            </Button>
+          </span>
+          ) : ("")
+        }
+        
+      </Box>
+    )
+  }
+
+
+  return (
+    isMobile ?
+      <Box className={cn(styles.rootMobile)}>
+
+        {isVisalbe ?
+        <span>
+          {showMobileFilter()}
+          <div className={cn(styles.labelResultButton)}>
+          <Button
+            colorScheme="default"
+            iconType="filled"
+            variant="primary"
+            size="small"
+            type="button"
+            onBlur={function noRefCheck() { }}
+            onFocus={function noRefCheck() { }}
+            onClick={() => { setIsVisible(false) }}
+          >
+            {labelResultButton}
+          </Button>
+        </div>
+        </span>
+          :
+          (
+          <div>
+            { makeWideIconButton(
+            label, 
+            () => {setIsVisible(true)},
+            {
+              color:"blue400",
+              icon:"menu"
+            },
+          )
+        }
+          </div>
+          )
+        }
+      </Box>
+      :
+      showDesktopFilter()
   )
 };

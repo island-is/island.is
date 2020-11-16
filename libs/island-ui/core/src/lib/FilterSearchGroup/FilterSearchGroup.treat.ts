@@ -19,29 +19,28 @@ export const filter = style({
 })
 
 export const groupItem = style({
-    marginTop: 0,
     background: 'white',
-    borderBottomWidth:1,
-    borderBottomStyle:'solid',
-    borderBottomColor:theme.color.blue200,
-    padding:24,
+    marginTop:24,
+    marginLeft:24,
+    marginRight:24,
+    paddingBottom:24,
     fontSize:18,
     color:theme.color.dark400,
     fontWeight:600,
-    minWidth:318
+    minWidth:318,
+    borderBottomWidth:1,
+    borderBottomStyle:'solid',
+    borderBottomColor:theme.color.blue200,
     
 })
 
 export const groupItemMobile = style({
   marginTop: 20,
-  background: 'white',
   borderWidth:1,
   borderStyle:'solid',
   borderColor:theme.color.blue200,
+  background:theme.color.white,
   borderRadius:5,
-  fontSize:50,
-  color:theme.color.dark400,
-  fontWeight:600,
   paddingTop:19,
   paddingBottom:19,
   paddingLeft:16,
