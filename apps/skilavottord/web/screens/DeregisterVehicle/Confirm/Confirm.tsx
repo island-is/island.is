@@ -37,7 +37,7 @@ const Confirm: FC = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const { data } = useQuery(VEHICLE_TO_DEREGISTER, {
+  const { data, loading } = useQuery(VEHICLE_TO_DEREGISTER, {
     variables: { permno: id },
   })
 
@@ -58,7 +58,7 @@ const Confirm: FC = () => {
     if (mutationResponse?.status) {
       router.replace(routes.baseRoute).then(() => toast.success(t.success))
     }
-  }, [mutationResponse])
+  }, [mutationResponse, router, routes, t.success])
 
   const partnerId = user?.partnerId
 
@@ -131,19 +131,27 @@ const Confirm: FC = () => {
             />
           </Stack>
         ) : (
-          <Stack space={4}>
-            <Text variant="h1">{t.titles.notfound}</Text>
-            <Inline space={1}>
-              <Text>{t.info.error}</Text>
-              <Text variant="h5">{id}</Text>
-            </Inline>
-            <BulletList type="ul">
-              <Bullet>
-                {t.info.notfound}
-                <Text variant="h5">skilavottord.island.is/my-cars</Text>
-              </Bullet>
-            </BulletList>
-          </Stack>
+          <Box>
+            {loading ? (
+              <Box textAlign="center">
+                <LoadingIcon size={50} />
+              </Box>
+            ) : (
+              <Stack space={4}>
+                <Text variant="h1">{t.titles.notfound}</Text>
+                <Inline space={1}>
+                  <Text>{t.info.error}</Text>
+                  <Text variant="h5">{id}</Text>
+                </Inline>
+                <BulletList type="ul">
+                  <Bullet>
+                    {t.info.notfound}
+                    <Text variant="h5">skilavottord.island.is/my-cars</Text>
+                  </Bullet>
+                </BulletList>
+              </Stack>
+            )}
+          </Box>
         )}
         <Box width="full" display="inlineFlex" justifyContent="spaceBetween">
           <Hidden above="md">
