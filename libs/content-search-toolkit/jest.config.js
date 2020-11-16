@@ -1,10 +1,10 @@
 module.exports = {
   name: 'api-content-search',
-  preset: '../../../jest.config.js',
+  preset: '../../jest.config.js',
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
-  coverageDirectory: '../../../coverage/libs/content-search-toolkit',
+  coverageDirectory: '../../coverage/libs/content-search-toolkit',
   globals: { 'ts-jest': { tsConfig: '<rootDir>/tsconfig.spec.json' } },
 }
