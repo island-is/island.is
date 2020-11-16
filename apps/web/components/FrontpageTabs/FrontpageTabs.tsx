@@ -164,7 +164,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
       <GridRow className={styles.tabPanelRow}>
         <GridColumn hiddenBelow="lg" span="1/12" />
         <GridColumn
-          span={['12/12', '12/12', '12/12', '6/12']}
+          span={['12/12', '12/12', '7/12', '6/12']}
           position="static"
         >
           <Box ref={contentRef}>
@@ -318,7 +318,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
             {searchContent}
           </Box>
         </GridColumn>
-        <GridColumn hiddenBelow="lg" span={['0', '0', '0', '4/12']}>
+        <GridColumn hiddenBelow="md" span={['0', '0', '5/12', '4/12']}>
           <Box
             display="flex"
             flexDirection="column"
