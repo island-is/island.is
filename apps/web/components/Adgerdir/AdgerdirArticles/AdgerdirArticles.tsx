@@ -1,12 +1,5 @@
-import React, {
-  FC,
-  useState,
-  useContext,
-  useCallback,
-  useEffect,
-  useRef,
-} from 'react'
-import intersection from 'lodash/intersection'
+import React, { FC, useState, useCallback, useEffect, useRef } from 'react'
+import { intersection, isEqual } from 'lodash'
 import {
   Box,
   Tiles,
@@ -17,7 +10,6 @@ import {
   Inline,
   Icon,
   LoadingIcon,
-  SleeveContext,
   Divider,
 } from '@island.is/island-ui/core'
 import routeNames from '@island.is/web/i18n/routeNames'
@@ -36,6 +28,20 @@ const FILTER_TIMER = 300
 const ITEMS_PER_SHOW = 12
 
 const DIVIDER_FILTERS = [ADGERDIR_INDIVIDUALS_TAG_ID, ADGERDIR_COMPANIES_TAG_ID]
+
+export const includesAllFilterTags = (
+  adgerdirItems: Array<AdgerdirPage>,
+  selectedTags: Array<string>,
+) => {
+  return selectedTags && selectedTags.length > 0
+    ? adgerdirItems.filter((x) =>
+        isEqual(
+          x.tags.map((x) => x.id),
+          selectedTags,
+        ),
+      )
+    : adgerdirItems
+}
 
 interface AdgerdirArticlesProps {
   title?: string
@@ -69,7 +75,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
   >(items)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showCount, setShowCount] = useState<number | null>(ITEMS_PER_SHOW)
-  const [itemsFilteredByString, setItemsFilteredByString] = useState<
+  const [itemsFilteredBySearch, setItemsFilteredBySearch] = useState<
     Array<AdgerdirPage>
   >([])
 
@@ -93,50 +99,28 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
       }
     })
 
-    setItemsFilteredByString(arr)
+    setItemsFilteredBySearch(arr)
   }, [visibleItems, filterString])
 
-  const arrayEquals = (a: Array<string>, b: Array<string>) => {
-    return (
-      Array.isArray(a) &&
-      Array.isArray(b) &&
-      a.length === b.length &&
-      a.every((val, index) => val === b[index])
-    )
-  }
-
   const onFilterTagChange = useCallback(() => {
-    const arr = []
-
-    const filteredItems = visibleItems.filter((x) =>
-      arrayEquals(
-        x.tags.map((x) => x.id),
-        tagIds,
-      ),
+    const filteredItems_twoOrMore = includesAllFilterTags(visibleItems, tagIds)
+    const filteredItems_singleTag = visibleItems.filter((x) =>
+      x.tags.find((y) => tagIds.includes(y.id)),
     )
 
     console.log('all results: ', visibleItems)
     console.log('selected tags: ', tagIds)
-    console.log('bla: ', filteredItems)
-    console.log(
-      'bla2: ',
-      visibleItems.filter((x) => x.tags.find((y) => tagIds.includes(y.id))),
-    )
-
-    if (tagIds && tagIds.length < 1) {
-      setItemsFilteredByTag(visibleItems)
-    }
+    console.log('two or more: ', filteredItems_twoOrMore)
+    console.log('single tag ', filteredItems_singleTag)
 
     if (tagIds.length === 1) {
-      console.log('er inní einum')
-      setItemsFilteredByTag(
-        visibleItems.filter((x) => x.tags.find((y) => tagIds.includes(y.id))),
-      )
+      console.log('has only one tag')
+      setItemsFilteredByTag(filteredItems_singleTag)
     }
 
     if (tagIds.length > 1) {
-      console.log('er inní tveimur')
-      setItemsFilteredByTag(filteredItems)
+      console.log('has two or more')
+      setItemsFilteredByTag(filteredItems_twoOrMore)
     }
   }, [visibleItems, tagIds])
 
@@ -178,7 +162,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
   }, [onUpdateFilters])
 
   const filteredItems = visibleItems.filter((tag, index) => {
-    const indexList = [itemsFilteredByTag, itemsFilteredByString].filter(
+    const indexList = [itemsFilteredByTag, itemsFilteredBySearch].filter(
       (x) => x.length > 0,
     )
 
