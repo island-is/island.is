@@ -39,7 +39,6 @@
       "@island.is/api-catalogue/types": [
         "libs/api-catalogue/types/src/index.ts"
       ],
-      "@island.is/api/content-search": ["libs/api/content-search/src/index.ts"],
       "@island.is/api/domains/api-catalogue": [
         "libs/api/domains/api-catalogue/src/index.ts"
       ],
@@ -114,6 +113,9 @@
       ],
       "@island.is/content-search-indexer/types": [
         "libs/content-search-indexer/types/src/index.ts"
+      ],
+      "@island.is/content-search-toolkit": [
+        "libs/content-search-toolkit/src/index.ts"
       ],
       "@island.is/dokobit-signing": ["libs/dokobit-signing/src/index.ts"],
       "@island.is/email-service": ["libs/email-service/src/index.ts"],

@@ -1,6 +1,6 @@
 import fs from 'fs'
 import { logger } from '@island.is/logging'
-import { ElasticService } from '@island.is/api/content-search'
+import { ElasticService } from '@island.is/content-search-toolkit'
 import { AwsEsPackage } from './aws'
 import { SyncOptions } from '@island.is/content-search-indexer/types'
 import {

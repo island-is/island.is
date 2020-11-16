@@ -3,7 +3,7 @@ import {
   dateResolution,
   ElasticService,
   sortDirection,
-} from '@island.is/api/content-search'
+} from '@island.is/content-search-toolkit'
 import { ArticleCategory } from './models/articleCategory.model'
 import { Article } from './models/article.model'
 import { News } from './models/news.model'

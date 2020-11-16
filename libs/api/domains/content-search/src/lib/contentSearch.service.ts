@@ -5,7 +5,7 @@ import {
   SearcherInput,
   TagAggregationResponse,
   WebSearchAutocompleteInput,
-} from '@island.is/api/content-search'
+} from '@island.is/content-search-toolkit'
 import { logger } from '@island.is/logging'
 import { SearchResult } from './models/searchResult.model'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'

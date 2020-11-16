@@ -68,9 +68,6 @@
     "api-catalogue-types": {
       "tags": []
     },
-    "api-content-search": {
-      "tags": []
-    },
     "api-domains-api-catalogue": {
       "tags": []
     },
@@ -163,6 +160,9 @@
       "tags": []
     },
     "content-search-indexer-types": {
+      "tags": []
+    },
+    "content-search-toolkit": {
       "tags": []
     },
     "contentful-importer": {
