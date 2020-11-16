@@ -143,29 +143,29 @@ export class CaseController {
 
     const user = await this.findUserByNationalId(transition.nationalId)
 
-    const update = transitionUpdate(transition, existingCase, user)
+    try {
+      const update = transitionUpdate(transition, existingCase, user)
 
-    const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
-      id,
-      update,
-    )
+      const {
+        numberOfAffectedRows,
+        updatedCase,
+      } = await this.caseService.update(id, update)
 
-    if (numberOfAffectedRows === 0) {
-      throw new ConflictException(
-        `A more recent version exists of the case with id ${id}`,
-      )
-    }
+      if (numberOfAffectedRows === 0) {
+        throw new ConflictException(
+          `A more recent version exists of the case with id ${id}`,
+        )
+      }
 
-    // Find a better place for this
-    if (transition.transition === CaseTransition.SUBMIT) {
+      return updatedCase
+    } finally {
+      // Find a better place for this
       const dbCase = await this.findCaseById(id)
 
       const pdf = await generateRequestPdf(dbCase)
 
       await this.sendRequestAsPdf(dbCase, pdf)
     }
-
-    return updatedCase
   }
 
   @Get('cases')
