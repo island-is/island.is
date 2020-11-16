@@ -6,4 +6,6 @@ export {
   formatPrisonCourtDateEmailNotification,
   formatDefenderCourtDateEmailNotification,
   formatCourtDateNotificationCondition,
+  formatPrisonRulingEmailNotification,
+  stripHtmlTags,
 } from './formatters'
