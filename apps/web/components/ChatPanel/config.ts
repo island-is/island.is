@@ -1,7 +1,11 @@
 import { theme } from '@island.is/island-ui/theme'
 import { ChatPanelConfig } from './types'
 
-export const defaultConfig = {
+export const ID = '246covid-island-chat-panel'
+
+export const URL = 'https://246covid-island.boost.ai/chatPanel/chatPanel.js'
+
+export const config = {
   chatPanel: {
     header: {
       title: 'test',
@@ -15,20 +19,20 @@ export const defaultConfig = {
       avatarShape: 'rounded',
       composer: {
         composeLengthColor: theme.color.blue100,
-        composeLengthDisabledColor: theme.color.blue100,
-        frameBackgroundColor: theme.color.blue100,
+        composeLengthDisabledColor: theme.color.blue200,
+        frameBackgroundColor: theme.color.blue300,
         hide: false,
-        sendButtonColor: theme.color.blue100,
-        sendButtonDisabledColor: theme.color.blue100,
-        sendButtonFocusOutlineColor: theme.color.blue100,
-        textareaBackgroundColor: theme.color.blue100,
-        textareaBorderColor: theme.color.blue100,
-        textareaFocusBorderColor: theme.color.blue100,
-        textareaFocusOutlineColor: theme.color.blue100,
-        textareaPlaceholderTextColor: theme.color.blue100,
-        textareaTextColor: theme.color.blue100,
-        topBorderColor: theme.color.blue100,
-        topBorderFocusColor: theme.color.blue100,
+        sendButtonColor: theme.color.blue400,
+        sendButtonDisabledColor: theme.color.blue600,
+        sendButtonFocusOutlineColor: theme.color.purple100,
+        textareaBackgroundColor: theme.color.purple200,
+        textareaBorderColor: theme.color.purple300,
+        textareaFocusBorderColor: theme.color.purple400,
+        textareaFocusOutlineColor: theme.color.mint400,
+        textareaPlaceholderTextColor: theme.color.red100,
+        textareaTextColor: theme.color.red200,
+        topBorderColor: theme.color.red300,
+        topBorderFocusColor: theme.color.red400,
       },
       chatBubbles: {
         typingBackgroundColor: theme.color.blue100,
@@ -48,8 +52,8 @@ export const defaultConfig = {
       pace: 'normal',
       panelShape: 'rounded',
       position: {
-        spacingBottom: 30,
-        spacingRight: 30,
+        spacingBottom: 0,
+        spacingRight: theme.spacing[3],
         zIndex: 1,
       },
       size: 'medium',
