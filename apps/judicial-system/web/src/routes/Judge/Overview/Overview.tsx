@@ -176,6 +176,26 @@ export const JudgeOverview: React.FC = () => {
                 </Text>
               </Box>
             )}
+            {workingCase.requestedDefenderName && (
+              <Box marginBottom={5}>
+                <Box marginBottom={1}>
+                  <Text variant="eyebrow" color="blue400">
+                    Nafn verjanda
+                  </Text>
+                </Box>
+                <Text variant="h3">{workingCase.requestedDefenderName}</Text>
+              </Box>
+            )}
+            {workingCase.requestedDefenderEmail && (
+              <Box marginBottom={5}>
+                <Box marginBottom={1}>
+                  <Text variant="eyebrow" color="blue400">
+                    Netfang verjanda
+                  </Text>
+                </Box>
+                <Text variant="h3">{workingCase.requestedDefenderEmail}</Text>
+              </Box>
+            )}
             <Box marginBottom={5}>
               <Box marginBottom={1}>
                 <Text variant="eyebrow" color="blue400">
