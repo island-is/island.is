@@ -79,7 +79,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
   const { activeLocale, t } = useI18n()
   const { makePath } = routeNames(activeLocale as Locale)
-  const { width } = useWindowSize()
 
   const nextSlide = useCallback(() => {
     tab.next()
@@ -122,6 +121,8 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
       return { href: null, as: null }
     }
   }
+
+  const { width } = useWindowSize()
 
   const onResize = useCallback(() => {
     setMinHeight(0)
@@ -206,7 +207,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                     })}
                   >
                     <Box
-                      paddingY={3}
+                      marginY={3}
                       ref={(el) => (itemRefs.current[index] = el)}
                       style={{ minHeight: `${minHeight}px` }}
                     >
@@ -321,8 +322,8 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
           <Box
             display="flex"
             flexDirection="column"
-            justifyContent="center"
             height="full"
+            justifyContent="center"
           >
             <Illustration illustrationIndex={selectedIndex} />
           </Box>
