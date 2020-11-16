@@ -1,4 +1,4 @@
-import { SearchIndexes } from '@island.is/elastic-indexing/types'
+import { SearchIndexes } from '@island.is/content-search-indexer/types'
 import { Field, InputType } from '@nestjs/graphql'
 import { IsOptional, IsString } from 'class-validator'
 
