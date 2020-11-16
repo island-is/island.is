@@ -2,7 +2,7 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import {
   SearcherInput,
   WebSearchAutocompleteInput,
-} from '@island.is/api/content-search'
+} from '@island.is/content-search-toolkit'
 
 import { ContentSearchService } from './contentSearch.service'
 import { SearchResult } from './models/searchResult.model'

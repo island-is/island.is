@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { ElasticService } from '@island.is/api/content-search'
+import { ElasticService } from '@island.is/content-search-toolkit'
 import { ContentfulService } from './contentful.service'
 import { ArticleSyncService } from './importers/article.service'
 import { CmsSyncService } from './cmsSync.service'

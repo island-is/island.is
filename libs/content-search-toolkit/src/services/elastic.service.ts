@@ -15,7 +15,10 @@ import {
 } from '../queries/documentByMetaData'
 import { TagAggregationResponse } from '../types'
 import { GetByIdResponse, SearchResponse } from '@island.is/shared/types'
-import { MappedData, SearchIndexes } from '@island.is/elastic-indexing/types'
+import {
+  MappedData,
+  SearchIndexes,
+} from '@island.is/content-search-indexer/types'
 import { environment } from '../environments/environment'
 import { WebSearchAutocompleteInput } from '../dto'
 import {
