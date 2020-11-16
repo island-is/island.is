@@ -1,14 +1,10 @@
-import React, { useState, ReactNode } from 'react'
+import React, { useState } from 'react'
 import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import {
   Box,
   Breadcrumbs,
-  ContentBlock,
-  GridRow,
-  GridColumn,
   Text,
   AccordionItem,
-  GridContainer,
   LoadingIcon,
   Stack,
 } from '@island.is/island-ui/core'
@@ -16,12 +12,11 @@ import {
 import * as styles from './ServiceList.treat'
 import cn from 'classnames'
 import {
-  Layout,
+  ServiceLayout,
   ServiceCard,
   ServiceFilter,
   ServiceCardMessage,
 } from '../../components'
-import { Page } from '../../services/contentful.types'
 import { theme } from '@island.is/island-ui/theme'
 import { GET_CATALOGUE_QUERY } from '../Queries'
 import { useQuery } from 'react-apollo'
@@ -31,59 +26,31 @@ import {
   QueryGetApiCatalogueArgs,
 } from '@island.is/api/schema'
 
-interface PropTypes {
-  top?: ReactNode
-  left: ReactNode
-  right?: ReactNode
-  bottom?: ReactNode
-  className?: string
-  listClassNames?: string
-}
-
-function ServiceLayout({
-  top,
-  left,
-  right,
-  bottom,
-  className,
-  listClassNames,
-}: PropTypes) {
-  return (
-    <Box paddingX="gutter">
-      <Layout left={top} />
-      <GridContainer className={className}>
-        <GridRow className={listClassNames}>
-          <GridColumn
-            span={['12/12', '8/12', '8/12', '9/12', '9/12']}
-            offset={['0', '0', '0', '0', '0']}
-          >
-            {left}
-          </GridColumn>
-          <GridColumn
-            span={['12/12', '4/12', '4/12', '3/12', '3/12']}
-            offset={['0', '0', '0', '0', '0']}
-          >
-            {right}
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
-      <ContentBlock>{bottom}</ContentBlock>
-    </Box>
-  )
-}
+import { useNamespace } from '@island.is/web/hooks'
+import { QueryGetNamespaceArgs } from '@island.is/api/schema'
+import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import { GET_NAMESPACE_QUERY } from '../Queries'
+import { Screen } from '../../types'
+import initApollo from 'apps/api-catalogue/graphql/client'
 
 const LIMIT = 25
 
 export interface ServiceListProps {
-  pageContent: Page
-  filterStrings: Page
+  staticContent: GetNamespaceQuery['getNamespace']
+  filterContent: GetNamespaceQuery['getNamespace']
 }
 
-export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
+export const ServiceList: Screen<ServiceListProps> = ({
+  staticContent,
+  filterContent,
+}) => {
+  const n = useNamespace(staticContent)
+  const fn = useNamespace(filterContent)
+
   // prettier-ignore
-  const TEXT_NOT_FOUND = pageContent.strings.find(s => s.id === 'catalog-not-found').text;
+  const TEXT_NOT_FOUND = n('notFound')
   // prettier-ignore
-  const TEXT_ERROR = pageContent.strings.find(s => s.id === 'catalog-error').text;
+  const TEXT_ERROR = n('error')
 
   const [parameters, setParameters] = useState<GetApiCatalogueInput>({
     cursor: null,
@@ -172,19 +139,13 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
           <Box marginBottom={2}>
             <Breadcrumbs>
               <a href="/">Viskuausan</a>
-              <span>
-                {pageContent.strings.find((s) => s.id === 'catalog-title').text}
-              </span>
+              <span>{n('title')}</span>
             </Breadcrumbs>
           </Box>
           <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
             <Stack space={1}>
-              <Text variant="h1">
-                {pageContent.strings.find((s) => s.id === 'catalog-title').text}
-              </Text>
-              <Text variant="intro">
-                {pageContent.strings.find((s) => s.id === 'catalog-intro').text}
-              </Text>
+              <Text variant="h1">{n('title')}</Text>
+              <Text variant="intro">{n('intro')}</Text>
             </Stack>
           </Box>
         </Box>
@@ -204,7 +165,7 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
                 <ServiceCard
                   key={item.id}
                   service={item}
-                  strings={filterStrings.strings}
+                  strings={filterContent}
                 />
               )
             })}
@@ -228,13 +189,7 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
               borderRadius="large"
               onClick={() => onLoadMore()}
             >
-              <div className={cn(styles.navigationText)}>
-                {
-                  pageContent.strings.find(
-                    (s) => s.id === 'catalog-fetch-more-button',
-                  ).text
-                }
-              </div>
+              <div className={cn(styles.navigationText)}>{n('fmButton')}</div>
             </Box>
           )}
 
@@ -252,7 +207,7 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
           <div>
             <AccordionItem
               id="serviceFilter"
-              label="Sýna flokka"
+              label={fn('mobile')}
               labelVariant="default"
               iconVariant="default"
             >
@@ -266,7 +221,7 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
                 onCheckCategoryChanged={({ target }) => {
                   updateCategoryCheckBox(target)
                 }}
-                strings={filterStrings.strings}
+                strings={filterContent}
               />
             </AccordionItem>
           </div>
@@ -280,10 +235,47 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
             onCheckCategoryChanged={({ target }) => {
               updateCategoryCheckBox(target)
             }}
-            strings={filterStrings.strings}
+            strings={filterContent}
           />
         )
       }
     />
   )
+}
+
+ServiceList.getInitialProps = async (ctx) => {
+  if (!ctx.locale) {
+    ctx.locale = 'is-IS'
+  }
+  const client = initApollo({})
+
+  const [staticContent, filterContent] = await Promise.all([
+    client
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'ApiCatalog',
+            lang: ctx.locale,
+          },
+        },
+      })
+      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+    client
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'ApiCatalogFilter',
+            lang: ctx.locale,
+          },
+        },
+      })
+      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+  ])
+
+  return {
+    staticContent,
+    filterContent,
+  }
 }

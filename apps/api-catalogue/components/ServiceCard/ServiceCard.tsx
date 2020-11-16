@@ -4,16 +4,20 @@ import * as styles from './ServiceCard.treat'
 import cn from 'classnames'
 import { useHorizontalDragScroll } from '..'
 import { ApiService } from '@island.is/api/schema'
-import { ContentfulString } from '../../services/contentful.types'
 import { useIsomorphicLayoutEffect, useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import { capitalize } from '../../utils'
+
+import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 
 export interface ServiceCardProps {
   service: ApiService
-  strings: Array<ContentfulString>
+  strings: GetNamespaceQuery['getNamespace']
 }
 
 export const ServiceCard = ({ service, strings }: ServiceCardProps) => {
+  const n = useNamespace(strings)
   const dragProps = useHorizontalDragScroll()
 
   const preventDragHandler = (e) => {
@@ -55,13 +59,7 @@ export const ServiceCard = ({ service, strings }: ServiceCardProps) => {
                     className={cn(styles.categoryItem, styles.noSelect)}
                     key={index}
                   >
-                    {
-                      strings.find(
-                        (s) =>
-                          s.id ===
-                          `catalog-filter-pricing-${item.toLowerCase()}`,
-                      ).text
-                    }
+                    {n(`pricing${capitalize(item)}`)}
                   </Box>
                 ))}
                 {service.data?.map((item, index) => (
@@ -69,12 +67,7 @@ export const ServiceCard = ({ service, strings }: ServiceCardProps) => {
                     className={cn(styles.categoryItem, styles.noSelect)}
                     key={index}
                   >
-                    {
-                      strings.find(
-                        (s) =>
-                          s.id === `catalog-filter-data-${item.toLowerCase()}`,
-                      ).text
-                    }
+                    {n(`data${capitalize(item)}`)}
                   </Box>
                 ))}
                 {service.type?.map((item, index) => (
@@ -82,12 +75,7 @@ export const ServiceCard = ({ service, strings }: ServiceCardProps) => {
                     className={cn(styles.categoryItem, styles.noSelect)}
                     key={index}
                   >
-                    {
-                      strings.find(
-                        (s) =>
-                          s.id === `catalog-filter-type-${item.toLowerCase()}`,
-                      ).text
-                    }
+                    {n(`type${capitalize(item)}`)}
                   </Box>
                 ))}
                 {service.access?.map((item, index) => (
@@ -95,13 +83,7 @@ export const ServiceCard = ({ service, strings }: ServiceCardProps) => {
                     className={cn(styles.categoryItem, styles.noSelect)}
                     key={index}
                   >
-                    {
-                      strings.find(
-                        (s) =>
-                          s.id ===
-                          `catalog-filter-access-${item.toLowerCase()}`,
-                      ).text
-                    }
+                    {n(`access${capitalize(item)}`)}
                   </Box>
                 ))}
               </Box>
