@@ -39,20 +39,21 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 
+interface CaseData {
+  case: Case
+}
+
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const { id } = useParams<{ id: string }>()
   const history = useHistory()
   const { user } = useContext(userContext)
-  const { data } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const resCase = data?.case
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
 
@@ -120,23 +121,16 @@ export const Overview: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setIsLoading(true)
-      setWorkingCase(resCase)
-
-      console.log(workingCase?.custodyRestrictions)
-      setIsLoading(false)
+    if (!workingCase && data) {
+      setWorkingCase(data.case)
     }
-    if (id && !workingCase && resCase) {
-      getCurrentCase()
-    }
-  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
+  }, [workingCase, setWorkingCase, data])
 
   return (
     <PageLayout
       activeSection={Sections.PROSECUTOR}
       activeSubSection={ProsecutorSubsections.PROSECUTOR_OVERVIEW}
-      isLoading={isLoading}
+      isLoading={loading}
     >
       {workingCase ? (
         <>
