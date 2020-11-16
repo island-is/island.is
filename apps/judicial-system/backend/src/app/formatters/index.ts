@@ -8,5 +8,4 @@ export {
   formatCourtDateNotificationCondition,
   formatPrisonRulingEmailNotification,
   stripHtmlTags,
-  formatGender,
 } from './formatters'

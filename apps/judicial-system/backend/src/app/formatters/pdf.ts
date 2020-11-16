@@ -7,8 +7,10 @@ import {
   CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
 import {
+  capitalize,
   formatCustodyRestrictions,
   formatDate,
+  formatGender,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 
@@ -19,7 +21,6 @@ import {
   formatConclusion,
   formatCourtCaseNumber,
   formatCustodyProvisions,
-  formatGender,
   formatProsecutorDemands,
   formatRestrictions,
 } from './formatters'
@@ -59,7 +60,7 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .lineGap(4)
     .text(`Kennitala: ${formatNationalId(existingCase.accusedNationalId)}`)
     .text(`Fullt nafn: ${existingCase.accusedName}`)
-    .text(`Kyn: ${formatGender(existingCase.accusedGender)}`)
+    .text(`Kyn: ${capitalize(formatGender(existingCase.accusedGender))}`)
     .text(`Lögheimili: ${existingCase.accusedAddress}`)
     .text(' ')
     .font('Helvetica-Bold')
