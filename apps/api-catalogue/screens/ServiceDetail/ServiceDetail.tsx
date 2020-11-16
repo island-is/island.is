@@ -2,21 +2,25 @@ import React from 'react'
 import { ServiceDetail as ServiceDetails } from '../../components'
 import { Query, QueryGetApiServiceByIdArgs } from '@island.is/api/schema'
 import { GridContainer, LoadingIcon } from '@island.is/island-ui/core'
-import { Page } from '../../services/contentful.types'
 import * as styles from './ServiceDetail.treat'
 import cn from 'classnames'
 import { useQuery } from 'react-apollo'
-import { GET_API_SERVICE_QUERY } from '../Queries'
+import { GET_API_SERVICE_QUERY, GET_NAMESPACE_QUERY } from '../Queries'
+
+import { QueryGetNamespaceArgs } from '@island.is/api/schema'
+import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import { Screen } from '../../types'
+import initApollo from 'apps/api-catalogue/graphql/client'
 
 export interface ServiceDetailProps {
   serviceId: string
-  filterStrings: Page
+  filterContent: GetNamespaceQuery['getNamespace']
 }
 
-export function ServiceDetail({
+export const ServiceDetail: Screen<ServiceDetailProps> = ({
   serviceId,
-  filterStrings,
-}: ServiceDetailProps) {
+  filterContent,
+}) => {
   // prettier-ignore
   const { data, loading, error } = useQuery<Query, QueryGetApiServiceByIdArgs>(GET_API_SERVICE_QUERY, {
     variables: {
@@ -41,9 +45,35 @@ export function ServiceDetail({
       {data?.getApiServiceById?.name && (
         <ServiceDetails
           service={data.getApiServiceById}
-          strings={filterStrings.strings}
+          strings={filterContent}
         />
       )}
     </GridContainer>
   )
+}
+
+ServiceDetail.getInitialProps = async (ctx) => {
+  if (!ctx.locale) {
+    ctx.locale = 'is-IS'
+  }
+  const client = initApollo({})
+
+  const filterContent = await client
+    .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+      query: GET_NAMESPACE_QUERY,
+      variables: {
+        input: {
+          namespace: 'ApiCatalogFilter',
+          lang: ctx.locale,
+        },
+      },
+    })
+    .then((res) => JSON.parse(res.data.getNamespace.fields))
+
+  const id = ctx.asPath.slice(ctx.asPath.indexOf('/', 1) + 1)
+
+  return {
+    serviceId: id,
+    filterContent,
+  }
 }
