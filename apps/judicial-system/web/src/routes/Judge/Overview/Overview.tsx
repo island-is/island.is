@@ -25,9 +25,7 @@ import {
   UpdateCase,
   CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
-import {
-  parseString,
-} from '@island.is/judicial-system-web/src/utils/formatters'
+import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import * as styles from './Overview.treat'
 import { useMutation, useQuery } from '@apollo/client'
