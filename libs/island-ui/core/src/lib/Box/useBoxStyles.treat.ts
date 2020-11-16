@@ -527,3 +527,11 @@ export const opacity = styleMap({
   0: { opacity: 0 },
   1: { opacity: 1 },
 })
+
+export const printHidden = style({
+  '@media': {
+    print: {
+      display: 'none !important',
+    },
+  },
+})

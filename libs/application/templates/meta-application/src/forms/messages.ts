@@ -257,4 +257,9 @@ export const m = defineMessages({
     defaultMessage: 'Sjá minna',
     description: '',
   },
+  submit: {
+    id: 'example.application.submit',
+    defaultMessage: 'Senda inn umsókn',
+    description: 'Used in primary submit button',
+  },
 })

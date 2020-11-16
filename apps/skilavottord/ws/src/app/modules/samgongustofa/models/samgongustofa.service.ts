@@ -123,6 +123,8 @@ export class SamgongustofaService {
                   let carHasCoOwner = true
                   if (car['otherowners'][0] == '0') {
                     carHasCoOwner = false
+                  } else {
+                    carIsRecyclable = false
                   }
 
                   // Create new Vehicle information object on each vehicle
@@ -165,7 +167,7 @@ export class SamgongustofaService {
         this.logger.info(
           `Starting extracting details information on ${carObj['permno']}`,
         )
-        if (carObj['status'] == 'inUse') {
+        if (carObj['status'] == 'inUse' && carObj['isRecyclable']) {
           // Vehicle information's Soap body
           const xmlBasicInfoBodyStr = `<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:usx="https://xml.samgongustofa.is/scripts/WebObjects.dll/XML.woa/1/ws/.USXMLWS">
             <soapenv:Header/>
@@ -272,7 +274,7 @@ export class SamgongustofaService {
           }
         } catch (err) {
           this.logger.error(
-            `Error while checking requestType in DB for vehicle ${vehicle['permno']}`,
+            `Error while checking requestType in DB for vehicle ${vehicle['permno']} with error: ${err}`,
           )
         }
       }
