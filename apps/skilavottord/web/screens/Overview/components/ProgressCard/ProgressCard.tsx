@@ -33,6 +33,7 @@ export const ProgressCard: FC<ProgressCardProps> = ({
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
   const justifyContent = isMobile ? 'flexStart' : 'flexEnd'
+  const textAlign = isMobile ? 'left' : 'right'
   const modelYear = formatYear(firstRegDate, 'dd.MM.yyyy')
 
   return (
@@ -69,11 +70,7 @@ export const ProgressCard: FC<ProgressCardProps> = ({
                     </Tag>
                   </Box>
                 </Box>
-                <Box
-                  display="flex"
-                  justifyContent={justifyContent}
-                  paddingTop={[0, 0, 0, 3]}
-                >
+                <Box textAlign={textAlign} paddingTop={[0, 0, 0, 3]}>
                   <Button variant="text" icon="arrowForward" onClick={onClick}>
                     {status === 'pendingRecycle'
                       ? t.buttons.openProcess
