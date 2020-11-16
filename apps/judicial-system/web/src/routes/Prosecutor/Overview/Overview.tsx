@@ -38,6 +38,7 @@ import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
+import { getGender } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 interface CaseData {
   case?: Case
@@ -139,77 +140,91 @@ export const Overview: React.FC = () => {
               Krafa um gæsluvarðhald
             </Text>
           </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" color="blue400">
-                LÖKE málsnúmer
-              </Text>
-            </Box>
-            <Text variant="h3">{workingCase.policeCaseNumber}</Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" color="blue400">
-                Kennitala
-              </Text>
-            </Box>
-            <Text variant="h3">
-              {formatNationalId(workingCase.accusedNationalId)}
-            </Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" color="blue400">
-                Fullt nafn
-              </Text>
-            </Box>
-            <Text variant="h3"> {workingCase.accusedName}</Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" color="blue400">
-                Lögheimili/dvalarstaður
-              </Text>
-            </Box>
-            <Text variant="h3">{workingCase.accusedAddress}</Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" color="blue400">
-                Dómstóll
-              </Text>
-            </Box>
-            <Text variant="h3">{workingCase.court}</Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" color="blue400">
-                Tími handtöku
-              </Text>
-            </Box>
-            <Text variant="h3">
-              {`${capitalize(
-                formatDate(workingCase.arrestDate, 'PPPP') || '',
-              )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
-            </Text>
-          </Box>
-          {workingCase.requestedCourtDate && (
-            <Box component="section" marginBottom={9}>
+          <Box component="section">
+            <Box marginBottom={5}>
               <Box marginBottom={1}>
                 <Text variant="eyebrow" color="blue400">
-                  Ósk um fyrirtökudag og tíma
+                  LÖKE málsnúmer
+                </Text>
+              </Box>
+              <Text variant="h3">{workingCase.policeCaseNumber}</Text>
+            </Box>
+            <Box marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Kennitala
+                </Text>
+              </Box>
+              <Text variant="h3">
+                {formatNationalId(workingCase.accusedNationalId)}
+              </Text>
+            </Box>
+            <Box marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Fullt nafn
+                </Text>
+              </Box>
+              <Text variant="h3"> {workingCase.accusedName}</Text>
+            </Box>
+            <Box marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Lögheimili/dvalarstaður
+                </Text>
+              </Box>
+              <Text variant="h3">{workingCase.accusedAddress}</Text>
+            </Box>
+            {workingCase.accusedGender && (
+              <Box marginBottom={5}>
+                <Box marginBottom={1}>
+                  <Text variant="eyebrow" color="blue400">
+                    Kyn
+                  </Text>
+                </Box>
+                <Text variant="h3">
+                  {capitalize(getGender(workingCase.accusedGender))}
+                </Text>
+              </Box>
+            )}
+            <Box marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Dómstóll
+                </Text>
+              </Box>
+              <Text variant="h3">{workingCase.court}</Text>
+            </Box>
+            <Box marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Tími handtöku
                 </Text>
               </Box>
               <Text variant="h3">
                 {`${capitalize(
-                  formatDate(workingCase.requestedCourtDate, 'PPPP') || '',
-                )} eftir kl. ${formatDate(
-                  workingCase?.requestedCourtDate,
-                  TIME_FORMAT,
-                )}`}
+                  formatDate(workingCase.arrestDate, 'PPPP') || '',
+                )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
               </Text>
             </Box>
-          )}
+            {workingCase.requestedCourtDate && (
+              <Box marginBottom={9}>
+                <Box marginBottom={1}>
+                  <Text variant="eyebrow" color="blue400">
+                    Ósk um fyrirtökudag og tíma
+                  </Text>
+                </Box>
+                <Text variant="h3">
+                  {`${capitalize(
+                    formatDate(workingCase.requestedCourtDate, 'PPPP') || '',
+                  )} eftir kl. ${formatDate(
+                    workingCase?.requestedCourtDate,
+                    TIME_FORMAT,
+                  )}`}
+                </Text>
+              </Box>
+            )}
+          </Box>
           <Box component="section" marginBottom={10}>
             <Accordion>
               <AccordionItem labelVariant="h3" id="id_1" label="Dómkröfur">

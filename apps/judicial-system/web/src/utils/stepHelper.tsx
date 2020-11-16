@@ -6,6 +6,8 @@ import {
   Case,
   CaseAppealDecision,
   CaseCustodyRestrictions,
+  CaseGender,
+  Gender,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
 
@@ -150,4 +152,18 @@ export const isNextDisabled = (requiredFields: RequiredField[]) => {
     }
   }
   return false
+}
+
+export const getGender = (gender: CaseGender): Gender => {
+  switch (gender) {
+    case CaseGender.MALE: {
+      return 'karl'
+    }
+    case CaseGender.FEMALE: {
+      return 'kona'
+    }
+    case CaseGender.OTHER: {
+      return 'annað'
+    }
+  }
 }

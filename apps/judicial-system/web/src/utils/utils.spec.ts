@@ -5,12 +5,13 @@ import {
   parseTime,
   parseTransition,
 } from './formatters'
-import { constructConclusion, isNextDisabled } from './stepHelper'
+import { constructConclusion, getGender, isNextDisabled } from './stepHelper'
 import { RequiredField } from '../types'
 import {
   CaseTransition,
   CaseCustodyRestrictions,
   Case,
+  CaseGender,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
 import { render } from '@testing-library/react'
@@ -408,6 +409,7 @@ describe('Step helper', () => {
       ).toBeTruthy()
     })
   })
+
   describe('isNextDisabled()', () => {
     test('should return true if the only validation does not pass', () => {
       // Arrange
@@ -446,6 +448,25 @@ describe('Step helper', () => {
 
       // Assert
       expect(ind).toEqual(false)
+    })
+  })
+
+  describe('getGender()', () => {
+    test('should return the correct gender', () => {
+      // Arrange
+      const male = CaseGender.MALE
+      const female = CaseGender.FEMALE
+      const other = CaseGender.OTHER
+
+      // Act
+      const resultMale = getGender(male)
+      const resultFemale = getGender(female)
+      const resultOther = getGender(other)
+
+      // Assert
+      expect(resultMale).toEqual('karl')
+      expect(resultFemale).toEqual('kona')
+      expect(resultOther).toEqual('annað')
     })
   })
 })
