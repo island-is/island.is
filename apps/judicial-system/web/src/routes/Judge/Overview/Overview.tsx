@@ -26,7 +26,6 @@ import {
   CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
 import {
-  parseArray,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
