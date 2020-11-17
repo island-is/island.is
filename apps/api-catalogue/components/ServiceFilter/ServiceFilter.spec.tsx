@@ -3,28 +3,33 @@ import { render } from '@testing-library/react'
 
 import { ServiceFilter } from './ServiceFilter'
 import { GetApiCatalogueInput } from '@island.is/api/schema'
-import { ContentfulString } from '../../services/contentful.types'
+import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
 
 describe(' ServiceFilter ', () => {
-  const strings: Array<ContentfulString> = [
-    { id: 'catalog-filter-access', text: 'Aðgengi' },
-    { id: 'catalog-filter-data', text: 'Gögn' },
-    { id: 'catalog-filter-data-financial', text: 'Fjármál' },
-    { id: 'catalog-filter-data-health', text: 'Heilsa' },
-    { id: 'catalog-filter-data-official', text: 'Opinber' },
-    { id: 'catalog-filter-data-personal', text: 'Persónugreinanleg' },
-    { id: 'catalog-filter-data-public', text: 'Almenn' },
-    { id: 'catalog-filter-pricing', text: 'Verð' },
-    { id: 'catalog-filter-pricing-free', text: 'Gjaldfrjáls' },
-    { id: 'catalog-filter-pricing-paid', text: 'Gjaldskyld' },
-    { id: 'catalog-filter-type', text: 'Tegund' },
-    { id: 'catalog-filter-type-graphql', text: 'GraphQL' },
-    { id: 'catalog-filter-type-rest', text: 'REST' },
-    { id: 'catalog-filter-type-soap', text: 'SOAP' },
-    { id: 'catalog-filter-access-xroad', text: 'X-Road' },
-    { id: 'catalog-filter-access-apigw', text: 'API GW' },
-    { id: 'catalog-filter-search', text: 'Leita' },
-  ]
+
+  const strings: GetNamespaceQuery['getNamespace'] = {
+    __typename: "Namespace",
+    fields: "{" +
+      "'data': 'Gögn'," +
+      "'type': 'Tegund'," +
+      "'access': 'Aðgengi'," +
+      "'mobile': 'Sýna flokka'," +
+      "'search': 'Leita'," +
+      "'pricing': 'Verð'," +
+      "'typeRest': 'REST'," +
+      "'typeSoap': 'SOAP'," +
+      "'dataHealth': 'Heilsa'," +
+      "'dataPublic': 'Almenn'," +
+      "'accessApigw': 'API GW'," +
+      "'accessXroad': 'X-Road'," +
+      "'pricingFree': 'Gjaldfrjáls'," +
+      "'pricingPaid': 'Gjaldskyld'," +
+      "'typeGraphql': 'GraphQL'," +
+      "'dataOfficial': 'Opinber'," +
+      "'dataPersonal': 'Persónugreinanleg'," +
+      "'dataFinancial': 'Fjármál'" +
+    "}"
+  }
 
   const params: GetApiCatalogueInput = {
     access: [],
