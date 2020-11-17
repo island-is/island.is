@@ -16,6 +16,7 @@ import {
   DateAggregationResponse,
   AutocompleteTermResponse,
   TagAggregationInput,
+  SyncRequest,
 } from '../types'
 import { GetByIdResponse, SearchResponse } from '@island.is/shared/types'
 import {

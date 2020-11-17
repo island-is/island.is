@@ -1,4 +1,10 @@
-import { elasticTagField, sortableFields } from '.'
+import { elasticTagField, sortDirection } from '.'
+
+type sortableFields = {
+  dateUpdated?: sortDirection
+  dateCreated?: sortDirection
+  'title.sort'?: sortDirection
+}
 
 interface MetaPropsBase {
   types?: string[]
