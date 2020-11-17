@@ -22,5 +22,5 @@ export class XroadInfo implements XroadIdentifier {
 
   @Field((type) => String)
   @IsString()
-  serviceCode: string
+  serviceCode?: string
 }
