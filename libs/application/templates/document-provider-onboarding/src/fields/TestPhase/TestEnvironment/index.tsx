@@ -5,6 +5,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {
   interface User {
     id: string
     name: string
+    value: string
   }
 
   let [users, setUsers] = useState<User[]>([])
@@ -18,7 +19,9 @@ const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {
   return (
     <ul>
       {users.map((User) => (
-        <li key={User.id}>{User.name}</li>
+        <li key={User.id}>
+          {User.name} - {User.value}
+        </li>
       ))}
     </ul>
   )
