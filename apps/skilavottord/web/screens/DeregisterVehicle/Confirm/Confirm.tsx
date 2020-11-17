@@ -146,7 +146,7 @@ const Confirm: FC = () => {
           </Stack>
         )}
         <Box width="full" display="inlineFlex" justifyContent="spaceBetween">
-          <Hidden above="md">
+          <Hidden above="sm">
             <Button
               variant="ghost"
               circle
