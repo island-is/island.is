@@ -1,8 +1,6 @@
 import { Server } from 'miragejs'
 
 export function makeServer({ environment = 'development' } = {}) {
-  console.log('hello there')
-
   const server = new Server({
     routes() {
       this.passthrough('http://localhost:4444/api/graphql')
@@ -15,6 +13,18 @@ export function makeServer({ environment = 'development' } = {}) {
         {
           id: '2',
           name: 'Secret key',
+          value: '5016d8d5cb6ce0758107b9969ea3c201',
+        },
+      ])
+      this.get('/api/endPointVariables', () => [
+        {
+          id: '1',
+          name: 'Audience',
+          value: '5016d8d5cb6ce0758107b9969ea3c201',
+        },
+        {
+          id: '2',
+          name: 'Scope',
           value: '5016d8d5cb6ce0758107b9969ea3c201',
         },
       ])

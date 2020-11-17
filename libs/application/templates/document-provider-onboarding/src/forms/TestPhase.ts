@@ -46,13 +46,13 @@ export const TestPhase: Form = buildForm({
     }),
     buildSection({
       id: 'testEndPointSection',
-      name: m.testIntroSection,
+      name: m.testEndPointSection,
       children: [
         buildCustomField(
           {
-            id: 'testEndPoint',
+            id: 'endPoint',
             name: 'Upplýsingar um endapunkt umsækjenda',
-            component: 'testEndPointScreen',
+            component: 'TestEndPoint',
           },
           {},
         ),

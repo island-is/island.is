@@ -45,6 +45,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {
       </Box>
 
       {keys.map((Key) => (
+        //   Need copy button, should maybe be individual component
         <Box marginBottom={3} key={Key.id}>
           <Input disabled label={Key.name} name="Test1" value={Key.value} />
         </Box>

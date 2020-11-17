@@ -56,6 +56,7 @@ const dataSchema = z.object({
   administrativeContact: contact,
   technicalContact: contact,
   helpDesk: helpDeskContact,
+  endPoint: z.string().nonempty(),
   rejectionReason: z.string(),
   approvedByReviewer: z.enum(['APPROVE', 'REJECT']),
 })
