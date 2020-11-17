@@ -216,7 +216,17 @@ export const m = defineMessages({
   },
   testIntroSection: {
     id: 'dpo.application:testinfo.section',
-    defaultMessage: 'Aðgangur að test umhverfi',
+    defaultMessage: 'Tæknilýsing',
+    description: '',
+  },
+  testAccountSection: {
+    id: 'dpo.application:testinfo.section',
+    defaultMessage: 'Prófunarumhverfi',
+    description: '',
+  },
+  testEndPointSection: {
+    id: 'dpo.application:testinfo.section',
+    defaultMessage: 'Endapunktur',
     description: '',
   },
   testSection: {

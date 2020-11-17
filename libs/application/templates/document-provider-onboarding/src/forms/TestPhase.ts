@@ -23,7 +23,7 @@ export const TestPhase: Form = buildForm({
         buildCustomField(
           {
             id: 'testPhaseIntro',
-            name: 'Upplýsingar um prufuaðgang',
+            name: 'Umsókn hefur verið samþykkt',
             component: 'TestPhaseInfoScreen',
           },
           {},
@@ -31,8 +31,36 @@ export const TestPhase: Form = buildForm({
       ],
     }),
     buildSection({
+      id: 'testAccountSection',
+      name: m.testAccountSection,
+      children: [
+        buildCustomField(
+          {
+            id: 'testAccount',
+            name: 'Aðgangur að prófunarumhverfi',
+            component: 'testAccountScreen',
+          },
+          {},
+        ),
+      ],
+    }),
+    buildSection({
+      id: 'testEndPointSection',
+      name: m.testIntroSection,
+      children: [
+        buildCustomField(
+          {
+            id: 'testEndPoint',
+            name: 'Upplýsingar um endapunkt umsækjenda',
+            component: 'testEndPointScreen',
+          },
+          {},
+        ),
+      ],
+    }),
+    buildSection({
       id: 'testSection',
-      name: m.testSection,
+      name: m.testAccountSection,
       children: [
         buildCustomField(
           {
