@@ -35,7 +35,7 @@ import initApollo from 'apps/api-catalogue/graphql/client'
 
 const LIMIT = 25
 
-export interface ServiceListProps {
+interface ServiceListProps {
   staticContent: GetNamespaceQuery['getNamespace']
   filterContent: GetNamespaceQuery['getNamespace']
 }

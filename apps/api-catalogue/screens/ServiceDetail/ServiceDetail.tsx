@@ -12,7 +12,7 @@ import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
 import { Screen } from '../../types'
 import initApollo from 'apps/api-catalogue/graphql/client'
 
-export interface ServiceDetailProps {
+interface ServiceDetailProps {
   serviceId: string
   filterContent: GetNamespaceQuery['getNamespace']
 }
