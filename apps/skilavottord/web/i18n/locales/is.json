@@ -23,12 +23,12 @@
   "myCars": {
     "title": "Úrvinnsla ökutækis",
     "subTitles": {
-      "pending": "Yfirstandandi úrvinnslur",
+      "pending": "Beiðnir í vinnslu",
       "active": "Þín ökutæki",
       "done": "Endurnýtt eða förguð ökutæki"
     },
     "info": {
-      "noCarsAvailable": "Engin ökutæki skrá á þessa kennitölu/þig"
+      "noCarsAvailable": "Engin ökutæki eru skráð á þessa kennitölu"
     },
     "actions": {
       "valid": "Endurvinna ökutæki",
@@ -142,7 +142,7 @@
         "Samþykkja úrvinnslu ökutækis",
         "Afhenda ökutæki á móttökustöð"
       ],
-      "completed": "Búið"
+      "completed": "Lokið"
     },
     "company": {
       "title": "Afskrá ökutæki",
