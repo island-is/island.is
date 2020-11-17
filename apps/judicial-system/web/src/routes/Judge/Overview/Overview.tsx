@@ -238,7 +238,9 @@ export const JudgeOverview: React.FC = () => {
                       TIME_FORMAT,
                     )}`}
                   </Text>
-                  {workingCase.requestedCustodyRestrictions?.includes(CaseCustodyRestrictions.ISOLATION) ? (
+                  {workingCase.requestedCustodyRestrictions?.includes(
+                    CaseCustodyRestrictions.ISOLATION,
+                  ) ? (
                     <>
                       , og verði gert að{' '}
                       <Text as="span" fontWeight="semiBold">
