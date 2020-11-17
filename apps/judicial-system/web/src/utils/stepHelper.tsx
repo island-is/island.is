@@ -153,17 +153,3 @@ export const isNextDisabled = (requiredFields: RequiredField[]) => {
   }
   return false
 }
-
-export const getGender = (gender: CaseGender): Gender => {
-  switch (gender) {
-    case CaseGender.MALE: {
-      return 'karl'
-    }
-    case CaseGender.FEMALE: {
-      return 'kona'
-    }
-    case CaseGender.OTHER: {
-      return 'annað'
-    }
-  }
-}

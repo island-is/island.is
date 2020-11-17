@@ -17,6 +17,7 @@ import {
   capitalize,
   formatNationalId,
   laws,
+  formatGender,
 } from '@island.is/judicial-system/formatters'
 import { parseTransition } from '../../../utils/formatters'
 import { FormFooter } from '../../../shared-components/FormFooter'
@@ -38,7 +39,6 @@ import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { getGender } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 interface CaseData {
   case?: Case
@@ -183,7 +183,7 @@ export const Overview: React.FC = () => {
                   </Text>
                 </Box>
                 <Text variant="h3">
-                  {capitalize(getGender(workingCase.accusedGender))}
+                  {capitalize(formatGender(workingCase.accusedGender))}
                 </Text>
               </Box>
             )}

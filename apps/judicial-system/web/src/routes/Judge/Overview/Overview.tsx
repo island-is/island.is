@@ -12,8 +12,9 @@ import {
   formatCustodyRestrictions,
   laws,
   formatNationalId,
+  formatGender,
 } from '@island.is/judicial-system/formatters'
-import { getGender, isNextDisabled } from '../../../utils/stepHelper'
+import { isNextDisabled } from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import { validate } from '../../../utils/validate'
@@ -172,7 +173,7 @@ export const JudgeOverview: React.FC = () => {
                   </Text>
                 </Box>
                 <Text variant="h3">
-                  {capitalize(getGender(workingCase.accusedGender))}
+                  {capitalize(formatGender(workingCase.accusedGender))}
                 </Text>
               </Box>
             )}

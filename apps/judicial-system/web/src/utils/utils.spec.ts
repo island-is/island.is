@@ -5,7 +5,7 @@ import {
   parseTime,
   parseTransition,
 } from './formatters'
-import { constructConclusion, getGender, isNextDisabled } from './stepHelper'
+import { constructConclusion, isNextDisabled } from './stepHelper'
 import { RequiredField } from '../types'
 import {
   CaseTransition,
@@ -448,25 +448,6 @@ describe('Step helper', () => {
 
       // Assert
       expect(ind).toEqual(false)
-    })
-  })
-
-  describe('getGender()', () => {
-    test('should return the correct gender', () => {
-      // Arrange
-      const male = CaseGender.MALE
-      const female = CaseGender.FEMALE
-      const other = CaseGender.OTHER
-
-      // Act
-      const resultMale = getGender(male)
-      const resultFemale = getGender(female)
-      const resultOther = getGender(other)
-
-      // Assert
-      expect(resultMale).toEqual('karl')
-      expect(resultFemale).toEqual('kona')
-      expect(resultOther).toEqual('annað')
     })
   })
 })
