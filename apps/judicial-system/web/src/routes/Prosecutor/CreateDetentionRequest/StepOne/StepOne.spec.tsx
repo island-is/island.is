@@ -432,13 +432,13 @@ describe('/krafa without ID', () => {
         ]}
         addTypename={false}
       >
-        <userContext.Provider value={mockProsecutorUserContext}>
-          <MemoryRouter initialEntries={[Constants.SINGLE_REQUEST_BASE_ROUTE]}>
+        <MemoryRouter initialEntries={[Constants.SINGLE_REQUEST_BASE_ROUTE]}>
+          <userContext.Provider value={mockProsecutorUserContext}>
             <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}`}>
               <StepOne />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </userContext.Provider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 

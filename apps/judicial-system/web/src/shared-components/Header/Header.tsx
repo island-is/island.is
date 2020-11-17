@@ -2,60 +2,18 @@ import React, { useContext, useEffect } from 'react'
 import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 
-import { userContext } from '../../utils/userContext'
 import { api } from '../../services'
 import * as styles from './Header.treat'
 import * as Constants from '../../utils/constants'
+import { UserContext } from '../UserProvider/UserProvider'
 import { IslandIsApplicationLogo } from '../Logos'
-import { gql, useQuery } from '@apollo/client'
-
-export const UserQuery = gql`
-  query UserQuery {
-    user {
-      name
-      title
-      role
-    }
-  }
-`
-
-const User: React.FC = () => {
-  const { setUser } = useContext(userContext)
-
-  const { loading, data } = useQuery(UserQuery, { fetchPolicy: 'no-cache' })
-  const user = data?.user
-
-  useEffect(() => {
-    if (loading) {
-      return
-    }
-
-    setUser(user)
-  }, [loading, user, setUser])
-
-  return (
-    <Button
-      variant="ghost"
-      icon="logOut"
-      iconType="outline"
-      size="small"
-      onClick={() => {
-        setUser(null)
-        api.logOut()
-      }}
-      data-testid="logout-button"
-    >
-      {user?.name}
-    </Button>
-  )
-}
 
 interface Props {
   pathname: string
 }
 
 const Header: React.FC<Props> = (props: Props) => {
-  const { isAuthenticated } = useContext(userContext)
+  const { isAuthenticated, setUser, user } = useContext(UserContext)
 
   return (
     <header className={`${styles.header}`}>
@@ -81,7 +39,21 @@ const Header: React.FC<Props> = (props: Props) => {
           </Box>
         )}
       </Link>
-      {isAuthenticated() && <User />}
+      {isAuthenticated && (
+        <Button
+          variant="ghost"
+          icon="logOut"
+          iconType="outline"
+          size="small"
+          onClick={() => {
+            api.logOut()
+            setUser(undefined)
+          }}
+          data-testid="logout-button"
+        >
+          {user?.name}
+        </Button>
+      )}
     </header>
   )
 }
