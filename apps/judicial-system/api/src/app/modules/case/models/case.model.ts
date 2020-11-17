@@ -10,6 +10,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { User } from '../../user'
+import { Notification } from './notification.model'
 
 @ObjectType()
 export class Case implements TCase {
@@ -144,4 +145,7 @@ export class Case implements TCase {
 
   @Field(() => User, { nullable: true })
   readonly judge?: User
+
+  @Field(() => [Notification], { nullable: true })
+  readonly notifications?: Notification[]
 }
