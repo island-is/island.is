@@ -18,6 +18,8 @@ module.exports = {
       queryInterface
         .bulkDelete('client_secret', {
           client_id: 'island-is-client-cred-1',
+          value:
+            '2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b',
         })
         .then(() => {
           Promise.all([
