@@ -1,25 +1,12 @@
 import React from 'react'
 import { render, waitFor } from '@testing-library/react'
 import { BrowserRouter, MemoryRouter, Route } from 'react-router-dom'
-import { userContext } from '../../utils/userContext'
-
 import Login from './Login'
-import { mockJudge } from '../../utils/mocks'
-import { User } from '@island.is/judicial-system/types'
+import { mockJudgeQuery } from '../../utils/mocks'
 import { api } from '../../services'
 import fetchMock from 'fetch-mock'
-import {
-  UserProvider,
-  UserQuery,
-} from '../../shared-components/UserProvider/UserProvider'
+import { UserProvider } from '../../shared-components/UserProvider/UserProvider'
 import { MockedProvider } from '@apollo/client/testing'
-import * as Constants from '../../utils/constants'
-
-const mockJudgeUserContext = {
-  isAuthenticated: () => false,
-  user: mockJudge,
-  setUser: (_: User) => undefined,
-}
 
 describe('Login route', () => {
   fetchMock.mock('/api/auth/logout', 200)
@@ -29,11 +16,9 @@ describe('Login route', () => {
 
     // Act
     const { baseElement } = render(
-      <userContext.Provider value={mockJudgeUserContext}>
-        <BrowserRouter>
-          <Login />
-        </BrowserRouter>
-      </userContext.Provider>,
+      <BrowserRouter>
+        <Login />
+      </BrowserRouter>,
     )
 
     // Assert
@@ -45,11 +30,9 @@ describe('Login route', () => {
 
     // Act
     render(
-      <userContext.Provider value={mockJudgeUserContext}>
-        <BrowserRouter>
-          <Login />
-        </BrowserRouter>
-      </userContext.Provider>,
+      <BrowserRouter>
+        <Login />
+      </BrowserRouter>,
     )
 
     // Assert
@@ -58,22 +41,11 @@ describe('Login route', () => {
 
   test('should logout a logged in user', async () => {
     // Arrange
-    const mockJudgeQuery = {
-      request: {
-        query: UserQuery,
-      },
-      result: {
-        data: {
-          user: mockJudge,
-        },
-      },
-    }
-
     const spy = jest.spyOn(api, 'logOut')
 
     // Act
     render(
-      <MockedProvider mocks={[mockJudgeQuery]} addTypename={false}>
+      <MockedProvider mocks={mockJudgeQuery} addTypename={false}>
         <MemoryRouter initialEntries={['/']}>
           <Route path="/">
             <UserProvider>

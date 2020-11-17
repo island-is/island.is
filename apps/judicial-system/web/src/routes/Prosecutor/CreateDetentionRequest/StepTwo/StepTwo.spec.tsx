@@ -7,14 +7,14 @@ import {
   CaseCustodyProvisions,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import * as Constants from '../../../../utils/constants'
 import {
   mockCaseQueries,
-  mockProsecutorUserContext,
+  mockProsecutorQuery,
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 describe('Create detention request, step two', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
@@ -22,8 +22,10 @@ describe('Create detention request, step two', () => {
 
     render(
       <MockedProvider
-        mocks={mockCaseQueries.concat(
-          mockUpdateCaseMutation([
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockUpdateCaseMutation([
             {
               requestedCustodyEndDate: '2020-09-16T13:37:00Z',
               custodyEndDate: '2020-09-16T13:37:00Z',
@@ -41,18 +43,18 @@ describe('Create detention request, step two', () => {
                 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
             } as UpdateCase,
           ]),
-        )}
+        ]}
         addTypename={false}
       >
-        <userContext.Provider value={mockProsecutorUserContext}>
-          <MemoryRouter
-            initialEntries={[`${Constants.STEP_TWO_ROUTE}/test_id_2`]}
-          >
+        <MemoryRouter
+          initialEntries={[`${Constants.STEP_TWO_ROUTE}/test_id_2`]}
+        >
+          <UserProvider>
             <Route path={`${Constants.STEP_TWO_ROUTE}/:id`}>
               <StepTwo />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 
@@ -118,14 +120,17 @@ describe('Create detention request, step two', () => {
 
     // Act
     render(
-      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
-        <userContext.Provider value={mockProsecutorUserContext}>
-          <MemoryRouter initialEntries={['/stofna-krofu/lagaakvaedi/test_id']}>
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter initialEntries={['/stofna-krofu/lagaakvaedi/test_id']}>
+          <UserProvider>
             <Route path={`${Constants.STEP_TWO_ROUTE}/:id`}>
               <StepTwo />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 
@@ -145,16 +150,17 @@ describe('Create detention request, step two', () => {
 
     // Act
     render(
-      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
-        <userContext.Provider value={mockProsecutorUserContext}>
-          <MemoryRouter
-            initialEntries={[`${Constants.STEP_TWO_ROUTE}/test_id`]}
-          >
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter initialEntries={[`${Constants.STEP_TWO_ROUTE}/test_id`]}>
+          <UserProvider>
             <Route path={`${Constants.STEP_TWO_ROUTE}/:id`}>
               <StepTwo />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 

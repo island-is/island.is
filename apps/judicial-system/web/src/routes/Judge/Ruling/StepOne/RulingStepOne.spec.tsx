@@ -9,12 +9,12 @@ import {
 import userEvent from '@testing-library/user-event'
 import {
   mockCaseQueries,
-  mockJudgeUserContext,
+  mockJudgeQuery,
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import { MemoryRouter, Route } from 'react-router-dom'
 import { MockedProvider } from '@apollo/client/testing'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 describe('/domari-krafa/urskurdur', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
@@ -25,6 +25,7 @@ describe('/domari-krafa/urskurdur', () => {
       <MockedProvider
         mocks={[
           ...mockCaseQueries,
+          ...mockJudgeQuery,
           ...mockUpdateCaseMutation([
             {
               id: 'test_id_3',
@@ -43,15 +44,15 @@ describe('/domari-krafa/urskurdur', () => {
         ]}
         addTypename={false}
       >
-        <userContext.Provider value={mockJudgeUserContext}>
-          <MemoryRouter
-            initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id_3`]}
-          >
+        <MemoryRouter
+          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id_3`]}
+        >
+          <UserProvider>
             <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
               <RulingStepOne />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 
@@ -93,6 +94,7 @@ describe('/domari-krafa/urskurdur', () => {
       <MockedProvider
         mocks={[
           ...mockCaseQueries,
+          ...mockJudgeQuery,
           ...mockUpdateCaseMutation([
             {
               id: 'test_id',
@@ -105,15 +107,15 @@ describe('/domari-krafa/urskurdur', () => {
         ]}
         addTypename={false}
       >
-        <userContext.Provider value={mockJudgeUserContext}>
-          <MemoryRouter
-            initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
-          >
+        <MemoryRouter
+          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
+        >
+          <UserProvider>
             <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
               <RulingStepOne />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 
@@ -136,6 +138,7 @@ describe('/domari-krafa/urskurdur', () => {
       <MockedProvider
         mocks={[
           ...mockCaseQueries,
+          ...mockJudgeQuery,
           ...mockUpdateCaseMutation([
             {
               id: 'test_id',
@@ -148,15 +151,15 @@ describe('/domari-krafa/urskurdur', () => {
         ]}
         addTypename={false}
       >
-        <userContext.Provider value={mockJudgeUserContext}>
-          <MemoryRouter
-            initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
-          >
+        <MemoryRouter
+          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
+        >
+          <UserProvider>
             <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
               <RulingStepOne />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 

@@ -19,12 +19,12 @@ export const Login = () => {
   }, [])
 
   useEffect(() => {
-    const logoutCurrentUser = async () => {
-      console.log(user)
-      api.logOut()
-    }
+    /**
+     * When users go to the login screen we want to make sure
+     * that any logged in user is logged out.
+     */
     if (user) {
-      logoutCurrentUser()
+      api.logOut()
     }
   }, [user])
 

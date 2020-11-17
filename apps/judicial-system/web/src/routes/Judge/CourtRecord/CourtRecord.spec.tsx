@@ -4,24 +4,26 @@ import { MemoryRouter, Route } from 'react-router-dom'
 import * as Constants from '../../../utils/constants'
 import CourtRecord from './CourtRecord'
 import userEvent from '@testing-library/user-event'
-import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import {
   mockCaseQueries,
-  mockJudgeUserContext,
+  mockJudgeQuery,
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
 import { UpdateCase } from '@island.is/judicial-system/types'
 import formatISO from 'date-fns/formatISO'
 import { parseTime } from '@island.is/judicial-system-web/src/utils/formatters'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 describe('/domari-krafa/thingbok', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     render(
       <MockedProvider
-        mocks={mockCaseQueries.concat(
-          mockUpdateCaseMutation([
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation([
             {
               courtStartTime: parseTime(formatISO(new Date()), '12:31'),
             } as UpdateCase,
@@ -45,18 +47,18 @@ describe('/domari-krafa/thingbok', () => {
                 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nihilne est in his rebus, quod dignum libero aut indignum esse ducamus? Haec quo modo conveniant, non sane intellego. Facit enim ille duo seiuncta ultima bonorum, quae ut essent vera, coniungi debuerunt; Etenim semper illud extra est, quod arte comprehenditur. Paulum, cum regem Persem captum adduceret, eodem flumine invectio? Nunc haec primum fortasse audientis servire debemus. Duo Reges: constructio interrete. Quare hoc videndum est, possitne nobis hoc ratio philosophorum dare.',
             } as UpdateCase,
           ]),
-        )}
+        ]}
         addTypename={false}
       >
-        <userContext.Provider value={mockJudgeUserContext}>
-          <MemoryRouter
-            initialEntries={[`${Constants.COURT_RECORD_ROUTE}/test_id_2`]}
-          >
+        <MemoryRouter
+          initialEntries={[`${Constants.COURT_RECORD_ROUTE}/test_id_2`]}
+        >
+          <UserProvider>
             <Route path={`${Constants.COURT_RECORD_ROUTE}/:id`}>
               <CourtRecord />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 

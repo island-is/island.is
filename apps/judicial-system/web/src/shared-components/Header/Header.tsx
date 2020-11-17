@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 
@@ -47,7 +47,7 @@ const Header: React.FC<Props> = (props: Props) => {
           size="small"
           onClick={() => {
             api.logOut()
-            setUser(undefined)
+            setUser && setUser(undefined)
           }}
           data-testid="logout-button"
         >
