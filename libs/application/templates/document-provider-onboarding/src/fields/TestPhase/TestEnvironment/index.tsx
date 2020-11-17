@@ -1,0 +1,27 @@
+import React, { FC, useEffect, useState } from 'react'
+import { FieldBaseProps } from '@island.is/application/core'
+
+const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {
+  interface User {
+    id: string
+    name: string
+  }
+
+  let [users, setUsers] = useState<User[]>([])
+
+  useEffect(() => {
+    fetch('/api/users')
+      .then((response) => response.json())
+      .then((json) => setUsers(json))
+  }, [])
+
+  return (
+    <ul>
+      {users.map((User) => (
+        <li key={User.id}>{User.name}</li>
+      ))}
+    </ul>
+  )
+}
+
+export default TestEnvironment

@@ -38,7 +38,7 @@ export const TestPhase: Form = buildForm({
           {
             id: 'testAccount',
             name: 'Aðgangur að prófunarumhverfi',
-            component: 'testAccountScreen',
+            component: 'TestEnvironment',
           },
           {},
         ),
