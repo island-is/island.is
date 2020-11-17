@@ -50,7 +50,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {
             fetchAndValidateData()
           }}
         >
-          Búa til aðgang
+          Vista endapunkt
         </Button>
       </Box>
 
