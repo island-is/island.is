@@ -96,7 +96,7 @@ export const FormStep: FC<Props> = ({
         >
           {formatMessage({
             id: 'service.portal:confirm-code',
-            defaultMessage: 'Senda staðfestingarkóða',
+            defaultMessage: 'Staðfesta',
           })}
         </Button>
       </Box>
