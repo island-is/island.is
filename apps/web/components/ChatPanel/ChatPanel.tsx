@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { Button, Icon } from '@island.is/island-ui/core'
-import { Boost } from './types'
-import { config, ID, URL } from './config'
+import { config, ID, CONVERSATION_KEY } from './config'
 
 import * as styles from './ChatPanel.treat'
 
@@ -13,13 +12,36 @@ declare global {
   }
 }
 
+let boost = null
+
 export const ChatPanel = () => {
   const [visible, setVisible] = useState<boolean>(true)
-  const [boost, setBoost] = useState<Boost | null>(null)
 
   useEffect(() => {
-    if (!boost) {
-      setBoost(window.boostInit(ID, config))
+    const conversationId =
+      window.sessionStorage.getItem(CONVERSATION_KEY) ?? null
+
+    if (!boost && window.boostInit) {
+      const settings = {
+        chatPanel: {
+          ...config.chatPanel,
+          styling: {
+            ...config.chatPanel.styling,
+            settings: {
+              ...config.chatPanel.styling.settings,
+              conversationId,
+            },
+          },
+        },
+      }
+
+      boost = window.boostInit(ID, settings)
+
+      boost.chatPanel.addEventListener('chatPanelClosed', onChatPanelClosed)
+      boost.chatPanel.addEventListener(
+        'conversationIdChanged',
+        onConversationIdChanged,
+      )
     }
   }, [])
 
@@ -27,19 +49,12 @@ export const ChatPanel = () => {
     setVisible(true)
   }
 
-  useEffect(() => {
-    if (boost) {
-      boost.chatPanel.addEventListener('chatPanelClosed', onChatPanelClosed)
-      boost.chatPanel.addEventListener('chatPanelClosed', onChatPanelClosed)
-    }
-  }, [boost])
-
-  if (!boost) {
-    return null
+  const onConversationIdChanged = (e) => {
+    window.sessionStorage.setItem(CONVERSATION_KEY, e.detail.conversationId)
   }
 
   return (
-    <div className={cn(styles.root, { [styles.hidden]: !visible })}>
+    <div className={cn(styles.root, { [styles.hidden]: !boost || !visible })}>
       <Button
         variant="primary"
         circle

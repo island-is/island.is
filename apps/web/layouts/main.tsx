@@ -17,13 +17,7 @@ import * as Sentry from '@sentry/node'
 import { RewriteFrames } from '@sentry/integrations'
 import { useRouter } from 'next/router'
 
-import {
-  Header,
-  PageLoader,
-  FixedNav,
-  SkipToMainContent,
-  ChatPanel,
-} from '../components'
+import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import {
@@ -232,7 +226,10 @@ const Layout: NextComponentType<
             content="https://island.is/island-fb-1200x630.png"
             key="twitterImage"
           />
-          <script src="https://246covid-island.boost.ai/chatPanel/chatPanel.js"></script>
+          <script
+            key="246covid-chat-panel"
+            src="https://246covid-island.boost.ai/chatPanel/chatPanel.js"
+          ></script>
         </Head>
         {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
           <AlertBanner
@@ -336,7 +333,6 @@ const Layout: NextComponentType<
               url('/fonts/ibm-plex-sans-v7-latin-600.woff') format('woff');
           }
         `}</style>
-        <ChatPanel />
       </Page>
     </GlobalContextProvider>
   )

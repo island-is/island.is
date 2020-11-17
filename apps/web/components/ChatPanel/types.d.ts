@@ -1,10 +1,3 @@
-export type Boost = {
-  chatPanel: {
-    show: () => void
-    addEventListener: any
-  }
-}
-
 export type ChatPanelConfig = {
   chatPanel?: {
     header?: {
