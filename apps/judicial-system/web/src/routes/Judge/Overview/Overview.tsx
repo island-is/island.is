@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import {
   Box,
   Text,
@@ -23,6 +23,7 @@ import {
   Case,
   CaseCustodyProvisions,
   UpdateCase,
+  CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
@@ -37,6 +38,10 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 
+interface CaseData {
+  case?: Case
+}
+
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const [
@@ -45,34 +50,36 @@ export const JudgeOverview: React.FC = () => {
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
 
-  const { data, loading } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-  const resCase = data?.case
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
-    const { data } = await updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
-    })
-    const resCase = data?.updateCase
-    if (resCase) {
-      // Do something with the result. In particular, we want th modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-    return resCase
-  }
+  const updateCase = useCallback(
+    async (id: string, updateCase: UpdateCase) => {
+      const { data } = await updateCaseMutation({
+        variables: { input: { id, ...updateCase } },
+      })
+      const resCase = data?.updateCase
+      if (resCase) {
+        // Do something with the result. In particular, we want th modified timestamp passed between
+        // the client and the backend so that we can handle multiple simultanious updates.
+      }
+      return resCase
+    },
+    [updateCaseMutation],
+  )
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
-    if (!workingCase && resCase) {
-      setWorkingCase(resCase)
+    if (!workingCase && data?.case) {
+      setWorkingCase(data.case)
     }
-  }, [workingCase, setWorkingCase, resCase])
+  }, [workingCase, setWorkingCase, data])
 
   return (
     <PageLayout
@@ -211,17 +218,39 @@ export const JudgeOverview: React.FC = () => {
                 labelVariant="h3"
               >
                 <Text>
-                  Gæsluvarðhald til
-                  <strong>
-                    {workingCase.requestedCustodyEndDate &&
-                      ` ${formatDate(
-                        workingCase.requestedCustodyEndDate,
-                        'PPP',
-                      )} kl. ${formatDate(
-                        workingCase.requestedCustodyEndDate,
-                        TIME_FORMAT,
-                      )}`}
-                  </strong>
+                  Þess er krafist að
+                  <Text as="span" fontWeight="semiBold">
+                    {` ${workingCase?.accusedName} 
+                    ${formatNationalId(workingCase.accusedNationalId)}`}
+                  </Text>
+                  , verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta
+                  gæsluvarðhaldi til
+                  <Text as="span" fontWeight="semiBold">
+                    {` ${formatDate(
+                      workingCase.requestedCourtDate,
+                      'EEEE',
+                    ).replace('dagur', 'dagsins')} 
+                    ${formatDate(
+                      workingCase.requestedCustodyEndDate,
+                      'PPP',
+                    )},  kl. ${formatDate(
+                      workingCase?.requestedCustodyEndDate,
+                      TIME_FORMAT,
+                    )}`}
+                  </Text>
+                  {workingCase.requestedCustodyRestrictions?.includes(
+                    CaseCustodyRestrictions.ISOLATION,
+                  ) ? (
+                    <>
+                      , og verði gert að{' '}
+                      <Text as="span" fontWeight="semiBold">
+                        sæta einangrun
+                      </Text>{' '}
+                      á meðan gæsluvarðhaldinu stendur.
+                    </>
+                  ) : (
+                    '.'
+                  )}
                 </Text>
               </AccordionItem>
               <AccordionItem
