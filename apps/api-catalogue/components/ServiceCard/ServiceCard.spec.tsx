@@ -32,8 +32,9 @@ describe(' ServiceCard ', () => {
     ],
   }
   const filterContent: GetNamespaceQuery['getNamespace'] = {
-    __typename: "Namespace",
-    fields: "{" +
+    __typename: 'Namespace',
+    fields:
+      '{' +
       "'data': 'Gögn'," +
       "'type': 'Tegund'," +
       "'access': 'Aðgengi'," +
@@ -52,7 +53,7 @@ describe(' ServiceCard ', () => {
       "'dataOfficial': 'Opinber'," +
       "'dataPersonal': 'Persónugreinanleg'," +
       "'dataFinancial': 'Fjármál'" +
-    "}"
+      '}',
   }
 
   const n = useNamespace(filterContent)
@@ -83,36 +84,26 @@ describe(' ServiceCard ', () => {
       const { getByText } = render(
         <ServiceCard service={service} strings={filterContent} />,
       )
-      expect(
-        getByText(n('pricingFree')),
-      ).toBeTruthy()
-      expect(
-        getByText(n('pricingPaid')),
-      ).toBeTruthy()
+      expect(getByText(n('pricingFree'))).toBeTruthy()
+      expect(getByText(n('pricingPaid'))).toBeTruthy()
     })
     it('should contain all categories values', () => {
       const { getByText } = render(
         <ServiceCard service={service} strings={filterContent} />,
       )
-      expect(
-        getByText(n('dataPublic')),
-      ).toBeTruthy()
+      expect(getByText(n('dataPublic'))).toBeTruthy()
     })
     it('should contain all types values', () => {
       const { getByText } = render(
         <ServiceCard service={service} strings={filterContent} />,
       )
-      expect(
-        getByText(n('typeRest')),
-      ).toBeTruthy()
+      expect(getByText(n('typeRest'))).toBeTruthy()
     })
     it('should contain all Access values', () => {
       const { getByText } = render(
         <ServiceCard service={service} strings={filterContent} />,
       )
-      expect(
-        getByText(n('accessXroad')),
-      ).toBeTruthy()
+      expect(getByText(n('accessXroad'))).toBeTruthy()
     })
   })
 })

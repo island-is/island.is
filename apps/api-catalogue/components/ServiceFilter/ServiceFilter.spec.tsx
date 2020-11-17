@@ -6,10 +6,10 @@ import { GetApiCatalogueInput } from '@island.is/api/schema'
 import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
 
 describe(' ServiceFilter ', () => {
-
   const strings: GetNamespaceQuery['getNamespace'] = {
-    __typename: "Namespace",
-    fields: "{" +
+    __typename: 'Namespace',
+    fields:
+      '{' +
       "'data': 'Gögn'," +
       "'type': 'Tegund'," +
       "'access': 'Aðgengi'," +
@@ -28,7 +28,7 @@ describe(' ServiceFilter ', () => {
       "'dataOfficial': 'Opinber'," +
       "'dataPersonal': 'Persónugreinanleg'," +
       "'dataFinancial': 'Fjármál'" +
-    "}"
+      '}',
   }
 
   const params: GetApiCatalogueInput = {
