@@ -9,28 +9,43 @@ import * as styles from './ChatPanel.treat'
 declare global {
   interface Window {
     boostInit: any
+    boostChatPanel: any
   }
 }
 
 export const ChatPanel = () => {
-  const [show, setShow] = useState<boolean>(true)
+  const [showToggler, setShowToggler] = useState<boolean>(true)
   const [boost, setBoost] = useState<Boost | null>(null)
 
   useEffect(() => {
-    if (window.boostInit) {
-      setBoost(window.boostInit('246covid-island', config))
+    if (!boost) {
+      setBoost(window.boostInit(ID, config))
     }
   }, [])
 
-  if (!boost) {
-    return null
+  const onChatPanelClosed = () => {
+    setShowToggler(true)
   }
 
-  console.log('boost', boost)
+  if (!boost) {
+    console.log('no boost', boost, window.boostInit)
+  } else {
+    console.log('boost', boost, window.boostInit)
+  }
+
+  if (!boost) {
+    return <div>OK!</div>
+  }
 
   return (
-    <div className={cn(styles.button, { [styles.hidden]: !show })}>
-      <button className={cn(styles.button)} onClick={boost.chatPanel.show}>
+    <div className={cn(styles.button, { [styles.hidden]: !showToggler })}>
+      <button
+        className={cn(styles.button)}
+        onClick={() => {
+          boost.chatPanel.show()
+          setShowToggler(!showToggler)
+        }}
+      >
         <Icon icon="accessibility" color="red600" />
       </button>
     </div>

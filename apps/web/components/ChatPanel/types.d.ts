@@ -1,6 +1,7 @@
 export type Boost = {
   chatPanel: {
     show: () => void
+    addEventListener: any
   }
 }
 
