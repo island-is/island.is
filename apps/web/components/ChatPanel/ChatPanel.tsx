@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
-import { Icon } from '@island.is/island-ui/core'
+import { Button, Icon } from '@island.is/island-ui/core'
 import { Boost } from './types'
 import { config, ID, URL } from './config'
 
@@ -14,7 +14,7 @@ declare global {
 }
 
 export const ChatPanel = () => {
-  const [showToggler, setShowToggler] = useState<boolean>(true)
+  const [visible, setVisible] = useState<boolean>(true)
   const [boost, setBoost] = useState<Boost | null>(null)
 
   useEffect(() => {
@@ -24,30 +24,35 @@ export const ChatPanel = () => {
   }, [])
 
   const onChatPanelClosed = () => {
-    setShowToggler(true)
+    setVisible(true)
   }
 
-  if (!boost) {
-    console.log('no boost', boost, window.boostInit)
-  } else {
-    console.log('boost', boost, window.boostInit)
-  }
+  useEffect(() => {
+    if (boost) {
+      boost.chatPanel.addEventListener('chatPanelClosed', onChatPanelClosed)
+      boost.chatPanel.addEventListener('chatPanelClosed', onChatPanelClosed)
+    }
+  }, [boost])
 
   if (!boost) {
-    return <div>OK!</div>
+    return null
   }
 
   return (
-    <div className={cn(styles.button, { [styles.hidden]: !showToggler })}>
-      <button
-        className={cn(styles.button)}
+    <div className={cn(styles.root, { [styles.hidden]: !visible })}>
+      <Button
+        variant="primary"
+        circle
+        disabled={!visible}
+        size="large"
+        iconType="filled"
         onClick={() => {
           boost.chatPanel.show()
-          setShowToggler(!showToggler)
+          setVisible(false)
         }}
       >
-        <Icon icon="accessibility" color="red600" />
-      </button>
+        <Icon icon="chatbubble" color="white" size="large" type="outline" />
+      </Button>
     </div>
   )
 }
