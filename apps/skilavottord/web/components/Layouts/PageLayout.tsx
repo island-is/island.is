@@ -118,12 +118,14 @@ interface PartnerPageProps {
 export const PartnerPageLayout: FC<PartnerPageProps> = ({ children, side }) => (
   <Box>
     <ToastContainer />
-    <Box paddingY={10}>
+    <Box paddingY={[5, 5, 10, 10]}>
       <GridContainer>
         <GridRow>
-          <GridColumn span={['0', '0', '3/12', '3/12']}>{side}</GridColumn>
+          <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
+            {side}
+          </GridColumn>
           <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
-            {children}
+            <Box paddingY={[5, 5, 0, 0]}>{children}</Box>
           </GridColumn>
         </GridRow>
       </GridContainer>
