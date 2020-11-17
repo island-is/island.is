@@ -15,15 +15,17 @@ module.exports = {
     ]
 
     return new Promise((resolve) => {
-      queryInterface.bulkDelete('client_secret', {
-        client_id: 'island-is-client-cred-1'
-      }).then(() => {
-        Promise.all([
-          queryInterface.bulkInsert('client_secret', secrets, {})
-        ]).then(() => {
-          resolve('done')
+      queryInterface
+        .bulkDelete('client_secret', {
+          client_id: 'island-is-client-cred-1',
         })
-      })
+        .then(() => {
+          Promise.all([
+            queryInterface.bulkInsert('client_secret', secrets, {}),
+          ]).then(() => {
+            resolve('done')
+          })
+        })
     })
   },
 
