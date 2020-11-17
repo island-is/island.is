@@ -1,4 +1,4 @@
-import { elasticTagField, sortableFields } from '.';
+import { elasticTagField, sortableFields } from '.'
 
 interface MetaPropsBase {
   types?: string[]

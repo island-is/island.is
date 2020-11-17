@@ -13,7 +13,7 @@ import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
 
 @Injectable()
 export class ContentSearchService {
-  constructor(private elasticService: ElasticService) { }
+  constructor(private elasticService: ElasticService) {}
 
   private getIndex(lang: keyof typeof SearchIndexes) {
     return SearchIndexes[lang] ?? SearchIndexes.is

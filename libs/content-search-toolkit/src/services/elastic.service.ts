@@ -4,32 +4,30 @@ import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-import {
-  autocompleteTermQuery,
-} from '../queries/autocomplete'
+import { autocompleteTermQuery } from '../queries/autocomplete'
 import { searchQuery } from '../queries/search'
+import { documentByMetaDataQuery } from '../queries/documentByMetaData'
 import {
-  documentByMetaDataQuery,
-} from '../queries/documentByMetaData'
-import { AutocompleteTermInput, SearchInput, TagAggregationResponse, DocumentByMetaDataInput, DateAggregationInput, DateAggregationResponse, AutocompleteTermResponse, TagAggregationInput } from '../types'
+  AutocompleteTermInput,
+  SearchInput,
+  TagAggregationResponse,
+  DocumentByMetaDataInput,
+  DateAggregationInput,
+  DateAggregationResponse,
+  AutocompleteTermResponse,
+  TagAggregationInput,
+} from '../types'
 import { GetByIdResponse, SearchResponse } from '@island.is/shared/types'
 import {
   MappedData,
   SearchIndexes,
 } from '@island.is/content-search-indexer/types'
 import { environment } from '../environments/environment'
-import {
-  dateAggregationQuery,
-} from '../queries/dateAggregation'
-import {
-  tagAggregationQuery,
-} from '../queries/tagAggregation'
+import { dateAggregationQuery } from '../queries/dateAggregation'
+import { tagAggregationQuery } from '../queries/tagAggregation'
 
 const { elastic } = environment
-interface SyncRequest {
-  add: MappedData[]
-  remove: string[]
-}
+
 @Injectable()
 export class ElasticService {
   private client: Client

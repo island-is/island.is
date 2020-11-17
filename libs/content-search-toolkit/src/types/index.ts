@@ -1,16 +1,6 @@
-export * from './autocomplete'
-export * from './search'
-export * from './documentByMetaData'
-export * from './dateAggregation'
-export * from './tagAggregation'
+import { MappedData } from '@island.is/content-search-indexer/types'
 
 export type sortDirection = 'desc' | 'asc'
-
-export type sortableFields = {
-  dateUpdated?: sortDirection
-  dateCreated?: sortDirection
-  'title.sort'?: sortDirection
-}
 
 export type elasticTagField = {
   key: string
@@ -18,28 +8,13 @@ export type elasticTagField = {
   value?: string
 }
 
-export type dateResolution = 'year' | 'month' | 'week' | 'day'
-
-export interface TagAggregationResponse {
-  group: {
-    filtered: {
-      doc_count: number
-      count: {
-        buckets: [
-          {
-            key: string
-            doc_count: number
-            value: {
-              buckets: [
-                {
-                  key: string
-                  doc_count: number
-                },
-              ]
-            }
-          },
-        ]
-      }
-    }
-  }
+export interface SyncRequest {
+  add: MappedData[]
+  remove: string[]
 }
+
+export * from './autocomplete'
+export * from './search'
+export * from './documentByMetaData'
+export * from './dateAggregation'
+export * from './tagAggregation'

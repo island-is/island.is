@@ -1,4 +1,4 @@
-import { AutocompleteTermInput } from '../types';
+import { AutocompleteTermInput } from '../types'
 
 export const autocompleteTermQuery = ({
   singleTerm,

@@ -1,4 +1,4 @@
-import { dateResolution, elasticTagField } from '.';
+import { elasticTagField } from '.'
 
 export interface DateAggregationInput {
   types: string[]
@@ -19,3 +19,5 @@ export interface DateAggregationResponse {
     buckets: aggregationResult[]
   }
 }
+
+export type dateResolution = 'year' | 'month' | 'week' | 'day'
