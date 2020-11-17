@@ -1,5 +1,5 @@
-import * as React from "react";
-import { SvgProps as SVGRProps } from "../Icon";
+import * as React from 'react'
+import { SvgProps as SVGRProps } from '../Icon'
 
 const SvgChatbubbleOutline = ({
   title,
@@ -24,7 +24,7 @@ const SvgChatbubbleOutline = ({
         strokeWidth={32}
       />
     </svg>
-  );
-};
+  )
+}
 
-export default SvgChatbubbleOutline;
+export default SvgChatbubbleOutline
