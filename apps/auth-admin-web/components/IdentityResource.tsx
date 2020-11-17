@@ -15,8 +15,8 @@ type Props = {
 export default function IdentityResource<Props> (resource: IdentityResourcesDTO) {
   const { register, handleSubmit, errors, formState } = useForm<IdentityResourcesDTO>();
   const { isDirty, isSubmitting } = formState;
+  // TODO: FIX 
   resource = resource.resource;
-  console.log(resource);
   
   const back = () => {
     // TODO: Go back
@@ -25,9 +25,10 @@ export default function IdentityResource<Props> (resource: IdentityResourcesDTO)
   };
 
   const save = async (data: IdentityResourcesDTO) => {
+    console.log("FORM DATA");
     console.log(data);
 
-    const response = await axios.post("api/resources/identity-resource", data).catch((err) => {
+    const response = await axios.post("api/identity-resource", data.resource).catch((err) => {
        console.log(err);
      });
 
