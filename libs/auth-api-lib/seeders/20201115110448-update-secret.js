@@ -18,6 +18,8 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('client_secret', {})
+    return queryInterface.bulkDelete('client_secret', {
+      client_id: 'island-is-client-cred-1'
+    })
   },
 }
