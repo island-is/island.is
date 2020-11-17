@@ -14,12 +14,16 @@ module.exports = {
       },
     ]
 
+    queryInterface.bulkDelete('client_secret', {
+      client_id: 'island-is-client-cred-1',
+    })
+
     return queryInterface.bulkInsert('client_secret', secrets, {})
   },
 
   down: (queryInterface, Sequelize) => {
     return queryInterface.bulkDelete('client_secret', {
-      client_id: 'island-is-client-cred-1'
+      value: 'island-is-client-cred-1',
     })
   },
 }
