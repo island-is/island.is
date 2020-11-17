@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 import { Layout } from '../Layout'
 import {
   Box,
@@ -17,14 +17,14 @@ interface PropTypes {
   listClassNames?: string
 }
 
-function ServiceLayout({
+const ServiceLayout = ({
   top,
   left,
   right,
   bottom,
   className,
   listClassNames,
-}: PropTypes) {
+}: PropTypes) => {
   return (
     <Box paddingX="gutter">
       <Layout left={top} />

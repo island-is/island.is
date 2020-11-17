@@ -8,7 +8,8 @@ import {
   DataCategory,
 } from '@island.is/api-catalogue/consts'
 
-import { ContentfulString } from '../../services/contentful.types'
+import { GetNamespaceQuery, Namespace } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 
 describe(' ServiceCard ', () => {
   const service: any = {
@@ -30,30 +31,35 @@ describe(' ServiceCard ', () => {
       },
     ],
   }
+  const filterContent: GetNamespaceQuery['getNamespace'] = {
+    __typename: "Namespace",
+    fields: "{" +
+      "'data': 'Gögn'," +
+      "'type': 'Tegund'," +
+      "'access': 'Aðgengi'," +
+      "'mobile': 'Sýna flokka'," +
+      "'search': 'Leita'," +
+      "'pricing': 'Verð'," +
+      "'typeRest': 'REST'," +
+      "'typeSoap': 'SOAP'," +
+      "'dataHealth': 'Heilsa'," +
+      "'dataPublic': 'Almenn'," +
+      "'accessApigw': 'API GW'," +
+      "'accessXroad': 'X-Road'," +
+      "'pricingFree': 'Gjaldfrjáls'," +
+      "'pricingPaid': 'Gjaldskyld'," +
+      "'typeGraphql': 'GraphQL'," +
+      "'dataOfficial': 'Opinber'," +
+      "'dataPersonal': 'Persónugreinanleg'," +
+      "'dataFinancial': 'Fjármál'" +
+    "}"
+  }
 
-  const filterStrings: Array<ContentfulString> = [
-    { id: 'catalog-filter-access', text: 'Aðgengi' },
-    { id: 'catalog-filter-data', text: 'Gögn' },
-    { id: 'catalog-filter-data-financial', text: 'Fjármál' },
-    { id: 'catalog-filter-data-health', text: 'Heilsa' },
-    { id: 'catalog-filter-data-official', text: 'Opinber' },
-    { id: 'catalog-filter-data-personal', text: 'Persónugreinanleg' },
-    { id: 'catalog-filter-data-public', text: 'Almenn' },
-    { id: 'catalog-filter-pricing', text: 'Verð' },
-    { id: 'catalog-filter-pricing-free', text: 'Gjaldfrjáls' },
-    { id: 'catalog-filter-pricing-paid', text: 'Gjaldskyld' },
-    { id: 'catalog-filter-type', text: 'Tegund' },
-    { id: 'catalog-filter-type-graphql', text: 'GraphQL' },
-    { id: 'catalog-filter-type-rest', text: 'REST' },
-    { id: 'catalog-filter-type-soap', text: 'SOAP' },
-    { id: 'catalog-filter-access-xroad', text: 'X-Road' },
-    { id: 'catalog-filter-access-apigw', text: 'API GW' },
-    { id: 'catalog-filter-search', text: 'Leita' },
-  ]
+  const n = useNamespace(filterContent)
 
   it('should render successfully', async () => {
     const { baseElement } = render(
-      <ServiceCard service={service} strings={filterStrings} />,
+      <ServiceCard service={service} strings={filterContent} />,
     )
     expect(baseElement).toBeTruthy()
   })
@@ -61,64 +67,51 @@ describe(' ServiceCard ', () => {
   describe('Card values should contain', () => {
     it('should contain service name', () => {
       const { getByText } = render(
-        <ServiceCard service={service} strings={filterStrings} />,
+        <ServiceCard service={service} strings={filterContent} />,
       )
       expect(getByText(service.name)).toBeTruthy()
     })
 
     it('should contain owner name', () => {
       const { getByText } = render(
-        <ServiceCard service={service} strings={filterStrings} />,
+        <ServiceCard service={service} strings={filterContent} />,
       )
       expect(getByText(service.owner)).toBeTruthy()
     })
 
     it('should contain all pricing values', () => {
       const { getByText } = render(
-        <ServiceCard service={service} strings={filterStrings} />,
+        <ServiceCard service={service} strings={filterContent} />,
       )
       expect(
-        getByText(
-          filterStrings.find((s) => s.id === 'catalog-filter-pricing-free')
-            .text,
-        ),
+        getByText(n('pricingFree')),
       ).toBeTruthy()
       expect(
-        getByText(
-          filterStrings.find((s) => s.id === 'catalog-filter-pricing-paid')
-            .text,
-        ),
+        getByText(n('pricingPaid')),
       ).toBeTruthy()
     })
     it('should contain all categories values', () => {
       const { getByText } = render(
-        <ServiceCard service={service} strings={filterStrings} />,
+        <ServiceCard service={service} strings={filterContent} />,
       )
       expect(
-        getByText(
-          filterStrings.find((s) => s.id === 'catalog-filter-data-public').text,
-        ),
+        getByText(n('dataPublic')),
       ).toBeTruthy()
     })
     it('should contain all types values', () => {
       const { getByText } = render(
-        <ServiceCard service={service} strings={filterStrings} />,
+        <ServiceCard service={service} strings={filterContent} />,
       )
       expect(
-        getByText(
-          filterStrings.find((s) => s.id === 'catalog-filter-type-rest').text,
-        ),
+        getByText(n('typeRest')),
       ).toBeTruthy()
     })
     it('should contain all Access values', () => {
       const { getByText } = render(
-        <ServiceCard service={service} strings={filterStrings} />,
+        <ServiceCard service={service} strings={filterContent} />,
       )
       expect(
-        getByText(
-          filterStrings.find((s) => s.id === 'catalog-filter-access-xroad')
-            .text,
-        ),
+        getByText(n('accessXroad')),
       ).toBeTruthy()
     })
   })
