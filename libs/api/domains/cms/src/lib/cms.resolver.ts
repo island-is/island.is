@@ -46,7 +46,6 @@ import { CmsContentfulService } from './cms.contentful.service'
 import { CmsElasticsearchService } from './cms.elasticsearch.service'
 import { ArticleCategory } from './models/articleCategory.model'
 import { GetArticleCategoriesInput } from './dto/getArticleCategories.input'
-import { SearchIndexes } from '@island.is/api/content-search'
 import { GetArticlesInput } from './dto/getArticles.input'
 import { GetContentSlugInput } from './dto/getContentSlug.input'
 import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.input'
@@ -63,6 +62,7 @@ import { GetNewsDatesInput } from './dto/getNewsDates.input'
 import { NewsList } from './models/newsList.model'
 import { GetTellUsAStoryInput } from './dto/getTellUsAStory.input'
 import { TellUsAStory } from './models/tellUsAStory.model'
+import { SearchIndexes } from '@island.is/content-search-indexer/types'
 
 const { cacheTime } = environment
 
