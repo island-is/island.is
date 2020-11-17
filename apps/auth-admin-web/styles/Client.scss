@@ -1,4 +1,5 @@
-.client {
+.client,
+.identity-resource {
   &__container {
     h1 {
       font-family: IBM Plex Sans;
@@ -35,10 +36,15 @@
       position: relative;
       flex-basis: 70%;
     }
-    input[type="checkbox"] {
+    input[type='checkbox'] {
       flex-basis: unset;
       margin-top: 30px;
       margin-left: 8px;
+    }
+    span // validation
+    {
+      margin-left: 20px;
+      color: #fb115b;
     }
   }
 

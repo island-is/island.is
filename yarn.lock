@@ -1409,6 +1409,11 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@hookform/error-message@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@hookform/error-message/-/error-message-0.0.4.tgz#a499aa62994af44da3d207f6ed01232f43b3a549"
+  integrity sha512-as5acnxkWuF5XrzHhZlzdXUk4zpHNzFLe+uGyaJtSrMbDVTvcNL62ESRK5DTVGPix8shJnt6G2LfrobHBPpvYg==
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz#fd3db1d59ecf7cf121e80650bb86712f9b55eced"
@@ -11015,6 +11020,11 @@ react-fast-compare@^2.0.1:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-2.0.4.tgz#e84b4d455b0fec113e0402c329352715196f81f9"
   integrity sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==
+
+react-hook-form@^6.11.2:
+  version "6.11.2"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-6.11.2.tgz#a0d81f71f85551457aa06892599aa07605f42154"
+  integrity sha512-3Go23kq3JAsUi5xNtOBi2YVJALufmycyS8eA/hdriAbj3U7/lffPlcl0QWviSy4L0EE+dsQwEX2YSTyMMADQsw==
 
 react-is@16.13.1, react-is@^16.12.0, react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"
