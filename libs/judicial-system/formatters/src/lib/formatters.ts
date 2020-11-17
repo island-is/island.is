@@ -2,7 +2,10 @@ import { format, parseISO, isValid } from 'date-fns' // eslint-disable-line no-r
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
 
-import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
+import {
+  CaseCustodyRestrictions,
+  CaseGender,
+} from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
   if (typeof date === 'string' || date instanceof String) {
@@ -73,4 +76,15 @@ export const formatCustodyRestrictions = (
         .toString()
         .replace(',', ', ')
     : 'Ekki er farið fram á takmarkanir á gæslu'
+}
+
+export function formatGender(gender: CaseGender): string {
+  switch (gender) {
+    case CaseGender.MALE:
+      return 'karl'
+    case CaseGender.FEMALE:
+      return 'kona'
+    case CaseGender.OTHER:
+      return 'annað'
+  }
 }
