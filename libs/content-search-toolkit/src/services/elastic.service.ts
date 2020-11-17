@@ -6,28 +6,22 @@ import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import {
   autocompleteTermQuery,
-  AutocompleteTermResponse,
 } from '../queries/autocomplete'
-import { SearchInput, searchQuery } from '../queries/search'
+import { searchQuery } from '../queries/search'
 import {
-  DocumentByMetaDataInput,
   documentByMetaDataQuery,
 } from '../queries/documentByMetaData'
-import { TagAggregationResponse } from '../types'
+import { AutocompleteTermInput, SearchInput, TagAggregationResponse, DocumentByMetaDataInput, DateAggregationInput, DateAggregationResponse, AutocompleteTermResponse, TagAggregationInput } from '../types'
 import { GetByIdResponse, SearchResponse } from '@island.is/shared/types'
 import {
   MappedData,
   SearchIndexes,
 } from '@island.is/content-search-indexer/types'
 import { environment } from '../environments/environment'
-import { WebSearchAutocompleteInput } from '../dto'
 import {
-  DateAggregationInput,
   dateAggregationQuery,
-  DateAggregationResponse,
 } from '../queries/dateAggregation'
 import {
-  TagAggregationInput,
   tagAggregationQuery,
 } from '../queries/tagAggregation'
 
@@ -199,10 +193,10 @@ export class ElasticService {
 
   async fetchAutocompleteTerm(
     index: SearchIndexes,
-    input: Omit<WebSearchAutocompleteInput, 'language'>,
+    input: AutocompleteTermInput,
   ): Promise<AutocompleteTermResponse> {
-    const { singleTerm: prefix, size } = input
-    const requestBody = autocompleteTermQuery({ prefix, size })
+    const { singleTerm, size } = input
+    const requestBody = autocompleteTermQuery({ singleTerm, size })
 
     const data = await this.findByQuery<
       AutocompleteTermResponse,

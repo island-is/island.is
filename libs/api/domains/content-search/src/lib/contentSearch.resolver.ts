@@ -1,16 +1,13 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
-import {
-  SearcherInput,
-  WebSearchAutocompleteInput,
-} from '@island.is/content-search-toolkit'
-
 import { ContentSearchService } from './contentSearch.service'
+import { SearcherInput } from './dto/searcher.input'
+import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
 import { SearchResult } from './models/searchResult.model'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
 
 @Resolver()
 export class ContentSearchResolver {
-  constructor(private contentSearchService: ContentSearchService) {}
+  constructor(private contentSearchService: ContentSearchService) { }
 
   @Query(() => SearchResult)
   searchResults(@Args('query') query: SearcherInput): Promise<SearchResult> {

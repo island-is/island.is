@@ -1,4 +1,8 @@
-export * from './document'
+export * from './autocomplete'
+export * from './search'
+export * from './documentByMetaData'
+export * from './dateAggregation'
+export * from './tagAggregation'
 
 export type sortDirection = 'desc' | 'asc'
 
