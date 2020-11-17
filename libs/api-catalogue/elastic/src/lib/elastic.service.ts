@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { Client } from '@elastic/elasticsearch'
+import { Client, ApiResponse } from '@elastic/elasticsearch'
 import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { environment } from '../environments/environments'
 import { Service } from '@island.is/api-catalogue/types'
-import { RequestBody } from '@elastic/elasticsearch/lib/Transport'
 import { SearchResponse } from '@island.is/shared/types'
 import { searchQuery } from './queries/search.model'
 import { logger } from '@island.is/logging'
@@ -38,20 +37,6 @@ export class ElasticService {
     }
   }
 
-  async index(service: Service) {
-    logger.info('Indexing', service)
-
-    try {
-      return await this.client.index({
-        id: service.id,
-        index: this.indexName,
-        body: service,
-      })
-    } catch (error) {
-      logger.error('Error in index', error)
-    }
-  }
-
   /**
    * Accepts array of Services to bulk insert into elastic search.
    */
@@ -80,14 +65,15 @@ export class ElasticService {
   }
 
   async fetchAll(
-    limit?: number,
+    //Set the default limit to fetch 25 services
+    limit = 25,
     searchAfter?: string[],
     query?: string,
     pricing?: string[],
     data?: string[],
     type?: string[],
     access?: string[],
-  ): Promise<any> {
+  ): Promise<ApiResponse<SearchResponse<Service>>> {
     logger.debug('Fetch paginated results')
 
     const requestBody = searchQuery({
@@ -103,23 +89,20 @@ export class ElasticService {
     return this.search<SearchResponse<Service>, typeof requestBody>(requestBody)
   }
 
-  async fetchById(id: string): Promise<any> {
+  async fetchById(id: string): Promise<ApiResponse<SearchResponse<Service>>> {
     logger.info('Fetch by id')
-    return this.search<SearchResponse<Service>, RequestBody>({
+    const requestBody = {
       query: { bool: { must: { term: { id: id } } } },
-    })
+    }
+    return this.search<SearchResponse<Service>, typeof requestBody>(requestBody)
   }
 
   async search<ResponseBody, RequestBody>(query: RequestBody) {
     logger.debug('Searching for', query)
-    try {
-      return await this.client.search<ResponseBody, RequestBody>({
-        body: query,
-        index: this.indexName,
-      })
-    } catch (error) {
-      logger.error('Error in search', error)
-    }
+    return await this.client.search<ResponseBody, RequestBody>({
+      body: query,
+      index: this.indexName,
+    })
   }
 
   async deleteByIds(ids: Array<string>) {

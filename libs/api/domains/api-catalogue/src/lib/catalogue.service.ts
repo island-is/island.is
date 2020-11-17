@@ -25,7 +25,7 @@ export class ApiCatalogueService {
     try {
       //Set the search after parameter as an empty array since it will be ignored in elastic
       let searchAfter: string[] = []
-      const { limit = 25, cursor, query, pricing, data, type, access } = input
+      const { limit, cursor, query, pricing, data, type, access } = input
 
       if (typeof cursor !== 'undefined' && cursor !== null) {
         const temp = Buffer.from(input.cursor as string, 'base64').toString()
@@ -43,11 +43,11 @@ export class ApiCatalogueService {
       )
 
       //check if we have more available then was asked for
-      if (body?.hits?.hits.length > limit) {
+      if (limit && body?.hits?.hits.length > limit) {
         //remove the unwanted result
         body?.hits?.hits.pop()
         //get the sort parameters of the last item to use as the cursor for next search
-        searchAfter = body?.hits?.hits[body?.hits?.hits.length - 1].sort
+        searchAfter = body.hits.hits[body.hits.hits.length - 1].sort as string[]
         //Set next cursor values
         res = {
           ...res,

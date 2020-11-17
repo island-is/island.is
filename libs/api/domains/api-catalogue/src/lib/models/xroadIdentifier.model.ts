@@ -22,9 +22,5 @@ export class XroadInfo implements XroadIdentifier {
 
   @Field((type) => String)
   @IsString()
-<<<<<<< HEAD
   serviceCode?: string
-=======
-  serviceCode!: string
->>>>>>> setting libs for api-catalogue to strict
 }
