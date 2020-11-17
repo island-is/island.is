@@ -40,7 +40,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 
 interface CaseData {
-  case: Case
+  case?: Case
 }
 
 export const Overview: React.FC = () => {
@@ -121,7 +121,7 @@ export const Overview: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (!workingCase && data) {
+    if (!workingCase && data?.case) {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])

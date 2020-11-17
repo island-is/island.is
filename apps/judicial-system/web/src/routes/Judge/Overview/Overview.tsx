@@ -38,6 +38,10 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 
+interface CaseData {
+  case?: Case
+}
+
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const [
@@ -46,7 +50,7 @@ export const JudgeOverview: React.FC = () => {
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
 
-  const { data, loading } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
@@ -72,19 +76,10 @@ export const JudgeOverview: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (!workingCase && data) {
+    if (!workingCase && data?.case) {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
-
-  const hasIsolation = (rass: Case): boolean => {
-    const restrictions =
-      rass?.custodyRestrictions !== undefined
-        ? rass.custodyRestrictions
-        : rass.requestedCustodyRestrictions
-
-    return restrictions?.includes(CaseCustodyRestrictions.ISOLATION)
-  }
 
   return (
     <PageLayout
@@ -243,7 +238,7 @@ export const JudgeOverview: React.FC = () => {
                       TIME_FORMAT,
                     )}`}
                   </Text>
-                  {hasIsolation(workingCase) ? (
+                  {workingCase.requestedCustodyRestrictions?.includes(CaseCustodyRestrictions.ISOLATION) ? (
                     <>
                       , og verði gert að{' '}
                       <Text as="span" fontWeight="semiBold">
