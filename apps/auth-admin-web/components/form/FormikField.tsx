@@ -1,28 +1,32 @@
 import React from "react";
-import { ErrorMessage, Field } from "formik";
+import { ErrorMessage } from '@hookform/error-message';
+import { useForm } from "react-hook-form";
 
 
-interface FormikFieldProps {
+interface FieldProps {
   name: string;
   label: string;
   type?: string;
   required?: boolean;
-  className?: string
+  parent?: string
+  value: number | string | null,
+  errors: unknown,
 }
 
-const FormikField: React.FC<FormikFieldProps> = ({ name, label, className="input__", type = "text", required = false}) => {
-  return (
-    <div className={className+'__'+type}>
-      <Field
-        required={required}
-        autoComplete="off"
-        label={label}
-        name={name}
-        type={type}
-        helperText={<ErrorMessage name={name} />}
-      />
-    </div>
-  );
+const HookField: React.FC<FieldProps> = ({ name, label, value, errors, type = "text", required = false}) => {
+    return (
+      <div className={'__container__field'}>
+        <label className={'__label'}>{label}</label>
+        <input
+          required={required}
+          defaultValue={value}
+          autoComplete="off"
+          name={name}
+          type={type}
+           />       
+        <ErrorMessage as="span" errors={errors} name={name} message={label + ' is required'} /> 
+      </div>
+    );  
 };
 
-export default FormikField;
+export default HookField;
