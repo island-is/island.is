@@ -90,7 +90,13 @@ const Select: FC = () => {
         />
         <Box width="full" display="inlineFlex" justifyContent="spaceBetween">
           <Hidden above="md">
-            <Button variant="ghost" circle size="large" icon="arrowBack" />
+            <Button
+              variant="ghost"
+              circle
+              size="large"
+              icon="arrowBack"
+              onClick={handleCancel}
+            />
           </Hidden>
           <Hidden below="md">
             <Button variant="ghost" onClick={handleCancel}>

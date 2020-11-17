@@ -147,7 +147,13 @@ const Confirm: FC = () => {
         )}
         <Box width="full" display="inlineFlex" justifyContent="spaceBetween">
           <Hidden above="md">
-            <Button variant="ghost" circle icon="arrowBack" size="large" />
+            <Button
+              variant="ghost"
+              circle
+              icon="arrowBack"
+              size="large"
+              onClick={handleBack}
+            />
           </Hidden>
           <Hidden below="md">
             <Button variant="ghost" onClick={handleBack}>
