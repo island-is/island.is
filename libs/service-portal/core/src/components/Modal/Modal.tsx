@@ -22,7 +22,7 @@ export const Modal: FC<Props> = ({ id, children, onCloseModal }) => {
               <FocusableBox
                 component="button"
                 className={styles.closeButton}
-                onClick={closeModal}
+                onClick={handleClose}
                 padding={1}
               >
                 <Icon
