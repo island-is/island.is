@@ -11,7 +11,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {
   let [users, setUsers] = useState<User[]>([])
 
   useEffect(() => {
-    fetch('/api/users')
+    fetch('/api/keys')
       .then((response) => response.json())
       .then((json) => setUsers(json))
   }, [])
