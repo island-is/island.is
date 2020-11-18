@@ -33,6 +33,7 @@ export const routes = {
     lifeEvent: 'life-event',
     LifeEventPage: 'life-event',
     lifeEventPage: 'life-event',
+    adgerdir: 'covid-operations',
   },
 }
 
