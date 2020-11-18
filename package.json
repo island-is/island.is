@@ -79,6 +79,7 @@
     "@types/nodemailer": "6.4.0",
     "@types/passport-jwt": "3.0.3",
     "@types/pdfkit": "0.10.6",
+    "@types/pubsub-js": "1.8.1",
     "@types/react-table": "7.0.24",
     "@types/stream-buffers": "3.0.3",
     "@xstate/react": "0.8.1",

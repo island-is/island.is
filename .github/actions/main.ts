@@ -38,7 +38,7 @@ rl.on('line', function (line) {
 rl.on('close', async function () {
   const result = await findLastGoodBuild(
     shas,
-    process.env.BRANCH,
+    process.env.BRANCH || process.env.GIT_BRANCH,
     process.env.BASE_BRANCH || 'main',
     new GitHubWorkflowQueries(),
   )

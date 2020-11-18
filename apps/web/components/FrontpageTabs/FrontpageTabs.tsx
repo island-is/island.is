@@ -162,10 +162,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     <GridContainer>
       <GridRow className={styles.tabPanelRow}>
         <GridColumn hiddenBelow="lg" span="1/12" />
-        <GridColumn
-          span={['12/12', '12/12', '12/12', '6/12']}
-          position="static"
-        >
+        <GridColumn span={['12/12', '12/12', '7/12', '6/12']} position="static">
           <Box ref={contentRef}>
             <TabList
               {...tab}
@@ -206,13 +203,19 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                     })}
                   >
                     <Box
-                      paddingY={3}
+                      marginY={3}
                       ref={(el) => (itemRefs.current[index] = el)}
                       style={{ minHeight: `${minHeight}px` }}
                     >
                       <Stack space={3}>
                         <Text variant="eyebrow" color="purple400">
-                          <span className={styles.textItem}>{subtitle}</span>
+                          <span
+                            className={cn(styles.textItem, {
+                              [styles.textItemVisible]: visible,
+                            })}
+                          >
+                            {subtitle}
+                          </span>
                         </Text>
                         <Text variant="h1" as="h1" id={tabTitleId}>
                           <span
@@ -311,12 +314,12 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
             {searchContent}
           </Box>
         </GridColumn>
-        <GridColumn hiddenBelow="lg" span={['0', '0', '0', '4/12']}>
+        <GridColumn hiddenBelow="md" span={['0', '0', '5/12', '4/12']}>
           <Box
             display="flex"
             flexDirection="column"
-            justifyContent="center"
             height="full"
+            justifyContent="center"
           >
             <Illustration illustrationIndex={selectedIndex} />
           </Box>

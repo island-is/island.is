@@ -13,7 +13,7 @@ import { environment } from '../../../environments'
 import { generateRulingPdf, writeFile } from '../../formatters'
 import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
-import { Case, ConfirmSignatureResponse } from './models'
+import { Case, SignatureConfirmationResponse } from './models'
 import { TransitionUpdate } from './case.state'
 
 @Injectable()
@@ -29,6 +29,44 @@ export class CaseService {
     private readonly logger: Logger,
   ) {}
 
+  private async sendEmail(
+    recipientName: string,
+    recipientEmail: string,
+    courtCaseNumber: string,
+    signedRulingPdf: string,
+  ) {
+    try {
+      await this.emailService.sendEmail({
+        from: {
+          name: environment.email.fromName,
+          address: environment.email.fromEmail,
+        },
+        replyTo: {
+          name: environment.email.replyToName,
+          address: environment.email.replyToEmail,
+        },
+        to: [
+          {
+            name: recipientName,
+            address: recipientEmail,
+          },
+        ],
+        subject: `Úrskurður í máli ${courtCaseNumber}`,
+        text: 'Sjá viðhengi',
+        html: 'Sjá viðhengi',
+        attachments: [
+          {
+            filename: `${courtCaseNumber}.pdf`,
+            content: signedRulingPdf,
+            encoding: 'binary',
+          },
+        ],
+      })
+    } catch (error) {
+      this.logger.error(`Failed to send email to ${recipientEmail}`, error)
+    }
+  }
+
   private async sendRulingAsSignedPdf(
     existingCase: Case,
     signedRulingPdf: string,
@@ -37,40 +75,26 @@ export class CaseService {
       writeFile(`${existingCase.id}-ruling-signed.pdf`, signedRulingPdf)
     }
 
-    await this.emailService.sendEmail({
-      from: {
-        name: environment.email.fromName,
-        address: environment.email.fromEmail,
-      },
-      replyTo: {
-        name: environment.email.replyToName,
-        address: environment.email.replyToEmail,
-      },
-      to: [
-        {
-          name: existingCase.prosecutor?.name,
-          address: existingCase.prosecutor?.email,
-        },
-        {
-          name: existingCase.judge?.name,
-          address: existingCase.judge?.email,
-        },
-        {
-          name: existingCase.defenderName,
-          address: existingCase.defenderEmail,
-        },
-      ],
-      subject: `Úrskurður í máli ${existingCase.courtCaseNumber}`,
-      text: 'Sjá viðhengi',
-      html: 'Sjá viðhengi',
-      attachments: [
-        {
-          filename: `${existingCase.courtCaseNumber}.pdf`,
-          content: signedRulingPdf,
-          encoding: 'binary',
-        },
-      ],
-    })
+    await Promise.all([
+      this.sendEmail(
+        existingCase.prosecutor?.name,
+        existingCase.prosecutor?.email,
+        existingCase.courtCaseNumber,
+        signedRulingPdf,
+      ),
+      this.sendEmail(
+        existingCase.judge?.name,
+        existingCase.judge?.email,
+        existingCase.courtCaseNumber,
+        signedRulingPdf,
+      ),
+      this.sendEmail(
+        existingCase.defenderName,
+        existingCase.defenderEmail,
+        existingCase.courtCaseNumber,
+        signedRulingPdf,
+      ),
+    ])
   }
 
   getAll(): Promise<Case[]> {
@@ -148,10 +172,10 @@ export class CaseService {
     }
   }
 
-  async confirmSignature(
+  async getSignatureConfirmation(
     existingCase: Case,
     documentToken: string,
-  ): Promise<ConfirmSignatureResponse> {
+  ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(
       `Confirming signature of ruling for case ${existingCase.id}`,
     )
