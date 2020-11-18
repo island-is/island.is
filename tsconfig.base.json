@@ -117,6 +117,7 @@
       "@island.is/content-search-toolkit": [
         "libs/content-search-toolkit/src/index.ts"
       ],
+      "@island.is/contentful-editor": ["libs/contentful-editor/src/index.ts"],
       "@island.is/dokobit-signing": ["libs/dokobit-signing/src/index.ts"],
       "@island.is/email-service": ["libs/email-service/src/index.ts"],
       "@island.is/file-storage": ["libs/file-storage/src/index.ts"],

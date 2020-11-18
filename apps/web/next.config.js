@@ -81,6 +81,10 @@ module.exports = withTreat(
 
       env: {
         API_MOCKS: process.env.API_MOCKS,
+        CONTENTFUL_SPACE: process.env.CONTENTFUL_SPACE,
+        CONTENTFUL_MANAGEMENT_ACCESS_TOKEN:
+          process.env.CONTENTFUL_MANAGEMENT_ACCESS_TOKEN,
+        CONTENTFUL_ENVIRONMENT: process.env.CONTENTFUL_ENVIRONMENT,
       },
     }),
   ),

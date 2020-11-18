@@ -78,7 +78,7 @@ const ArticleFields = [
 
 @Injectable()
 export class CmsContentfulService {
-  constructor(private contentfulRepository: ContentfulRepository) {}
+  constructor(private contentfulRepository: ContentfulRepository) { }
 
   async getAdgerdirFrontpage(lang = 'is-IS'): Promise<AdgerdirFrontpage> {
     const result = await this.contentfulRepository

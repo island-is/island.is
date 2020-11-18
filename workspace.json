@@ -1741,6 +1741,32 @@
         }
       }
     },
+    "contentful-editor": {
+      "root": "libs/contentful-editor",
+      "sourceRoot": "libs/contentful-editor/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/contentful-editor/tsconfig.lib.json",
+              "libs/contentful-editor/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/contentful-editor/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/contentful-editor/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "contentful-importer": {
       "root": "libs/contentful-importer",
       "sourceRoot": "libs/contentful-importer/src",
