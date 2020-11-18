@@ -11,13 +11,13 @@ import {
 export class TransitionCaseInput implements TransitionCase {
   @Allow()
   @Field()
-  readonly id: string
+  readonly id!: string
 
   @Allow()
   @Field()
-  readonly modified: string
+  readonly modified!: string
 
   @Allow()
   @Field(() => String)
-  readonly transition: CaseTransition
+  readonly transition!: CaseTransition
 }

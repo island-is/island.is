@@ -28,6 +28,7 @@ import {
   SendNotificationResponse,
   SignatureConfirmationResponse,
 } from './models'
+import { BackendAPI } from '../../../services'
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Case)
@@ -38,7 +39,9 @@ export class CaseResolver {
   ) {}
 
   @Query(() => [Case], { nullable: true })
-  cases(@Context('dataSources') { backendApi }): Promise<Case[]> {
+  cases(
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
     return backendApi.getCases()
@@ -48,7 +51,7 @@ export class CaseResolver {
   case(
     @Args('input', { type: () => CaseQueryInput })
     input: CaseQueryInput,
-    @Context('dataSources') { backendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Case> {
     this.logger.debug(`Getting case ${input.id}`)
 
@@ -59,7 +62,7 @@ export class CaseResolver {
   createCase(
     @Args('input', { type: () => CreateCaseInput })
     input: CreateCaseInput,
-    @Context('dataSources') { backendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Case> {
     this.logger.debug('Creating case')
 
@@ -70,7 +73,7 @@ export class CaseResolver {
   updateCase(
     @Args('input', { type: () => UpdateCaseInput })
     input: UpdateCaseInput,
-    @Context('dataSources') { backendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Case> {
     const { id, ...updateCase } = input
 
@@ -84,7 +87,7 @@ export class CaseResolver {
     @Args('input', { type: () => TransitionCaseInput })
     input: TransitionCaseInput,
     @CurrentAuthUser() authUser: AuthUser,
-    @Context('dataSources') { backendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Case> {
     const { id, ...transitionCase } = input
 
@@ -98,7 +101,7 @@ export class CaseResolver {
     @Args('input', { type: () => SendNotificationInput })
     input: SendNotificationInput,
     @CurrentAuthUser() authUser: AuthUser,
-    @Context('dataSources') { backendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<SendNotificationResponse> {
     const { caseId, ...sendNotification } = input
 
@@ -115,7 +118,7 @@ export class CaseResolver {
   requestSignature(
     @Args('input', { type: () => RequestSignatureInput })
     input: RequestSignatureInput,
-    @Context('dataSources') { backendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<RequestSignatureResponse> {
     this.logger.debug(`Requesting signature of ruling for case ${input.caseId}`)
 
@@ -126,7 +129,7 @@ export class CaseResolver {
   signatureConfirmation(
     @Args('input', { type: () => SignatureConfirmationQueryInput })
     input: SignatureConfirmationQueryInput,
-    @Context('dataSources') { backendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<SignatureConfirmationResponse> {
     const { caseId, documentToken } = input
 
@@ -138,7 +141,7 @@ export class CaseResolver {
   @ResolveField(() => [Notification])
   async notifications(
     @Parent() existingCase: Case,
-    @Context('dataSources') { backendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Notification[]> {
     const { id } = existingCase
 

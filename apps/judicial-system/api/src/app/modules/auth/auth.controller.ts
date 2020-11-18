@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken'
 import IslandisLogin from 'islandis-login'
 import { Entropy } from 'entropy-string'
 import { uuid } from 'uuidv4'
+import { CookieOptions, Request, Response } from 'express'
 
 import {
   Body,
@@ -22,13 +23,7 @@ import {
 } from '@island.is/judicial-system/consts'
 
 import { environment } from '../../../environments'
-import {
-  Cookie,
-  CookieOptions,
-  Credentials,
-  VerifyResult,
-  AuthUser,
-} from './auth.types'
+import { Cookie, Credentials, VerifyResult, AuthUser } from './auth.types'
 import { AuthService } from './auth.service'
 
 const { samlEntryPoint, jwtSecret } = environment.auth
@@ -76,7 +71,11 @@ export class AuthController {
   ) {}
 
   @Post('callback')
-  async callback(@Body('token') token, @Res() res, @Req() req) {
+  async callback(
+    @Body('token') token: string,
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
     this.logger.debug('Received callback request')
 
     let verifyResult: VerifyResult
@@ -113,7 +112,7 @@ export class AuthController {
 
   @Get('login')
   @ApiQuery({ name: 'returnUrl' })
-  login(@Res() res, @Query('returnUrl') returnUrl) {
+  login(@Res() res: Response, @Query('returnUrl') returnUrl: string) {
     this.logger.debug(`Received login request with return url ${returnUrl}`)
 
     const { name, options } = REDIRECT_COOKIE
@@ -128,8 +127,8 @@ export class AuthController {
       return this.redirectAuthenticatedUser(
         {
           nationalId: process.env.AUTH_USER,
-          name: null,
-          mobile: null,
+          name: '',
+          mobile: '',
         },
         returnUrl ?? '/gaesluvardhaldskrofur',
         res,
@@ -145,7 +144,7 @@ export class AuthController {
   }
 
   @Get('logout')
-  logout(@Res() res) {
+  logout(@Res() res: Response) {
     this.logger.debug('Received logout request')
 
     res.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
@@ -157,7 +156,7 @@ export class AuthController {
   private async redirectAuthenticatedUser(
     authUser: AuthUser,
     returnUrl: string,
-    res,
+    res: Response,
     csrfToken?: string,
   ) {
     const valid = await this.authService.validateUser(authUser)
@@ -187,10 +186,14 @@ export class AuthController {
 
     const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
     return res
-      .cookie(CSRF_COOKIE.name, csrfToken, {
-        ...CSRF_COOKIE.options,
-        maxAge,
-      })
+      .cookie(
+        CSRF_COOKIE.name,
+        csrfToken as string,
+        {
+          ...CSRF_COOKIE.options,
+          maxAge,
+        } as CookieOptions,
+      )
       .cookie(ACCESS_TOKEN_COOKIE.name, jwtToken, {
         ...ACCESS_TOKEN_COOKIE.options,
         maxAge,
