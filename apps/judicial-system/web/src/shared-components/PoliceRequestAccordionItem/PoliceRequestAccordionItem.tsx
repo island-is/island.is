@@ -55,7 +55,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         <Text>
           Þess er krafist að
           <Text as="span" fontWeight="semiBold">
-            {` ${workingCase?.accusedName}
+            {` ${workingCase.accusedName}
                     ${formatNationalId(workingCase.accusedNationalId)}`}
           </Text>
           , verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta
@@ -64,12 +64,12 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
             {` ${formatDate(
               workingCase.requestedCustodyEndDate,
               'EEEE',
-            ).replace('dagur', 'dagsins')}
-                    ${formatDate(
-                      workingCase.requestedCustodyEndDate,
-                      'PPP',
-                    )},  kl. ${formatDate(
-              workingCase?.requestedCustodyEndDate,
+            )?.replace('dagur', 'dagsins')}
+            ${formatDate(
+              workingCase.requestedCustodyEndDate,
+              'PPP',
+            )},  kl. ${formatDate(
+              workingCase.requestedCustodyEndDate,
               TIME_FORMAT,
             )}`}
           </Text>

@@ -27,7 +27,7 @@ export function formatProsecutorDemands(
     'PPPPp',
   )
     ?.replace('dagur,', 'dagsins')
-    .replace(' kl.', ', kl.')}${
+    ?.replace(' kl.', ', kl.')}${
     isolation
       ? ' og verði gert að sæta einangrun meðan á gæsluvarðhaldi stendur'
       : ''
