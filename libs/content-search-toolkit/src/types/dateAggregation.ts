@@ -1,4 +1,4 @@
-import { elasticTagField } from '.'
+import { elasticTagField } from './index'
 
 export interface DateAggregationInput {
   types: string[]
