@@ -11,7 +11,6 @@ import {
   CaseTransition,
   CaseCustodyRestrictions,
   Case,
-  CaseGender,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
 import { render } from '@testing-library/react'
@@ -227,7 +226,7 @@ describe('Validation', () => {
       const validEmail = 'garfield.lasagne-lover@garfield.io'
 
       // Act
-      const validation = validate('', 'email-format')
+      const validation = validate(validEmail, 'email-format')
 
       // Assert
       expect(validation.isValid).toEqual(true)

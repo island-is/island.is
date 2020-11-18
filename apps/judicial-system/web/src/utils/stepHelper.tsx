@@ -6,8 +6,6 @@ import {
   Case,
   CaseAppealDecision,
   CaseCustodyRestrictions,
-  CaseGender,
-  Gender,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
 
