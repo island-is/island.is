@@ -156,7 +156,8 @@ export const Input = forwardRef(
             <label
               htmlFor={id}
               className={cn(styles.label, styles.labelSizes[size], {
-                [styles.labelDisabledEmptyInput]: disabled && !value,
+                [styles.labelDisabledEmptyInput]:
+                  disabled && !value && !defaultValue,
               })}
             >
               {label}
