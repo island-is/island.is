@@ -41,7 +41,7 @@ export const input = style({
     borderColor: theme.color.blue400,
   },
   '::placeholder': {
-    color: theme.color.dark400,
+    color: theme.color.dark200,
     fontWeight: theme.typography.light,
   },
   selectors: {

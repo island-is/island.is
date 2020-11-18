@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from 'react'
 import * as styles from './InputSearch.treat'
 import cn from 'classnames'
-import { Icon, LoadingIcon } from '../..'
+import { Icon } from '../Icon/Icon'
+import { LoadingIcon } from '../LoadingIcon/LoadingIcon'
 
 export interface InputSearchProps {
   value?: string | number
@@ -15,7 +16,7 @@ export interface InputSearchProps {
   ) => void
 }
 
-export const InputSearch = (givenValues: InputSearchProps, ...props) => {
+export const InputSearch = (userProps: InputSearchProps, ...props: any[]) => {
   const [hasFocus, setHasFocus] = useState(false)
   const onFocus = useCallback(() => setHasFocus(true), [setHasFocus])
   const onBlur = useCallback(() => setHasFocus(false), [setHasFocus])
@@ -25,19 +26,22 @@ export const InputSearch = (givenValues: InputSearchProps, ...props) => {
       className={cn(styles.wrapper, ...props, hasFocus ? styles.focused : {})}
     >
       <input
-        className={cn(styles.input, givenValues.colored ? styles.colored : styles.outlined)}
-        id={givenValues.id}
+        className={cn(
+          styles.input,
+          userProps.colored ? styles.colored : styles.outlined,
+        )}
+        id={userProps.id}
         type="text"
-        value={givenValues.value}
-        placeholder={givenValues.placeholder}
-        onChange={givenValues.onChange}
+        value={userProps.value}
+        placeholder={userProps.placeholder}
+        onChange={userProps.onChange}
         onFocus={onFocus}
         onBlur={onBlur}
       />
       <div>
-        {!givenValues.loading ? (
+        {!userProps.loading ? (
           <span className={cn(styles.iconWrapper)}>
-            <Icon type="filled" icon="search" className={cn(styles.search)} />
+            <Icon type="search" className={cn(styles.search)} />
           </span>
         ) : (
           <span

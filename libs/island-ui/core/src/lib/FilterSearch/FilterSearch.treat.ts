@@ -94,10 +94,9 @@ export const inputSearch = style({
 })
 
 export const clear = style({
-  marginTop: 12,
-  display: 'flex',
-  justifyContent: 'flex-end',
+  paddingTop:12,
+  position: 'relative',
+  float: 'right'
 })
-
 
 

@@ -2,7 +2,11 @@ import React, { Component } from 'react'
 import * as styles from './FilterSearch.treat'
 import cn from 'classnames'
 
-import { Box, Button, Icon, IconProps, InputSearch,Text } from '@island.is/island-ui/core'
+import { Box } from '../Box/Box'
+import { Button } from '../Button/Button'
+import { Icon, IconProps } from '../Icon/Icon'
+import { InputSearch } from '../InputSearch/InputSearch'
+import { Text } from '../Text/Text'
 import { theme } from '@island.is/island-ui/theme'
 import { useIsomorphicLayoutEffect, useWindowSize } from 'react-use'
 
@@ -32,10 +36,9 @@ export type ClearValues = {
 export type FilterSearchType = 'default' | 'noStyles'
 
 export interface FilterSearchProps  {
-  id:string,
-  label:string,
-  labelCloseButton:string,
-  labelResultButton:string,
+  labelMobileButton:string,
+  LabelMobileCloseButton:string,
+  LabelMobileResultButton:string,
   type?:FilterSearchType
   inputValues?:InputValues,
   clearValues?:ClearValues,
@@ -46,10 +49,9 @@ export interface FilterSearchProps  {
 
 
 export const FilterSearch: React.FC<FilterSearchProps> = ({
-  id,
-  label,
-  labelCloseButton = 'Close filter',
-  labelResultButton = 'View Results',
+  labelMobileButton: label,
+  LabelMobileCloseButton: labelCloseButton = 'Close filter',
+  LabelMobileResultButton: labelResultButton = 'View Results',
   type = 'default',
   inputValues,
   clearValues,
@@ -128,9 +130,7 @@ export const FilterSearch: React.FC<FilterSearchProps> = ({
         <Text variant="h4" color="blue600">{label}</Text>
         <Icon
           color={iconProps.color}
-          icon={iconProps.icon}
-          size="large"
-          type="filled"
+          type={iconProps.type}
         />
       </span>
     )
@@ -148,7 +148,7 @@ export const FilterSearch: React.FC<FilterSearchProps> = ({
             () => { setIsVisible(false) },
             {
               color: "blue400",
-              icon: "closeCircle"
+              type: "close"
             },
           )
           }
@@ -183,6 +183,7 @@ export const FilterSearch: React.FC<FilterSearchProps> = ({
               size="default"
               type="button"
               variant="text"
+              
             >
               {clearValues.text}
             </Button>
@@ -225,7 +226,7 @@ export const FilterSearch: React.FC<FilterSearchProps> = ({
             () => {setIsVisible(true)},
             {
               color:"blue400",
-              icon:"menu"
+              type:"burger"
             },
           )
         }

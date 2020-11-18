@@ -3,15 +3,9 @@ import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import {
   Box,
   Breadcrumbs,
-  ContentBlock,
-  GridRow,
-  GridColumn,
   Text,
-  AccordionItem,
-  GridContainer,
   LoadingIcon,
   Stack,
-  ServiceFilter,
   FilterSearchGroup,
   FilterSearch,
   Checkbox,
@@ -40,7 +34,6 @@ import {
   AccessCategory
 } from '@island.is/api-catalogue/consts'
 import { style } from 'treat'
-import { label } from 'libs/island-ui/core/src/lib/AsyncSearch/shared/Label/Label.treat'
 
 interface PropTypes {
   top?: ReactNode

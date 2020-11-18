@@ -5,7 +5,7 @@ import { InputSearch } from './InputSearch'
 
 describe(' InputSearch ', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<InputSearch name="Test search" />)
+    const { baseElement } = render(<InputSearch />)
     expect(baseElement).toBeTruthy()
   })
 })
