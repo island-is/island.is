@@ -18,7 +18,6 @@ const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {
 
   const fetchAndValidateData = async () => {
     //This should be POST to create new user, answer will hold variables, is GET for now.
-    console.log(this)
     fetch('/api/endPointVariables')
       .then((response) => response.json())
       .then((json) => setendPointVariables(json))
