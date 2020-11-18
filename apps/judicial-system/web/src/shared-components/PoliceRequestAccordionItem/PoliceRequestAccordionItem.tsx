@@ -53,7 +53,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       <AccordionListItem title="Dómkröfur">
         {`Gæsluvarðhald til ${capitalize(
           formatDate(workingCase.custodyEndDate, 'PPP') || '',
-        )} kl. ${formatDate(workingCase.custodyEndDate, TIME_FORMAT)}`}
+        )}, kl. ${formatDate(workingCase.custodyEndDate, TIME_FORMAT)}`}
       </AccordionListItem>
       <AccordionListItem title="Lagaákvæði" breakSpaces>
         {workingCase.lawsBroken}
