@@ -408,6 +408,7 @@ describe('Step helper', () => {
       ).toBeTruthy()
     })
   })
+
   describe('isNextDisabled()', () => {
     test('should return true if the only validation does not pass', () => {
       // Arrange
