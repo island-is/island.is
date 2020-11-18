@@ -1,10 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
-import {
-  FieldDescription,
-  InputController,
-} from '@island.is/shared/form-fields'
+import { FieldDescription } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 
 const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {

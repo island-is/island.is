@@ -60,7 +60,7 @@ export const TestPhase: Form = buildForm({
     }),
     buildSection({
       id: 'testSection',
-      name: m.testAccountSection,
+      name: m.testSection,
       children: [
         buildCustomField(
           {
@@ -82,6 +82,14 @@ export const TestPhase: Form = buildForm({
           description:
             'Hér getur þú búið til aðgang að raunumhverfi. Athugið að afrita og geyma þessar upplýsingar því þær eru ekki geymdar hér í þessari umsókn.',
           children: [
+            buildCustomField(
+              {
+                id: 'test',
+                name: 'Sjálfvirkar prófanir',
+                component: 'ProdEnvironment',
+              },
+              {},
+            ),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',

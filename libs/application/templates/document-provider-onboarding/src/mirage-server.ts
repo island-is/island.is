@@ -46,6 +46,18 @@ export function makeServer({ environment = 'development' } = {}) {
           timing: 2000,
         },
       )
+      this.get('/api/prodKeys', () => [
+        {
+          id: '1',
+          name: 'Client ID',
+          value: '5016d8d5cb6ce0758107b9969ea3c201',
+        },
+        {
+          id: '2',
+          name: 'Secret key',
+          value: '5016d8d5cb6ce0758107b9969ea3c201',
+        },
+      ])
     },
   })
 }
