@@ -13,8 +13,12 @@ import {
   DocumentByMetaDataInput,
   documentByMetaDataQuery,
 } from '../queries/documentByMetaData'
-import { MappedData, SearchIndexes, TagAggregationResponse } from '../types'
+import { TagAggregationResponse } from '../types'
 import { GetByIdResponse, SearchResponse } from '@island.is/shared/types'
+import {
+  MappedData,
+  SearchIndexes,
+} from '@island.is/content-search-indexer/types'
 import { environment } from '../environments/environment'
 import { WebSearchAutocompleteInput } from '../dto'
 import {

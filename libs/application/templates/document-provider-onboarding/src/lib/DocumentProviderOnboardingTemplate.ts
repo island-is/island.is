@@ -39,7 +39,19 @@ const applicant = z.object({
   zipCode: z.string().nonempty(),
 })
 
+const termsOfAgreement = z.object({
+  userTerms: z.boolean().refine((v) => v, {
+    //When to show these ?
+    message: 'Þú verður að samþykkja notendaskilmála',
+  }),
+  securityTerms: z.boolean().refine((v) => v, {
+    //When to show these ?
+    message: 'Þú verður að samþykkja öryggisskilmála ',
+  }),
+})
+
 const dataSchema = z.object({
+  termsOfAgreement: termsOfAgreement,
   applicant: applicant,
   administrativeContact: contact,
   technicalContact: contact,
