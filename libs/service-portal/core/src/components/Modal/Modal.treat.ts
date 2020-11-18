@@ -1,7 +1,5 @@
 import { style } from 'treat'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
-import { zIndex } from '@island.is/service-portal/constants'
-import { hexToRgba } from '@island.is/island-ui/utils'
 
 export const modal = style({
   position: 'relative',
@@ -19,22 +17,6 @@ export const modal = style({
       width: 828,
     },
   }),
-})
-
-export const overlay = style({
-  transition: 'opacity 300ms',
-  backgroundColor: hexToRgba(theme.color.dark400, 0.2),
-  zIndex: zIndex.modal - 1,
-  '@keyframes': {
-    from: {
-      opacity: 0,
-    },
-    to: {
-      opacity: 1,
-    },
-  },
-  animationTimingFunction: 'ease-out',
-  animationDuration: '0.25s',
 })
 
 export const closeButton = style({

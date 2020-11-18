@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import * as styles from './Modal.treat'
-import { Box, Button, Icon, ModalBase } from '@island.is/island-ui/core'
+import { Box, Icon, ModalBase } from '@island.is/island-ui/core'
 
 interface Props {
   id: string
