@@ -1,9 +1,6 @@
 import { NextComponentType } from 'next'
 import { NextPageContext } from 'next/dist/next-server/lib/utils'
-import { 
-  Maybe,
-  Namespace
- } from '@island.is/api/schema'
+import { Maybe, Namespace } from '@island.is/api/schema'
 
 export type GetInitialPropsContext<Context> = Context & {
   locale: string
