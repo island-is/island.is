@@ -47,6 +47,11 @@ export const findLastGoodBuild = async (
   if (base != 'main') {
     branchTargets.push('main')
   }
+  // Lastly, consider no branch, as the best candidate might be on a branch that
+  // is between branch and base.
+  // If this keeps being a problem, lets consider dropping the branch filter and
+  // simply consider all builds and walk down the list of shas.
+  branchTargets.push('')
   for (const branchTarget of branchTargets) {
     const goodBuild = await getGoodBuildOnBranch(branchTarget)
     if (goodBuild) {
