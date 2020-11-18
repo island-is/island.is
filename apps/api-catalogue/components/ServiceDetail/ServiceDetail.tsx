@@ -17,8 +17,8 @@ import { OpenApi } from '@island.is/api-catalogue/types'
 import YamlParser from 'js-yaml'
 import { OpenApiView } from '../OpenApiView'
 
-import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
+import { GetNamespaceQuery } from '../../graphql/schema'
+import { useNamespace } from '../../hooks'
 import { capitalize } from '../../utils'
 
 type SelectOption = {

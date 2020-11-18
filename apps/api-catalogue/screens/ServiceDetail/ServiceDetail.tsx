@@ -1,16 +1,18 @@
 import React from 'react'
 import { ServiceDetail as ServiceDetails } from '../../components'
-import { Query, QueryGetApiServiceByIdArgs } from '@island.is/api/schema'
+import {
+  Query,
+  QueryGetApiServiceByIdArgs,
+  QueryGetNamespaceArgs,
+} from '@island.is/api/schema'
 import { GridContainer, LoadingIcon } from '@island.is/island-ui/core'
 import * as styles from './ServiceDetail.treat'
 import cn from 'classnames'
 import { useQuery } from 'react-apollo'
 import { GET_API_SERVICE_QUERY, GET_NAMESPACE_QUERY } from '../Queries'
-
-import { QueryGetNamespaceArgs } from '@island.is/api/schema'
-import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import { GetNamespaceQuery } from '../../graphql/schema'
 import { Screen } from '../../types'
-import initApollo from 'apps/api-catalogue/graphql/client'
+import initApollo from '../../graphql/client'
 
 interface ServiceDetailProps {
   serviceId: string

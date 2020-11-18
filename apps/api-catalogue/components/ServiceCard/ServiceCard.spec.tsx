@@ -8,8 +8,8 @@ import {
   DataCategory,
 } from '@island.is/api-catalogue/consts'
 
-import { GetNamespaceQuery, Namespace } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
+import { GetNamespaceQuery } from '../../graphql/schema'
+import { useNamespace } from '../../hooks'
 
 describe(' ServiceCard ', () => {
   const service: any = {

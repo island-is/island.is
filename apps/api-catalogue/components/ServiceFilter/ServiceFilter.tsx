@@ -11,8 +11,8 @@ import {
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
 
-import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
+import { GetNamespaceQuery } from '../../graphql/schema'
+import { useNamespace } from '../../hooks'
 
 type IconVariantTypes = 'default' | 'sidebar'
 

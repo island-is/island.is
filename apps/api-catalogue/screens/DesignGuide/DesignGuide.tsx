@@ -9,12 +9,12 @@ import {
   Link,
 } from '@island.is/island-ui/core'
 
-import { useNamespace } from '@island.is/web/hooks'
+import { useNamespace } from '../../hooks'
 import { QueryGetNamespaceArgs } from '@island.is/api/schema'
-import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import { GetNamespaceQuery } from '../../graphql/schema'
 import { GET_NAMESPACE_QUERY } from '../Queries'
 import { Screen } from '../../types'
-import initApollo from 'apps/api-catalogue/graphql/client'
+import initApollo from '../../graphql/client'
 
 import cn from 'classnames'
 import * as styles from './DesignGuide.treat'
