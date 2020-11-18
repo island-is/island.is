@@ -42,7 +42,7 @@ import {
 import Modal from '../../../shared-components/Modal/Modal'
 
 interface CaseData {
-  case: Case
+  case?: Case
 }
 
 export const HearingArrangements: React.FC = () => {
@@ -103,7 +103,7 @@ export const HearingArrangements: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (data && !workingCase) {
+    if (!workingCase && data?.case) {
       let theCase = data.case
 
       if (!theCase.courtDate && theCase.requestedCourtDate) {
@@ -163,6 +163,7 @@ export const HearingArrangements: React.FC = () => {
       activeSection={Sections.JUDGE}
       activeSubSection={JudgeSubsections.HEARING_ARRANGEMENTS}
       isLoading={loading}
+      notFound={data?.case === undefined}
     >
       {workingCase ? (
         <>

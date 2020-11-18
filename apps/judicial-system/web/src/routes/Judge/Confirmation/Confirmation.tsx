@@ -157,6 +157,10 @@ const SigningModal: React.FC<SigningModalProps> = (
   )
 }
 
+interface CaseData {
+  case?: Case
+}
+
 export const Confirmation: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
@@ -166,22 +170,20 @@ export const Confirmation: React.FC = () => {
 
   const { id } = useParams<{ id: string }>()
   const { user } = useContext(userContext)
-  const { data, loading } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const resCase = data?.case
 
   useEffect(() => {
     document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
-    if (!workingCase && resCase) {
-      setWorkingCase(resCase)
+    if (!workingCase && data?.case) {
+      setWorkingCase(data.case)
     }
-  }, [workingCase, setWorkingCase, resCase])
+  }, [workingCase, setWorkingCase, data])
 
   useEffect(() => {
     if (!modalVisible) {
@@ -247,6 +249,7 @@ export const Confirmation: React.FC = () => {
       activeSubSection={Sections.JUDGE}
       activeSection={JudgeSubsections.CONFIRMATION}
       isLoading={loading}
+      notFound={data?.case === undefined}
     >
       {workingCase ? (
         <>

@@ -32,7 +32,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 
 interface CaseData {
-  case: Case
+  case?: Case
 }
 
 export const CourtRecord: React.FC = () => {
@@ -93,7 +93,7 @@ export const CourtRecord: React.FC = () => {
   }
 
   useEffect(() => {
-    if (data && workingCase == null) {
+    if (!workingCase && data?.case) {
       let theCase = data.case
 
       if (!theCase.courtAttendees) {
@@ -116,6 +116,7 @@ export const CourtRecord: React.FC = () => {
       activeSection={Sections.JUDGE}
       activeSubSection={JudgeSubsections.COURT_RECORD}
       isLoading={loading}
+      notFound={data?.case === undefined}
     >
       {workingCase ? (
         <>

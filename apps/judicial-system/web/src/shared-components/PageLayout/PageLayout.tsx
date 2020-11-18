@@ -21,6 +21,7 @@ interface PageProps {
   activeSection: number
   activeSubSection: number
   isLoading: boolean
+  notFound: boolean
 }
 
 export const PageLayout: FC<PageProps> = ({
@@ -28,6 +29,7 @@ export const PageLayout: FC<PageProps> = ({
   activeSection,
   activeSubSection,
   isLoading,
+  notFound,
 }) => {
   const { user } = useContext(userContext)
 
@@ -111,15 +113,17 @@ export const PageLayout: FC<PageProps> = ({
         ),
       }}
     >
-      <AlertBanner
-        title="Mál fannst ekki"
-        description="Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni"
-        variant="error"
-        link={{
-          href: Constants.DETENTION_REQUESTS_ROUTE,
-          title: 'Fara á yfirlitssíðu',
-        }}
-      />
+      {notFound && (
+        <AlertBanner
+          title="Mál fannst ekki"
+          description="Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni"
+          variant="error"
+          link={{
+            href: Constants.DETENTION_REQUESTS_ROUTE,
+            title: 'Fara á yfirlitssíðu',
+          }}
+        />
+      )}
     </LinkContext.Provider>
   )
 }
