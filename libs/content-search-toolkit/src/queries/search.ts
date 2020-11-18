@@ -1,15 +1,6 @@
-import { Tag } from '../dto/searcher.input'
+import { SearchInput } from '../types'
 import { aggregationQuery } from './tagAggregation'
 import { tagQuery } from './tagQuery'
-
-export interface SearchInput {
-  queryString: string
-  size?: number
-  page?: number
-  types?: string[]
-  tags?: Tag[]
-  countTag?: string
-}
 
 export const searchQuery = ({
   queryString,
