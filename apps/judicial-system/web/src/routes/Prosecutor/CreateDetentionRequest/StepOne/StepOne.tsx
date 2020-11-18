@@ -920,7 +920,20 @@ export const StepOne: React.FC = () => {
             </GridRow>
           </Box>
           <FormFooter
-            onNextButtonClick={() => setModalVisible(true)}
+            onNextButtonClick={() => {
+              if (
+                workingCase.notifications?.find(
+                  (notification) =>
+                    notification.type === NotificationType.HEADS_UP,
+                )
+              ) {
+                history.push(
+                  `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
+                )
+              } else {
+                setModalVisible(true)
+              }
+            }}
             nextIsDisabled={isStepIllegal}
           />
           {modalVisible && (
@@ -936,7 +949,7 @@ export const StepOne: React.FC = () => {
                 )
               }
               handlePrimaryButtonClick={async () => {
-                await sendNotification(workingCase.id)
+                await sendNotification(workingCase.id ?? id)
 
                 history.push(
                   `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
