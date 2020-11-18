@@ -41,7 +41,7 @@ describe('formatProsecutorDemands', () => {
 
     // Assert
     expect(res).toBe(
-      'Þess er krafist að Glanni Glæpur 010101-0000 verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi til mánudagsins 16. nóvember 2020 kl. 19:30 og verði gert að sæta einangrun meðan á gæsluvarðhaldi stendur.',
+      'Þess er krafist að Glanni Glæpur 010101-0000 verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi til mánudagsins 16. nóvember 2020, kl. 19:30 og verði gert að sæta einangrun meðan á gæsluvarðhaldi stendur.',
     )
   })
 
@@ -64,7 +64,7 @@ describe('formatProsecutorDemands', () => {
 
     // Assert
     expect(res).toBe(
-      'Þess er krafist að Glanni Glæpur 010101-0000 verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi til mánudagsins 16. nóvember 2020 kl. 19:30.',
+      'Þess er krafist að Glanni Glæpur 010101-0000 verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi til mánudagsins 16. nóvember 2020, kl. 19:30.',
     )
   })
 })

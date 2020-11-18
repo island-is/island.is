@@ -113,15 +113,29 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
           {status === 'success' && (
             <AlertMessage
               type="info"
-              title="Nýtt netfang hefur verið vistað"
-              message="Vinsamlegast athugaðu netpóstinn þinn, staðfestingarpóstur hefur verið sendur á þig"
+              title={formatMessage({
+                id: 'sp.settings:email-confirmed-sent-success-title',
+                defaultMessage: 'Nýtt netfang hefur verið vistað',
+              })}
+              message={formatMessage({
+                id: 'sp.settings:email-confirmed-sent-success-subtext',
+                defaultMessage:
+                  'Vinsamlegast athugaðu netpóstinn þinn, staðfestingarpóstur hefur verið sendur á þig',
+              })}
             />
           )}
           {status === 'error' && (
             <AlertMessage
               type="error"
-              title="Tókst ekki að vista netfang"
-              message="Eitthvað hefur farið úrskeiðis, vinsamlegast reyndu aftur síðar"
+              title={formatMessage({
+                id: 'sp.settings:email-confirmed-sent-error-title',
+                defaultMessage: 'Tókst ekki að vista netfang',
+              })}
+              message={formatMessage({
+                id: 'sp.settings:email-confirmed-sent-error-subtext',
+                defaultMessage:
+                  'Eitthvað hefur farið úrskeiðis, vinsamlegast reynið aftur síðar',
+              })}
             />
           )}
         </Box>

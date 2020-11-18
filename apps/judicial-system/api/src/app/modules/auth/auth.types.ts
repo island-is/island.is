@@ -1,13 +1,9 @@
+import { CookieOptions } from 'express'
+
 export type AuthUser = {
   nationalId: string
   name: string
   mobile: string
-}
-
-export type CookieOptions = {
-  secure: boolean
-  httpOnly: boolean
-  sameSite: string
 }
 
 export type Cookie = {
