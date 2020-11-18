@@ -23,8 +23,8 @@ export class GrantDto {
   })
   readonly subjectId: string
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   @ApiProperty({
     example: 'sessionId',
   })
