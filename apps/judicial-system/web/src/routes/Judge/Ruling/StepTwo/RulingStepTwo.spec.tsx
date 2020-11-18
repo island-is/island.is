@@ -51,7 +51,7 @@ describe('/domari-krafa/urskurdarord', () => {
       await waitFor(
         () =>
           screen.getByRole('radio', {
-            name: 'Kærði kærir málið',
+            name: 'Kærði kærir úrskurðinn',
           }) as HTMLInputElement,
       ),
     )
