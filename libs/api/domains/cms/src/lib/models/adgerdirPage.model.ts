@@ -51,7 +51,7 @@ export const mapAdgerdirPage = ({
   sys,
   fields,
 }: IVidspyrnaPage): AdgerdirPage => ({
-  id: sys.id,
+  id: sys?.id ?? '',
   slug: fields?.slug ?? '',
   title: fields?.title ?? '',
   description: fields?.description ?? '',
@@ -61,5 +61,8 @@ export const mapAdgerdirPage = ({
   status: '',
   link: fields?.link ?? '',
   linkButtonText: fields?.linkButtonText ?? '',
-  content: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
+  content:
+    sys?.id && fields?.content
+      ? mapDocument(fields.content, sys.id + ':content')
+      : [],
 })

@@ -236,7 +236,7 @@ export const RulingStepOne: React.FC = () => {
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                Dómkröfur
+                Gæsluvarðhaldstími
               </Text>
             </Box>
             <GridRow>

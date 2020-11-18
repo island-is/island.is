@@ -17,7 +17,7 @@ export const getAppealDecitionText = (
     case CaseAppealDecision.APPEAL: {
       return `${
         role === AppealDecisionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
-      } kærir málið`
+      } kærir úrskurðinn`
     }
     case CaseAppealDecision.ACCEPT: {
       return `${
