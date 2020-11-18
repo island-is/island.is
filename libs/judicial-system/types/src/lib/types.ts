@@ -58,6 +58,8 @@ export enum CaseGender {
   OTHER = 'OTHER',
 }
 
+export type Gender = 'karl' | 'kona' | 'annað'
+
 export interface Case {
   id: string
   created: string
@@ -103,6 +105,7 @@ export interface Case {
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
   judge?: User
+  notifications?: Notification[]
 }
 
 export enum NotificationType {
@@ -117,7 +120,8 @@ export interface Notification {
   created: string
   caseId: string
   type: NotificationType
-  message: string
+  condition?: string
+  recipients?: string
 }
 
 export interface CreateCase {

@@ -9,11 +9,11 @@ import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { environment } from '../../../environments'
 import { Credentials, AuthUser } from './auth.types'
 
-const cookieExtractor = (req) => {
+const cookieExtractor = (req: { cookies: { [x: string]: string } }) => {
   if (req && req.cookies) {
     return req.cookies[ACCESS_TOKEN_COOKIE_NAME]
   }
-  return null
+  return undefined
 }
 
 @Injectable()
@@ -29,10 +29,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     })
   }
 
-  validate(req: Request, { csrfToken, user }: Credentials): AuthUser {
-    if (csrfToken && `Bearer ${csrfToken}` !== req.headers['authorization']) {
+  validate(
+    req: Request,
+    { csrfToken, user }: Credentials,
+  ): AuthUser | undefined {
+    if (
+      csrfToken &&
+      `Bearer ${csrfToken}` !== req.headers.get('authorization')
+    ) {
       this.logger.error('invalid csrf token')
-      return null
+      return undefined
     }
 
     return user

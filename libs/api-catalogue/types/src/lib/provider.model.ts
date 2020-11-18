@@ -1,16 +1,14 @@
 import { ProviderType } from '@island.is/api-catalogue/consts'
+import { XroadIdentifier } from './xroadIdentifier.model'
 
 export interface Provider {
   type: ProviderType
-  xroadInstance: string
-  memberClass: string
-  memberCode: string
-  subsystemCode: string
+  xroadInfo: XroadIdentifier
 }
 
 export const providerToString = (provider: Provider): string => {
   if (provider) {
-    return `${provider.xroadInstance}/${provider.memberClass}/${provider.memberCode}/${provider.subsystemCode}`
+    return `${provider.xroadInfo.instance}/${provider.xroadInfo.memberClass}/${provider.xroadInfo.memberCode}/${provider.xroadInfo.subsystemCode}`
   } else {
     return ''
   }

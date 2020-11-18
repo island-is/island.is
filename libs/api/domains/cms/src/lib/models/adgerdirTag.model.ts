@@ -15,6 +15,6 @@ export const mapAdgerdirTag = ({
   sys,
   fields,
 }: IVidspyrnaTag): AdgerdirTag => ({
-  id: sys.id,
-  title: fields.title,
+  id: sys?.id ?? '',
+  title: fields?.title ?? '',
 })
