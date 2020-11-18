@@ -30,10 +30,12 @@ export interface SyncOptions {
 export interface SyncResponse<PostSyncOptionsType = any> {
   add: MappedData[]
   remove: string[]
-  postSyncOptions: PostSyncOptionsType
+  postSyncOptions?: PostSyncOptionsType
 }
 
 export interface ContentSearchImporter<postSyncOptions = any> {
-  doSync: (options: SyncOptions) => Promise<SyncResponse<postSyncOptions>>
-  postSync: (options: postSyncOptions) => Promise<boolean>
+  doSync: (
+    options: SyncOptions,
+  ) => Promise<SyncResponse<postSyncOptions> | null>
+  postSync?: (options: postSyncOptions) => Promise<boolean>
 }
