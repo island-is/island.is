@@ -131,7 +131,7 @@ describe('/krafa with an id', () => {
     ).toBeDisabled()
 
     expect(
-      screen.getByLabelText('Nafn verjanda') as HTMLInputElement,
+      screen.getByLabelText('Netfang verjanda') as HTMLInputElement,
     ).toBeDisabled()
   })
 })

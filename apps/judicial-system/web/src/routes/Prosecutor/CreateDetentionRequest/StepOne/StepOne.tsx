@@ -633,6 +633,12 @@ export const StepOne: React.FC = () => {
                 placeholder="Fullt nafn"
                 defaultValue={workingCase.requestedDefenderName}
                 disabled={workingCase.defenderName !== undefined}
+                icon={
+                  workingCase.defenderName !== undefined
+                    ? 'lockClosed'
+                    : undefined
+                }
+                iconType="outline"
                 onBlur={(evt) => {
                   if (workingCase.requestedDefenderName !== evt.target.value) {
                     setWorkingCase({
@@ -652,8 +658,14 @@ export const StepOne: React.FC = () => {
               name="requestedDefenderEmail"
               label="Netfang verjanda"
               placeholder="Netfang"
-              ref={defenderEmailRef}
               disabled={workingCase.defenderEmail !== undefined}
+              icon={
+                workingCase.defenderEmail !== undefined
+                  ? 'lockClosed'
+                  : undefined
+              }
+              iconType="outline"
+              ref={defenderEmailRef}
               defaultValue={workingCase.requestedDefenderEmail}
               errorMessage={requestedDefenderEmailErrorMessage}
               hasError={requestedDefenderEmailErrorMessage !== ''}
@@ -683,6 +695,11 @@ export const StepOne: React.FC = () => {
               }}
               onFocus={() => setRequestedDefenderEmailErrorMessage('')}
             />
+            {workingCase.defenderName && workingCase.defenderEmail && (
+              <Box marginTop={1}>
+                <Text variant="eyebrow">Verjanda hefur verið úthlutað</Text>
+              </Box>
+            )}
           </Box>
           <Box component="section" marginBottom={7}>
             <Box marginBottom={2}>
@@ -835,6 +852,7 @@ export const StepOne: React.FC = () => {
                   label="Veldu dagsetningu"
                   placeholderText="Veldu dagsetningu"
                   locale="is"
+                  icon="lockClosed"
                   minDate={new Date()}
                   selected={
                     workingCase.requestedCourtDate
@@ -881,6 +899,12 @@ export const StepOne: React.FC = () => {
                     !workingCase.requestedCourtDate ||
                     workingCase.courtDate !== undefined
                   }
+                  icon={
+                    workingCase.courtDate !== undefined
+                      ? 'lockClosed'
+                      : undefined
+                  }
+                  iconType="outline"
                   ref={requestedCourtTimeRef}
                   onBlur={(evt) => {
                     if (workingCase.requestedCourtDate) {
@@ -926,6 +950,13 @@ export const StepOne: React.FC = () => {
                 />
               </GridColumn>
             </GridRow>
+            {workingCase.courtDate && (
+              <Box marginTop={1}>
+                <Text variant="eyebrow">
+                  Fyrirtökudegi og tíma hefur verið úthlutað
+                </Text>
+              </Box>
+            )}
           </Box>
           <FormFooter
             onNextButtonClick={() => {
