@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import ClientDTO from "../models/dtos/client-dto";
 import axios from "axios";
 import StatusBar from "./StatusBar";
@@ -13,7 +13,8 @@ type Props = {
 };
 export default function Client<ClientDTO>(client: ClientDTO){
   const { register, handleSubmit, errors, formState, control } = useForm<ClientDTO>();
-  const { isDirty, isSubmitting } = formState;
+  const { isSubmitting } = formState;
+  const [ show, setShow] = useState(false);
   // TODO: Fix
   client = client.client;
 
@@ -27,7 +28,7 @@ export default function Client<ClientDTO>(client: ClientDTO){
     obj.refreshTokenUsage = +obj.refreshTokenUsage;    
     obj.slidingRefreshTokenLifetime = +obj.slidingRefreshTokenLifetime;
     obj.identityTokenLifetime = +obj.identityTokenLifetime;
-    obj.accessTokenType = + obj.accessTokenType;
+    obj.accessTokenType = +obj.accessTokenType;
 
     if (obj.consentLifetime === "")
     {
@@ -165,10 +166,10 @@ export default function Client<ClientDTO>(client: ClientDTO){
                   </div>
 
                   <div className="client__container__button">
-                    <button className="client__button__show">Advanced</button>
+                    <button className="client__button__show" onClick={() => setShow(!show)}>Advanced</button>
                   </div>
 
-                  <div className="client__container__advanced">
+                  <div className={`client__container__advanced ${show === true ? 'show':'hidden'}`}>
 
                     <div className="client__container__field">
                       <label className="client__label">

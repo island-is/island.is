@@ -17,9 +17,8 @@ input {
   }
 }
 
-input[type="text"],
-input[type="number"] {
-  // @extend input;
+input[type='text'],
+input[type='number'] {
   padding: 30px 16px 10px 20px;
   height: 60px;
   font-size: 18px;
@@ -37,12 +36,12 @@ select {
   padding: 10px;
 }
 
-input[type="checkbox"] {
+input[type='checkbox'] {
   width: 30px;
   height: 30px;
 }
 
-input[type="submit"] {
+input[type='submit'] {
   @extend button;
 }
 
@@ -61,7 +60,7 @@ button {
   border: none;
   cursor: pointer;
 
-  &[class$="cancel"] {
+  &[class$='cancel'] {
     background: rgb(228, 226, 226);
     color: #00003c;
   }
@@ -107,7 +106,7 @@ h3 {
   text-align: left;
 }
 
-div[class$="container__field"] {
+div[class$='container__field'] {
   display: flex;
   width: 100%;
   padding: 8px;
@@ -124,13 +123,13 @@ div[class$="container__field"] {
   }
 }
 
-div[class$="buttons__container"] {
+div[class$='buttons__container'] {
   display: flex;
   width: 100%;
   padding: 12px 8px;
   align-items: center;
 
-  div[class$="button__container"] {
+  div[class$='button__container'] {
     flex: 1;
   }
 }
@@ -181,7 +180,7 @@ table {
   }
 }
 
-nav[class$="pagination"] {
+nav[class$='pagination'] {
   padding: 10px;
 
   li {
@@ -211,4 +210,12 @@ nav[class$="pagination"] {
       }
     }
   }
+}
+
+.show {
+  display: block;
+}
+
+.hidden {
+  display: none;
 }
