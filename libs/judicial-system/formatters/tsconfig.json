@@ -1,5 +1,9 @@
 {
   "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node", "jest"],
+    "strict": true
+  },
   "files": [],
   "include": [],
   "references": [

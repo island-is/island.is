@@ -5,5 +5,5 @@ import { SendNotificationResponse as TSendNotificationResponse } from '@island.i
 @ObjectType()
 export class SendNotificationResponse implements TSendNotificationResponse {
   @Field()
-  notificationSent: boolean
+  notificationSent!: boolean
 }
