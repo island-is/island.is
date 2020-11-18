@@ -1,15 +1,25 @@
 # content-search-indexer
 
-This library groups together importers from multiple projects to import data into the search engine.
+This library groups together importers from multiple projects to import data into elasticsearch used by the content search engine.
 
 # Create an importer
 
-Types are exported from the `@island.is/content-search-indexer/types` library to ease implementation (see example below).  
-An importer service must export at least the `doSync` function.  
-`SyncOptions` is passed to the importer service as a parameter to the `doSync` function (see **Importing data** section for details ).  
-`doSync` must resolve to `SyncResponse` or `null` when called.  
-Optionally an importer can export a `postSync` function that is called after the importer has executed it's `doSync` function.  
-The `postSync` function is passed the `postSyncOptions` returned by `doSync` in it's `SyncResponse` (see **Post sync** section for details).
+## Quick start
+
+1. Create an importer nestjs service for your project and export it with a nestjs module
+2. Import and add your nestjs module to the code in `indexing.module.ts`
+3. Import and add your nestjs service to the code in `indexing.service.ts`
+
+Your data should now be imported when you call the `/sync` or `/re-sync` endpoint
+
+### Overview
+
+- Types are exported from the `@island.is/content-search-indexer/types` library to ease implementation (see example below).
+- An importer service must export at least the `doSync` function.
+- `SyncOptions` is passed to the importer service as a parameter to the `doSync` function (see **Importing data** section for details ).
+- `doSync` must resolve to `SyncResponse` or `null` when called.
+- Optionally an importer can export a `postSync` function that is called after the importer has executed it's `doSync` function.
+- The `postSync` function is passed the `postSyncOptions` returned by `doSync` in it's `SyncResponse` (see **Post sync** section for details).
 
 Example:
 
@@ -74,11 +84,3 @@ Your importer should be robust, but not so that it hides critical errors e.g.
 Missing title in one entry, should probably not throw an error and hence stop all importers.  
 Your importer can't connect to it's data source probably should throw an error and hence stop all importers.  
 The importer is used when populating new versions of the indexes when deploying new versions of our apps hence we don't want the importer to succeed when it shouldn't.
-
-## Quick start
-
-1. Create an importer nestjs service for your project and export it with a nestjs module
-2. Import and add your nestjs module to the code in `indexing.module.ts`
-3. Import and add your nestjs service to the code in `indexing.service.ts`
-
-Your data should now be imported when you call the `/sync` or `/re-sync` endpoint

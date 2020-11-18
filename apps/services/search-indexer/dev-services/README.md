@@ -3,7 +3,7 @@
 ### Dependencies
 
 You must have `docker` and `docker-compose` installed and running on you machine.  
-**\*Docker must be given 4gb+ of ram**
+**Docker must be given 4gb+ of ram**
 
 ### Start the server
 
