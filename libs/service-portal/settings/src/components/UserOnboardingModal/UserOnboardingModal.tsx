@@ -28,6 +28,7 @@ const defaultLanguageOption: LanguageFormOption = {
 }
 
 const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
+  const [toggleCloseModal, setToggleCloseModal] = useState(false)
   const [step, setStep] = useState<OnboardingStep>('intro')
   const [tel, setTel] = useState('')
   const [email, setEmail] = useState('')
@@ -36,8 +37,15 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   )
   const { createUserProfile } = useCreateUserProfile()
 
+  // On close side effects
   const handleCloseModal = () => {
     toast.info('Notendaupplýsingum er hægt að breyta í stillingum')
+  }
+
+  // Handles a close event directly in the onboarding component
+  const closeModal = () => {
+    setToggleCloseModal(true)
+    handleCloseModal()
   }
 
   const gotoStep = (step: OnboardingStep) => {
@@ -58,8 +66,8 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
         mobilePhoneNumber,
       })
       toast.success('Notendaupplýsingar þínar hafa verið uppfærðar')
-      // TODO: Close modal
-      // setIsOpen(false)
+      // Close the modal
+      setToggleCloseModal(true)
     } catch (err) {
       gotoStep('language-form')
       toast.error(
@@ -84,11 +92,15 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   }
 
   return (
-    <Modal id="user-onboarding-modal" onCloseModal={handleCloseModal}>
+    <Modal
+      id="user-onboarding-modal"
+      onCloseModal={handleCloseModal}
+      toggleClose={toggleCloseModal}
+    >
       {step === 'intro' && (
         <IntroStep
           userInfo={userInfo}
-          onClose={handleCloseModal}
+          onClose={closeModal}
           onSubmit={gotoStep.bind(null, 'tel-form')}
         />
       )}

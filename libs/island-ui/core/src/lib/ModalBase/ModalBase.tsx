@@ -5,6 +5,7 @@ import React, {
   useState,
   useLayoutEffect,
   ReactElement,
+  useEffect,
 } from 'react'
 import cn from 'classnames'
 import {
@@ -44,12 +45,17 @@ type ModalBaseProps = {
    * Default visibility state
    */
   initialVisibility?: boolean
+  /**
+   * Setting this to false automatically closes the modal
+   */
+  toggleClose?: boolean
 }
 
 export const ModalBase: FC<ModalBaseProps> = ({
   disclosure,
   baseId,
   initialVisibility,
+  toggleClose,
   children,
   className,
 }) => {
@@ -59,6 +65,10 @@ export const ModalBase: FC<ModalBaseProps> = ({
     visible: initialVisibility || false,
   })
   const closeModal = () => modal.hide()
+
+  useEffect(() => {
+    if (toggleClose) closeModal()
+  }, [toggleClose])
 
   return (
     <>
