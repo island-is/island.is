@@ -113,45 +113,43 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     to: pageSize * page,
     totalPages: Math.ceil(filteredDocuments.length / pageSize),
   }
-  const handleDateFromInput = useCallback(
-    (value: Date) =>
-      setFilterValue((oldState) => {
-        const { dateTo } = oldState
-        return {
-          ...oldState,
-          dateTo: dateTo ? (isAfter(value, dateTo) ? value : dateTo) : dateTo,
-          dateFrom: value,
-        }
-      }),
-    [],
-  )
-
-  const handleDateToInput = useCallback(
-    (value: Date) =>
-      setFilterValue((oldState) => ({
+  const handleDateFromInput = useCallback((value: Date) => {
+    setPage(1)
+    setFilterValue((oldState) => {
+      const { dateTo } = oldState
+      return {
         ...oldState,
-        dateTo: value,
-      })),
-    [],
-  )
+        dateTo: dateTo ? (isAfter(value, dateTo) ? value : dateTo) : dateTo,
+        dateFrom: value,
+      }
+    })
+  }, [])
+
+  const handleDateToInput = useCallback((value: Date) => {
+    setPage(1)
+    setFilterValue((oldState) => ({
+      ...oldState,
+      dateTo: value,
+    }))
+  }, [])
 
   const handlePageChange = useCallback((page: number) => setPage(page), [])
   const handleCategoryChange = useCallback((newCategory: ValueType<Option>) => {
+    setPage(1)
     setFilterValue((oldFilter) => ({
       ...oldFilter,
       activeCategory: newCategory as Option,
     }))
   }, [])
 
-  const handleSearchChange = useCallback(
-    (value: string) =>
-      setFilterValue({ ...defaultFilterValues, searchQuery: value }),
-    [],
-  )
+  const handleSearchChange = useCallback((value: string) => {
+    setPage(1)
+    setFilterValue({ ...defaultFilterValues, searchQuery: value })
+  }, [])
 
   const handleClearFilters = useCallback(() => {
-    setFilterValue({ ...defaultFilterValues })
     setPage(1)
+    setFilterValue({ ...defaultFilterValues })
   }, [])
 
   const hasActiveFilters = () => !isEqual(filterValue, defaultFilterValues)

@@ -119,7 +119,7 @@ export const DetentionRequests: React.FC = () => {
               <th>Kennitala</th>
               <th>Krafa stofnuð</th>
               <th>Staða</th>
-              <th>Gæsluvarðhaldstími</th>
+              <th>Gæsla rennur út</th>
               <th></th>
             </tr>
           </thead>

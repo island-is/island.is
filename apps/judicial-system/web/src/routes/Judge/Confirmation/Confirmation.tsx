@@ -130,7 +130,7 @@ const SigningModal: React.FC<SigningModalProps> = (
         !signatureConfirmationResponse
           ? renderContolCode()
           : signatureConfirmationResponse.documentSigned
-          ? 'Tilkynning hefur verið send á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi.'
+          ? 'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi.'
           : 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
       }
       secondaryButtonText={
@@ -351,8 +351,7 @@ export const Confirmation: React.FC = () => {
             </Box>
             <Box marginBottom={3}>{constructConclusion(workingCase)}</Box>
             <Text>
-              Úrskurðarorðið er lesið í heyranda hljóði að viðstöddum kærða,
-              verjanda hans, túlki og aðstoðarsaksóknara.
+              Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.
             </Text>
           </Box>
           <Box component="section" marginBottom={3}>

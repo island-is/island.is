@@ -6,19 +6,19 @@ import { XroadIdentifier } from '@island.is/api-catalogue/types'
 export class XroadInfo implements XroadIdentifier {
   @Field((type) => String)
   @IsString()
-  instance: string
+  instance!: string
 
   @Field((type) => String)
   @IsString()
-  memberClass: string
+  memberClass!: string
 
   @Field((type) => String)
   @IsString()
-  memberCode: string
+  memberCode!: string
 
   @Field((type) => String)
   @IsString()
-  subsystemCode: string
+  subsystemCode!: string
 
   @Field((type) => String)
   @IsString()

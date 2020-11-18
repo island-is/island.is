@@ -280,15 +280,10 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
         <Box marginTop={2}>
           <Stack space={2}>
             <Text color="red600">
-              <span>Ekkert fannst með{` `}</span>
-              {filterString
-                ? `leitarorðinu „${filterString}“${
-                    indexesFilteredByTag.length
-                      ? ' og völdum málefnum hér fyrir ofan'
-                      : ''
-                  }`
-                : null}
-              {!filterString ? 'völdum málefnum hér fyrir ofan' : null}.
+              {n(
+                'nothingFoundWithSelectedFilters',
+                'Ekkert fannst með völdum málefnum og/eða leitarstreng',
+              )}
             </Text>
           </Stack>
         </Box>
