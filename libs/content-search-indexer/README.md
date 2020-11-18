@@ -85,6 +85,5 @@ To use you export a function called `postSync` from your importer, it then gets 
 ## Error handling
 
 Your importer should be robust, but not so that it hides critical errors e.g.  
-Missing title in one entry, should probably not throw an error and hence stop all importers.  
-Your importer can't connect to it's data source probably should throw an error and hence stop all importers.  
+`Missing title in one entry`, should probably not throw an error and hence stop all importers while `Your importer can't connect to it's data source` probably should throw an error and hence stop all importers.  
 The importer is used when populating new versions of the indexes when deploying new versions of our apps hence we don't want the importer to succeed when it shouldn't.
