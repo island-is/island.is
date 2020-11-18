@@ -12,27 +12,49 @@ type Props = {
   client: ClientDTO;
 };
 export default function Client<ClientDTO>(client: ClientDTO){
-  const validationSchema = useMemo(
-    () =>
-      yup.object({
-        firstName: yup.string().required("Required"),
-        lastName: yup.string().required("Required")
-      }),
-    []
-  );
-  
   const { register, handleSubmit, errors, formState, control } = useForm<ClientDTO>();
   const { isDirty, isSubmitting } = formState;
+  // TODO: Fix
   client = client.client;
 
+  const castNumbers = (obj: ClientDTO) : ClientDTO =>
+  {
+    obj.absoluteRefreshTokenLifetime = +obj.absoluteRefreshTokenLifetime;
+    obj.accessTokenLifetime = +obj.accessTokenLifetime;
+    obj.authorizationCodeLifetime = +obj.authorizationCodeLifetime;
+    obj.deviceCodeLifetime = +obj.deviceCodeLifetime;
+    obj.refreshTokenExpiration = +obj.refreshTokenExpiration;
+    obj.refreshTokenUsage = +obj.refreshTokenUsage;    
+    obj.slidingRefreshTokenLifetime = +obj.slidingRefreshTokenLifetime;
+    obj.identityTokenLifetime = +obj.identityTokenLifetime;
+    obj.accessTokenType = + obj.accessTokenType;
+
+    if (obj.consentLifetime === "")
+    {
+      obj.consentLifetime = null;
+    }
+    else {
+      obj.consentLifetime = +obj.consentLifetime;
+    }
+
+    if (obj.userSsoLifetime === ""){
+      obj.userSsoLifetime = null;
+    }
+    else
+    {
+      obj.userSsoLifetime = +obj.userSsoLifetime;
+    }
+
+    return obj;
+  }
+
   const save = async (data) => {
-    console.log(data.client);
-    const response = await axios.post("/api/clients", data.client).catch((err) => {
+    const clientObject = castNumbers(data.client);
+    const response = await axios.post("/api/clients", clientObject).catch((err) => {
       console.log(err);
     });
 
-    console.log(response);
-    
+    console.log(response);    
   };
 
     return (
@@ -147,6 +169,59 @@ export default function Client<ClientDTO>(client: ClientDTO){
                   </div>
 
                   <div className="client__container__advanced">
+
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Front channel logout uri
+                      </label>
+                      <input
+                        type="text"
+                        name="client.frontChannelLogoutUri"
+                        defaultValue={client.frontChannelLogoutUri ?? ""}
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Rair wise subject salt
+                      </label>
+                      <input
+                        type="text"
+                        defaultValue={client.pairWiseSubjectSalt ?? ""}
+                        className="client__input"
+                        name="client.pairWiseSubjectSalt"
+                        ref={register}
+                      />
+                    </div>
+
+                    <div className="client__container__field">
+                      <label className="client__label">User code type</label>
+                      <input
+                        type="text"
+                        defaultValue={client.userCodeType ?? ""}
+                        name="client.userCodeType"
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+
+                    {/* Number inputs */}
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Access Token Type
+                      </label>
+                      <input
+                        type="number"
+                        ref={register({ required: true })}
+                        name="client.accessTokenType"
+                        defaultValue={client.accessTokenType}
+                        className="client__input"
+                      />
+                      <ErrorMessage as="span" errors={errors} name="client.accessTokenType" message="Absolute Refresh Token Lifetime is required" />
+                    </div>
+                    
                     <div className="client__container__field">
                       <label className="client__label">
                         Absolute Refresh Token Lifetime
@@ -164,25 +239,15 @@ export default function Client<ClientDTO>(client: ClientDTO){
                       <label className="client__label">
                         Access Token Lifetime
                       </label>
-                      <Controller
-                      as={<input />}
-                      name="client.accessTokenLifetime"
-                      control={control}
-                      defaultValue={client.accessTokenLifetime}
-                      ref={register({ required: true })}
-                      onChange={([e]) => {
-                        return parseInt(e.target.value, 10);
-                      }}
-                      />
-                      <ErrorMessage as="span" errors={errors} name="client.accessTokenLifetime" message="Access Token Lifetime is required" /> 
-                      {/* <input
+
+                      <input
                         ref={register({ required: true })}
                         type="number"
                         name="client.accessTokenLifetime"
                         defaultValue={client.accessTokenLifetime}
                         className="client__input"
                       />
-                      <ErrorMessage as="span" errors={errors} name="client.accessTokenLifetime" message="Access Token Lifetime is required" /> */}
+                      <ErrorMessage as="span" errors={errors} name="client.accessTokenLifetime" message="Access Token Lifetime is required" />
                     </div>
                     <div className="client__container__field">
                       <label className="client__label">
@@ -222,41 +287,12 @@ export default function Client<ClientDTO>(client: ClientDTO){
                     </div>
 
                     <div className="client__container__field">
-                      <label className="client__label">
-                        Front channel logout uri
-                      </label>
-                      <input
-                        type="text"
-                        name="client.frontChannelLogoutUri"
-                        defaultValue={client.frontChannelLogoutUri ?? ""}
-                        className="client__input"
-                        ref={register}
-                      />
-                    </div>
-
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Identity token lifetime
-                      </label>
+                      <label className="client__label">User Sso Lifetime</label>
                       <input
                         type="number"
-                        name="client.identityTokenLifetime"
-                        defaultValue={client.identityTokenLifetime}
-                        ref={register({ required: true })}
+                        defaultValue={client.userSsoLifetime}
+                        name="client.userSsoLifetime"
                         className="client__input"
-                      />
-                      <ErrorMessage as="span" errors={errors} name="client.identityTokenLifetime" message="Key is required" />
-                    </div>
-
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Rair wise subject salt
-                      </label>
-                      <input
-                        type="text"
-                        defaultValue={client.pairWiseSubjectSalt ?? ""}
-                        className="client__input"
-                        name="client.pairWiseSubjectSalt"
                         ref={register}
                       />
                     </div>
@@ -299,25 +335,17 @@ export default function Client<ClientDTO>(client: ClientDTO){
                     </div>
 
                     <div className="client__container__field">
-                      <label className="client__label">User code type</label>
-                      <input
-                        type="text"
-                        defaultValue={client.userCodeType ?? ""}
-                        name="client.userCodeType"
-                        className="client__input"
-                        ref={register}
-                      />
-                    </div>
-
-                    <div className="client__container__field">
-                      <label className="client__label">User Sso Lifetime</label>
+                      <label className="client__label">
+                        Identity token lifetime
+                      </label>
                       <input
                         type="number"
-                        defaultValue={client.userSsoLifetime}
-                        name="client.userSsoLifetime"
+                        name="client.identityTokenLifetime"
+                        defaultValue={client.identityTokenLifetime}
+                        ref={register({ required: true })}
                         className="client__input"
-                        ref={register}
                       />
+                      <ErrorMessage as="span" errors={errors} name="client.identityTokenLifetime" message="Key is required" />
                     </div>
 
 
