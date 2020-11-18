@@ -5,5 +5,5 @@ import { IsString } from 'class-validator'
 export class OpenApi {
   @Field()
   @IsString()
-  spec: string
+  spec!: string
 }
