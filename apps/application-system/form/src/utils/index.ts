@@ -28,7 +28,7 @@ export function fixSvgUrls(baseUrl: string) {
         }
         return false
       })
-      // prepend `window.location` to the attrib's url() value, in order to make it an absolute IRI
+      // prepend baseUrl to the attrib's url() value, in order to make it an absolute IRI
       .forEach((element: SVGElement) => {
         const attribute = element.getAttribute(attrib)
         if (attribute !== null) {
