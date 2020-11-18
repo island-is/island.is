@@ -1,8 +1,6 @@
 import React from 'react'
-import { Box, ButtonDeprecated as Button } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import { useHistory } from 'react-router-dom'
-
-import * as styles from './FormFooter.treat'
 
 interface Props {
   nextUrl?: string
@@ -27,21 +25,21 @@ const FormFooter: React.FC<Props> = (props: Props) => {
       >
         Til baka
       </Button>
-      <div className={styles.nextButtonContainer}>
-        <Button
-          data-testid="continueButton"
-          icon="arrowRight"
-          disabled={props.nextIsDisabled}
-          loading={props.nextIsLoading}
-          onClick={() => {
-            props.onNextButtonClick
-              ? props.onNextButtonClick()
-              : history.push(props.nextUrl)
-          }}
-        >
-          {props.nextButtonText ?? 'Halda áfram'}
-        </Button>
-      </div>
+      <Button
+        data-testid="continueButton"
+        icon="arrowForward"
+        disabled={props.nextIsDisabled}
+        loading={props.nextIsLoading}
+        onClick={() => {
+          if (props.onNextButtonClick) {
+            props.onNextButtonClick()
+          } else if (props.nextUrl) {
+            history.push(props.nextUrl)
+          }
+        }}
+      >
+        {props.nextButtonText ?? 'Halda áfram'}
+      </Button>
     </Box>
   )
 }

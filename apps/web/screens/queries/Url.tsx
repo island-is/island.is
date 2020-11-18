@@ -7,19 +7,8 @@ export const GET_URL_QUERY = gql`
       title
       urlsList
       page {
-        __typename
-        ... on Article {
-          slug
-        }
-        ... on ArticleCategory {
-          slug
-        }
-        ... on News {
-          slug
-        }
-        ... on LifeEventPage {
-          slug
-        }
+        slug
+        contentType
       }
     }
   }

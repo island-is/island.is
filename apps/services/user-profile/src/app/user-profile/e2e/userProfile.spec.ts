@@ -173,25 +173,6 @@ describe('User profile API', () => {
     )
   })
 
-  it(`POST /userProfile should return error status on unverified Phone Number`, async () => {
-    // Act
-    const response = await request(app.getHttpServer())
-      .post('/userProfile')
-      .send({
-        nationalId: '1234567890',
-        mobilePhoneNumber: '123456798',
-        locale: 'en',
-        email: 'email@email.is',
-      })
-      .expect(400)
-
-    // Assert
-    expect(response.body.error).toBe('Bad Request')
-    expect(response.body.message).toBe(
-      'Phone number: 123456798 is not verified',
-    )
-  })
-
   it(`POST /userProfile creates an email verfication in Db`, async () => {
     // Act
     const spy = jest.spyOn(emailService, 'sendEmail')

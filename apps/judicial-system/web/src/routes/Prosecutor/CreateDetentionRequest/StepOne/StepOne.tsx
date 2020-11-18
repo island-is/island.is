@@ -109,7 +109,7 @@ export const CreateCaseMutation = gql`
 
 export const StepOne: React.FC = () => {
   const history = useHistory()
-  const [workingCase, setWorkingCase] = useState<Case | null>(null)
+  const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
 
   const [
@@ -140,7 +140,6 @@ export const StepOne: React.FC = () => {
     setRequestedCourtTimeErrorMessage,
   ] = useState<string>('')
   const [modalVisible, setModalVisible] = useState(false)
-  const [isSendingNotification, setIsSendingNotification] = useState(false)
 
   const { id } = useParams<{ id: string }>()
 
@@ -260,7 +259,10 @@ export const StepOne: React.FC = () => {
     return resCase
   }
 
-  const [sendNotificationMutation] = useMutation(SendNotificationMutation)
+  const [
+    sendNotificationMutation,
+    { loading: isSendingNotification },
+  ] = useMutation(SendNotificationMutation)
 
   const sendNotification = async (id: string) => {
     const { data } = await sendNotificationMutation({
@@ -736,11 +738,9 @@ export const StepOne: React.FC = () => {
                   }
                   handleChange={(date) => {
                     const formattedDate = formatISO(date, {
-                      representation:
-                        workingCase.arrestDate &&
-                        workingCase.arrestDate.indexOf('T') > -1
-                          ? 'complete'
-                          : 'date',
+                      representation: workingCase.arrestDate?.includes('T')
+                        ? 'complete'
+                        : 'date',
                     })
 
                     setWorkingCase({
@@ -772,8 +772,7 @@ export const StepOne: React.FC = () => {
                   errorMessage={arrestTimeErrorMessage}
                   hasError={arrestTimeErrorMessage !== ''}
                   defaultValue={
-                    workingCase.arrestDate &&
-                    workingCase.arrestDate.indexOf('T') > -1
+                    workingCase.arrestDate?.includes('T')
                       ? formatDate(workingCase.arrestDate, TIME_FORMAT)
                       : undefined
                   }
@@ -840,11 +839,11 @@ export const StepOne: React.FC = () => {
                   }
                   handleChange={(date) => {
                     const formattedDate = formatISO(date, {
-                      representation:
-                        workingCase.requestedCourtDate &&
-                        workingCase.requestedCourtDate.indexOf('T') > -1
-                          ? 'complete'
-                          : 'date',
+                      representation: workingCase.requestedCourtDate?.includes(
+                        'T',
+                      )
+                        ? 'complete'
+                        : 'date',
                     })
 
                     setWorkingCase({
@@ -869,8 +868,7 @@ export const StepOne: React.FC = () => {
                   errorMessage={requestedCourtTimeErrorMessage}
                   hasError={requestedCourtTimeErrorMessage !== ''}
                   defaultValue={
-                    workingCase.requestedCourtDate &&
-                    workingCase.requestedCourtDate.indexOf('T') > -1
+                    workingCase.requestedCourtDate?.includes('T')
                       ? formatDate(workingCase.requestedCourtDate, TIME_FORMAT)
                       : undefined
                   }
@@ -922,7 +920,20 @@ export const StepOne: React.FC = () => {
             </GridRow>
           </Box>
           <FormFooter
-            onNextButtonClick={() => setModalVisible(true)}
+            onNextButtonClick={() => {
+              if (
+                workingCase.notifications?.find(
+                  (notification) =>
+                    notification.type === NotificationType.HEADS_UP,
+                )
+              ) {
+                history.push(
+                  `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
+                )
+              } else {
+                setModalVisible(true)
+              }
+            }}
             nextIsDisabled={isStepIllegal}
           />
           {modalVisible && (
@@ -938,9 +949,8 @@ export const StepOne: React.FC = () => {
                 )
               }
               handlePrimaryButtonClick={async () => {
-                setIsSendingNotification(true)
-                await sendNotification(workingCase.id)
-                setIsSendingNotification(false)
+                await sendNotification(workingCase.id ?? id)
+
                 history.push(
                   `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
                 )

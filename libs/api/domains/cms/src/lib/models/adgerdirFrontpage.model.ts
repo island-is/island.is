@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { ApolloError } from 'apollo-server-express'
-
 import {
   IVidspyrnaFrontpage,
   IVidspyrnaFeaturedNews,
@@ -15,22 +15,22 @@ import { mapAdgerdirGroupSlice } from './adgerdirGroupSlice.model'
 @ObjectType()
 export class AdgerdirFrontpage {
   @Field(() => ID)
-  id: string
+  id: string = ''
 
   @Field()
-  slug: string
+  slug: string = ''
 
   @Field()
-  title: string
+  title: string = ''
 
   @Field({ nullable: true })
   description?: string
 
   @Field(() => [Slice])
-  content: Array<typeof Slice>
+  content: Array<typeof Slice> = []
 
   @Field(() => [AdgerdirSlice])
-  slices: Array<typeof AdgerdirSlice>
+  slices: Array<typeof AdgerdirSlice> = []
 }
 
 type AdgerdirSliceTypes = IVidspyrnaFeaturedNews | IVidspyrnaFlokkur
@@ -47,7 +47,7 @@ export const mapAdgerdirSlice = (
 
     default:
       throw new ApolloError(
-        `Can not convert to slice: ${(slice as any).sys.contentType.sys.id}`,
+        `Can not convert to slice in mapAdgerdirFrontpage -> mapAdgerdirSlice`,
       )
   }
 }

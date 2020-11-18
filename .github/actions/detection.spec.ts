@@ -46,7 +46,7 @@ describe('Discovering last successful build', () => {
     })
   })
 
-  it('should find it on master if not found on the branch nor the base', async () => {
+  it('should find it on main if not found on the branch nor the base', async () => {
     const workflowQueried = Substitute.for<WorkflowQueries>()
     workflowQueried
       .getData('new-br')
@@ -55,9 +55,9 @@ describe('Discovering last successful build', () => {
       .getData('baseBranch')
       .resolves({ total_count: 0, workflow_runs: [] })
     workflowQueried
-      .getData('master')
+      .getData('main')
       .resolves(
-        (workflowsMaster as unknown) as ActionsListWorkflowRunsForRepoResponseData,
+        (workflowsMain as unknown) as ActionsListWorkflowRunsForRepoResponseData,
       )
     const lastGoodBuild = await findLastGoodBuild(
       shasBranch,
@@ -67,12 +67,12 @@ describe('Discovering last successful build', () => {
     )
     expect(lastGoodBuild).toStrictEqual({
       sha: 'b39fb602059ec0f873623249e9a72e2740686a28',
-      branch: 'master',
+      branch: 'main',
       run_number: 157,
     })
   })
 
-  it('should return empty object if not found on baseBranch, master nor on the branch', async () => {
+  it('should return empty object if not found on baseBranch, main nor on the branch', async () => {
     const workflowQueried = Substitute.for<WorkflowQueries>()
     workflowQueried
       .getData(Arg.any())
@@ -112,4 +112,4 @@ const shasBranch = [
 
 import * as workflowsBase from './baseWorkflows.json'
 import * as workflowsBranch from './branchWorkflows.json'
-import * as workflowsMaster from './masterWorkflows.json'
+import * as workflowsMain from './mainWorkflows.json'

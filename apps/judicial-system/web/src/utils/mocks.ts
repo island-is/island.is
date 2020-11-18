@@ -1,6 +1,7 @@
 import {
   CaseAppealDecision,
   CaseCustodyProvisions,
+  CaseCustodyRestrictions,
   CaseGender,
   UpdateCase,
   User,
@@ -99,7 +100,10 @@ const testCase2 = {
   investigationProgress: 'string',
   legalArguments: null,
   comments: 'string',
-  prosecutor: null,
+  prosecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   courtCaseNumber: null,
   courtDate: null,
   courtStartTime: null,
@@ -117,6 +121,8 @@ const testCase2 = {
   prosecutorAppealDecision: null,
   prosecutorAppealAnnouncement: null,
   judge: null,
+  defenderName: 'Saul Goodman',
+  defenderEmail: 'saul@goodman.com',
   requestedDefenderName: 'Saul Goodman',
   requestedDefenderEmail: 'saul@goodman.com',
 }
@@ -137,7 +143,7 @@ const testCase3 = {
   requestedCustodyEndDate: null,
   lawsBroken: null,
   custodyProvisions: [],
-  requestedCustodyRestrictions: [],
+  requestedCustodyRestrictions: [CaseCustodyRestrictions.MEDIA],
   caseFacts: null,
   witnessAccounts: 'string',
   investigationProgress: 'string',

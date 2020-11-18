@@ -9,18 +9,18 @@ import Bottleneck from 'bottleneck'
 import environment from '../environments/environment'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
+import { ElasticService } from '@island.is/content-search-toolkit'
+import flatten from 'lodash/flatten'
 import {
-  ElasticService,
   SearchIndexes,
   SyncOptions,
-} from '@island.is/api/content-search'
-import flatten from 'lodash/flatten'
+} from '@island.is/content-search-indexer/types'
 
 interface SyncerResult {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   items: Entry<any>[]
   deletedItems: string[]
-  token: string | undefined
+  token: string
   elasticIndex: string
 }
 
@@ -62,7 +62,7 @@ export class ContentfulService {
 
   private getFilteredIdString(chunkToProcess: Entry<any>[]): string {
     return chunkToProcess
-      .reduce((csvIds, entry) => {
+      .reduce((csvIds: string[], entry) => {
         // contentful sync api does not support limiting the sync to a single content type we filter here to reduce subsequent calls to Contentful
         if (environment.indexableTypes.includes(entry.sys.contentType.sys.id)) {
           csvIds.push(entry.sys.id)
@@ -90,7 +90,7 @@ export class ContentfulService {
    * This token is only used in "fromLast" type syncs
    */
   private async getNextSyncToken(elasticIndex: string): Promise<string> {
-    logger.info('Getting models hash from index', {
+    logger.info('Getting next sync token from index', {
       index: elasticIndex,
     })
     // return last folder hash found in elasticsearch else return empty string
@@ -189,7 +189,7 @@ export class ContentfulService {
    */
   private async linksToEntry(
     linkId: string,
-    locale: string,
+    locale: keyof typeof SearchIndexes,
   ): Promise<Entry<any>[]> {
     const data = await this.contentfulClient.getEntries({
       include: this.defaultIncludeDepth,

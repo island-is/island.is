@@ -1,104 +1,6 @@
 {
   "version": 1,
   "projects": {
-    "adgerdir": {
-      "root": "apps/adgerdir",
-      "sourceRoot": "apps/adgerdir/src",
-      "projectType": "application",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/next:build",
-          "options": {
-            "root": "apps/adgerdir",
-            "outputPath": "dist/apps/adgerdir"
-          },
-          "configurations": {
-            "production": {
-              "fileReplacements": [
-                {
-                  "replace": "apps/adgerdir/environments/environment.ts",
-                  "with": "apps/adgerdir/environments/environment.prod.ts"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@nrwl/next:server",
-          "options": {
-            "buildTarget": "adgerdir:build",
-            "dev": true,
-            "proxyConfig": "apps/adgerdir/proxy.config.json"
-          },
-          "configurations": {
-            "production": {
-              "buildTarget": "adgerdir:build:production",
-              "dev": false
-            }
-          }
-        },
-        "export": {
-          "builder": "@nrwl/next:export",
-          "options": {
-            "buildTarget": "adgerdir:build:production"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "apps/adgerdir/tsconfig.json",
-              "apps/adgerdir/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!apps/adgerdir/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "apps/adgerdir/jest.config.js",
-            "passWithNoTests": true
-          }
-        },
-        "schemas/codegen": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "graphql-codegen --config apps/adgerdir/codegen.yml"
-          }
-        },
-        "docker-next": {}
-      }
-    },
-    "adgerdir-e2e": {
-      "root": "apps/adgerdir-e2e",
-      "sourceRoot": "apps/adgerdir-e2e/src",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@nrwl/cypress:cypress",
-          "options": {
-            "cypressConfig": "apps/adgerdir-e2e/cypress.json",
-            "tsConfig": "apps/adgerdir-e2e/tsconfig.e2e.json",
-            "devServerTarget": "adgerdir:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "adgerdir:serve:production"
-            }
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": ["apps/adgerdir-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/adgerdir-e2e/**/*"]
-          }
-        }
-      }
-    },
     "air-discount-scheme-api": {
       "root": "apps/air-discount-scheme/api",
       "sourceRoot": "apps/air-discount-scheme/api/src",
@@ -511,10 +413,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "parallel": false,
-            "commands": [
-              "yarn nx run api:contentful-types",
-              "graphql-codegen --config apps/api/codegen.yml"
-            ]
+            "command": "graphql-codegen --config apps/api/codegen.yml"
           }
         },
         "contentful-types": {
@@ -743,32 +642,6 @@
           "options": {
             "jestConfig": "libs/api-catalogue/types/jest.config.js",
             "tsConfig": "libs/api-catalogue/types/tsconfig.spec.json",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "api-content-search": {
-      "root": "libs/api/content-search",
-      "sourceRoot": "libs/api/content-search/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/api/content-search/tsconfig.lib.json",
-              "libs/api/content-search/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/api/content-search/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/api/content-search/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -1781,6 +1654,93 @@
         }
       }
     },
+    "content-search-indexer": {
+      "root": "libs/content-search-indexer",
+      "sourceRoot": "libs/content-search-indexer/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/content-search-indexer/tsconfig.lib.json",
+              "libs/content-search-indexer/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/content-search-indexer/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/content-search-indexer/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "content-search-indexer-types": {
+      "root": "libs/content-search-indexer/types",
+      "sourceRoot": "libs/content-search-indexer/types/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/content-search-indexer/types/tsconfig.lib.json",
+              "libs/content-search-indexer/types/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/content-search-indexer/types/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/content-search-indexer/types/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "content-search-toolkit": {
+      "root": "libs/content-search-toolkit",
+      "sourceRoot": "libs/content-search-toolkit/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/content-search-toolkit/tsconfig.lib.json",
+              "libs/content-search-toolkit/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/content-search-toolkit/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/content-search-toolkit/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "contentful-importer": {
       "root": "libs/contentful-importer",
       "sourceRoot": "libs/contentful-importer/src",
@@ -1828,32 +1788,6 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/dokobit-signing/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "elastic-indexing": {
-      "root": "libs/elastic-indexing",
-      "sourceRoot": "libs/elastic-indexing/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/elastic-indexing/tsconfig.lib.json",
-              "libs/elastic-indexing/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/elastic-indexing/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/elastic-indexing/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -4081,6 +4015,32 @@
         "docker-express": {}
       }
     },
+    "shared-connected": {
+      "root": "libs/shared/connected",
+      "sourceRoot": "libs/shared/connected/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/shared/connected/tsconfig.lib.json",
+              "libs/shared/connected/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/shared/connected/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/shared/connected/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "shared-form-fields": {
       "root": "libs/shared/form-fields",
       "sourceRoot": "libs/shared/form-fields/src",
@@ -4128,6 +4088,32 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/shared/mocking/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "shared-table": {
+      "root": "libs/shared/table",
+      "sourceRoot": "libs/shared/table/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/shared/table/tsconfig.lib.json",
+              "libs/shared/table/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/shared/table/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/shared/table/jest.config.js",
             "passWithNoTests": true
           }
         }

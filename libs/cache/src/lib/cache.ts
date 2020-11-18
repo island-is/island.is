@@ -52,6 +52,7 @@ const getRedisClusterOptions = (
   return {
     ...options,
     keyPrefix: `${options.name}:`,
+    slotsRefreshTimeout: 2000,
     connectTimeout: 5000,
     // https://www.npmjs.com/package/ioredis#special-note-aws-elasticache-clusters-with-tls
     dnsLookup: (address, callback) => callback(null, address, 0),

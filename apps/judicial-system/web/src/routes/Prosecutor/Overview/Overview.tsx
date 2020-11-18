@@ -8,6 +8,7 @@ import {
   CaseTransition,
   NotificationType,
   TransitionCase,
+  CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
 
 import Modal from '../../../shared-components/Modal/Modal'
@@ -38,19 +39,21 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 
+interface CaseData {
+  case?: Case
+}
+
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
-  const [workingCase, setWorkingCase] = useState<Case>(null)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [workingCase, setWorkingCase] = useState<Case>()
+
   const { id } = useParams<{ id: string }>()
   const history = useHistory()
   const { user } = useContext(userContext)
-  const { data } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const resCase = data?.case
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
 
@@ -69,7 +72,10 @@ export const Overview: React.FC = () => {
     return resCase
   }
 
-  const [sendNotificationMutation] = useMutation(SendNotificationMutation)
+  const [
+    sendNotificationMutation,
+    { loading: isSendingNotification },
+  ] = useMutation(SendNotificationMutation)
 
   const sendNotification = async (id: string) => {
     const { data } = await sendNotificationMutation({
@@ -85,21 +91,29 @@ export const Overview: React.FC = () => {
   }
 
   const handleNextButtonClick: () => Promise<boolean> = async () => {
-    try {
-      // Parse the transition request
-      const transitionRequest = parseTransition(
-        workingCase.modified,
-        CaseTransition.SUBMIT,
-      )
+    if (workingCase) {
+      try {
+        // Parse the transition request
+        const transitionRequest = parseTransition(
+          workingCase.modified,
+          CaseTransition.SUBMIT,
+        )
 
-      // Transition the case
-      await transitionCase(workingCase.id, transitionRequest)
-    } catch (e) {
-      // Improve error handling at some point
-      console.log('Transition failing')
+        // Transition the case
+        const resCase = await transitionCase(workingCase.id, transitionRequest)
+
+        if (!resCase) {
+          // Improve error handling at some point
+          console.log('Transition failing')
+          return false
+        }
+      } catch (e) {
+        // Improve error handling at some point
+        console.log('Transition failing')
+      }
+
+      return sendNotification(workingCase.id)
     }
-
-    return sendNotification(workingCase.id)
   }
 
   useEffect(() => {
@@ -107,21 +121,16 @@ export const Overview: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setIsLoading(true)
-      setWorkingCase(resCase)
-      setIsLoading(false)
+    if (!workingCase && data?.case) {
+      setWorkingCase(data.case)
     }
-    if (id && !workingCase && resCase) {
-      getCurrentCase()
-    }
-  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
+  }, [workingCase, setWorkingCase, data])
 
   return (
     <PageLayout
       activeSection={Sections.PROSECUTOR}
       activeSubSection={ProsecutorSubsections.PROSECUTOR_OVERVIEW}
-      isLoading={isLoading}
+      isLoading={loading}
     >
       {workingCase ? (
         <>
@@ -180,8 +189,8 @@ export const Overview: React.FC = () => {
             </Box>
             <Text variant="h3">
               {`${capitalize(
-                formatDate(workingCase.arrestDate, 'PPPP'),
-              )} kl. ${formatDate(workingCase?.arrestDate, TIME_FORMAT)}`}
+                formatDate(workingCase.arrestDate, 'PPPP') || '',
+              )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
             </Text>
           </Box>
           {workingCase.requestedCourtDate && (
@@ -193,7 +202,7 @@ export const Overview: React.FC = () => {
               </Box>
               <Text variant="h3">
                 {`${capitalize(
-                  formatDate(workingCase.requestedCourtDate, 'PPPP'),
+                  formatDate(workingCase.requestedCourtDate, 'PPPP') || '',
                 )} eftir kl. ${formatDate(
                   workingCase?.requestedCourtDate,
                   TIME_FORMAT,
@@ -205,16 +214,39 @@ export const Overview: React.FC = () => {
             <Accordion>
               <AccordionItem labelVariant="h3" id="id_1" label="Dómkröfur">
                 <Text>
-                  Gæsluvarðhald til
+                  Þess er krafist að
+                  <Text as="span" fontWeight="semiBold">
+                    {` ${workingCase?.accusedName} 
+                    ${formatNationalId(workingCase.accusedNationalId)}`}
+                  </Text>
+                  , verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta
+                  gæsluvarðhaldi til
                   <Text as="span" fontWeight="semiBold">
                     {` ${formatDate(
+                      workingCase.requestedCourtDate,
+                      'EEEE',
+                    ).replace('dagur', 'dagsins')} 
+                    ${formatDate(
                       workingCase?.requestedCustodyEndDate,
                       'PPP',
-                    )} kl. ${formatDate(
+                    )},  kl. ${formatDate(
                       workingCase?.requestedCustodyEndDate,
                       TIME_FORMAT,
                     )}`}
                   </Text>
+                  {workingCase?.requestedCustodyRestrictions.includes(
+                    CaseCustodyRestrictions.ISOLATION,
+                  ) ? (
+                    <>
+                      , og verði gert að{' '}
+                      <Text as="span" fontWeight="semiBold">
+                        sæta einangrun
+                      </Text>{' '}
+                      á meðan gæsluvarðhaldinu stendur.
+                    </>
+                  ) : (
+                    '.'
+                  )}
                 </Text>
               </AccordionItem>
               <AccordionItem labelVariant="h3" id="id_2" label="Lagaákvæði">
@@ -236,15 +268,16 @@ export const Overview: React.FC = () => {
                       Lagaákvæði sem krafan er byggð á
                     </Text>
                   </Box>
-                  {workingCase?.custodyProvisions.map(
-                    (custodyProvision: CaseCustodyProvisions, index) => {
-                      return (
-                        <div key={index}>
-                          <Text>{laws[custodyProvision]}</Text>
-                        </div>
-                      )
-                    },
-                  )}
+                  {workingCase.custodyProvisions &&
+                    workingCase.custodyProvisions.map(
+                      (custodyProvision: CaseCustodyProvisions, index) => {
+                        return (
+                          <div key={index}>
+                            <Text>{laws[custodyProvision]}</Text>
+                          </div>
+                        )
+                      },
+                    )}
                 </Box>
               </AccordionItem>
               <AccordionItem
@@ -307,14 +340,16 @@ export const Overview: React.FC = () => {
             </Box>
             <Text variant="h3">
               {workingCase?.prosecutor
-                ? `${workingCase?.prosecutor.name}, ${workingCase?.prosecutor.title}`
-                : `${user?.name}, ${user?.title}`}
+                ? `${workingCase?.prosecutor.name} ${workingCase?.prosecutor.title}`
+                : `${user?.name} ${user?.title}`}
             </Text>
           </Box>
           <FormFooter
             nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
+            nextIsLoading={isSendingNotification}
             onNextButtonClick={async () => {
               const notificationSent = await handleNextButtonClick()
+
               if (notificationSent) {
                 setModalVisible(true)
               } else {

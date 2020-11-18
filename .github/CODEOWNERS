@@ -12,7 +12,6 @@
 # Make sure that team names are correct or everything stops working.
 # Organisation name is @island-is, not @island.is
 
-/apps/adgerdir*/                                          @island-is/kosmos-kaos
 /apps/web*/                                               @island-is/kosmos-kaos @island-is/aranja
 /libs/api/domains/cms/                                    @island-is/kosmos-kaos @island-is/aranja
 
@@ -36,7 +35,7 @@
 /apps/services/user-profile/                              @island-is/sendiradid
 
 /apps/services/search-indexer/                            @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
-/libs/api/content-search/                                 @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
+/libs/content-search-toolkit/                             @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 /libs/api/domains/content-search/                         @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 
 /libs/island-ui/                                          @island-is/island-ui

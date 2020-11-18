@@ -24,7 +24,7 @@ export const PageLayout: FC<PageProps> = ({ children }) => (
       <GridContainer>
         <GridRow>
           <GridColumn
-            span={['12/12', '12/12', '7/12', '7/12']}
+            span={['12/12', '12/12', '8/12', '7/12']}
             offset={['0', '0', '1/12', '1/12']}
           >
             <Box paddingBottom={10}>{children}</Box>
@@ -79,15 +79,15 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
         <GridRow>
           <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
             <Box
-              paddingY={[3, 3, 3, 6]}
+              paddingY={[3, 3, 6, 6]}
               background="white"
               borderColor="white"
               borderRadius="large"
               className={styles.processContent}
             >
               <GridColumn
-                span={['9/9', '9/9', '7/9', '7/9']}
-                offset={['0', '0', '1/9', '1/9']}
+                span={['9/9', '9/9', '10/12', '7/9']}
+                offset={['0', '0', '1/12', '1/9']}
               >
                 {children}
               </GridColumn>
@@ -118,12 +118,14 @@ interface PartnerPageProps {
 export const PartnerPageLayout: FC<PartnerPageProps> = ({ children, side }) => (
   <Box>
     <ToastContainer />
-    <Box paddingY={10}>
+    <Box paddingY={[5, 5, 10, 10]}>
       <GridContainer>
         <GridRow>
-          <GridColumn span={['0', '0', '3/12', '3/12']}>{side}</GridColumn>
+          <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
+            {side}
+          </GridColumn>
           <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
-            {children}
+            <Box paddingY={[5, 5, 0, 0]}>{children}</Box>
           </GridColumn>
         </GridRow>
       </GridContainer>

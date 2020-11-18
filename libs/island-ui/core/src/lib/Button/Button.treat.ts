@@ -62,8 +62,10 @@ export const size = styleMap({
   default: {
     fontSize: 16,
     lineHeight: 1.25,
+    minHeight: 48,
     ...themeUtils.responsiveStyle({
       md: {
+        minHeight: 64,
         fontSize: 18,
         lineHeight: 1.6,
       },
@@ -72,10 +74,12 @@ export const size = styleMap({
   small: {
     fontSize: 16,
     lineHeight: 1.25,
+    minHeight: 40,
     ...themeUtils.responsiveStyle({
       md: {
         fontSize: 18,
         lineHeight: 1.6,
+        minHeight: 48,
       },
     }),
   },
@@ -96,6 +100,7 @@ export const size = styleMap({
       md: {
         fontSize: 14,
         lineHeight: 1.142857,
+        minHeight: 48,
       },
     }),
   },
@@ -438,27 +443,24 @@ export const icon = style({
     },
   }),
   selectors: {
-    [`${isEmpty} &`]: {
+    [`${isEmpty} &, ${circle} &`]: {
       marginLeft: 0,
     },
-    [`${circle} &`]: {
-      marginLeft: 0,
-      width: '50%',
-      height: '50%',
-    },
-    [`${size.small} &`]: {
-      width: 15,
-      height: 15,
-    },
-    [`${variants.text}:not(${isEmpty}) &`]: {
-      width: 15,
-      height: 15,
-      marginLeft: 8,
-    },
-    [`${variants.utility}:not(${isEmpty}) &`]: {
+    [`${size.small} &, ${variants.utility} &, ${size.textSmall} &, ${circleSizes.small} &`]: {
       width: 16,
       height: 16,
+    },
+    [`${variants.utility}:not(${isEmpty}) &, ${variants.text}:not(${isEmpty}) &`]: {
       marginLeft: 8,
+    },
+    [`${variants.text}${size.textSmall}:not(${isEmpty}) &`]: {
+      marginLeft: 4,
+    },
+    [`${variants.text}:not(${size.textSmall}) &`]: {
+      marginBottom: -5,
+    },
+    [`${size.textSmall} &`]: {
+      marginBottom: -3,
     },
     ...utilityIconColor(
       'default',
@@ -470,5 +472,68 @@ export const icon = style({
       theme.color.red600,
       theme.color.roseTinted400,
     ),
+  },
+})
+
+export const loadingCircle = style({})
+
+export const hideContent = style({
+  color: 'transparent',
+})
+
+export const loading = style({
+  position: 'relative',
+})
+
+export const loader = style({
+  position: 'absolute',
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+})
+
+export const loadingDot = style({
+  width: 8,
+  height: 8,
+  borderRadius: '50%',
+  background: 'currentcolor',
+  selectors: {
+    '&:not(:last-child)': {
+      marginRight: 10,
+    },
+    '&:nth-child(2)': {
+      animationDelay: '0.4s',
+    },
+    '&:nth-child(3)': {
+      animationDelay: '0.8s',
+    },
+    [`${loadingCircle} &:nth-child(2), ${loadingCircle} &:nth-child(3)`]: {
+      display: 'none',
+    },
+    [`${loadingCircle} &`]: {
+      width: 16,
+      height: 16,
+      marginRight: 0,
+    },
+  },
+  animation:
+    '@keyframes 1.4s forwards cubic-bezier(0.59, 0.01, 0.39, 1) infinite',
+  '@keyframes': {
+    '0%': {
+      transform: 'scale(1)',
+      opacity: 1,
+    },
+    '50%': {
+      transform: 'scale(0.8)',
+      opacity: 0.4,
+    },
+    '100%': {
+      transform: 'scale(1)',
+      opacity: 1,
+    },
   },
 })

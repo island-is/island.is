@@ -9,7 +9,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import {
   Case,
@@ -42,11 +42,14 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 
+interface CaseData {
+  case: Case
+}
+
 export const RulingStepOne: React.FC = () => {
-  const custodyEndTimeRef = useRef<HTMLInputElement>()
+  const custodyEndTimeRef = useRef<HTMLInputElement>(null)
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [, setRestrictionCheckboxOne] = useState<boolean>()
   const [, setRestrictionCheckboxTwo] = useState<boolean>()
   const [, setRestrictionCheckboxThree] = useState<boolean>()
@@ -56,25 +59,26 @@ export const RulingStepOne: React.FC = () => {
     '',
   )
   const { id } = useParams<{ id: string }>()
-  const { data } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
 
-  const resCase = data?.case
-
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
-    const { data } = await updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
-    })
-    const resCase = data?.updateCase
-    if (resCase) {
-      // Do something with the result. In particular, we want th modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-    return resCase
-  }
+  const updateCase = useCallback(
+    async (id: string, updateCase: UpdateCase) => {
+      const { data } = await updateCaseMutation({
+        variables: { input: { id, ...updateCase } },
+      })
+      const resCase = data?.updateCase
+      if (resCase) {
+        // Do something with the result. In particular, we want th modified timestamp passed between
+        // the client and the backend so that we can handle multiple simultanious updates.
+      }
+      return resCase
+    },
+    [updateCaseMutation],
+  )
 
   const restrictions = [
     {
@@ -112,22 +116,33 @@ export const RulingStepOne: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setIsLoading(true)
-      setWorkingCase(resCase)
-      setIsLoading(false)
+    if (!workingCase && data) {
+      let theCase = data.case
+
+      if (!theCase.custodyRestrictions) {
+        theCase = {
+          ...theCase,
+          custodyRestrictions: theCase.requestedCustodyRestrictions,
+        }
+
+        updateCase(
+          theCase.id,
+          parseArray(
+            'custodyRestrictions',
+            theCase.requestedCustodyRestrictions || [],
+          ),
+        )
+      }
+      setWorkingCase(theCase)
     }
-    if (id && !workingCase && resCase) {
-      getCurrentCase()
-    }
-  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
+  }, [workingCase, setWorkingCase, data, updateCase])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
-      { value: workingCase?.ruling, validations: ['empty'] },
-      { value: workingCase?.custodyEndDate, validations: ['empty'] },
+      { value: workingCase?.ruling || '', validations: ['empty'] },
+      { value: workingCase?.custodyEndDate || '', validations: ['empty'] },
       {
-        value: custodyEndTimeRef.current?.value,
+        value: custodyEndTimeRef.current?.value || '',
         validations: ['empty', 'time-format'],
       },
     ]
@@ -141,7 +156,7 @@ export const RulingStepOne: React.FC = () => {
     <PageLayout
       activeSection={Sections.JUDGE}
       activeSubSection={JudgeSubsections.RULING_STEP_ONE}
-      isLoading={isLoading}
+      isLoading={loading}
     >
       {workingCase ? (
         <>
@@ -239,10 +254,9 @@ export const RulingStepOne: React.FC = () => {
                   }
                   handleChange={(date) => {
                     const formattedDate = formatISO(date, {
-                      representation:
-                        workingCase.custodyEndDate?.indexOf('T') > -1
-                          ? 'complete'
-                          : 'date',
+                      representation: workingCase.custodyEndDate?.includes('T')
+                        ? 'complete'
+                        : 'date',
                     })
 
                     setWorkingCase({
@@ -265,50 +279,52 @@ export const RulingStepOne: React.FC = () => {
                   label="Tímasetning"
                   ref={custodyEndTimeRef}
                   defaultValue={
-                    workingCase.custodyEndDate?.indexOf('T') > -1
+                    workingCase.custodyEndDate?.includes('T')
                       ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
-                      : workingCase.requestedCustodyEndDate?.indexOf('T') > -1
+                      : workingCase.requestedCustodyEndDate?.includes('T')
                       ? formatDate(
                           workingCase.requestedCustodyEndDate,
                           TIME_FORMAT,
                         )
-                      : null
+                      : undefined
                   }
                   hasError={custodyEndTimeErrorMessage !== ''}
                   errorMessage={custodyEndTimeErrorMessage}
                   onFocus={() => setCustodyEndTimeErrorMessage('')}
                   onBlur={(evt) => {
-                    const validateTimeEmpty = validate(
-                      evt.target.value,
-                      'empty',
-                    )
-                    const validateTimeFormat = validate(
-                      evt.target.value,
-                      'time-format',
-                    )
-                    const custodyEndDateMinutes = parseTime(
-                      workingCase.custodyEndDate,
-                      evt.target.value,
-                    )
-
-                    setWorkingCase({
-                      ...workingCase,
-                      custodyEndDate: custodyEndDateMinutes,
-                    })
-
-                    if (
-                      validateTimeEmpty.isValid &&
-                      validateTimeFormat.isValid
-                    ) {
-                      updateCase(
-                        workingCase.id,
-                        parseString('custodyEndDate', custodyEndDateMinutes),
+                    if (workingCase.custodyEndDate) {
+                      const validateTimeEmpty = validate(
+                        evt.target.value,
+                        'empty',
                       )
-                    } else {
-                      setCustodyEndTimeErrorMessage(
-                        validateTimeEmpty.errorMessage ||
-                          validateTimeFormat.errorMessage,
+                      const validateTimeFormat = validate(
+                        evt.target.value,
+                        'time-format',
                       )
+                      const custodyEndDateMinutes = parseTime(
+                        workingCase.custodyEndDate,
+                        evt.target.value,
+                      )
+
+                      setWorkingCase({
+                        ...workingCase,
+                        custodyEndDate: custodyEndDateMinutes,
+                      })
+
+                      if (
+                        validateTimeEmpty.isValid &&
+                        validateTimeFormat.isValid
+                      ) {
+                        updateCase(
+                          workingCase.id,
+                          parseString('custodyEndDate', custodyEndDateMinutes),
+                        )
+                      } else {
+                        setCustodyEndTimeErrorMessage(
+                          validateTimeEmpty.errorMessage ||
+                            validateTimeFormat.errorMessage,
+                        )
+                      }
                     }
                   }}
                   required
@@ -332,20 +348,17 @@ export const RulingStepOne: React.FC = () => {
                           name={restriction.restriction}
                           label={restriction.restriction}
                           value={restriction.value}
-                          checked={
-                            workingCase.custodyRestrictions?.indexOf(
-                              restriction.value,
-                            ) > -1
-                          }
+                          checked={workingCase.custodyRestrictions?.includes(
+                            restriction.value,
+                          )}
                           tooltip={restriction.explination}
                           onChange={({ target }) => {
                             // Create a copy of the state
                             const copyOfState = Object.assign(workingCase, {})
 
-                            const restrictionIsSelected =
-                              copyOfState.custodyRestrictions?.indexOf(
-                                target.value as CaseCustodyRestrictions,
-                              ) > -1
+                            const restrictionIsSelected = copyOfState.custodyRestrictions?.includes(
+                              target.value as CaseCustodyRestrictions,
+                            )
 
                             // Toggle the checkbox on or off
                             restriction.setCheckbox(!restrictionIsSelected)
@@ -356,20 +369,20 @@ export const RulingStepOne: React.FC = () => {
                                 copyOfState.custodyRestrictions = []
                               }
 
-                              copyOfState.custodyRestrictions.push(
-                                target.value as CaseCustodyRestrictions,
-                              )
+                              copyOfState.custodyRestrictions &&
+                                copyOfState.custodyRestrictions.push(
+                                  target.value as CaseCustodyRestrictions,
+                                )
                             }
                             // If the user is unchecking the box, remove the restriction from the state
                             else {
-                              const restrictions =
-                                copyOfState.custodyRestrictions
-                              restrictions.splice(
-                                restrictions?.indexOf(
-                                  target.value as CaseCustodyRestrictions,
-                                ),
-                                1,
-                              )
+                              copyOfState.custodyRestrictions &&
+                                copyOfState.custodyRestrictions.splice(
+                                  copyOfState.custodyRestrictions.indexOf(
+                                    target.value as CaseCustodyRestrictions,
+                                  ),
+                                  1,
+                                )
                             }
 
                             setWorkingCase({
@@ -383,7 +396,7 @@ export const RulingStepOne: React.FC = () => {
                               workingCase.id,
                               parseArray(
                                 'custodyRestrictions',
-                                copyOfState.custodyRestrictions,
+                                copyOfState.custodyRestrictions || [],
                               ),
                             )
                           }}

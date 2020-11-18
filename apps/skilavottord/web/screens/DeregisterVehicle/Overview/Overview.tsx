@@ -19,7 +19,12 @@ import {
   PartnerPageLayout,
 } from '@island.is/skilavottord-web/components'
 import { CarsTable } from './components/CarsTable'
-import { VEHICLES_BY_PARTNER_ID } from '@island.is/skilavottord-web/graphql/queries'
+import {
+  ALL_RECYCLING_PARTNERS,
+  VEHICLES_BY_PARTNER_ID,
+} from '@island.is/skilavottord-web/graphql/queries'
+import { RecyclingPartner } from '@island.is/skilavottord-web/types'
+import { getDate, getYear } from '@island.is/skilavottord-web/utils/dateUtils'
 
 const Overview: FC = () => {
   const { user } = useContext(UserContext)
@@ -29,19 +34,44 @@ const Overview: FC = () => {
   const router = useRouter()
 
   const partnerId = user?.partnerId ?? ''
-  const { data } = useQuery(VEHICLES_BY_PARTNER_ID, {
+  const { data: vehicleData } = useQuery(VEHICLES_BY_PARTNER_ID, {
     variables: { partnerId },
     fetchPolicy: 'cache-and-network',
   })
 
-  const vehicleOwners = data?.skilavottordRecyclingPartnerVehicles
-  const deregisteredVehicles = vehicleOwners?.filter(({ vehicles }) => {
-    for (const vehicle of vehicles) {
-      for (const request of vehicle.recyclingRequests) {
-        return request.requestType === 'deregistered'
-      }
-    }
+  const { data: partnerData } = useQuery(ALL_RECYCLING_PARTNERS, {
+    variables: { partnerId },
   })
+
+  const vehicleOwners = vehicleData?.skilavottordRecyclingPartnerVehicles
+  const recyclingPartners = partnerData?.skilavottordAllRecyclingPartners
+
+  const activePartner = recyclingPartners?.filter(
+    (partner: RecyclingPartner) => partner.companyId === partnerId,
+  )[0]
+
+  const getDeregisteredCars = () => {
+    const deregisteredVehicles = []
+    const owners = vehicleOwners?.map(({ vehicles }) =>
+      vehicles.map(
+        ({ vehicleId, vehicleType, newregDate, recyclingRequests }) =>
+          recyclingRequests.map(
+            ({ requestType, nameOfRequestor, createdAt }) => {
+              if (requestType === 'deregistered') {
+                deregisteredVehicles.push({
+                  vehicleId,
+                  vehicleType,
+                  modelYear: getYear(newregDate),
+                  nameOfRequestor,
+                  deregistrationDate: getDate(createdAt),
+                })
+              }
+            },
+          ),
+      ),
+    )
+    return deregisteredVehicles
+  }
 
   const handleDeregister = () => {
     router.push(routes.deregisterVehicle.select)
@@ -53,11 +83,13 @@ const Overview: FC = () => {
     return <NotFound />
   }
 
+  const deregisteredVehicles = getDeregisteredCars()
+
   return (
     <PartnerPageLayout
       side={
         <Sidenav
-          title={user.name}
+          title={activePartner?.companyName || user.name}
           sections={[
             {
               icon: 'car',
@@ -92,7 +124,10 @@ const Overview: FC = () => {
           <Box marginX={1}>
             <Stack space={4}>
               <Text variant="h3">{t.subtitles.history}</Text>
-              <CarsTable titles={t.table} vehicleOwner={deregisteredVehicles} />
+              <CarsTable
+                titles={t.table}
+                deregisteredVehicles={deregisteredVehicles}
+              />
             </Stack>
           </Box>
         )}

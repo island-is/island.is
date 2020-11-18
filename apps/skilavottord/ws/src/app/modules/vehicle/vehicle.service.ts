@@ -28,9 +28,7 @@ export class VehicleService {
         {
           model: RecyclingRequestModel,
           where: {
-            //requestType: 'test',
-            requestType: 'handOver',
-            // recyclingPartnerId: NotNull,
+            requestType: 'deregistered',
           },
           include: [
             {

@@ -83,12 +83,12 @@ export class AuthController {
     const { returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
     const { user } = verifyResult
     if (!user) {
-      this.logger.error('Could not verify user authenticity')
+      this.logger.error('Could not verify user authenticity ')
       return res.redirect('/error')
     }
 
     if (!kennitala.isPerson(user.kennitala)) {
-      this.logger.warn('User used company kennitala to log in')
+      this.logger.warn('User used company kennitala to log in ')
       return res.redirect(`/error?errorType=${SSN_IS_NOT_A_PERSON}`)
     }
 
@@ -116,7 +116,6 @@ export class AuthController {
     this.logger.info(
       `  - personalId = ${user.kennitala}  name = ${user.fullname}   mobile = ${user.mobile}`,
     )
-    this.logger.info(`  - csrfToken = ${csrfToken}`)
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
     this.logger.info(`  - ACCESS_TOKEN_COOKIE = ${ACCESS_TOKEN_COOKIE.name}`)
     this.logger.info(`  - returnUrl = ${returnUrl}`)

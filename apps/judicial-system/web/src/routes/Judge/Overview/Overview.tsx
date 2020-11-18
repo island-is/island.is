@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import {
   Box,
   Text,
@@ -23,6 +23,7 @@ import {
   Case,
   CaseCustodyProvisions,
   UpdateCase,
+  CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
@@ -37,54 +38,54 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 
+interface CaseData {
+  case?: Case
+}
+
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const [
     courtCaseNumberErrorMessage,
     setCourtCaseNumberErrorMessage,
   ] = useState('')
-  const [workingCase, setWorkingCase] = useState<Case>(null)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [workingCase, setWorkingCase] = useState<Case>()
 
-  const { data } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-  const resCase = data?.case
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
-    const { data } = await updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
-    })
-    const resCase = data?.updateCase
-    if (resCase) {
-      // Do something with the result. In particular, we want th modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-    return resCase
-  }
+  const updateCase = useCallback(
+    async (id: string, updateCase: UpdateCase) => {
+      const { data } = await updateCaseMutation({
+        variables: { input: { id, ...updateCase } },
+      })
+      const resCase = data?.updateCase
+      if (resCase) {
+        // Do something with the result. In particular, we want th modified timestamp passed between
+        // the client and the backend so that we can handle multiple simultanious updates.
+      }
+      return resCase
+    },
+    [updateCaseMutation],
+  )
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setIsLoading(true)
-      setWorkingCase(resCase)
-      setIsLoading(false)
+    if (!workingCase && data?.case) {
+      setWorkingCase(data.case)
     }
-    if (id && !workingCase && resCase) {
-      getCurrentCase()
-    }
-  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
+  }, [workingCase, setWorkingCase, data])
 
   return (
     <PageLayout
       activeSection={Sections.JUDGE}
       activeSubSection={JudgeSubsections.JUDGE_OVERVIEW}
-      isLoading={isLoading}
+      isLoading={loading}
     >
       {workingCase ? (
         <>
@@ -179,7 +180,7 @@ export const JudgeOverview: React.FC = () => {
             <Text variant="h3">
               {workingCase.arrestDate &&
                 `${capitalize(
-                  formatDate(workingCase.arrestDate, 'PPPP'),
+                  formatDate(workingCase.arrestDate, 'PPPP') || '',
                 )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
             </Text>
           </Box>
@@ -191,7 +192,7 @@ export const JudgeOverview: React.FC = () => {
             </Box>
             <Text variant="h3">
               {`${capitalize(
-                formatDate(workingCase.requestedCourtDate, 'PPPP'),
+                formatDate(workingCase.requestedCourtDate, 'PPPP') || '',
               )} eftir kl. ${formatDate(
                 workingCase.requestedCourtDate,
                 TIME_FORMAT,
@@ -217,17 +218,39 @@ export const JudgeOverview: React.FC = () => {
                 labelVariant="h3"
               >
                 <Text>
-                  Gæsluvarðhald til
-                  <strong>
-                    {workingCase.requestedCustodyEndDate &&
-                      ` ${formatDate(
-                        workingCase.requestedCustodyEndDate,
-                        'PPP',
-                      )} kl. ${formatDate(
-                        workingCase.requestedCustodyEndDate,
-                        TIME_FORMAT,
-                      )}`}
-                  </strong>
+                  Þess er krafist að
+                  <Text as="span" fontWeight="semiBold">
+                    {` ${workingCase?.accusedName} 
+                    ${formatNationalId(workingCase.accusedNationalId)}`}
+                  </Text>
+                  , verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta
+                  gæsluvarðhaldi til
+                  <Text as="span" fontWeight="semiBold">
+                    {` ${formatDate(
+                      workingCase.requestedCourtDate,
+                      'EEEE',
+                    ).replace('dagur', 'dagsins')} 
+                    ${formatDate(
+                      workingCase.requestedCustodyEndDate,
+                      'PPP',
+                    )},  kl. ${formatDate(
+                      workingCase?.requestedCustodyEndDate,
+                      TIME_FORMAT,
+                    )}`}
+                  </Text>
+                  {workingCase.requestedCustodyRestrictions?.includes(
+                    CaseCustodyRestrictions.ISOLATION,
+                  ) ? (
+                    <>
+                      , og verði gert að{' '}
+                      <Text as="span" fontWeight="semiBold">
+                        sæta einangrun
+                      </Text>{' '}
+                      á meðan gæsluvarðhaldinu stendur.
+                    </>
+                  ) : (
+                    '.'
+                  )}
                 </Text>
               </AccordionItem>
               <AccordionItem
@@ -325,7 +348,10 @@ export const JudgeOverview: React.FC = () => {
           <FormFooter
             nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
             nextIsDisabled={isNextDisabled([
-              { value: workingCase.courtCaseNumber, validations: ['empty'] },
+              {
+                value: workingCase.courtCaseNumber || '',
+                validations: ['empty'],
+              },
             ])}
           />
         </>

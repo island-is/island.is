@@ -1,4 +1,12 @@
-import { Query, Resolver, Context, Args, Mutation } from '@nestjs/graphql'
+import {
+  Query,
+  Resolver,
+  Context,
+  Args,
+  Mutation,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -15,9 +23,10 @@ import {
 } from './dto'
 import {
   Case,
+  Notification,
   RequestSignatureResponse,
-  ConfirmSignatureResponse,
   SendNotificationResponse,
+  SignatureConfirmationResponse,
 } from './models'
 
 @UseGuards(JwtAuthGuard)
@@ -113,16 +122,26 @@ export class CaseResolver {
     return backendApi.requestSignature(input.caseId)
   }
 
-  @Query(() => ConfirmSignatureResponse, { nullable: true })
-  confirmSignature(
+  @Query(() => SignatureConfirmationResponse, { nullable: true })
+  signatureConfirmation(
     @Args('input', { type: () => SignatureConfirmationQueryInput })
     input: SignatureConfirmationQueryInput,
     @Context('dataSources') { backendApi },
-  ): Promise<ConfirmSignatureResponse> {
+  ): Promise<SignatureConfirmationResponse> {
     const { caseId, documentToken } = input
 
     this.logger.debug(`Confirming signature of ruling for case ${caseId}`)
 
-    return backendApi.confirmSignature(caseId, documentToken)
+    return backendApi.getSignatureConfirmation(caseId, documentToken)
+  }
+
+  @ResolveField(() => [Notification])
+  async notifications(
+    @Parent() existingCase: Case,
+    @Context('dataSources') { backendApi },
+  ): Promise<Notification[]> {
+    const { id } = existingCase
+
+    return backendApi.getCaseNotifications(id)
   }
 }

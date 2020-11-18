@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { IPageHeader } from '../generated/contentfulTypes'
+import { IPageHeader, ITimeline } from '../generated/contentfulTypes'
 import { Link, mapLink } from './link.model'
 import { TimelineSlice, mapTimelineSlice } from './timelineSlice.model'
 
@@ -32,11 +32,16 @@ export const mapPageHeader = (entry: IPageHeader): PageHeader => {
   const sys = entry?.sys
   return {
     typename: 'PageHeader',
-    id: sys?.id ?? '',
-    title: fields?.title ?? '',
-    introduction: fields?.introduction ?? '',
-    navigationText: fields?.navigationText ?? '',
-    links: (fields?.links ?? []).map(mapLink),
-    slices: (fields?.slices ?? []).map(mapTimelineSlice),
+    id: sys.id,
+    title: fields.title ?? '',
+    introduction: fields.introduction ?? '',
+    navigationText: fields.navigationText ?? '',
+    links: (fields.links ?? []).map(mapLink),
+    slices: (fields.slices ?? [])
+      .filter(
+        (entry): entry is ITimeline =>
+          entry.sys.contentType.sys.id === 'timeline',
+      )
+      .map((slice) => mapTimelineSlice(slice)),
   }
 }

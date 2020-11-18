@@ -3,14 +3,14 @@ import {
   ContentLanguage,
   ElasticService,
   SearcherInput,
-  SearchIndexes,
   TagAggregationResponse,
   WebSearchAutocompleteInput,
-} from '@island.is/api/content-search'
+} from '@island.is/content-search-toolkit'
 import { logger } from '@island.is/logging'
 import { SearchResult } from './models/searchResult.model'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
 import { TagCount } from './models/tagCount'
+import { SearchIndexes } from '@island.is/content-search-indexer/types'
 
 @Injectable()
 export class ContentSearchService {
