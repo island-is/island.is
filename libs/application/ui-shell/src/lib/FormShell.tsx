@@ -121,7 +121,7 @@ export const FormShell: FC<{
             >
               <Box
                 height="full"
-                paddingTop={[2, 2, 8]}
+                paddingTop={[0, 0, 8]}
                 paddingLeft={[0, 0, 0, 4]}
                 className={styles.sidebarInner}
               >
