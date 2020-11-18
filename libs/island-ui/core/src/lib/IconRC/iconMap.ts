@@ -9,6 +9,8 @@ export type Icon =
   | 'calendar'
   | 'car'
   | 'cellular'
+  | 'chatbubble'
+  | 'checkmark'
   | 'checkmarkCircle'
   | 'chevronBack'
   | 'chevronDown'
@@ -48,6 +50,8 @@ export default {
     calendar: 'Calendar',
     car: 'Car',
     cellular: 'Cellular',
+    chatbubble: 'Chatbubble',
+    checkmark: 'Checkmark',
     checkmarkCircle: 'CheckmarkCircle',
     chevronBack: 'ChevronBack',
     chevronDown: 'ChevronDown',
@@ -86,6 +90,8 @@ export default {
     calendar: 'CalendarOutline',
     car: 'CarOutline',
     cellular: 'CellularOutline',
+    chatbubble: 'ChatbubbleOutline',
+    checkmark: 'Checkmark',
     checkmarkCircle: 'CheckmarkCircleOutline',
     chevronBack: 'ChevronBackOutline',
     chevronDown: 'ChevronDownOutline',
