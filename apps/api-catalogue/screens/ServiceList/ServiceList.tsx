@@ -273,7 +273,7 @@ ServiceList.getInitialProps = async (ctx) => {
       })
       .then((res) => JSON.parse(res.data.getNamespace.fields)),
   ])
-  
+
   return {
     staticContent,
     filterContent,
