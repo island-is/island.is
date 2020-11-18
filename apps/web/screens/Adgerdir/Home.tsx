@@ -22,6 +22,7 @@ import {
   FrontpageSvg,
   RichText,
   HeadWithSocialSharing,
+  ChatPanel,
 } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import {
@@ -183,6 +184,7 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
           })}
         </Stack>
       </Box>
+      <ChatPanel />
     </>
   )
 }
