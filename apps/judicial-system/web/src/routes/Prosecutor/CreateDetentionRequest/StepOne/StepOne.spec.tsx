@@ -71,6 +71,69 @@ describe('/krafa with an id', () => {
       ),
     ).not.toBeDisabled()
   })
+
+  test('should have a disabled requestedCourtDate if judge has set a court date', async () => {
+    // Arrange
+
+    // Act
+    render(
+      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
+        <userContext.Provider value={mockProsecutorUserContext}>
+          <MemoryRouter
+            initialEntries={[
+              `${Constants.SINGLE_REQUEST_BASE_ROUTE}/test_id_3`,
+            ]}
+          >
+            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+              <StepOne />
+            </Route>
+          </MemoryRouter>
+        </userContext.Provider>
+      </MockedProvider>,
+    )
+
+    // Assert
+    expect(
+      await waitFor(
+        () =>
+          screen.getAllByLabelText(
+            'Veldu dagsetningu *',
+          )[1] as HTMLInputElement,
+      ),
+    ).toBeDisabled()
+  })
+
+  test('should have a disabled defender name and email if judge has set a defender', async () => {
+    // Arrange
+
+    // Act
+    render(
+      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
+        <userContext.Provider value={mockProsecutorUserContext}>
+          <MemoryRouter
+            initialEntries={[
+              `${Constants.SINGLE_REQUEST_BASE_ROUTE}/test_id_2`,
+            ]}
+          >
+            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+              <StepOne />
+            </Route>
+          </MemoryRouter>
+        </userContext.Provider>
+      </MockedProvider>,
+    )
+
+    // Assert
+    expect(
+      await waitFor(
+        () => screen.getByLabelText('Nafn verjanda') as HTMLInputElement,
+      ),
+    ).toBeDisabled()
+
+    expect(
+      screen.getByLabelText('Nafn verjanda') as HTMLInputElement,
+    ).toBeDisabled()
+  })
 })
 
 describe('/krafa without ID', () => {

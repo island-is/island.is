@@ -632,6 +632,7 @@ export const StepOne: React.FC = () => {
                 label="Nafn verjanda"
                 placeholder="Fullt nafn"
                 defaultValue={workingCase.requestedDefenderName}
+                disabled={workingCase.defenderName !== undefined}
                 onBlur={(evt) => {
                   if (workingCase.requestedDefenderName !== evt.target.value) {
                     setWorkingCase({
@@ -652,6 +653,7 @@ export const StepOne: React.FC = () => {
               label="Netfang verjanda"
               placeholder="Netfang"
               ref={defenderEmailRef}
+              disabled={workingCase.defenderEmail !== undefined}
               defaultValue={workingCase.requestedDefenderEmail}
               errorMessage={requestedDefenderEmailErrorMessage}
               hasError={requestedDefenderEmailErrorMessage !== ''}
@@ -726,6 +728,7 @@ export const StepOne: React.FC = () => {
             <GridRow>
               <GridColumn span="5/8">
                 <DatePicker
+                  id="arrestDate"
                   label="Veldu dagsetningu"
                   placeholderText="Veldu dagsetningu"
                   locale="is"
@@ -828,6 +831,7 @@ export const StepOne: React.FC = () => {
             <GridRow>
               <GridColumn span="5/8">
                 <DatePicker
+                  id="reqCourtDate"
                   label="Veldu dagsetningu"
                   placeholderText="Veldu dagsetningu"
                   locale="is"
@@ -837,6 +841,7 @@ export const StepOne: React.FC = () => {
                       ? parseISO(workingCase.requestedCourtDate.toString())
                       : null
                   }
+                  disabled={workingCase.courtDate !== undefined}
                   handleChange={(date) => {
                     const formattedDate = formatISO(date, {
                       representation: workingCase.requestedCourtDate?.includes(
@@ -872,7 +877,10 @@ export const StepOne: React.FC = () => {
                       ? formatDate(workingCase.requestedCourtDate, TIME_FORMAT)
                       : undefined
                   }
-                  disabled={!workingCase.requestedCourtDate}
+                  disabled={
+                    !workingCase.requestedCourtDate ||
+                    workingCase.courtDate !== undefined
+                  }
                   ref={requestedCourtTimeRef}
                   onBlur={(evt) => {
                     if (workingCase.requestedCourtDate) {
