@@ -216,7 +216,7 @@ export const Overview: React.FC = () => {
                 <Text>
                   Þess er krafist að
                   <Text as="span" fontWeight="semiBold">
-                    {` ${workingCase?.accusedName} 
+                    {` ${workingCase?.accusedName}
                     ${formatNationalId(workingCase.accusedNationalId)}`}
                   </Text>
                   , verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta
@@ -225,7 +225,7 @@ export const Overview: React.FC = () => {
                     {` ${formatDate(
                       workingCase.requestedCourtDate,
                       'EEEE',
-                    ).replace('dagur', 'dagsins')} 
+                    ).replace('dagur', 'dagsins')}
                     ${formatDate(
                       workingCase?.requestedCustodyEndDate,
                       'PPP',
@@ -234,7 +234,7 @@ export const Overview: React.FC = () => {
                       TIME_FORMAT,
                     )}`}
                   </Text>
-                  {workingCase?.requestedCustodyRestrictions.includes(
+                  {workingCase?.requestedCustodyRestrictions?.includes(
                     CaseCustodyRestrictions.ISOLATION,
                   ) ? (
                     <>

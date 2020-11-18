@@ -220,16 +220,16 @@ export const JudgeOverview: React.FC = () => {
                 <Text>
                   Þess er krafist að
                   <Text as="span" fontWeight="semiBold">
-                    {` ${workingCase?.accusedName} 
+                    {` ${workingCase?.accusedName}
                     ${formatNationalId(workingCase.accusedNationalId)}`}
                   </Text>
                   , verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta
                   gæsluvarðhaldi til
                   <Text as="span" fontWeight="semiBold">
                     {` ${formatDate(
-                      workingCase.requestedCourtDate,
+                      workingCase.requestedCustodyEndDate,
                       'EEEE',
-                    ).replace('dagur', 'dagsins')} 
+                    ).replace('dagur', 'dagsins')}
                     ${formatDate(
                       workingCase.requestedCustodyEndDate,
                       'PPP',
