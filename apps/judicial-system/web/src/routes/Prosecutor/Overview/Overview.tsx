@@ -242,7 +242,7 @@ export const Overview: React.FC = () => {
                       <Text as="span" fontWeight="semiBold">
                         sæta einangrun
                       </Text>{' '}
-                      á meðan gæsluvarðhaldinu stendur.
+                      meðan á gæsluvarðhaldinu stendur.
                     </>
                   ) : (
                     '.'
