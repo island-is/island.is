@@ -17,7 +17,7 @@ import { OpenApi } from '@island.is/api-catalogue/types'
 import YamlParser from 'js-yaml'
 import { OpenApiView } from '../OpenApiView'
 
-import { GetNamespaceQuery } from '../../graphql/schema'
+import { GetNamespaceQuery } from '../../types'
 import { useNamespace } from '../../hooks'
 import { capitalize } from '../../utils'
 

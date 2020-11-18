@@ -10,8 +10,7 @@ import * as styles from './ServiceDetail.treat'
 import cn from 'classnames'
 import { useQuery } from 'react-apollo'
 import { GET_API_SERVICE_QUERY, GET_NAMESPACE_QUERY } from '../Queries'
-import { GetNamespaceQuery } from '../../graphql/schema'
-import { Screen } from '../../types'
+import { Screen, GetNamespaceQuery } from '../../types'
 import initApollo from '../../graphql/client'
 
 interface ServiceDetailProps {

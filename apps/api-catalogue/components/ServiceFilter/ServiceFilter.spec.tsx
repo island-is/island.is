@@ -3,7 +3,7 @@ import { render } from '@testing-library/react'
 
 import { ServiceFilter } from './ServiceFilter'
 import { GetApiCatalogueInput } from '@island.is/api/schema'
-import { GetNamespaceQuery } from '../../graphql/schema'
+import { GetNamespaceQuery } from '../../types'
 
 describe(' ServiceFilter ', () => {
   const strings: GetNamespaceQuery['getNamespace'] = {

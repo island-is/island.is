@@ -8,7 +8,7 @@ import {
   DataCategory,
 } from '@island.is/api-catalogue/consts'
 
-import { GetNamespaceQuery } from '../../graphql/schema'
+import { GetNamespaceQuery } from '../../types'
 import { useNamespace } from '../../hooks'
 
 describe(' ServiceCard ', () => {

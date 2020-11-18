@@ -28,9 +28,8 @@ import {
 } from '@island.is/api/schema'
 
 import { useNamespace } from '../../hooks'
-import { GetNamespaceQuery } from '../../graphql/schema'
 import { GET_NAMESPACE_QUERY } from '../Queries'
-import { Screen } from '../../types'
+import { Screen, GetNamespaceQuery } from '../../types'
 import initApollo from '../../graphql/client'
 
 const LIMIT = 25
