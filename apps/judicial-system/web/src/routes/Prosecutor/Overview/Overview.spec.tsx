@@ -13,8 +13,6 @@ import { MockedProvider } from '@apollo/client/testing'
 describe('/stofna-krofu/yfirlit', () => {
   test('should display the approprieate custody provisions', async () => {
     // Arrange
-
-    // Act
     render(
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockProsecutorUserContext}>

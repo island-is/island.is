@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import React, { FC, useContext, useEffect } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import {
@@ -37,7 +37,7 @@ const Confirm: FC = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const { data } = useQuery(VEHICLE_TO_DEREGISTER, {
+  const { data, loading } = useQuery(VEHICLE_TO_DEREGISTER, {
     variables: { permno: id },
   })
 
@@ -45,15 +45,20 @@ const Confirm: FC = () => {
 
   const [
     setRecyclingRequest,
-    { error: mutationError, loading: mutationLoading },
+    { data: mutationData, error: mutationError, loading: mutationLoading },
   ] = useMutation(CREATE_RECYCLING_REQUEST_COMPANY, {
-    onCompleted() {
-      router.replace(routes.baseRoute).then(() => toast.success(t.success))
-    },
     onError() {
       return mutationError
     },
   })
+
+  const mutationResponse = mutationData?.createSkilavottordRecyclingRequest
+
+  useEffect(() => {
+    if (mutationResponse?.status) {
+      router.replace(routes.baseRoute).then(() => toast.success(t.success))
+    }
+  }, [mutationResponse, router, routes, t.success])
 
   const partnerId = user?.partnerId
 
@@ -77,7 +82,7 @@ const Confirm: FC = () => {
     return <NotFound />
   }
 
-  if (mutationError || mutationLoading) {
+  if (mutationError || mutationLoading || mutationResponse?.message) {
     return (
       <ProcessPageLayout sectionType={'company'} activeSection={1}>
         {mutationLoading ? (
@@ -126,23 +131,37 @@ const Confirm: FC = () => {
             />
           </Stack>
         ) : (
-          <Stack space={4}>
-            <Text variant="h1">{t.titles.notfound}</Text>
-            <Inline space={1}>
-              <Text>{t.info.error}</Text>
-              <Text variant="h5">{id}</Text>
-            </Inline>
-            <BulletList type="ul">
-              <Bullet>
-                {t.info.notfound}
-                <Text variant="h5">skilavottord.island.is/my-cars</Text>
-              </Bullet>
-            </BulletList>
-          </Stack>
+          <Box>
+            {loading ? (
+              <Box textAlign="center">
+                <LoadingIcon size={50} />
+              </Box>
+            ) : (
+              <Stack space={4}>
+                <Text variant="h1">{t.titles.notfound}</Text>
+                <Inline space={1}>
+                  <Text>{t.info.error}</Text>
+                  <Text variant="h5">{id}</Text>
+                </Inline>
+                <BulletList type="ul">
+                  <Bullet>
+                    {t.info.notfound}
+                    <Text variant="h5">skilavottord.island.is/my-cars</Text>
+                  </Bullet>
+                </BulletList>
+              </Stack>
+            )}
+          </Box>
         )}
         <Box width="full" display="inlineFlex" justifyContent="spaceBetween">
-          <Hidden above="md">
-            <Button variant="ghost" circle icon="arrowBack" size="large" />
+          <Hidden above="sm">
+            <Button
+              variant="ghost"
+              circle
+              icon="arrowBack"
+              size="large"
+              onClick={handleBack}
+            />
           </Hidden>
           <Hidden below="md">
             <Button variant="ghost" onClick={handleBack}>

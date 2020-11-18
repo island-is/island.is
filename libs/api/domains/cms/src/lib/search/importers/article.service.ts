@@ -1,4 +1,4 @@
-import { MappedData } from '@island.is/api/content-search'
+import { MappedData } from '@island.is/content-search-indexer/types'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'

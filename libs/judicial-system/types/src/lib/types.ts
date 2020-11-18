@@ -14,6 +14,7 @@ export interface User {
   mobileNumber: string
   email: string
   role: UserRole
+  active: boolean
 }
 
 export enum CaseState {
@@ -102,12 +103,14 @@ export interface Case {
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
   judge?: User
+  notifications?: Notification[]
 }
 
 export enum NotificationType {
   HEADS_UP = 'HEADS_UP',
   READY_FOR_COURT = 'READY_FOR_COURT',
   COURT_DATE = 'COURT_DATE',
+  RULING = 'RULING',
 }
 
 export interface Notification {
@@ -115,7 +118,8 @@ export interface Notification {
   created: string
   caseId: string
   type: NotificationType
-  message: string
+  condition?: string
+  recipients?: string
 }
 
 export interface CreateCase {
@@ -186,7 +190,7 @@ export interface RequestSignatureResponse {
   documentToken: string
 }
 
-export interface ConfirmSignatureResponse {
+export interface SignatureConfirmationResponse {
   documentSigned: boolean
   code?: number
   message?: string

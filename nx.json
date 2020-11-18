@@ -68,9 +68,6 @@
     "api-catalogue-types": {
       "tags": []
     },
-    "api-content-search": {
-      "tags": []
-    },
     "api-domains-api-catalogue": {
       "tags": []
     },
@@ -162,13 +159,19 @@
     "cache": {
       "tags": []
     },
+    "content-search-indexer": {
+      "tags": []
+    },
+    "content-search-indexer-types": {
+      "tags": []
+    },
+    "content-search-toolkit": {
+      "tags": []
+    },
     "contentful-importer": {
       "tags": []
     },
     "dokobit-signing": {
-      "tags": []
-    },
-    "elastic-indexing": {
       "tags": []
     },
     "email-service": {

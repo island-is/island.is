@@ -221,6 +221,17 @@ describe('Validation', () => {
       expect(validation.isValid).toEqual(true)
     })
 
+    test('should be valid if email contains - and . characters', () => {
+      // Arrange
+      const validEmail = 'garfield.lasagne-lover@garfield.io'
+
+      // Act
+      const validation = validate('', 'email-format')
+
+      // Assert
+      expect(validation.isValid).toEqual(true)
+    })
+
     test('should be valid if email is valid', () => {
       // Arrange
       const validEmail = 'garfield@garfield.io'
@@ -264,6 +275,11 @@ describe('Step helper', () => {
     test('should return the correct string if there are no restrictions and the case is not being rejected', () => {
       // Arrange
       const wc = {
+        id: 'testid',
+        created: 'test',
+        modified: 'test',
+        state: 'DRAFT',
+        policeCaseNumber: 'test',
         rejecting: false,
         custodyRestrictions: [],
         accusedName: 'Doe',
@@ -410,17 +426,6 @@ describe('Step helper', () => {
         { value: '', validations: ['empty'] },
         { value: '13:37', validations: ['empty', 'time-format'] },
       ]
-
-      // Act
-      const ind = isNextDisabled(rf)
-
-      // Assert
-      expect(ind).toEqual(true)
-    })
-
-    test('should return true if a value is undefined', () => {
-      // Arrange
-      const rf: RequiredField[] = [{ value: undefined, validations: ['empty'] }]
 
       // Act
       const ind = isNextDisabled(rf)

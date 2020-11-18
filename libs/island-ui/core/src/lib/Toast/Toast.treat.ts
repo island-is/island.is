@@ -1,4 +1,4 @@
-import { style, styleMap, globalStyle } from 'treat'
+import { style, globalStyle } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const root = style({

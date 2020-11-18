@@ -35,10 +35,10 @@ export const mapAdgerdirGroupSlice = ({
   sys,
 }: IVidspyrnaFlokkur): AdgerdirGroupSlice =>
   new AdgerdirGroupSlice({
-    id: sys.id,
-    title: fields.title,
-    subtitle: fields.subtitle,
-    description: fields.description,
-    image: fields.image?.fields?.file ? mapImage(fields.image) : null,
-    pages: fields.pages.map(mapAdgerdirPage),
+    id: sys?.id ?? '',
+    title: fields?.title ?? '',
+    subtitle: fields?.subtitle ?? '',
+    description: fields?.description ?? '',
+    image: fields?.image?.fields?.file ? mapImage(fields.image) : null,
+    pages: fields?.pages ? fields.pages.map(mapAdgerdirPage) : [],
   })
