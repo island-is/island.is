@@ -34,27 +34,39 @@ type ModalBaseProps = {
    * Element that opens the dialog.
    * It will be forwarded neccessery props for a11y and event handling.
    */
-  disclosure: ReactElement
+  disclosure?: ReactElement
   /**
    * Unique ID for accessibility purposes
    */
   baseId: string
   className?: string
+  /**
+   * Default visibility state
+   */
+  initialVisibility?: boolean
 }
 
 export const ModalBase: FC<ModalBaseProps> = ({
   disclosure,
   baseId,
+  initialVisibility,
   children,
   className,
 }) => {
-  const modal = useDialogState({ animated: true, baseId })
+  const modal = useDialogState({
+    animated: true,
+    baseId,
+    visible: initialVisibility || false,
+  })
   const closeModal = () => modal.hide()
+
   return (
     <>
-      <DialogDisclosure {...modal} {...disclosure.props}>
-        {(disclosureProps) => React.cloneElement(disclosure, disclosureProps)}
-      </DialogDisclosure>
+      {disclosure ? (
+        <DialogDisclosure {...modal} {...disclosure.props}>
+          {(disclosureProps) => React.cloneElement(disclosure, disclosureProps)}
+        </DialogDisclosure>
+      ) : null}
       <DialogBackdrop {...modal} as={BackdropDiv}>
         <BaseDialog {...modal} className={cn(styles.modal, className)}>
           {typeof children === 'function' ? children({ closeModal }) : children}
