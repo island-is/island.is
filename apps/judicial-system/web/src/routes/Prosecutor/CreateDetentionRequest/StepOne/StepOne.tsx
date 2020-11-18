@@ -27,6 +27,8 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   parseString,
   parseTime,
+  replaceTabs,
+  replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import {
@@ -378,7 +380,7 @@ export const StepOne: React.FC = () => {
               name="policeCaseNumber"
               label="Slá inn LÖKE málsnúmer"
               placeholder="007-2020-X"
-              defaultValue={workingCase?.policeCaseNumber}
+              defaultValue={workingCase.policeCaseNumber}
               ref={policeCaseNumberRef}
               errorMessage={policeCaseNumberErrorMessage}
               hasError={policeCaseNumberErrorMessage !== ''}
@@ -412,6 +414,7 @@ export const StepOne: React.FC = () => {
                   )
                 }
               }}
+              onChange={replaceTabsOnChange}
               onFocus={() => setPoliceCaseNumberErrorMessage('')}
               required
             />
@@ -465,6 +468,7 @@ export const StepOne: React.FC = () => {
                     )
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 onFocus={() => setNationalIdErrorMessage('')}
                 required
               />
@@ -500,6 +504,7 @@ export const StepOne: React.FC = () => {
                     setAccusedNameErrorMessage(validateField.errorMessage)
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 onFocus={() => setAccusedNameErrorMessage('')}
                 required
               />
@@ -535,6 +540,7 @@ export const StepOne: React.FC = () => {
                     setAccusedAddressErrorMessage(validateField.errorMessage)
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 onFocus={() => setAccusedAddressErrorMessage('')}
                 required
               />
@@ -645,6 +651,7 @@ export const StepOne: React.FC = () => {
                     )
                   }
                 }}
+                onChange={replaceTabsOnChange}
               />
             </Box>
             <Input
@@ -679,6 +686,7 @@ export const StepOne: React.FC = () => {
                   )
                 }
               }}
+              onChange={replaceTabsOnChange}
               onFocus={() => setRequestedDefenderEmailErrorMessage('')}
             />
           </Box>

@@ -76,3 +76,12 @@ export const parseTime = (date: string, time: string) => {
 // Credit: https://stackoverflow.com/a/53060314
 export const insertAt = (str: string, sub: string, pos: number) =>
   `${str.slice(0, pos)}${sub}${str.slice(pos)}`
+
+export const replaceTabs = (str: string) =>
+  str?.replace(/(?: \t+|\t+ |\t+)/g, ' ')
+
+export const replaceTabsOnChange = (
+  evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+) => {
+  evt.target.value = replaceTabs(evt.target.value)
+}
