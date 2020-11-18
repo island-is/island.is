@@ -28,6 +28,7 @@ import {
   HeadWithSocialSharing,
   RichText,
   Intro,
+  ChatPanel,
 } from '@island.is/web/components'
 import {
   GET_ADGERDIR_PAGE_QUERY,
@@ -164,6 +165,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
           </ContentBlock>
         </Box>
       </ColorSchemeContext.Provider>
+      <ChatPanel />
     </>
   )
 }

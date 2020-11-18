@@ -226,6 +226,10 @@ const Layout: NextComponentType<
             content="https://island.is/island-fb-1200x630.png"
             key="twitterImage"
           />
+          <script
+            key="246covid-chat-panel"
+            src="https://246covid-island.boost.ai/chatPanel/chatPanel.js"
+          ></script>
         </Head>
         {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
           <AlertBanner
