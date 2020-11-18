@@ -66,6 +66,7 @@ export const ModalBase: FC<ModalBaseProps> = ({
   })
   const closeModal = () => modal.hide()
 
+  // If the toggleClose flag has been set to true, we close the modal
   useEffect(() => {
     if (toggleClose) closeModal()
   }, [toggleClose])
