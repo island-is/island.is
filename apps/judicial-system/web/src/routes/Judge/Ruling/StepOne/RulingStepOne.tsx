@@ -242,6 +242,7 @@ export const RulingStepOne: React.FC = () => {
             <GridRow>
               <GridColumn span="5/8">
                 <DatePicker
+                  id="custodyEndDate"
                   label="Gæsluvarðhald til"
                   placeholderText="Veldu dagsetningu"
                   locale="is"
