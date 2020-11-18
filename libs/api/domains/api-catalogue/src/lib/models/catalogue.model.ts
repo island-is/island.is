@@ -30,45 +30,45 @@ registerEnumType(TypeCategory, {
 export class ApiService implements Service {
   @Field((type) => ID)
   @IsString()
-  id: string
+  id!: string
 
   @Field((type) => String)
   @IsString()
-  owner: string
+  owner!: string
 
   @Field((type) => String)
   @IsString()
-  name: string
+  name!: string
 
   @Field((type) => String)
   @IsString()
-  description: string
+  description!: string
 
   @Field((type) => [PricingCategory])
   @IsEnum(PricingCategory)
-  pricing: Array<PricingCategory>
+  pricing!: Array<PricingCategory>
 
   @Field((type) => [DataCategory])
   @IsEnum(DataCategory)
-  data: Array<DataCategory>
+  data!: Array<DataCategory>
 
   @Field((type) => [TypeCategory])
   @IsEnum(TypeCategory)
-  type: Array<TypeCategory>
+  type!: Array<TypeCategory>
 
   @Field((type) => [AccessCategory])
   @IsEnum(AccessCategory)
-  access: Array<AccessCategory>
+  access!: Array<AccessCategory>
 
   @Field((type) => [XroadInfo])
   @IsArray()
-  xroadIdentifier: Array<XroadInfo>
+  xroadIdentifier!: Array<XroadInfo>
 }
 
 @ObjectType()
 export class ApiCatalogue {
   @Field((type) => [ApiService])
-  services: ApiService[]
+  services!: ApiService[]
 
   @Field((type) => PageInfo, { nullable: true })
   @IsOptional()
