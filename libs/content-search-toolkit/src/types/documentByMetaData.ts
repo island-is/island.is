@@ -1,4 +1,4 @@
-import { elasticTagField, sortDirection } from './index'
+import { elasticTagField, sortDirection } from './shared'
 
 type sortableFields = {
   dateUpdated?: sortDirection
