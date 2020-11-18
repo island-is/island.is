@@ -28,7 +28,6 @@ const defaultLanguageOption: LanguageFormOption = {
 }
 
 const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
-  const [isOpen, setIsOpen] = useState(true)
   const [step, setStep] = useState<OnboardingStep>('intro')
   const [tel, setTel] = useState('')
   const [email, setEmail] = useState('')
@@ -39,7 +38,6 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const handleCloseModal = () => {
     toast.info('Notendaupplýsingum er hægt að breyta í stillingum')
-    setIsOpen(false)
   }
 
   const gotoStep = (step: OnboardingStep) => {
@@ -60,7 +58,8 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
         mobilePhoneNumber,
       })
       toast.success('Notendaupplýsingar þínar hafa verið uppfærðar')
-      setIsOpen(false)
+      // TODO: Close modal
+      // setIsOpen(false)
     } catch (err) {
       gotoStep('language-form')
       toast.error(
@@ -85,7 +84,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   }
 
   return (
-    <Modal onCloseModal={handleCloseModal} isOpen={isOpen}>
+    <Modal id="user-onboarding-modal" onCloseModal={handleCloseModal}>
       {step === 'intro' && (
         <IntroStep
           userInfo={userInfo}
