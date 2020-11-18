@@ -68,28 +68,37 @@ export const ConfirmationStep: FC<Props> = ({
           )}
         />
       </Box>
-      <Box display="flex" justifyContent="spaceBetween" marginTop={4}>
-        <Button variant="ghost" onClick={onBack}>
-          {formatMessage({
-            id: 'service.portal:go-back',
-            defaultMessage: 'Til baka',
-          })}
-        </Button>
-        <Button
-          type="submit"
-          variant="primary"
-          icon="arrowForward"
-          disabled={loading}
-        >
-          {formatMessage(
-            submitButtonText
-              ? submitButtonText
-              : {
-                  id: 'sp.settings:save-changes',
-                  defaultMessage: 'Vista breytingar',
-                },
-          )}
-        </Button>
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        flexWrap="wrap"
+        marginTop={4}
+      >
+        <Box marginBottom={[1, 0]}>
+          <Button variant="ghost" onClick={onBack}>
+            {formatMessage({
+              id: 'service.portal:go-back',
+              defaultMessage: 'Til baka',
+            })}
+          </Button>
+        </Box>
+        <Box marginBottom={[1, 0]}>
+          <Button
+            type="submit"
+            variant="primary"
+            icon="arrowForward"
+            disabled={loading}
+          >
+            {formatMessage(
+              submitButtonText
+                ? submitButtonText
+                : {
+                    id: 'sp.settings:save-changes',
+                    defaultMessage: 'Vista breytingar',
+                  },
+            )}
+          </Button>
+        </Box>
       </Box>
     </form>
   )

@@ -77,19 +77,28 @@ export const IntroStep: FC<Props> = ({ userInfo, onClose, onSubmit }) => {
           <img src="assets/images/jobsGrid.jpg" alt="Skrautmynd" />
         </GridColumn>
       </GridRow>
-      <Box display="flex" justifyContent="spaceBetween" marginTop={8}>
-        <Button variant="ghost" onClick={onClose}>
-          {formatMessage({
-            id: 'service.portal:finish-later',
-            defaultMessage: 'Klára seinna',
-          })}
-        </Button>
-        <Button variant="primary" onClick={onSubmit} icon="arrowForward">
-          {formatMessage({
-            id: 'service.portal:next-step',
-            defaultMessage: 'Næsta skref',
-          })}
-        </Button>
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        flexWrap="wrap"
+        marginTop={[4, 8]}
+      >
+        <Box marginBottom={[1, 0]}>
+          <Button variant="ghost" onClick={onClose}>
+            {formatMessage({
+              id: 'service.portal:finish-later',
+              defaultMessage: 'Klára seinna',
+            })}
+          </Button>
+        </Box>
+        <Box marginBottom={[1, 0]}>
+          <Button variant="primary" onClick={onSubmit} icon="arrowForward">
+            {formatMessage({
+              id: 'service.portal:next-step',
+              defaultMessage: 'Næsta skref',
+            })}
+          </Button>
+        </Box>
       </Box>
     </>
   )
