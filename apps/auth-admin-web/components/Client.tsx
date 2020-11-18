@@ -1,4 +1,4 @@
-import React, { SyntheticEvent } from "react";
+import React, { useMemo } from "react";
 import ClientDTO from "../models/dtos/client-dto";
 import axios from "axios";
 import StatusBar from "./StatusBar";
@@ -12,6 +12,15 @@ type Props = {
   client: ClientDTO;
 };
 export default function Client<ClientDTO>(client: ClientDTO){
+  const validationSchema = useMemo(
+    () =>
+      yup.object({
+        firstName: yup.string().required("Required"),
+        lastName: yup.string().required("Required")
+      }),
+    []
+  );
+  
   const { register, handleSubmit, errors, formState, control } = useForm<ClientDTO>();
   const { isDirty, isSubmitting } = formState;
   client = client.client;
