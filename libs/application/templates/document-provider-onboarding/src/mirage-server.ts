@@ -28,6 +28,18 @@ export function makeServer({ environment = 'development' } = {}) {
           value: '5016d8d5cb6ce0758107b9969ea3c201',
         },
       ])
+      this.get('/api/prodKeys', () => [
+        {
+          id: '1',
+          name: 'Client ID',
+          value: '5016d8d5cb6ce0758107b9969ea3c201',
+        },
+        {
+          id: '2',
+          name: 'Secret key',
+          value: '5016d8d5cb6ce0758107b9969ea3c201',
+        },
+      ])
       this.get('/api/SæunnEndpoint', () => [
         { id: '1', name: 'Luke' },
         { id: '2', name: 'Leia' },

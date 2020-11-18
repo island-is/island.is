@@ -1,9 +1,9 @@
 import React, { FC, useEffect, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
-import { FieldDescription } from '@island.is/shared/form-fields'
 
-const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {
+const ProdEnvironment: FC<FieldBaseProps> = () => {
+  // TODO: Add this to types file ?
   interface Key {
     id: string
     name: string
@@ -12,7 +12,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {
 
   const fetchData = async () => {
     //TODO: This should be post to create new user, answer will hold variables, is get for now.
-    fetch('/api/keys')
+    fetch('/api/prodKeys')
       .then((response) => response.json())
       .then((json) => setKeys(json))
   }
@@ -20,20 +20,9 @@ const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {
   let [keys, setKeys] = useState<Key[]>([])
 
   return (
-    //TODO: we can make this a generic component for reuasabilty, same as production environment
+    //TODO: we can make this a generic component for reuasabilty, same as TEST environment
     <Box>
-      <Box marginBottom={7}>
-        <Box marginBottom={3}>
-          <FieldDescription description="Hér getur þú búið til aðgang að prófunarumhverfi. Athugið að afrita og geyma þessar upplýsingar því þær eru ekki geymdar hér í þessari umsókn. Ef upplýsingarnar glatast er hægt að búa til nýjan aðgang." />
-        </Box>
-        <Box marginBottom={1}>
-          <Text variant="h3">Aðgangur að pósthólfi</Text>
-          <Text>
-            Hér er hægt að útbúa aðgang til að senda inn skjalatilvísanir í
-            pósthólf
-          </Text>
-        </Box>
-      </Box>
+      <Box marginBottom={7} />
       <Box marginBottom={7}>
         <Button
           variant="primary"
@@ -55,4 +44,4 @@ const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {
   )
 }
 
-export default TestEnvironment
+export default ProdEnvironment

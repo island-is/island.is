@@ -4,3 +4,4 @@ export { default as TermsOfAgreement } from './DocumentProvicerApplication/Terms
 export { default as TestEnvironment } from './TestPhase/TestEnvironment'
 export { default as TestEndPoint } from './TestPhase/TestEndPoint'
 export { default as Review } from './DocumentProvicerApplication/Review'
+export { default as ProdEnvironment } from './TestPhase/ProdEnvironment'
