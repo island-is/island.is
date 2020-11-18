@@ -53,6 +53,9 @@ export const CaseQuery = gql`
         name
         title
       }
+      notifications {
+        type
+      }
     }
   }
 `

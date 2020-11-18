@@ -19,7 +19,7 @@ export class ApiCatalogueResolver {
   @Query(() => ApiService, { nullable: true })
   async getApiServiceById(
     @Args('input') input: GetApiServiceInput,
-  ): Promise<ApiService> {
+  ): Promise<ApiService | null> {
     return this.catalogueService.getApiServiceById(input.id)
   }
 
