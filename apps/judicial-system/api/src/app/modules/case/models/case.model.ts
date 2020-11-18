@@ -15,22 +15,22 @@ import { Notification } from './notification.model'
 @ObjectType()
 export class Case implements TCase {
   @Field(() => ID)
-  readonly id: string
+  readonly id!: string
 
   @Field()
-  readonly created: string
+  readonly created!: string
 
   @Field()
-  readonly modified: string
+  readonly modified!: string
 
   @Field(() => String)
-  readonly state: CaseState
+  readonly state!: CaseState
 
   @Field()
-  readonly policeCaseNumber: string
+  readonly policeCaseNumber!: string
 
   @Field()
-  readonly accusedNationalId: string
+  readonly accusedNationalId!: string
 
   @Field({ nullable: true })
   readonly accusedName?: string
