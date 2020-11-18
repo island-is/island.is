@@ -632,6 +632,13 @@ export const StepOne: React.FC = () => {
                 label="Nafn verjanda"
                 placeholder="Fullt nafn"
                 defaultValue={workingCase.requestedDefenderName}
+                disabled={workingCase.defenderName !== undefined}
+                icon={
+                  workingCase.defenderName !== undefined
+                    ? 'lockClosed'
+                    : undefined
+                }
+                iconType="outline"
                 onBlur={(evt) => {
                   if (workingCase.requestedDefenderName !== evt.target.value) {
                     setWorkingCase({
@@ -651,6 +658,13 @@ export const StepOne: React.FC = () => {
               name="requestedDefenderEmail"
               label="Netfang verjanda"
               placeholder="Netfang"
+              disabled={workingCase.defenderEmail !== undefined}
+              icon={
+                workingCase.defenderEmail !== undefined
+                  ? 'lockClosed'
+                  : undefined
+              }
+              iconType="outline"
               ref={defenderEmailRef}
               defaultValue={workingCase.requestedDefenderEmail}
               errorMessage={requestedDefenderEmailErrorMessage}
@@ -681,6 +695,11 @@ export const StepOne: React.FC = () => {
               }}
               onFocus={() => setRequestedDefenderEmailErrorMessage('')}
             />
+            {workingCase.defenderName && workingCase.defenderEmail && (
+              <Box marginTop={1}>
+                <Text variant="eyebrow">Verjanda hefur verið úthlutað</Text>
+              </Box>
+            )}
           </Box>
           <Box component="section" marginBottom={7}>
             <Box marginBottom={2}>
@@ -726,6 +745,7 @@ export const StepOne: React.FC = () => {
             <GridRow>
               <GridColumn span="5/8">
                 <DatePicker
+                  id="arrestDate"
                   label="Veldu dagsetningu"
                   placeholderText="Veldu dagsetningu"
                   locale="is"
@@ -828,15 +848,18 @@ export const StepOne: React.FC = () => {
             <GridRow>
               <GridColumn span="5/8">
                 <DatePicker
+                  id="reqCourtDate"
                   label="Veldu dagsetningu"
                   placeholderText="Veldu dagsetningu"
                   locale="is"
+                  icon="lockClosed"
                   minDate={new Date()}
                   selected={
                     workingCase.requestedCourtDate
                       ? parseISO(workingCase.requestedCourtDate.toString())
                       : null
                   }
+                  disabled={workingCase.courtDate !== undefined}
                   handleChange={(date) => {
                     const formattedDate = formatISO(date, {
                       representation: workingCase.requestedCourtDate?.includes(
@@ -872,7 +895,16 @@ export const StepOne: React.FC = () => {
                       ? formatDate(workingCase.requestedCourtDate, TIME_FORMAT)
                       : undefined
                   }
-                  disabled={!workingCase.requestedCourtDate}
+                  disabled={
+                    !workingCase.requestedCourtDate ||
+                    workingCase.courtDate !== undefined
+                  }
+                  icon={
+                    workingCase.courtDate !== undefined
+                      ? 'lockClosed'
+                      : undefined
+                  }
+                  iconType="outline"
                   ref={requestedCourtTimeRef}
                   onBlur={(evt) => {
                     if (workingCase.requestedCourtDate) {
@@ -918,6 +950,13 @@ export const StepOne: React.FC = () => {
                 />
               </GridColumn>
             </GridRow>
+            {workingCase.courtDate && (
+              <Box marginTop={1}>
+                <Text variant="eyebrow">
+                  Fyrirtökudegi og tíma hefur verið úthlutað
+                </Text>
+              </Box>
+            )}
           </Box>
           <FormFooter
             onNextButtonClick={() => {

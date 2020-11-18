@@ -95,7 +95,7 @@ export const icon = style({
   color: theme.color.blue400,
   ...themeUtils.responsiveStyle({
     md: {
-      width: 32,
+      minWidth: 32,
       height: 32,
     },
   }),
