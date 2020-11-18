@@ -5,6 +5,7 @@ import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/api/domains/cms'
 import { ApplicationModule } from '@island.is/api/domains/application'
+import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of-labour'
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { DocumentModule } from '@island.is/api/domains/documents'
 import { CommunicationsModule } from '@island.is/api/domains/communications'
@@ -50,6 +51,7 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl,
     }),
+    DirectorateOfLabourModule.register(),
     FileUploadModule,
     DocumentModule.register({
       basePath: environment.documentService.basePath,

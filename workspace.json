@@ -824,6 +824,35 @@
         }
       }
     },
+    "api-domains-directorate-of-labour": {
+      "root": "libs/api/domains/directorate-of-labour",
+      "sourceRoot": "libs/api/domains/directorate-of-labour/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/directorate-of-labour/tsconfig.lib.json",
+              "libs/api/domains/directorate-of-labour/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/directorate-of-labour/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/directorate-of-labour/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-documents": {
       "root": "libs/api/domains/documents",
       "sourceRoot": "libs/api/domains/documents/src",
