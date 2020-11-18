@@ -4,19 +4,21 @@ import axios from "axios";
 import StatusBar from "./StatusBar";
 import APIResponse from "../models/APIResponse";
 import { useRouter } from "next/router";
-import { useForm } from "react-hook-form";
+import { useForm, Controller  } from "react-hook-form";
 import { ErrorMessage } from '@hookform/error-message';
+import * as yup from "yup";
 
 type Props = {
   client: ClientDTO;
 };
 export default function Client<ClientDTO>(client: ClientDTO){
-  const { register, handleSubmit, errors, formState } = useForm<ClientDTO>();
+  const { register, handleSubmit, errors, formState, control } = useForm<ClientDTO>();
   const { isDirty, isSubmitting } = formState;
   client = client.client;
 
   const save = async (data) => {
-    const response = await axios.post("/api/clients", data).catch((err) => {
+    console.log(data.client);
+    const response = await axios.post("/api/clients", data.client).catch((err) => {
       console.log(err);
     });
 
@@ -36,10 +38,11 @@ export default function Client<ClientDTO>(client: ClientDTO){
           </div>
 
           <div className="client__container">
-            <h1>Stofna nýjann Client</h1>
+            <h1>Create a new Client</h1>
             <div className="client__container__form">
               <form onSubmit={handleSubmit(save)}>
                 <div className="client__container__fields">
+                  {/* <HookField name='client.clientId' errors={errors} required={true} label="Client Id" value={client.clientId}  /> */}
                   <div className="client__container__field">
                     <label className="client__label">
                       Client Id</label>
@@ -67,6 +70,7 @@ export default function Client<ClientDTO>(client: ClientDTO){
                     <label className="client__label">URI</label>
                     <input
                       name="client.clientUri"
+                      ref={register}
                       type="text"
                       defaultValue={client.clientUri ?? ""}
                       className="client__input"
@@ -77,6 +81,7 @@ export default function Client<ClientDTO>(client: ClientDTO){
                     <label className="client__label">Description</label>
                     <input
                       type="text"
+                      ref={register}
                       name="client.description"
                       defaultValue={client.description ?? ""}
                       className="client__input"
@@ -124,6 +129,7 @@ export default function Client<ClientDTO>(client: ClientDTO){
                       name="client.enabled"
                       className="client__checkbox"
                       defaultChecked={client.enabled}
+                      ref={register}
                     ></input>
                   </div>
 
@@ -149,81 +155,25 @@ export default function Client<ClientDTO>(client: ClientDTO){
                       <label className="client__label">
                         Access Token Lifetime
                       </label>
-                      <input
+                      <Controller
+                      as={<input />}
+                      name="client.accessTokenLifetime"
+                      control={control}
+                      defaultValue={client.accessTokenLifetime}
                       ref={register({ required: true })}
+                      onChange={([e]) => {
+                        return parseInt(e.target.value, 10);
+                      }}
+                      />
+                      <ErrorMessage as="span" errors={errors} name="client.accessTokenLifetime" message="Access Token Lifetime is required" /> 
+                      {/* <input
+                        ref={register({ required: true })}
                         type="number"
                         name="client.accessTokenLifetime"
                         defaultValue={client.accessTokenLifetime}
                         className="client__input"
                       />
-                    </div>
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        allow access token via browser
-                      </label>
-                      <input
-                        type="checkbox"
-                        name="client.allowAccessTokenViaBrowser"
-                        defaultChecked={client.allowAccessTokenViaBrowser}
-                        className="client__input"
-                      />
-                    </div>
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Allow offline access
-                      </label>
-                      <input
-                        name="client.allowOfflineAccess"
-                        type="checkbox"
-                        defaultChecked={client.allowOfflineAccess}
-                        className="client__input"
-                      />
-                    </div>
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Allow plain text Pkce
-                      </label>
-                      <input
-                        name="client.allowPlainTextPkce"
-                        type="checkbox"
-                        defaultChecked={client.allowPlainTextPkce}
-                        className="client__input"
-                      />
-                    </div>
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Allow remember consent
-                      </label>
-                      <input
-                        name="client.allowRememberConsent"
-                        type="checkbox"
-                        defaultChecked={client.allowRememberConsent}
-                        className="client__input"
-                      />
-                    </div>
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Always include user claims in Id token
-                      </label>
-                      <input
-                        type="checkbox"
-                        name="client.alwaysIncludeUserClaimsInIdToken"
-                        defaultChecked={
-                          client.alwaysIncludeUserClaimsInIdToken
-                        }
-                        className="client__input"
-                      />
-                    </div>
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Always send client claims
-                      </label>
-                      <input
-                        type="checkbox"
-                        name="client.alwaysSendClientClaims"
-                        defaultChecked={client.alwaysSendClientClaims}
-                        className="client__input"
-                      />
+                      <ErrorMessage as="span" errors={errors} name="client.accessTokenLifetime" message="Access Token Lifetime is required" /> */}
                     </div>
                     <div className="client__container__field">
                       <label className="client__label">
@@ -236,31 +186,18 @@ export default function Client<ClientDTO>(client: ClientDTO){
                         ref={register({ required: true })}
                         className="client__input"
                       />
+                      <ErrorMessage as="span" errors={errors} name="client.authorizationCodeLifetime" message="Authorization code lifetime is required" />
                     </div>
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Back channel logout session required
-                      </label>
-                      <input
-                        type="checkbox"
-                        name="client.backChannelLogoutSessionRequired"
-                        defaultChecked={
-                          client.backChannelLogoutSessionRequired
-                        }
-                        className="client__input"
-                      />
-                    </div>
-
                     <div className="client__container__field">
                       <label className="client__label">Consent lifetime</label>
                       <input
                         type="number"
                         name="client.consentLifetime"
-                        defaultValue={client.consentLifetime ?? ""}
+                        defaultValue={client.consentLifetime ?? null}
                         className="client__input"
+                        ref={register}
                       />
                     </div>
-
                     <div className="client__container__field">
                       <label className="client__label">
                         Device code lifetime
@@ -272,32 +209,7 @@ export default function Client<ClientDTO>(client: ClientDTO){
                         defaultValue={client.deviceCodeLifetime}
                         className="client__input"
                       />
-                    </div>
-
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Enable local login
-                      </label>
-                      <input
-                        type="checkbox"
-                        defaultChecked={client.enableLocalLogin}
-                        className="client__input"
-                        name="client.enableLocalLogin"
-                      />
-                    </div>
-
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Front channel logout session required
-                      </label>
-                      <input
-                        type="checkbox"
-                        name="client.frontChannelLogoutSessionRequired"
-                        defaultChecked={
-                          client.frontChannelLogoutSessionRequired
-                        }
-                        className="client__input"
-                      />
+                      <ErrorMessage as="span" errors={errors} name="client.deviceCodeLifetime" message="Device code lifetime is required" />
                     </div>
 
                     <div className="client__container__field">
@@ -309,6 +221,7 @@ export default function Client<ClientDTO>(client: ClientDTO){
                         name="client.frontChannelLogoutUri"
                         defaultValue={client.frontChannelLogoutUri ?? ""}
                         className="client__input"
+                        ref={register}
                       />
                     </div>
 
@@ -323,16 +236,7 @@ export default function Client<ClientDTO>(client: ClientDTO){
                         ref={register({ required: true })}
                         className="client__input"
                       />
-                    </div>
-
-                    <div className="client__container__field">
-                      <label className="client__label">Include Jwt Id</label>
-                      <input
-                        type="checkbox"
-                        defaultChecked={client.includeJwtId}
-                        className="client__input"
-                        name="client.includeJwtId"
-                      />
+                      <ErrorMessage as="span" errors={errors} name="client.identityTokenLifetime" message="Key is required" />
                     </div>
 
                     <div className="client__container__field">
@@ -344,6 +248,7 @@ export default function Client<ClientDTO>(client: ClientDTO){
                         defaultValue={client.pairWiseSubjectSalt ?? ""}
                         className="client__input"
                         name="client.pairWiseSubjectSalt"
+                        ref={register}
                       />
                     </div>
 
@@ -373,6 +278,185 @@ export default function Client<ClientDTO>(client: ClientDTO){
 
                     <div className="client__container__field">
                       <label className="client__label">
+                        Sliding refresh token lifetime
+                      </label>
+                      <input
+                        type="number"
+                        defaultValue={client.slidingRefreshTokenLifetime}
+                        name="client.slidingRefreshTokenLifetime"
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+
+                    <div className="client__container__field">
+                      <label className="client__label">User code type</label>
+                      <input
+                        type="text"
+                        defaultValue={client.userCodeType ?? ""}
+                        name="client.userCodeType"
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+
+                    <div className="client__container__field">
+                      <label className="client__label">User Sso Lifetime</label>
+                      <input
+                        type="number"
+                        defaultValue={client.userSsoLifetime}
+                        name="client.userSsoLifetime"
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+
+
+                    {/* Checkboxes */}
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        allow access token via browser
+                      </label>
+                      <input
+                        type="checkbox"
+                        name="client.allowAccessTokenViaBrowser"
+                        defaultChecked={client.allowAccessTokenViaBrowser}
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Allow offline access
+                      </label>
+                      <input
+                        name="client.allowOfflineAccess"
+                        type="checkbox"
+                        defaultChecked={client.allowOfflineAccess}
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Allow plain text Pkce
+                      </label>
+                      <input
+                        name="client.allowPlainTextPkce"
+                        type="checkbox"
+                        defaultChecked={client.allowPlainTextPkce}
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Allow remember consent
+                      </label>
+                      <input
+                        name="client.allowRememberConsent"
+                        type="checkbox"
+                        defaultChecked={client.allowRememberConsent}
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Always include user claims in Id token
+                      </label>
+                      <input
+                        type="checkbox"
+                        name="client.alwaysIncludeUserClaimsInIdToken"
+                        defaultChecked={
+                          client.alwaysIncludeUserClaimsInIdToken
+                        }
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Always send client claims
+                      </label>
+                      <input
+                        type="checkbox"
+                        name="client.alwaysSendClientClaims"
+                        defaultChecked={client.alwaysSendClientClaims}
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+                   
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Back channel logout session required
+                      </label>
+                      <input
+                        type="checkbox"
+                        name="client.backChannelLogoutSessionRequired"
+                        defaultChecked={
+                          client.backChannelLogoutSessionRequired
+                        }
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+
+                    
+
+                   
+
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Enable local login
+                      </label>
+                      <input
+                        type="checkbox"
+                        defaultChecked={client.enableLocalLogin}
+                        className="client__input"
+                        name="client.enableLocalLogin"
+                        ref={register}
+                      />
+                    </div>
+
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Front channel logout session required
+                      </label>
+                      <input
+                        type="checkbox"
+                        name="client.frontChannelLogoutSessionRequired"
+                        defaultChecked={
+                          client.frontChannelLogoutSessionRequired
+                        }
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+
+                    
+                    
+
+                    <div className="client__container__field">
+                      <label className="client__label">Include Jwt Id</label>
+                      <input
+                        type="checkbox"
+                        defaultChecked={client.includeJwtId}
+                        className="client__input"
+                        name="client.includeJwtId"
+                        ref={register}
+                      />
+                    </div>
+
+                    
+
+                    
+
+                    
+
+                    <div className="client__container__field">
+                      <label className="client__label">
                         Require client secret
                       </label>
                       <input
@@ -380,6 +464,7 @@ export default function Client<ClientDTO>(client: ClientDTO){
                         defaultChecked={client.requireClientSecret}
                         className="client__input"
                         name="client.requireClientSecret"
+                        ref={register}
                       />
                     </div>
 
@@ -390,6 +475,7 @@ export default function Client<ClientDTO>(client: ClientDTO){
                         defaultChecked={client.requireConsent}
                         className="client__input"
                         name="client.requireConsent"
+                        ref={register}
                       />
                     </div>
 
@@ -400,20 +486,11 @@ export default function Client<ClientDTO>(client: ClientDTO){
                         defaultChecked={client.requirePkce}
                         name="client.requirePkce"
                         className="client__input"
+                        ref={register}
                       />
                     </div>
 
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Sliding refresh token lifetime
-                      </label>
-                      <input
-                        type="number"
-                        defaultValue={client.slidingRefreshTokenLifetime}
-                        name="client.slidingRefreshTokenLifetime"
-                        className="client__input"
-                      />
-                    </div>
+                    
 
                     <div className="client__container__field">
                       <label className="client__label">
@@ -426,28 +503,13 @@ export default function Client<ClientDTO>(client: ClientDTO){
                         }
                         name="client.updateAccessTokenClaimsOnRefresh"
                         className="client__input"
+                        ref={register}
                       />
                     </div>
 
-                    <div className="client__container__field">
-                      <label className="client__label">User code type</label>
-                      <input
-                        type="text"
-                        defaultValue={client.userCodeType ?? ""}
-                        name="client.userCodeType"
-                        className="client__input"
-                      />
-                    </div>
+                    
 
-                    <div className="client__container__field">
-                      <label className="client__label">User Sso Lifetime</label>
-                      <input
-                        type="number"
-                        defaultValue={client.userSsoLifetime}
-                        name="client.userSsoLifetime"
-                        className="client__input"
-                      />
-                    </div>
+                    
                   </div>
                 </div>
                 <div className="client__buttons__container">

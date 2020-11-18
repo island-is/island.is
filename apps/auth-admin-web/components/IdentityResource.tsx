@@ -1,4 +1,4 @@
-import React, { SyntheticEvent } from "react";
+import React, { useCallback, useMemo } from "react";
 import IdentityResourcesDTO from "../models/dtos/identity-resources-dto";
 import axios from "axios";
 import StatusBar from "./StatusBar";
@@ -6,14 +6,57 @@ import { __asyncValues } from 'tslib';
 import { useForm } from "react-hook-form";
 import ResourcesCard from './IdentityResources';
 import { ErrorMessage } from '@hookform/error-message';
+import * as yup from "yup";
 
 
 type Props = {
   resource: IdentityResourcesDTO;
 };
 
+const useYupValidationResolver = validationSchema =>
+  useCallback(
+    async data => {
+      try {
+        const values = await validationSchema.validate(data, {
+          abortEarly: false
+        });
+
+        return {
+          values,
+          errors: {}
+        };
+      } catch (errors) {
+        return {
+          values: {},
+          errors: errors.inner.reduce(
+            (allErrors, currentError) => ({
+              ...allErrors,
+              [currentError.path]: {
+                type: currentError.type ?? "validation",
+                message: currentError.message
+              }
+            }),
+            {}
+          )
+        };
+      }
+    },
+    [validationSchema]
+  );
+
 export default function IdentityResource<Props> (resource: IdentityResourcesDTO) {
-  const { register, handleSubmit, errors, formState } = useForm<IdentityResourcesDTO>();
+  const validationSchema = useMemo(
+    () =>
+      yup.object({
+        firstName: yup.string().required("Required"),
+        lastName: yup.string().required("Required")
+      }),
+    []
+  );
+  const resolver = useYupValidationResolver(validationSchema);
+
+
+  const { register, handleSubmit, errors, formState } = useForm({resolver});
   const { isDirty, isSubmitting } = formState;
   // TODO: FIX 
   resource = resource.resource;

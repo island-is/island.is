@@ -1,5 +1,8 @@
 .client,
 .identity-resource {
+  &__wrapper {
+    max-width: 700px;
+  }
   &__container {
     h1 {
       font-family: IBM Plex Sans;
@@ -12,7 +15,6 @@
   }
 
   &__container__form {
-    max-width: 666px;
     padding: 42px 113px;
 
     /* aðal / blár / 100 */
