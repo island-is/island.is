@@ -418,7 +418,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
       })
       .text(' ')
       .text(
-        'Dómari bendir kærða á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.',
+        'Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.',
         {
           lineGap: 6,
           paragraphGap: 0,
