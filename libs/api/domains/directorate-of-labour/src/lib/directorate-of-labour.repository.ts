@@ -2,31 +2,31 @@ import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { ParentalLeavePeriod } from './parentalLeavePeriod.model'
 
-const accessToken = process.env.DIRECTORATE_OF_LABOUR_ACCESS_TOKEN
+// const accessToken = process.env.DIRECTORATE_OF_LABOUR_ACCESS_TOKEN
 
 // TODO implement this class when the endpoints are ready, this is just mocks atm
 
 @Injectable()
 export class DirectorateOfLabourRepository {
-  private client: any
+  //   private client: any
 
   constructor() {
     logger.debug('Created Directorate of labour repository')
   }
 
-  getClient(): any {
-    if (!accessToken) {
-      throw new Error(
-        'Missing environment variables: DIRECTORATE_OF_LABOUR_ACCESS_TOKEN',
-      )
-    }
+  //   getClient(): any {
+  //     if (!accessToken) {
+  //       throw new Error(
+  //         'Missing environment variables: DIRECTORATE_OF_LABOUR_ACCESS_TOKEN',
+  //       )
+  //     }
 
-    if (this.client) {
-      return this.client
-    }
+  //     if (this.client) {
+  //       return this.client
+  //     }
 
-    return 'client'
-  }
+  //     return 'new client'
+  //   }
 
   async getUnions() {
     return [
