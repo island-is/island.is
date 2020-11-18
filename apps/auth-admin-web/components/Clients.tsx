@@ -59,11 +59,11 @@ class Clients extends Component {
   render() {
     return (
       <div className="clients__container">
-        <h2>Vefir og smáforrit</h2>
+        <h2>Clients</h2>
         <div className="clients__container__options">
           <div className="clients__container__button">
             <Link href={'/client'}>
-              <a className="clients__button__new">Bæta við nýjum</a>
+              <a className="clients__button__new">Create new client</a>
             </Link>
           </div>
           <div className="clients__container__field">

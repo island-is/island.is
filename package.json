@@ -27,11 +27,15 @@
   },
   "private": true,
   "dependencies": {
+    "@hookform/error-message": "^0.0.4",
+    "@types/yup": "^0.29.9",
     "document-register-element": "1.13.1",
     "formik": "^2.2.5",
     "next": "9.5.2",
     "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "react-dom": "16.13.1",
+    "react-hook-form": "^6.11.2",
+    "yup": "^0.29.3"
   },
   "devDependencies": {
     "@babel/core": "7.9.6",

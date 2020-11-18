@@ -2,144 +2,126 @@ import React, { SyntheticEvent } from "react";
 import IdentityResourcesDTO from "../models/dtos/identity-resources-dto";
 import axios from "axios";
 import StatusBar from "./StatusBar";
-import APIResponse from "../models/APIResponse";
-import { useRouter } from "next/router";
-import { Formik, Field, Form, FormikHelpers } from 'formik';
 import { __asyncValues } from 'tslib';
+import { useForm } from "react-hook-form";
+import ResourcesCard from './IdentityResources';
+import { ErrorMessage } from '@hookform/error-message';
+
 
 type Props = {
   resource: IdentityResourcesDTO;
 };
 
-class IdentityResource extends React.Component<{ resource: IdentityResourcesDTO }> {
-  resource: IdentityResourcesDTO;
-  response: APIResponse;
-  state: { response: APIResponse };
-
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      response: { statusCode: 0, message: null, error: null },
-    };
-
-    this.resource = this.props.resource;
-    if (!this.resource) {
-      
-      this.resource = new IdentityResourcesDTO();
-      this.resource.key = "1234";
-    }
-    this.response = { statusCode: 200, message: null, error: null };
-  }
-
-  componentDidMount() {
-    this.setState({
-      response: {
-        statusCode: this.response.statusCode,
-        message: this.response.message,
-      },
-    });
-  }
-
-  back = () => {
+export default function IdentityResource<Props> (resource: IdentityResourcesDTO) {
+  const { register, handleSubmit, errors, formState } = useForm<IdentityResourcesDTO>();
+  const { isDirty, isSubmitting } = formState;
+  // TODO: FIX 
+  resource = resource.resource;
+  
+  const back = () => {
     // TODO: Go back
     // const router = useRouter();
     // router.back();
   };
 
-  isValid = (): boolean => {
-    return true;
+  const save = async (data: IdentityResourcesDTO) => {
+    console.log("FORM DATA");
+    console.log(data);
+
+    const response = await axios.post("api/identity-resource", data.resource).catch((err) => {
+       console.log(err);
+     });
+
+     console.log(response);
+    
   };
 
-  submit = async (e: SyntheticEvent) => {
-    e.preventDefault();
-    const response = await axios.post("http://localhost:3333/clients", this.resource).catch((err) => {
-      console.log(err);
-    });
+  
+    return( 
+    <div className="identity-resource">
+    <div className="identity-resource__wrapper">
+      <div className="identity-resource__help">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur
+        sed alias neque ullam repudiandae, iste reiciendis suscipit rerum
+        officiis necessitatibus doloribus incidunt libero distinctio
+        consequuntur voluptatibus tenetur aliquid ut inventore!
+      </div>
 
-    console.log(response);
-    this.componentDidMount();
-  };
-
-  render() {
-    return (
-      
-      <div className="identity-resource">
-        <StatusBar status={this.state.response}></StatusBar>
-        <div className="identity-resource__wrapper">
-          <div className="identity-resource__help">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur
-            sed alias neque ullam repudiandae, iste reiciendis suscipit rerum
-            officiis necessitatibus doloribus incidunt libero distinctio
-            consequuntur voluptatibus tenetur aliquid ut inventore!
-          </div>
-
-          <div className="identity-resource__container">
-            <h1>Create new Identity Resource</h1>
-            <div className="identity-resource__container__form">
-            <Formik
-              initialValues={{
-                resource: this.resource,
-              }}
-              onSubmit={(
-              values: Props,
-                { setSubmitting }: FormikHelpers<Props>
-              ) => {
-                setTimeout(() => {
-                  alert(JSON.stringify(values, null, 2));
-                  setSubmitting(false);
-                }, 500);
-              }}
-            >
-              <Form>
+      <div className="identity-resource__container">
+        <h1>Create new Identity Resource</h1>
+        <div className="identity-resource__container__form">
+              <form onSubmit={handleSubmit(save)}>
                 <div className="identity-resource__container__fields">
                   <div className="identity-resource__container__field">
-                    <label className="identity-resource__label">
+                    <label htmlFor="key" className="identity-resource__label">
                       Key</label>
-                    <Field
+                    <input
+                    ref={register({ required: true })}
+                      id="key"
                       type="text"
                       name="resource.key"
+                      defaultValue={resource.key}
                       className="identity-resource__input"
                     />
+                    <ErrorMessage as="span" errors={errors} name="resource.key" message="Key is required" />
+                    
                   </div>
                   <div className="identity-resource__container__field">
-                    <label className="identity-resource__label">Name</label>
-                    <Field
+                    <label htmlFor="name" className="identity-resource__label">Name</label>
+                    <input
+                        ref={register({ required: true })}
+                      id="name"
                       name="resource.name"
                       type="text"
                       className="identity-resource__input"
+                      defaultValue={resource.name}
                     />
+                    <ErrorMessage as="span" errors={errors} name="resource.name" message="Name is required" />
                   </div>
                   <div className="identity-resource__container__field">
-                    <label className="identity-resource__label">Display Name</label>
-                    <Field
+                    <label htmlFor="displayName" className="identity-resource__label">Display Name</label>
+                    <input
+                    ref={register({ required: true })}
+                      id="displayName"
                       name="resource.displayName"
                       type="text"
                       className="identity-resource__input"
+                      defaultValue={resource.displayName}
                     />
+                      <ErrorMessage as="span" errors={errors} name="resource.displayName" message="DisplayName is required" />
+                    
                   </div>
                   <div className="identity-resource__container__field">
-                    <label className="identity-resource__label">Description</label>
-                    <Field
+                    <label htmlFor="description" className="identity-resource__label">Description</label>
+                    <input
+                        ref={register}
+                      id="description"
                       name="resource.description"
                       type="text"
+                      defaultValue={resource.description}
                       className="identity-resource__input"
                     />
                   </div>
-                  
 
                   <div className="identity-resource__container__field">
-                    <label className="identity-resource__label">Enabled</label>
-                    <Field
+                    <label htmlFor="enabled" className="identity-resource__label">Enabled</label>
+                    <input
+                    ref={register}
+                      id="enabled"
                       name="resource.enabled"
                       type="checkbox"
+                      defaultChecked={resource.enabled}
                       className="identity-resource__checkbox"
                     />
                   </div>
 
                   <div className="identity-resource__container__field">
-                    <label className="identity-resource__label">Emphasize</label>
-                    <Field
+                    <label htmlFor="emphasize" className="identity-resource__label">Emphasize</label>
+                    <input
+                    ref={register}
+                      id="emphasize"
                       name="resource.emphasize"
+                      defaultChecked={resource.emphasize}
                       type="checkbox"
                       className="identity-resource__checkbox"
                     />
@@ -147,21 +129,28 @@ class IdentityResource extends React.Component<{ resource: IdentityResourcesDTO 
 
 
                   <div className="identity-resource__container__field">
-                    <label className="identity-resource__label">Required</label>
-                    <Field
+                    <label htmlFor="required" className="identity-resource__label">Required</label>
+                    <input
+                    ref={register}
+                      id="required"
                       name="resource.required"
+                      defaultChecked={resource.required}
                       type="checkbox"
                       className="identity-resource__checkbox"
                     />
                   </div>
 
                   <div className="identity-resource__container__field">
-                    <label className="identity-resource__label">Show In Discovery Document</label>
-                    <Field
+                    <label htmlFor="showInDiscoveryDocument" className="identity-resource__label">Show In Discovery Document</label>
+                    <input
+                        ref={register}
+                      id="showInDiscoveryDocument"
                       name="resource.showInDiscoveryDocument"
                       type="checkbox"
+                      defaultChecked={resource.showInDiscoveryDocument}
                       className="identity-resource__checkbox"
                     />
+                    {resource.showInDiscoveryDocument}
                   </div>
 
 
@@ -169,29 +158,27 @@ class IdentityResource extends React.Component<{ resource: IdentityResourcesDTO 
                   <div className="identity-resource__button__container">
                     <button
                       className="identity-resource__button__cancel"
-                      onClick={this.back}
+                      onClick={back}
                     >
-                      Hætta við
+                      Cancel
                     </button>
                   </div>
                   <div className="identity-resource__button__container">
                     <input
                       type="submit"
                       className="identity-resource__button__save"
-                      disabled={!this.isValid()}
+                      disabled={isSubmitting}
                       value="Save"
                     />
                   </div>
                 </div>
                 </div>
-              </Form>
-              </Formik>
+              </form>
             </div>
           </div>
           </div>
-        </div>
-    );
+        </div>        
+    )
   }
-}
 
-export default IdentityResource;
+

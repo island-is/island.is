@@ -1,4 +1,8 @@
-.client {
+.client,
+.identity-resource {
+  &__wrapper {
+    max-width: 700px;
+  }
   &__container {
     h1 {
       font-family: IBM Plex Sans;
@@ -11,7 +15,6 @@
   }
 
   &__container__form {
-    max-width: 666px;
     padding: 42px 113px;
 
     /* aðal / blár / 100 */
@@ -35,10 +38,15 @@
       position: relative;
       flex-basis: 70%;
     }
-    input[type="checkbox"] {
+    input[type='checkbox'] {
       flex-basis: unset;
       margin-top: 30px;
       margin-left: 8px;
+    }
+    span // validation
+    {
+      margin-left: 20px;
+      color: #fb115b;
     }
   }
 

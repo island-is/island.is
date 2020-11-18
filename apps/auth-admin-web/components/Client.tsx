@@ -1,64 +1,66 @@
-import React, { SyntheticEvent } from "react";
+import React, { useMemo, useState } from "react";
 import ClientDTO from "../models/dtos/client-dto";
 import axios from "axios";
 import StatusBar from "./StatusBar";
 import APIResponse from "../models/APIResponse";
 import { useRouter } from "next/router";
+import { useForm, Controller  } from "react-hook-form";
+import { ErrorMessage } from '@hookform/error-message';
+import * as yup from "yup";
 
 type Props = {
   client: ClientDTO;
 };
-class Client extends React.Component<{ client: ClientDTO }> {
-  client: ClientDTO;
-  response: APIResponse;
-  state: { response: APIResponse };
+export default function Client<ClientDTO>(client: ClientDTO){
+  const { register, handleSubmit, errors, formState, control } = useForm<ClientDTO>();
+  const { isSubmitting } = formState;
+  const [ show, setShow] = useState(false);
+  // TODO: Fix
+  client = client.client;
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      response: { statusCode: 0, message: null, error: null },
-    };
+  const castNumbers = (obj: ClientDTO) : ClientDTO =>
+  {
+    obj.absoluteRefreshTokenLifetime = +obj.absoluteRefreshTokenLifetime;
+    obj.accessTokenLifetime = +obj.accessTokenLifetime;
+    obj.authorizationCodeLifetime = +obj.authorizationCodeLifetime;
+    obj.deviceCodeLifetime = +obj.deviceCodeLifetime;
+    obj.refreshTokenExpiration = +obj.refreshTokenExpiration;
+    obj.refreshTokenUsage = +obj.refreshTokenUsage;    
+    obj.slidingRefreshTokenLifetime = +obj.slidingRefreshTokenLifetime;
+    obj.identityTokenLifetime = +obj.identityTokenLifetime;
+    obj.accessTokenType = +obj.accessTokenType;
 
-    this.client = this.props.client;
-    if (!this.client) {
-      this.client = new ClientDTO();
+    if (obj.consentLifetime === "")
+    {
+      obj.consentLifetime = null;
     }
-    this.response = { statusCode: 200, message: null, error: null };
+    else {
+      obj.consentLifetime = +obj.consentLifetime;
+    }
+
+    if (obj.userSsoLifetime === ""){
+      obj.userSsoLifetime = null;
+    }
+    else
+    {
+      obj.userSsoLifetime = +obj.userSsoLifetime;
+    }
+
+    return obj;
   }
 
-  componentDidMount() {
-    this.setState({
-      response: {
-        statusCode: this.response.statusCode,
-        message: this.response.message,
-      },
-    });
-  }
-
-  back = () => {
-    const router = useRouter();
-    router.back();
-  };
-
-  isValid = (): boolean => {
-    return true;
-  };
-
-  submit = async (e: SyntheticEvent) => {
-    e.preventDefault();
-
-    const response = await axios.post("/api/clients", this.client).catch((err) => {
+  const save = async (data) => {
+    const clientObject = castNumbers(data.client);
+    const response = await axios.post("/api/clients", clientObject).catch((err) => {
       console.log(err);
     });
 
-    console.log(response);
-    this.componentDidMount();
+    console.log(response);    
   };
 
-  render() {
     return (
       <div className="client">
-        <StatusBar status={this.state.response}></StatusBar>
+        {/* <StatusBar status={null}></StatusBar> */}
         <div className="client__wrapper">
           <div className="client__help">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur
@@ -68,46 +70,52 @@ class Client extends React.Component<{ client: ClientDTO }> {
           </div>
 
           <div className="client__container">
-            <h1>Stofna nýjann Client</h1>
+            <h1>Create a new Client</h1>
             <div className="client__container__form">
-              <form onSubmit={this.submit}>
+              <form onSubmit={handleSubmit(save)}>
                 <div className="client__container__fields">
+                  {/* <HookField name='client.clientId' errors={errors} required={true} label="Client Id" value={client.clientId}  /> */}
                   <div className="client__container__field">
                     <label className="client__label">
                       Client Id</label>
                     <input
                       type="text"
-                      defaultValue={this.client.clientId}
-                      onChange={(e) => (this.client.clientId = e.target.value)}
+                      name="client.clientId"
+                      ref={register({ required: true })}
+                      defaultValue={client.clientId}
                       className="client__input"
                     />
+                    <ErrorMessage as="span" errors={errors} name="client.clientId" message="Id is required" />
                   </div>
                   <div className="client__container__field">
                     <label className="client__label">Name</label>
                     <input
                       type="text"
-                      defaultValue={this.client.clientName}
-                      onChange={(e) =>
-                        (this.client.clientName = e.target.value)
-                      }
+                      name="client.clientName"
+                      ref={register({ required: true })}
+                      defaultValue={client.clientName}
                       className="client__input"
                     />
+                    <ErrorMessage as="span" errors={errors} name="client.clientName" message="Name is required" />
                   </div>
                   <div className="client__container__field">
                     <label className="client__label">URI</label>
                     <input
+                      name="client.clientUri"
+                      ref={register}
                       type="text"
-                      defaultValue={this.client.clientUri ?? ""}
-                      onChange={(e) => (this.client.clientUri = e.target.value)}
+                      defaultValue={client.clientUri ?? ""}
                       className="client__input"
                     />
+                    
                   </div>
                   <div className="client__container__field">
                     <label className="client__label">Description</label>
                     <input
                       type="text"
-                      defaultValue={this.client.description ?? ""}
-                      onChange={(e) => (this.client.clientUri = e.target.value)}
+                      ref={register}
+                      name="client.description"
+                      defaultValue={client.description ?? ""}
                       className="client__input"
                     />
                   </div>
@@ -117,249 +125,51 @@ class Client extends React.Component<{ client: ClientDTO }> {
                       Client claims prefix
                     </label>
                     <input
+                      ref={register({ required: true })}
                       type="text"
+                      name="client.clientClaimsPrefix"
                       defaultValue={
-                        this.client.clientClaimsPrefix
-                          ? this.client.clientClaimsPrefix
+                        client.clientClaimsPrefix
+                          ? client.clientClaimsPrefix
                           : "client__"
-                      }
-                      onChange={(e) =>
-                        (this.client.clientClaimsPrefix = e.target.value)
                       }
                       className="client__input"
                     />
+                    <ErrorMessage as="span" errors={errors} name="client.clientClaimsPrefix" message="Client claims prefix is required" />
                   </div>
 
                   <div className="client__container__field">
                     <label className="client__label">Protocol Type</label>
                     <input
+                    ref={register({ required: true })}
                       type="text"
+                      name="client.protocolType"
                       defaultValue={
-                        this.client.protocolType
-                          ? this.client.protocolType
+                        client.protocolType
+                          ? client.protocolType
                           : "oidc"
-                      }
-                      onChange={(e) =>
-                        (this.client.protocolType = e.target.value)
                       }
                       className="client__input"
                     />
+                    <ErrorMessage as="span" errors={errors} name="client.protocolType" message="Protocol Type is required" />
                   </div>
 
                   <div className="client__container__field">
                     <label className="client__label">Virkur</label>
                     <input
                       type="checkbox"
+                      name="client.enabled"
                       className="client__checkbox"
-                      defaultChecked={this.client.enabled}
-                      onChange={(e) => (this.client.enabled = e.target.checked)}
+                      defaultChecked={client.enabled}
+                      ref={register}
                     ></input>
                   </div>
 
                   <div className="client__container__button">
-                    <button className="client__button__show">Advanced</button>
+                    <button className="client__button__show" onClick={() => setShow(!show)}>Advanced</button>
                   </div>
 
-                  <div className="client__container__advanced">
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Absolute Refresh Token Lifetime
-                      </label>
-                      <input
-                        type="number"
-                        defaultValue={this.client.absoluteRefreshTokenLifetime}
-                        onChange={(e) =>
-                          (this.client.absoluteRefreshTokenLifetime = +e.target
-                            .value)
-                        }
-                        className="client__input"
-                      />
-                    </div>
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Access Token Lifetime
-                      </label>
-                      <input
-                        type="number"
-                        defaultValue={this.client.accessTokenLifetime}
-                        onChange={(e) =>
-                          (this.client.absoluteRefreshTokenLifetime = +e.target
-                            .value)
-                        }
-                        className="client__input"
-                      />
-                    </div>
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        allow access token via browser
-                      </label>
-                      <input
-                        type="checkbox"
-                        defaultChecked={this.client.allowAccessTokenViaBrowser}
-                        onChange={(e) =>
-                          (this.client.allowAccessTokenViaBrowser =
-                            e.target.checked)
-                        }
-                        className="client__input"
-                      />
-                    </div>
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Allow offline access
-                      </label>
-                      <input
-                        type="checkbox"
-                        defaultChecked={this.client.allowOfflineAccess}
-                        onChange={(e) =>
-                          (this.client.allowOfflineAccess = e.target.checked)
-                        }
-                        className="client__input"
-                      />
-                    </div>
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Allow plain text Pkce
-                      </label>
-                      <input
-                        type="checkbox"
-                        defaultChecked={this.client.allowPlainTextPkce}
-                        onChange={(e) =>
-                          (this.client.allowPlainTextPkce = e.target.checked)
-                        }
-                        className="client__input"
-                      />
-                    </div>
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Allow remember consent
-                      </label>
-                      <input
-                        type="checkbox"
-                        defaultChecked={this.client.allowRememberConsent}
-                        onChange={(e) =>
-                          (this.client.allowRememberConsent = e.target.checked)
-                        }
-                        className="client__input"
-                      />
-                    </div>
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Always include user claims in Id token
-                      </label>
-                      <input
-                        type="checkbox"
-                        defaultChecked={
-                          this.client.alwaysIncludeUserClaimsInIdToken
-                        }
-                        onChange={(e) =>
-                          (this.client.alwaysIncludeUserClaimsInIdToken =
-                            e.target.checked)
-                        }
-                        className="client__input"
-                      />
-                    </div>
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Always send client claims
-                      </label>
-                      <input
-                        type="checkbox"
-                        defaultChecked={this.client.alwaysSendClientClaims}
-                        onChange={(e) =>
-                          (this.client.alwaysSendClientClaims =
-                            e.target.checked)
-                        }
-                        className="client__input"
-                      />
-                    </div>
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Authorization code lifetime
-                      </label>
-                      <input
-                        type="number"
-                        defaultValue={this.client.authorizationCodeLifetime}
-                        onChange={(e) =>
-                          (this.client.authorizationCodeLifetime = +e.target
-                            .value)
-                        }
-                        className="client__input"
-                      />
-                    </div>
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Back channel logout session required
-                      </label>
-                      <input
-                        type="checkbox"
-                        defaultChecked={
-                          this.client.backChannelLogoutSessionRequired
-                        }
-                        onChange={(e) =>
-                          (this.client.backChannelLogoutSessionRequired =
-                            e.target.checked)
-                        }
-                        className="client__input"
-                      />
-                    </div>
-
-                    <div className="client__container__field">
-                      <label className="client__label">Consent lifetime</label>
-                      <input
-                        type="number"
-                        defaultValue={this.client.consentLifetime ?? ""}
-                        onChange={(e) =>
-                          (this.client.consentLifetime =
-                            e.target.value === "" ? null : +e.target.value)
-                        }
-                        className="client__input"
-                      />
-                    </div>
-
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Device code lifetime
-                      </label>
-                      <input
-                        type="number"
-                        defaultValue={this.client.deviceCodeLifetime.toString()}
-                        onChange={(e) =>
-                          (this.client.consentLifetime = +e.target.value)
-                        }
-                        className="client__input"
-                      />
-                    </div>
-
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Enable local login
-                      </label>
-                      <input
-                        type="checkbox"
-                        defaultChecked={this.client.enableLocalLogin}
-                        onChange={(e) =>
-                          (this.client.enableLocalLogin = e.target.checked)
-                        }
-                        className="client__input"
-                      />
-                    </div>
-
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Front channel logout session required
-                      </label>
-                      <input
-                        type="checkbox"
-                        defaultChecked={
-                          this.client.frontChannelLogoutSessionRequired
-                        }
-                        onChange={(e) =>
-                          (this.client.frontChannelLogoutSessionRequired =
-                            e.target.checked)
-                        }
-                        className="client__input"
-                      />
-                    </div>
+                  <div className={`client__container__advanced ${show === true ? 'show':'hidden'}`}>
 
                     <div className="client__container__field">
                       <label className="client__label">
@@ -367,37 +177,10 @@ class Client extends React.Component<{ client: ClientDTO }> {
                       </label>
                       <input
                         type="text"
-                        defaultValue={this.client.frontChannelLogoutUri ?? ""}
-                        onChange={(e) =>
-                          (this.client.frontChannelLogoutUri = e.target.value)
-                        }
+                        name="client.frontChannelLogoutUri"
+                        defaultValue={client.frontChannelLogoutUri ?? ""}
                         className="client__input"
-                      />
-                    </div>
-
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Identity token lifetime
-                      </label>
-                      <input
-                        type="number"
-                        defaultValue={this.client.identityTokenLifetime}
-                        onChange={(e) =>
-                          (this.client.identityTokenLifetime = +e.target.value)
-                        }
-                        className="client__input"
-                      />
-                    </div>
-
-                    <div className="client__container__field">
-                      <label className="client__label">Include Jwt Id</label>
-                      <input
-                        type="checkbox"
-                        defaultChecked={this.client.includeJwtId}
-                        onChange={(e) =>
-                          (this.client.includeJwtId = e.target.checked)
-                        }
-                        className="client__input"
+                        ref={register}
                       />
                     </div>
 
@@ -407,11 +190,111 @@ class Client extends React.Component<{ client: ClientDTO }> {
                       </label>
                       <input
                         type="text"
-                        defaultValue={this.client.pairWiseSubjectSalt ?? ""}
-                        onChange={(e) =>
-                          (this.client.pairWiseSubjectSalt = e.target.value)
-                        }
+                        defaultValue={client.pairWiseSubjectSalt ?? ""}
                         className="client__input"
+                        name="client.pairWiseSubjectSalt"
+                        ref={register}
+                      />
+                    </div>
+
+                    <div className="client__container__field">
+                      <label className="client__label">User code type</label>
+                      <input
+                        type="text"
+                        defaultValue={client.userCodeType ?? ""}
+                        name="client.userCodeType"
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+
+                    {/* Number inputs */}
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Access Token Type
+                      </label>
+                      <input
+                        type="number"
+                        ref={register({ required: true })}
+                        name="client.accessTokenType"
+                        defaultValue={client.accessTokenType}
+                        className="client__input"
+                      />
+                      <ErrorMessage as="span" errors={errors} name="client.accessTokenType" message="Absolute Refresh Token Lifetime is required" />
+                    </div>
+                    
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Absolute Refresh Token Lifetime
+                      </label>
+                      <input
+                        type="number"
+                        ref={register({ required: true })}
+                        name="client.absoluteRefreshTokenLifetime"
+                        defaultValue={client.absoluteRefreshTokenLifetime}
+                        className="client__input"
+                      />
+                      <ErrorMessage as="span" errors={errors} name="client.absoluteRefreshTokenLifetime" message="Absolute Refresh Token Lifetime is required" />
+                    </div>
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Access Token Lifetime
+                      </label>
+
+                      <input
+                        ref={register({ required: true })}
+                        type="number"
+                        name="client.accessTokenLifetime"
+                        defaultValue={client.accessTokenLifetime}
+                        className="client__input"
+                      />
+                      <ErrorMessage as="span" errors={errors} name="client.accessTokenLifetime" message="Access Token Lifetime is required" />
+                    </div>
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Authorization code lifetime
+                      </label>
+                      <input
+                        type="number"
+                        name="client.authorizationCodeLifetime"
+                        defaultValue={client.authorizationCodeLifetime}
+                        ref={register({ required: true })}
+                        className="client__input"
+                      />
+                      <ErrorMessage as="span" errors={errors} name="client.authorizationCodeLifetime" message="Authorization code lifetime is required" />
+                    </div>
+                    <div className="client__container__field">
+                      <label className="client__label">Consent lifetime</label>
+                      <input
+                        type="number"
+                        name="client.consentLifetime"
+                        defaultValue={client.consentLifetime ?? null}
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Device code lifetime
+                      </label>
+                      <input
+                        type="number"
+                        ref={register({ required: true })}
+                        name="client.deviceCodeLifetime"
+                        defaultValue={client.deviceCodeLifetime}
+                        className="client__input"
+                      />
+                      <ErrorMessage as="span" errors={errors} name="client.deviceCodeLifetime" message="Device code lifetime is required" />
+                    </div>
+
+                    <div className="client__container__field">
+                      <label className="client__label">User Sso Lifetime</label>
+                      <input
+                        type="number"
+                        defaultValue={client.userSsoLifetime}
+                        name="client.userSsoLifetime"
+                        className="client__input"
+                        ref={register}
                       />
                     </div>
 
@@ -421,61 +304,21 @@ class Client extends React.Component<{ client: ClientDTO }> {
                       </label>
                       <input
                         type="number"
-                        defaultValue={this.client.refreshTokenExpiration}
-                        onChange={(e) =>
-                          (this.client.refreshTokenExpiration = +e.target.value)
-                        }
+                        defaultValue={client.refreshTokenExpiration}
+                        ref={register({ required: true })}
                         className="client__input"
+                        name="client.refreshTokenExpiration"
                       />
                     </div>
 
                     <div className="client__container__field">
-                      <label className="client__label">refreshTokenUsage</label>
+                      <label className="client__label">Refresh Token Usage</label>
                       <input
                         type="number"
-                        defaultValue={this.client.refreshTokenUsage}
-                        onChange={(e) =>
-                          (this.client.refreshTokenUsage = +e.target.value)
-                        }
+                        defaultValue={client.refreshTokenUsage}
+                        ref={register({ required: true })}
                         className="client__input"
-                      />
-                    </div>
-
-                    <div className="client__container__field">
-                      <label className="client__label">
-                        Require client secret
-                      </label>
-                      <input
-                        type="checkbox"
-                        defaultChecked={this.client.requireClientSecret}
-                        onChange={(e) =>
-                          (this.client.requireClientSecret = e.target.checked)
-                        }
-                        className="client__input"
-                      />
-                    </div>
-
-                    <div className="client__container__field">
-                      <label className="client__label">Require consent</label>
-                      <input
-                        type="checkbox"
-                        defaultChecked={this.client.requireConsent}
-                        onChange={(e) =>
-                          (this.client.requireConsent = e.target.checked)
-                        }
-                        className="client__input"
-                      />
-                    </div>
-
-                    <div className="client__container__field">
-                      <label className="client__label">Require Pkce</label>
-                      <input
-                        type="checkbox"
-                        defaultChecked={this.client.requirePkce}
-                        onChange={(e) =>
-                          (this.client.requirePkce = e.target.checked)
-                        }
-                        className="client__input"
+                        name="client.refreshTokenUsage"
                       />
                     </div>
 
@@ -485,14 +328,207 @@ class Client extends React.Component<{ client: ClientDTO }> {
                       </label>
                       <input
                         type="number"
-                        defaultValue={this.client.slidingRefreshTokenLifetime}
-                        onChange={(e) =>
-                          (this.client.slidingRefreshTokenLifetime = +e.target
-                            .checked)
-                        }
+                        defaultValue={client.slidingRefreshTokenLifetime}
+                        name="client.slidingRefreshTokenLifetime"
                         className="client__input"
+                        ref={register}
                       />
                     </div>
+
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Identity token lifetime
+                      </label>
+                      <input
+                        type="number"
+                        name="client.identityTokenLifetime"
+                        defaultValue={client.identityTokenLifetime}
+                        ref={register({ required: true })}
+                        className="client__input"
+                      />
+                      <ErrorMessage as="span" errors={errors} name="client.identityTokenLifetime" message="Key is required" />
+                    </div>
+
+
+                    {/* Checkboxes */}
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        allow access token via browser
+                      </label>
+                      <input
+                        type="checkbox"
+                        name="client.allowAccessTokenViaBrowser"
+                        defaultChecked={client.allowAccessTokenViaBrowser}
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Allow offline access
+                      </label>
+                      <input
+                        name="client.allowOfflineAccess"
+                        type="checkbox"
+                        defaultChecked={client.allowOfflineAccess}
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Allow plain text Pkce
+                      </label>
+                      <input
+                        name="client.allowPlainTextPkce"
+                        type="checkbox"
+                        defaultChecked={client.allowPlainTextPkce}
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Allow remember consent
+                      </label>
+                      <input
+                        name="client.allowRememberConsent"
+                        type="checkbox"
+                        defaultChecked={client.allowRememberConsent}
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Always include user claims in Id token
+                      </label>
+                      <input
+                        type="checkbox"
+                        name="client.alwaysIncludeUserClaimsInIdToken"
+                        defaultChecked={
+                          client.alwaysIncludeUserClaimsInIdToken
+                        }
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Always send client claims
+                      </label>
+                      <input
+                        type="checkbox"
+                        name="client.alwaysSendClientClaims"
+                        defaultChecked={client.alwaysSendClientClaims}
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+                   
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Back channel logout session required
+                      </label>
+                      <input
+                        type="checkbox"
+                        name="client.backChannelLogoutSessionRequired"
+                        defaultChecked={
+                          client.backChannelLogoutSessionRequired
+                        }
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+
+                    
+
+                   
+
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Enable local login
+                      </label>
+                      <input
+                        type="checkbox"
+                        defaultChecked={client.enableLocalLogin}
+                        className="client__input"
+                        name="client.enableLocalLogin"
+                        ref={register}
+                      />
+                    </div>
+
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Front channel logout session required
+                      </label>
+                      <input
+                        type="checkbox"
+                        name="client.frontChannelLogoutSessionRequired"
+                        defaultChecked={
+                          client.frontChannelLogoutSessionRequired
+                        }
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+
+                    
+                    
+
+                    <div className="client__container__field">
+                      <label className="client__label">Include Jwt Id</label>
+                      <input
+                        type="checkbox"
+                        defaultChecked={client.includeJwtId}
+                        className="client__input"
+                        name="client.includeJwtId"
+                        ref={register}
+                      />
+                    </div>
+
+                    
+
+                    
+
+                    
+
+                    <div className="client__container__field">
+                      <label className="client__label">
+                        Require client secret
+                      </label>
+                      <input
+                        type="checkbox"
+                        defaultChecked={client.requireClientSecret}
+                        className="client__input"
+                        name="client.requireClientSecret"
+                        ref={register}
+                      />
+                    </div>
+
+                    <div className="client__container__field">
+                      <label className="client__label">Require consent</label>
+                      <input
+                        type="checkbox"
+                        defaultChecked={client.requireConsent}
+                        className="client__input"
+                        name="client.requireConsent"
+                        ref={register}
+                      />
+                    </div>
+
+                    <div className="client__container__field">
+                      <label className="client__label">Require Pkce</label>
+                      <input
+                        type="checkbox"
+                        defaultChecked={client.requirePkce}
+                        name="client.requirePkce"
+                        className="client__input"
+                        ref={register}
+                      />
+                    </div>
+
+                    
 
                     <div className="client__container__field">
                       <label className="client__label">
@@ -501,55 +537,33 @@ class Client extends React.Component<{ client: ClientDTO }> {
                       <input
                         type="checkbox"
                         defaultChecked={
-                          this.client.updateAccessTokenClaimsOnRefresh
+                          client.updateAccessTokenClaimsOnRefresh
                         }
-                        onChange={(e) =>
-                          (this.client.updateAccessTokenClaimsOnRefresh =
-                            e.target.checked)
-                        }
+                        name="client.updateAccessTokenClaimsOnRefresh"
                         className="client__input"
+                        ref={register}
                       />
                     </div>
 
-                    <div className="client__container__field">
-                      <label className="client__label">User code type</label>
-                      <input
-                        type="text"
-                        defaultValue={this.client.userCodeType ?? ""}
-                        onChange={(e) =>
-                          (this.client.userCodeType = e.target.value)
-                        }
-                        className="client__input"
-                      />
-                    </div>
+                    
 
-                    <div className="client__container__field">
-                      <label className="client__label">userSsoLifetime</label>
-                      <input
-                        type="number"
-                        defaultValue={this.client.userSsoLifetime?.toString()}
-                        onChange={(e) =>
-                          (this.client.userSsoLifetime = +e.target.value)
-                        }
-                        className="client__input"
-                      />
-                    </div>
+                    
                   </div>
                 </div>
                 <div className="client__buttons__container">
                   <div className="client__button__container">
                     <button
                       className="client__button__cancel"
-                      onClick={this.back}
+                      
                     >
-                      Hætta við
+                      Cancel
                     </button>
                   </div>
                   <div className="client__button__container">
                     <input
                       type="submit"
                       className="client__button__save"
-                      disabled={!this.isValid()}
+                      disabled={isSubmitting}
                       value="Save"
                     />
                   </div>
@@ -560,7 +574,5 @@ class Client extends React.Component<{ client: ClientDTO }> {
         </div>
       </div>
     );
-  }
 }
 
-export default Client;
