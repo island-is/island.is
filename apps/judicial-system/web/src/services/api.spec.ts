@@ -15,6 +15,13 @@ describe('Judicial system web api endpoints', () => {
         value: 'judicial-system.csrf=mock_token',
       })
 
+      Object.defineProperty(window, 'location', {
+        value: {
+          pathname: '/test',
+          assign: jest.fn(),
+        },
+      })
+
       // Act
       api.logOut()
 

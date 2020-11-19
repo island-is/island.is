@@ -1,19 +1,12 @@
 import React from 'react'
-import { render } from '@testing-library/react'
-import { BrowserRouter } from 'react-router-dom'
-import { userContext } from '../../utils/userContext'
-
+import { render, waitFor } from '@testing-library/react'
+import { BrowserRouter, MemoryRouter, Route } from 'react-router-dom'
 import Login from './Login'
-import { mockJudge } from '../../utils/mocks'
-import { User } from '@island.is/judicial-system/types'
+import { mockJudgeQuery } from '../../utils/mocks'
 import { api } from '../../services'
 import fetchMock from 'fetch-mock'
-
-const mockJudgeUserContext = {
-  isAuthenticated: () => false,
-  user: mockJudge,
-  setUser: (_: User) => undefined,
-}
+import { UserProvider } from '../../shared-components/UserProvider/UserProvider'
+import { MockedProvider } from '@apollo/client/testing'
 
 describe('Login route', () => {
   fetchMock.mock('/api/auth/logout', 200)
@@ -23,11 +16,9 @@ describe('Login route', () => {
 
     // Act
     const { baseElement } = render(
-      <userContext.Provider value={mockJudgeUserContext}>
-        <BrowserRouter>
-          <Login />
-        </BrowserRouter>
-      </userContext.Provider>,
+      <BrowserRouter>
+        <Login />
+      </BrowserRouter>,
     )
 
     // Assert
@@ -39,31 +30,33 @@ describe('Login route', () => {
 
     // Act
     render(
-      <userContext.Provider value={mockJudgeUserContext}>
-        <BrowserRouter>
-          <Login />
-        </BrowserRouter>
-      </userContext.Provider>,
+      <BrowserRouter>
+        <Login />
+      </BrowserRouter>,
     )
 
     // Assert
     expect(document.title).toEqual('Réttarvörslugátt')
   })
 
-  test('should logout a logged in user', () => {
+  test('should logout a logged in user', async () => {
     // Arrange
     const spy = jest.spyOn(api, 'logOut')
 
     // Act
     render(
-      <userContext.Provider value={mockJudgeUserContext}>
-        <BrowserRouter>
-          <Login />
-        </BrowserRouter>
-      </userContext.Provider>,
+      <MockedProvider mocks={mockJudgeQuery} addTypename={false}>
+        <MemoryRouter initialEntries={['/']}>
+          <Route path="/">
+            <UserProvider>
+              <Login />
+            </UserProvider>
+          </Route>
+        </MemoryRouter>
+      </MockedProvider>,
     )
 
     // Assert
-    expect(spy).toHaveBeenCalled()
+    await waitFor(() => expect(spy).toHaveBeenCalled())
   })
 })
