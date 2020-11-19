@@ -76,7 +76,7 @@ export const EmailForm: FC<Props> = ({
         {formatMessage({
           id: 'sp.settings:email-form-confirmation-instructions',
           defaultMessage:
-            'Þú færð sendan tölvupóst á þetta netfang sem þú þarft að staðfesta við fyrsta tækifæri. ',
+            'Þú færð sendan tölvupóst á þetta netfang sem þú þarft að staðfesta við fyrsta tækifæri.',
         })}
       </Box>
       {(renderBackButton || renderSubmitButton) && (
