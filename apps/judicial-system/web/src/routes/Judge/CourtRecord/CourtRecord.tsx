@@ -6,7 +6,7 @@ import {
   Input,
   Text,
 } from '@island.is/island-ui/core'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import CourtDocument from '../../../shared-components/CourtDocument/CourtDocument'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { isNextDisabled } from '../../../utils/stepHelper'
@@ -31,9 +31,12 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 
+interface CaseData {
+  case: Case
+}
+
 export const CourtRecord: React.FC = () => {
-  const [workingCase, setWorkingCase] = useState<Case>(null)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [workingCase, setWorkingCase] = useState<Case>()
   const [
     courtDocumentStartErrorMessage,
     setCourtDocumentStartErrorMessage,
@@ -50,45 +53,69 @@ export const CourtRecord: React.FC = () => {
     setLitigationPresentationsMessage,
   ] = useState('')
   const { id } = useParams<{ id: string }>()
-  const { data } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
 
-  const resCase = data?.case
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
-    const { data } = await updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
-    })
-    const resCase = data?.updateCase
-    if (resCase) {
-      // Do something with the result. In particular, we want th modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-    return resCase
-  }
+  const updateCase = useCallback(
+    async (id: string, updateCase: UpdateCase) => {
+      const { data } = await updateCaseMutation({
+        variables: { input: { id, ...updateCase } },
+      })
+      const resCase = data?.updateCase
+      if (resCase) {
+        // Do something with the result. In particular, we want th modified timestamp passed between
+        // the client and the backend so that we can handle multiple simultanious updates.
+      }
+      return resCase
+    },
+    [updateCaseMutation],
+  )
 
   useEffect(() => {
     document.title = 'Þingbók - Réttarvörslugátt'
   }, [])
 
+  const defaultCourtAttendees = (wc: Case): string => {
+    let attendees = ''
+
+    if (wc.prosecutor && wc.accusedName) {
+      attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${wc.accusedName} kærði`
+    }
+
+    if (wc.defenderName) {
+      attendees += `\n${wc.defenderName} verjandi kærða`
+    }
+
+    return attendees
+  }
+
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setIsLoading(true)
-      setWorkingCase(resCase)
-      setIsLoading(false)
+    if (data && workingCase == null) {
+      let theCase = data.case
+
+      if (!theCase.courtAttendees) {
+        theCase = { ...theCase, courtAttendees: defaultCourtAttendees(theCase) }
+
+        if (theCase.courtAttendees) {
+          updateCase(
+            theCase.id,
+            parseString('courtAttendees', theCase.courtAttendees),
+          )
+        }
+      }
+
+      setWorkingCase(theCase)
     }
-    if (id && !workingCase && resCase) {
-      getCurrentCase()
-    }
-  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
+  }, [workingCase, updateCase, setWorkingCase, data])
 
   return (
     <PageLayout
       activeSection={Sections.JUDGE}
       activeSubSection={JudgeSubsections.COURT_RECORD}
-      isLoading={isLoading}
+      isLoading={loading}
     >
       {workingCase ? (
         <>
@@ -403,24 +430,25 @@ export const CourtRecord: React.FC = () => {
             nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
             nextIsDisabled={isNextDisabled([
               {
-                value: formatDate(workingCase?.courtStartTime, TIME_FORMAT),
+                value:
+                  formatDate(workingCase.courtStartTime, TIME_FORMAT) || '',
                 validations: ['empty', 'time-format'],
               },
               {
-                value: formatDate(workingCase?.courtEndTime, TIME_FORMAT),
+                value: formatDate(workingCase.courtEndTime, TIME_FORMAT) || '',
                 validations: ['empty', 'time-format'],
               },
               {
-                value: workingCase?.courtAttendees,
+                value: workingCase.courtAttendees || '',
                 validations: ['empty'],
               },
               {
-                value: workingCase?.policeDemands,
+                value: workingCase.policeDemands || '',
                 validations: ['empty'],
               },
-              { value: workingCase?.accusedPlea, validations: ['empty'] },
+              { value: workingCase.accusedPlea || '', validations: ['empty'] },
               {
-                value: workingCase?.litigationPresentations,
+                value: workingCase.litigationPresentations || '',
                 validations: ['empty'],
               },
             ])}

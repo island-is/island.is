@@ -3,11 +3,33 @@ import { theme } from '@island.is/island-ui/theme'
 
 import { TimelinePeriod } from './components/Timeline'
 import { Period } from '../types'
+import { ParentalLeave, PregnancyStatus } from '../dataProviders/APIDataTypes'
 
-export function getExpectedDateOfBirth(application: Application): string {
-  const dataProviderResult = application.externalData
-    .expectedDateOfBirth as DataProviderResult
-  return dataProviderResult.data as string
+export function getExpectedDateOfBirth(
+  application: Application,
+): string | undefined {
+  const pregnancyStatusResult = application.externalData
+    .pregnancyStatus as DataProviderResult
+
+  if (pregnancyStatusResult.status === 'success') {
+    const pregnancyStatus = pregnancyStatusResult.data as PregnancyStatus
+    if (pregnancyStatus.pregnancyDueDate)
+      return pregnancyStatus.pregnancyDueDate
+  }
+  // applicant is not a mother giving birth
+  const parentalLeavesResult = application.externalData
+    .parentalLeaves as DataProviderResult
+  if (parentalLeavesResult.status === 'success') {
+    const parentalLeaves = parentalLeavesResult.data as ParentalLeave[]
+    if (parentalLeaves.length) {
+      if (parentalLeaves.length === 1) {
+        return parentalLeaves[0].expectedDateOfBirth
+      }
+      // here we have multiple parental leaves... must store the selected application id or something
+    }
+  }
+
+  return undefined
 }
 
 export function getNameAndIdOfSpouse(

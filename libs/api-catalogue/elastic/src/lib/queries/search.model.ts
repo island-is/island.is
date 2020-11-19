@@ -9,7 +9,7 @@ interface SearchInput {
 }
 
 export const searchQuery = ({
-  limit = 25,
+  limit,
   searchAfter = [],
   query = '',
   pricing = [],

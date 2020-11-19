@@ -3,7 +3,7 @@ import { Query, Resolver, Mutation, Args } from '@nestjs/graphql'
 import { VehicleModel } from './model/vehicle.model'
 import { VehicleService } from './vehicle.service'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Authorize, AuthService, CurrentUser, AuthUser } from '../auth'
+import { Authorize } from '../auth'
 
 @Resolver(() => VehicleModel)
 export class VehicleResolver {

@@ -1,6 +1,6 @@
 export * from './types/ApplicationTypes'
 export * from './types/Condition'
-export * from './types/DataProvider'
+export * from './types/BasicDataProvider'
 export * from './types/DataProviderResult'
 export * from './types/Fields'
 export * from './types/Form'

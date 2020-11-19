@@ -30,7 +30,7 @@ export const ActionCard: FC<ActionCardProps> = ({
   } = useI18n()
 
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
+  const isTablet = width < theme.breakpoints.lg
 
   const toolTipText = (
     <>
@@ -46,9 +46,9 @@ export const ActionCard: FC<ActionCardProps> = ({
     <OutlinedBox backgroundColor="white">
       <GridContainer>
         <GridRow>
-          <GridColumn span={['10/10', '10/10', '6/10', '7/10']}>
+          <GridColumn span={['10/10', '10/10', '10/10', '7/10']}>
             <GridRow>
-              <GridColumn span={['6/10', '8/10', '8/10', '7/10']}>
+              <GridColumn span={['6/10', '7/10', '7/10', '7/10']}>
                 <Box paddingLeft={4} paddingY={4}>
                   <Stack space={1}>
                     <Text variant="h3">{permno}</Text>
@@ -56,7 +56,7 @@ export const ActionCard: FC<ActionCardProps> = ({
                   </Stack>
                 </Box>
               </GridColumn>
-              <GridColumn span={['4/10', '2/10', '2/10', '3/10']}>
+              <GridColumn span={['4/10', '3/10', '3/10', '3/10']}>
                 {hasCoOwner && (
                   <ColumnBox width="full" paddingRight={[4, 4, 4, 1]}>
                     <Text variant="h5">{t.status.coOwned}</Text>
@@ -65,7 +65,7 @@ export const ActionCard: FC<ActionCardProps> = ({
               </GridColumn>
             </GridRow>
           </GridColumn>
-          <GridColumn span={['10/10', '10/10', '4/10', '3/10']}>
+          <GridColumn span={['10/10', '10/10', '10/10', '3/10']}>
             {isRecyclable ? (
               <ColumnBox
                 background="blue100"
@@ -75,15 +75,15 @@ export const ActionCard: FC<ActionCardProps> = ({
                 paddingX={4}
                 paddingY={4}
               >
-                <Button onClick={onContinue} fluid={isMobile}>
+                <Button onClick={onContinue} fluid={isTablet}>
                   {t.actions.valid}
                 </Button>
               </ColumnBox>
             ) : (
               <ColumnBox
                 borderColor="blue200"
-                borderTopWidth={isMobile ? 'standard' : 'none'}
-                borderLeftWidth={isMobile ? 'none' : 'standard'}
+                borderTopWidth={isTablet ? 'standard' : 'none'}
+                borderLeftWidth={isTablet ? 'none' : 'standard'}
                 borderStyle="solid"
                 borderRadius="large"
                 padding={4}

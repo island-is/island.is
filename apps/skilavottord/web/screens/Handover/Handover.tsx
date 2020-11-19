@@ -21,6 +21,7 @@ import { CREATE_RECYCLING_REQUEST_CITIZEN } from '@island.is/skilavottord-web/gr
 import { VEHICLES_BY_NATIONAL_ID } from '@island.is/skilavottord-web/graphql/queries'
 import CompanyList from './components/CompanyList'
 import * as styles from './Handover.treat'
+import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
 
 const Handover: FC = () => {
   const { user } = useContext(UserContext)
@@ -48,7 +49,7 @@ const Handover: FC = () => {
 
   const [
     setRecyclingRequest,
-    { error: mutationError, loading: mutationLoading },
+    { data: mutationData, error: mutationError, loading: mutationLoading },
   ] = useMutation(CREATE_RECYCLING_REQUEST_CITIZEN, {
     onCompleted() {
       if (requestType === 'cancelled') {
@@ -60,6 +61,8 @@ const Handover: FC = () => {
       return mutationError
     },
   })
+
+  const mutationResponse = mutationData?.createSkilavottordRecyclingRequest
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -77,14 +80,20 @@ const Handover: FC = () => {
       switch (activeCar.status) {
         case 'inUse':
         case 'cancelled':
-          setRequestType('pendingRecycle')
-          setRecyclingRequest({
-            variables: {
-              permno: id,
-              nameOfRequestor: user?.name,
-              requestType: 'pendingRecycle',
-            },
-          })
+          if (
+            localStorage.getItem(ACCEPTED_TERMS_AND_CONDITION) === id.toString()
+          ) {
+            setRequestType('pendingRecycle')
+            setRecyclingRequest({
+              variables: {
+                permno: id,
+                nameOfRequestor: user?.name,
+                requestType: 'pendingRecycle',
+              },
+            })
+          } else {
+            setInvalidCar(true)
+          }
         default:
           break
       }
@@ -94,6 +103,7 @@ const Handover: FC = () => {
   }, [user, id, activeCar])
 
   const routeHome = () => {
+    localStorage.clear()
     router.push(routes.myCars).then(() => window.scrollTo(0, 0))
   }
 
@@ -120,6 +130,7 @@ const Handover: FC = () => {
     (requestType !== 'cancelled' && (mutationError || mutationLoading)) ||
     error ||
     isInvalidCar ||
+    mutationResponse?.message ||
     (loading && !data)
   ) {
     return (

@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { ApolloError } from 'apollo-server-express'
-
 import {
   IVidspyrnaFrontpage,
   IVidspyrnaFeaturedNews,
@@ -15,22 +15,22 @@ import { mapAdgerdirGroupSlice } from './adgerdirGroupSlice.model'
 @ObjectType()
 export class AdgerdirFrontpage {
   @Field(() => ID)
-  id: string
+  id: string = ''
 
   @Field()
-  slug: string
+  slug: string = ''
 
   @Field()
-  title: string
+  title: string = ''
 
   @Field({ nullable: true })
   description?: string
 
   @Field(() => [Slice])
-  content: Array<typeof Slice>
+  content: Array<typeof Slice> = []
 
   @Field(() => [AdgerdirSlice])
-  slices: Array<typeof AdgerdirSlice>
+  slices: Array<typeof AdgerdirSlice> = []
 }
 
 type AdgerdirSliceTypes = IVidspyrnaFeaturedNews | IVidspyrnaFlokkur
@@ -38,7 +38,9 @@ type AdgerdirSliceTypes = IVidspyrnaFeaturedNews | IVidspyrnaFlokkur
 export const mapAdgerdirSlice = (
   slice: AdgerdirSliceTypes,
 ): typeof AdgerdirSlice => {
-  switch (slice.sys.contentType.sys.id) {
+  const id = slice?.sys?.contentType?.sys?.id ?? ''
+
+  switch (id) {
     case 'vidspyrnaFeaturedNews':
       return mapAdgerdirFeaturedNewsSlice(slice as IVidspyrnaFeaturedNews)
 
@@ -47,7 +49,7 @@ export const mapAdgerdirSlice = (
 
     default:
       throw new ApolloError(
-        `Can not convert to slice: ${(slice as any).sys.contentType.sys.id}`,
+        `Can not convert to slice in mapAdgerdirFrontpage -> mapAdgerdirSlice`,
       )
   }
 }
@@ -56,10 +58,17 @@ export const mapAdgerdirFrontpage = ({
   sys,
   fields,
 }: IVidspyrnaFrontpage): AdgerdirFrontpage => ({
-  id: sys.id,
-  slug: fields.slug,
-  title: fields.title,
-  description: fields.description,
-  content: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
-  slices: fields.slices.map(mapAdgerdirSlice),
+  id: sys?.id ?? '',
+  slug: fields?.slug ?? '',
+  title: fields?.title ?? '',
+  description: fields?.description ?? '',
+  content:
+    sys?.id && fields?.content
+      ? mapDocument(fields.content, sys?.id + ':content')
+      : [],
+  slices: fields?.slices
+    ? fields.slices
+        .filter((x) => x.sys?.contentType?.sys?.id)
+        .map(mapAdgerdirSlice)
+    : [],
 })

@@ -6,9 +6,9 @@ import { Field, InputType } from '@nestjs/graphql'
 export class SignatureConfirmationQueryInput {
   @Allow()
   @Field()
-  readonly caseId: string
+  readonly caseId!: string
 
   @Allow()
   @Field()
-  documentToken: string
+  documentToken!: string
 }

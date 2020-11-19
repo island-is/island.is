@@ -9,7 +9,7 @@ module.exports = {
       queryInterface,
       tableName: 'notification',
       columnName: 'type',
-      newValues: ['HEADS_UP', 'READY_FOR_COURT', 'COURT_DATE'],
+      newValues: ['HEADS_UP', 'READY_FOR_COURT', 'COURT_DATE', 'RULING'],
       enumName: 'enum_notification_type',
     })
   },

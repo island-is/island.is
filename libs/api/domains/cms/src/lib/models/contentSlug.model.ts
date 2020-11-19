@@ -1,16 +1,17 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { IArticle, ILifeEventPage } from '../generated/contentfulTypes'
+import { IArticle } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class ContentSlug {
   @Field(() => ID)
-  id: string
+  id: string = ''
 
   @Field()
-  slug: string
+  slug: string = ''
 
   @Field()
-  type: string
+  type: string = ''
 }
 
 export const mapContentSlug = ({ fields, sys }: IArticle): ContentSlug => ({

@@ -26,7 +26,7 @@ export class News {
   author: Author
 
   @Field({ nullable: true })
-  intro?: string
+  intro: string
 
   @Field(() => Image, { nullable: true })
   image?: Image

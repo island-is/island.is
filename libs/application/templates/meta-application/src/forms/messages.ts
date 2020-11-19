@@ -48,7 +48,7 @@ export const m = defineMessages({
   },
   serviceUsers: {
     id: 'example.application:service.users',
-    defaultMessage: 'Hverjir sækja þjónustuna Fyrirtæki/Einstaklingar/Bæði',
+    defaultMessage: 'Hverjir sækja þjónustuna?',
     description: 'Some description',
   },
   serviceGeneral: {
@@ -96,6 +96,22 @@ export const m = defineMessages({
     defaultMessage: 'Upload af notanda',
     description: 'Some description',
   },
+  dataAdd: {
+    id: 'example.application:data.add',
+    defaultMessage: 'Bæta við gögnum',
+    description: 'Some description',
+  },
+  dataEmptyDraft: {
+    id: 'example.application:data.empty.draft',
+    defaultMessage:
+      'Hér skal taka fram þau gögn sem þurfa að fylgja umsókninni',
+    description: 'Some description',
+  },
+  dataEmpty: {
+    id: 'example.application:data.empty',
+    defaultMessage: 'Engum gögnum fylgir umsókninni',
+    description: 'Some description',
+  },
   payment: {
     id: 'example.application:payment',
     defaultMessage: 'Greiðslur',
@@ -129,6 +145,21 @@ export const m = defineMessages({
   noOptionLabel: {
     id: 'example.application:no.option.label',
     defaultMessage: 'Nei',
+    description: 'Some description',
+  },
+  companiesOptionLabel: {
+    id: 'example.application:companies.option.label',
+    defaultMessage: 'Fyrirtæki',
+    description: 'Some description',
+  },
+  individualsOptionLabel: {
+    id: 'example.application:individuals.option.label',
+    defaultMessage: 'Einstaklingar',
+    description: 'Some description',
+  },
+  bothOptionLabel: {
+    id: 'example.application:both.option.label',
+    defaultMessage: 'Bæði',
     description: 'Some description',
   },
   inAdvanceOptionLabel: {
@@ -215,5 +246,20 @@ export const m = defineMessages({
     id: 'example.application.decline.option',
     defaultMessage: 'Lokið',
     description: 'Some description',
+  },
+  showMore: {
+    id: 'example.application.more',
+    defaultMessage: 'Sjá öll gögn',
+    description: '',
+  },
+  showLess: {
+    id: 'example.application.less',
+    defaultMessage: 'Sjá minna',
+    description: '',
+  },
+  submit: {
+    id: 'example.application.submit',
+    defaultMessage: 'Senda inn umsókn',
+    description: 'Used in primary submit button',
   },
 })

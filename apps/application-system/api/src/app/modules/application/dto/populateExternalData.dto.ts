@@ -1,5 +1,4 @@
-import { IsArray, IsEnum, IsString } from 'class-validator'
-import { DataProviderTypes } from '@island.is/application/core'
+import { IsArray, IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 
@@ -8,9 +7,9 @@ class DataProviderDto {
   @ApiProperty()
   id!: string
 
-  @IsEnum(DataProviderTypes)
-  @ApiProperty({ enum: DataProviderTypes })
-  type!: DataProviderTypes
+  @IsString()
+  @ApiProperty()
+  type!: string
 }
 
 export class PopulateExternalDataDto {

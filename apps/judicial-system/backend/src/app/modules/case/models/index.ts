@@ -1,2 +1,2 @@
 export { Case } from './case.model'
-export { ConfirmSignatureResponse } from './confirmSignature.response'
+export { SignatureConfirmationResponse } from './signatureConfirmation.response'

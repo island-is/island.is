@@ -64,27 +64,24 @@ export class UserProfileController {
         `A profile with nationalId - "${userProfileDto.nationalId}" already exists`,
       )
     }
+
+    await this.verificationService.createEmailVerification(
+      userProfileDto.nationalId,
+      userProfileDto.email,
+    )
+
     if (userProfileDto.mobilePhoneNumber) {
       const phoneVerified = await this.verificationService.isPhoneNumberVerified(
         userProfileDto,
       )
-      if (!phoneVerified)
-        throw new BadRequestException(
-          `Phone number: ${userProfileDto.mobilePhoneNumber} is not verified`,
-        )
-      else
-        userProfileDto = {
-          ...userProfileDto,
-          mobilePhoneNumberVerified: phoneVerified,
-        }
+      userProfileDto = {
+        ...userProfileDto,
+        mobilePhoneNumberVerified: phoneVerified,
+      }
     }
     const profile = await this.userProfileService.create(userProfileDto)
     await this.verificationService.removeSmsVerification(
       userProfileDto.nationalId,
-    )
-    await this.verificationService.createEmailVerification(
-      profile.nationalId,
-      profile.email,
     )
 
     return profile
@@ -115,10 +112,7 @@ export class UserProfileController {
       const phoneVerified = await this.verificationService.isPhoneNumberVerified(
         { nationalId, mobilePhoneNumber },
       )
-      if (!phoneVerified)
-        throw new BadRequestException(
-          `Phone number: ${mobilePhoneNumber} is not verified`,
-        )
+
       userProfileToUpdate = {
         ...userProfileToUpdate,
         mobilePhoneNumberVerified: phoneVerified,

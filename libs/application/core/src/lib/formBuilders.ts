@@ -15,7 +15,6 @@ import {
   FormModes,
   FormText,
 } from '../types/Form'
-import { DataProviderTypes } from '../types/DataProvider'
 import { MessageDescriptor } from 'react-intl'
 
 export function buildForm(data: {
@@ -82,7 +81,7 @@ export function buildExternalDataProvider(data: {
 
 export function buildDataProviderItem(data: {
   id: string
-  type: DataProviderTypes
+  type: string
   title: MessageDescriptor | string
   subTitle?: MessageDescriptor | string
   source?: string

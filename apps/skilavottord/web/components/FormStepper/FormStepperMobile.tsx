@@ -1,10 +1,5 @@
 import React from 'react'
-import {
-  Box,
-  FormStepperSection,
-  IconDeprecated as Icon,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, FormStepperSection, Icon, Text } from '@island.is/island-ui/core'
 import * as styles from './FormStepperMobile.treat'
 
 interface ProcessProps {
@@ -38,9 +33,9 @@ const FormStepperMobile = ({ sections, activeSection }: ProcessProps) => (
           {isActive || isCompleted ? (
             <IconBackground>
               {isCompleted ? (
-                <Icon type="check" color="white" width="16px" />
+                <Icon icon="checkmark" color="white" />
               ) : (
-                <Text variant="h5" color="white">
+                <Text variant="h3" color="white">
                   {activeSection + 1}
                 </Text>
               )}

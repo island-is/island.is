@@ -42,11 +42,16 @@ export const findLastGoodBuild = async (
   }
   // First we try to find the last successful workflow build on our branch
   // Then try to find the last successful workflow build on our target branch
-  // Failing that, and in case base != master, we try master
+  // Failing that, and in case base != main, we try main
   const branchTargets = [branch, base]
-  if (base != 'master') {
-    branchTargets.push('master')
+  if (base != 'main') {
+    branchTargets.push('main')
   }
+  // Lastly, consider no branch, as the best candidate might be on a branch that
+  // is between branch and base.
+  // If this keeps being a problem, lets consider dropping the branch filter and
+  // simply consider all builds and walk down the list of shas.
+  branchTargets.push('')
   for (const branchTarget of branchTargets) {
     const goodBuild = await getGoodBuildOnBranch(branchTarget)
     if (goodBuild) {

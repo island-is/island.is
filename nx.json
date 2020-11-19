@@ -18,7 +18,7 @@
           "lint",
           "test",
           "e2e",
-          "schemas/build-open-api",
+          "schemas/build-openapi",
           "schemas/openapi-generator",
           "schemas/build-schema",
           "schemas/codegen"
@@ -27,13 +27,6 @@
     }
   },
   "projects": {
-    "adgerdir": {
-      "tags": []
-    },
-    "adgerdir-e2e": {
-      "tags": [],
-      "implicitDependencies": ["adgerdir"]
-    },
     "air-discount-scheme-api": {
       "tags": []
     },
@@ -73,9 +66,6 @@
       "tags": []
     },
     "api-catalogue-types": {
-      "tags": []
-    },
-    "api-content-search": {
       "tags": []
     },
     "api-domains-api-catalogue": {
@@ -166,13 +156,19 @@
     "cache": {
       "tags": []
     },
+    "content-search-indexer": {
+      "tags": []
+    },
+    "content-search-indexer-types": {
+      "tags": []
+    },
+    "content-search-toolkit": {
+      "tags": []
+    },
     "contentful-importer": {
       "tags": []
     },
     "dokobit-signing": {
-      "tags": []
-    },
-    "elastic-indexing": {
       "tags": []
     },
     "email-service": {
@@ -330,10 +326,16 @@
     "services-xroad-collector": {
       "tags": ["api-catalogue-services"]
     },
+    "shared-connected": {
+      "tags": []
+    },
     "shared-form-fields": {
       "tags": []
     },
     "shared-mocking": {
+      "tags": []
+    },
+    "shared-table": {
       "tags": []
     },
     "shared-types": {
@@ -364,6 +366,6 @@
     }
   },
   "affected": {
-    "defaultBase": "master"
+    "defaultBase": "main"
   }
 }

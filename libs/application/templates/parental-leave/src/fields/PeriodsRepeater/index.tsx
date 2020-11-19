@@ -13,6 +13,9 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
   expandRepeater,
 }) => {
   const dob = getExpectedDateOfBirth(application)
+  if (!dob) {
+    return null
+  }
   const dobDate = new Date(dob)
 
   // TODO this will also come from somewhere in the external data

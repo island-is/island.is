@@ -18,6 +18,7 @@ import * as styles from './DatePicker.treat'
 import * as coreStyles from './react-datepicker.treat'
 import { Input, InputProps } from '../Input/Input'
 import { VisuallyHidden } from 'reakit'
+import { Icon as IconType, Type } from '../IconRC/iconMap'
 
 const languageConfig = {
   is: {
@@ -52,6 +53,10 @@ interface DatePickerProps {
   handleOpenCalendar?: () => void
   required?: boolean
   inputName?: string
+  size?: 'md' | 'sm'
+  backgroundColor?: 'white' | 'blue'
+  icon?: IconType
+  iconType?: Type
 }
 
 interface CustomHeaderProps {
@@ -85,6 +90,10 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   handleOpenCalendar,
   required,
   inputName = '',
+  backgroundColor = 'white',
+  size = 'md',
+  icon = 'calendar',
+  iconType = 'outline',
 }) => {
   const [startDate, setStartDate] = useState<Date | null>(selected ?? null)
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
@@ -101,7 +110,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   }, [locale])
   return (
     <div className={coreStyles.root} data-testid="datepicker">
-      <div className={cn(styles.root, 'island-ui-datepicker')}>
+      <div
+        className={cn(styles.root, 'island-ui-datepicker', {
+          [styles.small]: size === 'sm',
+        })}
+      >
         <ReactDatePicker
           id={id}
           disabled={disabled}
@@ -134,6 +147,9 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           }}
           startDate={startDate}
           required={required}
+          calendarClassName={cn({
+            [styles.backgroundBlue]: backgroundColor === 'blue',
+          })}
           customInput={
             <CustomInput
               name={inputName}
@@ -143,6 +159,10 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               errorMessage={errorMessage}
               placeholderText={placeholderText}
               onInputClick={onInputClick}
+              backgroundColor={backgroundColor}
+              icon={icon}
+              iconType={iconType}
+              size={size}
             />
           }
           renderCustomHeader={(props) => (
@@ -162,13 +182,21 @@ const CustomInput = forwardRef<
   }
 >(
   (
-    { className, placeholderText, onInputClick, fixedFocusState, ...props },
+    {
+      className,
+      placeholderText,
+      onInputClick,
+      fixedFocusState,
+      icon,
+      iconType,
+      ...props
+    },
     ref,
   ) => (
     <Input
       {...props}
-      icon="calendar"
-      iconType="outline"
+      icon={icon}
+      iconType={iconType}
       ref={ref}
       fixedFocusState={fixedFocusState}
       placeholder={placeholderText}
@@ -191,7 +219,7 @@ const CustomHeader = ({
     if (locale.localize) {
       return locale.localize.month(i)
     }
-    return
+    return undefined
   })
   return (
     <div className={styles.customHeaderContainer}>

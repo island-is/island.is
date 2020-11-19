@@ -1,17 +1,17 @@
 import { callDataProviders } from './dataProviderUtils'
-import { DataProvider, DataProviderTypes } from '../types/DataProvider'
+import { BasicDataProvider } from '../types/BasicDataProvider'
 import { ApplicationTypes } from '../types/ApplicationTypes'
 
-class ExampleProviderThatAlwaysFails extends DataProvider {
-  readonly type = DataProviderTypes.ExampleFails
+class ExampleProviderThatAlwaysFails extends BasicDataProvider {
+  readonly type = 'ExampleFails'
 
   provide(): Promise<unknown> {
     return Promise.reject('this should reject')
   }
 }
 
-class ExampleProviderThatAlwaysSucceeds extends DataProvider {
-  readonly type = DataProviderTypes.ExampleSucceeds
+class ExampleProviderThatAlwaysSucceeds extends BasicDataProvider {
+  readonly type = 'ExampleSucceeds'
 
   provide(): Promise<string> {
     return Promise.resolve('success')

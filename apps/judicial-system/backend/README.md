@@ -9,6 +9,7 @@ First, make sure you have docker, then run:
 Then run the migrations and seed the database:
 
 `yarn nx run judicial-system-backend:migrate`
+
 `yarn nx run judicial-system-backend:seed:all`
 
 ## Running locally
@@ -22,8 +23,22 @@ a judge mobile number:
 
 `NOVA_PASSWORD=<SMS password> JUDGE_MOBILE_NUMBER=<judge mobile number> yarn nx serve judicial-system-backend`
 
-Finally, you can enable electronic signatures of judge rulings by providing a Dokobit access token:
+Similarly, you can enable electronic signatures of judge rulings by providing a Dokobit access token:
 `DOKOBIT_ACCESS_TOKEN=<Dokobit access token>`
+
+To enable email sending you can modify `emailOptions` in `environment.ts` as follows:
+
+```javascript
+emailOptions: {
+    useTestAccount: false,
+    options: {
+      region: 'eu-west-1',
+    },
+  },
+```
+
+Finally, to enable prison email notifications provide a prison email address:
+`PRISON_EMAIL=<prison email>`
 
 ## Graphql
 

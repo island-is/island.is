@@ -17,16 +17,13 @@ import {
 } from './models/adgerdirFrontpage.model'
 import { AdgerdirPages } from './models/adgerdirPages.model'
 import { AdgerdirPage, mapAdgerdirPage } from './models/adgerdirPage.model'
-import { AdgerdirNews, mapAdgerdirNewsItem } from './models/adgerdirNews.model'
 import { GetContentSlugInput } from './dto/getContentSlug.input'
-import { GetAdgerdirNewsListInput } from './dto/getAdgerdirNewsList.input'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { Namespace, mapNamespace } from './models/namespace.model'
 import { Menu, mapMenu } from './models/menu.model'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
-import { PaginatedAdgerdirNews } from './models/paginatedAdgerdirNews.model'
 import { AdgerdirTags } from './models/adgerdirTags.model'
 import { Organization } from './models/organization.model'
 import { Organizations } from './models/organizations.model'
@@ -198,18 +195,6 @@ export class CmsContentfulService {
     return result.items.map(mapOrganization)[0] ?? null
   }
 
-  async getAdgerdirNews(slug: string, lang: string): Promise<AdgerdirNews> {
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IVidspyrnaNewsFields>(lang, {
-        ['content_type']: 'vidspyrnaNews',
-        include: 10,
-        'fields.slug': slug,
-      })
-      .catch(errorHandler('getAdgerdirNews'))
-
-    return result.items.map(mapAdgerdirNewsItem)[0] ?? null
-  }
-
   async getArticle(slug: string, lang: string): Promise<Article | null> {
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.IArticleFields>(lang, {
@@ -260,40 +245,6 @@ export class CmsContentfulService {
       .catch(errorHandler('getNews'))
 
     return result.items.map(mapNews)[0] ?? null
-  }
-
-  async getAdgerdirNewsList({
-    lang = 'is-IS',
-    year,
-    month,
-    ascending = false,
-    page = 1,
-    perPage = 10,
-  }: GetAdgerdirNewsListInput): Promise<PaginatedAdgerdirNews> {
-    const params = {
-      ['content_type']: 'vidspyrnaNews',
-      include: 10,
-      order: (ascending ? '' : '-') + 'fields.date',
-      skip: (page - 1) * perPage,
-      limit: perPage,
-    }
-
-    if (year) {
-      params['fields.date[gte]'] = new Date(year, month ?? 0, 1)
-      params['fields.date[lt]'] =
-        month != undefined
-          ? new Date(year, month + 1, 1)
-          : new Date(year + 1, 0, 1)
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IVidspyrnaNewsFields>(lang, params)
-      .catch(errorHandler('getAdgerdirNewsList'))
-
-    return {
-      page: makePage(page, perPage, result.total),
-      news: result.items.map(mapAdgerdirNewsItem),
-    }
   }
 
   async getAboutPage({ lang }: GetAboutPageInput): Promise<AboutPage | null> {

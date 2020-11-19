@@ -38,7 +38,10 @@ import {
   ExternalData,
 } from '@island.is/application/core'
 import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-api-lib'
-import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import {
+  getApplicationDataProviders,
+  getApplicationTemplateByTypeId,
+} from '@island.is/application/template-loader'
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'
@@ -61,7 +64,7 @@ import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+// @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
 @ApiTags('applications')
 @Controller()
 export class ApplicationController {
@@ -111,14 +114,14 @@ export class ApplicationController {
   @UseInterceptors(ApplicationSerializer)
   async findApplicantApplications(
     @Param('nationalRegistryId') nationalRegistryId: string,
-    @Req() request: Request,
+    // @Req() request: Request,
     @Query('typeId') typeId?: string,
   ): Promise<ApplicationResponseDto[]> {
-    console.log('request.user', request.user)
-    const user = request.user as User
+    // const user = request.user as User
 
     const whereOptions: WhereOptions = {
-      applicant: user.nationalId,
+      // applicant: user.nationalId, TODO use this when user is in the request
+      applicant: nationalRegistryId,
     }
 
     if (typeId) {
@@ -232,8 +235,12 @@ export class ApplicationController {
       externalDataDto,
     )
 
+    const templateDataProviders = await getApplicationDataProviders(
+      (existingApplication as BaseApplication).typeId,
+    )
+
     const results = await callDataProviders(
-      buildDataProviders(externalDataDto),
+      buildDataProviders(externalDataDto, templateDataProviders),
       existingApplication as BaseApplication,
     )
     const {

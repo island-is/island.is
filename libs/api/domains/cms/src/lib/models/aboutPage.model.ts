@@ -34,7 +34,9 @@ export const mapAboutPage = ({ fields, sys }: types.IPage): AboutPage => ({
   typename: 'AboutPage',
   id: sys.id,
   pageHeader: mapPageHeader(fields.header),
-  slices: fields.slices?.map(safelyMapSlices).filter(Boolean), // filter out empty slices that failed mapping
+  slices: fields.slices
+    ?.map(safelyMapSlices)
+    .filter((slice): slice is typeof Slice => Boolean(slice)), // filter out empty slices that failed mapping
   title: fields.title ?? '',
   slug: fields.slug ?? '',
   theme: fields.theme ?? '',

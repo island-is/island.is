@@ -51,7 +51,7 @@ const Overview: FC = () => {
         {vehicles.length > 0 ? (
           <CarsTable titles={t.table} vehicles={vehicles} />
         ) : (
-          <Text>There are no recycled cars yet</Text>
+          <Text>{t.info}</Text>
         )}
       </Stack>
     </PartnerPageLayout>

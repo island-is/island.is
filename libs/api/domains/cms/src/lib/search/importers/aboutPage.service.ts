@@ -1,26 +1,31 @@
-import { MappedData } from '@island.is/api/content-search'
+import { MappedData } from '@island.is/content-search-indexer/types'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'
 import isCircular from 'is-circular'
 import { IPage } from '../../generated/contentfulTypes'
 import { mapAboutPage } from '../../models/aboutPage.model'
+import {
+  CmsSyncProvider,
+  doMappingInput,
+  processSyncDataInput,
+} from '../cmsSync.service'
 
 import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
-export class AboutPageSyncService {
-  processSyncData(entries: Entry<any>[]): IPage[] {
+export class AboutPageSyncService implements CmsSyncProvider<IPage> {
+  processSyncData(entries: processSyncDataInput<IPage>) {
     // only process pages that we consider not to be empty and dont have circular structures
     return entries.filter(
-      (entry: IPage): entry is IPage =>
+      (entry: Entry<any>): entry is IPage =>
         entry.sys.contentType.sys.id === 'page' &&
         !!entry.fields.title &&
         !isCircular(entry),
     )
   }
 
-  doMapping(entries: IPage[]): MappedData[] {
+  doMapping(entries: doMappingInput<IPage>) {
     logger.info('Mapping about page', { count: entries.length })
 
     return entries

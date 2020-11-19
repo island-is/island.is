@@ -41,7 +41,6 @@ const testApplicationTemplate: ApplicationTemplate<
   },
   type: ApplicationTypes.EXAMPLE,
   name: 'Test application',
-  dataProviders: [],
   dataSchema: z.object({
     person: z.object({
       age: z.number().min(18),

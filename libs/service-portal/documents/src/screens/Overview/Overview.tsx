@@ -31,7 +31,7 @@ import { defineMessage } from 'react-intl'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 6
-const defaultStartDate = subYears(new Date(), 20)
+const defaultStartDate = new Date('2000-01-01')
 const defaultEndDate = startOfTomorrow()
 
 // type FuseItem = {
@@ -65,8 +65,8 @@ const getFilteredDocuments = (
   const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
   let filteredDocuments = documents.filter((document) =>
     isWithinInterval(new Date(document.date), {
-      start: dateFrom,
-      end: dateTo,
+      start: dateFrom || defaultStartDate,
+      end: dateTo || defaultEndDate,
     }),
   )
 
@@ -113,45 +113,43 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     to: pageSize * page,
     totalPages: Math.ceil(filteredDocuments.length / pageSize),
   }
-  const handleDateFromInput = useCallback(
-    (value: Date) =>
-      setFilterValue((oldState) => {
-        const { dateTo } = oldState
-        return {
-          ...oldState,
-          dateTo: dateTo ? (isAfter(value, dateTo) ? value : dateTo) : dateTo,
-          dateFrom: value,
-        }
-      }),
-    [],
-  )
-
-  const handleDateToInput = useCallback(
-    (value: Date) =>
-      setFilterValue((oldState) => ({
+  const handleDateFromInput = useCallback((value: Date) => {
+    setPage(1)
+    setFilterValue((oldState) => {
+      const { dateTo } = oldState
+      return {
         ...oldState,
-        dateTo: value,
-      })),
-    [],
-  )
+        dateTo: dateTo ? (isAfter(value, dateTo) ? value : dateTo) : dateTo,
+        dateFrom: value,
+      }
+    })
+  }, [])
+
+  const handleDateToInput = useCallback((value: Date) => {
+    setPage(1)
+    setFilterValue((oldState) => ({
+      ...oldState,
+      dateTo: value,
+    }))
+  }, [])
 
   const handlePageChange = useCallback((page: number) => setPage(page), [])
   const handleCategoryChange = useCallback((newCategory: ValueType<Option>) => {
+    setPage(1)
     setFilterValue((oldFilter) => ({
       ...oldFilter,
       activeCategory: newCategory as Option,
     }))
   }, [])
 
-  const handleSearchChange = useCallback(
-    (value: string) =>
-      setFilterValue({ ...defaultFilterValues, searchQuery: value }),
-    [],
-  )
+  const handleSearchChange = useCallback((value: string) => {
+    setPage(1)
+    setFilterValue({ ...defaultFilterValues, searchQuery: value })
+  }, [])
 
   const handleClearFilters = useCallback(() => {
-    setFilterValue({ ...defaultFilterValues })
     setPage(1)
+    setFilterValue({ ...defaultFilterValues })
   }, [])
 
   const hasActiveFilters = () => !isEqual(filterValue, defaultFilterValues)

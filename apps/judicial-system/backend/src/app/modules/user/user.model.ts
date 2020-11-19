@@ -64,7 +64,7 @@ export class User extends Model<User> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: true,
+    allowNull: false,
   })
   @ApiProperty()
   email: string
@@ -76,4 +76,11 @@ export class User extends Model<User> {
   })
   @ApiProperty({ enum: UserRole })
   role: UserRole
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  active: boolean
 }

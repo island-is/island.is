@@ -1,6 +1,6 @@
 import { Application } from '../types/Application'
 import { DataProviderResult } from '../types/DataProviderResult'
-import { DataProvider } from '../types/DataProvider'
+import { BasicDataProvider } from '../types/BasicDataProvider'
 
 export interface FulfilledPromise<T> {
   status: 'fulfilled'
@@ -8,7 +8,7 @@ export interface FulfilledPromise<T> {
 }
 
 function callProvider(
-  provider: DataProvider,
+  provider: BasicDataProvider,
   application: Application,
 ): Promise<DataProviderResult> {
   if (provider === null) {
@@ -29,7 +29,7 @@ function callProvider(
 }
 
 export async function callDataProviders(
-  dataProviders: DataProvider[],
+  dataProviders: BasicDataProvider[],
   application: Application,
 ): Promise<DataProviderResult[]> {
   // TODO what about options to pass to each data provider?

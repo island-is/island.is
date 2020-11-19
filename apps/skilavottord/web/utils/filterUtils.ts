@@ -9,6 +9,7 @@ export const filterCarsByStatus = (status: CarStatus, cars: Car[]) => {
     case 'deregistered':
       return cars.filter(
         (car: Car) =>
+          car.status === 'handOver' ||
           car.status === 'deregistered' ||
           car.status === 'paymentInitiated' ||
           car.status === 'paymentFailed',

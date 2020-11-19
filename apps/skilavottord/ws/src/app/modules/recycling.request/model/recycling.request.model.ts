@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, createUnionType } from '@nestjs/graphql'
 import {
   Column,
   DataType,
@@ -14,6 +14,35 @@ import {
 } from 'sequelize-typescript'
 import { RecyclingPartnerModel } from '../../recycling.partner/model/recycling.partner.model'
 import { VehicleModel } from '../../vehicle/model/vehicle.model'
+
+@ObjectType()
+export class RequestErrors {
+  @Field()
+  message: string
+
+  @Field()
+  operation: string
+}
+
+@ObjectType()
+export class RequestStatus {
+  @Field()
+  status: boolean
+}
+
+export const RecyclingRequestUnion = createUnionType({
+  name: 'RecyclingRequest',
+  types: () => [RequestErrors, RequestStatus],
+  resolveType(res) {
+    if (res.status) {
+      return RequestStatus
+    }
+    if (res.operation) {
+      return RequestErrors
+    }
+    return null
+  },
+})
 
 @ObjectType()
 @Table({ tableName: 'recycling_request' })

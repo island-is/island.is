@@ -1,4 +1,5 @@
-import React, { AllHTMLAttributes, forwardRef, ReactNode } from 'react'
+import * as React from 'react'
+import { AllHTMLAttributes, forwardRef, ReactNode } from 'react'
 import { Button as ReaButton } from 'reakit/Button'
 import cn from 'classnames'
 
@@ -51,6 +52,7 @@ export interface ButtonProps {
   iconType?: Type
   type?: NativeButtonProps['type']
   lang?: string
+  loading?: boolean
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
@@ -65,6 +67,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       circle,
       type = 'button',
       fluid,
+      disabled,
+      loading,
       ...buttonProps
     },
     ref,
@@ -93,12 +97,30 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
             [styles.padding.text]: variant === 'text',
             [styles.padding.utility]: variant === 'utility',
             [styles.isEmpty]: !children,
+            [styles.loading]: loading,
           },
         )}
+        disabled={disabled || loading}
         {...buttonProps}
       >
-        {children}
-        {icon && <ButtonIcon icon={icon} type={iconType} />}
+        {loading && variant !== 'text' ? (
+          <>
+            <span className={styles.hideContent}>{children}</span>
+            {icon && <ButtonIcon icon={icon} type={iconType} transparent />}
+            <div
+              className={cn(styles.loader, { [styles.loadingCircle]: circle })}
+            >
+              <div className={styles.loadingDot} />
+              <div className={styles.loadingDot} />
+              <div className={styles.loadingDot} />
+            </div>
+          </>
+        ) : (
+          <>
+            {children}
+            {icon && <ButtonIcon icon={icon} type={iconType} />}
+          </>
+        )}
       </Box>
     )
   },
@@ -107,13 +129,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
 type ButtonIconProps = {
   icon: ButtonProps['icon']
   type: ButtonProps['iconType']
+  transparent?: boolean
 }
 
-const ButtonIcon = ({ icon, type }: ButtonIconProps) => (
+const ButtonIcon = ({ icon, type, transparent }: ButtonIconProps) => (
   <Icon
     icon={icon!}
     type={type!}
-    color="currentColor"
+    color={transparent ? 'transparent' : 'currentColor'}
     className={styles.icon}
     skipPlaceholderSize
   />

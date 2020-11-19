@@ -1,7 +1,12 @@
 export default {
   production: true,
-  baseApiUrl: process.env.API_URL,
+  baseApiUrl: window.location.origin,
   identityServer: {
-    authority: process.env.IDENTITY_SERVER_ISSUER_URL,
+    authority:
+      window.location.origin === 'https://umsoknir.staging01.devland.is'
+        ? 'https://identity-server.staging01.devland.is'
+        : window.location.origin === 'https://umsoknir.island.is'
+        ? 'https://innskra.island.is'
+        : 'https://identity-server.dev01.devland.is',
   },
 }

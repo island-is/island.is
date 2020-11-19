@@ -90,11 +90,13 @@ export class SmsService extends RESTDataSource {
     }
 
     try {
-      return this.post(url, body, {
+      const res = await this.post(url, body, {
         headers: {
           token,
         },
       })
+
+      return res
     } catch (error) {
       // Nova token is only valid for 24 hours
       const status = error?.extensions?.response?.status

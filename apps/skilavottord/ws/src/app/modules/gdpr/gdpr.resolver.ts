@@ -3,7 +3,7 @@ import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import { GdprService } from './gdpr.service'
 import { GdprModel } from './model/gdpr.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Authorize, AuthService, CurrentUser, AuthUser } from '../auth'
+import { Authorize } from '../auth'
 
 @Resolver(() => GdprModel)
 export class GdprResolver {

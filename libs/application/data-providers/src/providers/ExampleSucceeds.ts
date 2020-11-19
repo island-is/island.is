@@ -1,7 +1,7 @@
-import { DataProvider, DataProviderTypes } from '@island.is/application/core'
+import { BasicDataProvider } from '@island.is/application/core'
 
-export class ExampleSucceeds extends DataProvider {
-  readonly type = DataProviderTypes.ExampleSucceeds
+export class ExampleSucceeds extends BasicDataProvider {
+  readonly type = 'ExampleSucceeds'
 
   provide(): Promise<string> {
     return Promise.resolve('success')

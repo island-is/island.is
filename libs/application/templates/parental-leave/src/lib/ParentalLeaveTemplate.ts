@@ -67,7 +67,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PARENTAL_LEAVE,
   name: 'Umsókn um fæðingarorlof',
-  dataProviders: [],
   dataSchema,
   stateMachineConfig: {
     initial: 'draft',
@@ -80,7 +79,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: 'applicant',
               formLoader: () =>
-                import('./ParentalLeaveForm').then((val) =>
+                import('../forms/ParentalLeaveForm').then((val) =>
                   Promise.resolve(val.ParentalLeaveForm),
                 ),
               actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
@@ -113,7 +112,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               id: 'applicant',
               read: {
                 answers: ['spread', 'periods'],
-                externalData: ['expectedDateOfBirth', 'salary'],
+                externalData: ['pregnancyStatus', 'parentalLeaves'],
               },
             },
           ],

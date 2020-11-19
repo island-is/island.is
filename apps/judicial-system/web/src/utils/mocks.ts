@@ -1,12 +1,14 @@
 import {
   CaseAppealDecision,
   CaseCustodyProvisions,
+  CaseCustodyRestrictions,
   CaseGender,
   UpdateCase,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
 import { CaseQuery, UpdateCaseMutation } from '../graphql'
+import { UserQuery } from '../shared-components/UserProvider/UserProvider'
 
 export const mockProsecutor = {
   role: UserRole.PROSECUTOR,
@@ -19,18 +21,6 @@ export const mockJudge = {
   name: 'Wonder Woman',
   title: 'héraðsdómari',
 } as User
-
-export const mockJudgeUserContext = {
-  isAuthenticated: () => true,
-  user: mockJudge,
-  setUser: (_: User) => undefined,
-}
-
-export const mockProsecutorUserContext = {
-  isAuthenticated: () => true,
-  user: mockProsecutor,
-  setUser: (_: User) => undefined,
-}
 
 const testCase1 = {
   id: 'test_id',
@@ -99,7 +89,10 @@ const testCase2 = {
   investigationProgress: 'string',
   legalArguments: null,
   comments: 'string',
-  prosecutor: null,
+  prosecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   courtCaseNumber: null,
   courtDate: null,
   courtStartTime: null,
@@ -117,6 +110,8 @@ const testCase2 = {
   prosecutorAppealDecision: null,
   prosecutorAppealAnnouncement: null,
   judge: null,
+  defenderName: 'Saul Goodman',
+  defenderEmail: 'saul@goodman.com',
   requestedDefenderName: 'Saul Goodman',
   requestedDefenderEmail: 'saul@goodman.com',
 }
@@ -137,7 +132,7 @@ const testCase3 = {
   requestedCustodyEndDate: null,
   lawsBroken: null,
   custodyProvisions: [],
-  requestedCustodyRestrictions: [],
+  requestedCustodyRestrictions: [CaseCustodyRestrictions.MEDIA],
   caseFacts: null,
   witnessAccounts: 'string',
   investigationProgress: 'string',
@@ -164,6 +159,32 @@ const testCase3 = {
   requestedDefenderName: 'Saul Goodman',
   requestedDefenderEmail: 'saul@goodman.com',
 }
+
+export const mockJudgeQuery = [
+  {
+    request: {
+      query: UserQuery,
+    },
+    result: {
+      data: {
+        user: mockJudge,
+      },
+    },
+  },
+]
+
+export const mockProsecutorQuery = [
+  {
+    request: {
+      query: UserQuery,
+    },
+    result: {
+      data: {
+        user: mockProsecutor,
+      },
+    },
+  },
+]
 
 export const mockCaseQueries = [
   {

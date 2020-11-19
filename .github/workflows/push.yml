@@ -3,7 +3,7 @@ name: Monorepo pipeline - push
 on:
   push:
     branches:
-      - 'master'
+      - 'main'
       - 'release/**'
       - 'hotfix/**'
     paths-ignore:
@@ -45,13 +45,14 @@ jobs:
                 echo "Checking branch against pattern '$pattern'"
                 if [[ "$GIT_BRANCH" =~ $pattern ]]; then
                   echo "'$GIT_BRANCH' matches '$pattern', continuing with build"
+                  echo "::set-output name=PRE_CHECK_OK::$GITHUB_EVENT_NAME"
                   exit 0
                 fi
             done
             echo "No pattern matches '$GIT_BRANCH', exiting with exit code 1"
             exit 1
           fi
-          echo "::set-output name=PRE_CHECK_OK::true"
+          echo "::set-output name=PRE_CHECK_OK::$GITHUB_EVENT_NAME"
   prepare:
     runs-on: ubuntu-20.04
     timeout-minutes: 30
@@ -84,8 +85,8 @@ jobs:
            # a PR
            GIT_BASE_BRANCH=$GITHUB_BASE_REF
           else
-           # on master
-           GIT_BASE_BRANCH=master
+           # on main
+           GIT_BASE_BRANCH=main
           fi
           echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
           echo "GIT_BASE_BRANCH=$GIT_BASE_BRANCH" >> $GITHUB_ENV
@@ -127,7 +128,7 @@ jobs:
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
         run: |
-          export HASH=${{ hashFiles('scripts/schemas.js', 'libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}
+          export HASH=${{ hashFiles('scripts/schemas.js', 'libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/air-discount-scheme/web/screens/**.tsx', 'apps/gjafakort/api/src/**.typeDefs.ts', 'apps/**/codegen.yml', 'libs/**/codegen.yml', 'apps/**.model.ts', 'libs/**.model.ts', 'apps/**.enum.ts', 'libs/**.enum.ts', 'apps/**/queries/**.tsx?', 'libs/**/queries/**.tsx?', 'apps/**.resolver.ts', 'libs/**.resolver.ts', 'apps/**.service.ts', 'libs/**.service.ts', 'apps/**.dto.ts', 'libs/**.dto.ts', 'apps/**.input.ts', 'libs/**.input.ts', 'apps/**.module.ts', 'libs/**.module.ts', 'apps/**.controller.ts', 'libs/**.controller.ts') }}
           export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-generated-files
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "::set-output name=generated-files-cache-key::$GENERATED_FILES_KEY"

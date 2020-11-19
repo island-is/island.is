@@ -8,6 +8,7 @@ import {
   ApplicationTemplateHelper,
   FieldBaseProps,
   RepeaterProps,
+  BasicDataProvider,
 } from '@island.is/application/core'
 import { EventObject } from 'xstate'
 import templateLoaders from './lib/templateLoaders'
@@ -16,6 +17,7 @@ import { FC } from 'react'
 type UIFields = Record<string, FC<FieldBaseProps | RepeaterProps>>
 type TemplateLibraryModule = {
   default: unknown
+  getDataProviders?: () => Promise<Record<string, new () => BasicDataProvider>>
   getFields?: () => Promise<UIFields>
 }
 const loadedTemplateLibs: Record<string, TemplateLibraryModule> = {}
@@ -59,6 +61,16 @@ export async function getApplicationUIFields(
   const templateLib = await loadTemplateLib(templateId)
   if (templateLib.getFields) {
     return await templateLib.getFields()
+  }
+  return Promise.resolve({})
+}
+
+export async function getApplicationDataProviders(
+  templateId: ApplicationTypes,
+): Promise<Record<string, new () => BasicDataProvider>> {
+  const templateLib = await loadTemplateLib(templateId)
+  if (templateLib.getDataProviders) {
+    return await templateLib.getDataProviders()
   }
   return Promise.resolve({})
 }

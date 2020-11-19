@@ -6,6 +6,16 @@ export const root = style({
   position: 'relative',
 })
 
+export const backgroundBlue = style({
+  selectors: {
+    [`${root} &`]: {
+      backgroundColor: theme.color.blue100,
+    },
+  },
+})
+
+export const small = style({})
+
 export const inputContainer = style({
   display: 'flex',
   alignItems: 'center',
@@ -94,6 +104,7 @@ export const headerSelect = style({
   appearance: 'none',
   fontSize: 18,
   fontWeight: 600,
+  background: theme.color.transparent,
   ...themeUtils.responsiveStyle({
     md: {
       fontSize: 20,
@@ -138,10 +149,13 @@ globalStyle(`${root}.island-ui-datepicker .react-datepicker-wrapper`, {
   display: 'block',
 })
 
-globalStyle(`${root}.island-ui-datepicker .react-datepicker__header`, {
-  backgroundColor: `${theme.color.white}`,
-  borderBottom: 'none',
-})
+globalStyle(
+  `${root}.island-ui-datepicker${root}.island-ui-datepicker .react-datepicker__header`,
+  {
+    backgroundColor: `${theme.color.transparent}`,
+    borderBottom: 'none',
+  },
+)
 
 globalStyle(`${root}.island-ui-datepicker .react-datepicker-popper`, {
   marginTop: '0',
@@ -153,6 +167,15 @@ globalStyle(`${root}.island-ui-datepicker .react-datepicker-popper`, {
   ...themeUtils.responsiveStyle({
     md: {
       top: '70px !important',
+    },
+  }),
+})
+
+globalStyle(`${root}${small}.island-ui-datepicker .react-datepicker-popper`, {
+  top: '51px !important',
+  ...themeUtils.responsiveStyle({
+    md: {
+      top: '57px !important',
     },
   }),
 })

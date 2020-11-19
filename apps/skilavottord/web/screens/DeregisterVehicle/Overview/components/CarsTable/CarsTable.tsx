@@ -8,15 +8,20 @@ import {
   Data,
   Body,
 } from '@island.is/skilavottord-web/components'
-import { getDate, getYear } from '@island.is/skilavottord-web/utils/dateUtils'
-import { VehicleOwner } from '@island.is/skilavottord-web/types'
 
 interface TableProps {
   titles: string[]
-  vehicleOwner: VehicleOwner[]
+  deregisteredVehicles: DeregisteredVehicle[]
+}
+interface DeregisteredVehicle {
+  vehicleId: string
+  vehicleType: string
+  modelYear: string
+  nameOfRequestor: string
+  deregistrationDate: string
 }
 
-export const CarsTable: FC<TableProps> = ({ titles, vehicleOwner }) => {
+export const CarsTable: FC<TableProps> = ({ titles, deregisteredVehicles }) => {
   return (
     <Stack space={5}>
       <Table>
@@ -30,22 +35,21 @@ export const CarsTable: FC<TableProps> = ({ titles, vehicleOwner }) => {
           </Row>
         </Head>
         <Body>
-          {vehicleOwner.map(({ vehicles }) =>
-            vehicles.map(
-              ({ vehicleId, vehicleType, newregDate, recyclingRequests }) =>
-                recyclingRequests.map(({ nameOfRequestor, createdAt }) => {
-                  const modelYear = getYear(newregDate)
-                  const deregistrationDate = getDate(createdAt)
-                  return (
-                    <Row key={vehicleId}>
-                      <Data textVariant="h5">{vehicleId}</Data>
-                      <Data>{vehicleType}</Data>
-                      <Data>{modelYear}</Data>
-                      <Data>{nameOfRequestor}</Data>
-                      <Data>{deregistrationDate}</Data>
-                    </Row>
-                  )
-                }),
+          {deregisteredVehicles.map(
+            ({
+              vehicleId,
+              vehicleType,
+              modelYear,
+              nameOfRequestor,
+              deregistrationDate,
+            }) => (
+              <Row key={vehicleId}>
+                <Data textVariant="h5">{vehicleId}</Data>
+                <Data>{vehicleType}</Data>
+                <Data>{modelYear}</Data>
+                <Data>{nameOfRequestor}</Data>
+                <Data>{deregistrationDate}</Data>
+              </Row>
             ),
           )}
         </Body>

@@ -1,17 +1,10 @@
 import {
-  buildDataProviderItem,
-  buildDateField,
-  buildExternalDataProvider,
   buildForm,
   buildIntroductionField,
   buildMultiField,
-  buildRadioField,
   buildSection,
-  buildSelectField,
   buildSubmitField,
-  buildSubSection,
   buildTextField,
-  DataProviderTypes,
   Form,
   FormModes,
 } from '@island.is/application/core'

@@ -1,27 +1,33 @@
-import { MappedData } from '@island.is/api/content-search'
+import { MappedData } from '@island.is/content-search-indexer/types'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'
 import isCircular from 'is-circular'
 import { IArticleCategory } from '../../generated/contentfulTypes'
 import { mapArticleCategory } from '../../models/articleCategory.model'
+import {
+  CmsSyncProvider,
+  doMappingInput,
+  processSyncDataInput,
+} from '../cmsSync.service'
 import { createTerms } from './utils'
 
 @Injectable()
-export class ArticleCategorySyncService {
-  processSyncData(entries: Entry<any>[]): IArticleCategory[] {
+export class ArticleCategorySyncService
+  implements CmsSyncProvider<IArticleCategory> {
+  processSyncData(entries: processSyncDataInput<IArticleCategory>) {
     logger.info('Processing sync data for article category')
 
     // only process articles that we consider not to be empty and dont have circular structures
     return entries.filter(
-      (entry: IArticleCategory): entry is IArticleCategory =>
+      (entry: Entry<any>): entry is IArticleCategory =>
         entry.sys.contentType.sys.id === 'articleCategory' &&
         !!entry.fields.title &&
         !isCircular(entry),
     )
   }
 
-  doMapping(entries: IArticleCategory[]): MappedData[] {
+  doMapping(entries: doMappingInput<IArticleCategory>) {
     logger.info('Mapping article category', { count: entries.length })
 
     return entries
