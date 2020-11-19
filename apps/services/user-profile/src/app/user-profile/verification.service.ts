@@ -178,7 +178,8 @@ export class VerificationService {
         subject: `Staðfesting netfangs á Ísland.is`,
         html: `Þú hefur skráð ${verification.email} á Mínum síðum á Ísland.is. Til að staðfesta skráninguna þarftu að smella á eftirfarandi hlekk:
         <a href="${environment.email.servicePortalBaseUrl}/stillingar/minn-adgangur/stadfesta-netfang/${verification.hash}" target="_blank">Staðfesta</a>
-        <br>Hlekkurinn gildir í tvo daga. Ef hlekkurinn er ekki lengur í gildi biðjum við þig að endurtaka skráninguna á Ísland.is.`,
+        <br>Hlekkurinn gildir í tvo daga. Ef hlekkurinn er ekki lengur í gildi biðjum við þig að endurtaka skráninguna á Ísland.is.
+        <br><br>Ef þú kannast ekki við að hafa sett inn þetta netfang, vinsamlegast hunsaðu þennan póst.`,
       })
     } catch (exception) {
       this.logger.error(exception)
