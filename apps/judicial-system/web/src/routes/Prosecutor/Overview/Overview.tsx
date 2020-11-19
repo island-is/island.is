@@ -26,7 +26,6 @@ import {
   TIME_FORMAT,
   formatCustodyRestrictions,
 } from '@island.is/judicial-system/formatters'
-import { userContext } from '../../../utils/userContext'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import * as styles from './Overview.treat'
 import { useMutation, useQuery } from '@apollo/client'
@@ -39,6 +38,7 @@ import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 interface CaseData {
   case?: Case
@@ -50,8 +50,8 @@ export const Overview: React.FC = () => {
 
   const { id } = useParams<{ id: string }>()
   const history = useHistory()
-  const { user } = useContext(userContext)
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
+  const { user } = useContext(UserContext)
+  const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
