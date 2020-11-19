@@ -10,22 +10,20 @@ import { Text } from '../Text/Text'
 import { theme } from '@island.is/island-ui/theme'
 import { useIsomorphicLayoutEffect, useWindowSize } from 'react-use'
 
-
 export type IconVariantTypes = 'default' | 'sidebar'
 
 export type InputValues = {
-  placeholder:string,
-  isLoading:boolean,
-  colored:boolean,
-  value?:string,
+  placeholder: string
+  isLoading: boolean
+  colored: boolean
+  value?: string
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
 }
 export type ClearValues = {
-  text:string,
+  text: string
   onClick?: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void
-  
 }
 
 // 'default': The component will be styled with default styles and all styles
@@ -35,18 +33,17 @@ export type ClearValues = {
 
 export type FilterSearchType = 'default' | 'noStyles'
 
-export interface FilterSearchProps  {
-  labelMobileButton:string,
-  LabelMobileCloseButton:string,
-  LabelMobileResultButton:string,
-  type?:FilterSearchType
-  inputValues?:InputValues,
-  clearValues?:ClearValues,
+export interface FilterSearchProps {
+  labelMobileButton: string
+  LabelMobileCloseButton: string
+  LabelMobileResultButton: string
+  type?: FilterSearchType
+  inputValues?: InputValues
+  clearValues?: ClearValues
   className?: string
-  searchInput?:Component,
-  children?: JSX.Element | JSX.Element[];
+  searchInput?: Component
+  children?: JSX.Element | JSX.Element[]
 }
-
 
 export const FilterSearch: React.FC<FilterSearchProps> = ({
   labelMobileButton: label,
@@ -55,11 +52,9 @@ export const FilterSearch: React.FC<FilterSearchProps> = ({
   type = 'default',
   inputValues,
   clearValues,
-  className= null,
+  className = null,
   children,
 }) => {
-
-
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = React.useState(false)
   const [isVisalbe, setIsVisible] = React.useState(false)
@@ -70,17 +65,20 @@ export const FilterSearch: React.FC<FilterSearchProps> = ({
     }
     setIsMobile(false)
   }, [width])
-  
+
   const showDesktopFilter = () => {
     return (
-      <Box className={
-        type === 'default'
-          ? `filter-search ${isMobile? cn(styles.rootMobile): cn(styles.root)} ${className}`
-          : `filter-search ${className}`
-      } >
-      { inputValues?
-        (<Box className={cn(styles.inputSearch)}>
-            
+      <Box
+        className={
+          type === 'default'
+            ? `filter-search ${
+                isMobile ? cn(styles.rootMobile) : cn(styles.root)
+              } ${className}`
+            : `filter-search ${className}`
+        }
+      >
+        {inputValues ? (
+          <Box className={cn(styles.inputSearch)}>
             <InputSearch
               placeholder={inputValues.placeholder}
               value={inputValues?.value}
@@ -88,14 +86,13 @@ export const FilterSearch: React.FC<FilterSearchProps> = ({
               colored={inputValues.colored}
               onChange={inputValues?.onChange}
             />
-          </Box>):""
-        }
-  
-      <div className={cn(styles.groupContainer)}>
-      {children}
-      </div>
-      {clearValues?
-        (
+          </Box>
+        ) : (
+          ''
+        )}
+
+        <div className={cn(styles.groupContainer)}>{children}</div>
+        {clearValues ? (
           <span className={cn(styles.clear)}>
             <Button
               colorScheme="default"
@@ -109,52 +106,53 @@ export const FilterSearch: React.FC<FilterSearchProps> = ({
               {clearValues.text}
             </Button>
           </span>
-        ):("")
-      }
-    </Box>
-  )
+        ) : (
+          ''
+        )}
+      </Box>
+    )
   }
-
 
   const makeWideIconButton = (
     label: string,
     onItemClick: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void,
-    iconProps: IconProps) => {
+    iconProps: IconProps,
+  ) => {
     return (
-
-      <span className={cn(styles.wideIconButton)}
-        onClick={onItemClick}
-      >
-        <Text variant="h4" color="blue600">{label}</Text>
-        <Icon
-          color={iconProps.color}
-          type={iconProps.type}
-        />
+      <span className={cn(styles.wideIconButton)} onClick={onItemClick}>
+        <Text variant="h4" color="blue600">
+          {label}
+        </Text>
+        <Icon color={iconProps.color} type={iconProps.type} />
       </span>
     )
   }
   const showMobileFilter = () => {
     return (
-      <Box className={
-        type === 'default'
-          ? `${className ? className : ""} ${cn(styles.filterContentMobile)} filter-search`
-          : `${className ? className : ""} filter-search`
-      } >
+      <Box
+        className={
+          type === 'default'
+            ? `${className ? className : ''} ${cn(
+                styles.filterContentMobile,
+              )} filter-search`
+            : `${className ? className : ''} filter-search`
+        }
+      >
         <div className={styles.mobileCloseButton}>
           {makeWideIconButton(
             labelCloseButton,
-            () => { setIsVisible(false) },
-            {
-              color: "blue400",
-              type: "close"
+            () => {
+              setIsVisible(false)
             },
-          )
-          }
+            {
+              color: 'blue400',
+              type: 'close',
+            },
+          )}
         </div>
 
-        { inputValues ?
-          (<Box className={cn(styles.inputSearch)}>
-
+        {inputValues ? (
+          <Box className={cn(styles.inputSearch)}>
             <InputSearch
               placeholder={inputValues.placeholder}
               value={inputValues?.value}
@@ -162,15 +160,14 @@ export const FilterSearch: React.FC<FilterSearchProps> = ({
               colored={inputValues.colored}
               onChange={inputValues?.onChange}
             />
-          </Box>) : ""
-        }
+          </Box>
+        ) : (
+          ''
+        )}
 
-        <div className={cn(styles.groupContainerMobile)}>
-          {children}
-        </div>
-        {clearValues ?
-          (
-            <span className={cn(styles.clear)}>
+        <div className={cn(styles.groupContainerMobile)}>{children}</div>
+        {clearValues ? (
+          <span className={cn(styles.clear)}>
             <Button
               colorScheme="default"
               icon="ellipse"
@@ -179,56 +176,53 @@ export const FilterSearch: React.FC<FilterSearchProps> = ({
               size="default"
               type="button"
               variant="text"
-              
             >
               {clearValues.text}
             </Button>
           </span>
-          ) : ("")
-        }
-        
+        ) : (
+          ''
+        )}
       </Box>
     )
   }
 
-
-  return (
-    isMobile ?
-      <Box className={cn(styles.rootMobile)}>
-
-        {isVisalbe ?
+  return isMobile ? (
+    <Box className={cn(styles.rootMobile)}>
+      {isVisalbe ? (
         <span>
           {showMobileFilter()}
           <div className={cn(styles.labelResultButton)}>
-          <Button
-            colorScheme="default"
-            iconType="filled"
-            variant="primary"
-            size="small"
-            type="button"
-            onClick={() => { setIsVisible(false) }}
-          >
-            {labelResultButton}
-          </Button>
-        </div>
-        </span>
-          :
-          (
-          <div>
-            { makeWideIconButton(
-            label, 
-            () => {setIsVisible(true)},
-            {
-              color:"blue400",
-              type:"burger"
-            },
-          )
-        }
+            <Button
+              colorScheme="default"
+              iconType="filled"
+              variant="primary"
+              size="small"
+              type="button"
+              onClick={() => {
+                setIsVisible(false)
+              }}
+            >
+              {labelResultButton}
+            </Button>
           </div>
-          )
-        }
-      </Box>
-      :
-      showDesktopFilter()
+        </span>
+      ) : (
+        <div>
+          {makeWideIconButton(
+            label,
+            () => {
+              setIsVisible(true)
+            },
+            {
+              color: 'blue400',
+              type: 'burger',
+            },
+          )}
+        </div>
+      )}
+    </Box>
+  ) : (
+    showDesktopFilter()
   )
-};
+}

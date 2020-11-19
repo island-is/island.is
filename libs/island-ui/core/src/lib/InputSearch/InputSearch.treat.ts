@@ -68,7 +68,7 @@ export const colored = style({
 export const outlined = style({
   borderStyle: 'solid',
   borderColor: theme.color.blue200,
-  borderRadius:8
+  borderRadius: 8,
 })
 
 export const sizes = styleMap({

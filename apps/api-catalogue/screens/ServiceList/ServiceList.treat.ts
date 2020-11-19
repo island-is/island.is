@@ -1,42 +1,38 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-
 const bottomRootBase = {
-  background:theme.color.blue100,
-  paddingTop:33,
-  paddingLeft:48,
-  paddingRight:24,
+  background: theme.color.blue100,
+  paddingTop: 33,
+  paddingLeft: 48,
+  paddingRight: 24,
 }
 
 export const bottomRoot = style({
   ...bottomRootBase,
-  paddingLeft:48,
+  paddingLeft: 48,
 })
 
 export const bottomRootMobile = style({
   ...bottomRootBase,
-  paddingLeft:24,
+  paddingLeft: 24,
 })
 
 export const bottomHeading = style({
-  fontWeight:600,
-  color:theme.color.blue600,
-  fontStyle:'normal',
-  fontSize:20,
-  lineHeight:'30px',
-  paddingLeft:24
+  fontWeight: 600,
+  color: theme.color.blue600,
+  fontStyle: 'normal',
+  fontSize: 20,
+  lineHeight: '30px',
+  paddingLeft: 24,
 })
 
-const leftAndRightBase = {
-}
-
+const leftAndRightBase = {}
 
 export const leftAndRight = style({
-    ...leftAndRightBase,
-    display:'flex',
+  ...leftAndRightBase,
+  display: 'flex',
 })
-
 
 export const leftAndRightMobile = style({
   ...leftAndRightBase,
@@ -149,7 +145,6 @@ export const displayHidden = style({
 export const radioButton = style({
   marginTop: 5,
 })
-
 
 const spinOrg = {
   lineHeight: 0,

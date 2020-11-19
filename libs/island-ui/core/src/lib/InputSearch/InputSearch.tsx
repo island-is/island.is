@@ -22,9 +22,7 @@ export const InputSearch = (userProps: InputSearchProps) => {
   const onBlur = useCallback(() => setHasFocus(false), [setHasFocus])
 
   return (
-    <div
-      className={cn(styles.wrapper, hasFocus ? styles.focused : {})}
-    >
+    <div className={cn(styles.wrapper, hasFocus ? styles.focused : {})}>
       <input
         className={cn(
           styles.input,

@@ -4,7 +4,6 @@ import { FilterSearchGroup } from '../FilterSearchGroup/FilterSearchGroup'
 import { FilterSearch } from './FilterSearch'
 import { theme } from '@island.is/island-ui/theme'
 
-
 export default {
   title: 'Components/FilterSearch',
   component: FilterSearch,
@@ -12,14 +11,17 @@ export default {
 
 export const WithGroupedChildren = () => (
   <div>
-    <FilterSearch 
-      labelMobileButton="Search" 
+    <FilterSearch
+      labelMobileButton="Search"
       LabelMobileResultButton="View Results"
       LabelMobileCloseButton="Filter"
     >
       <FilterSearchGroup id="group1" label="Group number one">
         <Checkbox label="Include stuff" />
-        <Checkbox label="Include and more stuff" tooltip="You never get to much stuff"/>
+        <Checkbox
+          label="Include and more stuff"
+          tooltip="You never get to much stuff"
+        />
       </FilterSearchGroup>
       <FilterSearchGroup id="group2" label="Group number two">
         <Checkbox label="I want animals" />
@@ -30,61 +32,64 @@ export const WithGroupedChildren = () => (
 )
 
 export const WithInputBox = () => {
-  
-  const [text, setText] = useState("")
+  const [text, setText] = useState('')
 
   const onTextChange = (target) => {
     setText(target.value)
-   }
-
-
-   return (
-  <div style={{height:400}}>
-    <FilterSearch 
-      labelMobileButton="Search" 
-      LabelMobileResultButton="View Results"
-      LabelMobileCloseButton="Filter"
-      inputValues={{
-        placeholder: 'Search',
-        colored: false,
-        isLoading: false,
-        value:text,
-        onChange: (event) => onTextChange(event.target.value),
-      }}
-    >
-      <FilterSearchGroup id="group1" label="Group number one">
-        <Checkbox label="Include stuff" />
-        <Checkbox label="Include and more stuff" tooltip="You never get to much stuff"/>
-      </FilterSearchGroup>
-      <FilterSearchGroup id="group2" label="Group number two">
-        <Checkbox label="I want animals" />
-        <Checkbox label="I want material things" />
-      </FilterSearchGroup>
-    </FilterSearch>
-  </div>
-)
-}
-
-export const WithInputClearButton = () => {
-
-  const clearValues = () => {
-   console.log('you, clear the values here')
   }
 
   return (
-    <div style={{height:400}}>
-      <FilterSearch 
-        labelMobileButton="Search" 
+    <div style={{ height: 400 }}>
+      <FilterSearch
+        labelMobileButton="Search"
         LabelMobileResultButton="View Results"
         LabelMobileCloseButton="Filter"
-        clearValues={{
-          text: 'Hreinsa',
-          onClick: clearValues
+        inputValues={{
+          placeholder: 'Search',
+          colored: false,
+          isLoading: false,
+          value: text,
+          onChange: (event) => onTextChange(event.target.value),
         }}
       >
         <FilterSearchGroup id="group1" label="Group number one">
           <Checkbox label="Include stuff" />
-          <Checkbox label="Include and more stuff" tooltip="You never get to much stuff"/>
+          <Checkbox
+            label="Include and more stuff"
+            tooltip="You never get to much stuff"
+          />
+        </FilterSearchGroup>
+        <FilterSearchGroup id="group2" label="Group number two">
+          <Checkbox label="I want animals" />
+          <Checkbox label="I want material things" />
+        </FilterSearchGroup>
+      </FilterSearch>
+    </div>
+  )
+}
+
+export const WithInputClearButton = () => {
+  const clearValues = () => {
+    console.log('you, clear the values here')
+  }
+
+  return (
+    <div style={{ height: 400 }}>
+      <FilterSearch
+        labelMobileButton="Search"
+        LabelMobileResultButton="View Results"
+        LabelMobileCloseButton="Filter"
+        clearValues={{
+          text: 'Hreinsa',
+          onClick: clearValues,
+        }}
+      >
+        <FilterSearchGroup id="group1" label="Group number one">
+          <Checkbox label="Include stuff" />
+          <Checkbox
+            label="Include and more stuff"
+            tooltip="You never get to much stuff"
+          />
         </FilterSearchGroup>
         <FilterSearchGroup id="group2" label="Group number two">
           <Checkbox label="I want animals" />
@@ -96,9 +101,9 @@ export const WithInputClearButton = () => {
 }
 
 export const WithOnlyOneChild = () => (
-  <div style={{minHeight:100}}>
-    <FilterSearch 
-      labelMobileButton="Search" 
+  <div style={{ minHeight: 100 }}>
+    <FilterSearch
+      labelMobileButton="Search"
       LabelMobileResultButton="This button is displayed on top of all"
       LabelMobileCloseButton="Filter"
     >
