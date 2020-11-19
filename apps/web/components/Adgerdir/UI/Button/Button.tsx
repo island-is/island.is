@@ -2,7 +2,7 @@ import * as React from 'react'
 import { AllHTMLAttributes, forwardRef, ReactNode } from 'react'
 import { Button as ReaButton } from 'reakit/Button'
 import cn from 'classnames'
-import { Box, Icon, IconMap } from '@island.is/island-ui/core'
+import { Box, Icon, IconMapIcon, IconMapType } from '@island.is/island-ui/core'
 
 import * as styles from './Button.treat'
 
@@ -46,8 +46,8 @@ export interface ButtonProps {
   disabled?: boolean
   focusable?: boolean
   fluid?: boolean
-  icon?: IconMap.Icon
-  iconType?: IconMap.Type
+  icon?: IconMapIcon
+  iconType?: IconMapType
   type?: NativeButtonProps['type']
   lang?: string
   loading?: boolean
