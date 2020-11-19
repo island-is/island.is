@@ -140,7 +140,7 @@ const testCase3 = {
   comments: 'string',
   prosecutor: null,
   courtCaseNumber: null,
-  courtDate: null,
+  courtDate: '2020-09-16T19:51:00.000Z',
   courtStartTime: null,
   courtEndTime: null,
   courtAttendees: null,
