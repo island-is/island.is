@@ -3,6 +3,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { escapeGrid } from '@island.is/island-ui/utils'
 
 export const root = style({
+  minHeight: '-webkit-fill-available',
   display: 'flex',
   flexDirection: 'column',
 
