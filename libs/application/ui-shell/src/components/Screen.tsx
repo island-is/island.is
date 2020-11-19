@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo } from 'react'
+import React, { FC, useCallback, useEffect, useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 import {
   Application,
@@ -127,6 +127,10 @@ const Screen: FC<ScreenProps> = ({
     }
     return !isLoadingOrPending
   }
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [activeScreenIndex])
 
   return (
     <FormProvider {...hookFormData}>
