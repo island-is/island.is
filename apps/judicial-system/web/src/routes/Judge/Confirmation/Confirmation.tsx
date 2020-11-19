@@ -20,7 +20,6 @@ import {
   SignatureConfirmationResponse,
   TransitionCase,
 } from '@island.is/judicial-system/types'
-import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import { useHistory, useParams } from 'react-router-dom'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
@@ -31,6 +30,7 @@ import {
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import { gql, useMutation, useQuery } from '@apollo/client'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 export const RequestSignatureMutation = gql`
   mutation RequestSignatureMutation($input: RequestSignatureInput!) {
@@ -130,7 +130,7 @@ const SigningModal: React.FC<SigningModalProps> = (
         !signatureConfirmationResponse
           ? renderContolCode()
           : signatureConfirmationResponse.documentSigned
-          ? 'Tilkynning hefur verið send á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi.'
+          ? 'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi.'
           : 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
       }
       secondaryButtonText={
@@ -165,7 +165,7 @@ export const Confirmation: React.FC = () => {
   >()
 
   const { id } = useParams<{ id: string }>()
-  const { user } = useContext(userContext)
+  const { user } = useContext(UserContext)
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -351,8 +351,7 @@ export const Confirmation: React.FC = () => {
             </Box>
             <Box marginBottom={3}>{constructConclusion(workingCase)}</Box>
             <Text>
-              Úrskurðarorðið er lesið í heyranda hljóði að viðstöddum kærða,
-              verjanda hans, túlki og aðstoðarsaksóknara.
+              Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.
             </Text>
           </Box>
           <Box component="section" marginBottom={3}>
