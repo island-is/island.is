@@ -1,4 +1,4 @@
-import { VehicleInformation } from '.'
+import { VehicleInformation } from './samgongustofa.model'
 import { Injectable, HttpService, Inject } from '@nestjs/common'
 import xml2js from 'xml2js'
 import { environment } from '../../../../environments'
