@@ -20,7 +20,7 @@ export const EmailStep: FC<Props> = ({ onBack, onSubmit, email }) => {
           defaultMessage: 'Netfang',
         })}
       </Text>
-      <Text marginBottom={7}>
+      <Text variant="intro" marginBottom={7}>
         {formatMessage({
           id: 'sp.settings:email-form-message',
           defaultMessage: `
