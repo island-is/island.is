@@ -19,8 +19,10 @@ interface Props {
   variant?: ColorVariant
   state?: State
   errorMessage?: string
-  onChange: (event: React.ChangeEvent<any>) => void
-  onSubmit: (event: React.FormEvent<any>) => void
+  onChange: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void
+  onSubmit: (event: React.FormEvent<unknown>) => void
   value: string
 }
 

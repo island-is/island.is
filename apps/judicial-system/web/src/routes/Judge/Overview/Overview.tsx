@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import {
   Box,
   Text,
@@ -12,6 +12,7 @@ import {
   formatCustodyRestrictions,
   laws,
   formatNationalId,
+  formatGender,
 } from '@island.is/judicial-system/formatters'
 import { isNextDisabled } from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
@@ -23,6 +24,7 @@ import {
   Case,
   CaseCustodyProvisions,
   UpdateCase,
+  CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
@@ -37,6 +39,10 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 
+interface CaseData {
+  case?: Case
+}
+
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const [
@@ -45,34 +51,36 @@ export const JudgeOverview: React.FC = () => {
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
 
-  const { data, loading } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-  const resCase = data?.case
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
-    const { data } = await updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
-    })
-    const resCase = data?.updateCase
-    if (resCase) {
-      // Do something with the result. In particular, we want th modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-    return resCase
-  }
+  const updateCase = useCallback(
+    async (id: string, updateCase: UpdateCase) => {
+      const { data } = await updateCaseMutation({
+        variables: { input: { id, ...updateCase } },
+      })
+      const resCase = data?.updateCase
+      if (resCase) {
+        // Do something with the result. In particular, we want th modified timestamp passed between
+        // the client and the backend so that we can handle multiple simultanious updates.
+      }
+      return resCase
+    },
+    [updateCaseMutation],
+  )
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
-    if (!workingCase && resCase) {
-      setWorkingCase(resCase)
+    if (!workingCase && data?.case) {
+      setWorkingCase(data.case)
     }
-  }, [workingCase, setWorkingCase, resCase])
+  }, [workingCase, setWorkingCase, data])
 
   return (
     <PageLayout
@@ -130,77 +138,111 @@ export const JudgeOverview: React.FC = () => {
               >{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
             </Box>
           </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" color="blue400">
-                Kennitala
+          <Box component="section">
+            <Box marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Kennitala
+                </Text>
+              </Box>
+              <Text variant="h3">
+                {formatNationalId(workingCase.accusedNationalId)}
               </Text>
             </Box>
-            <Text variant="h3">
-              {formatNationalId(workingCase.accusedNationalId)}
-            </Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" color="blue400">
-                Fullt nafn
+            <Box marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Fullt nafn
+                </Text>
+              </Box>
+              <Text variant="h3">{workingCase.accusedName}</Text>
+            </Box>
+            <Box marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Lögheimili/dvalarstaður
+                </Text>
+              </Box>
+              <Text variant="h3">{workingCase.accusedAddress}</Text>
+            </Box>
+            {workingCase.accusedGender && (
+              <Box marginBottom={5}>
+                <Box marginBottom={1}>
+                  <Text variant="eyebrow" color="blue400">
+                    Kyn
+                  </Text>
+                </Box>
+                <Text variant="h3">
+                  {capitalize(formatGender(workingCase.accusedGender))}
+                </Text>
+              </Box>
+            )}
+            {workingCase.requestedDefenderName && (
+              <Box marginBottom={5}>
+                <Box marginBottom={1}>
+                  <Text variant="eyebrow" color="blue400">
+                    Nafn verjanda
+                  </Text>
+                </Box>
+                <Text variant="h3">{workingCase.requestedDefenderName}</Text>
+              </Box>
+            )}
+            {workingCase.requestedDefenderEmail && (
+              <Box marginBottom={5}>
+                <Box marginBottom={1}>
+                  <Text variant="eyebrow" color="blue400">
+                    Netfang verjanda
+                  </Text>
+                </Box>
+                <Text variant="h3">{workingCase.requestedDefenderEmail}</Text>
+              </Box>
+            )}
+            <Box marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Dómstóll
+                </Text>
+              </Box>
+              <Text variant="h3">{workingCase.court}</Text>
+            </Box>
+            <Box marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Tími handtöku
+                </Text>
+              </Box>
+              <Text variant="h3">
+                {workingCase.arrestDate &&
+                  `${capitalize(
+                    formatDate(workingCase.arrestDate, 'PPPP') || '',
+                  )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
               </Text>
             </Box>
-            <Text variant="h3">{workingCase.accusedName}</Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" color="blue400">
-                Lögheimili/dvalarstaður
+            <Box marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Ósk um fyrirtökudag og tíma
+                </Text>
+              </Box>
+              <Text variant="h3">
+                {`${capitalize(
+                  formatDate(workingCase.requestedCourtDate, 'PPPP') || '',
+                )} eftir kl. ${formatDate(
+                  workingCase.requestedCourtDate,
+                  TIME_FORMAT,
+                )}`}
               </Text>
             </Box>
-            <Text variant="h3">{workingCase.accusedAddress}</Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" color="blue400">
-                Dómstóll
+            <Box marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Ákærandi
+                </Text>
+              </Box>
+              <Text variant="h3">
+                {workingCase.prosecutor?.name} {workingCase.prosecutor?.title}
               </Text>
             </Box>
-            <Text variant="h3">{workingCase.court}</Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" color="blue400">
-                Tími handtöku
-              </Text>
-            </Box>
-            <Text variant="h3">
-              {workingCase.arrestDate &&
-                `${capitalize(
-                  formatDate(workingCase.arrestDate, 'PPPP') || '',
-                )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
-            </Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" color="blue400">
-                Ósk um fyrirtökudag og tíma
-              </Text>
-            </Box>
-            <Text variant="h3">
-              {`${capitalize(
-                formatDate(workingCase.requestedCourtDate, 'PPPP') || '',
-              )} eftir kl. ${formatDate(
-                workingCase.requestedCourtDate,
-                TIME_FORMAT,
-              )}`}
-            </Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" color="blue400">
-                Ákærandi
-              </Text>
-            </Box>
-            <Text variant="h3">
-              {workingCase.prosecutor?.name} {workingCase.prosecutor?.title}
-            </Text>
           </Box>
           <Box component="section" marginBottom={5}>
             <Accordion singleExpand={false}>
@@ -211,17 +253,39 @@ export const JudgeOverview: React.FC = () => {
                 labelVariant="h3"
               >
                 <Text>
-                  Gæsluvarðhald til
-                  <strong>
-                    {workingCase.requestedCustodyEndDate &&
-                      ` ${formatDate(
-                        workingCase.requestedCustodyEndDate,
-                        'PPP',
-                      )} kl. ${formatDate(
-                        workingCase.requestedCustodyEndDate,
-                        TIME_FORMAT,
-                      )}`}
-                  </strong>
+                  Þess er krafist að
+                  <Text as="span" fontWeight="semiBold">
+                    {` ${workingCase.accusedName}
+                    ${formatNationalId(workingCase.accusedNationalId)}`}
+                  </Text>
+                  , verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta
+                  gæsluvarðhaldi til
+                  <Text as="span" fontWeight="semiBold">
+                    {` ${formatDate(
+                      workingCase.requestedCustodyEndDate,
+                      'EEEE',
+                    )?.replace('dagur', 'dagsins')}
+                    ${formatDate(
+                      workingCase.requestedCustodyEndDate,
+                      'PPP',
+                    )},  kl. ${formatDate(
+                      workingCase.requestedCustodyEndDate,
+                      TIME_FORMAT,
+                    )}`}
+                  </Text>
+                  {workingCase.requestedCustodyRestrictions?.includes(
+                    CaseCustodyRestrictions.ISOLATION,
+                  ) ? (
+                    <>
+                      , og verði gert að{' '}
+                      <Text as="span" fontWeight="semiBold">
+                        sæta einangrun
+                      </Text>{' '}
+                      meðan á gæsluvarðhaldinu stendur.
+                    </>
+                  ) : (
+                    '.'
+                  )}
                 </Text>
               </AccordionItem>
               <AccordionItem

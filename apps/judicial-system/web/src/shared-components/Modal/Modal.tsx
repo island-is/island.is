@@ -1,9 +1,4 @@
-import {
-  Box,
-  ButtonDeprecated as Button,
-  Icon,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
@@ -57,10 +52,9 @@ const Modal: React.FC<ModalProps> = ({
               </Button>
             </Box>
           )}
-          {primaryButtonText && (
+          {primaryButtonText !== '' && (
             <Button
               onClick={handlePrimaryButtonClick}
-              icon={isPrimaryButtonLoading ? 'loading' : undefined}
               loading={isPrimaryButtonLoading}
             >
               {primaryButtonText}

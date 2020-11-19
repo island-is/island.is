@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useRef,
 } from 'react'
+import uniq from 'lodash/uniq'
 import intersection from 'lodash/intersection'
 import {
   Box,
@@ -61,6 +62,9 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
   const { isOpen: sleeveIsOpen, setIsOpen } = useContext(SleeveContext)
   const { makePath } = routeNames(activeLocale)
   const [filterString, setFilterString] = useState<string>('')
+  const [usableFilters, setUsableFilters] = useState<Array<AdgerdirTag['id']>>(
+    [],
+  )
   const [startingItems, setstartingItems] = useState<Array<AdgerdirPage>>(
     items.filter((x) => startingIds.includes(x.id)),
   )
@@ -76,6 +80,20 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
   const timerRef = useRef(null)
 
   const visibleItems = startingItems.length ? startingItems : items
+
+  useEffect(() => {
+    setUsableFilters(
+      items.reduce((all, cur) => {
+        const ids = cur.tags.map((x) => x.id)
+
+        if (ids.length) {
+          return uniq(ids.concat(all))
+        }
+
+        return all
+      }, []),
+    )
+  }, [])
 
   const handleChange = (e) => {
     e.preventDefault()
@@ -100,7 +118,9 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
     const arr = []
 
     visibleItems.forEach(({ tags }, index) => {
-      if (tags.some(({ id }) => tagIds.includes(id as string))) {
+      const ids = tags.map((x) => x.id)
+
+      if (tagIds.every((id) => ids.includes(id))) {
         arr.push(index)
       }
     })
@@ -150,9 +170,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
   }, [onUpdateFilters])
 
   const filteredItems = visibleItems.filter((_, index) => {
-    const indexList = [indexesFilteredByTag, indexesFilteredByString].filter(
-      (x) => x.length > 0,
-    )
+    const indexList = [indexesFilteredByTag, indexesFilteredByString]
 
     return intersection(...indexList).includes(index)
   })
@@ -213,7 +231,10 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
           <Stack space={2}>
             <Inline space={2} alignY="center">
               {tags
-                .filter(({ id }) => !DIVIDER_FILTERS.includes(id))
+                .filter(
+                  ({ id }) =>
+                    !DIVIDER_FILTERS.includes(id) && usableFilters.includes(id),
+                )
                 .map(({ title, id }, index) => {
                   return (
                     <Tag
@@ -259,15 +280,10 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
         <Box marginTop={2}>
           <Stack space={2}>
             <Text color="red600">
-              <span>Ekkert fannst með{` `}</span>
-              {filterString
-                ? `leitarorðinu „${filterString}“${
-                    indexesFilteredByTag.length
-                      ? ' og völdum málefnum hér fyrir ofan'
-                      : ''
-                  }`
-                : null}
-              {!filterString ? 'völdum málefnum hér fyrir ofan' : null}.
+              {n(
+                'nothingFoundWithSelectedFilters',
+                'Ekkert fannst með völdum málefnum og/eða leitarstreng',
+              )}
             </Text>
           </Stack>
         </Box>

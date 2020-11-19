@@ -35,7 +35,7 @@ export const slide = style({
   marginBottom: theme.spacing[2],
   selectors: {
     // First and last slides fake the horizontal grid margin
-    ['&:last-child::after']: {
+    '&:last-child::after': {
       content: "''",
       display: 'block',
       flex: 'none',

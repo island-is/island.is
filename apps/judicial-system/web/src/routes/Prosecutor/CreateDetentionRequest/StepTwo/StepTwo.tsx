@@ -252,11 +252,11 @@ export const StepTwo: React.FC = () => {
                   errorMessage={requestedCustodyEndDateErrorMessage}
                   handleChange={(date) => {
                     const formattedDate = formatISO(date, {
-                      representation:
-                        workingCase.requestedCustodyEndDate &&
-                        workingCase.requestedCustodyEndDate.indexOf('T') > -1
-                          ? 'complete'
-                          : 'date',
+                      representation: workingCase.requestedCustodyEndDate?.includes(
+                        'T',
+                      )
+                        ? 'complete'
+                        : 'date',
                     })
                     setWorkingCase({
                       ...workingCase,
@@ -292,8 +292,7 @@ export const StepTwo: React.FC = () => {
                   placeholder="Settu inn tíma"
                   ref={requestedCustodyEndTimeRef}
                   defaultValue={
-                    workingCase.requestedCustodyEndDate &&
-                    workingCase.requestedCustodyEndDate.indexOf('T') > -1
+                    workingCase.requestedCustodyEndDate?.includes('T')
                       ? formatDate(
                           workingCase.requestedCustodyEndDate,
                           TIME_FORMAT,

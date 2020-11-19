@@ -7,6 +7,7 @@ import {
   buildRadioField,
   buildRepeater,
   buildSection,
+  buildSubmitField,
   buildSubSection,
   buildTextField,
   Form,
@@ -221,10 +222,22 @@ export const ApplicationForm: Form = buildForm({
       id: 'other',
       name: m.other,
       children: [
-        buildTextField({
-          id: 'info',
+        buildMultiField({
+          id: 'confirmation',
           name: m.otherInfo,
-          variant: 'textarea',
+          children: [
+            buildTextField({
+              id: 'info',
+              name: '',
+              variant: 'textarea',
+            }),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              name: m.submit,
+              actions: [{ event: 'SUBMIT', name: m.submit, type: 'primary' }],
+            }),
+          ],
         }),
       ],
     }),

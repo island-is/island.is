@@ -8,13 +8,13 @@ import {
   AlertBanner,
   LinkContext,
 } from '@island.is/island-ui/core'
-import { userContext } from '../../utils/userContext'
 import * as styles from './PageLayout.treat'
 import { JudgeLogo, ProsecutorLogo } from '../Logos'
 import Loading from '../Loading/Loading'
 import * as Constants from '../../utils/constants'
 import { UserRole } from '@island.is/judicial-system/types'
 import { Link } from 'react-router-dom'
+import { UserContext } from '../UserProvider/UserProvider'
 
 interface PageProps {
   children: ReactNode
@@ -29,7 +29,7 @@ export const PageLayout: FC<PageProps> = ({
   activeSubSection,
   isLoading,
 }) => {
-  const { user } = useContext(userContext)
+  const { user } = useContext(UserContext)
 
   return children ? (
     <Box

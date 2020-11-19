@@ -4,15 +4,18 @@ import userEvent from '@testing-library/user-event'
 import { Route, MemoryRouter } from 'react-router-dom'
 import StepOne, { CreateCaseMutation } from './StepOne'
 import * as Constants from '../../../../utils/constants'
-import { userContext } from '../../../../utils/userContext'
 import {
   mockCaseQueries,
-  mockProsecutorUserContext,
+  mockProsecutorQuery,
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
 import { CaseGender, UpdateCase } from '@island.is/judicial-system/types'
 import formatISO from 'date-fns/formatISO'
+import {
+  UserContext,
+  UserProvider,
+} from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 describe('/krafa with an id', () => {
   test('should prefill the inputs with the correct data if id is in the url', async () => {
@@ -20,14 +23,17 @@ describe('/krafa with an id', () => {
 
     // Act
     render(
-      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
-        <userContext.Provider value={mockProsecutorUserContext}>
-          <MemoryRouter initialEntries={['/krafa/test_id_2']}>
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter initialEntries={['/krafa/test_id_2']}>
+          <UserProvider>
             <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
               <StepOne />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 
@@ -49,14 +55,17 @@ describe('/krafa with an id', () => {
 
     // Act
     render(
-      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
-        <userContext.Provider value={mockProsecutorUserContext}>
-          <MemoryRouter initialEntries={['/krafa/test_id_3']}>
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter initialEntries={['/krafa/test_id_3']}>
+          <UserProvider>
             <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
               <StepOne />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 
@@ -71,6 +80,71 @@ describe('/krafa with an id', () => {
       ),
     ).not.toBeDisabled()
   })
+
+  test('should have a disabled requestedCourtDate if judge has set a court date', async () => {
+    // Arrange
+
+    // Act
+    render(
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.SINGLE_REQUEST_BASE_ROUTE}/test_id_3`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+              <StepOne />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    // Assert
+    expect(
+      await waitFor(
+        () =>
+          screen.getAllByLabelText(
+            'Veldu dagsetningu *',
+          )[1] as HTMLInputElement,
+      ),
+    ).toBeDisabled()
+  })
+
+  test('should have a disabled defender name and email if judge has set a defender', async () => {
+    // Arrange
+
+    // Act
+    render(
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.SINGLE_REQUEST_BASE_ROUTE}/test_id_2`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+              <StepOne />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    // Assert
+    expect(
+      await waitFor(
+        () => screen.getByLabelText('Nafn verjanda') as HTMLInputElement,
+      ),
+    ).toBeDisabled()
+
+    expect(
+      screen.getByLabelText('Netfang verjanda') as HTMLInputElement,
+    ).toBeDisabled()
+  })
 })
 
 describe('/krafa without ID', () => {
@@ -78,14 +152,17 @@ describe('/krafa without ID', () => {
     // Arrange
 
     render(
-      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
-        <userContext.Provider value={mockProsecutorUserContext}>
-          <MemoryRouter initialEntries={[Constants.SINGLE_REQUEST_BASE_ROUTE]}>
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter initialEntries={[Constants.SINGLE_REQUEST_BASE_ROUTE]}>
+          <UserProvider>
             <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id?`}>
               <StepOne />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 
@@ -152,6 +229,7 @@ describe('/krafa without ID', () => {
       <MockedProvider
         mocks={[
           ...mockCaseQueries,
+          ...mockProsecutorQuery,
           {
             request: {
               query: CreateCaseMutation,
@@ -211,13 +289,13 @@ describe('/krafa without ID', () => {
         ]}
         addTypename={false}
       >
-        <userContext.Provider value={mockProsecutorUserContext}>
-          <MemoryRouter initialEntries={['/krafa']}>
+        <MemoryRouter initialEntries={['/krafa']}>
+          <UserProvider>
             <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}`}>
               <StepOne />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 
@@ -341,6 +419,7 @@ describe('/krafa without ID', () => {
       <MockedProvider
         mocks={[
           ...mockCaseQueries,
+          ...mockProsecutorQuery,
           {
             request: {
               query: CreateCaseMutation,
@@ -369,13 +448,13 @@ describe('/krafa without ID', () => {
         ]}
         addTypename={false}
       >
-        <userContext.Provider value={mockProsecutorUserContext}>
-          <MemoryRouter initialEntries={[Constants.SINGLE_REQUEST_BASE_ROUTE]}>
+        <MemoryRouter initialEntries={[Constants.SINGLE_REQUEST_BASE_ROUTE]}>
+          <UserProvider>
             <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}`}>
               <StepOne />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 

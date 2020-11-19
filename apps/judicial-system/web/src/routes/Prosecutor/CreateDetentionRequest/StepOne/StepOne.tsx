@@ -140,7 +140,6 @@ export const StepOne: React.FC = () => {
     setRequestedCourtTimeErrorMessage,
   ] = useState<string>('')
   const [modalVisible, setModalVisible] = useState(false)
-  const [isSendingNotification, setIsSendingNotification] = useState(false)
 
   const { id } = useParams<{ id: string }>()
 
@@ -260,7 +259,10 @@ export const StepOne: React.FC = () => {
     return resCase
   }
 
-  const [sendNotificationMutation] = useMutation(SendNotificationMutation)
+  const [
+    sendNotificationMutation,
+    { loading: isSendingNotification },
+  ] = useMutation(SendNotificationMutation)
 
   const sendNotification = async (id: string) => {
     const { data } = await sendNotificationMutation({
@@ -630,6 +632,13 @@ export const StepOne: React.FC = () => {
                 label="Nafn verjanda"
                 placeholder="Fullt nafn"
                 defaultValue={workingCase.requestedDefenderName}
+                disabled={workingCase.defenderName !== undefined}
+                icon={
+                  workingCase.defenderName !== undefined
+                    ? 'lockClosed'
+                    : undefined
+                }
+                iconType="outline"
                 onBlur={(evt) => {
                   if (workingCase.requestedDefenderName !== evt.target.value) {
                     setWorkingCase({
@@ -649,6 +658,13 @@ export const StepOne: React.FC = () => {
               name="requestedDefenderEmail"
               label="Netfang verjanda"
               placeholder="Netfang"
+              disabled={workingCase.defenderEmail !== undefined}
+              icon={
+                workingCase.defenderEmail !== undefined
+                  ? 'lockClosed'
+                  : undefined
+              }
+              iconType="outline"
               ref={defenderEmailRef}
               defaultValue={workingCase.requestedDefenderEmail}
               errorMessage={requestedDefenderEmailErrorMessage}
@@ -679,6 +695,11 @@ export const StepOne: React.FC = () => {
               }}
               onFocus={() => setRequestedDefenderEmailErrorMessage('')}
             />
+            {workingCase.defenderName && workingCase.defenderEmail && (
+              <Box marginTop={1}>
+                <Text variant="eyebrow">Verjanda hefur verið úthlutað</Text>
+              </Box>
+            )}
           </Box>
           <Box component="section" marginBottom={7}>
             <Box marginBottom={2}>
@@ -724,6 +745,7 @@ export const StepOne: React.FC = () => {
             <GridRow>
               <GridColumn span="5/8">
                 <DatePicker
+                  id="arrestDate"
                   label="Veldu dagsetningu"
                   placeholderText="Veldu dagsetningu"
                   locale="is"
@@ -736,11 +758,9 @@ export const StepOne: React.FC = () => {
                   }
                   handleChange={(date) => {
                     const formattedDate = formatISO(date, {
-                      representation:
-                        workingCase.arrestDate &&
-                        workingCase.arrestDate.indexOf('T') > -1
-                          ? 'complete'
-                          : 'date',
+                      representation: workingCase.arrestDate?.includes('T')
+                        ? 'complete'
+                        : 'date',
                     })
 
                     setWorkingCase({
@@ -772,8 +792,7 @@ export const StepOne: React.FC = () => {
                   errorMessage={arrestTimeErrorMessage}
                   hasError={arrestTimeErrorMessage !== ''}
                   defaultValue={
-                    workingCase.arrestDate &&
-                    workingCase.arrestDate.indexOf('T') > -1
+                    workingCase.arrestDate?.includes('T')
                       ? formatDate(workingCase.arrestDate, TIME_FORMAT)
                       : undefined
                   }
@@ -829,22 +848,25 @@ export const StepOne: React.FC = () => {
             <GridRow>
               <GridColumn span="5/8">
                 <DatePicker
+                  id="reqCourtDate"
                   label="Veldu dagsetningu"
                   placeholderText="Veldu dagsetningu"
                   locale="is"
+                  icon="lockClosed"
                   minDate={new Date()}
                   selected={
                     workingCase.requestedCourtDate
                       ? parseISO(workingCase.requestedCourtDate.toString())
                       : null
                   }
+                  disabled={workingCase.courtDate !== undefined}
                   handleChange={(date) => {
                     const formattedDate = formatISO(date, {
-                      representation:
-                        workingCase.requestedCourtDate &&
-                        workingCase.requestedCourtDate.indexOf('T') > -1
-                          ? 'complete'
-                          : 'date',
+                      representation: workingCase.requestedCourtDate?.includes(
+                        'T',
+                      )
+                        ? 'complete'
+                        : 'date',
                     })
 
                     setWorkingCase({
@@ -869,12 +891,20 @@ export const StepOne: React.FC = () => {
                   errorMessage={requestedCourtTimeErrorMessage}
                   hasError={requestedCourtTimeErrorMessage !== ''}
                   defaultValue={
-                    workingCase.requestedCourtDate &&
-                    workingCase.requestedCourtDate.indexOf('T') > -1
+                    workingCase.requestedCourtDate?.includes('T')
                       ? formatDate(workingCase.requestedCourtDate, TIME_FORMAT)
                       : undefined
                   }
-                  disabled={!workingCase.requestedCourtDate}
+                  disabled={
+                    !workingCase.requestedCourtDate ||
+                    workingCase.courtDate !== undefined
+                  }
+                  icon={
+                    workingCase.courtDate !== undefined
+                      ? 'lockClosed'
+                      : undefined
+                  }
+                  iconType="outline"
                   ref={requestedCourtTimeRef}
                   onBlur={(evt) => {
                     if (workingCase.requestedCourtDate) {
@@ -920,9 +950,29 @@ export const StepOne: React.FC = () => {
                 />
               </GridColumn>
             </GridRow>
+            {workingCase.courtDate && (
+              <Box marginTop={1}>
+                <Text variant="eyebrow">
+                  Fyrirtökudegi og tíma hefur verið úthlutað
+                </Text>
+              </Box>
+            )}
           </Box>
           <FormFooter
-            onNextButtonClick={() => setModalVisible(true)}
+            onNextButtonClick={() => {
+              if (
+                workingCase.notifications?.find(
+                  (notification) =>
+                    notification.type === NotificationType.HEADS_UP,
+                )
+              ) {
+                history.push(
+                  `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
+                )
+              } else {
+                setModalVisible(true)
+              }
+            }}
             nextIsDisabled={isStepIllegal}
           />
           {modalVisible && (
@@ -938,9 +988,8 @@ export const StepOne: React.FC = () => {
                 )
               }
               handlePrimaryButtonClick={async () => {
-                setIsSendingNotification(true)
-                await sendNotification(workingCase.id)
-                setIsSendingNotification(false)
+                await sendNotification(workingCase.id ?? id)
+
                 history.push(
                   `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
                 )

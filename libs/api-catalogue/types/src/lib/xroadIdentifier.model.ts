@@ -3,5 +3,5 @@ export interface XroadIdentifier {
   memberClass: string
   memberCode: string
   subsystemCode: string
-  serviceCode: string
+  serviceCode?: string
 }

@@ -25,6 +25,8 @@ const Illustration: React.FC<IllustrationProps> = ({
   }
 
   const SelectedIllustration = illustrations[illustrationIndex]
+  const NextIllustration =
+    illustrations[(illustrationIndex + 1) % illustrations.length]
 
   if (!SelectedIllustration) {
     return null
@@ -413,6 +415,9 @@ const Illustration: React.FC<IllustrationProps> = ({
         <circle cx="383.5" cy="530.243" r="2"></circle>
       </g>
       <SelectedIllustration />
+      <g style={{ display: 'none' }}>
+        <NextIllustration />
+      </g>
     </svg>
   )
 }

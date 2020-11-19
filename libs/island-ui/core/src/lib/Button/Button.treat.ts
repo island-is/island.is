@@ -502,13 +502,13 @@ export const loadingDot = style({
   borderRadius: '50%',
   background: 'currentcolor',
   selectors: {
-    ['&:not(:last-child)']: {
+    '&:not(:last-child)': {
       marginRight: 10,
     },
-    ['&:nth-child(2)']: {
+    '&:nth-child(2)': {
       animationDelay: '0.4s',
     },
-    ['&:nth-child(3)']: {
+    '&:nth-child(3)': {
       animationDelay: '0.8s',
     },
     [`${loadingCircle} &:nth-child(2), ${loadingCircle} &:nth-child(3)`]: {
