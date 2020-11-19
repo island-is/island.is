@@ -16,6 +16,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   parseString,
   parseTime,
+  replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useHistory, useParams } from 'react-router-dom'
@@ -310,6 +311,7 @@ export const HearingArrangements: React.FC = () => {
                   setCourtroomErrorMessage(validateEmpty.errorMessage)
                 }
               }}
+              onChange={replaceTabsOnChange}
               errorMessage={courtroomErrorMessage}
               hasError={courtroomErrorMessage !== ''}
               onFocus={() => setCourtroomErrorMessage('')}
@@ -341,6 +343,7 @@ export const HearingArrangements: React.FC = () => {
                     )
                   }
                 }}
+                onChange={replaceTabsOnChange}
               />
             </Box>
             <Input
@@ -369,6 +372,7 @@ export const HearingArrangements: React.FC = () => {
                   setDefenderEmailErrorMessage(validateField.errorMessage)
                 }
               }}
+              onChange={replaceTabsOnChange}
               onFocus={() => setDefenderEmailErrorMessage('')}
             />
           </Box>
