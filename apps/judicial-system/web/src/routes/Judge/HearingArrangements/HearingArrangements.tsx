@@ -32,7 +32,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql'
 import parseISO from 'date-fns/parseISO'
 import formatISO from 'date-fns/formatISO'
-import isNull from 'lodash/isNull'
+import isEmpty from 'lodash/isEmpty'
 import isValid from 'date-fns/isValid'
 import {
   JudgeSubsections,
@@ -42,7 +42,7 @@ import {
 import Modal from '../../../shared-components/Modal/Modal'
 
 interface CaseData {
-  case: Case
+  case?: Case
 }
 
 export const HearingArrangements: React.FC = () => {
@@ -52,6 +52,7 @@ export const HearingArrangements: React.FC = () => {
   const [courtDateErrorMessage, setCourtDateErrorMessage] = useState('')
   const [courtTimeErrorMessage, setCourtTimeErrorMessage] = useState('')
   const [courtroomErrorMessage, setCourtroomErrorMessage] = useState('')
+  const [defenderEmailErrorMessage, setDefenderEmailErrorMessage] = useState('')
 
   const courtTimeRef = useRef<HTMLInputElement>(null)
 
@@ -103,7 +104,7 @@ export const HearingArrangements: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (data && !workingCase) {
+    if (!workingCase && data?.case) {
       let theCase = data.case
 
       if (!theCase.courtDate && theCase.requestedCourtDate) {
@@ -151,6 +152,10 @@ export const HearingArrangements: React.FC = () => {
         value: workingCase?.courtRoom || '',
         validations: ['empty'],
       },
+      {
+        value: workingCase?.defenderEmail || '',
+        validations: ['email-format'],
+      },
     ]
 
     if (workingCase) {
@@ -163,6 +168,7 @@ export const HearingArrangements: React.FC = () => {
       activeSection={Sections.JUDGE}
       activeSubSection={JudgeSubsections.HEARING_ARRANGEMENTS}
       isLoading={loading}
+      notFound={data?.case === undefined}
     >
       {workingCase ? (
         <>
@@ -215,7 +221,7 @@ export const HearingArrangements: React.FC = () => {
                       )
                     }}
                     handleCloseCalendar={(date: Date | null) => {
-                      if (isNull(date) || !isValid(date)) {
+                      if (isEmpty(date) || !isValid(date)) {
                         setCourtDateErrorMessage('Reitur má ekki vera tómur')
                       }
                     }}
@@ -342,19 +348,28 @@ export const HearingArrangements: React.FC = () => {
               label="Netfang verjanda"
               defaultValue={workingCase.defenderEmail}
               placeholder="Netfang"
+              errorMessage={defenderEmailErrorMessage}
+              hasError={defenderEmailErrorMessage !== ''}
               onBlur={(evt) => {
-                if (evt.target.value !== workingCase.defenderEmail) {
-                  setWorkingCase({
-                    ...workingCase,
-                    defenderEmail: evt.target.value,
-                  })
+                const validateField = validate(evt.target.value, 'email-format')
 
-                  updateCase(
-                    workingCase.id,
-                    parseString('defenderEmail', evt.target.value),
-                  )
+                setWorkingCase({
+                  ...workingCase,
+                  defenderEmail: evt.target.value,
+                })
+
+                if (validateField.isValid) {
+                  if (evt.target.value !== workingCase.defenderEmail) {
+                    updateCase(
+                      workingCase.id,
+                      parseString('defenderEmail', evt.target.value),
+                    )
+                  }
+                } else {
+                  setDefenderEmailErrorMessage(validateField.errorMessage)
                 }
               }}
+              onFocus={() => setDefenderEmailErrorMessage('')}
             />
           </Box>
           <FormFooter

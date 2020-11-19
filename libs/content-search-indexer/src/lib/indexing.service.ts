@@ -15,6 +15,7 @@ export class IndexingService {
     private readonly elasticService: ElasticService,
     private readonly cmsSyncService: CmsSyncService,
   ) {
+    // add importer service to this array to make it import
     this.importers = [this.cmsSyncService]
   }
 
@@ -51,12 +52,14 @@ export class IndexingService {
         allImportedIds = [...allImportedIds, ...allAddedIds]
       }
 
-      // allow importers to clean up after import
-      await importer.postSync(postSyncOptions)
-      logger.info('Importer finished sync', {
-        importer: importer.constructor.name,
-        index: elasticIndex,
-      })
+      if (importer.postSync) {
+        // allow importers to clean up after import
+        await importer.postSync(postSyncOptions)
+        logger.info('Importer finished sync', {
+          importer: importer.constructor.name,
+          index: elasticIndex,
+        })
+      }
       return true
     })
 
