@@ -22,6 +22,7 @@ import { REQUEST_TYPES } from '@island.is/skilavottord-web/graphql/queries'
 import { useQuery } from '@apollo/client'
 import { RecyclingRequestTypes } from '@island.is/skilavottord-web/types'
 import { getTime, getDate, formatYear } from '@island.is/skilavottord-web/utils'
+import compareDesc from 'date-fns/compareDesc'
 
 const Completed = ({ apolloState }) => {
   const [isMobile, setIsMobile] = useState(false)
@@ -60,16 +61,21 @@ const Completed = ({ apolloState }) => {
   }
 
   const sortedRequests = recyclingRequests.slice().sort((a, b) => {
-    return new Date(a.createdAt).getDate() - new Date(b.createdAt).getDate()
+    return compareDesc(new Date(b.createdAt), new Date(a.createdAt))
   })
 
-  const latestUserRequest = sortedRequests.filter(
+  const citizenRequests = sortedRequests.filter(
     (request) => request.requestType === 'pendingRecycle',
-  )[0]
+  )
+  const latestCitizenRequest = citizenRequests[citizenRequests.length - 1]
 
-  const partnerRequests = sortedRequests.filter(
+  const handoverRequests = sortedRequests.filter(
+    (request) => request.requestType === 'handOver',
+  )
+  const latestHandoverRequest = handoverRequests[handoverRequests.length - 1]
+
+  const deregistrationRequests = sortedRequests.filter(
     (request) =>
-      request.requestType === 'handOver' ||
       request.requestType === 'deregistered' ||
       request.requestType === 'paymentInitiated' ||
       request.requestType === 'paymentFailed',
@@ -147,21 +153,21 @@ const Completed = ({ apolloState }) => {
                   <GridContainer>
                     <Stack space={4}>
                       <Stack space={2}>
-                        {latestUserRequest && (
+                        {latestCitizenRequest && (
                           <GridRow>
                             <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
                               <Text>
                                 {`${getConfirmationText(
-                                  latestUserRequest.requestType,
-                                  latestUserRequest.nameOfRequestor,
+                                  latestCitizenRequest.requestType,
+                                  latestCitizenRequest.nameOfRequestor,
                                 )}`}
                               </Text>
                             </GridColumn>
                             <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
                               <Text variant="h5">
                                 {`${getDate(
-                                  latestUserRequest.createdAt,
-                                )} ${getTime(latestUserRequest.createdAt)}`}
+                                  latestCitizenRequest.createdAt,
+                                )} ${getTime(latestCitizenRequest.createdAt)}`}
                               </Text>
                             </GridColumn>
                           </GridRow>
@@ -169,8 +175,27 @@ const Completed = ({ apolloState }) => {
                       </Stack>
                       <Divider />
                       <Stack space={2}>
-                        {partnerRequests.map((request) => (
+                        {latestHandoverRequest && (
                           <GridRow>
+                            <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
+                              <Text>
+                                {`${getConfirmationText(
+                                  latestHandoverRequest.requestType,
+                                  latestHandoverRequest.nameOfRequestor,
+                                )}`}
+                              </Text>
+                            </GridColumn>
+                            <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
+                              <Text variant="h5">
+                                {`${getDate(
+                                  latestHandoverRequest.createdAt,
+                                )} ${getTime(latestHandoverRequest.createdAt)}`}
+                              </Text>
+                            </GridColumn>
+                          </GridRow>
+                        )}
+                        {deregistrationRequests.map((request) => (
+                          <GridRow key={request.id}>
                             <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
                               <Text>
                                 {`${getConfirmationText(

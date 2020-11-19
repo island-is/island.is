@@ -15,39 +15,18 @@ describe('Judicial system web api endpoints', () => {
         value: 'judicial-system.csrf=mock_token',
       })
 
-      // Act
-      api.logOut()
-
-      // Assert
-      expect(cookies.getCookie('judicial-system.csrf')).toEqual(null)
-    })
-
-    it('should redirect the user to the login screen', async () => {
-      // Arrange
-      delete window.location
-      window.location = {
-        href: '',
-        ancestorOrigins: null,
-        hash: '',
-        host: '',
-        hostname: '',
-        origin: '',
-        pathname: '',
-        port: '',
-        protocol: '',
-        search: '',
-        assign: jest.fn(),
-        reload: () => null,
-        replace: () => null,
-      }
-
-      const spy = jest.spyOn(window.location, 'assign')
+      Object.defineProperty(window, 'location', {
+        value: {
+          pathname: '/test',
+          assign: jest.fn(),
+        },
+      })
 
       // Act
       api.logOut()
 
       // Assert
-      expect(spy).toHaveBeenCalledWith('/')
+      expect(cookies.getCookie('judicial-system.csrf')).toEqual(undefined)
     })
   })
 })

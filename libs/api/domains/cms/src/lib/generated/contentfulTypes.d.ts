@@ -1463,9 +1463,6 @@ export interface IParentPluginTestFields {
   /** Slug */
   slug?: string | undefined
 
-  /** Normal field */
-  normalField?: string | undefined
-
   /** Parent */
   parent?: IArticle | IParentPluginTest | undefined
 }
@@ -1792,60 +1789,6 @@ export interface IStorySection extends Entry<IStorySectionFields> {
     contentType: {
       sys: {
         id: 'storySection'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IStringFields {
-  /** Id */
-  id: string
-
-  /** Text */
-  text: string
-}
-
-/** An identifiable string of up to 50k characters. */
-
-export interface IString extends Entry<IStringFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'string'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IStringListFields {
-  /** List Id */
-  listId: string
-
-  /** List Strings */
-  listStrings: IString[]
-}
-
-/** An identifiable list of Strings. */
-
-export interface IStringList extends Entry<IStringListFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'stringList'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2581,8 +2524,6 @@ export type CONTENT_TYPE =
   | 'statistics'
   | 'story'
   | 'storySection'
-  | 'string'
-  | 'stringList'
   | 'subArticle'
   | 'tabContent'
   | 'tabSection'

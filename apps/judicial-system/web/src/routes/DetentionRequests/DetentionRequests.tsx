@@ -10,7 +10,7 @@ import {
 } from '@island.is/judicial-system-web/src/shared-components/Logos'
 import {
   AlertMessage,
-  ButtonDeprecated as Button,
+  Button,
   Text,
   Tag,
   TagVariant,
@@ -22,10 +22,10 @@ import * as styles from './DetentionRequests.treat'
 import { UserRole } from '@island.is/judicial-system/types'
 import * as Constants from '../../utils/constants'
 import { Link } from 'react-router-dom'
-import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { insertAt } from '../../utils/formatters'
 import { gql, useQuery } from '@apollo/client'
+import { UserContext } from '../../shared-components/UserProvider/UserProvider'
 
 export const CasesQuery = gql`
   query CasesQuery {
@@ -43,7 +43,7 @@ export const CasesQuery = gql`
 
 export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<Case[]>()
-  const { user } = useContext(userContext)
+  const { user } = useContext(UserContext)
 
   const isJudge = user?.role === UserRole.JUDGE
 
@@ -99,7 +99,7 @@ export const DetentionRequests: React.FC = () => {
               to={Constants.SINGLE_REQUEST_BASE_ROUTE}
               style={{ textDecoration: 'none' }}
             >
-              <Button icon="plus">Stofna nýja kröfu</Button>
+              <Button icon="add">Stofna nýja kröfu</Button>
             </Link>
           )}
         </div>
@@ -119,7 +119,7 @@ export const DetentionRequests: React.FC = () => {
               <th>Kennitala</th>
               <th>Krafa stofnuð</th>
               <th>Staða</th>
-              <th>Gæsluvarðhaldstími</th>
+              <th>Gæsla rennur út</th>
               <th></th>
             </tr>
           </thead>
@@ -158,7 +158,7 @@ export const DetentionRequests: React.FC = () => {
                     }
                     style={{ textDecoration: 'none', whiteSpace: 'nowrap' }}
                   >
-                    <Button icon="arrowRight" variant="text">
+                    <Button icon="arrowForward" variant="text">
                       Opna kröfu
                     </Button>
                   </Link>

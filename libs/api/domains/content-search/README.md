@@ -2,8 +2,12 @@
 
 # api-domains-content-search
 
-This library was generated with [Nx](https://nx.dev).
+Exposes endpoints to allow querying of searchable data in content search elasticsearch
 
-## Running unit tests
+## Making data searchable
 
-Run `ng test api-domains-content-search` to execute the unit tests via [Jest](https://jestjs.io).
+When a client makes a search request we return a response of type `SearchResult`.  
+`SearchResult` groups results, aggregations and metrics into a single response.  
+`SearchResult.items` is a union type used to resolve search result types.  
+You must add your documents type to the union as a nestjs model under the types array. You should then add a `typename` field to your mapped data for the type to resolve correctly. (`src/lib/models/searchResult.model.ts`)  
+All mapping for the search response is done on import.

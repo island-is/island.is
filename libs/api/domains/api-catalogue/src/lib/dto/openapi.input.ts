@@ -5,21 +5,21 @@ import { IsString } from 'class-validator'
 export class GetOpenApiInput {
   @Field()
   @IsString()
-  instance: string
+  instance!: string
 
   @Field()
   @IsString()
-  memberClass: string
+  memberClass!: string
 
   @Field()
   @IsString()
-  memberCode: string
+  memberCode!: string
 
   @Field()
   @IsString()
-  subsystemCode: string
+  subsystemCode!: string
 
   @Field()
   @IsString()
-  serviceCode: string
+  serviceCode!: string
 }

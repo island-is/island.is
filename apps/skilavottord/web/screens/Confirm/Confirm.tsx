@@ -22,7 +22,7 @@ import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/
 const Confirm = ({ apolloState }) => {
   const { user } = useContext(UserContext)
   const [checkbox, setCheckbox] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
+  const [isTablet, setIsTablet] = useState(false)
   const { width } = useWindowSize()
 
   const {
@@ -44,9 +44,9 @@ const Confirm = ({ apolloState }) => {
 
   useEffect(() => {
     if (width < theme.breakpoints.lg) {
-      return setIsMobile(true)
+      return setIsTablet(true)
     }
-    setIsMobile(false)
+    setIsTablet(false)
   }, [width])
 
   const [setVehicle] = useMutation(CREATE_VEHICLE)
@@ -127,7 +127,7 @@ const Confirm = ({ apolloState }) => {
               display="inlineFlex"
               justifyContent="spaceBetween"
             >
-              {isMobile ? (
+              {isTablet ? (
                 <Button
                   variant="ghost"
                   onClick={onCancel}

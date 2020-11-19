@@ -1,5 +1,6 @@
 import { Inject, Injectable, HttpService } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import format from 'date-fns/format'
 import {
   RecyclingRequestModel,
   RecyclingRequestUnion,
@@ -68,11 +69,7 @@ export class RecyclingRequestService {
       const dateNow = new Date()
       const jsonDeRegBody = JSON.stringify({
         permno: vehiclePermno,
-        deRegisterDate:
-          dateNow.toLocaleDateString() +
-          'T' +
-          dateNow.toTimeString().split(' ')[0] +
-          'Z',
+        deRegisterDate: format(dateNow, "yyyy-MM-dd'T'HH:mm:ss'Z'"),
         subCode: 'U',
         plateCount: 0,
         destroyed: 0,
@@ -89,10 +86,12 @@ export class RecyclingRequestService {
         Authorization: 'Bearer ' + jToken,
       }
 
+      this.logger.info(`RestUrl: ${restDeRegUrl}`)
+      this.logger.info(`RestHeader: ${headerDeRegRequest}`)
+      this.logger.info(`RestBody: ${jsonDeRegBody}`)
       const deRegRes = await this.httpService
         .post(restDeRegUrl, jsonDeRegBody, { headers: headerDeRegRequest })
         .toPromise()
-
       if (deRegRes.status < 300 && deRegRes.status >= 200) {
         this.logger.info(
           `---- Finished deRegisterVehicle call on ${vehiclePermno} ----`,
@@ -106,7 +105,9 @@ export class RecyclingRequestService {
       this.logger.error(
         `Failed on deregistered vehicle ${vehiclePermno} with: ${err}`,
       )
-      throw new Error(`Failed on deregistered vehicle ${vehiclePermno}...`)
+      throw new Error(
+        `Failed on deregistered vehicle ${vehiclePermno} because: ${err}`,
+      )
     }
   }
 

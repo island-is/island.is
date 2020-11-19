@@ -61,7 +61,8 @@ export class RestMetadataService {
           // The list is sorted for the latest service version to be the last element
           // so name, owner and description will be from the latest version.
           service.name = spec.info.title
-          service.owner = spec.info.contact?.name || provider.subsystemCode // ToDo: Maybe update to use provider.memberCode to look up the name
+          service.owner =
+            spec.info.contact?.name || provider.xroadInfo.subsystemCode // ToDo: Maybe update to use provider.memberCode to look up the name
           service.description = spec.info.description ?? ''
           service.data = union(service.data, spec.info['x-category'])
           service.pricing = union(service.pricing, spec.info['x-pricing'])
@@ -126,10 +127,10 @@ export class RestMetadataService {
   ): Promise<Map<string, Array<XroadIdentifier>>> {
     const serviceMap = new Map<string, Array<XroadIdentifier>>()
     const xrdServices = await this.xrdRestMetaservice.listMethods({
-      xRoadInstance: provider.xroadInstance,
-      memberClass: provider.memberClass,
-      memberCode: provider.memberCode,
-      subsystemCode: provider.subsystemCode,
+      xRoadInstance: provider.xroadInfo.instance,
+      memberClass: provider.xroadInfo.memberClass,
+      memberCode: provider.xroadInfo.memberCode,
+      subsystemCode: provider.xroadInfo.subsystemCode,
     })
 
     logger.debug(

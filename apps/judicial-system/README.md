@@ -20,14 +20,6 @@ You can serve this service locally by running:
 yarn start judicial-system-api
 ```
 
-To skip authentication at innskraning.island.is run:
-
-```bash
-AUTH_USER=<national id> yarn start judicial-system-api
-```
-
-where `<national id>` is the national id of a known user.
-
 ### Graphql playground
 
 Visit
@@ -116,8 +108,14 @@ Start the backend locally. Instructions on how to do that can be found [in the b
 Start the application
 
 ```bash
-yarn start judicial-system-web
+yarn start judicial-system-web --ssl
 ```
+
+{% hint style="info" %}
+You can skip `--ssl` but then authentication through innskraning.island.is will not work.
+
+To skip authentication at innskraning.island.is navigate to `/api/auth/login?nationalId=<national_id>` in the web project where `<national id>` is the national id of a known user.
+{% endhint %}
 
 Then the project should be running on http://localhost:4200/.
 

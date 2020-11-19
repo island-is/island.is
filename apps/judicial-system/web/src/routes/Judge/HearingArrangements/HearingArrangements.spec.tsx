@@ -5,21 +5,23 @@ import { UpdateCase } from '@island.is/judicial-system/types'
 import userEvent from '@testing-library/user-event'
 import {
   mockCaseQueries,
-  mockJudgeUserContext,
+  mockJudgeQuery,
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import { MemoryRouter, Route } from 'react-router-dom'
 import { MockedProvider } from '@apollo/client/testing'
 import * as Constants from '../../../utils/constants'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 describe('/domari-krafa/fyrirtokutimi', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     render(
       <MockedProvider
-        mocks={mockCaseQueries.concat(
-          mockUpdateCaseMutation([
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation([
             {
               id: 'test_id_2',
               courtDate: '2020-09-12',
@@ -41,20 +43,18 @@ describe('/domari-krafa/fyrirtokutimi', () => {
               defenderEmail: 'saul@goodman.com',
             } as UpdateCase,
           ]),
-        )}
+        ]}
         addTypename={false}
       >
-        <userContext.Provider value={mockJudgeUserContext}>
-          <MemoryRouter
-            initialEntries={[
-              `${Constants.HEARING_ARRANGEMENTS_ROUTE}/test_id_2`,
-            ]}
-          >
+        <MemoryRouter
+          initialEntries={[`${Constants.HEARING_ARRANGEMENTS_ROUTE}/test_id_2`]}
+        >
+          <UserProvider>
             <Route path={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/:id`}>
               <HearingArrangements />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 
@@ -78,8 +78,10 @@ describe('/domari-krafa/fyrirtokutimi', () => {
     // Arrange
     render(
       <MockedProvider
-        mocks={mockCaseQueries.concat(
-          mockUpdateCaseMutation([
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation([
             {
               id: 'test_id_3',
               courtDate: '2020-09-16',
@@ -97,20 +99,18 @@ describe('/domari-krafa/fyrirtokutimi', () => {
               defenderEmail: 'saul@goodman.com',
             } as UpdateCase,
           ]),
-        )}
+        ]}
         addTypename={false}
       >
-        <userContext.Provider value={mockJudgeUserContext}>
-          <MemoryRouter
-            initialEntries={[
-              `${Constants.HEARING_ARRANGEMENTS_ROUTE}/test_id_3`,
-            ]}
-          >
+        <MemoryRouter
+          initialEntries={[`${Constants.HEARING_ARRANGEMENTS_ROUTE}/test_id_3`]}
+        >
+          <UserProvider>
             <Route path={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/:id`}>
               <HearingArrangements />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 

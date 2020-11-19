@@ -6,5 +6,5 @@ import { Field, InputType } from '@nestjs/graphql'
 export class RequestSignatureInput {
   @Allow()
   @Field()
-  readonly caseId: string
+  readonly caseId!: string
 }

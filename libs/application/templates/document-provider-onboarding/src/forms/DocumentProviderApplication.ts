@@ -18,13 +18,14 @@ export const DocumentProviderOnboarding: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'terms and conditions agreement',
+      id: 'termsOfAgreement',
       name: m.termsSection,
       children: [
         buildCustomField(
           {
             id: 'termsOfAgreement',
             name: 'Skilmálar',
+            description: m.termsSection,
             component: 'TermsOfAgreement',
           },
           {},
@@ -152,17 +153,6 @@ export const DocumentProviderOnboarding: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'documents',
-      name: m.documentsSection,
-      children: [
-        buildIntroductionField({
-          id: 'fileUpload',
-          name: 'TODO',
-          introduction: 'TODO',
-        }),
-      ],
-    }),
-    buildSection({
       id: 'confirmation',
       name: m.confirmationSection,
       children: [
@@ -171,6 +161,14 @@ export const DocumentProviderOnboarding: Form = buildForm({
           name: m.overview,
           description: m.overviewIntro,
           children: [
+            buildCustomField(
+              {
+                id: 'review',
+                name: 'Yfirlit umsóknar',
+                component: 'Review',
+              },
+              {},
+            ),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
