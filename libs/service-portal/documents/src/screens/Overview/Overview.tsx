@@ -206,6 +206,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               <Stack space={3}>
                 <Box height="full">
                   <Input
+                    icon="search"
                     value={filterValue.searchQuery}
                     onChange={(ev) => handleSearchChange(ev.target.value)}
                     name="rafraen-skjol-leit"
