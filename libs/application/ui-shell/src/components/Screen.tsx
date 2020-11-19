@@ -142,7 +142,6 @@ const Screen: FC<ScreenProps> = ({
         key={screen.id}
         height="full"
         onSubmit={handleSubmit(onSubmit)}
-        style={{ minHeight: '65vh' }}
       >
         <GridColumn
           span={['12/12', '12/12', '7/9', '7/9']}

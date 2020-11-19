@@ -3,14 +3,12 @@ import { theme } from '@island.is/island-ui/theme'
 import { escapeGrid } from '@island.is/island-ui/utils'
 
 export const root = style({
-  minHeight: '100vh',
   display: 'flex',
   flexDirection: 'column',
 
   '@media': {
-    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
-      // https://github.com/seek-oss/treat/issues/120
-      minHeight: '-webkit-fill-available',
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      minHeight: '100vh',
     },
   },
 })
