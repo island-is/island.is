@@ -11,6 +11,7 @@ import {
   Hidden,
   GridRow,
   GridContainer,
+  ColorSchemeContext,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Slice as SliceType } from '@island.is/island-ui/contentful'
@@ -23,7 +24,10 @@ import {
   RichText,
   HeadWithSocialSharing,
   ChatPanel,
+  Header,
+  BackgroundImage,
 } from '@island.is/web/components'
+import { ColorSchemeContext as CovidColorSchemeContext } from '@island.is/web/components/Adgerdir/UI/ColorSchemeContext/ColorSchemeContext'
 import { useI18n } from '@island.is/web/i18n'
 import {
   Query,
@@ -40,8 +44,9 @@ import {
 } from '../queries'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { Screen } from '../../types'
-import { ColorSchemeContext } from '@island.is/web/context'
 import { useNamespace } from '@island.is/web/hooks'
+
+import * as covidStyles from '@island.is/web/components/Adgerdir/UI/styles/styles.treat'
 
 interface HomeProps {
   frontpage: Query['getAdgerdirFrontpage']
@@ -67,61 +72,70 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
   return (
     <>
       <HeadWithSocialSharing title={`Viðspyrna fyrir Ísland`} />
-      <GridContainer>
-        <Box paddingTop={[2, 2, 10]} paddingBottom={[4, 4, 4, 3, 2]}>
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '12/12', '8/12', '9/12']}>
-              <GridRow>
-                <GridColumn
-                  offset={['0', '0', '0', '1/8']}
-                  span={['8/8', '8/8', '8/8', '7/8']}
-                >
-                  <Stack space={2}>
-                    <Breadcrumbs color="blue400">
-                      <Link href={makePath()} as={makePath()}>
-                        <a>Ísland.is</a>
-                      </Link>
-                      <Link
-                        href={makePath('adgerdir')}
-                        as={makePath('adgerdir')}
-                      >
-                        <a>{n('covidAdgerdir', 'Covid aðgerðir')}</a>
-                      </Link>
-                    </Breadcrumbs>
-                    <Text variant="h1" as="h1">
-                      {frontpage.title}
-                    </Text>
-                    <Text variant="intro" as="p">
-                      {frontpage.description}
-                    </Text>
-                    <RichText
-                      body={frontpage.content as SliceType[]}
-                      config={{ defaultPadding: [2, 2, 4], skipGrid: true }}
-                      locale={activeLocale}
-                    />
-                  </Stack>
-                </GridColumn>
-              </GridRow>
-            </GridColumn>
-            <GridColumn hiddenBelow="md" span={['0', '0', '0', '4/12', '3/12']}>
-              <Hidden below="lg" print={true}>
-                <Box
-                  height="full"
-                  width="full"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  <FrontpageSvg />
-                </Box>
-              </Hidden>
-            </GridColumn>
-          </GridRow>
-        </Box>
-      </GridContainer>
+      <Box className={covidStyles.frontpageBg}>
+        <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
+          <Header buttonColorScheme="negative" />
+        </ColorSchemeContext.Provider>
+        <GridContainer>
+          <Box paddingTop={[2, 2, 10]} paddingBottom={[4, 4, 4, 10]}>
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
+                <GridRow>
+                  <GridColumn
+                    offset={['0', '0', '0', '1/8']}
+                    span={['8/8', '8/8', '8/8', '7/8']}
+                  >
+                    <Stack space={2}>
+                      <span className={covidStyles.white}>
+                        <Breadcrumbs color="white">
+                          <Link href={makePath()} as={makePath()}>
+                            <a>Ísland.is</a>
+                          </Link>
+                          <Link
+                            href={makePath('adgerdir')}
+                            as={makePath('adgerdir')}
+                          >
+                            <a>{n('covidAdgerdir', 'Covid aðgerðir')}</a>
+                          </Link>
+                        </Breadcrumbs>
+                      </span>
+                      <Text variant="h1" as="h1" color="white">
+                        {frontpage.title}
+                      </Text>
+                      <Text variant="intro" as="p" color="white">
+                        {frontpage.description}
+                      </Text>
+                      <span className={covidStyles.white}>
+                        <RichText
+                          body={frontpage.content as SliceType[]}
+                          config={{ defaultPadding: [2, 2, 4], skipGrid: true }}
+                          locale={activeLocale}
+                        />
+                      </span>
+                    </Stack>
+                  </GridColumn>
+                </GridRow>
+              </GridColumn>
+              <GridColumn hiddenBelow="md" span={['0', '0', '0', '4/12']}>
+                <Hidden below="lg" print={true}>
+                  <Box
+                    height="full"
+                    width="full"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <img src="/covid/birds.png" alt="Fuglar" />
+                  </Box>
+                </Hidden>
+              </GridColumn>
+            </GridRow>
+          </Box>
+        </GridContainer>
+      </Box>
 
-      <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
+      <CovidColorSchemeContext.Provider value={{ colorScheme: 'green' }}>
         <Box marginBottom={10}>
-          <Box background="red100">
+          <Box className={covidStyles.bg}>
             <ContentBlock width="large">
               <AdgerdirArticles
                 tags={tagsItems}
@@ -131,7 +145,7 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
             </ContentBlock>
           </Box>
         </Box>
-      </ColorSchemeContext.Provider>
+      </CovidColorSchemeContext.Provider>
       <Box marginBottom={[6, 6, 15]}>
         <Stack space={[6, 6, 12]}>
           {frontpage.slices.map((slice, index) => {
@@ -141,11 +155,13 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
               case 'AdgerdirGroupSlice':
                 groupSliceCount++
 
+                const colorScheme = groupSliceCount % 2 ? 'blue' : 'green'
+
                 return (
-                  <ColorSchemeContext.Provider
+                  <CovidColorSchemeContext.Provider
                     key={index}
                     value={{
-                      colorScheme: groupSliceCount % 2 ? 'blue' : 'purple',
+                      colorScheme,
                     }}
                   >
                     <Box width="full" overflow="hidden">
@@ -158,7 +174,11 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
                                 as="h2"
                                 color="roseTinted400"
                               >
-                                {slice.subtitle}
+                                <span
+                                  className={covidStyles.textColor[colorScheme]}
+                                >
+                                  {slice.subtitle}
+                                </span>
                               </Text>
                               <Text variant="h2" as="h3">
                                 {slice.title}
@@ -176,7 +196,7 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
                         />
                       </ContentBlock>
                     </Box>
-                  </ColorSchemeContext.Provider>
+                  </CovidColorSchemeContext.Provider>
                 )
             }
 
@@ -248,4 +268,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(Home)
+export default withMainLayout(Home, {
+  showHeader: false,
+  hasDrawerMenu: false,
+})

@@ -38,6 +38,7 @@ export * from './lib/Link/ArrowLink/ArrowLink'
 export { Icon as IconDeprecated } from './lib/Icon/Icon'
 export * from './lib/Icon/IconTypes'
 export * from './lib/IconRC/Icon'
+export * as IconMap from './lib/IconRC/iconMap'
 export * from './lib/Typography/Typography'
 export * from './lib/Text/Text'
 
