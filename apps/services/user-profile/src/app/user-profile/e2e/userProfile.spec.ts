@@ -4,6 +4,7 @@ import { INestApplication } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
 import { EmailVerification } from '../email-verification.model'
 import { SmsVerification } from '../sms-verification.model'
+import { UserProfile } from '../userProfile.model'
 import { SmsService } from '@island.is/nova-sms'
 
 let app: INestApplication
@@ -23,7 +24,7 @@ beforeAll(async () => {
 })
 
 describe('User profile API', () => {
-  it(`POST /userProfile should register userProfile with no phonenumber`, async () => {
+  it(`POST /userProfile should register userProfile with no phonenumber `, async () => {
     // Act
     const spy = jest
       .spyOn(emailService, 'sendEmail')
@@ -39,6 +40,23 @@ describe('User profile API', () => {
     expect(spy).toHaveBeenCalled()
     expect(response.body.id).toBeTruthy()
   })
+
+  it(`POST /userProfile should register userProfile with no email`, async () => {
+    // Act
+    const spy = jest
+      .spyOn(emailService, 'sendEmail')
+      .mockImplementation(() => Promise.resolve('user'))
+    const response = await request(app.getHttpServer())
+      .post('/userProfile')
+      .send({
+        nationalId: '1234567890',
+        locale: 'en',
+      })
+      .expect(201)
+    expect(spy).toHaveBeenCalled()
+    expect(response.body.id).toBeTruthy()
+  })
+
 
   it(`POST /userProfile should return 400 bad request on invalid locale`, async () => {
     // Act
@@ -220,5 +238,84 @@ describe('User profile API', () => {
     expect(response.body).toEqual(
       expect.objectContaining({ smsCode: verification.smsCode }),
     )
+  })
+
+  it(`POST /confirmSms/ marks as verified`, async () => {
+    // Act
+
+    const verificationResponse = await request(app.getHttpServer())
+      .post('/smsVerification/')
+      .send({
+        nationalId: '123456789',
+        mobilePhoneNumber: '1111111',
+      })
+      .expect(201)
+
+    const response = await request(app.getHttpServer())
+      .post('/confirmSms/123456789')
+      .send({
+        code: verificationResponse.body.smsCode
+      })
+      .expect(201)
+
+    // Assert
+    expect(response.body).toEqual(
+      expect.objectContaining({ confirmed: true }),
+    )
+  })
+
+  it(`POST /userProfile should register userProfile and create verification`, async () => {
+    // Act
+    const spy = jest
+      .spyOn(emailService, 'sendEmail')
+      .mockImplementation(() => Promise.resolve('user'))
+    const response = await request(app.getHttpServer())
+      .post('/userProfile')
+      .send({
+        nationalId: '1234567890',
+        locale: 'en',
+        email: 'email@example.com',
+      })
+      .expect(201)
+    expect(spy).toHaveBeenCalled()
+    expect(response.body.id).toBeTruthy()
+
+    const verification = await EmailVerification.findOne({
+      where: { nationalId: response.body.nationalId },
+    })
+
+    expect(verification.email).toEqual('email@example.com')
+    expect(verification.nationalId).toEqual('1234567890')
+  })
+
+  it(`PUT /userProfile with email should create verification`, async () => {
+    // Act
+    const spy = jest
+      .spyOn(emailService, 'sendEmail')
+      .mockImplementation(() => Promise.resolve('user'))
+    await request(app.getHttpServer())
+      .post('/userProfile')
+      .send({
+        nationalId: '11111111111',
+        locale: 'en',
+        email: 'email@example.com',
+      })
+      .expect(201)
+    const response = await request(app.getHttpServer())
+      .put(`/userProfile/11111111111`)
+      .send({
+        locale: 'en',
+        email: 'email@example2.com',
+      })
+      .expect(200)
+    expect(spy).toHaveBeenCalled()
+    expect(response.body.id).toBeTruthy()
+
+    const verification = await EmailVerification.findOne({
+      where: { nationalId: response.body.nationalId },
+    })
+
+    expect(verification.email).toEqual('email@example2.com')
+    expect(verification.nationalId).toEqual('11111111111')
   })
 })
