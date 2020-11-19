@@ -73,9 +73,18 @@ export const EmailForm: FC<Props> = ({
         />
       </Box>
       {(renderBackButton || renderSubmitButton) && (
-        <Box display="flex" justifyContent="spaceBetween" marginTop={4}>
-          {renderBackButton && renderBackButton()}
-          {renderSubmitButton && renderSubmitButton()}
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          flexWrap="wrap"
+          marginTop={4}
+        >
+          {renderBackButton && (
+            <Box marginBottom={[1, 0]}>{renderBackButton()}</Box>
+          )}
+          {renderSubmitButton && (
+            <Box marginBottom={[1, 0]}>{renderSubmitButton()}</Box>
+          )}
         </Box>
       )}
     </form>
