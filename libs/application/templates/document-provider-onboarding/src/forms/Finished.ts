@@ -22,7 +22,7 @@ export const Finished: Form = buildForm({
         buildCustomField(
           {
             id: 'test',
-            name: 'baba',
+            name: 'Takk fyrir',
             component: 'ThankYouImage',
           },
           {},
