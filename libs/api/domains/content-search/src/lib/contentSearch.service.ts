@@ -1,24 +1,22 @@
 import { Injectable } from '@nestjs/common'
 import {
-  ContentLanguage,
   ElasticService,
-  SearcherInput,
   TagAggregationResponse,
-  WebSearchAutocompleteInput,
 } from '@island.is/content-search-toolkit'
 import { logger } from '@island.is/logging'
 import { SearchResult } from './models/searchResult.model'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
 import { TagCount } from './models/tagCount'
 import { SearchIndexes } from '@island.is/content-search-indexer/types'
+import { SearcherInput } from './dto/searcher.input'
+import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
 
 @Injectable()
 export class ContentSearchService {
   constructor(private elasticService: ElasticService) {}
 
-  private getIndex(lang: ContentLanguage) {
-    const languageCode = ContentLanguage[lang]
-    return SearchIndexes[languageCode] ?? SearchIndexes.is
+  private getIndex(lang: keyof typeof SearchIndexes) {
+    return SearchIndexes[lang] ?? SearchIndexes.is
   }
 
   mapFindAggregations(aggregations: TagAggregationResponse): TagCount[] {
@@ -53,12 +51,12 @@ export class ContentSearchService {
   ): Promise<WebSearchAutocomplete> {
     logger.info('search index', {
       lang: input.language,
-      index: this.getIndex(ContentLanguage[input.language]),
+      index: this.getIndex(input.language),
     })
     const {
       suggest: { searchSuggester },
     } = await this.elasticService.fetchAutocompleteTerm(
-      this.getIndex(ContentLanguage[input.language]),
+      this.getIndex(input.language),
       {
         ...input,
         singleTerm: input.singleTerm.trim(),

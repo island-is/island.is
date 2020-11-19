@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'api-content-search',
+  name: 'content-search-toolkit',
   preset: '../../jest.config.js',
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',

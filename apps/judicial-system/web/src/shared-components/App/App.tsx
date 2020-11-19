@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { ApolloProvider } from '@apollo/client'
 import { Header } from '../Header'
@@ -10,39 +10,19 @@ import {
 } from '../../routes/Prosecutor/CreateDetentionRequest'
 import { DetentionRequests } from '../../routes/DetentionRequests'
 import { Login } from '../../routes/Login'
-import { userContext } from '../../utils/userContext'
 import JudgeOverview from '../../routes/Judge/Overview/Overview'
 import CourtRecord from '../../routes/Judge/CourtRecord/CourtRecord'
 import { RulingStepOne, RulingStepTwo } from '../../routes/Judge/Ruling'
 import Confirmation from '../../routes/Judge/Confirmation/Confirmation'
 import { client } from '../../graphql'
-import { User } from '@island.is/judicial-system/types'
-import Cookie from 'js-cookie'
-import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import HearingArrangements from '../../routes/Judge/HearingArrangements/HearingArrangements'
+import { UserProvider } from '../UserProvider/UserProvider'
 
 const App: React.FC = () => {
-  const [user, setUser] = useState<User>(null)
-  const isAuthenticated = () => Boolean(Cookie.get(CSRF_COOKIE_NAME))
-
-  if (
-    !isAuthenticated() &&
-    window.location.pathname !== '/' &&
-    window.location.pathname.substring(0, 1) !== '/?'
-  ) {
-    window.location.assign('/')
-  }
-
   return (
     <ApolloProvider client={client}>
-      <userContext.Provider
-        value={{
-          isAuthenticated: isAuthenticated,
-          user,
-          setUser,
-        }}
-      >
-        <BrowserRouter>
+      <BrowserRouter>
+        <UserProvider>
           <Route
             render={(props) => {
               return <Header pathname={props.location.pathname} />
@@ -92,8 +72,8 @@ const App: React.FC = () => {
               </Route>
             </Switch>
           </main>
-        </BrowserRouter>
-      </userContext.Provider>
+        </UserProvider>
+      </BrowserRouter>
     </ApolloProvider>
   )
 }
