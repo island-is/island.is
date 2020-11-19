@@ -11,7 +11,12 @@ export const TableOfContentsExample = () => (
   <Box paddingTop={3}>
     <TableOfContents
       title={'Table of contents'}
-      headings={['First heading', 'Second heading', 'Third heading', 'Fourth heading']}
+      headings={[
+        'First heading',
+        'Second heading',
+        'Third heading',
+        'Fourth heading',
+      ]}
       onClick={(text) => console.log(text)}
     />
   </Box>
