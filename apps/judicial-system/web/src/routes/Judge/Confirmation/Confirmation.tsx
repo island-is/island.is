@@ -20,7 +20,6 @@ import {
   SignatureConfirmationResponse,
   TransitionCase,
 } from '@island.is/judicial-system/types'
-import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import { useHistory, useParams } from 'react-router-dom'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
@@ -31,6 +30,7 @@ import {
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import { gql, useMutation, useQuery } from '@apollo/client'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 export const RequestSignatureMutation = gql`
   mutation RequestSignatureMutation($input: RequestSignatureInput!) {
@@ -165,7 +165,7 @@ export const Confirmation: React.FC = () => {
   >()
 
   const { id } = useParams<{ id: string }>()
-  const { user } = useContext(userContext)
+  const { user } = useContext(UserContext)
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',

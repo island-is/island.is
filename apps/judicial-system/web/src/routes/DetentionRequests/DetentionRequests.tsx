@@ -22,10 +22,10 @@ import * as styles from './DetentionRequests.treat'
 import { UserRole } from '@island.is/judicial-system/types'
 import * as Constants from '../../utils/constants'
 import { Link } from 'react-router-dom'
-import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { insertAt } from '../../utils/formatters'
 import { gql, useQuery } from '@apollo/client'
+import { UserContext } from '../../shared-components/UserProvider/UserProvider'
 
 export const CasesQuery = gql`
   query CasesQuery {
@@ -43,7 +43,7 @@ export const CasesQuery = gql`
 
 export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<Case[]>()
-  const { user } = useContext(userContext)
+  const { user } = useContext(UserContext)
 
   const isJudge = user?.role === UserRole.JUDGE
 
