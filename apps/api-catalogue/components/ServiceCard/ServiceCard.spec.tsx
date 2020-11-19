@@ -7,6 +7,7 @@ import {
   TypeCategory,
   DataCategory,
 } from '@island.is/api-catalogue/consts'
+import { ApiService } from '@island.is/api/schema'
 
 import { ContentfulString } from '../../services/contentful.types'
 

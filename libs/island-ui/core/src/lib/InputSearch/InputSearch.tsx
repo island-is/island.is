@@ -16,14 +16,14 @@ export interface InputSearchProps {
   ) => void
 }
 
-export const InputSearch = (userProps: InputSearchProps, ...props: unknown[]) => {
+export const InputSearch = (userProps: InputSearchProps) => {
   const [hasFocus, setHasFocus] = useState(false)
   const onFocus = useCallback(() => setHasFocus(true), [setHasFocus])
   const onBlur = useCallback(() => setHasFocus(false), [setHasFocus])
 
   return (
     <div
-      className={cn(styles.wrapper, ...props, hasFocus ? styles.focused : {})}
+      className={cn(styles.wrapper, hasFocus ? styles.focused : {})}
     >
       <input
         className={cn(
