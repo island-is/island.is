@@ -6,21 +6,23 @@ While we are still heavily working on improving this section, we appreciate, for
 
 ## Getting started
 
-Ísland.is repository contains many projects and libraries. As you can imagine, it's dependant of many external services and APIs. In result, we need many credentials if we want to run all the projects.
+Ísland.is repository contains many projects and libraries. As you can imagine, it depends of many external services and APIs. In result, we need many credentials if we want to run all the projects.
 
 While we are still working on solutions to help external developers to run all the projects, we already implemented some solutions for you.
 
 We have a [Mock library](../../libs/shared/mocking/README.md) that can be setup individually on project to replace the usage of external services, like contentful, and run dummy data instead.
 
-At the moment, only the [`web`](https://github.com/island-is/island.is/tree/master/apps/web) project is using the Mock library.
+### API and Web
 
-To run a project with the Mock library:
+At the moment, only the [`api`](https://github.com/island-is/island.is/tree/master/apps/api) project is using the Mock library, but as a result, it allows you to run the [`web`](https://github.com/island-is/island.is/tree/master/apps/web) project.
 
-- Add the following to your `.env` file
+To run a project with the Mock library, add the following to your `.env` file:
 
-  ```bash
-  API_MOCKS=true
-  ```
+```bash
+API_MOCKS=true
+```
+
+To find out how to run the website, check out the detail on [its documentation](../../apps/web/README.md#getting-started).
 
 ## Workflow
 

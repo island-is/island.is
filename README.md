@@ -60,6 +60,8 @@ We have many lint rules to help having a unify code all over the project. To exe
 yarn lint <project>
 ```
 
+> Running lint locally is slow and fill up heap memory. This is related to Typescript compilation and NX lint builder being slow. As a result you might get a `JavaScript heap out of memory`. NX is working on fixing this for an upcoming update. In the meantime you can do `NODE_OPTIONS=“--max-old-space-size=4096” yarn lint <project>` to raise the memory limit.
+
 ### Running unit tests
 
 To execute the unit tests via [Jest](https://jestjs.io):
