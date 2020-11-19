@@ -14,7 +14,6 @@ export interface FilterSearchGroupProps  {
   label:string,
   labelVariant?:TextVariants,
   iconVariant?:IconVariantTypes,
-  className?: string,
   children?: JSX.Element | JSX.Element[];
 }
 
@@ -23,7 +22,6 @@ export const FilterSearchGroup: React.FC<FilterSearchGroupProps> = ({
   label,
   labelVariant="h3",
   iconVariant="default",
-  className,
   children,
 }) => {
 
@@ -38,16 +36,16 @@ export const FilterSearchGroup: React.FC<FilterSearchGroupProps> = ({
   }, [width])
 
   const showChildren = () => {
-    {
-      return (
+    
+    return (
       React.Children.map(children, (child) => {
         return (
             <div className={cn(styles.filterGroupItem)}>
               {child}
             </div>
         )
-      }))
-    }
+      })
+    )
   }
   
   return (

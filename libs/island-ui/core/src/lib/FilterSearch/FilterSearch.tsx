@@ -101,9 +101,7 @@ export const FilterSearch: React.FC<FilterSearchProps> = ({
               colorScheme="default"
               icon="ellipse"
               iconType="outline"
-              onBlur={function noRefCheck(){}}
               onClick={clearValues.onClick}
-              onFocus={function noRefCheck(){}}
               size="default"
               type="button"
               variant="text"
@@ -177,9 +175,7 @@ export const FilterSearch: React.FC<FilterSearchProps> = ({
               colorScheme="default"
               icon="ellipse"
               iconType="outline"
-              onBlur={function noRefCheck(){}}
               onClick={clearValues.onClick}
-              onFocus={function noRefCheck(){}}
               size="default"
               type="button"
               variant="text"
@@ -210,8 +206,6 @@ export const FilterSearch: React.FC<FilterSearchProps> = ({
             variant="primary"
             size="small"
             type="button"
-            onBlur={function noRefCheck() { }}
-            onFocus={function noRefCheck() { }}
             onClick={() => { setIsVisible(false) }}
           >
             {labelResultButton}

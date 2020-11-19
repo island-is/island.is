@@ -1,6 +1,5 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
-import { borderBottomWidth } from '../Box/useBoxStyles.treat'
 
 const filterOrg = {
   background: 'white',

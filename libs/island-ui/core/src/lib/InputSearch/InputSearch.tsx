@@ -16,7 +16,7 @@ export interface InputSearchProps {
   ) => void
 }
 
-export const InputSearch = (userProps: InputSearchProps, ...props: any[]) => {
+export const InputSearch = (userProps: InputSearchProps, ...props: unknown[]) => {
   const [hasFocus, setHasFocus] = useState(false)
   const onFocus = useCallback(() => setHasFocus(true), [setHasFocus])
   const onBlur = useCallback(() => setHasFocus(false), [setHasFocus])

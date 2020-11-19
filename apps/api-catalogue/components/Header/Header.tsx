@@ -30,8 +30,6 @@ function Header() {
           >
             <Button
               variant="utility"
-              onBlur={function noRefCheck(){}}
-              onFocus={function noRefCheck(){}}
               onClick={() => setSideMenuOpen(true)}
               icon="menu"
               size="small"

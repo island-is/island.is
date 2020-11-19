@@ -8,7 +8,7 @@ export interface OpenApiProps {
 }
 
 interface Window {
-  Redoc: any
+  Redoc: unknown
 }
 
 declare const window: Window
