@@ -56,6 +56,7 @@ export type ApplicationStateMachine<
   TEvents extends EventObject
 > = StateMachine<TContext, TStateSchema, TEvents>
 
+// manually overwrites the initial state for the template as well so the interpreter starts in the current application state
 export function createApplicationMachine<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvent>,
@@ -69,5 +70,11 @@ export function createApplicationMachine<
   const context = initialContext
     ? { ...initialContext, application }
     : { application }
-  return Machine(config, options ?? {}, context as TContext)
+
+  const applicationState = application.state
+  return Machine(
+    { ...config, initial: applicationState },
+    options ?? {},
+    context as TContext,
+  )
 }
