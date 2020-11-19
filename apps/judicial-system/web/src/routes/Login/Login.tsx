@@ -6,12 +6,12 @@ import {
   AlertMessage,
 } from '@island.is/island-ui/core'
 import * as styles from './Login.treat'
-import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import { api } from '../../services'
+import { UserContext } from '../../shared-components/UserProvider/UserProvider'
 
 export const Login = () => {
   const urlParams = new URLSearchParams(window.location.search)
-  const { user } = useContext(userContext)
+  const { user } = useContext(UserContext)
 
   useEffect(() => {
     document.title = 'Réttarvörslugátt'
@@ -19,11 +19,12 @@ export const Login = () => {
   }, [])
 
   useEffect(() => {
-    const logoutCurrentUser = async () => {
-      api.logOut()
-    }
+    /**
+     * When users go to the login screen we want to make sure
+     * that any logged in user is logged out.
+     */
     if (user) {
-      logoutCurrentUser()
+      api.logOut()
     }
   }, [user])
 
