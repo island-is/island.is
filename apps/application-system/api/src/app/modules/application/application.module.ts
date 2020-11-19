@@ -9,7 +9,7 @@ import { ApplicationController } from './application.controller'
 import { ApplicationService } from './application.service'
 import { UploadProcessor } from './upload.processor'
 import { environment } from '../../../environments'
-import { AuthModule } from '@island.is/auth-api-lib'
+// import { AuthModule } from '@island.is/auth-api-lib'
 
 let BullModule: DynamicModule
 
@@ -33,11 +33,11 @@ if (process.env.INIT_SCHEMA === 'true') {
 
 @Module({
   imports: [
-    AuthModule.register({
-      audience: environment.identityServer.audience,
-      issuer: environment.identityServer.issuer,
-      jwksUri: `${environment.identityServer.jwksUri}`,
-    }),
+    // AuthModule.register({
+    //   audience: environment.identityServer.audience,
+    //   issuer: environment.identityServer.issuer,
+    //   jwksUri: `${environment.identityServer.jwksUri}`,
+    // }),
     SequelizeModule.forFeature([Application]),
     FileStorageModule,
     BullModule,
