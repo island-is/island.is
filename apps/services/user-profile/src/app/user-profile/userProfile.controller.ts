@@ -33,7 +33,7 @@ export class UserProfileController {
   constructor(
     private userProfileService: UserProfileService,
     private verificationService: VerificationService,
-  ) { }
+  ) {}
 
   @Get('userProfile/:nationalId')
   @ApiParam({
@@ -121,7 +121,10 @@ export class UserProfileController {
       }
     }
 
-    if (userProfileToUpdate.email && userProfileToUpdate.email !== profile.email) {
+    if (
+      userProfileToUpdate.email &&
+      userProfileToUpdate.email !== profile.email
+    ) {
       await this.verificationService.createEmailVerification(
         nationalId,
         userProfileToUpdate.email,

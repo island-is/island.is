@@ -57,7 +57,6 @@ describe('User profile API', () => {
     expect(response.body.id).toBeTruthy()
   })
 
-
   it(`POST /userProfile should return 400 bad request on invalid locale`, async () => {
     // Act
     const response = await request(app.getHttpServer())
@@ -254,14 +253,12 @@ describe('User profile API', () => {
     const response = await request(app.getHttpServer())
       .post('/confirmSms/123456789')
       .send({
-        code: verificationResponse.body.smsCode
+        code: verificationResponse.body.smsCode,
       })
       .expect(201)
 
     // Assert
-    expect(response.body).toEqual(
-      expect.objectContaining({ confirmed: true }),
-    )
+    expect(response.body).toEqual(expect.objectContaining({ confirmed: true }))
   })
 
   it(`POST /userProfile should register userProfile and create verification`, async () => {
