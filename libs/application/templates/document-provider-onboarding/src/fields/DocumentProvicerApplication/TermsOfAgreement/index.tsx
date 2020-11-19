@@ -13,7 +13,7 @@ import * as styles from './TermsOfAgreement.treat'
 
 import { FieldDescription } from '@island.is/shared/form-fields'
 
-import { m } from '../../forms/messages'
+import { m } from '../../../forms/messages'
 
 //TODO: Finish error messages.
 const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {

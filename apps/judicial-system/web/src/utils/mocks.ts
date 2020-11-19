@@ -8,6 +8,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 import { CaseQuery, UpdateCaseMutation } from '../graphql'
+import { UserQuery } from '../shared-components/UserProvider/UserProvider'
 
 export const mockProsecutor = {
   role: UserRole.PROSECUTOR,
@@ -20,18 +21,6 @@ export const mockJudge = {
   name: 'Wonder Woman',
   title: 'héraðsdómari',
 } as User
-
-export const mockJudgeUserContext = {
-  isAuthenticated: () => true,
-  user: mockJudge,
-  setUser: (_: User) => undefined,
-}
-
-export const mockProsecutorUserContext = {
-  isAuthenticated: () => true,
-  user: mockProsecutor,
-  setUser: (_: User) => undefined,
-}
 
 const testCase1 = {
   id: 'test_id',
@@ -170,6 +159,32 @@ const testCase3 = {
   requestedDefenderName: 'Saul Goodman',
   requestedDefenderEmail: 'saul@goodman.com',
 }
+
+export const mockJudgeQuery = [
+  {
+    request: {
+      query: UserQuery,
+    },
+    result: {
+      data: {
+        user: mockJudge,
+      },
+    },
+  },
+]
+
+export const mockProsecutorQuery = [
+  {
+    request: {
+      query: UserQuery,
+    },
+    result: {
+      data: {
+        user: mockProsecutor,
+      },
+    },
+  },
+]
 
 export const mockCaseQueries = [
   {

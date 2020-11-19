@@ -4,38 +4,31 @@ import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
+import { autocompleteTermQuery } from '../queries/autocomplete'
+import { searchQuery } from '../queries/search'
+import { documentByMetaDataQuery } from '../queries/documentByMetaData'
 import {
-  autocompleteTermQuery,
-  AutocompleteTermResponse,
-} from '../queries/autocomplete'
-import { SearchInput, searchQuery } from '../queries/search'
-import {
+  AutocompleteTermInput,
+  SearchInput,
+  TagAggregationResponse,
   DocumentByMetaDataInput,
-  documentByMetaDataQuery,
-} from '../queries/documentByMetaData'
-import { TagAggregationResponse } from '../types'
+  DateAggregationInput,
+  DateAggregationResponse,
+  AutocompleteTermResponse,
+  TagAggregationInput,
+  SyncRequest,
+} from '../types'
 import { GetByIdResponse, SearchResponse } from '@island.is/shared/types'
 import {
   MappedData,
   SearchIndexes,
 } from '@island.is/content-search-indexer/types'
 import { environment } from '../environments/environment'
-import { WebSearchAutocompleteInput } from '../dto'
-import {
-  DateAggregationInput,
-  dateAggregationQuery,
-  DateAggregationResponse,
-} from '../queries/dateAggregation'
-import {
-  TagAggregationInput,
-  tagAggregationQuery,
-} from '../queries/tagAggregation'
+import { dateAggregationQuery } from '../queries/dateAggregation'
+import { tagAggregationQuery } from '../queries/tagAggregation'
 
 const { elastic } = environment
-interface SyncRequest {
-  add: MappedData[]
-  remove: string[]
-}
+
 @Injectable()
 export class ElasticService {
   private client: Client
@@ -199,10 +192,10 @@ export class ElasticService {
 
   async fetchAutocompleteTerm(
     index: SearchIndexes,
-    input: Omit<WebSearchAutocompleteInput, 'language'>,
+    input: AutocompleteTermInput,
   ): Promise<AutocompleteTermResponse> {
-    const { singleTerm: prefix, size } = input
-    const requestBody = autocompleteTermQuery({ prefix, size })
+    const { singleTerm, size } = input
+    const requestBody = autocompleteTermQuery({ singleTerm, size })
 
     const data = await this.findByQuery<
       AutocompleteTermResponse,

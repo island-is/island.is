@@ -5,8 +5,8 @@ import { RequestSignatureResponse as TRequestSignatureResponse } from '@island.i
 @ObjectType()
 export class RequestSignatureResponse implements TRequestSignatureResponse {
   @Field()
-  controlCode: string
+  controlCode!: string
 
   @Field()
-  documentToken: string
+  documentToken!: string
 }
