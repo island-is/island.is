@@ -6,11 +6,13 @@ You can serve this service locally by running:
 
 `yarn nx serve judicial-system-api --ssl`
 
-To skip authentication at innskraning.island.is run:
+You can skip `--ssl` but then authentication through innskraning.island.is will not work.
 
-`AUTH_USER=<national id> yarn nx serve judicial-system-api`
+To skip authentication at innskraning.island.is navigate to
 
-where `<national id>` is the national id of a known user.
+`/api/auth/login?nationalId=<national id>`
+
+in the web project where `<national id>` is the national id of a known user.
 
 ## Graphql playground
 

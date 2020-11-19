@@ -112,7 +112,11 @@ export class AuthController {
 
   @Get('login')
   @ApiQuery({ name: 'returnUrl' })
-  login(@Res() res: Response, @Query('returnUrl') returnUrl: string) {
+  login(
+    @Res() res: Response,
+    @Query('returnUrl') returnUrl: string,
+    @Query('nationalId') nationalId: string,
+  ) {
     this.logger.debug(`Received login request with return url ${returnUrl}`)
 
     const { name, options } = REDIRECT_COOKIE
@@ -120,13 +124,11 @@ export class AuthController {
     res.clearCookie(name, options)
 
     // Local development
-    if (!environment.production && process.env.AUTH_USER) {
-      this.logger.debug(
-        `Logging in as ${process.env.AUTH_USER} in local development`,
-      )
+    if (environment.auth.allowAuthBypass && nationalId) {
+      this.logger.debug(`Logging in as ${nationalId} in development mode`)
       return this.redirectAuthenticatedUser(
         {
-          nationalId: process.env.AUTH_USER,
+          nationalId,
           name: '',
           mobile: '',
         },
