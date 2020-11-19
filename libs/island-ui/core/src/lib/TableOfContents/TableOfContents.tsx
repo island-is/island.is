@@ -12,7 +12,7 @@ interface Props {
 
 export const TableOfContents: FC<Props> = ({ title, headings, onClick }) => (
   <Box paddingX={4} paddingY={2} style={{ borderLeft: `1px solid ${blue200}` }}>
-    <Stack space={2}>
+    <Stack space={1}>
       <Text variant="h5" as="h5">
         {title}
       </Text>
