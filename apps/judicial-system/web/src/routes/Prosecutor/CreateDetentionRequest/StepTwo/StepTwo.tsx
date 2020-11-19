@@ -31,6 +31,7 @@ import {
   parseArray,
   parseString,
   parseTime,
+  replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '../../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
@@ -375,6 +376,7 @@ export const StepTwo: React.FC = () => {
                   setLawsBrokenErrorMessage(validateField.errorMessage)
                 }
               }}
+              onChange={replaceTabsOnChange}
               onFocus={() => setLawsBrokenErrorMessage('')}
               required
               textarea
@@ -588,6 +590,7 @@ export const StepTwo: React.FC = () => {
                     setCaseFactsErrorMessage(validateField.errorMessage)
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 onFocus={() => setCaseFactsErrorMessage('')}
                 required
                 rows={16}
@@ -619,6 +622,7 @@ export const StepTwo: React.FC = () => {
                     setLegalArgumentsErrorMessage(validateField.errorMessage)
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 onFocus={() => setLegalArgumentsErrorMessage('')}
                 required
                 textarea
@@ -653,6 +657,7 @@ export const StepTwo: React.FC = () => {
                       parseString('comments', evt.target.value),
                     )
                   }}
+                  onChange={replaceTabsOnChange}
                   textarea
                   rows={7}
                 />

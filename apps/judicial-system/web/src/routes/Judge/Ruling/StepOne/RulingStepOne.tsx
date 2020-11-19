@@ -22,6 +22,7 @@ import {
   parseArray,
   parseString,
   parseTime,
+  replaceTabsOnChange,
 } from '../../../../utils/formatters'
 import { isNextDisabled } from '../../../../utils/stepHelper'
 import {
@@ -208,6 +209,7 @@ export const RulingStepOne: React.FC = () => {
                     setRulingErrorMessage(validateEmpty.errorMessage)
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 textarea
                 required
               />
