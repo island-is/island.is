@@ -226,7 +226,7 @@ describe('Validation', () => {
       const validEmail = 'garfield.lasagne-lover@garfield.io'
 
       // Act
-      const validation = validate('', 'email-format')
+      const validation = validate(validEmail, 'email-format')
 
       // Assert
       expect(validation.isValid).toEqual(true)
@@ -408,6 +408,7 @@ describe('Step helper', () => {
       ).toBeTruthy()
     })
   })
+
   describe('isNextDisabled()', () => {
     test('should return true if the only validation does not pass', () => {
       // Arrange

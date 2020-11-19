@@ -74,6 +74,7 @@ export const RulingStepTwo: React.FC = () => {
       activeSection={Sections.JUDGE}
       activeSubSection={JudgeSubsections.RULING_STEP_TWO}
       isLoading={isLoading}
+      notFound={data?.case === undefined}
     >
       {workingCase ? (
         <>
@@ -97,8 +98,7 @@ export const RulingStepTwo: React.FC = () => {
                 <Text>{constructConclusion(workingCase)}</Text>
               </Box>
               <Text variant="h4" fontWeight="light">
-                Úrskurðarorðið er lesið í heyranda hljóði að viðstöddum kærða,
-                verjanda hans, túlki og aðstoðarsaksóknara.
+                Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.
               </Text>
             </Box>
           </Box>
@@ -129,7 +129,7 @@ export const RulingStepTwo: React.FC = () => {
                     <RadioButton
                       name="accused-appeal-decition"
                       id="accused-appeal"
-                      label="Kærði kærir málið"
+                      label="Kærði kærir úrskurðinn"
                       value={CaseAppealDecision.APPEAL}
                       checked={
                         workingCase.accusedAppealDecision ===
@@ -251,7 +251,7 @@ export const RulingStepTwo: React.FC = () => {
                   <RadioButton
                     name="prosecutor-appeal-decition"
                     id="prosecutor-appeal"
-                    label="Sækjandi kærir málið"
+                    label="Sækjandi kærir úrskurðinn"
                     value={CaseAppealDecision.APPEAL}
                     checked={
                       workingCase.prosecutorAppealDecision ===
@@ -364,8 +364,8 @@ export const RulingStepTwo: React.FC = () => {
               />
             </Box>
             <Text variant="h4" fontWeight="light">
-              Dómari bendir kærða á að honum sé heimilt að bera atriði er lúta
-              að framkvæmd gæsluvarðhaldsins undir dómara.
+              Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
+              atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
             </Text>
           </Box>
           <FormFooter

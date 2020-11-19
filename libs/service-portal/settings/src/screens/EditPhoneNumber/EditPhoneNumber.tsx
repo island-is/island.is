@@ -116,15 +116,29 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
           {status === 'success' && (
             <AlertMessage
               type="success"
-              title="Nýtt símanúmer hefur verið vistað"
-              message="Þú hefur vistað nýtt símanúmer hjá Stafrænt Ísland"
+              title={formatMessage({
+                id: 'sp.settings:phone-confirmed-success-title',
+                defaultMessage: 'Nýtt símanúmer hefur verið vistað',
+              })}
+              message={formatMessage({
+                id: 'sp.settings:phone-confirmed-success-subtext',
+                defaultMessage:
+                  'Þú hefur vistað nýtt símanúmer hjá Stafrænt Ísland',
+              })}
             />
           )}
           {status === 'error' && (
             <AlertMessage
               type="error"
-              title="Tókst ekki að vista símanúmer"
-              message="Eitthvað hefur farið úrskeiðis, vinsamlegast reyndu aftur síðar"
+              title={formatMessage({
+                id: 'sp.settings:phone-confirmed-failed-title',
+                defaultMessage: 'Tókst ekki að vista símanúmer',
+              })}
+              message={formatMessage({
+                id: 'sp.settings:phone-confirmed-failed-subtext',
+                defaultMessage:
+                  'Eitthvað hefur farið úrskeiðis, vinsamlegast reynið aftur síðar',
+              })}
             />
           )}
         </Box>

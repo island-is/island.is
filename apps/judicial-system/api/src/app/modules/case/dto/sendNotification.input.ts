@@ -11,9 +11,9 @@ import {
 export class SendNotificationInput implements SendNotification {
   @Allow()
   @Field()
-  readonly caseId: string
+  readonly caseId!: string
 
   @Allow()
   @Field(() => String)
-  readonly type: NotificationType
+  readonly type!: NotificationType
 }
