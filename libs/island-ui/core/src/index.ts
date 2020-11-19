@@ -25,6 +25,7 @@ export * from './lib/InputSearch/InputSearch'
 export * from './lib/DialogPrompt/DialogPrompt'
 export * from './lib/FilterSearchGroup/FilterSearchGroup'
 export * from './lib/FilterSearch/FilterSearch'
+export * from './lib/ModalBase/ModalBase'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'
