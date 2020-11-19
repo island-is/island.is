@@ -90,6 +90,7 @@ export const JudgeOverview: React.FC = () => {
       activeSection={Sections.JUDGE}
       activeSubSection={JudgeSubsections.JUDGE_OVERVIEW}
       isLoading={loading}
+      notFound={data?.case === undefined}
     >
       {workingCase ? (
         <>

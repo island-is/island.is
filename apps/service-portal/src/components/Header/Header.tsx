@@ -50,7 +50,7 @@ export const Header: FC<{}> = () => {
                     <Logo width={40} iconOnly />
                   </Hidden>
                   <Hidden below="lg">
-                    <Logo />
+                    <Logo width={160} />
                   </Hidden>
                   <BetaTag />
                 </FocusableBox>

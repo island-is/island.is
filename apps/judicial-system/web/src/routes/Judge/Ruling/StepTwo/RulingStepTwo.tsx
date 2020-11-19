@@ -74,6 +74,7 @@ export const RulingStepTwo: React.FC = () => {
       activeSection={Sections.JUDGE}
       activeSubSection={JudgeSubsections.RULING_STEP_TWO}
       isLoading={isLoading}
+      notFound={data?.case === undefined}
     >
       {workingCase ? (
         <>

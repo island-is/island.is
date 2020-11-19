@@ -221,6 +221,7 @@ export const StepTwo: React.FC = () => {
       activeSection={Sections.PROSECUTOR}
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_TWO}
       isLoading={isLoading}
+      notFound={data?.case === undefined}
     >
       {workingCase ? (
         <>
