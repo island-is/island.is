@@ -11,15 +11,13 @@ import { useAssigneeApplications } from '@island.is/service-portal/graphql'
 import { Application } from '@island.is/application/core'
 
 const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
-  const { data: applications, loading, error } = useApplicantApplications(
-    userInfo.profile.nationalId,
-  )
+  const { data: applications, loading, error } = useApplicantApplications()
 
   const {
     data: assigneeApplications,
     loading: assigneeApplicationsLoading,
     error: assigneeApplicationsError,
-  } = useAssigneeApplications(userInfo.profile.nationalId)
+  } = useAssigneeApplications()
 
   return (
     <>
