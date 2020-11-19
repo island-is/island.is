@@ -2,8 +2,8 @@ import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { ActionType, useAuthState } from '../context/AuthProvider'
 import { userManager } from '../utils/userManager'
-import { setClientAuthToken } from 'libs/application/graphql/src/lib/client'
 import AuthenticationLoading from '../components/AuthenticationLoading/AuthenticationLoading'
+import { setClientAuthToken } from '@island.is/application/graphql'
 
 export const Signin = () => {
   const history = useHistory()

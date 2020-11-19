@@ -1,4 +1,4 @@
-import { setClientAuthToken } from 'libs/application/graphql/src/lib/client'
+import { setClientAuthToken } from '@island.is/application/graphql'
 import { useLocation } from 'react-router-dom'
 import { ActionType, useAuthState } from '../context/AuthProvider'
 import { userManager } from '../utils/userManager'
