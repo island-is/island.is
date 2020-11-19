@@ -21,6 +21,9 @@ export const logoContainer = style({
 export const detentionRequestsTable = style({
   gridRow: '2',
   gridColumn: '1 / -1',
+
+  // Needed for Safari.
+  width: '100%',
 })
 
 export const detentionRequestsError = style({
