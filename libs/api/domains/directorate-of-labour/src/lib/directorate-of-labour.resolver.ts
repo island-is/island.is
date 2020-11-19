@@ -27,7 +27,7 @@ export class DirectorateOfLabourResolver {
   ): Promise<ParentalLeaveEntitlement[] | null> {
     return this.directorateOfLabourService.getParentalLeavesEntitlements(
       input.dateOfBirth,
-      'user.nationalId',
+      user.nationalId,
     )
   }
 
@@ -39,7 +39,7 @@ export class DirectorateOfLabourResolver {
     return this.directorateOfLabourService.getParentalLeavesEstimatedPaymentPlan(
       input.dateOfBirth,
       input.period,
-      'user.nationalId',
+      user.nationalId,
     )
   }
   @Query(() => ParentalLeavePaymentPlan, { nullable: true })
@@ -50,17 +50,17 @@ export class DirectorateOfLabourResolver {
     return this.directorateOfLabourService.getParentalLeavesApplicationPaymentPlan(
       input.dateOfBirth,
       input.applicationId,
-      'user.nationalId',
+      user.nationalId,
     )
   }
 
   @Query(() => [Union], { nullable: true })
-  async getUnions(@CurrentUser() user: User): Promise<Union[] | null> {
+  async getUnions(): Promise<Union[] | null> {
     return this.directorateOfLabourService.getUnions()
   }
 
   @Query(() => [PensionFund], { nullable: true })
-  async getPensionFunds(@CurrentUser() user: User): Promise<Union[] | null> {
+  async getPensionFunds(): Promise<Union[] | null> {
     return this.directorateOfLabourService.getPensionFunds()
   }
 }

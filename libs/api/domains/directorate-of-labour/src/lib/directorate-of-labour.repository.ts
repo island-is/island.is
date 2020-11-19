@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { ParentalLeavePeriod } from './parentalLeavePeriod.model'
+import { Union } from './union.model'
+import { PensionFund } from './pensionFund.model'
+import { ParentalLeaveEntitlement } from './parentalLeaveEntitlement.model'
+import { ParentalLeavePaymentPlan } from './parentalLeavePaymentPlan.model'
 
 // const accessToken = process.env.DIRECTORATE_OF_LABOUR_ACCESS_TOKEN
 
@@ -28,7 +32,7 @@ export class DirectorateOfLabourRepository {
   //     return 'new client'
   //   }
 
-  async getUnions() {
+  async getUnions(): Promise<Union[]> {
     return [
       {
         id: 'id',
@@ -37,7 +41,7 @@ export class DirectorateOfLabourRepository {
     ]
   }
 
-  async getPensionFunds() {
+  async getPensionFunds(): Promise<PensionFund[]> {
     return [
       {
         id: 'id',
@@ -46,7 +50,10 @@ export class DirectorateOfLabourRepository {
     ]
   }
 
-  async getParentalLeavesEntitlements(dateOfBirth: string, nationalId: string) {
+  async getParentalLeavesEntitlements(
+    dateOfBirth: string,
+    nationalId: string,
+  ): Promise<ParentalLeaveEntitlement[]> {
     return [
       {
         independentMonths: 5,
@@ -59,7 +66,7 @@ export class DirectorateOfLabourRepository {
     dateOfBirth: string,
     period: ParentalLeavePeriod,
     nationalId: string,
-  ) {
+  ): Promise<ParentalLeavePaymentPlan> {
     return {
       estimatedAmount: 1.0,
       pensionAmount: 0.0,
@@ -81,7 +88,7 @@ export class DirectorateOfLabourRepository {
     dateOfBirth: string,
     applicationId: string,
     nationalId: string,
-  ) {
+  ): Promise<ParentalLeavePaymentPlan> {
     return {
       estimatedAmount: 1.0,
       pensionAmount: 0.0,
