@@ -353,7 +353,7 @@ export const StepOne: React.FC = () => {
     arrestTimeRef.current?.value,
     requestedCourtTimeRef.current?.value,
   ])
-  console.log(workingCase?.courtDate)
+
   return (
     <PageLayout
       activeSection={Sections.PROSECUTOR}
