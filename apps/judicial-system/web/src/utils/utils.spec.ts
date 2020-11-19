@@ -514,7 +514,7 @@ describe('Step helper', () => {
       // Arrange
 
       // Act
-      const res = replaceTabs(undefined)
+      const res = replaceTabs((undefined as unknown) as string)
 
       // Assert
       expect(res).toBeUndefined()
