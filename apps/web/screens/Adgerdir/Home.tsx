@@ -149,13 +149,13 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
       <Box marginBottom={[6, 6, 15]}>
         <Stack space={[6, 6, 12]}>
           {frontpage.slices.map((slice, index) => {
+            const colorScheme = groupSliceCount % 2 ? 'blue' : 'green'
+
             switch (slice.__typename) {
               case 'AdgerdirFeaturedNewsSlice':
                 return <FeaturedNews key={index} items={slice.featured} />
               case 'AdgerdirGroupSlice':
                 groupSliceCount++
-
-                const colorScheme = groupSliceCount % 2 ? 'blue' : 'green'
 
                 return (
                   <CovidColorSchemeContext.Provider
