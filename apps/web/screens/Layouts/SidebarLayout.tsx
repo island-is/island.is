@@ -31,18 +31,18 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
       height="full"
       paddingBottom={6}
       style={{
-        position: Boolean(absolute) ? undefined : 'relative',
+        position: absolute ? undefined : 'relative',
       }}
     >
       <Hidden
         print
-        position={Boolean(absolute) ? 'none' : 'relative'}
+        position={absolute ? 'none' : 'relative'}
         below={hiddenBelow}
       >
         <Box
           className={cn(
             styles.sidebarWrapper,
-            Boolean(absolute) ? styles.absolute : styles.sticky,
+            absolute ? styles.absolute : styles.sticky,
           )}
         >
           {sidebarContent}
