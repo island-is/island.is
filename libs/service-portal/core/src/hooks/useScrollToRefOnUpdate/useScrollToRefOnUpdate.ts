@@ -13,10 +13,10 @@ export const useScrollToRefOnUpdate = (
       setIsFirstRun(false)
       return
     }
-    const headerOffset = 112
+    const offset = 168
     const refPosition = scrollToRef?.current?.offsetTop || 0
     window.scrollTo({
-      top: Math.max(refPosition - headerOffset, 0),
+      top: Math.max(refPosition - offset, 0),
       behavior: 'smooth',
     })
   }, deps)
