@@ -188,10 +188,9 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
       }
       left={
         <FilterSearch
-          id="filter-search-box"
-          label="Sýna flokka"
-          labelCloseButton = "Sía API vörulista"
-          labelResultButton={data?.getApiCatalogue.services.length > 0? 
+          labelMobileButton="Sýna flokka"
+          LabelMobileCloseButton = "Sía API vörulista"
+          LabelMobileResultButton={data?.getApiCatalogue.services.length > 0? 
                                   `Skoða niðurstöður (${data?.getApiCatalogue.services.length})`:
                                   'Ekkert fannst'}
           inputValues={{
