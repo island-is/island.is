@@ -35,65 +35,63 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
   return (
     <Box>
       <Box marginBottom={5}>
-        <FieldDescription description="Generic entry text..." />
+        <FieldDescription description="Hér mun koma texti um skilmálasíðu" />
       </Box>
       <Box marginBottom={3}>
         <Accordion singleExpand={false}>
           <AccordionItem id="id_1" label="Notendaskilmálar">
             <Box paddingY={2} className={styles.maximumHeight}>
               <Text>
-                Mun koma ur messages ? Lorem ipsum dolor sit amet, consectetur
-                adipiscing elit. Nullam nibh metus, ornare sed neque id,
-                efficitur mollis mauris. Proin eget metus cursus, eleifend
-                sapien ut, consectetur ex. Sed vel ante ac magna pretium
-                scelerisque faucibus sodales diam. Donec id leo posuere,
-                tincidunt erat quis, venenatis purus. Ut sollicitudin mauris
-                vitae ipsum mattis, vel iaculis ante pellentesque. Nam sed
-                facilisis sapien. Proin facilisis porta blandit. Nunc ac dictum
-                nisl, sit amet varius tortor. Suspendisse a lacinia lacus, non
-                lobortis purus. Nullam eget nisi vitae augue iaculis euismod.
-                Nulla rhoncus est vitae mi condimentum, nec convallis diam
-                ullamcorper. Mun koma ur messages ? Lorem ipsum dolor sit amet,
-                consectetur adipiscing elit. Nullam nibh metus, ornare sed neque
-                id, efficitur mollis mauris. Proin eget metus cursus, eleifend
-                sapien ut, consectetur ex. Sed vel ante ac magna pretium
-                scelerisque faucibus sodales diam. Donec id leo posuere,
-                tincidunt erat quis, venenatis purus. Ut sollicitudin mauris
-                vitae ipsum mattis, vel iaculis ante pellentesque. Nam sed
-                facilisis sapien. Proin facilisis porta blandit. Nunc ac dictum
-                nisl, sit amet varius tortor. Suspendisse a lacinia lacus, non
-                lobortis purus. Nullam eget nisi vitae augue iaculis euismod.
-                Nulla rhoncus est vitae mi condimentum, nec convallis diam
-                ullamcorper. Mun koma ur messages ? Lorem ipsum dolor sit amet,
-                consectetur adipiscing elit. Nullam nibh metus, ornare sed neque
-                id, efficitur mollis mauris. Proin eget metus cursus, eleifend
-                sapien ut, consectetur ex. Sed vel ante ac magna pretium
-                scelerisque faucibus sodales diam. Donec id leo posuere,
-                tincidunt erat quis, venenatis purus. Ut sollicitudin mauris
-                vitae ipsum mattis, vel iaculis ante pellentesque. Nam sed
-                facilisis sapien. Proin facilisis porta blandit. Nunc ac dictum
-                nisl, sit amet varius tortor. Suspendisse a lacinia lacus, non
-                lobortis purus. Nullam eget nisi vitae augue iaculis euismod.
-                Nulla rhoncus est vitae mi condimentum, nec convallis diam
-                ullamcorper.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam
+                nibh metus, ornare sed neque id, efficitur mollis mauris. Proin
+                eget metus cursus, eleifend sapien ut, consectetur ex. Sed vel
+                ante ac magna pretium scelerisque faucibus sodales diam. Donec
+                id leo posuere, tincidunt erat quis, venenatis purus. Ut
+                sollicitudin mauris vitae ipsum mattis, vel iaculis ante
+                pellentesque. Nam sed facilisis sapien. Proin facilisis porta
+                blandit. Nunc ac dictum nisl, sit amet varius tortor.
+                Suspendisse a lacinia lacus, non lobortis purus. Nullam eget
+                nisi vitae augue iaculis euismod. Nulla rhoncus est vitae mi
+                condimentum, nec convallis diam ullamcorper. Mun koma ur
+                messages ? Lorem ipsum dolor sit amet, consectetur adipiscing
+                elit. Nullam nibh metus, ornare sed neque id, efficitur mollis
+                mauris. Proin eget metus cursus, eleifend sapien ut, consectetur
+                ex. Sed vel ante ac magna pretium scelerisque faucibus sodales
+                diam. Donec id leo posuere, tincidunt erat quis, venenatis
+                purus. Ut sollicitudin mauris vitae ipsum mattis, vel iaculis
+                ante pellentesque. Nam sed facilisis sapien. Proin facilisis
+                porta blandit. Nunc ac dictum nisl, sit amet varius tortor.
+                Suspendisse a lacinia lacus, non lobortis purus. Nullam eget
+                nisi vitae augue iaculis euismod. Nulla rhoncus est vitae mi
+                condimentum, nec convallis diam ullamcorper. Mun koma ur
+                messages ? Lorem ipsum dolor sit amet, consectetur adipiscing
+                elit. Nullam nibh metus, ornare sed neque id, efficitur mollis
+                mauris. Proin eget metus cursus, eleifend sapien ut, consectetur
+                ex. Sed vel ante ac magna pretium scelerisque faucibus sodales
+                diam. Donec id leo posuere, tincidunt erat quis, venenatis
+                purus. Ut sollicitudin mauris vitae ipsum mattis, vel iaculis
+                ante pellentesque. Nam sed facilisis sapien. Proin facilisis
+                porta blandit. Nunc ac dictum nisl, sit amet varius tortor.
+                Suspendisse a lacinia lacus, non lobortis purus. Nullam eget
+                nisi vitae augue iaculis euismod. Nulla rhoncus est vitae mi
+                condimentum, nec convallis diam ullamcorper.
               </Text>
             </Box>
           </AccordionItem>
           <AccordionItem id="id_2" label="Öryggisskilmálar">
             <Box paddingY={2} className={styles.maximumHeight}>
               <Text>
-                Mun koma ur messages ? Lorem ipsum dolor sit amet, consectetur
-                adipiscing elit. Nullam nibh metus, ornare sed neque id,
-                efficitur mollis mauris. Proin eget metus cursus, eleifend
-                sapien ut, consectetur ex. Sed vel ante ac magna pretium
-                scelerisque faucibus sodales diam. Donec id leo posuere,
-                tincidunt erat quis, venenatis purus. Ut sollicitudin mauris
-                vitae ipsum mattis, vel iaculis ante pellentesque. Nam sed
-                facilisis sapien. Proin facilisis porta blandit. Nunc ac dictum
-                nisl, sit amet varius tortor. Suspendisse a lacinia lacus, non
-                lobortis purus. Nullam eget nisi vitae augue iaculis euismod.
-                Nulla rhoncus est vitae mi condimentum, nec convallis diam
-                ullamcorper.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam
+                nibh metus, ornare sed neque id, efficitur mollis mauris. Proin
+                eget metus cursus, eleifend sapien ut, consectetur ex. Sed vel
+                ante ac magna pretium scelerisque faucibus sodales diam. Donec
+                id leo posuere, tincidunt erat quis, venenatis purus. Ut
+                sollicitudin mauris vitae ipsum mattis, vel iaculis ante
+                pellentesque. Nam sed facilisis sapien. Proin facilisis porta
+                blandit. Nunc ac dictum nisl, sit amet varius tortor.
+                Suspendisse a lacinia lacus, non lobortis purus. Nullam eget
+                nisi vitae augue iaculis euismod. Nulla rhoncus est vitae mi
+                condimentum, nec convallis diam ullamcorper.
               </Text>
             </Box>
           </AccordionItem>
