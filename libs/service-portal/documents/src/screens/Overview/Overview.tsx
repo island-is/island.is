@@ -309,8 +309,8 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             {filteredDocuments
               ?.slice(pagedDocuments.from, pagedDocuments.to)
               .map((document, index) => (
-                <Box ref={index === 0 ? scrollToRef : null}>
-                  <DocumentCard key={document.id} document={document} />
+                <Box key={document.id} ref={index === 0 ? scrollToRef : null}>
+                  <DocumentCard document={document} />
                 </Box>
               ))}
             {filteredDocuments && filteredDocuments.length > pageSize && (
