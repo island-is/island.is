@@ -4145,6 +4145,61 @@
         }
       }
     },
+    "skilavottord-backend": {
+      "root": "apps/skilavottord/backend",
+      "sourceRoot": "apps/skilavottord/backend/src",
+      "projectType": "application",
+      "prefix": "skilavottord-backend",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/skilavottord/backend",
+            "main": "apps/skilavottord/backend/src/main.ts",
+            "tsConfig": "apps/skilavottord/backend/tsconfig.app.json",
+            "assets": ["apps/skilavottord/backend/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/skilavottord/backend/src/environments/environment.ts",
+                  "with": "apps/skilavottord/backend/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "skilavottord-backend:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/skilavottord/backend/tsconfig.app.json",
+              "apps/skilavottord/backend/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/skilavottord/backend/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/skilavottord/backend/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "skilavottord-consts": {
       "root": "libs/skilavottord/consts",
       "sourceRoot": "libs/skilavottord/consts/src",
