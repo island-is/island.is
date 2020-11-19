@@ -15,7 +15,6 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common'
-import { Request } from 'express'
 
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
@@ -37,7 +36,7 @@ import {
   ApplicationTemplateHelper,
   ExternalData,
 } from '@island.is/application/core'
-import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-api-lib'
+// import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-api-lib'
 import {
   getApplicationDataProviders,
   getApplicationTemplateByTypeId,
