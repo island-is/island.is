@@ -23,7 +23,11 @@ export const Modal: FC<Props> = ({
         toggleClose={toggleClose}
       >
         {({ closeModal }: { closeModal: () => void }) => (
-          <Box background="white" padding={[3, 6, 12, 15]}>
+          <Box
+            background="white"
+            paddingY={[3, 6, 12]}
+            paddingX={[3, 6, 12, 15]}
+          >
             <Box className={styles.closeButton}>
               <Button
                 circle

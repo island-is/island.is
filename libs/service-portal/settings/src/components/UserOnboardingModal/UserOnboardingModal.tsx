@@ -9,13 +9,14 @@ import React, { useState } from 'react'
 import { EmailFormData } from '../Forms/EmailForm'
 import { LanguageFormData, LanguageFormOption } from '../Forms/LanguageForm'
 import { PhoneFormData } from '../Forms/PhoneForm/Steps/FormStep'
+import { OnboardingStepper } from './OnboardingStepper'
 import { EmailStep } from './Steps/EmailStep'
 import { FormSubmittedStep } from './Steps/FormSubmittedStep'
 import { LanguageStep } from './Steps/LanguageStep'
 import { PhoneStep } from './Steps/PhoneStep'
 import { SubmitFormStep } from './Steps/SubmitFormStep'
 
-type OnboardingStep =
+export type OnboardingStep =
   | 'language-form'
   | 'tel-form'
   | 'email-form'
@@ -102,6 +103,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
       onCloseModal={dropOnboardingSideEffects}
       toggleClose={toggleCloseModal}
     >
+      <OnboardingStepper activeStep={step} />
       {step === 'language-form' && (
         <LanguageStep
           onClose={dropOnboarding}
