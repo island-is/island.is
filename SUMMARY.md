@@ -96,6 +96,7 @@
   - [UI Fields](libs/application/ui-fields/README.md)
   - [UI Shell](libs/application/ui-shell/README.md)
 - [Auth API Lib](libs/auth-api-lib/README.md)
+- [Content Search Indexer](libs/content-search-indexer/README.md)
 - [Dokobit Signing](libs/dokobit-signing/README.md)
 - [Email Service](libs/email-service/README.md)
 - [Storybook](libs/island-ui/README.md)

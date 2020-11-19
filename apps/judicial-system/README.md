@@ -111,13 +111,12 @@ Start the application
 yarn start judicial-system-web --ssl
 ```
 
-{% hint style="info" %}
-You can skip `--ssl` but then authentication through innskraning.island.is will not work.
+Then the project should be running on https://localhost:4200/.
 
-To skip authentication at innskraning.island.is navigate to `/api/auth/login?nationalId=<national_id>` in the web project where `<national id>` is the national id of a known user.
+{% hint style="warning" %}
+To skip authentication at innskraning.island.is navigate to `/api/auth/login?nationalId=<national_id>` in the web project where `<national_id>` is the national id of a known user.
+You can skip `--ssl` but then authentication through innskraning.island.is will fail. The project should now be running on http://localhost:4200/.
 {% endhint %}
-
-Then the project should be running on http://localhost:4200/.
 
 ### Running the tests
 
