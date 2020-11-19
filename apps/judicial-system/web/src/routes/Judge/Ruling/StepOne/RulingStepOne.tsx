@@ -236,12 +236,13 @@ export const RulingStepOne: React.FC = () => {
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                Dómkröfur
+                Gæsluvarðhaldstími
               </Text>
             </Box>
             <GridRow>
               <GridColumn span="5/8">
                 <DatePicker
+                  id="custodyEndDate"
                   label="Gæsluvarðhald til"
                   placeholderText="Veldu dagsetningu"
                   locale="is"

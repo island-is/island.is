@@ -58,6 +58,8 @@ export enum CaseGender {
   OTHER = 'OTHER',
 }
 
+export type Gender = 'karl' | 'kona' | 'annað'
+
 export interface Case {
   id: string
   created: string

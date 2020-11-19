@@ -14,7 +14,7 @@ import {
 export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field()
-  readonly id?: string
+  readonly id!: string
 
   @Allow()
   @Field({ nullable: true })

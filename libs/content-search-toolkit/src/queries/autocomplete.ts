@@ -1,21 +1,12 @@
-interface AutocompleteTermInput {
-  prefix: string
-  size: number
-}
-
-export interface AutocompleteTermResponse {
-  suggest: {
-    searchSuggester: [{ options: [{ text: string }] }]
-  }
-}
+import { AutocompleteTermInput } from '../types'
 
 export const autocompleteTermQuery = ({
-  prefix,
+  singleTerm,
   size,
 }: AutocompleteTermInput) => ({
   suggest: {
     searchSuggester: {
-      prefix,
+      prefix: singleTerm,
       completion: {
         field: 'termPool',
         size,

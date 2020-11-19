@@ -6,13 +6,13 @@ import * as Constants from '../../../utils/constants'
 import Overview from './Overview'
 import { UpdateCase } from '@island.is/judicial-system/types'
 import userEvent from '@testing-library/user-event'
-import { userContext } from '../../../utils/userContext'
 import {
   mockCaseQueries,
-  mockJudgeUserContext,
+  mockJudgeQuery,
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 describe('/domari-krafa with an ID', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
@@ -28,6 +28,7 @@ describe('/domari-krafa with an ID', () => {
       <MockedProvider
         mocks={[
           ...mockCaseQueries,
+          ...mockJudgeQuery,
           ...mockUpdateCaseMutation([
             {
               courtCaseNumber: '000-0000-000',
@@ -36,13 +37,13 @@ describe('/domari-krafa with an ID', () => {
         ]}
         addTypename={false}
       >
-        <userContext.Provider value={mockJudgeUserContext}>
-          <Router history={history}>
+        <Router history={history}>
+          <UserProvider>
             <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
               <Overview />
             </Route>
-          </Router>
-        </userContext.Provider>
+          </UserProvider>
+        </Router>
       </MockedProvider>,
     )
     userEvent.type(
@@ -69,14 +70,17 @@ describe('/domari-krafa with an ID', () => {
 
     // Act
     render(
-      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
-        <userContext.Provider value={mockJudgeUserContext}>
-          <Router history={history}>
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <Router history={history}>
+          <UserProvider>
             <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
               <Overview />
             </Route>
-          </Router>
-        </userContext.Provider>
+          </UserProvider>
+        </Router>
       </MockedProvider>,
     )
 
@@ -98,14 +102,17 @@ describe('/domari-krafa with an ID', () => {
 
     // Act
     render(
-      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
-        <userContext.Provider value={mockJudgeUserContext}>
-          <Router history={history}>
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <Router history={history}>
+          <UserProvider>
             <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
               <Overview />
             </Route>
-          </Router>
-        </userContext.Provider>
+          </UserProvider>
+        </Router>
       </MockedProvider>,
     )
 
@@ -125,14 +132,17 @@ describe('/domari-krafa with an ID', () => {
 
     // Act
     render(
-      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
-        <userContext.Provider value={mockJudgeUserContext}>
-          <Router history={history}>
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <Router history={history}>
+          <UserProvider>
             <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
               <Overview />
             </Route>
-          </Router>
-        </userContext.Provider>
+          </UserProvider>
+        </Router>
       </MockedProvider>,
     )
 
