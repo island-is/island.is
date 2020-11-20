@@ -11,7 +11,6 @@ export enum ServicePortalPath {
   UmsoknirLyfsedlar = '/umsoknir/lyfsedlar',
   // Stillingar
   StillingarRoot = '/stillingar',
-  StillingarUmbod = '/min-rettindi',
   // Fjolskyldan
   FamilyRoot = '/fjolskyldan',
   FamilyMember = '/fjolskyldan/:nationalId',

@@ -23,7 +23,7 @@ export const settingsModule: ServicePortalModule = {
       },
       {
         name: 'Mín réttindi',
-        path: ServicePortalPath.StillingarUmbod,
+        path: ServicePortalPath.MinRettindiRoot,
         render: () =>
           lazy(() => import('./screens/DelegationGreeting/DelegationGreeting')),
       },

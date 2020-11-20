@@ -144,7 +144,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:delegation',
           defaultMessage: 'Mín réttindi',
         }),
-        path: ServicePortalPath.StillingarUmbod,
+        path: ServicePortalPath.MinRettindiRoot,
         icon: {
           type: 'outline',
           icon: 'receipt',
