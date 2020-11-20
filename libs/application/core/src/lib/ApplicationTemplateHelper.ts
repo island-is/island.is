@@ -1,5 +1,4 @@
-import { Event, EventObject, State } from 'xstate'
-import { MachineOptions } from 'xstate/lib/types'
+import { interpret, Event, EventObject } from 'xstate'
 import { Application, ExternalData, FormValue } from '../types/Application'
 import {
   ApplicationContext,
@@ -33,15 +32,12 @@ export class ApplicationTemplateHelper<
     this.template = template
   }
 
-  protected initializeStateMachine(
-    stateMachineOptions?: Partial<MachineOptions<TContext, TEvents>>,
-    initialStateMachineContext?: TContext,
-  ) {
+  private initializeStateMachine(stateMachineContext?: TContext) {
     this.stateMachine = createApplicationMachine(
       this.application,
       this.template.stateMachineConfig,
-      stateMachineOptions,
-      initialStateMachineContext,
+      this.template.stateMachineOptions,
+      stateMachineContext,
     )
   }
 
@@ -57,18 +53,31 @@ export class ApplicationTemplateHelper<
     return this.template.stateMachineConfig.states[stateKey]?.meta
   }
 
-  changeState(
-    event: Event<TEvents>,
-  ): State<
-    TContext,
-    TEvents,
-    TStateSchema,
-    { value: string; context: TContext }
-  > {
-    if (!this.stateMachine) {
-      this.initializeStateMachine()
-    }
-    return this.stateMachine.transition(this.application.state, event)
+  /***
+   * Changes the application state
+   * @param event A state machine event
+   * returns [hasChanged, newState, newApplication] where newApplication has the updated state value
+   */
+  changeState(event: Event<TEvents>): [boolean, string, Application] {
+    this.initializeStateMachine()
+    const service = interpret(
+      this.stateMachine,
+      this.template.stateMachineOptions,
+    )
+    service.start()
+    service.send(event)
+
+    const newState = service.state
+    service.stop()
+    const newApplicationState = newState.value.toString()
+    return [
+      Boolean(newState.changed),
+      newApplicationState,
+      {
+        ...newState.context.application,
+        state: newApplicationState,
+      },
+    ]
   }
 
   getReadableAnswersAndExternalData(
