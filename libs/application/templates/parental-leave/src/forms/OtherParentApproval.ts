@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildForm,
   buildIntroductionField,
   buildMultiField,
@@ -9,30 +8,26 @@ import {
   FormModes,
 } from '@island.is/application/core'
 
-export const EmployerApproval: Form = buildForm({
-  id: 'EmployerApprovalForParentalLeave',
-  name: 'Employer approval for parental leave application',
+export const OtherParentApproval: Form = buildForm({
+  id: 'OtherParentApprovalForParentalLeave',
+  name: 'Other parent approval for parental leave application',
   mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'review',
-      name: 'Employer approval',
+      name: 'Other parent approval',
       children: [
         buildMultiField({
           id: 'multi',
           name:
-            'Your employee has applied for parental leave. Do you approve of his/her selected periods?',
+            'Do you want to give away one month of your parental leave rights?',
           children: [
-            buildCustomField(
-              {
-                id: 'intro',
-                name: '',
-                component: 'PeriodsRepeater',
-              },
-              {
-                editable: false,
-              },
-            ),
+            buildIntroductionField({
+              id: 'intro',
+              name: '',
+              introduction:
+                'You are apparently expecting a baby with some person that wishes to use one month of your rights. That means your rights will be 5 months at most. Do you agree?',
+            }),
             buildSubmitField({
               id: 'submit',
               name: 'submit',
