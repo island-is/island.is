@@ -3,20 +3,17 @@ import {
   Button,
   GridColumn,
   GridRow,
-  Icon,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import { Locale, useLocale, useNamespaces } from '@island.is/localization'
 import { ISLAND_IS_URL } from '@island.is/service-portal/constants'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
-import { Link } from 'react-router-dom'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { ActionType } from '../../store/actions'
 import { useStore } from '../../store/stateProvider'
-import { getMobileMenuFigure } from './figuresMapper'
 import * as styles from './MobileMenu.treat'
+import MobileMenuItem from './MobileMenuItem'
 
 const MobileMenu: FC<{}> = () => {
   const [{ mobileMenuState }, dispatch] = useStore()
@@ -74,88 +71,26 @@ const MobileMenu: FC<{}> = () => {
         <GridRow>
           {info?.children?.map((navItem, index) => {
             if (navItem.path === ServicePortalPath.MinarSidurRoot) return null
-            const figure = getMobileMenuFigure(navItem.path)
-
             return (
-              <GridColumn key={`info-${index}`} span={['1/2', '1/4']}>
-                <Link
-                  to={navItem.path || ''}
-                  className={styles.link}
-                  onClick={handleLinkClick}
-                >
-                  <Box
-                    display="flex"
-                    flexDirection="column"
-                    alignItems="center"
-                    justifyContent="center"
-                    height="full"
-                    background="white"
-                    padding={2}
-                    borderRadius="large"
-                    textAlign="center"
-                    className={styles.figureCard}
-                  >
-                    <Box
-                      className={styles.figure}
-                      style={{ backgroundImage: `url(${figure})` }}
-                      marginBottom={2}
-                    />
-                    <Text variant="eyebrow" color="blueberry400">
-                      {formatMessage(navItem.name)}
-                    </Text>
-                  </Box>
-                </Link>
-              </GridColumn>
+              <MobileMenuItem
+                key={`info-${index}`}
+                item={navItem}
+                index={index}
+                onClick={handleLinkClick}
+                itemName={formatMessage(navItem.name)}
+              />
             )
           }) || null}
-        </GridRow>
-        <GridRow>
           {actions?.children?.map((navItem, index) => {
             if (navItem.path === ServicePortalPath.MinarSidurRoot) return null
-
             return (
-              <GridColumn key={`info-${index}`} span={['1/2', '1/4']}>
-                <Link
-                  to={navItem.path || ''}
-                  className={styles.link}
-                  onClick={handleLinkClick}
-                >
-                  <Box
-                    display="flex"
-                    flexDirection="column"
-                    alignItems="center"
-                    justifyContent="center"
-                    height="full"
-                    background="blueberry100"
-                    paddingY={3}
-                    paddingX={2}
-                    borderRadius="large"
-                    textAlign="center"
-                  >
-                    <Box
-                      className={styles.icon}
-                      display="flex"
-                      justifyContent="center"
-                      alignItems="center"
-                      marginBottom={2}
-                      borderRadius="circle"
-                      background="blueberry200"
-                    >
-                      {navItem.icon && (
-                        <Icon
-                          type={navItem.icon.type}
-                          icon={navItem.icon.icon}
-                          size="medium"
-                          color="blueberry400"
-                        />
-                      )}
-                    </Box>
-                    <Text variant="eyebrow" color="blueberry400">
-                      {formatMessage(navItem.name)}
-                    </Text>
-                  </Box>
-                </Link>
-              </GridColumn>
+              <MobileMenuItem
+                key={`action-${index}`}
+                item={navItem}
+                index={index}
+                onClick={handleLinkClick}
+                itemName={formatMessage(navItem.name)}
+              />
             )
           }) || null}
         </GridRow>
