@@ -40,7 +40,7 @@ export const LanguageForm: FC<Props> = ({
         <Controller
           control={control}
           name="language"
-          defaultValue={language}
+          defaultValue={language || { label: 'Íslenska', value: 'is' }}
           render={({ onChange, value, name }) => (
             <Select
               name={name}
