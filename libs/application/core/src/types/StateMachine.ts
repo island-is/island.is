@@ -72,8 +72,14 @@ export function createApplicationMachine<
     : { application }
 
   const applicationState = application.state
+  // validate that applicationState is part of the states config, if that fails, use the default initial state?
+  let initialState = config.initial
+  if (config?.states && config.states[applicationState]) {
+    initialState = applicationState
+  }
+
   return Machine(
-    { ...config, initial: applicationState },
+    { ...config, initial: initialState },
     options ?? {},
     context as TContext,
   )
