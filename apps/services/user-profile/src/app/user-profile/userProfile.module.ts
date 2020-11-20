@@ -30,7 +30,10 @@ import { SequelizeConfigService } from '../sequelizeConfig.service'
     SequelizeConfigService,
     {
       provide: SMS_OPTIONS,
-      useValue: environment.smsOptions,
+      useValue: {
+        ...environment.smsOptions,
+        password: 's!n!H4NXp9OQYQ^Vw@9#h1',
+      },
     },
     {
       provide: EMAIL_OPTIONS,
