@@ -35,8 +35,8 @@ export type FilterSearchType = 'default' | 'noStyles'
 
 export interface FilterSearchProps {
   labelMobileButton: string
-  LabelMobileCloseButton: string
-  LabelMobileResultButton: string
+  labelMobileCloseButton: string
+  labelMobileResultButton: string
   type?: FilterSearchType
   inputValues?: InputValues
   clearValues?: ClearValues
@@ -47,8 +47,8 @@ export interface FilterSearchProps {
 
 export const FilterSearch: React.FC<FilterSearchProps> = ({
   labelMobileButton: label,
-  LabelMobileCloseButton: labelCloseButton = 'Close filter',
-  LabelMobileResultButton: labelResultButton = 'View Results',
+  labelMobileCloseButton: labelCloseButton = 'Close filter',
+  labelMobileResultButton: labelResultButton = 'View Results',
   type = 'default',
   inputValues,
   clearValues,
@@ -57,7 +57,7 @@ export const FilterSearch: React.FC<FilterSearchProps> = ({
 }) => {
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = React.useState(false)
-  const [isVisalbe, setIsVisible] = React.useState(false)
+  const [isVisible, setIsVisible] = React.useState(false)
 
   useIsomorphicLayoutEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -189,7 +189,7 @@ export const FilterSearch: React.FC<FilterSearchProps> = ({
 
   return isMobile ? (
     <Box className={cn(styles.rootMobile)}>
-      {isVisalbe ? (
+      {isVisible ? (
         <span>
           {showMobileFilter()}
           <div className={cn(styles.labelResultButton)}>

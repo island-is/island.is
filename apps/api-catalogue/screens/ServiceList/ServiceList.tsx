@@ -184,8 +184,8 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
       left={
         <FilterSearch
           labelMobileButton="Sýna flokka"
-          LabelMobileCloseButton="Sía API vörulista"
-          LabelMobileResultButton={
+          labelMobileCloseButton="Sía API vörulista"
+          labelMobileResultButton={
             data?.getApiCatalogue.services.length > 0
               ? `Skoða niðurstöður (${data?.getApiCatalogue.services.length})`
               : 'Ekkert fannst'

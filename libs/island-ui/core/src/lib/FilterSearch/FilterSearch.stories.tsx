@@ -13,8 +13,8 @@ export const WithGroupedChildren = () => (
   <div>
     <FilterSearch
       labelMobileButton="Search"
-      LabelMobileResultButton="View Results"
-      LabelMobileCloseButton="Filter"
+      labelMobileResultButton="View Results"
+      labelMobileCloseButton="Filter"
     >
       <FilterSearchGroup id="group1" label="Group number one">
         <Checkbox label="Include stuff" />
@@ -42,8 +42,8 @@ export const WithInputBox = () => {
     <div style={{ height: 400 }}>
       <FilterSearch
         labelMobileButton="Search"
-        LabelMobileResultButton="View Results"
-        LabelMobileCloseButton="Filter"
+        labelMobileResultButton="View Results"
+        labelMobileCloseButton="Filter"
         inputValues={{
           placeholder: 'Search',
           colored: false,
@@ -77,8 +77,8 @@ export const WithInputClearButton = () => {
     <div style={{ height: 400 }}>
       <FilterSearch
         labelMobileButton="Search"
-        LabelMobileResultButton="View Results"
-        LabelMobileCloseButton="Filter"
+        labelMobileResultButton="View Results"
+        labelMobileCloseButton="Filter"
         clearValues={{
           text: 'Hreinsa',
           onClick: clearValues,
@@ -104,8 +104,8 @@ export const WithOnlyOneChild = () => (
   <div style={{ minHeight: 100 }}>
     <FilterSearch
       labelMobileButton="Search"
-      LabelMobileResultButton="This button is displayed on top of all"
-      LabelMobileCloseButton="Filter"
+      labelMobileResultButton="This button is displayed on top of all"
+      labelMobileCloseButton="Filter"
     >
       <Checkbox label="Include stuff" />
     </FilterSearch>
@@ -179,8 +179,8 @@ export const DetailedExample = () => {
     <div style={{ height: 550, background: theme.color.blue100 }}>
       <FilterSearch
         labelMobileButton="Sýna flokka"
-        LabelMobileCloseButton="Sía API vörulista"
-        LabelMobileResultButton={'Skoða niðurstöður'}
+        labelMobileCloseButton="Sía API vörulista"
+        labelMobileResultButton={'Skoða niðurstöður'}
         inputValues={{
           placeholder: 'Search',
           colored: false,
