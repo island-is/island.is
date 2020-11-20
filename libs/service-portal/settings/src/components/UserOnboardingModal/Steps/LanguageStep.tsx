@@ -37,7 +37,6 @@ export const LanguageStep: FC<Props> = ({
           id: 'sp.settings:language-step-onboarding',
           defaultMessage: `
             Byrjum á því að velja það tungumál sem hentar þér.
-            Let's begin by picking the language of your choice.
           `,
         })}
       </Text>
