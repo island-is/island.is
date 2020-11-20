@@ -180,17 +180,11 @@ export const HearingArrangements: React.FC = () => {
             </Text>
           </Box>
           <Box marginBottom={8}>
-            <GridContainer>
-              <GridRow>
-                <GridColumn span="7/12">
-                  <AlertMessage
-                    type="info"
-                    title="Krafa hefur ekki verið staðfest af ákæranda"
-                    message="Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram að vinna úrskurðinn fyrr en ákærandi hefur staðfest kröfuna."
-                  />
-                </GridColumn>
-              </GridRow>
-            </GridContainer>
+            <AlertMessage
+              type="info"
+              title="Krafa hefur ekki verið staðfest af ákæranda"
+              message="Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram að vinna úrskurðinn fyrr en ákærandi hefur staðfest kröfuna."
+            />
           </Box>
           <Box component="section" marginBottom={7}>
             <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
