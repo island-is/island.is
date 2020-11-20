@@ -17,6 +17,7 @@ export const routes = {
     LifeEventPage: 'lifsvidburdur',
     lifeEventPage: 'lifsvidburdur',
     adgerdir: 'covid-adgerdir',
+    'vidspyrna-frontpage': 'covid-adgerdir',
   },
   en: {
     article: '',
@@ -34,6 +35,7 @@ export const routes = {
     LifeEventPage: 'life-event',
     lifeEventPage: 'life-event',
     adgerdir: 'covid-operations',
+    'vidspyrna-frontpage': 'covid-operations',
   },
 }
 
@@ -50,9 +52,17 @@ export type PathTypes =
   | 'LifeEventPage'
   | 'lifeEventPage'
   | 'adgerdir'
+  | 'vidspyrna-frontpage'
 
 export const routeNames = (locale: Locale = defaultLanguage) => {
   const makePath = (type?: PathTypes, subfix?: string) => {
+    let urlEnd
+    if (type === 'vidspyrna-frontpage') {
+      urlEnd = ''
+    } else {
+      urlEnd = subfix
+    }
+
     const typePath =
       type && typeof routes[locale][type] === 'string'
         ? String(routes[locale][type])
@@ -68,8 +78,8 @@ export const routeNames = (locale: Locale = defaultLanguage) => {
       path += '/' + typePath
     }
 
-    if (subfix) {
-      path += '/' + subfix
+    if (urlEnd) {
+      path += '/' + urlEnd
     }
 
     return path ? path.replace(/\/\/+/g, '/') : '/'
