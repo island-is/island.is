@@ -19,4 +19,6 @@ export class UserProfile {
 
   @Field(() => Boolean)
   mobilePhoneNumberVerified!: boolean
+
+  // Force rebuild of schemas
 }
