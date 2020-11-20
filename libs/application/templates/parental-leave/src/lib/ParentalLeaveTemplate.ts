@@ -8,6 +8,7 @@ import {
 import * as z from 'zod'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
+import { assign } from 'xstate'
 
 type Events =
   | { type: 'APPROVE' }
@@ -60,6 +61,14 @@ const dataSchema = z.object({
   otherParentId: z.string().optional(),
 })
 
+type SchemaFormValues = z.infer<typeof dataSchema>
+
+function needsOtherParentApproval(context: ApplicationContext) {
+  const currentApplicationAnswers = context.application
+    .answers as SchemaFormValues
+  return currentApplicationAnswers.requestRights === 'yes'
+}
+
 const ParentalLeaveTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -88,10 +97,41 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: { target: 'employerApproval' },
+          SUBMIT: [
+            {
+              target: 'otherParentApproval',
+              cond: needsOtherParentApproval,
+            },
+            { target: 'employerApproval' },
+          ],
+        },
+      },
+      otherParentApproval: {
+        entry: 'assignToOtherParent',
+        meta: {
+          name: 'Needs other parent approval',
+          progress: 0.4,
+          roles: [
+            {
+              id: 'otherParent',
+              formLoader: () =>
+                import('../forms/OtherParentApproval').then((val) =>
+                  Promise.resolve(val.OtherParentApproval),
+                ),
+              actions: [
+                { event: 'APPROVE', name: 'Approve', type: 'primary' },
+                { event: 'REJECT', name: 'Reject', type: 'reject' },
+              ],
+            },
+          ],
+        },
+        on: {
+          APPROVE: { target: 'employerApproval' },
+          REJECT: { target: 'draft' },
         },
       },
       employerApproval: {
+        entry: 'assignToEmployer',
         meta: {
           name: 'Employer Approval',
           progress: 0.5,
@@ -146,9 +186,53 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
     },
   },
+  stateMachineOptions: {
+    actions: {
+      assignToOtherParent: assign((context) => {
+        const currentApplicationAnswers = context.application
+          .answers as SchemaFormValues
+        if (
+          currentApplicationAnswers.requestRights === 'yes' &&
+          currentApplicationAnswers.otherParentId !== undefined &&
+          currentApplicationAnswers.otherParentId !== ''
+        ) {
+          return {
+            ...context,
+            application: {
+              ...context.application,
+              assignees: [currentApplicationAnswers.otherParentId],
+            },
+          }
+        }
+        return context
+      }),
+      assignToEmployer: assign((context) => {
+        // here we might go the email route instead.
+        const currentApplicationAnswers = context.application
+          .answers as SchemaFormValues
+        if (
+          currentApplicationAnswers.employer.nationalRegistryId !== undefined &&
+          currentApplicationAnswers.employer.nationalRegistryId !== ''
+        ) {
+          return {
+            ...context,
+            application: {
+              ...context.application,
+              assignees: [
+                currentApplicationAnswers.employer.nationalRegistryId,
+              ],
+            },
+          }
+        }
+        return context
+      }),
+    },
+  },
   mapUserToRole(id, state): ApplicationRole {
     if (state === 'employerApproval') {
       return 'employer'
+    } else if (state === 'otherParentApproval') {
+      return 'otherParent'
     }
     return 'applicant'
   },

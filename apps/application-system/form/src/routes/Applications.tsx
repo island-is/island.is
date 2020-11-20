@@ -28,10 +28,7 @@ export const Applications: FC = () => {
     APPLICANT_APPLICATIONS,
     {
       variables: {
-        input: {
-          nationalRegistryId: nationalRegistryId,
-          typeId: type,
-        },
+        typeId: type,
       },
     },
   )

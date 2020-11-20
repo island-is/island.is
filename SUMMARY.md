@@ -75,7 +75,7 @@
       - [Search indexer migration](apps/services/search-indexer/src/migrate/README.md)
   - [User Profile](apps/services/user-profile/README.md)
   - [X-Road Collector](apps/services/xroad-collector/README.md)
-- [Skilavottorð](apps/skilavottord/README.md)
+- [Car recycling - Skilavottorð](apps/skilavottord/README.md)
 - [Web](apps/web/README.md)
 
 ## Libs
