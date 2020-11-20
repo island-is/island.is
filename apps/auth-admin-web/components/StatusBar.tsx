@@ -11,6 +11,8 @@ class StatusBar extends Component<{ status: APIResponse | null }> {
   };
 
   render() {
+    console.log("statusbar");
+    console.log(this.props.status);
     if (!this.props.status) {
       return '';
     }
