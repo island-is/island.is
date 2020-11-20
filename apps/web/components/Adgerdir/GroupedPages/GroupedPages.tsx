@@ -6,7 +6,10 @@ import {
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
-import { ColorSchemeContext, ColorSchemes } from '@island.is/web/context'
+import {
+  ColorSchemeContext,
+  ColorSchemes,
+} from '@island.is/web/components/Adgerdir/UI/ColorSchemeContext/ColorSchemeContext'
 
 import * as styles from './GroupedPages.treat'
 
