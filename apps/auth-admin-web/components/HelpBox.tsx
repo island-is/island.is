@@ -8,7 +8,7 @@ class HelpBox extends Component<{helpText: string}> {
   {
     return (
         <div className="helpbox">
-          <a className="helpbox__button__show" onClick={() => this.setState({show: !this.state.show})}>
+          <a className="helpbox__button__show" onClick={() => this.setState({show: !this.state.show})} title={this.props.helpText}>
             Info
           </a>
           <div className={`helpbox__content ${this.state.show === true ? 'show':'hidden'}`}>

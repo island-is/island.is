@@ -18,5 +18,17 @@
   &__message {
     font-weight: 600;
     margin-right: 15px;
+
+    span {
+      margin-right: 10px;
+      text-transform: capitalize;
+    }
+    span:not(:last-child):after {
+      content: ',';
+    }
+  }
+
+  &__error {
+    margin-left: 15px;
   }
 }

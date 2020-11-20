@@ -7,7 +7,7 @@ class APIResponse {
     }
 
     statusCode?: number;
-    message?: string;
+    message?: string[];
     error?: string;
 }
 
