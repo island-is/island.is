@@ -10,10 +10,12 @@ import {
   User,
 } from '@island.is/auth-api-lib'
 
+console.log('-trigger');
+
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
 export class NationalRegistryResolver {
-  constructor(private nationalRegistryService: NationalRegistryService) {}
+  constructor(private nationalRegistryService: NationalRegistryService) { }
 
   @Query(() => MyInfo, { nullable: true })
   getMyInfo(@CurrentUser() user: User): Promise<MyInfo | null> {
