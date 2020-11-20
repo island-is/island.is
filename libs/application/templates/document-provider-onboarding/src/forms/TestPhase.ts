@@ -62,6 +62,12 @@ export const TestPhase: Form = buildForm({
       id: 'testSection',
       name: m.testSection,
       children: [
+        buildIntroductionField({
+          id: 'testSectionIntro',
+          name: 'Sjálfvirkar prófanir',
+          introduction:
+            'Nú þarf þú að útfæra tæknilega útfærslu, smelltu á halda áfram þegar henni er lokið og þú vilt fara í sjálfvirkar prófanir',
+        }),
         buildCustomField(
           {
             id: 'test',
