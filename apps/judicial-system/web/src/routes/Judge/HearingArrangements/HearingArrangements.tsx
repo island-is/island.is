@@ -183,7 +183,7 @@ export const HearingArrangements: React.FC = () => {
             <AlertMessage
               type="info"
               title="Krafa hefur ekki verið staðfest af ákæranda"
-              message="Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram í viðmótinu fyrr en ákærandi hefur staðfest kröfuna."
+              message="Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram fyrr en ákærandi hefur staðfest kröfuna."
             />
           </Box>
           <Box component="section" marginBottom={7}>

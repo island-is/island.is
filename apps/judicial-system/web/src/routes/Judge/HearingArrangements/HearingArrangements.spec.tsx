@@ -185,7 +185,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
 
     expect(
       screen.getByText(
-        'Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram að vinna úrskurðinn fyrr en ákærandi hefur staðfest kröfuna.',
+        'Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram fyrr en ákærandi hefur staðfest kröfuna.',
       ),
     ).toBeInTheDocument()
   })
