@@ -1,5 +1,6 @@
 import { style, styleMap, globalStyle } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { themeUtils } from '@island.is/island-ui/theme'
+import covidColors from '../../Adgerdir/UI/colors'
 
 export const wrapper = style({
   position: 'relative',
@@ -22,8 +23,7 @@ export const item = style({
 
 export const variants = styleMap({
   blue: {},
-  red: {},
-  purple: {},
+  green: {},
 })
 
 export const arrowButton = style({
@@ -33,23 +33,17 @@ export const arrowButton = style({
   boxSizing: 'border-box',
   width: 40,
   height: 40,
-  backgroundColor: theme.color.purple400,
+  backgroundColor: covidColors.green400,
   borderRadius: '50%',
   outline: 0,
   opacity: 1,
   transition: `all 300ms ease`,
   selectors: {
     [`${variants.blue} &`]: {
-      backgroundColor: theme.color.blue400,
+      backgroundColor: covidColors.blue400,
     },
-    [`${variants.blue} &`]: {
-      backgroundColor: theme.color.blue400,
-    },
-    [`${variants.red} &`]: {
-      backgroundColor: theme.color.red400,
-    },
-    [`${variants.purple} &`]: {
-      backgroundColor: theme.color.purple400,
+    [`${variants.green} &`]: {
+      backgroundColor: covidColors.green400,
     },
   },
 })
@@ -80,16 +74,13 @@ export const dot = style({
   borderRadius: '50%',
   marginRight: 16,
   outline: 0,
-  backgroundColor: theme.color.blue400,
+  backgroundColor: covidColors.blue400,
   selectors: {
     [`${variants.blue} &`]: {
-      backgroundColor: theme.color.blue400,
+      backgroundColor: covidColors.blue400,
     },
-    [`${variants.red} &`]: {
-      backgroundColor: theme.color.red400,
-    },
-    [`${variants.purple} &`]: {
-      backgroundColor: theme.color.purple400,
+    [`${variants.green} &`]: {
+      backgroundColor: covidColors.green400,
     },
   },
   ':after': {

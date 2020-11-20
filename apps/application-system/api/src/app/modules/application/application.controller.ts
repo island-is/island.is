@@ -308,15 +308,18 @@ export class ApplicationController {
       template,
     )
 
-    const newState = helper.changeState(updateApplicationStateDto.event)
+    const [hasChanged, newState, newApplication] = helper.changeState(
+      updateApplicationStateDto.event,
+    )
 
-    if (newState.changed) {
+    if (hasChanged) {
       const {
         updatedApplication,
       } = await this.applicationService.updateApplicationState(
         existingApplication.id,
-        newState.value.toString(), // TODO maybe ban more complicated states....
-        mergedAnswers,
+        newState, // TODO maybe ban more complicated states....
+        newApplication.answers,
+        newApplication.assignees,
       )
 
       return updatedApplication
