@@ -6,6 +6,10 @@ import { Box } from '../Box/Box'
 import * as styles from './Icon.treat'
 
 const colors = theme.color
+
+export type IconMapType = Type
+export type IconMapIcon = IconType
+
 export interface IconProps {
   type?: Type
   icon: IconType
