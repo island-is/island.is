@@ -1,7 +1,7 @@
 import { callDataProviders } from './dataProviderUtils'
 import { BasicDataProvider } from '../types/BasicDataProvider'
 import { ApplicationTypes } from '../types/ApplicationTypes'
-
+import { Application } from '../types/Application'
 class ExampleProviderThatAlwaysFails extends BasicDataProvider {
   readonly type = 'ExampleFails'
 
@@ -18,8 +18,9 @@ class ExampleProviderThatAlwaysSucceeds extends BasicDataProvider {
   }
 }
 
-const application = {
+const application: Application = {
   id: '123',
+  assignees: [],
   state: 'draft',
   applicant: '111111-3000',
   typeId: ApplicationTypes.EXAMPLE,

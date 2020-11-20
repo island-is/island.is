@@ -93,6 +93,7 @@ const form: Form = buildForm({
 
 const application: Application = {
   id: '12315151515',
+  assignees: [],
   typeId: ApplicationTypes.EXAMPLE,
   attachments: {},
   externalData: {},
