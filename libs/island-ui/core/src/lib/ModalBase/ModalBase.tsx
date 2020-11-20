@@ -20,7 +20,7 @@ import * as styles from './ModalBase.treat'
 export const BackdropDiv = forwardRef(
   (props: DialogProps, ref: Ref<HTMLDivElement>) => {
     const [mounted, setMounted] = useState(false)
-    useLayoutEffect(function () {
+    useLayoutEffect(function() {
       setMounted(true)
     }, [])
 
@@ -49,6 +49,10 @@ type ModalBaseProps = {
    * Setting this to false automatically closes the modal
    */
   toggleClose?: boolean
+  /**
+   * Optional cb function that is fired when the modal is not visible
+   */
+  onClose?: () => void
 }
 
 export const ModalBase: FC<ModalBaseProps> = ({
@@ -58,6 +62,7 @@ export const ModalBase: FC<ModalBaseProps> = ({
   toggleClose,
   children,
   className,
+  onClose,
 }) => {
   const modal = useDialogState({
     animated: true,
@@ -70,6 +75,10 @@ export const ModalBase: FC<ModalBaseProps> = ({
   useEffect(() => {
     if (toggleClose) closeModal()
   }, [toggleClose])
+
+  useEffect(() => {
+    if (!modal.visible && onClose) onClose()
+  }, [modal.visible])
 
   return (
     <>

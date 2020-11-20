@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import * as styles from './Modal.treat'
-import { Box, Icon, ModalBase, Button } from '@island.is/island-ui/core'
+import { Box, ModalBase, Button } from '@island.is/island-ui/core'
 
 interface Props {
   id: string
@@ -21,6 +21,7 @@ export const Modal: FC<Props> = ({
         initialVisibility={true}
         className={styles.modal}
         toggleClose={toggleClose}
+        onClose={onCloseModal}
       >
         {({ closeModal }: { closeModal: () => void }) => (
           <Box background="white" padding={[3, 6, 12]}>
@@ -30,7 +31,6 @@ export const Modal: FC<Props> = ({
                 colorScheme="negative"
                 icon="close"
                 onClick={() => {
-                  onCloseModal()
                   closeModal()
                 }}
                 size="large"
