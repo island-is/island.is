@@ -64,45 +64,44 @@ export class DirectorateOfLabourRepository {
 
   async getParentalLeavesEstimatedPaymentPlan(
     dateOfBirth: string,
-    period: ParentalLeavePeriod,
+    period: ParentalLeavePeriod[],
     nationalId: string,
-  ): Promise<ParentalLeavePaymentPlan> {
-    return {
-      estimatedAmount: 1.0,
-      pensionAmount: 0.0,
-      privatePensionAmount: 0.0,
-      unionAmount: 0.0,
-      taxAmount: 0.0,
-      estimatePayment: 0.0,
-      period: {
-        from: '01-01-2020',
-        to: '01-01-2020',
-        ratio: 0.8,
-        approved: true,
-        paid: true,
-      },
-    }
+  ): Promise<ParentalLeavePaymentPlan[]> {
+    const paymentPlan: ParentalLeavePaymentPlan[] = period.map((p) => {
+      return {
+        estimatedAmount: 405300,
+        pensionAmount: 14800,
+        privatePensionAmount: 0,
+        unionAmount: 0,
+        taxAmount: 77500,
+        estimatePayment: 405300,
+        period: p,
+      }
+    })
+    return Promise.resolve(paymentPlan)
   }
 
   async getParentalLeavesApplicationPaymentPlan(
     dateOfBirth: string,
     applicationId: string,
     nationalId: string,
-  ): Promise<ParentalLeavePaymentPlan> {
-    return {
-      estimatedAmount: 1.0,
-      pensionAmount: 0.0,
-      privatePensionAmount: 0.0,
-      unionAmount: 0.0,
-      taxAmount: 0.0,
-      estimatePayment: 0.0,
-      period: {
-        from: '01-01-2020',
-        to: '01-01-2020',
-        ratio: 0.8,
-        approved: true,
-        paid: true,
+  ): Promise<ParentalLeavePaymentPlan[]> {
+    return [
+      {
+        estimatedAmount: 1.0,
+        pensionAmount: 0.0,
+        privatePensionAmount: 0.0,
+        unionAmount: 0.0,
+        taxAmount: 0.0,
+        estimatePayment: 0.0,
+        period: {
+          from: '01-01-2020',
+          to: '01-01-2020',
+          ratio: 0.8,
+          approved: true,
+          paid: true,
+        },
       },
-    }
+    ]
   }
 }
