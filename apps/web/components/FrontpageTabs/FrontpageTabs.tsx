@@ -113,7 +113,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
       const contentId = linkData.sys?.contentType?.sys?.id
 
       const slug = linkData.fields?.slug
-      if (slug && ['article', 'category', 'news', 'page'].includes(contentId)) {
+      if (slug) {
         return {
           href: contentId === 'page' ? slug : makePath(contentId, '[slug]'),
           as: makePath(contentId, slug),
