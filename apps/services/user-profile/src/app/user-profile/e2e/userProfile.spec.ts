@@ -2,9 +2,8 @@ import { setup } from '../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
-import { EmailVerification } from '../email-verification.model'
-import { SmsVerification } from '../sms-verification.model'
-import { UserProfile } from '../userProfile.model'
+import { EmailVerification } from '../emailVerification.model'
+import { SmsVerification } from '../smsVerification.model'
 import { SmsService } from '@island.is/nova-sms'
 
 let app: INestApplication

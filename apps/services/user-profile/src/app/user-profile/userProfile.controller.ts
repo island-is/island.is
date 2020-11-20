@@ -20,9 +20,9 @@ import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
 import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
-import { EmailVerification } from './email-verification.model'
+import { EmailVerification } from './emailVerification.model'
 import { UserProfileByNationalIdPipe } from './pipes/userProfileByNationalId.pipe'
-import { SmsVerification } from './sms-verification.model'
+import { SmsVerification } from './smsVerification.model'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
@@ -33,7 +33,7 @@ export class UserProfileController {
   constructor(
     private userProfileService: UserProfileService,
     private verificationService: VerificationService,
-  ) {}
+  ) { }
 
   @Get('userProfile/:nationalId')
   @ApiParam({
