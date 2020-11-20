@@ -1,5 +1,5 @@
 import { Field, Float, InputType } from '@nestjs/graphql'
-import { IsString, IsNumber, IsBoolean, IsObject } from 'class-validator'
+import { IsString, IsNumber, IsBoolean, IsArray } from 'class-validator'
 
 @InputType()
 class Period {
@@ -30,7 +30,7 @@ export class GetParentalLeavesEstimatedPaymentPlanInput {
   @IsString()
   dateOfBirth!: string
 
-  @Field(() => Period)
-  @IsObject()
-  period!: Period
+  @Field(() => [Period])
+  @IsArray()
+  period!: Period[]
 }

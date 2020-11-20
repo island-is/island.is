@@ -45,7 +45,7 @@ export class DirectorateOfLabourService {
     dateOfBirth: string,
     applicationId: string,
     nationalId: string,
-  ): Promise<ParentalLeavePaymentPlan> {
+  ): Promise<ParentalLeavePaymentPlan[]> {
     return await this.directorateOfLabourRepository
       .getParentalLeavesApplicationPaymentPlan(
         dateOfBirth,
@@ -57,9 +57,9 @@ export class DirectorateOfLabourService {
 
   async getParentalLeavesEstimatedPaymentPlan(
     dateOfBirth: string,
-    period: ParentalLeavePeriod,
+    period: ParentalLeavePeriod[],
     nationalId: string,
-  ): Promise<ParentalLeavePaymentPlan> {
+  ): Promise<ParentalLeavePaymentPlan[]> {
     return await this.directorateOfLabourRepository
       .getParentalLeavesEstimatedPaymentPlan(dateOfBirth, period, nationalId)
       .catch(handleError)
