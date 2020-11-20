@@ -1,53 +1,61 @@
 import React, { FC } from 'react'
-import { Button, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
+import { Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   LanguageForm,
   LanguageFormData,
   LanguageFormOption,
 } from '../../Forms/LanguageForm'
+import { User } from 'oidc-client'
 
 interface Props {
   language: LanguageFormOption | null
-  onBack: () => void
+  onClose: () => void
   onSubmit: (data: LanguageFormData) => void
+  userInfo: User
 }
 
-export const LanguageStep: FC<Props> = ({ onBack, onSubmit, language }) => {
+export const LanguageStep: FC<Props> = ({
+  onClose,
+  onSubmit,
+  language,
+  userInfo,
+}) => {
   const { formatMessage } = useLocale()
 
   return (
     <>
       <Text variant="h1" marginBottom={3}>
         {formatMessage({
-          id: 'service.portal:language',
-          defaultMessage: 'Tungumál',
+          id: 'service.portal:hi',
+          defaultMessage: 'Hæ',
         })}
+        {`, ${userInfo?.profile.name}`}
       </Text>
-      <Text marginBottom={7}>
+      <Text variant="intro" marginBottom={7}>
         {formatMessage({
-          id: 'sp.settings:language-form-message',
+          id: 'sp.settings:language-step-onboarding',
           defaultMessage: `
-                Vinsamlegast veldu tungumálið sem þú vilt
-                nota í kerfum island.is
-              `,
+            Byrjum á því að velja það tungumál sem hentar þér.
+            Let's begin by picking the language of your choice.
+          `,
         })}
       </Text>
       <LanguageForm
         language={language}
         renderBackButton={() => (
-          <Button variant="ghost" onClick={onBack}>
+          <Button variant="ghost" onClick={onClose}>
             {formatMessage({
-              id: 'service.portal:go-back',
-              defaultMessage: 'Til baka',
+              id: 'sp.settings:finish-later',
+              defaultMessage: 'Klára seinna',
             })}
           </Button>
         )}
         renderSubmitButton={() => (
           <Button variant="primary" type="submit" icon="arrowForward">
             {formatMessage({
-              id: 'service.portal:save-data',
-              defaultMessage: 'Vista upplýsingar',
+              id: 'service.portal:next-step',
+              defaultMessage: 'Næsta skref',
             })}
           </Button>
         )}

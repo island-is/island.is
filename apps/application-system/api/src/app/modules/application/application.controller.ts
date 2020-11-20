@@ -12,7 +12,10 @@ import {
   BadRequestException,
   UseInterceptors,
   Optional,
+  UseGuards,
+  Req,
 } from '@nestjs/common'
+
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
@@ -33,6 +36,7 @@ import {
   ApplicationTemplateHelper,
   ExternalData,
 } from '@island.is/application/core'
+// import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-api-lib'
 import {
   getApplicationDataProviders,
   getApplicationTemplateByTypeId,
@@ -59,6 +63,7 @@ import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
 
+// @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
 @ApiTags('applications')
 @Controller()
 export class ApplicationController {
@@ -108,9 +113,13 @@ export class ApplicationController {
   @UseInterceptors(ApplicationSerializer)
   async findApplicantApplications(
     @Param('nationalRegistryId') nationalRegistryId: string,
+    // @Req() request: Request,
     @Query('typeId') typeId?: string,
   ): Promise<ApplicationResponseDto[]> {
+    // const user = request.user as User
+
     const whereOptions: WhereOptions = {
+      // applicant: user.nationalId, TODO use this when user is in the request
       applicant: nationalRegistryId,
     }
 
@@ -299,15 +308,18 @@ export class ApplicationController {
       template,
     )
 
-    const newState = helper.changeState(updateApplicationStateDto.event)
+    const [hasChanged, newState, newApplication] = helper.changeState(
+      updateApplicationStateDto.event,
+    )
 
-    if (newState.changed) {
+    if (hasChanged) {
       const {
         updatedApplication,
       } = await this.applicationService.updateApplicationState(
         existingApplication.id,
-        newState.value.toString(), // TODO maybe ban more complicated states....
-        mergedAnswers,
+        newState, // TODO maybe ban more complicated states....
+        newApplication.answers,
+        newApplication.assignees,
       )
 
       return updatedApplication

@@ -104,7 +104,8 @@ export const headerSelect = style({
   appearance: 'none',
   fontSize: 18,
   fontWeight: 600,
-  background: theme.color.transparent,
+  backgroundColor: theme.color.transparent,
+  padding: 0,
   ...themeUtils.responsiveStyle({
     md: {
       fontSize: 20,

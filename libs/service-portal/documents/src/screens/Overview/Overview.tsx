@@ -14,14 +14,13 @@ import {
 } from '@island.is/island-ui/core'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
-  useScrollTopOnUpdate,
+  useScrollToRefOnUpdate,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 import { ActionCardLoader } from '@island.is/service-portal/core'
 import { Document } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import isAfter from 'date-fns/isAfter'
-import subYears from 'date-fns/subYears'
 import startOfTomorrow from 'date-fns/startOfTomorrow'
 import isWithinInterval from 'date-fns/isWithinInterval'
 import isEqual from 'lodash/isEqual'
@@ -99,7 +98,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   useNamespaces('sp.documents')
   const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
-  useScrollTopOnUpdate([page])
+  const { scrollToRef } = useScrollToRefOnUpdate([page])
 
   const [filterValue, setFilterValue] = useState<FilterValues>(
     defaultFilterValues,
@@ -207,6 +206,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               <Stack space={3}>
                 <Box height="full">
                   <Input
+                    icon="search"
                     value={filterValue.searchQuery}
                     onChange={(ev) => handleSearchChange(ev.target.value)}
                     name="rafraen-skjol-leit"
@@ -308,8 +308,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             )}
             {filteredDocuments
               ?.slice(pagedDocuments.from, pagedDocuments.to)
-              .map((document) => (
-                <DocumentCard key={document.id} document={document} />
+              .map((document, index) => (
+                <Box key={document.id} ref={index === 0 ? scrollToRef : null}>
+                  <DocumentCard document={document} />
+                </Box>
               ))}
             {filteredDocuments && filteredDocuments.length > pageSize && (
               <Pagination
