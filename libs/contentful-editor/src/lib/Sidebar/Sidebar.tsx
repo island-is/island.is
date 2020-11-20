@@ -6,10 +6,11 @@ import * as styles from './Sidebar.treat'
 
 interface SidebarProps {
   fields: any
+  locale: 'is-IS' | 'en'
   onChange(field: string, value: string): void
 }
 
-export const Sidebar: FC<SidebarProps> = ({ fields, onChange }) => {
+export const Sidebar: FC<SidebarProps> = ({ fields, locale, onChange }) => {
   console.log('-fields', fields)
 
   const handleChange = (field: string, value: string) => {
@@ -71,7 +72,7 @@ export const Sidebar: FC<SidebarProps> = ({ fields, onChange }) => {
                 name={field}
                 placeholder={field}
                 size="sm"
-                defaultValue={fields[field]?.['is-IS'] ?? ''}
+                defaultValue={fields[field]?.[locale] ?? 'is-IS'}
                 onChange={(event) => handleChange(field, event.target.value)}
               />
             </Box>
