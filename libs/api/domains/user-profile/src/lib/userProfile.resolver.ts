@@ -18,11 +18,12 @@ import { UseGuards } from '@nestjs/common'
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
 export class UserProfileResolver {
-  constructor(private readonly userUserProfileService: UserProfileService) {}
+  constructor(private readonly userUserProfileService: UserProfileService) { }
   @Query(() => UserProfile, { nullable: true })
   getUserProfile(
     @CurrentUser() user: User,
   ): Promise<UserProfile | null | undefined> {
+    // Force rebuild of schemas
     return this.userUserProfileService.getUser(user.nationalId)
   }
 
