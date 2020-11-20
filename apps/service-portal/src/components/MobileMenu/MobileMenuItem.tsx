@@ -7,17 +7,11 @@ import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
 
 interface MobileMenuItem {
   item: ServicePortalNavigationItem
-  index: number
   onClick?: () => void
   itemName: string
 }
 
-const MobileMenuItem: FC<MobileMenuItem> = ({
-  item,
-  index,
-  onClick,
-  itemName,
-}) => {
+const MobileMenuItem: FC<MobileMenuItem> = ({ item, onClick, itemName }) => {
   const figure = getMobileMenuFigure(item.path)
 
   return (

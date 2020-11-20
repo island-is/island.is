@@ -75,7 +75,6 @@ const MobileMenu: FC<{}> = () => {
               <MobileMenuItem
                 key={`info-${index}`}
                 item={navItem}
-                index={index}
                 onClick={handleLinkClick}
                 itemName={formatMessage(navItem.name)}
               />
@@ -87,7 +86,6 @@ const MobileMenu: FC<{}> = () => {
               <MobileMenuItem
                 key={`action-${index}`}
                 item={navItem}
-                index={index}
                 onClick={handleLinkClick}
                 itemName={formatMessage(navItem.name)}
               />
