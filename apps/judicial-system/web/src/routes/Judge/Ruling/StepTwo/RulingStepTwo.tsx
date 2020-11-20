@@ -14,7 +14,7 @@ import {
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as Constants from '../../../../utils/constants'
-import { parseString } from '../../../../utils/formatters'
+import { parseString, replaceTabsOnChange } from '../../../../utils/formatters'
 import { constructConclusion } from '../../../../utils/stepHelper'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useParams } from 'react-router-dom'
@@ -233,6 +233,7 @@ export const RulingStepTwo: React.FC = () => {
                     parseString('accusedAppealAnnouncement', evt.target.value),
                   )
                 }}
+                onChange={replaceTabsOnChange}
                 textarea
                 rows={7}
               />
@@ -359,6 +360,7 @@ export const RulingStepTwo: React.FC = () => {
                     ),
                   )
                 }}
+                onChange={replaceTabsOnChange}
                 textarea
                 rows={7}
               />

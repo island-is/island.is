@@ -19,6 +19,7 @@ const createMockApplication = (
   } = {},
 ): Application => ({
   id: '123',
+  assignees: [],
   state: data.state || 'draft',
   applicant: '111111-3000',
   typeId: data.typeId || ApplicationTypes.EXAMPLE,
@@ -157,18 +158,18 @@ describe('ApplicationTemplate', () => {
 
   describe('changeState', () => {
     it('should be able to change from draft to inReview on SUBMIT', () => {
-      const newState = templateHelper.changeState('SUBMIT')
-      expect(newState.value).toBe('inReview')
-      expect(newState.changed).toBe(true)
+      const [hasChanged, newState] = templateHelper.changeState('SUBMIT')
+      expect(newState).toBe('inReview')
+      expect(hasChanged).toBe(true)
     })
     it('should return the same state if passing an event that cannot progress the application to any other state', () => {
-      const newState = templateHelper.changeState('APPROVE')
-      expect(newState.value).toBe('draft')
-      expect(newState.changed).toBe(false)
+      const [hasChanged, newState] = templateHelper.changeState('APPROVE')
+      expect(newState).toBe('draft')
+      expect(hasChanged).toBe(false)
 
       const anotherState = templateHelper.changeState('REJECT')
-      expect(anotherState.value).toBe('draft')
-      expect(anotherState.changed).toBe(false)
+      expect(anotherState[0]).toBe(false)
+      expect(anotherState[1]).toBe('draft')
     })
   })
 
