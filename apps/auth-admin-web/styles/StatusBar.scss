@@ -4,12 +4,19 @@
   box-sizing: border-box;
   border-radius: 5px;
   padding: 15px;
-  padding: 10px 10px 10px 45px;
+  padding: 12px 12px 12px 55px;
+  display: flex;
+  margin: 20px 0px;
 
   &.error {
     background: url('/warning.svg') #fff2f6;
     background-repeat: no-repeat;
     background-position: 10px 10px;
     border: 1px solid #ffccdc;
+  }
+
+  &__message {
+    font-weight: 600;
+    margin-right: 15px;
   }
 }

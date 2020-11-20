@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useForm, Controller  } from "react-hook-form";
 import { ErrorMessage } from '@hookform/error-message';
 import * as yup from "yup";
+import HelpBox from './HelpBox';
 
 type Props = {
   client: ClientDTO;
@@ -95,6 +96,7 @@ export default function Client<ClientDTO>(client: ClientDTO){
                       defaultValue={client.clientId}
                       className="client__input"
                     />
+                    <HelpBox helpText="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem architecto a odit ea distinctio consequatur autem nesciunt cupiditate eos, error reprehenderit illum dolor, mollitia modi vitae. Ducimus esse eos explicabo." />
                     <ErrorMessage as="span" errors={errors} name="client.clientId" message="Id is required" />
                   </div>
                   <div className="client__container__field">
