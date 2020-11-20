@@ -27,7 +27,6 @@ import {
   parseString,
   parseTime,
   parseTransition,
-  replaceTabs,
   replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
@@ -917,9 +916,7 @@ export const StepOne: React.FC = () => {
                   label="Veldu dagsetningu"
                   placeholderText="Veldu dagsetningu"
                   locale="is"
-                  icon={
-                    Boolean(workingCase.courtDate) ? 'lockClosed' : undefined
-                  }
+                  icon={workingCase.courtDate ? 'lockClosed' : undefined}
                   minDate={new Date()}
                   selected={
                     workingCase.requestedCourtDate
@@ -966,9 +963,7 @@ export const StepOne: React.FC = () => {
                     !workingCase.requestedCourtDate ||
                     Boolean(workingCase.courtDate)
                   }
-                  icon={
-                    Boolean(workingCase.courtDate) ? 'lockClosed' : undefined
-                  }
+                  icon={workingCase.courtDate ? 'lockClosed' : undefined}
                   iconType="outline"
                   ref={requestedCourtTimeRef}
                   onBlur={(evt) => {

@@ -12,10 +12,7 @@ import {
 import { MockedProvider } from '@apollo/client/testing'
 import { CaseGender, UpdateCase } from '@island.is/judicial-system/types'
 import formatISO from 'date-fns/formatISO'
-import {
-  UserContext,
-  UserProvider,
-} from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 describe('/krafa with an id', () => {
   test('should prefill the inputs with the correct data if id is in the url', async () => {
