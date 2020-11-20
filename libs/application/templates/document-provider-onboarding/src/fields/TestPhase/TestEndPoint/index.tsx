@@ -3,6 +3,7 @@ import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
+import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 
 const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {
   interface Variable {
@@ -51,14 +52,11 @@ const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {
       </Box>
 
       {variables.map((Variable) => (
-        //   Need copy button, should maybe be individual component
         <Box marginBottom={3} key={Variable.id}>
-          <Input
-            disabled
-            label={Variable.name}
-            name="Test1"
-            value={Variable.value}
-          />
+          <CopyToClipboardInput
+            inputLabel={Variable.name}
+            inputValue={Variable.value}
+          ></CopyToClipboardInput>
         </Box>
       ))}
     </Box>
