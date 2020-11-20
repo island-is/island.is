@@ -19,6 +19,7 @@ describe(' FormShell', () => {
   const applicant = '1111112219'
   const application: Application = {
     id: '12315151515',
+    assignees: [],
     typeId: ApplicationTypes.PARENTAL_LEAVE,
     attachments: {},
     externalData: {},
