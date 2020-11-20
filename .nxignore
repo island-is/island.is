@@ -17,9 +17,16 @@ apps/judicial-system/codegen.yml
 apps/judicial-system/api.graphql
 
 # Readmes
-apps/gjafakort/README.md
 apps/air-discount-scheme/README.md
 apps/application-system/README.md
+apps/gjafakort/README.md
 apps/judicial-system/README.md
+apps/services/README.md
 apps/skilavottord/README.md
+libs/api-catalogue/README.md
+libs/api/domains/README.md
+libs/api/README.md
+libs/application/README.md
 libs/island-ui/README.md
+libs/service-portal/README.md
+libs/shared/README.md
