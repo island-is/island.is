@@ -74,6 +74,122 @@ describe('/domari-krafa/fyrirtokutimi', () => {
     ).not.toBeDisabled()
   })
 
+  test('should not allow users to continue if the case has a DRAFT status code', async () => {
+    // Arrange
+    render(
+      <MockedProvider
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation([
+            {
+              id: 'test_id_3',
+              courtDate: '2020-09-12',
+            } as UpdateCase,
+            {
+              id: 'test_id_3',
+              courtDate: '2020-09-12T14:51:00.000Z',
+            } as UpdateCase,
+            {
+              id: 'test_id_3',
+              courtRoom: '999',
+            } as UpdateCase,
+            {
+              id: 'test_id_3',
+              defenderName: 'Saul Goodman',
+            } as UpdateCase,
+            {
+              id: 'test_id_3',
+              defenderEmail: 'saul@goodman.com',
+            } as UpdateCase,
+          ]),
+        ]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.HEARING_ARRANGEMENTS_ROUTE}/test_id_3`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/:id`}>
+              <HearingArrangements />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    // Act
+    userEvent.type(
+      await waitFor(() => screen.getByLabelText('Dómsalur *')),
+      '999',
+    )
+
+    userEvent.tab()
+
+    // Assert
+    expect(
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
+    ).toBeDisabled()
+  })
+
+  test("should have a info box that informs the user that they can't continue until the case is no longer a DRAFT", async () => {
+    // Arrange
+    render(
+      <MockedProvider
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation([
+            {
+              id: 'test_id_3',
+              courtDate: '2020-09-12',
+            } as UpdateCase,
+            {
+              id: 'test_id_3',
+              courtDate: '2020-09-12T14:51:00.000Z',
+            } as UpdateCase,
+            {
+              id: 'test_id_3',
+              defenderName: 'Saul Goodman',
+            } as UpdateCase,
+            {
+              id: 'test_id_3',
+              defenderEmail: 'saul@goodman.com',
+            } as UpdateCase,
+          ]),
+        ]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.HEARING_ARRANGEMENTS_ROUTE}/test_id_3`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/:id`}>
+              <HearingArrangements />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    // Act
+
+    // Assert
+    expect(
+      await waitFor(() =>
+        screen.getByText('Krafa hefur ekki verið staðfest af ákæranda'),
+      ),
+    ).toBeInTheDocument()
+
+    expect(
+      screen.getByText(
+        'Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram að vinna úrskurðinn fyrr en ákærandi hefur staðfest kröfuna.',
+      ),
+    ).toBeInTheDocument()
+  })
+
   test('should have a prefilled court date and dedender info with requested  date and dedender info', async () => {
     // Arrange
     render(

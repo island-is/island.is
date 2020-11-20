@@ -54,7 +54,6 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { ValueType } from 'react-select/src/types'
 import * as styles from './StepOne.treat'
-import isEmpty from 'lodash/isEmpty'
 
 export const CreateCaseMutation = gql`
   mutation CreateCaseMutation($input: CreateCaseInput!) {
@@ -699,9 +698,9 @@ export const StepOne: React.FC = () => {
                 label="Nafn verjanda"
                 placeholder="Fullt nafn"
                 defaultValue={workingCase.requestedDefenderName}
-                disabled={!isEmpty(workingCase.defenderName)}
+                disabled={Boolean(workingCase.defenderName)}
                 icon={
-                  !isEmpty(workingCase.defenderName) ? 'lockClosed' : undefined
+                  Boolean(workingCase.defenderName) ? 'lockClosed' : undefined
                 }
                 iconType="outline"
                 onBlur={(evt) => {
@@ -724,9 +723,9 @@ export const StepOne: React.FC = () => {
               name="requestedDefenderEmail"
               label="Netfang verjanda"
               placeholder="Netfang"
-              disabled={!isEmpty(workingCase.defenderEmail)}
+              disabled={Boolean(workingCase.defenderEmail)}
               icon={
-                !isEmpty(workingCase.defenderEmail) ? 'lockClosed' : undefined
+                Boolean(workingCase.defenderEmail) ? 'lockClosed' : undefined
               }
               iconType="outline"
               ref={defenderEmailRef}
@@ -839,7 +838,7 @@ export const StepOne: React.FC = () => {
                     )
                   }}
                   handleCloseCalendar={(date: Date | null) => {
-                    if (isEmpty(date) || !isValid(date)) {
+                    if (date === null || !isValid(date)) {
                       setArrestDateErrorMessage('Reitur má ekki vera tómur')
                     }
                   }}
@@ -918,7 +917,7 @@ export const StepOne: React.FC = () => {
                   placeholderText="Veldu dagsetningu"
                   locale="is"
                   icon={
-                    !isEmpty(workingCase.courtDate) ? 'lockClosed' : undefined
+                    Boolean(workingCase.courtDate) ? 'lockClosed' : undefined
                   }
                   minDate={new Date()}
                   selected={
@@ -926,7 +925,7 @@ export const StepOne: React.FC = () => {
                       ? parseISO(workingCase.requestedCourtDate.toString())
                       : null
                   }
-                  disabled={!isEmpty(workingCase.courtDate)}
+                  disabled={Boolean(workingCase.courtDate)}
                   handleChange={(date) => {
                     const formattedDate = formatISO(date, {
                       representation: workingCase.requestedCourtDate?.includes(
@@ -964,10 +963,10 @@ export const StepOne: React.FC = () => {
                   }
                   disabled={
                     !workingCase.requestedCourtDate ||
-                    !isEmpty(workingCase.courtDate)
+                    Boolean(workingCase.courtDate)
                   }
                   icon={
-                    !isEmpty(workingCase.courtDate) ? 'lockClosed' : undefined
+                    Boolean(workingCase.courtDate) ? 'lockClosed' : undefined
                   }
                   iconType="outline"
                   ref={requestedCourtTimeRef}
