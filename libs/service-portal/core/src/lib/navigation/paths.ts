@@ -33,6 +33,8 @@ export enum ServicePortalPath {
   EignirRoot = '/eignir',
   // Skilabod
   MessagesRoot = '/skilabod',
+  // Min rettindi
+  MinRettindiRoot = '/min-rettindi',
 
   // User Profile
   UserProfileRoot = '/stillingar/minn-adgangur',
