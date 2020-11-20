@@ -1,5 +1,6 @@
 import { style, styleMap } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
+import covidColors from '../UI/colors'
 
 export const container = style({
   borderRadius: theme.border.radius.large,
@@ -9,13 +10,10 @@ export const container = style({
 
 export const variants = styleMap({
   blue: {
-    borderColor: theme.color.blue200,
+    borderColor: covidColors.blue200,
   },
-  purple: {
-    borderColor: theme.color.purple200,
-  },
-  red: {
-    borderColor: theme.color.red200,
+  green: {
+    borderColor: covidColors.green200,
   },
 })
 
@@ -23,13 +21,10 @@ export const bottom = style({
   borderRadius: `0 0 ${theme.border.radius.large} ${theme.border.radius.large}`,
   selectors: {
     [`${variants.blue} &`]: {
-      background: theme.color.blue100,
+      background: covidColors.blue100,
     },
-    [`${variants.purple} &`]: {
-      background: theme.color.purple100,
-    },
-    [`${variants.red} &`]: {
-      background: theme.color.red100,
+    [`${variants.green} &`]: {
+      background: covidColors.green100,
     },
   },
 })

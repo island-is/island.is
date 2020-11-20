@@ -17,6 +17,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   parseString,
   parseTime,
+  replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useParams } from 'react-router-dom'
@@ -32,7 +33,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 
 interface CaseData {
-  case: Case
+  case?: Case
 }
 
 export const CourtRecord: React.FC = () => {
@@ -93,7 +94,7 @@ export const CourtRecord: React.FC = () => {
   }
 
   useEffect(() => {
-    if (data && workingCase == null) {
+    if (!workingCase && data?.case) {
       let theCase = data.case
 
       if (!theCase.courtAttendees) {
@@ -116,6 +117,7 @@ export const CourtRecord: React.FC = () => {
       activeSection={Sections.JUDGE}
       activeSubSection={JudgeSubsections.COURT_RECORD}
       isLoading={loading}
+      notFound={data?.case === undefined}
     >
       {workingCase ? (
         <>
@@ -220,6 +222,7 @@ export const CourtRecord: React.FC = () => {
                     setCourtAttendeesMessage(validateEmpty.errorMessage)
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 errorMessage={courtAttendeesErrorMessage}
                 hasError={courtAttendeesErrorMessage !== ''}
                 onFocus={() => setCourtAttendeesMessage('')}
@@ -253,6 +256,7 @@ export const CourtRecord: React.FC = () => {
                   setPoliceDemandsMessage(validateEmpty.errorMessage)
                 }
               }}
+              onChange={replaceTabsOnChange}
               errorMessage={policeDemandsErrorMessage}
               hasError={policeDemandsErrorMessage !== ''}
               onFocus={() => setPoliceDemandsMessage('')}
@@ -317,6 +321,7 @@ export const CourtRecord: React.FC = () => {
                   setAccusedPleaMessage(validateEmpty.errorMessage)
                 }
               }}
+              onChange={replaceTabsOnChange}
               errorMessage={accusedPleaErrorMessage}
               hasError={accusedPleaErrorMessage !== ''}
               onFocus={() => setAccusedPleaMessage('')}
@@ -359,6 +364,7 @@ export const CourtRecord: React.FC = () => {
                     )
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 errorMessage={litigationPresentationsErrorMessage}
                 hasError={litigationPresentationsErrorMessage !== ''}
                 onFocus={() => setLitigationPresentationsMessage('')}

@@ -43,14 +43,23 @@ export const ConfirmationStep: FC<Props> = ({
           rules={{
             required: {
               value: true,
-              message: 'Skylda er að setja inn öryggiskóða',
+              message: formatMessage({
+                id: 'service.portal:verification-code-required',
+                defaultMessage: 'Skylda er að setja inn öryggiskóða',
+              }),
             },
           }}
           defaultValue={''}
           render={({ onChange, value, name }) => (
             <Input
-              label="Öryggiskóði"
-              placeholder="Öryggiskóði"
+              label={formatMessage({
+                id: 'service.portal:verification-code',
+                defaultMessage: 'Öryggiskóði',
+              })}
+              placeholder={formatMessage({
+                id: 'service.portal:verification-code',
+                defaultMessage: 'Öryggiskóði',
+              })}
               name={name}
               value={value}
               hasError={errors.code}
