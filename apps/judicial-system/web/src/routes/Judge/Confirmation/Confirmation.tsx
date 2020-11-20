@@ -16,6 +16,7 @@ import {
   CaseAppealDecision,
   CaseState,
   CaseTransition,
+  PendingSignature,
   SignatureResponse,
   TransitionCase,
 } from '@island.is/judicial-system/types'
@@ -29,7 +30,6 @@ import {
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import { gql, useMutation, useQuery } from '@apollo/client'
-import { PendingSignature } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const RequestSignatureMutation = gql`
   mutation RequestSignatureMutation($input: RequestSignatureInput!) {

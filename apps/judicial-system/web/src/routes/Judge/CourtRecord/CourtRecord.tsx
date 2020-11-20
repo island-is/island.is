@@ -16,6 +16,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   parseString,
   parseTime,
+  replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useParams } from 'react-router-dom'
@@ -224,6 +225,7 @@ export const CourtRecord: React.FC = () => {
                     setCourtAttendeesMessage(validateEmpty.errorMessage)
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 errorMessage={courtAttendeesErrorMessage}
                 hasError={courtAttendeesErrorMessage !== ''}
                 onFocus={() => setCourtAttendeesMessage('')}
@@ -257,6 +259,7 @@ export const CourtRecord: React.FC = () => {
                   setPoliceDemandsMessage(validateEmpty.errorMessage)
                 }
               }}
+              onChange={replaceTabsOnChange}
               errorMessage={policeDemandsErrorMessage}
               hasError={policeDemandsErrorMessage !== ''}
               onFocus={() => setPoliceDemandsMessage('')}
@@ -321,6 +324,7 @@ export const CourtRecord: React.FC = () => {
                   setAccusedPleaMessage(validateEmpty.errorMessage)
                 }
               }}
+              onChange={replaceTabsOnChange}
               errorMessage={accusedPleaErrorMessage}
               hasError={accusedPleaErrorMessage !== ''}
               onFocus={() => setAccusedPleaMessage('')}
@@ -360,6 +364,7 @@ export const CourtRecord: React.FC = () => {
                   setLitigationPresentationsMessage(validateEmpty.errorMessage)
                 }
               }}
+              onChange={replaceTabsOnChange}
               errorMessage={litigationPresentationsErrorMessage}
               hasError={litigationPresentationsErrorMessage !== ''}
               onFocus={() => setLitigationPresentationsMessage('')}
