@@ -2,6 +2,7 @@ import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 import { escapeGrid } from '@island.is/island-ui/utils'
 
+const headerHeight = 112
 export const root = style({
   minHeight: '-webkit-fill-available',
   display: 'flex',
@@ -9,7 +10,7 @@ export const root = style({
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      minHeight: '100vh',
+      minHeight: `calc(100vh - ${headerHeight}px)`,
     },
   },
 })
@@ -67,10 +68,13 @@ export const shellContainer = style({
 
 export const sidebarContainer = style({
   order: 1,
+  position: 'sticky',
+  top: 0,
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       order: 2,
+      position: 'relative',
     },
   },
 })

@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import {
   Application,
@@ -25,6 +25,8 @@ import FormExternalDataProvider from './FormExternalDataProvider'
 import { findSubmitField, verifyExternalData } from '../utils'
 import { useLocale } from '@island.is/localization'
 import ScreenFooter from './ScreenFooter'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -128,8 +130,20 @@ const Screen: FC<ScreenProps> = ({
     return !isLoadingOrPending
   }
 
+  const [isMobile, setIsMobile] = useState(false)
+  const { width } = useWindowSize()
+  const headerHeight = 85
+
   useEffect(() => {
-    window.scrollTo(0, 0)
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
+
+  useEffect(() => {
+    const target = isMobile ? headerHeight : 0
+    window.scrollTo(0, target)
   }, [activeScreenIndex])
 
   return (
