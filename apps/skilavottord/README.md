@@ -91,12 +91,14 @@ If a user is registered as an employee of a recycling company, they can log in h
 
 URL: [https://skilavottord.dev01.devland.is/recycled-vehicles](https://skilavottord.dev01.devland.is/deregister-vehicle)
 
-If a user is registered as an employee of Fjársýsla ríkisins, they can log in here to see a list of all vehicles that has completed the process of being deregistered and recycled. This page also lists all available recycling companies.
+If a user is registered as an employee of Fjársýsla ríkisins, they can log in here to see a list of all vehicles that has completed the process of being deregistered and recycled.
+
+This page also lists all available recycling companies.
 
 ## Integrations
 
-- [Samgöngustofa](https://www.samgongustofa.is/): To fetch vehicle information and to deregister a vehicle.
-- [Fjársýsla ríkisins](https://www.fjs.is/): To be able to initiate payment after vehicles have been recycled vehicles.
+- [Samgöngustofa](https://www.samgongustofa.is/): To fetch vehicle information and to deregister vehicles.
+- [Fjársýsla ríkisins](https://www.fjs.is/): To be able to initiate payment after vehicles have been recycled.
 
 ## Code owners and maintainers
 
