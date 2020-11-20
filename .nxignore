@@ -17,3 +17,6 @@ apps/air-discount-scheme/Makefile
 # judicial-system
 apps/judicial-system/codegen.yml
 apps/judicial-system/api.graphql
+
+# skilavottord
+apps/skilavottord/README.md
