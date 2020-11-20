@@ -33,7 +33,7 @@ export class UserProfileController {
   constructor(
     private userProfileService: UserProfileService,
     private verificationService: VerificationService,
-  ) { }
+  ) {}
 
   @Get('userProfile/:nationalId')
   @ApiParam({

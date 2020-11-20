@@ -48,4 +48,4 @@ import { SequelizeConfigService } from '../sequelizeConfig.service'
   ],
   exports: [UserProfileService],
 })
-export class UserProfileModule { }
+export class UserProfileModule {}
