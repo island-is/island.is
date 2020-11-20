@@ -14,7 +14,7 @@ import {
   RadioButton,
 } from '@island.is/island-ui/core'
 import { validate } from '../../../../utils/validate'
-import { isNextDisabled } from '../../../../utils/stepHelper'
+import { isDirty, isNextDisabled } from '../../../../utils/stepHelper'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import formatISO from 'date-fns/formatISO'
@@ -698,9 +698,9 @@ export const StepOne: React.FC = () => {
                 label="Nafn verjanda"
                 placeholder="Fullt nafn"
                 defaultValue={workingCase.requestedDefenderName}
-                disabled={Boolean(workingCase.defenderName)}
+                disabled={isDirty(workingCase.defenderName)}
                 icon={
-                  Boolean(workingCase.defenderName) ? 'lockClosed' : undefined
+                  isDirty(workingCase.defenderName) ? 'lockClosed' : undefined
                 }
                 iconType="outline"
                 onBlur={(evt) => {
@@ -723,9 +723,9 @@ export const StepOne: React.FC = () => {
               name="requestedDefenderEmail"
               label="Netfang verjanda"
               placeholder="Netfang"
-              disabled={Boolean(workingCase.defenderEmail)}
+              disabled={isDirty(workingCase.defenderEmail)}
               icon={
-                Boolean(workingCase.defenderEmail) ? 'lockClosed' : undefined
+                isDirty(workingCase.defenderEmail) ? 'lockClosed' : undefined
               }
               iconType="outline"
               ref={defenderEmailRef}
@@ -759,7 +759,8 @@ export const StepOne: React.FC = () => {
               onChange={replaceTabsOnChange}
               onFocus={() => setRequestedDefenderEmailErrorMessage('')}
             />
-            {workingCase.defenderName && workingCase.defenderEmail && (
+            {(isDirty(workingCase.defenderName) ||
+              isDirty(workingCase.defenderEmail)) && (
               <Box marginTop={1}>
                 <Text variant="eyebrow">Verjanda hefur verið úthlutað</Text>
               </Box>

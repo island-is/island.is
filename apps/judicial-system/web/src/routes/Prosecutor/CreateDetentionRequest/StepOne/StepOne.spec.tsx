@@ -147,6 +147,40 @@ describe('/krafa with an id', () => {
   })
 })
 
+test('should have a disabled defender name and email even if a judge erases that info from the hearing arrangement screen', async () => {
+  // Arrange
+
+  // Act
+  render(
+    <MockedProvider
+      mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+      addTypename={false}
+    >
+      <MemoryRouter
+        initialEntries={[`${Constants.SINGLE_REQUEST_BASE_ROUTE}/test_id_3`]}
+      >
+        <UserProvider>
+          <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+            <StepOne />
+          </Route>
+        </UserProvider>
+      </MemoryRouter>
+    </MockedProvider>,
+  )
+
+  // Assert
+  // A value is considered dirty if it's a string, even an empty one.
+  expect(
+    await waitFor(
+      () => screen.getByLabelText('Nafn verjanda') as HTMLInputElement,
+    ),
+  ).toBeDisabled()
+
+  expect(
+    screen.getByLabelText('Netfang verjanda') as HTMLInputElement,
+  ).toBeDisabled()
+})
+
 describe('/krafa without ID', () => {
   test('should display an empty form if there is no id in url', async () => {
     // Arrange
