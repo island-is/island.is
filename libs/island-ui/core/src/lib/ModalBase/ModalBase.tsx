@@ -20,7 +20,7 @@ import * as styles from './ModalBase.treat'
 export const BackdropDiv = forwardRef(
   (props: DialogProps, ref: Ref<HTMLDivElement>) => {
     const [mounted, setMounted] = useState(false)
-    useLayoutEffect(function() {
+    useLayoutEffect(function () {
       setMounted(true)
     }, [])
 
