@@ -26,6 +26,8 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   parseString,
   parseTime,
+  replaceTabs,
+  replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import {
@@ -107,6 +109,10 @@ export const CreateCaseMutation = gql`
   }
 `
 
+interface CaseData {
+  case?: Case
+}
+
 export const StepOne: React.FC = () => {
   const history = useHistory()
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -148,12 +154,10 @@ export const StepOne: React.FC = () => {
   const defenderEmailRef = useRef<HTMLInputElement>(null)
   const arrestTimeRef = useRef<HTMLInputElement>(null)
   const requestedCourtTimeRef = useRef<HTMLInputElement>(null)
-  const { data, loading } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const resCase = data?.case
 
   const courts = [
     {
@@ -283,8 +287,8 @@ export const StepOne: React.FC = () => {
 
   // Run this if id is in url, i.e. if user is opening an existing request.
   useEffect(() => {
-    if (id && !workingCase && resCase) {
-      setWorkingCase(resCase)
+    if (id && !workingCase && data?.case) {
+      setWorkingCase(data?.case)
     } else if (!id && !workingCase) {
       setWorkingCase({
         id: '',
@@ -303,7 +307,7 @@ export const StepOne: React.FC = () => {
         requestedCourtDate: undefined,
       })
     }
-  }, [id, workingCase, setWorkingCase, resCase])
+  }, [id, workingCase, setWorkingCase, data])
 
   /**
    * Run this to validate form after each change
@@ -359,6 +363,7 @@ export const StepOne: React.FC = () => {
       activeSection={Sections.PROSECUTOR}
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_ONE}
       isLoading={loading}
+      notFound={id !== undefined && data?.case === undefined}
     >
       {workingCase ? (
         <>
@@ -378,7 +383,7 @@ export const StepOne: React.FC = () => {
               name="policeCaseNumber"
               label="Slá inn LÖKE málsnúmer"
               placeholder="007-2020-X"
-              defaultValue={workingCase?.policeCaseNumber}
+              defaultValue={workingCase.policeCaseNumber}
               ref={policeCaseNumberRef}
               errorMessage={policeCaseNumberErrorMessage}
               hasError={policeCaseNumberErrorMessage !== ''}
@@ -412,6 +417,7 @@ export const StepOne: React.FC = () => {
                   )
                 }
               }}
+              onChange={replaceTabsOnChange}
               onFocus={() => setPoliceCaseNumberErrorMessage('')}
               required
             />
@@ -465,6 +471,7 @@ export const StepOne: React.FC = () => {
                     )
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 onFocus={() => setNationalIdErrorMessage('')}
                 required
               />
@@ -500,6 +507,7 @@ export const StepOne: React.FC = () => {
                     setAccusedNameErrorMessage(validateField.errorMessage)
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 onFocus={() => setAccusedNameErrorMessage('')}
                 required
               />
@@ -535,6 +543,7 @@ export const StepOne: React.FC = () => {
                     setAccusedAddressErrorMessage(validateField.errorMessage)
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 onFocus={() => setAccusedAddressErrorMessage('')}
                 required
               />
@@ -650,6 +659,7 @@ export const StepOne: React.FC = () => {
                     )
                   }
                 }}
+                onChange={replaceTabsOnChange}
               />
             </Box>
             <Input
@@ -689,6 +699,7 @@ export const StepOne: React.FC = () => {
                   )
                 }
               }}
+              onChange={replaceTabsOnChange}
               onFocus={() => setRequestedDefenderEmailErrorMessage('')}
             />
             {workingCase.defenderName && workingCase.defenderEmail && (

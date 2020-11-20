@@ -19,7 +19,7 @@ const settings: UserManagerSettings = {
   revokeAccessTokenOnSignout: true,
   loadUserInfo: true,
   automaticSilentRenew: true,
-  scope: 'openid profile offline_access',
+  scope: 'openid profile offline_access api_resource.scope',
   userStore: new WebStorageStateStore({ store: window.sessionStorage }),
 }
 
