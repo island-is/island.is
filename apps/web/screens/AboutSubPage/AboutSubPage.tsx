@@ -104,7 +104,7 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
           <Box paddingTop={5}>
             <Background
               background="dotted"
-              paddingTop={10}
+              paddingTop={[4, 4, 6, 10]}
               paddingBottom={page.bottomSlices.length ? 20 : 10}
             >
               <RichText body={page.slices as SliceType[]} />
