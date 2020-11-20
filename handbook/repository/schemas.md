@@ -1,4 +1,4 @@
-# Schemas
+# Auto-generated schemas
 
 We are ignoring all the auto-generated files from the repository to avoid noises, to make reviews easier on PRs and don't notify teams with code reviews when not needed.
 
@@ -59,7 +59,7 @@ Follow the next steps to configure your project:
 
 First we need to create an `openApi.ts` file to define the document builder. Add this file at the root of the project along the `index.ts`.
 
-```ts
+```typescript
 import { DocumentBuilder } from '@nestjs/swagger'
 
 export const openApi = new DocumentBuilder()
@@ -72,7 +72,7 @@ export const openApi = new DocumentBuilder()
 
 Next, we need to create an `buildOpenApi.ts` that will consume the previous file and generate the `openapi.yaml` file.
 
-```ts
+```typescript
 import { buildOpenApi } from '@island.is/infra-nest-server'
 
 import { AppModule } from './app/app.module'
@@ -105,13 +105,13 @@ If your service is running a service like redis, you will need to ignore it for 
 
 and in the module where the redis manager is defined
 
-```ts
+```typescript
 if (process.env.INIT_SCHEMA === 'true') {
   CacheModule = NestCacheModule.register()
 } else {
   CacheModule = NestCacheModule.register({
     store: redisStore,
-    redisInstance: createRedisCluster({...}),
+    redisInstance: createNestJSCache({...}),
   })
 }
 ```
@@ -122,7 +122,9 @@ if (process.env.INIT_SCHEMA === 'true') {
 
 We will now use the `openapi.yaml` file generated from the previous script to run `openapi-generator`.
 
-> If the `.yaml` file comes from an outside source, don't name it openapi.yaml, otherwise it will be git ignored.
+{% hint style="info" %}
+If the `.yaml` file comes from an outside source, don't name it openapi.yaml, otherwise it will be git ignored.
+{% endhint %}
 
 Add the following script to the `workspace.json`'s project.
 
@@ -142,7 +144,7 @@ Add the following script to the `workspace.json`'s project.
 
 If you are creating an API, you will need to create a `buildSchema.ts` at the root of the project, along `index.ts` as follow:
 
-```ts
+```typescript
 import { buildSchema } from '@island.is/infra-nest-server'
 
 buildSchema({
@@ -196,7 +198,9 @@ Finally, you need to add it inside your `workspace.json`
 }
 ```
 
-> You should use one of the following name for the generated file from the codegen.yml configuration: `schema.d.ts`, `schema.tsx`, `schema.ts`, `possibleTypes.json`, `fragmentTypes.json` to be ignored from git.
+{% hint style="info" %}
+You should use one of the following name for the generated file from the codegen.yml configuration: `schema.d.ts`, `schema.tsx`, `schema.ts`, `possibleTypes.json`, `fragmentTypes.json` to be ignored from git.
+{% endhint %}
 
 ## Generating schema and client types
 

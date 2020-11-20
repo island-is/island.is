@@ -6,7 +6,7 @@ This library provides components to support Internationalization in nextjs and r
 
 ### **Wrap your App with the `appWithLocale` HOC**
 
-```js
+```tsx
 import { appWithLocale } from '@island.is/localization'
 
 function MyApp({ Component, pageProps }) {
@@ -18,7 +18,7 @@ export default appWithLocale(MyApp)
 
 ### **Fetch namespaces by wrapping your Pages with the `withLocale` HOC**
 
-```js
+```tsx
 import { withLocale } from '@island.is/localization'
 
 const Home = () => {
@@ -41,7 +41,7 @@ export default withLocale(['global', 'yourNamespace'])(Home)
 
 ### **Wrap your Application with the `<LocaleProvider>`**
 
-```js
+```tsx
 import { defaultLanguage, LocaleProvider } from '@island.is/localization'
 
 const App = () => {
@@ -55,7 +55,7 @@ const App = () => {
 
 ### **Fetch namespaces by wrapping your component with the `withLocale` HOC or use the `useNamespaces` hook**
 
-```js
+```tsx
 const Home = () => {
   const { loadingMessages } = useNamespaces(['gloable', 'yourNamespace'])
   const { formatMessage } = useLocale()
@@ -83,40 +83,43 @@ You can declare a message by:
 
 - Using `formatMessage` method from the `useLocale` hook
 
-```js
+```tsx
 const { formatMessage } = useLocale();
 
 return (
-    <div>
-      {formatMessage({
-        id: 'global:welcome',
-        defaultMessage: 'Hello {name}',
-        description: 'A welcome message',
-        values={{
-            name: userName,
-        }}
-      })}
-    </div>
-  )
+  <div>
+    {formatMessage({
+      id: 'global:welcome',
+      defaultMessage: 'Hello {name}',
+      description: 'A welcome message',
+      values={{
+          name: userName,
+      }}
+    })}
+  </div>
+)
 ```
 
 - Using React API `<FormattedMessage />`
 
-```js
+```tsx
 import { FormattedMessage } from 'react-intl'
-;<FormattedMessage
-  id="global:welcome"
-  defaultMessage="Hello {name}"
-  description="A welcome message"
-  values={{
-    name: userName,
-  }}
-/>
+
+return (
+  <FormattedMessage
+    id="global:welcome"
+    defaultMessage="Hello {name}"
+    description="A welcome message"
+    values={{
+      name: userName,
+    }}
+  />
+)
 ```
 
 - Pre-declaring using `defineMessage` or `defineMessages` for later consumption
 
-```js
+```tsx
 const message = defineMessage({
   id: 'global:title',
   defaultMessage: 'Default title',
@@ -145,24 +148,19 @@ return <div>{formatMessage(message)}</div>
 
 Add the `extract-strings` script to `workspace.json`. Running this script will extract messages from the project and create or update a Namespace entry in Contentful, if the namespace did not exist it will need to be published in Contentful before the client can query the entry.
 
-```js
+```json
 {
-    "your-project": {
-        "architect": {
-            "lint": {...}
-            "test": {...}
-            "extract-strings": {
-                "builder": "@nrwl/workspace:run-commands",
-                "options": {
-                    "parallel": false,
-                    "commands": [
-                    {
-                        "command": "yarn ts-node libs/localization/scripts/extract '{pathToComponents}/*.{js,ts,tsx}'"
-                    }
-                    ]
-                }
-            }
+  "your-project": {
+    "architect": {
+      "lint": {...},
+      "test": {...},
+      "extract-strings": {
+        "builder": "@nrwl/workspace:run-commands",
+        "options": {
+          "command": "yarn ts-node libs/localization/scripts/extract '{pathToComponents}/*.{js,ts,tsx}'"
         }
+      }
     }
+  }
 }
 ```

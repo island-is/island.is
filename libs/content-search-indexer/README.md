@@ -1,4 +1,4 @@
-# content-search-indexer
+# Content Search Indexer
 
 This library groups together importers from multiple projects to import data into elasticsearch used by the content search engine.
 
@@ -60,16 +60,16 @@ export class MyCustomImporterModule {}
 
 ## Importing data
 
-The importer must return data of type `MappedData` in `SyncResponse.add`.  
+The importer must return data of type `MappedData` in `SyncResponse.add`.
 You importer should support three types of imports (SyncOptions.syncType):
 
-- **full**: Is triggered by a call to the `/re-sync` endpoint.  
-  This type of sync should import all indexable data since the beginning of time.  
-  In production this type of sync should only be called manually and only if the index is out of sync or contains stale data.  
+- **full**: Is triggered by a call to the `/re-sync` endpoint.
+  This type of sync should import all indexable data since the beginning of time.
+  In production this type of sync should only be called manually and only if the index is out of sync or contains stale data.
   The indexer removes all documents form the index not returned in this type of sync.
-- **fromLast**: Is triggered by a call to the `/sync` endpoint.  
+- **fromLast**: Is triggered by a call to the `/sync` endpoint.
   This type of sync should import new/updated data since last sync.
-- **initialize**: Is triggered by the deployment of a indexer container in the cluster.  
+- **initialize**: Is triggered by the deployment of a indexer container in the cluster.
   This type of sync should validate if the importer contains any changes, and run a full sync if it does, this is to ensure the data in the index is up to date when it is being deployed.
 
 The locale is passed with **SyncOptions.locale** you importer should return an empty `SyncResponse` if a locale in the search engine is not supported.
@@ -78,12 +78,12 @@ The name of the elastic index is passed with **SyncOptions.elasticIndex** in cas
 
 ## Post sync (optional)
 
-`postSync` is a function called by the indexer after `doSync` and after all data has been imported into elastic.  
-This function can serve as a cleanup function e.g. to release locks or maintain last sync tokens.  
+`postSync` is a function called by the indexer after `doSync` and after all data has been imported into elastic.
+This function can serve as a cleanup function e.g. to release locks or maintain last sync tokens.
 To use you export a function called `postSync` from your importer, it then gets passed the `postSyncOptions` you returned from `doSync` as part of `SyncResponse`.
 
 ## Error handling
 
-Your importer should be robust, but not so that it hides critical errors e.g.  
-`Missing title in one entry`, should probably not throw an error and hence stop all importers while `Your importer can't connect to it's data source` probably should throw an error and hence stop all importers.  
+Your importer should be robust, but not so that it hides critical errors e.g.
+`Missing title in one entry`, should probably not throw an error and hence stop all importers while `Your importer can't connect to it's data source` probably should throw an error and hence stop all importers.
 The importer is used when populating new versions of the indexes when deploying new versions of our apps hence we don't want the importer to succeed when it shouldn't.

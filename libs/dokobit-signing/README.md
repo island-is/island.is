@@ -1,4 +1,6 @@
-# Getting started
+# Dokobit Signing
+
+## About
 
 This library defines dokobit-signing, a service that is derived from Apollo's RESTDataSource.
 The service allows its users to request individuals to sign PDF documents using their mobile electronic ids via Dokobit.
@@ -24,3 +26,7 @@ Assuming `environment.signingOptions` implements `SigningServiceOptions`, add th
   ],
 })
 ```
+
+## Code owners and maintainers
+
+- [Kolibri](https://github.com/orgs/island-is/teams/kolibri/members)
