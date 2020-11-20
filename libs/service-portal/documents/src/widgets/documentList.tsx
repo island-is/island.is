@@ -48,7 +48,7 @@ export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
         ))}
       </Stack>
       <Box display="flex" justifyContent="flexEnd" marginTop={[4, 8]}>
-        <Link to={ServicePortalPath.RafraenSkjolRoot}>
+        <Link to={ServicePortalPath.ElectronicDocumentsRoot}>
           <Button variant="primary">
             {formatMessage({
               id: 'sp.documents:goto-documents',
