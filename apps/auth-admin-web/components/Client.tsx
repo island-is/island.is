@@ -15,6 +15,7 @@ export default function Client<ClientDTO>(client: ClientDTO){
   const { register, handleSubmit, errors, formState, control } = useForm<ClientDTO>();
   const { isSubmitting } = formState;
   const [ show, setShow] = useState(false);
+  const [ response, setResponse] = useState<APIResponse>(null);
   // TODO: Fix
   client = client.client;
 
@@ -51,16 +52,25 @@ export default function Client<ClientDTO>(client: ClientDTO){
 
   const save = async (data) => {
     const clientObject = castNumbers(data.client);
-    const response = await axios.post("/api/clients", clientObject).catch((err) => {
-      console.log(err);
-    });
-
-    console.log(response);    
+    await axios.post("/api/clients", clientObject).then((response) => {
+      const res = new APIResponse();
+      res.statusCode = response.request.status;
+      res.message = response.request.statusText; 
+      setResponse(res);
+    }).catch(function (error) {
+      if (error.response) {
+        setResponse(error.response.data);
+        // console.log(error.response.data);
+        // console.log(error.response.status);
+        // console.log(error.response.headers);
+      }
+    }
+    );
   };
 
     return (
       <div className="client">
-        {/* <StatusBar status={null}></StatusBar> */}
+        <StatusBar status={response}></StatusBar>
         <div className="client__wrapper">
           <div className="client__help">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur
@@ -155,7 +165,7 @@ export default function Client<ClientDTO>(client: ClientDTO){
                   </div>
 
                   <div className="client__container__field">
-                    <label className="client__label">Virkur</label>
+                    <label className="client__label">Enabled</label>
                     <input
                       type="checkbox"
                       name="client.enabled"

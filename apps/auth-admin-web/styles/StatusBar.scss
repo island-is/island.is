@@ -4,9 +4,12 @@
   box-sizing: border-box;
   border-radius: 5px;
   padding: 15px;
+  padding: 10px 10px 10px 45px;
 
   &.error {
-    background: #fff2f6;
+    background: url('/warning.svg') #fff2f6;
+    background-repeat: no-repeat;
+    background-position: 10px 10px;
     border: 1px solid #ffccdc;
   }
 }
