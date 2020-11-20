@@ -1,8 +1,4 @@
-export interface TagAggregationInput {
-  documentTypes: string[]
-  tagType: string
-  size?: number
-}
+import { TagAggregationInput } from '../types'
 
 export const aggregationQuery = (tagType: string, size = 20) => ({
   aggs: {
