@@ -45,13 +45,14 @@ jobs:
                 echo "Checking branch against pattern '$pattern'"
                 if [[ "$GIT_BRANCH" =~ $pattern ]]; then
                   echo "'$GIT_BRANCH' matches '$pattern', continuing with build"
+                  echo "::set-output name=PRE_CHECK_OK::$GITHUB_EVENT_NAME"
                   exit 0
                 fi
             done
             echo "No pattern matches '$GIT_BRANCH', exiting with exit code 1"
             exit 1
           fi
-          echo "::set-output name=PRE_CHECK_OK::true"
+          echo "::set-output name=PRE_CHECK_OK::$GITHUB_EVENT_NAME"
   prepare:
     runs-on: ubuntu-20.04
     timeout-minutes: 30

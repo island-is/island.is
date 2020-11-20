@@ -1,7 +1,15 @@
-import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
+import {
+  CaseCustodyRestrictions,
+  CaseGender,
+} from '@island.is/judicial-system/types'
 
 import * as Constants from './constants'
-import { formatDate, formatCustodyRestrictions, capitalize } from './formatters'
+import {
+  formatDate,
+  formatCustodyRestrictions,
+  capitalize,
+  formatGender,
+} from './formatters'
 
 describe('formatDate', () => {
   test('should return undefined if date parameter is undefined', () => {
@@ -67,5 +75,40 @@ describe('capitalize', () => {
 
     // Assert
     expect(r).toBe('')
+  })
+})
+
+describe('formatGender', () => {
+  test('should format male', () => {
+    // Arrange
+    const gender = CaseGender.MALE
+
+    // Act
+    const r = formatGender(gender)
+
+    // Assert
+    expect(r).toBe('karl')
+  })
+
+  test('should format female', () => {
+    // Arrange
+    const gender = CaseGender.FEMALE
+
+    // Act
+    const r = formatGender(gender)
+
+    // Assert
+    expect(r).toBe('kona')
+  })
+
+  test('should format other', () => {
+    // Arrange
+    const gender = CaseGender.OTHER
+
+    // Act
+    const r = formatGender(gender)
+
+    // Assert
+    expect(r).toBe('annað')
   })
 })

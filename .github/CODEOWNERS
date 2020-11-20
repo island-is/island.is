@@ -35,7 +35,7 @@
 /apps/services/user-profile/                              @island-is/sendiradid
 
 /apps/services/search-indexer/                            @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
-/libs/api/content-search/                                 @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
+/libs/content-search-toolkit/                             @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 /libs/api/domains/content-search/                         @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 
 /libs/island-ui/                                          @island-is/island-ui

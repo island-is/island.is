@@ -126,11 +126,13 @@ describe('ProviderService', () => {
       const providers = await service.getPrivateProviders()
       expect(providers).toEqual([
         {
-          memberClass: 'GOV',
-          memberCode: '10001',
-          subsystemCode: 'VMST-Private',
           type: 'private',
-          xroadInstance: 'IS-DEV',
+          xroadInfo: {
+            instance: 'IS-DEV',
+            memberClass: 'GOV',
+            memberCode: '10001',
+            subsystemCode: 'VMST-Private',
+          },
         },
       ])
     })
@@ -141,18 +143,22 @@ describe('ProviderService', () => {
       const providers = await service.getProtectedProviders()
       expect(providers).toEqual([
         {
-          memberClass: 'GOV',
-          memberCode: '10001',
-          subsystemCode: 'VMST-Protected',
           type: 'protected',
-          xroadInstance: 'IS-DEV',
+          xroadInfo: {
+            instance: 'IS-DEV',
+            memberClass: 'GOV',
+            memberCode: '10001',
+            subsystemCode: 'VMST-Protected',
+          },
         },
         {
-          memberClass: 'GOV',
-          memberCode: '10002',
-          subsystemCode: 'SKRA-Protected',
           type: 'protected',
-          xroadInstance: 'IS-DEV',
+          xroadInfo: {
+            instance: 'IS-DEV',
+            memberClass: 'GOV',
+            memberCode: '10002',
+            subsystemCode: 'SKRA-Protected',
+          },
         },
       ])
     })
@@ -163,18 +169,22 @@ describe('ProviderService', () => {
       const providers = await service.getPublicProviders()
       expect(providers).toEqual([
         {
-          memberClass: 'GOV',
-          memberCode: '10001',
-          subsystemCode: 'VMST-Public',
           type: 'public',
-          xroadInstance: 'IS-DEV',
+          xroadInfo: {
+            instance: 'IS-DEV',
+            memberClass: 'GOV',
+            memberCode: '10001',
+            subsystemCode: 'VMST-Public',
+          },
         },
         {
-          memberClass: 'GOV',
-          memberCode: '10002',
-          subsystemCode: 'SKRA-Public',
           type: 'public',
-          xroadInstance: 'IS-DEV',
+          xroadInfo: {
+            instance: 'IS-DEV',
+            memberClass: 'GOV',
+            memberCode: '10002',
+            subsystemCode: 'SKRA-Public',
+          },
         },
       ])
     })

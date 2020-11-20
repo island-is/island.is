@@ -22,6 +22,7 @@ import {
   parseArray,
   parseString,
   parseTime,
+  replaceTabsOnChange,
 } from '../../../../utils/formatters'
 import { isNextDisabled } from '../../../../utils/stepHelper'
 import {
@@ -43,7 +44,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 
 interface CaseData {
-  case: Case
+  case?: Case
 }
 
 export const RulingStepOne: React.FC = () => {
@@ -116,7 +117,7 @@ export const RulingStepOne: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (!workingCase && data) {
+    if (!workingCase && data?.case) {
       let theCase = data.case
 
       if (!theCase.custodyRestrictions) {
@@ -157,6 +158,7 @@ export const RulingStepOne: React.FC = () => {
       activeSection={Sections.JUDGE}
       activeSubSection={JudgeSubsections.RULING_STEP_ONE}
       isLoading={loading}
+      notFound={data?.case === undefined}
     >
       {workingCase ? (
         <>
@@ -208,6 +210,7 @@ export const RulingStepOne: React.FC = () => {
                     setRulingErrorMessage(validateEmpty.errorMessage)
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 textarea
                 required
               />
@@ -236,12 +239,13 @@ export const RulingStepOne: React.FC = () => {
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                Dómkröfur
+                Gæsluvarðhaldstími
               </Text>
             </Box>
             <GridRow>
               <GridColumn span="5/8">
                 <DatePicker
+                  id="custodyEndDate"
                   label="Gæsluvarðhald til"
                   placeholderText="Veldu dagsetningu"
                   locale="is"

@@ -9,9 +9,22 @@ if [[ "$DOCKER_REGISTRY" != */ ]]; then
     DOCKER_REGISTRY="${DOCKER_REGISTRY}/"
 fi
 
-curl -H "Authorization: Basic $TOKEN" "https://${DOCKER_REGISTRY}v2/$IMAGE/manifests/$LAST_GOOD_BUILD_DOCKER_TAG" \
--H 'accept: application/vnd.docker.distribution.manifest.v2+json' \
-| \
-curl -XPUT -H "Authorization: Basic $TOKEN" "https://${DOCKER_REGISTRY}v2/$IMAGE/manifests/$DOCKER_TAG" \
--H 'content-type: application/vnd.docker.distribution.manifest.v2+json' \
--d @-
+manifest=$(curl -s \
+    -H "Authorization: Basic $TOKEN" \
+    -H 'accept: application/vnd.docker.distribution.manifest.v2+json' \
+    "https://${DOCKER_REGISTRY}v2/$IMAGE/manifests/$LAST_GOOD_BUILD_DOCKER_TAG" \
+)
+
+status_code=$(curl -s -XPUT \
+    -H "Authorization: Basic $TOKEN" \
+    -H 'content-type: application/vnd.docker.distribution.manifest.v2+json' \
+    "https://${DOCKER_REGISTRY}v2/$IMAGE/manifests/$DOCKER_TAG" \
+    -d @<(echo $manifest) \
+    -o /dev/stderr \
+    -w "%{http_code}" \
+)
+
+if [ $status_code -gt 399  ]; then
+    echo "Status code when retagging $IMAGE was $status_code, exiting"
+    exit 1
+fi
