@@ -24,8 +24,8 @@ export const EmailStep: FC<Props> = ({ onBack, onSubmit, email }) => {
         {formatMessage({
           id: 'sp.settings:email-form-message',
           defaultMessage: `
-                Vinsamlegt settu inn nefangið þitt.
-                Við komum til með að senda á þig staðfestingar og tilkynningar.
+                Vinsamlegast settu inn nefangið þitt.
+                Við komum til með að senda þér staðfestingar og tilkynningar.
               `,
         })}
       </Text>
