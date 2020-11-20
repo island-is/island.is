@@ -8,19 +8,20 @@ import {
   AlertBanner,
   LinkContext,
 } from '@island.is/island-ui/core'
-import { userContext } from '../../utils/userContext'
 import * as styles from './PageLayout.treat'
 import { JudgeLogo, ProsecutorLogo } from '../Logos'
 import Loading from '../Loading/Loading'
 import * as Constants from '../../utils/constants'
 import { UserRole } from '@island.is/judicial-system/types'
 import { Link } from 'react-router-dom'
+import { UserContext } from '../UserProvider/UserProvider'
 
 interface PageProps {
   children: ReactNode
   activeSection: number
   activeSubSection: number
   isLoading: boolean
+  notFound: boolean
 }
 
 export const PageLayout: FC<PageProps> = ({
@@ -28,8 +29,9 @@ export const PageLayout: FC<PageProps> = ({
   activeSection,
   activeSubSection,
   isLoading,
+  notFound,
 }) => {
-  const { user } = useContext(userContext)
+  const { user } = useContext(UserContext)
 
   return children ? (
     <Box
@@ -111,15 +113,17 @@ export const PageLayout: FC<PageProps> = ({
         ),
       }}
     >
-      <AlertBanner
-        title="Mál fannst ekki"
-        description="Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni"
-        variant="error"
-        link={{
-          href: Constants.DETENTION_REQUESTS_ROUTE,
-          title: 'Fara á yfirlitssíðu',
-        }}
-      />
+      {notFound && (
+        <AlertBanner
+          title="Mál fannst ekki"
+          description="Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni"
+          variant="error"
+          link={{
+            href: Constants.DETENTION_REQUESTS_ROUTE,
+            title: 'Fara á yfirlitssíðu',
+          }}
+        />
+      )}
     </LinkContext.Provider>
   )
 }
