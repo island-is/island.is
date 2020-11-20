@@ -27,6 +27,7 @@ export const UserProfileLocale = () => {
   useEffect(() => {
     if (
       userProfile &&
+      userProfile.locale &&
       isLocale(userProfile.locale) &&
       userProfile.locale !== lang
     )
