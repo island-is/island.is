@@ -1,7 +1,6 @@
 import React, { FC, useRef } from 'react'
 import { Box, Input, Button } from '@island.is/island-ui/core'
 import * as styles from './CopyToClipboardInput.treat'
-import { indexOf } from 'lodash'
 
 export interface CopyToClipboardInputProps {
   inputLabel: string
@@ -24,14 +23,6 @@ export const CopyToClipboardInput: FC<CopyToClipboardInputProps> = ({
     el.select()
     document.execCommand('copy')
     document.body.removeChild(el)
-
-    //   const el = testRef.current
-    //   console.log(el)
-    //   el?.removeAttribute('disabled')
-    //   el?.select()
-    //   let copy = document.execCommand('copy')
-    //   console.log(copy)
-    // el?.setAttribute('disabled', 'disabled')
   }
   return (
     <Box position="relative">
@@ -39,7 +30,7 @@ export const CopyToClipboardInput: FC<CopyToClipboardInputProps> = ({
         ref={testRef}
         disabled
         label={inputLabel}
-        name="Test1"
+        name={inputLabel}
         value={inputValue}
       />
       <Box position="absolute" className={styles.clipboardContainer}>
