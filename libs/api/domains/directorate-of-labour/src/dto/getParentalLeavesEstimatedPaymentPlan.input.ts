@@ -1,6 +1,8 @@
 import { Field, Float, InputType } from '@nestjs/graphql'
 import { IsString, IsNumber, IsBoolean, IsArray } from 'class-validator'
 
+console.log('-trigger');
+
 @InputType()
 class Period {
   @Field(() => String)
