@@ -68,6 +68,7 @@ export const label = style({
     [`${hasError} &`]: mixins.labelErrorState,
   },
 })
+export const noLabel = style({})
 
 export const labelSizes = styleMap(mixins.labelSizes)
 
@@ -95,8 +96,15 @@ export const icon = style({
   color: theme.color.blue400,
   ...themeUtils.responsiveStyle({
     md: {
-      minWidth: 32,
-      height: 32,
+      selectors: {
+        [`${container}:not(${noLabel}) &`]: {
+          width: 32,
+          height: 32,
+        },
+        [`${container}${noLabel} &`]: {
+          marginBottom: 0,
+        },
+      },
     },
   }),
 })
