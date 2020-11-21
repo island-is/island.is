@@ -1,12 +1,12 @@
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { EmailVerification } from './email-verification.model'
+import { EmailVerification } from './emailVerification.model'
 import * as CryptoJS from 'crypto-js'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { UserProfile } from '../user-profile/userProfile.model'
 import { UserProfileService } from '../user-profile/userProfile.service'
-import { SmsVerification } from './sms-verification.model'
+import { SmsVerification } from './smsVerification.model'
 import { CreateUserProfileDto } from '../user-profile/dto/createUserProfileDto'
 import { SmsService } from '@island.is/nova-sms'
 import { EmailService } from '@island.is/email-service'
@@ -176,9 +176,10 @@ export class VerificationService {
           },
         ],
         subject: `Staðfesting netfangs á Ísland.is`,
-        html: `Þú hefur skráð ${verification.email} á Mínum síðum á Ísland.is. Til að staðfesta skráninguna þarftu að smella á eftirfarandi hlekk:
+        html: `Þú hefur skráð ${verification.email} á Mínum síðum á Ísland.is. Vinsamlegast staðfestu skráninguna með því að smella á þennan hlekk:
         <a href="${environment.email.servicePortalBaseUrl}/stillingar/minn-adgangur/stadfesta-netfang/${verification.hash}" target="_blank">Staðfesta</a>
-        <br>Hlekkurinn gildir í tvo daga. Ef hlekkurinn er ekki lengur í gildi biðjum við þig að endurtaka skráninguna á Ísland.is.`,
+        <br>Ef hlekkurinn er ekki lengur í gildi biðjum við þig að endurtaka skráninguna á Ísland.is.
+        <br><br>Ef þú kannast ekki við að hafa sett inn þetta netfang, vinsamlegast hunsaðu þennan póst.`,
       })
     } catch (exception) {
       this.logger.error(exception)

@@ -1,7 +1,6 @@
-# shared-types
+# Shared Types
 
-The purpose of this library is to store shared types used throught various
-libraries and apps, i.e. common ElasticSearch type definitions
+The purpose of this library is to store shared types used throught various libraries and apps, i.e. common ElasticSearch type definitions
 
 ## Running unit tests
 

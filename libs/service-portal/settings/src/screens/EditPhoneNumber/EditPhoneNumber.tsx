@@ -37,7 +37,7 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
   const { updateUserProfile } = useUpdateUserProfile()
 
   useEffect(() => {
-    if (!userProfile) return
+    if (!userProfile || !userProfile.mobilePhoneNumber) return
     if (userProfile.mobilePhoneNumber.length > 0)
       setTel(userProfile.mobilePhoneNumber)
   }, [userProfile])
