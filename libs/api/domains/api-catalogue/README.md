@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # api-domains-api-catalogue
 
 This library was generated with [Nx](https://nx.dev).

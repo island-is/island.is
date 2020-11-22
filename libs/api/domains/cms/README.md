@@ -1,4 +1,6 @@
-# CMS Api
+# CMS API
+
+## About
 
 This is mostly a wrapper around the [contentful rest api](https://www.contentful.com/developers/docs/references/content-delivery-api/).
 
@@ -10,7 +12,9 @@ When you are updating a field inside a content type in Contentful you will need 
 yarn nx run api:contentful-types
 ```
 
-> We keep this file in the repository because in case contentful is down, the whole pipeline would fail and we won’t be able to build island.is. By keeping it in the repo, we ensure we can still build and we don't have to rely on an external service.
+{% hint style="info" %}
+We keep this file in the repository because in case contentful is down, the whole pipeline would fail and we won’t be able to build island.is. By keeping it in the repo, we ensure we can still build and we don't have to rely on an external service.
+{% endhint %}
 
 ## Generate models for a new content type
 
@@ -46,4 +50,11 @@ The script take 3 arguments:
 
 <br />
 
-> You will need a `CONTENTFUL_MANAGEMENT_ACCESS_TOKEN` to run the script locally. Don't run the api at the same time, wait until the script is done to restart the api `yarn start api`.
+{% hint style="warning" %}
+You will need a `CONTENTFUL_MANAGEMENT_ACCESS_TOKEN` to run the script locally. Don't run the api at the same time, wait until the script is done to restart the api `yarn start api`.
+{% endhint %}
+
+## Code owners and maintainers
+
+- [Kosmos & Kaos](https://github.com/orgs/island-is/teams/kosmos-kaos/members)
+- [Aranja](https://github.com/orgs/island-is/teams/aranja/members)

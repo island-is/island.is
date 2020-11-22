@@ -1,11 +1,29 @@
-# Getting started
+# Auth Admin API
 
-## Running locally
+## About
+
+TODO
+
+## URLs
+
+- Dev: N/A
+- Staging: N/A
+- Production: N/A
+
+## Getting started
 
 With Docker installed, run
 
-`nx dev-services services-auth-api`
+```bash
+yarn dev-services services-auth-api
+```
 
 and then
 
-`nx serve services-auth-admin-api`
+```bash
+yarn start services-auth-admin-api
+```
+
+## Code owners and maintainers
+
+- [Fuglar](https://github.com/orgs/island-is/teams/fuglar/members)

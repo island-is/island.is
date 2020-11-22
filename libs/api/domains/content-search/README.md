@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # api-domains-content-search
 
 Exposes endpoints to allow querying of searchable data in content search elasticsearch
