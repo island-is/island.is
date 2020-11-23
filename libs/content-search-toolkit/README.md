@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # content-search-toolkit
 
 This library was generated with [Nx](https://nx.dev).

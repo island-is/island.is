@@ -10,11 +10,9 @@ The recycling fund can then see a list of recycled cars.
 
 ## URLs
 
-Dev: [https://skilavottord.dev01.devland.is](https://skilavottord.dev01.devland.is)
-
-Staging: N/A
-
-Prod: N/A
+- [Dev](https://skilavottord.dev01.devland.is)
+- Staging: N/A
+- Prod: N/A
 
 ## Getting started
 

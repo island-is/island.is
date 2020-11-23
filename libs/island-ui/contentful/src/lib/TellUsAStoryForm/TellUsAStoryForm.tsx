@@ -20,6 +20,8 @@ import {
 } from '@island.is/island-ui/core'
 import BackgroundImage from '../BackgroundImage/BackgroundImage'
 import { renderHtml } from '../richTextRendering'
+import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 import * as styles from './TellUsAStoryFrom.treat'
 
@@ -137,6 +139,16 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
     },
   })
 
+  const { width } = useWindowSize()
+  const [isTablet, setIsTablet] = React.useState(false)
+
+  useIsomorphicLayoutEffect(() => {
+    if (width < theme.breakpoints.lg) {
+      return setIsTablet(true)
+    }
+    setIsTablet(false)
+  }, [width])
+
   const { handleSubmit, register, control, errors } = methods
 
   useEffect(() => {
@@ -159,7 +171,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
         <Box paddingX={[3, 3, 8]} paddingBottom={8}>
           <GridRow>
             <GridColumn
-              span={['10/10', '10/10', '10/10', '7/10']}
+              span={['12/12', '12/12', '12/12', '7/12']}
               paddingBottom={[2, 2, 4]}
             >
               <Text as="h1" variant="h1" lineHeight={'lg'}>
@@ -172,7 +184,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
             {!!introImage && (
               <GridColumn
                 hiddenBelow="lg"
-                span={['0', '0', '0', '3/10']}
+                span={['0', '0', '0', '3/12']}
                 className={styles.infoImageWrapper}
               >
                 <Box
@@ -196,7 +208,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
       )}
       <Box
         paddingY={[3, 3, 8]}
-        paddingX={showIntro ? [3, 3, 8] : [3, 3, 3, 15]}
+        paddingX={showIntro ? [3, 3, 8] : [3, 3, 3, 3, 15]}
         borderRadius="large"
         background="blue100"
       >
@@ -204,12 +216,12 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack space={5}>
               <GridRow>
-                <GridColumn span={'10/10'} paddingBottom={3}>
+                <GridColumn span={'12/12'} paddingBottom={3}>
                   <Text as="h3" variant="h3" color="blue600">
                     {firstSectionTitle}
                   </Text>
                 </GridColumn>
-                <GridColumn span={['10/10', '10/10', '10/10', '10/10', '5/10']}>
+                <GridColumn span={['12/12', '12/12', '12/12', '12/12', '6/12']}>
                   <Controller
                     name="organization"
                     defaultValue={''}
@@ -239,7 +251,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                   />
                 </GridColumn>
                 <GridColumn
-                  span={['10/10', '10/10', '10/10', '10/10', '5/10']}
+                  span={['12/12', '12/12', '12/12', '12/12', '6/12']}
                   paddingTop={[3, 3, 3, 3, 0]}
                 >
                   <Controller
@@ -268,14 +280,16 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                 </GridColumn>
               </GridRow>
               <GridRow>
-                <GridColumn span={'10/10'} paddingBottom={3}>
+                <GridColumn span={'12/12'} paddingBottom={3}>
                   <Text as="h3" variant="h3" color="blue600">
                     {secondSectionTitle}
                   </Text>
                 </GridColumn>
-                <GridColumn span={['10/10', '10/10', '10/10', '10/10', '6/10']}>
+                <GridColumn span={['12/12', '12/12', '12/12', '12/12', '9/12']}>
                   <GridRow>
-                    <GridColumn span={'10/10'}>
+                    <GridColumn
+                      span={['12/12', '12/12', '12/12', '12/12', '11/12']}
+                    >
                       <Stack space={3}>
                         <Input
                           name="subject"
@@ -293,7 +307,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                           placeholder={messagePlaceholder}
                           defaultValue=""
                           textarea
-                          rows={8}
+                          rows={isTablet ? 8 : showIntro ? 14 : 18}
                           required
                           errorMessage={errors.message?.message}
                           disabled={state === 'submitting'}
@@ -306,17 +320,15 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                   </GridRow>
                 </GridColumn>
                 <GridColumn
-                  span={['10/10', '10/10', '10/10', '10/10', '3/10']}
-                  offset={[null, null, null, '1/10']}
-                  paddingTop={[4, 4, 4, 0]}
-                  paddingBottom={[0, 0, 0, 0, 3]}
+                  span={['12/12', '12/12', '12/12', '12/12', '3/12']}
+                  paddingTop={[4, 4, 4, 4, 0]}
                 >
                   <GridRow>
                     {!!instructionsImage && (
                       <GridColumn
-                        span={['4/10', '3/10', '4/10', '3/10', '10/10']}
+                        span={['0', '3/12', '4/12', '3/12', '12/12']}
                         className={styles.alignSelfCenter}
-                        paddingTop={[2, 2, 2, 4, 0]}
+                        hiddenBelow="sm"
                       >
                         <Box className={styles.contentImage}>
                           <BackgroundImage
@@ -328,7 +340,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                       </GridColumn>
                     )}
                     <GridColumn
-                      span={['6/10', '7/10', '6/10', '7/10', '10/10']}
+                      span={['12/12', '7/12', '6/12', '7/12', '12/12']}
                       className={styles.alignSelfCenter}
                     >
                       <Text
@@ -351,13 +363,13 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                 </GridColumn>
               </GridRow>
               <GridRow>
-                <GridColumn span={'10/10'} paddingBottom={3}>
+                <GridColumn span={'12/12'} paddingBottom={3}>
                   <Text as="h3" variant="h3" color="blue600">
                     {thirdSectionTitle}
                   </Text>
                 </GridColumn>
                 <GridColumn
-                  span={['10/10', '10/10', '10/10', '10/10', '5/10']}
+                  span={['12/12', '12/12', '12/12', '12/12', '6/12']}
                   paddingBottom={3}
                 >
                   <Input
@@ -375,7 +387,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                 </GridColumn>
 
                 <GridColumn
-                  span={['10/10', '10/10', '10/10', '10/10', '5/10']}
+                  span={['12/12', '12/12', '12/12', '12/12', '6/12']}
                   paddingBottom={3}
                 >
                   <Input
@@ -412,7 +424,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                 )}
               />
               <GridRow>
-                <GridColumn span={'10/10'}>
+                <GridColumn span={'12/12'}>
                   <Box className={styles.justifyContentFlexEnd}>
                     <Button htmlType="submit" loading={state === 'submitting'}>
                       {submitButtonTitle}

@@ -20,7 +20,7 @@ module.exports = {
         },
         email: {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: true,
         },
         profile_image_url: {
           type: Sequelize.STRING,

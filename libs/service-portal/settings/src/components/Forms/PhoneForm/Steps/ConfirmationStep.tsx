@@ -80,10 +80,11 @@ export const ConfirmationStep: FC<Props> = ({
       <Box
         display="flex"
         justifyContent="spaceBetween"
-        flexWrap="wrap"
+        alignItems="center"
+        flexDirection={['columnReverse', 'row']}
         marginTop={4}
       >
-        <Box marginBottom={[1, 0]}>
+        <Box marginTop={[1, 0]}>
           <Button variant="ghost" onClick={onBack}>
             {formatMessage({
               id: 'service.portal:go-back',
@@ -91,23 +92,21 @@ export const ConfirmationStep: FC<Props> = ({
             })}
           </Button>
         </Box>
-        <Box marginBottom={[1, 0]}>
-          <Button
-            type="submit"
-            variant="primary"
-            icon="arrowForward"
-            disabled={loading}
-          >
-            {formatMessage(
-              submitButtonText
-                ? submitButtonText
-                : {
-                    id: 'sp.settings:save-changes',
-                    defaultMessage: 'Vista breytingar',
-                  },
-            )}
-          </Button>
-        </Box>
+        <Button
+          type="submit"
+          variant="primary"
+          icon="arrowForward"
+          disabled={loading}
+        >
+          {formatMessage(
+            submitButtonText
+              ? submitButtonText
+              : {
+                  id: 'sp.settings:save-changes',
+                  defaultMessage: 'Vista breytingar',
+                },
+          )}
+        </Button>
       </Box>
     </form>
   )
