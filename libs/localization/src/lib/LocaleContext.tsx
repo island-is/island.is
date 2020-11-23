@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react'
 import { IntlProvider } from 'react-intl'
-import { useApolloClient, useLazyQuery } from '@apollo/client'
+import { useApolloClient } from '@apollo/client'
 import gql from 'graphql-tag'
 import difference from 'lodash/difference'
 import isEmpty from 'lodash/isEmpty'
