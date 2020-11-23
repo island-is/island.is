@@ -1,4 +1,5 @@
 import {
+  buildAsyncSelectField,
   buildCustomField,
   buildDataProviderItem,
   buildDateField,
@@ -24,6 +25,25 @@ import {
   getEstimatedMonthlyPay,
   getNameAndIdOfSpouse,
 } from '../fields/parentalLeaveUtils'
+import gql from 'graphql-tag'
+
+const GetUnions = gql`
+  query GetUnions {
+    getUnions {
+      id
+      name
+    }
+  }
+`
+
+interface Union {
+  id: string
+  name: string
+}
+
+export type Query = {
+  getUnions: Array<Union>
+}
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -68,6 +88,22 @@ export const ParentalLeaveForm: Form = buildForm({
               name: 'Er þetta réttur sími og netfang?',
               description: 'Vinsamlegast breyttu ef þetta er ekki rétt',
               children: [
+                buildAsyncSelectField({
+                  id: 'some.id',
+                  width: 'half',
+                  name: 'Async select field',
+                  placeholder: 'Pick your percent',
+                  loadOptions: async ({ apolloClient }) => {
+                    const { data } = await apolloClient.query<Query>({
+                      query: GetUnions,
+                    })
+
+                    return data?.getUnions.map(({ id, name }) => ({
+                      id,
+                      label: name,
+                    }))
+                  },
+                }),
                 buildTextField({
                   width: 'half',
                   name: 'Netfang',
@@ -166,7 +202,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   name: 'Union (optional)',
                   id: 'payments.union',
                   width: 'half',
-                  options: [{ label: 'TODO', value: 'todo' }],
+                  options: () => [{ label: 'TODO', value: 'todo' }],
                 }),
                 buildRadioField({
                   emphasize: true,

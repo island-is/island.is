@@ -15,7 +15,7 @@ import { GetParentalLeavesEstimatedPaymentPlanInput } from '../dto/getParentalLe
 import { ParentalLeavePaymentPlan } from './parentalLeavePaymentPlan.model'
 import { GetParentalLeavesApplicationPaymentPlanInput } from '../dto/getParentalLeavesApplicationPaymentPlan.input'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+// @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
 export class DirectorateOfLabourResolver {
   constructor(private directorateOfLabourService: DirectorateOfLabourService) {}
