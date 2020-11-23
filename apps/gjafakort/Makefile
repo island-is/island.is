@@ -19,18 +19,18 @@ docker:
 application:
 	./${CWD}scripts/_wait-for.sh localhost:5432  # postgresql
 	./${CWD}scripts/_wait-for.sh -t 60 localhost:7777  # queue-listener
-	yarn --cwd ${CWD} nx serve gjafakort-application
+	yarn --cwd ${CWD} start gjafakort-application
 
 queue-listener:
 	./${CWD}scripts/_wait-for.sh localhost:4575  # AWS SNS
 	./${CWD}scripts/_wait-for.sh localhost:4576  # AWS SQS
 	sleep 20  # localstack takes for ever to start
-	yarn --cwd ${CWD} nx serve gjafakort-queue-listener
+	yarn --cwd ${CWD} start gjafakort-queue-listener
 
 services: docker application queue-listener
 
 api:
-	yarn --cwd ${CWD} nx serve gjafakort-api
+	yarn --cwd ${CWD} start gjafakort-api
 
 web:
-	yarn --cwd ${CWD} nx serve gjafakort-web
+	yarn --cwd ${CWD} start gjafakort-web

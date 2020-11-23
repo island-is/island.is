@@ -10,12 +10,12 @@ docker:
 backend:
 	./${CWD}scripts/_wait-for.sh localhost:5432  # postgresql
 	./${CWD}scripts/_wait-for.sh localhost:7000  # redis-cluster
-	yarn --cwd ${CWD} nx serve air-discount-scheme-backend
+	yarn --cwd ${CWD} start air-discount-scheme-backend
 
 services: docker backend
 
 api:
-	yarn --cwd ${CWD} nx serve air-discount-scheme-api
+	yarn --cwd ${CWD} start air-discount-scheme-api
 
 web:
-	yarn --cwd ${CWD} nx serve air-discount-scheme-web
+	yarn --cwd ${CWD} start air-discount-scheme-web

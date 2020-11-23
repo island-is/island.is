@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # infra-monitoring
 
 This library was generated with [Nx](https://nx.dev).

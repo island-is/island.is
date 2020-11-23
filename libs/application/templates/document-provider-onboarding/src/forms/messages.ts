@@ -240,4 +240,15 @@ export const m = defineMessages({
       'Til að gerast skjalaveitandi þarf að útfæra tvenn forritunarskil. Annarsvegar eru það skil til að senda skjalatilvísun í pósthólf og hinsvegar eru það skil til að hægt sé að nálgast skjal hjá skjalaveitu. Hér að neðan finnur þú upplýsingar um tæknilegar útfærslur á þessum skilum.Í þessu ferli færð þú aðgang að prófunarumhverfi til að útfæra þjónustuna.Þegar þjónustan og prófanir eru búnar, er hægt að framkvæma sjálfvirkar prófanir til að staðfesta virkni.',
     description: '',
   },
+  firstThankYouScreenScreenSubTitle: {
+    id: 'dpo.application:thankyouscreen.subtitle',
+    defaultMessage: 'Nú bíður umsókn þín samþykkis island.is.',
+    description: '',
+  },
+  firstThankYouScreenScreenMessage: {
+    id: 'dpo.application:thankyouscreen.message',
+    defaultMessage:
+      'Þegar og ef hún verður samþykkt, þarf að koma aftur inn í þetta ferli og klára umsóknina. Sá hluti er tæknilegur og krefst tæknilegrar útfærslu. Hér að neðan er að finna upplýsingar sem nauðsynlegt er að búið sé að kynna sér áður en farið er af stað í það ferli.',
+    description: '',
+  },
 })

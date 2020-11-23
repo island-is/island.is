@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # service-portal-applications
 
 This library was generated with [Nx](https://nx.dev).

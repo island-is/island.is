@@ -31,22 +31,22 @@ export class DirectorateOfLabourResolver {
     )
   }
 
-  @Query(() => ParentalLeavePaymentPlan, { nullable: true })
+  @Query(() => [ParentalLeavePaymentPlan], { nullable: true })
   async getParentalLeavesEstimatedPaymentPlan(
     @Args('input') input: GetParentalLeavesEstimatedPaymentPlanInput,
     @CurrentUser() user: User,
-  ): Promise<ParentalLeavePaymentPlan | null> {
+  ): Promise<ParentalLeavePaymentPlan[] | null> {
     return this.directorateOfLabourService.getParentalLeavesEstimatedPaymentPlan(
       input.dateOfBirth,
       input.period,
       user.nationalId,
     )
   }
-  @Query(() => ParentalLeavePaymentPlan, { nullable: true })
+  @Query(() => [ParentalLeavePaymentPlan], { nullable: true })
   async getParentalLeavesApplicationPaymentPlan(
     @Args('input') input: GetParentalLeavesApplicationPaymentPlanInput,
     @CurrentUser() user: User,
-  ): Promise<ParentalLeavePaymentPlan | null> {
+  ): Promise<ParentalLeavePaymentPlan[] | null> {
     return this.directorateOfLabourService.getParentalLeavesApplicationPaymentPlan(
       input.dateOfBirth,
       input.applicationId,

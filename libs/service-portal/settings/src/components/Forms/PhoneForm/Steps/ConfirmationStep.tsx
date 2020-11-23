@@ -43,14 +43,23 @@ export const ConfirmationStep: FC<Props> = ({
           rules={{
             required: {
               value: true,
-              message: 'Skylda er að setja inn öryggiskóða',
+              message: formatMessage({
+                id: 'service.portal:verification-code-required',
+                defaultMessage: 'Skylda er að setja inn öryggiskóða',
+              }),
             },
           }}
           defaultValue={''}
           render={({ onChange, value, name }) => (
             <Input
-              label="Öryggiskóði"
-              placeholder="Öryggiskóði"
+              label={formatMessage({
+                id: 'service.portal:verification-code',
+                defaultMessage: 'Öryggiskóði',
+              })}
+              placeholder={formatMessage({
+                id: 'service.portal:verification-code',
+                defaultMessage: 'Öryggiskóði',
+              })}
               name={name}
               value={value}
               hasError={errors.code}
@@ -71,10 +80,11 @@ export const ConfirmationStep: FC<Props> = ({
       <Box
         display="flex"
         justifyContent="spaceBetween"
-        flexWrap="wrap"
+        alignItems="center"
+        flexDirection={['columnReverse', 'row']}
         marginTop={4}
       >
-        <Box marginBottom={[1, 0]}>
+        <Box marginTop={[1, 0]}>
           <Button variant="ghost" onClick={onBack}>
             {formatMessage({
               id: 'service.portal:go-back',
@@ -82,23 +92,21 @@ export const ConfirmationStep: FC<Props> = ({
             })}
           </Button>
         </Box>
-        <Box marginBottom={[1, 0]}>
-          <Button
-            type="submit"
-            variant="primary"
-            icon="arrowForward"
-            disabled={loading}
-          >
-            {formatMessage(
-              submitButtonText
-                ? submitButtonText
-                : {
-                    id: 'sp.settings:save-changes',
-                    defaultMessage: 'Vista breytingar',
-                  },
-            )}
-          </Button>
-        </Box>
+        <Button
+          type="submit"
+          variant="primary"
+          icon="arrowForward"
+          disabled={loading}
+        >
+          {formatMessage(
+            submitButtonText
+              ? submitButtonText
+              : {
+                  id: 'sp.settings:save-changes',
+                  defaultMessage: 'Vista breytingar',
+                },
+          )}
+        </Button>
       </Box>
     </form>
   )

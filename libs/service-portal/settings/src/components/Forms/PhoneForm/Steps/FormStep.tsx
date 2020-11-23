@@ -89,25 +89,22 @@ export const FormStep: FC<Props> = ({
       <Box
         display="flex"
         justifyContent="spaceBetween"
-        flexWrap="wrap"
+        alignItems="center"
+        flexDirection={['columnReverse', 'row']}
         marginTop={4}
       >
-        {renderBackButton && (
-          <Box marginBottom={[1, 0]}>{renderBackButton()}</Box>
-        )}
-        <Box marginBottom={[1, 0]}>
-          <Button
-            variant="primary"
-            type="submit"
-            icon="arrowForward"
-            disabled={loading}
-          >
-            {formatMessage({
-              id: 'service.portal:confirm-code',
-              defaultMessage: 'Staðfesta',
-            })}
-          </Button>
-        </Box>
+        {renderBackButton && <Box marginTop={[1, 0]}>{renderBackButton()}</Box>}
+        <Button
+          variant="primary"
+          type="submit"
+          icon="arrowForward"
+          disabled={loading}
+        >
+          {formatMessage({
+            id: 'service.portal:confirm-code',
+            defaultMessage: 'Senda staðfestingarkóða',
+          })}
+        </Button>
       </Box>
     </form>
   )

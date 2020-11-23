@@ -10,6 +10,11 @@ import {
 } from '@island.is/application/template-loader'
 import { FieldProvider, useFields } from '../components/FieldContext'
 
+function isOnProduction(): boolean {
+  // TODO detect better when the application system is on production
+  return false
+}
+
 const ShellWrapper: FC<{
   applicationId: string
   nationalRegistryId: string
@@ -35,7 +40,10 @@ const ShellWrapper: FC<{
         const template = await getApplicationTemplateByTypeId(
           application.typeId,
         )
-        if (template !== null) {
+        if (
+          template !== null &&
+          !(isOnProduction() && !template.readyForProduction)
+        ) {
           const stateInformation = await getApplicationStateInformation(
             application,
           )
