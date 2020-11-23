@@ -184,7 +184,7 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                   />
                 </div>
 
-                <div className="client__container__field">
+                <div className="client__container__checkbox__field">
                   <label className="client__label">Enabled</label>
                   <input
                     type="checkbox"
@@ -417,7 +417,7 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                   </div>
 
                   {/* Checkboxes */}
-                  <div className="client__container__field">
+                  <div className="client__container__checkbox__field">
                     <label className="client__label">
                       allow access token via browser
                     </label>
@@ -429,7 +429,7 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                       ref={register}
                     />
                   </div>
-                  <div className="client__container__field">
+                  <div className="client__container__checkbox__field">
                     <label className="client__label">
                       Allow offline access
                     </label>
@@ -441,7 +441,7 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                       ref={register}
                     />
                   </div>
-                  <div className="client__container__field">
+                  <div className="client__container__checkbox__field">
                     <label className="client__label">
                       Allow plain text Pkce
                     </label>
@@ -453,7 +453,7 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                       ref={register}
                     />
                   </div>
-                  <div className="client__container__field">
+                  <div className="client__container__checkbox__field">
                     <label className="client__label">
                       Allow remember consent
                     </label>
@@ -465,7 +465,7 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                       ref={register}
                     />
                   </div>
-                  <div className="client__container__field">
+                  <div className="client__container__checkbox__field">
                     <label className="client__label">
                       Always include user claims in Id token
                     </label>
@@ -477,7 +477,7 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                       ref={register}
                     />
                   </div>
-                  <div className="client__container__field">
+                  <div className="client__container__checkbox__field">
                     <label className="client__label">
                       Always send client claims
                     </label>
@@ -490,7 +490,7 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                     />
                   </div>
 
-                  <div className="client__container__field">
+                  <div className="client__container__checkbox__field">
                     <label className="client__label">
                       Back channel logout session required
                     </label>
@@ -503,7 +503,7 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                     />
                   </div>
 
-                  <div className="client__container__field">
+                  <div className="client__container__checkbox__field">
                     <label className="client__label">Enable local login</label>
                     <input
                       type="checkbox"
@@ -514,7 +514,7 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                     />
                   </div>
 
-                  <div className="client__container__field">
+                  <div className="client__container__checkbox__field">
                     <label className="client__label">
                       Front channel logout session required
                     </label>
@@ -527,7 +527,7 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                     />
                   </div>
 
-                  <div className="client__container__field">
+                  <div className="client__container__checkbox__field">
                     <label className="client__label">Include Jwt Id</label>
                     <input
                       type="checkbox"
@@ -538,7 +538,7 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                     />
                   </div>
 
-                  <div className="client__container__field">
+                  <div className="client__container__checkbox__field">
                     <label className="client__label">
                       Require client secret
                     </label>
@@ -551,7 +551,7 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                     />
                   </div>
 
-                  <div className="client__container__field">
+                  <div className="client__container__checkbox__field">
                     <label className="client__label">Require consent</label>
                     <input
                       type="checkbox"
@@ -562,7 +562,7 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                     />
                   </div>
 
-                  <div className="client__container__field">
+                  <div className="client__container__checkbox__field">
                     <label className="client__label">Require Pkce</label>
                     <input
                       type="checkbox"
@@ -573,7 +573,7 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                     />
                   </div>
 
-                  <div className="client__container__field">
+                  <div className="client__container__checkbox__field">
                     <label className="client__label">
                       Update access token claims on refresh
                     </label>
