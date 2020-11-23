@@ -3,7 +3,6 @@ import {
   AsyncSelectField,
   FieldBaseProps,
   formatText,
-  SelectField,
 } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -11,8 +10,6 @@ import {
   FieldDescription,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import { buildOptions } from '../utils'
-import { useQuery } from '@apollo/client'
 import { useApolloClient } from '@apollo/client/react'
 import { Option } from '@island.is/application/core'
 

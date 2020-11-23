@@ -36,13 +36,26 @@ const GetUnions = gql`
   }
 `
 
-interface Union {
+const GetPensionFunds = gql`
+  query GetPensionFunds {
+    getPensionFunds {
+      id
+      name
+    }
+  }
+`
+
+interface SelectItem {
   id: string
   name: string
 }
 
-export type Query = {
-  getUnions: Array<Union>
+type UnionQuery = {
+  getUnions: Array<SelectItem>
+}
+
+type PensionFundsQuery = {
+  getPensionFunds: Array<SelectItem>
 }
 
 export const ParentalLeaveForm: Form = buildForm({
@@ -88,22 +101,6 @@ export const ParentalLeaveForm: Form = buildForm({
               name: 'Er þetta réttur sími og netfang?',
               description: 'Vinsamlegast breyttu ef þetta er ekki rétt',
               children: [
-                buildAsyncSelectField({
-                  id: 'some.id',
-                  width: 'half',
-                  name: 'Async select field',
-                  placeholder: 'Pick your percent',
-                  loadOptions: async ({ apolloClient }) => {
-                    const { data } = await apolloClient.query<Query>({
-                      query: GetUnions,
-                    })
-
-                    return data?.getUnions.map(({ id, name }) => ({
-                      id,
-                      label: name,
-                    }))
-                  },
-                }),
                 buildTextField({
                   width: 'half',
                   name: 'Netfang',
@@ -192,17 +189,38 @@ export const ParentalLeaveForm: Form = buildForm({
                     { label: '25%', value: '25' },
                   ],
                 }),
-                buildSelectField({
+
+                buildAsyncSelectField({
                   name: 'Pension fund (optional)',
                   id: 'payments.pensionFund',
                   width: 'half',
-                  options: [{ label: 'TODO', value: 'todo' }],
+                  loadOptions: async ({ apolloClient }) => {
+                    const { data } = await apolloClient.query<
+                      PensionFundsQuery
+                    >({
+                      query: GetPensionFunds,
+                    })
+
+                    return data?.getPensionFunds.map(({ id, name }) => ({
+                      label: name,
+                      value: id,
+                    }))
+                  },
                 }),
-                buildSelectField({
+                buildAsyncSelectField({
                   name: 'Union (optional)',
                   id: 'payments.union',
                   width: 'half',
-                  options: () => [{ label: 'TODO', value: 'todo' }],
+                  loadOptions: async ({ apolloClient }) => {
+                    const { data } = await apolloClient.query<UnionQuery>({
+                      query: GetUnions,
+                    })
+
+                    return data?.getUnions.map(({ id, name }) => ({
+                      label: name,
+                      value: id,
+                    }))
+                  },
                 }),
                 buildRadioField({
                   emphasize: true,

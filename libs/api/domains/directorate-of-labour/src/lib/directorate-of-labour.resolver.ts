@@ -60,7 +60,7 @@ export class DirectorateOfLabourResolver {
   }
 
   @Query(() => [PensionFund], { nullable: true })
-  async getPensionFunds(): Promise<Union[] | null> {
+  async getPensionFunds(): Promise<PensionFund[] | null> {
     return this.directorateOfLabourService.getPensionFunds()
   }
 }
