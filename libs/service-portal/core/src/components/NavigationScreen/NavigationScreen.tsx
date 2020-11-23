@@ -27,7 +27,7 @@ export const NavigationScreen: FC<Props> = ({ title, items, inProgress }) => {
     <>
       <Box marginBottom={4}>
         <Inline space={1}>
-          <Text variant="h2" as="h2">
+          <Text variant="h2" as="h2" as="h2">
             {formatMessage(title)}
           </Text>
           {inProgress && (

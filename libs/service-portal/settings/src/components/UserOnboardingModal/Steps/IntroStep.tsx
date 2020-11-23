@@ -45,7 +45,7 @@ export const IntroStep: FC<Props> = ({ userInfo, onClose, onSubmit }) => {
     <>
       <GridRow>
         <GridColumn order={[2, 2, 1]} span={['1/1', '1/1', '4/7']}>
-          <Text variant="h5" color="roseTinted400" marginBottom={1}>
+          <Text variant="h5" as="h5" color="roseTinted400" marginBottom={1}>
             {formatMessage(
               {
                 id: 'global:welcome',
@@ -57,7 +57,7 @@ export const IntroStep: FC<Props> = ({ userInfo, onClose, onSubmit }) => {
               },
             )}
           </Text>
-          <Text variant="h1" marginBottom={3}>
+          <Text variant="h1" as="h1" marginBottom={3}>
             {hasMaleGreeting && formatMessage(maleGreeting)}
             {hasFemaleGreeting && formatMessage(femaleGreeting)}
             {hasNonBinaryGreeting && formatMessage(nonBinaryGreeting)}

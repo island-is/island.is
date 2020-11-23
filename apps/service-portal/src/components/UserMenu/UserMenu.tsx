@@ -55,12 +55,14 @@ const UserMenu: FC<{}> = () => {
                   marginRight={3}
                   className={styles.avatar}
                 >
-                  <Text variant="h3" color="blue400">
+                  <Text variant="h3" as="h3" color="blue400">
                     {getNameAbbreviation(userInfo?.profile.name || '')}
                   </Text>
                 </Box>
                 <Box marginRight={4}>
-                  <Text variant="h4">{userInfo?.profile.name}</Text>
+                  <Text variant="h4" as="h4">
+                    {userInfo?.profile.name}
+                  </Text>
                 </Box>
               </Box>
               <Box padding={3} background="blue100">

@@ -19,7 +19,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
   return (
     <>
       <Box marginBottom={6}>
-        <Text variant="h1" as="h1">
+        <Text variant="h1" as="h1" as="h1">
           {formatMessage({
             id: 'service.portal:profile-info',
             defaultMessage: 'Minn aðgangur',
