@@ -8,6 +8,7 @@ import {
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
 import * as styles from './FamilyMemberCard.treat'
+import { defineMessage } from 'react-intl'
 
 interface Props {
   title: string
@@ -21,6 +22,19 @@ export const FamilyMemberCard: FC<Props> = ({
   familyRelation,
 }) => {
   const { formatMessage } = useLocale()
+
+  const familyRelationLabel = familyRelation === 'child' ? defineMessage({
+    id: 'sp.family:child',
+    defaultMessage: 'Barn',
+  }) : familyRelation === 'spouse' ? defineMessage({
+    id: 'sp.family:spouse',
+    defaultMessage: 'Maki',
+  }) : defineMessage({
+    id: 'sp.family:family-member',
+    defaultMessage: 'Fjölskyldumeðlimur',
+  });
+
+
 
   return (
     <Box
@@ -49,22 +63,7 @@ export const FamilyMemberCard: FC<Props> = ({
         <div>
           {familyRelation && (
             <Text variant="eyebrow" color="purple400">
-              {formatMessage(
-                familyRelation === 'child'
-                  ? {
-                      id: 'sp.family:child',
-                      defaultMessage: 'Barn',
-                    }
-                  : familyRelation === 'spouse'
-                  ? {
-                      id: 'sp.family:spouse',
-                      defaultMessage: 'Maki',
-                    }
-                  : {
-                      id: 'sp.family:family-member',
-                      defaultMessage: 'Fjölskyldumeðlimur',
-                    },
-              )}
+              {formatMessage(familyRelationLabel)}
             </Text>
           )}
           <Box marginBottom={1}>
