@@ -1,7 +1,7 @@
 .client,
 .identity-resource {
   &__wrapper {
-    max-width: 700px;
+    max-width: 1024px;
   }
   &__container {
     h1 {
@@ -15,7 +15,7 @@
   }
 
   &__container__form {
-    padding: 42px 113px;
+    padding: 44px 40px;
 
     /* aðal / blár / 100 */
 
@@ -35,22 +35,25 @@
       z-index: 1;
       color: #0061ff;
     }
-    input {
+    input,
+    select {
       position: relative;
       flex-basis: 70%;
+      font-size: 0.9rem;
     }
 
     span // validation
     {
-      margin-left: 20px;
+      position: absolute;
+      left: 60%;
       color: #fb115b;
       text-shadow: 0 0 black;
     }
 
     &__available {
       position: absolute;
-      left: 182px;
-      top: 45px;
+      left: 38%;
+      top: 48px;
       font-size: 0.8rem;
       opacity: 0.8;
 

@@ -12,7 +12,7 @@ import HelpBox from './HelpBox';
 type Props = {
   client: ClientDTO;
 };
-export default function Client<ClientDTO>(client: ClientDTO) {
+export default function Client<ClientDTO>(client: ClientDTO, handleSaved: any) {
   const { register, handleSubmit, errors, formState, control } = useForm<
     ClientDTO
   >();
@@ -59,6 +59,10 @@ export default function Client<ClientDTO>(client: ClientDTO) {
         res.statusCode = response.request.status;
         res.message = response.request.statusText;
         setResponse(res);
+        if (res.statusCode === 201){
+          console.log("handle change");
+          handleSaved(clientObject.clientId);
+        }
       })
       .catch(function (error) {
         if (error.response) {
@@ -106,6 +110,27 @@ export default function Client<ClientDTO>(client: ClientDTO) {
               <div className="client__container__fields">
                 {/* <HookField name='client.clientId' errors={errors} required={true} label="Client Id" value={client.clientId}  /> */}
                 <div className="client__container__field">
+                  <label className="client__label">National Id (Kennitala)</label>
+                  <input
+                    type="text"
+                    name="client.nationalId"
+                    ref={register({ required: true, maxLength: 10, minLength: 10, pattern: /\d+/ })}
+                    defaultValue={client.nationalId}
+                    className="client__input"
+                    placeholder="0123456789"
+                    title=""
+                    maxLength="10"
+                    title="The nationalId (Kennitala) registered for the client"
+                  />
+                  <HelpBox helpText="The nationalId (Kennitala) registered for the client" />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="client.nationalId"
+                    message="NationalId must be 10 numeric characters"
+                  />
+                </div>
+                <div className="client__container__field">
                   <label className="client__label">Client Id</label>
                   <input
                     type="text"
@@ -146,6 +171,25 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                     errors={errors}
                     name="client.clientName"
                     message="Display Name is required"
+                    
+                  />
+                </div>
+                <div className="client__container__field">
+                  <label className="client__label">Client Type</label>
+                  <select name="client.clientType" ref={register({ required: true })} title="Type of Client">
+                    <option value="spa">Single Page Application</option>
+                    <option value="native">Native - authorization code flow + PKCE</option>
+                    <option value="device">Device - flow using external browser</option>
+                    <option value="web">Web App - Hyprid flow with client authentication</option>
+                    <option value="machine">Machine - client credentials</option>
+                  </select>
+                 
+                  <HelpBox helpText="Select the appropriate client Type" />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="client.clientName"
+                    message="Client Type is required"
                     
                   />
                 </div>
@@ -646,3 +690,4 @@ export default function Client<ClientDTO>(client: ClientDTO) {
     </div>
   );
 }
+
