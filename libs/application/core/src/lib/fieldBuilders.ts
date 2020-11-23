@@ -194,7 +194,6 @@ export function buildAsyncSelectField(data: {
   loadOptions: (c: Context) => Promise<any>
   disabled?: boolean
   width?: FieldWidth
-  // mapResponseToOptions: (t: unknown) => Option[]
 }): AsyncSelectField {
   const {
     condition,
