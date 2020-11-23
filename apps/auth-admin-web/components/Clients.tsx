@@ -36,8 +36,8 @@ class Clients extends Component {
   };
 
   delete = async (clientId: string) => {
-    if (window.confirm('Ertu viss um að þú viljir eyða þessari færslu?')) {
-      const response = await axios.delete(`./clients/${clientId}`);
+    if (window.confirm('Are you sure you want to delete this client?')) {
+      const response = await axios.delete(`api/clients/${clientId}`);
       console.log(response);
       await this.componentDidMount();
     }

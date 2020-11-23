@@ -1,5 +1,7 @@
 export abstract class ClientBaseDTO {
   constructor() {
+    this.nationalId = '';
+    this.clientType = 'spa';
     this.allowOfflineAccess = false;
     this.identityTokenLifetime = 3600;
     this.accessTokenLifetime = 3600;
@@ -30,14 +32,16 @@ export abstract class ClientBaseDTO {
     this.frontChannelLogoutSessionRequired = true;
     this.backChannelLogoutUri = null;
     this.allowRememberConsent = true;
-    this.clientClaimsPrefix = "client__";
-    this.clientName = "";
+    this.clientClaimsPrefix = 'client__';
+    this.clientName = '';
     this.clientUri = null;
     this.description = null;
-    this.protocolType = "";
+    this.protocolType = '';
     this.requireClientSecret = true;
   }
 
+  nationalId: string;
+  clientType: string;
   allowOfflineAccess: boolean;
   identityTokenLifetime: number;
   accessTokenLifetime: number;

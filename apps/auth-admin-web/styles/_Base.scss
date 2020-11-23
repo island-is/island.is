@@ -18,7 +18,8 @@ input {
 }
 
 input[type='text'],
-input[type='number'] {
+input[type='number'],
+select {
   padding: 30px 16px 10px 20px;
   height: 60px;
   font-size: 18px;
@@ -27,13 +28,6 @@ input[type='number'] {
   line-height: 28px;
   letter-spacing: 0em;
   text-align: left;
-}
-
-select {
-  @extend input;
-  height: 35px;
-  text-align: left;
-  padding: 10px;
 }
 
 input[type='checkbox'] {
@@ -59,6 +53,12 @@ button {
   color: #ffffff;
   border: none;
   cursor: pointer;
+
+  &:disabled,
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 
   &[class$='cancel'] {
     background: rgb(228, 226, 226);
@@ -117,7 +117,8 @@ div[class$='container__field'] {
     text-align: right;
   }
 
-  input {
+  input,
+  select {
     flex-basis: 50%;
     justify-self: flex-end;
   }
