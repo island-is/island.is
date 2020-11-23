@@ -38,6 +38,24 @@ export class Client extends Model<Client> {
   clientId: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty({
+    example: '1234567890',
+  })
+  nationalId: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty({
+    example: 'spa',
+  })
+  clientType: string
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: false,
