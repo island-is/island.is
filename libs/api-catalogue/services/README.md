@@ -1,4 +1,4 @@
-# api-catalogue-services
+# Services
 
 This library was generated with [Nx](https://nx.dev).
 

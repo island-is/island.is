@@ -35,7 +35,8 @@
     "ts-node": "cross-env ts-node -r tsconfig-paths/register -O '{\\\"module\\\":\\\"commonjs\\\",\\\"esModuleInterop\\\":true}'",
     "openapi-generator": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true",
     "schemas": "node ./scripts/schemas.js",
-    "postinstall": "node ./scripts/postinstall.js"
+    "postinstall": "node ./scripts/postinstall.js",
+    "gitbook": "node ./scripts/gitbook.js"
   },
   "dependencies": {
     "@apollo/client": "3.1.3",
