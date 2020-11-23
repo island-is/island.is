@@ -180,11 +180,14 @@ export const DocumentProviderOnboarding: Form = buildForm({
             }),
           ],
         }),
-        buildIntroductionField({
-          id: 'final',
-          name: 'Takk',
-          introduction: 'Umsókn þín er komin í vinnslu',
-        }),
+        buildCustomField(
+          {
+            id: 'final',
+            name: 'Takk fyrir að sækja um',
+            component: 'ThankYouScreen',
+          },
+          {},
+        ),
       ],
     }),
   ],
