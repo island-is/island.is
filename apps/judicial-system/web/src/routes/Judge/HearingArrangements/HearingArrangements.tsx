@@ -179,13 +179,15 @@ export const HearingArrangements: React.FC = () => {
               Fyrirtökutími
             </Text>
           </Box>
-          <Box marginBottom={8}>
-            <AlertMessage
-              type="info"
-              title="Krafa hefur ekki verið staðfest af ákæranda"
-              message="Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram fyrr en ákærandi hefur staðfest kröfuna."
-            />
-          </Box>
+          {workingCase.state === CaseState.DRAFT && (
+            <Box marginBottom={8}>
+              <AlertMessage
+                type="info"
+                title="Krafa hefur ekki verið staðfest af ákæranda"
+                message="Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram fyrr en ákærandi hefur staðfest kröfuna."
+              />
+            </Box>
+          )}
           <Box component="section" marginBottom={7}>
             <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
             <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
