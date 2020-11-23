@@ -60,6 +60,12 @@ button {
   border: none;
   cursor: pointer;
 
+  &:disabled,
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
   &[class$='cancel'] {
     background: rgb(228, 226, 226);
     color: #00003c;

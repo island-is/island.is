@@ -219,6 +219,19 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                 </div>
 
                 <div className="client__container__checkbox__field">
+                    <label className="client__label">Require consent</label>
+                    <input
+                      type="checkbox"
+                      defaultChecked={client.requireConsent}
+                      className="client__input"
+                      name="client.requireConsent"
+                      ref={register}
+                      title="Specifies whether a consent screen is required"
+                    />
+                    <HelpBox helpText="Specifies whether a consent screen is required" />
+                  </div>
+
+                <div className="client__container__checkbox__field">
                   <label className="client__label">Enabled</label>
                   <input
                     type="checkbox"
@@ -586,16 +599,7 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                     />
                   </div>
 
-                  <div className="client__container__checkbox__field">
-                    <label className="client__label">Require consent</label>
-                    <input
-                      type="checkbox"
-                      defaultChecked={client.requireConsent}
-                      className="client__input"
-                      name="client.requireConsent"
-                      ref={register}
-                    />
-                  </div>
+                  
 
                   <div className="client__container__checkbox__field">
                     <label className="client__label">Require Pkce</label>
@@ -630,7 +634,7 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                   <input
                     type="submit"
                     className="client__button__save"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !available}
                     value="Save"
                   />
                 </div>
