@@ -22,14 +22,8 @@ export const useVerifySms = () => {
     { loading: createLoading, error: createError },
   ] = useMutation<Mutation, MutationCreateSmsVerificationArgs>(
     CREATE_SMS_VERIFICATION,
-    {
-      refetchQueries: [
-        {
-          query: USER_PROFILE,
-        },
-      ],
-    },
   )
+
   const [
     confirmSmsVerificationMutation,
     { loading: confirmLoading, error: confirmError },

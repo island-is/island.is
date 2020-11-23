@@ -1,4 +1,4 @@
-import React, { useState, ReactNode } from 'react'
+import React, { ReactNode, useState } from 'react'
 import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import {
   Box,
@@ -14,7 +14,6 @@ import {
 import * as styles from './ServiceList.treat'
 import cn from 'classnames'
 import { Layout, ServiceCard, ServiceCardMessage } from '../../components'
-import { Page } from '../../services/contentful.types'
 import { theme } from '@island.is/island-ui/theme'
 import { GET_CATALOGUE_QUERY } from '../Queries'
 import { useQuery } from 'react-apollo'
@@ -22,6 +21,7 @@ import {
   GetApiCatalogueInput,
   Query,
   QueryGetApiCatalogueArgs,
+  QueryGetNamespaceArgs,
 } from '@island.is/api/schema'
 import {
   PricingCategory,
@@ -30,6 +30,12 @@ import {
   AccessCategory,
 } from '@island.is/api-catalogue/consts'
 import { style } from 'treat'
+
+import { useNamespace } from '../../hooks'
+import { GET_NAMESPACE_QUERY } from '../Queries'
+import { Screen, GetNamespaceQuery } from '../../types'
+import initApollo from '../../graphql/client'
+
 
 interface PropTypes {
   top?: ReactNode
@@ -66,16 +72,22 @@ function ServiceLayout({ top, left, right, isMobile }: PropTypes) {
 
 const LIMIT = 25
 
-export interface ServiceListProps {
-  pageContent: Page
-  filterStrings: Page
+interface ServiceListProps {
+  staticContent: GetNamespaceQuery['getNamespace']
+  filterContent: GetNamespaceQuery['getNamespace']
 }
 
-export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
+export const ServiceList: Screen<ServiceListProps> = ({
+  staticContent,
+  filterContent,
+}) => {
+  const n = useNamespace(staticContent)
+  const fn = useNamespace(filterContent)
+
   // prettier-ignore
-  const TEXT_NOT_FOUND = pageContent.strings.find(s => s.id === 'catalog-not-found').text;
+  const TEXT_NOT_FOUND = n('notFound')
   // prettier-ignore
-  const TEXT_ERROR = pageContent.strings.find(s => s.id === 'catalog-error').text;
+  const TEXT_ERROR = n('error')
 
   const [parameters, setParameters] = useState<GetApiCatalogueInput>({
     cursor: null,
@@ -164,19 +176,13 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
           <Box marginBottom={2}>
             <Breadcrumbs>
               <a href="/">Viskuausan</a>
-              <span>
-                {pageContent.strings.find((s) => s.id === 'catalog-title').text}
-              </span>
+              <span>{n('title')}</span>
             </Breadcrumbs>
           </Box>
           <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
             <Stack space={1}>
-              <Text variant="h1">
-                {pageContent.strings.find((s) => s.id === 'catalog-title').text}
-              </Text>
-              <Text variant="intro">
-                {pageContent.strings.find((s) => s.id === 'catalog-intro').text}
-              </Text>
+              <Text variant="h1">{n('title')}</Text>
+              <Text variant="intro">{n('intro')}</Text>
             </Stack>
           </Box>
         </Box>
@@ -192,9 +198,7 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
           }
           inputValues={{
             value: parameters?.query === null ? '' : parameters?.query,
-            placeholder: filterStrings.strings.find(
-              (s) => s.id === 'catalog-filter-search',
-            ).text,
+            placeholder: n('search'),
             colored: false,
             isLoading: loading,
             onChange: (event) => onSearchChange(event.target.value),
@@ -206,21 +210,13 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
         >
           <FilterSearchGroup
             id="pricing_category"
-            label={
-              filterStrings.strings.find(
-                (s) => s.id === 'catalog-filter-pricing',
-              ).text
-            }
+            label={n('pricing') }
           >
             <Checkbox
               id="pricing-free"
               name="pricing"
               value={PricingCategory.FREE}
-              label={
-                filterStrings.strings.find(
-                  (s) => s.id === 'catalog-filter-pricing-free',
-                ).text
-              }
+              label={n('pricingFree')}
               checked={parameters.pricing.includes(PricingCategory.FREE)}
               onChange={({ target }) => {
                 updateCategoryCheckBox(target)
@@ -229,11 +225,7 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
             <Checkbox
               id="pricing-paid"
               name="pricing"
-              label={
-                filterStrings.strings.find(
-                  (s) => s.id === 'catalog-filter-pricing-paid',
-                ).text
-              }
+              label={n('pricingPaid')}
               value={PricingCategory.PAID}
               checked={parameters.pricing.includes(PricingCategory.PAID)}
               onChange={({ target }) => {
@@ -243,19 +235,12 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
           </FilterSearchGroup>
           <FilterSearchGroup
             id="data_category"
-            label={
-              filterStrings.strings.find((s) => s.id === 'catalog-filter-data')
-                .text
-            }
+            label={n('data')}
           >
             <Checkbox
               id="data-public"
               name="data"
-              label={
-                filterStrings.strings.find(
-                  (s) => s.id === 'catalog-filter-data-public',
-                ).text
-              }
+              label={ n('dataPublic') }
               value={DataCategory.PUBLIC}
               checked={parameters.data.includes(DataCategory.PUBLIC)}
               onChange={({ target }) => {
@@ -265,11 +250,7 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
             <Checkbox
               id="data-official"
               name="data"
-              label={
-                filterStrings.strings.find(
-                  (s) => s.id === 'catalog-filter-data-official',
-                ).text
-              }
+              label={ n('dataOfficial') }
               value={DataCategory.OFFICIAL}
               checked={parameters.data.includes(DataCategory.OFFICIAL)}
               onChange={({ target }) => {
@@ -279,11 +260,7 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
             <Checkbox
               id="data-personal"
               name="data"
-              label={
-                filterStrings.strings.find(
-                  (s) => s.id === 'catalog-filter-data-personal',
-                ).text
-              }
+              label={ n('dataPersonal') }
               value={DataCategory.PERSONAL}
               checked={parameters.data.includes(DataCategory.PERSONAL)}
               onChange={({ target }) => {
@@ -293,11 +270,7 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
             <Checkbox
               id="data-health"
               name="data"
-              label={
-                filterStrings.strings.find(
-                  (s) => s.id === 'catalog-filter-data-health',
-                ).text
-              }
+              label={n('dataHealth') }
               value={DataCategory.HEALTH}
               checked={parameters.data.includes(DataCategory.HEALTH)}
               onChange={({ target }) => {
@@ -308,10 +281,7 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
               id="data-financial"
               name="data"
               label={
-                filterStrings.strings.find(
-                  (s) => s.id === 'catalog-filter-data-financial',
-                ).text
-              }
+                n('dataFinancial') }
               value={DataCategory.FINANCIAL}
               checked={parameters.data.includes(DataCategory.FINANCIAL)}
               onChange={({ target }) => {
@@ -321,19 +291,12 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
           </FilterSearchGroup>
           <FilterSearchGroup
             id="type_category"
-            label={
-              filterStrings.strings.find((s) => s.id === 'catalog-filter-type')
-                .text
-            }
+            label={ n('type') }
           >
             <Checkbox
               id="type-rest"
               name="type"
-              label={
-                filterStrings.strings.find(
-                  (s) => s.id === 'catalog-filter-type-rest',
-                ).text
-              }
+              label={ n('typeRest') }
               value={TypeCategory.REST}
               checked={parameters.type.includes(TypeCategory.REST)}
               onChange={({ target }) => {
@@ -343,11 +306,7 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
             <Checkbox
               id="type-soap"
               name="type"
-              label={
-                filterStrings.strings.find(
-                  (s) => s.id === 'catalog-filter-type-soap',
-                ).text
-              }
+              label={n('typeSoap') }
               value={TypeCategory.SOAP}
               checked={parameters.type.includes(TypeCategory.SOAP)}
               onChange={({ target }) => {
@@ -357,11 +316,7 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
             <Checkbox
               id="type-graphql"
               name="type"
-              label={
-                filterStrings.strings.find(
-                  (s) => s.id === 'catalog-filter-type-graphql',
-                ).text
-              }
+              label={ n('typeGraphql') }
               value={TypeCategory.GRAPHQL}
               checked={parameters.type.includes(TypeCategory.GRAPHQL)}
               onChange={({ target }) => {
@@ -371,20 +326,12 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
           </FilterSearchGroup>
           <FilterSearchGroup
             id="access_category"
-            label={
-              filterStrings.strings.find(
-                (s) => s.id === 'catalog-filter-access',
-              ).text
-            }
+            label={n('access') }
           >
             <Checkbox
               id="access-xroad"
               name="access"
-              label={
-                filterStrings.strings.find(
-                  (s) => s.id === 'catalog-filter-access-xroad',
-                ).text
-              }
+              label={ n('accessXroad') }
               value={AccessCategory.XROAD}
               checked={parameters.access.includes(AccessCategory.XROAD)}
               onChange={({ target }) => {
@@ -394,11 +341,7 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
             <Checkbox
               id="access-apigw"
               name="access"
-              label={
-                filterStrings.strings.find(
-                  (s) => s.id === 'catalog-filter-access-apigw',
-                ).text
-              }
+              label={ n('accessApigw') }
               value={AccessCategory.APIGW}
               checked={parameters.access.includes(AccessCategory.APIGW)}
               onChange={({ target }) => {
@@ -423,7 +366,7 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
                 <ServiceCard
                   key={item.id}
                   service={item}
-                  strings={filterStrings.strings}
+                  strings={filterContent}
                 />
               )
             })}
@@ -447,13 +390,7 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
               borderRadius="large"
               onClick={() => onLoadMore()}
             >
-              <div className={cn(styles.navigationText)}>
-                {
-                  pageContent.strings.find(
-                    (s) => s.id === 'catalog-fetch-more-button',
-                  ).text
-                }
-              </div>
+              <div className={cn(styles.navigationText)}>{n('fmButton')}</div>
             </Box>
           )}
 
@@ -468,4 +405,41 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
       }
     />
   )
+}
+
+ServiceList.getInitialProps = async (ctx) => {
+  if (!ctx.locale) {
+    ctx.locale = 'is-IS'
+  }
+  const client = initApollo({})
+
+  const [staticContent, filterContent] = await Promise.all([
+    client
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'ApiCatalog',
+            lang: ctx.locale,
+          },
+        },
+      })
+      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+    client
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'ApiCatalogFilter',
+            lang: ctx.locale,
+          },
+        },
+      })
+      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+  ])
+  console.log(filterContent);
+  return {
+    staticContent,
+    filterContent,
+  }
 }

@@ -8,6 +8,7 @@ import {
 import { USER_PROFILE } from '@island.is/service-portal/graphql'
 import { lazy } from 'react'
 import { defineMessage } from 'react-intl'
+import * as Sentry from '@sentry/react'
 
 export const settingsModule: ServicePortalModule = {
   name: 'Stillingar',
@@ -83,21 +84,23 @@ export const settingsModule: ServicePortalModule = {
   global: async ({ client }) => {
     const routes: ServicePortalGlobalComponent[] = []
 
+    /**
+     * User Profile Onboarding
+     */
     try {
-      await client.query<Query>({
+      const res = await client.query<Query>({
         query: USER_PROFILE,
       })
-      // If successful, there is a user profile present and we
-      // don't render the onboarding prompt
-    } catch (err) {
-      // If there is no user profile present, graphQL returns an error
-      // In which case, we render the onboarding modal
-      routes.push({
-        render: () =>
-          lazy(() =>
-            import('./components/UserOnboardingModal/UserOnboardingModal'),
-          ),
-      })
+      // If the user profile is empty, we render the onboarding modal
+      if (res.data?.getUserProfile === null)
+        routes.push({
+          render: () =>
+            lazy(() =>
+              import('./components/UserOnboardingModal/UserOnboardingModal'),
+            ),
+        })
+    } catch (error) {
+      Sentry.captureException(error)
     }
     return routes
   },

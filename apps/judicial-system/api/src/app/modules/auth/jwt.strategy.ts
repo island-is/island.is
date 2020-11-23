@@ -1,4 +1,5 @@
 import { Strategy } from 'passport-jwt'
+import { Request } from 'express'
 
 import { Injectable, Inject } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
@@ -9,7 +10,7 @@ import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { environment } from '../../../environments'
 import { Credentials, AuthUser } from './auth.types'
 
-const cookieExtractor = (req: { cookies: { [x: string]: string } }) => {
+const cookieExtractor = (req: Request) => {
   if (req && req.cookies) {
     return req.cookies[ACCESS_TOKEN_COOKIE_NAME]
   }
@@ -33,10 +34,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     req: Request,
     { csrfToken, user }: Credentials,
   ): AuthUser | undefined {
-    if (
-      csrfToken &&
-      `Bearer ${csrfToken}` !== req.headers.get('authorization')
-    ) {
+    if (csrfToken && `Bearer ${csrfToken}` !== req.headers['authorization']) {
       this.logger.error('invalid csrf token')
       return undefined
     }

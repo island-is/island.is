@@ -118,6 +118,7 @@ describe('application schema utility functions', () => {
 describe('formatText', () => {
   const application: Application = {
     answers: { someAnswer: 'awesome' },
+    assignees: [],
     applicant: '',
     attachments: {},
     created: new Date(),

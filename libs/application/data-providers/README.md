@@ -1,4 +1,4 @@
-# application-data-providers
+# Data Providers
 
 This library contains pre-built, reusable data providers used for the application system.
 
@@ -12,8 +12,16 @@ Create a new class which extends the `DataProvider` interface, or extends the ab
 
 ## Running unit tests
 
-Run `yarn nx test application-data-providers` to execute the unit tests via [Jest](https://jestjs.io).
+to execute the unit tests via [Jest](https://jestjs.io)
+
+```bash
+yarn nx test application-data-providers
+```
 
 ## Running lint
 
-Run `yarn nx lint application-data-providers` to lint
+To lint run
+
+```bash
+yarn nx lint application-data-providers
+```

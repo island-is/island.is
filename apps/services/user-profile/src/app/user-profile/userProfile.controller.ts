@@ -7,7 +7,6 @@ import {
   Param,
   Post,
   ConflictException,
-  BadRequestException,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -21,9 +20,9 @@ import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
 import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
-import { EmailVerification } from './email-verification.model'
+import { EmailVerification } from './emailVerification.model'
 import { UserProfileByNationalIdPipe } from './pipes/userProfileByNationalId.pipe'
-import { SmsVerification } from './sms-verification.model'
+import { SmsVerification } from './smsVerification.model'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
@@ -65,10 +64,12 @@ export class UserProfileController {
       )
     }
 
-    await this.verificationService.createEmailVerification(
-      userProfileDto.nationalId,
-      userProfileDto.email,
-    )
+    if (userProfileDto.email) {
+      await this.verificationService.createEmailVerification(
+        userProfileDto.nationalId,
+        userProfileDto.email,
+      )
+    }
 
     if (userProfileDto.mobilePhoneNumber) {
       const phoneVerified = await this.verificationService.isPhoneNumberVerified(
@@ -78,13 +79,14 @@ export class UserProfileController {
         ...userProfileDto,
         mobilePhoneNumberVerified: phoneVerified,
       }
+      if (phoneVerified) {
+        await this.verificationService.removeSmsVerification(
+          userProfileDto.nationalId,
+        )
+      }
     }
-    const profile = await this.userProfileService.create(userProfileDto)
-    await this.verificationService.removeSmsVerification(
-      userProfileDto.nationalId,
-    )
 
-    return profile
+    return await this.userProfileService.create(userProfileDto)
   }
 
   @Put('userProfile/:nationalId')
@@ -119,7 +121,10 @@ export class UserProfileController {
       }
     }
 
-    if (userProfileToUpdate.email !== profile.email) {
+    if (
+      userProfileToUpdate.email &&
+      userProfileToUpdate.email !== profile.email
+    ) {
       await this.verificationService.createEmailVerification(
         nationalId,
         userProfileToUpdate.email,

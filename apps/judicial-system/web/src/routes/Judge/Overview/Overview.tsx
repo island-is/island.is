@@ -26,7 +26,10 @@ import {
   UpdateCase,
   CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
-import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
+import {
+  parseString,
+  replaceTabsOnChange,
+} from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import * as styles from './Overview.treat'
 import { useMutation, useQuery } from '@apollo/client'
@@ -87,6 +90,7 @@ export const JudgeOverview: React.FC = () => {
       activeSection={Sections.JUDGE}
       activeSubSection={JudgeSubsections.JUDGE_OVERVIEW}
       isLoading={loading}
+      notFound={data?.case === undefined}
     >
       {workingCase ? (
         <>
@@ -127,6 +131,7 @@ export const JudgeOverview: React.FC = () => {
                     setCourtCaseNumberErrorMessage(validateField.errorMessage)
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 onFocus={() => setCourtCaseNumberErrorMessage('')}
                 required
               />
