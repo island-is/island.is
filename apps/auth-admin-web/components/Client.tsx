@@ -19,6 +19,8 @@ export default function Client<ClientDTO>(client: ClientDTO) {
   const { isSubmitting } = formState;
   const [show, setShow] = useState(false);
   const [response, setResponse] = useState<APIResponse>(null);
+  const [available, setAvailable] = useState<boolean>(false);
+  const [clientIdLength, setClientIdLength] = useState<number>(0);
   // TODO: Fix
   client = client.client;
 
@@ -62,11 +64,29 @@ export default function Client<ClientDTO>(client: ClientDTO) {
         if (error.response) {
           setResponse(error.response.data);
           // console.log(error.response.data);
-          // console.log(error.response.status);
+          
           // console.log(error.response.headers);
         }
       });
   };
+
+  const checkAvailability = async(clientId: string) => {
+    setClientIdLength(clientId.length);
+    await axios
+      .get(`/api/clients/${clientId}`)
+      .then((response) => {
+        if (response.request.status !== 404)
+          setAvailable(false);
+        
+      })
+      .catch(function (error) {
+        if (error.response) {
+          if (error.response.status === 404){
+            setAvailable(true);
+          }
+        }
+      });
+  }
 
   return (
     <div className="client">
@@ -93,42 +113,54 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                     ref={register({ required: true })}
                     defaultValue={client.clientId}
                     className="client__input"
+                    placeholder="example-client"
+                    onChange={(e) => checkAvailability(e.target.value)}
+                    title="The unique identifier for this application"
                   />
-                  <HelpBox helpText="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem architecto a odit ea distinctio consequatur autem nesciunt cupiditate eos, error reprehenderit illum dolor, mollitia modi vitae. Ducimus esse eos explicabo." />
+                  <div className={`client__container__field__available ${
+                    available ? 'ok ' : 'taken '} ${clientIdLength > 0 ? 'show' : 'hidden'}`}>
+                      { available ? 'Available' : 'Unavailable'}
+                    </div>
+                  <HelpBox helpText="The unique identifier for this application" />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="client.clientId"
-                    message="Id is required"
+                    message="°Client Id is required"
                   />
                 </div>
                 <div className="client__container__field">
-                  <label className="client__label">Name</label>
+                  <label className="client__label">Display Name</label>
                   <input
                     type="text"
                     name="client.clientName"
                     ref={register({ required: true })}
                     defaultValue={client.clientName}
                     className="client__input"
+                    title="Application name that will be seen on consent screens"
+                    placeholder="Example name"
                   />
-                  <HelpBox helpText="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem architecto a odit ea distinctio consequatur autem nesciunt cupiditate eos, error reprehenderit illum dolor, mollitia modi vitae. Ducimus esse eos explicabo." />
+                  <HelpBox helpText="Application name that will be seen on consent screens" />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="client.clientName"
-                    message="Name is required"
+                    message="Display Name is required"
+                    
                   />
                 </div>
                 <div className="client__container__field">
-                  <label className="client__label">URI</label>
+                  <label className="client__label">Display URL</label>
                   <input
                     name="client.clientUri"
                     ref={register}
                     type="text"
                     defaultValue={client.clientUri ?? ''}
                     className="client__input"
+                    placeholder="https://localhost:4200"
+                    title="Application URL that will be seen on consent screens"
                   />
-                  <HelpBox helpText="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem architecto a odit ea distinctio consequatur autem nesciunt cupiditate eos, error reprehenderit illum dolor, mollitia modi vitae. Ducimus esse eos explicabo." />
+                  <HelpBox helpText="Application URL that will be seen on consent screens" />
                 </div>
                 <div className="client__container__field">
                   <label className="client__label">Description</label>
@@ -138,8 +170,10 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                     name="client.description"
                     defaultValue={client.description ?? ''}
                     className="client__input"
+                    title="Application description for use within AdminUI"
+                    placeholder="Example description"
                   />
-                  <HelpBox helpText="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem architecto a odit ea distinctio consequatur autem nesciunt cupiditate eos, error reprehenderit illum dolor, mollitia modi vitae. Ducimus esse eos explicabo." />
+                  <HelpBox helpText="Application description for use within IDS management" />
                 </div>
 
                 <div className="client__container__field">
@@ -197,12 +231,13 @@ export default function Client<ClientDTO>(client: ClientDTO) {
                 </div>
 
                 <div className="client__container__button">
-                  <button
+                  <a
                     className="client__button__show"
                     onClick={() => setShow(!show)}
                   >
+                    <i className="client__button__show__icon"></i>
                     Advanced
-                  </button>
+                  </a>
                 </div>
 
                 <div

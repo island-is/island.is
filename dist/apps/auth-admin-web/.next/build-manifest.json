@@ -29,10 +29,10 @@
       "static/chunks/webpack.js",
       "static/chunks/pages/client.js"
     ],
-    "/resources": [
+    "/clients": [
       "static/chunks/main.js",
       "static/chunks/webpack.js",
-      "static/chunks/pages/resources.js"
+      "static/chunks/pages/clients.js"
     ]
   },
   "ampFirstPages": []

@@ -23,7 +23,8 @@
     border-radius: 5px;
   }
 
-  &__container__field {
+  &__container__field,
+  &__container__checkbox__field {
     display: block;
     position: relative;
 
@@ -38,17 +39,47 @@
       position: relative;
       flex-basis: 70%;
     }
-    input[type='checkbox'] {
-      flex-basis: unset;
-      margin-top: 30px;
-      margin-left: 8px;
-    }
+
     span // validation
     {
       margin-left: 20px;
       color: #fb115b;
       text-shadow: 0 0 black;
     }
+
+    &__available {
+      position: absolute;
+      left: 182px;
+      top: 45px;
+      font-size: 0.8rem;
+      opacity: 0.8;
+
+      &.ok {
+        color: green;
+      }
+
+      &.taken {
+        color: red;
+      }
+    }
+  }
+
+  &__container__checkbox__field {
+    input[type='checkbox'] {
+      flex-basis: 50px;
+      margin-top: 40px;
+      margin-left: 15px;
+    }
+
+    .helpbox {
+      position: absolute;
+      left: 45px;
+      top: 44px;
+    }
+  }
+
+  &__container__button {
+    margin: 15px 0;
   }
 
   &__button__show {
@@ -56,7 +87,32 @@
     color: #0061ff;
     font-weight: 300;
     text-decoration: underline;
-    font-size: 14px;
+    font-size: 1rem;
     padding: 0;
+    cursor: pointer;
+    margin: 0 14px;
+
+    &__icon {
+      @extend .fa;
+      @extend .fa-caret-square-o-down;
+      margin-right: 12px;
+    }
+  }
+
+  ::-webkit-input-placeholder {
+    /* Edge */
+    opacity: 0.5;
+    font-size: 0.8rem;
+  }
+
+  :-ms-input-placeholder {
+    /* Internet Explorer */
+    opacity: 0.5;
+    font-size: 0.8rem;
+  }
+
+  ::placeholder {
+    opacity: 0.5;
+    font-size: 0.8rem;
   }
 }
