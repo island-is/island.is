@@ -1,29 +1,30 @@
 import React, { FC, useEffect, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Button, Input, Text } from '@island.is/island-ui/core'
+import { Box, Button, Input } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
-import { useFormContext } from 'react-hook-form'
+import { useFormContext, Controller } from 'react-hook-form'
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 
-const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {
+const TestEnvironment: FC<FieldBaseProps> = () => {
   interface Variable {
     id: string
     name: string
     value: string
   }
 
-  const { register } = useFormContext()
+  const { register, errors, trigger } = useFormContext()
 
-  const fetchAndValidateData = async () => {
-    //This should be POST to create new user, answer will hold variables, is GET for now.
-    fetch('/api/endPointVariables')
-      .then((response) => response.json())
-      .then((json) => setendPointVariables(json))
+  const fetchAndValidateData = async (isValid: boolean) => {
+    //TODO: If he presses save again ?
+    if (isValid) {
+      fetch('/api/endPointVariables')
+        .then((response) => response.json())
+        .then((json) => setendPointVariables(json))
+    }
   }
 
   let [variables, setendPointVariables] = useState<Variable[]>([])
 
-  //TODO: Endpoint cannot be null before we call fetchendpointData...
   return (
     <Box>
       <Box marginBottom={7}>
@@ -31,12 +32,21 @@ const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {
           <FieldDescription description="Til að hægt sé að sækja skjöl til skjalaveitu þarf að tilgreina endapunkt. Þegar endapunktur er vistaður er búnar til Audience og Scope breytur." />
         </Box>
         <Box marginBottom={1}>
-          <Input
-            label="Endapunktur"
+          <Controller
+            defaultValue=""
             name={'endPoint'}
-            id={'endPoint'}
-            ref={register}
-            placeholder="Skráðu inn endapunkt"
+            render={({ onChange, value }) => (
+              <Input
+                label="Endapunktur"
+                name={'endPoint'}
+                id={'endPoint'}
+                ref={register}
+                defaultValue=""
+                placeholder="Skráðu inn endapunkt"
+                hasError={errors.endPoint !== undefined}
+                errorMessage="Þú verður að skrá inn endapunkt"
+              />
+            )}
           />
         </Box>
       </Box>
@@ -44,7 +54,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {
         <Button
           variant="primary"
           onClick={() => {
-            fetchAndValidateData()
+            trigger('endPoint').then((answer) => fetchAndValidateData(answer))
           }}
         >
           Vista endapunkt

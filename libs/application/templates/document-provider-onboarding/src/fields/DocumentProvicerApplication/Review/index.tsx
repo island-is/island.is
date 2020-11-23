@@ -14,11 +14,7 @@ import {
   Input,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  FieldDescription,
-  RadioController,
-  SelectController,
-} from '@island.is/shared/form-fields'
+import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
 const Review: FC<FieldBaseProps> = ({ field, application }) => {
