@@ -9,6 +9,7 @@ import {
   NotificationType,
   TransitionCase,
   CaseCustodyRestrictions,
+  CaseState,
 } from '@island.is/judicial-system/types'
 
 import Modal from '../../../shared-components/Modal/Modal'
@@ -63,14 +64,7 @@ export const Overview: React.FC = () => {
       variables: { input: { id, ...transitionCase } },
     })
 
-    const resCase = data?.transitionCase
-
-    if (resCase) {
-      // Do smoething with the result. In particular, we want the modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-
-    return resCase
+    return data?.transitionCase
   }
 
   const [
@@ -92,29 +86,47 @@ export const Overview: React.FC = () => {
   }
 
   const handleNextButtonClick: () => Promise<boolean> = async () => {
-    if (workingCase) {
-      try {
-        // Parse the transition request
-        const transitionRequest = parseTransition(
-          workingCase.modified,
-          CaseTransition.SUBMIT,
-        )
+    if (!workingCase) {
+      return false
+    }
 
-        // Transition the case
-        const resCase = await transitionCase(workingCase.id, transitionRequest)
+    switch (workingCase.state) {
+      case CaseState.DRAFT:
+        try {
+          // Parse the transition request
+          const transitionRequest = parseTransition(
+            workingCase.modified,
+            CaseTransition.SUBMIT,
+          )
 
-        if (!resCase) {
-          // Improve error handling at some point
-          console.log('Transition failing')
+          // Transition the case
+          const resCase = await transitionCase(
+            workingCase.id,
+            transitionRequest,
+          )
+
+          if (!resCase) {
+            return false
+          }
+
+          setWorkingCase({
+            ...workingCase,
+            state: resCase.state,
+            prosecutor: resCase.prosecutor,
+          })
+        } catch (e) {
+          console.log(e)
+
           return false
         }
-      } catch (e) {
-        // Improve error handling at some point
-        console.log('Transition failing')
-      }
-
-      return sendNotification(workingCase.id)
+        break
+      case CaseState.SUBMITTED:
+        break
+      default:
+        return false
     }
+
+    return sendNotification(workingCase.id)
   }
 
   useEffect(() => {
