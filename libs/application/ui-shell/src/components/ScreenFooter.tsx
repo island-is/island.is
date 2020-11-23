@@ -95,13 +95,7 @@ export const ScreenFooter: FC<FooterProps> = ({
   }
 
   return (
-    <Box
-      marginTop={7}
-      className={styles.buttonContainer}
-      onClick={() => {
-        console.log('clickity click?')
-      }}
-    >
+    <Box marginTop={7} className={styles.buttonContainer}>
       <GridColumn
         span={['12/12', '12/12', '7/9', '7/9']}
         offset={['0', '0', '1/9']}
