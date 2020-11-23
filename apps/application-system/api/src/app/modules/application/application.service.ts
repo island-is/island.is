@@ -53,12 +53,17 @@ export class ApplicationService {
     return { numberOfAffectedRows, updatedApplication }
   }
 
-  async updateApplicationState(id: string, state: string, answers: FormValue) {
+  async updateApplicationState(
+    id: string,
+    state: string,
+    answers: FormValue,
+    assignees: string[],
+  ) {
     const [
       numberOfAffectedRows,
       [updatedApplication],
     ] = await this.applicationModel.update(
-      { state, answers },
+      { state, answers, assignees },
       {
         where: { id },
         returning: true,

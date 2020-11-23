@@ -10,9 +10,12 @@ import cn from 'classnames'
 import AliceCarousel, { EventObject } from 'react-alice-carousel'
 import { Icon, Inline, Hidden } from '@island.is/island-ui/core'
 import { AdgerdirPage } from '@island.is/api/schema'
-import { ColorSchemeContext, ColorSchemes } from '@island.is/web/context'
+import {
+  ColorSchemeContext,
+  ColorSchemes,
+} from '@island.is/web/components/Adgerdir/UI/ColorSchemeContext/ColorSchemeContext'
 import { useI18n } from '@island.is/web/i18n'
-import { Card } from '@island.is/web/components'
+import { Card } from '@island.is/web/components/Adgerdir/UI/Card/Card'
 import routeNames from '@island.is/web/i18n/routeNames'
 
 import 'react-alice-carousel/lib/alice-carousel.css'
@@ -141,7 +144,6 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
               description={description}
               title={title}
               tags={tags}
-              // variant={colorScheme}
               as={makePath('adgerdir', slug)}
               href={makePath('adgerdir', '[slug]')}
             />

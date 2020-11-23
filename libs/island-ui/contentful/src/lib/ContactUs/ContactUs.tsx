@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import {
   Text,
@@ -8,6 +8,8 @@ import {
   GridColumn,
   Box,
   ButtonDeprecated as Button,
+  ToastContainer,
+  toast,
 } from '@island.is/island-ui/core'
 
 export interface ContactUsFormState {
@@ -54,6 +56,12 @@ export const ContactUs: FC<ContactUsProps> = ({
   errorMessage = 'Eitthvað fór úrskeiðis',
 }) => {
   const { handleSubmit, register, errors } = useForm<ContactUsFormState>()
+
+  useEffect(() => {
+    if (state === 'error') {
+      toast.error(errorMessage)
+    }
+  }, [state, errorMessage])
 
   return (
     <Box position="relative">
@@ -141,9 +149,6 @@ export const ContactUs: FC<ContactUsProps> = ({
                         {submitButtonText}
                       </Button>
                     )}
-                    {state === 'error' && (
-                      <Text color="red400">{errorMessage}</Text>
-                    )}
                   </Stack>
                 </Box>
               </Stack>
@@ -151,6 +156,11 @@ export const ContactUs: FC<ContactUsProps> = ({
           </GridColumn>
         </GridRow>
       </Box>
+      <ToastContainer
+        hideProgressBar={true}
+        closeButton={true}
+        useKeyframeStyles={false}
+      />
     </Box>
   )
 }

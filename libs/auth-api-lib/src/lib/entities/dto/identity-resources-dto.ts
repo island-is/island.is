@@ -2,13 +2,6 @@ import { IsString, IsBoolean, IsNotEmpty } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class IdentityResourcesDTO {
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    example: 'set_key',
-  })
-  readonly key: string
-
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
