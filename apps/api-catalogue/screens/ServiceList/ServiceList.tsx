@@ -36,7 +36,6 @@ import { GET_NAMESPACE_QUERY } from '../Queries'
 import { Screen, GetNamespaceQuery } from '../../types'
 import initApollo from '../../graphql/client'
 
-
 interface PropTypes {
   top?: ReactNode
   left: ReactNode
@@ -208,10 +207,7 @@ export const ServiceList: Screen<ServiceListProps> = ({
             onClick: onClear,
           }}
         >
-          <FilterSearchGroup
-            id="pricing_category"
-            label={n('pricing') }
-          >
+          <FilterSearchGroup id="pricing_category" label={n('pricing')}>
             <Checkbox
               id="pricing-free"
               name="pricing"
@@ -233,14 +229,11 @@ export const ServiceList: Screen<ServiceListProps> = ({
               }}
             />
           </FilterSearchGroup>
-          <FilterSearchGroup
-            id="data_category"
-            label={n('data')}
-          >
+          <FilterSearchGroup id="data_category" label={n('data')}>
             <Checkbox
               id="data-public"
               name="data"
-              label={ n('dataPublic') }
+              label={n('dataPublic')}
               value={DataCategory.PUBLIC}
               checked={parameters.data.includes(DataCategory.PUBLIC)}
               onChange={({ target }) => {
@@ -250,7 +243,7 @@ export const ServiceList: Screen<ServiceListProps> = ({
             <Checkbox
               id="data-official"
               name="data"
-              label={ n('dataOfficial') }
+              label={n('dataOfficial')}
               value={DataCategory.OFFICIAL}
               checked={parameters.data.includes(DataCategory.OFFICIAL)}
               onChange={({ target }) => {
@@ -260,7 +253,7 @@ export const ServiceList: Screen<ServiceListProps> = ({
             <Checkbox
               id="data-personal"
               name="data"
-              label={ n('dataPersonal') }
+              label={n('dataPersonal')}
               value={DataCategory.PERSONAL}
               checked={parameters.data.includes(DataCategory.PERSONAL)}
               onChange={({ target }) => {
@@ -270,7 +263,7 @@ export const ServiceList: Screen<ServiceListProps> = ({
             <Checkbox
               id="data-health"
               name="data"
-              label={n('dataHealth') }
+              label={n('dataHealth')}
               value={DataCategory.HEALTH}
               checked={parameters.data.includes(DataCategory.HEALTH)}
               onChange={({ target }) => {
@@ -280,8 +273,7 @@ export const ServiceList: Screen<ServiceListProps> = ({
             <Checkbox
               id="data-financial"
               name="data"
-              label={
-                n('dataFinancial') }
+              label={n('dataFinancial')}
               value={DataCategory.FINANCIAL}
               checked={parameters.data.includes(DataCategory.FINANCIAL)}
               onChange={({ target }) => {
@@ -289,14 +281,11 @@ export const ServiceList: Screen<ServiceListProps> = ({
               }}
             />
           </FilterSearchGroup>
-          <FilterSearchGroup
-            id="type_category"
-            label={ n('type') }
-          >
+          <FilterSearchGroup id="type_category" label={n('type')}>
             <Checkbox
               id="type-rest"
               name="type"
-              label={ n('typeRest') }
+              label={n('typeRest')}
               value={TypeCategory.REST}
               checked={parameters.type.includes(TypeCategory.REST)}
               onChange={({ target }) => {
@@ -306,7 +295,7 @@ export const ServiceList: Screen<ServiceListProps> = ({
             <Checkbox
               id="type-soap"
               name="type"
-              label={n('typeSoap') }
+              label={n('typeSoap')}
               value={TypeCategory.SOAP}
               checked={parameters.type.includes(TypeCategory.SOAP)}
               onChange={({ target }) => {
@@ -316,7 +305,7 @@ export const ServiceList: Screen<ServiceListProps> = ({
             <Checkbox
               id="type-graphql"
               name="type"
-              label={ n('typeGraphql') }
+              label={n('typeGraphql')}
               value={TypeCategory.GRAPHQL}
               checked={parameters.type.includes(TypeCategory.GRAPHQL)}
               onChange={({ target }) => {
@@ -324,14 +313,11 @@ export const ServiceList: Screen<ServiceListProps> = ({
               }}
             />
           </FilterSearchGroup>
-          <FilterSearchGroup
-            id="access_category"
-            label={n('access') }
-          >
+          <FilterSearchGroup id="access_category" label={n('access')}>
             <Checkbox
               id="access-xroad"
               name="access"
-              label={ n('accessXroad') }
+              label={n('accessXroad')}
               value={AccessCategory.XROAD}
               checked={parameters.access.includes(AccessCategory.XROAD)}
               onChange={({ target }) => {
@@ -341,7 +327,7 @@ export const ServiceList: Screen<ServiceListProps> = ({
             <Checkbox
               id="access-apigw"
               name="access"
-              label={ n('accessApigw') }
+              label={n('accessApigw')}
               value={AccessCategory.APIGW}
               checked={parameters.access.includes(AccessCategory.APIGW)}
               onChange={({ target }) => {
@@ -437,7 +423,7 @@ ServiceList.getInitialProps = async (ctx) => {
       })
       .then((res) => JSON.parse(res.data.getNamespace.fields)),
   ])
-  console.log(filterContent);
+
   return {
     staticContent,
     filterContent,
