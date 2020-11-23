@@ -26,6 +26,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   parseString,
   parseTime,
+  parseTransition,
   replaceTabs,
   replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -36,11 +37,14 @@ import {
   CaseState,
   NotificationType,
   CaseGender,
+  TransitionCase,
+  CaseTransition,
 } from '@island.is/judicial-system/types'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   SendNotificationMutation,
+  TransitionCaseMutation,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import {
@@ -263,6 +267,16 @@ export const StepOne: React.FC = () => {
     return resCase
   }
 
+  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+
+  const transitionCase = async (id: string, transitionCase: TransitionCase) => {
+    const { data } = await transitionCaseMutation({
+      variables: { input: { id, ...transitionCase } },
+    })
+
+    return data?.transitionCase
+  }
+
   const [
     sendNotificationMutation,
     { loading: isSendingNotification },
@@ -279,6 +293,50 @@ export const StepOne: React.FC = () => {
     })
 
     return data?.sendNotification?.notificationSent
+  }
+
+  const handleNextButtonClick: () => Promise<boolean> = async () => {
+    if (!workingCase) {
+      return false
+    }
+
+    switch (workingCase.state) {
+      case CaseState.NEW:
+        try {
+          // Parse the transition request
+          const transitionRequest = parseTransition(
+            workingCase.modified,
+            CaseTransition.OPEN,
+          )
+
+          // Transition the case
+          const resCase = await transitionCase(
+            workingCase.id ?? id,
+            transitionRequest,
+          )
+
+          if (!resCase) {
+            return false
+          }
+
+          setWorkingCase({
+            ...workingCase,
+            state: resCase.state,
+            prosecutor: resCase.prosecutor,
+          })
+
+          return true
+        } catch (e) {
+          console.log(e)
+
+          return false
+        }
+      case CaseState.DRAFT:
+      case CaseState.SUBMITTED:
+        return true
+      default:
+        return false
+    }
   }
 
   useEffect(() => {
@@ -966,18 +1024,23 @@ export const StepOne: React.FC = () => {
             )}
           </Box>
           <FormFooter
-            onNextButtonClick={() => {
-              if (
-                workingCase.notifications?.find(
-                  (notification) =>
-                    notification.type === NotificationType.HEADS_UP,
-                )
-              ) {
-                history.push(
-                  `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
-                )
+            onNextButtonClick={async () => {
+              const caseTransitioned = await handleNextButtonClick()
+              if (caseTransitioned) {
+                if (
+                  workingCase.notifications?.find(
+                    (notification) =>
+                      notification.type === NotificationType.HEADS_UP,
+                  )
+                ) {
+                  history.push(
+                    `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
+                  )
+                } else {
+                  setModalVisible(true)
+                }
               } else {
-                setModalVisible(true)
+                // TODO: Handle error
               }
             }}
             nextIsDisabled={isStepIllegal}
@@ -995,11 +1058,15 @@ export const StepOne: React.FC = () => {
                 )
               }
               handlePrimaryButtonClick={async () => {
-                await sendNotification(workingCase.id ?? id)
-
-                history.push(
-                  `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
+                const notificationSent = await sendNotification(
+                  workingCase.id ?? id,
                 )
+
+                if (notificationSent) {
+                  history.push(
+                    `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
+                  )
+                }
               }}
               isPrimaryButtonLoading={isSendingNotification}
             />
