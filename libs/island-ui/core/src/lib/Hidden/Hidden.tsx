@@ -7,14 +7,11 @@ import {
   ResponsiveRangeProps,
 } from '../../utils/responsiveRangeProps'
 
-type position = 'relative' | 'fixed' | 'absolute' | 'static'
-
 export interface HiddenProps extends ResponsiveRangeProps {
   children: ReactNode
   screen?: boolean
   print?: boolean
   inline?: boolean
-  position?: position | 'none'
 }
 
 export const Hidden = ({
@@ -24,7 +21,6 @@ export const Hidden = ({
   screen,
   print,
   inline,
-  position = 'relative',
 }: HiddenProps) => {
   const hiddenOnScreen = Boolean(screen)
   const hiddenOnPrint = Boolean(print)
@@ -37,17 +33,10 @@ export const Hidden = ({
     hiddenOnXl,
   ] = resolveResponsiveRangeProps({ above, below })
 
-  const pos: { position?: position } = {}
-
-  if (position !== 'none') {
-    pos.position = position
-  }
-
   const display = inline ? 'inline' : 'block'
 
   return (
     <Box
-      {...pos}
       display={
         hiddenOnScreen
           ? 'none'

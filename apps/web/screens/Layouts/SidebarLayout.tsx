@@ -14,14 +14,14 @@ type Breakpoint = keyof typeof theme['breakpoints']
 
 interface SidebarLayoutProps {
   sidebarContent: ReactNode
-  absolute?: boolean
-  hiddenBelow?: Exclude<Breakpoint, 'xs'>
+  isSticky?: boolean
+  hiddenOnTablet?: boolean
 }
 
 export const SidebarLayout: FC<SidebarLayoutProps> = ({
   sidebarContent,
-  absolute,
-  hiddenBelow,
+  isSticky = true,
+  hiddenOnTablet = false,
   children,
 }) => (
   <GridContainer position="none">
@@ -30,24 +30,19 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
       flexDirection="row"
       height="full"
       paddingBottom={6}
-      style={{
-        position: absolute ? undefined : 'relative',
-      }}
+      position={isSticky ? 'relative' : undefined}
     >
-      <Hidden
-        print
-        position={absolute ? 'none' : 'relative'}
-        below={hiddenBelow}
+      <Box
+        printHidden
+        className={cn(styles.sidebarWrapper, isSticky ? styles.sticky : null)}
+        display={
+          hiddenOnTablet
+            ? ['none', 'none', 'none', 'block', 'block']
+            : ['none', 'none', 'block', 'block', 'block']
+        }
       >
-        <Box
-          className={cn(
-            styles.sidebarWrapper,
-            absolute ? styles.absolute : styles.sticky,
-          )}
-        >
-          {sidebarContent}
-        </Box>
-      </Hidden>
+        {sidebarContent}
+      </Box>
       <GridContainer>
         <GridRow>
           <GridColumn span={'12/12'}>

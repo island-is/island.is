@@ -6,10 +6,12 @@ const top = STICKY_NAV_HEIGHT + theme.spacing[1]
 
 export const sidebarWrapper = style({
   top,
-  width: '246px',
+  minWidth: '246px',
+  maxWidth: '246px',
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.lg}px)`]: {
       maxWidth: '230px',
+      minWidth: '230px',
     },
   },
 })
@@ -19,6 +21,3 @@ export const sticky = style({
   alignSelf: 'flex-start',
 })
 
-export const absolute = style({
-  position: undefined,
-})
