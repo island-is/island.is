@@ -63,7 +63,7 @@ export const EducationOverview: ServicePortalModuleComponent = () => {
         id: 'service.portal:timeline-link-title',
         defaultMessage: 'Sjá tímalínu',
       })}
-      figure="/assets/images/bus.jpg"
+      figure="/assets/images/bus.svg"
     />
   )
 }
