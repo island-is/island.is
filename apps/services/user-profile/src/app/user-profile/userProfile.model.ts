@@ -19,6 +19,7 @@ import { Locale } from './types/localeTypes'
   ],
 })
 export class UserProfile extends Model<UserProfile> {
+  // Force rebuild of schemas
   @Column({
     type: DataType.UUID,
     primaryKey: true,

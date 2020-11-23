@@ -36,7 +36,7 @@ export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
   const { updateUserProfile } = useUpdateUserProfile()
 
   useEffect(() => {
-    if (!userProfile) return
+    if (!userProfile || !userProfile.locale) return
     if (userProfile.locale.length > 0)
       setLanguage({
         value: userProfile.locale as Locale,
