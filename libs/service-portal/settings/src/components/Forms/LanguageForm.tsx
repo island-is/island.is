@@ -40,7 +40,7 @@ export const LanguageForm: FC<Props> = ({
         <Controller
           control={control}
           name="language"
-          defaultValue={language}
+          defaultValue={language || { label: 'Íslenska', value: 'is' }}
           render={({ onChange, value, name }) => (
             <Select
               name={name}
@@ -59,15 +59,14 @@ export const LanguageForm: FC<Props> = ({
         <Box
           display="flex"
           justifyContent="spaceBetween"
-          flexWrap="wrap"
+          alignItems="center"
+          flexDirection={['columnReverse', 'row']}
           marginTop={4}
         >
           {renderBackButton && (
-            <Box marginBottom={[1, 0]}>{renderBackButton()}</Box>
+            <Box marginTop={[1, 0]}>{renderBackButton()}</Box>
           )}
-          {renderSubmitButton && (
-            <Box marginBottom={[1, 0]}>{renderSubmitButton()}</Box>
-          )}
+          {renderSubmitButton && <Box>{renderSubmitButton()}</Box>}
         </Box>
       )}
     </form>
