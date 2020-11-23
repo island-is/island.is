@@ -13,5 +13,8 @@ const { graphqlUrl } = serverRuntimeConfig
 const externalEndpointDependencies = [graphqlUrl]
 
 export default withHealthchecks(externalEndpointDependencies)(
-  withContentfulEditor(withApollo(withLocale('is')(articleScreen)), environment.contentful),
+  withContentfulEditor(
+    withApollo(withLocale('is')(articleScreen)),
+    environment.contentful,
+  ),
 )

@@ -3,52 +3,19 @@ import { NextComponentType, NextPageContext } from 'next'
 import { createClient } from 'contentful-management'
 import { Entry } from 'contentful-management/dist/typings/entities/entry'
 
-import { Header } from './Header/Header'
-import { Sidebar } from './Sidebar/Sidebar'
+import { Header } from './components/Header/Header'
+import { Sidebar } from './components/Sidebar/Sidebar'
+import { getContentfulInfo } from './utils/get-contentful-info'
 
-const mapping = (path?: string) => {
-  console.log('-path', path)
-
-  if (!path) {
-    return { locale: undefined, name: undefined }
-  }
-
-  const slashes = path.match(/\//g)?.length
-  let arg = path?.split('/')?.[1]
-  let locale = 'is-IS'
-
-  if (arg === 'en') {
-    arg = path?.split('/')?.[2]
-    locale = 'en'
-  }
-
-  if (
-    (arg === 'en' && slashes === 2) ||
-    (arg === 'is-IS' && slashes === 1) ||
-    !arg
-  ) {
-    return { locale, name: 'article' }
-  }
-
-  const types = [
-    { id: 'lifeEventPage', matches: ['life-event', 'lifsvidburdur'] },
-    { id: 'articleCategory', matches: ['category', 'flokkur'] },
-    { id: 'news', matches: ['news', 'frett'] },
-    { id: 'article', matches: ['article', 'grein'] },
-    { id: 'tellUsAStory', matches: ['tell-us-your-story', 'segdu-okkur-sogu'] },
-    { id: 'organization', matches: ['organizations', 'stofnanir'] },
-    { id: 'aboutPage', matches: ['stafraent-island'] },
-  ]
-
-  const res = types.find((t) => t.matches.find((item) => item === arg))
-  console.log('-res', res)
-
-  if (!res) {
-    return { locale: undefined, name: undefined }
-  }
-
-  return { locale, name: res.id }
-}
+const CONTENTFUL_TYPES_TO_MAP = [
+  { id: 'lifeEventPage', matches: ['life-event', 'lifsvidburdur'] },
+  { id: 'articleCategory', matches: ['category', 'flokkur'] },
+  { id: 'news', matches: ['news', 'frett'] },
+  { id: 'article', matches: ['article', 'grein'] },
+  { id: 'tellUsAStory', matches: ['tell-us-your-story', 'segdu-okkur-sogu'] },
+  { id: 'organization', matches: ['organizations', 'stofnanir'] },
+  { id: 'aboutPage', matches: ['stafraent-island'] },
+]
 
 export const withContentfulEditor = (
   Component: NextComponentType<NextPageContext, unknown, any>,
@@ -62,17 +29,13 @@ export const withContentfulEditor = (
     pageProps,
     slug,
     contentType,
+    locale,
   }: {
     pageProps: unknown
-    slug?: string
-    contentType: {
-      locale?: string
-      name?: string
-    }
+    slug: string
+    contentType: string
+    locale: string
   }) => {
-    console.log('-slug', slug)
-    console.log('-contentType', contentType)
-
     const client = useRef(
       createClient({ accessToken: env.managementAccessToken }),
     ).current
@@ -80,7 +43,7 @@ export const withContentfulEditor = (
     const [entry, setEntry] = useState<Entry | undefined>(undefined)
 
     const handleLoad = async () => {
-      if (!slug || !contentType.name || !edit || !env.managementAccessToken) {
+      if (!slug || !contentType || !edit || !env.managementAccessToken) {
         return
       }
 
@@ -89,11 +52,10 @@ export const withContentfulEditor = (
 
       try {
         const entry = await environment.getEntries({
-          content_type: contentType.name,
+          content_type: contentType,
           'fields.slug': slug,
-          locale: contentType.locale,
+          locale,
         })
-        console.log('-entry', entry)
 
         setEntry(entry.items?.[0])
       } catch (e) {
@@ -109,7 +71,7 @@ export const withContentfulEditor = (
             ...prev?.fields,
             [field]: {
               ...prev?.fields[field],
-              [contentType.locale ?? 'is-IS']: value,
+              [locale]: value,
             },
           },
         }
@@ -159,7 +121,7 @@ export const withContentfulEditor = (
         {edit && (
           <Sidebar
             fields={entry?.fields}
-            locale={contentType.locale}
+            locale={locale}
             onChange={handleChange}
           />
         )}
@@ -170,10 +132,14 @@ export const withContentfulEditor = (
   }
 
   NewComponent.getInitialProps = async (ctx: NextPageContext) => {
-    const { query, asPath } = ctx
-    const { slug } = query
-    const contentType = mapping(asPath)
-    // console.log('-contentType', contentType)
+    const { slug, contentType, locale } = getContentfulInfo(
+      ctx,
+      CONTENTFUL_TYPES_TO_MAP,
+    )
+
+    console.log('-slug', slug)
+    console.log('-contentType', contentType)
+    console.log('-locale', locale)
 
     const props = Component.getInitialProps
       ? await Component.getInitialProps(ctx)
@@ -183,6 +149,7 @@ export const withContentfulEditor = (
       pageProps: props,
       slug,
       contentType,
+      locale,
     }
   }
 

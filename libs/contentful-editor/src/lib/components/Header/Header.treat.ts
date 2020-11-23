@@ -1,4 +1,4 @@
-import { style } from 'treat';
+import { style } from 'treat'
 
 export const wrapper = style({
   position: 'fixed',

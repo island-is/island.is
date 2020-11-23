@@ -5,4 +5,7 @@ import { withContentfulEditor } from '@island.is/contentful-editor'
 
 import { environment } from '../../../environments/environment'
 
-export default withContentfulEditor(withApollo(withLocale('en')(articleScreen)), environment.contentful)
+export default withContentfulEditor(
+  withApollo(withLocale('en')(articleScreen)),
+  environment.contentful,
+)
