@@ -46,7 +46,7 @@ export const EventCard: React.FC<Props> = ({
           className={styles.content}
           marginRight={[2, 2, 2, 2, 1]}
         >
-          <Text variant="h3" as="h3" as="h3" paddingBottom={1} color="blue400">
+          <Text variant="h3" as="h3" paddingBottom={1} color="blue400">
             {title}
           </Text>
           {renderContent && renderContent()}

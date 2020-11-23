@@ -41,7 +41,7 @@ const ApplicationCard: FC<Props> = ({
           alignItems="center"
           marginBottom={1}
         >
-          <Text variant="h3" as="h3" as="h3">
+          <Text variant="h3" as="h3">
             {name}
           </Text>
           <Tag variant={isComplete ? 'mint' : 'purple'} label>

@@ -183,7 +183,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
       <Stack space={3}>
-        <Text variant="h1" as="h1" as="h1">
+        <Text variant="h1" as="h1">
           {formatMessage({
             id: 'sp.documents:title',
             defaultMessage: 'Rafræn skjöl',

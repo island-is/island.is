@@ -35,7 +35,7 @@ const UserInfoOverviewItem: FC<UserInfoOverviewItemComponent> = ({
           marginTop={[3, 3, 0]}
         >
           <Box marginBottom={2}>
-            <Text variant="h2" as="h2" as="h2">
+            <Text variant="h2" as="h2">
               {formatMessage(heading)}
             </Text>
           </Box>

@@ -43,7 +43,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={2}>
-              <Text variant="h1" as="h1" as="h1">
+              <Text variant="h1" as="h1">
                 {person?.fullName || ''}
               </Text>
             </Stack>

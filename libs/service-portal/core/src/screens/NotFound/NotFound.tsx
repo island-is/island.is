@@ -25,7 +25,7 @@ export const NotFound: FC<Props> = ({ title }) => {
           >
             404
           </Text>
-          <Text variant="h1" as="h1" as="h1" marginBottom={3}>
+          <Text variant="h1" as="h1" marginBottom={3}>
             {formatMessage(
               title ||
                 defineMessage({
