@@ -12,7 +12,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
         name="Sýnidæmi um umsókn"
         date=""
         isComplete={false}
-        url={ServicePortalPath.UmsoknirRoot}
+        url={ServicePortalPath.ApplicationRoot}
         progress={80}
       />
     </>

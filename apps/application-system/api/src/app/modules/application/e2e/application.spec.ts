@@ -29,6 +29,32 @@ describe('Application system API', () => {
     expect(response.body.id).toBeTruthy()
   })
 
+  it('should fail when POST-ing an application whose template is not ready for production, on production environment', async () => {
+    const envBefore = process.env.NODE_ENV
+    process.env.NODE_ENV = 'production'
+
+    const failedResponse = await request(app.getHttpServer())
+      .post('/applications')
+      .send({
+        applicant: '123456-4321',
+        state: 'draft',
+        attachments: {},
+        typeId: 'ExampleForm',
+        assignees: ['123456-1234'],
+        answers: {
+          careerHistoryCompanies: ['government'],
+          dreamJob: 'pilot',
+        },
+      })
+      .expect(400)
+
+    expect(failedResponse.body.message).toBe(
+      'Template ExampleForm is not ready for production',
+    )
+
+    process.env.NODE_ENV = envBefore
+  })
+
   it('should fail when PUT-ing answers on an application which dont comply the dataschema', async () => {
     const server = request(app.getHttpServer())
     const response = await server
