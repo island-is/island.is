@@ -1,7 +1,6 @@
 import { ServicePortalPath } from '@island.is/service-portal/core'
 
 export const getMobileMenuFigure = (path: ServicePortalPath | undefined) => {
-  console.log(path)
   if (path === ServicePortalPath.FinanceRoot)
     return '/assets/images/payment.svg'
   if (path === ServicePortalPath.MyInfoRoot) return '/assets/images/myInfo.svg'
