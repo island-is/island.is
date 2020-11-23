@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react'
 import { IntlProvider } from 'react-intl'
-import { useLazyQuery } from '@apollo/client'
+import { useApolloClient, useLazyQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import difference from 'lodash/difference'
 import isEmpty from 'lodash/isEmpty'
@@ -34,6 +34,10 @@ interface LocaleProviderProps {
   children: React.ReactElement
 }
 
+type Query = {
+  getTranslations: Record<string, string>
+}
+
 export const LocaleContext = createContext<LocaleContextType>({
   lang: 'is',
   loadMessages: () => undefined,
@@ -60,7 +64,7 @@ export const LocaleProvider = ({
   )
   const [messagesDict, setMessagesDict] = useState<MessagesDict>(messages)
   const [loadedNamespaces, setLoadedNamespaces] = useState<string[]>([])
-  const [fetchMessages, { data }] = useLazyQuery(GET_TRANSLATIONS)
+  const apolloClient = useApolloClient()
   const [loadingMessages, setLoadingMessages] = useState<boolean>(false)
 
   useEffect(() => {
@@ -90,22 +94,16 @@ export const LocaleProvider = ({
 
   useEffect(() => {
     if (messages) {
-      setMessagesDict(Object.assign({}, messagesDict, messages))
+      setMessagesDict((old) => Object.assign({}, old, messages))
     }
   }, [messages])
-
-  useEffect(() => {
-    if (data?.getTranslations) {
-      setLoadingMessages(false)
-      setMessagesDict(Object.assign({}, messagesDict, data?.getTranslations))
-    }
-  }, [data])
 
   async function changeLanguage(lang: Locale) {
     setLoadingMessages(true)
     await polyfill(lang)
     setActiveLocale(lang)
-    fetchMessages({
+    const { data } = await apolloClient.query<Query>({
+      query: GET_TRANSLATIONS,
       variables: {
         input: {
           namespaces: loadedNamespaces,
@@ -113,6 +111,9 @@ export const LocaleProvider = ({
         },
       },
     })
+
+    setLoadingMessages(false)
+    setMessagesDict((old) => Object.assign({}, old, data?.getTranslations))
   }
 
   const loadMessages = async (namespaces: string | string[]) => {
@@ -124,7 +125,8 @@ export const LocaleProvider = ({
     if (!isEmpty(diff)) {
       setLoadedNamespaces([...loadedNamespaces, ...diff])
 
-      fetchMessages({
+      const { data } = await apolloClient.query<Query>({
+        query: GET_TRANSLATIONS,
         variables: {
           input: {
             namespaces: diff,
@@ -132,6 +134,9 @@ export const LocaleProvider = ({
           },
         },
       })
+
+      setLoadingMessages(false)
+      setMessagesDict((old) => Object.assign({}, old, data?.getTranslations))
     }
   }
 
