@@ -32,7 +32,7 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
   const { updateUserProfile } = useUpdateUserProfile()
 
   useEffect(() => {
-    if (!userProfile) return
+    if (!userProfile || !userProfile.email) return
     if (userProfile.email.length > 0) setEmail(userProfile.email)
   }, [userProfile])
 

@@ -83,15 +83,14 @@ export const EmailForm: FC<Props> = ({
         <Box
           display="flex"
           justifyContent="spaceBetween"
-          flexWrap="wrap"
+          alignItems="center"
+          flexDirection={['columnReverse', 'row']}
           marginTop={4}
         >
           {renderBackButton && (
-            <Box marginBottom={[1, 0]}>{renderBackButton()}</Box>
+            <Box marginTop={[1, 0]}>{renderBackButton()}</Box>
           )}
-          {renderSubmitButton && (
-            <Box marginBottom={[1, 0]}>{renderSubmitButton()}</Box>
-          )}
+          {renderSubmitButton && renderSubmitButton()}
         </Box>
       )}
     </form>

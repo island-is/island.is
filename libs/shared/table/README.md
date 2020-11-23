@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # shared-table
 
 This library was generated with [Nx](https://nx.dev).

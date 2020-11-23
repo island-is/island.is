@@ -1,4 +1,4 @@
-# api-catalogue-elastic
+# Elastic
 
 This library was generated with [Nx](https://nx.dev).
 

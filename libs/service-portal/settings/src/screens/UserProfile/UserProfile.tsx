@@ -37,14 +37,14 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
           })}
           content={userProfile?.email || ''}
           tag={
-            userProfile?.emailVerified === true ? (
+            userProfile?.email && userProfile?.emailVerified === true ? (
               <Tag variant="darkerMint" label>
                 {formatMessage({
                   id: 'sp.settings:verified',
                   defaultMessage: 'Staðfest',
                 })}
               </Tag>
-            ) : userProfile?.emailVerified === false ? (
+            ) : userProfile?.email && userProfile?.emailVerified === false ? (
               <Link to={ServicePortalPath.UserProfileEditEmail}>
                 <Tag variant="red">
                   {formatMessage({
@@ -68,6 +68,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
           })}
           content={userProfile?.mobilePhoneNumber || ''}
           tag={
+            userProfile?.mobilePhoneNumber &&
             userProfile?.mobilePhoneNumberVerified === true ? (
               <Tag variant="darkerMint" label>
                 {formatMessage({
@@ -75,7 +76,8 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
                   defaultMessage: 'Staðfest',
                 })}
               </Tag>
-            ) : userProfile?.emailVerified === false ? (
+            ) : userProfile?.mobilePhoneNumber &&
+              userProfile?.mobilePhoneNumberVerified === false ? (
               <Link to={ServicePortalPath.UserProfileEditPhoneNumber}>
                 <Tag variant="red">
                   {formatMessage({
@@ -101,7 +103,9 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
             userProfile
               ? userProfile.locale === 'is'
                 ? 'Íslenska'
-                : 'English'
+                : userProfile.locale === 'en'
+                ? 'English'
+                : ''
               : ''
           }
           editLink={{

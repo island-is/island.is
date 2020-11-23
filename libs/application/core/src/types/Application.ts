@@ -15,6 +15,7 @@ export interface Application {
   id: string
   state: string
   applicant: string
+  assignees: string[]
   typeId: ApplicationTypes
   modified: Date
   created: Date

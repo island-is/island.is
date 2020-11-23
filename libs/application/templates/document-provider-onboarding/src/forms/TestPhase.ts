@@ -107,11 +107,21 @@ export const TestPhase: Form = buildForm({
             }),
           ],
         }),
-        buildIntroductionField({
-          id: 'finalTestPhase',
-          name: 'Takk',
-          introduction:
+        buildMultiField({
+          id: 'finished',
+          name: 'Aðgangur að raun',
+          description:
             'Þú hefur nú fengið aðgang að umsjónarkerfi skajalveitenda. Það má finna á þínum síðum á ísland.is',
+          children: [
+            buildCustomField(
+              {
+                id: 'test',
+                name: 'Takk fyrir',
+                component: 'ThankYouImage',
+              },
+              {},
+            ),
+          ],
         }),
       ],
     }),
