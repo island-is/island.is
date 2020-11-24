@@ -1,7 +1,9 @@
 import {
+  AlertMessage,
   Box,
   DatePicker,
   GridColumn,
+  GridContainer,
   GridRow,
   Input,
   Text,
@@ -22,6 +24,7 @@ import { PageLayout } from '@island.is/judicial-system-web/src/shared-components
 import { useHistory, useParams } from 'react-router-dom'
 import {
   Case,
+  CaseState,
   NotificationType,
   UpdateCase,
 } from '@island.is/judicial-system/types'
@@ -33,13 +36,11 @@ import {
 } from '@island.is/judicial-system-web/src/graphql'
 import parseISO from 'date-fns/parseISO'
 import formatISO from 'date-fns/formatISO'
-import isEmpty from 'lodash/isEmpty'
 import isValid from 'date-fns/isValid'
 import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-
 import Modal from '../../../shared-components/Modal/Modal'
 
 interface CaseData {
@@ -178,6 +179,15 @@ export const HearingArrangements: React.FC = () => {
               Fyrirtökutími
             </Text>
           </Box>
+          {workingCase.state === CaseState.DRAFT && (
+            <Box marginBottom={8}>
+              <AlertMessage
+                type="info"
+                title="Krafa hefur ekki verið staðfest af ákæranda"
+                message="Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram fyrr en ákærandi hefur staðfest kröfuna."
+              />
+            </Box>
+          )}
           <Box component="section" marginBottom={7}>
             <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
             <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
@@ -222,7 +232,7 @@ export const HearingArrangements: React.FC = () => {
                       )
                     }}
                     handleCloseCalendar={(date: Date | null) => {
-                      if (isEmpty(date) || !isValid(date)) {
+                      if (date === null || !isValid(date)) {
                         setCourtDateErrorMessage('Reitur má ekki vera tómur')
                       }
                     }}
@@ -377,7 +387,9 @@ export const HearingArrangements: React.FC = () => {
             />
           </Box>
           <FormFooter
-            nextIsDisabled={isStepIllegal}
+            nextIsDisabled={
+              workingCase.state === CaseState.DRAFT || isStepIllegal
+            }
             nextIsLoading={isSendingNotification}
             onNextButtonClick={async () => {
               const notificationSent = await sendNotification(workingCase.id)

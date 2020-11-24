@@ -45,6 +45,15 @@ const mockCasesQuery = [
             accusedName: 'Erlingur L Kristinsson',
             custodyEndDate: '2020-11-11T12:31:00.000Z',
           },
+          {
+            id: 'test_id_4',
+            created: '2020-09-16T19:50:08.033Z',
+            state: CaseState.NEW,
+            policeCaseNumber: '008-2020-X',
+            accusedNationalId: '012345-6789',
+            accusedName: 'Erlingur L Kristinsson',
+            custodyEndDate: '2020-11-11T12:31:00.000Z',
+          },
         ],
       },
     },
@@ -52,7 +61,7 @@ const mockCasesQuery = [
 ]
 
 describe('Detention requests route', () => {
-  test('should list all cases that are not a draft in a list if you are a judge', async () => {
+  test('should list all cases that do not have status NEW in a list if you are a judge', async () => {
     render(
       <MockedProvider
         mocks={[...mockCasesQuery, ...mockJudgeQuery]}
@@ -76,7 +85,7 @@ describe('Detention requests route', () => {
       ),
     ).toEqual(
       mockCasesQuery[0].result.data.cases.filter((dr) => {
-        return dr.state !== CaseState.DRAFT
+        return dr.state !== CaseState.NEW
       }).length,
     )
   })
