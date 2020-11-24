@@ -14,6 +14,9 @@ export class AboutSubPage {
   slug: string
 
   @Field()
+  url: string
+
+  @Field()
   description: string
 
   @Field()
@@ -33,6 +36,7 @@ export const mapAboutSubPage = ({
   id: sys.id,
   title: fields.title ?? '',
   slug: fields.slug ?? '',
+  url: fields.url ?? '',
   description: fields.description ?? '',
   subDescription: fields.subDescription ?? '',
   slices: fields.content
