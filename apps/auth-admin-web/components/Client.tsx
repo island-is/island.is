@@ -10,9 +10,10 @@ import * as yup from 'yup';
 import HelpBox from './HelpBox';
 
 type Props = {
-  client: ClientDTO;
+  client: ClientDTO,
+  
 };
-const Client = (client: ClientDTO, handleSaved) => {
+const Client: React.FC<Props> = (client: ClientDTO, handleSaved) => {
   const { register, handleSubmit, errors, formState, control } = useForm<
     ClientDTO
   >();

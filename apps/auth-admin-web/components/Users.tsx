@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import { UserIdentityDTO } from "../models/dtos/user-identity.dto";
 
-class UsersCard extends Component {
+class Users extends Component {
   state = {
     subjectId: "",
     users: [],
@@ -108,4 +108,4 @@ class UsersCard extends Component {
   }
 }
 
-export default UsersCard;
+export default Users;
