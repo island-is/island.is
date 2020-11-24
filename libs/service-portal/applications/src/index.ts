@@ -17,13 +17,13 @@ export const applicationsModule: ServicePortalModule = {
     const applicationRoutes = [
       {
         name: rootName,
-        path: ServicePortalPath.UmsoknirRoot,
+        path: ServicePortalPath.ApplicationRoot,
         render: () =>
           lazy(() => import('./screens/ApplicationList/ApplicationList')),
       },
       {
         name: rootName,
-        path: ServicePortalPath.UmsoknirKynning,
+        path: ServicePortalPath.ApplicationIntroduction,
         render: () =>
           lazy(() => import('./screens/ApplicationListWip/ApplicationListWip')),
       },

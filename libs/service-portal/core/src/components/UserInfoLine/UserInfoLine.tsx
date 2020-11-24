@@ -43,7 +43,9 @@ export const UserInfoLine: FC<Props> = ({
       <GridRow>
         <GridColumn order={1} span={['8/12', '4/12']}>
           <Box overflow="hidden">
-            <Text variant="h5">{formatMessage(label)}</Text>
+            <Text variant="h5" as="h5">
+              {formatMessage(label)}
+            </Text>
           </Box>
         </GridColumn>
         <GridColumn order={[3, 2]} span={['1/1', tag ? '3/12' : '5/12']}>

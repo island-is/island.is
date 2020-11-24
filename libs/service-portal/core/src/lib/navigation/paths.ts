@@ -3,36 +3,37 @@ export enum ServicePortalPath {
   MinarSidurRoot = '/',
   MinarSidurSignInOidc = '/signin-oidc',
   MinarSidurSilentSignInOidc = '/silent/signin-oidc',
-  // Umsoknir
-  UmsoknirRoot = '/umsoknir',
-  UmsoknirKynning = '/umsoknir-kynning',
-  UmsoknirNyUmsokn = '/umsoknir/ny-umsokn',
-  UmsoknirOpnarUmsoknir = '/umsoknir/opnar-umsoknir',
-  UmsoknirLyfsedlar = '/umsoknir/lyfsedlar',
-  // Stillingar
-  StillingarRoot = '/stillingar',
-  StillingarUmbod = '/min-rettindi',
-  // Fjolskyldan
+  // Applications
+  ApplicationRoot = '/umsoknir',
+  ApplicationIntroduction = '/umsoknir-kynning',
+  ApplicationNewApplication = '/umsoknir/ny-umsokn',
+  ApplicationOpenApplications = '/umsoknir/opnar-umsoknir',
+  ApplicationPrescription = '/umsoknir/lyfsedlar',
+  // Settings
+  SettingsRoot = '/stillingar',
+  // Family
   FamilyRoot = '/fjolskyldan',
   FamilyMember = '/fjolskyldan/:nationalId',
-  MinGognRoot = '/min-gogn',
+  MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
   // Fjarmal
-  FjarmalRoot = '/fjarmal',
-  FjarmalOkutaeki = 'https://mitt.samgongustofa.is/',
-  FjarmalGreidslur = '/greidslur',
-  // Rafræn skjöl
-  RafraenSkjolRoot = '/rafraen-skjol',
+  FinanceRoot = '/fjarmal',
+  FinanceVehicles = 'https://mitt.samgongustofa.is/',
+  FinancePayments = '/greidslur',
+  // Electronic Documents
+  ElectronicDocumentsRoot = '/rafraen-skjol',
   // Heilsa
-  HeilsaRoot = '/heilsa',
-  HeilsaHeilsuvera = 'https://minarsidur.heilsuvera.is/heimasvaedi',
-  HeilsaBolusetningar = 'https://minarsidur.heilsuvera.is/bolusetningar/bolusett-gegn/',
-  // Menntun
-  MenntunRoot = '/menntun',
-  // Eignir
-  EignirRoot = '/eignir',
-  // Skilabod
+  HealthRoot = '/heilsa',
+  HealthHeilsuvera = 'https://minarsidur.heilsuvera.is/heimasvaedi',
+  HealthVaccinations = 'https://minarsidur.heilsuvera.is/bolusetningar/bolusett-gegn/',
+  // Education
+  EducationRoot = '/menntun',
+  // Assets
+  AssetsRoot = '/eignir',
+  // Messages
   MessagesRoot = '/skilabod',
+  // My licenses
+  MyLicensesRoot = '/min-rettindi',
 
   // User Profile
   UserProfileRoot = '/stillingar/minn-adgangur',

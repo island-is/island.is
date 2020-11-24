@@ -23,7 +23,7 @@ export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
         {loading && <ActionCardLoader repeat={3} />}
         {error && (
           <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-            <Text variant="h3">
+            <Text variant="h3" as="h3">
               {formatMessage({
                 id: 'sp.documents:error',
                 defaultMessage:
@@ -34,7 +34,7 @@ export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
         )}
         {!loading && !error && data?.documents.length === 0 && (
           <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-            <Text variant="h3">
+            <Text variant="h3" as="h3">
               {formatMessage({
                 id: 'sp.documents:not-found',
                 defaultMessage:
@@ -48,7 +48,7 @@ export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
         ))}
       </Stack>
       <Box display="flex" justifyContent="flexEnd" marginTop={[4, 8]}>
-        <Link to={ServicePortalPath.RafraenSkjolRoot}>
+        <Link to={ServicePortalPath.ElectronicDocumentsRoot}>
           <Button variant="primary">
             {formatMessage({
               id: 'sp.documents:goto-documents',

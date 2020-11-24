@@ -46,7 +46,9 @@ const InfoAccordionCard: FC<Props> = ({ id, label, description, rows }) => {
                     {column.render ? (
                       column.render()
                     ) : index === 0 ? (
-                      <Text variant="h5">{column.content}</Text>
+                      <Text variant="h5" as="h5">
+                        {column.content}
+                      </Text>
                     ) : (
                       column.content
                     )}

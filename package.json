@@ -32,10 +32,11 @@
     "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "ts-node": "cross-env ts-node -r tsconfig-paths/register -O '{\\\"module\\\":\\\"commonjs\\\",\\\"esModuleInterop\\\":true}'",
+    "ts-node": "cross-env ts-node -r tsconfig-paths/register -O '{\\\"module\\\":\\\"commonjs\\\",\\\"esModuleInterop\\\":true,\\\"strict\\\":false}'",
     "openapi-generator": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true",
     "schemas": "node ./scripts/schemas.js",
-    "postinstall": "node ./scripts/postinstall.js"
+    "postinstall": "node ./scripts/postinstall.js",
+    "gitbook": "node ./scripts/gitbook.js"
   },
   "dependencies": {
     "@apollo/client": "3.1.3",

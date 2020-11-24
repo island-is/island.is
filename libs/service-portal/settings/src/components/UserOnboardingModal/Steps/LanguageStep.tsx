@@ -25,7 +25,7 @@ export const LanguageStep: FC<Props> = ({
 
   return (
     <>
-      <Text variant="h1" marginBottom={3}>
+      <Text variant="h1" as="h1" marginBottom={3}>
         {formatMessage({
           id: 'service.portal:hi',
           defaultMessage: 'Hæ',
@@ -37,7 +37,6 @@ export const LanguageStep: FC<Props> = ({
           id: 'sp.settings:language-step-onboarding',
           defaultMessage: `
             Byrjum á því að velja það tungumál sem hentar þér.
-            Let's begin by picking the language of your choice.
           `,
         })}
       </Text>
