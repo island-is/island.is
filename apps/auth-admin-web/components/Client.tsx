@@ -12,7 +12,7 @@ import HelpBox from './HelpBox';
 type Props = {
   client: ClientDTO;
 };
-export default function Client<ClientDTO>(client: ClientDTO, handleSaved: any) {
+const Client = (client: ClientDTO, handleSaved) => {
   const { register, handleSubmit, errors, formState, control } = useForm<
     ClientDTO
   >();
@@ -61,7 +61,7 @@ export default function Client<ClientDTO>(client: ClientDTO, handleSaved: any) {
         setResponse(res);
         if (res.statusCode === 201){
           console.log("handle change");
-          handleSaved(clientObject.clientId);
+          console.log(handleSaved('sdf'));          
         }
       })
       .catch(function (error) {
@@ -690,4 +690,5 @@ export default function Client<ClientDTO>(client: ClientDTO, handleSaved: any) {
     </div>
   );
 }
+export default Client;
 
