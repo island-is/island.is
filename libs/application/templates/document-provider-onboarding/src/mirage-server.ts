@@ -16,18 +16,23 @@ export function makeServer({ environment = 'development' } = {}) {
           value: '5016d8d5cb6ce0758107b9969ea3c201',
         },
       ])
-      this.get('/api/endPointVariables', () => [
-        {
-          id: '1',
-          name: 'Audience',
-          value: '5016d8d5cb6ce0758107b9969ea3c201',
-        },
-        {
-          id: '2',
-          name: 'Scope',
-          value: '5016d8d5cb6ce0758107b9969ea3c201',
-        },
-      ])
+      this.post('/api/endPointVariables', (schema, request) => {
+        let attrs = JSON.parse(request.requestBody)
+        console.log(attrs)
+        let data = [
+          {
+            id: '1',
+            name: 'Audience',
+            value: '5016d8d5cb6ce0758107b9969ea3c201',
+          },
+          {
+            id: '2',
+            name: 'Scope',
+            value: '5016d8d5cb6ce0758107b9969ea3c201',
+          },
+        ]
+        return data
+      })
       this.get(
         '/api/testMyEndpoint',
         () => [
