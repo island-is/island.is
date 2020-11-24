@@ -1,5 +1,10 @@
 import { Grant } from '../entities/models/grants.model'
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { InjectModel } from '@nestjs/sequelize'
 import { GrantDto } from '../entities/dto/grant-dto'
@@ -114,5 +119,17 @@ export class GrantsService {
     this.logger.debug(`Creating a new grant`)
 
     return await this.grantModel.create({ ...grant })
+  }
+
+  async updateAsync(key: string, grant: GrantDto): Promise<Grant> {
+    this.logger.debug(`Updating grant`)
+
+    var existing = await this.grantModel.findByPk(key)
+
+    if (!existing) {
+      throw new NotFoundException('Grant not found')
+    }
+
+    return await existing.update({ ...grant })
   }
 }
