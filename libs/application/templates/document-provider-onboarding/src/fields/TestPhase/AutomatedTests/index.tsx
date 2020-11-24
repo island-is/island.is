@@ -10,19 +10,22 @@ import {
   Button,
   Icon,
   LoadingIcon,
+  Stack,
 } from '@island.is/island-ui/core'
+import { useForm } from 'react-hook-form'
 import { FieldDescription } from '@island.is/shared/form-fields'
+import * as styles from './AutomatedTests.treat'
 
-//TODO: Implement this component, only initial setup.
-const AutomatedTests: FC<FieldBaseProps> = ({ field, application }) => {
+const AutomatedTests: FC<FieldBaseProps> = () => {
   interface Response {
     id: string
     isValid: boolean
     message: string
   }
 
-  const fetchData = async () => {
-    //
+  const { register, errors, trigger } = useForm()
+
+  const validateEndpoint = async () => {
     setIsLoading(true)
     await fetch('/api/testMyEndpoint')
       .then((response) => response.json())
@@ -52,14 +55,33 @@ const AutomatedTests: FC<FieldBaseProps> = ({ field, application }) => {
           hægt sé að sækja skjalið til skjalaveitu.
         </Text>
       </Box>
-      <Box marginTop={3}>
+      <Box marginTop={3} position="relative">
         <GridContainer>
           <GridRow>
             <GridColumn span="6/12">
-              <Input label="Kennitala mótttakanda" name="Test" />
+              <Input
+                label="Kennitala móttakanda"
+                name="nationalId"
+                id="nationalId"
+                ref={register({ required: true })}
+                required
+                defaultValue=""
+                placeholder="Skráðu inn kennitölu"
+                hasError={errors.nationalId !== undefined}
+                errorMessage="Þú verður að skrá inn kennitölu móttakanda"
+                disabled={isLoading}
+              />
             </GridColumn>
             <GridColumn span="6/12">
-              <Input label="Id skjals" name="Test2" />
+              <Input
+                label="Id skjals"
+                name="docId"
+                required
+                placeholder="Skráðu inn Id skjals"
+                ref={register({ required: true })}
+                hasError={errors.docId !== undefined}
+                errorMessage="Þú verður að skrá inn Id skjals"
+              />
             </GridColumn>
           </GridRow>
           <GridRow>
@@ -71,51 +93,67 @@ const AutomatedTests: FC<FieldBaseProps> = ({ field, application }) => {
                 alignItems="center"
               >
                 <Button
-                  variant="primary"
                   onClick={() => {
-                    fetchData()
+                    trigger(['nationalId', 'docId']).then((isValid) =>
+                      isValid ? validateEndpoint() : setResponse([]),
+                    )
                   }}
                 >
                   Hefja próf
                 </Button>
-                <Box>{isLoading && <LoadingIcon size={50} />}</Box>
               </Box>
             </GridColumn>
           </GridRow>
         </GridContainer>
+        {isLoading ? (
+          <Box
+            className={styles.isLoadingContainer}
+            position="absolute"
+            left={0}
+            right={0}
+            top={0}
+            bottom={0}
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            borderRadius="large"
+            background="blue100"
+          >
+            <LoadingIcon animate size={30} />
+          </Box>
+        ) : (
+          <Box>
+            {response.map((Response) => (
+              <Box marginTop={3} key={Response.id}>
+                <GridContainer>
+                  <GridRow>
+                    <GridColumn>
+                      {Response.isValid ? (
+                        <Icon
+                          color="mint600"
+                          icon="checkmarkCircle"
+                          size="medium"
+                          type="filled"
+                        />
+                      ) : (
+                        <Icon
+                          color="red600"
+                          icon="warning"
+                          size="medium"
+                          type="filled"
+                        />
+                      )}
+                    </GridColumn>
+                    <GridColumn>
+                      <Text variant="h5">{Response.message}</Text>
+                    </GridColumn>
+                  </GridRow>
+                </GridContainer>
+              </Box>
+            ))}
+          </Box>
+        )}
       </Box>
-      {!isLoading && (
-        <Box>
-          {response.map((Response) => (
-            <Box marginTop={3} key={Response.id}>
-              <GridContainer>
-                <GridRow>
-                  <GridColumn>
-                    {Response.isValid ? (
-                      <Icon
-                        color="mint600"
-                        icon="checkmarkCircle"
-                        size="medium"
-                        type="filled"
-                      />
-                    ) : (
-                      <Icon
-                        color="red600"
-                        icon="warning"
-                        size="medium"
-                        type="filled"
-                      />
-                    )}
-                  </GridColumn>
-                  <GridColumn>
-                    <Text variant="h5">{Response.message}</Text>
-                  </GridColumn>
-                </GridRow>
-              </GridContainer>
-            </Box>
-          ))}
-        </Box>
-      )}
     </Box>
   )
 }
