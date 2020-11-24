@@ -6,11 +6,11 @@ import { useLocale } from '@island.is/localization'
 import { toast } from '@island.is/island-ui/core'
 
 const base64ToArrayBuffer = (base64Pdf: string) => {
-  let binaryString = window.atob(base64Pdf)
-  let binaryLen = binaryString.length
-  let bytes = new Uint8Array(binaryLen)
+  const binaryString = window.atob(base64Pdf)
+  const binaryLen = binaryString.length
+  const bytes = new Uint8Array(binaryLen)
   for (let i = 0; i < binaryLen; i++) {
-    let ascii = binaryString.charCodeAt(i)
+    const ascii = binaryString.charCodeAt(i)
     bytes[i] = ascii
   }
   return bytes
@@ -20,12 +20,9 @@ const downloadAsPdf = (base64Pdf: string) => {
   if (typeof window === 'undefined') {
     return
   }
-
-  try {
-    let byte = base64ToArrayBuffer(base64Pdf)
-    let blob = new Blob([byte], { type: 'application/pdf' })
-    window.open(URL.createObjectURL(blob), '_blank')
-  } catch (error) {}
+  const byte = base64ToArrayBuffer(base64Pdf)
+  const blob = new Blob([byte], { type: 'application/pdf' })
+  window.open(URL.createObjectURL(blob), '_blank')
 }
 
 interface Props {
