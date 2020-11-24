@@ -1,3 +1,4 @@
+import * as kennitala from 'kennitala'
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -16,14 +17,14 @@ type Events =
 const dataSchema = z.object({
   address: z.object({
     home: z.string().nonempty(),
-    postcode: z.string().nonempty(),
+    postcode: z.string(),
     city: z.string().nonempty(),
   }),
   user: z.object({
     name: z.string().nonempty(),
-    phoneNumber: z.string().nonempty(),
-    nationalId: z.string().nonempty(),
-    email: z.string().nonempty(),
+    phoneNumber: z.string().min(7),
+    nationalId: z.string().refine((x) => kennitala.isPerson(x)),
+    email: z.string().email().nonempty(),
     country: z.string().nonempty(),
   }),
   teacher: z.string().nonempty(),
@@ -46,6 +47,7 @@ const drivingLicenseTemplate: ApplicationTemplate<
       draft: {
         meta: {
           name: 'Umsókn um ökuskilríki',
+          progress: 0.33,
           roles: [
             {
               id: 'applicant',
@@ -65,6 +67,77 @@ const drivingLicenseTemplate: ApplicationTemplate<
             target: 'inReview',
           },
         },
+      },
+      inReview: {
+        meta: {
+          name: 'In Review',
+          progress: 0.66,
+          roles: [
+            {
+              id: 'reviewer',
+              formLoader: () =>
+                import('../forms/reviewDrivingLicenseApplication').then((val) =>
+                  Promise.resolve(val.reviewDrivingLicenseApplication),
+                ),
+              actions: [
+                { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
+                { event: 'REJECT', name: 'Hafna', type: 'reject' },
+              ],
+              read: 'all',
+            },
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import(
+                  '../forms/drivingLicenseApplicationPendingReview'
+                ).then((val) =>
+                  Promise.resolve(val.drivingLicenseApplicationPendingReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          APPROVE: { target: 'approved' },
+          REJECT: { target: 'rejected' },
+        },
+      },
+      approved: {
+        meta: {
+          name: 'Approved',
+          progress: 1,
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import(
+                  '../forms/approvedDrivingLicenseApplication'
+                ).then((val) =>
+                  Promise.resolve(val.approvedDrivingLicenseApplication),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+        type: 'final' as const,
+      },
+      rejected: {
+        meta: {
+          name: 'Rejected',
+          progress: 1,
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import(
+                  '../forms/rejectedDrivingLicenseApplication'
+                ).then((val) =>
+                  Promise.resolve(val.rejectedDrivingLicenseApplication),
+                ),
+            },
+          ],
+        },
+        type: 'final' as const,
       },
     },
   },
