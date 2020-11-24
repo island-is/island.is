@@ -12,7 +12,7 @@ import {
 } from '@island.is/auth-api-lib'
 import { UseGuards } from '@nestjs/common'
 
-// @UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
 export class DocumentResolver {
   constructor(private documentService: DocumentService) {}
@@ -23,7 +23,7 @@ export class DocumentResolver {
     @CurrentUser() user: User,
   ): Promise<DocumentDetails> {
     const result = await this.documentService.findByDocumentId(
-      '2606862759',
+      user.nationalId,
       input.id,
     )
 
@@ -32,13 +32,13 @@ export class DocumentResolver {
 
   @Query(() => [Document], { nullable: true })
   listDocuments(@CurrentUser() user: User): Promise<Document[]> {
-    return this.documentService.listDocuments('2606862759')
+    return this.documentService.listDocuments(user.nationalId)
   }
 
   @Query(() => [DocumentCategory], { nullable: true })
   getDocumentCategories(
     @CurrentUser() user: User,
   ): Promise<DocumentCategory[]> {
-    return this.documentService.getCategories('2606862759')
+    return this.documentService.getCategories(user.nationalId)
   }
 }
