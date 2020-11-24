@@ -1,5 +1,7 @@
+import { SearchIndexes } from '@island.is/content-search-indexer/types'
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import * as types from '../generated/contentfulTypes'
+import { AboutPage } from './aboutPage.model'
 import { Slice, mapDocument, safelyMapSlices } from './slice.model'
 
 @ObjectType()
@@ -27,6 +29,9 @@ export class AboutSubPage {
 
   @Field(() => [Slice])
   bottomSlices: Array<typeof Slice>
+
+  @Field(() => AboutPage, { nullable: true })
+  parent?: { lang: keyof typeof SearchIndexes; id: string }
 }
 
 export const mapAboutSubPage = ({
@@ -45,4 +50,13 @@ export const mapAboutSubPage = ({
   bottomSlices: (fields.belowContent ?? [])
     .map(safelyMapSlices)
     .filter(Boolean),
+  parent: fields.parent
+    ? {
+        lang:
+          sys.locale === 'is-IS'
+            ? 'is'
+            : (sys.locale as keyof typeof SearchIndexes),
+        id: fields.parent.sys.id,
+      }
+    : null,
 })
