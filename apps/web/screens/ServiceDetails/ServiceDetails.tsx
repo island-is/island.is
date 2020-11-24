@@ -9,14 +9,12 @@ interface ServiceDetailsProps {
 }
 
 const ServiceDetails: Screen<ServiceDetailsProps> = ({ title }) => {
-  return (
-    <h1>{title}</h1>
-  )
+  return <h1>{title}</h1>
 }
 
-ServiceDetails.getInitialProps = async({ apolloClient, locale, query }) => {
+ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
   return {
-    title: "Vefþjónusta - nánari lýsing"
+    title: 'Vefþjónusta - nánari lýsing',
   }
 }
 

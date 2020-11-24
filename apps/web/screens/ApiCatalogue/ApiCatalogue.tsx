@@ -9,14 +9,12 @@ interface ApiCatalogueProps {
 }
 
 const ApiCatalogue: Screen<ApiCatalogueProps> = ({ title }) => {
-  return (
-    <h1>{title}</h1>
-  )
+  return <h1>{title}</h1>
 }
 
-ApiCatalogue.getInitialProps = async({ apolloClient, locale, query }) => {
+ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
   return {
-    title: "Vörulisti Vefþjónusta"
+    title: 'Vörulisti Vefþjónusta',
   }
 }
 
