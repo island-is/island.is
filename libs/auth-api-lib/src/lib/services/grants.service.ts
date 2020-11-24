@@ -124,7 +124,7 @@ export class GrantsService {
   async updateAsync(key: string, grant: GrantDto): Promise<Grant> {
     this.logger.debug(`Updating grant`)
 
-    let existing = await this.grantModel.findByPk(key)
+    const existing = await this.grantModel.findByPk(key)
 
     if (!existing) {
       throw new NotFoundException('Grant not found')
