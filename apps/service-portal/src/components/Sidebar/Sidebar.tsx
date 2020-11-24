@@ -13,7 +13,7 @@ export const Sidebar: FC<{}> = () => {
     <aside className={styles.sidebar}>
       <Box background="blue100" borderRadius="large">
         <Box paddingY={3} paddingX={4}>
-          <Text variant="h3" color="blue600">
+          <Text variant="h3" as="h3" color="blue600">
             {formatMessage({
               id: 'service.portal:my-pages',
               defaultMessage: 'Mínar síður',
