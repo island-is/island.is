@@ -6,30 +6,24 @@ import { useLocale } from '@island.is/localization'
 import * as styles from './DocumentCard.treat'
 import { toast, Text, Stack, Button, Box } from '@island.is/island-ui/core'
 
-const downloadAsPdf = (base64Pdf: string, fileName: string) => {
-  if (typeof window === 'undefined') {
-    return
+const base64ToArrayBuffer = (base64Pdf: string) => {
+  const binaryString = window.atob(base64Pdf)
+  const binaryLen = binaryString.length
+  const bytes = new Uint8Array(binaryLen)
+  for (let i = 0; i < binaryLen; i++) {
+    const ascii = binaryString.charCodeAt(i)
+    bytes[i] = ascii
   }
-  const fakeLink = window.document.createElement('a')
-  const url = `data:application/pdf;base64,${base64Pdf}`
-  fakeLink.href = url
-  fakeLink.download = fileName
-  fakeLink.title = fileName
-  const clickHandler = () => {
-    setTimeout(() => {
-      URL.revokeObjectURL(url)
-      fakeLink.removeEventListener('click', clickHandler)
-    }, 150)
-  }
-  fakeLink.addEventListener('click', clickHandler, false)
-  fakeLink.click()
+  return bytes
 }
 
-const openExternalDocument = (url: string) => {
+const downloadAsPdf = (base64Pdf: string) => {
   if (typeof window === 'undefined') {
     return
   }
-  window.open(url, '_blank')
+  const byte = base64ToArrayBuffer(base64Pdf)
+  const blob = new Blob([byte], { type: 'application/pdf' })
+  window.open(URL.createObjectURL(blob), '_blank')
 }
 
 interface Props {
@@ -37,7 +31,6 @@ interface Props {
 }
 
 const DocumentCard: FC<Props> = ({ document }) => {
-  const fileName = `${document.subject}.pdf`
   const { formatMessage } = useLocale()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { fetchDocument, loading, data, error } = useLazyDocumentDetail(
@@ -51,13 +44,13 @@ const DocumentCard: FC<Props> = ({ document }) => {
 
   const handleOnFetch = () => {
     if ((data?.fileType || '').toLowerCase() === 'pdf' && data?.content) {
-      downloadAsPdf(data.content, fileName)
+      downloadAsPdf(data.content)
       return
     }
     if (data?.url) {
-      setIsModalOpen(true)
       return
     }
+
     if (error && !loading) {
       toast.error(
         formatMessage({
