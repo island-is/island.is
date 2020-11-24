@@ -14,7 +14,7 @@ import { generateRulingPdf, writeFile } from '../../formatters'
 import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
-import { TransitionUpdate } from './case.state'
+import { TransitionUpdate } from './state'
 
 @Injectable()
 export class CaseService {
