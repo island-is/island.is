@@ -40,7 +40,9 @@ const NotificationCard: FC<Props> = ({ card, onClick }) => {
       </Box>
       <Stack space={1}>
         <Box display="flex" justifyContent="spaceBetween" alignItems="center">
-          <Text variant="h4">{formatMessage(card.title)}</Text>
+          <Text variant="h4" as="h4">
+            {formatMessage(card.title)}
+          </Text>
           {card.wip && (
             <Tag variant="purple" label>
               {formatMessage({
