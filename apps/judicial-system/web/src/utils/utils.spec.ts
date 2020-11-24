@@ -6,7 +6,7 @@ import {
   parseTransition,
   replaceTabs,
 } from './formatters'
-import { constructConclusion, isNextDisabled } from './stepHelper'
+import { constructConclusion, isDirty, isNextDisabled } from './stepHelper'
 import { RequiredField } from '../types'
 import {
   CaseTransition,
@@ -247,7 +247,7 @@ describe('Validation', () => {
 })
 
 describe('Step helper', () => {
-  describe('insertAt()', () => {
+  describe('insertAt', () => {
     test('should insert a string at a certain position into another string', () => {
       // Arrange
       const str = 'Lorem ipsum dolum kara'
@@ -410,7 +410,7 @@ describe('Step helper', () => {
     })
   })
 
-  describe('isNextDisabled()', () => {
+  describe('isNextDisabled', () => {
     test('should return true if the only validation does not pass', () => {
       // Arrange
       const rf: RequiredField[] = [{ value: '', validations: ['empty'] }]
@@ -529,6 +529,44 @@ describe('Step helper', () => {
 
       // Assert
       expect(res).toEqual('020-0202-2929')
+    })
+  })
+
+  describe('isDirty', () => {
+    test('should return true if value is an empty string', () => {
+      // Arrange
+      const emptyString = ''
+
+      // Act
+      const result = isDirty(emptyString)
+
+      // Assert
+      expect(result).toEqual(true)
+    })
+
+    test('should return true if value is a non empty string', () => {
+      // Arrange
+      const str = 'test'
+
+      // Act
+      const result = isDirty(str)
+
+      // Assert
+      expect(result).toEqual(true)
+    })
+
+    test('should return false if value is undefined or null', () => {
+      // Arrange
+      const und = undefined
+      const n = null
+
+      // Act
+      const resultUnd = isDirty(und)
+      const resultN = isDirty(n)
+
+      // Assert
+      expect(resultUnd).toEqual(false)
+      expect(resultN).toEqual(false)
     })
   })
 })

@@ -14,7 +14,7 @@ import {
   RadioButton,
 } from '@island.is/island-ui/core'
 import { validate } from '../../../../utils/validate'
-import { isNextDisabled } from '../../../../utils/stepHelper'
+import { isDirty, isNextDisabled } from '../../../../utils/stepHelper'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import formatISO from 'date-fns/formatISO'
@@ -27,7 +27,6 @@ import {
   parseString,
   parseTime,
   parseTransition,
-  replaceTabs,
   replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
@@ -54,7 +53,6 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { ValueType } from 'react-select/src/types'
 import * as styles from './StepOne.treat'
-import isEmpty from 'lodash/isEmpty'
 
 export const CreateCaseMutation = gql`
   mutation CreateCaseMutation($input: CreateCaseInput!) {
@@ -699,9 +697,9 @@ export const StepOne: React.FC = () => {
                 label="Nafn verjanda"
                 placeholder="Fullt nafn"
                 defaultValue={workingCase.requestedDefenderName}
-                disabled={!isEmpty(workingCase.defenderName)}
+                disabled={isDirty(workingCase.defenderName)}
                 icon={
-                  !isEmpty(workingCase.defenderName) ? 'lockClosed' : undefined
+                  isDirty(workingCase.defenderName) ? 'lockClosed' : undefined
                 }
                 iconType="outline"
                 onBlur={(evt) => {
@@ -724,9 +722,9 @@ export const StepOne: React.FC = () => {
               name="requestedDefenderEmail"
               label="Netfang verjanda"
               placeholder="Netfang"
-              disabled={!isEmpty(workingCase.defenderEmail)}
+              disabled={isDirty(workingCase.defenderEmail)}
               icon={
-                !isEmpty(workingCase.defenderEmail) ? 'lockClosed' : undefined
+                isDirty(workingCase.defenderEmail) ? 'lockClosed' : undefined
               }
               iconType="outline"
               ref={defenderEmailRef}
@@ -760,7 +758,8 @@ export const StepOne: React.FC = () => {
               onChange={replaceTabsOnChange}
               onFocus={() => setRequestedDefenderEmailErrorMessage('')}
             />
-            {workingCase.defenderName && workingCase.defenderEmail && (
+            {(isDirty(workingCase.defenderName) ||
+              isDirty(workingCase.defenderEmail)) && (
               <Box marginTop={1}>
                 <Text variant="eyebrow">Verjanda hefur verið úthlutað</Text>
               </Box>
@@ -839,7 +838,7 @@ export const StepOne: React.FC = () => {
                     )
                   }}
                   handleCloseCalendar={(date: Date | null) => {
-                    if (isEmpty(date) || !isValid(date)) {
+                    if (date === null || !isValid(date)) {
                       setArrestDateErrorMessage('Reitur má ekki vera tómur')
                     }
                   }}
@@ -917,16 +916,14 @@ export const StepOne: React.FC = () => {
                   label="Veldu dagsetningu"
                   placeholderText="Veldu dagsetningu"
                   locale="is"
-                  icon={
-                    !isEmpty(workingCase.courtDate) ? 'lockClosed' : undefined
-                  }
+                  icon={workingCase.courtDate ? 'lockClosed' : undefined}
                   minDate={new Date()}
                   selected={
                     workingCase.requestedCourtDate
                       ? parseISO(workingCase.requestedCourtDate.toString())
                       : null
                   }
-                  disabled={!isEmpty(workingCase.courtDate)}
+                  disabled={Boolean(workingCase.courtDate)}
                   handleChange={(date) => {
                     const formattedDate = formatISO(date, {
                       representation: workingCase.requestedCourtDate?.includes(
@@ -964,11 +961,9 @@ export const StepOne: React.FC = () => {
                   }
                   disabled={
                     !workingCase.requestedCourtDate ||
-                    !isEmpty(workingCase.courtDate)
+                    Boolean(workingCase.courtDate)
                   }
-                  icon={
-                    !isEmpty(workingCase.courtDate) ? 'lockClosed' : undefined
-                  }
+                  icon={workingCase.courtDate ? 'lockClosed' : undefined}
                   iconType="outline"
                   ref={requestedCourtTimeRef}
                   onBlur={(evt) => {
