@@ -1,6 +1,6 @@
 # Naming Conventions
 
-This document describes API naming conventions related to services and resources, with focus on the general consumer experience. Consistency and clear naming conventions are key to providing uniform APIs between agencies. _For further information about our naming conventions for the developer experience please refer to our_ [_coding standard_](https://github.com/island-is/handbook/blob/master/code-standards.md)_._
+This document describes API naming conventions related to services and resources, with focus on the general consumer experience. Consistency and clear naming conventions are key to providing uniform APIs between agencies. _For further information about our naming conventions for the developer experience please refer to our_ [_coding standard_](../code-standards.md)_._
 
 ## General
 
@@ -10,7 +10,7 @@ In order to provide a consistent consumer experience across the API ecosystem an
 - intuitive
 - consistent
 
-One goal of these naming conventions is to ensure that the majority of consumers can easily understand an API. It does this by encouraging the use of a simple, consistent and small vocabulary when naming methods and resources. It also enforces names to be in British English. Developers should use our [glossary](https://github.com/island-is/handbook/blob/master/glossary.md) when in trouble finding the appropriate English translation of an Icelandic concept.
+One goal of these naming conventions is to ensure that the majority of consumers can easily understand an API. It does this by encouraging the use of a simple, consistent and small vocabulary when naming methods and resources. It also enforces names to be in British English. Developers should use our [glossary](../../misc/glossary.md) when in trouble finding the appropriate English translation of an Icelandic concept.
 
 Commonly accepted short forms or abbreviations of long words may be used for brevity. For example, API is preferred over Application Programming Interface. Use intuitive, familiar terminology where possible. For example, when describing removing (and destroying) a resource, delete is preferred over erase. Use the same name or term for the same concept, including for concepts shared across the ecosystem.
 

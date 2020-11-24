@@ -22,7 +22,7 @@ If you want to contribute to the repository, please make sure to follow [this gu
 
 ## Usage
 
-There are many projects that can be built and run. [Click here to see the full list](https://github.com/island-is/island.is/blob/master/nx.json#L29-L365).
+There are many projects that can be built and run. [Click here to see the full list](https://github.com/island-is/island.is/blob/main/nx.json).
 
 ### Development server
 
