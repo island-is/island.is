@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useCallback  } from 'react';
 import axios from 'axios';
 import ClientDTO from '../models/dtos/client-dto';
 import Paginator from './Paginator';
