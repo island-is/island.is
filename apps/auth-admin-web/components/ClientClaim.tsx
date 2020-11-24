@@ -3,11 +3,16 @@ import { ClientClaimDTO } from '../models/dtos/client-claim.dto';
 
 interface Props {
     claim: ClientClaimDTO,
-    handleSaved?: () => void
+    handleSaved?: (claim: ClientClaimDTO) => void
 }
 
 const ClientClaim: React.FC<Props> = (props: Props) =>
 {
-    return <div onClick={props.handleSaved}>Client Claim {props.claim.clientId}</div>
+    const save = () => {
+        const temp = new ClientClaimDTO();
+        temp.clientId = props.claim.clientId;
+        props.handleSaved(temp);
+    }
+    return <div onClick={() => save()}>Client Claim {props.claim.clientId}</div>
 }
 export default ClientClaim;

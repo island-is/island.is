@@ -9,11 +9,12 @@ import { ErrorMessage } from '@hookform/error-message';
 import * as yup from 'yup';
 import HelpBox from './HelpBox';
 
-type Props = {
-  client: ClientDTO,
-  
-};
-const Client: React.FC<Props> = (client: ClientDTO, handleSaved) => {
+interface Props {
+  client: ClientDTO;
+  onNextButtonClick?: (client: ClientDTO) => void;
+}
+
+const Client: React.FC<Props> = (props: Props) => {
   const { register, handleSubmit, errors, formState, control } = useForm<
     ClientDTO
   >();
@@ -23,7 +24,7 @@ const Client: React.FC<Props> = (client: ClientDTO, handleSaved) => {
   const [available, setAvailable] = useState<boolean>(false);
   const [clientIdLength, setClientIdLength] = useState<number>(0);
   // TODO: Fix
-  client = client.client;
+  const client = props.client;
 
   const castToNumbers = (obj: ClientDTO): ClientDTO => {
     obj.absoluteRefreshTokenLifetime = +obj.absoluteRefreshTokenLifetime;
@@ -60,38 +61,39 @@ const Client: React.FC<Props> = (client: ClientDTO, handleSaved) => {
         res.statusCode = response.request.status;
         res.message = response.request.statusText;
         setResponse(res);
-        if (res.statusCode === 201){
-          console.log("handle change");
-          console.log(handleSaved('sdf'));          
+        if (res.statusCode === 201) {
+          console.log('handle change');
+          props.onNextButtonClick(clientObject);
         }
       })
       .catch(function (error) {
         if (error.response) {
           setResponse(error.response.data);
+
           // console.log(error.response.data);
-          
+
           // console.log(error.response.headers);
+        } else {
+          // TODO: Handle and show error
         }
       });
   };
 
-  const checkAvailability = async(clientId: string) => {
+  const checkAvailability = async (clientId: string) => {
     setClientIdLength(clientId.length);
     await axios
       .get(`/api/clients/${clientId}`)
       .then((response) => {
-        if (response.request.status !== 404)
-          setAvailable(false);
-        
+        if (response.request.status !== 404) setAvailable(false);
       })
       .catch(function (error) {
         if (error.response) {
-          if (error.response.status === 404){
+          if (error.response.status === 404) {
             setAvailable(true);
           }
         }
       });
-  }
+  };
 
   return (
     <div className="client">
@@ -111,11 +113,18 @@ const Client: React.FC<Props> = (client: ClientDTO, handleSaved) => {
               <div className="client__container__fields">
                 {/* <HookField name='client.clientId' errors={errors} required={true} label="Client Id" value={client.clientId}  /> */}
                 <div className="client__container__field">
-                  <label className="client__label">National Id (Kennitala)</label>
+                  <label className="client__label">
+                    National Id (Kennitala)
+                  </label>
                   <input
                     type="text"
                     name="client.nationalId"
-                    ref={register({ required: true, maxLength: 10, minLength: 10, pattern: /\d+/ })}
+                    ref={register({
+                      required: true,
+                      maxLength: 10,
+                      minLength: 10,
+                      pattern: /\d+/,
+                    })}
                     defaultValue={client.nationalId}
                     className="client__input"
                     placeholder="0123456789"
@@ -143,10 +152,13 @@ const Client: React.FC<Props> = (client: ClientDTO, handleSaved) => {
                     onChange={(e) => checkAvailability(e.target.value)}
                     title="The unique identifier for this application"
                   />
-                  <div className={`client__container__field__available ${
-                    available ? 'ok ' : 'taken '} ${clientIdLength > 0 ? 'show' : 'hidden'}`}>
-                      { available ? 'Available' : 'Unavailable'}
-                    </div>
+                  <div
+                    className={`client__container__field__available ${
+                      available ? 'ok ' : 'taken '
+                    } ${clientIdLength > 0 ? 'show' : 'hidden'}`}
+                  >
+                    {available ? 'Available' : 'Unavailable'}
+                  </div>
                   <HelpBox helpText="The unique identifier for this application" />
                   <ErrorMessage
                     as="span"
@@ -172,26 +184,36 @@ const Client: React.FC<Props> = (client: ClientDTO, handleSaved) => {
                     errors={errors}
                     name="client.clientName"
                     message="Display Name is required"
-                    
                   />
                 </div>
                 <div className="client__container__field">
                   <label className="client__label">Client Type</label>
-                  <select name="client.clientType" ref={register({ required: true })} title="Type of Client">
+                  <select
+                    name="client.clientType"
+                    ref={register({ required: true })}
+                    title="Type of Client"
+                  >
                     <option value="spa">Single Page Application</option>
-                    <option value="native">Native - authorization code flow + PKCE</option>
-                    <option value="device">Device - flow using external browser</option>
-                    <option value="web">Web App - Hyprid flow with client authentication</option>
-                    <option value="machine">Machine - client credentials</option>
+                    <option value="native">
+                      Native - authorization code flow + PKCE
+                    </option>
+                    <option value="device">
+                      Device - flow using external browser
+                    </option>
+                    <option value="web">
+                      Web App - Hyprid flow with client authentication
+                    </option>
+                    <option value="machine">
+                      Machine - client credentials
+                    </option>
                   </select>
-                 
+
                   <HelpBox helpText="Select the appropriate client Type" />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="client.clientName"
                     message="Client Type is required"
-                    
                   />
                 </div>
                 <div className="client__container__field">
@@ -264,17 +286,17 @@ const Client: React.FC<Props> = (client: ClientDTO, handleSaved) => {
                 </div>
 
                 <div className="client__container__checkbox__field">
-                    <label className="client__label">Require consent</label>
-                    <input
-                      type="checkbox"
-                      defaultChecked={client.requireConsent}
-                      className="client__input"
-                      name="client.requireConsent"
-                      ref={register}
-                      title="Specifies whether a consent screen is required"
-                    />
-                    <HelpBox helpText="Specifies whether a consent screen is required" />
-                  </div>
+                  <label className="client__label">Require consent</label>
+                  <input
+                    type="checkbox"
+                    defaultChecked={client.requireConsent}
+                    className="client__input"
+                    name="client.requireConsent"
+                    ref={register}
+                    title="Specifies whether a consent screen is required"
+                  />
+                  <HelpBox helpText="Specifies whether a consent screen is required" />
+                </div>
 
                 <div className="client__container__checkbox__field">
                   <label className="client__label">Enabled</label>
@@ -644,8 +666,6 @@ const Client: React.FC<Props> = (client: ClientDTO, handleSaved) => {
                     />
                   </div>
 
-                  
-
                   <div className="client__container__checkbox__field">
                     <label className="client__label">Require Pkce</label>
                     <input
@@ -690,6 +710,5 @@ const Client: React.FC<Props> = (client: ClientDTO, handleSaved) => {
       </div>
     </div>
   );
-}
+};
 export default Client;
-
