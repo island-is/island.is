@@ -10,7 +10,7 @@ Developers should use the `logging` library that is part of the monorepo and is 
 
 The logging levels to be used are `error`, `warn`,`info` and `debug`. Everything from level `info` and up (that's `info`, `error` and `warn`) are delivered to the central log store. You can use all the levels of course but the logs with logging level lower than `info` will be discarded when deployed to one of the environments. We can change the logging level for a specific service to a lower level but that is a manual operation, to be used only as a last resort.
 
-Example - [logging](https://github.com/island-is/island.is/blob/master/apps/reference-backend/src/app/modules/resource/resource.service.ts#L31-L33)
+Example - [logging](https://github.com/island-is/island.is/blob/main/apps/reference-backend/src/app/modules/resource/resource.service.ts#L31-L33)
 
 ## Viewing logs
 

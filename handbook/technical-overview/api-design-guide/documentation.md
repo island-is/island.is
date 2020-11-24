@@ -69,8 +69,8 @@ info:
   x-links:
     documentation: "https://docs.my-service.island.is"
     responsibleParty: "https://my-service.island.is/responsible"
-    bugReport: "https://github.com/island-is/handbook/issues/new?assignees=&labels=&template=bug_report.md"
-    featureRequest: "https://github.com/island-is/handbook/issues/new?assignees=&labels=&template=feature_request.md"
+    bugReport: "https://github.com/island-is/island.is/issues/new"
+    featureRequest: "https://github.com/island-is/island.is/issues/new"
 paths:
   /individuals:
     get:
