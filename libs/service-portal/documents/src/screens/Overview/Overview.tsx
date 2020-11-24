@@ -103,10 +103,14 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const [filterValue, setFilterValue] = useState<FilterValues>(
     defaultFilterValues,
   )
-  const { data, loading, error } = useListDocuments(userInfo.profile.nationalId)
+  // const { data, loading, error } = useListDocuments(userInfo.profile.nationalId)
 
-  const categories = [defaultCategory, ...data.categories]
-  const filteredDocuments = getFilteredDocuments(data.documents, filterValue)
+  // const categories = [defaultCategory, ...data.categories]
+  const filteredDocuments = [
+    JSON.parse(
+      '{"__typename":"Document","id":"0dffea10-79d3-4c79-8cba-30af2d95bba7","subject":"Prufuskjal :)","senderName":"Advania","senderNatReg":"5902697199","date":"2020-10-12T00:00:00.000Z","opened":true}',
+    ),
+  ]
   const pagedDocuments = {
     from: (page - 1) * pageSize,
     to: pageSize * page,
@@ -217,7 +221,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   />
                 </Box>
                 <Box>
-                  <Select
+                  {/* <Select
                     name="categories"
                     defaultValue={categories[0]}
                     options={categories}
@@ -227,7 +231,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       id: 'sp.documents:institution-label',
                       defaultMessage: 'Stofnun',
                     })}
-                  />
+                  /> */}
                 </Box>
                 <Columns space={2} collapseBelow="md">
                   <Column width="6/12">
@@ -283,7 +287,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 </Box>
               </Stack>
             </div>
-            {loading && <ActionCardLoader repeat={3} />}
+            {/* {loading && <ActionCardLoader repeat={3} />}
             {error && (
               <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
                 <Text variant="h3">
@@ -305,7 +309,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   })}
                 </Text>
               </Box>
-            )}
+            )} */}
             {filteredDocuments
               ?.slice(pagedDocuments.from, pagedDocuments.to)
               .map((document, index) => (
