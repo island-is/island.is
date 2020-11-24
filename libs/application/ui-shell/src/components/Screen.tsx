@@ -144,7 +144,7 @@ const Screen: FC<ScreenProps> = ({
           span={['12/12', '12/12', '7/9', '7/9']}
           offset={['0', '0', '1/9']}
         >
-          <Text variant="h2">
+          <Text variant="h2" marginBottom={5}>
             {formatText(screen.name, application, formatMessage)}
           </Text>
           <Box>
