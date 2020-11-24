@@ -50,11 +50,11 @@ export function getEstimatedMonthlyPay(application: Application): number {
 }
 
 export function formatPeriods(
-  periods: Period[],
-  otherParentPeriods: Period[],
+  periods?: Period[],
+  otherParentPeriods?: Period[],
 ): TimelinePeriod[] {
   const timelinePeriods: TimelinePeriod[] = []
-  periods.forEach((period, index) => {
+  periods?.forEach((period, index) => {
     if (period.startDate && period.endDate) {
       timelinePeriods.push({
         startDate: period.startDate,
@@ -64,7 +64,7 @@ export function formatPeriods(
       })
     }
   })
-  otherParentPeriods.forEach((period) => {
+  otherParentPeriods?.forEach((period) => {
     timelinePeriods.push({
       startDate: period.startDate,
       endDate: period.endDate,
