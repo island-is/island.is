@@ -16,7 +16,6 @@ const base64ToArrayBuffer = (base64Pdf: string) => {
   return bytes
 }
 
-
 const downloadAsPdf = (base64Pdf: string) => {
   if (typeof window === 'undefined') {
     return
@@ -25,11 +24,9 @@ const downloadAsPdf = (base64Pdf: string) => {
   try {
     let byte = base64ToArrayBuffer(base64Pdf)
     let blob = new Blob([byte], { type: 'application/pdf' })
-    window.open(URL.createObjectURL(blob), "_blank")
-  } catch (error) {
-  }
+    window.open(URL.createObjectURL(blob), '_blank')
+  } catch (error) {}
 }
-
 
 interface Props {
   document: Document
@@ -54,7 +51,6 @@ const DocumentCard: FC<Props> = ({ document }) => {
     if (data?.url) {
       return
     }
-
 
     if (error && !loading) {
       toast.error(
