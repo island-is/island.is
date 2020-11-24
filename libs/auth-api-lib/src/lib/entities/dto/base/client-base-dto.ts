@@ -8,6 +8,20 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 
 export abstract class ClientBaseDTO {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: '1234567890',
+  })
+  readonly nationalId: string
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: 'spa',
+  })
+  readonly clientType: string
+
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({

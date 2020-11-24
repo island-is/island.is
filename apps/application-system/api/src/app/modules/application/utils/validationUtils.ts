@@ -19,6 +19,13 @@ export async function validateApplicationSchema(
     throw new BadRequestException(
       `No template exists for type: ${application.typeId}`,
     )
+  } else if (
+    process.env.NODE_ENV === 'production' &&
+    !applicationTemplate.readyForProduction
+  ) {
+    throw new BadRequestException(
+      `Template ${application.typeId} is not ready for production`,
+    )
   }
   const schemaFormValidationError = validateAnswers(
     applicationTemplate.dataSchema,

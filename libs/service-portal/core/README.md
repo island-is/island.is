@@ -99,7 +99,7 @@ routes: (userInfo) => {
   const applicationRoutes = [
     {
       name: 'Applications',
-      path: ServicePortalPath.UmsoknirRoot,
+      path: ServicePortalPath.ApplicationRoot,
       render: () =>
         lazy(() => import('./screens/ApplicationList/ApplicationList')),
     },
@@ -142,7 +142,7 @@ export const applicationsModule: ServicePortalModule = {
     const applicationRoutes = [
       {
         name: 'Applications',
-        path: ServicePortalPath.UmsoknirRoot,
+        path: ServicePortalPath.ApplicationRoot,
         render: () =>
           lazy(() => import('./screens/ApplicationList/ApplicationList')),
       },
