@@ -11,9 +11,12 @@ interface Props {
 export const Modal: FC<Props> = ({
   id,
   children,
-  onCloseModal,
   toggleClose,
+  onCloseModal,
 }) => {
+  const handleOnVisibilityChange = (isVisible: boolean) => {
+    !isVisible && onCloseModal && onCloseModal()
+  }
   return (
     <>
       <ModalBase
@@ -21,7 +24,7 @@ export const Modal: FC<Props> = ({
         initialVisibility={true}
         className={styles.modal}
         toggleClose={toggleClose}
-        onClose={onCloseModal}
+        onVisibilityChange={handleOnVisibilityChange}
       >
         {({ closeModal }: { closeModal: () => void }) => (
           <Box

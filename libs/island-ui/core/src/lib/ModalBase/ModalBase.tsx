@@ -50,9 +50,9 @@ type ModalBaseProps = {
    */
   toggleClose?: boolean
   /**
-   * Optional cb function that is fired when the modal is not visible
+   * Optional cb function that is fired when the modal visibility changes
    */
-  onClose?: () => void
+  onVisibilityChange?: (isVisible: boolean) => void
 }
 
 export const ModalBase: FC<ModalBaseProps> = ({
@@ -62,7 +62,7 @@ export const ModalBase: FC<ModalBaseProps> = ({
   toggleClose,
   children,
   className,
-  onClose,
+  onVisibilityChange,
 }) => {
   const modal = useDialogState({
     animated: true,
@@ -77,7 +77,7 @@ export const ModalBase: FC<ModalBaseProps> = ({
   }, [toggleClose])
 
   useEffect(() => {
-    if (!modal.visible && onClose) onClose()
+    onVisibilityChange && onVisibilityChange(modal.visible)
   }, [modal.visible])
 
   return (
