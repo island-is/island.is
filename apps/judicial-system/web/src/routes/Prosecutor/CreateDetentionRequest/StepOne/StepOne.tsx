@@ -12,6 +12,7 @@ import {
   DatePicker,
   GridContainer,
   RadioButton,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { validate } from '../../../../utils/validate'
 import { isDirty, isNextDisabled } from '../../../../utils/stepHelper'
@@ -906,7 +907,8 @@ export const StepOne: React.FC = () => {
           <Box component="section" marginBottom={7}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                Ósk um fyrirtökudag og tíma
+                Ósk um fyrirtökudag og tíma{' '}
+                <Tooltip text='Vinsamlegast sláðu tímann sem þú óskar eftir að málið verður tekið fyrir. Gáttin birtir tímann sem: "Eftir kl." tíminn sem þú slærð inn. Það þarf því ekki að velja nákvæma tímasetningu hvenær óskað er eftir fyrirtöku, heldur bara eftir hvaða tíma myndi henta að taka málið fyrir.' />
               </Text>
             </Box>
             <GridRow>
