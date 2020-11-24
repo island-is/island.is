@@ -33,7 +33,7 @@ const dataSchema = z.object({
   isBusiness: z.boolean(),
 })
 
-const drivingLicenseTemplate: ApplicationTemplate<
+const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
@@ -52,8 +52,8 @@ const drivingLicenseTemplate: ApplicationTemplate<
             {
               id: 'applicant',
               formLoader: () =>
-                import('../forms/drivingLicenseApplication').then((val) =>
-                  Promise.resolve(val.drivingLicenseApplication),
+                import('../forms/application').then((val) =>
+                  Promise.resolve(val.application),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
@@ -76,8 +76,8 @@ const drivingLicenseTemplate: ApplicationTemplate<
             {
               id: 'reviewer',
               formLoader: () =>
-                import('../forms/reviewDrivingLicenseApplication').then((val) =>
-                  Promise.resolve(val.reviewDrivingLicenseApplication),
+                import('../forms/review').then((val) =>
+                  Promise.resolve(val.review),
                 ),
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
@@ -88,10 +88,8 @@ const drivingLicenseTemplate: ApplicationTemplate<
             {
               id: 'applicant',
               formLoader: () =>
-                import(
-                  '../forms/drivingLicenseApplicationPendingReview'
-                ).then((val) =>
-                  Promise.resolve(val.drivingLicenseApplicationPendingReview),
+                import('../forms/pending').then((val) =>
+                  Promise.resolve(val.pending),
                 ),
               read: 'all',
             },
@@ -110,10 +108,8 @@ const drivingLicenseTemplate: ApplicationTemplate<
             {
               id: 'applicant',
               formLoader: () =>
-                import(
-                  '../forms/approvedDrivingLicenseApplication'
-                ).then((val) =>
-                  Promise.resolve(val.approvedDrivingLicenseApplication),
+                import('../forms/approved').then((val) =>
+                  Promise.resolve(val.approved),
                 ),
               read: 'all',
             },
@@ -129,10 +125,8 @@ const drivingLicenseTemplate: ApplicationTemplate<
             {
               id: 'applicant',
               formLoader: () =>
-                import(
-                  '../forms/rejectedDrivingLicenseApplication'
-                ).then((val) =>
-                  Promise.resolve(val.rejectedDrivingLicenseApplication),
+                import('../forms/rejected').then((val) =>
+                  Promise.resolve(val.rejected),
                 ),
             },
           ],
@@ -149,4 +143,4 @@ const drivingLicenseTemplate: ApplicationTemplate<
   },
 }
 
-export default drivingLicenseTemplate
+export default template

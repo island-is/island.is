@@ -13,8 +13,8 @@ import {
   FormModes,
 } from '@island.is/application/core'
 
-export const reviewDrivingLicenseApplication: Form = buildForm({
-  id: 'ReviewDrivingLicenseApplication',
+export const review: Form = buildForm({
+  id: 'Review',
   name: 'Úrvinnsla umsóknar um ökuskilríki',
   mode: FormModes.REVIEW,
   children: [],

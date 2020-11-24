@@ -13,15 +13,15 @@ import {
   FormModes,
 } from '@island.is/application/core'
 
-export const approvedDrivingLicenseApplication: Form = buildForm({
-  id: 'approvedDrivingLicenseApplication',
-  name: 'Samþykkt',
-  mode: FormModes.APPROVED,
+export const rejected: Form = buildForm({
+  id: 'rejected',
+  name: 'Í vinnslu',
+  mode: FormModes.REJECTED,
   children: [
     buildIntroductionField({
-      id: 'approved',
-      name: 'Samþykkt',
-      introduction: 'Umsókn þín um ökuskilríki hefur verið samþykkt.',
+      id: 'rejected',
+      name: 'Höfnuð',
+      introduction: 'Umsókn þín um ökuskilríki hefur verið höfnuð.',
     }),
   ],
 })

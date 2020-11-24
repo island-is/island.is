@@ -13,7 +13,7 @@ import {
   FormModes,
 } from '@island.is/application/core'
 
-export const drivingLicenseApplication: Form = buildForm({
+export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
   name: 'Ökuskilríki',
   mode: FormModes.APPLYING,
