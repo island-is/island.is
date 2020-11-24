@@ -38,7 +38,7 @@ const WidgetError: FC<Props> = ({ name }) => {
 
   return (
     <Box padding={8}>
-      <Text variant="h2">
+      <Text variant="h2" as="h2">
         {formatMessage({
           id: 'service.portal:could-not-fetch',
           defaultMessage: 'Tókst ekki að sækja',
