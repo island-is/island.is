@@ -83,7 +83,9 @@ export const replaceTabs = (str: string) =>
 export const replaceTabsOnChange = (
   evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
 ) => {
-  evt.target.value = replaceTabs(evt.target.value)
+  if (evt.target.value.includes('\t')) {
+    evt.target.value = replaceTabs(evt.target.value)
+  }
 }
 
 /**

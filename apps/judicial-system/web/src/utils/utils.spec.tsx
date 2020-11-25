@@ -6,7 +6,9 @@ import {
   parseTime,
   parseTransition,
   replaceTabs,
+  replaceTabsOnChange,
 } from './formatters'
+import * as formatters from './formatters'
 import { constructConclusion, isDirty, isNextDisabled } from './stepHelper'
 import { RequiredField } from '../types'
 import {
@@ -15,7 +17,9 @@ import {
   Case,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import React from 'react'
+import userEvent from '@testing-library/user-event'
 
 describe('Formatters utils', () => {
   describe('Parse array', () => {
@@ -129,6 +133,20 @@ ipsum`
 
       // Assert
       expect(result).toEqual('01:15')
+    })
+  })
+
+  describe('replaceTabsOnChange', () => {
+    test('should not call replaceTabs if called with a string that does not have a tab character', () => {
+      // Arrange
+      const spy = jest.spyOn(formatters, 'replaceTabs')
+      render(<input onChange={(evt) => replaceTabsOnChange(evt)} />)
+
+      // Act
+      userEvent.type(screen.getByRole('textbox'), 'Lorem ipsum')
+
+      // Assert
+      expect(spy).not.toBeCalled()
     })
   })
 })
