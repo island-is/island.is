@@ -14,3 +14,14 @@ export const wrapper = style({
   backgroundColor: theme.color.white,
   boxShadow: '1px 0 24px 4px rgba(0, 0, 0, 0.1)',
 })
+
+export const overlay = style({
+  position: 'fixed',
+  top: 0,
+  right: 0,
+  left: 0,
+  bottom: 0,
+  zIndex: 9996,
+
+  backgroundColor: 'rgba(0, 0, 0, 0.25)',
+})

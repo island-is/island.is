@@ -41,11 +41,15 @@ export const withContentfulEditor = (
     ).current
     const [edit, setEdit] = useState(false)
     const [entry, setEntry] = useState<Entry | undefined>(undefined)
+    const [loading, setLoading] = useState(false)
+    const [saving, setSaving] = useState(false)
 
     const handleLoad = async () => {
       if (!slug || !contentType || !edit || !env.managementAccessToken) {
         return
       }
+
+      setLoading(true)
 
       const space = await client.getSpace(env.space)
       const environment = await space.getEnvironment(env.environment)
@@ -61,6 +65,8 @@ export const withContentfulEditor = (
       } catch (e) {
         console.log('-e', e)
       }
+
+      setLoading(false)
     }
 
     const handleChange = (field: string, value: string) => {
@@ -87,6 +93,8 @@ export const withContentfulEditor = (
         return
       }
 
+      setSaving(true)
+
       entryToSave.fields = entry.fields
 
       try {
@@ -95,6 +103,8 @@ export const withContentfulEditor = (
       } catch (e) {
         console.log('-e', e)
       }
+
+      setSaving(false)
     }
 
     const handleEditClick = () => {
@@ -114,6 +124,7 @@ export const withContentfulEditor = (
         <Header
           copy={edit ? 'Save changes' : 'Edit this page'}
           cancel={edit}
+          saving={saving}
           onClick={handleEditClick}
           onCancelClick={() => setEdit(false)}
         />
@@ -122,6 +133,7 @@ export const withContentfulEditor = (
           <Sidebar
             fields={entry?.fields}
             locale={locale}
+            loading={loading}
             onChange={handleChange}
           />
         )}

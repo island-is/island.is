@@ -7,10 +7,16 @@ import * as styles from './Sidebar.treat'
 interface SidebarProps {
   fields: any
   locale: string
+  loading: boolean
   onChange(field: string, value: string): void
 }
 
-export const Sidebar: FC<SidebarProps> = ({ fields, locale, onChange }) => {
+export const Sidebar: FC<SidebarProps> = ({
+  fields,
+  locale,
+  loading,
+  onChange,
+}) => {
   console.log('-fields', fields)
 
   const handleChange = (field: string, value: string) => {
@@ -21,16 +27,20 @@ export const Sidebar: FC<SidebarProps> = ({ fields, locale, onChange }) => {
   }
 
   return (
-    <Box className={styles.wrapper}>
-      <Text as="h3" variant="h3" fontWeight="semiBold">
-        Contentful editor mode
-      </Text>
+    <>
+      <Box className={styles.wrapper}>
+        <Text as="h3" variant="h3" fontWeight="semiBold">
+          Contentful editor mode
+        </Text>
 
-      {Object.keys(fields ?? [])
-        // .filter((field) => field !== 'title' && field !== 'slug')
-        .filter((field) => field === 'title' || field === 'intro')
-        .map((field, index) => {
-          /*
+        {loading && <Text marginTop={2}>Loading...</Text>}
+
+        {!loading &&
+          Object.keys(fields ?? [])
+            // .filter((field) => field !== 'title' && field !== 'slug')
+            .filter((field) => field === 'title' || field === 'intro')
+            .map((field, index) => {
+              /*
         const getContent = () => {
           const data = fields[field]?.['is-IS'] as {
             sys: FieldItem
@@ -57,27 +67,32 @@ export const Sidebar: FC<SidebarProps> = ({ fields, locale, onChange }) => {
         }
         */
 
-          return (
-            <Box
-              key={`${field}-${index}`}
-              paddingY={3}
-              borderBottomWidth="standard"
-              borderColor="dark200"
-            >
-              <Text variant="eyebrow" marginBottom={1}>
-                {field}
-              </Text>
+              return (
+                <Box
+                  key={`${field}-${index}`}
+                  paddingY={3}
+                  borderBottomWidth="standard"
+                  borderColor="dark200"
+                >
+                  <Text variant="eyebrow" marginBottom={1}>
+                    {field}
+                  </Text>
 
-              <Input
-                name={field}
-                placeholder={field}
-                size="sm"
-                defaultValue={fields[field]?.[locale]}
-                onChange={(event) => handleChange(field, event.target.value)}
-              />
-            </Box>
-          )
-        })}
-    </Box>
+                  <Input
+                    name={field}
+                    placeholder={field}
+                    size="sm"
+                    defaultValue={fields[field]?.[locale]}
+                    onChange={(event) =>
+                      handleChange(field, event.target.value)
+                    }
+                  />
+                </Box>
+              )
+            })}
+      </Box>
+
+      <Box className={styles.overlay} />
+    </>
   )
 }
