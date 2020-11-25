@@ -43,7 +43,7 @@
     "no-restricted-imports": [
       "error",
       {
-        "paths": ["lodash", "date-fns", "date-fns/locale"]
+        "paths": ["lodash", "date-fns", "date-fns/locale", "."]
       }
     ]
   },

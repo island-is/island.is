@@ -5,7 +5,7 @@ import { IsString } from 'class-validator'
 export class GetAboutSubPageInput {
   @Field()
   @IsString()
-  slug: string
+  url: string
 
   @Field()
   @IsString()
