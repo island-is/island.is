@@ -10,6 +10,7 @@
 export interface Translation {
   home: Home
   header: Header
+  footer: Footer
   gdpr: GDPR
   myCars: MyCars
   confirm: Confirm
@@ -35,6 +36,18 @@ export interface Home {
 
 export interface Header {
   logoutText: string
+}
+
+export interface Footer {
+  topLinksInfo: FooterLinks[]
+  topLinksContact: FooterLinks[]
+  bottomLinks: FooterLinks[]
+  bottomLinksTitle: string
+}
+
+export interface FooterLinks {
+  title: string
+  href: string
 }
 
 export interface GDPR {

@@ -86,24 +86,9 @@ class SupportApplication extends App<Props> {
 
     return (
       <ApolloProvider client={initApollo(pageProps.apolloState)}>
-        <LinkContext.Provider
-          value={{
-            linkRenderer: (href, children) => (
-              <a
-                style={{
-                  color: theme.color.blue400,
-                }}
-                href={href}
-              >
-                {children}
-              </a>
-            ),
-          }}
-        >
-          <AppLayout isAuthenticated={isAuthenticated}>
-            <Component {...pageProps} />
-          </AppLayout>
-        </LinkContext.Provider>
+        <AppLayout isAuthenticated={isAuthenticated}>
+          <Component {...pageProps} />
+        </AppLayout>
       </ApolloProvider>
     )
   }
