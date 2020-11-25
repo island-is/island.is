@@ -42,6 +42,7 @@ const content = (
   - [Example API Service](handbook/technical-overview/api-design-guide/example.md)
   - [Error Handling](handbook/technical-overview/api-design-guide/errors.md)
 - [Architectural Decision Records](handbook/technical-overview/adr/README.md)
+  - [Chart Library](handbook/technical-overview/adr/0012-chart-library.md)
   - [Open Source License](handbook/technical-overview/adr/0011-open-source-license.md)
   - [CMS](handbook/technical-overview/adr/0010-cms.md)
   - [Unified naming strategy for files and directories](handbook/technical-overview/adr/0009-naming-files-and-directories.md)
