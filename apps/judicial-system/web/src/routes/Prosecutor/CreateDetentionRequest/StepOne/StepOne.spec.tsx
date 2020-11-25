@@ -238,11 +238,7 @@ describe('/krafa without ID', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     const now = new Date()
-    const arrestDate = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() + 1,
-    )
+    const arrestDate = new Date(now.getFullYear(), now.getMonth(), 15)
     arrestDate.setHours(17, 0, 0)
     const lastDateOfTheMonth = new Date(
       now.getFullYear(),
@@ -394,9 +390,7 @@ describe('/krafa without ID', () => {
 
     userEvent.click(arrestedDatePicker[0])
 
-    userEvent.click(
-      arrestedWrapper.getAllByText((now.getDate() + 1).toString())[0],
-    )
+    userEvent.click(arrestedWrapper.getAllByText('15')[0])
 
     const hearingWrapper = within(datePickerWrappers[1])
 
