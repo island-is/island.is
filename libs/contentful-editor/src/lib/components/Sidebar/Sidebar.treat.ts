@@ -9,7 +9,7 @@ export const wrapper = style({
   zIndex: 9998,
 
   padding: theme.spacing['2'],
-  width: 600,
+  width: 800,
 
   backgroundColor: theme.color.white,
   boxShadow: '1px 0 24px 4px rgba(0, 0, 0, 0.1)',
