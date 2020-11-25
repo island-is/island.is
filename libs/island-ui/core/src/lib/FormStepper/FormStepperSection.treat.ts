@@ -5,7 +5,7 @@ export const container = style({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  transition: 'margin-left .35s ease',
+  transition: 'margin-left .35s ease .5s',
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {

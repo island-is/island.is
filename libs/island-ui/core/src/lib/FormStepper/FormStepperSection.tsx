@@ -100,6 +100,7 @@ export const FormStepperSection: FC<{
 
         <Box
           paddingTop={[0, 0, 2]}
+          paddingRight={[2, 2, 0]}
           width="full"
           className={cn(styles.name, {
             [styles.nameWithActiveSubSections]: hasSubSections && isActive,
