@@ -1,3 +1,4 @@
+import { Op } from 'sequelize'
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
@@ -15,6 +16,7 @@ import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { TransitionUpdate } from './state'
+import { CaseState } from '@island.is/judicial-system/types'
 
 @Injectable()
 export class CaseService {
@@ -97,11 +99,47 @@ export class CaseService {
     ])
   }
 
+  private sevenDaysFromNow(): string {
+    const now = new Date()
+    const sevenDaysFromNow = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+    )
+
+    sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() - 7)
+
+    return sevenDaysFromNow.toISOString()
+  }
+
   getAll(): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
+    const sevenDaysFromNow = this.sevenDaysFromNow()
+
     return this.caseModel.findAll({
       order: [['modified', 'DESC']],
+      where: {
+        [Op.or]: [
+          {
+            state: {
+              [Op.in]: [CaseState.NEW, CaseState.DRAFT, CaseState.SUBMITTED],
+            },
+          },
+          {
+            [Op.and]: [
+              { state: CaseState.ACCEPTED },
+              { custodyEndDate: { [Op.gt]: sevenDaysFromNow } },
+            ],
+          },
+          {
+            [Op.and]: [
+              { state: CaseState.REJECTED },
+              { courtEndTime: { [Op.gt]: sevenDaysFromNow } },
+            ],
+          },
+        ],
+      },
       include: [
         { model: User, as: 'prosecutor' },
         { model: User, as: 'judge' },
