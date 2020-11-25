@@ -57,6 +57,7 @@ import {
 import { ValueType } from 'react-select/src/types'
 import * as styles from './StepOne.treat'
 import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
+import InputMask from 'react-input-mask'
 
 export const CreateCaseMutation = gql`
   mutation CreateCaseMutation($input: CreateCaseInput!) {
@@ -438,15 +439,30 @@ export const StepOne: React.FC = () => {
                 LÖKE málsnúmer
               </Text>
             </Box>
-            <Input
-              data-testid="policeCaseNumber"
-              name="policeCaseNumber"
-              label="Slá inn LÖKE málsnúmer"
-              placeholder="007-2020-X"
-              defaultValue={workingCase.policeCaseNumber}
-              ref={policeCaseNumberRef}
-              errorMessage={policeCaseNumberErrorMessage}
-              hasError={policeCaseNumberErrorMessage !== ''}
+            <InputMask
+              //This is temporary until we start reading LÖKE case numbers from LÖKE
+              mask={[
+                /[0-9]/,
+                /[0-9]/,
+                /[0-9]/,
+                '-',
+                /[0-9]/,
+                /[0-9]/,
+                /[0-9]/,
+                /[0-9]/,
+                '-',
+                /[0-9]/,
+                /[0-9]/,
+                /[0-9]/,
+                /[0-9]/,
+                /[0-9]/,
+                /[0-9]/,
+                /[0-9]/,
+                /[0-9]/,
+                /[0-9]/,
+                /[0-9]/,
+              ]}
+              maskPlaceholder={null}
               onBlur={(evt) => {
                 const validateField = validate(evt.target.value, 'empty')
                 const validateFieldFormat = validate(
@@ -479,8 +495,19 @@ export const StepOne: React.FC = () => {
               }}
               onChange={replaceTabsOnChange}
               onFocus={() => setPoliceCaseNumberErrorMessage('')}
-              required
-            />
+            >
+              <Input
+                data-testid="policeCaseNumber"
+                name="policeCaseNumber"
+                label="Slá inn LÖKE málsnúmer"
+                placeholder="007-2020-X"
+                defaultValue={workingCase.policeCaseNumber}
+                ref={policeCaseNumberRef}
+                errorMessage={policeCaseNumberErrorMessage}
+                hasError={policeCaseNumberErrorMessage !== ''}
+                required
+              />
+            </InputMask>
           </Box>
           <Box component="section" marginBottom={3}>
             <Box marginBottom={2}>
@@ -489,15 +516,21 @@ export const StepOne: React.FC = () => {
               </Text>
             </Box>
             <Box marginBottom={3}>
-              <Input
-                data-testid="nationalId"
-                name="nationalId"
-                label="Kennitala"
-                placeholder="Kennitala"
-                defaultValue={workingCase.accusedNationalId}
-                ref={accusedNationalIdRef}
-                errorMessage={nationalIdErrorMessage}
-                hasError={nationalIdErrorMessage !== ''}
+              <InputMask
+                mask={[
+                  /[0-9]/,
+                  /[0-9]/,
+                  /[0-9]/,
+                  /[0-9]/,
+                  /[0-9]/,
+                  /[0-9]/,
+                  '-',
+                  /[0-9]/,
+                  /[0-9]/,
+                  /[0-9]/,
+                  /[0-9]/,
+                ]}
+                maskPlaceholder={null}
                 onBlur={(evt) => {
                   const validateField = validate(evt.target.value, 'empty')
                   const validateFieldFormat = validate(
@@ -533,8 +566,19 @@ export const StepOne: React.FC = () => {
                 }}
                 onChange={replaceTabsOnChange}
                 onFocus={() => setNationalIdErrorMessage('')}
-                required
-              />
+              >
+                <Input
+                  data-testid="nationalId"
+                  name="nationalId"
+                  label="Kennitala"
+                  placeholder="Kennitala"
+                  defaultValue={workingCase.accusedNationalId}
+                  ref={accusedNationalIdRef}
+                  errorMessage={nationalIdErrorMessage}
+                  hasError={nationalIdErrorMessage !== ''}
+                  required
+                />
+              </InputMask>
             </Box>
             <Box marginBottom={3}>
               <Input
@@ -951,39 +995,21 @@ export const StepOne: React.FC = () => {
                 />
               </GridColumn>
               <GridColumn span="3/8">
-                <Input
-                  data-testid="requestedCourtDate"
-                  name="requestedCourtDate"
-                  label="Ósk um tíma"
-                  placeholder="Settu inn tíma dags"
-                  errorMessage={requestedCourtTimeErrorMessage}
-                  hasError={requestedCourtTimeErrorMessage !== ''}
-                  defaultValue={
-                    workingCase.requestedCourtDate?.includes('T')
-                      ? formatDate(workingCase.requestedCourtDate, TIME_FORMAT)
-                      : undefined
-                  }
+                <TimeInputField
                   disabled={
                     !workingCase.requestedCourtDate ||
                     Boolean(workingCase.courtDate)
                   }
-                  icon={workingCase.courtDate ? 'lockClosed' : undefined}
-                  iconType="outline"
-                  ref={requestedCourtTimeRef}
                   onBlur={(evt) => {
+                    const time = padTimeWithZero(evt.target.value)
+
                     if (workingCase.requestedCourtDate) {
                       const requestedCourtDateMinutes = parseTime(
                         workingCase.requestedCourtDate,
-                        evt.target.value,
+                        time,
                       )
-                      const validateTimeEmpty = validate(
-                        evt.target.value,
-                        'empty',
-                      )
-                      const validateTimeFormat = validate(
-                        evt.target.value,
-                        'time-format',
-                      )
+                      const validateTimeEmpty = validate(time, 'empty')
+                      const validateTimeFormat = validate(time, 'time-format')
 
                       setWorkingCase({
                         ...workingCase,
@@ -1010,8 +1036,28 @@ export const StepOne: React.FC = () => {
                     }
                   }}
                   onFocus={() => setRequestedCourtTimeErrorMessage('')}
-                  required
-                />
+                >
+                  <Input
+                    data-testid="requestedCourtDate"
+                    name="requestedCourtDate"
+                    label="Ósk um tíma"
+                    placeholder="Settu inn tíma dags"
+                    errorMessage={requestedCourtTimeErrorMessage}
+                    hasError={requestedCourtTimeErrorMessage !== ''}
+                    defaultValue={
+                      workingCase.requestedCourtDate?.includes('T')
+                        ? formatDate(
+                            workingCase.requestedCourtDate,
+                            TIME_FORMAT,
+                          )
+                        : undefined
+                    }
+                    icon={workingCase.courtDate ? 'lockClosed' : undefined}
+                    iconType="outline"
+                    ref={requestedCourtTimeRef}
+                    required
+                  />
+                </TimeInputField>
               </GridColumn>
             </GridRow>
             {workingCase.courtDate && (

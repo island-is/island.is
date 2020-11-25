@@ -19,6 +19,7 @@ import {
 import * as Constants from '../../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import {
+  padTimeWithZero,
   parseArray,
   parseString,
   parseTime,
@@ -42,6 +43,7 @@ import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
+import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
 
 interface CaseData {
   case?: Case
@@ -243,37 +245,17 @@ export const RulingStepOne: React.FC = () => {
                 />
               </GridColumn>
               <GridColumn span="5/12">
-                <Input
-                  data-testid="custodyEndTime"
-                  name="custodyEndTime"
-                  label="Tímasetning"
-                  ref={custodyEndTimeRef}
-                  defaultValue={
-                    workingCase.custodyEndDate?.includes('T')
-                      ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
-                      : workingCase.requestedCustodyEndDate?.includes('T')
-                      ? formatDate(
-                          workingCase.requestedCustodyEndDate,
-                          TIME_FORMAT,
-                        )
-                      : undefined
-                  }
-                  hasError={custodyEndTimeErrorMessage !== ''}
-                  errorMessage={custodyEndTimeErrorMessage}
+                <TimeInputField
                   onFocus={() => setCustodyEndTimeErrorMessage('')}
                   onBlur={(evt) => {
+                    const time = padTimeWithZero(evt.target.value)
+
                     if (workingCase.custodyEndDate) {
-                      const validateTimeEmpty = validate(
-                        evt.target.value,
-                        'empty',
-                      )
-                      const validateTimeFormat = validate(
-                        evt.target.value,
-                        'time-format',
-                      )
+                      const validateTimeEmpty = validate(time, 'empty')
+                      const validateTimeFormat = validate(time, 'time-format')
                       const custodyEndDateMinutes = parseTime(
                         workingCase.custodyEndDate,
-                        evt.target.value,
+                        time,
                       )
 
                       setWorkingCase({
@@ -297,8 +279,27 @@ export const RulingStepOne: React.FC = () => {
                       }
                     }
                   }}
-                  required
-                />
+                >
+                  <Input
+                    data-testid="custodyEndTime"
+                    name="custodyEndTime"
+                    label="Tímasetning"
+                    ref={custodyEndTimeRef}
+                    defaultValue={
+                      workingCase.custodyEndDate?.includes('T')
+                        ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
+                        : workingCase.requestedCustodyEndDate?.includes('T')
+                        ? formatDate(
+                            workingCase.requestedCustodyEndDate,
+                            TIME_FORMAT,
+                          )
+                        : undefined
+                    }
+                    hasError={custodyEndTimeErrorMessage !== ''}
+                    errorMessage={custodyEndTimeErrorMessage}
+                    required
+                  />
+                </TimeInputField>
               </GridColumn>
             </GridRow>
           </Box>
