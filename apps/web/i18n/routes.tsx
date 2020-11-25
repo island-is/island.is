@@ -67,10 +67,10 @@ export const routes: Record<ContentType, Record<Locale, AnchorAttributes>> = {
     },
   },
   'vidspyrna-frontpage': {
-    is: { as: '/covid-adgerdir/[slug]', href: '/covid-adgerdir/[slug]' },
+    is: { as: '/covid-adgerdir', href: '/covid-adgerdir' },
     en: {
-      as: '/en/covid-operations/[slug]',
-      href: '/en/covid-operations/[slug]',
+      as: '/en/covid-operations',
+      href: '/en/covid-operations',
     },
   },
 }
@@ -86,12 +86,6 @@ export const pathNames = (
 ): AnchorAttributes => {
   const typePath = routes[type.toLowerCase()][locale]
   const path: AnchorAttributes = typePath
-
-  if (type === 'vidspyrna-frontpage') {
-    path.as = removeSlugFromString(path.as)
-    path.href = removeSlugFromString(path.href)
-    return path
-  }
 
   if (slugs && slugs.length > 0) {
     for (let i = 0; i < slugs.length; i++) {
