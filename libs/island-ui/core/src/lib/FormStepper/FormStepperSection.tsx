@@ -41,22 +41,29 @@ export const FormStepperSection: FC<{
   const subSections = getSubSectionsInSection(section, subSection)
   const hasSubSections = subSections.length > 0
   const containerRef = useRef<HTMLDivElement>(null)
-  const { height: activeHeight, width: containerWidth } = useComponentSize(
+  const { height: activeHeight, width: activeWidth } = useComponentSize(
     containerRef,
   )
   const [containerHeight, setContainerHeight] = useState(0)
+  const [containerWidth, setContainerWidth] = useState(0)
   const [isSmallScreen, setIsSmallScreen] = useState(false)
   const isClient = typeof window === 'object'
 
   useEffect(() => {
-    if (!isClient) {
-      return
-    }
+    if (!isClient) return
 
     if (containerRef.current) {
       setContainerHeight(activeHeight)
     }
   }, [isActive, isClient, activeHeight])
+
+  useEffect(() => {
+    if (!isClient) return
+
+    if (containerRef.current) {
+      setContainerWidth(activeWidth)
+    }
+  }, [isComplete, isActive, activeWidth])
 
   useEffect(() => {
     if (!isClient) return
@@ -76,7 +83,7 @@ export const FormStepperSection: FC<{
     return () => {
       window.removeEventListener('resize', handleResize)
     }
-  }, [])
+  }, [, isClient])
 
   return (
     <Box
