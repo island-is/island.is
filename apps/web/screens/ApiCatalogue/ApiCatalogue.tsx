@@ -14,8 +14,8 @@ interface ApiCatalogueProps {
 
 const ApiCatalogue: Screen<ApiCatalogueProps> = ({ title }) => {
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
-
-  if (disablePage) {
+  
+  if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
   }
 
