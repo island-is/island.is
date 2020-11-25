@@ -31,6 +31,20 @@ export const TestPhase: Form = buildForm({
       ],
     }),
     buildSection({
+      id: 'technicalImplementation',
+      name: m.testTechnicalImplementation,
+      children: [
+        buildCustomField(
+          {
+            id: 'technicalImplementation',
+            name: 'Forritun og prófanir',
+            component: 'TechnicalImplementation',
+          },
+          {},
+        ),
+      ],
+    }),
+    buildSection({
       id: 'testSection',
       name: m.testSection,
       children: [

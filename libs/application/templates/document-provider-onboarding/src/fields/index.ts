@@ -4,3 +4,4 @@ export { default as TermsOfAgreement } from './DocumentProvicerApplication/Terms
 export { default as Review } from './DocumentProvicerApplication/Review'
 export { default as ThankYouScreen } from './DocumentProvicerApplication/ThankYouScreen'
 export { default as ThankYouImage } from './ThankYouImage'
+export { default as TechnicalImplementation } from './TestPhase/TechnicalImplementation'
