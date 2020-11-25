@@ -13,7 +13,6 @@ import {
   GridContainer,
   RadioButton,
   Tooltip,
-  InputProps,
 } from '@island.is/island-ui/core'
 import { validate } from '../../../../utils/validate'
 import { isDirty, isNextDisabled } from '../../../../utils/stepHelper'
@@ -441,27 +440,7 @@ export const StepOne: React.FC = () => {
             </Box>
             <InputMask
               //This is temporary until we start reading LÖKE case numbers from LÖKE
-              mask={[
-                /[0-9]/,
-                /[0-9]/,
-                /[0-9]/,
-                '-',
-                /[0-9]/,
-                /[0-9]/,
-                /[0-9]/,
-                /[0-9]/,
-                '-',
-                /[0-9]/,
-                /[0-9]/,
-                /[0-9]/,
-                /[0-9]/,
-                /[0-9]/,
-                /[0-9]/,
-                /[0-9]/,
-                /[0-9]/,
-                /[0-9]/,
-                /[0-9]/,
-              ]}
+              mask="999-9999-9999999"
               maskPlaceholder={null}
               onBlur={(evt) => {
                 const validateField = validate(evt.target.value, 'empty')
@@ -517,19 +496,7 @@ export const StepOne: React.FC = () => {
             </Box>
             <Box marginBottom={3}>
               <InputMask
-                mask={[
-                  /[0-9]/,
-                  /[0-9]/,
-                  /[0-9]/,
-                  /[0-9]/,
-                  /[0-9]/,
-                  /[0-9]/,
-                  '-',
-                  /[0-9]/,
-                  /[0-9]/,
-                  /[0-9]/,
-                  /[0-9]/,
-                ]}
+                mask="999999-9999"
                 maskPlaceholder={null}
                 onBlur={(evt) => {
                   const validateField = validate(evt.target.value, 'empty')
