@@ -12,9 +12,10 @@ import {
   DatePicker,
   GridContainer,
   RadioButton,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { validate } from '../../../../utils/validate'
-import { isNextDisabled } from '../../../../utils/stepHelper'
+import { isDirty, isNextDisabled } from '../../../../utils/stepHelper'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import formatISO from 'date-fns/formatISO'
@@ -26,7 +27,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   parseString,
   parseTime,
-  replaceTabs,
+  parseTransition,
   replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
@@ -36,11 +37,14 @@ import {
   CaseState,
   NotificationType,
   CaseGender,
+  TransitionCase,
+  CaseTransition,
 } from '@island.is/judicial-system/types'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   SendNotificationMutation,
+  TransitionCaseMutation,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import {
@@ -50,7 +54,6 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { ValueType } from 'react-select/src/types'
 import * as styles from './StepOne.treat'
-import isEmpty from 'lodash/isEmpty'
 
 export const CreateCaseMutation = gql`
   mutation CreateCaseMutation($input: CreateCaseInput!) {
@@ -263,6 +266,16 @@ export const StepOne: React.FC = () => {
     return resCase
   }
 
+  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+
+  const transitionCase = async (id: string, transitionCase: TransitionCase) => {
+    const { data } = await transitionCaseMutation({
+      variables: { input: { id, ...transitionCase } },
+    })
+
+    return data?.transitionCase
+  }
+
   const [
     sendNotificationMutation,
     { loading: isSendingNotification },
@@ -279,6 +292,50 @@ export const StepOne: React.FC = () => {
     })
 
     return data?.sendNotification?.notificationSent
+  }
+
+  const handleNextButtonClick: () => Promise<boolean> = async () => {
+    if (!workingCase) {
+      return false
+    }
+
+    switch (workingCase.state) {
+      case CaseState.NEW:
+        try {
+          // Parse the transition request
+          const transitionRequest = parseTransition(
+            workingCase.modified,
+            CaseTransition.OPEN,
+          )
+
+          // Transition the case
+          const resCase = await transitionCase(
+            workingCase.id ?? id,
+            transitionRequest,
+          )
+
+          if (!resCase) {
+            return false
+          }
+
+          setWorkingCase({
+            ...workingCase,
+            state: resCase.state,
+            prosecutor: resCase.prosecutor,
+          })
+
+          return true
+        } catch (e) {
+          console.log(e)
+
+          return false
+        }
+      case CaseState.DRAFT:
+      case CaseState.SUBMITTED:
+        return true
+      default:
+        return false
+    }
   }
 
   useEffect(() => {
@@ -641,9 +698,9 @@ export const StepOne: React.FC = () => {
                 label="Nafn verjanda"
                 placeholder="Fullt nafn"
                 defaultValue={workingCase.requestedDefenderName}
-                disabled={!isEmpty(workingCase.defenderName)}
+                disabled={isDirty(workingCase.defenderName)}
                 icon={
-                  !isEmpty(workingCase.defenderName) ? 'lockClosed' : undefined
+                  isDirty(workingCase.defenderName) ? 'lockClosed' : undefined
                 }
                 iconType="outline"
                 onBlur={(evt) => {
@@ -666,9 +723,9 @@ export const StepOne: React.FC = () => {
               name="requestedDefenderEmail"
               label="Netfang verjanda"
               placeholder="Netfang"
-              disabled={!isEmpty(workingCase.defenderEmail)}
+              disabled={isDirty(workingCase.defenderEmail)}
               icon={
-                !isEmpty(workingCase.defenderEmail) ? 'lockClosed' : undefined
+                isDirty(workingCase.defenderEmail) ? 'lockClosed' : undefined
               }
               iconType="outline"
               ref={defenderEmailRef}
@@ -702,7 +759,8 @@ export const StepOne: React.FC = () => {
               onChange={replaceTabsOnChange}
               onFocus={() => setRequestedDefenderEmailErrorMessage('')}
             />
-            {workingCase.defenderName && workingCase.defenderEmail && (
+            {(isDirty(workingCase.defenderName) ||
+              isDirty(workingCase.defenderEmail)) && (
               <Box marginTop={1}>
                 <Text variant="eyebrow">Verjanda hefur verið úthlutað</Text>
               </Box>
@@ -781,7 +839,7 @@ export const StepOne: React.FC = () => {
                     )
                   }}
                   handleCloseCalendar={(date: Date | null) => {
-                    if (isEmpty(date) || !isValid(date)) {
+                    if (date === null || !isValid(date)) {
                       setArrestDateErrorMessage('Reitur má ekki vera tómur')
                     }
                   }}
@@ -849,7 +907,8 @@ export const StepOne: React.FC = () => {
           <Box component="section" marginBottom={7}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                Ósk um fyrirtökudag og tíma
+                Ósk um fyrirtökudag og tíma{' '}
+                <Tooltip text='Vinsamlegast sláðu tímann sem þú óskar eftir að málið verður tekið fyrir. Gáttin birtir tímann sem: "Eftir kl." tíminn sem þú slærð inn. Það þarf því ekki að velja nákvæma tímasetningu hvenær óskað er eftir fyrirtöku, heldur bara eftir hvaða tíma myndi henta að taka málið fyrir.' />
               </Text>
             </Box>
             <GridRow>
@@ -859,16 +918,14 @@ export const StepOne: React.FC = () => {
                   label="Veldu dagsetningu"
                   placeholderText="Veldu dagsetningu"
                   locale="is"
-                  icon={
-                    !isEmpty(workingCase.courtDate) ? 'lockClosed' : undefined
-                  }
+                  icon={workingCase.courtDate ? 'lockClosed' : undefined}
                   minDate={new Date()}
                   selected={
                     workingCase.requestedCourtDate
                       ? parseISO(workingCase.requestedCourtDate.toString())
                       : null
                   }
-                  disabled={!isEmpty(workingCase.courtDate)}
+                  disabled={Boolean(workingCase.courtDate)}
                   handleChange={(date) => {
                     const formattedDate = formatISO(date, {
                       representation: workingCase.requestedCourtDate?.includes(
@@ -906,11 +963,9 @@ export const StepOne: React.FC = () => {
                   }
                   disabled={
                     !workingCase.requestedCourtDate ||
-                    !isEmpty(workingCase.courtDate)
+                    Boolean(workingCase.courtDate)
                   }
-                  icon={
-                    !isEmpty(workingCase.courtDate) ? 'lockClosed' : undefined
-                  }
+                  icon={workingCase.courtDate ? 'lockClosed' : undefined}
                   iconType="outline"
                   ref={requestedCourtTimeRef}
                   onBlur={(evt) => {
@@ -966,18 +1021,23 @@ export const StepOne: React.FC = () => {
             )}
           </Box>
           <FormFooter
-            onNextButtonClick={() => {
-              if (
-                workingCase.notifications?.find(
-                  (notification) =>
-                    notification.type === NotificationType.HEADS_UP,
-                )
-              ) {
-                history.push(
-                  `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
-                )
+            onNextButtonClick={async () => {
+              const caseTransitioned = await handleNextButtonClick()
+              if (caseTransitioned) {
+                if (
+                  workingCase.notifications?.find(
+                    (notification) =>
+                      notification.type === NotificationType.HEADS_UP,
+                  )
+                ) {
+                  history.push(
+                    `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
+                  )
+                } else {
+                  setModalVisible(true)
+                }
               } else {
-                setModalVisible(true)
+                // TODO: Handle error
               }
             }}
             nextIsDisabled={isStepIllegal}
@@ -995,11 +1055,15 @@ export const StepOne: React.FC = () => {
                 )
               }
               handlePrimaryButtonClick={async () => {
-                await sendNotification(workingCase.id ?? id)
-
-                history.push(
-                  `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
+                const notificationSent = await sendNotification(
+                  workingCase.id ?? id,
                 )
+
+                if (notificationSent) {
+                  history.push(
+                    `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
+                  )
+                }
               }}
               isPrimaryButtonLoading={isSendingNotification}
             />

@@ -261,16 +261,16 @@ export class CmsContentfulService {
 
   async getAboutSubPage({
     lang,
-    slug,
+    url,
   }: {
     lang: string
-    slug: string
+    url: string
   }): Promise<AboutSubPage | null> {
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.IAboutSubPageFields>(lang, {
         ['content_type']: 'aboutSubPage',
         include: 10,
-        'fields.slug': slug,
+        'fields.url': url,
       })
       .catch(errorHandler('getAboutSubPage'))
 

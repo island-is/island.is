@@ -29,7 +29,7 @@ The codebase is all [TypeScript](https://www.typescriptlang.org) and [NodeJS](ht
 
 ### Backend
 
-We use [NestJS](https://nestjs.com) for the backend. Use the pre-packaged setup that we have and you will save us all some time. You can find the latest and greatest in how we setup a backend in our [reference-backend](https://github.com/island-is/island.is/blob/master/apps/reference-backend)
+We use [NestJS](https://nestjs.com) for the backend. Use the pre-packaged setup that we have and you will save us all some time. You can find the latest and greatest in how we setup a backend in our [reference-backend](https://github.com/island-is/island.is/blob/main/apps/reference-backend)
 
 | Tool                                                 | Description                                 |
 | ---------------------------------------------------- | ------------------------------------------- |
@@ -72,9 +72,9 @@ Applications are composed of services that are [packaged in Docker containers](R
 
 ## Practices
 
-To contribute you need to follow the standard [GitHub Pull Request (PR)](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests) workflow. When you open a PR, your code will be run through the [CI process](adr/0002-continuous-integration.md) automatically. Ask for a [code-review](code-reviews.md) and when you get an approval, merge to `master`. Rinse and repeat.
+To contribute you need to follow the standard [GitHub Pull Request (PR)](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests) workflow. When you open a PR, your code will be run through the [CI process](adr/0002-continuous-integration.md) automatically. Ask for a [code-review](code-reviews.md) and when you get an approval, merge to `main`. Rinse and repeat.
 
-When a code change gets on `master`, that will create Docker containers for all services and everything will get deployed to `Dev` env. For more info please see the [Continuous Delivery process](devops/continuous-delivery.md).
+When a code change gets on `main`, that will create Docker containers for all services and everything will get deployed to `Dev` env. For more info please see the [Continuous Delivery process](devops/continuous-delivery.md).
 
 We expect contributors to deliver the following:
 

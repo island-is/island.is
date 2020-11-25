@@ -14,7 +14,7 @@ export const EmailStep: FC<Props> = ({ onBack, onSubmit, email }) => {
 
   return (
     <>
-      <Text variant="h1" marginBottom={3}>
+      <Text variant="h1" as="h1" marginBottom={3}>
         {formatMessage({
           id: 'service.portal:email',
           defaultMessage: 'Netfang',
