@@ -24,7 +24,7 @@ export const PhoneStep: FC<Props> = ({ onBack, onSubmit, tel, natReg }) => {
 
   return (
     <>
-      <Text variant="h1" marginBottom={3}>
+      <Text variant="h1" as="h1" marginBottom={3}>
         {step === 'form'
           ? formatMessage({
               id: 'service.portal:tel-number',
@@ -35,13 +35,12 @@ export const PhoneStep: FC<Props> = ({ onBack, onSubmit, tel, natReg }) => {
               defaultMessage: 'Staðfestingarkóði',
             })}
       </Text>
-      <Text marginBottom={7}>
+      <Text variant="intro" marginBottom={7}>
         {step === 'form'
           ? formatMessage({
-              id: 'sp.settings:profile-info-form-message',
+              id: 'sp.settings:onboarding-phone-form-message',
               defaultMessage: `
-                  Vinsamlegast gerðu breytingar á þessum upplýsingum
-                  ef þörf krefur.
+                  Vinsamlegast sláðu inn símanúmerið þitt
                 `,
             })
           : formatMessage({

@@ -12,13 +12,13 @@ import {
   DatePicker,
   GridContainer,
   RadioButton,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { validate } from '../../../../utils/validate'
-import { isNextDisabled } from '../../../../utils/stepHelper'
+import { isDirty, isNextDisabled } from '../../../../utils/stepHelper'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import formatISO from 'date-fns/formatISO'
-import isNull from 'lodash/isNull'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as Constants from '../../../../utils/constants'
@@ -27,6 +27,8 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   parseString,
   parseTime,
+  parseTransition,
+  replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import {
@@ -35,11 +37,14 @@ import {
   CaseState,
   NotificationType,
   CaseGender,
+  TransitionCase,
+  CaseTransition,
 } from '@island.is/judicial-system/types'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   SendNotificationMutation,
+  TransitionCaseMutation,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import {
@@ -107,6 +112,10 @@ export const CreateCaseMutation = gql`
   }
 `
 
+interface CaseData {
+  case?: Case
+}
+
 export const StepOne: React.FC = () => {
   const history = useHistory()
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -148,12 +157,10 @@ export const StepOne: React.FC = () => {
   const defenderEmailRef = useRef<HTMLInputElement>(null)
   const arrestTimeRef = useRef<HTMLInputElement>(null)
   const requestedCourtTimeRef = useRef<HTMLInputElement>(null)
-  const { data, loading } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const resCase = data?.case
 
   const courts = [
     {
@@ -259,6 +266,16 @@ export const StepOne: React.FC = () => {
     return resCase
   }
 
+  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+
+  const transitionCase = async (id: string, transitionCase: TransitionCase) => {
+    const { data } = await transitionCaseMutation({
+      variables: { input: { id, ...transitionCase } },
+    })
+
+    return data?.transitionCase
+  }
+
   const [
     sendNotificationMutation,
     { loading: isSendingNotification },
@@ -277,14 +294,58 @@ export const StepOne: React.FC = () => {
     return data?.sendNotification?.notificationSent
   }
 
+  const handleNextButtonClick: () => Promise<boolean> = async () => {
+    if (!workingCase) {
+      return false
+    }
+
+    switch (workingCase.state) {
+      case CaseState.NEW:
+        try {
+          // Parse the transition request
+          const transitionRequest = parseTransition(
+            workingCase.modified,
+            CaseTransition.OPEN,
+          )
+
+          // Transition the case
+          const resCase = await transitionCase(
+            workingCase.id ?? id,
+            transitionRequest,
+          )
+
+          if (!resCase) {
+            return false
+          }
+
+          setWorkingCase({
+            ...workingCase,
+            state: resCase.state,
+            prosecutor: resCase.prosecutor,
+          })
+
+          return true
+        } catch (e) {
+          console.log(e)
+
+          return false
+        }
+      case CaseState.DRAFT:
+      case CaseState.SUBMITTED:
+        return true
+      default:
+        return false
+    }
+  }
+
   useEffect(() => {
     document.title = 'Grunnupplýsingar - Réttarvörslugátt'
   }, [])
 
   // Run this if id is in url, i.e. if user is opening an existing request.
   useEffect(() => {
-    if (id && !workingCase && resCase) {
-      setWorkingCase(resCase)
+    if (id && !workingCase && data?.case) {
+      setWorkingCase(data?.case)
     } else if (!id && !workingCase) {
       setWorkingCase({
         id: '',
@@ -303,7 +364,7 @@ export const StepOne: React.FC = () => {
         requestedCourtDate: undefined,
       })
     }
-  }, [id, workingCase, setWorkingCase, resCase])
+  }, [id, workingCase, setWorkingCase, data])
 
   /**
    * Run this to validate form after each change
@@ -359,6 +420,7 @@ export const StepOne: React.FC = () => {
       activeSection={Sections.PROSECUTOR}
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_ONE}
       isLoading={loading}
+      notFound={id !== undefined && data?.case === undefined}
     >
       {workingCase ? (
         <>
@@ -378,7 +440,7 @@ export const StepOne: React.FC = () => {
               name="policeCaseNumber"
               label="Slá inn LÖKE málsnúmer"
               placeholder="007-2020-X"
-              defaultValue={workingCase?.policeCaseNumber}
+              defaultValue={workingCase.policeCaseNumber}
               ref={policeCaseNumberRef}
               errorMessage={policeCaseNumberErrorMessage}
               hasError={policeCaseNumberErrorMessage !== ''}
@@ -412,6 +474,7 @@ export const StepOne: React.FC = () => {
                   )
                 }
               }}
+              onChange={replaceTabsOnChange}
               onFocus={() => setPoliceCaseNumberErrorMessage('')}
               required
             />
@@ -465,6 +528,7 @@ export const StepOne: React.FC = () => {
                     )
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 onFocus={() => setNationalIdErrorMessage('')}
                 required
               />
@@ -500,6 +564,7 @@ export const StepOne: React.FC = () => {
                     setAccusedNameErrorMessage(validateField.errorMessage)
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 onFocus={() => setAccusedNameErrorMessage('')}
                 required
               />
@@ -535,6 +600,7 @@ export const StepOne: React.FC = () => {
                     setAccusedAddressErrorMessage(validateField.errorMessage)
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 onFocus={() => setAccusedAddressErrorMessage('')}
                 required
               />
@@ -632,11 +698,9 @@ export const StepOne: React.FC = () => {
                 label="Nafn verjanda"
                 placeholder="Fullt nafn"
                 defaultValue={workingCase.requestedDefenderName}
-                disabled={workingCase.defenderName !== undefined}
+                disabled={isDirty(workingCase.defenderName)}
                 icon={
-                  workingCase.defenderName !== undefined
-                    ? 'lockClosed'
-                    : undefined
+                  isDirty(workingCase.defenderName) ? 'lockClosed' : undefined
                 }
                 iconType="outline"
                 onBlur={(evt) => {
@@ -652,17 +716,16 @@ export const StepOne: React.FC = () => {
                     )
                   }
                 }}
+                onChange={replaceTabsOnChange}
               />
             </Box>
             <Input
               name="requestedDefenderEmail"
               label="Netfang verjanda"
               placeholder="Netfang"
-              disabled={workingCase.defenderEmail !== undefined}
+              disabled={isDirty(workingCase.defenderEmail)}
               icon={
-                workingCase.defenderEmail !== undefined
-                  ? 'lockClosed'
-                  : undefined
+                isDirty(workingCase.defenderEmail) ? 'lockClosed' : undefined
               }
               iconType="outline"
               ref={defenderEmailRef}
@@ -693,9 +756,11 @@ export const StepOne: React.FC = () => {
                   )
                 }
               }}
+              onChange={replaceTabsOnChange}
               onFocus={() => setRequestedDefenderEmailErrorMessage('')}
             />
-            {workingCase.defenderName && workingCase.defenderEmail && (
+            {(isDirty(workingCase.defenderName) ||
+              isDirty(workingCase.defenderEmail)) && (
               <Box marginTop={1}>
                 <Text variant="eyebrow">Verjanda hefur verið úthlutað</Text>
               </Box>
@@ -774,7 +839,7 @@ export const StepOne: React.FC = () => {
                     )
                   }}
                   handleCloseCalendar={(date: Date | null) => {
-                    if (isNull(date) || !isValid(date)) {
+                    if (date === null || !isValid(date)) {
                       setArrestDateErrorMessage('Reitur má ekki vera tómur')
                     }
                   }}
@@ -842,7 +907,8 @@ export const StepOne: React.FC = () => {
           <Box component="section" marginBottom={7}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                Ósk um fyrirtökudag og tíma
+                Ósk um fyrirtökudag og tíma{' '}
+                <Tooltip text='Vinsamlegast sláðu tímann sem þú óskar eftir að málið verður tekið fyrir. Gáttin birtir tímann sem: "Eftir kl." tíminn sem þú slærð inn. Það þarf því ekki að velja nákvæma tímasetningu hvenær óskað er eftir fyrirtöku, heldur bara eftir hvaða tíma myndi henta að taka málið fyrir.' />
               </Text>
             </Box>
             <GridRow>
@@ -852,14 +918,14 @@ export const StepOne: React.FC = () => {
                   label="Veldu dagsetningu"
                   placeholderText="Veldu dagsetningu"
                   locale="is"
-                  icon="lockClosed"
+                  icon={workingCase.courtDate ? 'lockClosed' : undefined}
                   minDate={new Date()}
                   selected={
                     workingCase.requestedCourtDate
                       ? parseISO(workingCase.requestedCourtDate.toString())
                       : null
                   }
-                  disabled={workingCase.courtDate !== undefined}
+                  disabled={Boolean(workingCase.courtDate)}
                   handleChange={(date) => {
                     const formattedDate = formatISO(date, {
                       representation: workingCase.requestedCourtDate?.includes(
@@ -897,13 +963,9 @@ export const StepOne: React.FC = () => {
                   }
                   disabled={
                     !workingCase.requestedCourtDate ||
-                    workingCase.courtDate !== undefined
+                    Boolean(workingCase.courtDate)
                   }
-                  icon={
-                    workingCase.courtDate !== undefined
-                      ? 'lockClosed'
-                      : undefined
-                  }
+                  icon={workingCase.courtDate ? 'lockClosed' : undefined}
                   iconType="outline"
                   ref={requestedCourtTimeRef}
                   onBlur={(evt) => {
@@ -959,18 +1021,23 @@ export const StepOne: React.FC = () => {
             )}
           </Box>
           <FormFooter
-            onNextButtonClick={() => {
-              if (
-                workingCase.notifications?.find(
-                  (notification) =>
-                    notification.type === NotificationType.HEADS_UP,
-                )
-              ) {
-                history.push(
-                  `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
-                )
+            onNextButtonClick={async () => {
+              const caseTransitioned = await handleNextButtonClick()
+              if (caseTransitioned) {
+                if (
+                  workingCase.notifications?.find(
+                    (notification) =>
+                      notification.type === NotificationType.HEADS_UP,
+                  )
+                ) {
+                  history.push(
+                    `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
+                  )
+                } else {
+                  setModalVisible(true)
+                }
               } else {
-                setModalVisible(true)
+                // TODO: Handle error
               }
             }}
             nextIsDisabled={isStepIllegal}
@@ -988,11 +1055,15 @@ export const StepOne: React.FC = () => {
                 )
               }
               handlePrimaryButtonClick={async () => {
-                await sendNotification(workingCase.id ?? id)
-
-                history.push(
-                  `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
+                const notificationSent = await sendNotification(
+                  workingCase.id ?? id,
                 )
+
+                if (notificationSent) {
+                  history.push(
+                    `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
+                  )
+                }
               }}
               isPrimaryButtonLoading={isSendingNotification}
             />

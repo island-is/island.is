@@ -4,8 +4,9 @@ import {
   parseString,
   parseTime,
   parseTransition,
+  replaceTabs,
 } from './formatters'
-import { constructConclusion, isNextDisabled } from './stepHelper'
+import { constructConclusion, isDirty, isNextDisabled } from './stepHelper'
 import { RequiredField } from '../types'
 import {
   CaseTransition,
@@ -246,7 +247,7 @@ describe('Validation', () => {
 })
 
 describe('Step helper', () => {
-  describe('insertAt()', () => {
+  describe('insertAt', () => {
     test('should insert a string at a certain position into another string', () => {
       // Arrange
       const str = 'Lorem ipsum dolum kara'
@@ -409,7 +410,7 @@ describe('Step helper', () => {
     })
   })
 
-  describe('isNextDisabled()', () => {
+  describe('isNextDisabled', () => {
     test('should return true if the only validation does not pass', () => {
       // Arrange
       const rf: RequiredField[] = [{ value: '', validations: ['empty'] }]
@@ -447,6 +448,125 @@ describe('Step helper', () => {
 
       // Assert
       expect(ind).toEqual(false)
+    })
+  })
+
+  describe('removeTabs', () => {
+    test('should replace a single tab with a single space', () => {
+      // Arrange
+      const str = '\t'
+
+      // Act
+      const res = replaceTabs(str)
+
+      // Assert
+      expect(res).toEqual(' ')
+    })
+
+    test('should replace multiple consecutive tabs with a single space', () => {
+      // Arrange
+      const str = '\t\t\t'
+
+      // Act
+      const res = replaceTabs(str)
+
+      // Assert
+      expect(res).toEqual(' ')
+    })
+
+    test('should remove multiple consecutive tabs with a leading space', () => {
+      // Arrange
+      const str = ' \t\t\t'
+
+      // Act
+      const res = replaceTabs(str)
+
+      // Assert
+      expect(res).toEqual(' ')
+    })
+
+    test('should remove multiple consecutive tabs with a trailing space', () => {
+      // Arrange
+      const str = '\t\t\t '
+
+      // Act
+      const res = replaceTabs(str)
+
+      // Assert
+      expect(res).toEqual(' ')
+    })
+
+    test('should process a complicated string with tabs', () => {
+      // Arrange
+      const str =
+        'Lorem\t ipsum dolor \t\tsit amet,\t\t\t\tconsectetur \t\t\t adipiscing elit.'
+
+      // Act
+      const res = replaceTabs(str)
+
+      // Assert
+      expect(res).toEqual(
+        'Lorem ipsum dolor sit amet, consectetur  adipiscing elit.',
+      )
+    })
+
+    test('should handle undefined', () => {
+      // Arrange
+
+      // Act
+      const res = replaceTabs((undefined as unknown) as string)
+
+      // Assert
+      expect(res).toBeUndefined()
+    })
+
+    test('should handle string with no tabs', () => {
+      // Arrange
+      const str = '020-0202-2929'
+
+      // Act
+      const res = replaceTabs(str)
+
+      // Assert
+      expect(res).toEqual('020-0202-2929')
+    })
+  })
+
+  describe('isDirty', () => {
+    test('should return true if value is an empty string', () => {
+      // Arrange
+      const emptyString = ''
+
+      // Act
+      const result = isDirty(emptyString)
+
+      // Assert
+      expect(result).toEqual(true)
+    })
+
+    test('should return true if value is a non empty string', () => {
+      // Arrange
+      const str = 'test'
+
+      // Act
+      const result = isDirty(str)
+
+      // Assert
+      expect(result).toEqual(true)
+    })
+
+    test('should return false if value is undefined or null', () => {
+      // Arrange
+      const und = undefined
+      const n = null
+
+      // Act
+      const resultUnd = isDirty(und)
+      const resultN = isDirty(n)
+
+      // Assert
+      expect(resultUnd).toEqual(false)
+      expect(resultN).toEqual(false)
     })
   })
 })

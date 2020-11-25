@@ -15,6 +15,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common'
@@ -108,5 +109,20 @@ export class GrantsController {
   @ApiCreatedResponse({ type: Grant })
   async create(@Body() grant: GrantDto): Promise<Grant> {
     return await this.grantsService.createAsync(grant)
+  }
+
+  /** Updates a grant */
+  @Scopes('@identityserver.api/authentication')
+  @Put(':key')
+  @ApiCreatedResponse({ type: Grant })
+  async update(
+    @Param('key') key: string,
+    @Body() grant: GrantDto,
+  ): Promise<Grant> {
+    if (!key) {
+      throw new BadRequestException('Key must be provided')
+    }
+
+    return await this.grantsService.updateAsync(key, grant)
   }
 }

@@ -32,7 +32,7 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
   const { updateUserProfile } = useUpdateUserProfile()
 
   useEffect(() => {
-    if (!userProfile) return
+    if (!userProfile || !userProfile.email) return
     if (userProfile.email.length > 0) setEmail(userProfile.email)
   }, [userProfile])
 
@@ -63,7 +63,7 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
   return (
     <>
       <Box marginBottom={4}>
-        <Text variant="h1">
+        <Text variant="h1" as="h1">
           {formatMessage({
             id: 'sp.settings:edit-email',
             defaultMessage: 'Breyta netfangi',
