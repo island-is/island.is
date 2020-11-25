@@ -48,7 +48,7 @@ export class ApplicationTemplateHelper<
     this.stateMachine = createApplicationMachine(
       this.application,
       this.template.stateMachineConfig,
-      merge({}, stateMachineOptions, this.template.stateMachineOptions),
+      merge(stateMachineOptions, this.template.stateMachineOptions),
       stateMachineContext,
     )
   }
