@@ -1,11 +1,5 @@
 import React, { FC, useRef } from 'react'
-import {
-  Box,
-  Input,
-  Button,
-  ToastContainer,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, Input, Button } from '@island.is/island-ui/core'
 import * as styles from './CopyToClipboardInput.treat'
 
 export interface CopyToClipboardInputProps {
@@ -27,7 +21,7 @@ export const CopyToClipboardInput: FC<CopyToClipboardInputProps> = ({
     el.style.opacity = '0'
     document.body.appendChild(el)
     el.select()
-    let isSuccessful = document.execCommand('copy')
+    document.execCommand('copy')
     document.body.removeChild(el)
     //TODO if we want to use ToastContainer the component needs to be added to the base screen of the application
     //isSuccessful ? toast.success('Afritað!') : null

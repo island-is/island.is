@@ -5,7 +5,7 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 import { useFormContext, Controller } from 'react-hook-form'
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 
-const TestEnvironment: FC<FieldBaseProps> = ({ application }) => {
+const TestEnvironment: FC<FieldBaseProps> = ({ field, application }) => {
   interface Variable {
     id: string
     name: string
@@ -38,8 +38,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application }) => {
     }
   }
 
-  let [variables, setendPointVariables] = useState<Variable[]>([])
-  console.log(variables)
+  const [variables, setendPointVariables] = useState<Variable[]>([])
 
   return (
     <Box>

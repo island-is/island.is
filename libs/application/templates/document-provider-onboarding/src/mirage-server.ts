@@ -1,7 +1,7 @@
 import { Server } from 'miragejs'
 
 export function makeServer({ environment = 'development' } = {}) {
-  const server = new Server({
+  new Server({
     routes() {
       this.passthrough('http://localhost:4444/api/graphql')
       this.get('/api/keys', () => [
@@ -17,9 +17,9 @@ export function makeServer({ environment = 'development' } = {}) {
         },
       ])
       this.post('/api/endPointVariables', (schema, request) => {
-        let attrs = JSON.parse(request.requestBody)
+        const attrs = JSON.parse(request.requestBody)
         console.log(attrs)
-        let data = [
+        const data = [
           {
             id: '1',
             name: 'Audience',

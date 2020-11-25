@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import {

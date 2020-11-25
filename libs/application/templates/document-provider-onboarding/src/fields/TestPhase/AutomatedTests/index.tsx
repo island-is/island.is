@@ -10,7 +10,6 @@ import {
   Button,
   Icon,
   LoadingIcon,
-  Stack,
 } from '@island.is/island-ui/core'
 import { useForm } from 'react-hook-form'
 import { FieldDescription } from '@island.is/shared/form-fields'
@@ -35,8 +34,8 @@ const AutomatedTests: FC<FieldBaseProps> = () => {
       })
   }
 
-  let [response, setResponse] = useState<Response[]>([])
-  let [isLoading, setIsLoading] = useState(false)
+  const [response, setResponse] = useState<Response[]>([])
+  const [isLoading, setIsLoading] = useState(false)
   return (
     <Box>
       <Box marginBottom={3}>

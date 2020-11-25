@@ -1,6 +1,6 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Button, Input, Text } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 
 const ProdEnvironment: FC<FieldBaseProps> = () => {
@@ -18,7 +18,7 @@ const ProdEnvironment: FC<FieldBaseProps> = () => {
       .then((json) => setKeys(json))
   }
 
-  let [keys, setKeys] = useState<Key[]>([])
+  const [keys, setKeys] = useState<Key[]>([])
 
   return (
     //TODO: we can make this a generic component for reuasabilty, same as TEST environment
