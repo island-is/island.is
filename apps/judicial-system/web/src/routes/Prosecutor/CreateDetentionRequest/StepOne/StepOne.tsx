@@ -55,8 +55,8 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { ValueType } from 'react-select/src/types'
-import InputMask from 'react-input-mask'
 import * as styles from './StepOne.treat'
+import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
 
 export const CreateCaseMutation = gql`
   mutation CreateCaseMutation($input: CreateCaseInput!) {
@@ -851,24 +851,7 @@ export const StepOne: React.FC = () => {
                 />
               </GridColumn>
               <GridColumn span="3/8">
-                <InputMask
-                  mask={[
-                    /([0-9]|1[0-9]|2[0-3])/,
-                    /([0-9])?/,
-                    ':',
-                    /[0-9]/,
-                    /[0-9]/,
-                  ]}
-                  maskPlaceholder={null}
-                  beforeMaskedStateChange={({ nextState }) => {
-                    let { value } = nextState
-                    value = value.replace('::', ':')
-
-                    return {
-                      ...nextState,
-                      value,
-                    }
-                  }}
+                <TimeInputField
                   disabled={!workingCase.arrestDate}
                   onBlur={(evt) => {
                     const time = padTimeWithZero(evt.target.value)
@@ -919,7 +902,7 @@ export const StepOne: React.FC = () => {
                     }
                     required
                   />
-                </InputMask>
+                </TimeInputField>
               </GridColumn>
             </GridRow>
           </Box>
