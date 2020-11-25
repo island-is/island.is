@@ -23,18 +23,21 @@ export const FamilyMemberCard: FC<Props> = ({
 }) => {
   const { formatMessage } = useLocale()
 
-  const familyRelationLabel = familyRelation === 'child' ? defineMessage({
-    id: 'sp.family:child',
-    defaultMessage: 'Barn',
-  }) : familyRelation === 'spouse' ? defineMessage({
-    id: 'sp.family:spouse',
-    defaultMessage: 'Maki',
-  }) : defineMessage({
-    id: 'sp.family:family-member',
-    defaultMessage: 'Fjölskyldumeðlimur',
-  });
-
-
+  const familyRelationLabel =
+    familyRelation === 'child'
+      ? defineMessage({
+          id: 'sp.family:child',
+          defaultMessage: 'Barn',
+        })
+      : familyRelation === 'spouse'
+      ? defineMessage({
+          id: 'sp.family:spouse',
+          defaultMessage: 'Maki',
+        })
+      : defineMessage({
+          id: 'sp.family:family-member',
+          defaultMessage: 'Fjölskyldumeðlimur',
+        })
 
   return (
     <Box
