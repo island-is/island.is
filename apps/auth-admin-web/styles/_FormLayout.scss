@@ -68,6 +68,13 @@
     }
   }
 
+  &__container__list {
+    flex-direction: column;
+    text-align: left;
+    align-items: flex-start;
+    padding: 0px 13px;
+  }
+
   &__container__checkbox__field {
     input[type='checkbox'] {
       flex-basis: 50px;

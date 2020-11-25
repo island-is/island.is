@@ -16,6 +16,7 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) =>
     const { register, handleSubmit, errors, formState } = useForm<ClientRedirectUriDTO>();
     const { isSubmitting } = formState;
     const [response, setResponse] = useState(null);
+    const [uris, setUris] = useState<string[]>([]);
     
     const save = (data) => {
 
@@ -24,6 +25,8 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) =>
         temp.redirectUri = data.redirectUri;
         console.log(temp);
         props.handleSaved(temp);
+        uris.push(temp.redirectUri);
+        setUris(uris);
     }
     return  <div className="client-redirect">
     <StatusBar status={response}></StatusBar>
@@ -42,7 +45,7 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) =>
               
               <div className="client-redirect__container__field">
 
-                <label className="client-redirect__label">National Id (Kennitala)</label>
+                <label className="client-redirect__label">Callback URL</label>
                 <input
                   type="text"
                   name="redirectUri"
@@ -59,19 +62,33 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) =>
                   name="client.nationalId"
                   message="Path is required"
                 />
-              </div>
-              </div>
-
-              <div className="client-redirect__buttons__container">
-                <div className="client-redirect__button__container">
-                  <button className="client-redirect__button__cancel">Cancel</button>
-                </div>
-                <div className="client-redirect__button__container">
-                  <input
+                <input
                     type="submit"
                     className="client-redirect__button__save"
                     disabled={isSubmitting}
-                    value="Save"
+                    value="Add"
+                />
+              </div>
+              </div>
+
+               <div className="client-redirect__container__list">
+               {uris.map((uri: string) => {
+                return (
+                  <p>{uri}</p>
+                );
+              })}
+              </div>
+              
+
+              <div className="client-redirect__buttons__container">
+                <div className="client-redirect__button__container">
+                  <button type="button" className="client-redirect__button__cancel">Back</button>
+                </div>
+                <div className="client-redirect__button__container">
+                  <button
+                    type="button"
+                    className="client-redirect__button__save"
+                    value="Next"
                   />
                 </div>
               </div>

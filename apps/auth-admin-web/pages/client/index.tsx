@@ -40,13 +40,13 @@ export default function Index(){
             // Set up the client properties
             return <Client client={ new ClientDTO() } onNextButtonClick={handleClientSaved}/> 
         case 2: {
-            // Set the callback URI
+            // Set the callback URI .. ALLT
             const rObj = new ClientRedirectUriDTO();
             rObj.clientId = clientId;
             return <ClientRedirectUri redirectObject={rObj} handleSaved={handleRedirectSaved} />
             }
         case 3: {
-            // Add Claims?
+            // Add Claims - Custom Claims (Vitum ekki alveg) - Setja í BID
             const claim = new ClientClaimDTO();
             console.log("Client ID: " + clientId);
             claim.clientId = clientId;
@@ -54,27 +54,29 @@ export default function Index(){
         }
         case 4: {
             // Allowed Scopes
+            // Ákveðin scope sem við eigum og veljum úr lista - Skilgreinum scopes fyrir resource-a
+            // Sett á bið?
         }
         case 5: {
             // Allowed Cors Origin
+            // Default Display URL ?
         }
         case 6: {
             // Grant Types
+            // Authorization code ALLT NEMA SERVICE TO SERVICE - [Client credentials - SERVICE to SERVICE]
         }
         case 7: {
-            // Grant Types
+            // ClientPostLogoutRedirectUri
+            // Loggaður út -> viltu fara aftur á þína síðu
         }
         case 8: {
-            // ClientPostLogoutRedirectUri
+            // ClientIdpRestrictions
+            // Sími, KORT, HAKA VId
         }
         case 9: {
-            // ClientPostLogoutRedirectUri
-        }
-        case 10: {
-            // ClientIdpRestrictions
-        }
-        case 11: {
-            // ClientSecret
+            //ClientSecret
+            // EF SPA eða NATIVE þá sýna ekkert
+            // Generate og sýna
         }
     }
 }
