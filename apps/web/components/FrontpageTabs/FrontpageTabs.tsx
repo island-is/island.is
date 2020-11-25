@@ -22,7 +22,7 @@ import {
 } from '@island.is/island-ui/core'
 import { deorphanize } from '@island.is/island-ui/utils'
 import { Locale } from '@island.is/web/i18n/I18n'
-import routeNames from '@island.is/web/i18n/routeNames'
+import { pathNames, AnchorAttributes } from '@island.is/web/i18n/routes'
 import { useI18n } from '../../i18n'
 import { theme } from '@island.is/island-ui/theme'
 import Illustration from './illustrations/Illustration'
@@ -33,11 +33,6 @@ type TabsProps = {
   title?: string
   content?: string
   link?: string
-}
-
-type LinkUrls = {
-  href: string
-  as: string
 }
 
 export const LEFT = 'Left'
@@ -78,7 +73,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   })
 
   const { activeLocale, t } = useI18n()
-  const { makePath } = routeNames(activeLocale as Locale)
   const { width } = useWindowSize()
 
   const nextSlide = useCallback(() => {
@@ -107,17 +101,14 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     }
   }
 
-  const generateUrls = (link: string): LinkUrls => {
+  const generateUrls = (link: string): AnchorAttributes => {
     if (link) {
       const linkData = JSON.parse(link)
       const contentId = linkData.sys?.contentType?.sys?.id
 
-      const slug = linkData.fields?.slug
+      const slug = String(linkData.fields?.slug)
       if (slug) {
-        return {
-          href: contentId === 'page' ? slug : makePath(contentId, '[slug]'),
-          as: makePath(contentId, slug),
-        }
+        return pathNames(activeLocale as Locale, contentId, [slug])
       }
       return { href: null, as: null }
     }
@@ -245,6 +236,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                               as={linkUrls.as}
                               href={linkUrls.href}
                               passHref
+                              prefetch
                             >
                               <Button
                                 variant="text"
