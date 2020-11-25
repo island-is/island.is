@@ -1,10 +1,19 @@
 import React, { FC } from 'react'
-import { Box, Input, Text } from '@island.is/island-ui/core'
-import { FieldItem, RichTextContent } from 'contentful'
+import { Box, Text } from '@island.is/island-ui/core'
+import { SingleLineEditor } from '@contentful/field-editor-single-line'
+import { RichTextEditor } from '@contentful/field-editor-rich-text'
+import { FieldAPI } from 'contentful-ui-extensions-sdk/typings'
+
+import { MagicType } from '../../utils/buildContentTypeAndData'
+import { locales } from '../../contentful/locales'
+import { getSdk } from '../../contentful/sdk'
+import { ContentfulEnv } from '../../contentful/client'
 
 import * as styles from './Sidebar.treat'
 
 interface SidebarProps {
+  env: ContentfulEnv
+  entry: MagicType
   fields: any
   locale: string
   loading: boolean
@@ -12,18 +21,49 @@ interface SidebarProps {
 }
 
 export const Sidebar: FC<SidebarProps> = ({
+  env,
+  entry,
   fields,
   locale,
   loading,
   onChange,
 }) => {
-  console.log('-fields', fields)
-
   const handleChange = (field: string, value: string) => {
     console.log('-field', field)
     console.log('-value', value)
 
     onChange(field, value)
+  }
+
+  const renderFields = (field: FieldAPI) => {
+    switch (field.type) {
+      case 'Text':
+      case 'Symbol':
+        return (
+          <SingleLineEditor
+            key={field.id}
+            field={field}
+            locales={locales}
+            isInitiallyDisabled={false}
+          />
+        )
+
+      case 'RichText':
+        const sdk = getSdk(field, env)
+        console.log('-sdk', sdk)
+
+        return (
+          <RichTextEditor
+            key={field.id}
+            sdk={sdk}
+            isInitiallyDisabled={false}
+          />
+        )
+
+      default:
+        console.warn(`${field.type} is not supported yet.`)
+        return null
+    }
   }
 
   return (
@@ -36,60 +76,20 @@ export const Sidebar: FC<SidebarProps> = ({
         {loading && <Text marginTop={2}>Loading...</Text>}
 
         {!loading &&
-          Object.keys(fields ?? [])
-            // .filter((field) => field !== 'title' && field !== 'slug')
-            .filter((field) => field === 'title' || field === 'intro')
-            .map((field, index) => {
-              /*
-        const getContent = () => {
-          const data = fields[field]?.['is-IS'] as {
-            sys: FieldItem
-            content: RichTextContent[]
-          }
+          (entry?.fields ?? []).map((field) => (
+            <Box
+              key={field.id}
+              paddingY={3}
+              borderBottomWidth="standard"
+              borderColor="dark200"
+            >
+              <Text variant="eyebrow" marginBottom={1}>
+                {field.id}
+              </Text>
 
-          if (typeof data === 'string') {
-            return data
-          }
-
-          // Not for now
-          if (
-            data?.sys?.linkType === 'Asset' ||
-            data?.sys?.linkType === 'Entry'
-          ) {
-            return
-          }
-
-          return (data?.content ?? []).map((text) => {
-            return {
-              nodeType: text.nodeType,
-            }
-          })
-        }
-        */
-
-              return (
-                <Box
-                  key={`${field}-${index}`}
-                  paddingY={3}
-                  borderBottomWidth="standard"
-                  borderColor="dark200"
-                >
-                  <Text variant="eyebrow" marginBottom={1}>
-                    {field}
-                  </Text>
-
-                  <Input
-                    name={field}
-                    placeholder={field}
-                    size="sm"
-                    defaultValue={fields[field]?.[locale]}
-                    onChange={(event) =>
-                      handleChange(field, event.target.value)
-                    }
-                  />
-                </Box>
-              )
-            })}
+              {renderFields(field)}
+            </Box>
+          ))}
       </Box>
 
       <Box className={styles.overlay} />

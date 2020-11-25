@@ -1,0 +1,52 @@
+{
+  "sys": {
+    "space": {
+      "sys": {
+        "type": "Link",
+        "linkType": "Space",
+        "id": "my-test-space"
+      }
+    },
+    "id": "published-entry",
+    "type": "Entry",
+    "createdAt": "2020-02-05T16:16:37.052Z",
+    "updatedAt": "2020-03-25T15:00:06.808Z",
+    "environment": {
+      "sys": {
+        "id": "master",
+        "type": "Link",
+        "linkType": "Environment"
+      }
+    },
+    "firstPublishedAt": "2020-02-05T16:16:43.536Z",
+    "createdBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "34MOMGPHEnQmheXGJJyghQ"
+      }
+    },
+    "updatedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "34MOMGPHEnQmheXGJJyghQ"
+      }
+    },
+    "publishedCounter": 2,
+    "version": 10,
+    "publishedVersion": 10,
+    "contentType": {
+      "sys": {
+        "type": "Link",
+        "linkType": "ContentType",
+        "id": "exampleCT"
+      }
+    }
+  },
+  "fields": {
+    "content": {
+      "is-IS": "The best article ever"
+    }
+  }
+}

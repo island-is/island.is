@@ -1,11 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { NextComponentType, NextPageContext } from 'next'
-import { createClient } from 'contentful-management'
-import { Entry } from 'contentful-management/dist/typings/entities/entry'
+import {
+  Entry,
+  EntryProp,
+} from 'contentful-management/dist/typings/entities/entry'
 
-import { Header } from './components/Header/Header'
+import { Buttons } from './components/Buttons/Buttons'
 import { Sidebar } from './components/Sidebar/Sidebar'
 import { getContentfulInfo } from './utils/get-contentful-info'
+import { Collection } from 'contentful-management/dist/typings/common-types'
+import { createContentfulClient, ContentfulEnv } from './contentful/client'
+import { buildContentTypeAndData } from './utils/buildContentTypeAndData'
 
 const CONTENTFUL_TYPES_TO_MAP = [
   { id: 'lifeEventPage', matches: ['life-event', 'lifsvidburdur'] },
@@ -19,11 +24,7 @@ const CONTENTFUL_TYPES_TO_MAP = [
 
 export const withContentfulEditor = (
   Component: NextComponentType<NextPageContext, unknown, any>,
-  env: {
-    space: string
-    managementAccessToken: string
-    environment: string
-  },
+  env: ContentfulEnv,
 ) => {
   const NewComponent = ({
     pageProps,
@@ -34,13 +35,10 @@ export const withContentfulEditor = (
     pageProps: unknown
     slug: string
     contentType: string
-    locale: string
+    locale: 'en' | 'is-IS'
   }) => {
-    const client = useRef(
-      createClient({ accessToken: env.managementAccessToken }),
-    ).current
     const [edit, setEdit] = useState(false)
-    const [entry, setEntry] = useState<Entry | undefined>(undefined)
+    const [entry, setEntry] = useState<any | undefined>(undefined)
     const [loading, setLoading] = useState(false)
     const [saving, setSaving] = useState(false)
 
@@ -51,17 +49,15 @@ export const withContentfulEditor = (
 
       setLoading(true)
 
-      const space = await client.getSpace(env.space)
-      const environment = await space.getEnvironment(env.environment)
-
       try {
-        const entry = await environment.getEntries({
-          content_type: contentType,
-          'fields.slug': slug,
+        const res = await buildContentTypeAndData({
+          slug,
+          contentType,
           locale,
+          env,
         })
 
-        setEntry(entry.items?.[0])
+        setEntry(res)
       } catch (e) {
         console.log('-e', e)
       }
@@ -70,6 +66,7 @@ export const withContentfulEditor = (
     }
 
     const handleChange = (field: string, value: string) => {
+      /*
       setEntry((prev) => {
         return {
           ...prev,
@@ -82,9 +79,11 @@ export const withContentfulEditor = (
           },
         }
       })
+      */
     }
 
     const handleSave = async () => {
+      /*
       const space = await client.getSpace(env.space)
       const environment = await space.getEnvironment(env.environment)
       const entryToSave = await environment.getEntry('2F6n9qoAWTG1ekp12VTQOD')
@@ -105,6 +104,7 @@ export const withContentfulEditor = (
       }
 
       setSaving(false)
+      */
     }
 
     const handleEditClick = () => {
@@ -121,9 +121,9 @@ export const withContentfulEditor = (
 
     return (
       <>
-        <Header
+        <Buttons
           copy={edit ? 'Save changes' : 'Edit this page'}
-          cancel={edit}
+          edit={edit}
           saving={saving}
           onClick={handleEditClick}
           onCancelClick={() => setEdit(false)}
@@ -131,7 +131,9 @@ export const withContentfulEditor = (
 
         {edit && (
           <Sidebar
-            fields={entry?.fields}
+            env={env}
+            entry={entry}
+            fields={entry?._entry?.items?.[0]?.fields}
             locale={locale}
             loading={loading}
             onChange={handleChange}

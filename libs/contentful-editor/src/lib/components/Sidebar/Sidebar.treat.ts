@@ -11,6 +11,7 @@ export const wrapper = style({
   padding: theme.spacing['2'],
   width: 800,
 
+  overflowY: 'scroll',
   backgroundColor: theme.color.white,
   boxShadow: '1px 0 24px 4px rgba(0, 0, 0, 0.1)',
 })
