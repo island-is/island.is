@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Content search toolkit
 
 Contains useful functions to help with querying data from content search elasticsearch.
