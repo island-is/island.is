@@ -97,7 +97,7 @@
   - [UI Shell](libs/application/ui-shell/README.md)
 - [Auth API Lib](libs/auth-api-lib/README.md)
 - [Content Search Indexer](libs/content-search-indexer/README.md)
-- [Content search toolkit](libs/content-search-toolkit/README.md)
+- [Content Search Toolkit](libs/content-search-toolkit/README.md)
 - [Dokobit Signing](libs/dokobit-signing/README.md)
 - [Email Service](libs/email-service/README.md)
 - [Storybook](libs/island-ui/README.md)
