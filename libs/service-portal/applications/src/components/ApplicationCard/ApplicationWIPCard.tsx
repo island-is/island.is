@@ -11,8 +11,8 @@ export const ApplicationWIPCard: FC = () => {
       <Box position="absolute" className={styles.wipTag}>
         <Tag variant="blue" label>
           {formatMessage({
-            id: 'service.portal:coming-soon',
-            defaultMessage: 'Væntanlegt',
+            id: 'service.portal:in-progress',
+            defaultMessage: 'Í vinnslu',
           })}
         </Tag>
       </Box>
