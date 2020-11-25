@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import {
   ElasticService,
   TagAggregationResponse,
+  TypeAggregationResponse,
 } from '@island.is/content-search-toolkit'
 import { logger } from '@island.is/logging'
 import { SearchResult } from './models/searchResult.model'
@@ -10,16 +11,17 @@ import { TagCount } from './models/tagCount'
 import { SearchIndexes } from '@island.is/content-search-indexer/types'
 import { SearcherInput } from './dto/searcher.input'
 import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
+import { TypeCount } from './models/typeCount'
 
 @Injectable()
 export class ContentSearchService {
-  constructor(private elasticService: ElasticService) {}
+  constructor(private elasticService: ElasticService) { }
 
   private getIndex(lang: keyof typeof SearchIndexes) {
     return SearchIndexes[lang] ?? SearchIndexes.is
   }
 
-  mapFindAggregations(aggregations: TagAggregationResponse): TagCount[] {
+  mapTagAggregations(aggregations: TagAggregationResponse): TagCount[] {
     if (!aggregations?.group) {
       return null
     }
@@ -28,6 +30,19 @@ export class ContentSearchService {
         key: tagObject.key,
         count: tagObject.doc_count.toString(),
         value: tagObject.value.buckets?.[0]?.key ?? '', // value of tag is always the first value here we provide default value since value is optional
+      }),
+    )
+  }
+
+  mapTypeAggregations(aggregations: TypeAggregationResponse): TypeCount[] {
+    console.log(aggregations)
+    if (!aggregations?.typeCount) {
+      return null
+    }
+    return aggregations.typeCount.buckets.map<TypeCount>(
+      (tagObject) => ({
+        key: tagObject.key,
+        count: tagObject.doc_count.toString(),
       }),
     )
   }
@@ -42,7 +57,8 @@ export class ContentSearchService {
       total: body.hits.total.value,
       // we map data when it goes into the index we can return it without mapping it here
       items: body.hits.hits.map((item) => JSON.parse(item._source.response)),
-      tagCounts: this.mapFindAggregations(body.aggregations),
+      tagCounts: this.mapTagAggregations(body.aggregations as TagAggregationResponse),
+      typesCount: this.mapTypeAggregations(body.aggregations as TypeAggregationResponse)
     }
   }
 

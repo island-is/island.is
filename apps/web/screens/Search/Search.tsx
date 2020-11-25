@@ -26,8 +26,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import {
   GET_NAMESPACE_QUERY,
   GET_SEARCH_RESULTS_QUERY_DETAILED,
-  GET_SEARCH_RESULTS_NEWS_QUERY,
-  GET_SEARCH_COUNT_TAGS_QUERY,
+  GET_SEARCH_COUNT_QUERY,
 } from '../queries'
 import { CategoryLayout } from '../Layouts/Layouts'
 import routeNames from '@island.is/web/i18n/routeNames'
@@ -63,8 +62,7 @@ interface CategoryProps {
   q: string
   page: number
   searchResults: GetSearchResultsDetailedQuery['searchResults']
-  newsResults: GetSearchResultsNewsQuery['searchResults']
-  countTags: GetSearchCountTagsQuery['searchResults']
+  countResults: GetSearchCountTagsQuery['searchResults']
   namespace: GetNamespaceQuery['getNamespace']
 }
 
@@ -72,15 +70,17 @@ const Search: Screen<CategoryProps> = ({
   q,
   page,
   searchResults,
-  newsResults,
-  countTags,
+  countResults,
   namespace,
 }) => {
   const { activeLocale } = useI18n()
   const searchRef = useRef<HTMLInputElement | null>(null)
   const Router = useRouter()
   const n = useNamespace(namespace)
-  const [sidebarCategories, setSidebarCategories] = useState([])
+  const [sidebarCategories, setSidebarCategories] = useState({
+    tags: [],
+    types: [],
+  })
   const [
     grandTotalSearchResultCount,
     setGrandTotalSearchResultCount,
@@ -94,16 +94,36 @@ const Search: Screen<CategoryProps> = ({
 
   useEffect(() => {
     // we only update the tagCount results when we get new tag count results
-    const newTagCountResults = countTags.tagCounts.map(
+    const newTagCountResults = countResults.tagCounts.map(
       ({ key, count: total, value: title }) => ({
         key,
         total,
         title,
       }),
     )
-    setSidebarCategories(newTagCountResults)
-    setGrandTotalSearchResultCount(countTags.total)
-  }, [countTags])
+
+    const typeNames = {
+      webNews: n('newsTitle'),
+      webAdgerdirPage: n('adgerdirTitle'),
+    }
+    const newTypeCountResults = countResults.typesCount.reduce(
+      (typeList, { key, count: total }) => {
+        if (Object.keys(typeNames).includes(key)) {
+          typeList.push({
+            title: typeNames[key],
+            total,
+          })
+        }
+        return typeList
+      },
+      [],
+    )
+    setSidebarCategories({
+      tags: newTagCountResults,
+      types: newTypeCountResults,
+    })
+    setGrandTotalSearchResultCount(countResults.total)
+  }, [countResults])
 
   const getLabels = (item) => {
     const labels = []
@@ -159,14 +179,6 @@ const Search: Screen<CategoryProps> = ({
     labels: getLabels(item),
   }))
 
-  const newsItems = (newsResults.items as Array<News>).map((item) => ({
-    title: item.title,
-    description: item.intro,
-    href: makePath(item.__typename, '[slug]'),
-    as: makePath(item.__typename, item.slug),
-    label: n('newsTitle'),
-  }))
-
   const onRemoveFilters = () => {
     Router.replace({
       pathname: makePath('search'),
@@ -199,11 +211,8 @@ const Search: Screen<CategoryProps> = ({
   const filteredItems = searchResultsItems.filter(byCategory)
 
   const totalSearchResults = searchResults.total
-  const totalNews = newsResults.total
 
-  const totalResultsOnPage = filters.showNews ? totalNews : totalSearchResults
-
-  const totalPages = Math.ceil(totalResultsOnPage / PERPAGE)
+  const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
   const categoryTitle = filters.showNews
     ? n('newsTitle')
@@ -215,7 +224,7 @@ const Search: Screen<CategoryProps> = ({
     : searchResultsItems.find((x) => x.categorySlug === filters.category)
         ?.categorySlug
 
-  const categorySelectOptions = sidebarCategories.map(
+  const categorySelectOptions = sidebarCategories.tags.map(
     ({ title, total, key }) => ({
       label: `${title} (${total})`,
       value: key,
@@ -226,12 +235,6 @@ const Search: Screen<CategoryProps> = ({
     label: n('allCategories', 'Allir flokkar'),
     value: '',
   })
-
-  totalNews > 0 &&
-    categorySelectOptions.push({
-      label: `${n('newsTitle')} (${totalNews})`,
-      value: 'showNews',
-    })
 
   const onChangeSelectCategoryOptions = ({ value }: Option) => {
     value === 'showNews' ? onSelectNews() : onSelectCategory(value as string)
@@ -268,7 +271,7 @@ const Search: Screen<CategoryProps> = ({
                       label={''}
                     >
                       <Stack space={[1, 1, 2]}>
-                        {sidebarCategories.map((c, index) => {
+                        {sidebarCategories.tags.map((c, index) => {
                           const selected = c.key === filters.category
                           const text = `${c.title} (${c.total})`
 
@@ -291,57 +294,46 @@ const Search: Screen<CategoryProps> = ({
                 )}
               </Box>
             </Sidebar>
-            {totalNews > 0 && (
+            {
               <Sidebar bullet="none" title={n('oterCategories')}>
                 <Stack space={[1, 1, 2]}>
-                  <Filter
-                    selected={filters.showNews}
-                    onClick={() => onSelectNews()}
-                    text={`${n('newsTitle')} (${totalNews})`}
-                  />
+                  {sidebarCategories.types.map(({ title, total }) => (
+                    <Filter
+                      selected={filters.showNews}
+                      onClick={() => onSelectNews()}
+                      text={`${title} (${total})`}
+                    />
+                  ))}
                 </Stack>
               </Sidebar>
-            )}
+            }
           </Stack>
         }
         belowContent={
           <Stack space={2}>
-            {filters.showNews
-              ? newsItems.map(({ label, ...rest }, index) => {
-                  const tags: Array<CardTagsProps> = []
+            {filteredItems.map(
+              ({ image, thumbnail, labels, ...rest }, index) => {
+                const tags: Array<CardTagsProps> = []
 
+                labels.forEach((label) => {
                   tags.push({
                     title: label,
                     tagProps: {
                       outlined: true,
                     },
                   })
-
-                  return <Card key={index} tags={tags} {...rest} />
                 })
-              : filteredItems.map(
-                  ({ image, thumbnail, labels, ...rest }, index) => {
-                    const tags: Array<CardTagsProps> = []
 
-                    labels.forEach((label) => {
-                      tags.push({
-                        title: label,
-                        tagProps: {
-                          outlined: true,
-                        },
-                      })
-                    })
-
-                    return (
-                      <Card
-                        key={index}
-                        tags={tags}
-                        image={thumbnail ? thumbnail : image}
-                        {...rest}
-                      />
-                    )
-                  },
-                )}{' '}
+                return (
+                  <Card
+                    key={index}
+                    tags={tags}
+                    image={thumbnail ? thumbnail : image}
+                    {...rest}
+                  />
+                )
+              },
+            )}{' '}
             {totalSearchResults > 0 && (
               <Box paddingTop={8}>
                 <Pagination
@@ -401,8 +393,8 @@ const Search: Screen<CategoryProps> = ({
             </>
           ) : (
             <Text variant="intro" as="p">
-              {totalResultsOnPage}{' '}
-              {totalResultsOnPage === 1
+              {totalSearchResults}{' '}
+              {totalSearchResults === 1
                 ? n('searchResult', 'leitarniðurstaða')
                 : n('searchResults', 'leitarniðurstöður')}
               {(filters.category || filters.showNews) && (
@@ -446,10 +438,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       data: { searchResults },
     },
     {
-      data: { searchResults: news },
-    },
-    {
-      data: { searchResults: countTags },
+      data: { searchResults: countResults },
     },
     namespace,
   ] = await Promise.all([
@@ -472,24 +461,13 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       },
     }),
     apolloClient.query<GetSearchResultsNewsQuery, QuerySearchResultsArgs>({
-      query: GET_SEARCH_RESULTS_NEWS_QUERY,
-      variables: {
-        query: {
-          language: locale as ContentLanguage,
-          queryString,
-          types: ['webNews' as SearchableContentTypes],
-          size: PERPAGE,
-          page,
-        },
-      },
-    }),
-    apolloClient.query<GetSearchResultsNewsQuery, QuerySearchResultsArgs>({
-      query: GET_SEARCH_COUNT_TAGS_QUERY,
+      query: GET_SEARCH_COUNT_QUERY,
       variables: {
         query: {
           language: locale as ContentLanguage,
           queryString,
           countTag: 'category' as SearchableTags,
+          countTypes: true,
         },
       },
     }),
@@ -516,8 +494,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   return {
     q: queryString,
     searchResults,
-    newsResults: news,
-    countTags: countTags,
+    countResults,
     namespace,
     showSearchInHeader: false,
     page,
@@ -544,3 +521,6 @@ const Filter = ({ selected, text, onClick, truncate = false, ...props }) => {
 }
 
 export default withMainLayout(Search, { showSearchInHeader: false })
+
+// TODO: Make other content search result actually search
+// TODO: Fix totals in sidebar

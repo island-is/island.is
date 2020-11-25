@@ -17,6 +17,8 @@ import {
   AutocompleteTermResponse,
   TagAggregationInput,
   SyncRequest,
+  TypeAggregationInput,
+  TypeAggregationResponse,
 } from '../types'
 import { GetByIdResponse, SearchResponse } from '@island.is/shared/types'
 import {
@@ -26,6 +28,7 @@ import {
 import { environment } from '../environments/environment'
 import { dateAggregationQuery } from '../queries/dateAggregation'
 import { tagAggregationQuery } from '../queries/tagAggregation'
+import { typeAggregationQuery } from '../queries/typeAggregation'
 
 const { elastic } = environment
 
@@ -163,6 +166,15 @@ export class ElasticService {
     return data.body
   }
 
+  async getTypeAggregation(index: string, query: TypeAggregationInput) {
+    const requestBody = typeAggregationQuery(query)
+    const data = await this.findByQuery<
+      SearchResponse<any, TypeAggregationResponse>,
+      typeof requestBody
+    >(index, requestBody)
+    return data.body
+  }
+
   async getDateAggregation(index: string, query: DateAggregationInput) {
     const requestBody = dateAggregationQuery(query)
     const data = await this.findByQuery<
@@ -173,19 +185,10 @@ export class ElasticService {
   }
 
   async search(index: SearchIndexes, query: SearchInput) {
-    const { queryString, size, page, types, tags, countTag } = query
-
-    const requestBody = searchQuery({
-      queryString,
-      size,
-      page,
-      types,
-      tags,
-      countTag,
-    })
+    const requestBody = searchQuery(query)
 
     return this.findByQuery<
-      SearchResponse<MappedData, TagAggregationResponse>,
+      SearchResponse<MappedData, TagAggregationResponse | TypeAggregationResponse>,
       typeof requestBody
     >(index, requestBody)
   }

@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { IsArray, IsEnum, IsInt, IsOptional, IsString } from 'class-validator'
+import { IsArray, IsBoolean, IsEnum, IsInt, IsOptional, IsString } from 'class-validator'
 import { ContentLanguage } from '../enums/contentLanguage.enum'
 import { SearchableContentTypes } from '../enums/searchableContentTypes'
 import { SearchableTags } from '../enums/searchableTags'
@@ -47,5 +47,11 @@ export class SearcherInput {
   @Field(() => SearchableTags, { nullable: true })
   @IsEnum(SearchableTags)
   @IsOptional()
-  countTag: SearchableTags
+  countTag?: SearchableTags
+
+
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  countTypes?: boolean = false
 }

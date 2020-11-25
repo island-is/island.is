@@ -34,14 +34,13 @@ export class ArticleCategorySyncService
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapArticleCategory(entry)
-          const type = 'webArticleCategory'
           return {
             _id: mapped.slug,
             title: mapped.title,
             content: mapped.description,
-            type,
+            type: 'webArticleCategory',
             termPool: createTerms([mapped.title, mapped.description]),
-            response: JSON.stringify({ ...mapped, __typename: type }),
+            response: JSON.stringify({ ...mapped, typename: 'ArticleCategory' }),
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
           }
