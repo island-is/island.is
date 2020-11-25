@@ -6,6 +6,12 @@ These solutions are [FOSS](https://en.wikipedia.org/wiki/Free_and_open-source_so
 
 The repository is a [monorepo](../technical-overview/monorepo.md) that has multiple apps (something that can be built and run) and libraries (which other apps and libraries can depend on). All custom-written services is stored in there.
 
+## GitBook
+
+The apps and libraries documentation and our handbook are hosted on [GitBook](https://www.gitbook.com).
+
+### For a better reading experience make sure to visit [docs.devland.is](https://docs.devland.is/handbook/).
+
 ## Reading material
 
 To get more technical information about the project please make sure to read this [overview](handbook/technical-overview/README.md).
@@ -22,7 +28,7 @@ If you want to contribute to the repository, please make sure to follow [this gu
 
 ## Usage
 
-There are many projects that can be built and run. [Click here to see the full list](https://github.com/island-is/island.is/blob/master/nx.json#L29-L365).
+There are many projects that can be built and run. [Click here to see the full list](https://github.com/island-is/island.is/blob/main/nx.json).
 
 ### Development server
 

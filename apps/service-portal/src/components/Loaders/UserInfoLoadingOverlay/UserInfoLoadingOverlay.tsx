@@ -9,13 +9,17 @@ const UserInfoLoadingOverlay: FC<{}> = () => {
   if (userInfoState === 'pending')
     return (
       <div className={styles.overlay}>
-        <Text variant="h2">Skipti um notanda</Text>
+        <Text variant="h2" as="h2">
+          Skipti um notanda
+        </Text>
       </div>
     )
   else if (userInfoState === 'logging-out')
     return (
       <div className={styles.overlay}>
-        <Text variant="h2">Skrái notanda út</Text>
+        <Text variant="h2" as="h2">
+          Skrái notanda út
+        </Text>
       </div>
     )
   return null

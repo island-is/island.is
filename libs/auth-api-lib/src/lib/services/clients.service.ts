@@ -18,6 +18,8 @@ export class ClientsService {
   constructor(
     @InjectModel(Client)
     private clientModel: typeof Client,
+    @InjectModel(ClientAllowedCorsOrigin)
+    private clientAllowedCorsOriginModel: typeof ClientAllowedCorsOrigin,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -122,6 +124,23 @@ export class ClientsService {
 
     return await this.clientModel.destroy({
       where: { clientId: id },
+    })
+  }
+
+  /** Finds allowed cors origins by origin */
+  async findAllowedCorsOrigins(
+    origin: string,
+  ): Promise<ClientAllowedCorsOrigin[]> {
+    this.logger.debug(
+      `Finding client allowed CORS origins for origin - "${origin}"`,
+    )
+
+    if (!origin) {
+      throw new BadRequestException('Origin must be provided')
+    }
+
+    return this.clientAllowedCorsOriginModel.findAll({
+      where: { origin: origin },
     })
   }
 }

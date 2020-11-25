@@ -1,4 +1,5 @@
 import { Colors } from '@island.is/island-ui/theme'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { FormText, FormItem } from './Form'
 import { Condition } from './Condition'
 import { CallToAction } from './StateMachine'
@@ -15,6 +16,11 @@ export type MaybeWithApplication<T> = T | ((a: Application) => T)
 
 export type FieldWidth = 'full' | 'half'
 export type TextFieldVariant = 'text' | 'email' | 'number' | 'tel' | 'textarea'
+
+export type Context = {
+  application: Application
+  apolloClient: ApolloClient<object>
+}
 
 export interface BaseField extends FormItem {
   readonly id: string
@@ -42,6 +48,7 @@ export enum FieldTypes {
   FILEUPLOAD = 'FILEUPLOAD',
   SUBMIT = 'SUBMIT',
   DIVIDER = 'DIVIDER',
+  ASYNC_SELECT = 'ASYNC_SELECT',
 }
 
 export enum FieldComponents {
@@ -54,6 +61,7 @@ export enum FieldComponents {
   FILEUPLOAD = 'FileUploadFormField',
   DIVIDER = 'DividerFormField',
   SUBMIT = 'SubmitFormField',
+  ASYNC_SELECT = 'AsyncSelectFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -89,6 +97,14 @@ export interface SelectField extends BaseField {
   component: FieldComponents.SELECT
   options: MaybeWithApplication<Option[]>
   placeholder?: FormText
+}
+
+export interface AsyncSelectField extends BaseField {
+  readonly type: FieldTypes.ASYNC_SELECT
+  component: FieldComponents.ASYNC_SELECT
+  placeholder?: FormText
+  loadOptions: (c: Context) => Promise<Option[]>
+  loadingError?: FormText
 }
 
 export interface TextField extends BaseField {
@@ -142,3 +158,4 @@ export type Field =
   | FileUploadField
   | DividerField
   | SubmitField
+  | AsyncSelectField

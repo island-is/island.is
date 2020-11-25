@@ -55,18 +55,20 @@ const UserMenu: FC<{}> = () => {
                   marginRight={3}
                   className={styles.avatar}
                 >
-                  <Text variant="h3" color="blue400">
+                  <Text variant="h3" as="h3" color="blue400">
                     {getNameAbbreviation(userInfo?.profile.name || '')}
                   </Text>
                 </Box>
                 <Box marginRight={4}>
-                  <Text variant="h4">{userInfo?.profile.name}</Text>
+                  <Text variant="h4" as="h4">
+                    {userInfo?.profile.name}
+                  </Text>
                 </Box>
               </Box>
               <Box padding={3} background="blue100">
                 <Stack space={1}>
                   <NavItem
-                    path={ServicePortalPath.MinGognRoot}
+                    path={ServicePortalPath.MyInfoRoot}
                     onClick={setIsOpen.bind(null, false)}
                     icon={{
                       type: 'outline',
@@ -80,7 +82,7 @@ const UserMenu: FC<{}> = () => {
                     })}
                   </NavItem>
                   <NavItem
-                    path={ServicePortalPath.StillingarRoot}
+                    path={ServicePortalPath.SettingsRoot}
                     onClick={setIsOpen.bind(null, false)}
                     icon={{
                       type: 'outline',
