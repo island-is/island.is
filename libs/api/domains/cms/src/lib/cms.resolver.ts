@@ -354,3 +354,21 @@ export class ArticleResolver {
     return this.cmsContentfulService.getRelatedArticles(article.slug, 'is')
   }
 }
+
+@Resolver(() => AboutSubPage)
+export class AboutSubPageResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => AboutPage)
+  async parent(@Parent() { parent }: AboutSubPage) {
+    if (parent) {
+      const { lang, id } = parent
+      return this.cmsElasticsearchService.getSingleAboutPage(
+        SearchIndexes[lang],
+        id,
+      )
+    } else {
+      return null
+    }
+  }
+}

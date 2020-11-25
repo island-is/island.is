@@ -7,7 +7,10 @@ interface ProcessProps {
   activeSection: number
 }
 
-const FormStepperMobile = ({ sections, activeSection }: ProcessProps) => (
+export const FormStepperMobile = ({
+  sections,
+  activeSection,
+}: ProcessProps) => (
   <Box
     className={styles.stepContainer}
     display="flex"

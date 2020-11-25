@@ -19,7 +19,7 @@ const checkPresenceAWSAccessVars = () => {
     .filter((v) => !!v)
   if (valuesPresent.length != awsCredsEnvVars.length)
     error(
-      'Missing AWS envronment variables\n\nYou need to login to AWS portal and get some env variables as in step 1 here - https://github.com/island-is/handbook/blob/master/dockerizing.md#troubleshooting\nThen simply re-run the script',
+      'Missing AWS envronment variables\n\nYou need to login to AWS portal and get some env variables as in step 1 here - https://docs.devland.is/handbook/technical-overview/devops/dockerizing#troubleshooting\nThen simply re-run the script',
     )
 }
 

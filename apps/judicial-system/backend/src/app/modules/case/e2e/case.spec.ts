@@ -198,7 +198,7 @@ describe('Case', () => {
           id: response.body.id || 'FAILURE',
           created: response.body.created || 'FAILURE',
           modified: response.body.modified || 'FAILURE',
-          state: CaseState.DRAFT,
+          state: CaseState.NEW,
         } as Case)
 
         // Check the data in the database
@@ -228,7 +228,7 @@ describe('Case', () => {
           id: response.body.id || 'FAILURE',
           created: response.body.created || 'FAILURE',
           modified: response.body.modified || 'FAILURE',
-          state: CaseState.DRAFT,
+          state: CaseState.NEW,
         } as Case)
 
         // Check the data in the database
