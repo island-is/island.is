@@ -11,8 +11,6 @@ export const CopyToClipboardInput: FC<CopyToClipboardInputProps> = ({
   inputLabel,
   inputValue,
 }) => {
-  const testRef = useRef<HTMLInputElement>(null)
-
   const copyToClipboard = (inputValue: string) => {
     const el = document.createElement('textarea')
     el.value = inputValue
@@ -23,14 +21,15 @@ export const CopyToClipboardInput: FC<CopyToClipboardInputProps> = ({
     el.select()
     document.execCommand('copy')
     document.body.removeChild(el)
-    //TODO if we want to use ToastContainer the component needs to be added to the base screen of the application
-    //isSuccessful ? toast.success('Afritað!') : null
+    buttonRef.current?.focus()
   }
+
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  //TODO Change icon on button to copy icon
   return (
     <Box>
       <Box position="relative">
         <Input
-          ref={testRef}
           disabled
           label={inputLabel}
           name={inputLabel}
@@ -38,6 +37,7 @@ export const CopyToClipboardInput: FC<CopyToClipboardInputProps> = ({
         />
         <Box position="absolute" className={styles.clipboardContainer}>
           <Button
+            ref={buttonRef}
             circle
             colorScheme="default"
             icon="documents"
