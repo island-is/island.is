@@ -11,6 +11,7 @@ import { GetNewsInput } from './dto/getNews.input'
 import { GetArticlesInput } from './dto/getArticles.input'
 import { NewsList } from './models/newsList.model'
 import { GetNewsDatesInput } from './dto/getNewsDates.input'
+import { AboutPage } from './models/aboutPage.model'
 import { SearchIndexes } from '@island.is/content-search-indexer/types'
 
 @Injectable()
@@ -157,5 +158,13 @@ export class CmsElasticsearchService {
     } else {
       return null
     }
+  }
+
+  async getSingleAboutPage(
+    index: SearchIndexes,
+    id: string,
+  ): Promise<AboutPage> {
+    const aboutPageDocument = await this.elasticService.findById(index, id)
+    return JSON.parse(aboutPageDocument.body?._source?.response)
   }
 }

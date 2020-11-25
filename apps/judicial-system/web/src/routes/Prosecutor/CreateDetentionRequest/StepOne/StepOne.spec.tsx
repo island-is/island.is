@@ -12,10 +12,7 @@ import {
 import { MockedProvider } from '@apollo/client/testing'
 import { CaseGender, UpdateCase } from '@island.is/judicial-system/types'
 import formatISO from 'date-fns/formatISO'
-import {
-  UserContext,
-  UserProvider,
-} from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 describe('/krafa with an id', () => {
   test('should prefill the inputs with the correct data if id is in the url', async () => {
@@ -147,6 +144,40 @@ describe('/krafa with an id', () => {
   })
 })
 
+test('should have a disabled defender name and email even if a judge erases that info from the hearing arrangement screen', async () => {
+  // Arrange
+
+  // Act
+  render(
+    <MockedProvider
+      mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+      addTypename={false}
+    >
+      <MemoryRouter
+        initialEntries={[`${Constants.SINGLE_REQUEST_BASE_ROUTE}/test_id_3`]}
+      >
+        <UserProvider>
+          <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+            <StepOne />
+          </Route>
+        </UserProvider>
+      </MemoryRouter>
+    </MockedProvider>,
+  )
+
+  // Assert
+  // A value is considered dirty if it's a string, even an empty one.
+  expect(
+    await waitFor(
+      () => screen.getByLabelText('Nafn verjanda') as HTMLInputElement,
+    ),
+  ).toBeDisabled()
+
+  expect(
+    screen.getByLabelText('Netfang verjanda') as HTMLInputElement,
+  ).toBeDisabled()
+})
+
 describe('/krafa without ID', () => {
   test('should display an empty form if there is no id in url', async () => {
     // Arrange
@@ -207,11 +238,7 @@ describe('/krafa without ID', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     const now = new Date()
-    const arrestDate = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() + 1,
-    )
+    const arrestDate = new Date(now.getFullYear(), now.getMonth(), 15)
     arrestDate.setHours(17, 0, 0)
     const lastDateOfTheMonth = new Date(
       now.getFullYear(),
@@ -363,9 +390,7 @@ describe('/krafa without ID', () => {
 
     userEvent.click(arrestedDatePicker[0])
 
-    userEvent.click(
-      arrestedWrapper.getAllByText((now.getDate() + 1).toString())[0],
-    )
+    userEvent.click(arrestedWrapper.getAllByText('15')[0])
 
     const hearingWrapper = within(datePickerWrappers[1])
 

@@ -42,7 +42,7 @@ export const FamilyMemberCard: FC<Props> = ({
           background="blue100"
           className={styles.avatar}
         >
-          <Text variant="h2" color="blue400">
+          <Text variant="h2" as="h2" color="blue400">
             {getNameAbbreviation(title)}
           </Text>
         </Box>
@@ -68,7 +68,7 @@ export const FamilyMemberCard: FC<Props> = ({
             </Text>
           )}
           <Box marginBottom={1}>
-            <Text variant="h3" color="dark400">
+            <Text variant="h3" as="h3" color="dark400">
               {title}
             </Text>
           </Box>

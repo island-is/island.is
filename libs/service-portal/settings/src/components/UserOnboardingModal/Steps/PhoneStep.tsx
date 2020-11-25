@@ -24,7 +24,7 @@ export const PhoneStep: FC<Props> = ({ onBack, onSubmit, tel, natReg }) => {
 
   return (
     <>
-      <Text variant="h1" marginBottom={3}>
+      <Text variant="h1" as="h1" marginBottom={3}>
         {step === 'form'
           ? formatMessage({
               id: 'service.portal:tel-number',
