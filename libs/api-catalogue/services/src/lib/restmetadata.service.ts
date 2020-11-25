@@ -206,16 +206,19 @@ export class RestMetadataService {
     return true
   }
 
-
-   /**
+  /**
    * Creates a single service id for the service based on the service code and X-Road info.
    * @param xroadIdentifier
    */
   private createServiceId(xroadIdentifier: XroadIdentifier): string {
-      const serviceCode = xroadIdentifier.serviceCode?.split('-')[0]
-      const serviceId = `${xroadIdentifier.instance}_${xroadIdentifier.memberClass}_${xroadIdentifier.memberCode}_${xroadIdentifier.subsystemCode}_${serviceCode}`
-      
-      //Remove tokens that interrupt URLs
-      return Buffer.from(serviceId).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '')
+    const serviceCode = xroadIdentifier.serviceCode?.split('-')[0]
+    const serviceId = `${xroadIdentifier.instance}_${xroadIdentifier.memberClass}_${xroadIdentifier.memberCode}_${xroadIdentifier.subsystemCode}_${serviceCode}`
+
+    //Remove tokens that interrupt URLs
+    return Buffer.from(serviceId)
+      .toString('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/\=+$/, '')
   }
 }
