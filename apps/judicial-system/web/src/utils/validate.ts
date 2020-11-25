@@ -28,21 +28,21 @@ export const getRegexByValidation = (validation: Validation) => {
     case 'time-format':
       return {
         regex: new RegExp('^((0[0-9]|1[0-9]|2[0-3])|[0-9]):[0-5][0-9]$'),
-        errorMessage: 'Ekki á réttu formi',
+        errorMessage: 'Dæmi: 12:34 eða 1:23',
       }
     case 'police-casenumber-format':
       return {
         regex: new RegExp(
           /^[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-\d{0,99999}$/g,
         ),
-        errorMessage: 'Ekki á réttu formi',
+        errorMessage: 'Dæmi: 012-3456-7890',
       }
     case 'national-id':
       return {
         regex: new RegExp(
           /^(0[0-9]|1[0-9]|2[0-9]|3[0-1])(0[0-9]|1[0-2])(\d{2})(-?(\d{3}){1}(0|9){1})?$/g,
         ),
-        errorMessage: 'Ekki á réttu formi',
+        errorMessage: 'Dæmi: 012345-6789',
       }
     case 'email-format':
       return {

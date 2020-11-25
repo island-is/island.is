@@ -144,7 +144,7 @@ describe('Validation', () => {
 
       // Assert
       expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Ekki á réttu formi')
+      expect(r.errorMessage).toEqual('Dæmi: 012-3456-7890')
     })
   })
 
@@ -158,7 +158,7 @@ describe('Validation', () => {
 
       // Assert
       expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Ekki á réttu formi')
+      expect(r.errorMessage).toEqual('Dæmi: 12:34 eða 1:23')
     })
 
     test('should be valid if with the hour part is one digit within the 24 hour clock', () => {
@@ -183,7 +183,7 @@ describe('Validation', () => {
 
       // Assert
       expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Ekki á réttu formi')
+      expect(r.errorMessage).toEqual('Dæmi: 012345-6789')
     })
 
     test('should be valid given just the first six digits', () => {
@@ -207,7 +207,7 @@ describe('Validation', () => {
 
       // Assert
       expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Ekki á réttu formi')
+      expect(r.errorMessage).toEqual('Dæmi: 012345-6789')
     })
 
     test('should not be valid given an invalid month', () => {
@@ -219,7 +219,7 @@ describe('Validation', () => {
 
       // Assert
       expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Ekki á réttu formi')
+      expect(r.errorMessage).toEqual('Dæmi: 012345-6789')
     })
   })
 
