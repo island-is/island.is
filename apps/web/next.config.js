@@ -77,6 +77,7 @@ module.exports = withTreat(
         graphqlUrl: '',
         graphqlEndpoint: graphqlPath,
         SENTRY_DSN,
+        disableApiCatalog: true,
       },
 
       env: {
