@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 
-import { useI18n } from '.'
+import useI18n from './useI18n'
 import { Locale } from '../types'
 import { TranslationsContext } from './appWithTranslation'
 
