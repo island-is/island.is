@@ -9,6 +9,8 @@ import * as z from 'zod'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import { assign } from 'xstate'
+import assignParentTemplate from '../emailTemplates/assignToParent'
+import assignEmployerTemplate from '../emailTemplates/assignToEmployer'
 
 type Events =
   | { type: 'APPROVE' }
@@ -108,6 +110,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       otherParentApproval: {
         entry: 'assignToOtherParent',
+        invoke: {
+          src: {
+            type: 'emailService',
+            template: assignParentTemplate,
+          },
+        },
         meta: {
           name: 'Needs other parent approval',
           progress: 0.4,
@@ -132,6 +140,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       employerApproval: {
         entry: 'assignToEmployer',
+        invoke: {
+          src: {
+            type: 'emailService',
+            template: assignEmployerTemplate,
+          },
+        },
         meta: {
           name: 'Employer Approval',
           progress: 0.5,

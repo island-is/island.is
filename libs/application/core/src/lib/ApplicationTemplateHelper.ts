@@ -1,5 +1,14 @@
-import { interpret, Event, EventObject } from 'xstate'
+import {
+  interpret,
+  Event,
+  EventObject,
+  MachineOptions,
+  ServiceConfig,
+  InvokeMeta,
+} from 'xstate'
 import { Application, ExternalData, FormValue } from '../types/Application'
+import merge from 'lodash/merge'
+
 import {
   ApplicationContext,
   ApplicationRole,
@@ -32,11 +41,14 @@ export class ApplicationTemplateHelper<
     this.template = template
   }
 
-  private initializeStateMachine(stateMachineContext?: TContext) {
+  private initializeStateMachine(
+    stateMachineContext?: TContext,
+    stateMachineOptions?: Partial<MachineOptions<TContext, TEvents>>,
+  ) {
     this.stateMachine = createApplicationMachine(
       this.application,
       this.template.stateMachineConfig,
-      this.template.stateMachineOptions,
+      merge({}, stateMachineOptions, this.template.stateMachineOptions),
       stateMachineContext,
     )
   }
@@ -58,8 +70,22 @@ export class ApplicationTemplateHelper<
    * @param event A state machine event
    * returns [hasChanged, newState, newApplication] where newApplication has the updated state value
    */
-  changeState(event: Event<TEvents>): [boolean, string, Application] {
-    this.initializeStateMachine()
+  changeState(
+    event: Event<TEvents>,
+    emailService: any,
+  ): [boolean, string, Application] {
+    this.initializeStateMachine(undefined, {
+      services: {
+        emailService: async (
+          context: TContext,
+          event: TEvents,
+          { src }: InvokeMeta,
+        ) => {
+          const template = src.template(context)
+          return emailService.sendEmail(template)
+        },
+      },
+    })
     const service = interpret(
       this.stateMachine,
       this.template.stateMachineOptions,
