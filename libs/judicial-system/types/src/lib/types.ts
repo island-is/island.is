@@ -18,6 +18,7 @@ export interface User {
 }
 
 export enum CaseState {
+  NEW = 'NEW',
   DRAFT = 'DRAFT',
   SUBMITTED = 'SUBMITTED',
   ACCEPTED = 'ACCEPTED',
@@ -25,6 +26,7 @@ export enum CaseState {
 }
 
 export enum CaseTransition {
+  OPEN = 'OPEN',
   SUBMIT = 'SUBMIT',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',

@@ -38,7 +38,7 @@ Please use the `logging` library and _not_ `console.log`. Even better, use Nest.
 
 The `logging` library provides a single place to control the log routing so if you deviate from that you might not have your log statements delivered correctly to our central storage.
 
-For using the correct logging levels please see the logging manual [here](https://github.com/island-is/handbook/logging.md)
+For using the correct logging levels please see the logging manual [here](../../handbook/technical-overview/devops/logging.md)
 
 ### Metrics
 
@@ -46,13 +46,13 @@ We use Prometheus for collecting metrics. For more details about the different t
 
 If you use the `infra-nest-server` it is already configured to collect metrics for all your routes and export metrics to be scraped.
 
-For more details, please see the metrics manual [here](https://github.com/island-is/handbook/metrics.md)
+For more details, please see the metrics manual [here](../../handbook/technical-overview/devops/metrics.md)
 
 ### Tracing
 
 If you use the `infra-nest-server` it is already configured to provide support for tracing for HTTP/HTTPS API calls as well as support for your service to participate in tracing. We have not added support for tracing to Postgres as is but hope to take care of this soon enough. You do not need to do anything for this to work. It will start working automatically when we add this.
 
-For more details, please see the tracing manual [here](https://github.com/island-is/handbook/tracing.md)
+For more details, please see the tracing manual [here](../../handbook/technical-overview/devops/observability#tracing)
 
 ## Code owners and maintainers
 

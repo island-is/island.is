@@ -17,13 +17,13 @@ export const settingsModule: ServicePortalModule = {
     const routes: ServicePortalRoute[] = [
       {
         name: 'Stillingar',
-        path: ServicePortalPath.StillingarRoot,
+        path: ServicePortalPath.SettingsRoot,
         render: () =>
           lazy(() => import('./screens/NavigationScreen/NavigationScreen')),
       },
       {
         name: 'Mín réttindi',
-        path: ServicePortalPath.StillingarUmbod,
+        path: ServicePortalPath.MyLicensesRoot,
         render: () =>
           lazy(() => import('./screens/DelegationGreeting/DelegationGreeting')),
       },

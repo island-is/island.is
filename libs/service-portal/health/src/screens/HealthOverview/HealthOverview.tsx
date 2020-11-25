@@ -68,7 +68,7 @@ export const HealthOverview: ServicePortalModuleComponent = () => {
         id: 'service.portal:timeline-link-title',
         defaultMessage: 'Sjá tímalínu',
       })}
-      figure="/assets/images/park.jpg"
+      figure="/assets/images/bench.svg"
     />
   )
 }

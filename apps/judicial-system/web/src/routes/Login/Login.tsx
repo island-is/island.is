@@ -15,7 +15,6 @@ export const Login = () => {
 
   useEffect(() => {
     document.title = 'Réttarvörslugátt'
-    window.localStorage.clear()
   }, [])
 
   useEffect(() => {
