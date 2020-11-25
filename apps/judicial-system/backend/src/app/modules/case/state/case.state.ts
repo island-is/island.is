@@ -6,10 +6,6 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { User } from '../user'
-import { TransitionCaseDto } from './dto'
-import { Case } from './models'
-
 interface Agent {
   role: UserRole
   userKey: string
@@ -28,6 +24,14 @@ export interface TransitionUpdate {
 }
 
 const caseStateMachine: Map<CaseTransition, Rule> = new Map([
+  [
+    CaseTransition.OPEN,
+    {
+      from: CaseState.NEW,
+      to: CaseState.DRAFT,
+      agent: { role: UserRole.PROSECUTOR, userKey: 'prosecutorId' },
+    },
+  ],
   [
     CaseTransition.SUBMIT,
     {
@@ -55,29 +59,30 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
 ])
 
 export const transitionCase = function (
-  transition: TransitionCaseDto,
-  existingCase: Case,
-  user: User,
+  transition: CaseTransition,
+  currentState: CaseState,
+  userId: string,
+  userRole: UserRole,
 ): TransitionUpdate {
-  const rule: Rule = caseStateMachine.get(transition.transition)
+  const rule: Rule = caseStateMachine.get(transition)
 
-  if (rule?.from !== existingCase.state) {
+  if (rule?.from !== currentState) {
     throw new ForbiddenException(
-      `The transition ${transition.transition} cannot be applied to a case in state ${existingCase.state}`,
+      `The transition ${transition} cannot be applied to a case in state ${currentState}`,
     )
   }
 
   const agent: Agent = rule.agent
 
-  if (user.role !== agent.role) {
+  if (userRole !== agent.role) {
     throw new UnauthorizedException(
-      `The transition ${transition.transition} cannot be applied by a user with role ${user.role}`,
+      `The transition ${transition} cannot be applied by a user with role ${userRole}`,
     )
   }
 
   const update: TransitionUpdate = { state: rule.to }
 
-  update[agent.userKey] = user.id
+  update[agent.userKey] = userId
 
   return update
 }

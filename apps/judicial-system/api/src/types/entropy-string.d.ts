@@ -1,3 +1,6 @@
 declare module 'entropy-string' {
-  export const Entropy
+  export class Entropy {
+    constructor({ bits: number })
+    string: () => string
+  }
 }
