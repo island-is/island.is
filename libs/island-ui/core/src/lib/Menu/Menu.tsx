@@ -7,7 +7,6 @@ import { Logo } from '../Logo/Logo'
 import { Input } from '../Input/Input'
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
-import bg from './bg.png'
 
 /* eslint-disable-next-line */
 export interface MenuProps {
@@ -35,7 +34,6 @@ export const Menu = ({ baseId }: MenuProps) => {
             paddingBottom={4}
             paddingLeft={[3, 3, 6]}
             className={styles.main}
-            style={{ backgroundImage: `url(${bg})` }}
             display="flex"
             justifyContent="flexEnd"
           >

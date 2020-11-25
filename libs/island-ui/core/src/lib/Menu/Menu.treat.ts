@@ -1,6 +1,6 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { style } from 'treat'
-import bg from './bg.png'
+import bg from './bg.svg'
 
 export const container = style({
   ...themeUtils.responsiveStyle({
