@@ -13,6 +13,7 @@ import {
   GridContainer,
   RadioButton,
   Tooltip,
+  InputProps,
 } from '@island.is/island-ui/core'
 import { validate } from '../../../../utils/validate'
 import { isDirty, isNextDisabled } from '../../../../utils/stepHelper'
@@ -25,6 +26,7 @@ import * as Constants from '../../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  padTimeWithZero,
   parseString,
   parseTime,
   parseTransition,
@@ -53,6 +55,7 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { ValueType } from 'react-select/src/types'
+import InputMask from 'react-input-mask'
 import * as styles from './StepOne.treat'
 
 export const CreateCaseMutation = gql`
@@ -148,7 +151,7 @@ export const StepOne: React.FC = () => {
     requestedCourtTimeErrorMessage,
     setRequestedCourtTimeErrorMessage,
   ] = useState<string>('')
-  const [modalVisible, setModalVisible] = useState(false)
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
 
   const { id } = useParams<{ id: string }>()
 
@@ -848,33 +851,34 @@ export const StepOne: React.FC = () => {
                 />
               </GridColumn>
               <GridColumn span="3/8">
-                <Input
-                  data-testid="arrestTime"
-                  name="arrestTime"
-                  label="Tímasetning"
-                  placeholder="Settu inn tíma"
+                <InputMask
+                  mask={[
+                    /([0-9]|1[0-9]|2[0-3])/,
+                    /([0-9])?/,
+                    ':',
+                    /[0-9]/,
+                    /[0-9]/,
+                  ]}
+                  maskPlaceholder={null}
+                  beforeMaskedStateChange={({ nextState }) => {
+                    let { value } = nextState
+                    value = value.replace('::', ':')
+
+                    return {
+                      ...nextState,
+                      value,
+                    }
+                  }}
                   disabled={!workingCase.arrestDate}
-                  errorMessage={arrestTimeErrorMessage}
-                  hasError={arrestTimeErrorMessage !== ''}
-                  defaultValue={
-                    workingCase.arrestDate?.includes('T')
-                      ? formatDate(workingCase.arrestDate, TIME_FORMAT)
-                      : undefined
-                  }
-                  ref={arrestTimeRef}
                   onBlur={(evt) => {
+                    const time = padTimeWithZero(evt.target.value)
+
                     if (workingCase.arrestDate) {
-                      const validateTimeEmpty = validate(
-                        evt.target.value,
-                        'empty',
-                      )
-                      const validateTimeFormat = validate(
-                        evt.target.value,
-                        'time-format',
-                      )
+                      const validateTimeEmpty = validate(time, 'empty')
+                      const validateTimeFormat = validate(time, 'time-format')
                       const arrestDateMinutes = parseTime(
                         workingCase.arrestDate,
-                        evt.target.value,
+                        time,
                       )
 
                       setWorkingCase({
@@ -899,8 +903,23 @@ export const StepOne: React.FC = () => {
                     }
                   }}
                   onFocus={() => setArrestTimeErrorMessage('')}
-                  required
-                />
+                >
+                  <Input
+                    data-testid="arrestTime"
+                    name="arrestTime"
+                    label="Tímasetning"
+                    placeholder="Settu inn tíma"
+                    ref={arrestTimeRef}
+                    errorMessage={arrestTimeErrorMessage}
+                    hasError={arrestTimeErrorMessage !== ''}
+                    defaultValue={
+                      workingCase.arrestDate?.includes('T')
+                        ? formatDate(workingCase.arrestDate, TIME_FORMAT)
+                        : undefined
+                    }
+                    required
+                  />
+                </InputMask>
               </GridColumn>
             </GridRow>
           </Box>

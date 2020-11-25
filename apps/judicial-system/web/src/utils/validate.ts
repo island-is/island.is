@@ -27,7 +27,7 @@ export const getRegexByValidation = (validation: Validation) => {
       }
     case 'time-format':
       return {
-        regex: new RegExp('^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$'),
+        regex: new RegExp('^((0[0-9]|1[0-9]|2[0-3])|[0-9]):[0-5][0-9]$'),
         errorMessage: 'Ekki á réttu formi',
       }
     case 'police-casenumber-format':

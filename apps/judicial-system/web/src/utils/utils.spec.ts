@@ -1,5 +1,6 @@
 import {
   insertAt,
+  padTimeWithZero,
   parseArray,
   parseString,
   parseTime,
@@ -106,6 +107,30 @@ ipsum`
       expect(dd).toEqual('2020-10-24')
     })
   })
+
+  describe('padTimeWithZero', () => {
+    test('should pad a time with single hour value with a zero', () => {
+      // Arrange
+      const val = '1:15'
+
+      // Act
+      const result = padTimeWithZero(val)
+
+      // Assert
+      expect(result).toEqual('01:15')
+    })
+
+    test('should return the input value if the value is of lenght 5', () => {
+      // Arrange
+      const val = '01:15'
+
+      // Act
+      const result = padTimeWithZero(val)
+
+      // Assert
+      expect(result).toEqual('01:15')
+    })
+  })
 })
 
 describe('Validation', () => {
@@ -124,7 +149,7 @@ describe('Validation', () => {
   })
 
   describe('Validate time format', () => {
-    test('should fail if not in correct form', () => {
+    test('should fail if time is not within the 24 hour clock', () => {
       // Arrange
       const time = '99:00'
 
@@ -134,6 +159,17 @@ describe('Validation', () => {
       // Assert
       expect(r.isValid).toEqual(false)
       expect(r.errorMessage).toEqual('Ekki á réttu formi')
+    })
+
+    test('should be valid if with the hour part is one digit within the 24 hour clock', () => {
+      // Arrange
+      const time = '1:00'
+
+      // Act
+      const r = validate(time, 'time-format')
+
+      // Assert
+      expect(r.isValid).toEqual(true)
     })
   })
 
