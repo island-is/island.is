@@ -17,19 +17,33 @@ interface Props extends FieldBaseProps {
   field: AsyncSelectField
 }
 const AsyncSelectFormField: FC<Props> = ({ application, error, field }) => {
-  const { id, name, description, loadOptions, placeholder, disabled } = field
+  const {
+    id,
+    name,
+    description,
+    loadOptions,
+    loadingError,
+    placeholder,
+    disabled,
+  } = field
   const { formatMessage } = useLocale()
   const apolloClient = useApolloClient()
   const [options, setOptions] = useState<Option[]>([])
+  const [hasLoadingError, setHasLoadingError] = useState<boolean>(false)
 
   useEffect(() => {
     async function load() {
-      const loaded = await loadOptions({ application, apolloClient })
-      setOptions(loaded)
+      try {
+        setHasLoadingError(false)
+        const loaded = await loadOptions({ application, apolloClient })
+        setOptions(loaded)
+      } catch {
+        setHasLoadingError(true)
+      }
     }
 
     load()
-  }, [])
+  }, [loadOptions])
 
   return (
     <div>
@@ -44,7 +58,12 @@ const AsyncSelectFormField: FC<Props> = ({ application, error, field }) => {
           label={formatText(name, application, formatMessage)}
           name={id}
           disabled={disabled}
-          error={error}
+          error={
+            error ||
+            (hasLoadingError && loadingError
+              ? formatText(loadingError, application, formatMessage)
+              : undefined)
+          }
           id={id}
           options={options.map(({ label, tooltip, ...o }) => ({
             ...o,

@@ -1,4 +1,3 @@
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { Condition } from '../types/Condition'
 import {
   CheckboxField,
@@ -21,7 +20,7 @@ import {
   Context,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
-import { Application, FormText } from '..'
+import { FormText } from '..'
 import { Colors } from '@island.is/island-ui/theme'
 
 export function buildCheckboxField(data: {
@@ -191,7 +190,8 @@ export function buildAsyncSelectField(data: {
   name: FormText
   description?: FormText
   placeholder?: string
-  loadOptions: (c: Context) => Promise<any>
+  loadOptions: (c: Context) => Promise<Option[]>
+  loadingError?: FormText
   disabled?: boolean
   width?: FieldWidth
 }): AsyncSelectField {
@@ -201,6 +201,7 @@ export function buildAsyncSelectField(data: {
     name,
     description,
     loadOptions,
+    loadingError,
     placeholder,
     disabled = false,
     width = 'full',
@@ -215,6 +216,7 @@ export function buildAsyncSelectField(data: {
     name,
     description,
     loadOptions,
+    loadingError,
     type: FieldTypes.ASYNC_SELECT,
     component: FieldComponents.ASYNC_SELECT,
   }

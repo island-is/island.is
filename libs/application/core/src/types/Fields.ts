@@ -103,7 +103,8 @@ export interface AsyncSelectField extends BaseField {
   readonly type: FieldTypes.ASYNC_SELECT
   component: FieldComponents.ASYNC_SELECT
   placeholder?: FormText
-  loadOptions: (c: Context) => Promise<any>
+  loadOptions: (c: Context) => Promise<Option[]>
+  loadingError?: FormText
 }
 
 export interface TextField extends BaseField {

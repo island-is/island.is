@@ -25,25 +25,7 @@ import {
   getEstimatedMonthlyPay,
   getNameAndIdOfSpouse,
 } from '../fields/parentalLeaveUtils'
-import gql from 'graphql-tag'
-
-const GetUnions = gql`
-  query GetUnions {
-    getUnions {
-      id
-      name
-    }
-  }
-`
-
-const GetPensionFunds = gql`
-  query GetPensionFunds {
-    getPensionFunds {
-      id
-      name
-    }
-  }
-`
+import { GetPensionFunds, GetUnions } from '../graphql/queries'
 
 interface SelectItem {
   id: string
@@ -201,25 +183,30 @@ export const ParentalLeaveForm: Form = buildForm({
                       query: GetPensionFunds,
                     })
 
-                    return data?.getPensionFunds.map(({ id, name }) => ({
-                      label: name,
-                      value: id,
-                    }))
+                    return (
+                      data?.getPensionFunds.map(({ id, name }) => ({
+                        label: name,
+                        value: id,
+                      })) ?? []
+                    )
                   },
                 }),
                 buildAsyncSelectField({
                   name: 'Union (optional)',
                   id: 'payments.union',
                   width: 'half',
+                  loadingError: m.loadingError,
                   loadOptions: async ({ apolloClient }) => {
                     const { data } = await apolloClient.query<UnionQuery>({
                       query: GetUnions,
                     })
 
-                    return data?.getUnions.map(({ id, name }) => ({
-                      label: name,
-                      value: id,
-                    }))
+                    return (
+                      data?.getUnions.map(({ id, name }) => ({
+                        label: name,
+                        value: id,
+                      })) ?? []
+                    )
                   },
                 }),
                 buildRadioField({
