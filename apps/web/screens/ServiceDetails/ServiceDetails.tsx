@@ -6,7 +6,6 @@ import { CustomNextError } from '@island.is/web/units/errors'
 
 const { publicRuntimeConfig } = getConfig()
 
-
 /* TEMPORARY LAYOUT CREATED TO SCAFFOLD SERVICE DETAILS INTO THE WEB */
 
 interface ServiceDetailsProps {
@@ -14,11 +13,9 @@ interface ServiceDetailsProps {
 }
 
 const ServiceDetails: Screen<ServiceDetailsProps> = ({ title }) => {
-  const { 
-    disableApiCatalog: disablePage
-  } = publicRuntimeConfig
-  
-  if(disablePage) {
+  const { disableApiCatalog: disablePage } = publicRuntimeConfig
+
+  if (disablePage) {
     throw new CustomNextError(404, 'Not found')
   }
 

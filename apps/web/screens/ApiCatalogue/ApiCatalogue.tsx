@@ -6,7 +6,6 @@ import { CustomNextError } from '@island.is/web/units/errors'
 
 const { publicRuntimeConfig } = getConfig()
 
-
 /* TEMPORARY LAYOUT CREATED TO SCAFFOLD API CATALOGUE INTO THE WEB */
 
 interface ApiCatalogueProps {
@@ -14,11 +13,9 @@ interface ApiCatalogueProps {
 }
 
 const ApiCatalogue: Screen<ApiCatalogueProps> = ({ title }) => {
-  const { 
-    disableApiCatalog: disablePage
-  } = publicRuntimeConfig
-  
-  if(disablePage) {
+  const { disableApiCatalog: disablePage } = publicRuntimeConfig
+
+  if (disablePage) {
     throw new CustomNextError(404, 'Not found')
   }
 
