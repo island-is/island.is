@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { logger, Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { VehicleModel } from './model/vehicle.model'
 import { RecyclingRequestModel } from '../recycling.request/model/recycling.request.model'
 import { RecyclingPartnerModel } from '../recycling.partner/model/recycling.partner.model'
