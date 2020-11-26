@@ -19,7 +19,7 @@ export abstract class BasicDataProvider implements DataProvider {
    * @param application: current application object which may or may not possess answers, and more information that
    * could be beneficial in the function body
    */
-  abstract provide(application: Application): Promise<unknown>
+  abstract async provide(application: Application): Promise<unknown>
 
   // extend this method to transform a rejected response from the provide function to the proper type
   onProvideError(_: unknown): FailedDataProviderResult {
