@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { ClientsController } from './clients.controller'
+import { OriginsController } from './origins.controller'
 import {
   Client,
   ClientAllowedScope,
@@ -29,7 +30,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
       ClientClaim,
     ]),
   ],
-  controllers: [ClientsController],
+  controllers: [ClientsController, OriginsController],
   providers: [ClientsService],
 })
 export class ClientsModule {}

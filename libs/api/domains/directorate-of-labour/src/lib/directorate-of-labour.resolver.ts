@@ -15,7 +15,7 @@ import { GetParentalLeavesEstimatedPaymentPlanInput } from '../dto/getParentalLe
 import { ParentalLeavePaymentPlan } from './parentalLeavePaymentPlan.model'
 import { GetParentalLeavesApplicationPaymentPlanInput } from '../dto/getParentalLeavesApplicationPaymentPlan.input'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+// @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
 export class DirectorateOfLabourResolver {
   constructor(private directorateOfLabourService: DirectorateOfLabourService) {}
@@ -60,7 +60,7 @@ export class DirectorateOfLabourResolver {
   }
 
   @Query(() => [PensionFund], { nullable: true })
-  async getPensionFunds(): Promise<Union[] | null> {
+  async getPensionFunds(): Promise<PensionFund[] | null> {
     return this.directorateOfLabourService.getPensionFunds()
   }
 }

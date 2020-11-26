@@ -20,6 +20,7 @@
   - [Unified naming strategy for files and directories](handbook/technical-overview/adr/0009-naming-files-and-directories.md)
   - [CMS](handbook/technical-overview/adr/0010-cms.md)
   - [Open Source License](handbook/technical-overview/adr/0011-open-source-license.md)
+  - [What chart library should we use across island.is?](handbook/technical-overview/adr/0012-chart-library.md)
   - [ADR Template](handbook/technical-overview/adr/template.md)
 - [API Design Guide](handbook/technical-overview/api-design-guide/README.md)
   - [Data Definitions and Standards](handbook/technical-overview/api-design-guide/data-definitions.md)
