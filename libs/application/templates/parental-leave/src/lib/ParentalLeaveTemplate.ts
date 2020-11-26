@@ -113,7 +113,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         invoke: {
           src: {
             type: 'emailService',
-            template: assignParentTemplate,
+            emailTemplate: assignParentTemplate,
           },
         },
         meta: {
@@ -143,7 +143,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         invoke: {
           src: {
             type: 'emailService',
-            template: assignEmployerTemplate,
+            emailTemplate: assignEmployerTemplate,
           },
         },
         meta: {

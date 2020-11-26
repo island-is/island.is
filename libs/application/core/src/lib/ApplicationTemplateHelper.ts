@@ -5,9 +5,12 @@ import {
   MachineOptions,
   ServiceConfig,
   InvokeMeta,
+  InvokeSourceDefinition,
+  ActionTypes,
 } from 'xstate'
 import { Application, ExternalData, FormValue } from '../types/Application'
 import merge from 'lodash/merge'
+import { SendMailOptions } from 'nodemailer'
 
 import {
   ApplicationContext,
@@ -19,6 +22,10 @@ import {
   ReadWriteValues,
 } from '../types/StateMachine'
 import { ApplicationTemplate } from '../types/ApplicationTemplate'
+
+interface EmailServiceInvokeSourceDefinition extends InvokeSourceDefinition {
+  emailTemplate: (context: ApplicationContext) => SendMailOptions
+}
 
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
@@ -48,7 +55,7 @@ export class ApplicationTemplateHelper<
     this.stateMachine = createApplicationMachine(
       this.application,
       this.template.stateMachineConfig,
-      merge(stateMachineOptions, this.template.stateMachineOptions),
+      merge(stateMachineOptions || {}, this.template.stateMachineOptions),
       stateMachineContext,
     )
   }
@@ -72,17 +79,29 @@ export class ApplicationTemplateHelper<
    */
   changeState(
     event: Event<TEvents>,
-    emailService: any,
+    sendEmail: (emailTemplate: SendMailOptions) => Promise<string>,
   ): [boolean, string, Application] {
     this.initializeStateMachine(undefined, {
       services: {
-        emailService: async (
+        emailService: (
           context: TContext,
           event: TEvents,
           { src }: InvokeMeta,
         ) => {
-          const template = src.template(context)
-          return emailService.sendEmail(template)
+          if (event.type === ActionTypes.Init) {
+            // Do not send emails on xstate.init event
+            return Promise.reject('')
+          }
+
+          const emailTemplate = (src as EmailServiceInvokeSourceDefinition).emailTemplate(
+            context,
+          )
+
+          if (!emailTemplate) {
+            return Promise.reject('No email template provided')
+          }
+
+          return sendEmail(emailTemplate)
         },
       },
     })
