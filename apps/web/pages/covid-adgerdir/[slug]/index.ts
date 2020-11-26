@@ -3,9 +3,6 @@ import { withLocale } from '@island.is/web/i18n'
 import adgerdirArticleScreen from '@island.is/web/screens/Adgerdir/Article'
 import { withContentfulEditor } from '@island.is/contentful-editor'
 
-import { environment } from '../../../environments/environment'
-
 export default withContentfulEditor(
   withApollo(withLocale('is')(adgerdirArticleScreen)),
-  environment.contentful,
 )

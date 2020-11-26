@@ -1,11 +1,10 @@
-
 export function createFakeNavigatorAPI() {
   return {
     openEntry(entryId: string) {
-      window.alert(`Open entry ${entryId}`);
+      window.alert(`Open entry ${entryId}`)
     },
     openAsset(assetId: string) {
-      window.alert(`Open asset ${assetId}`);
-    }
-  };
+      window.alert(`Open asset ${assetId}`)
+    },
+  }
 }

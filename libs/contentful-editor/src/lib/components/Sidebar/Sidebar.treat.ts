@@ -9,6 +9,7 @@ export const wrapper = style({
   zIndex: 9998,
 
   padding: theme.spacing['2'],
+  paddingBottom: theme.spacing['12'],
   width: 800,
 
   overflowY: 'scroll',

@@ -6,15 +6,10 @@ import articleScreen from '@island.is/web/screens/Article'
 import { withHealthchecks } from '@island.is/web/units/Healthchecks/withHealthchecks'
 import { withContentfulEditor } from '@island.is/contentful-editor'
 
-import { environment } from '../../environments/environment'
-
 const { serverRuntimeConfig } = getConfig()
 const { graphqlUrl } = serverRuntimeConfig
 const externalEndpointDependencies = [graphqlUrl]
 
 export default withHealthchecks(externalEndpointDependencies)(
-  withContentfulEditor(
-    withApollo(withLocale('is')(articleScreen)),
-    environment.contentful,
-  ),
+  withContentfulEditor(withApollo(withLocale('is')(articleScreen))),
 )

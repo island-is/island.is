@@ -6,10 +6,14 @@ export interface ContentfulEnv {
   environment: string
 }
 
-export const createContentfulClient = async ({ managementAccessToken, space, environment }: ContentfulEnv) => {
-  const getClient = createClient({ accessToken: managementAccessToken });
-  const getSpace = await getClient.getSpace(space);
-  const getEnvironment = await getSpace.getEnvironment(environment);
+export const createContentfulClient = async ({
+  managementAccessToken,
+  space,
+  environment,
+}: ContentfulEnv) => {
+  const getClient = createClient({ accessToken: managementAccessToken })
+  const getSpace = await getClient.getSpace(space)
+  const getEnvironment = await getSpace.getEnvironment(environment)
 
   return {
     client: getClient,

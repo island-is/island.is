@@ -1,13 +1,17 @@
-import { FieldAPI, CrudAction, EntityType } from 'contentful-ui-extensions-sdk/typings';
-import { createFakeFieldAPI } from '../utils/createFakeFieldAPI';
+import {
+  FieldAPI,
+  CrudAction,
+  EntityType,
+} from 'contentful-ui-extensions-sdk/typings'
+import { Space } from 'contentful-management/dist/typings/entities/space'
+import { ContentType } from 'contentful-management/dist/typings/entities/content-type'
 
-import { createFakeNavigatorAPI } from '../utils/createFakeNavigatorAPI';
-
-import { ContentfulEnv, createContentfulClient } from './client';
+import { createFakeFieldAPI } from '../utils/createFakeFieldAPI'
+import { createFakeNavigatorAPI } from '../utils/createFakeNavigatorAPI'
 import publishedEntry from '../utils/entry.json'
-
+import { createFakeSpaceAPI } from '../utils/createFakeSpaceAPI'
 import { locales } from './locales'
-import { createFakeSpaceAPI } from '../utils/createFakeSpaceAPI';
+import { ContentfulEnv, createContentfulClient } from './client'
 
 const newEntitySelectorDummyDialog = (
   fnName: string,
@@ -17,18 +21,20 @@ const newEntitySelectorDummyDialog = (
     `sdk.dialogs.${fnName}()\nSimulate selecting a random entity or cancel?`,
   )
     ? {
-      sys: {
-        id: Math.random().toString(36).substring(7),
-        type,
-      },
-    }
+        sys: {
+          id: Math.random().toString(36).substring(7),
+          type,
+        },
+      }
     : Promise.reject() // Simulate cancellation.
 }
 
-export const getSdk = (field: FieldAPI, env: ContentfulEnv) => {
-  // const space = (await createContentfulClient(env)).space
-  const space = createFakeSpaceAPI(); // TEMP
-  // const [fieldTemp] = createFakeFieldAPI() // TEMP
+/**
+ * TODO
+ * If more than one content types used in a page,
+ * we need to loop through and send them here as well
+ */
+export const getSdk = (space: Space, types: ContentType) => {
   const navigator = createFakeNavigatorAPI() // TEMP
 
   return {
@@ -46,13 +52,16 @@ export const getSdk = (field: FieldAPI, env: ContentfulEnv) => {
       getAssets: () => {
         return Promise.resolve({ items: [null] })
       },
+      getCachedContentTypes() {
+        return [types]
+      },
     },
-    field: field,
+    field: undefined, // Is added when displaying the data in the sidebar
     locales,
     navigator: {
       ...navigator,
       onSlideInNavigation: () => {
-        return () => { }
+        return () => {}
       },
     },
     dialogs: {

@@ -1,10 +1,10 @@
-import { Entry } from '@contentful/field-editor-shared';
+import { Entry } from '@contentful/field-editor-shared'
 
 interface Fields {
   [key: string]: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [localeKey: string]: any;
-  };
+    [localeKey: string]: any
+  }
 }
 
 export const createEntry = (contentTypeId: string, fields: Fields): Entry => ({
@@ -24,6 +24,8 @@ export const createEntry = (contentTypeId: string, fields: Fields): Entry => ({
     createdBy: { sys: { id: 'u123', type: 'Link', linkType: 'User' } },
     updatedBy: { sys: { id: 'u123', type: 'Link', linkType: 'User' } },
     publishedBy: { sys: { id: 'u123', type: 'Link', linkType: 'User' } },
-    contentType: { sys: { id: contentTypeId, type: 'Link', linkType: 'ContentType' } }
-  }
-});
+    contentType: {
+      sys: { id: contentTypeId, type: 'Link', linkType: 'ContentType' },
+    },
+  },
+})

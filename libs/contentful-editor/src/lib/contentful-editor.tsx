@@ -1,16 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { NextComponentType, NextPageContext } from 'next'
-import {
-  Entry,
-  EntryProp,
-} from 'contentful-management/dist/typings/entities/entry'
+import { useLockBodyScroll } from 'react-use'
 
 import { Buttons } from './components/Buttons/Buttons'
 import { Sidebar } from './components/Sidebar/Sidebar'
 import { getContentfulInfo } from './utils/get-contentful-info'
-import { Collection } from 'contentful-management/dist/typings/common-types'
-import { createContentfulClient, ContentfulEnv } from './contentful/client'
-import { buildContentTypeAndData } from './utils/buildContentTypeAndData'
+import { initializer, MagicType } from './contentful/initializer'
 
 const CONTENTFUL_TYPES_TO_MAP = [
   { id: 'lifeEventPage', matches: ['life-event', 'lifsvidburdur'] },
@@ -22,9 +17,19 @@ const CONTENTFUL_TYPES_TO_MAP = [
   { id: 'aboutPage', matches: ['stafraent-island'] },
 ]
 
+export const env = {
+  managementAccessToken: '',
+  space: '8k0h54kbe6bj',
+  environment: 'master',
+}
+
+/**
+ * LOGIN to an endpoint somewhere else first through oauth contentful application.
+ * Get management token there (not working from what I tested so far)
+ * If we don't have any management token, we just return the component without anything else wrapped around
+ */
 export const withContentfulEditor = (
   Component: NextComponentType<NextPageContext, unknown, any>,
-  env: ContentfulEnv,
 ) => {
   const NewComponent = ({
     pageProps,
@@ -38,26 +43,26 @@ export const withContentfulEditor = (
     locale: 'en' | 'is-IS'
   }) => {
     const [edit, setEdit] = useState(false)
-    const [entry, setEntry] = useState<any | undefined>(undefined)
+    const [data, setData] = useState<MagicType | undefined>(undefined)
     const [loading, setLoading] = useState(false)
     const [saving, setSaving] = useState(false)
 
     const handleLoad = async () => {
-      if (!slug || !contentType || !edit || !env.managementAccessToken) {
+      if (!slug || !contentType || !edit) {
         return
       }
 
       setLoading(true)
 
       try {
-        const res = await buildContentTypeAndData({
+        const res = await initializer({
           slug,
           contentType,
           locale,
           env,
         })
 
-        setEntry(res)
+        setData(res)
       } catch (e) {
         console.log('-e', e)
       }
@@ -115,6 +120,8 @@ export const withContentfulEditor = (
       }
     }
 
+    useLockBodyScroll(edit)
+
     useEffect(() => {
       handleLoad()
     }, [slug, edit])
@@ -130,14 +137,7 @@ export const withContentfulEditor = (
         />
 
         {edit && (
-          <Sidebar
-            env={env}
-            entry={entry}
-            fields={entry?._entry?.items?.[0]?.fields}
-            locale={locale}
-            loading={loading}
-            onChange={handleChange}
-          />
+          <Sidebar data={data} loading={loading} onChange={handleChange} />
         )}
 
         <Component {...pageProps} />
@@ -150,10 +150,6 @@ export const withContentfulEditor = (
       ctx,
       CONTENTFUL_TYPES_TO_MAP,
     )
-
-    console.log('-slug', slug)
-    console.log('-contentType', contentType)
-    console.log('-locale', locale)
 
     const props = Component.getInitialProps
       ? await Component.getInitialProps(ctx)

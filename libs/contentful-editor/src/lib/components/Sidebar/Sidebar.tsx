@@ -3,8 +3,9 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { SingleLineEditor } from '@contentful/field-editor-single-line'
 import { RichTextEditor } from '@contentful/field-editor-rich-text'
 import { FieldAPI } from 'contentful-ui-extensions-sdk/typings'
+import { Space } from 'contentful'
 
-import { MagicType } from '../../utils/buildContentTypeAndData'
+import { MagicType } from '../../contentful/initializer'
 import { locales } from '../../contentful/locales'
 import { getSdk } from '../../contentful/sdk'
 import { ContentfulEnv } from '../../contentful/client'
@@ -12,22 +13,12 @@ import { ContentfulEnv } from '../../contentful/client'
 import * as styles from './Sidebar.treat'
 
 interface SidebarProps {
-  env: ContentfulEnv
-  entry: MagicType
-  fields: any
-  locale: string
+  data: MagicType | undefined
   loading: boolean
   onChange(field: string, value: string): void
 }
 
-export const Sidebar: FC<SidebarProps> = ({
-  env,
-  entry,
-  fields,
-  locale,
-  loading,
-  onChange,
-}) => {
+export const Sidebar: FC<SidebarProps> = ({ data, loading, onChange }) => {
   const handleChange = (field: string, value: string) => {
     console.log('-field', field)
     console.log('-value', value)
@@ -49,13 +40,13 @@ export const Sidebar: FC<SidebarProps> = ({
         )
 
       case 'RichText':
-        const sdk = getSdk(field, env)
-        console.log('-sdk', sdk)
-
         return (
           <RichTextEditor
             key={field.id}
-            sdk={sdk}
+            sdk={{
+              ...data?._sdk,
+              field,
+            }}
             isInitiallyDisabled={false}
           />
         )
@@ -76,7 +67,7 @@ export const Sidebar: FC<SidebarProps> = ({
         {loading && <Text marginTop={2}>Loading...</Text>}
 
         {!loading &&
-          (entry?.fields ?? []).map((field) => (
+          (data?.fields ?? []).map((field) => (
             <Box
               key={field.id}
               paddingY={3}
