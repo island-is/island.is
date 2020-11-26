@@ -20,4 +20,3 @@ export const sticky = style({
   position: 'sticky',
   alignSelf: 'flex-start',
 })
-
