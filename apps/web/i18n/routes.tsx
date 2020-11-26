@@ -66,8 +66,15 @@ export const routes: Record<ContentType, Record<Locale, string>> = {
   },
 }
 
-const removeSlugFromString = (path: string): string => {
-  return path.replace('/[slug]', '')
+export const replaceSlugInPath = (
+  path: string,
+  replacement: string,
+): string => {
+  return path.replace(/\[\w+\]/, replacement)
+}
+
+export const removeSlugFromPath = (path: string): string => {
+  return path.replace(/\/\[\w+\]/g, '')
 }
 
 export const pathNames = (
@@ -84,14 +91,14 @@ export const pathNames = (
 
     if (slugs && slugs.length > 0) {
       for (let i = 0; i < slugs.length; i++) {
-        path.as = typePath.replace('[slug]', slugs[i])
+        path.as = replaceSlugInPath(typePath, slugs[i])
         if (type === 'page' && slugs[i] === 'stafraent-island') {
           path.href = path.as
         }
       }
     } else {
-      path.as = removeSlugFromString(path.as)
-      path.href = removeSlugFromString(path.href)
+      path.as = removeSlugFromPath(path.as)
+      path.href = removeSlugFromPath(path.href)
     }
     return path
   }

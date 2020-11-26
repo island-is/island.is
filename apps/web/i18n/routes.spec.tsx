@@ -1,4 +1,9 @@
-import { pathNames, AnchorAttributes } from './routes'
+import {
+  pathNames,
+  AnchorAttributes,
+  removeSlugFromPath,
+  replaceSlugInPath,
+} from './routes'
 
 describe('Generating routes', () => {
   it('should return correct path to covid-adgerdir with slug', () => {
@@ -93,5 +98,34 @@ describe('Route exceptions', () => {
       as: '/',
       href: '/',
     })
+  })
+})
+
+describe('Regex operations', () => {
+  it('should replace first slug in path with "bunny"', () => {
+    const path = '/lifsvidburdur/[slug]'
+    const resolvedPath: string = replaceSlugInPath(path, 'bunny')
+    expect(resolvedPath).toEqual('/lifsvidburdur/bunny')
+  })
+
+  it('should replace slugs in path with replacement strings', () => {
+    const slugs: string[] = ['bird', 'hamster', 'fish']
+    let path = '/sky/[slug]/cage/[slug]/tank/[subslug]'
+    for (let i = 0; i < slugs.length; i++) {
+      path = replaceSlugInPath(path, slugs[i])
+    }
+    expect(path).toEqual('/sky/bird/cage/hamster/tank/fish')
+  })
+
+  it('should remove slug from path', () => {
+    const path = '/lifsvidburdur/[slug]'
+    const resolvedPath: string = removeSlugFromPath(path)
+    expect(resolvedPath).toEqual('/lifsvidburdur')
+  })
+
+  it('should remove all slugs from path', () => {
+    const path = '/sky/[slug]/cage/[slug]/tank/[subslug]'
+    const resolvedPath: string = removeSlugFromPath(path)
+    expect(resolvedPath).toEqual('/sky/cage/tank')
   })
 })
