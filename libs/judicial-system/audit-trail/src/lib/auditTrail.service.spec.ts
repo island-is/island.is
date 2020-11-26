@@ -73,7 +73,7 @@ describe('AuditTrailService', () => {
     service.audit(userId, action, caseId)
 
     // Assert
-    expect(spy).toHaveBeenCalledWith({
+    expect(spy).toHaveBeenCalledWith('Audit', {
       user: userId,
       action,
       cases: caseId,
@@ -96,7 +96,7 @@ describe('AuditTrailService', () => {
     service.audit(userId, action, caseId)
 
     // Assert
-    expect(spy).toHaveBeenCalledWith({
+    expect(spy).toHaveBeenCalledWith('Audit', {
       user: userId,
       action,
       cases: caseId,
