@@ -153,4 +153,9 @@ export const m = defineMessages({
     defaultMessage: 'very nice',
     description: 'Some description',
   },
+  loadingError: {
+    id: 'pl.application:loading.error',
+    defaultMessage: 'Ops! Something went wrong',
+    description: 'Some description',
+  },
 })

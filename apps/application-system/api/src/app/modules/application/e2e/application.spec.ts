@@ -2,6 +2,8 @@ import { setup } from '../../../../../test/setup'
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 
+import { environment } from '../../../../environments'
+
 let app: INestApplication
 
 beforeAll(async () => {
@@ -30,8 +32,8 @@ describe('Application system API', () => {
   })
 
   it('should fail when POST-ing an application whose template is not ready for production, on production environment', async () => {
-    const envBefore = process.env.NODE_ENV
-    process.env.NODE_ENV = 'production'
+    const envBefore = environment.environment
+    environment.environment = 'production'
 
     const failedResponse = await request(app.getHttpServer())
       .post('/applications')
@@ -52,7 +54,7 @@ describe('Application system API', () => {
       'Template ExampleForm is not ready for production',
     )
 
-    process.env.NODE_ENV = envBefore
+    environment.environment = envBefore
   })
 
   it('should fail when PUT-ing answers on an application which dont comply the dataschema', async () => {
