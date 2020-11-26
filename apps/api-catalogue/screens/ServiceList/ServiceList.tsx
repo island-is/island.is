@@ -188,31 +188,31 @@ export const ServiceList: Screen<ServiceListProps> = ({
       }
       left={
         <FilterSearch
-          labelMobileButton="Sýna flokka"
-          labelMobileCloseButton="Sía API vörulista"
+          labelMobileButton={fn('mobile')}
+          labelMobileCloseButton={fn('mobileClose')}
           labelMobileResultButton={
             data?.getApiCatalogue.services.length > 0
-              ? `Skoða niðurstöður (${data?.getApiCatalogue.services.length})`
-              : 'Ekkert fannst'
+              ? `${fn('mobileResult')} (${data?.getApiCatalogue.services.length})`
+              : fn('mobileNoResult')
           }
           inputValues={{
             value: parameters?.query === null ? '' : parameters?.query,
-            placeholder: n('search'),
+            placeholder: fn('search'),
             colored: false,
             isLoading: loading,
             onChange: (event) => onSearchChange(event.target.value),
           }}
           clearValues={{
-            text: 'Hreinsa',
+            text: fn('clear'),
             onClick: onClear,
           }}
         >
-          <FilterSearchGroup id="pricing_category" label={n('pricing')}>
+          <FilterSearchGroup id="pricing_category" label={fn('pricing')}>
             <Checkbox
               id="pricing-free"
               name="pricing"
               value={PricingCategory.FREE}
-              label={n('pricingFree')}
+              label={fn('pricingFree')}
               checked={parameters.pricing.includes(PricingCategory.FREE)}
               onChange={({ target }) => {
                 updateCategoryCheckBox(target)
@@ -221,7 +221,7 @@ export const ServiceList: Screen<ServiceListProps> = ({
             <Checkbox
               id="pricing-paid"
               name="pricing"
-              label={n('pricingPaid')}
+              label={fn('pricingPaid')}
               value={PricingCategory.PAID}
               checked={parameters.pricing.includes(PricingCategory.PAID)}
               onChange={({ target }) => {
@@ -229,11 +229,11 @@ export const ServiceList: Screen<ServiceListProps> = ({
               }}
             />
           </FilterSearchGroup>
-          <FilterSearchGroup id="data_category" label={n('data')}>
+          <FilterSearchGroup id="data_category" label={fn('data')}>
             <Checkbox
               id="data-public"
               name="data"
-              label={n('dataPublic')}
+              label={fn('dataPublic')}
               value={DataCategory.PUBLIC}
               checked={parameters.data.includes(DataCategory.PUBLIC)}
               onChange={({ target }) => {
@@ -243,7 +243,7 @@ export const ServiceList: Screen<ServiceListProps> = ({
             <Checkbox
               id="data-official"
               name="data"
-              label={n('dataOfficial')}
+              label={fn('dataOfficial')}
               value={DataCategory.OFFICIAL}
               checked={parameters.data.includes(DataCategory.OFFICIAL)}
               onChange={({ target }) => {
@@ -253,7 +253,7 @@ export const ServiceList: Screen<ServiceListProps> = ({
             <Checkbox
               id="data-personal"
               name="data"
-              label={n('dataPersonal')}
+              label={fn('dataPersonal')}
               value={DataCategory.PERSONAL}
               checked={parameters.data.includes(DataCategory.PERSONAL)}
               onChange={({ target }) => {
@@ -263,7 +263,7 @@ export const ServiceList: Screen<ServiceListProps> = ({
             <Checkbox
               id="data-health"
               name="data"
-              label={n('dataHealth')}
+              label={fn('dataHealth')}
               value={DataCategory.HEALTH}
               checked={parameters.data.includes(DataCategory.HEALTH)}
               onChange={({ target }) => {
@@ -273,7 +273,7 @@ export const ServiceList: Screen<ServiceListProps> = ({
             <Checkbox
               id="data-financial"
               name="data"
-              label={n('dataFinancial')}
+              label={fn('dataFinancial')}
               value={DataCategory.FINANCIAL}
               checked={parameters.data.includes(DataCategory.FINANCIAL)}
               onChange={({ target }) => {
@@ -281,11 +281,11 @@ export const ServiceList: Screen<ServiceListProps> = ({
               }}
             />
           </FilterSearchGroup>
-          <FilterSearchGroup id="type_category" label={n('type')}>
+          <FilterSearchGroup id="type_category" label={fn('type')}>
             <Checkbox
               id="type-rest"
               name="type"
-              label={n('typeRest')}
+              label={fn('typeRest')}
               value={TypeCategory.REST}
               checked={parameters.type.includes(TypeCategory.REST)}
               onChange={({ target }) => {
@@ -295,7 +295,7 @@ export const ServiceList: Screen<ServiceListProps> = ({
             <Checkbox
               id="type-soap"
               name="type"
-              label={n('typeSoap')}
+              label={fn('typeSoap')}
               value={TypeCategory.SOAP}
               checked={parameters.type.includes(TypeCategory.SOAP)}
               onChange={({ target }) => {
@@ -305,7 +305,7 @@ export const ServiceList: Screen<ServiceListProps> = ({
             <Checkbox
               id="type-graphql"
               name="type"
-              label={n('typeGraphql')}
+              label={fn('typeGraphql')}
               value={TypeCategory.GRAPHQL}
               checked={parameters.type.includes(TypeCategory.GRAPHQL)}
               onChange={({ target }) => {
@@ -313,11 +313,11 @@ export const ServiceList: Screen<ServiceListProps> = ({
               }}
             />
           </FilterSearchGroup>
-          <FilterSearchGroup id="access_category" label={n('access')}>
+          <FilterSearchGroup id="access_category" label={fn('access')}>
             <Checkbox
               id="access-xroad"
               name="access"
-              label={n('accessXroad')}
+              label={fn('accessXroad')}
               value={AccessCategory.XROAD}
               checked={parameters.access.includes(AccessCategory.XROAD)}
               onChange={({ target }) => {
@@ -327,7 +327,7 @@ export const ServiceList: Screen<ServiceListProps> = ({
             <Checkbox
               id="access-apigw"
               name="access"
-              label={n('accessApigw')}
+              label={fn('accessApigw')}
               value={AccessCategory.APIGW}
               checked={parameters.access.includes(AccessCategory.APIGW)}
               onChange={({ target }) => {
