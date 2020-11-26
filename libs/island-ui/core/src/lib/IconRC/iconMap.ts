@@ -40,6 +40,7 @@ export type Icon =
   | 'settings'
   | 'wallet'
   | 'warning'
+  | 'reload'
 
 export default {
   filled: {
@@ -83,6 +84,7 @@ export default {
     settings: 'Settings',
     wallet: 'Wallet',
     warning: 'Warning',
+    reload: 'Reload',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
@@ -125,5 +127,6 @@ export default {
     settings: 'SettingsOutline',
     wallet: 'WalletOutline',
     warning: 'WarningOutline',
+    reload: 'ReloadOutline',
   },
 }
