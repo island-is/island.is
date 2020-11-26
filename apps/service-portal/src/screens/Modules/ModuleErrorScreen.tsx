@@ -27,7 +27,7 @@ export class ModuleErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error) {
-    if (window.location.origin === 'http://localhost:4200') {
+    if (window.location.origin.includes('http://localhost')) {
       return
     }
     Sentry.captureException(error)
