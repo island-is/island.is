@@ -192,7 +192,9 @@ export const ServiceList: Screen<ServiceListProps> = ({
           labelMobileCloseButton={fn('mobileClose')}
           labelMobileResultButton={
             data?.getApiCatalogue.services.length > 0
-              ? `${fn('mobileResult')} (${data?.getApiCatalogue.services.length})`
+              ? `${fn('mobileResult')} (${
+                  data?.getApiCatalogue.services.length
+                })`
               : fn('mobileNoResult')
           }
           inputValues={{
