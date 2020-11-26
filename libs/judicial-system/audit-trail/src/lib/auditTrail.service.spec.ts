@@ -27,8 +27,8 @@ jest.mock('winston-cloudwatch', () => {
 })
 
 describe('AuditTrailService', () => {
+  const genericLogger = mock<Logger>()
   let service: AuditTrailService
-  let genericLogger = mock<Logger>()
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
