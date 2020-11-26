@@ -9,7 +9,12 @@ import {
   replaceTabsOnChange,
 } from './formatters'
 import * as formatters from './formatters'
-import { constructConclusion, isDirty, isNextDisabled } from './stepHelper'
+import {
+  constructConclusion,
+  constructProsecutorDemands,
+  isDirty,
+  isNextDisabled,
+} from './stepHelper'
 import { RequiredField } from '../types'
 import {
   CaseTransition,
@@ -452,6 +457,43 @@ describe('Step helper', () => {
           const hasText = (node: Element) =>
             node.textContent ===
             'Kærði, Doe kt.0123456789 skal sæta gæsluvarðhaldi, þó ekki lengur en til 22. október 2020 kl. 12:31. Kærði skal sæta fjölmiðlabanni, heimsóknarbanni og einangrun á meðan á gæsluvarðhaldinu stendur.'
+
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
+
+          return nodeHasText && childrenDontHaveText
+        }),
+      ).toBeTruthy()
+    })
+  })
+
+  describe('constructPoliceDemands', () => {
+    test('should render a message if requestedCustodyEndDate is not set', () => {
+      // Arrange
+      const wc = {
+        rejecting: false,
+        custodyRestrictions: [
+          CaseCustodyRestrictions.MEDIA,
+          CaseCustodyRestrictions.VISITAION,
+          CaseCustodyRestrictions.ISOLATION,
+        ],
+        accusedName: 'Doe',
+        accusedNationalId: '0123456789',
+        custodyEndDate: '2020-11-26T12:31:00.000Z',
+        requestedCustodyEndDate: undefined,
+      }
+
+      // Act
+      const { getByText } = render(constructProsecutorDemands(wc as Case))
+
+      // Assert
+      expect(
+        getByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent === 'Saksóknari hefur ekki fyllt út dómkröfur.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(
