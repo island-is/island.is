@@ -19,59 +19,50 @@ export type ContentType =
   | 'adgerdir'
   | 'vidspyrna-frontpage'
 
-export const routes: Record<ContentType, Record<Locale, AnchorAttributes>> = {
+export const routes: Record<ContentType, Record<Locale, string>> = {
   article: {
-    is: { as: '/[slug]', href: '/[slug]' },
-    en: { as: '/en/[slug]', href: '/en/[slug]' },
+    is: '/[slug]',
+    en: '/en/[slug]',
   },
   page: {
-    is: { as: '/stofnanir/[slug]', href: '/stofnanir/stafraent-island' }, // TODO FOLDER STRUCTURE NEEDS FIXING
-    en: {
-      as: '/en/organizations/[slug]',
-      href: '/en/organizations/stafraent-island',
-    },
+    is: '/stofnanir/[slug]',
+    en: '/en/organizations/[slug]',
   },
   category: {
-    is: { as: '/flokkur/[slug]', href: '/flokkur/[slug]' },
-    en: { as: '/en/category/[slug]', href: '/en/category/[slug]' },
+    is: '/flokkur/[slug]',
+    en: '/en/category/[slug]',
   },
   articlecategory: {
-    is: { as: '/flokkur/[slug]', href: '/flokkur/[slug]' },
-    en: { as: '/en/category/[slug]', href: '/en/category/[slug]' },
+    is: '/flokkur/[slug]',
+    en: '/en/category/[slug]',
   },
   contentcategory: {
-    is: { as: '/flokkur/[slug]', href: '/flokkur/[slug]' },
-    en: { as: '/en/category/[slug]', href: '/en/category/[slug]' },
+    is: '/flokkur/[slug]',
+    en: '/en/category/[slug]',
   },
   news: {
-    is: { as: '/frett/[slug]', href: '/frett/[slug]' },
-    en: { as: '/en/news/[slug]', href: '/en/news/[slug]' },
+    is: '/frett/[slug]',
+    en: '/en/news/[slug]',
   },
   search: {
-    is: { as: '/leit/[slug]', href: '/leit/[slug]' },
-    en: { as: '/en/search/[slug]', href: '/en/search/[slug]' },
+    is: '/leit/[slug]',
+    en: '/en/search/[slug]',
   },
   lifeevent: {
-    is: { as: '/lifsvidburdur/[slug]', href: '/lifsvidburdur/[slug]' },
-    en: { as: '/en/life-event/[slug]', href: '/en/life-event/[slug]' },
+    is: '/lifsvidburdur/[slug]',
+    en: '/en/life-event/[slug]',
   },
   lifeeventpage: {
-    is: { as: '/lifsvidburdur/[slug]', href: '/lifsvidburdur/[slug]' },
-    en: { as: '/en/life-event/[slug]', href: '/en/life-event/[slug]' },
+    is: '/lifsvidburdur/[slug]',
+    en: '/en/life-event/[slug]',
   },
   adgerdir: {
-    is: { as: '/covid-adgerdir/[slug]', href: '/covid-adgerdir/[slug]' },
-    en: {
-      as: '/en/covid-operations/[slug]',
-      href: '/en/covid-operations/[slug]',
-    },
+    is: '/covid-adgerdir/[slug]',
+    en: '/en/covid-operations/[slug]',
   },
   'vidspyrna-frontpage': {
-    is: { as: '/covid-adgerdir', href: '/covid-adgerdir' },
-    en: {
-      as: '/en/covid-operations',
-      href: '/en/covid-operations',
-    },
+    is: '/covid-adgerdir',
+    en: '/en/covid-operations',
   },
 }
 
@@ -81,22 +72,29 @@ const removeSlugFromString = (path: string): string => {
 
 export const pathNames = (
   locale: Locale = defaultLanguage,
-  type: ContentType,
+  contentType: ContentType,
   slugs?: Array<string>,
 ): AnchorAttributes => {
-  const typePath = routes[type.toLowerCase()][locale]
-  const path: AnchorAttributes = typePath
+  let path: AnchorAttributes = { as: '/', href: '/' }
+  const type = String(contentType).toLowerCase()
 
-  if (slugs && slugs.length > 0) {
-    for (let i = 0; i < slugs.length; i++) {
-      path.as = String(typePath.as).replace('[slug]', slugs[i])
-      path.href = String(typePath.href)
+  if (routes[type]) {
+    const typePath: string = routes[type][locale]
+    path = { as: typePath, href: typePath }
+
+    if (slugs && slugs.length > 0) {
+      for (let i = 0; i < slugs.length; i++) {
+        path.as = typePath.replace('[slug]', slugs[i])
+        if (type === 'page' && slugs[i] === 'stafraent-island') {
+          path.href = path.as
+        }
+      }
+    } else {
+      path.as = removeSlugFromString(path.as)
+      path.href = removeSlugFromString(path.href)
     }
-  } else {
-    path.as = removeSlugFromString(path.as)
-    path.href = removeSlugFromString(path.href)
+    return path
   }
-
   return path
 }
 

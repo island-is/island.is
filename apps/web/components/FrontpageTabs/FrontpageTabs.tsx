@@ -236,7 +236,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                               as={linkUrls.as}
                               href={linkUrls.href}
                               passHref
-                              prefetch
                             >
                               <Button
                                 variant="text"
