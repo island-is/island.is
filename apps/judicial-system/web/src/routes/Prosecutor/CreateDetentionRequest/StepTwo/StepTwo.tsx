@@ -28,9 +28,11 @@ import isNull from 'lodash/isNull'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  padTimeWithZero,
   parseArray,
   parseString,
   parseTime,
+  replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '../../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
@@ -45,6 +47,7 @@ import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
+import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
 
 export const StepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -220,6 +223,7 @@ export const StepTwo: React.FC = () => {
       activeSection={Sections.PROSECUTOR}
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_TWO}
       isLoading={isLoading}
+      notFound={data?.case === undefined}
     >
       {workingCase ? (
         <>
@@ -285,36 +289,17 @@ export const StepTwo: React.FC = () => {
                 />
               </GridColumn>
               <GridColumn span="3/8">
-                <Input
-                  data-testid="requestedCustodyEndTime"
-                  name="requestedCustodyEndTime"
-                  label="Tímasetning"
-                  placeholder="Settu inn tíma"
-                  ref={requestedCustodyEndTimeRef}
-                  defaultValue={
-                    workingCase.requestedCustodyEndDate?.includes('T')
-                      ? formatDate(
-                          workingCase.requestedCustodyEndDate,
-                          TIME_FORMAT,
-                        )
-                      : undefined
-                  }
+                <TimeInputField
                   disabled={!workingCase?.requestedCustodyEndDate}
-                  errorMessage={requestedCustodyEndTimeErrorMessage}
-                  hasError={requestedCustodyEndTimeErrorMessage !== ''}
                   onBlur={async (evt) => {
+                    const time = padTimeWithZero(evt.target.value)
+
                     if (workingCase.requestedCustodyEndDate) {
-                      const validateTimeEmpty = validate(
-                        evt.target.value,
-                        'empty',
-                      )
-                      const validateTimeFormat = validate(
-                        evt.target.value,
-                        'time-format',
-                      )
+                      const validateTimeEmpty = validate(time, 'empty')
+                      const validateTimeFormat = validate(time, 'time-format')
                       const requestedCustodyEndDateMinutes = parseTime(
                         workingCase.requestedCustodyEndDate,
-                        evt.target.value,
+                        time,
                       )
 
                       setWorkingCase({
@@ -343,8 +328,26 @@ export const StepTwo: React.FC = () => {
                     }
                   }}
                   onFocus={() => setRequestedCustodyEndTimeErrorMessage('')}
-                  required
-                />
+                >
+                  <Input
+                    data-testid="requestedCustodyEndTime"
+                    name="requestedCustodyEndTime"
+                    label="Tímasetning"
+                    placeholder="Settu inn tíma"
+                    ref={requestedCustodyEndTimeRef}
+                    defaultValue={
+                      workingCase.requestedCustodyEndDate?.includes('T')
+                        ? formatDate(
+                            workingCase.requestedCustodyEndDate,
+                            TIME_FORMAT,
+                          )
+                        : undefined
+                    }
+                    errorMessage={requestedCustodyEndTimeErrorMessage}
+                    hasError={requestedCustodyEndTimeErrorMessage !== ''}
+                    required
+                  />
+                </TimeInputField>
               </GridColumn>
             </GridRow>
           </Box>
@@ -375,6 +378,7 @@ export const StepTwo: React.FC = () => {
                   setLawsBrokenErrorMessage(validateField.errorMessage)
                 }
               }}
+              onChange={replaceTabsOnChange}
               onFocus={() => setLawsBrokenErrorMessage('')}
               required
               textarea
@@ -588,6 +592,7 @@ export const StepTwo: React.FC = () => {
                     setCaseFactsErrorMessage(validateField.errorMessage)
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 onFocus={() => setCaseFactsErrorMessage('')}
                 required
                 rows={16}
@@ -619,6 +624,7 @@ export const StepTwo: React.FC = () => {
                     setLegalArgumentsErrorMessage(validateField.errorMessage)
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 onFocus={() => setLegalArgumentsErrorMessage('')}
                 required
                 textarea
@@ -653,6 +659,7 @@ export const StepTwo: React.FC = () => {
                       parseString('comments', evt.target.value),
                     )
                   }}
+                  onChange={replaceTabsOnChange}
                   textarea
                   rows={7}
                 />

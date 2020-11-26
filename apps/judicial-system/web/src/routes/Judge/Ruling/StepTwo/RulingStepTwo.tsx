@@ -1,5 +1,6 @@
 import {
   Box,
+  Checkbox,
   GridColumn,
   GridRow,
   Input,
@@ -11,10 +12,15 @@ import { FormFooter } from '../../../../shared-components/FormFooter'
 import {
   Case,
   CaseAppealDecision,
+  CaseCustodyRestrictions,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as Constants from '../../../../utils/constants'
-import { parseString } from '../../../../utils/formatters'
+import {
+  parseArray,
+  parseString,
+  replaceTabsOnChange,
+} from '../../../../utils/formatters'
 import { constructConclusion } from '../../../../utils/stepHelper'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useParams } from 'react-router-dom'
@@ -31,6 +37,9 @@ import {
 export const RulingStepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [, setVisitationCheckbox] = useState<boolean>()
+  const [, setCommunicationCheckbox] = useState<boolean>()
+  const [, setMediaCheckbox] = useState<boolean>()
   const { id } = useParams<{ id: string }>()
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
   const { data } = useQuery(CaseQuery, {
@@ -69,11 +78,36 @@ export const RulingStepTwo: React.FC = () => {
     }
   }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
 
+  const restrictions = [
+    {
+      restriction: 'C - Heimsóknarbann',
+      value: CaseCustodyRestrictions.VISITAION,
+      setCheckbox: setVisitationCheckbox,
+      explination:
+        'Gæslufangar eiga rétt á heimsóknum. Þó getur sá sem rannsókn stýrir bannað heimsóknir ef nauðsyn ber til í þágu hennar en skylt er að verða við óskum gæslufanga um að hafa samband við verjanda og ræða við hann einslega, sbr. 1. mgr. 36. gr., og rétt að verða við óskum hans um að hafa samband við lækni eða prest, ef þess er kostur.',
+    },
+    {
+      restriction: 'D - Bréfskoðun, símabann',
+      value: CaseCustodyRestrictions.COMMUNICATION,
+      setCheckbox: setCommunicationCheckbox,
+      explination:
+        'Gæslufangar mega nota síma eða önnur fjarskiptatæki og senda og taka við bréfum og öðrum skjölum. Þó getur sá sem rannsókn stýrir bannað notkun síma eða annarra fjarskiptatækja og látið athuga efni bréfa eða annarra skjala og kyrrsett þau ef nauðsyn ber til í þágu hennar en gera skal sendanda viðvart um kyrrsetningu, ef því er að skipta.',
+    },
+    {
+      restriction: 'E - Fjölmiðlabann',
+      value: CaseCustodyRestrictions.MEDIA,
+      setCheckbox: setMediaCheckbox,
+      explination:
+        'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
+    },
+  ]
+
   return (
     <PageLayout
       activeSection={Sections.JUDGE}
       activeSubSection={JudgeSubsections.RULING_STEP_TWO}
       isLoading={isLoading}
+      notFound={data?.case === undefined}
     >
       {workingCase ? (
         <>
@@ -97,8 +131,7 @@ export const RulingStepTwo: React.FC = () => {
                 <Text>{constructConclusion(workingCase)}</Text>
               </Box>
               <Text variant="h4" fontWeight="light">
-                Úrskurðarorðið er lesið í heyranda hljóði að viðstöddum kærða,
-                verjanda hans, túlki og aðstoðarsaksóknara.
+                Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.
               </Text>
             </Box>
           </Box>
@@ -125,11 +158,11 @@ export const RulingStepTwo: React.FC = () => {
               </Box>
               <Box marginBottom={3}>
                 <GridRow>
-                  <GridColumn span="3/7">
+                  <GridColumn span="6/12">
                     <RadioButton
                       name="accused-appeal-decition"
                       id="accused-appeal"
-                      label="Kærði kærir málið"
+                      label="Kærði kærir úrskurðinn"
                       value={CaseAppealDecision.APPEAL}
                       checked={
                         workingCase.accusedAppealDecision ===
@@ -152,7 +185,7 @@ export const RulingStepTwo: React.FC = () => {
                       large
                     />
                   </GridColumn>
-                  <GridColumn span="3/7">
+                  <GridColumn span="6/12">
                     <RadioButton
                       name="accused-appeal-decition"
                       id="accused-accept"
@@ -183,7 +216,7 @@ export const RulingStepTwo: React.FC = () => {
               </Box>
               <Box marginBottom={4}>
                 <GridRow>
-                  <GridColumn span="4/7">
+                  <GridColumn span="7/12">
                     <RadioButton
                       name="accused-appeal-decition"
                       id="accused-postpone"
@@ -233,6 +266,7 @@ export const RulingStepTwo: React.FC = () => {
                     parseString('accusedAppealAnnouncement', evt.target.value),
                   )
                 }}
+                onChange={replaceTabsOnChange}
                 textarea
                 rows={7}
               />
@@ -247,11 +281,11 @@ export const RulingStepTwo: React.FC = () => {
             </Box>
             <Box marginBottom={3}>
               <GridRow>
-                <GridColumn span="3/7">
+                <GridColumn span="6/12">
                   <RadioButton
                     name="prosecutor-appeal-decition"
                     id="prosecutor-appeal"
-                    label="Sækjandi kærir málið"
+                    label="Sækjandi kærir úrskurðinn"
                     value={CaseAppealDecision.APPEAL}
                     checked={
                       workingCase.prosecutorAppealDecision ===
@@ -274,7 +308,7 @@ export const RulingStepTwo: React.FC = () => {
                     large
                   />
                 </GridColumn>
-                <GridColumn>
+                <GridColumn span="6/12">
                   <RadioButton
                     name="prosecutor-appeal-decition"
                     id="prosecutor-accept"
@@ -305,7 +339,7 @@ export const RulingStepTwo: React.FC = () => {
             </Box>
             <Box marginBottom={4}>
               <GridRow>
-                <GridColumn span="4/7">
+                <GridColumn span="7/12">
                   <RadioButton
                     name="prosecutor-appeal-decition"
                     id="prosecutor-postpone"
@@ -334,7 +368,7 @@ export const RulingStepTwo: React.FC = () => {
                 </GridColumn>
               </GridRow>
             </Box>
-            <Box marginBottom={1}>
+            <Box marginBottom={7}>
               <Input
                 name="prosecutorAppealAnnouncement"
                 data-testid="prosecutorAppealAnnouncement"
@@ -359,13 +393,91 @@ export const RulingStepTwo: React.FC = () => {
                     ),
                   )
                 }}
+                onChange={replaceTabsOnChange}
                 textarea
                 rows={7}
               />
             </Box>
+            <Box component="section" marginBottom={3}>
+              <Box marginBottom={2}>
+                <Text as="h3" variant="h3">
+                  Tilhögun gæsluvarðhalds
+                </Text>
+              </Box>
+              <Box marginBottom={1}>
+                <GridRow>
+                  {restrictions.map((restriction, index) => {
+                    return (
+                      <GridColumn span="6/12" key={index}>
+                        <Box marginBottom={3}>
+                          <Checkbox
+                            name={restriction.restriction}
+                            label={restriction.restriction}
+                            value={restriction.value}
+                            checked={workingCase.custodyRestrictions?.includes(
+                              restriction.value,
+                            )}
+                            tooltip={restriction.explination}
+                            onChange={({ target }) => {
+                              // Create a copy of the state
+                              const copyOfState = Object.assign(workingCase, {})
+
+                              const restrictionIsSelected = copyOfState.custodyRestrictions?.includes(
+                                target.value as CaseCustodyRestrictions,
+                              )
+
+                              // Toggle the checkbox on or off
+                              restriction.setCheckbox(!restrictionIsSelected)
+
+                              // If the user is checking the box, add the restriction to the state
+                              if (!restrictionIsSelected) {
+                                if (copyOfState.custodyRestrictions === null) {
+                                  copyOfState.custodyRestrictions = []
+                                }
+
+                                copyOfState.custodyRestrictions &&
+                                  copyOfState.custodyRestrictions.push(
+                                    target.value as CaseCustodyRestrictions,
+                                  )
+                              }
+                              // If the user is unchecking the box, remove the restriction from the state
+                              else {
+                                copyOfState.custodyRestrictions &&
+                                  copyOfState.custodyRestrictions.splice(
+                                    copyOfState.custodyRestrictions.indexOf(
+                                      target.value as CaseCustodyRestrictions,
+                                    ),
+                                    1,
+                                  )
+                              }
+
+                              setWorkingCase({
+                                ...workingCase,
+                                custodyRestrictions:
+                                  copyOfState.custodyRestrictions,
+                              })
+
+                              // Save case
+                              updateCase(
+                                workingCase.id,
+                                parseArray(
+                                  'custodyRestrictions',
+                                  copyOfState.custodyRestrictions || [],
+                                ),
+                              )
+                            }}
+                            large
+                          />
+                        </Box>
+                      </GridColumn>
+                    )
+                  })}
+                </GridRow>
+              </Box>
+            </Box>
             <Text variant="h4" fontWeight="light">
-              Dómari bendir kærða á að honum sé heimilt að bera atriði er lúta
-              að framkvæmd gæsluvarðhaldsins undir dómara.
+              Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
+              atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
             </Text>
           </Box>
           <FormFooter

@@ -14,13 +14,13 @@ import AccordionListItem from '@island.is/judicial-system-web/src/shared-compone
 import {
   Case,
   CaseAppealDecision,
+  CaseState,
   CaseTransition,
   NotificationType,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
   TransitionCase,
 } from '@island.is/judicial-system/types'
-import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import { useHistory, useParams } from 'react-router-dom'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
@@ -31,6 +31,7 @@ import {
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import { gql, useMutation, useQuery } from '@apollo/client'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 export const RequestSignatureMutation = gql`
   mutation RequestSignatureMutation($input: RequestSignatureInput!) {
@@ -75,7 +76,8 @@ const SigningModal: React.FC<SigningModalProps> = (
     },
     fetchPolicy: 'no-cache',
   })
-  const resSignatureResponse = data?.signatureConfirmation
+  // TODO: Handle case when resSignatureConfirmationResponse is never set
+  const resSignatureConfirmationResponse = data?.signatureConfirmation
 
   const [sendNotificationMutation] = useMutation(SendNotificationMutation)
 
@@ -83,7 +85,7 @@ const SigningModal: React.FC<SigningModalProps> = (
     const completeSigning = async (
       resSignatureResponse: SignatureConfirmationResponse,
     ) => {
-      await sendNotificationMutation({
+      const { data } = await sendNotificationMutation({
         variables: {
           input: {
             caseId: props.caseId,
@@ -91,13 +93,18 @@ const SigningModal: React.FC<SigningModalProps> = (
           },
         },
       })
+
+      if (!data?.sendNotification?.notificationSent) {
+        // TODO: Handle error
+      }
+
       setSignatureConfirmationResponse(resSignatureResponse)
     }
 
-    if (resSignatureResponse) {
-      completeSigning(resSignatureResponse)
+    if (resSignatureConfirmationResponse) {
+      completeSigning(resSignatureConfirmationResponse)
     }
-  }, [resSignatureResponse, props.caseId, sendNotificationMutation])
+  }, [resSignatureConfirmationResponse, props.caseId, sendNotificationMutation])
 
   const renderContolCode = () => {
     return (
@@ -130,7 +137,7 @@ const SigningModal: React.FC<SigningModalProps> = (
         !signatureConfirmationResponse
           ? renderContolCode()
           : signatureConfirmationResponse.documentSigned
-          ? 'Tilkynning hefur verið send á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi.'
+          ? 'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi.'
           : 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
       }
       secondaryButtonText={
@@ -157,6 +164,10 @@ const SigningModal: React.FC<SigningModalProps> = (
   )
 }
 
+interface CaseData {
+  case?: Case
+}
+
 export const Confirmation: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
@@ -165,23 +176,21 @@ export const Confirmation: React.FC = () => {
   >()
 
   const { id } = useParams<{ id: string }>()
-  const { user } = useContext(userContext)
-  const { data, loading } = useQuery(CaseQuery, {
+  const { user } = useContext(UserContext)
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const resCase = data?.case
 
   useEffect(() => {
     document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
-    if (!workingCase && resCase) {
-      setWorkingCase(resCase)
+    if (!workingCase && data?.case) {
+      setWorkingCase(data.case)
     }
-  }, [workingCase, setWorkingCase, resCase])
+  }, [workingCase, setWorkingCase, data])
 
   useEffect(() => {
     if (!modalVisible) {
@@ -199,14 +208,7 @@ export const Confirmation: React.FC = () => {
       variables: { input: { id, ...transitionCase } },
     })
 
-    const resCase = data?.transitionCase
-
-    if (resCase) {
-      // Do something with the result. In particular, we want the modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-
-    return resCase
+    return data?.transitionCase
   }
 
   const [
@@ -222,24 +224,43 @@ export const Confirmation: React.FC = () => {
     return data?.requestSignature
   }
 
-  const handleNextButtonClick = async () => {
-    if (workingCase && workingCase.id && workingCase.modified) {
+  const handleNextButtonClick: () => Promise<boolean> = async () => {
+    if (!workingCase) {
+      return false
+    }
+
+    if (workingCase.state === CaseState.SUBMITTED) {
       try {
         // Parse the transition request
         const transitionRequest = parseTransition(
           workingCase.modified,
-          workingCase?.rejecting
-            ? CaseTransition.REJECT
-            : CaseTransition.ACCEPT,
+          workingCase.rejecting ? CaseTransition.REJECT : CaseTransition.ACCEPT,
         )
 
         // Transition the case
-        await transitionCase(workingCase.id, transitionRequest)
+        const resCase = await transitionCase(workingCase.id, transitionRequest)
+
+        if (!resCase) {
+          return false
+        }
+
+        setWorkingCase({
+          ...workingCase,
+          state: resCase.state,
+          judge: resCase.judge,
+        })
+
+        return true
       } catch (e) {
-        // Improve error handling at some point
-        console.log('Transition failing')
+        console.log(e)
+
+        return false
       }
     }
+
+    return workingCase.rejecting
+      ? workingCase.state === CaseState.REJECTED
+      : workingCase.state === CaseState.ACCEPTED
   }
 
   return (
@@ -247,6 +268,7 @@ export const Confirmation: React.FC = () => {
       activeSubSection={Sections.JUDGE}
       activeSection={JudgeSubsections.CONFIRMATION}
       isLoading={loading}
+      notFound={data?.case === undefined}
     >
       {workingCase ? (
         <>
@@ -351,8 +373,7 @@ export const Confirmation: React.FC = () => {
             </Box>
             <Box marginBottom={3}>{constructConclusion(workingCase)}</Box>
             <Text>
-              Úrskurðarorðið er lesið í heyranda hljóði að viðstöddum kærða,
-              verjanda hans, túlki og aðstoðarsaksóknara.
+              Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.
             </Text>
           </Box>
           <Box component="section" marginBottom={3}>
@@ -421,16 +442,24 @@ export const Confirmation: React.FC = () => {
             nextButtonText="Staðfesta úrskurð"
             onNextButtonClick={async () => {
               // Transition case from submitted state to either accepted or rejected
-              await handleNextButtonClick()
-
-              // Request signature to get control code
-              const requestSignatureResponse = await requestSignature(
-                workingCase.id,
-              )
-
-              if (requestSignatureResponse) {
-                setRequestSignatureResponse(requestSignatureResponse)
-                setModalVisible(true)
+              const caseTransitioned = await handleNextButtonClick()
+              if (caseTransitioned) {
+                // Request signature to get control code
+                try {
+                  const requestSignatureResponse = await requestSignature(
+                    workingCase.id,
+                  )
+                  if (requestSignatureResponse) {
+                    setRequestSignatureResponse(requestSignatureResponse)
+                    setModalVisible(true)
+                  } else {
+                    // TODO: Handle error
+                  }
+                } catch (e) {
+                  // TODO: Handle error
+                }
+              } else {
+                // TODO: Handle error
               }
             }}
             nextIsLoading={isTransitioningCase || isRequestingSignature}

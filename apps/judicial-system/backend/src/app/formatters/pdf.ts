@@ -45,12 +45,16 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .font('Helvetica-Bold')
     .fontSize(26)
     .lineGap(8)
-    .text('Krafa um gæsluvarðhald')
+    .text('Krafa um gæsluvarðhald', { align: 'center' })
     .font('Helvetica')
+    .fontSize(18)
+    .text(`LÖKE málsnúmer: ${existingCase.policeCaseNumber}`, {
+      align: 'center',
+    })
     .fontSize(16)
-    .text(`LÖKE málsnúmer: ${existingCase.policeCaseNumber}`)
+    .text('Embætti: Lögreglustjórinn á Höfuðborgarsvæðinu', { align: 'center' })
     .lineGap(40)
-    .text(`Dómstóll: ${existingCase.court}`)
+    .text(`Dómstóll: ${existingCase.court}`, { align: 'center' })
     .font('Helvetica-Bold')
     .fontSize(18)
     .lineGap(8)
@@ -126,7 +130,7 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .lineGap(8)
     .text('Greinargerð um málsatvik og lagarök')
     .fontSize(14)
-    .text('Málsatvik rakin')
+    .text('Málsatvik')
     .font('Helvetica')
     .fontSize(12)
     .text(existingCase.caseFacts, {
@@ -147,7 +151,7 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .text(' ')
     .font('Helvetica-Bold')
     .text(
-      `Fhl. ${existingCase.prosecutor?.name} ${existingCase.prosecutor?.title}`,
+      `F.h.l. ${existingCase.prosecutor?.name} ${existingCase.prosecutor?.title}`,
     )
     .end()
 
@@ -350,13 +354,10 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     })
     .text(' ')
     .font('Helvetica')
-    .text(
-      'Úrskurðarorðið er lesið í heyranda hljóði að viðstöddum kærða, verjanda hans, túlki og aðstoðarsaksóknara.',
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
+    .text('Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.', {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -421,7 +422,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
       })
       .text(' ')
       .text(
-        'Dómari bendir kærða á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.',
+        'Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.',
         {
           lineGap: 6,
           paragraphGap: 0,

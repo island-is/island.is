@@ -5,6 +5,67 @@
   "header": {
     "logoutText": "Log out"
   },
+  "footer": {
+    "topLinksInfo": [
+      {
+        "title": "About Digital Iceland",
+        "href": "https://stafraent.island.is/"
+      },
+      {
+        "title": "Public Institutions",
+        "href": "https://island.is/en/organizations"
+      },
+      {
+        "title": "Services on Ísland.is",
+        "href": "https://island.is/en/category/services-on-island-is"
+      }
+    ],
+    "topLinksContact": [
+      {
+        "title": "Contact us",
+        "href": "https://island.is/stafraent-island/hafa-samband"
+      },
+      {
+        "title": "Tel: 426 5500",
+        "href": "tel: +3544265500"
+      }
+    ],
+    "bottomLinksTitle": "Other Government Sites",
+    "bottomLinks": [
+      {
+        "title": "Mínar síður",
+        "href": "https://minarsidur.island.is/"
+      },
+      {
+        "title": "Heilsuvera",
+        "href": "https://www.heilsuvera.is/"
+      },
+      {
+        "title": "Public Sector Innovation",
+        "href": "https://opinbernyskopun.island.is/"
+      },
+      {
+        "title": "Samráðsgátt - Public Consultation",
+        "href": "https://samradsgatt.island.is/"
+      },
+      {
+        "title": "Registry of Approved Names",
+        "href": "https://island.is/mannanofn/"
+      },
+      {
+        "title": "Online Petitions",
+        "href": "https://vefur.island.is/en/e-petitions"
+      },
+      {
+        "title": "Public Invoices Paid",
+        "href": "http://www.opnirreikningar.is/"
+      },
+      {
+        "title": "Tekjusagan - Public Data on Living Standards",
+        "href": "https://tekjusagan.is/"
+      }
+    ]
+  },
   "gdpr": {
     "title": "You own your data",
     "subTitles": {
@@ -294,8 +355,8 @@
     }
   },
   "notFound": {
-    "title": "Resource could not be found",
-    "content": "Something went wrong, please try again",
+    "title": "Page not found",
+    "content": "We can't seem to find the page you're looking for. Something has gone wrong or you've entered a wrong URL.",
     "button": "Back"
   },
   "errorBoundary": {

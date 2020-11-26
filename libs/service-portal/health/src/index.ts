@@ -13,7 +13,7 @@ export const healthModule: ServicePortalModule = {
     const routes: ServicePortalRoute[] = [
       {
         name: 'Heilsa',
-        path: ServicePortalPath.HeilsaRoot,
+        path: ServicePortalPath.HealthRoot,
         render: () =>
           lazy(() => import('./screens/HealthOverview/HealthOverview')),
       },

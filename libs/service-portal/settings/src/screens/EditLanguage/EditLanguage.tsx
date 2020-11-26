@@ -36,7 +36,7 @@ export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
   const { updateUserProfile } = useUpdateUserProfile()
 
   useEffect(() => {
-    if (!userProfile) return
+    if (!userProfile || !userProfile.locale) return
     if (userProfile.locale.length > 0)
       setLanguage({
         value: userProfile.locale as Locale,
@@ -76,7 +76,7 @@ export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
   return (
     <>
       <Box marginBottom={4}>
-        <Text variant="h1">
+        <Text variant="h1" as="h1">
           {formatMessage({
             id: 'sp.settings:edit-language',
             defaultMessage: 'Breyta tungumáli',

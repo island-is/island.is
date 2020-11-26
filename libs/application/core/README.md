@@ -1,4 +1,6 @@
-# application-core
+# Core
+
+## About
 
 This library contains all types, and utilities needed to build applications, forms, and schemas that act as the main base for the whole application system.
 
@@ -51,45 +53,45 @@ cannot perform any actions in the `inReview` state, while the `reviewer` has all
 
 ```ts
 stateMachineConfig: {
-    states: {
-      ...
-      inReview: {
-        meta: {
-          name: 'In Review',
-          roles: [
-            {
-              id: 'reviewer',
-              formLoader: () =>
-                import('../forms/ReviewApplication').then((val) =>
-                  Promise.resolve(val.ReviewApplication),
-                ),
-              actions: [
-                { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
-                { event: 'REJECT', name: 'Hafna', type: 'reject' },
-              ],
-              read: 'all',
-              write: {
-                answers: ['reviewerComment'],
-              },
+  states: {
+    ...
+    inReview: {
+      meta: {
+        name: 'In Review',
+        roles: [
+          {
+            id: 'reviewer',
+            formLoader: () =>
+              import('../forms/ReviewApplication').then((val) =>
+                Promise.resolve(val.ReviewApplication),
+              ),
+            actions: [
+              { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
+              { event: 'REJECT', name: 'Hafna', type: 'reject' },
+            ],
+            read: 'all',
+            write: {
+              answers: ['reviewerComment'],
             },
-            {
-              id: 'applicant',
-              formLoader: () =>
-                import('../forms/PendingReview').then((val) =>
-                  Promise.resolve(val.PendingReview),
-                ),
-              read: 'all',
-            },
-          ],
-        },
-        on: {
-          APPROVE: { target: 'approved' },
-          REJECT: { target: 'rejected' },
-        },
+          },
+          {
+            id: 'applicant',
+            formLoader: () =>
+              import('../forms/PendingReview').then((val) =>
+                Promise.resolve(val.PendingReview),
+              ),
+            read: 'all',
+          },
+        ],
       },
-     ...
+      on: {
+        APPROVE: { target: 'approved' },
+        REJECT: { target: 'rejected' },
+      },
     },
+    ...
   },
+},
 ```
 
 ## Form
@@ -120,8 +122,20 @@ Many applications rely on external data that should not be editable by any user 
 
 ## Running unit tests
 
-Run `yarn nx test application-core` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests via [Jest](https://jestjs.io).
+
+```bash
+yarn nx test application-core
+```
 
 ## Running lint
 
-Run `yarn nx lint application-core` to lint
+To lint
+
+```bash
+yarn nx lint application-core
+```
+
+## Code owners and maintainers
+
+- [Aranja](https://github.com/orgs/island-is/teams/aranja/members)

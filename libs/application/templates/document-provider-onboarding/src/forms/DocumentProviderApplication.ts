@@ -153,17 +153,6 @@ export const DocumentProviderOnboarding: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'documents',
-      name: m.documentsSection,
-      children: [
-        buildIntroductionField({
-          id: 'fileUpload',
-          name: 'TODO',
-          introduction: 'TODO',
-        }),
-      ],
-    }),
-    buildSection({
       id: 'confirmation',
       name: m.confirmationSection,
       children: [
@@ -172,6 +161,14 @@ export const DocumentProviderOnboarding: Form = buildForm({
           name: m.overview,
           description: m.overviewIntro,
           children: [
+            buildCustomField(
+              {
+                id: 'review',
+                name: 'Yfirlit umsóknar',
+                component: 'Review',
+              },
+              {},
+            ),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
@@ -183,11 +180,14 @@ export const DocumentProviderOnboarding: Form = buildForm({
             }),
           ],
         }),
-        buildIntroductionField({
-          id: 'final',
-          name: 'Takk',
-          introduction: 'Umsókn þín er komin í vinnslu',
-        }),
+        buildCustomField(
+          {
+            id: 'final',
+            name: 'Takk fyrir að sækja um',
+            component: 'ThankYouScreen',
+          },
+          {},
+        ),
       ],
     }),
   ],

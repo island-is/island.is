@@ -22,10 +22,10 @@ import * as styles from './DetentionRequests.treat'
 import { UserRole } from '@island.is/judicial-system/types'
 import * as Constants from '../../utils/constants'
 import { Link } from 'react-router-dom'
-import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { insertAt } from '../../utils/formatters'
 import { gql, useQuery } from '@apollo/client'
+import { UserContext } from '../../shared-components/UserProvider/UserProvider'
 
 export const CasesQuery = gql`
   query CasesQuery {
@@ -43,7 +43,7 @@ export const CasesQuery = gql`
 
 export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<Case[]>()
-  const { user } = useContext(userContext)
+  const { user } = useContext(UserContext)
 
   const isJudge = user?.role === UserRole.JUDGE
 
@@ -61,8 +61,8 @@ export const DetentionRequests: React.FC = () => {
     if (resCases && !cases) {
       if (isJudge) {
         const judgeCases = resCases.filter((c: Case) => {
-          // Judges should see all cases except drafts
-          return c.state !== CaseState.DRAFT
+          // Judges should see all cases except cases with status code NEW.
+          return c.state !== CaseState.NEW
         })
 
         setCases(judgeCases)
@@ -76,7 +76,7 @@ export const DetentionRequests: React.FC = () => {
     state: CaseState,
   ): { color: TagVariant; text: string } => {
     switch (state) {
-      case CaseState.DRAFT:
+      case CaseState.DRAFT || CaseState.NEW:
         return { color: 'red', text: 'Drög' }
       case CaseState.SUBMITTED:
         return { color: 'purple', text: 'Krafa staðfest' }
@@ -119,7 +119,7 @@ export const DetentionRequests: React.FC = () => {
               <th>Kennitala</th>
               <th>Krafa stofnuð</th>
               <th>Staða</th>
-              <th>Gæsluvarðhaldstími</th>
+              <th>Gæsla rennur út</th>
               <th></th>
             </tr>
           </thead>
