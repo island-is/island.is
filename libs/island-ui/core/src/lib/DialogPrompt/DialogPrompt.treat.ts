@@ -1,7 +1,7 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-const spacing = theme.spacing[3]
+const spacing = theme.spacing[2]
 
 export const content = style({
   filter: `drop-shadow(0 4px 70px rgba(0, 97, 255, 0.1))`,

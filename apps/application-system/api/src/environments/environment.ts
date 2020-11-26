@@ -1,5 +1,6 @@
 export default {
   production: false,
+  environment: 'local',
   identityServer: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: 'api_resource.scope', // TODO update scope when a new one has been created, uses same scope as graphql api atm

@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Text, Link } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import InfoScreen from '../../components/InfoScreen'
 import { m } from '../../../forms/messages'
 

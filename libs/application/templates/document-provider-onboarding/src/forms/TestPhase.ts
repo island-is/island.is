@@ -23,8 +23,36 @@ export const TestPhase: Form = buildForm({
         buildCustomField(
           {
             id: 'testPhaseIntro',
-            name: 'Upplýsingar um prufuaðgang',
+            name: 'Umsókn hefur verið samþykkt',
             component: 'TestPhaseInfoScreen',
+          },
+          {},
+        ),
+      ],
+    }),
+    buildSection({
+      id: 'testAccountSection',
+      name: m.testAccountSection,
+      children: [
+        buildCustomField(
+          {
+            id: 'testAccount',
+            name: 'Aðgangur að prófunarumhverfi',
+            component: 'TestEnvironment',
+          },
+          {},
+        ),
+      ],
+    }),
+    buildSection({
+      id: 'testEndPointSection',
+      name: m.testEndPointSection,
+      children: [
+        buildCustomField(
+          {
+            id: 'endPoint',
+            name: 'Upplýsingar um endapunkt umsækjenda',
+            component: 'TestEndPoint',
           },
           {},
         ),
@@ -44,10 +72,17 @@ export const TestPhase: Form = buildForm({
         ),
       ],
     }),
+
     buildSection({
       id: 'testSection',
       name: m.testSection,
       children: [
+        buildIntroductionField({
+          id: 'testSectionIntro',
+          name: 'Sjálfvirkar prófanir',
+          introduction:
+            'Nú þarf þú að útfæra tæknilega útfærslu, smelltu á halda áfram þegar henni er lokið og þú vilt fara í sjálfvirkar prófanir',
+        }),
         buildCustomField(
           {
             id: 'test',
@@ -68,6 +103,14 @@ export const TestPhase: Form = buildForm({
           description:
             'Hér getur þú búið til aðgang að raunumhverfi. Athugið að afrita og geyma þessar upplýsingar því þær eru ekki geymdar hér í þessari umsókn.',
           children: [
+            buildCustomField(
+              {
+                id: 'test',
+                name: 'Sjálfvirkar prófanir',
+                component: 'ProdEnvironment',
+              },
+              {},
+            ),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',

@@ -59,8 +59,9 @@ const dataSchema = z.object({
   //Not sure if we want this ? Confirmation that tests have finished...
   technicalAnswer: z.boolean().refine((v) => v, {
     //When to show these ?
-    message: 'Þú verður að samþykkja notendaskilmála',
+    message: 'Þú verður að samþykkja að forritun og prófunum sé lokið',
   }),
+  endPoint: z.string().url().nonempty(),
   rejectionReason: z.string(),
   approvedByReviewer: z.enum(['APPROVE', 'REJECT']),
 })

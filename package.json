@@ -81,6 +81,7 @@
     "@types/passport-jwt": "3.0.3",
     "@types/pdfkit": "0.10.6",
     "@types/pubsub-js": "1.8.1",
+    "@types/react-input-mask": "3.0.0",
     "@types/react-table": "7.0.24",
     "@types/stream-buffers": "3.0.3",
     "@xstate/react": "0.8.1",
@@ -178,6 +179,7 @@
     "react-focus-lock": "2.4.1",
     "react-hook-form": "6.4.1",
     "react-html-parser": "2.0.2",
+    "react-input-mask": "3.0.0-alpha.2",
     "react-intl": "5.8.0",
     "react-keyed-flatten-children": "1.2.0",
     "react-number-format": "4.4.1",
@@ -321,8 +323,8 @@
   "resolutions": {
     "webpack": "4.44.1",
     "serialize-javascript": "4.0.0",
-    "http-proxy": "1.18.1",
     "node-forge": "0.10.0",
-    "object-path": "0.11.5"
+    "object-path": "0.11.5",
+    "xml-crypto": "2.0.0"
   }
 }
