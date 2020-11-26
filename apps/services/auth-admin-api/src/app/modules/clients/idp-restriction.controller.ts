@@ -8,26 +8,16 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
-  NotFoundException,
   Param,
   Post,
-  Put,
-  Query,
 } from '@nestjs/common'
-import {
-  ApiCreatedResponse,
-  ApiOAuth2,
-  ApiOkResponse,
-  ApiQuery,
-  ApiTags,
-} from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiOAuth2, ApiTags } from '@nestjs/swagger'
 
 @ApiOAuth2(['@identityserver.api/read'])
 // TODO: ADD guards when functional
 // @UseGuards(AuthGuard('jwt'))
-@ApiTags('Idprestriction')
-@Controller('idprestriction')
+@ApiTags('idp-restriction')
+@Controller('idp-restriction')
 export class IdpRestrictionController {
   constructor(private readonly clientsService: ClientsService) {}
 

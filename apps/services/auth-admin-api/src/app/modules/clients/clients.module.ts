@@ -14,6 +14,8 @@ import {
 } from '@island.is/auth-api-lib'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { IdpRestrictionController } from './idp-restriction.controller'
+import { CorsController } from './cors.controller'
+import { RedirectUriController } from './redirect-uri.controller'
 
 @Module({
   imports: [
@@ -30,7 +32,12 @@ import { IdpRestrictionController } from './idp-restriction.controller'
       ClientClaim,
     ]),
   ],
-  controllers: [ClientsController, IdpRestrictionController],
+  controllers: [
+    ClientsController,
+    IdpRestrictionController,
+    CorsController,
+    RedirectUriController,
+  ],
   providers: [ClientsService],
 })
 export class ClientsModule {}
