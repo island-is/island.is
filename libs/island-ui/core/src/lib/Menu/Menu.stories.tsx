@@ -66,9 +66,9 @@ export default {
   decorators: [withDesign],
   parameters: withFigma({
     desktop:
-      'https://www.figma.com/file/cl7qnkUWOFwgMQKt2FsiZn/H%C3%B6nnun?node-id=5393%3A0',
+      'https://www.figma.com/file/cl7qnkUWOFwgMQKt2FsiZn/H%C3%B6nnun?node-id=6170%3A685',
     mobile:
-      'https://www.figma.com/file/cl7qnkUWOFwgMQKt2FsiZn/H%C3%B6nnun?node-id=5580%3A2504',
+      'https://www.figma.com/file/cl7qnkUWOFwgMQKt2FsiZn/H%C3%B6nnun?node-id=6271%3A1298',
   }),
 }
 
