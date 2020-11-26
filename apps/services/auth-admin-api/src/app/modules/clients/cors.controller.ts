@@ -30,7 +30,7 @@ export class CorsController {
     return await this.clientsService.addAllowedCorsOrigin(corsOrigin)
   }
 
-  /** Removes a idp restriction */
+  /** Removes an cors origin from client */
   @Delete(':clientId/:origin')
   @ApiCreatedResponse()
   async delete(
