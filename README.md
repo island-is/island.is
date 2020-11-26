@@ -34,16 +34,16 @@ You can also read up on our development stack and preferred tools:
 
 #### Frontend
 
-| Tool                     | Description                                                |
-| ------------------------ | ---------------------------------------------------------- |
-| [React]                  | UI framework                                               |
-| [NextJS]                 | frontend framework with routing and server-side rendering  |
-| [Treat]                  | css-in-js                                                  |
-| [Storybook]              | develop, and document React components in isolation        |
-| [Apollo Client]          | graphql client                                             |
-| [GraphQL Code Generator] | generate GraphQL clients and types                         |
-| [Cypress]                | automated browser testing tool                             |
-| [MirageJS]               | API mocking for web apps                                   |
+| Tool                     | Description                                               |
+| ------------------------ | --------------------------------------------------------- |
+| [React]                  | UI framework                                              |
+| [NextJS]                 | frontend framework with routing and server-side rendering |
+| [Treat]                  | css-in-js                                                 |
+| [Storybook]              | develop, and document React components in isolation       |
+| [Apollo Client]          | graphql client                                            |
+| [GraphQL Code Generator] | generate GraphQL clients and types                        |
+| [Cypress]                | automated browser testing tool                            |
+| [MirageJS]               | API mocking for web apps                                  |
 
 #### Backend
 
