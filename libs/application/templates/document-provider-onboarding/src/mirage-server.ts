@@ -17,8 +17,8 @@ export function makeServer({ environment = 'development' } = {}) {
         },
       ])
       this.post('/api/endPointVariables', (schema, request) => {
-        const attrs = JSON.parse(request.requestBody)
-        console.log(attrs)
+        // const attrs = JSON.parse(request.requestBody)
+        // console.log(attrs)
         const data = [
           {
             id: '1',
