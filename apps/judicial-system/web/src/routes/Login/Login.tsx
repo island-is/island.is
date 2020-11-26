@@ -53,7 +53,6 @@ export const Login = () => {
           href={`${api.apiUrl}/api/auth/login?returnUrl=/gaesluvardhaldskrofur`}
           role="button"
           rel="noreferrer noopener"
-          target="_blank"
           className={styles.btn}
         >
           <Button fluid>Innskráning</Button>
