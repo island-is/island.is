@@ -198,13 +198,9 @@ Finally, you need to add it inside your `workspace.json`
 }
 ```
 
-<<<<<<< HEAD:handbook/repository/schemas.md
 {% hint style="info" %}
-You should use one of the following name for the generated file from the codegen.yml configuration: `schema.d.ts`, `schema.tsx`, `schema.ts`, `possibleTypes.json`, `fragmentTypes.json` to be ignored from git.
+You should use one of the following names for the generated file from the codegen.yml configuration: `schema.d.ts`, `schema.tsx`, `schema.ts`, `possibleTypes.json`, `fragmentTypes.json` to be ignored from git.
 {% endhint %}
-=======
-> You should use one of the following names for the generated file from the codegen.yml configuration: `schema.d.ts`, `schema.tsx`, `schema.ts`, `possibleTypes.json`, `fragmentTypes.json` to be ignored from git.
->>>>>>> Update SCHEMAS.md:SCHEMAS.md
 
 ## Generating schema and client types
 
