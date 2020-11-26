@@ -6,5 +6,8 @@ export default {
     jwtSecret: process.env.AUTH_JWT_SECRET,
     allowAuthBypass: process.env.ALLOW_AUTH_BYPASS,
   },
+  auditTrail: {
+    useGenericLogger: process.env.USE_GENERIC_LOGGER,
+  },
   backendUrl: process.env.BACKEND_URL,
 }

@@ -1,22 +1,23 @@
 import fetch from 'node-fetch'
 import { Injectable } from '@nestjs/common'
 
+import { User } from '@island.is/judicial-system/types'
+
 import { environment } from '../../../environments'
-import { AuthUser } from './auth.types'
 
 @Injectable()
 export class AuthService {
-  async validateUser(authUser: AuthUser): Promise<boolean> {
-    const res = await fetch(
-      `${environment.backendUrl}/api/user/${authUser.nationalId}`,
-    )
+  async findUser(nationalId: string): Promise<User | undefined> {
+    const res = await fetch(`${environment.backendUrl}/api/user/${nationalId}`)
 
     if (!res.ok) {
-      return false
+      return undefined
     }
 
-    const user = await res.json()
+    return await res.json()
+  }
 
-    return user?.active
+  validateUser(user?: User): boolean {
+    return Boolean(user?.active)
   }
 }
