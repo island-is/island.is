@@ -63,7 +63,12 @@ export const CategoryCard = ({
         <Box paddingTop={3}>
           <Inline space={['smallGutter', 'smallGutter', 'gutter']}>
             {tags.map((tag) => (
-              <Tag variant={tagVariant} href={tag.href} onClick={tag.onClick}>
+              <Tag
+                label={!Boolean(tag.href)}
+                variant={tagVariant}
+                href={tag.href}
+                onClick={tag.onClick}
+              >
                 {tag.label}
               </Tag>
             ))}
