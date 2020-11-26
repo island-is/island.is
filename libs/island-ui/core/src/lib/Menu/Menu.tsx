@@ -24,7 +24,7 @@ type Link = {
 type LinkWithSub = {
   text: string
   href: string
-  sub: Link[]
+  sub?: Link[]
 }
 
 export interface MenuProps {
@@ -36,31 +36,31 @@ export interface MenuProps {
    * Element that opens the menu.
    * It will be forwarded neccessery props for a11y and event handling.
    */
-  menuButton: ReactElement
+  menuButton?: ReactElement
   /**
    * Render function for all links, usefull for wraping framework specific routing links
    */
-  renderLink: (settings: RenderLinkObj) => ReactNode
+  renderLink?: (settings: RenderLinkObj) => ReactNode
   /**
    * Render function for Logo, usefull for wraping framework specific routing links
    */
-  renderLogo: (logo: ReactNode) => ReactNode
+  renderLogo?: (logo: ReactNode) => ReactNode
   /**
    * Render function search input, useful for rendering custom search
    */
-  renderSearch: (search: ReactNode) => ReactNode
+  renderSearch?: (search: ReactNode) => ReactNode
   /**
    * Render function for my pages button, useful for adding specific logic to my pages button
    */
-  renderMyPagesButton: (myPagesButton: ReactNode) => ReactNode
+  renderMyPagesButton?: (myPagesButton: ReactNode) => ReactNode
   /**
    * Render function for language switch button, useful for adding specific logic to language switch button
    */
-  renderLanguageSwitch: (languageSwitch: ReactNode) => ReactNode
+  renderLanguageSwitch?: (languageSwitch: ReactNode) => ReactNode
   /**
    * Logo title for accessibility
    */
-  logoTitle: string
+  logoTitle?: string
   myPagesText: string
   languageSwitchText: string
   /**
@@ -319,7 +319,7 @@ export const Menu = ({
                 </Box>
                 <Box marginTop={[0, 0, 9]}>
                   {asideTopLinks.map(({ text, href, sub }, index) =>
-                    sub?.length > 0 ? (
+                    sub && sub.length > 0 ? (
                       <AsideTopLinkWithSub
                         key={index}
                         id={index}
