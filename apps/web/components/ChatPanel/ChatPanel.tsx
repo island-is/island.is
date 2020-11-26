@@ -15,7 +15,7 @@ declare global {
 let boost = null
 
 export const ChatPanel = () => {
-  const [visible, setVisible] = useState<boolean>(true)
+  const [visible, setVisible] = useState<boolean>(false)
 
   useEffect(() => {
     const conversationId =
@@ -36,9 +36,17 @@ export const ChatPanel = () => {
       }
 
       boost = window.boostInit(ID, settings)
-
+      boost.chatPanel.show()
       boost.chatPanel.addEventListener('chatPanelClosed', onChatPanelClosed)
       boost.chatPanel.addEventListener(
+        'conversationIdChanged',
+        onConversationIdChanged,
+      )
+    }
+
+    return () => {
+      boost.chatPanel.removeEventListener('chatPanelClosed', onChatPanelClosed)
+      boost.chatPanel.removeEventListener(
         'conversationIdChanged',
         onConversationIdChanged,
       )
