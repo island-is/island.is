@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import IdentityResourcesDTO from '../models/dtos/identity-resources-dto';
+import IdentityResourcesDTO from '../models/dtos/identity-resources.dto';
 import axios from 'axios';
 import StatusBar from './StatusBar';
 import { __asyncValues } from 'tslib';

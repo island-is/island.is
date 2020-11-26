@@ -5,12 +5,17 @@ import ClientClaim from './../../components/ClientClaim';
 import { ClientClaimDTO } from './../../models/dtos/client-claim.dto';
 import ClientRedirectUri from './../../components/ClientRedirectUri';
 import { ClientRedirectUriDTO } from './../../models/dtos/client-redirect-uri.dto';
+import ClientIdpRestrictions from './../../components/ClientIdpRestrictions';
 
 export default function Index(){
     
     const [step, setStep] = useState(1);
     const [clientId, SetClientId] = useState(null);
     // let clientObj: ClientDTO = new ClientDTO();
+
+    const handlePageChange = () => {
+        setStep(step+1);
+    }
 
     const handleClientSaved = (client: ClientDTO) => {
         if (client.clientId){
@@ -29,11 +34,14 @@ export default function Index(){
         {
             console.log(redirectObj);    
         }
+        setStep(step+1);
     }
 
     const handleClaimSaved = (claim: ClientClaimDTO) => {
         console.log(claim.clientId);
     }
+
+    console.log(step);
 
     switch (step){
         case 1:
@@ -43,14 +51,10 @@ export default function Index(){
             // Set the callback URI .. ALLT
             const rObj = new ClientRedirectUriDTO();
             rObj.clientId = clientId;
-            return <ClientRedirectUri redirectObject={rObj} handleSaved={handleRedirectSaved} />
+            return <ClientRedirectUri redirectObject={rObj} handlePageChange={handleRedirectSaved} />
             }
         case 3: {
-            // Add Claims - Custom Claims (Vitum ekki alveg) - Setja í BID
-            const claim = new ClientClaimDTO();
-            console.log("Client ID: " + clientId);
-            claim.clientId = clientId;
-            return <ClientClaim claim={claim} handleSaved={handleClaimSaved} />
+            return <ClientIdpRestrictions clientId={clientId} restrictions={[]} handlePageChange={handlePageChange} />
         }
         case 4: {
             // Allowed Scopes
@@ -70,8 +74,11 @@ export default function Index(){
             // Loggaður út -> viltu fara aftur á þína síðu
         }
         case 8: {
-            // ClientIdpRestrictions
-            // Sími, KORT, HAKA VId
+           // Add Claims - Custom Claims (Vitum ekki alveg) - Setja í BID
+           const claim = new ClientClaimDTO();
+           console.log("Client ID: " + clientId);
+           claim.clientId = clientId;
+           return <ClientClaim claim={claim} handleSaved={handleClaimSaved} />
         }
         case 9: {
             //ClientSecret

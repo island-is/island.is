@@ -1,7 +1,7 @@
 import { ENGINE_METHOD_DIGESTS } from 'constants';
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
-import IdentityResourcesDTO from '../models/dtos/identity-resources-dto';
+import IdentityResourcesDTO from '../models/dtos/identity-resources.dto';
 import axios from 'axios';
 import Paginator from './Paginator';
 import APIResponse from '../models/APIResponse';

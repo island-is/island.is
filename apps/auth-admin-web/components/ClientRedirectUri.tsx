@@ -4,11 +4,10 @@ import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import StatusBar from './StatusBar';
 import HelpBox from './HelpBox';
-
-
+ 
 interface Props {
     redirectObject: ClientRedirectUriDTO,
-    handleSaved?: (redirectObject: ClientRedirectUriDTO) => void
+    handlePageChange?: () => void
 }
 
 const ClientRedirectUri: React.FC<Props> = (props: Props) =>
@@ -19,12 +18,10 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) =>
     const [uris, setUris] = useState<string[]>([]);
     
     const save = (data) => {
-
         const temp = new ClientRedirectUriDTO();
         temp.clientId = props.redirectObject.clientId;
         temp.redirectUri = data.redirectUri;
         console.log(temp);
-        props.handleSaved(temp);
         uris.push(temp.redirectUri);
         setUris(uris);
     }
@@ -88,8 +85,8 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) =>
                   <button
                     type="button"
                     className="client-redirect__button__save"
-                    value="Next"
-                  />
+                    onClick={props.handlePageChange}
+                  >Next</button>
                 </div>
               </div>
            

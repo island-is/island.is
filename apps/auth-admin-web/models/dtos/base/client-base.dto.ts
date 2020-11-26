@@ -1,3 +1,5 @@
+import { IdpRestrictionDTO } from '../idp-restriction.dto';
+
 export abstract class ClientBaseDTO {
   constructor() {
     this.nationalId = '';
@@ -38,6 +40,7 @@ export abstract class ClientBaseDTO {
     this.description = null;
     this.protocolType = '';
     this.requireClientSecret = true;
+    this.idpRestrictions = [];
   }
 
   nationalId: string;

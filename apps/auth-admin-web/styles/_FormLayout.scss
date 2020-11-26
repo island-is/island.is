@@ -1,6 +1,7 @@
 .client,
 .identity-resource,
-.client-redirect {
+.client-redirect,
+.client-idp-restriction {
   &__wrapper {
     max-width: 1024px;
   }
