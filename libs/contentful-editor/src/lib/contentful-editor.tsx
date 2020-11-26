@@ -7,6 +7,7 @@ import { Sidebar } from './components/Sidebar/Sidebar'
 import { getContentfulInfo } from './utils/get-contentful-info'
 import { initializer, MagicType } from './contentful/initializer'
 
+// Use this https://github.com/island-is/island.is/pull/2024/files
 const CONTENTFUL_TYPES_TO_MAP = [
   { id: 'lifeEventPage', matches: ['life-event', 'lifsvidburdur'] },
   { id: 'articleCategory', matches: ['category', 'flokkur'] },

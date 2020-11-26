@@ -1,14 +1,8 @@
 import React, { FC } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
-import { SingleLineEditor } from '@contentful/field-editor-single-line'
-import { RichTextEditor } from '@contentful/field-editor-rich-text'
-import { FieldAPI } from 'contentful-ui-extensions-sdk/typings'
-import { Space } from 'contentful'
 
 import { MagicType } from '../../contentful/initializer'
-import { locales } from '../../contentful/locales'
-import { getSdk } from '../../contentful/sdk'
-import { ContentfulEnv } from '../../contentful/client'
+import { renderer } from '../../contentful/renderer'
 
 import * as styles from './Sidebar.treat'
 
@@ -26,42 +20,11 @@ export const Sidebar: FC<SidebarProps> = ({ data, loading, onChange }) => {
     onChange(field, value)
   }
 
-  const renderFields = (field: FieldAPI) => {
-    switch (field.type) {
-      case 'Text':
-      case 'Symbol':
-        return (
-          <SingleLineEditor
-            key={field.id}
-            field={field}
-            locales={locales}
-            isInitiallyDisabled={false}
-          />
-        )
-
-      case 'RichText':
-        return (
-          <RichTextEditor
-            key={field.id}
-            sdk={{
-              ...data?._sdk,
-              field,
-            }}
-            isInitiallyDisabled={false}
-          />
-        )
-
-      default:
-        console.warn(`${field.type} is not supported yet.`)
-        return null
-    }
-  }
-
   return (
     <>
       <Box className={styles.wrapper}>
-        <Text as="h3" variant="h3" fontWeight="semiBold">
-          Contentful editor mode
+        <Text as="h3" variant="h3" fontWeight="semiBold" marginBottom={3}>
+          Contentful Editor Mode
         </Text>
 
         {loading && <Text marginTop={2}>Loading...</Text>}
@@ -70,15 +33,16 @@ export const Sidebar: FC<SidebarProps> = ({ data, loading, onChange }) => {
           (data?.fields ?? []).map((field) => (
             <Box
               key={field.id}
-              paddingY={3}
-              borderBottomWidth="standard"
-              borderColor="dark200"
+              padding={2}
+              background="blue100"
+              borderRadius="standard"
+              marginBottom={2}
             >
               <Text variant="eyebrow" marginBottom={1}>
                 {field.id}
               </Text>
 
-              {renderFields(field)}
+              {renderer(field, data?._sdk)}
             </Box>
           ))}
       </Box>

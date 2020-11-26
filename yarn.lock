@@ -1972,7 +1972,7 @@
     lodash.get "^4.4.2"
     lodash.omit "^4.5.0"
 
-"@contentful/field-editor-reference@^2.1.2":
+"@contentful/field-editor-reference@2.1.2", "@contentful/field-editor-reference@^2.1.2":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@contentful/field-editor-reference/-/field-editor-reference-2.1.2.tgz#773c78d5443430447759b3361714d39e90aec81d"
   integrity sha512-f934HF+K0ucrYuYb9tz8x4FoonW55w470rA8gCqWo44brs+sn4jU0Mrf7SgT0YEkSWQgL41Qn7tp4/VMFoBE9Q==

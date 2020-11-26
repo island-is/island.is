@@ -7,7 +7,7 @@ export const wrapper = style({
   position: 'fixed',
   left: 0,
   bottom: 0,
-  zIndex: 9999,
+  zIndex: 99,
 
   width: 800,
   height: 100,

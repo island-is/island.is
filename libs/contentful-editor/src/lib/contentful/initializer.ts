@@ -11,19 +11,24 @@ import {
   BaseExtensionSDK,
   FieldAPI,
 } from 'contentful-ui-extensions-sdk/typings'
+import { ContentFields } from 'contentful-management/dist/typings/entities/content-type-fields'
 
 import { ContentfulEnv, createContentfulClient } from '../contentful/client'
 import { getSdk } from '../contentful/sdk'
 
+type _Entry = Collection<Entry, EntryProp>
+type _Locale = 'en' | 'is-IS'
+
 interface InitializerProps {
   slug: string
   contentType: string
-  locale: 'en' | 'is-IS'
+  locale: _Locale
   env: ContentfulEnv
 }
 
+
 export interface MagicType {
-  _entry: Collection<Entry, EntryProp>
+  _entry: _Entry
   _space: Space
   _type: ContentType
   _sdk: any // TODO
@@ -37,7 +42,6 @@ export const initializer = async ({
   env,
 }: InitializerProps) => {
   const { env: client, space } = await createContentfulClient(env)
-  const emitter: Emitter = mitt()
 
   // We get the entry content
   const entry = await client.getEntries({
@@ -45,20 +49,20 @@ export const initializer = async ({
     'fields.slug': slug,
     locale,
   })
+  console.log('-entry', entry);
 
   // We get the entry contentType
   const type = await client.getContentType(contentType)
+  console.log('-type', type);
 
   // We get the data for SDK
   const sdk = getSdk(space, type)
 
   // We merge both objects together to fit the contentful fields API
   const fields = type.fields
-    .filter(
-      (field) =>
-        field.id === 'title' || field.id === 'intro' || field.id === 'content',
-    ) // TEMP
     .map((field) => {
+      const emitter: Emitter = mitt()
+
       return {
         id: field.id,
         locale,
@@ -72,42 +76,56 @@ export const initializer = async ({
             (entryField) => entryField === field.id,
           )
 
-          console.log('-entryFields', entryFields)
-          console.log('-fieldName', fieldName)
-
           if (!fieldName) {
             return undefined
           }
 
-          const obj = entryFields?.[fieldName]?.[locale]
-          console.log('-obj', obj)
-
-          if (obj?.nodeType === 'document') {
-            // console.log('-obj', obj);
-            return obj
-          }
-
-          return obj
+          return entryFields?.[fieldName]?.[locale]
         },
-        // setValue: (value: any) => Promise<any>,
         setValue: (value: string) => {
-          console.log('-value', value)
-
           emitter.emit('setValue', value)
           emitter.emit('onValueChanged', value)
 
           return Promise.resolve()
         },
-        // removeValue: () => Promise<void>,
-        removeValue: () => null,
-        // setInvalid: (value: boolean) => void,
-        setInvalid: () => null,
-        // onValueChanged: (callback: (value: any) => void) => () => void,
-        onValueChanged: () => () => null,
-        // onIsDisabledChanged: (callback: (isDisabled: boolean) => void) => () => void,
-        onIsDisabledChanged: () => () => null,
-        // onSchemaErrorsChanged: (callback: (errors: Error[]) => void) => () => void,
-        onSchemaErrorsChanged: () => () => null,
+        removeValue: () => {
+          emitter.emit('removeValue')
+          emitter.emit('onValueChanged', undefined)
+
+          return Promise.resolve()
+        },
+        setInvalid: () => {
+          emitter.emit('setInvalid')
+        },
+        onValueChanged: (...args: [string, Function] | [Function]) => {
+          let fn: Function
+
+          if (typeof args[0] === 'string') {
+            fn = args[1] as Function
+          } else {
+            fn = args[0]
+          }
+
+          emitter.on('onValueChanged', fn as Handler)
+
+          return () => {
+            emitter.off('onValueChanged', fn as Handler)
+          }
+        },
+        onIsDisabledChanged: (fn: Function) => {
+          emitter.on('onIsDisabledChanged', fn as Handler)
+
+          return () => {
+            emitter.off('onIsDisabledChanged', fn as Handler)
+          }
+        },
+        onSchemaErrorsChanged: (fn: Function) => {
+          emitter.on('onSchemaErrorsChanged', fn as Handler)
+
+          return () => {
+            emitter.off('onSchemaErrorsChanged', fn as Handler)
+          }
+        },
       }
     })
 

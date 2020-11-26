@@ -5,6 +5,7 @@ import {
 } from 'contentful-ui-extensions-sdk/typings'
 import { Space } from 'contentful-management/dist/typings/entities/space'
 import { ContentType } from 'contentful-management/dist/typings/entities/content-type'
+import { openRichTextDialog } from '@contentful/field-editor-rich-text'
 
 import { createFakeFieldAPI } from '../utils/createFakeFieldAPI'
 import { createFakeNavigatorAPI } from '../utils/createFakeNavigatorAPI'
@@ -12,6 +13,10 @@ import publishedEntry from '../utils/entry.json'
 import { createFakeSpaceAPI } from '../utils/createFakeSpaceAPI'
 import { locales } from './locales'
 import { ContentfulEnv, createContentfulClient } from './client'
+
+/**
+ * https://github.com/contentful/field-editors/blob/master/packages/rich-text/src/dialogs/openRichTextDialog.jsx
+ */
 
 const newEntitySelectorDummyDialog = (
   fnName: string,
@@ -21,11 +26,11 @@ const newEntitySelectorDummyDialog = (
     `sdk.dialogs.${fnName}()\nSimulate selecting a random entity or cancel?`,
   )
     ? {
-        sys: {
-          id: Math.random().toString(36).substring(7),
-          type,
-        },
-      }
+      sys: {
+        id: Math.random().toString(36).substring(7),
+        type,
+      },
+    }
     : Promise.reject() // Simulate cancellation.
 }
 
@@ -37,7 +42,7 @@ const newEntitySelectorDummyDialog = (
 export const getSdk = (space: Space, types: ContentType) => {
   const navigator = createFakeNavigatorAPI() // TEMP
 
-  return {
+  const sdk = {
     space: {
       ...space,
       getEntry: () => {
@@ -61,18 +66,19 @@ export const getSdk = (space: Space, types: ContentType) => {
     navigator: {
       ...navigator,
       onSlideInNavigation: () => {
-        return () => {}
+        return () => { }
       },
     },
     dialogs: {
-      selectSingleAsset: newEntitySelectorDummyDialog(
-        'selectSingleAsset',
-        'Asset',
-      ),
-      selectSingleEntry: newEntitySelectorDummyDialog(
-        'selectSingleEntry',
-        'Entry',
-      ),
+      // TODO
+      // selectSingleAsset: newEntitySelectorDummyDialog(
+      //   'selectSingleAsset',
+      //   'Asset',
+      // ),
+      // selectSingleEntry: newEntitySelectorDummyDialog(
+      //   'selectSingleEntry',
+      //   'Entry',
+      // ),
     },
     access: {
       can: (access: CrudAction, entityType: EntityType) => {
@@ -95,4 +101,8 @@ export const getSdk = (space: Space, types: ContentType) => {
       },
     },
   }
+
+  sdk.dialogs.openCurrent = openRichTextDialog(sdk)
+
+  return sdk
 }
