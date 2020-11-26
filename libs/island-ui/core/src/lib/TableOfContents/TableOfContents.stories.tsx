@@ -10,14 +10,16 @@ export default {
 export const TableOfContentsExample = () => (
   <Box paddingTop={3}>
     <TableOfContents
-      title={'Table of contents'}
+      tableOfContentsTitle={'Table of contents'}
       headings={[
-        'First heading',
-        'Second heading',
-        'Third heading',
-        'Fourth heading',
+        { headingTitle: 'First heading', headingId: 'firstId' },
+        { headingTitle: 'Second heading', headingId: 'secondId' },
+        { headingTitle: 'Third heading', headingId: 'thirdId' },
+        { headingTitle: 'Fourth heading', headingId: 'fourthId' },
       ]}
-      onClick={(text) => console.log(text)}
+      onClick={(selectedHeadingId) =>
+        console.log('Navigate to: ', selectedHeadingId)
+      }
     />
   </Box>
 )
