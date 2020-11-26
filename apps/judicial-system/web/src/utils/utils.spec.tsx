@@ -1,12 +1,15 @@
 import {
   insertAt,
+  padTimeWithZero,
   parseArray,
   parseString,
   parseTime,
   parseTransition,
   replaceTabs,
+  replaceTabsOnChange,
 } from './formatters'
-import { constructConclusion, isNextDisabled } from './stepHelper'
+import * as formatters from './formatters'
+import { constructConclusion, isDirty, isNextDisabled } from './stepHelper'
 import { RequiredField } from '../types'
 import {
   CaseTransition,
@@ -14,7 +17,9 @@ import {
   Case,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import React from 'react'
+import userEvent from '@testing-library/user-event'
 
 describe('Formatters utils', () => {
   describe('Parse array', () => {
@@ -106,6 +111,44 @@ ipsum`
       expect(dd).toEqual('2020-10-24')
     })
   })
+
+  describe('padTimeWithZero', () => {
+    test('should pad a time with single hour value with a zero', () => {
+      // Arrange
+      const val = '1:15'
+
+      // Act
+      const result = padTimeWithZero(val)
+
+      // Assert
+      expect(result).toEqual('01:15')
+    })
+
+    test('should return the input value if the value is of lenght 5', () => {
+      // Arrange
+      const val = '01:15'
+
+      // Act
+      const result = padTimeWithZero(val)
+
+      // Assert
+      expect(result).toEqual('01:15')
+    })
+  })
+
+  describe('replaceTabsOnChange', () => {
+    test('should not call replaceTabs if called with a string that does not have a tab character', () => {
+      // Arrange
+      const spy = jest.spyOn(formatters, 'replaceTabs')
+      render(<input onChange={(evt) => replaceTabsOnChange(evt)} />)
+
+      // Act
+      userEvent.type(screen.getByRole('textbox'), 'Lorem ipsum')
+
+      // Assert
+      expect(spy).not.toBeCalled()
+    })
+  })
 })
 
 describe('Validation', () => {
@@ -119,12 +162,12 @@ describe('Validation', () => {
 
       // Assert
       expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Ekki á réttu formi')
+      expect(r.errorMessage).toEqual('Dæmi: 012-3456-7890')
     })
   })
 
   describe('Validate time format', () => {
-    test('should fail if not in correct form', () => {
+    test('should fail if time is not within the 24 hour clock', () => {
       // Arrange
       const time = '99:00'
 
@@ -133,7 +176,18 @@ describe('Validation', () => {
 
       // Assert
       expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Ekki á réttu formi')
+      expect(r.errorMessage).toEqual('Dæmi: 12:34 eða 1:23')
+    })
+
+    test('should be valid if with the hour part is one digit within the 24 hour clock', () => {
+      // Arrange
+      const time = '1:00'
+
+      // Act
+      const r = validate(time, 'time-format')
+
+      // Assert
+      expect(r.isValid).toEqual(true)
     })
   })
 
@@ -147,7 +201,7 @@ describe('Validation', () => {
 
       // Assert
       expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Ekki á réttu formi')
+      expect(r.errorMessage).toEqual('Dæmi: 012345-6789')
     })
 
     test('should be valid given just the first six digits', () => {
@@ -171,7 +225,7 @@ describe('Validation', () => {
 
       // Assert
       expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Ekki á réttu formi')
+      expect(r.errorMessage).toEqual('Dæmi: 012345-6789')
     })
 
     test('should not be valid given an invalid month', () => {
@@ -183,7 +237,7 @@ describe('Validation', () => {
 
       // Assert
       expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Ekki á réttu formi')
+      expect(r.errorMessage).toEqual('Dæmi: 012345-6789')
     })
   })
 
@@ -247,7 +301,7 @@ describe('Validation', () => {
 })
 
 describe('Step helper', () => {
-  describe('insertAt()', () => {
+  describe('insertAt', () => {
     test('should insert a string at a certain position into another string', () => {
       // Arrange
       const str = 'Lorem ipsum dolum kara'
@@ -410,7 +464,7 @@ describe('Step helper', () => {
     })
   })
 
-  describe('isNextDisabled()', () => {
+  describe('isNextDisabled', () => {
     test('should return true if the only validation does not pass', () => {
       // Arrange
       const rf: RequiredField[] = [{ value: '', validations: ['empty'] }]
@@ -529,6 +583,44 @@ describe('Step helper', () => {
 
       // Assert
       expect(res).toEqual('020-0202-2929')
+    })
+  })
+
+  describe('isDirty', () => {
+    test('should return true if value is an empty string', () => {
+      // Arrange
+      const emptyString = ''
+
+      // Act
+      const result = isDirty(emptyString)
+
+      // Assert
+      expect(result).toEqual(true)
+    })
+
+    test('should return true if value is a non empty string', () => {
+      // Arrange
+      const str = 'test'
+
+      // Act
+      const result = isDirty(str)
+
+      // Assert
+      expect(result).toEqual(true)
+    })
+
+    test('should return false if value is undefined or null', () => {
+      // Arrange
+      const und = undefined
+      const n = null
+
+      // Act
+      const resultUnd = isDirty(und)
+      const resultN = isDirty(n)
+
+      // Assert
+      expect(resultUnd).toEqual(false)
+      expect(resultN).toEqual(false)
     })
   })
 })

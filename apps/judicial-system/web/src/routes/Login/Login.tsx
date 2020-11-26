@@ -1,10 +1,5 @@
 import React, { useContext, useEffect } from 'react'
-import {
-  Text,
-  ButtonDeprecated as Button,
-  Box,
-  AlertMessage,
-} from '@island.is/island-ui/core'
+import { Text, Button, Box, AlertMessage } from '@island.is/island-ui/core'
 import * as styles from './Login.treat'
 import { api } from '../../services'
 import { UserContext } from '../../shared-components/UserProvider/UserProvider'
@@ -15,7 +10,6 @@ export const Login = () => {
 
   useEffect(() => {
     document.title = 'Réttarvörslugátt'
-    window.localStorage.clear()
   }, [])
 
   useEffect(() => {
@@ -55,12 +49,14 @@ export const Login = () => {
         </Text>
       </div>
       <div className={styles.buttonContainer}>
-        <Button
+        <a
           href={`${api.apiUrl}/api/auth/login?returnUrl=/gaesluvardhaldskrofur`}
-          width="fluid"
+          role="button"
+          rel="noreferrer noopener"
+          className={styles.btn}
         >
-          Innskráning
-        </Button>
+          <Button fluid>Innskráning</Button>
+        </a>
       </div>
     </div>
   )

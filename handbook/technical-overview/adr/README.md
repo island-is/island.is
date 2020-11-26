@@ -17,3 +17,5 @@ For new ADRs, please use [template.md](template.md) as basis. More information o
 - [ADR-0008](0008-use-oauth-and-openid-connect.md) - Use OAuth 2.0 and OpenID Connect as protocols for Authentication and Authorization
 - [ADR-0009](0009-naming-files-and-directories.md) - Unified naming strategy for files and directories
 - [ADR-0010](0010-cms.md) - CMS
+- [ADR-0011](0011-open-source-license.md) - Open source license
+- [ADR-0012](0012-chart-library.md) - Chart library

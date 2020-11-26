@@ -16,6 +16,8 @@ import {
   TextField,
   TextFieldVariant,
   MaybeWithApplication,
+  AsyncSelectField,
+  Context,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
 import { FormText } from '..'
@@ -179,6 +181,44 @@ export function buildSelectField(data: {
     options,
     type: FieldTypes.SELECT,
     component: FieldComponents.SELECT,
+  }
+}
+
+export function buildAsyncSelectField(data: {
+  condition?: Condition
+  id: string
+  name: FormText
+  description?: FormText
+  placeholder?: string
+  loadOptions: (c: Context) => Promise<Option[]>
+  loadingError?: FormText
+  disabled?: boolean
+  width?: FieldWidth
+}): AsyncSelectField {
+  const {
+    condition,
+    id,
+    name,
+    description,
+    loadOptions,
+    loadingError,
+    placeholder,
+    disabled = false,
+    width = 'full',
+  } = data
+  return {
+    children: undefined,
+    placeholder,
+    disabled,
+    width,
+    condition,
+    id,
+    name,
+    description,
+    loadOptions,
+    loadingError,
+    type: FieldTypes.ASYNC_SELECT,
+    component: FieldComponents.ASYNC_SELECT,
   }
 }
 

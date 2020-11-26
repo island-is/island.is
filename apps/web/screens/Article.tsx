@@ -70,7 +70,9 @@ const createArticleNavigation = (
   makePath: (t: string, p: string) => string,
 ): Array<{ url: string; title: string }> => {
   if (article.subArticles.length === 0) {
-    return createNavigation(article.body).map(({ id, text }) => ({
+    return createNavigation(article.body, {
+      title: article.shortTitle || article.title,
+    }).map(({ id, text }) => ({
       title: text,
       url: article.slug + '#' + id,
     }))
