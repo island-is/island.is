@@ -17,4 +17,7 @@ export default {
       'localhost:7005',
     ],
   },
+  emailOptions: {
+    useTestAccount: true,
+  },
 }

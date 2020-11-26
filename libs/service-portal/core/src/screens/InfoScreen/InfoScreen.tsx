@@ -51,7 +51,7 @@ export const InfoScreen: FC<Props> = ({
                   <Text variant="h1" as="h1">
                     {formatMessage(title)}
                   </Text>
-                  <Tag variant="blue" label>
+                  <Tag variant="blue" outlined>
                     {formatMessage({
                       id: 'service.portal:in-progress',
                       defaultMessage: 'Í vinnslu',
