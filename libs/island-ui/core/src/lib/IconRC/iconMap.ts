@@ -18,6 +18,7 @@ export type Icon =
   | 'chevronForward'
   | 'closeCircle'
   | 'close'
+  | 'copy'
   | 'documents'
   | 'download'
   | 'ellipse'
@@ -62,6 +63,7 @@ export default {
     chevronForward: 'ChevronForward',
     closeCircle: 'CloseCircle',
     close: 'Close',
+    copy: 'Copy',
     documents: 'Documents',
     download: 'Download',
     ellipse: 'Ellipse',
@@ -105,6 +107,7 @@ export default {
     chevronForward: 'ChevronForwardOutline',
     closeCircle: 'CloseCircleOutline',
     close: 'CloseOutline',
+    copy: 'CopyOutline',
     documents: 'DocumentsOutline',
     download: 'DownloadOutline',
     ellipse: 'EllipseOutline',
