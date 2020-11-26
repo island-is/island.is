@@ -209,7 +209,7 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
                           onTagClick(id)
                         }}
                         active={tagIds.includes(id)}
-                        bordered
+                        outlined
                       >
                         {title}
                       </Tag>
@@ -264,7 +264,7 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
                   tag.map((x) => ({
                     title: x.title,
                     tagProps: {
-                      label: true,
+                      outlined: true,
                     },
                   }))) ||
                 []

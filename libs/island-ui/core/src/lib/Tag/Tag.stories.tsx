@@ -26,12 +26,8 @@ export const Basic = () => (
         <Tag variant="darkerMint">Fæðingarorlof</Tag>
         <Tag variant="mint">Skilnaður</Tag>
         <Tag variant="purple">Færnimat</Tag>
-        <Tag variant="red" label>
-          Færnimat
-        </Tag>
-        <Tag variant="white" label>
-          Færnimat
-        </Tag>
+        <Tag variant="red">Færnimat</Tag>
+        <Tag variant="white">Færnimat</Tag>
         <Tag variant="rose">Færnimat</Tag>
         <Tag variant="red" attention>
           Mikilvægt
@@ -41,30 +37,30 @@ export const Basic = () => (
   </ContentBlock>
 )
 
-export const Bordered = () => (
+export const outlined = () => (
   <ContentBlock>
     <Box paddingY={[1, 2]}>
       <Inline space={1}>
-        <Tag bordered>Ferðagjöf</Tag>
-        <Tag variant="darkerBlue" bordered>
+        <Tag outlined>Ferðagjöf</Tag>
+        <Tag variant="darkerBlue" outlined>
           Gifting
         </Tag>
-        <Tag variant="darkerMint" bordered>
+        <Tag variant="darkerMint" outlined>
           Fæðingarorlof
         </Tag>
-        <Tag variant="mint" bordered>
+        <Tag variant="mint" outlined>
           Skilnaður
         </Tag>
-        <Tag variant="purple" bordered>
+        <Tag variant="purple" outlined>
           Færnimat
         </Tag>
-        <Tag variant="red" label bordered>
+        <Tag variant="red" outlined>
           Færnimat
         </Tag>
-        <Tag variant="white" label bordered>
+        <Tag variant="white" outlined>
           Færnimat
         </Tag>
-        <Tag variant="darkerMint" label bordered attention>
+        <Tag variant="darkerMint" outlined attention>
           Mikilvægt
         </Tag>
       </Inline>

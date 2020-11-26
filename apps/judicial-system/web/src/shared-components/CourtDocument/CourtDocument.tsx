@@ -22,7 +22,7 @@ const CourtDocument: React.FC<CourtDocumentProps> = ({
         <Box marginBottom={1}>
           <Text variant="h4">{title}</Text>
         </Box>
-        <Tag variant={tagVariant} label>
+        <Tag variant={tagVariant} outlined>
           {tagText}
         </Tag>
       </Box>
