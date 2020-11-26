@@ -53,6 +53,7 @@ export const CategoryCard = ({
       borderColor={borderColor}
       borderWidth="standard"
       height="full"
+      background="white"
     >
       <Text variant="h3" color={textColor}>
         {heading}
