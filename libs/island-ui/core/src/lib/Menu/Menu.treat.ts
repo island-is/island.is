@@ -3,11 +3,11 @@ import { style } from 'treat'
 import bg from './bg.svg'
 
 export const container = style({
+  width: '100%',
+  minHeight: '100%',
+  background: theme.color.white,
   ...themeUtils.responsiveStyle({
     md: {
-      width: '100%',
-      minHeight: '100%',
-      background: theme.color.white,
       display: 'flex',
     },
   }),
@@ -17,11 +17,13 @@ export const main = style({
   ...themeUtils.responsiveStyle({
     md: {
       flexBasis: '66.66666%',
+      flexGrow: 1,
+    },
+    xl: {
       backgroundImage: `url(${bg})`,
       backgroundRepeat: 'no-repeat',
       backgroundSize: 546,
       backgroundPosition: `top 579px right ${theme.spacing[15]}px`,
-      flexGrow: 1,
     },
   }),
 })
@@ -31,6 +33,14 @@ export const mainContainer = style({
   ...themeUtils.responsiveStyle({
     md: {
       maxWidth: 829,
+    },
+  }),
+})
+export const searchContainer = style({
+  width: '100%',
+  ...themeUtils.responsiveStyle({
+    md: {
+      maxWidth: 342,
     },
   }),
 })
@@ -60,4 +70,35 @@ export const asideContainer = style({
       maxWidth: 342,
     },
   }),
+})
+
+export const mainLinkContainer = style({
+  ...themeUtils.responsiveStyle({
+    md: {
+      columnCount: 2,
+      columnGap: theme.spacing[2],
+      height: 520,
+      columnFill: 'auto',
+    },
+  }),
+})
+export const mainLinkOuter = style({
+  paddingTop: theme.spacing[1],
+  paddingBottom: theme.spacing[1],
+  paddingLeft: theme.spacing[2],
+  borderLeft: `1px solid ${theme.color.blue200}`,
+})
+export const mainLink = style({
+  transition: 'color .3s',
+  ':hover': {
+    textDecoration: 'none',
+    color: theme.color.blue600,
+  },
+})
+export const asideLink = style({
+  transition: 'color .3s',
+  ':hover': {
+    textDecoration: 'none',
+    color: theme.color.blue400,
+  },
 })

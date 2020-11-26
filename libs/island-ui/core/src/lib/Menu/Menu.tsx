@@ -1,4 +1,6 @@
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, ReactNode, useState } from 'react'
+import cn from 'classnames'
+import AnimateHeight from 'react-animate-height'
 import { ModalBase } from '../ModalBase/ModalBase'
 import { Button } from '../Button/Button'
 
@@ -6,24 +8,131 @@ import * as styles from './Menu.treat'
 import { Logo } from '../Logo/Logo'
 import { Input } from '../Input/Input'
 import { Box } from '../Box/Box'
-import { Text } from '../Text/Text'
+import { Text, useTextStyles } from '../Text/Text'
 
-/* eslint-disable-next-line */
+type RenderLinkObj = {
+  className: string
+  text: string
+  href: string
+}
+
+type Link = {
+  text: string
+  href: string
+}
+
+type LinkWithSub = {
+  text: string
+  href: string
+  sub: Link[]
+}
+
 export interface MenuProps {
   /**
    * Unique ID for accessibility purposes
    */
   baseId: string
+  menuButton: ReactElement
+  renderLink: (settings: RenderLinkObj) => ReactNode
+  renderLogo: (logo: ReactNode) => ReactNode
+  renderSearch: (search: ReactNode) => ReactNode
+  renderMyPagesButton: (myPagesButton: ReactNode) => ReactNode
+  renderLanguageSwitch: (languageSwitch: ReactNode) => ReactNode
+  logoTitle: string
+  myPagesText: string
+  languageSwitchText: string
+  mainTitle: string
+  mainLinks: Link[]
+  asideTopLinks: LinkWithSub[]
+  asideBottomTitle: string
+  asideBottomLinks: Link[]
 }
 
-export const Menu = ({ baseId }: MenuProps) => {
-  const [hideDemo, setHideDemo] = useState(false)
+const defaultRenderLinks = ({ text, href, className }: RenderLinkObj) => (
+  <a href={href} className={className}>
+    {text}
+  </a>
+)
 
+const defaultRenderLogo: MenuProps['renderLogo'] = (logo) => logo
+const defaultRenderSearch: MenuProps['renderSearch'] = (search) => search
+const defaultRenderMyPagesButton: MenuProps['renderMyPagesButton'] = (button) =>
+  button
+const defaultRenderLanguageSwitch: MenuProps['renderLanguageSwitch'] = (
+  languageSwitch,
+) => languageSwitch
+
+const AsideTopLinkWithSub = ({
+  link,
+  sub,
+}: {
+  link: ReactNode
+  sub: ReactNode[]
+}) => {
+  const [isCollapsed, setIsCollapsed] = useState(true)
+
+  return (
+    <>
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        alignItems="center"
+        marginBottom={[isCollapsed ? 3 : 5, isCollapsed ? 3 : 5, 3]}
+      >
+        <Box marginRight={4}>{link}</Box>
+        <Button
+          circle
+          colorScheme="negative"
+          icon={isCollapsed ? 'add' : 'remove'}
+          onClick={() => setIsCollapsed(!isCollapsed)}
+        />
+      </Box>
+      <AnimateHeight duration={300} height={isCollapsed ? 0 : 'auto'}>
+        <Box
+          paddingLeft={2}
+          borderLeftWidth="standard"
+          borderColor="blue200"
+          marginBottom={[5, 5, 3]}
+        >
+          {sub.map((link) => (
+            <Box marginBottom={1}>{link}</Box>
+          ))}
+        </Box>
+      </AnimateHeight>
+    </>
+  )
+}
+
+export const Menu = ({
+  baseId,
+  menuButton,
+  renderLink = defaultRenderLinks,
+  renderLogo = defaultRenderLogo,
+  renderSearch = defaultRenderSearch,
+  renderMyPagesButton = defaultRenderMyPagesButton,
+  renderLanguageSwitch = defaultRenderLanguageSwitch,
+  logoTitle,
+  myPagesText,
+  languageSwitchText,
+  mainTitle,
+  mainLinks,
+  asideTopLinks,
+  asideBottomTitle,
+  asideBottomLinks,
+}: MenuProps) => {
+  const myPages = renderMyPagesButton(
+    <Button variant="utility" icon="person">
+      {myPagesText}
+    </Button>,
+  )
+  const languageSwitch = renderLanguageSwitch(
+    <Button variant="utility">{languageSwitchText}</Button>,
+  )
   return (
     <ModalBase
       baseId={baseId}
       className={styles.container}
-      disclosure={<Button>Open</Button>}
+      disclosure={menuButton}
       initialVisibility
     >
       {({ closeModal }: { closeModal: () => void }) => (
@@ -42,91 +151,87 @@ export const Menu = ({ baseId }: MenuProps) => {
                 display="flex"
                 justifyContent="spaceBetween"
                 alignItems="center"
+                flexWrap={['wrap', 'wrap', 'nowrap']}
               >
-                <Box display={['none', 'none', 'none', 'block']}>
-                  <Logo width={160} />
-                </Box>
+                {renderLogo(
+                  <>
+                    <Box
+                      display={['none', 'none', 'none', 'block']}
+                      marginRight={4}
+                    >
+                      <Logo width={160} title={logoTitle} />
+                    </Box>
+                    <Box
+                      display={['block', 'block', 'block', 'none']}
+                      marginRight={[1, 4]}
+                    >
+                      <Logo width={40} iconOnly title={logoTitle} />
+                    </Box>
+                  </>,
+                )}
                 <Box
-                  display={['block', 'block', 'block', 'none']}
-                  marginRight={2}
+                  display={['flex', 'flex', 'none']}
+                  justifyContent="flexEnd"
+                  alignItems="center"
                 >
-                  <Logo width={26} iconOnly />
+                  <Box display="flex">
+                    <Box marginRight={[1, 2]}>{myPages}</Box>
+                    <Box marginRight={[1, 2]}>{languageSwitch}</Box>
+                  </Box>
+                  <Button
+                    onClick={closeModal}
+                    circle
+                    icon="close"
+                    colorScheme="light"
+                  />
                 </Box>
-                <Input
-                  placeholder="Leitaðu á Ísland.is"
-                  backgroundColor="blue"
-                  size="sm"
-                  name="search"
-                  icon="search"
-                  iconType="outline"
-                />
+                <Box marginTop={[5, 5, 0]} className={styles.searchContainer}>
+                  {renderSearch(
+                    <Input
+                      placeholder="Leitaðu á Ísland.is"
+                      backgroundColor="blue"
+                      size="sm"
+                      name="search"
+                      icon="search"
+                      iconType="outline"
+                    />,
+                  )}
+                </Box>
               </Box>
               <Box marginTop={9}>
                 <Text variant="h3" marginBottom={2}>
-                  Þjónustuflokkar
+                  {mainTitle}
                 </Text>
-                <Box
-                  display="flex"
-                  flexDirection={['column', 'column', 'column', 'row']}
-                >
-                  <Box
-                    paddingLeft={2}
-                    borderLeftWidth="standard"
-                    borderColor="blue200"
-                    flexGrow={1}
-                  >
-                    <Text marginBottom={2}>Akstur og bifreiðar</Text>
-                    <Text marginBottom={2}>
-                      Atvinnurekstur og sjálfstætt starfandi
-                    </Text>
-                    <Text marginBottom={2}>Dómstólar og réttarfar</Text>
-                    <Text marginBottom={2}>Fjármál og skattar</Text>
-                    <Text marginBottom={2}>Fjölskylda og velferð</Text>
-                    <Text marginBottom={2}>Heilbrigðismál</Text>
-                    <Text marginBottom={2}>Húsnæðismál</Text>
-                    <Text marginBottom={2}>Iðnaður</Text>
-                    <Text marginBottom={2}>Innflytjendamál</Text>
-                    <Text marginBottom={2}>Launþegi, réttindi og lífeyrir</Text>
-                    <Text marginBottom={2}>Málefni fatlaðs fólks</Text>
-                    <Text>Menntun</Text>
-                  </Box>
-                  <Box marginLeft={[0, 0, 0, 3]} flexGrow={1}>
-                    <Box
-                      paddingLeft={2}
-                      borderLeftWidth="standard"
-                      borderColor="blue200"
-                    >
-                      <Text marginBottom={2}>Neytendamál</Text>
-                      <Text marginBottom={2}>Samfélag og réttindi</Text>
-                      <Text marginBottom={2}>Samgöngur</Text>
-                      <Text marginBottom={2}>Umhverfismál</Text>
-                      <Text marginBottom={2}>
-                        Vegabréf, ferðalög og búseta erlendis
-                      </Text>
-                      <Text>Vörur og þjónusta Ísland.is</Text>
-                    </Box>
-                  </Box>
-                </Box>
+                <div className={styles.mainLinkContainer}>
+                  {mainLinks.map(({ text, href }, index) => (
+                    <div className={styles.mainLinkOuter} key={index}>
+                      {renderLink({
+                        className: cn(useTextStyles({}), styles.mainLink),
+                        text: text,
+                        href: href,
+                      })}
+                    </div>
+                  ))}
+                </div>
               </Box>
             </div>
           </Box>
           <div className={styles.aside}>
             <Box
               paddingTop={8}
-              paddingRight={[3, 3, 6]}
+              paddingRight={[3, 3, 3, 6]}
               paddingBottom={6}
-              paddingLeft={[3, 3, 6, 12, 12]}
+              paddingLeft={[3, 3, 3, 6, 12]}
               className={styles.asideTop}
             >
               <div className={styles.asideContainer}>
-                <Box display="flex" justifyContent="spaceBetween">
+                <Box
+                  display={['none', 'none', 'flex']}
+                  justifyContent="spaceBetween"
+                >
                   <Box display="flex">
-                    <Box marginRight={2}>
-                      <Button variant="utility" icon="person">
-                        Mínar síður
-                      </Button>
-                    </Box>
-                    <Button variant="utility">EN</Button>
+                    <Box marginRight={2}>{myPages}</Box>
+                    {languageSwitch}
                   </Box>
                   <Button
                     onClick={closeModal}
@@ -135,78 +240,58 @@ export const Menu = ({ baseId }: MenuProps) => {
                     colorScheme="negative"
                   />
                 </Box>
-                <Box marginTop={9}>
-                  <Text variant="h3" color="blue600" marginBottom={3}>
-                    Stofnanir
-                  </Text>
-                  <Text variant="h3" color="blue600" marginBottom={3}>
-                    Stafrænt Ísland
-                  </Text>
-                  <Box
-                    display="flex"
-                    justifyContent="spaceBetween"
-                    alignItems="center"
-                    marginBottom={3}
-                  >
-                    <Box marginRight={4}>
-                      <Text variant="h3" color="blue600">
-                        Þróun
-                      </Text>
-                    </Box>
-                    <Button
-                      circle
-                      colorScheme="negative"
-                      icon={hideDemo ? 'remove' : 'add'}
-                      onClick={() => setHideDemo(!hideDemo)}
-                    />
-                  </Box>
-                  {hideDemo && (
-                    <Box
-                      paddingLeft={2}
-                      borderLeftWidth="standard"
-                      borderColor="blue200"
-                      marginBottom={3}
-                    >
-                      <Text marginBottom={1} color="blue600" variant="small">
-                        Viskuausan
-                      </Text>
-                      <Text marginBottom={1} color="blue600" variant="small">
-                        Ísland UI
-                      </Text>
-                      <Text marginBottom={1} color="blue600" variant="small">
-                        Hönnunarkerfi
-                      </Text>
-                      <Text marginBottom={1} color="blue600" variant="small">
-                        Efnisstefna
-                      </Text>
-                    </Box>
+                <Box marginTop={[0, 0, 9]}>
+                  {asideTopLinks.map(({ text, href, sub }, index) =>
+                    sub?.length > 0 ? (
+                      <AsideTopLinkWithSub
+                        key={index}
+                        link={renderLink({
+                          className: cn(
+                            useTextStyles({ variant: 'h3', color: 'blue600' }),
+                            styles.asideLink,
+                          ),
+                          text: text,
+                          href: href,
+                        })}
+                        sub={sub.map((link) =>
+                          renderLink({
+                            className: cn(
+                              useTextStyles({
+                                variant: 'small',
+                                color: 'blue600',
+                              }),
+                              styles.asideLink,
+                            ),
+                            ...link,
+                          }),
+                        )}
+                      />
+                    ) : (
+                      <Box marginBottom={[5, 5, 3]}>
+                        {renderLink({
+                          className: cn(
+                            useTextStyles({ variant: 'h3', color: 'blue600' }),
+                            styles.asideLink,
+                          ),
+                          text: text,
+                          href: href,
+                        })}
+                      </Box>
+                    ),
                   )}
-                  <Box
-                    display="flex"
-                    justifyContent="spaceBetween"
-                    alignItems="center"
-                    marginBottom={3}
-                  >
-                    <Box marginRight={4}>
-                      <Text variant="h3" color="blue600">
-                        Upplýsingarsvæði
-                      </Text>
-                    </Box>
-                    <Button circle colorScheme="negative" icon="add" />
-                  </Box>
                 </Box>
               </div>
             </Box>
             <Box
               paddingTop={5}
-              paddingRight={[3, 3, 6]}
+              paddingRight={[3, 3, 3, 6]}
               paddingBottom={6}
-              paddingLeft={[3, 3, 6, 12, 12]}
+              paddingLeft={[3, 3, 3, 6, 12]}
               className={styles.asideBottom}
             >
               <div className={styles.asideContainer}>
                 <Text color="blue600" variant="eyebrow">
-                  Aðrir opinberir vefir
+                  {asideBottomTitle}
                 </Text>
                 <Box
                   borderTopWidth="standard"
@@ -214,27 +299,17 @@ export const Menu = ({ baseId }: MenuProps) => {
                   marginTop={3}
                   marginBottom={3}
                 />
-                <Text variant="small" color="blue600" marginBottom={2}>
-                  Heilsuvera
-                </Text>
-                <Text variant="small" color="blue600" marginBottom={2}>
-                  Samráðsgátt
-                </Text>
-                <Text variant="small" color="blue600" marginBottom={2}>
-                  Mannanöfn
-                </Text>
-                <Text variant="small" color="blue600" marginBottom={2}>
-                  Undirskriftarlistar
-                </Text>
-                <Text variant="small" color="blue600" marginBottom={2}>
-                  Opin gögn
-                </Text>
-                <Text variant="small" color="blue600" marginBottom={2}>
-                  Opinber nýsköpun
-                </Text>
-                <Text variant="small" color="blue600">
-                  Tekjusagan
-                </Text>
+                {asideBottomLinks.map((link, index) => (
+                  <Box marginBottom={2} key={index}>
+                    {renderLink({
+                      className: cn(
+                        useTextStyles({ variant: 'small', color: 'blue600' }),
+                        styles.asideLink,
+                      ),
+                      ...link,
+                    })}
+                  </Box>
+                ))}
               </div>
             </Box>
           </div>
