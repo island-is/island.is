@@ -83,5 +83,17 @@ export const replaceTabs = (str: string) =>
 export const replaceTabsOnChange = (
   evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
 ) => {
-  evt.target.value = replaceTabs(evt.target.value)
+  if (evt.target.value.includes('\t')) {
+    evt.target.value = replaceTabs(evt.target.value)
+  }
+}
+
+/**
+ * Given a time with a single hour digit, f.x. 1:15, returns
+ * a zero padded value, i.e. 01:15.
+ * @param time value to pad with zero
+ */
+export const padTimeWithZero = (time: string): string => {
+  const threeDigitRegex = new RegExp(/^([0-9])(:[0-5]\d)/)
+  return threeDigitRegex.test(time) ? time.padStart(5, '0') : time
 }
