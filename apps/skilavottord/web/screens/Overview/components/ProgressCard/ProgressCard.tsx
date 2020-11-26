@@ -62,7 +62,7 @@ export const ProgressCard: FC<ProgressCardProps> = ({
                       variant={
                         status === 'pendingRecycle' ? 'rose' : 'darkerMint'
                       }
-                      label
+                      outlined
                     >
                       {status === 'pendingRecycle'
                         ? t.status.recycle
