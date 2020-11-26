@@ -7,7 +7,7 @@ export default {
     allowAuthBypass: process.env.ALLOW_AUTH_BYPASS,
   },
   auditTrail: {
-    useGenericLogger: process.env.USE_GENERIC_LOGGER,
+    useGenericLogger: process.env.AUDIT_TRAIL_USE_GENERIC_LOGGER,
   },
   backendUrl: process.env.BACKEND_URL,
 }
