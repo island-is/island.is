@@ -144,7 +144,7 @@ const Screen: FC<ScreenProps> = ({
   useEffect(() => {
     const target = isMobile ? headerHeight : 0
     window.scrollTo(0, target)
-  }, [activeScreenIndex])
+  }, [activeScreenIndex, isMobile])
 
   return (
     <FormProvider {...hookFormData}>
