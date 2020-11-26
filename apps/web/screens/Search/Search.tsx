@@ -49,6 +49,7 @@ import {
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
 import * as styles from './Search.treat'
+import { pathNames } from '@island.is/web/i18n/routes'
 
 const PERPAGE = 10
 
@@ -94,7 +95,6 @@ const Search: Screen<CategoryProps> = ({
     tags: {},
     types: {},
   })
-  const { makePath } = routeNames(activeLocale)
 
   const filters: SearchQueryFilters = {
     category: Router.query.category as string,
@@ -184,11 +184,8 @@ const Search: Screen<CategoryProps> = ({
   >).map((item) => ({
     title: item.title,
     description: item.intro ?? item.seoDescription ?? item.description,
-    href:
-      item.__typename === 'AboutPage'
-        ? item.slug
-        : makePath(item.__typename, '[slug]'),
-    as: makePath(item.__typename, item.slug),
+    href: pathNames(activeLocale, item.__typename, [item.slug])?.href,
+    as: pathNames(activeLocale, item.__typename, [item.slug])?.as,
     categorySlug: item.category?.slug,
     category: item.category,
     group: item.group,
@@ -199,14 +196,14 @@ const Search: Screen<CategoryProps> = ({
 
   const onRemoveFilters = () => {
     Router.replace({
-      pathname: makePath('search'),
+      pathname: pathNames(activeLocale, 'search').as,
       query: { q },
     })
   }
 
   const onSelectSidebarTag = (type: 'category' | 'type', key: string) => {
     Router.replace({
-      pathname: makePath('search'),
+      pathname: pathNames(activeLocale, 'search').as,
       query: { q, [type]: key },
     })
   }
@@ -347,7 +344,7 @@ const Search: Screen<CategoryProps> = ({
                   renderLink={(page, className, children) => (
                     <Link
                       href={{
-                        pathname: makePath('search'),
+                        pathname: pathNames(activeLocale, 'search')?.as,
                         query: { ...Router.query, page },
                       }}
                     >
@@ -362,7 +359,7 @@ const Search: Screen<CategoryProps> = ({
       >
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs>
-            <Link href={makePath()}>Ísland.is</Link>
+            <Link href={pathNames(activeLocale)?.as}>Ísland.is</Link>
           </Breadcrumbs>
           <SearchInput
             id="search_input_search_page"
@@ -535,5 +532,3 @@ const Filter = ({ selected, text, onClick, truncate = false, ...props }) => {
 }
 
 export default withMainLayout(Search, { showSearchInHeader: false })
-
-// TODO: Make adgerdir render correctly

@@ -18,6 +18,8 @@ export type ContentType =
   | 'lifeeventpage'
   | 'adgerdir'
   | 'vidspyrna-frontpage'
+  | 'adgerdirpage'
+  | ''
 
 export const routes: Record<ContentType, Record<Locale, string>> = {
   article: {
@@ -45,8 +47,8 @@ export const routes: Record<ContentType, Record<Locale, string>> = {
     en: '/en/news/[slug]',
   },
   search: {
-    is: '/leit/[slug]',
-    en: '/en/search/[slug]',
+    is: '/leit',
+    en: '/en/search',
   },
   lifeevent: {
     is: '/lifsvidburdur/[slug]',
@@ -64,6 +66,14 @@ export const routes: Record<ContentType, Record<Locale, string>> = {
     is: '/covid-adgerdir',
     en: '/en/covid-operations',
   },
+  adgerdirpage: {
+    is: '/covid-adgerdir/[slug]',
+    en: '/en/covid-operations/[slug]',
+  },
+  '': {
+    is: '/',
+    en: '/en',
+  },
 }
 
 export const replaceSlugInPath = (
@@ -79,7 +89,7 @@ export const removeSlugFromPath = (path: string): string => {
 
 export const pathNames = (
   locale: Locale = defaultLanguage,
-  contentType: ContentType,
+  contentType: ContentType = '',
   slugs?: Array<string>,
 ): AnchorAttributes => {
   let path: AnchorAttributes = { as: '/', href: '/' }
