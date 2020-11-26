@@ -35,7 +35,6 @@ export class ContentSearchService {
   }
 
   mapTypeAggregations(aggregations: TypeAggregationResponse): TypeCount[] {
-    console.log(aggregations)
     if (!aggregations?.typeCount) {
       return null
     }

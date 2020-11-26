@@ -268,7 +268,7 @@ const Search: Screen<CategoryProps> = ({
                     >
                       <Stack space={[1, 1, 2]}>
                         {Object.entries(sidebarData.tags).map(
-                          ([key, { title, total }], index) => {
+                          ([key, { title, total }]) => {
                             const selected = key === filters.category
                             const text = `${title} (${total})`
 
@@ -278,7 +278,7 @@ const Search: Screen<CategoryProps> = ({
 
                             return (
                               <Filter
-                                key={index}
+                                key={key}
                                 selected={selected}
                                 onClick={() =>
                                   onSelectSidebarTag('category', key)
@@ -300,6 +300,7 @@ const Search: Screen<CategoryProps> = ({
                   {Object.entries(sidebarData.types).map(
                     ([key, { title, total }]) => (
                       <Filter
+                        key={key}
                         selected={filters.type === key}
                         onClick={() => onSelectSidebarTag('type', key)}
                         text={`${title} (${total})`}
