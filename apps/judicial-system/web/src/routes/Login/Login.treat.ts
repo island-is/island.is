@@ -32,3 +32,9 @@ export const buttonContainer = style({
   gridRow: '4',
   gridColumn: '2 / span 2',
 })
+
+export const btn = style({
+  ':hover': {
+    textDecoration: 'none',
+  },
+})
