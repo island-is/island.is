@@ -40,7 +40,10 @@ export class ArticleCategorySyncService
             content: mapped.description,
             type: 'webArticleCategory',
             termPool: createTerms([mapped.title, mapped.description]),
-            response: JSON.stringify({ ...mapped, typename: 'ArticleCategory' }),
+            response: JSON.stringify({
+              ...mapped,
+              typename: 'ArticleCategory',
+            }),
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
           }

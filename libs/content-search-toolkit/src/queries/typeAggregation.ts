@@ -8,10 +8,10 @@ export const typeAggregationQuery = ({
       typeCount: {
         terms: {
           field: 'type',
-          size
-        }
-      }
-    }
+          size,
+        },
+      },
+    },
   }
 
   return query

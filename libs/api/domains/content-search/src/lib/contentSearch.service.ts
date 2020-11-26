@@ -15,7 +15,7 @@ import { TypeCount } from './models/typeCount'
 
 @Injectable()
 export class ContentSearchService {
-  constructor(private elasticService: ElasticService) { }
+  constructor(private elasticService: ElasticService) {}
 
   private getIndex(lang: keyof typeof SearchIndexes) {
     return SearchIndexes[lang] ?? SearchIndexes.is
@@ -39,12 +39,10 @@ export class ContentSearchService {
     if (!aggregations?.typeCount) {
       return null
     }
-    return aggregations.typeCount.buckets.map<TypeCount>(
-      (tagObject) => ({
-        key: tagObject.key,
-        count: tagObject.doc_count.toString(),
-      }),
-    )
+    return aggregations.typeCount.buckets.map<TypeCount>((tagObject) => ({
+      key: tagObject.key,
+      count: tagObject.doc_count.toString(),
+    }))
   }
 
   async find(query: SearcherInput): Promise<SearchResult> {
@@ -57,8 +55,12 @@ export class ContentSearchService {
       total: body.hits.total.value,
       // we map data when it goes into the index we can return it without mapping it here
       items: body.hits.hits.map((item) => JSON.parse(item._source.response)),
-      tagCounts: this.mapTagAggregations(body.aggregations as TagAggregationResponse),
-      typesCount: this.mapTypeAggregations(body.aggregations as TypeAggregationResponse)
+      tagCounts: this.mapTagAggregations(
+        body.aggregations as TagAggregationResponse,
+      ),
+      typesCount: this.mapTypeAggregations(
+        body.aggregations as TypeAggregationResponse,
+      ),
     }
   }
 

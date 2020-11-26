@@ -4,7 +4,7 @@ import {
   Article,
   LifeEventPage,
   News,
-  AdgerdirPage
+  AdgerdirPage,
 } from '@island.is/api/domains/cms'
 import { TagCount } from './tagCount'
 import { TypeCount } from './typeCount'

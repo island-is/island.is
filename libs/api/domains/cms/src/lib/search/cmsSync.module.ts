@@ -23,4 +23,4 @@ import { AdgerdirPageSyncService } from './importers/adgerdirPage'
   ],
   exports: [CmsSyncService],
 })
-export class CmsSyncModule { }
+export class CmsSyncModule {}

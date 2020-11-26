@@ -188,7 +188,10 @@ export class ElasticService {
     const requestBody = searchQuery(query)
 
     return this.findByQuery<
-      SearchResponse<MappedData, TagAggregationResponse | TypeAggregationResponse>,
+      SearchResponse<
+        MappedData,
+        TagAggregationResponse | TypeAggregationResponse
+      >,
       typeof requestBody
     >(index, requestBody)
   }

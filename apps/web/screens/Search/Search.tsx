@@ -16,7 +16,6 @@ import {
   Breadcrumbs,
   Hidden,
   Select,
-  Option,
   SidebarAccordion,
   Pagination,
   Link,
@@ -46,16 +45,16 @@ import {
   News,
   SearchableContentTypes,
   SearchableTags,
+  AdgerdirPage,
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
-
 import * as styles from './Search.treat'
 
 const PERPAGE = 10
 
 type SearchQueryFilters = {
-  category: string | string[]
-  showNews: boolean
+  category: string
+  type: string
 }
 
 interface CategoryProps {
@@ -64,6 +63,19 @@ interface CategoryProps {
   searchResults: GetSearchResultsDetailedQuery['searchResults']
   countResults: GetSearchCountTagsQuery['searchResults']
   namespace: GetNamespaceQuery['getNamespace']
+}
+
+interface SidebarTagMap {
+  [key: string]: {
+    title: string
+    total: number
+  }
+}
+
+interface SidebarData {
+  totalTagCount: number
+  tags: SidebarTagMap
+  types: SidebarTagMap
 }
 
 const Search: Screen<CategoryProps> = ({
@@ -77,52 +89,58 @@ const Search: Screen<CategoryProps> = ({
   const searchRef = useRef<HTMLInputElement | null>(null)
   const Router = useRouter()
   const n = useNamespace(namespace)
-  const [sidebarCategories, setSidebarCategories] = useState({
-    tags: [],
-    types: [],
+  const [sidebarData, setSidebarData] = useState<SidebarData>({
+    totalTagCount: 0,
+    tags: {},
+    types: {},
   })
-  const [
-    grandTotalSearchResultCount,
-    setGrandTotalSearchResultCount,
-  ] = useState(10)
   const { makePath } = routeNames(activeLocale)
 
   const filters: SearchQueryFilters = {
-    category: Router.query.category,
-    showNews: Router.query.showNews ? true : false,
+    category: Router.query.category as string,
+    type: Router.query.type as string,
   }
 
   useEffect(() => {
-    // we only update the tagCount results when we get new tag count results
-    const newTagCountResults = countResults.tagCounts.map(
-      ({ key, count: total, value: title }) => ({
-        key,
-        total,
-        title,
-      }),
+    // we get the tag count manually since the total includes uncategorised data and the type count
+    let totalTagCount = 0
+    // create a map of sidebar tag data for easier lookup later
+    const tagCountResults = countResults.tagCounts.reduce(
+      (tagList: SidebarTagMap, { key, count: total, value: title }) => {
+        totalTagCount = totalTagCount + total
+
+        tagList[key] = {
+          title,
+          total,
+        }
+
+        return tagList
+      },
+      {},
     )
 
+    // create a map of sidebar type data for easier lookup later
     const typeNames = {
       webNews: n('newsTitle'),
       webAdgerdirPage: n('adgerdirTitle'),
     }
-    const newTypeCountResults = countResults.typesCount.reduce(
-      (typeList, { key, count: total }) => {
+    const typeCountResults = countResults.typesCount.reduce(
+      (typeList: SidebarTagMap, { key, count: total }) => {
         if (Object.keys(typeNames).includes(key)) {
-          typeList.push({
+          typeList[key] = {
             title: typeNames[key],
             total,
-          })
+          }
         }
         return typeList
       },
-      [],
+      {},
     )
-    setSidebarCategories({
-      tags: newTagCountResults,
-      types: newTypeCountResults,
+    setSidebarData({
+      totalTagCount,
+      tags: tagCountResults,
+      types: typeCountResults,
     })
-    setGrandTotalSearchResultCount(countResults.total)
   }, [countResults])
 
   const getLabels = (item) => {
@@ -162,10 +180,10 @@ const Search: Screen<CategoryProps> = ({
   }
 
   const searchResultsItems = (searchResults.items as Array<
-    Article & LifeEventPage & AboutPage
+    Article & LifeEventPage & AboutPage & News & AdgerdirPage
   >).map((item) => ({
     title: item.title,
-    description: item.intro ?? item.seoDescription,
+    description: item.intro ?? item.seoDescription ?? item.description,
     href:
       item.__typename === 'AboutPage'
         ? item.slug
@@ -186,17 +204,10 @@ const Search: Screen<CategoryProps> = ({
     })
   }
 
-  const onSelectCategory = (key: string) => {
+  const onSelectSidebarTag = (type: 'category' | 'type', key: string) => {
     Router.replace({
       pathname: makePath('search'),
-      query: { q, category: key },
-    })
-  }
-
-  const onSelectNews = () => {
-    Router.replace({
-      pathname: makePath('search'),
-      query: { q, showNews: true },
+      query: { q, [type]: key },
     })
   }
 
@@ -214,18 +225,8 @@ const Search: Screen<CategoryProps> = ({
 
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
-  const categoryTitle = filters.showNews
-    ? n('newsTitle')
-    : searchResultsItems.find((x) => x.categorySlug === filters.category)
-        ?.category?.title
-
-  const categorySlug = filters.showNews
-    ? 'showNews'
-    : searchResultsItems.find((x) => x.categorySlug === filters.category)
-        ?.categorySlug
-
-  const categorySelectOptions = sidebarCategories.tags.map(
-    ({ title, total, key }) => ({
+  const categorySelectOptions = Object.entries(sidebarData.tags).map(
+    ([key, { title, total }]) => ({
       label: `${title} (${total})`,
       value: key,
     }),
@@ -236,13 +237,12 @@ const Search: Screen<CategoryProps> = ({
     value: '',
   })
 
-  const onChangeSelectCategoryOptions = ({ value }: Option) => {
-    value === 'showNews' ? onSelectNews() : onSelectCategory(value as string)
+  const defaultSelectedCategory = {
+    label:
+      sidebarData.tags[filters.category]?.title ??
+      n('allCategories', 'Allir flokkar'),
+    value: filters.category ?? '',
   }
-
-  const defaultSelectedCategory = categoryTitle
-    ? { label: categoryTitle, value: categorySlug }
-    : { label: n('allCategories', 'Allir flokkar'), value: '' }
 
   return (
     <>
@@ -258,12 +258,11 @@ const Search: Screen<CategoryProps> = ({
                   <>
                     <Filter
                       truncate
-                      selected={!filters.category && !filters.showNews}
+                      selected={!filters.category && !filters.type}
                       onClick={() => onRemoveFilters()}
-                      text={`${n(
-                        'allCategories',
-                        'Allir flokkar',
-                      )} (${grandTotalSearchResultCount})`}
+                      text={`${n('allCategories', 'Allir flokkar')} (${
+                        sidebarData.totalTagCount
+                      })`}
                       className={styles.allCategoriesLink}
                     />
                     <SidebarAccordion
@@ -271,23 +270,27 @@ const Search: Screen<CategoryProps> = ({
                       label={''}
                     >
                       <Stack space={[1, 1, 2]}>
-                        {sidebarCategories.tags.map((c, index) => {
-                          const selected = c.key === filters.category
-                          const text = `${c.title} (${c.total})`
+                        {Object.entries(sidebarData.tags).map(
+                          ([key, { title, total }], index) => {
+                            const selected = key === filters.category
+                            const text = `${title} (${total})`
 
-                          if (c.key === 'uncategorized') {
-                            return null
-                          }
+                            if (key === 'uncategorized') {
+                              return null
+                            }
 
-                          return (
-                            <Filter
-                              key={index}
-                              selected={selected}
-                              onClick={() => onSelectCategory(c.key)}
-                              text={text}
-                            />
-                          )
-                        })}
+                            return (
+                              <Filter
+                                key={index}
+                                selected={selected}
+                                onClick={() =>
+                                  onSelectSidebarTag('category', key)
+                                }
+                                text={text}
+                              />
+                            )
+                          },
+                        )}
                       </Stack>
                     </SidebarAccordion>
                   </>
@@ -295,15 +298,17 @@ const Search: Screen<CategoryProps> = ({
               </Box>
             </Sidebar>
             {
-              <Sidebar bullet="none" title={n('oterCategories')}>
+              <Sidebar bullet="none" title={n('otherCategories')}>
                 <Stack space={[1, 1, 2]}>
-                  {sidebarCategories.types.map(({ title, total }) => (
-                    <Filter
-                      selected={filters.showNews}
-                      onClick={() => onSelectNews()}
-                      text={`${title} (${total})`}
-                    />
-                  ))}
+                  {Object.entries(sidebarData.types).map(
+                    ([key, { title, total }]) => (
+                      <Filter
+                        selected={filters.type === key}
+                        onClick={() => onSelectSidebarTag('type', key)}
+                        text={`${title} (${total})`}
+                      />
+                    ),
+                  )}
                 </Stack>
               </Sidebar>
             }
@@ -373,7 +378,6 @@ const Search: Screen<CategoryProps> = ({
                 placeholder={n('sidebarHeader', 'Flokkar')}
                 defaultValue={defaultSelectedCategory}
                 options={categorySelectOptions}
-                onChange={onChangeSelectCategoryOptions}
                 name="content-overview"
                 isSearchable={false}
               />
@@ -397,17 +401,19 @@ const Search: Screen<CategoryProps> = ({
               {totalSearchResults === 1
                 ? n('searchResult', 'leitarniðurstaða')
                 : n('searchResults', 'leitarniðurstöður')}
-              {(filters.category || filters.showNews) && (
+              {(filters.category || filters.type) && (
                 <>
                   {' '}
                   {n('inCategory', 'í flokki')}
-                  {categoryTitle ? (
+                  {
                     <>
-                      : <strong>{categoryTitle}</strong>
+                      :{' '}
+                      <strong>
+                        {sidebarData.tags[filters.category]?.title ??
+                          sidebarData.types[filters.type]?.title}
+                      </strong>
                     </>
-                  ) : (
-                    '.'
-                  )}
+                  }
                 </>
               )}
             </Text>
@@ -423,6 +429,7 @@ const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   const queryString = single(query.q) || ''
   const category = single(query.category) || ''
+  const type = single(query.type) || ''
   const page = Number(single(query.page)) || 1
 
   let tags = {}
@@ -431,6 +438,17 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     tags = { tags: [{ key: category, type: 'category' as SearchableTags }] }
   } else {
     countTag = { countTag: 'category' as SearchableTags }
+  }
+
+  let types
+  if (type) {
+    types = [type as SearchableContentTypes]
+  } else {
+    types = [
+      'webArticle' as SearchableContentTypes,
+      'webLifeEventPage' as SearchableContentTypes,
+      'webAboutPage' as SearchableContentTypes,
+    ]
   }
 
   const [
@@ -448,14 +466,10 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: {
           language: locale as ContentLanguage,
           queryString,
-          types: [
-            'webArticle' as SearchableContentTypes,
-            'webLifeEventPage' as SearchableContentTypes,
-            'webAboutPage' as SearchableContentTypes,
-          ],
-          size: PERPAGE,
+          types,
           ...tags,
           ...countTag,
+          size: PERPAGE,
           page,
         },
       },
@@ -522,5 +536,4 @@ const Filter = ({ selected, text, onClick, truncate = false, ...props }) => {
 
 export default withMainLayout(Search, { showSearchInHeader: false })
 
-// TODO: Make other content search result actually search
-// TODO: Fix totals in sidebar
+// TODO: Make adgerdir render correctly

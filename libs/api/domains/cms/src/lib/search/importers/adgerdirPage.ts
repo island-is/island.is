@@ -14,7 +14,8 @@ import {
 import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
-export class AdgerdirPageSyncService implements CmsSyncProvider<IVidspyrnaPage> {
+export class AdgerdirPageSyncService
+  implements CmsSyncProvider<IVidspyrnaPage> {
   processSyncData(entries: processSyncDataInput<IVidspyrnaPage>) {
     // only process pages that we consider not to be empty and don't have circular structures
     return entries.filter(
@@ -35,7 +36,9 @@ export class AdgerdirPageSyncService implements CmsSyncProvider<IVidspyrnaPage> 
           return {
             _id: mapped.id,
             title: mapped.title,
-            content: `${mapped.longDescription} ${extractStringsFromObject({ ...mapped.content })}`, // this function only accepts plain js objects
+            content: `${mapped.longDescription} ${extractStringsFromObject({
+              ...mapped.content,
+            })}`, // this function only accepts plain js objects
             type: 'webAdgerdirPage',
             termPool: createTerms([mapped.title]),
             response: JSON.stringify({ ...mapped, typename: 'AdgerdirPage' }),
@@ -49,7 +52,9 @@ export class AdgerdirPageSyncService implements CmsSyncProvider<IVidspyrnaPage> 
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.warn('Failed to import adgerdir page', { error: error.message })
+          logger.warn('Failed to import adgerdir page', {
+            error: error.message,
+          })
           return false
         }
       })

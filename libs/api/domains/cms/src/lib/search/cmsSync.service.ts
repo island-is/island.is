@@ -56,7 +56,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.articleCategorySyncService,
       this.newsSyncService,
       this.aboutPageSyncService,
-      this.adgerdirPageSyncService
+      this.adgerdirPageSyncService,
     ]
   }
 

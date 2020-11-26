@@ -199,6 +199,12 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           seoDescription
           slug
         }
+
+        ... on AdgerdirPage {
+          title
+          description
+          slug
+        }
       }
       tagCounts {
         key
