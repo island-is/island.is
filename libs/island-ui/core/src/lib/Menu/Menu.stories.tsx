@@ -74,8 +74,8 @@ export default {
 
 const Template = (args) => <Menu {...args} />
 
-export const Primary = Template.bind({})
-Primary.args = {
+export const Default = Template.bind({})
+Default.args = {
   baseId: 'story',
   myPagesText: 'Mínar síður',
   languageSwitchText: 'EN',

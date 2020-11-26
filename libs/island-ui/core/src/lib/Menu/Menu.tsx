@@ -32,19 +32,56 @@ export interface MenuProps {
    * Unique ID for accessibility purposes
    */
   baseId: string
+  /**
+   * Element that opens the menu.
+   * It will be forwarded neccessery props for a11y and event handling.
+   */
   menuButton: ReactElement
+  /**
+   * Render function for all links, usefull for wraping framework specific routing links
+   */
   renderLink: (settings: RenderLinkObj) => ReactNode
+  /**
+   * Render function for Logo, usefull for wraping framework specific routing links
+   */
   renderLogo: (logo: ReactNode) => ReactNode
+  /**
+   * Render function search input, useful for rendering custom search
+   */
   renderSearch: (search: ReactNode) => ReactNode
+  /**
+   * Render function for my pages button, useful for adding specific logic to my pages button
+   */
   renderMyPagesButton: (myPagesButton: ReactNode) => ReactNode
+  /**
+   * Render function for language switch button, useful for adding specific logic to language switch button
+   */
   renderLanguageSwitch: (languageSwitch: ReactNode) => ReactNode
+  /**
+   * Logo title for accessibility
+   */
   logoTitle: string
   myPagesText: string
   languageSwitchText: string
+  /**
+   * Main section title
+   */
   mainTitle: string
+  /**
+   * Main section links
+   */
   mainLinks: Link[]
+  /**
+   * Aside top section links
+   */
   asideTopLinks: LinkWithSub[]
+  /**
+   * Aside bottom section title
+   */
   asideBottomTitle: string
+  /**
+   * Aside bottom section links
+   */
   asideBottomLinks: Link[]
 }
 
@@ -152,7 +189,6 @@ export const Menu = ({
       baseId={baseId}
       className={styles.container}
       disclosure={menuButton}
-      initialVisibility
     >
       {({ closeModal }: { closeModal: () => void }) => (
         <>
