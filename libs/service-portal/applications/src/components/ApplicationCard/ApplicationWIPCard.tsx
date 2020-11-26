@@ -9,7 +9,7 @@ export const ApplicationWIPCard: FC = () => {
   return (
     <Box position="relative" border="standard" paddingY={3} paddingX={4}>
       <Box position="absolute" className={styles.wipTag}>
-        <Tag variant="blue" label>
+        <Tag variant="blue" outlined>
           {formatMessage({
             id: 'service.portal:in-progress',
             defaultMessage: 'Í vinnslu',
