@@ -313,7 +313,7 @@ const Search: Screen<CategoryProps> = ({
                   tags.push({
                     title: label,
                     tagProps: {
-                      label: true,
+                      outlined: true,
                     },
                   })
 
@@ -327,7 +327,7 @@ const Search: Screen<CategoryProps> = ({
                       tags.push({
                         title: label,
                         tagProps: {
-                          label: true,
+                          outlined: true,
                         },
                       })
                     })

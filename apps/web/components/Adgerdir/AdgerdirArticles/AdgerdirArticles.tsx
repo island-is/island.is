@@ -313,7 +313,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
                       id,
                       title,
                       tagProps: {
-                        label: true,
+                        outlined: true,
                       },
                     }
                   })}
