@@ -5,6 +5,7 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { CurrentAuthUser, AuthUser, JwtAuthGuard } from '../auth'
 import { User } from './user.model'
+import { BackendAPI } from '../../../services'
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => User)
@@ -15,14 +16,14 @@ export class UserResolver {
   ) {}
 
   @Query(() => User, { nullable: true })
-  user(
+  async user(
     @CurrentAuthUser() authUser: AuthUser,
-    @Context('dataSources') { backendApi },
-  ): Promise<User> {
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<User | undefined> {
     this.logger.debug('Getting current user')
 
     if (!authUser) {
-      return null
+      return undefined
     }
 
     return backendApi.getUser(authUser.nationalId)

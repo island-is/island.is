@@ -5,5 +5,5 @@ import { Field, ObjectType } from '@nestjs/graphql'
 export class PageInfo {
   @Field((type) => String, { nullable: true })
   @IsString()
-  nextCursor: string
+  nextCursor!: string | null
 }

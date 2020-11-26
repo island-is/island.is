@@ -3,11 +3,13 @@ import {
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
   CaseGender,
+  CaseState,
   UpdateCase,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
 import { CaseQuery, UpdateCaseMutation } from '../graphql'
+import { UserQuery } from '../shared-components/UserProvider/UserProvider'
 
 export const mockProsecutor = {
   role: UserRole.PROSECUTOR,
@@ -20,18 +22,6 @@ export const mockJudge = {
   name: 'Wonder Woman',
   title: 'héraðsdómari',
 } as User
-
-export const mockJudgeUserContext = {
-  isAuthenticated: () => true,
-  user: mockJudge,
-  setUser: (_: User) => undefined,
-}
-
-export const mockProsecutorUserContext = {
-  isAuthenticated: () => true,
-  user: mockProsecutor,
-  setUser: (_: User) => undefined,
-}
 
 const testCase1 = {
   id: 'test_id',
@@ -82,7 +72,7 @@ const testCase2 = {
   id: 'test_id_2',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
-  state: 'DRAFT',
+  state: CaseState.SUBMITTED,
   policeCaseNumber: 'string',
   accusedNationalId: 'string',
   accusedName: 'Jon Harring',
@@ -151,7 +141,7 @@ const testCase3 = {
   comments: 'string',
   prosecutor: null,
   courtCaseNumber: null,
-  courtDate: null,
+  courtDate: '2020-09-16T19:51:00.000Z',
   courtStartTime: null,
   courtEndTime: null,
   courtAttendees: null,
@@ -167,9 +157,37 @@ const testCase3 = {
   prosecutorAppealDecision: null,
   prosecutorAppealAnnouncement: null,
   judge: null,
+  defenderName: '',
+  defenderEmail: '',
   requestedDefenderName: 'Saul Goodman',
   requestedDefenderEmail: 'saul@goodman.com',
 }
+
+export const mockJudgeQuery = [
+  {
+    request: {
+      query: UserQuery,
+    },
+    result: {
+      data: {
+        user: mockJudge,
+      },
+    },
+  },
+]
+
+export const mockProsecutorQuery = [
+  {
+    request: {
+      query: UserQuery,
+    },
+    result: {
+      data: {
+        user: mockProsecutor,
+      },
+    },
+  },
+]
 
 export const mockCaseQueries = [
   {

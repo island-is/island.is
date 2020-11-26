@@ -6,13 +6,14 @@ import {
   Schema,
 } from '@island.is/application/core'
 import { EventObject, MachineConfig } from 'xstate'
-import { StatesConfig } from 'xstate/lib/types'
+import { MachineOptions, StatesConfig } from 'xstate/lib/types'
 
 export interface ApplicationTemplate<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
   TEvents extends EventObject
 > {
+  readonly readyForProduction?: boolean
   readonly type: ApplicationTypes
   readonly name: string
   readonly dataSchema: Schema
@@ -21,7 +22,8 @@ export interface ApplicationTemplate<
     TStateSchema,
     TEvents
   > & {
-    states: StatesConfig<TContext, TStateSchema, TEvents>
+    states: StatesConfig<TContext, TStateSchema, TEvents> // TODO Extend StatesConfig to completely enforce meta being required attribute
   }
+  readonly stateMachineOptions?: Partial<MachineOptions<TContext, TEvents>>
   mapUserToRole(id: string, state: string): ApplicationRole
 }

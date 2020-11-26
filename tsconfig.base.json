@@ -52,6 +52,9 @@
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
       ],
+      "@island.is/api/domains/directorate-of-labour": [
+        "libs/api/domains/directorate-of-labour/src/index.ts"
+      ],
       "@island.is/api/domains/documents": [
         "libs/api/domains/documents/src/index.ts"
       ],
@@ -96,6 +99,9 @@
       ],
       "@island.is/application/templates/parental-leave": [
         "libs/application/templates/parental-leave/src/index.ts"
+      ],
+      "@island.is/application/templates/passport": [
+        "libs/application/templates/passport/src/index.ts"
       ],
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"

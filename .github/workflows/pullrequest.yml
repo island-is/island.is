@@ -43,7 +43,7 @@ jobs:
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
         run: |
-          export HASH=${{ hashFiles('scripts/schemas.js', 'libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/air-discount-scheme/web/screens/**.tsx', 'apps/gjafakort/api/src/**.typeDefs.ts', 'apps/**/codegen.yml', 'libs/**/codegen.yml', 'apps/**.model.ts', 'libs/**.model.ts', 'apps/**.enum.ts', 'libs/**.enum.ts', 'apps/**/queries/**.tsx?', 'libs/**/queries/**.tsx?', 'apps/**.resolver.ts', 'libs/**.resolver.ts', 'apps/**.service.ts', 'libs/**.service.ts', 'apps/**.dto.ts', 'libs/**.dto.ts', 'apps/**.input.ts', 'libs/**.input.ts', 'apps/**.module.ts', 'libs/**.module.ts', 'apps/**.controller.ts', 'libs/**.controller.ts') }}
+          export HASH=${{ hashFiles('scripts/schemas.js', 'libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/air-discount-scheme/web/screens/**.tsx', 'apps/gjafakort/api/src/**.typeDefs.ts', 'apps/**/codegen.yml', 'libs/**/codegen.yml', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.enum.ts', 'libs/**/*.enum.ts', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/**/*.dto.ts', 'libs/**/*.dto.ts', 'apps/**/*.input.ts', 'libs/**/*.input.ts', 'apps/**/*.module.ts', 'libs/**/*.module.ts', 'apps/**/*.controller.ts', 'libs/**/*.controller.ts') }}
           export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-generated-files
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "::set-output name=generated-files-cache-key::$GENERATED_FILES_KEY"
@@ -135,6 +135,22 @@ jobs:
       - name: Running tests
         run: ./scripts/ci/run-in-parallel.sh 30_test
 
+  linting-workspace:
+    needs:
+      - prepare
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache for NodeJS dependencies - host OS
+        id: node-modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+      - name: Linting workspace
+        run: ./scripts/ci/20_lint-workspace.sh
+
   formatting:
     needs:
       - prepare
@@ -223,6 +239,7 @@ jobs:
     if: always()
     needs:
       - prepare
+      - linting-workspace
       - tests
       - linting
       - formatting

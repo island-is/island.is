@@ -8,16 +8,16 @@ import {
 @ObjectType()
 export class Notification implements TNotification {
   @Field(() => ID)
-  readonly id: string
+  readonly id!: string
 
   @Field()
-  readonly created: string
+  readonly created!: string
 
   @Field()
-  readonly caseId: string
+  readonly caseId!: string
 
   @Field(() => String)
-  readonly type: NotificationType
+  readonly type!: NotificationType
 
   @Field({ nullable: true })
   readonly condition?: string

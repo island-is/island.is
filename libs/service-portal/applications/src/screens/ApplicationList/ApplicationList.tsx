@@ -11,25 +11,25 @@ import { useAssigneeApplications } from '@island.is/service-portal/graphql'
 import { Application } from '@island.is/application/core'
 
 const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
-  const { data: applications, loading, error } = useApplicantApplications(
-    userInfo.profile.nationalId,
-  )
+  const { data: applications, loading, error } = useApplicantApplications()
 
   const {
     data: assigneeApplications,
     loading: assigneeApplicationsLoading,
     error: assigneeApplicationsError,
-  } = useAssigneeApplications(userInfo.profile.nationalId)
+  } = useAssigneeApplications()
 
   return (
     <>
       <Box marginBottom={5}>
-        <Text variant="h1">Umsóknir</Text>
+        <Text variant="h1" as="h1">
+          Umsóknir
+        </Text>
       </Box>
       {loading && <ActionCardLoader repeat={3} />}
       {error && (
         <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-          <Text variant="h3">
+          <Text variant="h3" as="h3">
             Tókst ekki að sækja umsóknir, eitthvað fór úrskeiðis
           </Text>
         </Box>
@@ -48,12 +48,14 @@ const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
       </Stack>
 
       <Box marginTop={5} marginBottom={5}>
-        <Text variant="h1">Umsóknir til samþykktar</Text>
+        <Text variant="h1" as="h1">
+          Umsóknir til samþykktar
+        </Text>
       </Box>
       {assigneeApplicationsLoading && <ActionCardLoader repeat={3} />}
       {assigneeApplicationsError && (
         <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-          <Text variant="h3">
+          <Text variant="h3" as="h3">
             Tókst ekki að sækja umsóknir, eitthvað fór úrskeiðis
           </Text>
         </Box>

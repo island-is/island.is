@@ -11,27 +11,28 @@ import intersection from 'lodash/intersection'
 import {
   Box,
   Tiles,
-  Button,
   Stack,
   Text,
-  Tag,
   Inline,
   Icon,
   LoadingIcon,
   SleeveContext,
-  Divider,
 } from '@island.is/island-ui/core'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { AdgerdirPage, AdgerdirTag } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
-import { Card } from '@island.is/web/components'
+import { Card } from '@island.is/web/components/Adgerdir/UI/Card/Card'
+import { Button } from '@island.is/web/components/Adgerdir/UI/Button/Button'
+import { Tag } from '@island.is/web/components/Adgerdir/UI/Tag/Tag'
+import { ColorSchemeContext } from '@island.is/web/components/Adgerdir/UI/ColorSchemeContext/ColorSchemeContext'
 import {
   ADGERDIR_INDIVIDUALS_TAG_ID,
   ADGERDIR_COMPANIES_TAG_ID,
 } from '@island.is/web/constants'
 
 import * as styles from './AdgerdirArticles.treat'
+import * as covidStyles from '@island.is/web/components/Adgerdir/UI/styles/styles.treat'
 
 const FILTER_TIMER = 300
 const ITEMS_PER_SHOW = 9
@@ -59,6 +60,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
 }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
+  const { colorScheme } = useContext(ColorSchemeContext)
   const { isOpen: sleeveIsOpen, setIsOpen } = useContext(SleeveContext)
   const { makePath } = routeNames(activeLocale)
   const [filterString, setFilterString] = useState<string>('')
@@ -104,9 +106,12 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
     const arr = []
 
     visibleItems.forEach(({ title, description }, index) => {
-      const str = `${title} ${description}`
+      const str = `${title} ${description}`.trim()
 
-      if (str.match(new RegExp(filterString.trim(), 'gi'))) {
+      const invalid = /[°"§%\(\)()\[\]{}=\\?´`'#<>|,;.:+_-]+/g
+      const cleanFilterString = filterString.replace(invalid, '')
+
+      if (str.match(new RegExp(cleanFilterString.trim(), 'gi'))) {
         arr.push(index)
       }
     })
@@ -196,8 +201,10 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
     <Box padding={[3, 3, 6]}>
       <Inline space={2} alignY="center">
         <Box>
-          <Text variant="h3" as="h3" color="red600">
-            {title || n('adgerdirFor', 'Aðgerðir fyrir')}
+          <Text variant="h3" as="h3">
+            <span className={covidStyles.text}>
+              {title || n('adgerdirFor', 'Aðgerðir fyrir')}
+            </span>
           </Text>
         </Box>
         <Box>
@@ -208,7 +215,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
                 return (
                   <Tag
                     key={index}
-                    variant="red"
+                    variant={colorScheme}
                     onClick={() => {
                       setstartingItems([])
                       onTagClick(id)
@@ -224,7 +231,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
         </Box>
       </Inline>
       <Box width="full" paddingY={2}>
-        <Divider weight="red200" />
+        <Box className={covidStyles.divider} />
       </Box>
       <Box className={styles.filters}>
         <Box display="flex" marginRight={[0, 0, 0, 3]}>
@@ -239,7 +246,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
                   return (
                     <Tag
                       key={index}
-                      variant="red"
+                      variant={colorScheme}
                       onClick={() => {
                         setstartingItems([])
                         onTagClick(id)
@@ -263,13 +270,15 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
             />
             <span className={styles.inputIcon}>
               {isLoading ? (
-                <LoadingIcon size={24} color="red600" />
+                <span className={covidStyles.iconColor}>
+                  <LoadingIcon size={24} color="currentColor" />
+                </span>
               ) : (
                 <Icon
                   size="medium"
                   type="outline"
                   icon="search"
-                  color="red600"
+                  className={covidStyles.iconColor}
                 />
               )}
             </span>
@@ -279,16 +288,13 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
       {batches.length === 0 ? (
         <Box marginTop={2}>
           <Stack space={2}>
-            <Text color="red600">
-              <span>Ekkert fannst með{` `}</span>
-              {filterString
-                ? `leitarorðinu „${filterString}“${
-                    indexesFilteredByTag.length
-                      ? ' og völdum málefnum hér fyrir ofan'
-                      : ''
-                  }`
-                : null}
-              {!filterString ? 'völdum málefnum hér fyrir ofan' : null}.
+            <Text>
+              <span className={covidStyles.text}>
+                {n(
+                  'nothingFoundWithSelectedFilters',
+                  'Ekkert fannst með völdum málefnum og/eða leitarstreng',
+                )}
+              </span>
             </Text>
           </Stack>
         </Box>
@@ -325,7 +331,6 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
             onClick={() => {
               setShowCount(visibleItems.length)
             }}
-            colorScheme="destructive"
             variant="ghost"
           >
             {n('showAll', 'Sjá allt')}

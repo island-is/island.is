@@ -5,10 +5,8 @@ import {
   Box,
   Stack,
   Breadcrumbs,
-  Button,
   Link,
   Inline,
-  Tag,
   GridRow,
   Text,
   GridColumn,
@@ -28,7 +26,11 @@ import {
   HeadWithSocialSharing,
   RichText,
   Intro,
+  ChatPanel,
 } from '@island.is/web/components'
+import { Tag } from '@island.is/web/components/Adgerdir/UI/Tag/Tag'
+import { Button } from '@island.is/web/components/Adgerdir/UI/Button/Button'
+import { ColorSchemeContext } from '@island.is/web/components/Adgerdir/UI/ColorSchemeContext/ColorSchemeContext'
 import {
   GET_ADGERDIR_PAGE_QUERY,
   GET_NAMESPACE_QUERY,
@@ -40,8 +42,9 @@ import { Screen } from '@island.is/web/types'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { ColorSchemeContext } from '@island.is/web/context'
 import { useNamespace } from '@island.is/web/hooks'
+
+import * as covidStyles from '@island.is/web/components/Adgerdir/UI/styles/styles.treat'
 
 interface AdgerdirArticleProps {
   article: Query['getAdgerdirPage']
@@ -90,13 +93,15 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
             <Stack space={3}>
               {renderButton}
               <Stack space={1}>
-                <Text variant="tag" color="red600">
-                  {n('malefni', 'Málefni')}:
+                <Text variant="tag">
+                  <span className={covidStyles.text}>
+                    {n('malefni', 'Málefni')}:
+                  </span>
                 </Text>
                 <Inline space={2} alignY="center">
                   {article.tags.map(({ title }, index) => {
                     return (
-                      <Tag key={index} variant="red" label>
+                      <Tag key={index} variant="green" label>
                         {title}
                       </Tag>
                     )
@@ -113,13 +118,17 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
             span={['9/9', '9/9', '9/9', '9/9', '7/9']}
             paddingBottom={[2, 2, 4]}
           >
-            <Breadcrumbs color="blue400">
-              <Link href={makePath()} as={makePath()}>
-                <a>Ísland.is</a>
-              </Link>
-              <Link href={makePath('adgerdir')} as={makePath('adgerdir')}>
-                <a>{n('covidAdgerdir', 'Covid aðgerðir')}</a>
-              </Link>
+            <Breadcrumbs>
+              <span className={covidStyles.text}>
+                <Link href={makePath()} as={makePath()}>
+                  <a>Ísland.is</a>
+                </Link>
+              </span>
+              <span className={covidStyles.text}>
+                <Link href={makePath('adgerdir')} as={makePath('adgerdir')}>
+                  <a>{n('covidAdgerdir', 'Covid aðgerðir')}</a>
+                </Link>
+              </span>
               <Tag>{n('adgerdir', 'Aðgerðir')}</Tag>
             </Breadcrumbs>
           </GridColumn>
@@ -151,8 +160,8 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
           </GridColumn>
         </GridRow>
       </ArticleLayout>
-      <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
-        <Box background="red100">
+      <ColorSchemeContext.Provider value={{ colorScheme: 'green' }}>
+        <Box className={covidStyles.bg}>
           <ContentBlock width="large">
             <AdgerdirArticles
               tags={tagsItems}
@@ -164,6 +173,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
           </ContentBlock>
         </Box>
       </ColorSchemeContext.Provider>
+      <ChatPanel />
     </>
   )
 }

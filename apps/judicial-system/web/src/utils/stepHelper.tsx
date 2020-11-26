@@ -17,7 +17,7 @@ export const getAppealDecitionText = (
     case CaseAppealDecision.APPEAL: {
       return `${
         role === AppealDecisionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
-      } kærir málið`
+      } kærir úrskurðinn`
     }
     case CaseAppealDecision.ACCEPT: {
       return `${
@@ -150,4 +150,13 @@ export const isNextDisabled = (requiredFields: RequiredField[]) => {
     }
   }
   return false
+}
+
+/**
+ * A value is considered dirty if it's a string, either an empty string or not.
+ * On the contrary a value is pristine if it's undefined or null.
+ * @param value check if this value is dirty
+ */
+export const isDirty = (value?: string | null): boolean => {
+  return typeof value === 'string'
 }
