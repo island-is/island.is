@@ -53,7 +53,7 @@ export const searchQuery = ({
     })
   }
 
-  let aggregation = { aggs: {} }
+  const aggregation = { aggs: {} }
 
   if (countTag) {
     // set the tag aggregation as the only aggregation
