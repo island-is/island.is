@@ -8,7 +8,6 @@ import {
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
 import * as styles from './FamilyMemberCard.treat'
-import { defineMessage } from 'react-intl'
 
 interface Props {
   title: string
@@ -22,22 +21,6 @@ export const FamilyMemberCard: FC<Props> = ({
   familyRelation,
 }) => {
   const { formatMessage } = useLocale()
-
-  const familyRelationLabel =
-    familyRelation === 'child'
-      ? defineMessage({
-          id: 'sp.family:child',
-          defaultMessage: 'Barn',
-        })
-      : familyRelation === 'spouse'
-      ? defineMessage({
-          id: 'sp.family:spouse',
-          defaultMessage: 'Maki',
-        })
-      : defineMessage({
-          id: 'sp.family:family-member',
-          defaultMessage: 'Fjölskyldumeðlimur',
-        })
 
   return (
     <Box
@@ -59,18 +42,33 @@ export const FamilyMemberCard: FC<Props> = ({
           background="blue100"
           className={styles.avatar}
         >
-          <Text variant="h2" as="h2" color="blue400">
+          <Text variant="h2" color="blue400">
             {getNameAbbreviation(title)}
           </Text>
         </Box>
         <div>
           {familyRelation && (
             <Text variant="eyebrow" color="purple400">
-              {formatMessage(familyRelationLabel)}
+              {formatMessage(
+                familyRelation === 'child'
+                  ? {
+                      id: 'sp.family:child',
+                      defaultMessage: 'Barn',
+                    }
+                  : familyRelation === 'spouse'
+                  ? {
+                      id: 'sp.family:spouse',
+                      defaultMessage: 'Maki',
+                    }
+                  : {
+                      id: 'sp.family:family-member',
+                      defaultMessage: 'Fjölskyldumeðlimur',
+                    },
+              )}
             </Text>
           )}
           <Box marginBottom={1}>
-            <Text variant="h3" as="h3" color="dark400">
+            <Text variant="h3" color="dark400">
               {title}
             </Text>
           </Box>

@@ -43,23 +43,14 @@ export const ConfirmationStep: FC<Props> = ({
           rules={{
             required: {
               value: true,
-              message: formatMessage({
-                id: 'service.portal:verification-code-required',
-                defaultMessage: 'Skylda er að setja inn öryggiskóða',
-              }),
+              message: 'Skylda er að setja inn öryggiskóða',
             },
           }}
           defaultValue={''}
           render={({ onChange, value, name }) => (
             <Input
-              label={formatMessage({
-                id: 'service.portal:verification-code',
-                defaultMessage: 'Öryggiskóði',
-              })}
-              placeholder={formatMessage({
-                id: 'service.portal:verification-code',
-                defaultMessage: 'Öryggiskóði',
-              })}
+              label="Öryggiskóði"
+              placeholder="Öryggiskóði"
               name={name}
               value={value}
               hasError={errors.code}
@@ -77,21 +68,13 @@ export const ConfirmationStep: FC<Props> = ({
           )}
         />
       </Box>
-      <Box
-        display="flex"
-        justifyContent="spaceBetween"
-        alignItems="center"
-        flexDirection={['columnReverse', 'row']}
-        marginTop={4}
-      >
-        <Box marginTop={[1, 0]}>
-          <Button variant="ghost" onClick={onBack}>
-            {formatMessage({
-              id: 'service.portal:go-back',
-              defaultMessage: 'Til baka',
-            })}
-          </Button>
-        </Box>
+      <Box display="flex" justifyContent="spaceBetween" marginTop={4}>
+        <Button variant="ghost" onClick={onBack}>
+          {formatMessage({
+            id: 'service.portal:go-back',
+            defaultMessage: 'Til baka',
+          })}
+        </Button>
         <Button
           type="submit"
           variant="primary"

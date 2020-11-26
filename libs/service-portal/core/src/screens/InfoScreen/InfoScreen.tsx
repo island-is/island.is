@@ -48,9 +48,7 @@ export const InfoScreen: FC<Props> = ({
             <Box marginBottom={2}>
               <Box display="flex" marginBottom={[2, 3]}>
                 <Inline space={1}>
-                  <Text variant="h1" as="h1">
-                    {formatMessage(title)}
-                  </Text>
+                  <Text variant="h1">{formatMessage(title)}</Text>
                   <Tag variant="blue" label>
                     {formatMessage({
                       id: 'service.portal:in-progress',
@@ -65,9 +63,7 @@ export const InfoScreen: FC<Props> = ({
               {list && (
                 <>
                   <Box marginBottom={[2, 3]}>
-                    <Text variant="h2" as="h2">
-                      {formatMessage(list.title)}
-                    </Text>
+                    <Text variant="h2">{formatMessage(list.title)}</Text>
                   </Box>
                   <BulletList>
                     {list.items.map((item, index) => (

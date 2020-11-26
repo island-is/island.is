@@ -22,7 +22,7 @@ export const documentsModule: ServicePortalModule = {
   routes: () => [
     {
       name: rootName,
-      path: ServicePortalPath.ElectronicDocumentsRoot,
+      path: ServicePortalPath.RafraenSkjolRoot,
       render: () => lazy(() => import('./screens/Overview/Overview')),
     },
   ],

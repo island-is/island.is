@@ -11,7 +11,7 @@ export const familyModule: ServicePortalModule = {
   routes: () => [
     {
       name: 'Mín gögn',
-      path: ServicePortalPath.MyInfoRoot,
+      path: ServicePortalPath.MinGognRoot,
       render: () =>
         lazy(() => import('./screens/UserInfoOverview/UserInfoOverview')),
     },

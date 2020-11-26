@@ -74,12 +74,9 @@ const MobileToolbar: FC<{}> = () => {
       paddingX={1}
       overflow="auto"
     >
-      <Link
-        to={ServicePortalPath.ElectronicDocumentsRoot}
-        onClick={handleLinkClick}
-      >
+      <Link to={ServicePortalPath.RafraenSkjolRoot} onClick={handleLinkClick}>
         <MenuItem
-          active={pathname === ServicePortalPath.ElectronicDocumentsRoot}
+          active={pathname === ServicePortalPath.RafraenSkjolRoot}
           icon={{
             type: 'outline',
             icon: 'reader',
@@ -87,12 +84,9 @@ const MobileToolbar: FC<{}> = () => {
           title="Rafræn skjöl"
         />
       </Link>
-      <Link
-        to={ServicePortalPath.ApplicationIntroduction}
-        onClick={handleLinkClick}
-      >
+      <Link to={ServicePortalPath.UmsoknirKynning} onClick={handleLinkClick}>
         <MenuItem
-          active={pathname === ServicePortalPath.ApplicationIntroduction}
+          active={pathname === ServicePortalPath.UmsoknirKynning}
           icon={{
             type: 'outline',
             icon: 'fileTrayFull',
@@ -100,9 +94,9 @@ const MobileToolbar: FC<{}> = () => {
           title="Umsóknir"
         />
       </Link>
-      <Link to={ServicePortalPath.SettingsRoot} onClick={handleLinkClick}>
+      <Link to={ServicePortalPath.StillingarRoot} onClick={handleLinkClick}>
         <MenuItem
-          active={pathname === ServicePortalPath.SettingsRoot}
+          active={pathname === ServicePortalPath.StillingarRoot}
           icon={{
             type: 'outline',
             icon: 'settings',

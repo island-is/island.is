@@ -20,8 +20,6 @@ import { useLocation } from 'react-router-dom'
 import MobileMenu from '../MobileMenu/MobileMenu'
 import { useFooterContent } from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
-import { useStore } from '../../store/stateProvider'
-import { RemoveScroll } from 'react-remove-scroll'
 
 const Layout: FC = ({ children }) => {
   useRoutes()
@@ -30,19 +28,15 @@ const Layout: FC = ({ children }) => {
   const { pathname } = useLocation()
   useScrollTopOnUpdate([pathname])
   const footerProps = getFooterProps(data, formatMessage)
-  const [{ mobileMenuState }] = useStore()
 
   return (
     <>
       <UserInfoLoadingOverlay />
       <ToastContainer useKeyframeStyles={false} />
       <Header />
-      {/* // counter intuitive, the scroll blocks all scrolling aside from the component that is wrapped */}
-      <RemoveScroll enabled={mobileMenuState === 'open'}>
-        <Hidden above="md">
-          <MobileMenu />
-        </Hidden>
-      </RemoveScroll>
+      <Hidden above="md">
+        <MobileMenu />
+      </Hidden>
       <Box overflow="hidden" className={styles.layoutWrapper}>
         <ContentBlock>
           <Box paddingX={[2, 2, 4, 4, 6]} paddingY={[2, 2, 2, 7]}>

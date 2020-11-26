@@ -29,7 +29,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:my-info',
           defaultMessage: 'Mín gögn',
         }),
-        path: ServicePortalPath.MyInfoRoot,
+        path: ServicePortalPath.MinGognRoot,
         icon: {
           type: 'outline',
           icon: 'person',
@@ -58,7 +58,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:finance',
           defaultMessage: 'Fjármál',
         }),
-        path: ServicePortalPath.FinanceRoot,
+        path: ServicePortalPath.FjarmalRoot,
         icon: {
           type: 'outline',
           icon: 'cellular',
@@ -71,7 +71,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:health',
           defaultMessage: 'Heilsa',
         }),
-        path: ServicePortalPath.HealthRoot,
+        path: ServicePortalPath.HeilsaRoot,
         icon: {
           type: 'outline',
           icon: 'heart',
@@ -84,7 +84,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:assets',
           defaultMessage: 'Eignir',
         }),
-        path: ServicePortalPath.AssetsRoot,
+        path: ServicePortalPath.EignirRoot,
         icon: {
           type: 'outline',
           icon: 'wallet',
@@ -97,7 +97,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:education',
           defaultMessage: 'Menntun',
         }),
-        path: ServicePortalPath.EducationRoot,
+        path: ServicePortalPath.MenntunRoot,
         icon: {
           type: 'outline',
           icon: 'school',
@@ -118,7 +118,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:applications',
           defaultMessage: 'Umsóknir',
         }),
-        path: ServicePortalPath.ApplicationIntroduction,
+        path: ServicePortalPath.UmsoknirKynning,
         icon: {
           type: 'outline',
           icon: 'fileTrayFull',
@@ -131,7 +131,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:documents',
           defaultMessage: 'Rafræn skjöl',
         }),
-        path: ServicePortalPath.ElectronicDocumentsRoot,
+        path: ServicePortalPath.RafraenSkjolRoot,
         icon: {
           type: 'outline',
           icon: 'reader',
@@ -144,7 +144,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:delegation',
           defaultMessage: 'Mín réttindi',
         }),
-        path: ServicePortalPath.MyLicensesRoot,
+        path: ServicePortalPath.StillingarUmbod,
         icon: {
           type: 'outline',
           icon: 'receipt',
@@ -157,7 +157,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:settings',
           defaultMessage: 'Stillingar',
         }),
-        path: ServicePortalPath.SettingsRoot,
+        path: ServicePortalPath.StillingarRoot,
         icon: {
           type: 'outline',
           icon: 'settings',

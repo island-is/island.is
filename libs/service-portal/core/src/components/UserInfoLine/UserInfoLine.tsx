@@ -5,7 +5,6 @@ import {
   Button,
   GridRow,
   GridColumn,
-  LoadingIcon,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
@@ -16,7 +15,6 @@ interface Props {
   label: MessageDescriptor | string
   content?: string | JSX.Element
   tag?: string | JSX.Element
-  loading?: boolean
   editLink?: {
     external?: boolean
     url: string
@@ -24,13 +22,7 @@ interface Props {
   }
 }
 
-export const UserInfoLine: FC<Props> = ({
-  label,
-  content,
-  tag,
-  loading,
-  editLink,
-}) => {
+export const UserInfoLine: FC<Props> = ({ label, content, tag, editLink }) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -43,22 +35,12 @@ export const UserInfoLine: FC<Props> = ({
       <GridRow>
         <GridColumn order={1} span={['8/12', '4/12']}>
           <Box overflow="hidden">
-            <Text variant="h5" as="h5">
-              {formatMessage(label)}
-            </Text>
+            <Text variant="h5">{formatMessage(label)}</Text>
           </Box>
         </GridColumn>
         <GridColumn order={[3, 2]} span={['1/1', tag ? '3/12' : '5/12']}>
-          <Box
-            display="flex"
-            alignItems="center"
-            height="full"
-            width="full"
-            className={styles.content}
-            marginY={[1, 0]}
-            overflow="hidden"
-          >
-            {loading ? <LoadingIcon animate size={20} /> : content}
+          <Box className={styles.content} marginY={[1, 0]} overflow="hidden">
+            {content}
           </Box>
         </GridColumn>
         {tag && (

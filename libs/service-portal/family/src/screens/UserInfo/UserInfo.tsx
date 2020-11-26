@@ -15,15 +15,10 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { defineMessage } from 'react-intl'
 import { useNationalRegistryInfo } from '@island.is/service-portal/graphql'
 
-const dataNotFoundMessage = defineMessage({
-  id: 'sp.family:data-not-found',
-  defaultMessage: 'Gögn fundust ekki',
-})
-
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const { data: natRegInfo, loading, error } = useNationalRegistryInfo()
+  const { data: natRegInfo } = useNationalRegistryInfo()
 
   return (
     <>
@@ -41,7 +36,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
                 {formatMessage({
                   id: 'sp.family:user-info-description',
                   defaultMessage:
-                    'Hér eru þín gögn frá þjóðskrá. Þú hefur kost á að gera breytingar á þessum gögnum.',
+                    'Hér eru þín gögn frá þjóðskrá. Þú hefur kost á að gera breytingar á þessum gögnum',
                 })}
               </Text>
             </Stack>
@@ -77,12 +72,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             id: 'service.portal:legal-residence',
             defaultMessage: 'Lögheimili',
           })}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : natRegInfo?.legalResidence || ''
-          }
-          loading={loading}
+          content={natRegInfo?.legalResidence || '...'}
           editLink={{
             external: true,
             title: defineMessage({
@@ -98,12 +88,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             id: 'service.portal:birth-place',
             defaultMessage: 'Fæðingarstaður',
           })}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : natRegInfo?.birthPlace || ''
-          }
-          loading={loading}
+          content={natRegInfo?.birthPlace || '...'}
         />
         <UserInfoLine
           label={defineMessage({
@@ -119,36 +104,21 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             id: 'service.portal:gender',
             defaultMessage: 'Kyn',
           })}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : natRegInfo?.gender || ''
-          }
-          loading={loading}
+          content={natRegInfo?.gender || '...'}
         />
         <UserInfoLine
           label={defineMessage({
             id: 'service.portal:marital-status',
             defaultMessage: 'Hjúskaparstaða',
           })}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : natRegInfo?.maritalStatus || ''
-          }
-          loading={loading}
+          content={natRegInfo?.maritalStatus || '...'}
         />
         <UserInfoLine
           label={defineMessage({
             id: 'service.portal:religion',
             defaultMessage: 'Trúfélag / lífsskoðunarfélag',
           })}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : natRegInfo?.religion || ''
-          }
-          loading={loading}
+          content={natRegInfo?.religion || '...'}
           editLink={{
             external: true,
             title: defineMessage({

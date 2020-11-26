@@ -12,7 +12,7 @@ export const financeModule: ServicePortalModule = {
     const routes: ServicePortalRoute[] = [
       {
         name: 'Fjármál',
-        path: ServicePortalPath.FinanceRoot,
+        path: ServicePortalPath.FjarmalRoot,
         render: () =>
           lazy(() => import('./screens/FinanceOverview/FinanceOverview')),
       },

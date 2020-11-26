@@ -10,7 +10,7 @@ export const educationModule: ServicePortalModule = {
   routes: () => [
     {
       name: 'Menntun',
-      path: ServicePortalPath.EducationRoot,
+      path: ServicePortalPath.MenntunRoot,
       render: () =>
         lazy(() => import('./screens/EducationOverview/EducationOverview')),
     },

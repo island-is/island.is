@@ -54,7 +54,7 @@ export const Messages: ServicePortalModuleComponent = () => {
         id: 'service.portal:timeline-link-title',
         defaultMessage: 'Sjá tímalínu',
       })}
-      figure="/assets/images/bus.svg"
+      figure="/assets/images/bus.jpg"
     />
   )
 }

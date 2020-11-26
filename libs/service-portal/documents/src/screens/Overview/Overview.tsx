@@ -14,13 +14,14 @@ import {
 } from '@island.is/island-ui/core'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
-  useScrollToRefOnUpdate,
+  useScrollTopOnUpdate,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 import { ActionCardLoader } from '@island.is/service-portal/core'
 import { Document } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import isAfter from 'date-fns/isAfter'
+import subYears from 'date-fns/subYears'
 import startOfTomorrow from 'date-fns/startOfTomorrow'
 import isWithinInterval from 'date-fns/isWithinInterval'
 import isEqual from 'lodash/isEqual'
@@ -98,7 +99,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   useNamespaces('sp.documents')
   const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
-  const { scrollToRef } = useScrollToRefOnUpdate([page])
+  useScrollTopOnUpdate([page])
 
   const [filterValue, setFilterValue] = useState<FilterValues>(
     defaultFilterValues,
@@ -112,43 +113,45 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     to: pageSize * page,
     totalPages: Math.ceil(filteredDocuments.length / pageSize),
   }
-  const handleDateFromInput = useCallback((value: Date) => {
-    setPage(1)
-    setFilterValue((oldState) => {
-      const { dateTo } = oldState
-      return {
-        ...oldState,
-        dateTo: dateTo ? (isAfter(value, dateTo) ? value : dateTo) : dateTo,
-        dateFrom: value,
-      }
-    })
-  }, [])
+  const handleDateFromInput = useCallback(
+    (value: Date) =>
+      setFilterValue((oldState) => {
+        const { dateTo } = oldState
+        return {
+          ...oldState,
+          dateTo: dateTo ? (isAfter(value, dateTo) ? value : dateTo) : dateTo,
+          dateFrom: value,
+        }
+      }),
+    [],
+  )
 
-  const handleDateToInput = useCallback((value: Date) => {
-    setPage(1)
-    setFilterValue((oldState) => ({
-      ...oldState,
-      dateTo: value,
-    }))
-  }, [])
+  const handleDateToInput = useCallback(
+    (value: Date) =>
+      setFilterValue((oldState) => ({
+        ...oldState,
+        dateTo: value,
+      })),
+    [],
+  )
 
   const handlePageChange = useCallback((page: number) => setPage(page), [])
   const handleCategoryChange = useCallback((newCategory: ValueType<Option>) => {
-    setPage(1)
     setFilterValue((oldFilter) => ({
       ...oldFilter,
       activeCategory: newCategory as Option,
     }))
   }, [])
 
-  const handleSearchChange = useCallback((value: string) => {
-    setPage(1)
-    setFilterValue({ ...defaultFilterValues, searchQuery: value })
-  }, [])
+  const handleSearchChange = useCallback(
+    (value: string) =>
+      setFilterValue({ ...defaultFilterValues, searchQuery: value }),
+    [],
+  )
 
   const handleClearFilters = useCallback(() => {
-    setPage(1)
     setFilterValue({ ...defaultFilterValues })
+    setPage(1)
   }, [])
 
   const hasActiveFilters = () => !isEqual(filterValue, defaultFilterValues)
@@ -206,7 +209,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               <Stack space={3}>
                 <Box height="full">
                   <Input
-                    icon="search"
                     value={filterValue.searchQuery}
                     onChange={(ev) => handleSearchChange(ev.target.value)}
                     name="rafraen-skjol-leit"
@@ -266,7 +268,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   {hasActiveFilters() && (
                     <Columns space={3}>
                       <Column>
-                        <Text variant="h3" as="h3">{`${
+                        <Text variant="h3">{`${
                           filteredDocuments.length
                         } ${formatMessage(documentsFoundText())}`}</Text>
                       </Column>
@@ -286,7 +288,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             {loading && <ActionCardLoader repeat={3} />}
             {error && (
               <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-                <Text variant="h3" as="h3">
+                <Text variant="h3">
                   {formatMessage({
                     id: 'sp.documents:error',
                     defaultMessage:
@@ -297,7 +299,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             )}
             {!loading && !error && filteredDocuments?.length === 0 && (
               <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-                <Text variant="h3" as="h3">
+                <Text variant="h3">
                   {formatMessage({
                     id: 'sp.documents:not-found',
                     defaultMessage:
@@ -308,10 +310,8 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             )}
             {filteredDocuments
               ?.slice(pagedDocuments.from, pagedDocuments.to)
-              .map((document, index) => (
-                <Box key={document.id} ref={index === 0 ? scrollToRef : null}>
-                  <DocumentCard document={document} />
-                </Box>
+              .map((document) => (
+                <DocumentCard key={document.id} document={document} />
               ))}
             {filteredDocuments && filteredDocuments.length > pageSize && (
               <Pagination

@@ -48,9 +48,7 @@ export const ActionCard: FC<Props> = ({ label, title, date, cta, loading }) => {
           alignItems="center"
         >
           <FocusableBox component="button" onClick={cta.onClick}>
-            <Text variant="h4" as="h4">
-              {title}
-            </Text>
+            <Text variant="h4">{title}</Text>
           </FocusableBox>
           <Box
             className={styles.buttonWrapper}

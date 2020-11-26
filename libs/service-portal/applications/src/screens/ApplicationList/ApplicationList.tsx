@@ -24,14 +24,12 @@ const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
   return (
     <>
       <Box marginBottom={5}>
-        <Text variant="h1" as="h1">
-          Umsóknir
-        </Text>
+        <Text variant="h1">Umsóknir</Text>
       </Box>
       {loading && <ActionCardLoader repeat={3} />}
       {error && (
         <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-          <Text variant="h3" as="h3">
+          <Text variant="h3">
             Tókst ekki að sækja umsóknir, eitthvað fór úrskeiðis
           </Text>
         </Box>
@@ -50,14 +48,12 @@ const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
       </Stack>
 
       <Box marginTop={5} marginBottom={5}>
-        <Text variant="h1" as="h1">
-          Umsóknir til samþykktar
-        </Text>
+        <Text variant="h1">Umsóknir til samþykktar</Text>
       </Box>
       {assigneeApplicationsLoading && <ActionCardLoader repeat={3} />}
       {assigneeApplicationsError && (
         <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-          <Text variant="h3" as="h3">
+          <Text variant="h3">
             Tókst ekki að sækja umsóknir, eitthvað fór úrskeiðis
           </Text>
         </Box>

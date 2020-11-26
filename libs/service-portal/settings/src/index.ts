@@ -8,7 +8,6 @@ import {
 import { USER_PROFILE } from '@island.is/service-portal/graphql'
 import { lazy } from 'react'
 import { defineMessage } from 'react-intl'
-import * as Sentry from '@sentry/react'
 
 export const settingsModule: ServicePortalModule = {
   name: 'Stillingar',
@@ -17,13 +16,13 @@ export const settingsModule: ServicePortalModule = {
     const routes: ServicePortalRoute[] = [
       {
         name: 'Stillingar',
-        path: ServicePortalPath.SettingsRoot,
+        path: ServicePortalPath.StillingarRoot,
         render: () =>
           lazy(() => import('./screens/NavigationScreen/NavigationScreen')),
       },
       {
         name: 'Mín réttindi',
-        path: ServicePortalPath.MyLicensesRoot,
+        path: ServicePortalPath.StillingarUmbod,
         render: () =>
           lazy(() => import('./screens/DelegationGreeting/DelegationGreeting')),
       },
@@ -84,23 +83,21 @@ export const settingsModule: ServicePortalModule = {
   global: async ({ client }) => {
     const routes: ServicePortalGlobalComponent[] = []
 
-    /**
-     * User Profile Onboarding
-     */
     try {
-      const res = await client.query<Query>({
+      await client.query<Query>({
         query: USER_PROFILE,
       })
-      // If the user profile is empty, we render the onboarding modal
-      if (res.data?.getUserProfile === null)
-        routes.push({
-          render: () =>
-            lazy(() =>
-              import('./components/UserOnboardingModal/UserOnboardingModal'),
-            ),
-        })
-    } catch (error) {
-      Sentry.captureException(error)
+      // If successful, there is a user profile present and we
+      // don't render the onboarding prompt
+    } catch (err) {
+      // If there is no user profile present, graphQL returns an error
+      // In which case, we render the onboarding modal
+      routes.push({
+        render: () =>
+          lazy(() =>
+            import('./components/UserOnboardingModal/UserOnboardingModal'),
+          ),
+      })
     }
     return routes
   },

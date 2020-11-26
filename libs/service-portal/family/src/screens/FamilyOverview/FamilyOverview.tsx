@@ -19,7 +19,7 @@ const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   return (
     <>
       <Box marginBottom={[2, 3, 5]}>
-        <Text variant="h1" as="h1">
+        <Text variant="h1">
           {formatMessage({
             id: 'service.portal:family',
             defaultMessage: 'Fjölskyldan',
@@ -28,7 +28,7 @@ const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
       </Box>
       {error && (
         <Box textAlign="center">
-          <Text variant="h3" as="h3">
+          <Text variant="h3">
             {formatMessage({
               id: 'sp.family:could-not-fetch-family-info',
               defaultMessage:

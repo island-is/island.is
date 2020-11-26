@@ -20,7 +20,7 @@ const NotificationMenu: FC<Props> = ({ state, onClose }) => {
     <Box position="relative">
       <Menu isOpen={state === 'open'} onCloseMenu={onClose}>
         <Box className={styles.menu}>
-          <Text variant="h3" as="h3">
+          <Text variant="h3">
             {formatMessage({
               id: 'service.portal:messages',
               defaultMessage: 'Skilaboð',

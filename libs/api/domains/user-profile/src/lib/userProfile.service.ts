@@ -26,16 +26,10 @@ const handleError = (error: any) => {
 export class UserProfileService {
   constructor(private userProfileApi: UserProfileApi) {}
 
-  async getUser(nationalId: string) {
-    try {
-      const user = await this.userProfileApi.userProfileControllerFindOneByNationalId(
-        { nationalId },
-      )
-      return user
-    } catch (error) {
-      if (error.status === 404) return null
-      handleError(error)
-    }
+  async getUser(nationalId: string): Promise<UserProfile> {
+    return await this.userProfileApi
+      .userProfileControllerFindOneByNationalId({ nationalId })
+      .catch(handleError)
   }
 
   async createUser(

@@ -4,18 +4,19 @@ import { Locale } from '../types/locales.enum'
 
 @InputType()
 export class UpdateUserProfileInput {
-  @Field(() => String, { nullable: true })
-  @IsOptional()
+  @Field(() => String)
   @IsString()
+  @IsOptional()
   mobilePhoneNumber?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
+  @IsString()
   @IsOptional()
   @IsEnum(Locale)
   locale?: Locale
 
-  @Field(() => String, { nullable: true })
-  @IsOptional()
+  @Field(() => String)
   @IsEmail()
+  @IsOptional()
   email?: string
 }

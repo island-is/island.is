@@ -32,7 +32,7 @@ const UserInfoOverview: ServicePortalModuleComponent = () => {
                   {formatMessage({
                     id: 'sp.family:my-info-my-data-subtext',
                     defaultMessage:
-                      'Hér eru þín gögn frá þjóðskrá. Þú hefur kost á að gera breytingar á þessum gögnum.',
+                      'Hér eru þín gögn frá þjóðskrá. Þú hefur kost á að gera breytingar á þessum gögnum',
                   })}
                 </Text>
               </Stack>

@@ -32,7 +32,7 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
   const { updateUserProfile } = useUpdateUserProfile()
 
   useEffect(() => {
-    if (!userProfile || !userProfile.email) return
+    if (!userProfile) return
     if (userProfile.email.length > 0) setEmail(userProfile.email)
   }, [userProfile])
 
@@ -63,7 +63,7 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
   return (
     <>
       <Box marginBottom={4}>
-        <Text variant="h1" as="h1">
+        <Text variant="h1">
           {formatMessage({
             id: 'sp.settings:edit-email',
             defaultMessage: 'Breyta netfangi',
@@ -113,29 +113,15 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
           {status === 'success' && (
             <AlertMessage
               type="info"
-              title={formatMessage({
-                id: 'sp.settings:email-confirmed-sent-success-title',
-                defaultMessage: 'Nýtt netfang hefur verið vistað',
-              })}
-              message={formatMessage({
-                id: 'sp.settings:email-confirmed-sent-success-subtext',
-                defaultMessage:
-                  'Vinsamlegast athugaðu netpóstinn þinn, staðfestingarpóstur hefur verið sendur á þig',
-              })}
+              title="Nýtt netfang hefur verið vistað"
+              message="Vinsamlegast athugaðu netpóstinn þinn, staðfestingarpóstur hefur verið sendur á þig"
             />
           )}
           {status === 'error' && (
             <AlertMessage
               type="error"
-              title={formatMessage({
-                id: 'sp.settings:email-confirmed-sent-error-title',
-                defaultMessage: 'Tókst ekki að vista netfang',
-              })}
-              message={formatMessage({
-                id: 'sp.settings:email-confirmed-sent-error-subtext',
-                defaultMessage:
-                  'Eitthvað hefur farið úrskeiðis, vinsamlegast reynið aftur síðar',
-              })}
+              title="Tókst ekki að vista netfang"
+              message="Eitthvað hefur farið úrskeiðis, vinsamlegast reyndu aftur síðar"
             />
           )}
         </Box>

@@ -28,9 +28,7 @@ const ExternalFormDirect: FC<Props> = ({
           </Tag>
         </Box>
         <Stack space={3}>
-          <Text variant="h3" as="h3">
-            {title}
-          </Text>
+          <Text variant="h3">{title}</Text>
           <Text>{description}</Text>
         </Stack>
       </Box>

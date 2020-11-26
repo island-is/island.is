@@ -1,5 +1,5 @@
 import { toast } from '@island.is/island-ui/core'
-import { defaultLanguage, Locale, useNamespaces } from '@island.is/localization'
+import { Locale } from '@island.is/localization'
 import {
   Modal,
   ServicePortalModuleComponent,
@@ -9,19 +9,18 @@ import React, { useState } from 'react'
 import { EmailFormData } from '../Forms/EmailForm'
 import { LanguageFormData, LanguageFormOption } from '../Forms/LanguageForm'
 import { PhoneFormData } from '../Forms/PhoneForm/Steps/FormStep'
-import { OnboardingStepper } from './OnboardingStepper'
 import { EmailStep } from './Steps/EmailStep'
-import { FormSubmittedStep } from './Steps/FormSubmittedStep'
+import { IntroStep } from './Steps/IntroStep'
 import { LanguageStep } from './Steps/LanguageStep'
 import { PhoneStep } from './Steps/PhoneStep'
 import { SubmitFormStep } from './Steps/SubmitFormStep'
 
-export type OnboardingStep =
-  | 'language-form'
+type OnboardingStep =
+  | 'intro'
   | 'tel-form'
   | 'email-form'
+  | 'language-form'
   | 'submit-form'
-  | 'form-submitted'
 
 const defaultLanguageOption: LanguageFormOption = {
   value: 'is',
@@ -29,29 +28,18 @@ const defaultLanguageOption: LanguageFormOption = {
 }
 
 const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
-  const [toggleCloseModal, setToggleCloseModal] = useState(false)
-  const [step, setStep] = useState<OnboardingStep>('language-form')
+  const [isOpen, setIsOpen] = useState(true)
+  const [step, setStep] = useState<OnboardingStep>('intro')
   const [tel, setTel] = useState('')
   const [email, setEmail] = useState('')
   const [language, setLanguage] = useState<LanguageFormOption | null>(
     defaultLanguageOption,
   )
   const { createUserProfile } = useCreateUserProfile()
-  const { changeLanguage } = useNamespaces()
 
-  // On close side effects
-  const dropOnboardingSideEffects = () => {
+  const handleCloseModal = () => {
     toast.info('Notendaupplýsingum er hægt að breyta í stillingum')
-  }
-
-  // Handles a close event directly in the onboarding component
-  const dropOnboarding = () => {
-    setToggleCloseModal(true)
-    dropOnboardingSideEffects()
-  }
-
-  const closeModal = () => {
-    setToggleCloseModal(true)
+    setIsOpen(false)
   }
 
   const gotoStep = (step: OnboardingStep) => {
@@ -71,20 +59,14 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
         locale,
         mobilePhoneNumber,
       })
-      gotoStep('form-submitted')
+      toast.success('Notendaupplýsingar þínar hafa verið uppfærðar')
+      setIsOpen(false)
     } catch (err) {
-      gotoStep('email-form')
+      gotoStep('language-form')
       toast.error(
         'Eitthvað fór úrskeiðis, ekki tókst að uppfæra notendaupplýsingar þínar',
       )
     }
-  }
-
-  const handleLanguageStepSubmit = (data: LanguageFormData) => {
-    if (data.language === null) return
-    setLanguage(data.language)
-    changeLanguage(data.language.value)
-    gotoStep('tel-form')
   }
 
   const handlePhoneStepSubmit = (data: PhoneFormData) => {
@@ -94,27 +76,26 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const handleEmailStepSubmit = (data: EmailFormData) => {
     setEmail(data.email)
-    submitFormData(data.email, tel, language?.value || defaultLanguage)
+    gotoStep('language-form')
+  }
+
+  const handleLanguageStepSubmit = (data: LanguageFormData) => {
+    setLanguage(data.language)
+    submitFormData(email, tel, data?.language?.value || 'is')
   }
 
   return (
-    <Modal
-      id="user-onboarding-modal"
-      onCloseModal={dropOnboardingSideEffects}
-      toggleClose={toggleCloseModal}
-    >
-      <OnboardingStepper activeStep={step} />
-      {step === 'language-form' && (
-        <LanguageStep
-          onClose={dropOnboarding}
-          language={language}
-          onSubmit={handleLanguageStepSubmit}
+    <Modal onCloseModal={handleCloseModal} isOpen={isOpen}>
+      {step === 'intro' && (
+        <IntroStep
           userInfo={userInfo}
+          onClose={handleCloseModal}
+          onSubmit={gotoStep.bind(null, 'tel-form')}
         />
       )}
       {step === 'tel-form' && (
         <PhoneStep
-          onBack={gotoStep.bind(null, 'language-form')}
+          onBack={gotoStep.bind(null, 'intro')}
           natReg={userInfo.profile.nationalId}
           tel={tel}
           onSubmit={handlePhoneStepSubmit}
@@ -127,8 +108,14 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
           onSubmit={handleEmailStepSubmit}
         />
       )}
+      {step === 'language-form' && (
+        <LanguageStep
+          onBack={gotoStep.bind(null, 'email-form')}
+          language={language}
+          onSubmit={handleLanguageStepSubmit}
+        />
+      )}
       {step === 'submit-form' && <SubmitFormStep />}
-      {step === 'form-submitted' && <FormSubmittedStep onClose={closeModal} />}
     </Modal>
   )
 }

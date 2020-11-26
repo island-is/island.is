@@ -21,8 +21,6 @@ export * from './lib/NewsletterSignup/NewsletterSignup'
 export * from './lib/Swiper/Swiper'
 export * from './lib/Header/Header'
 export * from './lib/Footer/Footer'
-export * from './lib/DialogPrompt/DialogPrompt'
-export * from './lib/ModalBase/ModalBase'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'

@@ -12,7 +12,7 @@ const ModuleLoadingScreen: FC<Props> = ({ name }) => {
 
   return (
     <Box padding={8}>
-      <Text variant="h2" as="h2">
+      <Text variant="h2">
         {formatMessage({
           id: 'service.portal:fetching',
           defaultMessage: 'Sæki',

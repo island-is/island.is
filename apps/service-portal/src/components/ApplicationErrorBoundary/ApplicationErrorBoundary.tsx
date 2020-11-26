@@ -46,7 +46,7 @@ const Error: FC = () => {
 
   return (
     <Box>
-      <Text variant="h2" as="h2">
+      <Text variant="h2">
         {formatMessage({
           id: 'sp:error-page-heading',
           defaultMessage: 'Eitthvað fór úrskeiðis',

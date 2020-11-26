@@ -33,7 +33,7 @@ const EmailConfirmation: ServicePortalModuleComponent = () => {
   return (
     <>
       <Box marginBottom={4}>
-        <Text variant="h1" as="h1">
+        <Text variant="h1">
           {formatMessage({
             id: 'sp.settings:verify-email',
             defaultMessage: 'Staðfesta netfang',
@@ -56,29 +56,15 @@ const EmailConfirmation: ServicePortalModuleComponent = () => {
       {confirmationState === 'success' && (
         <AlertMessage
           type="success"
-          title={formatMessage({
-            id: 'sp.settings:email-confirmed-success-title',
-            defaultMessage: 'Netfang staðfest',
-          })}
-          message={formatMessage({
-            id: 'sp.settings:email-confirmed-success-subtext',
-            defaultMessage:
-              'Þú hefur staðfest netfangið þitt hjá Stafrænt Ísland',
-          })}
+          title="Netfang staðfest"
+          message="Þú hefur staðfest netfangið þitt hjá hjá Stafrænt Ísland"
         />
       )}
       {(error || confirmationState === 'error') && (
         <AlertMessage
           type="error"
-          title={formatMessage({
-            id: 'sp.settings:email-confirmed-error-title',
-            defaultMessage: 'Tókst ekki að staðfesta netfang',
-          })}
-          message={formatMessage({
-            id: 'sp.settings:email-confirmed-error-subtext',
-            defaultMessage:
-              'Eitthvað hefur farið úrskeiðis, vinsamlegast reynið aftur síðar',
-          })}
+          title="Tókst ekki að staðfesta netfang"
+          message="Eitthvað hefur farið úrskeiðis, vinsamlegast reynið aftur síðar"
         />
       )}
     </>

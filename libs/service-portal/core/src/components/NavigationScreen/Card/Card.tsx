@@ -33,7 +33,7 @@ const Card: FC<Props> = ({ title, description, tags, disabled }) => {
       paddingX={4}
     >
       <Box marginBottom={1}>
-        <Text variant="h3" as="h3" color="blue400">
+        <Text variant="h3" color="blue400">
           {formatMessage(title)}
         </Text>
       </Box>

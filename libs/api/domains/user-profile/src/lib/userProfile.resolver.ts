@@ -20,9 +20,7 @@ import { UseGuards } from '@nestjs/common'
 export class UserProfileResolver {
   constructor(private readonly userUserProfileService: UserProfileService) {}
   @Query(() => UserProfile, { nullable: true })
-  getUserProfile(
-    @CurrentUser() user: User,
-  ): Promise<UserProfile | null | undefined> {
+  getUserProfile(@CurrentUser() user: User): Promise<UserProfile | null> {
     return this.userUserProfileService.getUser(user.nationalId)
   }
 

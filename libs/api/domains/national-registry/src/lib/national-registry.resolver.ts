@@ -14,7 +14,7 @@ import {
 @Resolver()
 export class NationalRegistryResolver {
   constructor(private nationalRegistryService: NationalRegistryService) {}
-  //Touching this
+
   @Query(() => MyInfo, { nullable: true })
   getMyInfo(@CurrentUser() user: User): Promise<MyInfo | null> {
     return this.nationalRegistryService.GetMyinfo(user.nationalId)

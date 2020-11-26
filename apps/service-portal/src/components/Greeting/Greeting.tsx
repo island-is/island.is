@@ -14,7 +14,7 @@ const Greeting: FC<{}> = () => {
     <GridRow>
       <GridColumn span={['12/12', '7/12']}>
         <Box marginTop={[2, 3, 8]} marginBottom={2}>
-          <Text variant="h1" as="h1">
+          <Text variant="h1">
             {isEveningGreeting
               ? formatMessage({
                   defaultMessage: 'Góða kvöldið,',
@@ -27,7 +27,7 @@ const Greeting: FC<{}> = () => {
                   id: 'service.portal:good-day',
                 })}
           </Text>
-          <Text variant="h3" as="h3" color="purple400">
+          <Text variant="h3" color="purple400">
             {userInfo?.profile.name}
           </Text>
         </Box>

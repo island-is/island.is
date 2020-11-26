@@ -21,7 +21,7 @@ export const mockUserInfoList: UserInfoItem[] = [
         'Við viljum að stafræn þjónusta sé aðgengileg, sniðin að notandanum og með skýra framtíðarsýn. Hér fyrir neðan getur þú lesið okkar helstu.',
     }),
     link: ServicePortalPath.UserInfo,
-    image: '/assets/images/individualsGrid.svg',
+    image: '/assets/images/individualsGrid.jpg',
   },
   {
     heading: defineMessage({
@@ -34,7 +34,7 @@ export const mockUserInfoList: UserInfoItem[] = [
         'Hönnunarkerfi Ísland.is auðveldar okkur að setja nýja þjónustu í loftið á stuttum tíma, og einfaldar rekstur og viðhald stafrænnar þjónustu hins opinbera til.',
     }),
     link: ServicePortalPath.FamilyRoot,
-    image: '/assets/images/familyGrid.svg',
+    image: '/assets/images/familyGrid.jpg',
   },
   // {
   //   heading: defineMessage({
@@ -47,7 +47,7 @@ export const mockUserInfoList: UserInfoItem[] = [
   //       'Markmið verkefnisins er að smíða kerfi, Viskuausuna, sem veitir upplýsingar um gögn og vefþjónustur ríkisins til notenda.',
   //   }),
   //   link: '',
-  //   image: '/assets/images/sofa.svg',
+  //   image: '/assets/images/moving.jpg',
   // },
   // {
   //   heading: defineMessage({
@@ -60,6 +60,6 @@ export const mockUserInfoList: UserInfoItem[] = [
   //       'Markmið verkefnisins er að smíða kerfi, Viskuausuna, sem veitir upplýsingar um gögn og vefþjónustur ríkisins til notenda.',
   //   }),
   //   link: '',
-  //   image: '/assets/images/movingTruck.svg',
+  //   image: '/assets/images/jobs.jpg',
   // },
 ]
