@@ -65,9 +65,11 @@ const defaultRenderLanguageSwitch: MenuProps['renderLanguageSwitch'] = (
 const AsideTopLinkWithSub = ({
   link,
   sub,
+  id,
 }: {
   link: ReactNode
   sub: ReactNode[]
+  id: string | number
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
 
@@ -84,10 +86,16 @@ const AsideTopLinkWithSub = ({
           circle
           colorScheme="negative"
           icon={isCollapsed ? 'add' : 'remove'}
+          aria-expanded={!isCollapsed}
+          aria-controls={`AsideTopLink-${id}`}
           onClick={() => setIsCollapsed(!isCollapsed)}
         />
       </Box>
-      <AnimateHeight duration={300} height={isCollapsed ? 0 : 'auto'}>
+      <AnimateHeight
+        duration={300}
+        height={isCollapsed ? 0 : 'auto'}
+        id={`AsideTopLink-${id}`}
+      >
         <Box
           paddingLeft={2}
           borderLeftWidth="standard"
@@ -120,6 +128,8 @@ export const Menu = ({
   asideBottomTitle,
   asideBottomLinks,
 }: MenuProps) => {
+  const [mainLinksCollapsed, setMainLinksCollapsed] = useState(true)
+
   const myPages = renderMyPagesButton(
     <Button variant="utility" icon="person">
       {myPagesText}
@@ -128,6 +138,15 @@ export const Menu = ({
   const languageSwitch = renderLanguageSwitch(
     <Button variant="utility">{languageSwitchText}</Button>,
   )
+  const mainLinksRender = mainLinks.map(({ text, href }, index) => (
+    <div className={styles.mainLinkOuter} key={index}>
+      {renderLink({
+        className: cn(useTextStyles({}), styles.mainLink),
+        text: text,
+        href: href,
+      })}
+    </div>
+  ))
   return (
     <ModalBase
       baseId={baseId}
@@ -138,7 +157,7 @@ export const Menu = ({
       {({ closeModal }: { closeModal: () => void }) => (
         <>
           <Box
-            paddingTop={8}
+            paddingTop={[6, 6, 8]}
             paddingRight={[3, 3, 6, 6, 15]}
             paddingBottom={4}
             paddingLeft={[3, 3, 6]}
@@ -156,16 +175,16 @@ export const Menu = ({
                 {renderLogo(
                   <>
                     <Box
-                      display={['none', 'none', 'none', 'block']}
-                      marginRight={4}
-                    >
-                      <Logo width={160} title={logoTitle} />
-                    </Box>
-                    <Box
                       display={['block', 'block', 'block', 'none']}
                       marginRight={[1, 4]}
                     >
                       <Logo width={40} iconOnly title={logoTitle} />
+                    </Box>
+                    <Box
+                      display={['none', 'none', 'none', 'block']}
+                      marginRight={4}
+                    >
+                      <Logo width={160} title={logoTitle} />
                     </Box>
                   </>,
                 )}
@@ -176,7 +195,7 @@ export const Menu = ({
                 >
                   <Box display="flex">
                     <Box marginRight={[1, 2]}>{myPages}</Box>
-                    <Box marginRight={[1, 2]}>{languageSwitch}</Box>
+                    <Box marginRight={[2, 3]}>{languageSwitch}</Box>
                   </Box>
                   <Button
                     onClick={closeModal}
@@ -198,21 +217,43 @@ export const Menu = ({
                   )}
                 </Box>
               </Box>
-              <Box marginTop={9}>
+              <Box marginTop={9} display={['none', 'none', 'block']}>
                 <Text variant="h3" marginBottom={2}>
                   {mainTitle}
                 </Text>
                 <div className={styles.mainLinkContainer}>
-                  {mainLinks.map(({ text, href }, index) => (
-                    <div className={styles.mainLinkOuter} key={index}>
-                      {renderLink({
-                        className: cn(useTextStyles({}), styles.mainLink),
-                        text: text,
-                        href: href,
-                      })}
-                    </div>
-                  ))}
+                  {mainLinksRender}
                 </div>
+              </Box>
+              <Box marginTop={7} display={['block', 'block', 'none']}>
+                <Box
+                  display="flex"
+                  justifyContent="spaceBetween"
+                  alignItems="center"
+                >
+                  <Box
+                    className={useTextStyles({ variant: 'h3' })}
+                    marginBottom={2}
+                    marginRight={4}
+                  >
+                    {mainTitle}
+                  </Box>
+                  <Button
+                    circle
+                    colorScheme="light"
+                    icon={mainLinksCollapsed ? 'add' : 'remove'}
+                    aria-expanded={!mainLinksCollapsed}
+                    aria-controls="mainLinks"
+                    onClick={() => setMainLinksCollapsed(!mainLinksCollapsed)}
+                  />
+                </Box>
+                <AnimateHeight
+                  duration={300}
+                  height={mainLinksCollapsed ? 0 : 'auto'}
+                  id="mainLinks"
+                >
+                  {mainLinksRender}
+                </AnimateHeight>
               </Box>
             </div>
           </Box>
@@ -245,6 +286,7 @@ export const Menu = ({
                     sub?.length > 0 ? (
                       <AsideTopLinkWithSub
                         key={index}
+                        id={index}
                         link={renderLink({
                           className: cn(
                             useTextStyles({ variant: 'h3', color: 'blue600' }),
