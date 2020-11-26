@@ -5,8 +5,11 @@ import {
   validateAnswers,
 } from '@island.is/application/core'
 import { BadRequestException } from '@nestjs/common'
+
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
+import { environment } from '../../../../environments'
 
 export async function validateApplicationSchema(
   application: Pick<Application, 'typeId'>,
@@ -18,6 +21,13 @@ export async function validateApplicationSchema(
   if (applicationTemplate === null) {
     throw new BadRequestException(
       `No template exists for type: ${application.typeId}`,
+    )
+  } else if (
+    environment.environment === 'production' &&
+    !applicationTemplate.readyForProduction
+  ) {
+    throw new BadRequestException(
+      `Template ${application.typeId} is not ready for production`,
     )
   }
   const schemaFormValidationError = validateAnswers(

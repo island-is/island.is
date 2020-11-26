@@ -61,8 +61,8 @@ export const DetentionRequests: React.FC = () => {
     if (resCases && !cases) {
       if (isJudge) {
         const judgeCases = resCases.filter((c: Case) => {
-          // Judges should see all cases except drafts
-          return c.state !== CaseState.DRAFT
+          // Judges should see all cases except cases with status code NEW.
+          return c.state !== CaseState.NEW
         })
 
         setCases(judgeCases)
@@ -76,7 +76,7 @@ export const DetentionRequests: React.FC = () => {
     state: CaseState,
   ): { color: TagVariant; text: string } => {
     switch (state) {
-      case CaseState.DRAFT:
+      case CaseState.DRAFT || CaseState.NEW:
         return { color: 'red', text: 'Drög' }
       case CaseState.SUBMITTED:
         return { color: 'purple', text: 'Krafa staðfest' }

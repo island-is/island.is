@@ -1,7 +1,8 @@
 import {
   ApplicationTypes,
   buildForm,
-  buildIntroductionField,
+  buildCustomField,
+  buildMultiField,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -11,11 +12,21 @@ export const Finished: Form = buildForm({
   name: 'Umsókn lokið',
   mode: FormModes.APPROVED,
   children: [
-    buildIntroductionField({
+    buildMultiField({
       id: 'finished',
-      name: 'Takk',
-      introduction:
+      name: 'Aðgangur að raun',
+      description:
         'Þú hefur nú fengið aðgang að umsjónarkerfi skajalveitenda. Það má finna á þínum síðum á ísland.is',
+      children: [
+        buildCustomField(
+          {
+            id: 'test',
+            name: 'Takk fyrir',
+            component: 'ThankYouImage',
+          },
+          {},
+        ),
+      ],
     }),
   ],
 })

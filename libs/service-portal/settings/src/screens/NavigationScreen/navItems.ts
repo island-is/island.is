@@ -14,7 +14,7 @@ export const navScreenItems: NavigationScreenItem[] = [
     text: defineMessage({
       id: 'sp.settings:change-profile-description',
       defaultMessage:
-        'Hér getur þú m.a breytt upplýsingum um símanúmer, netfangi og prófíl myndinni þinni.',
+        'Hér getur þú m.a. breytt símanúmeri, netfangi og tungumáli.',
     }),
     tags: [
       defineMessage({

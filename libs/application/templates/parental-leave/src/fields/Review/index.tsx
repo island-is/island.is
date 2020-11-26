@@ -29,6 +29,8 @@ import {
 import { Period } from '../../types'
 import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 import YourRightsBoxChart from '../Rights/YourRightsBoxChart'
+import { useQuery } from '@apollo/client'
+import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 
 type ValidOtherParentAnswer = 'no' | 'manual' | undefined
 type ValidRadioAnswer = 'yes' | 'no' | undefined
@@ -76,6 +78,22 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
   )
 
   const dob = getExpectedDateOfBirth(application)
+  const { data, error, loading } = useQuery(getEstimatedPayments, {
+    variables: {
+      input: {
+        dateOfBirth: dob,
+        period: [
+          {
+            from: '2021-01-01',
+            to: '2021-01-01',
+            ratio: 100,
+            approved: true,
+            paid: true,
+          },
+        ],
+      },
+    },
+  })
   if (!dob) {
     return null
   }
@@ -360,7 +378,12 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="12/12">
-                  <PaymentsTable application={application} />
+                  {!loading && !error && (
+                    <PaymentsTable
+                      application={application}
+                      payments={data.getEstimatedPayments}
+                    />
+                  )}
                 </GridColumn>
               </GridRow>
             </Box>

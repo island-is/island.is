@@ -6,7 +6,6 @@ import {
   Application,
   formatText,
   FormModes,
-  FormText,
   SubmitField,
 } from '@island.is/application/core'
 
@@ -41,19 +40,58 @@ export const ScreenFooter: FC<FooterProps> = ({
   ) {
     return null
   }
-
-  function getSubmitButtonText(): FormText {
-    if (submitField?.placement === 'footer') {
-      const { actions } = submitField
-      if (actions.length === 1) {
-        return actions[0].name
-      }
+  function renderSubmitButtons() {
+    if (!submitField || submitField.placement === 'screen') {
+      return (
+        <Button
+          icon="checkmarkCircle"
+          disabled={!canProceed || loading}
+          type="submit"
+        >
+          {formatText(
+            {
+              id: 'application.system:button.submit',
+              defaultMessage: 'Submit',
+              description: 'Submit button text',
+            },
+            application,
+            formatMessage,
+          )}
+        </Button>
+      )
     }
-    return {
-      id: 'application.system:button.submit',
-      defaultMessage: 'Submit',
-      description: 'Submit button text',
-    }
+    return (
+      <>
+        {submitField?.actions.map(({ event, type, name }) => {
+          return (
+            <Box key={`cta-${event}`} marginX={1}>
+              <Button
+                type="submit"
+                disabled={!canProceed || loading}
+                colorScheme={
+                  type === 'reject'
+                    ? 'destructive'
+                    : type === 'subtle'
+                    ? 'light'
+                    : 'default'
+                }
+                id={typeof event === 'object' ? event.type : event}
+                variant={type === 'subtle' ? 'ghost' : 'primary'}
+                icon={
+                  type === 'primary'
+                    ? 'checkmarkCircle'
+                    : type === 'reject'
+                    ? 'closeCircle'
+                    : undefined
+                }
+              >
+                {formatText(name, application, formatMessage)}
+              </Button>
+            </Box>
+          )
+        })}
+      </>
+    )
   }
 
   return (
@@ -64,42 +102,15 @@ export const ScreenFooter: FC<FooterProps> = ({
       >
         <Box
           display="flex"
-          flexDirection="row"
+          flexDirection="rowReverse"
           alignItems="center"
           justifyContent="spaceBetween"
           paddingTop={[1, 4]}
           paddingBottom={[1, 5]}
         >
-          <Box display={['none', 'inlineFlex']} padding={2} paddingLeft="none">
-            {showGoBack && (
-              <Button variant="ghost" onClick={goBack}>
-                {formatMessage({
-                  id: 'application.system:button.back',
-                  defaultMessage: 'Back',
-                  description: 'Back button text',
-                })}
-              </Button>
-            )}
-          </Box>
-          <Box display={['inlineFlex', 'none']} padding={2} paddingLeft="none">
-            {showGoBack && (
-              <Button
-                circle
-                variant="ghost"
-                icon="arrowBack"
-                onClick={goBack}
-              />
-            )}
-          </Box>
           <Box display="inlineFlex" padding={2} paddingRight="none">
             {hasSubmitField ? (
-              <Button
-                icon="checkmarkCircle"
-                disabled={!canProceed || loading}
-                type="submit"
-              >
-                {formatText(getSubmitButtonText(), application, formatMessage)}
-              </Button>
+              renderSubmitButtons()
             ) : (
               <>
                 <Box display={['none', 'inlineFlex']}>
@@ -124,6 +135,27 @@ export const ScreenFooter: FC<FooterProps> = ({
                   />
                 </Box>
               </>
+            )}
+          </Box>
+          <Box display={['none', 'inlineFlex']} padding={2} paddingLeft="none">
+            {showGoBack && (
+              <Button variant="ghost" onClick={goBack}>
+                {formatMessage({
+                  id: 'application.system:button.back',
+                  defaultMessage: 'Back',
+                  description: 'Back button text',
+                })}
+              </Button>
+            )}
+          </Box>
+          <Box display={['inlineFlex', 'none']} padding={2} paddingLeft="none">
+            {showGoBack && (
+              <Button
+                circle
+                variant="ghost"
+                icon="arrowBack"
+                onClick={goBack}
+              />
             )}
           </Box>
         </Box>

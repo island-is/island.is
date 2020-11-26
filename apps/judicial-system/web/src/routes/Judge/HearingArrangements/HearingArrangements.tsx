@@ -1,4 +1,5 @@
 import {
+  AlertMessage,
   Box,
   DatePicker,
   GridColumn,
@@ -14,13 +15,16 @@ import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  padTimeWithZero,
   parseString,
   parseTime,
+  replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useHistory, useParams } from 'react-router-dom'
 import {
   Case,
+  CaseState,
   NotificationType,
   UpdateCase,
 } from '@island.is/judicial-system/types'
@@ -32,17 +36,16 @@ import {
 } from '@island.is/judicial-system-web/src/graphql'
 import parseISO from 'date-fns/parseISO'
 import formatISO from 'date-fns/formatISO'
-import isEmpty from 'lodash/isEmpty'
 import isValid from 'date-fns/isValid'
 import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-
 import Modal from '../../../shared-components/Modal/Modal'
+import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
 
 interface CaseData {
-  case: Case
+  case?: Case
 }
 
 export const HearingArrangements: React.FC = () => {
@@ -104,7 +107,7 @@ export const HearingArrangements: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (data && !workingCase) {
+    if (!workingCase && data?.case) {
       let theCase = data.case
 
       if (!theCase.courtDate && theCase.requestedCourtDate) {
@@ -168,6 +171,7 @@ export const HearingArrangements: React.FC = () => {
       activeSection={Sections.JUDGE}
       activeSubSection={JudgeSubsections.HEARING_ARRANGEMENTS}
       isLoading={loading}
+      notFound={data?.case === undefined}
     >
       {workingCase ? (
         <>
@@ -176,6 +180,15 @@ export const HearingArrangements: React.FC = () => {
               Fyrirtökutími
             </Text>
           </Box>
+          {workingCase.state === CaseState.DRAFT && (
+            <Box marginBottom={8}>
+              <AlertMessage
+                type="info"
+                title="Krafa hefur ekki verið staðfest af ákæranda"
+                message="Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram fyrr en ákærandi hefur staðfest kröfuna."
+              />
+            </Box>
+          )}
           <Box component="section" marginBottom={7}>
             <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
             <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
@@ -220,7 +233,7 @@ export const HearingArrangements: React.FC = () => {
                       )
                     }}
                     handleCloseCalendar={(date: Date | null) => {
-                      if (isEmpty(date) || !isValid(date)) {
+                      if (date === null || !isValid(date)) {
                         setCourtDateErrorMessage('Reitur má ekki vera tómur')
                       }
                     }}
@@ -229,33 +242,18 @@ export const HearingArrangements: React.FC = () => {
                   />
                 </GridColumn>
                 <GridColumn span="5/12">
-                  <Input
-                    name="courtTime"
-                    label="Tímasetning"
-                    placeholder="Settu inn tíma"
-                    errorMessage={courtTimeErrorMessage}
-                    hasError={courtTimeErrorMessage !== ''}
-                    defaultValue={
-                      workingCase.courtDate?.includes('T')
-                        ? formatDate(workingCase.courtDate, TIME_FORMAT)
-                        : undefined
-                    }
+                  <TimeInputField
                     disabled={!workingCase.courtDate}
-                    ref={courtTimeRef}
                     onBlur={(evt) => {
+                      const time = padTimeWithZero(evt.target.value)
+
                       if (workingCase.courtDate) {
                         const courtDateMinutes = parseTime(
                           workingCase.courtDate,
-                          evt.target.value,
+                          time,
                         )
-                        const validateTimeEmpty = validate(
-                          evt.target.value,
-                          'empty',
-                        )
-                        const validateTimeFormat = validate(
-                          evt.target.value,
-                          'time-format',
-                        )
+                        const validateTimeEmpty = validate(time, 'empty')
+                        const validateTimeFormat = validate(time, 'time-format')
 
                         setWorkingCase({
                           ...workingCase,
@@ -279,8 +277,22 @@ export const HearingArrangements: React.FC = () => {
                       }
                     }}
                     onFocus={() => setCourtTimeErrorMessage('')}
-                    required
-                  />
+                  >
+                    <Input
+                      name="courtTime"
+                      label="Tímasetning"
+                      placeholder="Settu inn tíma"
+                      errorMessage={courtTimeErrorMessage}
+                      hasError={courtTimeErrorMessage !== ''}
+                      defaultValue={
+                        workingCase.courtDate?.includes('T')
+                          ? formatDate(workingCase.courtDate, TIME_FORMAT)
+                          : undefined
+                      }
+                      ref={courtTimeRef}
+                      required
+                    />
+                  </TimeInputField>
                 </GridColumn>
               </GridRow>
             </Box>
@@ -309,6 +321,7 @@ export const HearingArrangements: React.FC = () => {
                   setCourtroomErrorMessage(validateEmpty.errorMessage)
                 }
               }}
+              onChange={replaceTabsOnChange}
               errorMessage={courtroomErrorMessage}
               hasError={courtroomErrorMessage !== ''}
               onFocus={() => setCourtroomErrorMessage('')}
@@ -340,6 +353,7 @@ export const HearingArrangements: React.FC = () => {
                     )
                   }
                 }}
+                onChange={replaceTabsOnChange}
               />
             </Box>
             <Input
@@ -368,11 +382,14 @@ export const HearingArrangements: React.FC = () => {
                   setDefenderEmailErrorMessage(validateField.errorMessage)
                 }
               }}
+              onChange={replaceTabsOnChange}
               onFocus={() => setDefenderEmailErrorMessage('')}
             />
           </Box>
           <FormFooter
-            nextIsDisabled={isStepIllegal}
+            nextIsDisabled={
+              workingCase.state === CaseState.DRAFT || isStepIllegal
+            }
             nextIsLoading={isSendingNotification}
             onNextButtonClick={async () => {
               const notificationSent = await sendNotification(workingCase.id)

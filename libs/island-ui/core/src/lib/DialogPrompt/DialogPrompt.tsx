@@ -84,9 +84,8 @@ export const DialogPrompt = ({
         return (
           <Box
             position="relative"
-            width="full"
             marginX={3}
-            paddingX={[3, 4, 4, 8]}
+            paddingX={[1, 4, 4, 8]}
             paddingY={[6, 6, 6, 12]}
             borderRadius="large"
             background="white"

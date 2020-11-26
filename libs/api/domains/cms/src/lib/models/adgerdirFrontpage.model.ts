@@ -11,6 +11,7 @@ import { Slice, mapDocument } from './slice.model'
 import { AdgerdirSlice } from './adgerdirSlice.model'
 import { mapAdgerdirFeaturedNewsSlice } from './adgerdirFeaturedNewsSlice.model'
 import { mapAdgerdirGroupSlice } from './adgerdirGroupSlice.model'
+import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class AdgerdirFrontpage {
@@ -31,6 +32,9 @@ export class AdgerdirFrontpage {
 
   @Field(() => [AdgerdirSlice])
   slices: Array<typeof AdgerdirSlice> = []
+
+  @Field(() => Image, { nullable: true })
+  featuredImage?: Image
 }
 
 type AdgerdirSliceTypes = IVidspyrnaFeaturedNews | IVidspyrnaFlokkur
@@ -62,6 +66,7 @@ export const mapAdgerdirFrontpage = ({
   slug: fields?.slug ?? '',
   title: fields?.title ?? '',
   description: fields?.description ?? '',
+  featuredImage: mapImage(fields.featuredImage),
   content:
     sys?.id && fields?.content
       ? mapDocument(fields.content, sys?.id + ':content')

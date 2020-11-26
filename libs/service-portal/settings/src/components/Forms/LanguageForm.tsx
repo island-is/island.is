@@ -1,5 +1,5 @@
 import { Box, Select } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/localization'
+import { Locale, useLocale } from '@island.is/localization'
 import React, { FC, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 
@@ -26,6 +26,7 @@ export const LanguageForm: FC<Props> = ({
   onSubmit,
 }) => {
   const { handleSubmit, control, reset } = useForm()
+  const { formatMessage } = useLocale()
 
   useEffect(() => {
     if (language)
@@ -40,13 +41,16 @@ export const LanguageForm: FC<Props> = ({
         <Controller
           control={control}
           name="language"
-          defaultValue={language}
+          defaultValue={language || { label: 'Íslenska', value: 'is' }}
           render={({ onChange, value, name }) => (
             <Select
               name={name}
               value={value}
               onChange={onChange}
-              label="Tungumál"
+              label={formatMessage({
+                id: 'service.portal:language',
+                defaultMessage: 'Tungumál',
+              })}
               options={[
                 { label: 'Íslenska', value: 'is' },
                 { label: 'English', value: 'en' },
@@ -59,15 +63,14 @@ export const LanguageForm: FC<Props> = ({
         <Box
           display="flex"
           justifyContent="spaceBetween"
-          flexWrap="wrap"
+          alignItems="center"
+          flexDirection={['columnReverse', 'row']}
           marginTop={4}
         >
           {renderBackButton && (
-            <Box marginBottom={[1, 0]}>{renderBackButton()}</Box>
+            <Box marginTop={[1, 0]}>{renderBackButton()}</Box>
           )}
-          {renderSubmitButton && (
-            <Box marginBottom={[1, 0]}>{renderSubmitButton()}</Box>
-          )}
+          {renderSubmitButton && <Box>{renderSubmitButton()}</Box>}
         </Box>
       )}
     </form>

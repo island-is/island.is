@@ -79,13 +79,22 @@ const Screen: FC<ScreenProps> = ({
     prevScreen()
   }, [formValue, prevScreen, reset])
 
-  const onSubmit: SubmitHandler<FormValue> = async (data) => {
+  const onSubmit: SubmitHandler<FormValue> = async (data, e) => {
     if (submitField !== undefined) {
       const finalAnswers = { ...formValue, ...data }
-
-      const event = submitField
-        ? finalAnswers[submitField.id] ?? 'SUBMIT'
-        : 'SUBMIT'
+      let event: string
+      if (submitField.placement === 'screen') {
+        event = (finalAnswers[submitField.id] as string) ?? 'SUBMIT'
+      } else {
+        if (submitField.actions.length === 1) {
+          const actionEvent = submitField.actions[0].event
+          event =
+            typeof actionEvent === 'object' ? actionEvent.type : actionEvent
+        } else {
+          const nativeEvent = e?.nativeEvent as { submitter: { id: string } }
+          event = nativeEvent?.submitter?.id ?? 'SUBMIT'
+        }
+      }
       await submitApplication({
         variables: {
           input: {
@@ -135,7 +144,7 @@ const Screen: FC<ScreenProps> = ({
           span={['12/12', '12/12', '7/9', '7/9']}
           offset={['0', '0', '1/9']}
         >
-          <Text variant="h2">
+          <Text variant="h2" marginBottom={5}>
             {formatText(screen.name, application, formatMessage)}
           </Text>
           <Box>

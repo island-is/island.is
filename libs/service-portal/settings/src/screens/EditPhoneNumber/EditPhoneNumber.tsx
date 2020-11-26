@@ -37,7 +37,7 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
   const { updateUserProfile } = useUpdateUserProfile()
 
   useEffect(() => {
-    if (!userProfile) return
+    if (!userProfile || !userProfile.mobilePhoneNumber) return
     if (userProfile.mobilePhoneNumber.length > 0)
       setTel(userProfile.mobilePhoneNumber)
   }, [userProfile])
@@ -69,7 +69,7 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
   return (
     <>
       <Box marginBottom={4}>
-        <Text variant="h1">
+        <Text variant="h1" as="h1">
           {formatMessage({
             id: 'sp.settings:edit-phone-number',
             defaultMessage: 'Breyta símanúmeri',
