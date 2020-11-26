@@ -29,6 +29,7 @@ export * from './lib/entities/dto/client-dto'
 export * from './lib/entities/dto/client-update-dto'
 export * from './lib/entities/dto/grant-dto'
 export * from './lib/entities/dto/user-identity.dto'
+export * from './lib/entities/dto/client-idp-restriction.dto'
 
 // Services
 export * from './lib/services/clients.service'

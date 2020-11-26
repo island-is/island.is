@@ -3,6 +3,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { ClientDTO } from '../entities/dto/client-dto'
 import { ClientUpdateDTO } from '../entities/dto/client-update-dto'
+import { ClientIdpRestrictionDTO } from '../entities/dto/client-idp-restriction.dto'
 import { ClientAllowedCorsOrigin } from '../entities/models/client-allowed-cors-origin.model'
 import { ClientAllowedScope } from '../entities/models/client-allowed-scope.model'
 import { ClientClaim } from '../entities/models/client-claim.model'
@@ -20,6 +21,8 @@ export class ClientsService {
     private clientModel: typeof Client,
     @InjectModel(ClientAllowedCorsOrigin)
     private clientAllowedCorsOriginModel: typeof ClientAllowedCorsOrigin,
+    @InjectModel(ClientIdpRestrictions)
+    private clientIdpRestriction: typeof ClientIdpRestrictions,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -141,6 +144,38 @@ export class ClientsService {
 
     return this.clientAllowedCorsOriginModel.findAll({
       where: { origin: origin },
+    })
+  }
+
+  /** Adds IDP restriction to client */
+  async addIdpRestriction(
+    clientIdpRestriction: ClientIdpRestrictionDTO,
+  ): Promise<ClientIdpRestrictions> {
+    this.logger.debug(
+      `Creating IDP restriction for client - "${clientIdpRestriction.clientId}" with restriction - "${clientIdpRestriction.name}"`,
+    )
+
+    if (!clientIdpRestriction) {
+      throw new BadRequestException('ClientIdpRestriction must be provided')
+    }
+
+    return await this.clientIdpRestriction.create({ ...clientIdpRestriction })
+  }
+
+  /** Removes an IDP restriction for a client */
+  async removeIdpRestriction(clientId: string, name: string): Promise<number> {
+    this.logger.debug(
+      `Removing IDP restriction for client - "${clientId}" with restriction - "${name}"`,
+    )
+
+    if (!name || !clientId) {
+      throw new BadRequestException(
+        'IdpRestriction and clientId must be provided',
+      )
+    }
+
+    return await this.clientIdpRestriction.destroy({
+      where: { clientId: clientId, name: name },
     })
   }
 }

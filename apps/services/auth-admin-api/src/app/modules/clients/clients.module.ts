@@ -13,6 +13,7 @@ import {
   ClientClaim,
 } from '@island.is/auth-api-lib'
 import { SequelizeModule } from '@nestjs/sequelize'
+import { IdpRestrictionController } from './idp-restriction.controller'
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
       ClientClaim,
     ]),
   ],
-  controllers: [ClientsController],
+  controllers: [ClientsController, IdpRestrictionController],
   providers: [ClientsService],
 })
 export class ClientsModule {}
