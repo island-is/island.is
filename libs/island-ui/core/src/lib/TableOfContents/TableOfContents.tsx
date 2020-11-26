@@ -1,6 +1,8 @@
 import React, { FC } from 'react'
+import { Button } from 'reakit/Button'
 import { Text } from '../Text/Text'
 import { Box } from '../Box/Box'
+import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Stack } from '../Stack/Stack'
 
 interface Props {
@@ -25,9 +27,9 @@ export const TableOfContents: FC<Props> = ({
         {tableOfContentsTitle}
       </Text>
       {headings.map(({ headingTitle, headingId }, id) => (
-        <Box
+        <FocusableBox
           key={id}
-          component="button"
+          component={Button}
           type="button"
           textAlign="left"
           onClick={() => onClick(headingId)}
@@ -35,7 +37,7 @@ export const TableOfContents: FC<Props> = ({
           <Text variant="small" color={'blue600'}>
             {headingTitle}
           </Text>
-        </Box>
+        </FocusableBox>
       ))}
     </Stack>
   </Box>
