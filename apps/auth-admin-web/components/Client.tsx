@@ -8,6 +8,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import * as yup from 'yup';
 import HelpBox from './HelpBox';
+import { IdpRestrictionDTO } from '../models/dtos/idp-restriction.dto';
 
 interface Props {
   client: ClientDTO;
