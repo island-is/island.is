@@ -72,13 +72,12 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
   return (
     <>
       <HeadWithSocialSharing
-        title={`Viðspyrna fyrir Ísland`}
+        title={frontpage.title}
         description={frontpage.description}
         imageUrl={frontpage.featuredImage?.url}
-        imageWidth={frontpage.featuredImage?.width.toString()}
-        imageHeight={frontpage.featuredImage?.height.toString()}
+        imageWidth={frontpage.featuredImage?.width?.toString()}
+        imageHeight={frontpage.featuredImage?.height?.toString()}
       />
-      <HeadWithSocialSharing title={`Viðspyrna fyrir Ísland`} />
       <Box className={covidStyles.frontpageBg}>
         <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
           <Header buttonColorScheme="negative" />

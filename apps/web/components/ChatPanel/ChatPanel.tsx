@@ -15,7 +15,7 @@ declare global {
 let boost = null
 
 export const ChatPanel = () => {
-  const [visible, setVisible] = useState<boolean>(false)
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
     const conversationId =
