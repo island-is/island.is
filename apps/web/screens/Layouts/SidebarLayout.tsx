@@ -4,13 +4,10 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
-  Hidden,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 
 import * as styles from './SidebarLayout.treat'
 import cn from 'classnames'
-type Breakpoint = keyof typeof theme['breakpoints']
 
 interface SidebarLayoutProps {
   sidebarContent: ReactNode
@@ -34,11 +31,11 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
     >
       <Box
         printHidden
-        className={cn(styles.sidebarWrapper, isSticky ? styles.sticky : null)}
+        className={cn(styles.sidebarWrapper, { [styles.sticky]: isSticky })}
         display={
           hiddenOnTablet
-            ? ['none', 'none', 'none', 'block', 'block']
-            : ['none', 'none', 'block', 'block', 'block']
+            ? ['none', 'none', 'none', 'block']
+            : ['none', 'none', 'block']
         }
       >
         {sidebarContent}
@@ -46,7 +43,7 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
       <GridContainer>
         <GridRow>
           <GridColumn span={'12/12'}>
-            <Box paddingLeft={[0, 2, 4, 6, 6]}>{children}</Box>
+            <Box paddingLeft={[0, 2, 4, 6]}>{children}</Box>
           </GridColumn>
         </GridRow>
       </GridContainer>
