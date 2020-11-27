@@ -39,7 +39,7 @@ export interface TextProps {
   marginBottom?: ResponsiveSpace
   marginY?: ResponsiveSpace
 }
-export interface UseTextStylesProps {
+export interface GetTextStylesProps {
   variant?: TextVariants
   color?: Colors
   truncate?: boolean
@@ -47,13 +47,13 @@ export interface UseTextStylesProps {
   lineHeight?: keyof typeof lineHeightStyles
 }
 
-export const useTextStyles = ({
+export const getTextStyles = ({
   color,
   truncate,
   fontWeight,
   lineHeight,
   variant = 'default',
-}: UseTextStylesProps) =>
+}: GetTextStylesProps) =>
   cn(base, {
     [variantStyles[variant!]]: variant,
     [colors[color!]]: color,
@@ -64,7 +64,7 @@ export const useTextStyles = ({
     [truncateStyle]: truncate,
   })
 
-export const Text = forwardRef<HTMLElement, TextProps & UseTextStylesProps>(
+export const Text = forwardRef<HTMLElement, TextProps & GetTextStylesProps>(
   (
     {
       id,
@@ -95,7 +95,7 @@ export const Text = forwardRef<HTMLElement, TextProps & UseTextStylesProps>(
         paddingTop={paddingTop}
         paddingBottom={paddingBottom}
         paddingY={paddingY}
-        className={useTextStyles({
+        className={getTextStyles({
           color,
           truncate,
           fontWeight,

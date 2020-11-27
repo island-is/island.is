@@ -8,7 +8,7 @@ import * as styles from './Menu.treat'
 import { Logo } from '../Logo/Logo'
 import { Input } from '../Input/Input'
 import { Box } from '../Box/Box'
-import { Text, useTextStyles } from '../Text/Text'
+import { Text, getTextStyles } from '../Text/Text'
 
 type RenderLinkObj = {
   className: string
@@ -178,7 +178,7 @@ export const Menu = ({
   const mainLinksRender = mainLinks.map(({ text, href }, index) => (
     <div className={styles.mainLinkOuter} key={index}>
       {renderLink({
-        className: cn(useTextStyles({}), styles.mainLink),
+        className: cn(getTextStyles({}), styles.mainLink),
         text: text,
         href: href,
       })}
@@ -268,7 +268,7 @@ export const Menu = ({
                   alignItems="center"
                 >
                   <Box
-                    className={useTextStyles({ variant: 'h3' })}
+                    className={getTextStyles({ variant: 'h3' })}
                     marginBottom={2}
                     marginRight={4}
                   >
@@ -325,7 +325,7 @@ export const Menu = ({
                         id={index}
                         link={renderLink({
                           className: cn(
-                            useTextStyles({ variant: 'h3', color: 'blue600' }),
+                            getTextStyles({ variant: 'h3', color: 'blue600' }),
                             styles.asideLink,
                           ),
                           text: text,
@@ -334,7 +334,7 @@ export const Menu = ({
                         sub={sub.map((link) =>
                           renderLink({
                             className: cn(
-                              useTextStyles({
+                              getTextStyles({
                                 variant: 'small',
                                 color: 'blue600',
                               }),
@@ -348,7 +348,7 @@ export const Menu = ({
                       <Box marginBottom={[5, 5, 3]}>
                         {renderLink({
                           className: cn(
-                            useTextStyles({ variant: 'h3', color: 'blue600' }),
+                            getTextStyles({ variant: 'h3', color: 'blue600' }),
                             styles.asideLink,
                           ),
                           text: text,
@@ -381,7 +381,7 @@ export const Menu = ({
                   <Box marginBottom={2} key={index}>
                     {renderLink({
                       className: cn(
-                        useTextStyles({ variant: 'small', color: 'blue600' }),
+                        getTextStyles({ variant: 'small', color: 'blue600' }),
                         styles.asideLink,
                       ),
                       ...link,
