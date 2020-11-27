@@ -3,7 +3,6 @@ import {
   Box,
   DatePicker,
   GridColumn,
-  GridContainer,
   GridRow,
   Input,
   Text,
@@ -16,6 +15,7 @@ import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  padTimeWithZero,
   parseString,
   parseTime,
   replaceTabsOnChange,
@@ -42,6 +42,7 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import Modal from '../../../shared-components/Modal/Modal'
+import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
 
 interface CaseData {
   case?: Case
@@ -241,33 +242,18 @@ export const HearingArrangements: React.FC = () => {
                   />
                 </GridColumn>
                 <GridColumn span="5/12">
-                  <Input
-                    name="courtTime"
-                    label="Tímasetning"
-                    placeholder="Settu inn tíma"
-                    errorMessage={courtTimeErrorMessage}
-                    hasError={courtTimeErrorMessage !== ''}
-                    defaultValue={
-                      workingCase.courtDate?.includes('T')
-                        ? formatDate(workingCase.courtDate, TIME_FORMAT)
-                        : undefined
-                    }
+                  <TimeInputField
                     disabled={!workingCase.courtDate}
-                    ref={courtTimeRef}
                     onBlur={(evt) => {
+                      const time = padTimeWithZero(evt.target.value)
+
                       if (workingCase.courtDate) {
                         const courtDateMinutes = parseTime(
                           workingCase.courtDate,
-                          evt.target.value,
+                          time,
                         )
-                        const validateTimeEmpty = validate(
-                          evt.target.value,
-                          'empty',
-                        )
-                        const validateTimeFormat = validate(
-                          evt.target.value,
-                          'time-format',
-                        )
+                        const validateTimeEmpty = validate(time, 'empty')
+                        const validateTimeFormat = validate(time, 'time-format')
 
                         setWorkingCase({
                           ...workingCase,
@@ -291,8 +277,22 @@ export const HearingArrangements: React.FC = () => {
                       }
                     }}
                     onFocus={() => setCourtTimeErrorMessage('')}
-                    required
-                  />
+                  >
+                    <Input
+                      name="courtTime"
+                      label="Tímasetning"
+                      placeholder="Settu inn tíma"
+                      errorMessage={courtTimeErrorMessage}
+                      hasError={courtTimeErrorMessage !== ''}
+                      defaultValue={
+                        workingCase.courtDate?.includes('T')
+                          ? formatDate(workingCase.courtDate, TIME_FORMAT)
+                          : undefined
+                      }
+                      ref={courtTimeRef}
+                      required
+                    />
+                  </TimeInputField>
                 </GridColumn>
               </GridRow>
             </Box>

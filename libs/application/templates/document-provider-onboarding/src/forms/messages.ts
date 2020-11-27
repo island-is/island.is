@@ -188,6 +188,11 @@ export const m = defineMessages({
     defaultMessage: 'Ég samþykki öryggisskilmála',
     description: 'Some description',
   },
+  technicalAgreementOptionLabel: {
+    id: 'dpo.application:technicalAgreement.option.label',
+    defaultMessage: 'Ég staðfesti hér með að prófunum og forritun sé lokið',
+    description: 'Some description',
+  },
   documentsSection: {
     id: 'dpo.application:documents.section',
     defaultMessage: 'Skjöl',
@@ -216,12 +221,27 @@ export const m = defineMessages({
   },
   testIntroSection: {
     id: 'dpo.application:testinfo.section',
-    defaultMessage: 'Aðgangur að test umhverfi',
+    defaultMessage: 'Tæknilýsing',
+    description: '',
+  },
+  testAccountSection: {
+    id: 'dpo.application:testinfo.section',
+    defaultMessage: 'Prófunarumhverfi',
+    description: '',
+  },
+  testEndPointSection: {
+    id: 'dpo.application:testinfo.section',
+    defaultMessage: 'Endapunktur',
     description: '',
   },
   testSection: {
     id: 'dpo.application:automaticTesting.section',
     defaultMessage: 'Sjálfvirkar prófanir',
+    description: '',
+  },
+  testTechnicalImplementation: {
+    id: 'dpo.application:technicalImplementation.section',
+    defaultMessage: 'Forritun og prófanir',
     description: '',
   },
   testOutroSection: {

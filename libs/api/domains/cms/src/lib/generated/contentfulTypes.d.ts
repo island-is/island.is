@@ -2214,6 +2214,9 @@ export interface IVidspyrnaFrontpageFields {
 
   /** Slices */
   slices: (IVidspyrnaFeaturedNews | IVidspyrnaFlokkur)[]
+
+  /** Featured image */
+  featuredImage?: Asset | undefined
 }
 
 /** Frontpage of /covid-adgerdir */

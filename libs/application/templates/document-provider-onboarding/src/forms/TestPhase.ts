@@ -23,13 +23,56 @@ export const TestPhase: Form = buildForm({
         buildCustomField(
           {
             id: 'testPhaseIntro',
-            name: 'Upplýsingar um prufuaðgang',
+            name: 'Umsókn hefur verið samþykkt',
             component: 'TestPhaseInfoScreen',
           },
           {},
         ),
       ],
     }),
+    buildSection({
+      id: 'testAccountSection',
+      name: m.testAccountSection,
+      children: [
+        buildCustomField(
+          {
+            id: 'testAccount',
+            name: 'Aðgangur að prófunarumhverfi',
+            component: 'TestEnvironment',
+          },
+          {},
+        ),
+      ],
+    }),
+    buildSection({
+      id: 'testEndPointSection',
+      name: m.testEndPointSection,
+      children: [
+        buildCustomField(
+          {
+            id: 'endPoint',
+            name: 'Upplýsingar um endapunkt umsækjenda',
+            component: 'TestEndPoint',
+          },
+          {},
+        ),
+      ],
+    }),
+    buildSection({
+      id: 'technicalImplementation',
+      name: m.testTechnicalImplementation,
+      children: [
+        buildCustomField(
+          {
+            id: 'technicalImplementation',
+            name: 'Forritun og prófanir',
+            component: 'TechnicalImplementation',
+          },
+          {},
+        ),
+      ],
+    }),
+
     buildSection({
       id: 'testSection',
       name: m.testSection,
@@ -54,6 +97,14 @@ export const TestPhase: Form = buildForm({
           description:
             'Hér getur þú búið til aðgang að raunumhverfi. Athugið að afrita og geyma þessar upplýsingar því þær eru ekki geymdar hér í þessari umsókn.',
           children: [
+            buildCustomField(
+              {
+                id: 'prodEnvironment',
+                name: 'Aðgangur að raun',
+                component: 'ProdEnvironment',
+              },
+              {},
+            ),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',

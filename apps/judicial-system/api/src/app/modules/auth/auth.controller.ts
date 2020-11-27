@@ -161,7 +161,8 @@ export class AuthController {
     res: Response,
     csrfToken?: string,
   ) {
-    const valid = await this.authService.validateUser(authUser)
+    const user = await this.authService.findUser(authUser.nationalId)
+    const valid = this.authService.validateUser(user)
 
     if (!valid) {
       this.logger.error('Unknown user', {
@@ -174,7 +175,7 @@ export class AuthController {
 
     const jwtToken = jwt.sign(
       {
-        user: authUser,
+        user,
         csrfToken,
       } as Credentials,
       jwtSecret,

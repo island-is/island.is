@@ -61,6 +61,12 @@ export const GET_ADGERDIR_FRONTPAGE_QUERY = gql`
       id
       title
       description
+      featuredImage {
+        url
+        title
+        width
+        height
+      }
       content {
         ... on Html {
           __typename

@@ -10,8 +10,15 @@ import {
 import { Inject, UseGuards } from '@nestjs/common'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  AuditedAction,
+  AuditTrailService,
+} from '@island.is/judicial-system/audit-trail'
+import { User } from '@island.is/judicial-system/types'
 
-import { AuthUser, CurrentAuthUser, JwtAuthGuard } from '../auth'
+import { environment } from '../../../environments'
+import { BackendAPI } from '../../../services'
+import { CurrentUser, JwtAuthGuard } from '../auth'
 import {
   CreateCaseInput,
   UpdateCaseInput,
@@ -28,34 +35,55 @@ import {
   SendNotificationResponse,
   SignatureConfirmationResponse,
 } from './models'
-import { BackendAPI } from '../../../services'
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Case)
 export class CaseResolver {
   constructor(
+    @Inject(AuditTrailService)
+    private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-  ) {}
+  ) {
+    auditTrailService.initTrail(environment.auditTrail)
+  }
 
   @Query(() => [Case], { nullable: true })
-  cases(
+  async cases(
+    @CurrentUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
-    return backendApi.getCases()
+    const cases = await backendApi.getCases()
+
+    this.auditTrailService.audit(
+      user.id,
+      AuditedAction.OVERVIEW,
+      cases.map((aCase) => aCase.id),
+    )
+
+    return cases
   }
 
   @Query(() => Case, { nullable: true })
-  case(
+  async case(
     @Args('input', { type: () => CaseQueryInput })
     input: CaseQueryInput,
+    @CurrentUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Case> {
     this.logger.debug(`Getting case ${input.id}`)
 
-    return backendApi.getCase(input.id)
+    const existingCase = await backendApi.getCase(input.id)
+
+    this.auditTrailService.audit(
+      user.id,
+      AuditedAction.VIEW_DETAILS,
+      existingCase.id,
+    )
+
+    return existingCase
   }
 
   @Mutation(() => Case, { nullable: true })
@@ -86,21 +114,21 @@ export class CaseResolver {
   transitionCase(
     @Args('input', { type: () => TransitionCaseInput })
     input: TransitionCaseInput,
-    @CurrentAuthUser() authUser: AuthUser,
+    @CurrentUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Case> {
     const { id, ...transitionCase } = input
 
     this.logger.debug(`Transitioning case ${id}`)
 
-    return backendApi.transitionCase(id, authUser.nationalId, transitionCase)
+    return backendApi.transitionCase(id, user.nationalId, transitionCase)
   }
 
   @Mutation(() => SendNotificationResponse, { nullable: true })
   sendNotification(
     @Args('input', { type: () => SendNotificationInput })
     input: SendNotificationInput,
-    @CurrentAuthUser() authUser: AuthUser,
+    @CurrentUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<SendNotificationResponse> {
     const { caseId, ...sendNotification } = input
@@ -109,7 +137,7 @@ export class CaseResolver {
 
     return backendApi.sendNotification(
       caseId,
-      authUser.nationalId,
+      user.nationalId,
       sendNotification,
     )
   }

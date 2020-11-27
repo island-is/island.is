@@ -6,10 +6,10 @@ import {
   capitalize,
   formatCustodyRestrictions,
   formatDate,
-  formatNationalId,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { Case, CaseCustodyRestrictions } from '@island.is/judicial-system/types'
+import { Case } from '@island.is/judicial-system/types'
+import { constructProsecutorDemands } from '../../utils/stepHelper'
 
 interface Props {
   workingCase: Case
@@ -52,41 +52,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         )}`}
       </AccordionListItem>
       <AccordionListItem title="Dómkröfur">
-        <Text>
-          Þess er krafist að
-          <Text as="span" fontWeight="semiBold">
-            {` ${workingCase.accusedName}
-                    ${formatNationalId(workingCase.accusedNationalId)}`}
-          </Text>
-          , verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta
-          gæsluvarðhaldi til
-          <Text as="span" fontWeight="semiBold">
-            {` ${formatDate(
-              workingCase.requestedCustodyEndDate,
-              'EEEE',
-            )?.replace('dagur', 'dagsins')}
-            ${formatDate(
-              workingCase.requestedCustodyEndDate,
-              'PPP',
-            )},  kl. ${formatDate(
-              workingCase.requestedCustodyEndDate,
-              TIME_FORMAT,
-            )}`}
-          </Text>
-          {workingCase.requestedCustodyRestrictions?.includes(
-            CaseCustodyRestrictions.ISOLATION,
-          ) ? (
-            <>
-              , og verði gert að{' '}
-              <Text as="span" fontWeight="semiBold">
-                sæta einangrun
-              </Text>{' '}
-              meðan á gæsluvarðhaldinu stendur.
-            </>
-          ) : (
-            '.'
-          )}
-        </Text>
+        {constructProsecutorDemands(workingCase)}
       </AccordionListItem>
       <AccordionListItem title="Lagaákvæði" breakSpaces>
         {workingCase.lawsBroken}

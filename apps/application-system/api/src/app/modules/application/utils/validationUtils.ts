@@ -5,8 +5,11 @@ import {
   validateAnswers,
 } from '@island.is/application/core'
 import { BadRequestException } from '@nestjs/common'
+
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
+import { environment } from '../../../../environments'
 
 export async function validateApplicationSchema(
   application: Pick<Application, 'typeId'>,
@@ -20,7 +23,7 @@ export async function validateApplicationSchema(
       `No template exists for type: ${application.typeId}`,
     )
   } else if (
-    process.env.NODE_ENV === 'production' &&
+    environment.environment === 'production' &&
     !applicationTemplate.readyForProduction
   ) {
     throw new BadRequestException(
