@@ -9,4 +9,10 @@ export default {
   redis: {
     urls: [process.env.REDIS_URL_NODE_01],
   },
+  emailOptions: {
+    useTestAccount: false,
+    options: {
+      region: process.env.EMAIL_REGION,
+    },
+  },
 }
