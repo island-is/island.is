@@ -64,21 +64,21 @@ const FormStepper: FC<FormStepperProps> = ({
       case FormModes.REVIEW:
       case FormModes.PENDING:
         return (
-          <Tag variant="darkerBlue" label bordered>
+          <Tag variant="darkerBlue" outlined>
             Status: In Review
           </Tag>
         )
 
       case FormModes.APPROVED:
         return (
-          <Tag variant="darkerMint" label bordered>
+          <Tag variant="darkerMint" outlined>
             Status: Approved
           </Tag>
         )
 
       case FormModes.REJECTED:
         return (
-          <Tag variant="red" label bordered>
+          <Tag variant="red" outlined>
             Status: Rejected
           </Tag>
         )

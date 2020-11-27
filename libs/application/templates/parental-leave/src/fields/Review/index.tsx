@@ -121,7 +121,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
         />
       )}
 
-      <Box marginTop={8} marginBottom={6}>
+      <Box marginTop={[4, 4, 8]} marginBottom={[0, 0, 6]}>
         <Accordion singleExpand={false}>
           <AccordionItem id="id_1" label="Contact information">
             <Box paddingY={4}>

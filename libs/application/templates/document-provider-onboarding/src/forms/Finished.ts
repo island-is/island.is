@@ -1,7 +1,6 @@
 import {
   ApplicationTypes,
   buildForm,
-  buildIntroductionField,
   buildCustomField,
   buildMultiField,
   Form,

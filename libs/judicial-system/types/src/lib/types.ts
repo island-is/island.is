@@ -23,6 +23,7 @@ export enum CaseState {
   SUBMITTED = 'SUBMITTED',
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
+  DELETED = 'DELETED',
 }
 
 export enum CaseTransition {
@@ -30,6 +31,7 @@ export enum CaseTransition {
   SUBMIT = 'SUBMIT',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
+  DELETE = 'DELETE',
 }
 
 export enum CaseCustodyProvisions {
