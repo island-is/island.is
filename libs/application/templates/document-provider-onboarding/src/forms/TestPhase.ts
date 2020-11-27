@@ -59,15 +59,24 @@ export const TestPhase: Form = buildForm({
       ],
     }),
     buildSection({
+      id: 'technicalImplementation',
+      name: m.testTechnicalImplementation,
+      children: [
+        buildCustomField(
+          {
+            id: 'technicalImplementation',
+            name: 'Forritun og prófanir',
+            component: 'TechnicalImplementation',
+          },
+          {},
+        ),
+      ],
+    }),
+
+    buildSection({
       id: 'testSection',
       name: m.testSection,
       children: [
-        buildIntroductionField({
-          id: 'testSectionIntro',
-          name: 'Sjálfvirkar prófanir',
-          introduction:
-            'Nú þarf þú að útfæra tæknilega útfærslu, smelltu á halda áfram þegar henni er lokið og þú vilt fara í sjálfvirkar prófanir',
-        }),
         buildCustomField(
           {
             id: 'test',
@@ -90,8 +99,8 @@ export const TestPhase: Form = buildForm({
           children: [
             buildCustomField(
               {
-                id: 'test',
-                name: 'Sjálfvirkar prófanir',
+                id: 'prodEnvironment',
+                name: 'Aðgangur að raun',
                 component: 'ProdEnvironment',
               },
               {},

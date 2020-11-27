@@ -219,12 +219,12 @@ const Search: Screen<CategoryProps> = ({
   }
 
   const filteredItems = searchResultsItems.filter(byCategory)
-
   const totalSearchResults = searchResults.total
-
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
+  const sidebarDataTypes = Object.entries(sidebarData.types)
+  const sidebarDataTags = Object.entries(sidebarData.tags)
 
-  const categorySelectOptions = Object.entries(sidebarData.tags).map(
+  const categorySelectOptions = sidebarDataTags.map(
     ([key, { title, total }]) => ({
       label: `${title} (${total})`,
       value: key,
@@ -251,26 +251,26 @@ const Search: Screen<CategoryProps> = ({
       <CategoryLayout
         sidebar={
           <Stack space={3}>
-            <Sidebar title={n('sidebarHeader')}>
-              <Box width="full" position="relative" paddingTop={2}>
-                {totalSearchResults > 0 && (
-                  <>
-                    <Filter
-                      truncate
-                      selected={!filters.category && !filters.type}
-                      onClick={() => onRemoveFilters()}
-                      text={`${n('allCategories', 'Allir flokkar')} (${
-                        sidebarData.totalTagCount
-                      })`}
-                      className={styles.allCategoriesLink}
-                    />
-                    <SidebarAccordion
-                      id="sidebar_accordion_categories"
-                      label={''}
-                    >
-                      <Stack space={[1, 1, 2]}>
-                        {Object.entries(sidebarData.tags).map(
-                          ([key, { title, total }]) => {
+            {!!sidebarDataTags.length && (
+              <Sidebar title={n('sidebarHeader')}>
+                <Box width="full" position="relative" paddingTop={2}>
+                  {totalSearchResults > 0 && (
+                    <>
+                      <Filter
+                        truncate
+                        selected={!filters.category && !filters.type}
+                        onClick={() => onRemoveFilters()}
+                        text={`${n('allCategories', 'Allir flokkar')} (${
+                          sidebarData.totalTagCount
+                        })`}
+                        className={styles.allCategoriesLink}
+                      />
+                      <SidebarAccordion
+                        id="sidebar_accordion_categories"
+                        label={''}
+                      >
+                        <Stack space={[1, 1, 2]}>
+                          {sidebarDataTags.map(([key, { title, total }]) => {
                             const selected = key === filters.category
                             const text = `${title} (${total})`
 
@@ -288,30 +288,28 @@ const Search: Screen<CategoryProps> = ({
                                 text={text}
                               />
                             )
-                          },
-                        )}
-                      </Stack>
-                    </SidebarAccordion>
-                  </>
-                )}
-              </Box>
-            </Sidebar>
-            {
+                          })}
+                        </Stack>
+                      </SidebarAccordion>
+                    </>
+                  )}
+                </Box>
+              </Sidebar>
+            )}
+            {!!sidebarDataTypes.length && (
               <Sidebar bullet="none" title={n('otherCategories')}>
                 <Stack space={[1, 1, 2]}>
-                  {Object.entries(sidebarData.types).map(
-                    ([key, { title, total }]) => (
-                      <Filter
-                        key={key}
-                        selected={filters.type === key}
-                        onClick={() => onSelectSidebarTag('type', key)}
-                        text={`${title} (${total})`}
-                      />
-                    ),
-                  )}
+                  {sidebarDataTypes.map(([key, { title, total }]) => (
+                    <Filter
+                      key={key}
+                      selected={filters.type === key}
+                      onClick={() => onSelectSidebarTag('type', key)}
+                      text={`${title} (${total})`}
+                    />
+                  ))}
                 </Stack>
               </Sidebar>
-            }
+            )}
           </Stack>
         }
         belowContent={
