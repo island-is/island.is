@@ -25,7 +25,7 @@ export const LanguageStep: FC<Props> = ({
 
   return (
     <>
-      <Text variant="h1" marginBottom={3}>
+      <Text variant="h1" as="h1" marginBottom={3}>
         {formatMessage({
           id: 'service.portal:hi',
           defaultMessage: 'Hæ',

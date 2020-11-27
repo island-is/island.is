@@ -12,9 +12,6 @@ import { SubArticle, mapSubArticle } from './subArticle.model'
 
 @ObjectType()
 export class Article {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -71,7 +68,6 @@ export class Article {
 }
 
 export const mapArticle = ({ fields, sys }: IArticle): Article => ({
-  typename: 'Article',
   id: sys.id,
   title: fields.title ?? '',
   shortTitle: fields.shortTitle ?? '',

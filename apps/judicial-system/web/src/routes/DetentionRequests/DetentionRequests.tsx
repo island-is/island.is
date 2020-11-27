@@ -140,7 +140,10 @@ export const DetentionRequests: React.FC = () => {
                   {format(parseISO(c.created), 'PP', { locale: localeIS })}
                 </td>
                 <td>
-                  <Tag variant={mapCaseStateToTagVariant(c.state).color} label>
+                  <Tag
+                    variant={mapCaseStateToTagVariant(c.state).color}
+                    outlined
+                  >
                     {mapCaseStateToTagVariant(c.state).text}
                   </Tag>
                 </td>

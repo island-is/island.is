@@ -1,4 +1,5 @@
 import {
+  buildAsyncSelectField,
   buildCustomField,
   buildDataProviderItem,
   buildDateField,
@@ -24,6 +25,20 @@ import {
   getEstimatedMonthlyPay,
   getNameAndIdOfSpouse,
 } from '../fields/parentalLeaveUtils'
+import { GetPensionFunds, GetUnions } from '../graphql/queries'
+
+interface SelectItem {
+  id: string
+  name: string
+}
+
+type UnionQuery = {
+  getUnions: Array<SelectItem>
+}
+
+type PensionFundsQuery = {
+  getPensionFunds: Array<SelectItem>
+}
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -72,11 +87,13 @@ export const ParentalLeaveForm: Form = buildForm({
                   width: 'half',
                   name: 'Netfang',
                   id: 'applicant.email',
+                  variant: 'email',
                 }),
                 buildTextField({
                   width: 'half',
                   name: 'Símanúmer',
                   id: 'applicant.phoneNumber',
+                  variant: 'tel',
                 }),
               ],
             }),
@@ -127,6 +144,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   condition: (answers) => answers.otherParent === 'manual',
                   name: 'National ID of other parent',
                   width: 'half',
+                  variant: 'number',
                 }),
               ],
             }),
@@ -144,6 +162,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   name: 'Bank',
                   id: 'payments.bank',
                   width: 'half',
+                  variant: 'number',
                 }),
                 buildSelectField({
                   name: 'Personal discount',
@@ -156,17 +175,43 @@ export const ParentalLeaveForm: Form = buildForm({
                     { label: '25%', value: '25' },
                   ],
                 }),
-                buildSelectField({
+
+                buildAsyncSelectField({
                   name: 'Pension fund (optional)',
                   id: 'payments.pensionFund',
                   width: 'half',
-                  options: [{ label: 'TODO', value: 'todo' }],
+                  loadOptions: async ({ apolloClient }) => {
+                    const { data } = await apolloClient.query<
+                      PensionFundsQuery
+                    >({
+                      query: GetPensionFunds,
+                    })
+
+                    return (
+                      data?.getPensionFunds.map(({ id, name }) => ({
+                        label: name,
+                        value: id,
+                      })) ?? []
+                    )
+                  },
                 }),
-                buildSelectField({
+                buildAsyncSelectField({
                   name: 'Union (optional)',
                   id: 'payments.union',
                   width: 'half',
-                  options: [{ label: 'TODO', value: 'todo' }],
+                  loadingError: m.loadingError,
+                  loadOptions: async ({ apolloClient }) => {
+                    const { data } = await apolloClient.query<UnionQuery>({
+                      query: GetUnions,
+                    })
+
+                    return (
+                      data?.getUnions.map(({ id, name }) => ({
+                        label: name,
+                        value: id,
+                      })) ?? []
+                    )
+                  },
                 }),
                 buildRadioField({
                   emphasize: true,

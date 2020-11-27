@@ -163,11 +163,6 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer',
     description: '',
   },
-  helpDeskChatbot: {
-    id: 'dpo.application:helpDesk.chatbot',
-    defaultMessage: 'Snjallmenni',
-    description: '',
-  },
   termsSection: {
     id: 'dpo.application:terms.section',
     defaultMessage: 'Skilmálar',
@@ -186,6 +181,11 @@ export const m = defineMessages({
   safetyAgreementOptionLabel: {
     id: 'dpo.application:safetyAgreement.option.label',
     defaultMessage: 'Ég samþykki öryggisskilmála',
+    description: 'Some description',
+  },
+  technicalAgreementOptionLabel: {
+    id: 'dpo.application:technicalAgreement.option.label',
+    defaultMessage: 'Ég staðfesti hér með að prófunum og forritun sé lokið',
     description: 'Some description',
   },
   documentsSection: {
@@ -216,12 +216,27 @@ export const m = defineMessages({
   },
   testIntroSection: {
     id: 'dpo.application:testinfo.section',
-    defaultMessage: 'Aðgangur að test umhverfi',
+    defaultMessage: 'Tæknilýsing',
+    description: '',
+  },
+  testAccountSection: {
+    id: 'dpo.application:testinfo.section',
+    defaultMessage: 'Prófunarumhverfi',
+    description: '',
+  },
+  testEndPointSection: {
+    id: 'dpo.application:testinfo.section',
+    defaultMessage: 'Endapunktur',
     description: '',
   },
   testSection: {
     id: 'dpo.application:automaticTesting.section',
     defaultMessage: 'Sjálfvirkar prófanir',
+    description: '',
+  },
+  testTechnicalImplementation: {
+    id: 'dpo.application:technicalImplementation.section',
+    defaultMessage: 'Forritun og prófanir',
     description: '',
   },
   testOutroSection: {

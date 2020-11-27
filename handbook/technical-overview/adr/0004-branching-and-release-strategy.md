@@ -55,8 +55,8 @@ We'll set up continuous delivery to different hosting environments:
 | Environment | Git source            | Databases/services | Features |
 | ----------- | --------------------- | ------------------ | -------- |
 | sandbox     | feature branch        | Test               | All      |
-| dev         | master                | Test               | All      |
-| staging     | master                | Prod               | All      |
+| dev         | main                  | Test               | All      |
+| staging     | main                  | Prod               | All      |
 | pre-prod    | release/hotfix branch | Prod               | Finished |
 | prod        | latest release tag    | Prod               | Finished |
 
@@ -70,7 +70,7 @@ We'll probably start with dev, staging, pre-prod and prod environments, since fe
 - Good, because it enforces an easy to comprehend naming convention for branches.
 - Good, because it has good support in popular git tools.
 - Bad, because the git history becomes unreadable.
-- Bad, because the master/develop split is redundant.
+- Bad, because the main/develop split is redundant.
 
 ### GitHub Flow
 

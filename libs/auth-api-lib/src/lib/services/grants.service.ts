@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { InjectModel } from '@nestjs/sequelize'
-import { GrantDto } from '../entities/dto/grant-dto'
+import { GrantDto } from '../entities/dto/grant.dto'
 import { WhereOptions } from 'sequelize/types'
 
 @Injectable()

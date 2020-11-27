@@ -20,13 +20,13 @@ const ApplicationList: ServicePortalModuleComponent = () => {
     <>
       <Box marginBottom={4}>
         <Inline space={1}>
-          <Text variant="h1">
+          <Text variant="h1" as="h1">
             {formatMessage({
               id: 'service.portal:applications',
               defaultMessage: 'Umsóknir',
             })}
           </Text>
-          <Tag variant="blue" label>
+          <Tag variant="blue" outlined>
             {formatMessage({
               id: 'service.portal:in-progress',
               defaultMessage: 'Í vinnslu',

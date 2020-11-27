@@ -1,4 +1,6 @@
-import { logger } from '@island.is/logging'
+import { mock } from 'jest-mock-extended'
+
+import { Logger } from '@island.is/logging'
 
 import { EmailService } from './email.service'
 
@@ -47,7 +49,7 @@ describe('EmailService', () => {
       {
         useTestAccount: true,
       },
-      logger,
+      mock<Logger>(),
     )
     const testMessage = { to: 'Test To' }
 
