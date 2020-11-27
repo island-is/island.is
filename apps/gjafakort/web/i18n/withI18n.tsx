@@ -1,6 +1,6 @@
 import React, { ComponentType } from 'react'
 
-import { useI18n } from '.'
+import useI18n from './useI18n'
 
 const withI18n = <P extends object>(Component: ComponentType<P>) => {
   return (props: P) => {

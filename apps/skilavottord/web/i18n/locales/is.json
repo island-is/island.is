@@ -5,6 +5,67 @@
   "header": {
     "logoutText": "Útskrá"
   },
+  "footer": {
+    "topLinksInfo": [
+      {
+        "title": "Um Stafrænt Ísland",
+        "href": "https://stafraent.island.is/"
+      },
+      {
+        "title": "Stofnanir",
+        "href": "/stofnanir"
+      },
+      {
+        "title": "Vörur og þjónusta Ísland.is",
+        "href": "https://island.is/flokkur/vorur-og-thjonusta-island-is"
+      }
+    ],
+    "topLinksContact": [
+      {
+        "title": "Hafa samband",
+        "href": "/stafraent-island/hafa-samband"
+      },
+      {
+        "title": "Sími: 426 5500",
+        "href": "tel: +3544265500"
+      }
+    ],
+    "bottomLinksTitle": "Aðrir opinberir vefir",
+    "bottomLinks": [
+      {
+        "title": "Mínar síður",
+        "href": "https://minarsidur.island.is/"
+      },
+      {
+        "title": "Heilsuvera",
+        "href": "https://www.heilsuvera.is/"
+      },
+      {
+        "title": "Opinber nýsköpun",
+        "href": "https://opinbernyskopun.island.is/"
+      },
+      {
+        "title": "Samráðsgátt",
+        "href": "https://samradsgatt.island.is/"
+      },
+      {
+        "title": "Mannanöfn",
+        "href": "https://island.is/mannanofn/"
+      },
+      {
+        "title": "Undirskriftarlistar",
+        "href": "http://vefur.island.is/undirskriftalistar"
+      },
+      {
+        "title": "Opnir reikningar ríkisins",
+        "href": "http://www.opnirreikningar.is/"
+      },
+      {
+        "title": "Tekjusagan",
+        "href": "https://tekjusagan.is/"
+      }
+    ]
+  },
   "gdpr": {
     "title": "Þín gögn",
     "subTitles": {

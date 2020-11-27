@@ -1,4 +1,4 @@
-import { User } from '.'
+import { User } from './user.model'
 
 export class UserService {
   userList: User[]

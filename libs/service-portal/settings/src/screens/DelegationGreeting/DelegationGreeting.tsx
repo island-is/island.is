@@ -21,13 +21,13 @@ export const DelegationGreeting: ServicePortalModuleComponent = () => {
     <>
       <Box marginBottom={4}>
         <Inline space={1}>
-          <Text variant="h1">
+          <Text variant="h1" as="h1">
             {formatMessage({
               id: 'sp.settings:delegation',
               defaultMessage: 'Mín réttindi',
             })}
           </Text>
-          <Tag variant="blue" label>
+          <Tag variant="blue" outlined>
             {formatMessage({
               id: 'service.portal:in-progress',
               defaultMessage: 'Í vinnslu',

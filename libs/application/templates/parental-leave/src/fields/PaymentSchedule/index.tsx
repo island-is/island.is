@@ -9,6 +9,8 @@ import { useQuery } from '@apollo/client'
 import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
 import { getEstimatedPayments } from './estimatedPaymentsQuery'
 
+import * as styles from './PaymentSchedule.treat'
+
 const PaymentSchedule: FC<FieldBaseProps> = ({ field, application }) => {
   const { description } = field
   const { formatMessage } = useLocale()
@@ -40,7 +42,7 @@ const PaymentSchedule: FC<FieldBaseProps> = ({ field, application }) => {
         />
       )}
       {!loading && !error && (
-        <Box marginY={3}>
+        <Box marginY={3} className={styles.tableContainer}>
           <PaymentsTable
             application={application}
             payments={data.getParentalLeavesEstimatedPaymentPlan}

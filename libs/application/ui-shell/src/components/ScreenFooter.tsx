@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Box, Button, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import * as styles from './Screen.treat'
+import * as styles from './ScreenFooter.treat'
 import {
   Application,
   formatText,
@@ -102,12 +102,30 @@ export const ScreenFooter: FC<FooterProps> = ({
       >
         <Box
           display="flex"
-          flexDirection="row"
+          flexDirection="rowReverse"
           alignItems="center"
           justifyContent="spaceBetween"
           paddingTop={[1, 4]}
-          paddingBottom={[1, 5]}
         >
+          <Box display="inlineFlex" padding={2} paddingRight="none">
+            {hasSubmitField ? (
+              renderSubmitButtons()
+            ) : (
+              <Box display="inlineFlex">
+                <Button
+                  disabled={!canProceed || loading}
+                  icon="arrowForward"
+                  type="submit"
+                >
+                  {formatMessage({
+                    id: 'application.system:button.next',
+                    defaultMessage: 'Continue',
+                    description: 'Next button text',
+                  })}
+                </Button>
+              </Box>
+            )}
+          </Box>
           <Box display={['none', 'inlineFlex']} padding={2} paddingLeft="none">
             {showGoBack && (
               <Button variant="ghost" onClick={goBack}>
@@ -127,35 +145,6 @@ export const ScreenFooter: FC<FooterProps> = ({
                 icon="arrowBack"
                 onClick={goBack}
               />
-            )}
-          </Box>
-          <Box display="inlineFlex" padding={2} paddingRight="none">
-            {hasSubmitField ? (
-              renderSubmitButtons()
-            ) : (
-              <>
-                <Box display={['none', 'inlineFlex']}>
-                  <Button
-                    disabled={!canProceed || loading}
-                    icon="arrowForward"
-                    type="submit"
-                  >
-                    {formatMessage({
-                      id: 'application.system:button.next',
-                      defaultMessage: 'Continue',
-                      description: 'Next button text',
-                    })}
-                  </Button>
-                </Box>
-                <Box display={['inlineFlex', 'none']}>
-                  <Button
-                    disabled={!canProceed || loading}
-                    icon="arrowForward"
-                    type="submit"
-                    circle
-                  />
-                </Box>
-              </>
             )}
           </Box>
         </Box>

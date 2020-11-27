@@ -1,8 +1,6 @@
-import { mock } from 'jest-mock-extended'
-
 import { Test, TestingModule } from '@nestjs/testing'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { LoggingModule } from '@island.is/logging'
 
 import { SmsService, SMS_OPTIONS } from './sms.service'
 
@@ -49,11 +47,8 @@ describe('SmsService', () => {
     postMock.mockClear()
 
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggingModule],
       providers: [
-        {
-          provide: LOGGER_PROVIDER,
-          useValue: mock<Logger>(),
-        },
         {
           provide: SMS_OPTIONS,
           useValue: testOptions,

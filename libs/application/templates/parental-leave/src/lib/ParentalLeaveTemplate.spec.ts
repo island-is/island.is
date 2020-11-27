@@ -40,9 +40,12 @@ describe('Parental Leave Application Template', () => {
         }),
         ParentalLeaveTemplate,
       )
-      const [hasChanged, newState, newApplication] = helper.changeState({
-        type: 'SUBMIT',
-      })
+      const [hasChanged, newState, newApplication] = helper.changeState(
+        {
+          type: 'SUBMIT',
+        },
+        () => Promise.resolve(''),
+      )
       expect(hasChanged).toBe(true)
       expect(newState).toBe('otherParentApproval')
       expect(newApplication.assignees).toEqual([otherParentId])
@@ -62,9 +65,12 @@ describe('Parental Leave Application Template', () => {
         }),
         ParentalLeaveTemplate,
       )
-      const [hasChanged, newState, newApplication] = helper.changeState({
-        type: 'SUBMIT',
-      })
+      const [hasChanged, newState, newApplication] = helper.changeState(
+        {
+          type: 'SUBMIT',
+        },
+        () => Promise.resolve(''),
+      )
       expect(hasChanged).toBe(true)
       expect(newState).toBe('employerApproval')
       expect(newApplication.assignees).toEqual([employerId])
@@ -84,9 +90,12 @@ describe('Parental Leave Application Template', () => {
         }),
         ParentalLeaveTemplate,
       )
-      const [hasChanged, newState, newApplication] = helper.changeState({
-        type: 'SUBMIT',
-      })
+      const [hasChanged, newState, newApplication] = helper.changeState(
+        {
+          type: 'SUBMIT',
+        },
+        () => Promise.resolve(''),
+      )
       expect(hasChanged).toBe(true)
       expect(newState).toBe('otherParentApproval')
       expect(newApplication.assignees).toEqual([otherParentId])
@@ -99,9 +108,12 @@ describe('Parental Leave Application Template', () => {
         hasChangedAgain,
         finalState,
         finalApplication,
-      ] = finalHelper.changeState({
-        type: 'APPROVE',
-      })
+      ] = finalHelper.changeState(
+        {
+          type: 'APPROVE',
+        },
+        () => Promise.resolve(''),
+      )
       expect(hasChangedAgain).toBe(true)
       expect(finalState).toBe('employerApproval')
       expect(finalApplication.assignees).toEqual([employerId])

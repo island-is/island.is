@@ -2599,6 +2599,35 @@
         "docker-express": {}
       }
     },
+    "judicial-system-audit-trail": {
+      "root": "libs/judicial-system/audit-trail",
+      "sourceRoot": "libs/judicial-system/audit-trail/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/judicial-system/audit-trail/tsconfig.lib.json",
+              "libs/judicial-system/audit-trail/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/judicial-system/audit-trail/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/judicial-system/audit-trail/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "judicial-system-backend": {
       "root": "apps/judicial-system/backend",
       "sourceRoot": "apps/judicial-system/backend/src",

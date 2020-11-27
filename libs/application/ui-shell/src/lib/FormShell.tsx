@@ -13,7 +13,6 @@ import {
   GridRow,
 } from '@island.is/island-ui/core'
 
-import { Sidebar } from '../components/Sidebar'
 import Screen from '../components/Screen'
 import FormStepper from '../components/FormStepper'
 import {
@@ -22,6 +21,7 @@ import {
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
 import * as styles from './FormShell.treat'
+import ErrorBoundary from '../components/ErrorBoundary'
 
 export const FormShell: FC<{
   application: Application
@@ -82,37 +82,49 @@ export const FormShell: FC<{
                 borderRadius="large"
                 background="white"
               >
-                <Screen
-                  application={storedApplication}
-                  addExternalData={(payload) =>
-                    dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
-                  }
-                  answerQuestions={(payload) =>
-                    dispatch({ type: ActionTypes.ANSWER, payload })
-                  }
-                  dataSchema={dataSchema}
-                  expandRepeater={() =>
-                    dispatch({ type: ActionTypes.EXPAND_REPEATER })
-                  }
-                  answerAndGoToNextScreen={(payload) =>
-                    dispatch({
-                      type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN,
-                      payload,
-                    })
-                  }
-                  prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
-                  activeScreenIndex={activeScreen}
-                  numberOfScreens={screens.length}
-                  screen={currentScreen}
-                  mode={mode}
-                />
+                <ErrorBoundary
+                  application={application}
+                  currentScreen={currentScreen}
+                >
+                  <Screen
+                    application={storedApplication}
+                    addExternalData={(payload) =>
+                      dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
+                    }
+                    answerQuestions={(payload) =>
+                      dispatch({ type: ActionTypes.ANSWER, payload })
+                    }
+                    dataSchema={dataSchema}
+                    expandRepeater={() =>
+                      dispatch({ type: ActionTypes.EXPAND_REPEATER })
+                    }
+                    answerAndGoToNextScreen={(payload) =>
+                      dispatch({
+                        type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN,
+                        payload,
+                      })
+                    }
+                    prevScreen={() =>
+                      dispatch({ type: ActionTypes.PREV_SCREEN })
+                    }
+                    activeScreenIndex={activeScreen}
+                    numberOfScreens={screens.length}
+                    screen={currentScreen}
+                    mode={mode}
+                  />
+                </ErrorBoundary>
               </Box>
             </GridColumn>
             <GridColumn
               span={['12/12', '12/12', '3/12', '3/12']}
-              className={styles.largeSidebarContainer}
+              className={styles.sidebarContainer}
             >
-              <Sidebar>
+              <Box
+                height="full"
+                paddingTop={[0, 0, 8]}
+                paddingLeft={[0, 0, 0, 4]}
+                className={styles.sidebarInner}
+              >
                 <FormStepper
                   application={storedApplication}
                   mode={mode}
@@ -121,7 +133,7 @@ export const FormShell: FC<{
                   sections={sections}
                   screen={currentScreen}
                 />
-              </Sidebar>
+              </Box>
             </GridColumn>
           </GridRow>
         </GridContainer>
