@@ -29,7 +29,6 @@ export const renderer = (field: FieldAPI, sdk: BaseExtensionSDK) => {
         />
       )
 
-    /*
     case 'Link':
       // return (
       //   <SingleEntryReferenceEditor
@@ -58,7 +57,6 @@ export const renderer = (field: FieldAPI, sdk: BaseExtensionSDK) => {
           }}
         />
       )
-      */
 
     /*
     case 'Link':

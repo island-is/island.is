@@ -18,7 +18,7 @@ import { locales } from './locales'
  * If more than one content types used in a page,
  * we need to loop through and send them here as well
  */
-export const getSdk = (entry: Entry, assets: Collection<Asset, AssetProps>, space: Space, types: ContentType): BaseExtensionSDK => {
+export const getSdk = (entry: Entry, assets: Asset[], space: Space, types: ContentType): BaseExtensionSDK => {
   const sdk = {
     space: {
       ...space,
@@ -26,9 +26,21 @@ export const getSdk = (entry: Entry, assets: Collection<Asset, AssetProps>, spac
         console.log('-getEntry');
         return Promise.resolve(entry)
       },
-      getAsset: () => {
-        console.log('-getAsset');
-        return Promise.resolve(null)
+      getAsset: (assetId: string) => {
+        console.log('-//////////////');
+        console.log('-getAsset assetId', assetId);
+
+        const bigboy = JSON.stringify(assets)
+        console.log('-bigboy', bigboy);
+
+        // assets.items.find(item => {
+        //   console.log('-item', item.sys.id);
+        // })
+
+        const asset = assets.find(item => item.sys.id === assetId);
+        console.log('-getAsset asset', asset);
+
+        return Promise.resolve(asset)
       },
       getEntityScheduledActions: () => {
         console.log('-getEntityScheduledActions');
@@ -36,7 +48,7 @@ export const getSdk = (entry: Entry, assets: Collection<Asset, AssetProps>, spac
       },
       getAssets: () => {
         console.log('-getAssets');
-        return Promise.resolve({ items: assets.items })
+        return Promise.resolve({ items: assets })
       },
       getCachedContentTypes() {
         console.log('-getCachedContentTypes');

@@ -5,6 +5,8 @@ import { Space } from 'contentful-management/dist/typings/entities/space'
 import { Collection } from 'contentful-management/dist/typings/common-types'
 import { Entry, EntryProp } from 'contentful-management/dist/typings/entities/entry'
 import { BaseExtensionSDK, FieldAPI } from 'contentful-ui-extensions-sdk/typings'
+import { Environment } from 'contentful-management/dist/typings/entities/environment'
+import { Asset, AssetProps } from 'contentful-management/dist/typings/entities/asset'
 
 import { ContentfulEnv, createContentfulClient } from '../contentful/client'
 import { getSdk } from '../contentful/sdk'
@@ -16,7 +18,6 @@ interface InitializerProps {
   env: ContentfulEnv
 }
 
-
 export interface MagicType {
   _entry: Collection<Entry, EntryProp>
   _space: Space
@@ -24,6 +25,26 @@ export interface MagicType {
   _sdk: BaseExtensionSDK
   fields: FieldAPI[]
 }
+
+const getAllAssets = async (client: Environment, stats: {
+  length: number
+  remainingToFetch: number
+  items: Asset[]
+}) => {
+  const res = await client.getAssets({ skip: stats.length });
+  const { total, skip } = res;
+  const remainingToFetch = total - skip;
+
+  if (remainingToFetch > 0) {
+    stats.length = stats.length + res.items.length;
+    stats.remainingToFetch = remainingToFetch;
+    stats.items = stats.items.concat(res.items)
+
+    return await getAllAssets(client, stats);
+  }
+
+  return stats.items;
+};
 
 export const initializer = async ({
   slug,
@@ -47,7 +68,12 @@ export const initializer = async ({
   console.log('-type', type);
 
   // We get all the assets of the space
-  const assets = await client.getAssets()
+  const stats = { length: 0, remainingToFetch: 0, items: [] }
+  const assets = await getAllAssets(client, stats);
+  console.log('-assets', assets);
+
+  // const assets = await client.getAssets({ skip: 234 }) // Very temporary
+  // console.log('-assets', assets);
 
   // We get the data for SDK
   const sdk = getSdk(firstEntry, assets, space, type)
