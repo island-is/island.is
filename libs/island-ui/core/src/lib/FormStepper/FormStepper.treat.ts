@@ -23,7 +23,7 @@ export const list = style({
   padding: '20px 24px',
 
   backgroundColor: theme.color.purple100,
-  overflowX: 'scroll',
+  overflowX: 'hidden',
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
@@ -32,7 +32,6 @@ export const list = style({
       padding: 0,
 
       backgroundColor: 'transparent',
-      overflowX: 'hidden',
     },
   },
 })
