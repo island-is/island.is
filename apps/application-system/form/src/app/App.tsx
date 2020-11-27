@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { ApolloProvider } from '@apollo/client'
 import { BrowserRouter } from 'react-router-dom'
 import { Redirect, Route, Switch } from 'react-router-dom'
@@ -9,19 +9,12 @@ import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
 import { Signin } from '../routes/SignIn'
 import { SilentSignIn } from '../routes/SilentSignin'
-import { fixSvgUrls } from '../utils'
 import { AuthProvider } from '../context/AuthProvider'
 import Header from '../components/Header'
 import ProtectedRoute from '../components/ProtectedRoute'
 import { environment } from '../environments'
 
 export const App = () => {
-  useEffect(() => {
-    // Fixes the island.is logo and other SVGs not appearing on
-    // Mobile Safari, when a <base> tag exists in index.html.
-    fixSvgUrls()
-  }, [])
-
   return (
     <ApolloProvider client={initializeClient(environment.baseApiUrl)}>
       <AuthProvider>

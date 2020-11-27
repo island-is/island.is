@@ -2,15 +2,15 @@ import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 import { escapeGrid } from '@island.is/island-ui/utils'
 
+const headerHeight = 112
 export const root = style({
-  minHeight: '100vh',
+  minHeight: '-webkit-fill-available',
   display: 'flex',
   flexDirection: 'column',
 
   '@media': {
-    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
-      // https://github.com/seek-oss/treat/issues/120
-      minHeight: '-webkit-fill-available',
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      minHeight: `calc(100vh - ${headerHeight}px)`,
     },
   },
 })
@@ -66,18 +66,23 @@ export const shellContainer = style({
   },
 })
 
-export const largeSidebarContainer = style({
+export const sidebarContainer = style({
   order: 1,
+  position: 'sticky',
+  top: 0,
 
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      order: 2,
+      position: 'relative',
+    },
+  },
+})
+
+export const sidebarInner = style({
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
       ...escapeGrid(),
-
-      maxWidth: `calc(100% + ${theme.grid.gutter.mobile * 4}px)`,
-    },
-
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      order: 2,
     },
   },
 })
