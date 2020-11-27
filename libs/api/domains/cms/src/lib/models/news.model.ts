@@ -7,9 +7,6 @@ import { GenericTag, mapGenericTag } from './genericTag.model'
 
 @ObjectType()
 export class News {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -42,7 +39,6 @@ export class News {
 }
 
 export const mapNews = ({ fields, sys }: INews): News => ({
-  typename: 'News',
   id: sys.id,
   slug: fields.slug ?? '',
   title: fields.title ?? '',
