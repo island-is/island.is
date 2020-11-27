@@ -36,6 +36,7 @@ const AutomatedTests: FC<FieldBaseProps> = () => {
 
   const [response, setResponse] = useState<Response[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  //TODO finish design of this component
   return (
     <Box>
       <Box marginBottom={3}>
@@ -62,7 +63,10 @@ const AutomatedTests: FC<FieldBaseProps> = () => {
                 label="Kennitala móttakanda"
                 name="nationalId"
                 id="nationalId"
-                ref={register({ required: true })}
+                ref={register({
+                  required: true,
+                  pattern: /([0-9]){6}-?([0-9]){4}/,
+                })}
                 required
                 defaultValue=""
                 placeholder="Skráðu inn kennitölu"
