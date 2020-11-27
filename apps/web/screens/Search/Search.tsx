@@ -28,7 +28,6 @@ import {
   GET_SEARCH_COUNT_QUERY,
 } from '../queries'
 import { CategoryLayout } from '../Layouts/Layouts'
-import routeNames from '@island.is/web/i18n/routeNames'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -107,11 +106,14 @@ const Search: Screen<CategoryProps> = ({
     // create a map of sidebar tag data for easier lookup later
     const tagCountResults = countResults.tagCounts.reduce(
       (tagList: SidebarTagMap, { key, count: total, value: title }) => {
-        totalTagCount = totalTagCount + total
+        // in some rare cases a tag might be empty we skip counting and rendering it
+        if (key && title) {
+          totalTagCount = totalTagCount + total
 
-        tagList[key] = {
-          title,
-          total,
+          tagList[key] = {
+            title,
+            total,
+          }
         }
 
         return tagList
