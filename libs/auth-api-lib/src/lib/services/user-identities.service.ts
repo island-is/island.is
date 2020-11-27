@@ -112,4 +112,20 @@ export class UserIdentitiesService {
       where: { subjectId: subjectId },
     })
   }
+
+  /** Activates or deactivates a user by it's subjectId */
+  async setActive(
+    subjectId: string,
+    active: boolean,
+  ): Promise<UserIdentity | null> {
+    this.logger.debug(`Set subjectId: ${subjectId} as active: ${active}`)
+
+    if (!subjectId) {
+      throw new BadRequestException('SubjectId must be provided')
+    }
+
+    const sub = await this.userIdentityModel.findByPk(subjectId)
+    sub.active = active
+    return sub.save()
+  }
 }
