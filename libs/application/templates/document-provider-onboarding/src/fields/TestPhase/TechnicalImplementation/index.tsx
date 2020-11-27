@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { m } from '../../../forms/messages'
 import { useFormContext, Controller } from 'react-hook-form'
-import { Box, Text, Checkbox, Link } from '@island.is/island-ui/core'
+import { Box, Text, Checkbox } from '@island.is/island-ui/core'
 
 const TestPhaseInfoScreen: FC<FieldBaseProps> = ({ field, application }) => {
   const { answers: formValue } = application
