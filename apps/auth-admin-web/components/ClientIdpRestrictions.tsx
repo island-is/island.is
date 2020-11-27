@@ -59,6 +59,7 @@ const ClientIdpRestrictions: React.FC<Props> = (props: Props) => {
     } else {
       remove('audkenni_sim');
     }
+
   };
 
   const setCard = (card: boolean) => {
@@ -89,7 +90,7 @@ const ClientIdpRestrictions: React.FC<Props> = (props: Props) => {
                   type="checkbox"
                   name="sim"
                   className="client__checkbox"
-                  defaultChecked={false}
+                  defaultChecked={props.restrictions?.includes('audkenni_sim')}
                   onChange={(e) => setSim(e.target.checked)}
                   title="Allows users to login with sim cards"
                 />
@@ -104,7 +105,7 @@ const ClientIdpRestrictions: React.FC<Props> = (props: Props) => {
                   type="checkbox"
                   name="card"
                   className="client__checkbox"
-                  defaultChecked={false}
+                  defaultChecked={props.restrictions?.includes('audkenni_card')}
                   onChange={(e) => setCard(e.target.checked)}
                   title="Allows users to login with identity cards"
                 />
