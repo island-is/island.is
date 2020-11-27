@@ -17,6 +17,7 @@ import { NewsSyncService } from './importers/news.service'
 import { AboutPageSyncService } from './importers/aboutPage.service'
 import { Entry } from 'contentful'
 import { ElasticService } from '@island.is/content-search-toolkit'
+import { AdgerdirPageSyncService } from './importers/adgerdirPage'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -45,6 +46,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly articleCategorySyncService: ArticleCategorySyncService,
     private readonly articleSyncService: ArticleSyncService,
     private readonly lifeEventsPageSyncService: LifeEventsPageSyncService,
+    private readonly adgerdirPageSyncService: AdgerdirPageSyncService,
     private readonly contentfulService: ContentfulService,
     private readonly elasticService: ElasticService,
   ) {
@@ -54,6 +56,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.articleCategorySyncService,
       this.newsSyncService,
       this.aboutPageSyncService,
+      this.adgerdirPageSyncService,
     ]
   }
 

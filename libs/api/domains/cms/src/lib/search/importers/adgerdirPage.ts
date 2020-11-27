@@ -3,8 +3,8 @@ import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'
 import isCircular from 'is-circular'
-import { IPage } from '../../generated/contentfulTypes'
-import { mapAboutPage } from '../../models/aboutPage.model'
+import { IVidspyrnaPage } from '../../generated/contentfulTypes'
+import { mapAdgerdirPage } from '../../models/adgerdirPage.model'
 import {
   CmsSyncProvider,
   doMappingInput,
@@ -14,31 +14,34 @@ import {
 import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
-export class AboutPageSyncService implements CmsSyncProvider<IPage> {
-  processSyncData(entries: processSyncDataInput<IPage>) {
-    // only process pages that we consider not to be empty and dont have circular structures
+export class AdgerdirPageSyncService
+  implements CmsSyncProvider<IVidspyrnaPage> {
+  processSyncData(entries: processSyncDataInput<IVidspyrnaPage>) {
+    // only process pages that we consider not to be empty and don't have circular structures
     return entries.filter(
-      (entry: Entry<any>): entry is IPage =>
-        entry.sys.contentType.sys.id === 'page' &&
+      (entry: Entry<any>): entry is IVidspyrnaPage =>
+        entry.sys.contentType.sys.id === 'vidspyrnaPage' &&
         !!entry.fields.title &&
         !isCircular(entry),
     )
   }
 
-  doMapping(entries: doMappingInput<IPage>) {
-    logger.info('Mapping about page', { count: entries.length })
+  doMapping(entries: doMappingInput<IVidspyrnaPage>) {
+    logger.info('Mapping adgerdir page', { count: entries.length })
 
     return entries
       .map<MappedData | boolean>((entry) => {
         try {
-          const mapped = mapAboutPage(entry)
+          const mapped = mapAdgerdirPage(entry)
           return {
             _id: mapped.id,
             title: mapped.title,
-            content: extractStringsFromObject({ ...mapped.slices }), // this function only accepts plain js objects
-            type: 'webAboutPage',
+            content: `${mapped.longDescription} ${extractStringsFromObject({
+              ...mapped.content,
+            })}`, // this function only accepts plain js objects
+            type: 'webAdgerdirPage',
             termPool: createTerms([mapped.title]),
-            response: JSON.stringify({ ...mapped, typename: 'AboutPage' }),
+            response: JSON.stringify({ ...mapped, typename: 'AdgerdirPage' }),
             tags: [
               {
                 key: entry.fields?.slug,
@@ -49,7 +52,9 @@ export class AboutPageSyncService implements CmsSyncProvider<IPage> {
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.warn('Failed to import about page', { error: error.message })
+          logger.warn('Failed to import adgerdir page', {
+            error: error.message,
+          })
           return false
         }
       })
