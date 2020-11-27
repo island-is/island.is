@@ -9,6 +9,7 @@ import { Logo } from '../Logo/Logo'
 import { Input } from '../Input/Input'
 import { Box } from '../Box/Box'
 import { Text, getTextStyles } from '../Text/Text'
+import Img from './Img'
 
 type RenderLinkObj = {
   className: string
@@ -189,6 +190,7 @@ export const Menu = ({
       baseId={baseId}
       className={styles.container}
       disclosure={menuButton}
+      initialVisibility
     >
       {({ closeModal }: { closeModal: () => void }) => (
         <>
@@ -292,6 +294,9 @@ export const Menu = ({
                 </AnimateHeight>
               </Box>
             </div>
+            <Box className={styles.bg}>
+              <Img />
+            </Box>
           </Box>
           <div className={styles.aside}>
             <Box

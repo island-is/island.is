@@ -1,6 +1,5 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { style } from 'treat'
-import bg from './bg.svg'
 
 export const container = style({
   width: '100%',
@@ -14,21 +13,30 @@ export const container = style({
 })
 
 export const main = style({
+  position: 'relative',
   ...themeUtils.responsiveStyle({
     md: {
       flexBasis: '66.66666%',
       flexGrow: 1,
     },
+  }),
+})
+export const bg = style({
+  display: 'none',
+  ...themeUtils.responsiveStyle({
     xl: {
-      backgroundImage: `url(${bg})`,
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: 546,
-      backgroundPosition: `top 579px right ${theme.spacing[15]}px`,
+      display: 'block',
+      position: 'absolute',
+      width: 546,
+      top: 579,
+      right: theme.spacing[15],
     },
   }),
 })
 
 export const mainContainer = style({
+  position: 'relative',
+  zIndex: 1,
   width: '100%',
   ...themeUtils.responsiveStyle({
     md: {
