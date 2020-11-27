@@ -171,6 +171,7 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer',
     description: '',
   },
+<<<<<<< HEAD
   //ovierview
   overviewSection: {
     id: 'dpo.application:overview.section',
@@ -181,6 +182,22 @@ export const m = defineMessages({
     id: 'dpo.application:overview.title',
     defaultMessage: 'Staðfesting umsóknar',
     description: '',
+=======
+  termsSection: {
+    id: 'dpo.application:terms.section',
+    defaultMessage: 'Skilmálar',
+    description: 'Some description',
+  },
+  termsAgreement: {
+    id: 'dpo.application:terms.section',
+    defaultMessage: 'Skilmálar vegna notkunar á pósthólfi Island.is',
+    description: 'Some description',
+  },
+  userAgreementOptionLabel: {
+    id: 'dpo.application:userAgreement.option.label',
+    defaultMessage: 'Ég samþykki notendaskilmála',
+    description: 'Some description',
+>>>>>>> main
   },
   overviewSubTitle: {
     id: 'dpo.application:overview.subTitle',
