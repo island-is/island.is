@@ -1,5 +1,7 @@
 import { CookieOptions } from 'express'
 
+import { User } from '@island.is/judicial-system/types'
+
 export type AuthUser = {
   nationalId: string
   name: string
@@ -23,6 +25,6 @@ export type VerifiedUser = {
 }
 
 export type Credentials = {
-  user: AuthUser
+  user: User
   csrfToken: string
 }

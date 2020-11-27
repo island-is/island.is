@@ -64,18 +64,17 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
 
         try {
           mapped = mapArticle(entry)
-          const type = 'webArticle'
           return {
             _id: mapped.id,
             title: mapped.title,
             content: extractStringsFromObject(mapped.body),
-            type,
+            type: 'webArticle',
             termPool: createTerms([
               mapped.title,
               mapped.category?.title ?? '',
               mapped.group?.title ?? '',
             ]),
-            response: JSON.stringify({ ...mapped, __typename: type }),
+            response: JSON.stringify({ ...mapped, typename: 'Article' }),
             tags: [
               {
                 key: entry.fields?.group?.fields?.slug ?? '',

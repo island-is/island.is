@@ -175,6 +175,43 @@ export const m = defineMessages({
   //ovierview
   overviewSection: {
     id: 'dpo.application:overview.section',
+  helpDeskChatbot: {
+    id: 'dpo.application:helpDesk.chatbot',
+    defaultMessage: 'Snjallmenni',
+    description: '',
+  },
+  termsSection: {
+    id: 'dpo.application:terms.section',
+    defaultMessage: 'Skilmálar',
+    description: 'Some description',
+  },
+  termsAgreement: {
+    id: 'dpo.application:terms.section',
+    defaultMessage: 'Skilmálar vegna notkunar á pósthólfi Island.is',
+    description: 'Some description',
+  },
+  userAgreementOptionLabel: {
+    id: 'dpo.application:userAgreement.option.label',
+    defaultMessage: 'Ég samþykki notendaskilmála',
+    description: 'Some description',
+  },
+  safetyAgreementOptionLabel: {
+    id: 'dpo.application:safetyAgreement.option.label',
+    defaultMessage: 'Ég samþykki öryggisskilmála',
+    description: 'Some description',
+  },
+  technicalAgreementOptionLabel: {
+    id: 'dpo.application:technicalAgreement.option.label',
+    defaultMessage: 'Ég staðfesti hér með að prófunum og forritun sé lokið',
+    description: 'Some description',
+  },
+  documentsSection: {
+    id: 'dpo.application:documents.section',
+    defaultMessage: 'Skjöl',
+    description: '',
+  },
+  confirmationSection: {
+    id: 'dpo.application:confirmation.section',
     defaultMessage: 'Staðfesta',
     description: '',
   },
@@ -227,6 +264,11 @@ export const m = defineMessages({
   testSection: {
     id: 'dpo.application:automaticTesting.section',
     defaultMessage: 'Sjálfvirkar prófanir',
+    description: '',
+  },
+  testTechnicalImplementation: {
+    id: 'dpo.application:technicalImplementation.section',
+    defaultMessage: 'Forritun og prófanir',
     description: '',
   },
   testOutroSection: {

@@ -32,14 +32,13 @@ export class AboutPageSyncService implements CmsSyncProvider<IPage> {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapAboutPage(entry)
-          const type = 'webAboutPage'
           return {
             _id: mapped.id,
             title: mapped.title,
             content: extractStringsFromObject({ ...mapped.slices }), // this function only accepts plain js objects
-            type,
+            type: 'webAboutPage',
             termPool: createTerms([mapped.title]),
-            response: JSON.stringify({ ...mapped, __typename: type }),
+            response: JSON.stringify({ ...mapped, typename: 'AboutPage' }),
             tags: [
               {
                 key: entry.fields?.slug,

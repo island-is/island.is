@@ -16,7 +16,6 @@ export const GET_TELL_US_A_STORY_DATA = gql`
 
   query GetTellUsAStory($input: GetTellUsAStoryInput!) {
     getTellUsAStory(input: $input) {
-      typename
       id
       introTitle
       introImage {
