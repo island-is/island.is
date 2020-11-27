@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  formName: {
+    id: 'dpo.application:form.name',
+    defaultMessage: 'Almennar upplýsingar um skjalaveitanda',
+    description: '',
+  },
   //Terms of agreement
   termsSection: {
     id: 'dpo.application:terms.section',
@@ -28,11 +33,6 @@ export const m = defineMessages({
     description: 'Some description',
   },
   //Applicant section
-  formName: {
-    id: 'dpo.application:form.name',
-    defaultMessage: 'Almennar upplýsingar um skjalaveitanda',
-    description: '',
-  },
   applicantSection: {
     id: 'dpo.application:applicant.section',
     defaultMessage: 'Umsækjandi',
@@ -171,59 +171,45 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer',
     description: '',
   },
-<<<<<<< HEAD
-  //ovierview
-  overviewSection: {
-    id: 'dpo.application:overview.section',
-    defaultMessage: 'Staðfesta',
-    description: '',
-  },
-  overviewTitle: {
-    id: 'dpo.application:overview.title',
-    defaultMessage: 'Staðfesting umsóknar',
-    description: '',
-=======
-  termsSection: {
-    id: 'dpo.application:terms.section',
-    defaultMessage: 'Skilmálar',
-    description: 'Some description',
-  },
-  termsAgreement: {
-    id: 'dpo.application:terms.section',
-    defaultMessage: 'Skilmálar vegna notkunar á pósthólfi Island.is',
-    description: 'Some description',
-  },
-  userAgreementOptionLabel: {
-    id: 'dpo.application:userAgreement.option.label',
-    defaultMessage: 'Ég samþykki notendaskilmála',
-    description: 'Some description',
->>>>>>> main
-  },
-  overviewSubTitle: {
-    id: 'dpo.application:overview.subTitle',
-    defaultMessage:
-      'Þú ert að ljúka ferlinu. Vinsamlegast farðu yfir hvort allar upplýsingar séu réttar.',
-    description: '',
-  },
-
-  //Technical Agreement
-  technicalAgreementOptionLabel: {
-    id: 'dpo.application:technicalAgreement.option.label',
-    defaultMessage: 'Ég staðfesti hér með að prófunum og forritun sé lokið',
-    description: 'Some description',
-  },
-  documentsSection: {
-    id: 'dpo.application:documents.section',
-    defaultMessage: 'Skjöl',
-    description: '',
-  },
+  //Confirmation
   confirmationSection: {
     id: 'dpo.application:confirmation.section',
     defaultMessage: 'Staðfesta',
     description: '',
   },
+  confirmationTitle: {
+    id: 'dpo.application:confirmation.title',
+    defaultMessage: 'Staðfesting umsóknar',
+    description: '',
+  },
+  confirmationSubTitle: {
+    id: 'dpo.application:confirmation.subTitle',
+    defaultMessage:
+      'Þú ert að ljúka ferlinu. Vinsamlegast farðu yfir hvort allar upplýsingar séu réttar.',
+    description: '',
+  },
+  confirmationSubmitButton: {
+    id: 'dpo.application:confirmation.submitButton',
+    defaultMessage: 'Senda inn umsókn',
+  },
 
-  //Takk fyrir að sækja um
+  //First thank you screen
+  firstThankYouScreenScreenTitle: {
+    id: 'dpo.application:thankyouscreen.title',
+    defaultMessage: 'Takk fyrir að sækja um',
+    description: '',
+  },
+  firstThankYouScreenScreenSubTitle: {
+    id: 'dpo.application:thankyouscreen.subtitle',
+    defaultMessage: 'Nú bíður umsókn þín samþykkis island.is.',
+    description: '',
+  },
+  firstThankYouScreenScreenMessage: {
+    id: 'dpo.application:thankyouscreen.message',
+    defaultMessage:
+      'Þegar og ef hún verður samþykkt, þarf að koma aftur inn í þetta ferli og klára umsóknina. Sá hluti er tæknilegur og krefst tæknilegrar útfærslu. Hér að neðan er að finna upplýsingar sem nauðsynlegt er að búið sé að kynna sér áður en farið er af stað í það ferli.',
+    description: '',
+  },
 
   //review
   reviewSection: {
@@ -242,56 +228,100 @@ export const m = defineMessages({
     description: '',
   },
 
-  testIntroSection: {
-    id: 'dpo.application:testinfo.section',
+  //Review processed
+  reviewProcessedTitle: {
+    id: 'dpo.application:reviewProcessed.title',
+    defaultMessage: 'Úrvinnslu lokið',
+    description: '',
+  },
+  reviewProcessedIntroduction: {
+    id: 'dpo.application:reviewProcessed.Introduction',
+    defaultMessage:
+      'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
+    description: '',
+  },
+  //Test Phase Info screen
+  testPhaseInfoSection: {
+    id: 'dpo.application:testPhaseInfo.section',
     defaultMessage: 'Tæknilýsing',
     description: '',
   },
-  testAccountSection: {
-    id: 'dpo.application:testinfo.section',
+  testPhaseInfoTitle: {
+    id: 'dpo.application:testPhaseInfo.title',
+    defaultMessage: 'Umsókn hefur verið samþykkt',
+    description: '',
+  },
+  testPhaseInfoMessage: {
+    id: 'dpo.application:testPhaseInfo.message',
+    defaultMessage:
+      'Til að gerast skjalaveitandi þarf að útfæra tvenn forritunarskil. Annarsvegar eru það skil til að senda skjalatilvísun í pósthólf og hinsvegar eru það skil til að hægt sé að nálgast skjal hjá skjalaveitu. Hér að neðan finnur þú upplýsingar um tæknilegar útfærslur á þessum skilum.Í þessu ferli færð þú aðgang að prófunarumhverfi til að útfæra þjónustuna.Þegar þjónustan og prófanir eru búnar, er hægt að framkvæma sjálfvirkar prófanir til að staðfesta virkni.',
+    description: '',
+  },
+  //Test enviroment
+  testEnviromentSection: {
+    id: 'dpo.application:testEnviroment.section',
     defaultMessage: 'Prófunarumhverfi',
     description: '',
   },
+  testEnviromentTitle: {
+    id: 'dpo.application:testEnviroment.Title',
+    defaultMessage: 'Aðgangur að prófunarumhverfi',
+    description: '',
+  },
+
+  //Test endpoint
   testEndPointSection: {
-    id: 'dpo.application:testinfo.section',
+    id: 'dpo.application:testEndPoint.section',
     defaultMessage: 'Endapunktur',
     description: '',
   },
-  testSection: {
-    id: 'dpo.application:automaticTesting.section',
-    defaultMessage: 'Sjálfvirkar prófanir',
+  testEndPointTitle: {
+    id: 'dpo.application:testEndPoint.title',
+    defaultMessage: 'Upplýsingar um endapunkt umsækjenda',
     description: '',
   },
-  testTechnicalImplementation: {
+  //Technical implementation
+  testTechnicalImplementationSection: {
     id: 'dpo.application:technicalImplementation.section',
     defaultMessage: 'Forritun og prófanir',
     description: '',
   },
-  testOutroSection: {
-    id: 'dpo.application:testoutro.section',
+  testTechnicalImplementationTitle: {
+    id: 'dpo.application:technicalImplementation.Title',
+    defaultMessage: 'Forritun og prófanir',
+    description: '',
+  },
+
+  technicalImplementationOptionLabel: {
+    id: 'dpo.application:technicalImplementation.optionLabel',
+    defaultMessage: 'Ég staðfesti hér með að prófunum og forritun sé lokið',
+    description: 'Some description',
+  },
+  //Automated tests
+  automatedTestsSection: {
+    id: 'dpo.application:automatedTests.section',
+    defaultMessage: 'Sjálfvirkar prófanir',
+    description: '',
+  },
+  automatedTestsTitle: {
+    id: 'dpo.application:automatedTests.title',
+    defaultMessage: 'Sjálfvirkar prófanir',
+    description: '',
+  },
+  //Prod enviroment
+  prodEnviromentSection: {
+    id: 'dpo.application:prodEnviroment.section',
+    defaultMessage: 'Raunumhverfi',
+    description: '',
+  },
+  prodEnviromentTitle: {
+    id: 'dpo.application:prodEnviroment.stitle',
     defaultMessage: 'Aðgangur að raun umhverfi',
     description: '',
   },
   errorMessageNationalID: {
     id: 'dpo.application:errormessage.nationalid',
     defaultMessage: 'Skrá þarf löglega kennitölu, með eða án bandstriks',
-    description: '',
-  },
-  testPhaseInfoScreenMessage: {
-    id: 'dpo.application:testPhase.message',
-    defaultMessage:
-      'Til að gerast skjalaveitandi þarf að útfæra tvenn forritunarskil. Annarsvegar eru það skil til að senda skjalatilvísun í pósthólf og hinsvegar eru það skil til að hægt sé að nálgast skjal hjá skjalaveitu. Hér að neðan finnur þú upplýsingar um tæknilegar útfærslur á þessum skilum.Í þessu ferli færð þú aðgang að prófunarumhverfi til að útfæra þjónustuna.Þegar þjónustan og prófanir eru búnar, er hægt að framkvæma sjálfvirkar prófanir til að staðfesta virkni.',
-    description: '',
-  },
-  firstThankYouScreenScreenSubTitle: {
-    id: 'dpo.application:thankyouscreen.subtitle',
-    defaultMessage: 'Nú bíður umsókn þín samþykkis island.is.',
-    description: '',
-  },
-  firstThankYouScreenScreenMessage: {
-    id: 'dpo.application:thankyouscreen.message',
-    defaultMessage:
-      'Þegar og ef hún verður samþykkt, þarf að koma aftur inn í þetta ferli og klára umsóknina. Sá hluti er tæknilegur og krefst tæknilegrar útfærslu. Hér að neðan er að finna upplýsingar sem nauðsynlegt er að búið sé að kynna sér áður en farið er af stað í það ferli.',
     description: '',
   },
 })

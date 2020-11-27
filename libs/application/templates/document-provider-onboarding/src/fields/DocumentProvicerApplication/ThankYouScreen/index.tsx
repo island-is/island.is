@@ -15,7 +15,7 @@ const ThankYouScreen: FC<FieldBaseProps> = ({ field, application }) => {
       <Box marginBottom={2}>
         <Text>{m.firstThankYouScreenScreenMessage.defaultMessage}</Text>
       </Box>
-      <InfoScreen message={m.testPhaseInfoScreenMessage.defaultMessage} />
+      <InfoScreen message={m.testPhaseInfoMessage.defaultMessage} />
     </Box>
   )
 }

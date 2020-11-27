@@ -53,7 +53,7 @@ const TestPhaseInfoScreen: FC<FieldBaseProps> = ({ field, application }) => {
                 }}
                 checked={value}
                 name="technicalAnswer"
-                label={m.technicalAgreementOptionLabel.defaultMessage}
+                label={m.technicalImplementationOptionLabel.defaultMessage}
                 large
                 hasError={
                   errors.technicalAnswer &&

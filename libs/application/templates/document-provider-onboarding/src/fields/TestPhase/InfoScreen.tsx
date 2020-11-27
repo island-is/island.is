@@ -4,7 +4,7 @@ import { m } from '../../forms/messages'
 import InfoScreen from '../components/InfoScreen'
 
 const TestPhaseInfoScreen: FC<FieldBaseProps> = ({ field, application }) => {
-  return <InfoScreen message={m.testPhaseInfoScreenMessage.defaultMessage} />
+  return <InfoScreen message={m.testPhaseInfoMessage.defaultMessage} />
 }
 
 export default TestPhaseInfoScreen

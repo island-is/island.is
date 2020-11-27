@@ -149,36 +149,36 @@ export const DocumentProviderOnboarding: Form = buildForm({
     }),
     buildSection({
       id: 'confirmation',
-      name: m.overviewSection,
+      name: m.confirmationSection,
       children: [
         buildMultiField({
-          id: 'overview',
-          name: m.overviewTitle,
-          description: m.overviewSubTitle,
+          id: 'confirmation',
+          name: m.confirmationTitle,
+          description: m.confirmationSubTitle,
           children: [
-            buildCustomField(
-              {
-                id: 'review',
-                name: 'Yfirlit umsóknar',
-                component: 'Review',
-              },
-              {},
-            ),
+            buildCustomField({
+              id: 'confirmation',
+              name: m.confirmationTitle,
+              component: 'Confirmation',
+            }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              name: 'Senda inn umsókn',
-
+              name: m.confirmationSubmitButton,
               actions: [
-                { event: 'SUBMIT', name: 'Senda inn umsókn', type: 'primary' },
+                {
+                  event: 'SUBMIT',
+                  name: m.confirmationSubmitButton,
+                  type: 'primary',
+                },
               ],
             }),
           ],
         }),
         buildCustomField(
           {
-            id: 'final',
-            name: 'Takk fyrir að sækja um',
+            id: 'thankYouScreen',
+            name: m.firstThankYouScreenScreenTitle,
             component: 'ThankYouScreen',
           },
           {},

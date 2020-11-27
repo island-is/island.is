@@ -23,11 +23,11 @@ export const ReviewApplication: Form = buildForm({
       name: m.reviewSection,
       children: [
         buildMultiField({
-          id: 'overview',
+          id: 'review',
           name: m.reviewTitle,
           description: m.reviewSubTitle,
           children: [
-            buildDividerField({ name: 'Umsækjandi' }),
+            buildDividerField({ name: m.applicantTitle.defaultMessage }),
             buildTextField({
               id: 'applicant.name',
               name: m.applicantName,
@@ -57,7 +57,9 @@ export const ReviewApplication: Form = buildForm({
               disabled: true,
               width: 'half',
             }),
-            buildDividerField({ name: 'Ábyrgðarmaður' }),
+            buildDividerField({
+              name: m.administrativeContactTitle.defaultMessage,
+            }),
             buildTextField({
               id: 'administrativeContact.name',
               name: m.administrativeContactName,
@@ -75,7 +77,7 @@ export const ReviewApplication: Form = buildForm({
               disabled: true,
               width: 'half',
             }),
-            buildDividerField({ name: 'Tæknilegur tengiliður' }),
+            buildDividerField({ name: m.technicalContactTitle.defaultMessage }),
             buildTextField({
               id: 'technicalContact.name',
               name: m.technicalContactName,
@@ -93,7 +95,7 @@ export const ReviewApplication: Form = buildForm({
               disabled: true,
               width: 'half',
             }),
-            buildDividerField({ name: 'Notendaaðstoð' }),
+            buildDividerField({ name: m.helpDeskTitle.defaultMessage }),
             buildTextField({
               id: 'helpDesk.email',
               name: m.helpDeskEmail,
@@ -129,10 +131,10 @@ export const ReviewApplication: Form = buildForm({
           ],
         }),
         buildIntroductionField({
-          id: 'final',
-          name: 'Takk fyrir',
-          introduction:
-            'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
+          id: 'reviewProcessed',
+          name: m.reviewProcessedTitle,
+
+          introduction: m.reviewProcessedIntroduction,
         }),
       ],
     }),
