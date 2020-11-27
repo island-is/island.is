@@ -9,14 +9,22 @@ import { RichTextEditor } from '@contentful/field-editor-rich-text'
 import {
   BaseExtensionSDK,
   FieldAPI,
+  FieldExtensionSDK,
 } from 'contentful-ui-extensions-sdk/typings'
 
 import { locales } from './locales'
 
-export const renderer = (field: FieldAPI, sdk: BaseExtensionSDK) => {
-  console.log('-field.type', field.type)
-  console.log('-field', field)
-
+/**
+ * TODO
+ * - Integer
+ * - Number
+ * - Date
+ * - Boolean
+ * - Location
+ * - Array
+ * - Object
+ */
+export const renderer = (field: FieldAPI, sdk: FieldExtensionSDK) => {
   switch (field.type) {
     case 'Text':
     case 'Symbol':
@@ -30,50 +38,47 @@ export const renderer = (field: FieldAPI, sdk: BaseExtensionSDK) => {
       )
 
     case 'Link':
-      // return (
-      //   <SingleEntryReferenceEditor
-      //     viewType="card"
-      //     sdk={{ ...sdk, field }}
-      //     isInitiallyDisabled={false}
-      //     parameters={{
-      //       instance: {
-      //         canCreateEntity: true,
-      //         canLinkEntity: true,
-      //       },
-      //     }}
-      //   />
-      // )
-
-      return (
-        <SingleMediaEditor
-          viewType="card"
-          sdk={{ ...sdk, field }}
-          isInitiallyDisabled={false}
-          parameters={{
-            instance: {
-              canCreateEntity: true,
-              canLinkEntity: true,
-            },
-          }}
-        />
+      const hasImage = !!(field.validations ?? []).find(
+        (item) => (item as Record<string, any>)?.linkMimetypeGroup,
+      )
+      const hasContent = !!(field.validations ?? []).find(
+        (item) => (item as Record<string, any>)?.linkContentType,
       )
 
-    /*
-    case 'Link':
-      return (
-        <SingleMediaEditor
-          viewType="card"
-          sdk={{ ...sdk, field }}
-          isInitiallyDisabled={false}
-          parameters={{
-            instance: {
-              canCreateEntity: true,
-              canLinkEntity: true,
-            },
-          }}
-        />
-      )
-      */
+      if (hasImage) {
+        return (
+          <SingleMediaEditor
+            viewType="card"
+            sdk={{ ...sdk, field }}
+            isInitiallyDisabled={false}
+            parameters={{
+              instance: {
+                showCreateEntityAction: true,
+                showLinkEntityAction: true,
+              },
+            }}
+          />
+        )
+      } else if (hasContent) {
+        return (
+          <SingleEntryReferenceEditor
+            viewType="card"
+            sdk={{ ...sdk, field }}
+            isInitiallyDisabled={false}
+            hasCardEditActions={true}
+            parameters={{
+              instance: {
+                showCreateEntityAction: true,
+                showLinkEntityAction: true,
+              },
+            }}
+          />
+        )
+      }
+
+      console.warn(`${field.type} is not supported yet.`)
+
+      return null
 
     case 'RichText':
       return (
