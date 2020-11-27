@@ -163,11 +163,6 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer',
     description: '',
   },
-  helpDeskChatbot: {
-    id: 'dpo.application:helpDesk.chatbot',
-    defaultMessage: 'Snjallmenni',
-    description: '',
-  },
   termsSection: {
     id: 'dpo.application:terms.section',
     defaultMessage: 'Skilmálar',

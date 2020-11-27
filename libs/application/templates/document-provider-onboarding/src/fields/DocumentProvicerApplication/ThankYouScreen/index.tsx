@@ -6,7 +6,7 @@ import { m } from '../../../forms/messages'
 
 const ThankYouScreen: FC<FieldBaseProps> = ({ field, application }) => {
   return (
-    <Box marginTop={[2, 3]}>
+    <Box marginBottom={8}>
       <Box marginBottom={2}>
         <Text variant="h3">
           {m.firstThankYouScreenScreenSubTitle.defaultMessage}{' '}

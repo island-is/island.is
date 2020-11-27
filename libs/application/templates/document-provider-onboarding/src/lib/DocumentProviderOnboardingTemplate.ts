@@ -24,7 +24,6 @@ const contact = z.object({
 const helpDeskContact = z.object({
   email: z.string().email().nonempty(),
   phoneNumber: z.string().min(7),
-  chatbot: z.string(),
 })
 
 //TODO: extend contact. Couldn't get it to work easily with contact.extend
