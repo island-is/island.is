@@ -7,7 +7,7 @@ const borderStyle = `1px solid ${theme.color.dark200}`
 // Left Panel Styles
 // ********************************************
 export const panel = style({
-  minWidth: '160px',
+  minWidth: '130px',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       minWidth: '200px',
@@ -96,7 +96,7 @@ export const duration = style({
 })
 
 export const period = style({
-  background: `repeating-linear-gradient(-45deg, #fff, #fff 5%, rgba(255, 255, 255, 0.35) 5%, rgba(255, 255, 255, 0.35) 50%, #fff 50%) top left fixed`,
+  background: `repeating-linear-gradient(-45deg, #fff, #fff 5%, rgba(255, 255, 255, 0.35) 5%, rgba(255, 255, 255, 0.35) 50%, #fff 50%) top left`,
   backgroundSize: '10px 10px',
   display: 'flex',
   flexDirection: 'column',
@@ -122,5 +122,10 @@ export const scrollGradient = style({
   position: 'absolute',
   right: 0,
   top: 0,
-  width: '100px',
+  width: '60px',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      width: '100px',
+    },
+  },
 })
