@@ -24,7 +24,8 @@ export const ReviewApplication: Form = buildForm({
       children: [
         buildMultiField({
           id: 'overview',
-          name: 'Umsókn um að gerast skjalaveitandi:',
+          name: m.reviewTitle,
+          description: m.reviewSubTitle,
           children: [
             buildDividerField({ name: 'Umsækjandi' }),
             buildTextField({
@@ -104,11 +105,6 @@ export const ReviewApplication: Form = buildForm({
               name: m.helpDeskPhoneNumber,
               disabled: true,
               width: 'half',
-            }),
-            buildTextField({
-              id: 'helpDesk.chatbot',
-              name: m.helpDeskChatbot,
-              disabled: true,
             }),
             buildSubmitField({
               id: 'approvedByReviewer',

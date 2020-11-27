@@ -35,7 +35,7 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
   return (
     <Box>
       <Box marginBottom={5}>
-        <FieldDescription description="Hér mun koma texti um skilmálasíðu" />
+        <FieldDescription description={m.termsSubTitle.defaultMessage} />
       </Box>
       <Box marginBottom={3}>
         <Accordion singleExpand={false}>

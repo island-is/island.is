@@ -23,8 +23,8 @@ export const DocumentProviderOnboarding: Form = buildForm({
         buildCustomField(
           {
             id: 'termsOfAgreement',
-            name: 'Skilmálar',
-            description: m.termsSection,
+            name: m.termsTitle,
+            description: m.termsSubTitle,
             component: 'TermsOfAgreement',
           },
           {},
@@ -143,22 +143,18 @@ export const DocumentProviderOnboarding: Form = buildForm({
               name: m.helpDeskPhoneNumber,
               variant: 'tel',
             }),
-            buildTextField({
-              id: 'helpDesk.chatbot',
-              name: m.helpDeskChatbot,
-            }),
           ],
         }),
       ],
     }),
     buildSection({
       id: 'confirmation',
-      name: m.confirmationSection,
+      name: m.overviewSection,
       children: [
         buildMultiField({
           id: 'overview',
-          name: m.overview,
-          description: m.overviewIntro,
+          name: m.overviewTitle,
+          description: m.overviewSubTitle,
           children: [
             buildCustomField(
               {

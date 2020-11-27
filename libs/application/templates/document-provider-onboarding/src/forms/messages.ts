@@ -1,6 +1,34 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  //Terms of agreement
+  //TODO add Notendaskilmálar and Öryggisskilmálar
+  termsSection: {
+    id: 'dpo.application:terms.section',
+    defaultMessage: 'Skilmálar',
+    description: 'Some description',
+  },
+  termsTitle: {
+    id: 'dpo.application:terms.Title',
+    defaultMessage: 'Skilmálar',
+    description: 'Some description',
+  },
+  termsSubTitle: {
+    id: 'dpo.application:terms.subTitle',
+    defaultMessage: 'Skilmálar vegna notkunar á pósthólfi Island.is',
+    description: 'Some description',
+  },
+  userAgreementOptionLabel: {
+    id: 'dpo.application:userAgreement.option.label',
+    defaultMessage: 'Ég samþykki notendaskilmála',
+    description: 'Some description',
+  },
+  safetyAgreementOptionLabel: {
+    id: 'dpo.application:safetyAgreement.option.label',
+    defaultMessage: 'Ég samþykki öryggisskilmála',
+    description: 'Some description',
+  },
+  //Applicant section
   formName: {
     id: 'dpo.application:form.name',
     defaultMessage: 'Almennar upplýsingar um skjalaveitanda',
@@ -51,11 +79,8 @@ export const m = defineMessages({
     defaultMessage: 'Póstnúmer og staður',
     description: '',
   },
-  contacts: {
-    id: 'dpo.application:contacts.section',
-    defaultMessage: 'Tengiliðir',
-    description: 'Tengiliðir',
-  },
+
+  //Administrative Contact
   administrativeContactSection: {
     id: 'dpo.application:administrativeContact.section',
     defaultMessage: 'Ábyrgðarmaður',
@@ -86,16 +111,8 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer',
     description: '',
   },
-  administrativeContactAddress: {
-    id: 'dpo.application:administrativeContact.address',
-    defaultMessage: 'Heimilisfang',
-    description: '',
-  },
-  administrativeContactZipCode: {
-    id: 'dpo.application:administrativeContact.zipCode',
-    defaultMessage: 'Póstnúmer og staður',
-    description: '',
-  },
+
+  //Technical Contact
   technicalContactSection: {
     id: 'dpo.application:technicalContact.section',
     defaultMessage: 'Tæknilegur tengiliður',
@@ -127,16 +144,8 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer',
     description: '',
   },
-  technicalContactAddress: {
-    id: 'dpo.application:technicalContact.address',
-    defaultMessage: 'Heimilisfang',
-    description: '',
-  },
-  technicalContactZipCode: {
-    id: 'dpo.application:technicalContact.zipCode',
-    defaultMessage: 'Póstnúmer og staður',
-    description: '',
-  },
+
+  //Help Desk
   helpDeskSection: {
     id: 'dpo.application:helpDesk.section',
     defaultMessage: 'Notendaaðstoð',
@@ -163,57 +172,43 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer',
     description: '',
   },
-  helpDeskChatbot: {
-    id: 'dpo.application:helpDesk.chatbot',
-    defaultMessage: 'Snjallmenni',
-    description: '',
-  },
-  termsSection: {
-    id: 'dpo.application:terms.section',
-    defaultMessage: 'Skilmálar',
-    description: 'Some description',
-  },
-  termsAgreement: {
-    id: 'dpo.application:terms.section',
-    defaultMessage: 'Skilmálar vegna notkunar á pósthólfi Island.is',
-    description: 'Some description',
-  },
-  userAgreementOptionLabel: {
-    id: 'dpo.application:userAgreement.option.label',
-    defaultMessage: 'Ég samþykki notendaskilmála',
-    description: 'Some description',
-  },
-  safetyAgreementOptionLabel: {
-    id: 'dpo.application:safetyAgreement.option.label',
-    defaultMessage: 'Ég samþykki öryggisskilmála',
-    description: 'Some description',
-  },
-  documentsSection: {
-    id: 'dpo.application:documents.section',
-    defaultMessage: 'Skjöl',
-    description: '',
-  },
-  confirmationSection: {
-    id: 'dpo.application:confirmation.section',
+  //ovierview
+  overviewSection: {
+    id: 'dpo.application:overview.section',
     defaultMessage: 'Staðfesta',
     description: '',
   },
-  overview: {
-    id: 'dpo.application:overview',
+  overviewTitle: {
+    id: 'dpo.application:overview.title',
     defaultMessage: 'Staðfesting umsóknar',
     description: '',
   },
-  overviewIntro: {
-    id: 'dpo.application:overview.introduction',
+  overviewSubTitle: {
+    id: 'dpo.application:overview.subTitle',
     defaultMessage:
       'Þú ert að ljúka ferlinu. Vinsamlegast farðu yfir hvort allar upplýsingar séu réttar.',
     description: '',
   },
+
+  //Takk fyrir að sækja um
+
+  //review
   reviewSection: {
-    id: 'dpo.application:review.confirmation.section',
+    id: 'dpo.application:review.section',
     defaultMessage: 'Staðfesta',
     description: '',
   },
+  reviewTitle: {
+    id: 'dpo.application:review.title',
+    defaultMessage: 'Umsókn um að gerast skjalaveitandi',
+    description: '',
+  },
+  reviewSubTitle: {
+    id: 'dpo.application:review.subTitle',
+    defaultMessage: 'Hér gæti komið texti ',
+    description: '',
+  },
+
   testIntroSection: {
     id: 'dpo.application:testinfo.section',
     defaultMessage: 'Tæknilýsing',

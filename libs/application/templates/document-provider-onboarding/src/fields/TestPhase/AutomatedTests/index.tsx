@@ -1,4 +1,5 @@
 import React, { FC, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { FieldBaseProps } from '@island.is/application/core'
 import {
   Box,
@@ -11,7 +12,6 @@ import {
   Icon,
   LoadingIcon,
 } from '@island.is/island-ui/core'
-import { useForm } from 'react-hook-form'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import * as styles from './AutomatedTests.treat'
 
