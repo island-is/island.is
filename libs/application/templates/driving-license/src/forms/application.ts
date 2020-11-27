@@ -13,7 +13,7 @@ import {
   FormModes,
 } from '@island.is/application/core'
 
-export const drivingLicenseApplication: Form = buildForm({
+export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
   name: 'Ökuskilríki',
   mode: FormModes.APPLYING,
@@ -126,6 +126,35 @@ export const drivingLicenseApplication: Form = buildForm({
               name: '',
               options: [
                 { value: 'isBusiness', label: 'Ég sæki um í atvinnuskyni' },
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'healthDeclaration',
+      name: 'Heilbrigðisyfirlýsing',
+      children: [
+        buildMultiField({
+          id: 'healthDeclaration',
+          name: 'Heilbrigðisyfirlýsing',
+          children: [
+            buildIntroductionField({
+              id: 'intro',
+              name: '',
+              introduction:
+                'Ef sótt er um réttindi í flokkum <b>AM</b>, <b>A1</b>, <b>A2</b>, <b>A</b>, <b>B</b>, <b>BE</b> eða <b>T</b> nægir heilbrigðisyfirlýsing ein og sér, nema sýslumaður telji þörf á læknisvottorði eða ef umsækjandi hefur náð 65 ára aldri eða hann vilji heldur skila læknisvottorði. Með umsókn um aðra flokka ökuréttinda (aukin ökuréttindi) er krafist læknisvottorðs á sérstöku eyðublaði.',
+            }),
+            buildCheckboxField({
+              id: 'useMedicalCertification',
+              name: '',
+              options: [
+                {
+                  value: 'useMedicalCertification',
+                  label:
+                    'Umsækjandi óskar eftir að skila inn læknisvottorði í stað heilbrigðisyfirlýsingu',
+                },
               ],
             }),
           ],
