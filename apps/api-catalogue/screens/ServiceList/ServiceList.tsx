@@ -9,6 +9,7 @@ import {
   FilterSearchGroup,
   FilterSearch,
   Checkbox,
+  ServiceListContainer,
 } from '@island.is/island-ui/core'
 
 import * as styles from './ServiceList.treat'
@@ -348,16 +349,10 @@ export const ServiceList: Screen<ServiceListProps> = ({
           marginBottom="containerGutter"
           marginTop={1}
         >
-          {data?.getApiCatalogue.services.length > 0 &&
-            data.getApiCatalogue.services.map((item) => {
-              return (
-                <ServiceCard
-                  key={item.id}
-                  service={item}
-                  strings={filterContent}
-                />
-              )
-            })}
+          <ServiceListContainer
+           services={data?.getApiCatalogue.services}
+           span = {['12/12','12/12','12/12','6/12', '4/12']}
+          />
 
           {loading && (
             <Box className={cn(styles.navigation)} borderRadius="large">

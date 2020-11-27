@@ -26,6 +26,7 @@ export * from './lib/DialogPrompt/DialogPrompt'
 export * from './lib/FilterSearchGroup/FilterSearchGroup'
 export * from './lib/FilterSearch/FilterSearch'
 export * from './lib/ModalBase/ModalBase'
+export * from './lib/ServiceListContainer/ServiceListContainer'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'
