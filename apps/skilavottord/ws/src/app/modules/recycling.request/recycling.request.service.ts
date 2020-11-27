@@ -39,7 +39,6 @@ export class RecyclingRequestService {
         restDeRegUrl,
         restUsername,
         restPassword,
-        restReportingStation,
       } = environment.samgongustofa
 
       const jsonObj = {
@@ -66,19 +65,27 @@ export class RecyclingRequestService {
       this.logger.info(
         'Finished Authentication request and starting deRegister request',
       )
-      const dateNow = new Date()
+
+      //ToDo: Clean up later when go to prod
+      // const dateNow = new Date()
+      // const jsonDeRegBody = JSON.stringify({
+      //   permno: vehiclePermno,
+      //   deRegisterDate: format(dateNow, "yyyy-MM-dd'T'HH:mm:ss'Z'"),
+      //   subCode: 'U',
+      //   plateCount: 0,
+      //   destroyed: 0,
+      //   lost: 0,
+      //   reportingStation: restReportingStation,
+      //   reportingStationType: 'R',
+      //   disposalStation: disposalStation,
+      //   disposalStationType: 'M',
+      //   explanation: 'TODO, what to put here?', // Rafrænt afskráning
+      // })
       const jsonDeRegBody = JSON.stringify({
         permno: vehiclePermno,
-        deRegisterDate: format(dateNow, "yyyy-MM-dd'T'HH:mm:ss'Z'"),
-        subCode: 'U',
-        plateCount: 0,
-        destroyed: 0,
-        lost: 0,
-        reportingStation: restReportingStation,
-        reportingStationType: 'R',
-        disposalStation: disposalStation,
-        disposalStationType: 'M',
-        explanation: 'TODO, what to put here?',
+        deRegisterDate: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
+        disposalstation: disposalStation,
+        explanation: 'Rafrænt afskráning',
       })
 
       const headerDeRegRequest = {
@@ -337,8 +344,8 @@ export class RecyclingRequestService {
             `start deregistered vehicle ${permno} for partnerId: ${partnerId}`,
           )
           // partnerId 000 is Rafræn afskráning in Samgongustofa's system
-          // Samgongustofa wants to use it ('000') instead of Recycling partnerId
-          await this.deRegisterVehicle(permno, '000')
+          // Samgongustofa wants to use it ('000') instead of Recycling partnerId for testing
+          await this.deRegisterVehicle(permno, partnerId)
         } catch (err) {
           this.logger.error(
             `Getting error while deregistered vehicle: ${permno} on Samgongustofa with error: ${err}`,
