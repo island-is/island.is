@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { Input } from '@island.is/island-ui/core'
-import { useFormContext } from 'react-hook-form'
+import { useFormContext, Controller } from 'react-hook-form'
+import NumberFormat from 'react-number-format'
 
 interface Props {
   autoFocus?: boolean
@@ -29,6 +30,33 @@ export const InputController: FC<Props> = ({
   onChange,
 }) => {
   const { register } = useFormContext()
+
+  if (type === 'tel') {
+    return (
+      <Controller
+        name={name}
+        render={({ value, onChange }) => (
+          <NumberFormat
+            customInput={Input}
+            id={id}
+            disabled={disabled}
+            name={name}
+            placeholder={placeholder}
+            label={label}
+            type={type}
+            value={value}
+            format="###-####"
+            onValueChange={({ value }) => {
+              onChange(value)
+            }}
+            hasError={error !== undefined}
+            errorMessage={error}
+          />
+        )}
+      />
+    )
+  }
+
   return (
     <Input
       id={id}

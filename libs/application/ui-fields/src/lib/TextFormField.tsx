@@ -22,7 +22,7 @@ const TextFormField: FC<Props> = ({
   field,
   showFieldName,
 }) => {
-  const { id, disabled, name, description } = field
+  const { id, disabled, name, description, placeholder } = field
   const { clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -38,6 +38,11 @@ const TextFormField: FC<Props> = ({
         <InputController
           disabled={disabled}
           id={id}
+          placeholder={formatText(
+            placeholder || '',
+            application,
+            formatMessage,
+          )}
           label={
             showFieldName
               ? formatText(name, application, formatMessage)

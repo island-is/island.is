@@ -94,6 +94,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   name: 'Símanúmer',
                   id: 'applicant.phoneNumber',
                   variant: 'tel',
+                  placeholder: '000-00000',
                 }),
               ],
             }),

@@ -230,18 +230,21 @@ export function buildTextField(data: {
   disabled?: boolean
   width?: FieldWidth
   variant?: TextFieldVariant
+  placeholder?: FormText
 }): TextField {
   const {
     condition,
     id,
     name,
     description,
+    placeholder,
     disabled = false,
     width = 'full',
     variant = 'text',
   } = data
   return {
     children: undefined,
+    placeholder,
     disabled,
     width,
     condition,
