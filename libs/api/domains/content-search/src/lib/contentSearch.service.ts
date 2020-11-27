@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import {
   ElasticService,
   TagAggregationResponse,
+  TypeAggregationResponse,
 } from '@island.is/content-search-toolkit'
 import { logger } from '@island.is/logging'
 import { SearchResult } from './models/searchResult.model'
@@ -10,6 +11,7 @@ import { TagCount } from './models/tagCount'
 import { SearchIndexes } from '@island.is/content-search-indexer/types'
 import { SearcherInput } from './dto/searcher.input'
 import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
+import { TypeCount } from './models/typeCount'
 
 @Injectable()
 export class ContentSearchService {
@@ -19,7 +21,7 @@ export class ContentSearchService {
     return SearchIndexes[lang] ?? SearchIndexes.is
   }
 
-  mapFindAggregations(aggregations: TagAggregationResponse): TagCount[] {
+  mapTagAggregations(aggregations: TagAggregationResponse): TagCount[] {
     if (!aggregations?.group) {
       return null
     }
@@ -32,6 +34,16 @@ export class ContentSearchService {
     )
   }
 
+  mapTypeAggregations(aggregations: TypeAggregationResponse): TypeCount[] {
+    if (!aggregations?.typeCount) {
+      return null
+    }
+    return aggregations.typeCount.buckets.map<TypeCount>((tagObject) => ({
+      key: tagObject.key,
+      count: tagObject.doc_count.toString(),
+    }))
+  }
+
   async find(query: SearcherInput): Promise<SearchResult> {
     const { body } = await this.elasticService.search(
       this.getIndex(query.language),
@@ -42,7 +54,12 @@ export class ContentSearchService {
       total: body.hits.total.value,
       // we map data when it goes into the index we can return it without mapping it here
       items: body.hits.hits.map((item) => JSON.parse(item._source.response)),
-      tagCounts: this.mapFindAggregations(body.aggregations),
+      tagCounts: this.mapTagAggregations(
+        body.aggregations as TagAggregationResponse,
+      ),
+      typesCount: this.mapTypeAggregations(
+        body.aggregations as TypeAggregationResponse,
+      ),
     }
   }
 

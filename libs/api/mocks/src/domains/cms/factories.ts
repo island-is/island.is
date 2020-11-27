@@ -65,7 +65,6 @@ export const subArticle = factory<SubArticle>({
 })
 
 export const articleCategory = factory<ArticleCategory>({
-  typename: 'ArticleCategory',
   title: () => title(),
   slug: slugify('title'),
   id: () => faker.random.uuid(),
@@ -73,7 +72,6 @@ export const articleCategory = factory<ArticleCategory>({
 })
 
 export const article = factory<Article>({
-  typename: 'Article',
   id: () => faker.random.uuid(),
   title: () => title(),
   body: () => slice.list(3),
@@ -91,7 +89,6 @@ export const article = factory<Article>({
 })
 
 export const lifeEvent = factory<LifeEventPage>({
-  typename: 'LifeEventPage',
   id: () => faker.random.uuid(),
   title: () => title(),
   slug: slugify('title'),
@@ -143,7 +140,6 @@ export const articleGroup = factory<ArticleGroup>({
 })
 
 export const news = factory<News>({
-  typename: 'News',
   id: () => faker.random.uuid(),
   title: () => title(),
   slug: slugify('title'),
