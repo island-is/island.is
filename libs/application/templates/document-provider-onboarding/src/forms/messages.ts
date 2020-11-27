@@ -2,7 +2,6 @@ import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
   //Terms of agreement
-  //TODO add Notendaskilmálar and Öryggisskilmálar
   termsSection: {
     id: 'dpo.application:terms.section',
     defaultMessage: 'Skilmálar',
@@ -175,31 +174,22 @@ export const m = defineMessages({
   //ovierview
   overviewSection: {
     id: 'dpo.application:overview.section',
-  helpDeskChatbot: {
-    id: 'dpo.application:helpDesk.chatbot',
-    defaultMessage: 'Snjallmenni',
+    defaultMessage: 'Staðfesta',
     description: '',
   },
-  termsSection: {
-    id: 'dpo.application:terms.section',
-    defaultMessage: 'Skilmálar',
-    description: 'Some description',
+  overviewTitle: {
+    id: 'dpo.application:overview.title',
+    defaultMessage: 'Staðfesting umsóknar',
+    description: '',
   },
-  termsAgreement: {
-    id: 'dpo.application:terms.section',
-    defaultMessage: 'Skilmálar vegna notkunar á pósthólfi Island.is',
-    description: 'Some description',
+  overviewSubTitle: {
+    id: 'dpo.application:overview.subTitle',
+    defaultMessage:
+      'Þú ert að ljúka ferlinu. Vinsamlegast farðu yfir hvort allar upplýsingar séu réttar.',
+    description: '',
   },
-  userAgreementOptionLabel: {
-    id: 'dpo.application:userAgreement.option.label',
-    defaultMessage: 'Ég samþykki notendaskilmála',
-    description: 'Some description',
-  },
-  safetyAgreementOptionLabel: {
-    id: 'dpo.application:safetyAgreement.option.label',
-    defaultMessage: 'Ég samþykki öryggisskilmála',
-    description: 'Some description',
-  },
+
+  //Technical Agreement
   technicalAgreementOptionLabel: {
     id: 'dpo.application:technicalAgreement.option.label',
     defaultMessage: 'Ég staðfesti hér með að prófunum og forritun sé lokið',
@@ -213,17 +203,6 @@ export const m = defineMessages({
   confirmationSection: {
     id: 'dpo.application:confirmation.section',
     defaultMessage: 'Staðfesta',
-    description: '',
-  },
-  overviewTitle: {
-    id: 'dpo.application:overview.title',
-    defaultMessage: 'Staðfesting umsóknar',
-    description: '',
-  },
-  overviewSubTitle: {
-    id: 'dpo.application:overview.subTitle',
-    defaultMessage:
-      'Þú ert að ljúka ferlinu. Vinsamlegast farðu yfir hvort allar upplýsingar séu réttar.',
     description: '',
   },
 
