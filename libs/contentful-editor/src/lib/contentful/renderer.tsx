@@ -1,14 +1,21 @@
 import React from 'react'
 import { Text } from '@island.is/island-ui/core'
 import { SingleLineEditor } from '@contentful/field-editor-single-line'
-import { SingleMediaEditor } from '@contentful/field-editor-reference'
+import {
+  SingleEntryReferenceEditor,
+  SingleMediaEditor,
+} from '@contentful/field-editor-reference'
 import { RichTextEditor } from '@contentful/field-editor-rich-text'
-import { FieldAPI } from 'contentful-ui-extensions-sdk/typings'
+import {
+  BaseExtensionSDK,
+  FieldAPI,
+} from 'contentful-ui-extensions-sdk/typings'
 
 import { locales } from './locales'
 
-export const renderer = (field: FieldAPI, sdk: any) => {
+export const renderer = (field: FieldAPI, sdk: BaseExtensionSDK) => {
   console.log('-field.type', field.type)
+  console.log('-field', field)
 
   switch (field.type) {
     case 'Text':
@@ -21,6 +28,37 @@ export const renderer = (field: FieldAPI, sdk: any) => {
           isInitiallyDisabled={false}
         />
       )
+
+    /*
+    case 'Link':
+      // return (
+      //   <SingleEntryReferenceEditor
+      //     viewType="card"
+      //     sdk={{ ...sdk, field }}
+      //     isInitiallyDisabled={false}
+      //     parameters={{
+      //       instance: {
+      //         canCreateEntity: true,
+      //         canLinkEntity: true,
+      //       },
+      //     }}
+      //   />
+      // )
+
+      return (
+        <SingleMediaEditor
+          viewType="card"
+          sdk={{ ...sdk, field }}
+          isInitiallyDisabled={false}
+          parameters={{
+            instance: {
+              canCreateEntity: true,
+              canLinkEntity: true,
+            },
+          }}
+        />
+      )
+      */
 
     /*
     case 'Link':

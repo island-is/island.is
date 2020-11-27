@@ -24,6 +24,8 @@ export const env = {
   environment: 'master',
 }
 
+export const contentfulUrl = `https://app.contentful.com/spaces/${env.space}/entries`
+
 /**
  * LOGIN to an endpoint somewhere else first through oauth contentful application.
  * Get management token there (not working from what I tested so far)
@@ -47,6 +49,7 @@ export const withContentfulEditor = (
     const [data, setData] = useState<MagicType | undefined>(undefined)
     const [loading, setLoading] = useState(false)
     const [saving, setSaving] = useState(false)
+    const [error, setError] = useState<string | undefined>(undefined)
 
     const handleLoad = async () => {
       if (!slug || !contentType || !edit) {
@@ -54,6 +57,7 @@ export const withContentfulEditor = (
       }
 
       setLoading(true)
+      setError(undefined)
 
       try {
         const res = await initializer({
@@ -65,7 +69,11 @@ export const withContentfulEditor = (
 
         setData(res)
       } catch (e) {
-        console.log('-e', e)
+        console.log('-e.message', e.message)
+
+        if (e.message === 'Expected parameter accessToken') {
+          setError(e.message)
+        }
       }
 
       setLoading(false)
@@ -138,7 +146,12 @@ export const withContentfulEditor = (
         />
 
         {edit && (
-          <Sidebar data={data} loading={loading} onChange={handleChange} />
+          <Sidebar
+            data={data}
+            error={error}
+            loading={loading}
+            onChange={handleChange}
+          />
         )}
 
         <Component {...pageProps} />

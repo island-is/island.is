@@ -8,11 +8,17 @@ import * as styles from './Sidebar.treat'
 
 interface SidebarProps {
   data: MagicType | undefined
+  error?: string
   loading: boolean
   onChange(field: string, value: string): void
 }
 
-export const Sidebar: FC<SidebarProps> = ({ data, loading, onChange }) => {
+export const Sidebar: FC<SidebarProps> = ({
+  data,
+  error,
+  loading,
+  onChange,
+}) => {
   const handleChange = (field: string, value: string) => {
     console.log('-field', field)
     console.log('-value', value)
@@ -26,6 +32,12 @@ export const Sidebar: FC<SidebarProps> = ({ data, loading, onChange }) => {
         <Text as="h3" variant="h3" fontWeight="semiBold" marginBottom={3}>
           Contentful Editor Mode
         </Text>
+
+        {!loading && error && (
+          <Text fontWeight="medium" color="red600">
+            {error}
+          </Text>
+        )}
 
         {loading && <Text marginTop={2}>Loading...</Text>}
 

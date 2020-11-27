@@ -3,35 +3,25 @@ import type { Emitter, Handler } from 'mitt'
 import { ContentType } from 'contentful-management/dist/typings/entities/content-type'
 import { Space } from 'contentful-management/dist/typings/entities/space'
 import { Collection } from 'contentful-management/dist/typings/common-types'
-import {
-  Entry,
-  EntryProp,
-} from 'contentful-management/dist/typings/entities/entry'
-import {
-  BaseExtensionSDK,
-  FieldAPI,
-} from 'contentful-ui-extensions-sdk/typings'
-import { ContentFields } from 'contentful-management/dist/typings/entities/content-type-fields'
+import { Entry, EntryProp } from 'contentful-management/dist/typings/entities/entry'
+import { BaseExtensionSDK, FieldAPI } from 'contentful-ui-extensions-sdk/typings'
 
 import { ContentfulEnv, createContentfulClient } from '../contentful/client'
 import { getSdk } from '../contentful/sdk'
 
-type _Entry = Collection<Entry, EntryProp>
-type _Locale = 'en' | 'is-IS'
-
 interface InitializerProps {
   slug: string
   contentType: string
-  locale: _Locale
+  locale: 'en' | 'is-IS'
   env: ContentfulEnv
 }
 
 
 export interface MagicType {
-  _entry: _Entry
+  _entry: Collection<Entry, EntryProp>
   _space: Space
   _type: ContentType
-  _sdk: any // TODO
+  _sdk: BaseExtensionSDK
   fields: FieldAPI[]
 }
 
@@ -49,14 +39,18 @@ export const initializer = async ({
     'fields.slug': slug,
     locale,
   })
-  console.log('-entry', entry);
+  const firstEntry = entry.items?.[0]
+  console.log('-firstEntry', firstEntry);
 
   // We get the entry contentType
   const type = await client.getContentType(contentType)
   console.log('-type', type);
 
+  // We get all the assets of the space
+  const assets = await client.getAssets()
+
   // We get the data for SDK
-  const sdk = getSdk(space, type)
+  const sdk = getSdk(firstEntry, assets, space, type)
 
   // We merge both objects together to fit the contentful fields API
   const fields = type.fields
@@ -68,10 +62,10 @@ export const initializer = async ({
         locale,
         type: field.type,
         required: field.required,
-        validations: field.validations,
+        validations: field.validations as Object[], // Miss-type between `contentful-management` and `contentful-ui-extensions-sdk`
         items: field.items,
         getValue: () => {
-          const entryFields = entry.items?.[0].fields
+          const entryFields = firstEntry?.fields
           const fieldName = Object.keys(entryFields).find(
             (entryField) => entryField === field.id,
           )
