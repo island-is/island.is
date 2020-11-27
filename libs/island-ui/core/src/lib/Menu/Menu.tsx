@@ -34,15 +34,15 @@ export interface MenuProps {
   baseId: string
   /**
    * Element that opens the menu.
-   * It will be forwarded neccessery props for a11y and event handling.
+   * It will be forwarded necessary props for a11y and event handling.
    */
   menuButton?: ReactElement
   /**
-   * Render function for all links, usefull for wraping framework specific routing links
+   * Render function for all links, useful for wrapping framework specific routing links
    */
   renderLink?: (settings: RenderLinkObj) => ReactNode
   /**
-   * Render function for Logo, usefull for wraping framework specific routing links
+   * Render function for Logo, useful for wrapping framework specific routing links
    */
   renderLogo?: (logo: ReactNode) => ReactNode
   /**

@@ -38,14 +38,17 @@ export interface TextProps {
   marginTop?: ResponsiveSpace
   marginBottom?: ResponsiveSpace
   marginY?: ResponsiveSpace
-}
-export interface GetTextStylesProps {
   variant?: TextVariants
   color?: Colors
   truncate?: boolean
   fontWeight?: keyof typeof fontWeightStyles
   lineHeight?: keyof typeof lineHeightStyles
 }
+
+type GetTextStylesProps = Pick<
+  TextProps,
+  'variant' | 'color' | 'truncate' | 'fontWeight' | 'lineHeight'
+>
 
 export const getTextStyles = ({
   color,
@@ -64,7 +67,7 @@ export const getTextStyles = ({
     [truncateStyle]: truncate,
   })
 
-export const Text = forwardRef<HTMLElement, TextProps & GetTextStylesProps>(
+export const Text = forwardRef<HTMLElement, TextProps>(
   (
     {
       id,
