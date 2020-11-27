@@ -1,7 +1,7 @@
 import { createParamDecorator } from '@nestjs/common'
 
-import { AuthUser } from './auth.types'
+import { User } from '@island.is/judicial-system/types'
 
-export const CurrentAuthUser = createParamDecorator(
-  (data, { args: [_1, _2, { req }] }): AuthUser => req.user,
+export const CurrentUser = createParamDecorator(
+  (data, { args: [_1, _2, { req }] }): User => req.user,
 )
