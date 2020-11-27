@@ -73,6 +73,7 @@ export * from './lib/FormStepper/FormStepper'
 export * from './lib/FormStepper/types'
 export * from './lib/Pagination/Pagination'
 export * from './lib/Tabs/Tabs'
+export * from './lib/TableOfContents/TableOfContents'
 
 // Context
 export * from './lib/context'

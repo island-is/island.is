@@ -90,7 +90,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
             <Inline space={2}>
               {tags.map(({ title }, index) => {
                 return (
-                  <Tag key={index} variant="blue" label>
+                  <Tag key={index} variant="blue" outlined>
                     {title}
                   </Tag>
                 )
