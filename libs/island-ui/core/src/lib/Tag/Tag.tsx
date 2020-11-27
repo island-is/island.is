@@ -22,8 +22,7 @@ export interface TagProps {
   id?: string
   active?: boolean
   disabled?: boolean
-  label?: boolean
-  bordered?: boolean
+  outlined?: boolean
   attention?: boolean // Renders a red dot driving attention to the tag.
   children: string | ReactNode
 }
@@ -39,17 +38,15 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       variant = 'blue',
       active = false,
       disabled,
-      label,
-      bordered = false,
+      outlined = false,
       attention,
       ...props
     }: TagProps,
     ref,
   ) => {
     const className = cn(styles.container, styles.variants[variant], {
-      [styles.label]: label,
       [styles.active]: active,
-      [styles.bordered]: bordered,
+      [styles.outlined]: outlined,
       [styles.attention]: attention,
     })
 
@@ -70,7 +67,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       </Text>
     )
 
-    if (label) {
+    if (outlined) {
       return <span {...sharedProps}>{content}</span>
     }
 

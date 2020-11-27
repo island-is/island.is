@@ -38,7 +38,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
           content={userProfile?.email || ''}
           tag={
             userProfile?.email && userProfile?.emailVerified === true ? (
-              <Tag variant="darkerMint" label>
+              <Tag variant="darkerMint" outlined>
                 {formatMessage({
                   id: 'sp.settings:verified',
                   defaultMessage: 'Staðfest',
@@ -70,7 +70,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
           tag={
             userProfile?.mobilePhoneNumber &&
             userProfile?.mobilePhoneNumberVerified === true ? (
-              <Tag variant="darkerMint" label>
+              <Tag variant="darkerMint" outlined>
                 {formatMessage({
                   id: 'sp.settings:verified',
                   defaultMessage: 'Staðfest',

@@ -6,5 +6,8 @@ export default {
     jwtSecret: 'securesecret',
     allowAuthBypass: true,
   },
+  auditTrail: {
+    useGenericLogger: true,
+  },
   backendUrl: 'http://localhost:3344',
 }

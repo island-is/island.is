@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 
+import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
+
 import { environment } from '../environments'
 import { BackendAPI } from '../services'
 import { AuthModule, UserModule, CaseModule } from './modules/'
@@ -26,6 +28,7 @@ const autoSchemaFile = debug ? 'apps/judicial-system/api.graphql' : true
     AuthModule,
     UserModule,
     CaseModule,
+    AuditTrailModule,
   ],
   providers: [BackendAPI],
 })
