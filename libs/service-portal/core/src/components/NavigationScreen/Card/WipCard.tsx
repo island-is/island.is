@@ -22,7 +22,7 @@ export const WipCard: FC<Props> = ({ label }) => {
           </Column>
           <Column>
             <Box display="flex" justifyContent="flexEnd">
-              <Tag variant="blue" label>
+              <Tag variant="blue" outlined>
                 {label}
               </Tag>
             </Box>

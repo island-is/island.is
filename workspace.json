@@ -1534,6 +1534,41 @@
         }
       }
     },
+    "application-templates-passport": {
+      "root": "libs/application/templates/passport",
+      "sourceRoot": "libs/application/templates/passport/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/passport/tsconfig.lib.json",
+              "libs/application/templates/passport/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/passport/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/passport/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/templates/passport/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
     "application-templates-reference-template": {
       "root": "libs/application/templates/reference-template",
       "sourceRoot": "libs/application/templates/reference-template/src",
@@ -2562,6 +2597,35 @@
           }
         },
         "docker-express": {}
+      }
+    },
+    "judicial-system-audit-trail": {
+      "root": "libs/judicial-system/audit-trail",
+      "sourceRoot": "libs/judicial-system/audit-trail/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/judicial-system/audit-trail/tsconfig.lib.json",
+              "libs/judicial-system/audit-trail/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/judicial-system/audit-trail/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/judicial-system/audit-trail/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
       }
     },
     "judicial-system-backend": {

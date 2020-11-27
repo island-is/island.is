@@ -2,7 +2,6 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
-  buildIntroductionField,
   buildTextField,
   Form,
   ApplicationTypes,
@@ -143,10 +142,6 @@ export const DocumentProviderOnboarding: Form = buildForm({
               id: 'helpDesk.phoneNumber',
               name: m.helpDeskPhoneNumber,
               variant: 'tel',
-            }),
-            buildTextField({
-              id: 'helpDesk.chatbot',
-              name: m.helpDeskChatbot,
             }),
           ],
         }),

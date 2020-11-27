@@ -1,10 +1,6 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-import {
-  FieldBaseProps,
-  formatText,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { FieldBaseProps, formatText } from '@island.is/application/core'
 import {
   Accordion,
   AccordionItem,
@@ -12,13 +8,8 @@ import {
   GridColumn,
   GridRow,
   Input,
-  Text,
 } from '@island.is/island-ui/core'
-import {
-  FieldDescription,
-  RadioController,
-  SelectController,
-} from '@island.is/shared/form-fields'
+import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
 const Review: FC<FieldBaseProps> = ({ field, application }) => {
@@ -182,18 +173,6 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                     id={'helpDesk.phoneNumber'}
                     name={'helpDesk.phoneNumber'}
                     label={'Símanúmer'}
-                    ref={register}
-                  />
-                </GridColumn>
-              </GridRow>
-              <Box marginTop={3} />
-              <GridRow>
-                {/* Maybe add condition here, because this can be empty ? opinions */}
-                <GridColumn span="6/12">
-                  <Input
-                    id={'helpDesk.chatbot'}
-                    name={'helpDesk.chatbot'}
-                    label={'Snjallmenni'}
                     ref={register}
                   />
                 </GridColumn>

@@ -40,7 +40,6 @@ const FormMultiField: FC<{
                 showFieldName
                 field={field as FieldDef}
                 key={field.id}
-                autoFocus={index === 0}
                 errors={errors}
               />
             </Box>

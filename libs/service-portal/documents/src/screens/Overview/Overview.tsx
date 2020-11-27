@@ -266,7 +266,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   {hasActiveFilters() && (
                     <Columns space={3}>
                       <Column>
-                        <Text variant="h3">{`${
+                        <Text variant="h3" as="h3">{`${
                           filteredDocuments.length
                         } ${formatMessage(documentsFoundText())}`}</Text>
                       </Column>
@@ -286,7 +286,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             {loading && <ActionCardLoader repeat={3} />}
             {error && (
               <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-                <Text variant="h3">
+                <Text variant="h3" as="h3">
                   {formatMessage({
                     id: 'sp.documents:error',
                     defaultMessage:
@@ -297,7 +297,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             )}
             {!loading && !error && filteredDocuments?.length === 0 && (
               <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-                <Text variant="h3">
+                <Text variant="h3" as="h3">
                   {formatMessage({
                     id: 'sp.documents:not-found',
                     defaultMessage:

@@ -10,8 +10,8 @@ import { IdentityResourceUserClaim } from '../entities/models/identity-resource-
 import { ApiResourceSecret } from '../entities/models/api-resource-secret.model'
 import { ApiResourceUserClaim } from '../entities/models/api-resource-user-claim.model'
 import { ApiScopeUserClaim } from '../entities/models/api-scope-user-claim.model'
-import { IdentityResourcesDTO } from '../entities/dto/identity-resources-dto'
-import { ApiScopesDTO } from '../entities/dto/api-scopes-dto'
+import { IdentityResourcesDTO } from '../entities/dto/identity-resources.dto'
+import { ApiScopesDTO } from '../entities/dto/api-scopes.dto'
 
 @Injectable()
 export class ResourcesService {

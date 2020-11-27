@@ -19,7 +19,7 @@ export const FormSubmittedStep: FC<Props> = ({ onClose }) => {
     <>
       <GridRow>
         <GridColumn order={[2, 2, 1]} span={['1/1', '1/1', '4/7']}>
-          <Text variant="h1" marginBottom={2}>
+          <Text variant="h1" as="h1" marginBottom={2}>
             {formatMessage({
               id: 'sp.settings:good-job',
               defaultMessage: 'Vel gert!',

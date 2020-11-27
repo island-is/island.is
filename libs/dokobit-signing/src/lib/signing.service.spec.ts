@@ -3,7 +3,7 @@ import { createHash } from 'crypto'
 
 import { Test, TestingModule } from '@nestjs/testing'
 
-import { LOGGER_PROVIDER, logger } from '@island.is/logging'
+import { LoggingModule } from '@island.is/logging'
 
 import { SigningService, SIGNING_OPTIONS } from './signing.service'
 
@@ -86,11 +86,8 @@ describe('SigningService', () => {
     fetchMock.mockClear()
 
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggingModule],
       providers: [
-        {
-          provide: LOGGER_PROVIDER,
-          useValue: logger,
-        },
         {
           provide: SIGNING_OPTIONS,
           useValue: testOptions,

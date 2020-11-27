@@ -62,13 +62,14 @@ import {
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
-
+import { EmailService } from '@island.is/email-service'
 // @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
 @ApiTags('applications')
 @Controller()
 export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
+    private readonly emailService: EmailService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
   ) {}
 
@@ -308,8 +309,12 @@ export class ApplicationController {
       template,
     )
 
-    const [hasChanged, newState, newApplication] = helper.changeState(
-      updateApplicationStateDto.event,
+    const [
+      hasChanged,
+      newState,
+      newApplication,
+    ] = helper.changeState(updateApplicationStateDto.event, (emailTemplate) =>
+      this.emailService.sendEmail(emailTemplate),
     )
 
     if (hasChanged) {

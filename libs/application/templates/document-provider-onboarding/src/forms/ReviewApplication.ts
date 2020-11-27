@@ -26,12 +26,6 @@ export const ReviewApplication: Form = buildForm({
           id: 'overview',
           name: 'Umsókn um að gerast skjalaveitandi:',
           children: [
-            buildDividerField({ name: 'Skilmálar' }),
-            buildIntroductionField({
-              id: 'ToDO',
-              name: 'TODO',
-              introduction: 'TODO',
-            }),
             buildDividerField({ name: 'Umsækjandi' }),
             buildTextField({
               id: 'applicant.name',
@@ -111,12 +105,6 @@ export const ReviewApplication: Form = buildForm({
               disabled: true,
               width: 'half',
             }),
-            buildTextField({
-              id: 'helpDesk.chatbot',
-              name: m.helpDeskChatbot,
-              disabled: true,
-            }),
-            buildDividerField({ name: 'Skjöl' }),
             buildSubmitField({
               id: 'approvedByReviewer',
               name: 'Samþykkir þú þessa umsókn?',
