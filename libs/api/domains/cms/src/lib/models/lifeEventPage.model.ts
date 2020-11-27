@@ -8,9 +8,6 @@ import { Slice, mapDocument } from './slice.model'
 
 @ObjectType()
 export class LifeEventPage {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -40,7 +37,6 @@ export const mapLifeEventPage = ({
   fields,
   sys,
 }: ILifeEventPage): LifeEventPage => ({
-  typename: 'LifeEventPage',
   id: sys.id,
   title: fields.title ?? '',
   slug: fields.slug ?? '',

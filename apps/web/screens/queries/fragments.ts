@@ -71,7 +71,6 @@ export const slices = gql`
     id
     title
     news {
-      typename
       id
       title
       subtitle
@@ -255,7 +254,6 @@ export const slices = gql`
 
   fragment LocationFields on Location {
     __typename
-    typename
     id
     title
     subTitle

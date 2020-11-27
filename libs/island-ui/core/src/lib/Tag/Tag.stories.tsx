@@ -60,6 +60,9 @@ export const outlined = () => (
         <Tag variant="white" outlined>
           Færnimat
         </Tag>
+        <Tag variant="rose" outlined>
+          Færnimat
+        </Tag>
         <Tag variant="darkerMint" outlined attention>
           Mikilvægt
         </Tag>
