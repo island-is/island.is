@@ -16,7 +16,7 @@ export default {
   }),
 }
 
-const getDemoTags = (amount) => {
+const getDemoTags = (amount: number) => {
   const demoTags = [
     'Fæðingarorlof',
     'Leikskóli',
@@ -154,4 +154,12 @@ export const NoTagsLayout = () => (
       </GridColumn>
     </GridRow>
   </GridContainer>
+)
+
+export const OnlyLabelTag = () => (
+  <CategoryCard
+    heading="Atvinnurekstur og sjálfstætt starfandi"
+    text="Stofnun fyrirtækja, launagreiðslur, gjaldþrot, löggildingar, starfsleyfi, vinnuvernd og fleira"
+    tags={[{ label: 'Not clickable' }]}
+  />
 )
