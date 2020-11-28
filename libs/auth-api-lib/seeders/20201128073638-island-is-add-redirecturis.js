@@ -7,7 +7,8 @@ module.exports = {
     return queryInterface.bulkInsert('client_redirect_uri', [
       {
         client_id: 'island-is-1',
-        redirect_uri: 'https://service-portal.staging01.devland.is/silent/signin-oidc',
+        redirect_uri:
+          'https://service-portal.staging01.devland.is/silent/signin-oidc',
       },
       {
         client_id: 'island-is-1',
@@ -15,7 +16,8 @@ module.exports = {
       },
       {
         client_id: 'island-is-1',
-        redirect_uri: 'https://umsoknir.staging01.devland.is/silent/signin-oidc',
+        redirect_uri:
+          'https://umsoknir.staging01.devland.is/silent/signin-oidc',
       },
       {
         client_id: 'island-is-1',
@@ -28,7 +30,8 @@ module.exports = {
     return queryInterface.bulkDelete('client_redirect_uri', [
       {
         client_id: 'island-is-1',
-        redirect_uri: 'https://service-portal.staging01.devland.is/silent/signin-oidc',
+        redirect_uri:
+          'https://service-portal.staging01.devland.is/silent/signin-oidc',
       },
       {
         client_id: 'island-is-1',
@@ -36,7 +39,8 @@ module.exports = {
       },
       {
         client_id: 'island-is-1',
-        redirect_uri: 'https://umsoknir.staging01.devland.is/silent/signin-oidc',
+        redirect_uri:
+          'https://umsoknir.staging01.devland.is/silent/signin-oidc',
       },
       {
         client_id: 'island-is-1',
