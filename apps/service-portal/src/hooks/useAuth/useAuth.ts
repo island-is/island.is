@@ -1,6 +1,7 @@
 import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
 import { userManager } from '../../utils/userManager'
+import { User } from '@sentry/react'
 
 const useAuth = () => {
   const [{ userInfo, userInfoState }, dispatch] = useStore()
@@ -10,9 +11,18 @@ const useAuth = () => {
       type: ActionType.SetUserPending,
     })
 
-    userManager.signinRedirect({
-      state: window.location.pathname,
-    })
+    const user = await userManager.getUser()
+
+    if (user) {
+      dispatch({
+        type: ActionType.SetUserFulfilled,
+        payload: user,
+      })
+    } else {
+      userManager.signinRedirect({
+        state: window.location.pathname,
+      })
+    }
   }
 
   async function signOutUser() {
