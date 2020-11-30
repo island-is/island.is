@@ -1,7 +1,8 @@
 .client,
 .identity-resource,
 .client-redirect,
-.client-idp-restriction {
+.client-idp-restriction,
+.paginator {
   &__wrapper {
     max-width: 1024px;
   }

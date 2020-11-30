@@ -30,9 +30,9 @@ class Clients extends Component {
     this.getClients(this.state.page, this.state.page) 
   };
 
-  handlePageChange = async (page: number) => {
-    this.getClients(page, this.state.count);
-    this.setState({ page: page});
+  handlePageChange = async (page: number, count: number) => {
+    this.getClients(page, count);
+    this.setState({ page: page, count: count});
   };
 
   delete = async (clientId: string) => {
@@ -47,17 +47,6 @@ class Clients extends Component {
     console.log(client);
   };
 
-  changeCount(count: string) {
-    this.getClients(1, +count);
-
-    this.setState({
-      count: +count,
-      page: 1,
-    });
-
-    console.log("Count is: " + this.state.count);
-  }
-
   render() {
     return (
       <div className="clients__container">
@@ -68,21 +57,7 @@ class Clients extends Component {
               <a className="clients__button__new">Create new client</a>
             </Link>
           </div>
-          <div className="clients__container__field">
-            <label htmlFor="count" className="clients__label">
-              Fjöldi á síðu
-            </label>
-            <select
-              id="count"
-              onChange={(e) => this.changeCount(e.target.value)}
-              className="clients__select"
-            >
-              <option value="1">1</option>
-              <option value="30">30</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-            </select>
-          </div>
+         
         </div>
         <div className="client__container__table">
           <table className="clients__table">
@@ -122,7 +97,6 @@ class Clients extends Component {
           </table>
         </div>
         <Paginator
-          page
           lastPage={this.state.lastPage}
           handlePageChange={this.handlePageChange}
         />

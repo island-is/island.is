@@ -1,15 +1,16 @@
 import React, { Component } from "react";
 
-class Paginator extends Component<{pageNumber: number, lastPage: number; handlePageChange: any }> {
+class Paginator extends Component<{lastPage: number; handlePageChange: any }> {
   page = 1;
+  count = 1;
 
-  componentDidMount() {
-    if (this.props.pageNumber === 1){
-      console.log("change pageNumber");
-      this.page = 1;
-    }
-
-    this.render();
+  changeCount(count: string) {
+    this.setState({
+      count: +count,
+      page: 1,
+    });
+    console.log("this.page " + this.page);
+    this.props.handlePageChange(1, +count);
   }
 
   next = async () => {
@@ -18,7 +19,7 @@ class Paginator extends Component<{pageNumber: number, lastPage: number; handleP
     }
 
     this.page++;
-    this.props.handlePageChange(this.page);
+    this.props.handlePageChange(this.page, this.count);
   };
 
   previous = async () => {
@@ -27,7 +28,7 @@ class Paginator extends Component<{pageNumber: number, lastPage: number; handleP
     }
 
     this.page--;
-    this.props.handlePageChange(this.page);
+    this.props.handlePageChange(this.page, this.count);
   };
 
   render() {
@@ -35,7 +36,8 @@ class Paginator extends Component<{pageNumber: number, lastPage: number; handleP
     console.log("Paginator: " + this.props.lastPage);
 
     return (
-      <nav className="paginator__pagination">
+      <div className="paginator">
+        <nav className="paginator__pagination">
         <li className="paginator__page-item">
           <button
             onClick={this.previous}
@@ -55,6 +57,26 @@ class Paginator extends Component<{pageNumber: number, lastPage: number; handleP
           </button>
         </li>
       </nav>
+      <div className="paginator__container__form">
+      <div className="paginator__container__field">
+            <label htmlFor="count" className="paginator__label">
+              Fjöldi á síðu
+            </label>
+            <select
+              id="count"
+              onChange={(e) => this.changeCount(e.target.value)}
+              className="paginator__select"
+            >
+              <option value="1">1</option>
+              <option value="30">30</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </div>
+      </div>
+         
+      </div>
+      
     );
   }
 }

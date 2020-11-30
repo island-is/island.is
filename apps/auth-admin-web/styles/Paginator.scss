@@ -1,0 +1,14 @@
+.paginator {
+  display: flex;
+
+  &__pagination {
+    flex-basis: 60%;
+  }
+
+  &__container__form {
+    flex-basis: 40%;
+    padding: 0;
+    background: none;
+    border-radius: none;
+  }
+}
