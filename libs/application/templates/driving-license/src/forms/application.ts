@@ -30,7 +30,7 @@ export const application: Form = buildForm({
               id: 'type',
               name: 'Tegund ökutækja',
               largeButtons: true,
-              halve: true,
+              width: 'half',
               options: [
                 { value: 'general', label: 'Almenn ökuréttindi' },
                 { value: 'truck', label: 'Vöru- eða hópbifreiðaréttindi' },

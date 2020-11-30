@@ -28,7 +28,7 @@ const RadioFormField: FC<Props> = ({
     name,
     description,
     options,
-    halve,
+    width,
     emphasize,
     largeButtons,
   } = field
@@ -64,7 +64,7 @@ const RadioFormField: FC<Props> = ({
           id={id}
           disabled={disabled}
           error={error}
-          halve={halve}
+          halve={width === 'half'}
           name={`${id}`}
           defaultValue={getValueViaPath(application.answers, id) as string[]}
           options={finalOptions.map(({ label, tooltip, ...o }) => ({
