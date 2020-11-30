@@ -5,7 +5,7 @@ import { getShortGender } from '../../utils/stepHelper'
 import * as styles from './InfoCard.treat'
 
 interface Props {
-  data: Array<{ title: string; value: string }>
+  data: Array<{ title: string; value?: string }>
   accusedName?: string
   accusedGender?: CaseGender
   accusedNationalId?: string
@@ -26,7 +26,12 @@ const InfoCard: React.FC<Props> = (props: PropsWithChildren<Props>) => {
       </Box>
       <Box className={styles.infoCardDataContainer}>
         {props.data.map((dataItem, index) => (
-          <Box className={styles.infoCardData} key={index}>
+          <Box
+            className={styles.infoCardData}
+            // Should be applied to every element except the last two
+            marginBottom={index < props.data.length - 2 ? 1 : 0}
+            key={index}
+          >
             <Text variant="h4">{dataItem.title}</Text>
             <Text>{dataItem.value}</Text>
           </Box>

@@ -1,6 +1,6 @@
 import React from 'react'
 import { AppealDecisionRole, RequiredField } from '../types'
-import { Text } from '@island.is/island-ui/core'
+import { TagVariant, Text } from '@island.is/island-ui/core'
 import {
   formatDate,
   formatNationalId,
@@ -218,6 +218,28 @@ export const getShortGender = (gender?: CaseGender): string => {
     }
     default: {
       return ''
+    }
+  }
+}
+
+export const getRestrictionTagVariant = (
+  restriction: CaseCustodyRestrictions,
+): TagVariant => {
+  switch (restriction) {
+    case CaseCustodyRestrictions.COMMUNICATION: {
+      return 'rose'
+    }
+    case CaseCustodyRestrictions.ISOLATION: {
+      return 'red'
+    }
+    case CaseCustodyRestrictions.MEDIA: {
+      return 'blueberry'
+    }
+    case CaseCustodyRestrictions.VISITAION: {
+      return 'purple'
+    }
+    default: {
+      return 'darkerBlue'
     }
   }
 }
