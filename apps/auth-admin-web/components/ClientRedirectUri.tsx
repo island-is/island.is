@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import StatusBar from './StatusBar';
 import HelpBox from './HelpBox';
-import { AddRedirectUri } from '../services/client.service';
 import axios from 'axios';
 import APIResponse from '../models/APIResponse';
 
