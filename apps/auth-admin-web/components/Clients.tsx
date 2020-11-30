@@ -54,6 +54,8 @@ class Clients extends Component {
       count: +count,
       page: 1,
     });
+
+    console.log("Count is: " + this.state.count);
   }
 
   render() {
@@ -98,7 +100,7 @@ class Clients extends Component {
                     <td>{client.clientId}</td>
                     <td>{client.identityTokenLifetime}</td>
                     <td>
-                      <button
+                      <button type="button"
                         className="clients__button__edit"
                         onClick={() => this.edit(client)}
                       >
@@ -106,7 +108,7 @@ class Clients extends Component {
                       </button>
                     </td>
                     <td>
-                      <button
+                      <button type="button"
                         className="clients__button__delete"
                         onClick={() => this.delete(client.clientId)}
                       >

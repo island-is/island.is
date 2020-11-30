@@ -37,7 +37,7 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
         }
       }
       
-  }, [])
+  });
 
   const add = async (data) => {
     const clientRedirect = new ClientRedirectUriDTO();

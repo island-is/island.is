@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
-class Paginator extends Component<{ lastPage: number; handlePageChange: any }> {
-  page: number = 1;
+class Paginator extends Component<{pageInput: number, lastPage: number; handlePageChange: any }> {
+  page = 1;
 
   componentDidMount() {
     this.render();

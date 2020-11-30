@@ -1,14 +1,12 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import ClientDTO from '../models/dtos/client-dto';
 import axios from 'axios';
 import StatusBar from './StatusBar';
 import APIResponse from '../models/APIResponse';
-import { useRouter } from 'next/router';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import * as yup from 'yup';
 import HelpBox from './HelpBox';
-import { IdpRestrictionDTO } from '../models/dtos/idp-restriction.dto';
+
 
 interface Props {
   client: ClientDTO;
@@ -16,7 +14,7 @@ interface Props {
 }
 
 const Client: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState, control } = useForm<
+  const { register, handleSubmit, errors, formState } = useForm<
     ClientDTO
   >();
   const { isSubmitting } = formState;
@@ -64,6 +62,7 @@ const Client: React.FC<Props> = (props: Props) => {
         setResponse(res);
         if (res.statusCode === 201) {
           console.log('handle change');
+          console.log(clientObject);
           props.onNextButtonClick(clientObject);
         }
       })
@@ -701,7 +700,7 @@ const Client: React.FC<Props> = (props: Props) => {
                     type="submit"
                     className="client__button__save"
                     disabled={isSubmitting || !available}
-                    value="Save"
+                    value="Next"
                   />
                 </div>
               </div>
