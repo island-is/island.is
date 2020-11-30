@@ -10,6 +10,7 @@ import {
   Case,
   CaseAppealDecision,
   CaseCustodyRestrictions,
+  CaseGender,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
 
@@ -202,4 +203,21 @@ export const isNextDisabled = (requiredFields: RequiredField[]) => {
  */
 export const isDirty = (value?: string | null): boolean => {
   return typeof value === 'string'
+}
+
+export const getShortGender = (gender?: CaseGender): string => {
+  switch (gender) {
+    case CaseGender.MALE: {
+      return 'kk'
+    }
+    case CaseGender.FEMALE: {
+      return 'kvk'
+    }
+    case CaseGender.OTHER: {
+      return 'annað'
+    }
+    default: {
+      return ''
+    }
+  }
 }
