@@ -143,10 +143,6 @@ export const DocumentProviderOnboarding: Form = buildForm({
               name: m.helpDeskPhoneNumber,
               variant: 'tel',
             }),
-            buildTextField({
-              id: 'helpDesk.chatbot',
-              name: m.helpDeskChatbot,
-            }),
           ],
         }),
       ],

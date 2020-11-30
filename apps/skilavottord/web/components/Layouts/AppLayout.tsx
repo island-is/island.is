@@ -1,17 +1,21 @@
-import React, { FC, ReactNode, useState } from 'react'
+import React, { createContext, FC, ReactNode, useState } from 'react'
 import Head from 'next/head'
 import { Header } from '../../components'
 
 import { Page, GridContainer } from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/skilavottord-web/context'
+import { User } from '@island.is/skilavottord-web/types'
 
 interface LayoutProps {
   children: ReactNode
   isAuthenticated?: boolean
 }
 
-export const AppLayout: FC<LayoutProps> = ({ children, isAuthenticated }) => {
-  const [user, setUser] = useState(null)
+export const AppLayout: FC<LayoutProps> = ({
+  children,
+  isAuthenticated = false,
+}) => {
+  const [user, setUser] = useState<User>()
   return (
     <UserContext.Provider value={{ isAuthenticated, user, setUser }}>
       <Page>

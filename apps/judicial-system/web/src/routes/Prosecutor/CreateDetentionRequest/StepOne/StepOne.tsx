@@ -90,6 +90,7 @@ export const CreateCaseMutation = gql`
       }
       courtCaseNumber
       courtDate
+      isCourtDateInThePast
       courtRoom
       defenderName
       defenderEmail

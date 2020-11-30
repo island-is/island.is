@@ -51,7 +51,7 @@ function I18n({ children, locale, translations }: PropTypes) {
   const i18nWrapper = {
     activeLocale: activeLocaleRef.current,
     t: translations,
-    locale: (l, dict) => {
+    locale: (l: Locale, dict: any) => {
       i18n.locale(l)
       activeLocaleRef.current = l
       if (dict) {

@@ -36,6 +36,7 @@ export const CasesQuery = gql`
       policeCaseNumber
       accusedNationalId
       accusedName
+      isCourtDateInThePast
       custodyEndDate
     }
   }
@@ -140,7 +141,10 @@ export const DetentionRequests: React.FC = () => {
                   {format(parseISO(c.created), 'PP', { locale: localeIS })}
                 </td>
                 <td>
-                  <Tag variant={mapCaseStateToTagVariant(c.state).color} label>
+                  <Tag
+                    variant={mapCaseStateToTagVariant(c.state).color}
+                    outlined
+                  >
                     {mapCaseStateToTagVariant(c.state).text}
                   </Tag>
                 </td>
@@ -154,6 +158,8 @@ export const DetentionRequests: React.FC = () => {
                     to={
                       isJudge
                         ? `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
+                        : c.isCourtDateInThePast
+                        ? `${Constants.STEP_THREE_ROUTE}/${c.id}`
                         : `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
                     }
                     style={{ textDecoration: 'none', whiteSpace: 'nowrap' }}

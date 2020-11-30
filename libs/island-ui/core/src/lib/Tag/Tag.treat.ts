@@ -82,32 +82,49 @@ export const variants = styleMap({
   label: {},
 })
 
-export const bordered = style({
+export const outlined = style({
+  backgroundColor: theme.color.white,
   selectors: {
     [`&${variants.blue}`]: {
       borderColor: theme.color.blue200,
+      color: theme.color.blue400,
     },
     [`&${variants.darkerBlue}`]: {
-      borderColor: theme.color.blue300,
+      borderColor: theme.color.blue200,
+      color: theme.color.blue600,
     },
     [`&${variants.white}`]: {
-      borderColor: theme.color.blue400,
+      borderColor: theme.color.blue200,
+      color: theme.color.blue400,
     },
     [`&${variants.purple}`]: {
       borderColor: theme.color.purple200,
+      color: theme.color.purple400,
     },
     [`&${variants.red}`]: {
       borderColor: theme.color.red200,
+      color: theme.color.red600,
     },
     [`&${variants.mint}`]: {
       borderColor: theme.color.mint200,
+      color: theme.color.mint400,
     },
     [`&${variants.darkerMint}`]: {
-      borderColor: theme.color.mint300,
+      borderColor: theme.color.mint200,
+      color: theme.color.mint600,
+    },
+    [`&${variants.rose}`]: {
+      borderColor: theme.color.roseTinted200,
+      color: theme.color.roseTinted400,
     },
     [`&${variants.blueberry}`]: {
       borderColor: theme.color.blueberry200,
+      color: theme.color.blueberry400,
     },
+  },
+
+  [':hover']: {
+    backgroundColor: theme.color.white,
   },
 })
 
@@ -126,10 +143,6 @@ export const active = style({
       color: theme.color.blueberry400,
     },
   },
-})
-
-export const label = style({
-  pointerEvents: 'none',
 })
 
 export const attention = style({

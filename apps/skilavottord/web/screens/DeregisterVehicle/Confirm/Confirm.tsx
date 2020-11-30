@@ -25,6 +25,7 @@ import {
 } from '@island.is/skilavottord-web/components'
 import { CREATE_RECYCLING_REQUEST_COMPANY } from '@island.is/skilavottord-web/graphql/mutations'
 import { VEHICLE_TO_DEREGISTER } from '@island.is/skilavottord-web/graphql/queries'
+import { RecyclingRequestMutation } from '@island.is/skilavottord-web/types'
 
 const Confirm: FC = () => {
   const { user } = useContext(UserContext)
@@ -46,7 +47,7 @@ const Confirm: FC = () => {
   const [
     setRecyclingRequest,
     { data: mutationData, error: mutationError, loading: mutationLoading },
-  ] = useMutation(CREATE_RECYCLING_REQUEST_COMPANY, {
+  ] = useMutation<RecyclingRequestMutation>(CREATE_RECYCLING_REQUEST_COMPANY, {
     onError() {
       return mutationError
     },
@@ -84,7 +85,7 @@ const Confirm: FC = () => {
 
   if (mutationError || mutationLoading || mutationResponse?.message) {
     return (
-      <ProcessPageLayout sectionType={'company'} activeSection={1}>
+      <ProcessPageLayout processType={'company'} activeSection={1}>
         {mutationLoading ? (
           <Box textAlign="center">
             <Stack space={4}>
@@ -114,7 +115,7 @@ const Confirm: FC = () => {
   }
 
   return (
-    <ProcessPageLayout sectionType={'company'} activeSection={1}>
+    <ProcessPageLayout processType={'company'} activeSection={1}>
       <Stack space={4}>
         {vehicle ? (
           <Stack space={4}>

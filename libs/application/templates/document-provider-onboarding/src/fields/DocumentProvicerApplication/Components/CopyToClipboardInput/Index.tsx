@@ -25,7 +25,6 @@ export const CopyToClipboardInput: FC<CopyToClipboardInputProps> = ({
   }
 
   const buttonRef = useRef<HTMLButtonElement>(null)
-  //TODO Change icon on button to copy icon
   return (
     <Box>
       <Box position="relative">
@@ -40,7 +39,7 @@ export const CopyToClipboardInput: FC<CopyToClipboardInputProps> = ({
             ref={buttonRef}
             circle
             colorScheme="default"
-            icon="documents"
+            icon="copy"
             iconType="outline"
             onClick={() => {
               copyToClipboard(inputValue)

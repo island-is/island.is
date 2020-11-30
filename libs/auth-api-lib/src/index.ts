@@ -22,13 +22,17 @@ export * from './lib/entities/models/identity-resource-user-claim.model'
 export * from './lib/entities/models/identity-resource.model'
 
 // DTO's
-export * from './lib/entities/dto/api-scopes-dto'
-export * from './lib/entities/dto/identity-resources-dto'
+export * from './lib/entities/dto/api-scopes.dto'
+export * from './lib/entities/dto/identity-resources.dto'
 export * from './lib/entities/dto/claim.dto'
-export * from './lib/entities/dto/client-dto'
-export * from './lib/entities/dto/client-update-dto'
-export * from './lib/entities/dto/grant-dto'
+export * from './lib/entities/dto/client.dto'
+export * from './lib/entities/dto/client-update.dto'
+export * from './lib/entities/dto/grant.dto'
 export * from './lib/entities/dto/user-identity.dto'
+export * from './lib/entities/dto/client-idp-restriction.dto'
+export * from './lib/entities/dto/client-allowed-cors-origin.dto'
+export * from './lib/entities/dto/client-redirect-uri.dto'
+export * from './lib/entities/dto/active.dto'
 
 // Services
 export * from './lib/services/clients.service'

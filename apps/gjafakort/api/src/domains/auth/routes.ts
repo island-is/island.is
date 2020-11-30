@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { body, query, validationResult } from 'express-validator'
 import jwt from 'jsonwebtoken'
 import { Entropy } from 'entropy-string'
-import IslandisLogin from 'islandis-login'
+import IslandisLogin, { VerifyResult } from 'islandis-login'
 import { uuid } from 'uuidv4'
 import kennitala from 'kennitala'
 
@@ -13,7 +13,6 @@ import {
 } from '@island.is/gjafakort/consts'
 
 import { Credentials } from '../../types'
-import { VerifyResult } from './types'
 import {
   ACCESS_TOKEN_COOKIE,
   CSRF_COOKIE,

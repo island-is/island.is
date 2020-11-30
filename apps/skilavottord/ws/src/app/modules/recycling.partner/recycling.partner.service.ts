@@ -15,38 +15,43 @@ export class RecyclingPartnerService {
     private recyclingRequestModel: typeof RecyclingRequestModel,
   ) {}
 
-  static createDefaultRecyclingPartner(): void {
-    logger.debug('.......START INSIDE STATIC.........')
-    const defaultRp = new RecyclingPartnerModel()
-    defaultRp.companyId = '0000000000'
-    defaultRp.companyName = 'unknown'
-    defaultRp.save()
-    logger.debug('.......END INSIDE STATIC.........')
-  }
-
   async findByPartnerId(companyId: string): Promise<RecyclingPartnerModel> {
     this.logger.info(`Finding recycling partner by companyId - "${companyId}"`)
-    return this.recyclingPartnerModel.findOne({
-      where: { companyId },
-    })
+    try {
+      return await this.recyclingPartnerModel.findOne({
+        where: { companyId },
+      })
+    } catch (error) {
+      this.logger.error('error findByPartnerId:' + error)
+    }
   }
 
   async findAll(): Promise<RecyclingPartnerModel[]> {
-    const res = await this.recyclingPartnerModel.findAll()
-    this.logger.info(
-      'findAll-recyclingPartners result:' + JSON.stringify(res, null, 2),
-    )
-    return res
+    this.logger.info('find all recycling-partners...')
+    try {
+      const res = await this.recyclingPartnerModel.findAll()
+      this.logger.info(
+        'findAll-recyclingPartners result:' + JSON.stringify(res, null, 2),
+      )
+      return res
+    } catch (error) {
+      this.logger.error('error finding all recycling-partners:' + error)
+    }
   }
 
   async findActive(): Promise<RecyclingPartnerModel[]> {
-    const res = await this.recyclingPartnerModel.findAll({
-      where: { active: true },
-    })
-    this.logger.info(
-      'findAll-recyclingPartners result:' + JSON.stringify(res, null, 2),
-    )
-    return res
+    this.logger.info('findActive recycling partner...')
+    try {
+      const res = await this.recyclingPartnerModel.findAll({
+        where: { active: true },
+      })
+      this.logger.info(
+        'findAll-recyclingPartners result:' + JSON.stringify(res, null, 2),
+      )
+      return res
+    } catch (error) {
+      this.logger.error('error finding active recycling partner:' + error)
+    }
   }
 
   async createRecyclingPartner(
@@ -55,7 +60,11 @@ export class RecyclingPartnerService {
     this.logger.info(
       'Creating recycling partner:' + JSON.stringify(recyclingPartner, null, 2),
     )
-    await recyclingPartner.save()
-    return true
+    try {
+      await recyclingPartner.save()
+      return true
+    } catch (error) {
+      this.logger.error('error creating recyclingpartner:' + error)
+    }
   }
 }

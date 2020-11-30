@@ -32,6 +32,7 @@ export const CaseQuery = gql`
       }
       courtCaseNumber
       courtDate
+      isCourtDateInThePast
       courtRoom
       defenderName
       defenderEmail
