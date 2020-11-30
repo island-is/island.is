@@ -6,6 +6,8 @@ import {
   GridRow,
   GridColumn,
   Hidden,
+  Divider,
+  UseBoxStylesProps,
 } from '@island.is/island-ui/core'
 import { Main, Sticky } from '../../components'
 
@@ -156,5 +158,61 @@ export const NewsItemLayout: FC<NewsItemProps> = ({ sidebar, children }) => (
     </Box>
   </GridContainer>
 )
+
+interface SubpageProps {
+  main: ReactNode
+  detailsHeader?: ReactNode
+  details?: ReactNode
+}
+export const SubpageLayout: FC<SubpageProps> = ({ main, detailsHeader, details }) => {
+  return (
+    <Box width='full'>
+      <Box paddingBottom={6}>
+        <GridContainer>
+          <GridRow>
+            <GridColumn span='12/12'>
+              {main}
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Box>
+      {details &&  (
+          <Box background='blue100'>
+            <SubpageDetailsLayout header={detailsHeader}>
+              {details}
+            </SubpageDetailsLayout>
+          </Box>
+      )}
+    </Box>
+  )
+}
+
+interface SubpageDetailsProps {
+  header: ReactNode
+}
+export const SubpageDetailsLayout: FC<SubpageDetailsProps> = ({ header, children }) => {
+  return (
+    <Box paddingTop={4}>
+      <Box paddingBottom={4}>
+        <GridContainer>
+          <GridRow>
+            <GridColumn span='12/12'>
+              {header}
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Box>
+      <Box>
+        <GridContainer>
+          <GridRow>
+            <GridColumn span='12/12'>
+              {children}
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Box>
+    </Box>
+  )
+}
 
 export default ArticleLayout
