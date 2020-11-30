@@ -226,7 +226,7 @@ export const DrivingLessonsApplication: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              name: 'sick',
+              name: 'submit',
               actions: [
                 {
                   event: 'SUBMIT',
