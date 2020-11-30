@@ -29,6 +29,7 @@ namespace ids4_sample.Controllers
         [HttpGet, Route("")]
         public async Task<ReturnObject> Test()
         {
+            // Get a token so we can talk to the demo service
             var tokenObject = await createTokenHelper.GetToken();
 
             using HttpClient httpClient = new HttpClient();

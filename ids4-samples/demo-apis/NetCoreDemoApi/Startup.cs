@@ -25,14 +25,14 @@ namespace NetCoreDemoApi
             services.AddControllers();
             services.AddServices();
 
-            // Add the swagger documentation with Authorize option
+            // Add the swagger documentation with Authorize option. 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerGenOptions>()
             .AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = ".NetCoreDemoApi", Version = "v1" });
             });
 
-            // Add authentication
+            // Add authentication to the service
             services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
             {
@@ -64,8 +64,9 @@ namespace NetCoreDemoApi
                 c.RoutePrefix = string.Empty;
                 c.EnableDeepLinking();
 
+                // Add the default values for the Swagger Authorize Option
                 c.OAuthClientId(Configuration.GetValue<string>("SwaggerAuthorization:ClientId"));
-                c.OAuthAppName("Domain.Adgangur");
+                c.OAuthAppName(".NetCore Demo Api");
                 c.OAuthScopeSeparator(" ");
                 c.OAuthUsePkce();
             });
