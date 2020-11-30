@@ -12,6 +12,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+import { nativeCountries } from '@island.is/shared/data'
 
 export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
@@ -91,10 +92,11 @@ export const application: Form = buildForm({
               id: 'user.country',
               name: 'Fæðingarland',
               width: 'half',
-              options: [
-                { label: 'Ísland', value: 'Iceland' },
-                { label: 'Pólland', value: 'Polland' },
-              ],
+              placeholder: 'Veldu land',
+              defaultValue: nativeCountries.find(
+                (c: typeof nativeCountries) => c.value === 'IS',
+              ),
+              options: nativeCountries,
             }),
             buildDividerField({
               name: 'Ökukennari',
