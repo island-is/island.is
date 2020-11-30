@@ -29,7 +29,7 @@ export class DocumentProviderService {
     documentId: string,
   ): Promise<TestResult[]> {
     // Return a dummy for now
-    let list: TestResult[] = new Array()
+    const list: TestResult[] = []
     const result1 = new TestResult()
     result1.id = 'getDocumentIndexfromMailbox'
     result1.isValid = true
