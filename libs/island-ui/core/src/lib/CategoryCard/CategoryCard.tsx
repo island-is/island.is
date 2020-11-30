@@ -16,6 +16,7 @@ type CategoryCardProps = {
   text: string
   tags?: Tag[]
   href?: string
+  onClick?: () => void
   colorScheme?: 'blue' | 'red'
 }
 
@@ -36,6 +37,7 @@ export const CategoryCard = ({
   heading,
   text,
   href = '/',
+  onClick,
   tags = [],
   colorScheme = 'blue',
 }: CategoryCardProps) => {
@@ -45,6 +47,7 @@ export const CategoryCard = ({
   return (
     <FocusableBox
       href={href}
+      onClick={onClick}
       display="flex"
       flexDirection="column"
       paddingY={3}
