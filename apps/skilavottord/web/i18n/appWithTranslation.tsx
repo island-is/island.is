@@ -1,9 +1,9 @@
 import React from 'react'
-
 import I18n from './I18n'
+import { NextComponentType } from 'next/dist/next-server/lib/utils'
 
-const appWithTranslation = (WrappedComponent) => {
-  const AppWithTranslation = (props) => {
+const appWithTranslation = (WrappedComponent: NextComponentType) => {
+  const AppWithTranslation = (props: any) => {
     return (
       <I18n
         translations={props.pageProps?.translations || {}}
