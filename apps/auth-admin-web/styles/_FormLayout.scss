@@ -1,6 +1,8 @@
 .client,
 .identity-resource,
-.client-redirect {
+.client-redirect,
+.client-idp-restriction,
+.paginator {
   &__wrapper {
     max-width: 1024px;
   }
@@ -66,6 +68,13 @@
         color: red;
       }
     }
+  }
+
+  &__container__list {
+    flex-direction: column;
+    text-align: left;
+    align-items: flex-start;
+    padding: 0px 13px;
   }
 
   &__container__checkbox__field {

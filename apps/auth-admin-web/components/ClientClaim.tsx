@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { ClientClaimDTO } from '../models/dtos/client-claim.dto';
 
 interface Props {

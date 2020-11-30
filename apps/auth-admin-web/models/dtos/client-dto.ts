@@ -1,9 +1,9 @@
-import { ClientBaseDTO } from "./base/client-base-dto";
+import { ClientBaseDTO } from './base/client-base.dto';
 
 class ClientDTO extends ClientBaseDTO {
   constructor() {
     super();
-    this.clientId = "";
+    this.clientId = '';
   }
 
   clientId: string;
