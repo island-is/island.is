@@ -37,9 +37,9 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               <GridRow>
                 <GridColumn span="6/12">
                   <Input
-                    id={'applicant.nationalId'}
-                    name={'applicant.nationalId'}
-                    label={'Kennitala'}
+                    id="applicant.nationalId"
+                    name="applicant.nationalId"
+                    label="Kennitala"
                     defaultValue={
                       getValueViaPath(
                         application.answers,
@@ -51,9 +51,9 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                 </GridColumn>
                 <GridColumn span="6/12">
                   <Input
-                    id={'applicant.name'}
-                    name={'applicant.name'}
-                    label={'Nafn'}
+                    id="applicant.name"
+                    name="applicant.name"
+                    label="Nafn"
                     defaultValue={
                       getValueViaPath(
                         application.answers,
@@ -68,9 +68,9 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               <GridRow>
                 <GridColumn span="6/12">
                   <Input
-                    id={'applicant.email'}
-                    name={'applicant.email'}
-                    label={'Netfang'}
+                    id="applicant.email"
+                    name="applicant.email"
+                    label="Netfang"
                     defaultValue={
                       getValueViaPath(
                         application.answers,
@@ -82,9 +82,9 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                 </GridColumn>
                 <GridColumn span="6/12">
                   <Input
-                    id={'applicant.phoneNumber'}
-                    name={'applicant.phoneNumber'}
-                    label={'Símanúmer'}
+                    id="applicant.phoneNumber"
+                    name="applicant.phoneNumber"
+                    label="Símanúmer"
                     defaultValue={
                       getValueViaPath(
                         application.answers,
@@ -99,9 +99,9 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               <GridRow>
                 <GridColumn span="6/12">
                   <Input
-                    id={'applicant.address'}
-                    name={'applicant.address'}
-                    label={'Heimilisfang'}
+                    id="applicant.address"
+                    name="applicant.address"
+                    label="Heimilisfang"
                     defaultValue={
                       getValueViaPath(
                         application.answers,
@@ -113,9 +113,9 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                 </GridColumn>
                 <GridColumn span="6/12">
                   <Input
-                    id={'applicant.zipCode'}
-                    name={'applicant.zipCode'}
-                    label={'Póstnúmer og staður'}
+                    id="applicant.zipCode"
+                    name="applicant.zipCode"
+                    label="Póstnúmer og staður"
                     defaultValue={
                       getValueViaPath(
                         application.answers,
@@ -134,9 +134,9 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               <GridRow>
                 <GridColumn span="12/12">
                   <Input
-                    id={'administrativeContact.name'}
-                    name={'administrativeContact.name'}
-                    label={'nafn'}
+                    id="administrativeContact.name"
+                    name="administrativeContact.name"
+                    label="Nafn"
                     defaultValue={
                       getValueViaPath(
                         application.answers,
@@ -151,9 +151,9 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               <GridRow>
                 <GridColumn span="6/12">
                   <Input
-                    id={'administrativeContact.email'}
-                    name={'administrativeContact.email'}
-                    label={'Netfang'}
+                    id="administrativeContact.email"
+                    name="administrativeContact.email"
+                    label="Netfang"
                     defaultValue={
                       getValueViaPath(
                         application.answers,
@@ -165,9 +165,9 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                 </GridColumn>
                 <GridColumn span="6/12">
                   <Input
-                    id={'administrativeContact.phoneNumber'}
-                    name={'administrativeContact.phoneNumber'}
-                    label={'Símanúmer'}
+                    id="administrativeContact.phoneNumber"
+                    name="administrativeContact.phoneNumber"
+                    label="Símanúmer"
                     defaultValue={
                       getValueViaPath(
                         application.answers,
@@ -186,9 +186,9 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               <GridRow>
                 <GridColumn span="12/12">
                   <Input
-                    id={'technicalContact.name'}
-                    name={'technicalContact.name'}
-                    label={'nafn'}
+                    id="technicalContact.name"
+                    name="technicalContact.name"
+                    label="Nafn"
                     defaultValue={
                       getValueViaPath(
                         application.answers,
@@ -203,9 +203,9 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               <GridRow>
                 <GridColumn span="6/12">
                   <Input
-                    id={'technicalContact.email'}
-                    name={'technicalContact.email'}
-                    label={'Netfang'}
+                    id="technicalContact.email"
+                    name="technicalContact.email"
+                    label="Netfang"
                     defaultValue={
                       getValueViaPath(
                         application.answers,
@@ -219,7 +219,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                   <Input
                     id="technicalContact.phoneNumber"
                     name="technicalContact.phoneNumber"
-                    label={'Símanúmer'}
+                    label="Símanúmer"
                     defaultValue={
                       getValueViaPath(
                         application.answers,
@@ -240,7 +240,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                   <Input
                     id="helpDesk.email"
                     name="helpDesk.email"
-                    label={'Netfang'}
+                    label="Netfang"
                     defaultValue={
                       getValueViaPath(
                         application.answers,
@@ -254,7 +254,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                   <Input
                     id="helpDesk.phoneNumber"
                     name="helpDesk.phoneNumber"
-                    label={'Símanúmer'}
+                    label="Símanúmer"
                     defaultValue={
                       getValueViaPath(
                         application.answers,
