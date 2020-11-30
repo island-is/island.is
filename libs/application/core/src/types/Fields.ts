@@ -96,6 +96,7 @@ export interface SelectField extends BaseField {
   readonly type: FieldTypes.SELECT
   component: FieldComponents.SELECT
   options: MaybeWithApplication<Option[]>
+  defaultValue?: Option
   placeholder?: FormText
 }
 

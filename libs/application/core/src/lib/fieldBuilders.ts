@@ -157,6 +157,7 @@ export function buildSelectField(data: {
   placeholder?: string
   options: MaybeWithApplication<Option[]>
   disabled?: boolean
+  defaultValue?: Option
   width?: FieldWidth
 }): SelectField {
   const {
@@ -166,6 +167,7 @@ export function buildSelectField(data: {
     description,
     options,
     placeholder,
+    defaultValue,
     disabled = false,
     width = 'full',
   } = data
@@ -179,6 +181,7 @@ export function buildSelectField(data: {
     name,
     description,
     options,
+    defaultValue,
     type: FieldTypes.SELECT,
     component: FieldComponents.SELECT,
   }

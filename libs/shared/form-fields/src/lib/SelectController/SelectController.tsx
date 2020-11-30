@@ -9,6 +9,7 @@ interface Props {
   name?: string
   label: string
   options?: Option[]
+  defaultValue?: Option
   placeholder?: string
 }
 export const SelectController: FC<Props> = ({
@@ -18,6 +19,7 @@ export const SelectController: FC<Props> = ({
   name = id,
   label,
   options = [],
+  defaultValue,
   placeholder,
 }) => {
   const { clearErrors } = useFormContext()
@@ -34,6 +36,7 @@ export const SelectController: FC<Props> = ({
           name={name}
           options={options}
           label={label}
+          defaultValue={defaultValue}
           placeholder={placeholder}
           value={options.find((option) => option.value === value)}
           onChange={(newVal) => {

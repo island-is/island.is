@@ -16,7 +16,15 @@ interface Props extends FieldBaseProps {
   field: SelectField
 }
 const SelectFormField: FC<Props> = ({ application, error, field }) => {
-  const { id, name, description, options, placeholder, disabled } = field
+  const {
+    id,
+    name,
+    description,
+    options,
+    placeholder,
+    disabled,
+    defaultValue,
+  } = field
   const { formatMessage } = useLocale()
   const finalOptions = useMemo(() => buildOptions(options, application), [
     options,
@@ -36,6 +44,7 @@ const SelectFormField: FC<Props> = ({ application, error, field }) => {
           name={id}
           disabled={disabled}
           error={error}
+          defaultValue={defaultValue}
           id={id}
           options={finalOptions.map(({ label, tooltip, ...o }) => ({
             ...o,
