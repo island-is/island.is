@@ -27,7 +27,6 @@ export class AuthService {
   }
 
   startAuthentication(): Promise<void> {
-    console.log("I make it here");
     return this.manager.signinRedirect();
   }
 
@@ -43,7 +42,6 @@ export function getClientSettings(): UserManagerSettings {
     authority: 'https://identity-server.dev01.devland.is/',
     client_id: 'island-is-1',
     redirect_uri: `${window.location.origin}/signin-oidc`,
-    post_logout_redirect_uri: 'http://localhost:4200/',
     response_type: 'code',
     scope: 'openid profile offline_access api_resource.scope',
     loadUserInfo: true,
