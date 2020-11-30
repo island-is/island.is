@@ -54,14 +54,10 @@ export default function IdentityResources() {
       });
   };
 
-  const changeCount = (count) => {
-    setCount(count);
-    getResources(page, count);
-  }
-
-  const handlePageChange = async (page: number) => {
-    getResources(page, count);
+  const handlePageChange = async (page: number, countPerPage: number) => {
+    getResources(page, countPerPage);
     setPage(page);
+    setCount(countPerPage);
   };
 
   const remove = async (name: string) => {
@@ -95,21 +91,6 @@ export default function IdentityResources() {
               Create new Identity Resource
             </a>
           </Link>
-        </div>
-        <div className="identity-resources__container__field">
-          <label htmlFor="count" className="identity-resources__label">
-            Fjöldi á síðu
-          </label>
-          <select
-            id="count"
-            onChange={(e) => changeCount(parseInt(e.target.value))}
-            className="identity-resources__select"
-          >
-            <option value="1">1</option>
-            <option value="30">30</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
         </div>
       </div>
       <div className="client__container__table">
