@@ -92,7 +92,7 @@ export class ElasticService {
   async fetchById(id: string): Promise<ApiResponse<SearchResponse<Service>>> {
     logger.info('Fetch by id')
     const requestBody = {
-      query: { bool: { must: { term: { id: id } } } },
+      query: { bool: { must: { term: { _id: id } } } },
     }
     return this.search<SearchResponse<Service>, typeof requestBody>(requestBody)
   }

@@ -7,7 +7,7 @@ import {
   ResolveField,
   Parent,
 } from '@nestjs/graphql'
-import { Inject, UseGuards } from '@nestjs/common'
+import { Inject, UseGuards, UseInterceptors } from '@nestjs/common'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -19,6 +19,7 @@ import { User } from '@island.is/judicial-system/types'
 import { environment } from '../../../environments'
 import { BackendAPI } from '../../../services'
 import { CurrentUser, JwtAuthGuard } from '../auth'
+import { CaseInterceptor, CasesInterceptor } from './interceptors'
 import {
   CreateCaseInput,
   UpdateCaseInput,
@@ -49,6 +50,7 @@ export class CaseResolver {
   }
 
   @Query(() => [Case], { nullable: true })
+  @UseInterceptors(CasesInterceptor)
   async cases(
     @CurrentUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
@@ -67,6 +69,7 @@ export class CaseResolver {
   }
 
   @Query(() => Case, { nullable: true })
+  @UseInterceptors(CaseInterceptor)
   async case(
     @Args('input', { type: () => CaseQueryInput })
     input: CaseQueryInput,
@@ -87,6 +90,7 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
+  @UseInterceptors(CaseInterceptor)
   createCase(
     @Args('input', { type: () => CreateCaseInput })
     input: CreateCaseInput,
@@ -98,6 +102,7 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
+  @UseInterceptors(CaseInterceptor)
   updateCase(
     @Args('input', { type: () => UpdateCaseInput })
     input: UpdateCaseInput,
@@ -111,6 +116,7 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
+  @UseInterceptors(CaseInterceptor)
   transitionCase(
     @Args('input', { type: () => TransitionCaseInput })
     input: TransitionCaseInput,

@@ -64,19 +64,22 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
         name: user?.name,
         nationalId: user?.nationalId,
       },
-    }).then(() =>
-      setVehicle({
-        variables: {
-          ...car,
-          newRegDate: formatDate(car.firstRegDate, 'dd.MM.yyyy'),
-          nationalId: user?.nationalId,
-        },
-      }),
-    )
-    localStorage.setItem(ACCEPTED_TERMS_AND_CONDITION, id.toString())
-    router.replace(
-      `${AUTH_URL['citizen']}/login?returnUrl=${routes.recycleVehicle.baseRoute}/${id}/handover`,
-    )
+    })
+      .then(() =>
+        setVehicle({
+          variables: {
+            ...car,
+            newRegDate: formatDate(car.firstRegDate, 'dd.MM.yyyy'),
+            nationalId: user?.nationalId,
+          },
+        }),
+      )
+      .then(() => {
+        localStorage.setItem(ACCEPTED_TERMS_AND_CONDITION, id.toString())
+        router.replace(
+          `${AUTH_URL['citizen']}/login?returnUrl=${routes.recycleVehicle.baseRoute}/${id}/handover`,
+        )
+      })
   }
 
   const checkboxLabel = (
