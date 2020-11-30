@@ -141,6 +141,9 @@
     "application-templates-driving-license": {
       "tags": []
     },
+    "application-templates-health-insurance": {
+      "tags": []
+    },
     "application-templates-meta-application": {
       "tags": []
     },
