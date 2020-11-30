@@ -27,30 +27,11 @@ export const bottomHeading = style({
   paddingLeft: 24,
 })
 
-const leftAndRightBase = {}
 
 export const leftAndRight = style({
-  ...leftAndRightBase,
   display: 'flex',
 })
 
-export const leftAndRightMobile = style({
-  ...leftAndRightBase,
-})
-export const serviceList = style({
-  display: 'flex',
-  flexWrap: 'wrap',
-  minHeight: 350,
-  flexDirection: 'row',
-})
-
-export const serviceListMobile = style({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  minHeight: 350,
-  justifyContent: 'space-between',
-})
 
 const filterOrg = {
   background: theme.color.blue100,

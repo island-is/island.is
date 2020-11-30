@@ -10,11 +10,14 @@ import {
   FilterSearch,
   Checkbox,
   ServiceListContainer,
+  Button,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 
 import * as styles from './ServiceList.treat'
 import cn from 'classnames'
-import { Layout, ServiceCard, ServiceCardMessage } from '../../components'
+import { Layout  } from '../../components'
 import { theme } from '@island.is/island-ui/theme'
 import { GET_CATALOGUE_QUERY } from '../Queries'
 import { useQuery } from 'react-apollo'
@@ -36,6 +39,7 @@ import { useNamespace } from '../../hooks'
 import { GET_NAMESPACE_QUERY } from '../Queries'
 import { Screen, GetNamespaceQuery } from '../../types'
 import initApollo from '../../graphql/client'
+import { CategoryCard } from 'libs/island-ui/core/src/lib/CategoryCard/CategoryCard'
 
 interface PropTypes {
   top?: ReactNode
@@ -57,7 +61,7 @@ function ServiceLayout({ top, left, right, isMobile }: PropTypes) {
         <h4 className={cn(styles.bottomHeading)}>API Vörulisti</h4>
         <div
           className={cn(
-            isMobile ? styles.leftAndRightMobile : styles.leftAndRight,
+            isMobile ? {} : styles.leftAndRight,
           )}
         >
           <div className={cn(isMobile ? style({ width: '100%' }) : {})}>
@@ -70,7 +74,7 @@ function ServiceLayout({ top, left, right, isMobile }: PropTypes) {
   )
 }
 
-const LIMIT = 25
+const LIMIT = 2
 
 interface ServiceListProps {
   staticContent: GetNamespaceQuery['getNamespace']
@@ -342,48 +346,58 @@ export const ServiceList: Screen<ServiceListProps> = ({
       }
       right={
         <Box
-          className={cn(
-            isMobile ? styles.serviceListMobile : styles.serviceList,
-            'service-list',
-          )}
           marginBottom="containerGutter"
           marginTop={1}
         >
           <ServiceListContainer
            services={data?.getApiCatalogue.services}
            span = {['12/12','12/12','12/12','6/12', '4/12']}
-          />
-
-          {loading && (
+          >
+            {loading && (
             <Box className={cn(styles.navigation)} borderRadius="large">
               <div>
                 <LoadingIcon animate color="blue400" size={32} />
               </div>
             </Box>
+            
           )}
-
-          {data?.getApiCatalogue?.services.length > 0 && (
-            <Box
-              className={cn(
-                isMobile ? styles.navigationMobile : styles.navigation,
-                data?.getApiCatalogue?.pageInfo?.nextCursor == null
-                  ? styles.displayHidden
-                  : {},
-              )}
-              borderRadius="large"
-              onClick={() => onLoadMore()}
-            >
-              <div className={cn(styles.navigationText)}>{n('fmButton')}</div>
-            </Box>
-          )}
-
           {data?.getApiCatalogue.services.length < 1 && !loading && (
-            <ServiceCardMessage messageType="default" title={TEXT_NOT_FOUND} />
+            <CategoryCard 
+              heading={TEXT_NOT_FOUND} 
+              text="" />
           )}
-
           {error && (
-            <ServiceCardMessage messageType="error" title={TEXT_ERROR} />
+            <CategoryCard 
+              colorScheme="red" 
+              heading={TEXT_ERROR} 
+              text="Ekki tókst að sækja gögn."/>
           )}
+          </ServiceListContainer>
+
+          {  data?.getApiCatalogue?.services.length > 0 && 
+              data?.getApiCatalogue?.pageInfo?.nextCursor != null && (
+              
+                <GridRow>
+                  <GridColumn span={"12/12"}
+                            offset={["4/12","5/12"]}
+                 >
+                    <Button
+                      colorScheme="default"
+                      iconType="filled"
+                      onBlur={function noRefCheck(){}}
+                      onClick={onLoadMore}
+                      onFocus={function noRefCheck(){}}
+                      size="default"
+                      type="button"
+                      variant="ghost"
+                    >
+                      {n('fmButton')}
+                    </Button>
+                  </GridColumn>
+                  </GridRow>
+            )}
+
+          
         </Box>
       }
     />

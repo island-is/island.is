@@ -17,12 +17,14 @@ export interface ServiceListContainerProps {
   baseUrl?: string
   services: ApiService[]
   span?: ResponsiveProp<styles.GridColumns>
+  children?: JSX.Element | JSX.Element[]
 }
 
 export const ServiceListContainer: React.FC<ServiceListContainerProps> = ({
   baseUrl = './services/',
   services = [],
-  span = ['12/12', '6/12', '6/12', '4/12']
+  span = ['12/12', '6/12', '6/12', '4/12'],
+  children
 }) => {
   const CategoriesToTags = (service: ApiService) => {
     const tags: Tag[] = []
@@ -39,6 +41,20 @@ export const ServiceListContainer: React.FC<ServiceListContainerProps> = ({
       tags.push({ label: tag })
     })
     return tags
+  }
+
+  const showChildren = () => {
+      return React.Children.map(children, (child, index) => {
+        return (
+                <GridColumn 
+                  key={index}
+                  span={span}
+                  paddingBottom={3}
+                >
+                  {child}
+                </GridColumn>
+        )
+      })
   }
 
   return (
@@ -62,6 +78,7 @@ export const ServiceListContainer: React.FC<ServiceListContainerProps> = ({
             )
           })
         }
+        {showChildren()}
       </GridRow>
     </GridContainer>
   )
