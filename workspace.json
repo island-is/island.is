@@ -827,6 +827,35 @@
         }
       }
     },
+    "api-domains-document-provider": {
+      "root": "libs/api/domains/document-provider",
+      "sourceRoot": "libs/api/domains/document-provider/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/document-provider/tsconfig.lib.json",
+              "libs/api/domains/document-provider/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/document-provider/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/document-provider/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-documents": {
       "root": "libs/api/domains/documents",
       "sourceRoot": "libs/api/domains/documents/src",
