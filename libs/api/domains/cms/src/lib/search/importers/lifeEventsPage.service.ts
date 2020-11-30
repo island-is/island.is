@@ -33,10 +33,12 @@ export class LifeEventsPageSyncService
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapLifeEventPage(entry)
+          const content = extractStringsFromObject(mapped.content)
           return {
             _id: mapped.id,
             title: mapped.title,
-            content: extractStringsFromObject(mapped.content),
+            content,
+            contentWordCount: content.split(' ').length,
             type: 'webLifeEventPage',
             termPool: createTerms([mapped.title]),
             response: JSON.stringify({ ...mapped, typename: 'LifeEventPage' }),

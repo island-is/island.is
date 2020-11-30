@@ -10,7 +10,12 @@ import {
   doMappingInput,
   processSyncDataInput,
 } from '../cmsSync.service'
-import { createTerms, extractStringsFromObject } from './utils'
+import {
+  createTerms,
+  extractStringsFromObject,
+  hasProcessEntry,
+  numberOfLinks,
+} from './utils'
 
 @Injectable()
 export class ArticleSyncService implements CmsSyncProvider<IArticle> {
@@ -64,10 +69,14 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
 
         try {
           mapped = mapArticle(entry)
+          const content = extractStringsFromObject(mapped.body)
           return {
             _id: mapped.id,
             title: mapped.title,
-            content: extractStringsFromObject(mapped.body),
+            content,
+            contentWordCount: content.split(' ').length,
+            hasProcessEntry: hasProcessEntry(mapped.body),
+            ...numberOfLinks(mapped.body),
             type: 'webArticle',
             termPool: createTerms([
               mapped.title,
