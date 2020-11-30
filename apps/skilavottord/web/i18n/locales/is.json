@@ -126,11 +126,6 @@
     "checkbox": {
       "label": "Samþykkja",
       "linkLabel": "Skilmála og skilyrði"
-    },
-    "error": {
-      "title": "Tæknileg vandamál komu upp",
-      "message": "Það komu upp vandamál við að merkja bíl til förgunar. Vinsamlegast reynið aftur.",
-      "primaryButton": "Hætta við"
     }
   },
   "handover": {

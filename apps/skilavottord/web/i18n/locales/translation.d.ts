@@ -76,7 +76,6 @@ export interface Confirm {
   info: string
   buttons: ProcessButtons
   checkbox: CheckBox
-  error: Errors
 }
 
 export interface Handover {
