@@ -126,7 +126,7 @@ export const setAndSendDateToServer = async (
   theCase: Case,
   setCase: (value: React.SetStateAction<Case | undefined>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
-  setErrorMessage: (value: React.SetStateAction<string>) => void,
+  setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
   if (setErrorMessage) {
     setErrorMessage('')

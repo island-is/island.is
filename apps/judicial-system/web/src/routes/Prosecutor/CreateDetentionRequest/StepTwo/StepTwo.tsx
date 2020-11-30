@@ -48,7 +48,13 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
-import { setAndSendDateToServer, validateAndSendTimeToServer, validateAndSendToServer, validateAndSetEvent, validateAndSetTime } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  setAndSendDateToServer,
+  validateAndSendTimeToServer,
+  validateAndSendToServer,
+  validateAndSetEvent,
+  validateAndSetTime,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 
 export const StepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -255,7 +261,6 @@ export const StepTwo: React.FC = () => {
                   minDate={new Date()}
                   hasError={requestedCustodyEndDateErrorMessage !== ''}
                   errorMessage={requestedCustodyEndDateErrorMessage}
-
                   handleChange={(date) =>
                     setAndSendDateToServer(
                       'requestedCustodyEndDate',
@@ -635,14 +640,13 @@ export const StepTwo: React.FC = () => {
                   label="Skilaboð til dómara"
                   placeholder="Er eitthvað sem þú vilt koma á framfæri við dómara sem tengist kröfunni eða ástandi sakbornings?"
                   defaultValue={workingCase?.comments}
-                  
                   onChange={(event) =>
                     validateAndSetEvent(
                       'comments',
                       event,
                       [],
                       workingCase,
-                      setWorkingCase
+                      setWorkingCase,
                     )
                   }
                   onBlur={(event) =>
@@ -651,7 +655,7 @@ export const StepTwo: React.FC = () => {
                       event.target.value,
                       [],
                       workingCase,
-                      updateCase
+                      updateCase,
                     )
                   }
                   textarea

@@ -43,7 +43,10 @@ import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { validateAndSendToServer, validateAndSetEvent } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  validateAndSendToServer,
+  validateAndSetEvent,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 
 interface CaseData {
   case?: Case
@@ -130,7 +133,7 @@ export const JudgeOverview: React.FC = () => {
                 }
                 onBlur={(event) =>
                   validateAndSendToServer(
-                    'accusedName',
+                    'courtCaseNumber',
                     event.target.value,
                     ['empty'],
                     workingCase,

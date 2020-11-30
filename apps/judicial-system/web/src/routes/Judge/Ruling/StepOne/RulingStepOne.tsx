@@ -44,6 +44,14 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
+import {
+  setAndSendDateToServer,
+  setAndSendToServer,
+  validateAndSendTimeToServer,
+  validateAndSendToServer,
+  validateAndSetEvent,
+  validateAndSetTime,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 
 interface CaseData {
   case?: Case
@@ -160,25 +168,27 @@ export const RulingStepOne: React.FC = () => {
                 rows={16}
                 errorMessage={rulingErrorMessage}
                 hasError={rulingErrorMessage !== ''}
-                onFocus={() => setRulingErrorMessage('')}
-                onBlur={(evt) => {
-                  const validateEmpty = validate(evt.target.value, 'empty')
-
-                  setWorkingCase({ ...workingCase, ruling: evt.target.value })
-
-                  if (
-                    validateEmpty.isValid &&
-                    workingCase.ruling !== evt.target.value
-                  ) {
-                    updateCase(
-                      workingCase.id,
-                      parseString('ruling', evt.target.value),
-                    )
-                  } else {
-                    setRulingErrorMessage(validateEmpty.errorMessage)
-                  }
-                }}
-                onChange={replaceTabsOnChange}
+                onChange={(event) =>
+                  validateAndSetEvent(
+                    'ruling',
+                    event,
+                    ['empty'],
+                    workingCase,
+                    setWorkingCase,
+                    rulingErrorMessage,
+                    setRulingErrorMessage,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'ruling',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setRulingErrorMessage,
+                  )
+                }
                 textarea
                 required
               />
@@ -224,61 +234,44 @@ export const RulingStepOne: React.FC = () => {
                       ? new Date(workingCase.requestedCustodyEndDate)
                       : null
                   }
-                  handleChange={(date) => {
-                    const formattedDate = formatISO(date, {
-                      representation: workingCase.custodyEndDate?.includes('T')
-                        ? 'complete'
-                        : 'date',
-                    })
-
-                    setWorkingCase({
-                      ...workingCase,
-                      custodyEndDate: formattedDate,
-                    })
-
-                    updateCase(
-                      workingCase.id,
-                      parseString('custodyEndDate', formattedDate),
+                  handleChange={(date) =>
+                    setAndSendDateToServer(
+                      'custodyEndDate',
+                      workingCase.custodyEndDate,
+                      date,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
                     )
-                  }}
+                  }
                   required
                 />
               </GridColumn>
               <GridColumn span="5/12">
                 <TimeInputField
-                  onFocus={() => setCustodyEndTimeErrorMessage('')}
-                  onBlur={(evt) => {
-                    const time = padTimeWithZero(evt.target.value)
-
-                    if (workingCase.custodyEndDate) {
-                      const validateTimeEmpty = validate(time, 'empty')
-                      const validateTimeFormat = validate(time, 'time-format')
-                      const custodyEndDateMinutes = parseTime(
-                        workingCase.custodyEndDate,
-                        time,
-                      )
-
-                      setWorkingCase({
-                        ...workingCase,
-                        custodyEndDate: custodyEndDateMinutes,
-                      })
-
-                      if (
-                        validateTimeEmpty.isValid &&
-                        validateTimeFormat.isValid
-                      ) {
-                        updateCase(
-                          workingCase.id,
-                          parseString('custodyEndDate', custodyEndDateMinutes),
-                        )
-                      } else {
-                        setCustodyEndTimeErrorMessage(
-                          validateTimeEmpty.errorMessage ||
-                            validateTimeFormat.errorMessage,
-                        )
-                      }
-                    }
-                  }}
+                  onChange={(evt) =>
+                    validateAndSetTime(
+                      'custodyEndDate',
+                      workingCase.requestedCourtDate,
+                      evt.target.value,
+                      ['empty', 'time-format'],
+                      workingCase,
+                      setWorkingCase,
+                      custodyEndTimeErrorMessage,
+                      setCustodyEndTimeErrorMessage,
+                    )
+                  }
+                  onBlur={(evt) =>
+                    validateAndSendTimeToServer(
+                      'custodyEndDate',
+                      workingCase.requestedCourtDate,
+                      evt.target.value,
+                      ['empty', 'time-format'],
+                      workingCase,
+                      updateCase,
+                      setCustodyEndTimeErrorMessage,
+                    )
+                  }
                 >
                   <Input
                     data-testid="custodyEndTime"

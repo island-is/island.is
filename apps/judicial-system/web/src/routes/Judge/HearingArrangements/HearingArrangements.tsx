@@ -43,7 +43,13 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import Modal from '../../../shared-components/Modal/Modal'
 import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
-import { setAndSendDateToServer, validateAndSendTimeToServer, validateAndSendToServer, validateAndSetEvent, validateAndSetTime } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  setAndSendDateToServer,
+  validateAndSendTimeToServer,
+  validateAndSendToServer,
+  validateAndSetEvent,
+  validateAndSetTime,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 
 interface CaseData {
   case?: Case
@@ -350,7 +356,6 @@ export const HearingArrangements: React.FC = () => {
               placeholder="Netfang"
               errorMessage={defenderEmailErrorMessage}
               hasError={defenderEmailErrorMessage !== ''}
-              
               onChange={(event) =>
                 validateAndSetEvent(
                   'defenderEmail',
