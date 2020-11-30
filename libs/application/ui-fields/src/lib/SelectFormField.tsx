@@ -4,7 +4,7 @@ import {
   formatText,
   SelectField,
 } from '@island.is/application/core'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Option as SelectOption } from '@island.is/island-ui/core'
 import {
   SelectController,
   FieldDescription,
@@ -44,7 +44,7 @@ const SelectFormField: FC<Props> = ({ application, error, field }) => {
           name={id}
           disabled={disabled}
           error={error}
-          defaultValue={defaultValue}
+          defaultValue={defaultValue as SelectOption}
           id={id}
           options={finalOptions.map(({ label, tooltip, ...o }) => ({
             ...o,
