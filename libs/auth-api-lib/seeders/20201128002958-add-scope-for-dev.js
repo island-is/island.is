@@ -9,7 +9,7 @@ module.exports = {
       },
     ]
 
-    if (process.env.SeedEnvironment === 'development') {
+    if (process.env.SUPPORT_LOCALHOST_AUTH === 'true') {
       return queryInterface.bulkInsert(
         'client_allowed_scope',
         clientAllowedScope,
@@ -23,7 +23,7 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    if (process.env.SeedEnvironment === 'development') {
+    if (process.env.SUPPORT_LOCALHOST_AUTH === 'true') {
       return queryInterface.bulkDelete('client_allowed_scope', {
         client_id: 'island-is-client-cred-1',
         scope_name: 'api_resource.scope',
