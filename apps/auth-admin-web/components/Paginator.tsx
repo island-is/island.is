@@ -1,57 +1,55 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 
-class Paginator extends Component<{lastPage: number; handlePageChange: any }> {
-  page = 1;
-  count = 1;
+interface Props {
+  lastPage: number;
+  handlePageChange?: (page: number, count: number) => void
+}
 
-  changeCount(count: string) {
-    this.setState({
-      count: +count,
-      page: 1,
-    });
-    console.log("this.page " + this.page);
-    this.props.handlePageChange(1, +count);
+const Paginator: React.FC<Props> = (props: Props) =>{
+  const [page, setPage] = useState<number>(1); 
+  const [count, setCount] = useState<number>(30); // TODO: Set to something that makes sense 30 
+
+  const changeCount = (count: string) => {
+    setPage(1);
+    setCount(+count);
+    props.handlePageChange(1, +count);
   }
 
-  next = async () => {
-    if (this.page === this.props.lastPage) {
+  const next = async () => {
+    if (page === props.lastPage) {
       return;
     }
 
-    this.page++;
-    this.props.handlePageChange(this.page, this.count);
+    setPage(page+1);
+    props.handlePageChange(page+1, count);
   };
 
-  previous = async () => {
-    if (this.page === 1) {
+  const previous = async () => {
+    if (page === 1) {
       return;
     }
-
-    this.page--;
-    this.props.handlePageChange(this.page, this.count);
+    setPage(page-1);
+    props.handlePageChange(page-1, count);
   };
 
-  render() {
-    console.log(this.page);
-    console.log("Paginator: " + this.props.lastPage);
+  return( 
 
-    return (
       <div className="paginator">
         <nav className="paginator__pagination">
         <li className="paginator__page-item">
           <button
-            onClick={this.previous}
+            onClick={previous}
             className="paginator__pagination-previous"
-            disabled={this.page === 1}
+            disabled={page === 1}
           >
             Back
           </button>
         </li>
         <li className="paginator__page-item">
           <button
-            onClick={this.next}
+            onClick={next}
             className="paginator__pagination-next"
-            disabled={this.page === this.props.lastPage}
+            disabled={page === props.lastPage}
           >
             Next
           </button>
@@ -60,11 +58,11 @@ class Paginator extends Component<{lastPage: number; handlePageChange: any }> {
       <div className="paginator__container__form">
       <div className="paginator__container__field">
             <label htmlFor="count" className="paginator__label">
-              Fjöldi á síðu
+              Count
             </label>
             <select
               id="count"
-              onChange={(e) => this.changeCount(e.target.value)}
+              onChange={(e) => changeCount(e.target.value)}
               className="paginator__select"
             >
               <option value="1">1</option>
@@ -78,7 +76,6 @@ class Paginator extends Component<{lastPage: number; handlePageChange: any }> {
       </div>
       
     );
-  }
 }
 
 export default Paginator;

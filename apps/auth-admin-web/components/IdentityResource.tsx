@@ -4,7 +4,6 @@ import axios from 'axios';
 import StatusBar from './StatusBar';
 import { __asyncValues } from 'tslib';
 import { useForm } from 'react-hook-form';
-import ResourcesCard from './IdentityResources';
 import { ErrorMessage } from '@hookform/error-message';
 import HelpBox from './HelpBox';
 import APIResponse from '../models/APIResponse';
