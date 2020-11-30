@@ -10,7 +10,7 @@ export class FjarsyslaService {
     private httpService: HttpService,
   ) {}
 
-  async getFjarsysluRest(nationalId: string, permno: string) {
+  async getFjarsysluRest(nationalId: string, permno: string, id: string) {
     try {
       this.logger.info(
         `---- Starting FjarsyslaRest request on ${nationalId} with number ${permno} ----`,
@@ -21,7 +21,7 @@ export class FjarsyslaService {
       const data = JSON.stringify({
         fastnr: permno,
         kennitala: nationalId,
-        tilvisun: 'Skilagjald ökutækis',
+        tilvisun: id,
       })
 
       const headersRequest = {

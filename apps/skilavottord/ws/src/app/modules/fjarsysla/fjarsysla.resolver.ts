@@ -16,7 +16,8 @@ export class FjarsyslaResolver {
   async skilavottordFjarsyslaSkilagjald(
     @Args('nationalId') nid: string,
     @Args('vehiclePermno') permno: string,
+    @Args('guid') id: string,
   ): Promise<boolean> {
-    return this.fjarsyslaService.getFjarsysluRest(nid, permno)
+    return this.fjarsyslaService.getFjarsysluRest(nid, permno, id)
   }
 }
