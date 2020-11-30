@@ -4,7 +4,7 @@ import {
   CaseCustodyRestrictions,
   CaseGender,
 } from '@island.is/judicial-system/types'
-
+import { formatRestrictions } from '@island.is/judicial-system/formatters'
 import {
   formatConclusion,
   formatCourtCaseNumber,
@@ -14,7 +14,6 @@ import {
   formatHeadsUpSmsNotification,
   formatProsecutorDemands,
   formatReadyForCourtSmsNotification,
-  formatRestrictions,
   formatPrisonCourtDateEmailNotification,
   stripHtmlTags,
   formatDefenderCourtDateEmailNotification,

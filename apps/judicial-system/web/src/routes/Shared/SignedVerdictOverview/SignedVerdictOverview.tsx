@@ -1,15 +1,16 @@
 import { useQuery } from '@apollo/client'
-import { Accordion, Box, Button, Tag, Text } from 'libs/island-ui/core/src'
-import { TIME_FORMAT } from 'libs/judicial-system/formatters/src'
+import { Accordion, Box, Tag, Text } from '@island.is/island-ui/core'
 import {
+  TIME_FORMAT,
   formatDate,
   getShortRestrictionByValue,
-} from 'libs/judicial-system/formatters/src/lib/formatters'
-import { Case, CaseState } from 'libs/judicial-system/types/src'
+} from '@island.is/judicial-system/formatters'
+import { Case, CaseState } from '@island.is/judicial-system/types'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CaseQuery } from '../../../graphql'
 import CourtRecordAccordionItem from '../../../shared-components/CourtRecordAccordionItem/CourtRecordAccordionItem'
+import { FormFooter } from '../../../shared-components/FormFooter'
 import InfoCard from '../../../shared-components/InfoCard/InfoCard'
 import { PageLayout } from '../../../shared-components/PageLayout/PageLayout'
 import PoliceRequestAccordionItem from '../../../shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
@@ -61,14 +62,14 @@ export const SignedVerdictOverview: React.FC = () => {
                 </Box>
                 <Text as="h5" variant="h5">
                   {workingCase.state === CaseState.ACCEPTED
-                    ? `Úrskurðað ${formatDate(
+                    ? `Gæsla til ${formatDate(
                         workingCase.custodyEndDate,
                         'PPP',
                       )} kl. ${formatDate(
                         workingCase.custodyEndDate,
                         TIME_FORMAT,
                       )}`
-                    : `Gæsla til ${formatDate(
+                    : `Úrskurðað ${formatDate(
                         workingCase.courtEndTime,
                         'PPP',
                       )} kl. ${formatDate(
@@ -116,11 +117,14 @@ export const SignedVerdictOverview: React.FC = () => {
               accusedAddress={workingCase.accusedAddress}
             />
           </Box>
-          <Accordion>
-            <PoliceRequestAccordionItem workingCase={workingCase} />
-            <CourtRecordAccordionItem workingCase={workingCase} />
-            <RulingAccordionItem workingCase={workingCase} />
-          </Accordion>
+          <Box marginBottom={15}>
+            <Accordion>
+              <PoliceRequestAccordionItem workingCase={workingCase} />
+              <CourtRecordAccordionItem workingCase={workingCase} />
+              <RulingAccordionItem workingCase={workingCase} />
+            </Accordion>
+          </Box>
+          <FormFooter hideNextButton />
         </>
       ) : null}
     </PageLayout>

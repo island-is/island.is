@@ -1,4 +1,4 @@
-import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import React, { useContext, useEffect, useState } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import Modal from '../../../shared-components/Modal/Modal'
@@ -7,10 +7,9 @@ import {
   getAppealDecitionText,
 } from '../../../utils/stepHelper'
 import * as Constants from '../../../utils/constants'
-import { TIME_FORMAT, formatDate } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseTransition } from '../../../utils/formatters'
 import { AppealDecisionRole, JudgeSubsections, Sections } from '../../../types'
-import AccordionListItem from '@island.is/judicial-system-web/src/shared-components/AccordionListItem/AccordionListItem'
 import {
   Case,
   CaseAppealDecision,

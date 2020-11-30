@@ -8,7 +8,7 @@ import {
 } from '../../utils/stepHelper'
 import { AppealDecisionRole } from '../../types'
 import { UserContext } from '../UserProvider/UserProvider'
-import { formatRestrictions } from 'libs/judicial-system/formatters/src'
+import { formatRestrictions } from '@island.is/judicial-system/formatters'
 
 interface Props {
   workingCase: Case
@@ -63,9 +63,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         <Box marginBottom={2}>
           <Text>
             Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð
-            þennan til Landsréttar innan þriggja sólarhringa. Dómari bendir
-            kærða á að honum sé heimilt að bera atriði er lúta að framkvæmd
-            gæsluvarðhaldsins undir dómara.
+            þennan til Landsréttar innan þriggja sólarhringa.
           </Text>
         </Box>
         <Box marginBottom={1}>
