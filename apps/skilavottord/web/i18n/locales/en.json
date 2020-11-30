@@ -126,6 +126,11 @@
     "checkbox": {
       "label": "I agree to the",
       "linkLabel": " Terms and conditions"
+    },
+    "error": {
+      "title": "There were some technical problems",
+      "message": "We ran into a problem marking your car for recycling. Please try again.",
+      "primaryButton": "Cancel"
     }
   },
   "handover": {

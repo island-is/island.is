@@ -7,6 +7,7 @@ import { Box, Stack, Button, Checkbox, Text } from '@island.is/island-ui/core'
 import {
   ProcessPageLayout,
   CarDetailsBox,
+  OutlinedError,
 } from '@island.is/skilavottord-web/components'
 import { theme } from '@island.is/island-ui/theme'
 import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
@@ -18,6 +19,25 @@ import {
   CREATE_VEHICLE,
 } from '@island.is/skilavottord-web/graphql/mutations'
 import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
+
+export interface VehicleMutation {
+  createSkilavottordVehicle: VehicleMutationData
+}
+
+export interface VehicleOwnerMutation {
+  createSkilavottordVehicleOwner: VehicleOwnerMutationData
+}
+
+export interface VehicleOwnerMutationData {
+  name: string
+  nationalId: string
+}
+
+export interface VehicleMutationData {
+  car: Car
+  newRegDate: string
+  nationalId: string
+}
 
 const Confirm = ({ apolloState }: WithApolloProps) => {
   const { user } = useContext(UserContext)
@@ -49,8 +69,36 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
     setIsTablet(false)
   }, [width])
 
-  const [setVehicle] = useMutation(CREATE_VEHICLE)
-  const [setVehicleOwner] = useMutation(CREATE_VEHICLE_OWNER)
+  const [setVehicle, { error: vehicleError }] = useMutation<
+    VehicleMutationData
+  >(CREATE_VEHICLE, {
+    onCompleted() {
+      localStorage.setItem(ACCEPTED_TERMS_AND_CONDITION, id.toString())
+      router.replace(
+        `${AUTH_URL['citizen']}/login?returnUrl=${routes.recycleVehicle.baseRoute}/${id}/handover`,
+      )
+    },
+    onError() {
+      return vehicleError
+    },
+  })
+
+  const [setVehicleOwner, { error: vehicleOwnerError }] = useMutation<
+    VehicleOwnerMutation
+  >(CREATE_VEHICLE_OWNER, {
+    onCompleted() {
+      setVehicle({
+        variables: {
+          ...car,
+          newRegDate: formatDate(car.firstRegDate, 'dd.MM.yyyy'),
+          nationalId: user?.nationalId,
+        },
+      })
+    },
+    onError() {
+      return vehicleOwnerError
+    },
+  })
 
   const onCancel = () => {
     router.replace({
@@ -58,28 +106,13 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
     })
   }
 
-  const onConfirm = (car: Car) => {
+  const onConfirm = () => {
     setVehicleOwner({
       variables: {
         name: user?.name,
         nationalId: user?.nationalId,
       },
     })
-      .then(() =>
-        setVehicle({
-          variables: {
-            ...car,
-            newRegDate: formatDate(car.firstRegDate, 'dd.MM.yyyy'),
-            nationalId: user?.nationalId,
-          },
-        }),
-      )
-      .then(() => {
-        localStorage.setItem(ACCEPTED_TERMS_AND_CONDITION, id.toString())
-        router.replace(
-          `${AUTH_URL['citizen']}/login?returnUrl=${routes.recycleVehicle.baseRoute}/${id}/handover`,
-        )
-      })
   }
 
   const checkboxLabel = (
@@ -92,6 +125,29 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
       </Text>
     </>
   )
+
+  if (vehicleOwnerError || vehicleError) {
+    return (
+      <ProcessPageLayout
+        processType={'citizen'}
+        activeSection={0}
+        activeCar={id.toString()}
+      >
+        <Stack space={4}>
+          <Text variant="h1">{t.title}</Text>
+          <OutlinedError
+            title={t.error.title}
+            message={t.error.message}
+            primaryButton={{
+              text: `${t.error.primaryButton}`,
+              action: () =>
+                router.push(routes.myCars).then(() => window.scrollTo(0, 0)),
+            }}
+          />
+        </Stack>
+      </ProcessPageLayout>
+    )
+  }
 
   return (
     <>
