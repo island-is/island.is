@@ -10,7 +10,7 @@ import ClientIdpRestrictions from './../../components/ClientIdpRestrictions';
 export default function Index(){
     
     const [step, setStep] = useState(1);
-    const [clientId, SetClientId] = useState(null);
+    const [client, setClient] = useState<ClientDTO>(null);
     // let clientObj: ClientDTO = new ClientDTO();
 
     const handleNext = () => {
@@ -21,13 +21,17 @@ export default function Index(){
         setStep(step-1);
     }
 
-    const handleClientSaved = (client: ClientDTO) => {
-        if (client.clientId){
-            SetClientId(client.clientId);
-            if (client.clientType === 'spa'){
+    const handleClientSaved = (clientSaved: ClientDTO) => {
+        console.log("Client SAVED");
+        console.log(clientSaved);
+        if (clientSaved.clientId){
+            setClient(clientSaved);
+            if (clientSaved.clientType === 'spa'){
                 setStep(2);
+                console.log("Setting step 2");
             }
             else{
+                console.log("Setting step 3");
                 setStep(3);
             }
         }
@@ -54,11 +58,11 @@ export default function Index(){
         case 2: {
             // Set the callback URI .. ALLT
             const rObj = new ClientRedirectUriDTO();
-            rObj.clientId = clientId;
+            rObj.clientId = client.clientId;
             return <ClientRedirectUri redirectObject={rObj} uris={null} handleNext={handleNext} handleBack={handleBack} />
             }
         case 3: {
-            return <ClientIdpRestrictions clientId={clientId} restrictions={[]} handlePageChange={handleNext} />
+            return <ClientIdpRestrictions clientId={client.clientId} restrictions={[]} handleNext={handleNext} handleBack={handleBack} />
         }
         case 4: {
             // Allowed Scopes
@@ -80,8 +84,8 @@ export default function Index(){
         case 8: {
            // Add Claims - Custom Claims (Vitum ekki alveg) - Setja í BID
            const claim = new ClientClaimDTO();
-           console.log("Client ID: " + clientId);
-           claim.clientId = clientId;
+           console.log("Client ID: " + client);
+           claim.clientId = client;
            return <ClientClaim claim={claim} handleSaved={handleClaimSaved} />
         }
         case 9: {
