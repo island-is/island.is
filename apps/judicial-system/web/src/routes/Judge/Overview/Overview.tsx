@@ -43,6 +43,7 @@ import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
+import { validateAndSendToServer, validateAndSetEvent } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 interface CaseData {
   case?: Case
@@ -116,25 +117,27 @@ export const JudgeOverview: React.FC = () => {
                 defaultValue={workingCase.courtCaseNumber}
                 errorMessage={courtCaseNumberErrorMessage}
                 hasError={courtCaseNumberErrorMessage !== ''}
-                onBlur={(evt) => {
-                  setWorkingCase({
-                    ...workingCase,
-                    courtCaseNumber: evt.target.value,
-                  })
-
-                  const validateField = validate(evt.target.value, 'empty')
-
-                  if (validateField.isValid) {
-                    updateCase(
-                      workingCase.id,
-                      parseString('courtCaseNumber', evt.target.value),
-                    )
-                  } else {
-                    setCourtCaseNumberErrorMessage(validateField.errorMessage)
-                  }
-                }}
-                onChange={replaceTabsOnChange}
-                onFocus={() => setCourtCaseNumberErrorMessage('')}
+                onChange={(event) =>
+                  validateAndSetEvent(
+                    'courtCaseNumber',
+                    event,
+                    ['empty'],
+                    workingCase,
+                    setWorkingCase,
+                    courtCaseNumberErrorMessage,
+                    setCourtCaseNumberErrorMessage,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'accusedName',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setCourtCaseNumberErrorMessage,
+                  )
+                }
                 required
               />
             </Box>

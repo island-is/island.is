@@ -43,6 +43,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import Modal from '../../../shared-components/Modal/Modal'
 import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
+import { setAndSendDateToServer, validateAndSendTimeToServer, validateAndSendToServer, validateAndSetEvent, validateAndSetTime } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 interface CaseData {
   case?: Case
@@ -215,68 +216,51 @@ export const HearingArrangements: React.FC = () => {
                         ? parseISO(workingCase.courtDate.toString())
                         : null
                     }
-                    handleChange={(date) => {
-                      const formattedDate = formatISO(date, {
-                        representation: workingCase.courtDate?.includes('T')
-                          ? 'complete'
-                          : 'date',
-                      })
-
-                      setWorkingCase({
-                        ...workingCase,
-                        courtDate: formattedDate,
-                      })
-
-                      updateCase(
-                        workingCase.id,
-                        parseString('courtDate', formattedDate),
+                    handleChange={(date) =>
+                      setAndSendDateToServer(
+                        'courtDate',
+                        workingCase.courtDate,
+                        date,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                        setCourtDateErrorMessage,
                       )
-                    }}
+                    }
                     handleCloseCalendar={(date: Date | null) => {
                       if (date === null || !isValid(date)) {
                         setCourtDateErrorMessage('Reitur má ekki vera tómur')
                       }
                     }}
-                    handleOpenCalendar={() => setCourtDateErrorMessage('')}
                     required
                   />
                 </GridColumn>
                 <GridColumn span="5/12">
                   <TimeInputField
                     disabled={!workingCase.courtDate}
-                    onBlur={(evt) => {
-                      const time = padTimeWithZero(evt.target.value)
-
-                      if (workingCase.courtDate) {
-                        const courtDateMinutes = parseTime(
-                          workingCase.courtDate,
-                          time,
-                        )
-                        const validateTimeEmpty = validate(time, 'empty')
-                        const validateTimeFormat = validate(time, 'time-format')
-
-                        setWorkingCase({
-                          ...workingCase,
-                          courtDate: courtDateMinutes,
-                        })
-
-                        if (
-                          validateTimeEmpty.isValid &&
-                          validateTimeFormat.isValid
-                        ) {
-                          updateCase(
-                            workingCase.id,
-                            parseString('courtDate', courtDateMinutes),
-                          )
-                        } else {
-                          setCourtTimeErrorMessage(
-                            validateTimeEmpty.errorMessage ||
-                              validateTimeFormat.errorMessage,
-                          )
-                        }
-                      }
-                    }}
-                    onFocus={() => setCourtTimeErrorMessage('')}
+                    onChange={(evt) =>
+                      validateAndSetTime(
+                        'courtDate',
+                        workingCase.courtDate,
+                        evt.target.value,
+                        ['empty', 'time-format'],
+                        workingCase,
+                        setWorkingCase,
+                        courtTimeErrorMessage,
+                        setCourtTimeErrorMessage,
+                      )
+                    }
+                    onBlur={(evt) =>
+                      validateAndSendTimeToServer(
+                        'courtDate',
+                        workingCase.courtDate,
+                        evt.target.value,
+                        ['empty', 'time-format'],
+                        workingCase,
+                        updateCase,
+                        setCourtTimeErrorMessage,
+                      )
+                    }
                   >
                     <Input
                       name="courtTime"
@@ -301,30 +285,29 @@ export const HearingArrangements: React.FC = () => {
               label="Dómsalur"
               defaultValue={workingCase?.courtRoom}
               placeholder="Skráðu inn dómsal"
-              onBlur={(evt) => {
-                const validateEmpty = validate(evt.target.value, 'empty')
-
-                setWorkingCase({
-                  ...workingCase,
-                  courtRoom: evt.target.value,
-                })
-
-                if (
-                  validateEmpty.isValid &&
-                  workingCase.courtAttendees !== evt.target.value
-                ) {
-                  updateCase(
-                    workingCase.id,
-                    parseString('courtRoom', evt.target.value),
-                  )
-                } else {
-                  setCourtroomErrorMessage(validateEmpty.errorMessage)
-                }
-              }}
-              onChange={replaceTabsOnChange}
+              onChange={(event) =>
+                validateAndSetEvent(
+                  'courtRoom',
+                  event,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                  courtroomErrorMessage,
+                  setCourtroomErrorMessage,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'courtRoom',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setCourtroomErrorMessage,
+                )
+              }
               errorMessage={courtroomErrorMessage}
               hasError={courtroomErrorMessage !== ''}
-              onFocus={() => setCourtroomErrorMessage('')}
               required
             />
           </Box>
@@ -340,20 +323,24 @@ export const HearingArrangements: React.FC = () => {
                 label="Nafn verjanda"
                 defaultValue={workingCase.defenderName}
                 placeholder="Fullt nafn"
-                onBlur={(evt) => {
-                  if (evt.target.value !== workingCase.defenderName) {
-                    setWorkingCase({
-                      ...workingCase,
-                      defenderName: evt.target.value,
-                    })
-
-                    updateCase(
-                      workingCase.id,
-                      parseString('defenderName', evt.target.value),
-                    )
-                  }
-                }}
-                onChange={replaceTabsOnChange}
+                onChange={(event) =>
+                  validateAndSetEvent(
+                    'defenderName',
+                    event,
+                    [],
+                    workingCase,
+                    setWorkingCase,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'defenderName',
+                    event.target.value,
+                    [],
+                    workingCase,
+                    updateCase,
+                  )
+                }
               />
             </Box>
             <Input
@@ -363,27 +350,25 @@ export const HearingArrangements: React.FC = () => {
               placeholder="Netfang"
               errorMessage={defenderEmailErrorMessage}
               hasError={defenderEmailErrorMessage !== ''}
-              onBlur={(evt) => {
-                const validateField = validate(evt.target.value, 'email-format')
-
-                setWorkingCase({
-                  ...workingCase,
-                  defenderEmail: evt.target.value,
-                })
-
-                if (validateField.isValid) {
-                  if (evt.target.value !== workingCase.defenderEmail) {
-                    updateCase(
-                      workingCase.id,
-                      parseString('defenderEmail', evt.target.value),
-                    )
-                  }
-                } else {
-                  setDefenderEmailErrorMessage(validateField.errorMessage)
-                }
-              }}
-              onChange={replaceTabsOnChange}
-              onFocus={() => setDefenderEmailErrorMessage('')}
+              
+              onChange={(event) =>
+                validateAndSetEvent(
+                  'defenderEmail',
+                  event,
+                  [],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'defenderEmail',
+                  event.target.value,
+                  [],
+                  workingCase,
+                  updateCase,
+                )
+              }
             />
           </Box>
           <FormFooter
