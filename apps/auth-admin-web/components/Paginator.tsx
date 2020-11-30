@@ -1,9 +1,14 @@
 import React, { Component } from "react";
 
-class Paginator extends Component<{pageInput: number, lastPage: number; handlePageChange: any }> {
+class Paginator extends Component<{pageNumber: number, lastPage: number; handlePageChange: any }> {
   page = 1;
 
   componentDidMount() {
+    if (this.props.pageNumber === 1){
+      console.log("change pageNumber");
+      this.page = 1;
+    }
+
     this.render();
   }
 
