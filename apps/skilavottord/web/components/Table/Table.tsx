@@ -6,8 +6,20 @@ import { Text } from '@island.is/island-ui/core'
 interface Data {
   span?: number
   alignRight?: boolean
-  textVariant?: any
+  textVariant?: TextVariants
 }
+
+export type TextVariants =
+  | 'default'
+  | 'small'
+  | 'h1'
+  | 'h2'
+  | 'h3'
+  | 'h4'
+  | 'h5'
+  | 'intro'
+  | 'eyebrow'
+  | 'tag'
 
 export const Table: FC = ({ children }) => {
   return (

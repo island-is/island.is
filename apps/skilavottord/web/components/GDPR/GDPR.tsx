@@ -1,4 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useMutation } from '@apollo/client'
+import { useRouter } from 'next/router'
+import { useWindowSize } from 'react-use'
 import {
   Box,
   Text,
@@ -8,15 +11,16 @@ import {
   Button,
   Inline,
 } from '@island.is/island-ui/core'
-import { PageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { useMutation } from '@apollo/client'
-import { useRouter } from 'next/router'
-import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { CREATE_GDPR_INFO } from '@island.is/skilavottord-web/graphql/mutations'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { InlineError } from '@island.is/skilavottord-web/components'
+import { PageLayout, InlineError } from '@island.is/skilavottord-web/components'
+
+export interface GdprMutation {
+  gdprStatus: string
+  nationalId: string
+}
 
 export const GDPR = () => {
   const { user } = useContext(UserContext)
@@ -35,7 +39,7 @@ export const GDPR = () => {
     setIsMobile(false)
   }, [width])
 
-  const [setGDPRInfo, { error: mutationError }] = useMutation(
+  const [setGDPRInfo, { error: mutationError }] = useMutation<GdprMutation>(
     CREATE_GDPR_INFO,
     {
       onCompleted() {

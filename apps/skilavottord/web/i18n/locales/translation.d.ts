@@ -387,6 +387,7 @@ export interface HomeRoutes {
   citizen: string
   recyclingCompany: string
   recyclingFund: string
+  developer: string
 }
 
 export interface RecycleVehicleRoutes {
