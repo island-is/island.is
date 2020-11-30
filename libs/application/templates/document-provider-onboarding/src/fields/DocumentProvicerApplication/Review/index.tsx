@@ -177,18 +177,6 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                   />
                 </GridColumn>
               </GridRow>
-              <Box marginTop={3} />
-              <GridRow>
-                {/* Maybe add condition here, because this can be empty ? opinions */}
-                <GridColumn span="6/12">
-                  <Input
-                    id={'helpDesk.chatbot'}
-                    name={'helpDesk.chatbot'}
-                    label={'Snjallmenni'}
-                    ref={register}
-                  />
-                </GridColumn>
-              </GridRow>
             </Box>
           </AccordionItem>
         </Accordion>

@@ -20,11 +20,15 @@ import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import { REQUEST_TYPES } from '@island.is/skilavottord-web/graphql/queries'
 import { useQuery } from '@apollo/client'
-import { RecyclingRequestTypes } from '@island.is/skilavottord-web/types'
+import {
+  RecyclingRequest,
+  RecyclingRequestTypes,
+  WithApolloProps,
+} from '@island.is/skilavottord-web/types'
 import { getTime, getDate, formatYear } from '@island.is/skilavottord-web/utils'
 import compareDesc from 'date-fns/compareDesc'
 
-const Completed = ({ apolloState }) => {
+const Completed = ({ apolloState }: WithApolloProps) => {
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
   const {
@@ -60,22 +64,24 @@ const Completed = ({ apolloState }) => {
     router.replace(routes.myCars)
   }
 
-  const sortedRequests = recyclingRequests.slice().sort((a, b) => {
-    return compareDesc(new Date(b.createdAt), new Date(a.createdAt))
-  })
+  const sortedRequests = recyclingRequests
+    .slice()
+    .sort((a: RecyclingRequest, b: RecyclingRequest) => {
+      return compareDesc(new Date(b.createdAt), new Date(a.createdAt))
+    })
 
   const citizenRequests = sortedRequests.filter(
-    (request) => request.requestType === 'pendingRecycle',
+    (request: RecyclingRequest) => request.requestType === 'pendingRecycle',
   )
   const latestCitizenRequest = citizenRequests[citizenRequests.length - 1]
 
   const handoverRequests = sortedRequests.filter(
-    (request) => request.requestType === 'handOver',
+    (request: RecyclingRequest) => request.requestType === 'handOver',
   )
   const latestHandoverRequest = handoverRequests[handoverRequests.length - 1]
 
   const deregistrationRequests = sortedRequests.filter(
-    (request) =>
+    (request: RecyclingRequest) =>
       request.requestType === 'deregistered' ||
       request.requestType === 'paymentInitiated' ||
       request.requestType === 'paymentFailed',
@@ -101,7 +107,7 @@ const Completed = ({ apolloState }) => {
   if (error || (loading && !data)) {
     return (
       <ProcessPageLayout
-        sectionType={'citizen'}
+        processType={'citizen'}
         activeSection={2}
         activeCar={id.toString()}
       >
@@ -133,7 +139,7 @@ const Completed = ({ apolloState }) => {
     <>
       {car && (
         <ProcessPageLayout
-          sectionType={'citizen'}
+          processType={'citizen'}
           activeSection={2}
           activeCar={id.toString()}
         >
@@ -194,25 +200,27 @@ const Completed = ({ apolloState }) => {
                             </GridColumn>
                           </GridRow>
                         )}
-                        {deregistrationRequests.map((request) => (
-                          <GridRow key={request.id}>
-                            <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
-                              <Text>
-                                {`${getConfirmationText(
-                                  request.requestType,
-                                  request.nameOfRequestor,
-                                )}`}
-                              </Text>
-                            </GridColumn>
-                            <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
-                              <Text variant="h5">
-                                {`${getDate(request.createdAt)} ${getTime(
-                                  request.createdAt,
-                                )}`}
-                              </Text>
-                            </GridColumn>
-                          </GridRow>
-                        ))}
+                        {deregistrationRequests.map(
+                          (request: RecyclingRequest) => (
+                            <GridRow key={request.id}>
+                              <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
+                                <Text>
+                                  {`${getConfirmationText(
+                                    request.requestType,
+                                    request.nameOfRequestor,
+                                  )}`}
+                                </Text>
+                              </GridColumn>
+                              <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
+                                <Text variant="h5">
+                                  {`${getDate(request.createdAt)} ${getTime(
+                                    request.createdAt,
+                                  )}`}
+                                </Text>
+                              </GridColumn>
+                            </GridRow>
+                          ),
+                        )}
                       </Stack>
                     </Stack>
                   </GridContainer>

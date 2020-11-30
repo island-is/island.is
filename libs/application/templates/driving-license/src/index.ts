@@ -1,3 +1,3 @@
-import drivingLicenseTemplate from './lib/drivingLicenseTemplate'
+import template from './lib/template'
 
-export default drivingLicenseTemplate
+export default template

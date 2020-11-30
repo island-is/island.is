@@ -105,11 +105,6 @@ export const ReviewApplication: Form = buildForm({
               disabled: true,
               width: 'half',
             }),
-            buildTextField({
-              id: 'helpDesk.chatbot',
-              name: m.helpDeskChatbot,
-              disabled: true,
-            }),
             buildSubmitField({
               id: 'approvedByReviewer',
               name: 'Samþykkir þú þessa umsókn?',

@@ -10,6 +10,7 @@ import { Locale } from '@island.is/skilavottord-web/i18n/I18n'
 import { getRoutefromLocale } from '@island.is/skilavottord-web/utils/routesMapper'
 import { useQuery } from '@apollo/client'
 import { USER } from '@island.is/skilavottord-web/graphql/queries'
+import { Role } from '@island.is/skilavottord-web/auth/utils'
 
 export const Header: FC = () => {
   const router = useRouter()
@@ -43,10 +44,12 @@ export const Header: FC = () => {
   }
 
   useEffect(() => {
-    setUser(user)
+    if (user && setUser) {
+      setUser(user)
+    }
   }, [user, setUser])
 
-  const homeRoute = routes.home[user?.role] ?? routes.home['citizen']
+  const homeRoute = routes.home[user?.role as Role] ?? routes.home['citizen']
 
   return (
     <IslandUIHeader

@@ -11,7 +11,7 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
 import { formatDate, formatYear } from '@island.is/skilavottord-web/utils'
-import { Car } from '@island.is/skilavottord-web/types'
+import { Car, WithApolloProps } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import {
   CREATE_VEHICLE_OWNER,
@@ -19,7 +19,7 @@ import {
 } from '@island.is/skilavottord-web/graphql/mutations'
 import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
 
-const Confirm = ({ apolloState }) => {
+const Confirm = ({ apolloState }: WithApolloProps) => {
   const { user } = useContext(UserContext)
   const [checkbox, setCheckbox] = useState(false)
   const [isTablet, setIsTablet] = useState(false)
@@ -40,7 +40,7 @@ const Confirm = ({ apolloState }) => {
         pathname: routes.myCars,
       })
     }
-  }, [car])
+  }, [car, router, routes])
 
   useEffect(() => {
     if (width < theme.breakpoints.lg) {
@@ -64,19 +64,22 @@ const Confirm = ({ apolloState }) => {
         name: user?.name,
         nationalId: user?.nationalId,
       },
-    }).then(() =>
-      setVehicle({
-        variables: {
-          ...car,
-          newRegDate: formatDate(car.firstRegDate, 'dd.MM.yyyy'),
-          nationalId: user?.nationalId,
-        },
-      }),
-    )
-    localStorage.setItem(ACCEPTED_TERMS_AND_CONDITION, id.toString())
-    router.replace(
-      `${AUTH_URL['citizen']}/login?returnUrl=${routes.recycleVehicle.baseRoute}/${id}/handover`,
-    )
+    })
+      .then(() =>
+        setVehicle({
+          variables: {
+            ...car,
+            newRegDate: formatDate(car.firstRegDate, 'dd.MM.yyyy'),
+            nationalId: user?.nationalId,
+          },
+        }),
+      )
+      .then(() => {
+        localStorage.setItem(ACCEPTED_TERMS_AND_CONDITION, id.toString())
+        router.replace(
+          `${AUTH_URL['citizen']}/login?returnUrl=${routes.recycleVehicle.baseRoute}/${id}/handover`,
+        )
+      })
   }
 
   const checkboxLabel = (
@@ -94,7 +97,7 @@ const Confirm = ({ apolloState }) => {
     <>
       {car && (
         <ProcessPageLayout
-          sectionType={'citizen'}
+          processType={'citizen'}
           activeSection={0}
           activeCar={id.toString()}
         >
@@ -110,7 +113,7 @@ const Confirm = ({ apolloState }) => {
                 vehicleType={car.type}
                 modelYear={formatYear(car.firstRegDate, 'dd.MM.yyyy')}
               />
-              <Box padding={4} background="blue100">
+              <Box padding={4} background="blue100" borderRadius="large">
                 <Checkbox
                   name="confirm"
                   label={checkboxLabel.props.children}

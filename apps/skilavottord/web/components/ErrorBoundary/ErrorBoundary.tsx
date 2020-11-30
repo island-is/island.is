@@ -9,7 +9,7 @@ import { Translation } from '../../i18n/locales'
 
 interface PropTypes {
   children: React.ReactNode
-  t?: Translation
+  t: Translation
 }
 
 interface StateTypes {
@@ -25,7 +25,7 @@ class ErrorBoundary extends PureComponent<PropTypes, StateTypes> {
     this.state = { error: undefined }
   }
 
-  componentDidCatch(error: Error, errorInfo: {}) {
+  componentDidCatch(error: Error, errorInfo: any) {
     this.setState({ error })
     Sentry.withScope((scope) => {
       Object.keys(errorInfo).forEach((key) => {

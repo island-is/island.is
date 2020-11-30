@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import IslandisLogin from 'islandis-login'
+import IslandisLogin, { VerifyResult } from 'islandis-login'
 import { Entropy } from 'entropy-string'
 import { uuid } from 'uuidv4'
 import { CookieOptions, Request, Response } from 'express'
@@ -23,7 +23,7 @@ import {
 } from '@island.is/judicial-system/consts'
 
 import { environment } from '../../../environments'
-import { Cookie, Credentials, VerifyResult, AuthUser } from './auth.types'
+import { Cookie, Credentials, AuthUser } from './auth.types'
 import { AuthService } from './auth.service'
 
 const { samlEntryPoint, jwtSecret } = environment.auth
