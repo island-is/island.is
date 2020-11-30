@@ -6,8 +6,6 @@ import {
   GridRow,
   GridColumn,
   Hidden,
-  Divider,
-  UseBoxStylesProps,
 } from '@island.is/island-ui/core'
 import { Main, Sticky } from '../../components'
 
