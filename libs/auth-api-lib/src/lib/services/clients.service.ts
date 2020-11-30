@@ -15,6 +15,9 @@ import { ClientSecret } from '../entities/models/client-secret.model'
 import { Client } from '../entities/models/client.model'
 import { ClientAllowedCorsOriginDTO } from '../entities/dto/client-allowed-cors-origin.dto'
 import { ClientRedirectUriDTO } from '../entities/dto/client-redirect-uri.dto'
+import { GrantType } from '../entities/models/grant-type.model'
+import { ClientGrantTypeDTO } from '../entities/dto/client-grant-type.dto'
+import { ClientAllowedScopeDTO, ClientClaimDTO } from '@island.is/auth-api-lib'
 
 @Injectable()
 export class ClientsService {
@@ -29,6 +32,12 @@ export class ClientsService {
     private clientAllowedCorsOrigin: typeof ClientAllowedCorsOrigin,
     @InjectModel(ClientRedirectUri)
     private clientRedirectUri: typeof ClientRedirectUri,
+    @InjectModel(ClientGrantType)
+    private clientGrantTypeModel: typeof ClientGrantType,
+    @InjectModel(ClientAllowedScope)
+    private clientAllowedScope: typeof ClientAllowedScope,
+    @InjectModel(ClientClaim)
+    private clientClaim: typeof ClientClaim,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -248,6 +257,105 @@ export class ClientsService {
 
     return await this.clientRedirectUri.destroy({
       where: { clientId: clientId, redirectUri: redirectUri },
+    })
+  }
+
+  /** Adds a grant type to client */
+  async addGrantType(
+    grantTypeObj: ClientGrantTypeDTO,
+  ): Promise<ClientGrantType> {
+    this.logger.debug(
+      `Adding grant type - "${grantTypeObj.grantType}" to client - "${grantTypeObj.clientId}"`,
+    )
+
+    if (!grantTypeObj) {
+      throw new BadRequestException('Grant Type object must be provided')
+    }
+
+    return await this.clientGrantTypeModel.create({ ...grantTypeObj })
+  }
+
+  /** Removes a grant type for client */
+  async removeGrantType(clientId: string, grantType: string): Promise<number> {
+    this.logger.debug(
+      `Removing grant type "${grantType}" for client - "${clientId}"`,
+    )
+
+    if (!clientId || !grantType) {
+      throw new BadRequestException('grantType and clientId must be provided')
+    }
+
+    return await this.clientGrantTypeModel.destroy({
+      where: { clientId: clientId, grantType: grantType },
+    })
+  }
+
+  /** Adds an allowed scope to client */
+  async addAllowedScope(
+    clientAllowedScope: ClientAllowedScopeDTO,
+  ): Promise<ClientAllowedScope> {
+    this.logger.debug(
+      `Adding allowed scope - "${clientAllowedScope.scopeName}" to client - "${clientAllowedScope.clientId}"`,
+    )
+
+    if (!clientAllowedScope) {
+      throw new BadRequestException(
+        'clientAllowedScope object must be provided',
+      )
+    }
+
+    return await this.clientAllowedScope.create({ ...clientAllowedScope })
+  }
+
+  /** Removes an allowed scope from client */
+  async removeAllowedScope(
+    clientId: string,
+    scopeName: string,
+  ): Promise<number> {
+    this.logger.debug(
+      `Removing scope - "${scopeName}" from client - "${clientId}"`,
+    )
+
+    if (!clientId || !scopeName) {
+      throw new BadRequestException('scopeName and clientId must be provided')
+    }
+
+    return await this.clientAllowedScope.destroy({
+      where: { clientId: clientId, scopeName: scopeName },
+    })
+  }
+
+  /** Adds an claim to client */
+  async addClaim(claim: ClientClaimDTO): Promise<ClientClaim> {
+    this.logger.debug(
+      `Adding claim of type - "${claim.type}", with value - "${claim.value}" to client - "${claim.clientId}"`,
+    )
+
+    if (!claim) {
+      throw new BadRequestException('claim object must be provided')
+    }
+
+    return await this.clientClaim.create({ ...claim })
+  }
+
+  /** Removes an claim from client */
+  async removeClaim(
+    clientId: string,
+    claimType: string,
+    claimValue: string,
+  ): Promise<number> {
+    this.logger.debug(
+      `Removing claim of type - "${claimType}", with value - "${claimValue}" from client - "${clientId}"`,
+    )
+
+    if (!clientId || !claimType || !claimValue) {
+      throw new BadRequestException(
+        'claimType, claimValue and clientId must be provided',
+      )
+    }
+
+    return await this.clientClaim.destroy({
+      where: { clientId: clientId, type: claimType, value: claimValue },
     })
   }
 }
