@@ -122,6 +122,7 @@ class Clients extends Component {
           </table>
         </div>
         <Paginator
+          page
           lastPage={this.state.lastPage}
           handlePageChange={this.handlePageChange}
         />
