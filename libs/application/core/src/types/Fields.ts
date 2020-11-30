@@ -89,6 +89,7 @@ export interface RadioField extends BaseField {
   component: FieldComponents.RADIO
   options: MaybeWithApplication<Option[]>
   emphasize?: boolean
+  halve?: boolean
   largeButtons?: boolean
 }
 

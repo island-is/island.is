@@ -20,7 +20,7 @@ export const application: Form = buildForm({
   children: [
     buildSection({
       id: 'type',
-      name: 'Tegund umsóknar',
+      name: 'Ökuréttindi',
       children: [
         buildMultiField({
           id: 'user',
@@ -29,12 +29,15 @@ export const application: Form = buildForm({
             buildRadioField({
               id: 'type',
               name: 'Tegund ökutækja',
-              emphasize: true,
+              largeButtons: true,
+              halve: true,
               options: [
-                { value: 'car', label: 'Bifreiða- eða bifhjólaréttindi' },
+                { value: 'general', label: 'Almenn ökuréttindi' },
                 { value: 'truck', label: 'Vöru- eða hópbifreiðaréttindi' },
-                { value: 'tractor', label: 'Dráttarvélaréttindi' },
+                { value: 'bike', label: 'Bifhjólaréttindi' },
                 { value: 'taxi', label: 'Leigubílaréttindi' },
+                { value: 'tractor', label: 'Dráttarvélaréttindi' },
+                { value: 'trailer', label: 'Kerrur og eftirvagnar' },
               ],
             }),
           ],

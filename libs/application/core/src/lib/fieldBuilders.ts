@@ -120,6 +120,7 @@ export function buildRadioField(data: {
   emphasize?: boolean
   largeButtons?: boolean
   disabled?: boolean
+  halve?: boolean
   width?: FieldWidth
 }): RadioField {
   const {
@@ -131,6 +132,7 @@ export function buildRadioField(data: {
     emphasize = false,
     largeButtons = false,
     disabled = false,
+    halve = false,
     width = 'full',
   } = data
   return {
@@ -139,6 +141,7 @@ export function buildRadioField(data: {
     largeButtons,
     disabled,
     width,
+    halve,
     condition,
     id,
     name,
