@@ -25,7 +25,7 @@ import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
 import { CaseService } from './case.service'
-import { CaseValidationPipe } from './case.pipe'
+import { CaseValidationPipe } from './pipes'
 
 @Controller('api')
 @ApiTags('cases')

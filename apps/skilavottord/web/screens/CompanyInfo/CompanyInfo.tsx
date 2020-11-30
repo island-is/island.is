@@ -38,7 +38,7 @@ const CompanyInfo: FC = () => {
 
   const recyclingPartners = data?.skilavottordAllActiveRecyclingPartners || []
   const activePartner = recyclingPartners.filter(
-    (partner) => partner.companyId === partnerId,
+    (partner: RecyclingPartner) => partner.companyId === partnerId,
   )
   const partnerName = activePartner.length > 0 && activePartner[0].companyName
 
@@ -76,7 +76,7 @@ const CompanyInfo: FC = () => {
           <Text variant="h3">{t.subtitles.location}</Text>
           <Box>
             {activePartner.length > 0 ? (
-              activePartner.map((partner: RecyclingPartner, index) => (
+              activePartner.map((partner: RecyclingPartner, index: string) => (
                 <ListItem
                   key={index}
                   title={partner.companyName}

@@ -91,6 +91,7 @@ export interface Case {
   prosecutor?: User
   courtCaseNumber?: string
   courtDate?: string
+  isCourtDateInThePast?: boolean
   courtRoom?: string
   defenderName?: string
   defenderEmail?: string

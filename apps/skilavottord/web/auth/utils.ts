@@ -5,7 +5,6 @@ const CSRF_COOKIE_NAME = 'skilavottord.csrf'
 type CookieContext = { req?: { headers: { cookie?: string } } }
 
 export type Role =
-  | 'admin'
   | 'developer'
   | 'recyclingCompany'
   | 'recyclingFund'
@@ -29,7 +28,7 @@ export const isAuthenticated = (ctx: CookieContext) => {
 export const hasPermission = (page: Page, role: Role) => {
   if (!role) return false
 
-  if (role === 'admin' || role === 'developer') return true
+  if (role === 'developer') return true
 
   const permittedRoutes = {
     recyclingCompany: ['deregisterVehicle', 'companyInfo'],
