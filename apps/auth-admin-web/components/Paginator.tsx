@@ -7,7 +7,7 @@ interface Props {
 
 const Paginator: React.FC<Props> = (props: Props) =>{
   const [page, setPage] = useState<number>(1); 
-  const [count, setCount] = useState<number>(30); // TODO: Set to something that makes sense 30 
+  const [count, setCount] = useState<number>(1); // TODO: Set to something that makes sense 30 
 
   const changeCount = (count: string) => {
     setPage(1);
@@ -64,6 +64,7 @@ const Paginator: React.FC<Props> = (props: Props) =>{
               id="count"
               onChange={(e) => changeCount(e.target.value)}
               className="paginator__select"
+              defaultValue={count}
             >
               <option value="1">1</option>
               <option value="30">30</option>

@@ -27,7 +27,7 @@ class Clients extends Component {
   }
 
   componentDidMount = async () => {
-    this.getClients(this.state.page, this.state.page) 
+    this.getClients(this.state.page, this.state.count) 
   };
 
   handlePageChange = async (page: number, count: number) => {
@@ -54,7 +54,7 @@ class Clients extends Component {
         <div className="clients__container__options">
           <div className="clients__container__button">
             <Link href={'/client'}>
-              <a className="clients__button__new">Create new client</a>
+              <a className="clients__button__new"><i className="icon__new"></i>Create new client</a>
             </Link>
           </div>
          
@@ -74,7 +74,7 @@ class Clients extends Component {
                   <tr key={client.clientId}>
                     <td>{client.clientId}</td>
                     <td>{client.identityTokenLifetime}</td>
-                    <td>
+                    <td className="clients__table__button">
                       <button type="button"
                         className="clients__button__edit"
                         onClick={() => this.edit(client)}
@@ -82,7 +82,7 @@ class Clients extends Component {
                         Breyta
                       </button>
                     </td>
-                    <td>
+                    <td className="clients__table__button">
                       <button type="button"
                         className="clients__button__delete"
                         onClick={() => this.delete(client.clientId)}
