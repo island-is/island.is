@@ -164,24 +164,26 @@ interface SubpageProps {
   detailsHeader?: ReactNode
   details?: ReactNode
 }
-export const SubpageLayout: FC<SubpageProps> = ({ main, detailsHeader, details }) => {
+export const SubpageLayout: FC<SubpageProps> = ({
+  main,
+  detailsHeader,
+  details,
+}) => {
   return (
-    <Box width='full'>
+    <Box width="full">
       <Box paddingBottom={6}>
         <GridContainer>
           <GridRow>
-            <GridColumn span='12/12'>
-              {main}
-            </GridColumn>
+            <GridColumn span="12/12">{main}</GridColumn>
           </GridRow>
         </GridContainer>
       </Box>
-      {details &&  (
-          <Box background='blue100'>
-            <SubpageDetailsLayout header={detailsHeader}>
-              {details}
-            </SubpageDetailsLayout>
-          </Box>
+      {details && (
+        <Box background="blue100">
+          <SubpageDetailsLayout header={detailsHeader}>
+            {details}
+          </SubpageDetailsLayout>
+        </Box>
       )}
     </Box>
   )
@@ -190,24 +192,23 @@ export const SubpageLayout: FC<SubpageProps> = ({ main, detailsHeader, details }
 interface SubpageDetailsProps {
   header: ReactNode
 }
-export const SubpageDetailsLayout: FC<SubpageDetailsProps> = ({ header, children }) => {
+export const SubpageDetailsLayout: FC<SubpageDetailsProps> = ({
+  header,
+  children,
+}) => {
   return (
     <Box paddingTop={4}>
       <Box paddingBottom={4}>
         <GridContainer>
           <GridRow>
-            <GridColumn span='12/12'>
-              {header}
-            </GridColumn>
+            <GridColumn span="12/12">{header}</GridColumn>
           </GridRow>
         </GridContainer>
       </Box>
       <Box>
         <GridContainer>
           <GridRow>
-            <GridColumn span='12/12'>
-              {children}
-            </GridColumn>
+            <GridColumn span="12/12">{children}</GridColumn>
           </GridRow>
         </GridContainer>
       </Box>
