@@ -367,9 +367,10 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
     return createArticleNavigation(article, subArticle, makePath)
   }, [article, subArticle, makePath])
 
-  const relatedLinks = (article.relatedArticles ?? []).map((x) => ({
-    title: x.title,
-    url: x.slug,
+  const relatedLinks = (article.relatedArticles ?? []).map((article) => ({
+    title: article.title,
+    url: makePath('article', '[slug]'),
+    as: makePath('article', article.slug),
   }))
 
   const combinedMobileNavigation = [
