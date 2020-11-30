@@ -13,8 +13,12 @@ export default function Index(){
     const [clientId, SetClientId] = useState(null);
     // let clientObj: ClientDTO = new ClientDTO();
 
-    const handlePageChange = () => {
+    const handleNext = () => {
         setStep(step+1);
+    }
+
+    const handleBack = () => {
+        setStep(step-1);
     }
 
     const handleClientSaved = (client: ClientDTO) => {
@@ -51,10 +55,10 @@ export default function Index(){
             // Set the callback URI .. ALLT
             const rObj = new ClientRedirectUriDTO();
             rObj.clientId = clientId;
-            return <ClientRedirectUri redirectObject={rObj} handlePageChange={handleRedirectSaved} />
+            return <ClientRedirectUri redirectObject={rObj} uris={null} handleNext={handleNext} handleBack={handleBack} />
             }
         case 3: {
-            return <ClientIdpRestrictions clientId={clientId} restrictions={[]} handlePageChange={handlePageChange} />
+            return <ClientIdpRestrictions clientId={clientId} restrictions={[]} handlePageChange={handleNext} />
         }
         case 4: {
             // Allowed Scopes

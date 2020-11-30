@@ -6,8 +6,9 @@ import APIResponse from './../models/APIResponse';
 
 interface Props {
   clientId: string;
-  restrictions: string[]; // What is currently valid
-  handlePageChange?: () => void;
+  restrictions: string[]; // What is currently valid for updating existing Clients
+  handleNext?: () => void;
+  handleBack?: () => void;
 }
 
 const ClientIdpRestrictions: React.FC<Props> = (props: Props) => {
@@ -19,7 +20,7 @@ const ClientIdpRestrictions: React.FC<Props> = (props: Props) => {
       clientId: props.clientId,
     };
     await axios
-      .post(`/api/idprestriction`, createObj)
+      .post(`/api/idp-restriction`, createObj)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
@@ -37,7 +38,7 @@ const ClientIdpRestrictions: React.FC<Props> = (props: Props) => {
 
   const remove = async (name: string) => {
     await axios
-      .delete(`/api/idprestriction/${props.clientId}/${name}`)
+      .delete(`/api/idp-restriction/${props.clientId}/${name}`)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
