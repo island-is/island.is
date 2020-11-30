@@ -168,6 +168,10 @@ table {
       color: #00003c;
       text-align: left;
 
+      &[class$='table__button'] {
+        width: 40px;
+      }
+
       button {
         height: 30px;
         font-size: 12px;
@@ -220,4 +224,18 @@ nav[class$='pagination'] {
 
 .hidden {
   display: none;
+}
+
+a {
+  &[class$='new'] {
+    display: block;
+    padding: 20px 0px;
+  }
+}
+
+// Icons
+.icon__new {
+  @extend .fa;
+  @extend .fa-plus;
+  margin-right: 10px;
 }

@@ -87,6 +87,7 @@ export default function IdentityResources() {
         <div className="identity-resources__container__button">
           <Link href={'/resource'}>
             <a className="identity-resources__button__new">
+              <i className="icon__new"></i>
               Create new Identity Resource
             </a>
           </Link>
@@ -107,7 +108,7 @@ export default function IdentityResources() {
                 <tr key={resource.name}>
                   <td>{resource.name}</td>
                   <td>{resource.displayName}</td>
-                  <td>
+                  <td className="identity-resources__table__button">
                     <button
                       className="identity-resources__button__edit"
                       onClick={() => edit(resource)}
@@ -115,7 +116,7 @@ export default function IdentityResources() {
                       Breyta
                     </button>
                   </td>
-                  <td>
+                  <td className="identity-resources__table__button">
                     <button
                       className="identity-resources__button__delete"
                       onClick={() => remove(resource.name)}
