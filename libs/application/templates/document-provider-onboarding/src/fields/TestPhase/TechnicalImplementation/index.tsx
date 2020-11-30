@@ -19,25 +19,15 @@ const TestPhaseInfoScreen: FC<FieldBaseProps> = ({ field, application }) => {
       <Box marginBottom={3}>
         <Text>
           <strong>
-            Nú er komið að því að þú klárir forritunarskilin hjá þér áður en þú
-            heldur áfram í umsóknarferlinu.
+            {m.testTechnicalImplementationSubTitle.defaultMessage}
           </strong>
         </Text>
       </Box>
       <Box marginBottom={3}>
-        <Text>
-          Þegar forritunarskilum er lokið er hægt að koma aftur að umsókninni
-          til að klára ferlið. Það er á ábyrgð skjalaveitanda að
-          forritunarskilin uppfylli öryggiskröfur og kröfur um virkni.
-        </Text>
+        <Text>{m.testTechnicalImplementationMessage1.defaultMessage}</Text>
       </Box>
       <Box marginBottom={3}>
-        <Text>
-          Það er einnig á ábyrgð útfærsluaðila að prófa þjónustuna vel hjá sér
-          áður en farið er á raun umhverfi. Til aðstoðar verða sjálfvirk próf
-          þegar eigin prófunum er lokið. Sjálfvirku prófin eru ekki tæmandi, því
-          er mikilvægt að útfærsluaðili prófi allt einnig í þaula.
-        </Text>
+        <Text>{m.testTechnicalImplementationMessage2.defaultMessage}</Text>
       </Box>
       <Box marginBottom={3}>
         <Controller

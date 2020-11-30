@@ -91,8 +91,7 @@ export const TestPhase: Form = buildForm({
         buildMultiField({
           id: 'testsFinishedMulti',
           name: m.prodEnviromentTitle,
-          description:
-            'Hér getur þú búið til aðgang að raunumhverfi. Athugið að afrita og geyma þessar upplýsingar því þær eru ekki geymdar hér í þessari umsókn.',
+          description: m.prodEnviromentsubTitle,
           children: [
             buildCustomField(
               {
@@ -115,14 +114,13 @@ export const TestPhase: Form = buildForm({
         }),
         buildMultiField({
           id: 'finished',
-          name: 'Aðgangur að raun',
-          description:
-            'Þú hefur nú fengið aðgang að umsjónarkerfi skajalveitenda. Það má finna á þínum síðum á ísland.is',
+          name: m.secondThankYouScreenScreenTitle,
+          description: m.secondThankYouScreenScreenSubTitle,
           children: [
             buildCustomField(
               {
-                id: 'test',
-                name: 'Takk fyrir',
+                id: 'secondThankYouScreen',
+                name: m.secondThankYouScreenScreenTitle,
                 component: 'ThankYouImage',
               },
               {},

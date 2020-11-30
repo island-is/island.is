@@ -6,6 +6,7 @@ export interface InfoScreenProps {
 }
 
 const InfoScreen = ({ message }: InfoScreenProps) => {
+  //TODO refactor links and text to messages.ts?
   return (
     <Box marginTop={[2, 3]}>
       <Box>

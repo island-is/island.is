@@ -14,6 +14,7 @@ import {
 } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import * as styles from './AutomatedTests.treat'
+import { m } from '../../../forms/messages'
 
 const AutomatedTests: FC<FieldBaseProps> = () => {
   interface Response {
@@ -41,26 +42,19 @@ const AutomatedTests: FC<FieldBaseProps> = () => {
     <Box>
       <Box marginBottom={3}>
         <FieldDescription
-          description="Tilgangur þessa prófs er að sannreyna að skjalaveita geti sent notanda
-          skjal og að notandi geti nálgast skjal hjá skjalaveitu."
+          description={m.automatedTestsSubTitle.defaultMessage}
         />
       </Box>
       <Box marginBottom={1}>
-        <Text variant="h3">Leiðbeiningar</Text>
-        <Text>
-          Sendu skjal á einhverja kennitölu í pósthólfið á prófunarumhverfinu.
-          Því næst skal slá inn kennitölu þess sem skjalið var sent á í reitinn
-          hér að neðan og velja að keyra próf. Prófið athugar hvort skjal hafi
-          borist þessari kennitölu á síðustu 5 mínútum. Einnig er sannreynt að
-          hægt sé að sækja skjalið til skjalaveitu.
-        </Text>
+        <Text variant="h3">{m.automatedTestsSubHeading.defaultMessage}</Text>
+        <Text>{m.automatedTestsMessage.defaultMessage}</Text>
       </Box>
       <Box marginTop={3} position="relative">
         <GridContainer>
           <GridRow>
             <GridColumn span="6/12">
               <Input
-                label="Kennitala móttakanda"
+                label={m.automatedTestsNationalIdLabel.defaultMessage}
                 name="nationalId"
                 id="nationalId"
                 ref={register({
@@ -71,19 +65,21 @@ const AutomatedTests: FC<FieldBaseProps> = () => {
                 defaultValue=""
                 placeholder="Skráðu inn kennitölu"
                 hasError={errors.nationalId !== undefined}
-                errorMessage="Þú verður að skrá inn kennitölu móttakanda"
+                errorMessage={
+                  m.automatedTestsNationalIdErrorMessage.defaultMessage
+                }
                 disabled={isLoading}
               />
             </GridColumn>
             <GridColumn span="6/12">
               <Input
-                label="Id skjals"
+                label={m.automatedTestsDocIdLabel.defaultMessage}
                 name="docId"
                 required
                 placeholder="Skráðu inn Id skjals"
                 ref={register({ required: true })}
                 hasError={errors.docId !== undefined}
-                errorMessage="Þú verður að skrá inn Id skjals"
+                errorMessage={m.automatedTestsDocIdErrorMessage.defaultMessage}
               />
             </GridColumn>
           </GridRow>

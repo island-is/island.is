@@ -110,12 +110,12 @@ export const ReviewApplication: Form = buildForm({
             }),
             buildSubmitField({
               id: 'approvedByReviewer',
-              name: 'Samþykkir þú þessa umsókn?',
+              name: m.reviewQuestion,
               placement: 'screen',
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
                 { event: 'REJECT', name: 'Hafna', type: 'reject' },
-                //Add "ófullnægjandi" here
+                //TODO Add "ófullnægjandi" here
               ],
             }),
             buildTextField({
