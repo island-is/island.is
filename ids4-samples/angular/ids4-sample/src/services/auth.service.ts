@@ -39,7 +39,7 @@ export class AuthService {
 
 export function getClientSettings(): UserManagerSettings {
   return {
-    authority: 'https://identity-server.dev01.devland.is/',
+    authority: 'https://localhost:6001/',
     client_id: 'island-is-1',
     redirect_uri: `${window.location.origin}/signin-oidc`,
     response_type: 'code',
