@@ -1,4 +1,5 @@
 import { Op } from 'sequelize'
+
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
@@ -9,6 +10,7 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
+import { CaseState } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { generateRulingPdf, writeFile } from '../../formatters'
@@ -16,7 +18,6 @@ import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { TransitionUpdate } from './state'
-import { CaseState } from '@island.is/judicial-system/types'
 
 @Injectable()
 export class CaseService {
@@ -182,12 +183,22 @@ export class CaseService {
     return { numberOfAffectedRows, updatedCase }
   }
 
+  async getRulingPdf(existingCase: Case) {
+    this.logger.debug(
+      `Getting the ruling for case ${existingCase.id} as a pdf document`,
+    )
+
+    // This method should only be called if the csae state is SUBMITTED
+
+    return await generateRulingPdf(existingCase)
+  }
+
   async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {
     this.logger.debug(
       `Requesting signature of ruling for case ${existingCase.id}`,
     )
 
-    // This method should only be called if the csae state is ACCEPTED or REJECTED
+    // This method should only be called if the csae state is SUBMITTED
 
     const pdf = await generateRulingPdf(existingCase)
 
@@ -218,7 +229,7 @@ export class CaseService {
       `Confirming signature of ruling for case ${existingCase.id}`,
     )
 
-    // This method should only be called if the csae state is ACCEPTED or REJECTED and
+    // This method should only be called if the csae state is SUBMITTED and
     // requestSignature has previously been called for the same case
 
     // Production, or development with signing service access token

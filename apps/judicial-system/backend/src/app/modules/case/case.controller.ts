@@ -1,3 +1,5 @@
+import { ReadableStreamBuffer } from 'stream-buffers'
+
 import {
   Body,
   Controller,
@@ -11,6 +13,7 @@ import {
   Query,
   ConflictException,
   Res,
+  Header,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -134,6 +137,28 @@ export class CaseController {
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
   async getById(@Param('id') id: string): Promise<Case> {
     return this.findCaseById(id)
+  }
+
+  @Get('case/:id/ruling')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets the ruling for an existing case as a pdf document',
+  })
+  async getRulingPdf(@Param('id') id: string, @Res() res) {
+    const existingCase = await this.findCaseById(id)
+
+    const pdf = await this.caseService.getRulingPdf(existingCase)
+
+    const stream = new ReadableStreamBuffer({
+      frequency: 10,
+      chunkSize: 2048,
+    })
+    stream.put(pdf, 'binary')
+
+    res.header('Content-length', pdf.length)
+
+    return stream.pipe(res)
   }
 
   @Post('case/:id/signature')
