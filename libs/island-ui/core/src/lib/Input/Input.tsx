@@ -143,6 +143,7 @@ export const Input = forwardRef(
               [styles.hasFocus]: hasFocus,
               [styles.containerDisabled]: disabled,
               [styles.fixedFocusState]: fixedFocusState,
+              [styles.noLabel]: !label,
             },
           )}
           onClick={(e) => {
