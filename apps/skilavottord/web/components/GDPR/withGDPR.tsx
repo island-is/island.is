@@ -1,11 +1,12 @@
 import React, { useContext } from 'react'
+import { NextComponentType } from 'next'
 import { useQuery } from '@apollo/client'
 import { SkeletonLoader } from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { GDPR_INFO_BY_NATIONAL_ID } from '@island.is/skilavottord-web/graphql/queries'
 import { PageLayout, GDPR } from '@island.is/skilavottord-web/components'
 
-export const withGDPR = (WrappedComponent) => () => {
+export const withGDPR = (WrappedComponent: NextComponentType) => () => {
   const { user } = useContext(UserContext)
 
   const nationalId = user?.nationalId ?? ''

@@ -42,6 +42,7 @@ export type Icon =
   | 'wallet'
   | 'warning'
   | 'reload'
+  | 'remove'
 
 export default {
   filled: {
@@ -87,6 +88,7 @@ export default {
     wallet: 'Wallet',
     warning: 'Warning',
     reload: 'Reload',
+    remove: 'Remove',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
@@ -131,5 +133,6 @@ export default {
     wallet: 'WalletOutline',
     warning: 'WarningOutline',
     reload: 'ReloadOutline',
+    remove: 'RemoveOutline',
   },
 }
