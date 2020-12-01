@@ -62,8 +62,6 @@ export class RestMetadataService {
           // so name, owner and description will be from the latest version.
           service.name = spec.info.title
           service.owner = provider.name
-            ? provider.name
-            : provider.xroadInfo.subsystemCode
           service.description = spec.info.description ?? ''
           service.data = union(service.data, spec.info['x-category'])
           service.pricing = union(service.pricing, spec.info['x-pricing'])
