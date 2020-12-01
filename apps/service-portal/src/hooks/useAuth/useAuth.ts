@@ -1,7 +1,6 @@
 import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
 import { userManager } from '../../utils/userManager'
-import { User } from '@sentry/react'
 
 const useAuth = () => {
   const [{ userInfo, userInfoState }, dispatch] = useStore()
