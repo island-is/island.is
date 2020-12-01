@@ -252,7 +252,7 @@ export const RulingStepOne: React.FC = () => {
                   onChange={(evt) =>
                     validateAndSetTime(
                       'custodyEndDate',
-                      workingCase.requestedCourtDate,
+                      workingCase.custodyEndDate,
                       evt.target.value,
                       ['empty', 'time-format'],
                       workingCase,
@@ -264,7 +264,7 @@ export const RulingStepOne: React.FC = () => {
                   onBlur={(evt) =>
                     validateAndSendTimeToServer(
                       'custodyEndDate',
-                      workingCase.requestedCourtDate,
+                      workingCase.custodyEndDate,
                       evt.target.value,
                       ['empty', 'time-format'],
                       workingCase,
