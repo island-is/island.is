@@ -4,7 +4,9 @@ import { Box, Stack, Inline, Tag } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { Screen } from '@island.is/web/types'
 import { useNamespace } from '@island.is/web/hooks'
-import routeNames from '@island.is/web/i18n/routeNames'
+import pathNames, { ContentType } from '@island.is/web/i18n/routes'
+import Link from 'next/link'
+
 import {
   QueryGetFrontpageSliderListArgs,
   ContentLanguage,
@@ -61,7 +63,6 @@ const Home: Screen<HomeProps> = ({
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)
   const gn = useNamespace(globalNamespace)
-  const { makePath } = routeNames(activeLocale)
 
   if (!lifeEvents || !lifeEvents.length) {
     return null
@@ -71,12 +72,19 @@ const Home: Screen<HomeProps> = ({
     document.documentElement.lang = activeLocale
   }
 
-  const cards = categories.map(({ title, slug, description }) => ({
-    title,
-    description,
-    href: makePath('ArticleCategory', '/[slug]'),
-    as: makePath('ArticleCategory', slug),
-  }))
+  const cards = categories.map(({ __typename, title, slug, description }) => {
+    const cardUrl = pathNames(
+      activeLocale,
+      __typename.toLowerCase() as ContentType,
+      [slug],
+    )
+    return {
+      title,
+      description,
+      href: cardUrl.href,
+      as: cardUrl.as,
+    }
+  })
 
   const searchContent = (
     <Box display="flex" flexDirection="column" width="full">
@@ -92,14 +100,21 @@ const Home: Screen<HomeProps> = ({
           />
         </Box>
         <Inline space={2}>
-          {page.featuredThings.map(({ title, attention, thing }, index) => {
-            return (
-              <Tag
-                key={title}
-                href={makePath('article', thing.slug)}
-                variant="darkerBlue"
-                attention={attention}
-              >
+          {page.featuredThings.map(({ title, attention, thing }) => {
+            const cardUrl = pathNames(
+              activeLocale,
+              thing.__typename.toLowerCase() as ContentType,
+              [thing.slug],
+            )
+
+            return cardUrl.href && cardUrl.href.length > 0 ? (
+              <Link key={title} href={cardUrl.href} as={cardUrl.as}>
+                <Tag variant="darkerBlue" attention={attention}>
+                  {title}
+                </Tag>
+              </Link>
+            ) : (
+              <Tag key={title} variant="darkerBlue" attention={attention}>
                 {title}
               </Tag>
             )
