@@ -27,11 +27,9 @@ export const bottomHeading = style({
   paddingLeft: 24,
 })
 
-
 export const leftAndRight = style({
   display: 'flex',
 })
-
 
 const filterOrg = {
   background: theme.color.blue100,

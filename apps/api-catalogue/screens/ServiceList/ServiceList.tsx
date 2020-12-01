@@ -18,7 +18,7 @@ import {
 
 import * as styles from './ServiceList.treat'
 import cn from 'classnames'
-import { Layout  } from '../../components'
+import { Layout } from '../../components'
 import { theme } from '@island.is/island-ui/theme'
 import { GET_CATALOGUE_QUERY } from '../Queries'
 import { useQuery } from 'react-apollo'
@@ -60,11 +60,7 @@ function ServiceLayout({ top, left, right, isMobile }: PropTypes) {
         className={cn(isMobile ? styles.bottomRootMobile : styles.bottomRoot)}
       >
         <h4 className={cn(styles.bottomHeading)}>API Vörulisti</h4>
-        <div
-          className={cn(
-            isMobile ? {} : styles.leftAndRight,
-          )}
-        >
+        <div className={cn(isMobile ? {} : styles.leftAndRight)}>
           <div className={cn(isMobile ? style({ width: '100%' }) : {})}>
             {left}
           </div>
@@ -166,7 +162,6 @@ export const ServiceList: Screen<ServiceListProps> = ({
     setParameters({ ...parameters, query: inputValue })
   }
 
-  
   const translateTags = (): TagDisplayNames => {
     const names: TagDisplayNames = {
       APIGW: fn('accessApigw'),
@@ -181,10 +176,10 @@ export const ServiceList: Screen<ServiceListProps> = ({
       GRAPHQL: fn('typeGraphql'),
       REST: fn('typeRest'),
       SOAP: fn('typeSoap'),
-      OPEN: 'OPEN'  //tag not currently used
+      OPEN: 'OPEN', //tag not currently used
     }
 
-    return names;
+    return names
   }
 
   useIsomorphicLayoutEffect(() => {
@@ -381,7 +376,8 @@ export const ServiceList: Screen<ServiceListProps> = ({
             <CategoryCard
               colorScheme="red"
               heading={TEXT_ERROR}
-              text="Ekki tókst að sækja gögn." />
+              text="Ekki tókst að sækja gögn."
+            />
           )}
         </ServiceListContainer>
       }

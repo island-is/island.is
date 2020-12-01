@@ -14,20 +14,31 @@ type Tag = {
   onClick?: () => void
 }
 
-type CategoryKeys = 'FREE' | 'PAID' | 'OPEN' | 'PUBLIC' |
-  'OFFICIAL' | 'PERSONAL' | 'HEALTH' | 'FINANCIAL' |
-  'REST' | 'SOAP' | 'GRAPHQL' | 'XROAD' | 'APIGW'
+type CategoryKeys =
+  | 'FREE'
+  | 'PAID'
+  | 'OPEN'
+  | 'PUBLIC'
+  | 'OFFICIAL'
+  | 'PERSONAL'
+  | 'HEALTH'
+  | 'FINANCIAL'
+  | 'REST'
+  | 'SOAP'
+  | 'GRAPHQL'
+  | 'XROAD'
+  | 'APIGW'
 
 export type TagDisplayNames = {
-  [key in CategoryKeys]: string;
+  [key in CategoryKeys]: string
 }
 
 export interface ServiceListContainerProps {
   baseUrl?: string
   services: ApiService[]
   span?: ResponsiveProp<GridColumnStyles.GridColumns>
-  tagDisplayNames?: TagDisplayNames  //If you want different display names for tag
-  loading?: Boolean  // pass true to show loading icon
+  tagDisplayNames?: TagDisplayNames //If you want different display names for tag
+  loading?: Boolean // pass true to show loading icon
   emptyListText?: string
   loadMoreButtonText?: string
   onLoadMoreClick?: () => void
@@ -42,43 +53,34 @@ export const ServiceListContainer: React.FC<ServiceListContainerProps> = ({
   tagDisplayNames = {},
   loading = true,
   moreToLoad = true,
-  emptyListText = "Engin þjónusta fannst!",
-  loadMoreButtonText = "Sjá fleiri",
+  emptyListText = 'Engin þjónusta fannst!',
+  loadMoreButtonText = 'Sjá fleiri',
   onLoadMoreClick,
-  children
+  children,
 }) => {
-
   const CategoriesToTags = (service: ApiService) => {
     const tags: Tag[] = []
-    let value;
+    let value
 
     service.pricing.forEach((tag) => {
-      value = tagDisplayNames[tag];
-      if (value !== undefined)
-        tags.push({ label: value })
-      else
-        tags.push({ label: tag })
+      value = tagDisplayNames[tag]
+      if (value !== undefined) tags.push({ label: value })
+      else tags.push({ label: tag })
     })
     service.data.forEach((tag) => {
-      value = tagDisplayNames[tag];
-      if (value !== undefined)
-        tags.push({ label: value })
-      else
-        tags.push({ label: tag })
+      value = tagDisplayNames[tag]
+      if (value !== undefined) tags.push({ label: value })
+      else tags.push({ label: tag })
     })
     service.type.forEach((tag) => {
-      value = tagDisplayNames[tag];
-      if (value !== undefined)
-        tags.push({ label: value })
-      else
-        tags.push({ label: tag })
+      value = tagDisplayNames[tag]
+      if (value !== undefined) tags.push({ label: value })
+      else tags.push({ label: tag })
     })
     service.access.forEach((tag) => {
-      value = tagDisplayNames[tag];
-      if (value !== undefined)
-        tags.push({ label: value })
-      else
-        tags.push({ label: tag })
+      value = tagDisplayNames[tag]
+      if (value !== undefined) tags.push({ label: value })
+      else tags.push({ label: tag })
     })
     return tags
   }
@@ -86,66 +88,50 @@ export const ServiceListContainer: React.FC<ServiceListContainerProps> = ({
   return (
     <GridContainer>
       <GridRow>
-        {
-          services.map((item) => {
-            return (
-              <GridColumn
-                key={item.id.toString()}
-                span={span}
-                paddingBottom={3}
-              >
-                <CategoryCard
-                  href={`${baseUrl}${item.id}`}
-                  heading={item.name}
-                  text={item.owner}
-                  tags={CategoriesToTags(item)}
-                />
-              </GridColumn>
-            )
-          })
-        }
+        {services.map((item) => {
+          return (
+            <GridColumn key={item.id.toString()} span={span} paddingBottom={3}>
+              <CategoryCard
+                href={`${baseUrl}${item.id}`}
+                heading={item.name}
+                text={item.owner}
+                tags={CategoriesToTags(item)}
+              />
+            </GridColumn>
+          )
+        })}
         {services.length < 1 && !loading && (
-          <CategoryCard
-            heading={emptyListText}
-            text="" />
+          <CategoryCard heading={emptyListText} text="" />
         )}
 
         {loading && (
           <GridColumn>
-            <Box
-              borderRadius="large"
-              padding="containerGutter"
-            >
+            <Box borderRadius="large" padding="containerGutter">
               <LoadingIcon animate color="blue400" size={32} />
             </Box>
           </GridColumn>
         )}
 
-        { //rendering items below all cards, such as load more button
+        {
+          //rendering items below all cards, such as load more button
           React.Children.map(children, (child) => {
             return (
-              <GridColumn
-                span={span}
-                paddingBottom={3}
-              >
+              <GridColumn span={span} paddingBottom={3}>
                 {child}
               </GridColumn>
             )
           })
         }
-        
       </GridRow>
       {services.length > 0 && moreToLoad && (
         <GridRow>
-          <GridColumn span={"12/12"}
-            offset={["4/12", "5/12"]}
-          >
+          <GridColumn span={'12/12'} offset={['4/12', '5/12']}>
             <Button
               colorScheme="default"
               iconType="filled"
-              onBlur={function noRefCheck() { }}
+              onBlur={function noRefCheck() {}}
               onClick={onLoadMoreClick}
-              onFocus={function noRefCheck() { }}
+              onFocus={function noRefCheck() {}}
               size="default"
               type="button"
               variant="ghost"
@@ -156,13 +142,11 @@ export const ServiceListContainer: React.FC<ServiceListContainerProps> = ({
         </GridRow>
       )}
       <GridRow>
-       { //rendering items below all, but within same GridContainer
+        {
+          //rendering items below all, but within same GridContainer
           React.Children.map(children, (child) => {
             return (
-              <GridColumn
-                span={span}
-                paddingBottom={3}
-              >
+              <GridColumn span={span} paddingBottom={3}>
                 {child}
               </GridColumn>
             )
