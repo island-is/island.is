@@ -120,7 +120,7 @@ export const ReviewApplication: Form = buildForm({
             }),
             buildTextField({
               id: 'rejectionReason',
-              name: 'Ástæða höfnunar',
+              name: m.reviewRejectReasonLabel.defaultMessage,
               condition: {
                 questionId: 'approvedByReviewer',
                 isMultiCheck: false,
@@ -133,7 +133,6 @@ export const ReviewApplication: Form = buildForm({
         buildIntroductionField({
           id: 'reviewProcessed',
           name: m.reviewProcessedTitle,
-
           introduction: m.reviewProcessedIntroduction,
         }),
       ],

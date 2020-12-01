@@ -178,7 +178,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
         buildCustomField(
           {
             id: 'thankYouScreen',
-            name: m.firstThankYouScreenScreenTitle,
+            name: m.thankYouScreenTitle,
             component: 'ThankYouScreen',
           },
           {},

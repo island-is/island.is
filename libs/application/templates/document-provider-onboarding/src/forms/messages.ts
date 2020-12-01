@@ -215,21 +215,65 @@ export const m = defineMessages({
     defaultMessage: 'Senda inn umsókn',
   },
 
-  //First thank you screen
-  firstThankYouScreenScreenTitle: {
-    id: 'dpo.application:thankyouscreen.title',
+  //Thank you screen
+  thankYouScreenTitle: {
+    id: 'dpo.application:thankYouScreen.title',
     defaultMessage: 'Takk fyrir að sækja um',
     description: '',
   },
-  firstThankYouScreenScreenSubTitle: {
-    id: 'dpo.application:thankyouscreen.subtitle',
+  thankYouScreenSubTitle: {
+    id: 'dpo.application:thankYouScreen.subTitle',
     defaultMessage: 'Nú bíður umsókn þín samþykkis island.is.',
     description: '',
   },
-  firstThankYouScreenScreenMessage: {
-    id: 'dpo.application:thankyouscreen.message',
+  thankYouScreenFirstMessage: {
+    id: 'dpo.application:thankYouScreen.firstMessage',
     defaultMessage:
       'Þegar og ef hún verður samþykkt, þarf að koma aftur inn í þetta ferli og klára umsóknina. Sá hluti er tæknilegur og krefst tæknilegrar útfærslu. Hér að neðan er að finna upplýsingar sem nauðsynlegt er að búið sé að kynna sér áður en farið er af stað í það ferli.',
+    description: '',
+  },
+  thankYouScreenSecondMessage: {
+    id: 'dpo.application:thankYouScreen.secondMessage',
+    defaultMessage:
+      'Til að gerast skjalaveitandi þarf að útfæra tvenn forritunarskil. Annarsvegar eru það skil til að senda skjalatilvísun í pósthólf og hinsvegar eru það skil til að hægt sé að nálgast skjal hjá skjalaveitu. Hér að neðan finnur þú upplýsingar um tæknilegar útfærslur á þessum skilum.Í þessu ferli færð þú aðgang að prófunarumhverfi til að útfæra þjónustuna.Þegar þjónustan og prófanir eru búnar, er hægt að framkvæma sjálfvirkar prófanir til að staðfesta virkni.',
+    description: '',
+  },
+  thankYouScreenLinkUrl1: {
+    id: 'dpo.application:thankYouScreen.linkUrl1',
+    defaultMessage:
+      'http://assets.ctfassets.net/8k0h54kbe6bj/Cy8xoQ5fX1Cef99GVYH4L/d12d148dace0528d67e59da19e732304/Design-1.0.0-DocumentProviders.pdf',
+    description: '',
+  },
+  thankYouScreenLinkText1: {
+    id: 'dpo.application:thankYouScreen.linkText1',
+    defaultMessage:
+      'Tæknilýsing vegna samskipta skjalaveitu við Pósthólf (aðeins á ensku)',
+    description: '',
+  },
+  thankYouScreenLinkUrl2: {
+    id: 'dpo.application:thankYouScreen.linkUrl2',
+    defaultMessage: 'https://github.com/digitaliceland/postholf-demo',
+    description: '',
+  },
+  thankYouScreenLinkText2: {
+    id: 'dpo.application:thankYouScreen.linkText2',
+    defaultMessage: 'Sýnidæmi á Github fyrir samskipti við Pósthólf island.is',
+    description: '',
+  },
+  thankYouScreenLinkUrl3: {
+    id: 'dpo.application:thankYouScreen.linkUrl3',
+    defaultMessage:
+      'http://assets.ctfassets.net/8k0h54kbe6bj/1MkIyeKtuc7c6BlbmKIOYz/c987f9e6a5d9a5284887869671c178a8/oryggisgatlisti-postholf.pdf',
+    description: '',
+  },
+  thankYouScreenLinkText3: {
+    id: 'dpo.application:thankYouScreen.linkText3',
+    defaultMessage: 'Öryggiskröfur sem gerðar eru til skjalaveitna',
+    description: '',
+  },
+  thankYouScreenFooterMessage: {
+    id: 'dpo.application:thankYouScreen.footerMessage',
+    defaultMessage: 'Skjöl þurfa að vera á PDF formi',
     description: '',
   },
 
@@ -252,6 +296,11 @@ export const m = defineMessages({
   reviewQuestion: {
     id: 'dpo.application:review.question',
     defaultMessage: 'Samþykkir þú þessa umsókn?',
+    description: '',
+  },
+  reviewRejectReasonLabel: {
+    id: 'dpo.application:review.RejectReasonLabel',
+    defaultMessage: 'Ástæða höfnunar',
     description: '',
   },
 
@@ -283,6 +332,44 @@ export const m = defineMessages({
     id: 'dpo.application:testPhaseInfo.message',
     defaultMessage:
       'Til að gerast skjalaveitandi þarf að útfæra tvenn forritunarskil. Annarsvegar eru það skil til að senda skjalatilvísun í pósthólf og hinsvegar eru það skil til að hægt sé að nálgast skjal hjá skjalaveitu. Hér að neðan finnur þú upplýsingar um tæknilegar útfærslur á þessum skilum.Í þessu ferli færð þú aðgang að prófunarumhverfi til að útfæra þjónustuna.Þegar þjónustan og prófanir eru búnar, er hægt að framkvæma sjálfvirkar prófanir til að staðfesta virkni.',
+    description: '',
+  },
+  testPhaseInfoLinkUrl1: {
+    id: 'dpo.application:testPhaseInfo.linkUrl1',
+    defaultMessage:
+      'http://assets.ctfassets.net/8k0h54kbe6bj/Cy8xoQ5fX1Cef99GVYH4L/d12d148dace0528d67e59da19e732304/Design-1.0.0-DocumentProviders.pdf',
+    description: '',
+  },
+  testPhaseInfoLinkText1: {
+    id: 'dpo.application:testPhaseInfo.linkText1',
+    defaultMessage:
+      'Tæknilýsing vegna samskipta skjalaveitu við Pósthólf (aðeins á ensku)',
+    description: '',
+  },
+  testPhaseInfoLinkUrl2: {
+    id: 'dpo.application:testPhaseInfo.linkUrl2',
+    defaultMessage: 'https://github.com/digitaliceland/postholf-demo',
+    description: '',
+  },
+  testPhaseInfoLinkText2: {
+    id: 'dpo.application:testPhaseInfo.linkText2',
+    defaultMessage: 'Sýnidæmi á Github fyrir samskipti við Pósthólf island.is',
+    description: '',
+  },
+  testPhaseInfoLinkUrl3: {
+    id: 'dpo.application:testPhaseInfo.linkUrl3',
+    defaultMessage:
+      'http://assets.ctfassets.net/8k0h54kbe6bj/1MkIyeKtuc7c6BlbmKIOYz/c987f9e6a5d9a5284887869671c178a8/oryggisgatlisti-postholf.pdf',
+    description: '',
+  },
+  testPhaseInfoLinkText3: {
+    id: 'dpo.application:testPhaseInfo.linkText3',
+    defaultMessage: 'Öryggiskröfur sem gerðar eru til skjalaveitna',
+    description: '',
+  },
+  testPhaseInfoFooterMessage: {
+    id: 'dpo.application:testPhaseInfo.footerMessage',
+    defaultMessage: 'Öryggiskröfur sem gerðar eru til skjalaveitna',
     description: '',
   },
   //Test enviroment
