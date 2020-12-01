@@ -16,6 +16,9 @@ import {
   Asset,
 } from 'contentful-management/dist/typings/entities/asset'
 
+import assets from './assets.fixtures.json'
+import entries from './entries.fixtures.json'
+
 import { ContentfulEnv, createContentfulClient } from '../contentful/client'
 import { getSdk } from '../contentful/sdk'
 
@@ -34,16 +37,15 @@ export interface MagicType {
   fields: FieldAPI[]
 }
 
-/*
 const getAllEntries = async (
   client: Environment,
   stats: {
     length: number
     remainingToFetch: number
-    items: Asset[]
+    items: Entry[]
   },
-): Promise<Asset[]> => {
-  const res = await client.getAssets({ skip: stats.length })
+): Promise<Entry[]> => {
+  const res = await client.getEntries({ skip: stats.length })
   const { total, skip } = res
   const remainingToFetch = total - skip
 
@@ -52,12 +54,11 @@ const getAllEntries = async (
     stats.remainingToFetch = remainingToFetch
     stats.items = stats.items.concat(res.items)
 
-    await getAllAssets(client, stats)
+    await getAllEntries(client, stats)
   }
 
   return stats.items
 }
-*/
 
 const getAllAssets = async (
   client: Environment,
@@ -82,6 +83,11 @@ const getAllAssets = async (
   return stats.items
 }
 
+/**
+ * TODO:
+ * We need to get all the entries and assets to be able to create the sdk object for contentful fields.
+ * move this logic into a single/cached method somewhere so it's not fetched every time we use the edit mode
+ */
 export const initializer = async ({
   slug,
   contentType,
@@ -90,26 +96,36 @@ export const initializer = async ({
 }: InitializerProps) => {
   const { env: client, space } = await createContentfulClient(env)
 
-  // We get the entry content
-  const entry = await client.getEntries({
-    content_type: contentType,
-    'fields.slug': slug,
-    locale,
-  })
-  const firstEntry = entry.items?.[0]
-  console.log('-firstEntry', firstEntry)
-
   // We get the entry contentType
   const type = await client.getContentType(contentType)
   console.log('-type', type)
 
   // We get all the assets of the space
-  const stats = { length: 0, remainingToFetch: 0, items: [] }
-  const assets = await getAllAssets(client, stats)
+  // const assets = await getAllAssets(client, { length: 0, remainingToFetch: 0, items: [] })
   console.log('-assets', assets);
 
+  // We get all the entries
+  // const entries = await getAllEntries(client, { length: 0, remainingToFetch: 0, items: [] })
+  console.log('-entries', entries);
+
+  // We get the entry we want to edit from all the entries
+  // TODO handle if no entry is found?
+  const testEntry = entries.find(entry => entry.fields?.slug?.[locale] === slug)
+  console.log('-testEntry', testEntry);
+
+  // We get the entry content
+  const entryResults = await client.getEntries({
+    content_type: contentType,
+    'fields.slug': slug,
+    locale,
+  })
+  const entry = entryResults.items?.[0]
+  console.log('-entry', entry)
+
+  const yo = await client.getEntry('1kpDxialbp55AWa0ukPmud')
+
   // We get the data for SDK
-  const sdk = getSdk(firstEntry, assets, space, type)
+  const sdk = getSdk(entry, entries, assets, space, type, locale, yo)
 
   // We merge both objects together to fit the contentful fields API
   const fields = type.fields.map((field) => {
@@ -123,7 +139,7 @@ export const initializer = async ({
       validations: field.validations as Object[], // Miss-type between `contentful-management` and `contentful-ui-extensions-sdk`
       items: field.items,
       getValue: () => {
-        const entryFields = firstEntry?.fields
+        const entryFields = entry?.fields
         const fieldName = Object.keys(entryFields).find(
           (entryField) => entryField === field.id,
         )

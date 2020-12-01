@@ -20,18 +20,29 @@ import { locales } from './locales'
  */
 export const getSdk = (
   entry: Entry,
+  entries: any[], // TODO
   assets: Asset[],
   space: Space,
   types: ContentType,
+  locale: any,
+  yo: any,
 ) => {
   const sdk = {
     space: {
       ...space,
-      getEntry: (assetId: string) => {
-        console.log('-getEntry')
+      getEntry: (entryId: string) => {
+        console.log('-////////////////');
+        console.log('-getEntry', entryId)
         // TODO find through all the entries
+        const foundEntry = entries.find(entry => entry.sys.id === entryId)
+        console.log('-foundEntry', foundEntry);
 
-        return Promise.resolve(entry)
+        if (yo.sys.id === entryId) {
+          console.log('-yo', yo);
+          return Promise.resolve(yo);
+        }
+
+        return Promise.resolve(foundEntry)
       },
       getAsset: (assetId: string) => {
         const asset = assets.find((item) => item.sys.id === assetId)
@@ -104,7 +115,12 @@ export const getSdk = (
     },
     parameters: {
       instance: {
-        getEntryUrl: () => '#',
+        getEntryUrl: (entryId: string) => {
+          const foundEntry = entries.find(entry => entry.sys.id === entryId)
+          console.log('-getEntryUrl entryId', entryId, foundEntry);
+
+          return '#'
+        }
       },
     },
   }
