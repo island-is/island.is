@@ -9,7 +9,7 @@ export default {
   auditTrail: {
     useGenericLogger: process.env.AUDIT_TRAIL_USE_GENERIC_LOGGER,
     groupName: process.env.AUDIT_TRAIL_GROUP_NAME,
-    streamName: `${process.env.AUDIT_TRAIL_GROUP_NAME}-${process.env.POD_NAME}`,
+    streamName: `${process.env.AUDIT_TRAIL_GROUP_NAME}-${process.env.HOSTNAME}`,
     region: process.env.AUDIT_TRAIL_REGION,
   },
   backendUrl: process.env.BACKEND_URL,
