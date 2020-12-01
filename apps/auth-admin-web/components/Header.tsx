@@ -10,7 +10,7 @@ class Header extends Component {
     return (
       <header className="header__container">
         <div className="header__container__logo">
-          <h1>Þjónustusíður</h1>
+          <h1>IDS management</h1>
         </div>
         <div className="header__container__options">
           <div className="header__container__user">
@@ -20,7 +20,7 @@ class Header extends Component {
                 className="header__button__logout"
                 onClick={() => this.logout()}
               >
-                Útskrá
+                Logout
               </button>
             </div>
           </div>

@@ -1,3 +1,7 @@
+import IdentityResourcesDTO from '../../models/dtos/identity-resources.dto';
+import React from 'react';
+import IdentityResource from './../../components/IdentityResource';
+
 export default function Index(){
-    return <h1>Resource</h1>
+    return <IdentityResource resource={new IdentityResourcesDTO()} />
 }

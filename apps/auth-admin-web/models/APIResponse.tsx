@@ -1,14 +1,14 @@
 class APIResponse {
     constructor()
     {
-        this.statusCode = 200;
-        this.message = ["Aðgerð tókst"];
+        this.statusCode = null;
+        this.message = null;
         this.error = null;
-
     }
-    statusCode: number;
-    message: string[] | null;
-    error: string | null;
+
+    statusCode?: number;
+    message?: string[];
+    error?: string;
 }
 
 export default APIResponse;

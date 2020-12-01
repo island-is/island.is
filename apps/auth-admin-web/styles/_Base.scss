@@ -5,7 +5,8 @@ body {
   margin: 0 40px;
 }
 
-input {
+input,
+select {
   box-sizing: border-box;
   background: #ffffff;
   border: 1px solid #ccdfff;
@@ -17,9 +18,9 @@ input {
   }
 }
 
-input[type="text"],
-input[type="number"] {
-  // @extend input;
+input[type='text'],
+input[type='number'],
+select {
   padding: 30px 16px 10px 20px;
   height: 60px;
   font-size: 18px;
@@ -30,19 +31,12 @@ input[type="number"] {
   text-align: left;
 }
 
-select {
-  @extend input;
-  height: 35px;
-  text-align: left;
-  padding: 10px;
-}
-
-input[type="checkbox"] {
+input[type='checkbox'] {
   width: 30px;
   height: 30px;
 }
 
-input[type="submit"] {
+input[type='submit'] {
   @extend button;
 }
 
@@ -61,7 +55,13 @@ button {
   border: none;
   cursor: pointer;
 
-  &[class$="cancel"] {
+  &:disabled,
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &[class$='cancel'] {
     background: rgb(228, 226, 226);
     color: #00003c;
   }
@@ -107,7 +107,7 @@ h3 {
   text-align: left;
 }
 
-div[class$="container__field"] {
+div[class$='container__field'] {
   display: flex;
   width: 100%;
   padding: 8px;
@@ -118,19 +118,20 @@ div[class$="container__field"] {
     text-align: right;
   }
 
-  input {
+  input,
+  select {
     flex-basis: 50%;
     justify-self: flex-end;
   }
 }
 
-div[class$="buttons__container"] {
+div[class$='buttons__container'] {
   display: flex;
   width: 100%;
   padding: 12px 8px;
   align-items: center;
 
-  div[class$="button__container"] {
+  div[class$='button__container'] {
     flex: 1;
   }
 }
@@ -167,6 +168,10 @@ table {
       color: #00003c;
       text-align: left;
 
+      &[class$='table__button'] {
+        width: 40px;
+      }
+
       button {
         height: 30px;
         font-size: 12px;
@@ -181,7 +186,7 @@ table {
   }
 }
 
-nav[class$="pagination"] {
+nav[class$='pagination'] {
   padding: 10px;
 
   li {
@@ -211,4 +216,26 @@ nav[class$="pagination"] {
       }
     }
   }
+}
+
+.show {
+  display: block;
+}
+
+.hidden {
+  display: none;
+}
+
+a {
+  &[class$='new'] {
+    display: block;
+    padding: 20px 0px;
+  }
+}
+
+// Icons
+.icon__new {
+  @extend .fa;
+  @extend .fa-plus;
+  margin-right: 10px;
 }

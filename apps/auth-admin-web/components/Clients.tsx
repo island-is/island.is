@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component  } from 'react';
 import axios from 'axios';
 import ClientDTO from '../models/dtos/client-dto';
 import Paginator from './Paginator';
@@ -27,17 +27,17 @@ class Clients extends Component {
   }
 
   componentDidMount = async () => {
-    this.getClients(this.state.page, this.state.page) 
+    this.getClients(this.state.page, this.state.count) 
   };
 
-  handlePageChange = async (page: number) => {
-    this.getClients(page, this.state.count);
-    this.setState({ page: page});
+  handlePageChange = async (page: number, count: number) => {
+    this.getClients(page, count);
+    this.setState({ page: page, count: count});
   };
 
   delete = async (clientId: string) => {
-    if (window.confirm('Ertu viss um að þú viljir eyða þessari færslu?')) {
-      const response = await axios.delete(`./clients/${clientId}`);
+    if (window.confirm('Are you sure you want to delete this client?')) {
+      const response = await axios.delete(`api/clients/${clientId}`);
       console.log(response);
       await this.componentDidMount();
     }
@@ -47,40 +47,17 @@ class Clients extends Component {
     console.log(client);
   };
 
-  changeCount(count: string) {
-    this.getClients(1, +count);
-
-    this.setState({
-      count: +count,
-      page: 1,
-    });
-  }
-
   render() {
     return (
       <div className="clients__container">
-        <h2>Vefir og smáforrit</h2>
+        <h2>Clients</h2>
         <div className="clients__container__options">
           <div className="clients__container__button">
             <Link href={'/client'}>
-              <a className="clients__button__new">Bæta við nýjum</a>
+              <a className="clients__button__new"><i className="icon__new"></i>Create new client</a>
             </Link>
           </div>
-          <div className="clients__container__field">
-            <label htmlFor="count" className="clients__label">
-              Fjöldi á síðu
-            </label>
-            <select
-              id="count"
-              onChange={(e) => this.changeCount(e.target.value)}
-              className="clients__select"
-            >
-              <option value="1">1</option>
-              <option value="30">30</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-            </select>
-          </div>
+         
         </div>
         <div className="client__container__table">
           <table className="clients__table">
@@ -97,16 +74,16 @@ class Clients extends Component {
                   <tr key={client.clientId}>
                     <td>{client.clientId}</td>
                     <td>{client.identityTokenLifetime}</td>
-                    <td>
-                      <button
+                    <td className="clients__table__button">
+                      <button type="button"
                         className="clients__button__edit"
                         onClick={() => this.edit(client)}
                       >
                         Breyta
                       </button>
                     </td>
-                    <td>
-                      <button
+                    <td className="clients__table__button">
+                      <button type="button"
                         className="clients__button__delete"
                         onClick={() => this.delete(client.clientId)}
                       >
