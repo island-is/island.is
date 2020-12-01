@@ -131,7 +131,6 @@ export const ParentalLeaveForm: Form = buildForm({
                     }
                     return options
                   },
-                  emphasize: false,
                   largeButtons: true,
                 }),
                 buildTextField({
@@ -166,17 +165,6 @@ export const ParentalLeaveForm: Form = buildForm({
                   width: 'half',
                   format: '####-##-######',
                   placeholder: '0000-00-000000',
-                }),
-                buildSelectField({
-                  name: m.paymentInformationPersonalDiscount,
-                  id: 'payments.personalAllowanceUsage',
-                  width: 'half',
-                  options: [
-                    { label: '100%', value: '100' },
-                    { label: '75%', value: '75' },
-                    { label: '50%', value: '50' },
-                    { label: '25%', value: '25' },
-                  ],
                 }),
                 buildAsyncSelectField({
                   name: m.pensionFund,
@@ -244,6 +232,106 @@ export const ParentalLeaveForm: Form = buildForm({
                     { label: '2%', value: '2' },
                     { label: '4%', value: '4' },
                   ],
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'personalAllowanceSubSection',
+          name: m.personalAllowanceName,
+          children: [
+            buildRadioField({
+              id: 'usePersonalAllowance',
+              name: m.usePersonalAllowance,
+              options: [
+                { label: m.yesOptionLabel, value: 'yes' },
+                { label: m.noOptionLabel, value: 'no' },
+              ],
+            }),
+            buildMultiField({
+              id: 'personalAllowance',
+              condition: (answers) => answers.usePersonalAllowance === 'yes',
+              name: m.personalAllowanceName,
+              description: m.personalAllowanceDescription,
+              children: [
+                buildSelectField({
+                  // This should probably be a text input with a format, and type number
+                  name: m.paymentInformationPersonalAllowance,
+                  id: 'personalAllowance.usage',
+                  width: 'half',
+                  options: [
+                    { label: '100%', value: '100' },
+                    { label: '75%', value: '75' },
+                    { label: '50%', value: '50' },
+                    { label: '25%', value: '25' },
+                  ],
+                }),
+                buildTextField({
+                  id: 'personalAllowance.usedAmount',
+                  name: m.personalAllowanceUsedAmount,
+                  width: 'half',
+                  // placeholder: 'kr.', TODO use numberformatter?
+                }),
+                buildDateField({
+                  id: 'personalAllowance.periodFrom',
+                  name: m.personalAllowancePeriodFrom,
+                  width: 'half',
+                }),
+                buildDateField({
+                  id: 'personalAllowance.periodTo',
+                  name: m.personalAllowancePeriodTo,
+                  width: 'half',
+                }),
+              ],
+            }),
+            buildRadioField({
+              id: 'usePersonalAllowanceFromSpouse',
+              name: m.usePersonalAllowanceFromSpouse,
+              condition: (answers) => {
+                // TODO add check if this person has a spouse...
+                return true
+              },
+              largeButtons: true,
+              options: [
+                { label: m.yesOptionLabel, value: 'yes' },
+                { label: m.noOptionLabel, value: 'no' },
+              ],
+            }),
+            buildMultiField({
+              id: 'personalAllowanceFromSpouse',
+              condition: (answers) =>
+                answers.usePersonalAllowanceFromSpouse === 'yes',
+              name: m.personalAllowanceFromSpouseName,
+              description: m.personalAllowanceFromSpouseDescription,
+              children: [
+                buildSelectField({
+                  // This should probably be a text input with a format, and type number
+                  name: m.paymentInformationPersonalAllowance,
+                  id: 'personalAllowanceFromSpouse.usage',
+                  width: 'half',
+                  options: [
+                    { label: '100%', value: '100' },
+                    { label: '75%', value: '75' },
+                    { label: '50%', value: '50' },
+                    { label: '25%', value: '25' },
+                  ],
+                }),
+                buildTextField({
+                  id: 'personalAllowanceFromSpouse.usedAmount',
+                  name: m.personalAllowanceUsedAmount,
+                  width: 'half',
+                  // placeholder: 'kr.', TODO use numberformatter?
+                }),
+                buildDateField({
+                  id: 'personalAllowanceFromSpouse.periodFrom',
+                  name: m.personalAllowancePeriodFrom,
+                  width: 'half',
+                }),
+                buildDateField({
+                  id: 'personalAllowanceFromSpouse.periodTo',
+                  name: m.personalAllowancePeriodTo,
+                  width: 'half',
                 }),
               ],
             }),
@@ -398,7 +486,6 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'singlePeriod',
               name: m.periodAllAtOnce,
               description: m.periodAllAtOnceDescription,
-              emphasize: true,
               largeButtons: true,
               options: [
                 {
@@ -441,7 +528,6 @@ export const ParentalLeaveForm: Form = buildForm({
               description:
                 'Some people choose to take the full leave all at once, but also extend it by months or to a certain date by adjusting their income.',
               largeButtons: true,
-              emphasize: true,
               options: [
                 { label: 'A certain duration', value: 'duration' },
                 { label: 'Until a specific date', value: 'specificDate' },
