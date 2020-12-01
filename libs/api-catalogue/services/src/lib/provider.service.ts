@@ -46,7 +46,7 @@ export class ProviderService {
           (item: XroadIdentifier): Provider => {
             return {
               type: providerType,
-              name: item.name ?? item.id?.subsystemCode!,
+              name: item.name ?? item.id!.subsystemCode!,
               xroadInfo: {
                 instance: item.id?.xroadInstance ?? '',
                 memberClass: item.id?.memberClass ?? '',
