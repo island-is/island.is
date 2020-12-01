@@ -159,7 +159,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
             buildCustomField({
               id: 'confirmation',
               name: m.confirmationTitle,
-              component: 'Confirmation',
+              component: 'Review',
             }),
             buildSubmitField({
               id: 'submit',
