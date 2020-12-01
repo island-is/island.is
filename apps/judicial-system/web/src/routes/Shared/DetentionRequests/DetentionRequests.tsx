@@ -38,6 +38,7 @@ export const CasesQuery = gql`
       accusedName
       isCourtDateInThePast
       custodyEndDate
+      isCustodyEndDateInThePast
     }
   }
 `
