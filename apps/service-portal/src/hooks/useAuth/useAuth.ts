@@ -10,9 +10,18 @@ const useAuth = () => {
       type: ActionType.SetUserPending,
     })
 
-    userManager.signinRedirect({
-      state: window.location.pathname,
-    })
+    const user = await userManager.getUser()
+
+    if (user) {
+      dispatch({
+        type: ActionType.SetUserFulfilled,
+        payload: user,
+      })
+    } else {
+      userManager.signinRedirect({
+        state: window.location.pathname,
+      })
+    }
   }
 
   async function signOutUser() {
