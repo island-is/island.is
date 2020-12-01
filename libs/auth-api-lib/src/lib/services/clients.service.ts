@@ -15,6 +15,13 @@ import { ClientSecret } from '../entities/models/client-secret.model'
 import { Client } from '../entities/models/client.model'
 import { ClientAllowedCorsOriginDTO } from '../entities/dto/client-allowed-cors-origin.dto'
 import { ClientRedirectUriDTO } from '../entities/dto/client-redirect-uri.dto'
+<<<<<<< HEAD
+=======
+import { ClientGrantTypeDTO } from '../entities/dto/client-grant-type.dto'
+import { ClientAllowedScopeDTO } from '../entities/dto/client-allowed-scope.dto'
+import { ClientClaimDTO } from '../entities/dto/client-claim.dto'
+import { ClientPostLogoutRedirectUriDTO } from '../entities/dto/client-post-logout-redirect-uri.dto'
+>>>>>>> main
 
 @Injectable()
 export class ClientsService {
@@ -29,6 +36,14 @@ export class ClientsService {
     private clientAllowedCorsOrigin: typeof ClientAllowedCorsOrigin,
     @InjectModel(ClientRedirectUri)
     private clientRedirectUri: typeof ClientRedirectUri,
+    @InjectModel(ClientGrantType)
+    private clientGrantTypeModel: typeof ClientGrantType,
+    @InjectModel(ClientAllowedScope)
+    private clientAllowedScope: typeof ClientAllowedScope,
+    @InjectModel(ClientClaim)
+    private clientClaim: typeof ClientClaim,
+    @InjectModel(ClientPostLogoutRedirectUri)
+    private clientPostLogoutUri: typeof ClientPostLogoutRedirectUri,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -250,4 +265,139 @@ export class ClientsService {
       where: { clientId: clientId, redirectUri: redirectUri },
     })
   }
+<<<<<<< HEAD
+=======
+
+  /** Adds a grant type to client */
+  async addGrantType(
+    grantTypeObj: ClientGrantTypeDTO,
+  ): Promise<ClientGrantType> {
+    this.logger.debug(
+      `Adding grant type - "${grantTypeObj.grantType}" to client - "${grantTypeObj.clientId}"`,
+    )
+
+    if (!grantTypeObj) {
+      throw new BadRequestException('Grant Type object must be provided')
+    }
+
+    return await this.clientGrantTypeModel.create({ ...grantTypeObj })
+  }
+
+  /** Removes a grant type for client */
+  async removeGrantType(clientId: string, grantType: string): Promise<number> {
+    this.logger.debug(
+      `Removing grant type "${grantType}" for client - "${clientId}"`,
+    )
+
+    if (!clientId || !grantType) {
+      throw new BadRequestException('grantType and clientId must be provided')
+    }
+
+    return await this.clientGrantTypeModel.destroy({
+      where: { clientId: clientId, grantType: grantType },
+    })
+  }
+
+  /** Adds an allowed scope to client */
+  async addAllowedScope(
+    clientAllowedScope: ClientAllowedScopeDTO,
+  ): Promise<ClientAllowedScope> {
+    this.logger.debug(
+      `Adding allowed scope - "${clientAllowedScope.scopeName}" to client - "${clientAllowedScope.clientId}"`,
+    )
+
+    if (!clientAllowedScope) {
+      throw new BadRequestException(
+        'clientAllowedScope object must be provided',
+      )
+    }
+
+    return await this.clientAllowedScope.create({ ...clientAllowedScope })
+  }
+
+  /** Removes an allowed scope from client */
+  async removeAllowedScope(
+    clientId: string,
+    scopeName: string,
+  ): Promise<number> {
+    this.logger.debug(
+      `Removing scope - "${scopeName}" from client - "${clientId}"`,
+    )
+
+    if (!clientId || !scopeName) {
+      throw new BadRequestException('scopeName and clientId must be provided')
+    }
+
+    return await this.clientAllowedScope.destroy({
+      where: { clientId: clientId, scopeName: scopeName },
+    })
+  }
+
+  /** Adds an claim to client */
+  async addClaim(claim: ClientClaimDTO): Promise<ClientClaim> {
+    this.logger.debug(
+      `Adding claim of type - "${claim.type}", with value - "${claim.value}" to client - "${claim.clientId}"`,
+    )
+
+    if (!claim) {
+      throw new BadRequestException('claim object must be provided')
+    }
+
+    return await this.clientClaim.create({ ...claim })
+  }
+
+  /** Removes an claim from client */
+  async removeClaim(
+    clientId: string,
+    claimType: string,
+    claimValue: string,
+  ): Promise<number> {
+    this.logger.debug(
+      `Removing claim of type - "${claimType}", with value - "${claimValue}" from client - "${clientId}"`,
+    )
+
+    if (!clientId || !claimType || !claimValue) {
+      throw new BadRequestException(
+        'claimType, claimValue and clientId must be provided',
+      )
+    }
+
+    return await this.clientClaim.destroy({
+      where: { clientId: clientId, type: claimType, value: claimValue },
+    })
+  }
+
+  /** Adds an post logout uri to client */
+  async addPostLogoutRedirectUri(
+    postLogoutUri: ClientPostLogoutRedirectUriDTO,
+  ): Promise<ClientPostLogoutRedirectUri> {
+    this.logger.debug(
+      `Adding post logout uri - "${postLogoutUri.redirectUri}", to client - "${postLogoutUri.clientId}"`,
+    )
+
+    if (!postLogoutUri) {
+      throw new BadRequestException('postLogoutUri object must be provided')
+    }
+
+    return await this.clientPostLogoutUri.create({ ...postLogoutUri })
+  }
+
+  /** Removes an post logout uri from client */
+  async removePostLogoutRedirectUri(
+    clientId: string,
+    redirectUri: string,
+  ): Promise<number> {
+    this.logger.debug(
+      `Removing post logout uri - "${redirectUri}" from client - "${clientId}"`,
+    )
+
+    if (!clientId || !redirectUri) {
+      throw new BadRequestException('clientId and uri must be provided')
+    }
+
+    return await this.clientPostLogoutUri.destroy({
+      where: { clientId: clientId, redirectUri: redirectUri },
+    })
+  }
+>>>>>>> main
 }
