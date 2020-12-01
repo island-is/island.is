@@ -10,11 +10,11 @@ const checkExternalDependency = (url: string) =>
   })
 
 export const withHealthchecks = (externalEndpointDependencies: string[]) => (
-  Component,
+  Component: any,
 ) => {
-  const NewComponent = (props) => <Component {...props} />
+  const NewComponent = (props: any) => <Component {...props} />
 
-  NewComponent.getInitialProps = async (context) => {
+  NewComponent.getInitialProps = async (context: any) => {
     const ctx = context.ctx ?? context
     /*
     Readiness should return 200 if it can resolve hostnames of external dependencies.

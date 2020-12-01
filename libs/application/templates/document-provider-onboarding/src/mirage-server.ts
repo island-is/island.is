@@ -1,9 +1,16 @@
 import { Server } from 'miragejs'
 
-export function makeServer({ environment = 'development' } = {}) {
+export function makeServer() {
+  let url = ''
+  if (process.env.NODE_ENV === 'production') {
+    url = 'https://umsoknir.dev01.devland.is/api/graphql'
+  } else {
+    url = 'http://localhost:4444/api/graphql'
+  }
+
   new Server({
     routes() {
-      this.passthrough('http://localhost:4444/api/graphql')
+      this.passthrough(url)
       this.get('/api/keys', () => [
         {
           id: '1',
@@ -17,8 +24,8 @@ export function makeServer({ environment = 'development' } = {}) {
         },
       ])
       this.post('/api/endPointVariables', (schema, request) => {
-        const attrs = JSON.parse(request.requestBody)
-        console.log(attrs)
+        // const attrs = JSON.parse(request.requestBody)
+        // console.log(attrs)
         const data = [
           {
             id: '1',

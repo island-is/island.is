@@ -16,6 +16,9 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { IdpRestrictionController } from './idp-restriction.controller'
 import { CorsController } from './cors.controller'
 import { RedirectUriController } from './redirect-uri.controller'
+import { ClientGrantTypeController } from './client-grant-type.controller'
+import { ClientAllowedScopeController } from './client-allowed-scope.controller'
+import { ClientClaimController } from './client-claim.controller'
 
 @Module({
   imports: [
@@ -37,6 +40,9 @@ import { RedirectUriController } from './redirect-uri.controller'
     IdpRestrictionController,
     CorsController,
     RedirectUriController,
+    ClientGrantTypeController,
+    ClientAllowedScopeController,
+    ClientClaimController,
   ],
   providers: [ClientsService],
 })

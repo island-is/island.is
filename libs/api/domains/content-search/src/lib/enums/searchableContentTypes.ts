@@ -5,6 +5,7 @@ export enum SearchableContentTypes {
   webArticle = 'webArticle',
   webLifeEventPage = 'webLifeEventPage',
   webNews = 'webNews',
+  webAdgerdirPage = 'webAdgerdirPage',
 }
 
 registerEnumType(SearchableContentTypes, { name: 'SearchableContentTypes' })

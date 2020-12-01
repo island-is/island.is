@@ -1,8 +1,14 @@
 import React, { FC, useState } from 'react'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  formatText,
+  getValueViaPath,
+} from '@island.is/application/core'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import { Box, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { RadioController } from '@island.is/shared/form-fields'
+import { m } from '../../lib/messages'
 
 type ValidAnswers = 'yes' | 'no' | undefined
 
@@ -16,16 +22,26 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
     currentAnswer,
   )
 
+  const { formatMessage } = useLocale()
+
   const boxChartKeys =
     statefulAnswer === 'yes'
       ? [
-          { label: '5 personal months', bulletStyle: 'blue' },
           {
-            label: '1 shared month given away to other parent',
+            label: () => ({ ...m.yourRightsInMonths, values: { months: '5' } }),
+            bulletStyle: 'blue',
+          },
+          {
+            label: m.giveRightsMonths,
             bulletStyle: 'greenWithLines',
           },
         ]
-      : [{ label: '6 personal months', bulletStyle: 'blue' }]
+      : [
+          {
+            label: () => ({ ...m.yourRightsInMonths, values: { months: '6' } }),
+            bulletStyle: 'blue',
+          },
+        ]
 
   return (
     <Box marginY={3} key={field.id}>
@@ -41,11 +57,13 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
           }
           options={[
             {
-              label:
-                'Yes, I want to give up to 1 month of my rights to the other parent',
+              label: formatText(m.giveRightsYes, application, formatMessage),
               value: 'yes',
             },
-            { label: 'No, I want to keep my months to myself', value: 'no' },
+            {
+              label: formatText(m.giveRightsNo, application, formatMessage),
+              value: 'no',
+            },
           ]}
           onSelect={(newAnswer) => setStatefulAnswer(newAnswer as ValidAnswers)}
           emphasize
@@ -54,12 +72,11 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
       </Box>
       {error && (
         <Box color="red400" padding={2}>
-          <Text color="red400">
-            You have to provide an answer to this question in order to proceed.
-          </Text>
+          <Text color="red400">{formatMessage(m.requiredAnswerError)}</Text>
         </Box>
       )}
       <BoxChart
+        application={application}
         boxes={6}
         calculateBoxStyle={(index) => {
           if (index === 5) {

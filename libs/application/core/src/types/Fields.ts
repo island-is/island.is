@@ -1,5 +1,5 @@
 import { Colors } from '@island.is/island-ui/theme'
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { ApolloClient } from '@apollo/client'
 import { FormText, FormItem } from './Form'
 import { Condition } from './Condition'
 import { CallToAction } from './StateMachine'
