@@ -5,7 +5,7 @@ import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
 
 import { environment } from '../environments'
 import { BackendAPI } from '../services'
-import { AuthModule, UserModule, CaseModule } from './modules/'
+import { AuthModule, UserModule, CaseModule, FileModule } from './modules/'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -29,6 +29,7 @@ const autoSchemaFile = debug ? 'apps/judicial-system/api.graphql' : true
     UserModule,
     CaseModule,
     AuditTrailModule,
+    FileModule,
   ],
   providers: [BackendAPI],
 })

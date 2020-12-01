@@ -183,14 +183,14 @@ export class CaseService {
     return { numberOfAffectedRows, updatedCase }
   }
 
-  async getRulingPdf(existingCase: Case) {
+  getRulingPdf(existingCase: Case): Promise<string> {
     this.logger.debug(
       `Getting the ruling for case ${existingCase.id} as a pdf document`,
     )
 
     // This method should only be called if the csae state is SUBMITTED
 
-    return await generateRulingPdf(existingCase)
+    return generateRulingPdf(existingCase)
   }
 
   async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {

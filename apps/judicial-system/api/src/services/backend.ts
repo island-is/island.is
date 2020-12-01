@@ -49,17 +49,6 @@ class BackendAPI extends RESTDataSource {
     return this.put(`case/${id}/state`, { ...transitionCase, nationalId })
   }
 
-  sendNotification(
-    id: string,
-    nationalId: string,
-    sendNotification: SendNotification,
-  ): Promise<SendNotificationResponse> {
-    return this.post(`case/${id}/notification`, {
-      ...sendNotification,
-      nationalId,
-    })
-  }
-
   requestSignature(id: string): Promise<RequestSignatureResponse> {
     return this.post(`case/${id}/signature`)
   }
@@ -69,6 +58,17 @@ class BackendAPI extends RESTDataSource {
     documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
     return this.get(`case/${id}/signature?documentToken=${documentToken}`)
+  }
+
+  sendNotification(
+    id: string,
+    nationalId: string,
+    sendNotification: SendNotification,
+  ): Promise<SendNotificationResponse> {
+    return this.post(`case/${id}/notification`, {
+      ...sendNotification,
+      nationalId,
+    })
   }
 
   getCaseNotifications(id: string): Promise<Notification[]> {

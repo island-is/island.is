@@ -14,7 +14,6 @@ import {
   Query,
   Req,
 } from '@nestjs/common'
-import { ApiTags, ApiQuery } from '@nestjs/swagger'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -60,7 +59,6 @@ const REDIRECT_COOKIE: Cookie = {
 }
 
 @Controller('api/auth')
-@ApiTags('authentication')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
@@ -111,7 +109,6 @@ export class AuthController {
   }
 
   @Get('login')
-  @ApiQuery({ name: 'returnUrl' })
   login(
     @Res() res: Response,
     @Query('returnUrl') returnUrl: string,

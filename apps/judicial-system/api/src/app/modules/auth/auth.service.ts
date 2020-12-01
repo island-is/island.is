@@ -1,4 +1,5 @@
 import fetch from 'node-fetch'
+
 import { Injectable } from '@nestjs/common'
 
 import { User } from '@island.is/judicial-system/types'

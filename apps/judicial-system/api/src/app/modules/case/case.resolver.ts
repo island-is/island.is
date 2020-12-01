@@ -18,7 +18,7 @@ import { User } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { BackendAPI } from '../../../services'
-import { CurrentUser, JwtAuthGuard } from '../auth'
+import { CurrentUser, JwtGraphQlAuthGuard } from '../auth'
 import { CaseInterceptor, CasesInterceptor } from './interceptors'
 import {
   CreateCaseInput,
@@ -37,7 +37,7 @@ import {
   SignatureConfirmationResponse,
 } from './models'
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => Case)
 export class CaseResolver {
   constructor(
@@ -130,24 +130,6 @@ export class CaseResolver {
     return backendApi.transitionCase(id, user.nationalId, transitionCase)
   }
 
-  @Mutation(() => SendNotificationResponse, { nullable: true })
-  sendNotification(
-    @Args('input', { type: () => SendNotificationInput })
-    input: SendNotificationInput,
-    @CurrentUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<SendNotificationResponse> {
-    const { caseId, ...sendNotification } = input
-
-    this.logger.debug(`Sending notification for case ${caseId}`)
-
-    return backendApi.sendNotification(
-      caseId,
-      user.nationalId,
-      sendNotification,
-    )
-  }
-
   @Mutation(() => RequestSignatureResponse, { nullable: true })
   requestSignature(
     @Args('input', { type: () => RequestSignatureInput })
@@ -170,6 +152,24 @@ export class CaseResolver {
     this.logger.debug(`Confirming signature of ruling for case ${caseId}`)
 
     return backendApi.getSignatureConfirmation(caseId, documentToken)
+  }
+
+  @Mutation(() => SendNotificationResponse, { nullable: true })
+  sendNotification(
+    @Args('input', { type: () => SendNotificationInput })
+    input: SendNotificationInput,
+    @CurrentUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<SendNotificationResponse> {
+    const { caseId, ...sendNotification } = input
+
+    this.logger.debug(`Sending notification for case ${caseId}`)
+
+    return backendApi.sendNotification(
+      caseId,
+      user.nationalId,
+      sendNotification,
+    )
   }
 
   @ResolveField(() => [Notification])
