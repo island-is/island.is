@@ -1,17 +1,12 @@
 import React, { FC } from 'react'
-import cs from 'classnames'
 import { useFormContext, Controller } from 'react-hook-form'
 
 import {
-  Box,
   RadioButton,
-  Stack,
   Tooltip,
-  useNegativeMarginTop,
-  useNegativeMarginLeft,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
-
-import * as styles from './RadioController.treat'
 
 interface Option {
   value: string
@@ -27,7 +22,7 @@ interface Props {
   name?: string
   options?: Option[]
   largeButtons?: boolean
-  halve?: boolean
+  split?: '1/1' | '1/2' | '1/3' | '1/4'
   emphasize?: boolean
   onSelect?: (s: string) => void
 }
@@ -38,27 +33,21 @@ export const RadioController: FC<Props> = ({
   id,
   name = id,
   options = [],
-  halve = false,
   largeButtons = false,
   emphasize = false,
   onSelect = () => undefined,
+  split = '1/1',
 }) => {
   const { clearErrors, setValue } = useFormContext()
-  const topSpace = 2
-  const leftSpace = 3
-  const negativeMarginTop = useNegativeMarginTop(topSpace)
-  const negativeMarginLeft = useNegativeMarginLeft(leftSpace)
 
   return (
     <Controller
       name={name}
       defaultValue={defaultValue}
-      render={({ value, onChange }) => {
-        const renderRadioButton = (
-          render: (_: React.ReactNode) => JSX.Element = (child) => <>{child}</>,
-        ) =>
-          options.map((option, index) =>
-            render(
+      render={({ value, onChange }) => (
+        <GridRow>
+          {options.map((option, index) => (
+            <GridColumn span={['1/1', split]} paddingBottom={2}>
               <RadioButton
                 large={largeButtons || emphasize}
                 filled={emphasize}
@@ -78,33 +67,11 @@ export const RadioController: FC<Props> = ({
                 disabled={disabled}
                 errorMessage={index === options.length - 1 ? error : undefined}
                 hasError={error !== undefined}
-              />,
-            ),
-          )
-
-        if (halve) {
-          return (
-            <Box
-              display="flex"
-              flexWrap="wrap"
-              flexDirection="row"
-              className={cs(negativeMarginTop, negativeMarginLeft)}
-            >
-              {renderRadioButton((child) => (
-                <Box
-                  paddingLeft={leftSpace}
-                  paddingTop={topSpace}
-                  className={styles.coverHalf}
-                >
-                  {child}
-                </Box>
-              ))}
-            </Box>
-          )
-        } else {
-          return <Stack space={topSpace}>{renderRadioButton()}</Stack>
-        }
-      }}
+              />
+            </GridColumn>
+          ))}
+        </GridRow>
+      )}
     />
   )
 }
