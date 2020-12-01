@@ -17,7 +17,11 @@ import { ClientAllowedCorsOriginDTO } from '../entities/dto/client-allowed-cors-
 import { ClientRedirectUriDTO } from '../entities/dto/client-redirect-uri.dto'
 import { GrantType } from '../entities/models/grant-type.model'
 import { ClientGrantTypeDTO } from '../entities/dto/client-grant-type.dto'
-import { ClientAllowedScopeDTO, ClientClaimDTO } from '@island.is/auth-api-lib'
+import {
+  ClientAllowedScopeDTO,
+  ClientClaimDTO,
+  ClientPostLogoutRedirectUriDTO,
+} from '@island.is/auth-api-lib'
 
 @Injectable()
 export class ClientsService {
@@ -38,6 +42,8 @@ export class ClientsService {
     private clientAllowedScope: typeof ClientAllowedScope,
     @InjectModel(ClientClaim)
     private clientClaim: typeof ClientClaim,
+    @InjectModel(ClientPostLogoutRedirectUri)
+    private clientPostLogoutUri: typeof ClientPostLogoutRedirectUri,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -356,6 +362,39 @@ export class ClientsService {
 
     return await this.clientClaim.destroy({
       where: { clientId: clientId, type: claimType, value: claimValue },
+    })
+  }
+
+  /** Adds an post logout uri to client */
+  async addPostLogoutRedirectUri(
+    postLogoutUri: ClientPostLogoutRedirectUriDTO,
+  ): Promise<ClientPostLogoutRedirectUri> {
+    this.logger.debug(
+      `Adding post logout uri - "${postLogoutUri.redirectUri}", to client - "${postLogoutUri.clientId}"`,
+    )
+
+    if (!postLogoutUri) {
+      throw new BadRequestException('postLogoutUri object must be provided')
+    }
+
+    return await this.clientPostLogoutUri.create({ ...postLogoutUri })
+  }
+
+  /** Removes an post logout uri from client */
+  async removePostLogoutRedirectUri(
+    clientId: string,
+    redirectUri: string,
+  ): Promise<number> {
+    this.logger.debug(
+      `Removing post logout uri - "${redirectUri}" from client - "${clientId}"`,
+    )
+
+    if (!clientId || !redirectUri) {
+      throw new BadRequestException('clientId and uri must be provided')
+    }
+
+    return await this.clientPostLogoutUri.destroy({
+      where: { clientId: clientId, redirectUri: redirectUri },
     })
   }
 }
