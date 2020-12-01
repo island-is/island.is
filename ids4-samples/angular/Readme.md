@@ -1,19 +1,18 @@
 A very simple and straightforward application that demonstrates how you can connect 
 a client made in Angular to island.is IdentityServer
 
-Default settings to connect to IDS4, implemented in auth.service.ts
+The service is setup with environment variables for nonproduction only
+Default environment variables for nonproduction are
 ```ts
-export function getClientSettings(): UserManagerSettings {
-  return {
+export const environment = {
+  production: false,
+  serviceLink: 'https://localhost:5001/',
+  identityServer: {
     authority: 'https://localhost:6001/',
-    client_id: 'island-is-1',
-    redirect_uri: `${window.location.origin}/signin-oidc`,
-    response_type: 'code',
-    scope: 'openid profile offline_access api_resource.scope',
-    loadUserInfo: true,
-    filterProtocolClaims: true,
-    userStore: new WebStorageStateStore({ store: window.localStorage }),
-  };
-}
-
+    clientId: 'island-is-1',
+    redirectUri: `${window.location.origin}/signin-oidc`,
+    responseType: 'code',
+    scope: 'openid profile offline_access api_resource.scope'
+  }
+};
 ```
