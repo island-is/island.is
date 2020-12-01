@@ -29,28 +29,30 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           )} ${formatDate(workingCase.courtEndTime, 'PP')}`}
         </Text>
       </Box>
-      <AccordionListItem title="Krafa lögreglu">
-        <span className={style.breakSpaces}>{workingCase.policeDemands}</span>
+      <AccordionListItem title="Krafa lögreglu" breakSpaces>
+        <Text>{workingCase.policeDemands}</Text>
       </AccordionListItem>
-      <AccordionListItem title="Viðstaddir">
-        <span className={style.breakSpaces}>{workingCase.courtAttendees}</span>
+      <AccordionListItem title="Viðstaddir" breakSpaces>
+        <Text>{workingCase.courtAttendees}</Text>
       </AccordionListItem>
       <AccordionListItem title="Dómskjöl">
-        Rannsóknargögn málsins liggja frammi. Krafa lögreglu þingmerkt nr. 1.
+        <Text>
+          Rannsóknargögn málsins liggja frammi. Krafa lögreglu þingmerkt nr. 1.
+        </Text>
       </AccordionListItem>
       <AccordionListItem title="Réttindi kærða">
-        Kærða er bent á að honum sé óskylt að svara spurningum er varða brot það
-        sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Kærði
-        er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið,
-        sbr. 1. mgr. 114. gr. sömu laga.
+        <Text>
+          Kærða er bent á að honum sé óskylt að svara spurningum er varða brot
+          það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008.
+          Kærði er enn fremur áminntur um sannsögli kjósi hann að tjá sig um
+          sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.
+        </Text>
       </AccordionListItem>
-      <AccordionListItem title="Afstaða kærða">
-        <span className={style.breakSpaces}>{workingCase.accusedPlea}</span>
+      <AccordionListItem title="Afstaða kærða" breakSpaces>
+        <Text>{workingCase.accusedPlea}</Text>
       </AccordionListItem>
-      <AccordionListItem title="Málflutningur">
-        <span className={style.breakSpaces}>
-          {workingCase.litigationPresentations}
-        </span>
+      <AccordionListItem title="Málflutningur" breakSpaces>
+        <Text>{workingCase.litigationPresentations}</Text>
       </AccordionListItem>
     </AccordionItem>
   )
