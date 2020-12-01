@@ -15,13 +15,10 @@ import { ClientSecret } from '../entities/models/client-secret.model'
 import { Client } from '../entities/models/client.model'
 import { ClientAllowedCorsOriginDTO } from '../entities/dto/client-allowed-cors-origin.dto'
 import { ClientRedirectUriDTO } from '../entities/dto/client-redirect-uri.dto'
-import { GrantType } from '../entities/models/grant-type.model'
 import { ClientGrantTypeDTO } from '../entities/dto/client-grant-type.dto'
-import {
-  ClientAllowedScopeDTO,
-  ClientClaimDTO,
-  ClientPostLogoutRedirectUriDTO,
-} from '@island.is/auth-api-lib'
+import { ClientAllowedScopeDTO } from '../entities/dto/client-allowed-scope.dto'
+import { ClientClaimDTO } from '../entities/dto/client-claim.dto'
+import { ClientPostLogoutRedirectUriDTO } from '../entities/dto/client-post-logout-redirect-uri.dto'
 
 @Injectable()
 export class ClientsService {
