@@ -142,12 +142,18 @@ export const DetentionRequests: React.FC = () => {
                   {format(parseISO(c.created), 'PP', { locale: localeIS })}
                 </td>
                 <td>
-                  <Tag
-                    variant={mapCaseStateToTagVariant(c.state).color}
-                    outlined
-                  >
-                    {mapCaseStateToTagVariant(c.state).text}
-                  </Tag>
+                  {c.isCourtDateInThePast ? (
+                    <Tag variant="darkerBlue" outlined>
+                      Gæsluvarðhaldi lokið
+                    </Tag>
+                  ) : (
+                    <Tag
+                      variant={mapCaseStateToTagVariant(c.state).color}
+                      outlined
+                    >
+                      {mapCaseStateToTagVariant(c.state).text}
+                    </Tag>
+                  )}
                 </td>
                 <td>
                   {c.custodyEndDate && c.state === CaseState.ACCEPTED

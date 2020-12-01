@@ -46,6 +46,7 @@ export const SignedVerdictOverview: React.FC = () => {
       activeSection={2}
       isLoading={loading}
       notFound={data?.case === undefined}
+      courtDateInThePast={workingCase?.isCourtDateInThePast}
       rejectedCase={data?.case?.state === CaseState.REJECTED}
     >
       {workingCase ? (
@@ -55,13 +56,23 @@ export const SignedVerdictOverview: React.FC = () => {
               <Box>
                 <Box marginBottom={1}>
                   <Text as="h1" variant="h1">
-                    {workingCase.state === CaseState.ACCEPTED
+                    {workingCase.isCourtDateInThePast
+                      ? 'Gæsluvarðhaldi lokið'
+                      : workingCase.state === CaseState.ACCEPTED
                       ? 'Gæsluvarðhald virkt'
                       : 'Gæsluvarðhaldi hafnað'}
                   </Text>
                 </Box>
                 <Text as="h5" variant="h5">
-                  {workingCase.state === CaseState.ACCEPTED
+                  {workingCase.isCourtDateInThePast
+                    ? `Gæsla rann út ${formatDate(
+                        workingCase.custodyEndDate,
+                        'PPP',
+                      )} kl. ${formatDate(
+                        workingCase.custodyEndDate,
+                        TIME_FORMAT,
+                      )}`
+                    : workingCase.state === CaseState.ACCEPTED
                     ? `Gæsla til ${formatDate(
                         workingCase.custodyEndDate,
                         'PPP',
