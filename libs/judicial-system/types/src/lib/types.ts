@@ -18,16 +18,20 @@ export interface User {
 }
 
 export enum CaseState {
+  NEW = 'NEW',
   DRAFT = 'DRAFT',
   SUBMITTED = 'SUBMITTED',
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
+  DELETED = 'DELETED',
 }
 
 export enum CaseTransition {
+  OPEN = 'OPEN',
   SUBMIT = 'SUBMIT',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
+  DELETE = 'DELETE',
 }
 
 export enum CaseCustodyProvisions {
@@ -58,6 +62,8 @@ export enum CaseGender {
   OTHER = 'OTHER',
 }
 
+export type Gender = 'karl' | 'kona' | 'annað'
+
 export interface Case {
   id: string
   created: string
@@ -85,6 +91,7 @@ export interface Case {
   prosecutor?: User
   courtCaseNumber?: string
   courtDate?: string
+  isCourtDateInThePast?: boolean
   courtRoom?: string
   defenderName?: string
   defenderEmail?: string

@@ -5,32 +5,32 @@ import { User as TUser, UserRole } from '@island.is/judicial-system/types'
 @ObjectType()
 export class User implements TUser {
   @Field(() => ID)
-  readonly id: string
+  readonly id!: string
 
   @Field()
-  readonly created: string
+  readonly created!: string
 
   @Field()
-  readonly modified: string
+  readonly modified!: string
 
   @Field()
-  readonly nationalId: string
+  readonly nationalId!: string
 
   @Field()
-  readonly name: string
+  readonly name!: string
 
   @Field()
-  readonly title: string
+  readonly title!: string
 
   @Field()
-  readonly mobileNumber: string
+  readonly mobileNumber!: string
 
   @Field()
-  readonly email: string
+  readonly email!: string
 
   @Field(() => String)
-  readonly role: UserRole
+  readonly role!: UserRole
 
   @Field()
-  readonly active: boolean
+  readonly active!: boolean
 }

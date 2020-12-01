@@ -76,3 +76,24 @@ export const parseTime = (date: string, time: string) => {
 // Credit: https://stackoverflow.com/a/53060314
 export const insertAt = (str: string, sub: string, pos: number) =>
   `${str.slice(0, pos)}${sub}${str.slice(pos)}`
+
+export const replaceTabs = (str: string) =>
+  str?.replace(/(?: \t+|\t+ |\t+)/g, ' ')
+
+export const replaceTabsOnChange = (
+  evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+) => {
+  if (evt.target.value.includes('\t')) {
+    evt.target.value = replaceTabs(evt.target.value)
+  }
+}
+
+/**
+ * Given a time with a single hour digit, f.x. 1:15, returns
+ * a zero padded value, i.e. 01:15.
+ * @param time value to pad with zero
+ */
+export const padTimeWithZero = (time: string): string => {
+  const threeDigitRegex = new RegExp(/^([0-9])(:[0-5]\d)/)
+  return threeDigitRegex.test(time) ? time.padStart(5, '0') : time
+}

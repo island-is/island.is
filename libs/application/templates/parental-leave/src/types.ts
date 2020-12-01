@@ -6,7 +6,17 @@ export type Period = {
 
 export interface Payment {
   date: string
-  tax: number
-  pensionContribution: number
-  amount: number
+  taxAmount: number
+  pensionAmount: number
+  estimatedAmount: number
+  privatePensionAmount: number
+  unionAmount: number
+  estimatePayment: number
+  period: {
+    from: string
+    to: string
+    ratio: number
+    approved: boolean
+    paid: boolean
+  }
 }

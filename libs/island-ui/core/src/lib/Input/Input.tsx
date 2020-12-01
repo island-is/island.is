@@ -143,6 +143,7 @@ export const Input = forwardRef(
               [styles.hasFocus]: hasFocus,
               [styles.containerDisabled]: disabled,
               [styles.fixedFocusState]: fixedFocusState,
+              [styles.noLabel]: !label,
             },
           )}
           onClick={(e) => {
@@ -156,7 +157,8 @@ export const Input = forwardRef(
             <label
               htmlFor={id}
               className={cn(styles.label, styles.labelSizes[size], {
-                [styles.labelDisabledEmptyInput]: disabled && !value,
+                [styles.labelDisabledEmptyInput]:
+                  disabled && !value && !defaultValue,
               })}
             >
               {label}

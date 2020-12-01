@@ -4,9 +4,8 @@
     "types": ["node", "jest"],
     "emitDecoratorMetadata": true,
     "target": "es2015",
-    "strict": false
+    "strict": true
   },
-  "allowJs": true,
   "files": [],
   "include": [],
   "references": [

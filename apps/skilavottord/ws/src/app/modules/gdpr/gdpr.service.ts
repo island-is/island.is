@@ -13,28 +13,30 @@ export class GdprService {
 
   async findByNationalId(nationalId: string): Promise<GdprModel> {
     this.logger.info(`Finding gdpr for nationalId - "${nationalId}"`)
-    return this.gdprModel.findOne({
-      where: { nationalId },
-    })
+    try {
+      return await this.gdprModel.findOne({
+        where: { nationalId },
+      })
+    } catch (error) {
+      this.logger.error('error finding gdprModel:' + error)
+    }
   }
 
-  createGdpr(nationalId: string, gdprStatus: string) {
+  async createGdpr(nationalId: string, gdprStatus: string) {
     this.logger.info(
       `Insert gdpr nationalId:${nationalId} gdprStatus: ${gdprStatus}`,
     )
-    const newGdpr: GdprModel = new GdprModel()
-    newGdpr.nationalId = nationalId
-    newGdpr.gdprStatus = gdprStatus
-    newGdpr.save()
+    try {
+      const newGdpr: GdprModel = new GdprModel()
+      newGdpr.nationalId = nationalId
+      newGdpr.gdprStatus = gdprStatus
+      await newGdpr.save()
+    } catch (error) {
+      this.logger.error('error creating gdpr:' + error)
+    }
   }
 
   async findAll(): Promise<GdprModel[]> {
     return await this.gdprModel.findAll()
   }
-
-  // async create(gdpr: Gdpr): Promise<Gdpr> {
-  //   //this.logger.debug(`Creating gdpr with nationalId - ${gdpr.nationalId}`)
-  //   this.applicationsRegistered.labels('res1').inc()
-  //   return this.gdprModel.create(gdpr)
-  // }
 }

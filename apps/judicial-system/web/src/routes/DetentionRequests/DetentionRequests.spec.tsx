@@ -3,15 +3,12 @@ import { render, waitFor, screen } from '@testing-library/react'
 import { DetentionRequests } from './'
 import { CaseState } from '@island.is/judicial-system/types'
 import { MemoryRouter, Route } from 'react-router-dom'
-import { userContext } from '../../utils/userContext'
-import {
-  mockJudgeUserContext,
-  mockProsecutorUserContext,
-} from '../../utils/mocks'
+import { mockJudgeQuery, mockProsecutorQuery } from '../../utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
 import { CasesQuery } from './DetentionRequests'
 import * as Constants from '../../utils/constants'
 import '@testing-library/jest-dom'
+import { UserProvider } from '../../shared-components/UserProvider/UserProvider'
 
 const mockCasesQuery = [
   {
@@ -48,6 +45,15 @@ const mockCasesQuery = [
             accusedName: 'Erlingur L Kristinsson',
             custodyEndDate: '2020-11-11T12:31:00.000Z',
           },
+          {
+            id: 'test_id_4',
+            created: '2020-09-16T19:50:08.033Z',
+            state: CaseState.NEW,
+            policeCaseNumber: '008-2020-X',
+            accusedNationalId: '012345-6789',
+            accusedName: 'Erlingur L Kristinsson',
+            custodyEndDate: '2020-11-11T12:31:00.000Z',
+          },
         ],
       },
     },
@@ -55,18 +61,21 @@ const mockCasesQuery = [
 ]
 
 describe('Detention requests route', () => {
-  test('should list all cases that are not a draft in a list if you are a judge', async () => {
+  test('should list all cases that do not have status NEW in a list if you are a judge', async () => {
     render(
-      <MockedProvider mocks={mockCasesQuery} addTypename={false}>
-        <userContext.Provider value={mockJudgeUserContext}>
-          <MemoryRouter
-            initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-          >
+      <MockedProvider
+        mocks={[...mockCasesQuery, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+        >
+          <UserProvider>
             <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
               <DetentionRequests />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 
@@ -76,23 +85,26 @@ describe('Detention requests route', () => {
       ),
     ).toEqual(
       mockCasesQuery[0].result.data.cases.filter((dr) => {
-        return dr.state !== CaseState.DRAFT
+        return dr.state !== CaseState.NEW
       }).length,
     )
   })
 
   test('should display the judge logo if you are a judge', async () => {
     render(
-      <MockedProvider mocks={mockCasesQuery} addTypename={false}>
-        <userContext.Provider value={mockJudgeUserContext}>
-          <MemoryRouter
-            initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-          >
+      <MockedProvider
+        mocks={[...mockCasesQuery, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+        >
+          <UserProvider>
             <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
               <DetentionRequests />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 
@@ -103,16 +115,19 @@ describe('Detention requests route', () => {
 
   test('should not display a button to create a request if you are a judge', async () => {
     render(
-      <MockedProvider mocks={mockCasesQuery} addTypename={false}>
-        <userContext.Provider value={mockJudgeUserContext}>
-          <MemoryRouter
-            initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-          >
+      <MockedProvider
+        mocks={[...mockCasesQuery, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+        >
+          <UserProvider>
             <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
               <DetentionRequests />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 
@@ -125,16 +140,19 @@ describe('Detention requests route', () => {
 
   test('should display the prosecutor logo if you are a prosecutor', async () => {
     render(
-      <MockedProvider mocks={mockCasesQuery} addTypename={false}>
-        <userContext.Provider value={mockProsecutorUserContext}>
-          <MemoryRouter
-            initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-          >
+      <MockedProvider
+        mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+        >
+          <UserProvider>
             <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
               <DetentionRequests />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 
@@ -145,16 +163,19 @@ describe('Detention requests route', () => {
 
   test('should list all cases in a list if you are a prosecutor', async () => {
     render(
-      <MockedProvider mocks={mockCasesQuery} addTypename={false}>
-        <userContext.Provider value={mockProsecutorUserContext}>
-          <MemoryRouter
-            initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-          >
+      <MockedProvider
+        mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+        >
+          <UserProvider>
             <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
               <DetentionRequests />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 
@@ -167,16 +188,19 @@ describe('Detention requests route', () => {
 
   test('should display custody end date if case has ACCEPTED status', async () => {
     render(
-      <MockedProvider mocks={mockCasesQuery} addTypename={false}>
-        <userContext.Provider value={mockProsecutorUserContext}>
-          <MemoryRouter
-            initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-          >
+      <MockedProvider
+        mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+        >
+          <UserProvider>
             <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
               <DetentionRequests />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 
@@ -195,18 +219,19 @@ describe('Detention requests route', () => {
             },
             error: { name: 'error', message: 'message' },
           },
+          ...mockProsecutorQuery,
         ]}
         addTypename={false}
       >
-        <userContext.Provider value={mockProsecutorUserContext}>
-          <MemoryRouter
-            initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-          >
+        <MemoryRouter
+          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+        >
+          <UserProvider>
             <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
               <DetentionRequests />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 

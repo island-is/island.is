@@ -7,11 +7,19 @@ import {
   ResolveField,
   Parent,
 } from '@nestjs/graphql'
-import { Inject, UseGuards } from '@nestjs/common'
+import { Inject, UseGuards, UseInterceptors } from '@nestjs/common'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  AuditedAction,
+  AuditTrailService,
+} from '@island.is/judicial-system/audit-trail'
+import { User } from '@island.is/judicial-system/types'
 
-import { AuthUser, CurrentAuthUser, JwtAuthGuard } from '../auth'
+import { environment } from '../../../environments'
+import { BackendAPI } from '../../../services'
+import { CurrentUser, JwtAuthGuard } from '../auth'
+import { CaseInterceptor, CasesInterceptor } from './interceptors'
 import {
   CreateCaseInput,
   UpdateCaseInput,
@@ -33,33 +41,60 @@ import {
 @Resolver(() => Case)
 export class CaseResolver {
   constructor(
+    @Inject(AuditTrailService)
+    private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-  ) {}
+  ) {
+    auditTrailService.initTrail(environment.auditTrail)
+  }
 
   @Query(() => [Case], { nullable: true })
-  cases(@Context('dataSources') { backendApi }): Promise<Case[]> {
+  @UseInterceptors(CasesInterceptor)
+  async cases(
+    @CurrentUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
-    return backendApi.getCases()
+    const cases = await backendApi.getCases()
+
+    this.auditTrailService.audit(
+      user.id,
+      AuditedAction.OVERVIEW,
+      cases.map((aCase) => aCase.id),
+    )
+
+    return cases
   }
 
   @Query(() => Case, { nullable: true })
-  case(
+  @UseInterceptors(CaseInterceptor)
+  async case(
     @Args('input', { type: () => CaseQueryInput })
     input: CaseQueryInput,
-    @Context('dataSources') { backendApi },
+    @CurrentUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Case> {
     this.logger.debug(`Getting case ${input.id}`)
 
-    return backendApi.getCase(input.id)
+    const existingCase = await backendApi.getCase(input.id)
+
+    this.auditTrailService.audit(
+      user.id,
+      AuditedAction.VIEW_DETAILS,
+      existingCase.id,
+    )
+
+    return existingCase
   }
 
   @Mutation(() => Case, { nullable: true })
+  @UseInterceptors(CaseInterceptor)
   createCase(
     @Args('input', { type: () => CreateCaseInput })
     input: CreateCaseInput,
-    @Context('dataSources') { backendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Case> {
     this.logger.debug('Creating case')
 
@@ -67,10 +102,11 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
+  @UseInterceptors(CaseInterceptor)
   updateCase(
     @Args('input', { type: () => UpdateCaseInput })
     input: UpdateCaseInput,
-    @Context('dataSources') { backendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Case> {
     const { id, ...updateCase } = input
 
@@ -80,25 +116,26 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
+  @UseInterceptors(CaseInterceptor)
   transitionCase(
     @Args('input', { type: () => TransitionCaseInput })
     input: TransitionCaseInput,
-    @CurrentAuthUser() authUser: AuthUser,
-    @Context('dataSources') { backendApi },
+    @CurrentUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Case> {
     const { id, ...transitionCase } = input
 
     this.logger.debug(`Transitioning case ${id}`)
 
-    return backendApi.transitionCase(id, authUser.nationalId, transitionCase)
+    return backendApi.transitionCase(id, user.nationalId, transitionCase)
   }
 
   @Mutation(() => SendNotificationResponse, { nullable: true })
   sendNotification(
     @Args('input', { type: () => SendNotificationInput })
     input: SendNotificationInput,
-    @CurrentAuthUser() authUser: AuthUser,
-    @Context('dataSources') { backendApi },
+    @CurrentUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<SendNotificationResponse> {
     const { caseId, ...sendNotification } = input
 
@@ -106,7 +143,7 @@ export class CaseResolver {
 
     return backendApi.sendNotification(
       caseId,
-      authUser.nationalId,
+      user.nationalId,
       sendNotification,
     )
   }
@@ -115,7 +152,7 @@ export class CaseResolver {
   requestSignature(
     @Args('input', { type: () => RequestSignatureInput })
     input: RequestSignatureInput,
-    @Context('dataSources') { backendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<RequestSignatureResponse> {
     this.logger.debug(`Requesting signature of ruling for case ${input.caseId}`)
 
@@ -126,7 +163,7 @@ export class CaseResolver {
   signatureConfirmation(
     @Args('input', { type: () => SignatureConfirmationQueryInput })
     input: SignatureConfirmationQueryInput,
-    @Context('dataSources') { backendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<SignatureConfirmationResponse> {
     const { caseId, documentToken } = input
 
@@ -138,7 +175,7 @@ export class CaseResolver {
   @ResolveField(() => [Notification])
   async notifications(
     @Parent() existingCase: Case,
-    @Context('dataSources') { backendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Notification[]> {
     const { id } = existingCase
 

@@ -196,7 +196,7 @@ const NewsList: Screen<NewsListProps> = ({
               {n('newsTitle', 'Fréttir og tilkynningar')}
             </Link>
             {!!selectedTag && (
-              <Tag variant="blue" label>
+              <Tag variant="blue" outlined>
                 {selectedTag.title}
               </Tag>
             )}

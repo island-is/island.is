@@ -70,7 +70,9 @@ const createArticleNavigation = (
   makePath: (t: string, p: string) => string,
 ): Array<{ url: string; title: string }> => {
   if (article.subArticles.length === 0) {
-    return createNavigation(article.body).map(({ id, text }) => ({
+    return createNavigation(article.body, {
+      title: article.shortTitle || article.title,
+    }).map(({ id, text }) => ({
       title: text,
       url: article.slug + '#' + id,
     }))
@@ -365,9 +367,10 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
     return createArticleNavigation(article, subArticle, makePath)
   }, [article, subArticle, makePath])
 
-  const relatedLinks = (article.relatedArticles ?? []).map((x) => ({
-    title: x.title,
-    url: x.slug,
+  const relatedLinks = (article.relatedArticles ?? []).map((article) => ({
+    title: article.title,
+    url: makePath('article', '[slug]'),
+    as: makePath('article', article.slug),
   }))
 
   const combinedMobileNavigation = [

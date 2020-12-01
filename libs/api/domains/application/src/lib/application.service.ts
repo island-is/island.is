@@ -8,11 +8,15 @@ import { ApolloError } from 'apollo-server-express'
 import { ApplicationsApi } from '../../gen/fetch'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
-import { GetApplicationsByUserInput } from './dto/getApplicationByUser.input'
 import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch/models/ApplicationResponseDto'
 
 const handleError = (error: any) => {
-  logger.error(error)
+  logger.error(JSON.stringify(error))
+  if (error.json) {
+    error.json().then((errorMessage) => {
+      logger.error(errorMessage)
+    })
+  }
   throw new ApolloError('Failed to resolve request', error.status)
 }
 
@@ -29,9 +33,11 @@ export class ApplicationService {
   }
 
   async create(input: CreateApplicationInput) {
-    return this.applicationApi.applicationControllerCreate({
-      createApplicationDto: input,
-    })
+    return this.applicationApi
+      .applicationControllerCreate({
+        createApplicationDto: input,
+      })
+      .catch(handleError)
   }
 
   async findAllByType(typeId: ApplicationResponseDtoTypeIdEnum) {
@@ -40,15 +46,27 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async findAllByApplicant(input: GetApplicationsByUserInput) {
+  async findAllByApplicant(
+    nationalRegistryId: string,
+    typeId?: ApplicationResponseDtoTypeIdEnum,
+  ) {
     return await this.applicationApi
-      .applicationControllerFindApplicantApplications(input)
+      .applicationControllerFindApplicantApplications({
+        nationalRegistryId,
+        typeId,
+      })
       .catch(handleError)
   }
 
-  async findAllByAssignee(input: GetApplicationsByUserInput) {
+  async findAllByAssignee(
+    nationalRegistryId: string,
+    typeId?: ApplicationResponseDtoTypeIdEnum,
+  ) {
     return await this.applicationApi
-      .applicationControllerFindAssigneeApplications(input)
+      .applicationControllerFindAssigneeApplications({
+        nationalRegistryId,
+        typeId,
+      })
       .catch(handleError)
   }
 

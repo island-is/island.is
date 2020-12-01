@@ -16,7 +16,7 @@ interface ProcessProps {
   activeCar?: string
 }
 
-const FormStepper = ({
+export const FormStepper = ({
   title,
   completedText,
   sections,

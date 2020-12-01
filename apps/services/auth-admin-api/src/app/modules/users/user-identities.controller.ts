@@ -1,12 +1,23 @@
-import { UserIdentitiesService, UserIdentity } from '@island.is/auth-api-lib'
+import {
+  UserIdentitiesService,
+  UserIdentity,
+  ActiveDTO,
+} from '@island.is/auth-api-lib'
 import {
   BadRequestException,
+  Body,
   Controller,
   Get,
   NotFoundException,
   Param,
+  Patch,
 } from '@nestjs/common'
-import { ApiOAuth2, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiCreatedResponse,
+  ApiOAuth2,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 
 @ApiOAuth2(['@identityserver.api/read'])
 // @UseGuards(AuthGuard('jwt'))
@@ -33,5 +44,16 @@ export class UserIdentitiesController {
     return userIdentity
   }
 
-  // TODO: Implement blacklist and whitelist user
+  @Patch(':subjectId')
+  @ApiCreatedResponse({ type: UserIdentity })
+  async setActive(
+    @Param('subjectId') subjectId: string,
+    @Body() req: ActiveDTO,
+  ): Promise<UserIdentity | null> {
+    if (!subjectId) {
+      throw new BadRequestException('Id must be provided')
+    }
+
+    return await this.userIdentityService.setActive(subjectId, req.active)
+  }
 }

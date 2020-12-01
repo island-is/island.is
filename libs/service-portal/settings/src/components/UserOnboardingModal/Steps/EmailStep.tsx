@@ -14,18 +14,18 @@ export const EmailStep: FC<Props> = ({ onBack, onSubmit, email }) => {
 
   return (
     <>
-      <Text variant="h1" marginBottom={3}>
+      <Text variant="h1" as="h1" marginBottom={3}>
         {formatMessage({
           id: 'service.portal:email',
           defaultMessage: 'Netfang',
         })}
       </Text>
-      <Text marginBottom={7}>
+      <Text variant="intro" marginBottom={7}>
         {formatMessage({
           id: 'sp.settings:email-form-message',
           defaultMessage: `
-                Vinsamlegt settu inn nefangið þitt.
-                Við komum til með að senda á þig staðfestingar og tilkynningar.
+                Vinsamlegast settu inn nefangið þitt.
+                Við komum til með að senda þér staðfestingar og tilkynningar.
               `,
         })}
       </Text>

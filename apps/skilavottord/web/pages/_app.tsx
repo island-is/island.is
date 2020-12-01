@@ -15,8 +15,6 @@ import { client as initApollo } from '../graphql'
 import { AppLayout } from '../components/Layouts'
 import { appWithTranslation } from '../i18n'
 import { isAuthenticated } from '../auth/utils'
-import { LinkContext } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 
 const {
   publicRuntimeConfig: { SENTRY_DSN },
@@ -31,7 +29,7 @@ interface Props extends AppProps {
 }
 
 class SupportApplication extends App<Props> {
-  static async getInitialProps(appContext) {
+  static async getInitialProps(appContext: any) {
     const { Component, ctx } = appContext
     const apolloClient = initApollo({})
     const customContext = {
@@ -54,7 +52,7 @@ class SupportApplication extends App<Props> {
     }
   }
 
-  getLanguage = (path) => {
+  getLanguage = (path: string) => {
     if (path.startsWith('en')) {
       return 'en'
     }
@@ -86,24 +84,9 @@ class SupportApplication extends App<Props> {
 
     return (
       <ApolloProvider client={initApollo(pageProps.apolloState)}>
-        <LinkContext.Provider
-          value={{
-            linkRenderer: (href, children) => (
-              <a
-                style={{
-                  color: theme.color.blue400,
-                }}
-                href={href}
-              >
-                {children}
-              </a>
-            ),
-          }}
-        >
-          <AppLayout isAuthenticated={isAuthenticated}>
-            <Component {...pageProps} />
-          </AppLayout>
-        </LinkContext.Provider>
+        <AppLayout isAuthenticated={isAuthenticated}>
+          <Component {...pageProps} />
+        </AppLayout>
       </ApolloProvider>
     )
   }

@@ -9,6 +9,7 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { Case } from '@island.is/judicial-system/types'
+import { constructProsecutorDemands } from '../../utils/stepHelper'
 
 interface Props {
   workingCase: Case
@@ -51,9 +52,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         )}`}
       </AccordionListItem>
       <AccordionListItem title="Dómkröfur">
-        {`Gæsluvarðhald til ${capitalize(
-          formatDate(workingCase.custodyEndDate, 'PPP') || '',
-        )} kl. ${formatDate(workingCase.custodyEndDate, TIME_FORMAT)}`}
+        {constructProsecutorDemands(workingCase)}
       </AccordionListItem>
       <AccordionListItem title="Lagaákvæði" breakSpaces>
         {workingCase.lawsBroken}

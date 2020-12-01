@@ -5,9 +5,6 @@ import { PageHeader, mapPageHeader } from './pageHeader.model'
 
 @ObjectType()
 export class AboutPage {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -31,7 +28,6 @@ export class AboutPage {
 }
 
 export const mapAboutPage = ({ fields, sys }: types.IPage): AboutPage => ({
-  typename: 'AboutPage',
   id: sys.id,
   pageHeader: mapPageHeader(fields.header),
   slices: fields.slices

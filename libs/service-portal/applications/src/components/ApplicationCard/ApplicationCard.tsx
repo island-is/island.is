@@ -41,8 +41,10 @@ const ApplicationCard: FC<Props> = ({
           alignItems="center"
           marginBottom={1}
         >
-          <Text variant="h3">{name}</Text>
-          <Tag variant={isComplete ? 'mint' : 'purple'} label>
+          <Text variant="h3" as="h3">
+            {name}
+          </Text>
+          <Tag variant={isComplete ? 'mint' : 'purple'} outlined>
             {isComplete ? 'Lokið' : 'Í ferli'}
           </Tag>
         </Box>

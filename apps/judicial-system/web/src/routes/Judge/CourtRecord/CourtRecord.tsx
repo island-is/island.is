@@ -15,8 +15,10 @@ import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  padTimeWithZero,
   parseString,
   parseTime,
+  replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useParams } from 'react-router-dom'
@@ -30,9 +32,10 @@ import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
+import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
 
 interface CaseData {
-  case: Case
+  case?: Case
 }
 
 export const CourtRecord: React.FC = () => {
@@ -93,7 +96,7 @@ export const CourtRecord: React.FC = () => {
   }
 
   useEffect(() => {
-    if (data && workingCase == null) {
+    if (!workingCase && data?.case) {
       let theCase = data.case
 
       if (!theCase.courtAttendees) {
@@ -116,6 +119,7 @@ export const CourtRecord: React.FC = () => {
       activeSection={Sections.JUDGE}
       activeSubSection={JudgeSubsections.COURT_RECORD}
       isLoading={loading}
+      notFound={data?.case === undefined}
     >
       {workingCase ? (
         <>
@@ -133,24 +137,11 @@ export const CourtRecord: React.FC = () => {
               <GridContainer>
                 <GridRow>
                   <GridColumn span="5/12">
-                    <Input
-                      data-testid="courtStartTime"
-                      name="courtStartTime"
-                      label="Þinghald hófst"
-                      placeholder="Veldu tíma"
-                      defaultValue={formatDate(
-                        workingCase.courtStartTime,
-                        TIME_FORMAT,
-                      )}
+                    <TimeInputField
                       onBlur={(evt) => {
-                        const validateTimeEmpty = validate(
-                          evt.target.value,
-                          'empty',
-                        )
-                        const validateTimeFormat = validate(
-                          evt.target.value,
-                          'time-format',
-                        )
+                        const time = padTimeWithZero(evt.target.value)
+                        const validateTimeEmpty = validate(time, 'empty')
+                        const validateTimeFormat = validate(time, 'time-format')
 
                         if (
                           validateTimeEmpty.isValid &&
@@ -158,7 +149,7 @@ export const CourtRecord: React.FC = () => {
                         ) {
                           const courtStartTimeMinutes = parseTime(
                             new Date().toString(),
-                            evt.target.value,
+                            time,
                           )
 
                           setWorkingCase({
@@ -184,11 +175,22 @@ export const CourtRecord: React.FC = () => {
                           )
                         }
                       }}
-                      errorMessage={courtDocumentStartErrorMessage}
-                      hasError={courtDocumentStartErrorMessage !== ''}
                       onFocus={() => setCourtDocumentStartErrorMessage('')}
-                      required
-                    />
+                    >
+                      <Input
+                        data-testid="courtStartTime"
+                        name="courtStartTime"
+                        label="Þinghald hófst"
+                        placeholder="Veldu tíma"
+                        defaultValue={formatDate(
+                          workingCase.courtStartTime,
+                          TIME_FORMAT,
+                        )}
+                        errorMessage={courtDocumentStartErrorMessage}
+                        hasError={courtDocumentStartErrorMessage !== ''}
+                        required
+                      />
+                    </TimeInputField>
                   </GridColumn>
                 </GridRow>
               </GridContainer>
@@ -220,6 +222,7 @@ export const CourtRecord: React.FC = () => {
                     setCourtAttendeesMessage(validateEmpty.errorMessage)
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 errorMessage={courtAttendeesErrorMessage}
                 hasError={courtAttendeesErrorMessage !== ''}
                 onFocus={() => setCourtAttendeesMessage('')}
@@ -253,6 +256,7 @@ export const CourtRecord: React.FC = () => {
                   setPoliceDemandsMessage(validateEmpty.errorMessage)
                 }
               }}
+              onChange={replaceTabsOnChange}
               errorMessage={policeDemandsErrorMessage}
               hasError={policeDemandsErrorMessage !== ''}
               onFocus={() => setPoliceDemandsMessage('')}
@@ -317,6 +321,7 @@ export const CourtRecord: React.FC = () => {
                   setAccusedPleaMessage(validateEmpty.errorMessage)
                 }
               }}
+              onChange={replaceTabsOnChange}
               errorMessage={accusedPleaErrorMessage}
               hasError={accusedPleaErrorMessage !== ''}
               onFocus={() => setAccusedPleaMessage('')}
@@ -359,6 +364,7 @@ export const CourtRecord: React.FC = () => {
                     )
                   }
                 }}
+                onChange={replaceTabsOnChange}
                 errorMessage={litigationPresentationsErrorMessage}
                 hasError={litigationPresentationsErrorMessage !== ''}
                 onFocus={() => setLitigationPresentationsMessage('')}
@@ -371,24 +377,11 @@ export const CourtRecord: React.FC = () => {
             <GridContainer>
               <GridRow>
                 <GridColumn>
-                  <Input
-                    data-testid="courtEndTime"
-                    name="courtEndTime"
-                    label="Þinghaldi lauk"
-                    placeholder="Veldu tíma"
-                    defaultValue={formatDate(
-                      workingCase.courtEndTime,
-                      TIME_FORMAT,
-                    )}
+                  <TimeInputField
                     onBlur={(evt) => {
-                      const validateTimeEmpty = validate(
-                        evt.target.value,
-                        'empty',
-                      )
-                      const validateTimeFormat = validate(
-                        evt.target.value,
-                        'time-format',
-                      )
+                      const time = padTimeWithZero(evt.target.value)
+                      const validateTimeEmpty = validate(time, 'empty')
+                      const validateTimeFormat = validate(time, 'time-format')
 
                       if (
                         validateTimeEmpty.isValid &&
@@ -396,7 +389,7 @@ export const CourtRecord: React.FC = () => {
                       ) {
                         const courtEndTimeMinutes = parseTime(
                           new Date().toString(),
-                          evt.target.value,
+                          time,
                         )
 
                         setWorkingCase({
@@ -417,11 +410,22 @@ export const CourtRecord: React.FC = () => {
                         )
                       }
                     }}
-                    errorMessage={courtDocumentEndErrorMessage}
-                    hasError={courtDocumentEndErrorMessage !== ''}
                     onFocus={() => setCourtDocumentEndErrorMessage('')}
-                    required
-                  />
+                  >
+                    <Input
+                      data-testid="courtEndTime"
+                      name="courtEndTime"
+                      label="Þinghaldi lauk"
+                      placeholder="Veldu tíma"
+                      defaultValue={formatDate(
+                        workingCase.courtEndTime,
+                        TIME_FORMAT,
+                      )}
+                      errorMessage={courtDocumentEndErrorMessage}
+                      hasError={courtDocumentEndErrorMessage !== ''}
+                      required
+                    />
+                  </TimeInputField>
                 </GridColumn>
               </GridRow>
             </GridContainer>

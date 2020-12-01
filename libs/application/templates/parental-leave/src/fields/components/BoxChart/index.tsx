@@ -4,16 +4,19 @@ import cn from 'classnames'
 import { Box, Text } from '@island.is/island-ui/core'
 
 import * as styles from './BoxChart.treat'
+import { Application, formatText, FormText } from '@island.is/application/core'
+import { useLocale } from '@island.is/localization'
 
 type boxStyle = 'blue' | 'green' | 'gray' | 'greenWithLines' | 'grayWithLines'
 
 export interface BoxChartKey {
-  label: string
+  label: FormText
   bulletStyle: boxStyle
 }
 
 export interface BoxChartProps {
-  titleLabel?: string
+  application: Application
+  titleLabel?: FormText
   boxes: number
   calculateBoxStyle: (index: number) => boxStyle
   keys?: BoxChartKey[]
@@ -45,11 +48,13 @@ export interface BoxChartProps {
 ***************************************************/
 
 const BoxChart = ({
-  titleLabel,
+  application,
   boxes,
   calculateBoxStyle,
   keys,
+  titleLabel,
 }: BoxChartProps) => {
+  const { formatMessage } = useLocale()
   return (
     <Box>
       {titleLabel && (
@@ -108,7 +113,7 @@ const BoxChart = ({
                   )}
                 </Box>
                 <Text variant="h5" as="span">
-                  {key.label}
+                  {formatText(key.label, application, formatMessage)}
                 </Text>
               </Box>
             )

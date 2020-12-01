@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { Box, FormStepperSection, Icon, Text } from '@island.is/island-ui/core'
 import * as styles from './FormStepperMobile.treat'
 
@@ -7,7 +7,10 @@ interface ProcessProps {
   activeSection: number
 }
 
-const FormStepperMobile = ({ sections, activeSection }: ProcessProps) => (
+export const FormStepperMobile = ({
+  sections,
+  activeSection,
+}: ProcessProps) => (
   <Box
     className={styles.stepContainer}
     display="flex"
@@ -56,7 +59,11 @@ const FormStepperMobile = ({ sections, activeSection }: ProcessProps) => (
   </Box>
 )
 
-const IconBackground = ({ children }) => (
+interface IconBackgroundProps {
+  children: ReactNode
+}
+
+const IconBackground = ({ children }: IconBackgroundProps) => (
   <Box
     className={styles.activeIcon}
     display="flex"

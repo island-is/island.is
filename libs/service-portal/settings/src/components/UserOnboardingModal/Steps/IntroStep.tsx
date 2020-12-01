@@ -45,7 +45,7 @@ export const IntroStep: FC<Props> = ({ userInfo, onClose, onSubmit }) => {
     <>
       <GridRow>
         <GridColumn order={[2, 2, 1]} span={['1/1', '1/1', '4/7']}>
-          <Text variant="h5" color="roseTinted400" marginBottom={1}>
+          <Text variant="h5" as="h5" color="roseTinted400" marginBottom={1}>
             {formatMessage(
               {
                 id: 'global:welcome',
@@ -57,7 +57,7 @@ export const IntroStep: FC<Props> = ({ userInfo, onClose, onSubmit }) => {
               },
             )}
           </Text>
-          <Text variant="h1" marginBottom={3}>
+          <Text variant="h1" as="h1" marginBottom={3}>
             {hasMaleGreeting && formatMessage(maleGreeting)}
             {hasFemaleGreeting && formatMessage(femaleGreeting)}
             {hasNonBinaryGreeting && formatMessage(nonBinaryGreeting)}
@@ -77,19 +77,28 @@ export const IntroStep: FC<Props> = ({ userInfo, onClose, onSubmit }) => {
           <img src="assets/images/jobsGrid.jpg" alt="Skrautmynd" />
         </GridColumn>
       </GridRow>
-      <Box display="flex" justifyContent="spaceBetween" marginTop={8}>
-        <Button variant="ghost" onClick={onClose}>
-          {formatMessage({
-            id: 'service.portal:finish-later',
-            defaultMessage: 'Klára seinna',
-          })}
-        </Button>
-        <Button variant="primary" onClick={onSubmit} icon="arrowForward">
-          {formatMessage({
-            id: 'service.portal:next-step',
-            defaultMessage: 'Næsta skref',
-          })}
-        </Button>
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        flexWrap="wrap"
+        marginTop={[4, 8]}
+      >
+        <Box marginBottom={[1, 0]}>
+          <Button variant="ghost" onClick={onClose}>
+            {formatMessage({
+              id: 'service.portal:finish-later',
+              defaultMessage: 'Klára seinna',
+            })}
+          </Button>
+        </Box>
+        <Box marginBottom={[1, 0]}>
+          <Button variant="primary" onClick={onSubmit} icon="arrowForward">
+            {formatMessage({
+              id: 'service.portal:next-step',
+              defaultMessage: 'Næsta skref',
+            })}
+          </Button>
+        </Box>
       </Box>
     </>
   )

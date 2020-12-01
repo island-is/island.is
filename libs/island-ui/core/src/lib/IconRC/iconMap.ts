@@ -18,6 +18,7 @@ export type Icon =
   | 'chevronForward'
   | 'closeCircle'
   | 'close'
+  | 'copy'
   | 'documents'
   | 'download'
   | 'ellipse'
@@ -40,6 +41,8 @@ export type Icon =
   | 'settings'
   | 'wallet'
   | 'warning'
+  | 'reload'
+  | 'remove'
 
 export default {
   filled: {
@@ -61,6 +64,7 @@ export default {
     chevronForward: 'ChevronForward',
     closeCircle: 'CloseCircle',
     close: 'Close',
+    copy: 'Copy',
     documents: 'Documents',
     download: 'Download',
     ellipse: 'Ellipse',
@@ -83,6 +87,8 @@ export default {
     settings: 'Settings',
     wallet: 'Wallet',
     warning: 'Warning',
+    reload: 'Reload',
+    remove: 'Remove',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
@@ -103,6 +109,7 @@ export default {
     chevronForward: 'ChevronForwardOutline',
     closeCircle: 'CloseCircleOutline',
     close: 'CloseOutline',
+    copy: 'CopyOutline',
     documents: 'DocumentsOutline',
     download: 'DownloadOutline',
     ellipse: 'EllipseOutline',
@@ -125,5 +132,7 @@ export default {
     settings: 'SettingsOutline',
     wallet: 'WalletOutline',
     warning: 'WarningOutline',
+    reload: 'ReloadOutline',
+    remove: 'RemoveOutline',
   },
 }

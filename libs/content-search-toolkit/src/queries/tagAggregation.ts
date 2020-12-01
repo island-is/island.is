@@ -1,10 +1,6 @@
-export interface TagAggregationInput {
-  documentTypes: string[]
-  tagType: string
-  size?: number
-}
+import { TagAggregationInput } from '../types'
 
-export const aggregationQuery = (tagType: string, size = 20) => ({
+export const tagAggregationQueryFragment = (tagType: string, size = 20) => ({
   aggs: {
     group: {
       nested: {
@@ -54,7 +50,7 @@ export const tagAggregationQuery = ({
         },
       },
     },
-    ...aggregationQuery(tagType, size),
+    ...tagAggregationQueryFragment(tagType, size),
   }
 
   return query

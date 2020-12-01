@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import {
   Application,
@@ -25,6 +25,8 @@ import FormExternalDataProvider from './FormExternalDataProvider'
 import { findSubmitField, verifyExternalData } from '../utils'
 import { useLocale } from '@island.is/localization'
 import ScreenFooter from './ScreenFooter'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -79,13 +81,22 @@ const Screen: FC<ScreenProps> = ({
     prevScreen()
   }, [formValue, prevScreen, reset])
 
-  const onSubmit: SubmitHandler<FormValue> = async (data) => {
+  const onSubmit: SubmitHandler<FormValue> = async (data, e) => {
     if (submitField !== undefined) {
       const finalAnswers = { ...formValue, ...data }
-
-      const event = submitField
-        ? finalAnswers[submitField.id] ?? 'SUBMIT'
-        : 'SUBMIT'
+      let event: string
+      if (submitField.placement === 'screen') {
+        event = (finalAnswers[submitField.id] as string) ?? 'SUBMIT'
+      } else {
+        if (submitField.actions.length === 1) {
+          const actionEvent = submitField.actions[0].event
+          event =
+            typeof actionEvent === 'object' ? actionEvent.type : actionEvent
+        } else {
+          const nativeEvent = e?.nativeEvent as { submitter: { id: string } }
+          event = nativeEvent?.submitter?.id ?? 'SUBMIT'
+        }
+      }
       await submitApplication({
         variables: {
           input: {
@@ -119,6 +130,22 @@ const Screen: FC<ScreenProps> = ({
     return !isLoadingOrPending
   }
 
+  const [isMobile, setIsMobile] = useState(false)
+  const { width } = useWindowSize()
+  const headerHeight = 85
+
+  useEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
+
+  useEffect(() => {
+    const target = isMobile ? headerHeight : 0
+    window.scrollTo(0, target)
+  }, [activeScreenIndex, isMobile])
+
   return (
     <FormProvider {...hookFormData}>
       <Box
@@ -129,13 +156,12 @@ const Screen: FC<ScreenProps> = ({
         key={screen.id}
         height="full"
         onSubmit={handleSubmit(onSubmit)}
-        style={{ minHeight: '65vh' }}
       >
         <GridColumn
           span={['12/12', '12/12', '7/9', '7/9']}
           offset={['0', '0', '1/9']}
         >
-          <Text variant="h2">
+          <Text variant="h2" marginBottom={5}>
             {formatText(screen.name, application, formatMessage)}
           </Text>
           <Box>

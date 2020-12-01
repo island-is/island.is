@@ -8,11 +8,11 @@ import { CaseGender, CreateCase } from '@island.is/judicial-system/types'
 export class CreateCaseInput implements CreateCase {
   @Allow()
   @Field()
-  readonly policeCaseNumber: string
+  readonly policeCaseNumber!: string
 
   @Allow()
   @Field()
-  readonly accusedNationalId: string
+  readonly accusedNationalId!: string
 
   @Allow()
   @Field({ nullable: true })

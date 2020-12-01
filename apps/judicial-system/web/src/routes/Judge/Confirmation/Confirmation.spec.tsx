@@ -2,14 +2,14 @@ import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
 import { Confirmation } from './Confirmation'
 import { CaseAppealDecision } from '@island.is/judicial-system/types'
-import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import { MemoryRouter, Route } from 'react-router-dom'
 import * as Constants from '../../../utils/constants'
 import {
   mockCaseQueries,
-  mockJudgeUserContext,
+  mockJudgeQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 describe('Confirmation route', () => {
   test(`should not display prosecutor or judge appeal announcements if appeal decition is not ${CaseAppealDecision.APPEAL}`, async () => {
@@ -17,16 +17,19 @@ describe('Confirmation route', () => {
 
     // Act
     render(
-      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
-        <userContext.Provider value={mockJudgeUserContext}>
-          <MemoryRouter
-            initialEntries={[`${Constants.CONFIRMATION_ROUTE}/test_id_2`]}
-          >
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.CONFIRMATION_ROUTE}/test_id_2`]}
+        >
+          <UserProvider>
             <Route path={`${Constants.CONFIRMATION_ROUTE}/:id`}>
               <Confirmation />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 
@@ -44,16 +47,19 @@ describe('Confirmation route', () => {
 
     // Act
     render(
-      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
-        <userContext.Provider value={mockJudgeUserContext}>
-          <MemoryRouter
-            initialEntries={[`${Constants.CONFIRMATION_ROUTE}/test_id`]}
-          >
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.CONFIRMATION_ROUTE}/test_id`]}
+        >
+          <UserProvider>
             <Route path={`${Constants.CONFIRMATION_ROUTE}/:id`}>
               <Confirmation />
             </Route>
-          </MemoryRouter>
-        </userContext.Provider>
+          </UserProvider>
+        </MemoryRouter>
       </MockedProvider>,
     )
 

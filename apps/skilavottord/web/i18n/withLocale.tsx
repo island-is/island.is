@@ -10,11 +10,9 @@ const withLocale = <C extends BaseContext = NextPageContext, IP = {}, P = {}>(
 ) => (Component: NextComponentType<C, IP, P>): NextComponentType<C, IP> => {
   const getInitialProps = Component.getInitialProps
 
-  const NewComponent: NextComponentType<C, IP, P> = (props) => (
-    <Component {...props} />
-  )
+  const NewComponent: any = (props: P) => <Component {...props} />
 
-  NewComponent.getInitialProps = async (ctx) => {
+  NewComponent.getInitialProps = async (ctx: C) => {
     const newContext = Object.assign({}, ctx, { locale })
     const [props, { default: translations = {} }] = await Promise.all([
       getInitialProps && getInitialProps(newContext),

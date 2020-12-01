@@ -22,6 +22,7 @@ export * from './lib/Swiper/Swiper'
 export * from './lib/Header/Header'
 export * from './lib/Footer/Footer'
 export * from './lib/DialogPrompt/DialogPrompt'
+export * from './lib/ModalBase/ModalBase'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'
@@ -73,6 +74,8 @@ export * from './lib/FormStepper/FormStepper'
 export * from './lib/FormStepper/types'
 export * from './lib/Pagination/Pagination'
 export * from './lib/Tabs/Tabs'
+export * from './lib/TableOfContents/TableOfContents'
+export * from './lib/Menu/Menu'
 
 // Context
 export * from './lib/context'

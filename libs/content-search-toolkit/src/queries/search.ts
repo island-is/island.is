@@ -1,15 +1,7 @@
-import { Tag } from '../dto/searcher.input'
-import { aggregationQuery } from './tagAggregation'
+import { SearchInput } from '../types'
+import { tagAggregationQueryFragment } from './tagAggregation'
 import { tagQuery } from './tagQuery'
-
-export interface SearchInput {
-  queryString: string
-  size?: number
-  page?: number
-  types?: string[]
-  tags?: Tag[]
-  countTag?: string
-}
+import { typeAggregationQuery } from './typeAggregation'
 
 export const searchQuery = ({
   queryString,
@@ -18,6 +10,7 @@ export const searchQuery = ({
   types = [],
   tags = [],
   countTag = '',
+  countTypes = false,
 }: SearchInput) => {
   const should = []
   const must = []
@@ -60,9 +53,16 @@ export const searchQuery = ({
     })
   }
 
-  let aggregation = {}
+  const aggregation = { aggs: {} }
+
   if (countTag) {
-    aggregation = aggregationQuery(countTag)
+    // set the tag aggregation as the only aggregation
+    aggregation.aggs = tagAggregationQueryFragment(countTag).aggs
+  }
+
+  if (countTypes) {
+    // add tag aggregation, handle if there is already an existing aggregation
+    aggregation.aggs = { ...aggregation.aggs, ...typeAggregationQuery().aggs }
   }
 
   return {

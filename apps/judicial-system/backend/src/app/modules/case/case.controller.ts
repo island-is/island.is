@@ -23,9 +23,9 @@ import { CaseState } from '@island.is/judicial-system/types'
 import { UserService } from '../user'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
+import { transitionCase } from './state'
 import { CaseService } from './case.service'
-import { CaseValidationPipe } from './case.pipe'
-import { transitionCase } from './case.state'
+import { CaseValidationPipe } from './pipes'
 
 @Controller('api')
 @ApiTags('cases')
@@ -99,7 +99,12 @@ export class CaseController {
 
     const user = await this.findUserByNationalId(transition.nationalId)
 
-    const update = transitionCase(transition, existingCase, user)
+    const update = transitionCase(
+      transition.transition,
+      existingCase.state,
+      user.id,
+      user.role,
+    )
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,

@@ -14,7 +14,9 @@ import retryLink from './retryLink'
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
-const createClient = (initialState): ApolloClient<NormalizedCacheObject> => {
+const createClient = (
+  initialState: NormalizedCacheObject,
+): ApolloClient<NormalizedCacheObject> => {
   const link = ApolloLink.from([retryLink, errorLink, authLink, httpLink])
 
   const cache = new InMemoryCache({
@@ -38,7 +40,9 @@ const createClient = (initialState): ApolloClient<NormalizedCacheObject> => {
   })
 }
 
-const initApollo = (initialState): ApolloClient<NormalizedCacheObject> => {
+const initApollo = (
+  initialState: NormalizedCacheObject,
+): ApolloClient<NormalizedCacheObject> => {
   // Make sure to create a new client for every server-side request so that data
   // isn't shared between connections (which would be bad)
   if (!isBrowser) {

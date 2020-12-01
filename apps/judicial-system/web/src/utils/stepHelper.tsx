@@ -1,7 +1,11 @@
 import React from 'react'
 import { AppealDecisionRole, RequiredField } from '../types'
 import { Text } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatNationalId,
+  TIME_FORMAT,
+} from '@island.is/judicial-system/formatters'
 import {
   Case,
   CaseAppealDecision,
@@ -17,7 +21,7 @@ export const getAppealDecitionText = (
     case CaseAppealDecision.APPEAL: {
       return `${
         role === AppealDecisionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
-      } kærir málið`
+      } kærir úrskurðinn`
     }
     case CaseAppealDecision.ACCEPT: {
       return `${
@@ -136,6 +140,45 @@ export const constructConclusion = (workingCase: Case) => {
   }
 }
 
+export const constructProsecutorDemands = (workingCase: Case) => {
+  return workingCase.requestedCustodyEndDate ? (
+    <Text>
+      Þess er krafist að
+      <Text as="span" fontWeight="semiBold">
+        {` ${workingCase.accusedName}
+    ${formatNationalId(workingCase.accusedNationalId)}`}
+      </Text>
+      , verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi
+      til
+      <Text as="span" fontWeight="semiBold">
+        {` ${formatDate(workingCase.requestedCustodyEndDate, 'EEEE')?.replace(
+          'dagur',
+          'dagsins',
+        )}
+    ${formatDate(workingCase.requestedCustodyEndDate, 'PPP')}, kl. ${formatDate(
+          workingCase.requestedCustodyEndDate,
+          TIME_FORMAT,
+        )}`}
+      </Text>
+      {workingCase.requestedCustodyRestrictions?.includes(
+        CaseCustodyRestrictions.ISOLATION,
+      ) ? (
+        <>
+          , og verði gert að{' '}
+          <Text as="span" fontWeight="semiBold">
+            sæta einangrun
+          </Text>{' '}
+          meðan á gæsluvarðhaldinu stendur.
+        </>
+      ) : (
+        '.'
+      )}
+    </Text>
+  ) : (
+    <Text>Saksóknari hefur ekki fyllt út dómkröfur.</Text>
+  )
+}
+
 export const isNextDisabled = (requiredFields: RequiredField[]) => {
   // Loop through requiredFields
   for (let i = 0; i < requiredFields.length; i++) {
@@ -150,4 +193,13 @@ export const isNextDisabled = (requiredFields: RequiredField[]) => {
     }
   }
   return false
+}
+
+/**
+ * A value is considered dirty if it's a string, either an empty string or not.
+ * On the contrary a value is pristine if it's undefined or null.
+ * @param value check if this value is dirty
+ */
+export const isDirty = (value?: string | null): boolean => {
+  return typeof value === 'string'
 }

@@ -1,6 +1,17 @@
-import { Event, EventObject, State } from 'xstate'
-import { MachineOptions } from 'xstate/lib/types'
+import {
+  interpret,
+  Event,
+  EventObject,
+  MachineOptions,
+  ServiceConfig,
+  InvokeMeta,
+  InvokeSourceDefinition,
+  ActionTypes,
+} from 'xstate'
 import { Application, ExternalData, FormValue } from '../types/Application'
+import merge from 'lodash/merge'
+import { SendMailOptions } from 'nodemailer'
+
 import {
   ApplicationContext,
   ApplicationRole,
@@ -11,6 +22,10 @@ import {
   ReadWriteValues,
 } from '../types/StateMachine'
 import { ApplicationTemplate } from '../types/ApplicationTemplate'
+
+interface EmailServiceInvokeSourceDefinition extends InvokeSourceDefinition {
+  emailTemplate: (context: ApplicationContext) => SendMailOptions
+}
 
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
@@ -33,15 +48,15 @@ export class ApplicationTemplateHelper<
     this.template = template
   }
 
-  protected initializeStateMachine(
+  private initializeStateMachine(
+    stateMachineContext?: TContext,
     stateMachineOptions?: Partial<MachineOptions<TContext, TEvents>>,
-    initialStateMachineContext?: TContext,
   ) {
     this.stateMachine = createApplicationMachine(
       this.application,
       this.template.stateMachineConfig,
-      stateMachineOptions,
-      initialStateMachineContext,
+      merge(stateMachineOptions || {}, this.template.stateMachineOptions),
+      stateMachineContext,
     )
   }
 
@@ -57,18 +72,57 @@ export class ApplicationTemplateHelper<
     return this.template.stateMachineConfig.states[stateKey]?.meta
   }
 
+  /***
+   * Changes the application state
+   * @param event A state machine event
+   * returns [hasChanged, newState, newApplication] where newApplication has the updated state value
+   */
   changeState(
     event: Event<TEvents>,
-  ): State<
-    TContext,
-    TEvents,
-    TStateSchema,
-    { value: string; context: TContext }
-  > {
-    if (!this.stateMachine) {
-      this.initializeStateMachine()
-    }
-    return this.stateMachine.transition(this.application.state, event)
+    sendEmail: (emailTemplate: SendMailOptions) => Promise<string>,
+  ): [boolean, string, Application] {
+    this.initializeStateMachine(undefined, {
+      services: {
+        emailService: (
+          context: TContext,
+          event: TEvents,
+          { src }: InvokeMeta,
+        ) => {
+          if (event.type === ActionTypes.Init) {
+            // Do not send emails on xstate.init event
+            return Promise.reject('')
+          }
+
+          const emailTemplate = (src as EmailServiceInvokeSourceDefinition).emailTemplate(
+            context,
+          )
+
+          if (!emailTemplate) {
+            return Promise.reject('No email template provided')
+          }
+
+          return sendEmail(emailTemplate)
+        },
+      },
+    })
+    const service = interpret(
+      this.stateMachine,
+      this.template.stateMachineOptions,
+    )
+    service.start()
+    service.send(event)
+
+    const newState = service.state
+    service.stop()
+    const newApplicationState = newState.value.toString()
+    return [
+      Boolean(newState.changed),
+      newApplicationState,
+      {
+        ...newState.context.application,
+        state: newApplicationState,
+      },
+    ]
   }
 
   getReadableAnswersAndExternalData(

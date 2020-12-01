@@ -1,27 +1,27 @@
 import { Injectable } from '@nestjs/common'
 import {
-  ContentLanguage,
   ElasticService,
-  SearcherInput,
   TagAggregationResponse,
-  WebSearchAutocompleteInput,
+  TypeAggregationResponse,
 } from '@island.is/content-search-toolkit'
 import { logger } from '@island.is/logging'
 import { SearchResult } from './models/searchResult.model'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
 import { TagCount } from './models/tagCount'
 import { SearchIndexes } from '@island.is/content-search-indexer/types'
+import { SearcherInput } from './dto/searcher.input'
+import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
+import { TypeCount } from './models/typeCount'
 
 @Injectable()
 export class ContentSearchService {
   constructor(private elasticService: ElasticService) {}
 
-  private getIndex(lang: ContentLanguage) {
-    const languageCode = ContentLanguage[lang]
-    return SearchIndexes[languageCode] ?? SearchIndexes.is
+  private getIndex(lang: keyof typeof SearchIndexes) {
+    return SearchIndexes[lang] ?? SearchIndexes.is
   }
 
-  mapFindAggregations(aggregations: TagAggregationResponse): TagCount[] {
+  mapTagAggregations(aggregations: TagAggregationResponse): TagCount[] {
     if (!aggregations?.group) {
       return null
     }
@@ -29,9 +29,19 @@ export class ContentSearchService {
       (tagObject) => ({
         key: tagObject.key,
         count: tagObject.doc_count.toString(),
-        value: tagObject.value.buckets?.[0]?.key ?? '', // value of tag is allways the first value here we provide default value since value is optional
+        value: tagObject.value.buckets?.[0]?.key ?? '', // value of tag is always the first value here we provide default value since value is optional
       }),
     )
+  }
+
+  mapTypeAggregations(aggregations: TypeAggregationResponse): TypeCount[] {
+    if (!aggregations?.typeCount) {
+      return null
+    }
+    return aggregations.typeCount.buckets.map<TypeCount>((tagObject) => ({
+      key: tagObject.key,
+      count: tagObject.doc_count.toString(),
+    }))
   }
 
   async find(query: SearcherInput): Promise<SearchResult> {
@@ -44,7 +54,12 @@ export class ContentSearchService {
       total: body.hits.total.value,
       // we map data when it goes into the index we can return it without mapping it here
       items: body.hits.hits.map((item) => JSON.parse(item._source.response)),
-      tagCounts: this.mapFindAggregations(body.aggregations),
+      tagCounts: this.mapTagAggregations(
+        body.aggregations as TagAggregationResponse,
+      ),
+      typesCount: this.mapTypeAggregations(
+        body.aggregations as TypeAggregationResponse,
+      ),
     }
   }
 
@@ -53,12 +68,12 @@ export class ContentSearchService {
   ): Promise<WebSearchAutocomplete> {
     logger.info('search index', {
       lang: input.language,
-      index: this.getIndex(ContentLanguage[input.language]),
+      index: this.getIndex(input.language),
     })
     const {
       suggest: { searchSuggester },
     } = await this.elasticService.fetchAutocompleteTerm(
-      this.getIndex(ContentLanguage[input.language]),
+      this.getIndex(input.language),
       {
         ...input,
         singleTerm: input.singleTerm.trim(),

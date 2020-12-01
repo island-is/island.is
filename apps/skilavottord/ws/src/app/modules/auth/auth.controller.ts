@@ -11,7 +11,7 @@ import {
 import jwt from 'jsonwebtoken'
 import { Entropy } from 'entropy-string'
 import * as kennitala from 'kennitala'
-import IslandisLogin from 'islandis-login'
+import IslandisLogin, { VerifyResult } from 'islandis-login'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CSRF_COOKIE_NAME,
@@ -19,7 +19,7 @@ import {
   SSN_IS_NOT_A_PERSON,
 } from '@island.is/skilavottord/consts'
 import { environment } from '../../../environments'
-import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
+import { Cookie, CookieOptions, Credentials } from './auth.types'
 import { Role, AuthUser } from './auth.types'
 import { AuthService } from './auth.service'
 

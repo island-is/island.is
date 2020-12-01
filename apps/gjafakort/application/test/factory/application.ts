@@ -5,7 +5,7 @@ import {
   ApplicationStates,
 } from '@island.is/gjafakort/consts'
 
-import { issuerFactory } from '.'
+import issuerFactory from './issuer'
 
 type Properties = {
   issuer?: Issuer

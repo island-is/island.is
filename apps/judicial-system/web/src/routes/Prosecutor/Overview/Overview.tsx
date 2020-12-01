@@ -8,7 +8,7 @@ import {
   CaseTransition,
   NotificationType,
   TransitionCase,
-  CaseCustodyRestrictions,
+  CaseState,
 } from '@island.is/judicial-system/types'
 
 import Modal from '../../../shared-components/Modal/Modal'
@@ -17,6 +17,7 @@ import {
   capitalize,
   formatNationalId,
   laws,
+  formatGender,
 } from '@island.is/judicial-system/formatters'
 import { parseTransition } from '../../../utils/formatters'
 import { FormFooter } from '../../../shared-components/FormFooter'
@@ -25,7 +26,6 @@ import {
   TIME_FORMAT,
   formatCustodyRestrictions,
 } from '@island.is/judicial-system/formatters'
-import { userContext } from '../../../utils/userContext'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import * as styles from './Overview.treat'
 import { useMutation, useQuery } from '@apollo/client'
@@ -38,6 +38,8 @@ import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 interface CaseData {
   case?: Case
@@ -49,8 +51,8 @@ export const Overview: React.FC = () => {
 
   const { id } = useParams<{ id: string }>()
   const history = useHistory()
-  const { user } = useContext(userContext)
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
+  const { user } = useContext(UserContext)
+  const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
@@ -62,14 +64,7 @@ export const Overview: React.FC = () => {
       variables: { input: { id, ...transitionCase } },
     })
 
-    const resCase = data?.transitionCase
-
-    if (resCase) {
-      // Do smoething with the result. In particular, we want the modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-
-    return resCase
+    return data?.transitionCase
   }
 
   const [
@@ -91,29 +86,47 @@ export const Overview: React.FC = () => {
   }
 
   const handleNextButtonClick: () => Promise<boolean> = async () => {
-    if (workingCase) {
-      try {
-        // Parse the transition request
-        const transitionRequest = parseTransition(
-          workingCase.modified,
-          CaseTransition.SUBMIT,
-        )
+    if (!workingCase) {
+      return false
+    }
 
-        // Transition the case
-        const resCase = await transitionCase(workingCase.id, transitionRequest)
+    switch (workingCase.state) {
+      case CaseState.DRAFT:
+        try {
+          // Parse the transition request
+          const transitionRequest = parseTransition(
+            workingCase.modified,
+            CaseTransition.SUBMIT,
+          )
 
-        if (!resCase) {
-          // Improve error handling at some point
-          console.log('Transition failing')
+          // Transition the case
+          const resCase = await transitionCase(
+            workingCase.id,
+            transitionRequest,
+          )
+
+          if (!resCase) {
+            return false
+          }
+
+          setWorkingCase({
+            ...workingCase,
+            state: resCase.state,
+            prosecutor: resCase.prosecutor,
+          })
+        } catch (e) {
+          console.log(e)
+
           return false
         }
-      } catch (e) {
-        // Improve error handling at some point
-        console.log('Transition failing')
-      }
-
-      return sendNotification(workingCase.id)
+        break
+      case CaseState.SUBMITTED:
+        break
+      default:
+        return false
     }
+
+    return sendNotification(workingCase.id)
   }
 
   useEffect(() => {
@@ -131,6 +144,7 @@ export const Overview: React.FC = () => {
       activeSection={Sections.PROSECUTOR}
       activeSubSection={ProsecutorSubsections.PROSECUTOR_OVERVIEW}
       isLoading={loading}
+      notFound={data?.case === undefined}
     >
       {workingCase ? (
         <>
@@ -139,115 +153,115 @@ export const Overview: React.FC = () => {
               Krafa um gæsluvarðhald
             </Text>
           </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" color="blue400">
-                LÖKE málsnúmer
-              </Text>
-            </Box>
-            <Text variant="h3">{workingCase.policeCaseNumber}</Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" color="blue400">
-                Kennitala
-              </Text>
-            </Box>
-            <Text variant="h3">
-              {formatNationalId(workingCase.accusedNationalId)}
-            </Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" color="blue400">
-                Fullt nafn
-              </Text>
-            </Box>
-            <Text variant="h3"> {workingCase.accusedName}</Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" color="blue400">
-                Lögheimili/dvalarstaður
-              </Text>
-            </Box>
-            <Text variant="h3">{workingCase.accusedAddress}</Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" color="blue400">
-                Dómstóll
-              </Text>
-            </Box>
-            <Text variant="h3">{workingCase.court}</Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" color="blue400">
-                Tími handtöku
-              </Text>
-            </Box>
-            <Text variant="h3">
-              {`${capitalize(
-                formatDate(workingCase.arrestDate, 'PPPP') || '',
-              )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
-            </Text>
-          </Box>
-          {workingCase.requestedCourtDate && (
-            <Box component="section" marginBottom={9}>
+          <Box component="section">
+            <Box marginBottom={5}>
               <Box marginBottom={1}>
                 <Text variant="eyebrow" color="blue400">
-                  Ósk um fyrirtökudag og tíma
+                  LÖKE málsnúmer
+                </Text>
+              </Box>
+              <Text variant="h3">{workingCase.policeCaseNumber}</Text>
+            </Box>
+            <Box marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Kennitala
+                </Text>
+              </Box>
+              <Text variant="h3">
+                {formatNationalId(workingCase.accusedNationalId)}
+              </Text>
+            </Box>
+            <Box marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Fullt nafn
+                </Text>
+              </Box>
+              <Text variant="h3"> {workingCase.accusedName}</Text>
+            </Box>
+            <Box marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Lögheimili/dvalarstaður
+                </Text>
+              </Box>
+              <Text variant="h3">{workingCase.accusedAddress}</Text>
+            </Box>
+            {workingCase.accusedGender && (
+              <Box marginBottom={5}>
+                <Box marginBottom={1}>
+                  <Text variant="eyebrow" color="blue400">
+                    Kyn
+                  </Text>
+                </Box>
+                <Text variant="h3">
+                  {capitalize(formatGender(workingCase.accusedGender))}
+                </Text>
+              </Box>
+            )}
+            {workingCase.requestedDefenderName && (
+              <Box marginBottom={5}>
+                <Box marginBottom={1}>
+                  <Text variant="eyebrow" color="blue400">
+                    Nafn verjanda
+                  </Text>
+                </Box>
+                <Text variant="h3">{workingCase.requestedDefenderName}</Text>
+              </Box>
+            )}
+            {workingCase.requestedDefenderEmail && (
+              <Box marginBottom={5}>
+                <Box marginBottom={1}>
+                  <Text variant="eyebrow" color="blue400">
+                    Netfang verjanda
+                  </Text>
+                </Box>
+                <Text variant="h3">{workingCase.requestedDefenderEmail}</Text>
+              </Box>
+            )}
+            <Box marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Dómstóll
+                </Text>
+              </Box>
+              <Text variant="h3">{workingCase.court}</Text>
+            </Box>
+            <Box marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Tími handtöku
                 </Text>
               </Box>
               <Text variant="h3">
                 {`${capitalize(
-                  formatDate(workingCase.requestedCourtDate, 'PPPP') || '',
-                )} eftir kl. ${formatDate(
-                  workingCase?.requestedCourtDate,
-                  TIME_FORMAT,
-                )}`}
+                  formatDate(workingCase.arrestDate, 'PPPP') || '',
+                )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
               </Text>
             </Box>
-          )}
+            {workingCase.requestedCourtDate && (
+              <Box marginBottom={9}>
+                <Box marginBottom={1}>
+                  <Text variant="eyebrow" color="blue400">
+                    Ósk um fyrirtökudag og tíma
+                  </Text>
+                </Box>
+                <Text variant="h3">
+                  {`${capitalize(
+                    formatDate(workingCase.requestedCourtDate, 'PPPP') || '',
+                  )} eftir kl. ${formatDate(
+                    workingCase?.requestedCourtDate,
+                    TIME_FORMAT,
+                  )}`}
+                </Text>
+              </Box>
+            )}
+          </Box>
           <Box component="section" marginBottom={10}>
             <Accordion>
               <AccordionItem labelVariant="h3" id="id_1" label="Dómkröfur">
-                <Text>
-                  Þess er krafist að
-                  <Text as="span" fontWeight="semiBold">
-                    {` ${workingCase?.accusedName} 
-                    ${formatNationalId(workingCase.accusedNationalId)}`}
-                  </Text>
-                  , verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta
-                  gæsluvarðhaldi til
-                  <Text as="span" fontWeight="semiBold">
-                    {` ${formatDate(
-                      workingCase.requestedCourtDate,
-                      'EEEE',
-                    ).replace('dagur', 'dagsins')} 
-                    ${formatDate(
-                      workingCase?.requestedCustodyEndDate,
-                      'PPP',
-                    )},  kl. ${formatDate(
-                      workingCase?.requestedCustodyEndDate,
-                      TIME_FORMAT,
-                    )}`}
-                  </Text>
-                  {workingCase?.requestedCustodyRestrictions.includes(
-                    CaseCustodyRestrictions.ISOLATION,
-                  ) ? (
-                    <>
-                      , og verði gert að{' '}
-                      <Text as="span" fontWeight="semiBold">
-                        sæta einangrun
-                      </Text>{' '}
-                      á meðan gæsluvarðhaldinu stendur.
-                    </>
-                  ) : (
-                    '.'
-                  )}
-                </Text>
+                {constructProsecutorDemands(workingCase)}
               </AccordionItem>
               <AccordionItem labelVariant="h3" id="id_2" label="Lagaákvæði">
                 <Box marginBottom={2}>

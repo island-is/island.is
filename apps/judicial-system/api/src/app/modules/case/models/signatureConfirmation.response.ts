@@ -6,11 +6,11 @@ import { SignatureConfirmationResponse as TSignatureConfirmationResponse } from 
 export class SignatureConfirmationResponse
   implements TSignatureConfirmationResponse {
   @Field()
-  documentSigned: boolean
+  documentSigned!: boolean
 
   @Field({ nullable: true })
-  code: number
+  code?: number
 
   @Field({ nullable: true })
-  message: string
+  message?: string
 }
