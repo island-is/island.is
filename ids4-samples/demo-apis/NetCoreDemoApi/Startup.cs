@@ -45,6 +45,7 @@ namespace NetCoreDemoApi
                 };
             });
 
+            // Adding a cors method to allow sample applications to communicate to the server
             services.AddCors(options =>
             {
                 options.AddPolicy("Cors",
@@ -65,6 +66,7 @@ namespace NetCoreDemoApi
                 app.UseDeveloperExceptionPage();
             }
 
+            // Register the cors method
             app.UseCors("Cors");
 
             app.UseSwagger();
