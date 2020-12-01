@@ -171,9 +171,7 @@ export const SubpageLayout: FC<SubpageProps> = ({
 }) => {
   return (
     <Box width="full" paddingTop={10}>
-      <SubpageMainLayout right={mainRight}>
-        {main}
-      </SubpageMainLayout>
+      <SubpageMainLayout right={mainRight}>{main}</SubpageMainLayout>
       {details && (
         <Box background="blue100">
           <SubpageDetailsLayout header={detailsHeader}>
@@ -190,22 +188,22 @@ interface SubpageMainProps {
 
 export const SubpageMainLayout: FC<SubpageMainProps> = ({
   right,
-  children
+  children,
 }) => {
   return (
     <Box paddingBottom={6}>
       <GridContainer>
         {!right && (
           <GridRow>
-            <GridColumn span='12/12'>{children}</GridColumn>
+            <GridColumn span="12/12">{children}</GridColumn>
           </GridRow>
         )}
         {right && (
           <GridRow>
-            <GridColumn span='9/12'>{children}</GridColumn>
-            <GridColumn span='3/12'>{right}</GridColumn>
+            <GridColumn span="9/12">{children}</GridColumn>
+            <GridColumn span="3/12">{right}</GridColumn>
           </GridRow>
-          )}
+        )}
       </GridContainer>
     </Box>
   )
