@@ -24,7 +24,7 @@ interface PageProps {
   activeSubSection?: number
   // Only needed for the SignedVerdictOverview screen
   rejectedCase?: boolean
-  courtDateInThePast?: boolean
+  isCustodyEndDateInThePast?: boolean
 }
 
 export const PageLayout: FC<PageProps> = ({
@@ -34,7 +34,7 @@ export const PageLayout: FC<PageProps> = ({
   isLoading,
   notFound,
   rejectedCase,
-  courtDateInThePast,
+  isCustodyEndDateInThePast,
 }) => {
   const { user } = useContext(UserContext)
 
@@ -95,10 +95,10 @@ export const PageLayout: FC<PageProps> = ({
                     ],
                   },
                   {
-                    name: courtDateInThePast
-                      ? 'Gæsluvarðhaldi lokið'
-                      : rejectedCase
+                    name: rejectedCase
                       ? 'Gæsluvarðhaldi hafnað'
+                      : isCustodyEndDateInThePast
+                      ? 'Gæsluvarðhaldi lokið'
                       : 'Gæsluvarðhald virkt',
                   },
                 ]}
