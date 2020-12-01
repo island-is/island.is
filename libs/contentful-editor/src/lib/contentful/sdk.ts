@@ -11,6 +11,7 @@ import { Entry } from 'contentful-management/dist/typings/entities/entry'
 import { Asset } from 'contentful-management/dist/typings/entities/asset'
 
 import { contentfulUrl } from '../contentful-editor'
+import { getEntryURL } from '../utils/get-entry-url'
 import { locales } from './locales'
 
 /**
@@ -25,24 +26,18 @@ export const getSdk = (
   space: Space,
   types: ContentType,
   locale: any,
-  yo: any,
 ) => {
   const sdk = {
     space: {
       ...space,
       getEntry: (entryId: string) => {
-        console.log('-////////////////');
-        console.log('-getEntry', entryId)
-        // TODO find through all the entries
         const foundEntry = entries.find(entry => entry.sys.id === entryId)
-        console.log('-foundEntry', foundEntry);
 
-        if (yo.sys.id === entryId) {
-          console.log('-yo', yo);
-          return Promise.resolve(yo);
+        if (foundEntry) {
+          return Promise.resolve(foundEntry);
         }
 
-        return Promise.resolve(foundEntry)
+        return Promise.resolve(entry)
       },
       getAsset: (assetId: string) => {
         const asset = assets.find((item) => item.sys.id === assetId)
@@ -59,7 +54,7 @@ export const getSdk = (
       },
       getCachedContentTypes() {
         console.log('-getCachedContentTypes')
-        return [types]
+        return types
       },
     },
     locales,
@@ -117,10 +112,13 @@ export const getSdk = (
       instance: {
         getEntryUrl: (entryId: string) => {
           const foundEntry = entries.find(entry => entry.sys.id === entryId)
-          console.log('-getEntryUrl entryId', entryId, foundEntry);
+
+          if (foundEntry) {
+            return getEntryURL(foundEntry)
+          }
 
           return '#'
-        }
+        },
       },
     },
   }

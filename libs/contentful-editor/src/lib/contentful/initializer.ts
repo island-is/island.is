@@ -1,5 +1,4 @@
-import mitt from 'mitt'
-import type { Emitter, Handler } from 'mitt'
+import mitt, { Emitter, Handler } from 'mitt'
 import { ContentType } from 'contentful-management/dist/typings/entities/content-type'
 import { Space } from 'contentful-management/dist/typings/entities/space'
 import { Collection } from 'contentful-management/dist/typings/common-types'
@@ -12,15 +11,16 @@ import {
   FieldAPI,
 } from 'contentful-ui-extensions-sdk/typings'
 import { Environment } from 'contentful-management/dist/typings/entities/environment'
-import {
-  Asset,
-} from 'contentful-management/dist/typings/entities/asset'
+import { Asset } from 'contentful-management/dist/typings/entities/asset'
+import { flatten } from 'lodash'
 
-import assets from './assets.fixtures.json'
-import entries from './entries.fixtures.json'
+import assets from '../fixtures/assets.json'
+import entries from '../fixtures/entries.json'
+import types from '../fixtures/types.json'
 
 import { ContentfulEnv, createContentfulClient } from '../contentful/client'
 import { getSdk } from '../contentful/sdk'
+import { createFieldAPI } from './create-field-api'
 
 interface InitializerProps {
   slug: string
@@ -37,6 +37,7 @@ export interface MagicType {
   fields: FieldAPI[]
 }
 
+/*
 const getAllEntries = async (
   client: Environment,
   stats: {
@@ -82,12 +83,61 @@ const getAllAssets = async (
 
   return stats.items
 }
+*/
+
+export let superData = []
+
+export const getEntryAPI = (slug: string, type: string) => {
+  return flatten(
+    superData.map((entry) => {
+      return flatten(
+        entry.map((field) => {
+          return field.id === 'slug' &&
+            field.getValue() === slug &&
+            field._contentType === type
+            ? entry
+            : undefined
+        }),
+      ).filter(Boolean)
+    }),
+  )
+}
+
+export const initializer = async ({ locale, env }: InitializerProps) => {
+  const { env: client, space } = await createContentfulClient(env)
+
+  // 1. We get all types
+  console.log('-fixtures types', types)
+
+  // 2. We get all entries
+  console.log('-fixtures entries', entries)
+
+  // 3. We get all assets
+  console.log('-fixtures assets', assets)
+
+  // 4. We have everything we need to initialize the SDK API, we now merge objects together
+  const res = entries.map((entry) => {
+    const entryContentType = entry.sys.contentType.sys.id
+    const type = types.find((type) => type.sys.id === entryContentType)
+
+    return createFieldAPI({ entry, type }, {
+      entries,
+      assets,
+      types,
+      space,
+      locale,
+    })
+  })
+
+  superData = res
+}
 
 /**
  * TODO:
  * We need to get all the entries and assets to be able to create the sdk object for contentful fields.
  * move this logic into a single/cached method somewhere so it's not fetched every time we use the edit mode
  */
+/*
 export const initializer = async ({
   slug,
   contentType,
@@ -95,6 +145,9 @@ export const initializer = async ({
   env,
 }: InitializerProps) => {
   const { env: client, space } = await createContentfulClient(env)
+
+  // const types = await client.getContentTypes();
+  console.log('-types', types);
 
   // We get the entry contentType
   const type = await client.getContentType(contentType)
@@ -106,12 +159,18 @@ export const initializer = async ({
 
   // We get all the entries
   // const entries = await getAllEntries(client, { length: 0, remainingToFetch: 0, items: [] })
-  console.log('-entries', entries);
+
+  // We create the Field API SDK for each field
+  // (entries as any[]).map(entry => {
+  //   entry.fields.map(field => fieldApi(field, locale))
+  // })
+
+  // console.log('-entries', entries);
 
   // We get the entry we want to edit from all the entries
   // TODO handle if no entry is found?
-  const testEntry = entries.find(entry => entry.fields?.slug?.[locale] === slug)
-  console.log('-testEntry', testEntry);
+  // const testEntry = (entries as any[]).find(entry => entry.fields?.slug?.[locale] === slug)
+  // console.log('-testEntry', testEntry);
 
   // We get the entry content
   const entryResults = await client.getEntries({
@@ -125,7 +184,7 @@ export const initializer = async ({
   const yo = await client.getEntry('1kpDxialbp55AWa0ukPmud')
 
   // We get the data for SDK
-  const sdk = getSdk(entry, entries, assets, space, type, locale, yo)
+  const sdk = getSdk(entry, [], assets, space, type, locale)
 
   // We merge both objects together to fit the contentful fields API
   const fields = type.fields.map((field) => {
@@ -206,3 +265,4 @@ export const initializer = async ({
     fields,
   }
 }
+*/

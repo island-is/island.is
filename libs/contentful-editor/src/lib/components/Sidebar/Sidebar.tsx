@@ -14,6 +14,7 @@ interface SidebarProps {
 }
 
 export const Sidebar: FC<SidebarProps> = ({
+  wip,
   data,
   error,
   loading,
@@ -42,21 +43,27 @@ export const Sidebar: FC<SidebarProps> = ({
         {loading && <Text marginTop={2}>Loading...</Text>}
 
         {!loading &&
-          (data?.fields ?? []).map((field) => (
-            <Box
-              key={field.id}
-              padding={2}
-              background="blue100"
-              borderRadius="standard"
-              marginBottom={2}
-            >
-              <Text variant="eyebrow" marginBottom={1}>
-                {field.id}
-              </Text>
+          // (data?.fields ?? []).map((field) => (
+          (wip ?? []).map((field) => {
+            console.log('-field._sdk', field._sdk)
 
-              {renderer(field, data?._sdk)}
-            </Box>
-          ))}
+            return (
+              <Box
+                key={field.id}
+                padding={2}
+                background="blue100"
+                borderRadius="standard"
+                marginBottom={2}
+              >
+                <Text variant="eyebrow" marginBottom={1}>
+                  {field.id}
+                </Text>
+
+                {/* {renderer(field, data?._sdk)} */}
+                {renderer(field, field?._sdk)}
+              </Box>
+            )
+          })}
       </Box>
 
       <Box className={styles.overlay} />

@@ -5,9 +5,9 @@ import { useLockBodyScroll } from 'react-use'
 import { Buttons } from './components/Buttons/Buttons'
 import { Sidebar } from './components/Sidebar/Sidebar'
 import { getContentfulInfo } from './utils/get-contentful-info'
-import { initializer, MagicType } from './contentful/initializer'
+import { getEntryAPI, initializer, MagicType } from './contentful/initializer'
 
-// Use this https://github.com/island-is/island.is/pull/2024/files
+// Maybe use this object https://github.com/island-is/island.is/pull/2024/files
 const CONTENTFUL_TYPES_TO_MAP = [
   { id: 'lifeEventPage', matches: ['life-event', 'lifsvidburdur'] },
   { id: 'articleCategory', matches: ['category', 'flokkur'] },
@@ -47,6 +47,7 @@ export const withContentfulEditor = (
   }) => {
     const [edit, setEdit] = useState(false)
     const [data, setData] = useState<MagicType | undefined>(undefined)
+    const [wip, setWip] = useState(undefined)
     const [loading, setLoading] = useState(false)
     const [saving, setSaving] = useState(false)
     const [error, setError] = useState<string | undefined>(undefined)
@@ -60,6 +61,15 @@ export const withContentfulEditor = (
       setError(undefined)
 
       try {
+        /**
+         * TODO
+         * First we gonna run the initializer somewhere.
+         * We gonna expose a get method to return only the object data
+         * for the contentType/slug and linked contentType/documents
+         * instead of returning the whole space/contentTypes/entries/assets
+         * into the state
+         */
+        /*
         const res = await initializer({
           slug,
           contentType,
@@ -68,6 +78,14 @@ export const withContentfulEditor = (
         })
 
         setData(res)
+        */
+
+        await initializer({ locale, env })
+
+        const entry = getEntryAPI(slug, contentType)
+        console.log('-entry', entry)
+
+        setWip(entry)
       } catch (e) {
         console.log('-e.message', e.message)
 
@@ -147,6 +165,7 @@ export const withContentfulEditor = (
 
         {edit && (
           <Sidebar
+            wip={wip}
             data={data}
             error={error}
             loading={loading}
