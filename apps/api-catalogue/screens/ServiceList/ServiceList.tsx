@@ -4,15 +4,11 @@ import {
   Box,
   Breadcrumbs,
   Text,
-  LoadingIcon,
   Stack,
   FilterSearchGroup,
   FilterSearch,
   Checkbox,
   ServiceListContainer,
-  Button,
-  GridRow,
-  GridColumn,
   TagDisplayNames,
 } from '@island.is/island-ui/core'
 
@@ -40,7 +36,6 @@ import { useNamespace } from '../../hooks'
 import { GET_NAMESPACE_QUERY } from '../Queries'
 import { Screen, GetNamespaceQuery } from '../../types'
 import initApollo from '../../graphql/client'
-import { CategoryCard } from 'libs/island-ui/core/src/lib/CategoryCard/CategoryCard'
 
 interface PropTypes {
   top?: ReactNode
@@ -88,7 +83,9 @@ export const ServiceList: Screen<ServiceListProps> = ({
   // prettier-ignore
   const TEXT_NOT_FOUND = n('notFound')
   // prettier-ignore
-  const TEXT_ERROR = n('error')
+  const HEADING_ERROR = n('errorHeading')
+  // prettier-ignore
+  const TEXT_ERROR = n('errorText')
 
   const [parameters, setParameters] = useState<GetApiCatalogueInput>({
     cursor: null,
@@ -188,7 +185,6 @@ export const ServiceList: Screen<ServiceListProps> = ({
     }
     setIsMobile(false)
   }, [width])
-
   return (
     <ServiceLayout
       isMobile={isMobile}
@@ -369,17 +365,12 @@ export const ServiceList: Screen<ServiceListProps> = ({
           loading={loading}
           moreToLoad={data?.getApiCatalogue?.pageInfo?.nextCursor != null}
           emptyListText={TEXT_NOT_FOUND}
+          errorMessage={
+            error ? { heading: HEADING_ERROR, text: TEXT_ERROR } : undefined
+          }
           onLoadMoreClick={onLoadMore}
           loadMoreButtonText={n('fmButton')}
-        >
-          {error && (
-            <CategoryCard
-              colorScheme="red"
-              heading={TEXT_ERROR}
-              text="Ekki tókst að sækja gögn."
-            />
-          )}
-        </ServiceListContainer>
+        />
       }
     />
   )
@@ -415,7 +406,6 @@ ServiceList.getInitialProps = async (ctx) => {
       })
       .then((res) => JSON.parse(res.data.getNamespace.fields)),
   ])
-
   return {
     staticContent,
     filterContent,

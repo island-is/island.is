@@ -33,6 +33,11 @@ export type TagDisplayNames = {
   [key in CategoryKeys]: string
 }
 
+export type ErrorMessage = {
+  heading: string
+  text: string
+}
+
 export interface ServiceListContainerProps {
   baseUrl?: string
   services: ApiService[]
@@ -40,6 +45,7 @@ export interface ServiceListContainerProps {
   tagDisplayNames?: TagDisplayNames //If you want different display names for tag
   loading?: Boolean // pass true to show loading icon
   emptyListText?: string
+  errorMessage?: ErrorMessage
   loadMoreButtonText?: string
   onLoadMoreClick?: () => void
   moreToLoad?: Boolean //should the loadMore button be shown
@@ -54,6 +60,7 @@ export const ServiceListContainer: React.FC<ServiceListContainerProps> = ({
   loading = true,
   moreToLoad = true,
   emptyListText = 'Engin þjónusta fannst!',
+  errorMessage = null,
   loadMoreButtonText = 'Sjá fleiri',
   onLoadMoreClick,
   children,
@@ -103,7 +110,6 @@ export const ServiceListContainer: React.FC<ServiceListContainerProps> = ({
         {services.length < 1 && !loading && (
           <CategoryCard heading={emptyListText} text="" />
         )}
-
         {loading && (
           <GridColumn>
             <Box borderRadius="large" padding="containerGutter">
@@ -111,18 +117,18 @@ export const ServiceListContainer: React.FC<ServiceListContainerProps> = ({
             </Box>
           </GridColumn>
         )}
-
-        {
-          //rendering items below all cards, such as load more button
-          React.Children.map(children, (child) => {
-            return (
-              <GridColumn span={span} paddingBottom={3}>
-                {child}
-              </GridColumn>
-            )
-          })
-        }
       </GridRow>
+      {errorMessage && (
+        <GridRow>
+          <GridColumn>
+            <CategoryCard
+              colorScheme="red"
+              heading={errorMessage.heading}
+              text={errorMessage.text}
+            />
+          </GridColumn>
+        </GridRow>
+      )}
       {services.length > 0 && moreToLoad && (
         <GridRow>
           <GridColumn span={'12/12'} offset={['4/12', '5/12']}>
@@ -141,6 +147,7 @@ export const ServiceListContainer: React.FC<ServiceListContainerProps> = ({
           </GridColumn>
         </GridRow>
       )}
+
       <GridRow>
         {
           //rendering items below all, but within same GridContainer
