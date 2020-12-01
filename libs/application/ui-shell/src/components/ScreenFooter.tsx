@@ -102,33 +102,12 @@ export const ScreenFooter: FC<FooterProps> = ({
       >
         <Box
           display="flex"
-          flexDirection="row"
+          flexDirection="rowReverse"
           alignItems="center"
           justifyContent="spaceBetween"
           paddingTop={[1, 4]}
           paddingBottom={[1, 5]}
         >
-          <Box display={['none', 'inlineFlex']} padding={2} paddingLeft="none">
-            {showGoBack && (
-              <Button variant="ghost" onClick={goBack}>
-                {formatMessage({
-                  id: 'application.system:button.back',
-                  defaultMessage: 'Back',
-                  description: 'Back button text',
-                })}
-              </Button>
-            )}
-          </Box>
-          <Box display={['inlineFlex', 'none']} padding={2} paddingLeft="none">
-            {showGoBack && (
-              <Button
-                circle
-                variant="ghost"
-                icon="arrowBack"
-                onClick={goBack}
-              />
-            )}
-          </Box>
           <Box display="inlineFlex" padding={2} paddingRight="none">
             {hasSubmitField ? (
               renderSubmitButtons()
@@ -156,6 +135,27 @@ export const ScreenFooter: FC<FooterProps> = ({
                   />
                 </Box>
               </>
+            )}
+          </Box>
+          <Box display={['none', 'inlineFlex']} padding={2} paddingLeft="none">
+            {showGoBack && (
+              <Button variant="ghost" onClick={goBack}>
+                {formatMessage({
+                  id: 'application.system:button.back',
+                  defaultMessage: 'Back',
+                  description: 'Back button text',
+                })}
+              </Button>
+            )}
+          </Box>
+          <Box display={['inlineFlex', 'none']} padding={2} paddingLeft="none">
+            {showGoBack && (
+              <Button
+                circle
+                variant="ghost"
+                icon="arrowBack"
+                onClick={goBack}
+              />
             )}
           </Box>
         </Box>

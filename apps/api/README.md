@@ -16,7 +16,7 @@ It's built as a thin GraphQL layer on top of data and services provided by gover
 
 ## Project structure
 
-The code in this app package should be kept as small as possible. Most business logic should be in [domain libraries](https://github.com/island-is/island.is/tree/master/libs/api/domains). Shared utilities and middlewares should be in libraries as well.
+The code in this app package should be kept as small as possible. Most business logic should be in [domain libraries](https://github.com/island-is/island.is/tree/main/libs/api/domains). Shared utilities and middlewares should be in libraries as well.
 
 ### Domains
 

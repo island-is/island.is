@@ -24,7 +24,6 @@ import { useRouter } from 'next/router'
 import { CustomNextError } from '@island.is/web/units/errors'
 import Head from 'next/head'
 import { Background, Slice as SliceType } from '@island.is/island-ui/contentful'
-import * as styles from './AboutSubPage.treat'
 
 export interface AboutSubPageProps {
   page: GetAboutSubPageQuery['getAboutSubPage']
@@ -117,14 +116,14 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
   )
 }
 
-AboutSubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
+AboutSubPage.getInitialProps = async ({ apolloClient, locale, asPath }) => {
   const [page, parentPage] = await Promise.all([
     apolloClient
       .query<GetAboutSubPageQuery, QueryGetAboutSubPageArgs>({
         query: GET_ABOUT_SUB_PAGE_QUERY,
         variables: {
           input: {
-            slug: String(query.slug),
+            url: asPath,
             lang: locale,
           },
         },
