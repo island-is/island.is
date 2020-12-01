@@ -121,6 +121,9 @@
       "@island.is/content-search-indexer/types": [
         "libs/content-search-indexer/types/src/index.ts"
       ],
+      "@island.is/content-search-metrics": [
+        "libs/content-search-metrics/src/index.ts"
+      ],
       "@island.is/content-search-toolkit": [
         "libs/content-search-toolkit/src/index.ts"
       ],

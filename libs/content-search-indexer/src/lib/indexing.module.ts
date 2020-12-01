@@ -5,9 +5,9 @@ import { IndexingController } from './indexing.controller'
 import { IndexingService } from './indexing.service'
 
 @Module({
-  // add the import nestjs module to the imports array to hace access to it's service in the indexing service
+  // add the importer nestjs module to the imports array to have access to it's service in the indexing service
   imports: [CmsSyncModule],
   controllers: [IndexingController],
   providers: [IndexingService, ElasticService],
 })
-export class IndexingModule {}
+export class IndexingModule { }
