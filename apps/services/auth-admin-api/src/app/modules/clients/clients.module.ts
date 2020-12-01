@@ -19,6 +19,7 @@ import { RedirectUriController } from './redirect-uri.controller'
 import { ClientGrantTypeController } from './client-grant-type.controller'
 import { ClientAllowedScopeController } from './client-allowed-scope.controller'
 import { ClientClaimController } from './client-claim.controller'
+import { ClientPostLogoutRedirectUriController } from './client-post-logout-redirect-uri.controller'
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { ClientClaimController } from './client-claim.controller'
     ClientGrantTypeController,
     ClientAllowedScopeController,
     ClientClaimController,
+    ClientPostLogoutRedirectUriController,
   ],
   providers: [ClientsService],
 })

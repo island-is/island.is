@@ -36,6 +36,7 @@ export * from './lib/entities/dto/active.dto'
 export * from './lib/entities/dto/client-grant-type.dto'
 export * from './lib/entities/dto/client-claim.dto'
 export * from './lib/entities/dto/client-allowed-scope.dto'
+export * from './lib/entities/dto/client-post-logout-redirect-uri.dto'
 
 // Services
 export * from './lib/services/clients.service'
