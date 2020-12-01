@@ -22,7 +22,7 @@ const TextFormField: FC<Props> = ({
   field,
   showFieldName,
 }) => {
-  const { id, disabled, name, description, placeholder } = field
+  const { id, disabled, name, description, placeholder, format } = field
   const { clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -57,6 +57,7 @@ const TextFormField: FC<Props> = ({
           }}
           textarea={field.variant === 'textarea'}
           type={field.variant !== 'textarea' ? field.variant : 'text'}
+          format={format}
         />
       </Box>
     </div>

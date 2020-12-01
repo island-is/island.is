@@ -4,6 +4,7 @@ import { FormText, FormItem } from './Form'
 import { Condition } from './Condition'
 import { CallToAction } from './StateMachine'
 import { Application } from './Application'
+import { FormatInputValueFunction } from 'react-number-format'
 
 export interface Option {
   value: string
@@ -115,6 +116,7 @@ export interface TextField extends BaseField {
   maxLength?: number
   placeholder?: FormText
   variant?: TextFieldVariant
+  format?: string | FormatInputValueFunction
 }
 
 export interface FileUploadField extends BaseField {

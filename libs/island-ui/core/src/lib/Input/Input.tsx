@@ -35,7 +35,7 @@ interface InputComponentProps {
     event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
   rows?: number
-  type?: 'text' | 'number' | 'email' | 'tel'
+  type?: 'text' | 'number' | 'email' | 'tel' | 'password'
   icon?: IconType
   iconType?: Type
   /**

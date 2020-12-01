@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Input } from '@island.is/island-ui/core'
 import { useFormContext, Controller } from 'react-hook-form'
-import NumberFormat from 'react-number-format'
+import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
 
 interface Props {
   autoFocus?: boolean
@@ -15,8 +15,10 @@ interface Props {
   ) => void
   placeholder?: string
   textarea?: boolean
-  type?: 'text' | 'email' | 'number' | 'tel'
+  type?: 'text' | 'email' | 'number' | 'tel' | 'password'
+  format?: string | FormatInputValueFunction
 }
+
 export const InputController: FC<Props> = ({
   autoFocus,
   disabled = false,
@@ -27,11 +29,12 @@ export const InputController: FC<Props> = ({
   placeholder,
   textarea,
   type = 'text',
+  format,
   onChange,
 }) => {
   const { register } = useFormContext()
 
-  if (type === 'tel') {
+  if (format && ['text', 'tel', 'password'].includes(type)) {
     return (
       <Controller
         name={name}
@@ -43,9 +46,9 @@ export const InputController: FC<Props> = ({
             name={name}
             placeholder={placeholder}
             label={label}
-            type={type}
+            type={type as 'text' | 'tel' | 'password'}
             value={value}
-            format="###-####"
+            format={format}
             onValueChange={({ value }) => {
               onChange(value)
             }}
