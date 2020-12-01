@@ -13,6 +13,7 @@ interface TableProps {
   titles: string[]
   deregisteredVehicles: DeregisteredVehicle[]
 }
+
 interface DeregisteredVehicle {
   vehicleId: string
   vehicleType: string

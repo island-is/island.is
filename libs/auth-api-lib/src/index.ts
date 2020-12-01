@@ -33,6 +33,10 @@ export * from './lib/entities/dto/client-idp-restriction.dto'
 export * from './lib/entities/dto/client-allowed-cors-origin.dto'
 export * from './lib/entities/dto/client-redirect-uri.dto'
 export * from './lib/entities/dto/active.dto'
+export * from './lib/entities/dto/client-grant-type.dto'
+export * from './lib/entities/dto/client-claim.dto'
+export * from './lib/entities/dto/client-allowed-scope.dto'
+export * from './lib/entities/dto/client-post-logout-redirect-uri.dto'
 
 // Services
 export * from './lib/services/clients.service'
