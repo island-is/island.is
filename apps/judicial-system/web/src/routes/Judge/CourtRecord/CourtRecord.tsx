@@ -36,7 +36,7 @@ import TimeInputField from '@island.is/judicial-system-web/src/shared-components
 import {
   validateAndSendTimeToServer,
   validateAndSendToServer,
-  validateAndSetEvent,
+  RemoveTabsValidateAndSet,
   validateAndSetTime,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 
@@ -194,7 +194,7 @@ export const CourtRecord: React.FC = () => {
                 defaultValue={workingCase?.courtAttendees}
                 placeholder="Skrifa hér..."
                 onChange={(event) =>
-                  validateAndSetEvent(
+                  RemoveTabsValidateAndSet(
                     'courtAttendees',
                     event,
                     ['empty'],
@@ -228,7 +228,7 @@ export const CourtRecord: React.FC = () => {
               defaultValue={workingCase?.policeDemands}
               placeholder="Hvað hafði ákæruvaldið að segja?"
               onChange={(event) =>
-                validateAndSetEvent(
+                RemoveTabsValidateAndSet(
                   'policeDemands',
                   event,
                   ['empty'],
@@ -293,7 +293,7 @@ export const CourtRecord: React.FC = () => {
               defaultValue={workingCase.accusedPlea}
               placeholder="Hvað hafði kærði að segja um kröfuna? Mótmælti eða samþykkti?"
               onChange={(event) =>
-                validateAndSetEvent(
+                RemoveTabsValidateAndSet(
                   'accusedPlea',
                   event,
                   ['empty'],
@@ -334,7 +334,7 @@ export const CourtRecord: React.FC = () => {
                 defaultValue={workingCase.litigationPresentations}
                 placeholder="Almennar málflutningsræður skráðar hér..."
                 onChange={(event) =>
-                  validateAndSetEvent(
+                  RemoveTabsValidateAndSet(
                     'litigationPresentations',
                     event,
                     ['empty'],

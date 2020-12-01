@@ -8,7 +8,7 @@ import {
 import { validate, Validation } from './validate'
 import formatISO from 'date-fns/formatISO'
 
-export const validateAndSetEvent = (
+export const RemoveTabsValidateAndSet = (
   field: string,
   evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   validations: Validation[],
@@ -90,35 +90,7 @@ export const validateAndSetTime = (
   }
 }
 
-export const validateAndSendTimeToServer = async (
-  field: string,
-  currentValue: string | undefined,
-  time: string,
-  validations: Validation[],
-  theCase: Case,
-  updateCase: (id: string, updateCase: UpdateCase) => void,
-  setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
-  if (currentValue) {
-    const paddedTime = padTimeWithZero(time)
-
-    const error = validations
-      .map((v) => validate(paddedTime, v))
-      .find((v) => v.isValid === false)
-
-    if (error && setErrorMessage) {
-      setErrorMessage(error.errorMessage)
-      return
-    }
-
-    const dateMinutes = parseTime(currentValue, paddedTime)
-
-    if (theCase.id !== '') {
-      updateCase(theCase.id, parseString(field, dateMinutes))
-    }
-  }
-}
-
 export const setAndSendDateToServer = async (
   field: string,
   currentValue: string | undefined,
@@ -171,6 +143,35 @@ export const validateAndSendToServer = async (
     await updateCase(theCase.id, parseString(field, value))
   }
 }
+
+export const validateAndSendTimeToServer = async (
+    field: string,
+    currentValue: string | undefined,
+    time: string,
+    validations: Validation[],
+    theCase: Case,
+    updateCase: (id: string, updateCase: UpdateCase) => void,
+    setErrorMessage?: (value: React.SetStateAction<string>) => void,
+  ) => {
+    if (currentValue) {
+      const paddedTime = padTimeWithZero(time)
+  
+      const error = validations
+        .map((v) => validate(paddedTime, v))
+        .find((v) => v.isValid === false)
+  
+      if (error && setErrorMessage) {
+        setErrorMessage(error.errorMessage)
+        return
+      }
+  
+      const dateMinutes = parseTime(currentValue, paddedTime)
+  
+      if (theCase.id !== '') {
+        updateCase(theCase.id, parseString(field, dateMinutes))
+      }
+    }
+  }
 
 export const setAndSendToServer = (
   field: string,

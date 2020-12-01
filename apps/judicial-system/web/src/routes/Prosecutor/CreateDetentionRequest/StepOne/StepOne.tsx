@@ -62,7 +62,7 @@ import {
   setAndSendToServer,
   validateAndSendTimeToServer,
   validateAndSendToServer,
-  validateAndSetEvent,
+  RemoveTabsValidateAndSet,
   validateAndSetTime,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 
@@ -493,7 +493,7 @@ export const StepOne: React.FC = () => {
               mask="999-9999-9999999"
               maskPlaceholder={null}
               onChange={(event) =>
-                validateAndSetEvent(
+                RemoveTabsValidateAndSet(
                   'policeCaseNumber',
                   event,
                   ['empty', 'police-casenumber-format'],
@@ -536,7 +536,7 @@ export const StepOne: React.FC = () => {
                 mask="999999-9999"
                 maskPlaceholder={null}
                 onChange={(event) =>
-                  validateAndSetEvent(
+                  RemoveTabsValidateAndSet(
                     'accusedNationalId',
                     event,
                     ['empty', 'national-id'],
@@ -578,7 +578,7 @@ export const StepOne: React.FC = () => {
                 errorMessage={accusedNameErrorMessage}
                 hasError={accusedNameErrorMessage !== ''}
                 onChange={(event) =>
-                  validateAndSetEvent(
+                  RemoveTabsValidateAndSet(
                     'accusedName',
                     event,
                     ['empty'],
@@ -611,7 +611,7 @@ export const StepOne: React.FC = () => {
                 errorMessage={accusedAddressErrorMessage}
                 hasError={accusedAddressErrorMessage !== ''}
                 onChange={(event) =>
-                  validateAndSetEvent(
+                  RemoveTabsValidateAndSet(
                     'accusedAddress',
                     event,
                     ['empty'],
@@ -750,7 +750,7 @@ export const StepOne: React.FC = () => {
               errorMessage={requestedDefenderEmailErrorMessage}
               hasError={requestedDefenderEmailErrorMessage !== ''}
               onChange={(event) =>
-                validateAndSetEvent(
+                RemoveTabsValidateAndSet(
                   'requestedDefenderEmail',
                   event,
                   ['email-format'],

@@ -47,7 +47,7 @@ import {
   setAndSendDateToServer,
   validateAndSendTimeToServer,
   validateAndSendToServer,
-  validateAndSetEvent,
+  RemoveTabsValidateAndSet,
   validateAndSetTime,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 
@@ -292,7 +292,7 @@ export const HearingArrangements: React.FC = () => {
               defaultValue={workingCase?.courtRoom}
               placeholder="Skráðu inn dómsal"
               onChange={(event) =>
-                validateAndSetEvent(
+                RemoveTabsValidateAndSet(
                   'courtRoom',
                   event,
                   ['empty'],
@@ -330,7 +330,7 @@ export const HearingArrangements: React.FC = () => {
                 defaultValue={workingCase.defenderName}
                 placeholder="Fullt nafn"
                 onChange={(event) =>
-                  validateAndSetEvent(
+                  RemoveTabsValidateAndSet(
                     'defenderName',
                     event,
                     [],
@@ -357,7 +357,7 @@ export const HearingArrangements: React.FC = () => {
               errorMessage={defenderEmailErrorMessage}
               hasError={defenderEmailErrorMessage !== ''}
               onChange={(event) =>
-                validateAndSetEvent(
+                RemoveTabsValidateAndSet(
                   'defenderEmail',
                   event,
                   [],
