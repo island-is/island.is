@@ -7,12 +7,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { SigninOidcComponent } from 'src/components/signin-oidc/signin-oidc.component';
 
 import { HttpClientModule } from '@angular/common/http';
+import { CallApiComponent } from 'src/components/call-api/call-api.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ProtectedComponent,
-    SigninOidcComponent
+    SigninOidcComponent,
+    CallApiComponent
   ],
   imports: [
     BrowserModule,

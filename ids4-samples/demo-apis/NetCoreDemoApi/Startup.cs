@@ -44,6 +44,17 @@ namespace NetCoreDemoApi
                     NameClaimType = "name"
                 };
             });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("Cors",
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost:4200");
+                    builder.AllowAnyHeader();
+                    builder.AllowAnyMethod();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +64,8 @@ namespace NetCoreDemoApi
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors("Cors");
 
             app.UseSwagger();
 
