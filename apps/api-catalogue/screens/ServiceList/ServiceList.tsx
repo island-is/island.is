@@ -13,6 +13,7 @@ import {
   Button,
   GridRow,
   GridColumn,
+  TagDisplayNames,
 } from '@island.is/island-ui/core'
 
 import * as styles from './ServiceList.treat'
@@ -163,6 +164,27 @@ export const ServiceList: Screen<ServiceListProps> = ({
 
   const onSearchChange = function (inputValue: string) {
     setParameters({ ...parameters, query: inputValue })
+  }
+
+  
+  const translateTags = (): TagDisplayNames => {
+    const names: TagDisplayNames = {
+      APIGW: fn('accessApigw'),
+      XROAD: fn('accessXroad'),
+      FINANCIAL: fn('dataFinancial'),
+      HEALTH: fn('dataHealth'),
+      OFFICIAL: fn('dataOfficial'),
+      PERSONAL: fn('dataPersonal'),
+      PUBLIC: fn('dataPublic'),
+      FREE: fn('pricingFree'),
+      PAID: fn('pricingPaid'),
+      GRAPHQL: fn('typeGraphql'),
+      REST: fn('typeRest'),
+      SOAP: fn('typeSoap'),
+      OPEN: 'OPEN'  //tag not currently used
+    }
+
+    return names;
   }
 
   useIsomorphicLayoutEffect(() => {
@@ -350,54 +372,55 @@ export const ServiceList: Screen<ServiceListProps> = ({
           marginTop={1}
         >
           <ServiceListContainer
-           services={data?.getApiCatalogue.services}
-           span = {['12/12','12/12','12/12','6/12', '4/12']}
+            services={data?.getApiCatalogue.services}
+            span={['12/12', '12/12', '12/12', '6/12', '4/12']}
+            tagDisplayNames={translateTags()}
           >
             {loading && (
-            <Box className={cn(styles.navigation)} borderRadius="large">
-              <div>
-                <LoadingIcon animate color="blue400" size={32} />
-              </div>
-            </Box>
-            
-          )}
-          {data?.getApiCatalogue.services.length < 1 && !loading && (
-            <CategoryCard 
-              heading={TEXT_NOT_FOUND} 
-              text="" />
-          )}
-          {error && (
-            <CategoryCard 
-              colorScheme="red" 
-              heading={TEXT_ERROR} 
-              text="Ekki tókst að sækja gögn."/>
-          )}
+              <Box className={cn(styles.navigation)} borderRadius="large">
+                <div>
+                  <LoadingIcon animate color="blue400" size={32} />
+                </div>
+              </Box>
+
+            )}
+            {data?.getApiCatalogue.services.length < 1 && !loading && (
+              <CategoryCard
+                heading={TEXT_NOT_FOUND}
+                text="" />
+            )}
+            {error && (
+              <CategoryCard
+                colorScheme="red"
+                heading={TEXT_ERROR}
+                text="Ekki tókst að sækja gögn." />
+            )}
           </ServiceListContainer>
 
-          {  data?.getApiCatalogue?.services.length > 0 && 
-              data?.getApiCatalogue?.pageInfo?.nextCursor != null && (
-              
-                <GridRow>
-                  <GridColumn span={"12/12"}
-                            offset={["4/12","5/12"]}
-                 >
-                    <Button
-                      colorScheme="default"
-                      iconType="filled"
-                      onBlur={function noRefCheck(){}}
-                      onClick={onLoadMore}
-                      onFocus={function noRefCheck(){}}
-                      size="default"
-                      type="button"
-                      variant="ghost"
-                    >
-                      {n('fmButton')}
-                    </Button>
-                  </GridColumn>
-                  </GridRow>
+          {data?.getApiCatalogue?.services.length > 0 &&
+            data?.getApiCatalogue?.pageInfo?.nextCursor != null && (
+
+              <GridRow>
+                <GridColumn span={"12/12"}
+                  offset={["4/12", "5/12"]}
+                >
+                  <Button
+                    colorScheme="default"
+                    iconType="filled"
+                    onBlur={function noRefCheck() { }}
+                    onClick={onLoadMore}
+                    onFocus={function noRefCheck() { }}
+                    size="default"
+                    type="button"
+                    variant="ghost"
+                  >
+                    {n('fmButton')}
+                  </Button>
+                </GridColumn>
+              </GridRow>
             )}
 
-          
+
         </Box>
       }
     />
