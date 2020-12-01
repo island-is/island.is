@@ -1,33 +1,33 @@
 import React, { useState } from 'react'
 import { Checkbox } from '../Checkbox/Checkbox'
-import { FilterSearchGroup } from '../FilterSearchGroup/FilterSearchGroup'
-import { FilterSearch } from './FilterSearch'
+import { FilterGroup } from '../Filter/FilterGroup/FilterGroup'
+import { Filter } from './FilterSearch'
 import { theme } from '@island.is/island-ui/theme'
 
 export default {
   title: 'Components/FilterSearch',
-  component: FilterSearch,
+  component: Filter,
 }
 
 export const WithGroupedChildren = () => (
   <div>
-    <FilterSearch
+    <Filter
       labelMobileButton="Search"
       labelMobileResultButton="View Results"
       labelMobileCloseButton="Filter"
     >
-      <FilterSearchGroup id="group1" label="Group number one">
+      <FilterGroup id="group1" label="Group number one">
         <Checkbox label="Include stuff" />
         <Checkbox
           label="Include and more stuff"
           tooltip="You never get to much stuff"
         />
-      </FilterSearchGroup>
-      <FilterSearchGroup id="group2" label="Group number two">
+      </FilterGroup>
+      <FilterGroup id="group2" label="Group number two">
         <Checkbox label="I want animals" />
         <Checkbox label="I want material things" />
-      </FilterSearchGroup>
-    </FilterSearch>
+      </FilterGroup>
+    </Filter>
   </div>
 )
 
@@ -40,7 +40,7 @@ export const WithInputBox = () => {
 
   return (
     <div style={{ height: 400 }}>
-      <FilterSearch
+      <Filter
         labelMobileButton="Search"
         labelMobileResultButton="View Results"
         labelMobileCloseButton="Filter"
@@ -52,18 +52,18 @@ export const WithInputBox = () => {
           onChange: (event) => onTextChange(event.target.value),
         }}
       >
-        <FilterSearchGroup id="group1" label="Group number one">
+        <FilterGroup id="group1" label="Group number one">
           <Checkbox label="Include stuff" />
           <Checkbox
             label="Include and more stuff"
             tooltip="You never get to much stuff"
           />
-        </FilterSearchGroup>
-        <FilterSearchGroup id="group2" label="Group number two">
+        </FilterGroup>
+        <FilterGroup id="group2" label="Group number two">
           <Checkbox label="I want animals" />
           <Checkbox label="I want material things" />
-        </FilterSearchGroup>
-      </FilterSearch>
+        </FilterGroup>
+      </Filter>
     </div>
   )
 }
@@ -75,7 +75,7 @@ export const WithInputClearButton = () => {
 
   return (
     <div style={{ height: 400 }}>
-      <FilterSearch
+      <Filter
         labelMobileButton="Search"
         labelMobileResultButton="View Results"
         labelMobileCloseButton="Filter"
@@ -84,31 +84,31 @@ export const WithInputClearButton = () => {
           onClick: clearValues,
         }}
       >
-        <FilterSearchGroup id="group1" label="Group number one">
+        <FilterGroup id="group1" label="Group number one">
           <Checkbox label="Include stuff" />
           <Checkbox
             label="Include and more stuff"
             tooltip="You never get to much stuff"
           />
-        </FilterSearchGroup>
-        <FilterSearchGroup id="group2" label="Group number two">
+        </FilterGroup>
+        <FilterGroup id="group2" label="Group number two">
           <Checkbox label="I want animals" />
           <Checkbox label="I want material things" />
-        </FilterSearchGroup>
-      </FilterSearch>
+        </FilterGroup>
+      </Filter>
     </div>
   )
 }
 
 export const WithOnlyOneChild = () => (
   <div style={{ minHeight: 100 }}>
-    <FilterSearch
+    <Filter
       labelMobileButton="Search"
       labelMobileResultButton="This button is displayed on top of all"
       labelMobileCloseButton="Filter"
     >
       <Checkbox label="Include stuff" />
-    </FilterSearch>
+    </Filter>
   </div>
 )
 
@@ -177,7 +177,7 @@ export const DetailedExample = () => {
 
   return (
     <div style={{ height: 550, background: theme.color.blue100 }}>
-      <FilterSearch
+      <Filter
         labelMobileButton="Sýna flokka"
         labelMobileCloseButton="Sía API vörulista"
         labelMobileResultButton={'Skoða niðurstöður'}
@@ -193,7 +193,7 @@ export const DetailedExample = () => {
           onClick: clearValues,
         }}
       >
-        <FilterSearchGroup id="pricing_category" label="Pricing">
+        <FilterGroup id="pricing_category" label="Pricing">
           <Checkbox
             id="pricing-free"
             name="pricing"
@@ -212,8 +212,8 @@ export const DetailedExample = () => {
               updateCategoryCheckBox(target)
             }}
           />
-        </FilterSearchGroup>
-        <FilterSearchGroup id="data_category" label="Data">
+        </FilterGroup>
+        <FilterGroup id="data_category" label="Data">
           <Checkbox
             id="data-public"
             name="data"
@@ -259,8 +259,8 @@ export const DetailedExample = () => {
               updateCategoryCheckBox(target)
             }}
           />
-        </FilterSearchGroup>
-        <FilterSearchGroup id="type_category" label="Type">
+        </FilterGroup>
+        <FilterGroup id="type_category" label="Type">
           <Checkbox
             id="type-rest"
             name="type"
@@ -279,8 +279,8 @@ export const DetailedExample = () => {
               updateCategoryCheckBox(target)
             }}
           />
-        </FilterSearchGroup>
-      </FilterSearch>
+        </FilterGroup>
+      </Filter>
     </div>
   )
 }

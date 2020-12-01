@@ -23,8 +23,7 @@ export * from './lib/Header/Header'
 export * from './lib/Footer/Footer'
 export * from './lib/InputSearch/InputSearch'
 export * from './lib/DialogPrompt/DialogPrompt'
-export * from './lib/FilterSearchGroup/FilterSearchGroup'
-export * from './lib/FilterSearch/FilterSearch'
+export * from './lib/Filter/Filter'
 export * from './lib/ModalBase/ModalBase'
 
 // Cards

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import * as styles from './FilterSearch.treat'
+import * as styles from './Filter.treat'
 import cn from 'classnames'
 
 import { Box } from '../Box/Box'
@@ -31,13 +31,13 @@ export type ClearValues = {
 // 'noStyles: The component will not use any styles, only styles provided in
 //            ClassName will be used.
 
-export type FilterSearchType = 'default' | 'noStyles'
+export type FilterType = 'default' | 'noStyles'
 
-export interface FilterSearchProps {
+export interface FilterProps {
   labelMobileButton: string
   labelMobileCloseButton: string
   labelMobileResultButton: string
-  type?: FilterSearchType
+  type?: FilterType
   inputValues?: InputValues
   clearValues?: ClearValues
   className?: string
@@ -45,7 +45,7 @@ export interface FilterSearchProps {
   children?: JSX.Element | JSX.Element[]
 }
 
-export const FilterSearch: React.FC<FilterSearchProps> = ({
+export const Filter: React.FC<FilterProps> = ({
   labelMobileButton: label,
   labelMobileCloseButton: labelCloseButton = 'Close filter',
   labelMobileResultButton: labelResultButton = 'View Results',
