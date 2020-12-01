@@ -367,61 +367,23 @@ export const ServiceList: Screen<ServiceListProps> = ({
         </FilterSearch>
       }
       right={
-        <Box
-          marginBottom="containerGutter"
-          marginTop={1}
+        <ServiceListContainer
+          services={data?.getApiCatalogue.services}
+          span={['12/12', '12/12', '12/12', '6/12', '4/12']}
+          tagDisplayNames={translateTags()}
+          loading={loading}
+          moreToLoad={data?.getApiCatalogue?.pageInfo?.nextCursor != null}
+          emptyListText={TEXT_NOT_FOUND}
+          onLoadMoreClick={onLoadMore}
+          loadMoreButtonText={n('fmButton')}
         >
-          <ServiceListContainer
-            services={data?.getApiCatalogue.services}
-            span={['12/12', '12/12', '12/12', '6/12', '4/12']}
-            tagDisplayNames={translateTags()}
-          >
-            {loading && (
-              <Box className={cn(styles.navigation)} borderRadius="large">
-                <div>
-                  <LoadingIcon animate color="blue400" size={32} />
-                </div>
-              </Box>
-
-            )}
-            {data?.getApiCatalogue.services.length < 1 && !loading && (
-              <CategoryCard
-                heading={TEXT_NOT_FOUND}
-                text="" />
-            )}
-            {error && (
-              <CategoryCard
-                colorScheme="red"
-                heading={TEXT_ERROR}
-                text="Ekki tókst að sækja gögn." />
-            )}
-          </ServiceListContainer>
-
-          {data?.getApiCatalogue?.services.length > 0 &&
-            data?.getApiCatalogue?.pageInfo?.nextCursor != null && (
-
-              <GridRow>
-                <GridColumn span={"12/12"}
-                  offset={["4/12", "5/12"]}
-                >
-                  <Button
-                    colorScheme="default"
-                    iconType="filled"
-                    onBlur={function noRefCheck() { }}
-                    onClick={onLoadMore}
-                    onFocus={function noRefCheck() { }}
-                    size="default"
-                    type="button"
-                    variant="ghost"
-                  >
-                    {n('fmButton')}
-                  </Button>
-                </GridColumn>
-              </GridRow>
-            )}
-
-
-        </Box>
+          {error && (
+            <CategoryCard
+              colorScheme="red"
+              heading={TEXT_ERROR}
+              text="Ekki tókst að sækja gögn." />
+          )}
+        </ServiceListContainer>
       }
     />
   )
