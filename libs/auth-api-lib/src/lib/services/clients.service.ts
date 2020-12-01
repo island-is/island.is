@@ -83,7 +83,7 @@ export class ClientsService {
       throw new BadRequestException('Id must be provided')
     }
 
-    let client = await this.clientModel.findByPk(id, { raw: true })
+    const client = await this.clientModel.findByPk(id, { raw: true })
 
     await this.findAssociations(client)
 
