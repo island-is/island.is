@@ -14,7 +14,7 @@ import {
   FormValue,
   buildRepeater,
 } from '@island.is/application/core'
-import { m } from './messages'
+import { m } from './examplemessages'
 
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',

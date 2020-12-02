@@ -15,7 +15,7 @@ type Events =
   | { type: 'SUBMIT' }
   | { type: 'ABORT' }
 
-const ExampleSchema = z.object({
+const HealthInsuranceSchema = z.object({
   person: z.object({
     age: z.string().refine((x) => {
       const asNumber = parseInt(x)
@@ -45,21 +45,21 @@ const HealthInsuranceTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.EXAMPLE,
-  name: 'Reference application',
-  dataSchema: ExampleSchema,
+  name: 'Application for health insurance',
+  dataSchema: HealthInsuranceSchema,
   stateMachineConfig: {
     initial: 'draft',
     states: {
       draft: {
         meta: {
-          name: 'Umsókn um ökunám',
-          progress: 0.33,
+          name: 'draft',
+          progress: 0.25,
           roles: [
             {
               id: 'applicant',
               formLoader: () =>
-                import('../forms/ExampleForm').then((module) =>
-                  Promise.resolve(module.ExampleForm),
+                import('../forms/HealthInsuranceForm').then((module) =>
+                  Promise.resolve(module.HealthInsuranceForm),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },

@@ -11,7 +11,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { m } from './messages'
+import { m } from './examplemessages'
 
 export const ReviewApplication: Form = buildForm({
   id: 'ExampleInReview',
