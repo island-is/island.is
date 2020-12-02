@@ -7,12 +7,12 @@ export class ClientGrantTypeDTO {
   @ApiProperty({
     example: 'clientId',
   })
-  readonly clientId: string
+  readonly clientId!: string
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty({
     example: 'authorization_code',
   })
-  readonly grantType: string
+  readonly grantType!: string
 }

@@ -7,12 +7,12 @@ export class ClientRedirectUriDTO {
   @ApiProperty({
     example: 'clientId',
   })
-  readonly clientId: string
+  readonly clientId!: string
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty({
     example: 'https://localhost:4200/signin-oidc',
   })
-  readonly redirectUri: string
+  readonly redirectUri!: string
 }
