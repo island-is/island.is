@@ -43,11 +43,12 @@ export class Grant extends Model<Grant> {
 
   @Column({
     type: DataType.STRING,
+    allowNull: true,
   })
   @ApiProperty({
     example: 'sessionId',
   })
-  sessionId!: string
+  sessionId?: string
 
   @Column({
     type: DataType.STRING,
