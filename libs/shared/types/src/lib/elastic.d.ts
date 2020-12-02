@@ -52,36 +52,36 @@ export interface GetByIdResponse<ResponseSource = any> {
 }
 
 export interface RankEvaluationResponse<searchTermsUnion = string> {
-  metric_score: number,
+  metric_score: number
   details: {
     [searchTerm in searchTermsUnion]: {
-      metric_score: number,
+      metric_score: number
       unrated_docs: [
         {
-          _index: string,
+          _index: string
           _id: string
-        }
-      ],
+        },
+      ]
       hits: [
         {
           hit: {
-            _index: string,
-            _type: string,
-            _id: string,
+            _index: string
+            _type: string
+            _id: string
             _score: number
-          },
+          }
           rating: number
-        }
-      ],
+        },
+      ]
       metric_details: {
         dcg: {
-          dcg: number,
-          ideal_dcg: number,
-          normalized_dcg: number,
+          dcg: number
+          ideal_dcg: number
+          normalized_dcg: number
           unrated_docs: number
         }
       }
-    },
-},
-failures: { }
+    }
+  }
+  failures: {}
 }

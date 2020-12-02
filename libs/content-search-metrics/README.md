@@ -1,7 +1,4 @@
-# content-search-metrics
+# content search metrics
 
-This library was generated with [Nx](https://nx.dev).
-
-## Running unit tests
-
-Run `nx test content-search-metrics` to execute the unit tests via [Jest](https://jestjs.io).
+Provides metrics for content search queries such as ranking accuracy and precision.  
+You can add and alter test cases by manipulating ranked test data in RankedDataService.
