@@ -3,14 +3,15 @@ import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
 import { Stack } from '../Stack/Stack'
 
-
 export interface FilterProps {
-  clearBtnLabel: string
+  labelClear: string
+  onFilterClear: () => void
 }
 
-export const Filter : React.FC<FilterProps> = ({
-  clearBtnLabel = '',
-  children
+export const Filter: React.FC<FilterProps> = ({
+  labelClear = '',
+  onFilterClear,
+  children,
 }) => {
   return (
     <Box>
@@ -22,11 +23,10 @@ export const Filter : React.FC<FilterProps> = ({
             size="small"
             variant="text"
             onClick={() => {
-
+              onFilterClear()
             }}
-            
           >
-            {clearBtnLabel}
+            {labelClear}
           </Button>
         </Box>
       </Stack>
