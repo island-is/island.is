@@ -64,7 +64,7 @@ export const CategoryCard = ({
           <Inline space={['smallGutter', 'smallGutter', 'gutter']}>
             {tags.map((tag) => (
               <Tag
-                label={!tag.href}
+                outlined={!tag.href}
                 variant={tagVariant}
                 href={tag.href}
                 onClick={tag.onClick}
