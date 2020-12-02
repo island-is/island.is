@@ -159,10 +159,9 @@ export const NewsItemLayout: FC<NewsItemProps> = ({ sidebar, children }) => (
 
 interface SubpageProps {
   main: ReactNode
-  mainRight?: ReactNode
-  detailsHeader?: ReactNode
   details?: ReactNode
 }
+
 export const SubpageLayout: FC<SubpageProps> = ({ main, details }) => {
   return (
     <Box width="full" paddingTop={10}>
