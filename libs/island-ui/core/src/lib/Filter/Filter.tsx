@@ -18,11 +18,13 @@ export const Filter : React.FC<FilterProps> = ({
         {children}
         <Box textAlign="right">
           <Button
-            // icon="reload"
+            icon="reload"
+            size="small"
+            variant="text"
             onClick={() => {
 
             }}
-            variant="text"
+            
           >
             {clearBtnLabel}
           </Button>

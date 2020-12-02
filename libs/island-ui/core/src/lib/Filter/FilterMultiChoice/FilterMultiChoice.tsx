@@ -36,7 +36,13 @@ export const FilterMultiChoice: React.FC<FilterMultiChoiceCProps> = ({
     <Box padding={3} borderRadius="large" background="white">
       <Accordion dividerOnBottom={false} dividerOnTop={false} singleExpand={false}>
         {categories.map((category) => (
-          <AccordionItem id={category.id} label={category.label}>
+          <AccordionItem 
+            id={category.id}
+            label={category.label}
+            labelUse="h5"
+            labelVariant="h5"
+            iconVariant="default"
+          >
             {category.filters.map((filter) => (
               <Box padding={1}>
                 <Checkbox 
