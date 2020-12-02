@@ -437,22 +437,29 @@ export const Confirmation: React.FC = () => {
                 )}
             </Box>
           )}
-          <Box marginBottom={5}>
+          <Box marginBottom={10}>
             <Text variant="h3">
               {workingCase?.judge
                 ? `${workingCase?.judge.name} ${workingCase?.judge.title}`
                 : `${user?.name} ${user?.title}`}
             </Text>
           </Box>
-          <Box marginBottom={5}>
-            <Button
-              variant="ghost"
-              onClick={() =>
-                window.open(`${api.apiUrl}/api/case/${workingCase.id}/ruling`)
-              }
+          <Box marginBottom={15}>
+            <a
+              className={style.pdfLink}
+              href={`${api.apiUrl}/api/case/${workingCase.id}/ruling`}
+              target="_blank"
+              rel="noopener"
             >
-              Sjá PDF af þingbók og úrskurði
-            </Button>
+              <Button
+                variant="ghost"
+                size="small"
+                icon="open"
+                iconType="outline"
+              >
+                Sjá PDF af þingbók og úrskurði
+              </Button>
+            </a>
           </Box>
           <FormFooter
             nextUrl={Constants.DETENTION_REQUESTS_ROUTE}
