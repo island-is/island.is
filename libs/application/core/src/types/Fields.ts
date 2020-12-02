@@ -4,6 +4,7 @@ import { FormText, FormItem } from './Form'
 import { Condition } from './Condition'
 import { CallToAction } from './StateMachine'
 import { Application } from './Application'
+import { FormatInputValueFunction } from 'react-number-format'
 
 export interface Option {
   value: string
@@ -15,7 +16,13 @@ export interface Option {
 export type MaybeWithApplication<T> = T | ((a: Application) => T)
 
 export type FieldWidth = 'full' | 'half'
-export type TextFieldVariant = 'text' | 'email' | 'number' | 'tel' | 'textarea'
+export type TextFieldVariant =
+  | 'text'
+  | 'email'
+  | 'number'
+  | 'tel'
+  | 'textarea'
+  | 'currency'
 
 export type Context = {
   application: Application
@@ -115,6 +122,7 @@ export interface TextField extends BaseField {
   maxLength?: number
   placeholder?: FormText
   variant?: TextFieldVariant
+  format?: string | FormatInputValueFunction
 }
 
 export interface FileUploadField extends BaseField {
