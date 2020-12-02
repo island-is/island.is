@@ -85,20 +85,22 @@ export class ClientsService {
 
     const client = await this.clientModel.findByPk(id, { raw: true })
 
-    await this.findAssociations(client)
-      .then<any, never>((result: any) => {
-        client.allowedScopes = result[0]
-        client.allowedCorsOrigins = result[1]
-        client.redirectUris = result[2]
-        client.identityProviderRestrictions = result[3]
-        client.clientSecrets = result[4]
-        client.postLogoutRedirectUris = result[5]
-        client.allowedGrantTypes = result[6]
-        client.claims = result[7]
-      })
-      .catch((error) =>
-        this.logger.error(`Error in findAssociations: ${error}`),
-      )
+    if (client) {
+      await this.findAssociations(client)
+        .then<any, never>((result: any) => {
+          client.allowedScopes = result[0]
+          client.allowedCorsOrigins = result[1]
+          client.redirectUris = result[2]
+          client.identityProviderRestrictions = result[3]
+          client.clientSecrets = result[4]
+          client.postLogoutRedirectUris = result[5]
+          client.allowedGrantTypes = result[6]
+          client.claims = result[7]
+        })
+        .catch((error) =>
+          this.logger.error(`Error in findAssociations: ${error}`),
+        )
+    }
 
     return client
   }
