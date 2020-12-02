@@ -66,21 +66,6 @@ export class RecyclingRequestService {
         'Finished Authentication request and starting deRegister request',
       )
 
-      //ToDo: Clean up later when go to prod
-      // const dateNow = new Date()
-      // const jsonDeRegBody = JSON.stringify({
-      //   permno: vehiclePermno,
-      //   deRegisterDate: format(dateNow, "yyyy-MM-dd'T'HH:mm:ss'Z'"),
-      //   subCode: 'U',
-      //   plateCount: 0,
-      //   destroyed: 0,
-      //   lost: 0,
-      //   reportingStation: restReportingStation,
-      //   reportingStationType: 'R',
-      //   disposalStation: disposalStation,
-      //   disposalStationType: 'M',
-      //   explanation: 'TODO, what to put here?', // Rafrænt afskráning
-      // })
       const jsonDeRegBody = JSON.stringify({
         permno: vehiclePermno,
         deRegisterDate: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
@@ -363,6 +348,7 @@ export class RecyclingRequestService {
         }
 
         // 4. Update requestType to 'deregistered'
+        let getGuId = new RecyclingRequestModel()
         try {
           this.logger.info(
             `create requestType: deregistered for ${permno} for partnerId: ${partnerId}`,
@@ -372,7 +358,7 @@ export class RecyclingRequestService {
           req.nameOfRequestor = newRecyclingRequest.nameOfRequestor
           req.requestType = 'deregistered'
           req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
-          await req.save()
+          getGuId = await req.save()
         } catch (err) {
           // Log error and continue to payment
           this.logger.error(
@@ -401,9 +387,14 @@ export class RecyclingRequestService {
             errors.message = `Vehicle has been successful deregistered but payment process failed. Please contact admin.`
             return errors
           }
+          let guid = `Skilagjald ökutækis: ${permno}`
+          if (getGuId?.id) {
+            guid = getGuId.id
+          }
           await this.fjarsyslaService.getFjarsysluRest(
             vehicle.ownerNationalId,
             permno,
+            guid,
           )
         } catch (err) {
           this.logger.error(

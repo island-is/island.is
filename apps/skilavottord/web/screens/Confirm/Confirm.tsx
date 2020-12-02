@@ -19,6 +19,25 @@ import {
 } from '@island.is/skilavottord-web/graphql/mutations'
 import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
 
+export interface VehicleMutation {
+  createSkilavottordVehicle: VehicleMutationData
+}
+
+export interface VehicleOwnerMutation {
+  createSkilavottordVehicleOwner: VehicleOwnerMutationData
+}
+
+export interface VehicleOwnerMutationData {
+  name: string
+  nationalId: string
+}
+
+export interface VehicleMutationData {
+  car: Car
+  newRegDate: string
+  nationalId: string
+}
+
 const Confirm = ({ apolloState }: WithApolloProps) => {
   const { user } = useContext(UserContext)
   const [checkbox, setCheckbox] = useState(false)
@@ -49,8 +68,34 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
     setIsTablet(false)
   }, [width])
 
-  const [setVehicle] = useMutation(CREATE_VEHICLE)
-  const [setVehicleOwner] = useMutation(CREATE_VEHICLE_OWNER)
+  const [setVehicle] = useMutation<VehicleMutationData>(CREATE_VEHICLE, {
+    onCompleted() {
+      routeToAuthCheck()
+    },
+    onError() {
+      // Because we want to show error after checking authenication
+      routeToAuthCheck()
+    },
+  })
+
+  const [setVehicleOwner] = useMutation<VehicleOwnerMutation>(
+    CREATE_VEHICLE_OWNER,
+    {
+      onCompleted() {
+        setVehicle({
+          variables: {
+            ...car,
+            newRegDate: formatDate(car.firstRegDate, 'dd.MM.yyyy'),
+            nationalId: user?.nationalId,
+          },
+        })
+      },
+      onError() {
+        // Because we want to show error after checking authenication
+        routeToAuthCheck()
+      },
+    },
+  )
 
   const onCancel = () => {
     router.replace({
@@ -58,28 +103,20 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
     })
   }
 
-  const onConfirm = (car: Car) => {
+  const onConfirm = () => {
     setVehicleOwner({
       variables: {
         name: user?.name,
         nationalId: user?.nationalId,
       },
     })
-      .then(() =>
-        setVehicle({
-          variables: {
-            ...car,
-            newRegDate: formatDate(car.firstRegDate, 'dd.MM.yyyy'),
-            nationalId: user?.nationalId,
-          },
-        }),
-      )
-      .then(() => {
-        localStorage.setItem(ACCEPTED_TERMS_AND_CONDITION, id.toString())
-        router.replace(
-          `${AUTH_URL['citizen']}/login?returnUrl=${routes.recycleVehicle.baseRoute}/${id}/handover`,
-        )
-      })
+  }
+
+  const routeToAuthCheck = () => {
+    localStorage.setItem(ACCEPTED_TERMS_AND_CONDITION, id.toString())
+    router.replace(
+      `${AUTH_URL['citizen']}/login?returnUrl=${routes.recycleVehicle.baseRoute}/${id}/handover`,
+    )
   }
 
   const checkboxLabel = (
@@ -146,7 +183,7 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
               <Button
                 disabled={!checkbox}
                 icon="arrowForward"
-                onClick={() => onConfirm(car)}
+                onClick={() => onConfirm()}
               >
                 {t.buttons.continue}
               </Button>

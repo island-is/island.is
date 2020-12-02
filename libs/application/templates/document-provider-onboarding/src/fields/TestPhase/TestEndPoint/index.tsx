@@ -1,9 +1,12 @@
 import React, { FC, useState } from 'react'
+import { useMutation } from '@apollo/client'
+import { useFormContext, Controller } from 'react-hook-form'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Button, Input } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
-import { useFormContext, Controller } from 'react-hook-form'
+
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
+import { registerEndpointMutation } from '../../../graphql/mutations/registerEndpointMutation'
 
 const TestEnvironment: FC<FieldBaseProps> = ({ field, application }) => {
   interface Variable {
@@ -13,32 +16,31 @@ const TestEnvironment: FC<FieldBaseProps> = ({ field, application }) => {
   }
 
   const { register, errors, trigger, getValues } = useFormContext()
+  const [variables, setendPointVariables] = useState<Variable[]>([])
+  const [registerEndpoint] = useMutation(registerEndpointMutation)
 
-  //Todo: move this
-  const fetchAndValidateData = async (isValid: boolean) => {
+  const onRegisterEndpoint = async (isValid: boolean) => {
     if (isValid) {
-      fetch('/api/endPointVariables', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          data: {
-            applicant: application.applicant,
-            endPoint: getValues('endPoint'),
-          },
-        }),
+      const result = await registerEndpoint({
+        variables: {
+          input: { endpoint: getValues('endPoint') },
+        },
       })
-        .then((response) => response.json())
-        .then((data) => {
-          setendPointVariables(data)
-        })
-        .catch((error) => {
-          //Todo: show error
-          console.error('Error:', error)
-        })
+
+      if (!result.data) {
+        //TODO display error
+      }
+
+      setendPointVariables([
+        {
+          id: '1',
+          name: 'Audience',
+          value: result.data.registerEndpoint.audience,
+        },
+        { id: '2', name: 'Scope', value: result.data.registerEndpoint.scope },
+      ])
     }
   }
-
-  const [variables, setendPointVariables] = useState<Variable[]>([])
 
   return (
     <Box>
@@ -69,7 +71,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ field, application }) => {
         <Button
           variant="primary"
           onClick={() => {
-            trigger(['endPoint']).then((answer) => fetchAndValidateData(answer))
+            trigger(['endPoint']).then((answer) => onRegisterEndpoint(answer))
           }}
         >
           Vista endapunkt
