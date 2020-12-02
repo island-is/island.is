@@ -126,7 +126,6 @@ export const iconWrapVariants = styleMap({
     width: iconWrapSizes.sidebar,
     height: iconWrapSizes.sidebar,
   },
-  
 })
 
 export const plusIcon = style({
