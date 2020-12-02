@@ -16,9 +16,9 @@ export const Filter : React.FC<FilterProps> = ({
     <Box>
       <Stack space={2} dividers={false}>
         {children}
-        <Box display="flex" alignItems="flexEnd">
+        <Box textAlign="right">
           <Button
-            icon="reload"
+            // icon="reload"
             onClick={() => {
 
             }}
