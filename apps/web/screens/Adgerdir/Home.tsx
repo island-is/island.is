@@ -12,6 +12,7 @@ import {
   GridRow,
   GridContainer,
   ColorSchemeContext,
+  Main,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Slice as SliceType } from '@island.is/island-ui/contentful'
@@ -139,78 +140,82 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
         </GridContainer>
       </Box>
 
-      <CovidColorSchemeContext.Provider value={{ colorScheme: 'green' }}>
-        <Box marginBottom={10}>
-          <Box className={covidStyles.bg}>
-            <ContentBlock width="large">
-              <AdgerdirArticles
-                tags={tagsItems}
-                items={pagesItems}
-                namespace={namespace}
-              />
-            </ContentBlock>
+      <Main>
+        <CovidColorSchemeContext.Provider value={{ colorScheme: 'green' }}>
+          <Box marginBottom={10}>
+            <Box className={covidStyles.bg}>
+              <ContentBlock width="large">
+                <AdgerdirArticles
+                  tags={tagsItems}
+                  items={pagesItems}
+                  namespace={namespace}
+                />
+              </ContentBlock>
+            </Box>
           </Box>
-        </Box>
-      </CovidColorSchemeContext.Provider>
-      <Box marginBottom={[6, 6, 15]}>
-        <Stack space={[6, 6, 12]}>
-          {frontpage.slices.map((slice, index) => {
-            const colorScheme = groupSliceCount % 2 ? 'blue' : 'green'
+        </CovidColorSchemeContext.Provider>
+        <Box marginBottom={[6, 6, 15]}>
+          <Stack space={[6, 6, 12]}>
+            {frontpage.slices.map((slice, index) => {
+              const colorScheme = groupSliceCount % 2 ? 'blue' : 'green'
 
-            switch (slice.__typename) {
-              case 'AdgerdirFeaturedNewsSlice':
-                return <FeaturedNews key={index} items={slice.featured} />
-              case 'AdgerdirGroupSlice':
-                groupSliceCount++
+              switch (slice.__typename) {
+                case 'AdgerdirFeaturedNewsSlice':
+                  return <FeaturedNews key={index} items={slice.featured} />
+                case 'AdgerdirGroupSlice':
+                  groupSliceCount++
 
-                return (
-                  <CovidColorSchemeContext.Provider
-                    key={index}
-                    value={{
-                      colorScheme,
-                    }}
-                  >
-                    <Box width="full" overflow="hidden">
-                      <ContentBlock width="large">
-                        <GroupedPages
-                          topContent={
-                            <Stack space={2}>
-                              <Text
-                                variant="eyebrow"
-                                as="h2"
-                                color="roseTinted400"
-                              >
-                                <span
-                                  className={covidStyles.textColor[colorScheme]}
+                  return (
+                    <CovidColorSchemeContext.Provider
+                      key={index}
+                      value={{
+                        colorScheme,
+                      }}
+                    >
+                      <Box width="full" overflow="hidden">
+                        <ContentBlock width="large">
+                          <GroupedPages
+                            topContent={
+                              <Stack space={2}>
+                                <Text
+                                  variant="eyebrow"
+                                  as="h2"
+                                  color="roseTinted400"
                                 >
-                                  {slice.subtitle}
-                                </span>
-                              </Text>
-                              <Text variant="h2" as="h3">
-                                {slice.title}
-                              </Text>
-                              <Text as="p">{slice.description}</Text>
-                            </Stack>
-                          }
-                          bottomContent={
-                            <CardsSlider
-                              items={slice.pages.filter(
-                                (x) => x.title && x.slug,
-                              )}
-                            />
-                          }
-                        />
-                      </ContentBlock>
-                    </Box>
-                  </CovidColorSchemeContext.Provider>
-                )
-            }
+                                  <span
+                                    className={
+                                      covidStyles.textColor[colorScheme]
+                                    }
+                                  >
+                                    {slice.subtitle}
+                                  </span>
+                                </Text>
+                                <Text variant="h2" as="h3">
+                                  {slice.title}
+                                </Text>
+                                <Text as="p">{slice.description}</Text>
+                              </Stack>
+                            }
+                            bottomContent={
+                              <CardsSlider
+                                items={slice.pages.filter(
+                                  (x) => x.title && x.slug,
+                                )}
+                              />
+                            }
+                          />
+                        </ContentBlock>
+                      </Box>
+                    </CovidColorSchemeContext.Provider>
+                  )
+              }
 
-            return null
-          })}
-        </Stack>
-      </Box>
-      <ChatPanel />
+              return null
+            })}
+          </Stack>
+        </Box>
+        <ChatPanel />
+      </Main>
     </>
   )
 }

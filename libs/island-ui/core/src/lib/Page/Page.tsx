@@ -1,7 +1,14 @@
 import React from 'react'
 
 import * as styles from './Page.treat'
+import { Box, BoxProps } from '../..'
 
-export const Page: React.FC = ({ children }) => (
-  <main className={styles.container}>{children}</main>
+interface PageProps {
+  component?: BoxProps['component']
+}
+
+export const Page: React.FC<PageProps> = ({ component = 'main', children }) => (
+  <Box className={styles.container} component={component}>
+    {children}
+  </Box>
 )

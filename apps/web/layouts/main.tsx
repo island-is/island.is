@@ -8,6 +8,7 @@ import {
   AlertBanner,
   AlertBannerVariants,
   Hidden,
+  Main,
 } from '@island.is/island-ui/core'
 import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
@@ -157,7 +158,7 @@ const Layout: NextComponentType<
 
   return (
     <GlobalContextProvider namespace={namespace}>
-      <Page>
+      <Page component="div">
         <Head>
           <link
             rel="apple-touch-icon"
@@ -261,9 +262,9 @@ const Layout: NextComponentType<
             <FixedNav />
             {showHeader && <Header showSearchInHeader={showSearchInHeader} />}
           </Hidden>
-          <div id="main-content">
+          <Main>
             {wrapContent ? <Box width="full">{children}</Box> : children}
-          </div>
+          </Main>
         </MenuTabsContext.Provider>
         {showFooter && (
           <Hidden print={true}>

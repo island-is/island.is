@@ -10,6 +10,7 @@ import {
   Stack,
   GridContainer,
   Tag,
+  Main,
 } from '@island.is/island-ui/core'
 import { Image, Slice as SliceType } from '@island.is/island-ui/contentful'
 import { Screen } from '@island.is/web/types'
@@ -88,58 +89,60 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
         <Box paddingTop={[2, 2, 10]} paddingBottom={[0, 0, 10]}>
           <GridRow>
             <GridColumn span={['12/12', '12/12', '8/12', '8/12', '9/12']}>
-              <GridRow>
-                <GridColumn
-                  offset={['0', '0', '0', '0', '1/9']}
-                  span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-                >
-                  <Breadcrumbs>
-                    <Link href={makePath()} as={makePath()}>
-                      Ísland.is
-                    </Link>
-                    <Link href={makePath('news')} as={makePath('news')}>
-                      {t.newsAndAnnouncements}
-                    </Link>
-                    {!!newsItem.genericTags.length &&
-                      newsItem.genericTags.map(({ id, title }, index) => {
-                        return (
-                          <Link
-                            key={index}
-                            href={{
-                              pathname: makePath('news'),
-                              query: { tag: id },
-                            }}
-                            as={makePath('news', `?tag=${id}`)}
-                            pureChildren
-                          >
-                            <Tag variant="blue">{title}</Tag>
-                          </Link>
-                        )
-                      })}
-                  </Breadcrumbs>
-                  <Text variant="h1" as="h1" paddingTop={1} paddingBottom={2}>
-                    {newsItem.title}
-                  </Text>
-                  <Text variant="intro" as="p" paddingBottom={2}>
-                    {newsItem.intro}
-                  </Text>
-                  {Boolean(newsItem.image) && (
-                    <Box paddingY={2}>
-                      <Image
-                        {...newsItem.image}
-                        url={newsItem.image.url + '?w=774&fm=webp&q=80'}
-                        thumbnail={newsItem.image.url + '?w=50&fm=webp&q=80'}
-                      />
-                    </Box>
-                  )}
-                </GridColumn>
-              </GridRow>
-              <Box paddingBottom={4} width="full">
-                <RichText
-                  body={newsItem.content as SliceType[]}
-                  config={{ defaultPadding: [2, 2, 4] }}
-                />
-              </Box>
+              <Main>
+                <GridRow>
+                  <GridColumn
+                    offset={['0', '0', '0', '0', '1/9']}
+                    span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+                  >
+                    <Breadcrumbs>
+                      <Link href={makePath()} as={makePath()}>
+                        Ísland.is
+                      </Link>
+                      <Link href={makePath('news')} as={makePath('news')}>
+                        {t.newsAndAnnouncements}
+                      </Link>
+                      {!!newsItem.genericTags.length &&
+                        newsItem.genericTags.map(({ id, title }, index) => {
+                          return (
+                            <Link
+                              key={index}
+                              href={{
+                                pathname: makePath('news'),
+                                query: { tag: id },
+                              }}
+                              as={makePath('news', `?tag=${id}`)}
+                              pureChildren
+                            >
+                              <Tag variant="blue">{title}</Tag>
+                            </Link>
+                          )
+                        })}
+                    </Breadcrumbs>
+                    <Text variant="h1" as="h1" paddingTop={1} paddingBottom={2}>
+                      {newsItem.title}
+                    </Text>
+                    <Text variant="intro" as="p" paddingBottom={2}>
+                      {newsItem.intro}
+                    </Text>
+                    {Boolean(newsItem.image) && (
+                      <Box paddingY={2}>
+                        <Image
+                          {...newsItem.image}
+                          url={newsItem.image.url + '?w=774&fm=webp&q=80'}
+                          thumbnail={newsItem.image.url + '?w=50&fm=webp&q=80'}
+                        />
+                      </Box>
+                    )}
+                  </GridColumn>
+                </GridRow>
+                <Box paddingBottom={4} width="full">
+                  <RichText
+                    body={newsItem.content as SliceType[]}
+                    config={{ defaultPadding: [2, 2, 4] }}
+                  />
+                </Box>
+              </Main>
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '4/12', '4/12', '3/12']}>
               <Sticky>
