@@ -26,6 +26,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { insertAt } from '../../../utils/formatters'
 import { gql, useQuery } from '@apollo/client'
 import { UserContext } from '../../../shared-components/UserProvider/UserProvider'
+import { useHistory } from 'react-router-dom'
 
 export const CasesQuery = gql`
   query CasesQuery {
@@ -46,6 +47,7 @@ export const CasesQuery = gql`
 export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<Case[]>()
   const { user } = useContext(UserContext)
+  const history = useHistory()
 
   const isJudge = user?.role === UserRole.JUDGE
 
@@ -91,6 +93,18 @@ export const DetentionRequests: React.FC = () => {
     }
   }
 
+  const handleClick = (c: Case): void => {
+    if (c.state === CaseState.ACCEPTED || c.state === CaseState.REJECTED) {
+      history.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${c.id}`)
+    } else if (isJudge) {
+      history.push(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
+    } else if (c.isCourtDateInThePast) {
+      history.push(`${Constants.STEP_THREE_ROUTE}/${c.id}`)
+    } else {
+      history.push(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
+    }
+  }
+
   return (
     <div className={styles.detentionRequestsContainer}>
       {user && (
@@ -116,30 +130,69 @@ export const DetentionRequests: React.FC = () => {
           </Text>
           <thead>
             <tr>
-              <th>LÖKE málsnr.</th>
-              <th>Fullt nafn</th>
-              <th>Kennitala</th>
-              <th>Krafa stofnuð</th>
-              <th>Staða</th>
-              <th>Gæsla rennur út</th>
-              <th></th>
+              <th>
+                <Text as="span" fontWeight="regular">
+                  LÖKE málsnr.
+                </Text>
+              </th>
+              <th>
+                <Text as="span" fontWeight="regular">
+                  Sakborningur
+                </Text>
+              </th>
+              <th>
+                <Text as="span" fontWeight="regular">
+                  Krafa stofnuð
+                </Text>
+              </th>
+              <th>
+                <Text as="span" fontWeight="regular">
+                  Staða
+                </Text>
+              </th>
+              <th>
+                <Text as="span" fontWeight="regular">
+                  Gæsla rennur út
+                </Text>
+              </th>
             </tr>
           </thead>
           <tbody>
             {cases.map((c, i) => (
               <tr
+                data-testid="detention-requests-table-row"
+                role="button"
                 key={i}
                 className={styles.detentionRequestsTableRow}
-                data-testid="detention-requests-table-row"
+                onClick={() => {
+                  handleClick(c)
+                }}
               >
-                <td>{c.policeCaseNumber || '-'}</td>
-                <td>{c.accusedName || '-'}</td>
                 <td>
-                  {insertAt(c.accusedNationalId.replace('-', ''), '-', 6) ||
-                    '-'}
+                  <Text as="span">{c.policeCaseNumber || '-'}</Text>
                 </td>
                 <td>
-                  {format(parseISO(c.created), 'PP', { locale: localeIS })}
+                  <Text as="span">
+                    {c.accusedName || '-'}
+                    {c.accusedNationalId && (
+                      <Box marginLeft={1} component="span">
+                        <Text as="span" variant="small" color="dark400">
+                          {`(${
+                            insertAt(
+                              c.accusedNationalId.replace('-', ''),
+                              '-',
+                              6,
+                            ) || '-'
+                          })`}
+                        </Text>
+                      </Box>
+                    )}
+                  </Text>
+                </td>
+                <td>
+                  <Text as="span">
+                    {format(parseISO(c.created), 'PP', { locale: localeIS })}
+                  </Text>
                 </td>
                 <td>
                   {c.state === CaseState.ACCEPTED &&
@@ -157,31 +210,11 @@ export const DetentionRequests: React.FC = () => {
                   )}
                 </td>
                 <td>
-                  {c.custodyEndDate && c.state === CaseState.ACCEPTED
-                    ? `${formatDate(c.custodyEndDate, 'PP')}`
-                    : null}
-                </td>
-                <td>
-                  <Link
-                    to={
-                      c.state === CaseState.ACCEPTED ||
-                      c.state === CaseState.REJECTED
-                        ? `${Constants.SIGNED_VERDICT_OVERVIEW}/${c.id}`
-                        : isJudge
-                        ? `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
-                        : // Should not be able to modify the request if it is in
-                        // a SUBMITTED state and the court date is in the past
-                        c.state === CaseState.SUBMITTED &&
-                          c.isCourtDateInThePast
-                        ? `${Constants.STEP_THREE_ROUTE}/${c.id}`
-                        : `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
-                    }
-                    style={{ textDecoration: 'none', whiteSpace: 'nowrap' }}
-                  >
-                    <Button icon="arrowForward" variant="text">
-                      Opna kröfu
-                    </Button>
-                  </Link>
+                  <Text as="span">
+                    {c.custodyEndDate && c.state === CaseState.ACCEPTED
+                      ? `${formatDate(c.custodyEndDate, 'PP')}`
+                      : null}
+                  </Text>
                 </td>
               </tr>
             ))}

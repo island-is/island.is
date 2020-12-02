@@ -33,4 +33,5 @@ export const detentionRequestsError = style({
 
 export const detentionRequestsTableRow = style({
   borderBottom: `1px solid ${theme.color.blue200}`,
+  cursor: 'pointer',
 })
