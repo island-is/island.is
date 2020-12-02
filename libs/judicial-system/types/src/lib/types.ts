@@ -104,6 +104,7 @@ export interface Case {
   ruling?: string
   rejecting?: boolean
   custodyEndDate?: string
+  isCustodyEndDateInThePast?: boolean
   custodyRestrictions?: CaseCustodyRestrictions[]
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string

@@ -15,9 +15,10 @@ import { ClientSecret } from '../entities/models/client-secret.model'
 import { Client } from '../entities/models/client.model'
 import { ClientAllowedCorsOriginDTO } from '../entities/dto/client-allowed-cors-origin.dto'
 import { ClientRedirectUriDTO } from '../entities/dto/client-redirect-uri.dto'
-import { GrantType } from '../entities/models/grant-type.model'
 import { ClientGrantTypeDTO } from '../entities/dto/client-grant-type.dto'
-import { ClientAllowedScopeDTO, ClientClaimDTO } from '@island.is/auth-api-lib'
+import { ClientAllowedScopeDTO } from '../entities/dto/client-allowed-scope.dto'
+import { ClientClaimDTO } from '../entities/dto/client-claim.dto'
+import { ClientPostLogoutRedirectUriDTO } from '../entities/dto/client-post-logout-redirect-uri.dto'
 
 @Injectable()
 export class ClientsService {
@@ -25,19 +26,21 @@ export class ClientsService {
     @InjectModel(Client)
     private clientModel: typeof Client,
     @InjectModel(ClientAllowedCorsOrigin)
-    private clientAllowedCorsOriginModel: typeof ClientAllowedCorsOrigin,
+    private clientAllowedCorsOrigin: typeof ClientAllowedCorsOrigin,
     @InjectModel(ClientIdpRestrictions)
     private clientIdpRestriction: typeof ClientIdpRestrictions,
-    @InjectModel(ClientAllowedCorsOrigin)
-    private clientAllowedCorsOrigin: typeof ClientAllowedCorsOrigin,
+    @InjectModel(ClientSecret)
+    private clientSecret: typeof ClientSecret,
     @InjectModel(ClientRedirectUri)
     private clientRedirectUri: typeof ClientRedirectUri,
     @InjectModel(ClientGrantType)
-    private clientGrantTypeModel: typeof ClientGrantType,
+    private clientGrantType: typeof ClientGrantType,
     @InjectModel(ClientAllowedScope)
     private clientAllowedScope: typeof ClientAllowedScope,
     @InjectModel(ClientClaim)
     private clientClaim: typeof ClientClaim,
+    @InjectModel(ClientPostLogoutRedirectUri)
+    private clientPostLogoutUri: typeof ClientPostLogoutRedirectUri,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -51,7 +54,6 @@ export class ClientsService {
         ClientRedirectUri,
         ClientIdpRestrictions,
         ClientSecret,
-        ClientPostLogoutRedirectUri,
         ClientPostLogoutRedirectUri,
         ClientGrantType,
         ClientClaim,
@@ -69,17 +71,6 @@ export class ClientsService {
     return this.clientModel.findAndCountAll({
       limit: count,
       offset: offset,
-      include: [
-        ClientAllowedScope,
-        ClientAllowedCorsOrigin,
-        ClientRedirectUri,
-        ClientIdpRestrictions,
-        ClientSecret,
-        ClientPostLogoutRedirectUri,
-        ClientPostLogoutRedirectUri,
-        ClientGrantType,
-        ClientClaim,
-      ],
       distinct: true,
     })
   }
@@ -92,18 +83,54 @@ export class ClientsService {
       throw new BadRequestException('Id must be provided')
     }
 
-    return this.clientModel.findByPk(id, {
-      include: [
-        ClientAllowedScope,
-        ClientAllowedCorsOrigin,
-        ClientRedirectUri,
-        ClientIdpRestrictions,
-        ClientSecret,
-        ClientPostLogoutRedirectUri,
-        ClientPostLogoutRedirectUri,
-        ClientGrantType,
-        ClientClaim,
-      ],
+    const client = await this.clientModel.findByPk(id, { raw: true })
+
+    await this.findAssociations(client)
+
+    return client
+  }
+
+  private async findAssociations(client: Client) {
+    client.allowedScopes = await this.clientAllowedScope.findAll({
+      where: { clientId: client.clientId },
+      raw: true,
+    })
+
+    client.allowedCorsOrigins = await this.clientAllowedCorsOrigin.findAll({
+      where: { clientId: client.clientId },
+      raw: true,
+    })
+
+    client.redirectUris = await this.clientRedirectUri.findAll({
+      where: { clientId: client.clientId },
+      raw: true,
+    })
+
+    client.identityProviderRestrictions = await this.clientIdpRestriction.findAll(
+      {
+        where: { clientId: client.clientId },
+        raw: true,
+      },
+    )
+
+    client.clientSecrets = await this.clientSecret.findAll({
+      where: { clientId: client.clientId },
+      raw: true,
+    })
+
+    client.postLogoutRedirectUris = await this.clientPostLogoutUri.findAll({
+      where: { clientId: client.clientId },
+      raw: true,
+    })
+
+    client.allowedGrantTypes = await this.clientGrantType.findAll({
+      where: { clientId: client.clientId },
+      raw: true,
+    })
+
+    client.claims = await this.clientClaim.findAll({
+      where: { clientId: client.clientId },
+      raw: true,
     })
   }
 
@@ -157,7 +184,7 @@ export class ClientsService {
       throw new BadRequestException('Origin must be provided')
     }
 
-    return this.clientAllowedCorsOriginModel.findAll({
+    return this.clientAllowedCorsOrigin.findAll({
       where: { origin: origin },
     })
   }
@@ -272,7 +299,7 @@ export class ClientsService {
       throw new BadRequestException('Grant Type object must be provided')
     }
 
-    return await this.clientGrantTypeModel.create({ ...grantTypeObj })
+    return await this.clientGrantType.create({ ...grantTypeObj })
   }
 
   /** Removes a grant type for client */
@@ -285,7 +312,7 @@ export class ClientsService {
       throw new BadRequestException('grantType and clientId must be provided')
     }
 
-    return await this.clientGrantTypeModel.destroy({
+    return await this.clientGrantType.destroy({
       where: { clientId: clientId, grantType: grantType },
     })
   }
@@ -356,6 +383,39 @@ export class ClientsService {
 
     return await this.clientClaim.destroy({
       where: { clientId: clientId, type: claimType, value: claimValue },
+    })
+  }
+
+  /** Adds an post logout uri to client */
+  async addPostLogoutRedirectUri(
+    postLogoutUri: ClientPostLogoutRedirectUriDTO,
+  ): Promise<ClientPostLogoutRedirectUri> {
+    this.logger.debug(
+      `Adding post logout uri - "${postLogoutUri.redirectUri}", to client - "${postLogoutUri.clientId}"`,
+    )
+
+    if (!postLogoutUri) {
+      throw new BadRequestException('postLogoutUri object must be provided')
+    }
+
+    return await this.clientPostLogoutUri.create({ ...postLogoutUri })
+  }
+
+  /** Removes an post logout uri from client */
+  async removePostLogoutRedirectUri(
+    clientId: string,
+    redirectUri: string,
+  ): Promise<number> {
+    this.logger.debug(
+      `Removing post logout uri - "${redirectUri}" from client - "${clientId}"`,
+    )
+
+    if (!clientId || !redirectUri) {
+      throw new BadRequestException('clientId and uri must be provided')
+    }
+
+    return await this.clientPostLogoutUri.destroy({
+      where: { clientId: clientId, redirectUri: redirectUri },
     })
   }
 }

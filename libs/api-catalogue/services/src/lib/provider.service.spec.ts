@@ -127,6 +127,7 @@ describe('ProviderService', () => {
       expect(providers).toEqual([
         {
           type: 'private',
+          name: 'VMST',
           xroadInfo: {
             instance: 'IS-DEV',
             memberClass: 'GOV',
@@ -144,6 +145,7 @@ describe('ProviderService', () => {
       expect(providers).toEqual([
         {
           type: 'protected',
+          name: 'VMST',
           xroadInfo: {
             instance: 'IS-DEV',
             memberClass: 'GOV',
@@ -153,6 +155,7 @@ describe('ProviderService', () => {
         },
         {
           type: 'protected',
+          name: 'SKRA',
           xroadInfo: {
             instance: 'IS-DEV',
             memberClass: 'GOV',
@@ -170,6 +173,7 @@ describe('ProviderService', () => {
       expect(providers).toEqual([
         {
           type: 'public',
+          name: 'VMST',
           xroadInfo: {
             instance: 'IS-DEV',
             memberClass: 'GOV',
@@ -179,6 +183,7 @@ describe('ProviderService', () => {
         },
         {
           type: 'public',
+          name: 'SKRA',
           xroadInfo: {
             instance: 'IS-DEV',
             memberClass: 'GOV',
