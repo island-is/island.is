@@ -92,6 +92,8 @@ export const ParentalLeaveForm: Form = buildForm({
                   name: 'Símanúmer',
                   id: 'applicant.phoneNumber',
                   variant: 'tel',
+                  format: '###-####',
+                  placeholder: '000-0000',
                 }),
               ],
             }),
@@ -161,7 +163,8 @@ export const ParentalLeaveForm: Form = buildForm({
                   name: m.paymentInformationBank,
                   id: 'payments.bank',
                   width: 'half',
-                  variant: 'number',
+                  format: '####-##-######',
+                  placeholder: '0000-00-000000',
                 }),
                 buildSelectField({
                   name: m.paymentInformationPersonalDiscount,
@@ -266,6 +269,8 @@ export const ParentalLeaveForm: Form = buildForm({
                   name: m.employerId,
                   width: 'half',
                   id: 'employer.nationalRegistryId',
+                  format: '######-####',
+                  placeholder: '000000-0000',
                 }),
                 // TODO this is no longer needed
                 // buildDividerField({
