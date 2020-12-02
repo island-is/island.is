@@ -1,41 +1,43 @@
 import {
-  Application,
   BasicDataProvider,
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-import fetch from 'isomorphic-fetch'
 
-type UserProfileResponse = {
-  email: string
-  emailVerified: boolean
-}
-
+// TODO using this dataprovider now depends on the developer running the user profile service, and also that (s)he has
+// inserted their mobilenumber AND email accordingly. How can we improve this for local development? Will the
+// shared/mocking lib be good enought for server side mocking?
 export class UserProfileProvider extends BasicDataProvider {
   readonly type = 'UserProfile'
 
-  async provide(application: Application): Promise<unknown> {
-    if (onDev()) {
-      return Promise.resolve({
-        email: 'arni@island.is',
-        phoneNumber: '1234567',
-      })
-    }
-    return fetch(`http://web-service-portal-api.service-portal.svc.cluster.local
-/userProfile/${application.applicant}`)
+  async provide(): Promise<unknown> {
+    const query = `query GetUserProfile {
+      getUserProfile {
+        email
+        emailVerified
+        mobilePhoneNumber
+        mobilePhoneNumberVerified
+      }
+    }`
+
+    return this.useGraphqlGateway(query)
       .then(async (res: Response) => {
         const response = await res.json()
+        if (response.errors) {
+          return Promise.reject(response.errors[0].message)
+        }
+        const responseObj = response.data.getUserProfile
         if (
-          !response.mobilePhoneNumber ||
-          !response.mobilePhoneNumberVerified ||
-          !response.email ||
-          !response.emailVerified
+          !responseObj?.mobilePhoneNumber ||
+          !responseObj?.mobilePhoneNumberVerified ||
+          !responseObj?.email ||
+          !responseObj?.emailVerified
         ) {
           return Promise.reject(
             'You must go to my pages and set your email and phone number in order to continue the application process',
           )
         }
-        return Promise.resolve(response)
+        return Promise.resolve(responseObj)
       })
       .catch(() => {
         return Promise.reject(

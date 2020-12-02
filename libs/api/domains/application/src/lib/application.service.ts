@@ -103,12 +103,16 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async updateExternalData(input: UpdateApplicationExternalDataInput) {
+  async updateExternalData(
+    input: UpdateApplicationExternalDataInput,
+    accessToken?: string,
+  ) {
     const { id, ...populateExternalDataDto } = input
 
     return this.applicationApi.applicationControllerUpdateExternalData({
       id,
       populateExternalDataDto,
+      xAccessToken: accessToken,
     })
   }
 

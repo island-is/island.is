@@ -15,13 +15,17 @@ class NotImplemented extends BasicDataProvider {
 
 export function buildDataProviders(
   externalDataDTO: PopulateExternalDataDto,
-  templateDataProviders: Record<string, new () => BasicDataProvider>,
+  templateDataProviders: Record<
+    string,
+    new (accessToken?: string) => BasicDataProvider
+  >,
+  accessToken?: string,
 ): BasicDataProvider[] {
   const providers: BasicDataProvider[] = []
   externalDataDTO.dataProviders.forEach(({ type }) => {
     const Provider = templateDataProviders[type]
     if (Provider) {
-      providers.push(new Provider())
+      providers.push(new Provider(accessToken))
     } else {
       providers.push(new NotImplemented())
     }

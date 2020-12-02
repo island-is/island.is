@@ -48,7 +48,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
         <RadioController
           id={field.id}
           defaultValue={
-            statefulAnswer === undefined ? statefulAnswer : [statefulAnswer]
+            statefulAnswer !== undefined ? [statefulAnswer] : undefined
           }
           options={[
             {
