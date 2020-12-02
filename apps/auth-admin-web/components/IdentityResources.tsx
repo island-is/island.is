@@ -13,18 +13,10 @@ export default function IdentityResources() {
   const [resources, setResources] = useState<IdentityResourcesDTO[]>([]);
   const [totalCount, setTotalCount] = useState(1);
   const [lastPage, setLastPage] = useState(1);
-  const [loaded, setLoaded] = useState(false);
 
   const edit = (resource: IdentityResourcesDTO) => {
    // TODO:
   };
-
-  useEffect(() => {
-    if (!loaded) {
-      getResources(page, count);
-      setLoaded(true);
-    }
-  });
 
   const getResources = async (page, count) => {
     console.log("getting res");
@@ -112,16 +104,19 @@ export default function IdentityResources() {
                     <button
                       className="identity-resources__button__edit"
                       onClick={() => edit(resource)}
-                    >
-                      Breyta
+                      title="Edit"
+                    ><i className="icon__edit"></i><span>
+                      Edit</span>
                     </button>
                   </td>
                   <td className="identity-resources__table__button">
                     <button
                       className="identity-resources__button__delete"
                       onClick={() => remove(resource.name)}
+                      title="Delete"
                     >
-                      Eyða
+                      <i className="icon__delete"></i>
+                      <span>Delete</span>
                     </button>
                   </td>
                 </tr>

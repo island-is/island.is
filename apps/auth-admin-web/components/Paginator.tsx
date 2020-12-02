@@ -1,13 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface Props {
   lastPage: number;
-  handlePageChange?: (page: number, count: number) => void
+  handlePageChange?: (page: number, count: number) => void,
 }
 
 const Paginator: React.FC<Props> = (props: Props) =>{
   const [page, setPage] = useState<number>(1); 
-  const [count, setCount] = useState<number>(1); // TODO: Set to something that makes sense 30 
+  const [count, setCount] = useState<number>(30); // TODO: Set to something that makes sense 30 
+
+  // Runs only once and trickers initial page change of parent
+  useEffect(() => {
+    props.handlePageChange(page, count);
+  }, []);
 
   const changeCount = (count: string) => {
     setPage(1);
@@ -31,6 +36,8 @@ const Paginator: React.FC<Props> = (props: Props) =>{
     setPage(page-1);
     props.handlePageChange(page-1, count);
   };
+
+  
 
   return( 
 
@@ -66,7 +73,6 @@ const Paginator: React.FC<Props> = (props: Props) =>{
               className="paginator__select"
               defaultValue={count}
             >
-              <option value="1">1</option>
               <option value="30">30</option>
               <option value="50">50</option>
               <option value="100">100</option>

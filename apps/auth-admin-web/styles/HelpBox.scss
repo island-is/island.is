@@ -6,12 +6,16 @@
     text-transform: uppercase;
     font-weight: 600;
     padding: 6px;
-    background: #ccdfff;
+    // background: #ccdfff;
     color: #0044b3;
     cursor: pointer;
     border: none;
     border-radius: 8px;
     margin: 0 10px;
+
+    span {
+      visibility: hidden;
+    }
   }
 
   &__content {
