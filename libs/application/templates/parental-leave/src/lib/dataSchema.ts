@@ -3,6 +3,7 @@ import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
+import { NO, YES } from '../constants'
 
 const PersonalAllowance = z
   .object({
@@ -51,8 +52,8 @@ export const dataSchema = z.object({
     privatePensionFund: z.enum(['frjalsi', '']).optional(),
     privatePensionFundPercentage: z.enum(['2', '4', '']).optional(),
   }),
-  shareInformationWithOtherParent: z.enum(['yes', 'no']),
-  usePrivatePensionFund: z.enum(['yes', 'no']),
+  shareInformationWithOtherParent: z.enum([YES, NO]),
+  usePrivatePensionFund: z.enum([YES, NO]),
   periods: z.array(Period).nonempty(),
   employer: z.object({
     name: z.string().nonempty(),
@@ -66,12 +67,12 @@ export const dataSchema = z.object({
     contact: z.string().optional(),
     contactId: z.string().optional(),
   }),
-  requestRights: z.enum(['yes', 'no']),
-  giveRights: z.enum(['yes', 'no']),
-  singlePeriod: z.enum(['yes', 'no']),
+  requestRights: z.enum([YES, NO]),
+  giveRights: z.enum([YES, NO]),
+  singlePeriod: z.enum([YES, NO]),
   firstPeriodStart: z.enum(['dateOfBirth', 'specificDate']),
   confirmLeaveDuration: z.enum(['duration', 'specificDate']),
-  otherParent: z.enum(['spouse', 'no', 'manual']).optional(),
+  otherParent: z.enum(['spouse', NO, 'manual']).optional(),
   otherParentName: z.string().optional(),
   otherParentId: z
     .string()
@@ -80,7 +81,7 @@ export const dataSchema = z.object({
       (n) => n && kennitala.isValid(n) && kennitala.isPerson(n),
       'Kennitala þarf að vera gild',
     ),
-  usePersonalAllowance: z.enum(['yes', 'no']),
-  usePersonalAllowanceFromSpouse: z.enum(['yes', 'no']),
+  usePersonalAllowance: z.enum([YES, NO]),
+  usePersonalAllowanceFromSpouse: z.enum([YES, NO]),
 })
 export type SchemaFormValues = z.infer<typeof dataSchema>
