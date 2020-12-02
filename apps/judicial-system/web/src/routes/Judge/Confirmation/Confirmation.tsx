@@ -1,4 +1,10 @@
-import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  AccordionItem,
+  Box,
+  Button,
+  Text,
+} from '@island.is/island-ui/core'
 import React, { useContext, useEffect, useState } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import Modal from '../../../shared-components/Modal/Modal'
@@ -32,6 +38,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { api } from '../../../services'
 
 export const RequestSignatureMutation = gql`
   mutation RequestSignatureMutation($input: RequestSignatureInput!) {
@@ -430,12 +437,22 @@ export const Confirmation: React.FC = () => {
                 )}
             </Box>
           )}
-          <Box marginBottom={15}>
+          <Box marginBottom={5}>
             <Text variant="h3">
               {workingCase?.judge
                 ? `${workingCase?.judge.name} ${workingCase?.judge.title}`
                 : `${user?.name} ${user?.title}`}
             </Text>
+          </Box>
+          <Box marginBottom={5}>
+            <Button
+              variant="ghost"
+              onClick={() =>
+                window.open(`${api.apiUrl}/api/case/${workingCase.id}/ruling`)
+              }
+            >
+              Sjá PDF af þingbók og úrskurði
+            </Button>
           </Box>
           <FormFooter
             nextUrl={Constants.DETENTION_REQUESTS_ROUTE}
