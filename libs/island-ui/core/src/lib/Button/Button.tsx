@@ -108,8 +108,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       >
         {loading && variant !== 'text' ? (
           <>
+            {icon && iconPosition === 'start' && (
+              <ButtonIcon icon={icon} type={iconType} transparent />
+            )}
             <span className={styles.hideContent}>{children}</span>
-            {icon && <ButtonIcon icon={icon} type={iconType} transparent />}
+            {icon && iconPosition === 'end' && (
+              <ButtonIcon icon={icon} type={iconType} transparent />
+            )}
             <div
               className={cn(styles.loader, { [styles.loadingCircle]: circle })}
             >

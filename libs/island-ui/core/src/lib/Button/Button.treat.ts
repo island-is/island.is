@@ -452,11 +452,15 @@ export const icon = style({
       width: 16,
       height: 16,
     },
+    [`:not(${variants.text})${iconPositionStart} &`]: {
+      marginRight: 15,
+      marginLeft: 0,
+    },
     [`${variants.utility}:not(${isEmpty}) &, ${variants.text}:not(${isEmpty}):not(${iconPositionStart}) &`]: {
       marginLeft: 8,
       marginRight: 0,
     },
-    [`${variants.utility}:not(${isEmpty}) &, ${variants.text}:not(${isEmpty}) &, ${iconPositionStart} &`]: {
+    [`${variants.utility}:not(${isEmpty}) &, ${variants.text}:not(${isEmpty}) &, ${variants.text}${iconPositionStart} &`]: {
       marginLeft: 0,
       marginRight: 8,
     },
