@@ -16,6 +16,7 @@ import {
   ButtonTypes,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
+import { FixedNav, SkipToMainContent } from '@island.is/web/components'
 import { SearchInput } from '../'
 import { LanguageToggler } from '../LanguageToggler'
 import { SideMenu } from '../SideMenu'
@@ -43,114 +44,122 @@ export const Header: FC<HeaderProps> = ({
   const ariaExpanded = sideMenuOpen ? { 'aria-expanded': 'true' } : {}
 
   return (
-    <GridContainer>
-      <GridRow>
-        <GridColumn span="12/12" paddingTop={4} paddingBottom={4}>
-          <Columns alignY="center" space={2}>
-            <Column width="content">
-              <FocusableBox href={english ? '/en' : '/'}>
-                <Hidden above="md">
-                  <Logo width={40} iconOnly solid={isWhite} />
-                </Hidden>
-                <Hidden below="lg">
-                  <Logo width={160} solid={isWhite} />
-                </Hidden>
-              </FocusableBox>
-            </Column>
-            <Column>
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="flexEnd"
-                width="full"
-              >
-                <Hidden above="sm" inline>
+    <header>
+      <Hidden print={true}>
+        <SkipToMainContent />
+        <FixedNav />
+        <GridContainer>
+          <GridRow>
+            <GridColumn span="12/12" paddingTop={4} paddingBottom={4}>
+              <Columns alignY="center" space={2}>
+                <Column width="content">
+                  <FocusableBox href={english ? '/en' : '/'}>
+                    <Hidden above="md">
+                      <Logo width={40} iconOnly solid={isWhite} />
+                    </Hidden>
+                    <Hidden below="lg">
+                      <Logo width={160} solid={isWhite} />
+                    </Hidden>
+                  </FocusableBox>
+                </Column>
+                <Column>
                   <Box
                     display="flex"
                     alignItems="center"
                     justifyContent="flexEnd"
                     width="full"
                   >
-                    <ComboButton
-                      showSearch={showSearchInHeader}
-                      sideBarMenuOpen={() => {
-                        setSideMenuSearchFocus(false)
-                        setSideMenuOpen(true)
-                      }}
-                      sideMenuSearchFocus={() => {
-                        setSideMenuSearchFocus(true)
-                        setSideMenuOpen(true)
-                      }}
-                    />
-                  </Box>
-                </Hidden>
-                {showSearchInHeader && (
-                  <>
-                    <Hidden below="lg">
-                      <SearchInput
-                        id="search_input_header"
-                        size="medium"
-                        activeLocale={locale}
-                        placeholder={t.searchPlaceholder}
-                        autocomplete={true}
-                        autosuggest={false}
-                      />
+                    <Hidden above="sm" inline>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="flexEnd"
+                        width="full"
+                      >
+                        <ComboButton
+                          showSearch={showSearchInHeader}
+                          sideBarMenuOpen={() => {
+                            setSideMenuSearchFocus(false)
+                            setSideMenuOpen(true)
+                          }}
+                          sideMenuSearchFocus={() => {
+                            setSideMenuSearchFocus(true)
+                            setSideMenuOpen(true)
+                          }}
+                        />
+                      </Box>
                     </Hidden>
-                  </>
-                )}
-                <Hidden below="md">
-                  <FocusableBox
-                    href="//minarsidur.island.is/"
-                    marginLeft={marginLeft}
-                    borderRadius="large"
-                  >
-                    <Button
-                      colorScheme={buttonColorScheme}
-                      variant="utility"
-                      icon="person"
-                    >
-                      {t.login}
-                    </Button>
-                  </FocusableBox>
-                </Hidden>
-                <Box marginLeft={marginLeft}>
-                  <LanguageToggler
-                    buttonColorScheme={buttonColorScheme}
-                    hideWhenMobile
-                  />
-                </Box>
-                <Hidden below="md">
-                  <Box marginLeft={marginLeft} position="relative">
-                    <Button
-                      colorScheme={buttonColorScheme}
-                      variant="utility"
-                      onClick={() => setSideMenuOpen(true)}
-                      icon="menu"
-                      aria-haspopup="true"
-                      aria-controls="sideMenu"
-                      id="sideMenuToggle"
-                      {...ariaExpanded}
-                    >
-                      {t.menuCaption}
-                    </Button>
+                    {showSearchInHeader && (
+                      <>
+                        <Hidden below="lg">
+                          <Box role="search">
+                            <SearchInput
+                              id="search_input_header"
+                              size="medium"
+                              activeLocale={locale}
+                              placeholder={t.searchPlaceholder}
+                              autocomplete={true}
+                              autosuggest={false}
+                            />
+                          </Box>
+                        </Hidden>
+                      </>
+                    )}
+                    <Hidden below="md">
+                      <FocusableBox
+                        href="//minarsidur.island.is/"
+                        marginLeft={marginLeft}
+                        borderRadius="large"
+                      >
+                        <Button
+                          colorScheme={buttonColorScheme}
+                          variant="utility"
+                          icon="person"
+                        >
+                          {t.login}
+                        </Button>
+                      </FocusableBox>
+                    </Hidden>
+                    <Box marginLeft={marginLeft}>
+                      <LanguageToggler
+                        buttonColorScheme={buttonColorScheme}
+                        hideWhenMobile
+                      />
+                    </Box>
+                    <Hidden below="md">
+                      <Box marginLeft={marginLeft} position="relative">
+                        <Button
+                          colorScheme={buttonColorScheme}
+                          variant="utility"
+                          onClick={() => setSideMenuOpen(true)}
+                          icon="menu"
+                          aria-haspopup="true"
+                          aria-controls="sideMenu"
+                          id="sideMenuToggle"
+                          {...ariaExpanded}
+                        >
+                          {t.menuCaption}
+                        </Button>
+                      </Box>
+                    </Hidden>
                   </Box>
-                </Hidden>
-              </Box>
-            </Column>
-          </Columns>
-        </GridColumn>
-      </GridRow>
-      <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
-        <SideMenu
-          isVisible={sideMenuOpen}
-          searchBarFocus={sideMenuSearchFocus}
-          handleClose={() => {
-            setSideMenuSearchFocus(false)
-            setSideMenuOpen(false)
-          }}
-        />
-      </ColorSchemeContext.Provider>
-    </GridContainer>
+                </Column>
+              </Columns>
+            </GridColumn>
+          </GridRow>
+          <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
+            <SideMenu
+              isVisible={sideMenuOpen}
+              searchBarFocus={sideMenuSearchFocus}
+              handleClose={() => {
+                setSideMenuSearchFocus(false)
+                setSideMenuOpen(false)
+              }}
+            />
+          </ColorSchemeContext.Provider>
+        </GridContainer>
+      </Hidden>
+    </header>
   )
 }
 
