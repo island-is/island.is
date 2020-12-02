@@ -72,7 +72,7 @@ const testCase2 = {
   id: 'test_id_2',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
-  state: CaseState.SUBMITTED,
+  state: CaseState.REJECTED,
   policeCaseNumber: 'string',
   accusedNationalId: 'string',
   accusedName: 'Jon Harring',
@@ -163,6 +163,55 @@ const testCase3 = {
   requestedDefenderEmail: 'saul@goodman.com',
 }
 
+const testCase4 = {
+  id: 'test_id_2',
+  created: '2020-09-16T19:50:08.033Z',
+  modified: '2020-09-16T19:51:39.466Z',
+  state: CaseState.REJECTED,
+  policeCaseNumber: 'string',
+  accusedNationalId: 'string',
+  accusedName: 'Jon Harring',
+  accusedAddress: 'Harringvej 2',
+  accusedGender: CaseGender.MALE,
+  court: 'string',
+  arrestDate: '2020-09-16T19:51:28.224Z',
+  requestedCourtDate: '2020-09-12T14:51:00.000Z',
+  requestedCustodyEndDate: '2020-09-16',
+  lawsBroken: null,
+  custodyProvisions: [],
+  requestedCustodyRestrictions: [],
+  caseFacts: null,
+  witnessAccounts: 'string',
+  investigationProgress: 'string',
+  legalArguments: null,
+  comments: 'string',
+  prosecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
+  courtCaseNumber: null,
+  courtDate: null,
+  courtStartTime: null,
+  courtEndTime: '2020-09-16T19:51:28.224Z',
+  courtAttendees: null,
+  policeDemands: null,
+  accusedPlea: null,
+  litigationPresentations: null,
+  ruling: null,
+  rejecting: null,
+  custodyEndDate: '2020-10-24',
+  custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
+  accusedAppealDecision: null,
+  accusedAppealAnnouncement: null,
+  prosecutorAppealDecision: null,
+  prosecutorAppealAnnouncement: null,
+  judge: null,
+  defenderName: 'Saul Goodman',
+  defenderEmail: 'saul@goodman.com',
+  requestedDefenderName: 'Saul Goodman',
+  requestedDefenderEmail: 'saul@goodman.com',
+}
+
 export const mockJudgeQuery = [
   {
     request: {
@@ -220,6 +269,17 @@ export const mockCaseQueries = [
     result: {
       data: {
         case: testCase3,
+      },
+    },
+  },
+  {
+    request: {
+      query: CaseQuery,
+      variables: { input: { id: 'test_id_4' } },
+    },
+    result: {
+      data: {
+        case: testCase4,
       },
     },
   },
