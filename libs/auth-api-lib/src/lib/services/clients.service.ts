@@ -85,53 +85,62 @@ export class ClientsService {
 
     const client = await this.clientModel.findByPk(id, { raw: true })
 
-    await this.findAssociations(client)
+    if (client) {
+      await this.findAssociations(client)
+        .then<any, never>((result: any) => {
+          client.allowedScopes = result[0]
+          client.allowedCorsOrigins = result[1]
+          client.redirectUris = result[2]
+          client.identityProviderRestrictions = result[3]
+          client.clientSecrets = result[4]
+          client.postLogoutRedirectUris = result[5]
+          client.allowedGrantTypes = result[6]
+          client.claims = result[7]
+        })
+        .catch((error) =>
+          this.logger.error(`Error in findAssociations: ${error}`),
+        )
+    }
 
     return client
   }
 
-  private async findAssociations(client: Client) {
-    client.allowedScopes = await this.clientAllowedScope.findAll({
-      where: { clientId: client.clientId },
-      raw: true,
-    })
-
-    client.allowedCorsOrigins = await this.clientAllowedCorsOrigin.findAll({
-      where: { clientId: client.clientId },
-      raw: true,
-    })
-
-    client.redirectUris = await this.clientRedirectUri.findAll({
-      where: { clientId: client.clientId },
-      raw: true,
-    })
-
-    client.identityProviderRestrictions = await this.clientIdpRestriction.findAll(
-      {
+  /** Gets all associations for Client */
+  private findAssociations(client: Client): Promise<any> {
+    return Promise.all([
+      this.clientAllowedScope.findAll({
         where: { clientId: client.clientId },
         raw: true,
-      },
-    )
-
-    client.clientSecrets = await this.clientSecret.findAll({
-      where: { clientId: client.clientId },
-      raw: true,
-    })
-
-    client.postLogoutRedirectUris = await this.clientPostLogoutUri.findAll({
-      where: { clientId: client.clientId },
-      raw: true,
-    })
-
-    client.allowedGrantTypes = await this.clientGrantType.findAll({
-      where: { clientId: client.clientId },
-      raw: true,
-    })
-
-    client.claims = await this.clientClaim.findAll({
-      where: { clientId: client.clientId },
-      raw: true,
-    })
+      }), // 0
+      this.clientAllowedCorsOrigin.findAll({
+        where: { clientId: client.clientId },
+        raw: true,
+      }), // 1
+      this.clientRedirectUri.findAll({
+        where: { clientId: client.clientId },
+        raw: true,
+      }), // 2
+      this.clientIdpRestriction.findAll({
+        where: { clientId: client.clientId },
+        raw: true,
+      }), // 3
+      this.clientSecret.findAll({
+        where: { clientId: client.clientId },
+        raw: true,
+      }), // 4
+      this.clientPostLogoutUri.findAll({
+        where: { clientId: client.clientId },
+        raw: true,
+      }), // 5
+      this.clientGrantType.findAll({
+        where: { clientId: client.clientId },
+        raw: true,
+      }), // 6
+      this.clientClaim.findAll({
+        where: { clientId: client.clientId },
+        raw: true,
+      }), // 7
+    ])
   }
 
   /** Creates a new client */
