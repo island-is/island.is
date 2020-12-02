@@ -135,6 +135,7 @@ const Home: Screen<HomeProps> = ({
         <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
       </Section>
       <Section
+        aria-labelledby="lifeEventsTitle"
         paddingTop={4}
         backgroundBleed={
           includeLifeEventSectionBleed && {
@@ -149,6 +150,7 @@ const Home: Screen<HomeProps> = ({
       >
         <LifeEventsCardsSection
           title={n('lifeEventsTitle')}
+          titleId="lifeEventsTitle"
           lifeEvents={lifeEvents}
           showSleeve={showSleeve}
         />
@@ -157,16 +159,26 @@ const Home: Screen<HomeProps> = ({
         paddingTop={[8, 8, 6]}
         paddingBottom={[8, 8, 6]}
         background="purple100"
+        aria-labelledby="serviceCategoriesTitle"
       >
-        <Categories title={n('articlesTitle')} cards={cards} />
+        <Categories
+          title={n('articlesTitle')}
+          titleId="serviceCategoriesTitle"
+          cards={cards}
+        />
       </Section>
-      <Section paddingTop={[8, 8, 6]}>
-        <LatestNewsSection label={gn('newsAndAnnouncements')} items={news} />
+      <Section paddingTop={[8, 8, 6]} aria-labelledby="latestNewsTitle">
+        <LatestNewsSection
+          label={gn('newsAndAnnouncements')}
+          labelId="latestNewsTitle"
+          items={news}
+        />
       </Section>
-      <Section paddingY={[8, 8, 8, 10, 15]}>
+      <Section paddingY={[8, 8, 8, 10, 15]} aria-labelledby="ourGoalsTitle">
         <IntroductionSection
           subtitle={n('ourGoalsSubTitle')}
           title={n('ourGoalsTitle')}
+          titleId="ourGoalsTitle"
           introText={n('ourGoalsIntro')}
           text={n('ourGoalsText')}
           linkText={n('ourGoalsButtonText')}
