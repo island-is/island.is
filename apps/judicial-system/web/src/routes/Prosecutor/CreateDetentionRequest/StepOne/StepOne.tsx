@@ -98,6 +98,7 @@ export const CreateCaseMutation = gql`
       }
       courtCaseNumber
       courtDate
+      isCourtDateInThePast
       courtRoom
       defenderName
       defenderEmail
@@ -110,6 +111,7 @@ export const CreateCaseMutation = gql`
       ruling
       rejecting
       custodyEndDate
+      isCustodyEndDateInThePast
       custodyRestrictions
       accusedAppealDecision
       accusedAppealAnnouncement

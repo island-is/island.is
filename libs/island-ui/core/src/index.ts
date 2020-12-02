@@ -29,6 +29,7 @@ export * from './lib/LinkCard/LinkCard'
 export { ProfileCard } from './lib/ProfileCard/ProfileCard'
 export { ActionCard } from './lib/ActionCard/ActionCard'
 export { TopicCard } from './lib/TopicCard/TopicCard'
+export { CategoryCard } from './lib/CategoryCard/CategoryCard'
 
 // Core
 export { Button as ButtonDeprecated } from './lib/ButtonDeprecated/Button'
@@ -74,6 +75,7 @@ export * from './lib/FormStepper/types'
 export * from './lib/Pagination/Pagination'
 export * from './lib/Tabs/Tabs'
 export * from './lib/TableOfContents/TableOfContents'
+export * from './lib/Menu/Menu'
 
 // Context
 export * from './lib/context'

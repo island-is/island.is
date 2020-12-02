@@ -4,7 +4,6 @@ import { NextPageContext } from 'next'
 import NextError, { ErrorProps as NextErrorProps } from 'next/error'
 
 import { withLocale } from '../i18n'
-import { Screen } from '../types'
 import { NotFound } from '@island.is/skilavottord-web/components'
 
 type PropTypes = {
@@ -51,4 +50,4 @@ CustomError.getInitialProps = async (
   return { ...errorInitialProps, isSSRReadyToRender: true }
 }
 
-export default withLocale('is')(CustomError as Screen)
+export default withLocale('is')(CustomError as any)

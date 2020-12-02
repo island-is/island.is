@@ -50,8 +50,8 @@ const dataSchema = z.object({
   employer: z.object({
     name: z.string().nonempty(),
     nationalRegistryId: z.string().nonempty(),
-    contact: z.string().nonempty(),
-    contactId: z.string().nonempty(),
+    contact: z.string().optional(),
+    contactId: z.string().optional(),
   }),
   requestRights: z.enum(['yes', 'no']),
   giveRights: z.enum(['yes', 'no']),
