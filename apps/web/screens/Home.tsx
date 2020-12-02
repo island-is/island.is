@@ -59,7 +59,7 @@ const Home: Screen<HomeProps> = ({
   lifeEvents,
   page,
 }) => {
-  const { activeLocale } = useI18n()
+  const { activeLocale, t } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)
   const gn = useNamespace(globalNamespace)
@@ -131,7 +131,7 @@ const Home: Screen<HomeProps> = ({
 
   return (
     <>
-      <Section paddingY={[0, 0, 4, 4, 6]}>
+      <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
         <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
       </Section>
       <Section
