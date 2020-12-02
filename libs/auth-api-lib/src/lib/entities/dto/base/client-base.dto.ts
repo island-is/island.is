@@ -221,7 +221,6 @@ export abstract class ClientBaseDTO {
   readonly frontChannelLogoutSessionRequired!: boolean
 
   @IsOptional()
-  @IsBoolean()
   @ApiProperty({
     example: null,
   })
