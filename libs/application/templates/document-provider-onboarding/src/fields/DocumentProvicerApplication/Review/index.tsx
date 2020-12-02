@@ -20,7 +20,11 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
   const { description } = field
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
-  //TODO refactor messages
+
+  const getValue = (id: string) => {
+    return getValueViaPath(application.answers, id) as string
+  }
+
   return (
     <div>
       {description && (
@@ -40,12 +44,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                     id="applicant.nationalId"
                     name="applicant.nationalId"
                     label="Kennitala"
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'applicant.nationalId',
-                      ) as string
-                    }
+                    defaultValue={getValue('applicant.nationalId')}
                     ref={register}
                   />
                 </GridColumn>
@@ -54,12 +53,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                     id="applicant.name"
                     name="applicant.name"
                     label="Nafn"
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'applicant.name',
-                      ) as string
-                    }
+                    defaultValue={getValue('applicant.name')}
                     ref={register}
                   />
                 </GridColumn>
@@ -71,12 +65,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                     id="applicant.email"
                     name="applicant.email"
                     label="Netfang"
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'applicant.email',
-                      ) as string
-                    }
+                    defaultValue={getValue('applicant.email')}
                     ref={register}
                   />
                 </GridColumn>
@@ -85,12 +74,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                     id="applicant.phoneNumber"
                     name="applicant.phoneNumber"
                     label="Símanúmer"
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'applicant.phoneNumber',
-                      ) as string
-                    }
+                    defaultValue={getValue('applicant.phoneNumber')}
                     ref={register}
                   />
                 </GridColumn>
@@ -102,12 +86,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                     id="applicant.address"
                     name="applicant.address"
                     label="Heimilisfang"
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'applicant.address',
-                      ) as string
-                    }
+                    defaultValue={getValue('applicant.address')}
                     ref={register}
                   />
                 </GridColumn>
@@ -116,12 +95,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                     id="applicant.zipCode"
                     name="applicant.zipCode"
                     label="Póstnúmer og staður"
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'applicant.zipCode',
-                      ) as string
-                    }
+                    defaultValue={getValue('applicant.zipCode')}
                     ref={register}
                   />
                 </GridColumn>
@@ -137,12 +111,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                     id="administrativeContact.name"
                     name="administrativeContact.name"
                     label="Nafn"
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'administrativeContact.name',
-                      ) as string
-                    }
+                    defaultValue={getValue('administrativeContact.name')}
                     ref={register}
                   />
                 </GridColumn>
@@ -154,12 +123,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                     id="administrativeContact.email"
                     name="administrativeContact.email"
                     label="Netfang"
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'administrativeContact.email',
-                      ) as string
-                    }
+                    defaultValue={getValue('administrativeContact.email')}
                     ref={register}
                   />
                 </GridColumn>
@@ -168,12 +132,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                     id="administrativeContact.phoneNumber"
                     name="administrativeContact.phoneNumber"
                     label="Símanúmer"
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'administrativeContact.phoneNumber',
-                      ) as string
-                    }
+                    defaultValue={getValue('administrativeContact.phoneNumber')}
                     ref={register}
                   />
                 </GridColumn>
@@ -189,12 +148,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                     id="technicalContact.name"
                     name="technicalContact.name"
                     label="Nafn"
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'technicalContact.name',
-                      ) as string
-                    }
+                    defaultValue={getValue('technicalContact.name')}
                     ref={register}
                   />
                 </GridColumn>
@@ -206,12 +160,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                     id="technicalContact.email"
                     name="technicalContact.email"
                     label="Netfang"
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'technicalContact.email',
-                      ) as string
-                    }
+                    defaultValue={getValue('technicalContact.email')}
                     ref={register}
                   />
                 </GridColumn>
@@ -220,12 +169,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                     id="technicalContact.phoneNumber"
                     name="technicalContact.phoneNumber"
                     label="Símanúmer"
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'technicalContact.phoneNumber',
-                      ) as string
-                    }
+                    defaultValue={getValue('technicalContact.phoneNumber')}
                     ref={register}
                   />
                 </GridColumn>
@@ -241,12 +185,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                     id="helpDesk.email"
                     name="helpDesk.email"
                     label="Netfang"
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'helpDesk.email',
-                      ) as string
-                    }
+                    defaultValue={getValue('helpDesk.email')}
                     ref={register}
                   />
                 </GridColumn>
@@ -255,12 +194,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                     id="helpDesk.phoneNumber"
                     name="helpDesk.phoneNumber"
                     label="Símanúmer"
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'helpDesk.phoneNumber',
-                      ) as string
-                    }
+                    defaultValue={getValue('helpDesk.phoneNumber')}
                     ref={register}
                   />
                 </GridColumn>
