@@ -3,7 +3,15 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  serviceLink: 'https://localhost:5001/',
+  identityServer: {
+    authority: 'https://localhost:6001/',
+    clientId: 'island-is-1',
+    redirectUri: `${window.location.origin}/signin-oidc`,
+    responseType: 'code',
+    scope: 'openid profile offline_access api_resource.scope'
+  }
 };
 
 /*

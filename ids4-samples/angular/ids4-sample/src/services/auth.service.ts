@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
-import { UserManager, UserManagerSettings, User, WebStorageStateStore } from 'oidc-client';
+import {
+  UserManager,
+  UserManagerSettings,
+  User,
+  WebStorageStateStore,
+} from 'oidc-client';
+import { environment } from './../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -39,11 +45,11 @@ export class AuthService {
 
 export function getClientSettings(): UserManagerSettings {
   return {
-    authority: 'https://localhost:6001/',
-    client_id: 'island-is-1',
-    redirect_uri: `${window.location.origin}/signin-oidc`,
-    response_type: 'code',
-    scope: 'openid profile offline_access api_resource.scope',
+    authority: environment.identityServer.authority,
+    client_id: environment.identityServer.clientId,
+    redirect_uri: environment.identityServer.redirectUri,
+    response_type: environment.identityServer.responseType,
+    scope: environment.identityServer.scope,
     loadUserInfo: true,
     filterProtocolClaims: true,
     userStore: new WebStorageStateStore({ store: window.localStorage }),
