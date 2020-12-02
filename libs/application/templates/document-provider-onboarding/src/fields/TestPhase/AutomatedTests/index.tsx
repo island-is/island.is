@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useMutation } from '@apollo/client'
 import { FieldBaseProps } from '@island.is/application/core'
 import {
   Box,
@@ -14,6 +15,8 @@ import {
 } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { m } from '../../../forms/messages'
+
+import { runEndpointTestsMutation } from '../../../graphql/mutations/runEndpointTestsMutation'
 import * as styles from './AutomatedTests.treat'
 
 const AutomatedTests: FC<FieldBaseProps> = () => {
@@ -23,20 +26,28 @@ const AutomatedTests: FC<FieldBaseProps> = () => {
     message: string
   }
 
+  const [response, setResponse] = useState<Response[]>([])
+  const [isLoading, setIsLoading] = useState(false)
   const { register, errors, trigger } = useForm()
+  const [runEndpointTests] = useMutation(runEndpointTestsMutation)
 
   const validateEndpoint = async () => {
     setIsLoading(true)
-    await fetch('/api/testMyEndpoint')
-      .then((response) => response.json())
-      .then((json) => {
-        setResponse(json)
-        setIsLoading(false)
-      })
+
+    const results = await runEndpointTests({
+      variables: {
+        input: { recipient: '2404805659', documentId: '123456' }, //TODO set real data
+      },
+    })
+
+    if (!results.data) {
+      //TODO display error
+    }
+
+    setResponse(results.data.runEndpointTests)
+    setIsLoading(false)
   }
 
-  const [response, setResponse] = useState<Response[]>([])
-  const [isLoading, setIsLoading] = useState(false)
   //TODO finish design of this component
   return (
     <Box>

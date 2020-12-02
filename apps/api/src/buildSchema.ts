@@ -13,6 +13,7 @@ import { UserProfileResolver } from '@island.is/api/domains/user-profile'
 import { NationalRegistryResolver } from '@island.is/api/domains/national-registry'
 import { CommunicationsResolver } from '@island.is/api/domains/communications'
 import { ApiCatalogueResolver } from '@island.is/api/domains/api-catalogue'
+import { DocumentProviderResolver } from '@island.is/api/domains/document-provider'
 
 buildSchema({
   path: 'apps/api/src/api.graphql',
@@ -29,5 +30,6 @@ buildSchema({
     UserProfileResolver,
     CommunicationsResolver,
     ApiCatalogueResolver,
+    DocumentProviderResolver,
   ],
 })

@@ -8,8 +8,8 @@ import {
   StepOne,
   StepTwo,
 } from '../../routes/Prosecutor/CreateDetentionRequest'
-import { DetentionRequests } from '../../routes/DetentionRequests'
-import { Login } from '../../routes/Login'
+import { DetentionRequests } from '../../routes/Shared/DetentionRequests/DetentionRequests'
+import { Login } from '../../routes/Shared/Login/Login'
 import JudgeOverview from '../../routes/Judge/Overview/Overview'
 import CourtRecord from '../../routes/Judge/CourtRecord/CourtRecord'
 import { RulingStepOne, RulingStepTwo } from '../../routes/Judge/Ruling'
@@ -17,6 +17,7 @@ import Confirmation from '../../routes/Judge/Confirmation/Confirmation'
 import { client } from '../../graphql'
 import HearingArrangements from '../../routes/Judge/HearingArrangements/HearingArrangements'
 import { UserProvider } from '../UserProvider/UserProvider'
+import SignedVerdictOverview from '../../routes/Shared/SignedVerdictOverview/SignedVerdictOverview'
 
 const App: React.FC = () => {
   return (
@@ -37,6 +38,9 @@ const App: React.FC = () => {
                   return <DetentionRequests />
                 }}
               />
+              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
+                <SignedVerdictOverview />
+              </Route>
               <Route path={`${Constants.CONFIRMATION_ROUTE}/:id`}>
                 <Confirmation />
               </Route>
