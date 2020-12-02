@@ -62,8 +62,9 @@ export const CategoryCard = ({
       {hasTags && (
         <Box paddingTop={3}>
           <Inline space={['smallGutter', 'smallGutter', 'gutter']}>
-            {tags.map((tag) => (
+            {tags.map((tag, index) => (
               <Tag
+                key={index.toString()}
                 outlined={!tag.href}
                 variant={tagVariant}
                 href={tag.href}
