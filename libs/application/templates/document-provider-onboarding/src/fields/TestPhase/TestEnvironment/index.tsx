@@ -1,17 +1,20 @@
 import React, { FC, useState } from 'react'
+import { useFormContext, Controller } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
-import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import { Box, Button, Text, Checkbox } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { registerProviderMutation } from '../../../graphql/mutations/registerProviderMutation'
 
-const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {
+const TestEnvironment: FC<FieldBaseProps> = ({ application }) => {
   interface Key {
     name: string
     value: string
   }
+
+  const { setValue, clearErrors, errors } = useFormContext()
 
   const [keys, setKeys] = useState<Key[]>([])
   const [registerProvider] = useMutation(registerProviderMutation)
@@ -37,7 +40,19 @@ const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {
         value: credentials.data.registerProvider.clientSecret,
       },
     ])
+
+    setValue('testUserExists' as string, true)
+
+    clearErrors('testUserExists')
   }
+
+  const { answers: formValue } = application
+
+  const currentAnswer = getValueViaPath(
+    formValue,
+    'testUserExists' as string,
+    false,
+  ) as boolean
 
   return (
     //TODO: we can make this a generic component for reuasabilty, same as production environment
@@ -64,6 +79,23 @@ const TestEnvironment: FC<FieldBaseProps> = ({ error, field, application }) => {
         >
           Búa til aðgang
         </Button>
+        <Box display="none">
+          <Controller
+            name="testUserExists"
+            defaultValue={currentAnswer}
+            rules={{ required: true }}
+            render={({ value }) => {
+              return <Checkbox checked={value} name="testUserExists" large />
+            }}
+          />
+        </Box>
+        {errors.testUserExists ? (
+          <Box color="red600" paddingY={2}>
+            <Text fontWeight="semiBold" color="red600">
+              {errors.testUserExists}
+            </Text>
+          </Box>
+        ) : null}
       </Box>
       {keys.map((Key, index) => (
         <Box marginBottom={3} key={index}>

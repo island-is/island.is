@@ -61,6 +61,10 @@ const dataSchema = z.object({
     message: 'Þú verður að samþykkja að forritun og prófunum sé lokið',
   }),
   endPoint: z.string().url().nonempty(),
+  testUserExists: z.boolean().refine((v) => v, {
+    //When to show these ?
+    message: 'Þú verður að stofna aðgang til að halda áfram',
+  }),
   rejectionReason: z.string(),
   approvedByReviewer: z.enum(['APPROVE', 'REJECT']),
 })
