@@ -16,7 +16,13 @@ export interface Option {
 export type MaybeWithApplication<T> = T | ((a: Application) => T)
 
 export type FieldWidth = 'full' | 'half'
-export type TextFieldVariant = 'text' | 'email' | 'number' | 'tel' | 'textarea'
+export type TextFieldVariant =
+  | 'text'
+  | 'email'
+  | 'number'
+  | 'tel'
+  | 'textarea'
+  | 'currency'
 
 export type Context = {
   application: Application
