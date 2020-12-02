@@ -9,7 +9,6 @@ export default {
   redis: {
     urls: [process.env.REDIS_URL_NODE_01],
   },
-  servicePortalBasePath: process.env.SERVICE_PORTAL_BASE_PATH,
   emailOptions: {
     useTestAccount: false,
     options: {

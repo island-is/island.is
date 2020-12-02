@@ -3,6 +3,7 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from './DataProviderResult'
+import fetch from 'isomorphic-fetch'
 
 export interface DataProvider {
   readonly type: string
@@ -13,6 +14,11 @@ export interface DataProvider {
 
 export abstract class BasicDataProvider implements DataProvider {
   readonly type!: string
+  readonly accessToken: string
+
+  constructor(accessToken = '') {
+    this.accessToken = accessToken
+  }
 
   /**
    * Use this method to fetch data from external APIs
@@ -20,6 +26,20 @@ export abstract class BasicDataProvider implements DataProvider {
    * could be beneficial in the function body
    */
   abstract async provide(application: Application): Promise<unknown>
+
+  protected async useGraphqlGateway(query: string): Promise<Response> {
+    return fetch(`http://localhost:4444/api/graphql`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        authorization: `Bearer ${this.accessToken}`,
+      },
+      body: JSON.stringify({
+        query,
+      }),
+    })
+  }
 
   // extend this method to transform a rejected response from the provide function to the proper type
   onProvideError(_: unknown): FailedDataProviderResult {

@@ -20,5 +20,4 @@ export default {
   emailOptions: {
     useTestAccount: true,
   },
-  servicePortalBasePath: undefined, // locally, do not depend on the user profile service being run as well
 }
