@@ -50,6 +50,7 @@ export interface ButtonProps {
   fluid?: boolean
   icon?: IconType
   iconType?: Type
+  iconPosition?: 'start' | 'end'
   type?: NativeButtonProps['type']
   lang?: string
   loading?: boolean
@@ -63,6 +64,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       size = 'default',
       icon,
       iconType = 'filled',
+      iconPosition = 'end',
       children,
       circle,
       type = 'button',
@@ -98,6 +100,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
             [styles.padding.utility]: variant === 'utility',
             [styles.isEmpty]: !children,
             [styles.loading]: loading,
+            [styles.iconPositionStart]: iconPosition === 'start',
           },
         )}
         disabled={disabled || loading}
@@ -117,8 +120,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
           </>
         ) : (
           <>
+            {icon && iconPosition === 'start' && (
+              <ButtonIcon icon={icon} type={iconType} />
+            )}
             {children}
-            {icon && <ButtonIcon icon={icon} type={iconType} />}
+            {icon && iconPosition === 'end' && (
+              <ButtonIcon icon={icon} type={iconType} />
+            )}
           </>
         )}
       </Box>

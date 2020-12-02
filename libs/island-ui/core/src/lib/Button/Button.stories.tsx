@@ -118,6 +118,14 @@ TextWithIcon.args = {
   icon: 'arrowForward',
 }
 
+export const TextWithIconPositionStart = Template.bind({})
+TextWithIconPositionStart.args = {
+  children: 'Text with icon',
+  variant: 'text',
+  icon: 'arrowBack',
+  iconPosition: 'start',
+}
+
 export const TextNegative = () => (
   <Box background="blue400" padding={4}>
     <Button colorScheme="negative" variant="text">
