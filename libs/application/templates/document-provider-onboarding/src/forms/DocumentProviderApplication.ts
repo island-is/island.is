@@ -23,8 +23,8 @@ export const DocumentProviderOnboarding: Form = buildForm({
         buildCustomField(
           {
             id: 'termsOfAgreement',
-            name: 'Skilmálar',
-            description: m.termsSection,
+            name: m.termsTitle,
+            description: m.termsSubTitle,
             component: 'TermsOfAgreement',
           },
           {},
@@ -152,33 +152,34 @@ export const DocumentProviderOnboarding: Form = buildForm({
       name: m.confirmationSection,
       children: [
         buildMultiField({
-          id: 'overview',
-          name: m.overview,
-          description: m.overviewIntro,
+          id: 'confirmation',
+          name: m.confirmationTitle,
+          description: m.confirmationSubTitle,
           children: [
-            buildCustomField(
-              {
-                id: 'review',
-                name: 'Yfirlit umsóknar',
-                component: 'Review',
-              },
-              {},
-            ),
+            buildCustomField({
+              id: 'confirmation',
+              name: m.confirmationTitle,
+              component: 'Review',
+            }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              name: 'Senda inn umsókn',
+              name: m.confirmationSubmitButton,
 
               actions: [
-                { event: 'SUBMIT', name: 'Senda inn umsókn', type: 'primary' },
+                {
+                  event: 'SUBMIT',
+                  name: m.confirmationSubmitButton,
+                  type: 'primary',
+                },
               ],
             }),
           ],
         }),
         buildCustomField(
           {
-            id: 'final',
-            name: 'Takk fyrir að sækja um',
+            id: 'thankYouScreen',
+            name: m.thankYouScreenTitle,
             component: 'ThankYouScreen',
           },
           {},
