@@ -70,5 +70,5 @@ export class Claim extends Model<Claim> {
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified!: Date
+  readonly modified?: Date
 }

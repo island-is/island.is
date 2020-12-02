@@ -63,7 +63,7 @@ export class UserIdentity extends Model<UserIdentity> {
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified!: Date
+  readonly modified?: Date
 
   @HasMany(() => Claim)
   @ApiProperty()

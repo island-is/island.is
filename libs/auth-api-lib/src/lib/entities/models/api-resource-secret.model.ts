@@ -64,5 +64,5 @@ export class ApiResourceSecret extends Model<ApiResourceSecret> {
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified!: Date
+  readonly modified?: Date
 }

@@ -64,5 +64,5 @@ export class ClientSecret extends Model<ClientSecret> {
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified!: Date
+  readonly modified?: Date
 }

@@ -43,5 +43,5 @@ export class ApiScopeUserClaim extends Model<ApiScopeUserClaim> {
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified!: Date
+  readonly modified?: Date
 }

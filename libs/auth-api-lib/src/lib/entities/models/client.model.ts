@@ -421,7 +421,7 @@ export class Client extends Model<Client> {
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified!: Date
+  readonly modified?: Date
 
   @HasMany(() => ClientAllowedScope)
   @ApiProperty()

@@ -43,5 +43,5 @@ export class ApiResourceScope extends Model<ApiResourceScope> {
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified!: Date
+  readonly modified?: Date
 }

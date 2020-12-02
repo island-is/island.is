@@ -43,5 +43,5 @@ export class ClientIdpRestrictions extends Model<ClientIdpRestrictions> {
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified!: Date
+  readonly modified?: Date
 }

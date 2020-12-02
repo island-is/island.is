@@ -45,5 +45,5 @@ export class ClientGrantType extends Model<ClientGrantType> {
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified!: Date
+  readonly modified?: Date
 }

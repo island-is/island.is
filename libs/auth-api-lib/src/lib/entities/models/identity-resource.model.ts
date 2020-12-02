@@ -91,5 +91,5 @@ export class IdentityResource extends Model<IdentityResource> {
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified!: Date
+  readonly modified?: Date
 }

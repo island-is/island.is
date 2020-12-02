@@ -91,5 +91,5 @@ export class ApiScope extends Model<ApiScope> {
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified!: Date
+  readonly modified?: Date
 }

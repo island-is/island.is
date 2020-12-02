@@ -45,5 +45,5 @@ export class IdentityResourceUserClaim extends Model<
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified!: Date
+  readonly modified?: Date
 }

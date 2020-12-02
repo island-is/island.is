@@ -69,7 +69,7 @@ export class ApiResource extends Model<ApiResource> {
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified!: Date
+  readonly modified?: Date
 
   @HasMany(() => ApiResourceScope)
   @ApiProperty()

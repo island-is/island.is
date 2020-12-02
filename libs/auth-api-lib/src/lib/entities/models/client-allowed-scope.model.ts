@@ -43,5 +43,5 @@ export class ClientAllowedScope extends Model<ClientAllowedScope> {
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified!: Date
+  readonly modified?: Date
 }

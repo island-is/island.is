@@ -5,6 +5,8 @@ import {
   Table,
   ForeignKey,
   PrimaryKey,
+  CreatedAt,
+  UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { Client } from './client.model'
@@ -41,4 +43,12 @@ export class ClientClaim extends Model<ClientClaim> {
   })
   @ApiProperty()
   value!: string
+
+  @CreatedAt
+  @ApiProperty()
+  readonly created!: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  readonly modified?: Date
 }

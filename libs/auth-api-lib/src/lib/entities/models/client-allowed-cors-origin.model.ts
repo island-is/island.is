@@ -43,5 +43,5 @@ export class ClientAllowedCorsOrigin extends Model<ClientAllowedCorsOrigin> {
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified!: Date
+  readonly modified?: Date
 }

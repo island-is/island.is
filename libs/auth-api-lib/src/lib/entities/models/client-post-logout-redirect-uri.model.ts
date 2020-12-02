@@ -45,5 +45,5 @@ export class ClientPostLogoutRedirectUri extends Model<
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified!: Date
+  readonly modified?: Date
 }

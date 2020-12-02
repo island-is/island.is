@@ -44,5 +44,5 @@ export class GrantType extends Model<GrantType> {
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified!: Date
+  readonly modified?: Date
 }
