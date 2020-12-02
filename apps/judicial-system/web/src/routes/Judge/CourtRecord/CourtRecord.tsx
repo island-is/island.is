@@ -33,6 +33,12 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
+import {
+  validateAndSendTimeToServer,
+  validateAndSendToServer,
+  removeTabsValidateAndSet,
+  validateAndSetTime,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 
 interface CaseData {
   case?: Case
@@ -138,44 +144,29 @@ export const CourtRecord: React.FC = () => {
                 <GridRow>
                   <GridColumn span="5/12">
                     <TimeInputField
-                      onBlur={(evt) => {
-                        const time = padTimeWithZero(evt.target.value)
-                        const validateTimeEmpty = validate(time, 'empty')
-                        const validateTimeFormat = validate(time, 'time-format')
-
-                        if (
-                          validateTimeEmpty.isValid &&
-                          validateTimeFormat.isValid
-                        ) {
-                          const courtStartTimeMinutes = parseTime(
-                            new Date().toString(),
-                            time,
-                          )
-
-                          setWorkingCase({
-                            ...workingCase,
-                            courtStartTime: courtStartTimeMinutes,
-                          })
-
-                          if (
-                            courtStartTimeMinutes !== workingCase.courtStartTime
-                          ) {
-                            updateCase(
-                              workingCase.id,
-                              parseString(
-                                'courtStartTime',
-                                courtStartTimeMinutes,
-                              ),
-                            )
-                          }
-                        } else {
-                          setCourtDocumentStartErrorMessage(
-                            validateTimeEmpty.errorMessage ||
-                              validateTimeFormat.errorMessage,
-                          )
-                        }
-                      }}
-                      onFocus={() => setCourtDocumentStartErrorMessage('')}
+                      onChange={(evt) =>
+                        validateAndSetTime(
+                          'courtStartTime',
+                          new Date().toString(),
+                          evt.target.value,
+                          ['empty', 'time-format'],
+                          workingCase,
+                          setWorkingCase,
+                          courtDocumentStartErrorMessage,
+                          setCourtDocumentStartErrorMessage,
+                        )
+                      }
+                      onBlur={(evt) =>
+                        validateAndSendTimeToServer(
+                          'courtStartTime',
+                          new Date().toString(),
+                          evt.target.value,
+                          ['empty', 'time-format'],
+                          workingCase,
+                          updateCase,
+                          setCourtDocumentStartErrorMessage,
+                        )
+                      }
                     >
                       <Input
                         data-testid="courtStartTime"
@@ -202,30 +193,29 @@ export const CourtRecord: React.FC = () => {
                 label="Viðstaddir og hlutverk þeirra"
                 defaultValue={workingCase?.courtAttendees}
                 placeholder="Skrifa hér..."
-                onBlur={(evt) => {
-                  const validateEmpty = validate(evt.target.value, 'empty')
-
-                  setWorkingCase({
-                    ...workingCase,
-                    courtAttendees: evt.target.value,
-                  })
-
-                  if (
-                    validateEmpty.isValid &&
-                    workingCase.courtAttendees !== evt.target.value
-                  ) {
-                    updateCase(
-                      workingCase.id,
-                      parseString('courtAttendees', evt.target.value),
-                    )
-                  } else {
-                    setCourtAttendeesMessage(validateEmpty.errorMessage)
-                  }
-                }}
-                onChange={replaceTabsOnChange}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'courtAttendees',
+                    event,
+                    ['empty'],
+                    workingCase,
+                    setWorkingCase,
+                    courtAttendeesErrorMessage,
+                    setCourtAttendeesMessage,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'courtAttendees',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setCourtAttendeesMessage,
+                  )
+                }
                 errorMessage={courtAttendeesErrorMessage}
                 hasError={courtAttendeesErrorMessage !== ''}
-                onFocus={() => setCourtAttendeesMessage('')}
                 textarea
                 rows={7}
                 required
@@ -237,29 +227,29 @@ export const CourtRecord: React.FC = () => {
               label="Krafa lögreglu"
               defaultValue={workingCase?.policeDemands}
               placeholder="Hvað hafði ákæruvaldið að segja?"
-              onBlur={(evt) => {
-                const validateEmpty = validate(evt.target.value, 'empty')
-                setWorkingCase({
-                  ...workingCase,
-                  policeDemands: evt.target.value,
-                })
-
-                if (
-                  validateEmpty.isValid &&
-                  workingCase.policeDemands !== evt.target.value
-                ) {
-                  updateCase(
-                    workingCase.id,
-                    parseString('policeDemands', evt.target.value),
-                  )
-                } else {
-                  setPoliceDemandsMessage(validateEmpty.errorMessage)
-                }
-              }}
-              onChange={replaceTabsOnChange}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'policeDemands',
+                  event,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                  policeDemandsErrorMessage,
+                  setPoliceDemandsMessage,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'policeDemands',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setPoliceDemandsMessage,
+                )
+              }
               errorMessage={policeDemandsErrorMessage}
               hasError={policeDemandsErrorMessage !== ''}
-              onFocus={() => setPoliceDemandsMessage('')}
               textarea
               rows={7}
               required
@@ -302,29 +292,29 @@ export const CourtRecord: React.FC = () => {
               label="Afstaða kærða"
               defaultValue={workingCase.accusedPlea}
               placeholder="Hvað hafði kærði að segja um kröfuna? Mótmælti eða samþykkti?"
-              onBlur={(evt) => {
-                const validateEmpty = validate(evt.target.value, 'empty')
-                setWorkingCase({
-                  ...workingCase,
-                  accusedPlea: evt.target.value,
-                })
-
-                if (
-                  validateEmpty.isValid &&
-                  workingCase.accusedPlea !== evt.target.value
-                ) {
-                  updateCase(
-                    workingCase.id,
-                    parseString('accusedPlea', evt.target.value),
-                  )
-                } else {
-                  setAccusedPleaMessage(validateEmpty.errorMessage)
-                }
-              }}
-              onChange={replaceTabsOnChange}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'accusedPlea',
+                  event,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                  accusedPleaErrorMessage,
+                  setAccusedPleaMessage,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'accusedPlea',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setAccusedPleaMessage,
+                )
+              }
               errorMessage={accusedPleaErrorMessage}
               hasError={accusedPleaErrorMessage !== ''}
-              onFocus={() => setAccusedPleaMessage('')}
               textarea
               rows={7}
               required
@@ -343,31 +333,29 @@ export const CourtRecord: React.FC = () => {
                 label="Málflutningsræður"
                 defaultValue={workingCase.litigationPresentations}
                 placeholder="Almennar málflutningsræður skráðar hér..."
-                onBlur={(evt) => {
-                  const validateEmpty = validate(evt.target.value, 'empty')
-                  setWorkingCase({
-                    ...workingCase,
-                    litigationPresentations: evt.target.value,
-                  })
-
-                  if (
-                    validateEmpty.isValid &&
-                    workingCase.litigationPresentations !== evt.target.value
-                  ) {
-                    updateCase(
-                      workingCase.id,
-                      parseString('litigationPresentations', evt.target.value),
-                    )
-                  } else {
-                    setLitigationPresentationsMessage(
-                      validateEmpty.errorMessage,
-                    )
-                  }
-                }}
-                onChange={replaceTabsOnChange}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'litigationPresentations',
+                    event,
+                    ['empty'],
+                    workingCase,
+                    setWorkingCase,
+                    litigationPresentationsErrorMessage,
+                    setLitigationPresentationsMessage,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'litigationPresentations',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setLitigationPresentationsMessage,
+                  )
+                }
                 errorMessage={litigationPresentationsErrorMessage}
                 hasError={litigationPresentationsErrorMessage !== ''}
-                onFocus={() => setLitigationPresentationsMessage('')}
                 textarea
                 rows={7}
                 required
@@ -378,39 +366,29 @@ export const CourtRecord: React.FC = () => {
               <GridRow>
                 <GridColumn>
                   <TimeInputField
-                    onBlur={(evt) => {
-                      const time = padTimeWithZero(evt.target.value)
-                      const validateTimeEmpty = validate(time, 'empty')
-                      const validateTimeFormat = validate(time, 'time-format')
-
-                      if (
-                        validateTimeEmpty.isValid &&
-                        validateTimeFormat.isValid
-                      ) {
-                        const courtEndTimeMinutes = parseTime(
-                          new Date().toString(),
-                          time,
-                        )
-
-                        setWorkingCase({
-                          ...workingCase,
-                          courtEndTime: courtEndTimeMinutes,
-                        })
-
-                        if (courtEndTimeMinutes !== workingCase.courtEndTime) {
-                          updateCase(
-                            workingCase.id,
-                            parseString('courtEndTime', courtEndTimeMinutes),
-                          )
-                        }
-                      } else {
-                        setCourtDocumentEndErrorMessage(
-                          validateTimeEmpty.errorMessage ||
-                            validateTimeFormat.errorMessage,
-                        )
-                      }
-                    }}
-                    onFocus={() => setCourtDocumentEndErrorMessage('')}
+                    onChange={(evt) =>
+                      validateAndSetTime(
+                        'courtEndTime',
+                        new Date().toString(),
+                        evt.target.value,
+                        ['empty', 'time-format'],
+                        workingCase,
+                        setWorkingCase,
+                        courtDocumentEndErrorMessage,
+                        setCourtDocumentEndErrorMessage,
+                      )
+                    }
+                    onBlur={(evt) =>
+                      validateAndSendTimeToServer(
+                        'courtEndTime',
+                        new Date().toString(),
+                        evt.target.value,
+                        ['empty', 'time-format'],
+                        workingCase,
+                        updateCase,
+                        setCourtDocumentEndErrorMessage,
+                      )
+                    }
                   >
                     <Input
                       data-testid="courtEndTime"
