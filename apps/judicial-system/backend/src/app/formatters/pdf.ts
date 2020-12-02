@@ -12,6 +12,7 @@ import {
   formatDate,
   formatGender,
   formatNationalId,
+  formatRestrictions,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -22,7 +23,6 @@ import {
   formatCourtCaseNumber,
   formatCustodyProvisions,
   formatProsecutorDemands,
-  formatRestrictions,
 } from './formatters'
 
 export function writeFile(fileName: string, documentContent: string) {
