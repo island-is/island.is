@@ -59,9 +59,9 @@ export const ServiceListContainer: React.FC<ServiceListContainerProps> = ({
   tagDisplayNames = {},
   loading = true,
   moreToLoad = true,
-  emptyListText = 'Engin þjónusta fannst!',
+  emptyListText = 'No service was found',
   errorMessage = null,
-  loadMoreButtonText = 'Sjá fleiri',
+  loadMoreButtonText = 'See more',
   onLoadMoreClick,
   children,
 }) => {
