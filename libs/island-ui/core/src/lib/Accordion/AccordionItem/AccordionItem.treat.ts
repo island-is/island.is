@@ -97,11 +97,13 @@ export const plusIconWrap = style({
 
 const iconWrapSizes = {
   default: 40,
+  small: 24,
   sidebar: 20,
 }
 
 const iconSizes = {
   default: 20,
+  small: 9,
   sidebar: 12,
 }
 
@@ -112,12 +114,19 @@ export const iconWrapVariants = styleMap({
     width: iconWrapSizes.default,
     height: iconWrapSizes.default,
   },
+  small: {
+    backgroundColor: theme.color.blue100,
+    color: theme.color.blue400,
+    width: iconWrapSizes.small,
+    height: iconWrapSizes.small,
+  },
   sidebar: {
     backgroundColor: theme.color.purple200,
     color: theme.color.purple400,
     width: iconWrapSizes.sidebar,
     height: iconWrapSizes.sidebar,
   },
+  
 })
 
 export const plusIcon = style({
@@ -131,6 +140,10 @@ export const iconVariants = styleMap({
   default: {
     width: iconSizes.default,
     height: iconSizes.default,
+  },
+  small: {
+    width: iconSizes.small,
+    height: iconSizes.small,
   },
   sidebar: {
     width: iconSizes.sidebar,
