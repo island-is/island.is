@@ -45,7 +45,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import {
   validateAndSendToServer,
-  RemoveTabsValidateAndSet,
+  removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 interface CaseData {
@@ -121,7 +121,7 @@ export const JudgeOverview: React.FC = () => {
                 errorMessage={courtCaseNumberErrorMessage}
                 hasError={courtCaseNumberErrorMessage !== ''}
                 onChange={(event) =>
-                  RemoveTabsValidateAndSet(
+                  removeTabsValidateAndSet(
                     'courtCaseNumber',
                     event,
                     ['empty'],

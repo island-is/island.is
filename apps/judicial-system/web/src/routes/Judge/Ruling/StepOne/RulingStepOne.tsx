@@ -49,7 +49,7 @@ import {
   setAndSendToServer,
   validateAndSendTimeToServer,
   validateAndSendToServer,
-  RemoveTabsValidateAndSet,
+  removeTabsValidateAndSet,
   validateAndSetTime,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 
@@ -169,7 +169,7 @@ export const RulingStepOne: React.FC = () => {
                 errorMessage={rulingErrorMessage}
                 hasError={rulingErrorMessage !== ''}
                 onChange={(event) =>
-                  RemoveTabsValidateAndSet(
+                  removeTabsValidateAndSet(
                     'ruling',
                     event,
                     ['empty'],

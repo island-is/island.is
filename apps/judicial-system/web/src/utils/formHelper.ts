@@ -8,7 +8,7 @@ import {
 import { validate, Validation } from './validate'
 import formatISO from 'date-fns/formatISO'
 
-export const RemoveTabsValidateAndSet = (
+export const removeTabsValidateAndSet = (
   field: string,
   evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   validations: Validation[],

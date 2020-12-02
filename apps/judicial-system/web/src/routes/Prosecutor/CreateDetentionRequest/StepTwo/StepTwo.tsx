@@ -52,7 +52,7 @@ import {
   setAndSendDateToServer,
   validateAndSendTimeToServer,
   validateAndSendToServer,
-  RemoveTabsValidateAndSet,
+  removeTabsValidateAndSet,
   validateAndSetTime,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 
@@ -346,7 +346,7 @@ export const StepTwo: React.FC = () => {
               errorMessage={lawsBrokenErrorMessage}
               hasError={lawsBrokenErrorMessage !== ''}
               onChange={(event) =>
-                RemoveTabsValidateAndSet(
+                removeTabsValidateAndSet(
                   'lawsBroken',
                   event,
                   ['empty'],
@@ -563,7 +563,7 @@ export const StepTwo: React.FC = () => {
                 hasError={caseFactsErrorMessage !== ''}
                 defaultValue={workingCase?.caseFacts}
                 onChange={(event) =>
-                  RemoveTabsValidateAndSet(
+                  removeTabsValidateAndSet(
                     'caseFacts',
                     event,
                     ['empty'],
@@ -598,7 +598,7 @@ export const StepTwo: React.FC = () => {
                 errorMessage={legalArgumentsErrorMessage}
                 hasError={legalArgumentsErrorMessage !== ''}
                 onChange={(event) =>
-                  RemoveTabsValidateAndSet(
+                  removeTabsValidateAndSet(
                     'legalArguments',
                     event,
                     ['empty'],
@@ -641,7 +641,7 @@ export const StepTwo: React.FC = () => {
                   placeholder="Er eitthvað sem þú vilt koma á framfæri við dómara sem tengist kröfunni eða ástandi sakbornings?"
                   defaultValue={workingCase?.comments}
                   onChange={(event) =>
-                    RemoveTabsValidateAndSet(
+                    removeTabsValidateAndSet(
                       'comments',
                       event,
                       [],

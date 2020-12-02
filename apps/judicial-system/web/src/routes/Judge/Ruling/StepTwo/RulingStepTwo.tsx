@@ -35,7 +35,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import {
   validateAndSendToServer,
-  RemoveTabsValidateAndSet,
+  removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 export const RulingStepTwo: React.FC = () => {
@@ -260,7 +260,7 @@ export const RulingStepTwo: React.FC = () => {
                 }
                 placeholder="Í hvaða skyni er kært?"
                 onChange={(event) =>
-                  RemoveTabsValidateAndSet(
+                  removeTabsValidateAndSet(
                     'accusedAppealAnnouncement',
                     event,
                     [],
@@ -390,7 +390,7 @@ export const RulingStepTwo: React.FC = () => {
                 }
                 placeholder="Í hvaða skyni er kært?"
                 onChange={(event) =>
-                  RemoveTabsValidateAndSet(
+                  removeTabsValidateAndSet(
                     'prosecutorAppealAnnouncement',
                     event,
                     ['email-format'],
