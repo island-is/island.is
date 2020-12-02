@@ -1,5 +1,6 @@
 import React, { ElementType, FC, ReactElement } from 'react'
 import cn from 'classnames'
+import HtmlParser from 'react-html-parser'
 import {
   Tooltip as ReakitTooltip,
   TooltipArrow,
@@ -107,7 +108,7 @@ export const Tooltip: FC<TooltipProps> = ({
           <TooltipArrow {...tooltip}>
             <ArrowIcon placement={tooltip.placement} />
           </TooltipArrow>
-          {text}
+          {HtmlParser(text)}
         </div>
       </ReakitTooltip>
     </>
