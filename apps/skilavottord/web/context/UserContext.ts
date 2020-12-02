@@ -1,10 +1,12 @@
 import { createContext } from 'react'
 import { User } from '../types'
 
-const UserContext = createContext({
-  isAuthenticated: false,
-  user: null as User,
-  setUser: (_: User) => undefined,
-})
+export interface UserProvider {
+  isAuthenticated?: boolean
+  user?: User
+  setUser?: React.Dispatch<React.SetStateAction<User | undefined>>
+}
+
+const UserContext = createContext<UserProvider>({})
 
 export default UserContext

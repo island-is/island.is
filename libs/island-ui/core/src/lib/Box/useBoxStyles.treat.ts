@@ -201,6 +201,7 @@ const positionRules = {
   relative: 'relative',
   fixed: 'fixed',
   static: 'static',
+  sticky: 'sticky',
 }
 export const position = styleMap(mapToStyleProperty(positionRules, 'position'))
 
@@ -387,6 +388,34 @@ const flexWrapRules = {
   nowrap: 'nowrap',
 }
 export const flexWrap = styleMap(mapToStyleProperty(flexWrapRules, 'flexWrap'))
+export const flexWrapSm = styleMap(
+  mapToStyleProperty(flexWrapRules, 'flexWrap', (value, propertyName) =>
+    themeUtils.responsiveStyle({
+      sm: { [propertyName]: value },
+    }),
+  ),
+)
+export const flexWrapMd = styleMap(
+  mapToStyleProperty(flexWrapRules, 'flexWrap', (value, propertyName) =>
+    themeUtils.responsiveStyle({
+      md: { [propertyName]: value },
+    }),
+  ),
+)
+export const flexWrapLg = styleMap(
+  mapToStyleProperty(flexWrapRules, 'flexWrap', (value, propertyName) =>
+    themeUtils.responsiveStyle({
+      lg: { [propertyName]: value },
+    }),
+  ),
+)
+export const flexWrapXl = styleMap(
+  mapToStyleProperty(flexWrapRules, 'flexWrap', (value, propertyName) =>
+    themeUtils.responsiveStyle({
+      xl: { [propertyName]: value },
+    }),
+  ),
+)
 
 const flexShrinkRules = {
   0: 0,

@@ -2,7 +2,9 @@
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "types": ["node", "jest"],
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": [],
   "files": [],

@@ -18,7 +18,6 @@ import {
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
 import { serviceIdSort, exceptionHandler } from './utils'
-import { uuid } from 'uuidv4'
 
 @Injectable()
 export class RestMetadataService {
@@ -36,9 +35,10 @@ export class RestMetadataService {
 
     for (const [_, value] of serviceMap) {
       const sorted = value.sort(serviceIdSort)
+      const serviceId = this.createServiceId(sorted[0])
 
       const service: Service = {
-        id: uuid().split('-').join(''),
+        id: serviceId,
         name: '',
         owner: '',
         description: '',
@@ -61,8 +61,7 @@ export class RestMetadataService {
           // The list is sorted for the latest service version to be the last element
           // so name, owner and description will be from the latest version.
           service.name = spec.info.title
-          service.owner =
-            spec.info.contact?.name || provider.xroadInfo.subsystemCode // ToDo: Maybe update to use provider.memberCode to look up the name
+          service.owner = provider.name
           service.description = spec.info.description ?? ''
           service.data = union(service.data, spec.info['x-category'])
           service.pricing = union(service.pricing, spec.info['x-pricing'])
@@ -204,5 +203,21 @@ export class RestMetadataService {
     }
 
     return true
+  }
+
+  /**
+   * Creates a single service id for the service based on the service code and X-Road info.
+   * @param xroadIdentifier
+   */
+  private createServiceId(xroadIdentifier: XroadIdentifier): string {
+    const serviceCode = xroadIdentifier.serviceCode?.split('-')[0]
+    const serviceId = `${xroadIdentifier.instance}_${xroadIdentifier.memberClass}_${xroadIdentifier.memberCode}_${xroadIdentifier.subsystemCode}_${serviceCode}`
+
+    //Remove tokens that interrupt URLs
+    return Buffer.from(serviceId)
+      .toString('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '')
   }
 }

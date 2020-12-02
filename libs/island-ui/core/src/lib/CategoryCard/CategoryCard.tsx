@@ -53,6 +53,7 @@ export const CategoryCard = ({
       borderColor={borderColor}
       borderWidth="standard"
       height="full"
+      background="white"
     >
       <Text variant="h3" color={textColor}>
         {heading}
@@ -62,7 +63,12 @@ export const CategoryCard = ({
         <Box paddingTop={3}>
           <Inline space={['smallGutter', 'smallGutter', 'gutter']}>
             {tags.map((tag) => (
-              <Tag variant={tagVariant} href={tag.href} onClick={tag.onClick}>
+              <Tag
+                outlined={!tag.href}
+                variant={tagVariant}
+                href={tag.href}
+                onClick={tag.onClick}
+              >
                 {tag.label}
               </Tag>
             ))}

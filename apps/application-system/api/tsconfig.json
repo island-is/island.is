@@ -5,7 +5,9 @@
     "types": ["node", "jest"],
     "emitDecoratorMetadata": true,
     "target": "es2015",
-    "strict": true
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": [],
   "files": [],

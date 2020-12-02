@@ -425,30 +425,30 @@ export class Client extends Model<Client> {
 
   @HasMany(() => ClientAllowedScope)
   @ApiProperty()
-  readonly allowedScopes: ClientAllowedScope[]
+  allowedScopes: ClientAllowedScope[]
 
   @HasMany(() => ClientAllowedCorsOrigin)
   @ApiProperty()
-  readonly allowedCorsOrigins: ClientAllowedCorsOrigin[]
+  allowedCorsOrigins: ClientAllowedCorsOrigin[]
 
   @HasMany(() => ClientPostLogoutRedirectUri)
   @ApiProperty()
-  readonly postLogoutRedirectUris: ClientPostLogoutRedirectUri[]
+  postLogoutRedirectUris: ClientPostLogoutRedirectUri[]
 
   @HasMany(() => ClientRedirectUri)
-  readonly redirectUris: ClientRedirectUri[]
+  redirectUris: ClientRedirectUri[]
 
   @HasMany(() => ClientIdpRestrictions)
-  readonly identityProviderRestrictions: ClientIdpRestrictions[]
+  identityProviderRestrictions: ClientIdpRestrictions[]
 
   @HasMany(() => ClientSecret)
-  readonly clientSecrets: ClientSecret[]
+  clientSecrets: ClientSecret[]
 
   @HasMany(() => ClientGrantType)
-  readonly allowedGrantTypes: ClientGrantType[]
+  allowedGrantTypes: ClientGrantType[]
 
   @HasMany(() => ClientClaim)
-  readonly claims: ClientClaim[]
+  claims: ClientClaim[]
 
   // Signing algorithm for identity token. If empty, will use the server default signing algorithm.
   // readonly allowedIdentityTokenSigningAlgorithms

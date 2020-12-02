@@ -32,7 +32,7 @@
     "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "ts-node": "cross-env ts-node -r tsconfig-paths/register -O '{\\\"module\\\":\\\"commonjs\\\",\\\"esModuleInterop\\\":true,\\\"strict\\\":false}'",
+    "ts-node": "cross-env ts-node -r tsconfig-paths/register -O '{\\\"module\\\":\\\"commonjs\\\",\\\"esModuleInterop\\\":true}'",
     "openapi-generator": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true",
     "schemas": "node ./scripts/schemas.js",
     "postinstall": "node ./scripts/postinstall.js",
@@ -81,6 +81,7 @@
     "@types/passport-jwt": "3.0.3",
     "@types/pdfkit": "0.10.6",
     "@types/pubsub-js": "1.8.1",
+    "@types/react-input-mask": "3.0.0",
     "@types/react-table": "7.0.24",
     "@types/stream-buffers": "3.0.3",
     "@xstate/react": "0.8.1",
@@ -138,7 +139,7 @@
     "intl-locales-supported": "1.8.12",
     "ioredis": "4.17.3",
     "is-circular": "1.0.2",
-    "islandis-login": "1.1.4",
+    "islandis-login": "1.1.6",
     "isomorphic-fetch": "2.2.1",
     "isomorphic-unfetch": "3.0.0",
     "js-base64": "2.5.2",
@@ -178,6 +179,7 @@
     "react-focus-lock": "2.4.1",
     "react-hook-form": "6.4.1",
     "react-html-parser": "2.0.2",
+    "react-input-mask": "3.0.0-alpha.2",
     "react-intl": "5.8.0",
     "react-keyed-flatten-children": "1.2.0",
     "react-number-format": "4.4.1",
@@ -209,6 +211,7 @@
     "uuidv4": "6.0.8",
     "webcrypto-jwt": "0.2.2",
     "winston": "3.3.3",
+    "winston-cloudwatch": "2.4.0",
     "winston-transport": "4.4.0",
     "xml2js": "0.4.23",
     "xstate": "4.13.0",
@@ -321,8 +324,8 @@
   "resolutions": {
     "webpack": "4.44.1",
     "serialize-javascript": "4.0.0",
-    "http-proxy": "1.18.1",
     "node-forge": "0.10.0",
-    "object-path": "0.11.5"
+    "object-path": "0.11.5",
+    "xml-crypto": "2.0.0"
   }
 }

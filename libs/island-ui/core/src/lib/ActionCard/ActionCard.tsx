@@ -89,7 +89,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     return (
       <Stack space="gutter">
         {tag.label && (
-          <Tag label variant={tag.variant}>
+          <Tag outlined variant={tag.variant}>
             {tag.label}
           </Tag>
         )}

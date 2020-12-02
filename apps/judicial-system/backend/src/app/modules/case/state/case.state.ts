@@ -12,22 +12,22 @@ interface Agent {
 }
 
 interface Rule {
-  from: CaseState
+  from: CaseState[]
   to: CaseState
   agent: Agent
 }
 
 export interface TransitionUpdate {
   state: CaseState
-  prosecutor?: string
-  judge?: string
+  prosecutorId?: string
+  judgeId?: string
 }
 
 const caseStateMachine: Map<CaseTransition, Rule> = new Map([
   [
     CaseTransition.OPEN,
     {
-      from: CaseState.NEW,
+      from: [CaseState.NEW],
       to: CaseState.DRAFT,
       agent: { role: UserRole.PROSECUTOR, userKey: 'prosecutorId' },
     },
@@ -35,7 +35,7 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
   [
     CaseTransition.SUBMIT,
     {
-      from: CaseState.DRAFT,
+      from: [CaseState.DRAFT],
       to: CaseState.SUBMITTED,
       agent: { role: UserRole.PROSECUTOR, userKey: 'prosecutorId' },
     },
@@ -43,7 +43,7 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
   [
     CaseTransition.ACCEPT,
     {
-      from: CaseState.SUBMITTED,
+      from: [CaseState.SUBMITTED],
       to: CaseState.ACCEPTED,
       agent: { role: UserRole.JUDGE, userKey: 'judgeId' },
     },
@@ -51,9 +51,17 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
   [
     CaseTransition.REJECT,
     {
-      from: CaseState.SUBMITTED,
+      from: [CaseState.SUBMITTED],
       to: CaseState.REJECTED,
       agent: { role: UserRole.JUDGE, userKey: 'judgeId' },
+    },
+  ],
+  [
+    CaseTransition.DELETE,
+    {
+      from: [CaseState.NEW, CaseState.DRAFT],
+      to: CaseState.DELETED,
+      agent: { role: UserRole.PROSECUTOR, userKey: 'prosecutorId' },
     },
   ],
 ])
@@ -66,7 +74,7 @@ export const transitionCase = function (
 ): TransitionUpdate {
   const rule: Rule = caseStateMachine.get(transition)
 
-  if (rule?.from !== currentState) {
+  if (!rule?.from.includes(currentState)) {
     throw new ForbiddenException(
       `The transition ${transition} cannot be applied to a case in state ${currentState}`,
     )

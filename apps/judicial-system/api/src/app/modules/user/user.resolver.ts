@@ -1,11 +1,11 @@
-import { Query, Resolver, Context } from '@nestjs/graphql'
+import { Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { User as TUser } from '@island.is/judicial-system/types'
 
-import { CurrentAuthUser, AuthUser, JwtAuthGuard } from '../auth'
+import { CurrentUser, JwtAuthGuard } from '../auth'
 import { User } from './user.model'
-import { BackendAPI } from '../../../services'
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => User)
@@ -16,16 +16,9 @@ export class UserResolver {
   ) {}
 
   @Query(() => User, { nullable: true })
-  async user(
-    @CurrentAuthUser() authUser: AuthUser,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<User | undefined> {
+  async user(@CurrentUser() user: TUser): Promise<User | undefined> {
     this.logger.debug('Getting current user')
 
-    if (!authUser) {
-      return undefined
-    }
-
-    return backendApi.getUser(authUser.nationalId)
+    return user as User
   }
 }

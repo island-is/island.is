@@ -23,8 +23,21 @@ import {
   ALL_RECYCLING_PARTNERS,
   VEHICLES_BY_PARTNER_ID,
 } from '@island.is/skilavottord-web/graphql/queries'
-import { RecyclingPartner } from '@island.is/skilavottord-web/types'
+import {
+  RecyclingPartner,
+  RecyclingRequest,
+  Vehicle,
+  VehicleOwner,
+} from '@island.is/skilavottord-web/types'
 import { getDate, getYear } from '@island.is/skilavottord-web/utils/dateUtils'
+
+export interface DeregisteredVehicle {
+  vehicleId: string
+  vehicleType: string
+  modelYear: string
+  nameOfRequestor: string
+  deregistrationDate: string
+}
 
 const Overview: FC = () => {
   const { user } = useContext(UserContext)
@@ -33,10 +46,11 @@ const Overview: FC = () => {
   } = useI18n()
   const router = useRouter()
 
-  const partnerId = user?.partnerId ?? ''
+  const partnerId = user?.partnerId
   const { data: vehicleData } = useQuery(VEHICLES_BY_PARTNER_ID, {
     variables: { partnerId },
     fetchPolicy: 'cache-and-network',
+    skip: !partnerId,
   })
 
   const { data: partnerData } = useQuery(ALL_RECYCLING_PARTNERS, {
@@ -51,23 +65,29 @@ const Overview: FC = () => {
   )[0]
 
   const getDeregisteredCars = () => {
-    const deregisteredVehicles = []
-    const owners = vehicleOwners?.map(({ vehicles }) =>
+    const deregisteredVehicles = [] as DeregisteredVehicle[]
+    const owners = vehicleOwners?.map(({ vehicles }: VehicleOwner) =>
       vehicles.map(
-        ({ vehicleId, vehicleType, newregDate, recyclingRequests }) =>
-          recyclingRequests.map(
-            ({ requestType, nameOfRequestor, createdAt }) => {
-              if (requestType === 'deregistered') {
-                deregisteredVehicles.push({
-                  vehicleId,
-                  vehicleType,
-                  modelYear: getYear(newregDate),
-                  nameOfRequestor,
-                  deregistrationDate: getDate(createdAt),
-                })
-              }
-            },
-          ),
+        ({
+          vehicleId,
+          vehicleType,
+          newregDate,
+          recyclingRequests,
+        }: Vehicle) => {
+          return recyclingRequests.map((request: RecyclingRequest) => {
+            const { requestType, nameOfRequestor, createdAt } = request
+            if (requestType === 'deregistered') {
+              deregisteredVehicles.push({
+                vehicleId,
+                vehicleType,
+                modelYear: getYear(newregDate),
+                nameOfRequestor,
+                deregistrationDate: getDate(createdAt),
+              })
+            }
+            return request
+          })
+        },
       ),
     )
     return deregisteredVehicles

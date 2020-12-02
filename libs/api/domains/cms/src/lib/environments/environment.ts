@@ -8,6 +8,7 @@ export default {
     'articleCategory',
     'news',
     'page',
+    'vidspyrnaPage',
   ],
   nestedContentTypes: [
     'processEntry',

@@ -22,10 +22,15 @@ import { VEHICLES_BY_NATIONAL_ID } from '@island.is/skilavottord-web/graphql/que
 import CompanyList from './components/CompanyList'
 import * as styles from './Handover.treat'
 import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
+import {
+  Car,
+  RecyclingRequestMutation,
+  RecyclingRequestTypes,
+} from '@island.is/skilavottord-web/types'
 
 const Handover: FC = () => {
   const { user } = useContext(UserContext)
-  const [requestType, setRequestType] = useState(null)
+  const [requestType, setRequestType] = useState<RecyclingRequestTypes>()
   const [isInvalidCar, setInvalidCar] = useState(false)
   const [showModal, setModal] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
@@ -45,12 +50,12 @@ const Handover: FC = () => {
   })
 
   const cars = data?.skilavottordVehicles || []
-  const activeCar = cars.filter((car) => car.permno === id)[0]
+  const activeCar = cars.filter((car: Car) => car.permno === id)[0]
 
   const [
     setRecyclingRequest,
     { data: mutationData, error: mutationError, loading: mutationLoading },
-  ] = useMutation(CREATE_RECYCLING_REQUEST_CITIZEN, {
+  ] = useMutation<RecyclingRequestMutation>(CREATE_RECYCLING_REQUEST_CITIZEN, {
     onCompleted() {
       if (requestType === 'cancelled') {
         setModal(false)
@@ -94,13 +99,14 @@ const Handover: FC = () => {
           } else {
             setInvalidCar(true)
           }
+          break
         default:
           break
       }
     } else {
       setInvalidCar(true)
     }
-  }, [user, id, activeCar])
+  }, [user, id, activeCar, setRecyclingRequest])
 
   const routeHome = () => {
     localStorage.clear()
@@ -135,7 +141,7 @@ const Handover: FC = () => {
   ) {
     return (
       <ProcessPageLayout
-        sectionType={'citizen'}
+        processType={'citizen'}
         activeSection={1}
         activeCar={id.toString()}
       >
@@ -169,7 +175,7 @@ const Handover: FC = () => {
 
   return (
     <ProcessPageLayout
-      sectionType={'citizen'}
+      processType={'citizen'}
       activeSection={1}
       activeCar={id.toString()}
     >
