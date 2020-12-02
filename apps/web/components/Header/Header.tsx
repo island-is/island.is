@@ -32,6 +32,7 @@ const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 export const Header: FC<HeaderProps> = ({
   showSearchInHeader = true,
   buttonColorScheme = 'default',
+  children,
 }) => {
   const { activeLocale, t } = useI18n()
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
@@ -159,6 +160,7 @@ export const Header: FC<HeaderProps> = ({
           </ColorSchemeContext.Provider>
         </GridContainer>
       </Hidden>
+      {children}
     </header>
   )
 }
