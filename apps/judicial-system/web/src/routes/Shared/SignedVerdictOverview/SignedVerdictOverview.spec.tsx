@@ -7,8 +7,7 @@ import { MockedProvider } from '@apollo/client/testing'
 import * as Constants from '../../../utils/constants'
 import '@testing-library/jest-dom'
 import { UserProvider } from '../../../shared-components/UserProvider/UserProvider'
-import { formatDate, TIME_FORMAT } from 'libs/judicial-system/formatters/src'
-import { formatISO } from 'date-fns'
+import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 
 describe('Signed Verdict Overview route', () => {
   describe('Rejected case', () => {
@@ -235,13 +234,6 @@ describe('Signed Verdict Overview route', () => {
   })
 
   test('should display restriction tags if there are restrictions', async () => {
-    const dateInPast = new Date(
-      new Date().getFullYear(),
-      new Date().getMonth(),
-      new Date().getDate() - 1,
-      new Date().getHours(),
-    )
-
     render(
       <MockedProvider
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}

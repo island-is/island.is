@@ -51,7 +51,6 @@ export const CaseQuery = gql`
       accusedAppealAnnouncement
       prosecutorAppealDecision
       prosecutorAppealAnnouncement
-      isCustodyEndDateInThePast
       judge {
         name
         title

@@ -4,7 +4,6 @@ import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 import AccordionListItem from '../AccordionListItem/AccordionListItem'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { Case } from '@island.is/judicial-system/types'
-import * as style from './CourtRecordAccordionItem.treat'
 
 interface Props {
   workingCase: Case
