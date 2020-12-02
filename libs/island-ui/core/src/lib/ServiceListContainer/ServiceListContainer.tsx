@@ -94,6 +94,11 @@ export const ServiceListContainer: React.FC<ServiceListContainerProps> = ({
 
   return (
     <GridContainer>
+      {services.length < 1 && !loading && (
+        <GridRow>
+          <CategoryCard heading={emptyListText} text="" />
+        </GridRow>
+      )}
       <GridRow>
         {services.map((item) => {
           return (
@@ -107,9 +112,6 @@ export const ServiceListContainer: React.FC<ServiceListContainerProps> = ({
             </GridColumn>
           )
         })}
-        {services.length < 1 && !loading && (
-          <CategoryCard heading={emptyListText} text="" />
-        )}
         {loading && (
           <GridColumn>
             <Box borderRadius="large" padding="containerGutter">
@@ -119,32 +121,28 @@ export const ServiceListContainer: React.FC<ServiceListContainerProps> = ({
         )}
       </GridRow>
       {errorMessage && (
-        <GridRow>
-          <GridColumn>
-            <CategoryCard
-              colorScheme="red"
-              heading={errorMessage.heading}
-              text={errorMessage.text}
-            />
-          </GridColumn>
+        <GridRow align="center">
+          <CategoryCard
+            colorScheme="red"
+            heading={errorMessage.heading}
+            text={errorMessage.text}
+          />
         </GridRow>
       )}
       {services.length > 0 && moreToLoad && (
-        <GridRow>
-          <GridColumn span={'12/12'} offset={['4/12', '5/12']}>
-            <Button
-              colorScheme="default"
-              iconType="filled"
-              onBlur={function noRefCheck() {}}
-              onClick={onLoadMoreClick}
-              onFocus={function noRefCheck() {}}
-              size="default"
-              type="button"
-              variant="ghost"
-            >
-              {loadMoreButtonText}
-            </Button>
-          </GridColumn>
+        <GridRow align="center">
+          <Button
+            colorScheme="default"
+            iconType="filled"
+            onBlur={function noRefCheck() {}}
+            onClick={onLoadMoreClick}
+            onFocus={function noRefCheck() {}}
+            size="default"
+            type="button"
+            variant="ghost"
+          >
+            {loadMoreButtonText}
+          </Button>
         </GridRow>
       )}
 
