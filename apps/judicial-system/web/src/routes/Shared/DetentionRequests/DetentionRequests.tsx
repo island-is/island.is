@@ -142,7 +142,8 @@ export const DetentionRequests: React.FC = () => {
                   {format(parseISO(c.created), 'PP', { locale: localeIS })}
                 </td>
                 <td>
-                  {c.isCustodyEndDateInThePast ? (
+                  {c.state === CaseState.ACCEPTED &&
+                  c.isCustodyEndDateInThePast ? (
                     <Tag variant="darkerBlue" outlined>
                       Gæsluvarðhaldi lokið
                     </Tag>
