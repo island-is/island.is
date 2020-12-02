@@ -1,4 +1,3 @@
-import { SearchIndexes } from '@island.is/content-search-indexer/types'
 import { Field, InputType } from '@nestjs/graphql'
 import { IsEnum, IsOptional, IsString } from 'class-validator'
 
@@ -8,4 +7,8 @@ export class MetricInput {
   @IsEnum(['raw', 'minimal'])
   @IsOptional()
   display: 'raw' | 'minimal' = 'minimal'
+
+  @Field(() => String)
+  @IsString()
+  index!: string
 }

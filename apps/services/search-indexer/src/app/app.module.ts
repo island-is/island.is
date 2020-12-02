@@ -5,4 +5,4 @@ import { MetricsModule } from '@island.is/content-search-metrics'
 @Module({
   imports: [IndexingModule, MetricsModule],
 })
-export class AppModule { }
+export class AppModule {}

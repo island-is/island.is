@@ -21,11 +21,12 @@ import {
   TypeAggregationResponse,
   RankEvaluationInput,
 } from '../types'
-import { GetByIdResponse, RankEvaluationResponse, SearchResponse } from '@island.is/shared/types'
 import {
-  MappedData,
-  SearchIndexes,
-} from '@island.is/content-search-indexer/types'
+  GetByIdResponse,
+  RankEvaluationResponse,
+  SearchResponse,
+} from '@island.is/shared/types'
+import { MappedData } from '@island.is/content-search-indexer/types'
 import { environment } from '../environments/environment'
 import { dateAggregationQuery } from '../queries/dateAggregation'
 import { tagAggregationQuery } from '../queries/tagAggregation'
@@ -41,7 +42,7 @@ export class ElasticService {
     logger.debug('Created ES Service')
   }
 
-  async index(index: SearchIndexes, { _id, ...body }: MappedData) {
+  async index(index: string, { _id, ...body }: MappedData) {
     try {
       const client = await this.getClient()
       return await client.index({
@@ -56,7 +57,7 @@ export class ElasticService {
   }
 
   // this can partially succeed
-  async bulk(index: SearchIndexes, documents: SyncRequest) {
+  async bulk(index: string, documents: SyncRequest) {
     logger.info('Processing documents', {
       index,
       added: documents.add.length,
@@ -119,7 +120,7 @@ export class ElasticService {
   }
 
   async findByQuery<ResponseBody, RequestBody>(
-    index: SearchIndexes,
+    index: string,
     query: RequestBody,
   ) {
     try {
@@ -137,7 +138,7 @@ export class ElasticService {
     }
   }
 
-  async findById(index: SearchIndexes, id: string) {
+  async findById(index: string, id: string) {
     try {
       const client = await this.getClient()
       return client.get<GetByIdResponse<MappedData>>({ id, index })
@@ -150,22 +151,30 @@ export class ElasticService {
     }
   }
 
-  async rankEvaluation<ResponseBody, RequestBody>(index: SearchIndexes, body: RequestBody) {
+  async rankEvaluation<ResponseBody, RequestBody>(
+    index: string,
+    body: RequestBody,
+  ) {
     const client = await this.getClient()
     return client.rank_eval<ResponseBody, RequestBody>({
       index,
-      body
+      body,
     })
   }
 
-  async getRankEvaluation<searchTermUnion>(index: SearchIndexes, termRatings: RankEvaluationInput) {
+  async getRankEvaluation<searchTermUnion>(
+    index: string,
+    termRatings: RankEvaluationInput,
+  ) {
     const requestBody = rankEvaluationQuery(termRatings)
-    logger.info('requestBody', requestBody)
-    const data = await this.rankEvaluation<RankEvaluationResponse<searchTermUnion>, typeof requestBody>(index, requestBody)
+    const data = await this.rankEvaluation<
+      RankEvaluationResponse<searchTermUnion>,
+      typeof requestBody
+    >(index, requestBody)
     return data.body
   }
 
-  async getDocumentsByMetaData(index: SearchIndexes, query: DocumentByMetaDataInput) {
+  async getDocumentsByMetaData(index: string, query: DocumentByMetaDataInput) {
     const requestBody = documentByMetaDataQuery(query)
     const data = await this.findByQuery<
       SearchResponse<MappedData>,
@@ -174,7 +183,7 @@ export class ElasticService {
     return data.body
   }
 
-  async getTagAggregation(index: SearchIndexes, query: TagAggregationInput) {
+  async getTagAggregation(index: string, query: TagAggregationInput) {
     const requestBody = tagAggregationQuery(query)
     const data = await this.findByQuery<
       SearchResponse<any, TagAggregationResponse>,
@@ -183,7 +192,7 @@ export class ElasticService {
     return data.body
   }
 
-  async getTypeAggregation(index: SearchIndexes, query: TypeAggregationInput) {
+  async getTypeAggregation(index: string, query: TypeAggregationInput) {
     const requestBody = typeAggregationQuery(query)
     const data = await this.findByQuery<
       SearchResponse<any, TypeAggregationResponse>,
@@ -192,7 +201,7 @@ export class ElasticService {
     return data.body
   }
 
-  async getDateAggregation(index: SearchIndexes, query: DateAggregationInput) {
+  async getDateAggregation(index: string, query: DateAggregationInput) {
     const requestBody = dateAggregationQuery(query)
     const data = await this.findByQuery<
       SearchResponse<any, DateAggregationResponse>,
@@ -201,7 +210,7 @@ export class ElasticService {
     return data.body
   }
 
-  async search(index: SearchIndexes, query: SearchInput) {
+  async search(index: string, query: SearchInput) {
     const requestBody = searchQuery(query)
 
     return this.findByQuery<
@@ -214,7 +223,7 @@ export class ElasticService {
   }
 
   async fetchAutocompleteTerm(
-    index: SearchIndexes,
+    index: string,
     input: AutocompleteTermInput,
   ): Promise<AutocompleteTermResponse> {
     const { singleTerm, size } = input
@@ -228,7 +237,7 @@ export class ElasticService {
     return data.body
   }
 
-  async deleteByIds(index: SearchIndexes, ids: Array<string>) {
+  async deleteByIds(index: string, ids: Array<string>) {
     // In case we get an empty list, ES will match that to all records... which we don't want to delete
     if (!ids.length) {
       return
@@ -247,7 +256,7 @@ export class ElasticService {
     })
   }
 
-  async deleteAllExcept(index: SearchIndexes, excludeIds: Array<string>) {
+  async deleteAllExcept(index: string, excludeIds: Array<string>) {
     const client = await this.getClient()
 
     return client.delete_by_query({
@@ -271,7 +280,6 @@ export class ElasticService {
     logger.info('Got elasticsearch ping response')
     return result
   }
-
 
   async getClient(): Promise<Client> {
     if (this.client) {
