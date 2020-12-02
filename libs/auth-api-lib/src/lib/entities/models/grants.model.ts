@@ -1,9 +1,11 @@
 import {
   Column,
+  CreatedAt,
   DataType,
   Model,
   PrimaryKey,
   Table,
+  UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -19,7 +21,7 @@ export class Grant extends Model<Grant> {
   @ApiProperty({
     example: 'key',
   })
-  key: string
+  key!: string
 
   @Column({
     type: DataType.STRING,
@@ -28,7 +30,7 @@ export class Grant extends Model<Grant> {
   @ApiProperty({
     example: 'type',
   })
-  type: string
+  type!: string
 
   @Column({
     type: DataType.STRING,
@@ -37,15 +39,16 @@ export class Grant extends Model<Grant> {
   @ApiProperty({
     example: 'subjectId',
   })
-  subjectId: string
+  subjectId!: string
 
   @Column({
     type: DataType.STRING,
+    allowNull: true,
   })
   @ApiProperty({
     example: 'sessionId',
   })
-  sessionId: string
+  sessionId?: string
 
   @Column({
     type: DataType.STRING,
@@ -54,7 +57,7 @@ export class Grant extends Model<Grant> {
   @ApiProperty({
     example: 'postman',
   })
-  clientId: string
+  clientId!: string
 
   @Column({
     type: DataType.STRING,
@@ -63,14 +66,14 @@ export class Grant extends Model<Grant> {
   @ApiProperty({
     example: 'description',
   })
-  description: string
+  description?: string
 
   @Column({
     type: DataType.DATE,
     allowNull: false,
   })
   @ApiProperty()
-  creationTime: string
+  creationTime!: string
 
   @Column({
     type: DataType.DATE,
@@ -80,14 +83,14 @@ export class Grant extends Model<Grant> {
     // add one day as an expiration example
     example: new Date(new Date().setTime(new Date().getTime() + 86400000)),
   })
-  expiration: string
+  expiration!: string
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
   @ApiProperty()
-  consumedTime: string
+  consumedTime?: string
 
   @Column({
     type: DataType.STRING,
@@ -96,5 +99,13 @@ export class Grant extends Model<Grant> {
   @ApiProperty({
     example: 'data',
   })
-  data: string
+  data!: string
+
+  @CreatedAt
+  @ApiProperty()
+  readonly created!: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  readonly modified?: Date
 }

@@ -27,7 +27,7 @@ export class ApiResourceSecret extends Model<ApiResourceSecret> {
   })
   @ForeignKey(() => ApiResource)
   @ApiProperty()
-  apiResourceName: string
+  apiResourceName!: string
 
   @PrimaryKey
   @Column({
@@ -35,34 +35,34 @@ export class ApiResourceSecret extends Model<ApiResourceSecret> {
     allowNull: false,
   })
   @ApiProperty()
-  value: string
+  value!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
-  description: string
+  description?: string
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
   @ApiProperty()
-  readonly expiration: Date
+  readonly expiration?: Date
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  type: string
+  type!: string
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified?: Date
 }
