@@ -7,6 +7,7 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { registerEndpointMutation } from '../../../graphql/mutations/registerEndpointMutation'
+import { m } from '../../../forms/messages'
 
 const TestEnvironment: FC<FieldBaseProps> = ({ field, application }) => {
   interface Variable {
@@ -46,7 +47,9 @@ const TestEnvironment: FC<FieldBaseProps> = ({ field, application }) => {
     <Box>
       <Box marginBottom={7}>
         <Box marginBottom={3}>
-          <FieldDescription description="Til að hægt sé að sækja skjöl til skjalaveitu þarf að tilgreina endapunkt. Þegar endapunktur er vistaður er búnar til Audience og Scope breytur." />
+          <FieldDescription
+            description={m.testEndPointSubTitle.defaultMessage}
+          />
         </Box>
         <Box marginBottom={1}>
           <Controller

@@ -6,6 +6,7 @@ export const m = defineMessages({
     defaultMessage: 'Almennar upplýsingar um skjalaveitanda',
     description: '',
   },
+
   //Terms of agreement
   termsSection: {
     id: 'dpo.application:terms.section',
@@ -54,6 +55,7 @@ export const m = defineMessages({
     defaultMessage: 'Ég samþykki öryggisskilmála',
     description: 'Some description',
   },
+
   //Applicant section
   applicantSection: {
     id: 'dpo.application:applicant.section',
@@ -193,6 +195,7 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer',
     description: '',
   },
+
   //Confirmation
   confirmationSection: {
     id: 'dpo.application:confirmation.section',
@@ -218,7 +221,7 @@ export const m = defineMessages({
   //Thank you screen
   thankYouScreenTitle: {
     id: 'dpo.application:thankYouScreen.title',
-    defaultMessage: 'Takk fyrir að sækja um',
+    defaultMessage: 'Takk fyrir að sækja um!',
     description: '',
   },
   thankYouScreenSubTitle: {
@@ -277,7 +280,14 @@ export const m = defineMessages({
     description: '',
   },
 
-  //review
+  //Pending Review Thank You Screen
+  pendingReviewthankYouScreenTitle: {
+    id: 'dpo.application:thankYouScreen.title',
+    defaultMessage: 'Í vinnslu',
+    description: '',
+  },
+
+  //Review
   reviewSection: {
     id: 'dpo.application:review.section',
     defaultMessage: 'Staðfesta',
@@ -301,6 +311,18 @@ export const m = defineMessages({
   reviewRejectReasonLabel: {
     id: 'dpo.application:review.RejectReasonLabel',
     defaultMessage: 'Ástæða höfnunar',
+    description: '',
+  },
+
+  //Rejected
+  rejectedTitle: {
+    id: 'dpo.application:rejected.title',
+    defaultMessage: 'Hafnað',
+    description: '',
+  },
+  rejectedSubTitle: {
+    id: 'dpo.application:rejected.subTitle',
+    defaultMessage: 'Umsókn þinni til að gerast skjalaveitandi var hafnað',
     description: '',
   },
 
@@ -372,6 +394,7 @@ export const m = defineMessages({
     defaultMessage: 'Öryggiskröfur sem gerðar eru til skjalaveitna',
     description: '',
   },
+
   //Test enviroment
   testEnviromentSection: {
     id: 'dpo.application:testEnviroment.section',
@@ -412,6 +435,13 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar um endapunkt umsækjenda',
     description: '',
   },
+  testEndPointSubTitle: {
+    id: 'dpo.application:testEndPoint.subTitle',
+    defaultMessage:
+      'Til að hægt sé að sækja skjöl til skjalaveitu þarf að tilgreina endapunkt. Þegar endapunktur er vistaður er búnar til Audience og Scope breytur.',
+    description: '',
+  },
+
   //Technical implementation
   testTechnicalImplementationSection: {
     id: 'dpo.application:technicalImplementation.section',
@@ -441,12 +471,12 @@ export const m = defineMessages({
       'Það er einnig á ábyrgð útfærsluaðila að prófa þjónustuna vel hjá sér áður en farið er á raun umhverfi. Til aðstoðar verða sjálfvirk próf þegar eigin prófunum er lokið. Sjálfvirku prófin eru ekki tæmandi, því er mikilvægt að útfærsluaðili prófi allt einnig í þaula.',
     description: '',
   },
-
   technicalImplementationOptionLabel: {
     id: 'dpo.application:technicalImplementation.optionLabel',
     defaultMessage: 'Ég staðfesti hér með að prófunum og forritun sé lokið',
     description: 'Some description',
   },
+
   //Automated tests
   automatedTestsSection: {
     id: 'dpo.application:automatedTests.section',
@@ -495,6 +525,12 @@ export const m = defineMessages({
     defaultMessage: 'Þú verður að skrá inn Id skjals',
     description: '',
   },
+  automatedTestsButton: {
+    id: 'dpo.application:automatedTests.button',
+    defaultMessage: 'Hefja próf',
+    description: '',
+  },
+
   //Prod enviroment
   prodEnviromentSection: {
     id: 'dpo.application:prodEnviroment.section',
@@ -512,14 +548,19 @@ export const m = defineMessages({
       'Hér getur þú búið til aðgang að raunumhverfi. Athugið að afrita og geyma þessar upplýsingar því þær eru ekki geymdar hér í þessari umsókn.',
     description: '',
   },
-
-  //Second thank you screen
-  secondThankYouScreenScreenTitle: {
-    id: 'dpo.application:seconadThankYouScreen.title',
-    defaultMessage: 'Aðgangur að raun',
+  prodEnviromentButton: {
+    id: 'dpo.application:prodEnviroment.button',
+    defaultMessage: 'Búa til aðgang',
     description: '',
   },
-  secondThankYouScreenScreenSubTitle: {
+
+  //Thank you Image screen
+  thankYouImageScreenTitle: {
+    id: 'dpo.application:seconadThankYouScreen.title',
+    defaultMessage: 'Umsókn lokið',
+    description: '',
+  },
+  thankYouImageScreenScreenSubTitle: {
     id: 'dpo.application:seconadThankYouScreen.subTitle',
     defaultMessage:
       'Þú hefur nú fengið aðgang að umsjónarkerfi skajalveitenda. Það má finna á þínum síðum á ísland.is',

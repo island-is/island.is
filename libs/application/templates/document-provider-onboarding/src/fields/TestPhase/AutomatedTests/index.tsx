@@ -109,7 +109,7 @@ const AutomatedTests: FC<FieldBaseProps> = () => {
                     )
                   }}
                 >
-                  Hefja próf
+                  {m.automatedTestsButton.defaultMessage}
                 </Button>
               </Box>
             </GridColumn>

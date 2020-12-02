@@ -114,13 +114,13 @@ export const TestPhase: Form = buildForm({
         }),
         buildMultiField({
           id: 'finished',
-          name: m.secondThankYouScreenScreenTitle,
-          description: m.secondThankYouScreenScreenSubTitle,
+          name: m.thankYouImageScreenTitle,
+          description: m.thankYouImageScreenScreenSubTitle,
           children: [
             buildCustomField(
               {
-                id: 'secondThankYouScreen',
-                name: m.secondThankYouScreenScreenTitle,
+                id: 'thankYouImage',
+                name: m.thankYouImageScreenTitle,
                 component: 'ThankYouImage',
               },
               {},

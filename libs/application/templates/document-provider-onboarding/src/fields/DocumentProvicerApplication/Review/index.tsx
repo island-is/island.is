@@ -20,7 +20,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
   const { description } = field
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
-
+  //TODO refactor messages
   return (
     <div>
       {description && (
