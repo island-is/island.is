@@ -1,14 +1,14 @@
 import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
-import { DetentionRequests } from './'
+import { DetentionRequests } from './DetentionRequests'
 import { CaseState } from '@island.is/judicial-system/types'
 import { MemoryRouter, Route } from 'react-router-dom'
-import { mockJudgeQuery, mockProsecutorQuery } from '../../utils/mocks'
+import { mockJudgeQuery, mockProsecutorQuery } from '../../../utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
 import { CasesQuery } from './DetentionRequests'
-import * as Constants from '../../utils/constants'
+import * as Constants from '../../../utils/constants'
 import '@testing-library/jest-dom'
-import { UserProvider } from '../../shared-components/UserProvider/UserProvider'
+import { UserProvider } from '../../../shared-components/UserProvider/UserProvider'
 
 const mockCasesQuery = [
   {

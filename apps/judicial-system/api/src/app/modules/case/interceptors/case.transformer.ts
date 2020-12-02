@@ -8,5 +8,10 @@ export function transformCase(theCase: Case) {
       Date.now() - fiveMinutes > new Date(theCase.courtDate).getTime()
   }
 
+  if (theCase.custodyEndDate) {
+    theCase.isCustodyEndDateInThePast =
+      Date.now() > new Date(theCase.custodyEndDate).getTime()
+  }
+
   return theCase
 }

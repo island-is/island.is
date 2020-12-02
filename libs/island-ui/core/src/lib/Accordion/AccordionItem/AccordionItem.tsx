@@ -22,7 +22,7 @@ import { TextVariants } from '../../Text/Text.treat'
 import { AccordionContext } from '../../Accordion/Accordion'
 import * as styles from './AccordionItem.treat'
 
-type IconVariantTypes = 'default' | 'sidebar'
+type IconVariantTypes = 'default' | 'small' | 'sidebar'
 
 export type AccordionItemLabelTags = 'p' | 'h2' | 'h3' | 'h4' | 'h5'
 

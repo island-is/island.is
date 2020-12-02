@@ -19,9 +19,12 @@ import { UserContext } from '../UserProvider/UserProvider'
 interface PageProps {
   children: ReactNode
   activeSection: number
-  activeSubSection: number
   isLoading: boolean
   notFound: boolean
+  activeSubSection?: number
+  // Only needed for the SignedVerdictOverview screen
+  rejectedCase?: boolean
+  isCustodyEndDateInThePast?: boolean
 }
 
 export const PageLayout: FC<PageProps> = ({
@@ -30,6 +33,8 @@ export const PageLayout: FC<PageProps> = ({
   activeSubSection,
   isLoading,
   notFound,
+  rejectedCase,
+  isCustodyEndDateInThePast,
 }) => {
   const { user } = useContext(UserContext)
 
@@ -88,6 +93,13 @@ export const PageLayout: FC<PageProps> = ({
                       { type: 'SUB_SECTION', name: 'Úrskurðarorð' },
                       { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
                     ],
+                  },
+                  {
+                    name: rejectedCase
+                      ? 'Gæsluvarðhaldi hafnað'
+                      : isCustodyEndDateInThePast
+                      ? 'Gæsluvarðhaldi lokið'
+                      : 'Gæsluvarðhald virkt',
                   },
                 ]}
                 formName="Gæsluvarðhald"
