@@ -5,6 +5,7 @@ interface Props {
   disabled?: boolean
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void
   onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const TimeInputField: React.FC<Props> = (props: PropsWithChildren<Props>) => {
@@ -24,6 +25,7 @@ const TimeInputField: React.FC<Props> = (props: PropsWithChildren<Props>) => {
       disabled={props.disabled}
       onBlur={props.onBlur}
       onFocus={props.onFocus}
+      onChange={props.onChange}
     >
       {props.children}
     </InputMask>
