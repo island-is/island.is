@@ -29,7 +29,7 @@ export class IdentityResourceUserClaim extends Model<
   })
   @ForeignKey(() => IdentityResource)
   @ApiProperty()
-  identityResourceName: string
+  identityResourceName!: string
 
   @PrimaryKey
   @Column({
@@ -37,13 +37,13 @@ export class IdentityResourceUserClaim extends Model<
     allowNull: false,
   })
   @ApiProperty()
-  claimName: string
+  claimName!: string
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified!: Date
 }

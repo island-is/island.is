@@ -13,119 +13,119 @@ export abstract class ClientBaseDTO {
   @ApiProperty({
     example: '1234567890',
   })
-  readonly nationalId: string
+  readonly nationalId!: string
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
     example: 'spa',
   })
-  readonly clientType: string
+  readonly clientType!: string
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     example: false,
   })
-  readonly allowOfflineAccess: boolean
+  readonly allowOfflineAccess!: boolean
 
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({
     example: 300,
   })
-  readonly identityTokenLifetime: number
+  readonly identityTokenLifetime!: number
 
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({
     example: 3600,
   })
-  readonly accessTokenLifetime: number
+  readonly accessTokenLifetime!: number
 
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({
     example: 300,
   })
-  readonly authorizationCodeLifetime: number
+  readonly authorizationCodeLifetime!: number
 
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({
     example: 2592000,
   })
-  readonly absoluteRefreshTokenLifetime: number
+  readonly absoluteRefreshTokenLifetime!: number
 
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({
     example: 1296000,
   })
-  readonly slidingRefreshTokenLifetime: number
+  readonly slidingRefreshTokenLifetime!: number
 
   @IsOptional()
   @IsNumber()
   @ApiProperty({
     example: null,
   })
-  readonly consentLifetime: number | null
+  readonly consentLifetime?: number
 
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({
     example: 1,
   })
-  readonly refreshTokenUsage: number
+  readonly refreshTokenUsage!: number
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     example: true,
   })
-  readonly updateAccessTokenClaimsOnRefresh: boolean
+  readonly updateAccessTokenClaimsOnRefresh!: boolean
 
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({
     example: 0,
   })
-  readonly refreshTokenExpiration: number
+  readonly refreshTokenExpiration!: number
 
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({
     example: 0,
   })
-  readonly accessTokenType: number
+  readonly accessTokenType!: number
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     example: true,
   })
-  readonly enableLocalLogin: boolean
+  readonly enableLocalLogin!: boolean
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     example: true,
   })
-  readonly includeJwtId: boolean
+  readonly includeJwtId!: boolean
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     example: false,
   })
-  readonly alwaysSendClientClaims: boolean
+  readonly alwaysSendClientClaims!: boolean
 
   @IsOptional()
   @IsString()
   @ApiProperty({
     example: null,
   })
-  readonly pairWiseSubjectSalt: string | null
+  readonly pairWiseSubjectSalt?: string
 
   @IsOptional()
   @IsNumber({
@@ -134,145 +134,145 @@ export abstract class ClientBaseDTO {
   @ApiProperty({
     example: null,
   })
-  readonly userSsoLifetime: number | null
+  readonly userSsoLifetime?: number
 
   @IsOptional()
   @IsString()
   @ApiProperty({
     example: null,
   })
-  readonly userCodeType: string | null
+  readonly userCodeType?: string
 
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({
     example: 300,
   })
-  readonly deviceCodeLifetime: number
+  readonly deviceCodeLifetime!: number
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     example: false,
   })
-  readonly alwaysIncludeUserClaimsInIdToken: boolean
+  readonly alwaysIncludeUserClaimsInIdToken!: boolean
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     example: true,
   })
-  readonly backChannelLogoutSessionRequired: boolean
+  readonly backChannelLogoutSessionRequired!: boolean
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     example: true,
   })
-  readonly enabled: boolean
+  readonly enabled!: boolean
 
   @IsOptional()
   @IsString()
   @ApiProperty({
     example: null,
   })
-  readonly logoUri: string | null
+  readonly logoUri?: string
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     example: false,
   })
-  readonly requireConsent: boolean
+  readonly requireConsent!: boolean
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     example: false,
   })
-  readonly requirePkce: boolean
+  readonly requirePkce!: boolean
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     example: false,
   })
-  readonly allowPlainTextPkce: boolean
+  readonly allowPlainTextPkce!: boolean
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     example: false,
   })
-  readonly allowAccessTokenViaBrowser: boolean
+  readonly allowAccessTokenViaBrowser!: boolean
 
   @IsOptional()
   @IsString()
   @ApiProperty({
     example: null,
   })
-  readonly frontChannelLogoutUri: string | null
+  readonly frontChannelLogoutUri?: string
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     example: true,
   })
-  readonly frontChannelLogoutSessionRequired: boolean
+  readonly frontChannelLogoutSessionRequired!: boolean
 
   @IsOptional()
   @IsBoolean()
   @ApiProperty({
     example: null,
   })
-  readonly backChannelLogoutUri: string
+  readonly backChannelLogoutUri?: string
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     example: true,
   })
-  readonly allowRememberConsent: boolean
+  readonly allowRememberConsent!: boolean
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
     example: 'set_client_claims_prefix',
   })
-  readonly clientClaimsPrefix: string
+  readonly clientClaimsPrefix!: string
 
   @IsOptional()
   @IsString()
   @ApiProperty({
     example: null,
   })
-  readonly clientName: string
+  readonly clientName?: string
 
   @IsOptional()
   @IsString()
   @ApiProperty({
     example: null,
   })
-  readonly clientUri: string
+  readonly clientUri?: string
 
   @IsOptional()
   @IsString()
   @ApiProperty({
     example: null,
   })
-  readonly description: string
+  readonly description?: string
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
     example: 'set_protocol_type',
   })
-  readonly protocolType: string
+  readonly protocolType!: string
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     example: true,
   })
-  readonly requireClientSecret: boolean
+  readonly requireClientSecret!: boolean
 }

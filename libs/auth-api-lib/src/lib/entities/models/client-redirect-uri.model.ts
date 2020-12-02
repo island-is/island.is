@@ -25,7 +25,7 @@ export class ClientRedirectUri extends Model<ClientRedirectUri> {
   })
   @ForeignKey(() => Client)
   @ApiProperty()
-  clientId: string
+  clientId!: string
 
   @PrimaryKey
   @Column({
@@ -33,5 +33,5 @@ export class ClientRedirectUri extends Model<ClientRedirectUri> {
     allowNull: false,
   })
   @ApiProperty()
-  redirectUri: string
+  redirectUri!: string
 }

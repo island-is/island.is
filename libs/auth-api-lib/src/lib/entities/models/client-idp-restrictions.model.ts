@@ -26,7 +26,7 @@ export class ClientIdpRestrictions extends Model<ClientIdpRestrictions> {
     allowNull: false,
   })
   @ApiProperty()
-  name: string
+  name!: string
 
   @PrimaryKey
   @Column({
@@ -35,13 +35,13 @@ export class ClientIdpRestrictions extends Model<ClientIdpRestrictions> {
   })
   @ForeignKey(() => Client)
   @ApiProperty()
-  clientId: string
+  clientId!: string
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified!: Date
 }

@@ -8,37 +8,37 @@ export class UserIdentityDto {
   @ApiProperty({
     example: 'set_subject_id',
   })
-  readonly subjectId: string
+  readonly subjectId!: string
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
     example: 'set_name',
   })
-  readonly name: string
+  readonly name!: string
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
     example: 'set_provider_name',
   })
-  readonly providerName: string
+  readonly providerName!: string
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     example: 'set_active',
   })
-  readonly active: boolean
+  readonly active!: boolean
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
     example: 'set_provider_subject_id',
   })
-  readonly providerSubjectId: string
+  readonly providerSubjectId!: string
 
   @IsArray()
   @ApiProperty({ type: [ClaimDto] })
-  readonly claims: ClaimDto[]
+  readonly claims?: ClaimDto[]
 }

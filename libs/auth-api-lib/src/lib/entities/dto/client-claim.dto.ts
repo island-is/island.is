@@ -7,19 +7,19 @@ export class ClientClaimDTO {
   @ApiProperty({
     example: 'clientId',
   })
-  readonly clientId: string
+  readonly clientId!: string
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty({
     example: 'claim type',
   })
-  readonly type: string
+  readonly type!: string
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty({
     example: 'claim value',
   })
-  readonly value: string
+  readonly value!: string
 }

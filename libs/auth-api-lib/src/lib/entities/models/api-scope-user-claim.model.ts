@@ -27,7 +27,7 @@ export class ApiScopeUserClaim extends Model<ApiScopeUserClaim> {
   })
   @ForeignKey(() => ApiScope)
   @ApiProperty()
-  apiScopeName: string
+  apiScopeName!: string
 
   @PrimaryKey
   @Column({
@@ -35,13 +35,13 @@ export class ApiScopeUserClaim extends Model<ApiScopeUserClaim> {
     allowNull: false,
   })
   @ApiProperty()
-  claimName: string
+  claimName!: string
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified!: Date
 }

@@ -35,25 +35,25 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: 'client_id',
   })
-  clientId: string
+  clientId!: string
 
   @Column({
     type: DataType.STRING,
-    allowNull: true,
+    allowNull: false,
   })
   @ApiProperty({
     example: '1234567890',
   })
-  nationalId: string
+  nationalId!: string
 
   @Column({
     type: DataType.STRING,
-    allowNull: true,
+    allowNull: false,
   })
   @ApiProperty({
     example: 'spa',
   })
-  clientType: string
+  clientType!: string
 
   @Column({
     type: DataType.BOOLEAN,
@@ -63,7 +63,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: false,
   })
-  allowOfflineAccess: boolean
+  allowOfflineAccess!: boolean
 
   @Column({
     type: DataType.INTEGER,
@@ -73,7 +73,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: 300,
   })
-  identityTokenLifetime: number
+  identityTokenLifetime!: number
 
   @Column({
     type: DataType.INTEGER,
@@ -83,7 +83,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: 3600,
   })
-  accessTokenLifetime: number
+  accessTokenLifetime!: number
 
   @Column({
     type: DataType.INTEGER,
@@ -93,7 +93,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: 300,
   })
-  authorizationCodeLifetime: number
+  authorizationCodeLifetime!: number
 
   @Column({
     type: DataType.INTEGER,
@@ -103,7 +103,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: 2592000,
   })
-  absoluteRefreshTokenLifetime: number
+  absoluteRefreshTokenLifetime!: number
 
   @Column({
     type: DataType.INTEGER,
@@ -113,7 +113,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: 1296000,
   })
-  slidingRefreshTokenLifetime: number
+  slidingRefreshTokenLifetime!: number
 
   @Column({
     type: DataType.INTEGER,
@@ -122,7 +122,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: null,
   })
-  consentLifetime: number
+  consentLifetime?: number
 
   @Column({
     type: DataType.INTEGER,
@@ -132,7 +132,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: 1,
   })
-  refreshTokenUsage: number
+  refreshTokenUsage!: number
 
   @Column({
     type: DataType.BOOLEAN,
@@ -142,7 +142,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: true,
   })
-  updateAccessTokenClaimsOnRefresh: boolean
+  updateAccessTokenClaimsOnRefresh!: boolean
 
   @Column({
     type: DataType.INTEGER,
@@ -152,7 +152,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: 1,
   })
-  refreshTokenExpiration: number
+  refreshTokenExpiration!: number
 
   @Column({
     type: DataType.INTEGER,
@@ -162,7 +162,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: 0,
   })
-  accessTokenType: number
+  accessTokenType!: number
 
   @Column({
     type: DataType.BOOLEAN,
@@ -172,7 +172,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: true,
   })
-  enableLocalLogin: boolean
+  enableLocalLogin!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
@@ -182,7 +182,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: true,
   })
-  includeJwtId: boolean
+  includeJwtId!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
@@ -192,7 +192,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: false,
   })
-  alwaysSendClientClaims: boolean
+  alwaysSendClientClaims!: boolean
 
   @Column({
     type: DataType.STRING,
@@ -201,7 +201,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: null,
   })
-  pairWiseSubjectSalt: string
+  pairWiseSubjectSalt?: string
 
   @Column({
     type: DataType.INTEGER,
@@ -210,7 +210,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: null,
   })
-  userSsoLifetime: number
+  userSsoLifetime?: number
 
   @Column({
     type: DataType.STRING,
@@ -219,7 +219,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: null,
   })
-  userCodeType: string
+  userCodeType?: string
 
   @Column({
     type: DataType.INTEGER,
@@ -229,7 +229,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: 300,
   })
-  deviceCodeLifetime: number
+  deviceCodeLifetime!: number
 
   @Column({
     type: DataType.BOOLEAN,
@@ -239,7 +239,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: false,
   })
-  alwaysIncludeUserClaimsInIdToken: boolean
+  alwaysIncludeUserClaimsInIdToken!: boolean
 
   @Column({
     type: DataType.STRING,
@@ -249,7 +249,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: true,
   })
-  backChannelLogoutSessionRequired: boolean
+  backChannelLogoutSessionRequired!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
@@ -259,7 +259,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: true,
   })
-  enabled: boolean
+  enabled?: boolean
 
   @Column({
     type: DataType.STRING,
@@ -268,7 +268,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: null,
   })
-  logoUri: string
+  logoUri?: string
 
   @Column({
     type: DataType.BOOLEAN,
@@ -278,7 +278,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: false,
   })
-  requireConsent: boolean
+  requireConsent!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
@@ -288,7 +288,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: false,
   })
-  requirePkce: boolean
+  requirePkce!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
@@ -298,7 +298,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: false,
   })
-  requireRequestObject: boolean
+  requireRequestObject!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
@@ -308,7 +308,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: false,
   })
-  allowPlainTextPkce: boolean
+  allowPlainTextPkce!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
@@ -318,7 +318,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: false,
   })
-  allowAccessTokenViaBrowser: boolean
+  allowAccessTokenViaBrowser!: boolean
 
   @Column({
     type: DataType.STRING,
@@ -327,7 +327,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: null,
   })
-  frontChannelLogoutUri: string
+  frontChannelLogoutUri?: string
 
   @Column({
     type: DataType.BOOLEAN,
@@ -337,7 +337,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: true,
   })
-  frontChannelLogoutSessionRequired: boolean
+  frontChannelLogoutSessionRequired!: boolean
 
   @Column({
     type: DataType.STRING,
@@ -346,7 +346,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: null,
   })
-  backChannelLogoutUri: string
+  backChannelLogoutUri?: string
 
   @Column({
     type: DataType.STRING,
@@ -356,7 +356,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: true,
   })
-  allowRememberConsent: boolean
+  allowRememberConsent!: boolean
 
   @Column({
     type: DataType.STRING,
@@ -366,7 +366,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: 'client_claims_prefix',
   })
-  clientClaimsPrefix: string
+  clientClaimsPrefix!: string
 
   @Column({
     type: DataType.STRING,
@@ -375,7 +375,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: null,
   })
-  clientName: string
+  clientName?: string
 
   @Column({
     type: DataType.STRING,
@@ -384,16 +384,16 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: null,
   })
-  clientUri: string
+  clientUri?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty({
-    example: null,
+    example: 'Client Description for AdminUI',
   })
-  description: string
+  description?: string
 
   @Column({
     type: DataType.STRING,
@@ -403,7 +403,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: 'protocol_type',
   })
-  protocolType: string
+  protocolType!: string
 
   @Column({
     type: DataType.BOOLEAN,
@@ -413,42 +413,42 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: true,
   })
-  requireClientSecret: boolean
+  requireClientSecret!: boolean
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified!: Date
 
   @HasMany(() => ClientAllowedScope)
   @ApiProperty()
-  allowedScopes: ClientAllowedScope[]
+  allowedScopes?: ClientAllowedScope[]
 
   @HasMany(() => ClientAllowedCorsOrigin)
   @ApiProperty()
-  allowedCorsOrigins: ClientAllowedCorsOrigin[]
+  allowedCorsOrigins?: ClientAllowedCorsOrigin[]
 
   @HasMany(() => ClientPostLogoutRedirectUri)
   @ApiProperty()
-  postLogoutRedirectUris: ClientPostLogoutRedirectUri[]
+  postLogoutRedirectUris?: ClientPostLogoutRedirectUri[]
 
   @HasMany(() => ClientRedirectUri)
-  redirectUris: ClientRedirectUri[]
+  redirectUris?: ClientRedirectUri[]
 
   @HasMany(() => ClientIdpRestrictions)
-  identityProviderRestrictions: ClientIdpRestrictions[]
+  identityProviderRestrictions?: ClientIdpRestrictions[]
 
   @HasMany(() => ClientSecret)
-  clientSecrets: ClientSecret[]
+  clientSecrets?: ClientSecret[]
 
   @HasMany(() => ClientGrantType)
-  allowedGrantTypes: ClientGrantType[]
+  allowedGrantTypes?: ClientGrantType[]
 
   @HasMany(() => ClientClaim)
-  claims: ClientClaim[]
+  claims?: ClientClaim[]
 
   // Signing algorithm for identity token. If empty, will use the server default signing algorithm.
   // readonly allowedIdentityTokenSigningAlgorithms

@@ -26,7 +26,7 @@ export class ClientAllowedScope extends Model<ClientAllowedScope> {
     allowNull: false,
   })
   @ApiProperty()
-  scopeName: string
+  scopeName!: string
 
   @PrimaryKey
   @Column({
@@ -35,13 +35,13 @@ export class ClientAllowedScope extends Model<ClientAllowedScope> {
   })
   @ForeignKey(() => Client)
   @ApiProperty()
-  clientId: string
+  clientId!: string
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified!: Date
 }

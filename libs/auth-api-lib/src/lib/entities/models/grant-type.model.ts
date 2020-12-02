@@ -27,7 +27,7 @@ export class GrantType extends Model<GrantType> {
   @ApiProperty({
     example: 'some_name',
   })
-  name: string
+  name!: string
 
   @Column({
     type: DataType.STRING,
@@ -36,13 +36,13 @@ export class GrantType extends Model<GrantType> {
   @ApiProperty({
     example: 'some_description',
   })
-  description: string
+  description!: string
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified!: Date
 }

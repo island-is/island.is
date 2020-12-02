@@ -27,7 +27,7 @@ export class ApiResourceUserClaim extends Model<ApiResourceUserClaim> {
   })
   @ForeignKey(() => ApiResource)
   @ApiProperty()
-  apiResourceName: string
+  apiResourceName!: string
 
   @PrimaryKey
   @Column({
@@ -35,13 +35,13 @@ export class ApiResourceUserClaim extends Model<ApiResourceUserClaim> {
     allowNull: false,
   })
   @ApiProperty()
-  claimName: string
+  claimName!: string
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified!: Date
 }
