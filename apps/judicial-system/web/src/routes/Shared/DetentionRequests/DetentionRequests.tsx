@@ -16,16 +16,16 @@ import {
   TagVariant,
   Box,
 } from '@island.is/island-ui/core'
-import Loading from '../../shared-components/Loading/Loading'
+import Loading from '../../../shared-components/Loading/Loading'
 import { Case, CaseState } from '@island.is/judicial-system/types'
 import * as styles from './DetentionRequests.treat'
 import { UserRole } from '@island.is/judicial-system/types'
-import * as Constants from '../../utils/constants'
+import * as Constants from '../../../utils/constants'
 import { Link } from 'react-router-dom'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { insertAt } from '../../utils/formatters'
+import { insertAt } from '../../../utils/formatters'
 import { gql, useQuery } from '@apollo/client'
-import { UserContext } from '../../shared-components/UserProvider/UserProvider'
+import { UserContext } from '../../../shared-components/UserProvider/UserProvider'
 
 export const CasesQuery = gql`
   query CasesQuery {
@@ -38,6 +38,7 @@ export const CasesQuery = gql`
       accusedName
       isCourtDateInThePast
       custodyEndDate
+      isCustodyEndDateInThePast
     }
   }
 `
@@ -141,12 +142,18 @@ export const DetentionRequests: React.FC = () => {
                   {format(parseISO(c.created), 'PP', { locale: localeIS })}
                 </td>
                 <td>
-                  <Tag
-                    variant={mapCaseStateToTagVariant(c.state).color}
-                    outlined
-                  >
-                    {mapCaseStateToTagVariant(c.state).text}
-                  </Tag>
+                  {c.isCustodyEndDateInThePast ? (
+                    <Tag variant="darkerBlue" outlined>
+                      Gæsluvarðhaldi lokið
+                    </Tag>
+                  ) : (
+                    <Tag
+                      variant={mapCaseStateToTagVariant(c.state).color}
+                      outlined
+                    >
+                      {mapCaseStateToTagVariant(c.state).text}
+                    </Tag>
+                  )}
                 </td>
                 <td>
                   {c.custodyEndDate && c.state === CaseState.ACCEPTED
@@ -156,7 +163,10 @@ export const DetentionRequests: React.FC = () => {
                 <td>
                   <Link
                     to={
-                      isJudge
+                      c.state === CaseState.ACCEPTED ||
+                      c.state === CaseState.REJECTED
+                        ? `${Constants.SIGNED_VERDICT_OVERVIEW}/${c.id}`
+                        : isJudge
                         ? `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
                         : c.isCourtDateInThePast
                         ? `${Constants.STEP_THREE_ROUTE}/${c.id}`

@@ -1,4 +1,5 @@
 // Routes
+export const SIGNED_VERDICT_OVERVIEW = '/stadfest-krafa'
 export const SINGLE_REQUEST_BASE_ROUTE = '/krafa'
 export const STEP_TWO_ROUTE = '/stofna-krofu/lagaakvaedi'
 export const STEP_THREE_ROUTE = '/stofna-krofu/yfirlit'

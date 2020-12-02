@@ -1,10 +1,4 @@
-import {
-  Accordion,
-  AccordionItem,
-  Box,
-  Button,
-  Text,
-} from '@island.is/island-ui/core'
+import { Accordion, Box, Button, Text } from '@island.is/island-ui/core'
 import React, { useContext, useEffect, useState } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import Modal from '../../../shared-components/Modal/Modal'
@@ -13,10 +7,9 @@ import {
   getAppealDecitionText,
 } from '../../../utils/stepHelper'
 import * as Constants from '../../../utils/constants'
-import { TIME_FORMAT, formatDate } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseTransition } from '../../../utils/formatters'
 import { AppealDecisionRole, JudgeSubsections, Sections } from '../../../types'
-import AccordionListItem from '@island.is/judicial-system-web/src/shared-components/AccordionListItem/AccordionListItem'
 import {
   Case,
   CaseAppealDecision,
@@ -39,6 +32,7 @@ import {
 import { gql, useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { api } from '../../../services'
+import CourtRecordAccordionItem from '../../../shared-components/CourtRecordAccordionItem/CourtRecordAccordionItem'
 
 export const RequestSignatureMutation = gql`
   mutation RequestSignatureMutation($input: RequestSignatureInput!) {
@@ -306,55 +300,7 @@ export const Confirmation: React.FC = () => {
           <Box marginBottom={9}>
             <Accordion>
               <PoliceRequestAccordionItem workingCase={workingCase} />
-              <AccordionItem id="id_2" label="Þingbók" labelVariant="h3">
-                <Box marginBottom={2}>
-                  <Text variant="h4" as="h4">
-                    Upplýsingar
-                  </Text>
-                </Box>
-                <Box marginBottom={3}>
-                  <Text>
-                    {`Þinghald frá kl. ${formatDate(
-                      workingCase.courtStartTime,
-                      TIME_FORMAT,
-                    )} til kl. ${formatDate(
-                      workingCase.courtEndTime,
-                      TIME_FORMAT,
-                    )} ${formatDate(workingCase.courtEndTime, 'PP')}`}
-                  </Text>
-                </Box>
-                <AccordionListItem title="Krafa lögreglu">
-                  <span className={style.breakSpaces}>
-                    {workingCase.policeDemands}
-                  </span>
-                </AccordionListItem>
-                <AccordionListItem title="Viðstaddir">
-                  <span className={style.breakSpaces}>
-                    {workingCase.courtAttendees}
-                  </span>
-                </AccordionListItem>
-                <AccordionListItem title="Dómskjöl">
-                  Rannsóknargögn málsins liggja frammi. Krafa lögreglu þingmerkt
-                  nr. 1.
-                </AccordionListItem>
-                <AccordionListItem title="Réttindi kærða">
-                  Kærða er bent á að honum sé óskylt að svara spurningum er
-                  varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113.
-                  gr. laga nr. 88/2008. Kærði er enn fremur áminntur um
-                  sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr.
-                  114. gr. sömu laga.
-                </AccordionListItem>
-                <AccordionListItem title="Afstaða kærða">
-                  <span className={style.breakSpaces}>
-                    {workingCase.accusedPlea}
-                  </span>
-                </AccordionListItem>
-                <AccordionListItem title="Málflutningur">
-                  <span className={style.breakSpaces}>
-                    {workingCase.litigationPresentations}
-                  </span>
-                </AccordionListItem>
-              </AccordionItem>
+              <CourtRecordAccordionItem workingCase={workingCase} />
             </Accordion>
           </Box>
           <Box component="section" marginBottom={8}>

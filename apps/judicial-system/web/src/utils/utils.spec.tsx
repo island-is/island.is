@@ -12,6 +12,7 @@ import * as formatters from './formatters'
 import {
   constructConclusion,
   constructProsecutorDemands,
+  getShortGender,
   isDirty,
   isNextDisabled,
 } from './stepHelper'
@@ -20,6 +21,7 @@ import {
   CaseTransition,
   CaseCustodyRestrictions,
   Case,
+  CaseGender,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
 import { render, screen } from '@testing-library/react'
@@ -663,6 +665,36 @@ describe('Step helper', () => {
       // Assert
       expect(resultUnd).toEqual(false)
       expect(resultN).toEqual(false)
+    })
+  })
+
+  describe('getShortGender', () => {
+    test('should return short genders given a valid gender', () => {
+      // Arrange
+      const male = CaseGender.MALE
+      const female = CaseGender.FEMALE
+      const other = CaseGender.OTHER
+
+      // Act
+      const resultM = getShortGender(male)
+      const resultF = getShortGender(female)
+      const resultO = getShortGender(other)
+
+      // Assert
+      expect(resultM).toEqual('kk')
+      expect(resultF).toEqual('kvk')
+      expect(resultO).toEqual('annað')
+    })
+
+    test('should return an empty string when not given a gender', () => {
+      // Arrange
+      const str = undefined
+
+      // Act
+      const res = getShortGender(str)
+
+      // Assert
+      expect(res).toEqual('')
     })
   })
 })
