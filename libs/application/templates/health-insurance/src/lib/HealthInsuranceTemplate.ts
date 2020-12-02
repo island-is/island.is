@@ -7,8 +7,6 @@ import {
 } from '@island.is/application/core'
 import * as z from 'zod'
 
-const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
-
 type Events =
   | { type: 'APPROVE' }
   | { type: 'REJECT' }
@@ -16,27 +14,10 @@ type Events =
   | { type: 'ABORT' }
 
 const HealthInsuranceSchema = z.object({
-  person: z.object({
-    age: z.string().refine((x) => {
-      const asNumber = parseInt(x)
-      if (isNaN(asNumber)) {
-        return false
-      }
-      return asNumber > 15
-    }),
-    name: z.string().nonempty().max(256),
-    nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
-    phoneNumber: z.string().min(7),
-    email: z.string().email(),
-  }),
-  careerHistory: z.enum(['yes', 'no']).optional(),
-  careerHistoryCompanies: z
-    .array(
-      // TODO checkbox answers are [undefined, 'aranja', undefined] and we need to do something about it...
-      z.union([z.enum(['government', 'aranja', 'advania']), z.undefined()]),
-    )
-    .nonempty(),
-  dreamJob: z.string().optional(),
+  personalDataText: z.string(),
+  occupationText: z.string(),
+  infoInput: z.string(),
+  summaryInput: z.string(),
 })
 
 const HealthInsuranceTemplate: ApplicationTemplate<
@@ -72,70 +53,6 @@ const HealthInsuranceTemplate: ApplicationTemplate<
           SUBMIT: {
             target: 'inReview',
           },
-        },
-      },
-      inReview: {
-        meta: {
-          name: 'In Review',
-          progress: 0.66,
-          roles: [
-            {
-              id: 'reviewer',
-              formLoader: () =>
-                import('../forms/ReviewApplication').then((val) =>
-                  Promise.resolve(val.ReviewApplication),
-                ),
-              actions: [
-                { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
-                { event: 'REJECT', name: 'Hafna', type: 'reject' },
-              ],
-              write: { answers: ['careerHistoryCompanies'] },
-              read: 'all',
-            },
-            {
-              id: 'applicant',
-              formLoader: () =>
-                import('../forms/PendingReview').then((val) =>
-                  Promise.resolve(val.PendingReview),
-                ),
-              read: 'all',
-            },
-          ],
-        },
-        on: {
-          APPROVE: { target: 'approved' },
-          REJECT: { target: 'rejected' },
-        },
-      },
-      approved: {
-        meta: {
-          name: 'Approved',
-          progress: 1,
-          roles: [
-            {
-              id: 'applicant',
-              formLoader: () =>
-                import('../forms/Approved').then((val) =>
-                  Promise.resolve(val.Approved),
-                ),
-              read: 'all',
-            },
-          ],
-        },
-        type: 'final' as const,
-      },
-      rejected: {
-        meta: {
-          name: 'Rejected',
-          roles: [
-            {
-              id: 'applicant',
-              formLoader: () =>
-                import('../forms/Rejected').then((val) =>
-                  Promise.resolve(val.Rejected),
-                ),
-            },
-          ],
         },
       },
     },

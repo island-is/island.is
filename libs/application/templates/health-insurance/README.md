@@ -1,6 +1,8 @@
-# application-templates-health-insurance
+<!-- gitbook-ignore -->
 
-This library was generated with [Nx](https://nx.dev).
+# Application for health insurance
+
+Application for health insurance when moving back to Iceland after living abroad.
 
 ## Running unit tests
 

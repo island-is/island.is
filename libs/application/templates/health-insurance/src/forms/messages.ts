@@ -1,4 +1,3 @@
 import { defineMessages } from 'react-intl'
 
-export const m = defineMessages({
-})
+export const m = defineMessages({})

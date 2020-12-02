@@ -5,7 +5,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { m } from './examplemessages'
+import { m } from './messages'
 
 export const HealthInsuranceForm: Form = buildForm({
   id: 'HealthInsuranceDraft',
@@ -37,7 +37,7 @@ export const HealthInsuranceForm: Form = buildForm({
       name: '',
       children: [
         buildTextField({
-          id: 'occupationText',
+          id: 'infoInput',
           name: 'text input',
         }),
       ],
@@ -47,7 +47,7 @@ export const HealthInsuranceForm: Form = buildForm({
       name: '',
       children: [
         buildTextField({
-          id: 'occupationText',
+          id: 'summaryInput',
           name: 'text input',
         }),
       ],
