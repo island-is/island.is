@@ -27,7 +27,7 @@ class Clients extends Component {
   }
 
   componentDidMount = async () => {
-    this.getClients(this.state.page, this.state.count) 
+    // this.getClients(this.state.page, this.state.count) 
   };
 
   handlePageChange = async (page: number, count: number) => {
@@ -63,8 +63,8 @@ class Clients extends Component {
           <table className="clients__table">
             <thead>
               <tr>
-                <th>Auðkenni</th>
-                <th>Identity token lifetime</th>
+                <th>Client Id</th>
+                <th>Description</th>
                 <th colSpan={2}></th>
               </tr>
             </thead>
@@ -73,21 +73,25 @@ class Clients extends Component {
                 return (
                   <tr key={client.clientId}>
                     <td>{client.clientId}</td>
-                    <td>{client.identityTokenLifetime}</td>
+                    <td>{client.description}</td>
                     <td className="clients__table__button">
                       <button type="button"
                         className="clients__button__edit"
                         onClick={() => this.edit(client)}
+                        title="Edit"
                       >
-                        Breyta
+                        <i className="icon__edit"></i><span>Edit</span>
                       </button>
                     </td>
                     <td className="clients__table__button">
                       <button type="button"
                         className="clients__button__delete"
+                        title="Delete"
                         onClick={() => this.delete(client.clientId)}
                       >
-                        Eyða
+                        <i className="icon__delete"></i>
+                        <span>Delete</span>
+                        
                       </button>
                     </td>
                   </tr>

@@ -49,16 +49,16 @@ export default function IdentityResource<Props>(
     <div className="identity-resource">
       <StatusBar status={response}></StatusBar>
       <div className="identity-resource__wrapper">
-        <div className="identity-resource__help">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur
-          sed alias neque ullam repudiandae, iste reiciendis suscipit rerum
-          officiis necessitatibus doloribus incidunt libero distinctio
-          consequuntur voluptatibus tenetur aliquid ut inventore!
-        </div>
+        
 
         <div className="identity-resource__container">
           <h1>Create new Identity Resource</h1>
           <div className="identity-resource__container__form">
+          <div className="identity-resource__help">
+          Enter some basic details for this client. Click advanced to configure preferences if default settings need to be changed. 
+          You will then go through steps to configure and add additional properties.
+        </div>
+        
             <form onSubmit={handleSubmit(save)}>
               <div className="identity-resource__container__fields">
                 <div className="identity-resource__container__field">

@@ -6,19 +6,30 @@ import { ClientClaimDTO } from './../../models/dtos/client-claim.dto';
 import ClientRedirectUri from './../../components/ClientRedirectUri';
 import { ClientRedirectUriDTO } from './../../models/dtos/client-redirect-uri.dto';
 import ClientIdpRestrictions from './../../components/ClientIdpRestrictions';
+import ClientPostLogoutRedirectUri from './../../components/ClientPostLogoutRedirectUri';
+import { useRouter } from 'next/router'
 
 export default function Index(){
     
     const [step, setStep] = useState(1);
     const [client, setClient] = useState<ClientDTO>(null);
+    const router = useRouter();
+
     // let clientObj: ClientDTO = new ClientDTO();
 
     const handleNext = () => {
+        console.log(step);
+        console.log("handle next called");
         setStep(step+1);
+        console.log(step);
     }
 
     const handleBack = () => {
         setStep(step-1);
+    }
+
+    const handleCancel = () => {
+        router.back();
     }
 
     const handleClientSaved = (clientSaved: ClientDTO) => {
@@ -54,7 +65,7 @@ export default function Index(){
     switch (step){
         case 1:
             // Set up the client properties
-            return <Client client={ new ClientDTO() } onNextButtonClick={handleClientSaved}/> 
+            return <Client handleCancel={handleCancel} client={ new ClientDTO() } onNextButtonClick={handleClientSaved}/> 
         case 2: {
             // Set the callback URI .. ALLT
             const rObj = new ClientRedirectUriDTO();
@@ -65,9 +76,7 @@ export default function Index(){
             return <ClientIdpRestrictions clientId={client.clientId} restrictions={[]} handleNext={handleNext} handleBack={handleBack} />
         }
         case 4: {
-            // Allowed Scopes
-            // Ákveðin scope sem við eigum og veljum úr lista - Skilgreinum scopes fyrir resource-a
-            // Sett á bið?
+            return <ClientPostLogoutRedirectUri clientId={client.clientId} defaultUrl={""} uris={null} handleNext={handleNext} handleBack={handleBack} />
         }
         case 5: {
             // Allowed Cors Origin
@@ -78,8 +87,9 @@ export default function Index(){
             // Authorization code ALLT NEMA SERVICE TO SERVICE - [Client credentials - SERVICE to SERVICE]
         }
         case 7: {
-            // ClientPostLogoutRedirectUri
-            // Loggaður út -> viltu fara aftur á þína síðu
+            // Allowed Scopes
+            // Ákveðin scope sem við eigum og veljum úr lista - Skilgreinum scopes fyrir resource-a
+            // Sett á bið?
         }
         case 8: {
            // Add Claims - Custom Claims (Vitum ekki alveg) - Setja í BID

@@ -11,6 +11,7 @@ import HelpBox from './HelpBox';
 interface Props {
   client: ClientDTO;
   onNextButtonClick?: (client: ClientDTO) => void;
+  handleCancel?: () => void;
 }
 
 const Client: React.FC<Props> = (props: Props) => {
@@ -99,16 +100,15 @@ const Client: React.FC<Props> = (props: Props) => {
     <div className="client">
       <StatusBar status={response}></StatusBar>
       <div className="client__wrapper">
-        <div className="client__help">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur
-          sed alias neque ullam repudiandae, iste reiciendis suscipit rerum
-          officiis necessitatibus doloribus incidunt libero distinctio
-          consequuntur voluptatibus tenetur aliquid ut inventore!
-        </div>
+        
 
         <div className="client__container">
           <h1>Create a new Client</h1>
           <div className="client__container__form">
+          <div className="client__help">
+          Enter some basic details for this client. Click <a href="#advanced">advanced</a> to configure preferences if default settings need to be changed. 
+          You will then go through steps to configure and add additional properties.
+        </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="client__container__fields">
                 {/* <HookField name='client.clientId' errors={errors} required={true} label="Client Id" value={client.clientId}  /> */}
@@ -310,7 +310,7 @@ const Client: React.FC<Props> = (props: Props) => {
                   <HelpBox helpText="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem architecto a odit ea distinctio consequatur autem nesciunt cupiditate eos, error reprehenderit illum dolor, mollitia modi vitae. Ducimus esse eos explicabo." />
                 </div>
 
-                <div className="client__container__button">
+                <div className="client__container__button" id="advanced">
                   <a
                     className="client__button__show"
                     onClick={() => setShow(!show)}
@@ -693,7 +693,7 @@ const Client: React.FC<Props> = (props: Props) => {
               </div>
               <div className="client__buttons__container">
                 <div className="client__button__container">
-                  <button className="client__button__cancel">Cancel</button>
+                  <button className="client__button__cancel" type="button" onClick={props.handleCancel}>Cancel</button>
                 </div>
                 <div className="client__button__container">
                   <input

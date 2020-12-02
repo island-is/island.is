@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ClientRedirectUriDTO } from '../models/dtos/client-redirect-uri.dto';
+import { ClientPostLogoutRedirectUriDTO } from '../models/dtos/client-post-logout-redirect-uri.dto';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import StatusBar from './StatusBar';
@@ -8,15 +8,16 @@ import axios from 'axios';
 import APIResponse from '../models/APIResponse';
 
 interface Props {
-  redirectObject: ClientRedirectUriDTO;
-  uris: [];
+  clientId: string;
+  defaultUrl: string;
+  uris: [],
   handleNext?: () => void;
   handleBack?: () => void;
 }
 
-const ClientRedirectUri: React.FC<Props> = (props: Props) => {
+const ClientPostLogoutRedirectUri: React.FC<Props> = (props: Props) => {
   const { register, handleSubmit, errors, formState } = useForm<
-    ClientRedirectUriDTO
+  ClientPostLogoutRedirectUriDTO
   >();
   const { isSubmitting } = formState;
   const [response, setResponse] = useState(null);
@@ -24,22 +25,24 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
 
   /** Setting the uris when updating an existing client */
   useEffect(() => {
-    if (props.uris && uris.length > 0) {
-      for (let i = 0; i < uris.length; i++) {
-        uris.push(props.uris[i]);
-      }
-      setUris(uris);
+    if (props.uris && uris.length > 0)
+    {
+        for(let i = 0; i < uris.length; i++){
+            uris.push(props.uris[i]);
+        }
+        setUris(uris);
     }
+     
   }, [props.uris]);
 
   const add = async (data) => {
-    const clientRedirect = new ClientRedirectUriDTO();
-    clientRedirect.clientId = props.redirectObject.clientId;
+    const clientRedirect = new ClientPostLogoutRedirectUriDTO();
+    clientRedirect.clientId = props.clientId;
     clientRedirect.redirectUri = data.redirectUri;
     let success = false;
 
     await axios
-      .post(`/api/redirect-uri`, clientRedirect)
+      .post(`/api/client-post-logout-redirect-uri`, clientRedirect)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
@@ -57,24 +60,23 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
         }
       });
 
-    if (success) {
-      uris.push(clientRedirect.redirectUri);
-      console.log('setting uris: ', uris);
-      setUris([...uris]);
-    }
+      if ( success ){
+        uris.push(clientRedirect.redirectUri);
+        setUris([...uris]);
+      }
   };
 
   const remove = async (uri) => {
     let success = false;
     await axios
-      .delete(`/api/redirect-uri/${props.redirectObject.clientId}/${uri}`)
+      .delete(`/api/client-post-logout-redirect-uri/${props.clientId}/${uri}`)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
         res.message = response.request.statusText;
         setResponse(res);
-        if (res.statusCode === 200) {
-          success = true;
+        if (res.statusCode === 200){
+           success = true;
         }
       })
       .catch(function (error) {
@@ -85,39 +87,37 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
         }
       });
 
-    if (success) {
-      uris.splice(uris.indexOf(uri), 1);
-      console.log('setting uris: ', uris);
-      setUris([...uris]);
-    }
+      if ( success ){
+        uris.splice(uris.indexOf(uri), 1);
+        setUris([...uris]);
+      }
   };
 
   return (
-    <div className="client-redirect">
+    <div className="client-post-logout">
       <StatusBar status={response}></StatusBar>
-      <div className="client-redirect__wrapper">
-        <div className="client-redirect__container">
+      <div className="client-post-logout__wrapper">
+        <div className="client-post-logout__container">
           <h1>Enter a callback URL</h1>
-        
-
-          <div className="client-redirect__container__form">
-          <div className="client-redirect__help">
-            Tokens will be sent to this endpoint
+          <div className="client-post-logout__container__form">
+          <div className="client-post-logout__help">
+            <p>Optional (you can configure this at a later time)</p>
+            <p>Users can be returned to this URL(s) after logging out</p>
           </div>
             <form onSubmit={handleSubmit(add)}>
-              <div className="client-redirect__container__fields">
-                <div className="client-redirect__container__field">
-                  <label className="client-redirect__label">Callback URL</label>
+              <div className="client-post-logout__container__fields">
+                <div className="client-post-logout__container__field">
+                  <label className="client-post-logout__label">Logout URL</label>
                   <input
                     type="text"
                     name="redirectUri"
                     ref={register({ required: true })}
-                    defaultValue={props.redirectObject.redirectUri}
-                    className="client-redirect__input"
-                    placeholder="https://localhost:4200/signin-oidc"
-                    title="Full path of the redirect URL. These protocols rely upon TLS in production"
+                    defaultValue={props.defaultUrl}
+                    className="client-post-logout__input"
+                    placeholder="https://localhost:4200"
+                    title="Users can be returned to this URL after logging out. These protocols rely upon TLS in production"
                   />
-                  <HelpBox helpText="Full path of the redirect URL. These protocols rely upon TLS in production" />
+                  <HelpBox helpText="Users can be returned to this URL after logging out. These protocols rely upon TLS in production" />
                   <ErrorMessage
                     as="span"
                     errors={errors}
@@ -126,18 +126,18 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
                   />
                   <input
                     type="submit"
-                    className="client-redirect__button__add"
+                    className="client-post-logout__button__save"
                     disabled={isSubmitting}
                     value="Add"
                   />
                 </div>
               </div>
 
-              <div className="client-redirect__container__list">
+              <div className="client-post-logout__container__list">
                 {uris.map((uri: string) => {
                   return (
                     <div
-                      className="client-redirect__container__list__item"
+                      className="client-post-logout__container__list__item"
                       key={uri}
                     >
                       <div className="list-value">{uri}</div>
@@ -145,7 +145,7 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
                         <button
                           type="button"
                           onClick={() => remove(uri)}
-                          className="client-redirect__container__list__button__remove"
+                          className="client-post-logout__container__list__button__remove"
                         >
                           Remove
                         </button>
@@ -155,19 +155,19 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
                 })}
               </div>
 
-              <div className="client-redirect__buttons__container">
-                <div className="client-redirect__button__container">
+              <div className="client-post-logout__buttons__container">
+                <div className="client-post-logout__button__container">
                   <button
                     type="button"
-                    className="client-redirect__button__cancel"
+                    className="client-post-logout__button__cancel"
                   >
                     Back
                   </button>
                 </div>
-                <div className="client-redirect__button__container">
+                <div className="client-post-logout__button__container">
                   <button
                     type="button"
-                    className="client-redirect__button__save"
+                    className="client-post-logout__button__save"
                     onClick={props.handleNext}
                   >
                     Next
@@ -181,4 +181,4 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
     </div>
   );
 };
-export default ClientRedirectUri;
+export default ClientPostLogoutRedirectUri;

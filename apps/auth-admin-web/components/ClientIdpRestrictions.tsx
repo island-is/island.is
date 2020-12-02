@@ -119,6 +119,7 @@ const ClientIdpRestrictions: React.FC<Props> = (props: Props) => {
                 <button
                   type="button"
                   className="client-idp-restriction__button__cancel"
+                  onClick={props.handleBack}
                 >
                   Back
                 </button>
@@ -128,6 +129,7 @@ const ClientIdpRestrictions: React.FC<Props> = (props: Props) => {
                   type="button"
                   className="client-idp-restriction__button__save"
                   value="Next"
+                  onClick={props.handleNext}
                 >Next</button>
               </div>
             </div>

@@ -1,8 +1,13 @@
 .client,
 .identity-resource,
 .client-redirect,
+.client-post-logout,
 .client-idp-restriction,
 .paginator {
+  &__help {
+    padding: 0 10px 20px 10px;
+  }
+
   &__wrapper {
     max-width: 1024px;
   }
@@ -19,9 +24,6 @@
 
   &__container__form {
     padding: 44px 40px;
-
-    /* aðal / blár / 100 */
-
     background: #f2f7ff;
     border-radius: 5px;
   }
@@ -110,6 +112,11 @@
       @extend .fa-caret-square-o-down;
       margin-right: 12px;
     }
+  }
+
+  &__button__add {
+    flex-basis: 100px !important;
+    margin-left: auto;
   }
 
   ::-webkit-input-placeholder {
