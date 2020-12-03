@@ -1,22 +1,54 @@
 import mitt, { Emitter, Handler } from 'mitt'
-import { ContentFields } from 'contentful-management/dist/typings/entities/content-type-fields'
+import {
+  FieldAPI,
+  BaseExtensionSDK,
+} from 'contentful-ui-extensions-sdk/typings'
+import { Entry } from 'contentful-management/dist/typings/entities/entry'
+import { ContentType } from 'contentful-management/dist/typings/entities/content-type'
+import { Space } from 'contentful-management/dist/typings/entities/space'
+import {
+  createSdk,
+  Types,
+  Entries,
+  Assets,
+  ContentfulLocale,
+} from '@island.is/contentful-editor'
 
-import { getSdk } from './sdk'
+export interface InternalFieldAPI extends FieldAPI {
+  _sdk: BaseExtensionSDK
+}
+
+export interface InternalEntry {
+  slug?: string
+  contentType: string
+  fields?: InternalFieldAPI[]
+}
 
 export const createFieldAPI = (
-  { entry, type }: { entry: any; type: any },
-  { entries, assets, types, space, locale }: { entries: any; assets: any; types: any; space: any; locale: string },
-) => {
-  if (!entry) {
-    return
-  }
-
-  return Array.from(type.fields).map((field: any) => {
+  { entry, type }: { entry: Entry; type: ContentType },
+  {
+    entries,
+    assets,
+    types,
+    space,
+    locale,
+  }: {
+    types: Types
+    entries: Entries
+    assets: Assets
+    space: Space
+    locale: ContentfulLocale
+  },
+): InternalEntry => ({
+  slug: entry.fields?.slug?.[locale],
+  contentType: type.sys.id,
+  fields: Array.from(type.fields).map((field: any) => {
     const emitter: Emitter = mitt()
 
     return {
-      _contentType: type.sys.id, // Internal
-      _sdk: getSdk(entry, entries, assets, space, types, locale), // Internal
+      // Internal 🔽
+      _sdk: createSdk(entry, entries, assets, types, space),
+      // General SDK API 🔽
       id: field.id,
       locale,
       type: field.type,
@@ -80,5 +112,5 @@ export const createFieldAPI = (
         }
       },
     }
-  })
-}
+  }),
+})

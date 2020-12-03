@@ -1,25 +1,17 @@
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
-
-import { MagicType } from '../../contentful/initializer'
-import { renderer } from '../../contentful/renderer'
+import { renderer, ContentfulContext } from '@island.is/contentful-editor'
 
 import * as styles from './Sidebar.treat'
 
 interface SidebarProps {
-  data: MagicType | undefined
-  error?: string
-  loading: boolean
   onChange(field: string, value: string): void
 }
 
-export const Sidebar: FC<SidebarProps> = ({
-  wip,
-  data,
-  error,
-  loading,
-  onChange,
-}) => {
+export const Sidebar: FC<SidebarProps> = ({ onChange }) => {
+  const { loading, entry } = useContext(ContentfulContext)
+  console.log('-entry', entry)
+
   const handleChange = (field: string, value: string) => {
     console.log('-field', field)
     console.log('-value', value)
@@ -34,36 +26,24 @@ export const Sidebar: FC<SidebarProps> = ({
           Contentful Editor Mode
         </Text>
 
-        {!loading && error && (
-          <Text fontWeight="medium" color="red600">
-            {error}
-          </Text>
-        )}
-
         {loading && <Text marginTop={2}>Loading...</Text>}
 
         {!loading &&
-          // (data?.fields ?? []).map((field) => (
-          (wip ?? []).map((field) => {
-            console.log('-field._sdk', field._sdk)
+          (entry?.fields ?? []).map((field) => (
+            <Box
+              key={field.id}
+              padding={2}
+              background="blue100"
+              borderRadius="standard"
+              marginBottom={2}
+            >
+              <Text variant="eyebrow" marginBottom={1}>
+                {field.id}
+              </Text>
 
-            return (
-              <Box
-                key={field.id}
-                padding={2}
-                background="blue100"
-                borderRadius="standard"
-                marginBottom={2}
-              >
-                <Text variant="eyebrow" marginBottom={1}>
-                  {field.id}
-                </Text>
-
-                {/* {renderer(field, data?._sdk)} */}
-                {renderer(field, field?._sdk)}
-              </Box>
-            )
-          })}
+              {renderer(field, field._sdk)}
+            </Box>
+          ))}
       </Box>
 
       <Box className={styles.overlay} />

@@ -7,7 +7,6 @@ import {
 } from '@contentful/field-editor-reference'
 import { RichTextEditor } from '@contentful/field-editor-rich-text'
 import {
-  BaseExtensionSDK,
   FieldAPI,
   FieldExtensionSDK,
 } from 'contentful-ui-extensions-sdk/typings'

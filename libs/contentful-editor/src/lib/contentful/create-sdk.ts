@@ -9,32 +9,37 @@ import { ContentType } from 'contentful-management/dist/typings/entities/content
 import { openRichTextDialog } from '@contentful/field-editor-rich-text'
 import { Entry } from 'contentful-management/dist/typings/entities/entry'
 import { Asset } from 'contentful-management/dist/typings/entities/asset'
+import {
+  env,
+  locales,
+  getEntryURL,
+  Entries,
+  Assets,
+  Types,
+} from '@island.is/contentful-editor'
 
-import { contentfulUrl } from '../contentful-editor'
-import { getEntryURL } from '../utils/get-entry-url'
-import { locales } from './locales'
+export const contentfulUrl = `https://app.contentful.com/spaces/${env.space}/entries`
 
 /**
  * TODO
  * If more than one content types used in a page,
  * we need to loop through and send them here as well
  */
-export const getSdk = (
+export const createSdk = (
   entry: Entry,
-  entries: any[], // TODO
-  assets: Asset[],
+  entries: Entries,
+  assets: Assets,
+  types: Types,
   space: Space,
-  types: ContentType,
-  locale: any,
 ) => {
   const sdk = {
     space: {
       ...space,
       getEntry: (entryId: string) => {
-        const foundEntry = entries.find(entry => entry.sys.id === entryId)
+        const foundEntry = entries.find((entry) => entry.sys.id === entryId)
 
         if (foundEntry) {
-          return Promise.resolve(foundEntry);
+          return Promise.resolve(foundEntry)
         }
 
         return Promise.resolve(entry)
@@ -53,7 +58,6 @@ export const getSdk = (
         return Promise.resolve({ items: assets })
       },
       getCachedContentTypes() {
-        console.log('-getCachedContentTypes')
         return types
       },
     },
@@ -67,7 +71,7 @@ export const getSdk = (
       },
       onSlideInNavigation: () => {
         console.log('-onSlideInNavigation')
-        return () => { }
+        return () => {}
       },
     },
     dialogs: {
@@ -111,7 +115,7 @@ export const getSdk = (
     parameters: {
       instance: {
         getEntryUrl: (entryId: string) => {
-          const foundEntry = entries.find(entry => entry.sys.id === entryId)
+          const foundEntry = entries.find((entry) => entry.sys.id === entryId)
 
           if (foundEntry) {
             return getEntryURL(foundEntry)
@@ -125,5 +129,5 @@ export const getSdk = (
 
   sdk.dialogs.openCurrent = openRichTextDialog(sdk)
 
-  return sdk as BaseExtensionSDK
+  return sdk
 }
