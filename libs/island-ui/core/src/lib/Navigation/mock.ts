@@ -6,6 +6,7 @@ export const categories = [
   {
     title: 'Eldri borgarar',
     href: '/eldri-borgarar',
+    active: true,
   },
   {
     title: 'Bætur',

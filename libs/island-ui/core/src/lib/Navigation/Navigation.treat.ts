@@ -26,6 +26,16 @@ export const link = style({
   },
 })
 
+export const baseIcon = style({
+  minWidth: 32,
+  minHeight: 32,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: '50%',
+  padding: 4,
+})
+
 export const level = styleMap({
   1: {
     padding: 0,
@@ -35,5 +45,51 @@ export const level = styleMap({
     marginBottom: theme.spacing[1],
     marginLeft: theme.spacing[3],
     marginRight: theme.spacing[3],
+  },
+})
+
+export const menuBtn = style({
+  width: '100%',
+  cursor: 'pointer',
+  outline: 'none',
+  borderRadius: 8,
+  padding: theme.spacing[1],
+  transition: 'box-shadow .25s, color .25s, background-color .25s',
+  ':focus': {
+    boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
+  },
+  ':active': {
+    boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
+  },
+})
+
+export const menuIcon = style({
+  position: 'absolute',
+  top: '2px',
+  right: '8px'
+})
+
+
+export const menuShadow = styleMap({
+  blue: {
+    boxShadow: ' 0px 4px 30px rgba(0, 97, 255, 0.25)',
+  },
+  purple: {
+    boxShadow: ' 0px 4px 30px rgba(106, 46, 160, 0.25)',
+
+  },
+  darkBlue: {
+    boxShadow: ' 0px 4px 30px rgba(0, 0, 60, 0.25)',
+
+  },
+})
+
+export const transition = style({
+  opacity: 0,
+  transition: 'opacity 150ms ease-in-out',
+  selectors: {
+    '&[data-enter]': {
+      opacity: 1,
+    },
   },
 })
