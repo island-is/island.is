@@ -12,7 +12,7 @@ export interface RadioButtonProps {
   checked?: boolean
   disabled?: boolean
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
-  tooltip?: string
+  tooltip?: React.ReactNode
   hasError?: boolean
   errorMessage?: string
   large?: boolean
