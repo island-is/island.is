@@ -74,7 +74,7 @@ export const RadioButton = ({
         >
           <div className={styles.checkMark} />
         </div>
-        {HtmlParser(label)}
+        {HtmlParser(label as string)}
         {tooltip && (
           <div
             className={cn(styles.tooltipContainer, {
