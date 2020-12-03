@@ -26,12 +26,14 @@ class ErrorBoundary extends PureComponent<Props, StateTypes> {
 
   componentDidCatch(error: Error) {
     const { application, currentScreen } = this.props
-    Sentry.withScope((scope) => {
-      scope.setExtra('applicationType', application.typeId)
-      scope.setExtra('applicationState', application.state)
-      scope.setExtra('currentScreen', currentScreen.id)
-      Sentry.captureException(error)
-    })
+    if (!window.location.origin.includes('http://localhost')) {
+      Sentry.withScope((scope) => {
+        scope.setExtra('applicationType', application.typeId)
+        scope.setExtra('applicationState', application.state)
+        scope.setExtra('currentScreen', currentScreen.id)
+        Sentry.captureException(error)
+      })
+    }
   }
 
   render() {
