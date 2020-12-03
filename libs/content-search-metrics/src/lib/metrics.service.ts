@@ -4,7 +4,6 @@ import {
   GroupedRankEvaluationResponse,
   rankEvaluationMetrics,
 } from '@island.is/content-search-toolkit'
-import { RankEvaluationResponse } from '@island.is/shared/types'
 import { RankedDataService, searchTermsUnion } from './rankedData.service'
 import { MetricInput } from './dto/metricInput'
 
