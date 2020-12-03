@@ -39,7 +39,7 @@ export class ArticleCategorySyncService
             _id: mapped.slug,
             title: mapped.title,
             content,
-            contentWordCount: content.split(' ').length,
+            contentWordCount: content.split(/\s+/).length,
             type: 'webArticleCategory',
             termPool: createTerms([mapped.title, mapped.description]),
             response: JSON.stringify({

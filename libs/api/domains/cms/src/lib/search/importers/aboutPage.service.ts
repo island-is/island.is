@@ -42,7 +42,7 @@ export class AboutPageSyncService implements CmsSyncProvider<IPage> {
             _id: mapped.id,
             title: mapped.title,
             content,
-            contentWordCount: content.split(' ').length,
+            contentWordCount: content.split(/\s+/).length,
             hasProcessEntry: hasProcessEntry(mapped.slices),
             ...numberOfLinks(mapped.slices),
             type: 'webAboutPage',

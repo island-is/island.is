@@ -74,7 +74,7 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             _id: mapped.id,
             title: mapped.title,
             content,
-            contentWordCount: content.split(' ').length,
+            contentWordCount: content.split(/\s+/).length,
             hasProcessEntry: hasProcessEntry(mapped.body),
             ...numberOfLinks(mapped.body),
             type: 'webArticle',

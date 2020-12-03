@@ -38,7 +38,7 @@ export class LifeEventsPageSyncService
             _id: mapped.id,
             title: mapped.title,
             content,
-            contentWordCount: content.split(' ').length,
+            contentWordCount: content.split(/\s+/).length,
             type: 'webLifeEventPage',
             termPool: createTerms([mapped.title]),
             response: JSON.stringify({ ...mapped, typename: 'LifeEventPage' }),

@@ -37,7 +37,7 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
             _id: mapped.id,
             title: mapped.title,
             content,
-            contentWordCount: content.split(' ').length,
+            contentWordCount: content.split(/\s+/).length,
             type: 'webNews',
             termPool: createTerms([mapped.title, mapped.intro]),
             response: JSON.stringify({ ...mapped, typename: 'News' }),
