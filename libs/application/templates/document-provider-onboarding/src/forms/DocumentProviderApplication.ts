@@ -44,6 +44,8 @@ export const DocumentProviderOnboarding: Form = buildForm({
             buildTextField({
               id: 'applicant.nationalId',
               name: m.applicantNationalId,
+              format: '######-####',
+              placeholder: '000000-0000',
             }),
             buildTextField({
               id: 'applicant.name',
@@ -66,6 +68,8 @@ export const DocumentProviderOnboarding: Form = buildForm({
               id: 'applicant.phoneNumber',
               name: m.applicantPhoneNumber,
               variant: 'tel',
+              format: '###-####',
+              placeholder: '000-0000',
             }),
           ],
         }),
@@ -93,6 +97,8 @@ export const DocumentProviderOnboarding: Form = buildForm({
               id: 'administrativeContact.phoneNumber',
               name: m.administrativeContactPhoneNumber,
               variant: 'tel',
+              format: '###-####',
+              placeholder: '000-0000',
             }),
           ],
         }),
@@ -120,6 +126,8 @@ export const DocumentProviderOnboarding: Form = buildForm({
               id: 'technicalContact.phoneNumber',
               name: m.technicalContactPhoneNumber,
               variant: 'tel',
+              format: '###-####',
+              placeholder: '000-0000',
             }),
           ],
         }),
@@ -143,6 +151,8 @@ export const DocumentProviderOnboarding: Form = buildForm({
               id: 'helpDesk.phoneNumber',
               name: m.helpDeskPhoneNumber,
               variant: 'tel',
+              format: '###-####',
+              placeholder: '000-0000',
             }),
           ],
         }),
@@ -165,6 +175,8 @@ export const DocumentProviderOnboarding: Form = buildForm({
               id: 'applicant.nationalId',
               name: m.applicantNationalId,
               width: 'half',
+              format: '######-####',
+              placeholder: '000000-0000',
             }),
             buildTextField({
               id: 'applicant.name',
@@ -192,6 +204,8 @@ export const DocumentProviderOnboarding: Form = buildForm({
               name: m.applicantPhoneNumber,
               variant: 'tel',
               width: 'half',
+              format: '###-####',
+              placeholder: '000-0000',
             }),
             buildDividerField({
               name: m.administrativeContactSection.defaultMessage,
@@ -212,6 +226,8 @@ export const DocumentProviderOnboarding: Form = buildForm({
               name: m.administrativeContactPhoneNumber,
               variant: 'tel',
               width: 'half',
+              format: '###-####',
+              placeholder: '000-0000',
             }),
             buildDividerField({
               name: m.technicalContactSection.defaultMessage,
@@ -232,22 +248,18 @@ export const DocumentProviderOnboarding: Form = buildForm({
               name: m.technicalContactPhoneNumber,
               variant: 'tel',
               width: 'half',
+              format: '###-####',
+              placeholder: '000-0000',
             }),
             buildDividerField({
               name: m.helpDeskSection.defaultMessage,
               color: 'currentColor',
             }),
-            buildTextField({
-              id: 'helpDesk.email',
-              name: m.helpDeskEmail,
-              variant: 'email',
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'helpDesk.phoneNumber',
-              name: m.helpDeskPhoneNumber,
-              variant: 'tel',
-              width: 'half',
+            //CustomField is a workaround because of a bug in react-hook-form
+            buildCustomField({
+              id: 'helpDeskConfirmation',
+              name: 'helpDeskConfirmation',
+              component: 'Review',
             }),
 
             buildSubmitField({
