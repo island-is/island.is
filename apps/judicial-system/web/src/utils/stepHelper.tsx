@@ -1,11 +1,16 @@
 import React from 'react'
 import { AppealDecisionRole, RequiredField } from '../types'
-import { Text } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import { TagVariant, Text } from '@island.is/island-ui/core'
+import {
+  formatDate,
+  formatNationalId,
+  TIME_FORMAT,
+} from '@island.is/judicial-system/formatters'
 import {
   Case,
   CaseAppealDecision,
   CaseCustodyRestrictions,
+  CaseGender,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
 
@@ -136,6 +141,45 @@ export const constructConclusion = (workingCase: Case) => {
   }
 }
 
+export const constructProsecutorDemands = (workingCase: Case) => {
+  return workingCase.requestedCustodyEndDate ? (
+    <Text>
+      Þess er krafist að
+      <Text as="span" fontWeight="semiBold">
+        {` ${workingCase.accusedName}
+    ${formatNationalId(workingCase.accusedNationalId)}`}
+      </Text>
+      , verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi
+      til
+      <Text as="span" fontWeight="semiBold">
+        {` ${formatDate(workingCase.requestedCustodyEndDate, 'EEEE')?.replace(
+          'dagur',
+          'dagsins',
+        )}
+    ${formatDate(workingCase.requestedCustodyEndDate, 'PPP')}, kl. ${formatDate(
+          workingCase.requestedCustodyEndDate,
+          TIME_FORMAT,
+        )}`}
+      </Text>
+      {workingCase.requestedCustodyRestrictions?.includes(
+        CaseCustodyRestrictions.ISOLATION,
+      ) ? (
+        <>
+          , og verði gert að{' '}
+          <Text as="span" fontWeight="semiBold">
+            sæta einangrun
+          </Text>{' '}
+          meðan á gæsluvarðhaldinu stendur.
+        </>
+      ) : (
+        '.'
+      )}
+    </Text>
+  ) : (
+    <Text>Saksóknari hefur ekki fyllt út dómkröfur.</Text>
+  )
+}
+
 export const isNextDisabled = (requiredFields: RequiredField[]) => {
   // Loop through requiredFields
   for (let i = 0; i < requiredFields.length; i++) {
@@ -159,4 +203,43 @@ export const isNextDisabled = (requiredFields: RequiredField[]) => {
  */
 export const isDirty = (value?: string | null): boolean => {
   return typeof value === 'string'
+}
+
+export const getShortGender = (gender?: CaseGender): string => {
+  switch (gender) {
+    case CaseGender.MALE: {
+      return 'kk'
+    }
+    case CaseGender.FEMALE: {
+      return 'kvk'
+    }
+    case CaseGender.OTHER: {
+      return 'annað'
+    }
+    default: {
+      return ''
+    }
+  }
+}
+
+export const getRestrictionTagVariant = (
+  restriction: CaseCustodyRestrictions,
+): TagVariant => {
+  switch (restriction) {
+    case CaseCustodyRestrictions.COMMUNICATION: {
+      return 'rose'
+    }
+    case CaseCustodyRestrictions.ISOLATION: {
+      return 'red'
+    }
+    case CaseCustodyRestrictions.MEDIA: {
+      return 'blueberry'
+    }
+    case CaseCustodyRestrictions.VISITAION: {
+      return 'purple'
+    }
+    default: {
+      return 'darkerBlue'
+    }
+  }
 }

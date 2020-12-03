@@ -9,12 +9,19 @@ import {
   replaceTabsOnChange,
 } from './formatters'
 import * as formatters from './formatters'
-import { constructConclusion, isDirty, isNextDisabled } from './stepHelper'
+import {
+  constructConclusion,
+  constructProsecutorDemands,
+  getShortGender,
+  isDirty,
+  isNextDisabled,
+} from './stepHelper'
 import { RequiredField } from '../types'
 import {
   CaseTransition,
   CaseCustodyRestrictions,
   Case,
+  CaseGender,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
 import { render, screen } from '@testing-library/react'
@@ -464,6 +471,43 @@ describe('Step helper', () => {
     })
   })
 
+  describe('constructPoliceDemands', () => {
+    test('should render a message if requestedCustodyEndDate is not set', () => {
+      // Arrange
+      const wc = {
+        rejecting: false,
+        custodyRestrictions: [
+          CaseCustodyRestrictions.MEDIA,
+          CaseCustodyRestrictions.VISITAION,
+          CaseCustodyRestrictions.ISOLATION,
+        ],
+        accusedName: 'Doe',
+        accusedNationalId: '0123456789',
+        custodyEndDate: '2020-11-26T12:31:00.000Z',
+        requestedCustodyEndDate: undefined,
+      }
+
+      // Act
+      const { getByText } = render(constructProsecutorDemands(wc as Case))
+
+      // Assert
+      expect(
+        getByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent === 'Saksóknari hefur ekki fyllt út dómkröfur.'
+
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
+
+          return nodeHasText && childrenDontHaveText
+        }),
+      ).toBeTruthy()
+    })
+  })
+
   describe('isNextDisabled', () => {
     test('should return true if the only validation does not pass', () => {
       // Arrange
@@ -621,6 +665,36 @@ describe('Step helper', () => {
       // Assert
       expect(resultUnd).toEqual(false)
       expect(resultN).toEqual(false)
+    })
+  })
+
+  describe('getShortGender', () => {
+    test('should return short genders given a valid gender', () => {
+      // Arrange
+      const male = CaseGender.MALE
+      const female = CaseGender.FEMALE
+      const other = CaseGender.OTHER
+
+      // Act
+      const resultM = getShortGender(male)
+      const resultF = getShortGender(female)
+      const resultO = getShortGender(other)
+
+      // Assert
+      expect(resultM).toEqual('kk')
+      expect(resultF).toEqual('kvk')
+      expect(resultO).toEqual('annað')
+    })
+
+    test('should return an empty string when not given a gender', () => {
+      // Arrange
+      const str = undefined
+
+      // Act
+      const res = getShortGender(str)
+
+      // Assert
+      expect(res).toEqual('')
     })
   })
 })

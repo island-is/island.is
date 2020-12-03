@@ -14,7 +14,10 @@ import {
   formatNationalId,
   formatGender,
 } from '@island.is/judicial-system/formatters'
-import { isNextDisabled } from '../../../utils/stepHelper'
+import {
+  constructProsecutorDemands,
+  isNextDisabled,
+} from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import { validate } from '../../../utils/validate'
@@ -24,7 +27,6 @@ import {
   Case,
   CaseCustodyProvisions,
   UpdateCase,
-  CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
 import {
   parseString,
@@ -41,6 +43,10 @@ import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
+import {
+  validateAndSendToServer,
+  removeTabsValidateAndSet,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 
 interface CaseData {
   case?: Case
@@ -114,25 +120,27 @@ export const JudgeOverview: React.FC = () => {
                 defaultValue={workingCase.courtCaseNumber}
                 errorMessage={courtCaseNumberErrorMessage}
                 hasError={courtCaseNumberErrorMessage !== ''}
-                onBlur={(evt) => {
-                  setWorkingCase({
-                    ...workingCase,
-                    courtCaseNumber: evt.target.value,
-                  })
-
-                  const validateField = validate(evt.target.value, 'empty')
-
-                  if (validateField.isValid) {
-                    updateCase(
-                      workingCase.id,
-                      parseString('courtCaseNumber', evt.target.value),
-                    )
-                  } else {
-                    setCourtCaseNumberErrorMessage(validateField.errorMessage)
-                  }
-                }}
-                onChange={replaceTabsOnChange}
-                onFocus={() => setCourtCaseNumberErrorMessage('')}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'courtCaseNumber',
+                    event,
+                    ['empty'],
+                    workingCase,
+                    setWorkingCase,
+                    courtCaseNumberErrorMessage,
+                    setCourtCaseNumberErrorMessage,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'courtCaseNumber',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setCourtCaseNumberErrorMessage,
+                  )
+                }
                 required
               />
             </Box>
@@ -257,41 +265,7 @@ export const JudgeOverview: React.FC = () => {
                 startExpanded
                 labelVariant="h3"
               >
-                <Text>
-                  Þess er krafist að
-                  <Text as="span" fontWeight="semiBold">
-                    {` ${workingCase.accusedName}
-                    ${formatNationalId(workingCase.accusedNationalId)}`}
-                  </Text>
-                  , verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta
-                  gæsluvarðhaldi til
-                  <Text as="span" fontWeight="semiBold">
-                    {` ${formatDate(
-                      workingCase.requestedCustodyEndDate,
-                      'EEEE',
-                    )?.replace('dagur', 'dagsins')}
-                    ${formatDate(
-                      workingCase.requestedCustodyEndDate,
-                      'PPP',
-                    )},  kl. ${formatDate(
-                      workingCase.requestedCustodyEndDate,
-                      TIME_FORMAT,
-                    )}`}
-                  </Text>
-                  {workingCase.requestedCustodyRestrictions?.includes(
-                    CaseCustodyRestrictions.ISOLATION,
-                  ) ? (
-                    <>
-                      , og verði gert að{' '}
-                      <Text as="span" fontWeight="semiBold">
-                        sæta einangrun
-                      </Text>{' '}
-                      meðan á gæsluvarðhaldinu stendur.
-                    </>
-                  ) : (
-                    '.'
-                  )}
-                </Text>
+                {constructProsecutorDemands(workingCase)}
               </AccordionItem>
               <AccordionItem
                 id="id_2"

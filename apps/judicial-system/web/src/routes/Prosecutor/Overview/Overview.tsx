@@ -8,7 +8,6 @@ import {
   CaseTransition,
   NotificationType,
   TransitionCase,
-  CaseCustodyRestrictions,
   CaseState,
 } from '@island.is/judicial-system/types'
 
@@ -40,6 +39,7 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 interface CaseData {
   case?: Case
@@ -261,41 +261,7 @@ export const Overview: React.FC = () => {
           <Box component="section" marginBottom={10}>
             <Accordion>
               <AccordionItem labelVariant="h3" id="id_1" label="Dómkröfur">
-                <Text>
-                  Þess er krafist að
-                  <Text as="span" fontWeight="semiBold">
-                    {` ${workingCase.accusedName}
-                    ${formatNationalId(workingCase.accusedNationalId)}`}
-                  </Text>
-                  , verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta
-                  gæsluvarðhaldi til
-                  <Text as="span" fontWeight="semiBold">
-                    {` ${formatDate(
-                      workingCase.requestedCourtDate,
-                      'EEEE',
-                    )?.replace('dagur', 'dagsins')}
-                    ${formatDate(
-                      workingCase.requestedCustodyEndDate,
-                      'PPP',
-                    )},  kl. ${formatDate(
-                      workingCase.requestedCustodyEndDate,
-                      TIME_FORMAT,
-                    )}`}
-                  </Text>
-                  {workingCase.requestedCustodyRestrictions?.includes(
-                    CaseCustodyRestrictions.ISOLATION,
-                  ) ? (
-                    <>
-                      , og verði gert að{' '}
-                      <Text as="span" fontWeight="semiBold">
-                        sæta einangrun
-                      </Text>{' '}
-                      meðan á gæsluvarðhaldinu stendur.
-                    </>
-                  ) : (
-                    '.'
-                  )}
-                </Text>
+                {constructProsecutorDemands(workingCase)}
               </AccordionItem>
               <AccordionItem labelVariant="h3" id="id_2" label="Lagaákvæði">
                 <Box marginBottom={2}>

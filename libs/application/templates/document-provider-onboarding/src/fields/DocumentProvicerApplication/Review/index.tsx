@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
   FieldBaseProps,
@@ -12,19 +12,18 @@ import {
   GridColumn,
   GridRow,
   Input,
-  Text,
 } from '@island.is/island-ui/core'
-import {
-  FieldDescription,
-  RadioController,
-  SelectController,
-} from '@island.is/shared/form-fields'
+import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
 const Review: FC<FieldBaseProps> = ({ field, application }) => {
   const { description } = field
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
+
+  const getValue = (id: string) => {
+    return getValueViaPath(application.answers, id) as string
+  }
 
   return (
     <div>
@@ -37,41 +36,24 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
       <Box marginTop={8} marginBottom={6}>
         <Accordion singleExpand={false}>
           {/* Applicant */}
-          <AccordionItem id="id_1" label="Upplýsingar umsækjanda" startExpanded>
+          <AccordionItem id="id_1" label="Upplýsingar umsækjanda">
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="6/12">
                   <Input
-                    id={'applicant.nationalId'}
-                    name={'applicant.nationalId'}
-                    label={'Kennitala'}
+                    id="applicant.nationalId"
+                    name="applicant.nationalId"
+                    label="Kennitala"
+                    defaultValue={getValue('applicant.nationalId')}
                     ref={register}
                   />
                 </GridColumn>
                 <GridColumn span="6/12">
                   <Input
-                    id={'applicant.name'}
-                    name={'applicant.name'}
-                    label={'Nafn'}
-                    ref={register}
-                  />
-                </GridColumn>
-              </GridRow>
-              <Box marginTop={3} />
-              <GridRow>
-                <GridColumn span="6/12">
-                  <Input
-                    id={'applicant.email'}
-                    name={'applicant.email'}
-                    label={'Netfang'}
-                    ref={register}
-                  />
-                </GridColumn>
-                <GridColumn span="6/12">
-                  <Input
-                    id={'applicant.phoneNumber'}
-                    name={'applicant.phoneNumber'}
-                    label={'Símanúmer'}
+                    id="applicant.name"
+                    name="applicant.name"
+                    label="Nafn"
+                    defaultValue={getValue('applicant.name')}
                     ref={register}
                   />
                 </GridColumn>
@@ -80,17 +62,40 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               <GridRow>
                 <GridColumn span="6/12">
                   <Input
-                    id={'applicant.address'}
-                    name={'applicant.address'}
-                    label={'Heimilisfang'}
+                    id="applicant.email"
+                    name="applicant.email"
+                    label="Netfang"
+                    defaultValue={getValue('applicant.email')}
                     ref={register}
                   />
                 </GridColumn>
                 <GridColumn span="6/12">
                   <Input
-                    id={'applicant.zipCode'}
-                    name={'applicant.zipCode'}
-                    label={'Póstnúmer og staður'}
+                    id="applicant.phoneNumber"
+                    name="applicant.phoneNumber"
+                    label="Símanúmer"
+                    defaultValue={getValue('applicant.phoneNumber')}
+                    ref={register}
+                  />
+                </GridColumn>
+              </GridRow>
+              <Box marginTop={3} />
+              <GridRow>
+                <GridColumn span="6/12">
+                  <Input
+                    id="applicant.address"
+                    name="applicant.address"
+                    label="Heimilisfang"
+                    defaultValue={getValue('applicant.address')}
+                    ref={register}
+                  />
+                </GridColumn>
+                <GridColumn span="6/12">
+                  <Input
+                    id="applicant.zipCode"
+                    name="applicant.zipCode"
+                    label="Póstnúmer og staður"
+                    defaultValue={getValue('applicant.zipCode')}
                     ref={register}
                   />
                 </GridColumn>
@@ -98,14 +103,15 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
             </Box>
           </AccordionItem>
           {/* administrativeContact */}
-          <AccordionItem id="id_1" label="Ábyrgðarmaður" startExpanded>
+          <AccordionItem id="id_2" label="Ábyrgðarmaður">
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="12/12">
                   <Input
-                    id={'administrativeContact.name'}
-                    name={'administrativeContact.name'}
-                    label={'nafn'}
+                    id="administrativeContact.name"
+                    name="administrativeContact.name"
+                    label="Nafn"
+                    defaultValue={getValue('administrativeContact.name')}
                     ref={register}
                   />
                 </GridColumn>
@@ -114,17 +120,19 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               <GridRow>
                 <GridColumn span="6/12">
                   <Input
-                    id={'administrativeContact.email'}
-                    name={'administrativeContact.email'}
-                    label={'Netfang'}
+                    id="administrativeContact.email"
+                    name="administrativeContact.email"
+                    label="Netfang"
+                    defaultValue={getValue('administrativeContact.email')}
                     ref={register}
                   />
                 </GridColumn>
                 <GridColumn span="6/12">
                   <Input
-                    id={'administrativeContact.phoneNumber'}
-                    name={'administrativeContact.phoneNumber'}
-                    label={'Símanúmer'}
+                    id="administrativeContact.phoneNumber"
+                    name="administrativeContact.phoneNumber"
+                    label="Símanúmer"
+                    defaultValue={getValue('administrativeContact.phoneNumber')}
                     ref={register}
                   />
                 </GridColumn>
@@ -132,14 +140,15 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
             </Box>
           </AccordionItem>
           {/* technicalContact */}
-          <AccordionItem id="id_1" label="Tæknilegur tengiliður" startExpanded>
+          <AccordionItem id="id_3" label="Tæknilegur tengiliður">
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="12/12">
                   <Input
-                    id={'technicalContact.name'}
-                    name={'technicalContact.name'}
-                    label={'nafn'}
+                    id="technicalContact.name"
+                    name="technicalContact.name"
+                    label="Nafn"
+                    defaultValue={getValue('technicalContact.name')}
                     ref={register}
                   />
                 </GridColumn>
@@ -148,17 +157,19 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               <GridRow>
                 <GridColumn span="6/12">
                   <Input
-                    id={'technicalContact.email'}
-                    name={'technicalContact.email'}
-                    label={'Netfang'}
+                    id="technicalContact.email"
+                    name="technicalContact.email"
+                    label="Netfang"
+                    defaultValue={getValue('technicalContact.email')}
                     ref={register}
                   />
                 </GridColumn>
                 <GridColumn span="6/12">
                   <Input
-                    id={'technicalContact.phoneNumber'}
-                    name={'technicalContact.phoneNumber'}
-                    label={'Símanúmer'}
+                    id="technicalContact.phoneNumber"
+                    name="technicalContact.phoneNumber"
+                    label="Símanúmer"
+                    defaultValue={getValue('technicalContact.phoneNumber')}
                     ref={register}
                   />
                 </GridColumn>
@@ -166,34 +177,24 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
             </Box>
           </AccordionItem>
           {/* helpdeskContact */}
-          <AccordionItem id="id_1" label="Notendaaðstoð" startExpanded>
+          <AccordionItem id="id_4" label="Notendaaðstoð">
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="6/12">
                   <Input
-                    id={'helpDesk.email'}
-                    name={'helpDesk.email'}
-                    label={'Netfang'}
+                    id="helpDesk.email"
+                    name="helpDesk.email"
+                    label="Netfang"
+                    defaultValue={getValue('helpDesk.email')}
                     ref={register}
                   />
                 </GridColumn>
                 <GridColumn span="6/12">
                   <Input
-                    id={'helpDesk.phoneNumber'}
-                    name={'helpDesk.phoneNumber'}
-                    label={'Símanúmer'}
-                    ref={register}
-                  />
-                </GridColumn>
-              </GridRow>
-              <Box marginTop={3} />
-              <GridRow>
-                {/* Maybe add condition here, because this can be empty ? opinions */}
-                <GridColumn span="6/12">
-                  <Input
-                    id={'helpDesk.chatbot'}
-                    name={'helpDesk.chatbot'}
-                    label={'Snjallmenni'}
+                    id="helpDesk.phoneNumber"
+                    name="helpDesk.phoneNumber"
+                    label="Símanúmer"
+                    defaultValue={getValue('helpDesk.phoneNumber')}
                     ref={register}
                   />
                 </GridColumn>

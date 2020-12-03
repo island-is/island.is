@@ -1,6 +1,12 @@
 import React, { FC } from 'react'
-import { Box, RadioButton, Stack, Tooltip } from '@island.is/island-ui/core'
 import { useFormContext, Controller } from 'react-hook-form'
+
+import {
+  RadioButton,
+  Tooltip,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
 
 interface Option {
   value: string
@@ -16,6 +22,7 @@ interface Props {
   name?: string
   options?: Option[]
   largeButtons?: boolean
+  split?: '1/1' | '1/2' | '1/3' | '1/4'
   emphasize?: boolean
   onSelect?: (s: string) => void
 }
@@ -29,16 +36,18 @@ export const RadioController: FC<Props> = ({
   largeButtons = false,
   emphasize = false,
   onSelect = () => undefined,
+  split = '1/1',
 }) => {
   const { clearErrors, setValue } = useFormContext()
+
   return (
     <Controller
       name={name}
       defaultValue={defaultValue}
-      render={({ value, onChange }) => {
-        return (
-          <Stack space={2}>
-            {options.map((option, index) => (
+      render={({ value, onChange }) => (
+        <GridRow>
+          {options.map((option, index) => (
+            <GridColumn span={['1/1', split]} paddingBottom={2}>
               <RadioButton
                 large={largeButtons || emphasize}
                 filled={emphasize}
@@ -59,10 +68,10 @@ export const RadioController: FC<Props> = ({
                 errorMessage={index === options.length - 1 ? error : undefined}
                 hasError={error !== undefined}
               />
-            ))}
-          </Stack>
-        )
-      }}
+            </GridColumn>
+          ))}
+        </GridRow>
+      )}
     />
   )
 }

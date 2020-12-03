@@ -8,7 +8,9 @@ import { Application } from './application.model'
 import { ApplicationController } from './application.controller'
 import { ApplicationService } from './application.service'
 import { UploadProcessor } from './upload.processor'
+import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
 import { environment } from '../../../environments'
+
 // import { AuthModule } from '@island.is/auth-api-lib'
 
 let BullModule: DynamicModule
@@ -43,6 +45,14 @@ if (process.env.INIT_SCHEMA === 'true') {
     BullModule,
   ],
   controllers: [ApplicationController],
-  providers: [ApplicationService, UploadProcessor],
+  providers: [
+    ApplicationService,
+    UploadProcessor,
+    {
+      provide: EMAIL_OPTIONS,
+      useValue: environment.emailOptions,
+    },
+    EmailService,
+  ],
 })
 export class ApplicationModule {}

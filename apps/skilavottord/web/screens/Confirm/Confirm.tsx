@@ -11,7 +11,7 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
 import { formatDate, formatYear } from '@island.is/skilavottord-web/utils'
-import { Car } from '@island.is/skilavottord-web/types'
+import { Car, WithApolloProps } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import {
   CREATE_VEHICLE_OWNER,
@@ -19,7 +19,26 @@ import {
 } from '@island.is/skilavottord-web/graphql/mutations'
 import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
 
-const Confirm = ({ apolloState }) => {
+export interface VehicleMutation {
+  createSkilavottordVehicle: VehicleMutationData
+}
+
+export interface VehicleOwnerMutation {
+  createSkilavottordVehicleOwner: VehicleOwnerMutationData
+}
+
+export interface VehicleOwnerMutationData {
+  name: string
+  nationalId: string
+}
+
+export interface VehicleMutationData {
+  car: Car
+  newRegDate: string
+  nationalId: string
+}
+
+const Confirm = ({ apolloState }: WithApolloProps) => {
   const { user } = useContext(UserContext)
   const [checkbox, setCheckbox] = useState(false)
   const [isTablet, setIsTablet] = useState(false)
@@ -40,7 +59,7 @@ const Confirm = ({ apolloState }) => {
         pathname: routes.myCars,
       })
     }
-  }, [car])
+  }, [car, router, routes])
 
   useEffect(() => {
     if (width < theme.breakpoints.lg) {
@@ -49,8 +68,34 @@ const Confirm = ({ apolloState }) => {
     setIsTablet(false)
   }, [width])
 
-  const [setVehicle] = useMutation(CREATE_VEHICLE)
-  const [setVehicleOwner] = useMutation(CREATE_VEHICLE_OWNER)
+  const [setVehicle] = useMutation<VehicleMutationData>(CREATE_VEHICLE, {
+    onCompleted() {
+      routeToAuthCheck()
+    },
+    onError() {
+      // Because we want to show error after checking authenication
+      routeToAuthCheck()
+    },
+  })
+
+  const [setVehicleOwner] = useMutation<VehicleOwnerMutation>(
+    CREATE_VEHICLE_OWNER,
+    {
+      onCompleted() {
+        setVehicle({
+          variables: {
+            ...car,
+            newRegDate: formatDate(car.firstRegDate, 'dd.MM.yyyy'),
+            nationalId: user?.nationalId,
+          },
+        })
+      },
+      onError() {
+        // Because we want to show error after checking authenication
+        routeToAuthCheck()
+      },
+    },
+  )
 
   const onCancel = () => {
     router.replace({
@@ -58,21 +103,16 @@ const Confirm = ({ apolloState }) => {
     })
   }
 
-  const onConfirm = (car: Car) => {
+  const onConfirm = () => {
     setVehicleOwner({
       variables: {
         name: user?.name,
         nationalId: user?.nationalId,
       },
-    }).then(() =>
-      setVehicle({
-        variables: {
-          ...car,
-          newRegDate: formatDate(car.firstRegDate, 'dd.MM.yyyy'),
-          nationalId: user?.nationalId,
-        },
-      }),
-    )
+    })
+  }
+
+  const routeToAuthCheck = () => {
     localStorage.setItem(ACCEPTED_TERMS_AND_CONDITION, id.toString())
     router.replace(
       `${AUTH_URL['citizen']}/login?returnUrl=${routes.recycleVehicle.baseRoute}/${id}/handover`,
@@ -94,7 +134,7 @@ const Confirm = ({ apolloState }) => {
     <>
       {car && (
         <ProcessPageLayout
-          sectionType={'citizen'}
+          processType={'citizen'}
           activeSection={0}
           activeCar={id.toString()}
         >
@@ -110,7 +150,7 @@ const Confirm = ({ apolloState }) => {
                 vehicleType={car.type}
                 modelYear={formatYear(car.firstRegDate, 'dd.MM.yyyy')}
               />
-              <Box padding={4} background="blue100">
+              <Box padding={4} background="blue100" borderRadius="large">
                 <Checkbox
                   name="confirm"
                   label={checkboxLabel.props.children}
@@ -143,7 +183,7 @@ const Confirm = ({ apolloState }) => {
               <Button
                 disabled={!checkbox}
                 icon="arrowForward"
-                onClick={() => onConfirm(car)}
+                onClick={() => onConfirm()}
               >
                 {t.buttons.continue}
               </Button>

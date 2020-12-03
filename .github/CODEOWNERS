@@ -19,11 +19,20 @@
 /*/air-discount-scheme/                                   @island-is/vice-versa
 /*/gjafakort/                                             @island-is/vice-versa
 /libs/application/templates/driving-license/              @island-is/vice-versa
+/libs/application/templates/passport/                     @island-is/vice-versa
 
 /apps/application-system/                                 @island-is/aranja
 /apps/reference-next-app/                                 @island-is/aranja
 /libs/api/domains/application/                            @island-is/aranja
-/libs/application/                                        @island-is/aranja
+/libs/application/core/                                   @island-is/aranja
+/libs/application/data-providers/                         @island-is/aranja
+/libs/application/graphql/                                @island-is/aranja
+/libs/application/ui-fields/                              @island-is/aranja
+/libs/application/ui-shell/                               @island-is/aranja
+/libs/application/template-loader/                        @island-is/aranja
+/libs/application/templates/meta-application/             @island-is/aranja
+/libs/application/templates/parental-leave/               @island-is/aranja
+/libs/application/templates/reference-template/           @island-is/aranja
 
 /apps/judicial-system/                                    @island-is/kolibri
 /libs/judicial-system/                                    @island-is/kolibri
@@ -54,6 +63,7 @@
 /apps/api-catalogue/                                      @island-is/advania
 /libs/api/domains/api-catalogue/                          @island-is/advania
 /libs/api-catalogue/                                      @island-is/advania
+/libs/api/domains/document-provider/                      @island-is/advania
 
 /libs/application/templates/document-provider-onboarding/ @island-is/advania
 /apps/services/xroad-collector/                           @island-is/advania

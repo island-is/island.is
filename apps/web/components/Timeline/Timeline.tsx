@@ -443,7 +443,7 @@ const EventModal = forwardRef(
             {event.data?.labels && (
               <Inline space={2}>
                 {event.data.labels.map((label, index) => (
-                  <Tag key={index} label variant="purple" bordered>
+                  <Tag key={index} label variant="purple" outlined>
                     {label}
                   </Tag>
                 ))}

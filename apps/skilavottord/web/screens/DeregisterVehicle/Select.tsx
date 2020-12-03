@@ -44,7 +44,7 @@ const Select: FC = () => {
   }
 
   const validateRegNumber = (value: string) => {
-    const regular = new RegExp(/^[A-Z]{1,2}(\s|\-){0,1}([A-Z]|\d){1}\d{2}$/gi)
+    const regular = new RegExp(/^[A-Z]{1,2}(\s|-){0,1}([A-Z]|\d){1}\d{2}$/gi)
     const antique = new RegExp(/^[A-Z]{1}\s{0,1}\d{5}$/gi)
     return regular.test(value) || antique.test(value)
   }
@@ -56,7 +56,7 @@ const Select: FC = () => {
   }
 
   return (
-    <ProcessPageLayout sectionType={'company'} activeSection={0}>
+    <ProcessPageLayout processType={'company'} activeSection={0}>
       <Stack space={4}>
         <Text variant="h1">{t.title}</Text>
         <Text variant="intro">{t.info}</Text>

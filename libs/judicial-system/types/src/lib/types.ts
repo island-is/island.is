@@ -23,6 +23,7 @@ export enum CaseState {
   SUBMITTED = 'SUBMITTED',
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
+  DELETED = 'DELETED',
 }
 
 export enum CaseTransition {
@@ -30,6 +31,7 @@ export enum CaseTransition {
   SUBMIT = 'SUBMIT',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
+  DELETE = 'DELETE',
 }
 
 export enum CaseCustodyProvisions {
@@ -89,6 +91,7 @@ export interface Case {
   prosecutor?: User
   courtCaseNumber?: string
   courtDate?: string
+  isCourtDateInThePast?: boolean
   courtRoom?: string
   defenderName?: string
   defenderEmail?: string
@@ -101,6 +104,7 @@ export interface Case {
   ruling?: string
   rejecting?: boolean
   custodyEndDate?: string
+  isCustodyEndDateInThePast?: boolean
   custodyRestrictions?: CaseCustodyRestrictions[]
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string

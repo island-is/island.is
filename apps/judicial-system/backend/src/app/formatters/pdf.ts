@@ -12,6 +12,7 @@ import {
   formatDate,
   formatGender,
   formatNationalId,
+  formatRestrictions,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -22,7 +23,6 @@ import {
   formatCourtCaseNumber,
   formatCustodyProvisions,
   formatProsecutorDemands,
-  formatRestrictions,
 } from './formatters'
 
 export function writeFile(fileName: string, documentContent: string) {
@@ -52,7 +52,7 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
       align: 'center',
     })
     .fontSize(16)
-    .text('Embætti: Lögreglustjórinn á Höfuðborgarsvæðinu', { align: 'center' })
+    .text('Embætti: Lögreglustjórinn á höfuðborgarsvæðinu', { align: 'center' })
     .lineGap(40)
     .text(`Dómstóll: ${existingCase.court}`, { align: 'center' })
     .font('Helvetica-Bold')
