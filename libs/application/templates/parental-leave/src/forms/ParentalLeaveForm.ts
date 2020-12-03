@@ -474,7 +474,6 @@ export const ParentalLeaveForm: Form = buildForm({
             ),
             buildMultiField({
               id: 'periods[0].ratio',
-              condition: (formValue) => formValue.singlePeriod === 'no',
               name: 'What percent off will you take for this period?',
               description:
                 'For example, you could work 50% of the time, and have 50% paid leave.',

@@ -3,9 +3,11 @@ import {
   ExternalData,
   FieldTypes,
   FormItemTypes,
+  FormValue,
   SubmitField,
 } from '@island.is/application/core'
 import { FormScreen } from './types'
+import pick from 'lodash/pick'
 
 export function verifyExternalData(
   externalData: ExternalData,
@@ -34,4 +36,36 @@ export function findSubmitField(screen: FormScreen): SubmitField | undefined {
     }
   }
   return undefined
+}
+
+export function extractAnswersToSubmitFromScreen(
+  data: FormValue,
+  screen: FormScreen,
+): FormValue {
+  const screenId = screen.id ?? ''
+  if (
+    screen.isPartOfRepeater ||
+    (screenId.includes('[') && screenId.includes(']'))
+  ) {
+    const baseId =
+      screen.type === FormItemTypes.MULTI_FIELD
+        ? screen.children[0].id
+        : screenId
+
+    // We always submit the whole array for the repeater answers
+    const repeaterId = baseId.split('[')[0] ?? ''
+    return pick(data, [repeaterId])
+  }
+  switch (screen.type) {
+    case FormItemTypes.MULTI_FIELD:
+      return pick(
+        data,
+        screen.children.map((c) => c.id),
+      )
+    case FormItemTypes.EXTERNAL_DATA_PROVIDER:
+    case FormItemTypes.REPEATER:
+      return {}
+    default:
+      return pick(data, [screenId])
+  }
 }

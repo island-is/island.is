@@ -22,7 +22,11 @@ import FormField from './FormField'
 import { resolver } from '../validation/resolver'
 import FormRepeater from './FormRepeater'
 import FormExternalDataProvider from './FormExternalDataProvider'
-import { findSubmitField, verifyExternalData } from '../utils'
+import {
+  extractAnswersToSubmitFromScreen,
+  findSubmitField,
+  verifyExternalData,
+} from '../utils'
 import { useLocale } from '@island.is/localization'
 import ScreenFooter from './ScreenFooter'
 import { useWindowSize } from 'react-use'
@@ -111,7 +115,7 @@ const Screen: FC<ScreenProps> = ({
         variables: {
           input: {
             id: applicationId,
-            answers: data,
+            answers: extractAnswersToSubmitFromScreen(data, screen),
           },
         },
       })
