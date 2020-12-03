@@ -246,6 +246,9 @@
     "judicial-system-audit-trail": {
       "tags": []
     },
+    "judicial-system-auth": {
+      "tags": []
+    },
     "judicial-system-backend": {
       "tags": []
     },
