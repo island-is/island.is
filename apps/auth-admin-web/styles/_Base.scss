@@ -285,3 +285,14 @@ a {
   @extend .fa;
   @extend .fa-trash-o;
 }
+
+// Buttons
+.button__warning {
+  background: $color-error;
+  color: $color-body-bg;
+}
+
+.button__ok {
+  background: $color-ok;
+  color: $color-body-bg;
+}
