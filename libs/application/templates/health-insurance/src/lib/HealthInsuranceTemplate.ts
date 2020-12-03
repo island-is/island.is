@@ -25,7 +25,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.EXAMPLE,
+  type: ApplicationTypes.HEALTH_INSURANCE,
   name: 'Application for health insurance',
   dataSchema: HealthInsuranceSchema,
   stateMachineConfig: {
