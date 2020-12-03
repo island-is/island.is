@@ -8,6 +8,7 @@ import {
   FormModes,
   buildSubmitField,
   buildCustomField,
+  buildDividerField,
 } from '@island.is/application/core'
 import { m } from './messages'
 
@@ -156,11 +157,99 @@ export const DocumentProviderOnboarding: Form = buildForm({
           name: m.confirmationTitle,
           description: m.confirmationSubTitle,
           children: [
-            buildCustomField({
-              id: 'confirmation',
-              name: m.confirmationTitle,
-              component: 'Review',
+            buildDividerField({
+              name: m.applicantSection.defaultMessage,
+              color: 'currentColor',
             }),
+            buildTextField({
+              id: 'applicant.nationalId',
+              name: m.applicantNationalId,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'applicant.name',
+              name: m.applicantName,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'applicant.address',
+              name: m.applicantAddress,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'applicant.zipCode',
+              name: m.applicantZipCode,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'applicant.email',
+              name: m.applicantEmail,
+              variant: 'email',
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'applicant.phoneNumber',
+              name: m.applicantPhoneNumber,
+              variant: 'tel',
+              width: 'half',
+            }),
+            buildDividerField({
+              name: m.administrativeContactSection.defaultMessage,
+              color: 'currentColor',
+            }),
+            buildTextField({
+              id: 'administrativeContact.name',
+              name: m.administrativeContactName,
+            }),
+            buildTextField({
+              id: 'administrativeContact.email',
+              name: m.administrativeContactEmail,
+              variant: 'email',
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'administrativeContact.phoneNumber',
+              name: m.administrativeContactPhoneNumber,
+              variant: 'tel',
+              width: 'half',
+            }),
+            buildDividerField({
+              name: m.technicalContactSection.defaultMessage,
+              color: 'currentColor',
+            }),
+            buildTextField({
+              id: 'technicalContact.name',
+              name: m.technicalContactName,
+            }),
+            buildTextField({
+              id: 'technicalContact.email',
+              name: m.technicalContactEmail,
+              variant: 'email',
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'technicalContact.phoneNumber',
+              name: m.technicalContactPhoneNumber,
+              variant: 'tel',
+              width: 'half',
+            }),
+            buildDividerField({
+              name: m.helpDeskSection.defaultMessage,
+              color: 'currentColor',
+            }),
+            buildTextField({
+              id: 'helpDesk.email',
+              name: m.helpDeskEmail,
+              variant: 'email',
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'helpDesk.phoneNumber',
+              name: m.helpDeskPhoneNumber,
+              variant: 'tel',
+              width: 'half',
+            }),
+
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
