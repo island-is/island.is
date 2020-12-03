@@ -5,6 +5,8 @@ import {
   Table,
   ForeignKey,
   PrimaryKey,
+  CreatedAt,
+  UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { Client } from './client.model'
@@ -25,7 +27,7 @@ export class ClientRedirectUri extends Model<ClientRedirectUri> {
   })
   @ForeignKey(() => Client)
   @ApiProperty()
-  clientId: string
+  clientId!: string
 
   @PrimaryKey
   @Column({
@@ -33,5 +35,13 @@ export class ClientRedirectUri extends Model<ClientRedirectUri> {
     allowNull: false,
   })
   @ApiProperty()
-  redirectUri: string
+  redirectUri!: string
+
+  @CreatedAt
+  @ApiProperty()
+  readonly created!: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  readonly modified?: Date
 }
