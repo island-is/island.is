@@ -1,8 +1,8 @@
 import React, { FC, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { useFormContext, Controller } from 'react-hook-form'
-import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Button, Input } from '@island.is/island-ui/core'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
@@ -15,9 +15,21 @@ const TestEnvironment: FC<FieldBaseProps> = ({ field, application }) => {
     value: string
   }
 
-  const { register, errors, trigger, getValues } = useFormContext()
+  const {
+    clearErrors,
+    setValue,
+    register,
+    errors,
+    trigger,
+    getValues,
+  } = useFormContext()
   const [variables, setendPointVariables] = useState<Variable[]>([])
   const [registerEndpoint] = useMutation(registerEndpointMutation)
+  const currentAnswer = getValueViaPath(
+    application.answers,
+    'endPointExists' as string,
+    '',
+  ) as string
 
   const onRegisterEndpoint = async (isValid: boolean) => {
     if (isValid) {
@@ -39,6 +51,9 @@ const TestEnvironment: FC<FieldBaseProps> = ({ field, application }) => {
         },
         { id: '2', name: 'Scope', value: result.data.registerEndpoint.scope },
       ])
+      setValue('endPointExists' as string, 'true')
+
+      clearErrors('endPointExists')
     }
   }
 
@@ -76,6 +91,23 @@ const TestEnvironment: FC<FieldBaseProps> = ({ field, application }) => {
         >
           Vista endapunkt
         </Button>
+        <Box display="none">
+          <Controller
+            name="endPointExists"
+            defaultValue={currentAnswer}
+            rules={{ required: true }}
+            render={() => {
+              return <input type="hidden" name="endPointExists" />
+            }}
+          />
+        </Box>
+        {errors.endPointExists && (
+          <Box color="red600" paddingY={2}>
+            <Text fontWeight="semiBold" color="red600">
+              {errors.endPointExists}
+            </Text>
+          </Box>
+        )}
       </Box>
 
       {variables &&

@@ -2,11 +2,12 @@ import React, { FC, useState } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
-import { Box, Button, Text, Checkbox } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { registerProviderMutation } from '../../../graphql/mutations/registerProviderMutation'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
 const TestEnvironment: FC<FieldBaseProps> = ({ application }) => {
   interface Key {
@@ -41,7 +42,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application }) => {
       },
     ])
 
-    setValue('testUserExists' as string, true)
+    setValue('testUserExists' as string, 'true')
 
     clearErrors('testUserExists')
   }
@@ -51,8 +52,8 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application }) => {
   const currentAnswer = getValueViaPath(
     formValue,
     'testUserExists' as string,
-    false,
-  ) as boolean
+    '',
+  ) as string
 
   return (
     //TODO: we can make this a generic component for reuasabilty, same as production environment
@@ -79,23 +80,22 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application }) => {
         >
           Búa til aðgang
         </Button>
-        <Box display="none">
-          <Controller
-            name="testUserExists"
-            defaultValue={currentAnswer}
-            rules={{ required: true }}
-            render={({ value }) => {
-              return <Checkbox checked={value} name="testUserExists" large />
-            }}
-          />
-        </Box>
-        {errors.testUserExists ? (
+        <Controller
+          name="testUserExists"
+          defaultValue={currentAnswer}
+          rules={{ required: true }}
+          render={() => {
+            return <input type="hidden" name="testUserExists" />
+          }}
+        />
+
+        {errors.testUserExists && (
           <Box color="red600" paddingY={2}>
             <Text fontWeight="semiBold" color="red600">
               {errors.testUserExists}
             </Text>
           </Box>
-        ) : null}
+        )}
       </Box>
       {keys.map((Key, index) => (
         <Box marginBottom={3} key={index}>

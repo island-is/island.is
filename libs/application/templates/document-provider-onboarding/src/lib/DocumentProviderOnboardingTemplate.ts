@@ -55,14 +55,17 @@ const dataSchema = z.object({
   administrativeContact: contact,
   technicalContact: contact,
   helpDesk: helpDeskContact,
-  //Not sure if we want this ? Confirmation that tests have finished...
   technicalAnswer: z.boolean().refine((v) => v, {
-    //When to show these ?
     message: 'Þú verður að samþykkja að forritun og prófunum sé lokið',
   }),
   endPoint: z.string().url().nonempty(),
-  testUserExists: z.boolean().refine((v) => v, {
-    //When to show these ?
+  testUserExists: z.string().nonempty({
+    message: 'Þú verður að stofna aðgang til að halda áfram',
+  }),
+  endPointExists: z.string().nonempty({
+    message: 'Þú verður að vista endapunkt til að halda áfram',
+  }),
+  productionUserExists: z.string().nonempty({
     message: 'Þú verður að stofna aðgang til að halda áfram',
   }),
   rejectionReason: z.string(),

@@ -1,20 +1,28 @@
 import React, { FC, useState } from 'react'
+import { useFormContext, Controller } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
-import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Button } from '@island.is/island-ui/core'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { registerProviderMutation } from '../../../graphql/mutations/registerProviderMutation'
 
-const ProdEnvironment: FC<FieldBaseProps> = () => {
+const ProdEnvironment: FC<FieldBaseProps> = ({ application }) => {
   // TODO: Add this to types file ?
   interface Key {
     name: string
     value: string
   }
 
+  const { setValue, clearErrors, errors } = useFormContext()
   const [keys, setKeys] = useState<Key[]>([])
   const [registerProvider] = useMutation(registerProviderMutation)
+
+  const currentAnswer = getValueViaPath(
+    application.answers,
+    'productionUserExists' as string,
+    '',
+  ) as string
 
   const onRegister = async () => {
     const credentials = await registerProvider({
@@ -37,6 +45,9 @@ const ProdEnvironment: FC<FieldBaseProps> = () => {
         value: credentials.data.registerProvider.clientSecret,
       },
     ])
+    setValue('productionUserExists' as string, 'true')
+
+    clearErrors('productionUserExists')
   }
 
   return (
@@ -52,6 +63,23 @@ const ProdEnvironment: FC<FieldBaseProps> = () => {
         >
           Búa til aðgang
         </Button>
+        <Box display="none">
+          <Controller
+            name="productionUserExists"
+            defaultValue={currentAnswer}
+            rules={{ required: true }}
+            render={() => {
+              return <input type="hidden" name="productionUserExists" />
+            }}
+          />
+        </Box>
+        {errors.productionUserExists && (
+          <Box color="red600" paddingY={2}>
+            <Text fontWeight="semiBold" color="red600">
+              {errors.productionUserExists}
+            </Text>
+          </Box>
+        )}
       </Box>
 
       {keys.map((Key, index) => (
