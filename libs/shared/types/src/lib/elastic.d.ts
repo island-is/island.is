@@ -73,14 +73,21 @@ export interface RankEvaluationResponse<searchTermsUnion = string> {
           rating: number
         },
       ]
-      metric_details: {
-        dcg: {
-          dcg: number
-          ideal_dcg: number
-          normalized_dcg: number
-          unrated_docs: number
-        }
-      }
+      metric_details:
+        | {
+            dcg: {
+              dcg: number
+              ideal_dcg: number
+              normalized_dcg: number
+              unrated_docs: number
+            }
+          }
+        | {
+            precision: {
+              relevant_docs_retrieved: number
+              docs_retrieved: number
+            }
+          }
     }
   }
   failures: {}

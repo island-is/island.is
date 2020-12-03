@@ -124,4 +124,9 @@ export class RankedDataService {
   getTermTestCase(term: searchTermsUnion) {
     return termsTestData[term].testCase
   }
+
+  // get serch terms for post processing
+  getTerms(): searchTermsUnion[] {
+    return Object.keys(termsTestData) as searchTermsUnion[]
+  }
 }

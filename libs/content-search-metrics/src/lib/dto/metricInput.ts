@@ -4,9 +4,9 @@ import { IsEnum, IsOptional, IsString } from 'class-validator'
 @InputType()
 export class MetricInput {
   @Field({ nullable: true })
-  @IsEnum(['raw', 'minimal'])
+  @IsEnum(['raw', 'minimal', 'descriptive'])
   @IsOptional()
-  display: 'raw' | 'minimal' = 'minimal'
+  display: 'raw' | 'minimal' | 'descriptive' = 'descriptive'
 
   @Field(() => String)
   @IsString()

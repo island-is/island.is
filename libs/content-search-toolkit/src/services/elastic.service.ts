@@ -20,6 +20,7 @@ import {
   TypeAggregationInput,
   TypeAggregationResponse,
   RankEvaluationInput,
+  GroupedRankEvaluationResponse,
 } from '../types'
 import {
   GetByIdResponse,
@@ -164,14 +165,24 @@ export class ElasticService {
 
   async getRankEvaluation<searchTermUnion>(
     index: string,
-    termRatings: RankEvaluationInput,
-  ) {
-    const requestBody = rankEvaluationQuery(termRatings)
-    const data = await this.rankEvaluation<
-      RankEvaluationResponse<searchTermUnion>,
-      typeof requestBody
-    >(index, requestBody)
-    return data.body
+    termRatings: RankEvaluationInput['termRatings'],
+    metrics: RankEvaluationInput['metric'][],
+  ): Promise<GroupedRankEvaluationResponse<searchTermUnion>> {
+    // elasticsearch does not support multiple metric request per rank_eval call
+    const requests = metrics.map(async (metric) => {
+      const requestBody = rankEvaluationQuery({ termRatings, metric })
+      const data = await this.rankEvaluation<
+        RankEvaluationResponse<searchTermUnion>,
+        typeof requestBody
+      >(index, requestBody)
+      return data.body
+    })
+
+    const results = await Promise.all(requests)
+    return results.reduce((groupedResults, result, index) => {
+      groupedResults[metrics[index]] = result
+      return groupedResults
+    }, {})
   }
 
   async getDocumentsByMetaData(index: string, query: DocumentByMetaDataInput) {
