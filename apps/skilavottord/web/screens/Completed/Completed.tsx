@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from 'react'
+import { useWindowSize } from 'react-use'
+import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
+import gql from 'graphql-tag'
 import {
   Stack,
   GridContainer,
@@ -14,12 +18,8 @@ import {
   CarDetailsBox,
   OutlinedError,
 } from '@island.is/skilavottord-web/components'
-import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
-import { REQUEST_TYPES } from '@island.is/skilavottord-web/graphql/queries'
-import { useQuery } from '@apollo/client'
 import {
   RecyclingRequest,
   RecyclingRequestTypes,
@@ -27,6 +27,17 @@ import {
 } from '@island.is/skilavottord-web/types'
 import { getTime, getDate, formatYear } from '@island.is/skilavottord-web/utils'
 import compareDesc from 'date-fns/compareDesc'
+
+export const skilavottordRecyclingRequestQuery = gql`
+  query skilavottordRecyclingRequestQuery($permno: String!) {
+    skilavottordRecyclingRequest(permno: $permno) {
+      id
+      requestType
+      nameOfRequestor
+      createdAt
+    }
+  }
+`
 
 const Completed = ({ apolloState }: WithApolloProps) => {
   const [isMobile, setIsMobile] = useState(false)
@@ -38,7 +49,7 @@ const Completed = ({ apolloState }: WithApolloProps) => {
   const router = useRouter()
   const { id } = router.query
 
-  const { data, error, loading } = useQuery(REQUEST_TYPES, {
+  const { data, error, loading } = useQuery(skilavottordRecyclingRequestQuery, {
     variables: { permno: id },
   })
 

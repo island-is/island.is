@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useQuery } from '@apollo/client'
+import gql from 'graphql-tag'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import {
@@ -21,7 +22,6 @@ import {
 import { CarsTable } from './components/CarsTable'
 import {
   ALL_RECYCLING_PARTNERS,
-  VEHICLES_BY_PARTNER_ID,
 } from '@island.is/skilavottord-web/graphql/queries'
 import {
   RecyclingPartner,
@@ -30,6 +30,24 @@ import {
   VehicleOwner,
 } from '@island.is/skilavottord-web/types'
 import { getDate, getYear } from '@island.is/skilavottord-web/utils/dateUtils'
+
+export const skilavottordRecyclingPartnerVehiclesQuery = gql`
+  query skilavottordRecyclingPartnerVehiclesQuery($partnerId: String!) {
+    skilavottordRecyclingPartnerVehicles(partnerId: $partnerId) {
+      nationalId
+      vehicles {
+        vehicleId
+        vehicleType
+        recyclingRequests {
+          id
+          requestType
+          nameOfRequestor
+          createdAt
+        }
+      }
+    }
+  }
+`
 
 export interface DeregisteredVehicle {
   vehicleId: string
@@ -47,7 +65,7 @@ const Overview: FC = () => {
   const router = useRouter()
 
   const partnerId = user?.partnerId
-  const { data: vehicleData } = useQuery(VEHICLES_BY_PARTNER_ID, {
+  const { data: vehicleData } = useQuery(skilavottordRecyclingPartnerVehiclesQuery, {
     variables: { partnerId },
     fetchPolicy: 'cache-and-network',
     skip: !partnerId,
