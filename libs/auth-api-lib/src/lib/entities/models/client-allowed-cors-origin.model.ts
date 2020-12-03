@@ -26,7 +26,7 @@ export class ClientAllowedCorsOrigin extends Model<ClientAllowedCorsOrigin> {
     allowNull: false,
   })
   @ApiProperty()
-  origin: string
+  origin!: string
 
   @PrimaryKey
   @Column({
@@ -35,13 +35,13 @@ export class ClientAllowedCorsOrigin extends Model<ClientAllowedCorsOrigin> {
   })
   @ForeignKey(() => Client)
   @ApiProperty()
-  clientId: string
+  clientId!: string
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified?: Date
 }
