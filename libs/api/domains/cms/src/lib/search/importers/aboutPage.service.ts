@@ -11,7 +11,12 @@ import {
   processSyncDataInput,
 } from '../cmsSync.service'
 
-import { createTerms, extractStringsFromObject } from './utils'
+import {
+  createTerms,
+  extractStringsFromObject,
+  hasProcessEntry,
+  numberOfLinks,
+} from './utils'
 
 @Injectable()
 export class AboutPageSyncService implements CmsSyncProvider<IPage> {
@@ -32,14 +37,17 @@ export class AboutPageSyncService implements CmsSyncProvider<IPage> {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapAboutPage(entry)
-          const type = 'webAboutPage'
+          const content = extractStringsFromObject({ ...mapped.slices }) // this function only accepts plain js objects
           return {
             _id: mapped.id,
             title: mapped.title,
-            content: extractStringsFromObject({ ...mapped.slices }), // this function only accepts plain js objects
-            type,
+            content,
+            contentWordCount: content.split(/\s+/).length,
+            hasProcessEntry: hasProcessEntry(mapped.slices),
+            ...numberOfLinks(mapped.slices),
+            type: 'webAboutPage',
             termPool: createTerms([mapped.title]),
-            response: JSON.stringify({ ...mapped, __typename: type }),
+            response: JSON.stringify({ ...mapped, typename: 'AboutPage' }),
             tags: [
               {
                 key: entry.fields?.slug,

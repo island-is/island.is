@@ -1,3 +1,5 @@
-import drivingLicenseTemplate from './lib/drivingLicenseTemplate'
+import template from './lib/template'
 
-export default drivingLicenseTemplate
+export const getFields = () => import('./fields/')
+
+export default template

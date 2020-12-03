@@ -1,21 +1,22 @@
 import {
   ApplicationTypes,
+  buildCustomField,
   buildForm,
-  buildIntroductionField,
   Form,
   FormModes,
 } from '@island.is/application/core'
 
+import { m } from './messages'
+
 export const PendingReview: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
-  name: 'Í vinnslu',
+  name: m.pendingReviewthankYouScreenTitle,
   mode: FormModes.PENDING,
   children: [
-    buildIntroductionField({
-      id: 'inReview',
-      name: 'Í vinnslu',
-      introduction:
-        'Umsóknin þín er nú í vinnslu. Á meðan getur þú útfært gaurinn sem þarf að útfæra... linkar á útfærslur.',
+    buildCustomField({
+      id: 'pendingReviewThankYouScreen',
+      name: m.pendingReviewthankYouScreenTitle,
+      component: 'ThankYouScreen',
     }),
   ],
 })

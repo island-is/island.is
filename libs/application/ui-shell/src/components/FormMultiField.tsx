@@ -1,11 +1,20 @@
 import React, { FC } from 'react'
-import FormField from './FormField'
-import { FieldDef, MultiFieldScreen } from '../types'
+
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
-import { Application, formatText, FormValue } from '@island.is/application/core'
-import ConditionHandler from './ConditionHandler'
+import {
+  Application,
+  formatText,
+  FormValue,
+  FieldTypes,
+} from '@island.is/application/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+
+import ConditionHandler from './ConditionHandler'
+import FormField from './FormField'
+import { FieldDef, MultiFieldScreen } from '../types'
+
+const IGNORED_HALF_TYPES: FieldTypes[] = [FieldTypes.RADIO]
 
 const FormMultiField: FC<{
   application: Application
@@ -30,8 +39,10 @@ const FormMultiField: FC<{
         </GridColumn>
       )}
       {children.map((field, index) => {
-        const isHalfColumn = field.width && field.width === 'half'
+        const isHalfColumn =
+          !IGNORED_HALF_TYPES.includes(field.type) && field?.width === 'half'
         const span = isHalfColumn ? '1/2' : '1/1'
+
         return (
           <GridColumn key={field.id} span={['1/1', '1/1', span]}>
             <Box paddingTop={1}>

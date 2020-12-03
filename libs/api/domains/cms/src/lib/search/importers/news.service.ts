@@ -32,14 +32,15 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapNews(entry)
-          const type = 'webNews'
+          const content = extractStringsFromObject(mapped.content)
           return {
             _id: mapped.id,
             title: mapped.title,
-            content: extractStringsFromObject(mapped.content),
-            type,
+            content,
+            contentWordCount: content.split(/\s+/).length,
+            type: 'webNews',
             termPool: createTerms([mapped.title, mapped.intro]),
-            response: JSON.stringify({ ...mapped, __typename: type }),
+            response: JSON.stringify({ ...mapped, typename: 'News' }),
             tags: [
               {
                 key: mapped.slug,

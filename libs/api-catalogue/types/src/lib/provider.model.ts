@@ -3,6 +3,7 @@ import { XroadIdentifier } from './xroadIdentifier.model'
 
 export interface Provider {
   type: ProviderType
+  name: string
   xroadInfo: XroadIdentifier
 }
 

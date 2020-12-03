@@ -67,6 +67,72 @@ const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
   }
 }
 
+export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
+  switch (value) {
+    case CaseCustodyRestrictions.COMMUNICATION:
+      return 'Bréfskoðun, símabann'
+    case CaseCustodyRestrictions.ISOLATION:
+      return 'Einangrun'
+    case CaseCustodyRestrictions.MEDIA:
+      return 'Fjölmiðlabann'
+    case CaseCustodyRestrictions.VISITAION:
+      return 'Heimsóknarbann'
+  }
+}
+
+export function formatRestrictions(
+  custodyRestrictions: CaseCustodyRestrictions[],
+): string {
+  if (!(custodyRestrictions?.length > 0)) {
+    return 'Sækjandi tekur fram að gæsluvarðhaldið sé án takmarkana.'
+  }
+
+  let res = 'Sækjandi tekur fram að '
+
+  if (custodyRestrictions.includes(CaseCustodyRestrictions.ISOLATION)) {
+    res += 'kærði skuli sæta einangrun meðan á gæsluvarðhaldi stendur'
+
+    if (custodyRestrictions.length === 1) {
+      return res + '.'
+    }
+
+    res += ' og að '
+  }
+
+  const filteredCustodyRestrictions = custodyRestrictions
+    .filter(
+      (custodyRestriction) =>
+        custodyRestriction !== CaseCustodyRestrictions.ISOLATION,
+    )
+    .sort()
+
+  const filteredCustodyRestrictionsAsString = filteredCustodyRestrictions.reduce(
+    (res, custodyRestriction, index) => {
+      const isNextLast = index === filteredCustodyRestrictions.length - 2
+      const isLast = index === filteredCustodyRestrictions.length - 1
+      const isOnly = filteredCustodyRestrictions.length === 1
+
+      return (res +=
+        custodyRestriction === CaseCustodyRestrictions.COMMUNICATION
+          ? `bréfaskoðun og símabanni${
+              isLast ? ' ' : isNextLast && !isOnly ? ' og ' : ', '
+            }`
+          : custodyRestriction === CaseCustodyRestrictions.MEDIA
+          ? `fjölmiðlabanni${
+              isLast ? ' ' : isNextLast && !isOnly ? ' og ' : ', '
+            }`
+          : custodyRestriction === CaseCustodyRestrictions.VISITAION
+          ? `heimsóknarbanni${
+              isLast ? ' ' : isNextLast && !isOnly ? ' og ' : ', '
+            }`
+          : '')
+    },
+    '',
+  )
+
+  return `${res}gæsluvarðhaldið verði með ${filteredCustodyRestrictionsAsString}skv. 99. gr. laga nr. 88/2008.`
+}
+
 export const formatCustodyRestrictions = (
   restrictions?: CaseCustodyRestrictions[],
 ) => {

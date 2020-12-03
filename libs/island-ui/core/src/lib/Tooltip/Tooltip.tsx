@@ -65,7 +65,7 @@ const ArrowIcon: FC<ArrowIconProps> = ({ placement }) => {
 
 interface TooltipProps {
   placement?: Placement
-  text: string
+  text: React.ReactNode
   iconSize?: number
   children?: ReactElement
   as?: ElementType

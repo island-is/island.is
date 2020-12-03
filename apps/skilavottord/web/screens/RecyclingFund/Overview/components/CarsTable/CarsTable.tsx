@@ -9,10 +9,11 @@ import {
   Body,
 } from '@island.is/skilavottord-web/components'
 import { getDate, getYear } from '@island.is/skilavottord-web/utils'
+import { Vehicle } from '@island.is/skilavottord-web/types'
 
 interface TableProps {
   titles: string[]
-  vehicles: any[]
+  vehicles: Vehicle[]
 }
 
 export const CarsTable: FC<TableProps> = ({ titles, vehicles }) => {

@@ -3,6 +3,7 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
 import * as mixins from './Input.mixins'
 
 export const containerDisabled = style({})
+export const noLabel = style({})
 
 export const container = style({
   ...mixins.container,
@@ -29,6 +30,11 @@ export const input = style({
   '::placeholder': mixins.inputPlaceholder,
   ':focus': mixins.inputFocus,
   ':disabled': mixins.inputDisabled,
+  selectors: {
+    [`${noLabel} &::placeholder`]: {
+      color: theme.color.dark400,
+    },
+  },
 })
 
 export const inputSize = styleMap(mixins.inputSizes)
@@ -95,8 +101,15 @@ export const icon = style({
   color: theme.color.blue400,
   ...themeUtils.responsiveStyle({
     md: {
-      minWidth: 32,
-      height: 32,
+      selectors: {
+        [`${container}:not(${noLabel}) &`]: {
+          width: 32,
+          height: 32,
+        },
+        [`${container}${noLabel} &`]: {
+          marginBottom: 0,
+        },
+      },
     },
   }),
 })
