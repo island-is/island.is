@@ -1,5 +1,11 @@
 import React, { FC } from 'react'
-import { Box, RadioButton, Stack, Tooltip } from '@island.is/island-ui/core'
+import {
+  Box,
+  InputError,
+  RadioButton,
+  Stack,
+  Tooltip,
+} from '@island.is/island-ui/core'
 import { useFormContext, Controller } from 'react-hook-form'
 
 interface Option {
@@ -56,10 +62,10 @@ export const RadioController: FC<Props> = ({
                 label={option.label}
                 value={option.value}
                 disabled={disabled}
-                errorMessage={index === options.length - 1 ? error : undefined}
                 hasError={error !== undefined}
               />
             ))}
+            {error !== undefined && <InputError errorMessage={error} />}
           </Stack>
         )
       }}
