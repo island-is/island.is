@@ -1,24 +1,16 @@
-import React, {
-  FC,
-  ReactElement,
-  useState,
-  useEffect,
-  MutableRefObject,
-} from 'react'
+import React, { FC, ReactElement, useState, useEffect } from 'react'
 import cn from 'classnames'
-
+import { useMenuState, Menu, MenuButton, MenuStateReturn } from 'reakit/Menu'
 import { theme, Colors } from '@island.is/island-ui/theme'
 import { Text } from '../Text/Text'
 import { Box, BoxProps } from '../Box/Box'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Button } from '../Button/Button'
-import { Icon } from '../IconRC/Icon'
 
-import * as navigationStyles from './Navigation.treat'
-import { useMenuState, Menu, MenuButton, MenuStateReturn } from 'reakit/Menu'
+import * as styles from './Navigation.treat'
 
 // The sidebar nav is not designed to show more than 2 levels.
-type Level = keyof typeof navigationStyles.level
+type Level = keyof typeof styles.level
 const MAX_LEVELS = 2
 
 const basePadding = {
@@ -33,7 +25,7 @@ export type NavigationColorAttributes =
   | 'activeColor'
 
 const colorSchemeColors: Record<
-  keyof typeof navigationStyles.colorScheme,
+  keyof typeof styles.colorScheme,
   Record<NavigationColorAttributes, Colors>
 > = {
   blue: {
@@ -67,9 +59,10 @@ export interface NavigationProps {
   title: string
   label?: string
   activeItemTitle: string
-  colorScheme?: keyof typeof navigationStyles.colorScheme
+  colorScheme?: keyof typeof styles.colorScheme
   expand?: boolean
   LinkWrapper?: FC<DefaultLinkWrapperProps>
+  isMenuDialog: boolean
   titleLink?: Pick<NavigationItem, 'href' | 'active'>
   items: NavigationItem[]
   baseId: string
@@ -83,16 +76,16 @@ export const Navigation: FC<NavigationProps> = ({
   colorScheme = 'blue',
   expand,
   LinkWrapper = DefaultLinkWrapper,
+  isMenuDialog = false,
   items,
   baseId,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const buttonRef = React.useRef(null)
 
-  let color = colorSchemeColors[colorScheme]['color']
-  let activeColor = colorSchemeColors[colorScheme]['activeColor']
-  let backgroundColor = colorSchemeColors[colorScheme]['backgroundColor']
-  let dividerColor = colorSchemeColors[colorScheme]['dividerColor']
+  const color = colorSchemeColors[colorScheme]['color']
+  const activeColor = colorSchemeColors[colorScheme]['activeColor']
+  const backgroundColor = colorSchemeColors[colorScheme]['backgroundColor']
+  const dividerColor = colorSchemeColors[colorScheme]['dividerColor']
 
   const someActiveLinks = items.some((x) => x.active)
   const menu = useMenuState({ animated: true, baseId, visible: false })
@@ -100,12 +93,6 @@ export const Navigation: FC<NavigationProps> = ({
   useEffect(() => {
     setMobileMenuOpen(menu.visible)
   }, [menu.visible])
-
-  const TitleText = (
-    <Text as="span" variant="h4" color={someActiveLinks ? activeColor : color}>
-      {title}
-    </Text>
-  )
 
   const titleLinkProps = titleLink
     ? {
@@ -119,7 +106,7 @@ export const Navigation: FC<NavigationProps> = ({
         component="a"
         href={titleLink?.href}
         borderRadius="large"
-        className={navigationStyles.link}
+        className={styles.link}
         {...basePadding}
       >
         {({
@@ -138,7 +125,13 @@ export const Navigation: FC<NavigationProps> = ({
             </Text>
           )
         }}
-        {TitleText}
+        <Text
+          as="span"
+          variant="h4"
+          color={someActiveLinks ? activeColor : color}
+        >
+          {title}
+        </Text>
       </FocusableBox>
     </LinkWrapper>
   ) : (
@@ -151,86 +144,77 @@ export const Navigation: FC<NavigationProps> = ({
 
   return (
     <>
-      <Box
-        display={['block', 'block', 'none']}
-        background={backgroundColor}
-        alignItems="center"
-        borderRadius="large"
-        position="relative"
-      >
-        <MenuButton
-          {...menu}
-          className={navigationStyles.menuBtn}
-          onClick={() => {
-            menu.show
-          }}
+      {isMenuDialog ? (
+        <Box
+          background={backgroundColor}
+          alignItems="center"
+          borderRadius="large"
+          position="relative"
         >
-          <MobileButton
-            title={activeItemTitle}
-            colorScheme={colorScheme}
-            aria-expanded={!mobileMenuOpen}
-            aria-control={'OpenNavigationDialog'}
-          />
-        </MenuButton>
-        <Menu
-          {...menu}
-          style={{
-            top: '-8px',
-            transform: 'none',
-            width: '100%',
-            borderRadius: '8px',
-          }}
-          className={cn(
-            navigationStyles.transition,
-            navigationStyles.menuShadow[colorScheme],
-          )}
-        >
-          <MobileNavigationDialog
-            Title={Title}
-            colorScheme={colorScheme}
-            targetRef={buttonRef}
-            items={items}
-            LinkWrapper={LinkWrapper}
-            isVisible={mobileMenuOpen}
-            menuState={menu}
-            onClick={() => {
-              menu.hide()
+          <MenuButton
+            {...menu}
+            className={styles.menuBtn}
+            onClick={() => menu.show}
+          >
+            <MobileButton
+              title={activeItemTitle}
+              colorScheme={colorScheme}
+              aria-expanded={!mobileMenuOpen}
+              aria-controls={'OpenNavigationDialog'}
+            />
+          </MenuButton>
+          <Menu
+            {...menu}
+            style={{
+              top: '-8px',
+              transform: 'none',
+              width: '100%',
+              borderRadius: '8px',
             }}
-          />
-        </Menu>
-      </Box>
-      <Box
-        component="nav"
-        borderRadius="large"
-        display={['none', 'none', 'block']}
-        paddingY={2}
-        aria-label={label ?? title}
-        background={backgroundColor}
-        className={cn(
-          navigationStyles.root,
-          navigationStyles.colorScheme[colorScheme],
-        )}
-      >
-        {Title}
-        <Box display="flex" alignItems="center" paddingY={2}>
-          <Box background={dividerColor} className={navigationStyles.divider} />
+            className={cn(styles.transition, styles.menuShadow[colorScheme])}
+          >
+            <MobileNavigationDialog
+              Title={Title}
+              colorScheme={colorScheme}
+              items={items}
+              LinkWrapper={LinkWrapper}
+              isVisible={mobileMenuOpen}
+              menuState={menu}
+              onClick={() => {
+                menu.hide()
+              }}
+            />
+          </Menu>
         </Box>
-        <NavigationTree
-          items={items}
-          colorScheme={colorScheme}
-          LinkWrapper={LinkWrapper}
-          menuState={menu}
-          expand={expand}
-        />
-      </Box>
+      ) : (
+        <Box
+          component="nav"
+          borderRadius="large"
+          paddingY={2}
+          aria-label={label ?? title}
+          background={backgroundColor}
+          className={cn(styles.root, styles.colorScheme[colorScheme])}
+        >
+          {Title}
+          <Box display="flex" alignItems="center" paddingY={2}>
+            <Box background={dividerColor} className={styles.divider} />
+          </Box>
+          <NavigationTree
+            items={items}
+            colorScheme={colorScheme}
+            LinkWrapper={LinkWrapper}
+            menuState={menu}
+            expand={expand}
+          />
+        </Box>
+      )}
     </>
   )
 }
 
 interface MobileNavigationDialogProps {
   Title: ReactElement
-  colorScheme: keyof typeof navigationStyles.colorScheme
-  targetRef: MutableRefObject<null>
+  colorScheme: keyof typeof styles.colorScheme
   items: NavigationItem[]
   LinkWrapper: FC<DefaultLinkWrapperProps>
   isVisible: boolean
@@ -248,6 +232,7 @@ const MobileNavigationDialog = ({
 }: MobileNavigationDialogProps) => {
   return (
     <Box
+      component="nav"
       background={colorSchemeColors[colorScheme]['backgroundColor']}
       paddingY={2}
       borderRadius={'large'}
@@ -266,7 +251,7 @@ const MobileNavigationDialog = ({
       <Box display="flex" alignItems="center" paddingY={2}>
         <Box
           background={colorSchemeColors[colorScheme]['dividerColor']}
-          className={navigationStyles.divider}
+          className={styles.divider}
         />
       </Box>
       <NavigationTree
@@ -280,17 +265,17 @@ const MobileNavigationDialog = ({
 }
 interface MobileButtonProps {
   title: string
-  colorScheme: keyof typeof navigationStyles.colorScheme
+  colorScheme: keyof typeof styles.colorScheme
 }
 
 const MobileButton = ({ title, colorScheme }: MobileButtonProps) => {
   return (
     <Box
       display="flex"
-      paddingX={2}
-      paddingY={1}
       justifyContent="spaceBetween"
       alignItems="center"
+      paddingX={2}
+      paddingY={1}
     >
       <Text
         as="span"
@@ -306,13 +291,7 @@ const MobileButton = ({ title, colorScheme }: MobileButtonProps) => {
         marginRight={2}
         style={{ top: '50%', transform: 'translateY(-50%)' }}
       >
-        <Button
-          circle
-          colorScheme="negative"
-          icon={'chevronDown'}
-          aria-controls={`CloseNavigationDialog`}
-          onClick={() => null}
-        />
+        <Button circle colorScheme="negative" icon={'chevronDown'} />
       </Box>
     </Box>
   )
@@ -321,7 +300,7 @@ const MobileButton = ({ title, colorScheme }: MobileButtonProps) => {
 interface NavigationTreeProps {
   items: NavigationItem[]
   level?: Level
-  colorScheme?: keyof typeof navigationStyles.colorScheme
+  colorScheme?: keyof typeof styles.colorScheme
   expand?: boolean
   LinkWrapper?: FC<DefaultLinkWrapperProps>
   menuState: MenuStateReturn
@@ -338,7 +317,7 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
   return (
     <Box
       component="ul"
-      className={cn(navigationStyles.ul, navigationStyles.level[level])}
+      className={cn(styles.ul, styles.level[level])}
       style={{
         borderLeftColor:
           level > 1
@@ -364,7 +343,7 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
             borderRadius="large"
             paddingLeft={isChildren ? 2 : 3}
             paddingY={isChildren ? 'smallGutter' : 1}
-            className={navigationStyles.link}
+            className={styles.link}
           >
             {({
               isFocused,

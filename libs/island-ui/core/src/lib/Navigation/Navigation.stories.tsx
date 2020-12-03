@@ -28,6 +28,7 @@ Blue.args = {
   activeItemTitle: 'Hér er virk undirsíða',
   colorScheme: 'blue',
   items: pages,
+  isMenuDialog: true,
 }
 
 export const Purple = Template.bind({})

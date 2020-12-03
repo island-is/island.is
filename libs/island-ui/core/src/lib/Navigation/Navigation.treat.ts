@@ -1,4 +1,4 @@
-import { style, styleMap, globalStyle } from 'treat'
+import { style, styleMap } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const divider = style({
@@ -24,16 +24,6 @@ export const link = style({
   ':hover': {
     textDecoration: 'none',
   },
-})
-
-export const baseIcon = style({
-  minWidth: 32,
-  minHeight: 32,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderRadius: '50%',
-  padding: 4,
 })
 
 export const level = styleMap({
@@ -66,9 +56,8 @@ export const menuBtn = style({
 export const menuIcon = style({
   position: 'absolute',
   top: '2px',
-  right: '8px'
+  right: '8px',
 })
-
 
 export const menuShadow = styleMap({
   blue: {
@@ -76,11 +65,9 @@ export const menuShadow = styleMap({
   },
   purple: {
     boxShadow: ' 0px 4px 30px rgba(106, 46, 160, 0.25)',
-
   },
   darkBlue: {
     boxShadow: ' 0px 4px 30px rgba(0, 0, 60, 0.25)',
-
   },
 })
 
