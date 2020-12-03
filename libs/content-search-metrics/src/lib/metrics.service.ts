@@ -114,7 +114,7 @@ export class MetricsService {
             dcg:
               'Shows if our search is ranking the documents well. Calculated based on presence of document in top X search results weight against their position in list. Higher score means higher rated documents near the top',
             precision:
-              'Shows if our ranked documents show up in to results. Calculated based on presence of document in top X search results. Higher score means more desired documents present somewhere in top X documents',
+              'Shows if our ranked documents show up in top results. Calculated based on presence of document in top X search results. Higher score means more desired documents present somewhere in top X documents',
           }
         }
         return results

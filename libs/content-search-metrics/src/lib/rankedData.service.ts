@@ -100,8 +100,6 @@ export type searchTermsUnion = keyof typeof termsTestData
 
 @Injectable()
 export class RankedDataService {
-  constructor() {}
-
   // extract ratings from test data
   getTermRatings(index: string) {
     return Object.entries(termsTestData).reduce(
