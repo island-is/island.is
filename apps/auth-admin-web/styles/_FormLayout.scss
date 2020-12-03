@@ -3,6 +3,7 @@
 .client-redirect,
 .client-post-logout,
 .client-idp-restriction,
+.step-end,
 .paginator {
   &__help {
     padding: 0 10px 20px 10px;
@@ -13,18 +14,17 @@
   }
   &__container {
     h1 {
-      font-family: IBM Plex Sans;
       font-style: normal;
-      font-weight: 600;
+      font-weight: $weight-semi-bold;
       font-size: 42px;
       line-height: 52px;
-      color: #00003c;
+      color: $color-text-primary;
     }
   }
 
   &__container__form {
     padding: 44px 40px;
-    background: #f2f7ff;
+    background: $color-bg-content;
     border-radius: 5px;
   }
 
@@ -38,7 +38,7 @@
       top: 12px;
       left: 15px;
       z-index: 1;
-      color: #0061ff;
+      color: $color-link;
     }
     input,
     select {
@@ -51,8 +51,8 @@
     {
       position: absolute;
       left: 60%;
-      color: #fb115b;
-      text-shadow: 0 0 black;
+      color: $color-error;
+      text-shadow: 0 0 $color-shadow;
     }
 
     &__available {
@@ -63,20 +63,42 @@
       opacity: 0.8;
 
       &.ok {
-        color: green;
+        color: $color-ok;
       }
 
       &.taken {
-        color: red;
+        color: $color-error;
       }
     }
   }
 
   &__container__list {
-    flex-direction: column;
+    flex-direction: row;
     text-align: left;
     align-items: flex-start;
-    padding: 0px 13px;
+    width: 100%;
+    padding: 8px 8px 24px 8px;
+    align-items: center;
+
+    &__item {
+      display: flex;
+      margin-bottom: 16px;
+
+      .list-value {
+        flex: 1;
+        padding: 10px 0px 0px 5px;
+        text-decoration: underline;
+        color: $color-link;
+      }
+
+      .list-remove {
+        align-self: flex-end;
+
+        button {
+          justify-self: flex-end;
+        }
+      }
+    }
   }
 
   &__container__checkbox__field {
@@ -99,8 +121,8 @@
 
   &__button__show {
     background-color: transparent;
-    color: #0061ff;
-    font-weight: 300;
+    color: $color-link;
+    font-weight: $weight-light;
     text-decoration: underline;
     font-size: 1rem;
     padding: 0;
