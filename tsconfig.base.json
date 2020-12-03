@@ -98,6 +98,9 @@
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
       ],
+      "@island.is/application/templates/health-insurance": [
+        "libs/application/templates/health-insurance/src/index.ts"
+      ],
       "@island.is/application/templates/meta-application": [
         "libs/application/templates/meta-application/src/index.ts"
       ],

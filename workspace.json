@@ -1499,6 +1499,35 @@
         }
       }
     },
+    "application-templates-health-insurance": {
+      "root": "libs/application/templates/health-insurance",
+      "sourceRoot": "libs/application/templates/health-insurance/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/health-insurance/tsconfig.lib.json",
+              "libs/application/templates/health-insurance/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/health-insurance/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/health-insurance/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "application-templates-meta-application": {
       "root": "libs/application/templates/meta-application",
       "sourceRoot": "libs/application/templates/meta-application/src",
