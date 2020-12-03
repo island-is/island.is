@@ -1,6 +1,6 @@
 {
   "order": 0,
-  "version": 4,
+  "version": 5,
   "index_patterns": ["island-en-v*"],
   "settings": {
     "analysis": {
