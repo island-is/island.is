@@ -13,6 +13,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+import { m } from '../lib/messages'
 
 export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
@@ -56,7 +57,7 @@ export const application: Form = buildForm({
                 { value: 'A1', label: '<b>A1</b> - Bifhjól' },
                 {
                   value: 'A2',
-                  label: '<b>A2</b> - Bifhjól',
+                  label: m.testing,
                   tooltip: `<h2>A2- flokkur</h2>
 <br />
 Veitir ökuréttindi til að stjórna bifhjóli:

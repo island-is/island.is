@@ -1,6 +1,5 @@
 import React from 'react'
 import cn from 'classnames'
-import HtmlParser from 'react-html-parser'
 
 import { Tooltip } from '../Tooltip/Tooltip'
 import * as styles from './RadioButton.treat'
@@ -8,7 +7,7 @@ import * as styles from './RadioButton.treat'
 export interface RadioButtonProps {
   name?: string
   id?: string
-  label?: string
+  label?: React.ReactNode
   value?: string | number
   checked?: boolean
   disabled?: boolean
@@ -74,7 +73,7 @@ export const RadioButton = ({
         >
           <div className={styles.checkMark} />
         </div>
-        {HtmlParser(label as string)}
+        {label}
         {tooltip && (
           <div
             className={cn(styles.tooltipContainer, {

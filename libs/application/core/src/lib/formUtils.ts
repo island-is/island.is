@@ -2,6 +2,8 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 const merge = require('deepmerge')
+import HtmlParser from 'react-html-parser'
+
 import { Field } from '../types/Fields'
 import { Application, FormValue } from '../types/Application'
 import {
@@ -167,17 +169,19 @@ export function formatText(
   text: FormText,
   application: Application,
   formatMessage: MessageFormatter,
-): string {
+): React.ReactNode {
   if (typeof text === 'function') {
     const message = text(application)
 
-    if (typeof message === 'string') return formatMessage(message)
+    if (typeof message === 'string') {
+      return HtmlParser(formatMessage(message))
+    }
 
     const { values = {}, ...descriptor } = message
 
-    return formatMessage(descriptor, values)
+    return HtmlParser(formatMessage(descriptor, values))
   }
-  return formatMessage(text)
+  return HtmlParser(formatMessage(text))
 }
 
 // periods[3].startDate -> 3
