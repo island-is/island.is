@@ -168,7 +168,7 @@ export class ElasticService {
     termRatings: RankEvaluationInput['termRatings'],
     metrics: RankEvaluationInput['metric'][],
   ): Promise<GroupedRankEvaluationResponse<searchTermUnion>> {
-    // elasticsearch does not support multiple metric request per rank_eval call
+    // elasticsearch does not support multiple metric request per rank_eval call so we make multiple calls
     const requests = metrics.map(async (metric) => {
       const requestBody = rankEvaluationQuery({ termRatings, metric })
       const data = await this.rankEvaluation<
