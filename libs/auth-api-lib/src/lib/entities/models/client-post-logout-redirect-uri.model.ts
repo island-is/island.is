@@ -29,7 +29,7 @@ export class ClientPostLogoutRedirectUri extends Model<
   })
   @ForeignKey(() => Client)
   @ApiProperty()
-  clientId: string
+  clientId!: string
 
   @PrimaryKey
   @Column({
@@ -37,13 +37,13 @@ export class ClientPostLogoutRedirectUri extends Model<
     allowNull: false,
   })
   @ApiProperty()
-  redirectUri: string
+  redirectUri!: string
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified?: Date
 }
