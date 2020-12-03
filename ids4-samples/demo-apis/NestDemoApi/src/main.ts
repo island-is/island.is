@@ -4,10 +4,8 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors({
-    origin: "http://localhost:4200",
-    
-  });
+
+  app.enableCors();
 
   const options = new DocumentBuilder()
     .setTitle('NestJS example')
@@ -17,8 +15,8 @@ async function bootstrap() {
       type: 'oauth2',
       flows: {
         authorizationCode: {
-          authorizationUrl: 'https://localhost:6001/connect/authorize',
-          tokenUrl: 'https://localhost:6001/connect/token',
+          authorizationUrl: process.env.SWAGGER_AUTH_URL,
+          tokenUrl: process.env.SWAGGER_TOKEN_URL,
           scopes: {
             'openid profile offline_access api_resource.scope':
               'Sækir OpenId, Profile og claimið sem þarf',
@@ -27,10 +25,11 @@ async function bootstrap() {
       },
     })
     .build();
-  
+
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('', app, document);
 
   await app.listen(5001);
 }
 bootstrap();
+
