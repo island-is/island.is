@@ -298,6 +298,9 @@
     "service-portal-core": {
       "tags": []
     },
+    "service-portal-document-provider": {
+      "tags": []
+    },
     "service-portal-documents": {
       "tags": []
     },
