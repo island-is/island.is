@@ -98,10 +98,10 @@ const ClientPostLogoutRedirectUri: React.FC<Props> = (props: Props) => {
       <StatusBar status={response}></StatusBar>
       <div className="client-post-logout__wrapper">
         <div className="client-post-logout__container">
-          <h1>Enter a callback URL</h1>
+          <h1>Enter a post logout redirect URL</h1>
           <div className="client-post-logout__container__form">
           <div className="client-post-logout__help">
-            <p>Optional (you can configure this at a later time)</p>
+            <p><strong>Optional</strong> (you can configure this at a later time)</p>
             <p>Users can be returned to this URL(s) after logging out</p>
           </div>
             <form onSubmit={handleSubmit(add)}>
@@ -126,7 +126,7 @@ const ClientPostLogoutRedirectUri: React.FC<Props> = (props: Props) => {
                   />
                   <input
                     type="submit"
-                    className="client-post-logout__button__save"
+                    className="client-post-logout__button__add"
                     disabled={isSubmitting}
                     value="Add"
                   />
@@ -135,6 +135,7 @@ const ClientPostLogoutRedirectUri: React.FC<Props> = (props: Props) => {
 
               <div className="client-post-logout__container__list">
                 {uris.map((uri: string) => {
+                  <h3>Active post logout URLs</h3>
                   return (
                     <div
                       className="client-post-logout__container__list__item"
@@ -146,8 +147,10 @@ const ClientPostLogoutRedirectUri: React.FC<Props> = (props: Props) => {
                           type="button"
                           onClick={() => remove(uri)}
                           className="client-post-logout__container__list__button__remove"
+                          title="Remove"
                         >
-                          Remove
+                          <i className="icon__delete"></i>
+                          <span>Remove</span>
                         </button>
                       </div>
                     </div>

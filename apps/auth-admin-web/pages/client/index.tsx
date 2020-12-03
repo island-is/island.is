@@ -8,6 +8,7 @@ import { ClientRedirectUriDTO } from './../../models/dtos/client-redirect-uri.dt
 import ClientIdpRestrictions from './../../components/ClientIdpRestrictions';
 import ClientPostLogoutRedirectUri from './../../components/ClientPostLogoutRedirectUri';
 import { useRouter } from 'next/router'
+import StepEnd from './../../components/form/StepEnd';
 
 export default function Index(){
     
@@ -25,11 +26,17 @@ export default function Index(){
     }
 
     const handleBack = () => {
+        console.log("handleback called");
         setStep(step-1);
     }
 
     const handleCancel = () => {
         router.back();
+    }
+
+    const handleFinished = () => {
+        console.log("Got to main");
+        router.push('/');
     }
 
     const handleClientSaved = (clientSaved: ClientDTO) => {
@@ -46,14 +53,6 @@ export default function Index(){
                 setStep(3);
             }
         }
-    }
-
-    const handleRedirectSaved = (redirectObj: ClientRedirectUriDTO) => {
-        if (redirectObj.clientId)
-        {
-            console.log(redirectObj);    
-        }
-        setStep(step+1);
     }
 
     const handleClaimSaved = (claim: ClientClaimDTO) => {
@@ -93,15 +92,18 @@ export default function Index(){
         }
         case 8: {
            // Add Claims - Custom Claims (Vitum ekki alveg) - Setja í BID
-           const claim = new ClientClaimDTO();
-           console.log("Client ID: " + client);
-           claim.clientId = client;
-           return <ClientClaim claim={claim} handleSaved={handleClaimSaved} />
+        //    const claim = new ClientClaimDTO();
+        //    console.log("Client ID: " + client);
+        //    claim.clientId = client;
+        //    return <ClientClaim claim={claim} handleSaved={handleClaimSaved} />
         }
         case 9: {
             //ClientSecret
             // EF SPA eða NATIVE þá sýna ekkert
             // Generate og sýna
+        }
+        default: {
+            return <StepEnd buttonText="Home" handleButtonFinishedClick={handleFinished} title="Success">Client has been created</StepEnd>
         }
     }
 }

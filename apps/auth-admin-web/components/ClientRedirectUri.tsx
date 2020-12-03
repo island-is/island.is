@@ -132,8 +132,11 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
                   />
                 </div>
               </div>
-
-              <div className="client-redirect__container__list">
+             
+              <div className={`client-redirect__container__list ${
+                    uris && uris.length > 0  ? 'show' : 'hidden'
+                  }`}>
+                    <h3>Active callback URLs</h3>
                 {uris.map((uri: string) => {
                   return (
                     <div
@@ -146,8 +149,11 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
                           type="button"
                           onClick={() => remove(uri)}
                           className="client-redirect__container__list__button__remove"
+                          title="Remove"
                         >
-                          Remove
+                          <i className="icon__delete"></i>
+                        <span>Remove</span>
+                          
                         </button>
                       </div>
                     </div>
@@ -160,6 +166,8 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
                   <button
                     type="button"
                     className="client-redirect__button__cancel"
+                    title="Back"
+                    onClick={props.handleBack}
                   >
                     Back
                   </button>
@@ -169,6 +177,7 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
                     type="button"
                     className="client-redirect__button__save"
                     onClick={props.handleNext}
+                    title="Next"
                   >
                     Next
                   </button>
