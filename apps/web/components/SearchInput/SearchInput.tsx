@@ -175,7 +175,7 @@ const useSearch = (
   return state
 }
 
-const useSubmit = (locale: Locale) => {
+const useSubmit = (locale: Locale, onRouting?: () => void) => {
   const Router = useRouter()
   const { makePath } = routeNames(locale)
 
@@ -188,6 +188,9 @@ const useSubmit = (locale: Locale) => {
         }).then(() => {
           window.scrollTo(0, 0)
         })
+        if (onRouting) {
+          onRouting()
+        }
       }
     },
     [Router, makePath],
@@ -205,6 +208,7 @@ interface SearchInputProps {
   white?: boolean
   colored?: boolean
   id?: string
+  onRouting?: () => void
 }
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
@@ -220,6 +224,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       autocomplete = true,
       autosuggest = true,
       id = 'downshift',
+      onRouting,
     },
     ref,
   ) => {
@@ -322,6 +327,11 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
                   getItemProps={getItemProps}
                   locale={locale}
                   autosuggest={autosuggest}
+                  onRouting={() => {
+                    if (onRouting) {
+                      onRouting
+                    }
+                  }}
                 />
               )}
             </AsyncSearchInput>
@@ -339,7 +349,15 @@ const Results: FC<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getItemProps: any
   autosuggest: boolean
-}> = ({ locale, search, highlightedIndex, getItemProps, autosuggest }) => {
+  onRouting?: () => void
+}> = ({
+  locale,
+  search,
+  highlightedIndex,
+  getItemProps,
+  autosuggest,
+  onRouting,
+}) => {
   const { makePath } = routeNames(locale)
 
   if (!search.term) {
@@ -371,11 +389,18 @@ const Results: FC<{
               const endOfString = suggestionHasTerm
                 ? suggestion.replace(search.term, '')
                 : ''
+              const { onClick, ...itemProps } = getItemProps({
+                item: suggestion,
+              })
               return (
                 <div
                   key={suggestion}
-                  {...getItemProps({ item: suggestion })}
+                  {...itemProps}
                   className={styles.suggestion}
+                  onClick={(e) => {
+                    onClick(e)
+                    onRouting()
+                  }}
                 >
                   <Text color={i === highlightedIndex ? 'blue400' : 'dark400'}>
                     {`${search.prefix} ${startOfString}`}
@@ -399,18 +424,30 @@ const Results: FC<{
                 AboutPage[] &
                 News[])
                 .slice(0, 5)
-                .map(({ id, title, slug, __typename }) => (
-                  <div key={id} {...getItemProps({ item: '' })}>
-                    <Link
-                      href={makePath(__typename, '[slug]')}
-                      as={makePath(__typename, slug)}
+                .map(({ id, title, slug, __typename }) => {
+                  const { onClick, ...itemProps } = getItemProps({
+                    item: '',
+                  })
+                  return (
+                    <div
+                      key={id}
+                      {...itemProps}
+                      onClick={(e) => {
+                        onClick(e)
+                        onRouting()
+                      }}
                     >
-                      <Text variant="h5" color="blue400">
-                        {title}
-                      </Text>
-                    </Link>
-                  </div>
-                ))}
+                      <Link
+                        href={makePath(__typename, '[slug]')}
+                        as={makePath(__typename, slug)}
+                      >
+                        <Text variant="h5" color="blue400">
+                          {title}
+                        </Text>
+                      </Link>
+                    </div>
+                  )
+                })}
             </Stack>
           </div>
         </>

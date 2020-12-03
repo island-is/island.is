@@ -19,8 +19,8 @@ import { useI18n } from '@island.is/web/i18n'
 import { FixedNav, SkipToMainContent } from '@island.is/web/components'
 import { SearchInput } from '../'
 import { LanguageToggler } from '../LanguageToggler'
-import { SideMenu } from '../SideMenu'
 import ComboButton from './ComboButton'
+import { Menu } from '../Menu/Menu'
 
 interface HeaderProps {
   showSearchInHeader?: boolean
@@ -42,7 +42,6 @@ export const Header: FC<HeaderProps> = ({
   const locale = activeLocale
   const english = activeLocale === 'en'
   const isWhite = colorScheme === 'white'
-  const ariaExpanded = sideMenuOpen ? { 'aria-expanded': 'true' } : {}
 
   return (
     <header>
@@ -129,18 +128,7 @@ export const Header: FC<HeaderProps> = ({
                     </Box>
                     <Hidden below="md">
                       <Box marginLeft={marginLeft} position="relative">
-                        <Button
-                          colorScheme={buttonColorScheme}
-                          variant="utility"
-                          onClick={() => setSideMenuOpen(true)}
-                          icon="menu"
-                          aria-haspopup="true"
-                          aria-controls="sideMenu"
-                          id="sideMenuToggle"
-                          {...ariaExpanded}
-                        >
-                          {t.menuCaption}
-                        </Button>
+                        <Menu />
                       </Box>
                     </Hidden>
                   </Box>
@@ -148,16 +136,6 @@ export const Header: FC<HeaderProps> = ({
               </Columns>
             </GridColumn>
           </GridRow>
-          <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
-            <SideMenu
-              isVisible={sideMenuOpen}
-              searchBarFocus={sideMenuSearchFocus}
-              handleClose={() => {
-                setSideMenuSearchFocus(false)
-                setSideMenuOpen(false)
-              }}
-            />
-          </ColorSchemeContext.Provider>
         </GridContainer>
       </Hidden>
       {children}
