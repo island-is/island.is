@@ -61,18 +61,16 @@ export class UserIdentitiesService {
   }
 
   /** Get user identity by national registyr id (kt) */
-  async findByNationalId(nrid: string) {
-    if (!nrid) {
-      throw new BadRequestException(
-        'National registry id (nrid) must be provided',
-      )
+  async findByNationalId(nationalId: string) {
+    if (!nationalId) {
+      throw new BadRequestException('NationalId must be provided')
     }
 
     const linkedIdentity = await this.userIdentityModel.findAll({
       include: [
         {
           model: Claim,
-          where: { type: 'nationalId', value: nrid },
+          where: { type: 'nationalId', value: nationalId },
         },
       ],
     })
