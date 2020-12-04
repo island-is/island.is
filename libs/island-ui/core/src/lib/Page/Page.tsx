@@ -1,7 +1,7 @@
 import React from 'react'
 
 import * as styles from './Page.treat'
-import { Box, BoxProps } from '../..'
+import { Box, BoxProps } from '../../lib/Box/Box'
 
 interface PageProps {
   component?: BoxProps['component']
