@@ -15,18 +15,14 @@ export const FilterInput: React.FC<FilterInputProps> = ({
   placeholder = '',
   value = '',
   onChange,
-}) => {
-  return (
-    <Input
-      id={id}
-      name={name}
-      placeholder={placeholder}
-      size="sm"
-      icon="search"
-      value={value}
-      onChange={(event) => {
-        onChange(event.target.value)
-      }}
-    />
-  )
-}
+}) => (
+  <Input
+    id={id}
+    name={name}
+    placeholder={placeholder}
+    size="sm"
+    icon="search"
+    value={value}
+    onChange={(event) => onChange(event.target.value)}
+  />
+)

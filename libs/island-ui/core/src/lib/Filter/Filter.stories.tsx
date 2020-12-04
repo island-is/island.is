@@ -37,10 +37,7 @@ export const Default = () => {
           name="filter-input"
           placeholder="Sía eftir leitarorði"
           value={searchInput}
-          onChange={(value) => {
-            setSearchInput(value)
-            console.log(`Search input changed ${searchInput}`)
-          }}
+          onChange={(value) => setSearchInput(value)}
         />
 
         <FilterMultiChoice
@@ -77,20 +74,18 @@ export const Default = () => {
               ],
             },
           ]}
-          onChange={(event) => {
-            console.log(`On change`, event)
+          onChange={(event) =>
             setFilter({
               ...filter,
               [event.categoryId]: event.selected,
             })
-          }}
-          onClear={(categoryId) => {
-            console.log(`Clear ${categoryId}`)
+          }
+          onClear={(categoryId) =>
             setFilter({
               ...filter,
               [categoryId]: [],
             })
-          }}
+          }
         />
       </Filter>
     </Box>

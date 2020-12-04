@@ -22,9 +22,7 @@ export const Filter: React.FC<FilterProps> = ({
             icon="reload"
             size="small"
             variant="text"
-            onClick={() => {
-              onFilterClear()
-            }}
+            onClick={() => onFilterClear()}
           >
             {labelClear}
           </Button>
