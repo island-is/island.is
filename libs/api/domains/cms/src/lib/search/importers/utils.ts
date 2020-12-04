@@ -53,14 +53,31 @@ const getAssetsByContentType = (contentList: object[], contentType: string) => {
   return assets.filter((asset) => asset.contentType === contentType)
 }
 
-export const numberOfLinks = (contentList: object[]) => ({
-  fillAndSignLinks: getEntriesByTypeName(
-    contentList,
-    'ProcessEntry',
-  ).filter((entry) => entry.processLink.includes('dropandsign.is')).length,
-  pdfLinks: getAssetsByContentType(contentList, 'application/pdf').length,
-  wordLinks: getAssetsByContentType(contentList, 'application/msword').length,
-})
+const getProcessEntries = (contentList: object[]) =>
+  getEntriesByTypeName(contentList, 'ProcessEntry')
+
+const getProcessEntryLinks = (contentList: object[], pathEnding: string = '') =>
+  getProcessEntries(contentList).filter((entry) =>
+    new URL(entry.processLink).pathname.endsWith(pathEnding),
+  )
+
+export const numberOfLinks = (contentList: object[]) => {
+  const pdfPELinks = getProcessEntryLinks(contentList, '.pdf').length
+  const docxPELinks = getProcessEntryLinks(contentList, '.docx').length
+  return {
+    fillAndSignLinks: getProcessEntries(contentList).filter((entry) =>
+      entry.processLink.includes('dropandsign.is'),
+    ).length,
+    pdfLinks:
+      getAssetsByContentType(contentList, 'application/pdf').length +
+      pdfPELinks,
+    wordLinks:
+      getAssetsByContentType(contentList, 'application/msword').length +
+      docxPELinks,
+    externalLinks:
+      getProcessEntryLinks(contentList).length - pdfPELinks - docxPELinks,
+  }
+}
 
 export const hasProcessEntry = (contentList: any[]) =>
-  getEntriesByTypeName(contentList, 'ProcessEntry').length !== 0
+  getProcessEntries(contentList).length !== 0
