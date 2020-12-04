@@ -4,20 +4,8 @@ import { renderer, ContentfulContext } from '@island.is/contentful-editor'
 
 import * as styles from './Sidebar.treat'
 
-interface SidebarProps {
-  onChange(field: string, value: string): void
-}
-
-export const Sidebar: FC<SidebarProps> = ({ onChange }) => {
-  const { loading, entry } = useContext(ContentfulContext)
-  console.log('-entry', entry)
-
-  const handleChange = (field: string, value: string) => {
-    console.log('-field', field)
-    console.log('-value', value)
-
-    onChange(field, value)
-  }
+export const Sidebar: FC = () => {
+  const { isLoading, entry, onChange } = useContext(ContentfulContext)
 
   return (
     <>
@@ -26,24 +14,32 @@ export const Sidebar: FC<SidebarProps> = ({ onChange }) => {
           Contentful Editor Mode
         </Text>
 
-        {loading && <Text marginTop={2}>Loading...</Text>}
+        {isLoading && <Text marginTop={2}>Loading...</Text>}
 
-        {!loading &&
-          (entry?.fields ?? []).map((field) => (
-            <Box
-              key={field.id}
-              padding={2}
-              background="blue100"
-              borderRadius="standard"
-              marginBottom={2}
-            >
-              <Text variant="eyebrow" marginBottom={1}>
-                {field.id}
-              </Text>
+        {!isLoading &&
+          (entry?.fields ?? []).map((field) => {
+            field._emitter.on('*', (type, e) => {
+              if (type === 'onValueChanged') {
+                onChange(field.id, e)
+              }
+            })
 
-              {renderer(field, field._sdk)}
-            </Box>
-          ))}
+            return (
+              <Box
+                key={field.id}
+                padding={2}
+                background="blue100"
+                borderRadius="standard"
+                marginBottom={2}
+              >
+                <Text variant="eyebrow" marginBottom={1}>
+                  {field.id}
+                </Text>
+
+                {renderer(field, field._sdk)}
+              </Box>
+            )
+          })}
       </Box>
 
       <Box className={styles.overlay} />

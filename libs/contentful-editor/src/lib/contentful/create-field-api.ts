@@ -16,11 +16,14 @@ import {
 
 export interface InternalFieldAPI extends FieldAPI {
   _sdk: BaseExtensionSDK
+  _emitter: Emitter
 }
 
 export interface InternalEntry {
-  slug?: string
-  contentType: string
+  _id: string
+  _slug?: string
+  _contentType: string
+  _entry: Entry
   fields?: InternalFieldAPI[]
 }
 
@@ -40,14 +43,19 @@ export const createFieldAPI = (
     locale: ContentfulLocale
   },
 ): InternalEntry => ({
-  slug: entry.fields?.slug?.[locale],
-  contentType: type.sys.id,
-  fields: Array.from(type.fields).map((field: any) => {
+  // Internal 🔽
+  _id: entry.sys.id,
+  _slug: entry.fields?.slug?.[locale],
+  _contentType: type.sys.id,
+  _entry: entry,
+  // For contentful renderer 🔽
+  fields: Array.from(type.fields).map((field) => {
     const emitter: Emitter = mitt()
 
     return {
       // Internal 🔽
       _sdk: createSdk(entry, entries, assets, types, space),
+      _emitter: emitter,
       // General SDK API 🔽
       id: field.id,
       locale,

@@ -1,11 +1,11 @@
 import { Environment } from 'contentful-management/dist/typings/entities/environment'
 
-export const getAll = async <T>(
+export const getAll = async <T extends any[]>(
   method: keyof Environment,
   client: Environment,
-): Promise<T[]> => {
+): Promise<T> => {
   let skip = 0
-  let array: T[] = []
+  let array: T = []
   let done = false
 
   const run = async () => {

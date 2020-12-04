@@ -3,27 +3,24 @@ import {
   CrudAction,
   EntityType,
   FieldExtensionSDK,
+  KnownSDK,
 } from 'contentful-ui-extensions-sdk/typings'
 import { Space } from 'contentful-management/dist/typings/entities/space'
 import { ContentType } from 'contentful-management/dist/typings/entities/content-type'
 import { openRichTextDialog } from '@contentful/field-editor-rich-text'
 import { Entry } from 'contentful-management/dist/typings/entities/entry'
-import { Asset } from 'contentful-management/dist/typings/entities/asset'
 import {
-  env,
   locales,
   getEntryURL,
   Entries,
   Assets,
   Types,
+  contentfulUrl,
 } from '@island.is/contentful-editor'
-
-export const contentfulUrl = `https://app.contentful.com/spaces/${env.space}/entries`
 
 /**
  * TODO
- * If more than one content types used in a page,
- * we need to loop through and send them here as well
+ * - Still missing more fields into the object
  */
 export const createSdk = (
   entry: Entry,
@@ -50,11 +47,9 @@ export const createSdk = (
         return Promise.resolve(asset)
       },
       getEntityScheduledActions: () => {
-        console.log('-getEntityScheduledActions')
         return Promise.resolve([])
       },
       getAssets: () => {
-        console.log('-getAssets')
         return Promise.resolve({ items: assets })
       },
       getCachedContentTypes() {
@@ -70,28 +65,13 @@ export const createSdk = (
         window.open(`${contentfulUrl}/${assetId}`, '_blank')
       },
       onSlideInNavigation: () => {
-        console.log('-onSlideInNavigation')
-        return () => {}
+        // console.log('-onSlideInNavigation')
+        return () => { }
       },
     },
     dialogs: {
-      selectSingleAsset({ contentTypes, entityType, locale, withCreate }) {
-        /*
-        console.log('-contentTypes', contentTypes)
-        console.log('-entityType', entityType)
-        console.log('-locale', locale)
-        console.log('-withCreate', withCreate)
-        */
-      },
-
-      selectSingleEntry({ contentTypes, entityType, locale, withCreate }) {
-        /*
-        console.log('-contentTypes', contentTypes)
-        console.log('-entityType', entityType)
-        console.log('-locale', locale)
-        console.log('-withCreate', withCreate)
-        */
-      },
+      selectSingleAsset({ contentTypes, entityType, locale, withCreate }) { },
+      selectSingleEntry({ contentTypes, entityType, locale, withCreate }) { },
     } as {
       selectSingleAsset: (...args: any) => void
       selectSingleEntry: (...args: any) => void

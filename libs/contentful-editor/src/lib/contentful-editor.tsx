@@ -2,7 +2,6 @@ import React from 'react'
 import { NextComponentType, NextPageContext } from 'next'
 import {
   getContentfulInfo,
-  Editor,
   ContentfulProvider,
 } from '@island.is/contentful-editor'
 
@@ -18,11 +17,6 @@ const CONTENTFUL_TYPES_TO_MAP = [
   { id: 'aboutPage', matches: ['stafraent-island'] },
 ]
 
-/**
- * LOGIN to an endpoint somewhere else first through oauth contentful application.
- * Get management token there (not working from what I tested so far)
- * If we don't have any management token, we just return the component without anything else wrapped around
- */
 export const withContentfulEditor = (
   Component: NextComponentType<NextPageContext, unknown, any>,
 ) => {
@@ -38,9 +32,7 @@ export const withContentfulEditor = (
     locale: ContentfulLocale
   }) => (
     <ContentfulProvider config={{ slug, contentType, locale }}>
-      <Editor>
-        <Component {...pageProps} />
-      </Editor>
+      <Component {...pageProps} />
     </ContentfulProvider>
   )
 

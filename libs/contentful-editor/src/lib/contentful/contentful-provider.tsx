@@ -1,8 +1,7 @@
 import React, {
   createContext,
   FC,
-  Ref,
-  RefObject,
+  ReactElement,
   useEffect,
   useMemo,
   useRef,
@@ -10,8 +9,9 @@ import React, {
 } from 'react'
 import {
   ContentfulLocale,
-  initializer,
+  Editor,
   InternalEntry,
+  useContentfulClient,
 } from '@island.is/contentful-editor'
 
 interface ContentfulProviderProps {
@@ -22,71 +22,109 @@ interface ContentfulProviderProps {
   }
 }
 
+// Should come from contentful's oauth application result
+export const accessToken = ''
+
 export const ContentfulContext = createContext<{
   loggedIn: boolean
   loading: boolean
+  saving: boolean
   entry?: InternalEntry
+  save(): Promise<boolean | undefined>
+  onChange(field: string, value: string): void
 }>({
   loggedIn: false,
   loading: true,
+  saving: false,
   entry: undefined,
+  save: async () => undefined,
+  onChange: () => {},
 })
 
+/**
+ * Log in to an endpoint somewhere else first through oauth contentful application.
+ * Get management token there (not working from what I tested so far)
+ */
 export const ContentfulProvider: FC<ContentfulProviderProps> = ({
   children,
   config: { slug, contentType, locale },
 }) => {
   const [loggedIn, setLoggedIn] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const { loading, saving, init, saveEntry } = useContentfulClient({ locale })
   const dataRef = useRef<InternalEntry[] | null>(null)
+  const validEntry = !loading && slug && contentType && dataRef.current
+  const entry = useMemo(
+    () =>
+      validEntry
+        ? (dataRef.current ?? []).find(
+            (item) => item._slug === slug && item._contentType === contentType,
+          )
+        : undefined,
+    [validEntry],
+  )
+  const [fields, setFields] = useState<Record<string, any> | undefined>(
+    undefined,
+  )
 
-  const getEntry = () => {
-    console.log('-loading', loading)
-    console.log('-slug', slug)
-    console.log('-contentType', contentType)
-    if (!loading || !slug || !contentType) {
-      return undefined
+  const handleChange = (field: string, value: string) => {
+    setFields((prev) => {
+      if (!prev) {
+        return
+      }
+
+      return {
+        ...prev,
+        [field]: {
+          ...prev[field],
+          [locale]: value,
+        },
+      }
+    })
+  }
+
+  const handleSave = async () => {
+    if (!entry || !fields) {
+      return
     }
 
-    console.log('-dataRef', dataRef.current)
-
-    return dataRef.current?.find(
-      (item) => item.slug === slug && item.contentType === contentType,
-    )
+    return await saveEntry(entry._id, fields)
   }
 
   useEffect(() => {
-    /**
-     * TODO: This should be run once when the user log in
-     * to the editor mode along the oauth app.
-     */
+    if (validEntry) {
+      setFields(entry?._entry.fields)
+    }
+  }, [loading, dataRef.current])
+
+  useEffect(() => {
     async function run() {
-      setLoading(true)
-
       try {
-        const data = await initializer({ locale })
-
-        dataRef.current = data
+        dataRef.current = await init()
         setLoggedIn(true)
       } catch (e) {
         console.error(`Error when trying to initialize the editor ${e.message}`)
       }
-
-      setLoading(false)
     }
 
     run()
   }, [])
+
+  if (!loggedIn) {
+    return children as ReactElement
+  }
 
   return (
     <ContentfulContext.Provider
       value={{
         loggedIn,
         loading,
-        entry: getEntry(),
+        saving,
+        entry,
+        save: handleSave,
+        onChange: handleChange,
       }}
     >
-      {children}
+      <Editor>{children}</Editor>
     </ContentfulContext.Provider>
   )
 }
