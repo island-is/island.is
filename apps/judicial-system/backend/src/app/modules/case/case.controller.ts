@@ -14,6 +14,7 @@ import {
   ConflictException,
   Res,
   Header,
+  UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -22,6 +23,7 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { CaseState } from '@island.is/judicial-system/types'
+import { JwtAuthGuard } from '@island.is/judicial-system/auth'
 
 import { UserService } from '../user'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
@@ -30,6 +32,7 @@ import { transitionCase } from './state'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './pipes'
 
+@UseGuards(JwtAuthGuard)
 @Controller('api')
 @ApiTags('cases')
 export class CaseController {

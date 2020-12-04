@@ -6,10 +6,12 @@ import {
   NotFoundException,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { JwtAuthGuard } from '@island.is/judicial-system/auth'
 
 import { UserService } from '../user'
 import { CaseService } from '../case'
@@ -17,6 +19,7 @@ import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
 import { NotificationService } from './notification.service'
 
+@UseGuards(JwtAuthGuard)
 @Controller('api/case/:id')
 @ApiTags('cases')
 export class NotificationController {

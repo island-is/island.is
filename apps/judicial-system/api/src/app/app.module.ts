@@ -1,8 +1,13 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 
-// Must import this before the global auth module in local development
+import { logger } from '@island.is/logging'
+
+// Must import this before the shared auth module in local development
 import { environment } from '../environments'
+// Log the environment in local development
+!environment.production &&
+  logger.debug(JSON.stringify({ environment }, null, 4))
 
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'

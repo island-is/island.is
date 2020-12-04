@@ -1,4 +1,4 @@
-import { RESTDataSource } from 'apollo-datasource-rest'
+import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 
 import { Injectable } from '@nestjs/common'
 
@@ -20,6 +20,11 @@ import { environment } from '../environments'
 @Injectable()
 class BackendAPI extends RESTDataSource {
   baseURL = `${environment.backendUrl}/api`
+
+  willSendRequest(req: RequestOptions) {
+    req.headers.set('authorization', this.context.req.headers.authorizztion)
+    req.headers.set('cookie', this.context.req.headers.cookie)
+  }
 
   getUser(nationalId: string): Promise<User> {
     return this.get(`user/${nationalId}`)

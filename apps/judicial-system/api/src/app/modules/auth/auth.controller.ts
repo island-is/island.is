@@ -20,12 +20,12 @@ import {
   ACCESS_TOKEN_COOKIE_NAME,
   EXPIRES_IN_MILLISECONDS,
 } from '@island.is/judicial-system/consts'
+import { User } from '@island.is/judicial-system/types'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../environments'
-import { Cookie, AuthUser } from './auth.types'
+import { AuthUser, Cookie } from './auth.types'
 import { AuthService } from './auth.service'
-import { User } from 'libs/judicial-system/types/src'
 
 const { samlEntryPoint } = environment.auth
 
