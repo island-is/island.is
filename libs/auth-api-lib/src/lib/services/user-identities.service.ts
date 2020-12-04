@@ -60,7 +60,7 @@ export class UserIdentitiesService {
     })
   }
 
-  /** Get user identity by national registyr id (kt) */
+  /** Get user identity by national national id (kt) */
   async findByNationalId(nationalId: string) {
     if (!nationalId) {
       throw new BadRequestException('NationalId must be provided')
