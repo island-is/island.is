@@ -30,7 +30,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
       {/* helpdeskContact Workaround */}
       <Box paddingTop={2}>
         <GridRow>
-          <GridColumn span="6/12">
+          <GridColumn span="1/1">
             <Input
               id="helpDesk.email"
               name="helpDesk.email"
@@ -39,7 +39,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               ref={register}
             />
           </GridColumn>
-          <GridColumn span="6/12">
+          <GridColumn span="1/1" paddingTop={3}>
             <Input
               id="helpDesk.phoneNumber"
               name="helpDesk.phoneNumber"
