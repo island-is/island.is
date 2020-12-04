@@ -10,6 +10,7 @@ import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import { assign } from 'xstate'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import * as kennitala from 'kennitala'
 
 import assignParentTemplate from '../emailTemplates/assignToParent'
 import assignEmployerTemplate from '../emailTemplates/assignToEmployer'
@@ -54,7 +55,13 @@ const dataSchema = z.object({
     .nonempty(),
   employer: z.object({
     name: z.string().nonempty(),
-    nationalRegistryId: z.string().nonempty(),
+    nationalRegistryId: z
+      .string()
+      .nonempty()
+      .refine(
+        (n) => kennitala.isValid(n) && kennitala.isCompany(n),
+        'Kennitala þarf að vera gild',
+      ),
     contact: z.string().optional(),
     contactId: z.string().optional(),
   }),
@@ -65,7 +72,13 @@ const dataSchema = z.object({
   confirmLeaveDuration: z.enum(['duration', 'specificDate']),
   otherParent: z.enum(['spouse', 'no', 'manual']).optional(),
   otherParentName: z.string().optional(),
-  otherParentId: z.string().optional(),
+  otherParentId: z
+    .string()
+    .optional()
+    .refine(
+      (n) => n && kennitala.isValid(n) && kennitala.isPerson(n),
+      'Kennitala þarf að vera gild',
+    ),
 })
 
 type SchemaFormValues = z.infer<typeof dataSchema>
