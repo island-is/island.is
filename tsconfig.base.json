@@ -56,6 +56,9 @@
       "@island.is/api/domains/directorate-of-labour": [
         "libs/api/domains/directorate-of-labour/src/index.ts"
       ],
+      "@island.is/api/domains/document-provider": [
+        "libs/api/domains/document-provider/src/index.ts"
+      ],
       "@island.is/api/domains/documents": [
         "libs/api/domains/documents/src/index.ts"
       ],
@@ -94,6 +97,9 @@
       ],
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
+      ],
+      "@island.is/application/templates/health-insurance": [
+        "libs/application/templates/health-insurance/src/index.ts"
       ],
       "@island.is/application/templates/meta-application": [
         "libs/application/templates/meta-application/src/index.ts"
@@ -176,6 +182,9 @@
       ],
       "@island.is/service-portal/core": [
         "libs/service-portal/core/src/index.ts"
+      ],
+      "@island.is/service-portal/document-provider": [
+        "libs/service-portal/document-provider/src/index.ts"
       ],
       "@island.is/service-portal/documents": [
         "libs/service-portal/documents/src/index.ts"

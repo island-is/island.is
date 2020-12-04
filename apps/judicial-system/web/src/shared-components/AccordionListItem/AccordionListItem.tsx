@@ -16,13 +16,11 @@ const AccordionListItem: React.FC<AccordionListItemProps> = (
         <Text variant="h5">{props.title}</Text>
       </Box>
       <Box marginBottom={3}>
-        <Text>
-          {props.breakSpaces ? (
-            <span className={styles.breakSpaces}>{props.children}</span>
-          ) : (
-            props.children
-          )}
-        </Text>
+        {props.breakSpaces ? (
+          <span className={styles.breakSpaces}>{props.children}</span>
+        ) : (
+          props.children
+        )}
       </Box>
     </>
   )

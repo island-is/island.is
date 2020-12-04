@@ -44,3 +44,23 @@ export const extractStringsFromObject = (
     return contentString
   }, '')
 }
+
+const getEntriesByTypeName = (contentList: any[], typename: string) =>
+  contentList.filter((content) => content.typename === typename)
+
+const getAssetsByContentType = (contentList: object[], contentType: string) => {
+  const assets = getEntriesByTypeName(contentList, 'Asset')
+  return assets.filter((asset) => asset.contentType === contentType)
+}
+
+export const numberOfLinks = (contentList: object[]) => ({
+  fillAndSignLinks: getEntriesByTypeName(
+    contentList,
+    'ProcessEntry',
+  ).filter((entry) => entry.processLink.includes('dropandsign.is')).length,
+  pdfLinks: getAssetsByContentType(contentList, 'application/pdf').length,
+  wordLinks: getAssetsByContentType(contentList, 'application/msword').length,
+})
+
+export const hasProcessEntry = (contentList: any[]) =>
+  getEntriesByTypeName(contentList, 'ProcessEntry').length !== 0

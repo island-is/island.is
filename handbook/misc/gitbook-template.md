@@ -1,4 +1,4 @@
-# Template
+# GitBook Template
 
 Here is a simple template for the README of your project:
 
