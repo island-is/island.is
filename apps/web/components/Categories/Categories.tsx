@@ -16,18 +16,22 @@ interface Card {
 
 interface CategoriesProps {
   title?: string
+  titleId?: string
   cards: Card[]
 }
 
 export const Categories: FC<CategoriesProps> = ({
   title = 'Þjónustuflokkar',
+  titleId,
   cards,
 }) => {
+  const titleProps = titleId ? { id: titleId } : {}
+
   return (
     <GridContainer>
       <GridRow>
         <GridColumn span={['6/12', '6/12', '12/12']}>
-          <Text variant="h3" as="h2" paddingBottom={4}>
+          <Text variant="h3" as="h2" paddingBottom={4} {...titleProps}>
             {title}
           </Text>
         </GridColumn>
