@@ -26,20 +26,46 @@ import {
 export class UserIdentitiesController {
   constructor(private readonly userIdentityService: UserIdentitiesService) {}
 
-  @Get(':nrid')
+  @Get(':id/:type')
   @ApiOkResponse({ type: UserIdentity })
-  async findOne(@Param('nrid') nrid: string): Promise<UserIdentity> {
-    if (!nrid) {
-      throw new BadRequestException('nrid must be provided')
+  async findByNationalIdOrSubjectId(
+    @Param('id') id: string,
+    @Param('type') type: string,
+  ): Promise<UserIdentity[]> {
+    type = type.toLowerCase()
+
+    if (type !== 'nationalid' && type !== 'subjectid') {
+      throw new BadRequestException(
+        'Types supported are [nationalId] and [subjectId]',
+      )
     }
 
-    const userIdentity = await this.userIdentityService.findByNationalReg(nrid)
+    if (!id) {
+      throw new BadRequestException('id must be provided')
+    }
 
-    if (!userIdentity) {
+    if (type === 'nationalid') {
+      const userIdentities = await this.userIdentityService.findByNationalReg(
+        id,
+      )
+
+      if (!userIdentities) {
+        throw new NotFoundException("This user identity doesn't exist")
+      }
+
+      return userIdentities
+    }
+
+    // Find by subjectId
+    const userIdentitiesBySubject = await this.userIdentityService.findBySubjectId(
+      id,
+    )
+
+    if (!userIdentitiesBySubject) {
       throw new NotFoundException("This user identity doesn't exist")
     }
 
-    return userIdentity
+    return [userIdentitiesBySubject]
   }
 
   @Patch(':subjectId')

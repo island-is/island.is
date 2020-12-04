@@ -68,11 +68,11 @@ export class UserIdentitiesService {
       )
     }
 
-    const linkedIdentity = await this.userIdentityModel.findOne({
+    const linkedIdentity = await this.userIdentityModel.findAll({
       include: [
         {
           model: Claim,
-          where: { type: 'nationalIdClaimName', value: nrid },
+          where: { type: 'nationalId', value: nrid },
         },
       ],
     })
