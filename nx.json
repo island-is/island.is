@@ -141,6 +141,9 @@
     "application-templates-driving-license": {
       "tags": []
     },
+    "application-templates-health-insurance": {
+      "tags": []
+    },
     "application-templates-meta-application": {
       "tags": []
     },
@@ -296,6 +299,9 @@
       "tags": []
     },
     "service-portal-core": {
+      "tags": []
+    },
+    "service-portal-document-provider": {
       "tags": []
     },
     "service-portal-documents": {

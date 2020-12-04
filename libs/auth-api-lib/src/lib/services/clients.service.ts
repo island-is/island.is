@@ -176,6 +176,32 @@ export class ClientsService {
       throw new BadRequestException('id must be provided')
     }
 
+    // Delete associations
+    await this.clientAllowedCorsOrigin.destroy({
+      where: { clientId: id },
+    })
+
+    await this.clientIdpRestriction.destroy({
+      where: { clientId: id },
+    })
+
+    await this.clientRedirectUri.destroy({
+      where: { clientId: id },
+    })
+
+    await this.clientSecret.destroy({
+      where: { clientId: id },
+    })
+
+    await this.clientPostLogoutUri.destroy({
+      where: { clientId: id },
+    })
+
+    await this.clientGrantType.destroy({
+      where: { clientId: id },
+    })
+
+    // Delete Client
     return await this.clientModel.destroy({
       where: { clientId: id },
     })
