@@ -4,7 +4,7 @@ import { Inject, UseGuards } from '@nestjs/common'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { User as TUser } from '@island.is/judicial-system/types'
 import {
-  CurrentUser,
+  CurrentGraphQlUser,
   JwtGraphQlAuthGuard,
 } from '@island.is/judicial-system/auth'
 
@@ -19,7 +19,7 @@ export class UserResolver {
   ) {}
 
   @Query(() => User, { nullable: true })
-  async user(@CurrentUser() user: TUser): Promise<User | undefined> {
+  async user(@CurrentGraphQlUser() user: TUser): Promise<User | undefined> {
     this.logger.debug('Getting current user')
 
     return user as User

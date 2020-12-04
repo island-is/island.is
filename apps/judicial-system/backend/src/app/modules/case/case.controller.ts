@@ -22,8 +22,8 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { CaseState } from '@island.is/judicial-system/types'
-import { JwtAuthGuard } from '@island.is/judicial-system/auth'
+import { CaseState, User } from '@island.is/judicial-system/types'
+import { CurrentHttpUser, JwtAuthGuard } from '@island.is/judicial-system/auth'
 
 import { UserService } from '../user'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
@@ -51,16 +51,6 @@ export class CaseController {
     }
 
     return existingCase
-  }
-
-  private async findUserByNationalId(nationalId: string) {
-    const user = await this.userService.findByNationalId(nationalId)
-
-    if (!user) {
-      throw new NotFoundException(`User ${nationalId} not found`)
-    }
-
-    return user
   }
 
   @Post('case')
@@ -97,13 +87,12 @@ export class CaseController {
   })
   async transition(
     @Param('id') id: string,
+    @CurrentHttpUser() user: User,
     @Body() transition: TransitionCaseDto,
   ): Promise<Case> {
     // Use existingCase.modified when client is ready to send last modified timestamp with all updates
 
     const existingCase = await this.findCaseById(id)
-
-    const user = await this.findUserByNationalId(transition.nationalId)
 
     const update = transitionCase(
       transition.transition,

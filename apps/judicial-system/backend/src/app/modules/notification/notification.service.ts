@@ -7,6 +7,7 @@ import { EmailService } from '@island.is/email-service'
 import {
   CaseCustodyRestrictions,
   NotificationType,
+  User,
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
@@ -21,7 +22,6 @@ import {
   stripHtmlTags,
   formatPrisonRulingEmailNotification,
 } from '../../formatters'
-import { User } from '../user'
 import { Case } from '../case'
 import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'

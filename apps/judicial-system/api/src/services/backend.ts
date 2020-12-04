@@ -22,6 +22,7 @@ class BackendAPI extends RESTDataSource {
   baseURL = `${environment.backendUrl}/api`
 
   willSendRequest(req: RequestOptions) {
+    console.log(this.context.req.headers)
     req.headers.set('authorization', this.context.req.headers.authorizztion)
     req.headers.set('cookie', this.context.req.headers.cookie)
   }
@@ -46,12 +47,8 @@ class BackendAPI extends RESTDataSource {
     return this.put(`case/${id}`, updateCase)
   }
 
-  transitionCase(
-    id: string,
-    nationalId: string,
-    transitionCase: TransitionCase,
-  ): Promise<Case> {
-    return this.put(`case/${id}/state`, { ...transitionCase, nationalId })
+  transitionCase(id: string, transitionCase: TransitionCase): Promise<Case> {
+    return this.put(`case/${id}/state`, transitionCase)
   }
 
   requestSignature(id: string): Promise<RequestSignatureResponse> {
@@ -67,13 +64,9 @@ class BackendAPI extends RESTDataSource {
 
   sendNotification(
     id: string,
-    nationalId: string,
     sendNotification: SendNotification,
   ): Promise<SendNotificationResponse> {
-    return this.post(`case/${id}/notification`, {
-      ...sendNotification,
-      nationalId,
-    })
+    return this.post(`case/${id}/notification`, sendNotification)
   }
 
   getCaseNotifications(id: string): Promise<Notification[]> {
