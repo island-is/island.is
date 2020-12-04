@@ -36,7 +36,7 @@ export const extractStringsFromObject = (
         )
       } catch (e) {
         // we only consider string of more than 3 words valid content strings
-        if (content.split(' ').length > 3) {
+        if (content.split(/\s+/).length > 3) {
           return `${contentString} ${content}`
         }
       }

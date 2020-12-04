@@ -32,7 +32,7 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
     return entries.reduce((processedEntries: IArticle[], entry: Entry<any>) => {
       if (this.validateArticle(entry)) {
         // remove nested related articles from releated articles
-        const relatedArticles = (entry.fields.relatedArticles ?? []).map(
+        const relatedArticles = (entry.fields.relatedArticles || []).map(
           ({
             sys,
             fields: { relatedArticles, ...prunedRelatedArticlesFields },
