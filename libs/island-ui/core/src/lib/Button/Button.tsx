@@ -50,7 +50,8 @@ export interface ButtonProps {
   fluid?: boolean
   icon?: IconType
   iconType?: Type
-  iconPosition?: 'start' | 'end'
+  preTextIcon?: IconType
+  preTextIconType?: Type
   type?: NativeButtonProps['type']
   lang?: string
   loading?: boolean
@@ -64,7 +65,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       size = 'default',
       icon,
       iconType = 'filled',
-      iconPosition = 'end',
+      preTextIcon,
+      preTextIconType = 'filled',
       children,
       circle,
       type = 'button',
@@ -100,7 +102,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
             [styles.padding.utility]: variant === 'utility',
             [styles.isEmpty]: !children,
             [styles.loading]: loading,
-            [styles.iconPositionStart]: iconPosition === 'start',
+            [styles.iconPositionStart]: preTextIcon,
           },
         )}
         disabled={disabled || loading}
@@ -108,13 +110,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       >
         {loading && variant !== 'text' ? (
           <>
-            {icon && iconPosition === 'start' && (
-              <ButtonIcon icon={icon} type={iconType} transparent />
+            {preTextIcon && (
+              <ButtonIcon icon={preTextIcon} type={iconType} transparent />
             )}
             <span className={styles.hideContent}>{children}</span>
-            {icon && iconPosition === 'end' && (
-              <ButtonIcon icon={icon} type={iconType} transparent />
-            )}
+            {icon && <ButtonIcon icon={icon} type={iconType} transparent />}
             <div
               className={cn(styles.loader, { [styles.loadingCircle]: circle })}
             >
@@ -125,13 +125,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
           </>
         ) : (
           <>
-            {icon && iconPosition === 'start' && (
-              <ButtonIcon icon={icon} type={iconType} />
-            )}
+            {preTextIcon && <ButtonIcon icon={preTextIcon} type={iconType} />}
             {children}
-            {icon && iconPosition === 'end' && (
-              <ButtonIcon icon={icon} type={iconType} />
-            )}
+            {icon && <ButtonIcon icon={icon} type={iconType} />}
           </>
         )}
       </Box>

@@ -64,8 +64,7 @@ export const SignedVerdictOverview: React.FC = () => {
             <Box marginBottom={3}>
               <Button
                 variant="text"
-                icon="arrowBack"
-                iconPosition="start"
+                preTextIcon="arrowBack"
                 onClick={() => history.push(Constants.DETENTION_REQUESTS_ROUTE)}
               >
                 Til baka

@@ -80,8 +80,7 @@ export const GhostWithIconPositionStart = Template.bind({})
 GhostWithIconPositionStart.args = {
   children: 'Ghost With Icon',
   variant: 'ghost',
-  icon: 'arrowBack',
-  iconPosition: 'start',
+  preTextIcon: 'arrowBack',
 }
 
 export const GhostNegative = () => (
@@ -130,8 +129,7 @@ export const TextWithIconPositionStart = Template.bind({})
 TextWithIconPositionStart.args = {
   children: 'Text with icon',
   variant: 'text',
-  icon: 'arrowBack',
-  iconPosition: 'start',
+  preTextIcon: 'arrowBack',
 }
 
 export const TextNegative = () => (
