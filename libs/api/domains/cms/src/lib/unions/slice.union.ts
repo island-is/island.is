@@ -19,6 +19,8 @@ import { TabSection } from '../models/tabSection.model'
 import { TeamList } from '../models/teamList.model'
 import { TellUsAStory } from '../models/tellUsAStory.model'
 import { TimelineSlice } from '../models/timelineSlice.model'
+import { Location } from '../models/location.model'
+import { Image } from '../models/image.model'
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
