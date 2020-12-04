@@ -1,6 +1,6 @@
 {
   "order": 0,
-  "version": 10,
+  "version": 11,
   "index_patterns": ["island-is-v*"],
   "settings": {
     "analysis": {
@@ -81,6 +81,9 @@
           "compound": {
             "type": "text",
             "analyzer": "compoundIcelandic"
+          },
+          "keyword": {
+            "type": "keyword"
           }
         }
       },
@@ -115,6 +118,21 @@
             "type": "keyword"
           }
         }
+      },
+      "contentWordCount": {
+        "type": "integer"
+      },
+      "hasProcessEntry": {
+        "type": "boolean"
+      },
+      "fillAndSignLinks": {
+        "type": "integer"
+      },
+      "pdfLinks": {
+        "type": "integer"
+      },
+      "wordLinks": {
+        "type": "integer"
       },
       "termPool": {
         "type": "completion",

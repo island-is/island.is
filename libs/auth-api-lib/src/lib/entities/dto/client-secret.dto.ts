@@ -7,26 +7,26 @@ export class ClientSecretDTO {
   @ApiProperty({
     example: 'clientId',
   })
-  readonly clientId: string
+  readonly clientId!: string
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty({
     example: 'The secret key',
   })
-  readonly value: string
+  readonly value!: string
 
   @IsString()
   @IsOptional()
   @ApiProperty({
     example: 'The secret key',
   })
-  description: string
+  description?: string
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty({
     example: 'Type of secret',
   })
-  type: string
+  type!: string
 }

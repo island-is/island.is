@@ -27,45 +27,45 @@ export class UserIdentity extends Model<UserIdentity> {
     allowNull: false,
   })
   @ApiProperty()
-  subjectId: string
+  subjectId!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  name: string
+  name!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  providerName: string
+  providerName!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  providerSubjectId: string
+  providerSubjectId!: string
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
   })
   @ApiProperty()
-  active: boolean
+  active!: boolean
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified?: Date
 
   @HasMany(() => Claim)
   @ApiProperty()
-  readonly claims: Claim[]
+  readonly claims?: Claim[]
 }

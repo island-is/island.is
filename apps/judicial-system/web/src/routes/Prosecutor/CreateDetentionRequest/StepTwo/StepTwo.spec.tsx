@@ -28,6 +28,8 @@ describe('Create detention request, step two', () => {
           ...mockUpdateCaseMutation([
             {
               requestedCustodyEndDate: '2020-09-16T13:37:00Z',
+            } as UpdateCase,
+            {
               custodyEndDate: '2020-09-16T13:37:00Z',
             } as UpdateCase,
             {
