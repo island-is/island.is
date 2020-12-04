@@ -19,7 +19,7 @@ export const logoContainer = style({
 })
 
 export const detentionRequestsTable = style({
-  gridRow: '2',
+  gridRow: '3',
   gridColumn: '1 / -1',
 
   // Needed for Safari.
@@ -34,4 +34,35 @@ export const detentionRequestsError = style({
 export const detentionRequestsTableRow = style({
   borderBottom: `1px solid ${theme.color.blue200}`,
   cursor: 'pointer',
+})
+
+export const thButton = style({
+  ':active': {
+    color: theme.color.dark400,
+  },
+})
+
+export const sortIcon = style({
+  opacity: 0,
+  transition: 'opacity .2s ease-in-out, transform .2s ease-in-out .1s',
+})
+
+export const sortCreatedAsc = style({
+  opacity: 1,
+  transform: 'rotate(0deg)',
+})
+
+export const sortCreatedDes = style({
+  opacity: 1,
+  transform: 'rotate(180deg)',
+})
+
+export const sortAccusedNameAsc = style({
+  opacity: 1,
+  transform: 'rotate(0deg)',
+})
+
+export const sortAccusedNameDes = style({
+  opacity: 1,
+  transform: 'rotate(180deg)',
 })

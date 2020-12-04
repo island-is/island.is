@@ -1,9 +1,8 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState, useContext, useMemo } from 'react'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
-
 import localeIS from 'date-fns/locale/is'
-
+import cn from 'classnames'
 import {
   JudgeLogo,
   ProsecutorLogo,
@@ -15,6 +14,7 @@ import {
   Tag,
   TagVariant,
   Box,
+  Icon,
 } from '@island.is/island-ui/core'
 import Loading from '../../../shared-components/Loading/Loading'
 import { Case, CaseState } from '@island.is/judicial-system/types'
@@ -44,10 +44,53 @@ export const CasesQuery = gql`
   }
 `
 
+type directionType = 'ascending' | 'descending'
+interface sortConfig {
+  key: keyof Case
+  direction: directionType
+}
+
+// Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
 export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<Case[]>()
+  const [sortConfig, setSortConfig] = useState<sortConfig>()
   const { user } = useContext(UserContext)
   const history = useHistory()
+
+  const mapCaseStateToTagVariant = (
+    state: CaseState,
+  ): { color: TagVariant; text: string } => {
+    switch (state) {
+      case CaseState.DRAFT || CaseState.NEW:
+        return { color: 'red', text: 'Drög' }
+      case CaseState.SUBMITTED:
+        return { color: 'purple', text: 'Krafa staðfest' }
+      case CaseState.ACCEPTED:
+        return { color: 'darkerMint', text: 'Gæsluvarðhald virkt' }
+      case CaseState.REJECTED:
+        return { color: 'blue', text: 'Gæsluvarðhaldi hafnað' }
+      default:
+        return { color: 'white', text: 'Óþekkt' }
+    }
+  }
+
+  useMemo(() => {
+    let sortedCases = cases || []
+
+    if (sortConfig) {
+      sortedCases.sort((a: Case, b: Case) => {
+        // Credit: https://stackoverflow.com/a/51169
+        return sortConfig.direction === 'ascending'
+          ? ('' + a[sortConfig.key]).localeCompare(
+              b[sortConfig.key]?.toString() || '',
+            )
+          : ('' + b[sortConfig.key]).localeCompare(
+              a[sortConfig.key]?.toString() || '',
+            )
+      })
+    }
+    return sortedCases
+  }, [cases, sortConfig])
 
   const isJudge = user?.role === UserRole.JUDGE
 
@@ -76,23 +119,6 @@ export const DetentionRequests: React.FC = () => {
     }
   }, [cases, isJudge, resCases, setCases])
 
-  const mapCaseStateToTagVariant = (
-    state: CaseState,
-  ): { color: TagVariant; text: string } => {
-    switch (state) {
-      case CaseState.DRAFT || CaseState.NEW:
-        return { color: 'red', text: 'Drög' }
-      case CaseState.SUBMITTED:
-        return { color: 'purple', text: 'Krafa staðfest' }
-      case CaseState.ACCEPTED:
-        return { color: 'darkerMint', text: 'Gæsluvarðhald virkt' }
-      case CaseState.REJECTED:
-        return { color: 'blue', text: 'Gæsluvarðhaldi hafnað' }
-      default:
-        return { color: 'white', text: 'Óþekkt' }
-    }
-  }
-
   const handleClick = (c: Case): void => {
     if (c.state === CaseState.ACCEPTED || c.state === CaseState.REJECTED) {
       history.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${c.id}`)
@@ -105,6 +131,25 @@ export const DetentionRequests: React.FC = () => {
     }
   }
 
+  const requestSort = (key: keyof Case) => {
+    let d: directionType = 'ascending'
+
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === 'ascending'
+    ) {
+      d = 'descending'
+    }
+    setSortConfig({ key, direction: d })
+  }
+
+  const getClassNamesFor = (name: keyof Case) => {
+    if (!sortConfig) {
+      return
+    }
+    return sortConfig.key === name ? sortConfig.direction : undefined
+  }
   return (
     <div className={styles.detentionRequestsContainer}>
       {user && (
@@ -121,78 +166,56 @@ export const DetentionRequests: React.FC = () => {
         </div>
       )}
       {cases ? (
-        <table
-          className={styles.detentionRequestsTable}
-          data-testid="detention-requests-table"
-        >
-          <Text as="caption" variant="h3">
-            <Box marginBottom={3}>Gæsluvarðhaldskröfur</Box>
-          </Text>
-          <thead>
-            <tr>
-              <th>
-                <Text as="span" fontWeight="regular">
-                  LÖKE málsnr.
-                </Text>
-              </th>
-              <th>
-                <Text as="span" fontWeight="regular">
-                  Sakborningur
-                </Text>
-              </th>
-              <th>
-                <Text as="span" fontWeight="regular">
-                  Krafa stofnuð
-                </Text>
-              </th>
-              <th>
-                <Text as="span" fontWeight="regular">
-                  Staða
-                </Text>
-              </th>
-              <th>
-                <Text as="span" fontWeight="regular">
-                  Gæsla rennur út
-                </Text>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {cases.map((c, i) => (
-              <tr
-                data-testid="detention-requests-table-row"
-                role="button"
-                key={i}
-                className={styles.detentionRequestsTableRow}
-                onClick={() => {
-                  handleClick(c)
-                }}
-              >
-                <td>
-                  <Text as="span">{c.policeCaseNumber || '-'}</Text>
-                </td>
-                <td>
-                  <Text as="span">
-                    {c.accusedName || '-'}
-                    {c.accusedNationalId && (
-                      <Box marginLeft={1} component="span">
-                        <Text as="span" variant="small" color="dark400">
-                          {`(${
-                            insertAt(
-                              c.accusedNationalId.replace('-', ''),
-                              '-',
-                              6,
-                            ) || '-'
-                          })`}
-                        </Text>
+        <>
+          <Box marginBottom={3}>
+            {/**
+             * This should be a <caption> tag inside the table but
+             * Safari has a bug that doesn't allow that. See more
+             * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
+             */}
+            <Text variant="h3" id="tableCaption">
+              Gæsluvarðhaldskröfur
+            </Text>
+          </Box>
+          <table
+            className={styles.detentionRequestsTable}
+            data-testid="detention-requests-table"
+            aria-describedby="tableCation"
+          >
+            <thead>
+              <tr>
+                <th>
+                  <Text as="span" fontWeight="regular">
+                    LÖKE málsnr.
+                  </Text>
+                </th>
+                <th>
+                  <Text as="span" fontWeight="regular">
+                    <Box
+                      component="button"
+                      display="flex"
+                      alignItems="center"
+                      className={styles.thButton}
+                      onClick={() => requestSort('accusedName')}
+                    >
+                      Sakborningur
+                      <Box
+                        className={cn(styles.sortIcon, {
+                          [styles.sortAccusedNameAsc]:
+                            getClassNamesFor('accusedName') === 'ascending',
+                          [styles.sortAccusedNameDes]:
+                            getClassNamesFor('accusedName') === 'descending',
+                        })}
+                        marginLeft={1}
+                        component="span"
+                        display="flex"
+                        alignItems="center"
+                      >
+                        <Icon icon="caretDown" size="small" />
                       </Box>
-                    )}
+                    </Box>
                   </Text>
-                </td>
-                <td>
-                  <Text as="span">
-                    {format(parseISO(c.created), 'PP', { locale: localeIS })}
-                  </Text>
+<<<<<<< HEAD
                 </td>
                 <td>
                   {c.state === CaseState.ACCEPTED &&
@@ -204,22 +227,112 @@ export const DetentionRequests: React.FC = () => {
                     <Tag
                       variant={mapCaseStateToTagVariant(c.state).color}
                       outlined
+=======
+                </th>
+                <th>
+                  <Text as="span" fontWeight="regular">
+                    <Box
+                      component="button"
+                      display="flex"
+                      alignItems="center"
+                      className={styles.thButton}
+                      onClick={() => requestSort('created')}
+>>>>>>> Reorder table on th click
                     >
-                      {mapCaseStateToTagVariant(c.state).text}
-                    </Tag>
-                  )}
-                </td>
-                <td>
-                  <Text as="span">
-                    {c.custodyEndDate && c.state === CaseState.ACCEPTED
-                      ? `${formatDate(c.custodyEndDate, 'PP')}`
-                      : null}
+                      Krafa stofnuð
+                      <Box
+                        className={cn(styles.sortIcon, {
+                          [styles.sortAccusedNameAsc]:
+                            getClassNamesFor('created') === 'ascending',
+                          [styles.sortAccusedNameDes]:
+                            getClassNamesFor('created') === 'descending',
+                        })}
+                        marginLeft={1}
+                        component="span"
+                        display="flex"
+                        alignItems="center"
+                      >
+                        <Icon icon="caretDown" size="small" />
+                      </Box>
+                    </Box>
                   </Text>
-                </td>
+                </th>
+                <th>
+                  <Text as="span" fontWeight="regular">
+                    Staða
+                  </Text>
+                </th>
+                <th>
+                  <Text as="span" fontWeight="regular">
+                    Gæsla rennur út
+                  </Text>
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {cases.map((c, i) => (
+                <tr
+                  data-testid="detention-requests-table-row"
+                  role="button"
+                  aria-label="Opna kröfu"
+                  key={i}
+                  className={styles.detentionRequestsTableRow}
+                  onClick={() => {
+                    handleClick(c)
+                  }}
+                >
+                  <td>
+                    <Text as="span">{c.policeCaseNumber || '-'}</Text>
+                  </td>
+                  <td>
+                    <Text as="span">
+                      {c.accusedName || '-'}
+                      {c.accusedNationalId && (
+                        <Box marginLeft={1} component="span">
+                          <Text as="span" variant="small" color="dark400">
+                            {`(${
+                              insertAt(
+                                c.accusedNationalId.replace('-', ''),
+                                '-',
+                                6,
+                              ) || '-'
+                            })`}
+                          </Text>
+                        </Box>
+                      )}
+                    </Text>
+                  </td>
+                  <td>
+                    <Text as="span">
+                      {format(parseISO(c.created), 'PP', { locale: localeIS })}
+                    </Text>
+                  </td>
+                  <td>
+                    {c.isCustodyEndDateInThePast ? (
+                      <Tag variant="darkerBlue" outlined>
+                        Gæsluvarðhaldi lokið
+                      </Tag>
+                    ) : (
+                      <Tag
+                        variant={mapCaseStateToTagVariant(c.state).color}
+                        outlined
+                      >
+                        {mapCaseStateToTagVariant(c.state).text}
+                      </Tag>
+                    )}
+                  </td>
+                  <td>
+                    <Text as="span">
+                      {c.custodyEndDate && c.state === CaseState.ACCEPTED
+                        ? `${formatDate(c.custodyEndDate, 'PP')}`
+                        : null}
+                    </Text>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
       ) : error ? (
         <div
           className={styles.detentionRequestsError}
