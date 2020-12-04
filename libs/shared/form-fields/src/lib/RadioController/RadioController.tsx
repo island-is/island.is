@@ -10,8 +10,8 @@ import {
 
 interface Option {
   value: string
-  label: string
-  tooltip?: string
+  label: React.ReactNode
+  tooltip?: React.ReactNode
   excludeOthers?: boolean
 }
 interface Props {
