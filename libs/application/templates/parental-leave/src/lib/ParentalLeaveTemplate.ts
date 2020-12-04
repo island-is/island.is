@@ -9,6 +9,8 @@ import * as z from 'zod'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import { assign } from 'xstate'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
+
 import assignParentTemplate from '../emailTemplates/assignToParent'
 import assignEmployerTemplate from '../emailTemplates/assignToEmployer'
 
@@ -22,7 +24,10 @@ const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: z.object({
     email: z.string().email(),
-    phoneNumber: z.string(),
+    phoneNumber: z.string().refine((p) => {
+      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+      return phoneNumber && phoneNumber.isValid()
+    }, 'Símanúmer þarf að vera gilt'),
   }),
   payments: z.object({
     bank: z.string().nonempty(),
