@@ -45,7 +45,7 @@ export const CasesQuery = gql`
 `
 
 type directionType = 'ascending' | 'descending'
-interface sortConfig {
+interface SortConfig {
   key: keyof Case
   direction: directionType
 }
@@ -53,7 +53,7 @@ interface sortConfig {
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
 export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<Case[]>()
-  const [sortConfig, setSortConfig] = useState<sortConfig>()
+  const [sortConfig, setSortConfig] = useState<SortConfig>()
 
   const { user } = useContext(UserContext)
   const history = useHistory()
@@ -61,7 +61,7 @@ export const DetentionRequests: React.FC = () => {
   const isJudge = user?.role === UserRole.JUDGE
 
   useMemo(() => {
-    let sortedCases = cases || []
+    const sortedCases = cases || []
 
     if (sortConfig) {
       sortedCases.sort((a: Case, b: Case) => {
