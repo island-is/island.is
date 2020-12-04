@@ -61,7 +61,7 @@ export class UserIdentitiesService {
   }
 
   /** Get user identity by national registyr id (kt) */
-  async findByNationalReg(nrid: string) {
+  async findByNationalId(nrid: string) {
     if (!nrid) {
       throw new BadRequestException(
         'National registry id (nrid) must be provided',

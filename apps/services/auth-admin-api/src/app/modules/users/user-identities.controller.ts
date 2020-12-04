@@ -45,9 +45,7 @@ export class UserIdentitiesController {
     }
 
     if (type === 'nationalid') {
-      const userIdentities = await this.userIdentityService.findByNationalReg(
-        id,
-      )
+      const userIdentities = await this.userIdentityService.findByNationalId(id)
 
       if (!userIdentities) {
         throw new NotFoundException("This user identity doesn't exist")
