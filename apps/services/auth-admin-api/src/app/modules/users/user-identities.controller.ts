@@ -26,16 +26,14 @@ import {
 export class UserIdentitiesController {
   constructor(private readonly userIdentityService: UserIdentitiesService) {}
 
-  @Get(':subjectId')
+  @Get(':nrid')
   @ApiOkResponse({ type: UserIdentity })
-  async findOne(@Param('subjectId') subjectId: string): Promise<UserIdentity> {
-    if (!subjectId) {
-      throw new BadRequestException('SubjectId must be provided')
+  async findOne(@Param('nrid') nrid: string): Promise<UserIdentity> {
+    if (!nrid) {
+      throw new BadRequestException('nrid must be provided')
     }
 
-    const userIdentity = await this.userIdentityService.findBySubjectId(
-      subjectId,
-    )
+    const userIdentity = await this.userIdentityService.findByNationalReg(nrid)
 
     if (!userIdentity) {
       throw new NotFoundException("This user identity doesn't exist")
