@@ -54,25 +54,11 @@ interface sortConfig {
 export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<Case[]>()
   const [sortConfig, setSortConfig] = useState<sortConfig>()
+
   const { user } = useContext(UserContext)
   const history = useHistory()
 
-  const mapCaseStateToTagVariant = (
-    state: CaseState,
-  ): { color: TagVariant; text: string } => {
-    switch (state) {
-      case CaseState.DRAFT || CaseState.NEW:
-        return { color: 'red', text: 'Drög' }
-      case CaseState.SUBMITTED:
-        return { color: 'purple', text: 'Krafa staðfest' }
-      case CaseState.ACCEPTED:
-        return { color: 'darkerMint', text: 'Gæsluvarðhald virkt' }
-      case CaseState.REJECTED:
-        return { color: 'blue', text: 'Gæsluvarðhaldi hafnað' }
-      default:
-        return { color: 'white', text: 'Óþekkt' }
-    }
-  }
+  const isJudge = user?.role === UserRole.JUDGE
 
   useMemo(() => {
     let sortedCases = cases || []
@@ -91,8 +77,6 @@ export const DetentionRequests: React.FC = () => {
     }
     return sortedCases
   }, [cases, sortConfig])
-
-  const isJudge = user?.role === UserRole.JUDGE
 
   useEffect(() => {
     document.title = 'Allar kröfur - Réttarvörslugátt'
@@ -118,6 +102,23 @@ export const DetentionRequests: React.FC = () => {
       }
     }
   }, [cases, isJudge, resCases, setCases])
+
+  const mapCaseStateToTagVariant = (
+    state: CaseState,
+  ): { color: TagVariant; text: string } => {
+    switch (state) {
+      case CaseState.DRAFT || CaseState.NEW:
+        return { color: 'red', text: 'Drög' }
+      case CaseState.SUBMITTED:
+        return { color: 'purple', text: 'Krafa staðfest' }
+      case CaseState.ACCEPTED:
+        return { color: 'darkerMint', text: 'Gæsluvarðhald virkt' }
+      case CaseState.REJECTED:
+        return { color: 'blue', text: 'Gæsluvarðhaldi hafnað' }
+      default:
+        return { color: 'white', text: 'Óþekkt' }
+    }
+  }
 
   const handleClick = (c: Case): void => {
     if (c.state === CaseState.ACCEPTED || c.state === CaseState.REJECTED) {
@@ -150,6 +151,7 @@ export const DetentionRequests: React.FC = () => {
     }
     return sortConfig.key === name ? sortConfig.direction : undefined
   }
+
   return (
     <div className={styles.detentionRequestsContainer}>
       {user && (
