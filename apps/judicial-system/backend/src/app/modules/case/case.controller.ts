@@ -22,10 +22,9 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { CaseState, User } from '@island.is/judicial-system/types'
+import { User, UserRole } from '@island.is/judicial-system/types'
 import { CurrentHttpUser, JwtAuthGuard } from '@island.is/judicial-system/auth'
 
-import { UserService } from '../user'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
@@ -39,8 +38,6 @@ export class CaseController {
   constructor(
     @Inject(CaseService)
     private readonly caseService: CaseService,
-    @Inject(UserService)
-    private readonly userService: UserService,
   ) {}
 
   private async findCaseById(id: string) {
@@ -137,10 +134,14 @@ export class CaseController {
     content: { 'application/pdf': {} },
     description: 'Gets the ruling for an existing case as a pdf document',
   })
-  async getRulingPdf(@Param('id') id: string, @Res() res) {
+  async getRulingPdf(
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+    @Res() res,
+  ) {
     const existingCase = await this.findCaseById(id)
 
-    const pdf = await this.caseService.getRulingPdf(existingCase)
+    const pdf = await this.caseService.getRulingPdf(existingCase, user)
 
     const stream = new ReadableStreamBuffer({
       frequency: 10,
@@ -160,25 +161,20 @@ export class CaseController {
   })
   async requestSignature(
     @Param('id') id: string,
+    @CurrentHttpUser() user: User,
     @Res() res,
   ): Promise<SigningServiceResponse> {
     const existingCase = await this.findCaseById(id)
 
-    if (
-      existingCase.state !== CaseState.ACCEPTED &&
-      existingCase.state !== CaseState.REJECTED
-    ) {
-      throw new ForbiddenException(
-        `Cannot sign a ruling for a case in state ${existingCase.state}`,
-      )
-    }
-
-    if (!existingCase.judge) {
+    if (user.role !== UserRole.JUDGE) {
       throw new ForbiddenException('A ruling must be signed by a judge')
     }
 
     try {
-      const response = await this.caseService.requestSignature(existingCase)
+      const response = await this.caseService.requestSignature(
+        existingCase,
+        user,
+      )
       return res.status(201).send(response)
     } catch (error) {
       if (error instanceof DokobitError) {
@@ -200,17 +196,13 @@ export class CaseController {
   })
   async getSignatureConfirmation(
     @Param('id') id: string,
+    @CurrentHttpUser() user: User,
     @Query('documentToken') documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
     const existingCase = await this.findCaseById(id)
 
-    if (
-      existingCase.state !== CaseState.ACCEPTED &&
-      existingCase.state !== CaseState.REJECTED
-    ) {
-      throw new ForbiddenException(
-        `Cannot confirm a ruling signature for a case in state ${existingCase.state}`,
-      )
+    if (user.role !== UserRole.JUDGE) {
+      throw new ForbiddenException('A ruling must be signed by a judge')
     }
 
     return this.caseService.getSignatureConfirmation(

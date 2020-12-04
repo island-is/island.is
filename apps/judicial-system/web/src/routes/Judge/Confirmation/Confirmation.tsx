@@ -385,8 +385,8 @@ export const Confirmation: React.FC = () => {
           )}
           <Box marginBottom={10}>
             <Text variant="h3">
-              {workingCase?.judge
-                ? `${workingCase?.judge.name} ${workingCase?.judge.title}`
+              {workingCase.judge
+                ? `${workingCase.judge.name} ${workingCase.judge.title}`
                 : `${user?.name} ${user?.title}`}
             </Text>
           </Box>
