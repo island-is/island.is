@@ -2,10 +2,10 @@ import React from 'react'
 import { render, waitFor } from '@testing-library/react'
 import { BrowserRouter, MemoryRouter, Route } from 'react-router-dom'
 import Login from './Login'
-import { mockJudgeQuery } from '../../utils/mocks'
-import { api } from '../../services'
+import { mockJudgeQuery } from '../../../utils/mocks'
+import { api } from '../../../services'
 import fetchMock from 'fetch-mock'
-import { UserProvider } from '../../shared-components/UserProvider/UserProvider'
+import { UserProvider } from '../../../shared-components/UserProvider/UserProvider'
 import { MockedProvider } from '@apollo/client/testing'
 
 describe('Login route', () => {

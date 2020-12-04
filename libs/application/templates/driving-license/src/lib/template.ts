@@ -15,6 +15,10 @@ type Events =
   | { type: 'ABORT' }
 
 const dataSchema = z.object({
+  type: z.string().nonempty(),
+  bikeType: z.string().nonempty(),
+  truckType: z.string().nonempty(),
+  acceptsPolicy: z.boolean(),
   address: z.object({
     home: z.string().nonempty(),
     postcode: z.string(),
@@ -28,9 +32,8 @@ const dataSchema = z.object({
     country: z.string().nonempty(),
   }),
   teacher: z.string().nonempty(),
-  type: z.string().nonempty(),
   category: z.string().nonempty(),
-  isBusiness: z.boolean(),
+  isBusiness: z.array(z.enum(['isBusiness'])),
 })
 
 const template: ApplicationTemplate<

@@ -28,7 +28,7 @@ export class ClientGrantType extends Model<ClientGrantType> {
   })
   @ForeignKey(() => Client)
   @ApiProperty()
-  clientId: string
+  clientId!: string
 
   @PrimaryKey
   @Column({
@@ -37,13 +37,13 @@ export class ClientGrantType extends Model<ClientGrantType> {
   })
   @ForeignKey(() => GrantType)
   @ApiProperty()
-  grantType: string
+  grantType!: string
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified?: Date
 }

@@ -7,6 +7,11 @@ export interface MappedData {
   _id?: string
   title: string
   content?: string
+  contentWordCount?: number
+  hasProcessEntry?: boolean
+  fillAndSignLinks?: number
+  pdfLinks?: number
+  wordLinks?: number
   type: string
   termPool?: string[]
   response?: string

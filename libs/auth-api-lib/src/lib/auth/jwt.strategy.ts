@@ -28,6 +28,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return {
       nationalId: payload.nationalId ?? payload.natreg,
       scope: payload.scope,
+      accessToken: '',
     }
   }
 }

@@ -26,15 +26,15 @@ export class ClientsService {
     @InjectModel(Client)
     private clientModel: typeof Client,
     @InjectModel(ClientAllowedCorsOrigin)
-    private clientAllowedCorsOriginModel: typeof ClientAllowedCorsOrigin,
+    private clientAllowedCorsOrigin: typeof ClientAllowedCorsOrigin,
     @InjectModel(ClientIdpRestrictions)
     private clientIdpRestriction: typeof ClientIdpRestrictions,
-    @InjectModel(ClientAllowedCorsOrigin)
-    private clientAllowedCorsOrigin: typeof ClientAllowedCorsOrigin,
+    @InjectModel(ClientSecret)
+    private clientSecret: typeof ClientSecret,
     @InjectModel(ClientRedirectUri)
     private clientRedirectUri: typeof ClientRedirectUri,
     @InjectModel(ClientGrantType)
-    private clientGrantTypeModel: typeof ClientGrantType,
+    private clientGrantType: typeof ClientGrantType,
     @InjectModel(ClientAllowedScope)
     private clientAllowedScope: typeof ClientAllowedScope,
     @InjectModel(ClientClaim)
@@ -55,7 +55,6 @@ export class ClientsService {
         ClientIdpRestrictions,
         ClientSecret,
         ClientPostLogoutRedirectUri,
-        ClientPostLogoutRedirectUri,
         ClientGrantType,
         ClientClaim,
       ],
@@ -72,17 +71,6 @@ export class ClientsService {
     return this.clientModel.findAndCountAll({
       limit: count,
       offset: offset,
-      include: [
-        ClientAllowedScope,
-        ClientAllowedCorsOrigin,
-        ClientRedirectUri,
-        ClientIdpRestrictions,
-        ClientSecret,
-        ClientPostLogoutRedirectUri,
-        ClientPostLogoutRedirectUri,
-        ClientGrantType,
-        ClientClaim,
-      ],
       distinct: true,
     })
   }
@@ -95,19 +83,64 @@ export class ClientsService {
       throw new BadRequestException('Id must be provided')
     }
 
-    return this.clientModel.findByPk(id, {
-      include: [
-        ClientAllowedScope,
-        ClientAllowedCorsOrigin,
-        ClientRedirectUri,
-        ClientIdpRestrictions,
-        ClientSecret,
-        ClientPostLogoutRedirectUri,
-        ClientPostLogoutRedirectUri,
-        ClientGrantType,
-        ClientClaim,
-      ],
-    })
+    const client = await this.clientModel.findByPk(id, { raw: true })
+
+    if (client) {
+      await this.findAssociations(client)
+        .then<any, never>((result: any) => {
+          client.allowedScopes = result[0]
+          client.allowedCorsOrigins = result[1]
+          client.redirectUris = result[2]
+          client.identityProviderRestrictions = result[3]
+          client.clientSecrets = result[4]
+          client.postLogoutRedirectUris = result[5]
+          client.allowedGrantTypes = result[6]
+          client.claims = result[7]
+        })
+        .catch((error) =>
+          this.logger.error(`Error in findAssociations: ${error}`),
+        )
+    }
+
+    return client
+  }
+
+  /** Gets all associations for Client */
+  private findAssociations(client: Client): Promise<any> {
+    return Promise.all([
+      this.clientAllowedScope.findAll({
+        where: { clientId: client.clientId },
+        raw: true,
+      }), // 0
+      this.clientAllowedCorsOrigin.findAll({
+        where: { clientId: client.clientId },
+        raw: true,
+      }), // 1
+      this.clientRedirectUri.findAll({
+        where: { clientId: client.clientId },
+        raw: true,
+      }), // 2
+      this.clientIdpRestriction.findAll({
+        where: { clientId: client.clientId },
+        raw: true,
+      }), // 3
+      this.clientSecret.findAll({
+        where: { clientId: client.clientId },
+        raw: true,
+      }), // 4
+      this.clientPostLogoutUri.findAll({
+        where: { clientId: client.clientId },
+        raw: true,
+      }), // 5
+      this.clientGrantType.findAll({
+        where: { clientId: client.clientId },
+        raw: true,
+      }), // 6
+      this.clientClaim.findAll({
+        where: { clientId: client.clientId },
+        raw: true,
+      }), // 7
+    ])
   }
 
   /** Creates a new client */
@@ -143,6 +176,32 @@ export class ClientsService {
       throw new BadRequestException('id must be provided')
     }
 
+    // Delete associations
+    await this.clientAllowedCorsOrigin.destroy({
+      where: { clientId: id },
+    })
+
+    await this.clientIdpRestriction.destroy({
+      where: { clientId: id },
+    })
+
+    await this.clientRedirectUri.destroy({
+      where: { clientId: id },
+    })
+
+    await this.clientSecret.destroy({
+      where: { clientId: id },
+    })
+
+    await this.clientPostLogoutUri.destroy({
+      where: { clientId: id },
+    })
+
+    await this.clientGrantType.destroy({
+      where: { clientId: id },
+    })
+
+    // Delete Client
     return await this.clientModel.destroy({
       where: { clientId: id },
     })
@@ -160,7 +219,7 @@ export class ClientsService {
       throw new BadRequestException('Origin must be provided')
     }
 
-    return this.clientAllowedCorsOriginModel.findAll({
+    return this.clientAllowedCorsOrigin.findAll({
       where: { origin: origin },
     })
   }
@@ -275,7 +334,7 @@ export class ClientsService {
       throw new BadRequestException('Grant Type object must be provided')
     }
 
-    return await this.clientGrantTypeModel.create({ ...grantTypeObj })
+    return await this.clientGrantType.create({ ...grantTypeObj })
   }
 
   /** Removes a grant type for client */
@@ -288,7 +347,7 @@ export class ClientsService {
       throw new BadRequestException('grantType and clientId must be provided')
     }
 
-    return await this.clientGrantTypeModel.destroy({
+    return await this.clientGrantType.destroy({
       where: { clientId: clientId, grantType: grantType },
     })
   }

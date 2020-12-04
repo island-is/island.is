@@ -60,6 +60,28 @@ export class UserIdentitiesService {
     })
   }
 
+  /** Get user identity by national national id (kt) */
+  async findByNationalId(nationalId: string) {
+    if (!nationalId) {
+      throw new BadRequestException('NationalId must be provided')
+    }
+
+    const linkedIdentity = await this.userIdentityModel.findAll({
+      include: [
+        {
+          model: Claim,
+          where: { type: 'nationalId', value: nationalId },
+        },
+      ],
+    })
+
+    if (linkedIdentity) {
+      return linkedIdentity
+    }
+
+    return null
+  }
+
   /** Gets a user identiy by a provider and subjectid */
   async findByProviderSubjectId(
     provider: string,
