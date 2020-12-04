@@ -77,16 +77,18 @@ export const FilterMultiChoice: React.FC<FilterMultiChoiceProps> = ({
               />
             ))}
 
-            <Box textAlign="right">
-              <Button
-                icon="reload"
-                size="small"
-                variant="text"
-                onClick={() => onClear(category.id)}
-              >
-                {labelClear}
-              </Button>
-            </Box>
+            {category.selected.length > 0 && (
+              <Box textAlign="right">
+                <Button
+                  icon="reload"
+                  size="small"
+                  variant="text"
+                  onClick={() => onClear(category.id)}
+                >
+                  {labelClear}
+                </Button>
+              </Box>
+            )}
           </Stack>
         </AccordionItem>
       ))}
