@@ -67,5 +67,5 @@ export class UserIdentity extends Model<UserIdentity> {
 
   @HasMany(() => Claim)
   @ApiProperty()
-  claims!: Claim[]
+  readonly claims?: Claim[]
 }
