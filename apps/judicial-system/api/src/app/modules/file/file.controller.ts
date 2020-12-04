@@ -12,9 +12,9 @@ import {
 } from '@nestjs/common'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { JwtAuthGuard } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../environments'
-import { JwtAuthGuard } from '../auth'
 
 @UseGuards(JwtAuthGuard)
 @Controller('api')

@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 
+// Must import this before the global auth module in local development
+import { environment } from '../environments'
+
+import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
 
-import { environment } from '../environments'
 import { BackendAPI } from '../services'
 import { AuthModule, UserModule, CaseModule, FileModule } from './modules/'
 
@@ -25,10 +28,11 @@ const autoSchemaFile = debug ? 'apps/judicial-system/api.graphql' : true
       context: ({ req }) => ({ req }),
       dataSources: () => ({ backendApi: new BackendAPI() }),
     }),
+    SharedAuthModule,
+    AuditTrailModule,
     AuthModule,
     UserModule,
     CaseModule,
-    AuditTrailModule,
     FileModule,
   ],
   providers: [BackendAPI],

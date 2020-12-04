@@ -1,3 +1,6 @@
+// Set for auth library environment in local development
+process.env.AUTH_JWT_SECRET = 'securesecret'
+
 export default {
   production: false,
   auth: {

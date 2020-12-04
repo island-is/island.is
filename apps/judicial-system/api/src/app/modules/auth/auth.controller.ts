@@ -1,4 +1,3 @@
-import jwt from 'jsonwebtoken'
 import IslandisLogin, { VerifyResult } from 'islandis-login'
 import { Entropy } from 'entropy-string'
 import { uuid } from 'uuidv4'
@@ -19,16 +18,17 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CSRF_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
+  EXPIRES_IN_MILLISECONDS,
 } from '@island.is/judicial-system/consts'
+import { SharedAuthService } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../environments'
-import { Cookie, Credentials, AuthUser } from './auth.types'
+import { Cookie, AuthUser } from './auth.types'
 import { AuthService } from './auth.service'
+import { User } from 'libs/judicial-system/types/src'
 
-const { samlEntryPoint, jwtSecret } = environment.auth
+const { samlEntryPoint } = environment.auth
 
-export const JWT_EXPIRES_IN_SECONDS = 4 * 60 * 60
-export const ONE_HOUR = 60 * 60 * 1000
 const REDIRECT_COOKIE_NAME = 'judicial-system.redirect'
 
 const defaultCookieOptions: CookieOptions = {
@@ -61,7 +61,10 @@ const REDIRECT_COOKIE: Cookie = {
 @Controller('api/auth')
 export class AuthController {
   constructor(
+    @Inject(AuthService)
     private readonly authService: AuthService,
+    @Inject(SharedAuthService)
+    private readonly sharedAuthService: SharedAuthService,
     @Inject('IslandisLogin')
     private readonly loginIS: IslandisLogin,
     @Inject(LOGGER_PROVIDER)
@@ -138,7 +141,11 @@ export class AuthController {
     const electronicIdOnly = '&qaa=4'
 
     return res
-      .cookie(name, { authId, returnUrl }, { ...options, maxAge: ONE_HOUR })
+      .cookie(
+        name,
+        { authId, returnUrl },
+        { ...options, maxAge: EXPIRES_IN_MILLISECONDS },
+      )
       .redirect(`${samlEntryPoint}&authId=${authId}${electronicIdOnly}`)
   }
 
@@ -170,33 +177,25 @@ export class AuthController {
       return res.redirect('/?error=true')
     }
 
-    const jwtToken = jwt.sign(
-      {
-        user,
-        csrfToken,
-      } as Credentials,
-      jwtSecret,
-      { expiresIn: JWT_EXPIRES_IN_SECONDS },
-    )
+    const jwtToken = this.sharedAuthService.signJwt(user as User, csrfToken)
 
     const tokenParts = jwtToken.split('.')
     if (tokenParts.length !== 3) {
       return res.redirect('/error=true')
     }
 
-    const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
     return res
       .cookie(
         CSRF_COOKIE.name,
         csrfToken as string,
         {
           ...CSRF_COOKIE.options,
-          maxAge,
+          maxAge: EXPIRES_IN_MILLISECONDS,
         } as CookieOptions,
       )
       .cookie(ACCESS_TOKEN_COOKIE.name, jwtToken, {
         ...ACCESS_TOKEN_COOKIE.options,
-        maxAge,
+        maxAge: EXPIRES_IN_MILLISECONDS,
       })
       .redirect(returnUrl)
   }

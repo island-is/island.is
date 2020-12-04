@@ -3,8 +3,11 @@ import { Inject, UseGuards } from '@nestjs/common'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { User as TUser } from '@island.is/judicial-system/types'
+import {
+  CurrentUser,
+  JwtGraphQlAuthGuard,
+} from '@island.is/judicial-system/auth'
 
-import { CurrentUser, JwtGraphQlAuthGuard } from '../auth'
 import { User } from './user.model'
 
 @UseGuards(JwtGraphQlAuthGuard)

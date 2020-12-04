@@ -15,10 +15,13 @@ import {
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
 import { User } from '@island.is/judicial-system/types'
+import {
+  CurrentUser,
+  JwtGraphQlAuthGuard,
+} from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../environments'
 import { BackendAPI } from '../../../services'
-import { CurrentUser, JwtGraphQlAuthGuard } from '../auth'
 import { CaseInterceptor, CasesInterceptor } from './interceptors'
 import {
   CreateCaseInput,
