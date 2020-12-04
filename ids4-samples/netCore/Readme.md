@@ -14,4 +14,4 @@ The default settings for creating the client credentials token are
     "Scope": "api api_resource.scope",
     "GrantType": "client_credentials"
   }
-  ```
+```

@@ -20,7 +20,7 @@ namespace ids4_sample.Helpers
             this.configuration = configuration;
         }
 
-        public async Task<Token> GetToken(string url = "almenni.is/oauth2/token")
+        public async Task<Token> GetToken()
         {
             using HttpClient httpClient = new HttpClient();
             

@@ -27,25 +27,30 @@ namespace ids4_sample.Controllers
         }
 
         [HttpGet, Route("")]
-        public async Task<ReturnObject> Test()
+        public async Task<ReturnObject> GetMessage()
         {
             // Get a token so we can talk to the demo service
-            var tokenObject = await createTokenHelper.GetToken();
+            var token = await createTokenHelper.GetToken();
 
+            // return await ReturnObjectHelper(token, configuration.GetValue<string>("NestJsDemoFunction")); // Demo NestJS Api function
+            return await ReturnObjectHelper(token, configuration.GetValue<string>("NetCoreDemoFunction")); // Demo .NetCore Api function
+        }
+
+        private async Task<ReturnObject> ReturnObjectHelper(Token token, string serviceUri)
+        {
             using HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri(configuration.GetValue<string>("Token:BaseUrl"));
             httpClient.DefaultRequestHeaders.Accept.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", tokenObject.Access_token);
+                new AuthenticationHeaderValue("Bearer", token.Access_token);
 
-            var response = await httpClient.GetAsync(configuration.GetValue<string>("TargetServiceUrl"));
+            var response = await httpClient.GetAsync(serviceUri);
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadAsStringAsync();
                 var resultObj = JsonConvert.DeserializeObject<DemoApiResult>(result);
 
-                return new ReturnObject(tokenObject, resultObj);
+                return new ReturnObject(token, resultObj);
             }
 
             throw new Exception("Unfortunately, this call has failed");

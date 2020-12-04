@@ -5,6 +5,6 @@ namespace ids4_sample.Interfaces
 {
     public interface IHomeController
     {
-        Task<ReturnObject> Test();
+        Task<ReturnObject> GetMessage();
     }
 }

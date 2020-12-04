@@ -115,6 +115,6 @@ export class AppController {
     Executing a function found in this controller in Swagger, this adds the generated token using the Swagger OAuth2 Authorize method to the header of the call so you won't get an 401 error. 
 
 To run the project 
-1. Run the command *npm install** in the root of the project
+1. Run the command **npm install** in the root of the project
 2. Run the command **npm run start** in the root of the project
     
