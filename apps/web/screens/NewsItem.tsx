@@ -10,7 +10,6 @@ import {
   Stack,
   GridContainer,
   Tag,
-  Main,
 } from '@island.is/island-ui/core'
 import { Image, Slice as SliceType } from '@island.is/island-ui/contentful'
 import { Screen } from '@island.is/web/types'
@@ -32,7 +31,7 @@ import {
   GetNamespaceQuery,
 } from '@island.is/web/graphql/schema'
 import { RichText } from '../components/RichText/RichText'
-import { SidebarBox, Sticky, HeadWithSocialSharing } from '../components'
+import { SidebarBox, Sticky, HeadWithSocialSharing, Main } from '../components'
 import { useNamespace } from '@island.is/web/hooks'
 
 interface NewsItemProps {

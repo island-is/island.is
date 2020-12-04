@@ -12,7 +12,6 @@ import {
   GridRow,
   GridContainer,
   ColorSchemeContext,
-  Main,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Slice as SliceType } from '@island.is/island-ui/contentful'
@@ -27,6 +26,7 @@ import {
   ChatPanel,
   Header,
   BackgroundImage,
+  Main,
 } from '@island.is/web/components'
 import { ColorSchemeContext as CovidColorSchemeContext } from '@island.is/web/components/Adgerdir/UI/ColorSchemeContext/ColorSchemeContext'
 import { useI18n } from '@island.is/web/i18n'

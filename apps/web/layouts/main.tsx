@@ -8,7 +8,6 @@ import {
   AlertBanner,
   AlertBannerVariants,
   Hidden,
-  Main,
 } from '@island.is/island-ui/core'
 import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
@@ -18,7 +17,7 @@ import * as Sentry from '@sentry/node'
 import { RewriteFrames } from '@sentry/integrations'
 import { useRouter } from 'next/router'
 
-import { Header, PageLoader } from '../components'
+import { Header, Main, PageLoader } from '../components'
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import {

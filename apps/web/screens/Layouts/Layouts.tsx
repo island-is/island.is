@@ -6,9 +6,8 @@ import {
   GridRow,
   GridColumn,
   Hidden,
-  Main,
 } from '@island.is/island-ui/core'
-import { Sticky } from '../../components'
+import { Main, Sticky } from '../../components'
 
 export interface StandardLayoutProps {
   sidebar: {

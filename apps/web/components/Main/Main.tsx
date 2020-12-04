@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { Box, BoxProps } from '../..'
+import { Box, BoxProps } from '@island.is/island-ui/core'
 
 export const Main: React.FC = ({ children }) => {
   const mainRef = useRef<HTMLDivElement>(null)
