@@ -169,7 +169,10 @@ export const DetentionRequests: React.FC = () => {
                         ? `${Constants.SIGNED_VERDICT_OVERVIEW}/${c.id}`
                         : isJudge
                         ? `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
-                        : c.isCourtDateInThePast
+                        : // Should not be able to modify the request if it is in
+                        // a SUBMITTED state and the court date is in the past
+                        c.state === CaseState.SUBMITTED &&
+                          c.isCourtDateInThePast
                         ? `${Constants.STEP_THREE_ROUTE}/${c.id}`
                         : `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
                     }
