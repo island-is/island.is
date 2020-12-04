@@ -1,5 +1,5 @@
-import fetch from 'node-fetch'
-import { Response } from 'express'
+import fetch, { Headers } from 'node-fetch'
+import { Request, Response } from 'express'
 
 import {
   Controller,
@@ -7,6 +7,7 @@ import {
   Header,
   Inject,
   Param,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common'
@@ -26,15 +27,26 @@ export class FileController {
 
   @Get('case/:id/ruling')
   @Header('Content-Type', 'application/pdf')
-  async getRulingPdf(@Param('id') id: string, @Res() res: Response) {
+  async getRulingPdf(
+    @Param('id') id: string,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
     this.logger.debug(`Getting the ruling for case ${id} as a pdf document`)
+
+    const headers = new Headers()
+    headers.set('Content-Type', 'application/pdf')
+    headers.set('authorization', req.headers.authorization as string)
+    headers.set('cookie', req.headers.cookie as string)
 
     const result = await fetch(
       `${environment.backendUrl}/api/case/${id}/ruling`,
-      {
-        headers: { 'Content-Type': 'application/pdf' },
-      },
+      { headers },
     )
+
+    if (!result.ok) {
+      return res.status(result.status).json(result.statusText)
+    }
 
     const stream = result.body
 
