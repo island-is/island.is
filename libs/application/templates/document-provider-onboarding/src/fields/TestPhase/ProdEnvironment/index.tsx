@@ -6,6 +6,7 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { registerProviderMutation } from '../../../graphql/mutations/registerProviderMutation'
+import { m } from '../../../forms/messages'
 
 const ProdEnvironment: FC<FieldBaseProps> = ({ application }) => {
   // TODO: Add this to types file ?
@@ -61,7 +62,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ application }) => {
             onRegister()
           }}
         >
-          Búa til aðgang
+          {m.prodEnviromentButton.defaultMessage}
         </Button>
         <Box display="none">
           <Controller

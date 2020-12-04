@@ -23,7 +23,7 @@ export class ApiScope extends Model<ApiScope> {
     allowNull: false,
   })
   @ApiProperty()
-  name: string
+  name!: string
 
   @Column({
     type: DataType.BOOLEAN,
@@ -33,21 +33,21 @@ export class ApiScope extends Model<ApiScope> {
   @ApiProperty({
     example: true,
   })
-  enabled: boolean
+  enabled!: boolean
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  displayName: string
+  displayName!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  description: string
+  description!: string
 
   @Column({
     type: DataType.BOOLEAN,
@@ -57,11 +57,11 @@ export class ApiScope extends Model<ApiScope> {
   @ApiProperty({
     example: true,
   })
-  showInDiscoveryDocument: boolean
+  showInDiscoveryDocument!: boolean
 
   @HasMany(() => ApiScopeUserClaim)
   @ApiProperty()
-  public userClaims: ApiScopeUserClaim[]
+  public userClaims?: ApiScopeUserClaim[]
 
   // Common properties end
 
@@ -73,7 +73,7 @@ export class ApiScope extends Model<ApiScope> {
   @ApiProperty({
     example: false,
   })
-  required: boolean
+  required!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
@@ -83,13 +83,13 @@ export class ApiScope extends Model<ApiScope> {
   @ApiProperty({
     example: false,
   })
-  emphasize: boolean
+  emphasize!: boolean
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified?: Date
 }

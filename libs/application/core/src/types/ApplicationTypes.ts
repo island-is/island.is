@@ -6,4 +6,5 @@ export enum ApplicationTypes {
   PARENTAL_LEAVE = 'ParentalLeave',
   META_APPLICATION = 'MetaApplication',
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
+  HEALTH_INSURANCE = 'HealthInsurance',
 }

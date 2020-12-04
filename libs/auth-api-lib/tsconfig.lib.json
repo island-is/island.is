@@ -6,7 +6,7 @@
     "declaration": true,
     "rootDir": "./src",
     "types": ["node"],
-    "strictNullChecks": false
+    "strictNullChecks": true
   },
   "exclude": ["**/*.spec.ts"],
   "include": ["**/*.ts"]

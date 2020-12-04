@@ -6,6 +6,7 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
+import { m } from '../../../forms/messages'
 import { registerProviderMutation } from '../../../graphql/mutations/registerProviderMutation'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
@@ -60,14 +61,13 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application }) => {
     <Box>
       <Box marginBottom={7}>
         <Box marginBottom={3}>
-          <FieldDescription description="Hér getur þú búið til aðgang að prófunarumhverfi. Athugið að afrita og geyma þessar upplýsingar því þær eru ekki geymdar hér í þessari umsókn. Ef upplýsingarnar glatast er hægt að búa til nýjan aðgang." />
+          <FieldDescription
+            description={m.testEnviromentFieldDescription.defaultMessage}
+          />
         </Box>
         <Box marginBottom={1}>
-          <Text variant="h3">Aðgangur að pósthólfi</Text>
-          <Text>
-            Hér er hægt að útbúa aðgang til að senda inn skjalatilvísanir í
-            pósthólf
-          </Text>
+          <Text variant="h3">{m.testEnviromentSubHeading.defaultMessage}</Text>
+          <Text>{m.testEnviromentSubMessage.defaultMessage}</Text>{' '}
         </Box>
       </Box>
       <Box></Box>

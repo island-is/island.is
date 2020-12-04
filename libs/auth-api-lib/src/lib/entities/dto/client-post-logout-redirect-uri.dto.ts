@@ -7,12 +7,12 @@ export class ClientPostLogoutRedirectUriDTO {
   @ApiProperty({
     example: 'clientId',
   })
-  clientId: string
+  readonly clientId!: string
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty({
     example: 'https://localhost:4200',
   })
-  redirectUri: string
+  readonly redirectUri!: string
 }
