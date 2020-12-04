@@ -7,12 +7,12 @@ export class ClientAllowedScopeDTO {
   @ApiProperty({
     example: 'clientId',
   })
-  readonly clientId: string
+  readonly clientId!: string
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty({
     example: '@island.is/example',
   })
-  readonly scopeName: string
+  readonly scopeName!: string
 }

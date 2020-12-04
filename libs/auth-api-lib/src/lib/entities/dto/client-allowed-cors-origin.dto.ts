@@ -7,12 +7,12 @@ export class ClientAllowedCorsOriginDTO {
   @ApiProperty({
     example: 'https://localhost',
   })
-  origin: string
+  origin!: string
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty({
     example: 'clientId',
   })
-  clientId: string
+  clientId!: string
 }

@@ -323,16 +323,16 @@ export function buildFileUploadField(data: {
 }
 
 export function buildDividerField(data: {
-  name: string
+  name?: string
   color?: Colors
 }): DividerField {
   const { name, color } = data
   return {
+    id: '',
     children: undefined,
     type: FieldTypes.DIVIDER,
     component: FieldComponents.DIVIDER,
-    id: name,
-    name,
+    name: name ?? '',
     color,
   }
 }
