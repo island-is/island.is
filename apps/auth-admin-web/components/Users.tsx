@@ -5,18 +5,36 @@ import APIResponse from '../models/APIResponse';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import HelpBox from './HelpBox';
+import { ClaimDTO } from '../models/dtos/claim.dto';
+
+interface ClaimShow {
+  subjectId: string;
+  show: boolean;
+}
 
 const Users: React.FC = () => {
-  const [subjectId, setSubjectId] = useState<string>('');
   const [users, setUsers] = useState<UserIdentityDTO[]>([]);
+  const [id, setId] = useState<string>("");
+  const [claimShow, setClaimShow] = useState<ClaimShow[]>([]);
+  const [type, setType] = useState<string>("");
   const { handleSubmit, register, errors, formState } = useForm();
   const { isSubmitting } = formState;
+
+  const getIndex = (subjectId: string) : number => {
+    for(let i: number = 0; i < claimShow.length; i++){
+      if ( claimShow[i].subjectId === subjectId)
+      {
+        return i;
+      }
+    }
+    return -1;
+  }
 
   const getUser = async (data) => {
     console.log(data);
     console.log('FORM SUMB');
     await axios
-      .get(`api/user-identities/${data.subjectId}`)
+      .get(`api/user-identities/${data.id}/${data.type}`)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
@@ -28,7 +46,7 @@ const Users: React.FC = () => {
         //   console.log(clientObject);
         //   props.onNextButtonClick(clientObject);
         // }
-        setUsers([response.data]);
+        setUsers(response.data);
       })
       .catch(function (error) {
         if (error.response) {
@@ -41,6 +59,9 @@ const Users: React.FC = () => {
         }
         setUsers([]);
       });
+
+      setId(data.id);
+      setType(data.type);
   };
 
   const edit = () => {
@@ -65,12 +86,34 @@ const Users: React.FC = () => {
         }
       });
 
-    getUser({ subjectId: user.subjectId });
+    getUser({ id: id, type: type });
   };
 
-  const viewClaims = async (user: UserIdentityDTO) => {
-    // TODO: View Claims if neccesary
+  const handleShowClaimsClicked = (user: UserIdentityDTO, show: boolean = true) : ClaimShow => {
+    const index = getIndex(user.subjectId);
+    let ret = { subjectId: user.subjectId, show: show};
+    if ( index === -1)
+    {
+      claimShow.push(ret);
+    }
+    else {
+      claimShow[index].show = !claimShow[index].show;
+      ret = claimShow[index];
+    }
+
+    setClaimShow([...claimShow]);    
+    return ret;
   };
+
+  const showClaims = (user: UserIdentityDTO) : boolean => {
+    const index = getIndex(user.subjectId);
+    if ( index === -1 ){
+      return false;
+    }
+    else {
+      return claimShow[index].show;
+    }
+  }
 
   return (
     <div className="users">
@@ -82,24 +125,33 @@ const Users: React.FC = () => {
               <div className="users__container__fields">
                 <div className="users__container__field">
                   <label className="users__label" htmlFor="search">
-                    Leit eftir subject Id
+                    Search by National Id or Subject Id
                   </label>
                   <input
                     id="search"
                     type="text"
-                    name="subjectId"
+                    name="id"
                     defaultValue={''}
                     className="users__search__input"
                     ref={register({ required: true })}
                     placeholder="0123456789"
                   />
-                  <HelpBox helpText="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem architecto a odit ea distinctio consequatur autem nesciunt cupiditate eos, error reprehenderit illum dolor, mollitia modi vitae. Ducimus esse eos explicabo." />
                   <ErrorMessage
                     as="span"
                     errors={errors}
-                    name="subjectId"
+                    name="id"
                     message="SubjectId is required"
                   />
+                  </div>
+
+                  <div className="users__container__field">
+                  <label htmlFor="type" className="users_label">Type</label>
+                  <select ref={register({ required: true })} name="type" defaultValue={'nationalId'} className="users_search_select" id="type">
+                    <option value="nationalId">National Id (kennitala)</option>
+                    <option value="subjectId">Subject Id</option>
+                  </select>
+                  <HelpBox helpText="You can search for user identities by national Id or User Identity subject Id" />
+                  
                   <input
                     type="submit"
                     value="Search"
@@ -129,17 +181,33 @@ const Users: React.FC = () => {
                 {users.map((user: UserIdentityDTO) => {
                   return (
                     <tr key={user.subjectId}>
+                      <td>{user.subjectId}</td>
                       <td>{user.name}</td>
                       <td>{user.providerName}</td>
                       <td>{user.providerSubjectId}</td>
-                      <td>{user.active}</td>
-                      <td>
+                      <td className="overlay-container">
                         <button
                           className="clients__button__view"
-                          onClick={() => viewClaims(user)}
+                          onClick={() => handleShowClaimsClicked(user)}
                         >
                           View claims
                         </button>
+                        
+                        <div className={`users__claim__overlay users__container__list ${showClaims(user)  ? 'show' : 'hidden'}`}>
+                        {user.claims.map((claim: ClaimDTO) => {
+                          return (
+                            <div className="users__container__list__item" key={claim.type}>
+                              <div className="users__container__list__item__name">
+                                {claim.type}
+                              </div>
+                              <div className="users__container__list__item__value">
+                                {claim.value}
+                              </div>
+                              </div>
+                          )
+                        })}
+
+                        </div>
                       </td>
                       <td>
                         <button
@@ -179,3 +247,4 @@ const Users: React.FC = () => {
 };
 
 export default Users;
+

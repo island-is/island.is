@@ -8,3 +8,12 @@
     // Search button
   }
 }
+
+.users__claim__overlay {
+  position: absolute;
+  z-index: 3;
+  border-radius: 5px;
+  border: solid 1px $color-border;
+  min-width: 300px;
+  background-color: $color-body-bg;
+}

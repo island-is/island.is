@@ -1,10 +1,10 @@
-export class ClaimDto {
+export class ClaimDTO {
   constructor() {
-    this.type = "";
-    this.value = "";
-    this.valueType = "";
-    this.originalIssuer = "";
-    this.issuer = "";
+    this.type = '';
+    this.value = '';
+    this.valueType = '';
+    this.originalIssuer = '';
+    this.issuer = '';
   }
 
   type: string;

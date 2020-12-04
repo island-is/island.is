@@ -1,12 +1,12 @@
-import { ClaimDto } from "./claim.dto";
+import { ClaimDTO } from './claim.dto';
 
 export class UserIdentityDTO {
   constructor() {
-    this.subjectId = "";
-    this.name = "";
-    this.providerName = "";
+    this.subjectId = '';
+    this.name = '';
+    this.providerName = '';
     this.active = true;
-    this.providerSubjectId = "";
+    this.providerSubjectId = '';
     this.claims = [];
   }
   subjectId: string;
@@ -14,5 +14,5 @@ export class UserIdentityDTO {
   providerName: string;
   active: boolean;
   providerSubjectId: string;
-  claims: ClaimDto[];
+  claims: ClaimDTO[];
 }
