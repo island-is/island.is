@@ -36,10 +36,10 @@ class Clients extends Component {
   };
 
   delete = async (clientId: string) => {
-    if (window.confirm('Are you sure you want to delete this client?')) {
+    if (window.confirm(`Are you sure you want to delete this client: "${clientId}"?`)) {
       const response = await axios.delete(`api/clients/${clientId}`);
       console.log(response);
-      await this.componentDidMount();
+      this.getClients(this.state.page, this.state.count);
     }
   };
 

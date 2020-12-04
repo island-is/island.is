@@ -4,6 +4,7 @@
 .client-post-logout,
 .client-idp-restriction,
 .step-end,
+.users,
 .paginator {
   &__help {
     padding: 0 10px 20px 10px;
@@ -91,6 +92,12 @@
         color: $color-link;
       }
 
+      .list-name {
+        padding: 10px 0px 0px 5px;
+        text-decoration: underline;
+        color: $color-link;
+      }
+
       .list-remove {
         align-self: flex-end;
 
@@ -139,6 +146,10 @@
   &__button__add {
     flex-basis: 100px !important;
     margin-left: auto;
+  }
+
+  &__button__search {
+    flex-basis: 100px !important;
   }
 
   ::-webkit-input-placeholder {

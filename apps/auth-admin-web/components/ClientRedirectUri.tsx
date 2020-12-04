@@ -132,6 +132,7 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
                   />
                 </div>
               </div>
+              </form>
              
               <div className={`client-redirect__container__list ${
                     uris && uris.length > 0  ? 'show' : 'hidden'
@@ -183,7 +184,7 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
                   </button>
                 </div>
               </div>
-            </form>
+            
           </div>
         </div>
       </div>
