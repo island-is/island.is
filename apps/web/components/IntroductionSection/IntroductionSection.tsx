@@ -26,6 +26,7 @@ type ImageProps = {
 interface Props {
   subtitle: string
   title: string
+  titleId?: string
   introText: string
   text?: string
   image?: ImageProps
@@ -36,11 +37,13 @@ interface Props {
 export const IntroductionSection: FC<Props> = ({
   subtitle,
   title,
+  titleId,
   introText,
   text,
   linkUrl,
   linkText,
 }) => {
+  const titleProps = titleId ? { id: titleId } : {}
   return (
     <GridContainer>
       <GridRow>
@@ -66,7 +69,7 @@ export const IntroductionSection: FC<Props> = ({
           <Text variant="eyebrow" color="purple400" paddingBottom={2}>
             {subtitle}
           </Text>
-          <Text as="h2" variant="h1" paddingBottom={2}>
+          <Text as="h2" variant="h1" paddingBottom={2} {...titleProps}>
             {title}
           </Text>
           <Text variant="intro" paddingBottom={text ? 2 : 0}>
