@@ -15,7 +15,10 @@ export class StorySlice {
   stories: Story[]
 }
 
-export const mapStorySlice = ({ fields, sys }: IStorySection): SystemMetadata<StorySlice> => ({
+export const mapStorySlice = ({
+  fields,
+  sys,
+}: IStorySection): SystemMetadata<StorySlice> => ({
   typename: 'StorySlice',
   id: sys.id,
   readMoreText: fields.readMoreText ?? '',

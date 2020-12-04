@@ -74,7 +74,7 @@ export const mapAdgerdirFrontpage = ({
       : [],
   slices: fields?.slices
     ? fields.slices
-      .filter((x) => x.sys?.contentType?.sys?.id)
-      .map(mapAdgerdirSlice)
+        .filter((x) => x.sys?.contentType?.sys?.id)
+        .map(mapAdgerdirSlice)
     : [],
 })

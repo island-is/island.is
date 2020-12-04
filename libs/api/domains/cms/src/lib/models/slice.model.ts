@@ -24,9 +24,7 @@ import {
 } from '../generated/contentfulTypes'
 import { mapImage } from './image.model'
 import { mapAsset } from './asset.model'
-import {
-  mapMailingListSignup,
-} from './mailingListSignupSlice.model'
+import { mapMailingListSignup } from './mailingListSignupSlice.model'
 import { mapTimelineSlice } from './timelineSlice.model'
 import { mapHeadingSlice } from './headingSlice.model'
 import { mapStorySlice } from './storySlice.model'

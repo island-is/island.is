@@ -15,7 +15,10 @@ export class TabSection {
   tabs: Array<TabContent>
 }
 
-export const mapTabSection = ({ fields, sys }: ITabSection): SystemMetadata<TabSection> => ({
+export const mapTabSection = ({
+  fields,
+  sys,
+}: ITabSection): SystemMetadata<TabSection> => ({
   typename: 'TabSection',
   id: sys.id,
   title: fields.title ?? '',

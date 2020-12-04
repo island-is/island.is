@@ -25,7 +25,10 @@ export class Location {
   background: Image
 }
 
-export const mapLocation = ({ fields, sys }: ILocation): SystemMetadata<Location> => ({
+export const mapLocation = ({
+  fields,
+  sys,
+}: ILocation): SystemMetadata<Location> => ({
   typename: 'Location',
   id: sys.id,
   title: fields.title ?? '',

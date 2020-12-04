@@ -44,7 +44,10 @@ export class ContactUs {
   errorMessage: string
 }
 
-export const mapContactUs = ({ fields, sys }: IContactUs): SystemMetadata<ContactUs> => ({
+export const mapContactUs = ({
+  fields,
+  sys,
+}: IContactUs): SystemMetadata<ContactUs> => ({
   typename: 'ContactUs',
   id: sys.id,
   title: fields.title ?? '',

@@ -12,7 +12,10 @@ export class TeamList {
   teamMembers: Array<TeamMember>
 }
 
-export const mapTeamList = ({ fields, sys }: ITeamList): SystemMetadata<TeamList> => ({
+export const mapTeamList = ({
+  fields,
+  sys,
+}: ITeamList): SystemMetadata<TeamList> => ({
   typename: 'TeamList',
   id: sys.id,
   teamMembers: (fields.teamMembers ?? []).map(mapTeamMember),

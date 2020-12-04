@@ -15,7 +15,10 @@ export class Statistics {
   statistics: Statistic[]
 }
 
-export const mapStatistics = ({ fields, sys }: IStatistics): SystemMetadata<Statistics> => ({
+export const mapStatistics = ({
+  fields,
+  sys,
+}: IStatistics): SystemMetadata<Statistics> => ({
   typename: 'Statistics',
   id: sys.id,
   title: fields.title ?? '',

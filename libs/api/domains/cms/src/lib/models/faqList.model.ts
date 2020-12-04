@@ -18,7 +18,10 @@ export class FaqList {
   questions: QuestionAndAnswer[]
 }
 
-export const mapFaqList = ({ fields, sys }: IFaqList): SystemMetadata<FaqList> => ({
+export const mapFaqList = ({
+  fields,
+  sys,
+}: IFaqList): SystemMetadata<FaqList> => ({
   typename: 'FaqList',
   id: sys.id,
   title: fields.title ?? '',

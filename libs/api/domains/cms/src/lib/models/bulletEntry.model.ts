@@ -1,7 +1,5 @@
 import { IIconBullet, INumberBulletSection } from '../generated/contentfulTypes'
-import {
-  mapNumberBulletGroup,
-} from './numberBulletGroup.model'
+import { mapNumberBulletGroup } from './numberBulletGroup.model'
 import { mapIconBullet } from './iconBullet.model'
 import { BulletEntryUnion } from '../unions/buttonEntry.union'
 
