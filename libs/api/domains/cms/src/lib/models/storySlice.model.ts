@@ -1,14 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-
 import { IStorySection } from '../generated/contentfulTypes'
-
+import { SystemMetadata } from '../types'
 import { Story, mapStory } from './story.model'
 
 @ObjectType()
 export class StorySlice {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -19,7 +15,7 @@ export class StorySlice {
   stories: Story[]
 }
 
-export const mapStorySlice = ({ fields, sys }: IStorySection): StorySlice => ({
+export const mapStorySlice = ({ fields, sys }: IStorySection): SystemMetadata<StorySlice> => ({
   typename: 'StorySlice',
   id: sys.id,
   readMoreText: fields.readMoreText ?? '',

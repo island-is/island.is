@@ -1,7 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-
 import { IStory } from '../generated/contentfulTypes'
-
 import { Image, mapImage } from './image.model'
 
 @ObjectType()

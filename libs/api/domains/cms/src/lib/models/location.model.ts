@@ -1,14 +1,11 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-
 import { ILocation } from '../generated/contentfulTypes'
+import { SystemMetadata } from '../types'
 import { Image, mapImage } from './image.model'
 import { Link, mapLink } from './link.model'
 
 @ObjectType()
 export class Location {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -28,7 +25,7 @@ export class Location {
   background: Image
 }
 
-export const mapLocation = ({ fields, sys }: ILocation): Location => ({
+export const mapLocation = ({ fields, sys }: ILocation): SystemMetadata<Location> => ({
   typename: 'Location',
   id: sys.id,
   title: fields.title ?? '',

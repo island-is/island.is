@@ -9,8 +9,7 @@ import {
 } from '@contentful/rich-text-types'
 import graphqlTypeJson from 'graphql-type-json'
 import { RichTextContent } from 'contentful'
-
-import { Slice } from './slice.model'
+import { SliceUnion } from '../unions/slice.union'
 
 type RichText = Block | Inline | Text
 
@@ -76,4 +75,4 @@ export const mapHtml = (html: Document | TopLevelBlock, id: string): Html => {
   }
 }
 
-export const isHtml = (x: typeof Slice): x is Html => x instanceof Html
+export const isHtml = (x: typeof SliceUnion): x is Html => x instanceof Html
