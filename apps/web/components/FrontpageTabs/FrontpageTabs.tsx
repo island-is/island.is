@@ -157,7 +157,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
           <Box ref={contentRef}>
             <TabList
               {...tab}
-              aria-label="Flettiborði"
+              aria-label={t.carouselTitle}
               className={styles.tabWrapper}
             >
               {tabs.map(({ title = '' }, index) => {

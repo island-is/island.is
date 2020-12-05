@@ -76,6 +76,13 @@ GhostWithIcon.args = {
   icon: 'arrowForward',
 }
 
+export const GhostWithIconPositionStart = Template.bind({})
+GhostWithIconPositionStart.args = {
+  children: 'Ghost With Icon',
+  variant: 'ghost',
+  preTextIcon: 'arrowBack',
+}
+
 export const GhostNegative = () => (
   <Box background="blue400" padding={4}>
     <Button colorScheme="negative" variant="ghost">
@@ -116,6 +123,13 @@ TextWithIcon.args = {
   children: 'Text with icon',
   variant: 'text',
   icon: 'arrowForward',
+}
+
+export const TextWithIconPositionStart = Template.bind({})
+TextWithIconPositionStart.args = {
+  children: 'Text with icon',
+  variant: 'text',
+  preTextIcon: 'arrowBack',
 }
 
 export const TextNegative = () => (
