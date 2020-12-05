@@ -199,12 +199,12 @@ export const m = defineMessages({
   //Confirmation
   confirmationSection: {
     id: 'dpo.application:confirmation.section',
-    defaultMessage: 'Staðfesta',
+    defaultMessage: 'Staðfesting',
     description: '',
   },
   confirmationTitle: {
     id: 'dpo.application:confirmation.title',
-    defaultMessage: 'Staðfesting umsóknar',
+    defaultMessage: 'Staðfesting',
     description: '',
   },
   confirmationSubTitle: {
