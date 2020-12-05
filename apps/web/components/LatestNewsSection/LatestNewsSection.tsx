@@ -23,24 +23,27 @@ import { NewsCard } from '../NewsCard'
 
 interface LatestNewsProps {
   label: string
+  labelId?: string
   items: GetNewsQuery['getNews']['items']
 }
 
 const LatestNewsSection: React.FC<LatestNewsProps> = ({
   items = [],
   label,
+  labelId = '',
 }) => {
   const newsItems = items.slice(0, 3)
   const { activeLocale, t } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(globalNamespace)
   const { makePath } = routeNames(activeLocale)
+  const titleProps = labelId ? { id: labelId } : {}
 
   return (
     <GridContainer>
       <GridRow>
         <GridColumn span={['12/12', '12/12', '6/12']}>
-          <Text variant="h3" as="h2" paddingBottom={2}>
+          <Text variant="h3" as="h2" paddingBottom={2} {...titleProps}>
             {label}
           </Text>
         </GridColumn>
