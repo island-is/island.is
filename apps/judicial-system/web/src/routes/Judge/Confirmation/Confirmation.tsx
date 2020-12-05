@@ -54,14 +54,18 @@ export const SignatureConfirmationQuery = gql`
 `
 
 interface SigningModalProps {
-  caseId: string
+  workingCase: Case
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   requestSignatureResponse?: RequestSignatureResponse
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const SigningModal: React.FC<SigningModalProps> = (
-  props: SigningModalProps,
-) => {
+const SigningModal: React.FC<SigningModalProps> = ({
+  workingCase,
+  setWorkingCase,
+  requestSignatureResponse,
+  setModalVisible,
+}) => {
   const history = useHistory()
   const [
     signatureConfirmationResponse,
@@ -71,8 +75,8 @@ const SigningModal: React.FC<SigningModalProps> = (
   const { data } = useQuery(SignatureConfirmationQuery, {
     variables: {
       input: {
-        caseId: props.caseId,
-        documentToken: props.requestSignatureResponse?.documentToken,
+        caseId: workingCase.id,
+        documentToken: requestSignatureResponse?.documentToken,
       },
     },
     fetchPolicy: 'no-cache',
@@ -80,22 +84,86 @@ const SigningModal: React.FC<SigningModalProps> = (
   // TODO: Handle case when resSignatureConfirmationResponse is never set
   const resSignatureConfirmationResponse = data?.signatureConfirmation
 
+  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+
+  const transitionCase = async (id: string, transitionCase: TransitionCase) => {
+    const { data } = await transitionCaseMutation({
+      variables: { input: { id, ...transitionCase } },
+    })
+
+    return data?.transitionCase
+  }
+
   const [sendNotificationMutation] = useMutation(SendNotificationMutation)
+
+  const sendNotification = async (id: string) => {
+    const { data } = await sendNotificationMutation({
+      variables: {
+        input: {
+          caseId: id,
+          type: NotificationType.RULING,
+        },
+      },
+    })
+
+    return data?.sendNotification?.notificationSent
+  }
 
   useEffect(() => {
     const completeSigning = async (
       resSignatureResponse: SignatureConfirmationResponse,
     ) => {
-      const { data } = await sendNotificationMutation({
-        variables: {
-          input: {
-            caseId: props.caseId,
-            type: NotificationType.RULING,
-          },
-        },
-      })
+      if (workingCase.state === CaseState.SUBMITTED) {
+        // Transition case from submitted state to either accepted or rejected
+        try {
+          // Parse the transition request
+          const transitionRequest = parseTransition(
+            workingCase.modified,
+            workingCase.rejecting
+              ? CaseTransition.REJECT
+              : CaseTransition.ACCEPT,
+          )
 
-      if (!data?.sendNotification?.notificationSent) {
+          // Transition the case
+          const resCase = await transitionCase(
+            workingCase.id,
+            transitionRequest,
+          )
+
+          if (resCase) {
+            setWorkingCase({
+              ...workingCase,
+              state: resCase.state,
+              judge: resCase.judge,
+            })
+          } else {
+            // TODO: Handle error
+          }
+        } catch (e) {
+          console.log(e)
+
+          // TODO: Handle error
+        }
+      } else {
+        // Expect case to already have the right state
+        if (
+          workingCase.rejecting
+            ? workingCase.state !== CaseState.REJECTED
+            : workingCase.state !== CaseState.ACCEPTED
+        ) {
+          // TODO: Handle error
+        }
+      }
+
+      try {
+        const notificationSent = await sendNotification(workingCase.id)
+
+        if (!notificationSent) {
+          // TODO: Handle error
+        }
+      } catch (e) {
+        console.log(e)
+
         // TODO: Handle error
       }
 
@@ -105,14 +173,18 @@ const SigningModal: React.FC<SigningModalProps> = (
     if (resSignatureConfirmationResponse) {
       completeSigning(resSignatureConfirmationResponse)
     }
-  }, [resSignatureConfirmationResponse, props.caseId, sendNotificationMutation])
+  }, [
+    resSignatureConfirmationResponse,
+    workingCase.id,
+    sendNotificationMutation,
+  ])
 
   const renderContolCode = () => {
     return (
       <>
         <Box marginBottom={2}>
           <Text variant="h2" color="blue400">
-            {`Öryggistala: ${props.requestSignatureResponse?.controlCode}`}
+            {`Öryggistala: ${requestSignatureResponse?.controlCode}`}
           </Text>
         </Box>
         <Text>
@@ -158,7 +230,7 @@ const SigningModal: React.FC<SigningModalProps> = (
         if (signatureConfirmationResponse?.documentSigned === true) {
           history.push(Constants.DETENTION_REQUESTS_ROUTE)
         } else {
-          props.setModalVisible(false)
+          setModalVisible(false)
         }
       }}
     />
@@ -200,19 +272,6 @@ export const Confirmation: React.FC = () => {
   }, [modalVisible, setRequestSignatureResponse])
 
   const [
-    transitionCaseMutation,
-    { loading: isTransitioningCase },
-  ] = useMutation(TransitionCaseMutation)
-
-  const transitionCase = async (id: string, transitionCase: TransitionCase) => {
-    const { data } = await transitionCaseMutation({
-      variables: { input: { id, ...transitionCase } },
-    })
-
-    return data?.transitionCase
-  }
-
-  const [
     requestSignatureMutation,
     { loading: isRequestingSignature },
   ] = useMutation(RequestSignatureMutation)
@@ -225,43 +284,23 @@ export const Confirmation: React.FC = () => {
     return data?.requestSignature
   }
 
-  const handleNextButtonClick: () => Promise<boolean> = async () => {
+  const handleNextButtonClick: () => Promise<void> = async () => {
     if (!workingCase) {
-      return false
+      return
     }
 
-    if (workingCase.state === CaseState.SUBMITTED) {
-      try {
-        // Parse the transition request
-        const transitionRequest = parseTransition(
-          workingCase.modified,
-          workingCase.rejecting ? CaseTransition.REJECT : CaseTransition.ACCEPT,
-        )
-
-        // Transition the case
-        const resCase = await transitionCase(workingCase.id, transitionRequest)
-
-        if (!resCase) {
-          return false
-        }
-
-        setWorkingCase({
-          ...workingCase,
-          state: resCase.state,
-          judge: resCase.judge,
-        })
-
-        return true
-      } catch (e) {
-        console.log(e)
-
-        return false
+    // Request signature to get control code
+    try {
+      const requestSignatureResponse = await requestSignature(workingCase.id)
+      if (requestSignatureResponse) {
+        setRequestSignatureResponse(requestSignatureResponse)
+        setModalVisible(true)
+      } else {
+        // TODO: Handle error
       }
+    } catch (e) {
+      // TODO: Handle error
     }
-
-    return workingCase.rejecting
-      ? workingCase.state === CaseState.REJECTED
-      : workingCase.state === CaseState.ACCEPTED
   }
 
   return (
@@ -410,33 +449,13 @@ export const Confirmation: React.FC = () => {
           <FormFooter
             nextUrl={Constants.DETENTION_REQUESTS_ROUTE}
             nextButtonText="Staðfesta úrskurð"
-            onNextButtonClick={async () => {
-              // Transition case from submitted state to either accepted or rejected
-              const caseTransitioned = await handleNextButtonClick()
-              if (caseTransitioned) {
-                // Request signature to get control code
-                try {
-                  const requestSignatureResponse = await requestSignature(
-                    workingCase.id,
-                  )
-                  if (requestSignatureResponse) {
-                    setRequestSignatureResponse(requestSignatureResponse)
-                    setModalVisible(true)
-                  } else {
-                    // TODO: Handle error
-                  }
-                } catch (e) {
-                  // TODO: Handle error
-                }
-              } else {
-                // TODO: Handle error
-              }
-            }}
-            nextIsLoading={isTransitioningCase || isRequestingSignature}
+            onNextButtonClick={handleNextButtonClick}
+            nextIsLoading={isRequestingSignature}
           />
           {modalVisible && (
             <SigningModal
-              caseId={workingCase.id}
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
               requestSignatureResponse={requestSignatureResponse}
               setModalVisible={setModalVisible}
             />
