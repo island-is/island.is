@@ -1,5 +1,5 @@
 import { Accordion, Box, Button, Text } from '@island.is/island-ui/core'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import Modal from '../../../shared-components/Modal/Modal'
 import {
@@ -18,7 +18,6 @@ import {
   NotificationType,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
-  TransitionCase,
 } from '@island.is/judicial-system/types'
 import { useHistory, useParams } from 'react-router-dom'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
@@ -86,86 +85,95 @@ const SigningModal: React.FC<SigningModalProps> = ({
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
 
-  const transitionCase = async (id: string, transitionCase: TransitionCase) => {
-    const { data } = await transitionCaseMutation({
-      variables: { input: { id, ...transitionCase } },
-    })
-
-    return data?.transitionCase
-  }
-
-  const [sendNotificationMutation] = useMutation(SendNotificationMutation)
-
-  const sendNotification = async (id: string) => {
-    const { data } = await sendNotificationMutation({
-      variables: {
-        input: {
-          caseId: id,
-          type: NotificationType.RULING,
-        },
-      },
-    })
-
-    return data?.sendNotification?.notificationSent
-  }
-
-  useEffect(() => {
-    const completeSigning = async (
-      resSignatureResponse: SignatureConfirmationResponse,
-    ) => {
-      if (workingCase.state === CaseState.SUBMITTED) {
-        // Transition case from submitted state to either accepted or rejected
-        try {
-          // Parse the transition request
-          const transitionRequest = parseTransition(
-            workingCase.modified,
-            workingCase.rejecting
-              ? CaseTransition.REJECT
-              : CaseTransition.ACCEPT,
-          )
-
-          // Transition the case
-          const resCase = await transitionCase(
-            workingCase.id,
-            transitionRequest,
-          )
-
-          if (resCase) {
-            setWorkingCase({
-              ...workingCase,
-              state: resCase.state,
-              judge: resCase.judge,
-            })
-          } else {
-            // TODO: Handle error
-          }
-        } catch (e) {
-          console.log(e)
-
-          // TODO: Handle error
-        }
-      } else {
-        // Expect case to already have the right state
-        if (
-          workingCase.rejecting
-            ? workingCase.state !== CaseState.REJECTED
-            : workingCase.state !== CaseState.ACCEPTED
-        ) {
-          // TODO: Handle error
-        }
-      }
-
+  const transitionCase = useCallback(async () => {
+    if (workingCase.state === CaseState.SUBMITTED) {
+      // Transition case from submitted state to either accepted or rejected
       try {
-        const notificationSent = await sendNotification(workingCase.id)
+        // Parse the transition request
+        const transitionRequest = parseTransition(
+          workingCase.modified,
+          workingCase.rejecting ? CaseTransition.REJECT : CaseTransition.ACCEPT,
+        )
 
-        if (!notificationSent) {
+        const { data } = await transitionCaseMutation({
+          variables: { input: { id: workingCase.id, ...transitionRequest } },
+        })
+
+        if (!data) {
           // TODO: Handle error
+          return
         }
+
+        const { resCase } = data
+
+        if (!resCase) {
+          // TODO: Handle error
+          return
+        }
+
+        setWorkingCase({
+          ...workingCase,
+          state: resCase.state,
+          judge: resCase.judge,
+        })
       } catch (e) {
         console.log(e)
 
         // TODO: Handle error
       }
+
+      return
+    }
+
+    // Expect case to already have the right state
+    if (
+      workingCase.rejecting
+        ? workingCase.state !== CaseState.REJECTED
+        : workingCase.state !== CaseState.ACCEPTED
+    ) {
+      // TODO: Handle error
+    }
+  }, [transitionCaseMutation, workingCase, setWorkingCase])
+
+  const [sendNotificationMutation] = useMutation(SendNotificationMutation)
+
+  const sendNotification = useCallback(async () => {
+    try {
+      const { data } = await sendNotificationMutation({
+        variables: {
+          input: {
+            caseId: workingCase.id,
+            type: NotificationType.RULING,
+          },
+        },
+      })
+
+      if (!data) {
+        // TODO: Handle error
+        return
+      }
+
+      const {
+        sendNotification: { notificationSent },
+      } = data
+
+      if (!notificationSent) {
+        // TODO: Handle error
+      }
+    } catch (e) {
+      console.log(e)
+
+      // TODO: Handle error
+    }
+  }, [sendNotificationMutation, workingCase.id])
+
+  useEffect(() => {
+    const completeSigning = async (
+      resSignatureResponse: SignatureConfirmationResponse,
+    ) => {
+      await transitionCase()
+
+      await sendNotification()
 
       setSignatureConfirmationResponse(resSignatureResponse)
     }
@@ -175,11 +183,12 @@ const SigningModal: React.FC<SigningModalProps> = ({
     }
   }, [
     resSignatureConfirmationResponse,
-    workingCase.id,
-    sendNotificationMutation,
+    setSignatureConfirmationResponse,
+    transitionCase,
+    sendNotification,
   ])
 
-  const renderContolCode = () => {
+  const renderControlCode = () => {
     return (
       <>
         <Box marginBottom={2}>
@@ -208,7 +217,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
       }
       text={
         !signatureConfirmationResponse
-          ? renderContolCode()
+          ? renderControlCode()
           : signatureConfirmationResponse.documentSigned
           ? 'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi.'
           : 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
@@ -434,7 +443,7 @@ export const Confirmation: React.FC = () => {
               className={style.pdfLink}
               href={`${api.apiUrl}/api/case/${workingCase.id}/ruling`}
               target="_blank"
-              rel="noopener"
+              rel="noopener noreferrer"
             >
               <Button
                 variant="ghost"

@@ -223,6 +223,7 @@ export class CaseService {
 
   async getSignatureConfirmation(
     existingCase: Case,
+    user: TUser,
     documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(
@@ -239,7 +240,7 @@ export class CaseService {
           documentToken,
         )
 
-        await this.sendRulingAsSignedPdf(existingCase, signedPdf)
+        await this.sendRulingAsSignedPdf(existingCase, user, signedPdf)
       } catch (error) {
         if (error instanceof DokobitError) {
           return {

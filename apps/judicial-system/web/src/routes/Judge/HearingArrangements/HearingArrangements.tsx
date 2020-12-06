@@ -357,6 +357,8 @@ export const HearingArrangements: React.FC = () => {
                   [],
                   workingCase,
                   setWorkingCase,
+                  defenderEmailErrorMessage,
+                  setDefenderEmailErrorMessage,
                 )
               }
               onBlur={(event) =>
@@ -366,6 +368,7 @@ export const HearingArrangements: React.FC = () => {
                   [],
                   workingCase,
                   updateCase,
+                  setDefenderEmailErrorMessage,
                 )
               }
             />

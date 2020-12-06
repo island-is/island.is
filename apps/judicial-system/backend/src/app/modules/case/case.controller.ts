@@ -207,6 +207,7 @@ export class CaseController {
 
     return this.caseService.getSignatureConfirmation(
       existingCase,
+      user,
       documentToken,
     )
   }
