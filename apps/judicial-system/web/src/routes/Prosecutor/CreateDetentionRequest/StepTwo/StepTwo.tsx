@@ -100,29 +100,12 @@ export const StepTwo: React.FC = () => {
     requestedCustodyEndDateErrorMessage,
     setRequestedCustodyEndDateErrorMessage,
   ] = useState<string>('')
+
   const [
     requestedCustodyEndTimeErrorMessage,
     setRequestedCustodyEndTimeErrorMessage,
   ] = useState<string>('')
-  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
-    '',
-  )
-  const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
-  const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] = useState<
-    string
-  >('')
-
-  const [, setCheckboxOne] = useState<boolean>()
-  const [, setCheckboxTwo] = useState<boolean>()
-  const [, setCheckboxThree] = useState<boolean>()
-  const [, setCheckboxFour] = useState<boolean>()
-  const [, setCheckboxFive] = useState<boolean>()
-  const [, setCheckboxSix] = useState<boolean>()
-  const [, setRestrictionCheckboxOne] = useState<boolean>()
-  const [, setRestrictionCheckboxTwo] = useState<boolean>()
-  const [, setRestrictionCheckboxThree] = useState<boolean>()
-  const [, setRestrictionCheckboxFour] = useState<boolean>()
-
+  
   const { data } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -147,82 +130,6 @@ export const StepTwo: React.FC = () => {
 
     return data?.sendNotification?.notificationSent
   }
-
-  const caseCustodyProvisions = [
-    {
-      brokenLaw: 'a-lið 1. mgr. 95. gr.',
-      value: CaseCustodyProvisions._95_1_A,
-      setCheckbox: setCheckboxOne,
-      explination:
-        'Að ætla megi að sakborningur muni torvelda rannsókn málsins, svo sem með því að afmá merki eftir brot, skjóta undan munum ellegar hafa áhrif á samseka eða vitni.',
-    },
-    {
-      brokenLaw: 'b-lið 1. mgr. 95. gr.',
-      value: CaseCustodyProvisions._95_1_B,
-      setCheckbox: setCheckboxTwo,
-      explination:
-        'Að ætla megi að hann muni reyna að komast úr landi eða leynast ellegar koma sér með öðrum hætti undan málsókn eða fullnustu refsingar.',
-    },
-    {
-      brokenLaw: 'c-lið 1. mgr. 95. gr.',
-      value: CaseCustodyProvisions._95_1_C,
-      setCheckbox: setCheckboxThree,
-      explination:
-        'Að ætla megi að hann muni halda áfram brotum meðan máli hans er ekki lokið eða rökstuddur grunur leiki á að hann hafi rofið í verulegum atriðum skilyrði sem honum hafa verið sett í skilorðsbundnum dómi.',
-    },
-    {
-      brokenLaw: 'd-lið 1. mgr. 95. gr.',
-      value: CaseCustodyProvisions._95_1_D,
-      setCheckbox: setCheckboxFour,
-      explination:
-        'Að telja megi gæsluvarðhald nauðsynlegt til að verja aðra fyrir árásum sakbornings ellegar hann sjálfan fyrir árásum eða áhrifum annarra manna.',
-    },
-    {
-      brokenLaw: '2. mgr. 95. gr.',
-      value: CaseCustodyProvisions._95_2,
-      setCheckbox: setCheckboxFive,
-      explination:
-        'Einnig má úrskurða sakborning í gæsluvarðhald þótt skilyrði a–d-liðar 1. mgr. séu ekki fyrir hendi ef sterkur grunur leikur á að hann hafi framið afbrot sem að lögum getur varðað 10 ára fangelsi, enda sé brotið þess eðlis að ætla megi varðhald nauðsynlegt með tilliti til almannahagsmuna.',
-    },
-    {
-      brokenLaw: 'b-lið 1. mgr. 99. gr.',
-      value: CaseCustodyProvisions._99_1_B,
-      setCheckbox: setCheckboxSix,
-      explination:
-        'Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum.',
-    },
-  ]
-
-  const restrictions = [
-    {
-      restriction: 'B - Einangrun',
-      value: CaseCustodyRestrictions.ISOLATION,
-      setCheckbox: setRestrictionCheckboxOne,
-      explination:
-        'Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum.',
-    },
-    {
-      restriction: 'C - Heimsóknarbann',
-      value: CaseCustodyRestrictions.VISITAION,
-      setCheckbox: setRestrictionCheckboxTwo,
-      explination:
-        'Gæslufangar eiga rétt á heimsóknum. Þó getur sá sem rannsókn stýrir bannað heimsóknir ef nauðsyn ber til í þágu hennar en skylt er að verða við óskum gæslufanga um að hafa samband við verjanda og ræða við hann einslega, sbr. 1. mgr. 36. gr., og rétt að verða við óskum hans um að hafa samband við lækni eða prest, ef þess er kostur.',
-    },
-    {
-      restriction: 'D - Bréfskoðun, símabann',
-      value: CaseCustodyRestrictions.COMMUNICATION,
-      setCheckbox: setRestrictionCheckboxThree,
-      explination:
-        'Gæslufangar mega nota síma eða önnur fjarskiptatæki og senda og taka við bréfum og öðrum skjölum. Þó getur sá sem rannsókn stýrir bannað notkun síma eða annarra fjarskiptatækja og látið athuga efni bréfa eða annarra skjala og kyrrsett þau ef nauðsyn ber til í þágu hennar en gera skal sendanda viðvart um kyrrsetningu, ef því er að skipta.',
-    },
-    {
-      restriction: 'E - Fjölmiðlabann',
-      value: CaseCustodyRestrictions.MEDIA,
-      setCheckbox: setRestrictionCheckboxFour,
-      explination:
-        'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
-    },
-  ]
 
   const courts = [
     {
