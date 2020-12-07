@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import {
   Text,
-  GridContainer,
   GridRow,
   GridColumn,
   Box,
@@ -13,8 +12,6 @@ import {
 } from '@island.is/island-ui/core'
 import {
   Case,
-  CaseCustodyProvisions,
-  CaseCustodyRestrictions,
   CaseState,
   CaseTransition,
   NotificationType,
@@ -22,7 +19,6 @@ import {
 } from '@island.is/judicial-system/types'
 import { isNextDisabled } from '../../../../utils/stepHelper'
 import {
-  validate,
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
 import isValid from 'date-fns/isValid'
@@ -32,12 +28,7 @@ import isNull from 'lodash/isNull'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  padTimeWithZero,
-  parseArray,
-  parseString,
-  parseTime,
   parseTransition,
-  replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '../../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
@@ -59,8 +50,6 @@ import TimeInputField from '@island.is/judicial-system-web/src/shared-components
 import {
   setAndSendDateToServer,
   validateAndSendTimeToServer,
-  validateAndSendToServer,
-  removeTabsValidateAndSet,
   validateAndSetTime,
   setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -69,13 +58,16 @@ import Modal from '../../../../shared-components/Modal/Modal'
 
 export const StepTwo: React.FC = () => {
   const history = useHistory()
+
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  
   const arrestTimeRef = useRef<HTMLInputElement>(null)
   const requestedCourtTimeRef = useRef<HTMLInputElement>(null)
   const requestedCustodyEndTimeRef = useRef<HTMLInputElement>(null)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
+  
   const { id } = useParams<{ id: string }>()
 
   const [arrestDateErrorMessage, setArrestDateErrorMessage] = useState<string>(
