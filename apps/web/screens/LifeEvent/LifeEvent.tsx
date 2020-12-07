@@ -119,11 +119,11 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                 <Hidden print above="md">
                   <GridRow>
                     <GridColumn paddingTop={6} paddingBottom={2} span={'9/9'}>
-                      <AnchorNavigation
-                        title={n('categoryOverview', 'Á þessari síðu')}
-                        navigation={navigation}
-                        position="right"
-                      />
+                        <AnchorNavigation
+                          title={n('categoryOverview', 'Á þessari síðu')}
+                          navigation={navigation}
+                          position="right"
+                        />
                     </GridColumn>
                   </GridRow>
                 </Hidden>
@@ -140,7 +140,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
               hiddenBelow="lg"
               span={['0', '0', '4/12', '4/12', '3/12']}
             >
-              <Box printHidden height="full">
+              <Box printHidden height="full" marginTop={10} marginLeft={4}>
                 <Sticky>
                   <AnchorNavigation
                     title={n('categoryOverview', 'Á þessari síðu')}
