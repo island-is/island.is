@@ -1,4 +1,5 @@
 import { Op } from 'sequelize'
+
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
@@ -9,6 +10,7 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
+import { CaseState, User as TUser } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { generateRulingPdf, writeFile } from '../../formatters'
@@ -16,7 +18,6 @@ import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { TransitionUpdate } from './state'
-import { CaseState } from '@island.is/judicial-system/types'
 
 @Injectable()
 export class CaseService {
@@ -71,6 +72,7 @@ export class CaseService {
 
   private async sendRulingAsSignedPdf(
     existingCase: Case,
+    user: TUser,
     signedRulingPdf: string,
   ): Promise<void> {
     if (!environment.production) {
@@ -85,8 +87,8 @@ export class CaseService {
         signedRulingPdf,
       ),
       this.sendEmail(
-        existingCase.judge?.name,
-        existingCase.judge?.email,
+        existingCase.judge?.name || user?.name,
+        existingCase.judge?.email || user?.email,
         existingCase.courtCaseNumber,
         signedRulingPdf,
       ),
@@ -182,21 +184,30 @@ export class CaseService {
     return { numberOfAffectedRows, updatedCase }
   }
 
-  async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {
+  getRulingPdf(existingCase: Case, user: TUser): Promise<string> {
+    this.logger.debug(
+      `Getting the ruling for case ${existingCase.id} as a pdf document`,
+    )
+
+    return generateRulingPdf(existingCase, user)
+  }
+
+  async requestSignature(
+    existingCase: Case,
+    user: TUser,
+  ): Promise<SigningServiceResponse> {
     this.logger.debug(
       `Requesting signature of ruling for case ${existingCase.id}`,
     )
 
-    // This method should only be called if the csae state is ACCEPTED or REJECTED
-
-    const pdf = await generateRulingPdf(existingCase)
+    const pdf = await generateRulingPdf(existingCase, user)
 
     // Production, or development with signing service access token
     if (environment.production || environment.signingOptions.accessToken) {
       return this.signingService.requestSignature(
-        existingCase.judge.mobileNumber,
+        user.mobileNumber,
         'Undirrita dóm - Öryggistala',
-        existingCase.judge.name,
+        user.name,
         'Ísland',
         'ruling.pdf',
         pdf,
@@ -212,14 +223,14 @@ export class CaseService {
 
   async getSignatureConfirmation(
     existingCase: Case,
+    user: TUser,
     documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(
       `Confirming signature of ruling for case ${existingCase.id}`,
     )
 
-    // This method should only be called if the csae state is ACCEPTED or REJECTED and
-    // requestSignature has previously been called for the same case
+    // This method should be called immediately after requestSignature
 
     // Production, or development with signing service access token
     if (environment.production || environment.signingOptions.accessToken) {
@@ -229,7 +240,7 @@ export class CaseService {
           documentToken,
         )
 
-        await this.sendRulingAsSignedPdf(existingCase, signedPdf)
+        await this.sendRulingAsSignedPdf(existingCase, user, signedPdf)
       } catch (error) {
         if (error instanceof DokobitError) {
           return {

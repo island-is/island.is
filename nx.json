@@ -141,6 +141,9 @@
     "application-templates-driving-license": {
       "tags": []
     },
+    "application-templates-health-insurance": {
+      "tags": []
+    },
     "application-templates-meta-application": {
       "tags": []
     },
@@ -169,6 +172,9 @@
       "tags": []
     },
     "content-search-indexer-types": {
+      "tags": []
+    },
+    "content-search-metrics": {
       "tags": []
     },
     "content-search-toolkit": {
@@ -246,6 +252,9 @@
     "judicial-system-audit-trail": {
       "tags": []
     },
+    "judicial-system-auth": {
+      "tags": []
+    },
     "judicial-system-backend": {
       "tags": []
     },
@@ -296,6 +305,9 @@
       "tags": []
     },
     "service-portal-core": {
+      "tags": []
+    },
+    "service-portal-document-provider": {
       "tags": []
     },
     "service-portal-documents": {

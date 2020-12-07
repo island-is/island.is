@@ -18,16 +18,13 @@ import { validate, Validation } from '../../../../utils/validate'
 import { isDirty, isNextDisabled } from '../../../../utils/stepHelper'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
-import formatISO from 'date-fns/formatISO'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as Constants from '../../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  padTimeWithZero,
   parseString,
-  parseTime,
   parseTransition,
   replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'

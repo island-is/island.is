@@ -45,11 +45,7 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
 
   return (
     <Box marginY={3} key={field.id}>
-      <Box
-        background={error ? 'red100' : 'blue100'}
-        padding={3}
-        marginBottom={3}
-      >
+      <Box paddingY={3} marginBottom={3}>
         <RadioController
           id={field.id}
           defaultValue={
@@ -66,7 +62,6 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
             },
           ]}
           onSelect={(newAnswer) => setStatefulAnswer(newAnswer as ValidAnswers)}
-          emphasize
           largeButtons
         />
       </Box>

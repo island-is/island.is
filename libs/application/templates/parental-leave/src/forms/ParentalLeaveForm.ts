@@ -25,6 +25,7 @@ import {
   getNameAndIdOfSpouse,
 } from '../fields/parentalLeaveUtils'
 import { GetPensionFunds, GetUnions } from '../graphql/queries'
+import { NO, YES } from '../constants'
 
 interface SelectItem {
   id: string
@@ -122,7 +123,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     )
                     const options: Option[] = [
                       {
-                        value: 'no',
+                        value: NO,
                         label: m.noOtherParent,
                       },
                       { value: 'manual', label: m.otherParentOption },
@@ -138,7 +139,6 @@ export const ParentalLeaveForm: Form = buildForm({
                     }
                     return options
                   },
-                  emphasize: false,
                   largeButtons: true,
                 }),
                 buildTextField({
@@ -152,7 +152,8 @@ export const ParentalLeaveForm: Form = buildForm({
                   condition: (answers) => answers.otherParent === 'manual',
                   name: m.otherParentID,
                   width: 'half',
-                  variant: 'number',
+                  format: '######-####',
+                  placeholder: '000000-0000',
                 }),
               ],
             }),
@@ -172,17 +173,6 @@ export const ParentalLeaveForm: Form = buildForm({
                   width: 'half',
                   format: '####-##-######',
                   placeholder: '0000-00-000000',
-                }),
-                buildSelectField({
-                  name: m.paymentInformationPersonalDiscount,
-                  id: 'payments.personalAllowanceUsage',
-                  width: 'half',
-                  options: [
-                    { label: '100%', value: '100' },
-                    { label: '75%', value: '75' },
-                    { label: '50%', value: '50' },
-                    { label: '25%', value: '25' },
-                  ],
                 }),
                 buildAsyncSelectField({
                   name: m.pensionFund,
@@ -228,21 +218,19 @@ export const ParentalLeaveForm: Form = buildForm({
                   name: m.privatePensionFundName,
                   description: m.privatePensionFundDescription,
                   options: [
-                    { label: m.yesOptionLabel, value: 'yes' },
-                    { label: m.noOptionLabel, value: 'no' },
+                    { label: m.yesOptionLabel, value: YES },
+                    { label: m.noOptionLabel, value: NO },
                   ],
                 }),
                 buildSelectField({
-                  condition: (answers) =>
-                    answers.usePrivatePensionFund === 'yes',
+                  condition: (answers) => answers.usePrivatePensionFund === YES,
                   id: 'payments.privatePensionFund',
                   name: m.privatePensionFund,
                   width: 'half',
                   options: [{ label: 'Frjalsi', value: 'frjalsi' }],
                 }),
                 buildSelectField({
-                  condition: (answers) =>
-                    answers.usePrivatePensionFund === 'yes',
+                  condition: (answers) => answers.usePrivatePensionFund === YES,
                   id: 'payments.privatePensionFundPercentage',
                   name: m.privatePensionFundRatio,
                   width: 'half',
@@ -250,6 +238,106 @@ export const ParentalLeaveForm: Form = buildForm({
                     { label: '2%', value: '2' },
                     { label: '4%', value: '4' },
                   ],
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'personalAllowanceSubSection',
+          name: m.personalAllowanceName,
+          children: [
+            buildRadioField({
+              id: 'usePersonalAllowance',
+              name: m.usePersonalAllowance,
+              options: [
+                { label: m.yesOptionLabel, value: YES },
+                { label: m.noOptionLabel, value: NO },
+              ],
+            }),
+            buildMultiField({
+              id: 'personalAllowance',
+              condition: (answers) => answers.usePersonalAllowance === YES,
+              name: m.personalAllowanceName,
+              description: m.personalAllowanceDescription,
+              children: [
+                buildSelectField({
+                  // This should probably be a text input with a format, and type number
+                  name: m.paymentInformationPersonalAllowance,
+                  id: 'personalAllowance.usage',
+                  width: 'half',
+                  options: [
+                    { label: '100%', value: '100' },
+                    { label: '75%', value: '75' },
+                    { label: '50%', value: '50' },
+                    { label: '25%', value: '25' },
+                  ],
+                }),
+                buildTextField({
+                  id: 'personalAllowance.usedAmount',
+                  name: m.personalAllowanceUsedAmount,
+                  width: 'half',
+                  // placeholder: 'kr.', TODO use numberformatter?
+                }),
+                buildDateField({
+                  id: 'personalAllowance.periodFrom',
+                  name: m.personalAllowancePeriodFrom,
+                  width: 'half',
+                }),
+                buildDateField({
+                  id: 'personalAllowance.periodTo',
+                  name: m.personalAllowancePeriodTo,
+                  width: 'half',
+                }),
+              ],
+            }),
+            buildRadioField({
+              id: 'usePersonalAllowanceFromSpouse',
+              name: m.usePersonalAllowanceFromSpouse,
+              condition: (answers) => {
+                // TODO add check if this person has a spouse...
+                return true
+              },
+              largeButtons: true,
+              options: [
+                { label: m.yesOptionLabel, value: YES },
+                { label: m.noOptionLabel, value: NO },
+              ],
+            }),
+            buildMultiField({
+              id: 'personalAllowanceFromSpouse',
+              condition: (answers) =>
+                answers.usePersonalAllowanceFromSpouse === YES,
+              name: m.personalAllowanceFromSpouseName,
+              description: m.personalAllowanceFromSpouseDescription,
+              children: [
+                buildSelectField({
+                  // This should probably be a text input with a format, and type number
+                  name: m.paymentInformationPersonalAllowance,
+                  id: 'personalAllowanceFromSpouse.usage',
+                  width: 'half',
+                  options: [
+                    { label: '100%', value: '100' },
+                    { label: '75%', value: '75' },
+                    { label: '50%', value: '50' },
+                    { label: '25%', value: '25' },
+                  ],
+                }),
+                buildTextField({
+                  id: 'personalAllowanceFromSpouse.usedAmount',
+                  name: m.personalAllowanceUsedAmount,
+                  width: 'half',
+                  // placeholder: 'kr.', TODO use numberformatter?
+                }),
+                buildDateField({
+                  id: 'personalAllowanceFromSpouse.periodFrom',
+                  name: m.personalAllowancePeriodFrom,
+                  width: 'half',
+                }),
+                buildDateField({
+                  id: 'personalAllowanceFromSpouse.periodTo',
+                  name: m.personalAllowancePeriodTo,
+                  width: 'half',
                 }),
               ],
             }),
@@ -353,7 +441,7 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'giveRights',
               name: m.giveRightsName,
               description: m.giveRightsDescription,
-              condition: (formValue) => formValue.requestRights === 'no',
+              condition: (formValue) => formValue.requestRights === NO,
               children: [
                 buildCustomField({
                   id: 'giveRights',
@@ -404,23 +492,22 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'singlePeriod',
               name: m.periodAllAtOnce,
               description: m.periodAllAtOnceDescription,
-              emphasize: true,
               largeButtons: true,
               options: [
                 {
                   label: m.periodAllAtOnceYes,
-                  value: 'yes',
+                  value: YES,
                 },
                 {
                   label: m.periodAllAtOnceNo,
-                  value: 'no',
+                  value: NO,
                 },
               ],
             }),
             buildCustomField({
               id: 'firstPeriodStart',
               name: (application) =>
-                application.answers.singlePeriod === 'yes'
+                application.answers.singlePeriod === YES
                   ? 'Hvenær viltu hefja fæðingarorlofið?'
                   : 'Hvenær viltu hefja fyrsta tímabilið?', // TODO Messages
               component: 'FirstPeriodStart',
@@ -447,7 +534,6 @@ export const ParentalLeaveForm: Form = buildForm({
               description:
                 'Some people choose to take the full leave all at once, but also extend it by months or to a certain date by adjusting their income.',
               largeButtons: true,
-              emphasize: true,
               options: [
                 { label: 'A certain duration', value: 'duration' },
                 { label: 'Until a specific date', value: 'specificDate' },
@@ -481,7 +567,6 @@ export const ParentalLeaveForm: Form = buildForm({
             ),
             buildMultiField({
               id: 'periods[0].ratio',
-              condition: (formValue) => formValue.singlePeriod === 'no',
               name: 'What percent off will you take for this period?',
               description:
                 'For example, you could work 50% of the time, and have 50% paid leave.',
@@ -598,11 +683,11 @@ export const ParentalLeaveForm: Form = buildForm({
                 {
                   label:
                     'Yes, I want to share my leave information with the other parent',
-                  value: 'yes',
+                  value: YES,
                 },
                 {
                   label: 'No, I do not want to share my information',
-                  value: 'no',
+                  value: NO,
                 },
               ],
             }),

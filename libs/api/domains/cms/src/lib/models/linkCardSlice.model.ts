@@ -1,14 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-
 import { ICardSection } from '../generated/contentfulTypes'
-
+import { SystemMetadata } from '../types'
 import { LinkCard, mapLinkCard } from './linkCard.model'
 
 @ObjectType()
 export class LinkCardSlice {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -22,7 +18,7 @@ export class LinkCardSlice {
 export const mapLinkCardSlice = ({
   fields,
   sys,
-}: ICardSection): LinkCardSlice => ({
+}: ICardSection): SystemMetadata<LinkCardSlice> => ({
   typename: 'LinkCardSlice',
   id: sys.id,
   title: fields.title ?? '',

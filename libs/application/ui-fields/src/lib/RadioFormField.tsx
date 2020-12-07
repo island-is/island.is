@@ -1,4 +1,6 @@
 import React, { FC, useMemo } from 'react'
+import HtmlParser from 'react-html-parser'
+
 import {
   FieldBaseProps,
   formatText,
@@ -69,13 +71,11 @@ const RadioFormField: FC<Props> = ({
           defaultValue={getValueViaPath(application.answers, id) as string[]}
           options={finalOptions.map(({ label, tooltip, ...o }) => ({
             ...o,
-            label: formatText(label, application, formatMessage) as string,
+            label: HtmlParser(formatText(label, application, formatMessage)),
             ...(tooltip && {
-              tooltip: formatText(
-                tooltip,
-                application,
-                formatMessage,
-              ) as string,
+              tooltip: HtmlParser(
+                formatText(tooltip, application, formatMessage),
+              ),
             }),
           }))}
         />

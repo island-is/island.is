@@ -7,12 +7,12 @@ export class ClientIdpRestrictionDTO {
   @ApiProperty({
     example: 'Idp restriction name',
   })
-  readonly name: string
+  readonly name!: string
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty({
     example: 'client id',
   })
-  readonly clientId: string
+  readonly clientId!: string
 }
