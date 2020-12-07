@@ -4,7 +4,11 @@ import { ProviderService } from '@island.is/api-catalogue/services'
 import { ServiceCollector } from './servicecollector.interface'
 import { logger } from '@island.is/logging'
 import { RestMetadataService } from '@island.is/api-catalogue/services'
-import { Provider, providerToString } from '@island.is/api-catalogue/types'
+import {
+  Provider,
+  Providers,
+  providerToString,
+} from '@island.is/api-catalogue/types'
 
 @Injectable()
 export class RestServiceCollector implements ServiceCollector {
@@ -17,10 +21,9 @@ export class RestServiceCollector implements ServiceCollector {
   async indexServices(): Promise<void> {
     logger.info('Start indexing of REST services')
 
-    const protectedProviders = await this.providerService.getProtectedProviders()
-    const publicProviders = await this.providerService.getPublicProviders()
+    const providers = await this.providerService.getProviders()
 
-    await this.indexProviders(protectedProviders.concat(publicProviders))
+    await this.indexProviders(providers.protected.concat(providers.public))
 
     logger.info('Finished indexing of REST services')
   }
