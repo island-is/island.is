@@ -2,13 +2,12 @@ import React, { FC, useState } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text, Checkbox } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { m } from '../../../forms/messages'
 import { registerProviderMutation } from '../../../graphql/mutations/registerProviderMutation'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
 const TestEnvironment: FC<FieldBaseProps> = ({ application }) => {
   interface Key {
@@ -43,7 +42,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application }) => {
       },
     ])
 
-    setValue('testUserExists' as string, 'true')
+    setValue('testUserExists' as string, true)
 
     clearErrors('testUserExists')
   }
@@ -53,8 +52,8 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application }) => {
   const currentAnswer = getValueViaPath(
     formValue,
     'testUserExists' as string,
-    '',
-  ) as string
+    false,
+  ) as boolean
 
   return (
     //TODO: we can make this a generic component for reuasabilty, same as production environment
@@ -84,8 +83,25 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application }) => {
           name="testUserExists"
           defaultValue={currentAnswer}
           rules={{ required: true }}
-          render={() => {
-            return <input type="hidden" name="testUserExists" />
+          render={({ value }) => {
+            return (
+              <Box display="none">
+                <Controller
+                  name="testUserExists"
+                  defaultValue={currentAnswer}
+                  rules={{ required: true }}
+                  render={({ value }) => {
+                    return (
+                      <Checkbox
+                        checked={value}
+                        name="testUserExists"
+                        id="testUserExists"
+                      />
+                    )
+                  }}
+                />
+              </Box>
+            )
           }}
         />
 

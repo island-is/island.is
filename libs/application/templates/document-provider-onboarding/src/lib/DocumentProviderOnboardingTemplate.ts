@@ -49,6 +49,13 @@ const termsOfAgreement = z.object({
   }),
 })
 
+const endPoint = z.object({
+  endPoint: z.string().url().nonempty(),
+  endPointExists: z.string().nonempty({
+    message: 'Þú verður að vista endapunkt til að halda áfram',
+  }),
+})
+
 const dataSchema = z.object({
   termsOfAgreement: termsOfAgreement,
   applicant: applicant,
@@ -58,14 +65,11 @@ const dataSchema = z.object({
   technicalAnswer: z.boolean().refine((v) => v, {
     message: 'Þú verður að samþykkja að forritun og prófunum sé lokið',
   }),
-  endPoint: z.string().url().nonempty(),
-  testUserExists: z.string().nonempty({
+  endPoint: endPoint,
+  testUserExists: z.boolean().refine((v) => v, {
     message: 'Þú verður að stofna aðgang til að halda áfram',
   }),
-  endPointExists: z.string().nonempty({
-    message: 'Þú verður að vista endapunkt til að halda áfram',
-  }),
-  productionUserExists: z.string().nonempty({
+  productionUserExists: z.boolean().refine((v) => v, {
     message: 'Þú verður að stofna aðgang til að halda áfram',
   }),
   rejectionReason: z.string(),

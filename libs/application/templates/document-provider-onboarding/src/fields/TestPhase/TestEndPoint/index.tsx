@@ -2,14 +2,14 @@ import React, { FC, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { useFormContext, Controller } from 'react-hook-form'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
-import { Box, Button, Input, Text } from '@island.is/island-ui/core'
+import { Box, Button, Input, Text, Checkbox } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { registerEndpointMutation } from '../../../graphql/mutations/registerEndpointMutation'
 import { m } from '../../../forms/messages'
 
-const TestEnvironment: FC<FieldBaseProps> = ({ field, application }) => {
+const TestEnvironment: FC<FieldBaseProps> = ({ field, error, application }) => {
   interface Variable {
     id: string
     name: string
@@ -24,19 +24,21 @@ const TestEnvironment: FC<FieldBaseProps> = ({ field, application }) => {
     trigger,
     getValues,
   } = useFormContext()
+  const { answers: formValue } = application
   const [variables, setendPointVariables] = useState<Variable[]>([])
+
+  const [endpointExists, setendpointExists] = useState(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    formValue.endPoint?.endPointExists || '',
+  )
   const [registerEndpoint] = useMutation(registerEndpointMutation)
-  const currentAnswer = getValueViaPath(
-    application.answers,
-    'endPointExists' as string,
-    '',
-  ) as string
 
   const onRegisterEndpoint = async (isValid: boolean) => {
     if (isValid) {
       const result = await registerEndpoint({
         variables: {
-          input: { endpoint: getValues('endPoint') },
+          input: { endpoint: getValues('endPoint.endPoint') },
         },
       })
 
@@ -52,11 +54,15 @@ const TestEnvironment: FC<FieldBaseProps> = ({ field, application }) => {
         },
         { id: '2', name: 'Scope', value: result.data.registerEndpoint.scope },
       ])
-      setValue('endPointExists' as string, 'true')
+      setendpointExists('true')
 
-      clearErrors('endPointExists')
+      clearErrors('endPoint.endPointExists')
     }
   }
+
+  console.log('errors endpoint', errors.endPoint)
+
+  console.log('errors', errors)
 
   return (
     <Box>
@@ -69,16 +75,16 @@ const TestEnvironment: FC<FieldBaseProps> = ({ field, application }) => {
         <Box marginBottom={1}>
           <Controller
             defaultValue=""
-            name={'endPoint'}
+            name={'endPoint.endPoint'}
             render={() => (
               <Input
                 label="Endapunktur"
-                name={'endPoint'}
-                id={'endPoint'}
+                name={'endPoint.endPoint'}
+                id={'endPoint.endPoint'}
                 ref={register}
                 defaultValue=""
                 placeholder="Skráðu inn endapunkt"
-                hasError={errors.endPoint !== undefined}
+                hasError={errors.endPoint?.endPoint !== undefined}
                 errorMessage="Þú verður að skrá inn endapunkt"
               />
             )}
@@ -89,25 +95,24 @@ const TestEnvironment: FC<FieldBaseProps> = ({ field, application }) => {
         <Button
           variant="primary"
           onClick={() => {
-            trigger(['endPoint']).then((answer) => onRegisterEndpoint(answer))
+            trigger(['endPoint.endPoint']).then((answer) =>
+              onRegisterEndpoint(answer),
+            )
           }}
         >
           Vista endapunkt
         </Button>
-        <Box display="none">
-          <Controller
-            name="endPointExists"
-            defaultValue={currentAnswer}
-            rules={{ required: true }}
-            render={() => {
-              return <input type="hidden" name="endPointExists" />
-            }}
-          />
-        </Box>
-        {errors.endPointExists && (
+        <input
+          type="hidden"
+          value={endpointExists}
+          ref={register({ required: true })}
+          name={'endPoint.endPointExists'}
+        />
+
+        {errors.endPoint?.endPointExists && (
           <Box color="red600" paddingY={2}>
             <Text fontWeight="semiBold" color="red600">
-              {errors.endPointExists}
+              þú verður að vista endapunkt
             </Text>
           </Box>
         )}

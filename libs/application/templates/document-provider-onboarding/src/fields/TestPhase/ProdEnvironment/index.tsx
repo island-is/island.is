@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text, Checkbox } from '@island.is/island-ui/core'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { registerProviderMutation } from '../../../graphql/mutations/registerProviderMutation'
@@ -22,8 +22,8 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ application }) => {
   const currentAnswer = getValueViaPath(
     application.answers,
     'productionUserExists' as string,
-    '',
-  ) as string
+    false,
+  ) as boolean
 
   const onRegister = async () => {
     const credentials = await registerProvider({
@@ -46,7 +46,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ application }) => {
         value: credentials.data.registerProvider.clientSecret,
       },
     ])
-    setValue('productionUserExists' as string, 'true')
+    setValue('productionUserExists' as string, true)
 
     clearErrors('productionUserExists')
   }
@@ -69,8 +69,8 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ application }) => {
             name="productionUserExists"
             defaultValue={currentAnswer}
             rules={{ required: true }}
-            render={() => {
-              return <input type="hidden" name="productionUserExists" />
+            render={({ value }) => {
+              return <Checkbox checked={value} name="productionUserExists" />
             }}
           />
         </Box>
