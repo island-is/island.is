@@ -1,5 +1,4 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-
 import { IGenericTag } from '../generated/contentfulTypes'
 
 @ObjectType()
