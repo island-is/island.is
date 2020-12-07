@@ -378,11 +378,27 @@ export const pages = gql`
     title
   }
 
+  fragment SubArticleFields on SubArticle {
+    __typename
+    id
+    slug
+    title
+  }
+
+  fragment LifeEventPageFragmentFields on LifeEventPage {
+    __typename
+    id
+    slug
+    title
+  }
+
   fragment AllPages on Page {
     ...AboutPageFields
     ...AboutSubPageFields
     ...AdgerdirFrontpageFields
     ...AdgerdirPageFields
     ...ArticleFields
+    ...SubArticleFields
+    ...LifeEventPageFragmentFields
   }
 `
