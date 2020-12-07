@@ -5,104 +5,50 @@ import {
   GridRow,
   GridColumn,
   Box,
-  DatePicker,
   Input,
   Checkbox,
-  Tooltip,
-  Select
 } from '@island.is/island-ui/core'
 import {
   Case,
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
-  CaseState,
-  CaseTransition,
-  NotificationType,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import { isNextDisabled } from '../../../../utils/stepHelper'
 import {
-  validate,
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
-import isValid from 'date-fns/isValid'
-import parseISO from 'date-fns/parseISO'
-import formatISO from 'date-fns/formatISO'
-import isNull from 'lodash/isNull'
 import { FormFooter } from '../../../../shared-components/FormFooter'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  padTimeWithZero,
   parseArray,
-  parseString,
-  parseTime,
-  parseTransition,
-  replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '../../../../utils/constants'
-import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
-import { useHistory, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
-  SendNotificationMutation,
-  TransitionCaseMutation,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import {
   ProsecutorSubsections,
-  ReactSelectOption,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
 import {
-  setAndSendDateToServer,
-  validateAndSendTimeToServer,
   validateAndSendToServer,
   removeTabsValidateAndSet,
-  validateAndSetTime,
-  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { ValueType } from 'react-select/src/types'
-import Modal from '../../../../shared-components/Modal/Modal'
 
 export const StepThree: React.FC = () => {
-  const history = useHistory()
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const arrestTimeRef = useRef<HTMLInputElement>(null)
-  const requestedCourtTimeRef = useRef<HTMLInputElement>(null)
   const requestedCustodyEndTimeRef = useRef<HTMLInputElement>(null)
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
   const { id } = useParams<{ id: string }>()
 
-  const [
-    requestedCourtDateErrorMessage,
-    setRequestedCourtDateErrorMessage,
-  ] = useState<string>('')
-
-  const [
-    requestedCourtTimeErrorMessage,
-    setRequestedCourtTimeErrorMessage,
-  ] = useState<string>('')
-
-  const [
-    requestedCustodyEndDateErrorMessage,
-    setRequestedCustodyEndDateErrorMessage,
-  ] = useState<string>('')
-  const [
-    requestedCustodyEndTimeErrorMessage,
-    setRequestedCustodyEndTimeErrorMessage,
-  ] = useState<string>('')
   const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
     '',
   )
-  const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
-  const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] = useState<
-    string
-  >('')
 
   const [, setCheckboxOne] = useState<boolean>()
   const [, setCheckboxTwo] = useState<boolean>()
@@ -243,8 +189,6 @@ export const StepThree: React.FC = () => {
 
     return resCase
   }
-
-
 
   return (
     <PageLayout
@@ -477,7 +421,7 @@ export const StepThree: React.FC = () => {
             </GridContainer>
           </Box>
           <FormFooter
-            onNextButtonClick={async () => await handleNextButtonClick()}
+            nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
             nextIsDisabled={isStepIllegal || workingCase.custodyProvisions?.length === 0}
           />
         </>
