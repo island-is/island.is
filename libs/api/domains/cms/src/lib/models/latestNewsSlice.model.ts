@@ -23,5 +23,9 @@ export const mapLatestNewsSlice = ({
   typename: 'LatestNewsSlice',
   id: sys.id,
   title: fields.title ?? '',
-  news: { lang: sys.locale === 'is-IS' ? 'is' : sys.locale, size: 3 },
+  news: {
+    lang: sys.locale === 'is-IS' ? 'is' : sys.locale,
+    size: 3,
+    order: 'desc',
+  },
 })

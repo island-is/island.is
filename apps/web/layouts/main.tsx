@@ -17,7 +17,7 @@ import * as Sentry from '@sentry/node'
 import { RewriteFrames } from '@sentry/integrations'
 import { useRouter } from 'next/router'
 
-import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
+import { Header, Main, PageLoader } from '../components'
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import {
@@ -157,7 +157,7 @@ const Layout: NextComponentType<
 
   return (
     <GlobalContextProvider namespace={namespace}>
-      <Page>
+      <Page component="div">
         <Head>
           <link
             rel="apple-touch-icon"
@@ -250,20 +250,16 @@ const Layout: NextComponentType<
             }}
           />
         )}
-        <SkipToMainContent />
         <PageLoader />
         <MenuTabsContext.Provider
           value={{
             menuTabs,
           }}
         >
-          <Hidden print={true}>
-            <FixedNav />
-            {showHeader && <Header showSearchInHeader={showSearchInHeader} />}
-          </Hidden>
-          <div id="main-content">
+          {showHeader && <Header showSearchInHeader={showSearchInHeader} />}
+          <Main>
             {wrapContent ? <Box width="full">{children}</Box> : children}
-          </div>
+          </Main>
         </MenuTabsContext.Provider>
         {showFooter && (
           <Hidden print={true}>

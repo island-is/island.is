@@ -174,6 +174,9 @@
     "content-search-indexer-types": {
       "tags": []
     },
+    "content-search-metrics": {
+      "tags": []
+    },
     "content-search-toolkit": {
       "tags": []
     },
@@ -247,6 +250,9 @@
       "tags": []
     },
     "judicial-system-audit-trail": {
+      "tags": []
+    },
+    "judicial-system-auth": {
       "tags": []
     },
     "judicial-system-backend": {
