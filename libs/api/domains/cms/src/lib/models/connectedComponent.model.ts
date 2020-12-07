@@ -4,7 +4,7 @@ import {
   ISliceConnectedComponent,
   ISliceConnectedComponentFields,
 } from '../generated/contentfulTypes'
-import { SystemMetadata } from '../types'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class ConnectedComponent {
