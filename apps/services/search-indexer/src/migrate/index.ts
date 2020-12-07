@@ -9,8 +9,18 @@ interface PromiseStatus {
   error?: Error
 }
 
+const { locales } = environment
+
 class App {
   async run() {
+    const versions = await Promise.all(locales.map(
+      (locale: string) => elastic.getCurrentVersionFromConfig(locale),
+    ))
+    if (!versions.every((version) => version === versions[0])) {
+      logger.error('All of the index templates should have the same version')
+      process.exit(1)
+    }
+
     logger.info('Starting migration of dictionaries and ES config', environment)
 
     const hasAwsAccess = await aws.checkAWSAccess()
@@ -82,7 +92,6 @@ class App {
     logger.info('Starting elasticsearch migration')
     await elastic.checkAccess() // this throws if there is no connection hence ensuring we dont continue
     const processedMigrations: elastic.MigrationInfo = {} // to rollback changes on failure
-    const locales = environment.locales
     const requests = locales.map(
       async (locale): Promise<PromiseStatus> => {
         const oldIndexVersion = await elastic.getCurrentVersionFromIndices(
