@@ -1,15 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import {
-  Text,
-  GridRow,
-  GridColumn,
-  Input,
-  Box,
-  GridContainer,
-  RadioButton,
-} from '@island.is/island-ui/core'
+import { Text, Input, Box, RadioButton } from '@island.is/island-ui/core'
 import { isDirty, isNextDisabled } from '../../../../utils/stepHelper'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
@@ -392,70 +384,64 @@ export const StepOne: React.FC = () => {
               </Text>
             </Box>
             <Box className={styles.blueBox}>
-              <Box marginBottom={2}>
-                <GridContainer>
-                  <GridRow>
-                    <GridColumn className={styles.genderColumn}>
-                      <RadioButton
-                        name="accused-gender"
-                        id="genderMale"
-                        label="Karl"
-                        checked={workingCase.accusedGender === CaseGender.MALE}
-                        onChange={() =>
-                          setAndSendToServer(
-                            'accusedGender',
-                            CaseGender.MALE,
-                            workingCase,
-                            setWorkingCase,
-                            updateCase,
-                          )
-                        }
-                        large
-                        filled
-                      />
-                    </GridColumn>
-                    <GridColumn className={styles.genderColumn}>
-                      <RadioButton
-                        name="accused-gender"
-                        id="genderFemale"
-                        label="Kona"
-                        checked={
-                          workingCase.accusedGender === CaseGender.FEMALE
-                        }
-                        onChange={() =>
-                          setAndSendToServer(
-                            'accusedGender',
-                            CaseGender.FEMALE,
-                            workingCase,
-                            setWorkingCase,
-                            updateCase,
-                          )
-                        }
-                        large
-                        filled
-                      />
-                    </GridColumn>
-                    <GridColumn className={styles.genderColumn}>
-                      <RadioButton
-                        name="accused-gender"
-                        id="genderOther"
-                        label="Annað"
-                        checked={workingCase.accusedGender === CaseGender.OTHER}
-                        onChange={() =>
-                          setAndSendToServer(
-                            'accusedGender',
-                            CaseGender.OTHER,
-                            workingCase,
-                            setWorkingCase,
-                            updateCase,
-                          )
-                        }
-                        large
-                        filled
-                      />
-                    </GridColumn>
-                  </GridRow>
-                </GridContainer>
+              <Box marginBottom={2} className={styles.genderContainer}>
+                <Box className={styles.genderColumn}>
+                  <RadioButton
+                    name="accused-gender"
+                    id="genderMale"
+                    label="Karl"
+                    checked={workingCase.accusedGender === CaseGender.MALE}
+                    onChange={() =>
+                      setAndSendToServer(
+                        'accusedGender',
+                        CaseGender.MALE,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    }
+                    large
+                    filled
+                  />
+                </Box>
+                <Box className={styles.genderColumn}>
+                  <RadioButton
+                    name="accused-gender"
+                    id="genderFemale"
+                    label="Kona"
+                    checked={workingCase.accusedGender === CaseGender.FEMALE}
+                    onChange={() =>
+                      setAndSendToServer(
+                        'accusedGender',
+                        CaseGender.FEMALE,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    }
+                    large
+                    filled
+                  />
+                </Box>
+                <Box className={styles.genderColumn}>
+                  <RadioButton
+                    name="accused-gender"
+                    id="genderOther"
+                    label="Annað"
+                    checked={workingCase.accusedGender === CaseGender.OTHER}
+                    onChange={() =>
+                      setAndSendToServer(
+                        'accusedGender',
+                        CaseGender.OTHER,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    }
+                    large
+                    filled
+                  />
+                </Box>
               </Box>
               <Box marginBottom={2}>
                 <InputMask
