@@ -8,8 +8,7 @@ module.exports = {
         'institution',
         {
           type: Sequelize.STRING,
-          allowNull: false,
-          defaultValue: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+          allowNull: true,
         },
         { transaction: t },
       ),
