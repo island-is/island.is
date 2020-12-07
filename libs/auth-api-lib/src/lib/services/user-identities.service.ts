@@ -76,7 +76,10 @@ export class UserIdentitiesService {
     })
 
     if (linkedIdentity) {
-      return linkedIdentity
+      return await this.userIdentityModel.findAll({
+        include: [Claim],
+        where: { subjectId: linkedIdentity.map((c) => c.subjectId) },
+      })
     }
 
     return null

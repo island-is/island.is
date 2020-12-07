@@ -9,16 +9,22 @@ import {
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseGender,
+  User as TUser,
 } from '@island.is/judicial-system/types'
+import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
+import { SharedAuthService } from '@island.is/judicial-system/auth'
 
 import { setup, user } from '../../../../../test/setup'
 import { User } from '../../user'
 import { Case } from '../models'
 
 let app: INestApplication
+let authCookie: string
 
 beforeAll(async () => {
   app = await setup()
+  const sharedAuthService = app.resolve(SharedAuthService)
+  authCookie = (await sharedAuthService).signJwt(user as TUser)
 })
 
 const minimalCaseData = {
@@ -189,6 +195,7 @@ describe('Case', () => {
 
     await request(app.getHttpServer())
       .post('/api/case')
+      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
       .send(data)
       .expect(201)
       .then(async (response) => {
@@ -219,6 +226,7 @@ describe('Case', () => {
 
     await request(app.getHttpServer())
       .post('/api/case')
+      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
       .send(data)
       .expect(201)
       .then(async (response) => {
@@ -250,6 +258,7 @@ describe('Case', () => {
 
       await request(app.getHttpServer())
         .put(`/api/case/${value.id}`)
+        .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
         .send(data)
         .expect(200)
         .then(async (response) => {
@@ -283,13 +292,13 @@ describe('Case', () => {
     await Case.create({ ...getCaseData(), state: CaseState.SUBMITTED }).then(
       async (value) => {
         const data = {
-          nationalId: user.nationalId,
           modified: value.modified.toISOString(),
           transition: CaseTransition.ACCEPT,
         }
 
         await request(app.getHttpServer())
           .put(`/api/case/${value.id}/state`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
           .send(data)
           .expect(200)
           .then(async (response) => {
@@ -332,6 +341,7 @@ describe('Case', () => {
       await Case.create(getCaseData()).then(async () => {
         await request(app.getHttpServer())
           .get(`/api/cases`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
           .send()
           .expect(200)
           .then((response) => {
@@ -346,6 +356,7 @@ describe('Case', () => {
     await Case.create(getCaseData(true, true)).then(async (value) => {
       await request(app.getHttpServer())
         .get(`/api/case/${value.id}`)
+        .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
         .send()
         .expect(200)
         .then((response) => {
@@ -364,6 +375,7 @@ describe('Case', () => {
     }).then(async (value) => {
       await request(app.getHttpServer())
         .post(`/api/case/${value.id}/signature`)
+        .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
         .expect(201)
         .then(async (response) => {
           // Check the response
@@ -381,6 +393,7 @@ describe('Case', () => {
     }).then(async (value) => {
       await request(app.getHttpServer())
         .get(`/api/case/${value.id}/signature`)
+        .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
         .query({ documentToken: 'DEVELOPMENT' })
         .expect(200)
         .then(async (response) => {

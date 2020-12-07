@@ -158,6 +158,9 @@
       "@island.is/judicial-system/audit-trail": [
         "libs/judicial-system/audit-trail/src/index.ts"
       ],
+      "@island.is/judicial-system/auth": [
+        "libs/judicial-system/auth/src/index.ts"
+      ],
       "@island.is/judicial-system/consts": [
         "libs/judicial-system/consts/src/index.ts"
       ],

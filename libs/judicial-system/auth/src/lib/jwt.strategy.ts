@@ -8,13 +8,28 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { User } from '@island.is/judicial-system/types'
 
-import { environment } from '../../../environments'
 import { Credentials } from './auth.types'
+import environment from './environment'
+
+const { jwtSecret } = environment
 
 const cookieExtractor = (req: Request) => {
   if (req && req.cookies) {
     return req.cookies[ACCESS_TOKEN_COOKIE_NAME]
   }
+
+  if (req && req.headers['cookie']) {
+    const cookie: string = req.headers['cookie'] as string
+    const match = cookie.match(
+      new RegExp(
+        '(?:^|;)\\s?' + ACCESS_TOKEN_COOKIE_NAME + '=(.*?)(?:;|$)',
+        'i',
+      ),
+    )
+
+    return match && unescape(match[1])
+  }
+
   return undefined
 }
 
@@ -26,7 +41,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       jwtFromRequest: cookieExtractor,
-      secretOrKey: environment.auth.jwtSecret,
+      secretOrKey: jwtSecret,
       passReqToCallback: true,
     })
   }
