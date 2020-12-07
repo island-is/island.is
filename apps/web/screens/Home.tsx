@@ -20,7 +20,6 @@ import {
   QueryGetLifeEventsArgs,
   QueryGetHomepageArgs,
   GetNewsQuery,
-  AllPagesFragment,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
