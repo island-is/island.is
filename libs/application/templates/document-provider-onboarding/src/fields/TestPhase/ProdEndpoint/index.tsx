@@ -1,37 +1,30 @@
 import React, { FC, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { useFormContext, Controller } from 'react-hook-form'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
-import { Box, Button, Input, Text, Checkbox } from '@island.is/island-ui/core'
+import { FieldBaseProps } from '@island.is/application/core'
+import { Box, Button, Input } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { registerEndpointMutation } from '../../../graphql/mutations/registerEndpointMutation'
 import { m } from '../../../forms/messages'
 
-const TestEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
+const ProdEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
   interface Variable {
     id: string
     name: string
     value: string
   }
 
-  const { clearErrors, register, errors, trigger, getValues } = useFormContext()
-  const { answers: formValue } = application
+  const { register, errors, trigger, getValues } = useFormContext()
   const [variables, setendPointVariables] = useState<Variable[]>([])
-
-  const [endpointExists, setendpointExists] = useState(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    formValue.endPointObject?.endPointExists || '',
-  )
   const [registerEndpoint] = useMutation(registerEndpointMutation)
 
   const onRegisterEndpoint = async (isValid: boolean) => {
     if (isValid) {
       const result = await registerEndpoint({
         variables: {
-          input: { endpoint: getValues('endPointObject.endPoint') },
+          input: { endpoint: getValues('prodEndPoint') },
         },
       })
 
@@ -39,6 +32,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
         //TODO display error
       }
 
+      //TODO: Needs new call to API
       setendPointVariables([
         {
           id: '1',
@@ -47,11 +41,6 @@ const TestEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
         },
         { id: '2', name: 'Scope', value: result.data.registerEndpoint.scope },
       ])
-
-      setendpointExists('true')
-      // setValue('endPointObject.endPointExists' as string, 'true')
-
-      clearErrors()
     }
   }
 
@@ -60,22 +49,22 @@ const TestEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
       <Box marginBottom={7}>
         <Box marginBottom={3}>
           <FieldDescription
-            description={m.testEndPointSubTitle.defaultMessage}
+            description={m.prodEndPointSubTitle.defaultMessage}
           />
         </Box>
         <Box marginBottom={1}>
           <Controller
             defaultValue=""
-            name={'endPointObject.endPoint'}
+            name={'prodEndPoint'}
             render={() => (
               <Input
                 label="Endapunktur"
-                name={'endPointObject.endPoint'}
-                id={'endPointObject.endPoint'}
+                name={'prodEndPoint'}
+                id={'prodEndPoint'}
                 ref={register}
                 defaultValue=""
                 placeholder="Skráðu inn endapunkt"
-                hasError={errors.endPointObject?.endPoint !== undefined}
+                hasError={errors.prodEndPoint !== undefined}
                 errorMessage="Þú verður að skrá inn endapunkt"
               />
             )}
@@ -86,27 +75,13 @@ const TestEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
         <Button
           variant="primary"
           onClick={() => {
-            trigger(['endPointObject.endPoint']).then((answer) =>
+            trigger(['prodEndPoint']).then((answer) =>
               onRegisterEndpoint(answer),
             )
           }}
         >
           Vista endapunkt
         </Button>
-        <input
-          type="hidden"
-          value={endpointExists}
-          ref={register({ required: true })}
-          name={'endPointObject.endPointExists'}
-        />
-
-        {errors['endPointObject.endPointExists'] && (
-          <Box color="red600" paddingY={2}>
-            <Text fontWeight="semiBold" color="red600">
-              {errors['endPointObject.endPointExists']}
-            </Text>
-          </Box>
-        )}
       </Box>
 
       {variables &&
@@ -122,4 +97,4 @@ const TestEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
   )
 }
 
-export default TestEndPoint
+export default ProdEndPoint

@@ -1,9 +1,8 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-
 import { IVidspyrnaPage } from '../generated/contentfulTypes'
-import { Slice, mapDocument } from './slice.model'
-
+import { mapDocument } from './slice.model'
 import { AdgerdirTag, mapAdgerdirTag } from './adgerdirTag.model'
+import { SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
 export class AdgerdirPage {
@@ -19,8 +18,8 @@ export class AdgerdirPage {
   @Field({ nullable: true })
   longDescription?: string
 
-  @Field(() => [Slice])
-  content: Array<typeof Slice>
+  @Field(() => [SliceUnion])
+  content: Array<typeof SliceUnion>
 
   @Field({ nullable: true })
   objective?: string

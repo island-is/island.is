@@ -72,6 +72,7 @@ const dataSchema = z.object({
   productionUserExists: z.string().nonempty({
     message: 'Þú verður að stofna aðgang til að halda áfram',
   }),
+  prodEndPoint: z.string().url().nonempty(),
   rejectionReason: z.string(),
   approvedByReviewer: z.enum(['APPROVE', 'REJECT']),
 })

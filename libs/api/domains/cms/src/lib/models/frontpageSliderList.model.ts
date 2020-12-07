@@ -1,7 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-
 import { IFrontpageSliderList } from '../generated/contentfulTypes'
-
 import { FrontpageSlider, mapFrontpageSlider } from './frontpageSlider.model'
 
 @ObjectType()
