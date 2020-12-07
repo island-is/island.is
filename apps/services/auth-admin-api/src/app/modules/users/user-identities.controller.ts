@@ -26,25 +26,18 @@ import {
 export class UserIdentitiesController {
   constructor(private readonly userIdentityService: UserIdentitiesService) {}
 
-  @Get(':id/:type')
+  /** Gets User Identity either by subject Id or National Id (kennitala) */
+  @Get(':id')
   @ApiOkResponse({ type: UserIdentity })
   async findByNationalIdOrSubjectId(
     @Param('id') id: string,
-    @Param('type') type: string,
   ): Promise<UserIdentity[]> {
-    type = type.toLowerCase()
-
-    if (type !== 'nationalid' && type !== 'subjectid') {
-      throw new BadRequestException(
-        'Types supported are [nationalId] and [subjectId]',
-      )
-    }
-
     if (!id) {
       throw new BadRequestException('id must be provided')
     }
 
-    if (type === 'nationalid') {
+    // Find by NationalId
+    if (!isNaN(+id) && id.length === 10) {
       const userIdentities = await this.userIdentityService.findByNationalId(id)
 
       if (!userIdentities) {
