@@ -7,7 +7,7 @@ import { AuthGuard } from '@nestjs/passport'
 import { User } from '@island.is/judicial-system/types'
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
+export class JwtGraphQlAuthGuard extends AuthGuard('jwt') {
   canActivate(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context)
     const { req } = ctx.getContext()

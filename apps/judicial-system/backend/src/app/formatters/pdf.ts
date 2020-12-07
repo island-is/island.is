@@ -5,6 +5,7 @@ import fs from 'fs'
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
+  User,
 } from '@island.is/judicial-system/types'
 import {
   capitalize,
@@ -30,7 +31,10 @@ export function writeFile(fileName: string, documentContent: string) {
   fs?.writeFileSync(`../${fileName}`, documentContent, { encoding: 'binary' })
 }
 
-export async function generateRequestPdf(existingCase: Case): Promise<string> {
+export async function generateRequestPdf(
+  existingCase: Case,
+  user: User,
+): Promise<string> {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -151,7 +155,9 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .text(' ')
     .font('Helvetica-Bold')
     .text(
-      `F.h.l. ${existingCase.prosecutor?.name} ${existingCase.prosecutor?.title}`,
+      `F.h.l. ${existingCase.prosecutor?.name || user?.name} ${
+        existingCase.prosecutor?.title || user.title
+      }`,
     )
     .end()
 
@@ -170,7 +176,10 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
   return pdf
 }
 
-export async function generateRulingPdf(existingCase: Case): Promise<string> {
+export async function generateRulingPdf(
+  existingCase: Case,
+  user: User,
+): Promise<string> {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -348,10 +357,15 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     )
     .text(' ')
     .font('Helvetica-Bold')
-    .text(`${existingCase.judge?.name} ${existingCase.judge?.title}`, {
-      align: 'center',
-      paragraphGap: 0,
-    })
+    .text(
+      `${existingCase.judge?.name || user?.name} ${
+        existingCase.judge?.title || user?.title
+      }`,
+      {
+        align: 'center',
+        paragraphGap: 0,
+      },
+    )
     .text(' ')
     .font('Helvetica')
     .text('Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.', {

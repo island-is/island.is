@@ -41,10 +41,6 @@ import {
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
-interface CaseData {
-  case?: Case
-}
-
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -251,7 +247,7 @@ export const Overview: React.FC = () => {
                   {`${capitalize(
                     formatDate(workingCase.requestedCourtDate, 'PPPP') || '',
                   )} eftir kl. ${formatDate(
-                    workingCase?.requestedCourtDate,
+                    workingCase.requestedCourtDate,
                     TIME_FORMAT,
                   )}`}
                 </Text>
@@ -272,7 +268,7 @@ export const Overview: React.FC = () => {
                   </Box>
                   <Text>
                     <span className={styles.breakSpaces}>
-                      {workingCase?.lawsBroken}
+                      {workingCase.lawsBroken}
                     </span>
                   </Text>
                 </Box>
@@ -301,7 +297,7 @@ export const Overview: React.FC = () => {
               >
                 <Text>
                   {formatCustodyRestrictions(
-                    workingCase?.requestedCustodyRestrictions,
+                    workingCase.requestedCustodyRestrictions,
                   )}
                 </Text>
               </AccordionItem>
@@ -342,7 +338,7 @@ export const Overview: React.FC = () => {
               >
                 <Text>
                   <span className={styles.breakSpaces}>
-                    {workingCase?.comments}
+                    {workingCase.comments}
                   </span>
                 </Text>
               </AccordionItem>
@@ -353,8 +349,8 @@ export const Overview: React.FC = () => {
               <Text>F.h.l</Text>
             </Box>
             <Text variant="h3">
-              {workingCase?.prosecutor
-                ? `${workingCase?.prosecutor.name} ${workingCase?.prosecutor.title}`
+              {workingCase.prosecutor
+                ? `${workingCase.prosecutor?.name} ${workingCase.prosecutor?.title}`
                 : `${user?.name} ${user?.title}`}
             </Text>
           </Box>

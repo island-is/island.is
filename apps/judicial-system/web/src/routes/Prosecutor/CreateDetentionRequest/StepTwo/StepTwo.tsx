@@ -17,23 +17,13 @@ import {
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import { isNextDisabled } from '../../../../utils/stepHelper'
-import {
-  validate,
-  Validation,
-} from '@island.is/judicial-system-web/src/utils/validate'
+import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
-import formatISO from 'date-fns/formatISO'
 import isNull from 'lodash/isNull'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import {
-  padTimeWithZero,
-  parseArray,
-  parseString,
-  parseTime,
-  replaceTabsOnChange,
-} from '@island.is/judicial-system-web/src/utils/formatters'
+import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '../../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
@@ -284,7 +274,7 @@ export const StepTwo: React.FC = () => {
               </GridColumn>
               <GridColumn span="3/8">
                 <TimeInputField
-                  disabled={!workingCase?.requestedCustodyEndDate}
+                  disabled={!workingCase.requestedCustodyEndDate}
                   onChange={(evt) =>
                     validateAndSetTime(
                       'requestedCustodyEndDate',
@@ -342,7 +332,7 @@ export const StepTwo: React.FC = () => {
               name="lawsBroken"
               label="Lagaákvæði sem ætluð brot kærða þykja varða við"
               placeholder="Skrá inn þau lagaákvæði sem brotið varðar við, til dæmis 1. mgr. 244 gr. almennra hegningarlaga nr. 19/1940..."
-              defaultValue={workingCase?.lawsBroken}
+              defaultValue={workingCase.lawsBroken}
               errorMessage={lawsBrokenErrorMessage}
               hasError={lawsBrokenErrorMessage !== ''}
               onChange={(event) =>
@@ -561,7 +551,7 @@ export const StepTwo: React.FC = () => {
                 placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
                 errorMessage={caseFactsErrorMessage}
                 hasError={caseFactsErrorMessage !== ''}
-                defaultValue={workingCase?.caseFacts}
+                defaultValue={workingCase.caseFacts}
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'caseFacts',
@@ -594,7 +584,7 @@ export const StepTwo: React.FC = () => {
                 name="legalArguments"
                 label="Lagarök"
                 placeholder="Hver eru lagarökin fyrir kröfu um gæsluvarðhald?"
-                defaultValue={workingCase?.legalArguments}
+                defaultValue={workingCase.legalArguments}
                 errorMessage={legalArgumentsErrorMessage}
                 hasError={legalArgumentsErrorMessage !== ''}
                 onChange={(event) =>
@@ -639,7 +629,7 @@ export const StepTwo: React.FC = () => {
                   name="comments"
                   label="Athugasemdir vegna málsmeðferðar"
                   placeholder="Er eitthvað sem þú vilt koma á framfæri við dómara sem tengist kröfunni eða ástandi sakbornings?"
-                  defaultValue={workingCase?.comments}
+                  defaultValue={workingCase.comments}
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'comments',
