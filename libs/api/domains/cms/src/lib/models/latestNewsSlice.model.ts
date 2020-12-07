@@ -2,7 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { GetNewsInput } from '../dto/getNews.input'
 import { ILatestNewsSlice } from '../generated/contentfulTypes'
 import { News } from './news.model'
-import { SystemMetadata } from '../types'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class LatestNewsSlice {
