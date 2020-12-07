@@ -1,0 +1,6 @@
+export { Fjolskyldan, GetViewFamilyDto } from './getViewFamilyDto'
+export { GetViewBanmarkingDto } from './GetViewBanmarkingDto'
+export { GetViewHomeDto } from './getViewHomeDto'
+export { GetViewMunicipalityDto } from './getViewMunicipalityDto'
+export { GetViewRegistryDto } from './getViewRegistryDto'
+export { GetViewReligionDto } from './getViewReligionDto'
