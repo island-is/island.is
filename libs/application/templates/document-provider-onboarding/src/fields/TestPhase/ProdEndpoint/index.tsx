@@ -9,7 +9,7 @@ import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/C
 import { registerEndpointMutation } from '../../../graphql/mutations/registerEndpointMutation'
 import { m } from '../../../forms/messages'
 
-const TestEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
+const ProdEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
   interface Variable {
     id: string
     name: string
@@ -32,6 +32,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
         //TODO display error
       }
 
+      //TODO: Needs new call to API
       setendPointVariables([
         {
           id: '1',
@@ -48,22 +49,22 @@ const TestEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
       <Box marginBottom={7}>
         <Box marginBottom={3}>
           <FieldDescription
-            description={m.testEndPointSubTitle.defaultMessage}
+            description={m.prodEndPointSubTitle.defaultMessage}
           />
         </Box>
         <Box marginBottom={1}>
           <Controller
             defaultValue=""
-            name={'endPoint'}
+            name={'prodEndPoint'}
             render={() => (
               <Input
                 label="Endapunktur"
-                name={'endPoint'}
-                id={'endPoint'}
+                name={'prodEndPoint'}
+                id={'prodEndPoint'}
                 ref={register}
                 defaultValue=""
                 placeholder="Skráðu inn endapunkt"
-                hasError={errors.endPoint !== undefined}
+                hasError={errors.prodEndPoint !== undefined}
                 errorMessage="Þú verður að skrá inn endapunkt"
               />
             )}
@@ -74,7 +75,9 @@ const TestEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
         <Button
           variant="primary"
           onClick={() => {
-            trigger(['endPoint']).then((answer) => onRegisterEndpoint(answer))
+            trigger(['prodEndPoint']).then((answer) =>
+              onRegisterEndpoint(answer),
+            )
           }}
         >
           Vista endapunkt
@@ -94,4 +97,4 @@ const TestEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
   )
 }
 
-export default TestEndPoint
+export default ProdEndPoint
