@@ -1,33 +1,21 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import Modal from '../../../../shared-components/Modal/Modal'
 import {
   Text,
   GridRow,
   GridColumn,
   Input,
   Box,
-  Select,
-  DatePicker,
   GridContainer,
   RadioButton,
-  Tooltip,
 } from '@island.is/island-ui/core'
-import { validate, Validation } from '../../../../utils/validate'
 import { isDirty, isNextDisabled } from '../../../../utils/stepHelper'
-import isValid from 'date-fns/isValid'
-import parseISO from 'date-fns/parseISO'
-import formatISO from 'date-fns/formatISO'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as Constants from '../../../../utils/constants'
-import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  padTimeWithZero,
   parseString,
-  parseTime,
   parseTransition,
   replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -38,7 +26,6 @@ import {
   CaseState,
   NotificationType,
   CaseGender,
-  TransitionCase,
   CaseTransition,
 } from '@island.is/judicial-system/types'
 import { gql, useMutation, useQuery } from '@apollo/client'
@@ -50,20 +37,14 @@ import {
 } from '@island.is/judicial-system-web/src/graphql'
 import {
   ProsecutorSubsections,
-  ReactSelectOption,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { ValueType } from 'react-select/src/types'
 import * as styles from './StepOne.treat'
-import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
 import InputMask from 'react-input-mask'
 import {
-  setAndSendDateToServer,
   setAndSendToServer,
-  validateAndSendTimeToServer,
   validateAndSendToServer,
   removeTabsValidateAndSet,
-  validateAndSetTime,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 export const CreateCaseMutation = gql`
@@ -156,8 +137,6 @@ export const StepOne: React.FC = () => {
     setRequestedDefenderEmailErrorMessage,
   ] = useState<string>('')
 
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
-
   const { id } = useParams<{ id: string }>()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -169,17 +148,13 @@ export const StepOne: React.FC = () => {
     CreateCaseMutation,
   )
 
-  const createCase = async (): Promise<string | undefined>  => {
-
+  const createCase = async (): Promise<string | undefined> => {
     if (createLoading === false) {
       const { data } = await createCaseMutation({
         variables: {
           input: {
             policeCaseNumber: workingCase?.policeCaseNumber,
-            accusedNationalId: workingCase?.accusedNationalId.replace(
-              '-',
-              '',
-            ),
+            accusedNationalId: workingCase?.accusedNationalId.replace('-', ''),
             accusedName: workingCase?.accusedName,
             accusedAddress: workingCase?.accusedAddress,
             requestedDefenderName: workingCase?.requestedDefenderName,
@@ -218,13 +193,15 @@ export const StepOne: React.FC = () => {
     return resCase
   }
 
-  const [transitionCaseMutation, { loading: transitionLoading }] = useMutation(TransitionCaseMutation)
+  const [transitionCaseMutation, { loading: transitionLoading }] = useMutation(
+    TransitionCaseMutation,
+  )
 
   const transitionCase = async () => {
     if (!workingCase) {
       return false
     }
-    
+
     switch (workingCase.state) {
       case CaseState.NEW:
         try {
@@ -285,13 +262,9 @@ export const StepOne: React.FC = () => {
       return
     }
 
-    const caseId = workingCase.id === "" ? 
-      await createCase() : 
-      workingCase.id
+    const caseId = workingCase.id === '' ? await createCase() : workingCase.id
 
-    history.push(
-      `${Constants.STEP_TWO_ROUTE}/${caseId}`,
-    )
+    history.push(`${Constants.STEP_TWO_ROUTE}/${caseId}`)
   }
 
   useEffect(() => {
@@ -344,17 +317,15 @@ export const StepOne: React.FC = () => {
             validations: ['email-format'],
           },
           {
-            value: workingCase.accusedGender || '', validations: ['empty']
-          }
+            value: workingCase.accusedGender || '',
+            validations: ['empty'],
+          },
         ]),
       )
     } else {
       setIsStepIllegal(true)
     }
-  }, [
-    workingCase,
-    setIsStepIllegal,
-  ])
+  }, [workingCase, setIsStepIllegal])
 
   return (
     <PageLayout
@@ -365,19 +336,19 @@ export const StepOne: React.FC = () => {
     >
       {workingCase ? (
         <>
-          <Box marginBottom={10}>
+          <Box marginBottom={7}>
             <Text as="h1" variant="h1">
               Krafa um gæsluvarðhald
             </Text>
           </Box>
-          <Box component="section" marginBottom={7}>
-            <Box marginBottom={2}>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                LÖKE málsnúmer
+                Málsnúmer lögreglu
               </Text>
             </Box>
             <InputMask
-              //This is temporary until we start reading LÖKE case numbers from LÖKE
+              // This is temporary until we start reading LÖKE case numbers from LÖKE
               mask="999-9999-9999999"
               maskPlaceholder={null}
               onChange={(event) =>
@@ -414,152 +385,149 @@ export const StepOne: React.FC = () => {
               />
             </InputMask>
           </Box>
-          <Box component="section" marginBottom={3}>
+          <Box component="section" marginBottom={5}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
                 Sakborningur
               </Text>
             </Box>
-            <Box component="section" marginBottom={7}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Kyn{' '}
-                <Text as="span" color="red600" fontWeight="semiBold">
-                  *
-                </Text>
-              </Text>
-            </Box>
-            <GridContainer>
-              <GridRow>
-                <GridColumn className={styles.genderColumn}>
-                  <RadioButton
-                    name="accused-gender"
-                    id="genderMale"
-                    label="Karl"
-                    checked={workingCase.accusedGender === CaseGender.MALE}
-                    onChange={() =>
-                      setAndSendToServer(
-                        'accusedGender',
-                        CaseGender.MALE,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }
-                    large
+            <Box className={styles.blueBox}>
+              <Box marginBottom={2}>
+                <GridContainer>
+                  <GridRow>
+                    <GridColumn className={styles.genderColumn}>
+                      <RadioButton
+                        name="accused-gender"
+                        id="genderMale"
+                        label="Karl"
+                        checked={workingCase.accusedGender === CaseGender.MALE}
+                        onChange={() =>
+                          setAndSendToServer(
+                            'accusedGender',
+                            CaseGender.MALE,
+                            workingCase,
+                            setWorkingCase,
+                            updateCase,
+                          )
+                        }
+                        large
+                        filled
+                      />
+                    </GridColumn>
+                    <GridColumn className={styles.genderColumn}>
+                      <RadioButton
+                        name="accused-gender"
+                        id="genderFemale"
+                        label="Kona"
+                        checked={
+                          workingCase.accusedGender === CaseGender.FEMALE
+                        }
+                        onChange={() =>
+                          setAndSendToServer(
+                            'accusedGender',
+                            CaseGender.FEMALE,
+                            workingCase,
+                            setWorkingCase,
+                            updateCase,
+                          )
+                        }
+                        large
+                        filled
+                      />
+                    </GridColumn>
+                    <GridColumn className={styles.genderColumn}>
+                      <RadioButton
+                        name="accused-gender"
+                        id="genderOther"
+                        label="Annað"
+                        checked={workingCase.accusedGender === CaseGender.OTHER}
+                        onChange={() =>
+                          setAndSendToServer(
+                            'accusedGender',
+                            CaseGender.OTHER,
+                            workingCase,
+                            setWorkingCase,
+                            updateCase,
+                          )
+                        }
+                        large
+                        filled
+                      />
+                    </GridColumn>
+                  </GridRow>
+                </GridContainer>
+              </Box>
+              <Box marginBottom={2}>
+                <InputMask
+                  mask="999999-9999"
+                  maskPlaceholder={null}
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'accusedNationalId',
+                      event,
+                      ['empty', 'national-id'],
+                      workingCase,
+                      setWorkingCase,
+                      nationalIdErrorMessage,
+                      setNationalIdErrorMessage,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'accusedNationalId',
+                      event.target.value,
+                      ['empty', 'national-id'],
+                      workingCase,
+                      updateCase,
+                      setNationalIdErrorMessage,
+                    )
+                  }
+                >
+                  <Input
+                    data-testid="nationalId"
+                    name="nationalId"
+                    label="Kennitala"
+                    placeholder="Kennitala"
+                    defaultValue={workingCase.accusedNationalId}
+                    errorMessage={nationalIdErrorMessage}
+                    hasError={nationalIdErrorMessage !== ''}
+                    required
                   />
-                </GridColumn>
-                <GridColumn className={styles.genderColumn}>
-                  <RadioButton
-                    name="accused-gender"
-                    id="genderFemale"
-                    label="Kona"
-                    checked={workingCase.accusedGender === CaseGender.FEMALE}
-                    onChange={() =>
-                      setAndSendToServer(
-                        'accusedGender',
-                        CaseGender.FEMALE,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }
-                    large
-                  />
-                </GridColumn>
-                <GridColumn className={styles.genderColumn}>
-                  <RadioButton
-                    name="accused-gender"
-                    id="genderOther"
-                    label="Annað"
-                    checked={workingCase.accusedGender === CaseGender.OTHER}
-                    onChange={() =>
-                      setAndSendToServer(
-                        'accusedGender',
-                        CaseGender.OTHER,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }
-                    large
-                  />
-                </GridColumn>
-              </GridRow>
-            </GridContainer>
-          </Box>
-            <Box marginBottom={3}>
-              <InputMask
-                mask="999999-9999"
-                maskPlaceholder={null}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'accusedNationalId',
-                    event,
-                    ['empty', 'national-id'],
-                    workingCase,
-                    setWorkingCase,
-                    nationalIdErrorMessage,
-                    setNationalIdErrorMessage,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'accusedNationalId',
-                    event.target.value,
-                    ['empty', 'national-id'],
-                    workingCase,
-                    updateCase,
-                    setNationalIdErrorMessage,
-                  )
-                }
-              >
+                </InputMask>
+              </Box>
+              <Box marginBottom={2}>
                 <Input
-                  data-testid="nationalId"
-                  name="nationalId"
-                  label="Kennitala"
-                  placeholder="Kennitala"
-                  defaultValue={workingCase.accusedNationalId}
-                  errorMessage={nationalIdErrorMessage}
-                  hasError={nationalIdErrorMessage !== ''}
+                  data-testid="accusedName"
+                  name="accusedName"
+                  label="Fullt nafn"
+                  placeholder="Fullt nafn"
+                  defaultValue={workingCase.accusedName}
+                  errorMessage={accusedNameErrorMessage}
+                  hasError={accusedNameErrorMessage !== ''}
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'accusedName',
+                      event,
+                      ['empty'],
+                      workingCase,
+                      setWorkingCase,
+                      accusedNameErrorMessage,
+                      setAccusedNameErrorMessage,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'accusedName',
+                      event.target.value,
+                      ['empty'],
+                      workingCase,
+                      updateCase,
+                      setAccusedNameErrorMessage,
+                    )
+                  }
                   required
                 />
-              </InputMask>
-            </Box>
-            <Box marginBottom={3}>
-              <Input
-                data-testid="accusedName"
-                name="accusedName"
-                label="Fullt nafn"
-                placeholder="Fullt nafn"
-                defaultValue={workingCase.accusedName}
-                errorMessage={accusedNameErrorMessage}
-                hasError={accusedNameErrorMessage !== ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'accusedName',
-                    event,
-                    ['empty'],
-                    workingCase,
-                    setWorkingCase,
-                    accusedNameErrorMessage,
-                    setAccusedNameErrorMessage,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'accusedName',
-                    event.target.value,
-                    ['empty'],
-                    workingCase,
-                    updateCase,
-                    setAccusedNameErrorMessage,
-                  )
-                }
-                required
-              />
-            </Box>
-            <Box marginBottom={3}>
+              </Box>
               <Input
                 data-testid="accusedAddress"
                 name="accusedAddress"
@@ -593,14 +561,24 @@ export const StepOne: React.FC = () => {
               />
             </Box>
           </Box>
-          
           <Box component="section" marginBottom={7}>
-            <Box marginBottom={2}>
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="baseline"
+              marginBottom={2}
+            >
               <Text as="h3" variant="h3">
-                Verjandi
+                Verjandi sakbornings
               </Text>
+              {(isDirty(workingCase.defenderName) ||
+                isDirty(workingCase.defenderEmail)) && (
+                <Text variant="eyebrow" color="blue400">
+                  (Verjanda hefur verið úthlutað)
+                </Text>
+              )}
             </Box>
-            <Box marginBottom={3}>
+            <Box marginBottom={2}>
               <Input
                 name="requestedDefenderName"
                 label="Nafn verjanda"
@@ -661,18 +639,14 @@ export const StepOne: React.FC = () => {
                 )
               }
             />
-            {(isDirty(workingCase.defenderName) ||
-              isDirty(workingCase.defenderEmail)) && (
-              <Box marginTop={1}>
-                <Text variant="eyebrow">Verjanda hefur verið úthlutað</Text>
-              </Box>
-            )}
           </Box>
           <FormFooter
             onNextButtonClick={async () => await handleNextButtonClick()}
             nextIsLoading={createLoading || transitionLoading}
             nextIsDisabled={isStepIllegal || createLoading || transitionLoading}
-            nextButtonText={workingCase.id === "" ? "Stofna kröfu" : "Halda áfram"}
+            nextButtonText={
+              workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
+            }
           />
         </>
       ) : null}
