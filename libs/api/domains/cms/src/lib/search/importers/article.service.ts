@@ -28,13 +28,13 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
   }
 
   processSyncData(entries: processSyncDataInput<IArticle>) {
-    // only process articles that we consider not to be empty and dont have circular structures
+    // only process articles that we consider not to be empty and don't have circular structures
     return entries.reduce((processedEntries: IArticle[], entry: Entry<any>) => {
       if (this.validateArticle(entry)) {
         // remove nested related articles from related articles
         const relatedArticles = (entry.fields.relatedArticles || [])
           .map(({ sys, fields }) => {
-            // handle if some one deletes an article without removing reference case, this will be fixed more permanently at a later time with nested resolvers
+            // handle if someone deletes an article without removing reference case, this will be fixed more permanently at a later time with nested resolvers
             if (!fields?.relatedArticles) {
               return undefined
             }
