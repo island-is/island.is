@@ -8,6 +8,10 @@ import {
   IndexingService,
 } from '@island.is/content-search-indexer'
 import { NestFactory } from '@nestjs/core'
+import {
+  MetricsModule,
+  MetricsService,
+} from '@island.is/content-search-metrics'
 
 const esService = new ElasticService()
 
@@ -232,6 +236,23 @@ export const importContentToIndex = async (
 
   logger.info('Done with content import', { elasticIndex, syncType })
   return true
+}
+
+export const rankSearchQueries = async (
+  locale: string,
+  indexVersion: number,
+) => {
+  const elasticIndex = getIndexNameForVersion(locale, indexVersion)
+  logger.info('Gathering content search query quality metrics', {
+    elasticIndex,
+  })
+  const app = await NestFactory.create(MetricsModule)
+  const metricsService = app.get(MetricsService)
+  const metrics = await metricsService.getCMSRankEvaluation({
+    index: elasticIndex,
+    display: 'minimal',
+  })
+  logger.info('Content search query quality metrics', metrics)
 }
 
 export const moveAliasToNewIndex = async (

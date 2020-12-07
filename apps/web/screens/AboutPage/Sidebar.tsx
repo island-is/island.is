@@ -68,7 +68,7 @@ const Sidebar: FC<SidebarProps> = ({ title, type, children }) => {
   }, [onResize])
 
   return (
-    <div ref={containerRef} className={styles.container}>
+    <div ref={containerRef} className={styles.container} role="scrollbar">
       <div style={divStyles}>
         <div className={styles.sticky}>
           <div className={styles.stickyInner}>
