@@ -333,7 +333,7 @@ export const Overview: React.FC = () => {
               </AccordionItem>
               <AccordionItem
                 id="id_5"
-                label="Skilaboð til dómara"
+                label="Athugasemdir vegna málsmeðferðar"
                 labelVariant="h3"
               >
                 <Text>

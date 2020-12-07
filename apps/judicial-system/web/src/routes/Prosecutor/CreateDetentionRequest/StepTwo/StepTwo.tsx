@@ -616,18 +616,18 @@ export const StepTwo: React.FC = () => {
             <Box component="section" marginBottom={7}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  Skilaboð til dómara{' '}
+                  Athugasemdir vegna málsmeðferðar{' '}
                   <Tooltip
                     placement="right"
                     as="span"
-                    text="Hér er hægt að skrá athugasemdir eða skilaboð til dómara sem verður ekki vistað sem hluti af kröfunni. Til dæmis aðrar upplýsingar en koma fram í kröfunni og/eða upplýsingar um ástand sakbornings"
+                    text="Hér er hægt að skrá athugasemdir til dómara sem verður ekki vistað sem hluti af kröfunni. Til dæmis aðrar upplýsingar en koma fram í kröfunni og/eða upplýsingar um ástand sakbornings"
                   />
                 </Text>
               </Box>
               <Box marginBottom={3}>
                 <Input
                   name="comments"
-                  label="Skilaboð til dómara"
+                  label="Athugasemdir vegna málsmeðferðar"
                   placeholder="Er eitthvað sem þú vilt koma á framfæri við dómara sem tengist kröfunni eða ástandi sakbornings?"
                   defaultValue={workingCase.comments}
                   onChange={(event) =>
