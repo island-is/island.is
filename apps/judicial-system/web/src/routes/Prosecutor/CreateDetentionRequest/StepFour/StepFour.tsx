@@ -67,7 +67,7 @@ import {
 import { ValueType } from 'react-select/src/types'
 import Modal from '../../../../shared-components/Modal/Modal'
 
-export const StepTwo: React.FC = () => {
+export const StepFour: React.FC = () => {
   const history = useHistory()
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
@@ -274,7 +274,7 @@ export const StepTwo: React.FC = () => {
         )
       ) {
         history.push(
-          `${Constants.STEP_THREE_ROUTE}/${workingCase.id}`,
+          `${Constants.STEP_TWO_ROUTE}/${workingCase.id}`,
         )
       } else {
         setModalVisible(true)
@@ -285,7 +285,7 @@ export const StepTwo: React.FC = () => {
   }
 
   useEffect(() => {
-    document.title = 'Dómkröfur - Réttarvörslugátt'
+    document.title = 'Málsatvik og lagarök - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
@@ -404,7 +404,7 @@ export const StepTwo: React.FC = () => {
         <>
           <Box marginBottom={10}>
             <Text as="h1" variant="h1">
-            Dómkröfur
+              Krafa um gæsluvarðhald
             </Text>
           </Box>
 
@@ -745,7 +745,7 @@ export const StepTwo: React.FC = () => {
 
                 if (notificationSent) {
                   history.push(
-                    `${Constants.STEP_THREE_ROUTE}/${workingCase.id}`,
+                    `${Constants.STEP_TWO_ROUTE}/${workingCase.id}`,
                   )
                 }
               }}
@@ -758,4 +758,4 @@ export const StepTwo: React.FC = () => {
   )
 }
 
-export default StepTwo
+export default StepFour
