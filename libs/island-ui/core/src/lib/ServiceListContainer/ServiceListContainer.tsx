@@ -117,7 +117,7 @@ export const ServiceListContainer: React.FC<ServiceListContainerProps> = ({
             <Box borderRadius="large" padding="containerGutter">
               <LoadingIcon animate color="blue400" size={32} />
             </Box>
-          </GridColumn>
+          </GridColumn> 
         )}
       </GridRow>
       {errorMessage && (
