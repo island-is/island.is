@@ -156,122 +156,45 @@ export const StepOne: React.FC = () => {
     setRequestedDefenderEmailErrorMessage,
   ] = useState<string>('')
 
-  const [arrestDateErrorMessage, setArrestDateErrorMessage] = useState<string>(
-    '',
-  )
-
-  const [arrestTimeErrorMessage, setArrestTimeErrorMessage] = useState<string>(
-    '',
-  )
-
-  const [
-    requestedCourtDateErrorMessage,
-    setRequestedCourtDateErrorMessage,
-  ] = useState<string>('')
-
-  const [
-    requestedCourtTimeErrorMessage,
-    setRequestedCourtTimeErrorMessage,
-  ] = useState<string>('')
-
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
   const { id } = useParams<{ id: string }>()
 
-  const policeCaseNumberRef = useRef<HTMLInputElement>(null)
-  const accusedNationalIdRef = useRef<HTMLInputElement>(null)
-  const defenderEmailRef = useRef<HTMLInputElement>(null)
-  const arrestTimeRef = useRef<HTMLInputElement>(null)
-  const requestedCourtTimeRef = useRef<HTMLInputElement>(null)
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
 
-  const courts = [
-    {
-      label: 'Héraðsdómur Reykjavíkur',
-      value: 0,
-    },
-    {
-      label: 'Héraðsdómur Vesturlands',
-      value: 1,
-    },
-    {
-      label: 'Héraðsdómur Vestfjarða',
-      value: 2,
-    },
-    {
-      label: 'Héraðsdómur Norðurlands vestra',
-      value: 3,
-    },
-    {
-      label: 'Héraðsdómur Norðurlands eystra',
-      value: 4,
-    },
-    {
-      label: 'Héraðsdómur Austurlands',
-      value: 5,
-    },
-    {
-      label: 'Héraðsdómur Reykjaness',
-      value: 6,
-    },
-  ]
-
-  const defaultCourt = courts.filter(
-    (court) => court.label === workingCase?.court,
-  )
-
   const [createCaseMutation, { loading: createLoading }] = useMutation(
     CreateCaseMutation,
   )
 
-  const createCaseIfPossible = async () => {
-    const isPossibleToSave =
-      createLoading === false &&
-      workingCase?.id === '' &&
-      policeCaseNumberRef.current?.value !== '' &&
-      accusedNationalIdRef.current?.value !== ''
+  const createCase = async (): Promise<string | undefined>  => {
 
-    if (isPossibleToSave) {
+    if (createLoading === false) {
       const { data } = await createCaseMutation({
         variables: {
           input: {
-            policeCaseNumber: policeCaseNumberRef.current?.value,
-            accusedNationalId: accusedNationalIdRef.current?.value.replace(
+            policeCaseNumber: workingCase?.policeCaseNumber,
+            accusedNationalId: workingCase?.accusedNationalId.replace(
               '-',
               '',
             ),
-            court: workingCase?.court,
             accusedName: workingCase?.accusedName,
             accusedAddress: workingCase?.accusedAddress,
             requestedDefenderName: workingCase?.requestedDefenderName,
             requestedDefenderEmail: workingCase?.requestedDefenderEmail,
             accusedGender: workingCase?.accusedGender,
-            arrestDate: workingCase?.arrestDate,
-            requestedCourtDate: workingCase?.requestedCourtDate,
           },
         },
       })
 
       const resCase: Case = data?.createCase
 
-      if (resCase) {
-        history.replace(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/${resCase.id}`)
-
-        setWorkingCase({
-          ...workingCase,
-          id: resCase.id,
-          accusedNationalId:
-            accusedNationalIdRef.current?.value.replace('-', '') || '',
-          policeCaseNumber: policeCaseNumberRef.current?.value || '',
-          created: resCase.created,
-          modified: resCase.modified,
-          state: resCase.state,
-        })
-      }
+      return resCase.id
     }
+
+    return undefined
   }
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
@@ -295,14 +218,48 @@ export const StepOne: React.FC = () => {
     return resCase
   }
 
-  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+  const [transitionCaseMutation, { loading: transitionLoading }] = useMutation(TransitionCaseMutation)
 
-  const transitionCase = async (id: string, transitionCase: TransitionCase) => {
-    const { data } = await transitionCaseMutation({
-      variables: { input: { id, ...transitionCase } },
-    })
+  const transitionCase = async () => {
+    if (!workingCase) {
+      return false
+    }
+    
+    switch (workingCase.state) {
+      case CaseState.NEW:
+        try {
+          // Parse the transition request
+          const transitionRequest = parseTransition(
+            workingCase.modified,
+            CaseTransition.OPEN,
+          )
 
-    return data?.transitionCase
+          const { data } = await transitionCaseMutation({
+            variables: { input: { id: workingCase.id, ...transitionRequest } },
+          })
+
+          if (!data) {
+            return false
+          }
+
+          setWorkingCase({
+            ...workingCase,
+            state: data.state,
+            prosecutor: data.prosecutor,
+          })
+
+          return true
+        } catch (e) {
+          console.log(e)
+
+          return false
+        }
+      case CaseState.DRAFT:
+      case CaseState.SUBMITTED:
+        return true
+      default:
+        return false
+    }
   }
 
   const [
@@ -323,48 +280,18 @@ export const StepOne: React.FC = () => {
     return data?.sendNotification?.notificationSent
   }
 
-  const handleNextButtonClick: () => Promise<boolean> = async () => {
+  const handleNextButtonClick = async () => {
     if (!workingCase) {
-      return false
+      return
     }
 
-    switch (workingCase.state) {
-      case CaseState.NEW:
-        try {
-          // Parse the transition request
-          const transitionRequest = parseTransition(
-            workingCase.modified,
-            CaseTransition.OPEN,
-          )
+    const caseId = workingCase.id === "" ? 
+      await createCase() : 
+      workingCase.id
 
-          // Transition the case
-          const resCase = await transitionCase(
-            workingCase.id ?? id,
-            transitionRequest,
-          )
-
-          if (!resCase) {
-            return false
-          }
-
-          setWorkingCase({
-            ...workingCase,
-            state: resCase.state,
-            prosecutor: resCase.prosecutor,
-          })
-
-          return true
-        } catch (e) {
-          console.log(e)
-
-          return false
-        }
-      case CaseState.DRAFT:
-      case CaseState.SUBMITTED:
-        return true
-      default:
-        return false
-    }
+    history.push(
+      `${Constants.STEP_TWO_ROUTE}/${caseId}`,
+    )
   }
 
   useEffect(() => {
@@ -388,9 +315,6 @@ export const StepOne: React.FC = () => {
         requestedDefenderName: '',
         requestedDefenderEmail: '',
         accusedGender: undefined,
-        court: 'Héraðsdómur Reykjavíkur',
-        arrestDate: undefined,
-        requestedCourtDate: undefined,
       })
     }
   }, [id, workingCase, setWorkingCase, data])
@@ -419,19 +343,9 @@ export const StepOne: React.FC = () => {
             value: workingCase.requestedDefenderEmail || '',
             validations: ['email-format'],
           },
-          { value: workingCase.arrestDate || '', validations: ['empty'] },
           {
-            value: arrestTimeRef.current?.value || '',
-            validations: ['empty', 'time-format'],
-          },
-          {
-            value: workingCase.requestedCourtDate || '',
-            validations: ['empty'],
-          },
-          {
-            value: requestedCourtTimeRef.current?.value || '',
-            validations: ['empty', 'time-format'],
-          },
+            value: workingCase.accusedGender || '', validations: ['empty']
+          }
         ]),
       )
     } else {
@@ -440,35 +354,7 @@ export const StepOne: React.FC = () => {
   }, [
     workingCase,
     setIsStepIllegal,
-    arrestTimeRef.current?.value,
-    requestedCourtTimeRef.current?.value,
   ])
-
-  const onBlurCreate = (
-    field: string,
-    text: string,
-    validations: Validation[],
-    setErrorMessage: (value: React.SetStateAction<string>) => void,
-  ) => {
-    if (!workingCase) {
-      return
-    }
-
-    const error = validations
-      .map((v) => validate(text, v))
-      .find((v) => v.isValid === false)
-
-    if (error) {
-      setErrorMessage(error.errorMessage)
-      return
-    }
-
-    if (workingCase.id !== '') {
-      updateCase(workingCase.id, parseString(field, text))
-    } else {
-      createCaseIfPossible()
-    }
-  }
 
   return (
     <PageLayout
@@ -506,10 +392,12 @@ export const StepOne: React.FC = () => {
                 )
               }
               onBlur={(event) =>
-                onBlurCreate(
+                validateAndSendToServer(
                   'policeCaseNumber',
                   event.target.value,
                   ['empty', 'police-casenumber-format'],
+                  workingCase,
+                  updateCase,
                   setPoliceCaseNumberErrorMessage,
                 )
               }
@@ -520,7 +408,6 @@ export const StepOne: React.FC = () => {
                 label="Slá inn LÖKE málsnúmer"
                 placeholder="007-2020-X"
                 defaultValue={workingCase.policeCaseNumber}
-                ref={policeCaseNumberRef}
                 errorMessage={policeCaseNumberErrorMessage}
                 hasError={policeCaseNumberErrorMessage !== ''}
                 required
@@ -533,6 +420,74 @@ export const StepOne: React.FC = () => {
                 Sakborningur
               </Text>
             </Box>
+            <Box component="section" marginBottom={7}>
+            <Box marginBottom={2}>
+              <Text as="h3" variant="h3">
+                Kyn{' '}
+                <Text as="span" color="red600" fontWeight="semiBold">
+                  *
+                </Text>
+              </Text>
+            </Box>
+            <GridContainer>
+              <GridRow>
+                <GridColumn className={styles.genderColumn}>
+                  <RadioButton
+                    name="accused-gender"
+                    id="genderMale"
+                    label="Karl"
+                    checked={workingCase.accusedGender === CaseGender.MALE}
+                    onChange={() =>
+                      setAndSendToServer(
+                        'accusedGender',
+                        CaseGender.MALE,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    }
+                    large
+                  />
+                </GridColumn>
+                <GridColumn className={styles.genderColumn}>
+                  <RadioButton
+                    name="accused-gender"
+                    id="genderFemale"
+                    label="Kona"
+                    checked={workingCase.accusedGender === CaseGender.FEMALE}
+                    onChange={() =>
+                      setAndSendToServer(
+                        'accusedGender',
+                        CaseGender.FEMALE,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    }
+                    large
+                  />
+                </GridColumn>
+                <GridColumn className={styles.genderColumn}>
+                  <RadioButton
+                    name="accused-gender"
+                    id="genderOther"
+                    label="Annað"
+                    checked={workingCase.accusedGender === CaseGender.OTHER}
+                    onChange={() =>
+                      setAndSendToServer(
+                        'accusedGender',
+                        CaseGender.OTHER,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    }
+                    large
+                  />
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
+          </Box>
             <Box marginBottom={3}>
               <InputMask
                 mask="999999-9999"
@@ -549,10 +504,12 @@ export const StepOne: React.FC = () => {
                   )
                 }
                 onBlur={(event) =>
-                  onBlurCreate(
+                  validateAndSendToServer(
                     'accusedNationalId',
                     event.target.value,
                     ['empty', 'national-id'],
+                    workingCase,
+                    updateCase,
                     setNationalIdErrorMessage,
                   )
                 }
@@ -563,7 +520,6 @@ export const StepOne: React.FC = () => {
                   label="Kennitala"
                   placeholder="Kennitala"
                   defaultValue={workingCase.accusedNationalId}
-                  ref={accusedNationalIdRef}
                   errorMessage={nationalIdErrorMessage}
                   hasError={nationalIdErrorMessage !== ''}
                   required
@@ -637,74 +593,7 @@ export const StepOne: React.FC = () => {
               />
             </Box>
           </Box>
-          <Box component="section" marginBottom={7}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Kyn{' '}
-                <Text as="span" color="red600" fontWeight="semiBold">
-                  *
-                </Text>
-              </Text>
-            </Box>
-            <GridContainer>
-              <GridRow>
-                <GridColumn className={styles.genderColumn}>
-                  <RadioButton
-                    name="accused-gender"
-                    id="genderMale"
-                    label="Karl"
-                    checked={workingCase.accusedGender === CaseGender.MALE}
-                    onChange={() =>
-                      setAndSendToServer(
-                        'accusedGender',
-                        CaseGender.MALE,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }
-                    large
-                  />
-                </GridColumn>
-                <GridColumn className={styles.genderColumn}>
-                  <RadioButton
-                    name="accused-gender"
-                    id="genderFemale"
-                    label="Kona"
-                    checked={workingCase.accusedGender === CaseGender.FEMALE}
-                    onChange={() =>
-                      setAndSendToServer(
-                        'accusedGender',
-                        CaseGender.FEMALE,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }
-                    large
-                  />
-                </GridColumn>
-                <GridColumn className={styles.genderColumn}>
-                  <RadioButton
-                    name="accused-gender"
-                    id="genderOther"
-                    label="Annað"
-                    checked={workingCase.accusedGender === CaseGender.OTHER}
-                    onChange={() =>
-                      setAndSendToServer(
-                        'accusedGender',
-                        CaseGender.OTHER,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }
-                    large
-                  />
-                </GridColumn>
-              </GridRow>
-            </GridContainer>
-          </Box>
+          
           <Box component="section" marginBottom={7}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
@@ -747,7 +636,6 @@ export const StepOne: React.FC = () => {
                 isDirty(workingCase.defenderEmail) ? 'lockClosed' : undefined
               }
               iconType="outline"
-              ref={defenderEmailRef}
               defaultValue={workingCase.requestedDefenderEmail}
               errorMessage={requestedDefenderEmailErrorMessage}
               hasError={requestedDefenderEmailErrorMessage !== ''}
@@ -780,275 +668,12 @@ export const StepOne: React.FC = () => {
               </Box>
             )}
           </Box>
-          <Box component="section" marginBottom={7}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Dómstóll
-              </Text>
-            </Box>
-            <Select
-              name="court"
-              label="Veldu dómstól"
-              defaultValue={{
-                label:
-                  defaultCourt.length > 0
-                    ? defaultCourt[0].label
-                    : courts[0].label,
-                value:
-                  defaultCourt.length > 0
-                    ? defaultCourt[0].value
-                    : courts[0].value,
-              }}
-              options={courts}
-              onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-                setAndSendToServer(
-                  'court',
-                  (selectedOption as ReactSelectOption).label,
-                  workingCase,
-                  setWorkingCase,
-                  updateCase,
-                )
-              }
-            />
-          </Box>
-          <Box component="section" marginBottom={7}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Tími handtöku
-              </Text>
-            </Box>
-            <GridRow>
-              <GridColumn span="5/8">
-                <DatePicker
-                  id="arrestDate"
-                  label="Veldu dagsetningu"
-                  placeholderText="Veldu dagsetningu"
-                  locale="is"
-                  errorMessage={arrestDateErrorMessage}
-                  hasError={arrestDateErrorMessage !== ''}
-                  selected={
-                    workingCase.arrestDate
-                      ? new Date(workingCase.arrestDate)
-                      : null
-                  }
-                  handleChange={(date) =>
-                    setAndSendDateToServer(
-                      'arrestDate',
-                      workingCase.arrestDate,
-                      date,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                      setArrestDateErrorMessage,
-                    )
-                  }
-                  handleCloseCalendar={(date: Date | null) => {
-                    if (date === null || !isValid(date)) {
-                      setArrestDateErrorMessage('Reitur má ekki vera tómur')
-                    }
-                  }}
-                  required
-                />
-              </GridColumn>
-              <GridColumn span="3/8">
-                <TimeInputField
-                  disabled={!workingCase.arrestDate}
-                  onChange={(evt) =>
-                    validateAndSetTime(
-                      'arrestDate',
-                      workingCase.arrestDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
-                      workingCase,
-                      setWorkingCase,
-                      arrestTimeErrorMessage,
-                      setArrestTimeErrorMessage,
-                    )
-                  }
-                  onBlur={(evt) =>
-                    validateAndSendTimeToServer(
-                      'arrestDate',
-                      workingCase.arrestDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
-                      workingCase,
-                      updateCase,
-                      setArrestTimeErrorMessage,
-                    )
-                  }
-                >
-                  <Input
-                    data-testid="arrestTime"
-                    name="arrestTime"
-                    label="Tímasetning"
-                    placeholder="Settu inn tíma"
-                    ref={arrestTimeRef}
-                    errorMessage={arrestTimeErrorMessage}
-                    hasError={arrestTimeErrorMessage !== ''}
-                    defaultValue={
-                      workingCase.arrestDate?.includes('T')
-                        ? formatDate(workingCase.arrestDate, TIME_FORMAT)
-                        : undefined
-                    }
-                    required
-                  />
-                </TimeInputField>
-              </GridColumn>
-            </GridRow>
-          </Box>
-          <Box component="section" marginBottom={7}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Ósk um fyrirtökudag og tíma{' '}
-                <Tooltip text='Vinsamlegast sláðu tímann sem þú óskar eftir að málið verður tekið fyrir. Gáttin birtir tímann sem: "Eftir kl." tíminn sem þú slærð inn. Það þarf því ekki að velja nákvæma tímasetningu hvenær óskað er eftir fyrirtöku, heldur bara eftir hvaða tíma myndi henta að taka málið fyrir.' />
-              </Text>
-            </Box>
-            <GridRow>
-              <GridColumn span="5/8">
-                <DatePicker
-                  id="reqCourtDate"
-                  label="Veldu dagsetningu"
-                  placeholderText="Veldu dagsetningu"
-                  locale="is"
-                  errorMessage={requestedCourtDateErrorMessage}
-                  icon={workingCase.courtDate ? 'lockClosed' : undefined}
-                  minDate={new Date()}
-                  selected={
-                    workingCase.requestedCourtDate
-                      ? parseISO(workingCase.requestedCourtDate.toString())
-                      : null
-                  }
-                  disabled={Boolean(workingCase.courtDate)}
-                  handleChange={(date) =>
-                    setAndSendDateToServer(
-                      'requestedCourtDate',
-                      workingCase.requestedCourtDate,
-                      date,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                      setRequestedCourtDateErrorMessage,
-                    )
-                  }
-                  handleCloseCalendar={(date: Date | null) => {
-                    if (date === null || !isValid(date)) {
-                      setRequestedCourtDateErrorMessage(
-                        'Reitur má ekki vera tómur',
-                      )
-                    }
-                  }}
-                  required
-                />
-              </GridColumn>
-              <GridColumn span="3/8">
-                <TimeInputField
-                  disabled={
-                    !workingCase.requestedCourtDate ||
-                    Boolean(workingCase.courtDate)
-                  }
-                  onChange={(evt) =>
-                    validateAndSetTime(
-                      'requestedCourtDate',
-                      workingCase.requestedCourtDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
-                      workingCase,
-                      setWorkingCase,
-                      requestedCourtTimeErrorMessage,
-                      setRequestedCourtTimeErrorMessage,
-                    )
-                  }
-                  onBlur={(evt) =>
-                    validateAndSendTimeToServer(
-                      'requestedCourtDate',
-                      workingCase.requestedCourtDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
-                      workingCase,
-                      updateCase,
-                      setRequestedCourtTimeErrorMessage,
-                    )
-                  }
-                >
-                  <Input
-                    data-testid="requestedCourtDate"
-                    name="requestedCourtDate"
-                    label="Ósk um tíma"
-                    placeholder="Settu inn tíma dags"
-                    errorMessage={requestedCourtTimeErrorMessage}
-                    hasError={requestedCourtTimeErrorMessage !== ''}
-                    defaultValue={
-                      workingCase.requestedCourtDate?.includes('T')
-                        ? formatDate(
-                            workingCase.requestedCourtDate,
-                            TIME_FORMAT,
-                          )
-                        : undefined
-                    }
-                    icon={workingCase.courtDate ? 'lockClosed' : undefined}
-                    iconType="outline"
-                    ref={requestedCourtTimeRef}
-                    required
-                  />
-                </TimeInputField>
-              </GridColumn>
-            </GridRow>
-            {workingCase.courtDate && (
-              <Box marginTop={1}>
-                <Text variant="eyebrow">
-                  Fyrirtökudegi og tíma hefur verið úthlutað
-                </Text>
-              </Box>
-            )}
-          </Box>
           <FormFooter
-            onNextButtonClick={async () => {
-              const caseTransitioned = await handleNextButtonClick()
-              if (caseTransitioned) {
-                if (
-                  workingCase.notifications?.find(
-                    (notification) =>
-                      notification.type === NotificationType.HEADS_UP,
-                  )
-                ) {
-                  history.push(
-                    `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
-                  )
-                } else {
-                  setModalVisible(true)
-                }
-              } else {
-                // TODO: Handle error
-              }
-            }}
-            nextIsDisabled={isStepIllegal}
+            onNextButtonClick={async () => await handleNextButtonClick()}
+            nextIsLoading={createLoading || transitionLoading}
+            nextIsDisabled={isStepIllegal || createLoading || transitionLoading}
+            nextButtonText={workingCase.id === "" ? "Stofna kröfu" : "Halda áfram"}
           />
-          {modalVisible && (
-            <Modal
-              title="Viltu senda tilkynningu?"
-              text="Með því að senda tilkynningu á dómara á vakt um að krafa um gæsluvarðhald sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála."
-              primaryButtonText="Senda tilkynningu"
-              secondaryButtonText="Halda áfram með kröfu"
-              handleClose={() => setModalVisible(false)}
-              handleSecondaryButtonClick={() =>
-                history.push(
-                  `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
-                )
-              }
-              handlePrimaryButtonClick={async () => {
-                const notificationSent = await sendNotification(
-                  workingCase.id ?? id,
-                )
-
-                if (notificationSent) {
-                  history.push(
-                    `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
-                  )
-                }
-              }}
-              isPrimaryButtonLoading={isSendingNotification}
-            />
-          )}
         </>
       ) : null}
     </PageLayout>

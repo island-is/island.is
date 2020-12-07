@@ -9,11 +9,15 @@ import {
   Input,
   Checkbox,
   Tooltip,
+  Select
 } from '@island.is/island-ui/core'
 import {
   Case,
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
+  CaseState,
+  CaseTransition,
+  NotificationType,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import { isNextDisabled } from '../../../../utils/stepHelper'
@@ -32,19 +36,23 @@ import {
   parseArray,
   parseString,
   parseTime,
+  parseTransition,
   replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '../../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
+  SendNotificationMutation,
+  TransitionCaseMutation,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import {
   ProsecutorSubsections,
+  ReactSelectOption,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
@@ -54,14 +62,39 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
   validateAndSetTime,
+  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { ValueType } from 'react-select/src/types'
+import Modal from '../../../../shared-components/Modal/Modal'
 
 export const StepTwo: React.FC = () => {
+  const history = useHistory()
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const arrestTimeRef = useRef<HTMLInputElement>(null)
+  const requestedCourtTimeRef = useRef<HTMLInputElement>(null)
   const requestedCustodyEndTimeRef = useRef<HTMLInputElement>(null)
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
   const { id } = useParams<{ id: string }>()
+
+  const [arrestDateErrorMessage, setArrestDateErrorMessage] = useState<string>(
+    '',
+  )
+
+  const [arrestTimeErrorMessage, setArrestTimeErrorMessage] = useState<string>(
+    '',
+  )
+
+  const [
+    requestedCourtDateErrorMessage,
+    setRequestedCourtDateErrorMessage,
+  ] = useState<string>('')
+
+  const [
+    requestedCourtTimeErrorMessage,
+    setRequestedCourtTimeErrorMessage,
+  ] = useState<string>('')
 
   const [
     requestedCustodyEndDateErrorMessage,
@@ -96,6 +129,24 @@ export const StepTwo: React.FC = () => {
   })
 
   const resCase = data?.case
+
+  const [
+    sendNotificationMutation,
+    { loading: isSendingNotification },
+  ] = useMutation(SendNotificationMutation)
+
+  const sendNotification = async (id: string) => {
+    const { data } = await sendNotificationMutation({
+      variables: {
+        input: {
+          caseId: id,
+          type: NotificationType.HEADS_UP,
+        },
+      },
+    })
+
+    return data?.sendNotification?.notificationSent
+  }
 
   const caseCustodyProvisions = [
     {
@@ -173,6 +224,71 @@ export const StepTwo: React.FC = () => {
     },
   ]
 
+  const courts = [
+    {
+      label: 'Héraðsdómur Reykjavíkur',
+      value: 0,
+    },
+    {
+      label: 'Héraðsdómur Vesturlands',
+      value: 1,
+    },
+    {
+      label: 'Héraðsdómur Vestfjarða',
+      value: 2,
+    },
+    {
+      label: 'Héraðsdómur Norðurlands vestra',
+      value: 3,
+    },
+    {
+      label: 'Héraðsdómur Norðurlands eystra',
+      value: 4,
+    },
+    {
+      label: 'Héraðsdómur Austurlands',
+      value: 5,
+    },
+    {
+      label: 'Héraðsdómur Reykjaness',
+      value: 6,
+    },
+  ]
+
+  const defaultCourt = courts.filter(
+    (court) => court.label === workingCase?.court,
+  )
+
+  const handleNextButtonClick = async () => {
+    
+    
+    
+    if (!workingCase) {
+      return
+    }
+    
+    const transitionSuccess = await transitionCase()
+
+    console.log("transitionSuccess:", transitionSuccess)
+    
+    if(transitionSuccess) {
+      if (
+        workingCase.notifications?.find(
+          (notification) =>
+            notification.type === NotificationType.HEADS_UP,
+        )
+      ) {
+        history.push(
+          `${Constants.STEP_TWO_ROUTE}/${workingCase.id}`,
+        )
+      } else {
+        setModalVisible(true)
+      }
+    } else {
+      // TODO: Handle error
+    }
+  }
+
   useEffect(() => {
     document.title = 'Málsatvik og lagarök - Réttarvörslugátt'
   }, [])
@@ -189,7 +305,24 @@ export const StepTwo: React.FC = () => {
   }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
 
   useEffect(() => {
+
     const requiredFields: { value: string; validations: Validation[] }[] = [
+      {
+        value: workingCase?.arrestDate || '',
+        validations: ['empty'],
+      },
+      {
+        value: arrestTimeRef.current?.value || '',
+        validations: ['empty', 'time-format'],
+      },
+      {
+        value: workingCase?.requestedCourtDate || '',
+        validations: ['empty'],
+      },
+      {
+        value: requestedCourtTimeRef.current?.value || '',
+        validations: ['empty', 'time-format'],
+      },
       {
         value: workingCase?.requestedCustodyEndDate || '',
         validations: ['empty'],
@@ -197,10 +330,7 @@ export const StepTwo: React.FC = () => {
       {
         value: requestedCustodyEndTimeRef.current?.value || '',
         validations: ['empty', 'time-format'],
-      },
-      { value: workingCase?.lawsBroken || '', validations: ['empty'] },
-      { value: workingCase?.caseFacts || '', validations: ['empty'] },
-      { value: workingCase?.legalArguments || '', validations: ['empty'] },
+      }
     ]
 
     if (workingCase) {
@@ -225,6 +355,51 @@ export const StepTwo: React.FC = () => {
     return resCase
   }
 
+  const [transitionCaseMutation, { loading: transitionLoading }] = useMutation(TransitionCaseMutation)
+
+  const transitionCase = async () => {
+    if (!workingCase) {
+      return false
+    }
+    
+    switch (workingCase.state) {
+      case CaseState.NEW:
+        try {
+          // Parse the transition request
+          const transitionRequest = parseTransition(
+            workingCase.modified,
+            CaseTransition.OPEN,
+          )
+
+          const { data } = await transitionCaseMutation({
+            variables: { input: { id: workingCase.id, ...transitionRequest } },
+          })
+
+          if (!data) {
+            return false
+          }
+
+          console.log(data);
+
+          setWorkingCase({
+            ...workingCase,
+            state: data.transitionCase.state,
+          })
+
+          return true
+        } catch (e) {
+          console.log(e)
+
+          return false
+        }
+      case CaseState.DRAFT:
+      case CaseState.SUBMITTED:
+        return true
+      default:
+        return false
+    }
+  }
+
   return (
     <PageLayout
       activeSection={Sections.PROSECUTOR}
@@ -239,6 +414,228 @@ export const StepTwo: React.FC = () => {
               Krafa um gæsluvarðhald
             </Text>
           </Box>
+
+          <Box component="section" marginBottom={7}>
+          <Box marginBottom={2}>
+            <Text as="h3" variant="h3">
+              Dómstóll
+            </Text>
+          </Box>
+          <Select
+            name="court"
+            label="Veldu dómstól"
+            defaultValue={{
+              label:
+                defaultCourt.length > 0
+                  ? defaultCourt[0].label
+                  : courts[0].label,
+              value:
+                defaultCourt.length > 0
+                  ? defaultCourt[0].value
+                  : courts[0].value,
+            }}
+            options={courts}
+            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+              setAndSendToServer(
+                'court',
+                (selectedOption as ReactSelectOption).label,
+                workingCase,
+                setWorkingCase,
+                updateCase,
+              )
+            }
+          />
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <Box marginBottom={2}>
+            <Text as="h3" variant="h3">
+              Tími handtöku
+            </Text>
+          </Box>
+          <GridRow>
+            <GridColumn span="5/8">
+              <DatePicker
+                id="arrestDate"
+                label="Veldu dagsetningu"
+                placeholderText="Veldu dagsetningu"
+                locale="is"
+                errorMessage={arrestDateErrorMessage}
+                hasError={arrestDateErrorMessage !== ''}
+                selected={
+                  workingCase.arrestDate
+                    ? new Date(workingCase.arrestDate)
+                    : null
+                }
+                handleChange={(date) =>
+                  setAndSendDateToServer(
+                    'arrestDate',
+                    workingCase.arrestDate,
+                    date,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                    setArrestDateErrorMessage,
+                  )
+                }
+                handleCloseCalendar={(date: Date | null) => {
+                  if (date === null || !isValid(date)) {
+                    setArrestDateErrorMessage('Reitur má ekki vera tómur')
+                  }
+                }}
+                required
+              />
+            </GridColumn>
+            <GridColumn span="3/8">
+              <TimeInputField
+                disabled={!workingCase.arrestDate}
+                onChange={(evt) =>
+                  validateAndSetTime(
+                    'arrestDate',
+                    workingCase.arrestDate,
+                    evt.target.value,
+                    ['empty', 'time-format'],
+                    workingCase,
+                    setWorkingCase,
+                    arrestTimeErrorMessage,
+                    setArrestTimeErrorMessage,
+                  )
+                }
+                onBlur={(evt) =>
+                  validateAndSendTimeToServer(
+                    'arrestDate',
+                    workingCase.arrestDate,
+                    evt.target.value,
+                    ['empty', 'time-format'],
+                    workingCase,
+                    updateCase,
+                    setArrestTimeErrorMessage,
+                  )
+                }
+              >
+                <Input
+                  data-testid="arrestTime"
+                  name="arrestTime"
+                  label="Tímasetning"
+                  placeholder="Settu inn tíma"
+                  ref={arrestTimeRef}
+                  errorMessage={arrestTimeErrorMessage}
+                  hasError={arrestTimeErrorMessage !== ''}
+                  defaultValue={
+                    workingCase.arrestDate?.includes('T')
+                      ? formatDate(workingCase.arrestDate, TIME_FORMAT)
+                      : undefined
+                  }
+                  required
+                />
+              </TimeInputField>
+            </GridColumn>
+          </GridRow>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <Box marginBottom={2}>
+            <Text as="h3" variant="h3">
+              Ósk um fyrirtökudag og tíma{' '}
+              <Tooltip text='Vinsamlegast sláðu tímann sem þú óskar eftir að málið verður tekið fyrir. Gáttin birtir tímann sem: "Eftir kl." tíminn sem þú slærð inn. Það þarf því ekki að velja nákvæma tímasetningu hvenær óskað er eftir fyrirtöku, heldur bara eftir hvaða tíma myndi henta að taka málið fyrir.' />
+            </Text>
+          </Box>
+          <GridRow>
+            <GridColumn span="5/8">
+              <DatePicker
+                id="reqCourtDate"
+                label="Veldu dagsetningu"
+                placeholderText="Veldu dagsetningu"
+                locale="is"
+                errorMessage={requestedCourtDateErrorMessage}
+                icon={workingCase.courtDate ? 'lockClosed' : undefined}
+                minDate={new Date()}
+                selected={
+                  workingCase.requestedCourtDate
+                    ? parseISO(workingCase.requestedCourtDate.toString())
+                    : null
+                }
+                disabled={Boolean(workingCase.courtDate)}
+                handleChange={(date) =>
+                  setAndSendDateToServer(
+                    'requestedCourtDate',
+                    workingCase.requestedCourtDate,
+                    date,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                    setRequestedCourtDateErrorMessage,
+                  )
+                }
+                handleCloseCalendar={(date: Date | null) => {
+                  if (date === null || !isValid(date)) {
+                    setRequestedCourtDateErrorMessage(
+                      'Reitur má ekki vera tómur',
+                    )
+                  }
+                }}
+                required
+              />
+            </GridColumn>
+            <GridColumn span="3/8">
+              <TimeInputField
+                disabled={
+                  !workingCase.requestedCourtDate ||
+                  Boolean(workingCase.courtDate)
+                }
+                onChange={(evt) =>
+                  validateAndSetTime(
+                    'requestedCourtDate',
+                    workingCase.requestedCourtDate,
+                    evt.target.value,
+                    ['empty', 'time-format'],
+                    workingCase,
+                    setWorkingCase,
+                    requestedCourtTimeErrorMessage,
+                    setRequestedCourtTimeErrorMessage,
+                  )
+                }
+                onBlur={(evt) =>
+                  validateAndSendTimeToServer(
+                    'requestedCourtDate',
+                    workingCase.requestedCourtDate,
+                    evt.target.value,
+                    ['empty', 'time-format'],
+                    workingCase,
+                    updateCase,
+                    setRequestedCourtTimeErrorMessage,
+                  )
+                }
+              >
+                <Input
+                  data-testid="requestedCourtDate"
+                  name="requestedCourtDate"
+                  label="Ósk um tíma"
+                  placeholder="Settu inn tíma dags"
+                  errorMessage={requestedCourtTimeErrorMessage}
+                  hasError={requestedCourtTimeErrorMessage !== ''}
+                  defaultValue={
+                    workingCase.requestedCourtDate?.includes('T')
+                      ? formatDate(
+                          workingCase.requestedCourtDate,
+                          TIME_FORMAT,
+                        )
+                      : undefined
+                  }
+                  icon={workingCase.courtDate ? 'lockClosed' : undefined}
+                  iconType="outline"
+                  ref={requestedCourtTimeRef}
+                  required
+                />
+              </TimeInputField>
+            </GridColumn>
+          </GridRow>
+          {workingCase.courtDate && (
+            <Box marginTop={1}>
+              <Text variant="eyebrow">
+                Fyrirtökudegi og tíma hefur verið úthlutað
+              </Text>
+            </Box>
+          )}
+        </Box>
           <Box component="section" marginBottom={7}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
@@ -331,345 +728,37 @@ export const StepTwo: React.FC = () => {
               </GridColumn>
             </GridRow>
           </Box>
-          <Box component="section" marginBottom={7}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Lagaákvæði sem brot varða við
-              </Text>
-            </Box>
-            <Input
-              data-testid="lawsBroken"
-              name="lawsBroken"
-              label="Lagaákvæði sem ætluð brot kærða þykja varða við"
-              placeholder="Skrá inn þau lagaákvæði sem brotið varðar við, til dæmis 1. mgr. 244 gr. almennra hegningarlaga nr. 19/1940..."
-              defaultValue={workingCase?.lawsBroken}
-              errorMessage={lawsBrokenErrorMessage}
-              hasError={lawsBrokenErrorMessage !== ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'lawsBroken',
-                  event,
-                  ['empty'],
-                  workingCase,
-                  setWorkingCase,
-                  lawsBrokenErrorMessage,
-                  setLawsBrokenErrorMessage,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'lawsBroken',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setLawsBrokenErrorMessage,
-                )
-              }
-              required
-              textarea
-              rows={7}
-            />
-          </Box>
-          <Box component="section" marginBottom={7}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Lagaákvæði sem krafan er byggð á{' '}
-                <Text as="span" color={'red400'} fontWeight="semiBold">
-                  *
-                </Text>
-              </Text>
-            </Box>
-            <GridContainer>
-              <GridRow>
-                {caseCustodyProvisions.map((provision, index) => {
-                  return (
-                    <GridColumn span="3/7" key={index}>
-                      <Box marginBottom={3}>
-                        <Checkbox
-                          name={provision.brokenLaw}
-                          label={provision.brokenLaw}
-                          value={provision.value}
-                          checked={
-                            workingCase.custodyProvisions &&
-                            workingCase.custodyProvisions.indexOf(
-                              provision.value,
-                            ) > -1
-                          }
-                          tooltip={provision.explination}
-                          onChange={({ target }) => {
-                            // Create a copy of the state
-                            const copyOfState = Object.assign(workingCase, {})
-
-                            const provisionIsSelected =
-                              copyOfState.custodyProvisions &&
-                              copyOfState.custodyProvisions.indexOf(
-                                target.value as CaseCustodyProvisions,
-                              ) > -1
-
-                            // Toggle the checkbox on or off
-                            provision.setCheckbox(!provisionIsSelected)
-
-                            // If the user is checking the box, add the broken law to the state
-                            if (!provisionIsSelected) {
-                              if (copyOfState.custodyProvisions === null) {
-                                copyOfState.custodyProvisions = []
-                              }
-
-                              copyOfState.custodyProvisions &&
-                                copyOfState.custodyProvisions.push(
-                                  target.value as CaseCustodyProvisions,
-                                )
-                            }
-                            // If the user is unchecking the box, remove the broken law from the state
-                            else {
-                              const provisions = copyOfState.custodyProvisions
-                              if (provisions) {
-                                provisions.splice(
-                                  provisions.indexOf(
-                                    target.value as CaseCustodyProvisions,
-                                  ),
-                                  1,
-                                )
-                              }
-                            }
-
-                            // Set the updated state as the state
-                            setWorkingCase(copyOfState)
-
-                            if (copyOfState.custodyProvisions) {
-                              // Save case
-                              updateCase(
-                                workingCase.id,
-                                parseArray(
-                                  'custodyProvisions',
-                                  copyOfState.custodyProvisions,
-                                ),
-                              )
-                            }
-                          }}
-                          large
-                        />
-                      </Box>
-                    </GridColumn>
-                  )
-                })}
-              </GridRow>
-            </GridContainer>
-          </Box>
-          <Box component="section" marginBottom={7}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Takmarkanir á gæslu
-              </Text>
-              <Text fontWeight="regular">
-                Ef ekkert er valið, er gæsla án takmarkana
-              </Text>
-            </Box>
-            <GridContainer>
-              <GridRow>
-                {restrictions.map((restriction, index) => (
-                  <GridColumn span="3/7" key={index}>
-                    <Box marginBottom={3}>
-                      <Checkbox
-                        name={restriction.restriction}
-                        label={restriction.restriction}
-                        value={restriction.value}
-                        checked={
-                          workingCase.requestedCustodyRestrictions &&
-                          workingCase.requestedCustodyRestrictions.indexOf(
-                            restriction.value,
-                          ) > -1
-                        }
-                        tooltip={restriction.explination}
-                        onChange={async ({ target }) => {
-                          // Create a copy of the state
-                          const copyOfState = Object.assign(workingCase, {})
-
-                          const restrictionIsSelected =
-                            copyOfState.requestedCustodyRestrictions &&
-                            copyOfState.requestedCustodyRestrictions.indexOf(
-                              target.value as CaseCustodyRestrictions,
-                            ) > -1
-
-                          // Toggle the checkbox on or off
-                          restriction.setCheckbox(!restrictionIsSelected)
-
-                          if (
-                            copyOfState.requestedCustodyRestrictions === null
-                          ) {
-                            copyOfState.requestedCustodyRestrictions = []
-                          }
-
-                          // If the user is checking the box, add the restriction to the state
-                          if (!restrictionIsSelected) {
-                            copyOfState.requestedCustodyRestrictions &&
-                              copyOfState.requestedCustodyRestrictions.push(
-                                target.value as CaseCustodyRestrictions,
-                              )
-                          }
-                          // If the user is unchecking the box, remove the restriction from the state
-                          else {
-                            copyOfState.requestedCustodyRestrictions &&
-                              copyOfState.requestedCustodyRestrictions.splice(
-                                copyOfState.requestedCustodyRestrictions.indexOf(
-                                  target.value as CaseCustodyRestrictions,
-                                ),
-                                1,
-                              )
-                          }
-
-                          // Set the updated state as the state
-                          setWorkingCase(copyOfState)
-
-                          // Save case
-                          if (copyOfState.requestedCustodyRestrictions) {
-                            await updateCase(
-                              workingCase.id,
-                              parseArray(
-                                'requestedCustodyRestrictions',
-                                copyOfState.requestedCustodyRestrictions,
-                              ),
-                            )
-                          }
-
-                          setWorkingCase({
-                            ...workingCase,
-                            requestedCustodyRestrictions:
-                              copyOfState.requestedCustodyRestrictions,
-                          })
-                        }}
-                        large
-                      />
-                    </Box>
-                  </GridColumn>
-                ))}
-              </GridRow>
-            </GridContainer>
-          </Box>
-          <Box component="section" marginBottom={7}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Greinargerð um málsatvik og lagarök
-              </Text>
-            </Box>
-            <Box marginBottom={3}>
-              <Input
-                data-testid="caseFacts"
-                name="caseFacts"
-                label="Málsatvik"
-                placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
-                errorMessage={caseFactsErrorMessage}
-                hasError={caseFactsErrorMessage !== ''}
-                defaultValue={workingCase?.caseFacts}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'caseFacts',
-                    event,
-                    ['empty'],
-                    workingCase,
-                    setWorkingCase,
-                    caseFactsErrorMessage,
-                    setCaseFactsErrorMessage,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'caseFacts',
-                    event.target.value,
-                    ['empty'],
-                    workingCase,
-                    updateCase,
-                    setCaseFactsErrorMessage,
-                  )
-                }
-                required
-                rows={16}
-                textarea
-              />
-            </Box>
-            <Box marginBottom={7}>
-              <Input
-                data-testid="legalArguments"
-                name="legalArguments"
-                label="Lagarök"
-                placeholder="Hver eru lagarökin fyrir kröfu um gæsluvarðhald?"
-                defaultValue={workingCase?.legalArguments}
-                errorMessage={legalArgumentsErrorMessage}
-                hasError={legalArgumentsErrorMessage !== ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'legalArguments',
-                    event,
-                    ['empty'],
-                    workingCase,
-                    setWorkingCase,
-                    legalArgumentsErrorMessage,
-                    setLegalArgumentsErrorMessage,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'legalArguments',
-                    event.target.value,
-                    ['empty'],
-                    workingCase,
-                    updateCase,
-                    setLegalArgumentsErrorMessage,
-                  )
-                }
-                required
-                textarea
-                rows={16}
-              />
-            </Box>
-            <Box component="section" marginBottom={7}>
-              <Box marginBottom={2}>
-                <Text as="h3" variant="h3">
-                  Skilaboð til dómara{' '}
-                  <Tooltip
-                    placement="right"
-                    as="span"
-                    text="Hér er hægt að skrá athugasemdir eða skilaboð til dómara sem verður ekki vistað sem hluti af kröfunni. Til dæmis aðrar upplýsingar en koma fram í kröfunni og/eða upplýsingar um ástand sakbornings"
-                  />
-                </Text>
-              </Box>
-              <Box marginBottom={3}>
-                <Input
-                  name="comments"
-                  label="Skilaboð til dómara"
-                  placeholder="Er eitthvað sem þú vilt koma á framfæri við dómara sem tengist kröfunni eða ástandi sakbornings?"
-                  defaultValue={workingCase?.comments}
-                  onChange={(event) =>
-                    removeTabsValidateAndSet(
-                      'comments',
-                      event,
-                      [],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }
-                  onBlur={(event) =>
-                    validateAndSendToServer(
-                      'comments',
-                      event.target.value,
-                      [],
-                      workingCase,
-                      updateCase,
-                    )
-                  }
-                  textarea
-                  rows={7}
-                />
-              </Box>
-            </Box>
-          </Box>
           <FormFooter
-            nextUrl={`${Constants.STEP_THREE_ROUTE}/${id}`}
-            nextIsDisabled={
-              isStepIllegal || workingCase.custodyProvisions?.length === 0
-            }
+            onNextButtonClick={async () => await handleNextButtonClick()}
+            nextIsDisabled={isStepIllegal || transitionLoading}
+            nextIsLoading={transitionLoading}
           />
+          {modalVisible && (
+            <Modal
+              title="Viltu senda tilkynningu?"
+              text="Með því að senda tilkynningu á dómara á vakt um að krafa um gæsluvarðhald sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála."
+              primaryButtonText="Senda tilkynningu"
+              secondaryButtonText="Halda áfram með kröfu"
+              handleClose={() => setModalVisible(false)}
+              handleSecondaryButtonClick={() =>
+                history.push(
+                  `${Constants.STEP_THREE_ROUTE}/${workingCase.id}`,
+                )
+              }
+              handlePrimaryButtonClick={async () => {
+                const notificationSent = await sendNotification(
+                  workingCase.id ?? id,
+                )
+
+                if (notificationSent) {
+                  history.push(
+                    `${Constants.STEP_TWO_ROUTE}/${workingCase.id}`,
+                  )
+                }
+              }}
+              isPrimaryButtonLoading={isSendingNotification}
+            />
+          )}
         </>
       ) : null}
     </PageLayout>
