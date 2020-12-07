@@ -56,6 +56,13 @@ const endPoint = z.object({
   }),
 })
 
+const productionEndPoint = z.object({
+  prodEndPoint: z.string().url().nonempty(),
+  prodEndPointExists: z.string().nonempty({
+    message: 'Þú verður að vista endapunkt til að halda áfram',
+  }),
+})
+
 const dataSchema = z.object({
   termsOfAgreement: termsOfAgreement,
   applicant: applicant,
@@ -72,7 +79,7 @@ const dataSchema = z.object({
   productionUserExists: z.string().nonempty({
     message: 'Þú verður að stofna aðgang til að halda áfram',
   }),
-  prodEndPoint: z.string().url().nonempty(),
+  productionEndPointObject: productionEndPoint,
   rejectionReason: z.string(),
   approvedByReviewer: z.enum(['APPROVE', 'REJECT']),
 })

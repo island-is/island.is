@@ -49,7 +49,6 @@ const TestEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
       ])
 
       setendpointExists('true')
-      // setValue('endPointObject.endPointExists' as string, 'true')
 
       clearErrors()
     }

@@ -17,10 +17,11 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ field, error, application }) => {
 
   const { register, clearErrors } = useFormContext()
   const [keys, setKeys] = useState<Key[]>([])
+  const { answers: formValue } = application
   const [currentAnswer, setCurrentAnswer] = useState(
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
-    (formValue.prodUserExists as string) || '',
+    (formValue.productionUserExists as string) || '',
   )
   const [registerProvider] = useMutation(registerProviderMutation)
 
@@ -67,7 +68,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ field, error, application }) => {
           type="hidden"
           value={currentAnswer}
           ref={register({ required: true })}
-          name={'prodUserExists'}
+          name={'productionUserExists'}
         />
         {error && (
           <Box color="red600" paddingY={2}>
