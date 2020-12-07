@@ -65,11 +65,11 @@ const dataSchema = z.object({
   technicalAnswer: z.boolean().refine((v) => v, {
     message: 'Þú verður að samþykkja að forritun og prófunum sé lokið',
   }),
-  endPoint: endPoint,
-  testUserExists: z.boolean().refine((v) => v, {
+  endPointObject: endPoint,
+  testUserExists: z.string().nonempty({
     message: 'Þú verður að stofna aðgang til að halda áfram',
   }),
-  productionUserExists: z.boolean().refine((v) => v, {
+  productionUserExists: z.string().nonempty({
     message: 'Þú verður að stofna aðgang til að halda áfram',
   }),
   rejectionReason: z.string(),

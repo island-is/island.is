@@ -8,22 +8,21 @@ import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/C
 import { registerProviderMutation } from '../../../graphql/mutations/registerProviderMutation'
 import { m } from '../../../forms/messages'
 
-const ProdEnvironment: FC<FieldBaseProps> = ({ application }) => {
+const ProdEnvironment: FC<FieldBaseProps> = ({ field, error, application }) => {
   // TODO: Add this to types file ?
   interface Key {
     name: string
     value: string
   }
 
-  const { setValue, clearErrors, errors } = useFormContext()
+  const { register, clearErrors } = useFormContext()
   const [keys, setKeys] = useState<Key[]>([])
+  const [currentAnswer, setCurrentAnswer] = useState(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    (formValue.prodUserExists as string) || '',
+  )
   const [registerProvider] = useMutation(registerProviderMutation)
-
-  const currentAnswer = getValueViaPath(
-    application.answers,
-    'productionUserExists' as string,
-    false,
-  ) as boolean
 
   const onRegister = async () => {
     const credentials = await registerProvider({
@@ -46,7 +45,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ application }) => {
         value: credentials.data.registerProvider.clientSecret,
       },
     ])
-    setValue('productionUserExists' as string, true)
+    setCurrentAnswer('true')
 
     clearErrors('productionUserExists')
   }
@@ -64,20 +63,16 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ application }) => {
         >
           {m.prodEnviromentButton.defaultMessage}
         </Button>
-        <Box display="none">
-          <Controller
-            name="productionUserExists"
-            defaultValue={currentAnswer}
-            rules={{ required: true }}
-            render={({ value }) => {
-              return <Checkbox checked={value} name="productionUserExists" />
-            }}
-          />
-        </Box>
-        {errors.productionUserExists && (
+        <input
+          type="hidden"
+          value={currentAnswer}
+          ref={register({ required: true })}
+          name={'prodUserExists'}
+        />
+        {error && (
           <Box color="red600" paddingY={2}>
             <Text fontWeight="semiBold" color="red600">
-              {errors.productionUserExists}
+              {error}
             </Text>
           </Box>
         )}

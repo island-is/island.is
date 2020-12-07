@@ -9,15 +9,20 @@ import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/C
 import { m } from '../../../forms/messages'
 import { registerProviderMutation } from '../../../graphql/mutations/registerProviderMutation'
 
-const TestEnvironment: FC<FieldBaseProps> = ({ application }) => {
+const TestEnvironment: FC<FieldBaseProps> = ({ field, application, error }) => {
   interface Key {
     name: string
     value: string
   }
-
-  const { setValue, clearErrors, errors } = useFormContext()
+  const { answers: formValue } = application
+  const { register, clearErrors } = useFormContext()
 
   const [keys, setKeys] = useState<Key[]>([])
+  const [currentAnswer, setCurrentAnswer] = useState(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    (formValue.testUserExists as string) || '',
+  )
   const [registerProvider] = useMutation(registerProviderMutation)
 
   const onRegister = async () => {
@@ -42,18 +47,10 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application }) => {
       },
     ])
 
-    setValue('testUserExists' as string, true)
+    setCurrentAnswer('true')
 
     clearErrors('testUserExists')
   }
-
-  const { answers: formValue } = application
-
-  const currentAnswer = getValueViaPath(
-    formValue,
-    'testUserExists' as string,
-    false,
-  ) as boolean
 
   return (
     //TODO: we can make this a generic component for reuasabilty, same as production environment
@@ -79,36 +76,16 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application }) => {
         >
           Búa til aðgang
         </Button>
-        <Controller
-          name="testUserExists"
-          defaultValue={currentAnswer}
-          rules={{ required: true }}
-          render={({ value }) => {
-            return (
-              <Box display="none">
-                <Controller
-                  name="testUserExists"
-                  defaultValue={currentAnswer}
-                  rules={{ required: true }}
-                  render={({ value }) => {
-                    return (
-                      <Checkbox
-                        checked={value}
-                        name="testUserExists"
-                        id="testUserExists"
-                      />
-                    )
-                  }}
-                />
-              </Box>
-            )
-          }}
+        <input
+          type="hidden"
+          value={currentAnswer}
+          ref={register({ required: true })}
+          name={'testUserExists'}
         />
-
-        {errors.testUserExists && (
+        {error && (
           <Box color="red600" paddingY={2}>
             <Text fontWeight="semiBold" color="red600">
-              {errors.testUserExists}
+              {error}
             </Text>
           </Box>
         )}

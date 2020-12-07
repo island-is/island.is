@@ -30,7 +30,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ field, error, application }) => {
   const [endpointExists, setendpointExists] = useState(
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
-    formValue.endPoint?.endPointExists || '',
+    formValue.endPointObject?.endPointExists || '',
   )
   const [registerEndpoint] = useMutation(registerEndpointMutation)
 
@@ -38,7 +38,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ field, error, application }) => {
     if (isValid) {
       const result = await registerEndpoint({
         variables: {
-          input: { endpoint: getValues('endPoint.endPoint') },
+          input: { endpoint: getValues('endPointObject.endPoint') },
         },
       })
 
@@ -54,15 +54,13 @@ const TestEnvironment: FC<FieldBaseProps> = ({ field, error, application }) => {
         },
         { id: '2', name: 'Scope', value: result.data.registerEndpoint.scope },
       ])
-      setendpointExists('true')
 
-      clearErrors('endPoint.endPointExists')
+      setendpointExists('true')
+      // setValue('endPointObject.endPointExists' as string, 'true')
+
+      clearErrors()
     }
   }
-
-  console.log('errors endpoint', errors.endPoint)
-
-  console.log('errors', errors)
 
   return (
     <Box>
@@ -75,16 +73,16 @@ const TestEnvironment: FC<FieldBaseProps> = ({ field, error, application }) => {
         <Box marginBottom={1}>
           <Controller
             defaultValue=""
-            name={'endPoint.endPoint'}
+            name={'endPointObject.endPoint'}
             render={() => (
               <Input
                 label="Endapunktur"
-                name={'endPoint.endPoint'}
-                id={'endPoint.endPoint'}
+                name={'endPointObject.endPoint'}
+                id={'endPointObject.endPoint'}
                 ref={register}
                 defaultValue=""
                 placeholder="Skráðu inn endapunkt"
-                hasError={errors.endPoint?.endPoint !== undefined}
+                hasError={errors.endPointObject?.endPoint !== undefined}
                 errorMessage="Þú verður að skrá inn endapunkt"
               />
             )}
@@ -95,7 +93,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ field, error, application }) => {
         <Button
           variant="primary"
           onClick={() => {
-            trigger(['endPoint.endPoint']).then((answer) =>
+            trigger(['endPointObject.endPoint']).then((answer) =>
               onRegisterEndpoint(answer),
             )
           }}
@@ -106,13 +104,13 @@ const TestEnvironment: FC<FieldBaseProps> = ({ field, error, application }) => {
           type="hidden"
           value={endpointExists}
           ref={register({ required: true })}
-          name={'endPoint.endPointExists'}
+          name={'endPointObject.endPointExists'}
         />
 
-        {errors.endPoint?.endPointExists && (
+        {errors['endPointObject.endPointExists'] && (
           <Box color="red600" paddingY={2}>
             <Text fontWeight="semiBold" color="red600">
-              þú verður að vista endapunkt
+              {errors['endPointObject.endPointExists']}
             </Text>
           </Box>
         )}
