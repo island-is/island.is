@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { Accordion, Box, Tag, Text } from '@island.is/island-ui/core'
+import { Accordion, Box, Button, Tag, Text } from '@island.is/island-ui/core'
 import {
   TIME_FORMAT,
   formatDate,
@@ -16,7 +16,8 @@ import { PageLayout } from '../../../shared-components/PageLayout/PageLayout'
 import PoliceRequestAccordionItem from '../../../shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
 import RulingAccordionItem from '../../../shared-components/RulingAccordionItem/RulingAccordionItem'
 import { getRestrictionTagVariant } from '../../../utils/stepHelper'
-
+import { useHistory } from 'react-router-dom'
+import * as Constants from '../../../utils/constants'
 interface CaseData {
   case?: Case
 }
@@ -24,6 +25,7 @@ interface CaseData {
 export const SignedVerdictOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
 
+  const history = useHistory()
   const { id } = useParams<{ id: string }>()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -59,6 +61,15 @@ export const SignedVerdictOverview: React.FC = () => {
       {workingCase ? (
         <>
           <Box marginBottom={5}>
+            <Box marginBottom={3}>
+              <Button
+                variant="text"
+                preTextIcon="arrowBack"
+                onClick={() => history.push(Constants.DETENTION_REQUESTS_ROUTE)}
+              >
+                Til baka
+              </Button>
+            </Box>
             <Box display="flex" justifyContent="spaceBetween">
               <Box>
                 <Box marginBottom={1}>

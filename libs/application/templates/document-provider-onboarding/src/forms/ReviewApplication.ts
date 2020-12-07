@@ -44,6 +44,8 @@ export const ReviewApplication: Form = buildForm({
               name: m.applicantPhoneNumber,
               disabled: true,
               width: 'half',
+              format: '###-####',
+              placeholder: '000-0000',
             }),
             buildTextField({
               id: 'applicant.address',
@@ -76,6 +78,8 @@ export const ReviewApplication: Form = buildForm({
               name: m.administrativeContactPhoneNumber,
               disabled: true,
               width: 'half',
+              format: '###-####',
+              placeholder: '000-0000',
             }),
             buildDividerField({ name: m.technicalContactTitle.defaultMessage }),
             buildTextField({
@@ -94,6 +98,8 @@ export const ReviewApplication: Form = buildForm({
               name: m.technicalContactPhoneNumber,
               disabled: true,
               width: 'half',
+              format: '###-####',
+              placeholder: '000-0000',
             }),
             buildDividerField({ name: m.helpDeskTitle.defaultMessage }),
             buildTextField({
@@ -107,6 +113,8 @@ export const ReviewApplication: Form = buildForm({
               name: m.helpDeskPhoneNumber,
               disabled: true,
               width: 'half',
+              format: '###-####',
+              placeholder: '000-0000',
             }),
             buildSubmitField({
               id: 'approvedByReviewer',

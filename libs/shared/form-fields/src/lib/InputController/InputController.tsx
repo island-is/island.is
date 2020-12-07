@@ -40,12 +40,11 @@ export const InputController: FC<Props> = ({
     return (
       <Controller
         name={name}
-        render={({ value, onChange }) => (
+        render={({ value, onChange, ...props }) => (
           <NumberFormat
             customInput={Input}
             id={id}
             disabled={disabled}
-            name={name}
             placeholder={placeholder}
             label={label}
             type="text"
@@ -59,6 +58,7 @@ export const InputController: FC<Props> = ({
             }}
             hasError={error !== undefined}
             errorMessage={error}
+            {...props}
           />
         )}
       />
@@ -69,12 +69,11 @@ export const InputController: FC<Props> = ({
     return (
       <Controller
         name={name}
-        render={({ value, onChange }) => (
+        render={({ value, onChange, ...props }) => (
           <NumberFormat
             customInput={Input}
             id={id}
             disabled={disabled}
-            name={name}
             placeholder={placeholder}
             label={label}
             type={type as 'text' | 'tel'}
@@ -85,6 +84,7 @@ export const InputController: FC<Props> = ({
             }}
             hasError={error !== undefined}
             errorMessage={error}
+            {...props}
           />
         )}
       />
