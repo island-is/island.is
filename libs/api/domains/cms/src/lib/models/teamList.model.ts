@@ -1,14 +1,10 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-
 import { ITeamList } from '../generated/contentfulTypes'
-
+import { SystemMetadata } from '../types'
 import { TeamMember, mapTeamMember } from './teamMember.model'
 
 @ObjectType()
 export class TeamList {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -16,7 +12,10 @@ export class TeamList {
   teamMembers: Array<TeamMember>
 }
 
-export const mapTeamList = ({ fields, sys }: ITeamList): TeamList => ({
+export const mapTeamList = ({
+  fields,
+  sys,
+}: ITeamList): SystemMetadata<TeamList> => ({
   typename: 'TeamList',
   id: sys.id,
   teamMembers: (fields.teamMembers ?? []).map(mapTeamMember),

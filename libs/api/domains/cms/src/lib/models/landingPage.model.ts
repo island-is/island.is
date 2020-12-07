@@ -1,11 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-
 import { ILandingPage } from '../generated/contentfulTypes'
-
+import { SliceUnion } from '../unions/slice.union'
 import { Image, mapImage } from './image.model'
 import { Link, mapLink } from './link.model'
 import { LinkList, mapLinkList } from './linkList.model'
-import { Slice, mapDocument } from './slice.model'
+import { mapDocument } from './slice.model'
 
 @ObjectType()
 export class LandingPage {
@@ -27,8 +26,8 @@ export class LandingPage {
   @Field({ nullable: true })
   links: LinkList
 
-  @Field(() => [Slice])
-  content: Array<typeof Slice>
+  @Field(() => [SliceUnion])
+  content: Array<typeof SliceUnion>
 }
 
 export const mapLandingPage = ({ sys, fields }: ILandingPage): LandingPage => ({

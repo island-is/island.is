@@ -48,12 +48,13 @@ export class GrantDto {
   @ApiProperty()
   readonly creationTime!: Date
 
+  @IsOptional()
   @IsDateString()
   @ApiProperty({
     // add one day as an expiration example
     example: new Date(new Date().setTime(new Date().getTime() + 86400000)), //86400000 = nr of ms in one day
   })
-  readonly expiration!: Date
+  readonly expiration?: Date
 
   @IsOptional()
   @IsDateString()

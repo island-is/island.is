@@ -1,5 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-
 import { AdgerdirPage } from './adgerdirPage.model'
 import { Image } from './image.model'
 

@@ -2,16 +2,24 @@ import * as request from 'supertest'
 
 import { INestApplication } from '@nestjs/common'
 
-import { NotificationType } from '@island.is/judicial-system/types'
+import {
+  NotificationType,
+  User as TUser,
+} from '@island.is/judicial-system/types'
+import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
+import { SharedAuthService } from '@island.is/judicial-system/auth'
 
 import { setup, user } from '../../../../../test/setup'
 import { Case } from '../../case'
 import { Notification } from '../models'
 
 let app: INestApplication
+let authCookie: string
 
 beforeAll(async () => {
   app = await setup()
+  const sharedAuthService = app.resolve(SharedAuthService)
+  authCookie = (await sharedAuthService).signJwt(user as TUser)
 })
 
 function dbNotificationToNotification(dbNotification: Notification) {
@@ -31,7 +39,8 @@ describe('Notification', () => {
     }).then(async (value) => {
       await request(app.getHttpServer())
         .post(`/api/case/${value.id}/notification`)
-        .send({ nationalId: user.nationalId, type: NotificationType.HEADS_UP })
+        .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
+        .send({ type: NotificationType.HEADS_UP })
         .expect(201)
         .then(async (response) => {
           // Check the response
@@ -75,6 +84,7 @@ describe('Notification', () => {
       }).then(async (notificationValue) => {
         await request(app.getHttpServer())
           .get(`/api/case/${caseValue.id}/notifications`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
           .expect(200)
           .then(async (response) => {
             // Check the response

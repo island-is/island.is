@@ -5,83 +5,17 @@ import {
   ApplicationTypes,
   ApplicationTemplate,
 } from '@island.is/application/core'
-import * as z from 'zod'
-import isValid from 'date-fns/isValid'
-import parseISO from 'date-fns/parseISO'
 import { assign } from 'xstate'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import * as kennitala from 'kennitala'
 
 import assignParentTemplate from '../emailTemplates/assignToParent'
 import assignEmployerTemplate from '../emailTemplates/assignToEmployer'
+import { dataSchema, SchemaFormValues } from './dataSchema'
 
 type Events =
   | { type: 'APPROVE' }
   | { type: 'REJECT' }
   | { type: 'SUBMIT' }
   | { type: 'ABORT' }
-
-const dataSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
-  applicant: z.object({
-    email: z.string().email(),
-    phoneNumber: z.string().refine((p) => {
-      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-      return phoneNumber && phoneNumber.isValid()
-    }, 'Símanúmer þarf að vera gilt'),
-  }),
-  payments: z.object({
-    bank: z.string().nonempty(),
-    personalAllowanceUsage: z.enum(['100', '75', '50', '25']),
-    pensionFund: z.string().optional(),
-    privatePensionFund: z.enum(['frjalsi', '']).optional(),
-    privatePensionFundPercentage: z.enum(['2', '4', '']).optional(),
-  }),
-  shareInformationWithOtherParent: z.enum(['yes', 'no']),
-  usePrivatePensionFund: z.enum(['yes', 'no']),
-  periods: z
-    .array(
-      z.object({
-        startDate: z.string().refine((d) => isValid(parseISO(d))),
-        endDate: z.string().refine((d) => isValid(parseISO(d))),
-        ratio: z
-          .string()
-          .refine(
-            (val) =>
-              !isNaN(Number(val)) && parseInt(val) > 0 && parseInt(val) <= 100,
-          ),
-      }),
-    )
-    .nonempty(),
-  employer: z.object({
-    name: z.string().nonempty(),
-    nationalRegistryId: z
-      .string()
-      .nonempty()
-      .refine(
-        (n) => kennitala.isValid(n) && kennitala.isCompany(n),
-        'Kennitala þarf að vera gild',
-      ),
-    contact: z.string().optional(),
-    contactId: z.string().optional(),
-  }),
-  requestRights: z.enum(['yes', 'no']),
-  giveRights: z.enum(['yes', 'no']),
-  singlePeriod: z.enum(['yes', 'no']),
-  firstPeriodStart: z.enum(['dateOfBirth', 'specificDate']),
-  confirmLeaveDuration: z.enum(['duration', 'specificDate']),
-  otherParent: z.enum(['spouse', 'no', 'manual']).optional(),
-  otherParentName: z.string().optional(),
-  otherParentId: z
-    .string()
-    .optional()
-    .refine(
-      (n) => n && kennitala.isValid(n) && kennitala.isPerson(n),
-      'Kennitala þarf að vera gild',
-    ),
-})
-
-type SchemaFormValues = z.infer<typeof dataSchema>
 
 function needsOtherParentApproval(context: ApplicationContext) {
   const currentApplicationAnswers = context.application
