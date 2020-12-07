@@ -1,12 +1,9 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-
 import { IMailingListSignup } from '../generated/contentfulTypes'
+import { SystemMetadata } from '../types'
 
 @ObjectType()
 export class MailingListSignupSlice {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -26,7 +23,7 @@ export class MailingListSignupSlice {
 export const mapMailingListSignup = ({
   fields,
   sys,
-}: IMailingListSignup): MailingListSignupSlice => ({
+}: IMailingListSignup): SystemMetadata<MailingListSignupSlice> => ({
   typename: 'MailingListSignupSlice',
   id: sys.id,
   title: fields.title ?? '',

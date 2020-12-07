@@ -1,14 +1,10 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-
 import { ITabSection } from '../generated/contentfulTypes'
-
+import { SystemMetadata } from '../types'
 import { TabContent, mapTabContent } from './tabContent.model'
 
 @ObjectType()
 export class TabSection {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -19,7 +15,10 @@ export class TabSection {
   tabs: Array<TabContent>
 }
 
-export const mapTabSection = ({ fields, sys }: ITabSection): TabSection => ({
+export const mapTabSection = ({
+  fields,
+  sys,
+}: ITabSection): SystemMetadata<TabSection> => ({
   typename: 'TabSection',
   id: sys.id,
   title: fields.title ?? '',
