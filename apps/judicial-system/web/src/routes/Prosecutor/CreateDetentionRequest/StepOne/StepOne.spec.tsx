@@ -179,9 +179,33 @@ test('should have a disabled defender name and email even if a judge erases that
 })
 
 describe('/krafa without ID', () => {
-  test('should display an empty form if there is no id in url', async () => {
+  test('should have a create case button', async () => {
     // Arrange
 
+    // Act
+    render(
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter initialEntries={[Constants.SINGLE_REQUEST_BASE_ROUTE]}>
+          <UserProvider>
+            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id?`}>
+              <StepOne />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    // Assert
+    expect(
+      await waitFor(() => screen.getByRole('button', { name: /Stofna kröfu/ })),
+    ).toBeInTheDocument()
+  })
+
+  test('should display an empty form if there is no id in url', async () => {
+    // Arrange
     render(
       <MockedProvider
         mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
@@ -203,8 +227,6 @@ describe('/krafa without ID', () => {
       await waitFor(() => screen.getByLabelText('Kennitala *')),
       await waitFor(() => screen.getByLabelText('Fullt nafn *')),
       await waitFor(() => screen.getByLabelText('Lögheimili/dvalarstaður *')),
-      await waitFor(() => screen.getByLabelText('Tímasetning *')),
-      await waitFor(() => screen.getByLabelText('Ósk um tíma *')),
     ]
 
     const court = screen
@@ -230,7 +252,7 @@ describe('/krafa without ID', () => {
     ).not.toBeChecked()
     expect(
       screen.getByRole('button', {
-        name: /Halda áfram/i,
+        name: /Stofna kröfu/i,
       }) as HTMLButtonElement,
     ).toBeDisabled()
   })
@@ -257,30 +279,6 @@ describe('/krafa without ID', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockProsecutorQuery,
-          {
-            request: {
-              query: CreateCaseMutation,
-              variables: {
-                input: {
-                  policeCaseNumber: '000-0000-0010',
-                  accusedNationalId: '1112902539',
-                  court: 'Héraðsdómur Reykjavíkur',
-                  accusedName: '',
-                  accusedAddress: '',
-                  requestedDefenderName: '',
-                  requestedDefenderEmail: '',
-                  accusedGender: undefined,
-                  arrestDate: undefined,
-                  requestedCourtDate: undefined,
-                },
-              },
-            },
-            result: () => {
-              setTimeout(() => promiseResolve(), 1000)
-
-              return { data: { createCase: { id: 'testid' } } }
-            },
-          },
           ...mockUpdateCaseMutation([
             {
               id: 'testid',
@@ -339,7 +337,7 @@ describe('/krafa without ID', () => {
 
     expect(
       screen.getByRole('button', {
-        name: /Halda áfram/i,
+        name: /Stofna kröfu/i,
       }) as HTMLButtonElement,
     ).toBeDisabled()
 
@@ -354,7 +352,7 @@ describe('/krafa without ID', () => {
 
     expect(
       screen.getByRole('button', {
-        name: /Halda áfram/i,
+        name: /Stofna kröfu/i,
       }) as HTMLButtonElement,
     ).toBeDisabled()
 
@@ -367,7 +365,7 @@ describe('/krafa without ID', () => {
 
     expect(
       screen.getByRole('button', {
-        name: /Halda áfram/i,
+        name: /Stofna kröfu/i,
       }) as HTMLButtonElement,
     ).toBeDisabled()
 
@@ -410,7 +408,7 @@ describe('/krafa without ID', () => {
 
     expect(
       screen.getByRole('button', {
-        name: /Halda áfram/i,
+        name: /Stofna kröfu/i,
       }) as HTMLButtonElement,
     ).toBeDisabled()
 
@@ -420,7 +418,7 @@ describe('/krafa without ID', () => {
 
     expect(
       screen.getByRole('button', {
-        name: /Halda áfram/i,
+        name: /Stofna kröfu/i,
       }) as HTMLButtonElement,
     ).toBeDisabled()
 
@@ -430,106 +428,8 @@ describe('/krafa without ID', () => {
 
     expect(
       screen.getByRole('button', {
-        name: /Halda áfram/i,
+        name: /Stofna kröfu/i,
       }) as HTMLButtonElement,
     ).not.toBeDisabled()
-  })
-
-  test('should save case if accused name is entered first and then police case number and accused national id', async () => {
-    // Arrange
-    let createCalled = false
-
-    // Act
-    render(
-      <MockedProvider
-        mocks={[
-          ...mockCaseQueries,
-          ...mockProsecutorQuery,
-          {
-            request: {
-              query: CreateCaseMutation,
-              variables: {
-                input: {
-                  policeCaseNumber: '020-0202-2929',
-                  accusedNationalId: '0000000000',
-                  court: 'Héraðsdómur Reykjavíkur',
-                  accusedName: 'Gervipersona',
-                  accusedAddress: 'Batcave',
-                  requestedDefenderName: 'Garfield',
-                  requestedDefenderEmail: 'gf@cartoon.io',
-                  accusedGender: CaseGender.OTHER,
-                  arrestDate: undefined,
-                  requestedCourtDate: undefined,
-                },
-              },
-            },
-            result: () => {
-              createCalled = true
-              return {
-                data: { createCase: { id: 'testid' } },
-              }
-            },
-          },
-        ]}
-        addTypename={false}
-      >
-        <MemoryRouter initialEntries={[Constants.SINGLE_REQUEST_BASE_ROUTE]}>
-          <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}`}>
-              <StepOne />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
-      </MockedProvider>,
-    )
-
-    userEvent.type(
-      await waitFor(
-        () => screen.getByLabelText('Fullt nafn *') as HTMLInputElement,
-      ),
-      'Gervipersona',
-    )
-
-    userEvent.tab()
-
-    userEvent.click(screen.getByRole('radio', { name: 'Annað' }))
-
-    await userEvent.type(
-      screen.getByLabelText('Lögheimili/dvalarstaður *') as HTMLInputElement,
-      'Batcave',
-    )
-
-    userEvent.tab()
-
-    await userEvent.type(
-      screen.getByLabelText('Nafn verjanda') as HTMLInputElement,
-      'Garfield',
-    )
-
-    userEvent.tab()
-
-    await userEvent.type(
-      screen.getByLabelText('Netfang verjanda') as HTMLInputElement,
-      'gf@cartoon.io',
-    )
-
-    userEvent.tab()
-
-    await userEvent.type(
-      screen.getByLabelText('Kennitala *') as HTMLInputElement,
-      '0000000000',
-    )
-
-    userEvent.tab()
-
-    await userEvent.type(
-      screen.getByLabelText('Slá inn LÖKE málsnúmer *') as HTMLInputElement,
-      '020-0202-2929',
-    )
-
-    userEvent.tab()
-
-    // Assert
-    await waitFor(() => expect(createCalled).toBe(true))
   })
 })
