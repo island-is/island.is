@@ -1,0 +1,203 @@
+{
+  "attributes": {
+    "description": "",
+    "kibanaSavedObjectMeta": {
+      "searchSourceJSON": {
+        "filter": [],
+        "indexRefName": "kibanaSavedObjectMeta.searchSourceJSON.index",
+        "query": {
+          "language": "kuery",
+          "query": ""
+        }
+      }
+    },
+    "title": "Articles that have a process entry",
+    "uiStateJSON": {},
+    "version": 1,
+    "visState": {
+      "aggs": [
+        {
+          "enabled": true,
+          "id": 1,
+          "params": {},
+          "schema": "metric",
+          "type": "count"
+        },
+        {
+          "enabled": true,
+          "id": 2,
+          "params": {
+            "filters": [
+              {
+                "input": {
+                  "language": "kuery",
+                  "query": "type : \"webArticle\" and _index : \"island-is-v*\" "
+                },
+                "label": "Icelandic articles"
+              },
+              {
+                "input": {
+                  "language": "kuery",
+                  "query": "type : \"webArticle\" and _index : \"island-en-v*\"  "
+                },
+                "label": "English articles"
+              }
+            ]
+          },
+          "schema": "segment",
+          "type": "filters"
+        },
+        {
+          "enabled": true,
+          "id": 3,
+          "params": {
+            "field": "hasProcessEntry",
+            "missingBucket": false,
+            "missingBucketLabel": "Missing",
+            "order": "desc",
+            "orderBy": 1,
+            "otherBucket": false,
+            "otherBucketLabel": "Other",
+            "size": 5
+          },
+          "schema": "group",
+          "type": "terms"
+        }
+      ],
+      "params": {
+        "addLegend": true,
+        "addTimeMarker": false,
+        "addTooltip": true,
+        "categoryAxes": [
+          {
+            "id": "CategoryAxis-1",
+            "labels": {
+              "filter": true,
+              "show": true,
+              "truncate": 100
+            },
+            "position": "bottom",
+            "scale": {
+              "type": "linear"
+            },
+            "show": true,
+            "style": {},
+            "title": {},
+            "type": "category"
+          }
+        ],
+        "dimensions": {
+          "series": [
+            {
+              "accessor": 1,
+              "aggType": "terms",
+              "format": {
+                "id": "terms",
+                "params": {
+                  "id": "boolean",
+                  "missingBucketLabel": "Missing",
+                  "otherBucketLabel": "Other"
+                }
+              },
+              "params": {}
+            }
+          ],
+          "x": {
+            "accessor": 0,
+            "aggType": "filters",
+            "format": {},
+            "params": {}
+          },
+          "y": [
+            {
+              "accessor": 2,
+              "aggType": "count",
+              "format": {
+                "id": "number"
+              },
+              "params": {}
+            }
+          ]
+        },
+        "grid": {
+          "categoryLines": false
+        },
+        "labels": {
+          "show": false
+        },
+        "legendPosition": "right",
+        "seriesParams": [
+          {
+            "data": {
+              "id": 1,
+              "label": "Count"
+            },
+            "drawLinesBetweenPoints": true,
+            "mode": "stacked",
+            "show": true,
+            "showCircles": true,
+            "type": "histogram",
+            "valueAxis": "ValueAxis-1"
+          }
+        ],
+        "thresholdLine": {
+          "color": "#34130C",
+          "show": false,
+          "style": "full",
+          "value": 10,
+          "width": 1
+        },
+        "times": [],
+        "type": "histogram",
+        "valueAxes": [
+          {
+            "id": "ValueAxis-1",
+            "labels": {
+              "filter": false,
+              "rotate": 0,
+              "show": true,
+              "truncate": 100
+            },
+            "name": "LeftAxis-1",
+            "position": "left",
+            "scale": {
+              "mode": "normal",
+              "type": "linear"
+            },
+            "show": true,
+            "style": {},
+            "title": {
+              "text": "Count"
+            },
+            "type": "value"
+          }
+        ]
+      },
+      "title": "Articles that have a process entry",
+      "type": "histogram"
+    }
+  },
+  "id": "abcc47b0-331a-11eb-b812-118bbced8a3f",
+  "migrationVersion": {
+    "visualization": "7.4.2"
+  },
+  "nestedJsonPaths": [
+    "attributes.kibanaSavedObjectMeta.searchSourceJSON",
+    "attributes.uiStateJSON",
+    "attributes.visState",
+    "attributes.visState.aggs[0].id",
+    "attributes.visState.aggs[1].id",
+    "attributes.visState.aggs[2].id",
+    "attributes.visState.aggs[2].params.orderBy",
+    "attributes.visState.params.seriesParams[0].data.id",
+    "attributes.visState.params.seriesParams[0].show"
+  ],
+  "references": [
+    {
+      "id": "b83598d0-34b4-11eb-83e6-db8492ac723e",
+      "name": "kibanaSavedObjectMeta.searchSourceJSON.index",
+      "type": "index-pattern"
+    }
+  ],
+  "type": "visualization"
+}

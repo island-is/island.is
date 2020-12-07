@@ -1,8 +1,11 @@
+import yargs from 'yargs'
+
 import { logger } from '@island.is/logging'
 import { environment } from '../environments/environment'
 import * as aws from './aws'
 import * as dictionary from './dictionary'
 import * as elastic from './elastic'
+import * as kibana from './kibana'
 
 interface PromiseStatus {
   success: boolean
@@ -13,9 +16,11 @@ const { locales } = environment
 
 class App {
   async run() {
-    const versions = await Promise.all(locales.map(
-      (locale: string) => elastic.getCurrentVersionFromConfig(locale),
-    ))
+    const versions = await Promise.all(
+      locales.map((locale: string) =>
+        elastic.getCurrentVersionFromConfig(locale),
+      ),
+    )
     if (!versions.every((version) => version === versions[0])) {
       logger.error('All of the index templates should have the same version')
       process.exit(1)
@@ -36,6 +41,8 @@ class App {
 
     await this.migrateES(esPackages)
 
+    await this.migrateKibana()
+
     // we remove unused AWS ES packages after ES migrate cause we cant/should not remove packages already in use
     if (hasAwsAccess) {
       logger.info('Cleaning up unused packages')
@@ -46,6 +53,12 @@ class App {
       await aws.deleteUnusedPackagesFromAwsEs(oldDictionaryVersion)
     }
     logger.info('Done!')
+  }
+
+  async sync() {
+    logger.info('Running local sync')
+
+    this.syncKibana()
   }
 
   private async migrateAws(): Promise<aws.AwsEsPackage[]> {
@@ -201,11 +214,29 @@ class App {
     logger.info('Elasticsearch migration completed')
     return processedMigrations
   }
+
+  private async migrateKibana() {
+    logger.info('Starting kibana migration')
+    const version = await elastic.getCurrentVersionFromConfig(locales[0])
+    await kibana.importObjects(version)
+    logger.info('Done')
+  }
+
+  private async syncKibana() {
+    logger.info('Starting kibana syncing')
+    await kibana.syncObjects()
+    logger.info('Done')
+  }
 }
 
 async function migrateBootstrap() {
+  const argv = yargs(process.argv).argv
   const app = new App()
-  await app.run()
+  if (argv.sync) {
+    await app.sync()
+  } else {
+    await app.run()
+  }
 }
 // TODO: Add lock to this procedure to ensure only a single initContainer can run this
 
