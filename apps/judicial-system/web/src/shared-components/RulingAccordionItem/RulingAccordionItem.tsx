@@ -48,7 +48,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         <Box marginBottom={1}>
           <Text variant="h3">
             {workingCase?.judge
-              ? `${workingCase?.judge.name} ${workingCase?.judge.title}`
+              ? `${workingCase.judge.name} ${workingCase.judge.title}`
               : `${user?.name} ${user?.title}`}
           </Text>
         </Box>
