@@ -74,7 +74,7 @@ export const searchQuery = ({
         minimum_should_match,
       },
     },
-    ...aggregation,
+    ...(Object.keys(aggregation.aggs).length ? aggregation : {}), // spread aggregations if we have any
     size,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }

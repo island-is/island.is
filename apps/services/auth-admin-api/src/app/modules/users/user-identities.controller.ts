@@ -26,22 +26,44 @@ import {
 export class UserIdentitiesController {
   constructor(private readonly userIdentityService: UserIdentitiesService) {}
 
-  @Get(':subjectId')
+  @Get(':id/:type')
   @ApiOkResponse({ type: UserIdentity })
-  async findOne(@Param('subjectId') subjectId: string): Promise<UserIdentity> {
-    if (!subjectId) {
-      throw new BadRequestException('SubjectId must be provided')
+  async findByNationalIdOrSubjectId(
+    @Param('id') id: string,
+    @Param('type') type: string,
+  ): Promise<UserIdentity[]> {
+    type = type.toLowerCase()
+
+    if (type !== 'nationalid' && type !== 'subjectid') {
+      throw new BadRequestException(
+        'Types supported are [nationalId] and [subjectId]',
+      )
     }
 
-    const userIdentity = await this.userIdentityService.findBySubjectId(
-      subjectId,
+    if (!id) {
+      throw new BadRequestException('id must be provided')
+    }
+
+    if (type === 'nationalid') {
+      const userIdentities = await this.userIdentityService.findByNationalId(id)
+
+      if (!userIdentities) {
+        throw new NotFoundException("This user identity doesn't exist")
+      }
+
+      return userIdentities
+    }
+
+    // Find by subjectId
+    const userIdentitiesBySubject = await this.userIdentityService.findBySubjectId(
+      id,
     )
 
-    if (!userIdentity) {
+    if (!userIdentitiesBySubject) {
       throw new NotFoundException("This user identity doesn't exist")
     }
 
-    return userIdentity
+    return [userIdentitiesBySubject]
   }
 
   @Patch(':subjectId')
