@@ -120,7 +120,12 @@ export const StepFour: React.FC = () => {
           <Box component="section" marginBottom={7}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                Greinargerð um málsatvik
+                Greinargerð um málsatvik{' '}
+                <Tooltip
+                    placement="right"
+                    as="span"
+                    text="Málsatvik, hvernig meðferð þessa máls hófst, skal skrá hér ásamt framburðum vitna og sakborninga ef til eru. Einnig er gott að taka fram stöðu rannsóknar og næstu skref."
+                  />
               </Text>
             </Box>
             <Box marginBottom={3}>
@@ -162,7 +167,12 @@ export const StepFour: React.FC = () => {
           <Box component="section" marginBottom={7}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                Greinargerð um lagarök
+                Greinargerð um lagarök{' '}
+                <Tooltip
+                    placement="right"
+                    as="span"
+                    text="Lagarök og lagaákvæði sem eiga við brotið og kröfuna skal taka fram hér."
+                  />
               </Text>
             </Box>
             <Box marginBottom={7}>
@@ -207,7 +217,7 @@ export const StepFour: React.FC = () => {
                   <Tooltip
                     placement="right"
                     as="span"
-                    text="Hér er hægt að skrá athugasemdir eða skilaboð til dómara sem verður ekki vistað sem hluti af kröfunni. Til dæmis aðrar upplýsingar en koma fram í kröfunni og/eða upplýsingar um ástand sakbornings"
+                    text="Hér er hægt að skrá athugasemdir eða skilaboð til dómara sem verður ekki vistað sem hluti af kröfunni. Til dæmis aðrar upplýsingar en koma fram í kröfunni og/eða upplýsingar um ástand sakbornings."
                   />
                 </Text>
               </Box>
