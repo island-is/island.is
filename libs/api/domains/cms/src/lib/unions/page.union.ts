@@ -29,6 +29,20 @@ type PageTypes =
   | IVidspyrnaPage
   | IVidspyrnaFrontpage
 
+export const PageUnion = createUnionType({
+  name: 'Page',
+  types: () => [
+    Article,
+    SubArticle,
+    AboutPage,
+    AboutSubPage,
+    LifeEventPage,
+    AdgerdirPage,
+    AdgerdirFrontpage,
+  ],
+  resolveType: (document) => document.typename, // typename is appended to request on indexing
+})
+
 export const mapPageUnion = (page: PageTypes): typeof PageUnion => {
   const contentType = page.sys.contentType?.sys?.id
   switch (contentType) {
@@ -58,17 +72,3 @@ export const mapPageUnion = (page: PageTypes): typeof PageUnion => {
     }
   }
 }
-
-export const PageUnion = createUnionType({
-  name: 'Page',
-  types: () => [
-    Article,
-    SubArticle,
-    AboutPage,
-    AboutSubPage,
-    LifeEventPage,
-    AdgerdirPage,
-    AdgerdirFrontpage,
-  ],
-  resolveType: (document) => document.typename, // typename is appended to request on indexing
-})
