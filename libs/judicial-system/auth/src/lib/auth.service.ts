@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken'
+import { sign } from 'jsonwebtoken'
 
 import { Injectable } from '@nestjs/common'
 
@@ -13,7 +13,7 @@ const { jwtSecret } = environment
 @Injectable()
 export class SharedAuthService {
   signJwt(user: User, csrfToken?: string) {
-    return jwt.sign(
+    return sign(
       {
         user,
         csrfToken,
