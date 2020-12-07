@@ -1,7 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-
 import { IQuestionAndAnswer } from '../generated/contentfulTypes'
-
 import { Html, mapHtml } from './html.model'
 
 @ObjectType()

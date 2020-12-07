@@ -1,4 +1,3 @@
-import { createUnionType } from '@nestjs/graphql'
 import { ApolloError } from 'apollo-server-express'
 import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
 import { logger } from '@island.is/logging'
@@ -23,34 +22,29 @@ import {
   ILocation,
   ITellUsAStory,
 } from '../generated/contentfulTypes'
-import { Image, mapImage } from './image.model'
-import { Asset, mapAsset } from './asset.model'
-import {
-  MailingListSignupSlice,
-  mapMailingListSignup,
-} from './mailingListSignupSlice.model'
-import { TimelineSlice, mapTimelineSlice } from './timelineSlice.model'
-import { HeadingSlice, mapHeadingSlice } from './headingSlice.model'
-import { StorySlice, mapStorySlice } from './storySlice.model'
-import { LinkCardSlice, mapLinkCardSlice } from './linkCardSlice.model'
-import { LatestNewsSlice, mapLatestNewsSlice } from './latestNewsSlice.model'
-import { LogoListSlice, mapLogoListSlice } from './logoListSlice.model'
-import { BulletListSlice, mapBulletListSlice } from './bulletListSlice.model'
-import { Statistics, mapStatistics } from './statistics.model'
+import { mapImage } from './image.model'
+import { mapAsset } from './asset.model'
+import { mapMailingListSignup } from './mailingListSignupSlice.model'
+import { mapTimelineSlice } from './timelineSlice.model'
+import { mapHeadingSlice } from './headingSlice.model'
+import { mapStorySlice } from './storySlice.model'
+import { mapLinkCardSlice } from './linkCardSlice.model'
+import { mapLatestNewsSlice } from './latestNewsSlice.model'
+import { mapLogoListSlice } from './logoListSlice.model'
+import { mapBulletListSlice } from './bulletListSlice.model'
+import { mapStatistics } from './statistics.model'
 import { Html, mapHtml } from './html.model'
-import { ProcessEntry, mapProcessEntry } from './processEntry.model'
-import { FaqList, mapFaqList } from './faqList.model'
-import {
-  ConnectedComponent,
-  mapConnectedComponent,
-} from './connectedComponent.model'
-import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
-import { SectionWithImage, mapSectionWithImage } from './sectionWithImage.model'
-import { TabSection, mapTabSection } from './tabSection.model'
-import { TeamList, mapTeamList } from './teamList.model'
-import { ContactUs, mapContactUs } from './contactUs.model'
-import { Location, mapLocation } from './location.model'
-import { TellUsAStory, mapTellUsAStory } from './tellUsAStory.model'
+import { mapProcessEntry } from './processEntry.model'
+import { mapFaqList } from './faqList.model'
+import { mapConnectedComponent } from './connectedComponent.model'
+import { mapEmbeddedVideo } from './embeddedVideo.model'
+import { mapSectionWithImage } from './sectionWithImage.model'
+import { mapTabSection } from './tabSection.model'
+import { mapTeamList } from './teamList.model'
+import { mapContactUs } from './contactUs.model'
+import { mapLocation } from './location.model'
+import { mapTellUsAStory } from './tellUsAStory.model'
+import { SliceUnion } from '../unions/slice.union'
 
 type SliceTypes =
   | ITimeline
@@ -73,36 +67,7 @@ type SliceTypes =
   | ILocation
   | ITellUsAStory
 
-export const Slice = createUnionType({
-  name: 'Slice',
-  types: () => [
-    TimelineSlice,
-    MailingListSignupSlice,
-    HeadingSlice,
-    LinkCardSlice,
-    StorySlice,
-    LogoListSlice,
-    LatestNewsSlice,
-    BulletListSlice,
-    Statistics,
-    ProcessEntry,
-    FaqList,
-    ConnectedComponent,
-    EmbeddedVideo,
-    SectionWithImage,
-    TabSection,
-    TeamList,
-    ContactUs,
-    Location,
-    TellUsAStory,
-    Html,
-    Image,
-    Asset,
-  ],
-  resolveType: (document) => document.typename, // typename is appended to request on indexing
-})
-
-export const mapSlice = (slice: SliceTypes): typeof Slice => {
+export const mapSlice = (slice: SliceTypes): typeof SliceUnion => {
   const contentType = slice.sys.contentType?.sys?.id
   switch (contentType) {
     case 'timeline':
@@ -159,7 +124,7 @@ if we add a slice that is not in mapper mapSlices fails for that slice.
 we dont want a single slice to cause errors on a whole page so we fail them gracefully
 this can e.g. happen when a developer is creating a new slice type and an editor publishes it by accident on a page
 */
-export const safelyMapSlices = (data: SliceTypes): typeof Slice | null => {
+export const safelyMapSlices = (data: SliceTypes): typeof SliceUnion | null => {
   try {
     return mapSlice(data)
   } catch (error) {
@@ -171,8 +136,8 @@ export const safelyMapSlices = (data: SliceTypes): typeof Slice | null => {
 export const mapDocument = (
   document: Document,
   idPrefix: string,
-): Array<typeof Slice> => {
-  const slices: Array<typeof Slice | null> = []
+): Array<typeof SliceUnion> => {
+  const slices: Array<typeof SliceUnion | null> = []
   const docs = document?.content ?? []
 
   docs.forEach((block, index) => {
@@ -203,5 +168,5 @@ export const mapDocument = (
     }
   })
 
-  return slices.filter((slice): slice is typeof Slice => Boolean(slice)) // filter out empty slices that failed mapping
+  return slices.filter((slice): slice is typeof SliceUnion => Boolean(slice)) // filter out empty slices that failed mapping
 }

@@ -1,12 +1,9 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-
 import { IEmbeddedVideo } from '../generated/contentfulTypes'
+import { SystemMetadata } from '../types'
 
 @ObjectType()
 export class EmbeddedVideo {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -20,7 +17,7 @@ export class EmbeddedVideo {
 export const mapEmbeddedVideo = ({
   fields,
   sys,
-}: IEmbeddedVideo): EmbeddedVideo => ({
+}: IEmbeddedVideo): SystemMetadata<EmbeddedVideo> => ({
   typename: 'EmbeddedVideo',
   id: sys.id,
   title: fields.title ?? '',

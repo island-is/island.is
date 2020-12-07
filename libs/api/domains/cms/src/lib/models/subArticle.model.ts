@@ -1,8 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-
 import { ISubArticle } from '../generated/contentfulTypes'
-
-import { Slice, mapDocument } from './slice.model'
+import { SliceUnion } from '../unions/slice.union'
+import { mapDocument } from './slice.model'
 
 @ObjectType()
 export class SubArticle {
@@ -12,8 +11,8 @@ export class SubArticle {
   @Field()
   slug: string
 
-  @Field(() => [Slice])
-  body: Array<typeof Slice>
+  @Field(() => [SliceUnion])
+  body: Array<typeof SliceUnion>
 }
 
 export const mapSubArticle = ({ sys, fields }: ISubArticle): SubArticle => ({
