@@ -1,8 +1,9 @@
 import { gql } from '@apollo/client'
 
 export const NATIONAL_REGISTRY_INFO = gql`
-  query GetMyInfo {
-    getMyInfo {
+  query NationalRegistryUserQuery {
+    nationalRegistry {
+      nationalId
       fullName
       gender
       legalResidence
