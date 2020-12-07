@@ -1,7 +1,7 @@
 import { SearchIndexes } from '@island.is/content-search-indexer/types'
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import * as types from '../generated/contentfulTypes'
-import { SystemMetadata } from '../types'
+import { SystemMetadata } from '@island.is/shared/types'
 import { SliceUnion } from '../unions/slice.union'
 import { AboutPage } from './aboutPage.model'
 import { mapDocument, safelyMapSlices } from './slice.model'

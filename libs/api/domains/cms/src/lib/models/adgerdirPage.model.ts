@@ -3,7 +3,7 @@ import { IVidspyrnaPage } from '../generated/contentfulTypes'
 import { mapDocument } from './slice.model'
 import { AdgerdirTag, mapAdgerdirTag } from './adgerdirTag.model'
 import { SliceUnion } from '../unions/slice.union'
-import { SystemMetadata } from '../types'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class AdgerdirPage {

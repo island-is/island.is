@@ -13,7 +13,7 @@ import { mapAdgerdirGroupSlice } from './adgerdirGroupSlice.model'
 import { Image, mapImage } from './image.model'
 import { SliceUnion } from '../unions/slice.union'
 import { AdgerdirSliceUnion } from '../unions/adgerdirSlice.union'
-import { SystemMetadata } from '../types'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class AdgerdirFrontpage {

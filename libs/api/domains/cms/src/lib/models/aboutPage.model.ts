@@ -3,7 +3,7 @@ import * as types from '../generated/contentfulTypes'
 import { safelyMapSlices } from './slice.model'
 import { PageHeader, mapPageHeader } from './pageHeader.model'
 import { SliceUnion } from '../unions/slice.union'
-import { SystemMetadata } from '../types'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class AboutPage {

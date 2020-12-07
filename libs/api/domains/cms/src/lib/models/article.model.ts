@@ -8,7 +8,7 @@ import { ArticleSubgroup, mapArticleSubgroup } from './articleSubgroup.model'
 import { Organization, mapOrganization } from './organization.model'
 import { SubArticle, mapSubArticle } from './subArticle.model'
 import { SliceUnion } from '../unions/slice.union'
-import { SystemMetadata } from '../types'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class Article {
