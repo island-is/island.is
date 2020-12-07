@@ -8,6 +8,7 @@ import { ArticleSubgroup, mapArticleSubgroup } from './articleSubgroup.model'
 import { Organization, mapOrganization } from './organization.model'
 import { SubArticle, mapSubArticle } from './subArticle.model'
 import { SliceUnion } from '../unions/slice.union'
+import { SystemMetadata } from '../types'
 
 @ObjectType()
 export class Article {
@@ -66,7 +67,11 @@ export class Article {
   featuredImage?: Image
 }
 
-export const mapArticle = ({ fields, sys }: IArticle): Article => ({
+export const mapArticle = ({
+  fields,
+  sys,
+}: IArticle): SystemMetadata<Article> => ({
+  typename: 'Article',
   id: sys.id,
   title: fields.title ?? '',
   shortTitle: fields.shortTitle ?? '',

@@ -341,3 +341,48 @@ export const slices = gql`
     ...ConnectedComponentFields
   }
 `
+
+export const pages = gql`
+  fragment AboutPageFields on AboutPage {
+    __typename
+    id
+    slug
+    title
+  }
+
+  fragment AboutSubPageFields on AboutSubPage {
+    __typename
+    id
+    slug
+    title
+  }
+
+  fragment AdgerdirFrontpageFields on AdgerdirFrontpage {
+    __typename
+    id
+    slug
+    title
+  }
+
+  fragment AdgerdirPageFields on AdgerdirPage {
+    __typename
+    id
+    slug
+    title
+  }
+
+  fragment ArticleFields on Article {
+    __typename
+    id
+    slug
+    title
+  }
+
+  fragment AllPages on Page {
+    ...AboutPageFields
+    ...AboutSubPageFields
+    ...AdgerdirFrontpageFields
+    ...AdgerdirPageFields
+    ...ArticleFields
+  }
+`
