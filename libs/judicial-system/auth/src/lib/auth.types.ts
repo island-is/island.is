@@ -1,4 +1,4 @@
-import { User } from 'libs/judicial-system/types/src'
+import { User } from '@island.is/judicial-system/types'
 
 export type Credentials = {
   user: User
