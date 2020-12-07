@@ -40,6 +40,10 @@ describe('/domari-krafa/urskurdur', () => {
               id: 'test_id_3',
               custodyEndDate: '2020-10-24T12:31:00Z',
             } as UpdateCase,
+            {
+              id: 'test_id_3',
+              custodyEndDate: '2020-10-24T12:31:00Z',
+            } as UpdateCase,
           ]),
         ]}
         addTypename={false}

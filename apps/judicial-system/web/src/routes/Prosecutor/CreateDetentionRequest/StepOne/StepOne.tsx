@@ -14,7 +14,7 @@ import {
   RadioButton,
   Tooltip,
 } from '@island.is/island-ui/core'
-import { validate } from '../../../../utils/validate'
+import { validate, Validation } from '../../../../utils/validate'
 import { isDirty, isNextDisabled } from '../../../../utils/stepHelper'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
@@ -57,6 +57,14 @@ import { ValueType } from 'react-select/src/types'
 import * as styles from './StepOne.treat'
 import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
 import InputMask from 'react-input-mask'
+import {
+  setAndSendDateToServer,
+  setAndSendToServer,
+  validateAndSendTimeToServer,
+  validateAndSendToServer,
+  removeTabsValidateAndSet,
+  validateAndSetTime,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 
 export const CreateCaseMutation = gql`
   mutation CreateCaseMutation($input: CreateCaseInput!) {
@@ -129,29 +137,42 @@ export const StepOne: React.FC = () => {
     policeCaseNumberErrorMessage,
     setPoliceCaseNumberErrorMessage,
   ] = useState<string>('')
+
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>(
     '',
   )
+
   const [accusedNameErrorMessage, setAccusedNameErrorMessage] = useState<
     string
   >('')
+
   const [accusedAddressErrorMessage, setAccusedAddressErrorMessage] = useState<
     string
   >('')
+
   const [
     requestedDefenderEmailErrorMessage,
     setRequestedDefenderEmailErrorMessage,
   ] = useState<string>('')
+
   const [arrestDateErrorMessage, setArrestDateErrorMessage] = useState<string>(
     '',
   )
+
   const [arrestTimeErrorMessage, setArrestTimeErrorMessage] = useState<string>(
     '',
   )
+
+  const [
+    requestedCourtDateErrorMessage,
+    setRequestedCourtDateErrorMessage,
+  ] = useState<string>('')
+
   const [
     requestedCourtTimeErrorMessage,
     setRequestedCourtTimeErrorMessage,
   ] = useState<string>('')
+
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
   const { id } = useParams<{ id: string }>()
@@ -201,10 +222,13 @@ export const StepOne: React.FC = () => {
     (court) => court.label === workingCase?.court,
   )
 
-  const [createCaseMutation] = useMutation(CreateCaseMutation)
+  const [createCaseMutation, { loading: createLoading }] = useMutation(
+    CreateCaseMutation,
+  )
 
   const createCaseIfPossible = async () => {
     const isPossibleToSave =
+      createLoading === false &&
       workingCase?.id === '' &&
       policeCaseNumberRef.current?.value !== '' &&
       accusedNationalIdRef.current?.value !== ''
@@ -419,6 +443,32 @@ export const StepOne: React.FC = () => {
     requestedCourtTimeRef.current?.value,
   ])
 
+  const onBlurCreate = (
+    field: string,
+    text: string,
+    validations: Validation[],
+    setErrorMessage: (value: React.SetStateAction<string>) => void,
+  ) => {
+    if (!workingCase) {
+      return
+    }
+
+    const error = validations
+      .map((v) => validate(text, v))
+      .find((v) => v.isValid === false)
+
+    if (error) {
+      setErrorMessage(error.errorMessage)
+      return
+    }
+
+    if (workingCase.id !== '') {
+      updateCase(workingCase.id, parseString(field, text))
+    } else {
+      createCaseIfPossible()
+    }
+  }
+
   return (
     <PageLayout
       activeSection={Sections.PROSECUTOR}
@@ -443,38 +493,25 @@ export const StepOne: React.FC = () => {
               //This is temporary until we start reading LÖKE case numbers from LÖKE
               mask="999-9999-9999999"
               maskPlaceholder={null}
-              onBlur={(evt) => {
-                const validateField = validate(evt.target.value, 'empty')
-                const validateFieldFormat = validate(
-                  evt.target.value,
-                  'police-casenumber-format',
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'policeCaseNumber',
+                  event,
+                  ['empty', 'police-casenumber-format'],
+                  workingCase,
+                  setWorkingCase,
+                  policeCaseNumberErrorMessage,
+                  setPoliceCaseNumberErrorMessage,
                 )
-
-                setWorkingCase({
-                  ...workingCase,
-                  policeCaseNumber: evt.target.value,
-                })
-
-                if (validateField.isValid && validateFieldFormat.isValid) {
-                  if (workingCase.policeCaseNumber !== evt.target.value) {
-                    if (workingCase.id !== '') {
-                      updateCase(
-                        workingCase.id,
-                        parseString('policeCaseNumber', evt.target.value),
-                      )
-                    } else {
-                      createCaseIfPossible()
-                    }
-                  }
-                } else {
-                  setPoliceCaseNumberErrorMessage(
-                    validateField.errorMessage ||
-                      validateFieldFormat.errorMessage,
-                  )
-                }
-              }}
-              onChange={replaceTabsOnChange}
-              onFocus={() => setPoliceCaseNumberErrorMessage('')}
+              }
+              onBlur={(event) =>
+                onBlurCreate(
+                  'policeCaseNumber',
+                  event.target.value,
+                  ['empty', 'police-casenumber-format'],
+                  setPoliceCaseNumberErrorMessage,
+                )
+              }
             >
               <Input
                 data-testid="policeCaseNumber"
@@ -499,41 +536,25 @@ export const StepOne: React.FC = () => {
               <InputMask
                 mask="999999-9999"
                 maskPlaceholder={null}
-                onBlur={(evt) => {
-                  const validateField = validate(evt.target.value, 'empty')
-                  const validateFieldFormat = validate(
-                    evt.target.value,
-                    'national-id',
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'accusedNationalId',
+                    event,
+                    ['empty', 'national-id'],
+                    workingCase,
+                    setWorkingCase,
+                    nationalIdErrorMessage,
+                    setNationalIdErrorMessage,
                   )
-
-                  setWorkingCase({
-                    ...workingCase,
-                    accusedNationalId: evt.target.value,
-                  })
-
-                  if (validateField.isValid && validateFieldFormat.isValid) {
-                    if (workingCase.accusedNationalId !== evt.target.value) {
-                      if (workingCase.id !== '') {
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'accusedNationalId',
-                            evt.target.value.replace('-', ''),
-                          ),
-                        )
-                      } else {
-                        createCaseIfPossible()
-                      }
-                    }
-                  } else {
-                    setNationalIdErrorMessage(
-                      validateField.errorMessage ||
-                        validateFieldFormat.errorMessage,
-                    )
-                  }
-                }}
-                onChange={replaceTabsOnChange}
-                onFocus={() => setNationalIdErrorMessage('')}
+                }
+                onBlur={(event) =>
+                  onBlurCreate(
+                    'accusedNationalId',
+                    event.target.value,
+                    ['empty', 'national-id'],
+                    setNationalIdErrorMessage,
+                  )
+                }
               >
                 <Input
                   data-testid="nationalId"
@@ -557,30 +578,27 @@ export const StepOne: React.FC = () => {
                 defaultValue={workingCase.accusedName}
                 errorMessage={accusedNameErrorMessage}
                 hasError={accusedNameErrorMessage !== ''}
-                onBlur={(evt) => {
-                  const validateField = validate(evt.target.value, 'empty')
-
-                  setWorkingCase({
-                    ...workingCase,
-                    accusedName: evt.target.value,
-                  })
-
-                  if (validateField.isValid) {
-                    if (
-                      workingCase.accusedName !== evt.target.value &&
-                      workingCase.id !== ''
-                    ) {
-                      updateCase(
-                        workingCase.id,
-                        parseString('accusedName', evt.target.value),
-                      )
-                    }
-                  } else {
-                    setAccusedNameErrorMessage(validateField.errorMessage)
-                  }
-                }}
-                onChange={replaceTabsOnChange}
-                onFocus={() => setAccusedNameErrorMessage('')}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'accusedName',
+                    event,
+                    ['empty'],
+                    workingCase,
+                    setWorkingCase,
+                    accusedNameErrorMessage,
+                    setAccusedNameErrorMessage,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'accusedName',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setAccusedNameErrorMessage,
+                  )
+                }
                 required
               />
             </Box>
@@ -593,30 +611,27 @@ export const StepOne: React.FC = () => {
                 defaultValue={workingCase.accusedAddress}
                 errorMessage={accusedAddressErrorMessage}
                 hasError={accusedAddressErrorMessage !== ''}
-                onBlur={(evt) => {
-                  const validateField = validate(evt.target.value, 'empty')
-
-                  setWorkingCase({
-                    ...workingCase,
-                    accusedAddress: evt.target.value,
-                  })
-
-                  if (validateField.isValid) {
-                    if (
-                      workingCase.accusedAddress !== evt.target.value &&
-                      workingCase.id !== ''
-                    ) {
-                      updateCase(
-                        workingCase.id,
-                        parseString('accusedAddress', evt.target.value),
-                      )
-                    }
-                  } else {
-                    setAccusedAddressErrorMessage(validateField.errorMessage)
-                  }
-                }}
-                onChange={replaceTabsOnChange}
-                onFocus={() => setAccusedAddressErrorMessage('')}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'accusedAddress',
+                    event,
+                    ['empty'],
+                    workingCase,
+                    setWorkingCase,
+                    accusedAddressErrorMessage,
+                    setAccusedAddressErrorMessage,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'accusedAddress',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setAccusedAddressErrorMessage,
+                  )
+                }
                 required
               />
             </Box>
@@ -638,19 +653,15 @@ export const StepOne: React.FC = () => {
                     id="genderMale"
                     label="Karl"
                     checked={workingCase.accusedGender === CaseGender.MALE}
-                    onChange={() => {
-                      setWorkingCase({
-                        ...workingCase,
-                        accusedGender: CaseGender.MALE,
-                      })
-
-                      if (workingCase.id) {
-                        updateCase(
-                          workingCase.id,
-                          parseString('accusedGender', CaseGender.MALE),
-                        )
-                      }
-                    }}
+                    onChange={() =>
+                      setAndSendToServer(
+                        'accusedGender',
+                        CaseGender.MALE,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    }
                     large
                   />
                 </GridColumn>
@@ -660,19 +671,15 @@ export const StepOne: React.FC = () => {
                     id="genderFemale"
                     label="Kona"
                     checked={workingCase.accusedGender === CaseGender.FEMALE}
-                    onChange={() => {
-                      setWorkingCase({
-                        ...workingCase,
-                        accusedGender: CaseGender.FEMALE,
-                      })
-
-                      if (workingCase.id) {
-                        updateCase(
-                          workingCase.id,
-                          parseString('accusedGender', CaseGender.FEMALE),
-                        )
-                      }
-                    }}
+                    onChange={() =>
+                      setAndSendToServer(
+                        'accusedGender',
+                        CaseGender.FEMALE,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    }
                     large
                   />
                 </GridColumn>
@@ -682,19 +689,15 @@ export const StepOne: React.FC = () => {
                     id="genderOther"
                     label="Annað"
                     checked={workingCase.accusedGender === CaseGender.OTHER}
-                    onChange={() => {
-                      setWorkingCase({
-                        ...workingCase,
-                        accusedGender: CaseGender.OTHER,
-                      })
-
-                      if (workingCase.id) {
-                        updateCase(
-                          workingCase.id,
-                          parseString('accusedGender', CaseGender.OTHER),
-                        )
-                      }
-                    }}
+                    onChange={() =>
+                      setAndSendToServer(
+                        'accusedGender',
+                        CaseGender.OTHER,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    }
                     large
                   />
                 </GridColumn>
@@ -747,32 +750,27 @@ export const StepOne: React.FC = () => {
               defaultValue={workingCase.requestedDefenderEmail}
               errorMessage={requestedDefenderEmailErrorMessage}
               hasError={requestedDefenderEmailErrorMessage !== ''}
-              onBlur={(evt) => {
-                const validateField = validate(evt.target.value, 'email-format')
-
-                setWorkingCase({
-                  ...workingCase,
-                  requestedDefenderEmail: evt.target.value,
-                })
-
-                if (validateField.isValid) {
-                  if (
-                    workingCase.requestedDefenderEmail !== evt.target.value &&
-                    workingCase.id !== ''
-                  ) {
-                    updateCase(
-                      workingCase.id,
-                      parseString('requestedDefenderEmail', evt.target.value),
-                    )
-                  }
-                } else {
-                  setRequestedDefenderEmailErrorMessage(
-                    validateField.errorMessage,
-                  )
-                }
-              }}
-              onChange={replaceTabsOnChange}
-              onFocus={() => setRequestedDefenderEmailErrorMessage('')}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'requestedDefenderEmail',
+                  event,
+                  ['email-format'],
+                  workingCase,
+                  setWorkingCase,
+                  requestedDefenderEmailErrorMessage,
+                  setRequestedDefenderEmailErrorMessage,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'requestedDefenderEmail',
+                  event.target.value,
+                  ['email-format'],
+                  workingCase,
+                  updateCase,
+                  setRequestedDefenderEmailErrorMessage,
+                )
+              }
             />
             {(isDirty(workingCase.defenderName) ||
               isDirty(workingCase.defenderEmail)) && (
@@ -801,19 +799,15 @@ export const StepOne: React.FC = () => {
                     : courts[0].value,
               }}
               options={courts}
-              onChange={(selectedOption: ValueType<ReactSelectOption>) => {
-                setWorkingCase({
-                  ...workingCase,
-                  court: (selectedOption as ReactSelectOption).label,
-                })
-                updateCase(
-                  workingCase.id,
-                  parseString(
-                    'court',
-                    (selectedOption as ReactSelectOption).label,
-                  ),
+              onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                setAndSendToServer(
+                  'court',
+                  (selectedOption as ReactSelectOption).label,
+                  workingCase,
+                  setWorkingCase,
+                  updateCase,
                 )
-              }}
+              }
             />
           </Box>
           <Box component="section" marginBottom={7}>
@@ -836,68 +830,51 @@ export const StepOne: React.FC = () => {
                       ? new Date(workingCase.arrestDate)
                       : null
                   }
-                  handleChange={(date) => {
-                    const formattedDate = formatISO(date, {
-                      representation: workingCase.arrestDate?.includes('T')
-                        ? 'complete'
-                        : 'date',
-                    })
-
-                    setWorkingCase({
-                      ...workingCase,
-                      arrestDate: formattedDate,
-                    })
-
-                    updateCase(
-                      workingCase.id,
-                      parseString('arrestDate', formattedDate),
+                  handleChange={(date) =>
+                    setAndSendDateToServer(
+                      'arrestDate',
+                      workingCase.arrestDate,
+                      date,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                      setArrestDateErrorMessage,
                     )
-                  }}
+                  }
                   handleCloseCalendar={(date: Date | null) => {
                     if (date === null || !isValid(date)) {
                       setArrestDateErrorMessage('Reitur má ekki vera tómur')
                     }
                   }}
-                  handleOpenCalendar={() => setArrestDateErrorMessage('')}
                   required
                 />
               </GridColumn>
               <GridColumn span="3/8">
                 <TimeInputField
                   disabled={!workingCase.arrestDate}
-                  onBlur={(evt) => {
-                    const time = padTimeWithZero(evt.target.value)
-
-                    if (workingCase.arrestDate) {
-                      const validateTimeEmpty = validate(time, 'empty')
-                      const validateTimeFormat = validate(time, 'time-format')
-                      const arrestDateMinutes = parseTime(
-                        workingCase.arrestDate,
-                        time,
-                      )
-
-                      setWorkingCase({
-                        ...workingCase,
-                        arrestDate: arrestDateMinutes,
-                      })
-
-                      if (
-                        validateTimeEmpty.isValid &&
-                        validateTimeFormat.isValid
-                      ) {
-                        updateCase(
-                          workingCase.id,
-                          parseString('arrestDate', arrestDateMinutes),
-                        )
-                      } else {
-                        setArrestTimeErrorMessage(
-                          validateTimeEmpty.errorMessage ||
-                            validateTimeFormat.errorMessage,
-                        )
-                      }
-                    }
-                  }}
-                  onFocus={() => setArrestTimeErrorMessage('')}
+                  onChange={(evt) =>
+                    validateAndSetTime(
+                      'arrestDate',
+                      workingCase.arrestDate,
+                      evt.target.value,
+                      ['empty', 'time-format'],
+                      workingCase,
+                      setWorkingCase,
+                      arrestTimeErrorMessage,
+                      setArrestTimeErrorMessage,
+                    )
+                  }
+                  onBlur={(evt) =>
+                    validateAndSendTimeToServer(
+                      'arrestDate',
+                      workingCase.arrestDate,
+                      evt.target.value,
+                      ['empty', 'time-format'],
+                      workingCase,
+                      updateCase,
+                      setArrestTimeErrorMessage,
+                    )
+                  }
                 >
                   <Input
                     data-testid="arrestTime"
@@ -932,6 +909,7 @@ export const StepOne: React.FC = () => {
                   label="Veldu dagsetningu"
                   placeholderText="Veldu dagsetningu"
                   locale="is"
+                  errorMessage={requestedCourtDateErrorMessage}
                   icon={workingCase.courtDate ? 'lockClosed' : undefined}
                   minDate={new Date()}
                   selected={
@@ -940,24 +918,23 @@ export const StepOne: React.FC = () => {
                       : null
                   }
                   disabled={Boolean(workingCase.courtDate)}
-                  handleChange={(date) => {
-                    const formattedDate = formatISO(date, {
-                      representation: workingCase.requestedCourtDate?.includes(
-                        'T',
-                      )
-                        ? 'complete'
-                        : 'date',
-                    })
-
-                    setWorkingCase({
-                      ...workingCase,
-                      requestedCourtDate: formattedDate,
-                    })
-
-                    updateCase(
-                      workingCase.id,
-                      parseString('requestedCourtDate', formattedDate),
+                  handleChange={(date) =>
+                    setAndSendDateToServer(
+                      'requestedCourtDate',
+                      workingCase.requestedCourtDate,
+                      date,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                      setRequestedCourtDateErrorMessage,
                     )
+                  }
+                  handleCloseCalendar={(date: Date | null) => {
+                    if (date === null || !isValid(date)) {
+                      setRequestedCourtDateErrorMessage(
+                        'Reitur má ekki vera tómur',
+                      )
+                    }
                   }}
                   required
                 />
@@ -968,42 +945,29 @@ export const StepOne: React.FC = () => {
                     !workingCase.requestedCourtDate ||
                     Boolean(workingCase.courtDate)
                   }
-                  onBlur={(evt) => {
-                    const time = padTimeWithZero(evt.target.value)
-
-                    if (workingCase.requestedCourtDate) {
-                      const requestedCourtDateMinutes = parseTime(
-                        workingCase.requestedCourtDate,
-                        time,
-                      )
-                      const validateTimeEmpty = validate(time, 'empty')
-                      const validateTimeFormat = validate(time, 'time-format')
-
-                      setWorkingCase({
-                        ...workingCase,
-                        requestedCourtDate: requestedCourtDateMinutes,
-                      })
-
-                      if (
-                        validateTimeEmpty.isValid &&
-                        validateTimeFormat.isValid
-                      ) {
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'requestedCourtDate',
-                            requestedCourtDateMinutes,
-                          ),
-                        )
-                      } else {
-                        setRequestedCourtTimeErrorMessage(
-                          validateTimeEmpty.errorMessage ||
-                            validateTimeFormat.errorMessage,
-                        )
-                      }
-                    }
-                  }}
-                  onFocus={() => setRequestedCourtTimeErrorMessage('')}
+                  onChange={(evt) =>
+                    validateAndSetTime(
+                      'requestedCourtDate',
+                      workingCase.requestedCourtDate,
+                      evt.target.value,
+                      ['empty', 'time-format'],
+                      workingCase,
+                      setWorkingCase,
+                      requestedCourtTimeErrorMessage,
+                      setRequestedCourtTimeErrorMessage,
+                    )
+                  }
+                  onBlur={(evt) =>
+                    validateAndSendTimeToServer(
+                      'requestedCourtDate',
+                      workingCase.requestedCourtDate,
+                      evt.target.value,
+                      ['empty', 'time-format'],
+                      workingCase,
+                      updateCase,
+                      setRequestedCourtTimeErrorMessage,
+                    )
+                  }
                 >
                   <Input
                     data-testid="requestedCourtDate"
