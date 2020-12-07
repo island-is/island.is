@@ -217,19 +217,6 @@ export const DetentionRequests: React.FC = () => {
                       </Box>
                     </Box>
                   </Text>
-<<<<<<< HEAD
-                </td>
-                <td>
-                  {c.state === CaseState.ACCEPTED &&
-                  c.isCustodyEndDateInThePast ? (
-                    <Tag variant="darkerBlue" outlined>
-                      Gæsluvarðhaldi lokið
-                    </Tag>
-                  ) : (
-                    <Tag
-                      variant={mapCaseStateToTagVariant(c.state).color}
-                      outlined
-=======
                 </th>
                 <th>
                   <Text as="span" fontWeight="regular">
@@ -239,7 +226,6 @@ export const DetentionRequests: React.FC = () => {
                       alignItems="center"
                       className={styles.thButton}
                       onClick={() => requestSort('created')}
->>>>>>> Reorder table on th click
                     >
                       Krafa stofnuð
                       <Box

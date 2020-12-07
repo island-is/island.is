@@ -531,5 +531,5 @@ describe('/krafa without ID', () => {
 
     // Assert
     await waitFor(() => expect(createCalled).toBe(true))
-  })
+  }, 10000)
 })
