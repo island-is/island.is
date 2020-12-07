@@ -24,7 +24,7 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
     if (isValid) {
       const result = await registerEndpoint({
         variables: {
-          input: { endpoint: getValues('endPoint') },
+          input: { endpoint: getValues('prodEndPoint') },
         },
       })
 
