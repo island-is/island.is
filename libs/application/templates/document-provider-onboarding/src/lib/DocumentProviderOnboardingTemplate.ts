@@ -61,6 +61,7 @@ const dataSchema = z.object({
     message: 'Þú verður að samþykkja að forritun og prófunum sé lokið',
   }),
   endPoint: z.string().url().nonempty(),
+  prodEndPoint: z.string().url().nonempty(),
   rejectionReason: z.string(),
   approvedByReviewer: z.enum(['APPROVE', 'REJECT']),
 })

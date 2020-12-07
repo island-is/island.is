@@ -1,12 +1,9 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-
 import { IContactUs } from '../generated/contentfulTypes'
+import { SystemMetadata } from '../types'
 
 @ObjectType()
 export class ContactUs {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -47,7 +44,10 @@ export class ContactUs {
   errorMessage: string
 }
 
-export const mapContactUs = ({ fields, sys }: IContactUs): ContactUs => ({
+export const mapContactUs = ({
+  fields,
+  sys,
+}: IContactUs): SystemMetadata<ContactUs> => ({
   typename: 'ContactUs',
   id: sys.id,
   title: fields.title ?? '',

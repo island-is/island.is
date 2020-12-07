@@ -7,6 +7,7 @@ import { EmailService } from '@island.is/email-service'
 import {
   CaseCustodyRestrictions,
   NotificationType,
+  User,
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
@@ -21,7 +22,6 @@ import {
   stripHtmlTags,
   formatPrisonRulingEmailNotification,
 } from '../../formatters'
-import { User } from '../user'
 import { Case } from '../case'
 import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
@@ -145,7 +145,7 @@ export class NotificationService {
     user: User,
   ): Promise<Recipient> {
     const smsText = formatHeadsUpSmsNotification(
-      existingCase.prosecutor?.name || user.name,
+      existingCase.prosecutor?.name || user?.name,
       existingCase.arrestDate,
       existingCase.requestedCourtDate,
     )
@@ -171,7 +171,7 @@ export class NotificationService {
     user: User,
   ): Promise<Recipient> {
     const smsText = formatReadyForCourtSmsNotification(
-      existingCase.prosecutor?.name || user.name,
+      existingCase.prosecutor?.name || user?.name,
       existingCase.court,
     )
 
@@ -180,8 +180,9 @@ export class NotificationService {
 
   private async sendReadyForCourtEmailToProsecutor(
     existingCase: Case,
+    user: User,
   ): Promise<Recipient> {
-    const pdf = await generateRequestPdf(existingCase)
+    const pdf = await generateRequestPdf(existingCase, user)
 
     const subject = `Krafa í máli ${existingCase.policeCaseNumber}`
     const html = 'Sjá viðhengi'
@@ -194,8 +195,8 @@ export class NotificationService {
     ]
 
     return this.sendEmail(
-      existingCase.prosecutor?.name,
-      existingCase.prosecutor?.email,
+      existingCase.prosecutor?.name || user?.name,
+      existingCase.prosecutor?.email || user?.email,
       subject,
       html,
       attachments,
@@ -207,7 +208,7 @@ export class NotificationService {
     user: User,
   ): Promise<SendNotificationResponse> {
     const recipients = await Promise.all([
-      this.sendReadyForCourtEmailToProsecutor(existingCase),
+      this.sendReadyForCourtEmailToProsecutor(existingCase, user),
       this.sendReadyForCourtSmsToCourt(existingCase, user),
     ])
 

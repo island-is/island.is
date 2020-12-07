@@ -101,6 +101,26 @@ export const TestPhase: Form = buildForm({
               },
               {},
             ),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'prodEndPointSection',
+      name: m.prodEndPointSection,
+      children: [
+        buildMultiField({
+          id: 'prodEndPointSection',
+          name: m.prodEndPointSection,
+          children: [
+            buildCustomField(
+              {
+                id: 'endPoint',
+                name: m.prodEndPointTitle,
+                component: 'ProdEndPoint',
+              },
+              {},
+            ),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',

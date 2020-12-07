@@ -25,7 +25,7 @@ export class ApiResource extends Model<ApiResource> {
     allowNull: false,
   })
   @ApiProperty()
-  name: string
+  name!: string
 
   @Column({
     type: DataType.BOOLEAN,
@@ -33,21 +33,21 @@ export class ApiResource extends Model<ApiResource> {
     defaultValue: true,
   })
   @ApiProperty()
-  enabled: boolean
+  enabled!: boolean
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  displayName: string
+  displayName!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  description: string
+  description!: string
 
   @Column({
     type: DataType.BOOLEAN,
@@ -55,29 +55,29 @@ export class ApiResource extends Model<ApiResource> {
     defaultValue: true,
   })
   @ApiProperty()
-  showInDiscoveryDocument: boolean
+  showInDiscoveryDocument!: boolean
 
   @HasMany(() => ApiResourceUserClaim)
   @ApiProperty()
-  public userClaims: ApiResourceUserClaim[]
+  public userClaims?: ApiResourceUserClaim[]
 
   // Common properties end
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified?: Date
 
   @HasMany(() => ApiResourceScope)
   @ApiProperty()
-  public scopes: ApiResourceScope[]
+  public scopes?: ApiResourceScope[]
 
   @HasMany(() => ApiResourceSecret)
   @ApiProperty()
-  readonly apiSecrets: ApiResourceSecret[]
+  readonly apiSecrets?: ApiResourceSecret[]
 
   // Signing algorithm for access token. If empty, will use the server default signing algorithm.
   // public allowedAccessTokenSigningAlgorithms

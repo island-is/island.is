@@ -26,6 +26,7 @@ import {
   ChatPanel,
   Header,
   BackgroundImage,
+  Main,
 } from '@island.is/web/components'
 import { ColorSchemeContext as CovidColorSchemeContext } from '@island.is/web/components/Adgerdir/UI/ColorSchemeContext/ColorSchemeContext'
 import { useI18n } from '@island.is/web/i18n'
@@ -80,137 +81,145 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
       />
       <Box className={covidStyles.frontpageBg}>
         <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
-          <Header buttonColorScheme="negative" />
-        </ColorSchemeContext.Provider>
-        <GridContainer>
-          <Box paddingTop={[2, 2, 10]} paddingBottom={[4, 4, 4, 10]}>
-            <GridRow>
-              <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
+          <Header buttonColorScheme="negative">
+            <GridContainer>
+              <Box paddingTop={[2, 2, 10]} paddingBottom={[4, 4, 4, 10]}>
                 <GridRow>
-                  <GridColumn
-                    offset={['0', '0', '0', '1/8']}
-                    span={['8/8', '8/8', '8/8', '7/8']}
-                  >
-                    <Stack space={2}>
-                      <span className={covidStyles.white}>
-                        <Breadcrumbs color="white">
-                          <Link href={makePath()} as={makePath()}>
-                            <a>Ísland.is</a>
-                          </Link>
-                          <Link
-                            href={makePath('adgerdir')}
-                            as={makePath('adgerdir')}
-                          >
-                            <a>{n('covidAdgerdir', 'Covid aðgerðir')}</a>
-                          </Link>
-                        </Breadcrumbs>
-                      </span>
-                      <Text variant="h1" as="h1" color="white">
-                        {frontpage.title}
-                      </Text>
-                      <Text variant="intro" as="p" color="white">
-                        {frontpage.description}
-                      </Text>
-                      <span className={covidStyles.white}>
-                        <RichText
-                          body={frontpage.content as SliceType[]}
-                          config={{ defaultPadding: [2, 2, 4], skipGrid: true }}
-                          locale={activeLocale}
-                        />
-                      </span>
-                    </Stack>
+                  <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
+                    <GridRow>
+                      <GridColumn
+                        offset={['0', '0', '0', '1/8']}
+                        span={['8/8', '8/8', '8/8', '7/8']}
+                      >
+                        <Stack space={2}>
+                          <span className={covidStyles.white}>
+                            <Breadcrumbs color="white">
+                              <Link href={makePath()} as={makePath()}>
+                                <a>Ísland.is</a>
+                              </Link>
+                              <Link
+                                href={makePath('adgerdir')}
+                                as={makePath('adgerdir')}
+                              >
+                                <a>{n('covidAdgerdir', 'Covid aðgerðir')}</a>
+                              </Link>
+                            </Breadcrumbs>
+                          </span>
+                          <Text variant="h1" as="h1" color="white">
+                            {frontpage.title}
+                          </Text>
+                          <Text variant="intro" as="p" color="white">
+                            {frontpage.description}
+                          </Text>
+                          <span className={covidStyles.white}>
+                            <RichText
+                              body={frontpage.content as SliceType[]}
+                              config={{
+                                defaultPadding: [2, 2, 4],
+                                skipGrid: true,
+                              }}
+                              locale={activeLocale}
+                            />
+                          </span>
+                        </Stack>
+                      </GridColumn>
+                    </GridRow>
+                  </GridColumn>
+                  <GridColumn hiddenBelow="md" span={['0', '0', '0', '4/12']}>
+                    <Hidden below="lg" print={true}>
+                      <Box
+                        height="full"
+                        width="full"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <img src="/covid/birds.png" alt="Fuglar" />
+                      </Box>
+                    </Hidden>
                   </GridColumn>
                 </GridRow>
-              </GridColumn>
-              <GridColumn hiddenBelow="md" span={['0', '0', '0', '4/12']}>
-                <Hidden below="lg" print={true}>
-                  <Box
-                    height="full"
-                    width="full"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <img src="/covid/birds.png" alt="Fuglar" />
-                  </Box>
-                </Hidden>
-              </GridColumn>
-            </GridRow>
-          </Box>
-        </GridContainer>
+              </Box>
+            </GridContainer>
+          </Header>
+        </ColorSchemeContext.Provider>
       </Box>
 
-      <CovidColorSchemeContext.Provider value={{ colorScheme: 'green' }}>
-        <Box marginBottom={10}>
-          <Box className={covidStyles.bg}>
-            <ContentBlock width="large">
-              <AdgerdirArticles
-                tags={tagsItems}
-                items={pagesItems}
-                namespace={namespace}
-              />
-            </ContentBlock>
+      <Main>
+        <CovidColorSchemeContext.Provider value={{ colorScheme: 'green' }}>
+          <Box marginBottom={10}>
+            <Box className={covidStyles.bg}>
+              <ContentBlock width="large">
+                <AdgerdirArticles
+                  tags={tagsItems}
+                  items={pagesItems}
+                  namespace={namespace}
+                />
+              </ContentBlock>
+            </Box>
           </Box>
-        </Box>
-      </CovidColorSchemeContext.Provider>
-      <Box marginBottom={[6, 6, 15]}>
-        <Stack space={[6, 6, 12]}>
-          {frontpage.slices.map((slice, index) => {
-            const colorScheme = groupSliceCount % 2 ? 'blue' : 'green'
+        </CovidColorSchemeContext.Provider>
+        <Box marginBottom={[6, 6, 15]}>
+          <Stack space={[6, 6, 12]}>
+            {frontpage.slices.map((slice, index) => {
+              const colorScheme = groupSliceCount % 2 ? 'blue' : 'green'
 
-            switch (slice.__typename) {
-              case 'AdgerdirFeaturedNewsSlice':
-                return <FeaturedNews key={index} items={slice.featured} />
-              case 'AdgerdirGroupSlice':
-                groupSliceCount++
+              switch (slice.__typename) {
+                case 'AdgerdirFeaturedNewsSlice':
+                  return <FeaturedNews key={index} items={slice.featured} />
+                case 'AdgerdirGroupSlice':
+                  groupSliceCount++
 
-                return (
-                  <CovidColorSchemeContext.Provider
-                    key={index}
-                    value={{
-                      colorScheme,
-                    }}
-                  >
-                    <Box width="full" overflow="hidden">
-                      <ContentBlock width="large">
-                        <GroupedPages
-                          topContent={
-                            <Stack space={2}>
-                              <Text
-                                variant="eyebrow"
-                                as="h2"
-                                color="roseTinted400"
-                              >
-                                <span
-                                  className={covidStyles.textColor[colorScheme]}
+                  return (
+                    <CovidColorSchemeContext.Provider
+                      key={index}
+                      value={{
+                        colorScheme,
+                      }}
+                    >
+                      <Box width="full" overflow="hidden">
+                        <ContentBlock width="large">
+                          <GroupedPages
+                            topContent={
+                              <Stack space={2}>
+                                <Text
+                                  variant="eyebrow"
+                                  as="h2"
+                                  color="roseTinted400"
                                 >
-                                  {slice.subtitle}
-                                </span>
-                              </Text>
-                              <Text variant="h2" as="h3">
-                                {slice.title}
-                              </Text>
-                              <Text as="p">{slice.description}</Text>
-                            </Stack>
-                          }
-                          bottomContent={
-                            <CardsSlider
-                              items={slice.pages.filter(
-                                (x) => x.title && x.slug,
-                              )}
-                            />
-                          }
-                        />
-                      </ContentBlock>
-                    </Box>
-                  </CovidColorSchemeContext.Provider>
-                )
-            }
+                                  <span
+                                    className={
+                                      covidStyles.textColor[colorScheme]
+                                    }
+                                  >
+                                    {slice.subtitle}
+                                  </span>
+                                </Text>
+                                <Text variant="h2" as="h3">
+                                  {slice.title}
+                                </Text>
+                                <Text as="p">{slice.description}</Text>
+                              </Stack>
+                            }
+                            bottomContent={
+                              <CardsSlider
+                                items={slice.pages.filter(
+                                  (x) => x.title && x.slug,
+                                )}
+                              />
+                            }
+                          />
+                        </ContentBlock>
+                      </Box>
+                    </CovidColorSchemeContext.Provider>
+                  )
+              }
 
-            return null
-          })}
-        </Stack>
-      </Box>
-      <ChatPanel />
+              return null
+            })}
+          </Stack>
+        </Box>
+        <ChatPanel />
+      </Main>
     </>
   )
 }

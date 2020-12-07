@@ -183,6 +183,12 @@ class App {
       throw error // we dont want this indexer to run if it could not migrate
     }
 
+    // rank the search results so we can see if they change
+    const currentIcelandicIndexVersion = await elastic.getCurrentVersionFromIndices(
+      'is',
+    )
+    await elastic.rankSearchQueries('is', currentIcelandicIndexVersion)
+
     logger.info('Elasticsearch migration completed')
     return processedMigrations
   }
