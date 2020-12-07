@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import HelpBox from './HelpBox';
 import { ClaimDTO } from '../models/dtos/claim.dto';
+import NotFound from './form/NotFound';
 
 interface ClaimShow {
   subjectId: string;
@@ -17,11 +18,12 @@ const Users: React.FC = () => {
   const [id, setId] = useState<string>("");
   const [claimShow, setClaimShow] = useState<ClaimShow[]>([]);
   const [type, setType] = useState<string>("");
+  const [showNotFound, setShowNotFound] = useState<boolean>(false);
   const { handleSubmit, register, errors, formState } = useForm();
   const { isSubmitting } = formState;
 
   const getIndex = (subjectId: string) : number => {
-    for(let i: number = 0; i < claimShow.length; i++){
+    for(let i = 0; i < claimShow.length; i++){
       if ( claimShow[i].subjectId === subjectId)
       {
         return i;
@@ -31,10 +33,9 @@ const Users: React.FC = () => {
   }
 
   const getUser = async (data) => {
-    console.log(data);
-    console.log('FORM SUMB');
+    setShowNotFound(false);
     await axios
-      .get(`api/user-identities/${data.id}/${data.type}`)
+      .get(`api/user-identities/${data.id}`)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
@@ -50,22 +51,20 @@ const Users: React.FC = () => {
       })
       .catch(function (error) {
         if (error.response) {
-          
+                  
           // setResponse(error.response.data);
           // console.log(error.response.data);
         } else {
           
           // TODO: Handle and show error
         }
+        console.log("Setting not found");
+        setShowNotFound(true);
         setUsers([]);
       });
 
       setId(data.id);
       setType(data.type);
-  };
-
-  const edit = () => {
-    console.log('Not Implemented - is it needed?');
   };
 
   const toggleActive = async (user: UserIdentityDTO) => {
@@ -89,7 +88,7 @@ const Users: React.FC = () => {
     getUser({ id: id, type: type });
   };
 
-  const handleShowClaimsClicked = (user: UserIdentityDTO, show: boolean = true) : ClaimShow => {
+  const handleShowClaimsClicked = (user: UserIdentityDTO, show = true) : ClaimShow => {
     const index = getIndex(user.subjectId);
     let ret = { subjectId: user.subjectId, show: show};
     if ( index === -1)
@@ -136,29 +135,20 @@ const Users: React.FC = () => {
                     ref={register({ required: true })}
                     placeholder="0123456789"
                   />
+                  <HelpBox helpText="You can search for user identities by national Id or User Identity subject Id. National ID must be typed in as a number with 10 number characters otherwise you will be looking up by Subject Id" />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="id"
                     message="SubjectId is required"
                   />
-                  </div>
-
-                  <div className="users__container__field">
-                  <label htmlFor="type" className="users_label">Type</label>
-                  <select ref={register({ required: true })} name="type" defaultValue={'nationalId'} className="users_search_select" id="type">
-                    <option value="nationalId">National Id (kennitala)</option>
-                    <option value="subjectId">Subject Id</option>
-                  </select>
-                  <HelpBox helpText="You can search for user identities by national Id or User Identity subject Id" />
-                  
-                  <input
+                    <input
                     type="submit"
                     value="Search"
                     disabled={isSubmitting}
                     className="users__button__search"
                   />
-                </div>
+                  </div>
               </div>
             </form>
           </div>
@@ -194,13 +184,15 @@ const Users: React.FC = () => {
                         </button>
                         
                         <div className={`users__claim__overlay users__container__list ${showClaims(user)  ? 'show' : 'hidden'}`}>
+                        <a className="users__container__button__close" onClick={() => handleShowClaimsClicked(user)}>&times;</a>
                         {user.claims.map((claim: ClaimDTO) => {
                           return (
                             <div className="users__container__list__item" key={claim.type}>
-                              <div className="users__container__list__item__name">
-                                {claim.type}
+                              
+                              <div className="list-name">
+                                {claim.type}:
                               </div>
-                              <div className="users__container__list__item__value">
+                              <div className="list-value">
                                 {claim.value}
                               </div>
                               </div>
@@ -209,14 +201,14 @@ const Users: React.FC = () => {
 
                         </div>
                       </td>
-                      <td>
+                      {/* <td>
                         <button
                           className="clients__button__edit"
                           onClick={() => edit(user)}
                         >
                           Edit
                         </button>
-                      </td>
+                      </td> */}
                       <td>
                         <button
                           className={`clients__button__delete ${
@@ -237,9 +229,12 @@ const Users: React.FC = () => {
                     </tr>
                   );
                 })}
+                
               </tbody>
             </table>
+           
           </div>
+          { showNotFound && (<NotFound title="User Identity not found">Nothing found for: {id}</NotFound>)}
         </div>
       </div>
     </div>
