@@ -20,7 +20,6 @@ import {
 } from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
-import { validate } from '../../../utils/validate'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import {
@@ -28,10 +27,6 @@ import {
   CaseCustodyProvisions,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import {
-  parseString,
-  replaceTabsOnChange,
-} from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import * as styles from './Overview.treat'
 import { useMutation, useQuery } from '@apollo/client'
@@ -347,7 +342,7 @@ export const JudgeOverview: React.FC = () => {
               </AccordionItem>
               <AccordionItem
                 id="id_5"
-                label="Skilaboð til dómara"
+                label="Athugasemdir vegna málsmeðferðar"
                 startExpanded
                 labelVariant="h3"
               >

@@ -1,6 +1,6 @@
 {
   "order": 0,
-  "version": 11,
+  "version": 12,
   "index_patterns": ["island-en-v*"],
   "settings": {
     "analysis": {
@@ -72,6 +72,9 @@
         "type": "integer"
       },
       "wordLinks": {
+        "type": "integer"
+      },
+      "externalLinks": {
         "type": "integer"
       },
       "termPool": {

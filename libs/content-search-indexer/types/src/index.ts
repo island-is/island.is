@@ -12,6 +12,7 @@ export interface MappedData {
   fillAndSignLinks?: number
   pdfLinks?: number
   wordLinks?: number
+  externalLinks?: number
   type: string
   termPool?: string[]
   response?: string
