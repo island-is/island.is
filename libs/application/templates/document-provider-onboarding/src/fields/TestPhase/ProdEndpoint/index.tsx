@@ -9,7 +9,7 @@ import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/C
 import { registerEndpointMutation } from '../../../graphql/mutations/registerEndpointMutation'
 import { m } from '../../../forms/messages'
 
-const ProdEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
+const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
   interface Variable {
     id: string
     name: string

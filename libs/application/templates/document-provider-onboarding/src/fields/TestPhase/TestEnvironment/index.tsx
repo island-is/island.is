@@ -1,15 +1,15 @@
 import React, { FC, useState } from 'react'
-import { useFormContext, Controller } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
-import { Box, Button, Text, Checkbox } from '@island.is/island-ui/core'
+import { FieldBaseProps } from '@island.is/application/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { m } from '../../../forms/messages'
 import { registerProviderMutation } from '../../../graphql/mutations/registerProviderMutation'
 
-const TestEnvironment: FC<FieldBaseProps> = ({ field, application, error }) => {
+const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
   interface Key {
     name: string
     value: string
