@@ -7,7 +7,7 @@ import { ArticleSubgroup, mapArticleSubgroup } from './articleSubgroup.model'
 import { Organization, mapOrganization } from './organization.model'
 import { SubArticle, mapSubArticle } from './subArticle.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
-import { SystemMetadata } from '@island.is/shared/types'
+import { mapProcessEntry, ProcessEntry } from './processEntry.model'
 
 @ObjectType()
 export class Article {
@@ -34,6 +34,9 @@ export class Article {
 
   @Field(() => [SliceUnion])
   body: Array<typeof SliceUnion>
+
+  @Field(() => ProcessEntry, { nullable: true })
+  processEntry?: ProcessEntry
 
   @Field(() => ArticleCategory, { nullable: true })
   category?: ArticleCategory
@@ -66,11 +69,7 @@ export class Article {
   featuredImage?: Image
 }
 
-export const mapArticle = ({
-  fields,
-  sys,
-}: IArticle): SystemMetadata<Article> => ({
-  typename: 'Article',
+export const mapArticle = ({ fields, sys }: IArticle): Article => ({
   id: sys.id,
   title: fields.title ?? '',
   shortTitle: fields.shortTitle ?? '',
@@ -79,6 +78,9 @@ export const mapArticle = ({
   containsApplicationForm: fields.containsApplicationForm ?? false,
   importance: fields.importance ?? 0,
   body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
+  processEntry: fields.processEntry
+    ? mapProcessEntry(fields.processEntry)
+    : null,
   category: fields.category ? mapArticleCategory(fields.category) : null,
   otherCategories: (fields.otherCategories ?? []).map(mapArticleCategory),
   group: fields.group ? mapArticleGroup(fields.group) : null,

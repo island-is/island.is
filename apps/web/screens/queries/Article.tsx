@@ -14,6 +14,14 @@ export const GET_ARTICLE_QUERY = gql`
       body {
         ...AllSlices
       }
+      processEntry {
+        id
+        type
+        processTitle
+        processLink
+        openLinkInModal
+        buttonText
+      }
       group {
         title
         slug
