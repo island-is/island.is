@@ -97,6 +97,7 @@
   - [UI Fields](libs/application/ui-fields/README.md)
   - [UI Shell](libs/application/ui-shell/README.md)
 - [Auth API Lib](libs/auth-api-lib/README.md)
+- [Auth Nest Tools](libs/auth-nest-tools/README.md)
 - [Content Search Indexer](libs/content-search-indexer/README.md)
 - [Content Search Toolkit](libs/content-search-toolkit/README.md)
 - [Dokobit Signing](libs/dokobit-signing/README.md)
