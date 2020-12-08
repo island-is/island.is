@@ -16,21 +16,11 @@ export const SubpageDetailsContent: FC<SubpageDetailsProps> = ({
   content,
 }) => {
   return (
-    <Box>
+    <GridContainer>
       <Box paddingBottom={4}>
-        <GridContainer>
-          <GridRow>
-            <GridColumn span="12/12">{header}</GridColumn>
-          </GridRow>
-        </GridContainer>
+        {header}
       </Box>
-      <Box>
-        <GridContainer>
-          <GridRow>
-            <GridColumn span="12/12">{content}</GridColumn>
-          </GridRow>
-        </GridContainer>
-      </Box>
-    </Box>
+      {content}
+    </GridContainer>
   )
 }

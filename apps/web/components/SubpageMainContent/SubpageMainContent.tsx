@@ -1,4 +1,6 @@
 import React, { FC, ReactNode } from 'react'
+import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 import {
   Box,
   GridContainer,
@@ -12,21 +14,38 @@ interface SubpageMainProps {
 }
 
 export const SubpageMainContent: FC<SubpageMainProps> = ({ main, image }) => {
+  const { width } = useWindowSize()
+  const [isMobile, setIsMobile] = React.useState(false)
+
+  useIsomorphicLayoutEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
+  
   return (
     <Box>
-      <GridContainer>
-        {!image && (
-          <GridRow>
-            <GridColumn span="12/12">{main}</GridColumn>
-          </GridRow>
-        )}
-        {image && (
-          <GridRow>
-            <GridColumn span="9/12">{main}</GridColumn>
-            <GridColumn span="3/12">{image}</GridColumn>
-          </GridRow>
-        )}
-      </GridContainer>
+      {isMobile ? (
+        <GridContainer>
+          {main}
+        </GridContainer>
+      ) : (
+        <Box>
+          {image ? (
+            <GridContainer>
+              <GridRow>
+                <GridColumn span="9/12">{main}</GridColumn>
+                <GridColumn span="3/12">{image}</GridColumn>
+              </GridRow>
+            </GridContainer>
+          ) : (
+            <GridContainer>
+              {main}
+            </GridContainer>
+          )}
+        </Box>
+      )}
     </Box>
   )
 }
