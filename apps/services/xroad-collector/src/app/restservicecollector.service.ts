@@ -6,7 +6,6 @@ import { logger } from '@island.is/logging'
 import { RestMetadataService } from '@island.is/api-catalogue/services'
 import {
   Provider,
-  Providers,
   providerToString,
 } from '@island.is/api-catalogue/types'
 
