@@ -4,10 +4,7 @@ import { ProviderService } from '@island.is/api-catalogue/services'
 import { ServiceCollector } from './servicecollector.interface'
 import { logger } from '@island.is/logging'
 import { RestMetadataService } from '@island.is/api-catalogue/services'
-import {
-  Provider,
-  providerToString,
-} from '@island.is/api-catalogue/types'
+import { Provider, providerToString } from '@island.is/api-catalogue/types'
 
 @Injectable()
 export class RestServiceCollector implements ServiceCollector {
