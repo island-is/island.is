@@ -1,16 +1,18 @@
 import { InternalServerErrorException, NotFoundException } from '@nestjs/common'
-import { logger } from '@island.is/logging'
-import Soap from 'soap'
-import { MyInfo } from '../myInfo.model'
-import { GetViewHomeDto } from './dto/getViewHomeDto'
-import { GetViewReligionDto } from './dto/getViewReligionDto'
-import { GetViewMunicipalityDto } from './dto/getViewMunicipalityDto'
-import { GetViewRegistryDto } from './dto/getViewRegistryDto'
-import { Fjolskyldan, GetViewFamilyDto } from './dto/getViewFamilyDto'
-import { FamilyMember } from '../familyMember.model'
-import { GetViewBanmarkingDto } from './dto/getViewBanmarkingDto'
 import * as kennitala from 'kennitala'
-import { FamilyRelation } from '../types/familyRelation.enum'
+import Soap from 'soap'
+
+import { logger } from '@island.is/logging'
+import {
+  GetViewBanmarkingDto,
+  GetViewHomeDto,
+  GetViewReligionDto,
+  GetViewMunicipalityDto,
+  GetViewRegistryDto,
+  Fjolskyldan,
+  GetViewFamilyDto,
+} from './dto'
+import { FamilyMember, User, FamilyRelation } from '../types'
 
 export class NationalRegistryApi {
   private readonly client: Soap.Client | null
@@ -37,7 +39,7 @@ export class NationalRegistryApi {
     this.clientPassword = clientPassword
   }
 
-  public async getMyInfo(nationalId: string): Promise<MyInfo | null> {
+  public async getMyInfo(nationalId: string): Promise<User> {
     const response = await this.getViewThjodskra(nationalId)
 
     if (!response)
@@ -56,6 +58,7 @@ export class NationalRegistryApi {
     )
 
     return {
+      nationalId,
       fullName: userInfo.Nafn,
       citizenship: userInfo.Rikisfang === 'IS' ? 'Ísland' : userInfo.Rikisfang,
       gender: this.formatGender(userInfo.Kyn),
@@ -67,7 +70,7 @@ export class NationalRegistryApi {
     }
   }
 
-  public async getMyFamily(nationalId: string): Promise<FamilyMember[] | null> {
+  public async getMyFamily(nationalId: string): Promise<FamilyMember[]> {
     const response = await this.getViewFjolskyldan(nationalId)
 
     if (!response)
