@@ -37,14 +37,37 @@ describe('/krafa with an id', () => {
     // Assert
     expect(
       await waitFor(
-        () => (screen.getByLabelText('Fullt nafn *') as HTMLInputElement).value,
+        () =>
+          (screen.getByLabelText(
+            'Slá inn LÖKE málsnúmer *',
+          ) as HTMLInputElement).value,
       ),
+    ).toEqual('000-0000-0000')
+
+    expect(
+      screen.getByRole('radio', { name: 'Karl' }) as HTMLInputElement,
+    ).toBeChecked()
+
+    expect(
+      (screen.getByLabelText('Kennitala *') as HTMLInputElement).value,
+    ).toEqual('111111-1110')
+
+    expect(
+      (screen.getByLabelText('Fullt nafn *') as HTMLInputElement).value,
     ).toEqual('Jon Harring')
 
     expect(
       (screen.getByLabelText('Lögheimili/dvalarstaður *') as HTMLInputElement)
         .value,
     ).toEqual('Harringvej 2')
+
+    expect(
+      (screen.getByLabelText('Nafn verjanda') as HTMLInputElement).value,
+    ).toEqual('Saul Goodman')
+
+    expect(
+      (screen.getByLabelText('Netfang verjanda') as HTMLInputElement).value,
+    ).toEqual('saul@goodman.com')
   }, 15000)
 
   test('should not have a disabled continue button if step is valid when a valid request is opened', async () => {
@@ -76,38 +99,6 @@ describe('/krafa with an id', () => {
           }) as HTMLButtonElement,
       ),
     ).not.toBeDisabled()
-  })
-
-  test('should have a disabled requestedCourtDate if judge has set a court date', async () => {
-    // Arrange
-
-    // Act
-    render(
-      <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
-        addTypename={false}
-      >
-        <MemoryRouter
-          initialEntries={[`${Constants.SINGLE_REQUEST_BASE_ROUTE}/test_id_3`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-              <StepOne />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
-      </MockedProvider>,
-    )
-
-    // Assert
-    expect(
-      await waitFor(
-        () =>
-          screen.getAllByLabelText(
-            'Veldu dagsetningu *',
-          )[1] as HTMLInputElement,
-      ),
-    ).toBeDisabled()
   })
 
   test('should have a disabled defender name and email if judge has set a defender', async () => {
@@ -142,40 +133,40 @@ describe('/krafa with an id', () => {
       screen.getByLabelText('Netfang verjanda') as HTMLInputElement,
     ).toBeDisabled()
   })
-})
 
-test('should have a disabled defender name and email even if a judge erases that info from the hearing arrangement screen', async () => {
-  // Arrange
+  test('should have a disabled defender name and email even if a judge erases that info from the hearing arrangement screen', async () => {
+    // Arrange
 
-  // Act
-  render(
-    <MockedProvider
-      mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
-      addTypename={false}
-    >
-      <MemoryRouter
-        initialEntries={[`${Constants.SINGLE_REQUEST_BASE_ROUTE}/test_id_3`]}
+    // Act
+    render(
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        addTypename={false}
       >
-        <UserProvider>
-          <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-            <StepOne />
-          </Route>
-        </UserProvider>
-      </MemoryRouter>
-    </MockedProvider>,
-  )
+        <MemoryRouter
+          initialEntries={[`${Constants.SINGLE_REQUEST_BASE_ROUTE}/test_id_3`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+              <StepOne />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
 
-  // Assert
-  // A value is considered dirty if it's a string, even an empty one.
-  expect(
-    await waitFor(
-      () => screen.getByLabelText('Nafn verjanda') as HTMLInputElement,
-    ),
-  ).toBeDisabled()
+    // Assert
+    // A value is considered dirty if it's a string, even an empty one.
+    expect(
+      await waitFor(
+        () => screen.getByLabelText('Nafn verjanda') as HTMLInputElement,
+      ),
+    ).toBeDisabled()
 
-  expect(
-    screen.getByLabelText('Netfang verjanda') as HTMLInputElement,
-  ).toBeDisabled()
+    expect(
+      screen.getByLabelText('Netfang verjanda') as HTMLInputElement,
+    ).toBeDisabled()
+  })
 })
 
 describe('/krafa without ID', () => {
@@ -222,25 +213,17 @@ describe('/krafa without ID', () => {
     )
 
     // Act
-    const aa = [
+    const textInputs = [
       await waitFor(() => screen.getByLabelText('Slá inn LÖKE málsnúmer *')),
       await waitFor(() => screen.getByLabelText('Kennitala *')),
       await waitFor(() => screen.getByLabelText('Fullt nafn *')),
       await waitFor(() => screen.getByLabelText('Lögheimili/dvalarstaður *')),
+      await waitFor(() => screen.getByLabelText('Nafn verjanda')),
+      await waitFor(() => screen.getByLabelText('Netfang verjanda')),
     ]
 
-    const court = screen
-      .getByTestId(/select-court/i)
-      .getElementsByClassName('singleValue')[0].innerHTML
-
-    const datepickers = await waitFor(() =>
-      screen.queryAllByTestId(/datepicker-value/i),
-    )
-
     // Assert
-    expect(aa.filter((a) => a.innerHTML !== '').length).toEqual(0)
-    expect(court).toEqual('Héraðsdómur Reykjavíkur')
-    expect(datepickers.length).toEqual(0)
+    expect(textInputs.filter((a) => a.innerHTML !== '').length).toEqual(0)
     expect(
       screen.getByRole('radio', { name: 'Karl' }) as HTMLInputElement,
     ).not.toBeChecked()
@@ -257,23 +240,8 @@ describe('/krafa without ID', () => {
     ).toBeDisabled()
   })
 
-  test('should not allow users to continue unless every required field has been filled out', async () => {
+  test('should not allow users to continue unless every required field has been filled outt', async () => {
     // Arrange
-    const now = new Date()
-    const arrestDate = new Date(now.getFullYear(), now.getMonth(), 15)
-    arrestDate.setHours(17, 0, 0)
-    const lastDateOfTheMonth = new Date(
-      now.getFullYear(),
-      now.getMonth() + 1,
-      0,
-    )
-    lastDateOfTheMonth.setHours(17, 0)
-
-    let promiseResolve: (value?: unknown) => void
-    const promise = new Promise(function (resolve) {
-      promiseResolve = resolve
-    })
-
     render(
       <MockedProvider
         mocks={[
@@ -291,24 +259,6 @@ describe('/krafa without ID', () => {
             {
               id: 'testid',
               accusedGender: CaseGender.FEMALE,
-            } as UpdateCase,
-            {
-              id: 'testid',
-              arrestDate: formatISO(arrestDate, { representation: 'date' }),
-            } as UpdateCase,
-            {
-              id: 'testid',
-              arrestDate: formatISO(arrestDate),
-            } as UpdateCase,
-            {
-              id: 'testid',
-              requestedCourtDate: formatISO(lastDateOfTheMonth, {
-                representation: 'date',
-              }),
-            } as UpdateCase,
-            {
-              id: 'testid',
-              requestedCourtDate: formatISO(lastDateOfTheMonth),
             } as UpdateCase,
           ]),
         ]}
@@ -333,35 +283,17 @@ describe('/krafa without ID', () => {
       '000-0000-0010',
     )
 
-    userEvent.tab()
-
-    expect(
-      screen.getByRole('button', {
-        name: /Stofna kröfu/i,
-      }) as HTMLButtonElement,
-    ).toBeDisabled()
+    userEvent.click(screen.getByRole('radio', { name: 'Kona' }))
 
     userEvent.type(
       screen.getByLabelText('Kennitala *') as HTMLInputElement,
       '1112902539',
     )
 
-    userEvent.tab()
-
-    await promise
-
-    expect(
-      screen.getByRole('button', {
-        name: /Stofna kröfu/i,
-      }) as HTMLButtonElement,
-    ).toBeDisabled()
-
     userEvent.type(
       screen.getByLabelText('Fullt nafn *') as HTMLInputElement,
       'Jon Harring',
     )
-
-    userEvent.tab()
 
     expect(
       screen.getByRole('button', {
@@ -373,58 +305,6 @@ describe('/krafa without ID', () => {
       screen.getByLabelText('Lögheimili/dvalarstaður *') as HTMLInputElement,
       'Harringvej 2',
     )
-    userEvent.tab()
-
-    userEvent.click(screen.getByRole('radio', { name: 'Kona' }))
-
-    // Select dates
-    const datePickerWrappers = screen.getAllByTestId('datepicker')
-
-    expect(datePickerWrappers.length).toEqual(2)
-
-    const arrestedWrapper = within(datePickerWrappers[0])
-
-    const arrestedDatePicker = arrestedWrapper.getAllByText('Veldu dagsetningu')
-
-    userEvent.click(arrestedDatePicker[0])
-
-    userEvent.click(arrestedWrapper.getAllByText('15')[0])
-
-    const hearingWrapper = within(datePickerWrappers[1])
-
-    const hearingDatePicker = hearingWrapper.getAllByText('Veldu dagsetningu')
-
-    userEvent.click(hearingDatePicker[0])
-
-    const lastDayOfTheMonth = lastDateOfTheMonth.getDate().toString()
-
-    const lastDays = hearingWrapper.getAllByText(lastDayOfTheMonth)
-
-    expect(lastDays.length).toBeGreaterThan(0)
-
-    const lastDayOfCurrentMonth = lastDays[lastDays.length - 1]
-
-    userEvent.click(lastDayOfCurrentMonth)
-
-    expect(
-      screen.getByRole('button', {
-        name: /Stofna kröfu/i,
-      }) as HTMLButtonElement,
-    ).toBeDisabled()
-
-    userEvent.type(screen.getByLabelText('Tímasetning *'), '17:00')
-
-    userEvent.tab()
-
-    expect(
-      screen.getByRole('button', {
-        name: /Stofna kröfu/i,
-      }) as HTMLButtonElement,
-    ).toBeDisabled()
-
-    userEvent.type(screen.getByLabelText('Ósk um tíma *'), '17:00')
-
-    userEvent.tab()
 
     expect(
       screen.getByRole('button', {
