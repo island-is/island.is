@@ -1,18 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import {
-  Text,
-  Box,
-  Input,
-  Tooltip,
-} from '@island.is/island-ui/core'
-import {
-  Case,
-  UpdateCase,
-} from '@island.is/judicial-system/types'
+import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
+import { Case, UpdateCase } from '@island.is/judicial-system/types'
 import { isNextDisabled } from '../../../../utils/stepHelper'
-import {
-  Validation,
-} from '@island.is/judicial-system-web/src/utils/validate'
+import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import * as Constants from '../../../../utils/constants'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
@@ -33,7 +23,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 export const StepFour: React.FC = () => {
-
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -77,7 +66,7 @@ export const StepFour: React.FC = () => {
       {
         value: workingCase?.legalArguments || '',
         validations: ['empty'],
-      }
+      },
     ]
 
     if (workingCase) {
@@ -105,7 +94,9 @@ export const StepFour: React.FC = () => {
   return (
     <PageLayout
       activeSection={Sections.PROSECUTOR}
-      activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_TWO}
+      activeSubSection={
+        ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_FOUR
+      }
       isLoading={isLoading}
       notFound={data?.case === undefined}
     >
@@ -122,10 +113,10 @@ export const StepFour: React.FC = () => {
               <Text as="h3" variant="h3">
                 Greinargerð um málsatvik{' '}
                 <Tooltip
-                    placement="right"
-                    as="span"
-                    text="Málsatvik, hvernig meðferð þessa máls hófst, skal skrá hér ásamt framburðum vitna og sakborninga ef til eru. Einnig er gott að taka fram stöðu rannsóknar og næstu skref."
-                  />
+                  placement="right"
+                  as="span"
+                  text="Málsatvik, hvernig meðferð þessa máls hófst, skal skrá hér ásamt framburðum vitna og sakborninga ef til eru. Einnig er gott að taka fram stöðu rannsóknar og næstu skref."
+                />
               </Text>
             </Box>
             <Box marginBottom={3}>
@@ -169,10 +160,10 @@ export const StepFour: React.FC = () => {
               <Text as="h3" variant="h3">
                 Greinargerð um lagarök{' '}
                 <Tooltip
-                    placement="right"
-                    as="span"
-                    text="Lagarök og lagaákvæði sem eiga við brotið og kröfuna skal taka fram hér."
-                  />
+                  placement="right"
+                  as="span"
+                  text="Lagarök og lagaákvæði sem eiga við brotið og kröfuna skal taka fram hér."
+                />
               </Text>
             </Box>
             <Box marginBottom={7}>

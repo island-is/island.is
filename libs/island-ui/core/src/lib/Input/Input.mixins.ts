@@ -162,11 +162,11 @@ export const labelDisabledEmptyInput = {
 }
 
 export const containerDisabled = {
-  backgroundColor: theme.color.transparent,
+  backgroundColor: theme.color.blue100,
 }
 
 export const inputDisabled = {
-  backgroundColor: theme.color.transparent,
+  backgroundColor: theme.color.blue100,
   color: theme.color.dark400,
 }
 

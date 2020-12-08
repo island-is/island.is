@@ -84,6 +84,14 @@ export const PageLayout: FC<PageProps> = ({
                         type: 'SUB_SECTION',
                         name: 'Lagagrundvöllur og takmarkanir',
                       },
+                      {
+                        type: 'SUB_SECTION',
+                        name: 'Greinargerð',
+                      },
+                      {
+                        type: 'SUB_SECTION',
+                        name: 'Yfirlit kröfu',
+                      },
                     ],
                   },
                   {
