@@ -19,17 +19,47 @@ Since the development of the institutions service portal hasn't stared yet, this
 For development purposes you can add it to the individual's service portal navigation by adding a navigation object to `libs/service-portal/core/src/lib/navigation/masterNavigation.ts`
 
 ```ts
-{
-  name: defineMessage({
-    id: 'service.portal:document-provider',
-    defaultMessage: 'Skjalaveita',
-  }),
-  path: ServicePortalPath.DocumentProviderRoot,
-  icon: {
-    type: 'outline',
-    icon: 'receipt',
+  {
+    name: defineMessage({
+      id: 'service.portal:document-provider',
+      defaultMessage: 'Skjalaveita',
+    }),
+    path: ServicePortalPath.DocumentProviderRoot,
+    icon: {
+      type: 'outline',
+      icon: 'receipt',
+    },
+    children: [
+      {
+        name: defineMessage({
+          id: 'service.portal:document-provider-document-providers',
+          defaultMessage: 'Skjalaveitendur',
+        }),
+        path: ServicePortalPath.DocumentProviderDocumentProviders,
+      },
+      {
+        name: defineMessage({
+          id: 'service.portal:document-provider-my-categories',
+          defaultMessage: 'Mínar flokkar',
+        }),
+        path: ServicePortalPath.DocumentProviderMyCategories,
+      },
+      {
+        name: defineMessage({
+          id: 'service.portal:document-provider-settings',
+          defaultMessage: 'Stillingar',
+        }),
+        path: ServicePortalPath.DocumentProviderSettingsRoot,
+      },
+      {
+        name: defineMessage({
+          id: 'service.portal:document-provider-technical-info',
+          defaultMessage: 'Tæknilegar upplýsingar',
+        }),
+        path: ServicePortalPath.DocumentProviderTechnicalInfo,
+      },
+    ],
   },
-},
 ```
 
 and then add the module to `apps/service-portal/src/store/modules.ts`

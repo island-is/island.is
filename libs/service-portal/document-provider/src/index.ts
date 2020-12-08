@@ -26,7 +26,8 @@ export const documentProviderModule: ServicePortalModule = {
         defaultMessage: 'Skjalaveitendur',
       }),
       path: ServicePortalPath.DocumentProviderDocumentProviders,
-      render: () => lazy(() => import('./screens/DocumentProviders/DocumentProviders')),
+      render: () =>
+        lazy(() => import('./screens/DocumentProviders/DocumentProviders')),
     },
     {
       //hvar birtist þetta nafn... ?
@@ -43,8 +44,63 @@ export const documentProviderModule: ServicePortalModule = {
         id: 'service.portal:document-provider-settings-title',
         defaultMessage: 'Stillingar',
       }),
-      path: ServicePortalPath.DocumentProviderSettings,
+      path: ServicePortalPath.DocumentProviderSettingsRoot,
       render: () => lazy(() => import('./screens/Settings/Settings')),
+    },
+    {
+      name: defineMessage({
+        id: 'sp.document-provider:edit-institution',
+        defaultMessage: 'Breyta stofnun',
+      }),
+      path: ServicePortalPath.DocumentProviderSettingsEditInstituion,
+      render: () =>
+        lazy(() => import('./screens/Settings/EditIntitution/EditIntitution')),
+    },
+    {
+      name: defineMessage({
+        id: 'sp.document-provider:edit-responsible-contact',
+        defaultMessage: 'Breyta Ábyrgðarmanni',
+      }),
+      path: ServicePortalPath.DocumentProviderSettingsEditResponsibleContact,
+      render: () =>
+        lazy(() =>
+          import(
+            './screens/Settings/EditResponsibleContact/EditResponsibleContact'
+          ),
+        ),
+    },
+    {
+      name: defineMessage({
+        id: 'sp.document-provider:edit-technical-contact',
+        defaultMessage: 'Breyta Ábyrgðarmanni',
+      }),
+      path: ServicePortalPath.DocumentProviderSettingsEditTechnicalContact,
+      render: () =>
+        lazy(() =>
+          import(
+            './screens/Settings/EditTechnicalContact/EditTechnicalContact'
+          ),
+        ),
+    },
+    {
+      name: defineMessage({
+        id: 'sp.document-provider:edit-user-help-contact',
+        defaultMessage: 'Breyta notendaaðstoð',
+      }),
+      path: ServicePortalPath.DocumentProviderSettingsEditUserHelpContact,
+      render: () =>
+        lazy(() =>
+          import('./screens/Settings/EditUserHelpContact/EditUserHelpContact'),
+        ),
+    },
+    {
+      name: defineMessage({
+        id: 'sp.document-provider:edit-endpoints',
+        defaultMessage: 'Breyta endapunkt',
+      }),
+      path: ServicePortalPath.DocumentProviderSettingsEditEndpoints,
+      render: () =>
+        lazy(() => import('./screens/Settings/EditEndpoints/EditEndpoints')),
     },
     {
       //hvar birtist þetta nafn... ?
