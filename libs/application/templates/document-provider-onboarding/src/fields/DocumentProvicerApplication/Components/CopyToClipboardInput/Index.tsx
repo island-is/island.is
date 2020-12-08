@@ -26,29 +26,27 @@ export const CopyToClipboardInput: FC<CopyToClipboardInputProps> = ({
 
   const buttonRef = useRef<HTMLButtonElement>(null)
   return (
-    <Box>
-      <Box position="relative">
+    <Box display="flex" alignItems="stretch" flexDirection="row">
+      <Box flexGrow={1}>
         <Input
           disabled
           label={inputLabel}
           name={inputLabel}
           value={inputValue}
         />
-        <Box position="absolute" className={styles.clipboardContainer}>
-          <Button
-            ref={buttonRef}
-            circle
-            colorScheme="default"
-            icon="copy"
-            iconType="outline"
-            onClick={() => {
-              copyToClipboard(inputValue)
-            }}
-            size="default"
-            type="button"
-            variant="primary"
-          />
-        </Box>
+      </Box>
+      <Box display="flex">
+        <Button
+          ref={buttonRef}
+          colorScheme="light"
+          icon="copy"
+          iconType="outline"
+          onClick={() => {
+            copyToClipboard(inputValue)
+          }}
+          size="default"
+          type="button"
+        />
       </Box>
     </Box>
   )

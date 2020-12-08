@@ -1,14 +1,12 @@
 import {
   ApplicationTypes,
+  buildCustomField,
   buildForm,
-  buildIntroductionField,
   buildMultiField,
-  buildTextField,
   Form,
   FormModes,
 } from '@island.is/application/core'
 import { m } from './messages'
-
 export const Rejected: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
   name: m.rejectedTitle,
@@ -19,10 +17,15 @@ export const Rejected: Form = buildForm({
       name: m.rejectedTitle,
       description: m.rejectedSubTitle,
       children: [
-        buildTextField({
-          id: 'rejectionReason',
-          name: m.reviewRejectReasonLabel.defaultMessage,
-          disabled: true,
+        buildCustomField({
+          id: 'RejectionScreen',
+          name: 'RejectionScreen',
+          component: 'RejectionScreen',
+        }),
+        buildCustomField({
+          id: 'ManOnBench',
+          name: 'ManOnBench',
+          component: 'ManOnBenchIllustrationPeriods',
         }),
       ],
     }),

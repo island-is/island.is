@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   formName: {
     id: 'dpo.application:form.name',
-    defaultMessage: 'Almennar upplýsingar um skjalaveitanda',
+    defaultMessage: 'Umsókn skjalaveitu',
     description: '',
   },
 
@@ -295,7 +295,7 @@ export const m = defineMessages({
   },
   reviewTitle: {
     id: 'dpo.application:review.title',
-    defaultMessage: 'Umsókn um að gerast skjalaveitandi',
+    defaultMessage: 'Úrvinnsla umsóknar',
     description: '',
   },
   reviewSubTitle: {
@@ -323,6 +323,11 @@ export const m = defineMessages({
   rejectedSubTitle: {
     id: 'dpo.application:rejected.subTitle',
     defaultMessage: 'Umsókn þinni til að gerast skjalaveitandi var hafnað',
+    description: '',
+  },
+  rejectedSubHeading: {
+    id: 'dpo.application:rejected.subHeading',
+    defaultMessage: 'Ástæða',
     description: '',
   },
 

@@ -22,7 +22,7 @@ export const Finished: Form = buildForm({
           {
             id: 'ThankYouImage',
             name: 'Takk fyrir',
-            component: 'ThankYouImage',
+            component: 'WomanWithLaptopIllustrationPeriods',
           },
           {},
         ),
