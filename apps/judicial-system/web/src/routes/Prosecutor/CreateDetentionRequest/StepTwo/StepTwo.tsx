@@ -61,10 +61,6 @@ export const StepTwo: React.FC = () => {
 
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-
-  const arrestTimeRef = useRef<HTMLInputElement>(null)
-  const requestedCourtTimeRef = useRef<HTMLInputElement>(null)
-  const requestedCustodyEndTimeRef = useRef<HTMLInputElement>(null)
   
   const [arrestTime, setArrestTime] = useState<string>()
   const [requestedCourtTime, setRequestedCourtTime] = useState<string>()
@@ -408,14 +404,10 @@ export const StepTwo: React.FC = () => {
                     name="arrestTime"
                     label="Tímasetning"
                     placeholder="Settu inn tíma"
-                    ref={arrestTimeRef}
+
                     errorMessage={arrestTimeErrorMessage}
                     hasError={arrestTimeErrorMessage !== ''}
-                    defaultValue={
-                      workingCase.arrestDate?.includes('T')
-                        ? formatDate(workingCase.arrestDate, TIME_FORMAT)
-                        : undefined
-                    }
+                    defaultValue={arrestTime}
                     required
                   />
                 </TimeInputField>
@@ -504,17 +496,9 @@ export const StepTwo: React.FC = () => {
                     placeholder="Settu inn tíma dags"
                     errorMessage={requestedCourtTimeErrorMessage}
                     hasError={requestedCourtTimeErrorMessage !== ''}
-                    defaultValue={
-                      workingCase.requestedCourtDate?.includes('T')
-                        ? formatDate(
-                            workingCase.requestedCourtDate,
-                            TIME_FORMAT,
-                          )
-                        : undefined
-                    }
+                    defaultValue={requestedCourtTime}
                     icon={workingCase.courtDate ? 'lockClosed' : undefined}
                     iconType="outline"
-                    ref={requestedCourtTimeRef}
                     required
                   />
                 </TimeInputField>
@@ -605,8 +589,7 @@ export const StepTwo: React.FC = () => {
                       name="requestedCustodyEndTime"
                       label="Tímasetning (kk:mm)"
                       placeholder="Settu inn tíma"
-                      ref={requestedCustodyEndTimeRef}
-                      defaultValue={getTimeFromDate(workingCase.requestedCustodyEndDate)}
+                      defaultValue={requestedCustodyEndTime}
                       errorMessage={requestedCustodyEndTimeErrorMessage}
                       hasError={requestedCustodyEndTimeErrorMessage !== ''}
                       required
