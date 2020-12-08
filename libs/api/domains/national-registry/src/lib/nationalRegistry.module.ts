@@ -1,6 +1,7 @@
 import { DynamicModule } from '@nestjs/common'
-import { NationalRegistryResolver } from './national-registry.resolver'
-import { NationalRegistryService } from './national-registry.service'
+
+import { NationalRegistryResolver } from './nationalRegistry.resolver'
+import { NationalRegistryService } from './nationalRegistry.service'
 import { NationalRegistryApi } from './soap/nationalRegistryApi'
 import { SoapClient } from './soap/soapClient'
 
