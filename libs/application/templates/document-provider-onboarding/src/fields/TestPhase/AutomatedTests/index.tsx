@@ -89,6 +89,7 @@ const AutomatedTests: FC<FieldBaseProps> = () => {
                 ref={register({ required: true })}
                 hasError={errors.docId !== undefined}
                 errorMessage={m.automatedTestsDocIdErrorMessage.defaultMessage}
+                disabled={isLoading}
               />
             </GridColumn>
           </GridRow>

@@ -1,7 +1,7 @@
 import React, { FC, useRef } from 'react'
 import { Box, Input, Button } from '@island.is/island-ui/core'
 import * as styles from './CopyToClipboardInput.treat'
-//TODO finish the look of this component
+
 export interface CopyToClipboardInputProps {
   inputLabel: string
   inputValue: string
@@ -24,6 +24,7 @@ export const CopyToClipboardInput: FC<CopyToClipboardInputProps> = ({
     buttonRef.current?.focus()
   }
 
+  //TODO finish UI and find out how to style the input and button so that they float togeather
   const buttonRef = useRef<HTMLButtonElement>(null)
   return (
     <Box display="flex" alignItems="stretch" flexDirection="row">

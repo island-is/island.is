@@ -81,7 +81,12 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
           />
         </Box>
       </Box>
-      <Box marginBottom={7} display="flex" justifyContent="flexEnd">
+      <Box
+        marginBottom={7}
+        display="flex"
+        flexDirection="column"
+        alignItems="flexEnd"
+      >
         <Button
           variant="ghost"
           size="small"
@@ -101,7 +106,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
         />
 
         {errors['endPointObject.endPointExists'] && (
-          <Box color="red600" paddingY={2}>
+          <Box color="red600" paddingY={2} display="flex">
             <Text fontWeight="semiBold" color="red600">
               {errors['endPointObject.endPointExists']}
             </Text>

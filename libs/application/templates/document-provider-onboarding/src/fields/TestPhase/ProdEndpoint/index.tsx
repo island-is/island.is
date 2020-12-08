@@ -85,7 +85,12 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
           />
         </Box>
       </Box>
-      <Box marginBottom={7} display="flex" justifyContent="flexEnd">
+      <Box
+        marginBottom={7}
+        display="flex"
+        flexDirection="column"
+        alignItems="flexEnd"
+      >
         <Button
           variant="ghost"
           size="small"

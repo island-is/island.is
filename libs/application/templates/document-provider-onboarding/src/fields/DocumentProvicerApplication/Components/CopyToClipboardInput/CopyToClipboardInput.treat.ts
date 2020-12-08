@@ -10,14 +10,3 @@ export const inputWrapper = style({
   borderBottomRightRadius: 0,
   borderTopRightRadius: 0,
 })
-
-export const testStyle = style({
-  ':hover': {
-    border: 'solid',
-  },
-  selectors: {
-    [`&:focus`]: {
-      borderColor: 'dark100',
-    },
-  },
-})

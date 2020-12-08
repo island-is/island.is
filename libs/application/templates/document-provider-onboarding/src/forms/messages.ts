@@ -396,7 +396,7 @@ export const m = defineMessages({
   },
   testPhaseInfoFooterMessage: {
     id: 'dpo.application:testPhaseInfo.footerMessage',
-    defaultMessage: 'Öryggiskröfur sem gerðar eru til skjalaveitna',
+    defaultMessage: 'Skjöl þurfa að vera á PDF formi',
     description: '',
   },
 

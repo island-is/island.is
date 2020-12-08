@@ -67,7 +67,12 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
         </Box>
       </Box>
       <Box></Box>
-      <Box marginBottom={7} display="flex" justifyContent="flexEnd">
+      <Box
+        marginBottom={7}
+        display="flex"
+        alignItems="flexEnd"
+        flexDirection="column"
+      >
         <Button
           variant="ghost"
           size="small"
