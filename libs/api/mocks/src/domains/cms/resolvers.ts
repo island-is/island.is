@@ -1,4 +1,4 @@
-import { SystemMetadata } from 'libs/shared/types/src'
+import { SystemMetadata } from '@island.is/shared/types'
 import orderBy from 'lodash/orderBy'
 import { Resolvers } from '../../types'
 import { store } from './store'
