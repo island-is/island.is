@@ -294,7 +294,7 @@ export const StepTwo: React.FC = () => {
     >
       {workingCase ? (
         <>
-          <Box marginBottom={10}>
+          <Box marginBottom={7}>
             <Text as="h1" variant="h1">
               Dómkröfur
             </Text>

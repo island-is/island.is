@@ -15,13 +15,9 @@ import {
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import { isNextDisabled } from '../../../../utils/stepHelper'
-import {
-  Validation,
-} from '@island.is/judicial-system-web/src/utils/validate'
+import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import { FormFooter } from '../../../../shared-components/FormFooter'
-import {
-  parseArray,
-} from '@island.is/judicial-system-web/src/utils/formatters'
+import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '../../../../utils/constants'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useParams } from 'react-router-dom'
@@ -38,6 +34,7 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import BlueBox from 'apps/judicial-system/web/src/shared-components/BlueBox/BlueBox'
 
 export const StepThree: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -160,12 +157,11 @@ export const StepThree: React.FC = () => {
   }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
 
   useEffect(() => {
-
     const requiredFields: { value: string; validations: Validation[] }[] = [
       {
         value: workingCase?.lawsBroken || '',
         validations: ['empty'],
-      }
+      },
     ]
 
     if (workingCase) {
@@ -193,19 +189,21 @@ export const StepThree: React.FC = () => {
   return (
     <PageLayout
       activeSection={Sections.PROSECUTOR}
-      activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_THREE}
+      activeSubSection={
+        ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_THREE
+      }
       isLoading={isLoading}
       notFound={data?.case === undefined}
     >
       {workingCase ? (
         <>
-          <Box marginBottom={10}>
+          <Box marginBottom={7}>
             <Text as="h1" variant="h1">
               Lagagrundvöllur og takmarkanir
             </Text>
           </Box>
           <Box component="section" marginBottom={7}>
-            <Box marginBottom={2}>
+            <Box marginBottom={3}>
               <Text as="h3" variant="h3">
                 Lagaákvæði sem brot varða við
               </Text>
@@ -244,185 +242,201 @@ export const StepThree: React.FC = () => {
               rows={7}
             />
           </Box>
-          <Box component="section" marginBottom={7}>
-            <Box marginBottom={2}>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={3}>
               <Text as="h3" variant="h3">
                 Lagaákvæði sem krafan er byggð á{' '}
-                <Text as="span" color={'red400'} fontWeight="semiBold">
+                <Text as="span" color={'red600'} fontWeight="semiBold">
                   *
                 </Text>
               </Text>
             </Box>
-            <GridContainer>
-              <GridRow>
-                {caseCustodyProvisions.map((provision, index) => {
-                  return (
-                    <GridColumn span="3/7" key={index}>
-                      <Box marginBottom={3}>
+            <BlueBox>
+              <GridContainer>
+                <GridRow>
+                  {caseCustodyProvisions.map((provision, index) => {
+                    return (
+                      <GridColumn span="6/12" key={index}>
+                        <Box
+                          marginBottom={
+                            // Do not add margins to the last two items
+                            index < caseCustodyProvisions.length - 2 ? 3 : 0
+                          }
+                        >
+                          <Checkbox
+                            name={provision.brokenLaw}
+                            label={provision.brokenLaw}
+                            value={provision.value}
+                            checked={
+                              workingCase.custodyProvisions &&
+                              workingCase.custodyProvisions.indexOf(
+                                provision.value,
+                              ) > -1
+                            }
+                            tooltip={provision.explination}
+                            onChange={({ target }) => {
+                              // Create a copy of the state
+                              const copyOfState = Object.assign(workingCase, {})
+
+                              const provisionIsSelected =
+                                copyOfState.custodyProvisions &&
+                                copyOfState.custodyProvisions.indexOf(
+                                  target.value as CaseCustodyProvisions,
+                                ) > -1
+
+                              // Toggle the checkbox on or off
+                              provision.setCheckbox(!provisionIsSelected)
+
+                              // If the user is checking the box, add the broken law to the state
+                              if (!provisionIsSelected) {
+                                if (copyOfState.custodyProvisions === null) {
+                                  copyOfState.custodyProvisions = []
+                                }
+
+                                copyOfState.custodyProvisions &&
+                                  copyOfState.custodyProvisions.push(
+                                    target.value as CaseCustodyProvisions,
+                                  )
+                              }
+                              // If the user is unchecking the box, remove the broken law from the state
+                              else {
+                                const provisions = copyOfState.custodyProvisions
+                                if (provisions) {
+                                  provisions.splice(
+                                    provisions.indexOf(
+                                      target.value as CaseCustodyProvisions,
+                                    ),
+                                    1,
+                                  )
+                                }
+                              }
+
+                              // Set the updated state as the state
+                              setWorkingCase(copyOfState)
+
+                              if (copyOfState.custodyProvisions) {
+                                // Save case
+                                updateCase(
+                                  workingCase.id,
+                                  parseArray(
+                                    'custodyProvisions',
+                                    copyOfState.custodyProvisions,
+                                  ),
+                                )
+                              }
+                            }}
+                            large
+                            filled
+                          />
+                        </Box>
+                      </GridColumn>
+                    )
+                  })}
+                </GridRow>
+              </GridContainer>
+            </BlueBox>
+          </Box>
+          <Box component="section" marginBottom={7}>
+            <Box marginBottom={3}>
+              <Box marginBottom={1}>
+                <Text as="h3" variant="h3">
+                  Takmarkanir á gæslu
+                </Text>
+              </Box>
+              <Text>Ef ekkert er valið, er gæsla án takmarkana</Text>
+            </Box>
+            <BlueBox>
+              <GridContainer>
+                <GridRow>
+                  {restrictions.map((restriction, index) => (
+                    <GridColumn span="6/12" key={index}>
+                      <Box
+                        // Do not add margins to the last two checkboxes
+                        marginBottom={index < restrictions.length - 2 ? 3 : 0}
+                      >
                         <Checkbox
-                          name={provision.brokenLaw}
-                          label={provision.brokenLaw}
-                          value={provision.value}
+                          name={restriction.restriction}
+                          label={restriction.restriction}
+                          value={restriction.value}
                           checked={
-                            workingCase.custodyProvisions &&
-                            workingCase.custodyProvisions.indexOf(
-                              provision.value,
+                            workingCase.requestedCustodyRestrictions &&
+                            workingCase.requestedCustodyRestrictions.indexOf(
+                              restriction.value,
                             ) > -1
                           }
-                          tooltip={provision.explination}
-                          onChange={({ target }) => {
+                          tooltip={restriction.explination}
+                          onChange={async ({ target }) => {
                             // Create a copy of the state
                             const copyOfState = Object.assign(workingCase, {})
 
-                            const provisionIsSelected =
-                              copyOfState.custodyProvisions &&
-                              copyOfState.custodyProvisions.indexOf(
-                                target.value as CaseCustodyProvisions,
+                            const restrictionIsSelected =
+                              copyOfState.requestedCustodyRestrictions &&
+                              copyOfState.requestedCustodyRestrictions.indexOf(
+                                target.value as CaseCustodyRestrictions,
                               ) > -1
 
                             // Toggle the checkbox on or off
-                            provision.setCheckbox(!provisionIsSelected)
+                            restriction.setCheckbox(!restrictionIsSelected)
 
-                            // If the user is checking the box, add the broken law to the state
-                            if (!provisionIsSelected) {
-                              if (copyOfState.custodyProvisions === null) {
-                                copyOfState.custodyProvisions = []
-                              }
+                            if (
+                              copyOfState.requestedCustodyRestrictions === null
+                            ) {
+                              copyOfState.requestedCustodyRestrictions = []
+                            }
 
-                              copyOfState.custodyProvisions &&
-                                copyOfState.custodyProvisions.push(
-                                  target.value as CaseCustodyProvisions,
+                            // If the user is checking the box, add the restriction to the state
+                            if (!restrictionIsSelected) {
+                              copyOfState.requestedCustodyRestrictions &&
+                                copyOfState.requestedCustodyRestrictions.push(
+                                  target.value as CaseCustodyRestrictions,
                                 )
                             }
-                            // If the user is unchecking the box, remove the broken law from the state
+                            // If the user is unchecking the box, remove the restriction from the state
                             else {
-                              const provisions = copyOfState.custodyProvisions
-                              if (provisions) {
-                                provisions.splice(
-                                  provisions.indexOf(
-                                    target.value as CaseCustodyProvisions,
+                              copyOfState.requestedCustodyRestrictions &&
+                                copyOfState.requestedCustodyRestrictions.splice(
+                                  copyOfState.requestedCustodyRestrictions.indexOf(
+                                    target.value as CaseCustodyRestrictions,
                                   ),
                                   1,
                                 )
-                              }
                             }
 
                             // Set the updated state as the state
                             setWorkingCase(copyOfState)
 
-                            if (copyOfState.custodyProvisions) {
-                              // Save case
-                              updateCase(
+                            // Save case
+                            if (copyOfState.requestedCustodyRestrictions) {
+                              await updateCase(
                                 workingCase.id,
                                 parseArray(
-                                  'custodyProvisions',
-                                  copyOfState.custodyProvisions,
+                                  'requestedCustodyRestrictions',
+                                  copyOfState.requestedCustodyRestrictions,
                                 ),
                               )
                             }
+
+                            setWorkingCase({
+                              ...workingCase,
+                              requestedCustodyRestrictions:
+                                copyOfState.requestedCustodyRestrictions,
+                            })
                           }}
                           large
+                          filled
                         />
                       </Box>
                     </GridColumn>
-                  )
-                })}
-              </GridRow>
-            </GridContainer>
-          </Box>
-          <Box component="section" marginBottom={7}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Takmarkanir á gæslu
-              </Text>
-              <Text fontWeight="regular">
-                Ef ekkert er valið, er gæsla án takmarkana
-              </Text>
-            </Box>
-            <GridContainer>
-              <GridRow>
-                {restrictions.map((restriction, index) => (
-                  <GridColumn span="3/7" key={index}>
-                    <Box marginBottom={3}>
-                      <Checkbox
-                        name={restriction.restriction}
-                        label={restriction.restriction}
-                        value={restriction.value}
-                        checked={
-                          workingCase.requestedCustodyRestrictions &&
-                          workingCase.requestedCustodyRestrictions.indexOf(
-                            restriction.value,
-                          ) > -1
-                        }
-                        tooltip={restriction.explination}
-                        onChange={async ({ target }) => {
-                          // Create a copy of the state
-                          const copyOfState = Object.assign(workingCase, {})
-
-                          const restrictionIsSelected =
-                            copyOfState.requestedCustodyRestrictions &&
-                            copyOfState.requestedCustodyRestrictions.indexOf(
-                              target.value as CaseCustodyRestrictions,
-                            ) > -1
-
-                          // Toggle the checkbox on or off
-                          restriction.setCheckbox(!restrictionIsSelected)
-
-                          if (
-                            copyOfState.requestedCustodyRestrictions === null
-                          ) {
-                            copyOfState.requestedCustodyRestrictions = []
-                          }
-
-                          // If the user is checking the box, add the restriction to the state
-                          if (!restrictionIsSelected) {
-                            copyOfState.requestedCustodyRestrictions &&
-                              copyOfState.requestedCustodyRestrictions.push(
-                                target.value as CaseCustodyRestrictions,
-                              )
-                          }
-                          // If the user is unchecking the box, remove the restriction from the state
-                          else {
-                            copyOfState.requestedCustodyRestrictions &&
-                              copyOfState.requestedCustodyRestrictions.splice(
-                                copyOfState.requestedCustodyRestrictions.indexOf(
-                                  target.value as CaseCustodyRestrictions,
-                                ),
-                                1,
-                              )
-                          }
-
-                          // Set the updated state as the state
-                          setWorkingCase(copyOfState)
-
-                          // Save case
-                          if (copyOfState.requestedCustodyRestrictions) {
-                            await updateCase(
-                              workingCase.id,
-                              parseArray(
-                                'requestedCustodyRestrictions',
-                                copyOfState.requestedCustodyRestrictions,
-                              ),
-                            )
-                          }
-
-                          setWorkingCase({
-                            ...workingCase,
-                            requestedCustodyRestrictions:
-                              copyOfState.requestedCustodyRestrictions,
-                          })
-                        }}
-                        large
-                      />
-                    </Box>
-                  </GridColumn>
-                ))}
-              </GridRow>
-            </GridContainer>
+                  ))}
+                </GridRow>
+              </GridContainer>
+            </BlueBox>
           </Box>
           <FormFooter
             nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
-            nextIsDisabled={isStepIllegal || workingCase.custodyProvisions?.length === 0}
+            nextIsDisabled={
+              isStepIllegal || workingCase.custodyProvisions?.length === 0
+            }
           />
         </>
       ) : null}
