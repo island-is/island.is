@@ -35,6 +35,10 @@ describe('/domari-krafa/thingbok', () => {
                 'Ruth Bader Ginsburg saksóknari\nJon Harring kærði\nSaul Goodman verjandi kærða',
             } as UpdateCase,
             {
+              courtAttendees:
+                'Ruth Bader Ginsburg saksóknari\nJon Harring kærði\nSaul Goodman verjandi kærða',
+            } as UpdateCase,
+            {
               policeDemands:
                 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nec lapathi suavitatem acupenseri Galloni Laelius anteponebat, sed suavitatem ipsam neglegebat; Duo Reges: constructio interrete. Nam his libris eum malo quam reliquo ornatu villae delectari. Quod cum dixissent, ille contra. At enim hic etiam dolore. Vide ne ista sint Manliana vestra aut maiora etiam, si imperes quod facere non possim. Ita ne hoc quidem modo paria peccata sunt. Non autem hoc: igitur ne illud quidem. Quare conare, quaeso. Nam si propter voluptatem, quae est ista laus, quae possit e macello peti?',
             } as UpdateCase,

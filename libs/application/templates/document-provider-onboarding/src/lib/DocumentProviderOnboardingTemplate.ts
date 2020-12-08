@@ -24,7 +24,6 @@ const contact = z.object({
 const helpDeskContact = z.object({
   email: z.string().email().nonempty(),
   phoneNumber: z.string().min(7),
-  chatbot: z.string(),
 })
 
 //TODO: extend contact. Couldn't get it to work easily with contact.extend
@@ -56,7 +55,13 @@ const dataSchema = z.object({
   administrativeContact: contact,
   technicalContact: contact,
   helpDesk: helpDeskContact,
+  //Not sure if we want this ? Confirmation that tests have finished...
+  technicalAnswer: z.boolean().refine((v) => v, {
+    //When to show these ?
+    message: 'Þú verður að samþykkja að forritun og prófunum sé lokið',
+  }),
   endPoint: z.string().url().nonempty(),
+  prodEndPoint: z.string().url().nonempty(),
   rejectionReason: z.string(),
   approvedByReviewer: z.enum(['APPROVE', 'REJECT']),
 })

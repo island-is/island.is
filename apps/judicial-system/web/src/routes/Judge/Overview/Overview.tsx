@@ -20,7 +20,6 @@ import {
 } from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
-import { validate } from '../../../utils/validate'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import {
@@ -28,10 +27,6 @@ import {
   CaseCustodyProvisions,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import {
-  parseString,
-  replaceTabsOnChange,
-} from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import * as styles from './Overview.treat'
 import { useMutation, useQuery } from '@apollo/client'
@@ -43,6 +38,10 @@ import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
+import {
+  validateAndSendToServer,
+  removeTabsValidateAndSet,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 
 interface CaseData {
   case?: Case
@@ -116,25 +115,27 @@ export const JudgeOverview: React.FC = () => {
                 defaultValue={workingCase.courtCaseNumber}
                 errorMessage={courtCaseNumberErrorMessage}
                 hasError={courtCaseNumberErrorMessage !== ''}
-                onBlur={(evt) => {
-                  setWorkingCase({
-                    ...workingCase,
-                    courtCaseNumber: evt.target.value,
-                  })
-
-                  const validateField = validate(evt.target.value, 'empty')
-
-                  if (validateField.isValid) {
-                    updateCase(
-                      workingCase.id,
-                      parseString('courtCaseNumber', evt.target.value),
-                    )
-                  } else {
-                    setCourtCaseNumberErrorMessage(validateField.errorMessage)
-                  }
-                }}
-                onChange={replaceTabsOnChange}
-                onFocus={() => setCourtCaseNumberErrorMessage('')}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'courtCaseNumber',
+                    event,
+                    ['empty'],
+                    workingCase,
+                    setWorkingCase,
+                    courtCaseNumberErrorMessage,
+                    setCourtCaseNumberErrorMessage,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'courtCaseNumber',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setCourtCaseNumberErrorMessage,
+                  )
+                }
                 required
               />
             </Box>
@@ -341,7 +342,7 @@ export const JudgeOverview: React.FC = () => {
               </AccordionItem>
               <AccordionItem
                 id="id_5"
-                label="Skilaboð til dómara"
+                label="Athugasemdir vegna málsmeðferðar"
                 startExpanded
                 labelVariant="h3"
               >

@@ -27,7 +27,7 @@ export class ClientSecret extends Model<ClientSecret> {
   })
   @ForeignKey(() => Client)
   @ApiProperty()
-  clientId: string
+  clientId!: string
 
   @PrimaryKey
   @Column({
@@ -35,34 +35,34 @@ export class ClientSecret extends Model<ClientSecret> {
     allowNull: false,
   })
   @ApiProperty()
-  value: string
+  value!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
-  description: string
+  description?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  type: string
+  type!: string
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
   @ApiProperty()
-  expiration: Date
+  expiration?: Date
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified?: Date
 }

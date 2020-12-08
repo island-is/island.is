@@ -1,6 +1,7 @@
 import { SearchInput } from '../types'
-import { aggregationQuery } from './tagAggregation'
+import { tagAggregationQueryFragment } from './tagAggregation'
 import { tagQuery } from './tagQuery'
+import { typeAggregationQuery } from './typeAggregation'
 
 export const searchQuery = ({
   queryString,
@@ -9,6 +10,7 @@ export const searchQuery = ({
   types = [],
   tags = [],
   countTag = '',
+  countTypes = false,
 }: SearchInput) => {
   const should = []
   const must = []
@@ -51,9 +53,16 @@ export const searchQuery = ({
     })
   }
 
-  let aggregation = {}
+  const aggregation = { aggs: {} }
+
   if (countTag) {
-    aggregation = aggregationQuery(countTag)
+    // set the tag aggregation as the only aggregation
+    aggregation.aggs = tagAggregationQueryFragment(countTag).aggs
+  }
+
+  if (countTypes) {
+    // add tag aggregation, handle if there is already an existing aggregation
+    aggregation.aggs = { ...aggregation.aggs, ...typeAggregationQuery().aggs }
   }
 
   return {
@@ -65,7 +74,7 @@ export const searchQuery = ({
         minimum_should_match,
       },
     },
-    ...aggregation,
+    ...(Object.keys(aggregation.aggs).length ? aggregation : {}), // spread aggregations if we have any
     size,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }

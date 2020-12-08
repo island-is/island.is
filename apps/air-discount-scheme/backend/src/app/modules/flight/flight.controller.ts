@@ -21,6 +21,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 
+import IslandisLogin, { VerifyResult } from 'islandis-login'
 import { Flight, FlightLeg } from './flight.model'
 import { FlightService } from './flight.service'
 import {

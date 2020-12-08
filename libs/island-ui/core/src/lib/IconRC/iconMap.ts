@@ -14,6 +14,7 @@ export type Icon =
   | 'checkmark'
   | 'checkmarkCircle'
   | 'chevronBack'
+  | 'chevronUp'
   | 'chevronDown'
   | 'chevronForward'
   | 'closeCircle'
@@ -42,6 +43,7 @@ export type Icon =
   | 'wallet'
   | 'warning'
   | 'reload'
+  | 'remove'
 
 export default {
   filled: {
@@ -60,6 +62,7 @@ export default {
     checkmarkCircle: 'CheckmarkCircle',
     chevronBack: 'ChevronBack',
     chevronDown: 'ChevronDown',
+    chevronUp: 'ChevronUp',
     chevronForward: 'ChevronForward',
     closeCircle: 'CloseCircle',
     close: 'Close',
@@ -87,6 +90,7 @@ export default {
     wallet: 'Wallet',
     warning: 'Warning',
     reload: 'Reload',
+    remove: 'Remove',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
@@ -103,6 +107,7 @@ export default {
     checkmark: 'Checkmark',
     checkmarkCircle: 'CheckmarkCircleOutline',
     chevronBack: 'ChevronBackOutline',
+    chevronUp: 'ChevronUpOutline',
     chevronDown: 'ChevronDownOutline',
     chevronForward: 'ChevronForwardOutline',
     closeCircle: 'CloseCircleOutline',
@@ -131,5 +136,6 @@ export default {
     wallet: 'WalletOutline',
     warning: 'WarningOutline',
     reload: 'ReloadOutline',
+    remove: 'RemoveOutline',
   },
 }

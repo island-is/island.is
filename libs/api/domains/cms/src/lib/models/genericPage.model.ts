@@ -1,5 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-
 import { IGenericPage } from '../generated/contentfulTypes'
 
 @ObjectType()

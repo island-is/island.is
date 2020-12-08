@@ -30,20 +30,42 @@ type TextElements =
 
 export interface TextProps {
   id?: string
-  variant?: TextVariants
   children?: React.ReactNode
   as?: TextElements
-  color?: Colors
-  truncate?: boolean
   paddingTop?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
   paddingY?: ResponsiveSpace
   marginTop?: ResponsiveSpace
   marginBottom?: ResponsiveSpace
   marginY?: ResponsiveSpace
+  variant?: TextVariants
+  color?: Colors
+  truncate?: boolean
   fontWeight?: keyof typeof fontWeightStyles
   lineHeight?: keyof typeof lineHeightStyles
 }
+
+type GetTextStylesProps = Pick<
+  TextProps,
+  'variant' | 'color' | 'truncate' | 'fontWeight' | 'lineHeight'
+>
+
+export const getTextStyles = ({
+  color,
+  truncate,
+  fontWeight,
+  lineHeight,
+  variant = 'default',
+}: GetTextStylesProps) =>
+  cn(base, {
+    [variantStyles[variant!]]: variant,
+    [colors[color!]]: color,
+    [fontWeightStyles[fontWeight!]]: fontWeight,
+    [lineHeightStyles[lineHeight!]]: lineHeight,
+    [defaultFontWeights[variant!]]: variant && !fontWeight,
+    [defaultLineHeights[variant!]]: variant && !lineHeight,
+    [truncateStyle]: truncate,
+  })
 
 export const Text = forwardRef<HTMLElement, TextProps>(
   (
@@ -76,14 +98,12 @@ export const Text = forwardRef<HTMLElement, TextProps>(
         paddingTop={paddingTop}
         paddingBottom={paddingBottom}
         paddingY={paddingY}
-        className={cn(base, {
-          [variantStyles[variant!]]: variant,
-          [colors[color!]]: color,
-          [fontWeightStyles[fontWeight!]]: fontWeight,
-          [lineHeightStyles[lineHeight!]]: lineHeight,
-          [defaultFontWeights[variant!]]: variant && !fontWeight,
-          [defaultLineHeights[variant!]]: variant && !lineHeight,
-          [truncateStyle]: truncate,
+        className={getTextStyles({
+          color,
+          truncate,
+          fontWeight,
+          lineHeight,
+          variant,
         })}
         ref={ref}
       >

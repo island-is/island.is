@@ -1,20 +1,16 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-
 import { IArticle } from '../generated/contentfulTypes'
-import { Slice, mapDocument } from './slice.model'
+import { mapDocument } from './slice.model'
 import { Image, mapImage } from './image.model'
-
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { ArticleGroup, mapArticleGroup } from './articleGroup.model'
 import { ArticleSubgroup, mapArticleSubgroup } from './articleSubgroup.model'
 import { Organization, mapOrganization } from './organization.model'
 import { SubArticle, mapSubArticle } from './subArticle.model'
+import { SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
 export class Article {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -36,8 +32,8 @@ export class Article {
   @Field({ nullable: true })
   importance: number
 
-  @Field(() => [Slice])
-  body: Array<typeof Slice>
+  @Field(() => [SliceUnion])
+  body: Array<typeof SliceUnion>
 
   @Field(() => ArticleCategory, { nullable: true })
   category?: ArticleCategory
@@ -71,7 +67,6 @@ export class Article {
 }
 
 export const mapArticle = ({ fields, sys }: IArticle): Article => ({
-  typename: 'Article',
   id: sys.id,
   title: fields.title ?? '',
   shortTitle: fields.shortTitle ?? '',

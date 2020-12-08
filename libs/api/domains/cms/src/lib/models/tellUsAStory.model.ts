@@ -1,14 +1,11 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-
 import { ITellUsAStory } from '../generated/contentfulTypes'
+import { SystemMetadata } from '@island.is/shared/types'
 import { Html, mapHtml } from './html.model'
 import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class TellUsAStory {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -115,7 +112,7 @@ export class TellUsAStory {
 export const mapTellUsAStory = ({
   fields,
   sys,
-}: ITellUsAStory): TellUsAStory => ({
+}: ITellUsAStory): SystemMetadata<TellUsAStory> => ({
   typename: 'TellUsAStory',
   id: sys.id,
   introTitle: fields.introTitle ?? '',

@@ -50,6 +50,8 @@ export interface ButtonProps {
   fluid?: boolean
   icon?: IconType
   iconType?: Type
+  preTextIcon?: IconType
+  preTextIconType?: Type
   type?: NativeButtonProps['type']
   lang?: string
   loading?: boolean
@@ -63,6 +65,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       size = 'default',
       icon,
       iconType = 'filled',
+      preTextIcon,
+      preTextIconType = 'filled',
       children,
       circle,
       type = 'button',
@@ -98,6 +102,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
             [styles.padding.utility]: variant === 'utility',
             [styles.isEmpty]: !children,
             [styles.loading]: loading,
+            [styles.iconPositionStart]: preTextIcon,
           },
         )}
         disabled={disabled || loading}
@@ -105,6 +110,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       >
         {loading && variant !== 'text' ? (
           <>
+            {preTextIcon && (
+              <ButtonIcon icon={preTextIcon} type={iconType} transparent />
+            )}
             <span className={styles.hideContent}>{children}</span>
             {icon && <ButtonIcon icon={icon} type={iconType} transparent />}
             <div
@@ -117,6 +125,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
           </>
         ) : (
           <>
+            {preTextIcon && <ButtonIcon icon={preTextIcon} type={iconType} />}
             {children}
             {icon && <ButtonIcon icon={icon} type={iconType} />}
           </>

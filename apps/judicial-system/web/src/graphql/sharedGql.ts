@@ -32,6 +32,7 @@ export const CaseQuery = gql`
       }
       courtCaseNumber
       courtDate
+      isCourtDateInThePast
       courtRoom
       defenderName
       defenderEmail
@@ -44,6 +45,7 @@ export const CaseQuery = gql`
       ruling
       rejecting
       custodyEndDate
+      isCustodyEndDateInThePast
       custodyRestrictions
       accusedAppealDecision
       accusedAppealAnnouncement

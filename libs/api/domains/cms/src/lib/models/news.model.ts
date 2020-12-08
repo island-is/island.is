@@ -2,14 +2,12 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { INews } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { Author, mapAuthor } from './author.model'
-import { Slice, mapDocument } from './slice.model'
+import { mapDocument } from './slice.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
+import { SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
 export class News {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -34,15 +32,14 @@ export class News {
   @Field()
   date: string
 
-  @Field(() => [Slice], { nullable: true })
-  content: Array<typeof Slice>
+  @Field(() => [SliceUnion], { nullable: true })
+  content: Array<typeof SliceUnion>
 
   @Field(() => [GenericTag])
   genericTags: GenericTag[]
 }
 
 export const mapNews = ({ fields, sys }: INews): News => ({
-  typename: 'News',
   id: sys.id,
   slug: fields.slug ?? '',
   title: fields.title ?? '',

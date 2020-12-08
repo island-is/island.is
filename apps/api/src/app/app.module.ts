@@ -12,10 +12,11 @@ import { CommunicationsModule } from '@island.is/api/domains/communications'
 import { TranslationsModule } from '@island.is/api/domains/translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
-import { AuthModule } from '@island.is/auth-api-lib'
+import { AuthModule } from '@island.is/auth-nest-tools'
 import { HealthController } from './health.controller'
 import { environment } from './environments'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
+import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -59,6 +60,7 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
       clientSecret: environment.documentService.clientSecret,
       tokenUrl: environment.documentService.tokenUrl,
     }),
+    DocumentProviderModule,
     TranslationsModule,
     TerminusModule,
     NationalRegistryModule.register({

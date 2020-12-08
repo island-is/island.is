@@ -60,6 +60,31 @@ export class UserIdentitiesService {
     })
   }
 
+  /** Get user identity by national national id (kt) */
+  async findByNationalId(nationalId: string) {
+    if (!nationalId) {
+      throw new BadRequestException('NationalId must be provided')
+    }
+
+    const linkedIdentity = await this.userIdentityModel.findAll({
+      include: [
+        {
+          model: Claim,
+          where: { type: 'nationalId', value: nationalId },
+        },
+      ],
+    })
+
+    if (linkedIdentity) {
+      return await this.userIdentityModel.findAll({
+        include: [Claim],
+        where: { subjectId: linkedIdentity.map((c) => c.subjectId) },
+      })
+    }
+
+    return null
+  }
+
   /** Gets a user identiy by a provider and subjectid */
   async findByProviderSubjectId(
     provider: string,
@@ -111,5 +136,21 @@ export class UserIdentitiesService {
     return await this.userIdentityModel.destroy({
       where: { subjectId: subjectId },
     })
+  }
+
+  /** Activates or deactivates a user by it's subjectId */
+  async setActive(
+    subjectId: string,
+    active: boolean,
+  ): Promise<UserIdentity | null> {
+    this.logger.debug(`Set subjectId: ${subjectId} as active: ${active}`)
+
+    if (!subjectId) {
+      throw new BadRequestException('SubjectId must be provided')
+    }
+
+    const sub = await this.userIdentityModel.findByPk(subjectId)
+    sub.active = active
+    return sub.save()
   }
 }

@@ -27,7 +27,7 @@ export class ApiResourceScope extends Model<ApiResourceScope> {
   })
   @ForeignKey(() => ApiResource)
   @ApiProperty()
-  apiResourceName: string
+  apiResourceName!: string
 
   @PrimaryKey
   @Column({
@@ -35,13 +35,13 @@ export class ApiResourceScope extends Model<ApiResourceScope> {
     allowNull: false,
   })
   @ApiProperty()
-  scopeName: string
+  scopeName!: string
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified?: Date
 }

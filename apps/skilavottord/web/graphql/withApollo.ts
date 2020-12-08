@@ -2,12 +2,8 @@ import { NextComponentType } from 'next'
 import initApollo from './client'
 import { BaseContext, NextPageContext } from 'next/dist/next-server/lib/utils'
 
-export const withApollo = <
-  C extends BaseContext = NextPageContext,
-  IP = {},
-  P = {}
->(
-  Component: NextComponentType<C, IP, P>,
+export const withApollo = <C extends BaseContext = NextPageContext, IP = {}>(
+  Component: NextComponentType<C, IP>,
 ): NextComponentType<C, IP> => {
   const getInitialProps = Component.getInitialProps
   if (!getInitialProps) {

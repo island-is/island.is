@@ -1,12 +1,23 @@
-import { UserIdentitiesService, UserIdentity } from '@island.is/auth-api-lib'
+import {
+  UserIdentitiesService,
+  UserIdentity,
+  ActiveDTO,
+} from '@island.is/auth-api-lib'
 import {
   BadRequestException,
+  Body,
   Controller,
   Get,
   NotFoundException,
   Param,
+  Patch,
 } from '@nestjs/common'
-import { ApiOAuth2, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiCreatedResponse,
+  ApiOAuth2,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 
 @ApiOAuth2(['@identityserver.api/read'])
 // @UseGuards(AuthGuard('jwt'))
@@ -15,23 +26,49 @@ import { ApiOAuth2, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 export class UserIdentitiesController {
   constructor(private readonly userIdentityService: UserIdentitiesService) {}
 
-  @Get(':subjectId')
+  /** Gets User Identity either by subject Id or National Id (kennitala) */
+  @Get(':id')
   @ApiOkResponse({ type: UserIdentity })
-  async findOne(@Param('subjectId') subjectId: string): Promise<UserIdentity> {
-    if (!subjectId) {
-      throw new BadRequestException('SubjectId must be provided')
+  async findByNationalIdOrSubjectId(
+    @Param('id') id: string,
+  ): Promise<UserIdentity[]> {
+    if (!id) {
+      throw new BadRequestException('id must be provided')
     }
 
-    const userIdentity = await this.userIdentityService.findBySubjectId(
-      subjectId,
+    // Find by NationalId
+    if (!isNaN(+id) && id.length === 10) {
+      const userIdentities = await this.userIdentityService.findByNationalId(id)
+
+      if (!userIdentities) {
+        throw new NotFoundException("This user identity doesn't exist")
+      }
+
+      return userIdentities
+    }
+
+    // Find by subjectId
+    const userIdentitiesBySubject = await this.userIdentityService.findBySubjectId(
+      id,
     )
 
-    if (!userIdentity) {
+    if (!userIdentitiesBySubject) {
       throw new NotFoundException("This user identity doesn't exist")
     }
 
-    return userIdentity
+    return [userIdentitiesBySubject]
   }
 
-  // TODO: Implement blacklist and whitelist user
+  @Patch(':subjectId')
+  @ApiCreatedResponse({ type: UserIdentity })
+  async setActive(
+    @Param('subjectId') subjectId: string,
+    @Body() req: ActiveDTO,
+  ): Promise<UserIdentity | null> {
+    if (!subjectId) {
+      throw new BadRequestException('Id must be provided')
+    }
+
+    return await this.userIdentityService.setActive(subjectId, req.active)
+  }
 }

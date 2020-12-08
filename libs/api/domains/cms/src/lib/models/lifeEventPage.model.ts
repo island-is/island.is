@@ -1,16 +1,12 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-
 import { ILifeEventPage } from '../generated/contentfulTypes'
-
 import { Image, mapImage } from './image.model'
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
-import { Slice, mapDocument } from './slice.model'
+import { mapDocument } from './slice.model'
+import { SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
 export class LifeEventPage {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -29,8 +25,8 @@ export class LifeEventPage {
   @Field({ nullable: true })
   thumbnail?: Image
 
-  @Field(() => [Slice])
-  content: Array<typeof Slice>
+  @Field(() => [SliceUnion])
+  content: Array<typeof SliceUnion>
 
   @Field(() => ArticleCategory, { nullable: true })
   category?: ArticleCategory
@@ -40,7 +36,6 @@ export const mapLifeEventPage = ({
   fields,
   sys,
 }: ILifeEventPage): LifeEventPage => ({
-  typename: 'LifeEventPage',
   id: sys.id,
   title: fields.title ?? '',
   slug: fields.slug ?? '',

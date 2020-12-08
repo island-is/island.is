@@ -1,4 +1,5 @@
 import React, { FC, useEffect } from 'react'
+import { ApolloError } from '@apollo/client'
 import {
   Button,
   Box,
@@ -22,7 +23,7 @@ export interface ModalProps {
   continueButtonText: string
   cancelButtonText: string
   loading?: boolean
-  error?: boolean
+  error?: ApolloError
   errorText?: Errors
 }
 
@@ -35,7 +36,7 @@ export const Modal: FC<ModalProps> = ({
   continueButtonText,
   cancelButtonText,
   loading = false,
-  error = false,
+  error,
   errorText,
 }: ModalProps) => {
   useEffect(() => {
@@ -76,7 +77,7 @@ export const Modal: FC<ModalProps> = ({
                     span={['8/8', '6/8', '6/8', '6/8']}
                     offset={['0', '1/8', '1/8', '1/8']}
                   >
-                    {error ? (
+                    {error && errorText ? (
                       <Stack space={2}>
                         <Text variant="h1">{title}</Text>
                         <OutlinedError

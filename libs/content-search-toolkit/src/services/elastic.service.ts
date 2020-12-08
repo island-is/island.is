@@ -17,15 +17,22 @@ import {
   AutocompleteTermResponse,
   TagAggregationInput,
   SyncRequest,
+  TypeAggregationInput,
+  TypeAggregationResponse,
+  RankEvaluationInput,
+  GroupedRankEvaluationResponse,
 } from '../types'
-import { GetByIdResponse, SearchResponse } from '@island.is/shared/types'
 import {
-  MappedData,
-  SearchIndexes,
-} from '@island.is/content-search-indexer/types'
+  GetByIdResponse,
+  RankEvaluationResponse,
+  SearchResponse,
+} from '@island.is/shared/types'
+import { MappedData } from '@island.is/content-search-indexer/types'
 import { environment } from '../environments/environment'
 import { dateAggregationQuery } from '../queries/dateAggregation'
 import { tagAggregationQuery } from '../queries/tagAggregation'
+import { typeAggregationQuery } from '../queries/typeAggregation'
+import { rankEvaluationQuery } from '../queries/rankEvaluation'
 
 const { elastic } = environment
 
@@ -145,6 +152,39 @@ export class ElasticService {
     }
   }
 
+  async rankEvaluation<ResponseBody, RequestBody>(
+    index: string,
+    body: RequestBody,
+  ) {
+    const client = await this.getClient()
+    return client.rank_eval<ResponseBody, RequestBody>({
+      index,
+      body,
+    })
+  }
+
+  async getRankEvaluation<searchTermUnion>(
+    index: string,
+    termRatings: RankEvaluationInput['termRatings'],
+    metrics: RankEvaluationInput['metric'][],
+  ): Promise<GroupedRankEvaluationResponse<searchTermUnion>> {
+    // elasticsearch does not support multiple metric request per rank_eval call so we make multiple calls
+    const requests = metrics.map(async (metric) => {
+      const requestBody = rankEvaluationQuery({ termRatings, metric })
+      const data = await this.rankEvaluation<
+        RankEvaluationResponse<searchTermUnion>,
+        typeof requestBody
+      >(index, requestBody)
+      return data.body
+    })
+
+    const results = await Promise.all(requests)
+    return results.reduce((groupedResults, result, index) => {
+      groupedResults[metrics[index]] = result
+      return groupedResults
+    }, {})
+  }
+
   async getDocumentsByMetaData(index: string, query: DocumentByMetaDataInput) {
     const requestBody = documentByMetaDataQuery(query)
     const data = await this.findByQuery<
@@ -163,6 +203,15 @@ export class ElasticService {
     return data.body
   }
 
+  async getTypeAggregation(index: string, query: TypeAggregationInput) {
+    const requestBody = typeAggregationQuery(query)
+    const data = await this.findByQuery<
+      SearchResponse<any, TypeAggregationResponse>,
+      typeof requestBody
+    >(index, requestBody)
+    return data.body
+  }
+
   async getDateAggregation(index: string, query: DateAggregationInput) {
     const requestBody = dateAggregationQuery(query)
     const data = await this.findByQuery<
@@ -172,26 +221,20 @@ export class ElasticService {
     return data.body
   }
 
-  async search(index: SearchIndexes, query: SearchInput) {
-    const { queryString, size, page, types, tags, countTag } = query
-
-    const requestBody = searchQuery({
-      queryString,
-      size,
-      page,
-      types,
-      tags,
-      countTag,
-    })
+  async search(index: string, query: SearchInput) {
+    const requestBody = searchQuery(query)
 
     return this.findByQuery<
-      SearchResponse<MappedData, TagAggregationResponse>,
+      SearchResponse<
+        MappedData,
+        TagAggregationResponse | TypeAggregationResponse
+      >,
       typeof requestBody
     >(index, requestBody)
   }
 
   async fetchAutocompleteTerm(
-    index: SearchIndexes,
+    index: string,
     input: AutocompleteTermInput,
   ): Promise<AutocompleteTermResponse> {
     const { singleTerm, size } = input
@@ -205,7 +248,7 @@ export class ElasticService {
     return data.body
   }
 
-  async deleteByIds(index: SearchIndexes, ids: Array<string>) {
+  async deleteByIds(index: string, ids: Array<string>) {
     // In case we get an empty list, ES will match that to all records... which we don't want to delete
     if (!ids.length) {
       return
