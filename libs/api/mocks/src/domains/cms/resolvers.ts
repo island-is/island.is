@@ -6,7 +6,7 @@ import { getDatePrefix } from './utils'
 export const resolvers: Resolvers = {
   Slice: {
     __resolveType: (parent) => {
-      return parent.typename as never
+      return parent.__typename as never
     },
   },
 
