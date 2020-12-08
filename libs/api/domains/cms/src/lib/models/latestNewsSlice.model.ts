@@ -1,15 +1,11 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { GetNewsInput } from '../dto/getNews.input'
-
 import { ILatestNewsSlice } from '../generated/contentfulTypes'
-
 import { News } from './news.model'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class LatestNewsSlice {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -23,7 +19,7 @@ export class LatestNewsSlice {
 export const mapLatestNewsSlice = ({
   fields,
   sys,
-}: ILatestNewsSlice): LatestNewsSlice => ({
+}: ILatestNewsSlice): SystemMetadata<LatestNewsSlice> => ({
   typename: 'LatestNewsSlice',
   id: sys.id,
   title: fields.title ?? '',

@@ -18,19 +18,9 @@ import {
 } from '@island.is/judicial-system/types'
 import * as Constants from '../../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
-import {
-  padTimeWithZero,
-  parseArray,
-  parseString,
-  parseTime,
-  replaceTabsOnChange,
-} from '../../../../utils/formatters'
+import { parseArray, parseString } from '../../../../utils/formatters'
 import { isNextDisabled } from '../../../../utils/stepHelper'
-import {
-  validate,
-  Validation,
-} from '@island.is/judicial-system-web/src/utils/validate'
-import formatISO from 'date-fns/formatISO'
+import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
 import { useParams } from 'react-router-dom'
@@ -46,7 +36,6 @@ import {
 import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
 import {
   setAndSendDateToServer,
-  setAndSendToServer,
   validateAndSendTimeToServer,
   validateAndSendToServer,
   removeTabsValidateAndSet,

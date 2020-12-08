@@ -151,7 +151,6 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               <GridRow>
                 <GridColumn span="12/12">
                   <RadioController
-                    emphasize={true}
                     id={'otherParent'}
                     disabled={false}
                     name={'otherParent'}
@@ -253,7 +252,6 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                   </Box>
 
                   <RadioController
-                    emphasize={true}
                     id={'usePrivatePensionFund'}
                     disabled={false}
                     name={'usePrivatePensionFund'}
@@ -401,7 +399,6 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                   </Box>
 
                   <RadioController
-                    emphasize={true}
                     id={'shareInformationWithOtherParent'}
                     disabled={false}
                     name={'shareInformationWithOtherParent'}

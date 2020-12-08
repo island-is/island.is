@@ -1,14 +1,11 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-
 import { ISectionWithImage } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { Html, mapHtml } from './html.model'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class SectionWithImage {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -25,7 +22,7 @@ export class SectionWithImage {
 export const mapSectionWithImage = ({
   fields,
   sys,
-}: ISectionWithImage): SectionWithImage => ({
+}: ISectionWithImage): SystemMetadata<SectionWithImage> => ({
   typename: 'SectionWithImage',
   id: sys.id,
   title: fields.title ?? '',

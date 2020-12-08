@@ -32,6 +32,7 @@ export const Section: React.FC<SectionProps> = ({
     bleedInMobile: false,
     mobileBleedAmount: 50,
   },
+  ...rest
 }) => {
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState(false)
@@ -70,6 +71,7 @@ export const Section: React.FC<SectionProps> = ({
       paddingBottom={paddingBottom}
       background={background}
       style={generateBackgroundBleed()}
+      {...rest}
     >
       {children}
     </Box>
