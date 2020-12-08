@@ -2,29 +2,37 @@ import React, { FC, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { useFormContext, Controller } from 'react-hook-form'
 import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Button, Input } from '@island.is/island-ui/core'
+import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { registerEndpointMutation } from '../../../graphql/mutations/registerEndpointMutation'
 import { m } from '../../../forms/messages'
 
-const ProdEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
+const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
   interface Variable {
     id: string
     name: string
     value: string
   }
 
-  const { register, errors, trigger, getValues } = useFormContext()
+  const { register, clearErrors, errors, trigger, getValues } = useFormContext()
+  const { answers: formValue } = application
   const [variables, setendPointVariables] = useState<Variable[]>([])
+  const [prodEndPointExists, setprodEndPointExists] = useState(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    formValue.productionEndPointObject?.prodEndPointExists || '',
+  )
   const [registerEndpoint] = useMutation(registerEndpointMutation)
 
   const onRegisterEndpoint = async (isValid: boolean) => {
     if (isValid) {
       const result = await registerEndpoint({
         variables: {
-          input: { endpoint: getValues('prodEndPoint') },
+          input: {
+            endpoint: getValues('productionEndPointObject.prodEndPoint'),
+          },
         },
       })
 
@@ -41,8 +49,12 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
         },
         { id: '2', name: 'Scope', value: result.data.registerEndpoint.scope },
       ])
+      setprodEndPointExists('true')
+      clearErrors()
     }
   }
+
+  console.log(errors)
 
   return (
     <Box>
@@ -55,16 +67,18 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
         <Box marginBottom={1}>
           <Controller
             defaultValue=""
-            name={'prodEndPoint'}
+            name={'productionEndPointObject.prodEndPoint'}
             render={() => (
               <Input
                 label="Endapunktur"
-                name={'prodEndPoint'}
-                id={'prodEndPoint'}
+                name={'productionEndPointObject.prodEndPoint'}
+                id={'productionEndPointObject.prodEndPoint'}
                 ref={register}
                 defaultValue=""
                 placeholder="Skráðu inn endapunkt"
-                hasError={errors.prodEndPoint !== undefined}
+                hasError={
+                  errors.productionEndPointObject?.prodEndPoint !== undefined
+                }
                 errorMessage="Þú verður að skrá inn endapunkt"
               />
             )}
@@ -75,13 +89,27 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
         <Button
           variant="primary"
           onClick={() => {
-            trigger(['prodEndPoint']).then((answer) =>
+            trigger(['productionEndPointObject.prodEndPoint']).then((answer) =>
               onRegisterEndpoint(answer),
             )
           }}
         >
           Vista endapunkt
         </Button>
+        <input
+          type="hidden"
+          value={prodEndPointExists}
+          ref={register({ required: true })}
+          name={'productionEndPointObject.prodEndPointExists'}
+        />
+
+        {errors['productionEndPointObject.prodEndPointExists'] && (
+          <Box color="red600" paddingY={2}>
+            <Text fontWeight="semiBold" color="red600">
+              {errors['productionEndPointObject.prodEndPointExists']}
+            </Text>
+          </Box>
+        )}
       </Box>
 
       {variables &&
