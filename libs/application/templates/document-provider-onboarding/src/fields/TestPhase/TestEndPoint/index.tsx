@@ -81,9 +81,15 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
           />
         </Box>
       </Box>
-      <Box marginBottom={7}>
+      <Box
+        marginBottom={7}
+        display="flex"
+        flexDirection="column"
+        alignItems="flexEnd"
+      >
         <Button
-          variant="primary"
+          variant="ghost"
+          size="small"
           onClick={() => {
             trigger(['endPointObject.endPoint']).then((answer) =>
               onRegisterEndpoint(answer),
@@ -100,7 +106,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
         />
 
         {errors['endPointObject.endPointExists'] && (
-          <Box color="red600" paddingY={2}>
+          <Box color="red600" paddingY={2} display="flex">
             <Text fontWeight="semiBold" color="red600">
               {errors['endPointObject.endPointExists']}
             </Text>
