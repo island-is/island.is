@@ -25,4 +25,24 @@ export class UserResolver {
   user(@CurrentUser() user: AuthUser): Promise<User> {
     return this.nationalRegistryService.getUserInfo(user.nationalId)
   }
+
+  @ResolveField('religion', () => String)
+  resolveReligion(@Parent() user: User): Promise<string> {
+    return this.nationalRegistryService.getReligion(user.nationalId)
+  }
+
+  @ResolveField('birthPlace', () => String)
+  resolveBirthPlace(@Parent() user: User): Promise<string> {
+    return this.nationalRegistryService.getBirthPlace(user.municipalCode)
+  }
+
+  @ResolveField('banMarking', () => String)
+  resolveBanMarking(@Parent() user: User): Promise<string> {
+    return this.nationalRegistryService.getBanMarking(user.nationalId)
+  }
+
+  @ResolveField('legalResidence', () => String)
+  resolveLegalResidence(@Parent() user: User): Promise<string> {
+    return this.nationalRegistryService.getLegalResidence(user.houseCode)
+  }
 }
