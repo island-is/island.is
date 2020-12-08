@@ -3,10 +3,10 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 @ObjectType()
 export class NationalRegistryUser {
   @Field(() => ID)
-  nationalId: string
+  nationalId!: string
 
   @Field(() => String)
-  fullName: string
+  fullName!: string
 
   @Field(() => String, { nullable: true })
   gender?: string
