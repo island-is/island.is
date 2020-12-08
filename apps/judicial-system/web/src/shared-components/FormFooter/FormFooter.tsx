@@ -9,6 +9,7 @@ interface Props {
   nextButtonText?: string
   onNextButtonClick?: () => void
   previousIsDisabled?: boolean
+  hideNextButton?: boolean
 }
 
 const FormFooter: React.FC<Props> = (props: Props) => {
@@ -25,21 +26,23 @@ const FormFooter: React.FC<Props> = (props: Props) => {
       >
         Til baka
       </Button>
-      <Button
-        data-testid="continueButton"
-        icon="arrowForward"
-        disabled={props.nextIsDisabled}
-        loading={props.nextIsLoading}
-        onClick={() => {
-          if (props.onNextButtonClick) {
-            props.onNextButtonClick()
-          } else if (props.nextUrl) {
-            history.push(props.nextUrl)
-          }
-        }}
-      >
-        {props.nextButtonText ?? 'Halda áfram'}
-      </Button>
+      {!props.hideNextButton && (
+        <Button
+          data-testid="continueButton"
+          icon="arrowForward"
+          disabled={props.nextIsDisabled}
+          loading={props.nextIsLoading}
+          onClick={() => {
+            if (props.onNextButtonClick) {
+              props.onNextButtonClick()
+            } else if (props.nextUrl) {
+              history.push(props.nextUrl)
+            }
+          }}
+        >
+          {props.nextButtonText ?? 'Halda áfram'}
+        </Button>
+      )}
     </Box>
   )
 }
