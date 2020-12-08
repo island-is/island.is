@@ -163,75 +163,25 @@ interface SubpageProps {
   detailsHeader?: ReactNode
   details?: ReactNode
 }
-export const SubpageLayout: FC<SubpageProps> = ({
-  main,
-  mainRight,
-  detailsHeader,
-  details,
-}) => {
+export const SubpageLayout: FC<SubpageProps> = ({ main, details }) => {
   return (
     <Box width="full" paddingTop={10}>
-      <SubpageMainLayout right={mainRight}>{main}</SubpageMainLayout>
+      <Box paddingBottom={6}>
+        <GridContainer>
+          <GridRow>
+            <GridColumn span="12/12">{main}</GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Box>
       {details && (
-        <Box background="blue100">
-          <SubpageDetailsLayout header={detailsHeader}>
-            {details}
-          </SubpageDetailsLayout>
+        <Box background="blue100" paddingTop={4}>
+          <GridContainer>
+            <GridRow>
+              <GridColumn span="12/12">{details}</GridColumn>
+            </GridRow>
+          </GridContainer>
         </Box>
       )}
-    </Box>
-  )
-}
-interface SubpageMainProps {
-  right?: ReactNode
-}
-
-export const SubpageMainLayout: FC<SubpageMainProps> = ({
-  right,
-  children,
-}) => {
-  return (
-    <Box paddingBottom={6}>
-      <GridContainer>
-        {!right && (
-          <GridRow>
-            <GridColumn span="12/12">{children}</GridColumn>
-          </GridRow>
-        )}
-        {right && (
-          <GridRow>
-            <GridColumn span="9/12">{children}</GridColumn>
-            <GridColumn span="3/12">{right}</GridColumn>
-          </GridRow>
-        )}
-      </GridContainer>
-    </Box>
-  )
-}
-
-interface SubpageDetailsProps {
-  header: ReactNode
-}
-export const SubpageDetailsLayout: FC<SubpageDetailsProps> = ({
-  header,
-  children,
-}) => {
-  return (
-    <Box paddingTop={4}>
-      <Box paddingBottom={4}>
-        <GridContainer>
-          <GridRow>
-            <GridColumn span="12/12">{header}</GridColumn>
-          </GridRow>
-        </GridContainer>
-      </Box>
-      <Box>
-        <GridContainer>
-          <GridRow>
-            <GridColumn span="12/12">{children}</GridColumn>
-          </GridRow>
-        </GridContainer>
-      </Box>
     </Box>
   )
 }
