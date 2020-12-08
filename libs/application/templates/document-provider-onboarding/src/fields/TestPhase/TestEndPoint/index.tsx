@@ -9,7 +9,7 @@ import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/C
 import { registerEndpointMutation } from '../../../graphql/mutations/registerEndpointMutation'
 import { m } from '../../../forms/messages'
 
-const TestEnvironment: FC<FieldBaseProps> = ({ field, application }) => {
+const TestEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
   interface Variable {
     id: string
     name: string
@@ -94,4 +94,4 @@ const TestEnvironment: FC<FieldBaseProps> = ({ field, application }) => {
   )
 }
 
-export default TestEnvironment
+export default TestEndPoint

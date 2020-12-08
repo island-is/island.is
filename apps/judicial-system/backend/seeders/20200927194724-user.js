@@ -10,7 +10,8 @@ const userSeed = JSON.parse(
         "title": "aðstoðarsaksóknari",
         "mobile_number": "8589030",
         "email": "gudjon@kolibri.is",
-        "role": "PROSECUTOR"
+        "role": "PROSECUTOR",
+        "institution": "Lögreglustjórinn á höfuðborgarsvæðinu"
       },
       {
         "id": "cef1ba9b-99b6-47fc-a216-55c8194830aa",
@@ -19,7 +20,8 @@ const userSeed = JSON.parse(
         "title": "dómritari",
         "mobile_number": "8949946",
         "email": "baldur@kolibri.is",
-        "role": "REGISTRAR"
+        "role": "REGISTRAR",
+        "institution": "Héraðsdómur Reykjavíkur"
       },
       {
         "id": "9c0b4106-4213-43be-a6b2-ff324f4ba0c2",
@@ -28,7 +30,8 @@ const userSeed = JSON.parse(
         "title": "héraðsdómari",
         "mobile_number": "6904031",
         "email": "ivaro@kolibri.is",
-        "role": "JUDGE"
+        "role": "JUDGE",
+        "institution": "Héraðsdómur Reykjavíkur"
       }
     ]`,
 )

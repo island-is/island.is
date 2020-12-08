@@ -8,7 +8,7 @@ import {
   ScopesGuard,
   CurrentUser,
   User,
-} from '@island.is/auth-api-lib'
+} from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()

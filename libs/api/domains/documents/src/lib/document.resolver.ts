@@ -9,7 +9,7 @@ import {
   ScopesGuard,
   CurrentUser,
   User,
-} from '@island.is/auth-api-lib'
+} from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)

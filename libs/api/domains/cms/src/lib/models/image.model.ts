@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType, ID } from '@nestjs/graphql'
 import { Asset } from 'contentful'
-import { SystemMetadata } from '../types'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class Image {
