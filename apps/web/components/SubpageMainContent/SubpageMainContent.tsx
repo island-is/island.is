@@ -23,13 +23,11 @@ export const SubpageMainContent: FC<SubpageMainProps> = ({ main, image }) => {
     }
     setIsMobile(false)
   }, [width])
-  
+
   return (
     <Box>
       {isMobile ? (
-        <GridContainer>
-          {main}
-        </GridContainer>
+        <GridContainer>{main}</GridContainer>
       ) : (
         <Box>
           {image ? (
@@ -40,9 +38,7 @@ export const SubpageMainContent: FC<SubpageMainProps> = ({ main, image }) => {
               </GridRow>
             </GridContainer>
           ) : (
-            <GridContainer>
-              {main}
-            </GridContainer>
+            <GridContainer>{main}</GridContainer>
           )}
         </Box>
       )}
