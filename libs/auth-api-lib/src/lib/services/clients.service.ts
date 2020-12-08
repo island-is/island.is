@@ -151,7 +151,7 @@ export class ClientsService {
   }
 
   /** Updates an existing client */
-  async update(client: ClientUpdateDTO, id: string): Promise<Client | null> {
+  async update(client: ClientDTO, id: string): Promise<Client | null> {
     this.logger.debug('Updating client with id: ', id)
 
     if (!id) {

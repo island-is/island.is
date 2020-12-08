@@ -73,7 +73,7 @@ export class ClientsController {
   @Put(':id')
   @ApiCreatedResponse({ type: Client })
   async update(
-    @Body() client: ClientUpdateDTO,
+    @Body() client: ClientDTO,
     @Param('id') id: string,
   ): Promise<Client | null> {
     if (!id) {
