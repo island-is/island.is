@@ -46,21 +46,30 @@ import {
   validateAndSendTimeToServer,
   validateAndSetTime,
   setAndSendToServer,
+  getTimeFromDate,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ValueType } from 'react-select/src/types'
 import Modal from '../../../../shared-components/Modal/Modal'
 import BlueBox from 'apps/judicial-system/web/src/shared-components/BlueBox/BlueBox'
+
+interface CaseData {
+  case?: Case
+}
 
 export const StepTwo: React.FC = () => {
   const history = useHistory()
 
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const arrestTimeRef = useRef<HTMLInputElement>(null)
   const requestedCourtTimeRef = useRef<HTMLInputElement>(null)
   const requestedCustodyEndTimeRef = useRef<HTMLInputElement>(null)
+  
+  const [arrestTime, setArrestTime] = useState<string>()
+  const [requestedCourtTime, setRequestedCourtTime] = useState<string>()
+  const [requestedCustodyEndTime, setRequestedCustodyEndTime] = useState<string>()
+  
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
   const { id } = useParams<{ id: string }>()
@@ -93,12 +102,10 @@ export const StepTwo: React.FC = () => {
     setRequestedCustodyEndTimeErrorMessage,
   ] = useState<string>('')
 
-  const { data } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const resCase = data?.case
 
   const [
     sendNotificationMutation,
@@ -180,15 +187,14 @@ export const StepTwo: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setIsLoading(true)
-      setWorkingCase(resCase)
-      setIsLoading(false)
+    if (!workingCase && data) {
+      setArrestTime(getTimeFromDate(data.case?.arrestDate))
+      setRequestedCourtTime(getTimeFromDate(data.case?.requestedCourtDate))
+      setRequestedCustodyEndTime(getTimeFromDate(data.case?.requestedCustodyEndDate))
+
+      setWorkingCase(data.case)
     }
-    if (id && !workingCase && resCase) {
-      getCurrentCase()
-    }
-  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
+  }, [workingCase, setWorkingCase, data])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
@@ -197,7 +203,7 @@ export const StepTwo: React.FC = () => {
         validations: ['empty'],
       },
       {
-        value: arrestTimeRef.current?.value || '',
+        value: arrestTime || '',
         validations: ['empty', 'time-format'],
       },
       {
@@ -205,7 +211,7 @@ export const StepTwo: React.FC = () => {
         validations: ['empty'],
       },
       {
-        value: requestedCourtTimeRef.current?.value || '',
+        value: requestedCourtTime || '',
         validations: ['empty', 'time-format'],
       },
       {
@@ -213,7 +219,7 @@ export const StepTwo: React.FC = () => {
         validations: ['empty'],
       },
       {
-        value: requestedCustodyEndTimeRef.current?.value || '',
+        value: requestedCustodyEndTime || '',
         validations: ['empty', 'time-format'],
       },
     ]
@@ -221,7 +227,7 @@ export const StepTwo: React.FC = () => {
     if (workingCase) {
       setIsStepIllegal(isNextDisabled(requiredFields))
     }
-  }, [workingCase, setIsStepIllegal, requestedCustodyEndTimeRef.current?.value])
+  }, [workingCase, setIsStepIllegal, arrestTime, requestedCourtTime, requestedCustodyEndTime])
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
 
@@ -289,7 +295,7 @@ export const StepTwo: React.FC = () => {
     <PageLayout
       activeSection={Sections.PROSECUTOR}
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_TWO}
-      isLoading={isLoading}
+      isLoading={loading}
       notFound={data?.case === undefined}
     >
       {workingCase ? (
@@ -380,6 +386,7 @@ export const StepTwo: React.FC = () => {
                       ['empty', 'time-format'],
                       workingCase,
                       setWorkingCase,
+                      setArrestTime,
                       arrestTimeErrorMessage,
                       setArrestTimeErrorMessage,
                     )
@@ -473,6 +480,7 @@ export const StepTwo: React.FC = () => {
                       ['empty', 'time-format'],
                       workingCase,
                       setWorkingCase,
+                      setRequestedCourtTime,
                       requestedCourtTimeErrorMessage,
                       setRequestedCourtTimeErrorMessage,
                     )
@@ -575,6 +583,7 @@ export const StepTwo: React.FC = () => {
                         ['empty', 'time-format'],
                         workingCase,
                         setWorkingCase,
+                        setRequestedCustodyEndTime,
                         requestedCustodyEndTimeErrorMessage,
                         setRequestedCustodyEndTimeErrorMessage,
                       )
@@ -597,14 +606,7 @@ export const StepTwo: React.FC = () => {
                       label="Tímasetning (kk:mm)"
                       placeholder="Settu inn tíma"
                       ref={requestedCustodyEndTimeRef}
-                      defaultValue={
-                        workingCase.requestedCustodyEndDate?.includes('T')
-                          ? formatDate(
-                              workingCase.requestedCustodyEndDate,
-                              TIME_FORMAT,
-                            )
-                          : undefined
-                      }
+                      defaultValue={getTimeFromDate(workingCase.requestedCustodyEndDate)}
                       errorMessage={requestedCustodyEndTimeErrorMessage}
                       hasError={requestedCustodyEndTimeErrorMessage !== ''}
                       required
