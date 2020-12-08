@@ -38,6 +38,7 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import BlueBox from 'apps/judicial-system/web/src/shared-components/BlueBox/BlueBox'
 
 export const CreateCaseMutation = gql`
   mutation CreateCaseMutation($input: CreateCaseInput!) {
@@ -383,7 +384,7 @@ export const StepOne: React.FC = () => {
                 Sakborningur
               </Text>
             </Box>
-            <Box className={styles.blueBox}>
+            <BlueBox>
               <Box marginBottom={2}>
                 <Text as="h4" variant="h4">
                   Kyn{' '}
@@ -553,7 +554,7 @@ export const StepOne: React.FC = () => {
                 }
                 required
               />
-            </Box>
+            </BlueBox>
           </Box>
           <Box component="section" marginBottom={7}>
             <Box
