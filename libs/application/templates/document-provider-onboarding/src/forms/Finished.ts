@@ -18,14 +18,11 @@ export const Finished: Form = buildForm({
       name: m.thankYouImageScreenTitle,
       description: m.thankYouImageScreenScreenSubTitle,
       children: [
-        buildCustomField(
-          {
-            id: 'ThankYouImage',
-            name: 'Takk fyrir',
-            component: 'WomanWithLaptopIllustrationPeriods',
-          },
-          {},
-        ),
+        buildCustomField({
+          id: 'thankYouImage',
+          name: m.thankYouScreenTitle,
+          component: 'WomanWithLaptopIllustrationPeriods',
+        }),
       ],
     }),
   ],

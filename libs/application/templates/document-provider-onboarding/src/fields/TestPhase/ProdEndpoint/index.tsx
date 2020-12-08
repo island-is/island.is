@@ -71,9 +71,10 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ field, application }) => {
           />
         </Box>
       </Box>
-      <Box marginBottom={7}>
+      <Box marginBottom={7} display="flex" justifyContent="flexEnd">
         <Button
-          variant="primary"
+          variant="ghost"
+          size="small"
           onClick={() => {
             trigger(['prodEndPoint']).then((answer) =>
               onRegisterEndpoint(answer),

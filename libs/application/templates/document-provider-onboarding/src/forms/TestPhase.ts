@@ -141,7 +141,7 @@ export const TestPhase: Form = buildForm({
               {
                 id: 'thankYouImage',
                 name: m.thankYouImageScreenTitle,
-                component: 'ThankYouImage',
+                component: 'WomanWithLaptopIllustrationPeriods',
               },
               {},
             ),

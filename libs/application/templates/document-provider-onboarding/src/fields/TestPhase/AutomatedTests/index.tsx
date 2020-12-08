@@ -94,27 +94,21 @@ const AutomatedTests: FC<FieldBaseProps> = () => {
               />
             </GridColumn>
           </GridRow>
-          <GridRow>
-            <GridColumn span="4/12">
-              <Box
-                marginTop={3}
-                display="flex"
-                justifyContent="spaceBetween"
-                alignItems="center"
-              >
-                <Button
-                  onClick={() => {
-                    trigger(['nationalId', 'docId']).then((isValid) =>
-                      isValid ? validateEndpoint() : setResponse([]),
-                    )
-                  }}
-                >
-                  {m.automatedTestsButton.defaultMessage}
-                </Button>
-              </Box>
-            </GridColumn>
-          </GridRow>
         </GridContainer>
+        <Box marginTop={3} display="flex" justifyContent="flexEnd">
+          <Button
+            variant="ghost"
+            size="small"
+            onClick={() => {
+              trigger(['nationalId', 'docId']).then((isValid) =>
+                isValid ? validateEndpoint() : setResponse([]),
+              )
+            }}
+          >
+            {m.automatedTestsButton.defaultMessage}
+          </Button>
+        </Box>
+
         {isLoading ? (
           <Box
             className={styles.isLoadingContainer}
