@@ -1,12 +1,9 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-
 import { IProcessEntry } from '../generated/contentfulTypes'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class ProcessEntry {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -29,7 +26,7 @@ export class ProcessEntry {
 export const mapProcessEntry = ({
   fields,
   sys,
-}: IProcessEntry): ProcessEntry => ({
+}: IProcessEntry): SystemMetadata<ProcessEntry> => ({
   typename: 'ProcessEntry',
   id: sys.id,
   type: fields.type ?? '',

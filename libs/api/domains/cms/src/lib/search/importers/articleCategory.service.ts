@@ -34,10 +34,12 @@ export class ArticleCategorySyncService
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapArticleCategory(entry)
+          const content = mapped.description
           return {
             _id: mapped.slug,
             title: mapped.title,
-            content: mapped.description,
+            content,
+            contentWordCount: content.split(/\s+/).length,
             type: 'webArticleCategory',
             termPool: createTerms([mapped.title, mapped.description]),
             response: JSON.stringify({

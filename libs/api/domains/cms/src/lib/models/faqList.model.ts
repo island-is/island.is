@@ -1,7 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-
 import { IFaqList } from '../generated/contentfulTypes'
-
+import { SystemMetadata } from '@island.is/shared/types'
 import {
   QuestionAndAnswer,
   mapQuestionAndAnswer,
@@ -9,9 +8,6 @@ import {
 
 @ObjectType()
 export class FaqList {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -22,7 +18,10 @@ export class FaqList {
   questions: QuestionAndAnswer[]
 }
 
-export const mapFaqList = ({ fields, sys }: IFaqList): FaqList => ({
+export const mapFaqList = ({
+  fields,
+  sys,
+}: IFaqList): SystemMetadata<FaqList> => ({
   typename: 'FaqList',
   id: sys.id,
   title: fields.title ?? '',

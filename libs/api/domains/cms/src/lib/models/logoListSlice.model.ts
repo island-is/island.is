@@ -1,14 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-
 import { ILogoListSlice } from '../generated/contentfulTypes'
-
+import { SystemMetadata } from '@island.is/shared/types'
 import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class LogoListSlice {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -25,7 +21,7 @@ export class LogoListSlice {
 export const mapLogoListSlice = ({
   fields,
   sys,
-}: ILogoListSlice): LogoListSlice => ({
+}: ILogoListSlice): SystemMetadata<LogoListSlice> => ({
   typename: 'LogoListSlice',
   id: sys.id,
   title: fields.title ?? '',

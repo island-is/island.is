@@ -4,7 +4,9 @@ import { Box, Stack, Inline, Tag } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { Screen } from '@island.is/web/types'
 import { useNamespace } from '@island.is/web/hooks'
-import routeNames from '@island.is/web/i18n/routeNames'
+import pathNames, { ContentType } from '@island.is/web/i18n/routes'
+import Link from 'next/link'
+
 import {
   QueryGetFrontpageSliderListArgs,
   ContentLanguage,
@@ -57,11 +59,10 @@ const Home: Screen<HomeProps> = ({
   lifeEvents,
   page,
 }) => {
-  const { activeLocale } = useI18n()
+  const { activeLocale, t } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)
   const gn = useNamespace(globalNamespace)
-  const { makePath } = routeNames(activeLocale)
 
   if (!lifeEvents || !lifeEvents.length) {
     return null
@@ -71,12 +72,19 @@ const Home: Screen<HomeProps> = ({
     document.documentElement.lang = activeLocale
   }
 
-  const cards = categories.map(({ title, slug, description }) => ({
-    title,
-    description,
-    href: makePath('ArticleCategory', '/[slug]'),
-    as: makePath('ArticleCategory', slug),
-  }))
+  const cards = categories.map(({ __typename, title, slug, description }) => {
+    const cardUrl = pathNames(
+      activeLocale,
+      __typename.toLowerCase() as ContentType,
+      [slug],
+    )
+    return {
+      title,
+      description,
+      href: cardUrl.href,
+      as: cardUrl.as,
+    }
+  })
 
   const searchContent = (
     <Box display="flex" flexDirection="column" width="full">
@@ -92,14 +100,21 @@ const Home: Screen<HomeProps> = ({
           />
         </Box>
         <Inline space={2}>
-          {page.featuredThings.map(({ title, attention, thing }, index) => {
-            return (
-              <Tag
-                key={title}
-                href={makePath('article', thing.slug)}
-                variant="darkerBlue"
-                attention={attention}
-              >
+          {page.featuredThings.map(({ title, attention, thing }) => {
+            const cardUrl = pathNames(
+              activeLocale,
+              thing.__typename.toLowerCase() as ContentType,
+              [thing.slug],
+            )
+
+            return cardUrl.href && cardUrl.href.length > 0 ? (
+              <Link key={title} href={cardUrl.href} as={cardUrl.as}>
+                <Tag variant="darkerBlue" attention={attention}>
+                  {title}
+                </Tag>
+              </Link>
+            ) : (
+              <Tag key={title} variant="darkerBlue" attention={attention}>
                 {title}
               </Tag>
             )
@@ -116,10 +131,11 @@ const Home: Screen<HomeProps> = ({
 
   return (
     <>
-      <Section paddingY={[0, 0, 4, 4, 6]}>
+      <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
         <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
       </Section>
       <Section
+        aria-labelledby="lifeEventsTitle"
         paddingTop={4}
         backgroundBleed={
           includeLifeEventSectionBleed && {
@@ -134,6 +150,7 @@ const Home: Screen<HomeProps> = ({
       >
         <LifeEventsCardsSection
           title={n('lifeEventsTitle')}
+          titleId="lifeEventsTitle"
           lifeEvents={lifeEvents}
           showSleeve={showSleeve}
         />
@@ -142,16 +159,26 @@ const Home: Screen<HomeProps> = ({
         paddingTop={[8, 8, 6]}
         paddingBottom={[8, 8, 6]}
         background="purple100"
+        aria-labelledby="serviceCategoriesTitle"
       >
-        <Categories title={n('articlesTitle')} cards={cards} />
+        <Categories
+          title={n('articlesTitle')}
+          titleId="serviceCategoriesTitle"
+          cards={cards}
+        />
       </Section>
-      <Section paddingTop={[8, 8, 6]}>
-        <LatestNewsSection label={gn('newsAndAnnouncements')} items={news} />
+      <Section paddingTop={[8, 8, 6]} aria-labelledby="latestNewsTitle">
+        <LatestNewsSection
+          label={gn('newsAndAnnouncements')}
+          labelId="latestNewsTitle"
+          items={news}
+        />
       </Section>
-      <Section paddingY={[8, 8, 8, 10, 15]}>
+      <Section paddingY={[8, 8, 8, 10, 15]} aria-labelledby="ourGoalsTitle">
         <IntroductionSection
           subtitle={n('ourGoalsSubTitle')}
           title={n('ourGoalsTitle')}
+          titleId="ourGoalsTitle"
           introText={n('ourGoalsIntro')}
           text={n('ourGoalsText')}
           linkText={n('ourGoalsButtonText')}

@@ -8,6 +8,7 @@ import {
   FormModes,
   buildSubmitField,
   buildCustomField,
+  buildDividerField,
 } from '@island.is/application/core'
 import { m } from './messages'
 
@@ -23,8 +24,8 @@ export const DocumentProviderOnboarding: Form = buildForm({
         buildCustomField(
           {
             id: 'termsOfAgreement',
-            name: 'Skilmálar',
-            description: m.termsSection,
+            name: m.termsTitle,
+            description: m.termsSubTitle,
             component: 'TermsOfAgreement',
           },
           {},
@@ -43,6 +44,8 @@ export const DocumentProviderOnboarding: Form = buildForm({
             buildTextField({
               id: 'applicant.nationalId',
               name: m.applicantNationalId,
+              format: '######-####',
+              placeholder: '000000-0000',
             }),
             buildTextField({
               id: 'applicant.name',
@@ -65,6 +68,8 @@ export const DocumentProviderOnboarding: Form = buildForm({
               id: 'applicant.phoneNumber',
               name: m.applicantPhoneNumber,
               variant: 'tel',
+              format: '###-####',
+              placeholder: '000-0000',
             }),
           ],
         }),
@@ -92,6 +97,8 @@ export const DocumentProviderOnboarding: Form = buildForm({
               id: 'administrativeContact.phoneNumber',
               name: m.administrativeContactPhoneNumber,
               variant: 'tel',
+              format: '###-####',
+              placeholder: '000-0000',
             }),
           ],
         }),
@@ -119,6 +126,8 @@ export const DocumentProviderOnboarding: Form = buildForm({
               id: 'technicalContact.phoneNumber',
               name: m.technicalContactPhoneNumber,
               variant: 'tel',
+              format: '###-####',
+              placeholder: '000-0000',
             }),
           ],
         }),
@@ -142,6 +151,8 @@ export const DocumentProviderOnboarding: Form = buildForm({
               id: 'helpDesk.phoneNumber',
               name: m.helpDeskPhoneNumber,
               variant: 'tel',
+              format: '###-####',
+              placeholder: '000-0000',
             }),
           ],
         }),
@@ -152,33 +163,114 @@ export const DocumentProviderOnboarding: Form = buildForm({
       name: m.confirmationSection,
       children: [
         buildMultiField({
-          id: 'overview',
-          name: m.overview,
-          description: m.overviewIntro,
+          id: 'confirmation',
+          name: m.confirmationTitle,
+          description: m.confirmationSubTitle,
           children: [
-            buildCustomField(
-              {
-                id: 'review',
-                name: 'Yfirlit umsóknar',
-                component: 'Review',
-              },
-              {},
-            ),
+            buildDividerField({
+              name: m.applicantSection.defaultMessage,
+              color: 'currentColor',
+            }),
+            buildTextField({
+              id: 'applicant.nationalId',
+              name: m.applicantNationalId,
+              format: '######-####',
+              placeholder: '000000-0000',
+            }),
+            buildTextField({
+              id: 'applicant.name',
+              name: m.applicantName,
+            }),
+            buildTextField({
+              id: 'applicant.address',
+              name: m.applicantAddress,
+            }),
+            buildTextField({
+              id: 'applicant.zipCode',
+              name: m.applicantZipCode,
+            }),
+            buildTextField({
+              id: 'applicant.email',
+              name: m.applicantEmail,
+              variant: 'email',
+            }),
+            buildTextField({
+              id: 'applicant.phoneNumber',
+              name: m.applicantPhoneNumber,
+              variant: 'tel',
+              format: '###-####',
+              placeholder: '000-0000',
+            }),
+            buildDividerField({
+              name: m.administrativeContactSection.defaultMessage,
+              color: 'currentColor',
+            }),
+            buildTextField({
+              id: 'administrativeContact.name',
+              name: m.administrativeContactName,
+            }),
+            buildTextField({
+              id: 'administrativeContact.email',
+              name: m.administrativeContactEmail,
+              variant: 'email',
+            }),
+            buildTextField({
+              id: 'administrativeContact.phoneNumber',
+              name: m.administrativeContactPhoneNumber,
+              variant: 'tel',
+              format: '###-####',
+              placeholder: '000-0000',
+            }),
+            buildDividerField({
+              name: m.technicalContactSection.defaultMessage,
+              color: 'currentColor',
+            }),
+            buildTextField({
+              id: 'technicalContact.name',
+              name: m.technicalContactName,
+            }),
+            buildTextField({
+              id: 'technicalContact.email',
+              name: m.technicalContactEmail,
+              variant: 'email',
+            }),
+            buildTextField({
+              id: 'technicalContact.phoneNumber',
+              name: m.technicalContactPhoneNumber,
+              variant: 'tel',
+              format: '###-####',
+              placeholder: '000-0000',
+            }),
+            buildDividerField({
+              name: m.helpDeskSection.defaultMessage,
+              color: 'currentColor',
+            }),
+            //CustomField is a workaround because of a bug in react-hook-form
+            buildCustomField({
+              id: 'helpDeskConfirmation',
+              name: 'helpDeskConfirmation',
+              component: 'Review',
+            }),
+
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              name: 'Senda inn umsókn',
+              name: m.confirmationSubmitButton,
 
               actions: [
-                { event: 'SUBMIT', name: 'Senda inn umsókn', type: 'primary' },
+                {
+                  event: 'SUBMIT',
+                  name: m.confirmationSubmitButton,
+                  type: 'primary',
+                },
               ],
             }),
           ],
         }),
         buildCustomField(
           {
-            id: 'final',
-            name: 'Takk fyrir að sækja um',
+            id: 'thankYouScreen',
+            name: m.thankYouScreenTitle,
             component: 'ThankYouScreen',
           },
           {},

@@ -14,6 +14,7 @@ export interface User {
   mobileNumber: string
   email: string
   role: UserRole
+  institution?: string
   active: boolean
 }
 
@@ -104,6 +105,7 @@ export interface Case {
   ruling?: string
   rejecting?: boolean
   custodyEndDate?: string
+  isCustodyEndDateInThePast?: boolean
   custodyRestrictions?: CaseCustodyRestrictions[]
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string

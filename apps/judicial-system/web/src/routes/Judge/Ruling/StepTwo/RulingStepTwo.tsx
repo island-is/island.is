@@ -16,11 +16,7 @@ import {
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as Constants from '../../../../utils/constants'
-import {
-  parseArray,
-  parseString,
-  replaceTabsOnChange,
-} from '../../../../utils/formatters'
+import { parseArray, parseString } from '../../../../utils/formatters'
 import { constructConclusion } from '../../../../utils/stepHelper'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useParams } from 'react-router-dom'
@@ -33,6 +29,10 @@ import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
+import {
+  validateAndSendToServer,
+  removeTabsValidateAndSet,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 
 export const RulingStepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -255,18 +255,24 @@ export const RulingStepTwo: React.FC = () => {
                   CaseAppealDecision.APPEAL
                 }
                 placeholder="Í hvaða skyni er kært?"
-                onBlur={(evt) => {
-                  setWorkingCase({
-                    ...workingCase,
-                    accusedAppealAnnouncement: evt.target.value,
-                  })
-
-                  updateCase(
-                    workingCase.id,
-                    parseString('accusedAppealAnnouncement', evt.target.value),
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'accusedAppealAnnouncement',
+                    event,
+                    [],
+                    workingCase,
+                    setWorkingCase,
                   )
-                }}
-                onChange={replaceTabsOnChange}
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'accusedAppealAnnouncement',
+                    event.target.value,
+                    [],
+                    workingCase,
+                    updateCase,
+                  )
+                }
                 textarea
                 rows={7}
               />
@@ -379,21 +385,24 @@ export const RulingStepTwo: React.FC = () => {
                   CaseAppealDecision.APPEAL
                 }
                 placeholder="Í hvaða skyni er kært?"
-                onBlur={(evt) => {
-                  setWorkingCase({
-                    ...workingCase,
-                    prosecutorAppealAnnouncement: evt.target.value,
-                  })
-
-                  updateCase(
-                    workingCase.id,
-                    parseString(
-                      'prosecutorAppealAnnouncement',
-                      evt.target.value,
-                    ),
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'prosecutorAppealAnnouncement',
+                    event,
+                    ['email-format'],
+                    workingCase,
+                    setWorkingCase,
                   )
-                }}
-                onChange={replaceTabsOnChange}
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'prosecutorAppealAnnouncement',
+                    event.target.value,
+                    ['email-format'],
+                    workingCase,
+                    updateCase,
+                  )
+                }
                 textarea
                 rows={7}
               />

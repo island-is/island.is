@@ -22,6 +22,7 @@ import {
 import { CallToAction } from '../types/StateMachine'
 import { FormText } from '..'
 import { Colors } from '@island.is/island-ui/theme'
+import { FormatInputValueFunction } from 'react-number-format'
 
 export function buildCheckboxField(data: {
   condition?: Condition
@@ -230,18 +231,23 @@ export function buildTextField(data: {
   disabled?: boolean
   width?: FieldWidth
   variant?: TextFieldVariant
+  placeholder?: FormText
+  format?: string | FormatInputValueFunction
 }): TextField {
   const {
     condition,
     id,
     name,
     description,
+    placeholder,
     disabled = false,
     width = 'full',
     variant = 'text',
+    format,
   } = data
   return {
     children: undefined,
+    placeholder,
     disabled,
     width,
     condition,
@@ -249,6 +255,7 @@ export function buildTextField(data: {
     name,
     description,
     variant,
+    format,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
   }
@@ -316,16 +323,16 @@ export function buildFileUploadField(data: {
 }
 
 export function buildDividerField(data: {
-  name: string
+  name?: string
   color?: Colors
 }): DividerField {
   const { name, color } = data
   return {
+    id: '',
     children: undefined,
     type: FieldTypes.DIVIDER,
     component: FieldComponents.DIVIDER,
-    id: name,
-    name,
+    name: name ?? '',
     color,
   }
 }

@@ -6,7 +6,7 @@ export class ClientDTO extends ClientBaseDTO {
   @IsNotEmpty()
   @IsString()
   @ApiProperty({
-    example: 'set_clientId',
+    example: 'clientId_example',
   })
-  readonly clientId: string
+  readonly clientId!: string
 }

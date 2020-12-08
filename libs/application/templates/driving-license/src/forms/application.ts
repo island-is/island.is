@@ -6,12 +6,14 @@ import {
   buildSubmitField,
   buildCheckboxField,
   buildTextField,
-  buildDividerField,
+  buildCustomField,
   buildRadioField,
   buildSelectField,
+  buildDividerField,
   Form,
   FormModes,
 } from '@island.is/application/core'
+import { m } from '../lib/messages'
 
 export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
@@ -20,7 +22,7 @@ export const application: Form = buildForm({
   children: [
     buildSection({
       id: 'type',
-      name: 'Tegund umsóknar',
+      name: 'Tegund ökuréttinda',
       children: [
         buildMultiField({
           id: 'user',
@@ -29,12 +31,84 @@ export const application: Form = buildForm({
             buildRadioField({
               id: 'type',
               name: 'Tegund ökutækja',
-              emphasize: true,
+              largeButtons: true,
+              width: 'half',
               options: [
-                { value: 'car', label: 'Bifreiða- eða bifhjólaréttindi' },
+                { value: 'general', label: 'Almenn ökuréttindi' },
                 { value: 'truck', label: 'Vöru- eða hópbifreiðaréttindi' },
-                { value: 'tractor', label: 'Dráttarvélaréttindi' },
+                { value: 'bike', label: 'Bifhjólaréttindi' },
                 { value: 'taxi', label: 'Leigubílaréttindi' },
+                { value: 'tractor', label: 'Dráttarvélaréttindi' },
+                { value: 'trailer', label: 'Kerrur og eftirvagnar' },
+              ],
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'bikeType',
+          name: 'Tegund bifhjólaréttinda sem sótt er um',
+          condition: ({ type }) => type === 'bike',
+          children: [
+            buildRadioField({
+              id: 'bikeType',
+              name: 'Ég sæki um nýjan flokk ökuréttinda',
+              options: [
+                { value: 'A', label: '<b>A</b> - Bifhjól' },
+                { value: 'A1', label: '<b>A1</b> - Bifhjól' },
+                {
+                  value: 'A2',
+                  label: m.testing,
+                  tooltip: `<h2>A2- flokkur</h2>
+<br />
+Veitir ökuréttindi til að stjórna bifhjóli:
+<br /><br />
+1. á tveimur hjólum með eða án hliðarvagns, með afl sem er ekki yfir 35 kw, með afl/þyngdarhlutfall sem er ekki yfir 0,2 kw/kg, svo og   bifhjóli sem hefur ekki verið breytt frá því að hafa áður meira en tvöfalt afl.
+<br /><br />
+2. bifhjóli í flokki A1.
+<br /><br />
+3. léttu bifhjóli í flokki AM.
+<br /><br />
+Ökuskírteini fyrir A2 flokk fyrir bifhjólaréttindi geta þeir fengið sem náð hafa 19 ára aldri. Taka þarf bóklegt námskeið fyrir A réttindi og 11 stundir í verklegri kennslu, ath að 5 stundir fást metnar ef viðkomandi aðili hefur fyrir A1 réttindi`,
+                },
+                { value: 'AM', label: '<b>AM</b> - Létt bifhjól' },
+              ],
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'truckType',
+          name: 'Tegund vöru- eða hópbifreiðaréttinda sem sótt er um',
+          condition: ({ type }) => type === 'truck',
+          children: [
+            buildRadioField({
+              id: 'truckType',
+              name: 'Ég sæki um nýjan flokk ökuréttinda',
+              options: [
+                { value: 'C', label: '<b>C</b> - Vörubifreið' },
+                { value: 'CE', label: '<b>CE</b> - Vörubifreið með eftirvagn' },
+                { value: 'C1', label: '<b>C1</b> - Lítil vörubifreið' },
+                {
+                  value: 'C1E',
+                  label: '<b>C1E</b> - Lítil vörubifreið með eftirvagn',
+                },
+                { value: 'D', label: '<b>D</b> - Hópbifreið' },
+                { value: 'DE', label: '<b>DE</b> - Hópbifreið með eftirvagn' },
+                { value: 'D1', label: '<b>D1</b> - Lítil hópbifreið' },
+                {
+                  value: 'D1E',
+                  label: '<b>D1E</b> - Lítil hópbifreið með eftirvagn',
+                },
+              ],
+            }),
+            buildDividerField({}),
+            buildCheckboxField({
+              id: 'isBusiness',
+              name: '',
+              options: [
+                {
+                  value: 'isBusiness',
+                  label: 'Ég sæki um réttindi til flutninga í atvinnuskyni',
+                },
               ],
             }),
           ],
@@ -89,8 +163,8 @@ export const application: Form = buildForm({
               name: 'Fæðingarland',
               width: 'half',
               options: [
-                { label: 'Ísland', value: 'Iceland' },
-                { label: 'Pólland', value: 'Polland' },
+                { label: 'Ísland', value: 'IS' },
+                { label: 'Pólland', value: 'PL' },
               ],
             }),
             buildDividerField({
@@ -104,60 +178,16 @@ export const application: Form = buildForm({
             }),
           ],
         }),
-        buildMultiField({
-          id: 'info2',
-          name: 'Tegund ökuréttinda sem sótt er um',
-          children: [
-            buildRadioField({
-              id: 'category',
-              name: 'Ég sæki um nýjan flokk ökuréttinda',
-              emphasize: true,
-              options: [
-                { value: 'B', label: 'Fólksbifreið' },
-                { value: 'BE', label: 'Fólksbifreið með eftirvagn' },
-                { value: 'AM', label: 'Létt bifhjól' },
-                { value: 'A1', label: 'Bifhjól' },
-                { value: 'A2', label: 'Bifhjól' },
-                { value: 'A', label: 'Bifhjól' },
-              ],
-            }),
-            buildCheckboxField({
-              id: 'isBusiness',
-              name: '',
-              options: [
-                { value: 'isBusiness', label: 'Ég sæki um í atvinnuskyni' },
-              ],
-            }),
-          ],
-        }),
       ],
     }),
     buildSection({
       id: 'healthDeclaration',
-      name: 'Heilbrigðisyfirlýsing',
+      name: '',
       children: [
-        buildMultiField({
+        buildCustomField({
           id: 'healthDeclaration',
           name: 'Heilbrigðisyfirlýsing',
-          children: [
-            buildIntroductionField({
-              id: 'intro',
-              name: '',
-              introduction:
-                'Ef sótt er um réttindi í flokkum <b>AM</b>, <b>A1</b>, <b>A2</b>, <b>A</b>, <b>B</b>, <b>BE</b> eða <b>T</b> nægir heilbrigðisyfirlýsing ein og sér, nema sýslumaður telji þörf á læknisvottorði eða ef umsækjandi hefur náð 65 ára aldri eða hann vilji heldur skila læknisvottorði. Með umsókn um aðra flokka ökuréttinda (aukin ökuréttindi) er krafist læknisvottorðs á sérstöku eyðublaði.',
-            }),
-            buildCheckboxField({
-              id: 'useMedicalCertification',
-              name: '',
-              options: [
-                {
-                  value: 'useMedicalCertification',
-                  label:
-                    'Umsækjandi óskar eftir að skila inn læknisvottorði í stað heilbrigðisyfirlýsingu',
-                },
-              ],
-            }),
-          ],
+          component: 'HealthDeclaration',
         }),
       ],
     }),

@@ -10,6 +10,10 @@ import { ApiTags, ApiOkResponse } from '@nestjs/swagger'
 import { User } from './user.model'
 import { UserService } from './user.service'
 
+/*
+ * This controller is not guarded as it needs to respond to unauthenticated requests
+ * from the authentication service.
+ */
 @Controller('api')
 @ApiTags('users')
 export class UserController {

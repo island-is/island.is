@@ -1,4 +1,5 @@
-import { AuthModule, SequelizeConfigService } from '@island.is/auth-api-lib'
+import { SequelizeConfigService } from '@island.is/auth-api-lib'
+import { AuthModule } from '@island.is/auth-nest-tools'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { ClientsModule } from './modules/clients/clients.module'

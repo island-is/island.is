@@ -17,23 +17,13 @@ import {
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import { isNextDisabled } from '../../../../utils/stepHelper'
-import {
-  validate,
-  Validation,
-} from '@island.is/judicial-system-web/src/utils/validate'
+import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
-import formatISO from 'date-fns/formatISO'
 import isNull from 'lodash/isNull'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import {
-  padTimeWithZero,
-  parseArray,
-  parseString,
-  parseTime,
-  replaceTabsOnChange,
-} from '@island.is/judicial-system-web/src/utils/formatters'
+import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '../../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
@@ -48,6 +38,13 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
+import {
+  setAndSendDateToServer,
+  validateAndSendTimeToServer,
+  validateAndSendToServer,
+  removeTabsValidateAndSet,
+  validateAndSetTime,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 
 export const StepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -254,27 +251,17 @@ export const StepTwo: React.FC = () => {
                   minDate={new Date()}
                   hasError={requestedCustodyEndDateErrorMessage !== ''}
                   errorMessage={requestedCustodyEndDateErrorMessage}
-                  handleChange={(date) => {
-                    const formattedDate = formatISO(date, {
-                      representation: workingCase.requestedCustodyEndDate?.includes(
-                        'T',
-                      )
-                        ? 'complete'
-                        : 'date',
-                    })
-                    setWorkingCase({
-                      ...workingCase,
-                      requestedCustodyEndDate: formattedDate,
-                    })
-
-                    updateCase(
-                      id,
-                      JSON.parse(`{
-                          "requestedCustodyEndDate": "${formattedDate}",
-                          "custodyEndDate": "${formattedDate}"
-                        }`),
+                  handleChange={(date) =>
+                    setAndSendDateToServer(
+                      'requestedCustodyEndDate',
+                      workingCase.requestedCustodyEndDate,
+                      date,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                      setRequestedCustodyEndDateErrorMessage,
                     )
-                  }}
+                  }
                   handleCloseCalendar={(date: Date | null) => {
                     if (isNull(date) || !isValid(date)) {
                       setRequestedCustodyEndDateErrorMessage(
@@ -282,52 +269,35 @@ export const StepTwo: React.FC = () => {
                       )
                     }
                   }}
-                  handleOpenCalendar={() =>
-                    setRequestedCustodyEndDateErrorMessage('')
-                  }
                   required
                 />
               </GridColumn>
               <GridColumn span="3/8">
                 <TimeInputField
-                  disabled={!workingCase?.requestedCustodyEndDate}
-                  onBlur={async (evt) => {
-                    const time = padTimeWithZero(evt.target.value)
-
-                    if (workingCase.requestedCustodyEndDate) {
-                      const validateTimeEmpty = validate(time, 'empty')
-                      const validateTimeFormat = validate(time, 'time-format')
-                      const requestedCustodyEndDateMinutes = parseTime(
-                        workingCase.requestedCustodyEndDate,
-                        time,
-                      )
-
-                      setWorkingCase({
-                        ...workingCase,
-                        requestedCustodyEndDate: requestedCustodyEndDateMinutes,
-                        custodyEndDate: requestedCustodyEndDateMinutes,
-                      })
-
-                      if (
-                        validateTimeEmpty.isValid &&
-                        validateTimeFormat.isValid
-                      ) {
-                        await updateCase(
-                          workingCase.id,
-                          JSON.parse(`{
-                              "requestedCustodyEndDate": "${requestedCustodyEndDateMinutes}",
-                              "custodyEndDate": "${requestedCustodyEndDateMinutes}"
-                            }`),
-                        )
-                      } else {
-                        setRequestedCustodyEndTimeErrorMessage(
-                          validateTimeEmpty.errorMessage ||
-                            validateTimeFormat.errorMessage,
-                        )
-                      }
-                    }
-                  }}
-                  onFocus={() => setRequestedCustodyEndTimeErrorMessage('')}
+                  disabled={!workingCase.requestedCustodyEndDate}
+                  onChange={(evt) =>
+                    validateAndSetTime(
+                      'requestedCustodyEndDate',
+                      workingCase.requestedCustodyEndDate,
+                      evt.target.value,
+                      ['empty', 'time-format'],
+                      workingCase,
+                      setWorkingCase,
+                      requestedCustodyEndTimeErrorMessage,
+                      setRequestedCustodyEndTimeErrorMessage,
+                    )
+                  }
+                  onBlur={(evt) =>
+                    validateAndSendTimeToServer(
+                      'requestedCustodyEndDate',
+                      workingCase.arrestDate,
+                      evt.target.value,
+                      ['empty', 'time-format'],
+                      workingCase,
+                      updateCase,
+                      setRequestedCustodyEndTimeErrorMessage,
+                    )
+                  }
                 >
                   <Input
                     data-testid="requestedCustodyEndTime"
@@ -362,24 +332,30 @@ export const StepTwo: React.FC = () => {
               name="lawsBroken"
               label="Lagaákvæði sem ætluð brot kærða þykja varða við"
               placeholder="Skrá inn þau lagaákvæði sem brotið varðar við, til dæmis 1. mgr. 244 gr. almennra hegningarlaga nr. 19/1940..."
-              defaultValue={workingCase?.lawsBroken}
+              defaultValue={workingCase.lawsBroken}
               errorMessage={lawsBrokenErrorMessage}
               hasError={lawsBrokenErrorMessage !== ''}
-              onBlur={(evt) => {
-                setWorkingCase({ ...workingCase, lawsBroken: evt.target.value })
-
-                const validateField = validate(evt.target.value, 'empty')
-                if (validateField.isValid) {
-                  updateCase(
-                    workingCase.id,
-                    parseString('lawsBroken', evt.target.value),
-                  )
-                } else {
-                  setLawsBrokenErrorMessage(validateField.errorMessage)
-                }
-              }}
-              onChange={replaceTabsOnChange}
-              onFocus={() => setLawsBrokenErrorMessage('')}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'lawsBroken',
+                  event,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                  lawsBrokenErrorMessage,
+                  setLawsBrokenErrorMessage,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'lawsBroken',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setLawsBrokenErrorMessage,
+                )
+              }
               required
               textarea
               rows={7}
@@ -575,25 +551,28 @@ export const StepTwo: React.FC = () => {
                 placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
                 errorMessage={caseFactsErrorMessage}
                 hasError={caseFactsErrorMessage !== ''}
-                defaultValue={workingCase?.caseFacts}
-                onBlur={(evt) => {
-                  setWorkingCase({
-                    ...workingCase,
-                    caseFacts: evt.target.value,
-                  })
-
-                  const validateField = validate(evt.target.value, 'empty')
-                  if (validateField.isValid) {
-                    updateCase(
-                      workingCase.id,
-                      parseString('caseFacts', evt.target.value),
-                    )
-                  } else {
-                    setCaseFactsErrorMessage(validateField.errorMessage)
-                  }
-                }}
-                onChange={replaceTabsOnChange}
-                onFocus={() => setCaseFactsErrorMessage('')}
+                defaultValue={workingCase.caseFacts}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'caseFacts',
+                    event,
+                    ['empty'],
+                    workingCase,
+                    setWorkingCase,
+                    caseFactsErrorMessage,
+                    setCaseFactsErrorMessage,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'caseFacts',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setCaseFactsErrorMessage,
+                  )
+                }
                 required
                 rows={16}
                 textarea
@@ -605,27 +584,30 @@ export const StepTwo: React.FC = () => {
                 name="legalArguments"
                 label="Lagarök"
                 placeholder="Hver eru lagarökin fyrir kröfu um gæsluvarðhald?"
-                defaultValue={workingCase?.legalArguments}
+                defaultValue={workingCase.legalArguments}
                 errorMessage={legalArgumentsErrorMessage}
                 hasError={legalArgumentsErrorMessage !== ''}
-                onBlur={(evt) => {
-                  setWorkingCase({
-                    ...workingCase,
-                    legalArguments: evt.target.value,
-                  })
-
-                  const validateField = validate(evt.target.value, 'empty')
-                  if (validateField.isValid) {
-                    updateCase(
-                      workingCase.id,
-                      parseString('legalArguments', evt.target.value),
-                    )
-                  } else {
-                    setLegalArgumentsErrorMessage(validateField.errorMessage)
-                  }
-                }}
-                onChange={replaceTabsOnChange}
-                onFocus={() => setLegalArgumentsErrorMessage('')}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'legalArguments',
+                    event,
+                    ['empty'],
+                    workingCase,
+                    setWorkingCase,
+                    legalArgumentsErrorMessage,
+                    setLegalArgumentsErrorMessage,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'legalArguments',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setLegalArgumentsErrorMessage,
+                  )
+                }
                 required
                 textarea
                 rows={16}
@@ -634,32 +616,38 @@ export const StepTwo: React.FC = () => {
             <Box component="section" marginBottom={7}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  Skilaboð til dómara{' '}
+                  Athugasemdir vegna málsmeðferðar{' '}
                   <Tooltip
                     placement="right"
                     as="span"
-                    text="Hér er hægt að skrá athugasemdir eða skilaboð til dómara sem verður ekki vistað sem hluti af kröfunni. Til dæmis aðrar upplýsingar en koma fram í kröfunni og/eða upplýsingar um ástand sakbornings"
+                    text="Hér er hægt að skrá athugasemdir til dómara sem verður ekki vistað sem hluti af kröfunni. Til dæmis aðrar upplýsingar en koma fram í kröfunni og/eða upplýsingar um ástand sakbornings"
                   />
                 </Text>
               </Box>
               <Box marginBottom={3}>
                 <Input
                   name="comments"
-                  label="Skilaboð til dómara"
+                  label="Athugasemdir vegna málsmeðferðar"
                   placeholder="Er eitthvað sem þú vilt koma á framfæri við dómara sem tengist kröfunni eða ástandi sakbornings?"
-                  defaultValue={workingCase?.comments}
-                  onBlur={(evt) => {
-                    setWorkingCase({
-                      ...workingCase,
-                      comments: evt.target.value,
-                    })
-
-                    updateCase(
-                      workingCase.id,
-                      parseString('comments', evt.target.value),
+                  defaultValue={workingCase.comments}
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'comments',
+                      event,
+                      [],
+                      workingCase,
+                      setWorkingCase,
                     )
-                  }}
-                  onChange={replaceTabsOnChange}
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'comments',
+                      event.target.value,
+                      [],
+                      workingCase,
+                      updateCase,
+                    )
+                  }
                   textarea
                   rows={7}
                 />

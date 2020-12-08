@@ -1,5 +1,5 @@
-import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
-import React, { useContext, useEffect, useState } from 'react'
+import { Accordion, Box, Button, Text } from '@island.is/island-ui/core'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import Modal from '../../../shared-components/Modal/Modal'
 import {
@@ -7,10 +7,9 @@ import {
   getAppealDecitionText,
 } from '../../../utils/stepHelper'
 import * as Constants from '../../../utils/constants'
-import { TIME_FORMAT, formatDate } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseTransition } from '../../../utils/formatters'
 import { AppealDecisionRole, JudgeSubsections, Sections } from '../../../types'
-import AccordionListItem from '@island.is/judicial-system-web/src/shared-components/AccordionListItem/AccordionListItem'
 import {
   Case,
   CaseAppealDecision,
@@ -19,7 +18,6 @@ import {
   NotificationType,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
-  TransitionCase,
 } from '@island.is/judicial-system/types'
 import { useHistory, useParams } from 'react-router-dom'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
@@ -32,6 +30,8 @@ import {
 } from '@island.is/judicial-system-web/src/graphql'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { api } from '../../../services'
+import CourtRecordAccordionItem from '../../../shared-components/CourtRecordAccordionItem/CourtRecordAccordionItem'
 
 export const RequestSignatureMutation = gql`
   mutation RequestSignatureMutation($input: RequestSignatureInput!) {
@@ -53,14 +53,18 @@ export const SignatureConfirmationQuery = gql`
 `
 
 interface SigningModalProps {
-  caseId: string
+  workingCase: Case
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   requestSignatureResponse?: RequestSignatureResponse
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const SigningModal: React.FC<SigningModalProps> = (
-  props: SigningModalProps,
-) => {
+const SigningModal: React.FC<SigningModalProps> = ({
+  workingCase,
+  setWorkingCase,
+  requestSignatureResponse,
+  setModalVisible,
+}) => {
   const history = useHistory()
   const [
     signatureConfirmationResponse,
@@ -70,8 +74,8 @@ const SigningModal: React.FC<SigningModalProps> = (
   const { data } = useQuery(SignatureConfirmationQuery, {
     variables: {
       input: {
-        caseId: props.caseId,
-        documentToken: props.requestSignatureResponse?.documentToken,
+        caseId: workingCase.id,
+        documentToken: requestSignatureResponse?.documentToken,
       },
     },
     fetchPolicy: 'no-cache',
@@ -79,24 +83,97 @@ const SigningModal: React.FC<SigningModalProps> = (
   // TODO: Handle case when resSignatureConfirmationResponse is never set
   const resSignatureConfirmationResponse = data?.signatureConfirmation
 
+  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+
+  const transitionCase = useCallback(async () => {
+    if (workingCase.state === CaseState.SUBMITTED) {
+      // Transition case from submitted state to either accepted or rejected
+      try {
+        // Parse the transition request
+        const transitionRequest = parseTransition(
+          workingCase.modified,
+          workingCase.rejecting ? CaseTransition.REJECT : CaseTransition.ACCEPT,
+        )
+
+        const { data } = await transitionCaseMutation({
+          variables: { input: { id: workingCase.id, ...transitionRequest } },
+        })
+
+        if (!data) {
+          // TODO: Handle error
+          return
+        }
+
+        const { resCase } = data
+
+        if (!resCase) {
+          // TODO: Handle error
+          return
+        }
+
+        setWorkingCase({
+          ...workingCase,
+          state: resCase.state,
+          judge: resCase.judge,
+        })
+      } catch (e) {
+        console.log(e)
+
+        // TODO: Handle error
+      }
+
+      return
+    }
+
+    // Expect case to already have the right state
+    if (
+      workingCase.rejecting
+        ? workingCase.state !== CaseState.REJECTED
+        : workingCase.state !== CaseState.ACCEPTED
+    ) {
+      // TODO: Handle error
+    }
+  }, [transitionCaseMutation, workingCase, setWorkingCase])
+
   const [sendNotificationMutation] = useMutation(SendNotificationMutation)
 
-  useEffect(() => {
-    const completeSigning = async (
-      resSignatureResponse: SignatureConfirmationResponse,
-    ) => {
+  const sendNotification = useCallback(async () => {
+    try {
       const { data } = await sendNotificationMutation({
         variables: {
           input: {
-            caseId: props.caseId,
+            caseId: workingCase.id,
             type: NotificationType.RULING,
           },
         },
       })
 
-      if (!data?.sendNotification?.notificationSent) {
+      if (!data) {
+        // TODO: Handle error
+        return
+      }
+
+      const {
+        sendNotification: { notificationSent },
+      } = data
+
+      if (!notificationSent) {
         // TODO: Handle error
       }
+    } catch (e) {
+      console.log(e)
+
+      // TODO: Handle error
+    }
+  }, [sendNotificationMutation, workingCase.id])
+
+  useEffect(() => {
+    const completeSigning = async (
+      resSignatureResponse: SignatureConfirmationResponse,
+    ) => {
+      await transitionCase()
+
+      await sendNotification()
 
       setSignatureConfirmationResponse(resSignatureResponse)
     }
@@ -104,14 +181,19 @@ const SigningModal: React.FC<SigningModalProps> = (
     if (resSignatureConfirmationResponse) {
       completeSigning(resSignatureConfirmationResponse)
     }
-  }, [resSignatureConfirmationResponse, props.caseId, sendNotificationMutation])
+  }, [
+    resSignatureConfirmationResponse,
+    setSignatureConfirmationResponse,
+    transitionCase,
+    sendNotification,
+  ])
 
-  const renderContolCode = () => {
+  const renderControlCode = () => {
     return (
       <>
         <Box marginBottom={2}>
           <Text variant="h2" color="blue400">
-            {`Öryggistala: ${props.requestSignatureResponse?.controlCode}`}
+            {`Öryggistala: ${requestSignatureResponse?.controlCode}`}
           </Text>
         </Box>
         <Text>
@@ -135,7 +217,7 @@ const SigningModal: React.FC<SigningModalProps> = (
       }
       text={
         !signatureConfirmationResponse
-          ? renderContolCode()
+          ? renderControlCode()
           : signatureConfirmationResponse.documentSigned
           ? 'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi.'
           : 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
@@ -157,7 +239,7 @@ const SigningModal: React.FC<SigningModalProps> = (
         if (signatureConfirmationResponse?.documentSigned === true) {
           history.push(Constants.DETENTION_REQUESTS_ROUTE)
         } else {
-          props.setModalVisible(false)
+          setModalVisible(false)
         }
       }}
     />
@@ -199,19 +281,6 @@ export const Confirmation: React.FC = () => {
   }, [modalVisible, setRequestSignatureResponse])
 
   const [
-    transitionCaseMutation,
-    { loading: isTransitioningCase },
-  ] = useMutation(TransitionCaseMutation)
-
-  const transitionCase = async (id: string, transitionCase: TransitionCase) => {
-    const { data } = await transitionCaseMutation({
-      variables: { input: { id, ...transitionCase } },
-    })
-
-    return data?.transitionCase
-  }
-
-  const [
     requestSignatureMutation,
     { loading: isRequestingSignature },
   ] = useMutation(RequestSignatureMutation)
@@ -224,43 +293,23 @@ export const Confirmation: React.FC = () => {
     return data?.requestSignature
   }
 
-  const handleNextButtonClick: () => Promise<boolean> = async () => {
+  const handleNextButtonClick: () => Promise<void> = async () => {
     if (!workingCase) {
-      return false
+      return
     }
 
-    if (workingCase.state === CaseState.SUBMITTED) {
-      try {
-        // Parse the transition request
-        const transitionRequest = parseTransition(
-          workingCase.modified,
-          workingCase.rejecting ? CaseTransition.REJECT : CaseTransition.ACCEPT,
-        )
-
-        // Transition the case
-        const resCase = await transitionCase(workingCase.id, transitionRequest)
-
-        if (!resCase) {
-          return false
-        }
-
-        setWorkingCase({
-          ...workingCase,
-          state: resCase.state,
-          judge: resCase.judge,
-        })
-
-        return true
-      } catch (e) {
-        console.log(e)
-
-        return false
+    // Request signature to get control code
+    try {
+      const requestSignatureResponse = await requestSignature(workingCase.id)
+      if (requestSignatureResponse) {
+        setRequestSignatureResponse(requestSignatureResponse)
+        setModalVisible(true)
+      } else {
+        // TODO: Handle error
       }
+    } catch (e) {
+      // TODO: Handle error
     }
-
-    return workingCase.rejecting
-      ? workingCase.state === CaseState.REJECTED
-      : workingCase.state === CaseState.ACCEPTED
   }
 
   return (
@@ -299,55 +348,7 @@ export const Confirmation: React.FC = () => {
           <Box marginBottom={9}>
             <Accordion>
               <PoliceRequestAccordionItem workingCase={workingCase} />
-              <AccordionItem id="id_2" label="Þingbók" labelVariant="h3">
-                <Box marginBottom={2}>
-                  <Text variant="h4" as="h4">
-                    Upplýsingar
-                  </Text>
-                </Box>
-                <Box marginBottom={3}>
-                  <Text>
-                    {`Þinghald frá kl. ${formatDate(
-                      workingCase.courtStartTime,
-                      TIME_FORMAT,
-                    )} til kl. ${formatDate(
-                      workingCase.courtEndTime,
-                      TIME_FORMAT,
-                    )} ${formatDate(workingCase.courtEndTime, 'PP')}`}
-                  </Text>
-                </Box>
-                <AccordionListItem title="Krafa lögreglu">
-                  <span className={style.breakSpaces}>
-                    {workingCase.policeDemands}
-                  </span>
-                </AccordionListItem>
-                <AccordionListItem title="Viðstaddir">
-                  <span className={style.breakSpaces}>
-                    {workingCase.courtAttendees}
-                  </span>
-                </AccordionListItem>
-                <AccordionListItem title="Dómskjöl">
-                  Rannsóknargögn málsins liggja frammi. Krafa lögreglu þingmerkt
-                  nr. 1.
-                </AccordionListItem>
-                <AccordionListItem title="Réttindi kærða">
-                  Kærða er bent á að honum sé óskylt að svara spurningum er
-                  varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113.
-                  gr. laga nr. 88/2008. Kærði er enn fremur áminntur um
-                  sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr.
-                  114. gr. sömu laga.
-                </AccordionListItem>
-                <AccordionListItem title="Afstaða kærða">
-                  <span className={style.breakSpaces}>
-                    {workingCase.accusedPlea}
-                  </span>
-                </AccordionListItem>
-                <AccordionListItem title="Málflutningur">
-                  <span className={style.breakSpaces}>
-                    {workingCase.litigationPresentations}
-                  </span>
-                </AccordionListItem>
-              </AccordionItem>
+              <CourtRecordAccordionItem workingCase={workingCase} />
             </Accordion>
           </Box>
           <Box component="section" marginBottom={8}>
@@ -430,43 +431,40 @@ export const Confirmation: React.FC = () => {
                 )}
             </Box>
           )}
-          <Box marginBottom={15}>
+          <Box marginBottom={10}>
             <Text variant="h3">
-              {workingCase?.judge
-                ? `${workingCase?.judge.name} ${workingCase?.judge.title}`
+              {workingCase.judge
+                ? `${workingCase.judge.name} ${workingCase.judge.title}`
                 : `${user?.name} ${user?.title}`}
             </Text>
+          </Box>
+          <Box marginBottom={15}>
+            <a
+              className={style.pdfLink}
+              href={`${api.apiUrl}/api/case/${workingCase.id}/ruling`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                variant="ghost"
+                size="small"
+                icon="open"
+                iconType="outline"
+              >
+                Sjá PDF af þingbók og úrskurði
+              </Button>
+            </a>
           </Box>
           <FormFooter
             nextUrl={Constants.DETENTION_REQUESTS_ROUTE}
             nextButtonText="Staðfesta úrskurð"
-            onNextButtonClick={async () => {
-              // Transition case from submitted state to either accepted or rejected
-              const caseTransitioned = await handleNextButtonClick()
-              if (caseTransitioned) {
-                // Request signature to get control code
-                try {
-                  const requestSignatureResponse = await requestSignature(
-                    workingCase.id,
-                  )
-                  if (requestSignatureResponse) {
-                    setRequestSignatureResponse(requestSignatureResponse)
-                    setModalVisible(true)
-                  } else {
-                    // TODO: Handle error
-                  }
-                } catch (e) {
-                  // TODO: Handle error
-                }
-              } else {
-                // TODO: Handle error
-              }
-            }}
-            nextIsLoading={isTransitioningCase || isRequestingSignature}
+            onNextButtonClick={handleNextButtonClick}
+            nextIsLoading={isRequestingSignature}
           />
           {modalVisible && (
             <SigningModal
-              caseId={workingCase.id}
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
               requestSignatureResponse={requestSignatureResponse}
               setModalVisible={setModalVisible}
             />

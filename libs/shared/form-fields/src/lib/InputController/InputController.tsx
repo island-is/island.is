@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { Input } from '@island.is/island-ui/core'
-import { useFormContext } from 'react-hook-form'
+import { useFormContext, Controller } from 'react-hook-form'
+import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
 
 interface Props {
   autoFocus?: boolean
@@ -14,8 +15,11 @@ interface Props {
   ) => void
   placeholder?: string
   textarea?: boolean
+  currency?: boolean
   type?: 'text' | 'email' | 'number' | 'tel'
+  format?: string | FormatInputValueFunction
 }
+
 export const InputController: FC<Props> = ({
   autoFocus,
   disabled = false,
@@ -25,10 +29,68 @@ export const InputController: FC<Props> = ({
   name = id,
   placeholder,
   textarea,
+  currency,
   type = 'text',
+  format,
   onChange,
 }) => {
   const { register } = useFormContext()
+
+  if (currency) {
+    return (
+      <Controller
+        name={name}
+        render={({ value, onChange, ...props }) => (
+          <NumberFormat
+            customInput={Input}
+            id={id}
+            disabled={disabled}
+            placeholder={placeholder}
+            label={label}
+            type="text"
+            decimalSeparator=","
+            thousandSeparator="."
+            suffix=" kr."
+            value={value}
+            format={format}
+            onValueChange={({ value }) => {
+              onChange(value)
+            }}
+            hasError={error !== undefined}
+            errorMessage={error}
+            {...props}
+          />
+        )}
+      />
+    )
+  }
+
+  if (format && ['text', 'tel'].includes(type)) {
+    return (
+      <Controller
+        name={name}
+        render={({ value, onChange, ...props }) => (
+          <NumberFormat
+            customInput={Input}
+            id={id}
+            disabled={disabled}
+            placeholder={placeholder}
+            label={label}
+            type={type as 'text' | 'tel'}
+            value={value}
+            format={format}
+            onValueChange={({ value }) => {
+              onChange(value)
+            }}
+            hasError={error !== undefined}
+            errorMessage={error}
+            {...props}
+          />
+        )}
+      />
+    )
+  }
+
   return (
     <Input
       id={id}

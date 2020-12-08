@@ -40,11 +40,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
         description="Þú mátt kjósa að byrja á áætluðum fæðingardegi, eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins."
         // description="You can choose to start on the date of birth, or on a specific date. Please note, that your rights end 18 months after the date of birth."
       />
-      <Box
-        background={error ? 'red100' : 'blue100'}
-        padding={3}
-        marginBottom={3}
-      >
+      <Box paddingY={3} marginBottom={3}>
         <RadioController
           id={field.id}
           defaultValue={
@@ -69,7 +65,6 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
             },
           ]}
           onSelect={(newAnswer) => setStatefulAnswer(newAnswer as ValidAnswers)}
-          emphasize
           largeButtons
         />
         <input
