@@ -1,2 +1,2 @@
-export * from './lib/national-registry.module'
-export * from './lib/national-registry.resolver'
+export * from './lib/nationalRegistry.module'
+export * from './lib/nationalRegistry.resolver'

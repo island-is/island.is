@@ -1,28 +1,31 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 @ObjectType()
-export class MyInfo {
+export class NationalRegistryUser {
+  @Field(() => ID)
+  nationalId!: string
+
   @Field(() => String)
   fullName!: string
 
   @Field(() => String, { nullable: true })
-  gender!: string | null
+  gender?: string
 
   @Field(() => String, { nullable: true })
-  legalResidence!: string | null
+  legalResidence?: string
 
   @Field(() => String, { nullable: true })
-  birthPlace!: string | null
+  birthPlace?: string
 
   @Field(() => String, { nullable: true })
-  citizenship!: string | null
+  citizenship?: string
 
   @Field(() => String, { nullable: true })
-  religion!: string | null
+  religion?: string
 
   @Field(() => String, { nullable: true })
-  maritalStatus!: string | null
+  maritalStatus?: string
 
   @Field(() => String, { nullable: true })
-  banMarking!: string | null
+  banMarking?: string
 }
