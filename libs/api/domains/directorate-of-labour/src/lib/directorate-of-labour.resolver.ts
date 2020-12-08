@@ -6,7 +6,7 @@ import {
   ScopesGuard,
   CurrentUser,
   User,
-} from '@island.is/auth-api-lib'
+} from '@island.is/auth-nest-tools'
 import { Union } from './union.model'
 import { PensionFund } from './pensionFund.model'
 import { GetParentalLeavesEntitlementsInput } from '../dto/getParentalLeavesEntitlements.input'
