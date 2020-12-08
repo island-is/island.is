@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { ITellUsAStory } from '../generated/contentfulTypes'
-import { SystemMetadata } from '../types'
+import { SystemMetadata } from '@island.is/shared/types'
 import { Html, mapHtml } from './html.model'
 import { Image, mapImage } from './image.model'
 

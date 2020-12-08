@@ -36,7 +36,7 @@ import {
   ApplicationTemplateHelper,
   ExternalData,
 } from '@island.is/application/core'
-// import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-api-lib'
+// import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-nest-tools'
 import {
   getApplicationDataProviders,
   getApplicationTemplateByTypeId,

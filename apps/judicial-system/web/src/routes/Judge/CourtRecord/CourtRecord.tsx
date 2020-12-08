@@ -89,7 +89,7 @@ export const CourtRecord: React.FC = () => {
     }
 
     if (wc.defenderName) {
-      attendees += `\n${wc.defenderName} verjandi kærða`
+      attendees += `\n${wc.defenderName} skipaður verjandi kærða`
     }
 
     return attendees
