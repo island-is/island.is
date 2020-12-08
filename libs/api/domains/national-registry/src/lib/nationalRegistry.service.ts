@@ -5,25 +5,31 @@ import { logger } from '@island.is/logging'
 import { FamilyMember, User } from './types'
 import { NationalRegistryApi } from './soap/nationalRegistryApi'
 
-// eslint-disable-next-line
-const handleError = (error: any) => {
-  logger.error(error)
-  throw new ApolloError('Failed to resolve request', error)
-}
-
 @Injectable()
 export class NationalRegistryService {
   constructor(private nationalRegistryApi: NationalRegistryApi) {}
 
-  async GetMyinfo(nationalId: string): Promise<User> {
-    return await this.nationalRegistryApi
-      .getMyInfo(nationalId)
-      .catch(handleError)
+  getUserInfo(nationalId: User['nationalId']): Promise<User> {
+    return this.nationalRegistryApi.getMyInfo(nationalId)
   }
 
-  async GetMyFamily(nationalId: string): Promise<FamilyMember[]> {
-    return await this.nationalRegistryApi
-      .getMyFamily(nationalId)
-      .catch(handleError)
+  getFamily(nationalId: User['nationalId']): Promise<FamilyMember[]> {
+    return this.nationalRegistryApi.getMyFamily(nationalId)
+  }
+
+  getReligion(nationalId: User['nationalId']): Promise<string> {
+    return this.nationalRegistryApi.getReligion(nationalId)
+  }
+
+  getBirthPlace(municipalCode: User['municipalCode']): Promise<string> {
+    return this.nationalRegistryApi.getBirthPlace(municipalCode)
+  }
+
+  getBanMarking(nationalId: User['nationalId']): Promise<string> {
+    return this.nationalRegistryApi.getBanMarking(nationalId)
+  }
+
+  getLegalResidence(houseCode: User['houseCode']): Promise<string> {
+    return this.nationalRegistryApi.getLegalResidence(houseCode)
   }
 }
