@@ -1,7 +1,7 @@
 import React, { FC, useRef } from 'react'
 import { Box, Input, Button } from '@island.is/island-ui/core'
 import * as styles from './CopyToClipboardInput.treat'
-
+//TODO finish the look of this component
 export interface CopyToClipboardInputProps {
   inputLabel: string
   inputValue: string
