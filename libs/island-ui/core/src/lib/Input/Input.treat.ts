@@ -98,7 +98,6 @@ export const icon = style({
   width: 24,
   height: 24,
   marginBottom: -3,
-  color: theme.color.blue400,
   ...themeUtils.responsiveStyle({
     md: {
       selectors: {

@@ -5,6 +5,7 @@ import { Box } from '../Box/Box'
 import { Tooltip } from '../Tooltip/Tooltip'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconType, Type } from '../IconRC/iconMap'
+import { Colors } from 'libs/island-ui/theme/src'
 
 export type InputBackgroundColor = 'white' | 'blue'
 
@@ -38,6 +39,7 @@ interface InputComponentProps {
   type?: 'text' | 'number' | 'email' | 'tel'
   icon?: IconType
   iconType?: Type
+  iconColor?: Colors
   /**
    * While true hover state will not show and focus state will be allways on
    */
@@ -113,6 +115,7 @@ export const Input = forwardRef(
       type,
       icon,
       iconType = 'filled',
+      iconColor = hasError ? 'red600' : 'blue400',
       size = 'md',
       fixedFocusState,
       ...inputProps
@@ -215,6 +218,7 @@ export const Input = forwardRef(
           {hasError && !icon && (
             <Icon
               icon="warning"
+              color={iconColor}
               skipPlaceholderSize
               className={cn(styles.icon, styles.iconError)}
             />
@@ -222,6 +226,7 @@ export const Input = forwardRef(
           {icon && (
             <Icon
               icon={icon}
+              color={iconColor}
               type={iconType}
               skipPlaceholderSize
               className={cn(styles.icon, {

@@ -384,6 +384,14 @@ export const StepOne: React.FC = () => {
               </Text>
             </Box>
             <Box className={styles.blueBox}>
+              <Box marginBottom={2}>
+                <Text as="h4" variant="h4">
+                  Kyn{' '}
+                  <Text as="span" color="red600" fontWeight="semiBold">
+                    *
+                  </Text>
+                </Text>
+              </Box>
               <Box marginBottom={2} className={styles.genderContainer}>
                 <Box className={styles.genderColumn}>
                   <RadioButton
@@ -575,6 +583,7 @@ export const StepOne: React.FC = () => {
                   isDirty(workingCase.defenderName) ? 'lockClosed' : undefined
                 }
                 iconType="outline"
+                iconColor="dark400"
                 onBlur={(evt) => {
                   if (workingCase.requestedDefenderName !== evt.target.value) {
                     setWorkingCase({
@@ -600,6 +609,7 @@ export const StepOne: React.FC = () => {
                 isDirty(workingCase.defenderEmail) ? 'lockClosed' : undefined
               }
               iconType="outline"
+              iconColor="dark400"
               defaultValue={workingCase.requestedDefenderEmail}
               errorMessage={requestedDefenderEmailErrorMessage}
               hasError={requestedDefenderEmailErrorMessage !== ''}
