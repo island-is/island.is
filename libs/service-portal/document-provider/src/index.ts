@@ -20,7 +20,6 @@ export const documentProviderModule: ServicePortalModule = {
       render: () => lazy(() => import('./screens/Dashboard/Dashboard')),
     },
     {
-      //hvar birtist þetta nafn... ?
       name: defineMessage({
         id: 'service.portal:document-provider-document-providers-title',
         defaultMessage: 'Skjalaveitendur',
@@ -30,7 +29,6 @@ export const documentProviderModule: ServicePortalModule = {
         lazy(() => import('./screens/DocumentProviders/DocumentProviders')),
     },
     {
-      //hvar birtist þetta nafn... ?
       name: defineMessage({
         id: 'service.portal:document-provider-my-categories-title',
         defaultMessage: 'Mínir flokkar',
@@ -39,7 +37,6 @@ export const documentProviderModule: ServicePortalModule = {
       render: () => lazy(() => import('./screens/MyCategories/MyCategories')),
     },
     {
-      //hvar birtist þetta nafn... ?
       name: defineMessage({
         id: 'service.portal:document-provider-settings-title',
         defaultMessage: 'Stillingar',
@@ -103,7 +100,6 @@ export const documentProviderModule: ServicePortalModule = {
         lazy(() => import('./screens/Settings/EditEndpoints/EditEndpoints')),
     },
     {
-      //hvar birtist þetta nafn... ?
       name: defineMessage({
         id: 'service.portal:document-provider-technical-information-title',
         defaultMessage: 'Tæknileg útfærsla',
