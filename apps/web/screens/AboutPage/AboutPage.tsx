@@ -50,14 +50,7 @@ import {
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import { RenderForm } from './RenderForm'
-
-const mainContentSpanFull: SpanType = ['12/12', '12/12', '12/12', '9/12']
-const mainContentSpan: SpanType = ['12/12', '12/12', '12/12', '8/12']
-const mainContentSpanWithIndent: SpanType = ['12/12', '12/12', '12/12', '7/12']
-const mainContentIndent: SpanType = ['0', '0', '0', '1/12']
-const sidebarContentSpan: SpanType = ['12/12', '12/12', '12/12', '3/12']
-const nestedSpanWithOffset: SpanType = ['9/9', '9/9', '9/9', '7/9']
-const nestedOffset: SpanType = ['0', '0', '0', '1/9']
+import { SidebarLayout } from '../Layouts/SidebarLayout'
 
 /**
  * TODO: Both fragments Image and EmbeddedVideo aren't used inside
@@ -72,18 +65,6 @@ export interface LayoutProps {
   width: SpanType
   indent?: SpanType
   boxProps?: BoxProps
-}
-
-const Layout: FC<LayoutProps> = ({ width, indent, children }) => {
-  return (
-    <GridContainer position="none">
-      <GridRow>
-        <GridColumn span={width} offset={indent}>
-          {children}
-        </GridColumn>
-      </GridRow>
-    </GridContainer>
-  )
 }
 
 interface BackgroundProps {
@@ -190,10 +171,77 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
             <Header buttonColorScheme="negative" />
           </Box>
         </ColorSchemeContext.Provider>
+      </GridContainer>
+      <SidebarLayout
+        isSticky={false}
+        hiddenOnTablet={true}
+        sidebarContent={
+          <Sidebar
+            title={page.title}
+            type={decideSidebarType(page, currentSliceId)}
+          >
+            {({ bulletRef, colors }) => {
+              const [navigationTitle, ...navigationList] = navigation
+              return (
+                <>
+                  <Box
+                    component="a"
+                    ref={
+                      navigationTitle.id === currentSliceId ? bulletRef : null
+                    }
+                    href={'#' + navigationTitle.id}
+                    onClick={() => navigate(navigationTitle.id)}
+                    paddingBottom={2}
+                    display="inlineBlock"
+                  >
+                    <Text color={colors.main}>
+                      {navigationTitle.id === currentSliceId ? (
+                        <b>{navigationTitle.text}</b>
+                      ) : (
+                        navigationTitle.text
+                      )}
+                    </Text>
+                  </Box>
+                  <Box
+                    borderLeftWidth="standard"
+                    borderColor={colors.subNavBorder}
+                    paddingLeft={2}
+                  >
+                    {navigationList.map(({ id, text }, index) => (
+                      <Box key={index} paddingBottom={1}>
+                        <a
+                          ref={id === currentSliceId ? bulletRef : null}
+                          href={'#' + id}
+                          onClick={() => navigate(id)}
+                        >
+                          <Text variant="small" as="p" color={colors.main}>
+                            {id === currentSliceId ? <b>{text}</b> : text}
+                          </Text>
+                        </a>
+                      </Box>
+                    ))}
+                  </Box>
+                  {slice.links.map(({ url, text }, index) => (
+                    <span key={index}>
+                      <Box paddingY={1}>
+                        <Link href={url}>
+                          <Text as="div" color={colors.secondary}>
+                            {text}
+                          </Text>
+                        </Link>
+                      </Box>
+                    </span>
+                  ))}
+                </>
+              )
+            }}
+          </Sidebar>
+        }
+      >
         <GridRow>
-          <GridColumn span={mainContentSpanFull}>
+          <GridColumn span={'12/12'}>
             <GridRow>
-              <GridColumn offset={nestedOffset} span={nestedSpanWithOffset}>
+              <GridColumn offset={'1/9'} span={'8/9'}>
                 <Stack space={2}>
                   <Breadcrumbs color="blue300" separatorColor="blue300">
                     <Link href={makePath()}>Ísland.is</Link>
@@ -207,75 +255,13 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
               </GridColumn>
             </GridRow>
           </GridColumn>
-          <GridColumn span={sidebarContentSpan} position="none">
-            <Sidebar
-              title={page.title}
-              type={decideSidebarType(page, currentSliceId)}
-            >
-              {({ bulletRef, colors }) => {
-                const [navigationTitle, ...navigationList] = navigation
-                return (
-                  <>
-                    <Box
-                      component="a"
-                      ref={
-                        navigationTitle.id === currentSliceId ? bulletRef : null
-                      }
-                      href={'#' + navigationTitle.id}
-                      onClick={() => navigate(navigationTitle.id)}
-                      paddingBottom={2}
-                      display="inlineBlock"
-                    >
-                      <Text color={colors.main}>
-                        {navigationTitle.id === currentSliceId ? (
-                          <b>{navigationTitle.text}</b>
-                        ) : (
-                          navigationTitle.text
-                        )}
-                      </Text>
-                    </Box>
-                    <Box
-                      borderLeftWidth="standard"
-                      borderColor={colors.subNavBorder}
-                      paddingLeft={2}
-                    >
-                      {navigationList.map(({ id, text }, index) => (
-                        <Box key={index} paddingBottom={1}>
-                          <a
-                            ref={id === currentSliceId ? bulletRef : null}
-                            href={'#' + id}
-                            onClick={() => navigate(id)}
-                          >
-                            <Text variant="small" as="p" color={colors.main}>
-                              {id === currentSliceId ? <b>{text}</b> : text}
-                            </Text>
-                          </a>
-                        </Box>
-                      ))}
-                    </Box>
-                    {slice.links.map(({ url, text }, index) => (
-                      <span key={index}>
-                        <Box paddingY={1}>
-                          <Link href={url}>
-                            <Text as="div" color={colors.secondary}>
-                              {text}
-                            </Text>
-                          </Link>
-                        </Box>
-                      </span>
-                    ))}
-                  </>
-                )
-              }}
-            </Sidebar>
-          </GridColumn>
-          <GridColumn span={mainContentSpanFull}>
+          <GridColumn span={'12/12'}>
             {(slice.slices as AvailableSlices[]).map((slice) => (
               <Section key={slice.id} slice={slice} />
             ))}
           </GridColumn>
         </GridRow>
-      </GridContainer>
+      </SidebarLayout>
     </Background>
   )
 }
@@ -302,27 +288,27 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
     case 'HeadingSlice':
       return (
         <div key={slice.id} id={slice.id}>
-          <Layout indent={mainContentIndent} width={mainContentSpanWithIndent}>
+          <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
             <Box paddingTop={[8, 6, 15]} paddingBottom={[4, 5, 10]}>
               <Heading {...slice} />
             </Box>
-          </Layout>
+          </SidebarLayout>
         </div>
       )
     case 'LinkCardSlice':
       return (
         <Box key={slice.id} id={slice.id} background="dotted">
-          <Layout width={mainContentSpan}>
+          <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
             <Box paddingTop={8} paddingBottom={[4, 5, 10]}>
               <LinkCardList {...slice} />
             </Box>
-          </Layout>
+          </SidebarLayout>
         </Box>
       )
     case 'MailingListSignupSlice':
       return (
         <Box key={slice.id} id={slice.id} background="blue100">
-          <Layout width={mainContentSpanWithIndent} indent={mainContentIndent}>
+          <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
             <Box paddingTop={[4, 4, 10]} paddingBottom={[4, 3, 7]}>
               <RenderForm
                 namespace={namespace}
@@ -332,13 +318,13 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
                 inputLabel={slice.inputLabel}
               />
             </Box>
-          </Layout>
+          </SidebarLayout>
         </Box>
       )
     case 'StorySlice':
       return (
         <div key={slice.id} id={slice.id} className={styles.gradient}>
-          <Layout width={mainContentSpan}>
+          <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
             <Box paddingTop={[8, 8, 12]} paddingBottom={[12, 8, 10]}>
               <StoryList
                 {...slice}
@@ -348,36 +334,36 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
                 }))}
               />
             </Box>
-          </Layout>
+          </SidebarLayout>
         </div>
       )
     case 'LatestNewsSlice':
       return (
         <div key={slice.id} id={slice.id}>
-          <Layout width={mainContentSpan}>
+          <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
             <Box paddingTop={[8, 8, 15]} paddingBottom={[4, 6, 12]}>
               <AboutLatestNews {...slice} namespace={namespace} />
             </Box>
-          </Layout>
+          </SidebarLayout>
         </div>
       )
     case 'LogoListSlice':
       return (
         <div key={slice.id} id={slice.id} className={styles.gradient}>
-          <Layout width={mainContentSpan}>
+          <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
             <Box paddingTop={[8, 8, 12]} paddingBottom={4}>
               <LogoList
                 {...slice}
                 images={slice.images.map((img) => img.url)}
               />
             </Box>
-          </Layout>
+          </SidebarLayout>
         </div>
       )
     case 'BulletListSlice':
       return (
         <div id={slice.id} key={slice.id}>
-          <Layout width={mainContentSpan}>
+          <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
             <Box paddingBottom={[8, 5, 10]}>
               <BulletList
                 bullets={slice.bullets.map((bullet) => {
@@ -397,13 +383,13 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
               />
             </Box>
             <Divider />
-          </Layout>
+          </SidebarLayout>
         </div>
       )
     case 'TabSection':
       return (
         <Box key={slice.id} id={slice.id} background="dotted">
-          <Layout width={mainContentSpan}>
+          <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
             <Box paddingTop={2} paddingBottom={[0, 5, 10]}>
               <Tabs
                 label={slice?.title}
@@ -434,7 +420,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
               />
             </Box>
             <Divider />
-          </Layout>
+          </SidebarLayout>
         </Box>
       )
   }
