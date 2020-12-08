@@ -1,6 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { ITeamList } from '../generated/contentfulTypes'
-import { SystemMetadata } from '../types'
+import { SystemMetadata } from '@island.is/shared/types'
 import { TeamMember, mapTeamMember } from './teamMember.model'
 
 @ObjectType()

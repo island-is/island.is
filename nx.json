@@ -165,6 +165,9 @@
     "auth-api-lib": {
       "tags": []
     },
+    "auth-nest-tools": {
+      "tags": []
+    },
     "cache": {
       "tags": []
     },
