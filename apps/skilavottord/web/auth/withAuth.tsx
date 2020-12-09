@@ -8,7 +8,7 @@ type AuthType = 'citizen' | 'recyclingPartner'
 
 const withAuth = (WrappedComponent: NextComponentType, authType: AuthType) =>
   class extends Component {
-    static async getInitialProps(ctx) {
+    static async getInitialProps(ctx: any) {
       if (!isAuthenticated(ctx)) {
         const authUrl = `${AUTH_URL[authType]}/login?returnUrl=${ctx.asPath}`
         const { res } = ctx

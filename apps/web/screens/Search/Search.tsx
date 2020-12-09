@@ -28,7 +28,6 @@ import {
   GET_SEARCH_COUNT_QUERY,
 } from '../queries'
 import { CategoryLayout } from '../Layouts/Layouts'
-import routeNames from '@island.is/web/i18n/routeNames'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -107,11 +106,14 @@ const Search: Screen<CategoryProps> = ({
     // create a map of sidebar tag data for easier lookup later
     const tagCountResults = countResults.tagCounts.reduce(
       (tagList: SidebarTagMap, { key, count: total, value: title }) => {
-        totalTagCount = totalTagCount + total
+        // in some rare cases a tag might be empty we skip counting and rendering it
+        if (key && title) {
+          totalTagCount = totalTagCount + total
 
-        tagList[key] = {
-          title,
-          total,
+          tagList[key] = {
+            title,
+            total,
+          }
         }
 
         return tagList
@@ -217,12 +219,12 @@ const Search: Screen<CategoryProps> = ({
   }
 
   const filteredItems = searchResultsItems.filter(byCategory)
-
   const totalSearchResults = searchResults.total
-
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
+  const sidebarDataTypes = Object.entries(sidebarData.types)
+  const sidebarDataTags = Object.entries(sidebarData.tags)
 
-  const categorySelectOptions = Object.entries(sidebarData.tags).map(
+  const categorySelectOptions = sidebarDataTags.map(
     ([key, { title, total }]) => ({
       label: `${title} (${total})`,
       value: key,
@@ -249,26 +251,26 @@ const Search: Screen<CategoryProps> = ({
       <CategoryLayout
         sidebar={
           <Stack space={3}>
-            <Sidebar title={n('sidebarHeader')}>
-              <Box width="full" position="relative" paddingTop={2}>
-                {totalSearchResults > 0 && (
-                  <>
-                    <Filter
-                      truncate
-                      selected={!filters.category && !filters.type}
-                      onClick={() => onRemoveFilters()}
-                      text={`${n('allCategories', 'Allir flokkar')} (${
-                        sidebarData.totalTagCount
-                      })`}
-                      className={styles.allCategoriesLink}
-                    />
-                    <SidebarAccordion
-                      id="sidebar_accordion_categories"
-                      label={''}
-                    >
-                      <Stack space={[1, 1, 2]}>
-                        {Object.entries(sidebarData.tags).map(
-                          ([key, { title, total }]) => {
+            {!!sidebarDataTags.length && (
+              <Sidebar title={n('sidebarHeader')}>
+                <Box width="full" position="relative" paddingTop={2}>
+                  {totalSearchResults > 0 && (
+                    <>
+                      <Filter
+                        truncate
+                        selected={!filters.category && !filters.type}
+                        onClick={() => onRemoveFilters()}
+                        text={`${n('allCategories', 'Allir flokkar')} (${
+                          sidebarData.totalTagCount
+                        })`}
+                        className={styles.allCategoriesLink}
+                      />
+                      <SidebarAccordion
+                        id="sidebar_accordion_categories"
+                        label={''}
+                      >
+                        <Stack space={[1, 1, 2]}>
+                          {sidebarDataTags.map(([key, { title, total }]) => {
                             const selected = key === filters.category
                             const text = `${title} (${total})`
 
@@ -286,30 +288,28 @@ const Search: Screen<CategoryProps> = ({
                                 text={text}
                               />
                             )
-                          },
-                        )}
-                      </Stack>
-                    </SidebarAccordion>
-                  </>
-                )}
-              </Box>
-            </Sidebar>
-            {
+                          })}
+                        </Stack>
+                      </SidebarAccordion>
+                    </>
+                  )}
+                </Box>
+              </Sidebar>
+            )}
+            {!!sidebarDataTypes.length && (
               <Sidebar bullet="none" title={n('otherCategories')}>
                 <Stack space={[1, 1, 2]}>
-                  {Object.entries(sidebarData.types).map(
-                    ([key, { title, total }]) => (
-                      <Filter
-                        key={key}
-                        selected={filters.type === key}
-                        onClick={() => onSelectSidebarTag('type', key)}
-                        text={`${title} (${total})`}
-                      />
-                    ),
-                  )}
+                  {sidebarDataTypes.map(([key, { title, total }]) => (
+                    <Filter
+                      key={key}
+                      selected={filters.type === key}
+                      onClick={() => onSelectSidebarTag('type', key)}
+                      text={`${title} (${total})`}
+                    />
+                  ))}
                 </Stack>
               </Sidebar>
-            }
+            )}
           </Stack>
         }
         belowContent={

@@ -1,16 +1,18 @@
 import { InternalServerErrorException, NotFoundException } from '@nestjs/common'
-import { logger } from '@island.is/logging'
-import Soap from 'soap'
-import { MyInfo } from '../myInfo.model'
-import { GetViewHomeDto } from './dto/getViewHomeDto'
-import { GetViewReligionDto } from './dto/getViewReligionDto'
-import { GetViewMunicipalityDto } from './dto/getViewMunicipalityDto'
-import { GetViewRegistryDto } from './dto/getViewRegistryDto'
-import { Fjolskyldan, GetViewFamilyDto } from './dto/getViewFamilyDto'
-import { FamilyMember } from '../familyMember.model'
-import { GetViewBanmarkingDto } from './dto/getViewBanmarkingDto'
 import * as kennitala from 'kennitala'
-import { FamilyRelation } from '../types/familyRelation.enum'
+import Soap from 'soap'
+
+import { logger } from '@island.is/logging'
+import {
+  GetViewBanmarkingDto,
+  GetViewHomeDto,
+  GetViewReligionDto,
+  GetViewMunicipalityDto,
+  GetViewRegistryDto,
+  Fjolskyldan,
+  GetViewFamilyDto,
+} from './dto'
+import { FamilyMember, User, FamilyRelation } from '../types'
 
 export class NationalRegistryApi {
   private readonly client: Soap.Client | null
@@ -37,7 +39,51 @@ export class NationalRegistryApi {
     this.clientPassword = clientPassword
   }
 
-  public async getMyInfo(nationalId: string): Promise<MyInfo | null> {
+  public async getReligion(nationalId: User['nationalId']): Promise<string> {
+    const response = await this.getViewKennitalaOgTrufelag(nationalId)
+    if (!response) {
+      return ''
+    }
+
+    return response.table.diffgram.DocumentElement.KennitalaOgTrufelag.Trufelag
+  }
+
+  public async getBirthPlace(
+    municipalCode: User['municipalCode'],
+  ): Promise<string> {
+    const response = await this.getViewSveitarfelag(municipalCode)
+
+    if (!response) {
+      return ''
+    }
+    return response.table.diffgram.DocumentElement.Sveitarfelag.Sokn
+  }
+
+  public async getBanMarking(nationalId: User['nationalId']): Promise<string> {
+    const response = await this.getViewKennitalaOgBannmerking(nationalId)
+
+    if (!response) {
+      return ''
+    }
+
+    const banMarking =
+      response.table.diffgram.DocumentElement.KennitalaOgBannmerking
+    const isBanmarked = banMarking.Bannmerking === '1'
+    return isBanmarked ? `Já ${banMarking.Brdagur}` : 'Nei'
+  }
+
+  public async getLegalResidence(
+    houseCode: User['houseCode'],
+  ): Promise<string> {
+    const response = await this.getViewHusaskra(houseCode)
+    if (!response) {
+      return ''
+    }
+    const houseInfo = response.table.diffgram.DocumentElement.Husaskra
+    return `${houseInfo.HusHeiti}, ${houseInfo.PostNr} ${houseInfo.Nafn}`
+  }
+
+  public async getMyInfo(nationalId: User['nationalId']): Promise<User> {
     const response = await this.getViewThjodskra(nationalId)
 
     if (!response)
@@ -46,28 +92,18 @@ export class NationalRegistryApi {
       )
 
     const userInfo = response.table.diffgram.DocumentElement.Thjodskra
-    const houseResponse = await this.getViewHusaskra(userInfo.LoghHusk)
-    const religionResponse = await this.getViewKennitalaOgTrufelag(nationalId)
-    const birthPlaceResponse = await this.getViewSveitarfelag(
-      userInfo.Faedsvfnr,
-    )
-    const banMarkingResponse = await this.getViewKennitalaOgBannmerking(
-      nationalId,
-    )
-
     return {
+      nationalId,
       fullName: userInfo.Nafn,
       citizenship: userInfo.Rikisfang === 'IS' ? 'Ísland' : userInfo.Rikisfang,
       gender: this.formatGender(userInfo.Kyn),
-      birthPlace: this.formatBirthPlaceString(birthPlaceResponse),
-      religion: this.formatReligionString(religionResponse),
-      legalResidence: this.formatResidenceAddressString(houseResponse),
       maritalStatus: this.formatMartialStatus(userInfo.Hju, userInfo.Kyn),
-      banMarking: this.formatBanMarking(banMarkingResponse),
+      houseCode: userInfo.LoghHusk,
+      municipalCode: userInfo.Faedsvfnr,
     }
   }
 
-  public async getMyFamily(nationalId: string): Promise<FamilyMember[] | null> {
+  public async getMyFamily(nationalId: string): Promise<FamilyMember[]> {
     const response = await this.getViewFjolskyldan(nationalId)
 
     if (!response)
@@ -126,34 +162,7 @@ export class NationalRegistryApi {
     )
   }
 
-  private formatResidenceAddressString(
-    houseDto: GetViewHomeDto | null,
-  ): string | null {
-    if (!houseDto) return null
-    const houseInfo = houseDto.table.diffgram.DocumentElement.Husaskra
-    return `${houseInfo.HusHeiti}, ${houseInfo.PostNr} ${houseInfo.Nafn}`
-  }
-
-  private formatReligionString(
-    religtionDto: GetViewReligionDto | null,
-  ): string | null {
-    if (!religtionDto) return null
-
-    return religtionDto.table.diffgram.DocumentElement.KennitalaOgTrufelag
-      .Trufelag
-  }
-
-  private formatBirthPlaceString(
-    birthPlaceDto: GetViewMunicipalityDto | null,
-  ): string | null {
-    if (!birthPlaceDto) return null
-    return birthPlaceDto.table.diffgram.DocumentElement.Sveitarfelag.Sokn
-  }
-
-  private formatMartialStatus(
-    maritalCode: string,
-    genderCode: string,
-  ): string | null {
+  private formatMartialStatus(maritalCode: string, genderCode: string): string {
     const isMale = genderCode === '1'
     switch (maritalCode) {
       case '1':
@@ -179,11 +188,11 @@ export class NationalRegistryApi {
       case 'L':
         return 'Íslendingur með lögheimili á Íslandi (t.d. námsmaður eða sendiráðsmaður); í hjúskap með útlendingi sem ekki er á skrá'
       default:
-        return null
+        return ''
     }
   }
 
-  private formatGender(genderIndex: string): string | null {
+  private formatGender(genderIndex: string): string {
     switch (genderIndex) {
       case '1':
         return 'Karl'
@@ -198,18 +207,8 @@ export class NationalRegistryApi {
       case '8':
         return 'Kynsegin'
       default:
-        return null
+        return ''
     }
-  }
-
-  private formatBanMarking(
-    banMarkingDto: GetViewBanmarkingDto | null,
-  ): string | null {
-    if (!banMarkingDto) return null
-    const banMarking =
-      banMarkingDto.table.diffgram.DocumentElement.KennitalaOgBannmerking
-    const isBanmarked = banMarking.Bannmerking === '1'
-    return isBanmarked ? `Já ${banMarking.Brdagur}` : 'Nei'
   }
 
   public async getViewThjodskra(

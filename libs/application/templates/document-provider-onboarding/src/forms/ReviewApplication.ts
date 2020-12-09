@@ -15,7 +15,7 @@ import { m } from './messages'
 
 export const ReviewApplication: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
-  name: 'Úrvinnsla umsóknar um að gerast skjalaveitandi',
+  name: m.reviewTitle,
   mode: FormModes.REVIEW,
   children: [
     buildSection({
@@ -23,10 +23,16 @@ export const ReviewApplication: Form = buildForm({
       name: m.reviewSection,
       children: [
         buildMultiField({
-          id: 'overview',
-          name: 'Umsókn um að gerast skjalaveitandi:',
+          id: 'review',
+          name: m.reviewTitle,
+          description: m.reviewSubTitle,
           children: [
-            buildDividerField({ name: 'Umsækjandi' }),
+            buildDividerField({ name: m.applicantTitle.defaultMessage }),
+            buildTextField({
+              id: 'applicant.nationalId',
+              name: m.applicantNationalId,
+              disabled: true,
+            }),
             buildTextField({
               id: 'applicant.name',
               name: m.applicantName,
@@ -36,27 +42,27 @@ export const ReviewApplication: Form = buildForm({
               id: 'applicant.email',
               name: m.applicantEmail,
               disabled: true,
-              width: 'half',
             }),
             buildTextField({
               id: 'applicant.phoneNumber',
               name: m.applicantPhoneNumber,
               disabled: true,
-              width: 'half',
+              format: '###-####',
+              placeholder: '000-0000',
             }),
             buildTextField({
               id: 'applicant.address',
               name: m.applicantAddress,
               disabled: true,
-              width: 'half',
             }),
             buildTextField({
               id: 'applicant.zipCode',
               name: m.applicantZipCode,
               disabled: true,
-              width: 'half',
             }),
-            buildDividerField({ name: 'Ábyrgðarmaður' }),
+            buildDividerField({
+              name: m.administrativeContactTitle.defaultMessage,
+            }),
             buildTextField({
               id: 'administrativeContact.name',
               name: m.administrativeContactName,
@@ -66,15 +72,15 @@ export const ReviewApplication: Form = buildForm({
               id: 'administrativeContact.email',
               name: m.administrativeContactEmail,
               disabled: true,
-              width: 'half',
             }),
             buildTextField({
               id: 'administrativeContact.phoneNumber',
               name: m.administrativeContactPhoneNumber,
               disabled: true,
-              width: 'half',
+              format: '###-####',
+              placeholder: '000-0000',
             }),
-            buildDividerField({ name: 'Tæknilegur tengiliður' }),
+            buildDividerField({ name: m.technicalContactTitle.defaultMessage }),
             buildTextField({
               id: 'technicalContact.name',
               name: m.technicalContactName,
@@ -84,45 +90,40 @@ export const ReviewApplication: Form = buildForm({
               id: 'technicalContact.email',
               name: m.technicalContactEmail,
               disabled: true,
-              width: 'half',
             }),
             buildTextField({
               id: 'technicalContact.phoneNumber',
               name: m.technicalContactPhoneNumber,
               disabled: true,
-              width: 'half',
+              format: '###-####',
+              placeholder: '000-0000',
             }),
-            buildDividerField({ name: 'Notendaaðstoð' }),
+            buildDividerField({ name: m.helpDeskTitle.defaultMessage }),
             buildTextField({
               id: 'helpDesk.email',
               name: m.helpDeskEmail,
               disabled: true,
-              width: 'half',
             }),
             buildTextField({
               id: 'helpDesk.phoneNumber',
               name: m.helpDeskPhoneNumber,
               disabled: true,
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'helpDesk.chatbot',
-              name: m.helpDeskChatbot,
-              disabled: true,
+              format: '###-####',
+              placeholder: '000-0000',
             }),
             buildSubmitField({
               id: 'approvedByReviewer',
-              name: 'Samþykkir þú þessa umsókn?',
+              name: m.reviewQuestion,
               placement: 'screen',
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
                 { event: 'REJECT', name: 'Hafna', type: 'reject' },
-                //Add "ófullnægjandi" here
+                //TODO Add "ófullnægjandi" here
               ],
             }),
             buildTextField({
               id: 'rejectionReason',
-              name: 'Ástæða höfnunar',
+              name: m.reviewRejectReasonLabel.defaultMessage,
               condition: {
                 questionId: 'approvedByReviewer',
                 isMultiCheck: false,
@@ -133,10 +134,9 @@ export const ReviewApplication: Form = buildForm({
           ],
         }),
         buildIntroductionField({
-          id: 'final',
-          name: 'Takk fyrir',
-          introduction:
-            'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
+          id: 'reviewProcessed',
+          name: m.reviewProcessedTitle,
+          introduction: m.reviewProcessedIntroduction,
         }),
       ],
     }),

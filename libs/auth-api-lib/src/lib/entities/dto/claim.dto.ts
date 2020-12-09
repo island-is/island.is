@@ -7,33 +7,33 @@ export class ClaimDto {
   @ApiProperty({
     example: 'set_type',
   })
-  readonly type: string
+  readonly type!: string
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
     example: 'set_value',
   })
-  readonly value: string
+  readonly value!: string
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
     example: 'set_value_type',
   })
-  readonly valueType: string
+  readonly valueType!: string
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
     example: 'set_issuer',
   })
-  readonly issuer: string
+  readonly issuer!: string
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
     example: 'set_original_issuer',
   })
-  readonly originalIssuer: string
+  readonly originalIssuer!: string
 }

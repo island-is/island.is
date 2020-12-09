@@ -10,7 +10,12 @@ import {
   doMappingInput,
   processSyncDataInput,
 } from '../cmsSync.service'
-import { createTerms, extractStringsFromObject } from './utils'
+import {
+  createTerms,
+  extractStringsFromObject,
+  hasProcessEntry,
+  numberOfLinks,
+} from './utils'
 
 @Injectable()
 export class ArticleSyncService implements CmsSyncProvider<IArticle> {
@@ -23,19 +28,23 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
   }
 
   processSyncData(entries: processSyncDataInput<IArticle>) {
-    // only process articles that we consider not to be empty and dont have circular structures
+    // only process articles that we consider not to be empty and don't have circular structures
     return entries.reduce((processedEntries: IArticle[], entry: Entry<any>) => {
       if (this.validateArticle(entry)) {
-        // remove nested related articles from releated articles
-        const relatedArticles = (entry.fields.relatedArticles ?? []).map(
-          ({
-            sys,
-            fields: { relatedArticles, ...prunedRelatedArticlesFields },
-          }) => ({
-            sys,
-            fields: prunedRelatedArticlesFields,
-          }),
-        )
+        // remove nested related articles from related articles
+        const relatedArticles = (entry.fields.relatedArticles || [])
+          .map(({ sys, fields }) => {
+            // handle if someone deletes an article without removing reference case, this will be fixed more permanently at a later time with nested resolvers
+            if (!fields?.relatedArticles) {
+              return undefined
+            }
+            const { relatedArticles, ...prunedRelatedArticlesFields } = fields
+            return {
+              sys,
+              fields: prunedRelatedArticlesFields,
+            }
+          })
+          .filter((relatedArticle) => Boolean(relatedArticle))
 
         // relatedArticles can include nested articles that point back to this entry
         const processedEntry = {
@@ -64,10 +73,14 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
 
         try {
           mapped = mapArticle(entry)
+          const content = extractStringsFromObject(mapped.body)
           return {
             _id: mapped.id,
             title: mapped.title,
-            content: extractStringsFromObject(mapped.body),
+            content,
+            contentWordCount: content.split(/\s+/).length,
+            hasProcessEntry: hasProcessEntry(mapped.body),
+            ...numberOfLinks(mapped.body),
             type: 'webArticle',
             termPool: createTerms([
               mapped.title,

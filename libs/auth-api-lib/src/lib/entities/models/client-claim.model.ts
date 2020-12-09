@@ -5,6 +5,8 @@ import {
   Table,
   ForeignKey,
   PrimaryKey,
+  CreatedAt,
+  UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { Client } from './client.model'
@@ -25,14 +27,14 @@ export class ClientClaim extends Model<ClientClaim> {
   })
   @ForeignKey(() => Client)
   @ApiProperty()
-  clientId: string
+  clientId!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  type: string
+  type!: string
 
   @PrimaryKey
   @Column({
@@ -40,5 +42,13 @@ export class ClientClaim extends Model<ClientClaim> {
     allowNull: false,
   })
   @ApiProperty()
-  value: string
+  value!: string
+
+  @CreatedAt
+  @ApiProperty()
+  readonly created!: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  readonly modified?: Date
 }

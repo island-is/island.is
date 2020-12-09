@@ -32,6 +32,11 @@ export * from './lib/entities/dto/user-identity.dto'
 export * from './lib/entities/dto/client-idp-restriction.dto'
 export * from './lib/entities/dto/client-allowed-cors-origin.dto'
 export * from './lib/entities/dto/client-redirect-uri.dto'
+export * from './lib/entities/dto/active.dto'
+export * from './lib/entities/dto/client-grant-type.dto'
+export * from './lib/entities/dto/client-claim.dto'
+export * from './lib/entities/dto/client-allowed-scope.dto'
+export * from './lib/entities/dto/client-post-logout-redirect-uri.dto'
 
 // Services
 export * from './lib/services/clients.service'
@@ -40,15 +45,6 @@ export * from './lib/services/grants.service'
 export * from './lib/services/resources.service'
 export * from './lib/services/user-identities.service'
 export * from './lib/services/sequelizeConfig.service'
-
-// Auth
-export * from './lib/auth/auth.module'
-export * from './lib/auth/jwt.strategy'
-export * from './lib/auth/scopes.decorator'
-export * from './lib/auth/current-user.decorator'
-export * from './lib/auth/scopes.guard'
-export * from './lib/auth/ids-auth.guard'
-export * from './lib/auth/user'
 
 // Config
 //export * as DbConfig from './lib/config/sequelize.config.js'

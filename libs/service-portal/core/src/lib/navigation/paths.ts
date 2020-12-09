@@ -41,4 +41,7 @@ export enum ServicePortalPath {
   UserProfileEditEmail = '/stillingar/minn-adgangur/breyta-netfangi',
   UserProfileEditLanguage = '/stillingar/minn-adgangur/breyta-tungumali',
   UserProfileEmailConfirmation = '/stillingar/minn-adgangur/stadfesta-netfang/:hash',
+
+  // Skjalaveita
+  DocumentProviderRoot = '/skjalaveita',
 }

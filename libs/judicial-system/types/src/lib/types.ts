@@ -14,6 +14,7 @@ export interface User {
   mobileNumber: string
   email: string
   role: UserRole
+  institution?: string
   active: boolean
 }
 
@@ -91,6 +92,7 @@ export interface Case {
   prosecutor?: User
   courtCaseNumber?: string
   courtDate?: string
+  isCourtDateInThePast?: boolean
   courtRoom?: string
   defenderName?: string
   defenderEmail?: string
@@ -103,6 +105,7 @@ export interface Case {
   ruling?: string
   rejecting?: boolean
   custodyEndDate?: string
+  isCustodyEndDateInThePast?: boolean
   custodyRestrictions?: CaseCustodyRestrictions[]
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string

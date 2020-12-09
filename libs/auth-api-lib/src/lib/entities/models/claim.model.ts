@@ -26,7 +26,7 @@ export class Claim extends Model<Claim> {
     allowNull: false,
   })
   @ApiProperty()
-  type: string
+  type!: string
 
   @PrimaryKey
   @Column({
@@ -34,41 +34,41 @@ export class Claim extends Model<Claim> {
     allowNull: false,
   })
   @ForeignKey(() => UserIdentity)
-  subjectId: string
+  subjectId!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  value: string
+  value!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  valueType: string
+  valueType!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  issuer: string
+  issuer!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  originalIssuer: string
+  originalIssuer!: string
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified?: Date
 }

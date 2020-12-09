@@ -1,7 +1,5 @@
 import { Field, ObjectType, ID, Int } from '@nestjs/graphql'
-
 import { IAlertBanner } from '../generated/contentfulTypes'
-
 import { Link, mapLink } from './link.model'
 
 @ObjectType()

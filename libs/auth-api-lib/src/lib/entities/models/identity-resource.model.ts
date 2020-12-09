@@ -23,7 +23,7 @@ export class IdentityResource extends Model<IdentityResource> {
     allowNull: false,
   })
   @ApiProperty()
-  name: string
+  name!: string
 
   @Column({
     type: DataType.BOOLEAN,
@@ -33,21 +33,21 @@ export class IdentityResource extends Model<IdentityResource> {
   @ApiProperty({
     example: true,
   })
-  enabled: boolean
+  enabled!: boolean
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  displayName: string
+  displayName!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  description: string
+  description!: string
 
   @Column({
     type: DataType.BOOLEAN,
@@ -57,11 +57,11 @@ export class IdentityResource extends Model<IdentityResource> {
   @ApiProperty({
     example: true,
   })
-  showInDiscoveryDocument: boolean
+  showInDiscoveryDocument!: boolean
 
   @HasMany(() => IdentityResourceUserClaim)
   @ApiProperty()
-  public userClaims: IdentityResourceUserClaim[]
+  public userClaims?: IdentityResourceUserClaim[]
 
   // Common properties end
 
@@ -73,7 +73,7 @@ export class IdentityResource extends Model<IdentityResource> {
   @ApiProperty({
     example: false,
   })
-  required: boolean
+  required!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
@@ -83,13 +83,13 @@ export class IdentityResource extends Model<IdentityResource> {
   @ApiProperty({
     example: false,
   })
-  emphasize: boolean
+  emphasize!: boolean
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified?: Date
 }

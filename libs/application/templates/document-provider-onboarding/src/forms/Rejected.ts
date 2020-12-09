@@ -1,32 +1,31 @@
 import {
   ApplicationTypes,
+  buildCustomField,
   buildForm,
-  buildIntroductionField,
   buildMultiField,
-  buildTextField,
   Form,
   FormModes,
 } from '@island.is/application/core'
-
+import { m } from './messages'
 export const Rejected: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
-  name: 'Hafnað',
+  name: m.rejectedTitle,
   mode: FormModes.REJECTED,
   children: [
     buildMultiField({
-      id: 'general',
-      name: '',
+      id: 'rejected',
+      name: m.rejectedTitle,
+      description: m.rejectedSubTitle,
       children: [
-        buildIntroductionField({
-          id: 'rejected',
-          name: 'Því miður...',
-          introduction:
-            'Umsókn þinni hefur verið hafnað! Það er frekar leiðinlegt...',
+        buildCustomField({
+          id: 'RejectionScreen',
+          name: 'RejectionScreen',
+          component: 'RejectionScreen',
         }),
-        buildTextField({
-          id: 'rejectionReason',
-          name: 'Ástæða höfnunar',
-          disabled: true,
+        buildCustomField({
+          id: 'ManOnBench',
+          name: 'ManOnBench',
+          component: 'ManOnBenchIllustrationPeriods',
         }),
       ],
     }),

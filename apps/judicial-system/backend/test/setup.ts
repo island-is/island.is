@@ -17,6 +17,7 @@ export const user = {
   mobileNumber: '6904031',
   email: 'ivaro@kolibri.is',
   role: 'JUDGE',
+  institution: 'Héraðsdómur Reykjavíkur',
   active: true,
 }
 
@@ -41,6 +42,7 @@ jest.mock('pdfkit', function () {
       return this
     }
   }
+
   return {
     default: MockPDFDocument,
   }
@@ -55,6 +57,7 @@ jest.mock('stream-buffers', function () {
       // eslint-disable-line @typescript-eslint/no-empty-function
     }
   }
+
   return {
     default: {
       WritableStreamBuffer: MockWritableStreamBuffer,

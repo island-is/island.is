@@ -18,26 +18,23 @@ export const TestPhase: Form = buildForm({
   children: [
     buildSection({
       id: 'testIntroSection',
-      name: m.testIntroSection,
+      name: m.testPhaseInfoSection,
       children: [
-        buildCustomField(
-          {
-            id: 'testPhaseIntro',
-            name: 'Umsókn hefur verið samþykkt',
-            component: 'TestPhaseInfoScreen',
-          },
-          {},
-        ),
+        buildCustomField({
+          id: 'testPhaseInfo',
+          name: m.testPhaseInfoTitle,
+          component: 'TestPhaseInfoScreen',
+        }),
       ],
     }),
     buildSection({
       id: 'testAccountSection',
-      name: m.testAccountSection,
+      name: m.testEnviromentSection,
       children: [
         buildCustomField(
           {
-            id: 'testAccount',
-            name: 'Aðgangur að prófunarumhverfi',
+            id: 'testUserExists',
+            name: m.testEnviromentTitle,
             component: 'TestEnvironment',
           },
           {},
@@ -50,8 +47,8 @@ export const TestPhase: Form = buildForm({
       children: [
         buildCustomField(
           {
-            id: 'endPoint',
-            name: 'Upplýsingar um endapunkt umsækjenda',
+            id: 'endPointObject',
+            name: m.testEndPointTitle,
             component: 'TestEndPoint',
           },
           {},
@@ -60,12 +57,12 @@ export const TestPhase: Form = buildForm({
     }),
     buildSection({
       id: 'technicalImplementation',
-      name: m.testTechnicalImplementation,
+      name: m.testTechnicalImplementationSection,
       children: [
         buildCustomField(
           {
-            id: 'technicalImplementation',
-            name: 'Forritun og prófanir',
+            id: 'technicalAnswer',
+            name: m.testTechnicalImplementationTitle,
             component: 'TechnicalImplementation',
           },
           {},
@@ -75,12 +72,12 @@ export const TestPhase: Form = buildForm({
 
     buildSection({
       id: 'testSection',
-      name: m.testSection,
+      name: m.automatedTestsSection,
       children: [
         buildCustomField(
           {
             id: 'test',
-            name: 'Sjálfvirkar prófanir',
+            name: m.automatedTestsTitle,
             component: 'AutomatedTests',
           },
           {},
@@ -89,19 +86,38 @@ export const TestPhase: Form = buildForm({
     }),
     buildSection({
       id: 'testsFinished',
-      name: m.testOutroSection,
+      name: m.prodEnviromentSection,
       children: [
         buildMultiField({
           id: 'testsFinishedMulti',
-          name: 'Aðgangur að raun',
-          description:
-            'Hér getur þú búið til aðgang að raunumhverfi. Athugið að afrita og geyma þessar upplýsingar því þær eru ekki geymdar hér í þessari umsókn.',
+          name: m.prodEnviromentTitle,
+          description: m.prodEnviromentsubTitle,
           children: [
             buildCustomField(
               {
-                id: 'prodEnvironment',
+                id: 'productionUserExists',
                 name: 'Aðgangur að raun',
                 component: 'ProdEnvironment',
+              },
+              {},
+            ),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'prodEndPointSection',
+      name: m.prodEndPointSection,
+      children: [
+        buildMultiField({
+          id: 'prodEndPointSection',
+          name: m.prodEndPointSection,
+          children: [
+            buildCustomField(
+              {
+                id: 'endPoint',
+                name: m.prodEndPointTitle,
+                component: 'ProdEndPoint',
               },
               {},
             ),
@@ -118,15 +134,14 @@ export const TestPhase: Form = buildForm({
         }),
         buildMultiField({
           id: 'finished',
-          name: 'Aðgangur að raun',
-          description:
-            'Þú hefur nú fengið aðgang að umsjónarkerfi skajalveitenda. Það má finna á þínum síðum á ísland.is',
+          name: m.thankYouImageScreenTitle,
+          description: m.thankYouImageScreenScreenSubTitle,
           children: [
             buildCustomField(
               {
-                id: 'test',
-                name: 'Takk fyrir',
-                component: 'ThankYouImage',
+                id: 'thankYouImage',
+                name: m.thankYouImageScreenTitle,
+                component: 'WomanWithLaptopIllustrationPeriods',
               },
               {},
             ),

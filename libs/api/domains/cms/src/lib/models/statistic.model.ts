@@ -1,5 +1,4 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-
 import { IStatistic } from '../generated/contentfulTypes'
 
 @ObjectType()

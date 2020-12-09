@@ -41,10 +41,6 @@ Visit [http://localhost:4200/](http://localhost:4200/) to view the application.
 make web
 ```
 
-## Queue listener
-
-TODO
-
 ### User Frontend
 
 The user frontend has information about the initiative, legal terms, a way for users to register for Ferðagjöf and use their Ferðagjöf.

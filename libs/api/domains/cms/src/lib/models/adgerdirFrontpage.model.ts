@@ -7,11 +7,13 @@ import {
   IVidspyrnaFlokkur,
 } from '../generated/contentfulTypes'
 
-import { Slice, mapDocument } from './slice.model'
-import { AdgerdirSlice } from './adgerdirSlice.model'
+import { mapDocument } from './slice.model'
 import { mapAdgerdirFeaturedNewsSlice } from './adgerdirFeaturedNewsSlice.model'
 import { mapAdgerdirGroupSlice } from './adgerdirGroupSlice.model'
 import { Image, mapImage } from './image.model'
+import { SliceUnion } from '../unions/slice.union'
+import { AdgerdirSliceUnion } from '../unions/adgerdirSlice.union'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class AdgerdirFrontpage {
@@ -27,11 +29,11 @@ export class AdgerdirFrontpage {
   @Field({ nullable: true })
   description?: string
 
-  @Field(() => [Slice])
-  content: Array<typeof Slice> = []
+  @Field(() => [SliceUnion])
+  content: Array<typeof SliceUnion> = []
 
-  @Field(() => [AdgerdirSlice])
-  slices: Array<typeof AdgerdirSlice> = []
+  @Field(() => [AdgerdirSliceUnion])
+  slices: Array<typeof AdgerdirSliceUnion> = []
 
   @Field(() => Image, { nullable: true })
   featuredImage?: Image
@@ -41,7 +43,7 @@ type AdgerdirSliceTypes = IVidspyrnaFeaturedNews | IVidspyrnaFlokkur
 
 export const mapAdgerdirSlice = (
   slice: AdgerdirSliceTypes,
-): typeof AdgerdirSlice => {
+): typeof AdgerdirSliceUnion => {
   const id = slice?.sys?.contentType?.sys?.id ?? ''
 
   switch (id) {
@@ -61,7 +63,8 @@ export const mapAdgerdirSlice = (
 export const mapAdgerdirFrontpage = ({
   sys,
   fields,
-}: IVidspyrnaFrontpage): AdgerdirFrontpage => ({
+}: IVidspyrnaFrontpage): SystemMetadata<AdgerdirFrontpage> => ({
+  typename: 'AdgerdirFrontpage',
   id: sys?.id ?? '',
   slug: fields?.slug ?? '',
   title: fields?.title ?? '',

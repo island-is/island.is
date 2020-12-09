@@ -9,11 +9,13 @@ export type Icon =
   | 'business'
   | 'calendar'
   | 'car'
+  | 'caretDown'
   | 'cellular'
   | 'chatbubble'
   | 'checkmark'
   | 'checkmarkCircle'
   | 'chevronBack'
+  | 'chevronUp'
   | 'chevronDown'
   | 'chevronForward'
   | 'closeCircle'
@@ -42,6 +44,7 @@ export type Icon =
   | 'wallet'
   | 'warning'
   | 'reload'
+  | 'remove'
 
 export default {
   filled: {
@@ -54,12 +57,14 @@ export default {
     business: 'Business',
     calendar: 'Calendar',
     car: 'Car',
+    caretDown: 'CaretDown',
     cellular: 'Cellular',
     chatbubble: 'Chatbubble',
     checkmark: 'Checkmark',
     checkmarkCircle: 'CheckmarkCircle',
     chevronBack: 'ChevronBack',
     chevronDown: 'ChevronDown',
+    chevronUp: 'ChevronUp',
     chevronForward: 'ChevronForward',
     closeCircle: 'CloseCircle',
     close: 'Close',
@@ -87,6 +92,7 @@ export default {
     wallet: 'Wallet',
     warning: 'Warning',
     reload: 'Reload',
+    remove: 'Remove',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
@@ -98,11 +104,13 @@ export default {
     business: 'BusinessOutline',
     calendar: 'CalendarOutline',
     car: 'CarOutline',
+    caretDown: 'CaretDownOutline',
     cellular: 'CellularOutline',
     chatbubble: 'ChatbubbleOutline',
     checkmark: 'Checkmark',
     checkmarkCircle: 'CheckmarkCircleOutline',
     chevronBack: 'ChevronBackOutline',
+    chevronUp: 'ChevronUpOutline',
     chevronDown: 'ChevronDownOutline',
     chevronForward: 'ChevronForwardOutline',
     closeCircle: 'CloseCircleOutline',
@@ -131,5 +139,6 @@ export default {
     wallet: 'WalletOutline',
     warning: 'WarningOutline',
     reload: 'ReloadOutline',
+    remove: 'RemoveOutline',
   },
 }

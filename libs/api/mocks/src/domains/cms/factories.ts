@@ -26,8 +26,9 @@ import {
   faker,
   title,
 } from '@island.is/shared/mocking'
+import { SystemMetadata } from '@island.is/shared/types'
 
-export const image = factory<Image>({
+export const image = factory<SystemMetadata<Image>>({
   typename: 'Image',
   width: 500,
   height: 500,
@@ -43,7 +44,7 @@ export const html = factory<Html>({
   document: () => wysiwyg(),
 })
 
-export const sectionWithImage = factory<SectionWithImage>({
+export const sectionWithImage = factory<SystemMetadata<SectionWithImage>>({
   typename: 'SectionWithImage',
   id: () => faker.random.uuid(),
   title: () => title(),
@@ -59,6 +60,7 @@ export const slice = simpleFactory(
 )
 
 export const subArticle = factory<SubArticle>({
+  id: () => faker.random.uuid(),
   title: () => title(),
   slug: slugify('title'),
   body: () => [slice()],

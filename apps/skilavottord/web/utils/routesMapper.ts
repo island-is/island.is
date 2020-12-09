@@ -2,7 +2,7 @@ import { isObject } from 'util'
 import { Translation } from '../i18n/locales'
 import { Locale } from '../i18n/I18n'
 
-const locales = {}
+const locales = {} as any
 
 export const getLocale = async (locale: Locale): Promise<Translation> => {
   if (!locales[locale]) {
@@ -21,7 +21,7 @@ export const getRoutefromLocale = async (
   if (!fromLocale && !toLocale) {
     return ''
   }
-  const findPath = (baseObj, returnObj, path) => {
+  const findPath = (baseObj: any, returnObj: any, path: string): string => {
     return Object.keys(baseObj).reduce((acc, key) => {
       if (baseObj[key] === path) {
         return returnObj[key]

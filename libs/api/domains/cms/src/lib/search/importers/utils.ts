@@ -36,7 +36,7 @@ export const extractStringsFromObject = (
         )
       } catch (e) {
         // we only consider string of more than 3 words valid content strings
-        if (content.split(' ').length > 3) {
+        if (content.split(/\s+/).length > 3) {
           return `${contentString} ${content}`
         }
       }
@@ -44,3 +44,54 @@ export const extractStringsFromObject = (
     return contentString
   }, '')
 }
+
+const getEntriesByTypeName = (contentList: any[], typename: string) =>
+  contentList.filter((content) => content.typename === typename)
+
+const getAssetsByContentType = (contentList: object[], contentType: string) => {
+  const assets = getEntriesByTypeName(contentList, 'Asset')
+  return assets.filter((asset) => asset.contentType === contentType)
+}
+
+const getProcessEntries = (contentList: object[]) =>
+  getEntriesByTypeName(contentList, 'ProcessEntry')
+
+export const numberOfLinks = (contentList: object[]) => {
+  const processLinks = getProcessEntries(contentList).map(
+    (entry) => new URL(entry.processLink),
+  )
+  const fillAndSignProcessLinks = processLinks.filter((url) =>
+    url.hostname.includes('dropandsign.is'),
+  ).length
+  const pdfProcessLinks = processLinks.filter((url) =>
+    url.pathname.endsWith('.pdf'),
+  ).length
+  const wordProcessLinks = processLinks.filter((url) =>
+    url.pathname.endsWith('.docx'),
+  ).length
+  const externalProcessLinks = processLinks.filter((url) => {
+    if (url.hostname.includes('innskraning.island.is')) {
+      return true
+    }
+    return !url.hostname.includes('island.is')
+  }).length
+
+  const pdfAssets = getAssetsByContentType(contentList, 'application/pdf')
+    .length
+  const wordAssets = getAssetsByContentType(contentList, 'application/msword')
+    .length
+
+  return {
+    fillAndSignLinks: fillAndSignProcessLinks,
+    pdfLinks: pdfAssets + pdfProcessLinks,
+    wordLinks: wordAssets + wordProcessLinks,
+    externalLinks:
+      externalProcessLinks -
+      pdfProcessLinks -
+      wordProcessLinks -
+      fillAndSignProcessLinks,
+  }
+}
+
+export const hasProcessEntry = (contentList: any[]) =>
+  getProcessEntries(contentList).length !== 0

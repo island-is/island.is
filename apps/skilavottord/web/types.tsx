@@ -43,10 +43,22 @@ export interface RecyclingRequest {
   id: string
   vehicleId: string
   recyclingPartnerId: string
-  requestType: string
+  requestType: RecyclingRequestTypes
   nameOfRequestor: string
   createdAt: string
   updatedAt: string
+}
+
+export interface RecyclingRequestMutation {
+  createSkilavottordRecyclingRequest: RecyclingRequestMutationData
+}
+
+export interface RecyclingRequestMutationData {
+  permno: string
+  partnerId: string
+  requestType: RecyclingRequestTypes
+  status: string
+  message: string
 }
 
 export type RecycleActionTypes = 'confirm' | 'handover' | 'completed'
@@ -58,6 +70,8 @@ export type RecyclingRequestTypes =
   | 'cancelled'
   | 'paymentInitiated'
   | 'paymentFailed'
+
+export type ProcessType = 'citizen' | 'company'
 
 export interface User {
   name: string
@@ -77,3 +91,9 @@ export type Screen<Props = {}> = NextComponentType<
   Props,
   Props
 >
+
+export type WithApolloProps = NextComponentType<
+  GetInitialPropsContext<NextPageContext>
+> & {
+  apolloState: any
+}

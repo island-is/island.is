@@ -1,79 +1,117 @@
 import React, { FC, useState } from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Button, Input } from '@island.is/island-ui/core'
-import { FieldDescription } from '@island.is/shared/form-fields'
+import { useMutation } from '@apollo/client'
 import { useFormContext, Controller } from 'react-hook-form'
-import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
+import { FieldBaseProps } from '@island.is/application/core'
+import { Box, Button, Input, Text } from '@island.is/island-ui/core'
+import { FieldDescription } from '@island.is/shared/form-fields'
 
-const TestEnvironment: FC<FieldBaseProps> = ({ field, application }) => {
+import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
+import { registerEndpointMutation } from '../../../graphql/mutations/registerEndpointMutation'
+import { m } from '../../../forms/messages'
+
+const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
   interface Variable {
     id: string
     name: string
     value: string
   }
 
-  const { register, errors, trigger, getValues } = useFormContext()
+  const { clearErrors, register, errors, trigger, getValues } = useFormContext()
+  const { answers: formValue } = application
+  const [variables, setendPointVariables] = useState<Variable[]>([])
 
-  //Todo: move this
-  const fetchAndValidateData = async (isValid: boolean) => {
+  const [endpointExists, setendpointExists] = useState(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    formValue.endPointObject?.endPointExists || '',
+  )
+  const [registerEndpoint] = useMutation(registerEndpointMutation)
+
+  const onRegisterEndpoint = async (isValid: boolean) => {
     if (isValid) {
-      fetch('/api/endPointVariables', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          data: {
-            applicant: application.applicant,
-            endPoint: getValues('endPoint'),
-          },
-        }),
+      const result = await registerEndpoint({
+        variables: {
+          input: { endpoint: getValues('endPointObject.endPoint') },
+        },
       })
-        .then((response) => response.json())
-        .then((data) => {
-          setendPointVariables(data)
-        })
-        .catch((error) => {
-          //Todo: show error
-          console.error('Error:', error)
-        })
+
+      if (!result.data) {
+        //TODO display error
+      }
+
+      setendPointVariables([
+        {
+          id: '1',
+          name: 'Audience',
+          value: result.data.registerEndpoint.audience,
+        },
+        { id: '2', name: 'Scope', value: result.data.registerEndpoint.scope },
+      ])
+
+      setendpointExists('true')
+
+      clearErrors()
     }
   }
-
-  const [variables, setendPointVariables] = useState<Variable[]>([])
 
   return (
     <Box>
       <Box marginBottom={7}>
         <Box marginBottom={3}>
-          <FieldDescription description="Til að hægt sé að sækja skjöl til skjalaveitu þarf að tilgreina endapunkt. Þegar endapunktur er vistaður er búnar til Audience og Scope breytur." />
+          <FieldDescription
+            description={m.testEndPointSubTitle.defaultMessage}
+          />
         </Box>
         <Box marginBottom={1}>
           <Controller
             defaultValue=""
-            name={'endPoint'}
+            name={'endPointObject.endPoint'}
             render={() => (
               <Input
                 label="Endapunktur"
-                name={'endPoint'}
-                id={'endPoint'}
+                name={'endPointObject.endPoint'}
+                id={'endPointObject.endPoint'}
                 ref={register}
                 defaultValue=""
                 placeholder="Skráðu inn endapunkt"
-                hasError={errors.endPoint !== undefined}
+                hasError={errors.endPointObject?.endPoint !== undefined}
                 errorMessage="Þú verður að skrá inn endapunkt"
               />
             )}
           />
         </Box>
       </Box>
-      <Box marginBottom={7}>
+      <Box
+        marginBottom={7}
+        display="flex"
+        flexDirection="column"
+        alignItems="flexEnd"
+      >
         <Button
-          variant="primary"
+          variant="ghost"
+          size="small"
           onClick={() => {
-            trigger(['endPoint']).then((answer) => fetchAndValidateData(answer))
+            trigger(['endPointObject.endPoint']).then((answer) =>
+              onRegisterEndpoint(answer),
+            )
           }}
         >
           Vista endapunkt
         </Button>
+        <input
+          type="hidden"
+          value={endpointExists}
+          ref={register({ required: true })}
+          name={'endPointObject.endPointExists'}
+        />
+
+        {errors['endPointObject.endPointExists'] && (
+          <Box color="red600" paddingY={2} display="flex">
+            <Text fontWeight="semiBold" color="red600">
+              {errors['endPointObject.endPointExists']}
+            </Text>
+          </Box>
+        )}
       </Box>
 
       {variables &&
@@ -89,4 +127,4 @@ const TestEnvironment: FC<FieldBaseProps> = ({ field, application }) => {
   )
 }
 
-export default TestEnvironment
+export default TestEndPoint

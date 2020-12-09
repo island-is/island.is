@@ -6,7 +6,6 @@
     "target": "es2015",
     "strict": true
   },
-  "allowJs": true,
   "files": [],
   "include": [],
   "references": [
