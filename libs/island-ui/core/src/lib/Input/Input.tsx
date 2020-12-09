@@ -5,7 +5,7 @@ import { Box } from '../Box/Box'
 import { Tooltip } from '../Tooltip/Tooltip'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconType, Type } from '../IconRC/iconMap'
-import { Colors } from 'libs/island-ui/theme/src'
+import { Colors } from '../../../../theme/src'
 
 export type InputBackgroundColor = 'white' | 'blue'
 
