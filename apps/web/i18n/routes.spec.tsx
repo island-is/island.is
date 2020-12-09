@@ -7,7 +7,7 @@ import {
 
 describe('Generating routes', () => {
   it('should return correct path to covid-adgerdir with slug', () => {
-    const nextLinks: AnchorAttributes = pathNames('is', 'vidspyrna-frontpage', [
+    const nextLinks: AnchorAttributes = pathNames('is', 'adgerdirfrontpage', [
       'cat',
     ])
     expect(nextLinks).toEqual({
