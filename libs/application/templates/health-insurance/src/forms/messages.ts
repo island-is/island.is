@@ -106,4 +106,69 @@ export const m = defineMessages({
       'Please edit if not correct. This will update your contact info for all of island.is ',
     description: 'About changing digital island data',
   },
+  childrenDescription: {
+    id: 'pl.application:children.description',
+    defaultMessage: 'Are there any children under the age of 18 moving with you?',
+    description: 'some description',
+  },
+  statusAdditionalInformation: {
+    id: 'pl.application:status.additionalInformation',
+    defaultMessage: 'Confirmation of studies must be submitted',
+    description: 'Drag and drop for proof of studies',
+  },
+  statusAndChildren: {
+    id: 'pl.application:applicant.section',
+    defaultMessage: 'Status and Children',
+    description: 'Applicant status and children information',
+  },
+  statusDescription: {
+    id: 'pl.application:status.description',
+    defaultMessage: 'What is you current status?',
+    description: 'Some description',
+  },
+  statusOther: {
+    id: 'pl.application:status.other',
+    defaultMessage: 'Other',
+    description: 'Some description',
+  },
+  statusOtherInformation: {
+    id: 'pl.application:other.information',
+    defaultMessage: 'All other statuses.',
+    description: 'Some description',
+  },
+  statusPensioner: {
+    id: 'pl.application:status.pensioner',
+    defaultMessage: 'Pensioner',
+    description: 'Some description',
+  },
+  statusPensionerInformation: {
+    id: 'pl.application:pensioner.information',
+    defaultMessage: 'You are reciving old age pension or disability pension from Iceland.',
+    description: 'Some description',
+  },
+  statusStudent: {
+    id: 'pl.application:status.student',
+    defaultMessage: 'Student',
+    description: 'Some description',
+  },
+  statusStudentInformation: {
+    id: 'pl.application:student.information',
+    defaultMessage: 'You moved away from Iceland for the purpose of studying abroad and are moving back to Iceland withing six months of the end of studies.',
+    description: 'Some description',
+  },
+  yesOptionLabel: {
+    id: 'pl.application:children.yes',
+    defaultMessage: 'Yes',
+    description: 'some description',
+  },
+  noOptionLabel: {
+    id: 'pl.application:children.no',
+    defaultMessage: 'No',
+    description: 'some description',
+  },
+  requiredAnswerError: {
+    id: 'pl.application:required.answer.error',
+    defaultMessage: 'You are required to answer this question!',
+    description: 'You need to answer this question to continue.',
+  },
 })

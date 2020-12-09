@@ -1,16 +1,20 @@
 import {
+  buildCustomField,
   buildDataProviderItem,
   buildDividerField,
   buildExternalDataProvider,
+  buildFileUploadField,
   buildForm,
   buildIntroductionField,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildTextField,
   Form,
   FormModes,
 } from '@island.is/application/core'
 import { m } from './messages'
+import { YES, NO } from '../constants'
 
 export const HealthInsuranceForm: Form = buildForm({
   id: 'HealthInsuranceDraft',
@@ -115,13 +119,37 @@ export const HealthInsuranceForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'occupation',
-      name: '',
+      id: 'statusAndChildrenSection',
+      name: m.statusAndChildren,
       children: [
-        buildTextField({
-          id: 'occupationText',
-          name: 'text input',
-        }),
+        buildMultiField({
+          id: 'statusAndChildren',
+          name: m.statusAndChildren,
+          children: [
+            buildCustomField({
+              id: 'status',
+              name: '',
+              component: 'CurrentStatus'
+            }),
+            buildFileUploadField({
+              id: 'information',
+              name: '',
+              introduction: m.statusAdditionalInformation,
+              condition: (answers) => answers.status === 'student'
+            }),
+            buildRadioField({
+              id: 'children',
+              name: '',
+              description: m.childrenDescription,
+              width: 'half',
+              largeButtons: true,
+              options: [
+                { label: m.yesOptionLabel, value: YES },
+                { label: m.noOptionLabel, value: NO },
+              ],
+            }),
+            ],
+          }),
       ],
     }),
     buildSection({

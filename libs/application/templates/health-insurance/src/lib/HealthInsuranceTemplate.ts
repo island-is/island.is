@@ -27,7 +27,13 @@ const HealthInsuranceSchema = z.object({
     email: z.string().email(),
     phoneNumber: z.string().optional(),
   }),
-  occupationText: z.string(),
+  statusAndChildrenSection: z.object({
+    statusAndChildren: z.object({
+      status: z.string(),
+      information: z.string(),
+      children: z.string(),
+    }),
+  }),
   infoInput: z.string(),
   summaryInput: z.string(),
 })
