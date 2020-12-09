@@ -19,7 +19,7 @@ describe('User', () => {
     await User.findOne({
       where: { nationalId },
     })
-      .then(async (value) => {
+      .then((value) => {
         dbUser = value
 
         return request(app.getHttpServer())

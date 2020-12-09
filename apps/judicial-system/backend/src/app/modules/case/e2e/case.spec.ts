@@ -25,6 +25,12 @@ let prosecutorAuthCookie: string
 let judge: TUser
 let judgeAuthCookie: string
 
+interface CCase extends TCase {
+  state: CaseState
+  prosecutorId: string
+  judgeId: string
+}
+
 beforeAll(async () => {
   app = await setup()
 
@@ -98,10 +104,10 @@ function getCaseData(fullCreateCaseData = false, otherCaseData = false) {
     data = { ...data, ...remainingCaseData }
   }
 
-  return data as Case
+  return data as CCase
 }
 
-function dbCaseToCase(dbCase: Case) {
+function caseToCCase(dbCase: Case) {
   const theCase = dbCase.toJSON() as Case
 
   return ({
@@ -120,14 +126,14 @@ function dbCaseToCase(dbCase: Case) {
     courtEndTime: theCase.courtEndTime && theCase.courtEndTime.toISOString(),
     custodyEndDate:
       theCase.custodyEndDate && theCase.custodyEndDate.toISOString(),
-  } as unknown) as Case
+  } as unknown) as CCase
 }
 
 function parseBoolean(value: string | boolean) {
   return value === 'false' ? false : value === 'true' ? true : value || false
 }
 
-function expectCasesToMatch(caseOne: Case, caseTwo: Case) {
+function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.id).toBe(caseTwo.id)
   expect(caseOne.created).toBe(caseTwo.created)
   expect(caseOne.modified).toBe(caseTwo.modified)
@@ -203,27 +209,24 @@ function expectCasesToMatch(caseOne: Case, caseTwo: Case) {
 describe('Case', () => {
   it('POST /api/case should create a case', async () => {
     const data = getCaseData(true)
-    let apiCase: TCase
+    let apiCase: CCase
 
     await request(app.getHttpServer())
       .post('/api/case')
       .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
       .send(data)
       .expect(201)
-      .then(async (response) => {
+      .then((response) => {
         apiCase = response.body
 
         // Check the response
-        expectCasesToMatch(
-          (apiCase as unknown) as Case,
-          ({
-            ...data,
-            id: apiCase.id || 'FAILURE',
-            created: apiCase.created || 'FAILURE',
-            modified: apiCase.modified || 'FAILURE',
-            state: CaseState.NEW,
-          } as unknown) as Case,
-        )
+        expectCasesToMatch(apiCase, {
+          ...data,
+          id: apiCase.id || 'FAILURE',
+          created: apiCase.created || 'FAILURE',
+          modified: apiCase.modified || 'FAILURE',
+          state: CaseState.NEW,
+        })
 
         // Check the data in the database
         return Case.findOne({
@@ -235,33 +238,30 @@ describe('Case', () => {
         })
       })
       .then((value) => {
-        expectCasesToMatch(dbCaseToCase(value), (apiCase as unknown) as Case)
+        expectCasesToMatch(caseToCCase(value), apiCase)
       })
   })
 
   it('POST /api/case with required fields should create a case', async () => {
     const data = getCaseData()
-    let apiCase: TCase
+    let apiCase: CCase
 
     await request(app.getHttpServer())
       .post('/api/case')
       .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
       .send(data)
       .expect(201)
-      .then(async (response) => {
+      .then((response) => {
         apiCase = response.body
 
         // Check the response
-        expectCasesToMatch(
-          (apiCase as unknown) as Case,
-          ({
-            ...data,
-            id: apiCase.id || 'FAILURE',
-            created: apiCase.created || 'FAILURE',
-            modified: apiCase.modified || 'FAILURE',
-            state: CaseState.NEW,
-          } as unknown) as Case,
-        )
+        expectCasesToMatch(apiCase, {
+          ...data,
+          id: apiCase.id || 'FAILURE',
+          created: apiCase.created || 'FAILURE',
+          modified: apiCase.modified || 'FAILURE',
+          state: CaseState.NEW,
+        })
 
         // Check the data in the database
         return Case.findOne({
@@ -273,123 +273,138 @@ describe('Case', () => {
         })
       })
       .then((value) => {
-        expectCasesToMatch(dbCaseToCase(value), (apiCase as unknown) as Case)
+        expectCasesToMatch(caseToCCase(value), apiCase)
       })
   })
 
   it('PUT /api/case/:id should update a case by id', async () => {
-    await Case.create(getCaseData()).then(async (value) => {
-      const data = getCaseData(true, true)
+    const data = getCaseData(true, true)
+    let dbCase: CCase
+    let apiCase: CCase
 
-      await request(app.getHttpServer())
-        .put(`/api/case/${value.id}`)
-        .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
-        .send(data)
-        .expect(200)
-        .then(async (response) => {
-          // Check the response
-          const dbCase = dbCaseToCase(value)
+    await Case.create(getCaseData())
+      .then((value) => {
+        dbCase = caseToCCase(value)
 
-          expect(response.body.modified).not.toBe(dbCase.modified)
-          expectCasesToMatch(response.body, {
-            ...data,
-            id: dbCase.id || 'FAILURE',
-            created: dbCase.created || 'FAILURE',
-            modified: response.body.modified,
-            state: dbCase.state || 'FAILURE',
-          } as Case)
+        return request(app.getHttpServer())
+          .put(`/api/case/${value.id}`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
+          .send(data)
+          .expect(200)
+      })
+      .then((response) => {
+        apiCase = response.body
 
-          // Check the data in the database
-          await Case.findOne({
-            where: { id: response.body.id },
-            include: [
-              { model: User, as: 'prosecutor' },
-              { model: User, as: 'judge' },
-            ],
-          }).then((newValue) => {
-            expectCasesToMatch(dbCaseToCase(newValue), response.body)
-          })
+        // Check the response
+        expect(apiCase.modified).not.toBe(dbCase.modified)
+        expectCasesToMatch(apiCase, {
+          ...data,
+          id: dbCase.id || 'FAILURE',
+          created: dbCase.created || 'FAILURE',
+          modified: apiCase.modified,
+          state: dbCase.state || 'FAILURE',
+        } as CCase)
+
+        // Check the data in the database
+        return Case.findOne({
+          where: { id: apiCase.id },
+          include: [
+            { model: User, as: 'prosecutor' },
+            { model: User, as: 'judge' },
+          ],
         })
-    })
+      })
+      .then((newValue) => {
+        expectCasesToMatch(caseToCCase(newValue), apiCase)
+      })
   })
 
   it('Put /api/case/:id/state should transition case to a new state', async () => {
-    await Case.create({ ...getCaseData(), state: CaseState.SUBMITTED }).then(
-      async (value) => {
+    let dbCase: CCase
+    let apiCase: CCase
+
+    await Case.create({ ...getCaseData(), state: CaseState.SUBMITTED })
+      .then((value) => {
+        dbCase = caseToCCase(value)
+
         const data = {
           modified: value.modified.toISOString(),
           transition: CaseTransition.ACCEPT,
         }
 
-        await request(app.getHttpServer())
+        return request(app.getHttpServer())
           .put(`/api/case/${value.id}/state`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
           .send(data)
           .expect(200)
-          .then(async (response) => {
-            // Check the response
-            const dbCase = dbCaseToCase(value)
+      })
+      .then((response) => {
+        apiCase = response.body
 
-            expect(response.body.modified).not.toBe(dbCase.modified)
-            expect(response.body.state).not.toBe(dbCase.state)
-            expectCasesToMatch(response.body, {
-              ...dbCase,
-              modified: response.body.modified,
-              state: CaseState.ACCEPTED,
-              judgeId: judge.id,
-            } as Case)
+        // Check the response
+        expect(apiCase.modified).not.toBe(dbCase.modified)
+        expect(apiCase.state).not.toBe(dbCase.state)
+        expectCasesToMatch(apiCase, {
+          ...dbCase,
+          modified: apiCase.modified,
+          state: CaseState.ACCEPTED,
+          judgeId: judge.id,
+        })
 
-            // Check the data in the database
-            await Case.findOne({
-              where: { id: response.body.id },
-              include: [
-                { model: User, as: 'prosecutor' },
-                { model: User, as: 'judge' },
-              ],
-            }).then((newValue) => {
-              expectCasesToMatch(dbCaseToCase(newValue), {
-                ...response.body,
-                judge: {
-                  ...judge,
-                  created: newValue.judge.created,
-                  modified: newValue.judge.modified,
-                },
-              })
-            })
-          })
-      },
-    )
+        // Check the data in the database
+        return Case.findOne({
+          where: { id: apiCase.id },
+          include: [
+            { model: User, as: 'prosecutor' },
+            { model: User, as: 'judge' },
+          ],
+        })
+      })
+      .then((value) => {
+        expectCasesToMatch(caseToCCase(value), {
+          ...apiCase,
+          judge: ({
+            ...judge,
+            created: value.judge.created,
+            modified: value.judge.modified,
+          } as unknown) as TUser,
+        })
+      })
   })
 
   it('Get /api/cases should get all cases', async () => {
-    await Case.create(getCaseData()).then(async () => {
-      await Case.create(getCaseData()).then(async () => {
-        await request(app.getHttpServer())
+    await Case.create(getCaseData())
+      .then(() => Case.create(getCaseData()))
+      .then(() =>
+        request(app.getHttpServer())
           .get(`/api/cases`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
           .send()
-          .expect(200)
-          .then((response) => {
-            // Check the response - should have at least two cases
-            expect(response.body.length).toBeGreaterThanOrEqual(2)
-          })
+          .expect(200),
+      )
+      .then((response) => {
+        // Check the response - should have at least two cases
+        expect(response.body.length).toBeGreaterThanOrEqual(2)
       })
-    })
   })
 
   it('GET /api/case/:id should get a case by id', async () => {
-    await Case.create(getCaseData(true, true)).then(async (value) => {
-      await request(app.getHttpServer())
-        .get(`/api/case/${value.id}`)
-        .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
-        .send()
-        .expect(200)
-        .then((response) => {
-          // Check the response
-          const dbCase = dbCaseToCase(value)
-          expectCasesToMatch(response.body, dbCase)
-        })
-    })
+    let dbCase: CCase
+
+    await Case.create(getCaseData(true, true))
+      .then((value) => {
+        dbCase = caseToCCase(value)
+
+        return request(app.getHttpServer())
+          .get(`/api/case/${dbCase.id}`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
+          .send()
+          .expect(200)
+      })
+      .then((response) => {
+        // Check the response
+        expectCasesToMatch(response.body, dbCase)
+      })
   })
 
   it('POST /api/case/:id/signature should request a signature for a case', async () => {
@@ -397,17 +412,18 @@ describe('Case', () => {
       ...getCaseData(true, true),
       state: CaseState.REJECTED,
       judgeId: judge.id,
-    }).then(async (value) => {
-      await request(app.getHttpServer())
-        .post(`/api/case/${value.id}/signature`)
-        .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
-        .expect(201)
-        .then(async (response) => {
-          // Check the response
-          expect(response.body.controlCode).toBe('0000')
-          expect(response.body.documentToken).toBe('DEVELOPMENT')
-        })
     })
+      .then(async (value) =>
+        request(app.getHttpServer())
+          .post(`/api/case/${value.id}/signature`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
+          .expect(201),
+      )
+      .then(async (response) => {
+        // Check the response
+        expect(response.body.controlCode).toBe('0000')
+        expect(response.body.documentToken).toBe('DEVELOPMENT')
+      })
   })
 
   it('GET /api/case/:id/signature should confirm a signature for a case', async () => {
@@ -415,19 +431,20 @@ describe('Case', () => {
       ...getCaseData(),
       state: CaseState.ACCEPTED,
       judgeId: judge.id,
-    }).then(async (value) => {
-      await request(app.getHttpServer())
-        .get(`/api/case/${value.id}/signature`)
-        .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
-        .query({ documentToken: 'DEVELOPMENT' })
-        .expect(200)
-        .then(async (response) => {
-          // Check the response
-          expect(response.body).not.toBeNull()
-          expect(response.body.documentSigned).toBe(true)
-          expect(response.body.code).toBeUndefined()
-          expect(response.body.message).toBeUndefined()
-        })
     })
+      .then((value) =>
+        request(app.getHttpServer())
+          .get(`/api/case/${value.id}/signature`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
+          .query({ documentToken: 'DEVELOPMENT' })
+          .expect(200),
+      )
+      .then(async (response) => {
+        // Check the response
+        expect(response.body).not.toBeNull()
+        expect(response.body.documentSigned).toBe(true)
+        expect(response.body.code).toBeUndefined()
+        expect(response.body.message).toBeUndefined()
+      })
   })
 })

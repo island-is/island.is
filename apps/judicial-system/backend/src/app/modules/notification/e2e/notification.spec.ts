@@ -41,7 +41,7 @@ describe('Notification', () => {
       policeCaseNumber: 'Case Number',
       accusedNationalId: '0101010000',
     })
-      .then(async (value) => {
+      .then((value) => {
         dbCase = value
 
         return request(app.getHttpServer())
@@ -50,7 +50,7 @@ describe('Notification', () => {
           .send({ type: NotificationType.HEADS_UP })
           .expect(201)
       })
-      .then(async (response) => {
+      .then((response) => {
         apiSendNotificationResponse = response.body
 
         // Check the response
@@ -94,7 +94,7 @@ describe('Notification', () => {
       policeCaseNumber: 'Case Number',
       accusedNationalId: '0101010000',
     })
-      .then(async (value) => {
+      .then((value) => {
         dbCase = value
 
         return Notification.create({
@@ -103,7 +103,7 @@ describe('Notification', () => {
           message: 'Test Message',
         })
       })
-      .then(async (value) => {
+      .then((value) => {
         dbNotification = value
 
         return request(app.getHttpServer())
@@ -111,7 +111,7 @@ describe('Notification', () => {
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
           .expect(200)
       })
-      .then(async (response) => {
+      .then((response) => {
         // Check the response
         expect(response.body).toStrictEqual([
           dbNotificationToNotification(dbNotification),
