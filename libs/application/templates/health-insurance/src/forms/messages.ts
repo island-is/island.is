@@ -108,7 +108,8 @@ export const m = defineMessages({
   },
   childrenDescription: {
     id: 'pl.application:children.description',
-    defaultMessage: 'Are there any children under the age of 18 moving with you?',
+    defaultMessage:
+      'Are there any children under the age of 18 moving with you?',
     description: 'some description',
   },
   statusAdditionalInformation: {
@@ -143,7 +144,8 @@ export const m = defineMessages({
   },
   statusPensionerInformation: {
     id: 'pl.application:pensioner.information',
-    defaultMessage: 'You are reciving old age pension or disability pension from Iceland.',
+    defaultMessage:
+      'You are reciving old age pension or disability pension from Iceland.',
     description: 'Some description',
   },
   statusStudent: {
@@ -153,7 +155,8 @@ export const m = defineMessages({
   },
   statusStudentInformation: {
     id: 'pl.application:student.information',
-    defaultMessage: 'You moved away from Iceland for the purpose of studying abroad and are moving back to Iceland withing six months of the end of studies.',
+    defaultMessage:
+      'You moved away from Iceland for the purpose of studying abroad and are moving back to Iceland withing six months of the end of studies.',
     description: 'Some description',
   },
   yesOptionLabel: {

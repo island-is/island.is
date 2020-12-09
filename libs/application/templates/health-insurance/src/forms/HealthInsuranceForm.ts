@@ -129,13 +129,13 @@ export const HealthInsuranceForm: Form = buildForm({
             buildCustomField({
               id: 'status',
               name: '',
-              component: 'CurrentStatus'
+              component: 'CurrentStatus',
             }),
             buildFileUploadField({
               id: 'information',
               name: '',
               introduction: m.statusAdditionalInformation,
-              condition: (answers) => answers.status === 'student'
+              condition: (answers) => answers.status === 'student',
             }),
             buildRadioField({
               id: 'children',
@@ -148,8 +148,8 @@ export const HealthInsuranceForm: Form = buildForm({
                 { label: m.noOptionLabel, value: NO },
               ],
             }),
-            ],
-          }),
+          ],
+        }),
       ],
     }),
     buildSection({
