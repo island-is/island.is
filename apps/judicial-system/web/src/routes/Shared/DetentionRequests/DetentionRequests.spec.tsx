@@ -9,6 +9,7 @@ import { CasesQuery } from './DetentionRequests'
 import * as Constants from '../../../utils/constants'
 import '@testing-library/jest-dom'
 import { UserProvider } from '../../../shared-components/UserProvider/UserProvider'
+import userEvent from '@testing-library/user-event'
 
 const mockCasesQuery = [
   {
@@ -24,12 +25,12 @@ const mockCasesQuery = [
             state: CaseState.DRAFT,
             policeCaseNumber: 'string',
             accusedNationalId: 'string',
-            accusedName: 'Jon Harring',
+            accusedName: 'Jon Harring Sr.',
             custodyEndDate: null,
           },
           {
             id: 'test_id_2',
-            created: '2020-09-16T19:50:08.033Z',
+            created: '2020-12-16T19:50:08.033Z',
             state: CaseState.DRAFT,
             policeCaseNumber: 'string',
             accusedNationalId: 'string',
@@ -38,16 +39,16 @@ const mockCasesQuery = [
           },
           {
             id: 'test_id_3',
-            created: '2020-09-16T19:50:08.033Z',
+            created: '2020-05-16T19:50:08.033Z',
             state: CaseState.ACCEPTED,
             policeCaseNumber: '008-2020-X',
             accusedNationalId: '012345-6789',
-            accusedName: 'Erlingur L Kristinsson',
+            accusedName: 'Mikki Refur',
             custodyEndDate: '2020-11-11T12:31:00.000Z',
           },
           {
             id: 'test_id_4',
-            created: '2020-09-16T19:50:08.033Z',
+            created: '2020-08-16T19:50:08.033Z',
             state: CaseState.NEW,
             policeCaseNumber: '008-2020-X',
             accusedNationalId: '012345-6789',
@@ -207,6 +208,126 @@ describe('Detention requests route', () => {
     expect(
       await waitFor(() => screen.getByText('11. nóv. 2020')),
     ).toBeInTheDocument()
+  })
+
+  test('should order the table data by accused name in ascending order when the user clicks the accused name table header', async () => {
+    render(
+      <MockedProvider
+        mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+              <DetentionRequests />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    userEvent.click(await waitFor(() => screen.getByText('Sakborningur')))
+
+    const tableRows = await waitFor(() =>
+      screen.getAllByTestId('detention-requests-table-row'),
+    )
+
+    expect(tableRows[0]).toHaveTextContent('Erlingur L Kristinsson')
+    expect(tableRows[1]).toHaveTextContent('Jon Harring')
+    expect(tableRows[2]).toHaveTextContent('Jon Harring Sr.')
+    expect(tableRows[3]).toHaveTextContent('Mikki Refur')
+  })
+
+  test('should order the table data by accused name in descending order when the user clicks the accused name table header twice', async () => {
+    render(
+      <MockedProvider
+        mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+              <DetentionRequests />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    userEvent.dblClick(await waitFor(() => screen.getByText('Sakborningur')))
+
+    const tableRows = await waitFor(() =>
+      screen.getAllByTestId('detention-requests-table-row'),
+    )
+
+    expect(tableRows[3]).toHaveTextContent('Erlingur L Kristinsson')
+    expect(tableRows[2]).toHaveTextContent('Jon Harring')
+    expect(tableRows[1]).toHaveTextContent('Jon Harring Sr.')
+    expect(tableRows[0]).toHaveTextContent('Mikki Refur')
+  })
+
+  test('should order the table data by created in ascending order when the user clicks the created table header', async () => {
+    render(
+      <MockedProvider
+        mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+              <DetentionRequests />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    userEvent.click(await waitFor(() => screen.getByText('Krafa stofnuð')))
+
+    const tableRows = await waitFor(() =>
+      screen.getAllByTestId('detention-requests-table-row'),
+    )
+
+    expect(tableRows[0]).toHaveTextContent('Mikki Refur')
+    expect(tableRows[1]).toHaveTextContent('Erlingur L Kristinsson')
+    expect(tableRows[2]).toHaveTextContent('Jon Harring Sr.')
+    expect(tableRows[3]).toHaveTextContent('Jon Harring')
+  })
+
+  test('should order the table data by created in descending order when the user clicks the created table header twice', async () => {
+    render(
+      <MockedProvider
+        mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+              <DetentionRequests />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    userEvent.dblClick(await waitFor(() => screen.getByText('Krafa stofnuð')))
+
+    const tableRows = await waitFor(() =>
+      screen.getAllByTestId('detention-requests-table-row'),
+    )
+
+    expect(tableRows[3]).toHaveTextContent('Mikki Refur')
+    expect(tableRows[2]).toHaveTextContent('Erlingur L Kristinsson')
+    expect(tableRows[1]).toHaveTextContent('Jon Harring Sr.')
+    expect(tableRows[0]).toHaveTextContent('Jon Harring')
   })
 
   test('should display an error alert if the api call fails', async () => {
