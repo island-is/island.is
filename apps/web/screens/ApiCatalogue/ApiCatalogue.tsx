@@ -25,12 +25,7 @@ import { SubpageMainContent } from '../../components/SubpageMainContent'
 import { SubpageDetailsContent } from '../../components/SubpageDetailsContent'
 
 import { SubpageLayout } from '../Layouts/Layouts'
-import {
-  Box,
-  Stack,
-  Text,
-  Button,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Text, Button, Link } from '@island.is/island-ui/core'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -41,8 +36,8 @@ interface ApiCatalogueProps {
   data: Query
   loading: boolean
   error: ApolloError
-  staticContent     : GetNamespaceQuery['getNamespace']
-  filterContent     : GetNamespaceQuery['getNamespace']
+  staticContent: GetNamespaceQuery['getNamespace']
+  filterContent: GetNamespaceQuery['getNamespace']
 }
 
 const LIMIT = 100
@@ -87,57 +82,50 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
     return names
   }
 
-   
   return (
     <SubpageLayout
       main={
-        <SidebarLayout
-          sidebarContent={
-            <div>Navigation menu kemur hér</div>
-          }
-        >
-          <SubpageMainContent 
+        <SidebarLayout sidebarContent={<div>Navigation menu kemur hér</div>}>
+          <SubpageMainContent
             main={
               <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
-              <Stack space={1}>
-                <Text variant="h1">{n('title')}</Text>
-                <Text variant="intro">{n('intro')}</Text>
-              </Stack>
-            <Stack space={1}>
-            <Button
-              colorScheme="default"
-              icon="arrowForward"
-              iconType="filled"
-              onBlur={function noRefCheck(){}}
-              onClick={function noRefCheck(){}}
-              onFocus={function noRefCheck(){}}
-              preTextIconType="filled"
-              size="default"
-              type="button"
-              variant="text"
-            >
-              {n('designGuideButtonTitle')}
-            </Button>
-            </Stack>
-          </Box>
+                <Stack space={1}>
+                  <Text variant="h1">{n('webServicesTitle')}</Text>
+                  <Text variant="intro">{n('webServicesDescription')}</Text>
+                </Stack>
+                <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
+                  <Link href="https://docs.devland.is/handbook/technical-overview/api-design-guide">
+                    <Button
+                      colorScheme="default"
+                      icon="arrowForward"
+                      iconType="filled"
+                      onBlur={function noRefCheck() {}}
+                      onClick={function noRefCheck() {}}
+                      onFocus={function noRefCheck() {}}
+                      preTextIconType="filled"
+                      size="default"
+                      type="button"
+                      variant="text"
+                    >
+                      {n('designGuideButtonTitle')}
+                    </Button>
+                  </Link>
+                </Box>
+              </Box>
             }
-            image={
-              <img src="/frame.png" alt="Viskuausan" />
-            } 
+            image={<img src="/frame.png" alt="Viskuausan" />}
           />
         </SidebarLayout>
       }
       details={
-        <SubpageDetailsContent 
+        <SubpageDetailsContent
           header={
-            <></> // Titill fyrir details hér (API vörulisti)
+            <Text variant="h4" color="blue600">
+              {n('title')}
+            </Text>
           }
           content={
-            <SidebarLayout
-              sidebarContent={
-                <></> // Hér kemur filterinn
-              }
-            >
+            <SidebarLayout sidebarContent={<div>Hér kemur Filterinn</div>}>
               <ServiceListContainer
                 services={data?.getApiCatalogue.services}
                 span={['12/12', '12/12', '12/12', '6/12', '4/12']}
@@ -145,7 +133,9 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                 moreToLoad={data?.getApiCatalogue?.pageInfo?.nextCursor != null}
                 emptyListText={TEXT_NOT_FOUND}
                 errorMessage={
-                  error ? { heading: HEADING_ERROR, text: TEXT_ERROR } : undefined
+                  error
+                    ? { heading: HEADING_ERROR, text: TEXT_ERROR }
+                    : undefined
                 }
                 loadMoreButtonText={TEXT_LOAD_MORE}
                 tagDisplayNames={translateTags()}
@@ -162,7 +152,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
 ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
   console.log(locale)
   const [staticContent, filterContent] = await Promise.all([
-      apolloClient
+    apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
         variables: {
@@ -203,7 +193,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
       },
     },
   })
- 
+
   return {
     title: 'Vörulisti Vefþjónusta',
     data: data,
