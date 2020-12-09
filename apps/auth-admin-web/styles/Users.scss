@@ -16,13 +16,18 @@
   border: solid 1px $color-border;
   min-width: 300px;
   background-color: $color-body-bg;
+  font-size: 0.9rem;
 }
 
 .list-value {
   text-decoration: none !important;
+  color: $color-text-primary !important;
+  padding: 8px !important;
 }
 
 .list-name {
   text-decoration: none !important;
   margin-right: 12px;
+  color: $color-text-primary !important;
+  padding: 8px !important;
 }

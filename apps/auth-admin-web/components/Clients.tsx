@@ -1,11 +1,10 @@
-import React, { Component  } from 'react';
+import React, { Component } from 'react';
 import axios from 'axios';
 import ClientDTO from '../models/dtos/client-dto';
 import Paginator from './Paginator';
 import Link from 'next/link';
 
 class Clients extends Component {
-  
   state = {
     clients: [],
     rowCount: 0,
@@ -24,19 +23,23 @@ class Clients extends Component {
       rowCount: response.data.count,
       lastPage: Math.ceil(this.state.rowCount / this.state.count),
     });
-  }
+  };
 
   componentDidMount = async () => {
-    // this.getClients(this.state.page, this.state.count) 
+    // this.getClients(this.state.page, this.state.count)
   };
 
   handlePageChange = async (page: number, count: number) => {
     this.getClients(page, count);
-    this.setState({ page: page, count: count});
+    this.setState({ page: page, count: count });
   };
 
   delete = async (clientId: string) => {
-    if (window.confirm(`Are you sure you want to delete this client: "${clientId}"?`)) {
+    if (
+      window.confirm(
+        `Are you sure you want to delete this client: "${clientId}"?`
+      )
+    ) {
       const response = await axios.delete(`api/clients/${clientId}`);
       console.log(response);
       this.getClients(this.state.page, this.state.count);
@@ -54,10 +57,11 @@ class Clients extends Component {
         <div className="clients__container__options">
           <div className="clients__container__button">
             <Link href={'/client'}>
-              <a className="clients__button__new"><i className="icon__new"></i>Create new client</a>
+              <a className="clients__button__new">
+                <i className="icon__new"></i>Create new client
+              </a>
             </Link>
           </div>
-         
         </div>
         <div className="client__container__table">
           <table className="clients__table">
@@ -75,23 +79,30 @@ class Clients extends Component {
                     <td>{client.clientId}</td>
                     <td>{client.description}</td>
                     <td className="clients__table__button">
-                      <button type="button"
+                    <Link href={`client/${client.clientId}`}>
+                    <button
+                        type="button"
                         className="clients__button__edit"
-                        onClick={() => this.edit(client)}
+                        // onClick={() => this.edit(client)}
                         title="Edit"
                       >
-                        <i className="icon__edit"></i><span>Edit</span>
+                        <i className="icon__edit"></i>
+                        <span>
+                        Edit
+                        </span>
                       </button>
+                    </Link>
+                    
                     </td>
                     <td className="clients__table__button">
-                      <button type="button"
+                      <button
+                        type="button"
                         className="clients__button__delete"
                         title="Delete"
                         onClick={() => this.delete(client.clientId)}
                       >
                         <i className="icon__delete"></i>
                         <span>Delete</span>
-                        
                       </button>
                     </td>
                   </tr>

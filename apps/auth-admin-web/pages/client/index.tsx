@@ -7,6 +7,7 @@ import ClientRedirectUri from './../../components/ClientRedirectUri';
 import { ClientRedirectUriDTO } from './../../models/dtos/client-redirect-uri.dto';
 import ClientIdpRestrictions from './../../components/ClientIdpRestrictions';
 import ClientPostLogoutRedirectUri from './../../components/ClientPostLogoutRedirectUri';
+
 import { useRouter } from 'next/router'
 import StepEnd from './../../components/form/StepEnd';
 
@@ -64,6 +65,7 @@ export default function Index(){
     switch (step){
         case 1:
             // Set up the client properties
+           
             return <Client handleCancel={handleCancel} client={ new ClientDTO() } onNextButtonClick={handleClientSaved}/> 
         case 2: {
             // Set the callback URI .. ALLT
