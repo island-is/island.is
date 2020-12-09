@@ -1,5 +1,13 @@
 import gql from 'graphql-tag'
 
+export const GET_NAMESPACE_QUERY = gql`
+  query GetNamespace($input: GetNamespaceInput!) {
+    getNamespace(input: $input) {
+      fields
+    }
+  }
+`
+
 export const GET_CATALOGUE_QUERY = gql`
   query GetApiCatalogue($input: GetApiCatalogueInput!) {
     getApiCatalogue(input: $input) {
