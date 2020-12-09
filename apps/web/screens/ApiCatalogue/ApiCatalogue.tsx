@@ -57,7 +57,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   data,
   loading,
   error,
-  designGuideContent,
   staticContent,
   filterContent,
 }) => {
@@ -69,7 +68,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
 
   const n = useNamespace(staticContent)
   const fn = useNamespace(filterContent)
-  const dn = useNamespace(designGuideContent)
   const TEXT_NOT_FOUND = n('notFound')
   const HEADING_ERROR = n('errorHeading')
   const TEXT_ERROR = n('errorText')
