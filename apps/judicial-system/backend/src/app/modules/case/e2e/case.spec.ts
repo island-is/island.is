@@ -3,6 +3,7 @@ import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 
 import {
+  Case as TCase,
   CaseState,
   CaseTransition,
   CaseCustodyProvisions,
@@ -202,6 +203,7 @@ function expectCasesToMatch(caseOne: Case, caseTwo: Case) {
 describe('Case', () => {
   it('POST /api/case should create a case', async () => {
     const data = getCaseData(true)
+    let apiCase: TCase
 
     await request(app.getHttpServer())
       .post('/api/case')
@@ -209,30 +211,37 @@ describe('Case', () => {
       .send(data)
       .expect(201)
       .then(async (response) => {
+        apiCase = response.body
+
         // Check the response
-        expectCasesToMatch(response.body, {
-          ...data,
-          id: response.body.id || 'FAILURE',
-          created: response.body.created || 'FAILURE',
-          modified: response.body.modified || 'FAILURE',
-          state: CaseState.NEW,
-        } as Case)
+        expectCasesToMatch(
+          (apiCase as unknown) as Case,
+          ({
+            ...data,
+            id: apiCase.id || 'FAILURE',
+            created: apiCase.created || 'FAILURE',
+            modified: apiCase.modified || 'FAILURE',
+            state: CaseState.NEW,
+          } as unknown) as Case,
+        )
 
         // Check the data in the database
-        await Case.findOne({
-          where: { id: response.body.id },
+        return Case.findOne({
+          where: { id: apiCase.id },
           include: [
             { model: User, as: 'prosecutor' },
             { model: User, as: 'judge' },
           ],
-        }).then((value) => {
-          expectCasesToMatch(dbCaseToCase(value), response.body)
         })
+      })
+      .then((value) => {
+        expectCasesToMatch(dbCaseToCase(value), (apiCase as unknown) as Case)
       })
   })
 
   it('POST /api/case with required fields should create a case', async () => {
     const data = getCaseData()
+    let apiCase: TCase
 
     await request(app.getHttpServer())
       .post('/api/case')
@@ -240,25 +249,31 @@ describe('Case', () => {
       .send(data)
       .expect(201)
       .then(async (response) => {
+        apiCase = response.body
+
         // Check the response
-        expectCasesToMatch(response.body, {
-          ...data,
-          id: response.body.id || 'FAILURE',
-          created: response.body.created || 'FAILURE',
-          modified: response.body.modified || 'FAILURE',
-          state: CaseState.NEW,
-        } as Case)
+        expectCasesToMatch(
+          (apiCase as unknown) as Case,
+          ({
+            ...data,
+            id: apiCase.id || 'FAILURE',
+            created: apiCase.created || 'FAILURE',
+            modified: apiCase.modified || 'FAILURE',
+            state: CaseState.NEW,
+          } as unknown) as Case,
+        )
 
         // Check the data in the database
-        await Case.findOne({
-          where: { id: response.body.id },
+        return Case.findOne({
+          where: { id: apiCase.id },
           include: [
             { model: User, as: 'prosecutor' },
             { model: User, as: 'judge' },
           ],
-        }).then((value) => {
-          expectCasesToMatch(dbCaseToCase(value), response.body)
         })
+      })
+      .then((value) => {
+        expectCasesToMatch(dbCaseToCase(value), (apiCase as unknown) as Case)
       })
   })
 
