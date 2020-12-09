@@ -18,11 +18,12 @@ import { RewriteFrames } from '@sentry/integrations'
 import { useRouter } from 'next/router'
 
 import { Header, Main, PageLoader } from '../components'
-import { GET_MENU_QUERY } from '../screens/queries/Menu'
+import { GET_GROUPED_MENU_QUERY, GET_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import {
   QueryGetMenuArgs,
   GetMenuQuery,
+  GetGroupedMenuQuery,
   GetNamespaceQuery,
   QueryGetNamespaceArgs,
   ContentLanguage,
@@ -30,6 +31,7 @@ import {
   QueryGetAlertBannerArgs,
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
+  QueryGetGroupedMenuArgs,
 } from '../graphql/schema'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
@@ -349,6 +351,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
     middleMenu,
     tagsMenu,
     namespace,
+    mainMenu,
   ] = await Promise.all([
     apolloClient
       .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
@@ -430,7 +433,17 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
         // map data here to reduce data processing in component
         return JSON.parse(res.data.getNamespace.fields)
       }),
+    apolloClient
+      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
+        query: GET_GROUPED_MENU_QUERY,
+        variables: {
+          input: { name: 'Top menu custom links', lang },
+        },
+      })
+      .then((res) => res.data.getGroupedMenu),
   ])
+
+  console.log('mainMenu', mainMenu)
 
   return {
     categories,

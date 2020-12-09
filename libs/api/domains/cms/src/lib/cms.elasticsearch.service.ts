@@ -13,10 +13,12 @@ import { NewsList } from './models/newsList.model'
 import { GetNewsDatesInput } from './dto/getNewsDates.input'
 import { AboutPage } from './models/aboutPage.model'
 import { SearchIndexes } from '@island.is/content-search-indexer/types'
+import { Menu } from './models/menu.model'
+import { GetMenuInput } from './dto/getMenu.input'
 
 @Injectable()
 export class CmsElasticsearchService {
-  constructor(private elasticService: ElasticService) {}
+  constructor(private elasticService: ElasticService) { }
 
   async getArticleCategories(
     index: SearchIndexes,
@@ -158,6 +160,19 @@ export class CmsElasticsearchService {
     } else {
       return null
     }
+  }
+
+  async getSingleMenu<RequestedMenuType>(
+    index: SearchIndexes,
+    { name, type }: GetMenuInput & { type: 'webMenu' | 'webGroupedMenu' },
+  ): Promise<RequestedMenuType> {
+    // return a single news item by slug
+    const query = { types: [type], tags: [{ type: 'name', key: name }] }
+    const menuResponse = await this.elasticService.getDocumentsByMetaData(
+      index,
+      query,
+    )
+    return JSON.parse(menuResponse.hits.hits?.[0]?._source?.response)
   }
 
   async getSingleAboutPage(

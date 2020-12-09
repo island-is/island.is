@@ -11,3 +11,22 @@ export const GET_MENU_QUERY = gql`
     }
   }
 `
+
+export const GET_GROUPED_MENU_QUERY = gql`
+  query GetGroupedMenu($input: GetMenuInput!) {
+    getGroupedMenu(input: $input) {
+      id
+      title
+      menus {
+        title
+        menuLinks {
+          title
+          link {
+            slug
+            type
+          }
+        }
+      }
+    }
+  }
+`
