@@ -50,7 +50,8 @@ module.exports = {
         queryInterface.bulkDelete('client_redirect_uri', [
           {
             client_id: 'apex-auth_client',
-            redirect_uri: 'https://tcqqxwk4o7udq5x-hgrdevatp.adb.eu-frankfurt-1.oraclecloudapps.com/ords/r/hms_app_app/test-island-is-authentication/signin-oidc',
+            redirect_uri:
+              'https://tcqqxwk4o7udq5x-hgrdevatp.adb.eu-frankfurt-1.oraclecloudapps.com/ords/r/hms_app_app/test-island-is-authentication/signin-oidc',
           },
         ]),
       ]).then(() => {
