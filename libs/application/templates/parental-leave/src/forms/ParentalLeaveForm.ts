@@ -81,30 +81,9 @@ export const ParentalLeaveForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'generalInfo',
-          name: m.generalInfoSubSection,
+          id: 'otherParent',
+          name: m.otherParentSubSection,
           children: [
-            buildMultiField({
-              id: 'contactInfo',
-              name: 'Er þetta réttur sími og netfang?',
-              description: 'Vinsamlegast breyttu ef þetta er ekki rétt',
-              children: [
-                buildTextField({
-                  width: 'half',
-                  name: 'Netfang',
-                  id: 'applicant.email',
-                  variant: 'email',
-                }),
-                buildTextField({
-                  width: 'half',
-                  name: 'Símanúmer',
-                  id: 'applicant.phoneNumber',
-                  variant: 'tel',
-                  format: '###-####',
-                  placeholder: '000-0000',
-                }),
-              ],
-            }),
             buildMultiField({
               id: 'otherParent',
               name: m.otherParentTitle,

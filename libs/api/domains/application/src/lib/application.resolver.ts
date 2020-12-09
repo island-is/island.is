@@ -80,7 +80,7 @@ export class ApplicationResolver {
     @Args('input') input: UpdateApplicationExternalDataInput,
     @CurrentUser() user: User,
   ): Promise<Application | void> {
-    return this.applicationService.updateExternalData(input, user.accessToken)
+    return this.applicationService.updateExternalData(input, user.authorization)
   }
 
   @Mutation(() => Application, { nullable: true })

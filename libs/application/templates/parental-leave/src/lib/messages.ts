@@ -28,10 +28,10 @@ export const m = defineMessages({
     description:
       'These applications could be for already born children, or an application made by you or the other parent for parental leave for your unborn child.',
   },
-  generalInfoSubSection: {
-    id: 'pl.application:generalInfo.subSection',
-    defaultMessage: 'Aðrar upplýsingar',
-    description: 'General Info',
+  otherParentSubSection: {
+    id: 'pl.application:otherParent.subSection',
+    defaultMessage: 'Hitt foreldrið',
+    description: 'The other parent',
   },
   otherParentDescription: {
     id: 'pl.application:otherParent.description',

@@ -68,8 +68,8 @@ import { EmailService } from '@island.is/email-service'
 // @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
 @ApiTags('applications')
 @ApiHeader({
-  name: 'X-AccessToken',
-  description: 'Access token',
+  name: 'authorization',
+  description: 'Bearer token authorization',
 })
 @Controller()
 export class ApplicationController {
@@ -244,13 +244,13 @@ export class ApplicationController {
     const templateDataProviders = await getApplicationDataProviders(
       (existingApplication as BaseApplication).typeId,
     )
-    const headers = (req.headers as unknown) as { 'x-accesstoken'?: string }
+    const headers = (req.headers as unknown) as { authorization?: string }
 
     const results = await callDataProviders(
       buildDataProviders(
         externalDataDto,
         templateDataProviders,
-        headers['x-accesstoken'] ?? undefined,
+        headers.authorization ?? '',
       ),
       existingApplication as BaseApplication,
     )

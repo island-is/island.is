@@ -1,9 +1,11 @@
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import {
   BasicDataProvider,
+  DataProviderConfig,
   DataProviderResult,
 } from '@island.is/application/core'
 import { ExternalData } from '@island.is/application/core'
+import { environment } from '../../../../environments'
 
 class NotImplemented extends BasicDataProvider {
   provide(): Promise<unknown> {
@@ -17,15 +19,17 @@ export function buildDataProviders(
   externalDataDTO: PopulateExternalDataDto,
   templateDataProviders: Record<
     string,
-    new (accessToken?: string) => BasicDataProvider
+    new (dataProviderConfig: DataProviderConfig) => BasicDataProvider
   >,
-  accessToken?: string,
+  authorization: string,
 ): BasicDataProvider[] {
   const providers: BasicDataProvider[] = []
   externalDataDTO.dataProviders.forEach(({ type }) => {
     const Provider = templateDataProviders[type]
     if (Provider) {
-      providers.push(new Provider(accessToken))
+      providers.push(
+        new Provider({ baseApiUrl: environment.baseApiUrl, authorization }),
+      )
     } else {
       providers.push(new NotImplemented())
     }
