@@ -102,7 +102,7 @@
 - [Content Search Toolkit](libs/content-search-toolkit/README.md)
 - [Dokobit Signing](libs/dokobit-signing/README.md)
 - [Email Service](libs/email-service/README.md)
-- [Storybook](libs/island-ui/README.md)
+- [Island UI](libs/island-ui/README.md)
 - [Localization](libs/localization/README.md)
 - [NOVA SMS](libs/nova-sms/README.md)
 - [Service Portal](libs/service-portal/README.md)
