@@ -1,7 +1,9 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import * as types from '../generated/contentfulTypes'
-import { Slice, safelyMapSlices } from './slice.model'
+import { safelyMapSlices } from './slice.model'
 import { PageHeader, mapPageHeader } from './pageHeader.model'
+import { SliceUnion } from '../unions/slice.union'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class AboutPage {
@@ -23,16 +25,20 @@ export class AboutPage {
   @Field(() => PageHeader)
   pageHeader: PageHeader
 
-  @Field(() => [Slice])
-  slices: Array<typeof Slice>
+  @Field(() => [SliceUnion])
+  slices: Array<typeof SliceUnion>
 }
 
-export const mapAboutPage = ({ fields, sys }: types.IPage): AboutPage => ({
+export const mapAboutPage = ({
+  fields,
+  sys,
+}: types.IPage): SystemMetadata<AboutPage> => ({
+  typename: 'AboutPage',
   id: sys.id,
   pageHeader: mapPageHeader(fields.header),
   slices: fields.slices
     ?.map(safelyMapSlices)
-    .filter((slice): slice is typeof Slice => Boolean(slice)), // filter out empty slices that failed mapping
+    .filter((slice): slice is typeof SliceUnion => Boolean(slice)), // filter out empty slices that failed mapping
   title: fields.title ?? '',
   slug: fields.slug ?? '',
   theme: fields.theme ?? '',

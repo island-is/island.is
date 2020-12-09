@@ -1,8 +1,10 @@
 import { SearchIndexes } from '@island.is/content-search-indexer/types'
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import * as types from '../generated/contentfulTypes'
+import { SystemMetadata } from '@island.is/shared/types'
+import { SliceUnion } from '../unions/slice.union'
 import { AboutPage } from './aboutPage.model'
-import { Slice, mapDocument, safelyMapSlices } from './slice.model'
+import { mapDocument, safelyMapSlices } from './slice.model'
 
 @ObjectType()
 export class AboutSubPage {
@@ -24,11 +26,11 @@ export class AboutSubPage {
   @Field()
   subDescription: string
 
-  @Field(() => [Slice])
-  slices: Array<typeof Slice>
+  @Field(() => [SliceUnion])
+  slices: Array<typeof SliceUnion>
 
-  @Field(() => [Slice])
-  bottomSlices: Array<typeof Slice>
+  @Field(() => [SliceUnion])
+  bottomSlices: Array<typeof SliceUnion>
 
   @Field(() => AboutPage, { nullable: true })
   parent?: { lang: keyof typeof SearchIndexes; id: string }
@@ -37,7 +39,8 @@ export class AboutSubPage {
 export const mapAboutSubPage = ({
   fields,
   sys,
-}: types.IAboutSubPage): AboutSubPage => ({
+}: types.IAboutSubPage): SystemMetadata<AboutSubPage> => ({
+  typename: 'AboutSubPage',
   id: sys.id,
   title: fields.title ?? '',
   slug: fields.slug ?? '',

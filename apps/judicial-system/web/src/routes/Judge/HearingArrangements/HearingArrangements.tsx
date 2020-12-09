@@ -283,7 +283,7 @@ export const HearingArrangements: React.FC = () => {
             <Input
               name="courtroom"
               label="Dómsalur"
-              defaultValue={workingCase?.courtRoom}
+              defaultValue={workingCase.courtRoom}
               placeholder="Skráðu inn dómsal"
               onChange={(event) =>
                 removeTabsValidateAndSet(
@@ -314,7 +314,7 @@ export const HearingArrangements: React.FC = () => {
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                Verjandi
+                Skipaður verjandi
               </Text>
             </Box>
             <Box marginBottom={3}>

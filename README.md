@@ -12,6 +12,10 @@ The apps and libraries documentation and our handbook are hosted on [GitBook](ht
 
 ### For a better reading experience make sure to visit [docs.devland.is](https://docs.devland.is/handbook/).
 
+## Storybook
+
+The Ísland.is design system is developed and showcased using [Storybook](https://www.storybook.js.org) and is publicly available at [ui.devland.is](https://ui.devland.is).
+
 ## Reading material
 
 To get more technical information about the project please make sure to read this [overview](handbook/technical-overview/README.md).

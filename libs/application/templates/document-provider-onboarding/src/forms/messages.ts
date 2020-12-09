@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   formName: {
     id: 'dpo.application:form.name',
-    defaultMessage: 'Almennar upplýsingar um skjalaveitanda',
+    defaultMessage: 'Umsókn skjalaveitu',
     description: '',
   },
 
@@ -199,12 +199,12 @@ export const m = defineMessages({
   //Confirmation
   confirmationSection: {
     id: 'dpo.application:confirmation.section',
-    defaultMessage: 'Staðfesta',
+    defaultMessage: 'Staðfesting',
     description: '',
   },
   confirmationTitle: {
     id: 'dpo.application:confirmation.title',
-    defaultMessage: 'Staðfesting umsóknar',
+    defaultMessage: 'Staðfesting',
     description: '',
   },
   confirmationSubTitle: {
@@ -295,7 +295,7 @@ export const m = defineMessages({
   },
   reviewTitle: {
     id: 'dpo.application:review.title',
-    defaultMessage: 'Umsókn um að gerast skjalaveitandi',
+    defaultMessage: 'Úrvinnsla umsóknar',
     description: '',
   },
   reviewSubTitle: {
@@ -323,6 +323,11 @@ export const m = defineMessages({
   rejectedSubTitle: {
     id: 'dpo.application:rejected.subTitle',
     defaultMessage: 'Umsókn þinni til að gerast skjalaveitandi var hafnað',
+    description: '',
+  },
+  rejectedSubHeading: {
+    id: 'dpo.application:rejected.subHeading',
+    defaultMessage: 'Ástæða',
     description: '',
   },
 
@@ -391,7 +396,7 @@ export const m = defineMessages({
   },
   testPhaseInfoFooterMessage: {
     id: 'dpo.application:testPhaseInfo.footerMessage',
-    defaultMessage: 'Öryggiskröfur sem gerðar eru til skjalaveitna',
+    defaultMessage: 'Skjöl þurfa að vera á PDF formi',
     description: '',
   },
 
@@ -427,7 +432,7 @@ export const m = defineMessages({
   //Test endpoint
   testEndPointSection: {
     id: 'dpo.application:testEndPoint.section',
-    defaultMessage: 'Endapunktur',
+    defaultMessage: 'Prófunar endapunktur',
     description: '',
   },
   testEndPointTitle: {
@@ -551,6 +556,24 @@ export const m = defineMessages({
   prodEnviromentButton: {
     id: 'dpo.application:prodEnviroment.button',
     defaultMessage: 'Búa til aðgang',
+    description: '',
+  },
+
+  //Prod endpoint
+  prodEndPointSection: {
+    id: 'dpo.application:prodEndPoint.section',
+    defaultMessage: 'Raun endapunktur',
+    description: '',
+  },
+  prodEndPointTitle: {
+    id: 'dpo.application:prodEndPoint.title',
+    defaultMessage: 'Upplýsingar um endapunkt umsækjenda',
+    description: '',
+  },
+  prodEndPointSubTitle: {
+    id: 'dpo.application:prodEndPoint.subTitle',
+    defaultMessage:
+      'Til að hægt sé að sækja skjöl til skjalaveitu þarf að tilgreina endapunkt. Þegar endapunktur er vistaður er búnar til Audience og Scope breytur.',
     description: '',
   },
 

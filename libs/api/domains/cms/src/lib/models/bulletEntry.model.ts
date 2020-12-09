@@ -1,21 +1,11 @@
-import { createUnionType } from '@nestjs/graphql'
-
 import { IIconBullet, INumberBulletSection } from '../generated/contentfulTypes'
-
-import {
-  NumberBulletGroup,
-  mapNumberBulletGroup,
-} from './numberBulletGroup.model'
-import { IconBullet, mapIconBullet } from './iconBullet.model'
-
-export const BulletEntry = createUnionType({
-  name: 'BulletEntry',
-  types: () => [IconBullet, NumberBulletGroup],
-})
+import { mapNumberBulletGroup } from './numberBulletGroup.model'
+import { mapIconBullet } from './iconBullet.model'
+import { BulletEntryUnion } from '../unions/buttonEntry.union'
 
 export const mapBulletEntry = (
   entry: IIconBullet | INumberBulletSection,
-): typeof BulletEntry => {
+): typeof BulletEntryUnion => {
   switch (entry.sys.contentType.sys.id) {
     case 'iconBullet':
       return mapIconBullet(entry as IIconBullet)

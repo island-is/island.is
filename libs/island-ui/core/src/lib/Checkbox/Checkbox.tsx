@@ -55,6 +55,7 @@ export const Checkbox = ({
         id={id}
         onChange={onChange}
         value={value}
+        checked={checked}
         {...ariaError}
       />
       <label

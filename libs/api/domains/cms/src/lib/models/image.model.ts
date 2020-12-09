@@ -1,11 +1,9 @@
 import { Field, Int, ObjectType, ID } from '@nestjs/graphql'
 import { Asset } from 'contentful'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class Image {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -25,7 +23,7 @@ export class Image {
   height: number
 }
 
-export const mapImage = (entry: Asset): Image => {
+export const mapImage = (entry: Asset): SystemMetadata<Image> => {
   const fields = entry?.fields
   const sys = entry?.sys
   return {
