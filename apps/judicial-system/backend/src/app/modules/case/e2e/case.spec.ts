@@ -19,6 +19,8 @@ import { setup } from '../../../../../test/setup'
 import { User } from '../../user'
 import { Case } from '../models'
 
+jest.setTimeout(10000)
+
 let app: INestApplication
 let prosecutor: TUser
 let prosecutorAuthCookie: string
