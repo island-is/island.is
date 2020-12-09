@@ -1,6 +1,7 @@
 import React, { FC, ReactNode, useMemo, forwardRef } from 'react'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
+
 import { GET_ABOUT_PAGE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
 import { Screen } from '@island.is/web/types'
 import {
@@ -12,7 +13,6 @@ import {
   AboutLatestNews,
   LogoList,
   BulletList,
-  DrawerMenu,
 } from '@island.is/web/components'
 import {
   Text,
@@ -27,11 +27,11 @@ import {
   GridRow,
   SpanType,
   Tabs,
-  Hidden,
   Divider,
+  Navigation,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import Sidebar, { SidebarProps } from './Sidebar'
+import Sidebar from './Sidebar'
 import * as styles from './AboutPage.treat'
 import Head from 'next/head'
 import {
@@ -60,6 +60,41 @@ type AvailableSlices = Exclude<
   AllSlicesFragment,
   AllSlicesEmbeddedVideoFragment | AllSlicesImageFragment
 >
+
+const sidebarContent = (
+  navigation: {
+    id: string
+    text: string
+  }[],
+  currentSliceId: string,
+  sliceLinks: {
+    url: string
+    text: string
+  }[],
+) => {
+  const [navigationTitle, ...navigationList] = navigation
+
+  const items = navigationList.map(({ id, text }) => ({
+    href: `#${id}`,
+    title: text,
+    active: id === currentSliceId,
+  }))
+
+  const sliceItems = sliceLinks.map(({ url, text }) => ({
+    href: url,
+    title: text,
+    active: false,
+    items: [],
+  }))
+  return [
+    {
+      href: `#${navigationTitle.id}`,
+      title: navigationTitle.text,
+      active: true,
+      items: items,
+    },
+  ].concat(sliceItems)
+}
 
 export interface LayoutProps {
   width: SpanType
@@ -102,7 +137,7 @@ const Background = forwardRef<HTMLDivElement, BackgroundProps>(
 const decideSidebarType = (
   page: GetAboutPageQuery['getAboutPage'],
   currentSliceId: string,
-): SidebarProps['type'] => {
+) => {
   if (
     currentSliceId === page.pageHeader.id ||
     page.slices.some(
@@ -119,52 +154,20 @@ const decideSidebarType = (
 
 interface PageHeaderProps {
   page: GetAboutPageQuery['getAboutPage']
+  navigation: { id: string; text: string }[]
   namespace?: GetNamespaceQuery['getNamespace']
 }
 
-const PageHeader: FC<PageHeaderProps> = ({ page }) => {
+const PageHeader: FC<PageHeaderProps> = ({ page, navigation }) => {
   const slice = page.pageHeader
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
-  const navigation = useMemo(
-    () =>
-      [{ id: slice.id, text: slice.navigationText }].concat(
-        createNavigation(page.slices),
-      ),
-    [page.slices, slice],
-  )
+
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
-  const [currentSliceId, navigate] = useScrollSpy(ids, { marginTop: 220 })
-
-  const mobileNavigation = navigation.map((x) => ({
-    title: x.text,
-    url: '#' + x.id,
-  }))
-
-  const sliceMobileNavigation = (slice?.links ?? []).map((x) => ({
-    title: x.text,
-    url: x.url,
-  }))
-
-  const combinedMobileNavigation = [
-    ...mobileNavigation,
-    ...sliceMobileNavigation,
-  ]
+  const [currentSliceId] = useScrollSpy(ids, { marginTop: 220 })
 
   return (
     <Background id={slice.id} theme={page.theme}>
-      {!!mobileNavigation.length && (
-        <Hidden above="md">
-          <DrawerMenu
-            categories={[
-              {
-                title: page.title,
-                items: combinedMobileNavigation,
-              },
-            ]}
-          />
-        </Hidden>
-      )}
       <GridContainer position="none">
         <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
           <Box marginBottom={[0, 0, 8, 15]}>
@@ -176,91 +179,61 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
         isSticky={false}
         hiddenOnTablet={true}
         sidebarContent={
-          <Sidebar
-            title={page.title}
-            type={decideSidebarType(page, currentSliceId)}
-          >
-            {({ bulletRef, colors }) => {
-              const [navigationTitle, ...navigationList] = navigation
-              return (
-                <>
-                  <Box
-                    component="a"
-                    ref={
-                      navigationTitle.id === currentSliceId ? bulletRef : null
-                    }
-                    href={'#' + navigationTitle.id}
-                    onClick={() => navigate(navigationTitle.id)}
-                    paddingBottom={2}
-                    display="inlineBlock"
-                  >
-                    <Text color={colors.main}>
-                      {navigationTitle.id === currentSliceId ? (
-                        <b>{navigationTitle.text}</b>
-                      ) : (
-                        navigationTitle.text
-                      )}
-                    </Text>
-                  </Box>
-                  <Box
-                    borderLeftWidth="standard"
-                    borderColor={colors.subNavBorder}
-                    paddingLeft={2}
-                  >
-                    {navigationList.map(({ id, text }, index) => (
-                      <Box key={index} paddingBottom={1}>
-                        <a
-                          ref={id === currentSliceId ? bulletRef : null}
-                          href={'#' + id}
-                          onClick={() => navigate(id)}
-                        >
-                          <Text variant="small" as="p" color={colors.main}>
-                            {id === currentSliceId ? <b>{text}</b> : text}
-                          </Text>
-                        </a>
-                      </Box>
-                    ))}
-                  </Box>
-                  {slice.links.map(({ url, text }, index) => (
-                    <span key={index}>
-                      <Box paddingY={1}>
-                        <Link href={url}>
-                          <Text as="div" color={colors.secondary}>
-                            {text}
-                          </Text>
-                        </Link>
-                      </Box>
-                    </span>
-                  ))}
-                </>
-              )
-            }}
+          <Sidebar>
+            <Navigation
+              colorScheme={
+                decideSidebarType(page, currentSliceId) === 'gradient'
+                  ? 'darkBlue'
+                  : 'blue'
+              }
+              baseId={currentSliceId}
+              isMenuDialog={false}
+              activeItemTitle=""
+              items={sidebarContent(navigation, currentSliceId, slice.links)}
+              title={page.title}
+            />
           </Sidebar>
         }
       >
-        <GridRow>
-          <GridColumn span={'12/12'}>
-            <GridRow>
-              <GridColumn offset={'1/9'} span={'8/9'}>
-                <Stack space={2}>
-                  <Breadcrumbs color="blue300" separatorColor="blue300">
-                    <Link href={makePath()}>Ísland.is</Link>
-                    <span>{page.title}</span>
-                  </Breadcrumbs>
-                  <Text variant="h1" as="h1" color="white">
-                    {slice.title}
-                  </Text>
-                  <Text color="white">{slice.introduction}</Text>
-                </Stack>
-              </GridColumn>
-            </GridRow>
-          </GridColumn>
-          <GridColumn span={'12/12'}>
-            {(slice.slices as AvailableSlices[]).map((slice) => (
-              <Section key={slice.id} slice={slice} />
-            ))}
-          </GridColumn>
-        </GridRow>
+        <GridColumn span={'12/12'}>
+          <GridRow>
+            <GridColumn
+              offset={[null, null, null, '1/9']}
+              span={['12/12', '12/12', '12/12', '8/9']}
+            >
+              <Stack space={2}>
+                <Breadcrumbs color="blue300" separatorColor="blue300">
+                  <Link href={makePath()}>Ísland.is</Link>
+                  <span>{page.title}</span>
+                </Breadcrumbs>
+                <Box display={['block', 'block', 'block', 'none']}>
+                  <Navigation
+                    colorScheme={'blue'}
+                    baseId={currentSliceId}
+                    isMenuDialog={true}
+                    activeItemTitle={navigation[0].text}
+                    items={sidebarContent(
+                      navigation,
+                      currentSliceId,
+                      slice.links,
+                    )}
+                    title={page.title}
+                  />
+                </Box>
+
+                <Text variant="h1" as="h1" color="white">
+                  {slice.title}
+                </Text>
+                <Text color="white">{slice.introduction}</Text>
+              </Stack>
+            </GridColumn>
+          </GridRow>
+        </GridColumn>
+        <GridColumn span={'12/12'}>
+          {(slice.slices as AvailableSlices[]).map((slice) => (
+            <Section key={slice.id} slice={slice} />
+          ))}
+        </GridColumn>
       </SidebarLayout>
     </Background>
   )
@@ -432,6 +405,13 @@ export interface AboutPageProps {
 }
 
 const AboutPageScreen: Screen<AboutPageProps> = ({ page, namespace }) => {
+  const navigation = useMemo(
+    () =>
+      [{ id: page.pageHeader.id, text: page.pageHeader.navigationText }].concat(
+        createNavigation(page.slices),
+      ),
+    [page.slices, page.pageHeader],
+  )
   return (
     <>
       <Head>
@@ -439,10 +419,26 @@ const AboutPageScreen: Screen<AboutPageProps> = ({ page, namespace }) => {
         <meta name="description" content={page.seoDescription} />
       </Head>
       <Box position="relative">
-        <PageHeader page={page} />
+        <PageHeader page={page} navigation={navigation} />
         {(page.slices as AvailableSlices[]).map((slice) => (
           <Section key={slice.id} slice={slice} namespace={namespace} />
         ))}
+        <GridContainer>
+          <Box display={['block', 'block', 'block', 'none']} marginBottom={8}>
+            <Navigation
+              colorScheme={'blue'}
+              baseId={page.pageHeader.id}
+              isMenuDialog={false}
+              activeItemTitle=""
+              items={sidebarContent(
+                navigation,
+                page.pageHeader.id,
+                page.pageHeader.links,
+              )}
+              title={page.title}
+            />
+          </Box>
+        </GridContainer>
       </Box>
     </>
   )
@@ -484,5 +480,4 @@ AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
 
 export default withMainLayout(AboutPageScreen, {
   showHeader: false,
-  hasDrawerMenu: true,
 })
