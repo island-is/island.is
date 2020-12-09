@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Text,
   GridRow,
@@ -48,7 +48,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ValueType } from 'react-select/src/types'
 import Modal from '../../../../shared-components/Modal/Modal'
-import BlueBox from 'apps/judicial-system/web/src/shared-components/BlueBox/BlueBox'
+import BlueBox from '../../../../shared-components/BlueBox/BlueBox'
 
 interface CaseData {
   case?: Case

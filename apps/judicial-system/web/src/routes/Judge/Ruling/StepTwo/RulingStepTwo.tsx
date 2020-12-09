@@ -16,11 +16,7 @@ import {
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as Constants from '../../../../utils/constants'
-import {
-  parseArray,
-  parseString,
-  replaceTabsOnChange,
-} from '../../../../utils/formatters'
+import { parseArray, parseString } from '../../../../utils/formatters'
 import { constructConclusion } from '../../../../utils/stepHelper'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useParams } from 'react-router-dom'

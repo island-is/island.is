@@ -1,5 +1,5 @@
 import { Box } from '@island.is/island-ui/core'
-import React, { Children } from 'react'
+import React from 'react'
 import * as styles from './BlueBox.treat'
 
 const BlueBox: React.FC<{}> = (props) => {

@@ -75,7 +75,7 @@ export const validateAndSetTime = (
 ) => {
   if (currentValue) {
     // remove optional
-    if(setTime) {
+    if (setTime) {
       setTime(time)
     }
 
@@ -204,21 +204,14 @@ export const setCheckboxAndSendToServer = (
   setCase: (value: React.SetStateAction<Case | undefined>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
-  const checks = theCase[field as keyof Case] ? 
-    [... theCase[field as keyof Case] as []] : 
-    [] as string[]
+  const checks = theCase[field as keyof Case]
+    ? [...(theCase[field as keyof Case] as [])]
+    : ([] as string[])
 
-  if(!checks.includes(value)) {
-    checks.push(
-      value,
-    )
+  if (!checks.includes(value)) {
+    checks.push(value)
   } else {
-    checks.splice(
-      checks.indexOf(
-        value,
-      ),
-      1,
-    )
+    checks.splice(checks.indexOf(value), 1)
   }
 
   setCase({
@@ -231,10 +224,6 @@ export const setCheckboxAndSendToServer = (
   }
 }
 
-export const getTimeFromDate = (
-  date: string | undefined
-) => {
-  return date?.includes('T') ? 
-    formatDate(date, TIME_FORMAT) : 
-    undefined
+export const getTimeFromDate = (date: string | undefined) => {
+  return date?.includes('T') ? formatDate(date, TIME_FORMAT) : undefined
 }

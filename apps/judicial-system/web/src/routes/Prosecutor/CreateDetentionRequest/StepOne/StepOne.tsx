@@ -8,7 +8,6 @@ import { useParams } from 'react-router-dom'
 import * as Constants from '../../../../utils/constants'
 import {
   parseString,
-  parseTransition,
   replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
@@ -16,15 +15,11 @@ import {
   Case,
   UpdateCase,
   CaseState,
-  NotificationType,
   CaseGender,
-  CaseTransition,
 } from '@island.is/judicial-system/types'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
-  SendNotificationMutation,
-  TransitionCaseMutation,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import {
@@ -38,7 +33,7 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import BlueBox from 'apps/judicial-system/web/src/shared-components/BlueBox/BlueBox'
+import BlueBox from '../../../../shared-components/BlueBox/BlueBox'
 
 export const CreateCaseMutation = gql`
   mutation CreateCaseMutation($input: CreateCaseInput!) {
@@ -184,70 +179,6 @@ export const StepOne: React.FC = () => {
     }
 
     return resCase
-  }
-
-  const [transitionCaseMutation, { loading: transitionLoading }] = useMutation(
-    TransitionCaseMutation,
-  )
-
-  const transitionCase = async () => {
-    if (!workingCase) {
-      return false
-    }
-
-    switch (workingCase.state) {
-      case CaseState.NEW:
-        try {
-          // Parse the transition request
-          const transitionRequest = parseTransition(
-            workingCase.modified,
-            CaseTransition.OPEN,
-          )
-
-          const { data } = await transitionCaseMutation({
-            variables: { input: { id: workingCase.id, ...transitionRequest } },
-          })
-
-          if (!data) {
-            return false
-          }
-
-          setWorkingCase({
-            ...workingCase,
-            state: data.state,
-            prosecutor: data.prosecutor,
-          })
-
-          return true
-        } catch (e) {
-          console.log(e)
-
-          return false
-        }
-      case CaseState.DRAFT:
-      case CaseState.SUBMITTED:
-        return true
-      default:
-        return false
-    }
-  }
-
-  const [
-    sendNotificationMutation,
-    { loading: isSendingNotification },
-  ] = useMutation(SendNotificationMutation)
-
-  const sendNotification = async (id: string) => {
-    const { data } = await sendNotificationMutation({
-      variables: {
-        input: {
-          caseId: id,
-          type: NotificationType.HEADS_UP,
-        },
-      },
-    })
-
-    return data?.sendNotification?.notificationSent
   }
 
   const handleNextButtonClick = async () => {
@@ -639,8 +570,8 @@ export const StepOne: React.FC = () => {
           </Box>
           <FormFooter
             onNextButtonClick={async () => await handleNextButtonClick()}
-            nextIsLoading={createLoading || transitionLoading}
-            nextIsDisabled={isStepIllegal || createLoading || transitionLoading}
+            nextIsLoading={createLoading}
+            nextIsDisabled={isStepIllegal || createLoading}
             nextButtonText={
               workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
             }

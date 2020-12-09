@@ -3,10 +3,7 @@ import { render, waitFor, screen } from '@testing-library/react'
 import StepFour from './StepFour'
 import { MemoryRouter, Route } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
-import {
-  CaseCustodyProvisions,
-  UpdateCase,
-} from '@island.is/judicial-system/types'
+import { UpdateCase } from '@island.is/judicial-system/types'
 import * as Constants from '../../../../utils/constants'
 import {
   mockCaseQueries,

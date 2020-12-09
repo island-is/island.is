@@ -34,7 +34,7 @@ import {
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import BlueBox from 'apps/judicial-system/web/src/shared-components/BlueBox/BlueBox'
+import BlueBox from '../../../../shared-components/BlueBox/BlueBox'
 
 export const StepThree: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()

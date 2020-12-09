@@ -1,8 +1,8 @@
 import React from 'react'
-import { render, waitFor, screen, within } from '@testing-library/react'
+import { render, waitFor, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Route, MemoryRouter } from 'react-router-dom'
-import StepOne, { CreateCaseMutation } from './StepOne'
+import StepOne from './StepOne'
 import * as Constants from '../../../../utils/constants'
 import {
   mockCaseQueries,
@@ -11,7 +11,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
 import { CaseGender, UpdateCase } from '@island.is/judicial-system/types'
-import formatISO from 'date-fns/formatISO'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 describe('/krafa with an id', () => {

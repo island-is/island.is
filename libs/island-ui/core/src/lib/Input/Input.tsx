@@ -131,7 +131,7 @@ export const Input = forwardRef(
     const mergedRefs = useMergeRefs(inputRef, ref || null)
 
     const InputComponent = textarea ? TextareaHOC : InputHOC
-
+    console.log(hasError)
     return (
       <div>
         <Box
