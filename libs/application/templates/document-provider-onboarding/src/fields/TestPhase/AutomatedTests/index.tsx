@@ -10,14 +10,13 @@ import {
   Input,
   Text,
   Button,
-  Icon,
-  LoadingIcon,
+  AlertMessage,
+  ContentBlock,
 } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { m } from '../../../forms/messages'
 
 import { runEndpointTestsMutation } from '../../../graphql/mutations/runEndpointTestsMutation'
-import * as styles from './AutomatedTests.treat'
 
 const AutomatedTests: FC<FieldBaseProps> = () => {
   interface Response {
@@ -47,8 +46,7 @@ const AutomatedTests: FC<FieldBaseProps> = () => {
     setResponse(results.data.runEndpointTests)
     setIsLoading(false)
   }
-
-  //TODO finish design of this component
+  //TODO finish loading state
   return (
     <Box>
       <Box marginBottom={3}>
@@ -91,78 +89,44 @@ const AutomatedTests: FC<FieldBaseProps> = () => {
                 ref={register({ required: true })}
                 hasError={errors.docId !== undefined}
                 errorMessage={m.automatedTestsDocIdErrorMessage.defaultMessage}
+                disabled={isLoading}
               />
             </GridColumn>
           </GridRow>
-          <GridRow>
-            <GridColumn span="4/12">
-              <Box
-                marginTop={3}
-                display="flex"
-                justifyContent="spaceBetween"
-                alignItems="center"
-              >
-                <Button
-                  onClick={() => {
-                    trigger(['nationalId', 'docId']).then((isValid) =>
-                      isValid ? validateEndpoint() : setResponse([]),
-                    )
-                  }}
-                >
-                  {m.automatedTestsButton.defaultMessage}
-                </Button>
-              </Box>
-            </GridColumn>
-          </GridRow>
         </GridContainer>
-        {isLoading ? (
-          <Box
-            className={styles.isLoadingContainer}
-            position="absolute"
-            left={0}
-            right={0}
-            top={0}
-            bottom={0}
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            borderRadius="large"
-            background="blue100"
+        <Box marginTop={3} display="flex" justifyContent="flexEnd">
+          <Button
+            variant="ghost"
+            size="small"
+            onClick={() => {
+              trigger(['nationalId', 'docId']).then((isValid) =>
+                isValid ? validateEndpoint() : setResponse([]),
+              )
+            }}
           >
-            <LoadingIcon animate size={30} />
-          </Box>
-        ) : (
-          <Box>
-            {response.map((Response) => (
-              <Box marginTop={3} key={Response.id}>
-                <GridContainer>
-                  <GridRow>
-                    <GridColumn>
-                      {Response.isValid ? (
-                        <Icon
-                          color="mint600"
-                          icon="checkmarkCircle"
-                          size="medium"
-                          type="filled"
-                        />
-                      ) : (
-                        <Icon
-                          color="red600"
-                          icon="warning"
-                          size="medium"
-                          type="filled"
-                        />
-                      )}
-                    </GridColumn>
-                    <GridColumn>
-                      <Text variant="h5">{Response.message}</Text>
-                    </GridColumn>
-                  </GridRow>
-                </GridContainer>
-              </Box>
-            ))}
-          </Box>
-        )}
+            {m.automatedTestsButton.defaultMessage}
+          </Button>
+        </Box>
+
+        <Box>
+          {response.map((Response) => (
+            <Box marginTop={3} key={Response.id}>
+              <ContentBlock>
+                {Response.isValid ? (
+                  <AlertMessage
+                    type="success"
+                    title={Response.message}
+                  ></AlertMessage>
+                ) : (
+                  <AlertMessage
+                    type="error"
+                    title={Response.message}
+                  ></AlertMessage>
+                )}
+              </ContentBlock>
+            </Box>
+          ))}
+        </Box>
       </Box>
     </Box>
   )
