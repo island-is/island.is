@@ -343,7 +343,7 @@ export const StepThree: React.FC = () => {
                   Takmarkanir á gæslu
                 </Text>
               </Box>
-              <Text>Ef ekkert er valið, er gæsla án takmarkana</Text>
+              <Text>Ef ekkert er valið er gæsla án takmarkana</Text>
             </Box>
             <BlueBox>
               <GridContainer>

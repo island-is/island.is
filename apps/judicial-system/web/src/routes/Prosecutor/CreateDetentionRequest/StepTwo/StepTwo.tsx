@@ -56,7 +56,6 @@ export const StepTwo: React.FC = () => {
 
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const arrestTimeRef = useRef<HTMLInputElement>(null)
   const requestedCourtTimeRef = useRef<HTMLInputElement>(null)
@@ -93,7 +92,7 @@ export const StepTwo: React.FC = () => {
     setRequestedCustodyEndTimeErrorMessage,
   ] = useState<string>('')
 
-  const { data } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
@@ -180,15 +179,10 @@ export const StepTwo: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setIsLoading(true)
-      setWorkingCase(resCase)
-      setIsLoading(false)
-    }
     if (id && !workingCase && resCase) {
-      getCurrentCase()
+      setWorkingCase(resCase)
     }
-  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
+  }, [id, workingCase, setWorkingCase, resCase])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
@@ -221,7 +215,13 @@ export const StepTwo: React.FC = () => {
     if (workingCase) {
       setIsStepIllegal(isNextDisabled(requiredFields))
     }
-  }, [workingCase, setIsStepIllegal, requestedCustodyEndTimeRef.current?.value])
+  }, [
+    workingCase,
+    setIsStepIllegal,
+    requestedCustodyEndTimeRef.current?.value,
+    requestedCourtTimeRef.current?.value,
+    arrestTimeRef.current?.value,
+  ])
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
 
@@ -289,7 +289,7 @@ export const StepTwo: React.FC = () => {
     <PageLayout
       activeSection={Sections.PROSECUTOR}
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_TWO}
-      isLoading={isLoading}
+      isLoading={loading}
       notFound={data?.case === undefined}
     >
       {workingCase ? (
@@ -530,6 +530,7 @@ export const StepTwo: React.FC = () => {
               <GridRow>
                 <GridColumn span="5/8">
                   <DatePicker
+                    id="reqCustodyEndDate"
                     label="Gæsluvarðhald til"
                     placeholderText="Veldu dagsetningu"
                     selected={

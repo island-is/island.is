@@ -240,7 +240,7 @@ describe('/krafa without ID', () => {
     ).toBeDisabled()
   })
 
-  test('should not allow users to continue unless every required field has been filled outt', async () => {
+  test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     render(
       <MockedProvider
