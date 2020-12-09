@@ -7,7 +7,6 @@ import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 
 import { setup } from '../../../../../test/setup'
-import { UserService } from '../../user'
 import { Case } from '../../case'
 import { Notification, SendNotificationResponse } from '../models'
 
@@ -16,10 +15,11 @@ let authCookie: string
 
 beforeAll(async () => {
   app = await setup()
-  const userService = await app.resolve(UserService)
-  const user = await userService.findByNationalId('1112902539')
+
   const sharedAuthService = await app.resolve(SharedAuthService)
 
+  const user = (await request(app.getHttpServer()).get(`/api/user/1112902539`))
+    .body
   authCookie = sharedAuthService.signJwt((user as unknown) as User)
 })
 

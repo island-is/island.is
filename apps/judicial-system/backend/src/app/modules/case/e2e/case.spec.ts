@@ -14,8 +14,8 @@ import {
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 
-import { setup, user } from '../../../../../test/setup'
-import { User, UserService } from '../../user'
+import { setup } from '../../../../../test/setup'
+import { User } from '../../user'
 import { Case } from '../models'
 
 let app: INestApplication
@@ -27,15 +27,13 @@ let judgeAuthCookie: string
 beforeAll(async () => {
   app = await setup()
 
-  const userService = await app.resolve(UserService)
   const sharedAuthService = await app.resolve(SharedAuthService)
-  prosecutor = ((await userService.findByNationalId(
-    '2510654469',
-  )) as unknown) as TUser
+
+  prosecutor = (await request(app.getHttpServer()).get(`/api/user/2510654469`))
+    .body
   prosecutorAuthCookie = sharedAuthService.signJwt(prosecutor)
-  judge = ((await userService.findByNationalId(
-    '1112902539',
-  )) as unknown) as TUser
+
+  judge = (await request(app.getHttpServer()).get(`/api/user/1112902539`)).body
   judgeAuthCookie = sharedAuthService.signJwt(judge)
 })
 
@@ -323,7 +321,7 @@ describe('Case', () => {
               ...dbCase,
               modified: response.body.modified,
               state: CaseState.ACCEPTED,
-              judgeId: user.id,
+              judgeId: judge.id,
             } as Case)
 
             // Check the data in the database
@@ -337,7 +335,7 @@ describe('Case', () => {
               expectCasesToMatch(dbCaseToCase(newValue), {
                 ...response.body,
                 judge: {
-                  ...user,
+                  ...judge,
                   created: newValue.judge.created,
                   modified: newValue.judge.modified,
                 },
@@ -383,7 +381,7 @@ describe('Case', () => {
     await Case.create({
       ...getCaseData(true, true),
       state: CaseState.REJECTED,
-      judgeId: user.id,
+      judgeId: judge.id,
     }).then(async (value) => {
       await request(app.getHttpServer())
         .post(`/api/case/${value.id}/signature`)
@@ -401,7 +399,7 @@ describe('Case', () => {
     await Case.create({
       ...getCaseData(),
       state: CaseState.ACCEPTED,
-      judgeId: user.id,
+      judgeId: judge.id,
     }).then(async (value) => {
       await request(app.getHttpServer())
         .get(`/api/case/${value.id}/signature`)
