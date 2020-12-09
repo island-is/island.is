@@ -120,7 +120,7 @@ export class CaseService {
     const sevenDaysFromNow = this.sevenDaysFromNow()
 
     return this.caseModel.findAll({
-      order: [['modified', 'DESC']],
+      order: [['created', 'DESC']],
       where: {
         [Op.or]: [
           {
