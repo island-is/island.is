@@ -123,7 +123,7 @@ export const ReviewApplication: Form = buildForm({
             }),
             buildTextField({
               id: 'rejectionReason',
-              name: m.reviewRejectReasonLabel.defaultMessage,
+              name: m.reviewRejectReasonLabel,
               condition: {
                 questionId: 'approvedByReviewer',
                 isMultiCheck: false,
