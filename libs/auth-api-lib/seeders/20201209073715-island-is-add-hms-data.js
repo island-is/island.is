@@ -42,7 +42,7 @@ module.exports = {
         queryInterface.bulkDelete('client_secret', [
           {
             client_id: 'apex-auth_client',
-            value: 'K7gNU3sdo+OL0wNhqoVWhr3g6s1xYv72ol/pe/Unols=',
+            value: '6THtRPZEkgZHoEc3YIqwDlo8y3AqBIgyeiq0D+Lj0t8=',
             description: 'secret for apex-auth_client',
             type: 'SharedSecret',
           },
