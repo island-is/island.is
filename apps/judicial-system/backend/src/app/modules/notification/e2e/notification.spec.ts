@@ -6,7 +6,7 @@ import { NotificationType, User } from '@island.is/judicial-system/types'
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 
-import { setup, user } from '../../../../../test/setup'
+import { setup } from '../../../../../test/setup'
 import { Case } from '../../case'
 import { Notification } from '../models'
 import { UserService } from '../../user'

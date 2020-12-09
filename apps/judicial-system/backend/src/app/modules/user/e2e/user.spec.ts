@@ -2,8 +2,11 @@ import * as request from 'supertest'
 
 import { INestApplication } from '@nestjs/common'
 
-import { setup, user } from '../../../../../test/setup'
+import { User } from '@island.is/judicial-system/types'
 
+import { setup } from '../../../../../test/setup'
+
+const nationalId = '1112902539'
 let app: INestApplication
 
 beforeAll(async () => {
@@ -12,10 +15,18 @@ beforeAll(async () => {
 
 describe('User', () => {
   it('GET /api/user/:nationalId should get the  user', async () => {
-    await request(app.getHttpServer())
-      .get(`/api/user/${user.nationalId}`)
-      .send()
+    let user: User
+
+    request(app.getHttpServer())
+      .get(`/api/user/${nationalId}`)
       .expect(200)
+      .then(async (response) => {
+        user = response.body
+        return request(app.getHttpServer())
+          .get(`/api/user/${user.nationalId}`)
+          .send()
+          .expect(200)
+      })
       .then((response) => {
         expect(response.body.id).toBe(user.id)
         expect(response.body.nationalId).toBe(user.nationalId)
