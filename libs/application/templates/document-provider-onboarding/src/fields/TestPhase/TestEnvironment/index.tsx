@@ -23,10 +23,11 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
     // @ts-ignore
     (formValue.testUserExists as string) || '',
   )
-  const [environmentError, setEnvironmentError] = useState('')
+  const [environmentError, setEnvironmentError] = useState<string | null>(null)
   const [registerProvider] = useMutation(registerProviderMutation)
 
   const onRegister = async () => {
+    setEnvironmentError(null)
     const credentials = await registerProvider({
       variables: {
         input: { nationalId: '2404805659' }, //TODO set real nationalId

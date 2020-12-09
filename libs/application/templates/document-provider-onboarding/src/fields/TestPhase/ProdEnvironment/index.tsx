@@ -16,7 +16,9 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
 
   const { register, clearErrors } = useFormContext()
   const [keys, setKeys] = useState<Key[]>([])
-  const [prodEnvironmentError, setProdEnvironmentErrorError] = useState('')
+  const [prodEnvironmentError, setProdEnvironmentErrorError] = useState<
+    string | null
+  >(null)
   const { answers: formValue } = application
   const [currentAnswer, setCurrentAnswer] = useState(
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -26,6 +28,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
   const [registerProvider] = useMutation(registerProviderMutation)
 
   const onRegister = async () => {
+    setProdEnvironmentErrorError(null)
     const credentials = await registerProvider({
       variables: {
         input: { nationalId: '2404805659' }, //TODO set real nationalId

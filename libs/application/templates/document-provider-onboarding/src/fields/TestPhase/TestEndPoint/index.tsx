@@ -19,7 +19,9 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
   const { clearErrors, register, errors, trigger, getValues } = useFormContext()
   const { answers: formValue } = application
   const [variables, setendPointVariables] = useState<Variable[]>([])
-  const [testEndPointError, setTestEndPointError] = useState('')
+  const [testEndPointError, setTestEndPointError] = useState<string | null>(
+    null,
+  )
 
   const [endpointExists, setendpointExists] = useState(
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -29,6 +31,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
   const [registerEndpoint] = useMutation(registerEndpointMutation)
 
   const onRegisterEndpoint = async (isValid: boolean) => {
+    setTestEndPointError(null)
     if (isValid) {
       const result = await registerEndpoint({
         variables: {

@@ -27,11 +27,14 @@ const AutomatedTests: FC<FieldBaseProps> = () => {
 
   const [response, setResponse] = useState<Response[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const [automatedTestsError, setautomatedTestsError] = useState('')
+  const [automatedTestsError, setautomatedTestsError] = useState<string | null>(
+    null,
+  )
   const { register, errors, trigger } = useForm()
   const [runEndpointTests] = useMutation(runEndpointTestsMutation)
 
   const validateEndpoint = async () => {
+    setautomatedTestsError(null)
     setIsLoading(true)
 
     const results = await runEndpointTests({
