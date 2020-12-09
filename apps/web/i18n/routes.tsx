@@ -17,7 +17,7 @@ export type ContentType =
   | 'lifeevent'
   | 'lifeeventpage'
   | 'adgerdir'
-  | 'vidspyrna-frontpage'
+  | 'adgerdirfrontpage'
   | 'adgerdirpage'
   | ''
 
@@ -62,7 +62,7 @@ export const routes: Record<ContentType, Record<Locale, string>> = {
     is: '/covid-adgerdir/[slug]',
     en: '/en/covid-operations/[slug]',
   },
-  'vidspyrna-frontpage': {
+  adgerdirfrontpage: {
     is: '/covid-adgerdir',
     en: '/en/covid-operations',
   },

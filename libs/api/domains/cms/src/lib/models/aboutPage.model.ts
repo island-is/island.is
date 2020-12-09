@@ -3,6 +3,7 @@ import * as types from '../generated/contentfulTypes'
 import { safelyMapSlices } from './slice.model'
 import { PageHeader, mapPageHeader } from './pageHeader.model'
 import { SliceUnion } from '../unions/slice.union'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class AboutPage {
@@ -28,7 +29,11 @@ export class AboutPage {
   slices: Array<typeof SliceUnion>
 }
 
-export const mapAboutPage = ({ fields, sys }: types.IPage): AboutPage => ({
+export const mapAboutPage = ({
+  fields,
+  sys,
+}: types.IPage): SystemMetadata<AboutPage> => ({
+  typename: 'AboutPage',
   id: sys.id,
   pageHeader: mapPageHeader(fields.header),
   slices: fields.slices
