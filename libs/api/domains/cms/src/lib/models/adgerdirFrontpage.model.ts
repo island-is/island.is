@@ -13,6 +13,7 @@ import { mapAdgerdirGroupSlice } from './adgerdirGroupSlice.model'
 import { Image, mapImage } from './image.model'
 import { SliceUnion } from '../unions/slice.union'
 import { AdgerdirSliceUnion } from '../unions/adgerdirSlice.union'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class AdgerdirFrontpage {
@@ -62,7 +63,8 @@ export const mapAdgerdirSlice = (
 export const mapAdgerdirFrontpage = ({
   sys,
   fields,
-}: IVidspyrnaFrontpage): AdgerdirFrontpage => ({
+}: IVidspyrnaFrontpage): SystemMetadata<AdgerdirFrontpage> => ({
+  typename: 'AdgerdirFrontpage',
   id: sys?.id ?? '',
   slug: fields?.slug ?? '',
   title: fields?.title ?? '',

@@ -1,0 +1,1 @@
+export { SubpageDetailsContent } from './SubpageDetailsContent'
