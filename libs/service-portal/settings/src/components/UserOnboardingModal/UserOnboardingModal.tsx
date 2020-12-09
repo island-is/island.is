@@ -15,6 +15,7 @@ import { FormSubmittedStep } from './Steps/FormSubmittedStep'
 import { LanguageStep } from './Steps/LanguageStep'
 import { PhoneStep } from './Steps/PhoneStep'
 import { SubmitFormStep } from './Steps/SubmitFormStep'
+import { RemoveScroll } from 'react-remove-scroll'
 
 export type OnboardingStep =
   | 'language-form'
@@ -98,38 +99,42 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   }
 
   return (
-    <Modal
-      id="user-onboarding-modal"
-      onCloseModal={dropOnboardingSideEffects}
-      toggleClose={toggleCloseModal}
-    >
-      <OnboardingStepper activeStep={step} />
-      {step === 'language-form' && (
-        <LanguageStep
-          onClose={dropOnboarding}
-          language={language}
-          onSubmit={handleLanguageStepSubmit}
-          userInfo={userInfo}
-        />
-      )}
-      {step === 'tel-form' && (
-        <PhoneStep
-          onBack={gotoStep.bind(null, 'language-form')}
-          natReg={userInfo.profile.nationalId}
-          tel={tel}
-          onSubmit={handlePhoneStepSubmit}
-        />
-      )}
-      {step === 'email-form' && (
-        <EmailStep
-          onBack={gotoStep.bind(null, 'tel-form')}
-          email={email}
-          onSubmit={handleEmailStepSubmit}
-        />
-      )}
-      {step === 'submit-form' && <SubmitFormStep />}
-      {step === 'form-submitted' && <FormSubmittedStep onClose={closeModal} />}
-    </Modal>
+    <RemoveScroll enabled={toggleCloseModal === false}>
+      <Modal
+        id="user-onboarding-modal"
+        onCloseModal={dropOnboardingSideEffects}
+        toggleClose={toggleCloseModal}
+      >
+        <OnboardingStepper activeStep={step} />
+        {step === 'language-form' && (
+          <LanguageStep
+            onClose={dropOnboarding}
+            language={language}
+            onSubmit={handleLanguageStepSubmit}
+            userInfo={userInfo}
+          />
+        )}
+        {step === 'tel-form' && (
+          <PhoneStep
+            onBack={gotoStep.bind(null, 'language-form')}
+            natReg={userInfo.profile.nationalId}
+            tel={tel}
+            onSubmit={handlePhoneStepSubmit}
+          />
+        )}
+        {step === 'email-form' && (
+          <EmailStep
+            onBack={gotoStep.bind(null, 'tel-form')}
+            email={email}
+            onSubmit={handleEmailStepSubmit}
+          />
+        )}
+        {step === 'submit-form' && <SubmitFormStep />}
+        {step === 'form-submitted' && (
+          <FormSubmittedStep onClose={closeModal} />
+        )}
+      </Modal>
+    </RemoveScroll>
   )
 }
 
