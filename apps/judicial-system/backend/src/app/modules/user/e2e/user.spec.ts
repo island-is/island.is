@@ -2,8 +2,6 @@ import * as request from 'supertest'
 
 import { INestApplication } from '@nestjs/common'
 
-import { User as TUser } from '@island.is/judicial-system/types'
-
 import { setup } from '../../../../../test/setup'
 import { User } from '../user.model'
 
@@ -16,13 +14,13 @@ beforeAll(async () => {
 describe('User', () => {
   it('GET /api/user/:nationalId should get the  user', async () => {
     const nationalId = '1112902539'
-    let user: TUser
+    let dbUser: User
 
     User.findOne({
       where: { nationalId },
     })
       .then(async (value) => {
-        user = (value as unknown) as TUser
+        dbUser = value
 
         return request(app.getHttpServer())
           .get(`/api/user/${nationalId}`)
@@ -30,15 +28,17 @@ describe('User', () => {
           .expect(200)
       })
       .then((response) => {
-        expect(response.body.id).toBe(user.id)
-        expect(response.body.nationalId).toBe(user.nationalId)
-        expect(response.body.name).toBe(user.name)
-        expect(response.body.title).toBe(user.title)
-        expect(response.body.mobileNumber).toBe(user.mobileNumber)
-        expect(response.body.email).toBe(user.email)
-        expect(response.body.role).toBe(user.role)
-        expect(response.body.institution).toBe(user.institution)
-        expect(response.body.active).toBe(user.active)
+        const apiUser = response.body
+
+        expect(apiUser.id).toBe(dbUser.id)
+        expect(apiUser.nationalId).toBe(dbUser.nationalId)
+        expect(apiUser.name).toBe(dbUser.name)
+        expect(apiUser.title).toBe(dbUser.title)
+        expect(apiUser.mobileNumber).toBe(dbUser.mobileNumber)
+        expect(apiUser.email).toBe(dbUser.email)
+        expect(apiUser.role).toBe(dbUser.role)
+        expect(apiUser.institution).toBe(dbUser.institution)
+        expect(apiUser.active).toBe(dbUser.active)
       })
   })
 })
