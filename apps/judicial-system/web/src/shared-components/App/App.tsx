@@ -8,7 +8,7 @@ import {
   StepOne,
   StepTwo,
   StepThree,
-  StepFour
+  StepFour,
 } from '../../routes/Prosecutor/CreateDetentionRequest'
 import { DetentionRequests } from '../../routes/Shared/DetentionRequests/DetentionRequests'
 import { Login } from '../../routes/Shared/Login/Login'
