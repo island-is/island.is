@@ -13,7 +13,7 @@ import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch/models/Applica
 const handleError = (error: any) => {
   logger.error(JSON.stringify(error))
   if (error.json) {
-    error.json().then((errorMessage) => {
+    error.json().then((errorMessage: unknown) => {
       logger.error(errorMessage)
     })
   }
@@ -105,14 +105,14 @@ export class ApplicationService {
 
   async updateExternalData(
     input: UpdateApplicationExternalDataInput,
-    accessToken?: string,
+    authorization?: string,
   ) {
     const { id, ...populateExternalDataDto } = input
 
     return this.applicationApi.applicationControllerUpdateExternalData({
       id,
       populateExternalDataDto,
-      xAccessToken: accessToken,
+      authorization,
     })
   }
 

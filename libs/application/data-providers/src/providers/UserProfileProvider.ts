@@ -4,9 +4,7 @@ import {
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 
-// TODO using this dataprovider now depends on the developer running the user profile service, and also that (s)he has
-// inserted their mobilenumber AND email accordingly. How can we improve this for local development? Will the
-// shared/mocking lib be good enought for server side mocking?
+/** This data provider fetches email and phone number information from user profile service and fails if the user has not set it up in my pages **/
 export class UserProfileProvider extends BasicDataProvider {
   readonly type = 'UserProfile'
 
@@ -19,7 +17,6 @@ export class UserProfileProvider extends BasicDataProvider {
         mobilePhoneNumberVerified
       }
     }`
-
     return this.useGraphqlGateway(query)
       .then(async (res: Response) => {
         const response = await res.json()
@@ -40,6 +37,12 @@ export class UserProfileProvider extends BasicDataProvider {
         return Promise.resolve(responseObj)
       })
       .catch(() => {
+        if (process.env.NODE_ENV === 'development') {
+          return Promise.resolve({
+            email: 'mockEmail@island.is',
+            mobilePhoneNumber: '1234567',
+          })
+        }
         return Promise.reject(
           'You must go to my pages and set your email and phone number to in order continue the application process',
         )

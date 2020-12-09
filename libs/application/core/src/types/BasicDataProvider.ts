@@ -12,12 +12,21 @@ export interface DataProvider {
   onProvideSuccess(_: unknown): SuccessfulDataProviderResult
 }
 
+export interface DataProviderConfig {
+  /** Authorization token **/
+  authorization: string
+  /** GraphQL api base url **/
+  baseApiUrl: string
+}
+
 export abstract class BasicDataProvider implements DataProvider {
   readonly type!: string
-  readonly accessToken: string
+  readonly config: DataProviderConfig
 
-  constructor(accessToken = '') {
-    this.accessToken = accessToken
+  constructor(
+    config: DataProviderConfig = { authorization: '', baseApiUrl: '' },
+  ) {
+    this.config = config
   }
 
   /**
@@ -28,12 +37,12 @@ export abstract class BasicDataProvider implements DataProvider {
   abstract async provide(application: Application): Promise<unknown>
 
   protected async useGraphqlGateway(query: string): Promise<Response> {
-    return fetch(`http://localhost:4444/api/graphql`, {
+    return fetch(`${this.config.baseApiUrl}/api/graphql`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        authorization: `Bearer ${this.accessToken}`,
+        authorization: this.config.authorization,
       },
       body: JSON.stringify({
         query,
