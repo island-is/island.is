@@ -69,9 +69,9 @@ export const validateAndSetTime = (
   validations: Validation[],
   theCase: Case,
   setCase: (value: React.SetStateAction<Case | undefined>) => void,
-  setTime?: (value: React.SetStateAction<string | undefined>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
+  setTime?: (value: React.SetStateAction<string | undefined>) => void,
 ) => {
   if (currentValue) {
     // remove optional

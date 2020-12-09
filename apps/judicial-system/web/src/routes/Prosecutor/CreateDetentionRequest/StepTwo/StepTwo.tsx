@@ -22,10 +22,8 @@ import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import isNull from 'lodash/isNull'
 import { FormFooter } from '../../../../shared-components/FormFooter'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '../../../../utils/constants'
-import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useHistory, useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
@@ -382,9 +380,9 @@ export const StepTwo: React.FC = () => {
                       ['empty', 'time-format'],
                       workingCase,
                       setWorkingCase,
-                      setArrestTime,
                       arrestTimeErrorMessage,
                       setArrestTimeErrorMessage,
+                      setArrestTime,
                     )
                   }
                   onBlur={(evt) =>
@@ -472,9 +470,9 @@ export const StepTwo: React.FC = () => {
                       ['empty', 'time-format'],
                       workingCase,
                       setWorkingCase,
-                      setRequestedCourtTime,
                       requestedCourtTimeErrorMessage,
                       setRequestedCourtTimeErrorMessage,
+                      setRequestedCourtTime,
                     )
                   }
                   onBlur={(evt) =>
@@ -567,9 +565,9 @@ export const StepTwo: React.FC = () => {
                         ['empty', 'time-format'],
                         workingCase,
                         setWorkingCase,
-                        setRequestedCustodyEndTime,
                         requestedCustodyEndTimeErrorMessage,
                         setRequestedCustodyEndTimeErrorMessage,
+                        setRequestedCustodyEndTime,
                       )
                     }
                     onBlur={(evt) =>
