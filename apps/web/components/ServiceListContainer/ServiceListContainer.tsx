@@ -59,7 +59,7 @@ export interface ServiceListContainerProps {
 export const ServiceListContainer: React.FC<ServiceListContainerProps> = ({
   baseUrl = './vorulisti/',
   services = [],
-  span = ['12/12', '6/12', '6/12', '4/12'],
+  span = ['12/12', '12/12', '12/12', '6/12', '4/12'],
   tagDisplayNames = {},
   loading = false,
   moreToLoad = false,

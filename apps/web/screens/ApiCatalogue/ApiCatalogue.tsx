@@ -93,7 +93,8 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                   <Text variant="h1">{n('webServicesTitle')}</Text>
                   <Text variant="intro">{n('webServicesDescription')}</Text>
                 </Stack>
-                <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
+                <Box marginTop={1}>
+                <Text variant="default">{n('designGuideDescription')}</Text>
                   <Link href="https://docs.devland.is/handbook/technical-overview/api-design-guide">
                     <Button
                       colorScheme="default"
@@ -128,7 +129,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
             <SidebarLayout sidebarContent={<div>Hér kemur Filterinn</div>}>
               <ServiceListContainer
                 services={data?.getApiCatalogue.services}
-                span={['12/12', '12/12', '12/12', '6/12', '4/12']}
                 loading={loading}
                 moreToLoad={data?.getApiCatalogue?.pageInfo?.nextCursor != null}
                 emptyListText={TEXT_NOT_FOUND}
