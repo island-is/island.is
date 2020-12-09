@@ -55,9 +55,15 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
     //TODO: we can make this a generic component for reuasabilty, same as TEST environment
     <Box>
       <Box marginBottom={7} />
-      <Box marginBottom={7}>
+      <Box
+        marginBottom={7}
+        display="flex"
+        flexDirection="column"
+        alignItems="flexEnd"
+      >
         <Button
-          variant="primary"
+          variant="ghost"
+          size="small"
           onClick={() => {
             onRegister()
           }}
