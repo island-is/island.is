@@ -132,7 +132,7 @@ export const HealthInsuranceForm: Form = buildForm({
               component: 'CurrentStatus',
             }),
             buildFileUploadField({
-              id: 'information',
+              id: 'additionalInformation',
               name: '',
               introduction: m.statusAdditionalInformation,
               condition: (answers) => answers.status === 'student',
