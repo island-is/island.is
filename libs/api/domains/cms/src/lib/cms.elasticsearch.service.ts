@@ -155,24 +155,22 @@ export class CmsElasticsearchService {
       query,
     )
     const response = newsResponse.hits.hits?.[0]?._source?.response
-    if (response) {
-      return JSON.parse(response)
-    } else {
-      return null
-    }
+    return response ? JSON.parse(response) : null
   }
 
   async getSingleMenu<RequestedMenuType>(
     index: SearchIndexes,
     { name, type }: GetMenuInput & { type: 'webMenu' | 'webGroupedMenu' },
-  ): Promise<RequestedMenuType> {
+  ): Promise<RequestedMenuType | null> {
     // return a single news item by slug
     const query = { types: [type], tags: [{ type: 'name', key: name }] }
     const menuResponse = await this.elasticService.getDocumentsByMetaData(
       index,
       query,
     )
-    return JSON.parse(menuResponse.hits.hits?.[0]?._source?.response)
+
+    const response = menuResponse.hits.hits?.[0]?._source?.response
+    return response ? JSON.parse(response) : null
   }
 
   async getSingleAboutPage(
