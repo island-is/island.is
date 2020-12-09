@@ -7,11 +7,12 @@ interface Props {
 }
 
 const Overlay: React.FC<Props> = ({ handleButtonClosed, title, showOverlay, children }) => {
-    const [show, setShow] = useState<boolean>(false);
+    const [show, setShow] = useState<boolean>(showOverlay);
   return (
     <div className={`overlay ${show ? "show" : "hidden"}`}>
-      <h3 className={`overlay-content ${title ? "show": "hidden"}`}>{title}</h3>
-      <div className="step-end__container__form">
+      <h3 className={`${title ? "show": "hidden"}`}>{title}</h3>
+      <div className="overlay__container__content">
+      <a className="users__container__button__close" onClick={() => setShow(!show)}>&times;</a>
         <div className="step-end__content">{children}</div>
       </div>
     </div>

@@ -18,6 +18,10 @@ select {
   }
 }
 
+input:read-only {
+  background-color: $color-disabled;
+}
+
 input[type='text'],
 input[type='number'],
 select {
@@ -260,6 +264,16 @@ a {
   &[class$='new'] {
     display: block;
     padding: 20px 0px;
+  }
+
+  &[class$='button__close'] {
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    padding: 3px;
+    font-weight: $weight-semi-bold;
+    font-size: 1rem;
+    top: 1px;
   }
 }
 

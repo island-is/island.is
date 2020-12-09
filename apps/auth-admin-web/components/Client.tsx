@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ClientDTO from '../models/dtos/client-dto';
 import axios from 'axios';
 import StatusBar from './StatusBar';
@@ -23,6 +23,8 @@ const Client: React.FC<Props> = (props: Props) => {
   const [response, setResponse] = useState<APIResponse>(null);
   const [available, setAvailable] = useState<boolean>(false);
   const [clientIdLength, setClientIdLength] = useState<number>(0);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
   // TODO: Fix
   const client = props.client;
 
@@ -52,33 +54,79 @@ const Client: React.FC<Props> = (props: Props) => {
     return obj;
   };
 
+  useEffect(() => {
+    if (props.client && props.client.clientId){
+      setIsEditing(true);
+      setAvailable(true);
+    }
+  }, [props.client])
+
   const save = async (data) => {
     const clientObject = castToNumbers(data.client);
-    await axios
-      .post('/api/clients', clientObject)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-        if (res.statusCode === 201) {
-          console.log('handle change');
-          console.log(clientObject);
-          props.onNextButtonClick(clientObject);
-        }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-
-          // console.log(error.response.data);
-
-          // console.log(error.response.headers);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
+    if (!isEditing) {
+      await create(clientObject);
+    }
+    else {
+      await edit(clientObject);
+    }
   };
+
+  const create = async (data) => {
+    await axios
+    .post('/api/clients', clientObject)
+    .then((response) => {
+      const res = new APIResponse();
+      res.statusCode = response.request.status;
+      res.message = response.request.statusText;
+      setResponse(res);
+      if (res.statusCode === 201) {
+        console.log('handle change');
+        console.log(clientObject);
+        props.onNextButtonClick(clientObject);
+      }
+    })
+    .catch(function (error) {
+      if (error.response) {
+        setResponse(error.response.data);
+
+        // console.log(error.response.data);
+
+        // console.log(error.response.headers);
+      } else {
+        // TODO: Handle and show error
+      }
+    });
+  }
+
+  const edit = async (data) => {
+    console.log("DELETE CLIENTID");
+    delete data.clientId;
+    console.log(data);
+    await axios
+    .put(`/api/clients/${props.client.clientId}`, data)
+    .then((response) => {
+      const res = new APIResponse();
+      res.statusCode = response.request.status;
+      res.message = response.request.statusText;
+      setResponse(res);
+      if (res.statusCode === 201) {
+        console.log('handle change');
+        console.log(data);
+        // props.onNextButtonClick(clientObject);
+      }
+    })
+    .catch(function (error) {
+      if (error.response) {
+        setResponse(error.response.data);
+
+        // console.log(error.response.data);
+
+        // console.log(error.response.headers);
+      } else {
+        // TODO: Handle and show error
+      }
+    });
+  }
 
   const checkAvailability = async (clientId: string) => {
     setClientIdLength(clientId.length);
@@ -103,7 +151,7 @@ const Client: React.FC<Props> = (props: Props) => {
         
 
         <div className="client__container">
-          <h1>Create a new Client</h1>
+          <h1>{ isEditing ? "Edit Client" : "Create a new Client"}</h1>
           <div className="client__container__form">
           <div className="client__help">
           Enter some basic details for this client. Click <a href="#advanced">advanced</a> to configure preferences if default settings need to be changed. 
@@ -151,6 +199,7 @@ const Client: React.FC<Props> = (props: Props) => {
                     placeholder="example-client"
                     onChange={(e) => checkAvailability(e.target.value)}
                     title="The unique identifier for this application"
+                    readOnly={isEditing}
                   />
                   <div
                     className={`client__container__field__available ${

@@ -19,7 +19,6 @@
 
   &__content {
     position: absolute;
-    padding: 8px 5px;
     background: $color-body-bg;
     border: 1px solid $color-border;
     width: 200px;
@@ -28,17 +27,6 @@
     top: 30px;
     left: 10px;
     border-radius: 8px;
-
-    &__button__close {
-      display: block;
-      font-size: 1rem;
-      font-weight: $weight-semi-bold;
-      text-align: right;
-      margin-right: 5px;
-      margin-bottom: -13px;
-      margin-left: 10px;
-      cursor: pointer;
-      padding-bottom: 5px;
-    }
+    padding: 12px 24px 12px 16px;
   }
 }
