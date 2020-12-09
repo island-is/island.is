@@ -1,4 +1,4 @@
-# Application system
+# Application System
 
 ## About
 

@@ -1,4 +1,4 @@
-# Auto-generated schemas
+# Auto Generated Schemas
 
 We are ignoring all the auto-generated files from the repository to avoid noises, to make reviews easier on PRs and don't notify teams with code reviews when not needed.
 

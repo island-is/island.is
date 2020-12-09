@@ -1,4 +1,4 @@
-# Operations base principles
+# Operations Base Principles
 
 Here are the principles that we apply when deciding how to run Operational workloads. They come from the management team at Stafrænt Ísland.
 
