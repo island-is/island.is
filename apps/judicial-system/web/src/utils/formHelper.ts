@@ -1,12 +1,14 @@
 import { Case, UpdateCase } from '@island.is/judicial-system/types'
 import {
   padTimeWithZero,
+  parseArray,
   parseString,
   parseTime,
   replaceTabs,
 } from './formatters'
 import { validate, Validation } from './validate'
 import formatISO from 'date-fns/formatISO'
+import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 
 export const removeTabsValidateAndSet = (
   field: string,
@@ -69,8 +71,14 @@ export const validateAndSetTime = (
   setCase: (value: React.SetStateAction<Case | undefined>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
+  setTime?: (value: React.SetStateAction<string | undefined>) => void,
 ) => {
   if (currentValue) {
+    // remove optional
+    if(setTime) {
+      setTime(time)
+    }
+
     const paddedTime = padTimeWithZero(time)
 
     const isValid = !validations.some(
@@ -187,4 +195,46 @@ export const setAndSendToServer = (
   if (theCase.id !== '') {
     updateCase(theCase.id, parseString(field, value))
   }
+}
+
+export const setCheckboxAndSendToServer = (
+  field: string,
+  value: string,
+  theCase: Case,
+  setCase: (value: React.SetStateAction<Case | undefined>) => void,
+  updateCase: (id: string, updateCase: UpdateCase) => void,
+) => {
+  const checks = theCase[field as keyof Case] ? 
+    [... theCase[field as keyof Case] as []] : 
+    [] as string[]
+
+  if(!checks.includes(value)) {
+    checks.push(
+      value,
+    )
+  } else {
+    checks.splice(
+      checks.indexOf(
+        value,
+      ),
+      1,
+    )
+  }
+
+  setCase({
+    ...theCase,
+    [field]: checks,
+  })
+
+  if (theCase.id !== '') {
+    updateCase(theCase.id, parseArray(field, checks))
+  }
+}
+
+export const getTimeFromDate = (
+  date: string | undefined
+) => {
+  return date?.includes('T') ? 
+    formatDate(date, TIME_FORMAT) : 
+    undefined
 }
