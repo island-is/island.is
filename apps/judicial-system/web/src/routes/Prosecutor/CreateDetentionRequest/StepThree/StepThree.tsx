@@ -17,7 +17,6 @@ import {
 import { isNextDisabled } from '../../../../utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import { FormFooter } from '../../../../shared-components/FormFooter'
-import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '../../../../utils/constants'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useParams } from 'react-router-dom'
@@ -36,7 +35,6 @@ import {
   setCheckboxAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import BlueBox from 'apps/judicial-system/web/src/shared-components/BlueBox/BlueBox'
-import { includes } from 'lodash'
 
 export const StepThree: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -255,13 +253,14 @@ export const StepThree: React.FC = () => {
                               ) > -1
                             }
                             tooltip={provision.explination}
-                            onChange={({ target }) => 
+                            onChange={({ target }) =>
                               setCheckboxAndSendToServer(
-                                "custodyProvisions", 
-                                target.value, 
-                                workingCase, 
-                                setWorkingCase, 
-                                updateCase)
+                                'custodyProvisions',
+                                target.value,
+                                workingCase,
+                                setWorkingCase,
+                                updateCase,
+                              )
                             }
                             large
                             filled
@@ -303,14 +302,14 @@ export const StepThree: React.FC = () => {
                             ) > -1
                           }
                           tooltip={restriction.explination}
-
-                          onChange={({ target }) => 
-                              setCheckboxAndSendToServer(
-                                "requestedCustodyRestrictions", 
-                                target.value, 
-                                workingCase, 
-                                setWorkingCase, 
-                                updateCase)
+                          onChange={({ target }) =>
+                            setCheckboxAndSendToServer(
+                              'requestedCustodyRestrictions',
+                              target.value,
+                              workingCase,
+                              setWorkingCase,
+                              updateCase,
+                            )
                           }
                           large
                           filled
