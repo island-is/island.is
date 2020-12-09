@@ -1,13 +1,14 @@
-import { Field, ObjectType } from '@nestjs/graphql'
-import { FamilyRelation } from './types/familyRelation.enum'
+import { Field, ObjectType, ID } from '@nestjs/graphql'
+
+import { FamilyRelation } from '../types/familyRelation.enum'
 
 @ObjectType()
-export class FamilyMember {
-  @Field(() => String)
-  fullName!: string
+export class NationalRegistryFamilyMember {
+  @Field(() => ID)
+  nationalId!: string
 
   @Field(() => String)
-  nationalId!: string
+  fullName!: string
 
   @Field(() => String)
   gender!: string

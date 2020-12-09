@@ -314,7 +314,7 @@ export const HearingArrangements: React.FC = () => {
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                Verjandi
+                Skipaður verjandi
               </Text>
             </Box>
             <Box marginBottom={3}>

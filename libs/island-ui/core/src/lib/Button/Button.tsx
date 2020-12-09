@@ -102,7 +102,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
             [styles.padding.utility]: variant === 'utility',
             [styles.isEmpty]: !children,
             [styles.loading]: loading,
-            [styles.iconPositionStart]: preTextIcon,
           },
         )}
         disabled={disabled || loading}
@@ -111,7 +110,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
         {loading && variant !== 'text' ? (
           <>
             {preTextIcon && (
-              <ButtonIcon icon={preTextIcon} type={iconType} transparent />
+              <ButtonIcon
+                icon={preTextIcon}
+                type={preTextIconType}
+                transparent
+                preText
+              />
             )}
             <span className={styles.hideContent}>{children}</span>
             {icon && <ButtonIcon icon={icon} type={iconType} transparent />}
@@ -125,7 +129,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
           </>
         ) : (
           <>
-            {preTextIcon && <ButtonIcon icon={preTextIcon} type={iconType} />}
+            {preTextIcon && (
+              <ButtonIcon icon={preTextIcon} type={preTextIconType} preText />
+            )}
             {children}
             {icon && <ButtonIcon icon={icon} type={iconType} />}
           </>
@@ -139,14 +145,18 @@ type ButtonIconProps = {
   icon: ButtonProps['icon']
   type: ButtonProps['iconType']
   transparent?: boolean
+  preText?: boolean
 }
 
-const ButtonIcon = ({ icon, type, transparent }: ButtonIconProps) => (
+const ButtonIcon = ({ icon, type, transparent, preText }: ButtonIconProps) => (
   <Icon
     icon={icon!}
     type={type!}
     color={transparent ? 'transparent' : 'currentColor'}
-    className={styles.icon}
+    className={cn(
+      styles.icon,
+      preText ? styles.iconPreText : styles.iconPostText,
+    )}
     skipPlaceholderSize
   />
 )
