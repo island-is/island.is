@@ -33,7 +33,7 @@ export const TestPhase: Form = buildForm({
       children: [
         buildCustomField(
           {
-            id: 'testAccount',
+            id: 'testUserExists',
             name: m.testEnviromentTitle,
             component: 'TestEnvironment',
           },
@@ -47,7 +47,7 @@ export const TestPhase: Form = buildForm({
       children: [
         buildCustomField(
           {
-            id: 'endPoint',
+            id: 'endPointObject',
             name: m.testEndPointTitle,
             component: 'TestEndPoint',
           },
@@ -61,7 +61,7 @@ export const TestPhase: Form = buildForm({
       children: [
         buildCustomField(
           {
-            id: 'technicalImplementation',
+            id: 'technicalAnswer',
             name: m.testTechnicalImplementationTitle,
             component: 'TechnicalImplementation',
           },
@@ -95,7 +95,7 @@ export const TestPhase: Form = buildForm({
           children: [
             buildCustomField(
               {
-                id: 'prodEnvironment',
+                id: 'productionUserExists',
                 name: 'Aðgangur að raun',
                 component: 'ProdEnvironment',
               },
@@ -141,7 +141,7 @@ export const TestPhase: Form = buildForm({
               {
                 id: 'thankYouImage',
                 name: m.thankYouImageScreenTitle,
-                component: 'ThankYouImage',
+                component: 'WomanWithLaptopIllustrationPeriods',
               },
               {},
             ),

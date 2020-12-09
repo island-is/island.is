@@ -49,19 +49,37 @@ const termsOfAgreement = z.object({
   }),
 })
 
+const endPoint = z.object({
+  endPoint: z.string().url().nonempty(),
+  endPointExists: z.string().nonempty({
+    message: 'Þú verður að vista endapunkt til að halda áfram',
+  }),
+})
+
+const productionEndPoint = z.object({
+  prodEndPoint: z.string().url().nonempty(),
+  prodEndPointExists: z.string().nonempty({
+    message: 'Þú verður að vista endapunkt til að halda áfram',
+  }),
+})
+
 const dataSchema = z.object({
   termsOfAgreement: termsOfAgreement,
   applicant: applicant,
   administrativeContact: contact,
   technicalContact: contact,
   helpDesk: helpDeskContact,
-  //Not sure if we want this ? Confirmation that tests have finished...
   technicalAnswer: z.boolean().refine((v) => v, {
-    //When to show these ?
     message: 'Þú verður að samþykkja að forritun og prófunum sé lokið',
   }),
-  endPoint: z.string().url().nonempty(),
-  prodEndPoint: z.string().url().nonempty(),
+  endPointObject: endPoint,
+  testUserExists: z.string().nonempty({
+    message: 'Þú verður að stofna aðgang til að halda áfram',
+  }),
+  productionUserExists: z.string().nonempty({
+    message: 'Þú verður að stofna aðgang til að halda áfram',
+  }),
+  productionEndPointObject: productionEndPoint,
   rejectionReason: z.string(),
   approvedByReviewer: z.enum(['APPROVE', 'REJECT']),
 })

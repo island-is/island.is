@@ -1,6 +1,8 @@
 import { DynamicModule } from '@nestjs/common'
-import { NationalRegistryResolver } from './national-registry.resolver'
-import { NationalRegistryService } from './national-registry.service'
+
+import { UserResolver } from './user.resolver'
+import { FamilyMemberResolver } from './familyMember.resolver'
+import { NationalRegistryService } from './nationalRegistry.service'
 import { NationalRegistryApi } from './soap/nationalRegistryApi'
 import { SoapClient } from './soap/soapClient'
 
@@ -17,7 +19,8 @@ export class NationalRegistryModule {
       module: NationalRegistryModule,
       providers: [
         NationalRegistryService,
-        NationalRegistryResolver,
+        UserResolver,
+        FamilyMemberResolver,
         {
           provide: NationalRegistryApi,
           useFactory: async () =>

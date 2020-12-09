@@ -10,7 +10,10 @@ import { DocumentResolver } from '@island.is/api/domains/documents'
 import { FileUploadResolver } from '@island.is/api/domains/file-upload'
 import { TranslationsResolver } from '@island.is/api/domains/translations'
 import { UserProfileResolver } from '@island.is/api/domains/user-profile'
-import { NationalRegistryResolver } from '@island.is/api/domains/national-registry'
+import {
+  NationalRegistryUserResolver,
+  NationalRegistryFamilyMemberResolver,
+} from '@island.is/api/domains/national-registry'
 import { CommunicationsResolver } from '@island.is/api/domains/communications'
 import { ApiCatalogueResolver } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderResolver } from '@island.is/api/domains/document-provider'
@@ -26,7 +29,8 @@ buildSchema({
     FileUploadResolver,
     DocumentResolver,
     TranslationsResolver,
-    NationalRegistryResolver,
+    NationalRegistryFamilyMemberResolver,
+    NationalRegistryUserResolver,
     UserProfileResolver,
     CommunicationsResolver,
     ApiCatalogueResolver,

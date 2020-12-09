@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing'
+import { Providers } from '@island.is/api-catalogue/types'
 import {
   ClientList,
   ListClientsRequest,
@@ -93,8 +94,28 @@ class MetaservicesApiMock {
           id: {
             xroadInstance: 'IS-DEV',
             memberClass: 'GOV',
+            memberCode: '10002',
+            subsystemCode: 'TJO',
+            objectType: XroadIdentifierIdObjectTypeEnum.SUBSYSTEM,
+          },
+          name: 'SKRA',
+        },
+        {
+          id: {
+            xroadInstance: 'IS-DEV',
+            memberClass: 'GOV',
             memberCode: '10003',
             subsystemCode: 'islandis-Client',
+            objectType: XroadIdentifierIdObjectTypeEnum.SUBSYSTEM,
+          },
+          name: 'island.is',
+        },
+        {
+          id: {
+            xroadInstance: 'IS-DEV',
+            memberClass: 'GOV',
+            memberCode: '10003',
+            subsystemCode: 'islandis-is',
             objectType: XroadIdentifierIdObjectTypeEnum.SUBSYSTEM,
           },
           name: 'island.is',
@@ -106,6 +127,7 @@ class MetaservicesApiMock {
 
 describe('ProviderService', () => {
   let service: ProviderService
+  let providers: Providers
 
   beforeAll(async () => {
     const app = await Test.createTestingModule({
@@ -119,15 +141,15 @@ describe('ProviderService', () => {
     }).compile()
 
     service = app.get<ProviderService>(ProviderService)
+    providers = await service.getProviders()
   })
 
   describe('getPrivateProviders', () => {
     it('should return all and only private service providers', async () => {
-      const providers = await service.getPrivateProviders()
-      expect(providers).toEqual([
+      expect(providers.private).toEqual([
         {
-          type: 'private',
           name: 'VMST',
+          type: 'private',
           xroadInfo: {
             instance: 'IS-DEV',
             memberClass: 'GOV',
@@ -141,11 +163,10 @@ describe('ProviderService', () => {
 
   describe('getProtectedProviders', () => {
     it('should return all and only protected service providers', async () => {
-      const providers = await service.getProtectedProviders()
-      expect(providers).toEqual([
+      expect(providers.protected).toEqual([
         {
-          type: 'protected',
           name: 'VMST',
+          type: 'protected',
           xroadInfo: {
             instance: 'IS-DEV',
             memberClass: 'GOV',
@@ -154,13 +175,33 @@ describe('ProviderService', () => {
           },
         },
         {
-          type: 'protected',
           name: 'SKRA',
+          type: 'protected',
           xroadInfo: {
             instance: 'IS-DEV',
             memberClass: 'GOV',
             memberCode: '10002',
             subsystemCode: 'SKRA-Protected',
+          },
+        },
+        {
+          name: 'SKRA',
+          type: 'protected',
+          xroadInfo: {
+            instance: 'IS-DEV',
+            memberClass: 'GOV',
+            memberCode: '10002',
+            subsystemCode: 'TJO',
+          },
+        },
+        {
+          name: 'island.is',
+          type: 'protected',
+          xroadInfo: {
+            instance: 'IS-DEV',
+            memberClass: 'GOV',
+            memberCode: '10003',
+            subsystemCode: 'islandis-is',
           },
         },
       ])
@@ -169,11 +210,10 @@ describe('ProviderService', () => {
 
   describe('getPublicProviders', () => {
     it('should return all and only `public` service providers', async () => {
-      const providers = await service.getPublicProviders()
-      expect(providers).toEqual([
+      expect(providers.public).toEqual([
         {
-          type: 'public',
           name: 'VMST',
+          type: 'public',
           xroadInfo: {
             instance: 'IS-DEV',
             memberClass: 'GOV',
@@ -182,8 +222,8 @@ describe('ProviderService', () => {
           },
         },
         {
-          type: 'public',
           name: 'SKRA',
+          type: 'public',
           xroadInfo: {
             instance: 'IS-DEV',
             memberClass: 'GOV',
