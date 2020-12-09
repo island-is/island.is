@@ -15,16 +15,27 @@ import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 
 import { setup, user } from '../../../../../test/setup'
-import { User } from '../../user'
+import { User, UserService } from '../../user'
 import { Case } from '../models'
 
 let app: INestApplication
-let authCookie: string
+let prosecutor: TUser
+let prosecutorAuthCookie: string
+let judge: TUser
+let judgeAuthCookie: string
 
 beforeAll(async () => {
   app = await setup()
-  const sharedAuthService = app.resolve(SharedAuthService)
-  authCookie = (await sharedAuthService).signJwt(user as TUser)
+  const userService = await app.resolve(UserService)
+  const sharedAuthService = await app.resolve(SharedAuthService)
+  prosecutor = ((await userService.findByNationalId(
+    '2510654469',
+  )) as unknown) as TUser
+  prosecutorAuthCookie = sharedAuthService.signJwt(prosecutor)
+  judge = ((await userService.findByNationalId(
+    '1112902539',
+  )) as unknown) as TUser
+  judgeAuthCookie = sharedAuthService.signJwt(judge)
 })
 
 const minimalCaseData = {
@@ -195,7 +206,7 @@ describe('Case', () => {
 
     await request(app.getHttpServer())
       .post('/api/case')
-      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
+      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
       .send(data)
       .expect(201)
       .then(async (response) => {
@@ -226,7 +237,7 @@ describe('Case', () => {
 
     await request(app.getHttpServer())
       .post('/api/case')
-      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
+      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
       .send(data)
       .expect(201)
       .then(async (response) => {
@@ -258,7 +269,7 @@ describe('Case', () => {
 
       await request(app.getHttpServer())
         .put(`/api/case/${value.id}`)
-        .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
+        .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
         .send(data)
         .expect(200)
         .then(async (response) => {
@@ -298,7 +309,7 @@ describe('Case', () => {
 
         await request(app.getHttpServer())
           .put(`/api/case/${value.id}/state`)
-          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
           .send(data)
           .expect(200)
           .then(async (response) => {
@@ -341,7 +352,7 @@ describe('Case', () => {
       await Case.create(getCaseData()).then(async () => {
         await request(app.getHttpServer())
           .get(`/api/cases`)
-          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
           .send()
           .expect(200)
           .then((response) => {
@@ -356,7 +367,7 @@ describe('Case', () => {
     await Case.create(getCaseData(true, true)).then(async (value) => {
       await request(app.getHttpServer())
         .get(`/api/case/${value.id}`)
-        .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
+        .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
         .send()
         .expect(200)
         .then((response) => {
@@ -375,7 +386,7 @@ describe('Case', () => {
     }).then(async (value) => {
       await request(app.getHttpServer())
         .post(`/api/case/${value.id}/signature`)
-        .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
+        .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
         .expect(201)
         .then(async (response) => {
           // Check the response
@@ -393,7 +404,7 @@ describe('Case', () => {
     }).then(async (value) => {
       await request(app.getHttpServer())
         .get(`/api/case/${value.id}/signature`)
-        .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
+        .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
         .query({ documentToken: 'DEVELOPMENT' })
         .expect(200)
         .then(async (response) => {

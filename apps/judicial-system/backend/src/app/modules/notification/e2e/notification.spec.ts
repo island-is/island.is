@@ -2,24 +2,24 @@ import * as request from 'supertest'
 
 import { INestApplication } from '@nestjs/common'
 
-import {
-  NotificationType,
-  User as TUser,
-} from '@island.is/judicial-system/types'
+import { NotificationType, User } from '@island.is/judicial-system/types'
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 
 import { setup, user } from '../../../../../test/setup'
 import { Case } from '../../case'
 import { Notification } from '../models'
+import { UserService } from '../../user'
 
 let app: INestApplication
 let authCookie: string
 
 beforeAll(async () => {
   app = await setup()
-  const sharedAuthService = app.resolve(SharedAuthService)
-  authCookie = (await sharedAuthService).signJwt(user as TUser)
+  const userService = await app.resolve(UserService)
+  const user = await userService.findByNationalId('1112902539')
+  const sharedAuthService = await app.resolve(SharedAuthService)
+  authCookie = sharedAuthService.signJwt((user as unknown) as User)
 })
 
 function dbNotificationToNotification(dbNotification: Notification) {

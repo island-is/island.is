@@ -23,7 +23,12 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { User, UserRole } from '@island.is/judicial-system/types'
-import { CurrentHttpUser, JwtAuthGuard } from '@island.is/judicial-system/auth'
+import {
+  CurrentHttpUser,
+  JwtAuthGuard,
+  Roles,
+  RolesGuard,
+} from '@island.is/judicial-system/auth'
 
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
@@ -50,6 +55,8 @@ export class CaseController {
     return existingCase
   }
 
+  @Roles(UserRole.PROSECUTOR)
+  @UseGuards(RolesGuard)
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   create(
@@ -128,6 +135,8 @@ export class CaseController {
     return this.findCaseById(id)
   }
 
+  @Roles(UserRole.JUDGE)
+  @UseGuards(RolesGuard)
   @Get('case/:id/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -154,6 +163,8 @@ export class CaseController {
     return stream.pipe(res)
   }
 
+  @Roles(UserRole.JUDGE)
+  @UseGuards(RolesGuard)
   @Post('case/:id/signature')
   @ApiCreatedResponse({
     type: SigningServiceResponse,
@@ -188,6 +199,8 @@ export class CaseController {
     }
   }
 
+  @Roles(UserRole.JUDGE)
+  @UseGuards(RolesGuard)
   @Get('case/:id/signature')
   @ApiOkResponse({
     type: SignatureConfirmationResponse,
