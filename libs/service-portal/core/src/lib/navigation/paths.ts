@@ -44,13 +44,4 @@ export enum ServicePortalPath {
 
   // Skjalaveita
   DocumentProviderRoot = '/skjalaveita',
-  DocumentProviderDocumentProviders = '/skjalaveita/skjalaveitendur',
-  DocumentProviderMyCategories = '/skjalaveita/minir-flokkar',
-  DocumentProviderSettingsRoot = '/skjalaveita/skjalaveita-stillingar',
-  DocumentProviderSettingsEditInstituion = '/skjalaveita/skjalaveita-stillingar/breyta-stofnun',
-  DocumentProviderSettingsEditResponsibleContact = '/skjalaveita/skjalaveita-stillingar/breyta-abyrgdarmanni',
-  DocumentProviderSettingsEditTechnicalContact = '/skjalaveita/skjalaveita-stillingar/breyta-taeknilegum-tengilid',
-  DocumentProviderSettingsEditUserHelpContact = '/skjalaveita/skjalaveita-stillingar/breyta-notendaadstod',
-  DocumentProviderSettingsEditEndpoints = '/skjalaveita/skjalaveita-stillingar/breyta-endapunkt',
-  DocumentProviderTechnicalInfo = '/skjalaveita/taeknilegar-upplysingar',
 }
