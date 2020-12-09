@@ -2,11 +2,11 @@ import * as request from 'supertest'
 
 import { INestApplication } from '@nestjs/common'
 
-import { User } from '@island.is/judicial-system/types'
+import { User as TUser } from '@island.is/judicial-system/types'
 
 import { setup } from '../../../../../test/setup'
+import { User } from '../user.model'
 
-const nationalId = '1112902539'
 let app: INestApplication
 
 beforeAll(async () => {
@@ -15,15 +15,17 @@ beforeAll(async () => {
 
 describe('User', () => {
   it('GET /api/user/:nationalId should get the  user', async () => {
-    let user: User
+    const nationalId = '1112902539'
+    let user: TUser
 
-    request(app.getHttpServer())
-      .get(`/api/user/${nationalId}`)
-      .expect(200)
-      .then(async (response) => {
-        user = response.body
+    User.findOne({
+      where: { nationalId },
+    })
+      .then(async (value) => {
+        user = (value as unknown) as TUser
+
         return request(app.getHttpServer())
-          .get(`/api/user/${user.nationalId}`)
+          .get(`/api/user/${nationalId}`)
           .send()
           .expect(200)
       })
