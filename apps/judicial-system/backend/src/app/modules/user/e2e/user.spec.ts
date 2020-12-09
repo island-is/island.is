@@ -16,7 +16,7 @@ describe('User', () => {
     const nationalId = '1112902539'
     let dbUser: User
 
-    User.findOne({
+    await User.findOne({
       where: { nationalId },
     })
       .then(async (value) => {

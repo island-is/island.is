@@ -26,6 +26,7 @@ let judgeAuthCookie: string
 
 beforeAll(async () => {
   app = await setup()
+
   const userService = await app.resolve(UserService)
   const sharedAuthService = await app.resolve(SharedAuthService)
   prosecutor = ((await userService.findByNationalId(

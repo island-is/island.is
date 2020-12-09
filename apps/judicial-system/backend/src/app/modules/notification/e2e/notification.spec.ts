@@ -11,7 +11,6 @@ import { UserService } from '../../user'
 import { Case } from '../../case'
 import { Notification, SendNotificationResponse } from '../models'
 
-const judgeMobileNumber = '9998888'
 let app: INestApplication
 let authCookie: string
 
@@ -38,7 +37,7 @@ describe('Notification', () => {
     let dbCase: Case
     let apiSendNotificationResponse: SendNotificationResponse
 
-    Case.create({
+    await Case.create({
       policeCaseNumber: 'Case Number',
       accusedNationalId: '0101010000',
     })
@@ -88,26 +87,35 @@ describe('Notification', () => {
   })
 
   it('GET /api/case/:id/notifications should get all notifications by case id', async () => {
+    let dbCase: Case
+    let dbNotification: Notification
+
     await Case.create({
       policeCaseNumber: 'Case Number',
       accusedNationalId: '0101010000',
-    }).then(async (caseValue) => {
-      await Notification.create({
-        caseId: caseValue.id,
-        type: NotificationType.HEADS_UP,
-        message: 'Test Message',
-      }).then(async (notificationValue) => {
-        await request(app.getHttpServer())
-          .get(`/api/case/${caseValue.id}/notifications`)
+    })
+      .then(async (value) => {
+        dbCase = value
+
+        return Notification.create({
+          caseId: dbCase.id,
+          type: NotificationType.HEADS_UP,
+          message: 'Test Message',
+        })
+      })
+      .then(async (value) => {
+        dbNotification = value
+
+        return request(app.getHttpServer())
+          .get(`/api/case/${dbCase.id}/notifications`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${authCookie}`)
           .expect(200)
-          .then(async (response) => {
-            // Check the response
-            expect(response.body).toStrictEqual([
-              dbNotificationToNotification(notificationValue),
-            ])
-          })
       })
-    })
+      .then(async (response) => {
+        // Check the response
+        expect(response.body).toStrictEqual([
+          dbNotificationToNotification(dbNotification),
+        ])
+      })
   })
 })
