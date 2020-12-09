@@ -437,7 +437,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
       .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
         query: GET_GROUPED_MENU_QUERY,
         variables: {
-          input: { name: 'Top menu custom links', lang },
+          input: { name: 'Main menu', lang },
         },
       })
       .then((res) => res.data.getGroupedMenu),
