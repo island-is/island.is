@@ -10,6 +10,8 @@ import { setup } from '../../../../../test/setup'
 import { Case } from '../../case'
 import { Notification, SendNotificationResponse } from '../models'
 
+jest.setTimeout(10000)
+
 let app: INestApplication
 let authCookie: string
 
