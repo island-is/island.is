@@ -1,4 +1,8 @@
 import React from 'react'
+import { defineMessage } from 'react-intl'
+import { useQuery, gql } from '@apollo/client'
+
+import { Query } from '@island.is/api/schema'
 import {
   Text,
   Box,
@@ -12,8 +16,19 @@ import {
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { defineMessage } from 'react-intl'
-import { useNationalRegistryInfo } from '@island.is/service-portal/graphql'
+
+const NationalRegistryUserQuery = gql`
+  query NationalRegistryUserQuery {
+    nationalRegistryUser {
+      nationalId
+      maritalStatus
+      religion
+      legalResidence
+      birthPlace
+      gender
+    }
+  }
+`
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -23,7 +38,8 @@ const dataNotFoundMessage = defineMessage({
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const { data: natRegInfo, loading, error } = useNationalRegistryInfo()
+  const { data, loading, error } = useQuery<Query>(NationalRegistryUserQuery)
+  const { nationalRegistryUser } = data || {}
 
   return (
     <>
@@ -80,7 +96,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : natRegInfo?.legalResidence || ''
+              : nationalRegistryUser?.legalResidence || ''
           }
           loading={loading}
           editLink={{
@@ -101,7 +117,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : natRegInfo?.birthPlace || ''
+              : nationalRegistryUser?.birthPlace || ''
           }
           loading={loading}
         />
@@ -122,7 +138,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : natRegInfo?.gender || ''
+              : nationalRegistryUser?.gender || ''
           }
           loading={loading}
         />
@@ -134,7 +150,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : natRegInfo?.maritalStatus || ''
+              : nationalRegistryUser?.maritalStatus || ''
           }
           loading={loading}
         />
@@ -146,7 +162,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : natRegInfo?.religion || ''
+              : nationalRegistryUser?.religion || ''
           }
           loading={loading}
           editLink={{
