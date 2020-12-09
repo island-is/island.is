@@ -28,6 +28,7 @@ const FormMultiField: FC<{
     <GridRow>
       <ConditionHandler
         answerQuestions={answerQuestions}
+        externalData={application.externalData}
         formValue={application.answers}
         screen={multiField}
       />

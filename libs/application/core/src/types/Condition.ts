@@ -1,4 +1,4 @@
-import { FormValue } from './Application'
+import { FormValue, ExternalData } from './Application'
 
 export enum Comparators {
   EQUALS = 'eq',
@@ -21,7 +21,10 @@ export interface StaticCheck {
   value: string | number
 }
 
-export type DynamicCheck = (formValue: FormValue, context?: object) => boolean
+export type DynamicCheck = (
+  formValue: FormValue,
+  externalData: ExternalData,
+) => boolean
 
 export type SingleConditionCheck = StaticCheck | DynamicCheck
 
