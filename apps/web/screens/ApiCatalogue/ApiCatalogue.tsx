@@ -41,7 +41,6 @@ interface ApiCatalogueProps {
   data: Query
   loading: boolean
   error: ApolloError
-  designGuideContent: GetNamespaceQuery['getNamespace']
   staticContent     : GetNamespaceQuery['getNamespace']
   filterContent     : GetNamespaceQuery['getNamespace']
 }
@@ -53,7 +52,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   data,
   loading,
   error,
-  designGuideContent,
   staticContent,
   filterContent,
 }) => {
@@ -65,7 +63,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
 
   const n = useNamespace(staticContent)
   const fn = useNamespace(filterContent)
-  const dn = useNamespace(designGuideContent)
   const TEXT_NOT_FOUND = n('notFound')
   const HEADING_ERROR = n('errorHeading')
   const TEXT_ERROR = n('errorText')
@@ -103,8 +100,8 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
             main={
               <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
               <Stack space={1}>
-                <Text variant="h1">{dn('title')}</Text>
-                <Text variant="intro">{dn('intro')}</Text>
+                <Text variant="h1">{n('title')}</Text>
+                <Text variant="intro">{n('intro')}</Text>
               </Stack>
             <Stack space={1}>
             <Button
@@ -119,7 +116,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
               type="button"
               variant="text"
             >
-              {dn('dgButtonTitle')}
+              {n('designGuideButtonTitle')}
             </Button>
             </Stack>
           </Box>
@@ -164,18 +161,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
 
 ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
   console.log(locale)
-  const [designGuideContent, staticContent, filterContent] = await Promise.all([
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'ViskuausanHome',
-            lang: locale,
-          },
-        },
-      })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+  const [staticContent, filterContent] = await Promise.all([
       apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -217,15 +203,12 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
       },
     },
   })
-  console.log("filterContent-----------------------------------------------------------------")
-  console.log(filterContent)
-  console.log("------------------------------------------------------------------------------")
+ 
   return {
     title: 'Vörulisti Vefþjónusta',
     data: data,
     loading,
     error,
-    designGuideContent,
     staticContent,
     filterContent,
   }
