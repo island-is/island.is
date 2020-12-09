@@ -29,14 +29,14 @@ describe('Create detention request, step two', () => {
               arrestDate: '2020-11-15',
             } as UpdateCase,
             {
-              id: 'test_id_3',
+              id: 'test_id_6',
               arrestDate: '2020-11-15T13:37:00Z',
             } as UpdateCase,
             {
               requestedCourtDate: '2020-11-20',
             } as UpdateCase,
             {
-              id: 'test_id_3',
+              id: 'test_id_6',
               requestedCourtDate: `2020-${
                 new Date().getMonth() + 1
               }-${formattedTodaysDate}T13:37:00Z`,
@@ -52,7 +52,7 @@ describe('Create detention request, step two', () => {
         addTypename={false}
       >
         <MemoryRouter
-          initialEntries={[`${Constants.STEP_TWO_ROUTE}/test_id_3`]}
+          initialEntries={[`${Constants.STEP_TWO_ROUTE}/test_id_6`]}
         >
           <UserProvider>
             <Route path={`${Constants.STEP_TWO_ROUTE}/:id`}>
@@ -74,15 +74,18 @@ describe('Create detention request, step two', () => {
       screen.getAllByLabelText(/Veldu dagsetningu/)[1],
       `${formattedTodaysDate}.${new Date().getMonth() + 1}.2020`,
     )
-    userEvent.type(screen.getByLabelText('Ósk um tíma (kk:mm) *'), '13:37')
 
+    userEvent.type(screen.getByLabelText('Ósk um tíma (kk:mm) *'), '13:37')
     expect(
       screen.getByRole('button', {
         name: /Halda áfram/i,
       }) as HTMLButtonElement,
     ).toBeDisabled()
 
-    userEvent.type(screen.getByLabelText(/Gæsluvarðhald til/), '25.11.2020')
+    userEvent.type(
+      screen.getByLabelText(/Gæsluvarðhald til/),
+      `${formattedTodaysDate}.${new Date().getMonth() + 1}.2020`,
+    )
     userEvent.type(screen.getByLabelText('Tímasetning (kk:mm) *'), '13:37')
 
     expect(

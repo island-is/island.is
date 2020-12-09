@@ -221,6 +221,7 @@ export const StepTwo: React.FC = () => {
     ]
 
     if (workingCase) {
+      console.log(workingCase?.requestedCourtDate)
       setIsStepIllegal(isNextDisabled(requiredFields))
     }
   }, [
