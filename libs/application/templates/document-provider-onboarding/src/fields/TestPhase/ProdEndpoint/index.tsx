@@ -18,6 +18,7 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
 
   const { register, clearErrors, errors, trigger, getValues } = useFormContext()
   const { answers: formValue } = application
+  const [prodEndPointError, setprodEndPointError] = useState('')
   const [variables, setendPointVariables] = useState<Variable[]>([])
   const [prodEndPointExists, setprodEndPointExists] = useState(
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -37,7 +38,7 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
       })
 
       if (!result.data) {
-        //TODO display error
+        setprodEndPointError(m.prodEndPointErrorMessage.defaultMessage)
       }
 
       //TODO: Needs new call to API
@@ -113,6 +114,13 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
           <Box color="red600" paddingY={2}>
             <Text fontWeight="semiBold" color="red600">
               {errors['productionEndPointObject.prodEndPointExists']}
+            </Text>
+          </Box>
+        )}
+        {prodEndPointError && (
+          <Box color="red600" paddingY={2}>
+            <Text fontWeight="semiBold" color="red600">
+              {prodEndPointError}
             </Text>
           </Box>
         )}
