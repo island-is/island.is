@@ -15,6 +15,7 @@ export type Icon =
   | 'checkmark'
   | 'checkmarkCircle'
   | 'chevronBack'
+  | 'chevronUp'
   | 'chevronDown'
   | 'chevronForward'
   | 'closeCircle'
@@ -63,6 +64,7 @@ export default {
     checkmarkCircle: 'CheckmarkCircle',
     chevronBack: 'ChevronBack',
     chevronDown: 'ChevronDown',
+    chevronUp: 'ChevronUp',
     chevronForward: 'ChevronForward',
     closeCircle: 'CloseCircle',
     close: 'Close',
@@ -108,6 +110,7 @@ export default {
     checkmark: 'Checkmark',
     checkmarkCircle: 'CheckmarkCircleOutline',
     chevronBack: 'ChevronBackOutline',
+    chevronUp: 'ChevronUpOutline',
     chevronDown: 'ChevronDownOutline',
     chevronForward: 'ChevronForwardOutline',
     closeCircle: 'CloseCircleOutline',

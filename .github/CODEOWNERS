@@ -70,3 +70,6 @@
 
 /apps/skilavottord/                                       @island-is/deloitte
 /libs/skilavottord/                                       @island-is/deloitte
+
+# /libs/auth-api-lib/                                     @island-is/fuglar
+# /libs/auth-nest-tools/                                  @island-is/fuglar

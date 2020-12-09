@@ -56,7 +56,12 @@ export async function generateRequestPdf(
       align: 'center',
     })
     .fontSize(16)
-    .text('Embætti: Lögreglustjórinn á höfuðborgarsvæðinu', { align: 'center' })
+    .text(
+      `Embætti: ${user.institution || 'Lögreglustjórinn á höfuðborgarsvæðinu'}`,
+      {
+        align: 'center',
+      },
+    )
     .lineGap(40)
     .text(`Dómstóll: ${existingCase.court}`, { align: 'center' })
     .font('Helvetica-Bold')

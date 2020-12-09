@@ -11,7 +11,7 @@ import { UploadProcessor } from './upload.processor'
 import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
 import { environment } from '../../../environments'
 
-// import { AuthModule } from '@island.is/auth-api-lib'
+// import { AuthModule } from '@island.is/auth-nest-tools'
 
 let BullModule: DynamicModule
 

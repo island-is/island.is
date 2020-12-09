@@ -1,2 +1,3 @@
-export * from './lib/national-registry.module'
-export * from './lib/national-registry.resolver'
+export { FamilyMemberResolver as NationalRegistryFamilyMemberResolver } from './lib/familyMember.resolver'
+export { NationalRegistryModule } from './lib/nationalRegistry.module'
+export { UserResolver as NationalRegistryUserResolver } from './lib/user.resolver'
