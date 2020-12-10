@@ -6,10 +6,13 @@ import { AUTH_URL, isAuthenticated } from './utils'
 
 type AuthType = 'citizen' | 'recyclingPartner'
 
+const USER_MOCKED =
+  process.env.NODE_ENV === 'development' && process.env.API_MOCKS === 'true'
+
 const withAuth = (WrappedComponent: NextComponentType, authType: AuthType) =>
   class extends Component {
     static async getInitialProps(ctx: any) {
-      if (!isAuthenticated(ctx)) {
+      if (!isAuthenticated(ctx) && !USER_MOCKED) {
         const authUrl = `${AUTH_URL[authType]}/login?returnUrl=${ctx.asPath}`
         const { res } = ctx
         if (res) {
