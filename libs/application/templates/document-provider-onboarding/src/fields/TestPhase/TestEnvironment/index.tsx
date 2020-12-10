@@ -23,9 +23,11 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
     // @ts-ignore
     (formValue.testUserExists as string) || '',
   )
+  const [environmentError, setEnvironmentError] = useState<string | null>(null)
   const [registerProvider] = useMutation(registerProviderMutation)
 
   const onRegister = async () => {
+    setEnvironmentError(null)
     const credentials = await registerProvider({
       variables: {
         input: { nationalId: '2404805659' }, //TODO set real nationalId
@@ -33,7 +35,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
     })
 
     if (!credentials.data) {
-      //TODO display error
+      setEnvironmentError(m.testEnviromentErrorMessage.defaultMessage)
     }
 
     setKeys([
@@ -53,7 +55,6 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
   }
 
   return (
-    //TODO: we can make this a generic component for reuasabilty, same as production environment
     <Box>
       <Box marginBottom={7}>
         <Box marginBottom={3}>
@@ -92,6 +93,13 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
           <Box color="red600" paddingY={2}>
             <Text fontWeight="semiBold" color="red600">
               {error}
+            </Text>
+          </Box>
+        )}
+        {environmentError && (
+          <Box color="red600" paddingY={2}>
+            <Text fontWeight="semiBold" color="red600">
+              {environmentError}
             </Text>
           </Box>
         )}

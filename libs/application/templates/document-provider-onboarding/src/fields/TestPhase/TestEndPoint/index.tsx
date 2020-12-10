@@ -19,6 +19,9 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
   const { clearErrors, register, errors, trigger, getValues } = useFormContext()
   const { answers: formValue } = application
   const [variables, setendPointVariables] = useState<Variable[]>([])
+  const [testEndPointError, setTestEndPointError] = useState<string | null>(
+    null,
+  )
 
   const [endpointExists, setendpointExists] = useState(
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -28,6 +31,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
   const [registerEndpoint] = useMutation(registerEndpointMutation)
 
   const onRegisterEndpoint = async (isValid: boolean) => {
+    setTestEndPointError(null)
     if (isValid) {
       const result = await registerEndpoint({
         variables: {
@@ -36,7 +40,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
       })
 
       if (!result.data) {
-        //TODO display error
+        setTestEndPointError(m.testEndPointErrorMessage.defaultMessage)
       }
 
       setendPointVariables([
@@ -104,11 +108,17 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
           ref={register({ required: true })}
           name={'endPointObject.endPointExists'}
         />
-
         {errors['endPointObject.endPointExists'] && (
           <Box color="red600" paddingY={2} display="flex">
             <Text fontWeight="semiBold" color="red600">
               {errors['endPointObject.endPointExists']}
+            </Text>
+          </Box>
+        )}
+        {testEndPointError && (
+          <Box color="red600" paddingY={2}>
+            <Text fontWeight="semiBold" color="red600">
+              {testEndPointError}
             </Text>
           </Box>
         )}
