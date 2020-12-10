@@ -63,7 +63,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
                   Promise.resolve(module.HealthInsuranceForm),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                { event: 'SUBMIT', name: 'Submit', type: 'primary' },
               ],
               write: 'all',
             },
@@ -75,6 +75,22 @@ const HealthInsuranceTemplate: ApplicationTemplate<
           },
         },
       },
+      inReview: {
+        meta: {
+          name: 'inReview',
+          progress: 0.5,
+          roles: [
+            {
+              id: 'applicant',
+              actions: [
+                { event: 'APPROVE', name: 'Approve', type: 'primary' },
+                { event: 'REJECT', name: 'Reject', type: 'reject' },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+      }
     },
   },
   mapUserToRole(id: string, state: string): ApplicationRole {

@@ -1,4 +1,6 @@
 import {
+  buildCheckboxField,
+  buildCustomField,
   buildDataProviderItem,
   buildDividerField,
   buildExternalDataProvider,
@@ -8,7 +10,9 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
+  buildSubmitField,
   buildTextField,
+  Comparators,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -226,12 +230,77 @@ export const HealthInsuranceForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'summary',
-      name: '',
+      id: 'confirm',
+      name: 'Confirmation',
       children: [
-        buildTextField({
-          id: 'summaryInput',
-          name: 'text input',
+        buildMultiField({
+          id: '',
+          name: 'Confirm and submit your application',
+          children: [
+            buildCustomField({
+              id: 'review',
+              name: '',
+              component: 'Review',
+            }),
+            buildRadioField({
+              id: 'additional',
+              name: '',
+              description: 'Do you have any additional information or remarks?',
+              largeButtons: true,
+              width: 'half',
+              options: [
+                { value: 'No', label: 'No' },
+                { value: 'Yes', label: 'Yes' },
+              ],
+            }),
+            buildTextField({
+              condition: {
+                questionId: 'additional',
+                isMultiCheck: false,
+                comparator: Comparators.EQUALS,
+                value: 'Yes',
+              },
+              id: 'additionalRemarks',
+              name: 'Remarks or additional information',
+              variant: 'textarea',
+            }),
+            buildFileUploadField({
+              condition: {
+                questionId: 'additional',
+                isMultiCheck: false,
+                comparator: Comparators.EQUALS,
+                value: 'Yes',
+              },
+              id: 'additionalFiles',
+              name: '',
+              introduction: '',
+              uploadMultiple: true,
+            }),
+            buildCheckboxField({
+              id: 'correctInfo',
+              name: '',
+              description:
+                'I am ensuring that the information is true and correct',
+              options: [
+                {
+                  value: 'Yes',
+                  label:
+                    'I am ensuring that the information is true and correct',
+                },
+              ],
+            }),
+            buildSubmitField({
+              id: 'submit',
+              name: 'Submit',
+              placement: 'footer',
+              actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
+            }),
+          ],
+        }),
+        buildIntroductionField({
+          id: 'successfulSubmission',
+          name: 'We have received your application',
+          introduction: 'We have recivived your application!',
         }),
       ],
     }),
