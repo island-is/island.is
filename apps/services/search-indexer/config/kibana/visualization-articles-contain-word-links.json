@@ -1,0 +1,143 @@
+{
+  "attributes": {
+    "description": "",
+    "kibanaSavedObjectMeta": {
+      "searchSourceJSON": {
+        "filter": [],
+        "indexRefName": "kibanaSavedObjectMeta.searchSourceJSON.index",
+        "query": {
+          "language": "kuery",
+          "query": ""
+        }
+      }
+    },
+    "title": "Articles that contain Word links",
+    "uiStateJSON": {
+      "vis": {
+        "params": {
+          "sort": {
+            "columnIndex": null,
+            "direction": null
+          }
+        }
+      }
+    },
+    "version": 1,
+    "visState": {
+      "aggs": [
+        {
+          "enabled": true,
+          "id": 1,
+          "params": {
+            "customLabel": "Word links",
+            "field": "wordLinks"
+          },
+          "schema": "metric",
+          "type": "sum"
+        },
+        {
+          "enabled": true,
+          "id": 2,
+          "params": {
+            "filters": [
+              {
+                "input": {
+                  "language": "kuery",
+                  "query": "wordLinks >= 1"
+                },
+                "label": "Word"
+              }
+            ]
+          },
+          "schema": "bucket",
+          "type": "filters"
+        },
+        {
+          "enabled": true,
+          "id": 3,
+          "params": {
+            "customLabel": "Title",
+            "field": "title.keyword",
+            "missingBucket": false,
+            "missingBucketLabel": "Missing",
+            "order": "desc",
+            "orderBy": 1,
+            "otherBucket": false,
+            "otherBucketLabel": "Other",
+            "size": 1000
+          },
+          "schema": "bucket",
+          "type": "terms"
+        }
+      ],
+      "params": {
+        "dimensions": {
+          "buckets": [
+            {
+              "accessor": 0,
+              "aggType": "filters",
+              "format": {},
+              "params": {}
+            },
+            {
+              "accessor": 1,
+              "aggType": "terms",
+              "format": {
+                "id": "terms",
+                "params": {
+                  "id": "string",
+                  "missingBucketLabel": "Missing",
+                  "otherBucketLabel": "Other"
+                }
+              },
+              "params": {}
+            }
+          ],
+          "metrics": [
+            {
+              "accessor": 2,
+              "aggType": "sum",
+              "format": {
+                "id": "number"
+              },
+              "params": {}
+            }
+          ]
+        },
+        "perPage": 10,
+        "percentageCol": "",
+        "showMetricsAtAllLevels": false,
+        "showPartialRows": false,
+        "showTotal": false,
+        "sort": {
+          "columnIndex": null,
+          "direction": null
+        },
+        "totalFunc": "sum"
+      },
+      "title": "Articles that contain Word links",
+      "type": "table"
+    }
+  },
+  "id": "2b7eea40-33bf-11eb-a920-1d8c547c86e9",
+  "migrationVersion": {
+    "visualization": "7.4.2"
+  },
+  "nestedJsonPaths": [
+    "attributes.kibanaSavedObjectMeta.searchSourceJSON",
+    "attributes.uiStateJSON",
+    "attributes.visState",
+    "attributes.visState.aggs[0].id",
+    "attributes.visState.aggs[1].id",
+    "attributes.visState.aggs[2].id",
+    "attributes.visState.aggs[2].params.orderBy"
+  ],
+  "references": [
+    {
+      "id": "b83598d0-34b4-11eb-83e6-db8492ac723e",
+      "name": "kibanaSavedObjectMeta.searchSourceJSON.index",
+      "type": "index-pattern"
+    }
+  ],
+  "type": "visualization"
+}

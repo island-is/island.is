@@ -1,0 +1,91 @@
+{
+  "attributes": {
+    "description": "",
+    "kibanaSavedObjectMeta": {
+      "searchSourceJSON": {
+        "filter": [
+          {
+            "$state": {
+              "store": "appState"
+            },
+            "meta": {
+              "alias": null,
+              "controlledBy": 1606506348206,
+              "disabled": false,
+              "indexRefName": "kibanaSavedObjectMeta.searchSourceJSON.filter[0].meta.index",
+              "key": "contentWordCount",
+              "negate": false,
+              "params": {
+                "gte": 1,
+                "lte": 2966
+              },
+              "type": "range",
+              "value": "1 to 2,966"
+            },
+            "range": {
+              "contentWordCount": {
+                "gte": 1,
+                "lte": 2966
+              }
+            }
+          }
+        ],
+        "query": {
+          "language": "kuery",
+          "query": ""
+        }
+      }
+    },
+    "title": "Content word count",
+    "uiStateJSON": {},
+    "version": 1,
+    "visState": {
+      "aggs": [],
+      "params": {
+        "controls": [
+          {
+            "fieldName": "contentWordCount",
+            "id": 1606506348206,
+            "indexPatternRefName": "control_0_index_pattern",
+            "label": "Content word count",
+            "options": {
+              "decimalPlaces": 10,
+              "step": 20
+            },
+            "parent": "",
+            "type": "range"
+          }
+        ],
+        "pinFilters": false,
+        "updateFiltersOnChange": true,
+        "useTimeFilter": false
+      },
+      "title": "Content word count",
+      "type": "input_control_vis"
+    }
+  },
+  "id": "df45aa10-30e9-11eb-a25b-bdba47296183",
+  "migrationVersion": {
+    "visualization": "7.4.2"
+  },
+  "nestedJsonPaths": [
+    "attributes.kibanaSavedObjectMeta.searchSourceJSON",
+    "attributes.kibanaSavedObjectMeta.searchSourceJSON.filter[0].meta.controlledBy",
+    "attributes.uiStateJSON",
+    "attributes.visState",
+    "attributes.visState.params.controls[0].id"
+  ],
+  "references": [
+    {
+      "id": "b83598d0-34b4-11eb-83e6-db8492ac723e",
+      "name": "kibanaSavedObjectMeta.searchSourceJSON.filter[0].meta.index",
+      "type": "index-pattern"
+    },
+    {
+      "id": "b83598d0-34b4-11eb-83e6-db8492ac723e",
+      "name": "control_0_index_pattern",
+      "type": "index-pattern"
+    }
+  ],
+  "type": "visualization"
+}
