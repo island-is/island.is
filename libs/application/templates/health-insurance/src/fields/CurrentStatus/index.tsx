@@ -24,7 +24,7 @@ const CurrentStatus: FC<FieldBaseProps> = ({ error, field, application }) => {
 
   return (
     <Box marginY={3} key={field.id}>
-      <FieldDescription description="What is your current status?" />
+      <FieldDescription description={formatMessage(m.statusDescription)} />
       <Box paddingY={3} marginBottom={3}>
         <RadioController
           id={field.id}
