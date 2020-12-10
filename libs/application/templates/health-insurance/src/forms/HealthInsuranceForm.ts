@@ -243,7 +243,7 @@ export const HealthInsuranceForm: Form = buildForm({
               component: 'Review',
             }),
             buildRadioField({
-              id: 'additional',
+              id: 'hasAdditionalInfo',
               name: '',
               description: 'Do you have any additional information or remarks?',
               largeButtons: true,
@@ -255,7 +255,7 @@ export const HealthInsuranceForm: Form = buildForm({
             }),
             buildTextField({
               condition: {
-                questionId: 'additional',
+                questionId: 'hasAdditionalInfo',
                 isMultiCheck: false,
                 comparator: Comparators.EQUALS,
                 value: 'Yes',
@@ -263,10 +263,11 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'additionalRemarks',
               name: 'Remarks or additional information',
               variant: 'textarea',
+              placeholder: 'Enter text here',
             }),
             buildFileUploadField({
               condition: {
-                questionId: 'additional',
+                questionId: 'hasAdditionalInfo',
                 isMultiCheck: false,
                 comparator: Comparators.EQUALS,
                 value: 'Yes',
@@ -276,18 +277,10 @@ export const HealthInsuranceForm: Form = buildForm({
               introduction: '',
               uploadMultiple: true,
             }),
-            buildCheckboxField({
+            buildCustomField({
               id: 'correctInfo',
               name: '',
-              description:
-                'I am ensuring that the information is true and correct',
-              options: [
-                {
-                  value: 'Yes',
-                  label:
-                    'I am ensuring that the information is true and correct',
-                },
-              ],
+              component: 'ConfirmCheckbox',
             }),
             buildSubmitField({
               id: 'submit',
