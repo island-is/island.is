@@ -39,7 +39,7 @@ describe('formatProsecutorDemands', () => {
 
     // Assert
     expect(res).toBe(
-      'Þess er krafist að Glanni Glæpur 010101-0000 verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi til mánudagsins 16. nóvember 2020, kl. 19:30 og verði gert að sæta einangrun meðan á gæsluvarðhaldi stendur.',
+      'Þess er krafist að Glanni Glæpur kt. 010101-0000 verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi til mánudagsins 16. nóvember 2020, kl. 19:30 og verði gert að sæta einangrun meðan á gæsluvarðhaldi stendur.',
     )
   })
 
@@ -62,7 +62,7 @@ describe('formatProsecutorDemands', () => {
 
     // Assert
     expect(res).toBe(
-      'Þess er krafist að Glanni Glæpur 010101-0000 verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi til mánudagsins 16. nóvember 2020, kl. 19:30.',
+      'Þess er krafist að Glanni Glæpur kt. 010101-0000 verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi til mánudagsins 16. nóvember 2020, kl. 19:30.',
     )
   })
 })
@@ -171,7 +171,7 @@ describe('formatConclusion', () => {
 
     // Assert
     expect(res).toBe(
-      'Kærði, Glanni Glæpur 010101-0000 skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 22. desember 2020 kl. 11:23.',
+      'Kærði, Glanni Glæpur, kt. 010101-0000 skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 22. desember 2020 kl. 11:23.',
     )
   })
 
@@ -194,7 +194,7 @@ describe('formatConclusion', () => {
 
     // Assert
     expect(res).toBe(
-      'Kærði, Glanni Glæpur 010101-0000 skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 22. desember 2020 kl. 11:23. Kærði skal sæta einangrun meðan á gæsluvarðhaldi stendur.',
+      'Kærði, Glanni Glæpur, kt. 010101-0000 skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 22. desember 2020 kl. 11:23. Kærði skal sæta einangrun meðan á gæsluvarðhaldi stendur.',
     )
   })
 })
