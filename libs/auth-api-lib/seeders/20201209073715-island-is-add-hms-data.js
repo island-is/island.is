@@ -42,7 +42,7 @@ module.exports = {
         queryInterface.bulkDelete('client_secret', [
           {
             client_id: 'apex-auth_client',
-            value: 'K7gNU3sdo+OL0wNhqoVWhr3g6s1xYv72ol/pe/Unols=',
+            value: '6THtRPZEkgZHoEc3YIqwDlo8y3AqBIgyeiq0D+Lj0t8=',
             description: 'secret for apex-auth_client',
             type: 'SharedSecret',
           },
@@ -50,7 +50,8 @@ module.exports = {
         queryInterface.bulkDelete('client_redirect_uri', [
           {
             client_id: 'apex-auth_client',
-            redirect_uri: 'https://tcqqxwk4o7udq5x-hgrdevatp.adb.eu-frankfurt-1.oraclecloudapps.com/ords/r/hms_app_app/test-island-is-authentication/signin-oidc',
+            redirect_uri:
+              'https://tcqqxwk4o7udq5x-hgrdevatp.adb.eu-frankfurt-1.oraclecloudapps.com/ords/r/hms_app_app/test-island-is-authentication/signin-oidc',
           },
         ]),
       ]).then(() => {
