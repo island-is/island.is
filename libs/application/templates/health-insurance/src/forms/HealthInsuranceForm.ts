@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildDataProviderItem,
   buildDividerField,
   buildExternalDataProvider,
@@ -126,10 +125,17 @@ export const HealthInsuranceForm: Form = buildForm({
           id: 'statusAndChildren',
           name: m.statusAndChildren,
           children: [
-            buildCustomField({
+            buildRadioField({
               id: 'status',
               name: '',
-              component: 'CurrentStatus',
+              description: m.statusDescription,
+              width: 'half',
+              largeButtons: true,
+              options: [
+                { label: m.statusPensioner, value: 'pensioner', tooltip: m.statusPensionerInformation },
+                { label: m.statusStudent, value: 'student', tooltip: m.statusStudentInformation },
+                { label: m.statusOther, value: 'other', tooltip: m.statusOtherInformation },
+              ]
             }),
             buildFileUploadField({
               id: 'additionalInformation',
