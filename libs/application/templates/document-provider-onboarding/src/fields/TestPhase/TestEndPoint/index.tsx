@@ -1,15 +1,18 @@
 import React, { FC, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { useFormContext, Controller } from 'react-hook-form'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
+import { useLocale } from '@island.is/localization'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { registerEndpointMutation } from '../../../graphql/mutations/registerEndpointMutation'
 import { m } from '../../../forms/messages'
 
 const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
+  const { formatMessage } = useLocale()
+
   interface Variable {
     id: string
     name: string
@@ -63,7 +66,11 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
       <Box marginBottom={7}>
         <Box marginBottom={3}>
           <FieldDescription
-            description={m.testEndPointSubTitle.defaultMessage}
+            description={formatText(
+              m.testEndPointSubTitle,
+              application,
+              formatMessage,
+            )}
           />
         </Box>
         <Box marginBottom={1}>

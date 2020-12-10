@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps, formatText } from '@island.is/application/core'
 import {
   Box,
   GridColumn,
@@ -14,11 +14,13 @@ import {
   ContentBlock,
 } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
+import { useLocale } from '@island.is/localization'
 import { m } from '../../../forms/messages'
-
 import { runEndpointTestsMutation } from '../../../graphql/mutations/runEndpointTestsMutation'
 
-const AutomatedTests: FC<FieldBaseProps> = () => {
+const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
+  const { formatMessage } = useLocale()
+
   interface Response {
     id: string
     isValid: boolean
@@ -52,23 +54,36 @@ const AutomatedTests: FC<FieldBaseProps> = () => {
     setIsLoading(false)
   }
   //TODO finish loading state
+  //TODO færa placeholders í messages
   return (
     <Box>
       <Box marginBottom={3}>
         <FieldDescription
-          description={m.automatedTestsSubTitle.defaultMessage}
+          description={formatText(
+            m.automatedTestsSubTitle,
+            application,
+            formatMessage,
+          )}
         />
       </Box>
       <Box marginBottom={1}>
-        <Text variant="h3">{m.automatedTestsSubHeading.defaultMessage}</Text>
-        <Text>{m.automatedTestsMessage.defaultMessage}</Text>
+        <Text variant="h3">
+          {formatText(m.automatedTestsSubHeading, application, formatMessage)}
+        </Text>
+        <Text>
+          {formatText(m.automatedTestsMessage, application, formatMessage)}
+        </Text>
       </Box>
       <Box marginTop={3} position="relative">
         <GridContainer>
           <GridRow>
-            <GridColumn span="6/12">
+            <GridColumn span={['12/12', '6/12']}>
               <Input
-                label={m.automatedTestsNationalIdLabel.defaultMessage}
+                label={formatText(
+                  m.automatedTestsNationalIdLabel,
+                  application,
+                  formatMessage,
+                )}
                 name="nationalId"
                 id="nationalId"
                 ref={register({
@@ -79,32 +94,37 @@ const AutomatedTests: FC<FieldBaseProps> = () => {
                 defaultValue=""
                 placeholder="Skráðu inn kennitölu"
                 hasError={errors.nationalId !== undefined}
-                errorMessage={
-                  m.automatedTestsNationalIdErrorMessage.defaultMessage
-                }
+                errorMessage={formatText(
+                  m.automatedTestsNationalIdErrorMessage,
+                  application,
+                  formatMessage,
+                )}
                 disabled={isLoading}
               />
             </GridColumn>
-            <GridColumn span="6/12">
+            <GridColumn span={['12/12', '6/12']} paddingTop={[3, 0]}>
               <Input
-                label={m.automatedTestsDocIdLabel.defaultMessage}
+                label={formatText(
+                  m.automatedTestsDocIdLabel,
+                  application,
+                  formatMessage,
+                )}
                 name="docId"
                 required
                 placeholder="Skráðu inn Id skjals"
                 ref={register({ required: true })}
                 hasError={errors.docId !== undefined}
-                errorMessage={m.automatedTestsDocIdErrorMessage.defaultMessage}
+                errorMessage={formatText(
+                  m.automatedTestsDocIdErrorMessage,
+                  application,
+                  formatMessage,
+                )}
                 disabled={isLoading}
               />
             </GridColumn>
           </GridRow>
         </GridContainer>
-        <Box
-          marginTop={3}
-          display="flex"
-          alignItems="flexEnd"
-          flexDirection="column"
-        >
+        <Box marginTop={3} display="flex" alignItems="flexEnd">
           <Box>
             <Button
               variant="ghost"
@@ -115,7 +135,7 @@ const AutomatedTests: FC<FieldBaseProps> = () => {
                 )
               }}
             >
-              {m.automatedTestsButton.defaultMessage}
+              {formatText(m.automatedTestsButton, application, formatMessage)}
             </Button>
           </Box>
           {automatedTestsError && (

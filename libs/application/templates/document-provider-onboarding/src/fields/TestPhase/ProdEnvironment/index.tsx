@@ -1,14 +1,17 @@
 import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { registerProviderMutation } from '../../../graphql/mutations/registerProviderMutation'
 import { m } from '../../../forms/messages'
 
 const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
+  const { formatMessage } = useLocale()
+
   interface Key {
     name: string
     value: string
@@ -70,7 +73,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
             onRegister()
           }}
         >
-          {m.prodEnviromentButton.defaultMessage}
+          {formatText(m.prodEnviromentButton, application, formatMessage)}
         </Button>
         <input
           type="hidden"
