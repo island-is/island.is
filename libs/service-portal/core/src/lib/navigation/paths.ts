@@ -16,6 +16,7 @@ export enum ServicePortalPath {
   FamilyMember = '/fjolskyldan/:nationalId',
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
+  RealEstate = 'https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir',
   // Fjarmal
   FinanceRoot = '/fjarmal',
   FinanceVehicles = 'https://mitt.samgongustofa.is/',

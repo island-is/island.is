@@ -37,6 +37,7 @@ const ModuleNavigation: FC<Props> = ({ nav, variant }) => {
         path={nav.path}
         icon={nav.icon}
         active={isModuleActive}
+        external={nav.external}
         onClick={nav.path === undefined ? handleExpand : undefined}
         variant={variant}
       >
@@ -55,6 +56,7 @@ const ModuleNavigation: FC<Props> = ({ nav, variant }) => {
                       child.path && pathname.includes(child.path) ? true : false
                     }
                     external={child.external}
+                    variant={variant}
                   >
                     {formatMessage(child.name)}
                   </SubNavItem>

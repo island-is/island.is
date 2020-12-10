@@ -15,7 +15,7 @@ interface Props {
 const SubNavItemContent: FC<Props> = ({
   active,
   onClick,
-  variant,
+  variant = 'blue',
   children,
 }) => (
   <Box
