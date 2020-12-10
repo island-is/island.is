@@ -1,13 +1,19 @@
 import { ServicePortalPath } from '@island.is/service-portal/core'
 
 export const getMobileMenuFigure = (path: ServicePortalPath | undefined) => {
-  if (path === ServicePortalPath.FinanceRoot)
+  if (
+    path === ServicePortalPath.FinanceRoot ||
+    path === ServicePortalPath.FinanceExternal
+  )
     return '/assets/images/payment.svg'
   if (path === ServicePortalPath.MyInfoRoot) return '/assets/images/myInfo.svg'
   if (path === ServicePortalPath.FamilyRoot)
     return '/assets/images/familyGrid.svg'
   if (path === ServicePortalPath.HealthRoot) return '/assets/images/health.svg'
-  if (path === ServicePortalPath.EducationRoot)
+  if (
+    path === ServicePortalPath.EducationRoot ||
+    path === ServicePortalPath.EducationExternal
+  )
     return '/assets/images/education.svg'
   if (path === ServicePortalPath.AssetsRoot) return '/assets/images/school.svg'
   if (path === ServicePortalPath.ApplicationIntroduction)

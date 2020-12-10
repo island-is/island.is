@@ -114,7 +114,9 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:finance',
           defaultMessage: 'Fjármál',
         }),
-        path: ServicePortalPath.FinanceRoot,
+        path: ServicePortalPath.FinanceExternal,
+        external: true,
+        systemRoute: true,
         icon: {
           type: 'outline',
           icon: 'cellular',
@@ -122,17 +124,18 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       },
 
       // Heilsa
-      {
-        name: defineMessage({
-          id: 'service.portal:health',
-          defaultMessage: 'Heilsa',
-        }),
-        path: ServicePortalPath.HealthRoot,
-        icon: {
-          type: 'outline',
-          icon: 'heart',
-        },
-      },
+      // Not showing this atm
+      // {
+      //   name: defineMessage({
+      //     id: 'service.portal:health',
+      //     defaultMessage: 'Heilsa',
+      //   }),
+      //   path: ServicePortalPath.HealthRoot,
+      //   icon: {
+      //     type: 'outline',
+      //     icon: 'heart',
+      //   },
+      // },
 
       // Menntun
       {
@@ -140,7 +143,9 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:education',
           defaultMessage: 'Menntun',
         }),
-        path: ServicePortalPath.EducationRoot,
+        path: ServicePortalPath.EducationExternal,
+        external: true,
+        systemRoute: true,
         icon: {
           type: 'outline',
           icon: 'school',
@@ -153,7 +158,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:real-estate',
           defaultMessage: 'Fasteignir',
         }),
-        path: ServicePortalPath.RealEstate,
+        path: ServicePortalPath.RealEstateExternal,
         external: true,
         systemRoute: true,
         icon: {
