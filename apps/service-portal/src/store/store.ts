@@ -13,6 +13,7 @@ export interface StoreState {
   navigationState: AsyncActionState
   notificationMenuState: MenuState
   mobileMenuState: MenuState
+  userMenuState: MenuState
   routes: ServicePortalRoute[]
 }
 
@@ -28,6 +29,7 @@ export const initialState: StoreState = {
   navigationState: 'passive',
   notificationMenuState: 'closed',
   mobileMenuState: 'closed',
+  userMenuState: 'closed',
   routes: [],
 }
 
@@ -48,12 +50,19 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
       return {
         ...state,
         notificationMenuState: action.payload,
+        mobileMenuState: 'closed',
       }
 
     case ActionType.SetMobileMenuState:
       return {
         ...state,
         mobileMenuState: action.payload,
+      }
+    case ActionType.SetUserMenuState:
+      return {
+        ...state,
+        userMenuState: action.payload,
+        mobileMenuState: 'closed',
       }
     case ActionType.SetUserLoggedOut:
       return {
