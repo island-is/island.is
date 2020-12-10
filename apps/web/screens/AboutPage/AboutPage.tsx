@@ -1,6 +1,5 @@
 import React, { FC, ReactNode, useMemo, forwardRef } from 'react'
-import routeNames from '@island.is/web/i18n/routeNames'
-import { useI18n } from '@island.is/web/i18n'
+import pathNames from '@island.is/web/i18n/routes'
 
 import { GET_ABOUT_PAGE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
 import { Screen } from '@island.is/web/types'
@@ -61,39 +60,46 @@ type AvailableSlices = Exclude<
   AllSlicesEmbeddedVideoFragment | AllSlicesImageFragment
 >
 
+interface NavItem {
+  href: string
+  title: string
+  active?: boolean
+  items?: NavItem[]
+}
+
+interface SliceItem {
+  url: string
+  text: string
+  id?: string
+}
+
 const sidebarContent = (
-  navigation: {
-    id: string
-    text: string
-  }[],
+  navigation: SliceItem[],
   currentSliceId: string,
-  sliceLinks: {
-    url: string
-    text: string
-  }[],
-) => {
+  sliceLinks: SliceItem[],
+): NavItem[] => {
   const [navigationTitle, ...navigationList] = navigation
 
-  const items = navigationList.map(({ id, text }) => ({
+  const items: NavItem[] = navigationList.map(({ id, text }) => ({
     href: `#${id}`,
     title: text,
     active: id === currentSliceId,
   }))
 
-  const sliceItems = sliceLinks.map(({ url, text }) => ({
+  const sliceItems: NavItem[] = sliceLinks.map(({ url, text }) => ({
     href: url,
     title: text,
     active: false,
-    items: [],
   }))
-  return [
-    {
-      href: `#${navigationTitle.id}`,
-      title: navigationTitle.text,
-      active: true,
-      items: items,
-    },
-  ].concat(sliceItems)
+
+  const firstItem: NavItem = {
+    href: `#${navigationTitle.id}`,
+    title: navigationTitle.text,
+    active: true,
+    items: items,
+  }
+
+  return [firstItem].concat(sliceItems)
 }
 
 export interface LayoutProps {
@@ -137,7 +143,7 @@ const Background = forwardRef<HTMLDivElement, BackgroundProps>(
 const decideSidebarType = (
   page: GetAboutPageQuery['getAboutPage'],
   currentSliceId: string,
-) => {
+): string => {
   if (
     currentSliceId === page.pageHeader.id ||
     page.slices.some(
@@ -154,14 +160,12 @@ const decideSidebarType = (
 
 interface PageHeaderProps {
   page: GetAboutPageQuery['getAboutPage']
-  navigation: { id: string; text: string }[]
+  navigation: SliceItem[]
   namespace?: GetNamespaceQuery['getNamespace']
 }
 
 const PageHeader: FC<PageHeaderProps> = ({ page, navigation }) => {
   const slice = page.pageHeader
-  const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale)
 
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
   const [currentSliceId] = useScrollSpy(ids, { marginTop: 220 })
@@ -203,7 +207,7 @@ const PageHeader: FC<PageHeaderProps> = ({ page, navigation }) => {
             >
               <Stack space={2}>
                 <Breadcrumbs color="blue300" separatorColor="blue300">
-                  <Link href={makePath()}>Ísland.is</Link>
+                  <Link href={pathNames().href}>Ísland.is</Link>
                   <span>{page.title}</span>
                 </Breadcrumbs>
                 <Box display={['block', 'block', 'block', 'none']}>
@@ -419,7 +423,7 @@ const AboutPageScreen: Screen<AboutPageProps> = ({ page, namespace }) => {
         <meta name="description" content={page.seoDescription} />
       </Head>
       <Box position="relative">
-        <PageHeader page={page} navigation={navigation} />
+        <PageHeader page={page} navigation={navigation as SliceItem[]} />
         {(page.slices as AvailableSlices[]).map((slice) => (
           <Section key={slice.id} slice={slice} namespace={namespace} />
         ))}
@@ -431,7 +435,7 @@ const AboutPageScreen: Screen<AboutPageProps> = ({ page, namespace }) => {
               isMenuDialog={false}
               activeItemTitle=""
               items={sidebarContent(
-                navigation,
+                navigation as SliceItem[],
                 page.pageHeader.id,
                 page.pageHeader.links,
               )}
