@@ -20,6 +20,7 @@ import { DocumentProviderModule } from '@island.is/api/domains/document-provider
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
+const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
 
 @Module({
   controllers: [HealthController],
@@ -27,7 +28,7 @@ const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
     GraphQLModule.forRoot({
       debug,
       playground,
-      autoSchemaFile: 'apps/api/src/api.graphql',
+      autoSchemaFile,
       path: '/api/graphql',
       plugins: [
         responseCachePlugin({
