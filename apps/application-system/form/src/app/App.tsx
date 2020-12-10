@@ -11,8 +11,9 @@ import { Signin } from '../routes/SignIn'
 import { SilentSignIn } from '../routes/SilentSignin'
 import { AuthProvider } from '../context/AuthProvider'
 import Header from '../components/Header'
-import ProtectedRoute from '../components/ProtectedRoute'
+import Authenticator from '../components/Authenticator'
 import { environment } from '../environments'
+import { NotFound } from '@island.is/application/ui-shell'
 
 export const App = () => {
   return (
@@ -28,16 +29,22 @@ export const App = () => {
             <Switch>
               <Route path="/signin-oidc" component={Signin} />
               <Route path="/silent/signin-oidc" component={SilentSignIn} />
-              <Route exact path="/">
-                <Redirect to="/application/" />
-              </Route>
-              <ProtectedRoute
-                strict
-                exact
-                path="/applications/:type"
-                component={Applications}
-              />
-              <ProtectedRoute path="/application/:id" component={Application} />
+              <Redirect from="/applications/:type" to="/umsoknir/:type" />
+              <Redirect from="/application/:id" to="/umsokn/:id" />
+              <Authenticator>
+                <Switch>
+                  <Route
+                    strict
+                    exact
+                    path="/umsoknir/:type"
+                    component={Applications}
+                  />
+                  <Route path="/umsokn/:id" component={Application} />
+                  <Route path="*">
+                    <NotFound />
+                  </Route>
+                </Switch>
+              </Authenticator>
             </Switch>
           </BrowserRouter>
         </LocaleProvider>
