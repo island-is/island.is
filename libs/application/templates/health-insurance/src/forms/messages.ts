@@ -119,7 +119,7 @@ export const m = defineMessages({
   },
   statusAndChildren: {
     id: 'hi.application:statusAndChildrend.section',
-    defaultMessage: 'Status and Children',
+    defaultMessage: 'Status and children',
     description: 'Applicant status and children information',
   },
   statusDescription: {
@@ -174,13 +174,18 @@ export const m = defineMessages({
     defaultMessage: 'You are required to answer this question!',
     description: 'You need to answer this question to continue.',
   },
+  formerInsuranceSection: {
+    id: 'hi.application:formerInsurance.section',
+    defaultMessage: 'Former insurance',
+    description: 'Former insurance',
+  },
   formerCountryOfInsuranceDescription: {
     id: 'hi.application:formerCountryOfInsurance.description',
     defaultMessage:
       'Were you registerd with a national health insurance insitution in your former country  of insurance?',
     description: 'former country of insurance description',
   },
-  formerCountryOfInsuranceEntitlement: {
+  insuranceEntitlement: {
     id: 'hi.application:formerCountryOfInsurance.entitlement',
     defaultMessage:
       'Are you entitled to continued insurance in your former country of residence while living in Iceland?',
@@ -216,5 +221,50 @@ export const m = defineMessages({
     id: 'hi.application:applicant.insuranceName',
     defaultMessage: 'Name of the health insurance institution',
     description: 'Name of the health insurance institution',
+  },
+  confirmationSection: {
+    id: 'hi.application:confirmationSection',
+    defaultMessage: 'Confirmation',
+    description: 'Confirmation',
+  },
+  confirmationTitle: {
+    id: 'hi.application:confirmationTitle',
+    defaultMessage: 'Confirm and submit your application',
+    description: 'Confirm and submit your application',
+  },
+  hasAdditionalRemarks: {
+    id: 'hi.application.hasAdditionalRemarks',
+    defaultMessage: 'Do you have any additional information or remarks?',
+    description: 'Do you have any additional information or remarks?',
+  },
+  additionalRemarks: {
+    id: 'hi.application.additionalRemarks',
+    defaultMessage: 'Remarks or additional information',
+    description: 'Remarks or additional information',
+  },
+  additionalRemarksPlacehokder: {
+    id: 'hi.application.additionalRemarks.placeholder',
+    defaultMessage: 'Enter text here',
+    description: 'Enter text here',
+  },
+  confirmCorrectInfo: {
+    id: 'hi.application:confirmCorrectInfo',
+    defaultMessage: 'I am ensuring that the information is true and correct',
+    description: 'I am ensuring that the information is true and correct',
+  },
+  submitLabel: {
+    id: 'hi.application:submit',
+    defaultMessage: 'Submit',
+    description: 'Submit',
+  },
+  succesfulSubmissionTitle: {
+    id: 'hi.application:successfulSubmission.title',
+    defaultMessage: 'We have received your application',
+    description: 'We have received your application',
+  },
+  succesfulSubmissionMessage: {
+    id: 'hi.application:successfulSubmission.message',
+    defaultMessage: 'We have received your application',
+    description: 'We have received your application',
   },
 })

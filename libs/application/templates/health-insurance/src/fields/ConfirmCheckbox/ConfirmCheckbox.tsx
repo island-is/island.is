@@ -1,20 +1,29 @@
 import React, { FC, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  formatText,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { Box, Checkbox } from '@island.is/island-ui/core'
+import { m } from '../../forms/messages'
+import { useLocale } from 'libs/localization/src'
 
 const ConfirmCheckbox: FC<FieldBaseProps> = ({ error, field, application }) => {
   const { id, disabled } = field
   const { setValue } = useFormContext()
-  const defaultValue = getValueViaPath(application.answers, id) as boolean
-
-  const [isChecked, setChecked] = useState(defaultValue)
+  const defaultValue = getValueViaPath(
+    application.answers,
+    id as string,
+    false,
+  ) as boolean
+  const { formatMessage } = useLocale()
 
   return (
     <Controller
       name={id}
       defaultValue={defaultValue}
-      render={() => {
+      render={({ value, onChange }) => {
         return (
           <Box
             border="standard"
@@ -26,12 +35,16 @@ const ConfirmCheckbox: FC<FieldBaseProps> = ({ error, field, application }) => {
               id={id}
               disabled={disabled}
               name={`${id}`}
-              label="I am ensuring that the information is true and correct"
+              label={formatText(
+                m.confirmCorrectInfo,
+                application,
+                formatMessage,
+              )}
               hasError={!!error}
-              checked={isChecked}
-              onChange={() => {
-                setChecked(!isChecked)
-                setValue(id, !isChecked)
+              checked={value}
+              onChange={(e) => {
+                onChange(e.target.checked)
+                setValue(id as string, e.target.checked)
               }}
             />
           </Box>

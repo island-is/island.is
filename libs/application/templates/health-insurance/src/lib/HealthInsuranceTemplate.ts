@@ -30,14 +30,15 @@ const HealthInsuranceSchema = z.object({
   status: z.string().nonempty(),
   additionalInformation: z.string().optional(),
   children: z.string().nonempty(),
-  formerCountry: z.object({
-    insuranceRegistration: z.string().nonempty(),
-    country: z.string().nonempty(),
-    id: z.string().nonempty(),
-    insuranceInstitution: z.string().nonempty(),
-    insuranceEntitlement: z.string().nonempty(),
-  }),
-  summaryInput: z.string(),
+  insuranceRegistration: z.string().nonempty(),
+  country: z.string().nonempty(),
+  id: z.string().nonempty(),
+  insuranceInstitution: z.string().nonempty(),
+  insuranceEntitlement: z.string().nonempty(),
+  hasAdditionalInfo: z.string().nonempty(),
+  additionalRemarks: z.string(),
+  additionalFiles: z.string(),
+  correctInfo: z.boolean().refine((v) => v),
 })
 
 const HealthInsuranceTemplate: ApplicationTemplate<
@@ -62,9 +63,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
                 import('../forms/HealthInsuranceForm').then((module) =>
                   Promise.resolve(module.HealthInsuranceForm),
                 ),
-              actions: [
-                { event: 'SUBMIT', name: 'Submit', type: 'primary' },
-              ],
+              actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
               write: 'all',
             },
           ],
@@ -90,7 +89,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
             },
           ],
         },
-      }
+      },
     },
   },
   mapUserToRole(id: string, state: string): ApplicationRole {

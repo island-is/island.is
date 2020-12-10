@@ -1,5 +1,4 @@
 import {
-  buildCheckboxField,
   buildCustomField,
   buildDataProviderItem,
   buildDividerField,
@@ -12,12 +11,12 @@ import {
   buildSection,
   buildSubmitField,
   buildTextField,
-  Comparators,
   Form,
   FormModes,
 } from '@island.is/application/core'
 import { m } from './messages'
 import { YES, NO } from '../constants'
+import { StatusTypes } from '../types'
 
 export const HealthInsuranceForm: Form = buildForm({
   id: 'HealthInsuranceDraft',
@@ -138,17 +137,17 @@ export const HealthInsuranceForm: Form = buildForm({
               options: [
                 {
                   label: m.statusPensioner,
-                  value: 'pensioner',
+                  value: StatusTypes.PENSIONER,
                   tooltip: m.statusPensionerInformation,
                 },
                 {
                   label: m.statusStudent,
-                  value: 'student',
+                  value: StatusTypes.STUDENT,
                   tooltip: m.statusStudentInformation,
                 },
                 {
                   label: m.statusOther,
-                  value: 'other',
+                  value: StatusTypes.OTHER,
                   tooltip: m.statusOtherInformation,
                 },
               ],
@@ -157,7 +156,7 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'additionalInformation',
               name: '',
               introduction: m.statusAdditionalInformation,
-              condition: (answers) => answers.status === 'student',
+              condition: (answers) => answers.status === StatusTypes.STUDENT,
             }),
             buildRadioField({
               id: 'children',
@@ -176,14 +175,14 @@ export const HealthInsuranceForm: Form = buildForm({
     }),
     buildSection({
       id: 'formerCountryofInsuranceSection',
-      name: '',
+      name: m.formerInsuranceSection,
       children: [
         buildMultiField({
           id: 'formerCountryofInsurance',
           name: m.formerCountryOfInsuranceTitle,
           children: [
             buildRadioField({
-              id: 'formerCountry.insuranceRegistration',
+              id: 'insuranceRegistration',
               name: '',
               description: m.formerCountryOfInsuranceDescription,
               largeButtons: true,
@@ -198,26 +197,23 @@ export const HealthInsuranceForm: Form = buildForm({
               introduction: m.formerCountryOfInsuranceInfo,
             }),
             buildTextField({
-              id: 'formerCountry.country',
+              id: 'country',
               name: m.country,
               width: 'half',
-              disabled: true,
             }),
             buildTextField({
-              id: 'formerCountry.id',
+              id: 'id',
               name: m.formerId,
               width: 'half',
-              disabled: true,
             }),
             buildTextField({
-              id: 'formerCountry.insuranceInstitution',
+              id: 'insuranceInstitution',
               name: m.insuranceInstitution,
-              disabled: true,
             }),
             buildRadioField({
-              id: 'formerCountry.insuranceEntitlement',
+              id: 'insuranceEntitlement',
               name: '',
-              description: m.formerCountryOfInsuranceEntitlement,
+              description: m.insuranceEntitlement,
               width: 'half',
               largeButtons: true,
               options: [
@@ -231,11 +227,11 @@ export const HealthInsuranceForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirm',
-      name: 'Confirmation',
+      name: m.confirmationSection,
       children: [
         buildMultiField({
           id: '',
-          name: 'Confirm and submit your application',
+          name: m.confirmationTitle,
           children: [
             buildCustomField({
               id: 'review',
@@ -245,37 +241,26 @@ export const HealthInsuranceForm: Form = buildForm({
             buildRadioField({
               id: 'hasAdditionalInfo',
               name: '',
-              description: 'Do you have any additional information or remarks?',
+              description: m.hasAdditionalRemarks,
               largeButtons: true,
               width: 'half',
               options: [
-                { value: 'No', label: 'No' },
-                { value: 'Yes', label: 'Yes' },
+                { value: NO, label: m.noOptionLabel },
+                { value: YES, label: m.yesOptionLabel },
               ],
             }),
             buildTextField({
-              condition: {
-                questionId: 'hasAdditionalInfo',
-                isMultiCheck: false,
-                comparator: Comparators.EQUALS,
-                value: 'Yes',
-              },
               id: 'additionalRemarks',
-              name: 'Remarks or additional information',
+              name: m.additionalRemarks,
               variant: 'textarea',
-              placeholder: 'Enter text here',
+              placeholder: m.additionalRemarksPlacehokder,
+              condition: (answers) => answers.hasAdditionalInfo === YES,
             }),
             buildFileUploadField({
-              condition: {
-                questionId: 'hasAdditionalInfo',
-                isMultiCheck: false,
-                comparator: Comparators.EQUALS,
-                value: 'Yes',
-              },
               id: 'additionalFiles',
               name: '',
               introduction: '',
-              uploadMultiple: true,
+              condition: (answers) => answers.hasAdditionalInfo === YES,
             }),
             buildCustomField({
               id: 'correctInfo',
@@ -284,16 +269,18 @@ export const HealthInsuranceForm: Form = buildForm({
             }),
             buildSubmitField({
               id: 'submit',
-              name: 'Submit',
+              name: m.submitLabel,
               placement: 'footer',
-              actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
+              actions: [
+                { event: 'SUBMIT', name: m.submitLabel, type: 'primary' },
+              ],
             }),
           ],
         }),
         buildIntroductionField({
           id: 'successfulSubmission',
-          name: 'We have received your application',
-          introduction: 'We have recivived your application!',
+          name: m.succesfulSubmissionTitle,
+          introduction: m.succesfulSubmissionMessage,
         }),
       ],
     }),
