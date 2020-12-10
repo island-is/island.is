@@ -1,4 +1,6 @@
 import React from 'react'
+import getConfig from 'next/config'
+
 import { Screen } from '@island.is/web/types'
 
 import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
@@ -8,21 +10,19 @@ import {
   QueryGetNamespaceArgs,
 } from '@island.is/api/schema'
 
-import { GET_NAMESPACE_QUERY } from '../queries'
-import { GET_CATALOGUE_QUERY } from '../queries/ApiCatalogue'
+import { GET_NAMESPACE_QUERY, GET_CATALOGUE_QUERY } from '../queries'
 import { useNamespace } from '../../hooks'
 
 import { withMainLayout } from '@island.is/web/layouts/main'
-import getConfig from 'next/config'
-import {
-  ServiceListContainer,
-  TagDisplayNames,
-} from 'apps/web/components/ServiceListContainer/ServiceListContainer'
 import { ApolloError } from '@apollo/client'
 import { SidebarLayout } from '../Layouts/SidebarLayout'
 
-import { SubpageMainContent } from '../../components/SubpageMainContent'
-import { SubpageDetailsContent } from '../../components/SubpageDetailsContent'
+import {
+  ServiceList,
+  SubpageMainContent,
+  SubpageDetailsContent,
+  ServiceTagDisplayNames,
+} from '../../components'
 
 import { SubpageLayout } from '../Layouts/Layouts'
 import { Box, Stack, Text, Button, Link } from '@island.is/island-ui/core'
@@ -59,13 +59,9 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
 
   const n = useNamespace(staticContent)
   const fn = useNamespace(filterContent)
-  const TEXT_NOT_FOUND = n('notFound')
-  const HEADING_ERROR = n('errorHeading')
-  const TEXT_ERROR = n('errorText')
-  const TEXT_LOAD_MORE = n('fmButton')
 
-  const translateTags = (): TagDisplayNames => {
-    const names: TagDisplayNames = {
+  const translateTags = (): ServiceTagDisplayNames => {
+    const names: ServiceTagDisplayNames = {
       APIGW: fn('accessApigw'),
       XROAD: fn('accessXroad'),
       FINANCIAL: fn('dataFinancial'),
@@ -136,17 +132,17 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                 <></> // Hér kemur filterinn
               }
             >
-              <ServiceListContainer
+              <ServiceList
                 services={data?.getApiCatalogue.services}
                 //loading={loading}
                 moreToLoad={data?.getApiCatalogue?.pageInfo?.nextCursor != null}
-                emptyListText={TEXT_NOT_FOUND}
+                emptyListText={n('notFound')}
                 errorMessage={
                   error
-                    ? { heading: HEADING_ERROR, text: TEXT_ERROR }
+                    ? { heading: n('errorHeading'), text: n('errorText') }
                     : undefined
                 }
-                loadMoreButtonText={TEXT_LOAD_MORE}
+                loadMoreButtonText={n('fmButton')}
                 tagDisplayNames={translateTags()}
                 // onLoadMoreClick={onLoadMore}
               />

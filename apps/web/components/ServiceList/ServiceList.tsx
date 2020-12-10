@@ -33,7 +33,7 @@ type CategoryKeys =
   | 'XROAD'
   | 'APIGW'
 
-export type TagDisplayNames = {
+export type ServiceTagDisplayNames = {
   [key in CategoryKeys]: string
 }
 
@@ -42,11 +42,11 @@ export type ErrorMessage = {
   text: string
 }
 
-export interface ServiceListContainerProps {
+export interface ServiceListProps {
   baseUrl?: string
   services: ApiService[]
   span?: ResponsiveProp<GridColumnStyles.GridColumns>
-  tagDisplayNames?: TagDisplayNames //If you want different display names for tag
+  tagDisplayNames?: ServiceTagDisplayNames //If you want different display names for tag
   loading?: Boolean // pass true to show loading icon
   emptyListText?: string //text displayed when the list is empty
   errorMessage?: ErrorMessage //pass null if no error
@@ -56,7 +56,7 @@ export interface ServiceListContainerProps {
   children?: JSX.Element | JSX.Element[]
 }
 
-export const ServiceListContainer: React.FC<ServiceListContainerProps> = ({
+export const ServiceList: React.FC<ServiceListProps> = ({
   baseUrl = './vorulisti/',
   services = [],
   span = ['12/12', '12/12', '12/12', '6/12', '4/12'],
