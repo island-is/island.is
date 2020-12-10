@@ -11,7 +11,6 @@ import {
   GetApiCatalogueInput,
 } from '@island.is/api/schema'
 
-
 import { GET_NAMESPACE_QUERY, GET_CATALOGUE_QUERY } from '../queries'
 import { useNamespace } from '../../hooks'
 
@@ -109,7 +108,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
     })
   }
 
-   const [parameters, setParameters] = useState<GetApiCatalogueInput>({
+  const [parameters, setParameters] = useState<GetApiCatalogueInput>({
     cursor: null,
     limit: LIMIT,
     query: '',
@@ -119,12 +118,14 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
     access: [],
   })
 
-  const { data, loading, error, fetchMore, refetch } = useQuery<Query, QueryGetApiCatalogueArgs>(GET_CATALOGUE_QUERY,
-    {
-      variables: {
-        input: parameters,
-      },
-    })
+  const { data, loading, error, fetchMore, refetch } = useQuery<
+    Query,
+    QueryGetApiCatalogueArgs
+  >(GET_CATALOGUE_QUERY, {
+    variables: {
+      input: parameters,
+    },
+  })
 
   return (
     <SubpageLayout
