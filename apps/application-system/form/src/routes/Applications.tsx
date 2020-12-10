@@ -17,6 +17,7 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { Application } from '@island.is/application/core'
+import { NotFound } from '@island.is/application/ui-shell'
 
 export const Applications: FC = () => {
   const { type } = useParams()
@@ -37,7 +38,7 @@ export const Applications: FC = () => {
     CREATE_APPLICATION,
     {
       onCompleted({ createApplication }) {
-        history.push(`../application/${createApplication.id}`)
+        history.push(`../umsokn/${createApplication.id}`)
       },
     },
   )
@@ -64,7 +65,20 @@ export const Applications: FC = () => {
     }
   }, [data])
 
-  if (createError) return <p>Error! {createError.message}</p>
+  if (applicationsError)
+    return (
+      <NotFound
+        title="Þessi gerð umsókna er ekki til"
+        subTitle={`Engin umsókn er til af gerðinni: ${type}`}
+      />
+    )
+  if (createError)
+    return (
+      <NotFound
+        title="Eitthvað fór úrskeiðis"
+        subTitle={`Ekki tókst að búa til umsókn af gerðinni: ${type}`}
+      />
+    )
 
   return (
     <Page>
@@ -73,13 +87,6 @@ export const Applications: FC = () => {
           <Box marginTop={5} marginBottom={5}>
             <Text variant="h1">Þínar umsóknir</Text>
           </Box>
-          {applicationsError && (
-            <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-              <Text variant="h3">
-                Tókst ekki að sækja umsóknir, eitthvað fór úrskeiðis
-              </Text>
-            </Box>
-          )}
           <Stack space={2}>
             {data?.getApplicationsByApplicant?.map(
               (application: Application) => (
@@ -90,8 +97,7 @@ export const Applications: FC = () => {
                   cta={{
                     label: 'Halda áfram',
                     variant: 'secondary',
-                    onClick: () =>
-                      history.push(`../application/${application.id}`),
+                    onClick: () => history.push(`../umsokn/${application.id}`),
                   }}
                   progressMeter={{
                     active: true,

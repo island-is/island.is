@@ -29,10 +29,14 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
 
   const [response, setResponse] = useState<Response[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [automatedTestsError, setautomatedTestsError] = useState<string | null>(
+    null,
+  )
   const { register, errors, trigger } = useForm()
   const [runEndpointTests] = useMutation(runEndpointTestsMutation)
 
   const validateEndpoint = async () => {
+    setautomatedTestsError(null)
     setIsLoading(true)
 
     const results = await runEndpointTests({
@@ -42,7 +46,8 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
     })
 
     if (!results.data) {
-      //TODO display error
+      setIsLoading(false)
+      setautomatedTestsError(m.automatedTestsErrorMessage.defaultMessage)
     }
 
     setResponse(results.data.runEndpointTests)
@@ -119,18 +124,27 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
             </GridColumn>
           </GridRow>
         </GridContainer>
-        <Box marginTop={3} display="flex" justifyContent="flexEnd">
-          <Button
-            variant="ghost"
-            size="small"
-            onClick={() => {
-              trigger(['nationalId', 'docId']).then((isValid) =>
-                isValid ? validateEndpoint() : setResponse([]),
-              )
-            }}
-          >
-            {formatText(m.automatedTestsButton, application, formatMessage)}
-          </Button>
+        <Box marginTop={3} display="flex" alignItems="flexEnd">
+          <Box>
+            <Button
+              variant="ghost"
+              size="small"
+              onClick={() => {
+                trigger(['nationalId', 'docId']).then((isValid) =>
+                  isValid ? validateEndpoint() : setResponse([]),
+                )
+              }}
+            >
+              {formatText(m.automatedTestsButton, application, formatMessage)}
+            </Button>
+          </Box>
+          {automatedTestsError && (
+            <Box color="red600" paddingY={2}>
+              <Text fontWeight="semiBold" color="red600">
+                {automatedTestsError}
+              </Text>
+            </Box>
+          )}
         </Box>
 
         <Box>

@@ -9,6 +9,7 @@ import {
   getApplicationUIFields,
 } from '@island.is/application/template-loader'
 import { FieldProvider, useFields } from '../components/FieldContext'
+import { NotFound } from './NotFound'
 
 function isOnProduction(): boolean {
   // TODO detect better when the application system is on production
@@ -71,11 +72,8 @@ const ShellWrapper: FC<{
     populateForm()
   }, [fieldsDispatch, application, form, nationalRegistryId])
 
-  if (!applicationId) {
-    return <p>Error there is no id</p>
-  }
-  if (error) {
-    return <p>{error}</p>
+  if (!applicationId || error) {
+    return <NotFound />
   }
   // TODO we need better loading states
   if (loading || !form || !dataSchema) {

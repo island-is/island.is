@@ -11,7 +11,7 @@ import { m } from '../../../forms/messages'
 
 const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
   const { formatMessage } = useLocale()
-  // TODO: Add this to types file ?
+
   interface Key {
     name: string
     value: string
@@ -19,6 +19,9 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
 
   const { register, clearErrors } = useFormContext()
   const [keys, setKeys] = useState<Key[]>([])
+  const [prodEnvironmentError, setProdEnvironmentErrorError] = useState<
+    string | null
+  >(null)
   const { answers: formValue } = application
   const [currentAnswer, setCurrentAnswer] = useState(
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -28,6 +31,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
   const [registerProvider] = useMutation(registerProviderMutation)
 
   const onRegister = async () => {
+    setProdEnvironmentErrorError(null)
     const credentials = await registerProvider({
       variables: {
         input: { nationalId: '2404805659' }, //TODO set real nationalId
@@ -35,7 +39,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
     })
 
     if (!credentials.data) {
-      //TODO display error
+      setProdEnvironmentErrorError(m.prodEnviromentErrorMessage.defaultMessage)
     }
 
     setKeys([
@@ -54,7 +58,6 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
   }
 
   return (
-    //TODO: we can make this a generic component for reuasabilty, same as TEST environment
     <Box>
       <Box marginBottom={7} />
       <Box
@@ -82,6 +85,13 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
           <Box color="red600" paddingY={2}>
             <Text fontWeight="semiBold" color="red600">
               {error}
+            </Text>
+          </Box>
+        )}
+        {prodEnvironmentError && (
+          <Box color="red600" paddingY={2}>
+            <Text fontWeight="semiBold" color="red600">
+              {prodEnvironmentError}
             </Text>
           </Box>
         )}
