@@ -162,7 +162,7 @@ export function mergeAnswers(
     arrayMerge: overwriteArrayMerge,
   })
 }
-type MessageFormatter = (descriptor: StaticText, values?: any) => string
+export type MessageFormatter = (descriptor: StaticText, values?: any) => string
 
 export function formatText(
   text: FormText,
