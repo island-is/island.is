@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import getConfig from 'next/config'
 
 import { Screen } from '@island.is/web/types'
@@ -8,13 +8,15 @@ import {
   Query,
   QueryGetApiCatalogueArgs,
   QueryGetNamespaceArgs,
+  GetApiCatalogueInput,
 } from '@island.is/api/schema'
+
 
 import { GET_NAMESPACE_QUERY, GET_CATALOGUE_QUERY } from '../queries'
 import { useNamespace } from '../../hooks'
 
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { ApolloError } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { SidebarLayout } from '../Layouts/SidebarLayout'
 
 import {
@@ -27,27 +29,20 @@ import {
 import { SubpageLayout } from '../Layouts/Layouts'
 import { Box, Stack, Text, Button, Link } from '@island.is/island-ui/core'
 import { CustomNextError } from '@island.is/web/units/errors'
-
 const { publicRuntimeConfig } = getConfig()
 
 /* TEMPORARY LAYOUT CREATED TO SCAFFOLD API CATALOGUE INTO THE WEB */
 
 interface ApiCatalogueProps {
   title: string
-  data: Query
-  loading: boolean
-  error: ApolloError
   staticContent: GetNamespaceQuery['getNamespace']
   filterContent: GetNamespaceQuery['getNamespace']
 }
 
-const LIMIT = 100
+const LIMIT = 2
 
 const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   title,
-  data,
-  loading,
-  error,
   staticContent,
   filterContent,
 }) => {
@@ -78,6 +73,42 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
     }
     return names
   }
+
+  const onLoadMore = () => {
+    if (data?.getApiCatalogue.pageInfo?.nextCursor == null) {
+      return
+    }
+
+    const { nextCursor } = data?.getApiCatalogue?.pageInfo
+    const param = { ...parameters, cursor: nextCursor }
+    fetchMore({
+      variables: { input: param },
+      updateQuery: (prevResult, { fetchMoreResult }) => {
+        fetchMoreResult.getApiCatalogue.services = [
+          ...prevResult.getApiCatalogue.services,
+          ...fetchMoreResult.getApiCatalogue.services,
+        ]
+        return fetchMoreResult
+      },
+    })
+  }
+
+   const [parameters, setParameters] = useState<GetApiCatalogueInput>({
+    cursor: null,
+    limit: LIMIT,
+    query: '',
+    pricing: [],
+    data: [],
+    type: [],
+    access: [],
+  })
+
+  const { data, loading, error, fetchMore, refetch } = useQuery<Query, QueryGetApiCatalogueArgs>(GET_CATALOGUE_QUERY,
+    {
+      variables: {
+        input: parameters,
+      },
+    })
 
   return (
     <SubpageLayout
@@ -133,8 +164,8 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
               }
             >
               <ServiceList
-                services={data?.getApiCatalogue.services}
-                //loading={loading}
+                services={data?.getApiCatalogue?.services}
+                loading={loading}
                 moreToLoad={data?.getApiCatalogue?.pageInfo?.nextCursor != null}
                 emptyListText={n('notFound')}
                 errorMessage={
@@ -144,7 +175,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                 }
                 loadMoreButtonText={n('fmButton')}
                 tagDisplayNames={translateTags()}
-                // onLoadMoreClick={onLoadMore}
+                onLoadMoreClick={onLoadMore}
               />
             </SidebarLayout>
           }
@@ -180,29 +211,9 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
       .then((res) => JSON.parse(res.data.getNamespace.fields)),
   ])
 
-  const { data, loading, error } = await apolloClient.query<
-    Query,
-    QueryGetApiCatalogueArgs
-  >({
-    query: GET_CATALOGUE_QUERY,
-    variables: {
-      input: {
-        cursor: null,
-        limit: LIMIT,
-        query: '',
-        pricing: [],
-        data: [],
-        type: [],
-        access: [],
-      },
-    },
-  })
 
   return {
     title: 'Vörulisti Vefþjónusta',
-    data: data,
-    loading,
-    error,
     staticContent,
     filterContent,
   }
