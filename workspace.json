@@ -2366,11 +2366,11 @@
           "options": {
             "cypressConfig": "apps/gjafakort/web-e2e/cypress.json",
             "tsConfig": "apps/gjafakort/web-e2e/tsconfig.e2e.json",
-            "devServerTarget": "gjafakort/web:serve"
+            "devServerTarget": "gjafakort-web:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "gjafakort/web:serve:production"
+              "devServerTarget": "gjafakort-web:serve:production"
             }
           }
         },
