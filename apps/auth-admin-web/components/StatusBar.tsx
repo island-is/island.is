@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component } from 'react';
 import APIResponse from '../../models/APIResponse';
 
 class StatusBar extends Component<{ status: APIResponse | null }> {

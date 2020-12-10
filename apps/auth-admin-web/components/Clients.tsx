@@ -1,11 +1,10 @@
-import React, { Component, useCallback  } from 'react';
+import React, { Component } from 'react';
 import axios from 'axios';
 import ClientDTO from '../models/dtos/client-dto';
 import Paginator from './Paginator';
 import Link from 'next/link';
 
 class Clients extends Component {
-  
   state = {
     clients: [],
     rowCount: 0,
@@ -24,39 +23,32 @@ class Clients extends Component {
       rowCount: response.data.count,
       lastPage: Math.ceil(this.state.rowCount / this.state.count),
     });
-  }
-
-  componentDidMount = async () => {
-    this.getClients(this.state.page, this.state.page) 
   };
 
-  handlePageChange = async (page: number) => {
-    this.getClients(page, this.state.count);
-    this.setState({ page: page});
+  componentDidMount = async () => {
+    // this.getClients(this.state.page, this.state.count)
+  };
+
+  handlePageChange = async (page: number, count: number) => {
+    this.getClients(page, count);
+    this.setState({ page: page, count: count });
   };
 
   delete = async (clientId: string) => {
-    if (window.confirm('Are you sure you want to delete this client?')) {
+    if (
+      window.confirm(
+        `Are you sure you want to delete this client: "${clientId}"?`
+      )
+    ) {
       const response = await axios.delete(`api/clients/${clientId}`);
       console.log(response);
-      await this.componentDidMount();
+      this.getClients(this.state.page, this.state.count);
     }
   };
 
   edit = async (client: ClientDTO) => {
     console.log(client);
   };
-
-  changeCount(count: string) {
-    this.getClients(1, +count);
-
-    this.setState({
-      count: +count,
-      page: 1,
-    });
-
-    console.log("Count is: " + this.state.count);
-  }
 
   render() {
     return (
@@ -65,31 +57,18 @@ class Clients extends Component {
         <div className="clients__container__options">
           <div className="clients__container__button">
             <Link href={'/client'}>
-              <a className="clients__button__new">Create new client</a>
+              <a className="clients__button__new">
+                <i className="icon__new"></i>Create new client
+              </a>
             </Link>
-          </div>
-          <div className="clients__container__field">
-            <label htmlFor="count" className="clients__label">
-              Fjöldi á síðu
-            </label>
-            <select
-              id="count"
-              onChange={(e) => this.changeCount(e.target.value)}
-              className="clients__select"
-            >
-              <option value="1">1</option>
-              <option value="30">30</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-            </select>
           </div>
         </div>
         <div className="client__container__table">
           <table className="clients__table">
             <thead>
               <tr>
-                <th>Auðkenni</th>
-                <th>Identity token lifetime</th>
+                <th>Client Id</th>
+                <th>Description</th>
                 <th colSpan={2}></th>
               </tr>
             </thead>
@@ -98,21 +77,32 @@ class Clients extends Component {
                 return (
                   <tr key={client.clientId}>
                     <td>{client.clientId}</td>
-                    <td>{client.identityTokenLifetime}</td>
-                    <td>
-                      <button type="button"
+                    <td>{client.description}</td>
+                    <td className="clients__table__button">
+                    <Link href={`client/${client.clientId}`}>
+                    <button
+                        type="button"
                         className="clients__button__edit"
-                        onClick={() => this.edit(client)}
+                        // onClick={() => this.edit(client)}
+                        title="Edit"
                       >
-                        Breyta
+                        <i className="icon__edit"></i>
+                        <span>
+                        Edit
+                        </span>
                       </button>
+                    </Link>
+                    
                     </td>
-                    <td>
-                      <button type="button"
+                    <td className="clients__table__button">
+                      <button
+                        type="button"
                         className="clients__button__delete"
+                        title="Delete"
                         onClick={() => this.delete(client.clientId)}
                       >
-                        Eyða
+                        <i className="icon__delete"></i>
+                        <span>Delete</span>
                       </button>
                     </td>
                   </tr>
@@ -122,7 +112,6 @@ class Clients extends Component {
           </table>
         </div>
         <Paginator
-          page
           lastPage={this.state.lastPage}
           handlePageChange={this.handlePageChange}
         />

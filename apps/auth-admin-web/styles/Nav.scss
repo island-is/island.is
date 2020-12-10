@@ -11,7 +11,7 @@
     a {
       display: flex;
       justify-content: center;
-      font-weight: 300;
+      font-weight: $weight-light;
       font-size: 18px;
       line-height: 28px;
       color: #00003c;
@@ -20,9 +20,9 @@
       padding-bottom: 10px;
 
       &.active {
-        color: #0061ff;
-        font-weight: 600;
-        border-bottom: solid 2px #0061ff;
+        color: $color-link;
+        font-weight: $weight-semi-bold;
+        border-bottom: solid 2px $color-link;
       }
     }
   }

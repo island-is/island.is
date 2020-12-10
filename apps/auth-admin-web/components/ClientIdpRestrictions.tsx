@@ -60,7 +60,6 @@ const ClientIdpRestrictions: React.FC<Props> = (props: Props) => {
     } else {
       remove('audkenni_sim');
     }
-
   };
 
   const setCard = (card: boolean) => {
@@ -77,13 +76,14 @@ const ClientIdpRestrictions: React.FC<Props> = (props: Props) => {
       <div className="client-idp-restriction__wrapper">
         <div className="client-idp-restriction__container">
           <h1>Select authentication types</h1>
-          <div className="client-idp-restriction__help">
-            Select the types of authentication that are allowed for this Client
-          </div>
 
           <div className="client-idp-restriction__container__form">
+            <div className="client-idp-restriction__help">
+              Select the types of authentication that are allowed for this
+              Client
+            </div>
             <div className="client-idp-restriction__container__fields">
-              <div className="client-idp-restriction__container__field">
+              <div className="client-idp-restriction__container__checkbox__field">
                 <label className="client-idp-restriction__label">
                   Sim card
                 </label>
@@ -98,7 +98,7 @@ const ClientIdpRestrictions: React.FC<Props> = (props: Props) => {
                 <HelpBox helpText="Allows users to login with sim cards" />
               </div>
 
-              <div className="client-idp-restriction__container__field">
+              <div className="client-idp-restriction__container__checkbox__field">
                 <label className="client-idp-restriction__label">
                   Identity card
                 </label>
@@ -119,6 +119,7 @@ const ClientIdpRestrictions: React.FC<Props> = (props: Props) => {
                 <button
                   type="button"
                   className="client-idp-restriction__button__cancel"
+                  onClick={props.handleBack}
                 >
                   Back
                 </button>
@@ -128,7 +129,10 @@ const ClientIdpRestrictions: React.FC<Props> = (props: Props) => {
                   type="button"
                   className="client-idp-restriction__button__save"
                   value="Next"
-                >Next</button>
+                  onClick={props.handleNext}
+                >
+                  Next
+                </button>
               </div>
             </div>
           </div>

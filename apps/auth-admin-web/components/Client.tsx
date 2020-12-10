@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ClientDTO from '../models/dtos/client-dto';
 import axios from 'axios';
 import StatusBar from './StatusBar';
@@ -11,6 +11,7 @@ import HelpBox from './HelpBox';
 interface Props {
   client: ClientDTO;
   onNextButtonClick?: (client: ClientDTO) => void;
+  handleCancel?: () => void;
 }
 
 const Client: React.FC<Props> = (props: Props) => {
@@ -22,6 +23,8 @@ const Client: React.FC<Props> = (props: Props) => {
   const [response, setResponse] = useState<APIResponse>(null);
   const [available, setAvailable] = useState<boolean>(false);
   const [clientIdLength, setClientIdLength] = useState<number>(0);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
   // TODO: Fix
   const client = props.client;
 
@@ -51,33 +54,79 @@ const Client: React.FC<Props> = (props: Props) => {
     return obj;
   };
 
+  useEffect(() => {
+    if (props.client && props.client.clientId){
+      setIsEditing(true);
+      setAvailable(true);
+    }
+  }, [props.client])
+
   const save = async (data) => {
     const clientObject = castToNumbers(data.client);
-    await axios
-      .post('/api/clients', clientObject)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-        if (res.statusCode === 201) {
-          console.log('handle change');
-          console.log(clientObject);
-          props.onNextButtonClick(clientObject);
-        }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-
-          // console.log(error.response.data);
-
-          // console.log(error.response.headers);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
+    if (!isEditing) {
+      await create(clientObject);
+    }
+    else {
+      await edit(clientObject);
+    }
   };
+
+  const create = async (data) => {
+    await axios
+    .post('/api/clients', clientObject)
+    .then((response) => {
+      const res = new APIResponse();
+      res.statusCode = response.request.status;
+      res.message = response.request.statusText;
+      setResponse(res);
+      if (res.statusCode === 201) {
+        console.log('handle change');
+        console.log(clientObject);
+        props.onNextButtonClick(clientObject);
+      }
+    })
+    .catch(function (error) {
+      if (error.response) {
+        setResponse(error.response.data);
+
+        // console.log(error.response.data);
+
+        // console.log(error.response.headers);
+      } else {
+        // TODO: Handle and show error
+      }
+    });
+  }
+
+  const edit = async (data) => {
+    console.log("DELETE CLIENTID");
+    delete data.clientId;
+    console.log(data);
+    await axios
+    .put(`/api/clients/${props.client.clientId}`, data)
+    .then((response) => {
+      const res = new APIResponse();
+      res.statusCode = response.request.status;
+      res.message = response.request.statusText;
+      setResponse(res);
+      if (res.statusCode === 201) {
+        console.log('handle change');
+        console.log(data);
+        // props.onNextButtonClick(clientObject);
+      }
+    })
+    .catch(function (error) {
+      if (error.response) {
+        setResponse(error.response.data);
+
+        // console.log(error.response.data);
+
+        // console.log(error.response.headers);
+      } else {
+        // TODO: Handle and show error
+      }
+    });
+  }
 
   const checkAvailability = async (clientId: string) => {
     setClientIdLength(clientId.length);
@@ -99,16 +148,15 @@ const Client: React.FC<Props> = (props: Props) => {
     <div className="client">
       <StatusBar status={response}></StatusBar>
       <div className="client__wrapper">
-        <div className="client__help">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur
-          sed alias neque ullam repudiandae, iste reiciendis suscipit rerum
-          officiis necessitatibus doloribus incidunt libero distinctio
-          consequuntur voluptatibus tenetur aliquid ut inventore!
-        </div>
+        
 
         <div className="client__container">
-          <h1>Create a new Client</h1>
+          <h1>{ isEditing ? "Edit Client" : "Create a new Client"}</h1>
           <div className="client__container__form">
+          <div className="client__help">
+          Enter some basic details for this client. Click <a href="#advanced">advanced</a> to configure preferences if default settings need to be changed. 
+          You will then go through steps to configure and add additional properties.
+        </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="client__container__fields">
                 {/* <HookField name='client.clientId' errors={errors} required={true} label="Client Id" value={client.clientId}  /> */}
@@ -151,6 +199,7 @@ const Client: React.FC<Props> = (props: Props) => {
                     placeholder="example-client"
                     onChange={(e) => checkAvailability(e.target.value)}
                     title="The unique identifier for this application"
+                    readOnly={isEditing}
                   />
                   <div
                     className={`client__container__field__available ${
@@ -310,7 +359,7 @@ const Client: React.FC<Props> = (props: Props) => {
                   <HelpBox helpText="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem architecto a odit ea distinctio consequatur autem nesciunt cupiditate eos, error reprehenderit illum dolor, mollitia modi vitae. Ducimus esse eos explicabo." />
                 </div>
 
-                <div className="client__container__button">
+                <div className="client__container__button" id="advanced">
                   <a
                     className="client__button__show"
                     onClick={() => setShow(!show)}
@@ -693,7 +742,7 @@ const Client: React.FC<Props> = (props: Props) => {
               </div>
               <div className="client__buttons__container">
                 <div className="client__button__container">
-                  <button className="client__button__cancel">Cancel</button>
+                  <button className="client__button__cancel" type="button" onClick={props.handleCancel}>Cancel</button>
                 </div>
                 <div className="client__button__container">
                   <input

@@ -4,38 +4,29 @@
     min-width: 20px;
     font-size: 0.8rem;
     text-transform: uppercase;
-    font-weight: 600;
+    font-weight: $weight-semi-bold;
     padding: 6px;
-    background: #ccdfff;
-    color: #0044b3;
+    color: $color-link;
     cursor: pointer;
     border: none;
     border-radius: 8px;
     margin: 0 10px;
+
+    span {
+      visibility: hidden;
+    }
   }
 
   &__content {
     position: absolute;
-    padding: 8px 5px;
-    background: white;
-    border: 1px solid #ccdfff;
+    background: $color-body-bg;
+    border: 1px solid $color-border;
     width: 200px;
     font-size: 0.8rem;
     z-index: 2;
     top: 30px;
     left: 10px;
     border-radius: 8px;
-
-    &__button__close {
-      display: block;
-      font-size: 1rem;
-      font-weight: 600;
-      text-align: right;
-      margin-right: 5px;
-      margin-bottom: -13px;
-      margin-left: 10px;
-      cursor: pointer;
-      padding-bottom: 5px;
-    }
+    padding: 12px 24px 12px 16px;
   }
 }

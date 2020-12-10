@@ -1,21 +1,25 @@
 body {
-  background: white;
+  background: $color-body-bg;
   box-sizing: border-box;
-  font-family: IBM Plex Sans;
+  font-family: $font-family-primary;
   margin: 0 40px;
 }
 
 input,
 select {
   box-sizing: border-box;
-  background: #ffffff;
-  border: 1px solid #ccdfff;
+  background: $color-body-bg;
+  border: 1px solid $color-border;
   border-radius: 8px;
 
   &:focus {
-    border-color: #0061ff;
+    border-color: $color-link;
     outline: none;
   }
+}
+
+input:read-only {
+  background-color: $color-disabled;
 }
 
 input[type='text'],
@@ -25,7 +29,7 @@ select {
   height: 60px;
   font-size: 18px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: $color-border;
   line-height: 28px;
   letter-spacing: 0em;
   text-align: left;
@@ -43,15 +47,15 @@ input[type='submit'] {
 button {
   padding: 10px 0px;
   min-width: 100px;
-  background: #0061ff;
+  background: $color-link;
   border-radius: 8px;
   font-style: normal;
-  font-weight: 600;
+  font-weight: $weight-semi-bold;
   font-size: 18px;
   line-height: 28px;
   align-items: center;
   text-align: center;
-  color: #ffffff;
+  color: $color-body-bg;
   border: none;
   cursor: pointer;
 
@@ -63,7 +67,38 @@ button {
 
   &[class$='cancel'] {
     background: rgb(228, 226, 226);
-    color: #00003c;
+    color: $color-text-primary;
+  }
+
+  &[class$='save'] {
+    margin-left: auto;
+  }
+
+  &[class$='edit'] {
+    span {
+      visibility: hidden;
+    }
+  }
+
+  &[class$='delete'] {
+    span {
+      visibility: hidden;
+    }
+  }
+
+  &[class$='remove'] {
+    background-color: $color-border;
+    span {
+      display: none;
+    }
+    height: 30px;
+    font-size: 12px;
+    padding: 10px;
+    min-width: 20px;
+    font-weight: $color-border;
+    line-height: 0;
+    background: $color-border;
+    color: $color-text-primary;
   }
 }
 
@@ -78,30 +113,29 @@ ul {
 }
 
 h1 {
-  color: #6a2ea0;
+  color: $color-text-secondary;
   font-size: 40px;
   font-style: normal;
-  font-weight: 600;
+  font-weight: $weight-semi-bold;
   line-height: 44px;
   letter-spacing: 0em;
 }
 
 h2 {
-  color: #6a2ea0;
+  color: $color-text-secondary;
   font-family: IBM Plex Sans;
   font-size: 34px;
   font-style: normal;
-  font-weight: 600;
+  font-weight: $weight-semi-bold;
   line-height: 44px;
   letter-spacing: 0em;
   text-align: left;
 }
 
 h3 {
-  font-family: IBM Plex Sans;
   font-size: 24px;
   font-style: normal;
-  font-weight: 600;
+  font-weight: $weight-semi-bold;
   line-height: 34px;
   letter-spacing: 0em;
   text-align: left;
@@ -130,9 +164,11 @@ div[class$='buttons__container'] {
   width: 100%;
   padding: 12px 8px;
   align-items: center;
+  margin-top: 24px;
 
   div[class$='button__container'] {
     flex: 1;
+    display: flex;
   }
 }
 
@@ -143,14 +179,14 @@ table {
     th {
       padding: 0 9px;
       height: 48px;
-      background: #f2f7ff;
-      box-shadow: inset 0px -1px 0px #ccdfff;
+      background: $color-bg-content;
+      box-shadow: inset 0px -1px 0px $color-border;
       font-family: IBM Plex Sans;
       font-style: normal;
       font-weight: bold;
       font-size: 18px;
       line-height: 28px;
-      color: #00003c;
+      color: $color-text-primary;
       text-align: left;
       border: none;
       margin: 0;
@@ -158,25 +194,28 @@ table {
     td {
       padding: 0 9px;
       height: 48px;
-      background: #ffffff;
-      box-shadow: inset 0px -1px 0px #ccdfff;
-      font-family: IBM Plex Sans;
+      background: $color-body-bg;
+      box-shadow: inset 0px -1px 0px $color-border;
       font-style: normal;
-      font-weight: 300;
+      font-weight: $color-border;
       font-size: 18px;
       line-height: 28px;
-      color: #00003c;
+      color: $color-text-primary;
       text-align: left;
+
+      &[class$='table__button'] {
+        width: 40px;
+      }
 
       button {
         height: 30px;
         font-size: 12px;
         padding: 10px;
         min-width: 20px;
-        font-weight: 300;
+        font-weight: $color-border;
         line-height: 0;
-        background: #ccdfff;
-        color: #00003c;
+        background: $color-border;
+        color: $color-text-primary;
       }
     }
   }
@@ -190,21 +229,20 @@ nav[class$='pagination'] {
     list-style: none;
     margin-right: 50px;
     button {
-      font-family: IBM Plex Sans;
       font-style: normal;
-      font-weight: 300;
+      font-weight: $color-border;
       font-size: 18px;
       line-height: 28px;
-      color: #0061ff;
+      color: $color-link;
       cursor: pointer;
       background: none;
       border: none;
-      border-bottom: solid 2px #0061ff;
+      border-bottom: solid 2px $color-link;
       border-radius: 0;
 
       &:disabled {
-        color: #ccc;
-        border-bottom: solid 2px #ccc;
+        color: $color-disabled;
+        border-bottom: solid 2px $color-disabled;
       }
 
       &:focus {
@@ -220,4 +258,63 @@ nav[class$='pagination'] {
 
 .hidden {
   display: none;
+}
+
+a {
+  &[class$='new'] {
+    display: block;
+    padding: 20px 0px;
+  }
+
+  &[class$='button__close'] {
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    padding: 3px;
+    font-weight: $weight-semi-bold;
+    font-size: 1rem;
+    top: 1px;
+  }
+}
+
+// Icons
+.icon__new {
+  @extend .fa;
+  @extend .fa-plus;
+  margin-right: 10px;
+}
+
+.icon__info {
+  @extend .fa;
+  @extend .fa-info;
+  margin-right: 10px;
+}
+
+.icon__edit {
+  @extend .fa;
+  @extend .fa-pencil;
+}
+
+.icon__delete {
+  @extend .fa;
+  @extend .fa-trash-o;
+}
+
+// Buttons
+.button__warning {
+  background: $color-error;
+  color: $color-body-bg;
+}
+
+.button__ok {
+  background: $color-ok;
+  color: $color-body-bg;
+}
+
+.overlay-container {
+  position: relative;
+}
+
+footer {
+  margin-top: 300px;
 }

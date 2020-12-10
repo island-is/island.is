@@ -4,13 +4,12 @@ import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import StatusBar from './StatusBar';
 import HelpBox from './HelpBox';
-import { AddRedirectUri } from '../services/client.service';
 import axios from 'axios';
 import APIResponse from '../models/APIResponse';
 
 interface Props {
   redirectObject: ClientRedirectUriDTO;
-  uris: [],
+  uris: [];
   handleNext?: () => void;
   handleBack?: () => void;
 }
@@ -22,22 +21,16 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
   const { isSubmitting } = formState;
   const [response, setResponse] = useState(null);
   const [uris, setUris] = useState<string[]>([]);
-  const [urisSet, setUrisSet] = useState<boolean>(false);
 
-    /** Setting the uris when updating an existing client */
+  /** Setting the uris when updating an existing client */
   useEffect(() => {
-      if (!urisSet){
-        if (props.uris && uris.length > 0)
-        {
-            for(let i = 0; i < uris.length; i++){
-                uris.push(props.uris[i]);
-            }
-            setUris(uris);
-            setUrisSet(true);
-        }
+    if (props.uris && uris.length > 0) {
+      for (let i = 0; i < uris.length; i++) {
+        uris.push(props.uris[i]);
       }
-      
-  });
+      setUris(uris);
+    }
+  }, [props.uris]);
 
   const add = async (data) => {
     const clientRedirect = new ClientRedirectUriDTO();
@@ -64,11 +57,11 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
         }
       });
 
-      if ( success ){
-        uris.push(clientRedirect.redirectUri);
-        console.log("setting uris: ", uris);
-        setUris([...uris]);
-      }
+    if (success) {
+      uris.push(clientRedirect.redirectUri);
+      console.log('setting uris: ', uris);
+      setUris([...uris]);
+    }
   };
 
   const remove = async (uri) => {
@@ -80,8 +73,8 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
         res.statusCode = response.request.status;
         res.message = response.request.statusText;
         setResponse(res);
-        if (res.statusCode === 200){
-           success = true;
+        if (res.statusCode === 200) {
+          success = true;
         }
       })
       .catch(function (error) {
@@ -92,11 +85,11 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
         }
       });
 
-      if ( success ){
-        uris.splice(uris.indexOf(uri), 1);
-        console.log("setting uris: ", uris);
-        setUris([...uris]);
-      }
+    if (success) {
+      uris.splice(uris.indexOf(uri), 1);
+      console.log('setting uris: ', uris);
+      setUris([...uris]);
+    }
   };
 
   return (
@@ -105,11 +98,12 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
       <div className="client-redirect__wrapper">
         <div className="client-redirect__container">
           <h1>Enter a callback URL</h1>
+        
+
+          <div className="client-redirect__container__form">
           <div className="client-redirect__help">
             Tokens will be sent to this endpoint
           </div>
-
-          <div className="client-redirect__container__form">
             <form onSubmit={handleSubmit(add)}>
               <div className="client-redirect__container__fields">
                 <div className="client-redirect__container__field">
@@ -127,19 +121,23 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
                   <ErrorMessage
                     as="span"
                     errors={errors}
-                    name="client.nationalId"
+                    name="redirectUri"
                     message="Path is required"
                   />
                   <input
                     type="submit"
-                    className="client-redirect__button__save"
+                    className="client-redirect__button__add"
                     disabled={isSubmitting}
                     value="Add"
                   />
                 </div>
               </div>
-
-              <div className="client-redirect__container__list">
+              </form>
+             
+              <div className={`client-redirect__container__list ${
+                    uris && uris.length > 0  ? 'show' : 'hidden'
+                  }`}>
+                    <h3>Active callback URLs</h3>
                 {uris.map((uri: string) => {
                   return (
                     <div
@@ -152,8 +150,11 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
                           type="button"
                           onClick={() => remove(uri)}
                           className="client-redirect__container__list__button__remove"
+                          title="Remove"
                         >
-                          Remove
+                          <i className="icon__delete"></i>
+                        <span>Remove</span>
+                          
                         </button>
                       </div>
                     </div>
@@ -166,6 +167,8 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
                   <button
                     type="button"
                     className="client-redirect__button__cancel"
+                    title="Back"
+                    onClick={props.handleBack}
                   >
                     Back
                   </button>
@@ -175,12 +178,13 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
                     type="button"
                     className="client-redirect__button__save"
                     onClick={props.handleNext}
+                    title="Next"
                   >
                     Next
                   </button>
                 </div>
               </div>
-            </form>
+            
           </div>
         </div>
       </div>
