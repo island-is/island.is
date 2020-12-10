@@ -1,4 +1,4 @@
-import React, { FC, ReactElement, useState, useEffect } from 'react'
+import React, { FC, useState, useEffect, Fragment, ReactNode } from 'react'
 import cn from 'classnames'
 import { useMenuState, Menu, MenuButton, MenuStateReturn } from 'reakit/Menu'
 import { theme, Colors } from '@island.is/island-ui/theme'
@@ -8,15 +8,6 @@ import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Button } from '../Button/Button'
 
 import * as styles from './Navigation.treat'
-
-// The sidebar nav is not designed to show more than 2 levels.
-type Level = keyof typeof styles.level
-const MAX_LEVELS = 2
-
-const basePadding = {
-  paddingY: 1,
-  paddingX: 3,
-} as Pick<BoxProps, 'paddingY' | 'paddingX'>
 
 export type NavigationColorAttributes =
   | 'color'
@@ -50,23 +41,58 @@ const colorSchemeColors: Record<
 
 export interface NavigationItem {
   title: string
-  href: string
+  href?: string
   active?: boolean
   items?: NavigationItem[]
+  typename?: string
+  slug?: string[]
+}
+interface MobileNavigationDialogProps {
+  Title: ReactNode
+  colorScheme: keyof typeof styles.colorScheme
+  items: NavigationItem[]
+  renderLink: NavigationTreeProps['renderLink']
+  isVisible: boolean
+  onClick: () => void
+  menuState: MenuStateReturn
 }
 
+interface NavigationTreeProps {
+  items: NavigationItem[]
+  level?: Level
+  colorScheme?: keyof typeof styles.colorScheme
+  expand?: boolean
+  renderLink?: (link: ReactNode, item?: NavigationItem) => ReactNode
+  menuState: MenuStateReturn
+}
 export interface NavigationProps {
   title: string
   label?: string
   activeItemTitle: string
   colorScheme?: keyof typeof styles.colorScheme
   expand?: boolean
-  LinkWrapper?: FC<DefaultLinkWrapperProps>
-  isMenuDialog: boolean
+  isMenuDialog?: boolean
   titleLink?: Pick<NavigationItem, 'href' | 'active'>
   items: NavigationItem[]
   baseId: string
+  /**
+   * Render function for all links, useful for wrapping framework specific routing links
+   */
+  renderLink?: NavigationTreeProps['renderLink']
+  titleProps?: NavigationItem
 }
+
+// The sidebar nav is not designed to show more than 2 levels.
+type Level = keyof typeof styles.level
+
+const MAX_LEVELS = 2
+
+const basePadding = {
+  paddingY: 1,
+  paddingX: 3,
+} as Pick<BoxProps, 'paddingY' | 'paddingX'>
+
+const defaultLinkRender: NavigationTreeProps['renderLink'] = (link) => link
 
 export const Navigation: FC<NavigationProps> = ({
   title = 'Efnisyfirlit',
@@ -75,9 +101,10 @@ export const Navigation: FC<NavigationProps> = ({
   label,
   colorScheme = 'blue',
   expand,
-  LinkWrapper = DefaultLinkWrapper,
+  renderLink = defaultLinkRender,
   isMenuDialog = false,
   items,
+  titleProps,
   baseId,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -100,8 +127,8 @@ export const Navigation: FC<NavigationProps> = ({
       }
     : null
 
-  const Title = titleLinkProps ? (
-    <LinkWrapper {...titleLinkProps}>
+  const Title: MobileNavigationDialogProps['Title'] = titleLinkProps ? (
+    renderLink(
       <FocusableBox
         component="a"
         href={titleLink?.href}
@@ -132,8 +159,9 @@ export const Navigation: FC<NavigationProps> = ({
         >
           {title}
         </Text>
-      </FocusableBox>
-    </LinkWrapper>
+      </FocusableBox>,
+      titleProps,
+    )
   ) : (
     <Box {...basePadding}>
       <Text as="span" variant="h4" color={color}>
@@ -177,7 +205,7 @@ export const Navigation: FC<NavigationProps> = ({
               Title={Title}
               colorScheme={colorScheme}
               items={items}
-              LinkWrapper={LinkWrapper}
+              renderLink={renderLink}
               isVisible={mobileMenuOpen}
               menuState={menu}
               onClick={() => {
@@ -202,7 +230,7 @@ export const Navigation: FC<NavigationProps> = ({
           <NavigationTree
             items={items}
             colorScheme={colorScheme}
-            LinkWrapper={LinkWrapper}
+            renderLink={renderLink}
             menuState={menu}
             expand={expand}
           />
@@ -212,21 +240,11 @@ export const Navigation: FC<NavigationProps> = ({
   )
 }
 
-interface MobileNavigationDialogProps {
-  Title: ReactElement
-  colorScheme: keyof typeof styles.colorScheme
-  items: NavigationItem[]
-  LinkWrapper: FC<DefaultLinkWrapperProps>
-  isVisible: boolean
-  onClick: () => void
-  menuState: MenuStateReturn
-}
-
 const MobileNavigationDialog = ({
   Title,
   colorScheme,
   items,
-  LinkWrapper,
+  renderLink,
   onClick,
   menuState,
 }: MobileNavigationDialogProps) => {
@@ -257,7 +275,7 @@ const MobileNavigationDialog = ({
       <NavigationTree
         items={items}
         colorScheme={colorScheme}
-        LinkWrapper={LinkWrapper}
+        renderLink={renderLink}
         menuState={menuState}
       />
     </Box>
@@ -297,21 +315,12 @@ const MobileButton = ({ title, colorScheme }: MobileButtonProps) => {
   )
 }
 
-interface NavigationTreeProps {
-  items: NavigationItem[]
-  level?: Level
-  colorScheme?: keyof typeof styles.colorScheme
-  expand?: boolean
-  LinkWrapper?: FC<DefaultLinkWrapperProps>
-  menuState: MenuStateReturn
-}
-
 export const NavigationTree: FC<NavigationTreeProps> = ({
   items,
   level = 1,
   colorScheme = 'blue',
   expand = false,
-  LinkWrapper = DefaultLinkWrapper,
+  renderLink = defaultLinkRender,
   menuState,
 }: NavigationTreeProps) => {
   return (
@@ -325,78 +334,63 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
             : undefined,
       }}
     >
-      {items.map(({ title, href, items = [], active }, index) => {
+      {items.map((item, index) => {
+        const { title, href, items = [], active } = item
         const nextLevel: Level = (level + 1) as Level
         const isChildren = level > 1
         const showNextLevel =
           (active || expand) && items.length && nextLevel <= MAX_LEVELS
 
-        const linkProps = {
-          href,
-        }
-
-        const content = (
-          <FocusableBox
-            key={index}
-            component="a"
-            href={href}
-            borderRadius="large"
-            paddingLeft={isChildren ? 2 : 3}
-            paddingY={isChildren ? 'smallGutter' : 1}
-            className={styles.link}
-          >
-            {({
-              isFocused,
-              isHovered,
-            }: {
-              isFocused: boolean
-              isHovered: boolean
-            }) => {
-              const textColor =
-                active || isFocused || isHovered
-                  ? colorSchemeColors[colorScheme]['activeColor']
-                  : colorSchemeColors[colorScheme]['color']
-
-              return (
-                <Text
-                  as="span"
-                  color={textColor}
-                  variant={isChildren ? 'small' : 'default'}
-                  fontWeight={active ? 'semiBold' : 'light'}
-                >
-                  {title}
-                </Text>
-              )
-            }}
-          </FocusableBox>
-        )
-
         return (
-          <>
-            <LinkWrapper {...linkProps}>{content}</LinkWrapper>
+          <Fragment key={index}>
+            {renderLink(
+              <FocusableBox
+                component="a"
+                href={href}
+                borderRadius="large"
+                paddingLeft={isChildren ? 2 : 3}
+                paddingY={isChildren ? 'smallGutter' : 1}
+                className={styles.link}
+              >
+                {({
+                  isFocused,
+                  isHovered,
+                }: {
+                  isFocused: boolean
+                  isHovered: boolean
+                }) => {
+                  const textColor =
+                    active || isFocused || isHovered
+                      ? colorSchemeColors[colorScheme]['activeColor']
+                      : colorSchemeColors[colorScheme]['color']
+
+                  return (
+                    <Text
+                      as="span"
+                      color={textColor}
+                      variant={isChildren ? 'small' : 'default'}
+                      fontWeight={active ? 'semiBold' : 'light'}
+                    >
+                      {title}
+                    </Text>
+                  )
+                }}
+              </FocusableBox>,
+              item,
+            )}
             {showNextLevel ? (
               <NavigationTree
                 items={items}
                 level={nextLevel}
                 colorScheme={colorScheme}
                 expand={expand}
-                LinkWrapper={LinkWrapper}
+                renderLink={renderLink}
                 menuState={menuState}
               />
             ) : null}
-          </>
+          </Fragment>
         )
       })}
     </Box>
   )
-}
-
-interface DefaultLinkWrapperProps {
-  children: ReactElement
-}
-
-export const DefaultLinkWrapper: FC<DefaultLinkWrapperProps> = ({
-  children,
-}: DefaultLinkWrapperProps) => {
-  return children
 }

@@ -45,3 +45,22 @@ export interface ContentSearchImporter<postSyncOptions = any> {
   ) => Promise<SyncResponse<postSyncOptions> | null>
   postSync?: (options: postSyncOptions) => Promise<boolean>
 }
+
+type KibanaType = 'visualization' | 'index-pattern' | 'dashboard'
+
+interface BaseKibanaSavedObject {
+  id: string
+  type: KibanaType
+  attributes: {
+    title: string
+  }
+}
+
+export interface KibanaSavedObject extends BaseKibanaSavedObject {
+  updated_at: string
+  version: string
+}
+
+export interface LocalKibanaSavedObject extends BaseKibanaSavedObject {
+  nestedJsonPaths: string[]
+}

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { ApplicationForm } from '@island.is/application/ui-shell'
+import { ApplicationForm, NotFound } from '@island.is/application/ui-shell'
 import { useNamespaces } from '@island.is/localization'
 import useAuth from '../hooks/useAuth'
 
@@ -17,10 +17,15 @@ export const Application = () => {
   const nationalRegistryId = userInfo?.profile?.nationalId
 
   if (!id) {
-    return <p>Error there is no id</p>
+    return <NotFound />
   }
   if (!nationalRegistryId) {
-    return null
+    return (
+      <NotFound
+        title="Þú þarft að vera skrá þig inn."
+        subTitle="Til að halda áfram umsóknarferli þarftu að skrá þig inn."
+      />
+    )
   }
 
   return (
