@@ -1,7 +1,10 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
-import { RadioController, FieldDescription } from '@island.is/shared/form-fields'
+import {
+  RadioController,
+  FieldDescription,
+} from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { m } from '../../forms/messages'
 import { useLocale } from '@island.is/localization'
@@ -21,9 +24,7 @@ const CurrentStatus: FC<FieldBaseProps> = ({ error, field, application }) => {
 
   return (
     <Box marginY={3} key={field.id}>
-      <FieldDescription 
-        description='What is your current status?'
-      />
+      <FieldDescription description="What is your current status?" />
       <Box paddingY={3} marginBottom={3}>
         <RadioController
           id={field.id}
