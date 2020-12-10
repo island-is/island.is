@@ -7,6 +7,7 @@ import {
   Author,
   Featured,
   FrontpageSlider,
+  GenericPage,
   Homepage,
   Html,
   Image,
@@ -61,7 +62,6 @@ export const slice = simpleFactory(
 )
 
 export const subArticle = factory<SubArticle>({
-  id: () => faker.random.uuid(),
   title: () => title(),
   slug: slugify('title'),
   body: () => [slice()],
@@ -180,4 +180,9 @@ export const featured = factory<Featured>({
 export const homepage = factory<Homepage>({
   id: () => faker.random.uuid(),
   featuredThings: () => featured.list(3),
+})
+
+export const genericPage = factory<GenericPage>({
+  slug: slugify('title'),
+  title: () => title(),
 })
