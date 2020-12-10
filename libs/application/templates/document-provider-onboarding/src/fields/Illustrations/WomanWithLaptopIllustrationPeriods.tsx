@@ -5,6 +5,8 @@ import WomanWithLaptopIllustration from './WomanWithLaptopIllustration'
 
 // TODO this will be moved into a reusable library
 const PeriodsSectionImage: FC<FieldBaseProps> = () => {
+  //TODO make responsive when moved into reusable library
+  const isMobile = window.innerWidth < 480
   return (
     <Box
       display="flex"
@@ -12,10 +14,15 @@ const PeriodsSectionImage: FC<FieldBaseProps> = () => {
       justifyContent="center"
       alignItems="center"
       height="full"
-      marginRight={8}
+      width="full"
+      //marginRight={8}
       marginBottom={8}
     >
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 451 510" width="50%">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 451 510"
+        width={isMobile ? '100%' : '50%'}
+      >
         <g fill="#ccdfff">
           <circle cx="311.385" cy="122.243" r="2" />
           <circle cx="263.385" cy="122.243" r="2" />

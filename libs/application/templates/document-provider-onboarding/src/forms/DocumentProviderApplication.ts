@@ -168,7 +168,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
           description: m.confirmationSubTitle,
           children: [
             buildDividerField({
-              name: m.applicantSection.defaultMessage,
+              name: m.applicantSection,
               color: 'currentColor',
             }),
             buildTextField({
@@ -202,7 +202,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
               placeholder: '000-0000',
             }),
             buildDividerField({
-              name: m.administrativeContactSection.defaultMessage,
+              name: m.administrativeContactSection,
               color: 'currentColor',
             }),
             buildTextField({
@@ -222,7 +222,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
               placeholder: '000-0000',
             }),
             buildDividerField({
-              name: m.technicalContactSection.defaultMessage,
+              name: m.technicalContactSection,
               color: 'currentColor',
             }),
             buildTextField({
@@ -242,7 +242,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
               placeholder: '000-0000',
             }),
             buildDividerField({
-              name: m.helpDeskSection.defaultMessage,
+              name: m.helpDeskSection,
               color: 'currentColor',
             }),
             //CustomField is a workaround because of a bug in react-hook-form

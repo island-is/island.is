@@ -72,7 +72,7 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
       <Box marginTop={3} position="relative">
         <GridContainer>
           <GridRow>
-            <GridColumn span="6/12">
+            <GridColumn span={['12/12', '6/12']}>
               <Input
                 label={formatText(
                   m.automatedTestsNationalIdLabel,
@@ -97,7 +97,7 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
                 disabled={isLoading}
               />
             </GridColumn>
-            <GridColumn span="6/12">
+            <GridColumn span={['12/12', '6/12']} paddingTop={[3, 0]}>
               <Input
                 label={formatText(
                   m.automatedTestsDocIdLabel,
