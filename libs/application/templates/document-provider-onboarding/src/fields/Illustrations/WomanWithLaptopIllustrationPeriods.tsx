@@ -15,7 +15,6 @@ const PeriodsSectionImage: FC<FieldBaseProps> = () => {
       alignItems="center"
       height="full"
       width="full"
-      //marginRight={8}
       marginBottom={8}
     >
       <svg
