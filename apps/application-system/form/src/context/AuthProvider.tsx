@@ -21,11 +21,22 @@ interface Action {
   payload?: any
 }
 
-const initialState: AuthReducerState = {
-  userInfo: undefined,
-  userInfoState: 'passive',
-  isAuthenticated: false,
-}
+const MOCKED =
+  process.env.NODE_ENV === 'development' && process.env.NX_API_MOCKS === 'true'
+
+const initialState: AuthReducerState = MOCKED
+  ? {
+      userInfo: ({
+        profile: { name: 'Mock', locale: 'is', nationalId: '0000000000' },
+      } as unknown) as User,
+      userInfoState: 'fulfilled',
+      isAuthenticated: true,
+    }
+  : {
+      userInfo: undefined,
+      userInfoState: 'passive',
+      isAuthenticated: false,
+    }
 export const AuthContext = createContext<
   [AuthReducerState, (action: Action) => void]
 >([
