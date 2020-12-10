@@ -52,10 +52,12 @@ export const constructConclusion = (workingCase: Case) => {
       <>
         <Text as="span" variant="intro">{`Kærði, `}</Text>
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
-          {`${workingCase.accusedName} kt. ${formatNationalId(workingCase.accusedNationalId)} `}
+          {`${workingCase.accusedName} kt. ${formatNationalId(
+            workingCase.accusedNationalId,
+          )} `}
         </Text>
         <Text as="span" variant="intro">
-        skal sæta gæsluvarðhaldi, þó ekki lengur en til
+          skal sæta gæsluvarðhaldi, þó ekki lengur en til
         </Text>
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
           {` ${formatDate(workingCase.custodyEndDate, 'PPPp')}. `}
@@ -147,8 +149,7 @@ export const constructProsecutorDemands = (workingCase: Case) => {
       Þess er krafist að
       <Text as="span" fontWeight="semiBold">
         {` ${workingCase.accusedName}, kt. 
-        ${formatNationalId(workingCase.accusedNationalId)
-        } `}
+        ${formatNationalId(workingCase.accusedNationalId)} `}
       </Text>
       , verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi
       til
