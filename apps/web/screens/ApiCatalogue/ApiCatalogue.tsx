@@ -1,4 +1,6 @@
 import React from 'react'
+import getConfig from 'next/config'
+
 import { Screen } from '@island.is/web/types'
 
 import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
@@ -8,8 +10,7 @@ import {
   QueryGetNamespaceArgs,
 } from '@island.is/api/schema'
 
-import { GET_NAMESPACE_QUERY } from '../queries'
-import { GET_CATALOGUE_QUERY } from '../queries/ApiCatalogue'
+import { GET_NAMESPACE_QUERY, GET_CATALOGUE_QUERY } from '../queries'
 import { useNamespace } from '../../hooks'
 
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -68,13 +69,9 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
 
   const n = useNamespace(staticContent)
   const fn = useNamespace(filterContent)
-  const TEXT_NOT_FOUND = n('notFound')
-  const HEADING_ERROR = n('errorHeading')
-  const TEXT_ERROR = n('errorText')
-  const TEXT_LOAD_MORE = n('fmButton')
 
-  const translateTags = (): TagDisplayNames => {
-    const names: TagDisplayNames = {
+  const translateTags = (): ServiceTagDisplayNames => {
+    const names: ServiceTagDisplayNames = {
       APIGW: fn('accessApigw'),
       XROAD: fn('accessXroad'),
       FINANCIAL: fn('dataFinancial'),
