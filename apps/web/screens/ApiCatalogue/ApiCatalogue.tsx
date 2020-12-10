@@ -62,9 +62,9 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
 }) => {
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
 
-   if (disablePage === 'true') {
-     throw new CustomNextError(404, 'Not found')
-   }
+  if (disablePage === 'true') {
+    throw new CustomNextError(404, 'Not found')
+  }
 
   const n = useNamespace(staticContent)
   const fn = useNamespace(filterContent)
