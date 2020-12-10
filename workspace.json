@@ -2989,7 +2989,10 @@
             "main": "apps/judicial-system/web/src/main.tsx",
             "polyfills": "apps/judicial-system/web/src/polyfills.ts",
             "tsConfig": "apps/judicial-system/web/tsconfig.app.json",
-            "assets": ["apps/judicial-system/web/src/favicon.ico"],
+            "assets": [
+              "apps/judicial-system/web/src/favicon.ico",
+              "apps/judicial-system/web/src/mockServiceWorker.js"
+            ],
             "styles": ["apps/judicial-system/web/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/judicial-system/web/webpack.config.js",

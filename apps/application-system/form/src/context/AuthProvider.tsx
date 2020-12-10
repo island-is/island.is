@@ -21,10 +21,10 @@ interface Action {
   payload?: any
 }
 
-const MOCKED =
+const USER_MOCKED =
   process.env.NODE_ENV === 'development' && process.env.NX_API_MOCKS === 'true'
 
-const initialState: AuthReducerState = MOCKED
+const initialState: AuthReducerState = USER_MOCKED
   ? {
       userInfo: ({
         profile: { name: 'Mock', locale: 'is', nationalId: '0000000000' },
