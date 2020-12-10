@@ -15,6 +15,7 @@ jobs:
 
     outputs:
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
+      E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
@@ -59,6 +60,23 @@ jobs:
         if: steps.node-modules.outputs.cache-hit != 'true'
         run: ./scripts/ci/10_prepare-host-deps.sh
 
+      - name: Cache for cypress
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
+
+      - name: Verify cypress
+        id: cypress-check
+        run: npx cypress verify
+        continue-on-error: true
+
+      - name: Install cypress
+        if: steps.cypress-check.outcome != 'success'
+        run: npx cypress install
+
+      - run: ls -lah ~/.cache/Cypress
+
       - name: Cache for generated files
         id: generated-files-cache
         uses: actions/cache@v2
@@ -88,6 +106,16 @@ jobs:
         id: test_projects
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh test)
+          if [[ $CHUNKS != "[]" ]]; then
+            echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
+          fi
+
+      - name: Prepare e2e targets
+        id: e2e_projects
+        env:
+          CHUNK_SIZE: 1
+        run: |
+          CHUNKS=$(./scripts/ci/generate-chunks.sh e2e)
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
           fi
@@ -134,6 +162,51 @@ jobs:
 
       - name: Running tests
         run: ./scripts/ci/run-in-parallel.sh 30_test
+
+  e2e:
+    needs:
+      - prepare
+    if: needs.prepare.outputs.E2E_CHUNKS
+    runs-on: ubuntu-20.04
+    timeout-minutes: 25
+    env:
+      AFFECTED_PROJECT: ${{ matrix.projects }}
+      CYPRESS_PROJECT_ID: 4q7jz8
+      CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      API_MOCKS: 'true'
+      NX_API_MOCKS: 'true'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache for NodeJS dependencies - host OS
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+
+      - name: Cache for cypress
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ needs.prepare.outputs.node-modules-hash }}
+
+      - run: ls -lah ~/.cache/Cypress
+      - run: env
+
+      - name: Cache for generated files
+        uses: actions/cache@v2
+        with:
+          path: generated_files.tar.gz
+          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
+
+      - name: Untar generated files
+        run: tar zxvf generated_files.tar.gz
+
+      - name: Running e2e tests
+        run: ./scripts/ci/40_e2e.sh ${AFFECTED_PROJECT}
 
   linting-workspace:
     needs:

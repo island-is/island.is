@@ -7,6 +7,7 @@ source $DIR/_common.sh
 
 export DOCKER_TAG=local
 export PUBLISH=local
+export CYPRESS_RUN_GROUP=local-$USER
 
 export APP=$1
 
@@ -20,6 +21,7 @@ $PROJECT_ROOT/scripts/ci/20_check-formatting.sh
 $PROJECT_ROOT/scripts/ci/20_security-audit.sh
 $PROJECT_ROOT/scripts/ci/20_license-audit.sh
 $PROJECT_ROOT/scripts/ci/30_test.sh
+$PROJECT_ROOT/scripts/ci/40_e2e.sh
 $PROJECT_ROOT/scripts/ci/90_docker-express.sh
 # Alternatively build different type of containers
 # $PROJECT_ROOT/scripts/ci/90_docker-next.sh

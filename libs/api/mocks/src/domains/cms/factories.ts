@@ -8,6 +8,7 @@ import {
   Featured,
   FrontpageSlider,
   GenericPage,
+  GroupedMenu,
   Homepage,
   Html,
   Image,
@@ -62,6 +63,7 @@ export const slice = simpleFactory(
 )
 
 export const subArticle = factory<SubArticle>({
+  id: () => faker.random.uuid(),
   title: () => title(),
   slug: slugify('title'),
   body: () => [slice()],
@@ -107,10 +109,16 @@ export const link = factory<Link>({
 })
 
 export const menu = factory<Menu>({
-  id: () => faker.random.uuid(),
+  id: faker.random.uuid(),
   title: () => title(),
   links: () => link.list(4),
   menuLinks: () => [],
+})
+
+export const groupedMenu = factory<GroupedMenu>({
+  id: faker.random.uuid(),
+  title: () => title(),
+  menus: () => menu.list(2),
 })
 
 export const alertBannerVariant = () =>
