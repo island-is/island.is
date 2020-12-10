@@ -10,10 +10,13 @@ import {
   FlightLegModule,
 } from './modules'
 import { BackendAPI } from '../services'
+import { environment } from '../environments'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
-const autoSchemaFile = debug ? 'apps/air-discount-scheme/api.graphql' : true
+const autoSchemaFile = environment.production
+  ? true
+  : 'apps/air-discount-scheme/api.graphql'
 
 @Module({
   imports: [

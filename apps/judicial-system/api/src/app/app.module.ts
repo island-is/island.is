@@ -17,7 +17,9 @@ import { AuthModule, UserModule, CaseModule, FileModule } from './modules/'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
-const autoSchemaFile = debug ? 'apps/judicial-system/api.graphql' : true
+const autoSchemaFile = environment.production
+  ? true
+  : 'apps/judicial-system/api.graphql'
 
 @Module({
   imports: [
