@@ -20,7 +20,7 @@ export class SoapClient {
             client.addHttpHeader('Host', host)
             resolve(client)
           } else {
-            logger.info('NationalRegistry connection failed', error)
+            logger.error('NationalRegistry connection failed : ', error)
             resolve(client)
           }
         },

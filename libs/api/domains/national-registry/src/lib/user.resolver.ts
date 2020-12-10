@@ -10,6 +10,7 @@ import {
 import { NationalRegistryUser } from './models'
 import { NationalRegistryService } from './nationalRegistry.service'
 import { User } from './types'
+import { BanMarking } from './models/banMarking.model'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver(() => NationalRegistryUser)
@@ -36,8 +37,8 @@ export class UserResolver {
     return this.nationalRegistryService.getBirthPlace(user.municipalCode)
   }
 
-  @ResolveField('banMarking', () => String)
-  resolveBanMarking(@Parent() user: User): Promise<string> {
+  @ResolveField('banMarking', () => BanMarking)
+  resolveBanMarking(@Parent() user: User): Promise<BanMarking | null> {
     return this.nationalRegistryService.getBanMarking(user.nationalId)
   }
 
