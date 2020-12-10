@@ -1,40 +1,58 @@
 'use strict'
 
-const userSeed = JSON.parse(
-  process.env.USER_SEED ||
-    `[
-      {
-        "id": "a1fd62db-18a6-4741-88eb-a7b7a7e05833",
-        "national_id": "2510654469",
-        "name": "Guðjón Guðjónsson",
-        "title": "aðstoðarsaksóknari",
-        "mobile_number": "8589030",
-        "email": "gudjon@kolibri.is",
-        "role": "PROSECUTOR",
-        "institution": "Lögreglustjórinn á höfuðborgarsvæðinu"
-      },
-      {
-        "id": "cef1ba9b-99b6-47fc-a216-55c8194830aa",
-        "national_id": "2408783999",
-        "name": "Baldur Kristjánsson",
-        "title": "dómritari",
-        "mobile_number": "8949946",
-        "email": "baldur@kolibri.is",
-        "role": "REGISTRAR",
-        "institution": "Héraðsdómur Reykjavíkur"
-      },
-      {
-        "id": "9c0b4106-4213-43be-a6b2-ff324f4ba0c2",
-        "national_id": "1112902539",
-        "name": "Ívar Oddsson",
-        "title": "héraðsdómari",
-        "mobile_number": "6904031",
-        "email": "ivaro@kolibri.is",
-        "role": "JUDGE",
-        "institution": "Héraðsdómur Reykjavíkur"
-      }
-    ]`,
-)
+const localEnv = {
+  userSeeds: 'gudjon,baldur,ivar',
+  gudjon: `[
+  {
+    "id": "a1fd62db-18a6-4741-88eb-a7b7a7e05833",
+    "national_id": "2510654469",
+    "name": "Guðjón Guðjónsson",
+    "title": "aðstoðarsaksóknari",
+    "mobile_number": "8589030",
+    "email": "gudjon@kolibri.is",
+    "role": "PROSECUTOR",
+    "institution": "Lögreglustjórinn á höfuðborgarsvæðinu"
+  }
+]`,
+
+  baldur: `[
+  {
+    "id": "cef1ba9b-99b6-47fc-a216-55c8194830aa",
+    "national_id": "2408783999",
+    "name": "Baldur Kristjánsson",
+    "title": "dómritari",
+    "mobile_number": "8949946",
+    "email": "baldur@kolibri.is",
+    "role": "REGISTRAR",
+    "institution": "Héraðsdómur Reykjavíkur"
+  }
+]`,
+
+  ivar: `[
+  {
+    "id": "9c0b4106-4213-43be-a6b2-ff324f4ba0c2",
+    "national_id": "1112902539",
+    "name": "Ívar Oddsson",
+    "title": "héraðsdómari",
+    "mobile_number": "6904031",
+    "email": "ivaro@kolibri.is",
+    "role": "JUDGE",
+    "institution": "Héraðsdómur Reykjavíkur"
+  }
+]`,
+}
+
+const userSeed = () => {
+  const seedVars = process.env.USER_SEEDS || localEnv.userSeeds
+
+  return seedVars
+    .split(',')
+    .reduce(
+      (seeds, seed) =>
+        seeds.concat(JSON.parse(process.env[seed] || localEnv[seed])),
+      [],
+    )
+}
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -54,7 +72,7 @@ module.exports = {
 
     return queryInterface.sequelize.transaction((t) =>
       Promise.all(
-        userSeed.map((user) =>
+        userSeed().map((user) =>
           queryInterface.upsert(
             'user',
             {

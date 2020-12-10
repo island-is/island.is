@@ -4087,8 +4087,8 @@
         "migrate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "node migrate.js",
-            "cwd": "dist/apps/services/search-indexer"
+            "command": "yarn ts-node -P apps/services/search-indexer/tsconfig.app.json apps/services/search-indexer/src/migrate/index.ts",
+            "cwd": "apps/services/search-indexer"
           }
         },
         "lint": {
