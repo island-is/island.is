@@ -3360,6 +3360,7 @@
             "tsConfig": "apps/service-portal/tsconfig.app.json",
             "assets": [
               "apps/service-portal/src/favicon.ico",
+              "apps/service-portal/src/mockServiceWorker.js",
               "apps/service-portal/src/assets"
             ],
             "scripts": [],
