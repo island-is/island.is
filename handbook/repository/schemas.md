@@ -140,6 +140,23 @@ Add the following script to the `workspace.json`'s project.
 
 ---
 
+### Graphql (schemas/build-graphql-schema)
+
+If you are creating an API, you'll need to hook up the `build-graphql-schema` script
+in `workspace.json` so the CI can create the GraphQL schema in the pipeline without
+starting running the server:
+
+```json
+"schemas/build-graphql-schema": {
+  "builder": "@nrwl/workspace:run-commands",
+  "options": {
+    "command": "yarn ts-node -P PATH/tsconfig.json PATH_TO_ROOT_MODULE"
+  }
+}
+```
+
+---
+
 ### Client (schemas/codegen)
 
 The last kind is the client-side consuming an `api.graphql` file.
