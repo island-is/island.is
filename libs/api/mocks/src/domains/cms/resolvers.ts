@@ -84,5 +84,13 @@ export const resolvers: Resolvers = {
         fields: '{}',
       }
     },
+
+    getGenericPage: (parent, args) => {
+      return (
+        store.genericPages.find(
+          (genericPage) => genericPage.slug === args.input.slug,
+        ) || null
+      )
+    },
   },
 }
