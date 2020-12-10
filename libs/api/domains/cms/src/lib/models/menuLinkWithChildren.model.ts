@@ -15,7 +15,9 @@ export class MenuLinkWithChildren {
   childLinks: MenuLink[]
 }
 
-export const mapMenuLinkWithChildren = ({ fields }: IMenuLinkWithChildren): MenuLinkWithChildren => ({
+export const mapMenuLinkWithChildren = ({
+  fields,
+}: IMenuLinkWithChildren): MenuLinkWithChildren => ({
   title: fields.title ?? '',
   link: fields.link ? mapReferenceLink(fields.link) : null,
   childLinks: (fields.childLinks ?? []).map(mapMenuLink),

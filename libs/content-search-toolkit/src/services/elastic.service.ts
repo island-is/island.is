@@ -142,7 +142,7 @@ export class ElasticService {
   async findById(index: string, id: string) {
     try {
       const client = await this.getClient()
-      return client.get<GetByIdResponse<MappedData>>({ id, index })
+      return await client.get<GetByIdResponse<MappedData>>({ id, index })
     } catch (e) {
       return ElasticService.handleError(
         'Error in ElasticService.findById',

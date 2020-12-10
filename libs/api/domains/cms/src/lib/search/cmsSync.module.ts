@@ -23,8 +23,8 @@ import { GroupedMenuSyncService } from './importers/groupedMenu.service'
     AboutPageSyncService,
     AdgerdirPageSyncService,
     MenuSyncService,
-    GroupedMenuSyncService
+    GroupedMenuSyncService,
   ],
   exports: [CmsSyncService],
 })
-export class CmsSyncModule { }
+export class CmsSyncModule {}

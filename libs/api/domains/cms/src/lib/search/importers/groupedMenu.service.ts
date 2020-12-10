@@ -15,7 +15,8 @@ import {
 export class GroupedMenuSyncService implements CmsSyncProvider<IGroupedMenu> {
   processSyncData(entries: processSyncDataInput<IGroupedMenu>) {
     return entries.filter(
-      (entry: Entry<any>): entry is IGroupedMenu => entry.sys.contentType.sys.id === 'groupedMenu'
+      (entry: Entry<any>): entry is IGroupedMenu =>
+        entry.sys.contentType.sys.id === 'groupedMenu',
     )
   }
 
@@ -31,12 +32,6 @@ export class GroupedMenuSyncService implements CmsSyncProvider<IGroupedMenu> {
             title: mapped.title,
             type: 'webGroupedMenu',
             response: JSON.stringify({ ...mapped, typename: 'GroupedMenu' }),
-            tags: [
-              {
-                key: mapped.title,
-                type: 'name',
-              }
-            ],
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
           }

@@ -13,7 +13,7 @@ export const GET_MENU_QUERY = gql`
 `
 
 export const GET_GROUPED_MENU_QUERY = gql`
-  query GetGroupedMenu($input: GetMenuInput!) {
+  query GetGroupedMenu($input: GetSingleMenuInput!) {
     getGroupedMenu(input: $input) {
       id
       title
@@ -24,6 +24,13 @@ export const GET_GROUPED_MENU_QUERY = gql`
           link {
             slug
             type
+          }
+          childLinks {
+            title
+            link {
+              slug
+              type
+            }
           }
         }
       }

@@ -25,6 +25,7 @@ import { Menu } from '../Menu/Menu'
 interface HeaderProps {
   showSearchInHeader?: boolean
   buttonColorScheme?: ButtonTypes['colorScheme']
+  megaMenuData
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
@@ -32,6 +33,7 @@ const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 export const Header: FC<HeaderProps> = ({
   showSearchInHeader = true,
   buttonColorScheme = 'default',
+  megaMenuData,
   children,
 }) => {
   const { activeLocale, t } = useI18n()
@@ -128,7 +130,7 @@ export const Header: FC<HeaderProps> = ({
                     </Box>
                     <Hidden below="md">
                       <Box marginLeft={marginLeft} position="relative">
-                        <Menu />
+                        <Menu {...megaMenuData} />
                       </Box>
                     </Hidden>
                   </Box>

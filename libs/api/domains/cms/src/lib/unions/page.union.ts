@@ -22,7 +22,10 @@ import {
 } from '../generated/contentfulTypes'
 import { ApolloError } from 'apollo-server-express'
 import { mapNews, News } from '../models/news.model'
-import { ArticleCategory, mapArticleCategory } from '../models/articleCategory.model'
+import {
+  ArticleCategory,
+  mapArticleCategory,
+} from '../models/articleCategory.model'
 
 export type PageTypes =
   | IArticle
@@ -46,7 +49,7 @@ export const PageUnion = createUnionType({
     AdgerdirPage,
     AdgerdirFrontpage,
     News,
-    ArticleCategory
+    ArticleCategory,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })

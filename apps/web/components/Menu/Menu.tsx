@@ -3,10 +3,29 @@ import { useI18n } from 'apps/web/i18n'
 import React, { FC } from 'react'
 import { SearchInput } from '..'
 import { LanguageToggler } from '../LanguageToggler'
+import { AnchorAttributes } from 'apps/web/i18n/routes'
 
-interface Props {}
+interface MegaMenuLink {
+  href: AnchorAttributes
+  text: string
+  sub?: [MegaMenuLink]
+}
 
-export const Menu: FC<Props> = () => {
+interface Props {
+  asideTopLinks: MegaMenuLink[]
+  asideBottomTitle: string
+  asideBottomLinks: MegaMenuLink[]
+  mainTitle: string
+  mainLinks: MegaMenuLink[]
+}
+
+export const Menu: FC<Props> = ({
+  asideTopLinks,
+  asideBottomTitle,
+  asideBottomLinks,
+  mainTitle,
+  mainLinks,
+}) => {
   const { activeLocale, t } = useI18n()
   return (
     <MenuUI
@@ -14,8 +33,8 @@ export const Menu: FC<Props> = () => {
       mainLinks={mainLinks}
       asideTopLinks={asideTopLinks}
       asideBottomLinks={asideBottomLinks}
-      mainTitle="Þjónustuflokkar"
-      asideBottomTitle="Aðrir opinberir vefir"
+      mainTitle={mainTitle}
+      asideBottomTitle={asideBottomTitle}
       myPagesText={t.login}
       menuButton={
         <Button variant="utility" icon="menu">
@@ -24,7 +43,7 @@ export const Menu: FC<Props> = () => {
       }
       renderLink={({ className, text, href }, closeModal) => {
         return (
-          <Link href={href} onClick={closeModal}>
+          <Link {...href} onClick={closeModal}>
             <a className={className}>{text}</a>
           </Link>
         )
@@ -48,58 +67,32 @@ export const Menu: FC<Props> = () => {
   )
 }
 
-const mainLinks = [
-  { text: 'Akstur og bifreiðar', href: '#' },
-  { text: 'Atvinnurekstur og sjálfstætt starfandi', href: '#' },
-  { text: 'Dómstólar og réttarfar', href: '#' },
-  { text: 'Fjármál og skattar', href: '#' },
-  { text: 'Fjölskylda og velferð', href: '#' },
-  { text: 'Heilbrigðismál', href: '#' },
-  { text: 'Húsnæðismál', href: '#' },
-  { text: 'Iðnaður', href: '#' },
-  { text: 'Innflytjendamál', href: '#' },
-  { text: 'Launþegi, réttindi og lífeyrir', href: '#' },
-  { text: 'Málefni fatlaðs fólks', href: '#' },
-  { text: 'Menntun', href: '#' },
-  { text: 'Neytendamál', href: '#' },
-  { text: 'Samfélag og réttindi', href: '#' },
-  { text: 'Samgöngur', href: '#' },
-  { text: 'Umhverfismál', href: '#' },
-  { text: 'Vegabréf, ferðalög og búseta erlendis', href: '#' },
-  { text: 'Vörur og þjónusta Ísland.is', href: '#' },
-]
-
-const asideTopLinks = [
-  { text: 'Stofnanir', href: '#' },
-  { text: 'Stafrænt Ísland', href: '#' },
+/*const mainLinks = [
+  { text: 'Akstur og bifreiðar', href: { href: 'test', as: 'test1' } },
   {
-    text: 'Þróun',
-    href: '#',
-    sub: [
-      { text: 'Viskuausan', href: '#' },
-      { text: 'Ísland UI', href: '#' },
-      { text: 'Hönnunarkerfi', href: '#' },
-      { text: 'Efnisstefna', href: '#' },
-    ],
+    text: 'Atvinnurekstur og sjálfstætt starfandi',
+    href: { href: 'test', as: 'test1' },
   },
+  { text: 'Dómstólar og réttarfar', href: { href: 'test', as: 'test1' } },
+  { text: 'Fjármál og skattar', href: { href: 'test', as: 'test1' } },
+  { text: 'Fjölskylda og velferð', href: { href: 'test', as: 'test1' } },
+  { text: 'Heilbrigðismál', href: { href: 'test', as: 'test1' } },
+  { text: 'Húsnæðismál', href: { href: 'test', as: 'test1' } },
+  { text: 'Iðnaður', href: { href: 'test', as: 'test1' } },
+  { text: 'Innflytjendamál', href: { href: 'test', as: 'test1' } },
   {
-    text: 'Upplýsingarsvæði',
-    href: '#',
-    sub: [
-      {
-        text: 'linkur á eitthvað',
-        href: '#',
-      },
-    ],
+    text: 'Launþegi, réttindi og lífeyrir',
+    href: { href: 'test', as: 'test1' },
   },
-]
-
-const asideBottomLinks = [
-  { text: 'Heilsuvera', href: '#' },
-  { text: 'Samráðsgátt', href: '#' },
-  { text: 'Mannanöfn', href: '#' },
-  { text: 'Undirskriftarlistar', href: '#' },
-  { text: 'Opin gögn', href: '#' },
-  { text: 'Opinber nýsköpun', href: '#' },
-  { text: 'Tekjusagan', href: '#' },
-]
+  { text: 'Málefni fatlaðs fólks', href: { href: 'test', as: 'test1' } },
+  { text: 'Menntun', href: { href: 'test', as: 'test1' } },
+  { text: 'Neytendamál', href: { href: 'test', as: 'test1' } },
+  { text: 'Samfélag og réttindi', href: { href: 'test', as: 'test1' } },
+  { text: 'Samgöngur', href: { href: 'test', as: 'test1' } },
+  { text: 'Umhverfismál', href: { href: 'test', as: 'test1' } },
+  {
+    text: 'Vegabréf, ferðalög og búseta erlendis',
+    href: { href: 'test', as: 'test1' },
+  },
+  { text: 'Vörur og þjónusta Ísland.is', href: { href: 'test', as: 'test1' } },
+]*/

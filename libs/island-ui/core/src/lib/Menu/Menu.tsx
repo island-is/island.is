@@ -14,17 +14,17 @@ import Img from './Img'
 type RenderLinkObj = {
   className: string
   text: string
-  href: string
+  href: any
 }
 
 type Link = {
   text: string
-  href: string
+  href: any
 }
 
 type LinkWithSub = {
   text: string
-  href: string
+  href: any
   sub?: Link[]
 }
 

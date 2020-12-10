@@ -64,6 +64,7 @@ import { GetTellUsAStoryInput } from './dto/getTellUsAStory.input'
 import { TellUsAStory } from './models/tellUsAStory.model'
 import { SearchIndexes } from '@island.is/content-search-indexer/types'
 import { GroupedMenu } from './models/groupedMenu.model'
+import { GetSingleMenuInput } from './dto/getSingleMenu.input'
 
 const { cacheTime } = environment
 
@@ -75,7 +76,7 @@ export class CmsResolver {
   constructor(
     private readonly cmsContentfulService: CmsContentfulService,
     private readonly cmsElasticsearchService: CmsElasticsearchService,
-  ) { }
+  ) {}
 
   @Directive(cacheControlDirective())
   @Query(() => Namespace, { nullable: true })
@@ -323,25 +324,27 @@ export class CmsResolver {
   @Directive(cacheControlDirective())
   @Query(() => Menu, { nullable: true })
   getMenu(@Args('input') input: GetMenuInput): Promise<Menu | null> {
-    return this.cmsElasticsearchService.getSingleMenu<Menu>(
+    return this.cmsElasticsearchService.getSingleMenuByName(
       SearchIndexes[input.lang],
-      { ...input, type: 'webMenu' }
+      { ...input },
     )
   }
 
   @Directive(cacheControlDirective())
   @Query(() => GroupedMenu, { nullable: true })
-  getGroupedMenu(@Args('input') input: GetMenuInput): Promise<GroupedMenu | null> {
+  getGroupedMenu(
+    @Args('input') input: GetSingleMenuInput,
+  ): Promise<GroupedMenu | null> {
     return this.cmsElasticsearchService.getSingleMenu<GroupedMenu>(
       SearchIndexes[input.lang],
-      { ...input, type: 'webGroupedMenu' }
+      input,
     )
   }
 }
 
 @Resolver(() => LatestNewsSlice)
 export class LatestNewsSliceResolver {
-  constructor(private cmsElasticsearchService: CmsElasticsearchService) { }
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
 
   @ResolveField(() => [News])
   async news(@Parent() { news: input }: LatestNewsSlice): Promise<News[]> {
@@ -355,7 +358,7 @@ export class LatestNewsSliceResolver {
 
 @Resolver(() => Article)
 export class ArticleResolver {
-  constructor(private cmsContentfulService: CmsContentfulService) { }
+  constructor(private cmsContentfulService: CmsContentfulService) {}
 
   @ResolveField(() => [Article])
   async relatedArticles(@Parent() article: Article) {
@@ -365,7 +368,7 @@ export class ArticleResolver {
 
 @Resolver(() => AboutSubPage)
 export class AboutSubPageResolver {
-  constructor(private cmsElasticsearchService: CmsElasticsearchService) { }
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
 
   @ResolveField(() => AboutPage)
   async parent(@Parent() { parent }: AboutSubPage) {

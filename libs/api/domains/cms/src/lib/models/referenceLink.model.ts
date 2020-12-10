@@ -11,7 +11,13 @@ export class ReferenceLink {
   type: string
 }
 
-export const mapReferenceLink = ({ sys, fields }: PageTypes | ILinkUrl): ReferenceLink => ({
-  slug: (fields as PageTypes['fields']).slug ?? (fields as ILinkUrl['fields']).url ?? '',
-  type: sys.contentType.sys.id
+export const mapReferenceLink = ({
+  sys,
+  fields,
+}: PageTypes | ILinkUrl): ReferenceLink => ({
+  slug:
+    (fields as PageTypes['fields']).slug ??
+    (fields as ILinkUrl['fields']).url ??
+    '',
+  type: sys.contentType.sys.id,
 })

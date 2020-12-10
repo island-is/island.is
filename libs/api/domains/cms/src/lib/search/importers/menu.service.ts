@@ -14,7 +14,8 @@ import {
 export class MenuSyncService implements CmsSyncProvider<IMenu> {
   processSyncData(entries: processSyncDataInput<IMenu>) {
     return entries.filter(
-      (entry: Entry<any>): entry is IMenu => entry.sys.contentType.sys.id === 'menu'
+      (entry: Entry<any>): entry is IMenu =>
+        entry.sys.contentType.sys.id === 'menu',
     )
   }
 
@@ -34,7 +35,7 @@ export class MenuSyncService implements CmsSyncProvider<IMenu> {
               {
                 key: mapped.title,
                 type: 'name',
-              }
+              },
             ],
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),

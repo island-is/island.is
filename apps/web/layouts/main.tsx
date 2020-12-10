@@ -32,14 +32,20 @@ import {
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
   QueryGetGroupedMenuArgs,
+  Menu,
+  MenuLinkWithChildren,
+  MenuLink,
 } from '../graphql/schema'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
 import routeNames from '../i18n/routeNames'
 import { useI18n } from '../i18n'
+import { Locale } from '../i18n/I18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { environment } from '../environments/environment'
 import { useNamespace } from '../hooks'
+import pathNames, { ContentType } from '../i18n/routes'
+import { AccessCategory, ArticleCategory } from 'libs/api/mocks/src/types'
 
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
@@ -73,6 +79,7 @@ export interface LayoutProps {
   namespace: Record<string, string | string[]>
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   respOrigin
+  megaMenuData
 }
 
 if (environment.sentryDsn) {
@@ -111,6 +118,7 @@ const Layout: NextComponentType<
   alertBannerContent,
   respOrigin,
   children,
+  megaMenuData,
 }) => {
   const { activeLocale, t } = useI18n()
   const { makePath } = routeNames(activeLocale)
@@ -258,7 +266,12 @@ const Layout: NextComponentType<
             menuTabs,
           }}
         >
-          {showHeader && <Header showSearchInHeader={showSearchInHeader} />}
+          {showHeader && (
+            <Header
+              showSearchInHeader={showSearchInHeader}
+              megaMenuData={megaMenuData}
+            />
+          )}
           <Main>
             {wrapContent ? <Box width="full">{children}</Box> : children}
           </Main>
@@ -343,7 +356,6 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
   const respOrigin = `${origin}`
   const [
     categories,
-    topMenuCustomLinks,
     alertBanner,
     upperMenuInfo,
     upperMenuContact,
@@ -351,7 +363,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
     middleMenu,
     tagsMenu,
     namespace,
-    mainMenu,
+    megaMenuData,
   ] = await Promise.all([
     apolloClient
       .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
@@ -363,14 +375,6 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
         },
       })
       .then((res) => res.data.getArticleCategories),
-    apolloClient
-      .query<GetMenuQuery, QueryGetMenuArgs>({
-        query: GET_MENU_QUERY,
-        variables: {
-          input: { name: 'Top menu custom links', lang },
-        },
-      })
-      .then((res) => res.data.getMenu),
     apolloClient
       .query<GetAlertBannerQuery, QueryGetAlertBannerArgs>({
         query: GET_ALERT_BANNER_QUERY,
@@ -437,22 +441,46 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
       .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
         query: GET_GROUPED_MENU_QUERY,
         variables: {
-          input: { name: 'Main menu', lang },
+          input: { id: '5prHB8HLyh4Y35LI4bnhh2', lang },
         },
       })
       .then((res) => res.data.getGroupedMenu),
   ])
 
-  console.log('mainMenu', mainMenu)
+  const formatMegaMenuLinks = (
+    menuLinks: (MenuLinkWithChildren | MenuLink)[],
+  ) => {
+    return menuLinks.map((linkData) => {
+      let sub
+      // if this link has children format them
+      if ('childLinks' in linkData) {
+        sub = formatMegaMenuLinks(linkData.childLinks)
+      } else {
+        sub = null
+      }
+
+      return {
+        text: linkData.title,
+        href: pathNames(lang as Locale, linkData.link.type as ContentType, [
+          linkData.link.slug,
+        ]),
+        sub,
+      }
+    })
+  }
+
+  const formatMegaMenuCategoryLinks = (categories: ArticleCategory[]) =>
+    categories.map((category) => ({
+      text: category.title,
+      href: pathNames(lang as Locale, category.__typename as ContentType, [
+        category.slug,
+      ]),
+    }))
+
+  const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
   return {
     categories,
-    topMenuCustomLinks: (topMenuCustomLinks.links ?? []).map(
-      ({ text, url }) => ({
-        title: text,
-        href: url,
-      }),
-    ),
     alertBannerContent: alertBanner,
     footerUpperInfo: (upperMenuInfo.links ?? []).map(({ text, url }) => ({
       title: text,
@@ -476,6 +504,13 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
     })),
     namespace,
     respOrigin,
+    megaMenuData: {
+      asideTopLinks: formatMegaMenuLinks(asideTopLinksData.menuLinks),
+      asideBottomTitle: asideBottomLinksData.title,
+      asideBottomLinks: formatMegaMenuLinks(asideBottomLinksData.menuLinks),
+      mainTitle: namespace.serviceCategories,
+      mainLinks: formatMegaMenuCategoryLinks(categories),
+    },
   }
 }
 
