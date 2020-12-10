@@ -971,7 +971,7 @@ export const StepOne: React.FC = () => {
                     data-testid="requestedCourtDate"
                     name="requestedCourtDate"
                     label="Ósk um tíma"
-                    placeholder="Settu inn tíma dags"
+                    placeholder="Settu inn tíma"
                     errorMessage={requestedCourtTimeErrorMessage}
                     hasError={requestedCourtTimeErrorMessage !== ''}
                     defaultValue={
