@@ -7,23 +7,23 @@ import {
   QueryGetAboutPageArgs,
 } from '@island.is/web/graphql/schema'
 import { GET_ABOUT_SUB_PAGE_QUERY, GET_ABOUT_PAGE_NAVIGATION } from '../queries'
-import { StandardLayout } from '../Layouts/Layouts'
 import {
   Breadcrumbs,
   Link,
   Stack,
-  Divider,
   Text,
   GridRow,
   GridColumn,
   Box,
+  Navigation,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { SidebarBox, Bullet, RichText } from '@island.is/web/components'
+import { RichText } from '@island.is/web/components'
 import { useRouter } from 'next/router'
 import { CustomNextError } from '@island.is/web/units/errors'
 import Head from 'next/head'
 import { Background, Slice as SliceType } from '@island.is/island-ui/contentful'
+import { SidebarLayout } from '../Layouts/SidebarLayout'
 
 export interface AboutSubPageProps {
   page: GetAboutSubPageQuery['getAboutSubPage']
@@ -35,59 +35,65 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
   parentPage,
 }) => {
   const { asPath } = useRouter()
+  const parentLink = [
+    {
+      title: parentPage.pageHeader.navigationText,
+      href: '/stafraent-island',
+      active: false,
+    },
+  ]
 
-  const sidebar = (
-    <SidebarBox background="blue100">
-      <Stack space={[1, 1, 2]}>
-        <Text variant="h4" as="h2">
-          {parentPage.title}
-        </Text>
-        <Divider weight="alternate" />
-        <Link href="/stafraent-island">
-          <Text>{parentPage.pageHeader.navigationText}</Text>
-        </Link>
-        {parentPage.pageHeader.links.map(({ text, url }, i) => (
-          <Link key={i} href={url}>
-            {asPath === url ? (
-              <>
-                <Bullet align="left" />
-                <Text variant="h5" color="blue400">
-                  {text}
-                </Text>
-              </>
-            ) : (
-              <Text>{text}</Text>
-            )}
-          </Link>
-        ))}
-      </Stack>
-    </SidebarBox>
-  )
+  const items = parentPage.pageHeader.links.map(({ text, url }) => ({
+    title: text,
+    href: url,
+    active: asPath === url,
+  }))
 
   return (
     <>
       <Head>
         <title>{page.title}</title>
       </Head>
-      <Box overflow="hidden">
-        <StandardLayout
-          sidebar={{ position: 'right', node: sidebar }}
-          contentBoxProps={{
-            paddingBottom: page.bottomSlices.length > 0 ? 0 : undefined,
-          }}
+      <Box paddingTop={[4, 4, 8]} overflow="hidden">
+        <SidebarLayout
+          isSticky={false}
+          sidebarContent={
+            <Box
+              position={'relative'}
+              display={['none', 'none', 'block']}
+              style={{ zIndex: 10 }}
+            >
+              <Navigation
+                colorScheme="blue"
+                baseId="desktopNav"
+                isMenuDialog={false}
+                activeItemTitle={page.title}
+                items={parentLink.concat(items)}
+                title={parentPage.title}
+              />
+            </Box>
+          }
         >
           <GridRow>
             <GridColumn
               span={['9/9', '9/9', '7/8', '7/8', '7/9']}
               offset={['0', '0', '0', '0', '1/9']}
             >
-              <Box paddingBottom={1}>
+              <Stack space={[3, 3, 2]}>
                 <Breadcrumbs>
                   <Link href="/">Ísland.is</Link>
                   <Link href="/stafraent-island">{parentPage.title}</Link>
                 </Breadcrumbs>
-              </Box>
-              <Stack space={2}>
+                <Box display={['block', 'block', 'none']}>
+                  <Navigation
+                    colorScheme="blue"
+                    baseId={'mobileNav'}
+                    isMenuDialog={true}
+                    activeItemTitle={page.title}
+                    items={parentLink.concat(items)}
+                    title={parentPage.title}
+                  />
+                </Box>
                 <Text variant="h1" as="h1">
                   {page.title}
                 </Text>
@@ -109,8 +115,8 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
               <RichText body={page.slices as SliceType[]} />
             </Background>
           </Box>
-        </StandardLayout>
-        <RichText body={page.bottomSlices as SliceType[]} />
+          <RichText body={page.bottomSlices as SliceType[]} />
+        </SidebarLayout>
       </Box>
     </>
   )
