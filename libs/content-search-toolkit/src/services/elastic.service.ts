@@ -302,7 +302,7 @@ export class ElasticService {
 
   async createEsClient(): Promise<Client> {
     const hasAWS =
-      'AWS_WEB_IDENTITY_TOKEN_FILE' in process.env ||
+      'AWS_WEB_IDENTITY_TOKEN_FILE' in process.env &&
       'AWS_SECRET_ACCESS_KEY' in process.env
 
     logger.info('Create AWS ES Client', {
