@@ -1,3 +1,9 @@
+import React from 'react'
+import { defineMessage } from 'react-intl'
+import { useParams } from 'react-router-dom'
+import { useQuery, gql } from '@apollo/client'
+
+import { Query } from '@island.is/api/schema'
 import {
   Box,
   GridColumn,
@@ -11,21 +17,22 @@ import {
   ServicePortalModuleComponent,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-import { useNationalRegistryFamilyInfo } from '@island.is/service-portal/graphql'
-import React from 'react'
-import { defineMessage } from 'react-intl'
-import { useParams } from 'react-router-dom'
+
+const NationalRegistryFamilyQuery = gql`
+  query NationalRegistryFamilyQuery {
+    nationalRegistryFamily {
+      nationalId
+    }
+  }
+`
 
 const FamilyMember: ServicePortalModuleComponent = () => {
-  const {
-    data: natRegFamilyInfo,
-    loading,
-    error,
-  } = useNationalRegistryFamilyInfo()
+  const { data, loading, error } = useQuery<Query>(NationalRegistryFamilyQuery)
+  const { nationalRegistryFamily } = data || {}
   const { nationalId }: { nationalId: string | undefined } = useParams()
 
   const person =
-    natRegFamilyInfo?.find((x) => x.nationalId === nationalId) || null
+    nationalRegistryFamily?.find((x) => x.nationalId === nationalId) || null
 
   if (!nationalId || error || (!loading && !person))
     return (
