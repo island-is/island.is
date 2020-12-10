@@ -53,9 +53,9 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
 }) => {
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
 
-   if (disablePage === 'true') {
-     throw new CustomNextError(404, 'Not found')
-   }
+  if (disablePage === 'true') {
+    throw new CustomNextError(404, 'Not found')
+  }
 
   const n = useNamespace(staticContent)
   const fn = useNamespace(filterContent)
@@ -86,9 +86,11 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   return (
     <SubpageLayout
       main={
-        <SidebarLayout sidebarContent={
-        <></> // Navigation menu kemur hér
-        }>
+        <SidebarLayout
+          sidebarContent={
+            <></> // Navigation menu kemur hér
+          }
+        >
           <SubpageMainContent
             main={
               <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
@@ -97,7 +99,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                   <Text variant="intro">{n('webServicesDescription')}</Text>
                 </Stack>
                 <Box marginTop={1}>
-                <Text variant="default">{n('designGuideDescription')}</Text>
+                  <Text variant="default">{n('designGuideDescription')}</Text>
                   <Link href="https://docs.devland.is/handbook/technical-overview/api-design-guide">
                     <Button
                       colorScheme="default"
@@ -129,9 +131,11 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
             </Text>
           }
           content={
-            <SidebarLayout sidebarContent={
-              <></> // Hér kemur filterinn
-            }>
+            <SidebarLayout
+              sidebarContent={
+                <></> // Hér kemur filterinn
+              }
+            >
               <ServiceListContainer
                 services={data?.getApiCatalogue.services}
                 //loading={loading}
@@ -155,7 +159,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
 }
 
 ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
-
   const [staticContent, filterContent] = await Promise.all([
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
