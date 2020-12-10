@@ -19,5 +19,5 @@ export const getMobileMenuFigure = (path: ServicePortalPath | undefined) => {
   if (path === ServicePortalPath.SettingsRoot)
     return '/assets/images/settings.svg'
 
-  return '/assets/images/school.svg'
+  return '/assets/images/jobsGrid.svg'
 }
