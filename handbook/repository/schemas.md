@@ -140,35 +140,6 @@ Add the following script to the `workspace.json`'s project.
 
 ---
 
-### Graphql (schemas/build-schema)
-
-If you are creating an API, you will need to create a `buildSchema.ts` at the root of the project, along `index.ts` as follow:
-
-```typescript
-import { buildSchema } from '@island.is/infra-nest-server'
-
-buildSchema({
-  path: 'PATH/api.graphql',
-  resolvers: [...], // Define all the resolvers used by the api
-})
-```
-
-> IMPORTANT! When adding new resolvers to your modules don't forget to update this array as well.
-
-Then you can add it to the `workspace.json`
-
-```json
-"schemas/build-schema": {
-  "builder": "@nrwl/workspace:run-commands",
-  "options": {
-    "outputPath": "PATH/api.graphql",
-    "command": "yarn ts-node -P PATH/tsconfig.app.json PATH/buildSchema.ts"
-  }
-}
-```
-
----
-
 ### Client (schemas/codegen)
 
 The last kind is the client-side consuming an `api.graphql` file.

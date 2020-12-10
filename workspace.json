@@ -62,7 +62,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/air-discount-scheme/api.graphql",
-            "command": "yarn ts-node -P apps/air-discount-scheme/api/tsconfig.app.json apps/air-discount-scheme/api/src/buildSchema.ts"
+            "command": "yarn ts-node -P apps/air-discount-scheme/api/tsconfig.json scripts/build-graphql-schema.ts apps/air-discount-scheme/api/src/app/app.module"
           }
         },
         "schemas/codegen": {
@@ -406,7 +406,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/api/src/api.graphql",
-            "command": "yarn ts-node -P apps/api/tsconfig.app.json apps/api/src/buildSchema.ts"
+            "command": "yarn ts-node -P apps/api/tsconfig.json scripts/build-graphql-schema.ts apps/api/src/app/app.module"
           }
         },
         "schemas/codegen": {
@@ -2706,7 +2706,7 @@
         "schemas/build-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P apps/judicial-system/api/tsconfig.app.json apps/judicial-system/api/src/buildSchema.ts"
+            "command": "yarn ts-node -P apps/judicial-system/api/tsconfig.json scripts/build-graphql-schema.ts apps/judicial-system/api/src/app/app.module"
           }
         },
         "schemas/codegen": {
@@ -4608,7 +4608,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/skilavottord/ws/src/app/api.graphql",
-            "command": "yarn ts-node -P apps/skilavottord/ws/tsconfig.app.json apps/skilavottord/ws/src/buildSchema.ts"
+            "command": "yarn ts-node -P apps/skilavottord/ws/tsconfig.json scripts/build-graphql-schema.ts apps/skilavottord/ws/src/app/app.module"
           }
         },
         "migrate": {
