@@ -26,6 +26,7 @@ import { SubpageDetailsContent } from '../../components/SubpageDetailsContent'
 
 import { SubpageLayout } from '../Layouts/Layouts'
 import { Box, Stack, Text, Button, Link } from '@island.is/island-ui/core'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -50,11 +51,11 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   staticContent,
   filterContent,
 }) => {
-  // const { disableApiCatalog: disablePage } = publicRuntimeConfig
+  const { disableApiCatalog: disablePage } = publicRuntimeConfig
 
-  // if (disablePage === 'true') {
-  //   throw new CustomNextError(404, 'Not found')
-  // }
+   if (disablePage === 'true') {
+     throw new CustomNextError(404, 'Not found')
+   }
 
   const n = useNamespace(staticContent)
   const fn = useNamespace(filterContent)
@@ -85,7 +86,9 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   return (
     <SubpageLayout
       main={
-        <SidebarLayout sidebarContent={<div>Navigation menu kemur hér</div>}>
+        <SidebarLayout sidebarContent={
+        <></> // Navigation menu kemur hér
+        }>
           <SubpageMainContent
             main={
               <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
@@ -126,10 +129,12 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
             </Text>
           }
           content={
-            <SidebarLayout sidebarContent={<div>Hér kemur Filterinn</div>}>
+            <SidebarLayout sidebarContent={
+              <></> // Hér kemur filterinn
+            }>
               <ServiceListContainer
                 services={data?.getApiCatalogue.services}
-                loading={loading}
+                //loading={loading}
                 moreToLoad={data?.getApiCatalogue?.pageInfo?.nextCursor != null}
                 emptyListText={TEXT_NOT_FOUND}
                 errorMessage={
@@ -150,7 +155,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
 }
 
 ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
-  console.log(locale)
+
   const [staticContent, filterContent] = await Promise.all([
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
