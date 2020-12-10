@@ -55,12 +55,6 @@ class App {
     logger.info('Done!')
   }
 
-  async sync() {
-    logger.info('Running local sync')
-
-    this.syncKibana()
-  }
-
   private async migrateAws(): Promise<aws.AwsEsPackage[]> {
     logger.info('Starting aws migration')
     const repoDictionaryVersion = await dictionary.getDictionaryVersion()
@@ -222,7 +216,7 @@ class App {
     logger.info('Done')
   }
 
-  private async syncKibana() {
+  async syncKibana() {
     logger.info('Starting kibana syncing')
     await kibana.syncObjects()
     logger.info('Done')
@@ -232,8 +226,8 @@ class App {
 async function migrateBootstrap() {
   const argv = yargs(process.argv).argv
   const app = new App()
-  if (argv.sync) {
-    await app.sync()
+  if (argv.syncKibana) {
+    await app.syncKibana()
   } else {
     await app.run()
   }

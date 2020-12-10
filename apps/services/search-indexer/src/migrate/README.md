@@ -33,15 +33,15 @@ This migrates the ES indexes to the latest version defined in the
 `./config/template-{LOCALE}.json` files. It also imports all kibana saved
 objects that are in `./config/kibana` folder.
 
-#### Sync
+#### Sync Kibana
 
-You can run a sync with
+You can run a kibana sync with
 
 ```bash
-yarn nx run services-search-indexer:migrate --sync
+yarn nx run services-search-indexer:migrate --sync-kibana
 ```
 
-A sync fetches data from running services and updates your local files. This
-finds the ids of the objects inside `./config/kibana` and searches for them on
-your local running Kibana instance and updates them accordingly. Remember to
-run `migrate` before running `sync`.
+A sync fetches saved objects from a local running kibana instance and updates
+your local kibana files. It uses the ids of the objects inside the
+`./config/kibana` folder and searches for them on your instance and updates
+them accordingly. Remember to run `migrate` before running `sync-kibana`.
