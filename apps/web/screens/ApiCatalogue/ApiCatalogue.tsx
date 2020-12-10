@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import getConfig from 'next/config'
 
 import { Screen } from '@island.is/web/types'
@@ -8,7 +8,9 @@ import {
   Query,
   QueryGetApiCatalogueArgs,
   QueryGetNamespaceArgs,
+  GetApiCatalogueInput,
 } from '@island.is/api/schema'
+
 
 import { GET_NAMESPACE_QUERY, GET_CATALOGUE_QUERY } from '../queries'
 import { useNamespace } from '../../hooks'
@@ -55,9 +57,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({ subpageHeader }) => {
 
 const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   title,
-  data,
-  loading,
-  error,
   staticContent,
   filterContent,
 }) => {
@@ -90,6 +89,42 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   }
   /* --- */
   const { activeLocale } = useI18n()
+
+  const onLoadMore = () => {
+    if (data?.getApiCatalogue.pageInfo?.nextCursor == null) {
+      return
+    }
+
+    const { nextCursor } = data?.getApiCatalogue?.pageInfo
+    const param = { ...parameters, cursor: nextCursor }
+    fetchMore({
+      variables: { input: param },
+      updateQuery: (prevResult, { fetchMoreResult }) => {
+        fetchMoreResult.getApiCatalogue.services = [
+          ...prevResult.getApiCatalogue.services,
+          ...fetchMoreResult.getApiCatalogue.services,
+        ]
+        return fetchMoreResult
+      },
+    })
+  }
+
+   const [parameters, setParameters] = useState<GetApiCatalogueInput>({
+    cursor: null,
+    limit: LIMIT,
+    query: '',
+    pricing: [],
+    data: [],
+    type: [],
+    access: [],
+  })
+
+  const { data, loading, error, fetchMore, refetch } = useQuery<Query, QueryGetApiCatalogueArgs>(GET_CATALOGUE_QUERY,
+    {
+      variables: {
+        input: parameters,
+      },
+    })
 
   return (
     <SubpageLayout
