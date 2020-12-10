@@ -48,7 +48,7 @@ We have 4 different types of scripts that can be added inside `workspace.json` t
 
 - `schemas/build-openapi`
 - `schemas/openapi-generator`
-- `schemas/build-schema`
+- `schemas/build-graphql-schema`
 - `schemas/codegen`
 
 Follow the next steps to configure your project:
@@ -190,7 +190,7 @@ yarn nx run <project>:schemas/openapi-generator
 All API calls should be type checked to backend schemas. When you update an API, you may need to generate schema files:
 
 ```bash
-yarn nx run <project>:schemas/build-schema
+yarn nx run <project>:schemas/build-graphql-schema
 ```
 
 And generate client types that depend on the schema:

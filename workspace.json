@@ -58,7 +58,7 @@
             "passWithNoTests": true
           }
         },
-        "schemas/build-schema": {
+        "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/air-discount-scheme/api.graphql",
@@ -402,7 +402,7 @@
             "command": "./scripts/secrets.sh api --reset"
           }
         },
-        "schemas/build-schema": {
+        "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/api/src/api.graphql",
@@ -2703,7 +2703,7 @@
             "passWithNoTests": true
           }
         },
-        "schemas/build-schema": {
+        "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P apps/judicial-system/api/tsconfig.json scripts/build-graphql-schema.ts apps/judicial-system/api/src/app/app.module"
@@ -4604,7 +4604,7 @@
             "passWithNoTests": true
           }
         },
-        "schemas/build-schema": {
+        "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/skilavottord/ws/src/app/api.graphql",
