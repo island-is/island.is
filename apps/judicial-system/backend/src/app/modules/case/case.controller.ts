@@ -36,6 +36,48 @@ import { transitionCase } from './state'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './pipes'
 
+const prosecutorDtoFields = [
+  'policeCaseNumber',
+  'accusedNationalId',
+  'accusedName',
+  'accusedAddress',
+  'accusedGender',
+  'requestedDefenderName',
+  'requestedDefenderEmail',
+  'court',
+  'arrestDate',
+  'requestedCourtDate',
+  'requestedCustodyEndDate',
+  'lawsBroken',
+  'custodyProvisions',
+  'requestedCustodyRestrictions',
+  'caseFacts',
+  'legalArguments',
+  'comments',
+]
+
+const judgeDtoFields = [
+  'courtCaseNumber',
+  'courtDate',
+  'courtRoom',
+  'defenderName',
+  'defenderEmail',
+  'courtStartTime',
+  'courtEndTime',
+  'courtAttendees',
+  'policeDemands',
+  'accusedPlea',
+  'litigationPresentations',
+  'ruling',
+  'rejecting',
+  'custodyEndDate',
+  'custodyRestrictions',
+  'accusedAppealDecision',
+  'accusedAppealAnnouncement',
+  'prosecutorAppealDecision',
+  'prosecutorAppealAnnouncement',
+]
+
 @UseGuards(JwtAuthGuard)
 @Controller('api')
 @ApiTags('cases')
@@ -66,6 +108,11 @@ export class CaseController {
     return this.caseService.create(caseToCreate)
   }
 
+  @Roles(
+    { role: UserRole.PROSECUTOR, dtoFields: prosecutorDtoFields },
+    { role: UserRole.JUDGE, dtoFields: judgeDtoFields },
+  )
+  @UseGuards(RolesGuard)
   @Put('case/:id')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(

@@ -62,7 +62,7 @@ const remainingCreateCaseData = {
   requestedCourtDate: '2020-09-08T11:30:00.000Z',
 }
 
-const remainingCaseData = {
+const remainingProsecutorCaseData = {
   requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
   lawsBroken: 'Broken Laws',
   custodyProvisions: [
@@ -76,6 +76,9 @@ const remainingCaseData = {
   caseFacts: 'Case Facts',
   legalArguments: 'Legal Arguments',
   comments: 'Comments',
+}
+
+const remainingJudgeCaseData = {
   courtCaseNumber: 'Court Case Number',
   courtDate: '2020-09-29T13:00:00.000Z',
   courtRoom: '201',
@@ -97,13 +100,32 @@ const remainingCaseData = {
   prosecutorAppealAnnouncement: 'Prosecutor Appeal Announcement',
 }
 
-function getCaseData(fullCreateCaseData = false, otherCaseData = false) {
+function getProsecutorCaseData(
+  fullCreateCaseData: boolean,
+  otherProsecutorCaseData: boolean,
+) {
   let data = minimalCaseData
   if (fullCreateCaseData) {
     data = { ...data, ...remainingCreateCaseData }
   }
-  if (otherCaseData) {
-    data = { ...data, ...remainingCaseData }
+  if (otherProsecutorCaseData) {
+    data = { ...data, ...remainingProsecutorCaseData }
+  }
+  return data
+}
+
+function getJudgeCaseData() {
+  return remainingJudgeCaseData
+}
+
+function getCaseData(
+  fullCreateCaseData = false,
+  otherProsecutorCaseData = false,
+  judgeCaseData = false,
+) {
+  let data = getProsecutorCaseData(fullCreateCaseData, otherProsecutorCaseData)
+  if (judgeCaseData) {
+    data = { ...data, ...getJudgeCaseData() }
   }
 
   return data as CCase
@@ -279,7 +301,7 @@ describe('Case', () => {
       })
   })
 
-  it('PUT /api/case/:id should update a case by id', async () => {
+  it('PUT /api/case/:id should update prosecutor fields of a case by id', async () => {
     const data = getCaseData(true, true)
     let dbCase: CCase
     let apiCase: CCase
@@ -290,7 +312,7 @@ describe('Case', () => {
 
         return request(app.getHttpServer())
           .put(`/api/case/${value.id}`)
-          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
           .send(data)
           .expect(200)
       })
@@ -305,6 +327,46 @@ describe('Case', () => {
           created: dbCase.created || 'FAILURE',
           modified: apiCase.modified,
           state: dbCase.state || 'FAILURE',
+        } as CCase)
+
+        // Check the data in the database
+        return Case.findOne({
+          where: { id: apiCase.id },
+          include: [
+            { model: User, as: 'prosecutor' },
+            { model: User, as: 'judge' },
+          ],
+        })
+      })
+      .then((newValue) => {
+        expectCasesToMatch(caseToCCase(newValue), apiCase)
+      })
+  })
+
+  it('PUT /api/case/:id should update judge fields of a case by id', async () => {
+    const judgeCaseData = getJudgeCaseData()
+    let dbCase: CCase
+    let apiCase: CCase
+
+    await Case.create(getCaseData())
+      .then((value) => {
+        dbCase = caseToCCase(value)
+
+        return request(app.getHttpServer())
+          .put(`/api/case/${value.id}`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
+          .send(judgeCaseData)
+          .expect(200)
+      })
+      .then((response) => {
+        apiCase = response.body
+
+        // Check the response
+        expect(apiCase.modified).not.toBe(dbCase.modified)
+        expectCasesToMatch(apiCase, {
+          ...dbCase,
+          modified: apiCase.modified,
+          ...judgeCaseData,
         } as CCase)
 
         // Check the data in the database

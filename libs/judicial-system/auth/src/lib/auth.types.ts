@@ -4,3 +4,8 @@ export type Credentials = {
   user: User
   csrfToken: string
 }
+
+export interface RolesRule {
+  role: string
+  dtoFields: string[]
+}
