@@ -197,6 +197,19 @@
         "panelIndex": "95ef75c0-76f7-4b4f-b9aa-265c720b70fc",
         "panelRefName": "panel_11",
         "version": "7.4.2"
+      },
+      {
+        "embeddableConfig": {},
+        "gridData": {
+          "h": 18,
+          "i": "2da624c5-eabb-446f-a886-7ff567b08071",
+          "w": 22,
+          "x": 22,
+          "y": 42
+        },
+        "panelIndex": "2da624c5-eabb-446f-a886-7ff567b08071",
+        "panelRefName": "panel_12",
+        "version": "7.4.2"
       }
     ],
     "refreshInterval": {
@@ -283,6 +296,11 @@
     {
       "id": "cf3b02f0-34b8-11eb-83e6-db8492ac723e",
       "name": "panel_11",
+      "type": "visualization"
+    },
+    {
+      "id": "1def3c10-3aed-11eb-88b7-630ea8059e64",
+      "name": "panel_12",
       "type": "visualization"
     }
   ],
