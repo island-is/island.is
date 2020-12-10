@@ -41,7 +41,11 @@ class App {
 
     await this.migrateES(esPackages)
 
-    await this.migrateKibana()
+    try {
+      await this.migrateKibana()
+    } catch (e) {
+      logger.error('Failed migrating kibana', e)
+    }
 
     // we remove unused AWS ES packages after ES migrate cause we cant/should not remove packages already in use
     if (hasAwsAccess) {
