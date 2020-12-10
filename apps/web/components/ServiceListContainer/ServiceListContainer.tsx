@@ -48,11 +48,11 @@ export interface ServiceListContainerProps {
   span?: ResponsiveProp<GridColumnStyles.GridColumns>
   tagDisplayNames?: TagDisplayNames //If you want different display names for tag
   loading?: Boolean // pass true to show loading icon
-  emptyListText?: string
+  emptyListText?: string //text displayed when the list is empty
   errorMessage?: ErrorMessage //pass null if no error
+  moreToLoad?: Boolean //should the load more button be shown
   loadMoreButtonText?: string
   onLoadMoreClick?: () => void
-  moreToLoad?: Boolean //should the loadMore button be shown
   children?: JSX.Element | JSX.Element[]
 }
 
