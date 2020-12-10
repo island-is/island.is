@@ -66,33 +66,3 @@ export const Menu: FC<Props> = ({
     />
   )
 }
-
-/*const mainLinks = [
-  { text: 'Akstur og bifreiðar', href: { href: 'test', as: 'test1' } },
-  {
-    text: 'Atvinnurekstur og sjálfstætt starfandi',
-    href: { href: 'test', as: 'test1' },
-  },
-  { text: 'Dómstólar og réttarfar', href: { href: 'test', as: 'test1' } },
-  { text: 'Fjármál og skattar', href: { href: 'test', as: 'test1' } },
-  { text: 'Fjölskylda og velferð', href: { href: 'test', as: 'test1' } },
-  { text: 'Heilbrigðismál', href: { href: 'test', as: 'test1' } },
-  { text: 'Húsnæðismál', href: { href: 'test', as: 'test1' } },
-  { text: 'Iðnaður', href: { href: 'test', as: 'test1' } },
-  { text: 'Innflytjendamál', href: { href: 'test', as: 'test1' } },
-  {
-    text: 'Launþegi, réttindi og lífeyrir',
-    href: { href: 'test', as: 'test1' },
-  },
-  { text: 'Málefni fatlaðs fólks', href: { href: 'test', as: 'test1' } },
-  { text: 'Menntun', href: { href: 'test', as: 'test1' } },
-  { text: 'Neytendamál', href: { href: 'test', as: 'test1' } },
-  { text: 'Samfélag og réttindi', href: { href: 'test', as: 'test1' } },
-  { text: 'Samgöngur', href: { href: 'test', as: 'test1' } },
-  { text: 'Umhverfismál', href: { href: 'test', as: 'test1' } },
-  {
-    text: 'Vegabréf, ferðalög og búseta erlendis',
-    href: { href: 'test', as: 'test1' },
-  },
-  { text: 'Vörur og þjónusta Ísland.is', href: { href: 'test', as: 'test1' } },
-]*/
