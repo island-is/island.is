@@ -14,9 +14,10 @@ import SubNavItem from './NavItem/SubNavItem'
 
 interface Props {
   nav: ServicePortalNavigationItem
+  variant: 'blue' | 'blueberry'
 }
 
-const ModuleNavigation: FC<Props> = ({ nav }) => {
+const ModuleNavigation: FC<Props> = ({ nav, variant }) => {
   const [expand, setExpand] = useState(false)
   const { pathname } = useLocation()
   const isModuleActive =
@@ -37,6 +38,7 @@ const ModuleNavigation: FC<Props> = ({ nav }) => {
         icon={nav.icon}
         active={isModuleActive}
         onClick={nav.path === undefined ? handleExpand : undefined}
+        variant={variant}
       >
         {formatMessage(nav.name)}
       </NavItem>
