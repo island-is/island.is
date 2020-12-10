@@ -146,7 +146,9 @@ export const constructProsecutorDemands = (workingCase: Case) => {
     <Text>
       Þess er krafist að
       <Text as="span" fontWeight="semiBold">
-        {` ${workingCase.accusedName}, kt. ${formatNationalId(workingCase.accusedNationalId)} `}
+        {` ${workingCase.accusedName}, kt. 
+        ${formatNationalId(workingCase.accusedNationalId)
+        } `}
       </Text>
       , verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi
       til
