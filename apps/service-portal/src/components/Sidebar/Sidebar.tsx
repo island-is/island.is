@@ -1,10 +1,10 @@
 import React, { FC } from 'react'
-import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import * as styles from './Sidebar.treat'
 import ModuleNavigation from './ModuleNavigation'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { useLocale } from '@island.is/localization'
-import { ServicePortalPath } from 'libs/service-portal/core/src'
+import { ServicePortalPath } from '@island.is/service-portal/core'
 
 export const Sidebar: FC<{}> = () => {
   const { formatMessage } = useLocale()
