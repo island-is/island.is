@@ -16,12 +16,10 @@ import Cookies from 'js-cookie'
 import * as Sentry from '@sentry/node'
 import { RewriteFrames } from '@sentry/integrations'
 import { useRouter } from 'next/router'
-
 import { Header, Main, PageLoader } from '../components'
 import { GET_GROUPED_MENU_QUERY, GET_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import {
-  ArticleCategory,
   QueryGetMenuArgs,
   GetMenuQuery,
   GetGroupedMenuQuery,
@@ -33,18 +31,19 @@ import {
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
   QueryGetGroupedMenuArgs,
-  MenuLinkWithChildren,
-  MenuLink,
 } from '../graphql/schema'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
 import routeNames from '../i18n/routeNames'
 import { useI18n } from '../i18n'
-import { Locale } from '../i18n/I18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { environment } from '../environments/environment'
 import { useNamespace } from '../hooks'
-import pathNames, { ContentType } from '../i18n/routes'
+import {
+  formatMegaMenuCategoryLinks,
+  formatMegaMenuLinks,
+} from '../utils/processMenuData'
+import { Locale } from '../i18n/I18n'
 
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
@@ -444,36 +443,6 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
       .then((res) => res.data.getGroupedMenu),
   ])
 
-  const formatMegaMenuLinks = (
-    menuLinks: (MenuLinkWithChildren | MenuLink)[],
-  ) => {
-    return menuLinks.map((linkData) => {
-      let sub
-      // if this link has children format them
-      if ('childLinks' in linkData) {
-        sub = formatMegaMenuLinks(linkData.childLinks)
-      } else {
-        sub = null
-      }
-
-      return {
-        text: linkData.title,
-        href: pathNames(lang as Locale, linkData.link.type as ContentType, [
-          linkData.link.slug,
-        ]),
-        sub,
-      }
-    })
-  }
-
-  const formatMegaMenuCategoryLinks = (categories: ArticleCategory[]) =>
-    categories.map((category) => ({
-      text: category.title,
-      href: pathNames(lang as Locale, category.__typename as ContentType, [
-        category.slug,
-      ]),
-    }))
-
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
   return {
@@ -502,11 +471,17 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
     namespace,
     respOrigin,
     megaMenuData: {
-      asideTopLinks: formatMegaMenuLinks(asideTopLinksData.menuLinks),
+      asideTopLinks: formatMegaMenuLinks(
+        lang as Locale,
+        asideTopLinksData.menuLinks,
+      ),
       asideBottomTitle: asideBottomLinksData.title,
-      asideBottomLinks: formatMegaMenuLinks(asideBottomLinksData.menuLinks),
+      asideBottomLinks: formatMegaMenuLinks(
+        lang as Locale,
+        asideBottomLinksData.menuLinks,
+      ),
       mainTitle: namespace.serviceCategories,
-      mainLinks: formatMegaMenuCategoryLinks(categories),
+      mainLinks: formatMegaMenuCategoryLinks(lang as Locale, categories),
     },
   }
 }

@@ -1,6 +1,10 @@
 import React, { FC, ReactNode, useMemo, forwardRef } from 'react'
 import pathNames from '@island.is/web/i18n/routes'
-import { GET_ABOUT_PAGE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
+import {
+  GET_ABOUT_PAGE_QUERY,
+  GET_CATEGORIES_QUERY,
+  GET_NAMESPACE_QUERY,
+} from '../queries'
 import { Screen } from '@island.is/web/types'
 import {
   Header,
@@ -33,7 +37,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import Sidebar from './Sidebar'
 import * as styles from './AboutPage.treat'
 import Head from 'next/head'
-
+import { Locale } from '../../i18n/I18n'
 import {
   GetAboutPageQuery,
   QueryGetAboutPageArgs,
@@ -42,6 +46,10 @@ import {
   AllSlicesImageFragment,
   GetNamespaceQuery,
   QueryGetNamespaceArgs,
+  GetGroupedMenuQuery,
+  QueryGetGroupedMenuArgs,
+  GetArticleCategoriesQuery,
+  QueryGetArticleCategoriesArgs,
 } from '@island.is/web/graphql/schema'
 import {
   renderSlices,
@@ -51,6 +59,11 @@ import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import { RenderForm } from './RenderForm'
 import { SidebarLayout } from '../Layouts/SidebarLayout'
+import { GET_GROUPED_MENU_QUERY } from '../queries/Menu'
+import {
+  formatMegaMenuCategoryLinks,
+  formatMegaMenuLinks,
+} from 'apps/web/utils/processMenuData'
 
 /**
  * TODO: Both fragments Image and EmbeddedVideo aren't used inside
@@ -156,9 +169,14 @@ interface PageHeaderProps {
   page: GetAboutPageQuery['getAboutPage']
   navigation: SliceItem[]
   namespace?: GetNamespaceQuery['getNamespace']
+  megaMenuData
 }
 
-const PageHeader: FC<PageHeaderProps> = ({ page, navigation }) => {
+const PageHeader: FC<PageHeaderProps> = ({
+  page,
+  navigation,
+  megaMenuData,
+}) => {
   const slice = page.pageHeader
 
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
@@ -169,7 +187,7 @@ const PageHeader: FC<PageHeaderProps> = ({ page, navigation }) => {
       <GridContainer position="none">
         <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
           <Box marginBottom={[0, 0, 8, 15]}>
-            <Header buttonColorScheme="negative" />
+            <Header buttonColorScheme="negative" megaMenuData={megaMenuData} />
           </Box>
         </ColorSchemeContext.Provider>
       </GridContainer>
@@ -399,9 +417,14 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
 export interface AboutPageProps {
   page?: GetAboutPageQuery['getAboutPage']
   namespace: GetNamespaceQuery['getNamespace']
+  megaMenuData
 }
 
-const AboutPageScreen: Screen<AboutPageProps> = ({ page, namespace }) => {
+const AboutPageScreen: Screen<AboutPageProps> = ({
+  page,
+  namespace,
+  megaMenuData,
+}) => {
   const navigation = useMemo(
     () =>
       [{ id: page.pageHeader.id, text: page.pageHeader.navigationText }].concat(
@@ -416,7 +439,11 @@ const AboutPageScreen: Screen<AboutPageProps> = ({ page, namespace }) => {
         <meta name="description" content={page.seoDescription} />
       </Head>
       <Box position="relative">
-        <PageHeader page={page} navigation={navigation as SliceItem[]} />
+        <PageHeader
+          page={page}
+          navigation={navigation as SliceItem[]}
+          megaMenuData={megaMenuData}
+        />
         {(page.slices as AvailableSlices[]).map((slice) => (
           <Section key={slice.id} slice={slice} namespace={namespace} />
         ))}
@@ -445,8 +472,10 @@ AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
       data: { getAboutPage: page },
     },
     namespace,
+    megaMenuData,
+    categories,
   ] = await Promise.all([
-    await apolloClient.query<GetAboutPageQuery, QueryGetAboutPageArgs>({
+    apolloClient.query<GetAboutPageQuery, QueryGetAboutPageArgs>({
       query: GET_ABOUT_PAGE_QUERY,
       variables: {
         input: {
@@ -454,7 +483,7 @@ AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    await apolloClient
+    apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
         variables: {
@@ -465,11 +494,44 @@ AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
         },
       })
       .then((res) => JSON.parse(res.data.getNamespace.fields)),
+    apolloClient
+      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
+        query: GET_GROUPED_MENU_QUERY,
+        variables: {
+          input: { id: '5prHB8HLyh4Y35LI4bnhh2', lang: locale },
+        },
+      })
+      .then((res) => res.data.getGroupedMenu),
+    apolloClient
+      .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
+        query: GET_CATEGORIES_QUERY,
+        variables: {
+          input: {
+            lang: locale,
+          },
+        },
+      })
+      .then((res) => res.data.getArticleCategories),
   ])
+
+  const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
   return {
     page,
     namespace,
+    megaMenuData: {
+      asideTopLinks: formatMegaMenuLinks(
+        locale as Locale,
+        asideTopLinksData.menuLinks,
+      ),
+      asideBottomTitle: asideBottomLinksData.title,
+      asideBottomLinks: formatMegaMenuLinks(
+        locale as Locale,
+        asideBottomLinksData.menuLinks,
+      ),
+      mainTitle: namespace.serviceCategories,
+      mainLinks: formatMegaMenuCategoryLinks(locale as Locale, categories),
+    },
   }
 }
 
