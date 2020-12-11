@@ -8,8 +8,15 @@ import {
   FormValue,
   Schema,
   formatText,
+  MessageFormatter,
 } from '@island.is/application/core'
-import { Box, GridColumn, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  Text,
+  ToastContainer,
+  toast,
+} from '@island.is/island-ui/core'
 import {
   SUBMIT_APPLICATION,
   UPDATE_APPLICATION,
@@ -47,6 +54,19 @@ type ScreenProps = {
   screen: FormScreen
 }
 
+function handleError(error: string, formatMessage: MessageFormatter): void {
+  toast.error(
+    formatMessage(
+      {
+        id: 'application.system:submit.error',
+        defaultMessage: 'Eitthvað fór úrskeiðis: {error}',
+        description: 'Error message on submit',
+      },
+      { error },
+    ),
+  )
+}
+
 const Screen: FC<ScreenProps> = ({
   activeScreenIndex,
   addExternalData,
@@ -78,9 +98,14 @@ const Screen: FC<ScreenProps> = ({
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION)
+  const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION, {
+    onError: (e) => handleError(e.message, formatMessage),
+  })
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
+    {
+      onError: (e) => handleError(e.message, formatMessage),
+    },
   )
   const { handleSubmit, errors, reset } = hookFormData
 
@@ -95,6 +120,7 @@ const Screen: FC<ScreenProps> = ({
   }, [formValue, prevScreen, reset])
 
   const onSubmit: SubmitHandler<FormValue> = async (data, e) => {
+    let response
     if (submitField !== undefined) {
       const finalAnswers = { ...formValue, ...data }
       let event: string
@@ -110,7 +136,7 @@ const Screen: FC<ScreenProps> = ({
           event = nativeEvent?.submitter?.id ?? 'SUBMIT'
         }
       }
-      await submitApplication({
+      response = await submitApplication({
         variables: {
           input: {
             id: applicationId,
@@ -120,7 +146,7 @@ const Screen: FC<ScreenProps> = ({
         },
       })
     } else {
-      await updateApplication({
+      response = await updateApplication({
         variables: {
           input: {
             id: applicationId,
@@ -129,7 +155,9 @@ const Screen: FC<ScreenProps> = ({
         },
       })
     }
-    answerAndGoToNextScreen(data)
+    if (response?.data) {
+      answerAndGoToNextScreen(data)
+    }
   }
 
   function canProceed(): boolean {
@@ -223,6 +251,7 @@ const Screen: FC<ScreenProps> = ({
             )}
           </Box>
         </GridColumn>
+        <ToastContainer hideProgressBar closeButton useKeyframeStyles={false} />
         <ScreenFooter
           application={application}
           activeScreenIndex={activeScreenIndex}

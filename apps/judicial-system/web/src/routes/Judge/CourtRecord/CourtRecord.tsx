@@ -89,7 +89,7 @@ export const CourtRecord: React.FC = () => {
     }
 
     if (wc.defenderName) {
-      attendees += `\n${wc.defenderName} verjandi kærða`
+      attendees += `\n${wc.defenderName} skipaður verjandi kærða`
     }
 
     return attendees
@@ -324,9 +324,9 @@ export const CourtRecord: React.FC = () => {
               <Input
                 data-testid="litigationPresentations"
                 name="litigationPresentations"
-                label="Málflutningsræður"
+                label="Málflutningur og aðrar bókanir"
                 defaultValue={workingCase.litigationPresentations}
-                placeholder="Almennar málflutningsræður skráðar hér..."
+                placeholder="Málflutningsræður og annað sem fram kom í þinghaldi er skráð hér..."
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'litigationPresentations',

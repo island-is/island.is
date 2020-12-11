@@ -4,8 +4,6 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
 // this is used to generate uniqe classname for button so we can target empty styles for icon
 export const isEmpty = style({})
 
-export const iconPositionStart = style({})
-
 const buttonBase = {
   display: 'flex',
   alignItems: 'center',
@@ -434,10 +432,33 @@ const utilityIconColor = (
   },
 })
 
+export const iconPostText = style({
+  marginLeft: 15,
+  selectors: {
+    [`${variants.utility}:not(${isEmpty}) &, ${variants.text}:not(${isEmpty}) &`]: {
+      marginLeft: 8,
+    },
+    [`${variants.text}${size.textSmall}:not(${isEmpty}) &`]: {
+      marginLeft: 4,
+    },
+  },
+})
+
+export const iconPreText = style({
+  marginRight: 15,
+  selectors: {
+    [`${variants.utility}:not(${isEmpty}) &, ${variants.text}:not(${isEmpty}) &`]: {
+      marginRight: 8,
+    },
+    [`${variants.text}${size.textSmall}:not(${isEmpty}) &`]: {
+      marginRight: 4,
+    },
+  },
+})
+
 export const icon = style({
   width: 16,
   height: 16,
-  marginLeft: 15,
   ...themeUtils.responsiveStyle({
     md: {
       width: 24,
@@ -447,25 +468,11 @@ export const icon = style({
   selectors: {
     [`${isEmpty} &, ${circle} &`]: {
       marginLeft: 0,
+      marginRight: 0,
     },
     [`${size.small} &, ${variants.utility} &, ${size.textSmall} &, ${circleSizes.small} &`]: {
       width: 16,
       height: 16,
-    },
-    [`:not(${variants.text})${iconPositionStart} &`]: {
-      marginRight: 15,
-      marginLeft: 0,
-    },
-    [`${variants.utility}:not(${isEmpty}) &, ${variants.text}:not(${isEmpty}):not(${iconPositionStart}) &`]: {
-      marginLeft: 8,
-      marginRight: 0,
-    },
-    [`${variants.utility}:not(${isEmpty}) &, ${variants.text}:not(${isEmpty}) &, ${variants.text}${iconPositionStart} &`]: {
-      marginLeft: 0,
-      marginRight: 8,
-    },
-    [`${variants.text}${size.textSmall}:not(${isEmpty}) &`]: {
-      marginLeft: 4,
     },
     [`${variants.text}:not(${size.textSmall}) &`]: {
       marginBottom: -5,

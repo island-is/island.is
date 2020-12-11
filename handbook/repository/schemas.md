@@ -1,6 +1,6 @@
 # Auto-generated schemas
 
-We are ignoring all the auto-generated files from the repository to avoid noises, to make reviews easier on PRs and don't notify teams with code reviews when not needed.
+We ignore all the auto-generated files from the repository to avoid noises, make reviews easier on PRs, and only notifies teams with code reviews when needed.
 
 ## Understanding how automatic schemas works
 
@@ -48,7 +48,7 @@ We have 4 different types of scripts that can be added inside `workspace.json` t
 
 - `schemas/build-openapi`
 - `schemas/openapi-generator`
-- `schemas/build-schema`
+- `schemas/build-graphql-schema`
 - `schemas/codegen`
 
 Follow the next steps to configure your project:
@@ -57,7 +57,7 @@ Follow the next steps to configure your project:
 
 ### Openapi (schemas/build-openapi)
 
-First we need to create an `openApi.ts` file to define the document builder. Add this file at the root of the project along the `index.ts`.
+First, we need to create an `openApi.ts` file to define the document builder. Add this file at the root of the project along the `index.ts`.
 
 ```typescript
 import { DocumentBuilder } from '@nestjs/swagger'
@@ -140,29 +140,17 @@ Add the following script to the `workspace.json`'s project.
 
 ---
 
-### Graphql (schemas/build-schema)
+### Graphql (schemas/build-graphql-schema)
 
-If you are creating an API, you will need to create a `buildSchema.ts` at the root of the project, along `index.ts` as follow:
-
-```typescript
-import { buildSchema } from '@island.is/infra-nest-server'
-
-buildSchema({
-  path: 'PATH/api.graphql',
-  resolvers: [...], // Define all the resolvers used by the api
-})
-```
-
-> IMPORTANT! When adding new resolvers to your modules don't forget to update this array as well.
-
-Then you can add it to the `workspace.json`
+If you are creating an API, you'll need to hook up the `build-graphql-schema` script
+in `workspace.json` so the CI can create the GraphQL schema in the pipeline without
+starting running the server:
 
 ```json
-"schemas/build-schema": {
+"schemas/build-graphql-schema": {
   "builder": "@nrwl/workspace:run-commands",
   "options": {
-    "outputPath": "PATH/api.graphql",
-    "command": "yarn ts-node -P PATH/tsconfig.app.json PATH/buildSchema.ts"
+    "command": "yarn ts-node -P PATH/tsconfig.json PATH_TO_ROOT_MODULE"
   }
 }
 ```
@@ -171,7 +159,7 @@ Then you can add it to the `workspace.json`
 
 ### Client (schemas/codegen)
 
-Last kind is the client-side consuming an `api.graphql` file.
+The last kind is the client-side consuming an `api.graphql` file.
 
 Create an `codegen.yml` file in your project
 
@@ -199,7 +187,7 @@ Finally, you need to add it inside your `workspace.json`
 ```
 
 {% hint style="info" %}
-You should use one of the following name for the generated file from the codegen.yml configuration: `schema.d.ts`, `schema.tsx`, `schema.ts`, `possibleTypes.json`, `fragmentTypes.json` to be ignored from git.
+You should use one of the following names for the generated file from the codegen.yml configuration: `schema.d.ts`, `schema.tsx`, `schema.ts`, `possibleTypes.json`, `fragmentTypes.json` to be ignored from git.
 {% endhint %}
 
 ## Generating schema and client types
@@ -216,10 +204,10 @@ And generate the types fetch client with:
 yarn nx run <project>:schemas/openapi-generator
 ```
 
-All api calls should be type checked to backend schemas. When you update an API, you may need to generate schema files:
+All API calls should be type checked to backend schemas. When you update an API, you may need to generate schema files:
 
 ```bash
-yarn nx run <project>:schemas/build-schema
+yarn nx run <project>:schemas/build-graphql-schema
 ```
 
 And generate client types that depend on the schema:

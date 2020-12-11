@@ -9,6 +9,7 @@ export type Icon =
   | 'business'
   | 'calendar'
   | 'car'
+  | 'caretDown'
   | 'cellular'
   | 'chatbubble'
   | 'checkmark'
@@ -56,6 +57,7 @@ export default {
     business: 'Business',
     calendar: 'Calendar',
     car: 'Car',
+    caretDown: 'CaretDown',
     cellular: 'Cellular',
     chatbubble: 'Chatbubble',
     checkmark: 'Checkmark',
@@ -102,6 +104,7 @@ export default {
     business: 'BusinessOutline',
     calendar: 'CalendarOutline',
     car: 'CarOutline',
+    caretDown: 'CaretDownOutline',
     cellular: 'CellularOutline',
     chatbubble: 'ChatbubbleOutline',
     checkmark: 'Checkmark',

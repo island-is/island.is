@@ -14,7 +14,7 @@ import {
 import {
   createTerms,
   extractStringsFromObject,
-  hasProcessEntry,
+  numberOfProcessEntries,
   numberOfLinks,
 } from './utils'
 
@@ -43,7 +43,7 @@ export class AboutPageSyncService implements CmsSyncProvider<IPage> {
             title: mapped.title,
             content,
             contentWordCount: content.split(/\s+/).length,
-            hasProcessEntry: hasProcessEntry(mapped.slices),
+            processEntryCount: numberOfProcessEntries(mapped.slices),
             ...numberOfLinks(mapped.slices),
             type: 'webAboutPage',
             termPool: createTerms([mapped.title]),

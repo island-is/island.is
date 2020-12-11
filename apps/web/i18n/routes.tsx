@@ -8,6 +8,7 @@ export interface AnchorAttributes
 
 export type ContentType =
   | 'article'
+  | 'subarticle'
   | 'page'
   | 'category'
   | 'contentcategory'
@@ -17,7 +18,7 @@ export type ContentType =
   | 'lifeevent'
   | 'lifeeventpage'
   | 'adgerdir'
-  | 'vidspyrna-frontpage'
+  | 'adgerdirfrontpage'
   | 'adgerdirpage'
   | ''
 
@@ -25,6 +26,10 @@ export const routes: Record<ContentType, Record<Locale, string>> = {
   article: {
     is: '/[slug]',
     en: '/en/[slug]',
+  },
+  subarticle: {
+    is: '/[slug]/[slug]',
+    en: '/en/[slug]/[slug]',
   },
   page: {
     is: '/stofnanir/[slug]',
@@ -62,7 +67,7 @@ export const routes: Record<ContentType, Record<Locale, string>> = {
     is: '/covid-adgerdir/[slug]',
     en: '/en/covid-operations/[slug]',
   },
-  'vidspyrna-frontpage': {
+  adgerdirfrontpage: {
     is: '/covid-adgerdir',
     en: '/en/covid-operations',
   },
@@ -101,7 +106,7 @@ export const pathNames = (
 
     if (slugs && slugs.length > 0) {
       for (let i = 0; i < slugs.length; i++) {
-        path.as = replaceSlugInPath(typePath, slugs[i])
+        path.as = replaceSlugInPath(path.as, slugs[i])
         if (type === 'page' && slugs[i] === 'stafraent-island') {
           path.href = path.as
         }

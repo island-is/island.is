@@ -12,6 +12,9 @@ import {
   MetricsModule,
   MetricsService,
 } from '@island.is/content-search-metrics'
+import { environment } from '../environments/environment'
+
+const { configPath } = environment
 
 const esService = new ElasticService()
 
@@ -80,7 +83,7 @@ const getTemplateName = (locale: string) => `template-${locale}`
 
 const getTemplateFilePath = (locale: string) => {
   const templateName = getTemplateName(locale)
-  return `./config/${templateName}.json`
+  return `${configPath}/${templateName}.json`
 }
 
 export const getCurrentVersionFromConfig = (locale: string): number => {

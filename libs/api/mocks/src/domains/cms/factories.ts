@@ -60,6 +60,7 @@ export const slice = simpleFactory(
 )
 
 export const subArticle = factory<SubArticle>({
+  id: () => faker.random.uuid(),
   title: () => title(),
   slug: slugify('title'),
   body: () => [slice()],

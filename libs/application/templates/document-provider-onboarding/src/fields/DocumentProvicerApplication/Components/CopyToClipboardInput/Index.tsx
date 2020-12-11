@@ -1,6 +1,5 @@
 import React, { FC, useRef } from 'react'
 import { Box, Input, Button } from '@island.is/island-ui/core'
-import * as styles from './CopyToClipboardInput.treat'
 
 export interface CopyToClipboardInputProps {
   inputLabel: string
@@ -26,29 +25,27 @@ export const CopyToClipboardInput: FC<CopyToClipboardInputProps> = ({
 
   const buttonRef = useRef<HTMLButtonElement>(null)
   return (
-    <Box>
-      <Box position="relative">
+    <Box display="flex" alignItems="stretch" flexDirection="row">
+      <Box flexGrow={1}>
         <Input
           disabled
           label={inputLabel}
           name={inputLabel}
           value={inputValue}
         />
-        <Box position="absolute" className={styles.clipboardContainer}>
-          <Button
-            ref={buttonRef}
-            circle
-            colorScheme="default"
-            icon="copy"
-            iconType="outline"
-            onClick={() => {
-              copyToClipboard(inputValue)
-            }}
-            size="default"
-            type="button"
-            variant="primary"
-          />
-        </Box>
+      </Box>
+      <Box display="flex" marginLeft={1}>
+        <Button
+          ref={buttonRef}
+          icon="copy"
+          iconType="outline"
+          onClick={() => {
+            copyToClipboard(inputValue)
+          }}
+          size="default"
+          type="button"
+          variant="ghost"
+        />
       </Box>
     </Box>
   )
