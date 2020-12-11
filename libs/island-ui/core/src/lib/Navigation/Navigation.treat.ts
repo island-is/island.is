@@ -7,7 +7,7 @@ export const divider = style({
 })
 
 export const root = style({
-  transition: 'all 150ms',
+  transition: 'background-color 150ms',
 })
 
 export const ul = style({
