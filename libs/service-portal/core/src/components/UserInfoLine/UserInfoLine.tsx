@@ -6,6 +6,7 @@ import {
   GridRow,
   GridColumn,
   LoadingIcon,
+  GridColumnProps,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
@@ -15,8 +16,11 @@ import * as styles from './UserInfoLine.treat'
 interface Props {
   label: MessageDescriptor | string
   content?: string | JSX.Element
-  tag?: string | JSX.Element
+  renderContent?: () => JSX.Element
   loading?: boolean
+  labelColumnSpan?: GridColumnProps['span']
+  valueColumnSpan?: GridColumnProps['span']
+  editColumnSpan?: GridColumnProps['span']
   editLink?: {
     external?: boolean
     url: string
@@ -27,7 +31,10 @@ interface Props {
 export const UserInfoLine: FC<Props> = ({
   label,
   content,
-  tag,
+  renderContent,
+  labelColumnSpan = ['8/12', '4/12'],
+  valueColumnSpan = ['1/1', '5/12'],
+  editColumnSpan = ['1/1', '3/12'],
   loading,
   editLink,
 }) => {
@@ -35,44 +42,50 @@ export const UserInfoLine: FC<Props> = ({
 
   return (
     <Box
+      position="relative"
       paddingY={[2, 3]}
       paddingX={[2, 4]}
       border="standard"
       borderRadius="large"
     >
-      <GridRow>
-        <GridColumn order={1} span={['8/12', '4/12']}>
-          <Box overflow="hidden">
+      <GridRow align={['flexStart', 'center']}>
+        <GridColumn order={1} span={labelColumnSpan}>
+          <Box
+            display="flex"
+            alignItems="center"
+            height="full"
+            overflow="hidden"
+          >
             <Text variant="h5" as="h5">
               {formatMessage(label)}
             </Text>
           </Box>
         </GridColumn>
-        <GridColumn order={[3, 2]} span={['1/1', tag ? '3/12' : '5/12']}>
+        <GridColumn order={[3, 2]} span={valueColumnSpan}>
           <Box
             display="flex"
             alignItems="center"
             height="full"
             width="full"
             className={styles.content}
-            marginY={[1, 0]}
             overflow="hidden"
           >
-            {loading ? <LoadingIcon animate size={20} /> : content}
+            {loading ? (
+              <LoadingIcon animate size={20} />
+            ) : renderContent ? (
+              renderContent()
+            ) : (
+              content
+            )}
           </Box>
         </GridColumn>
-        {tag && (
-          <GridColumn order={[2, 3]} span={['4/12', '2/12']}>
-            <Box display="flex" justifyContent={['flexEnd', 'flexStart']}>
-              {tag}
-            </Box>
-          </GridColumn>
-        )}
         {editLink ? (
-          <GridColumn order={4} span={['1/1', '3/12']}>
+          <GridColumn order={4} span={editColumnSpan}>
             <Box
               display="flex"
               justifyContent={['flexStart', 'flexEnd']}
+              alignItems="center"
+              height="full"
               overflow="hidden"
               className={styles.buttonWrapper}
             >
