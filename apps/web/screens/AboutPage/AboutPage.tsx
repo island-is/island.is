@@ -205,7 +205,7 @@ const PageHeader: FC<PageHeaderProps> = ({ page, navigation }) => {
                 </Breadcrumbs>
                 <Box display={['block', 'block', 'block', 'none']}>
                   <Navigation
-                    colorScheme={'blue'}
+                    colorScheme={'darkBlue'}
                     baseId="MobileMenuNavigation"
                     isMenuDialog={true}
                     activeItemTitle={slice.navigationText}

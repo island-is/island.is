@@ -198,6 +198,7 @@ export const Navigation: FC<NavigationProps> = ({
               transform: 'none',
               width: '100%',
               borderRadius: '8px',
+              zIndex: 10,
             }}
             className={cn(styles.transition, styles.menuShadow[colorScheme])}
           >

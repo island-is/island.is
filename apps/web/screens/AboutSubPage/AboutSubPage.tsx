@@ -118,8 +118,8 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
               <RichText body={page.slices as SliceType[]} />
             </Background>
           </Box>
-          <RichText body={page.bottomSlices as SliceType[]} />
         </SidebarLayout>
+        <RichText body={page.bottomSlices as SliceType[]} />
       </Box>
     </>
   )
