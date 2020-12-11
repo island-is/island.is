@@ -78,9 +78,20 @@ export const PageLayout: FC<PageProps> = ({
                   {
                     name: 'Krafa um gæsluvarðhald',
                     children: [
-                      { type: 'SUB_SECTION', name: 'Grunnupplýsingar' },
-                      { type: 'SUB_SECTION', name: 'Málsatvik og lagarök' },
-                      { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
+                      { type: 'SUB_SECTION', name: 'Sakborningur' },
+                      { type: 'SUB_SECTION', name: 'Dómkröfur' },
+                      {
+                        type: 'SUB_SECTION',
+                        name: 'Lagagrundvöllur og takmarkanir',
+                      },
+                      {
+                        type: 'SUB_SECTION',
+                        name: 'Greinargerð',
+                      },
+                      {
+                        type: 'SUB_SECTION',
+                        name: 'Yfirlit kröfu',
+                      },
                     ],
                   },
                   {
