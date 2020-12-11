@@ -48,7 +48,7 @@ We have 4 different types of scripts that can be added inside `workspace.json` t
 
 - `schemas/build-openapi`
 - `schemas/openapi-generator`
-- `schemas/build-schema`
+- `schemas/build-graphql-schema`
 - `schemas/codegen`
 
 Follow the next steps to configure your project:
@@ -140,29 +140,17 @@ Add the following script to the `workspace.json`'s project.
 
 ---
 
-### Graphql (schemas/build-schema)
+### Graphql (schemas/build-graphql-schema)
 
-If you are creating an API, you will need to create a `buildSchema.ts` at the root of the project, along `index.ts` as follow:
-
-```typescript
-import { buildSchema } from '@island.is/infra-nest-server'
-
-buildSchema({
-  path: 'PATH/api.graphql',
-  resolvers: [...], // Define all the resolvers used by the api
-})
-```
-
-> IMPORTANT! When adding new resolvers to your modules don't forget to update this array as well.
-
-Then you can add it to the `workspace.json`
+If you are creating an API, you'll need to hook up the `build-graphql-schema` script
+in `workspace.json` so the CI can create the GraphQL schema in the pipeline without
+starting running the server:
 
 ```json
-"schemas/build-schema": {
+"schemas/build-graphql-schema": {
   "builder": "@nrwl/workspace:run-commands",
   "options": {
-    "outputPath": "PATH/api.graphql",
-    "command": "yarn ts-node -P PATH/tsconfig.app.json PATH/buildSchema.ts"
+    "command": "yarn ts-node -P PATH/tsconfig.json PATH_TO_ROOT_MODULE"
   }
 }
 ```
@@ -219,7 +207,7 @@ yarn nx run <project>:schemas/openapi-generator
 All API calls should be type checked to backend schemas. When you update an API, you may need to generate schema files:
 
 ```bash
-yarn nx run <project>:schemas/build-schema
+yarn nx run <project>:schemas/build-graphql-schema
 ```
 
 And generate client types that depend on the schema:
