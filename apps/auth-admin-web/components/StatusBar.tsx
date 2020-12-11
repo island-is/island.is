@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import APIResponse from '../../models/APIResponse';
+import APIResponse from '../models/utils/APIResponse';
 
 class StatusBar extends Component<{ status: APIResponse | null }> {
   getMessage = () => {

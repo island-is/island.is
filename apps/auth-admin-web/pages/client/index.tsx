@@ -10,14 +10,12 @@ import ClientPostLogoutRedirectUri from './../../components/ClientPostLogoutRedi
 
 import { useRouter } from 'next/router';
 import StepEnd from './../../components/form/StepEnd';
-import { Steps } from 'apps/auth-admin-web/models/Steps';
+import { Steps } from './../../models/utils/Steps';
 
 export default function Index() {
   const [step, setStep] = useState(1);
   const [client, setClient] = useState<ClientDTO>(null);
   const router = useRouter();
-
-  // let clientObj: ClientDTO = new ClientDTO();
 
   const handleNext = () => {
     console.log(step);

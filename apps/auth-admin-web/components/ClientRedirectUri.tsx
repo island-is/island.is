@@ -5,7 +5,7 @@ import { ErrorMessage } from '@hookform/error-message';
 import StatusBar from './StatusBar';
 import HelpBox from './HelpBox';
 import axios from 'axios';
-import APIResponse from '../models/APIResponse';
+import APIResponse from '../models/utils/APIResponse';
 
 interface Props {
   redirectObject: ClientRedirectUriDTO;

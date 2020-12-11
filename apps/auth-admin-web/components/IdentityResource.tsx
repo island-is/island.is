@@ -5,7 +5,7 @@ import StatusBar from './StatusBar';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import HelpBox from './HelpBox';
-import APIResponse from '../models/APIResponse';
+import APIResponse from '../models/utils/APIResponse';
 
 type Props = {
   resource: IdentityResourcesDTO;
@@ -61,26 +61,6 @@ export default function IdentityResource<Props>(
         
             <form onSubmit={handleSubmit(save)}>
               <div className="identity-resource__container__fields">
-                <div className="identity-resource__container__field">
-                  <label htmlFor="key" className="identity-resource__label">
-                    Key
-                  </label>
-                  <input
-                    ref={register({ required: true })}
-                    id="key"
-                    type="text"
-                    name="resource.key"
-                    defaultValue={resource.key}
-                    className="identity-resource__input"
-                  />
-                  <HelpBox helpText="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem architecto a odit ea distinctio consequatur autem nesciunt cupiditate eos, error reprehenderit illum dolor, mollitia modi vitae. Ducimus esse eos explicabo." />
-                  <ErrorMessage
-                    as="span"
-                    errors={errors}
-                    name="resource.key"
-                    message="Key is required"
-                  />
-                </div>
                 <div className="identity-resource__container__field">
                   <label htmlFor="name" className="identity-resource__label">
                     Name
@@ -147,7 +127,7 @@ export default function IdentityResource<Props>(
                   />
                 </div>
 
-                <div className="identity-resource__container__field">
+                <div className="identity-resource__container__checkbox__field">
                   <label htmlFor="enabled" className="identity-resource__label">
                     Enabled
                   </label>
@@ -162,7 +142,7 @@ export default function IdentityResource<Props>(
                   <HelpBox helpText="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem architecto a odit ea distinctio consequatur autem nesciunt cupiditate eos, error reprehenderit illum dolor, mollitia modi vitae. Ducimus esse eos explicabo." />
                 </div>
 
-                <div className="identity-resource__container__field">
+                <div className="identity-resource__container__checkbox__field">
                   <label
                     htmlFor="emphasize"
                     className="identity-resource__label"
@@ -180,7 +160,7 @@ export default function IdentityResource<Props>(
                   <HelpBox helpText="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem architecto a odit ea distinctio consequatur autem nesciunt cupiditate eos, error reprehenderit illum dolor, mollitia modi vitae. Ducimus esse eos explicabo." />
                 </div>
 
-                <div className="identity-resource__container__field">
+                <div className="identity-resource__container__checkbox__field">
                   <label
                     htmlFor="required"
                     className="identity-resource__label"
@@ -198,7 +178,7 @@ export default function IdentityResource<Props>(
                   <HelpBox helpText="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem architecto a odit ea distinctio consequatur autem nesciunt cupiditate eos, error reprehenderit illum dolor, mollitia modi vitae. Ducimus esse eos explicabo." />
                 </div>
 
-                <div className="identity-resource__container__field">
+                <div className="identity-resource__container__checkbox__field">
                   <label
                     htmlFor="showInDiscoveryDocument"
                     className="identity-resource__label"

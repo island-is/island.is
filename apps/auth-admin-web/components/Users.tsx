@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { UserIdentityDTO } from '../models/dtos/user-identity.dto';
-import APIResponse from '../models/APIResponse';
+import APIResponse from '../models/utils/APIResponse';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import HelpBox from './HelpBox';

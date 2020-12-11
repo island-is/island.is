@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ClientDTO from '../models/dtos/client-dto';
 import axios from 'axios';
 import StatusBar from './StatusBar';
-import APIResponse from '../models/APIResponse';
+import APIResponse from '../models/utils/APIResponse';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import HelpBox from './HelpBox';

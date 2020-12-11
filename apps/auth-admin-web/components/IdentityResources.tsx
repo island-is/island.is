@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import IdentityResourcesDTO from '../models/dtos/identity-resources.dto';
 import axios from 'axios';
 import Paginator from './Paginator';
-import APIResponse from '../models/APIResponse';
+import APIResponse from '../models/utils/APIResponse';
 import StatusBar from './StatusBar';
 
 export default function IdentityResources() {

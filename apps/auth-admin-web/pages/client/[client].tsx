@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 
 import axios from 'axios';
-import { Steps } from 'apps/auth-admin-web/models/Steps';
+import { Steps } from '../../models/utils/Steps';
 
 const Index = () => {
   const { query } = useRouter();
