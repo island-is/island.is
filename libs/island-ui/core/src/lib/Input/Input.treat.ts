@@ -116,5 +116,4 @@ export const icon = style({
 
 export const iconError = style({
   color: theme.color.red600,
-  fill: theme.color.red600,
 })
