@@ -106,8 +106,10 @@ export const link = factory<Link>({
 })
 
 export const menu = factory<Menu>({
+  id: () => faker.random.uuid(),
   title: () => title(),
   links: () => link.list(4),
+  menuLinks: () => []
 })
 
 export const alertBannerVariant = () =>
