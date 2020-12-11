@@ -1,5 +1,6 @@
 export * from './lib/auth.module'
 export * from './lib/auth.service'
+export * from './lib/auth.types'
 export * from './lib/guards/auth.guard'
 export * from './lib/guards/auth.graphql.guard'
 export * from './lib/guards/roles.guard'

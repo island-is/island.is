@@ -3,33 +3,37 @@ import { Reflector } from '@nestjs/core'
 
 import { User } from '@island.is/judicial-system/types'
 
-import { RolesRule } from '../auth.types'
+import { RolesRule, RulesType } from '../auth.types'
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const roles = this.reflector.get<(string | RolesRule)[]>(
-      'roles',
+    const rolesRules = this.reflector.get<RolesRule[]>(
+      'roles-rules',
       context.getHandler(),
     )
 
-    if (!roles) {
+    // Allow if no rules
+    if (!rolesRules) {
       return true
     }
 
     const request = context.switchToHttp().getRequest()
     const user: User = request.user
 
-    const rule = roles.find((rule) =>
+    // Pick the first matching rule
+    const rule = rolesRules.find((rule) =>
       typeof rule === 'string' ? rule === user.role : rule?.role === user.role,
     )
 
+    // Deny if no rule matches the user's role
     if (!rule) {
       return false
     }
 
+    // Allow if the rule is simple a user role
     if (typeof rule === 'string') {
       return true
     }
@@ -40,8 +44,19 @@ export class RolesGuard implements CanActivate {
       return false
     }
 
-    const dtoFields = Object.keys(dto)
+    if (rule.type === RulesType.FIELD) {
+      const dtoFields = Object.keys(dto)
 
-    return dtoFields.every((field) => rule.dtoFields.includes(field))
+      // Allow if all the dto fields are included in the rule
+      return dtoFields.every((field) => rule.dtoFields?.includes(field))
+    }
+
+    if (rule.type === RulesType.FIELD_VALUES) {
+      // Allow if the value of the specified dto field is included in the rule
+      return rule.dtoFieldValues?.includes(dto[rule.dtoField])
+    }
+
+    // Deny if the rule type is unknown
+    return false
   }
 }
