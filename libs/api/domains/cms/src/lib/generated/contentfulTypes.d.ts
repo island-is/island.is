@@ -140,6 +140,9 @@ export interface IArticleFields {
   /** Content */
   content?: Document | undefined
 
+  /** Process Entry */
+  processEntry?: IProcessEntry | undefined
+
   /** Contains application form? */
   containsApplicationForm?: boolean | undefined
 
@@ -506,7 +509,7 @@ export interface IFeaturedFields {
   attention?: boolean | undefined
 
   /** Featured article */
-  thing?: IArticle | undefined
+  thing?: IArticle | IVidspyrnaFrontpage | undefined
 }
 
 export interface IFeatured extends Entry<IFeaturedFields> {
@@ -657,6 +660,33 @@ export interface IGenericTag extends Entry<IGenericTagFields> {
     contentType: {
       sys: {
         id: 'genericTag'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGroupedMenuFields {
+  /** Title */
+  title: string
+
+  /** Menus  */
+  menus?: IMenu[] | undefined
+}
+
+/** Includes multiple menu groups for complex menu structures such as footers or mega menu */
+
+export interface IGroupedMenu extends Entry<IGroupedMenuFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'groupedMenu'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1041,8 +1071,11 @@ export interface IMenuFields {
   /** Title */
   title?: string | undefined
 
+  /** Links (old) */
+  links?: ILink[] | undefined
+
   /** Links */
-  links: ILink[]
+  menuLinks?: IMenuLinkWithChildren[] | undefined
 }
 
 export interface IMenu extends Entry<IMenuFields> {
@@ -1055,6 +1088,86 @@ export interface IMenu extends Entry<IMenuFields> {
     contentType: {
       sys: {
         id: 'menu'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IMenuLinkFields {
+  /** Title */
+  title: string
+
+  /** Link */
+  link?:
+    | IAboutSubPage
+    | IArticle
+    | IArticleCategory
+    | ISubArticle
+    | ILifeEventPage
+    | ILinkUrl
+    | INews
+    | IPage
+    | IVidspyrnaFrontpage
+    | IVidspyrnaPage
+    | undefined
+}
+
+/** Simple link for menu */
+
+export interface IMenuLink extends Entry<IMenuLinkFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'menuLink'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IMenuLinkWithChildrenFields {
+  /** Title */
+  title: string
+
+  /** Link */
+  link?:
+    | IAboutSubPage
+    | IArticle
+    | IArticleCategory
+    | ISubArticle
+    | ILifeEventPage
+    | ILinkUrl
+    | INews
+    | IPage
+    | IVidspyrnaFrontpage
+    | IVidspyrnaPage
+    | undefined
+
+  /** Child links */
+  childLinks?: IMenuLink[] | undefined
+}
+
+/** Menu link that can have child links for hierarchical menu structures */
+
+export interface IMenuLinkWithChildren
+  extends Entry<IMenuLinkWithChildrenFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'menuLinkWithChildren'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2167,7 +2280,12 @@ export interface IUrlFields {
   title?: string | undefined
 
   /** Page */
-  page: IArticle | IArticleCategory | ILifeEventPage | INews
+  page:
+    | IArticle
+    | IArticleCategory
+    | ILifeEventPage
+    | INews
+    | IVidspyrnaFrontpage
 
   /** Urls list */
   urlsList: string[]
@@ -2455,6 +2573,7 @@ export type CONTENT_TYPE =
   | 'frontpageSliderList'
   | 'genericPage'
   | 'genericTag'
+  | 'groupedMenu'
   | 'homepage'
   | 'iconBullet'
   | 'landingPage'
@@ -2468,6 +2587,8 @@ export type CONTENT_TYPE =
   | 'logoListSlice'
   | 'mailingListSignup'
   | 'menu'
+  | 'menuLink'
+  | 'menuLinkWithChildren'
   | 'namespace'
   | 'news'
   | 'numberBullet'
