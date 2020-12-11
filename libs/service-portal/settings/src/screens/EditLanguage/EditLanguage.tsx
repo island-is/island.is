@@ -45,7 +45,6 @@ export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
   }, [userProfile])
 
   const submitFormData = async (formData: LanguageFormData) => {
-    console.log(formData)
     if (formData.language === null) {
       setStatus('error')
       return
