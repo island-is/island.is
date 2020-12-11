@@ -516,7 +516,6 @@ export const StepOne: React.FC = () => {
                   isDirty(workingCase.defenderName) ? 'lockClosed' : undefined
                 }
                 iconType="outline"
-                iconColor="dark400"
                 onBlur={(evt) => {
                   if (workingCase.requestedDefenderName !== evt.target.value) {
                     setWorkingCase({
@@ -542,7 +541,6 @@ export const StepOne: React.FC = () => {
                 isDirty(workingCase.defenderEmail) ? 'lockClosed' : undefined
               }
               iconType="outline"
-              iconColor="dark400"
               defaultValue={workingCase.requestedDefenderEmail}
               errorMessage={requestedDefenderEmailErrorMessage}
               hasError={requestedDefenderEmailErrorMessage !== ''}
