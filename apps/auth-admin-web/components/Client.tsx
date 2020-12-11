@@ -99,7 +99,6 @@ const Client: React.FC<Props> = (props: Props) => {
   }
 
   const edit = async (data) => {
-    console.log("DELETE CLIENTID");
     delete data.clientId;
     console.log(data);
     await axios
@@ -112,7 +111,7 @@ const Client: React.FC<Props> = (props: Props) => {
       if (res.statusCode === 201) {
         console.log('handle change');
         console.log(data);
-        // props.onNextButtonClick(clientObject);
+        
       }
     })
     .catch(function (error) {
