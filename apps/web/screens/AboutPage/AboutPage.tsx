@@ -1,6 +1,5 @@
 import React, { FC, ReactNode, useMemo, forwardRef } from 'react'
 import pathNames from '@island.is/web/i18n/routes'
-
 import { GET_ABOUT_PAGE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
 import { Screen } from '@island.is/web/types'
 import {
@@ -28,11 +27,13 @@ import {
   Tabs,
   Divider,
   Navigation,
+  NavigationItem,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import Sidebar from './Sidebar'
 import * as styles from './AboutPage.treat'
 import Head from 'next/head'
+
 import {
   GetAboutPageQuery,
   QueryGetAboutPageArgs,
@@ -60,13 +61,6 @@ type AvailableSlices = Exclude<
   AllSlicesEmbeddedVideoFragment | AllSlicesImageFragment
 >
 
-interface NavItem {
-  href: string
-  title: string
-  active?: boolean
-  items?: NavItem[]
-}
-
 interface SliceItem {
   url: string
   text: string
@@ -77,29 +71,29 @@ const sidebarContent = (
   navigation: SliceItem[],
   currentSliceId: string,
   sliceLinks: SliceItem[],
-): NavItem[] => {
+): NavigationItem[] => {
   const [navigationTitle, ...navigationList] = navigation
 
-  const items: NavItem[] = navigationList.map(({ id, text }) => ({
+  const items: NavigationItem[] = navigationList.map(({ id, text }) => ({
     href: `#${id}`,
     title: text,
     active: id === currentSliceId,
   }))
 
-  const sliceItems: NavItem[] = sliceLinks.map(({ url, text }) => ({
+  const subPages: NavigationItem[] = sliceLinks.map(({ url, text }) => ({
     href: url,
     title: text,
     active: false,
   }))
 
-  const firstItem: NavItem = {
+  const currentPage: NavigationItem = {
     href: `#${navigationTitle.id}`,
     title: navigationTitle.text,
     active: true,
     items: items,
   }
 
-  return [firstItem].concat(sliceItems)
+  return [currentPage].concat(subPages)
 }
 
 export interface LayoutProps {
@@ -190,9 +184,8 @@ const PageHeader: FC<PageHeaderProps> = ({ page, navigation }) => {
                   ? 'darkBlue'
                   : 'blue'
               }
-              baseId={currentSliceId}
+              baseId="LeftNavigation"
               isMenuDialog={false}
-              activeItemTitle=""
               items={sidebarContent(navigation, currentSliceId, slice.links)}
               title={page.title}
             />
@@ -213,9 +206,9 @@ const PageHeader: FC<PageHeaderProps> = ({ page, navigation }) => {
                 <Box display={['block', 'block', 'block', 'none']}>
                   <Navigation
                     colorScheme={'blue'}
-                    baseId={currentSliceId}
+                    baseId="MobileMenuNavigation"
                     isMenuDialog={true}
-                    activeItemTitle={navigation[0].text}
+                    activeItemTitle={slice.navigationText}
                     items={sidebarContent(
                       navigation,
                       currentSliceId,
@@ -430,10 +423,8 @@ const AboutPageScreen: Screen<AboutPageProps> = ({ page, namespace }) => {
         <GridContainer>
           <Box display={['block', 'block', 'block', 'none']} marginBottom={8}>
             <Navigation
-              colorScheme={'blue'}
-              baseId={page.pageHeader.id}
+              baseId="MobileBottomNavigation"
               isMenuDialog={false}
-              activeItemTitle=""
               items={sidebarContent(
                 navigation as SliceItem[],
                 page.pageHeader.id,

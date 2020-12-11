@@ -16,6 +16,7 @@ import {
   GridColumn,
   Box,
   Navigation,
+  NavigationItem,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { RichText } from '@island.is/web/components'
@@ -35,19 +36,22 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
   parentPage,
 }) => {
   const { asPath } = useRouter()
-  const parentLink = [
-    {
-      title: parentPage.pageHeader.navigationText,
-      href: '/stafraent-island',
-      active: false,
-    },
-  ]
 
-  const items = parentPage.pageHeader.links.map(({ text, url }) => ({
-    title: text,
-    href: url,
-    active: asPath === url,
-  }))
+  const parentPageLink: NavigationItem = {
+    title: parentPage.pageHeader.navigationText,
+    href: `/${parentPage.slug}`,
+    active: false,
+  }
+
+  const items: NavigationItem[] = parentPage.pageHeader.links.map(
+    ({ text, url }) => ({
+      title: text,
+      href: url,
+      active: asPath === url,
+    }),
+  )
+
+  const navList = [parentPageLink, ...items]
 
   return (
     <>
@@ -64,12 +68,11 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
               style={{ zIndex: 10 }}
             >
               <Navigation
-                colorScheme="blue"
                 baseId="desktopNav"
                 isMenuDialog={false}
-                activeItemTitle={page.title}
-                items={parentLink.concat(items)}
+                items={navList}
                 title={parentPage.title}
+                titleLink={{ href: `/${parentPage.slug}`, active: false }}
               />
             </Box>
           }
@@ -86,12 +89,12 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
                 </Breadcrumbs>
                 <Box display={['block', 'block', 'none']}>
                   <Navigation
-                    colorScheme="blue"
                     baseId={'mobileNav'}
                     isMenuDialog={true}
                     activeItemTitle={page.title}
-                    items={parentLink.concat(items)}
+                    items={navList}
                     title={parentPage.title}
+                    titleLink={{ href: `/${parentPage.slug}`, active: false }}
                   />
                 </Box>
                 <Text variant="h1" as="h1">
