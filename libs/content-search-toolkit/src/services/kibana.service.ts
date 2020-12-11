@@ -1,12 +1,18 @@
 import fetch from 'node-fetch'
 import FormData from 'form-data'
+import * as AWS from 'aws-sdk'
+import aws4 from 'aws4'
+import util from 'util'
+import fs from 'fs'
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { KibanaSavedObject } from '@island.is/content-search-indexer/types'
 
 import { environment } from '../environments/environment'
 
-const { kibana } = environment
+const readFile = util.promisify(fs.readFile)
+
+const { kibana, awsWebIdentityTokenFile, awsRoleName } = environment
 
 interface ImportSavedObjectsResponse {
   success: boolean
@@ -19,6 +25,30 @@ export class KibanaService {
     logger.debug('Created Kibana Service')
   }
 
+  private async fetchSignedHeaders(url: URL): Promise<object> {
+    const sts = new AWS.STS()
+    const token = await readFile(awsWebIdentityTokenFile)
+    const { Credentials } = await sts
+      .assumeRoleWithWebIdentity({
+        RoleArn: awsRoleName,
+        RoleSessionName: 'kibana',
+        WebIdentityToken: token.toString(),
+      })
+      .promise()
+
+    const opts = {
+      host: url.hostname,
+      path: url.pathname,
+    }
+    const signed = aws4.sign(opts, {
+      accessKeyId: Credentials.AccessKeyId,
+      secretAccessKey: Credentials.SecretAccessKey,
+      sessionToken: Credentials.SessionToken,
+    })
+
+    return signed.headers
+  }
+
   private async callApi({
     url,
     method,
@@ -29,12 +59,15 @@ export class KibanaService {
     body?: FormData
   }) {
     try {
+      let headers = { 'kbn-xsrf': 'true' }
+      if (awsWebIdentityTokenFile && awsRoleName) {
+        const signedHeaders = await this.fetchSignedHeaders(url)
+        headers = { ...headers, ...signedHeaders }
+      }
       const response = await fetch(url.href, {
         method,
         body,
-        headers: {
-          'kbn-xsrf': 'true',
-        },
+        headers,
       })
 
       if (!response.ok) {
