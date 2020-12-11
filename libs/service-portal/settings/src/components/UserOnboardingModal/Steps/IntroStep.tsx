@@ -1,3 +1,8 @@
+import React, { FC } from 'react'
+import { User } from 'oidc-client'
+import { defineMessage } from 'react-intl'
+import { useQuery, gql } from '@apollo/client'
+
 import {
   Box,
   Button,
@@ -5,11 +10,17 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
-import { User } from 'oidc-client'
-import React, { FC } from 'react'
+import { Query } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
-import { useNationalRegistryInfo } from '@island.is/service-portal/graphql'
-import { defineMessage } from 'react-intl'
+
+const NationalRegistryUserQuery = gql`
+  query NationalRegistryUserQuery {
+    nationalRegistryUser {
+      nationalId
+      gender
+    }
+  }
+`
 
 interface Props {
   userInfo: User
@@ -34,12 +45,16 @@ const nonBinaryGreeting = defineMessage({
 
 export const IntroStep: FC<Props> = ({ userInfo, onClose, onSubmit }) => {
   const { formatMessage } = useLocale()
-  const { data: natRegInfo } = useNationalRegistryInfo()
+  const { data } = useQuery<Query>(NationalRegistryUserQuery)
+  const { nationalRegistryUser } = data || {}
+
   const hasMaleGreeting =
-    natRegInfo?.gender === 'Karl' || natRegInfo?.gender === 'Drengur'
+    nationalRegistryUser?.gender === 'Karl' ||
+    nationalRegistryUser?.gender === 'Drengur'
   const hasFemaleGreeting =
-    natRegInfo?.gender === 'Kona' || natRegInfo?.gender === 'Stúlka'
-  const hasNonBinaryGreeting = natRegInfo?.gender === 'Kynsegin'
+    nationalRegistryUser?.gender === 'Kona' ||
+    nationalRegistryUser?.gender === 'Stúlka'
+  const hasNonBinaryGreeting = nationalRegistryUser?.gender === 'Kynsegin'
 
   return (
     <>

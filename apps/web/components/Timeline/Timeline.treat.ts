@@ -1,16 +1,9 @@
 import { style, styleMap } from 'treat'
 import { themeUtils, theme } from '@island.is/island-ui/theme'
-import { escapeGrid } from '@island.is/island-ui/utils'
 
 export const container = style({
   position: 'relative',
   display: 'flex',
-
-  '@media': {
-    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
-      ...escapeGrid(),
-    },
-  },
 })
 
 export const innerContainer = style({
@@ -62,6 +55,7 @@ export const frame = style({
     lg: {
       display: 'inline-block',
       maxHeight: 1000,
+      width: '100%',
       overflow: 'hidden',
     },
   }),
@@ -105,6 +99,7 @@ export const eventWrapper = style({
   ...themeUtils.responsiveStyle({
     lg: {
       flexDirection: 'row-reverse',
+      maxWidth: '100px',
       minHeight: 'auto',
       marginRight: 0,
       marginBottom: 40,

@@ -1,3 +1,5 @@
+import path from 'path'
+
 export interface Environment {
   elasticNode: string
   esDomain: string
@@ -6,6 +8,7 @@ export interface Environment {
   awsRegion: string
   dictRepo: string
   locales: string[]
+  configPath: string
 }
 
 export const environment: Environment = {
@@ -16,4 +19,5 @@ export const environment: Environment = {
   s3Folder: '',
   dictRepo: 'https://api.github.com/repos/island-is/elasticsearch-dictionaries',
   locales: ['is', 'en'],
+  configPath: path.resolve(__dirname, '../../config'),
 }
