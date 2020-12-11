@@ -6,10 +6,11 @@ import {
   ApplicationTemplate,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
+import * as z from 'zod'
 
 import assignParentTemplate from '../emailTemplates/assignToParent'
 import assignEmployerTemplate from '../emailTemplates/assignToEmployer'
-import { dataSchema, SchemaFormValues } from './dataSchema'
+import { dataSchema, SchemaFormValues, extendDataSchema } from './dataSchema'
 
 type Events =
   | { type: 'APPROVE' }
@@ -202,6 +203,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
     }
     return 'applicant'
   },
+  extendDataSchema,
 }
 
 export default ParentalLeaveTemplate

@@ -5,6 +5,7 @@ import {
   Repeater,
   FormNode,
   Schema,
+  ExternalData,
 } from '@island.is/application/core'
 
 type ScreenAttributes = {
@@ -36,4 +37,6 @@ export type FormScreen =
 export type ResolverContext = {
   formNode: FormNode
   dataSchema: Schema
+  extendDataSchema?(schema: Schema, ctx: any): Schema
+  externalData: ExternalData
 }

@@ -169,7 +169,7 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     // TODO not post the state, it should follow the initialstate of the machine
     await validateApplicationSchema(
-      application,
+      application as BaseApplication,
       application.answers as FormValue,
     )
 

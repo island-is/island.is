@@ -4,6 +4,7 @@ import parseISO from 'date-fns/parseISO'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
 import { NO, YES } from '../constants'
+import { Schema } from 'libs/application/core/src'
 
 const PersonalAllowance = z
   .object({
@@ -85,3 +86,26 @@ export const dataSchema = z.object({
   usePersonalAllowanceFromSpouse: z.enum([YES, NO]),
 })
 export type SchemaFormValues = z.infer<typeof dataSchema>
+
+export function extendDataSchema(schema: Schema, ctx: any) {
+  // Here we should manipulate (extend, merge...) the existing dataschema, could add refine methods
+  // that have access to the current answers and external data, return the new and modified dataschema and use
+  // that for validation
+  console.log('extendDataSchema Context', ctx)
+
+  return schema.extend({
+    approveExternalData: schema.shape.approveExternalData.refine(
+      (e: string) => {
+        console.log(
+          'Here we could add validation with access to the context',
+          e,
+          ctx,
+        )
+        return false
+      },
+      {
+        message: 'Some error message added from extended schema',
+      },
+    ),
+  })
+}

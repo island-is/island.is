@@ -15,8 +15,13 @@ export const resolver: Resolver<FormValue, ResolverContext> = (
       errors: {},
     }
   }
-  const { dataSchema } = context
-  const validationError = validateAnswers(dataSchema, formValue, false)
+  const { dataSchema, extendDataSchema, externalData } = context
+  const extendedSchema = extendDataSchema
+    ? extendDataSchema(dataSchema, { answers: formValue, externalData })
+    : dataSchema
+
+  console.log('extendedSchema....', extendedSchema)
+  const validationError = validateAnswers(extendedSchema, formValue, false)
   if (validationError) {
     return { values: {}, errors: validationError }
   }

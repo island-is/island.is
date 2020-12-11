@@ -12,7 +12,7 @@ import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import { environment } from '../../../../environments'
 
 export async function validateApplicationSchema(
-  application: Pick<Application, 'typeId'>,
+  application: Partial<Application> & Pick<Application, 'typeId'>,
   newAnswers: FormValue,
 ) {
   const applicationTemplate = await getApplicationTemplateByTypeId(
@@ -30,8 +30,16 @@ export async function validateApplicationSchema(
       `Template ${application.typeId} is not ready for production`,
     )
   }
+
+  const extendedSchema = applicationTemplate.extendDataSchema
+    ? applicationTemplate.extendDataSchema(applicationTemplate.dataSchema, {
+        answers: newAnswers,
+        externalData: application.externalData || {},
+      })
+    : applicationTemplate.dataSchema
+
   const schemaFormValidationError = validateAnswers(
-    applicationTemplate.dataSchema,
+    extendedSchema,
     newAnswers,
     false,
   )

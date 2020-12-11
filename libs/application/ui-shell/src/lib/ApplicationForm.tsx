@@ -1,7 +1,13 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { GET_APPLICATION } from '@island.is/application/graphql'
-import { Form, Schema } from '@island.is/application/core'
+import {
+  ApplicationTemplate,
+  ApplicationContext,
+  ApplicationStateSchema,
+  Form,
+  Schema,
+} from '@island.is/application/core'
 import { FormShell } from './FormShell'
 import {
   getApplicationStateInformation,
@@ -9,6 +15,7 @@ import {
   getApplicationUIFields,
 } from '@island.is/application/template-loader'
 import { FieldProvider, useFields } from '../components/FieldContext'
+import { EventObject } from 'xstate'
 
 function isOnProduction(): boolean {
   // TODO detect better when the application system is on production
@@ -21,6 +28,13 @@ const ShellWrapper: FC<{
 }> = ({ applicationId, nationalRegistryId }) => {
   const [dataSchema, setDataSchema] = useState<Schema>()
   const [form, setForm] = useState<Form>()
+  const [t, setTemplate] = useState<
+    ApplicationTemplate<
+      ApplicationContext,
+      ApplicationStateSchema<EventObject>,
+      EventObject
+    >
+  >()
   const [, fieldsDispatch] = useFields()
 
   const { data, error, loading } = useQuery(GET_APPLICATION, {
@@ -50,6 +64,7 @@ const ShellWrapper: FC<{
           const applicationFields = await getApplicationUIFields(
             application.typeId,
           )
+          setTemplate(template)
           fieldsDispatch(applicationFields)
           const role = template.mapUserToRole(
             nationalRegistryId,
@@ -78,13 +93,14 @@ const ShellWrapper: FC<{
     return <p>{error}</p>
   }
   // TODO we need better loading states
-  if (loading || !form || !dataSchema) {
+  if (loading || !t || !form || !dataSchema) {
     return null
   }
   return (
     <FormShell
       application={application}
       dataSchema={dataSchema}
+      extendDataSchema={t.extendDataSchema}
       form={form}
       nationalRegistryId={nationalRegistryId}
     />

@@ -39,6 +39,7 @@ type ScreenProps = {
   answerAndGoToNextScreen(answers: FormValue): void
   answerQuestions(answers: FormValue): void
   dataSchema: Schema
+  extendDataSchema?: (schema: Schema, ctx: any) => Schema
   expandRepeater(): void
   mode?: FormModes
   numberOfScreens: number
@@ -52,6 +53,7 @@ const Screen: FC<ScreenProps> = ({
   answerQuestions,
   application,
   dataSchema,
+  extendDataSchema,
   expandRepeater,
   answerAndGoToNextScreen,
   mode,
@@ -67,7 +69,12 @@ const Screen: FC<ScreenProps> = ({
     defaultValues: formValue,
     shouldUnregister: false,
     resolver,
-    context: { dataSchema, formNode: screen },
+    context: {
+      dataSchema,
+      formNode: screen,
+      extendDataSchema,
+      externalData,
+    },
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -76,6 +83,8 @@ const Screen: FC<ScreenProps> = ({
     SUBMIT_APPLICATION,
   )
   const { handleSubmit, errors, reset } = hookFormData
+
+  console.log('Errors', errors)
 
   const submitField = useMemo(() => findSubmitField(screen), [screen])
 

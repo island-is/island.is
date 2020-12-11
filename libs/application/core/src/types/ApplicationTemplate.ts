@@ -26,4 +26,5 @@ export interface ApplicationTemplate<
   }
   readonly stateMachineOptions?: Partial<MachineOptions<TContext, TEvents>>
   mapUserToRole(id: string, state: string): ApplicationRole
+  extendDataSchema?(schema: Schema, ctx: any): Schema
 }

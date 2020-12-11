@@ -28,7 +28,14 @@ export const FormShell: FC<{
   nationalRegistryId: string
   form: Form
   dataSchema: Schema
-}> = ({ application, nationalRegistryId, form, dataSchema }) => {
+  extendDataSchema?: (schema: Schema, ctx: any) => Schema
+}> = ({
+  application,
+  nationalRegistryId,
+  form,
+  dataSchema,
+  extendDataSchema,
+}) => {
   const [state, dispatch] = useReducer(
     ApplicationReducer,
     {
@@ -95,6 +102,7 @@ export const FormShell: FC<{
                       dispatch({ type: ActionTypes.ANSWER, payload })
                     }
                     dataSchema={dataSchema}
+                    extendDataSchema={extendDataSchema}
                     expandRepeater={() =>
                       dispatch({ type: ActionTypes.EXPAND_REPEATER })
                     }
