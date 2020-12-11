@@ -55,7 +55,6 @@ const Dashboard: ServicePortalModuleComponent = ({ userInfo }) => {
   }
 
   const handleSubmit = (data: StatisticFormData) => {
-    console.log('data', data)
     submitFormData(data)
   }
 

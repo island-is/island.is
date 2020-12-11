@@ -11,10 +11,20 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
+export type CategoryFormOption = {
+  label: 'Flokkur'
+  value: string
+}
+
+export type TypeFormOption = {
+  label: 'Tegund'
+  value: string
+}
+
 export interface StatisticFormData {
   fileName: string
-  category: string
-  type: string
+  category: CategoryFormOption
+  type: TypeFormOption
   dateFrom: string
   dateTo: string
 }
