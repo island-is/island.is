@@ -109,6 +109,7 @@ export const Menu: FC<Props> = ({
           autocomplete={true}
           autosuggest={false}
           onRouting={closeModal}
+          skipContext
         />
       )}
     />

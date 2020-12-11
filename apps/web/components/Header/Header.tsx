@@ -105,7 +105,10 @@ export const Header: FC<HeaderProps> = ({
                       <LanguageToggler buttonColorScheme={buttonColorScheme} />
                     </Box>
                     <Box marginLeft={marginLeft}>
-                      <Menu {...megaMenuData} />
+                      <Menu
+                        {...megaMenuData}
+                        buttonColorScheme={buttonColorScheme}
+                      />
                     </Box>
                   </Box>
                 </Column>

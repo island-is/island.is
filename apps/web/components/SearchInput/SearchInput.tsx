@@ -209,6 +209,7 @@ interface SearchInputProps {
   colored?: boolean
   id?: string
   onRouting?: () => void
+  skipContext?: boolean
 }
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
@@ -225,6 +226,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       autosuggest = true,
       id = 'downshift',
       onRouting,
+      skipContext,
     },
     ref,
   ) => {
@@ -283,6 +285,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               white={white}
               hasFocus={hasFocus}
               loading={search.isLoading}
+              skipContext={skipContext}
               rootProps={{
                 'aria-controls': id + '-menu',
                 ...getRootProps(),
