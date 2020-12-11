@@ -1,4 +1,4 @@
-# Search indexer migration
+# Search Indexer Migration
 
 The code inside the migration folder is built into a single file which is run
 on `initContainer` inside the cluster. The migration file has several tasks:

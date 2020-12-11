@@ -1,4 +1,4 @@
-# Car recycling - Skilavottorð
+# Car Recycling - Skilavottorð
 
 ## About
 
