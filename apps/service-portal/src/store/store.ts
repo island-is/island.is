@@ -50,7 +50,6 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
       return {
         ...state,
         notificationMenuState: action.payload,
-        mobileMenuState: 'closed',
       }
 
     case ActionType.SetMobileMenuState:
@@ -62,7 +61,6 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
       return {
         ...state,
         userMenuState: action.payload,
-        mobileMenuState: 'closed',
       }
     case ActionType.SetUserLoggedOut:
       return {

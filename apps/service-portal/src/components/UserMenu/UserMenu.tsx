@@ -15,9 +15,10 @@ import { MenuState } from '../../store/actions'
 interface Props {
   state: MenuState
   onClose: () => void
+  onRouteChange: () => void
 }
 
-const UserMenu: FC<Props> = ({ state, onClose }) => {
+const UserMenu: FC<Props> = ({ state, onClose, onRouteChange }) => {
   const { formatMessage } = useLocale()
   useNamespaces(['sp.settings', 'sp.messages'])
   const [{ userInfo }] = useStore()
@@ -52,7 +53,7 @@ const UserMenu: FC<Props> = ({ state, onClose }) => {
             <Stack space={1}>
               <NavItem
                 path={ServicePortalPath.MyInfoRoot}
-                onClick={onClose}
+                onClick={onRouteChange}
                 icon={{
                   type: 'outline',
                   icon: 'person',
@@ -66,7 +67,7 @@ const UserMenu: FC<Props> = ({ state, onClose }) => {
               </NavItem>
               <NavItem
                 path={ServicePortalPath.SettingsRoot}
-                onClick={onClose}
+                onClick={onRouteChange}
                 icon={{
                   type: 'outline',
                   icon: 'settings',

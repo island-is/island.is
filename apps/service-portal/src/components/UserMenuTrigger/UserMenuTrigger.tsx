@@ -16,6 +16,14 @@ const UserMenuTrigger: FC<{}> = () => {
     })
   }
 
+  const closeMenus = () => {
+    setMenuState('closed')
+    dispatch({
+      type: ActionType.SetMobileMenuState,
+      payload: 'closed',
+    })
+  }
+
   const handleClick = () =>
     setMenuState(userMenuState === 'open' ? 'closed' : 'open')
 
@@ -50,6 +58,9 @@ const UserMenuTrigger: FC<{}> = () => {
           state={userMenuState}
           onClose={() => {
             setMenuState('closed')
+          }}
+          onRouteChange={() => {
+            closeMenus()
           }}
         />
       )}
