@@ -26,11 +26,15 @@ const HealthInsuranceSchema = z.object({
     nationality: z.string().nonempty(),
     email: z.string().email(),
     phoneNumber: z.string().optional(),
+    country: z.string().nonempty(),
+    previousIdNr: z.string().nonempty(),
+    insuranceName: z.string().nonempty(),
   }),
   status: z.string().nonempty(),
   additionalInformation: z.string().optional(),
   children: z.string().nonempty(),
-  infoInput: z.string(),
+  formerCountryofInsuranceRegistration: z.string().nonempty(),
+  formerCountryInsuranceEntitlement: z.string().nonempty(),
   summaryInput: z.string(),
 })
 

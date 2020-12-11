@@ -171,12 +171,55 @@ export const HealthInsuranceForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'info',
+      id: 'FormerCountryofInsuranceSection',
       name: '',
       children: [
-        buildTextField({
-          id: 'infoInput',
-          name: 'text input',
+        buildMultiField({
+          id: 'FormerCountryofInsurance',
+          name: m.formerCountryOfInsuranceTitle,
+          children: [
+            buildRadioField({
+              id: 'formerCountryofInsuranceRegistration',
+              name: '',
+              description: m.formerCountryOfInsuranceDescription,
+              largeButtons: true,
+              options: [
+                { label: m.formerCountryOfInsuranceNo, value: NO },
+                { label: m.yesOptionLabel, value: YES },
+              ],
+            }),
+            buildIntroductionField({
+              id: 'infoFormerCountryInsurance',
+              name: '',
+              introduction: m.formerCountryOfInsuranceInfo,
+            }),
+            buildTextField({
+              id: 'applicant.country',
+              name: m.city,
+              width: 'half',
+              disabled: true,
+            }),
+            buildTextField({
+              id: 'applicant.previousIdNr',
+              name: m.nationality,
+              width: 'half',
+              disabled: true,
+            }),
+            buildTextField({
+              id: 'applicant.insuranceName',
+              name: m.nationality,
+              disabled: true,
+            }),
+            buildRadioField({
+              id: 'formerCountryInsuranceEntitlement',
+              name: '',
+              description: m.formerCountryOfInsuranceEntitlement,
+              options: [
+                { label: m.yesOptionLabel, value: YES },
+                { label: m.noOptionLabel, value: NO },
+              ],
+            }),
+          ],
         }),
       ],
     }),
