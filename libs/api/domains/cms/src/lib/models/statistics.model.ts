@@ -1,14 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-
 import { IStatistics } from '../generated/contentfulTypes'
-
+import { SystemMetadata } from '@island.is/shared/types'
 import { Statistic, mapStatistic } from './statistic.model'
 
 @ObjectType()
 export class Statistics {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -19,7 +15,10 @@ export class Statistics {
   statistics: Statistic[]
 }
 
-export const mapStatistics = ({ fields, sys }: IStatistics): Statistics => ({
+export const mapStatistics = ({
+  fields,
+  sys,
+}: IStatistics): SystemMetadata<Statistics> => ({
   typename: 'Statistics',
   id: sys.id,
   title: fields.title ?? '',

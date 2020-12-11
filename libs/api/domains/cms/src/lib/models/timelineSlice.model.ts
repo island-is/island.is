@@ -1,14 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-
 import { ITimeline } from '../generated/contentfulTypes'
-
+import { SystemMetadata } from '@island.is/shared/types'
 import { TimelineEvent, mapTimelineEvent } from './timelineEvent.model'
 
 @ObjectType()
 export class TimelineSlice {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -22,7 +18,7 @@ export class TimelineSlice {
 export const mapTimelineSlice = ({
   fields,
   sys,
-}: ITimeline): TimelineSlice => ({
+}: ITimeline): SystemMetadata<TimelineSlice> => ({
   typename: 'TimelineSlice',
   id: sys.id,
   title: fields.title ?? '',

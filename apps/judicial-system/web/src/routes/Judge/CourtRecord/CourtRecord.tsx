@@ -85,11 +85,11 @@ export const CourtRecord: React.FC = () => {
     let attendees = ''
 
     if (wc.prosecutor && wc.accusedName) {
-      attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${wc.accusedName} kærði`
+      attendees += `${wc.prosecutor?.name} ${wc.prosecutor?.title}\n${wc.accusedName} kærði`
     }
 
     if (wc.defenderName) {
-      attendees += `\n${wc.defenderName} verjandi kærða`
+      attendees += `\n${wc.defenderName} skipaður verjandi kærða`
     }
 
     return attendees
@@ -185,7 +185,7 @@ export const CourtRecord: React.FC = () => {
                 data-testid="courtAttendees"
                 name="courtAttendees"
                 label="Viðstaddir og hlutverk þeirra"
-                defaultValue={workingCase?.courtAttendees}
+                defaultValue={workingCase.courtAttendees}
                 placeholder="Skrifa hér..."
                 onChange={(event) =>
                   removeTabsValidateAndSet(
@@ -219,7 +219,7 @@ export const CourtRecord: React.FC = () => {
               data-testid="policeDemands"
               name="policeDemands"
               label="Krafa lögreglu"
-              defaultValue={workingCase?.policeDemands}
+              defaultValue={workingCase.policeDemands}
               placeholder="Hvað hafði ákæruvaldið að segja?"
               onChange={(event) =>
                 removeTabsValidateAndSet(

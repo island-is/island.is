@@ -1,11 +1,9 @@
 import {
-  IdsAuthGuard,
-  Scopes,
-  ScopesGuard,
   UserIdentitiesService,
   UserIdentity,
   UserIdentityDto,
 } from '@island.is/auth-api-lib'
+import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import {
   Body,
   Controller,

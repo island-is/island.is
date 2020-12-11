@@ -8,7 +8,7 @@ export const useNationalRegistryFamilyInfo = () => {
   )
 
   return {
-    data: data?.getMyFamily || null,
+    data: data?.nationalRegistryFamily || null,
     loading,
     error,
     called,

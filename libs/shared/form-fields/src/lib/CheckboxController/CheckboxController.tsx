@@ -1,6 +1,12 @@
 import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Box, Checkbox, Stack, Tooltip } from '@island.is/island-ui/core'
+import {
+  Box,
+  Checkbox,
+  InputError,
+  Stack,
+  Tooltip,
+} from '@island.is/island-ui/core'
 
 interface Option {
   value: string
@@ -66,7 +72,6 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
                   name={`${id}[${index}]`}
                   label={option.label}
                   value={option.value}
-                  errorMessage={index === options.length - 1 ? error : ''}
                   hasError={error !== undefined}
                 />
                 {option.tooltip && (
@@ -76,6 +81,7 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
                 )}
               </Box>
             ))}
+            {error !== undefined && <InputError errorMessage={error} />}
           </Stack>
         )
       }}

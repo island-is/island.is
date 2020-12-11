@@ -432,10 +432,33 @@ const utilityIconColor = (
   },
 })
 
+export const iconPostText = style({
+  marginLeft: 15,
+  selectors: {
+    [`${variants.utility}:not(${isEmpty}) &, ${variants.text}:not(${isEmpty}) &`]: {
+      marginLeft: 8,
+    },
+    [`${variants.text}${size.textSmall}:not(${isEmpty}) &`]: {
+      marginLeft: 4,
+    },
+  },
+})
+
+export const iconPreText = style({
+  marginRight: 15,
+  selectors: {
+    [`${variants.utility}:not(${isEmpty}) &, ${variants.text}:not(${isEmpty}) &`]: {
+      marginRight: 8,
+    },
+    [`${variants.text}${size.textSmall}:not(${isEmpty}) &`]: {
+      marginRight: 4,
+    },
+  },
+})
+
 export const icon = style({
   width: 16,
   height: 16,
-  marginLeft: 15,
   ...themeUtils.responsiveStyle({
     md: {
       width: 24,
@@ -445,16 +468,11 @@ export const icon = style({
   selectors: {
     [`${isEmpty} &, ${circle} &`]: {
       marginLeft: 0,
+      marginRight: 0,
     },
     [`${size.small} &, ${variants.utility} &, ${size.textSmall} &, ${circleSizes.small} &`]: {
       width: 16,
       height: 16,
-    },
-    [`${variants.utility}:not(${isEmpty}) &, ${variants.text}:not(${isEmpty}) &`]: {
-      marginLeft: 8,
-    },
-    [`${variants.text}${size.textSmall}:not(${isEmpty}) &`]: {
-      marginLeft: 4,
     },
     [`${variants.text}:not(${size.textSmall}) &`]: {
       marginBottom: -5,

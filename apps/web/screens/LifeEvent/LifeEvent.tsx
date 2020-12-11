@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react'
-import Head from 'next/head'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import slugify from '@sindresorhus/slugify'
@@ -13,15 +12,16 @@ import {
   Text,
   Box,
   Hidden,
+  GridContainer,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { useI18n } from '@island.is/web/i18n'
-import routeNames from '@island.is/web/i18n/routeNames'
+import pathNames from '@island.is/web/i18n/routes'
 import {
   RichText,
-  SidebarNavigation,
-  DrawerMenu,
+  AnchorNavigation,
   BackgroundImage,
+  HeadWithSocialSharing,
+  Sticky,
 } from '@island.is/web/components'
 import {
   GET_LIFE_EVENT_QUERY,
@@ -34,7 +34,6 @@ import {
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
-import ArticleLayout from '@island.is/web/screens/Layouts/Layouts'
 import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
@@ -44,112 +43,116 @@ interface LifeEventProps {
 }
 
 export const LifeEvent: Screen<LifeEventProps> = ({
-  lifeEvent: { id, slug, image, title, intro, content },
+  lifeEvent: { id, image, title, intro, content },
   namespace,
 }) => {
   useContentfulId(id)
-  const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale)
   const n = useNamespace(namespace)
 
   const navigation = useMemo(() => {
     return createNavigation(content, { title })
   }, [content, title])
 
-  const mobileNavigation = navigation.map((x) => ({
-    title: x.text,
-    url: slug + '#' + x.id,
-  }))
-
-  const metaTitle = `${title} | Ísland.is`
-  const metaDescription =
-    intro ||
-    'Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt.'
-
   return (
     <>
-      <Head>
-        <title>{metaTitle}</title>
-        <meta name="title" property="og:title" content={metaTitle} />
-        <meta
-          name="description"
-          property="og:description"
-          content={metaDescription}
-        />
-      </Head>
-      <ArticleLayout
-        sidebar={
-          <SidebarNavigation
-            title={n('categoryOverview', 'Efnisyfirlit')}
-            navigation={navigation}
-            position="right"
-          />
-        }
-      >
-        <>
+      <HeadWithSocialSharing
+        title={`${title} | Ísland.is`}
+        description={intro}
+        imageUrl={image.url}
+        imageWidth={image.width.toString()}
+        imageHeight={image.height.toString()}
+      />
+      <GridRow>
+        <GridColumn span={'12/12'}>
+          <Box
+            marginBottom={[4, 4, 4, 8]}
+            display="inlineBlock"
+            width="full"
+            paddingX={[0, 0, 0, 4]}
+          >
+            <Hidden print={true}>
+              <BackgroundImage
+                ratio="12:4"
+                background="transparent"
+                boxProps={{ background: 'white' }}
+                image={image}
+              />
+            </Hidden>
+          </Box>
+        </GridColumn>
+      </GridRow>
+
+      <GridContainer>
+        <Box paddingBottom={[2, 2, 10]}>
           <GridRow>
-            <GridColumn span={'9/9'} paddingBottom={2}>
-              <Box marginBottom={2} display="inlineBlock" width="full">
-                <Hidden print={true}>
-                  <BackgroundImage
-                    ratio="12:4"
-                    background="transparent"
-                    boxProps={{ background: 'white' }}
-                    image={image}
-                  />
+            <GridColumn span={['12/12', '12/12', '12/12', '8/12', '9/12']}>
+              <>
+                <GridRow>
+                  <GridColumn
+                    offset={['0', '0', '0', '0', '1/9']}
+                    span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+                    paddingBottom={[2, 2, 4]}
+                  >
+                    <Breadcrumbs>
+                      <Link href={pathNames()}>Ísland.is</Link>
+                      <Tag variant="blue" outlined>
+                        {n('lifeEventTitle', 'Lífsviðburður')}
+                      </Tag>
+                    </Breadcrumbs>
+                  </GridColumn>
+                </GridRow>
+                <GridRow>
+                  <GridColumn
+                    offset={['0', '0', '0', '0', '1/9']}
+                    span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+                  >
+                    <Text variant="h1" as="h1">
+                      <span id={slugify(title)}>{title}</span>
+                    </Text>
+                    {intro && (
+                      <Text variant="intro" as="p" paddingTop={2}>
+                        <span id={slugify(intro)}>{intro}</span>
+                      </Text>
+                    )}
+                  </GridColumn>
+                </GridRow>
+                <Hidden print above="md">
+                  <GridRow>
+                    <GridColumn paddingTop={6} paddingBottom={2} span={'9/9'}>
+                      <AnchorNavigation
+                        title={n('categoryOverview', 'Á þessari síðu')}
+                        navigation={navigation}
+                        position="right"
+                      />
+                    </GridColumn>
+                  </GridRow>
                 </Hidden>
+
+                <Box paddingTop={[3, 3, 4]}>
+                  <RichText
+                    body={content as SliceType[]}
+                    config={{ defaultPadding: [2, 2, 4] }}
+                  />
+                </Box>
+              </>
+            </GridColumn>
+            <GridColumn
+              hiddenBelow="lg"
+              span={['0', '0', '4/12', '4/12', '3/12']}
+            >
+              <Box printHidden height="full" marginTop={10} marginLeft={4}>
+                <Sticky>
+                  <AnchorNavigation
+                    title={n('categoryOverview', 'Á þessari síðu')}
+                    navigation={navigation}
+                    position="right"
+                  />
+                </Sticky>
               </Box>
             </GridColumn>
           </GridRow>
-          {!!mobileNavigation.length && (
-            <Hidden print={true} above="sm">
-              <DrawerMenu
-                categories={[
-                  {
-                    title: n('categoryOverview', 'Efnisyfirlit'),
-                    items: mobileNavigation,
-                  },
-                ]}
-              />
-            </Hidden>
-          )}
-          <GridRow>
-            <GridColumn
-              offset={['0', '0', '0', '0', '1/9']}
-              span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-              paddingBottom={[2, 2, 4]}
-            >
-              <Breadcrumbs>
-                <Link href={makePath()}>Ísland.is</Link>
-                <Tag variant="blue" outlined>
-                  {n('lifeEventTitle', 'Lífsviðburður')}
-                </Tag>
-              </Breadcrumbs>
-            </GridColumn>
-          </GridRow>
-          <GridRow>
-            <GridColumn
-              offset={['0', '0', '0', '0', '1/9']}
-              span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-            >
-              <Text variant="h1" as="h1">
-                <span id={slugify(title)}>{title}</span>
-              </Text>
-              {intro && (
-                <Text variant="intro" as="p" paddingTop={2}>
-                  <span id={slugify(intro)}>{intro}</span>
-                </Text>
-              )}
-            </GridColumn>
-          </GridRow>
-          <Box paddingTop={[3, 3, 4]}>
-            <RichText
-              body={content as SliceType[]}
-              config={{ defaultPadding: [2, 2, 4] }}
-            />
-          </Box>
-        </>
-      </ArticleLayout>
+        </Box>
+      </GridContainer>
     </>
   )
 }
@@ -191,4 +194,4 @@ LifeEvent.getInitialProps = async ({ apolloClient, locale, query }) => {
   return { lifeEvent, namespace }
 }
 
-export default withMainLayout(LifeEvent, { hasDrawerMenu: true })
+export default withMainLayout(LifeEvent)

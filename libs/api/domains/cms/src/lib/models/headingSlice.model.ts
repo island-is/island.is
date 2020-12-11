@@ -1,12 +1,9 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-
 import { ISectionHeading } from '../generated/contentfulTypes'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class HeadingSlice {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -20,7 +17,7 @@ export class HeadingSlice {
 export const mapHeadingSlice = ({
   fields,
   sys,
-}: ISectionHeading): HeadingSlice => ({
+}: ISectionHeading): SystemMetadata<HeadingSlice> => ({
   typename: 'HeadingSlice',
   id: sys.id,
   title: fields.title ?? '',

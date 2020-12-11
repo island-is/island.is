@@ -85,15 +85,65 @@ export const m = defineMessages({
     defaultMessage: 'Banki',
     description: 'Bank',
   },
-  paymentInformationPersonalDiscount: {
-    id: 'pl.application:payment.information.personal.discount',
-    defaultMessage: 'Nýting persónuafsláttar',
+  paymentInformationPersonalAllowance: {
+    id: 'pl.application:payment.information.personal.allowance',
+    defaultMessage: 'Hlutfall nýtingar á persónuafslætti',
     description: 'Personal discount',
   },
   pensionFund: {
     id: 'pl.application:payment.information.pensionfund',
-    defaultMessage: 'Lífeyrissjóður (valfrjálst)',
+    defaultMessage: 'Lífeyrissjóður',
     description: 'Pension fund (optional)',
+  },
+  usePersonalAllowance: {
+    id: 'pl.application:use.personal.allowance',
+    defaultMessage: 'Viltu nýta persónuafsláttinn þinn?',
+    description: 'Do you wish to use your personal allowance',
+  },
+  usePersonalAllowanceFromSpouse: {
+    id: 'pl.application:use.personal.allowance.spouse',
+    defaultMessage: 'Viltu nýta persónuafsláttinn maka þíns?',
+    description: 'Do you wish to use the personal allowance from your spouse?',
+  },
+  personalAllowanceName: {
+    id: 'pl.application:personal.allowance.name',
+    defaultMessage: 'Persónuafsláttur',
+    description: 'Personal Discount',
+  },
+  personalAllowanceFromSpouseName: {
+    id: 'pl.application:personal.allowance.from.spouse.name',
+    defaultMessage: 'Beiðni um persónuafslátt frá maka',
+    description: 'Personal Discount from spouse',
+  },
+  personalAllowancePeriodFrom: {
+    id: 'pl.application:personal.allowance.period.from',
+    defaultMessage: 'Upphaf tímabils',
+    description: 'Start of period',
+  },
+  personalAllowancePeriodTo: {
+    id: 'pl.application:personal.allowance.period.to',
+    defaultMessage: 'Lok tímabils',
+    description: 'End of period',
+  },
+  personalAllowanceUsedAmount: {
+    id: 'pl.application.personal.allowance.used.amount',
+    defaultMessage: 'Nýttur persónuafsláttur á árinu',
+    description: 'Personal allowance already used this year',
+  },
+  personalAllowanceDescription: {
+    id: 'pl.application:personal.allowance.description',
+    defaultMessage:
+      'Mikilvægt er að foreldri sendi sem nýjastar upplýsingar um stöðu persónuafsláttar svo forðast megi að til ofnýtingar á persónuafslætti komi. Eru foreldrar því hvattir til að senda eyðublaðið eftir síðustu launakeyrslu hjá vinnuveitanda fyrir fæðingarorlof og að þær upplýsingar hafi komið fram á *[þjónustusíðu RSK](www.skattur.is)*. ',
+    description: 'Translation needed',
+  },
+  personalAllowanceFromSpouseDescription: {
+    id: 'pl.application:personal.allowance.from.spouse.description',
+    defaultMessage:
+      'Mikilvægt er að foreldri sendi sem nýjastar upplýsingar um stöðu persónuafsláttar maka\n' +
+      'svo forðast megi að til ofnýtingar komi. Eru foreldrar því hvattir til að senda eyðublaðið\n' +
+      'eftir síðustu launakeyrslu hjá vinnuveitanda fyrir fæðingarorlof og að þær upplýsingar hafi\n' +
+      'komið fram á *[þjónustusíðu RSK](www.skattur.is)*.',
+    description: 'Translation needed',
   },
   union: {
     id: 'pl.application:payment.information.union',
@@ -175,14 +225,14 @@ export const m = defineMessages({
   rightsDescription: {
     id: 'pl.application:rights.description',
     defaultMessage:
-      'Sjálfstæður réttur hvers foreldris er sex mánuðir í fæðingarorlof, en annað foreldrið má gefa hinu allt að einn mánuð af sínum réttindum.',
+      'Sjálfstæður réttur hvers foreldris er sex mánuðir í fæðingarorlof, en annað foreldrið má yfirfæra allt að einn mánuð af sínum réttindum yfir á hitt foreldrið.',
     description:
-      'Both parents have 6 months, but can give up to 1 month to the other parent.',
+      'Both parents have 6 months, but can transfer to 1 month to the other parent.',
   },
   requestRightsName: {
     id: 'pl.application:request.rights.name',
     defaultMessage:
-      'Óskarðu eftir að fá auka mánuð af réttindum hins foreldrisins?',
+      'Óskarðu eftir að fá allt að einn mánuð af réttindum hins foreldrisins yfirfært yfir á þig?',
     description: 'Do you want to request extra time from the other parent?',
   },
   requestRightsMonths: {
@@ -199,7 +249,7 @@ export const m = defineMessages({
     id: 'pl.application:months.total.smallprint',
     defaultMessage:
       '* Hitt foreldrið þarf að samþykkja beiðni þína ef þú óskaðir eftir\n' +
-      '            auka mánuði af réttindum þess til fæðingarorlofs. Ef hitt foreldrið\n' +
+      '            yfirfærslu af réttindum þess til fæðingarorlofs. Ef hitt foreldrið\n' +
       '            neitar beiðni þinni, þá þarftu að breyta umsókn þinni aftur.',
     description:
       ' * The other parent has to approve if you requested extra month from\n' +
@@ -209,40 +259,42 @@ export const m = defineMessages({
   requestRightsDescription: {
     id: 'pl.application:request.rights.description',
     defaultMessage:
-      'Hitt foreldrið má gefa allt að einn mánuð af réttindum þess. Kjósir þú að óska eftir þessu, þá þarf hitt foreldrið að samþykkja beiðni þína.',
-    description: 'The other parent can give up to 1 month of their rights',
+      'Hitt foreldrið má yfirfæra allt að einn mánuð af réttindum þess yfir á þig. Kjósir þú að óska eftir þessu, þá þarf hitt foreldrið að samþykkja beiðni þína.',
+    description: 'The other parent can transfer to 1 month of their rights',
   },
   requestRightsYes: {
     id: 'pl.application:request.rights.yes',
     defaultMessage:
-      'Já, ég óska eftir einum mánuði af réttindum hins foreldrisins',
+      'Já, ég óska eftir yfirfærslu á réttindum frá hinu foreldrinu',
     description: 'Yes, I want to request extra time from my partner',
   },
   requestRightsNo: {
     id: 'pl.application:request.rights.no',
-    defaultMessage: 'Nei, ég mun bara nota mín réttindi',
+    defaultMessage: 'Nei, ég mun einungis nota mín réttindi',
     description: 'No, I will only use my rights',
   },
   giveRightsName: {
     id: 'pl.application:give.rights.name',
-    defaultMessage: 'Viltu gefa hinu foreldrinu mánuð af þínum réttindum?',
-    description: 'Do you want to give the other parent more parental leave?',
+    defaultMessage:
+      'Viltu yfirfæra allt að mánuð af þínum réttindum yfir á hitt foreldrið?',
+    description:
+      'Do you want to transfer up to one month of your parental leave rights to the other parent?',
   },
   giveRightsDescription: {
     id: 'pl.application:give.rights.description',
     defaultMessage:
-      'Þú getur gefið hinu foreldrinu einn mánuð af þínum réttindum',
+      'Þú getur yfirfært allt að einn mánuð af þínum réttindum yfir á hitt foreldrið',
     description: 'You can give the other parent one month of your rights',
   },
   giveRightsMonths: {
     id: 'pl.application:give.rights.months',
-    defaultMessage: '1 mánuður gefinn til hins foreldrisins',
+    defaultMessage: '1 mánuður yfirfærður til hins foreldrisins',
     description: '1 month given to the other parent',
   },
   giveRightsYes: {
     id: 'pl.application:give.rights.yes',
     defaultMessage:
-      'Já, ég vil gefa einn mánuð af mínum réttindum til hins foreldrisins',
+      'Já, ég vil yfirfæra allt að einn mánuð af mínum réttindum til hins foreldrisins',
     description: 'Yes, I wish to give one of my months to the other parent',
   },
   giveRightsNo: {

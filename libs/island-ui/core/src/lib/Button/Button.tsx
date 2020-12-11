@@ -50,6 +50,8 @@ export interface ButtonProps {
   fluid?: boolean
   icon?: IconType
   iconType?: Type
+  preTextIcon?: IconType
+  preTextIconType?: Type
   type?: NativeButtonProps['type']
   lang?: string
   loading?: boolean
@@ -63,6 +65,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       size = 'default',
       icon,
       iconType = 'filled',
+      preTextIcon,
+      preTextIconType = 'filled',
       children,
       circle,
       type = 'button',
@@ -105,6 +109,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       >
         {loading && variant !== 'text' ? (
           <>
+            {preTextIcon && (
+              <ButtonIcon
+                icon={preTextIcon}
+                type={preTextIconType}
+                transparent
+                preText
+              />
+            )}
             <span className={styles.hideContent}>{children}</span>
             {icon && <ButtonIcon icon={icon} type={iconType} transparent />}
             <div
@@ -117,6 +129,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
           </>
         ) : (
           <>
+            {preTextIcon && (
+              <ButtonIcon icon={preTextIcon} type={preTextIconType} preText />
+            )}
             {children}
             {icon && <ButtonIcon icon={icon} type={iconType} />}
           </>
@@ -130,14 +145,18 @@ type ButtonIconProps = {
   icon: ButtonProps['icon']
   type: ButtonProps['iconType']
   transparent?: boolean
+  preText?: boolean
 }
 
-const ButtonIcon = ({ icon, type, transparent }: ButtonIconProps) => (
+const ButtonIcon = ({ icon, type, transparent, preText }: ButtonIconProps) => (
   <Icon
     icon={icon!}
     type={type!}
     color={transparent ? 'transparent' : 'currentColor'}
-    className={styles.icon}
+    className={cn(
+      styles.icon,
+      preText ? styles.iconPreText : styles.iconPostText,
+    )}
     skipPlaceholderSize
   />
 )

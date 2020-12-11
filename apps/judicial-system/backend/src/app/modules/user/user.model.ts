@@ -78,6 +78,13 @@ export class User extends Model<User> {
   role: UserRole
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  institution: string
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
   })

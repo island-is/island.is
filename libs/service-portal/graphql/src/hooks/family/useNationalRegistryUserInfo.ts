@@ -6,7 +6,7 @@ export const useNationalRegistryInfo = () => {
   const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_INFO)
 
   return {
-    data: data?.getMyInfo || null,
+    data: data?.nationalRegistryUser || null,
     loading,
     error,
   }

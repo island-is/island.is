@@ -32,7 +32,7 @@ export const Sticky: FC<Props> = ({
   }, [onResize])
 
   return (
-    <div
+    <aside
       ref={ref}
       style={{
         top,
@@ -40,7 +40,7 @@ export const Sticky: FC<Props> = ({
       }}
     >
       {children}
-    </div>
+    </aside>
   )
 }
 

@@ -334,12 +334,10 @@ export class LatestNewsSliceResolver {
   constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
 
   @ResolveField(() => [News])
-  async news(
-    @Parent() { news: { lang, size } }: LatestNewsSlice,
-  ): Promise<News[]> {
+  async news(@Parent() { news: input }: LatestNewsSlice): Promise<News[]> {
     const newsList = await this.cmsElasticsearchService.getNews(
-      SearchIndexes[lang],
-      { size },
+      SearchIndexes[input.lang],
+      input,
     )
     return newsList.items
   }
