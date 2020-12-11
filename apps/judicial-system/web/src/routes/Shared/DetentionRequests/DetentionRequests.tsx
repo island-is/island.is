@@ -54,6 +54,7 @@ interface SortConfig {
 export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<Case[]>()
   const [sortConfig, setSortConfig] = useState<SortConfig>()
+  const [isDeleting, setIsDeleting] = useState<boolean>(false)
 
   const { user } = useContext(UserContext)
   const history = useHistory()
@@ -184,14 +185,14 @@ export const DetentionRequests: React.FC = () => {
             data-testid="detention-requests-table"
             aria-describedby="tableCation"
           >
-            <thead>
-              <tr>
-                <th>
+            <thead className={styles.thead}>
+              <tr className={styles.tr}>
+                <th className={styles.th}>
                   <Text as="span" fontWeight="regular">
                     LÖKE málsnr.
                   </Text>
                 </th>
-                <th>
+                <th className={styles.th}>
                   <Text as="span" fontWeight="regular">
                     <Box
                       component="button"
@@ -218,7 +219,7 @@ export const DetentionRequests: React.FC = () => {
                     </Box>
                   </Text>
                 </th>
-                <th>
+                <th className={styles.th}>
                   <Text as="span" fontWeight="regular">
                     <Box
                       component="button"
@@ -245,78 +246,110 @@ export const DetentionRequests: React.FC = () => {
                     </Box>
                   </Text>
                 </th>
-                <th>
+                <th className={styles.th}>
                   <Text as="span" fontWeight="regular">
                     Staða
                   </Text>
                 </th>
-                <th>
+                <th className={styles.th}>
                   <Text as="span" fontWeight="regular">
                     Gæsla rennur út
                   </Text>
                 </th>
+                <th></th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
               {cases.map((c, i) => (
-                <tr
-                  data-testid="detention-requests-table-row"
-                  role="button"
-                  aria-label="Opna kröfu"
-                  key={i}
-                  className={styles.detentionRequestsTableRow}
-                  onClick={() => {
-                    handleClick(c)
-                  }}
+                <Box
+                  display="flex"
+                  className={cn(
+                    styles.tableRowContainer,
+                    isDeleting && 'isDeleting',
+                  )}
                 >
-                  <td>
-                    <Text as="span">{c.policeCaseNumber || '-'}</Text>
-                  </td>
-                  <td>
-                    <Text as="span">
-                      {c.accusedName || '-'}
-                      {c.accusedNationalId && (
-                        <Box marginLeft={1} component="span">
-                          <Text as="span" variant="small" color="dark400">
-                            {`(${
-                              insertAt(
-                                c.accusedNationalId.replace('-', ''),
-                                '-',
-                                6,
-                              ) || '-'
-                            })`}
-                          </Text>
-                        </Box>
+                  <tr
+                    data-testid="detention-requests-table-row"
+                    role="button"
+                    aria-label="Opna kröfu"
+                    key={i}
+                    className={styles.detentionRequestsTableRow}
+                    onClick={() => {
+                      handleClick(c)
+                    }}
+                  >
+                    <td className={styles.td}>
+                      <Text as="span">{c.policeCaseNumber || '-'}</Text>
+                    </td>
+                    <td className={styles.td}>
+                      <Text as="span">
+                        {c.accusedName || '-'}
+                        {c.accusedNationalId && (
+                          <Box marginLeft={1} component="span">
+                            <Text as="span" variant="small" color="dark400">
+                              {`(${
+                                insertAt(
+                                  c.accusedNationalId.replace('-', ''),
+                                  '-',
+                                  6,
+                                ) || '-'
+                              })`}
+                            </Text>
+                          </Box>
+                        )}
+                      </Text>
+                    </td>
+                    <td className={styles.td}>
+                      <Text as="span">
+                        {format(parseISO(c.created), 'PP', {
+                          locale: localeIS,
+                        })}
+                      </Text>
+                    </td>
+                    <td className={styles.td}>
+                      {c.isCustodyEndDateInThePast ? (
+                        <Tag variant="darkerBlue" outlined>
+                          Gæsluvarðhaldi lokið
+                        </Tag>
+                      ) : (
+                        <Tag
+                          variant={mapCaseStateToTagVariant(c.state).color}
+                          outlined
+                        >
+                          {mapCaseStateToTagVariant(c.state).text}
+                        </Tag>
                       )}
-                    </Text>
-                  </td>
-                  <td>
-                    <Text as="span">
-                      {format(parseISO(c.created), 'PP', { locale: localeIS })}
-                    </Text>
-                  </td>
-                  <td>
-                    {c.isCustodyEndDateInThePast ? (
-                      <Tag variant="darkerBlue" outlined>
-                        Gæsluvarðhaldi lokið
-                      </Tag>
-                    ) : (
-                      <Tag
-                        variant={mapCaseStateToTagVariant(c.state).color}
-                        outlined
+                    </td>
+                    <td className={styles.td}>
+                      <Text as="span">
+                        {c.custodyEndDate && c.state === CaseState.ACCEPTED
+                          ? `${formatDate(c.custodyEndDate, 'PP')}`
+                          : null}
+                      </Text>
+                    </td>
+                    <td className={styles.td}>
+                      <Box
+                        display="flex"
+                        component="button"
+                        onClick={(evt) => {
+                          evt.stopPropagation()
+                          setIsDeleting(!isDeleting)
+                        }}
                       >
-                        {mapCaseStateToTagVariant(c.state).text}
-                      </Tag>
+                        <Icon icon="close" color="blue400" />
+                      </Box>
+                    </td>
+                  </tr>
+                  <Box
+                    className={cn(
+                      styles.deleteButtonContainer,
+                      styles.deleteButton[isDeleting ? 'open' : 'closed'],
                     )}
-                  </td>
-                  <td>
-                    <Text as="span">
-                      {c.custodyEndDate && c.state === CaseState.ACCEPTED
-                        ? `${formatDate(c.custodyEndDate, 'PP')}`
-                        : null}
-                    </Text>
-                  </td>
-                </tr>
+                  >
+                    <Text>is deleting</Text>
+                  </Box>
+                </Box>
               ))}
             </tbody>
           </table>
