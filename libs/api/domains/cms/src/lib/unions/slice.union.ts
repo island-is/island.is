@@ -1,7 +1,7 @@
 import { createUnionType } from '@nestjs/graphql'
 import { ApolloError } from 'apollo-server-express'
 import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
-import { logger } from 'libs/logging/src'
+import { logger } from '@island.is/logging'
 import {
   ITimeline,
   IMailingListSignup,
