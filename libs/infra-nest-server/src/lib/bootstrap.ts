@@ -17,6 +17,23 @@ import yaml from 'js-yaml'
 import * as yargs from 'yargs'
 import * as fs from 'fs'
 
+type OpenApi = {
+  /**
+   * Path for the OpenAPI output yml
+   */
+  path: string
+
+  /**
+   * OpenAPI definition.
+   */
+  document: Omit<OpenAPIObject, 'paths'>
+
+  /**
+   * The base path of the swagger documentation.
+   */
+  swaggerPath?: string
+}
+
 type RunServerOptions = {
   /**
    * Main nest module.
@@ -30,14 +47,9 @@ type RunServerOptions = {
   name: string
 
   /**
-   * The base path of the swagger documentation.
+   * OpenAPI
    */
-  swaggerPath?: string
-
-  /**
-   * OpenAPI definition.
-   */
-  openApi?: Omit<OpenAPIObject, 'paths'>
+  openApi?: OpenApi
 
   /**
    * The port to start the server on.
@@ -74,22 +86,24 @@ const startServer = async (app: INestApplication, port = 3333) => {
   await runMetricServer(metricsPort)
 }
 
-function setupOpenApi(
-  app: INestApplication,
-  openApi: Omit<OpenAPIObject, 'paths'>,
-  swaggerPath?: string,
-) {
-  const document = SwaggerModule.createDocument(app, openApi)
-  SwaggerModule.setup(swaggerPath ?? 'swagger', app, document)
+export function setupOpenApi(app: INestApplication, openApi: OpenApi) {
+  const document = SwaggerModule.createDocument(app, openApi.document)
+  SwaggerModule.setup(openApi.swaggerPath ?? 'swagger', app, document)
   return document
 }
 
-function generateSchema(filePath: string, document: OpenAPIObject) {
+export function generateSchema(filePath: string, document: OpenAPIObject) {
   logger.info('Generating OpenAPI schema.', { context: 'Bootstrap' })
   fs.writeFileSync(filePath, yaml.safeDump(document, { noRefs: true }))
 }
 
 export const bootstrap = async (options: RunServerOptions) => {
+  // TODO move to rewire, external config or something else
+  // We don't want to run this function if we are just generating schemas files.
+  if (process.env.INIT_SCHEMA === 'true') {
+    return
+  }
+
   const argv = yargs.option('generateSchema', {
     description: 'Generate OpenAPI schema into the specified file',
     type: 'string',
@@ -101,7 +115,7 @@ export const bootstrap = async (options: RunServerOptions) => {
   const app = await createApp(options)
 
   if (options.openApi) {
-    const document = setupOpenApi(app, options.openApi, options.swaggerPath)
+    const document = setupOpenApi(app, options.openApi)
 
     if (argv.generateSchema) {
       generateSchema(argv.generateSchema, document)

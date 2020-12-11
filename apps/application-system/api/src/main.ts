@@ -4,12 +4,25 @@
  */
 
 import '@island.is/infra-tracing'
+import { DocumentBuilder } from '@nestjs/swagger'
 import { bootstrap } from '@island.is/infra-nest-server'
 
-import { config } from './config'
+import { AppModule } from './app/app.module'
 
-bootstrap({
+export const config = {
   name: 'application-system-api',
-  appModule: config.appModule,
-  openApi: config.openApi.document,
-})
+  appModule: AppModule,
+  openApi: {
+    path: 'apps/application-system/api/src/openapi.yaml',
+    document: new DocumentBuilder()
+      .setTitle('Application backend')
+      .setDescription(
+        'This is provided as a reference to implement other backends.',
+      )
+      .setVersion('1.0')
+      .addTag('application')
+      .build(),
+  },
+}
+
+bootstrap(config)

@@ -61,7 +61,7 @@
         "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P apps/air-discount-scheme/api/tsconfig.json scripts/build-graphql-schema.ts apps/air-discount-scheme/api/src/app/app.module"
+            "command": "yarn ts-node -P apps/air-discount-scheme/api/tsconfig.json scripts/build-schema apps/air-discount-scheme/api/src/main"
           }
         },
         "schemas/codegen": {
@@ -152,7 +152,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/air-discount-scheme/backend/src/openapi.yaml",
-            "command": "cross-env INIT_SCHEMA=true yarn ts-node --files -P apps/air-discount-scheme/backend/tsconfig.app.json apps/air-discount-scheme/backend/src/buildOpenApi.ts"
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node --files -P apps/air-discount-scheme/backend/tsconfig.json scripts/build-schema apps/air-discount-scheme/backend/src/main"
           }
         },
         "migrate": {
@@ -404,7 +404,7 @@
         "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P apps/api/tsconfig.json scripts/build-graphql-schema.ts apps/api/src/app/app.module"
+            "command": "yarn ts-node -P apps/api/tsconfig.json scripts/build-schema apps/api/src/main"
           }
         },
         "schemas/codegen": {
@@ -1036,7 +1036,7 @@
           "options": {
             "commands": [
               "graphql-codegen --config libs/api/mocks/codegen.yml",
-              "yarn ts-node -P libs/shared/mocking/tsconfig.json libs/shared/mocking/scripts/generate-gql.ts apps/api/src/api.graphql libs/api/mocks/src/schema.ts"
+              "yarn ts-node -P libs/shared/mocking/tsconfig.json libs/shared/mocking/scripts/generate-gql apps/api/src/api.graphql libs/api/mocks/src/schema"
             ]
           }
         }
@@ -1235,7 +1235,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/application-system/api/src/openapi.yaml",
-            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/application-system/api/tsconfig.json scripts/build-openapi.ts apps/application-system/api/src/config"
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/application-system/api/tsconfig.json scripts/build-schema apps/application-system/api/src/main"
           }
         },
         "migrate": {
@@ -2704,7 +2704,7 @@
         "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P apps/judicial-system/api/tsconfig.json scripts/build-graphql-schema.ts apps/judicial-system/api/src/app/app.module"
+            "command": "yarn ts-node -P apps/judicial-system/api/tsconfig.json scripts/build-schema apps/judicial-system/api/src/main"
           }
         },
         "schemas/codegen": {
@@ -2860,7 +2860,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/judicial-system/backend/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/judicial-system/backend/tsconfig.app.json apps/judicial-system/backend/src/buildOpenApi.ts"
+            "command": "yarn ts-node -P apps/judicial-system/backend/tsconfig.app.json scripts/build-schema apps/judicial-system/backend/src/main"
           }
         },
         "migrate": {
@@ -3253,7 +3253,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/reference-backend/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/reference-backend/tsconfig.app.json apps/reference-backend/src/buildOpenApi.ts"
+            "command": "yarn ts-node -P apps/reference-backend/tsconfig.app.json scripts/build-schema apps/reference-backend/src/main"
           }
         },
         "migrate": {
@@ -4006,7 +4006,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/services/auth-api/src/openapi.yaml",
-            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth-api/tsconfig.app.json apps/services/auth-api/src/buildOpenApi.ts"
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth-api/tsconfig.app.json scripts/build-schema apps/services/auth-api/src/main"
           }
         },
         "migrate": {
@@ -4198,7 +4198,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/services/user-profile/src/openapi.yaml",
-            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/user-profile/tsconfig.app.json apps/services/user-profile/src/buildOpenApi.ts"
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/user-profile/tsconfig.json scripts/build-schema apps/services/user-profile/src/main"
           }
         },
         "migrate": {
@@ -4605,7 +4605,7 @@
         "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P apps/skilavottord/ws/tsconfig.json scripts/build-graphql-schema.ts apps/skilavottord/ws/src/app/app.module"
+            "command": "yarn ts-node -P apps/skilavottord/ws/tsconfig.json scripts/build-schema apps/skilavottord/ws/src/main"
           }
         },
         "migrate": {
