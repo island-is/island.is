@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useState, useContext } from 'react'
+import React, { FC, useContext } from 'react'
 import {
   Logo,
   Columns,
@@ -19,7 +19,6 @@ import { useI18n } from '@island.is/web/i18n'
 import { FixedNav, SkipToMainContent } from '@island.is/web/components'
 import { SearchInput } from '../'
 import { LanguageToggler } from '../LanguageToggler'
-import ComboButton from './ComboButton'
 import { Menu } from '../Menu/Menu'
 
 interface HeaderProps {
@@ -37,8 +36,6 @@ export const Header: FC<HeaderProps> = ({
   children,
 }) => {
   const { activeLocale, t } = useI18n()
-  const [sideMenuOpen, setSideMenuOpen] = useState(false)
-  const [sideMenuSearchFocus, setSideMenuSearchFocus] = useState(false)
   const { colorScheme } = useContext(ColorSchemeContext)
 
   const locale = activeLocale
@@ -71,43 +68,22 @@ export const Header: FC<HeaderProps> = ({
                     justifyContent="flexEnd"
                     width="full"
                   >
-                    <Hidden above="sm" inline>
+                    {showSearchInHeader && (
                       <Box
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="flexEnd"
-                        width="full"
+                        role="search"
+                        display={['none', 'none', 'none', 'block']}
                       >
-                        <ComboButton
-                          showSearch={showSearchInHeader}
-                          sideBarMenuOpen={() => {
-                            setSideMenuSearchFocus(false)
-                            setSideMenuOpen(true)
-                          }}
-                          sideMenuSearchFocus={() => {
-                            setSideMenuSearchFocus(true)
-                            setSideMenuOpen(true)
-                          }}
+                        <SearchInput
+                          id="search_input_header"
+                          size="medium"
+                          activeLocale={locale}
+                          placeholder={t.searchPlaceholder}
+                          autocomplete={true}
+                          autosuggest={false}
                         />
                       </Box>
-                    </Hidden>
-                    {showSearchInHeader && (
-                      <>
-                        <Hidden below="lg">
-                          <Box role="search">
-                            <SearchInput
-                              id="search_input_header"
-                              size="medium"
-                              activeLocale={locale}
-                              placeholder={t.searchPlaceholder}
-                              autocomplete={true}
-                              autosuggest={false}
-                            />
-                          </Box>
-                        </Hidden>
-                      </>
                     )}
-                    <Hidden below="md">
+                    <Hidden below="lg">
                       <FocusableBox
                         href="//minarsidur.island.is/"
                         marginLeft={marginLeft}
@@ -122,17 +98,15 @@ export const Header: FC<HeaderProps> = ({
                         </Button>
                       </FocusableBox>
                     </Hidden>
-                    <Box marginLeft={marginLeft}>
-                      <LanguageToggler
-                        buttonColorScheme={buttonColorScheme}
-                        hideWhenMobile
-                      />
+                    <Box
+                      marginLeft={marginLeft}
+                      display={['none', 'none', 'none', 'block']}
+                    >
+                      <LanguageToggler buttonColorScheme={buttonColorScheme} />
                     </Box>
-                    <Hidden below="md">
-                      <Box marginLeft={marginLeft} position="relative">
-                        <Menu {...megaMenuData} />
-                      </Box>
-                    </Hidden>
+                    <Box marginLeft={marginLeft}>
+                      <Menu {...megaMenuData} />
+                    </Box>
                   </Box>
                 </Column>
               </Columns>

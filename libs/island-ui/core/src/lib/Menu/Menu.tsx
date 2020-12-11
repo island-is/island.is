@@ -1,7 +1,7 @@
 import React, { ReactElement, ReactNode, useState } from 'react'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
-import { ModalBase } from '../ModalBase/ModalBase'
+import { ModalBase, ModalBaseProps } from '../ModalBase/ModalBase'
 import { Button } from '../Button/Button'
 
 import * as styles from './Menu.treat'
@@ -90,6 +90,11 @@ export interface MenuProps {
    * Aside bottom section links
    */
   asideBottomLinks: Link[]
+  /**
+   * Optional cb function that is fired when the modal visibility changes
+   */
+  onVisibilityChange?: ModalBaseProps['onVisibilityChange']
+  renderDisclosure?: ModalBaseProps['renderDisclosure']
 }
 
 const defaultRenderLinks = ({ text, href, className }: RenderLinkObj) => (
@@ -173,6 +178,8 @@ export const Menu = ({
   asideTopLinks,
   asideBottomTitle,
   asideBottomLinks,
+  onVisibilityChange,
+  renderDisclosure,
 }: MenuProps) => {
   const [mainLinksCollapsed, setMainLinksCollapsed] = useState(true)
 
@@ -202,6 +209,9 @@ export const Menu = ({
       baseId={baseId}
       className={styles.container}
       disclosure={menuButton}
+      aria-label="Menu"
+      onVisibilityChange={onVisibilityChange}
+      renderDisclosure={renderDisclosure}
     >
       {({ closeModal }: { closeModal: () => void }) => (
         <>
