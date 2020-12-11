@@ -1,501 +1,205 @@
-import {
-  CaseState,
-  CaseTransition,
-  UserRole,
-} from '@island.is/judicial-system/types'
-import { ForbiddenException, UnauthorizedException } from '@nestjs/common'
+import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+import { ForbiddenException } from '@nestjs/common'
 import { transitionCase } from './case.state'
 
 describe('Transition Case', () => {
-  describe('Prosecutor Transitions', () => {
-    // Arrange
-    const prosecutorId = 'some-random-prosecutor-id'
+  it('should open a new case', () => {
+    // Act
+    const res = transitionCase(CaseTransition.OPEN, CaseState.NEW)
 
-    it('should open a new case', () => {
-      // Act
-      const res = transitionCase(
-        CaseTransition.OPEN,
-        CaseState.NEW,
-        prosecutorId,
-        UserRole.PROSECUTOR,
-      )
-
-      // Assert
-      expect(res).toStrictEqual({
-        state: CaseState.DRAFT,
-        prosecutorId,
-      })
-    })
-
-    it('should submit an opened case', () => {
-      // Act
-      const res = transitionCase(
-        CaseTransition.SUBMIT,
-        CaseState.DRAFT,
-        prosecutorId,
-        UserRole.PROSECUTOR,
-      )
-
-      // Assert
-      expect(res).toStrictEqual({
-        state: CaseState.SUBMITTED,
-        prosecutorId,
-      })
-    })
-
-    it('should delete a new caes', () => {
-      // Act
-      const res = transitionCase(
-        CaseTransition.DELETE,
-        CaseState.NEW,
-        prosecutorId,
-        UserRole.PROSECUTOR,
-      )
-
-      // Assert
-      expect(res).toStrictEqual({
-        state: CaseState.DELETED,
-        prosecutorId,
-      })
-    })
-
-    it('should delete an opened caes', () => {
-      // Act
-      const res = transitionCase(
-        CaseTransition.DELETE,
-        CaseState.DRAFT,
-        prosecutorId,
-        UserRole.PROSECUTOR,
-      )
-
-      // Assert
-      expect(res).toStrictEqual({
-        state: CaseState.DELETED,
-        prosecutorId,
-      })
-    })
-
-    it('should not accept a subitted case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.ACCEPT,
-          CaseState.SUBMITTED,
-          prosecutorId,
-          UserRole.PROSECUTOR,
-        )
-
-      // Act and assert
-      expect(act).toThrow(UnauthorizedException)
-    })
-
-    it('should not reject a submitted case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.REJECT,
-          CaseState.SUBMITTED,
-          prosecutorId,
-          UserRole.PROSECUTOR,
-        )
-
-      // Act and assert
-      expect(act).toThrow(UnauthorizedException)
-    })
-
-    it('should delete a new caes', () => {
-      // Act
-      const res = transitionCase(
-        CaseTransition.DELETE,
-        CaseState.NEW,
-        prosecutorId,
-        UserRole.PROSECUTOR,
-      )
-
-      // Assert
-      expect(res).toStrictEqual({
-        state: CaseState.DELETED,
-        prosecutorId,
-      })
-    })
-
-    it('should delete an opened caes', () => {
-      // Act
-      const res = transitionCase(
-        CaseTransition.DELETE,
-        CaseState.DRAFT,
-        prosecutorId,
-        UserRole.PROSECUTOR,
-      )
-
-      // Assert
-      expect(res).toStrictEqual({
-        state: CaseState.DELETED,
-        prosecutorId,
-      })
-    })
+    // Assert
+    expect(res).toBe(CaseState.DRAFT)
   })
 
-  describe('Judge Transitions', () => {
+  it('should not open an opened case', () => {
     // Arrange
-    const judgeId = 'some-random-judge-id'
+    const act = () => transitionCase(CaseTransition.OPEN, CaseState.DRAFT)
 
-    it('should accept a submitted case', () => {
-      // Act
-      const res = transitionCase(
-        CaseTransition.ACCEPT,
-        CaseState.SUBMITTED,
-        judgeId,
-        UserRole.JUDGE,
-      )
-
-      // Assert
-      expect(res).toStrictEqual({
-        state: CaseState.ACCEPTED,
-        judgeId,
-      })
-    })
-
-    it('should reject a submitted case', () => {
-      // Act
-      const res = transitionCase(
-        CaseTransition.REJECT,
-        CaseState.SUBMITTED,
-        judgeId,
-        UserRole.JUDGE,
-      )
-
-      // Assert
-      expect(res).toStrictEqual({
-        state: CaseState.REJECTED,
-        judgeId,
-      })
-    })
-
-    it('should not open a new case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.OPEN,
-          CaseState.NEW,
-          judgeId,
-          UserRole.JUDGE,
-        )
-
-      // Act and assert
-      expect(act).toThrow(UnauthorizedException)
-    })
-
-    it('should not submit an opened case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.SUBMIT,
-          CaseState.DRAFT,
-          judgeId,
-          UserRole.JUDGE,
-        )
-
-      // Act and assert
-      expect(act).toThrow(UnauthorizedException)
-    })
-
-    it('should not delete a new case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.DELETE,
-          CaseState.NEW,
-          judgeId,
-          UserRole.JUDGE,
-        )
-
-      // Act and assert
-      expect(act).toThrow(UnauthorizedException)
-    })
-
-    it('should not delete an opened case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.DELETE,
-          CaseState.DRAFT,
-          judgeId,
-          UserRole.JUDGE,
-        )
-
-      // Act and assert
-      expect(act).toThrow(UnauthorizedException)
-    })
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
   })
 
-  describe('Forbidden Transactions', () => {
-    const userId = 'some-random-user-id'
+  it('should not open a submitted case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.OPEN, CaseState.SUBMITTED)
 
-    it('should not open an opened case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.OPEN,
-          CaseState.DRAFT,
-          userId,
-          UserRole.PROSECUTOR,
-        )
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
+  it('should not open an accepted case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.OPEN, CaseState.ACCEPTED)
 
-    it('should not open a submitted case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.OPEN,
-          CaseState.SUBMITTED,
-          userId,
-          UserRole.JUDGE,
-        )
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
+  it('should not open a rejected case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.OPEN, CaseState.REJECTED)
 
-    it('should not open an accepted case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.OPEN,
-          CaseState.ACCEPTED,
-          userId,
-          UserRole.PROSECUTOR,
-        )
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
+  it('should not submit a new case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.SUBMIT, CaseState.NEW)
 
-    it('should not open a rejected case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.OPEN,
-          CaseState.REJECTED,
-          userId,
-          UserRole.JUDGE,
-        )
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
+  it('should submit an opened case', () => {
+    // Act
+    const res = transitionCase(CaseTransition.SUBMIT, CaseState.DRAFT)
 
-    it('should not submit a new case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.SUBMIT,
-          CaseState.NEW,
-          userId,
-          UserRole.PROSECUTOR,
-        )
+    // Assert
+    expect(res).toStrictEqual(CaseState.SUBMITTED)
+  })
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
+  it('should not submit a submitted case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.SUBMIT, CaseState.SUBMITTED)
 
-    it('should not submit a submitted case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.SUBMIT,
-          CaseState.SUBMITTED,
-          userId,
-          UserRole.JUDGE,
-        )
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
+  it('should not submit an accepted case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.SUBMIT, CaseState.ACCEPTED)
 
-    it('should not submit an accepted case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.SUBMIT,
-          CaseState.ACCEPTED,
-          userId,
-          UserRole.PROSECUTOR,
-        )
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
+  it('should not submit a rejected case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.SUBMIT, CaseState.REJECTED)
 
-    it('should not submit a rejected case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.SUBMIT,
-          CaseState.REJECTED,
-          userId,
-          UserRole.JUDGE,
-        )
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
+  it('should not accept a new case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.ACCEPT, CaseState.NEW)
 
-    it('should not accept a new case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.ACCEPT,
-          CaseState.NEW,
-          userId,
-          UserRole.PROSECUTOR,
-        )
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
+  it('should not accept an opened case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.ACCEPT, CaseState.DRAFT)
 
-    it('should not accept an opened case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.ACCEPT,
-          CaseState.DRAFT,
-          userId,
-          UserRole.JUDGE,
-        )
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
+  it('should accept a submitted case', () => {
+    // Act
+    const res = transitionCase(CaseTransition.ACCEPT, CaseState.SUBMITTED)
 
-    it('should not accept an accepted case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.ACCEPT,
-          CaseState.ACCEPTED,
-          userId,
-          UserRole.PROSECUTOR,
-        )
+    // Assert
+    expect(res).toStrictEqual(CaseState.ACCEPTED)
+  })
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
+  it('should not accept an accepted case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.ACCEPT, CaseState.ACCEPTED)
 
-    it('should not accept a rejected case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.ACCEPT,
-          CaseState.REJECTED,
-          userId,
-          UserRole.JUDGE,
-        )
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
+  it('should not accept a rejected case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.ACCEPT, CaseState.REJECTED)
 
-    it('should not reject a new case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.REJECT,
-          CaseState.NEW,
-          userId,
-          UserRole.PROSECUTOR,
-        )
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
+  it('should not reject a new case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.REJECT, CaseState.NEW)
 
-    it('should not reject an opened case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.REJECT,
-          CaseState.DRAFT,
-          userId,
-          UserRole.JUDGE,
-        )
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
+  it('should not reject an opened case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.REJECT, CaseState.DRAFT)
 
-    it('should not reject an accepted case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.REJECT,
-          CaseState.ACCEPTED,
-          userId,
-          UserRole.PROSECUTOR,
-        )
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
+  it('should reject a submitted case', () => {
+    // Act
+    const res = transitionCase(CaseTransition.REJECT, CaseState.SUBMITTED)
 
-    it('should not reject a rejected case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.REJECT,
-          CaseState.REJECTED,
-          userId,
-          UserRole.JUDGE,
-        )
+    // Assert
+    expect(res).toStrictEqual(CaseState.REJECTED)
+  })
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
+  it('should not reject an accepted case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.REJECT, CaseState.ACCEPTED)
 
-    it('should not delete a submitted case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.DELETE,
-          CaseState.SUBMITTED,
-          userId,
-          UserRole.PROSECUTOR,
-        )
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
+  it('should not reject a rejected case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.REJECT, CaseState.REJECTED)
 
-    it('should not delete an accepted case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.DELETE,
-          CaseState.ACCEPTED,
-          userId,
-          UserRole.JUDGE,
-        )
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
+  it('should delete a new caes', () => {
+    // Act
+    const res = transitionCase(CaseTransition.DELETE, CaseState.NEW)
 
-    it('should not delete a rejected case', () => {
-      // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.DELETE,
-          CaseState.REJECTED,
-          userId,
-          UserRole.PROSECUTOR,
-        )
+    // Assert
+    expect(res).toStrictEqual(CaseState.DELETED)
+  })
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
+  it('should delete an opened caes', () => {
+    // Act
+    const res = transitionCase(CaseTransition.DELETE, CaseState.DRAFT)
+
+    // Assert
+    expect(res).toStrictEqual(CaseState.DELETED)
+  })
+
+  it('should not delete a submitted case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.DELETE, CaseState.SUBMITTED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should not delete an accepted case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.DELETE, CaseState.ACCEPTED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should not delete a rejected case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.DELETE, CaseState.REJECTED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
   })
 })

@@ -173,12 +173,12 @@ export class CaseController {
 
     const existingCase = await this.findCaseById(id)
 
-    const update = transitionCase(
-      transition.transition,
-      existingCase.state,
-      user.id,
-      user.role,
-    )
+    const update = {
+      state: transitionCase(transition.transition, existingCase.state),
+    } as UpdateCaseDto
+
+    update[user.role === UserRole.PROSECUTOR ? 'prosecutorId' : 'judgeId'] =
+      user.id
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,
