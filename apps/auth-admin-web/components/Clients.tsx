@@ -8,7 +8,6 @@ class Clients extends Component {
   state = {
     clients: [],
     rowCount: 0,
-    lastPage: 0,
     count: 1,
     page: 1,
   };
@@ -21,8 +20,7 @@ class Clients extends Component {
     this.setState({
       clients: response.data.rows,
       rowCount: response.data.count,
-      lastPage: Math.ceil(this.state.rowCount / this.state.count),
-    });
+    })
   };
 
   componentDidMount = async () => {
@@ -112,7 +110,7 @@ class Clients extends Component {
           </table>
         </div>
         <Paginator
-          lastPage={this.state.lastPage}
+          lastPage={Math.ceil(this.state.rowCount / this.state.count)}
           handlePageChange={this.handlePageChange}
         />
       </div>
