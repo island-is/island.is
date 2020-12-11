@@ -1,4 +1,4 @@
-# auth-nest-tools
+# Auth Nest Tools
 
 This library contains a reusable module (AuthModule) with guards that can be used to protect other APIs and GraphQL resolvers.
 

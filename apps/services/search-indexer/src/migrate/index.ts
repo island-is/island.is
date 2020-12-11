@@ -1,16 +1,31 @@
+import yargs from 'yargs'
+
 import { logger } from '@island.is/logging'
 import { environment } from '../environments/environment'
 import * as aws from './aws'
 import * as dictionary from './dictionary'
 import * as elastic from './elastic'
+import * as kibana from './kibana'
 
 interface PromiseStatus {
   success: boolean
   error?: Error
 }
 
+const { locales } = environment
+
 class App {
   async run() {
+    const versions = await Promise.all(
+      locales.map((locale: string) =>
+        elastic.getCurrentVersionFromConfig(locale),
+      ),
+    )
+    if (!versions.every((version) => version === versions[0])) {
+      logger.error('All of the index templates should have the same version')
+      process.exit(1)
+    }
+
     logger.info('Starting migration of dictionaries and ES config', environment)
 
     const hasAwsAccess = await aws.checkAWSAccess()
@@ -25,6 +40,12 @@ class App {
     }
 
     await this.migrateES(esPackages)
+
+    try {
+      await this.migrateKibana()
+    } catch (e) {
+      logger.error('Failed migrating kibana', e)
+    }
 
     // we remove unused AWS ES packages after ES migrate cause we cant/should not remove packages already in use
     if (hasAwsAccess) {
@@ -82,7 +103,6 @@ class App {
     logger.info('Starting elasticsearch migration')
     await elastic.checkAccess() // this throws if there is no connection hence ensuring we dont continue
     const processedMigrations: elastic.MigrationInfo = {} // to rollback changes on failure
-    const locales = environment.locales
     const requests = locales.map(
       async (locale): Promise<PromiseStatus> => {
         const oldIndexVersion = await elastic.getCurrentVersionFromIndices(
@@ -192,11 +212,29 @@ class App {
     logger.info('Elasticsearch migration completed')
     return processedMigrations
   }
+
+  private async migrateKibana() {
+    logger.info('Starting kibana migration')
+    const version = await elastic.getCurrentVersionFromConfig(locales[0])
+    await kibana.importObjects(version)
+    logger.info('Done')
+  }
+
+  async syncKibana() {
+    logger.info('Starting kibana syncing')
+    await kibana.syncObjects()
+    logger.info('Done')
+  }
 }
 
 async function migrateBootstrap() {
+  const argv = yargs(process.argv).argv
   const app = new App()
-  await app.run()
+  if (argv.syncKibana) {
+    await app.syncKibana()
+  } else {
+    await app.run()
+  }
 }
 // TODO: Add lock to this procedure to ensure only a single initContainer can run this
 
