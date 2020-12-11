@@ -93,5 +93,5 @@ export const numberOfLinks = (contentList: object[]) => {
   }
 }
 
-export const hasProcessEntry = (contentList: any[]) =>
-  getProcessEntries(contentList).length !== 0
+export const numberOfProcessEntries = (contentList: any[]) =>
+  getProcessEntries(contentList).length

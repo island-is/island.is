@@ -323,7 +323,7 @@ export function buildFileUploadField(data: {
 }
 
 export function buildDividerField(data: {
-  name?: string
+  name?: FormText
   color?: Colors
 }): DividerField {
   const { name, color } = data

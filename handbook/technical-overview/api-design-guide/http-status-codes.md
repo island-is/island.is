@@ -1,4 +1,4 @@
-# HTTP Status Response codes
+# HTTP Status Response Codes
 
 Try to minimize the number of HTTP status codes a REST API returns. When more details are needed in a error response use application defined errors and supply them in a response error object, described in the [errors](errors.md) document.
 

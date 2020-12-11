@@ -1,6 +1,10 @@
 import React, { FC } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  getValueViaPath,
+  formatText,
+} from '@island.is/application/core'
 import {
   Accordion,
   AccordionItem,
@@ -8,15 +12,15 @@ import {
   Text,
   Checkbox,
 } from '@island.is/island-ui/core'
+import { FieldDescription } from '@island.is/shared/form-fields'
+import { useLocale } from '@island.is/localization'
 
 import * as styles from './TermsOfAgreement.treat'
-
-import { FieldDescription } from '@island.is/shared/form-fields'
-
 import { m } from '../../../forms/messages'
 
 //TODO: Finish error messages.
 const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
+  const { formatMessage } = useLocale()
   const { answers: formValue } = application
   const currentUserTerms = getValueViaPath(
     formValue,
@@ -35,24 +39,46 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
   return (
     <Box>
       <Box marginBottom={5}>
-        <FieldDescription description={m.termsSubTitle.defaultMessage} />
+        <FieldDescription
+          description={formatText(m.termsSubTitle, application, formatMessage)}
+        />
       </Box>
       <Box marginBottom={3}>
         <Accordion singleExpand={false}>
           <AccordionItem
             id="id_1"
-            label={m.termsUserAgreementTitle.defaultMessage}
+            label={formatText(
+              m.termsUserAgreementTitle,
+              application,
+              formatMessage,
+            )}
           >
             <Box paddingY={2} className={styles.maximumHeight}>
-              <Text>{m.termsUserAgreementMessage.defaultMessage}</Text>
+              <Text>
+                {formatText(
+                  m.termsUserAgreementMessage,
+                  application,
+                  formatMessage,
+                )}
+              </Text>
             </Box>
           </AccordionItem>
           <AccordionItem
             id="id_2"
-            label={m.termsSafetyAgreementTitle.defaultMessage}
+            label={formatText(
+              m.termsSafetyAgreementTitle,
+              application,
+              formatMessage,
+            )}
           >
             <Box paddingY={2} className={styles.maximumHeight}>
-              <Text>{m.termsSafetyAgreementMessage.defaultMessage}</Text>
+              <Text>
+                {formatText(
+                  m.termsSafetyAgreementMessage,
+                  application,
+                  formatMessage,
+                )}
+              </Text>
             </Box>
           </AccordionItem>
         </Accordion>
@@ -74,7 +100,11 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
                 }}
                 checked={value}
                 name="termsOfAgreement.userTerms"
-                label={m.userAgreementOptionLabel.defaultMessage}
+                label={formatText(
+                  m.userAgreementOptionLabel,
+                  application,
+                  formatMessage,
+                )}
                 large
               />
             )
@@ -98,7 +128,11 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
                 }}
                 checked={value}
                 name="termsOfAgreement.securityTerms"
-                label={m.safetyAgreementOptionLabel.defaultMessage}
+                label={formatText(
+                  m.safetyAgreementOptionLabel,
+                  application,
+                  formatMessage,
+                )}
                 large
               />
             )

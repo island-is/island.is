@@ -1,4 +1,4 @@
-# Code reviews
+# Code Reviews
 
 Code reviews are a valuable tool for improving code quality and sharing knowledge across the teams working on the codebase. There are tons of best practices available online, but over time each company (or as in this case a swarm of companies working in the same codebase) adopts practices which suits their needs and culture.
 
