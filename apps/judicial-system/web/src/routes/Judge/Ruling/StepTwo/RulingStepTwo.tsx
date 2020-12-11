@@ -151,7 +151,7 @@ export const RulingStepTwo: React.FC = () => {
               <Box marginBottom={2}>
                 <Text as="h4" variant="h4">
                   Kærði{' '}
-                  <Text as="span" color="red400" fontWeight="semiBold">
+                  <Text as="span" color="red600" fontWeight="semiBold">
                     *
                   </Text>
                 </Text>

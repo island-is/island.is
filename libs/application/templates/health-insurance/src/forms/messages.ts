@@ -106,4 +106,72 @@ export const m = defineMessages({
       'Please edit if not correct. This will update your contact info for all of island.is ',
     description: 'About changing digital island data',
   },
+  childrenDescription: {
+    id: 'hi.application:children.description',
+    defaultMessage:
+      'Are there any children under the age of 18 moving with you?',
+    description: 'To fill in for those with children moving with them.',
+  },
+  statusAdditionalInformation: {
+    id: 'hi.application:status.additionalInformation',
+    defaultMessage: 'Confirmation of studies must be submitted',
+    description: 'Drag and drop for proof of studies',
+  },
+  statusAndChildren: {
+    id: 'hi.application:statusAndChildrend.section',
+    defaultMessage: 'Status and Children',
+    description: 'Applicant status and children information',
+  },
+  statusDescription: {
+    id: 'hi.application:status.description',
+    defaultMessage: 'What is you current status?',
+    description: 'The current status',
+  },
+  statusOther: {
+    id: 'hi.application:status.other',
+    defaultMessage: 'Other',
+    description: 'Other',
+  },
+  statusOtherInformation: {
+    id: 'hi.application:other.information',
+    defaultMessage: 'All other statuses.',
+    description: 'All other statuses',
+  },
+  statusPensioner: {
+    id: 'hi.application:status.pensioner',
+    defaultMessage: 'Pensioner',
+    description: 'Pensioner',
+  },
+  statusPensionerInformation: {
+    id: 'hi.application:pensioner.information',
+    defaultMessage:
+      'You are reciving old age pension or disability pension from Iceland.',
+    description: 'old age pension or disability pension',
+  },
+  statusStudent: {
+    id: 'hi.application:status.student',
+    defaultMessage: 'Student',
+    description: 'Student',
+  },
+  statusStudentInformation: {
+    id: 'hi.application:student.information',
+    defaultMessage:
+      'You moved away from Iceland for the purpose of studying abroad and are moving back to Iceland withing six months of the end of studies.',
+    description: 'For the people that have studied abroad and are coming back',
+  },
+  yesOptionLabel: {
+    id: 'hi.application:option.yes',
+    defaultMessage: 'Yes',
+    description: 'yes',
+  },
+  noOptionLabel: {
+    id: 'hi.application:option.no',
+    defaultMessage: 'No',
+    description: 'no',
+  },
+  requiredAnswerError: {
+    id: 'hi.application:required.answer.error',
+    defaultMessage: 'You are required to answer this question!',
+    description: 'You need to answer this question to continue.',
+  },
 })

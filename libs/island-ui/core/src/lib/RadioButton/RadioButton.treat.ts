@@ -34,9 +34,10 @@ export const label = style({
   display: 'flex',
   fontSize: theme.typography.baseFontSize,
   fontWeight: theme.typography.light,
+  lineHeight: theme.typography.baseLineHeight,
 })
 export const largeLabel = style({
-  padding: `${theme.spacing[4]}px ${theme.spacing[3]}px`,
+  padding: `26px ${theme.spacing[3]}px`,
 })
 export const labelChecked = style({
   fontWeight: theme.typography.medium,
