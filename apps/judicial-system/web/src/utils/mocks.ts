@@ -73,8 +73,8 @@ const testCase2 = {
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
   state: CaseState.REJECTED,
-  policeCaseNumber: 'string',
-  accusedNationalId: 'string',
+  policeCaseNumber: '000-0000-0000',
+  accusedNationalId: '111111-1110',
   accusedName: 'Jon Harring',
   accusedAddress: 'Harringvej 2',
   accusedGender: CaseGender.MALE,
@@ -128,8 +128,8 @@ const testCase3 = {
   accusedAddress: 'Harringvej 2',
   accusedGender: CaseGender.MALE,
   court: 'string',
-  arrestDate: '2020-09-16T19:51:28.224Z',
-  requestedCourtDate: '2020-09-16T19:51:00.000Z',
+  arrestDate: null,
+  requestedCourtDate: null,
   requestedCustodyEndDate: null,
   lawsBroken: null,
   custodyProvisions: [],
@@ -141,7 +141,7 @@ const testCase3 = {
   comments: 'string',
   prosecutor: null,
   courtCaseNumber: null,
-  courtDate: '2020-09-16T19:51:00.000Z',
+  courtDate: '2020-09-16T19:51:28.224Z',
   courtStartTime: null,
   courtEndTime: '2020-09-16T19:51:00.000Z',
   courtAttendees: null,
@@ -164,7 +164,7 @@ const testCase3 = {
 }
 
 const testCase4 = {
-  id: 'test_id_2',
+  id: 'test_id_4',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
   state: CaseState.REJECTED,
@@ -175,7 +175,7 @@ const testCase4 = {
   accusedGender: CaseGender.MALE,
   court: 'string',
   arrestDate: '2020-09-16T19:51:28.224Z',
-  requestedCourtDate: '2020-09-12T14:51:00.000Z',
+  requestedCourtDate: null,
   requestedCustodyEndDate: '2020-09-16',
   lawsBroken: null,
   custodyProvisions: [],
@@ -213,7 +213,7 @@ const testCase4 = {
 }
 
 const testCase5 = {
-  id: 'test_id_2',
+  id: 'test_id_5',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
   state: CaseState.ACCEPTED,
@@ -262,7 +262,7 @@ const testCase5 = {
 }
 
 const testCase6 = {
-  id: 'test_id_2',
+  id: 'test_id_6',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
   state: CaseState.ACCEPTED,
@@ -272,8 +272,8 @@ const testCase6 = {
   accusedAddress: 'Harringvej 2',
   accusedGender: CaseGender.MALE,
   court: 'string',
-  arrestDate: '2020-09-16T19:51:28.224Z',
-  requestedCourtDate: '2020-09-12T14:51:00.000Z',
+  arrestDate: null,
+  requestedCourtDate: null,
   requestedCustodyEndDate: '2020-09-16',
   lawsBroken: null,
   custodyProvisions: [],
