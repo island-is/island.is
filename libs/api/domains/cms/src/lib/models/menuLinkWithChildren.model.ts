@@ -8,7 +8,7 @@ export class MenuLinkWithChildren {
   @Field()
   title: string
 
-  @Field(() => ReferenceLink)
+  @Field(() => ReferenceLink, { nullable: true })
   link: ReferenceLink
 
   @Field(() => [MenuLink])

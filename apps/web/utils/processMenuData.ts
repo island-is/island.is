@@ -10,23 +10,29 @@ export const formatMegaMenuLinks = (
   lang: Locale,
   menuLinks: (MenuLinkWithChildren | MenuLink)[],
 ) => {
-  return menuLinks.map((linkData) => {
-    let sub
-    // if this link has children format them
-    if ('childLinks' in linkData) {
-      sub = formatMegaMenuLinks(lang, linkData.childLinks)
-    } else {
-      sub = null
-    }
+  return menuLinks
+    .map((linkData) => {
+      let sub
+      // if this link has children format them
+      if ('childLinks' in linkData) {
+        sub = formatMegaMenuLinks(lang, linkData.childLinks)
+      } else {
+        sub = null
+      }
 
-    return {
-      text: linkData.title,
-      href: pathNames(lang, linkData.link.type as ContentType, [
-        linkData.link.slug,
-      ]),
-      sub,
-    }
-  })
+      if (!linkData.link) {
+        return null
+      }
+
+      return {
+        text: linkData.title,
+        href: pathNames(lang, linkData.link.type as ContentType, [
+          linkData.link.slug,
+        ]),
+        sub,
+      }
+    })
+    .filter((linkData) => Boolean(linkData))
 }
 
 export const formatMegaMenuCategoryLinks = (
