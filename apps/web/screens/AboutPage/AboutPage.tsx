@@ -63,7 +63,7 @@ import { GET_GROUPED_MENU_QUERY } from '../queries/Menu'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
-} from 'apps/web/utils/processMenuData'
+} from '@island.is/web/utils/processMenuData'
 
 /**
  * TODO: Both fragments Image and EmbeddedVideo aren't used inside
