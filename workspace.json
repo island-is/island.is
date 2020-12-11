@@ -1235,7 +1235,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/application-system/api/src/openapi.yaml",
-            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/application-system/api/tsconfig.app.json apps/application-system/api/src/buildOpenApi.ts"
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/application-system/api/tsconfig.json scripts/build-openapi.ts apps/application-system/api/src/config"
           }
         },
         "migrate": {

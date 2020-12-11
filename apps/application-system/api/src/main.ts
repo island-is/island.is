@@ -6,11 +6,10 @@
 import '@island.is/infra-tracing'
 import { bootstrap } from '@island.is/infra-nest-server'
 
-import { AppModule } from './app/app.module'
-import { openApi } from './openApi'
+import { config } from './config'
 
 bootstrap({
-  appModule: AppModule,
   name: 'application-system-api',
-  openApi,
+  appModule: config.appModule,
+  openApi: config.openApi.document,
 })

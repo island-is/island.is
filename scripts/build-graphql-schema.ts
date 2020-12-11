@@ -1,6 +1,4 @@
 import yargs from 'yargs'
-import { GraphQLDefinitionsFactory } from '@nestjs/graphql'
-
 import { createApp } from '@island.is/infra-nest-server'
 
 const argv = yargs(process.argv.slice(2))
