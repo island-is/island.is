@@ -63,6 +63,12 @@ import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
 import { EmailService } from '@island.is/email-service'
+import { environment } from '../../../environments'
+
+// import { assignApplicationThroughEmail } from './application.utils'
+// import ApplicationTemplateUtils from './application.template-utils'
+import { ApplicationAPITemplateUtils } from '@island.is/application/api-template-utils'
+
 // @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
 @ApiTags('applications')
 @Controller()
@@ -273,7 +279,10 @@ export class ApplicationController {
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     existingApplication: Application,
     @Body() updateApplicationStateDto: UpdateApplicationStateDto,
+    @Req() request: Request,
   ): Promise<ApplicationResponseDto> {
+    console.log(Object.keys(request))
+    console.log(request)
     const template = await getApplicationTemplateByTypeId(
       existingApplication.typeId as ApplicationTypes,
     )
@@ -301,20 +310,25 @@ export class ApplicationController {
       permittedAnswers,
     )
 
-    const helper = new ApplicationTemplateHelper(
+    const mergedApplication: BaseApplication = {
+      ...(existingApplication.toJSON() as BaseApplication),
+      answers: mergedAnswers,
+    }
+
+    const helper = new ApplicationTemplateHelper(mergedApplication, template)
+
+    const apiTemplateUtils = new ApplicationAPITemplateUtils(
+      mergedApplication,
       {
-        ...(existingApplication.toJSON() as BaseApplication),
-        answers: mergedAnswers,
-      } as BaseApplication,
-      template,
+        jwtSecret: environment.auth.jwtSecret,
+        emailService: this.emailService,
+      },
     )
 
-    const [
-      hasChanged,
-      newState,
-      newApplication,
-    ] = helper.changeState(updateApplicationStateDto.event, (emailTemplate) =>
-      this.emailService.sendEmail(emailTemplate),
+    const [hasChanged, newState, newApplication] = helper.changeState(
+      updateApplicationStateDto.event,
+      (emailTemplate) => this.emailService.sendEmail(emailTemplate),
+      apiTemplateUtils,
     )
 
     if (hasChanged) {

@@ -9,6 +9,7 @@ import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
 import { Signin } from '../routes/SignIn'
 import { SilentSignIn } from '../routes/SilentSignin'
+import { AssignApplication } from '../routes/AssignApplication'
 import { AuthProvider } from '../context/AuthProvider'
 import Header from '../components/Header'
 import ProtectedRoute from '../components/ProtectedRoute'
@@ -31,6 +32,12 @@ export const App = () => {
               <Route exact path="/">
                 <Redirect to="/application/" />
               </Route>
+              <ProtectedRoute
+                strict
+                exact
+                path="/applications/assign"
+                component={AssignApplication}
+              />
               <ProtectedRoute
                 strict
                 exact

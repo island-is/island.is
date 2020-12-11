@@ -6,6 +6,7 @@ export * from './types/Fields'
 export * from './types/Form'
 export * from './types/Application'
 export * from './types/ApplicationTemplate'
+export * from './types/ApplicationAPITemplateActions'
 export * from './types/StateMachine'
 
 export * from './lib/conditionUtils'

@@ -147,6 +147,7 @@
     "js-yaml": "3.14.0",
     "jsbarcode": "3.11.0",
     "jsonp": "0.2.1",
+    "jsonwebtoken": "^8.5.1",
     "jwks-rsa": "1.10.1",
     "jwt-decode": "2.2.0",
     "kennitala": "1.2.4",

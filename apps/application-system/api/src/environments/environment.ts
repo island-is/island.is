@@ -20,4 +20,7 @@ export default {
   emailOptions: {
     useTestAccount: true,
   },
+  auth: {
+    jwtSecret: 'supersecret',
+  },
 }

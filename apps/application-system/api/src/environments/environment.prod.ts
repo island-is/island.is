@@ -15,4 +15,7 @@ export default {
       region: process.env.EMAIL_REGION,
     },
   },
+  auth: {
+    jwtSecret: process.env.AUTH_JWT_SECRET,
+  },
 }

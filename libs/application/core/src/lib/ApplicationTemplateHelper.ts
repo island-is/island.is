@@ -27,6 +27,12 @@ interface EmailServiceInvokeSourceDefinition extends InvokeSourceDefinition {
   emailTemplate: (context: ApplicationContext) => SendMailOptions
 }
 
+interface TemplateUtilsServiceInvokeSourceDefinition
+  extends InvokeSourceDefinition {
+  // TODO: import action type from api-template-utils
+  action: any
+}
+
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
@@ -80,6 +86,7 @@ export class ApplicationTemplateHelper<
   changeState(
     event: Event<TEvents>,
     sendEmail: (emailTemplate: SendMailOptions) => Promise<string>,
+    apiTemplateUtils: any,
   ): [boolean, string, Application] {
     this.initializeStateMachine(undefined, {
       services: {
@@ -102,6 +109,29 @@ export class ApplicationTemplateHelper<
           }
 
           return sendEmail(emailTemplate)
+        },
+        apiTemplateUtils: (
+          context: TContext,
+          event: TEvents,
+          { src }: InvokeMeta,
+        ) => {
+          if (event.type === ActionTypes.Init) {
+            // Do not send emails on xstate.init event
+            return Promise.reject('')
+          }
+
+          console.log('ApplicationTemplateHelper.templateUtils start')
+
+          const { action } = src as TemplateUtilsServiceInvokeSourceDefinition
+
+          try {
+            return apiTemplateUtils.performAction(action)
+          } catch (e) {
+            console.log(e)
+            // pass
+          }
+
+          return Promise.reject('')
         },
       },
     })
