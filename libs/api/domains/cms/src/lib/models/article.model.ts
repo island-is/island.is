@@ -8,6 +8,7 @@ import { Organization, mapOrganization } from './organization.model'
 import { SubArticle, mapSubArticle } from './subArticle.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { mapProcessEntry, ProcessEntry } from './processEntry.model'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class Article {
@@ -69,7 +70,11 @@ export class Article {
   featuredImage?: Image
 }
 
-export const mapArticle = ({ fields, sys }: IArticle): Article => ({
+export const mapArticle = ({
+  fields,
+  sys,
+}: IArticle): SystemMetadata<Article> => ({
+  typename: 'Article',
   id: sys.id,
   title: fields.title ?? '',
   shortTitle: fields.shortTitle ?? '',

@@ -22,6 +22,9 @@ export const GET_ARTICLES_QUERY = gql`
       }
       slug
       title
+      processEntry {
+        id
+      }
       group {
         slug
         title

@@ -236,24 +236,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   }
 
   const metaTitle = `${article.title} | Ísland.is`
-  /**
-   * Remove Start
-   */
-  const processEntries = article?.body?.length
-    ? article.body.filter((x) => x.__typename === 'ProcessEntry')
-    : []
-
-  // tmp fix
-  const processEntry =
-    processEntries.length === 1
-      ? (processEntries[0] as ProcessEntrySchema)
-      : null
-  /**
-   * Remove End
-   *
-   *
-   * const processEntry = article.processEntry
-   */
+  const processEntry = article.processEntry
 
   return (
     <>
