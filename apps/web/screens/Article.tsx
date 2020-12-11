@@ -416,4 +416,4 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   }
 }
 
-export default withMainLayout(ArticleScreen, { hasDrawerMenu: true })
+export default withMainLayout(ArticleScreen)
