@@ -1,4 +1,4 @@
-# Elasticsearch search dev server
+# Elasticsearch Search Dev Server
 
 ### Dependencies
 
