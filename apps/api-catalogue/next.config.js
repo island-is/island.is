@@ -24,12 +24,10 @@ module.exports = withTreat(
       serverRuntimeConfig: {
         // Will only be available on the server side
         // Requests made by the server are internal request made directly to the api hostname
-        graphqlUrl: API_URL,
-        graphqlEndpoint: graphqlPath,
+        graphqlEndpoint: `${API_URL}${graphqlPath}`,
       },
       publicRuntimeConfig: {
         // Will be available on both server and client
-        graphqlUrl: '',
         graphqlEndpoint: graphqlPath,
       },
     }),
