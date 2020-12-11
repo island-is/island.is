@@ -354,7 +354,7 @@ export const HearingArrangements: React.FC = () => {
                 removeTabsValidateAndSet(
                   'defenderEmail',
                   event,
-                  [],
+                  ['email-format'],
                   workingCase,
                   setWorkingCase,
                   defenderEmailErrorMessage,
@@ -365,7 +365,7 @@ export const HearingArrangements: React.FC = () => {
                 validateAndSendToServer(
                   'defenderEmail',
                   event.target.value,
-                  [],
+                  ['email-format'],
                   workingCase,
                   updateCase,
                   setDefenderEmailErrorMessage,

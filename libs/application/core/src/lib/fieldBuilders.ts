@@ -155,7 +155,7 @@ export function buildSelectField(data: {
   id: string
   name: FormText
   description?: FormText
-  placeholder?: string
+  placeholder?: FormText
   options: MaybeWithApplication<Option[]>
   disabled?: boolean
   width?: FieldWidth
