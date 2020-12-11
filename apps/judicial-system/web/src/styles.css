@@ -7,6 +7,7 @@
 table {
   border-spacing: 0;
   border-collapse: collapse;
+  overflow: hidden;
 }
 
 caption {
@@ -14,10 +15,6 @@ caption {
   margin-bottom: 16px;
 }
 
-thead {
-  background: #f2f7ff;
-  box-shadow: inset 0px -1px 0px #ccdfff;
-}
 
 th,
 td {
@@ -25,10 +22,3 @@ td {
   max-width: 224px;
 }
 
-th {
-  padding: 12px 24px;
-}
-
-td {
-  padding: 24px;
-}
