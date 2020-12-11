@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import {
-  IVidspyrnaFrontpage,
-} from '../generated/contentfulTypes'
+import { IVidspyrnaFrontpage } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
-import { AdgerdirSliceUnion, mapAdgerdirSliceUnion } from '../unions/adgerdirSlice.union'
+import {
+  AdgerdirSliceUnion,
+  mapAdgerdirSliceUnion,
+} from '../unions/adgerdirSlice.union'
 import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
@@ -48,7 +49,7 @@ export const mapAdgerdirFrontpage = ({
       : [],
   slices: fields?.slices
     ? fields.slices
-      .filter((x) => x.sys?.contentType?.sys?.id)
-      .map(mapAdgerdirSliceUnion)
+        .filter((x) => x.sys?.contentType?.sys?.id)
+        .map(mapAdgerdirSliceUnion)
     : [],
 })

@@ -25,21 +25,36 @@ import {
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
-import { MailingListSignupSlice, mapMailingListSignup } from '../models/mailingListSignupSlice.model'
+import {
+  MailingListSignupSlice,
+  mapMailingListSignup,
+} from '../models/mailingListSignupSlice.model'
 import { mapTimelineSlice, TimelineSlice } from '../models/timelineSlice.model'
 import { HeadingSlice, mapHeadingSlice } from '../models/headingSlice.model'
 import { mapStorySlice, StorySlice } from '../models/storySlice.model'
 import { LinkCardSlice, mapLinkCardSlice } from '../models/linkCardSlice.model'
-import { LatestNewsSlice, mapLatestNewsSlice } from '../models/latestNewsSlice.model'
+import {
+  LatestNewsSlice,
+  mapLatestNewsSlice,
+} from '../models/latestNewsSlice.model'
 import { LogoListSlice, mapLogoListSlice } from '../models/logoListSlice.model'
-import { BulletListSlice, mapBulletListSlice } from '../models/bulletListSlice.model'
+import {
+  BulletListSlice,
+  mapBulletListSlice,
+} from '../models/bulletListSlice.model'
 import { mapStatistics, Statistics } from '../models/statistics.model'
 import { Html, mapHtml } from '../models/html.model'
 import { mapProcessEntry, ProcessEntry } from '../models/processEntry.model'
 import { FaqList, mapFaqList } from '../models/faqList.model'
-import { ConnectedComponent, mapConnectedComponent } from '../models/connectedComponent.model'
+import {
+  ConnectedComponent,
+  mapConnectedComponent,
+} from '../models/connectedComponent.model'
 import { EmbeddedVideo, mapEmbeddedVideo } from '../models/embeddedVideo.model'
-import { mapSectionWithImage, SectionWithImage } from '../models/sectionWithImage.model'
+import {
+  mapSectionWithImage,
+  SectionWithImage,
+} from '../models/sectionWithImage.model'
 import { mapTabSection, TabSection } from '../models/tabSection.model'
 import { mapTeamList, TeamList } from '../models/teamList.model'
 import { ContactUs, mapContactUs } from '../models/contactUs.model'
@@ -147,7 +162,9 @@ if we add a slice that is not in mapper mapSlices fails for that slice.
 we don't want a single slice to cause errors on a whole page so we fail them gracefully
 this can e.g. happen when a developer is creating a new slice type and an editor publishes it by accident on a page
 */
-export const safelyMapSliceUnion = (data: SliceTypes): typeof SliceUnion | null => {
+export const safelyMapSliceUnion = (
+  data: SliceTypes,
+): typeof SliceUnion | null => {
   try {
     return mapSliceUnion(data)
   } catch (error) {

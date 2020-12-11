@@ -1,7 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { IBigBulletList } from '../generated/contentfulTypes'
 import { SystemMetadata } from '@island.is/shared/types'
-import { BulletEntryUnion, mapBulletEntryUnion } from '../unions/bulletEntry.union'
+import {
+  BulletEntryUnion,
+  mapBulletEntryUnion,
+} from '../unions/bulletEntry.union'
 @ObjectType()
 export class BulletListSlice {
   @Field(() => ID)

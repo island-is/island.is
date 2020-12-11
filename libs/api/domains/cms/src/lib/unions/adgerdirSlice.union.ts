@@ -1,8 +1,17 @@
 import { createUnionType } from '@nestjs/graphql'
 import { ApolloError } from 'apollo-server-express'
-import { IVidspyrnaFeaturedNews, IVidspyrnaFlokkur } from '../generated/contentfulTypes'
-import { AdgerdirFeaturedNewsSlice, mapAdgerdirFeaturedNewsSlice } from '../models/adgerdirFeaturedNewsSlice.model'
-import { AdgerdirGroupSlice, mapAdgerdirGroupSlice } from '../models/adgerdirGroupSlice.model'
+import {
+  IVidspyrnaFeaturedNews,
+  IVidspyrnaFlokkur,
+} from '../generated/contentfulTypes'
+import {
+  AdgerdirFeaturedNewsSlice,
+  mapAdgerdirFeaturedNewsSlice,
+} from '../models/adgerdirFeaturedNewsSlice.model'
+import {
+  AdgerdirGroupSlice,
+  mapAdgerdirGroupSlice,
+} from '../models/adgerdirGroupSlice.model'
 
 export const AdgerdirSliceUnion = createUnionType({
   name: 'AdgerdirSlice',
