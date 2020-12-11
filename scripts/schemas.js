@@ -20,7 +20,7 @@ const SCHEMA_PATH = 'libs/api/schema/src/lib/schema.d.ts'
 const TARGETS = [
   'schemas/build-openapi', // Output openapi.yaml
   'schemas/openapi-generator', // Output gen/fetch/* based on openapi.yaml to run openapi-generator
-  'schemas/build-schema', // Output api.graphql based on graphql app modules
+  'schemas/build-graphql-schema', // Output api.graphql based on graphql app modules
   'schemas/codegen', // Output clients schemas (*.d.ts) based on codegen.yml
 ]
 
