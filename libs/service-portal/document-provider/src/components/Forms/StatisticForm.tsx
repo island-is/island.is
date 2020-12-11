@@ -12,12 +12,12 @@ import {
 import { useLocale } from '@island.is/localization'
 
 export type CategoryFormOption = {
-  label: 'Flokkur'
+  label: string
   value: string
 }
 
 export type TypeFormOption = {
-  label: 'Tegund'
+  label: string
   value: string
 }
 
