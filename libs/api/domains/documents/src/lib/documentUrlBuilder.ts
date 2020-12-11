@@ -6,9 +6,9 @@ import { FileType } from './types/fileType.enum'
 
 @Injectable()
 export class DocumentBuilder {
-  constructor() {}
+  constructor() { }
 
-  private static readonly externalUrlDocuments: DocumentTypeFilter[] = [
+  private static readonly customDocuments: DocumentTypeFilter[] = [
     {
       senderName: 'Ríkisskattstjóri',
       senderNatReg: '5402696029',
@@ -31,7 +31,7 @@ export class DocumentBuilder {
   private static getTypeFilter(
     document: DocumentInfoDTO,
   ): Partial<DocumentTypeFilter> {
-    const found = this.externalUrlDocuments.find(
+    const found = this.customDocuments.find(
       (x) =>
         document.subject.includes(x.subjectContains) &&
         x.senderNatReg === document.senderKennitala,
