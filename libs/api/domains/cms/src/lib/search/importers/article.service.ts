@@ -13,7 +13,7 @@ import {
 import {
   createTerms,
   extractStringsFromObject,
-  hasProcessEntry,
+  numberOfProcessEntries,
   numberOfLinks,
 } from './utils'
 
@@ -79,7 +79,7 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             title: mapped.title,
             content,
             contentWordCount: content.split(/\s+/).length,
-            hasProcessEntry: hasProcessEntry(mapped.body),
+            processEntryCount: numberOfProcessEntries(mapped.body),
             ...numberOfLinks(mapped.body),
             type: 'webArticle',
             termPool: createTerms([

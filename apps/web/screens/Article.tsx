@@ -1,6 +1,6 @@
-import React, { FC, useState, useMemo, ReactNode, Fragment } from 'react'
-import { useFirstMountState } from 'react-use'
+import React, { FC, useMemo } from 'react'
 import { useRouter } from 'next/router'
+import NextLink from 'next/link'
 import { BLOCKS } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
 import {
@@ -16,24 +16,22 @@ import {
   GridColumn,
   GridRow,
   Tag,
-  Divider,
   Link,
+  Navigation,
 } from '@island.is/island-ui/core'
 import {
   DrawerMenu,
   SidebarBox,
-  Bullet,
-  SidebarSubNav,
   RichText,
   HeadWithSocialSharing,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
-import { ArticleLayout } from '@island.is/web/screens/Layouts/Layouts'
 import { Screen } from '@island.is/web/types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames from '@island.is/web/i18n/routeNames'
+import { ContentType, pathNames } from '@island.is/web/i18n/routes'
 import { CustomNextError } from '@island.is/web/units/errors'
 import {
   QueryGetNamespaceArgs,
@@ -44,14 +42,11 @@ import {
   QueryGetSingleArticleArgs,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
-import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { SidebarLayout } from './Layouts/SidebarLayout'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
-
-const maybeBold = (content: ReactNode, condition: boolean): ReactNode =>
-  condition ? <b>{content}</b> : content
 
 const createSubArticleNavigation = (body: Slice[]) => {
   // on sub-article page the main article title is h1, sub-article title is h2
@@ -120,10 +115,9 @@ const RelatedArticles: FC<{
   return (
     <SidebarBox>
       <Stack space={[1, 1, 2]}>
-        <Text variant="h4" as="h2">
+        <Text variant="eyebrow" as="h2">
           {title}
         </Text>
-        <Divider weight="alternate" />
         {articles.map((article) => (
           <Link
             key={article.slug}
@@ -171,155 +165,20 @@ const ActionButton: FC<{ content: Slice[]; defaultText: string }> = ({
   )
 }
 
-const SubArticleNavigation: FC<{
-  title: string
-  article: Article
-  selectedSubArticle: SubArticle
-}> = ({ title, article, selectedSubArticle }) => {
-  const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale)
-  const [bullet, setBullet] = useState<HTMLDivElement>(null)
-  const isFirstMount = useFirstMountState()
-  const navigation = useMemo(() => {
-    return createSubArticleNavigation(selectedSubArticle?.body ?? [])
-  }, [selectedSubArticle?.body])
-
-  const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
-  const [activeId, navigate] = useScrollSpy(ids)
-
-  return (
-    <SidebarBox position="relative">
-      {/*
-        first render sets the bullet ref, which means we don't know on first render
-        where to show the bullet. When navigating between sub-articles there
-        is also one render call with bullet=null, but in that case we don't
-        want to remove the bullet element because we'd lose the movement animation
-      */}
-      {!isFirstMount && <Bullet align="left" top={bullet?.offsetTop ?? 0} />}
-
-      <Stack space={[1, 1, 2]}>
-        <Text variant="h4" as="h4">
-          {title}
-        </Text>
-        <Divider weight="alternate" />
-        <div ref={!selectedSubArticle ? setBullet : null}>
-          <Link
-            shallow
-            href={makePath('article', '[slug]')}
-            as={makePath('article', article.slug)}
-          >
-            <Text>
-              {maybeBold(
-                article.shortTitle || article.title,
-                !selectedSubArticle,
-              )}
-            </Text>
-          </Link>
-        </div>
-        {article.subArticles.map((subArticle, id) => (
-          <Fragment key={id}>
-            <div
-              ref={
-                subArticle === selectedSubArticle && navigation.length === 0
-                  ? setBullet
-                  : null
-              }
-            >
-              <Link
-                shallow
-                href={makePath('article', '[slug]/[subSlug]')}
-                as={makePath('article', `${article.slug}/${subArticle.slug}`)}
-              >
-                <Text as="span">
-                  {maybeBold(
-                    subArticle.title,
-                    subArticle === selectedSubArticle,
-                  )}
-                </Text>
-              </Link>
-            </div>
-            {subArticle === selectedSubArticle && navigation.length > 0 && (
-              <SidebarSubNav>
-                <Stack space={1}>
-                  {navigation.map(({ id, text }) => (
-                    <div key={id} ref={id === activeId ? setBullet : null}>
-                      <Box
-                        component="button"
-                        type="button"
-                        textAlign="left"
-                        onClick={() => navigate(id)}
-                      >
-                        <Text variant="small">
-                          {maybeBold(text, id === activeId)}
-                        </Text>
-                      </Box>
-                    </div>
-                  ))}
-                </Stack>
-              </SidebarSubNav>
-            )}
-          </Fragment>
-        ))}
-      </Stack>
-    </SidebarBox>
-  )
-}
-
-const ArticleNavigation: FC<{ title: string; article: Article }> = ({
-  title,
-  article,
-}) => {
-  const [bullet, setBullet] = useState<HTMLElement>(null)
-
-  const navigation = useMemo(() => {
-    return createNavigation(article.body, {
-      title: article.shortTitle || article.title,
-    })
-  }, [article])
-
-  const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
-  const [activeId, navigate] = useScrollSpy(ids)
-
-  return (
-    <SidebarBox position="relative">
-      {bullet && <Bullet align="left" top={bullet.offsetTop} />}
-
-      <Stack space={[1, 1, 2]}>
-        <Text variant="h4" as="h2">
-          {title}
-        </Text>
-        <Divider weight="alternate" />
-
-        {navigation.map(({ id, text }) => (
-          <Box
-            ref={id === activeId ? setBullet : null}
-            key={id}
-            component="button"
-            type="button"
-            textAlign="left"
-            onClick={() => navigate(id)}
-          >
-            <Text>{id === activeId ? <strong>{text}</strong> : text}</Text>
-          </Box>
-        ))}
-      </Stack>
-    </SidebarBox>
-  )
-}
-
 interface ArticleSidebarProps {
   article: Article
-  subArticle: SubArticle
   showActionButton: boolean
+  activeSlug?: string | string[]
   n: (s: string) => string
 }
 
 const ArticleSidebar: FC<ArticleSidebarProps> = ({
   article,
-  subArticle,
   showActionButton,
+  activeSlug,
   n,
 }) => {
+  const { activeLocale } = useI18n()
   return (
     <Stack space={3}>
       {!!showActionButton && (
@@ -330,13 +189,35 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
           />
         </Hidden>
       )}
-      {article.subArticles.length === 0 ? (
-        <ArticleNavigation title={n('sidebarHeader')} article={article} />
-      ) : (
-        <SubArticleNavigation
+      {article.subArticles.length > 0 && (
+        <Navigation
+          baseId="articleNav"
           title={n('sidebarHeader')}
-          article={article}
-          selectedSubArticle={subArticle}
+          activeItemTitle="test"
+          renderLink={(link, { typename, slug }) => {
+            return (
+              <NextLink
+                {...pathNames(activeLocale, typename as ContentType, slug)}
+                passHref
+              >
+                {link}
+              </NextLink>
+            )
+          }}
+          items={[
+            {
+              title: article.shortTitle ?? article.title,
+              typename: article.__typename,
+              slug: [article.slug],
+              active: !activeSlug,
+            },
+            ...article.subArticles.map((item) => ({
+              title: item.title,
+              typename: item.__typename,
+              slug: [article.slug, item.slug],
+              active: activeSlug === item.slug,
+            })),
+          ]}
         />
       )}
       <RelatedArticles
@@ -406,13 +287,13 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         imageWidth={article.featuredImage?.width.toString()}
         imageHeight={article.featuredImage?.height.toString()}
       />
-      <ArticleLayout
-        sidebar={
+      <SidebarLayout
+        sidebarContent={
           <ArticleSidebar
             showActionButton={Boolean(processEntry)}
             article={article}
-            subArticle={subArticle}
             n={n}
+            activeSlug={query.subSlug}
           />
         }
       >
@@ -487,7 +368,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             locale={activeLocale}
           />
         </Box>
-      </ArticleLayout>
+      </SidebarLayout>
     </>
   )
 }
