@@ -1,4 +1,4 @@
-import { defineMessages } from 'react-intl'
+import { defineMessages, MessageDescriptor } from 'react-intl'
 
 export const m = defineMessages({
   applicationName: {
@@ -240,6 +240,16 @@ export const m = defineMessages({
     defaultMessage: '1 mánuður óskað eftir af rétti hins foreldrisins',
     description: "1 month requested from the other parent's rights",
   },
+  month: {
+    id: 'pl.application:month',
+    defaultMessage: 'mánuður',
+    description: 'month',
+  },
+  months: {
+    id: 'pl.application:months',
+    defaultMessage: 'mánuðir',
+    description: 'months',
+  },
   monthsTotal: {
     id: 'pl.application:months.total',
     defaultMessage: 'Samtals: {months} mánuðir *',
@@ -317,10 +327,15 @@ export const m = defineMessages({
     defaultMessage: 'Sækja gögn',
     description: 'Some description',
   },
+  dateOfBirthTitle: {
+    id: 'pl.application:dateOfBirth.title',
+    defaultMessage: 'Fæðingardagur',
+    description: 'Birth date',
+  },
   expectedDateOfBirthTitle: {
     id: 'pl.application:expectedDateOfBirth.title',
     defaultMessage: 'Áætlaður fæðingardagur',
-    description: 'Some description',
+    description: 'Expected birth date',
   },
   expectedDateOfBirthSubtitle: {
     id: 'pl.application:expectedDateOfBirth.subtitle',
@@ -385,22 +400,6 @@ export const m = defineMessages({
   usage: {
     id: 'pl.application:usage',
     defaultMessage: 'Hvað ætlar þú að nýta þér marga mánuði í fæðingarorlof?',
-    description: 'Some description',
-  },
-  durationSubsection: {
-    id: 'pl.application:duration.subsection',
-    defaultMessage: 'Duration',
-    description: 'Some description',
-  },
-  duration: {
-    id: 'pl.application:duration',
-    defaultMessage: 'Please confirm your leave duration',
-    description: 'Some description',
-  },
-  durationDescription: {
-    id: 'pl.application:duration.description',
-    defaultMessage:
-      'Some people choose to take the full leave all at once, but also extend it by months or to a certain date by adjsting their income percentage.',
     description: 'Some description',
   },
   calculationsSubsection: {
@@ -499,3 +498,231 @@ export const m = defineMessages({
     description: 'You need to answer this question to continue.',
   },
 })
+
+type MessageDir = Record<string, Record<string, MessageDescriptor>>
+
+export const mm: MessageDir = {
+  leavePlan: defineMessages({
+    subSection: {
+      id: 'pl.application:periods.subsection',
+      defaultMessage: 'Bættu við fleiri tímabilum',
+      description: 'Add more periods',
+    },
+    title: {
+      id: 'pl.application:leave.plan.title',
+      defaultMessage: 'Hér er tilhögun fæðingarorlofsins þíns',
+      description: 'Here is your current leave plan',
+    },
+    description: {
+      id: 'pl.application:leave.plan.description',
+      defaultMessage:
+        'Þetta eru þau tímabil sem þú hefur nú þegar valið til að haga fæðingarorlofinu þínu. Ef hitt foreldrið hefur samþykkt að deila upplýsingum um tilhögun fæðingarorlofsins síns með þér, þá sjást þau tímabil einnig.',
+      description:
+        'These are your already selected parental leave periods. If the other parent has agreed to share their period leave information, then those period leaves are visible below.',
+    },
+    addAnother: {
+      id: 'pl.application:periods.add.another',
+      defaultMessage: 'Bættu við öðru tímabili',
+      description: 'Add another period',
+    },
+  }),
+  firstPeriodStart: defineMessages({
+    title: {
+      id: 'pl.application:periods.first.period.title',
+      defaultMessage: 'Hvenær viltu hefja fæðingarorlofið?',
+      description: 'When do you want to start your parental leave',
+    },
+    description: {
+      id: 'pl.application:periods.first.period.description',
+      defaultMessage:
+        'Þú mátt kjósa að byrja á áætluðum fæðingardegi, eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.',
+      description:
+        'You can choose to start on the date of birth, or on a specific date. Please note, that your rights end 18 months after the date of birth.',
+    },
+    dateOfBirthOption: {
+      id: 'pl.application:periods.first.period.dateOfBirth',
+      defaultMessage: 'Ég vil byrja á áætluðum fæðingardegi',
+      description: 'I will start from the date of birth',
+    },
+    dateOfBirthOptionTooltip: {
+      id: 'pl.application:periods.first.period.dateOfBirth.tooltip',
+      defaultMessage:
+        'Ef barnið fæðist á annarri dagsetningu en áætlað er, þá mun fæðingarorlofið og lengd þess aðlagast raunverulegum fæðingardegi barnsins.',
+      description:
+        'If the child is born on another date than the expected date of birth, the parental leave and its duration will adjust to the real date of birth',
+    },
+    specificDateOption: {
+      id: 'pl.application:periods.first.period.specificDate',
+      defaultMessage: 'Ég vil byrja á ákveðinni dagsetningu',
+      description: 'I will start on a specific date',
+    },
+    specificDateOptionTooltip: {
+      id: 'pl.application:periods.first.period.specificDate.tooltip',
+      defaultMessage:
+        'Ef barnið fæðist á annarri dagsetningu en áætlað er, þá mun fæðingarorlofið og lengd þess EKKI aðlagast út frá raunverulegum fæðingardegi barnsins ef þessi valmöguleiki er valinn.',
+      description:
+        'If the child is born on another date than the expected date of birth, the parental leave and its duration will !!!!NOT!!!! adjust to the real date of birth',
+    },
+  }),
+  endDate: defineMessages({
+    title: {
+      id: 'pl.application:end.date.title',
+      defaultMessage: 'Vinsamlegast veldu lokadag tímabilsins',
+      description: 'Please pick the end date',
+    },
+    description: {
+      id: 'pl.application:end.date.description',
+      defaultMessage:
+        'Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins. Fæðingarorlof getur styst verið tvær vikur.',
+      description:
+        'Please note, that your parental leave rights end 18 months after the date of birth. A parental leave period can be no shorter than two weeks.',
+    },
+    label: {
+      id: 'pl.application:end.date.label',
+      defaultMessage: 'Lokadagur',
+      description: 'End date',
+    },
+    placeholder: {
+      id: 'pl.application:end.date.placeholder',
+      defaultMessage: 'Veldu lokadag tímabilsins',
+      description: 'Pick the end date',
+    },
+  }),
+  startDate: defineMessages({
+    title: {
+      id: 'pl.application:start.date.title',
+      defaultMessage: 'Vinsamlegast veldu upphafsdag tímabilsins',
+      description: 'Please pick the start date',
+    },
+    description: {
+      id: 'pl.application:start.date.description',
+      defaultMessage:
+        'Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.',
+      description:
+        'Please note, that your parental leave rights end 18 months after the date of birth',
+    },
+    label: {
+      id: 'pl.application:start.date.label',
+      defaultMessage: 'Upphafsdagur',
+      description: 'Start date',
+    },
+    placeholder: {
+      id: 'pl.application:start.date.placeholder',
+      defaultMessage: 'Veldu upphafsdaginn',
+      description: 'Pick the start date',
+    },
+  }),
+  duration: defineMessages({
+    title: {
+      id: 'pl.application:duration.title',
+      defaultMessage: 'Vinsamlegast staðfestu lengd tímabilsins',
+      description: 'Please confirm your leave duration',
+    },
+    description: {
+      id: 'pl.application:duration.description',
+      defaultMessage:
+        'Hægt er að velja lengd tímabilsins í fjölda mánaða, eða velja ákveðna endadagsetningu. Fæðingarorlof getur styst verið tvær vikur í senn',
+      description: 'Add translation',
+    },
+    monthsOption: {
+      id: 'pl.application:duration.months.option',
+      defaultMessage: 'Í fjölda mánaða',
+      description: 'A certain duration in months',
+    },
+    specificDateOption: {
+      id: 'pl.application:duration.specific.date.option',
+      defaultMessage: 'Fram að ákveðinni dagsetningu',
+      description: 'Until a specific date',
+    },
+    monthsDescription: {
+      id: 'pl.application:duration.months.description',
+      defaultMessage:
+        'Hægt er að dreifa rétti sínum yfir lengra tímabil en það hefur bein áhrif á greiðslur til þín úr fæðingarorlofssjóði. Dragðu stikuna til að stilla lengd tímabilsins ímánuðum.',
+      description: 'Add translation',
+    },
+    paymentsRatio: {
+      id: 'pl.application:duration.payments.ratio',
+      defaultMessage:
+        'Fyrir svona langt tímabil fást greiðslur að hlutfalli af hámarksréttindum þínum: ',
+      description: 'For this length of time you will get payments up to',
+    },
+  }),
+  ratio: defineMessages({
+    title: {
+      id: 'pl.application:ratio.title',
+      defaultMessage:
+        'Hversu hátt hlutfall viltu að fæðingarorlofið sé af starfshlutfalli þínu?',
+      description: 'What percent off will you take for this period?',
+    },
+    description: {
+      id: 'pl.application:ratio.description',
+      defaultMessage:
+        '100% þýðir að þú sért í fullu fæðingarorlofi. Lægra hlutfall hefur bein áhrif á greiðslur til þín úr fæðingarorlofssjóði. Sumir velja 50% fæðingarorlof á móti 50% starfi.',
+      description:
+        'For example, you could work 50% of the time, and have 50% paid leave.',
+    },
+    label: {
+      id: 'pl.application:ratio.label',
+      defaultMessage: 'Hlutfall fæðingarorlofs',
+      description: 'Percent leave',
+    },
+    placeholder: {
+      id: 'pl.application:ratio.placeholder',
+      defaultMessage: 'Veldu þitt hlutfall',
+      description: 'Pick your percent',
+    },
+  }),
+  paymentPlan: defineMessages({
+    subSection: {
+      id: 'pl.application:paymentPlan.subSection',
+      defaultMessage: 'Greiðsluáætlun',
+      description: 'Payment Plan',
+    },
+    title: {
+      id: 'pl.application:paymentPlan.title',
+      defaultMessage: 'Hér er núverandi greiðsluáætlunin þín',
+      description: 'Here is your current payment plan',
+    },
+    description: {
+      id: 'pl.application:paymentPlan.description',
+      defaultMessage:
+        'Heildargreiðslur á mánuði reiknast að hámarki 80% af meðallaunum umsækjanda á ákveðnu tímabili fyrir fæðingu barnsins, en þó ekki hærri en 600.000 kr.',
+      description:
+        'Payments amount to 80% of the average of the parent’s total wages during a specific period before the birth of the child.',
+    },
+  }),
+  shareInformation: defineMessages({
+    subSection: {
+      id: 'pl.application:shareInformation.subSection',
+      defaultMessage: 'Deila upplýsingum með hinu foreldrinu',
+      description: 'Share information with the other parent',
+    },
+    title: {
+      id: 'pl.application:shareInformation.title',
+      defaultMessage:
+        'Viltu deila upplýsingum um tilhögun fæðingarorlofsins þíns með hinu foreldrinu',
+      description:
+        'Do you want to share your leave information with the other parent?',
+    },
+    description: {
+      id: 'pl.application:shareInformation.description',
+      defaultMessage:
+        'Það einfaldar fólki að skipuleggja fæðingarorlofið sitt þar sem þá fær það að sjá þau tímabil sem hitt foreldrið valdi.',
+      description:
+        'Some people share their information to coordinate their parental leaves.',
+    },
+    yesOption: {
+      id: 'pl.application:shareInformation.yes',
+      defaultMessage:
+        'Já, ég vil deila þessum upplýsingum með hinu foreldrinu.',
+      description:
+        'Yes, I want to share my leave information with the other parent',
+    },
+    noOption: {
+      id: 'pl.application:shareInformation.no',
+      defaultMessage:
+        'Nei, ég vil ekki deila þessum upplýsingum að svo stöddu.',
+      description: 'No, I do not want to share my information',
+    },
+  }),
+}
