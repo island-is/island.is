@@ -202,4 +202,19 @@ export const m = defineMessages({
     defaultMessage: 'No, only private insurance or no insurance',
     description: 'former country of insurance information',
   },
+  country: {
+    id: 'hi.application:applicant.country',
+    defaultMessage: 'Country',
+    description: 'Country',
+  },
+  previousIdNr: {
+    id: 'hi.application:applicant.previousIdNr',
+    defaultMessage: 'ID number in previous country',
+    description: 'ID number in previous country',
+  },
+  insuranceName: {
+    id: 'hi.application:applicant.insuranceName',
+    defaultMessage: 'Name of the health insurance institution',
+    description: 'Name of the health insurance institution',
+  },
 })
