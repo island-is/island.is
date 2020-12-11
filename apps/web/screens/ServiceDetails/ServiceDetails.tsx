@@ -54,7 +54,11 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   return (
     <SubpageLayout
       main={
-        <SidebarLayout sidebarContent={<div>Navigation menu kemur hér</div>}>
+        <SidebarLayout
+          sidebarContent={
+            <div>Navigation menu kemur hér</div>
+          }
+        >
           <SubpageMainContent
             main={
               loading ? (
@@ -70,19 +74,8 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
         </SidebarLayout>
       }
       details={
-        <SubpageDetailsContent
-          header={<h1>OpenAPI skjölun</h1>}
-          content={
-            <SidebarLayout
-              sidebarContent={
-                <></> // Hér kemur filterinn
-              }
-            >
-              <div>Hér kemur open API spekkinn</div>
-            </SidebarLayout>
-          }
-        />
-      }
+            <div>Hér kemur open API spekkinn</div>
+        }
     />
   )
 }
