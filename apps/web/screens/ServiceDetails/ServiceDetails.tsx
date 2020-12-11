@@ -56,7 +56,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
       main={
         <SidebarLayout
           sidebarContent={
-            <div>Navigation menu kemur hér</div>
+            <>Navigation menu kemur hér</>
           }
         >
           <SubpageMainContent
@@ -74,7 +74,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
         </SidebarLayout>
       }
       details={
-            <div>Hér kemur open API spekkinn</div>
+            <>Hér kemur open API spekkinn</>
         }
     />
   )

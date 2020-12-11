@@ -42,7 +42,7 @@ export const ServiceInformation = ({
 
   const horizontalLine = () => {
     return (
-      <div
+      <Box
         style={{
           borderBottomWidth: 1,
           borderBottomStyle: 'solid',
@@ -53,7 +53,7 @@ export const ServiceInformation = ({
   }
   const showMobileTags = () => {
     return (
-      <div>
+      <Box>
         {/* Heading for data tags */}
         <GridRow>
           <GridColumn paddingTop="containerGutter">
@@ -104,12 +104,12 @@ export const ServiceInformation = ({
             </Inline>
           </GridColumn>
         </GridRow>
-      </div>
+      </Box>
     )
   }
   const showDesktopTags = () => {
     return (
-      <div>
+      <Box>
         {/* Headings for tags */}
         <GridRow>
           <GridColumn span="2/4" paddingTop="containerGutter">
@@ -153,7 +153,7 @@ export const ServiceInformation = ({
             </Inline>
           </GridColumn>
         </GridRow>
-      </div>
+      </Box>
     )
   }
   // Main page
