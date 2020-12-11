@@ -80,7 +80,6 @@ export const article = factory<Article>({
   slug: slugify('title'),
   intro: () => faker.lorem.paragraph(),
   category: null,
-  containsApplicationForm: () => faker.random.boolean(),
   subArticles: () =>
     faker.random.number(4) === 0
       ? subArticle.list(faker.random.number({ min: 1, max: 4 }))

@@ -28,9 +28,6 @@ export class Article {
   intro?: string
 
   @Field({ nullable: true })
-  containsApplicationForm: boolean
-
-  @Field({ nullable: true })
   importance: number
 
   @Field(() => [SliceUnion])
@@ -80,7 +77,6 @@ export const mapArticle = ({
   shortTitle: fields.shortTitle ?? '',
   slug: fields.slug ?? '',
   intro: fields.intro ?? '',
-  containsApplicationForm: fields.containsApplicationForm ?? false,
   importance: fields.importance ?? 0,
   body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
   processEntry: fields.processEntry
