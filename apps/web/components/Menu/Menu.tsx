@@ -21,7 +21,6 @@ interface Props {
   asideTopLinks: MegaMenuLink[]
   asideBottomTitle: string
   asideBottomLinks: MegaMenuLink[]
-  mainTitle: string
   mainLinks: MegaMenuLink[]
   buttonColorScheme?: ButtonTypes['colorScheme']
 }
@@ -30,19 +29,19 @@ export const Menu: FC<Props> = ({
   asideTopLinks,
   asideBottomTitle,
   asideBottomLinks,
-  mainTitle,
   mainLinks,
   buttonColorScheme = 'default',
 }) => {
   const searchInput = useRef<HTMLInputElement>()
   const { activeLocale, t } = useI18n()
+
   return (
     <MenuUI
       baseId="Menu"
       mainLinks={mainLinks}
       asideTopLinks={asideTopLinks}
       asideBottomLinks={asideBottomLinks}
-      mainTitle={mainTitle}
+      mainTitle={t.serviceCategories}
       asideBottomTitle={asideBottomTitle}
       myPagesText={t.login}
       renderDisclosure={(

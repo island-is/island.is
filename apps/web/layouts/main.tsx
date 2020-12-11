@@ -480,7 +480,6 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
         lang as Locale,
         asideBottomLinksData.menuLinks,
       ),
-      mainTitle: namespace.serviceCategories,
       mainLinks: formatMegaMenuCategoryLinks(lang as Locale, categories),
     },
   }

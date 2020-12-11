@@ -529,7 +529,6 @@ AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
         locale as Locale,
         asideBottomLinksData.menuLinks,
       ),
-      mainTitle: namespace.serviceCategories,
       mainLinks: formatMegaMenuCategoryLinks(locale as Locale, categories),
     },
   }
