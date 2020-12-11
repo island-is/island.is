@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import getConfig from 'next/config'
 
 import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
 import {
@@ -11,7 +12,7 @@ import {
   GetApiCatalogueInput,
 } from '@island.is/api/schema'
 
-import { GET_NAMESPACE_QUERY, GET_CATALOGUE_QUERY } from '../queries'
+import { GET_NAMESPACE_QUERY, GET_CATALOGUE_QUERY } from '@island.is/web/screens/queries'
 import { useNamespace } from '../../hooks'
 
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -22,26 +23,32 @@ import {
   ServiceList,
   SubpageMainContent,
   SubpageDetailsContent,
-  ServiceTagDisplayNames,
-} from '../../components'
+} from '@island.is/web/components'
 
 import { SubpageLayout } from '../Layouts/Layouts'
-import { Box, Stack, Text, Button, Link } from '@island.is/island-ui/core'
-import { CustomNextError } from '@island.is/web/units/errors'
+import { 
+  Box, 
+  Stack, 
+  Text, 
+  Button, 
+  Link, 
+  LoadingIcon,
+  GridContainer,
+} from '@island.is/island-ui/core'
 const { publicRuntimeConfig } = getConfig()
 
 /* TEMPORARY LAYOUT CREATED TO SCAFFOLD API CATALOGUE INTO THE WEB */
 
 interface ApiCatalogueProps {
-  title: string
+  mainContent  : GetNamespaceQuery['getNamespace']
   staticContent: GetNamespaceQuery['getNamespace']
   filterContent: GetNamespaceQuery['getNamespace']
 }
 
-const LIMIT = 2
+const LIMIT = 3
 
 const ApiCatalogue: Screen<ApiCatalogueProps> = ({
-  title,
+  mainContent,
   staticContent,
   filterContent,
 }) => {
@@ -51,27 +58,10 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
     throw new CustomNextError(404, 'Not found')
   }
 
-  const n = useNamespace(staticContent)
+  
+  const n = useNamespace(mainContent)
+  const sn = useNamespace(staticContent)
   const fn = useNamespace(filterContent)
-
-  const translateTags = (): ServiceTagDisplayNames => {
-    const names: ServiceTagDisplayNames = {
-      APIGW: fn('accessApigw'),
-      XROAD: fn('accessXroad'),
-      FINANCIAL: fn('dataFinancial'),
-      HEALTH: fn('dataHealth'),
-      OFFICIAL: fn('dataOfficial'),
-      PERSONAL: fn('dataPersonal'),
-      PUBLIC: fn('dataPublic'),
-      FREE: fn('pricingFree'),
-      PAID: fn('pricingPaid'),
-      GRAPHQL: fn('typeGraphql'),
-      REST: fn('typeRest'),
-      SOAP: fn('typeSoap'),
-      OPEN: 'OPEN', //tag not currently used
-    }
-    return names
-  }
 
   const onLoadMore = () => {
     if (data?.getApiCatalogue.pageInfo?.nextCursor == null) {
@@ -103,11 +93,11 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   })
 
   const { data, loading, error, fetchMore, refetch } = useQuery<
-    Query,
-    QueryGetApiCatalogueArgs
-  >(GET_CATALOGUE_QUERY, {
-    variables: {
-      input: parameters,
+      Query,
+      QueryGetApiCatalogueArgs
+    >(GET_CATALOGUE_QUERY, {
+      variables: {
+        input: parameters,
     },
   })
 
@@ -116,68 +106,62 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
       main={
         <SidebarLayout
           sidebarContent={
-            <></> // Navigation menu kemur hér
+            <div>Navigation menu here</div>
           }
         >
-          <SubpageMainContent
+          <SubpageMainContent 
             main={
-              <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
-                <Stack space={1}>
-                  <Text variant="h1">{n('webServicesTitle')}</Text>
-                  <Text variant="intro">{n('webServicesDescription')}</Text>
-                </Stack>
-                <Box marginTop={1}>
-                  <Text variant="default">{n('designGuideDescription')}</Text>
-                  <Link href="https://docs.devland.is/handbook/technical-overview/api-design-guide">
-                    <Button
-                      colorScheme="default"
-                      icon="arrowForward"
-                      iconType="filled"
-                      onBlur={function noRefCheck() {}}
-                      onClick={function noRefCheck() {}}
-                      onFocus={function noRefCheck() {}}
-                      preTextIconType="filled"
-                      size="default"
-                      type="button"
-                      variant="text"
-                    >
-                      {n('designGuideButtonTitle')}
-                    </Button>
-                  </Link>
-                </Box>
-              </Box>
+              <div>Main content here</div>
             }
-            image={<img src="/frame.png" alt="Viskuausan" />}
           />
         </SidebarLayout>
       }
       details={
-        <SubpageDetailsContent
+        <SubpageDetailsContent 
           header={
-            <Text variant="h4" color="blue600">
-              {n('title')}
-            </Text>
+            <Text variant="h4" color="blue600">{sn('title')}</Text>
           }
           content={
             <SidebarLayout
               sidebarContent={
-                <></> // Hér kemur filterinn
+                <>List filter here</>
               }
             >
-              <ServiceList
-                services={data?.getApiCatalogue?.services}
-                loading={loading}
-                moreToLoad={data?.getApiCatalogue?.pageInfo?.nextCursor != null}
-                emptyListText={n('notFound')}
-                errorMessage={
-                  error
-                    ? { heading: n('errorHeading'), text: n('errorText') }
-                    : undefined
-                }
-                loadMoreButtonText={n('fmButton')}
-                tagDisplayNames={translateTags()}
-                onLoadMoreClick={onLoadMore}
-              />
+              {(error || data?.getApiCatalogue?.services.length < 1) && (
+                <GridContainer>
+                  {error ? 
+                    <Text>Villa kom upp</Text> : 
+                    loading ? 
+                      <LoadingIcon animate color="blue400" size={32} /> :
+                      <Text>Engar þjónustur fundust</Text>
+                  }
+                </GridContainer>
+              )}
+              {data?.getApiCatalogue?.services.length > 0 && (
+                <GridContainer>
+                  <ServiceList
+                    services={data?.getApiCatalogue?.services}
+                    tagDisplayNames={filterContent}
+                  />
+                  {data?.getApiCatalogue?.pageInfo?.nextCursor != null && (
+                    <Box display="flex" justifyContent="center">
+                      <Button
+                        colorScheme="default"
+                        iconType="filled"
+                        onBlur={function noRefCheck() {}}
+                        onClick={() => onLoadMore()}
+                        onFocus={function noRefCheck() {}}
+                        size="default"
+                        type="button"
+                        variant="ghost"
+                      >
+                        {!loading ? sn('fmButton') : 
+                          <LoadingIcon animate color="blue400" size={16} />}
+                      </Button>
+                    </Box>
+                  )}
+                </GridContainer>
+              )}
             </SidebarLayout>
           }
         />
@@ -187,7 +171,19 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
 }
 
 ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const [staticContent, filterContent] = await Promise.all([
+  console.log(locale)
+  const [mainContent, staticContent, filterContent] = await Promise.all([
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'VefthjonusturHome',
+            lang: locale,
+          },
+        },
+      })
+      .then((res) => JSON.parse(res.data.getNamespace.fields)),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -213,7 +209,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
   ])
 
   return {
-    title: 'Vörulisti Vefþjónusta',
+    mainContent,
     staticContent,
     filterContent,
   }

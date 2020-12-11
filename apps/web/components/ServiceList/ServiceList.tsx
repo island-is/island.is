@@ -9,32 +9,14 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { ApiService } from '@island.is/api/schema'
-import { ResponsiveProp } from '../../../../libs/island-ui/core/src/utils/responsiveProp'
-import * as GridColumnStyles from '../../../../libs/island-ui/core/src/lib/Grid/GridColumn/GridColumn.treat'
+import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import { capitalize } from '@island.is/web/utils/capitalize'
+import { useNamespace } from 'apps/web/hooks'
 
 type Tag = {
   label: string
   href?: string
   onClick?: () => void
-}
-
-type CategoryKeys =
-  | 'FREE'
-  | 'PAID'
-  | 'OPEN'
-  | 'PUBLIC'
-  | 'OFFICIAL'
-  | 'PERSONAL'
-  | 'HEALTH'
-  | 'FINANCIAL'
-  | 'REST'
-  | 'SOAP'
-  | 'GRAPHQL'
-  | 'XROAD'
-  | 'APIGW'
-
-export type ServiceTagDisplayNames = {
-  [key in CategoryKeys]: string
 }
 
 export type ErrorMessage = {
@@ -45,51 +27,36 @@ export type ErrorMessage = {
 export interface ServiceListProps {
   baseUrl?: string
   services: ApiService[]
-  span?: ResponsiveProp<GridColumnStyles.GridColumns>
-  tagDisplayNames?: ServiceTagDisplayNames //If you want different display names for tag
-  loading?: Boolean // pass true to show loading icon
-  emptyListText?: string //text displayed when the list is empty
-  errorMessage?: ErrorMessage //pass null if no error
-  moreToLoad?: Boolean //should the load more button be shown
-  loadMoreButtonText?: string
-  onLoadMoreClick?: () => void
-  children?: JSX.Element | JSX.Element[]
+  tagDisplayNames?: GetNamespaceQuery['getNamespace']
 }
 
 export const ServiceList: React.FC<ServiceListProps> = ({
   baseUrl = './vorulisti/',
   services = [],
-  span = ['12/12', '12/12', '12/12', '6/12', '4/12'],
   tagDisplayNames = {},
-  loading = false,
-  moreToLoad = false,
-  emptyListText = 'No service was found',
-  errorMessage = null,
-  loadMoreButtonText = 'See more',
-  onLoadMoreClick,
-  children,
 }) => {
+  const n = useNamespace(tagDisplayNames)
   const CategoriesToTags = (service: ApiService) => {
     const tags: Tag[] = []
     let value
 
     service.pricing.forEach((tag) => {
-      value = tagDisplayNames[tag]
+      value = n(`pricing${capitalize(tag)}`)
       if (value !== undefined) tags.push({ label: value })
       else tags.push({ label: tag })
     })
     service.data.forEach((tag) => {
-      value = tagDisplayNames[tag]
+      value = n(`data${capitalize(tag)}`)
       if (value !== undefined) tags.push({ label: value })
       else tags.push({ label: tag })
     })
     service.type.forEach((tag) => {
-      value = tagDisplayNames[tag]
+      value = n(`type${capitalize(tag)}`)
       if (value !== undefined) tags.push({ label: value })
       else tags.push({ label: tag })
     })
     service.access.forEach((tag) => {
-      value = tagDisplayNames[tag]
+      value = n(`access${capitalize(tag)}`)
       if (value !== undefined) tags.push({ label: value })
       else tags.push({ label: tag })
     })
@@ -98,15 +65,10 @@ export const ServiceList: React.FC<ServiceListProps> = ({
 
   return (
     <GridContainer>
-      {services.length < 1 && !loading && (
-        <GridRow>
-          <CategoryCard heading={emptyListText} text="" />
-        </GridRow>
-      )}
       <GridRow>
         {services.map((item) => {
           return (
-            <GridColumn key={item.id.toString()} span={span} paddingBottom={3}>
+            <GridColumn key={item.id.toString()} span={['12/12', '12/12', '6/12']} paddingBottom={3}>
               <CategoryCard
                 href={`${baseUrl}${item.id}`}
                 heading={item.name}
@@ -116,51 +78,6 @@ export const ServiceList: React.FC<ServiceListProps> = ({
             </GridColumn>
           )
         })}
-        {loading && (
-          <GridColumn>
-            <Box borderRadius="large" padding="containerGutter">
-              <LoadingIcon animate color="blue400" size={32} />
-            </Box>
-          </GridColumn>
-        )}
-      </GridRow>
-      {errorMessage && (
-        <GridRow align="center">
-          <CategoryCard
-            colorScheme="red"
-            heading={errorMessage.heading}
-            text={errorMessage.text}
-          />
-        </GridRow>
-      )}
-      {services.length > 0 && moreToLoad && (
-        <GridRow align="center">
-          <Button
-            colorScheme="default"
-            iconType="filled"
-            onBlur={function noRefCheck() {}}
-            onClick={onLoadMoreClick}
-            onFocus={function noRefCheck() {}}
-            size="default"
-            type="button"
-            variant="ghost"
-          >
-            {loadMoreButtonText}
-          </Button>
-        </GridRow>
-      )}
-
-      <GridRow>
-        {
-          //rendering items below all, but within same GridContainer
-          React.Children.map(children, (child) => {
-            return (
-              <GridColumn span={span} paddingBottom={3}>
-                {child}
-              </GridColumn>
-            )
-          })
-        }
       </GridRow>
     </GridContainer>
   )
