@@ -18,7 +18,7 @@ export function formatProsecutorDemands(
   requestedCustodyEndDate: Date,
   isolation: boolean,
 ): string {
-  return `Þess er krafist að ${accusedName} ${formatNationalId(
+  return `Þess er krafist að ${accusedName} kt. ${formatNationalId(
     accusedNationalId,
   )} verði með úrskurði ${court?.replace(
     'Héraðsdómur',
@@ -63,7 +63,7 @@ export function formatConclusion(
 ): string {
   return rejecting
     ? 'Beiðni um gæsluvarðhald hafnað.'
-    : `Kærði, ${accusedName} ${formatNationalId(
+    : `Kærði, ${accusedName}, kt. ${formatNationalId(
         accusedNationalId,
       )} skal sæta gæsluvarðhaldi, þó ekki lengur en til ${formatDate(
         custodyEndDate,
