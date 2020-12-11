@@ -329,7 +329,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
                   autosuggest={autosuggest}
                   onRouting={() => {
                     if (onRouting) {
-                      onRouting
+                      onRouting()
                     }
                   }}
                 />

@@ -5,11 +5,11 @@ import {
   ButtonTypes,
   Box,
 } from '@island.is/island-ui/core'
-import { useI18n } from 'apps/web/i18n'
+import { useI18n } from '@island.is/web/i18n'
 import React, { FC, useRef } from 'react'
 import { SearchInput } from '..'
 import { LanguageToggler } from '../LanguageToggler'
-import { AnchorAttributes } from 'apps/web/i18n/routes'
+import { AnchorAttributes } from '@island.is/web/i18n/routes'
 
 interface MegaMenuLink {
   href: AnchorAttributes
@@ -60,7 +60,9 @@ export const Menu: FC<Props> = ({
                 onClick={(e) => {
                   onClick(e)
                   setTimeout(() => {
-                    searchInput?.current?.focus()
+                    if (searchInput.current) {
+                      searchInput.current.focus()
+                    }
                   }, 100)
                 }}
               />

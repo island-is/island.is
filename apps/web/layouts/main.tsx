@@ -21,6 +21,7 @@ import { Header, Main, PageLoader } from '../components'
 import { GET_GROUPED_MENU_QUERY, GET_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import {
+  ArticleCategory,
   QueryGetMenuArgs,
   GetMenuQuery,
   GetGroupedMenuQuery,
@@ -32,7 +33,6 @@ import {
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
   QueryGetGroupedMenuArgs,
-  Menu,
   MenuLinkWithChildren,
   MenuLink,
 } from '../graphql/schema'
@@ -45,7 +45,6 @@ import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { environment } from '../environments/environment'
 import { useNamespace } from '../hooks'
 import pathNames, { ContentType } from '../i18n/routes'
-import { AccessCategory, ArticleCategory } from 'libs/api/mocks/src/types'
 
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
@@ -68,7 +67,6 @@ export interface LayoutProps {
   wrapContent?: boolean
   showHeader?: boolean
   showFooter?: boolean
-  hasDrawerMenu?: boolean
   categories: GetArticleCategoriesQuery['getArticleCategories']
   topMenuCustomLinks?: FooterLinkProps[]
   footerUpperInfo?: FooterLinkProps[]
@@ -106,7 +104,6 @@ const Layout: NextComponentType<
   wrapContent = true,
   showHeader = true,
   showFooter = true,
-  hasDrawerMenu = false,
   categories,
   topMenuCustomLinks,
   footerUpperInfo,
