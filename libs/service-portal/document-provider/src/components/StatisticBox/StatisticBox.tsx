@@ -1,8 +1,5 @@
 import React, { FC } from 'react'
-import { Box, Button, Text, Inline } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { Link } from 'react-router-dom'
-import { defineMessage } from 'react-intl'
+import { Box, Text, Inline } from '@island.is/island-ui/core'
 
 interface Props {
   name: string

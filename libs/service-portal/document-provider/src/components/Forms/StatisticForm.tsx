@@ -10,6 +10,7 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
 export type CategoryFormOption = {
   label: string
@@ -50,10 +51,7 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
                   name={name}
                   value={value}
                   onChange={onChange}
-                  placeholder={formatMessage({
-                    id: 'service.portal:document-provider-statistics-file-name',
-                    defaultMessage: 'Leitaðu eftir skjalaheiti',
-                  })}
+                  placeholder={formatMessage(m.DashBoardStatisticsFileName)}
                   backgroundColor="blue"
                   icon="search"
                 />
@@ -73,11 +71,11 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
                   name={name}
                   value={value}
                   onChange={onChange}
-                  placeholder="Veldu flokk"
-                  label={formatMessage({
-                    id: 'service.portal:document-provider-category',
-                    defaultMessage: 'Flokkur',
-                  })}
+                  placeholder={formatMessage(
+                    m.DashBoardStatisticsCategoryPlaceHolder,
+                  )}
+                  label={formatMessage(m.DashBoardStatisticsCategory)}
+                  //   need translations for this when implemented
                   options={[
                     { label: 'Fjármál', value: 'fjarmal' },
                     { label: 'Annað', value: 'annad' },
@@ -96,11 +94,11 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
                   name={name}
                   value={value}
                   onChange={onChange}
-                  placeholder="Veldu tegund"
-                  label={formatMessage({
-                    id: 'service.portal:document-provider-statistics-type',
-                    defaultMessage: 'Tegund',
-                  })}
+                  placeholder={formatMessage(
+                    m.DashBoardStatisticsTypePlaceHolder,
+                  )}
+                  label={formatMessage(m.DashBoardStatisticsType)}
+                  //   need translations for this when implemented
                   options={[
                     { label: 'Greiðsluseðill', value: 'greidslusedill' },
                     { label: 'Tilkynning', value: 'tilkynning' },
@@ -119,11 +117,10 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
               control={control}
               render={({ onChange, value }) => (
                 <DatePicker
-                  label="Dagsetning frá"
-                  placeholderText={formatMessage({
-                    id: 'service.portal:document-provider-statistics-date-from',
-                    defaultMessage: 'Veldu dagsetningu',
-                  })}
+                  label={formatMessage(m.DashBoardStatisticsDateFrom)}
+                  placeholderText={formatMessage(
+                    m.DashBoardStatisticsDateFromPlaceHolder,
+                  )}
                   selected={value}
                   locale="is"
                   handleChange={onChange}
@@ -138,11 +135,10 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
               control={control}
               render={({ onChange, value }) => (
                 <DatePicker
-                  label="Dagsetning til"
-                  placeholderText={formatMessage({
-                    id: 'service.portal:document-provider-statistics-date-to',
-                    defaultMessage: 'Veldu dagsetningu',
-                  })}
+                  label={formatMessage(m.DashBoardStatisticsDateTo)}
+                  placeholderText={formatMessage(
+                    m.DashBoardStatisticsDateToPlaceHolder,
+                  )}
                   selected={value}
                   locale="is"
                   handleChange={onChange}

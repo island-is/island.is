@@ -13,6 +13,7 @@ import {
   StatisticForm,
   StatisticFormData,
 } from '../../components/Forms/StatisticForm'
+import { m } from '../../lib/messages'
 
 const Dashboard: ServicePortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
@@ -37,6 +38,7 @@ const Dashboard: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const handleFetch = () => {
     //TODO: Set up real data
+    //How do we translate this ?
     setData([
       {
         name: 'Send skjöl',
@@ -45,7 +47,7 @@ const Dashboard: ServicePortalModuleComponent = ({ userInfo }) => {
       { name: 'Opnuð skjöl', value: 333 },
       { name: 'Hnipp', value: 444 },
     ])
-
+    //How do we translate this ?
     seterrorData([
       {
         title: 'Skjalaveituþjónusta er ekki í lagi',
@@ -67,20 +69,11 @@ const Dashboard: ServicePortalModuleComponent = ({ userInfo }) => {
     <Box marginBottom={[2, 3, 5]}>
       <Box marginBottom={[2, 3]}>
         <Text variant="h1" as="h1">
-          {formatMessage({
-            id: 'service.portal:document-provider',
-            defaultMessage: 'Skjalaveita',
-          })}
+          {formatMessage(m.DashBoardTitle)}
         </Text>
       </Box>
       <Box marginBottom={2}>
-        <Text as="p">
-          {formatMessage({
-            id: 'sp.document-provider:dashboard-description',
-            defaultMessage:
-              'Á þessari síðu getur þú skoðað tölfræði yfir send skjöl.',
-          })}
-        </Text>
+        <Text as="p">{formatMessage(m.DashBoardDescription)}</Text>
       </Box>
       <Box marginBottom={2}>
         {errorData &&
