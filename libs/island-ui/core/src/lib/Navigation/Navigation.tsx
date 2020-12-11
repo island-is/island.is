@@ -68,7 +68,7 @@ interface NavigationTreeProps {
 export interface NavigationProps {
   title: string
   label?: string
-  activeItemTitle: string
+  activeItemTitle?: string
   colorScheme?: keyof typeof styles.colorScheme
   expand?: boolean
   isMenuDialog?: boolean
@@ -185,7 +185,7 @@ export const Navigation: FC<NavigationProps> = ({
             onClick={() => menu.show}
           >
             <MobileButton
-              title={activeItemTitle}
+              title={activeItemTitle ?? title}
               colorScheme={colorScheme}
               aria-expanded={!mobileMenuOpen}
               aria-controls={'OpenNavigationDialog'}
@@ -198,6 +198,7 @@ export const Navigation: FC<NavigationProps> = ({
               transform: 'none',
               width: '100%',
               borderRadius: '8px',
+              zIndex: 10,
             }}
             className={cn(styles.transition, styles.menuShadow[colorScheme])}
           >
