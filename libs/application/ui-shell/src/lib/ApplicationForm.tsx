@@ -1,10 +1,14 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { GET_APPLICATION } from '@island.is/application/graphql'
-import { Form, Schema } from '@island.is/application/core'
+import {
+  Application,
+  ApplicationTemplateHelper,
+  Form,
+  Schema,
+} from '@island.is/application/core'
 import { FormShell } from './FormShell'
 import {
-  getApplicationStateInformation,
   getApplicationTemplateByTypeId,
   getApplicationUIFields,
 } from '@island.is/application/template-loader'
@@ -16,14 +20,10 @@ function isOnProduction(): boolean {
   return false
 }
 
-const ShellWrapper: FC<{
+const ApplicationLoader: FC<{
   applicationId: string
   nationalRegistryId: string
 }> = ({ applicationId, nationalRegistryId }) => {
-  const [dataSchema, setDataSchema] = useState<Schema>()
-  const [form, setForm] = useState<Form>()
-  const [, fieldsDispatch] = useFields()
-
   const { data, error, loading } = useQuery(GET_APPLICATION, {
     variables: {
       input: {
@@ -35,9 +35,34 @@ const ShellWrapper: FC<{
 
   const application = data?.getApplication
 
+  if (!applicationId || error) {
+    return <NotFound />
+  }
+  // TODO we need better loading states
+  if (loading) {
+    return null
+  }
+  return (
+    <ShellWrapper
+      application={application}
+      nationalRegistryId={nationalRegistryId}
+    />
+  )
+}
+
+const ShellWrapper: FC<{
+  application: Application
+  nationalRegistryId: string
+}> = ({ application, nationalRegistryId }) => {
+  const [dataSchema, setDataSchema] = useState<Schema>()
+  const [form, setForm] = useState<Form>()
+  const [, fieldsDispatch] = useFields()
+
   useEffect(() => {
     async function populateForm() {
-      if (application !== undefined && form === undefined) {
+      console.log('popluate')
+      if (dataSchema === undefined && form === undefined) {
+        console.log('load templates')
         const template = await getApplicationTemplateByTypeId(
           application.typeId,
         )
@@ -45,18 +70,17 @@ const ShellWrapper: FC<{
           template !== null &&
           !(isOnProduction() && !template.readyForProduction)
         ) {
-          const stateInformation = await getApplicationStateInformation(
-            application,
-          )
-          const applicationFields = await getApplicationUIFields(
-            application.typeId,
-          )
-          fieldsDispatch(applicationFields)
-          const role = template.mapUserToRole(
-            nationalRegistryId,
-            application.state,
-          )
+          const helper = new ApplicationTemplateHelper(application, template)
+          const stateInformation =
+            helper.getApplicationStateInformation() || null
           if (stateInformation?.roles?.length) {
+            const applicationFields = await getApplicationUIFields(
+              application.typeId,
+            )
+            const role = template.mapUserToRole(
+              nationalRegistryId,
+              application.state,
+            )
             const currentRole = stateInformation.roles.find(
               (r) => r.id === role,
             )
@@ -64,19 +88,17 @@ const ShellWrapper: FC<{
               const formDescriptor = await currentRole.formLoader()
               setForm(formDescriptor)
               setDataSchema(template.dataSchema)
+              fieldsDispatch(applicationFields)
             }
           }
         }
       }
     }
     populateForm()
-  }, [fieldsDispatch, application, form, nationalRegistryId])
+  }, [fieldsDispatch, application, form, nationalRegistryId, dataSchema])
 
-  if (!applicationId || error) {
-    return <NotFound />
-  }
   // TODO we need better loading states
-  if (loading || !form || !dataSchema) {
+  if (!form || !dataSchema) {
     return null
   }
   return (
@@ -95,7 +117,7 @@ export const ApplicationForm: FC<{
 }> = ({ applicationId, nationalRegistryId }) => {
   return (
     <FieldProvider>
-      <ShellWrapper
+      <ApplicationLoader
         applicationId={applicationId}
         nationalRegistryId={nationalRegistryId}
       />
