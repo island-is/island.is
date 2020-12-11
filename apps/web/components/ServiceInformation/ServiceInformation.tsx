@@ -2,7 +2,6 @@ import React from 'react'
 import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import {
   Box,
-  Breadcrumbs,
   GridColumn,
   GridRow,
   Inline,
@@ -160,11 +159,6 @@ export const ServiceInformation = ({
   // Main page
   return (
     <Box>
-      <Breadcrumbs>
-        <a href="/throun/vefthjonustur">Vefþjónustur</a>
-        <a href="/throun/vefthjonustur/vorulisti">API Vörulisti</a>
-        <span>{service.name}</span>
-      </Breadcrumbs>
       <GridRow>
         <GridColumn>
           <Text variant="h1">{service.name}</Text>
