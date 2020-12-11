@@ -24,9 +24,6 @@ export class WidgetErrorBoundary extends React.Component<Props, StateTypes> {
   }
 
   componentDidCatch(error: Error) {
-    if (window.location.origin.includes('http://localhost')) {
-      return
-    }
     Sentry.captureException(error)
   }
 

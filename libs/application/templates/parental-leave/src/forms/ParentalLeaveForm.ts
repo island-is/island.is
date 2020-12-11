@@ -60,9 +60,8 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildDataProviderItem({
                   id: 'userProfile',
                   type: 'UserProfileProvider',
-                  title: 'Your user profile information',
-                  subTitle:
-                    'In order to apply for this application we need your email and phone number',
+                  title: m.userProfileInformationTitle,
+                  subTitle: m.userProfileInformationSubTitle,
                 }),
                 buildDataProviderItem({
                   id: 'pregnancyStatus',

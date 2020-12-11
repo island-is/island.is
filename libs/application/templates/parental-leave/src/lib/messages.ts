@@ -332,6 +332,18 @@ export const m = defineMessages({
     defaultMessage: 'Fæðingardagur',
     description: 'Birth date',
   },
+  userProfileInformationTitle: {
+    id: 'pl.application:userprofile.title',
+    defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
+    description: 'Your user profile information',
+  },
+  userProfileInformationSubTitle: {
+    id: 'pl.application:userprofile.subtitle',
+    defaultMessage:
+      'Til þess að sækja um fæðingarorlof þarftu að vera búin að stilla netfang og símanúmer á mínum síðum',
+    description:
+      'In order to apply for this application we need your email and phone number',
+  },
   expectedDateOfBirthTitle: {
     id: 'pl.application:expectedDateOfBirth.title',
     defaultMessage: 'Áætlaður fæðingardagur',
