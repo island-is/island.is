@@ -6,9 +6,15 @@ import {
   ILifeEventPage,
   INews,
   IUrl,
+  IVidspyrnaFrontpage,
 } from '../generated/contentfulTypes'
 
-type UrlPageTypes = IArticle | IArticleCategory | INews | ILifeEventPage
+type UrlPageTypes =
+  | IArticle
+  | IArticleCategory
+  | INews
+  | ILifeEventPage
+  | IVidspyrnaFrontpage
 
 export const mapPage = ({ fields, sys }: UrlPageTypes): UrlPage => ({
   id: sys.id,

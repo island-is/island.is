@@ -1,4 +1,4 @@
-# Code standards
+# Code Standards
 
 We use [Prettier](https://prettier.io/) and [ESLint](https://eslint.org/) to automatically enforce most of our Code Standards. Most of our rules follow recommendations from both project with these additions and changes:
 

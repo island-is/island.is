@@ -17,12 +17,10 @@ import { AuthModule, UserModule, CaseModule, FileModule } from './modules/'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
-const autoSchemaFile = debug ? 'apps/judicial-system/api.graphql' : true
+const autoSchemaFile = environment.production
+  ? true
+  : 'apps/judicial-system/api.graphql'
 
-/*
- * When adding new resolvers through your modules don't forget to add them to buildSchema.ts as well.
- * So the automatically generated schemas won't be failing when running.
- */
 @Module({
   imports: [
     GraphQLModule.forRoot({

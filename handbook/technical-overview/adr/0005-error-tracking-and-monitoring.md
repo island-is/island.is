@@ -1,4 +1,4 @@
-# Error tracking and monitoring
+# Error Tracking and Monitoring
 
 - Status: accepted
 - Deciders: devs, devops

@@ -8,7 +8,7 @@ export interface MappedData {
   title: string
   content?: string
   contentWordCount?: number
-  hasProcessEntry?: boolean
+  processEntryCount?: number
   fillAndSignLinks?: number
   pdfLinks?: number
   wordLinks?: number
