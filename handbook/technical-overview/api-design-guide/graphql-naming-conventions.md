@@ -1,4 +1,4 @@
-# GraphQL naming conventions
+# GraphQL Naming Conventions
 
 This document describes the GraphQL's Naming Conventions
 

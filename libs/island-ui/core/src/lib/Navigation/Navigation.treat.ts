@@ -6,7 +6,9 @@ export const divider = style({
   height: 1,
 })
 
-export const root = style({})
+export const root = style({
+  transition: 'background-color 150ms',
+})
 
 export const ul = style({
   borderLeftWidth: 1,

@@ -1,4 +1,4 @@
-# Judicial system
+# Judicial System
 
 ## About
 

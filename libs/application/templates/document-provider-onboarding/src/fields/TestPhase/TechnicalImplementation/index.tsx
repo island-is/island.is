@@ -1,10 +1,16 @@
 import React, { FC } from 'react'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  getValueViaPath,
+  formatText,
+} from '@island.is/application/core'
 import { m } from '../../../forms/messages'
 import { useFormContext, Controller } from 'react-hook-form'
 import { Box, Text, Checkbox } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
-const TestPhaseInfoScreen: FC<FieldBaseProps> = ({ field, application }) => {
+const TestPhaseInfoScreen: FC<FieldBaseProps> = ({ application }) => {
+  const { formatMessage } = useLocale()
   const { answers: formValue } = application
 
   const currentAnswer = getValueViaPath(
@@ -19,15 +25,31 @@ const TestPhaseInfoScreen: FC<FieldBaseProps> = ({ field, application }) => {
       <Box marginBottom={3}>
         <Text>
           <strong>
-            {m.testTechnicalImplementationSubTitle.defaultMessage}
+            {formatText(
+              m.testTechnicalImplementationSubTitle,
+              application,
+              formatMessage,
+            )}
           </strong>
         </Text>
       </Box>
       <Box marginBottom={3}>
-        <Text>{m.testTechnicalImplementationMessage1.defaultMessage}</Text>
+        <Text>
+          {formatText(
+            m.testTechnicalImplementationMessage1,
+            application,
+            formatMessage,
+          )}
+        </Text>
       </Box>
       <Box marginBottom={3}>
-        <Text>{m.testTechnicalImplementationMessage2.defaultMessage}</Text>
+        <Text>
+          {formatText(
+            m.testTechnicalImplementationMessage2,
+            application,
+            formatMessage,
+          )}
+        </Text>
       </Box>
       <Box marginBottom={3}>
         <Controller
@@ -43,7 +65,11 @@ const TestPhaseInfoScreen: FC<FieldBaseProps> = ({ field, application }) => {
                 }}
                 checked={value}
                 name="technicalAnswer"
-                label={m.technicalImplementationOptionLabel.defaultMessage}
+                label={formatText(
+                  m.technicalImplementationOptionLabel,
+                  application,
+                  formatMessage,
+                )}
                 large
                 hasError={
                   errors.technicalAnswer &&

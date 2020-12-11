@@ -11,36 +11,52 @@ interface MobileMenuItem {
   itemName: string
 }
 
-const MobileMenuItem: FC<MobileMenuItem> = ({ item, onClick, itemName }) => {
+const MobileMenuItem: FC<MobileMenuItem> = ({ item, itemName }) => {
   const figure = getMobileMenuFigure(item.path)
 
   return (
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      height="full"
+      background="white"
+      padding={2}
+      borderRadius="large"
+      textAlign="center"
+      className={styles.figureCard}
+    >
+      <Box
+        className={styles.figure}
+        style={{ backgroundImage: `url(${figure})` }}
+        marginBottom={2}
+      />
+      <Text variant="eyebrow" color="blueberry400">
+        {itemName}
+      </Text>
+    </Box>
+  )
+}
+
+const MobileMenuItemWrapper: FC<MobileMenuItem> = (props) => {
+  return (
     <GridColumn span={['1/2', '1/4']}>
-      <Link to={item.path || ''} className={styles.link} onClick={onClick}>
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          height="full"
-          background="white"
-          padding={2}
-          borderRadius="large"
-          textAlign="center"
-          className={styles.figureCard}
+      {props.item.external ? (
+        <a href={props.item.path} target="_blank" className={styles.link}>
+          <MobileMenuItem {...props} />
+        </a>
+      ) : (
+        <Link
+          to={props.item.path || ''}
+          className={styles.link}
+          onClick={props.onClick}
         >
-          <Box
-            className={styles.figure}
-            style={{ backgroundImage: `url(${figure})` }}
-            marginBottom={2}
-          />
-          <Text variant="eyebrow" color="blueberry400">
-            {itemName}
-          </Text>
-        </Box>
-      </Link>
+          <MobileMenuItem {...props} />
+        </Link>
+      )}
     </GridColumn>
   )
 }
 
-export default MobileMenuItem
+export default MobileMenuItemWrapper

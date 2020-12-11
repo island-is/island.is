@@ -9,10 +9,17 @@ interface Props {
   icon?: Pick<IconProps, 'icon' | 'type'>
   active: boolean
   external?: boolean
+  variant?: 'blue' | 'blueberry'
   onClick?: () => void
 }
 
-const NavItemContent: FC<Props> = ({ icon, active, onClick, children }) => {
+const NavItemContent: FC<Props> = ({
+  icon,
+  active,
+  onClick,
+  variant = 'blue',
+  children,
+}) => {
   return (
     <Box
       display="flex"
@@ -28,11 +35,22 @@ const NavItemContent: FC<Props> = ({ icon, active, onClick, children }) => {
             type={icon.type}
             icon={icon.icon}
             size="medium"
-            color={active ? 'blue600' : 'blue300'}
+            color={
+              active
+                ? variant === 'blue'
+                  ? 'blue600'
+                  : 'blueberry600'
+                : variant === 'blue'
+                ? 'blue300'
+                : 'blueberry300'
+            }
           />
         </Box>
       ) : null}
-      <Text fontWeight={active ? 'semiBold' : 'regular'} color="blue600">
+      <Text
+        fontWeight={active ? 'semiBold' : 'regular'}
+        color={variant === 'blue' ? 'blue600' : 'blueberry600'}
+      >
         {children}
       </Text>
     </Box>
