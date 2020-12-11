@@ -274,7 +274,6 @@ export const AsyncSearchInput = forwardRef<
       ? false
       : colorSchemeContext === 'white' || white
 
-    console.log(colorSchemeContext)
     return (
       <div
         {...rootProps}
