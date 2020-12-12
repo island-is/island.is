@@ -19,7 +19,6 @@ export interface MappedData {
   tags?: tag[]
   dateUpdated: string
   dateCreated: string
-  nextSyncToken?: string
 }
 
 export enum SearchIndexes {
