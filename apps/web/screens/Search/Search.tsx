@@ -124,7 +124,6 @@ const Search: Screen<CategoryProps> = ({
     // create a map of sidebar type data for easier lookup later
     const typeNames = {
       webNews: n('newsTitle'),
-      webAdgerdirPage: n('adgerdirTitle'),
     }
     const typeCountResults = countResults.typesCount.reduce(
       (typeList: SidebarTagMap, { key, count: total }) => {
@@ -147,7 +146,6 @@ const Search: Screen<CategoryProps> = ({
 
   const getLabels = (item) => {
     const labels = []
-
     switch (
       item.__typename as LifeEventPage['__typename'] &
         News['__typename'] &
@@ -161,6 +159,9 @@ const Search: Screen<CategoryProps> = ({
         break
       case 'News':
         labels.push(n('newsTitle'))
+        break
+      case 'AdgerdirPage':
+        labels.push(n('adgerdirTitle'))
         break
       default:
         break
@@ -446,6 +447,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       'webArticle' as SearchableContentTypes,
       'webLifeEventPage' as SearchableContentTypes,
       'webAboutPage' as SearchableContentTypes,
+      'webAdgerdirPage' as SearchableContentTypes,
     ]
   }
 
