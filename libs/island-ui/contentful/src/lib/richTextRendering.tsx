@@ -190,7 +190,7 @@ export const defaultRenderComponent = (
     case 'ProcessEntry':
       return (
         <Hidden print={true}>
-          <ProcessEntry {...slice} locale={locale} />
+          <ProcessEntry {...slice} />
         </Hidden>
       )
 

@@ -167,7 +167,7 @@ const Search: Screen<CategoryProps> = ({
         break
     }
 
-    if (item.containsApplicationForm) {
+    if (item.processEntry) {
       labels.push(n('applicationForm'))
     }
 
