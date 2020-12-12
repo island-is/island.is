@@ -14,6 +14,7 @@ import {
   Link,
   Menu,
   News,
+  Page,
   SectionWithImage,
   Slice,
   SubArticle,
@@ -73,14 +74,14 @@ export const articleCategory = factory<ArticleCategory>({
   description: () => faker.lorem.sentence(),
 })
 
-export const article = factory<Article>({
+export const article = factory<SystemMetadata<Article>>({
+  typename: 'Article',
   id: () => faker.random.uuid(),
   title: () => title(),
   body: () => slice.list(3),
   slug: slugify('title'),
   intro: () => faker.lorem.paragraph(),
   category: null,
-  containsApplicationForm: () => faker.random.boolean(),
   subArticles: () =>
     faker.random.number(4) === 0
       ? subArticle.list(faker.random.number({ min: 1, max: 4 }))
@@ -163,8 +164,15 @@ export const frontPageSlider = factory<FrontpageSlider>({
   content: () => faker.lorem.paragraph(),
 })
 
+export const page = simpleFactory(
+  (): Page => {
+    const factory = faker.random.arrayElement([article, subArticle])
+    return factory()
+  },
+)
+
 export const featured = factory<Featured>({
-  thing: () => article(),
+  thing: () => page(),
   title: ({ thing }) => thing.title,
   attention: () => faker.random.boolean(),
 })

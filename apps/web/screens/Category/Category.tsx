@@ -345,11 +345,7 @@ const Category: Screen<CategoryProps> = ({
                               )}
                               <Stack space={2}>
                                 {sortedArticles.map(
-                                  ({
-                                    title,
-                                    slug,
-                                    containsApplicationForm,
-                                  }) => {
+                                  ({ title, slug, processEntry }) => {
                                     return (
                                       <FocusableBox
                                         key={slug}
@@ -361,7 +357,7 @@ const Category: Screen<CategoryProps> = ({
                                           <LinkCard
                                             isFocused={isFocused}
                                             tag={
-                                              containsApplicationForm &&
+                                              !!processEntry &&
                                               n('applicationProcess', 'Umsókn')
                                             }
                                           >
