@@ -48,10 +48,12 @@ export class AuditTrailService {
       throw new ReferenceError('Audit trail has not been initialized')
     }
 
-    this.trail?.info('Audit', {
-      user: userId,
-      action,
-      cases: caseIds,
-    })
+    this.trail?.info(
+      JSON.stringify({
+        user: userId,
+        action,
+        cases: caseIds,
+      }),
+    )
   }
 }
