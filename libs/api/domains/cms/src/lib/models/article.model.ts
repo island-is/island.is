@@ -1,13 +1,12 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { IArticle } from '../generated/contentfulTypes'
-import { mapDocument } from './slice.model'
 import { Image, mapImage } from './image.model'
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { ArticleGroup, mapArticleGroup } from './articleGroup.model'
 import { ArticleSubgroup, mapArticleSubgroup } from './articleSubgroup.model'
 import { Organization, mapOrganization } from './organization.model'
 import { SubArticle, mapSubArticle } from './subArticle.model'
-import { SliceUnion } from '../unions/slice.union'
+import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
