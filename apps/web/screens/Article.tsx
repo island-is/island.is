@@ -18,13 +18,9 @@ import {
   Tag,
   Link,
   Navigation,
+  TableOfContents,
 } from '@island.is/island-ui/core'
-import {
-  DrawerMenu,
-  SidebarBox,
-  RichText,
-  HeadWithSocialSharing,
-} from '@island.is/web/components'
+import { RichText, HeadWithSocialSharing } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { Screen } from '@island.is/web/types'
@@ -37,7 +33,6 @@ import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
   AllSlicesFragment as Slice,
-  AllSlicesProcessEntryFragment as ProcessEntrySchema,
   GetSingleArticleQuery,
   QueryGetSingleArticleArgs,
 } from '@island.is/web/graphql/schema'
@@ -114,7 +109,7 @@ const RelatedArticles: FC<{
   if (articles.length === 0) return null
 
   return (
-    <SidebarBox>
+    <Box background="purple100" borderRadius="large" padding={[3, 3, 4]}>
       <Stack space={[1, 1, 2]}>
         <Text variant="eyebrow" as="h2">
           {title}
@@ -132,7 +127,79 @@ const RelatedArticles: FC<{
           </Link>
         ))}
       </Stack>
-    </SidebarBox>
+    </Box>
+  )
+}
+
+const TOC: FC<{
+  selectedSubArticle: SubArticle
+  title: string
+}> = ({ selectedSubArticle, title }) => {
+  const navigation = useMemo(() => {
+    return createSubArticleNavigation(selectedSubArticle?.body ?? [])
+  }, [selectedSubArticle?.body])
+  if (navigation.length === 0) {
+    return null
+  }
+  return (
+    <Box marginTop={3}>
+      <TableOfContents
+        tableOfContentsTitle={title}
+        headings={navigation.map(({ id, text }) => ({
+          headingTitle: text,
+          headingId: id,
+        }))}
+        onClick={(id) =>
+          document.getElementById(id).scrollIntoView({
+            behavior: 'smooth',
+          })
+        }
+      />
+    </Box>
+  )
+}
+
+const ArticleNavigation: FC<
+  ArticleSidebarProps & { isMenuDialog?: boolean }
+> = ({ article, activeSlug, n, isMenuDialog }) => {
+  const { activeLocale } = useI18n()
+  return (
+    article.subArticles.length > 0 && (
+      <Navigation
+        baseId="articleNav"
+        title={n('sidebarHeader')}
+        activeItemTitle={
+          !activeSlug
+            ? article.shortTitle ?? article.title
+            : article.subArticles.find((sub) => activeSlug === sub.slug).title
+        }
+        isMenuDialog={isMenuDialog}
+        renderLink={(link, { typename, slug }) => {
+          return (
+            <NextLink
+              {...pathNames(activeLocale, typename as ContentType, slug)}
+              passHref
+            >
+              {link}
+            </NextLink>
+          )
+        }}
+        items={[
+          {
+            title: article.shortTitle ?? article.title,
+            typename: article.__typename,
+            slug: [article.slug],
+            active: !activeSlug,
+          },
+          ...article.subArticles.map((item) => ({
+            title: item.title,
+            typename: item.__typename,
+            slug: [article.slug, item.slug],
+            active: activeSlug === item.slug,
+          })),
+        ]}
+      />
+    )
   )
 }
 
@@ -147,40 +214,9 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
   activeSlug,
   n,
 }) => {
-  const { activeLocale } = useI18n()
   return (
     <Stack space={3}>
-      {article.subArticles.length > 0 && (
-        <Navigation
-          baseId="articleNav"
-          title={n('sidebarHeader')}
-          activeItemTitle="test"
-          renderLink={(link, { typename, slug }) => {
-            return (
-              <NextLink
-                {...pathNames(activeLocale, typename as ContentType, slug)}
-                passHref
-              >
-                {link}
-              </NextLink>
-            )
-          }}
-          items={[
-            {
-              title: article.shortTitle ?? article.title,
-              typename: article.__typename,
-              slug: [article.slug],
-              active: !activeSlug,
-            },
-            ...article.subArticles.map((item) => ({
-              title: item.title,
-              typename: item.__typename,
-              slug: [article.slug, item.slug],
-              active: activeSlug === item.slug,
-            })),
-          ]}
-        />
-      )}
+      <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
       <RelatedArticles
         title={n('relatedMaterial')}
         articles={article.relatedArticles}
@@ -284,11 +320,6 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             </Breadcrumbs>
           </GridColumn>
         </GridRow>
-        {!!contentOverviewOptions.length && (
-          <Hidden print={true} above="sm">
-            <DrawerMenu categories={combinedMobileNavigation} />
-          </Hidden>
-        )}
         <GridRow>
           <GridColumn
             offset={['0', '0', '0', '0', '1/9']}
@@ -297,9 +328,25 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             <Text variant="h1" as="h1">
               <span id={slugify(article.title)}>{article.title}</span>
             </Text>
+            <Box marginTop={3} display={['block', 'block', 'none']} printHidden>
+              <ArticleNavigation
+                article={article}
+                n={n}
+                activeSlug={query.subSlug}
+                isMenuDialog
+              />
+            </Box>
             <Box marginTop={3} display={['none', 'none', 'block']} printHidden>
               <ProcessEntry {...processEntry} />
             </Box>
+            <GridRow>
+              <GridColumn span={[null, '4/7', '5/7', '4/7', '3/7']}>
+                <TOC
+                  title={n('tableOfContentTitle')}
+                  selectedSubArticle={subArticle}
+                />
+              </GridColumn>
+            </GridRow>
             {subArticle && (
               <Text variant="h2" as="h2" paddingTop={7}>
                 <span id={slugify(subArticle.title)}>{subArticle.title}</span>
@@ -315,6 +362,13 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           />
           <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
             <ProcessEntry {...processEntry} />
+            <Box marginTop={3}>
+              <ArticleSidebar
+                article={article}
+                n={n}
+                activeSlug={query.subSlug}
+              />
+            </Box>
           </Box>
         </Box>
         {!!processEntry &&
