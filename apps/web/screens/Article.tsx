@@ -336,9 +336,15 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                 isMenuDialog
               />
             </Box>
-            <Box marginTop={3} display={['none', 'none', 'block']} printHidden>
-              <ProcessEntry {...processEntry} />
-            </Box>
+            {!!processEntry && (
+              <Box
+                marginTop={3}
+                display={['none', 'none', 'block']}
+                printHidden
+              >
+                <ProcessEntry {...processEntry} />
+              </Box>
+            )}
             <GridRow>
               <GridColumn span={[null, '4/7', '5/7', '4/7', '3/7']}>
                 <TOC
@@ -361,7 +367,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             locale={activeLocale}
           />
           <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
-            <ProcessEntry {...processEntry} />
+            {!!processEntry && <ProcessEntry {...processEntry} />}
             <Box marginTop={3}>
               <ArticleSidebar
                 article={article}
