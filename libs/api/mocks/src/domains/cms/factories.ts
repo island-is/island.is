@@ -82,7 +82,6 @@ export const article = factory<SystemMetadata<Article>>({
   slug: slugify('title'),
   intro: () => faker.lorem.paragraph(),
   category: null,
-  containsApplicationForm: () => faker.random.boolean(),
   subArticles: () =>
     faker.random.number(4) === 0
       ? subArticle.list(faker.random.number({ min: 1, max: 4 }))
@@ -108,8 +107,10 @@ export const link = factory<Link>({
 })
 
 export const menu = factory<Menu>({
+  id: () => faker.random.uuid(),
   title: () => title(),
   links: () => link.list(4),
+  menuLinks: () => [],
 })
 
 export const alertBannerVariant = () =>

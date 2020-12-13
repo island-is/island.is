@@ -3,12 +3,10 @@ import {
   Text,
   Button,
   Box,
-  GridRow,
-  GridColumn,
-  Stack,
   Link,
   ButtonProps,
   ButtonTypes,
+  BoxProps,
 } from '@island.is/island-ui/core'
 import IframeModal from '../IframeModal/IframeModal'
 
@@ -34,9 +32,11 @@ export interface ProcessEntryProps {
   processTitle: string
   processLink: string
   openLinkInModal?: boolean
-  type: string
   buttonText: string
-  locale?: string
+  /**
+   * render process entry fixed to bottom of screen in a react portal
+   */
+  fixed?: boolean
 }
 
 export const ProcessEntryLinkButton: FC<
@@ -49,7 +49,7 @@ export const ProcessEntryLinkButton: FC<
   ...buttonProps
 }) => {
   const button = (
-    <Button icon="open" iconType="outline" {...buttonProps}>
+    <Button icon="open" iconType="outline" nowrap {...buttonProps}>
       {buttonText}
     </Button>
   )
@@ -70,60 +70,42 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
   processTitle,
   processLink,
   openLinkInModal,
-  type,
   buttonText,
-  locale = 'is',
+  fixed,
 }) => {
-  const titleType = type && type.length > 0 ? type : 'No type'
-  const localeType = locale && locale.length > 0 ? locale : 'is'
-  const translatedLabel = Titles[titleType][localeType]
+  const fixedProps: BoxProps = {
+    position: 'fixed',
+    bottom: 0,
+    paddingY: 2,
+    paddingX: 5,
+    className: styles.fixedContainer,
+  }
+  const defaultProps: BoxProps = {
+    borderRadius: 'large',
+    paddingY: 4,
+    paddingX: [3, 3, 3, 3, 4],
+  }
   return (
-    <>
-      <Box width="full" background="blue100" borderRadius="large">
-        <GridRow className={styles.row}>
-          <GridColumn
-            className={styles.column}
-            span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-            offset={['0', '0', '0', '0', '1/9']}
-          >
-            <Box
-              paddingY={4}
-              paddingX={[3, 3, 3, 3, 0]}
-              display="flex"
-              flexGrow={1}
-              flexDirection={['column', 'column', 'column', 'row', 'row']}
-            >
-              <Box flexGrow={1}>
-                <Stack space={1}>
-                  {Boolean(translatedLabel) && (
-                    <Text variant="eyebrow" color="blue400">
-                      {translatedLabel}
-                    </Text>
-                  )}
-                  <Text variant="h3" as="h3">
-                    {processTitle}
-                  </Text>
-                </Stack>
-              </Box>
-              <Box
-                flexShrink={0}
-                paddingTop={[3, 3, 3, 3, 0]}
-                paddingLeft={[0, 0, 0, 4, 8]}
-                alignItems="flexStart"
-                justifyContent="flexStart"
-              >
-                <ProcessEntryLinkButton
-                  processTitle={processTitle}
-                  processLink={processLink}
-                  openLinkInModal={openLinkInModal}
-                  buttonText={buttonText}
-                />
-              </Box>
-            </Box>
-          </GridColumn>
-        </GridRow>
+    <Box
+      width="full"
+      background="blue100"
+      display="flex"
+      alignItems="center"
+      justifyContent="spaceBetween"
+      {...(fixed ? fixedProps : defaultProps)}
+    >
+      <Box marginRight={2}>
+        <Text variant={fixed ? 'eyebrow' : 'h3'} as="h3" color="blue600">
+          {processTitle}
+        </Text>
       </Box>
-    </>
+      <ProcessEntryLinkButton
+        processTitle={processTitle}
+        processLink={processLink}
+        openLinkInModal={openLinkInModal}
+        buttonText={buttonText}
+      />
+    </Box>
   )
 }
 

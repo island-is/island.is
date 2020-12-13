@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useState, useContext } from 'react'
+import React, { FC, useContext } from 'react'
 import {
   Logo,
   Columns,
@@ -19,12 +19,12 @@ import { useI18n } from '@island.is/web/i18n'
 import { FixedNav, SkipToMainContent } from '@island.is/web/components'
 import { SearchInput } from '../'
 import { LanguageToggler } from '../LanguageToggler'
-import { SideMenu } from '../SideMenu'
-import ComboButton from './ComboButton'
+import { Menu } from '../Menu/Menu'
 
 interface HeaderProps {
   showSearchInHeader?: boolean
   buttonColorScheme?: ButtonTypes['colorScheme']
+  megaMenuData
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
@@ -32,17 +32,15 @@ const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 export const Header: FC<HeaderProps> = ({
   showSearchInHeader = true,
   buttonColorScheme = 'default',
+  megaMenuData,
   children,
 }) => {
   const { activeLocale, t } = useI18n()
-  const [sideMenuOpen, setSideMenuOpen] = useState(false)
-  const [sideMenuSearchFocus, setSideMenuSearchFocus] = useState(false)
   const { colorScheme } = useContext(ColorSchemeContext)
 
   const locale = activeLocale
   const english = activeLocale === 'en'
   const isWhite = colorScheme === 'white'
-  const ariaExpanded = sideMenuOpen ? { 'aria-expanded': 'true' } : {}
 
   return (
     <header>
@@ -70,43 +68,22 @@ export const Header: FC<HeaderProps> = ({
                     justifyContent="flexEnd"
                     width="full"
                   >
-                    <Hidden above="sm" inline>
+                    {showSearchInHeader && (
                       <Box
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="flexEnd"
-                        width="full"
+                        role="search"
+                        display={['none', 'none', 'none', 'block']}
                       >
-                        <ComboButton
-                          showSearch={showSearchInHeader}
-                          sideBarMenuOpen={() => {
-                            setSideMenuSearchFocus(false)
-                            setSideMenuOpen(true)
-                          }}
-                          sideMenuSearchFocus={() => {
-                            setSideMenuSearchFocus(true)
-                            setSideMenuOpen(true)
-                          }}
+                        <SearchInput
+                          id="search_input_header"
+                          size="medium"
+                          activeLocale={locale}
+                          placeholder={t.searchPlaceholder}
+                          autocomplete={true}
+                          autosuggest={false}
                         />
                       </Box>
-                    </Hidden>
-                    {showSearchInHeader && (
-                      <>
-                        <Hidden below="lg">
-                          <Box role="search">
-                            <SearchInput
-                              id="search_input_header"
-                              size="medium"
-                              activeLocale={locale}
-                              placeholder={t.searchPlaceholder}
-                              autocomplete={true}
-                              autosuggest={false}
-                            />
-                          </Box>
-                        </Hidden>
-                      </>
                     )}
-                    <Hidden below="md">
+                    <Hidden below="lg">
                       <FocusableBox
                         href="//minarsidur.island.is/"
                         marginLeft={marginLeft}
@@ -121,43 +98,23 @@ export const Header: FC<HeaderProps> = ({
                         </Button>
                       </FocusableBox>
                     </Hidden>
+                    <Box
+                      marginLeft={marginLeft}
+                      display={['none', 'none', 'none', 'block']}
+                    >
+                      <LanguageToggler buttonColorScheme={buttonColorScheme} />
+                    </Box>
                     <Box marginLeft={marginLeft}>
-                      <LanguageToggler
+                      <Menu
+                        {...megaMenuData}
                         buttonColorScheme={buttonColorScheme}
-                        hideWhenMobile
                       />
                     </Box>
-                    <Hidden below="md">
-                      <Box marginLeft={marginLeft} position="relative">
-                        <Button
-                          colorScheme={buttonColorScheme}
-                          variant="utility"
-                          onClick={() => setSideMenuOpen(true)}
-                          icon="menu"
-                          aria-haspopup="true"
-                          aria-controls="sideMenu"
-                          id="sideMenuToggle"
-                          {...ariaExpanded}
-                        >
-                          {t.menuCaption}
-                        </Button>
-                      </Box>
-                    </Hidden>
                   </Box>
                 </Column>
               </Columns>
             </GridColumn>
           </GridRow>
-          <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
-            <SideMenu
-              isVisible={sideMenuOpen}
-              searchBarFocus={sideMenuSearchFocus}
-              handleClose={() => {
-                setSideMenuSearchFocus(false)
-                setSideMenuOpen(false)
-              }}
-            />
-          </ColorSchemeContext.Provider>
         </GridContainer>
       </Hidden>
       {children}
