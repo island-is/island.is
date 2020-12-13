@@ -20,7 +20,7 @@ beforeAll(async () => {
 
   const sharedAuthService = await app.resolve(SharedAuthService)
 
-  const user = (await request(app.getHttpServer()).get(`/api/user/1112902539`))
+  const user = (await request(app.getHttpServer()).get(`/api/user/2510654469`))
     .body
   authCookie = sharedAuthService.signJwt((user as unknown) as User)
 })

@@ -42,8 +42,13 @@ import { transitionCase } from './state'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './pipes'
 
+// Allows prosecutors to perform any action
 const prosecutorRule = UserRole.PROSECUTOR as RolesRule
+
+// Allows judges to perform any action
 const judgeRule = UserRole.JUDGE as RolesRule
+
+// Allows prosecutors to update a specific set of fields
 const prosecutorUpdateRule = {
   role: UserRole.PROSECUTOR,
   type: RulesType.FIELD,
@@ -67,6 +72,8 @@ const prosecutorUpdateRule = {
     'comments',
   ],
 } as RolesRule
+
+// Allows judges to update a specific set of fields
 const judgeUpdateRule = {
   role: UserRole.JUDGE,
   type: RulesType.FIELD,
@@ -92,6 +99,8 @@ const judgeUpdateRule = {
     'prosecutorAppealAnnouncement',
   ],
 } as RolesRule
+
+// Allows prosecutors to open, submit and delete cases
 const prosecutorTransitionRule = {
   role: UserRole.PROSECUTOR,
   type: RulesType.FIELD_VALUES,
@@ -102,6 +111,8 @@ const prosecutorTransitionRule = {
     CaseTransition.DELETE,
   ],
 } as RolesRule
+
+// Allows judges to accept and reject cases
 const judgeTransitionRule = {
   role: UserRole.JUDGE,
   type: RulesType.FIELD_VALUES,
