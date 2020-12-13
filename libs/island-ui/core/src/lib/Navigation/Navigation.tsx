@@ -335,7 +335,7 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
   expand = false,
   renderLink = defaultLinkRender,
   menuState,
-  linkOnClick = () => {},
+  linkOnClick,
 }: NavigationTreeProps) => {
   return (
     <Box
