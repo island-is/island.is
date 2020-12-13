@@ -43,7 +43,7 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
       <GridContainer>
         <GridRow>
           <GridColumn span={'12/12'}>
-            <Box paddingLeft={[0, 2, 4, 6]}>{children}</Box>
+            <Box paddingLeft={[0, 0, 4, 6]}>{children}</Box>
           </GridColumn>
         </GridRow>
       </GridContainer>

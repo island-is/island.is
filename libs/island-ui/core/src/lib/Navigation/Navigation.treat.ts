@@ -61,6 +61,16 @@ export const menuIcon = style({
   right: '8px',
 })
 
+export const dropdownIcon = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: theme.color.white,
+  height: 24,
+  width: 24,
+  borderRadius: '50%',
+})
+
 export const menuShadow = styleMap({
   blue: {
     boxShadow: ' 0px 4px 30px rgba(0, 97, 255, 0.25)',
