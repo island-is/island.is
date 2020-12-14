@@ -14,7 +14,7 @@ import {
 } from './dto'
 import { FamilyMember, User, FamilyRelation } from '../types'
 import { Gender } from '../types/gender.enum'
-import { MartialStatus } from '../types/maritalStatus.enum'
+import { MaritalStatus } from '../types/maritalStatus.enum'
 import { BanMarking } from '../models/banMarking.model'
 
 export class NationalRegistryApi {
@@ -105,7 +105,7 @@ export class NationalRegistryApi {
       fullName: userInfo.Nafn,
       citizenship: userInfo.Rikisfang,
       gender: this.formatGender(userInfo.Kyn),
-      maritalStatus: this.formatMartialStatus(userInfo.Hju),
+      maritalStatus: this.formatMaritalStatus(userInfo.Hju),
       houseCode: userInfo.LoghHusk,
       municipalCode: userInfo.Faedsvfnr,
     }
@@ -140,7 +140,7 @@ export class NationalRegistryApi {
             fullName: familyMember.Nafn,
             nationalId: familyMember.Kennitala,
             gender: this.formatGender(familyMember.Kyn),
-            maritalStatus: this.formatMartialStatus(familyMember.Hjuskapur),
+            maritalStatus: this.formatMaritalStatus(familyMember.Hjuskapur),
             familyRelation: this.getFamilyRelation(familyMember),
             address: `${familyMember.Husheiti}, ${familyMember.Pnr} ${familyMember.Sveitarfelag}`,
           } as FamilyMember),
@@ -170,30 +170,30 @@ export class NationalRegistryApi {
     )
   }
 
-  private formatMartialStatus(maritalCode: String): MartialStatus {
+  private formatMaritalStatus(maritalCode: String): MaritalStatus {
     switch (maritalCode) {
       case '1':
-        return MartialStatus.UNMARRIED
+        return MaritalStatus.UNMARRIED
       case '3':
-        return MartialStatus.MARRIED
+        return MaritalStatus.MARRIED
       case '4':
-        return MartialStatus.WIDOWED
+        return MaritalStatus.WIDOWED
       case '5':
-        return MartialStatus.SEPARATED
+        return MaritalStatus.SEPARATED
       case '6':
-        return MartialStatus.DIVORCED
+        return MaritalStatus.DIVORCED
       case '7':
-        return MartialStatus.MARRIED_LIVING_SEPARATELY
+        return MaritalStatus.MARRIED_LIVING_SEPARATELY
       case '8':
-        return MartialStatus.MARRIED_TO_FOREIGN_LAW_PERSON
+        return MaritalStatus.MARRIED_TO_FOREIGN_LAW_PERSON
       case '9':
-        return MartialStatus.UNKNOWN
+        return MaritalStatus.UNKNOWN
       case '0':
-        return MartialStatus.FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON
+        return MaritalStatus.FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON
       case 'L':
-        return MartialStatus.ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON
+        return MaritalStatus.ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON
       default:
-        return MartialStatus.UNKNOWN
+        return MaritalStatus.UNKNOWN
     }
   }
 

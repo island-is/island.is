@@ -1,4 +1,4 @@
-export enum MartialStatus {
+export enum MaritalStatus {
   UNMARRIED = 'unmarried',
   MARRIED = 'married',
   WIDOWED = 'widowed',

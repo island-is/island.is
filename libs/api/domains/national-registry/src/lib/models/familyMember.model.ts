@@ -1,6 +1,9 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { IsEnum } from 'class-validator'
 
 import { FamilyRelation } from '../types/familyRelation.enum'
+import { Gender } from '../types/gender.enum'
+import { MaritalStatus } from '../types/maritalStatus.enum'
 
 @ObjectType()
 export class NationalRegistryFamilyMember {
@@ -10,11 +13,13 @@ export class NationalRegistryFamilyMember {
   @Field(() => String)
   fullName!: string
 
-  @Field(() => String)
-  gender!: string
+  @IsEnum(Gender)
+  @Field(() => Gender)
+  gender!: Gender
 
-  @Field(() => String)
-  maritalStatus!: string
+  @IsEnum(MaritalStatus)
+  @Field(() => MaritalStatus)
+  maritalStatus!: MaritalStatus
 
   @Field(() => String)
   address!: string
