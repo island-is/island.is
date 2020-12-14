@@ -54,7 +54,8 @@ interface SortConfig {
 export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<Case[]>()
   const [sortConfig, setSortConfig] = useState<SortConfig>()
-  const [isDeleting, setIsDeleting] = useState<boolean>(false)
+  // The index of requset that's about to be removed
+  const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
 
   const { user } = useContext(UserContext)
   const history = useHistory()
@@ -266,7 +267,7 @@ export const DetentionRequests: React.FC = () => {
                   display="flex"
                   className={cn(
                     styles.tableRowContainer,
-                    isDeleting && 'isDeleting',
+                    requestToRemoveIndex === i && 'isDeleting',
                   )}
                 >
                   <tr
@@ -334,7 +335,9 @@ export const DetentionRequests: React.FC = () => {
                         component="button"
                         onClick={(evt) => {
                           evt.stopPropagation()
-                          setIsDeleting(!isDeleting)
+                          setRequestToRemoveIndex(
+                            requestToRemoveIndex === i ? undefined : i,
+                          )
                         }}
                       >
                         <Icon icon="close" color="blue400" />
@@ -344,10 +347,14 @@ export const DetentionRequests: React.FC = () => {
                   <Box
                     className={cn(
                       styles.deleteButtonContainer,
-                      styles.deleteButton[isDeleting ? 'open' : 'closed'],
+                      requestToRemoveIndex === i && 'open',
                     )}
                   >
-                    <Text>is deleting</Text>
+                    <Button colorScheme="destructive" size="small">
+                      <Box as="span" className={styles.deleteButtonText}>
+                        Eyða drögum
+                      </Box>
+                    </Button>
                   </Box>
                 </Box>
               ))}

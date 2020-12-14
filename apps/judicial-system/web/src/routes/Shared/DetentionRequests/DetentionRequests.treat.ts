@@ -46,6 +46,17 @@ export const thead = style({
 
 export const deleteButtonContainer = style({
   boxShadow: `inset 0px -1px 0px ${theme.color.blue200}`,
+  display: 'flex',
+  alignItems: 'center',
+  width: 0,
+  overflow: 'hidden',
+  transition: 'all .2s ease-in-out',
+
+  selectors: {
+    ['&.open']: {
+      width: '150px',
+    },
+  },
 })
 
 export const thButton = style({
@@ -83,16 +94,8 @@ export const td = style({
   padding: theme.spacing[3],
 })
 
-export const deleteButton = styleMap({
-  closed: {
-    width: 0,
-    overflow: 'hidden',
-    transition: 'all .2s ease-in-out',
-  },
-  open: {
-    width: '100px',
-    transition: 'all .2s ease-in-out',
-  },
+export const deleteButtonText = style({
+  whiteSpace: 'nowrap',
 })
 
 export const sortIcon = style({
