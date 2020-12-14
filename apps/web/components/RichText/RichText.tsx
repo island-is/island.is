@@ -15,7 +15,6 @@ import {
 import { TellUsAStory, ContactUs } from '@island.is/web/components'
 
 const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
-  'ProcessEntry',
   'SectionWithImage',
   'TeamList',
   'ContactUs',

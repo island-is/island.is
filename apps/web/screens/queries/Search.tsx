@@ -10,7 +10,9 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           title
           slug
           intro
-          containsApplicationForm
+          processEntry {
+            id
+          }
           group {
             title
           }
@@ -132,7 +134,9 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           title
           slug
           intro
-          containsApplicationForm
+          processEntry {
+            id
+          }
           group {
             title
           }

@@ -58,7 +58,7 @@ export const ActionCard: FC<Props> = ({ label, title, date, cta, loading }) => {
             marginLeft={[0, 3]}
           >
             <Button
-              icon="download"
+              icon="open"
               colorScheme="default"
               iconType="outline"
               onClick={cta.onClick}

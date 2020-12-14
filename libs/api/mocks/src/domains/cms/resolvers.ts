@@ -1,3 +1,4 @@
+import { SystemMetadata } from '@island.is/shared/types'
 import orderBy from 'lodash/orderBy'
 import { Resolvers } from '../../types'
 import { store } from './store'
@@ -6,7 +7,13 @@ import { getDatePrefix } from './utils'
 export const resolvers: Resolvers = {
   Slice: {
     __resolveType: (parent) => {
-      return parent.__typename as never
+      return (parent as SystemMetadata<typeof parent>).typename as never
+    },
+  },
+
+  Page: {
+    __resolveType: (parent) => {
+      return (parent as SystemMetadata<typeof parent>).typename as never
     },
   },
 
