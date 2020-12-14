@@ -132,7 +132,8 @@ AboutSubPage.getInitialProps = async ({ apolloClient, locale, asPath }) => {
         query: GET_ABOUT_SUB_PAGE_QUERY,
         variables: {
           input: {
-            url: asPath,
+            // TODO: Revisit when updating language switch
+            url: asPath.split('?')[0], // split is so path ignores get query param
             lang: locale,
           },
         },

@@ -6,16 +6,14 @@ import {
 import { defineMessage } from 'react-intl'
 import { navScreenItems } from './navItems'
 import { useNamespaces } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
 const Settings: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.document-provider')
 
   return (
     <NavigationScreen
-      title={defineMessage({
-        id: 'service.portal:document-provider-settings',
-        defaultMessage: 'Stillingar',
-      })}
+      title={m.SettingsTitle}
       items={navScreenItems}
       inProgress
     />
