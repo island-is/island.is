@@ -83,11 +83,33 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 { event: 'REJECT', name: 'Reject', type: 'reject' },
               ],
             },
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+            },
           ],
         },
         on: {
           APPROVE: { target: 'employerApproval' },
-          REJECT: { target: 'draft' },
+          REJECT: { target: 'otherParentRequiresAction' },
+        },
+      },
+      otherParentRequiresAction: {
+        meta: {
+          name: 'Other parent requires action',
+          progress: 0.4,
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+            },
+          ],
         },
       },
       employerApproval: {
@@ -128,10 +150,34 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ABORT: { target: 'draft' },
         },
       },
+      employerRequiresAction: {
+        meta: {
+          name: 'Employer requires action',
+          progress: 0.5,
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+            },
+          ],
+        },
+      },
       inReview: {
         meta: {
           name: 'In Review',
           progress: 0.75,
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+            },
+          ],
         },
         on: {
           APPROVE: { target: 'approved' },
@@ -144,11 +190,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 1,
         },
         type: 'final' as const,
-      },
-      rejected: {
-        meta: {
-          name: 'Rejected',
-        },
       },
     },
   },
