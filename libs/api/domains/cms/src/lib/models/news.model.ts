@@ -2,9 +2,8 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { INews } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { Author, mapAuthor } from './author.model'
-import { mapDocument } from './slice.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
-import { SliceUnion } from '../unions/slice.union'
+import { mapDocument, SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
 export class News {

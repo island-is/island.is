@@ -15,10 +15,13 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 import Slider from '../components/Slider'
 import * as styles from './Duration.treat'
 import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
+import { m, mm } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field
   const { clearErrors } = useFormContext()
+  const { formatMessage } = useLocale()
   const { answers } = application
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
   const currentRepeaterIndex = extractRepeaterIndexFromField(field)
@@ -62,7 +65,9 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
   }, [chosenDuration, monthsToUse])
   return (
     <Box>
-      <FieldDescription description="Some people choose to take the full leave all at once, but others like to spread it over a longer period which might in turn affect the payments. Please confirm your choice below by dragging the lever:" />
+      <FieldDescription
+        description={formatMessage(mm.duration.monthsDescription)}
+      />
       <Box
         background="blue100"
         paddingTop={3}
@@ -90,8 +95,8 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
             className={styles.percentLabel}
           >
             <Text variant="h4" as="span">
-              For this length of time you will get payments up to&nbsp;&nbsp;
-              <Tooltip text="Payments amount to 80% of the average of the parent’s total wages during a specific period before the birth of the child." />
+              {formatMessage(mm.duration.paymentsRatio)}&nbsp;&nbsp;
+              <Tooltip text={formatMessage(mm.paymentPlan.description)} />
             </Text>
           </Box>
           <Box
@@ -122,7 +127,10 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
                 }}
                 showMinMaxLabels
                 showToolTip
-                label={{ singular: 'month', plural: 'months' }}
+                label={{
+                  singular: formatMessage(m.month),
+                  plural: formatMessage(m.months),
+                }}
                 currentIndex={chosenDuration}
                 onChange={(selectedMonths: number) => {
                   clearErrors(id)

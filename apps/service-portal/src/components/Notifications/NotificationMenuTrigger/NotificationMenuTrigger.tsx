@@ -15,6 +15,14 @@ const NotificationMenuTrigger: FC<{}> = () => {
       payload: state,
     })
 
+  const closeMenus = () => {
+    setMenuState('closed')
+    dispatch({
+      type: ActionType.SetMobileMenuState,
+      payload: 'closed',
+    })
+  }
+
   const handleClick = () =>
     setMenuState(notificationMenuState === 'open' ? 'closed' : 'open')
 
@@ -32,7 +40,12 @@ const NotificationMenuTrigger: FC<{}> = () => {
       />
       <NotificationMenu
         state={notificationMenuState}
-        onClose={setMenuState.bind(null, 'closed')}
+        onClose={() => {
+          setMenuState('closed')
+        }}
+        onRouteChange={() => {
+          closeMenus()
+        }}
       />
     </Box>
   )
