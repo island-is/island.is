@@ -28,10 +28,10 @@ export const m = defineMessages({
     description:
       'These applications could be for already born children, or an application made by you or the other parent for parental leave for your unborn child.',
   },
-  generalInfoSubSection: {
-    id: 'pl.application:generalInfo.subSection',
-    defaultMessage: 'Aðrar upplýsingar',
-    description: 'General Info',
+  otherParentSubSection: {
+    id: 'pl.application:otherParent.subSection',
+    defaultMessage: 'Hitt foreldrið',
+    description: 'The other parent',
   },
   otherParentDescription: {
     id: 'pl.application:otherParent.description',
@@ -331,6 +331,18 @@ export const m = defineMessages({
     id: 'pl.application:dateOfBirth.title',
     defaultMessage: 'Fæðingardagur',
     description: 'Birth date',
+  },
+  userProfileInformationTitle: {
+    id: 'pl.application:userprofile.title',
+    defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
+    description: 'Your user profile information',
+  },
+  userProfileInformationSubTitle: {
+    id: 'pl.application:userprofile.subtitle',
+    defaultMessage:
+      'Til þess að sækja um fæðingarorlof þarftu að vera búin að stilla netfang og símanúmer á mínum síðum',
+    description:
+      'In order to apply for this application we need your email and phone number',
   },
   expectedDateOfBirthTitle: {
     id: 'pl.application:expectedDateOfBirth.title',
