@@ -14,12 +14,12 @@ export class NationalRegistryFamilyMember {
   fullName!: string
 
   @IsEnum(Gender)
-  @Field(() => Gender)
-  gender!: Gender
+  @Field(() => [Gender], { nullable: true })
+  gender?: Array<Gender>
 
   @IsEnum(MaritalStatus)
-  @Field(() => MaritalStatus)
-  maritalStatus!: MaritalStatus
+  @Field(() => [MaritalStatus], { nullable: true })
+  maritalStatus?: Array<MaritalStatus>
 
   @Field(() => String)
   address!: string

@@ -1,8 +1,16 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { IsEnum, isEnum } from 'class-validator'
+import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
+import { IsEnum } from 'class-validator'
 import { Gender } from '../types/gender.enum'
 import { MaritalStatus } from '../types/maritalStatus.enum'
 import { BanMarking } from './banMarking.model'
+
+registerEnumType(MaritalStatus, {
+  name: 'MaritalStatus',
+})
+
+registerEnumType(Gender, {
+  name: 'Gender',
+})
 
 @ObjectType()
 export class NationalRegistryUser {
@@ -13,8 +21,8 @@ export class NationalRegistryUser {
   fullName!: string
 
   @IsEnum(Gender)
-  @Field(() => Gender, { nullable: true })
-  gender?: Gender
+  @Field(() => [Gender], { nullable: true })
+  gender?: Array<Gender>
 
   @Field(() => String, { nullable: true })
   legalResidence?: string
@@ -29,8 +37,8 @@ export class NationalRegistryUser {
   religion?: string
 
   @IsEnum(MaritalStatus)
-  @Field(() => MaritalStatus, { nullable: true })
-  maritalStatus?: MaritalStatus
+  @Field(() => [MaritalStatus], { nullable: true })
+  maritalStatus?: Array<MaritalStatus>
 
   @Field(() => BanMarking, { nullable: true })
   banMarking?: BanMarking
