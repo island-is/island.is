@@ -1,5 +1,4 @@
 import { logger } from '@island.is/logging'
-import { exception } from 'console'
 import * as Soap from 'soap'
 
 export class SoapClient {

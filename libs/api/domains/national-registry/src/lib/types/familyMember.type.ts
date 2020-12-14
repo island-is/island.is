@@ -1,6 +1,5 @@
 import { FamilyRelation } from './familyRelation.enum'
-import { Gender } from './gender.enum'
-import { MaritalStatus } from './maritalStatus.enum'
+import { Gender, MaritalStatus } from '../types'
 
 export interface FamilyMember {
   nationalId: string

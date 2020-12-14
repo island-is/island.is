@@ -7,10 +7,9 @@ import {
   CurrentUser,
   User as AuthUser,
 } from '@island.is/auth-nest-tools'
-import { NationalRegistryUser } from './models'
+import { NationalRegistryUser, BanMarking } from './models'
 import { NationalRegistryService } from './nationalRegistry.service'
 import { User } from './types'
-import { BanMarking } from './models/banMarking.model'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver(() => NationalRegistryUser)
