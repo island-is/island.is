@@ -10,6 +10,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Steps } from '../../models/utils/Steps';
 import { Client } from '../../models/client.model';
+import { CastHelper } from './../../utils/CastHelper';
 
 const Index = () => {
   const { query } = useRouter();
@@ -106,7 +107,7 @@ const Index = () => {
         <ClientStepNav handleStepChange={handleStepChange}>
         <ClientRedirectUriForm
           redirectObject={client}
-          uris={client.redirectUris}
+          uris={CastHelper.IdpRestrictionToStringArray(client.redirectUris)}
           handleNext={handleNext}
           handleBack={handleBack}
         />
@@ -118,7 +119,7 @@ const Index = () => {
         <ClientStepNav handleStepChange={handleStepChange}>
         <ClientIdpRestrictionsForm
           clientId={client.clientId}
-          restrictions={client.identityProviderRestrictions}
+          restrictions={CastHelper.IdpRestrictionToStringArray(client.identityProviderRestrictions)}
           handleNext={handleNext}
           handleBack={handleBack}
         />
