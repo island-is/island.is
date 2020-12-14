@@ -2,7 +2,7 @@
 
 ## About
 
-A service that is responsible for providing and storing User profile info. With the users National Id stores contact info and preferred locale. Additional responsibility is a verification process of email and mobile phone.
+A service that is responsible for providing and storing User profile info. With the users National Registration id stores contact info and preferred locale. Additional responsibility is a verification process of email and mobile phone.
 
 ### Initial setup
 
