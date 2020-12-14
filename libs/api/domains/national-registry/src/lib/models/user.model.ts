@@ -21,8 +21,8 @@ export class NationalRegistryUser {
   fullName!: string
 
   @IsEnum(Gender)
-  @Field(() => [Gender], { nullable: true })
-  gender?: Array<Gender>
+  @Field(() => Gender, { nullable: true })
+  gender?: Gender
 
   @Field(() => String, { nullable: true })
   legalResidence?: string
@@ -37,8 +37,8 @@ export class NationalRegistryUser {
   religion?: string
 
   @IsEnum(MaritalStatus)
-  @Field(() => [MaritalStatus], { nullable: true })
-  maritalStatus?: Array<MaritalStatus>
+  @Field(() => MaritalStatus, { nullable: true })
+  maritalStatus?: MaritalStatus
 
   @Field(() => BanMarking, { nullable: true })
   banMarking?: BanMarking
