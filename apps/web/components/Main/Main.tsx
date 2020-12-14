@@ -10,6 +10,7 @@ export const Main: React.FC = ({ children }) => {
         component: 'main',
         id: 'main-content',
         tabIndex: -1,
+        outline: 'none',
       }
     : {}
   return (

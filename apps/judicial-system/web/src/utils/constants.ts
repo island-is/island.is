@@ -1,8 +1,10 @@
 // Routes
 export const SIGNED_VERDICT_OVERVIEW = '/stadfest-krafa'
 export const SINGLE_REQUEST_BASE_ROUTE = '/krafa'
-export const STEP_TWO_ROUTE = '/stofna-krofu/lagaakvaedi'
-export const STEP_THREE_ROUTE = '/stofna-krofu/yfirlit'
+export const STEP_TWO_ROUTE = '/stofna-krofu/domkrofur'
+export const STEP_THREE_ROUTE = '/stofna-krofu/lagaakvaedi'
+export const STEP_FOUR_ROUTE = '/stofna-krofu/greinagerd'
+export const STEP_FIVE_ROUTE = '/stofna-krofu/yfirlit'
 export const DETENTION_REQUESTS_ROUTE = '/gaesluvardhaldskrofur'
 export const JUDGE_SINGLE_REQUEST_BASE_ROUTE = '/domari-krafa'
 export const HEARING_ARRANGEMENTS_ROUTE = '/domari-krafa/fyrirtokutimi'

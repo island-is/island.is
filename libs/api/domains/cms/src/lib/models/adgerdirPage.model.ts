@@ -1,8 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { IVidspyrnaPage } from '../generated/contentfulTypes'
-import { mapDocument } from './slice.model'
 import { AdgerdirTag, mapAdgerdirTag } from './adgerdirTag.model'
-import { SliceUnion } from '../unions/slice.union'
+import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()

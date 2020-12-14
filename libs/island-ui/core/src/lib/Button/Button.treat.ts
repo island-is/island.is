@@ -51,6 +51,10 @@ export const fluid = style({
   justifyContent: 'center',
 })
 
+export const nowrap = style({
+  whiteSpace: 'nowrap',
+})
+
 export const variants = styleMap({
   primary: buttonBase,
   ghost: buttonBase,

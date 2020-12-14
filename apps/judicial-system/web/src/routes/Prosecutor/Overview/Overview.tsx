@@ -304,7 +304,7 @@ export const Overview: React.FC = () => {
               <AccordionItem
                 labelVariant="h3"
                 id="id_4"
-                label="Greinagerð um málsatvik og lagarök"
+                label="Greinargerð um málsatvik og lagarök"
               >
                 {workingCase.caseFacts && (
                   <Box marginBottom={2}>

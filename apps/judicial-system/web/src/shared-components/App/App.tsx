@@ -7,6 +7,8 @@ import { Overview } from '../../routes/Prosecutor/Overview'
 import {
   StepOne,
   StepTwo,
+  StepThree,
+  StepFour,
 } from '../../routes/Prosecutor/CreateDetentionRequest'
 import { DetentionRequests } from '../../routes/Shared/DetentionRequests/DetentionRequests'
 import { Login } from '../../routes/Shared/Login/Login'
@@ -53,11 +55,17 @@ const App: React.FC = () => {
               <Route path={`${Constants.COURT_RECORD_ROUTE}/:id`}>
                 <CourtRecord />
               </Route>
-              <Route path={`${Constants.STEP_THREE_ROUTE}/:id`}>
-                <Overview />
-              </Route>
               <Route path={`${Constants.STEP_TWO_ROUTE}/:id`}>
                 <StepTwo />
+              </Route>
+              <Route path={`${Constants.STEP_THREE_ROUTE}/:id`}>
+                <StepThree />
+              </Route>
+              <Route path={`${Constants.STEP_FOUR_ROUTE}/:id`}>
+                <StepFour />
+              </Route>
+              <Route path={`${Constants.STEP_FIVE_ROUTE}/:id`}>
+                <Overview />
               </Route>
               <Route path={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/:id`}>
                 <HearingArrangements />

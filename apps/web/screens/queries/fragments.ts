@@ -392,6 +392,20 @@ export const pages = gql`
     title
   }
 
+  fragment NewsFragmentFields on News {
+    __typename
+    id
+    slug
+    title
+  }
+
+  fragment ArticleCategoryFragmentFields on ArticleCategory {
+    __typename
+    id
+    slug
+    title
+  }
+
   fragment AllPages on Page {
     ...AboutPageFields
     ...AboutSubPageFields
@@ -400,5 +414,7 @@ export const pages = gql`
     ...ArticleFields
     ...SubArticleFields
     ...LifeEventPageFragmentFields
+    ...NewsFragmentFields
+    ...ArticleCategoryFragmentFields
   }
 `
