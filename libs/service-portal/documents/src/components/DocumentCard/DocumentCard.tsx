@@ -38,6 +38,8 @@ const DocumentCard: FC<Props> = ({ document }) => {
   const { fetchDocument, loading, data, error } = useLazyDocumentDetail(
     document.id,
   )
+  const { pathname } = useLocation()
+
   useEffect(() => {
     if (data || error) {
       handleOnFetch()
@@ -45,11 +47,6 @@ const DocumentCard: FC<Props> = ({ document }) => {
   }, [data, error])
 
   const handleOnFetch = () => {
-    const { pathname } = useLocation()
-    plausibleEvent('documents Open Document', {
-      location: pathname,
-      fileName: document.subject,
-    })
     if ((data?.fileType || '').toLowerCase() === 'pdf' && data?.content) {
       downloadAsPdf(data.content)
       return
@@ -73,6 +70,10 @@ const DocumentCard: FC<Props> = ({ document }) => {
     if (loading) {
       return
     }
+    plausibleEvent('documents Open Document', {
+      location: pathname,
+      fileName: document.subject,
+    })
     if (!data) {
       fetchDocument()
     } else {
