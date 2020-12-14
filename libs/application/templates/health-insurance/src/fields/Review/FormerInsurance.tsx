@@ -1,10 +1,6 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-import {
-  FieldBaseProps,
-  formatText,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { FieldBaseProps, formatText } from '@island.is/application/core'
 import {
   GridColumn,
   GridRow,

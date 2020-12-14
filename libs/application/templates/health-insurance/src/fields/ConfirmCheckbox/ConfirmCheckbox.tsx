@@ -6,8 +6,8 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { Box, Checkbox } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { m } from '../../forms/messages'
-import { useLocale } from 'libs/localization/src'
 
 const ConfirmCheckbox: FC<FieldBaseProps> = ({ error, field, application }) => {
   const { id, disabled } = field
