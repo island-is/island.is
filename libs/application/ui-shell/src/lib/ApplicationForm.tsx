@@ -60,9 +60,7 @@ const ShellWrapper: FC<{
 
   useEffect(() => {
     async function populateForm() {
-      console.log('popluate')
       if (dataSchema === undefined && form === undefined) {
-        console.log('load templates')
         const template = await getApplicationTemplateByTypeId(
           application.typeId,
         )

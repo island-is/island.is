@@ -28,10 +28,17 @@ const HealthInsuranceSchema = z.object({
     phoneNumber: z.string().optional(),
   }),
   status: z.string().nonempty(),
-  additionalInformation: z.string().optional(),
+  confirmationOfStudies: z.string().optional(),
   children: z.string().nonempty(),
-  infoInput: z.string(),
-  summaryInput: z.string(),
+  formerInsuranceRegistration: z.string().nonempty(),
+  formerInsuranceCountry: z.string().nonempty(),
+  formerPersonalId: z.string().nonempty(),
+  formerInsuranceInstitution: z.string().nonempty(),
+  formerInsuranceEntitlement: z.string().nonempty(),
+  additionalInfo: z.string().nonempty(),
+  additionalRemarks: z.string().optional(),
+  additionalFiles: z.string().optional(),
+  confirmCorrectInfo: z.boolean().refine((v) => v),
 })
 
 const HealthInsuranceTemplate: ApplicationTemplate<
@@ -56,9 +63,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
                 import('../forms/HealthInsuranceForm').then((module) =>
                   Promise.resolve(module.HealthInsuranceForm),
                 ),
-              actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
-              ],
+              actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
               write: 'all',
             },
           ],
@@ -67,6 +72,22 @@ const HealthInsuranceTemplate: ApplicationTemplate<
           SUBMIT: {
             target: 'inReview',
           },
+        },
+      },
+      inReview: {
+        meta: {
+          name: 'inReview',
+          progress: 0.5,
+          roles: [
+            {
+              id: 'applicant',
+              actions: [
+                { event: 'APPROVE', name: 'Approve', type: 'primary' },
+                { event: 'REJECT', name: 'Reject', type: 'reject' },
+              ],
+              write: 'all',
+            },
+          ],
         },
       },
     },
