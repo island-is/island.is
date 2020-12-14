@@ -12,11 +12,7 @@ import {
 } from '@island.is/api/schema'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { GET_API_SERVICE_QUERY } from '../queries/ApiCatalogue'
-import {
-  SubpageDetailsContent,
-  SubpageMainContent,
-  ServiceInformation,
-} from '../../components'
+import { SubpageMainContent, ServiceInformation } from '../../components'
 import { useQuery } from '@apollo/client'
 import { SubpageLayout } from '../Layouts/Layouts'
 import SidebarLayout from '../Layouts/SidebarLayout'
@@ -55,9 +51,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
     <SubpageLayout
       main={
         <SidebarLayout
-          sidebarContent={
-            <>Navigation menu kemur hér</>
-          }
+          sidebarContent={<>Navigation menu will be displayed here</>}
         >
           <SubpageMainContent
             main={
@@ -73,9 +67,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
           />
         </SidebarLayout>
       }
-      details={
-            <>Hér kemur open API spekkinn</>
-        }
+      details={<>The open API document will be displayed here</>}
     />
   )
 }
