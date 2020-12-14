@@ -738,6 +738,16 @@ export const mm: MessageDir = {
     },
   }),
   reviewScreen: defineMessages({
+    titleInReview: {
+      id: 'pl.application:review.titleInReview',
+      defaultMessage: 'Your application is in review',
+      description: 'Your application is in review',
+    },
+    titleApproved: {
+      id: 'pl.application:review.titleApproved',
+      defaultMessage: 'Your application is in approved',
+      description: 'Your application is in approved',
+    },
     desc: {
       id: 'pl.application:review.desc',
       defaultMessage: 'Below are the steps that will happen next.',
