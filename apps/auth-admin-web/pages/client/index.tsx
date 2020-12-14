@@ -18,14 +18,10 @@ export default function Index() {
   const router = useRouter();
 
   const handleNext = () => {
-    console.log(step);
-    console.log('handle next called');
     setStep(step + 1);
-    console.log(step);
   };
 
   const handleBack = () => {
-    console.log('handleback called');
     setStep(step - 1);
   };
 
@@ -34,20 +30,15 @@ export default function Index() {
   };
 
   const handleFinished = () => {
-    console.log('Got to main');
     router.push('/');
   };
 
   const handleClientSaved = (clientSaved: ClientDTO) => {
-    console.log('Client SAVED');
-    console.log(clientSaved);
     if (clientSaved.clientId) {
       setClient(clientSaved);
       if (clientSaved.clientType === 'spa') {
         setStep(2);
-        console.log('Setting step 2');
       } else {
-        console.log('Setting step 3');
         setStep(3);
       }
     }
@@ -56,8 +47,6 @@ export default function Index() {
   const handleClaimSaved = (claim: ClientClaimDTO) => {
     console.log(claim.clientId);
   };
-
-  console.log(step);
 
   switch (step) {
     case Steps.Client:

@@ -13,14 +13,14 @@ class MyDocument extends Document<Props> {
       <Html lang="en">
         <Head></Head>
         <body>
-          <div className="wrapper__container">
+          <div className="document__wrapper">
             <Header />
             <Nav />
             <Main />
             <NextScript />
           </div>
           <footer>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur magnam fugit porro, impedit est blanditiis illo ad aliquam necessitatibus architecto earum quaerat nemo, cupiditate, commodi praesentium voluptatem deleniti eveniet explicabo.
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur magnam fugit porro.
           </footer>
         </body>
       </Html>

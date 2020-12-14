@@ -2,7 +2,12 @@ body {
   background: $color-body-bg;
   box-sizing: border-box;
   font-family: $font-family-primary;
-  margin: 0 40px;
+  margin: 0;
+}
+
+.document__wrapper {
+  min-height: calc(100vh - 112px);
+  margin: 0 40px 25px 40px;
 }
 
 input,
@@ -316,5 +321,8 @@ a {
 }
 
 footer {
-  margin-top: 300px;
+  height: 50px;
+  background: $color-bg-content;
+  padding: 24px 12px 12px 12px;
+  text-align: center;
 }
