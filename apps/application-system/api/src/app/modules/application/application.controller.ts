@@ -281,8 +281,6 @@ export class ApplicationController {
     @Body() updateApplicationStateDto: UpdateApplicationStateDto,
     @Req() request: Request,
   ): Promise<ApplicationResponseDto> {
-    console.log(Object.keys(request))
-    console.log(request)
     const template = await getApplicationTemplateByTypeId(
       existingApplication.typeId as ApplicationTypes,
     )
