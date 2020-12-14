@@ -27,6 +27,8 @@ import isEqual from 'lodash/isEqual'
 import { ValueType } from 'react-select'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { defineMessage } from 'react-intl'
+import { plausibleEvent } from '../../../../utils/plausibleEvent'
+import { useLocation } from 'react-use'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 6
@@ -62,6 +64,7 @@ const getFilteredDocuments = (
   filterValues: FilterValues,
 ): Document[] => {
   const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
+  let searchInteractionEventSent = false
   let filteredDocuments = documents.filter((document) =>
     isWithinInterval(new Date(document.date), {
       start: dateFrom || defaultStartDate,
@@ -84,6 +87,12 @@ const getFilteredDocuments = (
   //   })
   // }
   if (searchQuery) {
+    if (!searchInteractionEventSent) {
+      const { pathname } = useLocation()
+      plausibleEvent('documents Search Documents Intialized', {
+        location: pathname,
+      })
+    }
     return filteredDocuments.filter((x) =>
       x.subject.toLowerCase().includes(searchQuery.toLowerCase()),
     )

@@ -10,6 +10,8 @@ import {
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import { Link } from 'react-router-dom'
+import { plausibleEvent } from '../../../../utils/plausibleEvent'
+
 import * as styles from './UserInfoLine.treat'
 
 interface Props {
@@ -22,6 +24,10 @@ interface Props {
     url: string
     title?: MessageDescriptor
   }
+}
+
+const trackExternalLinkClick = () => {
+  plausibleEvent('Outbound Link: Click', {})
 }
 
 export const UserInfoLine: FC<Props> = ({
@@ -80,6 +86,7 @@ export const UserInfoLine: FC<Props> = ({
                 <a
                   href={editLink.url}
                   rel="noopener noreferrer"
+                  onClick={trackExternalLinkClick}
                   target="_blank"
                 >
                   <Button

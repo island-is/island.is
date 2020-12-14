@@ -15,6 +15,8 @@ import { FormSubmittedStep } from './Steps/FormSubmittedStep'
 import { LanguageStep } from './Steps/LanguageStep'
 import { PhoneStep } from './Steps/PhoneStep'
 import { SubmitFormStep } from './Steps/SubmitFormStep'
+import { plausibleEvent } from '../../../../utils/plausibleEvent'
+import { useLocation } from 'react-use'
 
 export type OnboardingStep =
   | 'language-form'
@@ -38,6 +40,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   )
   const { createUserProfile } = useCreateUserProfile()
   const { changeLanguage } = useNamespaces()
+  const { pathname } = useLocation()
 
   // On close side effects
   const dropOnboardingSideEffects = () => {
@@ -52,6 +55,9 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const closeModal = () => {
     setToggleCloseModal(true)
+    plausibleEvent('service-portal Close Onboarding Modal', {
+      location: pathname,
+    })
   }
 
   const gotoStep = (step: OnboardingStep) => {
@@ -64,6 +70,9 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
     locale: Locale,
   ) => {
     gotoStep('submit-form')
+    plausibleEvent('service-portal Submit On Boarding', {
+      location: pathname,
+    })
 
     try {
       await createUserProfile({

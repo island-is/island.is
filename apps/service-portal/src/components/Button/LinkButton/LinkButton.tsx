@@ -3,12 +3,17 @@ import cn from 'classnames'
 import { Box } from '@island.is/island-ui/core'
 import * as styles from './LinkButton.treat'
 import { Link } from 'react-router-dom'
+import { plausibleEvent } from '../../../utils/plausibleEvent'
 
 interface Props {
   onClick?: () => void
   url?: string
   active?: boolean
   external?: boolean
+}
+
+const trackExternalLinkClick = () => {
+  plausibleEvent('Outbound Link: Click', {})
 }
 
 const ButtonContent: FC<Props> = ({ onClick, active, children }) => (
@@ -31,6 +36,7 @@ const LinkButton: FC<Props> = (props) => {
       className={styles.link}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={trackExternalLinkClick}
     >
       <ButtonContent {...props} />
     </a>

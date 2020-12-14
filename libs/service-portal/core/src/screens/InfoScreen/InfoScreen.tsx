@@ -12,6 +12,7 @@ import {
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
+import { plausibleEvent } from '../../../../utils/plausibleEvent'
 
 interface Props {
   title: MessageDescriptor
@@ -28,6 +29,10 @@ interface Props {
   institutionHref: string
   institutionLinkTitle: MessageDescriptor
   figure: string
+}
+
+const trackExternalLinkClick = () => {
+  plausibleEvent('Outbound Link: Click', {})
 }
 
 export const InfoScreen: FC<Props> = ({
@@ -78,7 +83,10 @@ export const InfoScreen: FC<Props> = ({
               )}
               {externalHref && externalLinkTitle && (
                 <Box marginTop={[3, 4]}>
-                  <ArrowLink href={externalHref}>
+                  <ArrowLink
+                    href={externalHref}
+                    onClick={trackExternalLinkClick}
+                  >
                     {formatMessage(externalLinkTitle)}
                   </ArrowLink>
                 </Box>

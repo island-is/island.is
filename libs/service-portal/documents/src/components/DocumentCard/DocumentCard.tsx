@@ -5,6 +5,8 @@ import { useLazyDocumentDetail } from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
 import * as styles from './DocumentCard.treat'
 import { toast, Text, Stack, Button, Box } from '@island.is/island-ui/core'
+import { useLocation } from 'react-use'
+import { plausibleEvent } from '../../../../utils/plausibleEvent'
 
 const base64ToArrayBuffer = (base64Pdf: string) => {
   const binaryString = window.atob(base64Pdf)
@@ -43,6 +45,11 @@ const DocumentCard: FC<Props> = ({ document }) => {
   }, [data, error])
 
   const handleOnFetch = () => {
+    const { pathname } = useLocation()
+    plausibleEvent('documents Open Document', {
+      location: pathname,
+      fileName: document.subject,
+    })
     if ((data?.fileType || '').toLowerCase() === 'pdf' && data?.content) {
       downloadAsPdf(data.content)
       return
