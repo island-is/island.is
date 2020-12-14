@@ -40,9 +40,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
           valueColumnSpan={['1/1', '7/12']}
           renderContent={() => (
             <Box display="flex" alignItems="center">
-              <Box marginRight={2}>
-                {userProfile?.email || 'keliantonsson@gmail.com'}
-              </Box>
+              <Box marginRight={2}>{userProfile?.email || ''}</Box>
               {userProfile?.email && userProfile?.emailVerified === true ? (
                 <Tag variant="darkerMint" outlined>
                   {formatMessage({
@@ -60,12 +58,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
                   </Tag>
                 </Link>
               ) : (
-                <Tag variant="red">
-                  {formatMessage({
-                    id: 'sp.settings:not-verified',
-                    defaultMessage: 'Óstaðfest',
-                  })}
-                </Tag>
+                <div />
               )}
             </Box>
           )}
