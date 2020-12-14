@@ -259,7 +259,6 @@ const Category: Screen<CategoryProps> = ({
           <Navigation
             baseId="desktopNav"
             colorScheme="purple"
-            isMenuDialog={false}
             items={sidebarCategoryLinks}
             title={n('sidebarHeader')}
             renderLink={(link, { typename, slug }) => {
@@ -272,7 +271,6 @@ const Category: Screen<CategoryProps> = ({
                 </NextLink>
               )
             }}
-            activeItemTitle={n('sidebarHeader')}
           />
         }
       >
@@ -294,7 +292,7 @@ const Category: Screen<CategoryProps> = ({
           <Navigation
             baseId="mobileNav"
             colorScheme="purple"
-            isMenuDialog={true}
+            isMenuDialog
             renderLink={(link, { typename, slug }) => {
               return (
                 <NextLink
@@ -307,7 +305,7 @@ const Category: Screen<CategoryProps> = ({
             }}
             items={sidebarCategoryLinks}
             title={n('sidebarHeader')}
-            activeItemTitle={n('sidebarHeader')}
+            activeItemTitle={category.title}
           />
         </Box>
         <Stack space={2}>
