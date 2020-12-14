@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { FamilyMember, User } from './types'
+import { FamilyMember, User, BanMarking } from './types'
 import { NationalRegistryApi } from './soap/nationalRegistryApi'
-import { BanMarking } from './models/banMarking.model'
 
 @Injectable()
 export class NationalRegistryService {

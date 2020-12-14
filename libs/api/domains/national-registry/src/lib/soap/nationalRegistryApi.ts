@@ -18,8 +18,8 @@ import {
   FamilyRelation,
   Gender,
   MaritalStatus,
+  BanMarking,
 } from '../types'
-import { BanMarking } from '../models/banMarking.model'
 
 export class NationalRegistryApi {
   private readonly client: Soap.Client | null
