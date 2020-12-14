@@ -21,34 +21,38 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
   hiddenOnTablet = false,
   children,
 }) => (
-  <GridContainer position="none">
-    <Box
-      display="flex"
-      flexDirection="row"
-      height="full"
-      paddingBottom={6}
-      position={isSticky ? 'relative' : undefined}
-    >
+  <Box paddingTop={[0, 0, 8]}>
+    <GridContainer position="none">
       <Box
-        printHidden
-        className={cn(styles.sidebarWrapper, { [styles.sticky]: isSticky })}
-        display={
-          hiddenOnTablet
-            ? ['none', 'none', 'none', 'block']
-            : ['none', 'none', 'block']
-        }
+        display="flex"
+        flexDirection="row"
+        height="full"
+        paddingBottom={6}
+        position={isSticky ? 'relative' : undefined}
       >
-        {sidebarContent}
+        <Box
+          printHidden
+          className={cn(styles.sidebarWrapper, { [styles.sticky]: isSticky })}
+          display={
+            hiddenOnTablet
+              ? ['none', 'none', 'none', 'block']
+              : ['none', 'none', 'block']
+          }
+        >
+          {sidebarContent}
+        </Box>
+        <GridContainer>
+          <GridRow>
+            <GridColumn span={'12/12'}>
+              <Box paddingLeft={[0, 0, hiddenOnTablet ? 0 : 4, 6]}>
+                {children}
+              </Box>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
       </Box>
-      <GridContainer>
-        <GridRow>
-          <GridColumn span={'12/12'}>
-            <Box paddingLeft={[0, 0, 4, 6]}>{children}</Box>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
-    </Box>
-  </GridContainer>
+    </GridContainer>
+  </Box>
 )
 
 export default SidebarLayout
