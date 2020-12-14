@@ -143,7 +143,7 @@ export interface IArticleFields {
   /** Process Entry */
   processEntry?: IProcessEntry | undefined
 
-  /** Contains application form? */
+  /** Contains application form? (Deprecated) */
   containsApplicationForm?: boolean | undefined
 
   /** Category (Main) */

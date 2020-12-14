@@ -1,11 +1,11 @@
-import React, { FC, useMemo } from 'react'
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { BLOCKS } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
 import {
-  ProcessEntryLinkButton,
   Slice as SliceType,
+  ProcessEntry,
 } from '@island.is/island-ui/contentful'
 import {
   Box,
@@ -18,13 +18,9 @@ import {
   Tag,
   Link,
   Navigation,
+  TableOfContents,
 } from '@island.is/island-ui/core'
-import {
-  DrawerMenu,
-  SidebarBox,
-  RichText,
-  HeadWithSocialSharing,
-} from '@island.is/web/components'
+import { RichText, HeadWithSocialSharing } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { Screen } from '@island.is/web/types'
@@ -37,13 +33,13 @@ import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
   AllSlicesFragment as Slice,
-  AllSlicesProcessEntryFragment as ProcessEntry,
   GetSingleArticleQuery,
   QueryGetSingleArticleArgs,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { SidebarLayout } from './Layouts/SidebarLayout'
+import { createPortal } from 'react-dom'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -113,7 +109,7 @@ const RelatedArticles: FC<{
   if (articles.length === 0) return null
 
   return (
-    <SidebarBox>
+    <Box background="purple100" borderRadius="large" padding={[3, 3, 4]}>
       <Stack space={[1, 1, 2]}>
         <Text variant="eyebrow" as="h2">
           {title}
@@ -131,95 +127,96 @@ const RelatedArticles: FC<{
           </Link>
         ))}
       </Stack>
-    </SidebarBox>
+    </Box>
   )
 }
 
-const ActionButton: FC<{ content: Slice[]; defaultText: string }> = ({
-  content,
-}) => {
-  const processEntries = content.filter((slice): slice is ProcessEntry => {
-    return slice.__typename === 'ProcessEntry' && Boolean(slice.processLink)
-  })
-
-  // we'll only show the button if there is exactly one process entry on the page
-  if (processEntries.length !== 1) return null
-
-  const {
-    processTitle,
-    buttonText,
-    processLink,
-    openLinkInModal,
-  } = processEntries[0]
-
+const TOC: FC<{
+  selectedSubArticle: SubArticle
+  title: string
+}> = ({ selectedSubArticle, title }) => {
+  const navigation = useMemo(() => {
+    return createSubArticleNavigation(selectedSubArticle?.body ?? [])
+  }, [selectedSubArticle?.body])
+  if (navigation.length === 0) {
+    return null
+  }
   return (
-    <SidebarBox>
-      <ProcessEntryLinkButton
-        processTitle={processTitle}
-        buttonText={buttonText}
-        processLink={processLink}
-        openLinkInModal={openLinkInModal}
-        fluid
+    <Box marginTop={3}>
+      <TableOfContents
+        tableOfContentsTitle={title}
+        headings={navigation.map(({ id, text }) => ({
+          headingTitle: text,
+          headingId: id,
+        }))}
+        onClick={(id) =>
+          document.getElementById(id).scrollIntoView({
+            behavior: 'smooth',
+          })
+        }
       />
-    </SidebarBox>
+    </Box>
+  )
+}
+
+const ArticleNavigation: FC<
+  ArticleSidebarProps & { isMenuDialog?: boolean }
+> = ({ article, activeSlug, n, isMenuDialog }) => {
+  const { activeLocale } = useI18n()
+  return (
+    article.subArticles.length > 0 && (
+      <Navigation
+        baseId="articleNav"
+        title={n('sidebarHeader')}
+        activeItemTitle={
+          !activeSlug
+            ? article.shortTitle ?? article.title
+            : article.subArticles.find((sub) => activeSlug === sub.slug).title
+        }
+        isMenuDialog={isMenuDialog}
+        renderLink={(link, { typename, slug }) => {
+          return (
+            <NextLink
+              {...pathNames(activeLocale, typename as ContentType, slug)}
+              passHref
+            >
+              {link}
+            </NextLink>
+          )
+        }}
+        items={[
+          {
+            title: article.shortTitle ?? article.title,
+            typename: article.__typename,
+            slug: [article.slug],
+            active: !activeSlug,
+          },
+          ...article.subArticles.map((item) => ({
+            title: item.title,
+            typename: item.__typename,
+            slug: [article.slug, item.slug],
+            active: activeSlug === item.slug,
+          })),
+        ]}
+      />
+    )
   )
 }
 
 interface ArticleSidebarProps {
   article: Article
-  showActionButton: boolean
   activeSlug?: string | string[]
   n: (s: string) => string
 }
 
 const ArticleSidebar: FC<ArticleSidebarProps> = ({
   article,
-  showActionButton,
   activeSlug,
   n,
 }) => {
-  const { activeLocale } = useI18n()
   return (
     <Stack space={3}>
-      {!!showActionButton && (
-        <Hidden print={true}>
-          <ActionButton
-            content={article.body}
-            defaultText={n('processLinkButtonText')}
-          />
-        </Hidden>
-      )}
-      {article.subArticles.length > 0 && (
-        <Navigation
-          baseId="articleNav"
-          title={n('sidebarHeader')}
-          activeItemTitle="test"
-          renderLink={(link, { typename, slug }) => {
-            return (
-              <NextLink
-                {...pathNames(activeLocale, typename as ContentType, slug)}
-                passHref
-              >
-                {link}
-              </NextLink>
-            )
-          }}
-          items={[
-            {
-              title: article.shortTitle ?? article.title,
-              typename: article.__typename,
-              slug: [article.slug],
-              active: !activeSlug,
-            },
-            ...article.subArticles.map((item) => ({
-              title: item.title,
-              typename: item.__typename,
-              slug: [article.slug, item.slug],
-              active: activeSlug === item.slug,
-            })),
-          ]}
-        />
-      )}
+      <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
       <RelatedArticles
         title={n('relatedMaterial')}
         articles={article.relatedArticles}
@@ -234,6 +231,12 @@ export interface ArticleProps {
 }
 
 const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
+  const portalRef = useRef()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    portalRef.current = document.querySelector('#__next')
+    setMounted(true)
+  }, [])
   useContentfulId(article.id)
   const n = useNamespace(namespace)
   const { query } = useRouter()
@@ -269,14 +272,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   }
 
   const metaTitle = `${article.title} | Ísland.is`
-
-  const processEntries = article?.body?.length
-    ? article.body.filter((x) => x.__typename === 'ProcessEntry')
-    : []
-
-  // tmp fix
-  const processEntry =
-    processEntries.length === 1 ? (processEntries[0] as ProcessEntry) : null
+  const processEntry = article.processEntry
 
   return (
     <>
@@ -289,12 +285,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
       />
       <SidebarLayout
         sidebarContent={
-          <ArticleSidebar
-            showActionButton={Boolean(processEntry)}
-            article={article}
-            n={n}
-            activeSlug={query.subSlug}
-          />
+          <ArticleSidebar article={article} n={n} activeSlug={query.subSlug} />
         }
       >
         <GridRow>
@@ -329,11 +320,6 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             </Breadcrumbs>
           </GridColumn>
         </GridRow>
-        {!!contentOverviewOptions.length && (
-          <Hidden print={true} above="sm">
-            <DrawerMenu categories={combinedMobileNavigation} />
-          </Hidden>
-        )}
         <GridRow>
           <GridColumn
             offset={['0', '0', '0', '0', '1/9']}
@@ -342,22 +328,35 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             <Text variant="h1" as="h1">
               <span id={slugify(article.title)}>{article.title}</span>
             </Text>
+            <Box marginTop={3} display={['block', 'block', 'none']} printHidden>
+              <ArticleNavigation
+                article={article}
+                n={n}
+                activeSlug={query.subSlug}
+                isMenuDialog
+              />
+            </Box>
+            {!!processEntry && (
+              <Box
+                marginTop={3}
+                display={['none', 'none', 'block']}
+                printHidden
+              >
+                <ProcessEntry {...processEntry} />
+              </Box>
+            )}
+            <GridRow>
+              <GridColumn span={[null, '4/7', '5/7', '4/7', '3/7']}>
+                <TOC
+                  title={n('tableOfContentTitle')}
+                  selectedSubArticle={subArticle}
+                />
+              </GridColumn>
+            </GridRow>
             {subArticle && (
               <Text variant="h2" as="h2" paddingTop={7}>
                 <span id={slugify(subArticle.title)}>{subArticle.title}</span>
               </Text>
-            )}
-            {!!processEntry && (
-              <Hidden print={true} above="sm">
-                <Box
-                  background="blue100"
-                  padding={3}
-                  marginY={3}
-                  borderRadius="large"
-                >
-                  <ProcessEntryLinkButton variant="text" {...processEntry} />
-                </Box>
-              </Hidden>
             )}
           </GridColumn>
         </GridRow>
@@ -367,7 +366,25 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             config={{ defaultPadding: [2, 2, 4] }}
             locale={activeLocale}
           />
+          <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
+            {!!processEntry && <ProcessEntry {...processEntry} />}
+            <Box marginTop={3}>
+              <ArticleSidebar
+                article={article}
+                n={n}
+                activeSlug={query.subSlug}
+              />
+            </Box>
+          </Box>
         </Box>
+        {!!processEntry &&
+          mounted &&
+          createPortal(
+            <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
+              <ProcessEntry fixed {...processEntry} />
+            </Box>,
+            portalRef.current,
+          )}
       </SidebarLayout>
     </>
   )
@@ -416,4 +433,4 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   }
 }
 
-export default withMainLayout(ArticleScreen, { hasDrawerMenu: true })
+export default withMainLayout(ArticleScreen)
