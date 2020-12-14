@@ -20,12 +20,10 @@ import { DocumentProviderModule } from '@island.is/api/domains/document-provider
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
-const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
+const autoSchemaFile = environment.production
+  ? true
+  : 'apps/api/src/api.graphql'
 
-/*
- * When adding new resolvers through your modules don't forget to add them to buildSchema.ts as well.
- * So the automatically generated schemas won't be failing when running.
- */
 @Module({
   controllers: [HealthController],
   imports: [

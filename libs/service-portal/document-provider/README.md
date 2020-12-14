@@ -73,7 +73,7 @@ export const modules: ServicePortalModule[] = [
 ]
 ```
 
-and add the paths to to `libs/service-portal/core/src/lib/navigation/paths.ts`
+and add the paths underneath **DocumentProviderRoot** inside `libs/service-portal/core/src/lib/navigation/paths.ts`
 
 ```ts
   DocumentProviderDocumentProviders = '/skjalaveita/skjalaveitendur',

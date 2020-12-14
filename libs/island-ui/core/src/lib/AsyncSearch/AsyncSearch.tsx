@@ -243,6 +243,7 @@ export interface AsyncSearchInputProps {
   labelProps?: LabelHTMLAttributes<HTMLLabelElement>
   loading?: boolean
   children?: ReactNode
+  skipContext?: boolean
 }
 
 export const AsyncSearchInput = forwardRef<
@@ -261,14 +262,17 @@ export const AsyncSearchInput = forwardRef<
       labelProps = {},
       menuProps = {},
       children,
+      skipContext,
     },
     ref,
   ) => {
-    const { colorScheme } = useContext(ColorSchemeContext)
+    const { colorScheme: colorSchemeContext } = useContext(ColorSchemeContext)
     const { value, inputSize: size } = inputProps
     const showLabel = Boolean(size === 'large' && label)
     const isOpen = hasFocus && !!children && React.Children.count(children) > 0
-    const whiteColorScheme = colorScheme === 'white' || white
+    const whiteColorScheme = skipContext
+      ? false
+      : colorSchemeContext === 'white' || white
 
     return (
       <div
