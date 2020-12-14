@@ -771,9 +771,9 @@ export const mm: MessageDir = {
     otherParentDesc: {
       id: 'pl.application:review.otherParent.description',
       defaultMessage:
-        'The other parent will need to approve the extra 14 days you’ve requested.',
+        'The other parent will need to approve the extra days you’ve requested.',
       description:
-        'The other parent will need to approve the extra 14 days you’ve requested.',
+        'The other parent will need to approve the extra days you’ve requested.',
     },
     employerTitle: {
       id: 'pl.application:review.employer.title',
