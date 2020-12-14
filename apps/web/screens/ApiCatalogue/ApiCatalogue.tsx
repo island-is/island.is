@@ -12,7 +12,10 @@ import {
   GetApiCatalogueInput,
 } from '@island.is/api/schema'
 
-import { GET_NAMESPACE_QUERY, GET_CATALOGUE_QUERY } from '@island.is/web/screens/queries'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_CATALOGUE_QUERY,
+} from '@island.is/web/screens/queries'
 import { useNamespace } from '../../hooks'
 
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -119,11 +122,11 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   })
 
   const { data, loading, error, fetchMore, refetch } = useQuery<
-      Query,
-      QueryGetApiCatalogueArgs
-    >(GET_CATALOGUE_QUERY, {
-      variables: {
-        input: parameters,
+    Query,
+    QueryGetApiCatalogueArgs
+  >(GET_CATALOGUE_QUERY, {
+    variables: {
+      input: parameters,
     },
   })
 
