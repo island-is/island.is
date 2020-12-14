@@ -14,7 +14,7 @@ interface Props {
   handleCancel?: () => void;
 }
 
-const Client: React.FC<Props> = (props: Props) => {
+const ClientForm: React.FC<Props> = (props: Props) => {
   const { register, handleSubmit, errors, formState } = useForm<
     ClientDTO
   >();
@@ -757,4 +757,4 @@ const Client: React.FC<Props> = (props: Props) => {
     </div>
   );
 };
-export default Client;
+export default ClientForm;

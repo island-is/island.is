@@ -1,7 +1,7 @@
-import Users from './../../components/Users';
+import UsersList from '../../components/UsersList';
 import React from 'react';
 
 export default function Index(){
-    return (<Users></Users>)
+    return (<UsersList></UsersList>)
   
 }

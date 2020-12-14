@@ -13,7 +13,7 @@ interface ClaimShow {
   show: boolean;
 }
 
-const Users: React.FC = () => {
+const UsersList: React.FC = () => {
   const [users, setUsers] = useState<UserIdentityDTO[]>([]);
   const [id, setId] = useState<string>("");
   const [claimShow, setClaimShow] = useState<ClaimShow[]>([]);
@@ -233,5 +233,5 @@ const Users: React.FC = () => {
   );
 };
 
-export default Users;
+export default UsersList;
 

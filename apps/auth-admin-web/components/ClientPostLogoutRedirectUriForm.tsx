@@ -15,7 +15,7 @@ interface Props {
   handleBack?: () => void;
 }
 
-const ClientPostLogoutRedirectUri: React.FC<Props> = (props: Props) => {
+const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
   const { register, handleSubmit, errors, formState } = useForm<
   ClientPostLogoutRedirectUriDTO
   >();
@@ -184,4 +184,4 @@ const ClientPostLogoutRedirectUri: React.FC<Props> = (props: Props) => {
     </div>
   );
 };
-export default ClientPostLogoutRedirectUri;
+export default ClientPostLogoutRedirectUriForm;

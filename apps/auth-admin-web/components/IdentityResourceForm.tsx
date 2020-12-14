@@ -11,7 +11,7 @@ type Props = {
   resource: IdentityResourcesDTO;
 };
 
-export default function IdentityResource<Props>(
+export default function IdentityResourceForm<Props>(
   resource: IdentityResourcesDTO
 ) {
   const { register, handleSubmit, errors, formState } = useForm<
