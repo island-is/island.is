@@ -1,5 +1,5 @@
-import Clients from './../../components/Clients'
+import ClientsList from '../../components/ClientsList'
 export default function Index(){
-    return <Clients /> 
+    return <ClientsList /> 
 
 }

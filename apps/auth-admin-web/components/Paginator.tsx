@@ -37,8 +37,6 @@ const Paginator: React.FC<Props> = (props: Props) =>{
     props.handlePageChange(page-1, count);
   };
 
-  
-
   return( 
 
       <div className="paginator">
