@@ -235,7 +235,11 @@ module.exports = {
         ),
         queryInterface.bulkInsert('api_scope', apiScope, {}),
         queryInterface.bulkInsert('api_resource', apiResource, {}),
-        queryInterface.bulkInsert('client_allowed_scope', clientAllowedScope, {}),
+        queryInterface.bulkInsert(
+          'client_allowed_scope',
+          clientAllowedScope,
+          {},
+        ),
       ]).then(() => {
         Promise.all([
           clients,
