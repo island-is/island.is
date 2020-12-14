@@ -7,11 +7,11 @@ import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ReviewSection.treat'
 
-export type reviewSectionState =
-  | 'In progress'
-  | 'Requires action'
-  | 'Complete'
-  | undefined
+export enum reviewSectionState {
+  inProgress = 'In progress',
+  requiresAction = 'Requires action',
+  complete = 'Complete',
+}
 
 type ReviewSectionProps = {
   application: Application
@@ -46,12 +46,14 @@ const ReviewSection: FC<ReviewSectionProps> = ({
         position="absolute"
         className={cn(styles.sectionNumber, {
           [styles.sectionNumberNotStarted]: state === undefined,
-          [styles.sectionNumberInProgress]: state === 'In progress',
-          [styles.sectionNumberRequiresAction]: state === 'Requires action',
-          [styles.sectionNumberComplete]: state === 'Complete',
+          [styles.sectionNumberInProgress]:
+            state === reviewSectionState.inProgress,
+          [styles.sectionNumberRequiresAction]:
+            state === reviewSectionState.requiresAction,
+          [styles.sectionNumberComplete]: state === reviewSectionState.complete,
         })}
       >
-        {(state === 'Complete' && (
+        {(state === reviewSectionState.complete && (
           <Icon color="white" size="small" icon="checkmark" />
         )) || <span className={styles.sectionNumberText}>{index}</span>}
       </Box>
@@ -70,7 +72,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           </Text>
         </Box>
 
-        {state === 'In progress' && (
+        {state === reviewSectionState.inProgress && (
           <Box pointerEvents="none">
             <Tag variant="blue">
               {formatText(
@@ -85,7 +87,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
             </Tag>
           </Box>
         )}
-        {state === 'Requires action' && (
+        {state === reviewSectionState.requiresAction && (
           <Box pointerEvents="none">
             <Tag variant="red">
               {formatText(

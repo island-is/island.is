@@ -15,20 +15,20 @@ type statesMap = {
 }
 const statesMap: statesMap = {
   otherParent: {
-    otherParentApproval: 'In progress',
-    otherParentRequiresAction: 'Requires action',
-    employerApproval: 'Complete',
-    vinnumalastofnunApproval: 'Complete',
+    otherParentApproval: reviewSectionState.inProgress,
+    otherParentRequiresAction: reviewSectionState.requiresAction,
+    employerApproval: reviewSectionState.complete,
+    vinnumalastofnunApproval: reviewSectionState.complete,
   },
   employer: {
-    employerApproval: 'In progress',
-    employerRequiresAction: 'Requires action',
-    vinnumalastofnunApproval: 'Complete',
+    employerApproval: reviewSectionState.inProgress,
+    employerRequiresAction: reviewSectionState.requiresAction,
+    vinnumalastofnunApproval: reviewSectionState.complete,
   },
   vinnumalastofnun: {
-    vinnumalastofnunApproval: 'In progress',
-    vinnumalastofnunRequiresAction: 'Requires action',
-    approved: 'Complete',
+    vinnumalastofnunApproval: reviewSectionState.inProgress,
+    vinnumalastofnunRequiresAction: reviewSectionState.requiresAction,
+    approved: reviewSectionState.complete,
   },
 }
 
