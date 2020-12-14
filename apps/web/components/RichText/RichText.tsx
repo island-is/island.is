@@ -6,12 +6,7 @@ import {
   RenderConfig,
   Slice as SliceType,
 } from '@island.is/island-ui/contentful'
-import {
-  GridRow,
-  GridColumn,
-  LinkContext,
-  Link,
-} from '@island.is/island-ui/core'
+import { LinkContext, Link } from '@island.is/island-ui/core'
 import { TellUsAStory, ContactUs } from '@island.is/web/components'
 
 const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
@@ -45,18 +40,7 @@ const renderComponent = (
     config.skipGrid !== true &&
     !FULL_WIDTH_SLICE_TYPES.includes(slice.__typename)
   ) {
-    // XXX: We assume the component is rendered in a 9 column layout on desktop.
-    // If that turns out not to always be the case we need to make this configurable
-    children = (
-      <GridRow>
-        <GridColumn
-          offset={['0', '0', '0', '0', '1/9']}
-          span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-        >
-          {children}
-        </GridColumn>
-      </GridRow>
-    )
+    children
   }
 
   if (slice.__typename !== 'Html') {

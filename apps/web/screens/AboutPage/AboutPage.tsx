@@ -191,7 +191,8 @@ const PageHeader: FC<PageHeaderProps> = ({
       </GridContainer>
       <SidebarLayout
         isSticky={false}
-        hiddenOnTablet={true}
+        fullWidthContent
+        hiddenOnTablet
         sidebarContent={
           <Sidebar>
             <Navigation

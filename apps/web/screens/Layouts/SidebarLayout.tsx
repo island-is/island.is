@@ -13,12 +13,14 @@ interface SidebarLayoutProps {
   sidebarContent: ReactNode
   isSticky?: boolean
   hiddenOnTablet?: boolean
+  fullWidthContent?: boolean
 }
 
 export const SidebarLayout: FC<SidebarLayoutProps> = ({
   sidebarContent,
   isSticky = true,
   hiddenOnTablet = false,
+  fullWidthContent = false,
   children,
 }) => (
   <Box paddingTop={[0, 0, 8]}>
@@ -43,8 +45,17 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
         </Box>
         <GridContainer>
           <GridRow>
-            <GridColumn span={'12/12'}>
-              <Box paddingLeft={[0, 0, hiddenOnTablet ? 0 : 4, 6]}>
+            <GridColumn
+              offset={fullWidthContent ? '0' : ['0', '0', '0', '0', '1/9']}
+              span={[
+                '9/9',
+                '9/9',
+                '9/9',
+                '9/9',
+                fullWidthContent ? '9/9' : '7/9',
+              ]}
+            >
+              <Box paddingLeft={[0, 0, hiddenOnTablet ? 0 : 6, 6, 0]}>
                 {children}
               </Box>
             </GridColumn>

@@ -12,8 +12,6 @@ import {
   Link,
   Stack,
   Text,
-  GridRow,
-  GridColumn,
   Box,
   Navigation,
   NavigationItem,
@@ -77,38 +75,29 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
             </Box>
           }
         >
-          <GridRow>
-            <GridColumn
-              span={['9/9', '9/9', '7/8', '7/8', '7/9']}
-              offset={['0', '0', '0', '0', '1/9']}
-            >
-              <Stack space={[3, 3, 2]}>
-                <Breadcrumbs>
-                  <Link href="/">Ísland.is</Link>
-                  <Link href="/stafraent-island">{parentPage.title}</Link>
-                </Breadcrumbs>
-                <Box display={['block', 'block', 'none']}>
-                  <Navigation
-                    baseId={'mobileNav'}
-                    isMenuDialog={true}
-                    activeItemTitle={page.title}
-                    items={navList}
-                    title={parentPage.title}
-                    titleLink={{ href: `/${parentPage.slug}`, active: false }}
-                  />
-                </Box>
-                <Text variant="h1" as="h1">
-                  {page.title}
-                </Text>
-                {Boolean(page.description) && (
-                  <Text variant="intro">{page.description}</Text>
-                )}
-                {Boolean(page.subDescription) && (
-                  <Text>{page.subDescription}</Text>
-                )}
-              </Stack>
-            </GridColumn>
-          </GridRow>
+          <Stack space={[3, 3, 2]}>
+            <Breadcrumbs>
+              <Link href="/">Ísland.is</Link>
+              <Link href="/stafraent-island">{parentPage.title}</Link>
+            </Breadcrumbs>
+            <Box display={['block', 'block', 'none']}>
+              <Navigation
+                baseId={'mobileNav'}
+                isMenuDialog={true}
+                activeItemTitle={page.title}
+                items={navList}
+                title={parentPage.title}
+                titleLink={{ href: `/${parentPage.slug}`, active: false }}
+              />
+            </Box>
+            <Text variant="h1" as="h1">
+              {page.title}
+            </Text>
+            {Boolean(page.description) && (
+              <Text variant="intro">{page.description}</Text>
+            )}
+            {Boolean(page.subDescription) && <Text>{page.subDescription}</Text>}
+          </Stack>
           <Box paddingTop={5}>
             <Background
               background="dotted"
