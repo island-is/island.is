@@ -2,10 +2,12 @@ import React, { FC } from 'react'
 import { RepeaterProps } from '@island.is/application/core'
 
 import { Box, Button } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import Timeline from '../components/Timeline'
 import { Period } from '../../types'
 import { formatPeriods, getExpectedDateOfBirth } from '../parentalLeaveUtils'
 import { FieldDescription } from '@island.is/shared/form-fields'
+import { m, mm } from '../../lib/messages'
 
 const PeriodsRepeater: FC<RepeaterProps> = ({
   removeRepeaterItem,
@@ -13,6 +15,7 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
   expandRepeater,
 }) => {
   const dob = getExpectedDateOfBirth(application)
+  const { formatMessage } = useLocale()
   if (!dob) {
     return null
   }
@@ -35,12 +38,12 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
   const editable = application.state === 'draft'
   return (
     <Box>
-      <FieldDescription description="These are your already selected parental leave periods. If the other parent has agreed to share their period leave information, then those period leaves are visible below." />
+      <FieldDescription description={formatMessage(mm.leavePlan.description)} />
       <Box marginY={3}>
         <Timeline
           initDate={dobDate}
-          title="Expected birth date"
-          titleSmall="Birth date"
+          title={formatMessage(m.expectedDateOfBirthTitle)}
+          titleSmall={formatMessage(m.dateOfBirthTitle)}
           periods={formatPeriods(
             application.answers.periods as Period[],
             editable ? otherParentPeriods : [],
@@ -51,7 +54,7 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
       </Box>
       {editable && (
         <Button size="small" icon="add" onClick={expandRepeater}>
-          Add another period
+          {formatMessage(mm.leavePlan.addAnother)}
         </Button>
       )}
     </Box>

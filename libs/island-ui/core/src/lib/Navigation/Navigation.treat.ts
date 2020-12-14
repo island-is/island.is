@@ -6,7 +6,9 @@ export const divider = style({
   height: 1,
 })
 
-export const root = style({})
+export const root = style({
+  transition: 'background-color 150ms',
+})
 
 export const ul = style({
   borderLeftWidth: 1,
@@ -57,6 +59,16 @@ export const menuIcon = style({
   position: 'absolute',
   top: '2px',
   right: '8px',
+})
+
+export const dropdownIcon = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: theme.color.white,
+  height: 24,
+  width: 24,
+  borderRadius: '50%',
 })
 
 export const menuShadow = styleMap({

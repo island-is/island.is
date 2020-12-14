@@ -428,6 +428,11 @@ export const m = defineMessages({
       'Hér er hægt að útbúa aðgang til að senda inn skjalatilvísanir í pósthólf',
     description: '',
   },
+  testEnviromentErrorMessage: {
+    id: 'dpo.application:testEnviroment.subMessage',
+    defaultMessage: 'Eitthvað fór úrskeiðis. Ekki tókst að búa til aðgang.',
+    description: '',
+  },
 
   //Test endpoint
   testEndPointSection: {
@@ -444,6 +449,11 @@ export const m = defineMessages({
     id: 'dpo.application:testEndPoint.subTitle',
     defaultMessage:
       'Til að hægt sé að sækja skjöl til skjalaveitu þarf að tilgreina endapunkt. Þegar endapunktur er vistaður er búnar til Audience og Scope breytur.',
+    description: '',
+  },
+  testEndPointErrorMessage: {
+    id: 'dpo.application:testEnviroment.subMessage',
+    defaultMessage: 'Eitthvað fór úrskeiðis. Ekki tókst að vista endapunkt.',
     description: '',
   },
 
@@ -535,6 +545,12 @@ export const m = defineMessages({
     defaultMessage: 'Hefja próf',
     description: '',
   },
+  automatedTestsErrorMessage: {
+    id: 'dpo.application:testEnviroment.subMessage',
+    defaultMessage:
+      'Eitthvað fór úrskeiðis. Ekki tókst að hefja sjálfvirk próf.',
+    description: '',
+  },
 
   //Prod enviroment
   prodEnviromentSection: {
@@ -558,6 +574,11 @@ export const m = defineMessages({
     defaultMessage: 'Búa til aðgang',
     description: '',
   },
+  prodEnviromentErrorMessage: {
+    id: 'dpo.application:testEnviroment.subMessage',
+    defaultMessage: 'Eitthvað fór úrskeiðis. Ekki tókst að búa til aðgang.',
+    description: '',
+  },
 
   //Prod endpoint
   prodEndPointSection: {
@@ -574,6 +595,11 @@ export const m = defineMessages({
     id: 'dpo.application:prodEndPoint.subTitle',
     defaultMessage:
       'Til að hægt sé að sækja skjöl til skjalaveitu þarf að tilgreina endapunkt. Þegar endapunktur er vistaður er búnar til Audience og Scope breytur.',
+    description: '',
+  },
+  prodEndPointErrorMessage: {
+    id: 'dpo.application:testEnviroment.subMessage',
+    defaultMessage: 'Eitthvað fór úrskeiðis. Ekki tókst að vista endapunkt.',
     description: '',
   },
 

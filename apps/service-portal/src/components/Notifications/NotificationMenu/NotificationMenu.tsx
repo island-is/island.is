@@ -10,9 +10,10 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 interface Props {
   state: MenuState
   onClose: () => void
+  onRouteChange: () => void
 }
 
-const NotificationMenu: FC<Props> = ({ state, onClose }) => {
+const NotificationMenu: FC<Props> = ({ state, onClose, onRouteChange }) => {
   const { formatMessage } = useLocale()
   useNamespaces(['sp.settings', 'sp.messages'])
 
@@ -42,7 +43,7 @@ const NotificationMenu: FC<Props> = ({ state, onClose }) => {
                     <NotificationCard
                       key={card.id}
                       card={card}
-                      onClick={onClose}
+                      onClick={onRouteChange}
                     />
                   ))}
                 </Stack>

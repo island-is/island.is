@@ -1,0 +1,299 @@
+{
+  "attributes": {
+    "fields": [
+      {
+        "aggregatable": true,
+        "count": 0,
+        "esTypes": ["_id"],
+        "name": "_id",
+        "readFromDocValues": false,
+        "scripted": false,
+        "searchable": true,
+        "type": "string"
+      },
+      {
+        "aggregatable": true,
+        "count": 0,
+        "esTypes": ["_index"],
+        "name": "_index",
+        "readFromDocValues": false,
+        "scripted": false,
+        "searchable": true,
+        "type": "string"
+      },
+      {
+        "aggregatable": false,
+        "count": 0,
+        "name": "_score",
+        "readFromDocValues": false,
+        "scripted": false,
+        "searchable": false,
+        "type": "number"
+      },
+      {
+        "aggregatable": false,
+        "count": 0,
+        "esTypes": ["_source"],
+        "name": "_source",
+        "readFromDocValues": false,
+        "scripted": false,
+        "searchable": false,
+        "type": "_source"
+      },
+      {
+        "aggregatable": true,
+        "count": 0,
+        "esTypes": ["_type"],
+        "name": "_type",
+        "readFromDocValues": false,
+        "scripted": false,
+        "searchable": true,
+        "type": "string"
+      },
+      {
+        "aggregatable": false,
+        "count": 0,
+        "esTypes": ["text"],
+        "name": "content",
+        "readFromDocValues": false,
+        "scripted": false,
+        "searchable": true,
+        "type": "string"
+      },
+      {
+        "aggregatable": false,
+        "count": 0,
+        "esTypes": ["text"],
+        "name": "content.stemmed",
+        "parent": "content",
+        "readFromDocValues": false,
+        "scripted": false,
+        "searchable": true,
+        "subType": "multi",
+        "type": "string"
+      },
+      {
+        "aggregatable": true,
+        "count": 0,
+        "esTypes": ["integer"],
+        "name": "contentWordCount",
+        "readFromDocValues": true,
+        "scripted": false,
+        "searchable": true,
+        "type": "number"
+      },
+      {
+        "aggregatable": true,
+        "count": 0,
+        "esTypes": ["date"],
+        "name": "dateCreated",
+        "readFromDocValues": true,
+        "scripted": false,
+        "searchable": true,
+        "type": "date"
+      },
+      {
+        "aggregatable": true,
+        "count": 0,
+        "esTypes": ["date"],
+        "name": "dateUpdated",
+        "readFromDocValues": true,
+        "scripted": false,
+        "searchable": true,
+        "type": "date"
+      },
+      {
+        "aggregatable": true,
+        "count": 0,
+        "esTypes": ["integer"],
+        "name": "externalLinks",
+        "readFromDocValues": true,
+        "scripted": false,
+        "searchable": true,
+        "type": "number"
+      },
+      {
+        "aggregatable": true,
+        "count": 0,
+        "esTypes": ["integer"],
+        "name": "fillAndSignLinks",
+        "readFromDocValues": true,
+        "scripted": false,
+        "searchable": true,
+        "type": "number"
+      },
+      {
+        "aggregatable": true,
+        "count": 0,
+        "esTypes": ["integer"],
+        "name": "pdfLinks",
+        "readFromDocValues": true,
+        "scripted": false,
+        "searchable": true,
+        "type": "number"
+      },
+      {
+        "aggregatable": true,
+        "count": 0,
+        "esTypes": ["integer"],
+        "name": "processEntryCount",
+        "readFromDocValues": true,
+        "scripted": false,
+        "searchable": true,
+        "type": "number"
+      },
+      {
+        "aggregatable": false,
+        "count": 0,
+        "esTypes": ["text"],
+        "name": "response",
+        "readFromDocValues": false,
+        "scripted": false,
+        "searchable": false,
+        "type": "string"
+      },
+      {
+        "aggregatable": true,
+        "count": 0,
+        "esTypes": ["keyword"],
+        "name": "tags.key",
+        "readFromDocValues": true,
+        "scripted": false,
+        "searchable": true,
+        "type": "string"
+      },
+      {
+        "aggregatable": true,
+        "count": 0,
+        "esTypes": ["keyword"],
+        "name": "tags.type",
+        "readFromDocValues": true,
+        "scripted": false,
+        "searchable": true,
+        "type": "string"
+      },
+      {
+        "aggregatable": false,
+        "count": 0,
+        "esTypes": ["text"],
+        "name": "tags.value",
+        "readFromDocValues": false,
+        "scripted": false,
+        "searchable": true,
+        "type": "string"
+      },
+      {
+        "aggregatable": true,
+        "count": 0,
+        "esTypes": ["keyword"],
+        "name": "tags.value.keyword",
+        "parent": "tags.value",
+        "readFromDocValues": true,
+        "scripted": false,
+        "searchable": true,
+        "subType": "multi",
+        "type": "string"
+      },
+      {
+        "aggregatable": false,
+        "count": 0,
+        "esTypes": ["completion"],
+        "name": "termPool",
+        "readFromDocValues": false,
+        "scripted": false,
+        "searchable": true,
+        "type": "unknown"
+      },
+      {
+        "aggregatable": false,
+        "count": 0,
+        "esTypes": ["text"],
+        "name": "title",
+        "readFromDocValues": false,
+        "scripted": false,
+        "searchable": true,
+        "type": "string"
+      },
+      {
+        "aggregatable": false,
+        "count": 0,
+        "esTypes": ["text"],
+        "name": "title.compound",
+        "parent": "title",
+        "readFromDocValues": false,
+        "scripted": false,
+        "searchable": true,
+        "subType": "multi",
+        "type": "string"
+      },
+      {
+        "aggregatable": true,
+        "count": 0,
+        "esTypes": ["keyword"],
+        "name": "title.keyword",
+        "parent": "title",
+        "readFromDocValues": true,
+        "scripted": false,
+        "searchable": true,
+        "subType": "multi",
+        "type": "string"
+      },
+      {
+        "aggregatable": true,
+        "conflictDescriptions": {
+          "icu_collation_keyword": ["island-is-v13"],
+          "keyword": ["island-en-v13"]
+        },
+        "count": 0,
+        "esTypes": ["icu_collation_keyword", "keyword"],
+        "name": "title.sort",
+        "parent": "title",
+        "readFromDocValues": false,
+        "scripted": false,
+        "searchable": true,
+        "subType": "multi",
+        "type": "conflict"
+      },
+      {
+        "aggregatable": false,
+        "count": 0,
+        "esTypes": ["text"],
+        "name": "title.stemmed",
+        "parent": "title",
+        "readFromDocValues": false,
+        "scripted": false,
+        "searchable": true,
+        "subType": "multi",
+        "type": "string"
+      },
+      {
+        "aggregatable": true,
+        "count": 0,
+        "esTypes": ["keyword"],
+        "name": "type",
+        "readFromDocValues": true,
+        "scripted": false,
+        "searchable": true,
+        "type": "string"
+      },
+      {
+        "aggregatable": true,
+        "count": 0,
+        "esTypes": ["integer"],
+        "name": "wordLinks",
+        "readFromDocValues": true,
+        "scripted": false,
+        "searchable": true,
+        "type": "number"
+      }
+    ],
+    "timeFieldName": "dateCreated"
+  },
+  "id": "b83598d0-34b4-11eb-83e6-db8492ac723e",
+  "migrationVersion": {
+    "index-pattern": "6.5.0"
+  },
+  "nestedJsonPaths": ["attributes.fields"],
+  "references": [],
+  "type": "index-pattern"
+}

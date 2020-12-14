@@ -4,7 +4,10 @@ export * from './lib/EmbeddedVideo/EmbeddedVideo'
 export * from './lib/Hyperlink/Hyperlink'
 export * from './lib/RichText/RichText'
 export * from './lib/Paragraph/Paragraph'
-export { ProcessEntryLinkButton } from './lib/ProcessEntry/ProcessEntry'
+export {
+  ProcessEntryLinkButton,
+  ProcessEntry,
+} from './lib/ProcessEntry/ProcessEntry'
 export * from './lib/ContentContainer/ContentContainer'
 export * from './lib/Statistics/Statistics'
 export * from './lib/Statistic/Statistic'

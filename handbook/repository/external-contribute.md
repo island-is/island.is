@@ -1,4 +1,4 @@
-# External contributions
+# External Contributions
 
 {% hint style="warning" %}
 While we are still heavily working on improving this section, we appreciate, for now, assistance with security reviews (more eyes = better), documentation, and small fixes.

@@ -82,7 +82,6 @@ export const LanguageToggler: FC<{
       onClick={otherLanguage === 'en' ? null : onClick}
       aria-label={t.otherLanguageAria}
       lang={otherLanguage === 'en' ? 'en' : 'is'}
-      fluid
     >
       {t.otherLanguageName}
     </Button>

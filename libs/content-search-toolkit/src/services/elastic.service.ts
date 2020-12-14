@@ -142,7 +142,7 @@ export class ElasticService {
   async findById(index: string, id: string) {
     try {
       const client = await this.getClient()
-      return client.get<GetByIdResponse<MappedData>>({ id, index })
+      return await client.get<GetByIdResponse<MappedData>>({ id, index })
     } catch (e) {
       return ElasticService.handleError(
         'Error in ElasticService.findById',
@@ -301,9 +301,7 @@ export class ElasticService {
   }
 
   async createEsClient(): Promise<Client> {
-    const hasAWS =
-      'AWS_WEB_IDENTITY_TOKEN_FILE' in process.env ||
-      'AWS_SECRET_ACCESS_KEY' in process.env
+    const hasAWS = 'AWS_WEB_IDENTITY_TOKEN_FILE' in process.env
 
     logger.info('Create AWS ES Client', {
       esConfig: elastic,
