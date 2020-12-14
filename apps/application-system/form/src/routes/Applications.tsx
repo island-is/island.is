@@ -55,7 +55,6 @@ export const Applications: FC = () => {
           answers: {},
         },
       },
-      refetchQueries: ['GetApplicantApplications'],
     })
   }
 

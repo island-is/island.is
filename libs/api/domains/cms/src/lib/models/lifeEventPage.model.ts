@@ -2,8 +2,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { ILifeEventPage } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
-import { mapDocument } from './slice.model'
-import { SliceUnion } from '../unions/slice.union'
+import { mapDocument, SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
 export class LifeEventPage {

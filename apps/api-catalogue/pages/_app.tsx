@@ -1,11 +1,13 @@
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import React from 'react'
+import getConfig from 'next/config'
 
 import cn from 'classnames'
 
 import { Page, Box, ContentBlock, Footer } from '@island.is/island-ui/core'
 import { Header } from '../components'
+import { withHealthchecks } from '../utils/Healthchecks/withHealthchecks'
 
 import * as styles from '../styles/_app.treat'
 
@@ -14,7 +16,7 @@ import { ApolloProvider } from 'react-apollo'
 import initApollo from '../graphql/client'
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
-  const client = initApollo(pageProps.initialApolloState)
+  const client = initApollo({})
 
   return (
     <ApolloProvider client={client}>
@@ -76,4 +78,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   )
 }
 
-export default MyApp
+const { serverRuntimeConfig } = getConfig()
+const { graphqlEndpoint } = serverRuntimeConfig
+const externalEndpointDependencies = [graphqlEndpoint]
+
+export default withHealthchecks(externalEndpointDependencies)(MyApp)

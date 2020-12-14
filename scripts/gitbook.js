@@ -9,6 +9,63 @@ const path = require('path')
  */
 const ROOT_LEVEL = 3
 
+/**
+ * Format names following https://en.wikipedia.org/wiki/AP_Stylebook and https://en.wikipedia.org/wiki/APA_style styles
+ */
+const CONNECTIVES = 'a an and at but by for in nor of on or so the to up yet'
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1)
+
+const format = (str) => {
+  if (!str) {
+    return ''
+  }
+
+  const spaceSplit = /\s+/
+  const wordSplit = /(\s+|[-‑–—])/
+
+  return str
+    .split(spaceSplit)
+    .map((word) => {
+      if (word === '-') {
+        return word
+      }
+
+      if (word.includes('-')) {
+        const items = word.split('-')
+
+        if (items[0].length <= 2) {
+          return word
+        }
+
+        return word.replace(/-/g, ' ')
+      }
+
+      return word
+    })
+    .join(' ')
+    .split(wordSplit)
+    .map((word, index, all) => {
+      if (word.match(spaceSplit)) {
+        return ' '
+      }
+
+      if (word.match(wordSplit)) {
+        return word
+      }
+
+      if (
+        index !== 0 &&
+        index !== all.length - 1 &&
+        CONNECTIVES.split(' ').includes(word.toLowerCase())
+      ) {
+        return word.toLowerCase()
+      }
+
+      return capitalize(word)
+    })
+    .join('')
+}
+
 const printContent = (apps, libs, overview, repo, misc) => {
   const formatDeep = (arr) =>
     arr
@@ -36,7 +93,7 @@ const printContent = (apps, libs, overview, repo, misc) => {
 
 # Table of contents
 
-- [Getting started](README.md)
+- [Getting Started](README.md)
 
 ## Technical overview
 
@@ -87,6 +144,12 @@ const fromDir = async (startPath, res = [], readmeAsRoot = false) => {
         return
       }
 
+      // We overwrite the heading of the readme to match with our convention
+      const name = format(firstLine)
+      const updatedFile = file.replace(/# .*/, name)
+
+      fs.writeFileSync(filename, updatedFile)
+
       const deep = filename.split('/')
       const { length } = deep
       const level = length - ROOT_LEVEL
@@ -101,7 +164,7 @@ const fromDir = async (startPath, res = [], readmeAsRoot = false) => {
           : undefined
 
       res.push({
-        name: firstLine.replace('# ', ''),
+        name: name.replace('# ', ''),
         path: filename,
         fromRoot,
       })
