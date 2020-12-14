@@ -61,28 +61,17 @@ const Client: React.FC<Props> = (props: Props) => {
     }
   }, [props.client])
 
-  const save = async (data) => {
-    const clientObject = castToNumbers(data.client);
-    if (!isEditing) {
-      await create(clientObject);
-    }
-    else {
-      await edit(clientObject);
-    }
-  };
+  
 
   const create = async (data) => {
-    await axios
-    .post('/api/clients', clientObject)
+    await axios.post('/api/clients', data)
     .then((response) => {
       const res = new APIResponse();
       res.statusCode = response.request.status;
       res.message = response.request.statusText;
       setResponse(res);
       if (res.statusCode === 201) {
-        console.log('handle change');
-        console.log(clientObject);
-        props.onNextButtonClick(clientObject);
+        props.onNextButtonClick(data);
       }
     })
     .catch(function (error) {
@@ -101,8 +90,7 @@ const Client: React.FC<Props> = (props: Props) => {
   const edit = async (data) => {
     delete data.clientId;
     console.log(data);
-    await axios
-    .put(`/api/clients/${props.client.clientId}`, data)
+    await axios.put(`/api/clients/${props.client.clientId}`, data)
     .then((response) => {
       const res = new APIResponse();
       res.statusCode = response.request.status;
@@ -126,6 +114,16 @@ const Client: React.FC<Props> = (props: Props) => {
       }
     });
   }
+
+  const save = (data) => {
+    const clientObject = castToNumbers(data.client);
+    if (!isEditing) {
+      create(clientObject);
+    }
+    else {
+      edit(clientObject);
+    }
+  };
 
   const checkAvailability = async (clientId: string) => {
     setClientIdLength(clientId.length);

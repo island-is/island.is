@@ -165,7 +165,7 @@ const Users: React.FC = () => {
                 <th>Name</th>
                 <th>Provider Name</th>
                 <th>Provider Subject Id</th>
-                <th colSpan={3}></th>
+                <th colSpan={2}></th>
               </tr>
               <tbody>
                 {users.map((user: UserIdentityDTO) => {
@@ -201,14 +201,6 @@ const Users: React.FC = () => {
 
                         </div>
                       </td>
-                      {/* <td>
-                        <button
-                          className="clients__button__edit"
-                          onClick={() => edit(user)}
-                        >
-                          Edit
-                        </button>
-                      </td> */}
                       <td>
                         <button
                           className={`clients__button__delete ${
