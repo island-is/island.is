@@ -122,7 +122,7 @@ export const m = defineMessages({
   //Ábyrgðarmaður
   EditResponsibleContact: {
     id: 'sp.document-provider:edit-responsible-contact',
-    defaultMessage: 'Breyta Ábyrgðarmanni',
+    defaultMessage: 'Breyta ábyrgðarmanni',
   },
   EditResponsibleContactDescription: {
     id: 'sp.document-provider:edit-responsible-contact-description',
@@ -140,7 +140,7 @@ export const m = defineMessages({
   //Tæknilegur tengiliður
   EditTechnicalContact: {
     id: 'sp.document-provider:edit-technical-contact',
-    defaultMessage: 'Breyta Tæknilegum tengilið',
+    defaultMessage: 'Breyta tæknilegum tengilið',
   },
   EditTechnicalContactDescription: {
     id: 'sp.document-provider:edit-technical-contact-description',
@@ -200,6 +200,26 @@ export const m = defineMessages({
     id: 'sp.document-provider:settings-edit-institution-description',
     defaultMessage: 'Hér kemur form fyrir stofnun TODO',
   },
+  SettingsEditInstitutionName: {
+    id: 'sp.document-provider:settings-edit-institution-Name',
+    defaultMessage: 'Nafn á stofnun',
+  },
+  SettingsEditInstitutionNationalId: {
+    id: 'sp.document-provider:settings-edit-institution-nationalId',
+    defaultMessage: 'Kennitala',
+  },
+  SettingsEditInstitutionAddress: {
+    id: 'sp.document-provider:settings-edit-institution-address',
+    defaultMessage: 'Heimilisfang',
+  },
+  SettingsEditInstitutionEmail: {
+    id: 'sp.document-provider:settings-edit-institution-email',
+    defaultMessage: 'Netfang',
+  },
+  SettingsEditInstitutionTel: {
+    id: 'sp.document-provider:settings-edit-institution-tel',
+    defaultMessage: 'Símanúmer',
+  },
 
   //EditResponsibleContact
   SettingsEditResponsibleContactTitle: {
@@ -209,6 +229,18 @@ export const m = defineMessages({
   SettingsEditResponsibleContactDescription: {
     id: 'sp.document-provider:settings-edit-responsible-contact-description',
     defaultMessage: 'Hér kemur form fyrir ábyrgðarmann TODO',
+  },
+  SettingsEditResponsibleContactName: {
+    id: 'sp.document-provider:settings-edit-responsible-contact-name',
+    defaultMessage: 'Nafn',
+  },
+  SettingsEditResponsibleContactEmail: {
+    id: 'sp.document-provider:settings-edit-responsible-contact-email',
+    defaultMessage: 'Netfang',
+  },
+  SettingsEditResponsibleContactTel: {
+    id: 'sp.document-provider:settings-edit-responsible-contact-tel',
+    defaultMessage: 'Símanúmer',
   },
 
   //EditTechnicalContact
@@ -220,6 +252,18 @@ export const m = defineMessages({
     id: 'sp.document-provider:settings-edit-technical-contact-description',
     defaultMessage: 'Hér kemur form fyrir tæknilegan tengilið TODO',
   },
+  SettingsEditTechnicalContactName: {
+    id: 'sp.document-provider:settings-edit-technical-contact-name',
+    defaultMessage: 'Nafn',
+  },
+  SettingsEditTechnicalContactEmail: {
+    id: 'sp.document-provider:settings-edit-technical-contact-email',
+    defaultMessage: 'Netfang',
+  },
+  SettingsEditTechnicalContactTel: {
+    id: 'sp.document-provider:settings-edit-technical-contact-tel',
+    defaultMessage: 'Símanúmer',
+  },
 
   //EditUserHelpContact
   SettingsEditUserHelpContactTitle: {
@@ -230,6 +274,14 @@ export const m = defineMessages({
     id: 'sp.document-provider:settings-edit-user-help-contact-description',
     defaultMessage: 'Hér kemur form fyrir notendaaðstoð TODO',
   },
+  SettingsEditUserHelpContactName: {
+    id: 'sp.document-provider:settings-edit-user-help-contact-name',
+    defaultMessage: 'Nafn',
+  },
+  SettingsEditUserHelpContactEmail: {
+    id: 'sp.document-provider:settings-edit-user-help-contact-email',
+    defaultMessage: 'Netfang',
+  },
 
   //EditEndPoints
   SettingsEditEndPointsTitle: {
@@ -239,6 +291,10 @@ export const m = defineMessages({
   SettingsEditEndPointsDescription: {
     id: 'sp.document-provider:settings-edit-endpoints-description',
     defaultMessage: 'Hér kemur form fyrir endapunkta TODO',
+  },
+  SettingsEditEndPointsUrl: {
+    id: 'sp.document-provider:settings-edit-endpoints-url',
+    defaultMessage: 'Endapunktur',
   },
 
   //TechnicalInformation

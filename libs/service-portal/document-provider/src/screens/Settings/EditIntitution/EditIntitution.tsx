@@ -1,49 +1,52 @@
 import React from 'react'
-import { useForm, Controller } from 'react-hook-form'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import { Link } from 'react-router-dom'
+import {
+  ServicePortalModuleComponent,
+  ServicePortalPath,
+} from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import { Box, Text, Input, Stack } from '@island.is/island-ui/core'
-
-export interface InstitutionFormData {
-  name: string
-  nationalId: string
-  address: string
-  email: string
-  tel: string
-}
+import { Box, Text, Button, toast } from '@island.is/island-ui/core'
+import { m } from '../../../lib/messages'
+import {
+  InstitutionForm,
+  InstitutionFormData,
+} from '../../../components/Forms/InstitutionForm'
 
 //TODO fetch values and set values
 
-const EditIntitution: ServicePortalModuleComponent = ({ userInfo }) => {
+const EditIntitution: ServicePortalModuleComponent = ({}) => {
   const { formatMessage } = useLocale()
+
+  const handleSubmit = (data: InstitutionFormData) => {
+    submitFormData(data)
+  }
+
+  const submitFormData = async (formData: InstitutionFormData) => {
+    //TODO: Set up submit
+    console.log(formData)
+    toast.success('Stofnun vistuð')
+  }
 
   return (
     <Box marginBottom={[2, 3, 5]}>
       <Box marginBottom={4}>
         <Text variant="h1" as="h1">
-          {formatMessage({
-            id: 'sp.document-provider:edit-responsible-contact',
-            defaultMessage: 'Breyta stofnun',
-          })}
+          {formatMessage(m.SettingsEditInstitutionTitle)}
         </Text>
       </Box>
-      <Stack space={2}>
-        <Input
-          name="id1"
-          label="Nafn á stofnun"
-          value="Advania"
-          disabled
-        ></Input>
-        <Input name="id2" label="Kennitala" value="5409298989" disabled></Input>
-        <Input
-          name="id3"
-          label="Heimilisfang"
-          value="Guðrúnartún 10, 105 Reykjavík"
-          disabled
-        ></Input>
-        <Input name="id2" label="Netfang" placeholder="Netfang"></Input>
-        <Input name="id2" label="Símanúmer" placeholder="Símanúmer"></Input>
-      </Stack>
+      <InstitutionForm
+        onSubmit={handleSubmit}
+        renderBackButton={() => (
+          <Link to={ServicePortalPath.DocumentProviderSettingsRoot}>
+            <Button variant="ghost">Til baka</Button>
+          </Link>
+        )}
+        renderSubmitButton={() => (
+          <Button type="submit" variant="primary" icon="arrowForward">
+            Vista breytingar
+          </Button>
+        )}
+      />
     </Box>
   )
 }
