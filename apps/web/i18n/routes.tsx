@@ -20,9 +20,13 @@ export type ContentType =
   | 'adgerdir'
   | 'adgerdirfrontpage'
   | 'adgerdirpage'
+  | 'linkUrl'
   | ''
 
-export const routes: Record<ContentType, Record<Locale, string>> = {
+export const routes: Record<
+  Exclude<ContentType, 'linkUrl'>,
+  Record<Locale, string>
+> = {
   article: {
     is: '/[slug]',
     en: '/en/[slug]',
@@ -97,6 +101,14 @@ export const pathNames = (
   contentType: ContentType = '',
   slugs?: Array<string>,
 ): AnchorAttributes => {
+  // we just pass link url onward with url as href since it is external, this is handled in island-ui link
+  // this allows us to
+  if (contentType === 'linkUrl') {
+    return {
+      as: '',
+      href: slugs[0],
+    }
+  }
   let path: AnchorAttributes = { as: '/', href: '/' }
   const type = String(contentType).toLowerCase()
 
