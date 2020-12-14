@@ -504,60 +504,10 @@ export const m = defineMessages({
     defaultMessage: 'Oops! Something went wrong',
     description: 'Some description',
   },
-<<<<<<< Updated upstream
   requiredAnswerError: {
     id: 'pl.application:required.answer.error',
     defaultMessage: 'Þú verður að svara þessari spurningu til að halda áfram.',
     description: 'You need to answer this question to continue.',
-=======
-  reviewDesc: {
-    id: 'pl.application:review.desc',
-    defaultMessage: 'Below are the steps that will happen next.',
-    description: 'Some description',
-  },
-  reviewButtonsView: {
-    id: 'pl.application:review.desc',
-    defaultMessage: 'View application',
-    description: 'Some description',
-  },
-  reviewButtonsEdit: {
-    id: 'pl.application:review.desc',
-    defaultMessage: 'Edit application',
-    description: 'Some description',
-  },
-  reviewStepsOtherParentTitle: {
-    id: 'pl.application:review.otherParent.title',
-    defaultMessage: 'Other parent approves extra time',
-    description: 'Some description',
-  },
-  reviewStepsOtherParentDesc: {
-    id: 'pl.application:review.otherParent.description',
-    defaultMessage:
-      'The other parent will need to approve the extra 14 days you’ve requested.',
-    description: 'Some description',
-  },
-  reviewStepsEmployerTitle: {
-    id: 'pl.application:review.employer.title',
-    defaultMessage: 'Employer approves your leave',
-    description: 'Some description',
-  },
-  reviewStepsEmployerDesc: {
-    id: 'pl.application:review.employer.description',
-    defaultMessage:
-      'Your employer will confirm the dates of your parental leave.',
-    description: 'Some description',
-  },
-  reviewStepsDeptTitle: {
-    id: 'pl.application:review.employer.title',
-    defaultMessage: 'Vinnumálastofnun approves application',
-    description: 'Some description',
-  },
-  reviewStepsDeptDesc: {
-    id: 'pl.application:review.employer.description',
-    defaultMessage:
-      'Vinnumálastofnun will review and approve your application.',
-    description: 'Some description',
->>>>>>> Stashed changes
   },
 })
 
@@ -785,6 +735,58 @@ export const mm: MessageDir = {
       defaultMessage:
         'Nei, ég vil ekki deila þessum upplýsingum að svo stöddu.',
       description: 'No, I do not want to share my information',
+    },
+  }),
+  reviewScreen: defineMessages({
+    desc: {
+      id: 'pl.application:review.desc',
+      defaultMessage: 'Below are the steps that will happen next.',
+      description: 'Below are the steps that will happen next.',
+    },
+    buttonsView: {
+      id: 'pl.application:review.desc',
+      defaultMessage: 'View application',
+      description: 'View application',
+    },
+    buttonsEdit: {
+      id: 'pl.application:review.desc',
+      defaultMessage: 'Edit application',
+      description: 'Edit application',
+    },
+    otherParentTitle: {
+      id: 'pl.application:review.otherParent.title',
+      defaultMessage: 'Other parent approves extra time',
+      description: 'Other parent approves extra time',
+    },
+    otherParentDesc: {
+      id: 'pl.application:review.otherParent.description',
+      defaultMessage:
+        'The other parent will need to approve the extra 14 days you’ve requested.',
+      description:
+        'The other parent will need to approve the extra 14 days you’ve requested.',
+    },
+    employerTitle: {
+      id: 'pl.application:review.employer.title',
+      defaultMessage: 'Employer approves your leave',
+      description: 'Employer approves your leave',
+    },
+    employerDesc: {
+      id: 'pl.application:review.employer.description',
+      defaultMessage:
+        'Your employer will confirm the dates of your parental leave.',
+      description:
+        'Your employer will confirm the dates of your parental leave.',
+    },
+    deptTitle: {
+      id: 'pl.application:review.employer.title',
+      defaultMessage: 'Vinnumálastofnun approves application',
+      description: 'Vinnumálastofnun approves application',
+    },
+    deptDesc: {
+      id: 'pl.application:review.employer.description',
+      defaultMessage:
+        'Vinnumálastofnun will review and approve your application.',
+      description: 'Vinnumálastofnun will review and approve your application.',
     },
   }),
 }

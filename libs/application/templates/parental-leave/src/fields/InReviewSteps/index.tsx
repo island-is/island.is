@@ -1,10 +1,10 @@
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 
-import { m } from '../../lib/messages'
+import { mm } from '../../lib/messages'
 import ReviewSection, { reviewSectionState } from './ReviewSection'
 
 type stateMapEntry = { [key: string]: reviewSectionState }
@@ -39,7 +39,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application }) => {
     <Box marginBottom={10}>
       <Box>
         <Text as="div">
-          {formatText(m.reviewDesc, application, formatMessage)}{' '}
+          {formatMessage(mm.reviewScreen.desc)}{' '}
           <Box display="inlineBlock" marginLeft={1} marginRight={2}>
             <Button
               colorScheme="default"
@@ -49,7 +49,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application }) => {
               type="button"
               variant="text"
             >
-              {formatText(m.reviewButtonsView, application, formatMessage)}
+              {formatMessage(mm.reviewScreen.buttonsView)}
             </Button>
           </Box>
           <Box display="inlineBlock">
@@ -61,7 +61,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application }) => {
               type="button"
               variant="text"
             >
-              {formatText(m.reviewButtonsEdit, application, formatMessage)}
+              {formatMessage(mm.reviewScreen.buttonsEdit)}
             </Button>
           </Box>
         </Text>
@@ -72,42 +72,22 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application }) => {
           application={application}
           index={1}
           state={statesMap['otherParent'][application.state]}
-          title={formatText(
-            m.reviewStepsOtherParentTitle,
-            application,
-            formatMessage,
-          )}
-          description={formatText(
-            m.reviewStepsOtherParentDesc,
-            application,
-            formatMessage,
-          )}
+          title={formatMessage(mm.reviewScreen.otherParentTitle)}
+          description={formatMessage(mm.reviewScreen.otherParentDesc)}
         />
         <ReviewSection
           application={application}
           index={2}
           state={statesMap['employer'][application.state]}
-          title={formatText(
-            m.reviewStepsEmployerTitle,
-            application,
-            formatMessage,
-          )}
-          description={formatText(
-            m.reviewStepsEmployerDesc,
-            application,
-            formatMessage,
-          )}
+          title={formatMessage(mm.reviewScreen.employerTitle)}
+          description={formatMessage(mm.reviewScreen.employerDesc)}
         />
         <ReviewSection
           application={application}
           index={3}
           state={statesMap['vinnumalastofnun'][application.state]}
-          title={formatText(m.reviewStepsDeptTitle, application, formatMessage)}
-          description={formatText(
-            m.reviewStepsDeptDesc,
-            application,
-            formatMessage,
-          )}
+          title={formatMessage(mm.reviewScreen.deptTitle)}
+          description={formatMessage(mm.reviewScreen.deptDesc)}
         />
       </Box>
     </Box>
