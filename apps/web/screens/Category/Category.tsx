@@ -190,7 +190,7 @@ const Category: Screen<CategoryProps> = ({
     setHash(newHash)
 
     const url = pathNames(activeLocale, 'articlecategory', [slug])
-    Router.replace(url.as, url.href + `#${newHash}`)
+    Router.replace(url.href, url.as + `#${newHash}`)
   }
 
   const sortArticles = (articles: Articles) => {
