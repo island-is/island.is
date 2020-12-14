@@ -18,9 +18,10 @@ export const InReview: Form = buildForm({
       children: [
         buildCustomField({
           id: 'InReviewSteps',
-          // TODO: Can we make the name conditional?
-          // ex: name: state==='approved' ? "Your application is approved" : "Your application is in review"
-          name: mm.reviewScreen.titleInReview,
+          name: (application) =>
+            application.state === 'approved'
+              ? mm.reviewScreen.titleApproved
+              : mm.reviewScreen.titleInReview,
           component: 'InReviewSteps',
         }),
       ],
