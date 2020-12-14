@@ -89,7 +89,7 @@ const DocumentCard: FC<Props> = ({ document }) => {
           onClick: handleOnClick,
           label: formatMessage({
             id: 'sp.documents:documentCard-ctaLabel',
-            defaultMessage: 'Sækja skjal',
+            defaultMessage: 'Skoða skjal',
           }),
         }}
       />

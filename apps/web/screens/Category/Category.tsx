@@ -373,12 +373,7 @@ const Category: Screen<CategoryProps> = ({
                           )}
                           <Stack space={2}>
                             {sortedArticles.map(
-                              ({
-                                __typename,
-                                title,
-                                slug,
-                                containsApplicationForm,
-                              }) => {
+                              ({ __typename, title, slug, processEntry }) => {
                                 const url = pathNames(
                                   activeLocale,
                                   __typename.toLowerCase() as ContentType,
@@ -395,7 +390,7 @@ const Category: Screen<CategoryProps> = ({
                                       <LinkCard
                                         isFocused={isFocused}
                                         tag={
-                                          containsApplicationForm &&
+                                          !!processEntry &&
                                           n('applicationProcess', 'Umsókn')
                                         }
                                       >

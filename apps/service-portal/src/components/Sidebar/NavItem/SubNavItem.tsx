@@ -8,10 +8,16 @@ interface Props {
   path?: ServicePortalPath
   active: boolean
   external?: boolean
+  variant?: 'blue' | 'blueberry'
   onClick?: () => void
 }
 
-const SubNavItemContent: FC<Props> = ({ active, onClick, children }) => (
+const SubNavItemContent: FC<Props> = ({
+  active,
+  onClick,
+  variant = 'blue',
+  children,
+}) => (
   <Box
     display="flex"
     alignItems="center"
@@ -19,7 +25,10 @@ const SubNavItemContent: FC<Props> = ({ active, onClick, children }) => (
     position="relative"
     onClick={onClick}
   >
-    <Text fontWeight={active ? 'semiBold' : 'regular'} color="blue600">
+    <Text
+      fontWeight={active ? 'semiBold' : 'regular'}
+      color={variant === 'blue' ? 'blue600' : 'blueberry600'}
+    >
       <span className={styles.subNavItem}>{children}</span>
     </Text>
   </Box>
