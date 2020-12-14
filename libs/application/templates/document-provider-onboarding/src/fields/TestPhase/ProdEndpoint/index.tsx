@@ -61,8 +61,6 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
     }
   }
 
-  console.log(errors)
-
   return (
     <Box>
       <Box marginBottom={7}>
