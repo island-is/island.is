@@ -44,8 +44,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application }) => {
             <Button
               colorScheme="default"
               iconType="filled"
-              // TODO: Add this in next PR
-              onClick={function noRefCheck() {}}
+              // TODO: Add onClick in next PR
               size="small"
               type="button"
               variant="text"
@@ -57,8 +56,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application }) => {
             <Button
               colorScheme="default"
               iconType="filled"
-              // TODO: Add this in next PR
-              onClick={function noRefCheck() {}}
+              // TODO: Add onClick in next PR
               size="small"
               type="button"
               variant="text"
