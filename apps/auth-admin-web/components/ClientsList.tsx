@@ -4,7 +4,7 @@ import ClientDTO from '../models/dtos/client-dto';
 import Paginator from './Paginator';
 import Link from 'next/link';
 
-class Clients extends Component {
+class ClientsList extends Component {
   state = {
     clients: [],
     rowCount: 0,
@@ -118,4 +118,4 @@ class Clients extends Component {
   }
 }
 
-export default Clients;
+export default ClientsList;

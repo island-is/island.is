@@ -1,12 +1,12 @@
 import ClientDTO from '../../models/dtos/client-dto';
-import Client from './../../components/Client';
+import ClientForm from '../../components/ClientForm';
 import React, { useState } from 'react';
 import ClientClaim from './../../components/ClientClaim';
 import { ClientClaimDTO } from './../../models/dtos/client-claim.dto';
-import ClientRedirectUri from './../../components/ClientRedirectUri';
+import ClientRedirectUriForm from '../../components/ClientRedirectUriForm';
 import { ClientRedirectUriDTO } from './../../models/dtos/client-redirect-uri.dto';
-import ClientIdpRestrictions from './../../components/ClientIdpRestrictions';
-import ClientPostLogoutRedirectUri from './../../components/ClientPostLogoutRedirectUri';
+import ClientIdpRestrictionsForm from '../../components/ClientIdpRestrictionsForm';
+import ClientPostLogoutRedirectUriForm from '../../components/ClientPostLogoutRedirectUriForm';
 
 import { useRouter } from 'next/router';
 import StepEnd from './../../components/form/StepEnd';
@@ -51,7 +51,7 @@ export default function Index() {
   switch (step) {
     case Steps.Client:
       return (
-        <Client
+        <ClientForm
           handleCancel={handleCancel}
           client={new ClientDTO()}
           onNextButtonClick={handleClientSaved}
@@ -62,7 +62,7 @@ export default function Index() {
       const rObj = new ClientRedirectUriDTO();
       rObj.clientId = client.clientId;
       return (
-        <ClientRedirectUri
+        <ClientRedirectUriForm
           redirectObject={rObj}
           uris={null}
           handleNext={handleNext}
@@ -72,7 +72,7 @@ export default function Index() {
     }
     case Steps.ClientIdpRestrictions: {
       return (
-        <ClientIdpRestrictions
+        <ClientIdpRestrictionsForm
           clientId={client.clientId}
           restrictions={[]}
           handleNext={handleNext}
@@ -82,7 +82,7 @@ export default function Index() {
     }
     case Steps.ClientPostLogoutRedirectUri: {
       return (
-        <ClientPostLogoutRedirectUri
+        <ClientPostLogoutRedirectUriForm
           clientId={client.clientId}
           defaultUrl={''}
           uris={null}

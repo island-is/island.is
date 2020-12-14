@@ -14,7 +14,7 @@ interface Props {
   handleBack?: () => void;
 }
 
-const ClientRedirectUri: React.FC<Props> = (props: Props) => {
+const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
   const { register, handleSubmit, errors, formState } = useForm<
     ClientRedirectUriDTO
   >();
@@ -191,4 +191,4 @@ const ClientRedirectUri: React.FC<Props> = (props: Props) => {
     </div>
   );
 };
-export default ClientRedirectUri;
+export default ClientRedirectUriForm;

@@ -1,20 +1,22 @@
 import ClientDTO from '../../models/dtos/client-dto';
-import Client from './../../components/Client';
-import ClientRedirectUri from './../../components/ClientRedirectUri';
-import ClientIdpRestrictions from './../../components/ClientIdpRestrictions';
-import ClientPostLogoutRedirectUri from './../../components/ClientPostLogoutRedirectUri';
+import ClientForm from '../../components/ClientForm';
+import ClientRedirectUriForm from '../../components/ClientRedirectUriForm';
+import ClientIdpRestrictionsForm from '../../components/ClientIdpRestrictionsForm';
+import ClientPostLogoutRedirectUriForm from '../../components/ClientPostLogoutRedirectUriForm';
+import ClientStepNav from '../../components/ClientStepNav';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import axios from 'axios';
 import { Steps } from '../../models/utils/Steps';
+import { Client } from '../../models/client.model';
 
 const Index = () => {
   const { query } = useRouter();
   const clientId = query.client;
 
   const [step, setStep] = useState(1);
-  const [client, setClient] = useState<ClientDTO>(new ClientDTO());
+  const [client, setClient] = useState<Client>(new Client());
   const router = useRouter();
 
   const getClient = async (clientId: string) => {
@@ -25,6 +27,7 @@ const Index = () => {
         console.log(response);
         console.log(response.data);
         setClient(response.data);
+        console.log(client);
       })
       .catch(function (error) {
         if (error.response) {
@@ -33,7 +36,6 @@ const Index = () => {
   };
 
   useEffect(() => {
-    console.log('calling effect: ' + clientId);
     async function loadClient() {
       if (clientId) {
         await getClient(clientId as string);
@@ -43,17 +45,15 @@ const Index = () => {
     setStep(1);
   }, [clientId]);
 
-  let clientObj: ClientDTO = new ClientDTO();
-
   const handleNext = () => {
-    console.log(step);
-    console.log('handle next called');
     setStep(step + 1);
-    console.log(step);
   };
 
+  const handleStepChange = (step: Steps) => {
+    setStep(step);
+  }
+
   const handleBack = () => {
-    console.log('handleback called');
     setStep(step - 1);
   };
 
@@ -62,14 +62,12 @@ const Index = () => {
   };
 
   const handleFinished = () => {
-    console.log('Got to main');
     router.push('/');
   };
 
   const handleClientSaved = (clientSaved: ClientDTO) => {
-    console.log('Client SAVED');
     console.log(clientSaved);
-    if (clientSaved.clientId) {
+    if (clientSaved) {
       setClient(clientSaved);
       if (clientSaved.clientType === 'spa') {
         setStep(2);
@@ -86,48 +84,58 @@ const Index = () => {
   };
 
   console.log(step);
+  console.log(client);
 
   switch (step) {
     case Steps.Client:
       return (
-        <Client
-          handleCancel={handleCancel}
-          client={client}
-          onNextButtonClick={handleClientSaved}
+        <ClientStepNav handleStepChange={handleStepChange}>
+          <ClientForm
+            handleCancel={handleCancel}
+            client={client as ClientDTO}
+            onNextButtonClick={handleClientSaved}
         />
+        </ClientStepNav>
+        
       );
     case Steps.ClientRedirectUri: {
       // Set the callback URI .. ALLT
       const rObj = new ClientRedirectUriDTO();
       rObj.clientId = client.clientId;
       return (
-        <ClientRedirectUri
+        <ClientStepNav handleStepChange={handleStepChange}>
+        <ClientRedirectUriForm
           redirectObject={client}
-          uris={null}
+          uris={client.redirectUris}
           handleNext={handleNext}
           handleBack={handleBack}
         />
+        </ClientStepNav>
       );
     }
     case Steps.ClientIdpRestrictions: {
       return (
-        <ClientIdpRestrictions
+        <ClientStepNav handleStepChange={handleStepChange}>
+        <ClientIdpRestrictionsForm
           clientId={client.clientId}
-          restrictions={[]}
+          restrictions={client.identityProviderRestrictions}
           handleNext={handleNext}
           handleBack={handleBack}
         />
+        </ClientStepNav>
       );
     }
     case Steps.ClientPostLogoutRedirectUri: {
       return (
-        <ClientPostLogoutRedirectUri
+        <ClientStepNav handleStepChange={handleStepChange}>
+        <ClientPostLogoutRedirectUriForm
           clientId={client.clientId}
           defaultUrl={''}
           uris={null}
           handleNext={handleNext}
           handleBack={handleBack}
         />
+        </ClientStepNav>
       );
     }
     case Steps.ClientAllowedCorsOrigin: {
@@ -156,14 +164,9 @@ const Index = () => {
       // Generate og sýna
     }
     default: {
-      return (
-        <StepEnd
-          buttonText="Home"
-          handleButtonFinishedClick={handleFinished}
-          title="Success"
-        >
-          Client has been created
-        </StepEnd>
+      // TODO: Temp
+      return (<div>Step not found</div>
+        
       );
     }
   }

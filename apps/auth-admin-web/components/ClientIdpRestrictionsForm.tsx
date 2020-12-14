@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import StatusBar from './StatusBar';
 import HelpBox from './HelpBox';
 import axios from 'axios';
-import APIResponse from './../models/utils/APIResponse';
+import APIResponse from '../models/utils/APIResponse';
 
 interface Props {
   clientId: string;
@@ -11,7 +11,7 @@ interface Props {
   handleBack?: () => void;
 }
 
-const ClientIdpRestrictions: React.FC<Props> = (props: Props) => {
+const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
   const [response, setResponse] = useState(null);
 
   const add = async (name: string) => {
@@ -141,4 +141,4 @@ const ClientIdpRestrictions: React.FC<Props> = (props: Props) => {
     </div>
   );
 };
-export default ClientIdpRestrictions;
+export default ClientIdpRestrictionsForm;
