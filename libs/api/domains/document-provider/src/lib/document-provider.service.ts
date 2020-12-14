@@ -23,7 +23,7 @@ export class DocumentProviderService {
     nationalId: string,
     clientName: string,
   ): Promise<ClientCredentials> {
-    var currentProvider = await this.documentProviderRepository.getProvider(
+    const currentProvider = await this.documentProviderRepository.getProvider(
       nationalId,
     )
 
