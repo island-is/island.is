@@ -51,17 +51,20 @@
           "enabled": true,
           "id": 3,
           "params": {
-            "field": "hasProcessEntry",
-            "missingBucket": false,
-            "missingBucketLabel": "Missing",
-            "order": "desc",
-            "orderBy": 1,
-            "otherBucket": false,
-            "otherBucketLabel": "Other",
-            "size": 5
+            "customLabel": "Process Entry range",
+            "field": "processEntryCount",
+            "ranges": [
+              {
+                "from": 1
+              },
+              {
+                "from": 0,
+                "to": 1
+              }
+            ]
           },
           "schema": "group",
-          "type": "terms"
+          "type": "range"
         }
       ],
       "params": {
@@ -90,13 +93,11 @@
           "series": [
             {
               "accessor": 1,
-              "aggType": "terms",
+              "aggType": "range",
               "format": {
-                "id": "terms",
+                "id": "range",
                 "params": {
-                  "id": "boolean",
-                  "missingBucketLabel": "Missing",
-                  "otherBucketLabel": "Other"
+                  "id": "number"
                 }
               },
               "params": {}
@@ -188,7 +189,6 @@
     "attributes.visState.aggs[0].id",
     "attributes.visState.aggs[1].id",
     "attributes.visState.aggs[2].id",
-    "attributes.visState.aggs[2].params.orderBy",
     "attributes.visState.params.seriesParams[0].data.id",
     "attributes.visState.params.seriesParams[0].show"
   ],

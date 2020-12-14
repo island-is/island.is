@@ -8,6 +8,7 @@ import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Button } from '../Button/Button'
 
 import * as styles from './Navigation.treat'
+import { Icon } from '../IconRC/Icon'
 
 export type NavigationColorAttributes =
   | 'color'
@@ -64,11 +65,12 @@ interface NavigationTreeProps {
   expand?: boolean
   renderLink?: (link: ReactNode, item?: NavigationItem) => ReactNode
   menuState: MenuStateReturn
+  linkOnClick?: () => void
 }
 export interface NavigationProps {
   title: string
   label?: string
-  activeItemTitle: string
+  activeItemTitle?: string
   colorScheme?: keyof typeof styles.colorScheme
   expand?: boolean
   isMenuDialog?: boolean
@@ -185,7 +187,7 @@ export const Navigation: FC<NavigationProps> = ({
             onClick={() => menu.show}
           >
             <MobileButton
-              title={activeItemTitle}
+              title={activeItemTitle ?? title}
               colorScheme={colorScheme}
               aria-expanded={!mobileMenuOpen}
               aria-controls={'OpenNavigationDialog'}
@@ -194,10 +196,11 @@ export const Navigation: FC<NavigationProps> = ({
           <Menu
             {...menu}
             style={{
-              top: '-8px',
+              top: '-10px',
               transform: 'none',
               width: '100%',
               borderRadius: '8px',
+              zIndex: 10,
             }}
             className={cn(styles.transition, styles.menuShadow[colorScheme])}
           >
@@ -255,17 +258,24 @@ const MobileNavigationDialog = ({
       paddingY={2}
       borderRadius={'large'}
     >
-      {Title}
-      <Box position="absolute" top={0} right={0} margin={2}>
-        <Button
-          circle
-          colorScheme="negative"
-          icon={'chevronUp'}
-          aria-controls={`CloseNavigationDialog`}
-          onClick={onClick}
-        />
+      <Box position="relative">
+        {Title}
+        <Box
+          position="absolute"
+          right={0}
+          marginRight={2}
+          style={{ top: '50%', transform: 'translateY(-50%)' }}
+        >
+          <Button
+            circle
+            colorScheme="negative"
+            icon={'chevronUp'}
+            size="small"
+            aria-controls={`CloseNavigationDialog`}
+            onClick={onClick}
+          />
+        </Box>
       </Box>
-
       <Box display="flex" alignItems="center" paddingY={2}>
         <Box
           background={colorSchemeColors[colorScheme]['dividerColor']}
@@ -277,6 +287,7 @@ const MobileNavigationDialog = ({
         colorScheme={colorScheme}
         renderLink={renderLink}
         menuState={menuState}
+        linkOnClick={onClick}
       />
     </Box>
   )
@@ -309,7 +320,9 @@ const MobileButton = ({ title, colorScheme }: MobileButtonProps) => {
         marginRight={2}
         style={{ top: '50%', transform: 'translateY(-50%)' }}
       >
-        <Button circle colorScheme="negative" icon={'chevronDown'} />
+        <span className={styles.dropdownIcon}>
+          <Icon icon={'chevronDown'} size="small" color="blue400" />
+        </span>
       </Box>
     </Box>
   )
@@ -322,6 +335,7 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
   expand = false,
   renderLink = defaultLinkRender,
   menuState,
+  linkOnClick,
 }: NavigationTreeProps) => {
   return (
     <Box
@@ -351,6 +365,7 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
                 paddingLeft={isChildren ? 2 : 3}
                 paddingY={isChildren ? 'smallGutter' : 1}
                 className={styles.link}
+                onClick={linkOnClick}
               >
                 {({
                   isFocused,

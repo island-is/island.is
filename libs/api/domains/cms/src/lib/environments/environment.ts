@@ -9,6 +9,8 @@ export default {
     'news',
     'page',
     'vidspyrnaPage',
+    'menu',
+    'groupedMenu',
   ],
   nestedContentTypes: [
     'processEntry',
@@ -26,6 +28,8 @@ export default {
     'url',
     'articleGroup',
     'articleCategory',
+    'menuLink',
+    'menuLinkWithChildren',
   ],
   contentful: {
     space: process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj',

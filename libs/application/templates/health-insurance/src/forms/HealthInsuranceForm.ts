@@ -2,15 +2,18 @@ import {
   buildDataProviderItem,
   buildDividerField,
   buildExternalDataProvider,
+  buildFileUploadField,
   buildForm,
   buildIntroductionField,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildTextField,
   Form,
   FormModes,
 } from '@island.is/application/core'
 import { m } from './messages'
+import { YES, NO } from '../constants'
 
 export const HealthInsuranceForm: Form = buildForm({
   id: 'HealthInsuranceDraft',
@@ -115,22 +118,110 @@ export const HealthInsuranceForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'occupation',
-      name: '',
+      id: 'statusAndChildrenSection',
+      name: m.statusAndChildren,
       children: [
-        buildTextField({
-          id: 'occupationText',
-          name: 'text input',
+        buildMultiField({
+          id: 'statusAndChildren',
+          name: m.statusAndChildren,
+          children: [
+            buildRadioField({
+              id: 'status',
+              name: '',
+              description: m.statusDescription,
+              width: 'half',
+              largeButtons: true,
+              options: [
+                {
+                  label: m.statusPensioner,
+                  value: 'pensioner',
+                  tooltip: m.statusPensionerInformation,
+                },
+                {
+                  label: m.statusStudent,
+                  value: 'student',
+                  tooltip: m.statusStudentInformation,
+                },
+                {
+                  label: m.statusOther,
+                  value: 'other',
+                  tooltip: m.statusOtherInformation,
+                },
+              ],
+            }),
+            buildFileUploadField({
+              id: 'additionalInformation',
+              name: '',
+              introduction: m.statusAdditionalInformation,
+              condition: (answers) => answers.status === 'student',
+            }),
+            buildRadioField({
+              id: 'children',
+              name: '',
+              description: m.childrenDescription,
+              width: 'half',
+              largeButtons: true,
+              options: [
+                { label: m.yesOptionLabel, value: YES },
+                { label: m.noOptionLabel, value: NO },
+              ],
+            }),
+          ],
         }),
       ],
     }),
     buildSection({
-      id: 'info',
+      id: 'formerCountryofInsuranceSection',
       name: '',
       children: [
-        buildTextField({
-          id: 'infoInput',
-          name: 'text input',
+        buildMultiField({
+          id: 'formerCountryofInsurance',
+          name: m.formerCountryOfInsuranceTitle,
+          children: [
+            buildRadioField({
+              id: 'formerCountry.insuranceRegistration',
+              name: '',
+              description: m.formerCountryOfInsuranceDescription,
+              largeButtons: true,
+              options: [
+                { label: m.formerCountryOfInsuranceNoOption, value: NO },
+                { label: m.yesOptionLabel, value: YES },
+              ],
+            }),
+            buildIntroductionField({
+              id: 'infoFormerCountryInsurance',
+              name: '',
+              introduction: m.formerCountryOfInsuranceInfo,
+            }),
+            buildTextField({
+              id: 'formerCountry.country',
+              name: m.country,
+              width: 'half',
+              disabled: true,
+            }),
+            buildTextField({
+              id: 'formerCountry.id',
+              name: m.formerId,
+              width: 'half',
+              disabled: true,
+            }),
+            buildTextField({
+              id: 'formerCountry.insuranceInstitution',
+              name: m.insuranceInstitution,
+              disabled: true,
+            }),
+            buildRadioField({
+              id: 'formerCountry.insuranceEntitlement',
+              name: '',
+              description: m.formerCountryOfInsuranceEntitlement,
+              width: 'half',
+              largeButtons: true,
+              options: [
+                { label: m.noOptionLabel, value: NO },
+                { label: m.yesOptionLabel, value: YES },
+              ],
+            }),
+          ],
         }),
       ],
     }),

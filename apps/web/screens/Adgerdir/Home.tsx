@@ -20,12 +20,10 @@ import {
   GroupedPages,
   CardsSlider,
   FeaturedNews,
-  FrontpageSvg,
   RichText,
   HeadWithSocialSharing,
   ChatPanel,
   Header,
-  BackgroundImage,
   Main,
 } from '@island.is/web/components'
 import { ColorSchemeContext as CovidColorSchemeContext } from '@island.is/web/components/Adgerdir/UI/ColorSchemeContext/ColorSchemeContext'
@@ -36,27 +34,46 @@ import {
   ContentLanguage,
   QueryGetAdgerdirPagesArgs,
   QueryGetAdgerdirTagsArgs,
+  QueryGetGroupedMenuArgs,
 } from '@island.is/api/schema'
 import {
   GET_ADGERDIR_TAGS_QUERY,
   GET_NAMESPACE_QUERY,
   GET_ADGERDIR_PAGES_QUERY,
   GET_ADGERDIR_FRONTPAGE_QUERY,
+  GET_CATEGORIES_QUERY,
 } from '../queries'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
-
 import * as covidStyles from '@island.is/web/components/Adgerdir/UI/styles/styles.treat'
+import {
+  GetArticleCategoriesQuery,
+  GetGroupedMenuQuery,
+  QueryGetArticleCategoriesArgs,
+} from '@island.is/web/graphql/schema'
+import { GET_GROUPED_MENU_QUERY } from '../queries/Menu'
+import { Locale } from '../../i18n/I18n'
+import {
+  formatMegaMenuCategoryLinks,
+  formatMegaMenuLinks,
+} from '@island.is/web/utils/processMenuData'
 
 interface HomeProps {
   frontpage: Query['getAdgerdirFrontpage']
   pages: Query['getAdgerdirPages']
   tags: Query['getAdgerdirTags']
   namespace: Query['getNamespace']
+  megaMenuData
 }
 
-const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
+const Home: Screen<HomeProps> = ({
+  frontpage,
+  pages,
+  tags,
+  namespace,
+  megaMenuData,
+}) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
   const { makePath } = routeNames(activeLocale)
@@ -81,7 +98,7 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
       />
       <Box className={covidStyles.frontpageBg}>
         <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
-          <Header buttonColorScheme="negative">
+          <Header buttonColorScheme="negative" megaMenuData={megaMenuData}>
             <GridContainer>
               <Box paddingTop={[2, 2, 10]} paddingBottom={[4, 4, 4, 10]}>
                 <GridRow>
@@ -236,6 +253,8 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       data: { getAdgerdirPages },
     },
     namespace,
+    megaMenuData,
+    categories,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetAdgerdirPagesArgs>({
       query: GET_ADGERDIR_FRONTPAGE_QUERY,
@@ -272,7 +291,27 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         },
       })
       .then((variables) => JSON.parse(variables.data.getNamespace.fields)),
+    apolloClient
+      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
+        query: GET_GROUPED_MENU_QUERY,
+        variables: {
+          input: { id: '5prHB8HLyh4Y35LI4bnhh2', lang: locale },
+        },
+      })
+      .then((res) => res.data.getGroupedMenu),
+    apolloClient
+      .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
+        query: GET_CATEGORIES_QUERY,
+        variables: {
+          input: {
+            lang: locale,
+          },
+        },
+      })
+      .then((res) => res.data.getArticleCategories),
   ])
+
+  const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
   return {
     frontpage: getAdgerdirFrontpage,
@@ -280,10 +319,21 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
     pages: getAdgerdirPages,
     namespace,
     showSearchInHeader: false,
+    megaMenuData: {
+      asideTopLinks: formatMegaMenuLinks(
+        locale as Locale,
+        asideTopLinksData.menuLinks,
+      ),
+      asideBottomTitle: asideBottomLinksData.title,
+      asideBottomLinks: formatMegaMenuLinks(
+        locale as Locale,
+        asideBottomLinksData.menuLinks,
+      ),
+      mainLinks: formatMegaMenuCategoryLinks(locale as Locale, categories),
+    },
   }
 }
 
 export default withMainLayout(Home, {
   showHeader: false,
-  hasDrawerMenu: false,
 })

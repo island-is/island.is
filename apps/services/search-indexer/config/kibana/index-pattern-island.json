@@ -125,18 +125,18 @@
       {
         "aggregatable": true,
         "count": 0,
-        "esTypes": ["boolean"],
-        "name": "hasProcessEntry",
+        "esTypes": ["integer"],
+        "name": "pdfLinks",
         "readFromDocValues": true,
         "scripted": false,
         "searchable": true,
-        "type": "boolean"
+        "type": "number"
       },
       {
         "aggregatable": true,
         "count": 0,
         "esTypes": ["integer"],
-        "name": "pdfLinks",
+        "name": "processEntryCount",
         "readFromDocValues": true,
         "scripted": false,
         "searchable": true,
@@ -241,8 +241,8 @@
       {
         "aggregatable": true,
         "conflictDescriptions": {
-          "icu_collation_keyword": ["island-is-v12"],
-          "keyword": ["island-en-v12"]
+          "icu_collation_keyword": ["island-is-v13"],
+          "keyword": ["island-en-v13"]
         },
         "count": 0,
         "esTypes": ["icu_collation_keyword", "keyword"],

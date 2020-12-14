@@ -1,4 +1,4 @@
-# API catalogue
+# API Catalogue
 
 ## About
 

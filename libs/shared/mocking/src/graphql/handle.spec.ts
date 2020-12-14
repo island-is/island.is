@@ -1,5 +1,6 @@
-import { handle } from './handle'
 import { buildSchema } from 'graphql'
+
+import { handle } from './handle'
 import { createResolvers } from './createResolvers'
 
 describe('handle', () => {

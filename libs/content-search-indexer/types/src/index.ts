@@ -8,7 +8,7 @@ export interface MappedData {
   title: string
   content?: string
   contentWordCount?: number
-  hasProcessEntry?: boolean
+  processEntryCount?: number
   fillAndSignLinks?: number
   pdfLinks?: number
   wordLinks?: number
@@ -19,7 +19,6 @@ export interface MappedData {
   tags?: tag[]
   dateUpdated: string
   dateCreated: string
-  nextSyncToken?: string
 }
 
 export enum SearchIndexes {

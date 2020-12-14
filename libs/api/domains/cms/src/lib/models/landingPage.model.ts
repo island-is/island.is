@@ -1,10 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { ILandingPage } from '../generated/contentfulTypes'
-import { SliceUnion } from '../unions/slice.union'
+import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { Image, mapImage } from './image.model'
 import { Link, mapLink } from './link.model'
 import { LinkList, mapLinkList } from './linkList.model'
-import { mapDocument } from './slice.model'
 
 @ObjectType()
 export class LandingPage {
