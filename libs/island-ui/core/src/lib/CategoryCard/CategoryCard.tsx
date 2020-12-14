@@ -3,7 +3,7 @@ import { Box } from '../Box/Box'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Inline } from '../Inline/Inline'
 import { Tag } from '../Tag/Tag'
-import { Text } from '../Text/Text'
+import { Text, TextProps } from '../Text/Text'
 
 type Tag = {
   label: string
@@ -17,6 +17,7 @@ type CategoryCardProps = {
   tags?: Tag[]
   href?: string
   colorScheme?: 'blue' | 'red'
+  truncateHeading?: TextProps['truncate']
 }
 
 const colorSchemes = {
@@ -38,6 +39,7 @@ export const CategoryCard = ({
   href = '/',
   tags = [],
   colorScheme = 'blue',
+  truncateHeading = false,
 }: CategoryCardProps) => {
   const hasTags = Array.isArray(tags) && tags.length > 0
   const { borderColor, textColor, tagVariant } = colorSchemes[colorScheme]
@@ -55,7 +57,7 @@ export const CategoryCard = ({
       height="full"
       background="white"
     >
-      <Text variant="h3" color={textColor}>
+      <Text as="h3" variant="h3" color={textColor} truncate={truncateHeading}>
         {heading}
       </Text>
       <Text paddingTop={1}>{text}</Text>
