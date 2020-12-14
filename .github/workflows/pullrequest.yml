@@ -75,8 +75,6 @@ jobs:
         if: steps.cypress-check.outcome != 'success'
         run: npx cypress install
 
-      - run: ls -lah ~/.cache/Cypress
-
       - name: Cache for generated files
         id: generated-files-cache
         uses: actions/cache@v2
@@ -192,9 +190,6 @@ jobs:
         with:
           path: ~/.cache/Cypress
           key: cypress-${{ needs.prepare.outputs.node-modules-hash }}
-
-      - run: ls -lah ~/.cache/Cypress
-      - run: env
 
       - name: Cache for generated files
         uses: actions/cache@v2
