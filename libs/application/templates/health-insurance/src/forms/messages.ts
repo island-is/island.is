@@ -197,8 +197,8 @@ export const m = defineMessages({
       'Please provide the following details regarding your former country of residence.',
     description: 'former country of insurance information',
   },
-  formerCountryOfInsuranceNo: {
-    id: 'hi.application:formerCountryOfInsurance.no',
+  formerCountryOfInsuranceNoOption: {
+    id: 'hi.application:formerCountryOfInsurance.noOption',
     defaultMessage: 'No, only private insurance or no insurance',
     description: 'former country of insurance information',
   },
@@ -207,12 +207,12 @@ export const m = defineMessages({
     defaultMessage: 'Country',
     description: 'Country',
   },
-  previousIdNr: {
+  formerId: {
     id: 'hi.application:applicant.previousIdNr',
     defaultMessage: 'ID number in previous country',
     description: 'ID number in previous country',
   },
-  insuranceName: {
+  insuranceInstitution: {
     id: 'hi.application:applicant.insuranceName',
     defaultMessage: 'Name of the health insurance institution',
     description: 'Name of the health insurance institution',

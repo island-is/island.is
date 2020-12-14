@@ -171,20 +171,20 @@ export const HealthInsuranceForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'FormerCountryofInsuranceSection',
+      id: 'formerCountryofInsuranceSection',
       name: '',
       children: [
         buildMultiField({
-          id: 'FormerCountryofInsurance',
+          id: 'formerCountryofInsurance',
           name: m.formerCountryOfInsuranceTitle,
           children: [
             buildRadioField({
-              id: 'formerCountryofInsuranceRegistration',
+              id: 'formerCountry.insuranceRegistration',
               name: '',
               description: m.formerCountryOfInsuranceDescription,
               largeButtons: true,
               options: [
-                { label: m.formerCountryOfInsuranceNo, value: NO },
+                { label: m.formerCountryOfInsuranceNoOption, value: NO },
                 { label: m.yesOptionLabel, value: YES },
               ],
             }),
@@ -194,24 +194,24 @@ export const HealthInsuranceForm: Form = buildForm({
               introduction: m.formerCountryOfInsuranceInfo,
             }),
             buildTextField({
-              id: 'applicant.country',
+              id: 'formerCountry.country',
               name: m.country,
               width: 'half',
               disabled: true,
             }),
             buildTextField({
-              id: 'applicant.previousIdNr',
-              name: m.previousIdNr,
+              id: 'formerCountry.id',
+              name: m.formerId,
               width: 'half',
               disabled: true,
             }),
             buildTextField({
-              id: 'applicant.insuranceName',
-              name: m.insuranceName,
+              id: 'formerCountry.insuranceInstitution',
+              name: m.insuranceInstitution,
               disabled: true,
             }),
             buildRadioField({
-              id: 'formerCountryInsuranceEntitlement',
+              id: 'formerCountry.insuranceEntitlement',
               name: '',
               description: m.formerCountryOfInsuranceEntitlement,
               width: 'half',
