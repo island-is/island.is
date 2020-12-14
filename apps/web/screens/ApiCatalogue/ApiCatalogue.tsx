@@ -66,10 +66,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
     throw new CustomNextError(404, 'Not found')
   }
 
-  
-  const n = useNamespace(mainContent)
   const sn = useNamespace(staticContent)
-  const fn = useNamespace(filterContent)
 
   const translateTags = (): ServiceTagDisplayNames => {
     const names: ServiceTagDisplayNames = {
