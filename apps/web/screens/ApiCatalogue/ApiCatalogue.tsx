@@ -45,7 +45,7 @@ interface ApiCatalogueProps {
   filterContent: GetNamespaceQuery['getNamespace']
 }
 
-const LIMIT = 3
+const LIMIT = 20
 
 const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   mainContent,
@@ -58,10 +58,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
     throw new CustomNextError(404, 'Not found')
   }
 
-  
-  const n = useNamespace(mainContent)
   const sn = useNamespace(staticContent)
-  const fn = useNamespace(filterContent)
 
   const onLoadMore = () => {
     if (data?.getApiCatalogue.pageInfo?.nextCursor == null) {
@@ -130,10 +127,10 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
               {(error || data?.getApiCatalogue?.services.length < 1) && (
                 <GridContainer>
                   {error ? 
-                    <Text>Villa kom upp</Text> : 
+                    <Text>{sn('errorHeading')}</Text> : 
                     loading ? 
                       <LoadingIcon animate color="blue400" size={32} /> :
-                      <Text>Engar þjónustur fundust</Text>
+                      <Text>{sn('notFound')}</Text>
                   }
                 </GridContainer>
               )}

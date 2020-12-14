@@ -68,7 +68,7 @@ export const ServiceList: React.FC<ServiceListProps> = ({
       <GridRow>
         {services.map((item) => {
           return (
-            <GridColumn key={item.id.toString()} span={['12/12', '12/12', '6/12']} paddingBottom={3}>
+            <GridColumn key={item.id.toString()} span={['12/12', '12/12', '12/12', '6/12']} paddingBottom={3}>
               <CategoryCard
                 href={`${baseUrl}${item.id}`}
                 heading={item.name}
