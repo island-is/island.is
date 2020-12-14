@@ -24,7 +24,7 @@ export const HealthInsuranceForm: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'applicantInfo',
+      id: 'applicantInfoSection',
       name: m.applicantInfoSection,
       children: [
         buildExternalDataProvider({
@@ -52,7 +52,7 @@ export const HealthInsuranceForm: Form = buildForm({
           ],
         }),
         buildMultiField({
-          id: 'contactInfo',
+          id: 'contactInfoSection',
           name: m.contactInfoTitle,
           children: [
             buildTextField({
@@ -153,9 +153,9 @@ export const HealthInsuranceForm: Form = buildForm({
               ],
             }),
             buildFileUploadField({
-              id: 'additionalInformation',
+              id: 'confirmationOfStudies',
               name: '',
-              introduction: m.statusAdditionalInformation,
+              introduction: m.confirmationOfStudies,
               condition: (answers) => answers.status === StatusTypes.STUDENT,
             }),
             buildRadioField({
@@ -174,46 +174,46 @@ export const HealthInsuranceForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'formerCountryofInsuranceSection',
+      id: 'formerInsuranceSection',
       name: m.formerInsuranceSection,
       children: [
         buildMultiField({
-          id: 'formerCountryofInsurance',
-          name: m.formerCountryOfInsuranceTitle,
+          id: 'formerInsurance',
+          name: m.formerInsuranceTitle,
           children: [
             buildRadioField({
-              id: 'insuranceRegistration',
+              id: 'formerInsuranceRegistration',
               name: '',
-              description: m.formerCountryOfInsuranceDescription,
+              description: m.formerInsuranceRegistration,
               largeButtons: true,
               options: [
-                { label: m.formerCountryOfInsuranceNoOption, value: NO },
+                { label: m.formerInsuranceNoOption, value: NO },
                 { label: m.yesOptionLabel, value: YES },
               ],
             }),
             buildIntroductionField({
-              id: 'infoFormerCountryInsurance',
+              id: 'formerInsuranceDetails',
               name: '',
-              introduction: m.formerCountryOfInsuranceInfo,
+              introduction: m.formerInsuranceDetails,
             }),
             buildTextField({
-              id: 'country',
-              name: m.country,
+              id: 'formerInsuranceCountry',
+              name: m.formerInsuranceCountry,
               width: 'half',
             }),
             buildTextField({
-              id: 'id',
-              name: m.formerId,
+              id: 'formerPersonalId',
+              name: m.formerPersonalId,
               width: 'half',
             }),
             buildTextField({
-              id: 'insuranceInstitution',
-              name: m.insuranceInstitution,
+              id: 'formerInsuranceInstitution',
+              name: m.formerInsuranceInstitution,
             }),
             buildRadioField({
-              id: 'insuranceEntitlement',
+              id: 'formerInsuranceEntitlement',
               name: '',
-              description: m.insuranceEntitlement,
+              description: m.formerInsuranceEntitlement,
               width: 'half',
               largeButtons: true,
               options: [
@@ -239,9 +239,9 @@ export const HealthInsuranceForm: Form = buildForm({
               component: 'Review',
             }),
             buildRadioField({
-              id: 'hasAdditionalInfo',
+              id: 'additionalInfo',
               name: '',
-              description: m.hasAdditionalRemarks,
+              description: m.additionalInfo,
               largeButtons: true,
               width: 'half',
               options: [
@@ -254,16 +254,16 @@ export const HealthInsuranceForm: Form = buildForm({
               name: m.additionalRemarks,
               variant: 'textarea',
               placeholder: m.additionalRemarksPlacehokder,
-              condition: (answers) => answers.hasAdditionalInfo === YES,
+              condition: (answers) => answers.additionalInfo === YES,
             }),
             buildFileUploadField({
               id: 'additionalFiles',
               name: '',
               introduction: '',
-              condition: (answers) => answers.hasAdditionalInfo === YES,
+              condition: (answers) => answers.additionalInfo === YES,
             }),
             buildCustomField({
-              id: 'correctInfo',
+              id: 'confirmCorrectInfo',
               name: '',
               component: 'ConfirmCheckbox',
             }),

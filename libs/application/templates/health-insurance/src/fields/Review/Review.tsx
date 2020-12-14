@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import { useFormContext } from 'react-hook-form'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Accordion, AccordionItem, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -29,11 +28,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
         </AccordionItem>
         <AccordionItem
           id="id_3"
-          label={formatText(
-            m.formerCountryOfInsuranceTitle,
-            application,
-            formatMessage,
-          )}
+          label={formatText(m.formerInsuranceTitle, application, formatMessage)}
         >
           <FormerInsurance application={application} field={field} />
         </AccordionItem>

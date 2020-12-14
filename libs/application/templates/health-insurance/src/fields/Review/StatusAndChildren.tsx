@@ -4,7 +4,12 @@ import {
   formatText,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Box, InputFileUpload, Stack } from '@island.is/island-ui/core'
+import {
+  Box,
+  InputFileUpload,
+  Stack,
+  UploadFile,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   FieldDescription,
@@ -20,6 +25,10 @@ const StatusAndChildren: FC<FieldBaseProps> = ({ application }) => {
 
   const [status, setStatus] = useState(
     getValueViaPath(application.answers, 'status') as StatusTypes,
+  )
+
+  const [fileList, setFileList] = useState(
+    getValueViaPath(application.answers, 'confirmationOfStudies') || [],
   )
 
   return (
@@ -75,12 +84,35 @@ const StatusAndChildren: FC<FieldBaseProps> = ({ application }) => {
           <Stack space={2}>
             <FieldDescription
               description={formatText(
-                m.statusAdditionalInformation,
+                m.confirmationOfStudies,
                 application,
                 formatMessage,
               )}
             />
-            <InputFileUpload fileList={[{ name: '' }]} onRemove={() => {}} />
+            <InputFileUpload
+              id="confirmationOfStudies"
+              header={formatText(
+                m.fileUploadHeader,
+                application,
+                formatMessage,
+              )}
+              description={formatText(
+                m.fileUploadDescription,
+                application,
+                formatMessage,
+              )}
+              buttonLabel={formatText(
+                m.fileUploadButton,
+                application,
+                formatMessage,
+              )}
+              fileList={fileList as UploadFile[]}
+              /* TODO!! implement file upload/removal logic */
+              onRemove={(fileToRemove) => console.log(fileToRemove)}
+              onChange={(newFiles) =>
+                setFileList([...(fileList as UploadFile[]), ...newFiles])
+              }
+            />
           </Stack>
         </Box>
       )}

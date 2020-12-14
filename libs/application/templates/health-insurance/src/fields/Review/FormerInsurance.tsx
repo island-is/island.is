@@ -30,23 +30,20 @@ const FormerInsurance: FC<FieldBaseProps> = ({ application }) => {
       <Stack space={2}>
         <FieldDescription
           description={formatText(
-            m.insuranceEntitlement,
+            m.formerInsuranceRegistration,
             application,
             formatMessage,
           )}
         />
         <RadioController
-          id={'insuranceRegistration'}
+          id={'formerInsuranceRegistration'}
           disabled={false}
-          name={'insuranceRegistration'}
-          defaultValue={
-            getValueViaPath(application.answers, 'children') as string[]
-          }
+          name={'formerInsuranceRegistration'}
           largeButtons={true}
           options={[
             {
               label: formatText(
-                m.formerCountryOfInsuranceNoOption,
+                m.formerInsuranceNoOption,
                 application,
                 formatMessage,
               ),
@@ -59,11 +56,10 @@ const FormerInsurance: FC<FieldBaseProps> = ({ application }) => {
           ]}
         />
       </Stack>
-
       <Stack space={2}>
         <FieldDescription
           description={formatText(
-            m.formerCountryOfInsuranceInfo,
+            m.formerInsuranceDetails,
             application,
             formatMessage,
           )}
@@ -71,27 +67,31 @@ const FormerInsurance: FC<FieldBaseProps> = ({ application }) => {
         <GridRow>
           <GridColumn span="6/12">
             <Input
-              id={'country'}
-              name={'country'}
-              label={formatText(m.country, application, formatMessage)}
+              id={'formerInsuranceCountry'}
+              name={'formerInsuranceCountry'}
+              label={formatText(
+                m.formerInsuranceCountry,
+                application,
+                formatMessage,
+              )}
               ref={register}
             />
           </GridColumn>
           <GridColumn span="6/12">
             <Input
-              id={'id'}
-              name={'id'}
-              label={formatText(m.formerId, application, formatMessage)}
+              id={'formerPersonalId'}
+              name={'formerPersonalId'}
+              label={formatText(m.formerPersonalId, application, formatMessage)}
               ref={register}
             />
           </GridColumn>
         </GridRow>
         <Box paddingBottom={4}>
           <Input
-            id={'insuranceInstitution'}
-            name={'insuranceInstitution'}
+            id={'formerInsuranceInstitution'}
+            name={'formerInsuranceInstitution'}
             label={formatText(
-              m.insuranceInstitution,
+              m.formerInsuranceInstitution,
               application,
               formatMessage,
             )}
@@ -103,14 +103,14 @@ const FormerInsurance: FC<FieldBaseProps> = ({ application }) => {
       <Stack space={2}>
         <FieldDescription
           description={formatText(
-            m.insuranceEntitlement,
+            m.formerInsuranceEntitlement,
             application,
             formatMessage,
           )}
         />
         <RadioController
-          id={'insuranceEntitlement'}
-          name={'insuranceEntitlement'}
+          id={'formerInsuranceEntitlement'}
+          name={'formerInsuranceEntitlement'}
           largeButtons={true}
           split={'1/2'}
           options={[
