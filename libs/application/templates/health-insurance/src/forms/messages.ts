@@ -174,4 +174,47 @@ export const m = defineMessages({
     defaultMessage: 'You are required to answer this question!',
     description: 'You need to answer this question to continue.',
   },
+  formerCountryOfInsuranceDescription: {
+    id: 'hi.application:formerCountryOfInsurance.description',
+    defaultMessage:
+      'Were you registerd with a national health insurance insitution in your former country  of insurance?',
+    description: 'former country of insurance description',
+  },
+  formerCountryOfInsuranceEntitlement: {
+    id: 'hi.application:formerCountryOfInsurance.entitlement',
+    defaultMessage:
+      'Are you entitled to continued insurance in your former country of residence while living in Iceland?',
+    description: 'former country of insurance entitlement',
+  },
+  formerCountryOfInsuranceTitle: {
+    id: 'hi.application:formerCountryOfInsurance.title',
+    defaultMessage: 'Former country of insurance',
+    description: 'former country of insurance title',
+  },
+  formerCountryOfInsuranceInfo: {
+    id: 'hi.application:formerCountryOfInsurance.info',
+    defaultMessage:
+      'Please provide the following details regarding your former country of residence.',
+    description: 'former country of insurance information',
+  },
+  formerCountryOfInsuranceNoOption: {
+    id: 'hi.application:formerCountryOfInsurance.noOption',
+    defaultMessage: 'No, only private insurance or no insurance',
+    description: 'former country of insurance information',
+  },
+  country: {
+    id: 'hi.application:applicant.country',
+    defaultMessage: 'Country',
+    description: 'Country',
+  },
+  formerId: {
+    id: 'hi.application:applicant.previousIdNr',
+    defaultMessage: 'ID number in previous country',
+    description: 'ID number in previous country',
+  },
+  insuranceInstitution: {
+    id: 'hi.application:applicant.insuranceName',
+    defaultMessage: 'Name of the health insurance institution',
+    description: 'Name of the health insurance institution',
+  },
 })

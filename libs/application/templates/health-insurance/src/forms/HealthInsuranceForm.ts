@@ -171,12 +171,57 @@ export const HealthInsuranceForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'info',
+      id: 'formerCountryofInsuranceSection',
       name: '',
       children: [
-        buildTextField({
-          id: 'infoInput',
-          name: 'text input',
+        buildMultiField({
+          id: 'formerCountryofInsurance',
+          name: m.formerCountryOfInsuranceTitle,
+          children: [
+            buildRadioField({
+              id: 'formerCountry.insuranceRegistration',
+              name: '',
+              description: m.formerCountryOfInsuranceDescription,
+              largeButtons: true,
+              options: [
+                { label: m.formerCountryOfInsuranceNoOption, value: NO },
+                { label: m.yesOptionLabel, value: YES },
+              ],
+            }),
+            buildIntroductionField({
+              id: 'infoFormerCountryInsurance',
+              name: '',
+              introduction: m.formerCountryOfInsuranceInfo,
+            }),
+            buildTextField({
+              id: 'formerCountry.country',
+              name: m.country,
+              width: 'half',
+              disabled: true,
+            }),
+            buildTextField({
+              id: 'formerCountry.id',
+              name: m.formerId,
+              width: 'half',
+              disabled: true,
+            }),
+            buildTextField({
+              id: 'formerCountry.insuranceInstitution',
+              name: m.insuranceInstitution,
+              disabled: true,
+            }),
+            buildRadioField({
+              id: 'formerCountry.insuranceEntitlement',
+              name: '',
+              description: m.formerCountryOfInsuranceEntitlement,
+              width: 'half',
+              largeButtons: true,
+              options: [
+                { label: m.noOptionLabel, value: NO },
+                { label: m.yesOptionLabel, value: YES },
+              ],
+            }),
+          ],
         }),
       ],
     }),
