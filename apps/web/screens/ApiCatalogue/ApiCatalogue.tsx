@@ -139,9 +139,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                       <Button
                         colorScheme="default"
                         iconType="filled"
-                        onBlur={function noRefCheck() {}}
                         onClick={() => onLoadMore()}
-                        onFocus={function noRefCheck() {}}
                         size="default"
                         type="button"
                         variant="ghost"

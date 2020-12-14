@@ -11,7 +11,7 @@ import {
 import { ApiService } from '@island.is/api/schema'
 import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
 import { capitalize } from '@island.is/web/utils/capitalize'
-import { useNamespace } from 'apps/web/hooks'
+import { useNamespace } from '@island.is/web/hooks'
 
 type Tag = {
   label: string
