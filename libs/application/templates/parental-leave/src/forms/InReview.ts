@@ -5,6 +5,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+import { mm } from '../lib/messages'
 
 export const InReview: Form = buildForm({
   id: 'ParentalLeaveInReview',
@@ -13,11 +14,13 @@ export const InReview: Form = buildForm({
   children: [
     buildSection({
       id: 'review',
-      name: 'In Review',
+      name: '',
       children: [
         buildCustomField({
           id: 'InReviewSteps',
-          name: 'Your application is in review',
+          // TODO: Can we make the name conditional?
+          // ex: name: state==='approved' ? "Your application is approved" : "Your application is in review"
+          name: mm.reviewScreen.titleInReview,
           component: 'InReviewSteps',
         }),
       ],
