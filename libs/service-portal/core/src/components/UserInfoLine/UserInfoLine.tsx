@@ -56,7 +56,7 @@ export const UserInfoLine: FC<Props> = ({
             height="full"
             overflow="hidden"
           >
-            <Text variant="h5" as="h5">
+            <Text variant="h5" as="h5" lineHeight="lg">
               {formatMessage(label)}
             </Text>
           </Box>
@@ -79,15 +79,13 @@ export const UserInfoLine: FC<Props> = ({
             )}
           </Box>
         </GridColumn>
-        {editLink ? (
-          <GridColumn order={4} span={editColumnSpan}>
+        <GridColumn order={4} span={editColumnSpan}>
+          {editLink ? (
             <Box
               display="flex"
               justifyContent={['flexStart', 'flexEnd']}
               alignItems="center"
               height="full"
-              overflow="hidden"
-              className={styles.buttonWrapper}
             >
               {editLink.external ? (
                 <a
@@ -122,8 +120,8 @@ export const UserInfoLine: FC<Props> = ({
                 </Link>
               )}
             </Box>
-          </GridColumn>
-        ) : null}
+          ) : null}
+        </GridColumn>
       </GridRow>
     </Box>
   )
