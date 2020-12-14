@@ -11,7 +11,12 @@ import {
   processSyncDataInput,
 } from '../cmsSync.service'
 
-import { createTerms, extractStringsFromObject } from './utils'
+import {
+  createTerms,
+  extractStringsFromObject,
+  numberOfProcessEntries,
+  numberOfLinks,
+} from './utils'
 
 @Injectable()
 export class AdgerdirPageSyncService
@@ -33,12 +38,16 @@ export class AdgerdirPageSyncService
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapAdgerdirPage(entry)
+          const content = `${
+            mapped.longDescription
+          } ${extractStringsFromObject({ ...mapped.content })}` // this function only accepts plain js objects
           return {
             _id: mapped.id,
             title: mapped.title,
-            content: `${mapped.longDescription} ${extractStringsFromObject({
-              ...mapped.content,
-            })}`, // this function only accepts plain js objects
+            content,
+            contentWordCount: content.split(/\s+/).length,
+            processEntryCount: numberOfProcessEntries(mapped.content),
+            ...numberOfLinks(mapped.content),
             type: 'webAdgerdirPage',
             termPool: createTerms([mapped.title]),
             response: JSON.stringify({ ...mapped, typename: 'AdgerdirPage' }),

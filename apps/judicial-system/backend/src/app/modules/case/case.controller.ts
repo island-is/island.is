@@ -1,3 +1,5 @@
+import { ReadableStreamBuffer } from 'stream-buffers'
+
 import {
   Body,
   Controller,
@@ -11,6 +13,8 @@ import {
   Query,
   ConflictException,
   Res,
+  Header,
+  UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -18,23 +22,112 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { CaseState } from '@island.is/judicial-system/types'
+import {
+  CaseTransition,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
+import {
+  CurrentHttpUser,
+  JwtAuthGuard,
+  RolesRules,
+  RolesGuard,
+  RolesRule,
+  RulesType,
+} from '@island.is/judicial-system/auth'
 
-import { UserService } from '../user'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './pipes'
 
+// Allows prosecutors to perform any action
+const prosecutorRule = UserRole.PROSECUTOR as RolesRule
+
+// Allows judges to perform any action
+const judgeRule = UserRole.JUDGE as RolesRule
+
+// Allows prosecutors to update a specific set of fields
+const prosecutorUpdateRule = {
+  role: UserRole.PROSECUTOR,
+  type: RulesType.FIELD,
+  dtoFields: [
+    'policeCaseNumber',
+    'accusedNationalId',
+    'accusedName',
+    'accusedAddress',
+    'accusedGender',
+    'requestedDefenderName',
+    'requestedDefenderEmail',
+    'court',
+    'arrestDate',
+    'requestedCourtDate',
+    'requestedCustodyEndDate',
+    'lawsBroken',
+    'custodyProvisions',
+    'requestedCustodyRestrictions',
+    'caseFacts',
+    'legalArguments',
+    'comments',
+  ],
+} as RolesRule
+
+// Allows judges to update a specific set of fields
+const judgeUpdateRule = {
+  role: UserRole.JUDGE,
+  type: RulesType.FIELD,
+  dtoFields: [
+    'courtCaseNumber',
+    'courtDate',
+    'courtRoom',
+    'defenderName',
+    'defenderEmail',
+    'courtStartTime',
+    'courtEndTime',
+    'courtAttendees',
+    'policeDemands',
+    'accusedPlea',
+    'litigationPresentations',
+    'ruling',
+    'rejecting',
+    'custodyEndDate',
+    'custodyRestrictions',
+    'accusedAppealDecision',
+    'accusedAppealAnnouncement',
+    'prosecutorAppealDecision',
+    'prosecutorAppealAnnouncement',
+  ],
+} as RolesRule
+
+// Allows prosecutors to open, submit and delete cases
+const prosecutorTransitionRule = {
+  role: UserRole.PROSECUTOR,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [
+    CaseTransition.OPEN,
+    CaseTransition.SUBMIT,
+    CaseTransition.DELETE,
+  ],
+} as RolesRule
+
+// Allows judges to accept and reject cases
+const judgeTransitionRule = {
+  role: UserRole.JUDGE,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [CaseTransition.ACCEPT, CaseTransition.REJECT],
+} as RolesRule
+
+@UseGuards(RolesGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('api')
 @ApiTags('cases')
 export class CaseController {
   constructor(
     @Inject(CaseService)
     private readonly caseService: CaseService,
-    @Inject(UserService)
-    private readonly userService: UserService,
   ) {}
 
   private async findCaseById(id: string) {
@@ -47,16 +140,7 @@ export class CaseController {
     return existingCase
   }
 
-  private async findUserByNationalId(nationalId: string) {
-    const user = await this.userService.findByNationalId(nationalId)
-
-    if (!user) {
-      throw new NotFoundException(`User ${nationalId} not found`)
-    }
-
-    return user
-  }
-
+  @RolesRules(prosecutorRule)
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   create(
@@ -66,6 +150,7 @@ export class CaseController {
     return this.caseService.create(caseToCreate)
   }
 
+  @RolesRules(prosecutorUpdateRule, judgeUpdateRule)
   @Put('case/:id')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
@@ -84,6 +169,7 @@ export class CaseController {
     return updatedCase
   }
 
+  @RolesRules(prosecutorTransitionRule, judgeTransitionRule)
   @Put('case/:id/state')
   @ApiOkResponse({
     type: Case,
@@ -91,20 +177,19 @@ export class CaseController {
   })
   async transition(
     @Param('id') id: string,
+    @CurrentHttpUser() user: User,
     @Body() transition: TransitionCaseDto,
   ): Promise<Case> {
     // Use existingCase.modified when client is ready to send last modified timestamp with all updates
 
     const existingCase = await this.findCaseById(id)
 
-    const user = await this.findUserByNationalId(transition.nationalId)
+    const update = {
+      state: transitionCase(transition.transition, existingCase.state),
+    } as UpdateCaseDto
 
-    const update = transitionCase(
-      transition.transition,
-      existingCase.state,
-      user.id,
-      user.role,
-    )
+    update[user.role === UserRole.PROSECUTOR ? 'prosecutorId' : 'judgeId'] =
+      user.id
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,
@@ -136,6 +221,34 @@ export class CaseController {
     return this.findCaseById(id)
   }
 
+  @RolesRules(judgeRule)
+  @Get('case/:id/ruling')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets the ruling for an existing case as a pdf document',
+  })
+  async getRulingPdf(
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+    @Res() res,
+  ) {
+    const existingCase = await this.findCaseById(id)
+
+    const pdf = await this.caseService.getRulingPdf(existingCase, user)
+
+    const stream = new ReadableStreamBuffer({
+      frequency: 10,
+      chunkSize: 2048,
+    })
+    stream.put(pdf, 'binary')
+
+    res.header('Content-length', pdf.length)
+
+    return stream.pipe(res)
+  }
+
+  @RolesRules(judgeRule)
   @Post('case/:id/signature')
   @ApiCreatedResponse({
     type: SigningServiceResponse,
@@ -143,25 +256,20 @@ export class CaseController {
   })
   async requestSignature(
     @Param('id') id: string,
+    @CurrentHttpUser() user: User,
     @Res() res,
   ): Promise<SigningServiceResponse> {
     const existingCase = await this.findCaseById(id)
 
-    if (
-      existingCase.state !== CaseState.ACCEPTED &&
-      existingCase.state !== CaseState.REJECTED
-    ) {
-      throw new ForbiddenException(
-        `Cannot sign a ruling for a case in state ${existingCase.state}`,
-      )
-    }
-
-    if (!existingCase.judge) {
+    if (user.role !== UserRole.JUDGE) {
       throw new ForbiddenException('A ruling must be signed by a judge')
     }
 
     try {
-      const response = await this.caseService.requestSignature(existingCase)
+      const response = await this.caseService.requestSignature(
+        existingCase,
+        user,
+      )
       return res.status(201).send(response)
     } catch (error) {
       if (error instanceof DokobitError) {
@@ -175,6 +283,7 @@ export class CaseController {
     }
   }
 
+  @RolesRules(judgeRule)
   @Get('case/:id/signature')
   @ApiOkResponse({
     type: SignatureConfirmationResponse,
@@ -183,21 +292,18 @@ export class CaseController {
   })
   async getSignatureConfirmation(
     @Param('id') id: string,
+    @CurrentHttpUser() user: User,
     @Query('documentToken') documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
     const existingCase = await this.findCaseById(id)
 
-    if (
-      existingCase.state !== CaseState.ACCEPTED &&
-      existingCase.state !== CaseState.REJECTED
-    ) {
-      throw new ForbiddenException(
-        `Cannot confirm a ruling signature for a case in state ${existingCase.state}`,
-      )
+    if (user.role !== UserRole.JUDGE) {
+      throw new ForbiddenException('A ruling must be signed by a judge')
     }
 
     return this.caseService.getSignatureConfirmation(
       existingCase,
+      user,
       documentToken,
     )
   }

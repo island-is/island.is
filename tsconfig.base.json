@@ -98,6 +98,9 @@
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
       ],
+      "@island.is/application/templates/health-insurance": [
+        "libs/application/templates/health-insurance/src/index.ts"
+      ],
       "@island.is/application/templates/meta-application": [
         "libs/application/templates/meta-application/src/index.ts"
       ],
@@ -117,12 +120,16 @@
         "libs/application/ui-shell/src/index.ts"
       ],
       "@island.is/auth-api-lib": ["libs/auth-api-lib/src/index.ts"],
+      "@island.is/auth-nest-tools": ["libs/auth-nest-tools/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
       "@island.is/content-search-indexer": [
         "libs/content-search-indexer/src/index.ts"
       ],
       "@island.is/content-search-indexer/types": [
         "libs/content-search-indexer/types/src/index.ts"
+      ],
+      "@island.is/content-search-metrics": [
+        "libs/content-search-metrics/src/index.ts"
       ],
       "@island.is/content-search-toolkit": [
         "libs/content-search-toolkit/src/index.ts"
@@ -152,6 +159,9 @@
       "@island.is/judicial-system/audit-trail": [
         "libs/judicial-system/audit-trail/src/index.ts"
       ],
+      "@island.is/judicial-system/auth": [
+        "libs/judicial-system/auth/src/index.ts"
+      ],
       "@island.is/judicial-system/consts": [
         "libs/judicial-system/consts/src/index.ts"
       ],
@@ -176,6 +186,9 @@
       ],
       "@island.is/service-portal/core": [
         "libs/service-portal/core/src/index.ts"
+      ],
+      "@island.is/service-portal/document-provider": [
+        "libs/service-portal/document-provider/src/index.ts"
       ],
       "@island.is/service-portal/documents": [
         "libs/service-portal/documents/src/index.ts"

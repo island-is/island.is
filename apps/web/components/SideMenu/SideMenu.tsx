@@ -129,6 +129,7 @@ export const SideMenu: FC<Props> = ({
     <RemoveScroll ref={ref} enabled={isMobile && isVisible}>
       <FocusLock noFocusGuards={true}>
         <Box
+          component="nav"
           className={cn(styles.root, {
             [styles.isVisible]: isVisible,
           })}

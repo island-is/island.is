@@ -9,11 +9,13 @@ export type Icon =
   | 'business'
   | 'calendar'
   | 'car'
+  | 'caretDown'
   | 'cellular'
   | 'chatbubble'
   | 'checkmark'
   | 'checkmarkCircle'
   | 'chevronBack'
+  | 'chevronUp'
   | 'chevronDown'
   | 'chevronForward'
   | 'closeCircle'
@@ -55,12 +57,14 @@ export default {
     business: 'Business',
     calendar: 'Calendar',
     car: 'Car',
+    caretDown: 'CaretDown',
     cellular: 'Cellular',
     chatbubble: 'Chatbubble',
     checkmark: 'Checkmark',
     checkmarkCircle: 'CheckmarkCircle',
     chevronBack: 'ChevronBack',
     chevronDown: 'ChevronDown',
+    chevronUp: 'ChevronUp',
     chevronForward: 'ChevronForward',
     closeCircle: 'CloseCircle',
     close: 'Close',
@@ -100,11 +104,13 @@ export default {
     business: 'BusinessOutline',
     calendar: 'CalendarOutline',
     car: 'CarOutline',
+    caretDown: 'CaretDownOutline',
     cellular: 'CellularOutline',
     chatbubble: 'ChatbubbleOutline',
     checkmark: 'Checkmark',
     checkmarkCircle: 'CheckmarkCircleOutline',
     chevronBack: 'ChevronBackOutline',
+    chevronUp: 'ChevronUpOutline',
     chevronDown: 'ChevronDownOutline',
     chevronForward: 'ChevronForwardOutline',
     closeCircle: 'CloseCircleOutline',

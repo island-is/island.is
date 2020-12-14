@@ -73,24 +73,23 @@ export class Grant extends Model<Grant> {
     allowNull: false,
   })
   @ApiProperty()
-  creationTime!: string
+  creationTime!: Date
 
   @Column({
     type: DataType.DATE,
-    allowNull: false,
+    allowNull: true,
   })
   @ApiProperty({
-    // add one day as an expiration example
     example: new Date(new Date().setTime(new Date().getTime() + 86400000)),
   })
-  expiration!: string
+  expiration?: Date
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
   @ApiProperty()
-  consumedTime?: string
+  consumedTime?: Date
 
   @Column({
     type: DataType.STRING,

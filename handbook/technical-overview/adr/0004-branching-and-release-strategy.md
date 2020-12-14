@@ -1,4 +1,4 @@
-# Branching and release strategy
+# Branching and Release Strategy
 
 - Status: accepted
 - Deciders: devs, devops

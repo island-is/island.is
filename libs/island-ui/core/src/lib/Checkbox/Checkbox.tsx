@@ -17,6 +17,7 @@ export interface CheckboxProps {
   errorMessage?: string
   value?: string
   large?: boolean
+  filled?: boolean
 }
 
 export const Checkbox = ({
@@ -31,6 +32,7 @@ export const Checkbox = ({
   errorMessage,
   value,
   large,
+  filled = false,
 }: CheckboxProps) => {
   const ariaError = hasError
     ? {
@@ -42,6 +44,7 @@ export const Checkbox = ({
     <div
       className={cn(styles.container, large, {
         [styles.large]: large,
+        [styles.filled]: filled,
       })}
     >
       <input
@@ -52,6 +55,7 @@ export const Checkbox = ({
         id={id}
         onChange={onChange}
         value={value}
+        checked={checked}
         {...ariaError}
       />
       <label

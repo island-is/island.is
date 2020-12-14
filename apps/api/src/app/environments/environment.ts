@@ -10,7 +10,7 @@ export default {
     host: 'soffiaprufa.skra.is',
   },
   userProfile: {
-    userProfileServiceBasePath: 'http://localhost:3333',
+    userProfileServiceBasePath: 'http://localhost:3366',
   },
   identityServer: {
     issuer: 'https://identity-server.dev01.devland.is',

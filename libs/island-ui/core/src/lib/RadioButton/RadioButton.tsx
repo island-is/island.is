@@ -7,12 +7,12 @@ import * as styles from './RadioButton.treat'
 export interface RadioButtonProps {
   name?: string
   id?: string
-  label?: string
+  label?: React.ReactNode
   value?: string | number
   checked?: boolean
   disabled?: boolean
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
-  tooltip?: string
+  tooltip?: React.ReactNode
   hasError?: boolean
   errorMessage?: string
   large?: boolean
@@ -54,6 +54,7 @@ export const RadioButton = ({
         id={id}
         onChange={onChange}
         value={value}
+        checked={checked}
         {...ariaError}
       />
       <label

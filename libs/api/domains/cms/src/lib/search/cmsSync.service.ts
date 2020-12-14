@@ -18,6 +18,8 @@ import { AboutPageSyncService } from './importers/aboutPage.service'
 import { Entry } from 'contentful'
 import { ElasticService } from '@island.is/content-search-toolkit'
 import { AdgerdirPageSyncService } from './importers/adgerdirPage'
+import { MenuSyncService } from './importers/menu.service'
+import { GroupedMenuSyncService } from './importers/groupedMenu.service'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -48,6 +50,8 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly lifeEventsPageSyncService: LifeEventsPageSyncService,
     private readonly adgerdirPageSyncService: AdgerdirPageSyncService,
     private readonly contentfulService: ContentfulService,
+    private readonly menuSyncService: MenuSyncService,
+    private readonly groupedMenuSyncService: GroupedMenuSyncService,
     private readonly elasticService: ElasticService,
   ) {
     this.contentSyncProviders = [
@@ -57,6 +61,8 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.newsSyncService,
       this.aboutPageSyncService,
       this.adgerdirPageSyncService,
+      this.menuSyncService,
+      this.groupedMenuSyncService,
     ]
   }
 
@@ -98,7 +104,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     return this.elasticService.index(elasticIndex, folderHashDocument)
   }
 
-  // this will generate diffrent hash when any file has been changed in the importer app
+  // this will generate different hash when any file has been changed in the importer app
   private async getModelsFolderHash(): Promise<string> {
     // node_modules is quite big, it's unlikely that changes here will effect the cms importers mappings
     const options = { folders: { exclude: ['node_modules'] } }

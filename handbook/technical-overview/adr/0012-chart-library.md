@@ -1,4 +1,4 @@
-# What chart library should we use across island.is?
+# What Chart Library Should We Use Across Island.is?
 
 - Status: proposed
 - Deciders: designers and developers of island.is

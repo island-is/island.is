@@ -10,16 +10,11 @@ import {
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { isNextDisabled } from '../../../utils/stepHelper'
-import { validate, Validation } from '../../../utils/validate'
+import { Validation } from '../../../utils/validate'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import {
-  padTimeWithZero,
-  parseString,
-  parseTime,
-  replaceTabsOnChange,
-} from '@island.is/judicial-system-web/src/utils/formatters'
+import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useHistory, useParams } from 'react-router-dom'
 import {
@@ -35,7 +30,6 @@ import {
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import parseISO from 'date-fns/parseISO'
-import formatISO from 'date-fns/formatISO'
 import isValid from 'date-fns/isValid'
 import {
   JudgeSubsections,
@@ -289,7 +283,7 @@ export const HearingArrangements: React.FC = () => {
             <Input
               name="courtroom"
               label="Dómsalur"
-              defaultValue={workingCase?.courtRoom}
+              defaultValue={workingCase.courtRoom}
               placeholder="Skráðu inn dómsal"
               onChange={(event) =>
                 removeTabsValidateAndSet(
@@ -320,7 +314,7 @@ export const HearingArrangements: React.FC = () => {
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                Verjandi
+                Skipaður verjandi
               </Text>
             </Box>
             <Box marginBottom={3}>
@@ -360,18 +354,21 @@ export const HearingArrangements: React.FC = () => {
                 removeTabsValidateAndSet(
                   'defenderEmail',
                   event,
-                  [],
+                  ['email-format'],
                   workingCase,
                   setWorkingCase,
+                  defenderEmailErrorMessage,
+                  setDefenderEmailErrorMessage,
                 )
               }
               onBlur={(event) =>
                 validateAndSendToServer(
                   'defenderEmail',
                   event.target.value,
-                  [],
+                  ['email-format'],
                   workingCase,
                   updateCase,
+                  setDefenderEmailErrorMessage,
                 )
               }
             />

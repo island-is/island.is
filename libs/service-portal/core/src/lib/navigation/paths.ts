@@ -16,18 +16,19 @@ export enum ServicePortalPath {
   FamilyMember = '/fjolskyldan/:nationalId',
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
+  RealEstateExternal = 'https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir',
   // Fjarmal
   FinanceRoot = '/fjarmal',
   FinanceVehicles = 'https://mitt.samgongustofa.is/',
   FinancePayments = '/greidslur',
+  FinanceExternal = 'https://minarsidur.island.is/minar-sidur/fjarmal/fjarmal-stada-vid-rikissjod-og-stofnanir/',
   // Electronic Documents
   ElectronicDocumentsRoot = '/rafraen-skjol',
   // Heilsa
   HealthRoot = '/heilsa',
-  HealthHeilsuvera = 'https://minarsidur.heilsuvera.is/heimasvaedi',
-  HealthVaccinations = 'https://minarsidur.heilsuvera.is/bolusetningar/bolusett-gegn/',
   // Education
   EducationRoot = '/menntun',
+  EducationExternal = 'https://minarsidur.island.is/minar-sidur/menntun/namsferill/',
   // Assets
   AssetsRoot = '/eignir',
   // Messages
@@ -41,4 +42,7 @@ export enum ServicePortalPath {
   UserProfileEditEmail = '/stillingar/minn-adgangur/breyta-netfangi',
   UserProfileEditLanguage = '/stillingar/minn-adgangur/breyta-tungumali',
   UserProfileEmailConfirmation = '/stillingar/minn-adgangur/stadfesta-netfang/:hash',
+
+  // Skjalaveita
+  DocumentProviderRoot = '/skjalaveita',
 }

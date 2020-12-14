@@ -1,20 +1,30 @@
+import React from 'react'
+import { useQuery, gql } from '@apollo/client'
+
+import { Query } from '@island.is/api/schema'
 import { AlertMessage, Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
-import { useNationalRegistryFamilyInfo } from '@island.is/service-portal/graphql'
-import React from 'react'
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
 import { FamilyMemberCardLoader } from '../../components/FamilyMemberCard/FamilyMemberCardLoader'
+
+const NationalRegistryFamilyQuery = gql`
+  query NationalRegistryFamilyQuery {
+    nationalRegistryFamily {
+      nationalId
+      fullName
+      familyRelation
+    }
+  }
+`
 
 const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const {
-    data: natRegFamilyInfo,
-    loading,
-    error,
-    called,
-  } = useNationalRegistryFamilyInfo()
+  const { data, loading, error, called } = useQuery<Query>(
+    NationalRegistryFamilyQuery,
+  )
+  const { nationalRegistryFamily } = data || {}
 
   return (
     <>
@@ -38,7 +48,7 @@ const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
         </Box>
       )}
       <Stack space={2}>
-        {called && !loading && !error && natRegFamilyInfo?.length === 0 && (
+        {called && !loading && !error && nationalRegistryFamily?.length === 0 && (
           <AlertMessage
             type="info"
             title={formatMessage({
@@ -51,7 +61,7 @@ const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
           [...Array(3)].map((_key, index) => (
             <FamilyMemberCardLoader key={index} />
           ))}
-        {natRegFamilyInfo?.map((familyMember, index) => (
+        {nationalRegistryFamily?.map((familyMember, index) => (
           <FamilyMemberCard
             key={index}
             title={familyMember.fullName}

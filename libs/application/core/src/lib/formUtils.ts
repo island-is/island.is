@@ -2,6 +2,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 const merge = require('deepmerge')
+
 import { Field } from '../types/Fields'
 import { Application, FormValue } from '../types/Application'
 import {
@@ -161,7 +162,7 @@ export function mergeAnswers(
     arrayMerge: overwriteArrayMerge,
   })
 }
-type MessageFormatter = (descriptor: StaticText, values?: any) => string
+export type MessageFormatter = (descriptor: StaticText, values?: any) => string
 
 export function formatText(
   text: FormText,
@@ -171,7 +172,9 @@ export function formatText(
   if (typeof text === 'function') {
     const message = text(application)
 
-    if (typeof message === 'string') return formatMessage(message)
+    if (typeof message === 'string') {
+      return formatMessage(message)
+    }
 
     const { values = {}, ...descriptor } = message
 

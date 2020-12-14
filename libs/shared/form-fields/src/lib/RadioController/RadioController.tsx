@@ -3,15 +3,15 @@ import { useFormContext, Controller } from 'react-hook-form'
 
 import {
   RadioButton,
-  Tooltip,
   GridRow,
   GridColumn,
+  InputError,
 } from '@island.is/island-ui/core'
 
 interface Option {
   value: string
-  label: string
-  tooltip?: string
+  label: React.ReactNode
+  tooltip?: React.ReactNode
   excludeOthers?: boolean
 }
 interface Props {
@@ -65,11 +65,13 @@ export const RadioController: FC<Props> = ({
                 label={option.label}
                 value={option.value}
                 disabled={disabled}
-                errorMessage={index === options.length - 1 ? error : undefined}
                 hasError={error !== undefined}
               />
             </GridColumn>
           ))}
+          <GridColumn span={['1/1', split]} paddingBottom={2}>
+            {error !== undefined && <InputError errorMessage={error} />}
+          </GridColumn>
         </GridRow>
       )}
     />

@@ -1,0 +1,119 @@
+{
+  "attributes": {
+    "description": "",
+    "kibanaSavedObjectMeta": {
+      "searchSourceJSON": {
+        "filter": [],
+        "indexRefName": "kibanaSavedObjectMeta.searchSourceJSON.index",
+        "query": {
+          "language": "kuery",
+          "query": ""
+        }
+      }
+    },
+    "title": "Articles with the least amount of words",
+    "uiStateJSON": {
+      "vis": {
+        "params": {
+          "sort": {
+            "columnIndex": null,
+            "direction": null
+          }
+        }
+      }
+    },
+    "version": 1,
+    "visState": {
+      "aggs": [
+        {
+          "enabled": true,
+          "id": 1,
+          "params": {
+            "customLabel": "Word count",
+            "field": "contentWordCount"
+          },
+          "schema": "metric",
+          "type": "sum"
+        },
+        {
+          "enabled": true,
+          "id": 2,
+          "params": {
+            "customLabel": "Title",
+            "field": "title.keyword",
+            "missingBucket": false,
+            "missingBucketLabel": "Missing",
+            "order": "asc",
+            "orderBy": 1,
+            "otherBucket": false,
+            "otherBucketLabel": "Other",
+            "size": 100
+          },
+          "schema": "bucket",
+          "type": "terms"
+        }
+      ],
+      "params": {
+        "dimensions": {
+          "buckets": [
+            {
+              "accessor": 0,
+              "aggType": "terms",
+              "format": {
+                "id": "terms",
+                "params": {
+                  "id": "string",
+                  "missingBucketLabel": "Missing",
+                  "otherBucketLabel": "Other"
+                }
+              },
+              "params": {}
+            }
+          ],
+          "metrics": [
+            {
+              "accessor": 1,
+              "aggType": "sum",
+              "format": {
+                "id": "number"
+              },
+              "params": {}
+            }
+          ]
+        },
+        "perPage": 10,
+        "percentageCol": "",
+        "showMetricsAtAllLevels": false,
+        "showPartialRows": false,
+        "showTotal": false,
+        "sort": {
+          "columnIndex": null,
+          "direction": null
+        },
+        "totalFunc": "sum"
+      },
+      "title": "Articles with the least amount of words",
+      "type": "table"
+    }
+  },
+  "id": "cf3b02f0-34b8-11eb-83e6-db8492ac723e",
+  "migrationVersion": {
+    "visualization": "7.4.2"
+  },
+  "nestedJsonPaths": [
+    "attributes.kibanaSavedObjectMeta.searchSourceJSON",
+    "attributes.uiStateJSON",
+    "attributes.visState",
+    "attributes.visState.aggs[0].id",
+    "attributes.visState.aggs[1].id",
+    "attributes.visState.aggs[1].params.orderBy"
+  ],
+  "references": [
+    {
+      "id": "b83598d0-34b4-11eb-83e6-db8492ac723e",
+      "name": "kibanaSavedObjectMeta.searchSourceJSON.index",
+      "type": "index-pattern"
+    }
+  ],
+  "type": "visualization"
+}

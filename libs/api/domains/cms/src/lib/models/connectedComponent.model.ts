@@ -4,12 +4,10 @@ import {
   ISliceConnectedComponent,
   ISliceConnectedComponentFields,
 } from '../generated/contentfulTypes'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class ConnectedComponent {
-  @Field()
-  typename: string
-
   @Field(() => ID)
   id: string
 
@@ -63,7 +61,7 @@ const parseJson = (fields: ISliceConnectedComponentFields) => {
 export const mapConnectedComponent = ({
   fields,
   sys,
-}: ISliceConnectedComponent): ConnectedComponent => ({
+}: ISliceConnectedComponent): SystemMetadata<ConnectedComponent> => ({
   typename: 'ConnectedComponent',
   id: sys.id,
   title: fields?.title ?? '',

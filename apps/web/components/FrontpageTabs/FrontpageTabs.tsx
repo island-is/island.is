@@ -105,10 +105,18 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     if (link) {
       const linkData = JSON.parse(link)
       const contentId = linkData.sys?.contentType?.sys?.id
-
       const slug = String(linkData.fields?.slug)
+
       if (slug) {
-        return pathNames(activeLocale as Locale, contentId, [slug])
+        // the need for this check is caused by miss match in cache typename and cms typename
+        // TODO: Make CMS get this content from cache to standardize type
+        let type
+        if (contentId === 'vidspyrna-frontpage') {
+          type = 'adgerdirfrontpage'
+        } else {
+          type = contentId
+        }
+        return pathNames(activeLocale as Locale, type, [slug])
       }
       return { href: null, as: null }
     }
@@ -157,7 +165,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
           <Box ref={contentRef}>
             <TabList
               {...tab}
-              aria-label="Flettiborði"
+              aria-label={t.carouselTitle}
               className={styles.tabWrapper}
             >
               {tabs.map(({ title = '' }, index) => {

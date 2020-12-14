@@ -58,11 +58,10 @@
             "passWithNoTests": true
           }
         },
-        "schemas/build-schema": {
+        "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "outputPath": "apps/air-discount-scheme/api.graphql",
-            "command": "yarn ts-node -P apps/air-discount-scheme/api/tsconfig.app.json apps/air-discount-scheme/api/src/buildSchema.ts"
+            "command": "yarn ts-node -P apps/air-discount-scheme/api/tsconfig.json scripts/build-graphql-schema.ts apps/air-discount-scheme/api/src/app/app.module"
           }
         },
         "schemas/codegen": {
@@ -402,11 +401,10 @@
             "command": "./scripts/secrets.sh api --reset"
           }
         },
-        "schemas/build-schema": {
+        "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "outputPath": "apps/api/src/api.graphql",
-            "command": "yarn ts-node -P apps/api/tsconfig.app.json apps/api/src/buildSchema.ts"
+            "command": "yarn ts-node -P apps/api/tsconfig.json scripts/build-graphql-schema.ts apps/api/src/app/app.module"
           }
         },
         "schemas/codegen": {
@@ -1496,6 +1494,41 @@
             "jestConfig": "libs/application/templates/driving-license/jest.config.js",
             "passWithNoTests": true
           }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/templates/driving-license/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "application-templates-health-insurance": {
+      "root": "libs/application/templates/health-insurance",
+      "sourceRoot": "libs/application/templates/health-insurance/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/health-insurance/tsconfig.lib.json",
+              "libs/application/templates/health-insurance/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/health-insurance/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/health-insurance/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       }
     },
@@ -1721,6 +1754,32 @@
         }
       }
     },
+    "auth-nest-tools": {
+      "root": "libs/auth-nest-tools",
+      "sourceRoot": "libs/auth-nest-tools/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/auth-nest-tools/tsconfig.lib.json",
+              "libs/auth-nest-tools/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/auth-nest-tools/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/auth-nest-tools/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "cache": {
       "root": "libs/cache",
       "sourceRoot": "libs/cache/src",
@@ -1800,6 +1859,35 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/content-search-indexer/types/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "content-search-metrics": {
+      "root": "libs/content-search-metrics",
+      "sourceRoot": "libs/content-search-metrics/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/content-search-metrics/tsconfig.lib.json",
+              "libs/content-search-metrics/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/content-search-metrics/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/content-search-metrics/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -2613,10 +2701,10 @@
             "passWithNoTests": true
           }
         },
-        "schemas/build-schema": {
+        "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P apps/judicial-system/api/tsconfig.app.json apps/judicial-system/api/src/buildSchema.ts"
+            "command": "yarn ts-node -P apps/judicial-system/api/tsconfig.json scripts/build-graphql-schema.ts apps/judicial-system/api/src/app/app.module"
           }
         },
         "schemas/codegen": {
@@ -2652,6 +2740,32 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/judicial-system/audit-trail/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "judicial-system-auth": {
+      "root": "libs/judicial-system/auth",
+      "sourceRoot": "libs/judicial-system/auth/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/judicial-system/auth/tsconfig.lib.json",
+              "libs/judicial-system/auth/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/judicial-system/auth/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/judicial-system/auth/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -3447,6 +3561,35 @@
         }
       }
     },
+    "service-portal-document-provider": {
+      "root": "libs/service-portal/document-provider",
+      "sourceRoot": "libs/service-portal/document-provider/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/service-portal/document-provider/tsconfig.lib.json",
+              "libs/service-portal/document-provider/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/document-provider/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/document-provider/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "service-portal-documents": {
       "root": "libs/service-portal/documents",
       "sourceRoot": "libs/service-portal/documents/src",
@@ -3942,8 +4085,8 @@
         "migrate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "node migrate.js",
-            "cwd": "dist/apps/services/search-indexer"
+            "command": "yarn ts-node -P apps/services/search-indexer/tsconfig.app.json apps/services/search-indexer/src/migrate/index.ts",
+            "cwd": "apps/services/search-indexer"
           }
         },
         "lint": {
@@ -4459,11 +4602,10 @@
             "passWithNoTests": true
           }
         },
-        "schemas/build-schema": {
+        "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "outputPath": "apps/skilavottord/ws/src/app/api.graphql",
-            "command": "yarn ts-node -P apps/skilavottord/ws/tsconfig.app.json apps/skilavottord/ws/src/buildSchema.ts"
+            "command": "yarn ts-node -P apps/skilavottord/ws/tsconfig.json scripts/build-graphql-schema.ts apps/skilavottord/ws/src/app/app.module"
           }
         },
         "migrate": {

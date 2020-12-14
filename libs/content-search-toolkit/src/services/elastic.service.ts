@@ -19,16 +19,20 @@ import {
   SyncRequest,
   TypeAggregationInput,
   TypeAggregationResponse,
+  RankEvaluationInput,
+  GroupedRankEvaluationResponse,
 } from '../types'
-import { GetByIdResponse, SearchResponse } from '@island.is/shared/types'
 import {
-  MappedData,
-  SearchIndexes,
-} from '@island.is/content-search-indexer/types'
+  GetByIdResponse,
+  RankEvaluationResponse,
+  SearchResponse,
+} from '@island.is/shared/types'
+import { MappedData } from '@island.is/content-search-indexer/types'
 import { environment } from '../environments/environment'
 import { dateAggregationQuery } from '../queries/dateAggregation'
 import { tagAggregationQuery } from '../queries/tagAggregation'
 import { typeAggregationQuery } from '../queries/typeAggregation'
+import { rankEvaluationQuery } from '../queries/rankEvaluation'
 
 const { elastic } = environment
 
@@ -138,7 +142,7 @@ export class ElasticService {
   async findById(index: string, id: string) {
     try {
       const client = await this.getClient()
-      return client.get<GetByIdResponse<MappedData>>({ id, index })
+      return await client.get<GetByIdResponse<MappedData>>({ id, index })
     } catch (e) {
       return ElasticService.handleError(
         'Error in ElasticService.findById',
@@ -146,6 +150,39 @@ export class ElasticService {
         e,
       )
     }
+  }
+
+  async rankEvaluation<ResponseBody, RequestBody>(
+    index: string,
+    body: RequestBody,
+  ) {
+    const client = await this.getClient()
+    return client.rank_eval<ResponseBody, RequestBody>({
+      index,
+      body,
+    })
+  }
+
+  async getRankEvaluation<searchTermUnion>(
+    index: string,
+    termRatings: RankEvaluationInput['termRatings'],
+    metrics: RankEvaluationInput['metric'][],
+  ): Promise<GroupedRankEvaluationResponse<searchTermUnion>> {
+    // elasticsearch does not support multiple metric request per rank_eval call so we make multiple calls
+    const requests = metrics.map(async (metric) => {
+      const requestBody = rankEvaluationQuery({ termRatings, metric })
+      const data = await this.rankEvaluation<
+        RankEvaluationResponse<searchTermUnion>,
+        typeof requestBody
+      >(index, requestBody)
+      return data.body
+    })
+
+    const results = await Promise.all(requests)
+    return results.reduce((groupedResults, result, index) => {
+      groupedResults[metrics[index]] = result
+      return groupedResults
+    }, {})
   }
 
   async getDocumentsByMetaData(index: string, query: DocumentByMetaDataInput) {
@@ -184,7 +221,7 @@ export class ElasticService {
     return data.body
   }
 
-  async search(index: SearchIndexes, query: SearchInput) {
+  async search(index: string, query: SearchInput) {
     const requestBody = searchQuery(query)
 
     return this.findByQuery<
@@ -197,7 +234,7 @@ export class ElasticService {
   }
 
   async fetchAutocompleteTerm(
-    index: SearchIndexes,
+    index: string,
     input: AutocompleteTermInput,
   ): Promise<AutocompleteTermResponse> {
     const { singleTerm, size } = input
@@ -211,7 +248,7 @@ export class ElasticService {
     return data.body
   }
 
-  async deleteByIds(index: SearchIndexes, ids: Array<string>) {
+  async deleteByIds(index: string, ids: Array<string>) {
     // In case we get an empty list, ES will match that to all records... which we don't want to delete
     if (!ids.length) {
       return
@@ -264,9 +301,7 @@ export class ElasticService {
   }
 
   async createEsClient(): Promise<Client> {
-    const hasAWS =
-      'AWS_WEB_IDENTITY_TOKEN_FILE' in process.env ||
-      'AWS_SECRET_ACCESS_KEY' in process.env
+    const hasAWS = 'AWS_WEB_IDENTITY_TOKEN_FILE' in process.env
 
     logger.info('Create AWS ES Client', {
       esConfig: elastic,

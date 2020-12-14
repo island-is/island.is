@@ -10,16 +10,10 @@ import React, { useCallback, useEffect, useState } from 'react'
 import CourtDocument from '../../../shared-components/CourtDocument/CourtDocument'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { isNextDisabled } from '../../../utils/stepHelper'
-import { validate } from '../../../utils/validate'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import {
-  padTimeWithZero,
-  parseString,
-  parseTime,
-  replaceTabsOnChange,
-} from '@island.is/judicial-system-web/src/utils/formatters'
+import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useParams } from 'react-router-dom'
 import { Case, UpdateCase } from '@island.is/judicial-system/types'
@@ -91,11 +85,11 @@ export const CourtRecord: React.FC = () => {
     let attendees = ''
 
     if (wc.prosecutor && wc.accusedName) {
-      attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${wc.accusedName} kærði`
+      attendees += `${wc.prosecutor?.name} ${wc.prosecutor?.title}\n${wc.accusedName} kærði`
     }
 
     if (wc.defenderName) {
-      attendees += `\n${wc.defenderName} verjandi kærða`
+      attendees += `\n${wc.defenderName} skipaður verjandi kærða`
     }
 
     return attendees
@@ -191,7 +185,7 @@ export const CourtRecord: React.FC = () => {
                 data-testid="courtAttendees"
                 name="courtAttendees"
                 label="Viðstaddir og hlutverk þeirra"
-                defaultValue={workingCase?.courtAttendees}
+                defaultValue={workingCase.courtAttendees}
                 placeholder="Skrifa hér..."
                 onChange={(event) =>
                   removeTabsValidateAndSet(
@@ -225,7 +219,7 @@ export const CourtRecord: React.FC = () => {
               data-testid="policeDemands"
               name="policeDemands"
               label="Krafa lögreglu"
-              defaultValue={workingCase?.policeDemands}
+              defaultValue={workingCase.policeDemands}
               placeholder="Hvað hafði ákæruvaldið að segja?"
               onChange={(event) =>
                 removeTabsValidateAndSet(
@@ -330,9 +324,9 @@ export const CourtRecord: React.FC = () => {
               <Input
                 data-testid="litigationPresentations"
                 name="litigationPresentations"
-                label="Málflutningsræður"
+                label="Málflutningur og aðrar bókanir"
                 defaultValue={workingCase.litigationPresentations}
-                placeholder="Almennar málflutningsræður skráðar hér..."
+                placeholder="Málflutningsræður og annað sem fram kom í þinghaldi er skráð hér..."
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'litigationPresentations',

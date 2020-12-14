@@ -7,7 +7,7 @@ import {
   GridColumn,
   Hidden,
 } from '@island.is/island-ui/core'
-import { Sticky } from '../../components'
+import { Main, Sticky } from '../../components'
 
 export interface StandardLayoutProps {
   sidebar: {
@@ -31,7 +31,7 @@ export const StandardLayout: FC<StandardLayoutProps> = ({
       <Sticky>{sidebar.node}</Sticky>
     </GridColumn>,
     <GridColumn key="content" span={['12/12', '12/12', '8/12', '8/12', '9/12']}>
-      <Box>{children}</Box>
+      <Main>{children}</Main>
     </GridColumn>,
   ]
 
@@ -65,8 +65,10 @@ export const CategoryLayout: FC<CategoryProps> = ({
           span={['12/12', '12/12', '8/12']}
           offset={['0', '0', '0', '0', '1/12']}
         >
-          <Box paddingBottom={[5, 5, 10]}>{children}</Box>
-          {belowContent && belowContent}
+          <Main>
+            <Box paddingBottom={[5, 5, 10]}>{children}</Box>
+            {belowContent && belowContent}
+          </Main>
         </GridColumn>
         <GridColumn span={['0', '0', '4/12', '4/12', '3/12']} hiddenBelow="md">
           <Sticky>{sidebar}</Sticky>
@@ -85,12 +87,15 @@ export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
     <Box paddingY={[2, 2, 10]}>
       <GridRow>
         <GridColumn span={['12/12', '12/12', '8/12', '8/12', '9/12']}>
-          <Box>{children}</Box>
+          {sidebar && <Main>{children}</Main>}
+          {!sidebar && <Box>{children}</Box>}
         </GridColumn>
         <GridColumn hiddenBelow="md" span={['0', '0', '4/12', '4/12', '3/12']}>
-          <Box printHidden height="full">
-            <Sticky>{sidebar}</Sticky>
-          </Box>
+          {sidebar && (
+            <Box printHidden height="full">
+              <Sticky>{sidebar}</Sticky>
+            </Box>
+          )}
         </GridColumn>
       </GridRow>
     </Box>
@@ -112,7 +117,9 @@ export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
           span={['12/12', '12/12', '8/12', '6/12']}
           offset={['0', '0', '0', '1/12']}
         >
-          <Box paddingBottom={[5, 5, 10]}>{children}</Box>
+          <Main>
+            <Box paddingBottom={[5, 5, 10]}>{children}</Box>
+          </Main>
         </GridColumn>
       </GridRow>
     </Box>
@@ -149,5 +156,25 @@ export const NewsItemLayout: FC<NewsItemProps> = ({ sidebar, children }) => (
     </Box>
   </GridContainer>
 )
+
+interface SubpageProps {
+  main: ReactNode
+  details?: ReactNode
+}
+
+export const SubpageLayout: FC<SubpageProps> = ({ main, details }) => {
+  return (
+    <Box width="full" paddingTop={10}>
+      <Box paddingBottom={6}>
+        <GridContainer>{main}</GridContainer>
+      </Box>
+      {details && (
+        <Box background="blue100" paddingTop={4}>
+          <GridContainer>{details}</GridContainer>
+        </Box>
+      )}
+    </Box>
+  )
+}
 
 export default ArticleLayout
