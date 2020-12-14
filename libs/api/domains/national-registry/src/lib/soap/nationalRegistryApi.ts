@@ -12,9 +12,13 @@ import {
   Fjolskyldan,
   GetViewFamilyDto,
 } from './dto'
-import { FamilyMember, User, FamilyRelation } from '../types'
-import { Gender } from '../types/gender.enum'
-import { MaritalStatus } from '../types/maritalStatus.enum'
+import {
+  FamilyMember,
+  User,
+  FamilyRelation,
+  Gender,
+  MaritalStatus,
+} from '../types'
 import { BanMarking } from '../models/banMarking.model'
 
 export class NationalRegistryApi {
