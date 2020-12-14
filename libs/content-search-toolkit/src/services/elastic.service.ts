@@ -301,7 +301,7 @@ export class ElasticService {
   }
 
   async createEsClient(): Promise<Client> {
-    const hasAWS = 'S3_BUCKET' in process.env
+    const hasAWS = 'AWS_WEB_IDENTITY_TOKEN_FILE' in process.env
 
     logger.info('Create AWS ES Client', {
       esConfig: elastic,
