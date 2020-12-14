@@ -138,16 +138,16 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               id: 'applicant',
-              read: {
-                answers: ['spread', 'periods'],
-                externalData: ['pregnancyStatus', 'parentalLeaves'],
-              },
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
             },
           ],
         },
         on: {
-          APPROVE: { target: 'inReview' },
-          ABORT: { target: 'draft' },
+          APPROVE: { target: 'vinnumalastofnunApproval' },
+          ABORT: { target: 'employerRequiresAction' },
         },
       },
       employerRequiresAction: {
@@ -165,9 +165,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
       },
-      inReview: {
+      vinnumalastofnunApproval: {
         meta: {
-          name: 'In Review',
+          name: 'Vinnumálastofnun Approval',
           progress: 0.75,
           roles: [
             {
@@ -181,7 +181,22 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           APPROVE: { target: 'approved' },
-          REJECT: { target: 'draft' },
+          REJECT: { target: 'vinnumalastofnunRequiresAction' },
+        },
+      },
+      vinnumalastofnunRequiresAction: {
+        meta: {
+          name: 'Vinnumálastofnun requires action',
+          progress: 0.5,
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+            },
+          ],
         },
       },
       approved: {
