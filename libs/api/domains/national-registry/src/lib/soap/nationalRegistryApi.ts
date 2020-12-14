@@ -174,7 +174,7 @@ export class NationalRegistryApi {
     )
   }
 
-  private formatMaritalStatus(maritalCode: String): MaritalStatus {
+  private formatMaritalStatus(maritalCode: string): MaritalStatus {
     switch (maritalCode) {
       case '1':
         return MaritalStatus.UNMARRIED

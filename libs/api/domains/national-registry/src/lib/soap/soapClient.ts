@@ -6,7 +6,7 @@ export class SoapClient {
     baseUrl: string,
     host: string,
   ): Promise<Soap.Client | null> {
-    const promise = new Promise<Soap.Client>((resolve, reject) => {
+    const promise = new Promise<Soap.Client>((resolve) => {
       Soap.createClient(
         `${baseUrl}/lisaws/service.asmx?WSDL`,
         {

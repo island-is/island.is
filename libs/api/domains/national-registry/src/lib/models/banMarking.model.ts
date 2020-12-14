@@ -6,5 +6,5 @@ export class BanMarking {
   banMarked?: boolean
 
   @Field(() => String)
-  startDate?: String
+  startDate?: string
 }
