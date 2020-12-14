@@ -1,6 +1,6 @@
 import { MessageDescriptor } from 'react-intl'
 import { Gender, MaritalStatus } from '@island.is/api/schema'
-import { spmm } from 'libs/service-portal/core/src'
+import { spmm } from '@island.is/service-portal/core'
 
 export const natRegGenderMessageDescriptorRecord: Record<
   Gender,
