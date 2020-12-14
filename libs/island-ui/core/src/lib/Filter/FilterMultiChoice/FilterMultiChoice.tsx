@@ -1,6 +1,9 @@
 import React from 'react'
 import { Accordion } from '../../Accordion/Accordion'
-import { AccordionItem } from '../../Accordion/AccordionItem/AccordionItem'
+import {
+  AccordionCard,
+  AccordionItem,
+} from '../../Accordion/AccordionItem/AccordionItem'
 import { Box } from '../../Box/Box'
 import { Button } from '../../Button/Button'
 import { Checkbox } from '../../Checkbox/Checkbox'
@@ -37,61 +40,106 @@ export const FilterMultiChoice: React.FC<FilterMultiChoiceProps> = ({
   categories,
   onChange,
   onClear,
-}: FilterMultiChoiceProps) => (
-  <Box paddingX={3} paddingY={1} borderRadius="large" background="white">
-    <Accordion
-      dividerOnBottom={false}
-      dividerOnTop={false}
-      singleExpand={false}
-    >
-      {categories.map((category) => (
-        <AccordionItem
-          id={category.id}
-          label={category.label}
-          labelUse="h5"
-          labelVariant="h5"
-          iconVariant="small"
+}: FilterMultiChoiceProps) => {
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    category: FilterCategory,
+  ) => {
+    if (event.target.checked) {
+      category.selected.push(event.target.value)
+    } else {
+      category.selected.splice(category.selected.indexOf(event.target.value), 1)
+    }
+
+    onChange({
+      categoryId: category.id,
+      selected: category.selected,
+    })
+  }
+
+  return (
+    <Box>
+      <Box
+        display={['none', 'none', 'block']}
+        paddingX={3}
+        paddingY={1}
+        borderRadius="large"
+        background="white"
+      >
+        <Accordion
+          dividerOnBottom={false}
+          dividerOnTop={false}
+          singleExpand={false}
         >
-          <Stack space={1}>
-            {category.filters.map((filter) => (
-              <Checkbox
-                name={`${category.id}-${filter.value}`}
-                label={filter.label}
-                value={filter.value}
-                checked={category.selected.includes(filter.value)}
-                onChange={({ target }) => {
-                  if (target.checked) {
-                    category.selected.push(target.value)
-                  } else {
-                    category.selected.splice(
-                      category.selected.indexOf(target.value),
-                      1,
-                    )
-                  }
+          {categories.map((category) => (
+            <AccordionItem
+              id={category.id}
+              label={category.label}
+              labelUse="h5"
+              labelVariant="h5"
+              iconVariant="small"
+            >
+              <Stack space={1}>
+                {category.filters.map((filter) => (
+                  <Checkbox
+                    name={`${category.id}-${filter.value}`}
+                    label={filter.label}
+                    value={filter.value}
+                    checked={category.selected.includes(filter.value)}
+                    onChange={(event) => handleChange(event, category)}
+                  />
+                ))}
 
-                  onChange({
-                    categoryId: category.id,
-                    selected: category.selected,
-                  })
-                }}
-              />
-            ))}
+                {category.selected.length > 0 && (
+                  <Box textAlign="right">
+                    <Button
+                      icon="reload"
+                      size="small"
+                      variant="text"
+                      onClick={() => onClear(category.id)}
+                    >
+                      {labelClear}
+                    </Button>
+                  </Box>
+                )}
+              </Stack>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </Box>
 
-            {category.selected.length > 0 && (
-              <Box textAlign="right">
-                <Button
-                  icon="reload"
-                  size="small"
-                  variant="text"
-                  onClick={() => onClear(category.id)}
-                >
-                  {labelClear}
-                </Button>
-              </Box>
-            )}
-          </Stack>
-        </AccordionItem>
-      ))}
-    </Accordion>
-  </Box>
-)
+      <Box display={['block', 'block', 'none']}>
+        <Stack space={2}>
+          {categories.map((category) => (
+            <AccordionCard id={category.id} label={category.label}>
+              <Stack space={1}>
+                {category.filters.map((filter) => (
+                  <Checkbox
+                    name={`${category.id}-${filter.value}`}
+                    label={filter.label}
+                    value={filter.value}
+                    checked={category.selected.includes(filter.value)}
+                    onChange={(event) => handleChange(event, category)}
+                  />
+                ))}
+
+                {category.selected.length > 0 && (
+                  <Box textAlign="right">
+                    <Button
+                      icon="reload"
+                      size="small"
+                      variant="text"
+                      onClick={() => onClear(category.id)}
+                    >
+                      {labelClear}
+                    </Button>
+                  </Box>
+                )}
+              </Stack>
+            </AccordionCard>
+          ))}
+        </Stack>
+      </Box>
+    </Box>
+  )
+}

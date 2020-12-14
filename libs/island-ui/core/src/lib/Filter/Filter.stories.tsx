@@ -21,9 +21,13 @@ export const Default = () => {
   const [searchInput, setSearchInput] = useState('')
 
   return (
-    <Box padding={2} background="blue100">
+    <Box padding={2} background="blue100" height="full">
       <Filter
         labelClear="Hreinsa síu"
+        labelOpen="Opna síu"
+        labelTitle="Sía API Vörulista"
+        labelResult="Sýna niðurstöður"
+        resultCount={64}
         onFilterClear={() => {
           setFilter({
             price: [],

@@ -1,4 +1,6 @@
-import React from 'react'
+import { theme } from '@island.is/island-ui/theme'
+import React, { useEffect, useState } from 'react'
+import { useWindowSize } from 'react-use'
 import { Input } from '../../Input/Input'
 
 export interface FilterInputProps {
@@ -15,14 +17,26 @@ export const FilterInput: React.FC<FilterInputProps> = ({
   placeholder = '',
   value = '',
   onChange,
-}) => (
-  <Input
-    id={id}
-    name={name}
-    placeholder={placeholder}
-    size="sm"
-    icon="search"
-    value={value}
-    onChange={(event) => onChange(event.target.value)}
-  />
-)
+}) => {
+  const { width } = useWindowSize()
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
+
+  return (
+    <Input
+      id={id}
+      name={name}
+      placeholder={placeholder}
+      backgroundColor={isMobile ? 'blue' : 'white'}
+      size="sm"
+      icon="search"
+      value={value}
+      onChange={(event) => onChange(event.target.value)}
+    />
+  )
+}
