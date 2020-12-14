@@ -14,7 +14,7 @@ import {
   FocusableBox,
   Navigation,
 } from '@island.is/island-ui/core'
-import { Card, Sidebar } from '@island.is/web/components'
+import { Card } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import pathNames, { ContentType } from '@island.is/web/i18n/routes'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -26,7 +26,6 @@ import {
   GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
 } from '@island.is/web/screens/queries'
 import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
-
 import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import {
@@ -189,7 +188,11 @@ const Category: Screen<CategoryProps> = ({
 
     setHash(newHash)
 
-    const url = pathNames(activeLocale, 'articlecategory', [slug])
+    const url = pathNames(
+      activeLocale,
+      category.__typename.toLowerCase() as ContentType,
+      [slug],
+    )
     Router.replace(url.href, url.as + `#${newHash}`)
   }
 
