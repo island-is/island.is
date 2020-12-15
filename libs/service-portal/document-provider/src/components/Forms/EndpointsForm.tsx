@@ -32,10 +32,15 @@ export const EndpointsForm: FC<Props> = ({
             required: {
               value: true,
               message: formatMessage({
-                id: 'sp.settings:email-required-message',
+                id: 'test',
                 defaultMessage: 'Skylda er að fylla út endapunkt',
               }),
             },
+            //TODO get right url pattern
+            pattern: {
+              value: /^((?:https?:\/\/)?[^./]+(?:\.[^./]+)+(?:\/.*)?)$/,
+              message: 'endapunktur er ekki á réttu formi'
+            }
           }}
           defaultValue=""
           render={({ onChange, value, name }) => (

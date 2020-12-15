@@ -31,6 +31,12 @@ export const ResponsibleContactForm: FC<Props> = ({
           control={control}
           name="name"
           defaultValue=""
+          rules={{
+            required: {
+              value: true,
+              message: 'Skylda að fylla út nafn ábyrgðarmanns',
+            },
+          }}
           render={({ onChange, name, value }) => (
             <Input
               name={name}
@@ -38,6 +44,8 @@ export const ResponsibleContactForm: FC<Props> = ({
               label={formatMessage(m.SettingsEditResponsibleContactName)}
               placeholder={formatMessage(m.SettingsEditResponsibleContactName)}
               onChange={onChange}
+              hasError={errors.name}
+              errorMessage={errors.name?.message}
             />
           )}
         />
@@ -45,6 +53,14 @@ export const ResponsibleContactForm: FC<Props> = ({
           control={control}
           name="email"
           defaultValue=""
+          rules = {{required: {
+            value: true,
+            message: 'Skylda er að fylla út netfang',
+          },
+          pattern: {
+            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+            message: 'Netfangið er ekki á réttu formi'
+          }}}
           render={({ onChange, name, value }) => (
             <Input
               name={name}
@@ -52,6 +68,8 @@ export const ResponsibleContactForm: FC<Props> = ({
               value={value}
               placeholder={formatMessage(m.SettingsEditResponsibleContactEmail)}
               onChange={onChange}
+              hasError={errors.email}
+              errorMessage={errors.email?.message}
             />
           )}
         />
@@ -59,6 +77,14 @@ export const ResponsibleContactForm: FC<Props> = ({
           control={control}
           name="tel"
           defaultValue=""
+          rules = {{required: {
+            value: true,
+            message: 'Skylda er að fylla út símanúmer',
+          },
+          pattern: {
+            value: /^\d{3}[\d- ]*$/,
+            message: 'Símanúmerið er ekki á réttu formi'
+          }}}
           render={({ onChange, name, value }) => (
             <Input
               name={name}
@@ -66,6 +92,8 @@ export const ResponsibleContactForm: FC<Props> = ({
               value={value}
               placeholder={formatMessage(m.SettingsEditResponsibleContactTel)}
               onChange={onChange}
+              hasError={errors.tel}
+              errorMessage={errors.tel?.message}
             ></Input>
           )}
         />

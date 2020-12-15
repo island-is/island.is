@@ -29,6 +29,12 @@ export const UserHelpForm: FC<Props> = ({
           control={control}
           name="name"
           defaultValue=""
+          rules={{
+            required: {
+              value: true,
+              message: 'Skylda að fylla út nafn',
+            },
+          }}
           render={({ onChange, name, value }) => (
             <Input
               label={formatMessage(m.SettingsEditUserHelpContactName)}
@@ -36,6 +42,8 @@ export const UserHelpForm: FC<Props> = ({
               name={name}
               value={value}
               onChange={onChange}
+              hasError={errors.name}
+              errorMessage={errors.name?.message}
             ></Input>
           )}
         />
@@ -43,6 +51,14 @@ export const UserHelpForm: FC<Props> = ({
           control={control}
           name="email"
           defaultValue=""
+          rules = {{required: {
+            value: true,
+            message: 'Skylda er að fylla út netfang',
+          },
+          pattern: {
+            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+            message: 'Netfangið er ekki á réttu formi'
+          }}}
           render={({ onChange, name, value }) => (
             <Input
               label={formatMessage(m.SettingsEditUserHelpContactEmail)}
@@ -50,6 +66,8 @@ export const UserHelpForm: FC<Props> = ({
               name={name}
               value={value}
               onChange={onChange}
+              hasError={errors.email}
+              errorMessage={errors.email?.message}
             ></Input>
           )}
         />

@@ -57,6 +57,16 @@ export const InstitutionForm: FC<Props> = ({
           control={control}
           name="nationalId"
           defaultValue=""
+          rules={{
+            required: {
+              value: true,
+              message: 'Skylda að fylla út kennitölu stofnunar',
+            },
+            pattern:{
+             value: /([0-9]){6}-?([0-9]){4}/,
+             message: 'Kennitalan er ekki á réttu formi'
+            }
+          }}
           render={({ onChange, value, name }) => (
             <Input
               name={name}
@@ -64,6 +74,8 @@ export const InstitutionForm: FC<Props> = ({
               value={value}
               placeholder={formatMessage(m.SettingsEditInstitutionNationalId)}
               onChange={onChange}
+              hasError={errors.nationalId}
+              errorMessage={errors.nationalId?.message}
             ></Input>
           )}
         />
@@ -71,6 +83,12 @@ export const InstitutionForm: FC<Props> = ({
           control={control}
           name="address"
           defaultValue=""
+          rules={{
+            required: {
+              value: true,
+              message: 'Skylda að fylla út heimilisfang stofnunar',
+            },
+          }}
           render={({ onChange, value, name }) => (
             <Input
               name={name}
@@ -78,6 +96,8 @@ export const InstitutionForm: FC<Props> = ({
               value={value}
               placeholder={formatMessage(m.SettingsEditInstitutionAddress)}
               onChange={onChange}
+              hasError={errors.address}
+              errorMessage={errors.address?.message}
             ></Input>
           )}
         />
@@ -85,6 +105,14 @@ export const InstitutionForm: FC<Props> = ({
           control={control}
           name="email"
           defaultValue=""
+          rules = {{required: {
+            value: true,
+            message: 'Skylda er að fylla út netfang',
+          },
+          pattern: {
+            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+            message: 'Netfangið er ekki á réttu formi'
+          }}}
           render={({ onChange, value, name }) => (
             <Input
               name={name}
@@ -92,6 +120,8 @@ export const InstitutionForm: FC<Props> = ({
               placeholder={formatMessage(m.SettingsEditInstitutionEmail)}
               value={value}
               onChange={onChange}
+              hasError={errors.email}
+              errorMessage={errors.email?.message}
             ></Input>
           )}
         />
@@ -99,6 +129,14 @@ export const InstitutionForm: FC<Props> = ({
           control={control}
           name="tel"
           defaultValue=""
+          rules = {{required: {
+            value: true,
+            message: 'Skylda er að fylla út símanúmer',
+          },
+          pattern: {
+            value: /^\d{3}[\d- ]*$/,
+            message: 'Símanúmerið er ekki á réttu formi'
+          }}}
           render={({ onChange, value, name }) => (
             <Input
               name={name}
@@ -106,6 +144,8 @@ export const InstitutionForm: FC<Props> = ({
               placeholder={formatMessage(m.SettingsEditInstitutionTel)}
               value={value}
               onChange={onChange}
+              hasError={errors.tel}
+              errorMessage={errors.tel?.message}
             ></Input>
           )}
         />
