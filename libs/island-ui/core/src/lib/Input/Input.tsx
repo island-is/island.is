@@ -9,6 +9,7 @@ import {
   resolveResponsiveProp,
   ResponsiveProp,
 } from '../../utils/responsiveProp'
+import { UseBoxStylesProps } from '../Box/useBoxStyles'
 
 export type InputBackgroundColor = 'white' | 'blue'
 
@@ -132,31 +133,26 @@ export const Input = forwardRef(
     const mergedRefs = useMergeRefs(inputRef, ref || null)
 
     const InputComponent = textarea ? TextareaHOC : InputHOC
+    const mapBlue = (color: InputBackgroundColor) =>
+      color === 'blue' ? 'blue100' : color
+    const containerBackground = Array.isArray(backgroundColor)
+      ? backgroundColor.map(mapBlue)
+      : mapBlue(backgroundColor as InputBackgroundColor)
 
+    console.log(containerBackground)
     return (
       <div>
         <Box
           display="flex"
           alignItems="center"
-          className={cn(
-            styles.container,
-            resolveResponsiveProp(
-              backgroundColor,
-              styles.containerBackgroundXs,
-              styles.containerBackgroundSm,
-              styles.containerBackgroundMd,
-              styles.containerBackgroundLg,
-              styles.containerBackgroundXl,
-            ),
-            styles.containerSizes[size],
-            {
-              [styles.hasError]: hasError,
-              [styles.hasFocus]: hasFocus,
-              [styles.containerDisabled]: disabled,
-              [styles.fixedFocusState]: fixedFocusState,
-              [styles.noLabel]: !label,
-            },
-          )}
+          background={containerBackground as UseBoxStylesProps['background']}
+          className={cn(styles.container, styles.containerSizes[size], {
+            [styles.hasError]: hasError,
+            [styles.hasFocus]: hasFocus,
+            [styles.containerDisabled]: disabled,
+            [styles.fixedFocusState]: fixedFocusState,
+            [styles.noLabel]: !label,
+          })}
           onClick={(e) => {
             e.preventDefault()
             if (inputRef.current) {

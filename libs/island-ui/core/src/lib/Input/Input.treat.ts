@@ -1,14 +1,13 @@
 import { style, styleMap } from 'treat'
 import { Theme, theme, themeUtils } from '@island.is/island-ui/theme'
 import * as mixins from './Input.mixins'
-import { mapToStyleProperty } from '../../utils/mapToStyleProperty'
-import { mapValues } from 'lodash'
+import { mapValues, omit } from 'lodash'
 
 export const containerDisabled = style({})
 export const noLabel = style({})
 
 export const container = style({
-  ...mixins.container,
+  ...omit(mixins.container, 'backgroundColor'),
   boxSizing: 'border-box',
   selectors: {
     [`&:hover:not(${containerDisabled})`]: mixins.containerHover,
@@ -17,24 +16,6 @@ export const container = style({
 })
 
 export const containerSizes = styleMap(mixins.containerSizes)
-
-const backgroundColorRules = {
-  white: theme.color.white,
-  blue: theme.color.blue100
-} as const
-
-const makeContainerBackground = (breakpoint: keyof Theme['breakpoints']) =>
-  styleMap(
-    mapValues(backgroundColorRules, (color) => 
-      themeUtils.responsiveStyle({ [breakpoint]: { backgroundColor: color } })
-    )
-  )
-
-export const containerBackgroundXs = makeContainerBackground('xs')
-export const containerBackgroundSm = makeContainerBackground('sm')
-export const containerBackgroundMd = makeContainerBackground('md')
-export const containerBackgroundLg = makeContainerBackground('lg')
-export const containerBackgroundXl = makeContainerBackground('xl')
 
 export const input = style({
   ...mixins.input,
@@ -50,19 +31,25 @@ export const input = style({
 
 export const inputSize = styleMap(mixins.inputSizes)
 
-const makeInputBackground = (breakpoint: keyof Theme['breakpoints']) => 
+const backgroundColorRules = {
+  white: theme.color.white,
+  blue: theme.color.blue100,
+}
+
+// To handle styling auto-fill states
+const makeInputBackground = (breakpoint: keyof Theme['breakpoints']) =>
   styleMap(
-    mapValues(backgroundColorRules, (color) => 
-      themeUtils.responsiveStyle({ 
-        [breakpoint]: { 
+    mapValues(backgroundColorRules, (color) =>
+      themeUtils.responsiveStyle({
+        [breakpoint]: {
           selectors: {
             '&:-webkit-autofill, &:-webkit-autofill:focus, &:-webkit-autofill:hover': {
               boxShadow: `0 0 0px 1000px ${color} inset`,
-            }
-          }
-        }
-      })
-    )
+            },
+          },
+        },
+      }),
+    ),
   )
 
 export const inputBackgroundXs = makeInputBackground('xs')
