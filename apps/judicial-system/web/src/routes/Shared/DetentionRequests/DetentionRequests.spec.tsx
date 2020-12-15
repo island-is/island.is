@@ -5,11 +5,11 @@ import { CaseState } from '@island.is/judicial-system/types'
 import { MemoryRouter, Route } from 'react-router-dom'
 import { mockJudgeQuery, mockProsecutorQuery } from '../../../utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
-import { CasesQuery } from './DetentionRequests'
 import * as Constants from '../../../utils/constants'
 import '@testing-library/jest-dom'
 import { UserProvider } from '../../../shared-components/UserProvider/UserProvider'
 import userEvent from '@testing-library/user-event'
+import { CasesQuery } from '../../../utils/mutations'
 
 const mockCasesQuery = [
   {
@@ -50,6 +50,15 @@ const mockCasesQuery = [
             id: 'test_id_4',
             created: '2020-08-16T19:50:08.033Z',
             state: CaseState.NEW,
+            policeCaseNumber: '008-2020-X',
+            accusedNationalId: '012345-6789',
+            accusedName: 'Erlingur L Kristinsson',
+            custodyEndDate: '2020-11-11T12:31:00.000Z',
+          },
+          {
+            id: 'test_id_5',
+            created: '2020-08-16T19:50:08.033Z',
+            state: CaseState.DELETED,
             policeCaseNumber: '008-2020-X',
             accusedNationalId: '012345-6789',
             accusedName: 'Erlingur L Kristinsson',
@@ -114,7 +123,7 @@ describe('Detention requests route', () => {
     ).toBeInTheDocument()
   })
 
-  test('should not display a button to create a request if you are a judge', async () => {
+  test('should not display a button to create a request if the user is a judge', async () => {
     render(
       <MockedProvider
         mocks={[...mockCasesQuery, ...mockJudgeQuery]}
@@ -137,6 +146,79 @@ describe('Detention requests route', () => {
         screen.queryByRole('button', { name: /Stofna nýja kröfu/i }),
       ),
     ).not.toBeInTheDocument()
+  })
+
+  test('should not display a button to delete a request if the user is a judge', async () => {
+    render(
+      <MockedProvider
+        mocks={[...mockCasesQuery, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+              <DetentionRequests />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    expect(
+      await waitFor(() => screen.queryByLabelText('Viltu eyða drögum?')),
+    ).not.toBeInTheDocument()
+  })
+
+  test('should not display a buttton to delete a request that do not have a DRAFT or NEW state', async () => {
+    render(
+      <MockedProvider
+        mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+              <DetentionRequests />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    expect(
+      await waitFor(
+        () => screen.getAllByLabelText('Viltu eyða drögum?').length,
+      ),
+    ).toEqual(3)
+  })
+
+  test('should not show deleted requests', async () => {
+    render(
+      <MockedProvider
+        mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+              <DetentionRequests />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    expect(
+      await waitFor(
+        () => screen.getAllByTestId('detention-requests-table-row').length,
+      ),
+    ).toEqual(4)
   })
 
   test('should display the prosecutor logo if you are a prosecutor', async () => {

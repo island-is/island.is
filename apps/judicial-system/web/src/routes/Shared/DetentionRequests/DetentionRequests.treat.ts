@@ -50,7 +50,7 @@ export const deleteButtonContainer = style({
   alignItems: 'center',
   width: 0,
   overflow: 'hidden',
-  transition: 'all .2s ease-in-out',
+  transition: 'all .5s ease-in-out',
 
   selectors: {
     ['&.open']: {
@@ -66,8 +66,9 @@ export const thButton = style({
 })
 
 export const tableRowContainer = style({
+  display: 'flex',
   minWidth: '100%',
-  transition: 'all .2s ease-in-out',
+  transition: 'all .5s ease-in-out',
   float: 'right',
 
   selectors: {
@@ -100,7 +101,7 @@ export const deleteButtonText = style({
 
 export const sortIcon = style({
   opacity: 0,
-  transition: 'opacity .2s ease-in-out, transform .2s ease-in-out .1s',
+  transition: 'opacity .5s ease-in-out, transform .5s ease-in-out .2s',
 })
 
 export const sortCreatedAsc = style({
