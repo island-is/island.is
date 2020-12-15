@@ -136,10 +136,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                   />
                   {data?.getApiCatalogue?.pageInfo?.nextCursor != null && (
                     <Box display="flex" justifyContent="center">
-                      <Button
-                        onClick={() => onLoadMore()}
-                        variant="ghost"
-                      >
+                      <Button onClick={() => onLoadMore()} variant="ghost">
                         {!loading ? (
                           sn('fmButton')
                         ) : (
