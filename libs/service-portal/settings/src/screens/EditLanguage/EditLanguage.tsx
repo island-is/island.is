@@ -5,6 +5,7 @@ import {
   GridColumn,
   GridRow,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { Link, Redirect } from 'react-router-dom'
 import { Locale, useLocale, useNamespaces } from '@island.is/localization'
@@ -23,7 +24,6 @@ import {
   LanguageFormData,
   LanguageFormOption,
 } from '../../components/Forms/LanguageForm'
-import { toast } from 'react-toastify'
 
 export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings')
