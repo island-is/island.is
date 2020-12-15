@@ -17,16 +17,26 @@ type Events =
 const Schema = z.object({
   applicant: z.object({
     institution: z
-      .object({
-        id: z.string().optional(),
-        title: z.string().optional(),
-      })
+      .union([
+        z.string().optional(),
+        z
+          .object({
+            id: z.string().optional(),
+            title: z.string().optional(),
+          })
+          .optional(),
+      ])
       .optional(),
     ministry: z
-      .object({
-        id: z.string().optional(),
-        title: z.string().optional(),
-      })
+      .union([
+        z.string().optional(),
+        z
+          .object({
+            id: z.string().optional(),
+            title: z.string().optional(),
+          })
+          .optional(),
+      ])
       .optional(),
     contact: z.string().nonempty().max(256),
     email: z.string().email(),

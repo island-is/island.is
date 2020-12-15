@@ -95,7 +95,7 @@ export const ApplicationForm: Form = buildForm({
                 )
               },
               onSelect: (option, onChange) => {
-                onChange(option)
+                onChange({ id: option?.value, title: option?.label })
               },
             }),
             buildAsyncSelectField({
@@ -115,7 +115,7 @@ export const ApplicationForm: Form = buildForm({
                 )
               },
               onSelect: (option, onChange) => {
-                onChange(option)
+                onChange({ id: option?.value, title: option?.label })
               },
             }),
             buildTextField({
