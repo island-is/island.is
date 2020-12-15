@@ -139,7 +139,6 @@ export const Input = forwardRef(
       ? backgroundColor.map(mapBlue)
       : mapBlue(backgroundColor as InputBackgroundColor)
 
-    console.log(containerBackground)
     return (
       <div>
         <Box
