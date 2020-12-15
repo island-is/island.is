@@ -14,12 +14,14 @@ const PersonalAllowance = z
       .string()
       .refine((x) => parseInt(x, 10) >= 0)
       .optional(),
-    accumulatedUsage: z
+    periodFrom: z
       .string()
-      .refine((x) => parseInt(x, 10) >= 0)
+      .refine((d) => isValid(parseISO(d)))
       .optional(),
-    periodFrom: z.string().refine((d) => isValid(parseISO(d))),
-    periodTo: z.string().refine((d) => isValid(parseISO(d))),
+    periodTo: z
+      .string()
+      .refine((d) => isValid(parseISO(d)))
+      .optional(),
   })
   .optional()
 

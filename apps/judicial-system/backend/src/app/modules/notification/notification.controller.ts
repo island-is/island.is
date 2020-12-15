@@ -41,7 +41,7 @@ const prosecutorNotificationRule = {
 
 // Allows judges to send court-date and ruling notifiications
 const judgeNotificationRule = {
-  role: UserRole.PROSECUTOR,
+  role: UserRole.JUDGE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
   dtoFieldValues: [NotificationType.COURT_DATE, NotificationType.RULING],
