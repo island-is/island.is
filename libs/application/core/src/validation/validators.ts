@@ -39,7 +39,11 @@ function partialSchemaValidation(
   Object.keys(answers).forEach((key) => {
     const newPath = constructPath(currentPath, key)
     const answer = answers[key]
-    const trimmedSchema = originalSchema.pick({ [key]: true })
+
+    // ZodUnions do not have .pick method
+    const trimmedSchema = originalSchema.pick
+      ? originalSchema.pick({ [key]: true })
+      : originalSchema
     if (typeof answer === 'object') {
       if (answer.length) {
         // answer is array
