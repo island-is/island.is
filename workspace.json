@@ -3561,7 +3561,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/core/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/core/src/{lib,components,helpers,screens}/**/*.{js,ts,tsx}"
           }
         }
       }

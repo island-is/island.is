@@ -7,7 +7,7 @@ import {
   CurrentUser,
   User as AuthUser,
 } from '@island.is/auth-nest-tools'
-import { NationalRegistryUser } from './models'
+import { NationalRegistryUser, BanMarking } from './models'
 import { NationalRegistryService } from './nationalRegistry.service'
 import { User } from './types'
 
@@ -36,8 +36,8 @@ export class UserResolver {
     return this.nationalRegistryService.getBirthPlace(user.municipalCode)
   }
 
-  @ResolveField('banMarking', () => String)
-  resolveBanMarking(@Parent() user: User): Promise<string> {
+  @ResolveField('banMarking', () => BanMarking)
+  resolveBanMarking(@Parent() user: User): Promise<BanMarking | null> {
     return this.nationalRegistryService.getBanMarking(user.nationalId)
   }
 
