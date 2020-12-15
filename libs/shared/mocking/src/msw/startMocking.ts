@@ -5,8 +5,9 @@ export declare type RequestHandlersList = RequestHandler<any, any, any, any>[]
 
 export const startMocking = (requestHandlers: RequestHandlersList) => {
   if (typeof window === 'undefined') {
+    // https://github.com/webpack/webpack/issues/8826
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { setupServer } = require('msw/node')
+    const { setupServer } = eval('require')('msw/node')
     const server = setupServer(...requestHandlers)
     server.listen()
     return server
