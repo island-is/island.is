@@ -4,6 +4,7 @@ import { useMutation } from '@apollo/client'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { registerProviderMutation } from '../../../graphql/mutations/registerProviderMutation'
@@ -29,6 +30,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
     (formValue.productionUserExists as string) || '',
   )
   const [registerProvider] = useMutation(registerProviderMutation)
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
   const onRegister = async () => {
     setProdEnvironmentErrorError(null)
@@ -52,13 +54,35 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
         value: credentials.data.registerProvider.clientSecret,
       },
     ])
+
     setCurrentAnswer('true')
+
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            productionUserExists: 'true',
+            ...application.answers,
+          },
+        },
+      },
+    }).then((response) => {
+      application.answers = response.data?.updateApplication?.answers
+    })
 
     clearErrors('productionUserExists')
   }
 
   return (
     <Box>
+      <Box marginBottom={3}>
+        <Text>
+          <strong>
+            {formatText(m.prodEnviromentStrongText, application, formatMessage)}
+          </strong>
+        </Text>
+      </Box>
       <Box marginBottom={7} />
       <Box
         marginBottom={7}
@@ -69,6 +93,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
         <Button
           variant="ghost"
           size="small"
+          disabled={currentAnswer !== ''}
           onClick={() => {
             onRegister()
           }}
