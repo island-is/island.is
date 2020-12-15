@@ -1,7 +1,11 @@
 import React, { FC, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { useFormContext, Controller } from 'react-hook-form'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  formatText,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -32,13 +36,19 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
   )
   const [registerEndpoint] = useMutation(registerEndpointMutation)
 
+  const nationalId = getValueViaPath(
+    application.answers,
+    'applicant.nationalId',
+    undefined,
+  ) as string
+
   const onRegisterEndpoint = async (isValid: boolean) => {
     if (isValid) {
       setprodEndPointError(null)
       const result = await registerEndpoint({
         variables: {
           input: {
-            nationalId: '2404805659', //TODO setja gögn úr umsókn (kt stofnunar)
+            nationalId: nationalId,
             endpoint: getValues('productionEndPointObject.prodEndPoint'),
           },
         },

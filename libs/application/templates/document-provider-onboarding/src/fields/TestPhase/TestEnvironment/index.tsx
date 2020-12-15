@@ -1,7 +1,11 @@
 import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  formatText,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -30,11 +34,26 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
   const [registerProvider] = useMutation(registerProviderMutation)
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
+  const nationalId = getValueViaPath(
+    application.answers,
+    'applicant.nationalId',
+    undefined,
+  ) as string
+
+  const clientName = getValueViaPath(
+    application.answers,
+    'applicant.name',
+    undefined,
+  ) as string
+
+  console.log(nationalId)
+  console.log(clientName)
+
   const onRegister = async () => {
     setEnvironmentError(null)
     const credentials = await registerProvider({
       variables: {
-        input: { nationalId: '2404805659', clientName: 'Nafn stofnunar' }, //TODO setja gögn úr umsókn
+        input: { nationalId: nationalId, clientName: clientName },
       },
     })
 
