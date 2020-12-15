@@ -1,7 +1,8 @@
 import { style, styleMap } from 'treat'
 import { Theme, theme, themeUtils } from '@island.is/island-ui/theme'
 import * as mixins from './Input.mixins'
-import { mapValues, omit } from 'lodash'
+import omit from 'lodash/omit'
+import mapValues from 'lodash/mapValues'
 
 export const containerDisabled = style({})
 export const noLabel = style({})
