@@ -1,10 +1,10 @@
 // All tracked events related to the service portal
-import baseEvent from './baseEvent'
+import BaseEvent from './BaseEvent'
 import { plausibleCustomEvent } from './plausibleEvent'
 
 // Event sent when the search feature of documents is interacted with by the user
 export const DocumentsSearchDocumentsInitialized = (location: string) => {
-  const event: baseEvent = {
+  const event: BaseEvent = {
     eventName: 'Search Documents Initialized',
     featureName: 'documents',
     params: {
@@ -16,7 +16,7 @@ export const DocumentsSearchDocumentsInitialized = (location: string) => {
 
 // Event sent when a document is opened in the documents section of the service portal
 export const DocumentsOpenDocument = (location: string, fileName: string) => {
-  const event: baseEvent = {
+  const event: BaseEvent = {
     eventName: 'Open Document',
     featureName: 'documents',
     params: {
@@ -29,7 +29,7 @@ export const DocumentsOpenDocument = (location: string, fileName: string) => {
 
 // Event sent when the on boarding modal is closed in the service portal
 export const ServicePortalCloseOnBoardingModal = (location: string) => {
-  const event: baseEvent = {
+  const event: BaseEvent = {
     eventName: 'Close On Boarding Modal',
     featureName: 'service-portal',
     params: {
@@ -41,7 +41,7 @@ export const ServicePortalCloseOnBoardingModal = (location: string) => {
 
 // Event sent when the on boarding modal is submitted in the service portal
 export const ServicePortalSubmitOnBoardingModal = (location: string) => {
-  const event: baseEvent = {
+  const event: BaseEvent = {
     eventName: 'Submit On Boarding Modal',
     featureName: 'service-portal',
     params: {
@@ -56,7 +56,7 @@ export const ServicePortalOutboundLink = (
   location: string,
   destination: string,
 ) => {
-  const event: baseEvent = {
+  const event: BaseEvent = {
     eventName: 'Outbound Link',
     featureName: 'service-portal',
     params: {

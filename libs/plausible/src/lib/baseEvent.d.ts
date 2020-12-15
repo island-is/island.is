@@ -8,7 +8,7 @@
     This is to make sure events dont clash between products and features for better analization of
     events.
  */
-export default interface baseEvent {
+export default interface BaseEvent {
   eventName: string
   featureName: string
   params: {

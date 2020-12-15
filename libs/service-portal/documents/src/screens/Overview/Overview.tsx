@@ -34,6 +34,7 @@ const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 6
 const defaultStartDate = new Date('2000-01-01')
 const defaultEndDate = startOfTomorrow()
+const { pathname } = useLocation()
 
 // type FuseItem = {
 //   item: Document
@@ -64,7 +65,6 @@ const getFilteredDocuments = (
   filterValues: FilterValues,
 ): Document[] => {
   const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
-  const { pathname } = useLocation()
   let searchInteractionEventSent = false
   let filteredDocuments = documents.filter((document) =>
     isWithinInterval(new Date(document.date), {
