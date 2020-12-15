@@ -5,6 +5,10 @@ import { IsString } from 'class-validator'
 export class RunEndpointTestsInput {
   @Field(() => String)
   @IsString()
+  nationalId!: string
+
+  @Field(() => String)
+  @IsString()
   recipient!: string
 
   @Field(() => String)
