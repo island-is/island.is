@@ -5,6 +5,7 @@ import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { m } from '../../../forms/messages'
@@ -27,6 +28,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
   )
   const [environmentError, setEnvironmentError] = useState<string | null>(null)
   const [registerProvider] = useMutation(registerProviderMutation)
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
   const onRegister = async () => {
     setEnvironmentError(null)
@@ -53,6 +55,20 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
 
     setCurrentAnswer('true')
 
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            testUserExists: 'true',
+            ...application.answers,
+          },
+        },
+      },
+    }).then((response) => {
+      application.answers = response.data?.updateApplication?.answers
+    })
+
     clearErrors('testUserExists')
   }
 
@@ -68,16 +84,18 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
             )}
           />
         </Box>
-        <Box marginBottom={1}>
-          <Text variant="h3">
-            {formatText(m.testEnviromentSubHeading, application, formatMessage)}
-          </Text>
+        <Box marginBottom={3}>
           <Text>
-            {formatText(m.testEnviromentSubMessage, application, formatMessage)}
+            <strong>
+              {formatText(
+                m.testEnviromentStrongText,
+                application,
+                formatMessage,
+              )}
+            </strong>
           </Text>
         </Box>
       </Box>
-      <Box></Box>
       <Box
         marginBottom={7}
         display="flex"
@@ -87,6 +105,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
         <Button
           variant="ghost"
           size="small"
+          disabled={currentAnswer !== ''}
           onClick={() => {
             onRegister()
           }}
