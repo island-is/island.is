@@ -1,6 +1,7 @@
 export default {
   production: true,
   environment: process.env.ENVIRONMENT,
+  baseApiUrl: '',
   identityServer: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '',

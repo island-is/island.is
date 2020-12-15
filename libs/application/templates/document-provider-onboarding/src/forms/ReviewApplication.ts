@@ -27,7 +27,12 @@ export const ReviewApplication: Form = buildForm({
           name: m.reviewTitle,
           description: m.reviewSubTitle,
           children: [
-            buildDividerField({ name: m.applicantTitle.defaultMessage }),
+            buildDividerField({ name: m.applicantTitle }),
+            buildTextField({
+              id: 'applicant.nationalId',
+              name: m.applicantNationalId,
+              disabled: true,
+            }),
             buildTextField({
               id: 'applicant.name',
               name: m.applicantName,
@@ -37,13 +42,11 @@ export const ReviewApplication: Form = buildForm({
               id: 'applicant.email',
               name: m.applicantEmail,
               disabled: true,
-              width: 'half',
             }),
             buildTextField({
               id: 'applicant.phoneNumber',
               name: m.applicantPhoneNumber,
               disabled: true,
-              width: 'half',
               format: '###-####',
               placeholder: '000-0000',
             }),
@@ -51,16 +54,14 @@ export const ReviewApplication: Form = buildForm({
               id: 'applicant.address',
               name: m.applicantAddress,
               disabled: true,
-              width: 'half',
             }),
             buildTextField({
               id: 'applicant.zipCode',
               name: m.applicantZipCode,
               disabled: true,
-              width: 'half',
             }),
             buildDividerField({
-              name: m.administrativeContactTitle.defaultMessage,
+              name: m.administrativeContactTitle,
             }),
             buildTextField({
               id: 'administrativeContact.name',
@@ -71,17 +72,15 @@ export const ReviewApplication: Form = buildForm({
               id: 'administrativeContact.email',
               name: m.administrativeContactEmail,
               disabled: true,
-              width: 'half',
             }),
             buildTextField({
               id: 'administrativeContact.phoneNumber',
               name: m.administrativeContactPhoneNumber,
               disabled: true,
-              width: 'half',
               format: '###-####',
               placeholder: '000-0000',
             }),
-            buildDividerField({ name: m.technicalContactTitle.defaultMessage }),
+            buildDividerField({ name: m.technicalContactTitle }),
             buildTextField({
               id: 'technicalContact.name',
               name: m.technicalContactName,
@@ -91,28 +90,24 @@ export const ReviewApplication: Form = buildForm({
               id: 'technicalContact.email',
               name: m.technicalContactEmail,
               disabled: true,
-              width: 'half',
             }),
             buildTextField({
               id: 'technicalContact.phoneNumber',
               name: m.technicalContactPhoneNumber,
               disabled: true,
-              width: 'half',
               format: '###-####',
               placeholder: '000-0000',
             }),
-            buildDividerField({ name: m.helpDeskTitle.defaultMessage }),
+            buildDividerField({ name: m.helpDeskTitle }),
             buildTextField({
               id: 'helpDesk.email',
               name: m.helpDeskEmail,
               disabled: true,
-              width: 'half',
             }),
             buildTextField({
               id: 'helpDesk.phoneNumber',
               name: m.helpDeskPhoneNumber,
               disabled: true,
-              width: 'half',
               format: '###-####',
               placeholder: '000-0000',
             }),
@@ -128,7 +123,7 @@ export const ReviewApplication: Form = buildForm({
             }),
             buildTextField({
               id: 'rejectionReason',
-              name: m.reviewRejectReasonLabel.defaultMessage,
+              name: m.reviewRejectReasonLabel,
               condition: {
                 questionId: 'approvedByReviewer',
                 isMultiCheck: false,

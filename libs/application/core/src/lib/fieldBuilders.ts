@@ -155,7 +155,7 @@ export function buildSelectField(data: {
   id: string
   name: FormText
   description?: FormText
-  placeholder?: string
+  placeholder?: FormText
   options: MaybeWithApplication<Option[]>
   disabled?: boolean
   width?: FieldWidth
@@ -323,7 +323,7 @@ export function buildFileUploadField(data: {
 }
 
 export function buildDividerField(data: {
-  name?: string
+  name?: FormText
   color?: Colors
 }): DividerField {
   const { name, color } = data

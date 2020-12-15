@@ -17,7 +17,6 @@ import { generateRulingPdf, writeFile } from '../../formatters'
 import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
-import { TransitionUpdate } from './state'
 
 @Injectable()
 export class CaseService {
@@ -120,7 +119,7 @@ export class CaseService {
     const sevenDaysFromNow = this.sevenDaysFromNow()
 
     return this.caseModel.findAll({
-      order: [['modified', 'DESC']],
+      order: [['created', 'DESC']],
       where: {
         [Op.or]: [
           {
@@ -169,7 +168,7 @@ export class CaseService {
 
   async update(
     id: string,
-    update: UpdateCaseDto | TransitionUpdate,
+    update: UpdateCaseDto,
   ): Promise<{ numberOfAffectedRows: number; updatedCase: Case }> {
     this.logger.debug(`Updating case ${id}`)
 

@@ -18,9 +18,9 @@ export function initializeReducer(
   state: ApplicationUIState,
 ): ApplicationUIState {
   const { application, form } = state
-  const { answers } = application
-  const sections = getNavigableSectionsInForm(form, answers)
-  const screens = convertFormToScreens(form, answers)
+  const { answers, externalData } = application
+  const sections = getNavigableSectionsInForm(form, answers, externalData)
+  const screens = convertFormToScreens(form, answers, externalData)
   const currentScreen =
     form.mode === FormModes.REVIEW ? 0 : findCurrentScreen(screens, answers)
 
@@ -43,8 +43,16 @@ const addNewAnswersToState = (
       ...state.application,
       answers: newAnswers,
     },
-    sections: getNavigableSectionsInForm(state.form, newAnswers),
-    screens: convertFormToScreens(state.form, newAnswers),
+    sections: getNavigableSectionsInForm(
+      state.form,
+      newAnswers,
+      state.application.externalData,
+    ),
+    screens: convertFormToScreens(
+      state.form,
+      newAnswers,
+      state.application.externalData,
+    ),
   }
 }
 
@@ -92,7 +100,7 @@ function expandRepeater(state: ApplicationUIState): ApplicationUIState {
   if (!repeater || repeater.type !== FormItemTypes.REPEATER) {
     return state
   }
-  const { answers } = application
+  const { answers, externalData } = application
   const repeaterValues = getValueViaPath(
     answers ?? {},
     repeater.id,
@@ -104,7 +112,7 @@ function expandRepeater(state: ApplicationUIState): ApplicationUIState {
     [repeater.id]: [...repeaterValues, {}],
   })
 
-  const newScreens = convertFormToScreens(form, newAnswers)
+  const newScreens = convertFormToScreens(form, newAnswers, externalData)
   return {
     ...state,
     screens: newScreens,

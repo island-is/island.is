@@ -78,6 +78,7 @@
         "libs/api/domains/user-profile/src/index.ts"
       ],
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
+      "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/data-providers": [
@@ -123,6 +124,7 @@
         "libs/application/ui-shell/src/index.ts"
       ],
       "@island.is/auth-api-lib": ["libs/auth-api-lib/src/index.ts"],
+      "@island.is/auth-nest-tools": ["libs/auth-nest-tools/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
       "@island.is/content-search-indexer": [
         "libs/content-search-indexer/src/index.ts"

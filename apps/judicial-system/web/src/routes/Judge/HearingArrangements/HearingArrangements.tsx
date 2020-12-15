@@ -314,7 +314,7 @@ export const HearingArrangements: React.FC = () => {
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                Verjandi
+                Skipaður verjandi
               </Text>
             </Box>
             <Box marginBottom={3}>
@@ -354,7 +354,7 @@ export const HearingArrangements: React.FC = () => {
                 removeTabsValidateAndSet(
                   'defenderEmail',
                   event,
-                  [],
+                  ['email-format'],
                   workingCase,
                   setWorkingCase,
                   defenderEmailErrorMessage,
@@ -365,7 +365,7 @@ export const HearingArrangements: React.FC = () => {
                 validateAndSendToServer(
                   'defenderEmail',
                   event.target.value,
-                  [],
+                  ['email-format'],
                   workingCase,
                   updateCase,
                   setDefenderEmailErrorMessage,

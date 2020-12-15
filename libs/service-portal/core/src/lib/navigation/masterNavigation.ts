@@ -23,7 +23,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
-      // Min Sida
+      // Min Gogn
       {
         name: defineMessage({
           id: 'service.portal:my-info',
@@ -52,79 +52,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         ],
       },
 
-      // Fjarmal
-      {
-        name: defineMessage({
-          id: 'service.portal:finance',
-          defaultMessage: 'Fjármál',
-        }),
-        path: ServicePortalPath.FinanceRoot,
-        icon: {
-          type: 'outline',
-          icon: 'cellular',
-        },
-      },
-
-      // Heilsa
-      {
-        name: defineMessage({
-          id: 'service.portal:health',
-          defaultMessage: 'Heilsa',
-        }),
-        path: ServicePortalPath.HealthRoot,
-        icon: {
-          type: 'outline',
-          icon: 'heart',
-        },
-      },
-
-      // Eignir
-      {
-        name: defineMessage({
-          id: 'service.portal:assets',
-          defaultMessage: 'Eignir',
-        }),
-        path: ServicePortalPath.AssetsRoot,
-        icon: {
-          type: 'outline',
-          icon: 'wallet',
-        },
-      },
-
-      // Menntun
-      {
-        name: defineMessage({
-          id: 'service.portal:education',
-          defaultMessage: 'Menntun',
-        }),
-        path: ServicePortalPath.EducationRoot,
-        icon: {
-          type: 'outline',
-          icon: 'school',
-        },
-      },
-    ],
-  },
-  {
-    name: defineMessage({
-      id: 'service.portal:actions',
-      defaultMessage: 'Aðgerðir',
-      description: 'Title of the actions category',
-    }),
-    children: [
-      // Umsoknir
-      {
-        name: defineMessage({
-          id: 'service.portal:applications',
-          defaultMessage: 'Umsóknir',
-        }),
-        path: ServicePortalPath.ApplicationIntroduction,
-        icon: {
-          type: 'outline',
-          icon: 'fileTrayFull',
-        },
-      },
-
       // Rafraen skjol
       {
         name: defineMessage({
@@ -138,16 +65,16 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
-      // Mín réttindi
+      // Umsoknir
       {
         name: defineMessage({
-          id: 'service.portal:delegation',
-          defaultMessage: 'Mín réttindi',
+          id: 'service.portal:applications',
+          defaultMessage: 'Umsóknir',
         }),
-        path: ServicePortalPath.MyLicensesRoot,
+        path: ServicePortalPath.ApplicationIntroduction,
         icon: {
           type: 'outline',
-          icon: 'receipt',
+          icon: 'fileTrayFull',
         },
       },
 
@@ -171,6 +98,86 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.UserProfileRoot,
           },
         ],
+      },
+    ],
+  },
+  {
+    name: defineMessage({
+      id: 'service.portal:actions',
+      defaultMessage: 'Aðgerðir',
+      description: 'Title of the actions category',
+    }),
+    children: [
+      // Fjarmal
+      {
+        name: defineMessage({
+          id: 'service.portal:finance',
+          defaultMessage: 'Fjármál',
+        }),
+        path: ServicePortalPath.FinanceExternal,
+        external: true,
+        systemRoute: true,
+        icon: {
+          type: 'outline',
+          icon: 'cellular',
+        },
+      },
+
+      // Heilsa
+      // Not showing this atm
+      // {
+      //   name: defineMessage({
+      //     id: 'service.portal:health',
+      //     defaultMessage: 'Heilsa',
+      //   }),
+      //   path: ServicePortalPath.HealthRoot,
+      //   icon: {
+      //     type: 'outline',
+      //     icon: 'heart',
+      //   },
+      // },
+
+      // Menntun
+      {
+        name: defineMessage({
+          id: 'service.portal:education',
+          defaultMessage: 'Menntun',
+        }),
+        path: ServicePortalPath.EducationExternal,
+        external: true,
+        systemRoute: true,
+        icon: {
+          type: 'outline',
+          icon: 'school',
+        },
+      },
+
+      // Fasteignir
+      {
+        name: defineMessage({
+          id: 'service.portal:real-estate',
+          defaultMessage: 'Fasteignir',
+        }),
+        path: ServicePortalPath.RealEstateExternal,
+        external: true,
+        systemRoute: true,
+        icon: {
+          type: 'outline',
+          icon: 'home',
+        },
+      },
+
+      // Mín réttindi
+      {
+        name: defineMessage({
+          id: 'service.portal:delegation',
+          defaultMessage: 'Mín réttindi',
+        }),
+        path: ServicePortalPath.MyLicensesRoot,
+        icon: {
+          type: 'outline',
+          icon: 'receipt',
+        },
       },
     ],
   },

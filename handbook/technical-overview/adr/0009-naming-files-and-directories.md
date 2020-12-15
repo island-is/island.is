@@ -1,4 +1,4 @@
-# Unified naming strategy for files and directories
+# Unified Naming Strategy for Files and Directories
 
 - Status: accepted
 - Deciders: devs

@@ -32,11 +32,11 @@ describe('/domari-krafa/thingbok', () => {
             } as UpdateCase,
             {
               courtAttendees:
-                'Ruth Bader Ginsburg saksóknari\nJon Harring kærði\nSaul Goodman verjandi kærða',
+                'Ruth Bader Ginsburg saksóknari\nJon Harring kærði\nSaul Goodman skipaður verjandi kærða',
             } as UpdateCase,
             {
               courtAttendees:
-                'Ruth Bader Ginsburg saksóknari\nJon Harring kærði\nSaul Goodman verjandi kærða',
+                'Ruth Bader Ginsburg saksóknari\nJon Harring kærði\nSaul Goodman skipaður verjandi kærða',
             } as UpdateCase,
             {
               policeDemands:
@@ -88,7 +88,7 @@ describe('/domari-krafa/thingbok', () => {
         'Viðstaddir og hlutverk þeirra *',
       ) as HTMLInputElement).value,
     ).toEqual(
-      'Ruth Bader Ginsburg saksóknari\nJon Harring kærði\nSaul Goodman verjandi kærða',
+      'Ruth Bader Ginsburg saksóknari\nJon Harring kærði\nSaul Goodman skipaður verjandi kærða',
     )
 
     expect(
@@ -122,7 +122,9 @@ describe('/domari-krafa/thingbok', () => {
     ).toBeDisabled()
 
     userEvent.type(
-      screen.getByLabelText('Málflutningsræður *') as HTMLInputElement,
+      screen.getByLabelText(
+        'Málflutningur og aðrar bókanir *',
+      ) as HTMLInputElement,
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nihilne est in his rebus, quod dignum libero aut indignum esse ducamus? Haec quo modo conveniant, non sane intellego. Facit enim ille duo seiuncta ultima bonorum, quae ut essent vera, coniungi debuerunt; Etenim semper illud extra est, quod arte comprehenditur. Paulum, cum regem Persem captum adduceret, eodem flumine invectio? Nunc haec primum fortasse audientis servire debemus. Duo Reges: constructio interrete. Quare hoc videndum est, possitne nobis hoc ratio philosophorum dare.',
     )
     userEvent.tab()

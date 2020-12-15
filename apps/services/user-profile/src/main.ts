@@ -17,4 +17,5 @@ bootstrap({
   name: 'services-user-profile',
   interceptors: [new SentryInterceptor()],
   openApi,
+  port: environment.port,
 })

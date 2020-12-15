@@ -73,7 +73,7 @@ describe('AuditTrailService', () => {
     service.audit(userId, action, caseId)
 
     // Assert
-    expect(spy).toHaveBeenCalledWith('Audit', {
+    expect(spy).toHaveBeenCalledWith({
       user: userId,
       action,
       cases: caseId,
@@ -96,11 +96,13 @@ describe('AuditTrailService', () => {
     service.audit(userId, action, caseId)
 
     // Assert
-    expect(spy).toHaveBeenCalledWith('Audit', {
-      user: userId,
-      action,
-      cases: caseId,
-    })
+    expect(spy).toHaveBeenCalledWith(
+      JSON.stringify({
+        user: userId,
+        action,
+        cases: caseId,
+      }),
+    )
 
     // Cleanup
     spy.mockReset()

@@ -1,9 +1,14 @@
 import { SearchIndexes } from '@island.is/content-search-indexer/types'
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import * as types from '../generated/contentfulTypes'
-import { SliceUnion } from '../unions/slice.union'
+import { SystemMetadata } from '@island.is/shared/types'
+import { Html, mapHtml } from './html.model'
+import {
+  mapDocument,
+  safelyMapSliceUnion,
+  SliceUnion,
+} from '../unions/slice.union'
 import { AboutPage } from './aboutPage.model'
-import { mapDocument, safelyMapSlices } from './slice.model'
 
 @ObjectType()
 export class AboutSubPage {
@@ -25,6 +30,9 @@ export class AboutSubPage {
   @Field()
   subDescription: string
 
+  @Field(() => Html, { nullable: true })
+  intro: Html
+
   @Field(() => [SliceUnion])
   slices: Array<typeof SliceUnion>
 
@@ -38,18 +46,20 @@ export class AboutSubPage {
 export const mapAboutSubPage = ({
   fields,
   sys,
-}: types.IAboutSubPage): AboutSubPage => ({
+}: types.IAboutSubPage): SystemMetadata<AboutSubPage> => ({
+  typename: 'AboutSubPage',
   id: sys.id,
   title: fields.title ?? '',
   slug: fields.slug ?? '',
   url: fields.url ?? '',
   description: fields.description ?? '',
   subDescription: fields.subDescription ?? '',
+  intro: (fields.intro && mapHtml(fields.intro, sys.id + ':intro')) ?? null,
   slices: fields.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
   bottomSlices: (fields.belowContent ?? [])
-    .map(safelyMapSlices)
+    .map(safelyMapSliceUnion)
     .filter(Boolean),
   parent: fields.parent
     ? {

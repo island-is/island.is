@@ -20,7 +20,7 @@
           "e2e",
           "schemas/build-openapi",
           "schemas/openapi-generator",
-          "schemas/build-schema",
+          "schemas/build-graphql-schema",
           "schemas/codegen"
         ]
       }
@@ -166,6 +166,9 @@
       "tags": []
     },
     "auth-api-lib": {
+      "tags": []
+    },
+    "auth-nest-tools": {
       "tags": []
     },
     "cache": {

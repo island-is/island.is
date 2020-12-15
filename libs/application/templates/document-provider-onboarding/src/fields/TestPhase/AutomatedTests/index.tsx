@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps, formatText } from '@island.is/application/core'
 import {
   Box,
   GridColumn,
@@ -10,16 +10,17 @@ import {
   Input,
   Text,
   Button,
-  Icon,
-  LoadingIcon,
+  AlertMessage,
+  ContentBlock,
 } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
+import { useLocale } from '@island.is/localization'
 import { m } from '../../../forms/messages'
-
 import { runEndpointTestsMutation } from '../../../graphql/mutations/runEndpointTestsMutation'
-import * as styles from './AutomatedTests.treat'
 
-const AutomatedTests: FC<FieldBaseProps> = () => {
+const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
+  const { formatMessage } = useLocale()
+
   interface Response {
     id: string
     isValid: boolean
@@ -28,44 +29,65 @@ const AutomatedTests: FC<FieldBaseProps> = () => {
 
   const [response, setResponse] = useState<Response[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [automatedTestsError, setautomatedTestsError] = useState<string | null>(
+    null,
+  )
   const { register, errors, trigger } = useForm()
   const [runEndpointTests] = useMutation(runEndpointTestsMutation)
 
   const validateEndpoint = async () => {
+    setautomatedTestsError(null)
     setIsLoading(true)
 
     const results = await runEndpointTests({
       variables: {
-        input: { recipient: '2404805659', documentId: '123456' }, //TODO set real data
+        input: {
+          nationalId: '2404805659',
+          recipient: '2404805659',
+          documentId: '123456',
+        }, //TODO set real data
       },
     })
 
     if (!results.data) {
-      //TODO display error
+      setIsLoading(false)
+      setautomatedTestsError(m.automatedTestsErrorMessage.defaultMessage)
     }
 
     setResponse(results.data.runEndpointTests)
     setIsLoading(false)
   }
-
-  //TODO finish design of this component
+  //TODO finish loading state
+  //TODO færa placeholders í messages
   return (
     <Box>
       <Box marginBottom={3}>
         <FieldDescription
-          description={m.automatedTestsSubTitle.defaultMessage}
+          description={formatText(
+            m.automatedTestsSubTitle,
+            application,
+            formatMessage,
+          )}
         />
       </Box>
       <Box marginBottom={1}>
-        <Text variant="h3">{m.automatedTestsSubHeading.defaultMessage}</Text>
-        <Text>{m.automatedTestsMessage.defaultMessage}</Text>
+        <Text variant="h3">
+          {formatText(m.automatedTestsSubHeading, application, formatMessage)}
+        </Text>
+        <Text>
+          {formatText(m.automatedTestsMessage, application, formatMessage)}
+        </Text>
       </Box>
       <Box marginTop={3} position="relative">
         <GridContainer>
           <GridRow>
-            <GridColumn span="6/12">
+            <GridColumn span={['12/12', '6/12']}>
               <Input
-                label={m.automatedTestsNationalIdLabel.defaultMessage}
+                label={formatText(
+                  m.automatedTestsNationalIdLabel,
+                  application,
+                  formatMessage,
+                )}
                 name="nationalId"
                 id="nationalId"
                 ref={register({
@@ -76,93 +98,78 @@ const AutomatedTests: FC<FieldBaseProps> = () => {
                 defaultValue=""
                 placeholder="Skráðu inn kennitölu"
                 hasError={errors.nationalId !== undefined}
-                errorMessage={
-                  m.automatedTestsNationalIdErrorMessage.defaultMessage
-                }
+                errorMessage={formatText(
+                  m.automatedTestsNationalIdErrorMessage,
+                  application,
+                  formatMessage,
+                )}
                 disabled={isLoading}
               />
             </GridColumn>
-            <GridColumn span="6/12">
+            <GridColumn span={['12/12', '6/12']} paddingTop={[3, 0]}>
               <Input
-                label={m.automatedTestsDocIdLabel.defaultMessage}
+                label={formatText(
+                  m.automatedTestsDocIdLabel,
+                  application,
+                  formatMessage,
+                )}
                 name="docId"
                 required
                 placeholder="Skráðu inn Id skjals"
                 ref={register({ required: true })}
                 hasError={errors.docId !== undefined}
-                errorMessage={m.automatedTestsDocIdErrorMessage.defaultMessage}
+                errorMessage={formatText(
+                  m.automatedTestsDocIdErrorMessage,
+                  application,
+                  formatMessage,
+                )}
+                disabled={isLoading}
               />
             </GridColumn>
           </GridRow>
-          <GridRow>
-            <GridColumn span="4/12">
-              <Box
-                marginTop={3}
-                display="flex"
-                justifyContent="spaceBetween"
-                alignItems="center"
-              >
-                <Button
-                  onClick={() => {
-                    trigger(['nationalId', 'docId']).then((isValid) =>
-                      isValid ? validateEndpoint() : setResponse([]),
-                    )
-                  }}
-                >
-                  {m.automatedTestsButton.defaultMessage}
-                </Button>
-              </Box>
-            </GridColumn>
-          </GridRow>
         </GridContainer>
-        {isLoading ? (
-          <Box
-            className={styles.isLoadingContainer}
-            position="absolute"
-            left={0}
-            right={0}
-            top={0}
-            bottom={0}
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            borderRadius="large"
-            background="blue100"
-          >
-            <LoadingIcon animate size={30} />
-          </Box>
-        ) : (
+        <Box marginTop={3} display="flex" alignItems="flexEnd">
           <Box>
-            {response.map((Response) => (
-              <Box marginTop={3} key={Response.id}>
-                <GridContainer>
-                  <GridRow>
-                    <GridColumn>
-                      {Response.isValid ? (
-                        <Icon
-                          color="mint600"
-                          icon="checkmarkCircle"
-                          size="medium"
-                          type="filled"
-                        />
-                      ) : (
-                        <Icon
-                          color="red600"
-                          icon="warning"
-                          size="medium"
-                          type="filled"
-                        />
-                      )}
-                    </GridColumn>
-                    <GridColumn>
-                      <Text variant="h5">{Response.message}</Text>
-                    </GridColumn>
-                  </GridRow>
-                </GridContainer>
-              </Box>
-            ))}
+            <Button
+              variant="ghost"
+              size="small"
+              onClick={() => {
+                trigger(['nationalId', 'docId']).then((isValid) =>
+                  isValid ? validateEndpoint() : setResponse([]),
+                )
+              }}
+            >
+              {formatText(m.automatedTestsButton, application, formatMessage)}
+            </Button>
           </Box>
-        )}
+          {automatedTestsError && (
+            <Box color="red600" paddingY={2}>
+              <Text fontWeight="semiBold" color="red600">
+                {automatedTestsError}
+              </Text>
+            </Box>
+          )}
+        </Box>
+
+        <Box>
+          {response.map((Response) => (
+            <Box marginTop={3} key={Response.id}>
+              <ContentBlock>
+                {Response.isValid ? (
+                  <AlertMessage
+                    type="success"
+                    title={Response.message}
+                  ></AlertMessage>
+                ) : (
+                  <AlertMessage
+                    type="error"
+                    title={Response.message}
+                  ></AlertMessage>
+                )}
+              </ContentBlock>
+            </Box>
+          ))}
+        </Box>
       </Box>
     </Box>
   )

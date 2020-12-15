@@ -5,7 +5,8 @@ import { UsersModule } from './modules/users/users.module'
 import { GrantTypesModule } from './modules/grant-types/grant-types.module'
 import { ClientsModule } from './modules/clients/clients.module'
 import { ResourcesModule } from './modules/resources/resources.module'
-import { AuthModule, SequelizeConfigService } from '@island.is/auth-api-lib'
+import { SequelizeConfigService } from '@island.is/auth-api-lib'
+import { AuthModule } from '@island.is/auth-nest-tools'
 
 @Module({
   imports: [

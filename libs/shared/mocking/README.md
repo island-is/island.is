@@ -14,7 +14,6 @@ import {
   slugify,
   faker,
 } from '@island.is/shared/mocking'
-import { buildSchema } from 'graphql'
 import schema from './schema'
 import { Article, User, Resolvers } from './types'
 
