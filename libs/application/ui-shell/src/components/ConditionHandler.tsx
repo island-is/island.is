@@ -1,5 +1,9 @@
 import { FC, useEffect } from 'react'
-import { FormItemTypes, FormValue } from '@island.is/application/core'
+import {
+  ExternalData,
+  FormItemTypes,
+  FormValue,
+} from '@island.is/application/core'
 import { useWatch } from 'react-hook-form'
 import { FieldDef, MultiFieldScreen } from '../types'
 import { convertMultiFieldToScreen } from '../reducer/reducerUtils'
@@ -7,9 +11,10 @@ import { convertMultiFieldToScreen } from '../reducer/reducerUtils'
 // Use this component to optimize performance for applying conditions in response to form value changes for multifields
 export const ConditionHandler: FC<{
   answerQuestions(answers: FormValue): void
+  externalData: ExternalData
   formValue: FormValue
   screen: MultiFieldScreen
-}> = ({ answerQuestions, formValue, screen }) => {
+}> = ({ answerQuestions, externalData, formValue, screen }) => {
   const data = useWatch({ defaultValue: formValue }) as FormValue
 
   useEffect(() => {
@@ -19,6 +24,7 @@ export const ConditionHandler: FC<{
         ...formValue,
         ...data,
       },
+      externalData,
       true,
       screen.sectionIndex,
       screen.subSectionIndex,
@@ -37,7 +43,7 @@ export const ConditionHandler: FC<{
         }
       })
     }
-  }, [answerQuestions, data, formValue, screen])
+  }, [answerQuestions, data, externalData, formValue, screen])
   return null
 }
 

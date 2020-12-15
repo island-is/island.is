@@ -6,9 +6,9 @@ TODO
 
 ## URLs
 
-- [Dev](https://service-portal.dev01.devland.is)
-- [Staging](https://service-portal.staging01.devland.is)
-- [Production](https://beta.minarsidur.island.is)
+- [Dev](https://beta.dev01.devland.is/minarsidur)
+- [Staging](https://beta.staging01.devland.is/minarsidur)
+- [Production](https://island.is/minarsidur)
 
 ## Getting started
 

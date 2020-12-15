@@ -123,7 +123,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
 
       <Box marginTop={[4, 4, 8]} marginBottom={[0, 0, 6]}>
         <Accordion singleExpand={false}>
-          <AccordionItem id="id_1" label="Contact information">
+          <AccordionItem id="id_1" label="Contact information" startExpanded>
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="6/12">
@@ -146,7 +146,11 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
             </Box>
           </AccordionItem>
 
-          <AccordionItem id="id_4" label="Other parent confirmation">
+          <AccordionItem
+            id="id_4"
+            label="Other parent confirmation"
+            startExpanded
+          >
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="12/12">
@@ -195,7 +199,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
             </Box>
           </AccordionItem>
 
-          <AccordionItem id="id_3" label="Payment details">
+          <AccordionItem id="id_3" label="Payment details" startExpanded>
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="6/12">
@@ -299,7 +303,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               )}
             </Box>
           </AccordionItem>
-          <AccordionItem id="id_1" label="Employer">
+          <AccordionItem id="id_1" label="Employer" startExpanded>
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="6/12">
@@ -341,7 +345,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
             </Box>
           </AccordionItem>
 
-          <AccordionItem id="id_4" label="Your leave rights">
+          <AccordionItem id="id_4" label="Your leave rights" startExpanded>
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="12/12">
@@ -351,7 +355,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
             </Box>
           </AccordionItem>
 
-          <AccordionItem id="id_4" label="Your periods">
+          <AccordionItem id="id_4" label="Your periods" startExpanded>
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="12/12">
@@ -372,7 +376,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
             </Box>
           </AccordionItem>
 
-          <AccordionItem id="id_4" label="Payment plan">
+          <AccordionItem id="id_4" label="Payment plan" startExpanded>
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="12/12">
@@ -387,7 +391,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
             </Box>
           </AccordionItem>
 
-          <AccordionItem id="id_4" label="Share information">
+          <AccordionItem id="id_4" label="Share information" startExpanded>
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="12/12">
