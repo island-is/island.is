@@ -10,6 +10,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Step } from '../../models/common/Step';
 import { Client } from '../../models/client.model';
+import ClientAllowedCorsOriginsForm from 'apps/auth-admin-web/components/ClientAllowedCorsOriginsForm';
 
 const Index = () => {
   const { query } = useRouter();
@@ -144,8 +145,18 @@ const Index = () => {
       );
     }
     case Step.ClientAllowedCorsOrigin: {
-      // Allowed Cors Origin
-      // Default Display URL ?
+      return (
+        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+        <ClientAllowedCorsOriginsForm
+          clientId={client.clientId}
+          defaultOrigin={client.clientUri}
+          origins={client.allowedCorsOrigins?.map(a => a.origin)}
+          handleNext={handleNext}
+          handleBack={handleBack}
+          handleChanges={changesMade}
+        />
+        </ClientStepNav>
+      );
     }
     case Step.ClientGrantTypes: {
       // Grant Types

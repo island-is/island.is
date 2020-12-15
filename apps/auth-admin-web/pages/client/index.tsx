@@ -13,6 +13,7 @@ import { useRouter } from 'next/router';
 import StepEnd from './../../components/common/StepEnd';
 import { Step } from '../../models/common/Step';
 import { Client } from './../../models/client.model';
+import ClientAllowedCorsOriginsForm from 'apps/auth-admin-web/components/ClientAllowedCorsOriginsForm';
 
 export default function Index() {
   const [step, setStep] = useState(1);
@@ -111,8 +112,14 @@ export default function Index() {
       );
     }
     case Step.ClientAllowedCorsOrigin: {
-      // Allowed Cors Origin
-      // Default Display URL ?
+      return <ClientAllowedCorsOriginsForm
+          clientId={client.clientId}
+          defaultOrigin={client.clientUri}
+          origins={client.allowedCorsOrigins?.map(a => a.origin)}
+          handleNext={handleNext}
+          handleBack={handleBack}
+          handleChanges={changesMade}
+        />
     }
     case Step.ClientGrantTypes: {
       // Grant Types
