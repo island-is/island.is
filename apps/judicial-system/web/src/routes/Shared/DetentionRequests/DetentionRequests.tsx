@@ -311,86 +311,82 @@ export const DetentionRequests: React.FC = () => {
                     styles.tableRowContainer,
                     requestToRemoveIndex === i && 'isDeleting',
                   )}
+                  data-testid="detention-requests-table-row"
+                  role="button"
+                  aria-label="Opna kröfu"
+                  onClick={() => {
+                    handleClick(c)
+                  }}
                 >
-                  <Box
-                    data-testid="detention-requests-table-row"
-                    role="button"
-                    aria-label="Opna kröfu"
-                    className={styles.detentionRequestsTableRow}
-                    onClick={() => {
-                      handleClick(c)
-                    }}
-                  >
-                    <td className={styles.td}>
-                      <Text as="span">{c.policeCaseNumber || '-'}</Text>
-                    </td>
-                    <td className={styles.td}>
-                      <Text>{c.accusedName || '-'}</Text>
-                      <Text>
-                        {c.accusedNationalId && (
-                          <Box marginLeft={1} component="span">
-                            <Text as="span" variant="small" color="dark400">
-                              {`(${
-                                insertAt(
-                                  c.accusedNationalId.replace('-', ''),
-                                  '-',
-                                  6,
-                                ) || '-'
-                              })`}
-                            </Text>
-                          </Box>
-                        )}
-                      </Text>
-                    </td>
-                    <td className={styles.td}>
-                      <Text as="span">
-                        {format(parseISO(c.created), 'PP', {
-                          locale: localeIS,
-                        })}
-                      </Text>
-                    </td>
-                    <td className={styles.td}>
-                      {c.isCustodyEndDateInThePast ? (
-                        <Tag variant="darkerBlue" outlined>
-                          Gæsluvarðhaldi lokið
-                        </Tag>
-                      ) : (
-                        <Tag
-                          variant={mapCaseStateToTagVariant(c.state).color}
-                          outlined
+                  <td className={styles.td}>
+                    <Text as="span">{c.policeCaseNumber || '-'}</Text>
+                  </td>
+                  <td className={styles.td}>
+                    <Text>{c.accusedName || '-'}</Text>
+                    <Text>
+                      {c.accusedNationalId && (
+                        <Box marginLeft={1} component="span">
+                          <Text as="span" variant="small" color="dark400">
+                            {`(${
+                              insertAt(
+                                c.accusedNationalId.replace('-', ''),
+                                '-',
+                                6,
+                              ) || '-'
+                            })`}
+                          </Text>
+                        </Box>
+                      )}
+                    </Text>
+                  </td>
+                  <td className={styles.td}>
+                    <Text as="span">
+                      {format(parseISO(c.created), 'PP', {
+                        locale: localeIS,
+                      })}
+                    </Text>
+                  </td>
+                  <td className={styles.td}>
+                    {c.isCustodyEndDateInThePast ? (
+                      <Tag variant="darkerBlue" outlined>
+                        Gæsluvarðhaldi lokið
+                      </Tag>
+                    ) : (
+                      <Tag
+                        variant={mapCaseStateToTagVariant(c.state).color}
+                        outlined
+                      >
+                        {mapCaseStateToTagVariant(c.state).text}
+                      </Tag>
+                    )}
+                  </td>
+                  <td className={styles.td}>
+                    <Text as="span">
+                      {c.custodyEndDate && c.state === CaseState.ACCEPTED
+                        ? `${formatDate(c.custodyEndDate, 'PP')}`
+                        : null}
+                    </Text>
+                  </td>
+                  {!isJudge &&
+                    (c.state === CaseState.DRAFT ||
+                      c.state === CaseState.NEW) && (
+                      <td className={styles.td}>
+                        <Box
+                          display="flex"
+                          component="button"
+                          aria-label="Viltu eyða drögum?"
+                          onClick={(evt) => {
+                            evt.stopPropagation()
+                            setRequestToRemoveIndex(
+                              requestToRemoveIndex === i ? undefined : i,
+                            )
+                          }}
                         >
-                          {mapCaseStateToTagVariant(c.state).text}
-                        </Tag>
-                      )}
-                    </td>
-                    <td className={styles.td}>
-                      <Text as="span">
-                        {c.custodyEndDate && c.state === CaseState.ACCEPTED
-                          ? `${formatDate(c.custodyEndDate, 'PP')}`
-                          : null}
-                      </Text>
-                    </td>
-                    {!isJudge &&
-                      (c.state === CaseState.DRAFT ||
-                        c.state === CaseState.NEW) && (
-                        <td className={styles.td}>
-                          <Box
-                            display="flex"
-                            component="button"
-                            aria-label="Viltu eyða drögum?"
-                            onClick={(evt) => {
-                              evt.stopPropagation()
-                              setRequestToRemoveIndex(
-                                requestToRemoveIndex === i ? undefined : i,
-                              )
-                            }}
-                          >
-                            <Icon icon="close" color="blue400" />
-                          </Box>
-                        </td>
-                      )}
-                  </Box>
-                  <Box
+                          <Icon icon="close" color="blue400" />
+                        </Box>
+                      </td>
+                    )}
+                  <td
                     className={cn(
                       styles.deleteButtonContainer,
                       requestToRemoveIndex === i && 'open',
@@ -407,7 +403,7 @@ export const DetentionRequests: React.FC = () => {
                         Eyða drögum
                       </Box>
                     </Button>
-                  </Box>
+                  </td>
                 </tr>
               ))}
             </tbody>
