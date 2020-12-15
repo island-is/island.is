@@ -57,7 +57,7 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
   )
 
   const navList = [parentPageLink, ...items]
-  console.log(page)
+
   return (
     <>
       <Head>
