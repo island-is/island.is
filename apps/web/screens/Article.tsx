@@ -12,7 +12,6 @@ import {
   Text,
   Stack,
   Breadcrumbs,
-  Hidden,
   GridColumn,
   GridRow,
   Tag,

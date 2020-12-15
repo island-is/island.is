@@ -186,7 +186,7 @@ const PageHeader: FC<PageHeaderProps> = ({
     <Background id={slice.id} theme={page.theme}>
       <GridContainer position="none">
         <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
-            <Header buttonColorScheme="negative" megaMenuData={megaMenuData} />
+          <Header buttonColorScheme="negative" megaMenuData={megaMenuData} />
         </ColorSchemeContext.Provider>
       </GridContainer>
       <SidebarLayout
