@@ -4,7 +4,7 @@ import {
   FormValue,
   validateAnswers,
 } from '@island.is/application/core'
-import { BadRequestException } from '@nestjs/common'
+import { BadRequestException, UnauthorizedException } from '@nestjs/common'
 
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 
@@ -52,9 +52,15 @@ export async function validateIncomingAnswers(
     return {}
   }
   const template = await getApplicationTemplateByTypeId(application.typeId)
+  const role = template.mapUserToRole(nationalId, application)
+  if (!role) {
+    throw new UnauthorizedException(
+      'Current user does not have a role in this application state',
+    )
+  }
   const helper = new ApplicationTemplateHelper(application, template)
   const writableAnswersAndExternalData = helper.getWritableAnswersAndExternalData(
-    template.mapUserToRole(nationalId, application),
+    role,
   )
   if (writableAnswersAndExternalData === 'all') {
     return newAnswers
@@ -97,9 +103,15 @@ export async function validateIncomingExternalDataProviders(
     return
   }
   const template = await getApplicationTemplateByTypeId(application.typeId)
+  const role = template.mapUserToRole(nationalId, application)
+  if (!role) {
+    throw new UnauthorizedException(
+      'Current user does not have a role in this application state',
+    )
+  }
   const helper = new ApplicationTemplateHelper(application, template)
   const writableAnswersAndExternalData = helper.getWritableAnswersAndExternalData(
-    template.mapUserToRole(nationalId, application),
+    role,
   )
   if (writableAnswersAndExternalData === 'all') {
     return

@@ -53,8 +53,8 @@ export class ApplicationResolver {
   ): Promise<Application[] | null> {
     return this.applicationService.findAllByApplicant(
       user.nationalId,
-      typeId,
       user.authorization,
+      typeId,
     )
   }
 
@@ -69,8 +69,8 @@ export class ApplicationResolver {
   ): Promise<Application[] | null> {
     return this.applicationService.findAllByAssignee(
       user.nationalId,
-      typeId,
       user.authorization,
+      typeId,
     )
   }
 

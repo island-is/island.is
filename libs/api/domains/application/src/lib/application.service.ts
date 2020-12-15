@@ -24,7 +24,7 @@ const handleError = (error: any) => {
 export class ApplicationService {
   constructor(private applicationApi: ApplicationsApi) {}
 
-  async findOne(id: string, authorization?: string) {
+  async findOne(id: string, authorization: string) {
     return await this.applicationApi
       .applicationControllerFindOne({
         id,
@@ -33,7 +33,7 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async create(input: CreateApplicationInput, authorization?: string) {
+  async create(input: CreateApplicationInput, authorization: string) {
     return this.applicationApi
       .applicationControllerCreate({
         createApplicationDto: input,
@@ -44,7 +44,7 @@ export class ApplicationService {
 
   async findAllByType(
     typeId: ApplicationResponseDtoTypeIdEnum,
-    authorization?: string,
+    authorization: string,
   ) {
     return await this.applicationApi
       .applicationControllerFindAll({ typeId, authorization })
@@ -53,8 +53,8 @@ export class ApplicationService {
 
   async findAllByApplicant(
     nationalRegistryId: string,
+    authorization: string,
     typeId?: ApplicationResponseDtoTypeIdEnum,
-    authorization?: string,
   ) {
     return await this.applicationApi
       .applicationControllerFindApplicantApplications({
@@ -67,8 +67,8 @@ export class ApplicationService {
 
   async findAllByAssignee(
     nationalRegistryId: string,
+    authorization: string,
     typeId?: ApplicationResponseDtoTypeIdEnum,
-    authorization?: string,
   ) {
     return await this.applicationApi
       .applicationControllerFindAssigneeApplications({
@@ -79,7 +79,7 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async update(input: UpdateApplicationInput, authorization?: string) {
+  async update(input: UpdateApplicationInput, authorization: string) {
     const { id, ...updateApplicationDto } = input
 
     return await this.applicationApi
@@ -91,7 +91,7 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async addAttachment(input: AddAttachmentInput, authorization?: string) {
+  async addAttachment(input: AddAttachmentInput, authorization: string) {
     const { id, ...addAttachmentDto } = input
 
     return await this.applicationApi
@@ -103,7 +103,7 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async deleteAttachment(input: DeleteAttachmentInput, authorization?: string) {
+  async deleteAttachment(input: DeleteAttachmentInput, authorization: string) {
     const { id, ...deleteAttachmentDto } = input
 
     return await this.applicationApi
@@ -117,7 +117,7 @@ export class ApplicationService {
 
   async updateExternalData(
     input: UpdateApplicationExternalDataInput,
-    authorization?: string,
+    authorization: string,
   ) {
     const { id, ...populateExternalDataDto } = input
 
@@ -130,7 +130,7 @@ export class ApplicationService {
 
   async submitApplication(
     input: SubmitApplicationInput,
-    authorization?: string,
+    authorization: string,
   ) {
     const { id, ...updateApplicationStateDto } = input
     return this.applicationApi.applicationControllerSubmitApplication({
