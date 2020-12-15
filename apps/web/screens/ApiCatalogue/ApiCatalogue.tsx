@@ -1,201 +1,151 @@
 import React, { useState } from 'react'
-import getConfig from 'next/config'
-
 import { Screen } from '@island.is/web/types'
-import { CustomNextError } from '@island.is/web/units/errors'
-
-import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
-import {
-  Query,
-  QueryGetApiCatalogueArgs,
-  QueryGetNamespaceArgs,
-  GetApiCatalogueInput,
-} from '@island.is/api/schema'
-
-import {
-  GET_NAMESPACE_QUERY,
-  GET_CATALOGUE_QUERY,
-} from '@island.is/web/screens/queries'
-import { useNamespace } from '../../hooks'
-
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { useQuery } from '@apollo/client'
-import { SidebarLayout } from '../Layouts/SidebarLayout'
-
-import {
-  ServiceList,
-  SubpageMainContent,
-  SubpageDetailsContent,
-} from '@island.is/web/components'
-
-import { SubpageLayout } from '../Layouts/Layouts'
-import {
-  Box,
+import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { 
+  Text, 
+  Navigation, 
+  TableOfContents, 
   Stack,
-  Text,
-  Button,
-  Link,
-  LoadingIcon,
-  GridContainer,
-} from '@island.is/island-ui/core'
+  Breadcrumbs,
+  Box, 
+  Link } from '@island.is/island-ui/core'
+import { SubpageMainContent, SubpageDetailsContent } from '@island.is/web/components'
+
+import getConfig from 'next/config'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { 
+  ContentLanguage,
+  GetNamespaceQuery, 
+  QueryGetNamespaceArgs } from '@island.is/web/graphql/schema'
+import { GET_NAMESPACE_QUERY } from '../queries'
+import { useNamespace } from '@island.is/web/hooks'
+
+
 const { publicRuntimeConfig } = getConfig()
 
 /* TEMPORARY LAYOUT CREATED TO SCAFFOLD API CATALOGUE INTO THE WEB */
 
 interface ApiCatalogueProps {
-  mainContent: GetNamespaceQuery['getNamespace']
   staticContent: GetNamespaceQuery['getNamespace']
   filterContent: GetNamespaceQuery['getNamespace']
+  navContent: GetNamespaceQuery['getNamespace']
 }
 
-const LIMIT = 20
-
-const ApiCatalogue: Screen<ApiCatalogueProps> = ({
-  mainContent,
-  staticContent,
-  filterContent,
-}) => {
+const ApiCatalogue: Screen<ApiCatalogueProps> = ({ staticContent, filterContent, navContent }) => {
+  /* DISABLE FROM WEB WHILE WIP */
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
 
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
   }
-
-  const sn = useNamespace(staticContent)
-
-  const onLoadMore = () => {
-    if (data?.getApiCatalogue.pageInfo?.nextCursor === null) {
-      return
-    }
-
-    const { nextCursor } = data?.getApiCatalogue?.pageInfo
-    const param = { ...parameters, cursor: nextCursor }
-    fetchMore({
-      variables: { input: param },
-      updateQuery: (prevResult, { fetchMoreResult }) => {
-        fetchMoreResult.getApiCatalogue.services = [
-          ...prevResult.getApiCatalogue.services,
-          ...fetchMoreResult.getApiCatalogue.services,
-        ]
-        return fetchMoreResult
-      },
-    })
-  }
-
-  const [parameters, setParameters] = useState<GetApiCatalogueInput>({
-    cursor: null,
-    limit: LIMIT,
-    query: '',
-    pricing: [],
-    data: [],
-    type: [],
-    access: [],
-  })
-
-  const { data, loading, error, fetchMore, refetch } = useQuery<
-    Query,
-    QueryGetApiCatalogueArgs
-  >(GET_CATALOGUE_QUERY, {
-    variables: {
-      input: parameters,
-    },
-  })
+  /* --- */
+  const n = useNamespace(staticContent)
+  const fn = useNamespace(filterContent)
+  const navn = useNamespace(navContent)
 
   return (
     <SubpageLayout
       main={
-        <SidebarLayout sidebarContent={<div>Navigation menu here</div>}>
-          <SubpageMainContent main={<div>Main content here</div>} />
+        <SidebarLayout
+          sidebarContent={
+            <Navigation
+              activeItemTitle="Vefþjónustur"
+              colorScheme="blue"
+              items={[
+                {
+                  active: true,
+                  href: navn('servicesLink'),
+                  title: navn('servicesTitle'),
+                  items: [
+                    {
+                      active: true,
+                      href: navn('catalogueLink'),
+                      title: navn('catalogueTitle')
+                    }
+                  ]
+                }
+              ]}
+              title={navn('title')}
+              titleLink={navn('titleLink')}
+              isMenuDialog={false}
+              baseId="x"
+            />
+          }
+        >
+          <SubpageMainContent 
+            main={
+              <Box>
+                <Box marginBottom={2}>
+                  <Breadcrumbs>
+                    <Link href="/">
+                      Ísland.is
+                    </Link>
+                    <a href="/throun">Þróun</a>
+                    <a href="/throun/vefthjonustur">Vefþjónustur</a>
+                    <span>{n('title')}</span>
+                  </Breadcrumbs>
+                </Box>
+                <Stack space={1}>
+                  <Text variant='h1'>{n('title')}</Text>
+                  <Text variant='intro'>{n('intro')}</Text>
+                </Stack>
+              </Box>
+            }
+            image={
+              <Box background='blueberry100' width='full' height='full'>
+              </Box>
+            } 
+          />
         </SidebarLayout>
-      }
-      details={
-        <SubpageDetailsContent
-          header={
-            <Text variant="h4" color="blue600">
-              {sn('title')}
-            </Text>
-          }
-          content={
-            <SidebarLayout sidebarContent={<>List filter here</>}>
-              {(error || data?.getApiCatalogue?.services.length < 1) && (
-                <GridContainer>
-                  {error ? (
-                    <Text>{sn('errorHeading')}</Text>
-                  ) : loading ? (
-                    <LoadingIcon animate color="blue400" size={32} />
-                  ) : (
-                    <Text>{sn('notFound')}</Text>
-                  )}
-                </GridContainer>
-              )}
-              {data?.getApiCatalogue?.services.length > 0 && (
-                <GridContainer>
-                  <ServiceList
-                    services={data?.getApiCatalogue?.services}
-                    tagDisplayNames={filterContent}
-                  />
-                  {data?.getApiCatalogue?.pageInfo?.nextCursor != null && (
-                    <Box display="flex" justifyContent="center">
-                      <Button onClick={() => onLoadMore()} variant="ghost">
-                        {!loading ? (
-                          sn('fmButton')
-                        ) : (
-                          <LoadingIcon animate color="blue400" size={16} />
-                        )}
-                      </Button>
-                    </Box>
-                  )}
-                </GridContainer>
-              )}
-            </SidebarLayout>
-          }
-        />
       }
     />
   )
 }
 
 ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const [mainContent, staticContent, filterContent] = await Promise.all([
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'VefthjonusturHome',
-            lang: locale,
-          },
-        },
-      })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'ApiCatalog',
-            lang: locale,
-          },
-        },
-      })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'ApiCatalogFilter',
-            lang: locale,
-          },
-        },
-      })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
-  ])
-
-  return {
-    mainContent,
+  const [
     staticContent,
     filterContent,
+    navContent
+  ] = await Promise.all([
+    apolloClient.query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+      query: GET_NAMESPACE_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+          namespace: 'ApiCatalog',
+        },
+      },
+    })
+    .then((res) => JSON.parse(res.data.getNamespace.fields)),
+    apolloClient.query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+      query: GET_NAMESPACE_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+          namespace: 'ApiCatalogFilter',
+        },
+      },
+    })
+    .then((res) => JSON.parse(res.data.getNamespace.fields)),
+    apolloClient.query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+      query: GET_NAMESPACE_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+          namespace: 'ThrounNavigation',
+        },
+      },
+    })
+    .then((res) => JSON.parse(res.data.getNamespace.fields)),
+  ])
+  
+  return {
+    staticContent,
+    filterContent,
+    navContent,
   }
 }
 

@@ -42,6 +42,8 @@ import { mapUrl, Url } from './models/url.model'
 import { AboutSubPage, mapAboutSubPage } from './models/aboutSubPage.model'
 import { Homepage, mapHomepage } from './models/homepage.model'
 import { mapTellUsAStory, TellUsAStory } from './models/tellUsAStory.model'
+import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
+import { mapSubpageHeader, SubpageHeader } from './models/subpageHeader.model'
 
 const makePage = (
   page: number,
@@ -433,5 +435,19 @@ export class CmsContentfulService {
       .catch(errorHandler('getTellUsAStory'))
 
     return result.items.map(mapTellUsAStory)[0]
+  }
+
+  async getSubpageHeader({
+    lang,
+    id, 
+  } : GetSubpageHeaderInput): Promise<SubpageHeader> {
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.ISubpageHeaderFields>(lang, {
+        ['content_type']: 'subpageHeader',
+        'fields.subpageId': id,
+      })
+      .catch(errorHandler('getSubpageHeader'))
+
+    return result.items.map(mapSubpageHeader)[0]
   }
 }
