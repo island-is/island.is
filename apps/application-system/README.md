@@ -1,4 +1,4 @@
-# Application system
+# Application System
 
 ## About
 
@@ -65,7 +65,7 @@ yarn nx schemas/openapi-generator api-domains-application
 In order to update the graphql schema as well, run
 
 ```bash
-yarn nx schemas/build-schema api
+yarn nx schemas/build-graphql-schema api
 ```
 
 ## Form

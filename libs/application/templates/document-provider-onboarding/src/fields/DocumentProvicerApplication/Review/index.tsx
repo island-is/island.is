@@ -34,7 +34,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
             <Input
               id="helpDesk.email"
               name="helpDesk.email"
-              label={m.helpDeskEmail.defaultMessage}
+              label={formatText(m.helpDeskEmail, application, formatMessage)}
               defaultValue={getValue('helpDesk.email')}
               ref={register}
             />
@@ -43,7 +43,11 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
             <Input
               id="helpDesk.phoneNumber"
               name="helpDesk.phoneNumber"
-              label={m.helpDeskPhoneNumber.defaultMessage}
+              label={formatText(
+                m.helpDeskPhoneNumber,
+                application,
+                formatMessage,
+              )}
               defaultValue={getValue('helpDesk.phoneNumber')}
               ref={register}
             />

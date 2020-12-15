@@ -8,4 +8,5 @@ export const environment: Environment = {
   dictRepo: 'https://api.github.com/repos/island-is/elasticsearch-dictionaries',
   s3Folder: '',
   locales: ['is', 'en'],
+  configPath: './config',
 }

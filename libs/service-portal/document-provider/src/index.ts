@@ -3,61 +3,41 @@ import {
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { lazy } from 'react'
-import { defineMessage } from 'react-intl'
-
-const rootName = defineMessage({
-  id: 'sp.document-provider:title',
-  defaultMessage: 'Skjalaveita',
-})
+import { m } from './lib/messages'
 
 export const documentProviderModule: ServicePortalModule = {
-  name: rootName,
+  name: m.rootName,
   widgets: () => [],
   routes: () => [
     {
-      name: rootName,
+      name: m.rootName,
       path: ServicePortalPath.DocumentProviderRoot,
       render: () => lazy(() => import('./screens/Dashboard/Dashboard')),
     },
     {
-      name: defineMessage({
-        id: 'service.portal:document-provider-document-providers-title',
-        defaultMessage: 'Skjalaveitendur',
-      }),
+      name: m.documentProviders,
       path: ServicePortalPath.DocumentProviderDocumentProviders,
       render: () =>
         lazy(() => import('./screens/DocumentProviders/DocumentProviders')),
     },
     {
-      name: defineMessage({
-        id: 'service.portal:document-provider-my-categories-title',
-        defaultMessage: 'Mínir flokkar',
-      }),
+      name: m.MyCategories,
       path: ServicePortalPath.DocumentProviderMyCategories,
       render: () => lazy(() => import('./screens/MyCategories/MyCategories')),
     },
     {
-      name: defineMessage({
-        id: 'service.portal:document-provider-settings-title',
-        defaultMessage: 'Stillingar',
-      }),
+      name: m.Settings,
       path: ServicePortalPath.DocumentProviderSettingsRoot,
       render: () => lazy(() => import('./screens/Settings/Settings')),
     },
     {
-      name: defineMessage({
-        id: 'sp.document-provider:edit-institution',
-        defaultMessage: 'Breyta stofnun',
-      }),
+      name: m.EditInstitution,
       path: ServicePortalPath.DocumentProviderSettingsEditInstituion,
       render: () =>
         lazy(() => import('./screens/Settings/EditIntitution/EditIntitution')),
     },
     {
-      name: defineMessage({
-        id: 'sp.document-provider:edit-responsible-contact',
-        defaultMessage: 'Breyta Ábyrgðarmanni',
-      }),
+      name: m.EditResponsibleContact,
       path: ServicePortalPath.DocumentProviderSettingsEditResponsibleContact,
       render: () =>
         lazy(() =>
@@ -67,10 +47,7 @@ export const documentProviderModule: ServicePortalModule = {
         ),
     },
     {
-      name: defineMessage({
-        id: 'sp.document-provider:edit-technical-contact',
-        defaultMessage: 'Breyta Ábyrgðarmanni',
-      }),
+      name: m.EditTechnicalContact,
       path: ServicePortalPath.DocumentProviderSettingsEditTechnicalContact,
       render: () =>
         lazy(() =>
@@ -80,10 +57,7 @@ export const documentProviderModule: ServicePortalModule = {
         ),
     },
     {
-      name: defineMessage({
-        id: 'sp.document-provider:edit-user-help-contact',
-        defaultMessage: 'Breyta notendaaðstoð',
-      }),
+      name: m.EditUserHelpContact,
       path: ServicePortalPath.DocumentProviderSettingsEditUserHelpContact,
       render: () =>
         lazy(() =>
@@ -91,19 +65,13 @@ export const documentProviderModule: ServicePortalModule = {
         ),
     },
     {
-      name: defineMessage({
-        id: 'sp.document-provider:edit-endpoints',
-        defaultMessage: 'Breyta endapunkt',
-      }),
+      name: m.EditEndPoints,
       path: ServicePortalPath.DocumentProviderSettingsEditEndpoints,
       render: () =>
         lazy(() => import('./screens/Settings/EditEndpoints/EditEndpoints')),
     },
     {
-      name: defineMessage({
-        id: 'service.portal:document-provider-technical-information-title',
-        defaultMessage: 'Tæknileg útfærsla',
-      }),
+      name: m.TechnicalInformation,
       path: ServicePortalPath.DocumentProviderTechnicalInfo,
       render: () =>
         lazy(() =>

@@ -13,42 +13,57 @@ interface SidebarLayoutProps {
   sidebarContent: ReactNode
   isSticky?: boolean
   hiddenOnTablet?: boolean
+  fullWidthContent?: boolean
 }
 
 export const SidebarLayout: FC<SidebarLayoutProps> = ({
   sidebarContent,
   isSticky = true,
   hiddenOnTablet = false,
+  fullWidthContent = false,
   children,
 }) => (
-  <GridContainer position="none">
-    <Box
-      display="flex"
-      flexDirection="row"
-      height="full"
-      paddingBottom={6}
-      position={isSticky ? 'relative' : undefined}
-    >
+  <Box paddingTop={[0, 0, 8]}>
+    <GridContainer position="none">
       <Box
-        printHidden
-        className={cn(styles.sidebarWrapper, { [styles.sticky]: isSticky })}
-        display={
-          hiddenOnTablet
-            ? ['none', 'none', 'none', 'block']
-            : ['none', 'none', 'block']
-        }
+        display="flex"
+        flexDirection="row"
+        height="full"
+        paddingBottom={6}
+        position={isSticky ? 'relative' : undefined}
       >
-        {sidebarContent}
+        <Box
+          printHidden
+          className={cn(styles.sidebarWrapper, { [styles.sticky]: isSticky })}
+          display={
+            hiddenOnTablet
+              ? ['none', 'none', 'none', 'block']
+              : ['none', 'none', 'block']
+          }
+        >
+          {sidebarContent}
+        </Box>
+        <GridContainer>
+          <GridRow>
+            <GridColumn
+              offset={fullWidthContent ? '0' : ['0', '0', '0', '0', '1/9']}
+              span={[
+                '9/9',
+                '9/9',
+                '9/9',
+                '9/9',
+                fullWidthContent ? '9/9' : '7/9',
+              ]}
+            >
+              <Box paddingLeft={[0, 0, hiddenOnTablet ? 0 : 6, 6, 0]}>
+                {children}
+              </Box>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
       </Box>
-      <GridContainer>
-        <GridRow>
-          <GridColumn span={'12/12'}>
-            <Box paddingLeft={[0, 2, 4, 6]}>{children}</Box>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
-    </Box>
-  </GridContainer>
+    </GridContainer>
+  </Box>
 )
 
 export default SidebarLayout

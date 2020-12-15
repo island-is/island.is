@@ -78,8 +78,9 @@ export class ApplicationResolver {
   @Mutation(() => Application, { nullable: true })
   updateApplicationExternalData(
     @Args('input') input: UpdateApplicationExternalDataInput,
+    @CurrentUser() user: User,
   ): Promise<Application | void> {
-    return this.applicationService.updateExternalData(input)
+    return this.applicationService.updateExternalData(input, user.authorization)
   }
 
   @Mutation(() => Application, { nullable: true })

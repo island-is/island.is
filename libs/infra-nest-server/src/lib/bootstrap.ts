@@ -50,7 +50,7 @@ type RunServerOptions = {
   interceptors?: NestInterceptor[]
 }
 
-const createApp = async (options: RunServerOptions) => {
+export const createApp = async (options: RunServerOptions) => {
   const app = await NestFactory.create(InfraModule.forRoot(options.appModule), {
     logger: LoggingModule.createLogger(),
   })

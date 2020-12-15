@@ -1,9 +1,10 @@
 import React, { FC } from 'react'
-import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import * as styles from './Sidebar.treat'
 import ModuleNavigation from './ModuleNavigation'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { useLocale } from '@island.is/localization'
+import { ServicePortalPath } from '@island.is/service-portal/core'
 
 export const Sidebar: FC<{}> = () => {
   const { formatMessage } = useLocale()
@@ -11,29 +12,52 @@ export const Sidebar: FC<{}> = () => {
 
   return (
     <aside className={styles.sidebar}>
-      <Box background="blue100" borderRadius="large">
-        <Box paddingY={3} paddingX={4}>
-          <Text variant="h3" as="h3" color="blue600">
-            {formatMessage({
-              id: 'service.portal:my-pages',
-              defaultMessage: 'Mínar síður',
-            })}
-          </Text>
+      {navigation.map((rootItem, rootIndex) => (
+        <Box
+          marginBottom={3}
+          background={rootIndex === 0 ? 'blue100' : 'blueberry100'}
+          borderRadius="large"
+          key={rootIndex}
+          padding={4}
+        >
+          {rootIndex === 1 && (
+            <Text
+              variant="eyebrow"
+              color="blueberry600"
+              fontWeight="semiBold"
+              marginBottom={2}
+            >
+              {formatMessage({
+                id: 'service.portal:other',
+                defaultMessage: 'Annað',
+              })}
+            </Text>
+          )}
+          <Stack space={3}>
+            {rootItem.children?.map(
+              (navRoot, index) =>
+                navRoot.path !== ServicePortalPath.MinarSidurRoot && (
+                  <ModuleNavigation
+                    key={index}
+                    nav={navRoot}
+                    variant={rootIndex === 0 ? 'blue' : 'blueberry'}
+                  />
+                ),
+            )}
+          </Stack>
+          {rootIndex === 1 && (
+            <Text variant="small" color="blueberry600" marginTop={3}>
+              {formatMessage({
+                id: 'service.portal:incoming-services-footer',
+                defaultMessage: `
+                  Unnið er að því að flytja þessar þjónustur
+                  yfir á nýjan vef Ísland.is en þjónustur eru aðgengilegar hér.
+                `,
+              })}
+            </Text>
+          )}
         </Box>
-        <Divider />
-        {navigation.map((rootItem, rootIndex) => (
-          <div key={rootIndex}>
-            <Box paddingY={3} paddingX={4} key={rootIndex}>
-              <Stack space={3}>
-                {rootItem.children?.map((navRoot, index) => (
-                  <ModuleNavigation key={index} nav={navRoot} />
-                ))}
-              </Stack>
-            </Box>
-            {rootIndex < navigation.length - 1 && <Divider />}
-          </div>
-        ))}
-      </Box>
+      ))}
     </aside>
   )
 }

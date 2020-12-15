@@ -34,7 +34,7 @@ const Header: React.FC<Props> = (props: Props) => {
             {/* Text does not allow className prop so we need to do this on a separate span */}
             <span className={styles.headerDiviter} />
             <span className={styles.headerTextWrapper}>
-              <Text>Gæsluvarðhald</Text>
+              <Text>Réttarvörslugátt</Text>
             </span>
           </Box>
         )}

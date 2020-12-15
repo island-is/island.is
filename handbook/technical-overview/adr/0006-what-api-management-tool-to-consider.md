@@ -1,4 +1,4 @@
-# What API Management tool to consider
+# What API Management Tool to Consider
 
 - Status: accepted
 - Deciders: devs

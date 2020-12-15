@@ -1,4 +1,4 @@
-# Environment setup
+# Environment Setup
 
 1. Data center
 2. Kubernetes
