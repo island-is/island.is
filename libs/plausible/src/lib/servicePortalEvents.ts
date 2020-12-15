@@ -2,7 +2,7 @@
 import baseEvent from './baseEvent'
 import { plausibleCustomEvent } from './plausibleEvent'
 
-// Event sent when the search feature of documents are being searched in the service portal
+// Event sent when the search feature of documents is interacted with by the user
 export const DocumentsSearchDocumentsInitialized = (location: string) => {
   const event: baseEvent = {
     eventName: 'Search Documents Initialized',
@@ -14,7 +14,7 @@ export const DocumentsSearchDocumentsInitialized = (location: string) => {
   plausibleCustomEvent(event)
 }
 
-// Event sent when a document is opened in the service portal
+// Event sent when a document is opened in the documents section of the service portal
 export const DocumentsOpenDocument = (location: string, fileName: string) => {
   const event: baseEvent = {
     eventName: 'Open Document',
