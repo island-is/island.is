@@ -93,7 +93,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   const { activeLocale } = useI18n()
 
   const onLoadMore = () => {
-    if (data?.getApiCatalogue.pageInfo?.nextCursor == null) {
+    if (data?.getApiCatalogue.pageInfo?.nextCursor === null) {
       return
     }
 
