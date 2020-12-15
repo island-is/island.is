@@ -19,11 +19,12 @@ export interface ServicePortalModule {
 }
 ```
 
-All libraries are implemented by defining an interface that gets loaded into the service portal shell on startup. This interface defines three aspects about the library:
+All libraries are implemented by defining an interface that gets loaded into the service portal shell on startup. This interface defines four aspects about the library:
 
 - Name - The name of the library
 - Widgets - A function that return an array of widgets
 - Routes - A function that returns an array of routes
+- Global - A function that returns an array of global components
 
 ### Widgets
 
@@ -120,6 +121,36 @@ routes: (userInfo) => {
 }
 ```
 
+### Global Components
+
+Global components will always be rendered by default
+These are usually utility components that prompt the user about certain things or provide other global functionality
+Example: A modal providing onboarding for unfilled user profiles
+
+Global components should be used very sparingly to reduce harrassment on the user.
+
+```typescript
+{
+  global?: (
+    props: ServicePortalModuleProps,
+  ) => Promise<ServicePortalGlobalComponent[]>
+}
+```
+
+An example of how a global component might be implemented
+
+```typescript
+global: async ({ client }) => {
+  if(client.userDoesNotHaveAUserProfile()) return [{
+      render: () =>
+        lazy(() =>
+          import('./components/UserOnboardingModal/UserOnboardingModal'),
+        ),
+    }]
+
+  return []
+```
+
 A service portal library might then look something like this:
 
 ```typescript
@@ -170,3 +201,54 @@ const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => (
   </>
 )
 ```
+
+## Service Portal Shell
+
+The application shell takes care of initializing and maintaining the libraries along with implementing core functionality into the Service Portal.
+
+### Adding a library to the shell
+
+Libraries are stored in the shell's store and loaded into view, to add a libary to the shell's module list, import and it to the list defined in [modules.ts](../../../apps/service-portal/src/store/modules.ts)
+
+```typescript
+// other imports...
+import { myNewModule } from '@island.is/service-portal/my-new-module'
+
+export const modules: ServicePortalModule[] = [
+  // other modules...
+  myNewModule,
+]
+```
+
+### Declaring routes for a library
+
+Declaring a new route for the service portal involves a few steps
+
+- Declare a path for the route
+- Declare a route in the master navigation
+- Implement the route based on the user's authorization scope and return it so it gets rendered into the navigation.
+
+#### Declaring a path for a library
+
+All Service Portal paths are declared as an enum in [paths.ts](./src/lib/navigation/paths.ts)
+
+#### Declare a route in the master navigation
+
+The master navigation is defined in the service portal core in [masterNavigation.ts](./src/lib/navigation/masterNavigation.ts)
+Navigation items are defined as such:
+
+```typescript
+export interface ServicePortalNavigationItem {
+  name: MessageDescriptor | string
+  path?: ServicePortalPath
+  external?: boolean
+  // System routes are always rendered in the navigation
+  systemRoute?: boolean
+  icon?: Pick<IconProps, 'icon' | 'type'>
+  children?: ServicePortalNavigationItem[]
+}
+```
+
+#### Implement the route
+
+Each library implements it's own routes (see above). Routes should only be returned if available to the session scope. Items will be rendered into the navigation if a route has been declared for it.
