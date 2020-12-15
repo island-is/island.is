@@ -34,7 +34,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
     setEnvironmentError(null)
     const credentials = await registerProvider({
       variables: {
-        input: { nationalId: '2404805659' }, //TODO set real nationalId
+        input: { nationalId: '2404805659', clientName: 'Nafn stofnunar' }, //TODO setja gögn úr umsókn
       },
     })
 
