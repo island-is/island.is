@@ -11,6 +11,8 @@ import ContactInfo from './ContactInfo'
 const Review: FC<FieldBaseProps> = ({ field, application }) => {
   const { formatMessage } = useLocale()
 
+  const isEditable = field.id !== 'submittedData'
+
   return (
     <Box marginBottom={[1, 1, 3]}>
       <Accordion singleExpand={false}>
@@ -18,19 +20,31 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
           id="id_1"
           label={formatText(m.applicantInfoSection, application, formatMessage)}
         >
-          <ContactInfo application={application} field={field} />
+          <ContactInfo
+            application={application}
+            field={field}
+            isEditable={isEditable}
+          />
         </AccordionItem>
         <AccordionItem
           id="id_2"
           label={formatText(m.statusAndChildren, application, formatMessage)}
         >
-          <StatusAndChildren application={application} field={field} />
+          <StatusAndChildren
+            application={application}
+            field={field}
+            isEditable={isEditable}
+          />
         </AccordionItem>
         <AccordionItem
           id="id_3"
           label={formatText(m.formerInsuranceTitle, application, formatMessage)}
         >
-          <FormerInsurance application={application} field={field} />
+          <FormerInsurance
+            application={application}
+            field={field}
+            isEditable={isEditable}
+          />
         </AccordionItem>
       </Accordion>
     </Box>

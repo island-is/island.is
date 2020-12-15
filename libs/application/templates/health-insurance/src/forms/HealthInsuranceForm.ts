@@ -289,5 +289,52 @@ export const HealthInsuranceForm: Form = buildForm({
         }),
       ],
     }),
+    buildSection({
+      id: 'missingInfoSection',
+      name: 'Missing informaton',
+      children: [
+        buildMultiField({
+          id: 'missingInfo',
+          name: 'Missing information',
+          description: '',
+          children: [
+            buildIntroductionField({
+              id: 'commentTitle',
+              name: '',
+              introduction: 'Comment from Health Insurance in Iceland',
+            }),
+            buildCustomField({
+              id: 'comment',
+              name: '',
+              component: '',
+            }),
+            buildTextField({
+              id: 'missingInfo.remarks',
+              name: m.additionalRemarks,
+              placeholder: m.additionalRemarksPlaceholder,
+              variant: 'textarea',
+            }),
+            buildFileUploadField({
+              id: 'missingInfo.files',
+              name: '',
+              introduction: '',
+            }),
+            buildSubmitField({
+              id: 'submit',
+              name: m.submitLabel,
+              placement: 'footer',
+              actions: [
+                { event: 'SUBMIT', name: m.submitLabel, type: 'primary' },
+              ],
+            }),
+          ],
+        }),
+        buildIntroductionField({
+          id: 'successfulSubmission',
+          name: m.succesfulSubmissionTitle,
+          introduction: m.succesfulSubmissionMessage,
+        }),
+      ],
+    }),
   ],
 })

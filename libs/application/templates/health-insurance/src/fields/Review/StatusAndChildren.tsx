@@ -1,9 +1,5 @@
 import React, { FC, useState } from 'react'
-import {
-  FieldBaseProps,
-  formatText,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
   Box,
   InputFileUpload,
@@ -16,11 +12,11 @@ import {
   RadioController,
 } from '@island.is/shared/form-fields'
 import { YES, NO } from '../../constants'
-import { StatusTypes } from '../../types'
+import { ReviewFieldProps, StatusTypes } from '../../types'
 
 import { m } from '../../forms/messages'
 
-const StatusAndChildren: FC<FieldBaseProps> = ({ application }) => {
+const StatusAndChildren: FC<ReviewFieldProps> = ({ application, isEditable }) => {
   const { formatMessage } = useLocale()
 
   const [status, setStatus] = useState(
@@ -43,8 +39,8 @@ const StatusAndChildren: FC<FieldBaseProps> = ({ application }) => {
         />
         <RadioController
           id={'status'}
-          disabled={false}
           name={'status'}
+          disabled={!isEditable}
           largeButtons={true}
           split={'1/2'}
           onSelect={(value) => setStatus(value as StatusTypes)}
@@ -91,6 +87,7 @@ const StatusAndChildren: FC<FieldBaseProps> = ({ application }) => {
             />
             <InputFileUpload
               id="confirmationOfStudies"
+              disabled={!isEditable}
               header={formatText(
                 m.fileUploadHeader,
                 application,
@@ -126,8 +123,8 @@ const StatusAndChildren: FC<FieldBaseProps> = ({ application }) => {
         />
         <RadioController
           id={'children'}
-          disabled={false}
           name={'children'}
+          disabled={!isEditable}
           defaultValue={
             getValueViaPath(application.answers, 'children') as string[]
           }

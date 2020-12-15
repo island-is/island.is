@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
 import {
   GridColumn,
   GridRow,
@@ -16,8 +16,9 @@ import {
 import { YES, NO } from '../../constants'
 
 import { m } from '../../forms/messages'
+import { ReviewFieldProps } from '../../types'
 
-const FormerInsurance: FC<FieldBaseProps> = ({ application }) => {
+const FormerInsurance: FC<ReviewFieldProps> = ({ application, isEditable }) => {
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -33,8 +34,8 @@ const FormerInsurance: FC<FieldBaseProps> = ({ application }) => {
         />
         <RadioController
           id={'formerInsuranceRegistration'}
-          disabled={false}
           name={'formerInsuranceRegistration'}
+          disabled={!isEditable}
           largeButtons={true}
           options={[
             {
@@ -71,6 +72,7 @@ const FormerInsurance: FC<FieldBaseProps> = ({ application }) => {
                 formatMessage,
               )}
               ref={register}
+              disabled={!isEditable}
             />
           </GridColumn>
           <GridColumn span="6/12">
@@ -79,6 +81,7 @@ const FormerInsurance: FC<FieldBaseProps> = ({ application }) => {
               name={'formerPersonalId'}
               label={formatText(m.formerPersonalId, application, formatMessage)}
               ref={register}
+              disabled={!isEditable}
             />
           </GridColumn>
         </GridRow>
@@ -92,6 +95,7 @@ const FormerInsurance: FC<FieldBaseProps> = ({ application }) => {
               formatMessage,
             )}
             ref={register}
+            disabled={!isEditable}
           />
         </Box>
       </Stack>
@@ -107,6 +111,7 @@ const FormerInsurance: FC<FieldBaseProps> = ({ application }) => {
         <RadioController
           id={'formerInsuranceEntitlement'}
           name={'formerInsuranceEntitlement'}
+          disabled={!isEditable}
           largeButtons={true}
           split={'1/2'}
           options={[

@@ -15,6 +15,7 @@ type Events =
   | { type: 'REJECT' }
   | { type: 'SUBMIT' }
   | { type: 'ABORT' }
+  | { type: 'MISSING_INFO' }
 
 const HealthInsuranceSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -40,6 +41,7 @@ const HealthInsuranceSchema = z.object({
   additionalRemarks: z.string().optional(),
   additionalFiles: z.string().optional(),
   confirmCorrectInfo: z.boolean().refine((v) => v),
+  agentComments: z.string().nonempty(),
 })
 
 const HealthInsuranceTemplate: ApplicationTemplate<
@@ -55,7 +57,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
     states: {
       draft: {
         meta: {
-          name: 'draft',
+          name: 'Application for health insurance',
           progress: 0.25,
           roles: [
             {
@@ -77,16 +79,65 @@ const HealthInsuranceTemplate: ApplicationTemplate<
       },
       inReview: {
         meta: {
-          name: 'inReview',
+          name: 'In Review',
           progress: 0.5,
           roles: [
             {
-              id: 'applicant',
+              id: 'reviewer',
+              formLoader: () =>
+                import('../forms/ReviewApplication').then((val) =>
+                  Promise.resolve(val.ReviewApplication),
+                ),
               actions: [
-                { event: 'APPROVE', name: 'Approve', type: 'primary' },
-                { event: 'REJECT', name: 'Reject', type: 'reject' },
+                {
+                  event: 'MISSING_INFO',
+                  name: 'Missing information',
+                  type: 'primary',
+                },
               ],
-              write: 'all',
+              write: { answers: ['agentComments'] },
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          MISSING_INFO: {
+            target: 'missingInfo',
+          },
+        },
+      },
+      missingInfo: {
+        meta: {
+          name: 'Missing information',
+          progress: 0.75,
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/MissingInfoForm').then((val) =>
+                  Promise.resolve(val.MissingInfoForm),
+                ),
+              actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
+              write: { answers: ['missingInfoRemarks', 'missingInfoFiles'] },
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          REJECT: {
+            target: 'inReview',
+          },
+          SUBMIT: {
+            target: 'approved',
+          },
+        },
+      },
+      approved: {
+        meta: {
+          name: 'Rejected',
+          roles: [
+            {
+              id: 'applicant',
             },
           ],
         },

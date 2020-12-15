@@ -1,2 +1,4 @@
 export { default as Review } from './Review'
 export { default as ConfirmCheckbox } from './ConfirmCheckbox/ConfirmCheckbox'
+export { default as AgentComment } from './AgentComment/AgentComment'
+export { default as HiddenDateField } from './HiddenDateField/HiddenDateField'
