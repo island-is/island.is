@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Dialog, DialogDisclosure, useDialogState } from 'reakit/Dialog'
 import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
 import { Stack } from '../Stack/Stack'
@@ -46,93 +47,84 @@ export const Filter: React.FC<FilterProps> = ({
   onFilterClear,
   children,
 }) => {
-  const [expanded, setExpanded] = useState(false)
-
-  const handleToggle = () => {
-    setExpanded(!expanded)
-  }
+  const dialog = useDialogState()
 
   return (
-    <Box>
-      <Box
-        display={[
-          expanded ? 'none' : 'flex',
-          expanded ? 'none' : 'flex',
-          'none',
-        ]}
-        justifyContent="spaceBetween"
-        background="white"
-        onClick={handleToggle}
-        padding={2}
-        borderRadius="large"
-      >
-        <Text variant="h5" as="h5">
-          {labelOpen}
-        </Text>
-        <Button
-          circle
-          size="small"
-          colorScheme="light"
-          icon="menu"
-          iconType="outline"
-        ></Button>
-      </Box>
-      <Box
-        display={[
-          expanded ? 'block' : 'none',
-          expanded ? 'block' : 'none',
-          'none',
-        ]}
-        background="white"
-        position="relative"
-        top={0}
-        bottom={0}
-        left={0}
-        right={0}
-        paddingX={3}
-        paddingTop={3}
-        paddingBottom={3}
-      >
-        <Stack space={2} dividers={false}>
-          <Box display="flex" justifyContent="spaceBetween">
-            <Text variant="h4" color="blue600">
-              {labelTitle}
+    <>
+      <Box display={['block', 'block', 'none']}>
+        <DialogDisclosure {...dialog} style={{ width: '100%' }}>
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            background="white"
+            padding={2}
+            borderRadius="large"
+          >
+            <Text variant="h5" as="h5">
+              {labelOpen}
             </Text>
             <Button
               circle
+              size="small"
               colorScheme="light"
-              icon="close"
+              icon="menu"
               iconType="outline"
-              onClick={handleToggle}
             ></Button>
           </Box>
-          {children}
-        </Stack>
-      </Box>
-
-      <Box
-        display={[
-          expanded ? 'block' : 'none',
-          expanded ? 'block' : 'none',
-          'none',
-        ]}
-        background="blue100"
-        paddingTop={4}
-        paddingBottom={3}
-      >
-        <Stack space={2} dividers={false} align="center">
-          <Button size="small">
-            {labelResult} ({resultCount})
-          </Button>
-          <Button
-            icon="reload"
-            size="small"
-            variant="text"
-            onClick={() => onFilterClear()}
+        </DialogDisclosure>
+        <Dialog {...dialog}>
+          <Box
+            background="white"
+            position="fixed"
+            top={0}
+            bottom={0}
+            left={0}
+            right={0}
+            paddingX={3}
+            paddingY={3}
+            height="full"
+            display="flex"
+            justifyContent="spaceBetween"
+            flexDirection="column"
           >
-            {labelClear}
-          </Button>
-        </Stack>
+            <Stack space={2} dividers={false}>
+              <Box display="flex" justifyContent="spaceBetween">
+                <Text variant="h4" color="blue600">
+                  {labelTitle}
+                </Text>
+                <Button
+                  circle
+                  colorScheme="light"
+                  icon="close"
+                  iconType="outline"
+                  onClick={dialog.hide}
+                ></Button>
+              </Box>
+              {children}
+            </Stack>
+
+            <Box
+              background="blue100"
+              marginTop={2}
+              paddingTop={4}
+              paddingBottom={3}
+            >
+              <Stack space={2} dividers={false} align="center">
+                <Button size="small" onClick={dialog.hide}>
+                  {labelResult} ({resultCount})
+                </Button>
+                <Button
+                  icon="reload"
+                  size="small"
+                  variant="text"
+                  onClick={() => onFilterClear()}
+                >
+                  {labelClear}
+                </Button>
+              </Stack>
+            </Box>
+          </Box>
+        </Dialog>
       </Box>
 
       <Box display={['none', 'none', 'block']}>
@@ -150,6 +142,6 @@ export const Filter: React.FC<FilterProps> = ({
           </Button>
         </Box>
       </Box>
-    </Box>
+    </>
   )
 }

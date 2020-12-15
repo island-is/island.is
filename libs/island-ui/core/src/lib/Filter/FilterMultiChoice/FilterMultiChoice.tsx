@@ -111,7 +111,11 @@ export const FilterMultiChoice: React.FC<FilterMultiChoiceProps> = ({
       <Box display={['block', 'block', 'none']}>
         <Stack space={2}>
           {categories.map((category) => (
-            <AccordionCard id={category.id} label={category.label}>
+            <AccordionCard
+              id={category.id}
+              label={category.label}
+              iconVariant="small"
+            >
               <Stack space={1}>
                 {category.filters.map((filter) => (
                   <Checkbox
