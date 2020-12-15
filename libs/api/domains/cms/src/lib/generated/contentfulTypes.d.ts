@@ -16,6 +16,9 @@ export interface IAboutSubPageFields {
   /** Description */
   description?: string | undefined
 
+  /** Intro */
+  intro?: Document | undefined
+
   /** subDescription */
   subDescription?: string | undefined
 
@@ -1329,6 +1332,9 @@ export interface IOrganizationFields {
 
   /** Link */
   link?: string | undefined
+
+  /** Logo */
+  logo?: Asset | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -1939,6 +1945,40 @@ export interface ISubArticle extends Entry<ISubArticleFields> {
     contentType: {
       sys: {
         id: 'subArticle'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ISubpageHeaderFields {
+  /** Subpage Id */
+  subpageId: string
+
+  /** Title */
+  title: string
+
+  /** Summary */
+  summary: string
+
+  /** Featured Image */
+  featuredImage?: Asset | undefined
+
+  /** Content */
+  content?: Record<string, any> | undefined
+}
+
+export interface ISubpageHeader extends Entry<ISubpageHeaderFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'subpageHeader'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2613,6 +2653,7 @@ export type CONTENT_TYPE =
   | 'story'
   | 'storySection'
   | 'subArticle'
+  | 'subpageHeader'
   | 'tabContent'
   | 'tabSection'
   | 'teamList'
