@@ -308,9 +308,13 @@ export class ApplicationController {
       permittedAnswers,
     )
 
+    const assignees =
+      updateApplicationStateDto.assignees || existingApplication.assignees
+
     const mergedApplication: BaseApplication = {
       ...(existingApplication.toJSON() as BaseApplication),
       answers: mergedAnswers,
+      assignees,
     }
 
     const helper = new ApplicationTemplateHelper(mergedApplication, template)

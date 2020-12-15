@@ -28,16 +28,10 @@ class ApplicationAPITemplateUtils {
   }
 
   async sendEmail(template: SendMailOptions) {
-    console.log('ApplicationAPITemplateUtils.sendEmail', template)
-    // console.log('skipping sending email')
     return this.emailService.sendEmail(template)
   }
 
   async assignApplicationThroughEmail(email: string) {
-    console.log(
-      'ApplicationAPITemplateUtils.assignApplicationThroughEmail',
-      email,
-    )
     const token = createAssignToken(this.application, this.jwtSecret)
     const template = createAssignTemplate(this.application, email, token)
 
@@ -45,7 +39,6 @@ class ApplicationAPITemplateUtils {
   }
 
   async performAction(action: ApplicationAPITemplateAction) {
-    console.log('ApplicationAPITemplateUtils.performAction', action)
     try {
       switch (action.type) {
         case 'assignThroughEmail':
@@ -57,8 +50,6 @@ class ApplicationAPITemplateUtils {
           throw new Error('Invalid action')
       }
     } catch (e) {
-      console.log('ApplicationAPITemplateUtils.performAction failed:')
-      console.log(e)
       throw e
     }
   }
