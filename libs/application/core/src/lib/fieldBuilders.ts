@@ -20,7 +20,8 @@ import {
   Context,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
-import { FormText } from '..'
+import { FormText } from '../types/Form'
+import { Option as SelectOption } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
 import { FormatInputValueFunction } from 'react-number-format'
 
@@ -169,6 +170,7 @@ export function buildSelectField(data: {
   options: MaybeWithApplication<Option[]>
   disabled?: boolean
   width?: FieldWidth
+  onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   defaultValue?: MaybeWithApplication<unknown>
 }): SelectField {
   const {
@@ -181,6 +183,7 @@ export function buildSelectField(data: {
     placeholder,
     disabled = false,
     width = 'full',
+    onSelect,
   } = data
   return {
     children: undefined,
@@ -195,6 +198,7 @@ export function buildSelectField(data: {
     options,
     type: FieldTypes.SELECT,
     component: FieldComponents.SELECT,
+    onSelect,
   }
 }
 
@@ -203,11 +207,12 @@ export function buildAsyncSelectField(data: {
   id: string
   name: FormText
   description?: FormText
-  placeholder?: string
+  placeholder?: FormText
   loadOptions: (c: Context) => Promise<Option[]>
   loadingError?: FormText
   disabled?: boolean
   width?: FieldWidth
+  onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   defaultValue?: MaybeWithApplication<unknown>
 }): AsyncSelectField {
   const {
@@ -221,6 +226,7 @@ export function buildAsyncSelectField(data: {
     placeholder,
     disabled = false,
     width = 'full',
+    onSelect,
   } = data
   return {
     children: undefined,
@@ -236,6 +242,7 @@ export function buildAsyncSelectField(data: {
     loadingError,
     type: FieldTypes.ASYNC_SELECT,
     component: FieldComponents.ASYNC_SELECT,
+    onSelect,
   }
 }
 

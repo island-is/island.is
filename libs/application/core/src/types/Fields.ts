@@ -1,4 +1,5 @@
 import { Colors } from '@island.is/island-ui/theme'
+import { Option as SelectOption } from '@island.is/island-ui/core'
 import { ApolloClient } from '@apollo/client'
 import { FormText, FormItem } from './Form'
 import { Condition } from './Condition'
@@ -104,6 +105,7 @@ export interface SelectField extends BaseField {
   readonly type: FieldTypes.SELECT
   component: FieldComponents.SELECT
   options: MaybeWithApplication<Option[]>
+  onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   placeholder?: FormText
 }
 
@@ -112,6 +114,7 @@ export interface AsyncSelectField extends BaseField {
   component: FieldComponents.ASYNC_SELECT
   placeholder?: FormText
   loadOptions: (c: Context) => Promise<Option[]>
+  onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   loadingError?: FormText
 }
 

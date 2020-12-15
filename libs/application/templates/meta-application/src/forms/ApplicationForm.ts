@@ -1,6 +1,6 @@
 import {
   ApplicationTypes,
-  buildCustomField,
+  buildAsyncSelectField,
   buildForm,
   buildIntroductionField,
   buildMultiField,
@@ -16,6 +16,55 @@ import {
 } from '@island.is/application/core'
 import { m } from './messages'
 
+import { gql } from '@apollo/client'
+
+type Item = {
+  title: string
+  id: string
+}
+
+type GetOrganizations = {
+  getOrganizations:
+    | undefined
+    | {
+        items: Array<Item>
+      }
+}
+
+type GetOrganizationTags = {
+  getOrganizationTags:
+    | undefined
+    | {
+        items: Array<Item>
+      }
+}
+
+const GET_ORGANIZATIONS_QUERY = gql`
+  query GetOrganizations($input: GetOrganizationsInput!) {
+    getOrganizations(input: $input) {
+      items {
+        id
+        title
+        tag {
+          id
+          title
+        }
+      }
+    }
+  }
+`
+
+const GET_ORGANIZATION_TAGS_QUERY = gql`
+  query GetOrganizationTags($input: GetOrganizationTagsInput!) {
+    getOrganizationTags(input: $input) {
+      items {
+        id
+        title
+      }
+    }
+  }
+`
+
 export const ApplicationForm: Form = buildForm({
   id: ApplicationTypes.META_APPLICATION,
   name: 'Meta application',
@@ -29,10 +78,45 @@ export const ApplicationForm: Form = buildForm({
           id: 'general',
           name: m.generalInfo,
           children: [
-            buildCustomField({
+            buildAsyncSelectField({
               id: 'applicant.institution',
               name: m.institution,
-              component: 'OrganizationField',
+              placeholder: m.institution,
+              loadOptions: async ({ apolloClient }) => {
+                const { data } = await apolloClient.query<GetOrganizations>({
+                  query: GET_ORGANIZATIONS_QUERY,
+                  variables: { input: { lang: 'is' } },
+                })
+                return (
+                  data?.getOrganizations?.items.map(({ title, id }) => ({
+                    label: title,
+                    value: id,
+                  })) ?? []
+                )
+              },
+              onSelect: (option, onChange) => {
+                onChange(option)
+              },
+            }),
+            buildAsyncSelectField({
+              id: 'applicant.ministry',
+              name: m.ministry,
+              placeholder: m.ministry,
+              loadOptions: async ({ apolloClient }) => {
+                const { data } = await apolloClient.query<GetOrganizationTags>({
+                  query: GET_ORGANIZATION_TAGS_QUERY,
+                  variables: { input: { lang: 'is' } },
+                })
+                return (
+                  data?.getOrganizationTags?.items.map(({ title, id }) => ({
+                    label: title,
+                    value: id,
+                  })) ?? []
+                )
+              },
+              onSelect: (option, onChange) => {
+                onChange(option)
+              },
             }),
             buildTextField({
               id: 'applicant.contact',
@@ -151,15 +235,15 @@ export const ApplicationForm: Form = buildForm({
                   name: m.dataPublisher,
                   width: 'half',
                 }),
-                buildTextField({
+                buildRadioField({
                   id: 'download',
                   name: m.dataDownload,
                   width: 'half',
-                }),
-                buildTextField({
-                  id: 'upload',
-                  name: m.dataUpload,
-                  width: 'half',
+                  largeButtons: true,
+                  options: [
+                    { value: 'yes', label: m.yesOptionLabel },
+                    { value: 'no', label: m.noOptionLabel },
+                  ],
                 }),
               ],
             }),

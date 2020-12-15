@@ -16,14 +16,18 @@ type Events =
 
 const Schema = z.object({
   applicant: z.object({
-    institution: z.object({
-      id: z.string(),
-      title: z.string(),
-    }),
-    ministry: z.object({
-      id: z.string(),
-      title: z.string(),
-    }),
+    institution: z
+      .object({
+        id: z.string().optional(),
+        title: z.string().optional(),
+      })
+      .optional(),
+    ministry: z
+      .object({
+        id: z.string().optional(),
+        title: z.string().optional(),
+      })
+      .optional(),
     contact: z.string().nonempty().max(256),
     email: z.string().email(),
     phoneNumber: z.string().min(7),
@@ -42,8 +46,7 @@ const Schema = z.object({
     z.object({
       name: z.string(),
       publisher: z.string(),
-      download: z.string(),
-      upload: z.string(),
+      acceptsPayment: z.enum(['yes', 'no']),
     }),
   ),
   payment: z.object({

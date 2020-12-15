@@ -78,22 +78,17 @@ export const m = defineMessages({
   },
   dataName: {
     id: 'meta.application:data.name',
-    defaultMessage: 'Heiti skjals',
+    defaultMessage: 'Heiti gagna',
     description: 'Some description',
   },
   dataPublisher: {
     id: 'meta.application:data.publisher',
-    defaultMessage: 'Útgefandi skjals',
+    defaultMessage: 'Uppruni gagna',
     description: 'Some description',
   },
   dataDownload: {
     id: 'meta.application:data.download',
     defaultMessage: 'Er hægt að sækja skjal með vefþjónustu?',
-    description: 'Some description',
-  },
-  dataUpload: {
-    id: 'meta.application:data.upload',
-    defaultMessage: 'Upload af notanda',
     description: 'Some description',
   },
   dataAdd: {
