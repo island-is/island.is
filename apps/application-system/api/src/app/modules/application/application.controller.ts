@@ -26,6 +26,7 @@ import {
   ApiParam,
   ApiTags,
   ApiQuery,
+  ApiHeader,
 } from '@nestjs/swagger'
 import { Op } from 'sequelize'
 import {
@@ -63,8 +64,13 @@ import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
 import { EmailService } from '@island.is/email-service'
+
 // @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
 @ApiTags('applications')
+@ApiHeader({
+  name: 'authorization',
+  description: 'Bearer token authorization',
+})
 @Controller()
 export class ApplicationController {
   constructor(
@@ -229,18 +235,23 @@ export class ApplicationController {
     existingApplication: Application,
     @Body()
     externalDataDto: PopulateExternalDataDto,
+    @Req() req: Request,
   ): Promise<ApplicationResponseDto> {
     await validateIncomingExternalDataProviders(
       existingApplication as BaseApplication,
       externalDataDto,
     )
-
     const templateDataProviders = await getApplicationDataProviders(
       (existingApplication as BaseApplication).typeId,
     )
+    const headers = (req.headers as unknown) as { authorization?: string }
 
     const results = await callDataProviders(
-      buildDataProviders(externalDataDto, templateDataProviders),
+      buildDataProviders(
+        externalDataDto,
+        templateDataProviders,
+        headers.authorization ?? '',
+      ),
       existingApplication as BaseApplication,
     )
     const {

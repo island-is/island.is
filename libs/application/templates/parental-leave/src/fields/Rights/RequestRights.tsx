@@ -39,7 +39,7 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
         <RadioController
           id={field.id}
           defaultValue={
-            statefulAnswer === undefined ? statefulAnswer : [statefulAnswer]
+            statefulAnswer !== undefined ? [statefulAnswer] : undefined
           }
           options={[
             { label: formatMessage(m.requestRightsYes), value: 'yes' },

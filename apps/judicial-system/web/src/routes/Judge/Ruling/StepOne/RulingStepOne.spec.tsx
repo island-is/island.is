@@ -94,6 +94,10 @@ describe('/domari-krafa/urskurdur', () => {
     // Arrange
 
     // Act
+    /**
+     * TODO: Use test mock with custodyEndDate: null to make sure it's being autofilled with
+     * requestedCustodyEndDate
+     */
     render(
       <MockedProvider
         mocks={[
@@ -132,57 +136,5 @@ describe('/domari-krafa/urskurdur', () => {
           }) as HTMLButtonElement,
       ),
     ).not.toBeDisabled()
-  })
-
-  test('should save custodyRestrictions with requestedCustodyRestrictions if custodyRestrictions have not been set', async () => {
-    // Arrange
-
-    // Act
-    render(
-      <MockedProvider
-        mocks={[
-          ...mockCaseQueries,
-          ...mockJudgeQuery,
-          ...mockUpdateCaseMutation([
-            {
-              id: 'test_id',
-              custodyRestrictions: [
-                CaseCustodyRestrictions.ISOLATION,
-                CaseCustodyRestrictions.MEDIA,
-              ],
-            } as UpdateCase,
-          ]),
-        ]}
-        addTypename={false}
-      >
-        <MemoryRouter
-          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
-              <RulingStepOne />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
-      </MockedProvider>,
-    )
-
-    // Assert
-    /**
-     * This is a bit weird.. We want to do something like 👇 but there is a issue with the Checkbox
-     * component where it doesn't get the "checked" attribute set when it's checked. This make it
-     * virtually un-testable so the "quick fix" here is to rely on mockUpdateCaseMutation. If that
-     * is not present, the test fails because the component is trying to update the case and there
-     * is no mock for that, so we know that the component is doing what it's supposed to.
-     */
-
-    // expect(
-    //   await waitFor(
-    //     () =>
-    //       screen.getByRole('checkbox', {
-    //         name: 'E - Fjölmiðlabann',
-    //       }) as HTMLInputElement,
-    //   ),
-    // ).toBeChecked()
   })
 })

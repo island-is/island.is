@@ -28,10 +28,10 @@ export const m = defineMessages({
     description:
       'These applications could be for already born children, or an application made by you or the other parent for parental leave for your unborn child.',
   },
-  generalInfoSubSection: {
-    id: 'pl.application:generalInfo.subSection',
-    defaultMessage: 'Aðrar upplýsingar',
-    description: 'General Info',
+  otherParentSubSection: {
+    id: 'pl.application:otherParent.subSection',
+    defaultMessage: 'Hitt foreldrið',
+    description: 'The other parent',
   },
   otherParentDescription: {
     id: 'pl.application:otherParent.description',
@@ -331,6 +331,18 @@ export const m = defineMessages({
     id: 'pl.application:dateOfBirth.title',
     defaultMessage: 'Fæðingardagur',
     description: 'Birth date',
+  },
+  userProfileInformationTitle: {
+    id: 'pl.application:userprofile.title',
+    defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
+    description: 'Your user profile information',
+  },
+  userProfileInformationSubTitle: {
+    id: 'pl.application:userprofile.subtitle',
+    defaultMessage:
+      'Til þess að sækja um fæðingarorlof þarftu að vera búin að stilla netfang og símanúmer á mínum síðum',
+    description:
+      'In order to apply for this application we need your email and phone number',
   },
   expectedDateOfBirthTitle: {
     id: 'pl.application:expectedDateOfBirth.title',
@@ -723,6 +735,68 @@ export const mm: MessageDir = {
       defaultMessage:
         'Nei, ég vil ekki deila þessum upplýsingum að svo stöddu.',
       description: 'No, I do not want to share my information',
+    },
+  }),
+  reviewScreen: defineMessages({
+    titleInReview: {
+      id: 'pl.application:review.titleInReview',
+      defaultMessage: 'Your application is in review',
+      description: 'Your application is in review',
+    },
+    titleApproved: {
+      id: 'pl.application:review.titleApproved',
+      defaultMessage: 'Your application is in approved',
+      description: 'Your application is in approved',
+    },
+    desc: {
+      id: 'pl.application:review.desc',
+      defaultMessage: 'Below are the steps that will happen next.',
+      description: 'Below are the steps that will happen next.',
+    },
+    buttonsView: {
+      id: 'pl.application:review.desc',
+      defaultMessage: 'View application',
+      description: 'View application',
+    },
+    buttonsEdit: {
+      id: 'pl.application:review.desc',
+      defaultMessage: 'Edit application',
+      description: 'Edit application',
+    },
+    otherParentTitle: {
+      id: 'pl.application:review.otherParent.title',
+      defaultMessage: 'Other parent approves extra time',
+      description: 'Other parent approves extra time',
+    },
+    otherParentDesc: {
+      id: 'pl.application:review.otherParent.description',
+      defaultMessage:
+        'The other parent will need to approve the extra days you’ve requested.',
+      description:
+        'The other parent will need to approve the extra days you’ve requested.',
+    },
+    employerTitle: {
+      id: 'pl.application:review.employer.title',
+      defaultMessage: 'Employer approves your leave',
+      description: 'Employer approves your leave',
+    },
+    employerDesc: {
+      id: 'pl.application:review.employer.description',
+      defaultMessage:
+        'Your employer will confirm the dates of your parental leave.',
+      description:
+        'Your employer will confirm the dates of your parental leave.',
+    },
+    deptTitle: {
+      id: 'pl.application:review.employer.title',
+      defaultMessage: 'Vinnumálastofnun approves application',
+      description: 'Vinnumálastofnun approves application',
+    },
+    deptDesc: {
+      id: 'pl.application:review.employer.description',
+      defaultMessage:
+        'Vinnumálastofnun will review and approve your application.',
+      description: 'Vinnumálastofnun will review and approve your application.',
     },
   }),
 }

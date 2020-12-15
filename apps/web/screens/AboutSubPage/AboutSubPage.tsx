@@ -12,11 +12,11 @@ import {
   Link,
   Stack,
   Text,
-  GridRow,
-  GridColumn,
   Box,
   Navigation,
   NavigationItem,
+  GridColumn,
+  GridRow,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { RichText } from '@island.is/web/components'
@@ -61,6 +61,7 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
       <Box paddingTop={[4, 4, 8]} overflow="hidden">
         <SidebarLayout
           isSticky={false}
+          fullWidthContent={true}
           sidebarContent={
             <Box
               position={'relative'}
@@ -69,7 +70,6 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
             >
               <Navigation
                 baseId="desktopNav"
-                isMenuDialog={false}
                 items={navList}
                 title={parentPage.title}
                 titleLink={{ href: `/${parentPage.slug}`, active: false }}
@@ -79,10 +79,10 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
         >
           <GridRow>
             <GridColumn
-              span={['9/9', '9/9', '7/8', '7/8', '7/9']}
-              offset={['0', '0', '0', '0', '1/9']}
+              offset={[null, null, null, '1/9']}
+              span={['12/12', '12/12', '12/12', '8/9']}
             >
-              <Stack space={[3, 3, 2]}>
+              <Stack space={2}>
                 <Breadcrumbs>
                   <Link href="/">Ísland.is</Link>
                   <Link href="/stafraent-island">{parentPage.title}</Link>
@@ -90,13 +90,14 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
                 <Box display={['block', 'block', 'none']}>
                   <Navigation
                     baseId={'mobileNav'}
-                    isMenuDialog={true}
+                    isMenuDialog
                     activeItemTitle={page.title}
                     items={navList}
                     title={parentPage.title}
                     titleLink={{ href: `/${parentPage.slug}`, active: false }}
                   />
                 </Box>
+
                 <Text variant="h1" as="h1">
                   {page.title}
                 </Text>
