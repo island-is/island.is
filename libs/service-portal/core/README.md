@@ -204,7 +204,7 @@ const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => (
 
 ## Service Portal Shell
 
-The application shell takes care of initializing and maintaining the libraries along with implementing core functionality into the Service Portal.
+The application shell takes care of initializing and maintaining the libraries along with implementing core functionality in the Service Portal.
 
 ### Adding a library to the shell
 
