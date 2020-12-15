@@ -4,6 +4,7 @@ import {
   ApplicationStateSchema,
   ApplicationTypes,
   ApplicationTemplate,
+  Application,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import * as z from 'zod'
@@ -218,10 +219,10 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(id: string, state: string): ApplicationRole {
+  mapUserToRole(id: string, application: Application): ApplicationRole {
     //TODO: add this to if statement
     //&& id === '2311637949'
-    if (state === 'inReview') {
+    if (application.state === 'inReview') {
       return 'reviewer'
     }
     return 'applicant'

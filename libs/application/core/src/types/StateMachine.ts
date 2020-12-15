@@ -9,7 +9,7 @@ import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
 import { Form, FormText } from './Form'
 import { Application } from './Application'
 
-export type ApplicationRole = 'applicant' | 'reviewer' | string
+export type ApplicationRole = 'applicant' | 'assignee' | string
 
 export type ReadWriteValues =
   | 'all'
