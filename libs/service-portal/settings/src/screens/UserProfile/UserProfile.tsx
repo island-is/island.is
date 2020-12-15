@@ -35,28 +35,33 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
             id: 'service.portal:email',
             defaultMessage: 'Netfang',
           })}
-          content={userProfile?.email || ''}
-          tag={
-            userProfile?.email && userProfile?.emailVerified === true ? (
-              <Tag variant="darkerMint" outlined>
-                {formatMessage({
-                  id: 'sp.settings:verified',
-                  defaultMessage: 'Staðfest',
-                })}
-              </Tag>
-            ) : userProfile?.email && userProfile?.emailVerified === false ? (
-              <Link to={ServicePortalPath.UserProfileEditEmail}>
-                <Tag variant="red">
+          labelColumnSpan={['8/12', '3/12']}
+          editColumnSpan={['1/1', '2/12']}
+          valueColumnSpan={['1/1', '7/12']}
+          renderContent={() => (
+            <Box display="flex" alignItems="center">
+              <Box marginRight={2}>{userProfile?.email || ''}</Box>
+              {userProfile?.email && userProfile?.emailVerified === true ? (
+                <Tag variant="darkerMint" outlined>
                   {formatMessage({
-                    id: 'sp.settings:not-verified',
-                    defaultMessage: 'Óstaðfest',
+                    id: 'sp.settings:verified',
+                    defaultMessage: 'Staðfest',
                   })}
                 </Tag>
-              </Link>
-            ) : (
-              <div />
-            )
-          }
+              ) : userProfile?.email && userProfile?.emailVerified === false ? (
+                <Link to={ServicePortalPath.UserProfileEditEmail}>
+                  <Tag variant="red">
+                    {formatMessage({
+                      id: 'sp.settings:not-verified',
+                      defaultMessage: 'Óstaðfest',
+                    })}
+                  </Tag>
+                </Link>
+              ) : (
+                <div />
+              )}
+            </Box>
+          )}
           editLink={{
             url: ServicePortalPath.UserProfileEditEmail,
           }}
@@ -66,30 +71,35 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
             id: 'service.portal:tel',
             defaultMessage: 'Símanúmer',
           })}
-          content={userProfile?.mobilePhoneNumber || ''}
-          tag={
-            userProfile?.mobilePhoneNumber &&
-            userProfile?.mobilePhoneNumberVerified === true ? (
-              <Tag variant="darkerMint" outlined>
-                {formatMessage({
-                  id: 'sp.settings:verified',
-                  defaultMessage: 'Staðfest',
-                })}
-              </Tag>
-            ) : userProfile?.mobilePhoneNumber &&
-              userProfile?.mobilePhoneNumberVerified === false ? (
-              <Link to={ServicePortalPath.UserProfileEditPhoneNumber}>
-                <Tag variant="red">
+          renderContent={() => (
+            <Box display="flex" alignItems="center">
+              <Box marginRight={2}>{userProfile?.mobilePhoneNumber || ''}</Box>
+              {userProfile?.mobilePhoneNumber &&
+              userProfile?.mobilePhoneNumberVerified === true ? (
+                <Tag variant="darkerMint" outlined>
                   {formatMessage({
-                    id: 'sp.settings:not-verified',
-                    defaultMessage: 'Óstaðfest',
+                    id: 'sp.settings:verified',
+                    defaultMessage: 'Staðfest',
                   })}
                 </Tag>
-              </Link>
-            ) : (
-              <div />
-            )
-          }
+              ) : userProfile?.mobilePhoneNumber &&
+                userProfile?.mobilePhoneNumberVerified === false ? (
+                <Link to={ServicePortalPath.UserProfileEditPhoneNumber}>
+                  <Tag variant="red">
+                    {formatMessage({
+                      id: 'sp.settings:not-verified',
+                      defaultMessage: 'Óstaðfest',
+                    })}
+                  </Tag>
+                </Link>
+              ) : (
+                <div />
+              )}
+            </Box>
+          )}
+          labelColumnSpan={['8/12', '3/12']}
+          editColumnSpan={['1/1', '2/12']}
+          valueColumnSpan={['1/1', '7/12']}
           editLink={{
             url: ServicePortalPath.UserProfileEditPhoneNumber,
           }}
@@ -108,6 +118,9 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
                 : ''
               : ''
           }
+          labelColumnSpan={['8/12', '3/12']}
+          editColumnSpan={['1/1', '2/12']}
+          valueColumnSpan={['1/1', '7/12']}
           editLink={{
             url: ServicePortalPath.UserProfileEditLanguage,
           }}
