@@ -58,7 +58,12 @@ const autoSchemaFile = environment.production
       clientSecret: environment.documentService.clientSecret,
       tokenUrl: environment.documentService.tokenUrl,
     }),
-    DocumentProviderModule,
+    DocumentProviderModule.register({
+      basePath: environment.documentProviderService.basePath,
+      clientId: environment.documentProviderService.clientId,
+      clientSecret: environment.documentProviderService.clientSecret,
+      tokenUrl: environment.documentProviderService.tokenUrl,
+    }),
     TranslationsModule,
     TerminusModule,
     NationalRegistryModule.register({
