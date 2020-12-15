@@ -149,6 +149,7 @@ export const StepOne: React.FC = () => {
             requestedDefenderName: workingCase?.requestedDefenderName,
             requestedDefenderEmail: workingCase?.requestedDefenderEmail,
             accusedGender: workingCase?.accusedGender,
+            court: 'Héraðsdómur Reykjavíkur',
           },
         },
       })
