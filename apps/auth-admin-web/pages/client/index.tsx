@@ -10,13 +10,13 @@ import ClientIdpRestrictionsForm from '../../components/ClientIdpRestrictionsFor
 import ClientPostLogoutRedirectUriForm from '../../components/ClientPostLogoutRedirectUriForm';
 
 import { useRouter } from 'next/router';
-import StepEnd from './../../components/form/StepEnd';
-import { Steps } from './../../models/utils/Steps';
+import StepEnd from './../../components/common/StepEnd';
+import { Step } from '../../models/common/Step';
 import { Client } from './../../models/client.model';
 
 export default function Index() {
   const [step, setStep] = useState(1);
-  const [client, setClient] = useState<Client>(null);
+  const [client, setClient] = useState<Client>(new Client());
   const router = useRouter();
 
   const getClient = async (clientId: string) => {
@@ -29,6 +29,10 @@ export default function Index() {
         }
       });
   };
+
+  const changesMade = () => {
+    getClient(client.clientId);
+  }
 
   const handleNext = () => {
     setStep(step + 1);
@@ -62,7 +66,7 @@ export default function Index() {
   };
 
   switch (step) {
-    case Steps.Client:
+    case Step.Client:
       return (
         <ClientForm
           handleCancel={handleCancel}
@@ -70,61 +74,63 @@ export default function Index() {
           onNextButtonClick={handleClientSaved}
         />
       );
-    case Steps.ClientRedirectUri: {
+    case Step.ClientRedirectUri: {
       // Set the callback URI .. ALLT
-      const rObj = new ClientRedirectUriDTO();
-      rObj.clientId = client.clientId;
       return (
         <ClientRedirectUriForm
-          redirectObject={rObj}
-          uris={null}
+          clientId={client.clientId}
+          defaultUrl={client.clientUri}
+          uris={client.redirectUris?.map(r => r.redirectUri)}
           handleNext={handleNext}
           handleBack={handleBack}
+          handleChanges={changesMade}
         />
       );
     }
-    case Steps.ClientIdpRestrictions: {
+    case Step.ClientIdpRestrictions: {
       return (
         <ClientIdpRestrictionsForm
           clientId={client.clientId}
-          restrictions={[]}
+          restrictions={client.identityProviderRestrictions?.map(r => r.name)}
           handleNext={handleNext}
           handleBack={handleBack}
+          handleChanges={changesMade}
         />
       );
     }
-    case Steps.ClientPostLogoutRedirectUri: {
+    case Step.ClientPostLogoutRedirectUri: {
       return (
         <ClientPostLogoutRedirectUriForm
           clientId={client.clientId}
-          defaultUrl={''}
-          uris={null}
+          defaultUrl={client.clientUri}
+          uris={client.postLogoutRedirectUris?.map(p => p.redirectUri)}
           handleNext={handleNext}
           handleBack={handleBack}
+          handleChanges={changesMade}
         />
       );
     }
-    case Steps.ClientAllowedCorsOrigin: {
+    case Step.ClientAllowedCorsOrigin: {
       // Allowed Cors Origin
       // Default Display URL ?
     }
-    case Steps.ClientGrantTypes: {
+    case Step.ClientGrantTypes: {
       // Grant Types
       // Authorization code ALLT NEMA SERVICE TO SERVICE - [Client credentials - SERVICE to SERVICE]
     }
-    case Steps.ClientAllowedScopes: {
+    case Step.ClientAllowedScopes: {
       // Allowed Scopes
       // Ákveðin scope sem við eigum og veljum úr lista - Skilgreinum scopes fyrir resource-a
       // Sett á bið?
     }
-    case Steps.ClientClaims: {
+    case Step.ClientClaims: {
       // Add Claims - Custom Claims (Vitum ekki alveg) - Setja í BID
       //    const claim = new ClientClaimDTO();
       //    console.log("Client ID: " + client);
       //    claim.clientId = client;
       //    return <ClientClaim claim={claim} handleSaved={handleClaimSaved} />
     }
-    case Steps.ClientSecret: {
+    case Step.ClientSecret: {
       //ClientSecret
       // EF SPA eða NATIVE þá sýna ekkert
       // Generate og sýna

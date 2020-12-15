@@ -5,7 +5,7 @@ import { ErrorMessage } from '@hookform/error-message';
 import StatusBar from './StatusBar';
 import HelpBox from './HelpBox';
 import axios from 'axios';
-import APIResponse from '../models/utils/APIResponse';
+import APIResponse from '../models/common/APIResponse';
 
 interface Props {
   clientId: string;
@@ -27,7 +27,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
     const clientRedirect = new ClientPostLogoutRedirectUriDTO();
     clientRedirect.clientId = props.clientId;
     clientRedirect.redirectUri = data.redirectUri;
-    
+
     await axios
       .post(`/api/client-post-logout-redirect-uri`, clientRedirect)
       .then((response) => {

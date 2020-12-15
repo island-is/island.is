@@ -1,5 +1,5 @@
 import axios from 'axios';
-import APIResponse from '../models/utils/APIResponse';
+import APIResponse from '../models/common/APIResponse';
 import { ClientRedirectUriDTO } from '../models/dtos/client-redirect-uri.dto';
 
 export const AddRedirectUri = async (clientRedirect: ClientRedirectUriDTO) => {

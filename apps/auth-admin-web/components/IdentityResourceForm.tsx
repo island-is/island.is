@@ -5,7 +5,7 @@ import StatusBar from './StatusBar';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import HelpBox from './HelpBox';
-import APIResponse from '../models/utils/APIResponse';
+import APIResponse from '../models/common/APIResponse';
 
 type Props = {
   resource: IdentityResourcesDTO;
@@ -17,7 +17,7 @@ export default function IdentityResourceForm<Props>(
   const { register, handleSubmit, errors, formState } = useForm<
     IdentityResourcesDTO
   >();
-  const { isDirty, isSubmitting } = formState;
+  const { isSubmitting } = formState;
   const [response, setResponse] = useState<APIResponse>(null);
   // TODO: FIX
   resource = resource.resource;

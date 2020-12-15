@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react';
 
 import axios from 'axios';
-import { Steps } from '../../models/utils/Steps';
+import { Step } from '../../models/common/Step';
 import { Client } from '../../models/client.model';
 
 const Index = () => {
@@ -52,7 +52,7 @@ const Index = () => {
     setStep(step + 1);
   };
 
-  const handleStepChange = (step: Steps) => {
+  const handleStepChange = (step: Step) => {
     setStep(step);
   }
 
@@ -90,7 +90,7 @@ const Index = () => {
   console.log(client);
 
   switch (step) {
-    case Steps.Client:
+    case Step.Client:
       return (
         <ClientStepNav handleStepChange={handleStepChange}>
           <ClientForm
@@ -101,7 +101,7 @@ const Index = () => {
         </ClientStepNav>
         
       );
-    case Steps.ClientRedirectUri: {
+    case Step.ClientRedirectUri: {
       // Set the callback URI .. ALLT
       return (
         <ClientStepNav handleStepChange={handleStepChange}>
@@ -116,7 +116,7 @@ const Index = () => {
         </ClientStepNav>
       );
     }
-    case Steps.ClientIdpRestrictions: {
+    case Step.ClientIdpRestrictions: {
       return (
         <ClientStepNav handleStepChange={handleStepChange}>
         <ClientIdpRestrictionsForm
@@ -129,7 +129,7 @@ const Index = () => {
         </ClientStepNav>
       );
     }
-    case Steps.ClientPostLogoutRedirectUri: {
+    case Step.ClientPostLogoutRedirectUri: {
       return (
         <ClientStepNav handleStepChange={handleStepChange}>
         <ClientPostLogoutRedirectUriForm
@@ -143,27 +143,27 @@ const Index = () => {
         </ClientStepNav>
       );
     }
-    case Steps.ClientAllowedCorsOrigin: {
+    case Step.ClientAllowedCorsOrigin: {
       // Allowed Cors Origin
       // Default Display URL ?
     }
-    case Steps.ClientGrantTypes: {
+    case Step.ClientGrantTypes: {
       // Grant Types
       // Authorization code ALLT NEMA SERVICE TO SERVICE - [Client credentials - SERVICE to SERVICE]
     }
-    case Steps.ClientAllowedScopes: {
+    case Step.ClientAllowedScopes: {
       // Allowed Scopes
       // Ákveðin scope sem við eigum og veljum úr lista - Skilgreinum scopes fyrir resource-a
       // Sett á bið?
     }
-    case Steps.ClientClaims: {
+    case Step.ClientClaims: {
       // Add Claims - Custom Claims (Vitum ekki alveg) - Setja í BID
       //    const claim = new ClientClaimDTO();
       //    console.log("Client ID: " + client);
       //    claim.clientId = client;
       //    return <ClientClaim claim={claim} handleSaved={handleClaimSaved} />
     }
-    case Steps.ClientSecret: {
+    case Step.ClientSecret: {
       //ClientSecret
       // EF SPA eða NATIVE þá sýna ekkert
       // Generate og sýna
