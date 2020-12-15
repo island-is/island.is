@@ -18,7 +18,7 @@ import {
   FormModes,
   Option,
 } from '@island.is/application/core'
-import { m } from '../lib/messages'
+import { m, mm } from '../lib/messages'
 import {
   formatIsk,
   getEstimatedMonthlyPay,
@@ -58,6 +58,12 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'approveExternalData',
               dataProviders: [
                 buildDataProviderItem({
+                  id: 'userProfile',
+                  type: 'UserProfileProvider',
+                  title: m.userProfileInformationTitle,
+                  subTitle: m.userProfileInformationSubTitle,
+                }),
+                buildDataProviderItem({
                   id: 'pregnancyStatus',
                   type: 'PregnancyStatus',
                   title: m.expectedDateOfBirthTitle,
@@ -74,30 +80,9 @@ export const ParentalLeaveForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'generalInfo',
-          name: m.generalInfoSubSection,
+          id: 'otherParent',
+          name: m.otherParentSubSection,
           children: [
-            buildMultiField({
-              id: 'contactInfo',
-              name: 'Er þetta réttur sími og netfang?',
-              description: 'Vinsamlegast breyttu ef þetta er ekki rétt',
-              children: [
-                buildTextField({
-                  width: 'half',
-                  name: 'Netfang',
-                  id: 'applicant.email',
-                  variant: 'email',
-                }),
-                buildTextField({
-                  width: 'half',
-                  name: 'Símanúmer',
-                  id: 'applicant.phoneNumber',
-                  variant: 'tel',
-                  format: '###-####',
-                  placeholder: '000-0000',
-                }),
-              ],
-            }),
             buildMultiField({
               id: 'otherParent',
               name: m.otherParentTitle,
@@ -499,52 +484,49 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
             buildCustomField({
               id: 'firstPeriodStart',
-              name: (application) =>
-                application.answers.singlePeriod === YES
-                  ? 'Hvenær viltu hefja fæðingarorlofið?'
-                  : 'Hvenær viltu hefja fyrsta tímabilið?', // TODO Messages
+              name: mm.firstPeriodStart.title,
               component: 'FirstPeriodStart',
             }),
             buildMultiField({
               id: 'startDate',
               condition: (formValue) =>
                 formValue.firstPeriodStart === 'specificDate',
-              name: 'Please pick the start date',
-              description:
-                'You can choose to start on the date of birth, or on a specific date. Please note, that your rights end 18 months after the date of birth.',
+              name: mm.startDate.title,
+              description: mm.startDate.description,
               children: [
                 buildDateField({
                   id: 'periods[0].startDate',
                   width: 'half',
-                  name: 'Start date',
-                  placeholder: 'Pick the start date',
+                  name: mm.startDate.label,
+                  placeholder: mm.startDate.placeholder,
                 }),
               ],
             }),
             buildRadioField({
               id: 'confirmLeaveDuration',
-              name: 'Please confirm your leave duration',
-              description:
-                'Some people choose to take the full leave all at once, but also extend it by months or to a certain date by adjusting their income.',
+              name: mm.duration.title,
+              description: mm.duration.description,
               largeButtons: true,
               options: [
-                { label: 'A certain duration', value: 'duration' },
-                { label: 'Until a specific date', value: 'specificDate' },
+                { label: mm.duration.monthsOption, value: 'duration' },
+                {
+                  label: mm.duration.specificDateOption,
+                  value: 'specificDate',
+                },
               ],
             }),
             buildMultiField({
               id: 'endDate',
               condition: (formValue) =>
                 formValue.confirmLeaveDuration === 'specificDate',
-              name: 'Please pick the end date',
-              description:
-                'You can choose to end the parental leave no later than 18 months after the date of birth.',
+              name: mm.endDate.title,
+              description: mm.endDate.description,
               children: [
                 buildDateField({
                   id: 'periods[0].endDate',
                   width: 'half',
-                  name: 'End date',
-                  placeholder: 'Pick the end date',
+                  name: mm.endDate.label,
+                  placeholder: mm.endDate.placeholder,
                 }),
               ],
             }),
@@ -553,22 +535,21 @@ export const ParentalLeaveForm: Form = buildForm({
                 id: 'periods[0].endDate',
                 condition: (formValue) =>
                   formValue.confirmLeaveDuration === 'duration',
-                name: m.duration,
+                name: mm.duration.title,
                 component: 'ParentalLeaveDuration',
               },
               {},
             ),
             buildMultiField({
               id: 'periods[0].ratio',
-              name: 'What percent off will you take for this period?',
-              description:
-                'For example, you could work 50% of the time, and have 50% paid leave.',
+              name: mm.ratio.title,
+              description: mm.ratio.description,
               children: [
                 buildSelectField({
                   id: 'periods[0].ratio',
                   width: 'half',
-                  name: 'Percent leave',
-                  placeholder: 'Pick your percent',
+                  name: mm.ratio.label,
+                  placeholder: mm.ratio.placeholder,
                   options: [
                     { label: '100%', value: '100' },
                     { label: '75%', value: '75' },
@@ -582,30 +563,28 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'addMorePeriods',
-          name: 'Add more periods',
+          name: mm.leavePlan.subSection,
           children: [
             buildRepeater({
               id: 'periods',
-              name: 'Here is your current leave plan',
+              name: mm.leavePlan.title,
               component: 'PeriodsRepeater',
               children: [
                 buildDateField({
                   id: 'startDate',
-                  name: 'Adding a period',
-                  description:
-                    'You can choose to start on the date of birth, or on a specific date. Please note, that your rights end 18 months after the date of birth.',
-                  placeholder: 'Pick the start date',
+                  name: mm.startDate.title,
+                  description: mm.startDate.description,
+                  placeholder: mm.startDate.placeholder,
                 }),
                 buildMultiField({
                   id: 'endDate',
-                  name: 'Please pick the end date',
-                  description:
-                    'You can choose to end the parental leave no later than 18 months after the date of birth.',
+                  name: mm.endDate.title,
+                  description: mm.endDate.description,
                   children: [
                     buildDateField({
                       id: 'endDate',
-                      name: 'End date',
-                      placeholder: 'Pick the end date',
+                      name: mm.endDate.label,
+                      placeholder: mm.endDate.placeholder,
                     }),
                   ],
                 }),
@@ -613,7 +592,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 //   {
                 //     id: 'endDate',
                 //     name: m.duration,
-                //     description: m.durationDescription,
+                //     description: mm.duration.description,
                 //     component: 'ParentalLeaveDuration',
                 //   },
                 //   {
@@ -622,15 +601,14 @@ export const ParentalLeaveForm: Form = buildForm({
                 // ),
                 buildMultiField({
                   id: 'ratio',
-                  name: 'What percent off will you take for this period?',
-                  description:
-                    'For example, you could work 50% of the time, and have 50% paid leave.',
+                  name: mm.ratio.title,
+                  description: mm.ratio.description,
                   children: [
                     buildSelectField({
                       id: 'ratio',
                       width: 'half',
-                      name: 'Percent leave',
-                      placeholder: 'Pick your percent',
+                      name: mm.ratio.label,
+                      placeholder: mm.ratio.placeholder,
                       options: [
                         { label: '100%', value: '100' },
                         { label: '75%', value: '75' },
@@ -646,14 +624,13 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'paymentPlan',
-          name: 'Payment plan',
+          name: mm.paymentPlan.subSection,
           children: [
             buildCustomField(
               {
                 id: 'paymentPlan',
-                name: 'Here is your current payment plan',
-                description:
-                  'Payments amount to 80% of the average of your total wages during the last 6 months before the birth of the child.',
+                name: mm.paymentPlan.title,
+                description: mm.paymentPlan.description,
                 component: 'PaymentSchedule',
               },
               {},
@@ -662,24 +639,21 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'shareInformation',
-          name: 'Share information with other parent',
+          name: mm.shareInformation.subSection,
           children: [
             buildRadioField({
               id: 'shareInformationWithOtherParent',
-              name:
-                'Do you want to share your leave information with the other parent?',
-              description:
-                'Some people share their information to coordinate their parental leaves.',
+              name: mm.shareInformation.title,
+              description: mm.shareInformation.description,
               emphasize: false,
               largeButtons: true,
               options: [
                 {
-                  label:
-                    'Yes, I want to share my leave information with the other parent',
+                  label: mm.shareInformation.yesOption,
                   value: YES,
                 },
                 {
-                  label: 'No, I do not want to share my information',
+                  label: mm.shareInformation.noOption,
                   value: NO,
                 },
               ],

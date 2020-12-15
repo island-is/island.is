@@ -125,15 +125,29 @@ export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
           {status === 'success' && (
             <AlertMessage
               type="success"
-              title="Nýtt tungumál hefur verið vistað"
-              message="Þú hefur vistað nýtt tungumál hjá Stafrænt Ísland"
+              title={formatMessage({
+                id: 'sp.settings:language-confirmed-success-title',
+                defaultMessage: 'Nýtt tungumál hefur verið vistað',
+              })}
+              message={formatMessage({
+                id: 'sp.settings:language-confirmed-success-subtext',
+                defaultMessage:
+                  'Þú hefur vistað nýtt tungumál hjá Stafrænt Ísland',
+              })}
             />
           )}
           {status === 'error' && (
             <AlertMessage
               type="error"
-              title="Tókst ekki að vista tungumál"
-              message="Eitthvað hefur farið úrskeiðis, vinsamlegast reyndu aftur síðar"
+              title={formatMessage({
+                id: 'sp.settings:language-confirmed-error-title',
+                defaultMessage: 'Tókst ekki að vista tungumál',
+              })}
+              message={formatMessage({
+                id: 'sp.settings:language-confirmed-error-subtext',
+                defaultMessage:
+                  'Eitthvað hefur farið úrskeiðis, vinsamlegast reyndu aftur síðar',
+              })}
             />
           )}
         </Box>

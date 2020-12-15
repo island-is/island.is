@@ -8,19 +8,6 @@ import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
 
 import { AppModule } from '../src/app'
 
-// A bit of a hack for now, until we simulate login in tests
-export const user = {
-  id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c2',
-  nationalId: '1112902539',
-  name: 'Ívar Oddsson',
-  title: 'héraðsdómari',
-  mobileNumber: '6904031',
-  email: 'ivaro@kolibri.is',
-  role: 'JUDGE',
-  institution: 'Héraðsdómur Reykjavíkur',
-  active: true,
-}
-
 jest.mock('pdfkit', function () {
   class MockPDFDocument {
     pipe(stream) {

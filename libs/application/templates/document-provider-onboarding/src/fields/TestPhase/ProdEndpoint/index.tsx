@@ -1,15 +1,18 @@
 import React, { FC, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { useFormContext, Controller } from 'react-hook-form'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
+import { useLocale } from '@island.is/localization'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { registerEndpointMutation } from '../../../graphql/mutations/registerEndpointMutation'
 import { m } from '../../../forms/messages'
 
 const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
+  const { formatMessage } = useLocale()
+
   interface Variable {
     id: string
     name: string
@@ -18,6 +21,9 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
 
   const { register, clearErrors, errors, trigger, getValues } = useFormContext()
   const { answers: formValue } = application
+  const [prodEndPointError, setprodEndPointError] = useState<string | null>(
+    null,
+  )
   const [variables, setendPointVariables] = useState<Variable[]>([])
   const [prodEndPointExists, setprodEndPointExists] = useState(
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -28,6 +34,7 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
 
   const onRegisterEndpoint = async (isValid: boolean) => {
     if (isValid) {
+      setprodEndPointError(null)
       const result = await registerEndpoint({
         variables: {
           input: {
@@ -37,7 +44,7 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
       })
 
       if (!result.data) {
-        //TODO display error
+        setprodEndPointError(m.prodEndPointErrorMessage.defaultMessage)
       }
 
       //TODO: Needs new call to API
@@ -54,14 +61,16 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
     }
   }
 
-  console.log(errors)
-
   return (
     <Box>
       <Box marginBottom={7}>
         <Box marginBottom={3}>
           <FieldDescription
-            description={m.prodEndPointSubTitle.defaultMessage}
+            description={formatText(
+              m.prodEndPointSubTitle,
+              application,
+              formatMessage,
+            )}
           />
         </Box>
         <Box marginBottom={1}>
@@ -113,6 +122,13 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
           <Box color="red600" paddingY={2}>
             <Text fontWeight="semiBold" color="red600">
               {errors['productionEndPointObject.prodEndPointExists']}
+            </Text>
+          </Box>
+        )}
+        {prodEndPointError && (
+          <Box color="red600" paddingY={2}>
+            <Text fontWeight="semiBold" color="red600">
+              {prodEndPointError}
             </Text>
           </Box>
         )}

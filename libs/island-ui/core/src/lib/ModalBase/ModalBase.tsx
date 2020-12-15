@@ -16,6 +16,7 @@ import {
   DialogProps,
 } from 'reakit/Dialog'
 import * as styles from './ModalBase.treat'
+import { DisclosureProps } from 'reakit/ts'
 
 export const BackdropDiv = forwardRef(
   (props: DialogProps, ref: Ref<HTMLDivElement>) => {
@@ -30,7 +31,7 @@ export const BackdropDiv = forwardRef(
   },
 )
 
-type ModalBaseProps = {
+export type ModalBaseProps = {
   /**
    * Element that opens the dialog.
    * It will be forwarded neccessery props for a11y and event handling.
@@ -53,6 +54,10 @@ type ModalBaseProps = {
    * Optional cb function that is fired when the modal visibility changes
    */
   onVisibilityChange?: (isVisible: boolean) => void
+  renderDisclosure?: (
+    disclosure: ReactElement,
+    disclosureProps?: DisclosureProps,
+  ) => ReactElement
 }
 
 export const ModalBase: FC<ModalBaseProps> = ({
@@ -63,6 +68,7 @@ export const ModalBase: FC<ModalBaseProps> = ({
   children,
   className,
   onVisibilityChange,
+  renderDisclosure = (disclosure) => disclosure,
 }) => {
   const modal = useDialogState({
     animated: true,
@@ -84,7 +90,12 @@ export const ModalBase: FC<ModalBaseProps> = ({
     <>
       {disclosure ? (
         <DialogDisclosure {...modal} {...disclosure.props}>
-          {(disclosureProps) => React.cloneElement(disclosure, disclosureProps)}
+          {(disclosureProps: DisclosureProps) =>
+            renderDisclosure(
+              React.cloneElement(disclosure, disclosureProps),
+              disclosureProps,
+            )
+          }
         </DialogDisclosure>
       ) : null}
       <DialogBackdrop {...modal} as={BackdropDiv}>

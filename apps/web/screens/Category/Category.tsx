@@ -2,24 +2,21 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import intersection from 'lodash/intersection'
-import { theme } from '@island.is/island-ui/theme'
+import NextLink from 'next/link'
 import {
   Text,
   Stack,
   Box,
   Breadcrumbs,
-  Hidden,
-  Select,
   AccordionCard,
   LinkCard,
-  Option,
   Link,
   FocusableBox,
-  ColorSchemeContext,
+  Navigation,
 } from '@island.is/island-ui/core'
-import { Card, Sidebar } from '@island.is/web/components'
+import { Card } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
-import routeNames from '@island.is/web/i18n/routeNames'
+import pathNames, { ContentType } from '@island.is/web/i18n/routes'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 import {
@@ -28,8 +25,7 @@ import {
   GET_CATEGORIES_QUERY,
   GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
 } from '@island.is/web/screens/queries'
-import { CategoryLayout } from '@island.is/web/screens/Layouts/Layouts'
-
+import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import {
@@ -70,19 +66,8 @@ const Category: Screen<CategoryProps> = ({
   const { activeLocale, t } = useI18n()
   const Router = useRouter()
   const n = useNamespace(namespace)
-  const { makePath } = routeNames(activeLocale)
 
   const getCurrentCategory = () => categories.find((x) => x.slug === slug)
-
-  const scrollToSelectOnMobile = (e) => {
-    if (e.currentTarget && typeof window === 'object') {
-      if (window.innerWidth < theme.breakpoints.md) {
-        const rect = e.currentTarget.getBoundingClientRect()
-        const px = rect.top + window.scrollY - 16
-        window.scrollTo(0, px)
-      }
-    }
-  }
 
   // group articles
   const { groups, cards, otherArticles } = articles.reduce(
@@ -139,17 +124,14 @@ const Category: Screen<CategoryProps> = ({
     setHash(hashString)
   }, [Router])
 
-  const sidebarCategoryLinks = categories.map((c) => ({
-    title: c.title,
-    active: c.slug === Router.query.slug,
-    href: makePath('ArticleCategory', '/[slug]'),
-    as: makePath('ArticleCategory', c.slug),
-  }))
-
-  const categoryOptions = categories.map((c) => ({
-    label: c.title,
-    value: c.slug,
-  }))
+  const sidebarCategoryLinks = categories.map(({ __typename, title, slug }) => {
+    return {
+      title,
+      typename: __typename,
+      active: slug === Router.query.slug,
+      slug: [slug],
+    }
+  })
 
   const groupArticlesBySubgroup = (articles: Articles, groupSlug?: string) => {
     const bySubgroup = articles.reduce((result, item) => {
@@ -205,10 +187,13 @@ const Category: Screen<CategoryProps> = ({
     }
 
     setHash(newHash)
-    Router.replace(
-      makePath('ArticleCategory', '/[slug]'),
-      makePath('ArticleCategory', category.slug + `#${newHash}`),
+
+    const url = pathNames(
+      activeLocale,
+      category.__typename.toLowerCase() as ContentType,
+      [slug],
     )
+    Router.replace(url.href, url.as + `#${newHash}`)
   }
 
   const sortArticles = (articles: Articles) => {
@@ -268,188 +253,206 @@ const Category: Screen<CategoryProps> = ({
       <Head>
         <title>{category.title} | Ísland.is</title>
       </Head>
-      <CategoryLayout
-        sidebar={
-          <Sidebar
-            bullet="none"
+      <SidebarLayout
+        isSticky
+        sidebarContent={
+          <Navigation
+            baseId="desktopNav"
+            colorScheme="purple"
             items={sidebarCategoryLinks}
             title={n('sidebarHeader')}
+            renderLink={(link, { typename, slug }) => {
+              return (
+                <NextLink
+                  {...pathNames(activeLocale, typename as ContentType, slug)}
+                  passHref
+                >
+                  {link}
+                </NextLink>
+              )
+            }}
           />
         }
-        belowContent={
-          <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
-            <Stack space={2}>
-              {sortedGroups.map(({ groupSlug }, index) => {
-                const { title, description, articles } = groups[groupSlug]
-
-                const { articlesBySubgroup } = groupArticlesBySubgroup(
-                  articles,
-                  groupSlug,
-                )
-
-                const sortedSubgroupKeys = sortSubgroups(articlesBySubgroup)
-                const expanded = hash.includes(groupSlug)
-
-                return (
-                  <div
-                    key={index}
-                    id={groupSlug}
-                    ref={(el) => (itemsRef.current[index] = el)}
-                  >
-                    <AccordionCard
-                      id={`accordion-item-${groupSlug}`}
-                      label={title}
-                      labelUse="h2"
-                      labelVariant="h3"
-                      startExpanded={expanded}
-                      visibleContent={description}
-                      onClick={() => {
-                        handleAccordionClick(groupSlug)
-                      }}
-                    >
-                      <Box paddingTop={2}>
-                        {sortedSubgroupKeys.map((subgroup, index) => {
-                          const { sortedArticles } = sortArticles(
-                            articlesBySubgroup[subgroup],
-                          )
-
-                          // Articles with 1 subgroup only have the "other" group and don't get a heading.
-                          const hasSubgroups = sortedSubgroupKeys.length > 1
-
-                          const noSubgroupNameKeys = [
-                            'unknown',
-                            'undefined',
-                            'null',
-                          ]
-
-                          // Rename unknown group to 'Other'
-                          const subgroupName =
-                            noSubgroupNameKeys.indexOf(subgroup) !== -1 ||
-                            !subgroup
-                              ? n('other')
-                              : subgroup
-
-                          const heading = hasSubgroups ? subgroupName : ''
-
-                          return (
-                            <React.Fragment key={subgroup}>
-                              {heading && (
-                                <Text
-                                  variant="h5"
-                                  as="h3"
-                                  paddingBottom={3}
-                                  paddingTop={index === 0 ? 0 : 3}
-                                >
-                                  {heading}
-                                </Text>
-                              )}
-                              <Stack space={2}>
-                                {sortedArticles.map(
-                                  ({
-                                    title,
-                                    slug,
-                                    containsApplicationForm,
-                                  }) => {
-                                    return (
-                                      <FocusableBox
-                                        key={slug}
-                                        href={makePath('article', '/[slug]')}
-                                        as={makePath('article', slug)}
-                                        borderRadius="large"
-                                      >
-                                        {({ isFocused }) => (
-                                          <LinkCard
-                                            isFocused={isFocused}
-                                            tag={
-                                              containsApplicationForm &&
-                                              n('applicationProcess', 'Umsókn')
-                                            }
-                                          >
-                                            {title}
-                                          </LinkCard>
-                                        )}
-                                      </FocusableBox>
-                                    )
-                                  },
-                                )}
-                              </Stack>
-                            </React.Fragment>
-                          )
-                        })}
-                      </Box>
-                    </AccordionCard>
-                  </div>
-                )
-              })}
-              {lifeEvents.map(
-                ({ title, slug, intro, thumbnail, image }, index) => {
-                  return (
-                    <Card
-                      key={index}
-                      href={makePath('lifeEvent', '[slug]')}
-                      as={makePath('lifeEvent', slug)}
-                      description={intro}
-                      title={title}
-                      image={(thumbnail || image) as Image}
-                      tags={[
-                        {
-                          title: n('categoryTag'),
-                        },
-                      ]}
-                    />
-                  )
-                },
-              )}
-              {cards.map(({ title, content, slug }, index) => {
-                return (
-                  <Card
-                    key={index}
-                    title={title}
-                    description={content}
-                    href={makePath('article', '/[slug]')}
-                    as={makePath('article', slug)}
-                  />
-                )
-              })}
-            </Stack>
-          </ColorSchemeContext.Provider>
-        }
       >
-        <Box paddingBottom={2}>
+        <Box paddingBottom={[2, 2, 4]}>
           <Breadcrumbs>
-            <Link href={makePath()}>Ísland.is</Link>
+            <Link href={pathNames()}>Ísland.is</Link>
           </Breadcrumbs>
         </Box>
+        <Box paddingBottom={[5, 5, 10]}>
+          <Text variant="h1" as="h1" paddingTop={[4, 4, 0]} paddingBottom={2}>
+            {category.title}
+          </Text>
+          <Text variant="intro" as="p">
+            {category.description}
+          </Text>
+        </Box>
 
-        <Hidden above="sm">
-          <Box onClick={scrollToSelectOnMobile}>
-            <Select
-              label={t.serviceCategories}
-              defaultValue={{
-                label: category.title,
-                value: category.slug,
-              }}
-              onChange={({ value }: Option) => {
-                const slug = value as string
+        <Box display={['block', 'block', 'none']} marginBottom={4}>
+          <Navigation
+            baseId="mobileNav"
+            colorScheme="purple"
+            isMenuDialog
+            renderLink={(link, { typename, slug }) => {
+              return (
+                <NextLink
+                  {...pathNames(activeLocale, typename as ContentType, slug)}
+                  passHref
+                >
+                  {link}
+                </NextLink>
+              )
+            }}
+            items={sidebarCategoryLinks}
+            title={n('sidebarHeader')}
+            activeItemTitle={category.title}
+          />
+        </Box>
+        <Stack space={2}>
+          {sortedGroups.map(({ groupSlug }, index) => {
+            const { title, description, articles } = groups[groupSlug]
 
-                Router.push(
-                  makePath('ArticleCategory', '/[slug]'),
-                  makePath('ArticleCategory', slug),
-                )
-              }}
-              isSearchable={false}
-              options={categoryOptions}
-              name="categories"
-            />
-          </Box>
-        </Hidden>
-        <Text variant="h1" as="h1" paddingTop={[4, 4, 0]} paddingBottom={2}>
-          {category.title}
-        </Text>
-        <Text variant="intro" as="p">
-          {category.description}
-        </Text>
-      </CategoryLayout>
+            const { articlesBySubgroup } = groupArticlesBySubgroup(
+              articles,
+              groupSlug,
+            )
+
+            const sortedSubgroupKeys = sortSubgroups(articlesBySubgroup)
+            const expanded = hash.includes(groupSlug)
+
+            return (
+              <div
+                key={index}
+                id={groupSlug}
+                ref={(el) => (itemsRef.current[index] = el)}
+              >
+                <AccordionCard
+                  id={`accordion-item-${groupSlug}`}
+                  label={title}
+                  labelUse="h2"
+                  labelVariant="h3"
+                  startExpanded={expanded}
+                  visibleContent={description}
+                  onClick={() => {
+                    handleAccordionClick(groupSlug)
+                  }}
+                >
+                  <Box paddingTop={2}>
+                    {sortedSubgroupKeys.map((subgroup, index) => {
+                      const { sortedArticles } = sortArticles(
+                        articlesBySubgroup[subgroup],
+                      )
+
+                      // Articles with 1 subgroup only have the "other" group and don't get a heading.
+                      const hasSubgroups = sortedSubgroupKeys.length > 1
+
+                      const noSubgroupNameKeys = [
+                        'unknown',
+                        'undefined',
+                        'null',
+                      ]
+
+                      // Rename unknown group to 'Other'
+                      const subgroupName =
+                        noSubgroupNameKeys.indexOf(subgroup) !== -1 || !subgroup
+                          ? n('other')
+                          : subgroup
+
+                      const heading = hasSubgroups ? subgroupName : ''
+
+                      return (
+                        <React.Fragment key={subgroup}>
+                          {heading && (
+                            <Text
+                              variant="h5"
+                              as="h3"
+                              paddingBottom={3}
+                              paddingTop={index === 0 ? 0 : 3}
+                            >
+                              {heading}
+                            </Text>
+                          )}
+                          <Stack space={2}>
+                            {sortedArticles.map(
+                              ({ __typename, title, slug, processEntry }) => {
+                                const url = pathNames(
+                                  activeLocale,
+                                  __typename.toLowerCase() as ContentType,
+                                  [slug],
+                                )
+                                return (
+                                  <FocusableBox
+                                    key={slug}
+                                    href={url.href}
+                                    as={url.as}
+                                    borderRadius="large"
+                                  >
+                                    {({ isFocused }) => (
+                                      <LinkCard
+                                        isFocused={isFocused}
+                                        tag={
+                                          !!processEntry &&
+                                          n('applicationProcess', 'Umsókn')
+                                        }
+                                      >
+                                        {title}
+                                      </LinkCard>
+                                    )}
+                                  </FocusableBox>
+                                )
+                              },
+                            )}
+                          </Stack>
+                        </React.Fragment>
+                      )
+                    })}
+                  </Box>
+                </AccordionCard>
+              </div>
+            )
+          })}
+          {lifeEvents.map(
+            ({ __typename, title, slug, intro, thumbnail, image }, index) => {
+              const url = pathNames(
+                activeLocale,
+                __typename.toLowerCase() as ContentType,
+                [slug],
+              )
+              return (
+                <Card
+                  key={index}
+                  href={url.href}
+                  as={url.as}
+                  description={intro}
+                  title={title}
+                  image={(thumbnail || image) as Image}
+                  tags={[
+                    {
+                      title: n('categoryTag'),
+                    },
+                  ]}
+                />
+              )
+            },
+          )}
+          {cards.map(({ __typename, title, content, slug }, index) => {
+            const url = pathNames(
+              activeLocale,
+              __typename.toLowerCase() as ContentType,
+              [slug],
+            )
+            return (
+              <Card
+                key={index}
+                title={title}
+                description={content}
+                href={url.href}
+                as={url.as}
+              />
+            )
+          })}
+        </Stack>
+      </SidebarLayout>
     </>
   )
 }

@@ -1,7 +1,6 @@
 import * as z from 'zod'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
 import { NO, YES } from '../constants'
 
@@ -38,13 +37,6 @@ const Period = z.object({
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  applicant: z.object({
-    email: z.string().email(),
-    phoneNumber: z.string().refine((p) => {
-      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-      return phoneNumber && phoneNumber.isValid()
-    }, 'Símanúmer þarf að vera gilt'),
-  }),
   personalAllowance: PersonalAllowance,
   personalAllowanceFromSpouse: PersonalAllowance,
   payments: z.object({

@@ -20,6 +20,7 @@ export const ChatPanel = () => {
   useEffect(() => {
     const conversationId =
       window.sessionStorage.getItem(CONVERSATION_KEY) ?? null
+    const isABigWindow = window.innerWidth > 768
 
     if (!boost && window.boostInit) {
       const settings = {
@@ -36,7 +37,12 @@ export const ChatPanel = () => {
       }
 
       boost = window.boostInit(ID, settings)
-      boost.chatPanel.show()
+
+      // to prevent us from opening chat where there is no space for it
+      if (isABigWindow) {
+        boost.chatPanel.show()
+      }
+
       boost.chatPanel.addEventListener('chatPanelClosed', onChatPanelClosed)
       boost.chatPanel.addEventListener(
         'conversationIdChanged',
