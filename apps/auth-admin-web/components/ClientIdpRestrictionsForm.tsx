@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import StatusBar from './StatusBar';
 import HelpBox from './HelpBox';
 import axios from 'axios';
-import APIResponse from '../models/utils/APIResponse';
+import APIResponse from '../models/common/APIResponse';
 
 interface Props {
   clientId: string;
-  restrictions: string[]; // What is currently valid for updating existing Clients
+  restrictions?: string[]; // What is currently valid for updating existing Clients
   handleNext?: () => void;
   handleBack?: () => void;
+  handleChanges?: () => void;
 }
 
 const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
@@ -26,6 +27,9 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
         res.statusCode = response.request.status;
         res.message = response.request.statusText;
         setResponse(res);
+        if (props.handleChanges){
+          props.handleChanges();
+        }
       })
       .catch(function (error) {
         if (error.response) {
@@ -44,6 +48,9 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
         res.statusCode = response.request.status;
         res.message = response.request.statusText;
         setResponse(res);
+        if (props.handleChanges){
+          props.handleChanges();
+        }
       })
       .catch(function (error) {
         if (error.response) {

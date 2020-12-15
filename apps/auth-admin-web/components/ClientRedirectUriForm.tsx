@@ -5,13 +5,15 @@ import { ErrorMessage } from '@hookform/error-message';
 import StatusBar from './StatusBar';
 import HelpBox from './HelpBox';
 import axios from 'axios';
-import APIResponse from '../models/utils/APIResponse';
+import APIResponse from '../models/common/APIResponse';
 
 interface Props {
-  redirectObject: ClientRedirectUriDTO;
-  uris: [];
+  clientId: string;
+  defaultUrl?: string;
+  uris?: string[];
   handleNext?: () => void;
   handleBack?: () => void;
+  handleChanges?: () => void;
 }
 
 const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
@@ -20,23 +22,11 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
   >();
   const { isSubmitting } = formState;
   const [response, setResponse] = useState(null);
-  const [uris, setUris] = useState<string[]>([]);
-
-  /** Setting the uris when updating an existing client */
-  useEffect(() => {
-    if (props.uris && uris.length > 0) {
-      for (let i = 0; i < uris.length; i++) {
-        uris.push(props.uris[i]);
-      }
-      setUris(uris);
-    }
-  }, [props.uris]);
 
   const add = async (data) => {
     const clientRedirect = new ClientRedirectUriDTO();
-    clientRedirect.clientId = props.redirectObject.clientId;
+    clientRedirect.clientId = props.clientId;
     clientRedirect.redirectUri = data.redirectUri;
-    let success = false;
 
     await axios
       .post(`/api/redirect-uri`, clientRedirect)
@@ -46,7 +36,9 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
         res.message = response.request.statusText;
         setResponse(res);
         if (response.status === 201) {
-          success = true;
+          if (props.handleChanges){
+            props.handleChanges();
+          }
         }
       })
       .catch(function (error) {
@@ -56,25 +48,20 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
           // TODO: Handle and show error
         }
       });
-
-    if (success) {
-      uris.push(clientRedirect.redirectUri);
-      console.log('setting uris: ', uris);
-      setUris([...uris]);
-    }
   };
 
   const remove = async (uri) => {
-    let success = false;
     await axios
-      .delete(`/api/redirect-uri/${props.redirectObject.clientId}/${uri}`)
+      .delete(`/api/redirect-uri/${props.clientId}/${uri}`)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
         res.message = response.request.statusText;
         setResponse(res);
         if (res.statusCode === 200) {
-          success = true;
+          if (props.handleChanges){
+            props.handleChanges();
+          }
         }
       })
       .catch(function (error) {
@@ -84,12 +71,6 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
           // TODO: Handle and show error
         }
       });
-
-    if (success) {
-      uris.splice(uris.indexOf(uri), 1);
-      console.log('setting uris: ', uris);
-      setUris([...uris]);
-    }
   };
 
   return (
@@ -112,7 +93,7 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                     type="text"
                     name="redirectUri"
                     ref={register({ required: true })}
-                    defaultValue={props.redirectObject.redirectUri}
+                    defaultValue={props.defaultUrl ?? ''}
                     className="client-redirect__input"
                     placeholder="https://localhost:4200/signin-oidc"
                     title="Full path of the redirect URL. These protocols rely upon TLS in production"
@@ -135,10 +116,10 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
               </form>
              
               <div className={`client-redirect__container__list ${
-                    uris && uris.length > 0  ? 'show' : 'hidden'
+                    props.uris && props.uris.length > 0  ? 'show' : 'hidden'
                   }`}>
                     <h3>Active callback URLs</h3>
-                {uris.map((uri: string) => {
+                {props.uris?.map((uri: string) => {
                   return (
                     <div
                       className="client-redirect__container__list__item"

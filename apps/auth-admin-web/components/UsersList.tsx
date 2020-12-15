@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { UserIdentityDTO } from '../models/dtos/user-identity.dto';
-import APIResponse from '../models/utils/APIResponse';
+import APIResponse from '../models/common/APIResponse';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import HelpBox from './HelpBox';
 import { ClaimDTO } from '../models/dtos/claim.dto';
-import NotFound from './form/NotFound';
+import NotFound from './common/NotFound';
 
 interface ClaimShow {
   subjectId: string;

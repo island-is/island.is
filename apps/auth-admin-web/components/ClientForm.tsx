@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ClientDTO from '../models/dtos/client-dto';
 import axios from 'axios';
 import StatusBar from './StatusBar';
-import APIResponse from '../models/utils/APIResponse';
+import APIResponse from '../models/common/APIResponse';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import HelpBox from './HelpBox';
@@ -71,7 +71,10 @@ const ClientForm: React.FC<Props> = (props: Props) => {
       res.message = response.request.statusText;
       setResponse(res);
       if (res.statusCode === 201) {
-        props.onNextButtonClick(data);
+        if (props.onNextButtonClick)
+        {
+          props.onNextButtonClick(data);
+        }
       }
     })
     .catch(function (error) {
@@ -97,9 +100,10 @@ const ClientForm: React.FC<Props> = (props: Props) => {
       res.message = response.request.statusText;
       setResponse(res);
       if (res.statusCode === 201) {
-        console.log('handle change');
-        console.log(data);
-        
+        if (props.onNextButtonClick)
+        {
+          props.onNextButtonClick(data);
+        }
       }
     })
     .catch(function (error) {
