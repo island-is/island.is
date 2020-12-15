@@ -1,0 +1,25 @@
+.client-step-nav {
+  ul {
+    padding-inline-start: 0;
+
+    li {
+      padding: 0;
+      display: inline-block;
+
+      a {
+        font-size: 0.8rem;
+        cursor: pointer;
+
+        &:hover {
+          color: $color-link;
+        }
+
+        &.active {
+          color: $color-link;
+          font-weight: $weight-semi-bold;
+          border-bottom: solid 2px $color-link;
+        }
+      }
+    }
+  }
+}

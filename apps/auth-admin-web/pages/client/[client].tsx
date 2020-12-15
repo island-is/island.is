@@ -92,7 +92,7 @@ const Index = () => {
   switch (step) {
     case Step.Client:
       return (
-        <ClientStepNav handleStepChange={handleStepChange}>
+        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
           <ClientForm
             handleCancel={handleCancel}
             client={client as ClientDTO}
@@ -104,7 +104,7 @@ const Index = () => {
     case Step.ClientRedirectUri: {
       // Set the callback URI .. ALLT
       return (
-        <ClientStepNav handleStepChange={handleStepChange}>
+        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
         <ClientRedirectUriForm
           clientId={client.clientId}
           defaultUrl={client.clientUri}
@@ -118,7 +118,7 @@ const Index = () => {
     }
     case Step.ClientIdpRestrictions: {
       return (
-        <ClientStepNav handleStepChange={handleStepChange}>
+        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
         <ClientIdpRestrictionsForm
           clientId={client.clientId}
           restrictions={client.identityProviderRestrictions?.map(r => r.name)}
@@ -131,7 +131,7 @@ const Index = () => {
     }
     case Step.ClientPostLogoutRedirectUri: {
       return (
-        <ClientStepNav handleStepChange={handleStepChange}>
+        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
         <ClientPostLogoutRedirectUriForm
           clientId={client.clientId}
           defaultUrl={client.clientUri}
