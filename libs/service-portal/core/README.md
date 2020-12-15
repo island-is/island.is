@@ -222,7 +222,7 @@ export const modules: ServicePortalModule[] = [
 
 ### Declaring routes for a library
 
-Declaring a new route for the service portal involves a few steps
+Declaring a new route for the service portal involves a few steps:
 
 - Declare a path for the route
 - Declare a route in the master navigation
