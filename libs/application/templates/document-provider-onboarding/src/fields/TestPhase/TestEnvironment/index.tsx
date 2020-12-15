@@ -46,9 +46,6 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
     undefined,
   ) as string
 
-  console.log(nationalId)
-  console.log(clientName)
-
   const onRegister = async () => {
     setEnvironmentError(null)
     const credentials = await registerProvider({
