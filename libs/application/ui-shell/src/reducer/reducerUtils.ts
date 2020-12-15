@@ -1,4 +1,5 @@
 import {
+  ExternalData,
   ExternalDataProvider,
   Field,
   findSectionIndex,
@@ -80,6 +81,7 @@ export const moveToScreen = (
 function convertFieldToScreen(
   field: Field,
   answers: FormValue,
+  externalData: ExternalData,
   isParentNavigable = true,
   sectionIndex: number,
   subSectionIndex: number,
@@ -87,7 +89,8 @@ function convertFieldToScreen(
   return {
     ...field,
     isNavigable:
-      isParentNavigable && shouldShowFormItem(field as Field, answers),
+      isParentNavigable &&
+      shouldShowFormItem(field as Field, answers, externalData),
     sectionIndex,
     subSectionIndex,
   } as FieldDef
@@ -96,6 +99,7 @@ function convertFieldToScreen(
 function convertDataProviderToScreen(
   externalDataProvider: ExternalDataProvider,
   answers: FormValue,
+  externalData: ExternalData,
   isParentNavigable = true,
   sectionIndex: number,
   subSectionIndex: number,
@@ -103,7 +107,8 @@ function convertDataProviderToScreen(
   return {
     ...externalDataProvider,
     isNavigable:
-      isParentNavigable && shouldShowFormItem(externalDataProvider, answers),
+      isParentNavigable &&
+      shouldShowFormItem(externalDataProvider, answers, externalData),
     sectionIndex,
     subSectionIndex,
   }
@@ -112,6 +117,7 @@ function convertDataProviderToScreen(
 export function convertMultiFieldToScreen(
   multiField: MultiField,
   answers: FormValue,
+  externalData: ExternalData,
   isParentNavigable = true,
   sectionIndex: number,
   subSectionIndex: number,
@@ -119,7 +125,7 @@ export function convertMultiFieldToScreen(
   let isMultiFieldVisible = false
   const children: FieldDef[] = []
   multiField.children.forEach((field) => {
-    const isFieldVisible = shouldShowFormItem(field, answers)
+    const isFieldVisible = shouldShowFormItem(field, answers, externalData)
     if (isFieldVisible) {
       isMultiFieldVisible = true
     }
@@ -142,6 +148,7 @@ export function convertMultiFieldToScreen(
 function convertRepeaterToScreens(
   repeater: Repeater,
   answers: FormValue,
+  externalData: ExternalData,
   isParentNavigable = true,
   sectionIndex: number,
   subSectionIndex: number,
@@ -176,6 +183,7 @@ function convertRepeaterToScreens(
             isPartOfRepeater: true,
           } as FormLeaf,
           answers,
+          externalData,
           isParentNavigable,
           sectionIndex,
           subSectionIndex,
@@ -186,7 +194,9 @@ function convertRepeaterToScreens(
   return [
     {
       ...repeater,
-      isNavigable: isParentNavigable && shouldShowFormItem(repeater, answers),
+      isNavigable:
+        isParentNavigable &&
+        shouldShowFormItem(repeater, answers, externalData),
       sectionIndex,
       subSectionIndex,
     } as RepeaterScreen,
@@ -197,6 +207,7 @@ function convertRepeaterToScreens(
 function convertLeafToScreens(
   leaf: FormLeaf,
   answers: FormValue,
+  externalData: ExternalData,
   isParentNavigable = true,
   sectionIndex: number,
   subSectionIndex: number,
@@ -206,6 +217,7 @@ function convertLeafToScreens(
       convertMultiFieldToScreen(
         leaf,
         answers,
+        externalData,
         isParentNavigable,
         sectionIndex,
         subSectionIndex,
@@ -215,6 +227,7 @@ function convertLeafToScreens(
     return convertRepeaterToScreens(
       leaf,
       answers,
+      externalData,
       isParentNavigable,
       sectionIndex,
       subSectionIndex,
@@ -224,6 +237,7 @@ function convertLeafToScreens(
       convertDataProviderToScreen(
         leaf,
         answers,
+        externalData,
         isParentNavigable,
         sectionIndex,
         subSectionIndex,
@@ -234,6 +248,7 @@ function convertLeafToScreens(
     convertFieldToScreen(
       leaf,
       answers,
+      externalData,
       isParentNavigable,
       sectionIndex,
       subSectionIndex,
@@ -244,6 +259,7 @@ function convertLeafToScreens(
 function convertFormNodeToScreens(
   formNode: FormNode,
   answers: FormValue,
+  externalData: ExternalData,
   form: Form,
   isParentNavigable: boolean,
   sectionIndex: number,
@@ -254,6 +270,7 @@ function convertFormNodeToScreens(
     return convertLeafToScreens(
       formNode as FormLeaf,
       answers,
+      externalData,
       isParentNavigable,
       sectionIndex,
       subSectionIndex,
@@ -277,8 +294,9 @@ function convertFormNodeToScreens(
       newScreens = convertFormNodeToScreens(
         child,
         answers,
+        externalData,
         form,
-        isParentNavigable && shouldShowFormItem(child, answers),
+        isParentNavigable && shouldShowFormItem(child, answers, externalData),
         sectionIndex,
         subSectionIndex,
       )
@@ -293,24 +311,34 @@ function convertFormNodeToScreens(
 export function convertFormToScreens(
   form: Form,
   answers: FormValue,
+  externalData: ExternalData,
 ): FormScreen[] {
-  return convertFormNodeToScreens(form, answers, form, true, -1, -1)
+  return convertFormNodeToScreens(
+    form,
+    answers,
+    externalData,
+    form,
+    true,
+    -1,
+    -1,
+  )
 }
 
 export function getNavigableSectionsInForm(
   form: Form,
   answers: FormValue,
+  externalData: ExternalData,
 ): Section[] {
   const sections: Section[] = []
   form.children.forEach((child) => {
     if (
       child.type === FormItemTypes.SECTION &&
-      shouldShowFormItem(child, answers)
+      shouldShowFormItem(child, answers, externalData)
     ) {
       sections.push({
         ...(child as Section),
         children: child.children.filter((sectionChild) =>
-          shouldShowFormItem(sectionChild, answers),
+          shouldShowFormItem(sectionChild, answers, externalData),
         ),
       })
     }

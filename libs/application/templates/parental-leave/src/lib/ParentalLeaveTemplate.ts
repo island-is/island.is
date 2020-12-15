@@ -83,11 +83,33 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 { event: 'REJECT', name: 'Reject', type: 'reject' },
               ],
             },
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+            },
           ],
         },
         on: {
           APPROVE: { target: 'employerApproval' },
-          REJECT: { target: 'draft' },
+          REJECT: { target: 'otherParentRequiresAction' },
+        },
+      },
+      otherParentRequiresAction: {
+        meta: {
+          name: 'Other parent requires action',
+          progress: 0.4,
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+            },
+          ],
         },
       },
       employerApproval: {
@@ -116,26 +138,65 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               id: 'applicant',
-              read: {
-                answers: ['spread', 'periods'],
-                externalData: ['pregnancyStatus', 'parentalLeaves'],
-              },
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
             },
           ],
         },
         on: {
-          APPROVE: { target: 'inReview' },
-          ABORT: { target: 'draft' },
+          APPROVE: { target: 'vinnumalastofnunApproval' },
+          ABORT: { target: 'employerRequiresAction' },
         },
       },
-      inReview: {
+      employerRequiresAction: {
         meta: {
-          name: 'In Review',
+          name: 'Employer requires action',
+          progress: 0.5,
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+            },
+          ],
+        },
+      },
+      vinnumalastofnunApproval: {
+        meta: {
+          name: 'Vinnumálastofnun Approval',
           progress: 0.75,
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+            },
+          ],
         },
         on: {
           APPROVE: { target: 'approved' },
-          REJECT: { target: 'draft' },
+          REJECT: { target: 'vinnumalastofnunRequiresAction' },
+        },
+      },
+      vinnumalastofnunRequiresAction: {
+        meta: {
+          name: 'Vinnumálastofnun requires action',
+          progress: 0.5,
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+            },
+          ],
         },
       },
       approved: {
@@ -144,11 +205,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 1,
         },
         type: 'final' as const,
-      },
-      rejected: {
-        meta: {
-          name: 'Rejected',
-        },
       },
     },
   },

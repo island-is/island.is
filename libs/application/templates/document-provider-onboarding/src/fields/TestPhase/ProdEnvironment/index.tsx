@@ -36,7 +36,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
     setProdEnvironmentErrorError(null)
     const credentials = await registerProvider({
       variables: {
-        input: { nationalId: '2404805659' }, //TODO set real nationalId
+        input: { nationalId: '2404805659', clientName: 'Nafn stofnunar' }, //TODO gögn úr umsókn
       },
     })
 

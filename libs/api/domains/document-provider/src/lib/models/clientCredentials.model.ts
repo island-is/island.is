@@ -2,9 +2,14 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class ClientCredentials {
-  @Field(() => String)
-  clientId!: string
+  constructor(clientId: string, clientSecret: string) {
+    this.clientId = clientId
+    this.clientSecret = clientSecret
+  }
 
   @Field(() => String)
-  clientSecret!: string
+  clientId: string
+
+  @Field(() => String)
+  clientSecret: string
 }
