@@ -1,6 +1,7 @@
 import ClientDTO from '../../models/dtos/client-dto';
 import ClientForm from '../../components/ClientForm';
 import React, { useState } from 'react';
+import axios from 'axios';
 import ClientClaim from './../../components/ClientClaim';
 import { ClientClaimDTO } from './../../models/dtos/client-claim.dto';
 import ClientRedirectUriForm from '../../components/ClientRedirectUriForm';
@@ -11,11 +12,23 @@ import ClientPostLogoutRedirectUriForm from '../../components/ClientPostLogoutRe
 import { useRouter } from 'next/router';
 import StepEnd from './../../components/form/StepEnd';
 import { Steps } from './../../models/utils/Steps';
+import { Client } from './../../models/client.model';
 
 export default function Index() {
   const [step, setStep] = useState(1);
-  const [client, setClient] = useState<ClientDTO>(null);
+  const [client, setClient] = useState<Client>(null);
   const router = useRouter();
+
+  const getClient = async (clientId: string) => {
+    await axios.get(`/api/clients/${clientId}`)
+      .then((response) => {
+        setClient(response.data);
+      })
+      .catch(function (error) {
+        if (error.response) {
+        }
+      });
+  };
 
   const handleNext = () => {
     setStep(step + 1);
@@ -35,8 +48,8 @@ export default function Index() {
 
   const handleClientSaved = (clientSaved: ClientDTO) => {
     if (clientSaved.clientId) {
-      setClient(clientSaved);
       if (clientSaved.clientType === 'spa') {
+        getClient(clientSaved.clientId);
         setStep(2);
       } else {
         setStep(3);

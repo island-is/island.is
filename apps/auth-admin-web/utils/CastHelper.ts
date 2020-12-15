@@ -1,10 +1,7 @@
 import { ClientIdpRestrictions } from '../models/client-idp-restrictions.model';
 
 export class CastHelper {
-  static IdpRestrictionToStringArray(
-    idp: ClientIdpRestrictions[] | undefined
-  ): string[] {
-    console.log(idp);
+  static IdpRestrictionToStringArray(idp?: ClientIdpRestrictions[]): string[] {
     const arr: string[] = [];
     if (!idp) {
       return arr;

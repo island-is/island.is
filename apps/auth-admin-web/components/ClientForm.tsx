@@ -71,7 +71,10 @@ const ClientForm: React.FC<Props> = (props: Props) => {
       res.message = response.request.statusText;
       setResponse(res);
       if (res.statusCode === 201) {
-        props.onNextButtonClick(data);
+        if (props.onNextButtonClick)
+        {
+          props.onNextButtonClick(data);
+        }
       }
     })
     .catch(function (error) {
@@ -97,9 +100,10 @@ const ClientForm: React.FC<Props> = (props: Props) => {
       res.message = response.request.statusText;
       setResponse(res);
       if (res.statusCode === 201) {
-        console.log('handle change');
-        console.log(data);
-        
+        if (props.onNextButtonClick)
+        {
+          props.onNextButtonClick(data);
+        }
       }
     })
     .catch(function (error) {

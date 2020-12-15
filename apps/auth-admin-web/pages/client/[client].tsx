@@ -10,7 +10,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Steps } from '../../models/utils/Steps';
 import { Client } from '../../models/client.model';
-import { CastHelper } from './../../utils/CastHelper';
 
 const Index = () => {
   const { query } = useRouter();
@@ -24,7 +23,6 @@ const Index = () => {
     await axios
       .get(`/api/clients/${clientId}`)
       .then((response) => {
-        console.log('RESPONSE');
         console.log(response);
         console.log(response.data);
         setClient(response.data);
@@ -35,6 +33,10 @@ const Index = () => {
         }
       });
   };
+
+  const changesMade = () => {
+    getClient(clientId as string);
+  }
 
   useEffect(() => {
     async function loadClient() {
@@ -101,15 +103,15 @@ const Index = () => {
       );
     case Steps.ClientRedirectUri: {
       // Set the callback URI .. ALLT
-      const rObj = new ClientRedirectUriDTO();
-      rObj.clientId = client.clientId;
       return (
         <ClientStepNav handleStepChange={handleStepChange}>
         <ClientRedirectUriForm
-          redirectObject={client}
-          uris={CastHelper.IdpRestrictionToStringArray(client.redirectUris)}
+          clientId={client.clientId}
+          defaultUrl={client.clientUri}
+          uris={client.redirectUris?.map(r => r.redirectUri)}
           handleNext={handleNext}
           handleBack={handleBack}
+          handleChanges={changesMade}
         />
         </ClientStepNav>
       );
@@ -119,9 +121,10 @@ const Index = () => {
         <ClientStepNav handleStepChange={handleStepChange}>
         <ClientIdpRestrictionsForm
           clientId={client.clientId}
-          restrictions={CastHelper.IdpRestrictionToStringArray(client.identityProviderRestrictions)}
+          restrictions={client.identityProviderRestrictions?.map(r => r.name)}
           handleNext={handleNext}
           handleBack={handleBack}
+          handleChanges={changesMade}
         />
         </ClientStepNav>
       );
@@ -131,10 +134,11 @@ const Index = () => {
         <ClientStepNav handleStepChange={handleStepChange}>
         <ClientPostLogoutRedirectUriForm
           clientId={client.clientId}
-          defaultUrl={''}
-          uris={null}
+          defaultUrl={client.clientUri}
+          uris={client.postLogoutRedirectUris?.map(p => p.redirectUri)}
           handleNext={handleNext}
           handleBack={handleBack}
+          handleChanges={changesMade}
         />
         </ClientStepNav>
       );

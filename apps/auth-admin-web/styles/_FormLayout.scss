@@ -170,3 +170,17 @@
     font-size: 0.8rem;
   }
 }
+
+.client-step-nav {
+  ul {
+    li {
+      padding: 0;
+      display: inline-block;
+
+      a {
+        font-size: 0.8rem;
+        cursor: pointer;
+      }
+    }
+  }
+}
