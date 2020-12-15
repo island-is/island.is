@@ -1,4 +1,4 @@
-# Generating a new project
+# Generating a New Project
 
 ## Generate a component
 

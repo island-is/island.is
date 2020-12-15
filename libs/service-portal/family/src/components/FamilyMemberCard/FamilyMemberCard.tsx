@@ -69,7 +69,7 @@ export const FamilyMemberCard: FC<Props> = ({
               {formatMessage(familyRelationLabel)}
             </Text>
           )}
-          <Box marginBottom={1}>
+          <Box marginBottom={nationalId ? 1 : 0}>
             <Text variant="h3" as="h3" color="dark400">
               {title}
             </Text>

@@ -14,6 +14,7 @@ export enum ActionType {
   FetchSubjectListFailed = 'fetchSubjectListFailed',
   SetNotificationMenuState = 'setNotificationMenuState',
   SetMobileMenuState = 'setMobileMenuState',
+  SetUserMenuState = 'setUserMenuState',
   SetRoutesFulfilled = 'setRoutesFulfilled',
 }
 
@@ -29,6 +30,10 @@ export type Action =
     }
   | {
       type: ActionType.SetMobileMenuState
+      payload: MenuState
+    }
+  | {
+      type: ActionType.SetUserMenuState
       payload: MenuState
     }
   | {

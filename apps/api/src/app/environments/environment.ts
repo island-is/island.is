@@ -10,7 +10,7 @@ export default {
     host: 'soffiaprufa.skra.is',
   },
   userProfile: {
-    userProfileServiceBasePath: 'http://localhost:3333',
+    userProfileServiceBasePath: 'http://localhost:3366',
   },
   identityServer: {
     issuer: 'https://identity-server.dev01.devland.is',
@@ -23,5 +23,12 @@ export default {
     clientId: process.env.POSTHOLF_CLIENTID ?? '',
     clientSecret: process.env.POSTHOLF_CLIENT_SECRET ?? '',
     tokenUrl: process.env.POSTHOLF_TOKEN_URL ?? '',
+  },
+  documentProviderService: {
+    basePath:
+      'https://test-documentprovidermanagement-island-is.azurewebsites.net',
+    clientId: process.env.DOCUMENT_PROVIDER_CLIENTID ?? '',
+    clientSecret: process.env.DOCUMENT_PROVIDER_CLIENT_SECRET ?? '',
+    tokenUrl: process.env.DOCUMENT_PROVIDER_TOKEN_URL ?? '',
   },
 }

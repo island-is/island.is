@@ -54,6 +54,7 @@ export const RadioButton = ({
         id={id}
         onChange={onChange}
         value={value}
+        checked={checked}
         {...ariaError}
       />
       <label

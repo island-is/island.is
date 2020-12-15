@@ -55,6 +55,7 @@ export interface ButtonProps {
   type?: NativeButtonProps['type']
   lang?: string
   loading?: boolean
+  nowrap?: boolean
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
@@ -73,6 +74,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       fluid,
       disabled,
       loading,
+      nowrap,
       ...buttonProps
     },
     ref,
@@ -92,6 +94,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
               !circle &&
               !(variant === 'text' && size === 'small'),
             [styles.fluid]: fluid,
+            [styles.nowrap]: nowrap,
             [styles.size.utility]: variant === 'utility',
             [styles.size.textSmall]: variant === 'text' && size === 'small',
             [styles.circleSizes[size]]: circle,

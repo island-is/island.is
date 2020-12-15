@@ -1,0 +1,105 @@
+{
+  "attributes": {
+    "description": "",
+    "kibanaSavedObjectMeta": {
+      "searchSourceJSON": {
+        "filter": [],
+        "indexRefName": "kibanaSavedObjectMeta.searchSourceJSON.index",
+        "query": {
+          "language": "kuery",
+          "query": ""
+        }
+      }
+    },
+    "title": "Articles divided into language sections",
+    "uiStateJSON": {},
+    "version": 1,
+    "visState": {
+      "aggs": [
+        {
+          "enabled": true,
+          "id": 1,
+          "params": {},
+          "schema": "metric",
+          "type": "count"
+        },
+        {
+          "enabled": true,
+          "id": 2,
+          "params": {
+            "filters": [
+              {
+                "input": {
+                  "language": "kuery",
+                  "query": "type: \"webArticle\" AND _index: \"island-is-v*\""
+                },
+                "label": "Icelandic"
+              },
+              {
+                "input": {
+                  "language": "kuery",
+                  "query": "type: \"webArticle\" AND _index: \"island-en-v*\" "
+                },
+                "label": "English"
+              }
+            ]
+          },
+          "schema": "segment",
+          "type": "filters"
+        }
+      ],
+      "params": {
+        "addLegend": true,
+        "addTooltip": true,
+        "dimensions": {
+          "buckets": [
+            {
+              "accessor": 0,
+              "aggType": "filters",
+              "format": {},
+              "params": {}
+            }
+          ],
+          "metric": {
+            "accessor": 1,
+            "aggType": "count",
+            "format": {
+              "id": "number"
+            },
+            "params": {}
+          }
+        },
+        "isDonut": false,
+        "labels": {
+          "last_level": true,
+          "show": true,
+          "truncate": 100,
+          "values": true
+        },
+        "legendPosition": "right",
+        "type": "pie"
+      },
+      "title": "Articles divided into language sections",
+      "type": "pie"
+    }
+  },
+  "id": "24da5120-30ea-11eb-a25b-bdba47296183",
+  "migrationVersion": {
+    "visualization": "7.4.2"
+  },
+  "nestedJsonPaths": [
+    "attributes.kibanaSavedObjectMeta.searchSourceJSON",
+    "attributes.uiStateJSON",
+    "attributes.visState",
+    "attributes.visState.aggs[0].id",
+    "attributes.visState.aggs[1].id"
+  ],
+  "references": [
+    {
+      "id": "b83598d0-34b4-11eb-83e6-db8492ac723e",
+      "name": "kibanaSavedObjectMeta.searchSourceJSON.index",
+      "type": "index-pattern"
+    }
+  ],
+  "type": "visualization"
+}

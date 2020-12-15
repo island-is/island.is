@@ -33,6 +33,7 @@ export const GET_ABOUT_PAGE_NAVIGATION = gql`
   query GetAboutPageNavigation($input: GetAboutPageInput!) {
     getAboutPage(input: $input) {
       title
+      slug
       pageHeader {
         navigationText
         links {
