@@ -2,8 +2,7 @@ import React, { FC } from 'react'
 import cn from 'classnames'
 import { Box } from '@island.is/island-ui/core'
 import * as styles from './LinkButton.treat'
-import { Link, useLocation } from 'react-router-dom'
-import { ServicePortalOutboundLink } from '@island.is/plausible'
+import { Link } from 'react-router-dom'
 
 interface Props {
   onClick?: () => void
@@ -26,13 +25,6 @@ const ButtonContent: FC<Props> = ({ onClick, active, children }) => (
 )
 
 const LinkButton: FC<Props> = (props) => {
-  const { pathname } = useLocation()
-  const trackExternalLinkClick = (destination?: string) => {
-    if (destination) {
-      ServicePortalOutboundLink(pathname, destination)
-    }
-  }
-
   return props.external ? (
     <a
       href={props.url}
@@ -43,13 +35,7 @@ const LinkButton: FC<Props> = (props) => {
       <ButtonContent {...props} />
     </a>
   ) : props.url ? (
-    <Link
-      to={props.url}
-      className={styles.link}
-      onClick={() => {
-        trackExternalLinkClick(props.url)
-      }}
-    >
+    <Link to={props.url} className={styles.link}>
       <ButtonContent {...props} />
     </Link>
   ) : (
