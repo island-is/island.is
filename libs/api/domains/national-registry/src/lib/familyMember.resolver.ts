@@ -1,9 +1,9 @@
 import { UseGuards } from '@nestjs/common'
 import { Resolver, Query } from '@nestjs/graphql'
 
-import { NationalRegistryFamilyMember, NationalRegistryUser } from './models'
+import { NationalRegistryFamilyMember } from './models'
 import { NationalRegistryService } from './nationalRegistry.service'
-import { User, FamilyMember } from './types'
+import { FamilyMember } from './types'
 import {
   IdsAuthGuard,
   ScopesGuard,

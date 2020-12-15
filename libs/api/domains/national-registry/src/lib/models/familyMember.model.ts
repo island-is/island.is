@@ -1,6 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-
-import { FamilyRelation } from '../types/familyRelation.enum'
+import { Gender, MaritalStatus, FamilyRelation } from '../types'
 
 @ObjectType()
 export class NationalRegistryFamilyMember {
@@ -10,11 +9,11 @@ export class NationalRegistryFamilyMember {
   @Field(() => String)
   fullName!: string
 
-  @Field(() => String)
-  gender!: string
+  @Field(() => Gender, { nullable: true })
+  gender?: Gender
 
-  @Field(() => String)
-  maritalStatus!: string
+  @Field(() => MaritalStatus, { nullable: true })
+  maritalStatus?: MaritalStatus
 
   @Field(() => String)
   address!: string
