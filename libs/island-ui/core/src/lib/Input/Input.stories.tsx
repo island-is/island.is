@@ -91,3 +91,11 @@ TextareaRequired.args = {
   textarea: true,
   rows: 4,
 }
+
+export const ResponsiveBackgroundColor = Template.bind({})
+ResponsiveBackgroundColor.args = {
+  label: 'This is the label',
+  placeholder: 'Try to make me smaller!',
+  name: 'Test9',
+  backgroundColor: ['white', 'blue', 'white', 'blue', 'white'],
+}

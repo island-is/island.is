@@ -5,6 +5,10 @@ import { Box } from '../Box/Box'
 import { Tooltip } from '../Tooltip/Tooltip'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconType, Type } from '../IconRC/iconMap'
+import {
+  resolveResponsiveProp,
+  ResponsiveProp,
+} from '../../utils/responsiveProp'
 
 export type InputBackgroundColor = 'white' | 'blue'
 
@@ -49,7 +53,7 @@ export interface InputProps extends InputComponentProps {
   hasError?: boolean
   errorMessage?: string
   tooltip?: string
-  backgroundColor?: InputBackgroundColor
+  backgroundColor?: ResponsiveProp<InputBackgroundColor>
   textarea?: boolean
 }
 
@@ -136,7 +140,14 @@ export const Input = forwardRef(
           alignItems="center"
           className={cn(
             styles.container,
-            styles.containerBackgrounds[backgroundColor],
+            resolveResponsiveProp(
+              backgroundColor,
+              styles.containerBackgroundXs,
+              styles.containerBackgroundSm,
+              styles.containerBackgroundMd,
+              styles.containerBackgroundLg,
+              styles.containerBackgroundXl,
+            ),
             styles.containerSizes[size],
             {
               [styles.hasError]: hasError,
@@ -172,7 +183,14 @@ export const Input = forwardRef(
             <InputComponent
               className={cn(
                 styles.input,
-                styles.inputBackground[backgroundColor],
+                resolveResponsiveProp(
+                  backgroundColor,
+                  styles.inputBackgroundXs,
+                  styles.inputBackgroundSm,
+                  styles.inputBackgroundMd,
+                  styles.inputBackgroundLg,
+                  styles.inputBackgroundXl,
+                ),
                 styles.inputSize[size],
                 {
                   [styles.textarea]: textarea,
