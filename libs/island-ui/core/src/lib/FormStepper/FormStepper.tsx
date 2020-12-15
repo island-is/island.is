@@ -60,11 +60,10 @@ export const FormStepper: FC<{
           [styles.listWithHead]: hasHead,
         })}
       >
-        {sections.map((section, index) => {
-          return (
-            // If a section name is '', don't show it.
-            section.name &&
-            section.name != '' && (
+        {sections
+          .filter((section) => section?.name !== '')
+          .map((section, index) => {
+            return (
               <FormStepperSection
                 theme={theme}
                 key={`${section.name}-${index}`}
@@ -78,8 +77,7 @@ export const FormStepper: FC<{
                 showSubSectionIcon={showSubSectionIcons}
               />
             )
-          )
-        })}
+          })}
       </Box>
     </Box>
   )
