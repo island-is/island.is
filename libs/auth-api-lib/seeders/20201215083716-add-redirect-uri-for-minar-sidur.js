@@ -7,6 +7,10 @@ module.exports = {
         client_id: 'island-is-1',
         redirect_uri: 'https://island.is/minarsidur/signin-oidc',
       },
+      {
+        client_id: 'island-is-1',
+        redirect_uri: 'https://island.is/minarsidur/silent/signin-oidc',
+      },
     ])
   },
 
@@ -15,6 +19,10 @@ module.exports = {
       {
         client_id: 'island-is-1',
         redirect_uri: 'https://island.is/minarsidur/signin-oidc',
+      },
+      {
+        client_id: 'island-is-1',
+        redirect_uri: 'https://island.is/minarsidur/silent/signin-oidc',
       },
     ])
   },
