@@ -23,11 +23,11 @@ export const createAssignTemplate = (
 ): SendMailOptions => {
   const template = {
     from: {
-      name: 'ParentalLeave application',
+      name: 'Fæðingarorlofssjóður',
       address: 'baering@aranja.com',
     },
     replyTo: {
-      name: 'ParentalLeave application',
+      name: 'Fæðingarorlofssjóður',
       address: 'baering@aranja.com',
     },
     to: [
@@ -37,10 +37,17 @@ export const createAssignTemplate = (
       },
     ],
     subject: ``,
+    // TODO: place in translation file
+    // TODO: get client origin from environment to replace http://localhost:4200
     text: dedent(`
-      Hello employer, ${application.applicant} has assigned you as a reviewer of this application.
+      Góðan dag.
       
-      If you were expecting this email, then assign yourself to the application here: http://localhost:4200/applications/assign?token=${token}
+      Umsækjandi með kennitölu ${application.applicant} hefur skráð þig sem atvinnuveitanda í umsókn sinni.
+      
+      Ef þú áttir von á þessum tölvupósti þá getur þú haldið áfram hingað til þess að fara yfir umsóknina: http://localhost:4200/tengjast-umsokn?token=${token}
+
+      Með kveðju.
+      Starfsfólk fæðingarorlofssjóðs
     `),
   }
 

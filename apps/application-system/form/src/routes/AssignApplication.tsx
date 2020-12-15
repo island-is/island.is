@@ -5,6 +5,7 @@ import decode from 'jwt-decode'
 import qs from 'qs'
 
 import { Text, Page } from '@island.is/island-ui/core'
+import { NotFound } from '@island.is/application/ui-shell'
 
 import useAuth from '../hooks/useAuth'
 import { SUBMIT_APPLICATION } from 'libs/application/graphql/src'
@@ -67,16 +68,25 @@ export const AssignApplication = () => {
     }
   }, [])
 
+  // TODO: move code from <NotFound /> into a generic <Error/> component
+  // that receives status code as prop and use here as in <NotFound/>
   return (
     <Page>
       {isMissingToken ? (
-        <Text variant="h2">Missing design for when token is missing</Text>
+        <NotFound
+          title="Enginn tóki fannst"
+          subTitle="Ekki er hægt að tengja umsókn án auðkenningartóka"
+        />
       ) : hasInvalidToken ? (
-        <Text variant="h2">Missing design for when token is invalid</Text>
+        <NotFound
+          title="Ógildur tóki"
+          subTitle="Sá tóki sem var lesinn úr slóð er ógildur og tókst því ekki að tengja umsókn"
+        />
       ) : couldNotAssignApplication ? (
-        <Text variant="h2">
-          Missing design for when application could not be assigned
-        </Text>
+        <NotFound
+          title="Ekki tókst að tengjast umsókn"
+          subTitle="Villa koma upp við að tengjast umsókn og hefur hún verið skráð"
+        />
       ) : loading ? (
         <Text variant="default">This should be a loading indicator</Text>
       ) : null}
