@@ -208,7 +208,7 @@ The application shell takes care of initializing and maintaining the libraries a
 
 ### Adding a library to the shell
 
-Libraries are stored in the shell's store and loaded into view, to add a libary to the shell's module list, import and it to the list defined in [modules.ts](../../../apps/service-portal/src/store/modules.ts)
+Libraries are stored in the shell's store and loaded into view, to add a libary to the shell's module list, import and add it to the list defined in [modules.ts](../../../apps/service-portal/src/store/modules.ts)
 
 ```typescript
 // other imports...
