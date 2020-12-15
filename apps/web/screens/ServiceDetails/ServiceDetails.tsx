@@ -9,9 +9,8 @@ import {
   Query,
   QueryGetApiServiceByIdArgs,
   QueryGetNamespaceArgs,
-} from '@island.is/api/schema'
-import { GET_NAMESPACE_QUERY } from '../queries'
-import { GET_API_SERVICE_QUERY } from '../queries/ApiCatalogue'
+} from '@island.is/web/graphql/schema'
+import { GET_NAMESPACE_QUERY, GET_API_SERVICE_QUERY } from '../queries'
 import { SubpageMainContent, ServiceInformation } from '../../components'
 import { useQuery } from '@apollo/client'
 import { SubpageLayout } from '../Layouts/Layouts'
@@ -21,13 +20,12 @@ import { LoadingIcon } from '@island.is/island-ui/core'
 const { publicRuntimeConfig } = getConfig()
 
 interface ServiceDetailsProps {
-  //service: ApiService
   serviceId: string
   strings: GetNamespaceQuery['getNamespace']
 }
 
 const ServiceDetails: Screen<ServiceDetailsProps> = ({
-  /*service,*/ serviceId,
+  serviceId,
   strings,
 }) => {
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
@@ -75,19 +73,17 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
 ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
   const serviceId = String(query.slug)
 
-  const [filterContent] = await Promise.all([
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'ApiCatalogFilter',
-            lang: locale,
-          },
+  const filterContent = await apolloClient
+    .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+      query: GET_NAMESPACE_QUERY,
+      variables: {
+        input: {
+          namespace: 'ApiCatalogFilter',
+          lang: locale,
         },
-      })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
-  ])
+      },
+    })
+    .then((res) => JSON.parse(res.data.getNamespace.fields))
 
   return {
     serviceId: serviceId,
