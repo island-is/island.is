@@ -1,5 +1,4 @@
 import React, { FC, memo, ReactNode } from 'react'
-import { AllSlicesFragment as Slice } from '@island.is/web/graphql/schema'
 import {
   renderSlices,
   defaultRenderComponent,
@@ -8,14 +7,6 @@ import {
 } from '@island.is/island-ui/contentful'
 import { LinkContext, Link } from '@island.is/island-ui/core'
 import { TellUsAStory, ContactUs } from '@island.is/web/components'
-
-const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
-  'SectionWithImage',
-  'TeamList',
-  'ContactUs',
-  'Location',
-  'TellUsAStory',
-]
 
 const renderComponent = (
   slice: SliceType,
@@ -36,19 +27,7 @@ const renderComponent = (
       break
   }
 
-  if (
-    config.skipGrid !== true &&
-    !FULL_WIDTH_SLICE_TYPES.includes(slice.__typename)
-  ) {
-    children
-  }
-
-  if (slice.__typename !== 'Html') {
-    // Wrap with slice id for navigation and linking to specific slice.
-    // Html type is excluded because navigation/linking is handled by
-    // the heading tags in the html.
-    children = <div id={slice.id}>{children}</div>
-  }
+  children = <div id={slice.id}>{children}</div>
 
   return children
 }
