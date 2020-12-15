@@ -1,89 +1,47 @@
 import { Injectable } from '@nestjs/common'
-import { logger } from '@island.is/logging'
-import { ApolloError } from 'apollo-server-express'
-
-import { DocumentProviderClient } from './client/documentProviderClient'
-import { DocumentProviderRepository } from './document-provider.repository'
-import { AudienceAndScope, ClientCredentials, TestResult } from './models'
-
-// eslint-disable-next-line
-const handleError = (error: any) => {
-  logger.error(error)
-  throw new ApolloError('Failed to resolve request', error.response.message)
-}
+import { AudienceAndScope } from './models/audienceAndScope.model'
+import { ClientCredentials } from './models/clientCredentials.model'
+import { TestResult } from './models/testResult.model'
 
 @Injectable()
 export class DocumentProviderService {
-  constructor(
-    private documentProviderRepository: DocumentProviderRepository,
-    private documentProviderClient: DocumentProviderClient,
-  ) {}
-
-  async registerProvider(
-    nationalId: string,
-    clientName: string,
-  ): Promise<ClientCredentials> {
-    const currentProvider = await this.documentProviderRepository.getProvider(
-      nationalId,
-    )
-
-    if (currentProvider !== null) {
-      throw new ApolloError('Provider already exists for this organisation.')
-    }
-
-    const result = await this.documentProviderClient
-      .createClient(nationalId, clientName)
-      .catch(handleError)
-
-    const { providerId } = result
-    await this.documentProviderRepository.saveProvider(nationalId, providerId)
-
-    const credentials = new ClientCredentials(
-      result.clientId,
-      result.clientSecret,
-    )
+  async registerProvider(nationalId: string): Promise<ClientCredentials> {
+    // Return a dummy for now
+    const credentials = new ClientCredentials()
+    credentials.clientId = '5016d8d5cb6ce0758107b9969ea3c301'
+    credentials.clientSecret =
+      '7a557951364a960a608735371db61ed8ed320d6bfc59f52fe37fc08e23dbd8d1'
     return credentials
   }
 
-  async registerEndpoint(
-    nationalId: string,
-    endpoint: string,
-  ): Promise<AudienceAndScope> {
-    const providerId = await this.documentProviderRepository.getProvider(
-      nationalId,
-    )
-
-    if (providerId === null) {
-      throw new ApolloError('No provider exists for this organisation.')
-    }
-
-    const result = await this.documentProviderClient
-      .updateEndpoint(providerId, endpoint)
-      .catch(handleError)
-
-    const audienceAndScope = new AudienceAndScope(result.audience, result.scope)
+  async registerEndpoint(endpoint: string): Promise<AudienceAndScope> {
+    // Return a dummy for now
+    const audienceAndScope = new AudienceAndScope()
+    audienceAndScope.audience =
+      'https://test-skjalaveita-island-is.azurewebsites.net'
+    audienceAndScope.scope =
+      'https://test-skjalaveita-island-is.azurewebsites.net/api/v1/customer/.default'
     return audienceAndScope
   }
 
   async runEndpointTests(
-    nationalId: string,
     recipient: string,
     documentId: string,
   ): Promise<TestResult[]> {
-    const providerId = await this.documentProviderRepository.getProvider(
-      nationalId,
-    )
+    // Return a dummy for now
+    const list: TestResult[] = []
+    const result1 = new TestResult()
+    result1.id = 'getDocumentIndexfromMailbox'
+    result1.isValid = true
+    result1.message = 'Skjal fannst fyrir skráða kennitölu.'
+    list.push(result1)
 
-    if (providerId === null) {
-      throw new ApolloError('No provider exists for this organisation.')
-    }
+    const result2 = new TestResult()
+    result2.id = 'getDocumentFromEndpoint'
+    result2.isValid = false
+    result2.message = 'Ekki tókst að sækja skjal til skjalaveitu.'
+    list.push(result2)
 
-    const results = await this.documentProviderClient
-      .runTests(providerId, recipient, documentId)
-      .catch(handleError)
-
-    return results.map((result) => {
-      return new TestResult(result.id, result.isValid, result.message)
-    })
+    return list
   }
 }
