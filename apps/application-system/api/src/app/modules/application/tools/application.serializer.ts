@@ -3,10 +3,11 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
+  UnauthorizedException,
 } from '@nestjs/common'
 import { classToPlain, plainToClass } from 'class-transformer'
-import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
+import { Observable } from 'rxjs'
 import { Application } from '../application.model'
 import {
   Application as BaseApplication,
@@ -24,11 +25,15 @@ export class ApplicationSerializer
     context: ExecutionContext,
     next: CallHandler,
   ): Observable<Promise<any>> {
-    // code here will be executed before the controller executes
+    let nationalId: string
+    try {
+      nationalId = getNationalIdFromToken(context)
+    } catch (e) {
+      throw new UnauthorizedException('You are not authenticated')
+    }
     return next.handle().pipe(
       map(async (res: Application | Array<Application>) => {
         const isArray = Array.isArray(res)
-        const nationalId = getNationalIdFromToken(context)
         return isArray
           ? Promise.all(
               (res as Application[]).map((item) =>
@@ -40,7 +45,7 @@ export class ApplicationSerializer
     )
   }
 
-  async serialize(model: Application, nationalId = '') {
+  async serialize(model: Application, nationalId: string) {
     const application = model.toJSON() as BaseApplication
     const template = await getApplicationTemplateByTypeId(
       application.typeId as ApplicationTypes,

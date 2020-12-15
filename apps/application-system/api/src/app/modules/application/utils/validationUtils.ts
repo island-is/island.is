@@ -45,8 +45,8 @@ export async function validateApplicationSchema(
 export async function validateIncomingAnswers(
   application: Application,
   newAnswers: FormValue | undefined,
+  nationalId: string,
   isStrict = true,
-  nationalId = '',
 ): Promise<FormValue> {
   if (!newAnswers) {
     return {}
@@ -90,7 +90,7 @@ export async function validateIncomingAnswers(
 export async function validateIncomingExternalDataProviders(
   application: Application,
   providerDto: PopulateExternalDataDto,
-  nationalId = '',
+  nationalId: string,
 ) {
   const { dataProviders } = providerDto
   if (!dataProviders.length) {

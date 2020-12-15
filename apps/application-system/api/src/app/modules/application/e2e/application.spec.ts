@@ -71,6 +71,26 @@ describe('Application system API', () => {
     environment.environment = envBefore
   })
 
+  it('should fail when trying to POST when not logged in', async () => {
+    spy.mockRestore()
+    const failedResponse = await request(app.getHttpServer())
+      .post('/applications')
+      .send({
+        applicant: nationalId,
+        state: 'draft',
+        attachments: {},
+        typeId: 'ExampleForm',
+        assignees: ['123456-1234'],
+        answers: {
+          careerHistoryCompanies: ['government'],
+          dreamJob: 'pilot',
+        },
+      })
+      .expect(401)
+
+    expect(failedResponse.body.message).toBe('You are not authenticated')
+  })
+
   it('should fail when PUT-ing answers on an application which dont comply the dataschema', async () => {
     const server = request(app.getHttpServer())
     const response = await server

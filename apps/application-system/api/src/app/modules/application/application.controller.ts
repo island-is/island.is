@@ -198,14 +198,14 @@ export class ApplicationController {
     existingApplication: Application,
     @Body()
     application: UpdateApplicationDto,
-    @NationalId() nationalId: string | undefined,
+    @NationalId() nationalId: string,
   ): Promise<ApplicationResponseDto> {
     const newAnswers = application.answers as FormValue
     await validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
-      true,
       nationalId,
+      true,
     )
 
     await validateApplicationSchema(
@@ -240,10 +240,12 @@ export class ApplicationController {
     @Body()
     externalDataDto: PopulateExternalDataDto,
     @Req() req: Request,
+    @NationalId() nationalId: string,
   ): Promise<ApplicationResponseDto> {
     await validateIncomingExternalDataProviders(
       existingApplication as BaseApplication,
       externalDataDto,
+      nationalId,
     )
     const templateDataProviders = await getApplicationDataProviders(
       (existingApplication as BaseApplication).typeId,
@@ -288,7 +290,7 @@ export class ApplicationController {
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     existingApplication: Application,
     @Body() updateApplicationStateDto: UpdateApplicationStateDto,
-    @NationalId() nationalId: string | undefined,
+    @NationalId() nationalId: string,
   ): Promise<ApplicationResponseDto> {
     const template = await getApplicationTemplateByTypeId(
       existingApplication.typeId as ApplicationTypes,
@@ -305,8 +307,8 @@ export class ApplicationController {
     const permittedAnswers = await validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
-      false,
       nationalId,
+      false,
     )
 
     await validateApplicationSchema(
