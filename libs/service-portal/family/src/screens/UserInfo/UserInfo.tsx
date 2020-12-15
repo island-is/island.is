@@ -16,6 +16,10 @@ import {
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  natRegGenderMessageDescriptorRecord,
+  natRegMaritalStatusMessageDescriptorRecord,
+} from '../../helpers/localizationHelpers'
 
 const NationalRegistryUserQuery = gql`
   query NationalRegistryUserQuery {
@@ -138,7 +142,13 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.gender || ''
+              : nationalRegistryUser?.gender
+              ? formatMessage(
+                  natRegGenderMessageDescriptorRecord[
+                    nationalRegistryUser.gender
+                  ],
+                )
+              : ''
           }
           loading={loading}
         />
@@ -150,7 +160,13 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.maritalStatus || ''
+              : nationalRegistryUser?.maritalStatus
+              ? formatMessage(
+                  natRegMaritalStatusMessageDescriptorRecord[
+                    nationalRegistryUser?.maritalStatus
+                  ],
+                )
+              : ''
           }
           loading={loading}
         />
