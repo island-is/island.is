@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { ApolloError } from 'apollo-server-express'
-
-import { logger } from '@island.is/logging'
-import { FamilyMember, User } from './types'
+import { FamilyMember, User, BanMarking } from './types'
 import { NationalRegistryApi } from './soap/nationalRegistryApi'
 
 @Injectable()
@@ -25,7 +22,7 @@ export class NationalRegistryService {
     return this.nationalRegistryApi.getBirthPlace(municipalCode)
   }
 
-  getBanMarking(nationalId: User['nationalId']): Promise<string> {
+  getBanMarking(nationalId: User['nationalId']): Promise<BanMarking | null> {
     return this.nationalRegistryApi.getBanMarking(nationalId)
   }
 

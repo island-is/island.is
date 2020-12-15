@@ -1,10 +1,12 @@
 import {
-  ApplicationTemplate,
-  ApplicationTypes,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
+  ApplicationTypes,
+  ApplicationTemplate,
+  Application,
 } from '@island.is/application/core'
+import { assign } from 'xstate'
 import * as z from 'zod'
 
 type Events =
@@ -120,6 +122,15 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         },
       },
       inReview: {
+        entry: assign((context) => {
+          return {
+            ...context,
+            application: {
+              ...context.application,
+              assignees: ['2311637949'],
+            },
+          }
+        }),
         meta: {
           name: 'In Review',
           progress: 0.5,
@@ -208,8 +219,10 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(id: string, state: string): ApplicationRole {
-    if (state === 'inReview') {
+  mapUserToRole(id: string, application: Application): ApplicationRole {
+    //TODO: add this to if statement
+    //&& id === '2311637949'
+    if (application.state === 'inReview') {
       return 'reviewer'
     }
     return 'applicant'

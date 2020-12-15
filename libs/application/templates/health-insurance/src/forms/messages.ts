@@ -106,26 +106,15 @@ export const m = defineMessages({
       'Please edit if not correct. This will update your contact info for all of island.is ',
     description: 'About changing digital island data',
   },
-  childrenDescription: {
-    id: 'hi.application:children.description',
-    defaultMessage:
-      'Are there any children under the age of 18 moving with you?',
-    description: 'To fill in for those with children moving with them.',
-  },
-  statusAdditionalInformation: {
-    id: 'hi.application:status.additionalInformation',
-    defaultMessage: 'Confirmation of studies must be submitted',
-    description: 'Drag and drop for proof of studies',
-  },
   statusAndChildren: {
     id: 'hi.application:statusAndChildrend.section',
-    defaultMessage: 'Status and Children',
-    description: 'Applicant status and children information',
+    defaultMessage: 'Status and children',
+    description: 'Status and children',
   },
   statusDescription: {
     id: 'hi.application:status.description',
     defaultMessage: 'What is you current status?',
-    description: 'The current status',
+    description: 'What is you current status?',
   },
   statusOther: {
     id: 'hi.application:status.other',
@@ -145,8 +134,8 @@ export const m = defineMessages({
   statusPensionerInformation: {
     id: 'hi.application:pensioner.information',
     defaultMessage:
-      'You are reciving old age pension or disability pension from Iceland.',
-    description: 'old age pension or disability pension',
+      'You are receiving old age pension or disability pension from Iceland.',
+    description: 'Receiving old age pension or disability pension',
   },
   statusStudent: {
     id: 'hi.application:status.student',
@@ -159,19 +148,133 @@ export const m = defineMessages({
       'You moved away from Iceland for the purpose of studying abroad and are moving back to Iceland withing six months of the end of studies.',
     description: 'For the people that have studied abroad and are coming back',
   },
+  confirmationOfStudies: {
+    id: 'hi.application:student.confirmationOfStudies',
+    defaultMessage: 'Confirmation of studies must be submitted',
+    description: 'Confirmation of studies must be submitted',
+  },
+  childrenDescription: {
+    id: 'hi.application:children.description',
+    defaultMessage:
+      'Are there any children under the age of 18 moving with you?',
+    description: 'To fill in for those with children moving with them.',
+  },
   yesOptionLabel: {
     id: 'hi.application:option.yes',
     defaultMessage: 'Yes',
-    description: 'yes',
+    description: 'Yes',
   },
   noOptionLabel: {
     id: 'hi.application:option.no',
     defaultMessage: 'No',
-    description: 'no',
+    description: 'No',
   },
-  requiredAnswerError: {
-    id: 'hi.application:required.answer.error',
-    defaultMessage: 'You are required to answer this question!',
-    description: 'You need to answer this question to continue.',
+  fileUploadHeader: {
+    id: 'hi.application:fileUpload.header',
+    defaultMessage: 'Drag documents here to upload',
+    description: 'Drag documents here to upload',
+  },
+  fileUploadDescription: {
+    id: 'hi.application:fileUpload.description',
+    defaultMessage: 'Documents accepted with extension: .pdf, .docx, .rtf',
+    description: 'Documents accepted with extension: .pdf, .docx, .rtf',
+  },
+  fileUploadButton: {
+    id: 'hi.application:fileUpload.button',
+    defaultMessage: 'Select documents to upload',
+    description: 'Select documents to upload',
+  },
+  formerInsuranceSection: {
+    id: 'hi.application:formerInsurance.section',
+    defaultMessage: 'Former insurance',
+    description: 'Former insurance',
+  },
+  formerInsuranceTitle: {
+    id: 'hi.application:formerInsurance.title',
+    defaultMessage: 'Former country of insurance',
+    description: 'Former country of insurance',
+  },
+  formerInsuranceRegistration: {
+    id: 'hi.application:formerInsurance.registration',
+    defaultMessage:
+      'Were you registerd with a national health insurance insitution in your former country  of insurance?',
+    description: 'Former country insurance registration',
+  },
+  formerInsuranceDetails: {
+    id: 'hi.application:formerInsurance.details',
+    defaultMessage:
+      'Please provide the following details regarding your former country of residence.',
+    description: 'Former insurance details',
+  },
+  formerInsuranceEntitlement: {
+    id: 'hi.application:formerInsurance.entitlement',
+    defaultMessage:
+      'Are you entitled to continued insurance in your former country of residence while living in Iceland?',
+    description: 'Former insurance entitlement',
+  },
+  formerInsuranceNoOption: {
+    id: 'hi.application:formerInsurance.noOption',
+    defaultMessage: 'No, only private insurance or no insurance',
+    description: 'No, only private insurance or no insurance',
+  },
+  formerInsuranceCountry: {
+    id: 'hi.application:formerInsurance.country',
+    defaultMessage: 'Country',
+    description: 'Country',
+  },
+  formerPersonalId: {
+    id: 'hi.application:formerInsurance.formerPersonalId',
+    defaultMessage: 'ID number in previous country',
+    description: 'ID number in previous country',
+  },
+  formerInsuranceInstitution: {
+    id: 'hi.application:formerInsurance.instituiton',
+    defaultMessage: 'Name of the health insurance institution',
+    description: 'Name of the health insurance institution',
+  },
+  confirmationSection: {
+    id: 'hi.application:confirmationSection',
+    defaultMessage: 'Confirmation',
+    description: 'Confirmation',
+  },
+  confirmationTitle: {
+    id: 'hi.application:confirmationTitle',
+    defaultMessage: 'Confirm and submit your application',
+    description: 'Confirm and submit your application',
+  },
+  additionalInfo: {
+    id: 'hi.application.hasAdditionalRemarks',
+    defaultMessage: 'Do you have any additional information or remarks?',
+    description: 'Do you have any additional information or remarks?',
+  },
+  additionalRemarks: {
+    id: 'hi.application.additionalRemarks',
+    defaultMessage: 'Remarks or additional information',
+    description: 'Remarks or additional information',
+  },
+  additionalRemarksPlacehokder: {
+    id: 'hi.application.additionalRemarks.placeholder',
+    defaultMessage: 'Enter text here',
+    description: 'Enter text here',
+  },
+  confirmCorrectInfo: {
+    id: 'hi.application:confirmCorrectInfo',
+    defaultMessage: 'I am ensuring that the information is true and correct',
+    description: 'I am ensuring that the information is true and correct',
+  },
+  submitLabel: {
+    id: 'hi.application:submit',
+    defaultMessage: 'Submit',
+    description: 'Submit',
+  },
+  succesfulSubmissionTitle: {
+    id: 'hi.application:successfulSubmission.title',
+    defaultMessage: 'We have received your application',
+    description: 'We have received your application',
+  },
+  succesfulSubmissionMessage: {
+    id: 'hi.application:successfulSubmission.message',
+    defaultMessage: 'We have received your application',
+    description: 'We have received your application',
   },
 })

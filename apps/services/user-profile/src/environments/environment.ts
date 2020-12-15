@@ -1,5 +1,6 @@
 export default {
   production: false,
+  port: 3366,
   email: {
     fromEmail: 'olafur@sendiradid.is',
     fromName: 'Olafur',

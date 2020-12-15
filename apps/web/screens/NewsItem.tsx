@@ -20,7 +20,6 @@ import {
   GET_NAMESPACE_QUERY,
   GET_SINGLE_NEWS_ITEM_QUERY,
 } from '@island.is/web/screens/queries'
-import { CustomNextError } from '@island.is/web/units/errors'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import {
@@ -133,14 +132,14 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
                         />
                       </Box>
                     )}
+                    <Box paddingBottom={4} width="full">
+                      <RichText
+                        body={newsItem.content as SliceType[]}
+                        config={{ defaultPadding: [2, 2, 4] }}
+                      />
+                    </Box>
                   </GridColumn>
                 </GridRow>
-                <Box paddingBottom={4} width="full">
-                  <RichText
-                    body={newsItem.content as SliceType[]}
-                    config={{ defaultPadding: [2, 2, 4] }}
-                  />
-                </Box>
               </Main>
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '4/12', '4/12', '3/12']}>

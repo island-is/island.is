@@ -1,26 +1,10 @@
-import { ForbiddenException, UnauthorizedException } from '@nestjs/common'
+import { ForbiddenException } from '@nestjs/common'
 
-import {
-  CaseState,
-  CaseTransition,
-  UserRole,
-} from '@island.is/judicial-system/types'
-
-interface Agent {
-  role: UserRole
-  userKey: string
-}
+import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 
 interface Rule {
   from: CaseState[]
   to: CaseState
-  agent: Agent
-}
-
-export interface TransitionUpdate {
-  state: CaseState
-  prosecutorId?: string
-  judgeId?: string
 }
 
 const caseStateMachine: Map<CaseTransition, Rule> = new Map([
@@ -29,7 +13,6 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
     {
       from: [CaseState.NEW],
       to: CaseState.DRAFT,
-      agent: { role: UserRole.PROSECUTOR, userKey: 'prosecutorId' },
     },
   ],
   [
@@ -37,7 +20,6 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
     {
       from: [CaseState.DRAFT],
       to: CaseState.SUBMITTED,
-      agent: { role: UserRole.PROSECUTOR, userKey: 'prosecutorId' },
     },
   ],
   [
@@ -45,7 +27,6 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
     {
       from: [CaseState.SUBMITTED],
       to: CaseState.ACCEPTED,
-      agent: { role: UserRole.JUDGE, userKey: 'judgeId' },
     },
   ],
   [
@@ -53,7 +34,6 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
     {
       from: [CaseState.SUBMITTED],
       to: CaseState.REJECTED,
-      agent: { role: UserRole.JUDGE, userKey: 'judgeId' },
     },
   ],
   [
@@ -61,7 +41,6 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
     {
       from: [CaseState.NEW, CaseState.DRAFT],
       to: CaseState.DELETED,
-      agent: { role: UserRole.PROSECUTOR, userKey: 'prosecutorId' },
     },
   ],
 ])
@@ -69,9 +48,7 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
 export const transitionCase = function (
   transition: CaseTransition,
   currentState: CaseState,
-  userId: string,
-  userRole: UserRole,
-): TransitionUpdate {
+): CaseState {
   const rule: Rule = caseStateMachine.get(transition)
 
   if (!rule?.from.includes(currentState)) {
@@ -80,17 +57,5 @@ export const transitionCase = function (
     )
   }
 
-  const agent: Agent = rule.agent
-
-  if (userRole !== agent.role) {
-    throw new UnauthorizedException(
-      `The transition ${transition} cannot be applied by a user with role ${userRole}`,
-    )
-  }
-
-  const update: TransitionUpdate = { state: rule.to }
-
-  update[agent.userKey] = userId
-
-  return update
+  return rule.to
 }

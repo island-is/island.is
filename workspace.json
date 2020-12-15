@@ -1271,6 +1271,7 @@
             "tsConfig": "apps/application-system/form/tsconfig.app.json",
             "assets": [
               "apps/application-system/form/src/favicon.ico",
+              "apps/application-system/form/src/mockServiceWorker.js",
               "apps/application-system/form/src/assets"
             ],
             "styles": ["apps/application-system/form/src/styles.css"],
@@ -2365,11 +2366,11 @@
           "options": {
             "cypressConfig": "apps/gjafakort/web-e2e/cypress.json",
             "tsConfig": "apps/gjafakort/web-e2e/tsconfig.e2e.json",
-            "devServerTarget": "gjafakort/web:serve"
+            "devServerTarget": "gjafakort-web:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "gjafakort/web:serve:production"
+              "devServerTarget": "gjafakort-web:serve:production"
             }
           }
         },
@@ -2988,7 +2989,10 @@
             "main": "apps/judicial-system/web/src/main.tsx",
             "polyfills": "apps/judicial-system/web/src/polyfills.ts",
             "tsConfig": "apps/judicial-system/web/tsconfig.app.json",
-            "assets": ["apps/judicial-system/web/src/favicon.ico"],
+            "assets": [
+              "apps/judicial-system/web/src/favicon.ico",
+              "apps/judicial-system/web/src/mockServiceWorker.js"
+            ],
             "styles": ["apps/judicial-system/web/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/judicial-system/web/webpack.config.js",
@@ -3356,6 +3360,7 @@
             "tsConfig": "apps/service-portal/tsconfig.app.json",
             "assets": [
               "apps/service-portal/src/favicon.ico",
+              "apps/service-portal/src/mockServiceWorker.js",
               "apps/service-portal/src/assets"
             ],
             "scripts": [],
@@ -3556,7 +3561,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/core/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/core/src/{lib,components,helpers,screens}/**/*.{js,ts,tsx}"
           }
         }
       }

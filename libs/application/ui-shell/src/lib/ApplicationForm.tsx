@@ -60,9 +60,7 @@ const ShellWrapper: FC<{
 
   useEffect(() => {
     async function populateForm() {
-      console.log('popluate')
       if (dataSchema === undefined && form === undefined) {
-        console.log('load templates')
         const template = await getApplicationTemplateByTypeId(
           application.typeId,
         )
@@ -77,10 +75,12 @@ const ShellWrapper: FC<{
             const applicationFields = await getApplicationUIFields(
               application.typeId,
             )
-            const role = template.mapUserToRole(
-              nationalRegistryId,
-              application.state,
-            )
+            const role = template.mapUserToRole(nationalRegistryId, application)
+            if (!role) {
+              throw new Error(
+                'Logged in user does not have a role in this application state',
+              )
+            }
             const currentRole = stateInformation.roles.find(
               (r) => r.id === role,
             )

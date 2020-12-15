@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Button, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   LanguageForm,
   LanguageFormData,
@@ -22,6 +22,10 @@ export const LanguageStep: FC<Props> = ({
   userInfo,
 }) => {
   const { formatMessage } = useLocale()
+  const { changeLanguage } = useNamespaces()
+
+  const handleValueChange = (data: LanguageFormData) =>
+    data.language?.value && changeLanguage(data.language.value)
 
   return (
     <>
@@ -42,6 +46,7 @@ export const LanguageStep: FC<Props> = ({
       </Text>
       <LanguageForm
         language={language}
+        onValueChange={handleValueChange}
         renderBackButton={() => (
           <Button variant="ghost" onClick={onClose}>
             {formatMessage({

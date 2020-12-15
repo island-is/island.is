@@ -1,10 +1,11 @@
+import { Application } from './Application'
 import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  ApplicationTypes,
-  Schema,
-} from '@island.is/application/core'
+} from './StateMachine'
+import { ApplicationTypes } from './ApplicationTypes'
+import { Schema } from './Form'
 import { EventObject, MachineConfig } from 'xstate'
 import { MachineOptions, StatesConfig } from 'xstate/lib/types'
 
@@ -25,5 +26,8 @@ export interface ApplicationTemplate<
     states: StatesConfig<TContext, TStateSchema, TEvents> // TODO Extend StatesConfig to completely enforce meta being required attribute
   }
   readonly stateMachineOptions?: Partial<MachineOptions<TContext, TEvents>>
-  mapUserToRole(id: string, state: string): ApplicationRole
+  mapUserToRole(
+    id: string,
+    application: Application,
+  ): ApplicationRole | undefined
 }
