@@ -52,19 +52,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         ],
       },
 
-      // Umsoknir
-      {
-        name: defineMessage({
-          id: 'service.portal:applications',
-          defaultMessage: 'Umsóknir',
-        }),
-        path: ServicePortalPath.ApplicationIntroduction,
-        icon: {
-          type: 'outline',
-          icon: 'fileTrayFull',
-        },
-      },
-
       // Rafraen skjol
       {
         name: defineMessage({
@@ -75,6 +62,19 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           type: 'outline',
           icon: 'reader',
+        },
+      },
+
+      // Umsoknir
+      {
+        name: defineMessage({
+          id: 'service.portal:applications',
+          defaultMessage: 'Umsóknir',
+        }),
+        path: ServicePortalPath.ApplicationIntroduction,
+        icon: {
+          type: 'outline',
+          icon: 'fileTrayFull',
         },
       },
 

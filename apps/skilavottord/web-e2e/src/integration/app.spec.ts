@@ -1,13 +1,10 @@
-import { getGreeting } from '../support/app.po'
-
 describe('skilavottord-web', () => {
-  beforeEach(() => cy.visit('/'))
-
-  it('should display welcome message', () => {
+  it('should show gdpr accept', () => {
     // Custom command example, see `../support/commands.ts` file
-    cy.login('my-email@something.com', 'myPassword')
+    cy.visit('/my-cars')
 
-    // Function helper example, see `../support/app.po.ts` file
-    getGreeting().contains('Welcome to skilavottord-web!')
+    cy.get('input').click()
+
+    cy.contains('Halda áfram').click()
   })
 })
