@@ -1,5 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql'
-import { Gender, MaritalStatus } from '.'
+import { Gender } from './gender.enum'
+import { MaritalStatus } from './maritalStatus.enum'
 
 registerEnumType(MaritalStatus, {
   name: 'MaritalStatus',
