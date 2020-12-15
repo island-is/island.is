@@ -64,7 +64,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   const sn = useNamespace(staticContent)
 
   const onLoadMore = () => {
-    if (data?.getApiCatalogue.pageInfo?.nextCursor == null) {
+    if (data?.getApiCatalogue.pageInfo?.nextCursor === null) {
       return
     }
 
@@ -137,11 +137,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                   {data?.getApiCatalogue?.pageInfo?.nextCursor != null && (
                     <Box display="flex" justifyContent="center">
                       <Button
-                        colorScheme="default"
-                        iconType="filled"
                         onClick={() => onLoadMore()}
-                        size="default"
-                        type="button"
                         variant="ghost"
                       >
                         {!loading ? (
@@ -163,7 +159,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
 }
 
 ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
-  console.log(locale)
   const [mainContent, staticContent, filterContent] = await Promise.all([
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
