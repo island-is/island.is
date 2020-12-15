@@ -26,15 +26,20 @@ export class ApplicationResolver {
   @Query(() => Application, { nullable: true })
   async getApplication(
     @Args('input') input: GetApplicationInput,
+    @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.findOne(input.id)
+    return this.applicationService.findOne(input.id, user.authorization)
   }
 
   @Query(() => [Application], { nullable: true })
   async getApplicationsByType(
     @Args('input') input: GetApplicationsByTypeInput,
+    @CurrentUser() user: User,
   ): Promise<Application[] | null> {
-    return this.applicationService.findAllByType(input.typeId)
+    return this.applicationService.findAllByType(
+      input.typeId,
+      user.authorization,
+    )
   }
 
   @Query(() => [Application], { nullable: true })
@@ -46,7 +51,11 @@ export class ApplicationResolver {
     })
     typeId?: ApplicationResponseDtoTypeIdEnum,
   ): Promise<Application[] | null> {
-    return this.applicationService.findAllByApplicant(user.nationalId, typeId)
+    return this.applicationService.findAllByApplicant(
+      user.nationalId,
+      typeId,
+      user.authorization,
+    )
   }
 
   @Query(() => [Application], { nullable: true })
@@ -58,21 +67,27 @@ export class ApplicationResolver {
     })
     typeId?: ApplicationResponseDtoTypeIdEnum,
   ): Promise<Application[] | null> {
-    return this.applicationService.findAllByAssignee(user.nationalId, typeId)
+    return this.applicationService.findAllByAssignee(
+      user.nationalId,
+      typeId,
+      user.authorization,
+    )
   }
 
   @Mutation(() => Application, { nullable: true })
   async createApplication(
     @Args('input') input: CreateApplicationInput,
+    @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.create(input)
+    return this.applicationService.create(input, user.authorization)
   }
 
   @Mutation(() => Application, { nullable: true })
   async updateApplication(
     @Args('input') input: UpdateApplicationInput,
+    @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.update(input)
+    return this.applicationService.update(input, user.authorization)
   }
 
   @Mutation(() => Application, { nullable: true })
@@ -86,21 +101,24 @@ export class ApplicationResolver {
   @Mutation(() => Application, { nullable: true })
   async addAttachment(
     @Args('input') input: AddAttachmentInput,
+    @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.addAttachment(input)
+    return this.applicationService.addAttachment(input, user.authorization)
   }
 
   @Mutation(() => Application, { nullable: true })
   async deleteAttachment(
     @Args('input') input: DeleteAttachmentInput,
+    @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.deleteAttachment(input)
+    return this.applicationService.deleteAttachment(input, user.authorization)
   }
 
   @Mutation(() => Application, { nullable: true })
   async submitApplication(
     @Args('input') input: SubmitApplicationInput,
+    @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.submitApplication(input)
+    return this.applicationService.submitApplication(input, user.authorization)
   }
 }

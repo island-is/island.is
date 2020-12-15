@@ -4,6 +4,7 @@ import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
+  Application,
 } from '@island.is/application/core'
 import * as z from 'zod'
 
@@ -15,6 +16,10 @@ type Events =
   | { type: 'SUBMIT' }
   | { type: 'ABORT' }
 
+enum Roles {
+  APPLICANT = 'applicant',
+  ASSIGNEE = 'assignee',
+}
 const ExampleSchema = z.object({
   person: z.object({
     age: z.string().refine((x) => {
@@ -56,7 +61,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 0.33,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/ExampleForm').then((module) =>
                   Promise.resolve(module.ExampleForm),
@@ -80,7 +85,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 0.66,
           roles: [
             {
-              id: 'reviewer',
+              id: Roles.ASSIGNEE,
               formLoader: () =>
                 import('../forms/ReviewApplication').then((val) =>
                   Promise.resolve(val.ReviewApplication),
@@ -93,7 +98,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
               read: 'all',
             },
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/PendingReview').then((val) =>
                   Promise.resolve(val.PendingReview),
@@ -113,7 +118,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 1,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/Approved').then((val) =>
                   Promise.resolve(val.Approved),
@@ -129,7 +134,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           name: 'Rejected',
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/Rejected').then((val) =>
                   Promise.resolve(val.Rejected),
@@ -140,11 +145,14 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(id: string, state: string): ApplicationRole {
-    if (state === 'inReview') {
-      return 'reviewer'
+  mapUserToRole(
+    id: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    if (application.state === 'inReview') {
+      return Roles.ASSIGNEE
     }
-    return 'applicant'
+    return Roles.APPLICANT
   },
 }
 

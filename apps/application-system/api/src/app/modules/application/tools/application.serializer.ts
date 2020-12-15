@@ -3,7 +3,6 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-  Inject,
 } from '@nestjs/common'
 import { classToPlain, plainToClass } from 'class-transformer'
 import { Observable } from 'rxjs'
@@ -13,10 +12,10 @@ import {
   Application as BaseApplication,
   ApplicationTemplateHelper,
   ApplicationTypes,
-  ApplicationStateMeta,
 } from '@island.is/application/core'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { ApplicationResponseDto } from '../dto/application.response.dto'
+import { getNationalIdFromToken } from '../utils/tokenUtils'
 
 @Injectable()
 export class ApplicationSerializer
@@ -29,17 +28,19 @@ export class ApplicationSerializer
     return next.handle().pipe(
       map(async (res: Application | Array<Application>) => {
         const isArray = Array.isArray(res)
-
+        const nationalId = getNationalIdFromToken(context)
         return isArray
           ? Promise.all(
-              (res as Application[]).map((item) => this.serialize(item)),
+              (res as Application[]).map((item) =>
+                this.serialize(item, nationalId),
+              ),
             )
-          : this.serialize(res as Application)
+          : this.serialize(res as Application, nationalId)
       }),
     )
   }
 
-  async serialize(model: Application) {
+  async serialize(model: Application, nationalId = '') {
     const application = model.toJSON() as BaseApplication
     const template = await getApplicationTemplateByTypeId(
       application.typeId as ApplicationTypes,
@@ -49,7 +50,7 @@ export class ApplicationSerializer
     const dto = plainToClass(ApplicationResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(
-        application.state === 'inReview' ? 'reviewer' : 'applicant',
+        template.mapUserToRole(nationalId, application) ?? '',
       ),
       name: template.name,
       progress: helper.getApplicationProgress(),

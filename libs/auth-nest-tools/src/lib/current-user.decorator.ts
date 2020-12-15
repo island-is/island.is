@@ -13,3 +13,14 @@ export const CurrentUser = createParamDecorator(
     }
   },
 )
+
+export const CurrentRestUser = createParamDecorator(
+  (data: unknown, context: ExecutionContext): User => {
+    const request = context.switchToHttp().getRequest()
+    const user = request.user
+    return {
+      ...user,
+      authorization: request.headers.authorization,
+    }
+  },
+)

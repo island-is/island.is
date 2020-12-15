@@ -64,6 +64,7 @@ import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
 import { EmailService } from '@island.is/email-service'
+import { NationalId } from './tools/nationalId.decorator'
 
 // @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
 @ApiTags('applications')
@@ -197,11 +198,14 @@ export class ApplicationController {
     existingApplication: Application,
     @Body()
     application: UpdateApplicationDto,
+    @NationalId() nationalId: string | undefined,
   ): Promise<ApplicationResponseDto> {
     const newAnswers = application.answers as FormValue
     await validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
+      true,
+      nationalId,
     )
 
     await validateApplicationSchema(
@@ -284,6 +288,7 @@ export class ApplicationController {
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     existingApplication: Application,
     @Body() updateApplicationStateDto: UpdateApplicationStateDto,
+    @NationalId() nationalId: string | undefined,
   ): Promise<ApplicationResponseDto> {
     const template = await getApplicationTemplateByTypeId(
       existingApplication.typeId as ApplicationTypes,
@@ -301,6 +306,7 @@ export class ApplicationController {
       existingApplication as BaseApplication,
       newAnswers,
       false,
+      nationalId,
     )
 
     await validateApplicationSchema(

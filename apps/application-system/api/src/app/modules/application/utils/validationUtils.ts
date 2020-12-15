@@ -46,6 +46,7 @@ export async function validateIncomingAnswers(
   application: Application,
   newAnswers: FormValue | undefined,
   isStrict = true,
+  nationalId = '',
 ): Promise<FormValue> {
   if (!newAnswers) {
     return {}
@@ -53,8 +54,7 @@ export async function validateIncomingAnswers(
   const template = await getApplicationTemplateByTypeId(application.typeId)
   const helper = new ApplicationTemplateHelper(application, template)
   const writableAnswersAndExternalData = helper.getWritableAnswersAndExternalData(
-    // TODO we really really need the token to get the national id
-    application.state === 'inReview' ? 'reviewer' : 'applicant',
+    template.mapUserToRole(nationalId, application),
   )
   if (writableAnswersAndExternalData === 'all') {
     return newAnswers
@@ -64,7 +64,6 @@ export async function validateIncomingAnswers(
     (!writableAnswersAndExternalData ||
       !writableAnswersAndExternalData?.answers)
   ) {
-    console.log('im going to throw an error here', application.state)
     throw new BadRequestException(
       `Current user is not permitted to update answers in this state: ${application.state}`,
     )
@@ -87,10 +86,11 @@ export async function validateIncomingAnswers(
   }
   return trimmedAnswers
 }
-// TODO
+
 export async function validateIncomingExternalDataProviders(
   application: Application,
   providerDto: PopulateExternalDataDto,
+  nationalId = '',
 ) {
   const { dataProviders } = providerDto
   if (!dataProviders.length) {
@@ -99,8 +99,7 @@ export async function validateIncomingExternalDataProviders(
   const template = await getApplicationTemplateByTypeId(application.typeId)
   const helper = new ApplicationTemplateHelper(application, template)
   const writableAnswersAndExternalData = helper.getWritableAnswersAndExternalData(
-    // TODO we really really need the token to get the national id
-    application.state === 'inReview' ? 'reviewer' : 'applicant',
+    template.mapUserToRole(nationalId, application),
   )
   if (writableAnswersAndExternalData === 'all') {
     return

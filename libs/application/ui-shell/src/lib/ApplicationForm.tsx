@@ -75,10 +75,7 @@ const ShellWrapper: FC<{
             const applicationFields = await getApplicationUIFields(
               application.typeId,
             )
-            const role = template.mapUserToRole(
-              nationalRegistryId,
-              application.state,
-            )
+            const role = template.mapUserToRole(nationalRegistryId, application)
             const currentRole = stateInformation.roles.find(
               (r) => r.id === role,
             )
