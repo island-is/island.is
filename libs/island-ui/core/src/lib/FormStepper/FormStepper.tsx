@@ -60,20 +60,24 @@ export const FormStepper: FC<{
           [styles.listWithHead]: hasHead,
         })}
       >
-        {sections.map((section, index) => (
-          <FormStepperSection
-            theme={theme}
-            key={`${section.name}-${index}`}
-            section={section}
-            subSection={subSection}
-            isActive={index === activeSection}
-            isComplete={index < activeSection}
-            isLastSection={index === sections.length - 1}
-            sectionIndex={index}
-            activeSubSection={activeSubSection}
-            showSubSectionIcon={showSubSectionIcons}
-          />
-        ))}
+        {sections
+          .filter((section) => section?.name !== '')
+          .map((section, index) => {
+            return (
+              <FormStepperSection
+                theme={theme}
+                key={`${section.name}-${index}`}
+                section={section}
+                subSection={subSection}
+                isActive={index === activeSection}
+                isComplete={index < activeSection}
+                isLastSection={index === sections.length - 1}
+                sectionIndex={index}
+                activeSubSection={activeSubSection}
+                showSubSectionIcon={showSubSectionIcons}
+              />
+            )
+          })}
       </Box>
     </Box>
   )

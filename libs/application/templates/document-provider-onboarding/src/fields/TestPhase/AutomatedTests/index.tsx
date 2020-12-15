@@ -41,7 +41,11 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
 
     const results = await runEndpointTests({
       variables: {
-        input: { recipient: '2404805659', documentId: '123456' }, //TODO set real data
+        input: {
+          nationalId: '2404805659',
+          recipient: '2404805659',
+          documentId: '123456',
+        }, //TODO set real data
       },
     })
 
