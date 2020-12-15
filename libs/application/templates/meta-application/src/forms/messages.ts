@@ -119,7 +119,7 @@ export const m = defineMessages({
   },
   paymentRadio: {
     id: 'meta.application:payment.radio',
-    defaultMessage: 'Er greitt fyrir gjald fyrir þjónustuna?',
+    defaultMessage: 'Er greitt gjald fyrir þjónustuna?',
     description: 'Some description',
   },
   paymentTBR: {
@@ -134,7 +134,7 @@ export const m = defineMessages({
   },
   paymentCharge: {
     id: 'meta.application:payment.charge',
-    defaultMessage: 'Má rukka fyrirfram eða við samþykki?',
+    defaultMessage: 'Má rukka fyrir fram eða við samþykki?',
     description: 'Some description',
   },
   yesOptionLabel: {

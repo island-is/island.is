@@ -37,7 +37,6 @@ export const ApplicationForm: Form = buildForm({
             buildTextField({
               id: 'applicant.contact',
               name: m.contact,
-              width: 'half',
             }),
             buildTextField({
               id: 'applicant.email',
@@ -50,6 +49,8 @@ export const ApplicationForm: Form = buildForm({
               name: m.phoneNumber,
               width: 'half',
               variant: 'tel',
+              format: '###-####',
+              placeholder: '000-0000',
             }),
           ],
         }),
@@ -73,7 +74,7 @@ export const ApplicationForm: Form = buildForm({
                   width: 'half',
                 }),
                 buildTextField({
-                  id: 'service.countPerYEar',
+                  id: 'service.countPerYear',
                   name: m.serviceCount,
                   width: 'half',
                   variant: 'number',
@@ -81,6 +82,7 @@ export const ApplicationForm: Form = buildForm({
                 buildRadioField({
                   id: 'service.users',
                   name: m.serviceUsers,
+                  largeButtons: true,
                   options: [
                     { value: 'companies', label: m.companiesOptionLabel },
                     { value: 'individuals', label: m.individualsOptionLabel },
@@ -102,6 +104,8 @@ export const ApplicationForm: Form = buildForm({
                 buildRadioField({
                   id: 'service.digital',
                   name: m.serviceDigital,
+                  largeButtons: true,
+                  width: 'half',
                   options: [
                     { value: 'yes', label: m.yesOptionLabel },
                     { value: 'no', label: m.noOptionLabel },
@@ -110,7 +114,7 @@ export const ApplicationForm: Form = buildForm({
                 buildTextField({
                   id: 'service.link',
                   name: m.serviceLink,
-                  width: 'half',
+                  placeholder: 'https://www.someUrl.is',
                   condition: (formValue: FormValue) => {
                     return (
                       (formValue as { service: { digital: string } })?.service
@@ -130,12 +134,12 @@ export const ApplicationForm: Form = buildForm({
       children: [
         buildRepeater({
           id: 'data',
-          name: 'Hvaða gögn þarf að skila með umsókn?',
+          name: 'Hvaða gögn þurfa að fylgja umsókninni?',
           component: 'DataRepeater',
           children: [
             buildMultiField({
               id: 'data.fields',
-              name: '',
+              name: m.data,
               children: [
                 buildTextField({
                   id: 'name',
@@ -174,6 +178,8 @@ export const ApplicationForm: Form = buildForm({
             buildRadioField({
               id: 'payment.radio',
               name: m.paymentRadio,
+              largeButtons: true,
+              width: 'half',
               options: [
                 { value: 'yes', label: m.yesOptionLabel },
                 { value: 'no', label: m.noOptionLabel },
@@ -192,7 +198,8 @@ export const ApplicationForm: Form = buildForm({
             buildTextField({
               id: 'payment.amount',
               name: m.paymentAmount,
-              variant: 'number',
+              variant: 'currency',
+              placeholder: 'kr.',
               condition: (formValue: FormValue) => {
                 return (
                   (formValue as { payment: { radio: string } })?.payment
@@ -203,9 +210,11 @@ export const ApplicationForm: Form = buildForm({
             buildRadioField({
               id: 'payment.charge',
               name: m.paymentCharge,
+              largeButtons: true,
+              width: 'half',
               options: [
-                { value: 'in advance', label: m.inAdvanceOptionLabel },
-                { value: 'on approval', label: m.onApprovalOptionLabel },
+                { value: 'inAdvance', label: m.inAdvanceOptionLabel },
+                { value: 'onApproval', label: m.onApprovalOptionLabel },
               ],
               condition: (formValue: FormValue) => {
                 return (

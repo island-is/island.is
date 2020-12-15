@@ -113,65 +113,80 @@ const OrganizationField: FC<Props> = ({ error, field, application }) => {
     <>
       <Box paddingTop={2}>
         <GridRow>
-          <GridColumn span={['1/1', '1/1', '1/2']}>
-            <Controller
-              name={id}
-              defaultValue=""
-              render={({ value, onChange }) => {
-                return (
+          <GridColumn span={['1/1', '1/1', '1/1']}>
+            <Box paddingBottom={1}>
+              <Controller
+                name={id}
+                defaultValue={{}}
+                render={({ value, onChange }) => {
+                  return (
+                    <Select
+                      name="organization"
+                      options={organizations}
+                      placeholder={formatText(
+                        m.institution,
+                        application,
+                        formatMessage,
+                      )}
+                      disabled={(props as OrganizationFieldProps).disabled}
+                      value={
+                        organizations.find(
+                          (option) => option.value === value.id,
+                        ) || null
+                      }
+                      onChange={({ label, value, ministry: m }: any) => {
+                        clearErrors(id)
+                        onChange({ id: value, title: label })
+                        console.log({ m })
+                        if (m && m.id) {
+                          setValue('applicant.ministry', {
+                            id: m?.id,
+                            title: m?.title,
+                          })
+                        } else {
+                          setValue('applicant.ministry', {
+                            id: undefined,
+                            title: undefined,
+                          })
+                        }
+                      }}
+                    />
+                  )
+                }}
+              />
+            </Box>
+          </GridColumn>
+          <GridColumn span={['1/1', '1/1', '1/1']}>
+            <Box paddingY={1}>
+              <Controller
+                name="applicant.ministry"
+                defaultValue={{}}
+                render={({ value, onChange }) => (
                   <Select
-                    name="organization"
-                    options={organizations}
+                    name="ministries"
+                    options={ministries}
                     placeholder={formatText(
-                      m.institution,
+                      m.ministry,
                       application,
                       formatMessage,
                     )}
                     disabled={(props as OrganizationFieldProps).disabled}
                     value={
-                      organizations.find(
-                        (option) => option.value === value.id,
-                      ) || null
+                      ministries.find((option) => option.value === value.id) ||
+                      null
                     }
-                    onChange={({ label, value, ministry: m }: any) => {
-                      clearErrors(id)
+                    onChange={({ value, label }: any) => {
+                      clearErrors('applicant.ministry')
                       onChange({ id: value, title: label })
-                      setValue('applicant.ministry', {
-                        id: m.id,
-                        title: m.title,
+                      setValue('applicant.institution', {
+                        id: undefined,
+                        title: undefined,
                       })
                     }}
                   />
-                )
-              }}
-            />
-          </GridColumn>
-          <GridColumn span={['1/1', '1/1', '1/2']}>
-            <Controller
-              name="applicant.ministry"
-              defaultValue=""
-              render={({ value, onChange }) => (
-                <Select
-                  name="ministries"
-                  options={ministries}
-                  placeholder={formatText(
-                    m.ministry,
-                    application,
-                    formatMessage,
-                  )}
-                  disabled={(props as OrganizationFieldProps).disabled}
-                  value={
-                    ministries.find((option) => option.value === value.id) ||
-                    null
-                  }
-                  onChange={({ value, label }: any) => {
-                    clearErrors('applicant.ministry')
-                    onChange({ id: value, title: label })
-                    setValue('applicant.institution', null)
-                  }}
-                />
-              )}
-            />
+                )}
+              />
+            </Box>
           </GridColumn>
         </GridRow>
       </Box>
