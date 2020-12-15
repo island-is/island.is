@@ -15,7 +15,11 @@ import { FormSubmittedStep } from './Steps/FormSubmittedStep'
 import { LanguageStep } from './Steps/LanguageStep'
 import { PhoneStep } from './Steps/PhoneStep'
 import { SubmitFormStep } from './Steps/SubmitFormStep'
-import { plausibleEvent } from '../../../../utils/plausibleEvent'
+import {
+  plausibleCustomEvent,
+  ServicePortalCloseOnBoardingModal,
+  ServicePortalSubmitOnBoardingModal,
+} from '@island.is/plausible'
 import { useLocation } from 'react-use'
 
 export type OnboardingStep =
@@ -55,9 +59,16 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const closeModal = () => {
     setToggleCloseModal(true)
-    plausibleEvent('service-portal Close Onboarding Modal', {
-      location: pathname,
-    })
+    if (pathname) {
+      const event: ServicePortalCloseOnBoardingModal = {
+        eventName: 'Close On Boarding Modal',
+        featureName: 'service-portal',
+        params: {
+          location: pathname,
+        },
+      }
+      plausibleCustomEvent(event)
+    }
   }
 
   const gotoStep = (step: OnboardingStep) => {
@@ -70,9 +81,16 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
     locale: Locale,
   ) => {
     gotoStep('submit-form')
-    plausibleEvent('service-portal Submit On Boarding', {
-      location: pathname,
-    })
+    if (pathname) {
+      const event: ServicePortalSubmitOnBoardingModal = {
+        eventName: 'Submit On Boarding Modal',
+        featureName: 'service-portal',
+        params: {
+          location: pathname,
+        },
+      }
+      plausibleCustomEvent(event)
+    }
 
     try {
       await createUserProfile({

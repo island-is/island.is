@@ -3187,6 +3187,32 @@
         }
       }
     },
+    "plausible": {
+      "root": "libs/plausible",
+      "sourceRoot": "libs/plausible/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/plausible/tsconfig.lib.json",
+              "libs/plausible/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/plausible/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/plausible/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "reference-backend": {
       "root": "apps/reference-backend",
       "sourceRoot": "apps/reference-backend/src",

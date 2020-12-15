@@ -12,7 +12,11 @@ import {
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import { plausibleEvent } from '../../../../utils/plausibleEvent'
+import { useLocation } from 'react-router-dom'
+import {
+  plausibleCustomEvent,
+  ServicePortalOutboundLink,
+} from '@island.is/plausible'
 
 interface Props {
   title: MessageDescriptor
@@ -31,10 +35,6 @@ interface Props {
   figure: string
 }
 
-const trackExternalLinkClick = () => {
-  plausibleEvent('Outbound Link: Click', {})
-}
-
 export const InfoScreen: FC<Props> = ({
   title,
   intro,
@@ -44,7 +44,16 @@ export const InfoScreen: FC<Props> = ({
   figure,
 }) => {
   const { formatMessage } = useLocale()
-
+  const location = useLocation().pathname
+  plausibleCustomevent(ServicePortalOutboundLink({ params: 'bla' }))
+  const trackExternalLinkClick = (destination: string) => {
+    const event: ServicePortalOutboundLink = {
+      featureName: 'service-portal',
+      eventName: 'Outbound Link',
+      params: { location, destination },
+    }
+    plausibleCustomEvent(event)
+  }
   return (
     <>
       <Box marginBottom={[4, 6, 9]}>
@@ -85,7 +94,9 @@ export const InfoScreen: FC<Props> = ({
                 <Box marginTop={[3, 4]}>
                   <ArrowLink
                     href={externalHref}
-                    onClick={trackExternalLinkClick}
+                    onClick={() => {
+                      trackExternalLinkClick(externalHref)
+                    }}
                   >
                     {formatMessage(externalLinkTitle)}
                   </ArrowLink>

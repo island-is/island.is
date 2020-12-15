@@ -2,18 +2,17 @@ import React, { FC } from 'react'
 import cn from 'classnames'
 import { Box } from '@island.is/island-ui/core'
 import * as styles from './LinkButton.treat'
-import { Link } from 'react-router-dom'
-import { plausibleEvent } from '../../../utils/plausibleEvent'
+import { Link, useLocation } from 'react-router-dom'
+import {
+  plausibleCustomEvent,
+  ServicePortalOutboundLink,
+} from '@island.is/plausible'
 
 interface Props {
   onClick?: () => void
   url?: string
   active?: boolean
   external?: boolean
-}
-
-const trackExternalLinkClick = () => {
-  plausibleEvent('Outbound Link: Click', {})
 }
 
 const ButtonContent: FC<Props> = ({ onClick, active, children }) => (
@@ -30,18 +29,36 @@ const ButtonContent: FC<Props> = ({ onClick, active, children }) => (
 )
 
 const LinkButton: FC<Props> = (props) => {
+  const { pathname } = useLocation()
+  const trackExternalLinkClick = (destination?: string) => {
+    if (!destination) {
+      return
+    }
+    const event: ServicePortalOutboundLink = {
+      featureName: 'service-portal',
+      eventName: 'Outbound Link',
+      params: { location: pathname, destination },
+    }
+    plausibleCustomEvent(event)
+  }
+
   return props.external ? (
     <a
       href={props.url}
       className={styles.link}
       target="_blank"
       rel="noopener noreferrer"
-      onClick={trackExternalLinkClick}
     >
       <ButtonContent {...props} />
     </a>
   ) : props.url ? (
-    <Link to={props.url} className={styles.link}>
+    <Link
+      to={props.url}
+      className={styles.link}
+      onClick={() => {
+        trackExternalLinkClick(props.url)
+      }}
+    >
       <ButtonContent {...props} />
     </Link>
   ) : (

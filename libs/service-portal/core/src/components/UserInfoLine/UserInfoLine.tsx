@@ -9,8 +9,11 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import { Link } from 'react-router-dom'
-import { plausibleEvent } from '../../../../utils/plausibleEvent'
+import { Link, useLocation } from 'react-router-dom'
+import {
+  plausibleCustomEvent,
+  ServicePortalOutboundLink,
+} from '@island.is/plausible'
 
 import * as styles from './UserInfoLine.treat'
 
@@ -26,10 +29,6 @@ interface Props {
   }
 }
 
-const trackExternalLinkClick = () => {
-  plausibleEvent('Outbound Link: Click', {})
-}
-
 export const UserInfoLine: FC<Props> = ({
   label,
   content,
@@ -37,6 +36,15 @@ export const UserInfoLine: FC<Props> = ({
   loading,
   editLink,
 }) => {
+  const { pathname } = useLocation()
+  const trackExternalLinkClick = (destination: string) => {
+    const event: ServicePortalOutboundLink = {
+      featureName: 'service-portal',
+      eventName: 'Outbound Link',
+      params: { location: pathname, destination },
+    }
+    plausibleCustomEvent(event)
+  }
   const { formatMessage } = useLocale()
 
   return (
@@ -86,7 +94,9 @@ export const UserInfoLine: FC<Props> = ({
                 <a
                   href={editLink.url}
                   rel="noopener noreferrer"
-                  onClick={trackExternalLinkClick}
+                  onClick={() => {
+                    trackExternalLinkClick(editLink.url)
+                  }}
                   target="_blank"
                 >
                   <Button

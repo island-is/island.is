@@ -27,7 +27,10 @@ import isEqual from 'lodash/isEqual'
 import { ValueType } from 'react-select'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { defineMessage } from 'react-intl'
-import { plausibleEvent } from '../../../../utils/plausibleEvent'
+import {
+  plausibleCustomEvent,
+  DocumentsSearchDocumentsInitialized,
+} from '@island.is/plausible'
 import { useLocation } from 'react-use'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
@@ -89,9 +92,14 @@ const getFilteredDocuments = (
   if (searchQuery) {
     if (!searchInteractionEventSent) {
       const { pathname } = useLocation()
-      plausibleEvent('documents Search Documents Intialized', {
-        location: pathname,
-      })
+      if (pathname) {
+        const event: DocumentsSearchDocumentsInitialized = {
+          featureName: 'documents',
+          eventName: 'Search Documents Initialized',
+          params: { location: pathname },
+        }
+        plausibleCustomEvent(event)
+      }
     }
     return filteredDocuments.filter((x) =>
       x.subject.toLowerCase().includes(searchQuery.toLowerCase()),
