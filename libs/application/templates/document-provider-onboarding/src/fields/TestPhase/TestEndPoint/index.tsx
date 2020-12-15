@@ -38,7 +38,10 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
     if (isValid) {
       const result = await registerEndpoint({
         variables: {
-          input: { endpoint: getValues('endPointObject.endPoint') },
+          input: {
+            nationalId: '2404805659', //TODO: setja gögn úr umsókn
+            endpoint: getValues('endPointObject.endPoint'),
+          },
         },
       })
 
