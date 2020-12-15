@@ -1,7 +1,12 @@
 describe('application-system-form', () => {
-  beforeEach(() => cy.visit('/'))
+  before(() => {
+    cy.server()
+    cy.route('POST', '/api/graphql').as('graphql')
+  })
+  beforeEach(() => cy.visit('/umsoknir/ExampleForm'))
 
   it('should display form title', () => {
-    cy.contains('Atvinnuleysisbætur')
+    cy.wait('@graphql')
+    cy.contains('ExampleForm')
   })
 })
