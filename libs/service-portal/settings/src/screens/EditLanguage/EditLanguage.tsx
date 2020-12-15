@@ -6,7 +6,7 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import { Locale, useLocale, useNamespaces } from '@island.is/localization'
 import {
   ServicePortalModuleComponent,
@@ -23,6 +23,7 @@ import {
   LanguageFormData,
   LanguageFormOption,
 } from '../../components/Forms/LanguageForm'
+import { toast } from 'react-toastify'
 
 export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings')
@@ -64,6 +65,12 @@ export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
         })
       }
       setStatus('success')
+      toast.success(
+        formatMessage({
+          id: 'sp.settings:language-confirmed-success-title',
+          defaultMessage: 'Nýtt tungumál hefur verið vistað',
+        }),
+      )
     } catch (err) {
       setStatus('error')
     }
@@ -122,20 +129,6 @@ export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
       />
       {status !== 'passive' && (
         <Box marginTop={[5, 7, 15]}>
-          {status === 'success' && (
-            <AlertMessage
-              type="success"
-              title={formatMessage({
-                id: 'sp.settings:language-confirmed-success-title',
-                defaultMessage: 'Nýtt tungumál hefur verið vistað',
-              })}
-              message={formatMessage({
-                id: 'sp.settings:language-confirmed-success-subtext',
-                defaultMessage:
-                  'Þú hefur vistað nýtt tungumál hjá Stafrænt Ísland',
-              })}
-            />
-          )}
           {status === 'error' && (
             <AlertMessage
               type="error"
@@ -151,6 +144,9 @@ export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
             />
           )}
         </Box>
+      )}
+      {status === 'success' && (
+        <Redirect to={ServicePortalPath.UserProfileRoot} />
       )}
     </>
   )
