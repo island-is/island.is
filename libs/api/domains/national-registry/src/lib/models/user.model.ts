@@ -1,14 +1,6 @@
-import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
+import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { Gender, MaritalStatus } from '../types'
 import { BanMarking } from './banMarking.model'
-
-registerEnumType(MaritalStatus, {
-  name: 'MaritalStatus',
-})
-
-registerEnumType(Gender, {
-  name: 'Gender',
-})
 
 @ObjectType()
 export class NationalRegistryUser {
