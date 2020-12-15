@@ -4,8 +4,8 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import getConfig from 'next/config'
 import { CustomNextError } from '@island.is/web/units/errors'
 
-import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
 import {
+  GetNamespaceQuery,
   Query,
   QueryGetApiServiceByIdArgs,
   QueryGetNamespaceArgs,
