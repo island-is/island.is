@@ -12,7 +12,14 @@ import {
   Fjolskyldan,
   GetViewFamilyDto,
 } from './dto'
-import { FamilyMember, User, FamilyRelation } from '../types'
+import {
+  FamilyMember,
+  User,
+  FamilyRelation,
+  Gender,
+  MaritalStatus,
+  BanMarking,
+} from '../types'
 
 export class NationalRegistryApi {
   private readonly client: Soap.Client | null
@@ -59,17 +66,22 @@ export class NationalRegistryApi {
     return response.table.diffgram.DocumentElement.Sveitarfelag.Sokn
   }
 
-  public async getBanMarking(nationalId: User['nationalId']): Promise<string> {
+  public async getBanMarking(
+    nationalId: User['nationalId'],
+  ): Promise<BanMarking | null> {
     const response = await this.getViewKennitalaOgBannmerking(nationalId)
 
     if (!response) {
-      return ''
+      return null
     }
 
     const banMarking =
       response.table.diffgram.DocumentElement.KennitalaOgBannmerking
-    const isBanmarked = banMarking.Bannmerking === '1'
-    return isBanmarked ? `Já ${banMarking.Brdagur}` : 'Nei'
+
+    return {
+      banMarked: banMarking.Bannmerking === '1',
+      startDate: banMarking.Brdagur ?? '',
+    }
   }
 
   public async getLegalResidence(
@@ -95,9 +107,9 @@ export class NationalRegistryApi {
     return {
       nationalId,
       fullName: userInfo.Nafn,
-      citizenship: userInfo.Rikisfang === 'IS' ? 'Ísland' : userInfo.Rikisfang,
+      citizenship: userInfo.Rikisfang,
       gender: this.formatGender(userInfo.Kyn),
-      maritalStatus: this.formatMartialStatus(userInfo.Hju, userInfo.Kyn),
+      maritalStatus: this.formatMaritalStatus(userInfo.Hju),
       houseCode: userInfo.LoghHusk,
       municipalCode: userInfo.Faedsvfnr,
     }
@@ -162,52 +174,49 @@ export class NationalRegistryApi {
     )
   }
 
-  private formatMartialStatus(maritalCode: string, genderCode: string): string {
-    const isMale = genderCode === '1'
+  private formatMaritalStatus(maritalCode: string): MaritalStatus {
     switch (maritalCode) {
       case '1':
-        return isMale ? 'Ógiftur' : 'Ógift'
+        return MaritalStatus.UNMARRIED
       case '3':
-        return isMale
-          ? 'Giftur eða staðfest samvist'
-          : 'Gift eða staðfest samvist'
+        return MaritalStatus.MARRIED
       case '4':
-        return isMale ? 'Ekkill' : 'Ekkja'
+        return MaritalStatus.WIDOWED
       case '5':
-        return `Skilin${isMale ? 'n' : ''} að borði og sæng`
+        return MaritalStatus.SEPARATED
       case '6':
-        return `Skilin${isMale ? 'n' : ''} að lögum`
+        return MaritalStatus.DIVORCED
       case '7':
-        return 'Hjón ekki í samvistum'
+        return MaritalStatus.MARRIED_LIVING_SEPARATELY
       case '8':
-        return 'Íslendingur í hjúskap með útlendingi sem nýtur úrlendisréttar og verður því ekki skráður (t.d. varnarliðsmaður eða sendiráðsmaður)'
+        return MaritalStatus.MARRIED_TO_FOREIGN_LAW_PERSON
       case '9':
-        return 'Hjúskaparstaða óupplýst'
+        return MaritalStatus.UNKNOWN
       case '0':
-        return 'Íslendingur með lögheimili erlendis; í hjúskap með útlendingi sem ekki er á skrá'
+        return MaritalStatus.FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON
       case 'L':
-        return 'Íslendingur með lögheimili á Íslandi (t.d. námsmaður eða sendiráðsmaður); í hjúskap með útlendingi sem ekki er á skrá'
+        return MaritalStatus.ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON
       default:
-        return ''
+        return MaritalStatus.UNKNOWN
     }
   }
 
-  private formatGender(genderIndex: string): string {
+  private formatGender(genderIndex: string): Gender {
     switch (genderIndex) {
       case '1':
-        return 'Karl'
+        return Gender.MALE
       case '2':
-        return 'Kona'
+        return Gender.FEMALE
       case '3':
-        return 'Drengur'
+        return Gender.MALE_MINOR
       case '4':
-        return 'Stúlka'
+        return Gender.FEMALE_MINOR
       case '7':
-        return 'Kynsegin'
+        return Gender.TRANSGENDER
       case '8':
-        return 'Kynsegin'
+        return Gender.TRANSGENDER_MINOR
       default:
-        return ''
+        return Gender.UNKNOWN
     }
   }
 
