@@ -3,10 +3,7 @@ import cn from 'classnames'
 import { Box } from '@island.is/island-ui/core'
 import * as styles from './LinkButton.treat'
 import { Link, useLocation } from 'react-router-dom'
-import {
-  plausibleCustomEvent,
-  ServicePortalOutboundLink,
-} from '@island.is/plausible'
+import { ServicePortalOutboundLink } from '@island.is/plausible'
 
 interface Props {
   onClick?: () => void
@@ -31,15 +28,9 @@ const ButtonContent: FC<Props> = ({ onClick, active, children }) => (
 const LinkButton: FC<Props> = (props) => {
   const { pathname } = useLocation()
   const trackExternalLinkClick = (destination?: string) => {
-    if (!destination) {
-      return
+    if (destination) {
+      ServicePortalOutboundLink(pathname, destination)
     }
-    const event: ServicePortalOutboundLink = {
-      featureName: 'service-portal',
-      eventName: 'Outbound Link',
-      params: { location: pathname, destination },
-    }
-    plausibleCustomEvent(event)
   }
 
   return props.external ? (

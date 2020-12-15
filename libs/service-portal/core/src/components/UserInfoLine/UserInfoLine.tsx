@@ -10,10 +10,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import { Link, useLocation } from 'react-router-dom'
-import {
-  plausibleCustomEvent,
-  ServicePortalOutboundLink,
-} from '@island.is/plausible'
+import { ServicePortalOutboundLink } from '@island.is/plausible'
 
 import * as styles from './UserInfoLine.treat'
 
@@ -38,12 +35,7 @@ export const UserInfoLine: FC<Props> = ({
 }) => {
   const { pathname } = useLocation()
   const trackExternalLinkClick = (destination: string) => {
-    const event: ServicePortalOutboundLink = {
-      featureName: 'service-portal',
-      eventName: 'Outbound Link',
-      params: { location: pathname, destination },
-    }
-    plausibleCustomEvent(event)
+    ServicePortalOutboundLink(pathname, destination)
   }
   const { formatMessage } = useLocale()
 

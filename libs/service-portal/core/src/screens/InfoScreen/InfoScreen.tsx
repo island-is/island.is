@@ -13,10 +13,7 @@ import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import { useLocation } from 'react-router-dom'
-import {
-  plausibleCustomEvent,
-  ServicePortalOutboundLink,
-} from '@island.is/plausible'
+import { ServicePortalOutboundLink } from '@island.is/plausible'
 
 interface Props {
   title: MessageDescriptor
@@ -44,15 +41,9 @@ export const InfoScreen: FC<Props> = ({
   figure,
 }) => {
   const { formatMessage } = useLocale()
-  const location = useLocation().pathname
-  plausibleCustomevent(ServicePortalOutboundLink({ params: 'bla' }))
+  const { pathname } = useLocation()
   const trackExternalLinkClick = (destination: string) => {
-    const event: ServicePortalOutboundLink = {
-      featureName: 'service-portal',
-      eventName: 'Outbound Link',
-      params: { location, destination },
-    }
-    plausibleCustomEvent(event)
+    ServicePortalOutboundLink(pathname, destination)
   }
   return (
     <>

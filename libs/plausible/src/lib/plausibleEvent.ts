@@ -1,4 +1,4 @@
-import baseEvent from './events/baseEvent'
+import baseEvent from './baseEvent'
 
 // Fix for TypeScript error: Property 'X' does not exist on type 'Window'
 declare global {
@@ -11,6 +11,6 @@ export const plausibleCustomEvent = (event: baseEvent) => {
   const plausible = window.plausible
   if (plausible) {
     const eventName = `${event.featureName} ${event.eventName}`
-    plausible(eventName, event.params)
+    plausible(eventName, { props: event.params })
   }
 }

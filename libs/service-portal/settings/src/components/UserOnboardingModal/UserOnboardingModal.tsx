@@ -16,7 +16,6 @@ import { LanguageStep } from './Steps/LanguageStep'
 import { PhoneStep } from './Steps/PhoneStep'
 import { SubmitFormStep } from './Steps/SubmitFormStep'
 import {
-  plausibleCustomEvent,
   ServicePortalCloseOnBoardingModal,
   ServicePortalSubmitOnBoardingModal,
 } from '@island.is/plausible'
@@ -60,14 +59,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const closeModal = () => {
     setToggleCloseModal(true)
     if (pathname) {
-      const event: ServicePortalCloseOnBoardingModal = {
-        eventName: 'Close On Boarding Modal',
-        featureName: 'service-portal',
-        params: {
-          location: pathname,
-        },
-      }
-      plausibleCustomEvent(event)
+      ServicePortalCloseOnBoardingModal(pathname)
     }
   }
 
@@ -81,16 +73,6 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
     locale: Locale,
   ) => {
     gotoStep('submit-form')
-    if (pathname) {
-      const event: ServicePortalSubmitOnBoardingModal = {
-        eventName: 'Submit On Boarding Modal',
-        featureName: 'service-portal',
-        params: {
-          location: pathname,
-        },
-      }
-      plausibleCustomEvent(event)
-    }
 
     try {
       await createUserProfile({
@@ -99,6 +81,9 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
         mobilePhoneNumber,
       })
       gotoStep('form-submitted')
+      if (pathname) {
+        ServicePortalSubmitOnBoardingModal(pathname)
+      }
     } catch (err) {
       gotoStep('email-form')
       toast.error(

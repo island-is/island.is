@@ -1,2 +1,1 @@
-export * from './lib/plausibleEvent'
-export * from './lib/events'
+export * from './lib/servicePortalEvents'
