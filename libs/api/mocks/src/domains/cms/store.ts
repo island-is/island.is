@@ -3,6 +3,7 @@ import {
   articleCategory,
   alertBanner as createAlertBanner,
   menu as createMenu,
+  groupedMenu as createGroupedMenu,
   news,
   lifeEvent,
   frontPageSlider,
@@ -10,6 +11,7 @@ import {
   articleGroup,
   articleSubgroup,
   featured,
+  genericPage,
 } from './factories'
 import orderBy from 'lodash/orderBy'
 import { Article } from '../../types'
@@ -43,6 +45,8 @@ export const store = createStore(() => {
 
   const menu = createMenu()
 
+  const groupedMenu = createGroupedMenu()
+
   const alertBanner = createAlertBanner()
 
   const newsList = orderBy(news.list(12), ['date'], ['desc'])
@@ -59,6 +63,8 @@ export const store = createStore(() => {
     }),
   })
 
+  const genericPages = [genericPage({ title: 'Loftbrú', slug: 'loftbru' })]
+
   return {
     homepage,
     frontPageSliders,
@@ -66,7 +72,9 @@ export const store = createStore(() => {
     newsList,
     alertBanner,
     menu,
+    groupedMenu,
     articles,
     articleCategories,
+    genericPages,
   }
 })
