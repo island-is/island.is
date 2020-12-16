@@ -439,8 +439,8 @@ export class CmsContentfulService {
 
   async getSubpageHeader({
     lang,
-    id, 
-  } : GetSubpageHeaderInput): Promise<SubpageHeader> {
+    id,
+  }: GetSubpageHeaderInput): Promise<SubpageHeader> {
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.ISubpageHeaderFields>(lang, {
         ['content_type']: 'subpageHeader',
