@@ -128,10 +128,10 @@ export default function Index() {
     />
     }
     case Step.ClientClaims: {
-      return <ClientClaimForm claim={new ClaimDTO()} handleNext={handleNext} handleBack={handleBack} handleChanges={changesMade}></ClientClaimForm>
+      return <ClientClaimForm clientId={client.clientId} claims={client.claims} handleNext={handleNext} handleBack={handleBack} handleChanges={changesMade}></ClientClaimForm>
     }
     case Step.ClientSecret: {
-      return <ClientSecretForm handleBack={handleBack} handleNext={handleNext} handleChanges={changesMade} />
+      return <ClientSecretForm clientId={client.clientId} handleBack={handleBack} handleNext={handleNext} handleChanges={changesMade} />
     }
     default: {
       return (
