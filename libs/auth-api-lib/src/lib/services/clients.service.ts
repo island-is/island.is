@@ -20,7 +20,7 @@ import { ClientAllowedScopeDTO } from '../entities/dto/client-allowed-scope.dto'
 import { ClientClaimDTO } from '../entities/dto/client-claim.dto'
 import { ClientPostLogoutRedirectUriDTO } from '../entities/dto/client-post-logout-redirect-uri.dto'
 import { ClientSecretDTO } from '../entities/dto/client-secret.dto'
-import SHA256 from 'crypto-js/SHA256'
+import sha256 from 'crypto-js/sha256'
 import Base64 from 'crypto-js/enc-base64'
 
 @Injectable()
@@ -459,7 +459,7 @@ export class ClientsService {
 
   /** Add secret to Client */
   async addClientSecret(clientSecret: ClientSecretDTO): Promise<ClientSecret> {
-    const words = SHA256(clientSecret.value)
+    const words = sha256(clientSecret.value)
     const secret = Base64.stringify(words)
 
     return this.clientSecret.create({
