@@ -15,6 +15,7 @@ import ClientAllowedScopes from '../../components/ClientAllowedScopesForm';
 import ClientSecretForm from '../../components/ClientSecretForm';
 import { ClaimDTO } from '../../models/dtos/claim.dto';
 import ClientClaimForm from '../../components/ClientClaimForm';
+import ClientGrantTypesForm from '../../components/ClientGrantTypesForm';
 
 const Index = () => {
   const { query } = useRouter();
@@ -38,10 +39,7 @@ const Index = () => {
     await axios
       .get(`/api/clients/${clientId}`)
       .then((response) => {
-        console.log(response);
-        console.log(response.data);
         setClient(response.data);
-        console.log(client);
       })
       .catch(function (error) {
         if (error.response) {
@@ -69,19 +67,11 @@ const Index = () => {
     router.back();
   };
 
-  const handleFinished = () => {
-    router.push('/');
-  };
-
   const handleClientSaved = (clientSaved: ClientDTO) => {
     if (clientSaved) {
       getClient(clientSaved.clientId);
       handleNext();
     }
-  };
-
-  const handleClaimSaved = (claim: ClientClaimDTO) => {
-    console.log(claim.clientId);
   };
 
   switch (step) {
@@ -153,8 +143,17 @@ const Index = () => {
       );
     }
     case Step.ClientGrantTypes: {
-      // Grant Types
-      // Authorization code ALLT NEMA SERVICE TO SERVICE - [Client credentials - SERVICE to SERVICE]
+      return (
+        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+          <ClientGrantTypesForm
+            clientId={client.clientId}
+            grantTypes={client.allowedGrantTypes?.map((a) => a.grantType)}
+            handleBack={handleBack}
+            handleChanges={changesMade}
+            handleNext={handleNext}
+          />
+        </ClientStepNav>
+      );
     }
     case Step.ClientAllowedScopes: {
       return (
@@ -170,18 +169,27 @@ const Index = () => {
       );
     }
     case Step.ClientClaims: {
-      // Add Claims - Custom Claims (Vitum ekki alveg) - Setja í BID
-      return <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
-        <ClientClaimForm claim={new ClaimDTO()} handleNext={handleNext} handleBack={handleBack} handleChanges={changesMade}></ClientClaimForm>
-      </ClientStepNav>
+      return (
+        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+          <ClientClaimForm
+            claim={new ClaimDTO()}
+            handleNext={handleNext}
+            handleBack={handleBack}
+            handleChanges={changesMade}
+          ></ClientClaimForm>
+        </ClientStepNav>
+      );
     }
     case Step.ClientSecret: {
-      return (<ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
-        <ClientSecretForm handleBack={handleBack} handleNext={handleNext} handleChanges={changesMade} />
-      </ClientStepNav>)
-      //ClientSecret
-      // EF SPA eða NATIVE þá sýna ekkert
-      // Generate og sýna
+      return (
+        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+          <ClientSecretForm
+            handleBack={handleBack}
+            handleNext={handleNext}
+            handleChanges={changesMade}
+          />
+        </ClientStepNav>
+      );
     }
     default: {
       // TODO: Temp

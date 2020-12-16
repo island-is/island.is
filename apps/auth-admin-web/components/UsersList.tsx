@@ -40,25 +40,16 @@ const UsersList: React.FC = () => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
         res.message = response.request.statusText;
-        console.log(response.data);
-        // setResponse(res);
-        // if (res.statusCode === 201) {
-        //   console.log('handle change');
-        //   console.log(clientObject);
-        //   props.onNextButtonClick(clientObject);
-        // }
         setUsers(response.data);
       })
       .catch(function (error) {
         if (error.response) {
-                  
-          // setResponse(error.response.data);
-          // console.log(error.response.data);
+        // TODO: Set response                
+//          setResponse(error.response.data);
         } else {
           
           // TODO: Handle and show error
         }
-        console.log("Setting not found");
         setShowNotFound(true);
         setUsers([]);
       });
@@ -74,12 +65,10 @@ const UsersList: React.FC = () => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
         res.message = response.request.statusText;
-        console.log(response.data);
       })
       .catch(function (error) {
         if (error.response) {
           // setResponse(error.response.data);
-          // console.log(error.response.data);
         } else {
           // TODO: Handle and show error
         }

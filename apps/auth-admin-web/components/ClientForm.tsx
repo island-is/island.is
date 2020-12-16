@@ -64,7 +64,6 @@ const ClientForm: React.FC<Props> = (props: Props) => {
   
 
   const create = async (data: any) => {
-    console.log("SAVING CLIENT")
     await axios.post('/api/clients', data)
     .then((response) => {
       const res = new APIResponse();
@@ -81,10 +80,6 @@ const ClientForm: React.FC<Props> = (props: Props) => {
     .catch(function (error) {
       if (error.response) {
         setResponse(error.response.data);
-
-        // console.log(error.response.data);
-
-        // console.log(error.response.headers);
       } else {
         // TODO: Handle and show error
       }
@@ -92,10 +87,8 @@ const ClientForm: React.FC<Props> = (props: Props) => {
   }
 
   const edit = async (data: any) => {
-    console.log("EDITING CLIENT");
     const handleObject = {...data};
     delete data.clientId;
-    console.log(data);
     await axios.put(`/api/clients/${props.client.clientId}`, data)
     .then((response) => {
       const res = new APIResponse();
@@ -105,7 +98,6 @@ const ClientForm: React.FC<Props> = (props: Props) => {
       if (res.statusCode === 200) {
         if (props.onNextButtonClick)
         {
-          console.log(handleObject);
           props.onNextButtonClick(handleObject);
         }
       }
@@ -113,10 +105,6 @@ const ClientForm: React.FC<Props> = (props: Props) => {
     .catch(function (error) {
       if (error.response) {
         setResponse(error.response.data);
-
-        // console.log(error.response.data);
-
-        // console.log(error.response.headers);
       } else {
         // TODO: Handle and show error
       }

@@ -9,7 +9,7 @@ import { ClientAllowedScopeDTO } from '../models/dtos/client-allowed-scope.dto';
 
 interface Props {
   clientId: string;
-  scopes?: string[],
+  scopes?: string[];
   handleNext?: () => void;
   handleBack?: () => void;
   handleChanges?: () => void;
@@ -17,7 +17,7 @@ interface Props {
 
 const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
   const { register, handleSubmit, errors, formState } = useForm<
-  ClientAllowedScopeDTO
+    ClientAllowedScopeDTO
   >();
   const { isSubmitting } = formState;
   const [response, setResponse] = useState<APIResponse>(new APIResponse());
@@ -35,7 +35,7 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
         res.message = response.request.statusText;
         setResponse(res);
         if (response.status === 201) {
-          if (props.handleChanges){
+          if (props.handleChanges) {
             props.handleChanges();
           }
         }
@@ -51,14 +51,18 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
 
   const remove = async (scope: string) => {
     await axios
-      .delete(`/api/client-allowed-scope/${props.clientId}/${scope}`)
+      .delete(
+        `/api/client-allowed-scope/${props.clientId}/${encodeURIComponent(
+          scope
+        )}`
+      )
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
         res.message = response.request.statusText;
         setResponse(res);
-        if (res.statusCode === 200){
-           if (props.handleChanges){
+        if (res.statusCode === 200) {
+          if (props.handleChanges) {
             props.handleChanges();
           }
         }
@@ -79,13 +83,15 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
         <div className="client-allowed-scopes__container">
           <h1>Allowed scopes</h1>
           <div className="client-allowed-scopes__container__form">
-          <div className="client-allowed-scopes__help">
-            Allowed scopes for client
-          </div>
+            <div className="client-allowed-scopes__help">
+              Allowed scopes for client
+            </div>
             <form onSubmit={handleSubmit(add)}>
               <div className="client-allowed-scopes__container__fields">
                 <div className="client-allowed-scopes__container__field">
-                  <label className="client-allowed-scopes__label">Scope Name</label>
+                  <label className="client-allowed-scopes__label">
+                    Scope Name
+                  </label>
                   <input
                     type="text"
                     name="scopeName"
@@ -111,12 +117,13 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                 </div>
               </div>
 
-              <div className={`client-allowed-scopes__container__list ${
-                    props.scopes && props.scopes.length > 0  ? 'show' : 'hidden'
-                  }`}>
-              <h3>Active scopes</h3>
+              <div
+                className={`client-allowed-scopes__container__list ${
+                  props.scopes && props.scopes.length > 0 ? 'show' : 'hidden'
+                }`}
+              >
+                <h3>Active scopes</h3>
                 {props.scopes?.map((scope: string) => {
-                  
                   return (
                     <div
                       className="client-allowed-scopes__container__list__item"

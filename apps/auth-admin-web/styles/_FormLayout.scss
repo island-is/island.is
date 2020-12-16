@@ -10,7 +10,8 @@
 .client-allowed-cors-origin,
 .client-allowed-scopes,
 .client-secret,
-.client-claim {
+.client-claim,
+.client-grant-types {
   &__help {
     padding: 0 10px 20px 10px;
   }
