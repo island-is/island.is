@@ -12,6 +12,7 @@ import {
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useRouter } from 'next/router'
 import { RecyclingPartner } from '@island.is/skilavottord-web/types'
+import { BASE_PATH } from 'apps/skilavottord/web/utils/consts'
 
 interface FormProps {
   initialValues?: RecyclingPartner
@@ -39,13 +40,13 @@ const CompanyInfoForm: FC<FormProps> = ({
 
   const onSubmit = (formData: RecyclingPartner) => {
     console.log(formData)
-    router.push(routes.companyInfo.baseRoute).then(() => {
+    router.push(`${BASE_PATH}${routes.companyInfo.baseRoute}`).then(() => {
       toast.success(t.success)
     })
   }
 
   const handleCancel = () => {
-    router.push(routes.companyInfo.baseRoute)
+    router.push(`${BASE_PATH}${routes.companyInfo.baseRoute}`)
   }
 
   return (
