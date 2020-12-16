@@ -25,8 +25,26 @@ export const ServiceInformation = ({
 }: ServiceInformationProps) => {
   const n = useNamespace(strings)
 
-  const showTags = () => {
-    return (
+  return (
+    <Box>
+      <Inline space={1}>
+        <Text variant="h1" as="h1">
+          {service.name}
+        </Text>
+        {service.pricing.length > 0 && (
+          <Box>
+            <Tag variant="white" outlined>
+              {n(`pricing${capitalize(service.pricing[0])}`)}
+            </Tag>
+          </Box>
+        )}
+      </Inline>
+      <Text variant="h3" as="h3" paddingTop="gutter">
+        {`${n('serviceOwner')}: ${service.owner}`}
+      </Text>
+      <Text variant="intro" paddingTop="gutter">
+        {service.description}
+      </Text>
       <Box>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12']} paddingTop="gutter">
@@ -94,30 +112,6 @@ export const ServiceInformation = ({
           </GridColumn>
         </GridRow>
       </Box>
-    )
-  }
-  // Main page
-  return (
-    <Box>
-      <Inline space={1}>
-        <Text variant="h1" as="h1">
-          {service.name}
-        </Text>
-        {service.pricing.length > 0 && (
-          <Box>
-            <Tag variant="white" outlined>
-              {n(`pricing${capitalize(service.pricing[0])}`)}
-            </Tag>
-          </Box>
-        )}
-      </Inline>
-      <Text variant="h3" as="h3" paddingTop="gutter">
-        {`${n('serviceOwner')}: ${service.owner}`}
-      </Text>
-      <Text variant="intro" paddingTop="gutter">
-        {service.description}
-      </Text>
-      {showTags()}
     </Box>
   )
 }
