@@ -469,4 +469,14 @@ export class ClientsService {
       type: clientSecret.type,
     })
   }
+
+  /** Remove a secret from Client */
+  async removeClientSecret(clientSecret: ClientSecretDTO): Promise<number> {
+    return this.clientSecret.destroy({
+      where: {
+        clientId: clientSecret.clientId,
+        value: clientSecret.value,
+      },
+    })
+  }
 }

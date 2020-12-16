@@ -3,7 +3,13 @@ import {
   ClientSecretDTO,
   ClientSecret,
 } from '@island.is/auth-api-lib'
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common'
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Post,
+} from '@nestjs/common'
 import { ApiCreatedResponse, ApiOAuth2, ApiTags } from '@nestjs/swagger'
 
 @ApiOAuth2(['@identityserver.api/read'])
@@ -23,5 +29,16 @@ export class ClientSecretController {
     }
 
     return await this.clientsService.addClientSecret(clientSecret)
+  }
+
+  /** Removes a secret from client */
+  @Delete()
+  @ApiCreatedResponse()
+  async delete(@Body() clientSecret: ClientSecretDTO): Promise<number> {
+    if (!clientSecret) {
+      throw new BadRequestException('Client Secret object is required')
+    }
+
+    return await this.clientsService.removeClientSecret(clientSecret)
   }
 }
