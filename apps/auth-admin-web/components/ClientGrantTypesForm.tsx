@@ -20,35 +20,28 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
   const [grantTypes, setGrantTypes] = useState<GrantType[]>([]);
 
   useEffect(() => {
-      getGrantTypes();
-  }, [])
+    getGrantTypes();
+  }, []);
 
   const getGrantTypes = async () => {
-    // TODO: Fix in service. We don't need paging
     await axios
-    .get(`/api/grants`)
-    .then((response) => {
+      .get(`/api/grants`)
+      .then((response) => {
         console.log(response);
         setGrantTypes(response.data);
-        /*
-      const res = new APIResponse();
-      res.statusCode = response.request.status;
-      res.message = response.request.statusText;
-      setResponse(res);*/
-      
-    })
-    .catch(function (error) {
-      if (error.response) {
-        setResponse(error.response.data);
-      } else {
-        // TODO: Handle and show error
-      }
-    });
-  }
+      })
+      .catch(function (error) {
+        if (error.response) {
+          setResponse(error.response.data);
+        } else {
+          // TODO: Handle and show error
+        }
+      });
+  };
 
   const add = async (grantType: string) => {
     const createObj: ClientGrantTypeDTO = {
-        grantType: grantType,
+      grantType: grantType,
       clientId: props.clientId,
     };
 
@@ -59,7 +52,7 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
         res.statusCode = response.request.status;
         res.message = response.request.statusText;
         setResponse(res);
-        if (props.handleChanges){
+        if (props.handleChanges) {
           props.handleChanges();
         }
       })
@@ -80,7 +73,7 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
         res.statusCode = response.request.status;
         res.message = response.request.statusText;
         setResponse(res);
-        if (props.handleChanges){
+        if (props.handleChanges) {
           props.handleChanges();
         }
       })
@@ -93,7 +86,7 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
       });
   };
 
-  const setValue = (grantType:string, value: boolean) => {
+  const setValue = (grantType: string, value: boolean) => {
     if (value) {
       add(grantType);
     } else {
@@ -114,18 +107,28 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
               Client
             </div>
             <div className="client-grant-types__container__fields">
-            {grantTypes?.map((grantType: GrantType) => {
+              {grantTypes?.map((grantType: GrantType) => {
                 return (
-                    <div className="client-grant-types__container__checkbox__field" key={grantType.name}>
-                    <label className="client-grant-types__label" title={grantType.description}>
-                        {grantType.name}
+                  <div
+                    className="client-grant-types__container__checkbox__field"
+                    key={grantType.name}
+                  >
+                    <label
+                      className="client-grant-types__label"
+                      title={grantType.description}
+                    >
+                      {grantType.name}
                     </label>
                     <input
                       type="checkbox"
                       name={grantType.name}
                       className="client__checkbox"
-                      defaultChecked={props.grantTypes?.includes(grantType.name)}
-                      onChange={(e) => setValue(grantType.name, e.target.checked)}
+                      defaultChecked={props.grantTypes?.includes(
+                        grantType.name
+                      )}
+                      onChange={(e) =>
+                        setValue(grantType.name, e.target.checked)
+                      }
                       title={`Set grant type ${grantType.name} as active og inactive`}
                     />
                     <HelpBox helpText={grantType.description} />
