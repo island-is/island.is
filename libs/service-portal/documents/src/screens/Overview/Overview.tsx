@@ -34,7 +34,6 @@ const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 6
 const defaultStartDate = new Date('2000-01-01')
 const defaultEndDate = startOfTomorrow()
-const { pathname } = useLocation()
 
 // type FuseItem = {
 //   item: Document
@@ -60,47 +59,6 @@ type FilterValues = {
   searchQuery: string
 }
 
-const getFilteredDocuments = (
-  documents: Document[],
-  filterValues: FilterValues,
-): Document[] => {
-  const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
-  let searchInteractionEventSent = false
-  let filteredDocuments = documents.filter((document) =>
-    isWithinInterval(new Date(document.date), {
-      start: dateFrom || defaultStartDate,
-      end: dateTo || defaultEndDate,
-    }),
-  )
-
-  if (activeCategory.value) {
-    filteredDocuments = filteredDocuments.filter(
-      (document) => document.senderNatReg === activeCategory.value,
-    )
-  }
-
-  // if (searchQuery) {
-  //   const fuse = new Fuse(filteredDocuments, defaultSearchOptions)
-  //   return fuse.search(searchQuery).map((elem) => {
-  //     // const fuseItem = (elem as unknown) as FuseItem
-  //     // return fuseItem.item
-  //     return elem.item
-  //   })
-  // }
-  if (searchQuery) {
-    if (!searchInteractionEventSent) {
-      if (pathname) {
-        DocumentsSearchDocumentsInitialized(pathname)
-      }
-    }
-    return filteredDocuments.filter((x) =>
-      x.subject.toLowerCase().includes(searchQuery.toLowerCase()),
-    )
-  }
-
-  return filteredDocuments
-}
-
 export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
 }) => {
@@ -108,6 +66,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
   const { scrollToRef } = useScrollToRefOnUpdate([page])
+  const { pathname } = useLocation()
 
   const [filterValue, setFilterValue] = useState<FilterValues>(
     defaultFilterValues,
@@ -115,6 +74,49 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const { data, loading, error } = useListDocuments(userInfo.profile.nationalId)
 
   const categories = [defaultCategory, ...data.categories]
+
+  const getFilteredDocuments = (
+    documents: Document[],
+    filterValues: FilterValues,
+  ): Document[] => {
+    const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
+    let searchInteractionEventSent = false
+    let filteredDocuments = documents.filter((document) =>
+      isWithinInterval(new Date(document.date), {
+        start: dateFrom || defaultStartDate,
+        end: dateTo || defaultEndDate,
+      }),
+    )
+
+    if (activeCategory.value) {
+      filteredDocuments = filteredDocuments.filter(
+        (document) => document.senderNatReg === activeCategory.value,
+      )
+    }
+
+    // if (searchQuery) {
+    //   const fuse = new Fuse(filteredDocuments, defaultSearchOptions)
+    //   return fuse.search(searchQuery).map((elem) => {
+    //     // const fuseItem = (elem as unknown) as FuseItem
+    //     // return fuseItem.item
+    //     return elem.item
+    //   })
+    // }
+    if (searchQuery) {
+      if (!searchInteractionEventSent) {
+        if (pathname) {
+          DocumentsSearchDocumentsInitialized(pathname)
+          searchInteractionEventSent = true
+        }
+      }
+      return filteredDocuments.filter((x) =>
+        x.subject.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    }
+
+    return filteredDocuments
+  }
+
   const filteredDocuments = getFilteredDocuments(data.documents, filterValue)
   const pagedDocuments = {
     from: (page - 1) * pageSize,
