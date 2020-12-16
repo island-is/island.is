@@ -31,42 +31,33 @@ export const TestPhase: Form = buildForm({
       id: 'testAccountSection',
       name: m.testEnviromentSection,
       children: [
-        buildCustomField(
-          {
-            id: 'testUserExists',
-            name: m.testEnviromentTitle,
-            component: 'TestEnvironment',
-          },
-          {},
-        ),
+        buildCustomField({
+          id: 'testUserExists',
+          name: m.testEnviromentTitle,
+          component: 'TestEnvironment',
+        }),
       ],
     }),
     buildSection({
       id: 'testEndPointSection',
       name: m.testEndPointSection,
       children: [
-        buildCustomField(
-          {
-            id: 'endPointObject',
-            name: m.testEndPointTitle,
-            component: 'TestEndPoint',
-          },
-          {},
-        ),
+        buildCustomField({
+          id: 'endPointObject',
+          name: m.testEndPointTitle,
+          component: 'TestEndPoint',
+        }),
       ],
     }),
     buildSection({
       id: 'technicalImplementation',
       name: m.testTechnicalImplementationSection,
       children: [
-        buildCustomField(
-          {
-            id: 'technicalAnswer',
-            name: m.testTechnicalImplementationTitle,
-            component: 'TechnicalImplementation',
-          },
-          {},
-        ),
+        buildCustomField({
+          id: 'technicalAnswer',
+          name: m.testTechnicalImplementationTitle,
+          component: 'TechnicalImplementation',
+        }),
       ],
     }),
 
@@ -74,14 +65,11 @@ export const TestPhase: Form = buildForm({
       id: 'testSection',
       name: m.automatedTestsSection,
       children: [
-        buildCustomField(
-          {
-            id: 'test',
-            name: m.automatedTestsTitle,
-            component: 'AutomatedTests',
-          },
-          {},
-        ),
+        buildCustomField({
+          id: 'test',
+          name: m.automatedTestsTitle,
+          component: 'AutomatedTests',
+        }),
       ],
     }),
     buildSection({
@@ -93,14 +81,11 @@ export const TestPhase: Form = buildForm({
           name: m.prodEnviromentTitle,
           description: m.prodEnviromentsubTitle,
           children: [
-            buildCustomField(
-              {
-                id: 'productionUserExists',
-                name: 'Aðgangur að raun',
-                component: 'ProdEnvironment',
-              },
-              {},
-            ),
+            buildCustomField({
+              id: 'productionUserExists',
+              name: 'Aðgangur að raun',
+              component: 'ProdEnvironment',
+            }),
           ],
         }),
       ],
@@ -113,14 +98,11 @@ export const TestPhase: Form = buildForm({
           id: 'prodEndPointSection',
           name: m.prodEndPointSection,
           children: [
-            buildCustomField(
-              {
-                id: 'endPoint',
-                name: m.prodEndPointTitle,
-                component: 'ProdEndPoint',
-              },
-              {},
-            ),
+            buildCustomField({
+              id: 'endPoint',
+              name: m.prodEndPointTitle,
+              component: 'ProdEndPoint',
+            }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',

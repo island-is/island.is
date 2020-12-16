@@ -34,6 +34,11 @@ export const m = defineMessages({
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nibh metus, ornare sed neque id, efficitur mollis mauris. Proin eget metus cursus, eleifend sapien ut, consectetur ex. Sed vel ante ac magna pretium scelerisque faucibus sodales diam. Donec id leo posuere, tincidunt erat quis, venenatis purus. Ut sollicitudin mauris vitae ipsum mattis, vel iaculis ante pellentesque. Nam sed facilisis sapien. Proin facilisis porta blandit. Nunc ac dictum nisl, sit amet varius tortor. Suspendisse a lacinia lacus, non lobortis purus. Nullam eget nisi vitae augue iaculis euismod. Nulla rhoncus est vitae mi condimentum, nec convallis diam ullamcorper. Mun koma ur messages ? Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nibh metus, ornare sed neque id, efficitur mollis mauris. Proin eget metus cursus, eleifend sapien ut, consectetur ex. Sed vel ante ac magna pretium scelerisque faucibus sodales diam. Donec id leo posuere, tincidunt erat quis, venenatis purus. Ut sollicitudin mauris vitae ipsum mattis, vel iaculis ante pellentesque. Nam sed facilisis sapien. Proin facilisis porta blandit. Nunc ac dictum nisl, sit amet varius tortor. Suspendisse a lacinia lacus, non lobortis purus. Nullam eget nisi vitae augue iaculis euismod. Nulla rhoncus est vitae mi condimentum, nec convallis diam ullamcorper. Mun koma ur messages ? Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nibh metus, ornare sed neque id, efficitur mollis mauris. Proin eget metus cursus, eleifend sapien ut, consectetur ex. Sed vel ante ac magna pretium scelerisque faucibus sodales diam. Donec id leo posuere, tincidunt erat quis, venenatis purus. Ut sollicitudin mauris vitae ipsum mattis, vel iaculis ante pellentesque. Nam sed facilisis sapien. Proin facilisis porta blandit. Nunc ac dictum nisl, sit amet varius tortor. Suspendisse a lacinia lacus, non lobortis purus. Nullam eget nisi vitae augue iaculis euismod. Nulla rhoncus est vitae mi condimentum, nec convallis diam ullamcorper.',
     description: 'Some description',
   },
+  termsUserAgreementRequiredMessage: {
+    id: 'dpo.application:terms.userAgreementRequiredMessage',
+    defaultMessage: 'Þú verður að samþykkja notandaskilmála',
+    description: 'Some description',
+  },
   termsSafetyAgreementTitle: {
     id: 'dpo.application:terms.safetyAgreementLabel',
     defaultMessage: 'Öryggisskilmálar',
@@ -43,6 +48,11 @@ export const m = defineMessages({
     id: 'dpo.application:terms.safetyAgreementLabel',
     defaultMessage:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nibh metus, ornare sed neque id, efficitur mollis mauris. Proin eget metus cursus, eleifend sapien ut, consectetur ex. Sed vel ante ac magna pretium scelerisque faucibus sodales diam. Donec id leo posuere, tincidunt erat quis, venenatis purus. Ut sollicitudin mauris vitae ipsum mattis, vel iaculis ante pellentesque. Nam sed facilisis sapien. Proin facilisis porta blandit. Nunc ac dictum nisl, sit amet varius tortor. Suspendisse a lacinia lacus, non lobortis purus. Nullam eget nisi vitae augue iaculis euismod. Nulla rhoncus est vitae mi condimentum, nec convallis diam ullamcorper.',
+    description: 'Some description',
+  },
+  termsSafetyAgreementRequiredMessage: {
+    id: 'dpo.application:terms.safetyAgreementLabel',
+    defaultMessage: 'Þú verður að samþykkja öryggisskilmála',
     description: 'Some description',
   },
   userAgreementOptionLabel: {
