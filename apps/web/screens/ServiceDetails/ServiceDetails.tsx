@@ -40,9 +40,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   return (
     <SubpageLayout
       main={
-        <SidebarLayout
-          sidebarContent={<>Navigation menu will be displayed here</>}
-        >
+        <SidebarLayout sidebarContent={<></>}>
           <SubpageMainContent
             main={
               !service ? (
@@ -58,7 +56,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
           />
         </SidebarLayout>
       }
-      details={<>The open API document will be displayed here</>}
+      details={<></>}
     />
   )
 }
