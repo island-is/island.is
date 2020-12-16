@@ -106,11 +106,6 @@ export const DetentionRequests: React.FC = () => {
     }
   }, [cases, isJudge, resCases, setCases])
 
-  useEffect(() => {
-    if (requestToRemoveIndex) {
-    }
-  }, [requestToRemoveIndex])
-
   const mapCaseStateToTagVariant = (
     state: CaseState,
   ): { color: TagVariant; text: string } => {
@@ -161,7 +156,6 @@ export const DetentionRequests: React.FC = () => {
   }
 
   const deleteCase = async (caseToDelete: Case) => {
-    console.log(caseToDelete)
     if (
       caseToDelete.state === CaseState.NEW ||
       caseToDelete.state === CaseState.DRAFT
@@ -175,7 +169,6 @@ export const DetentionRequests: React.FC = () => {
         const { data } = await transitionCaseMutation({
           variables: { input: { id: caseToDelete.id, ...transitionRequest } },
         })
-
         if (!data) {
           return
         }
@@ -300,6 +293,7 @@ export const DetentionRequests: React.FC = () => {
                     Gæsla rennur út
                   </Text>
                 </th>
+                <th></th>
                 {!isJudge && <th></th>}
               </tr>
             </thead>
@@ -321,21 +315,19 @@ export const DetentionRequests: React.FC = () => {
                   <td className={styles.td}>
                     <Text as="span">{c.policeCaseNumber || '-'}</Text>
                   </td>
-                  <td className={styles.td}>
+                  <td className={cn(styles.td, 'flexDirectionCol')}>
                     <Text>{c.accusedName || '-'}</Text>
                     <Text>
                       {c.accusedNationalId && (
-                        <Box marginLeft={1} component="span">
-                          <Text as="span" variant="small" color="dark400">
-                            {`(${
-                              insertAt(
-                                c.accusedNationalId.replace('-', ''),
-                                '-',
-                                6,
-                              ) || '-'
-                            })`}
-                          </Text>
-                        </Box>
+                        <Text as="span" variant="small" color="dark400">
+                          {`(${
+                            insertAt(
+                              c.accusedNationalId.replace('-', ''),
+                              '-',
+                              6,
+                            ) || '-'
+                          })`}
+                        </Text>
                       )}
                     </Text>
                   </td>
@@ -367,14 +359,17 @@ export const DetentionRequests: React.FC = () => {
                         : null}
                     </Text>
                   </td>
-                  {!isJudge &&
-                    (c.state === CaseState.DRAFT ||
-                      c.state === CaseState.NEW) && (
-                      <td className={styles.td}>
+                  <td className={cn(styles.td, 'secondLast')}>
+                    {!isJudge &&
+                      (c.state === CaseState.DRAFT ||
+                        c.state === CaseState.NEW) && (
                         <Box
-                          display="flex"
                           component="button"
                           aria-label="Viltu eyða drögum?"
+                          className={cn(
+                            styles.deleteButton,
+                            'js-focus-visible',
+                          )}
                           onClick={(evt) => {
                             evt.stopPropagation()
                             setRequestToRemoveIndex(
@@ -384,8 +379,8 @@ export const DetentionRequests: React.FC = () => {
                         >
                           <Icon icon="close" color="blue400" />
                         </Box>
-                      </td>
-                    )}
+                      )}
+                  </td>
                   <td
                     className={cn(
                       styles.deleteButtonContainer,
@@ -395,7 +390,8 @@ export const DetentionRequests: React.FC = () => {
                     <Button
                       colorScheme="destructive"
                       size="small"
-                      onClick={() => {
+                      onClick={(evt) => {
+                        evt.stopPropagation()
                         deleteCase(cases[i])
                       }}
                     >

@@ -1,7 +1,11 @@
 import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
 import { DetentionRequests } from './DetentionRequests'
-import { CaseState } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseTransition,
+  TransitionCase,
+} from '@island.is/judicial-system/types'
 import { MemoryRouter, Route } from 'react-router-dom'
 import { mockJudgeQuery, mockProsecutorQuery } from '../../../utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
@@ -21,6 +25,7 @@ const mockCasesQuery = [
         cases: [
           {
             id: 'test_id_1',
+            modified: '2020-09-16T19:51:39.466Z',
             created: '2020-09-16T19:50:08.033Z',
             state: CaseState.DRAFT,
             policeCaseNumber: 'string',
@@ -31,6 +36,7 @@ const mockCasesQuery = [
           {
             id: 'test_id_2',
             created: '2020-12-16T19:50:08.033Z',
+            modified: '2020-09-16T19:51:39.466Z',
             state: CaseState.DRAFT,
             policeCaseNumber: 'string',
             accusedNationalId: 'string',
@@ -40,6 +46,7 @@ const mockCasesQuery = [
           {
             id: 'test_id_3',
             created: '2020-05-16T19:50:08.033Z',
+            modified: '2020-09-16T19:51:39.466Z',
             state: CaseState.ACCEPTED,
             policeCaseNumber: '008-2020-X',
             accusedNationalId: '012345-6789',
@@ -49,6 +56,7 @@ const mockCasesQuery = [
           {
             id: 'test_id_4',
             created: '2020-08-16T19:50:08.033Z',
+            modified: '2020-09-16T19:51:39.466Z',
             state: CaseState.NEW,
             policeCaseNumber: '008-2020-X',
             accusedNationalId: '012345-6789',
@@ -58,6 +66,7 @@ const mockCasesQuery = [
           {
             id: 'test_id_5',
             created: '2020-08-16T19:50:08.033Z',
+            modified: '2020-09-16T19:51:39.466Z',
             state: CaseState.DELETED,
             policeCaseNumber: '008-2020-X',
             accusedNationalId: '012345-6789',
@@ -71,7 +80,7 @@ const mockCasesQuery = [
 ]
 
 describe('Detention requests route', () => {
-  test('should list all cases that do not have status NEW in a list if you are a judge', async () => {
+  test('should list all cases that do not have status NEW or DELETED in a list if you are a judge', async () => {
     render(
       <MockedProvider
         mocks={[...mockCasesQuery, ...mockJudgeQuery]}
@@ -93,11 +102,7 @@ describe('Detention requests route', () => {
       await waitFor(
         () => screen.getAllByTestId('detention-requests-table-row').length,
       ),
-    ).toEqual(
-      mockCasesQuery[0].result.data.cases.filter((dr) => {
-        return dr.state !== CaseState.NEW
-      }).length,
-    )
+    ).toEqual(3)
   })
 
   test('should display the judge logo if you are a judge', async () => {
@@ -266,7 +271,7 @@ describe('Detention requests route', () => {
       await waitFor(
         () => screen.getAllByTestId('detention-requests-table-row').length,
       ),
-    ).toEqual(mockCasesQuery[0].result.data.cases.length)
+    ).toEqual(4)
   })
 
   test('should display custody end date if case has ACCEPTED status', async () => {

@@ -32,7 +32,6 @@ export const detentionRequestsError = style({
 })
 
 export const thead = style({
-  display: 'flex',
   background: theme.color.blue100,
   boxShadow: `inset 0px -1px 0px ${theme.color.blue200}`,
 })
@@ -62,6 +61,7 @@ export const thButton = style({
 export const tableRowContainer = style({
   display: 'flex',
   flex: 1,
+  alignItems: 'center',
   minWidth: '100%',
   borderBottom: `1px solid ${theme.color.blue200}`,
   cursor: 'pointer',
@@ -84,12 +84,52 @@ export const th = style({
   display: 'flex',
   flex: 1,
   padding: '12px 24px',
+  width: 'auto',
 })
 
 export const td = style({
   display: 'flex',
   flex: 1,
   padding: theme.spacing[3],
+  width: 'auto',
+
+  selectors: {
+    ['&.secondLast']: {
+      flex: 0,
+      justifyContent: 'flex-end',
+      marginLeft: 'auto',
+      height: '100%',
+      padding: 0,
+    },
+    ['&.flexDirectionCol']: {
+      flexDirection: 'column',
+    },
+  },
+})
+
+export const deleteButton = style({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: '100px',
+  height: '100px',
+  borderRadius: theme.border.radius.large,
+  outline: 'none',
+
+  selectors: {
+    '&:focus': {
+      boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
+    },
+    '&:hover': {
+      backgroundColor: theme.color.transparent,
+      boxShadow: `inset 0 0 0 2px ${theme.color.blueberry400}`,
+      color: theme.color.blueberry400,
+    },
+    '&:focus:active': {
+      backgroundColor: theme.color.transparent,
+      boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
+    },
+  },
 })
 
 export const deleteButtonText = style({
