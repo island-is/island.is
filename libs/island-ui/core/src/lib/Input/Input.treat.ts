@@ -1,12 +1,14 @@
 import { style, styleMap } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { Theme, theme, themeUtils } from '@island.is/island-ui/theme'
 import * as mixins from './Input.mixins'
+import omit from 'lodash/omit'
+import mapValues from 'lodash/mapValues'
 
 export const containerDisabled = style({})
 export const noLabel = style({})
 
 export const container = style({
-  ...mixins.container,
+  ...omit(mixins.container, 'backgroundColor'),
   boxSizing: 'border-box',
   selectors: {
     [`&:hover:not(${containerDisabled})`]: mixins.containerHover,
@@ -15,15 +17,6 @@ export const container = style({
 })
 
 export const containerSizes = styleMap(mixins.containerSizes)
-
-export const containerBackgrounds = styleMap({
-  white: {
-    backgroundColor: theme.color.white,
-  },
-  blue: {
-    backgroundColor: theme.color.blue100,
-  },
-})
 
 export const input = style({
   ...mixins.input,
@@ -39,23 +32,32 @@ export const input = style({
 
 export const inputSize = styleMap(mixins.inputSizes)
 
+const backgroundColorRules = {
+  white: theme.color.white,
+  blue: theme.color.blue100,
+}
+
 // To handle styling auto-fill states
-export const inputBackground = styleMap({
-  white: {
-    selectors: {
-      '&:-webkit-autofill, &:-webkit-autofill:focus, &:-webkit-autofill:hover': {
-        boxShadow: `0 0 0px 1000px ${theme.color.white} inset`,
-      },
-    },
-  },
-  blue: {
-    selectors: {
-      '&:-webkit-autofill, &:-webkit-autofill:focus, &:-webkit-autofill:hover': {
-        boxShadow: `0 0 0px 1000px ${theme.color.blue100} inset`,
-      },
-    },
-  },
-})
+const makeInputBackground = (breakpoint: keyof Theme['breakpoints']) =>
+  styleMap(
+    mapValues(backgroundColorRules, (color) =>
+      themeUtils.responsiveStyle({
+        [breakpoint]: {
+          selectors: {
+            '&:-webkit-autofill, &:-webkit-autofill:focus, &:-webkit-autofill:hover': {
+              boxShadow: `0 0 0px 1000px ${color} inset`,
+            },
+          },
+        },
+      }),
+    ),
+  )
+
+export const inputBackgroundXs = makeInputBackground('xs')
+export const inputBackgroundSm = makeInputBackground('sm')
+export const inputBackgroundMd = makeInputBackground('md')
+export const inputBackgroundLg = makeInputBackground('lg')
+export const inputBackgroundXl = makeInputBackground('xl')
 
 export const textarea = style({
   ...mixins.textarea,
