@@ -3,22 +3,25 @@ import { ClientClaimDTO } from '../models/dtos/client-claim.dto';
 
 interface Props {
     claim: ClientClaimDTO,
-    handleSaved?: (claim: ClientClaimDTO) => void
+    handleNext?: () => void;
+    handleBack?: () => void;
+    handleChanges?: () => void
 }
 
-const ClientClaim: React.FC<Props> = (props: Props) =>
+const ClientClaimForm: React.FC<Props> = (props: Props) =>
 {
-    const save = () => {
-        const temp = new ClientClaimDTO();
-        temp.clientId = props.claim.clientId;
-        props.handleSaved(temp);
+  const save = (data: any) => {
+    if (props.handleChanges) {
+      props.handleChanges();
     }
+  }
+    
     return (
         <div className="client-claim">
           {/* <StatusBar status={response}></StatusBar> */}
           <div className="client-claim__wrapper">
             <div className="client-claim__container">
-              <h1>Select authentication types</h1>
+              <h1>Add claims for the Client</h1>
               <div className="client-claim__help">
                 Select claims for this client
               </div>
@@ -33,6 +36,7 @@ const ClientClaim: React.FC<Props> = (props: Props) =>
                     <button
                       type="button"
                       className="client-claim__button__cancel"
+                      onClick={props.handleBack}
                     >
                       Back
                     </button>
@@ -41,6 +45,7 @@ const ClientClaim: React.FC<Props> = (props: Props) =>
                     <button
                       type="button"
                       className="client-claim__button__save"
+                      onClick={props.handleNext}
                       value="Next"
                     >Next</button>
                   </div>
@@ -51,4 +56,4 @@ const ClientClaim: React.FC<Props> = (props: Props) =>
         </div>
       );
 }
-export default ClientClaim;
+export default ClientClaimForm;

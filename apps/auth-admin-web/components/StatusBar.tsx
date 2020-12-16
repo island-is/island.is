@@ -3,17 +3,17 @@ import APIResponse from '../models/common/APIResponse';
 
 class StatusBar extends Component<{ status: APIResponse | null }> {
   getMessage = () => {
-    if (typeof this.props.status.message === 'string') {
-      return <span>{this.props.status.message}</span>;
-    } else {
-      return this.props.status.message.map((item, i) => <span>{item}</span>);
+    if (this.props.status && this.props.status.message){
+      if (typeof this.props.status.message === 'string') {
+        return <span>{this.props.status.message}</span>;
+      } else {
+        return this.props.status.message.map((item, i) => <span>{item}</span>);
+      }
     }
   };
 
   render() {
-    console.log("statusbar");
-    console.log(this.props.status);
-    if (!this.props.status) {
+    if (!this.props.status || !this.props.status.statusCode ) {
       return '';
     }
 
