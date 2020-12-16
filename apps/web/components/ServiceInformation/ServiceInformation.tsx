@@ -25,12 +25,13 @@ export const ServiceInformation = ({
 }: ServiceInformationProps) => {
   const n = useNamespace(strings)
 
-  const showDesktopTags = () => {
+  const showTags = () => {
     return (
       <Box>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12']} paddingTop="gutter">
             <Box
+              paddingBottom="gutter"
               borderBottomWidth="standard"
               borderStyle="solid"
               borderColor="blue200"
@@ -51,6 +52,7 @@ export const ServiceInformation = ({
           </GridColumn>
           <GridColumn span={['6/12', '6/12', '3/12']} paddingTop="gutter">
             <Box
+              paddingBottom="gutter"
               borderBottomWidth="standard"
               borderStyle="solid"
               borderColor="blue200"
@@ -71,6 +73,7 @@ export const ServiceInformation = ({
           </GridColumn>
           <GridColumn span={['6/12', '6/12', '3/12']} paddingTop="gutter">
             <Box
+              paddingBottom="gutter"
               borderBottomWidth="standard"
               borderStyle="solid"
               borderColor="blue200"
@@ -99,6 +102,9 @@ export const ServiceInformation = ({
       <Text variant="h1" as="h1">
         {service.name}
       </Text>
+      <Text variant="h3" as="h3" paddingTop="gutter">
+        {`${n('serviceOwner')}: ${service.owner}`}
+      </Text>
       {service.pricing.length > 0 && (
         <Box>
           <Tag variant="white" outlined>
@@ -109,13 +115,7 @@ export const ServiceInformation = ({
       <Text variant="intro" paddingTop="gutter">
         {service.description}
       </Text>
-      <Text variant="h3" as="h3" paddingTop="gutter">
-        {n('serviceOwner')}
-      </Text>
-      <Text variant="intro" paddingTop="gutter">
-        {service.owner}
-      </Text>
-      {showDesktopTags()}
+      {showTags()}
     </Box>
   )
 }
