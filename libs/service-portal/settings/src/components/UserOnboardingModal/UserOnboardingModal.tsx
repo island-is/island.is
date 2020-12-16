@@ -48,6 +48,9 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   // On close side effects
   const dropOnboardingSideEffects = () => {
     toast.info('Notendaupplýsingum er hægt að breyta í stillingum')
+    if (pathname) {
+      servicePortalCloseOnBoardingModal(pathname)
+    }
   }
 
   // Handles a close event directly in the onboarding component
@@ -58,9 +61,6 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const closeModal = () => {
     setToggleCloseModal(true)
-    if (pathname) {
-      servicePortalCloseOnBoardingModal(pathname)
-    }
   }
 
   const gotoStep = (step: OnboardingStep) => {

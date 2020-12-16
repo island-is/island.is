@@ -67,6 +67,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const [page, setPage] = useState(1)
   const { scrollToRef } = useScrollToRefOnUpdate([page])
   const { pathname } = useLocation()
+  let searchInteractionEventSent = false
 
   const [filterValue, setFilterValue] = useState<FilterValues>(
     defaultFilterValues,
@@ -80,7 +81,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     filterValues: FilterValues,
   ): Document[] => {
     const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
-    let searchInteractionEventSent = false
     let filteredDocuments = documents.filter((document) =>
       isWithinInterval(new Date(document.date), {
         start: dateFrom || defaultStartDate,
@@ -103,12 +103,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     //   })
     // }
     if (searchQuery) {
-      if (!searchInteractionEventSent) {
-        if (pathname) {
-          documentsSearchDocumentsInitialized(pathname)
-          searchInteractionEventSent = true
-        }
-      }
       return filteredDocuments.filter((x) =>
         x.subject.toLowerCase().includes(searchQuery.toLowerCase()),
       )
@@ -155,6 +149,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const handleSearchChange = useCallback((value: string) => {
     setPage(1)
     setFilterValue({ ...defaultFilterValues, searchQuery: value })
+    if (!searchInteractionEventSent && pathname) {
+      documentsSearchDocumentsInitialized(pathname)
+      searchInteractionEventSent = true
+    }
   }, [])
 
   const handleClearFilters = useCallback(() => {
