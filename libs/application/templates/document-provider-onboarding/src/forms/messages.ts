@@ -530,9 +530,19 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala móttakanda',
     description: '',
   },
+  automatedTestsNationalIdPlaceholder: {
+    id: 'dpo.application:automatedTests.nationalIdPlaceholder',
+    defaultMessage: 'Skráðu inn kennitölu',
+    description: '',
+  },
   automatedTestsDocIdLabel: {
     id: 'dpo.application:automatedTests.docIdLabel',
     defaultMessage: 'Id skjals',
+    description: '',
+  },
+  automatedTestsDocIdPlaceholder: {
+    id: 'dpo.application:automatedTests.docIdPlaceholder',
+    defaultMessage: 'Skráðu inn Id skjals',
     description: '',
   },
   automatedTestsNationalIdErrorMessage: {
