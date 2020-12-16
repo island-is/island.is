@@ -38,6 +38,7 @@ export const Hyphen = ({
   const text = useMemo(() => hypenateText(children, { minRight, minLeft }), [
     minRight,
     minLeft,
+    children,
   ])
   return <>{ReactHtmlParser(text)}</>
 }
