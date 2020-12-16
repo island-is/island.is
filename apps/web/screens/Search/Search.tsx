@@ -29,7 +29,7 @@ import {
   GET_SEARCH_RESULTS_QUERY_DETAILED,
   GET_SEARCH_COUNT_QUERY,
 } from '../queries'
-import { CategoryLayout } from '../Layouts/Layouts'
+import { SidebarLayout } from '../Layouts/SidebarLayout'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -251,8 +251,8 @@ const Search: Screen<CategoryProps> = ({
       <Head>
         <title>{n('searchResults', 'Leitarniðurstöður')} | Ísland.is</title>
       </Head>
-      <CategoryLayout
-        sidebar={
+      <SidebarLayout
+        sidebarContent={
           <Stack space={3}>
             {!!sidebarDataTags.length && (
               <Sidebar title={n('sidebarHeader')}>
@@ -312,51 +312,6 @@ const Search: Screen<CategoryProps> = ({
                   ))}
                 </Stack>
               </Sidebar>
-            )}
-          </Stack>
-        }
-        belowContent={
-          <Stack space={2}>
-            {filteredItems.map(
-              ({ image, thumbnail, labels, ...rest }, index) => {
-                const tags: Array<CardTagsProps> = []
-
-                labels.forEach((label) => {
-                  tags.push({
-                    title: label,
-                    tagProps: {
-                      outlined: true,
-                    },
-                  })
-                })
-
-                return (
-                  <Card
-                    key={index}
-                    tags={tags}
-                    image={thumbnail ? thumbnail : image}
-                    {...rest}
-                  />
-                )
-              },
-            )}
-            {totalSearchResults > 0 && (
-              <Box paddingTop={8}>
-                <Pagination
-                  page={page}
-                  totalPages={totalPages}
-                  renderLink={(page, className, children) => (
-                    <Link
-                      href={{
-                        pathname: pathNames(activeLocale, 'search')?.as,
-                        query: { ...Router.query, page },
-                      }}
-                    >
-                      <span className={className}>{children}</span>
-                    </Link>
-                  )}
-                />
-              </Box>
             )}
           </Stack>
         }
@@ -424,7 +379,48 @@ const Search: Screen<CategoryProps> = ({
             </Text>
           )}
         </Stack>
-      </CategoryLayout>
+        <Stack space={2}>
+          {filteredItems.map(({ image, thumbnail, labels, ...rest }, index) => {
+            const tags: Array<CardTagsProps> = []
+
+            labels.forEach((label) => {
+              tags.push({
+                title: label,
+                tagProps: {
+                  outlined: true,
+                },
+              })
+            })
+
+            return (
+              <Card
+                key={index}
+                tags={tags}
+                image={thumbnail ? thumbnail : image}
+                {...rest}
+              />
+            )
+          })}{' '}
+          {totalSearchResults > 0 && (
+            <Box paddingTop={8}>
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                renderLink={(page, className, children) => (
+                  <Link
+                    href={{
+                      pathname: pathNames(activeLocale, 'search')?.as,
+                      query: { ...Router.query, page },
+                    }}
+                  >
+                    <span className={className}>{children}</span>
+                  </Link>
+                )}
+              />
+            </Box>
+          )}
+        </Stack>
+      </SidebarLayout>
     </>
   )
 }
