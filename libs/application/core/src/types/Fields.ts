@@ -1,5 +1,4 @@
 import { Colors } from '@island.is/island-ui/theme'
-import { Option as SelectOption } from '@island.is/island-ui/core'
 import { ApolloClient } from '@apollo/client'
 import { FormText, FormItem } from './Form'
 import { Condition } from './Condition'
@@ -12,6 +11,11 @@ export interface Option {
   label: FormText
   tooltip?: FormText
   excludeOthers?: boolean
+}
+
+interface SelectOption {
+  label: string
+  value: string | number
 }
 
 export type MaybeWithApplication<T> = T | ((a: Application) => T)

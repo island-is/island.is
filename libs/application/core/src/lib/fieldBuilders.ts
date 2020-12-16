@@ -21,9 +21,13 @@ import {
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
 import { FormText } from '../types/Form'
-import { Option as SelectOption } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
 import { FormatInputValueFunction } from 'react-number-format'
+
+interface SelectOption {
+  label: string
+  value: string | number
+}
 
 export function buildCheckboxField(data: {
   condition?: Condition

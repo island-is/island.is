@@ -22,7 +22,7 @@ export const SelectController: FC<Props> = ({
   label,
   options = [],
   placeholder,
-  onSelect
+  onSelect,
 }) => {
   const { clearErrors } = useFormContext()
   return (
