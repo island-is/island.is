@@ -10,7 +10,11 @@ Box is the primary layout component. See all the available props below.
 
 <Canvas>
   <Story name="Default">
-    <Box background="blue200" paddingY={1} paddingX={1}>
+    <Box
+      background={['blue100', 'red200', 'blue100', 'red200']}
+      paddingY={1}
+      paddingX={1}
+    >
       A nice box.
     </Box>
   </Story>

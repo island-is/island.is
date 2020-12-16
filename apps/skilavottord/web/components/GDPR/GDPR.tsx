@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
+import gql from 'graphql-tag'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import {
@@ -13,9 +14,17 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { CREATE_GDPR_INFO } from '@island.is/skilavottord-web/graphql/mutations'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { PageLayout, InlineError } from '@island.is/skilavottord-web/components'
+
+const skilavottordGdprMutation = gql`
+  mutation skilavottordGdprMutation(
+    $gdprStatus: String!
+    $nationalId: String!
+  ) {
+    createSkilavottordGdpr(gdprStatus: $gdprStatus, nationalId: $nationalId)
+  }
+`
 
 export interface GdprMutation {
   gdprStatus: string
@@ -40,7 +49,7 @@ export const GDPR = () => {
   }, [width])
 
   const [setGDPRInfo, { error: mutationError }] = useMutation<GdprMutation>(
-    CREATE_GDPR_INFO,
+    skilavottordGdprMutation,
     {
       onCompleted() {
         router.reload()

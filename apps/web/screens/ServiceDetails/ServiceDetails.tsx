@@ -4,27 +4,92 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import getConfig from 'next/config'
 import { CustomNextError } from '@island.is/web/units/errors'
 
+import {
+  GetNamespaceQuery,
+  Query,
+  QueryGetApiServiceByIdArgs,
+  QueryGetNamespaceArgs,
+  ApiService,
+} from '@island.is/web/graphql/schema'
+import { GET_NAMESPACE_QUERY, GET_API_SERVICE_QUERY } from '../queries'
+import { SubpageMainContent, ServiceInformation } from '../../components'
+import { SubpageLayout } from '../Layouts/Layouts'
+import SidebarLayout from '../Layouts/SidebarLayout'
+import { Box, Text } from '@island.is/island-ui/core'
+import { useNamespace } from '../../hooks'
+
 const { publicRuntimeConfig } = getConfig()
 
-/* TEMPORARY LAYOUT CREATED TO SCAFFOLD SERVICE DETAILS INTO THE WEB */
-
 interface ServiceDetailsProps {
-  title: string
+  strings: GetNamespaceQuery['getNamespace']
+  service: ApiService
 }
 
-const ServiceDetails: Screen<ServiceDetailsProps> = ({ title }) => {
+const ServiceDetails: Screen<ServiceDetailsProps> = ({
+  strings,
+  service = null,
+}) => {
+  const n = useNamespace(strings)
+
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
 
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
   }
 
-  return <h1>{title}</h1>
+  return (
+    <SubpageLayout
+      main={
+        <SidebarLayout sidebarContent={<></>}>
+          <SubpageMainContent
+            main={
+              !service ? (
+                <Box>
+                  <Text variant="h3" as="h3">
+                    {n('serviceNotFound')}
+                  </Text>
+                </Box>
+              ) : (
+                <ServiceInformation strings={strings} service={service} />
+              )
+            }
+          />
+        </SidebarLayout>
+      }
+      details={<></>}
+    />
+  )
 }
 
 ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
+  const serviceId = String(query.slug)
+
+  const [filterContent, { data }] = await Promise.all([
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'ApiCatalogFilter',
+            lang: locale,
+          },
+        },
+      })
+      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+    apolloClient.query<Query, QueryGetApiServiceByIdArgs>({
+      query: GET_API_SERVICE_QUERY,
+      variables: {
+        input: {
+          id: serviceId,
+        },
+      },
+    }),
+  ])
+
   return {
-    title: 'Vefþjónusta - nánari lýsing',
+    serviceId: serviceId,
+    strings: filterContent,
+    service: data?.getApiServiceById,
   }
 }
 

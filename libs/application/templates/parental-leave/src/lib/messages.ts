@@ -126,7 +126,7 @@ export const m = defineMessages({
     description: 'End of period',
   },
   personalAllowanceUsedAmount: {
-    id: 'pl.application.personal.allowance.used.amount',
+    id: 'pl.application:personal.allowance.used.amount',
     defaultMessage: 'Nýttur persónuafsláttur á árinu',
     description: 'Personal allowance already used this year',
   },
@@ -359,50 +359,40 @@ export const m = defineMessages({
     defaultMessage: 'Laungreiðendaskrá',
     description: 'Some description',
   },
-  salarySubtitle: {
-    id: 'pl.application:salary.subtitle',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    description: 'Some description',
-  },
   salaryLabelYear: {
     id: 'pl.application:salary.label.year',
-    defaultMessage: 'Year',
-    description: '',
+    defaultMessage: 'Ár',
+    description: 'Year',
   },
   salaryLabelMonth: {
     id: 'pl.application:salary.label.month',
-    defaultMessage: 'Month',
-    description: '',
+    defaultMessage: 'Mánuður',
+    description: 'Month',
   },
   salaryLabelPensionFund: {
     id: 'pl.application:salary.label.pensionfund',
-    defaultMessage: 'Pension fund',
-    description: '',
+    defaultMessage: 'Lífeyrissjóður',
+    description: 'Pension fund',
   },
   salaryLabelTax: {
     id: 'pl.application:salary.label.tax',
-    defaultMessage: 'Tax',
-    description: '',
+    defaultMessage: 'Skattur',
+    description: 'Tax',
   },
   salaryLabelPaidAmount: {
     id: 'pl.application:salary.label.paidamount',
-    defaultMessage: 'Paid amount',
-    description: '',
+    defaultMessage: 'Útborgun',
+    description: 'Paid amount',
   },
   salaryLabelShowMore: {
-    id: 'pl.application:salary.label.paidamount',
-    defaultMessage: 'See all months',
-    description: '',
+    id: 'pl.application:salary.label.seeMore',
+    defaultMessage: 'Sjá meira',
+    description: 'See more',
   },
   salaryLabelShowLess: {
-    id: 'pl.application:salary.label.paidamount',
-    defaultMessage: 'See less',
-    description: '',
-  },
-  sharedTimeSection: {
-    id: 'pl.application:sharedTime.section',
-    defaultMessage: 'Shared time',
-    description: 'Some description',
+    id: 'pl.application:salary.label.seeLess',
+    defaultMessage: 'Sjá minna',
+    description: 'See less',
   },
   usageSubsection: {
     id: 'pl.application:usage.subsection',
@@ -419,35 +409,9 @@ export const m = defineMessages({
     defaultMessage: 'Útreikningur',
     description: 'Some description',
   },
-  spread: {
-    id: 'pl.application:spread',
-    defaultMessage: ' ',
-    description: 'Some description',
-  },
   periods: {
     id: 'pl.application:periods',
     defaultMessage: 'Viltu breyta eða skipta upp tímabilinu?',
-    description: 'Some description',
-  },
-  startDateTitle: {
-    id: 'pl.application:periods.startdate',
-    defaultMessage: 'When do you want to start?',
-    description: 'Some description',
-  },
-  startDateDescription: {
-    id: 'pl.application:periods.startdate.description',
-    defaultMessage:
-      'You can choose to start from one month before the date of birth, on the date of birth, or on a specific date. Please note, that your rights end 18 months after the date of birth.',
-    description: 'Some description',
-  },
-  startDateOption1: {
-    id: 'pl.application:periods.startdate.description',
-    defaultMessage: 'On the date of birth',
-    description: 'Some description',
-  },
-  startDateOption2: {
-    id: 'pl.application:periods.startdate.description',
-    defaultMessage: 'On a specific date',
     description: 'Some description',
   },
   periodsSection: {
@@ -489,20 +453,10 @@ export const m = defineMessages({
     description:
       'I want to customize my leave into multiple periods and/or to stretch it out over time at less than 100% time off.',
   },
-  summaryName: {
-    id: 'pl.application:summary.name',
-    defaultMessage: 'Here we need a summary screen',
-    description: 'Some description',
-  },
-  summaryIntro: {
-    id: 'pl.application:summary.intro',
-    defaultMessage: 'very nice',
-    description: 'Some description',
-  },
   loadingError: {
     id: 'pl.application:loading.error',
-    defaultMessage: 'Oops! Something went wrong',
-    description: 'Some description',
+    defaultMessage: 'Úps! Eitthvað fór úrskeiðis',
+    description: 'Oops! Something went wrong',
   },
   requiredAnswerError: {
     id: 'pl.application:required.answer.error',
@@ -536,6 +490,11 @@ export const mm: MessageDir = {
       id: 'pl.application:periods.add.another',
       defaultMessage: 'Bættu við öðru tímabili',
       description: 'Add another period',
+    },
+    change: {
+      id: 'pl.application:periods.change',
+      defaultMessage: 'Breyta tilhögun fæðingarorlofs',
+      description: 'Change the periods',
     },
   }),
   firstPeriodStart: defineMessages({
@@ -797,6 +756,41 @@ export const mm: MessageDir = {
       defaultMessage:
         'Vinnumálastofnun will review and approve your application.',
       description: 'Vinnumálastofnun will review and approve your application.',
+    },
+  }),
+  confirmation: defineMessages({
+    section: {
+      id: 'pl.application:confirmation.section',
+      defaultMessage: 'Samþykkja',
+      description: 'Confirmation',
+    },
+    title: {
+      id: 'pl.application:confirmation.title',
+      defaultMessage: 'Senda inn umsókn',
+      description: 'Review and submit',
+    },
+    description: {
+      id: 'pl.application:confirmation.description',
+      defaultMessage:
+        'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
+      description:
+        'Please review your information before submitting the application.',
+    },
+  }),
+  finalScreen: defineMessages({
+    title: {
+      id: 'pl.application:finalscreen.title',
+      defaultMessage: 'Næstu skref:',
+      description: 'All done, here are the next steps:',
+    },
+    description: {
+      id: 'pl.application:finalscreen.description',
+      defaultMessage:
+        'Hitt foreldrið þarf að samþykkja umsókn þína ef þú óskaðir eftir yfirfærslu á hluta réttinda þess til þín, eða nýtingu á persónuafslætti þess. Síðan þarf vinnuveitandinn þinn að samþykkja tilhögun þína til fæðingarorlofs. Að lokum fer umsóknin á borð Fæðingarorlofssjóðs þar sem lokaúrvinnsla hennar fer fram.',
+      description:
+        'The other parent will need to approve your request to use their shared month (if you did so). Then, ' +
+        'your employer will approve your parental leave dates.' +
+        'And finally Vinnumálastofnun will review your application.',
     },
   }),
 }
