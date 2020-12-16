@@ -5,8 +5,9 @@ import {
   GridColumn,
   GridRow,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ServicePortalModuleComponent,
@@ -51,6 +52,13 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
         })
       }
       setStatus('success')
+      toast.success(
+        formatMessage({
+          id: 'sp.settings:email-confirmed-sent-success-subtext',
+          defaultMessage:
+            'Vinsamlegast athugaðu netpóstinn þinn, staðfestingarpóstur hefur verið sendur á þig',
+        }),
+      )
     } catch (err) {
       setStatus('error')
     }
@@ -110,20 +118,6 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
       />
       {status !== 'passive' && (
         <Box marginTop={[5, 7, 15]}>
-          {status === 'success' && (
-            <AlertMessage
-              type="info"
-              title={formatMessage({
-                id: 'sp.settings:email-confirmed-sent-success-title',
-                defaultMessage: 'Nýtt netfang hefur verið vistað',
-              })}
-              message={formatMessage({
-                id: 'sp.settings:email-confirmed-sent-success-subtext',
-                defaultMessage:
-                  'Vinsamlegast athugaðu netpóstinn þinn, staðfestingarpóstur hefur verið sendur á þig',
-              })}
-            />
-          )}
           {status === 'error' && (
             <AlertMessage
               type="error"
@@ -139,6 +133,9 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
             />
           )}
         </Box>
+      )}
+      {status === 'success' && (
+        <Redirect to={ServicePortalPath.UserProfileRoot} />
       )}
     </>
   )
