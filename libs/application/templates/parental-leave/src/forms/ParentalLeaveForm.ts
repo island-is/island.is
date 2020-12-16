@@ -664,35 +664,37 @@ export const ParentalLeaveForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirmation',
-      name: 'Confirmation',
+      name: mm.confirmation.section,
       children: [
         buildMultiField({
           id: 'confirmation',
-          name: 'Review and submit',
+          name: mm.confirmation.title,
+          description: mm.confirmation.description,
           children: [
             buildCustomField({
               id: 'confirmationScreen',
-              name: 'Final review',
-              description:
-                'Please review your information before submiting the application.',
+              name: '',
               component: 'Review',
             }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              name: 'Submit',
+              name: mm.confirmation.title,
 
-              actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: mm.confirmation.title,
+                  type: 'primary',
+                },
+              ],
             }),
           ],
         }),
         buildIntroductionField({
           id: 'thankYou',
-          name: 'All done, here are the next steps:',
-          introduction:
-            'The other parent will need to approve your request to use their shared month (if you did so). Then, ' +
-            'your employer will approve your parental leave dates.' +
-            'And finally Vinnumálastofnun will review your application.',
+          name: mm.finalScreen.title,
+          introduction: mm.finalScreen.description,
         }),
       ],
     }),

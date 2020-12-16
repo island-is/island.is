@@ -32,6 +32,8 @@ export const resolvers: Resolvers = {
 
     getMenu: () => store.menu,
 
+    getGroupedMenu: (parent, args) => store.groupedMenu,
+
     getAlertBanner: () => store.alertBanner,
 
     getNews: (parent, args) => {
@@ -83,6 +85,14 @@ export const resolvers: Resolvers = {
         namespace: args.input.namespace || 'namespace',
         fields: '{}',
       }
+    },
+
+    getGenericPage: (parent, args) => {
+      return (
+        store.genericPages.find(
+          (genericPage) => genericPage.slug === args.input.slug,
+        ) || null
+      )
     },
   },
 }

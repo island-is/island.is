@@ -1,3 +1,4 @@
+import '@island.is/api/mocks'
 import React, { useState } from 'react'
 import get from 'lodash/get'
 import Head from 'next/head'

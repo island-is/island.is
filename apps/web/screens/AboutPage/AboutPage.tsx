@@ -186,14 +186,13 @@ const PageHeader: FC<PageHeaderProps> = ({
     <Background id={slice.id} theme={page.theme}>
       <GridContainer position="none">
         <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
-          <Box marginBottom={[0, 0, 8, 15]}>
-            <Header buttonColorScheme="negative" megaMenuData={megaMenuData} />
-          </Box>
+          <Header buttonColorScheme="negative" megaMenuData={megaMenuData} />
         </ColorSchemeContext.Provider>
       </GridContainer>
       <SidebarLayout
         isSticky={false}
-        hiddenOnTablet={true}
+        fullWidthContent
+        hiddenOnTablet
         sidebarContent={
           <Sidebar>
             <Navigation
@@ -285,7 +284,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       )
     case 'LinkCardSlice':
       return (
-        <Box key={slice.id} id={slice.id} background="dotted">
+        <Box key={slice.id} id={slice.id} backgroundPattern="dotted">
           <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
             <Box paddingTop={8} paddingBottom={[4, 5, 10]}>
               <LinkCardList {...slice} />
@@ -376,7 +375,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       )
     case 'TabSection':
       return (
-        <Box key={slice.id} id={slice.id} background="dotted">
+        <Box key={slice.id} id={slice.id} backgroundPattern="dotted">
           <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
             <Box paddingTop={2} paddingBottom={[0, 5, 10]}>
               <Tabs
