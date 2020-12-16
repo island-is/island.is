@@ -118,10 +118,6 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
           <div className="client-secret__container__form">
             <div className="client-secret__help">
               Add client secret for client
-              <p>
-                If client is a SPA client. This is <strong>not</strong>{' '}
-                neccesary.
-              </p>
             </div>
             <form onSubmit={handleSubmit(add)}>
               <div className="client-secret__container__fields">
