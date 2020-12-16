@@ -37,7 +37,7 @@ import {
   GET_ADGERDIR_PAGES_QUERY,
   GET_ADGERDIR_TAGS_QUERY,
 } from '../queries'
-import { ArticleLayout } from '@island.is/web/screens/Layouts/Layouts'
+import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import { Screen } from '@island.is/web/types'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames from '@island.is/web/i18n/routeNames'
@@ -87,8 +87,8 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
         title={`${article.title} | Viðspyrna fyrir Ísland`}
         description={article.description}
       />
-      <ArticleLayout
-        sidebar={
+      <SidebarLayout
+        sidebarContent={
           <Box marginBottom={10}>
             <Stack space={3}>
               {renderButton}
@@ -112,54 +112,42 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
           </Box>
         }
       >
+        <Box paddingBottom={[2, 2, 4]}>
+          <Breadcrumbs>
+            <span className={covidStyles.text}>
+              <Link href={makePath()} as={makePath()}>
+                <a>Ísland.is</a>
+              </Link>
+            </span>
+            <span className={covidStyles.text}>
+              <Link href={makePath('adgerdir')} as={makePath('adgerdir')}>
+                <a>{n('covidAdgerdir', 'Covid aðgerðir')}</a>
+              </Link>
+            </span>
+            <Tag>{n('adgerdir', 'Aðgerðir')}</Tag>
+          </Breadcrumbs>
+        </Box>
+
+        <Stack space={2}>
+          <Text variant="h1" as="h1">
+            {article.title}
+          </Text>
+          {description ? <Intro>{description}</Intro> : null}
+        </Stack>
+        <RichText
+          body={article.content as SliceType[]}
+          config={{ defaultPadding: [2, 2, 4], skipGrid: true }}
+          locale={activeLocale}
+        />
         <GridRow>
           <GridColumn
-            offset={['0', '0', '0', '0', '1/9']}
-            span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-            paddingBottom={[2, 2, 4]}
+            paddingTop={4}
+            span={['12/12', '6/12', '6/12', '5/12', '4/12']}
           >
-            <Breadcrumbs>
-              <span className={covidStyles.text}>
-                <Link href={makePath()} as={makePath()}>
-                  <a>Ísland.is</a>
-                </Link>
-              </span>
-              <span className={covidStyles.text}>
-                <Link href={makePath('adgerdir')} as={makePath('adgerdir')}>
-                  <a>{n('covidAdgerdir', 'Covid aðgerðir')}</a>
-                </Link>
-              </span>
-              <Tag>{n('adgerdir', 'Aðgerðir')}</Tag>
-            </Breadcrumbs>
+            {renderButton}
           </GridColumn>
         </GridRow>
-        <GridRow>
-          <GridColumn
-            offset={['0', '0', '0', '0', '1/9']}
-            span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-          >
-            <Stack space={2}>
-              <Text variant="h1" as="h1">
-                {article.title}
-              </Text>
-              {description ? <Intro>{description}</Intro> : null}
-            </Stack>
-            <RichText
-              body={article.content as SliceType[]}
-              config={{ defaultPadding: [2, 2, 4], skipGrid: true }}
-              locale={activeLocale}
-            />
-            <GridRow>
-              <GridColumn
-                paddingTop={4}
-                span={['12/12', '6/12', '6/12', '5/12', '4/12']}
-              >
-                {renderButton}
-              </GridColumn>
-            </GridRow>
-          </GridColumn>
-        </GridRow>
-      </ArticleLayout>
+      </SidebarLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'green' }}>
         <Box className={covidStyles.bg}>
           <ContentBlock width="large">
