@@ -80,10 +80,18 @@ export const EmailForm: FC<Props> = ({
                   marginTop={1}
                 >
                   <Box marginRight={1}>
-                    <Text>Fékkstu ekki staðfestingarpóst?</Text>
+                    <Text>
+                      {formatMessage({
+                        id: 'sp.settings:did-you-not-receive-an-email',
+                        defaultMessage: 'Fékkstu ekki staðfestingarpóst?',
+                      })}
+                    </Text>
                   </Box>
                   <Button variant="text" size="small" onClick={onResendEmail}>
-                    Endursenda
+                    {formatMessage({
+                      id: 'sp.settings:resend',
+                      defaultMessage: 'Endursenda',
+                    })}
                   </Button>
                 </Box>
               )}
@@ -91,13 +99,6 @@ export const EmailForm: FC<Props> = ({
           )}
         />
       </Box>
-      {/* <Box marginTop={3}>
-        {formatMessage({
-          id: 'sp.settings:email-form-confirmation-instructions',
-          defaultMessage:
-            'Þú færð sendan tölvupóst á þetta netfang sem þú þarft að staðfesta við fyrsta tækifæri.',
-        })}
-      </Box> */}
       {(renderBackButton || renderSubmitButton) && (
         <Box
           display="flex"
