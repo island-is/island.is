@@ -84,6 +84,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(
       lineHeight,
       variant = 'default',
       as = 'p',
+      ...htmlTextProps
     },
     ref,
   ) => {
@@ -106,6 +107,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(
           variant,
         })}
         ref={ref}
+        {...htmlTextProps}
       >
         {React.Children.map<React.ReactNode, React.ReactNode>(
           children,
