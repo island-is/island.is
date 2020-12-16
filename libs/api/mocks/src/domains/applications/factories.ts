@@ -14,7 +14,7 @@ export const application = factory<Application>({
   modified: faker.date.past().toISOString(),
   applicant: faker.random.alphaNumeric(10),
   assignees: [],
-  state: 'someState',
+  state: 'draft',
   typeId: 'ExampleForm',
   answers: [],
   externalData: {},

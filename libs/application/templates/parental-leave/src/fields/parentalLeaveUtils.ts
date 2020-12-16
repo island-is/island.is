@@ -4,6 +4,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { TimelinePeriod } from './components/Timeline'
 import { Period } from '../types'
 import { ParentalLeave, PregnancyStatus } from '../dataProviders/APIDataTypes'
+import { NationalRegistryFamilyMember } from '@island.is/api/schema'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -33,15 +34,15 @@ export function getExpectedDateOfBirth(
 }
 
 export function getNameAndIdOfSpouse(
-  application: Application,
+  familyMembers?: NationalRegistryFamilyMember[],
 ): [string?, string?] {
-  const dataProviderResult = application.externalData
-    .spouse as DataProviderResult
-  if (!dataProviderResult || dataProviderResult.status === 'failure') {
-    // TODO read the correct spouse value
-    return ['Jón Jónsson', '123456-7890']
+  const spouse = familyMembers?.find(
+    (member) => member.familyRelation === 'spouse',
+  )
+  if (!spouse) {
+    return [undefined, undefined]
   }
-  return [undefined, undefined]
+  return [spouse.fullName, spouse.nationalId]
 }
 
 export function getEstimatedMonthlyPay(application: Application): number {

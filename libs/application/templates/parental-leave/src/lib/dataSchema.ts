@@ -72,6 +72,8 @@ export const dataSchema = z.object({
       (n) => n && kennitala.isValid(n) && kennitala.isPerson(n),
       'Kennitala þarf að vera gild',
     ),
+  otherParentRightOfAccess: z.enum([YES, NO]).optional(),
+  isSelfEmployed: z.enum([YES, NO]),
   usePersonalAllowance: z.enum([YES, NO]),
   usePersonalAllowanceFromSpouse: z.enum([YES, NO]),
 })
