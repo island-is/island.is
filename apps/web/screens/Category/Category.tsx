@@ -276,7 +276,7 @@ const Category: Screen<CategoryProps> = ({
       >
         <Box paddingBottom={[2, 2, 4]}>
           <Breadcrumbs>
-            <Link href={pathNames()}>Ísland.is</Link>
+            <Link href={pathNames().as}>Ísland.is</Link>
           </Breadcrumbs>
         </Box>
         <Box paddingBottom={[5, 5, 10]}>
