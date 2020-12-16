@@ -15,7 +15,7 @@ import ClientAllowedScopes from '../../components/ClientAllowedScopesForm';
 import ClientSecretForm from '../../components/ClientSecretForm';
 import { ClaimDTO } from '../../models/dtos/claim.dto';
 import ClientClaimForm from '../../components/ClientClaimForm';
-import ClientGrantTypesForm from 'apps/auth-admin-web/components/ClientGrantTypesForm';
+import ClientGrantTypesForm from '../../components/ClientGrantTypesForm';
 
 const Index = () => {
   const { query } = useRouter();
@@ -154,9 +154,17 @@ const Index = () => {
       );
     }
     case Step.ClientGrantTypes: {
-      return <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
-        <ClientGrantTypesForm clientId={client.clientId} grantTypes={client.allowedGrantTypes?.map(a => a.grantType)} handleBack={handleBack} handleChanges={changesMade} handleNext={handleNext} />
-      </ClientStepNav>
+      return (
+        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+          <ClientGrantTypesForm
+            clientId={client.clientId}
+            grantTypes={client.allowedGrantTypes?.map((a) => a.grantType)}
+            handleBack={handleBack}
+            handleChanges={changesMade}
+            handleNext={handleNext}
+          />
+        </ClientStepNav>
+      );
     }
     case Step.ClientAllowedScopes: {
       return (
@@ -172,18 +180,27 @@ const Index = () => {
       );
     }
     case Step.ClientClaims: {
-      // Add Claims - Custom Claims (Vitum ekki alveg) - Setja í BID
-      return <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
-        <ClientClaimForm claim={new ClaimDTO()} handleNext={handleNext} handleBack={handleBack} handleChanges={changesMade}></ClientClaimForm>
-      </ClientStepNav>
+      return (
+        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+          <ClientClaimForm
+            claim={new ClaimDTO()}
+            handleNext={handleNext}
+            handleBack={handleBack}
+            handleChanges={changesMade}
+          ></ClientClaimForm>
+        </ClientStepNav>
+      );
     }
     case Step.ClientSecret: {
-      return (<ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
-        <ClientSecretForm handleBack={handleBack} handleNext={handleNext} handleChanges={changesMade} />
-      </ClientStepNav>)
-      //ClientSecret
-      // EF SPA eða NATIVE þá sýna ekkert
-      // Generate og sýna
+      return (
+        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+          <ClientSecretForm
+            handleBack={handleBack}
+            handleNext={handleNext}
+            handleChanges={changesMade}
+          />
+        </ClientStepNav>
+      );
     }
     default: {
       // TODO: Temp

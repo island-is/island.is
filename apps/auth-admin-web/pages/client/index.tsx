@@ -5,7 +5,6 @@ import axios from 'axios';
 import ClientClaimForm from '../../components/ClientClaimForm';
 import { ClientClaimDTO } from './../../models/dtos/client-claim.dto';
 import ClientRedirectUriForm from '../../components/ClientRedirectUriForm';
-import { ClientRedirectUriDTO } from './../../models/dtos/client-redirect-uri.dto';
 import ClientIdpRestrictionsForm from '../../components/ClientIdpRestrictionsForm';
 import ClientPostLogoutRedirectUriForm from '../../components/ClientPostLogoutRedirectUriForm';
 
@@ -13,11 +12,11 @@ import { useRouter } from 'next/router';
 import StepEnd from './../../components/common/StepEnd';
 import { Step } from '../../models/common/Step';
 import { Client } from './../../models/client.model';
-import ClientAllowedCorsOriginsForm from 'apps/auth-admin-web/components/ClientAllowedCorsOriginsForm';
-import ClientAllowedScopes from 'apps/auth-admin-web/components/ClientAllowedScopesForm';
-import ClientGrantTypesForm from 'apps/auth-admin-web/components/ClientGrantTypesForm';
-import { ClaimDTO } from 'apps/auth-admin-web/models/dtos/claim.dto';
-import ClientSecretForm from 'apps/auth-admin-web/components/ClientSecretForm';
+import ClientAllowedCorsOriginsForm from '../../components/ClientAllowedCorsOriginsForm';
+import ClientAllowedScopes from '../../components/ClientAllowedScopesForm';
+import ClientGrantTypesForm from '../../components/ClientGrantTypesForm';
+import { ClaimDTO } from '../../models/dtos/claim.dto';
+import ClientSecretForm from '../../components/ClientSecretForm';
 
 export default function Index() {
   const [step, setStep] = useState(1);
