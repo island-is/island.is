@@ -6,7 +6,7 @@ module.exports = {
       Promise.all([
         queryInterface.bulkInsert('client_allowed_cors_origin', [
           {
-            origin: 'https://island.is/minarsidur',
+            origin: 'https://island.is',
             client_id: 'island-is-1',
           },
         ]),
@@ -27,7 +27,7 @@ module.exports = {
       Promise.all([
         queryInterface.bulkDelete('client_allowed_cors_origin', [
           {
-            origin: 'https://island.is/minarsidur',
+            origin: 'https://island.is',
             client_id: 'island-is-1',
           },
         ]),
