@@ -3,14 +3,12 @@ import {
   Event,
   EventObject,
   MachineOptions,
-  ServiceConfig,
   InvokeMeta,
   InvokeSourceDefinition,
   ActionTypes,
 } from 'xstate'
 import { Application, ExternalData, FormValue } from '../types/Application'
 import merge from 'lodash/merge'
-import { SendMailOptions } from 'nodemailer'
 
 import {
   ApplicationContext,
@@ -23,13 +21,10 @@ import {
 } from '../types/StateMachine'
 import { ApplicationTemplate } from '../types/ApplicationTemplate'
 
-interface EmailServiceInvokeSourceDefinition extends InvokeSourceDefinition {
-  emailTemplate: (context: ApplicationContext) => SendMailOptions
-}
-
-interface TemplateUtilsServiceInvokeSourceDefinition
+interface APITemplateUtilsServiceInvokeSourceDefinition
   extends InvokeSourceDefinition {
-  // TODO: import action type from api-template-utils
+  // TODO: use action type from apiTemplateUtils
+  // import { ApplicationAPITemplateAction } from '@island.is/application/api-template-utils'
   action: any
 }
 
@@ -85,31 +80,10 @@ export class ApplicationTemplateHelper<
    */
   changeState(
     event: Event<TEvents>,
-    sendEmail: (emailTemplate: SendMailOptions) => Promise<string>,
     apiTemplateUtils: any,
   ): [boolean, string, Application] {
     this.initializeStateMachine(undefined, {
       services: {
-        emailService: (
-          context: TContext,
-          event: TEvents,
-          { src }: InvokeMeta,
-        ) => {
-          if (event.type === ActionTypes.Init) {
-            // Do not send emails on xstate.init event
-            return Promise.reject('')
-          }
-
-          const emailTemplate = (src as EmailServiceInvokeSourceDefinition).emailTemplate(
-            context,
-          )
-
-          if (!emailTemplate) {
-            return Promise.reject('No email template provided')
-          }
-
-          return sendEmail(emailTemplate)
-        },
         apiTemplateUtils: (
           context: TContext,
           event: TEvents,
@@ -122,7 +96,9 @@ export class ApplicationTemplateHelper<
 
           console.log('ApplicationTemplateHelper.templateUtils start')
 
-          const { action } = src as TemplateUtilsServiceInvokeSourceDefinition
+          const {
+            action,
+          } = src as APITemplateUtilsServiceInvokeSourceDefinition
 
           try {
             return apiTemplateUtils.performAction(action)

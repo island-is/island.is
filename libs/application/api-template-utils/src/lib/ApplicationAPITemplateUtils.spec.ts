@@ -5,20 +5,16 @@ import {
   ApplicationTypes,
 } from '@island.is/application/core'
 
+import { AssignApplicationThroughEmail } from './types'
+
 const mockSignedToken = 'signed_token'
 
 jest.mock('./utils/assign', () => ({
   __esModule: true,
   createAssignToken: jest.fn(() => mockSignedToken),
-  createAssignTemplate: jest.fn((application, email, token) => ({
-    application,
-    email,
-    token,
-  })),
 }))
 
 import ApplicationAPITemplateUtils from './ApplicationAPITemplateUtils'
-import { createAssignTemplate } from './utils'
 
 const createMockApplication = (
   data: {
@@ -65,7 +61,7 @@ describe('ApplicationAPITemplateUtils', () => {
       expect(sendEmailSpy).toHaveBeenCalledTimes(0)
 
       apiTemplateUtils.performAction({
-        type: 'email',
+        type: 'sendEmail',
         template: {},
       })
 
@@ -75,11 +71,10 @@ describe('ApplicationAPITemplateUtils', () => {
 
     it('send an email with assignment template when called with assignThroughEmail action', () => {
       const testEmail = 'test@test.test'
-      const emailKey = 'email'
 
       mockApplication = createMockApplication({
         answers: {
-          [emailKey]: testEmail,
+          email: testEmail,
         },
       })
 
@@ -92,15 +87,21 @@ describe('ApplicationAPITemplateUtils', () => {
 
       expect(sendEmailSpy).toHaveBeenCalledTimes(0)
 
-      const expectedTemplate = createAssignTemplate(
+      const generateTemplate: AssignApplicationThroughEmail['generateTemplate'] = (
+        application,
+        token,
+      ) => ({
+        text: `Test ${application.answers.email} ${application.id} ${token}`,
+      })
+
+      const expectedTemplate = generateTemplate(
         mockApplication,
-        testEmail,
         mockSignedToken,
       )
 
       apiTemplateUtils.performAction({
         type: 'assignThroughEmail',
-        emailAnswerKey: emailKey,
+        generateTemplate,
       })
 
       expect(sendEmailSpy).toHaveBeenCalledTimes(1)

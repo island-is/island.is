@@ -1,12 +1,12 @@
-import { SendMailOptions } from 'nodemailer'
-
 import { EmailService } from '@island.is/email-service'
-import {
-  Application,
-  ApplicationAPITemplateAction,
-} from '@island.is/application/core'
+import { Application } from '@island.is/application/core'
 
-import { createAssignToken, createAssignTemplate } from './utils'
+import { createAssignToken } from './utils'
+import {
+  ApplicationAPITemplateAction,
+  AssignApplicationThroughEmail,
+  SendEmail,
+} from './types'
 
 type GenericEmailService = Pick<EmailService, 'sendEmail'>
 
@@ -29,25 +29,26 @@ class ApplicationAPITemplateUtils {
     this.jwtSecret = config.jwtSecret
   }
 
-  async sendEmail(template: SendMailOptions) {
+  async sendEmail({ template }: SendEmail) {
     return this.emailService.sendEmail(template)
   }
 
-  async assignApplicationThroughEmail(email: string) {
+  async assignApplicationThroughEmail({
+    generateTemplate,
+  }: AssignApplicationThroughEmail) {
     const token = createAssignToken(this.application, this.jwtSecret)
-    const template = createAssignTemplate(this.application, email, token)
+    const template = generateTemplate(this.application, token)
 
-    return this.sendEmail(template)
+    return this.performAction({ type: 'sendEmail', template })
   }
 
-  async performAction(action: ApplicationAPITemplateAction) {
+  async performAction(action: ApplicationAPITemplateAction): Promise<string> {
     try {
       switch (action.type) {
         case 'assignThroughEmail':
-          const email = this.application.answers[action.emailAnswerKey]
-          return this.assignApplicationThroughEmail(email as string)
-        case 'email':
-          return this.sendEmail(action.template)
+          return this.assignApplicationThroughEmail(action)
+        case 'sendEmail':
+          return this.sendEmail(action)
         default:
           throw new Error('Invalid action')
       }

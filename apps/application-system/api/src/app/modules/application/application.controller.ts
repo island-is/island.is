@@ -343,7 +343,6 @@ export class ApplicationController {
 
     const [hasChanged, newState, newApplication] = helper.changeState(
       updateApplicationStateDto.event,
-      (emailTemplate) => this.emailService.sendEmail(emailTemplate),
       apiTemplateUtils,
     )
 

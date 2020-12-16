@@ -1,10 +1,12 @@
 import { SendMailOptions } from 'nodemailer'
 
-type AssignApplicationThroughEmail = {
+import { Application } from '@island.is/application/core'
+
+export type AssignApplicationThroughEmail = {
   type: 'assignThroughEmail'
-  emailAnswerKey: string
+  generateTemplate: (application: Application, token: string) => SendMailOptions
 }
-type SendEmail = { type: 'email'; template: SendMailOptions }
+export type SendEmail = { type: 'sendEmail'; template: SendMailOptions }
 
 export type ApplicationAPITemplateAction =
   | SendEmail
