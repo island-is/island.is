@@ -9,7 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 
 import * as styles from './UserInfoLine.treat'
@@ -33,9 +33,8 @@ export const UserInfoLine: FC<Props> = ({
   loading,
   editLink,
 }) => {
-  const { pathname } = useLocation()
-  const trackExternalLinkClick = (destination: string) => {
-    servicePortalOutboundLink(pathname, destination)
+  const trackExternalLinkClick = () => {
+    servicePortalOutboundLink()
   }
   const { formatMessage } = useLocale()
 
@@ -86,9 +85,7 @@ export const UserInfoLine: FC<Props> = ({
                 <a
                   href={editLink.url}
                   rel="noopener noreferrer"
-                  onClick={() => {
-                    trackExternalLinkClick(editLink.url)
-                  }}
+                  onClick={trackExternalLinkClick}
                   target="_blank"
                 >
                   <Button

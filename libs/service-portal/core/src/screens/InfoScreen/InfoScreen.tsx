@@ -12,7 +12,6 @@ import {
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import { useLocation } from 'react-router-dom'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 
 interface Props {
@@ -41,9 +40,8 @@ export const InfoScreen: FC<Props> = ({
   figure,
 }) => {
   const { formatMessage } = useLocale()
-  const { pathname } = useLocation()
-  const trackExternalLinkClick = (destination: string) => {
-    servicePortalOutboundLink(pathname, destination)
+  const trackExternalLinkClick = () => {
+    servicePortalOutboundLink()
   }
   return (
     <>
@@ -85,9 +83,7 @@ export const InfoScreen: FC<Props> = ({
                 <Box marginTop={[3, 4]}>
                   <ArrowLink
                     href={externalHref}
-                    onClick={() => {
-                      trackExternalLinkClick(externalHref)
-                    }}
+                    onClick={trackExternalLinkClick}
                   >
                     {formatMessage(externalLinkTitle)}
                   </ArrowLink>

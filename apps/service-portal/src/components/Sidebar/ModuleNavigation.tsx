@@ -11,6 +11,7 @@ import AnimateHeight from 'react-animate-height'
 import { useLocale } from '@island.is/localization'
 import NavItem from './NavItem/NavItem'
 import SubNavItem from './NavItem/SubNavItem'
+import { servicePortalOutboundLink } from '@island.is/plausible'
 
 interface Props {
   nav: ServicePortalNavigationItem
@@ -29,7 +30,16 @@ const ModuleNavigation: FC<Props> = ({ nav, variant }) => {
     expand ||
     nav.path === pathname
   const { formatMessage } = useLocale()
-  const handleExpand = () => setExpand(!expand)
+  const shouldExpand = nav.path === undefined
+
+  const handleOnClick = (expand: boolean, external?: boolean) => {
+    if (expand) {
+      setExpand(!expand)
+    }
+    if (external) {
+      servicePortalOutboundLink()
+    }
+  }
 
   return (
     <Box>
@@ -38,7 +48,9 @@ const ModuleNavigation: FC<Props> = ({ nav, variant }) => {
         icon={nav.icon}
         active={isModuleActive}
         external={nav.external}
-        onClick={nav.path === undefined ? handleExpand : undefined}
+        onClick={() => {
+          handleOnClick(shouldExpand, nav.external)
+        }}
         variant={variant}
       >
         {formatMessage(nav.name)}
