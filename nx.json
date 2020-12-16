@@ -316,6 +316,9 @@
     "service-portal-documents": {
       "tags": []
     },
+    "service-portal-driving-license": {
+      "tags": []
+    },
     "service-portal-e2e": {
       "tags": [],
       "implicitDependencies": ["service-portal"]
