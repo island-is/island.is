@@ -185,6 +185,8 @@ const Index = () => {
       return (
         <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
           <ClientSecretForm
+            secrets={client.clientSecrets}
+            clientId={client.clientId}
             handleBack={handleBack}
             handleNext={handleNext}
             handleChanges={changesMade}
