@@ -5,6 +5,11 @@ import { Box } from '../Box/Box'
 import { Tooltip } from '../Tooltip/Tooltip'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconType, Type } from '../IconRC/iconMap'
+import {
+  resolveResponsiveProp,
+  ResponsiveProp,
+} from '../../utils/responsiveProp'
+import { UseBoxStylesProps } from '../Box/useBoxStyles'
 
 export type InputBackgroundColor = 'white' | 'blue'
 
@@ -49,7 +54,7 @@ export interface InputProps extends InputComponentProps {
   hasError?: boolean
   errorMessage?: string
   tooltip?: string
-  backgroundColor?: InputBackgroundColor
+  backgroundColor?: ResponsiveProp<InputBackgroundColor>
   textarea?: boolean
 }
 
@@ -128,24 +133,25 @@ export const Input = forwardRef(
     const mergedRefs = useMergeRefs(inputRef, ref || null)
 
     const InputComponent = textarea ? TextareaHOC : InputHOC
+    const mapBlue = (color: InputBackgroundColor) =>
+      color === 'blue' ? 'blue100' : color
+    const containerBackground = Array.isArray(backgroundColor)
+      ? backgroundColor.map(mapBlue)
+      : mapBlue(backgroundColor as InputBackgroundColor)
 
     return (
       <div>
         <Box
           display="flex"
           alignItems="center"
-          className={cn(
-            styles.container,
-            styles.containerBackgrounds[backgroundColor],
-            styles.containerSizes[size],
-            {
-              [styles.hasError]: hasError,
-              [styles.hasFocus]: hasFocus,
-              [styles.containerDisabled]: disabled,
-              [styles.fixedFocusState]: fixedFocusState,
-              [styles.noLabel]: !label,
-            },
-          )}
+          background={containerBackground as UseBoxStylesProps['background']}
+          className={cn(styles.container, styles.containerSizes[size], {
+            [styles.hasError]: hasError,
+            [styles.hasFocus]: hasFocus,
+            [styles.containerDisabled]: disabled,
+            [styles.fixedFocusState]: fixedFocusState,
+            [styles.noLabel]: !label,
+          })}
           onClick={(e) => {
             e.preventDefault()
             if (inputRef.current) {
@@ -172,7 +178,14 @@ export const Input = forwardRef(
             <InputComponent
               className={cn(
                 styles.input,
-                styles.inputBackground[backgroundColor],
+                resolveResponsiveProp(
+                  backgroundColor,
+                  styles.inputBackgroundXs,
+                  styles.inputBackgroundSm,
+                  styles.inputBackgroundMd,
+                  styles.inputBackgroundLg,
+                  styles.inputBackgroundXl,
+                ),
                 styles.inputSize[size],
                 {
                   [styles.textarea]: textarea,
