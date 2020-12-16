@@ -56,6 +56,25 @@ const addNewAnswersToState = (
   }
 }
 
+const goToSpecificScreen = (
+  state: ApplicationUIState,
+  screenId: string,
+): ApplicationUIState => {
+  const { screens } = state
+  let activeScreen = state.activeScreen
+  screens.forEach(({ id }, index) => {
+    if (id === screenId) {
+      activeScreen = index
+      return false
+    }
+  })
+
+  return {
+    ...state,
+    activeScreen,
+  }
+}
+
 const answerAndGoNextScreen = (
   state: ApplicationUIState,
   answers: FormValue,
@@ -170,6 +189,8 @@ export const ApplicationReducer = (
       return addNewAnswersToState(state, action.payload)
     case ActionTypes.EXPAND_REPEATER:
       return expandRepeater(state)
+    case ActionTypes.GO_TO_SCREEN:
+      return goToSpecificScreen(state, action.payload)
     case ActionTypes.ADD_EXTERNAL_DATA:
       return {
         ...state,

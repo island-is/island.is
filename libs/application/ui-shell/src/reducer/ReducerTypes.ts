@@ -17,6 +17,7 @@ export enum ActionTypes {
   ANSWER_AND_GO_NEXT_SCREEN = 'ANSWER_AND_GO_NEXT_SCREEN',
   PREV_SCREEN = 'PREV_SCREEN',
   ADD_EXTERNAL_DATA = 'ADD_EXTERNAL_DATA',
+  GO_TO_SCREEN = 'GO_TO_SCREEN',
 }
 
 export interface Action {
