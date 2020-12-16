@@ -13,6 +13,11 @@ export class GrantTypeService {
   ) {}
 
   /** Get's all Grant Types and count */
+  async findAll(): Promise<GrantType[] | null> {
+    return this.grantTypeModel.findAll()
+  }
+
+  /** Get's all Grant Types and count */
   async findAndCountAll(
     page: number,
     count: number,
