@@ -21,7 +21,11 @@ import {
 const NationalRegistryFamilyQuery = gql`
   query NationalRegistryFamilyQuery {
     nationalRegistryFamily {
+      fullName
       nationalId
+      address
+      gender
+      maritalStatus
     }
   }
 `
