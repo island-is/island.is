@@ -8,14 +8,16 @@ import {
 
 import { createAssignToken, createAssignTemplate } from './utils'
 
+type GenericEmailService = Pick<EmailService, 'sendEmail'>
+
 interface ApplicationAPITemplateUtilsConfig {
   jwtSecret: string
-  emailService: EmailService
+  emailService: GenericEmailService
 }
 
 class ApplicationAPITemplateUtils {
   private readonly application: Application
-  private readonly emailService: EmailService
+  private readonly emailService: GenericEmailService
   private readonly jwtSecret: string
 
   constructor(
