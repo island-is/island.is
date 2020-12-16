@@ -24,11 +24,4 @@ export default {
     clientSecret: process.env.POSTHOLF_CLIENT_SECRET ?? '',
     tokenUrl: process.env.POSTHOLF_TOKEN_URL ?? '',
   },
-  documentProviderService: {
-    basePath:
-      'https://test-documentprovidermanagement-island-is.azurewebsites.net',
-    clientId: process.env.DOCUMENT_PROVIDER_CLIENTID ?? '',
-    clientSecret: process.env.DOCUMENT_PROVIDER_CLIENT_SECRET ?? '',
-    tokenUrl: process.env.DOCUMENT_PROVIDER_TOKEN_URL ?? '',
-  },
 }
