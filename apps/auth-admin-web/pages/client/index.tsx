@@ -3,7 +3,6 @@ import ClientForm from '../../components/ClientForm';
 import React, { useState } from 'react';
 import axios from 'axios';
 import ClientClaimForm from '../../components/ClientClaimForm';
-import { ClientClaimDTO } from './../../models/dtos/client-claim.dto';
 import ClientRedirectUriForm from '../../components/ClientRedirectUriForm';
 import ClientIdpRestrictionsForm from '../../components/ClientIdpRestrictionsForm';
 import ClientPostLogoutRedirectUriForm from '../../components/ClientPostLogoutRedirectUriForm';
@@ -55,20 +54,9 @@ export default function Index() {
   };
 
   const handleClientSaved = (clientSaved: ClientDTO) => {
-    console.log(clientSaved.clientId);
     if (clientSaved.clientId) {
       getClient(clientSaved.clientId);
-
-      if (clientSaved.clientType === 'spa') {
-        setStep(2);
-      } else {
-        setStep(3);
-      }
     }
-  };
-
-  const handleClaimSaved = (claim: ClientClaimDTO) => {
-    console.log(claim.clientId);
   };
 
   switch (step) {

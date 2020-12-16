@@ -27,7 +27,6 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
     await axios
       .get(`/api/grants`)
       .then((response) => {
-        console.log(response);
         setGrantTypes(response.data);
       })
       .catch(function (error) {

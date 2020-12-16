@@ -39,10 +39,7 @@ const Index = () => {
     await axios
       .get(`/api/clients/${clientId}`)
       .then((response) => {
-        console.log(response);
-        console.log(response.data);
         setClient(response.data);
-        console.log(client);
       })
       .catch(function (error) {
         if (error.response) {
@@ -70,19 +67,11 @@ const Index = () => {
     router.back();
   };
 
-  const handleFinished = () => {
-    router.push('/');
-  };
-
   const handleClientSaved = (clientSaved: ClientDTO) => {
     if (clientSaved) {
       getClient(clientSaved.clientId);
       handleNext();
     }
-  };
-
-  const handleClaimSaved = (claim: ClientClaimDTO) => {
-    console.log(claim.clientId);
   };
 
   switch (step) {
