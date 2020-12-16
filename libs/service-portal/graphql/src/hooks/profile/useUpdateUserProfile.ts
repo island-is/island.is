@@ -29,7 +29,6 @@ export const useUpdateUserProfile = () => {
   })
 
   const updateUserProfile = (data: UpdateUserProfileData) => {
-    // TODO: Call create user profile directly here?
     if (!userProfile)
       throw new Error(
         'User profile does not exist, one must be created before it can be updated',

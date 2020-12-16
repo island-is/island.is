@@ -289,7 +289,6 @@ const Layout: NextComponentType<
               }}
               showMiddleLinks
               showTagLinks
-              hasDrawerMenu
             />
           </Hidden>
         )}
