@@ -57,7 +57,13 @@ export const CategoryCard = ({
       height="full"
       background="white"
     >
-      <Text as="h3" variant="h3" color={textColor} truncate={truncateHeading} title={heading}>
+      <Text
+        as="h3"
+        variant="h3"
+        color={textColor}
+        truncate={truncateHeading}
+        title={heading}
+      >
         {heading}
       </Text>
       <Text paddingTop={1}>{text}</Text>
