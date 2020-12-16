@@ -53,7 +53,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
 
   const remove = async (origin: string) => {
     await axios
-      .delete(`/api/cors/${props.clientId}/${origin}`)
+      .delete(`/api/cors/${props.clientId}/${encodeURIComponent(origin)}`)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
