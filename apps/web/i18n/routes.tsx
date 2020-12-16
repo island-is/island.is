@@ -1,53 +1,35 @@
-import { Locale, defaultLanguage } from './I18n'
+import React, { useContext } from 'react'
+import { Locale, I18nContext } from './I18n'
 
-export interface AnchorAttributes
-  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+interface LinkResolverResponse {
   href: string
   as: string
 }
 
-export type ContentType =
-  | 'article'
-  | 'subarticle'
-  | 'page'
-  | 'category'
-  | 'contentcategory'
-  | 'articlecategory'
-  | 'news'
-  | 'search'
-  | 'lifeevent'
-  | 'lifeeventpage'
-  | 'adgerdir'
-  | 'adgerdirfrontpage'
-  | 'adgerdirpage'
-  | 'linkUrl'
-  | ''
+interface LinkResolverInput {
+  linkType: LinkType
+  slugs?: Array<string>
+  locale?: Locale
+}
 
-export const routes: Record<
-  Exclude<ContentType, 'linkUrl'>,
-  Record<Locale, string>
-> = {
-  article: {
-    is: '/[slug]',
-    en: '/en/[slug]',
-  },
-  subarticle: {
-    is: '/[slug]/[slug]',
-    en: '/en/[slug]/[slug]',
-  },
+interface TypeResolverResponse {
+  type: LinkType
+  locale: Locale
+}
+
+type LinkType = keyof typeof routesTemplate
+
+// the order matters, arrange from most specific to least specific for correct type resolution
+export const routesTemplate = {
   page: {
-    is: '/stofnanir/[slug]',
-    en: '/en/organizations/[slug]',
+    is: '/stofnanir/stafraent-island',
+    en: '/en/organizations/stafraent-island',
   },
-  category: {
-    is: '/flokkur/[slug]',
-    en: '/en/category/[slug]',
+  search: {
+    is: '/leit',
+    en: '/en/search',
   },
   articlecategory: {
-    is: '/flokkur/[slug]',
-    en: '/en/category/[slug]',
-  },
-  contentcategory: {
     is: '/flokkur/[slug]',
     en: '/en/category/[slug]',
   },
@@ -55,21 +37,9 @@ export const routes: Record<
     is: '/frett/[slug]',
     en: '/en/news/[slug]',
   },
-  search: {
-    is: '/leit',
-    en: '/en/search',
-  },
-  lifeevent: {
-    is: '/lifsvidburdur/[slug]',
-    en: '/en/life-event/[slug]',
-  },
   lifeeventpage: {
     is: '/lifsvidburdur/[slug]',
     en: '/en/life-event/[slug]',
-  },
-  adgerdir: {
-    is: '/covid-adgerdir/[slug]',
-    en: '/en/covid-operations/[slug]',
   },
   adgerdirfrontpage: {
     is: '/covid-adgerdir',
@@ -79,57 +49,100 @@ export const routes: Record<
     is: '/covid-adgerdir/[slug]',
     en: '/en/covid-operations/[slug]',
   },
-  '': {
+  homepage: {
     is: '/',
     en: '/en',
   },
+  article: {
+    is: '/[slug]',
+    en: '/en/[slug]',
+  },
+  subarticle: {
+    is: '/[slug]/[subSlug]',
+    en: '/en/[slug]/[subSlug]',
+  },
+  linkurl: {
+    is: '[slug]',
+    en: '[slug]',
+  },
 }
 
-export const replaceSlugInPath = (
-  path: string,
-  replacement: string,
-): string => {
+const replaceVariableInPath = (path: string, replacement: string): string => {
   return path.replace(/\[\w+\]/, replacement)
 }
 
-export const removeSlugFromPath = (path: string): string => {
+const removeVariableFromPath = (path: string): string => {
   return path.replace(/\/\[\w+\]/g, '')
 }
 
-export const pathNames = (
-  locale: Locale = defaultLanguage,
-  contentType: ContentType = '',
-  slugs?: Array<string>,
-): AnchorAttributes => {
-  // we just pass link url onward with url as href since it is external, this is handled in island-ui link
-  // this allows us to
-  if (contentType === 'linkUrl') {
-    return {
-      as: '',
-      href: slugs[0],
-    }
-  }
-  let path: AnchorAttributes = { as: '/', href: '/' }
-  const type = String(contentType).toLowerCase()
+// returns a regex query for a given route template
+const convertToRegex = (routeTemplate: string) =>
+  routeTemplate
+    .replace(/\//g, '\\/') // escape slashes to match literal "/" in route template
+    .replace(/\[\w+\]/g, '\\[\\w+\\]') // make path variables be regex word matches
 
-  if (routes[type]) {
-    const typePath: string = routes[type][locale]
+// tries to return url for given type
+export const linkResolver = ({
+  linkType,
+  slugs,
+  locale,
+}: LinkResolverInput): LinkResolverResponse => {
+  let path = { as: '/', href: '/' }
+  const type = String(linkType).toLowerCase()
+
+  if (routesTemplate[type]) {
+    const typePath: string = routesTemplate[type][locale]
     path = { as: typePath, href: typePath }
 
     if (slugs && slugs.length > 0) {
       for (let i = 0; i < slugs.length; i++) {
-        path.as = replaceSlugInPath(path.as, slugs[i])
-        if (type === 'page' && slugs[i] === 'stafraent-island') {
-          path.href = path.as
-        }
+        path.as = replaceVariableInPath(path.as, slugs[i])
       }
     } else {
-      path.as = removeSlugFromPath(path.as)
-      path.href = removeSlugFromPath(path.href)
+      path.as = removeVariableFromPath(path.as)
+      path.href = removeVariableFromPath(path.href)
     }
     return path
   }
   return path
 }
 
-export default pathNames
+// tries to return type for given path
+export const typeResolver = (path: string): TypeResolverResponse | null => {
+  for (const [type, locales] of Object.entries(routesTemplate)) {
+    for (const [locale, routeTemplate] of Object.entries(locales)) {
+      // convert the route template string into a regex query
+      const regex = convertToRegex(routeTemplate)
+
+      // if this path matches query return route info else continue
+      if (path.match(regex)) {
+        return { type, locale } as TypeResolverResponse
+      }
+    }
+  }
+  return null
+}
+
+export const useLinkResolver = () => {
+  const context = useContext(I18nContext)
+  // TODO: use useCallback here
+  const wrappedLinkResolver = (
+    linkType: LinkResolverInput['linkType'],
+    slugs: LinkResolverInput['slugs'] = [],
+    locale: LinkResolverInput['locale'] = context.activeLocale,
+  ) =>
+    linkResolver({
+      locale: context.activeLocale,
+      ...{
+        linkType,
+        slugs,
+        locale,
+      },
+    })
+  return {
+    typeResolver,
+    linkResolver: wrappedLinkResolver,
+  }
+}
+
+export default useLinkResolver
