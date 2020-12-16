@@ -12,7 +12,11 @@ import {
   ApiService,
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY, GET_API_SERVICE_QUERY } from '../queries'
-import { SubpageMainContent, ServiceInformation } from '../../components'
+import {
+  SubpageMainContent,
+  ServiceInformation,
+  OpenApiView,
+} from '../../components'
 import { SubpageLayout } from '../Layouts/Layouts'
 import SidebarLayout from '../Layouts/SidebarLayout'
 import { Box, Text } from '@island.is/island-ui/core'
@@ -56,7 +60,9 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
           />
         </SidebarLayout>
       }
-      details={<></>}
+      details={
+        !service ? <></> : <OpenApiView strings={strings} service={service} />
+      }
     />
   )
 }
