@@ -10,7 +10,7 @@ export interface StatisticsProps {
 
 export const Statistics: FC<StatisticsProps> = ({ statistics, ...props }) => {
   return (
-    <Background background="dotted" paddingY={10}>
+    <Background backgroundPattern="dotted" paddingY={10}>
       <div className={styles.container}>
         {statistics.map((stat, index) => (
           <Box key={index} display="flex" margin={1}>

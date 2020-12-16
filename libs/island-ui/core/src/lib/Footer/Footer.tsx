@@ -37,7 +37,6 @@ interface FooterProps {
   hideLanguageSwith?: boolean
   showMiddleLinks?: boolean
   showTagLinks?: boolean
-  hasDrawerMenu?: boolean
   languageSwitchOnClick?: () => void
 }
 
@@ -52,7 +51,6 @@ export const Footer = ({
   bottomLinksTitle = 'Aðrir opinberir vefir',
   showMiddleLinks = false,
   showTagLinks = false,
-  hasDrawerMenu = false,
   languageSwitchLink = defaultLanguageSwitchLink,
   hideLanguageSwith = false,
   languageSwitchOnClick,
@@ -214,7 +212,7 @@ export const Footer = ({
         </GridContainer>
       </Box>
       {}
-      <Box paddingTop={4} paddingBottom={[hasDrawerMenu ? 10 : 4, 4, 4]}>
+      <Box paddingY={4}>
         <GridContainer>
           <GridRow>
             <GridColumn span="12/12">
