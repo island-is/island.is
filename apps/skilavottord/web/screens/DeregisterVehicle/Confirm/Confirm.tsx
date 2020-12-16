@@ -24,10 +24,9 @@ import {
   OutlinedError,
   CarDetailsBox,
 } from '@island.is/skilavottord-web/components'
-import { CREATE_RECYCLING_REQUEST_COMPANY } from '@island.is/skilavottord-web/graphql/mutations'
 import { RecyclingRequestMutation } from '@island.is/skilavottord-web/types'
 
-export const skilavottordVehicleReadyToDeregisteredQuery = gql`
+const skilavottordVehicleReadyToDeregisteredQuery = gql`
   query skilavottordVehicleReadyToDeregisteredQuery($permno: String!) {
     skilavottordVehicleReadyToDeregistered(permno: $permno) {
       vehicleId
@@ -35,6 +34,28 @@ export const skilavottordVehicleReadyToDeregisteredQuery = gql`
       newregDate
       recyclingRequests {
         nameOfRequestor
+      }
+    }
+  }
+`
+
+const skilavottordRecyclingRequestMutation = gql`
+  mutation skilavottordRecyclingRequestMutation(
+    $partnerId: String
+    $permno: String!
+    $requestType: String!
+  ) {
+    createSkilavottordRecyclingRequest(
+      partnerId: $partnerId
+      permno: $permno
+      requestType: $requestType
+    ) {
+      ... on RequestErrors {
+        message
+        operation
+      }
+      ... on RequestStatus {
+        status
       }
     }
   }
@@ -63,11 +84,14 @@ const Confirm: FC = () => {
   const [
     setRecyclingRequest,
     { data: mutationData, error: mutationError, loading: mutationLoading },
-  ] = useMutation<RecyclingRequestMutation>(CREATE_RECYCLING_REQUEST_COMPANY, {
-    onError() {
-      return mutationError
+  ] = useMutation<RecyclingRequestMutation>(
+    skilavottordRecyclingRequestMutation,
+    {
+      onError() {
+        return mutationError
+      },
     },
-  })
+  )
 
   const mutationResponse = mutationData?.createSkilavottordRecyclingRequest
 
