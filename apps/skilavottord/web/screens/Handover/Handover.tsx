@@ -2,6 +2,7 @@ import React, { FC, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useMutation, useQuery } from '@apollo/client'
+import gql from 'graphql-tag'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import {
   Box,
@@ -18,7 +19,6 @@ import {
 } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { CREATE_RECYCLING_REQUEST_CITIZEN } from '@island.is/skilavottord-web/graphql/mutations'
-import { VEHICLES_BY_NATIONAL_ID } from '@island.is/skilavottord-web/graphql/queries'
 import CompanyList from './components/CompanyList'
 import * as styles from './Handover.treat'
 import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
@@ -27,6 +27,15 @@ import {
   RecyclingRequestMutation,
   RecyclingRequestTypes,
 } from '@island.is/skilavottord-web/types'
+
+const skilavottordVehiclesQuery = gql`
+  query skilavottordVehiclesQuery($nationalId: String!) {
+    skilavottordVehicles(nationalId: $nationalId) {
+      permno
+      status
+    }
+  }
+`
 
 const Handover: FC = () => {
   const { user } = useContext(UserContext)
@@ -44,7 +53,7 @@ const Handover: FC = () => {
   const { id } = router.query
 
   const nationalId = user?.nationalId
-  const { data, loading, error } = useQuery(VEHICLES_BY_NATIONAL_ID, {
+  const { data, loading, error } = useQuery(skilavottordVehiclesQuery, {
     variables: { nationalId },
     skip: !nationalId,
   })
