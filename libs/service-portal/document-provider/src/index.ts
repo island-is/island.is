@@ -78,5 +78,10 @@ export const documentProviderModule: ServicePortalModule = {
           import('./screens/TechnicalInformation/TechnicalInformation'),
         ),
     },
+    {
+      name: m.Statistics,
+      path: ServicePortalPath.DocumentProviderStatistics,
+      render: () => lazy(() => import('./screens/Statistics/Statistics')),
+    },
   ],
 }
