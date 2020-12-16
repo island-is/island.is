@@ -7,7 +7,10 @@
 .users,
 .not-found,
 .paginator,
-.client-allowed-cors-origin {
+.client-allowed-cors-origin,
+.client-allowed-scopes,
+.client-secret,
+.client-claim {
   &__help {
     padding: 0 10px 20px 10px;
   }

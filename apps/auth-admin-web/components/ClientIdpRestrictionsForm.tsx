@@ -13,7 +13,7 @@ interface Props {
 }
 
 const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
-  const [response, setResponse] = useState(null);
+  const [response, setResponse] = useState<APIResponse>(new APIResponse());
 
   const add = async (name: string) => {
     const createObj = {

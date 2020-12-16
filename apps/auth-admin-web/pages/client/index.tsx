@@ -2,7 +2,7 @@ import ClientDTO from '../../models/dtos/client-dto';
 import ClientForm from '../../components/ClientForm';
 import React, { useState } from 'react';
 import axios from 'axios';
-import ClientClaim from './../../components/ClientClaim';
+import ClientClaimForm from '../../components/ClientClaimForm';
 import { ClientClaimDTO } from './../../models/dtos/client-claim.dto';
 import ClientRedirectUriForm from '../../components/ClientRedirectUriForm';
 import { ClientRedirectUriDTO } from './../../models/dtos/client-redirect-uri.dto';
@@ -14,6 +14,7 @@ import StepEnd from './../../components/common/StepEnd';
 import { Step } from '../../models/common/Step';
 import { Client } from './../../models/client.model';
 import ClientAllowedCorsOriginsForm from 'apps/auth-admin-web/components/ClientAllowedCorsOriginsForm';
+import ClientAllowedScopes from 'apps/auth-admin-web/components/ClientAllowedScopesForm';
 
 export default function Index() {
   const [step, setStep] = useState(1);
@@ -52,9 +53,11 @@ export default function Index() {
   };
 
   const handleClientSaved = (clientSaved: ClientDTO) => {
+    console.log(clientSaved.clientId);
     if (clientSaved.clientId) {
+      getClient(clientSaved.clientId);
+
       if (clientSaved.clientType === 'spa') {
-        getClient(clientSaved.clientId);
         setStep(2);
       } else {
         setStep(3);
@@ -71,7 +74,7 @@ export default function Index() {
       return (
         <ClientForm
           handleCancel={handleCancel}
-          client={new ClientDTO()}
+          client={client.clientId ? client as ClientDTO : new ClientDTO()}
           onNextButtonClick={handleClientSaved}
         />
       );
@@ -126,6 +129,13 @@ export default function Index() {
       // Authorization code ALLT NEMA SERVICE TO SERVICE - [Client credentials - SERVICE to SERVICE]
     }
     case Step.ClientAllowedScopes: {
+      return <ClientAllowedScopes
+      clientId={client.clientId}
+      scopes={client.allowedScopes?.length > 0 ? client.allowedScopes?.map((s) => s.scopeName) : []}
+      handleChanges={changesMade}
+      handleNext={handleNext}
+      handleBack={handleBack}
+    />
       // Allowed Scopes
       // Ákveðin scope sem við eigum og veljum úr lista - Skilgreinum scopes fyrir resource-a
       // Sett á bið?

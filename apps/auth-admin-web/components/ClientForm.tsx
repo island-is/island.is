@@ -63,7 +63,8 @@ const ClientForm: React.FC<Props> = (props: Props) => {
 
   
 
-  const create = async (data) => {
+  const create = async (data: any) => {
+    console.log("SAVING CLIENT")
     await axios.post('/api/clients', data)
     .then((response) => {
       const res = new APIResponse();
@@ -90,7 +91,9 @@ const ClientForm: React.FC<Props> = (props: Props) => {
     });
   }
 
-  const edit = async (data) => {
+  const edit = async (data: any) => {
+    console.log("EDITING CLIENT");
+    const handleObject = {...data};
     delete data.clientId;
     console.log(data);
     await axios.put(`/api/clients/${props.client.clientId}`, data)
@@ -99,10 +102,11 @@ const ClientForm: React.FC<Props> = (props: Props) => {
       res.statusCode = response.request.status;
       res.message = response.request.statusText;
       setResponse(res);
-      if (res.statusCode === 201) {
+      if (res.statusCode === 200) {
         if (props.onNextButtonClick)
         {
-          props.onNextButtonClick(data);
+          console.log(handleObject);
+          props.onNextButtonClick(handleObject);
         }
       }
     })
@@ -119,7 +123,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
     });
   }
 
-  const save = (data) => {
+  const save = (data: any) => {
     const clientObject = castToNumbers(data.client);
     if (!isEditing) {
       create(clientObject);
@@ -160,7 +164,6 @@ const ClientForm: React.FC<Props> = (props: Props) => {
         </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="client__container__fields">
-                {/* <HookField name='client.clientId' errors={errors} required={true} label="Client Id" value={client.clientId}  /> */}
                 <div className="client__container__field">
                   <label className="client__label">
                     National Id (Kennitala)
@@ -178,7 +181,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                     className="client__input"
                     placeholder="0123456789"
                     title=""
-                    maxLength="10"
+                    maxLength={10}
                     title="The nationalId (Kennitala) registered for the client"
                   />
                   <HelpBox helpText="The nationalId (Kennitala) registered for the client" />
