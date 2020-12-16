@@ -13,7 +13,7 @@ import { m } from './messages'
 
 export const TestPhase: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
-  name: 'Útfærsla og prófanir.',
+  name: 'Útfærsla og prófanir',
   mode: FormModes.APPLYING,
   children: [
     buildSection({
