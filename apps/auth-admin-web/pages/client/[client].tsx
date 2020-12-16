@@ -15,6 +15,7 @@ import ClientAllowedScopes from '../../components/ClientAllowedScopesForm';
 import ClientSecretForm from '../../components/ClientSecretForm';
 import { ClaimDTO } from '../../models/dtos/claim.dto';
 import ClientClaimForm from '../../components/ClientClaimForm';
+import ClientGrantTypesForm from 'apps/auth-admin-web/components/ClientGrantTypesForm';
 
 const Index = () => {
   const { query } = useRouter();
@@ -153,8 +154,9 @@ const Index = () => {
       );
     }
     case Step.ClientGrantTypes: {
-      // Grant Types
-      // Authorization code ALLT NEMA SERVICE TO SERVICE - [Client credentials - SERVICE to SERVICE]
+      return <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+        <ClientGrantTypesForm clientId={client.clientId} grantTypes={client.allowedGrantTypes?.map(a => a.grantType)} handleBack={handleBack} handleChanges={changesMade} handleNext={handleNext} />
+      </ClientStepNav>
     }
     case Step.ClientAllowedScopes: {
       return (

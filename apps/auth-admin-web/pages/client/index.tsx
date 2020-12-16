@@ -15,6 +15,9 @@ import { Step } from '../../models/common/Step';
 import { Client } from './../../models/client.model';
 import ClientAllowedCorsOriginsForm from 'apps/auth-admin-web/components/ClientAllowedCorsOriginsForm';
 import ClientAllowedScopes from 'apps/auth-admin-web/components/ClientAllowedScopesForm';
+import ClientGrantTypesForm from 'apps/auth-admin-web/components/ClientGrantTypesForm';
+import { ClaimDTO } from 'apps/auth-admin-web/models/dtos/claim.dto';
+import ClientSecretForm from 'apps/auth-admin-web/components/ClientSecretForm';
 
 export default function Index() {
   const [step, setStep] = useState(1);
@@ -125,32 +128,23 @@ export default function Index() {
         />
     }
     case Step.ClientGrantTypes: {
-      // Grant Types
-      // Authorization code ALLT NEMA SERVICE TO SERVICE - [Client credentials - SERVICE to SERVICE]
+      return <ClientGrantTypesForm clientId={client.clientId} grantTypes={client.allowedGrantTypes?.map(a => a.grantType)} handleBack={handleBack} handleChanges={changesMade} handleNext={handleNext} />
+      
     }
     case Step.ClientAllowedScopes: {
       return <ClientAllowedScopes
       clientId={client.clientId}
-      scopes={client.allowedScopes?.length > 0 ? client.allowedScopes?.map((s) => s.scopeName) : []}
+      scopes={client.allowedScopes?.map((s) => s.scopeName)}
       handleChanges={changesMade}
       handleNext={handleNext}
       handleBack={handleBack}
     />
-      // Allowed Scopes
-      // Ákveðin scope sem við eigum og veljum úr lista - Skilgreinum scopes fyrir resource-a
-      // Sett á bið?
     }
     case Step.ClientClaims: {
-      // Add Claims - Custom Claims (Vitum ekki alveg) - Setja í BID
-      //    const claim = new ClientClaimDTO();
-      //    console.log("Client ID: " + client);
-      //    claim.clientId = client;
-      //    return <ClientClaim claim={claim} handleSaved={handleClaimSaved} />
+      return <ClientClaimForm claim={new ClaimDTO()} handleNext={handleNext} handleBack={handleBack} handleChanges={changesMade}></ClientClaimForm>
     }
     case Step.ClientSecret: {
-      //ClientSecret
-      // EF SPA eða NATIVE þá sýna ekkert
-      // Generate og sýna
+      return <ClientSecretForm handleBack={handleBack} handleNext={handleNext} handleChanges={changesMade} />
     }
     default: {
       return (
