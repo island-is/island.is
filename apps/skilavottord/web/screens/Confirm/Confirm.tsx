@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useMutation } from '@apollo/client'
+import gql from 'graphql-tag'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { Box, Stack, Button, Checkbox, Text } from '@island.is/island-ui/core'
 import {
@@ -13,11 +14,36 @@ import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
 import { formatDate, formatYear } from '@island.is/skilavottord-web/utils'
 import { Car, WithApolloProps } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import {
-  CREATE_VEHICLE_OWNER,
-  CREATE_VEHICLE,
-} from '@island.is/skilavottord-web/graphql/mutations'
 import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
+
+const skilavottordVehicleOwnerMutation = gql`
+  mutation skilavottordVehicleOwnerMutation(
+    $name: String!
+    $nationalId: String!
+  ) {
+    createSkilavottordVehicleOwner(name: $name, nationalId: $nationalId)
+  }
+`
+
+const skilavottordVehicleMutation = gql`
+  mutation skilavottordVehicleMutation(
+    $vinNumber: String!
+    $newRegDate: DateTime!
+    $color: String!
+    $type: String!
+    $nationalId: String!
+    $permno: String!
+  ) {
+    createSkilavottordVehicle(
+      vinNumber: $vinNumber
+      newRegDate: $newRegDate
+      color: $color
+      type: $type
+      nationalId: $nationalId
+      permno: $permno
+    )
+  }
+`
 
 export interface VehicleMutation {
   createSkilavottordVehicle: VehicleMutationData
@@ -68,7 +94,7 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
     setIsTablet(false)
   }, [width])
 
-  const [setVehicle] = useMutation<VehicleMutationData>(CREATE_VEHICLE, {
+  const [setVehicle] = useMutation<VehicleMutationData>(skilavottordVehicleMutation, {
     onCompleted() {
       routeToAuthCheck()
     },
@@ -79,7 +105,7 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
   })
 
   const [setVehicleOwner] = useMutation<VehicleOwnerMutation>(
-    CREATE_VEHICLE_OWNER,
+    skilavottordVehicleOwnerMutation,
     {
       onCompleted() {
         setVehicle({
