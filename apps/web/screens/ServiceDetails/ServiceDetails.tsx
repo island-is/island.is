@@ -15,20 +15,18 @@ import { GET_NAMESPACE_QUERY, GET_API_SERVICE_QUERY } from '../queries'
 import { SubpageMainContent, ServiceInformation } from '../../components'
 import { SubpageLayout } from '../Layouts/Layouts'
 import SidebarLayout from '../Layouts/SidebarLayout'
-import { Box, LoadingIcon, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useNamespace } from '../../hooks'
 
 const { publicRuntimeConfig } = getConfig()
 
 interface ServiceDetailsProps {
   strings: GetNamespaceQuery['getNamespace']
-  loading?: boolean
   service: ApiService
 }
 
 const ServiceDetails: Screen<ServiceDetailsProps> = ({
   strings,
-  loading = false,
   service = null,
 }) => {
   const n = useNamespace(strings)
@@ -39,20 +37,6 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
     throw new CustomNextError(404, 'Not found')
   }
 
-  const showService = () => {
-    if (service) {
-      return <ServiceInformation strings={strings} service={service} />
-    }
-
-    return (
-      <Box>
-        <Text variant="h3" as="h3">
-          {n('serviceNotFound')}
-        </Text>
-      </Box>
-    )
-  }
-
   return (
     <SubpageLayout
       main={
@@ -61,10 +45,14 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
         >
           <SubpageMainContent
             main={
-              loading ? (
-                <LoadingIcon animate color="blue400" size={32} />
+              !service ? (
+                <Box>
+                  <Text variant="h3" as="h3">
+                    {n('serviceNotFound')}
+                  </Text>
+                </Box>
               ) : (
-                showService()
+                <ServiceInformation strings={strings} service={service} />
               )
             }
           />
@@ -78,7 +66,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
 ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
   const serviceId = String(query.slug)
 
-  const [filterContent, { data, loading }] = await Promise.all([
+  const [filterContent, { data }] = await Promise.all([
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -104,7 +92,6 @@ ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
     serviceId: serviceId,
     strings: filterContent,
     service: data?.getApiServiceById,
-    loading,
   }
 }
 

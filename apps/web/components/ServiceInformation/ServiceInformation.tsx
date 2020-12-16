@@ -99,19 +99,21 @@ export const ServiceInformation = ({
   // Main page
   return (
     <Box>
-      <Text variant="h1" as="h1">
-        {service.name}
-      </Text>
+      <Inline space={1}>
+        <Text variant="h1" as="h1">
+          {service.name}
+        </Text>
+        {service.pricing.length > 0 && (
+          <Box>
+            <Tag variant="white" outlined>
+              {n(`pricing${capitalize(service.pricing[0])}`)}
+            </Tag>
+          </Box>
+        )}
+      </Inline>
       <Text variant="h3" as="h3" paddingTop="gutter">
         {`${n('serviceOwner')}: ${service.owner}`}
       </Text>
-      {service.pricing.length > 0 && (
-        <Box>
-          <Tag variant="white" outlined>
-            {n(`pricing${capitalize(service.pricing[0])}`)}
-          </Tag>
-        </Box>
-      )}
       <Text variant="intro" paddingTop="gutter">
         {service.description}
       </Text>
