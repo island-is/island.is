@@ -14,7 +14,7 @@ export class SubpageHeader {
   @Field()
   summary: string
 
-  @Field({ nullable: true })
+  @Field(() => Image, { nullable: true })
   featuredImage?: Image
 
   @Field({ nullable: true })
