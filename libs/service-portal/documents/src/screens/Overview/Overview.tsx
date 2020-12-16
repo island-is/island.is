@@ -59,58 +59,58 @@ type FilterValues = {
   searchQuery: string
 }
 
+const getFilteredDocuments = (
+  documents: Document[],
+  filterValues: FilterValues,
+): Document[] => {
+  const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
+  let filteredDocuments = documents.filter((document) =>
+    isWithinInterval(new Date(document.date), {
+      start: dateFrom || defaultStartDate,
+      end: dateTo || defaultEndDate,
+    }),
+  )
+
+  if (activeCategory.value) {
+    filteredDocuments = filteredDocuments.filter(
+      (document) => document.senderNatReg === activeCategory.value,
+    )
+  }
+
+  // if (searchQuery) {
+  //   const fuse = new Fuse(filteredDocuments, defaultSearchOptions)
+  //   return fuse.search(searchQuery).map((elem) => {
+  //     // const fuseItem = (elem as unknown) as FuseItem
+  //     // return fuseItem.item
+  //     return elem.item
+  //   })
+  // }
+  if (searchQuery) {
+    return filteredDocuments.filter((x) =>
+      x.subject.toLowerCase().includes(searchQuery.toLowerCase()),
+    )
+  }
+
+  return filteredDocuments
+}
+
 export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
 }) => {
   useNamespaces('sp.documents')
   const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
+  const [searchInteractionEventSent, setSearchInteractionEventSent] = useState(
+    false,
+  )
   const { scrollToRef } = useScrollToRefOnUpdate([page])
   const { pathname } = useLocation()
-  let searchInteractionEventSent = false
 
   const [filterValue, setFilterValue] = useState<FilterValues>(
     defaultFilterValues,
   )
   const { data, loading, error } = useListDocuments(userInfo.profile.nationalId)
-
   const categories = [defaultCategory, ...data.categories]
-
-  const getFilteredDocuments = (
-    documents: Document[],
-    filterValues: FilterValues,
-  ): Document[] => {
-    const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
-    let filteredDocuments = documents.filter((document) =>
-      isWithinInterval(new Date(document.date), {
-        start: dateFrom || defaultStartDate,
-        end: dateTo || defaultEndDate,
-      }),
-    )
-
-    if (activeCategory.value) {
-      filteredDocuments = filteredDocuments.filter(
-        (document) => document.senderNatReg === activeCategory.value,
-      )
-    }
-
-    // if (searchQuery) {
-    //   const fuse = new Fuse(filteredDocuments, defaultSearchOptions)
-    //   return fuse.search(searchQuery).map((elem) => {
-    //     // const fuseItem = (elem as unknown) as FuseItem
-    //     // return fuseItem.item
-    //     return elem.item
-    //   })
-    // }
-    if (searchQuery) {
-      return filteredDocuments.filter((x) =>
-        x.subject.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-    }
-
-    return filteredDocuments
-  }
-
   const filteredDocuments = getFilteredDocuments(data.documents, filterValue)
   const pagedDocuments = {
     from: (page - 1) * pageSize,
@@ -151,7 +151,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     setFilterValue({ ...defaultFilterValues, searchQuery: value })
     if (!searchInteractionEventSent && pathname) {
       documentsSearchDocumentsInitialized(pathname)
-      searchInteractionEventSent = true
+      setSearchInteractionEventSent(true)
     }
   }, [])
 
