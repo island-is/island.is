@@ -172,7 +172,8 @@ const Index = () => {
       return (
         <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
           <ClientClaimForm
-            claim={new ClaimDTO()}
+            clientId={client.clientId}
+            claims={client.claims}
             handleNext={handleNext}
             handleBack={handleBack}
             handleChanges={changesMade}
