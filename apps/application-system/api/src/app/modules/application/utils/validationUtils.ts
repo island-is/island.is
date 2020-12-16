@@ -4,7 +4,7 @@ import {
   FormValue,
   validateAnswers,
 } from '@island.is/application/core'
-import { BadRequestException } from '@nestjs/common'
+import { BadRequestException, UnauthorizedException } from '@nestjs/common'
 
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 
@@ -45,16 +45,22 @@ export async function validateApplicationSchema(
 export async function validateIncomingAnswers(
   application: Application,
   newAnswers: FormValue | undefined,
+  nationalId: string,
   isStrict = true,
 ): Promise<FormValue> {
   if (!newAnswers) {
     return {}
   }
   const template = await getApplicationTemplateByTypeId(application.typeId)
+  const role = template.mapUserToRole(nationalId, application)
+  if (!role) {
+    throw new UnauthorizedException(
+      'Current user does not have a role in this application state',
+    )
+  }
   const helper = new ApplicationTemplateHelper(application, template)
   const writableAnswersAndExternalData = helper.getWritableAnswersAndExternalData(
-    // TODO we really really need the token to get the national id
-    application.state === 'inReview' ? 'reviewer' : 'applicant',
+    role,
   )
   if (writableAnswersAndExternalData === 'all') {
     return newAnswers
@@ -64,7 +70,6 @@ export async function validateIncomingAnswers(
     (!writableAnswersAndExternalData ||
       !writableAnswersAndExternalData?.answers)
   ) {
-    console.log('im going to throw an error here', application.state)
     throw new BadRequestException(
       `Current user is not permitted to update answers in this state: ${application.state}`,
     )
@@ -87,20 +92,26 @@ export async function validateIncomingAnswers(
   }
   return trimmedAnswers
 }
-// TODO
+
 export async function validateIncomingExternalDataProviders(
   application: Application,
   providerDto: PopulateExternalDataDto,
+  nationalId: string,
 ) {
   const { dataProviders } = providerDto
   if (!dataProviders.length) {
     return
   }
   const template = await getApplicationTemplateByTypeId(application.typeId)
+  const role = template.mapUserToRole(nationalId, application)
+  if (!role) {
+    throw new UnauthorizedException(
+      'Current user does not have a role in this application state',
+    )
+  }
   const helper = new ApplicationTemplateHelper(application, template)
   const writableAnswersAndExternalData = helper.getWritableAnswersAndExternalData(
-    // TODO we really really need the token to get the national id
-    application.state === 'inReview' ? 'reviewer' : 'applicant',
+    role,
   )
   if (writableAnswersAndExternalData === 'all') {
     return
