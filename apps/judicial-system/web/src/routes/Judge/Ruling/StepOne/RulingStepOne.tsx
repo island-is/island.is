@@ -99,6 +99,19 @@ export const RulingStepOne: React.FC = () => {
           ),
         )
       }
+
+      if (!theCase.custodyEndDate) {
+        theCase = {
+          ...theCase,
+          custodyEndDate: theCase.requestedCustodyEndDate,
+        }
+
+        updateCase(
+          theCase.id,
+          parseString('custodyEndDate', theCase.requestedCustodyEndDate || ''),
+        )
+      }
+
       setWorkingCase(theCase)
     }
   }, [workingCase, setWorkingCase, data, updateCase])

@@ -134,7 +134,7 @@ describe('reducerUtils', () => {
         name: 'asdf',
       })
 
-      expect(getNavigableSectionsInForm(form, {})).toEqual(sections)
+      expect(getNavigableSectionsInForm(form, {}, {})).toEqual(sections)
     })
     it('should only return sections that have non-violated conditions', () => {
       const sections = [
@@ -153,7 +153,7 @@ describe('reducerUtils', () => {
         name: 'asdf',
       })
 
-      expect(getNavigableSectionsInForm(form, {})).toEqual([
+      expect(getNavigableSectionsInForm(form, {}, {})).toEqual([
         firstSection,
         thirdSection,
       ])
@@ -192,7 +192,7 @@ describe('reducerUtils', () => {
         name: 'asdf',
       })
 
-      expect(getNavigableSectionsInForm(form, {})).toEqual([
+      expect(getNavigableSectionsInForm(form, {}, {})).toEqual([
         firstSection,
         secondSection,
         buildSection({
@@ -230,7 +230,7 @@ describe('reducerUtils', () => {
           name: 'asdf',
           children: [invisibleSection, visibleSection],
         })
-        const screens = convertFormToScreens(form, {})
+        const screens = convertFormToScreens(form, {}, {})
         expect(screens.length).toBe(5)
         expect(screens[0].isNavigable).toBe(false)
         expect(screens[0].id).toBe('1')
@@ -262,7 +262,7 @@ describe('reducerUtils', () => {
           name: 'asdf',
           children: [multifield],
         })
-        const screens = convertFormToScreens(form, {})
+        const screens = convertFormToScreens(form, {}, {})
         expect(screens.length).toBe(1)
         expect(screens[0].id).toBe('multi')
       })
@@ -286,7 +286,7 @@ describe('reducerUtils', () => {
           name: 'asdf',
           children: [repeater],
         })
-        const screens = convertFormToScreens(form, {})
+        const screens = convertFormToScreens(form, {}, {})
         expect(screens.length).toBe(1)
         expect(screens[0]).toEqual({
           ...repeater,
@@ -343,7 +343,7 @@ describe('reducerUtils', () => {
             }),
           ],
         })
-        const screens = convertFormToScreens(form, {})
+        const screens = convertFormToScreens(form, {}, {})
         expect(screens.length).toBe(6)
         expect(screens[0].sectionIndex).toBe(0)
         expect(screens[0].subSectionIndex).toBe(-1)

@@ -88,6 +88,28 @@ describe('conditions', () => {
         ),
       ).toBeFalsy()
     })
+    it('should be able to use external data for applying dynamic conditions', () => {
+      expect(
+        shouldShowFormItem(
+          buildTextField({
+            id: 'asdf',
+            name: 'asdf',
+            condition: (formValue: FormValue, externalData) =>
+              formValue.money > formValue.price &&
+              externalData.userProfile.status === 'success' &&
+              externalData.userProfile.data === 'asdf@asdf.com',
+          }),
+          { money: 1000, price: 5 },
+          {
+            userProfile: {
+              date: new Date(),
+              data: 'asdf@asdf.com',
+              status: 'success',
+            },
+          },
+        ),
+      ).toBeTruthy()
+    })
   })
   describe('static', () => {
     it('should show a section which has a fulfilled static condition', () => {
