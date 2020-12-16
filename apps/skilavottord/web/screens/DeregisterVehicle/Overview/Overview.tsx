@@ -35,6 +35,7 @@ export const skilavottordRecyclingPartnerVehiclesQuery = gql`
       vehicles {
         vehicleId
         vehicleType
+        newregDate
         recyclingRequests {
           id
           requestType
