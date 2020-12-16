@@ -4,7 +4,6 @@ import { theme } from '@island.is/island-ui/theme'
 globalStyle('html', {
   boxSizing: 'border-box',
   fontSize: theme.typography.baseFontSize,
-  scrollBehavior: 'smooth',
 })
 
 globalStyle('body', {
