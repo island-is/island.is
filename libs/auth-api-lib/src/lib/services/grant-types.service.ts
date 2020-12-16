@@ -12,7 +12,7 @@ export class GrantTypeService {
     private logger: Logger,
   ) {}
 
-  /** Get's all Grant Types and count */
+  /** Get's all Grant Types  */
   async findAll(): Promise<GrantType[] | null> {
     return this.grantTypeModel.findAll()
   }
