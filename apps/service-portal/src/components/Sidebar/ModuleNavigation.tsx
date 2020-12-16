@@ -3,9 +3,8 @@ import {
   ServicePortalNavigationItem,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import cn from 'classnames'
 import * as styles from './Sidebar.treat'
-import { Box, Stack } from '@island.is/island-ui/core'
+import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
 import AnimateHeight from 'react-animate-height'
 import { useLocale } from '@island.is/localization'
@@ -33,6 +32,21 @@ const ModuleNavigation: FC<Props> = ({ nav, variant }) => {
 
   return (
     <Box>
+      {nav.heading && (
+        <Text
+          variant="eyebrow"
+          color={variant === 'blue' ? 'blue600' : 'blueberry600'}
+          fontWeight="semiBold"
+          marginBottom={2}
+        >
+          {formatMessage(nav.heading)}
+        </Text>
+      )}
+      {nav.divider && (
+        <Box paddingBottom={3}>
+          <Divider />
+        </Box>
+      )}
       <NavItem
         path={nav.path}
         icon={nav.icon}

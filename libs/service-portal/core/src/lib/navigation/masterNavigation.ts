@@ -23,40 +23,15 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
-      // Min Gogn
-      {
-        name: defineMessage({
-          id: 'service.portal:my-info',
-          defaultMessage: 'Mín gögn',
-        }),
-        path: ServicePortalPath.MyInfoRoot,
-        icon: {
-          type: 'outline',
-          icon: 'person',
-        },
-        children: [
-          {
-            name: defineMessage({
-              id: 'service.portal:user-info',
-              defaultMessage: 'Mínar upplýsingar',
-            }),
-            path: ServicePortalPath.UserInfo,
-          },
-          {
-            name: defineMessage({
-              id: 'service.portal:family',
-              defaultMessage: 'Fjölskyldan',
-            }),
-            path: ServicePortalPath.FamilyRoot,
-          },
-        ],
-      },
-
       // Rafraen skjol
       {
         name: defineMessage({
           id: 'service.portal:documents',
           defaultMessage: 'Rafræn skjöl',
+        }),
+        heading: defineMessage({
+          id: 'service.portal:services',
+          defaultMessage: 'Þjónusta',
         }),
         path: ServicePortalPath.ElectronicDocumentsRoot,
         icon: {
@@ -78,13 +53,42 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
+      // Min Gogn
+      {
+        name: defineMessage({
+          id: 'service.portal:user-info',
+          defaultMessage: 'Mínar upplýsingar',
+        }),
+        heading: defineMessage({
+          id: 'service.portal:my-info',
+          defaultMessage: 'Mín gögn',
+        }),
+        path: ServicePortalPath.UserInfo,
+        icon: {
+          type: 'outline',
+          icon: 'person',
+        },
+      },
+      {
+        name: defineMessage({
+          id: 'service.portal:family',
+          defaultMessage: 'Fjölskyldan',
+        }),
+        path: ServicePortalPath.FamilyRoot,
+        icon: {
+          type: 'outline',
+          icon: 'people',
+        },
+      },
+
       // Stillingar
       {
         name: defineMessage({
           id: 'service.portal:settings',
           defaultMessage: 'Stillingar',
         }),
-        path: ServicePortalPath.SettingsRoot,
+        path: ServicePortalPath.UserProfileRoot,
+        divider: true,
         icon: {
           type: 'outline',
           icon: 'settings',
@@ -114,6 +118,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:finance',
           defaultMessage: 'Fjármál',
         }),
+        heading: defineMessage({
+          id: 'service.portal:coming-soon',
+          defaultMessage: 'Væntanlegt',
+        }),
         path: ServicePortalPath.FinanceExternal,
         external: true,
         systemRoute: true,
@@ -122,20 +130,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'cellular',
         },
       },
-
-      // Heilsa
-      // Not showing this atm
-      // {
-      //   name: defineMessage({
-      //     id: 'service.portal:health',
-      //     defaultMessage: 'Heilsa',
-      //   }),
-      //   path: ServicePortalPath.HealthRoot,
-      //   icon: {
-      //     type: 'outline',
-      //     icon: 'heart',
-      //   },
-      // },
 
       // Menntun
       {
