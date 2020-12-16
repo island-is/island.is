@@ -293,6 +293,14 @@ const Review: FC<FieldBaseProps> = ({
                     ref={register}
                   />
                 </GridColumn>
+                <GridColumn span="12/12">
+                  <Input
+                    id={'employer.email'}
+                    name={'employer.email'}
+                    label={m.employerEmail.defaultMessage}
+                    ref={register}
+                  />
+                </GridColumn>
               </GridRow>
             </Box>
           </AccordionItem>

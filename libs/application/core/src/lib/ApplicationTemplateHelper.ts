@@ -94,8 +94,6 @@ export class ApplicationTemplateHelper<
             return Promise.reject('')
           }
 
-          console.log('ApplicationTemplateHelper.templateUtils start')
-
           const {
             action,
           } = src as APITemplateUtilsServiceInvokeSourceDefinition

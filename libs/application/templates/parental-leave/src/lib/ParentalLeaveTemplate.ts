@@ -1,3 +1,4 @@
+import { assign } from 'xstate'
 import {
   ApplicationContext,
   ApplicationRole,
@@ -6,11 +7,28 @@ import {
   ApplicationTemplate,
   Application,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
+import { ApplicationAPITemplateAction } from '@island.is/application/api-template-utils'
 
-import assignParentTemplate from '../emailTemplates/assignToParent'
-import assignEmployerTemplate from '../emailTemplates/assignToEmployer'
+import {
+  generateAssignParentTemplate,
+  generateAssignReviewerTemplate,
+} from '../emailTemplateGenerators'
 import { dataSchema, SchemaFormValues } from './dataSchema'
+
+interface ApiTemplateUtilActions {
+  [key: string]: ApplicationAPITemplateAction
+}
+
+const TEMPLATE_API_ACTIONS: ApiTemplateUtilActions = {
+  assignParentThroughEmail: {
+    type: 'assignThroughEmail',
+    generateTemplate: generateAssignParentTemplate,
+  },
+  assignReviewerThroughEmail: {
+    type: 'assignThroughEmail',
+    generateTemplate: generateAssignReviewerTemplate,
+  },
+}
 
 type Events =
   | { type: 'APPROVE' }
@@ -29,6 +47,7 @@ enum States {
   OTHER_PARENT_ACTION = 'otherParentRequiresAction',
   VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
   VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
+  EMPLOYER_WAITING_TO_ASSIGN = 'employerWaitingToAssign',
   EMPLOYER_APPROVAL = 'employerApproval',
   EMPLOYER_ACTION = 'employerRequiresAction',
   IN_REVIEW = 'inReview',
@@ -74,7 +93,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.OTHER_PARENT_APPROVAL,
               cond: needsOtherParentApproval,
             },
-            { target: States.EMPLOYER_APPROVAL },
+            { target: States.EMPLOYER_WAITING_TO_ASSIGN },
           ],
         },
       },
@@ -82,8 +101,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         entry: 'assignToOtherParent',
         invoke: {
           src: {
-            type: 'emailService',
-            emailTemplate: assignParentTemplate,
+            type: 'apiTemplateUtils',
+            action: TEMPLATE_API_ACTIONS.assignParentThroughEmail,
           },
         },
         meta: {
@@ -111,7 +130,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          APPROVE: { target: States.EMPLOYER_APPROVAL },
+          APPROVE: { target: States.EMPLOYER_WAITING_TO_ASSIGN },
           REJECT: { target: States.OTHER_PARENT_ACTION },
         },
       },
@@ -130,14 +149,33 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
       },
-      [States.EMPLOYER_APPROVAL]: {
-        entry: 'assignToEmployer',
+      [States.EMPLOYER_WAITING_TO_ASSIGN]: {
         invoke: {
           src: {
-            type: 'emailService',
-            emailTemplate: assignEmployerTemplate,
+            type: 'apiTemplateUtils',
+            action: TEMPLATE_API_ACTIONS.assignReviewerThroughEmail,
+            // TODO: handle async onDone / onError when transitioning states
           },
         },
+        meta: {
+          name: 'Waiting to assign employer',
+          progress: 0.4,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+            },
+          ],
+        },
+        on: {
+          APPROVE: { target: States.EMPLOYER_APPROVAL },
+          REJECT: { target: States.DRAFT },
+        },
+      },
+      [States.EMPLOYER_APPROVAL]: {
         meta: {
           name: 'Employer Approval',
           progress: 0.5,
@@ -245,26 +283,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             application: {
               ...context.application,
               assignees: [currentApplicationAnswers.otherParentId],
-            },
-          }
-        }
-        return context
-      }),
-      assignToEmployer: assign((context) => {
-        // here we might go the email route instead.
-        const currentApplicationAnswers = context.application
-          .answers as SchemaFormValues
-        if (
-          currentApplicationAnswers.employer.nationalRegistryId !== undefined &&
-          currentApplicationAnswers.employer.nationalRegistryId !== ''
-        ) {
-          return {
-            ...context,
-            application: {
-              ...context.application,
-              assignees: [
-                currentApplicationAnswers.employer.nationalRegistryId,
-              ],
             },
           }
         }

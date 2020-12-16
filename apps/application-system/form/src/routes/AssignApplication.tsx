@@ -43,7 +43,7 @@ export const AssignApplication = () => {
       variables: {
         input: {
           id: applicationId,
-          event: 'SUBMIT',
+          event: 'APPROVE',
           assignees: [newAssigneeNationalRegistryId],
         },
       },

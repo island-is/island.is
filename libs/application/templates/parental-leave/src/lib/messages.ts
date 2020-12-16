@@ -202,6 +202,11 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala vinnuveitanda',
     description: 'Employer national registry id',
   },
+  employerEmail: {
+    id: 'pl.application:employerEmail',
+    defaultMessage: 'Netfang vinnuveitanda',
+    description: 'Employer email',
+  },
   rightsSection: {
     id: 'pl.application:rights.section',
     defaultMessage: 'Réttindi til fæðingarorlofs',
