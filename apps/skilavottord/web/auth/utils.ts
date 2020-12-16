@@ -40,6 +40,6 @@ export const hasPermission = (page: Page, role: Role) => {
 }
 
 export const AUTH_URL = {
-  citizen: '/api/auth/citizen',
-  recyclingPartner: '/api/auth/company',
+  citizen: 'skilavottord/api/auth/citizen',
+  recyclingPartner: 'skilavottord/api/auth/company',
 }
