@@ -93,15 +93,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           type: 'outline',
           icon: 'settings',
         },
-        children: [
-          {
-            name: defineMessage({
-              id: 'service.portal:profile-info',
-              defaultMessage: 'Minn aðgangur',
-            }),
-            path: ServicePortalPath.UserProfileRoot,
-          },
-        ],
       },
     ],
   },
