@@ -17,16 +17,11 @@ import { Scopes } from '@island.is/auth-nest-tools'
 export class GrantTypeController {
   constructor(private readonly grantTypeService: GrantTypeService) {}
 
-  /** Gets all Grant Types and count of rows */
+  /** Gets all Grant Types */
   @Get()
-  @ApiQuery({ name: 'page', required: true })
-  @ApiQuery({ name: 'count', required: true })
-  // TODO: Add ApiOkResponse
-  async findAndCountAll(
-    @Query('page') page: number,
-    @Query('count') count: number,
-  ): Promise<{ rows: GrantType[]; count: number } | null> {
-    const grantTypes = await this.grantTypeService.findAndCountAll(page, count)
+  @ApiOkResponse({ type: [GrantType] })
+  async findAll(): Promise<GrantType[] | null> {
+    const grantTypes = await this.grantTypeService.findAll()
     return grantTypes
   }
 

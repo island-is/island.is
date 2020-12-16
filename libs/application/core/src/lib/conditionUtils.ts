@@ -1,5 +1,5 @@
 import { FormItem } from '../types/Form'
-import { Answer, FormValue } from '../types/Application'
+import { Answer, ExternalData, FormValue } from '../types/Application'
 import {
   AllOrAny,
   Comparators,
@@ -50,6 +50,7 @@ function applyStaticConditionalCheck(
 export function shouldShowFormItem(
   formItem: FormItem,
   formValue: FormValue,
+  externalData: ExternalData = {},
 ): boolean {
   const { condition } = formItem
   if (!condition) {
@@ -57,7 +58,7 @@ export function shouldShowFormItem(
   }
 
   if (typeof condition === 'function') {
-    return condition(formValue)
+    return condition(formValue, externalData)
   }
 
   if (condition.isMultiCheck) {
@@ -67,7 +68,7 @@ export function shouldShowFormItem(
       const conditionalCheck: SingleConditionCheck = check[i]
       let isValid: boolean
       if (typeof conditionalCheck === 'function') {
-        isValid = conditionalCheck(formValue)
+        isValid = conditionalCheck(formValue, externalData)
       } else {
         isValid = applyStaticConditionalCheck(formValue, conditionalCheck)
       }

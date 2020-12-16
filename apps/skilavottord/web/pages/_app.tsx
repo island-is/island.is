@@ -1,3 +1,4 @@
+import '@island.is/api/mocks'
 import './app.css'
 
 import React from 'react'
