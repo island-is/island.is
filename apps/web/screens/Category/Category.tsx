@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import intersection from 'lodash/intersection'
-import NextLink from 'next/link'
+import NextLink, { LinkProps } from 'next/link'
 import {
   Text,
   Stack,
@@ -276,7 +276,9 @@ const Category: Screen<CategoryProps> = ({
       >
         <Box paddingBottom={[2, 2, 4]}>
           <Breadcrumbs>
-            <Link href={pathNames().as}>Ísland.is</Link>
+            <Link {...(pathNames() as LinkProps)} passHref>
+              Ísland.is
+            </Link>
           </Breadcrumbs>
         </Box>
         <Box paddingBottom={[5, 5, 10]}>

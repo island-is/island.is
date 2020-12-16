@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import { LinkProps } from 'next/link'
 import { Screen } from '../../types'
 import {
   Sidebar,
@@ -362,7 +363,9 @@ const Search: Screen<CategoryProps> = ({
       >
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs>
-            <Link href={pathNames(activeLocale).as}>Ísland.is</Link>
+            <Link {...(pathNames() as LinkProps)} passHref>
+              Ísland.is
+            </Link>
           </Breadcrumbs>
           <SearchInput
             id="search_input_search_page"
