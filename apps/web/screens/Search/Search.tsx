@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import { LinkProps } from 'next/link'
 import { Screen } from '../../types'
 import {
   Sidebar,
@@ -16,6 +17,7 @@ import {
   Breadcrumbs,
   Hidden,
   Select,
+  Option,
   SidebarAccordion,
   Pagination,
   Link,
@@ -27,7 +29,7 @@ import {
   GET_SEARCH_RESULTS_QUERY_DETAILED,
   GET_SEARCH_COUNT_QUERY,
 } from '../queries'
-import { CategoryLayout } from '../Layouts/Layouts'
+import { SidebarLayout } from '../Layouts/SidebarLayout'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -249,8 +251,8 @@ const Search: Screen<CategoryProps> = ({
       <Head>
         <title>{n('searchResults', 'Leitarniðurstöður')} | Ísland.is</title>
       </Head>
-      <CategoryLayout
-        sidebar={
+      <SidebarLayout
+        sidebarContent={
           <Stack space={3}>
             {!!sidebarDataTags.length && (
               <Sidebar title={n('sidebarHeader')}>
@@ -313,55 +315,12 @@ const Search: Screen<CategoryProps> = ({
             )}
           </Stack>
         }
-        belowContent={
-          <Stack space={2}>
-            {filteredItems.map(
-              ({ image, thumbnail, labels, ...rest }, index) => {
-                const tags: Array<CardTagsProps> = []
-
-                labels.forEach((label) => {
-                  tags.push({
-                    title: label,
-                    tagProps: {
-                      outlined: true,
-                    },
-                  })
-                })
-
-                return (
-                  <Card
-                    key={index}
-                    tags={tags}
-                    image={thumbnail ? thumbnail : image}
-                    {...rest}
-                  />
-                )
-              },
-            )}{' '}
-            {totalSearchResults > 0 && (
-              <Box paddingTop={8}>
-                <Pagination
-                  page={page}
-                  totalPages={totalPages}
-                  renderLink={(page, className, children) => (
-                    <Link
-                      href={{
-                        pathname: pathNames(activeLocale, 'search')?.as,
-                        query: { ...Router.query, page },
-                      }}
-                    >
-                      <span className={className}>{children}</span>
-                    </Link>
-                  )}
-                />
-              </Box>
-            )}
-          </Stack>
-        }
       >
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs>
-            <Link href={pathNames(activeLocale)?.as}>Ísland.is</Link>
+            <Link {...(pathNames() as LinkProps)} passHref>
+              Ísland.is
+            </Link>
           </Breadcrumbs>
           <SearchInput
             id="search_input_search_page"
@@ -370,7 +329,7 @@ const Search: Screen<CategoryProps> = ({
             activeLocale={activeLocale}
             initialInputValue={q}
           />
-          <Hidden above="md">
+          <Hidden above="sm">
             {totalSearchResults > 0 && (
               <Select
                 label={n('sidebarHeader')}
@@ -379,6 +338,9 @@ const Search: Screen<CategoryProps> = ({
                 options={categorySelectOptions}
                 name="content-overview"
                 isSearchable={false}
+                onChange={({ value }: Option) => {
+                  onSelectSidebarTag('category', value as string)
+                }}
               />
             )}
           </Hidden>
@@ -386,7 +348,7 @@ const Search: Screen<CategoryProps> = ({
           {filteredItems.length === 0 ? (
             <>
               <Text variant="intro" as="p">
-                {n('nothingFoundWhenSearchingFor', 'Ekkert fannst við leit á')}{' '}
+                {n('nothingFoundWhenSearchingFor', 'Ekkert fannst við leit á')}
                 <strong>{q}</strong>
               </Text>
 
@@ -396,17 +358,16 @@ const Search: Screen<CategoryProps> = ({
             </>
           ) : (
             <Text variant="intro" as="p">
-              {totalSearchResults}{' '}
+              {totalSearchResults}
               {totalSearchResults === 1
                 ? n('searchResult', 'leitarniðurstaða')
                 : n('searchResults', 'leitarniðurstöður')}
               {(filters.category || filters.type) && (
                 <>
-                  {' '}
                   {n('inCategory', 'í flokki')}
                   {
                     <>
-                      :{' '}
+                      :
                       <strong>
                         {sidebarData.tags[filters.category]?.title ??
                           sidebarData.types[filters.type]?.title}
@@ -418,7 +379,48 @@ const Search: Screen<CategoryProps> = ({
             </Text>
           )}
         </Stack>
-      </CategoryLayout>
+        <Stack space={2}>
+          {filteredItems.map(({ image, thumbnail, labels, ...rest }, index) => {
+            const tags: Array<CardTagsProps> = []
+
+            labels.forEach((label) => {
+              tags.push({
+                title: label,
+                tagProps: {
+                  outlined: true,
+                },
+              })
+            })
+
+            return (
+              <Card
+                key={index}
+                tags={tags}
+                image={thumbnail ? thumbnail : image}
+                {...rest}
+              />
+            )
+          })}{' '}
+          {totalSearchResults > 0 && (
+            <Box paddingTop={8}>
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                renderLink={(page, className, children) => (
+                  <Link
+                    href={{
+                      pathname: pathNames(activeLocale, 'search')?.as,
+                      query: { ...Router.query, page },
+                    }}
+                  >
+                    <span className={className}>{children}</span>
+                  </Link>
+                )}
+              />
+            </Box>
+          )}
+        </Stack>
+      </SidebarLayout>
     </>
   )
 }

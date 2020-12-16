@@ -284,7 +284,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       )
     case 'LinkCardSlice':
       return (
-        <Box key={slice.id} id={slice.id} background="dotted">
+        <Box key={slice.id} id={slice.id} backgroundPattern="dotted">
           <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
             <Box paddingTop={8} paddingBottom={[4, 5, 10]}>
               <LinkCardList {...slice} />
@@ -375,7 +375,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       )
     case 'TabSection':
       return (
-        <Box key={slice.id} id={slice.id} background="dotted">
+        <Box key={slice.id} id={slice.id} backgroundPattern="dotted">
           <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
             <Box paddingTop={2} paddingBottom={[0, 5, 10]}>
               <Tabs

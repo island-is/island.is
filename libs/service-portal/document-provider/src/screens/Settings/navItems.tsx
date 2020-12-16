@@ -9,19 +9,33 @@ export const navScreenItems: NavigationScreenItem[] = [
     name: m.EditInstitution,
     url: ServicePortalPath.DocumentProviderSettingsEditInstituion,
     text: m.EditInstitutionDescription,
-    tags: [m.EditInstitutionTagOne, m.EditInstitutionTagTwo],
+    tags: [
+      m.EditInstitutionTagOne,
+      m.EditInstitutionTagTwo,
+      m.EditInstitutionTagThree,
+      m.EditInstitutionTagFour,
+      m.EditInstitutionTagFive,
+    ],
   },
   {
     name: m.EditResponsibleContact,
     url: ServicePortalPath.DocumentProviderSettingsEditResponsibleContact,
     text: m.EditResponsibleContactDescription,
-    tags: [m.EditResponsibleContactTagOne, m.EditResponsibleContactTagTwo],
+    tags: [
+      m.EditResponsibleContactTagOne,
+      m.EditResponsibleContactTagTwo,
+      m.EditResponsibleContactTagThree,
+    ],
   },
   {
     name: m.EditTechnicalContact,
     url: ServicePortalPath.DocumentProviderSettingsEditTechnicalContact,
     text: m.EditTechnicalContactDescription,
-    tags: [m.EditTechnicalContactTagOne, m.EditTechnicalContactTagTwo],
+    tags: [
+      m.EditTechnicalContactTagOne,
+      m.EditTechnicalContactTagTwo,
+      m.EditTechnicalContactTagThree,
+    ],
   },
   {
     name: m.EditUserHelpContact,
@@ -33,6 +47,6 @@ export const navScreenItems: NavigationScreenItem[] = [
     name: m.EditEndPoints,
     url: ServicePortalPath.DocumentProviderSettingsEditEndpoints,
     text: m.EditEndPointsDescription,
-    tags: [m.EditEndPointsTagOne, m.EditEndPointsTagTwo],
+    tags: [m.EditEndPointsTagOne],
   },
 ]

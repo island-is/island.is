@@ -166,8 +166,11 @@ export class ApplicationTemplateHelper<
     return returnValue
   }
   getWritableAnswersAndExternalData(
-    role: ApplicationRole,
+    role?: ApplicationRole,
   ): ReadWriteValues | undefined {
+    if (!role) {
+      return undefined
+    }
     const stateInformation = this.getApplicationStateInformation(
       this.application.state,
     )

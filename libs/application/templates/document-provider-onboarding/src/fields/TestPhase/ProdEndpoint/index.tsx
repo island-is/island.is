@@ -38,6 +38,7 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
       const result = await registerEndpoint({
         variables: {
           input: {
+            nationalId: '2404805659', //TODO setja gögn úr umsókn (kt stofnunar)
             endpoint: getValues('productionEndPointObject.prodEndPoint'),
           },
         },
