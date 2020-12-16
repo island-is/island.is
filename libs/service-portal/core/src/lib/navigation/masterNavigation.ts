@@ -150,6 +150,22 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           type: 'outline',
           icon: 'home',
         },
+        children: [
+          {
+            name: defineMessage({
+              id: 'service.portal:parentalLeave',
+              defaultMessage: 'Fæðingarorlof',
+            }),
+            path: ServicePortalPath.ParentalLeave,
+          },
+          {
+            name: defineMessage({
+              id: 'service.portal:drivingLicense',
+              defaultMessage: 'Ökuréttindi',
+            }),
+            path: ServicePortalPath.DrivingLicense,
+          },
+        ],
       },
 
       // Mín réttindi

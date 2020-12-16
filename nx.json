@@ -323,6 +323,9 @@
     "service-portal-education": {
       "tags": []
     },
+    "service-portal-eligibility": {
+      "tags": []
+    },
     "service-portal-family": {
       "tags": []
     },

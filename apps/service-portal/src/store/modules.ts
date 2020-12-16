@@ -7,6 +7,7 @@ import { familyModule } from '@island.is/service-portal/family'
 import { healthModule } from '@island.is/service-portal/health'
 import { educationModule } from '@island.is/service-portal/education'
 import { assetsModule } from '@island.is/service-portal/assets'
+import { eligibilityModule } from '@island.is/service-portal/eligibility'
 
 export const modules: ServicePortalModule[] = [
   applicationsModule,
@@ -16,5 +17,6 @@ export const modules: ServicePortalModule[] = [
   familyModule,
   healthModule,
   educationModule,
+  eligibilityModule,
   assetsModule,
 ]
