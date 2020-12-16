@@ -94,15 +94,18 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
     setIsTablet(false)
   }, [width])
 
-  const [setVehicle] = useMutation<VehicleMutationData>(skilavottordVehicleMutation, {
-    onCompleted() {
-      routeToAuthCheck()
+  const [setVehicle] = useMutation<VehicleMutationData>(
+    skilavottordVehicleMutation,
+    {
+      onCompleted() {
+        routeToAuthCheck()
+      },
+      onError() {
+        // Because we want to show error after checking authenication
+        routeToAuthCheck()
+      },
     },
-    onError() {
-      // Because we want to show error after checking authenication
-      routeToAuthCheck()
-    },
-  })
+  )
 
   const [setVehicleOwner] = useMutation<VehicleOwnerMutation>(
     skilavottordVehicleOwnerMutation,
