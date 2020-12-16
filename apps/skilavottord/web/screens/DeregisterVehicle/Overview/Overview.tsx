@@ -21,9 +21,6 @@ import {
 } from '@island.is/skilavottord-web/components'
 import { CarsTable } from './components/CarsTable'
 import {
-  ALL_RECYCLING_PARTNERS,
-} from '@island.is/skilavottord-web/graphql/queries'
-import {
   RecyclingPartner,
   RecyclingRequest,
   Vehicle,
@@ -49,6 +46,15 @@ export const skilavottordRecyclingPartnerVehiclesQuery = gql`
   }
 `
 
+const skilavottordAllRecyclingPartnersQuery = gql`
+  query skilavottordAllRecyclingPartnersQuery {
+    skilavottordAllRecyclingPartners {
+      companyId
+      companyName
+    }
+  }
+`
+
 export interface DeregisteredVehicle {
   vehicleId: string
   vehicleType: string
@@ -65,15 +71,21 @@ const Overview: FC = () => {
   const router = useRouter()
 
   const partnerId = user?.partnerId
-  const { data: vehicleData } = useQuery(skilavottordRecyclingPartnerVehiclesQuery, {
-    variables: { partnerId },
-    fetchPolicy: 'cache-and-network',
-    skip: !partnerId,
-  })
+  const { data: vehicleData } = useQuery(
+    skilavottordRecyclingPartnerVehiclesQuery,
+    {
+      variables: { partnerId },
+      fetchPolicy: 'cache-and-network',
+      skip: !partnerId,
+    },
+  )
 
-  const { data: partnerData } = useQuery(ALL_RECYCLING_PARTNERS, {
-    variables: { partnerId },
-  })
+  const { data: partnerData } = useQuery(
+    skilavottordAllRecyclingPartnersQuery,
+    {
+      variables: { partnerId },
+    },
+  )
 
   const vehicleOwners = vehicleData?.skilavottordRecyclingPartnerVehicles
   const recyclingPartners = partnerData?.skilavottordAllRecyclingPartners

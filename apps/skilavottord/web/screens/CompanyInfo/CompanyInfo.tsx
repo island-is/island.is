@@ -1,6 +1,7 @@
 import React, { FC, useContext } from 'react'
 import Link from 'next/link'
 import { useQuery } from '@apollo/client'
+import gql from 'graphql-tag'
 import {
   Box,
   Stack,
@@ -18,11 +19,19 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { RecyclingPartner } from '@island.is/skilavottord-web/types'
-import { ALL_ACTIVE_RECYCLING_PARTNERS } from '@island.is/skilavottord-web/graphql/queries'
+
+const skilavottordAllActiveRecyclingPartnersQuery = gql`
+  query skilavottordAllActiveRecyclingPartnersQuery {
+    skilavottordAllActiveRecyclingPartners {
+      companyId
+      companyName
+    }
+  }
+`
 
 const CompanyInfo: FC = () => {
   const { user } = useContext(UserContext)
-  const { data } = useQuery(ALL_ACTIVE_RECYCLING_PARTNERS)
+  const { data } = useQuery(skilavottordAllActiveRecyclingPartnersQuery)
 
   const {
     t: { companyInfo: t, deregisterSidenav: sidenavText, routes },

@@ -51,9 +51,12 @@ const Confirm: FC = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const { data, loading } = useQuery(skilavottordVehicleReadyToDeregisteredQuery, {
-    variables: { permno: id },
-  })
+  const { data, loading } = useQuery(
+    skilavottordVehicleReadyToDeregisteredQuery,
+    {
+      variables: { permno: id },
+    },
+  )
 
   const vehicle = data?.skilavottordVehicleReadyToDeregistered
 
