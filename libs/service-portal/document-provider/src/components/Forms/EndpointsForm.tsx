@@ -1,7 +1,9 @@
 import React, { FC } from 'react'
+import { Link } from 'react-router-dom'
+import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useForm, Controller } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
-import { Box, Stack, Input } from '@island.is/island-ui/core'
+import { Box, Stack, Input, Button } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 
 export interface EndpointsFormData {
@@ -9,16 +11,10 @@ export interface EndpointsFormData {
 }
 
 interface Props {
-  renderBackButton?: () => JSX.Element
-  renderSubmitButton?: () => JSX.Element
   onSubmit: (data: EndpointsFormData) => void
 }
 
-export const EndpointsForm: FC<Props> = ({
-  onSubmit,
-  renderBackButton,
-  renderSubmitButton,
-}) => {
+export const EndpointsForm: FC<Props> = ({ onSubmit }) => {
   const { formatMessage } = useLocale()
   const { handleSubmit, control, errors } = useForm()
 
@@ -33,14 +29,18 @@ export const EndpointsForm: FC<Props> = ({
               value: true,
               message: formatMessage({
                 id: 'test',
-                defaultMessage: formatMessage(m.SettingsEditEndPointsUrlRequiredMessage),
+                defaultMessage: formatMessage(
+                  m.SettingsEditEndPointsUrlRequiredMessage,
+                ),
               }),
             },
             //TODO get correct url pattern
             pattern: {
               value: /^((?:https?:\/\/)?[^./]+(?:\.[^./]+)+(?:\/.*)?)$/,
-              message: formatMessage(m.SettingsEditEndPointsUrlWrongFormatMessage)
-            }
+              message: formatMessage(
+                m.SettingsEditEndPointsUrlWrongFormatMessage,
+              ),
+            },
           }}
           defaultValue=""
           render={({ onChange, value, name }) => (
@@ -56,20 +56,22 @@ export const EndpointsForm: FC<Props> = ({
           )}
         />
       </Stack>
-      {(renderBackButton || renderSubmitButton) && (
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          alignItems="center"
-          flexDirection={['columnReverse', 'row']}
-          marginTop={4}
-        >
-          {renderBackButton && (
-            <Box marginTop={[1, 0]}>{renderBackButton()}</Box>
-          )}
-          {renderSubmitButton && renderSubmitButton()}
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        alignItems="center"
+        flexDirection={['columnReverse', 'row']}
+        marginTop={4}
+      >
+        <Box marginTop={[1, 0]}>
+          <Link to={ServicePortalPath.DocumentProviderSettingsRoot}>
+            <Button variant="ghost">Til baka</Button>
+          </Link>
         </Box>
-      )}
+        <Button type="submit" variant="primary" icon="arrowForward">
+          Vista breytingar
+        </Button>
+      </Box>
     </form>
   )
 }

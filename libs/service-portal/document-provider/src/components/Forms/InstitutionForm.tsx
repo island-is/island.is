@@ -1,7 +1,9 @@
 import React, { FC } from 'react'
+import { Link } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
-import { Box, Input, Stack } from '@island.is/island-ui/core'
+import { Box, Input, Stack, Button } from '@island.is/island-ui/core'
+import { ServicePortalPath } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
 
 export interface InstitutionFormData {
@@ -16,15 +18,9 @@ interface Props {
   onSubmit: (data: InstitutionFormData) => void
   renderBackButton?: () => JSX.Element
   renderSubmitButton?: () => JSX.Element
-  InstitutionFormData?: InstitutionFormData
 }
 
-export const InstitutionForm: FC<Props> = ({
-  InstitutionFormData,
-  onSubmit,
-  renderBackButton,
-  renderSubmitButton,
-}) => {
+export const InstitutionForm: FC<Props> = ({ onSubmit }) => {
   const { handleSubmit, control, errors } = useForm()
   const { formatMessage } = useLocale()
 
@@ -37,7 +33,9 @@ export const InstitutionForm: FC<Props> = ({
           rules={{
             required: {
               value: true,
-              message: formatMessage(m.SettingsEditInstitutionNameRequiredMessage),
+              message: formatMessage(
+                m.SettingsEditInstitutionNameRequiredMessage,
+              ),
             },
           }}
           defaultValue=""
@@ -60,12 +58,16 @@ export const InstitutionForm: FC<Props> = ({
           rules={{
             required: {
               value: true,
-              message: formatMessage(m.SettingsEditInstitutionNationalIdRequiredMessage),
+              message: formatMessage(
+                m.SettingsEditInstitutionNationalIdRequiredMessage,
+              ),
             },
-            pattern:{
-             value: /([0-9]){6}-?([0-9]){4}/,
-             message: formatMessage(m.SettingsEditInstitutionNationalIdWrongFormatMessage)
-            }
+            pattern: {
+              value: /([0-9]){6}-?([0-9]){4}/,
+              message: formatMessage(
+                m.SettingsEditInstitutionNationalIdWrongFormatMessage,
+              ),
+            },
           }}
           render={({ onChange, value, name }) => (
             <Input
@@ -86,7 +88,9 @@ export const InstitutionForm: FC<Props> = ({
           rules={{
             required: {
               value: true,
-              message: formatMessage(m.SettingsEditInstitutionAddressRequiredMessage),
+              message: formatMessage(
+                m.SettingsEditInstitutionAddressRequiredMessage,
+              ),
             },
           }}
           render={({ onChange, value, name }) => (
@@ -105,14 +109,20 @@ export const InstitutionForm: FC<Props> = ({
           control={control}
           name="email"
           defaultValue=""
-          rules = {{required: {
-            value: true,
-            message: formatMessage(m.SettingsEditInstitutionEmailRequiredMessage),
-          },
-          pattern: {
-            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-            message: formatMessage(m.SettingsEditInstitutionEmailWrongFormatMessage)
-          }}}
+          rules={{
+            required: {
+              value: true,
+              message: formatMessage(
+                m.SettingsEditInstitutionEmailRequiredMessage,
+              ),
+            },
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: formatMessage(
+                m.SettingsEditInstitutionEmailWrongFormatMessage,
+              ),
+            },
+          }}
           render={({ onChange, value, name }) => (
             <Input
               name={name}
@@ -129,14 +139,20 @@ export const InstitutionForm: FC<Props> = ({
           control={control}
           name="tel"
           defaultValue=""
-          rules = {{required: {
-            value: true,
-            message: formatMessage(m.SettingsEditInstitutionTelRequiredMessage),
-          },
-          pattern: {
-            value: /^\d{3}[\d- ]*$/,
-            message: formatMessage(m.SettingsEditInstitutionTelWrongFormatMessage)
-          }}}
+          rules={{
+            required: {
+              value: true,
+              message: formatMessage(
+                m.SettingsEditInstitutionTelRequiredMessage,
+              ),
+            },
+            pattern: {
+              value: /^\d{3}[\d- ]*$/,
+              message: formatMessage(
+                m.SettingsEditInstitutionTelWrongFormatMessage,
+              ),
+            },
+          }}
           render={({ onChange, value, name }) => (
             <Input
               name={name}
@@ -150,20 +166,23 @@ export const InstitutionForm: FC<Props> = ({
           )}
         />
       </Stack>
-      {(renderBackButton || renderSubmitButton) && (
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          alignItems="center"
-          flexDirection={['columnReverse', 'row']}
-          marginTop={4}
-        >
-          {renderBackButton && (
-            <Box marginTop={[1, 0]}>{renderBackButton()}</Box>
-          )}
-          {renderSubmitButton && renderSubmitButton()}
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        alignItems="center"
+        flexDirection={['columnReverse', 'row']}
+        marginTop={4}
+      >
+        <Box marginTop={[1, 0]}>
+          <Link to={ServicePortalPath.DocumentProviderSettingsRoot}>
+            <Button variant="ghost">Til baka</Button>
+          </Link>
         </Box>
-      )}
+        <Button type="submit" variant="primary" icon="arrowForward">
+          Vista breytingar
+        </Button>
+      </Box>
+      )
     </form>
   )
 }
