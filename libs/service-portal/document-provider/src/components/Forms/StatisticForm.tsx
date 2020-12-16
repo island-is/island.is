@@ -147,10 +147,11 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
             />
           </GridColumn>
         </GridRow>
-        <Box marginBottom={2} />
+        <Box marginTop = {2} display = 'flex' justifyContent = 'flexEnd'>
         <Button type="submit" variant="primary" icon="arrowForward">
           Leitaðu
         </Button>
+        </Box>
       </Box>
     </form>
   )

@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
-import { Box, Text, Stack, Input } from '@island.is/island-ui/core'
+import { Box, Stack, Input } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 
 export interface TechnicalContactFormData {
@@ -32,7 +32,7 @@ export const TechnicalContactForm: FC<Props> = ({
           rules={{
             required: {
               value: true,
-              message: 'Skylda að fylla út nafn tæknilegs tengiliðs',
+              message: formatMessage(m.SettingsEditTechnicalContactNameRequiredMessage),
             },
           }}
           render={({ onChange, name, value }) => (
@@ -53,11 +53,11 @@ export const TechnicalContactForm: FC<Props> = ({
           defaultValue=""
           rules = {{required: {
             value: true,
-            message: 'Skylda er að fylla út netfang',
+            message: formatMessage(m.SettingsEditTechnicalContactEmailRequiredMessage),
           },
           pattern: {
             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-            message: 'Netfangið er ekki á réttu formi'
+            message: formatMessage(m.SettingsEditTechnicalContactEmailWrongFormatMessage)
           }}}
           render={({ onChange, name, value }) => (
             <Input
@@ -77,11 +77,11 @@ export const TechnicalContactForm: FC<Props> = ({
           defaultValue=""
           rules = {{required: {
             value: true,
-            message: 'Skylda er að fylla út símanúmer',
+            message: formatMessage(m.SettingsEditTechnicalContactTelRequiredMessage),
           },
           pattern: {
             value: /^\d{3}[\d- ]*$/,
-            message: 'Símanúmerið er ekki á réttu formi'
+            message: formatMessage(m.SettingsEditTechnicalContactTelWrongFormatMessage)
           }}}
           render={({ onChange, name, value }) => (
             <Input

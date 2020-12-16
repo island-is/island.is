@@ -33,13 +33,13 @@ export const EndpointsForm: FC<Props> = ({
               value: true,
               message: formatMessage({
                 id: 'test',
-                defaultMessage: 'Skylda er að fylla út endapunkt',
+                defaultMessage: formatMessage(m.SettingsEditEndPointsUrlRequiredMessage),
               }),
             },
-            //TODO get right url pattern
+            //TODO get correct url pattern
             pattern: {
               value: /^((?:https?:\/\/)?[^./]+(?:\.[^./]+)+(?:\/.*)?)$/,
-              message: 'endapunktur er ekki á réttu formi'
+              message: formatMessage(m.SettingsEditEndPointsUrlWrongFormatMessage)
             }
           }}
           defaultValue=""

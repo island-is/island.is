@@ -37,7 +37,7 @@ export const InstitutionForm: FC<Props> = ({
           rules={{
             required: {
               value: true,
-              message: 'Skylda að fylla út nafn stofnunar',
+              message: formatMessage(m.SettingsEditInstitutionNameRequiredMessage),
             },
           }}
           defaultValue=""
@@ -60,11 +60,11 @@ export const InstitutionForm: FC<Props> = ({
           rules={{
             required: {
               value: true,
-              message: 'Skylda að fylla út kennitölu stofnunar',
+              message: formatMessage(m.SettingsEditInstitutionNationalIdRequiredMessage),
             },
             pattern:{
              value: /([0-9]){6}-?([0-9]){4}/,
-             message: 'Kennitalan er ekki á réttu formi'
+             message: formatMessage(m.SettingsEditInstitutionNationalIdWrongFormatMessage)
             }
           }}
           render={({ onChange, value, name }) => (
@@ -86,7 +86,7 @@ export const InstitutionForm: FC<Props> = ({
           rules={{
             required: {
               value: true,
-              message: 'Skylda að fylla út heimilisfang stofnunar',
+              message: formatMessage(m.SettingsEditInstitutionAddressRequiredMessage),
             },
           }}
           render={({ onChange, value, name }) => (
@@ -107,11 +107,11 @@ export const InstitutionForm: FC<Props> = ({
           defaultValue=""
           rules = {{required: {
             value: true,
-            message: 'Skylda er að fylla út netfang',
+            message: formatMessage(m.SettingsEditInstitutionEmailRequiredMessage),
           },
           pattern: {
             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-            message: 'Netfangið er ekki á réttu formi'
+            message: formatMessage(m.SettingsEditInstitutionEmailWrongFormatMessage)
           }}}
           render={({ onChange, value, name }) => (
             <Input
@@ -131,11 +131,11 @@ export const InstitutionForm: FC<Props> = ({
           defaultValue=""
           rules = {{required: {
             value: true,
-            message: 'Skylda er að fylla út símanúmer',
+            message: formatMessage(m.SettingsEditInstitutionTelRequiredMessage),
           },
           pattern: {
             value: /^\d{3}[\d- ]*$/,
-            message: 'Símanúmerið er ekki á réttu formi'
+            message: formatMessage(m.SettingsEditInstitutionTelWrongFormatMessage)
           }}}
           render={({ onChange, value, name }) => (
             <Input

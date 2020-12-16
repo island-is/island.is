@@ -34,7 +34,7 @@ export const ResponsibleContactForm: FC<Props> = ({
           rules={{
             required: {
               value: true,
-              message: 'Skylda að fylla út nafn ábyrgðarmanns',
+              message: formatMessage(m.SettingsEditResponsibleContactNameRequiredMessage),
             },
           }}
           render={({ onChange, name, value }) => (
@@ -55,11 +55,11 @@ export const ResponsibleContactForm: FC<Props> = ({
           defaultValue=""
           rules = {{required: {
             value: true,
-            message: 'Skylda er að fylla út netfang',
+            message: formatMessage(m.SettingsEditResponsibleContactEmailRequiredMessage),
           },
           pattern: {
             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-            message: 'Netfangið er ekki á réttu formi'
+            message: formatMessage(m.SettingsEditResponsibleContactEmailWrongFormatMessage)
           }}}
           render={({ onChange, name, value }) => (
             <Input
@@ -79,11 +79,11 @@ export const ResponsibleContactForm: FC<Props> = ({
           defaultValue=""
           rules = {{required: {
             value: true,
-            message: 'Skylda er að fylla út símanúmer',
+            message: formatMessage(m.SettingsEditResponsibleContactTelRequiredMessage),
           },
           pattern: {
             value: /^\d{3}[\d- ]*$/,
-            message: 'Símanúmerið er ekki á réttu formi'
+            message: formatMessage(m.SettingsEditResponsibleContactTelWrongFormatMessage)
           }}}
           render={({ onChange, name, value }) => (
             <Input
