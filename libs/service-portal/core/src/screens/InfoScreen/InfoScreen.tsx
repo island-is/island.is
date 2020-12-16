@@ -13,7 +13,7 @@ import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import { useLocation } from 'react-router-dom'
-import { ServicePortalOutboundLink } from '@island.is/plausible'
+import { servicePortalOutboundLink } from '@island.is/plausible'
 
 interface Props {
   title: MessageDescriptor
@@ -43,7 +43,7 @@ export const InfoScreen: FC<Props> = ({
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
   const trackExternalLinkClick = (destination: string) => {
-    ServicePortalOutboundLink(pathname, destination)
+    servicePortalOutboundLink(pathname, destination)
   }
   return (
     <>

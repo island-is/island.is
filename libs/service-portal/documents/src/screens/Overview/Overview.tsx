@@ -27,7 +27,7 @@ import isEqual from 'lodash/isEqual'
 import { ValueType } from 'react-select'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { defineMessage } from 'react-intl'
-import { DocumentsSearchDocumentsInitialized } from '@island.is/plausible'
+import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
 import { useLocation } from 'react-use'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
@@ -105,7 +105,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     if (searchQuery) {
       if (!searchInteractionEventSent) {
         if (pathname) {
-          DocumentsSearchDocumentsInitialized(pathname)
+          documentsSearchDocumentsInitialized(pathname)
           searchInteractionEventSent = true
         }
       }

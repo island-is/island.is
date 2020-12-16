@@ -16,8 +16,8 @@ import { LanguageStep } from './Steps/LanguageStep'
 import { PhoneStep } from './Steps/PhoneStep'
 import { SubmitFormStep } from './Steps/SubmitFormStep'
 import {
-  ServicePortalCloseOnBoardingModal,
-  ServicePortalSubmitOnBoardingModal,
+  servicePortalCloseOnBoardingModal,
+  servicePortalSubmitOnBoardingModal,
 } from '@island.is/plausible'
 import { useLocation } from 'react-use'
 
@@ -59,7 +59,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const closeModal = () => {
     setToggleCloseModal(true)
     if (pathname) {
-      ServicePortalCloseOnBoardingModal(pathname)
+      servicePortalCloseOnBoardingModal(pathname)
     }
   }
 
@@ -82,7 +82,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
       })
       gotoStep('form-submitted')
       if (pathname) {
-        ServicePortalSubmitOnBoardingModal(pathname)
+        servicePortalSubmitOnBoardingModal(pathname)
       }
     } catch (err) {
       gotoStep('email-form')

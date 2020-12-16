@@ -3,7 +3,7 @@ import BaseEvent from './BaseEvent'
 import { plausibleCustomEvent } from './plausibleEvent'
 
 // Event sent when the search feature of documents is interacted with by the user
-export const DocumentsSearchDocumentsInitialized = (location: string) => {
+export const documentsSearchDocumentsInitialized = (location: string) => {
   const event: BaseEvent = {
     eventName: 'Search Documents Initialized',
     featureName: 'documents',
@@ -15,7 +15,7 @@ export const DocumentsSearchDocumentsInitialized = (location: string) => {
 }
 
 // Event sent when a document is opened in the documents section of the service portal
-export const DocumentsOpenDocument = (location: string, fileName: string) => {
+export const documentsOpenDocument = (location: string, fileName: string) => {
   const event: BaseEvent = {
     eventName: 'Open Document',
     featureName: 'documents',
@@ -28,7 +28,7 @@ export const DocumentsOpenDocument = (location: string, fileName: string) => {
 }
 
 // Event sent when the on boarding modal is closed in the service portal
-export const ServicePortalCloseOnBoardingModal = (location: string) => {
+export const servicePortalCloseOnBoardingModal = (location: string) => {
   const event: BaseEvent = {
     eventName: 'Close On Boarding Modal',
     featureName: 'service-portal',
@@ -40,7 +40,7 @@ export const ServicePortalCloseOnBoardingModal = (location: string) => {
 }
 
 // Event sent when the on boarding modal is submitted in the service portal
-export const ServicePortalSubmitOnBoardingModal = (location: string) => {
+export const servicePortalSubmitOnBoardingModal = (location: string) => {
   const event: BaseEvent = {
     eventName: 'Submit On Boarding Modal',
     featureName: 'service-portal',
@@ -52,7 +52,7 @@ export const ServicePortalSubmitOnBoardingModal = (location: string) => {
 }
 
 // Event sent when a user clicks an outbound link in the service portal
-export const ServicePortalOutboundLink = (
+export const servicePortalOutboundLink = (
   location: string,
   destination: string,
 ) => {

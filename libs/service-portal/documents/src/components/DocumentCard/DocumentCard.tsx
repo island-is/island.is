@@ -6,7 +6,7 @@ import { useLocale } from '@island.is/localization'
 import * as styles from './DocumentCard.treat'
 import { toast, Text, Stack, Button, Box } from '@island.is/island-ui/core'
 import { useLocation } from 'react-use'
-import { DocumentsOpenDocument } from '@island.is/plausible'
+import { documentsOpenDocument } from '@island.is/plausible'
 
 const base64ToArrayBuffer = (base64Pdf: string) => {
   const binaryString = window.atob(base64Pdf)
@@ -71,7 +71,7 @@ const DocumentCard: FC<Props> = ({ document }) => {
       return
     }
     if (pathname) {
-      DocumentsOpenDocument(pathname, document.subject)
+      documentsOpenDocument(pathname, document.subject)
     }
     if (!data) {
       fetchDocument()
