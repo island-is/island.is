@@ -5,6 +5,7 @@ import {
   GridColumn,
   GridRow,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -36,9 +37,29 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
     if (userProfile.email.length > 0) setEmail(userProfile.email)
   }, [userProfile])
 
+  const handleResendEmail = async () => {
+    if (userProfile && userProfile.email) {
+      try {
+        await updateUserProfile({
+          email
+        })
+        toast.info(
+          formatMessage({
+            id: 'sp.settings:email-confirmation-resent',
+            defaultMessage: 'Þú hefur fengið sendan nýjan staðfestingarpóst',
+          }),
+        )
+      } catch(err) {
+        toast.error(formatMessage({
+          id: 'sp.settings:email-confirmation-resend-error',
+          defaultMessage: 'Ekki tókst að senda nýjan staðfestingarpóst, eitthvað fór úrskeiðis'
+        }))
+      }
+    }
+  }
+
   const submitFormData = async (formData: EmailFormData) => {
     if (status !== 'passive') setStatus('passive')
-
     try {
       // Update the profile if it exists, otherwise create one
       if (userProfile) {
@@ -88,6 +109,7 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
       </Box>
       <EmailForm
         email={email}
+        onResendEmail={handleResendEmail}
         renderBackButton={() => (
           <Link to={ServicePortalPath.UserProfileRoot}>
             <Button variant="ghost">
