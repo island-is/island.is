@@ -5,14 +5,12 @@ import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { 
   Text, 
-  Navigation, 
-  TableOfContents, 
   Stack,
   Breadcrumbs,
   Box, 
   Link,
   Button } from '@island.is/island-ui/core'
-import { SubpageMainContent, SubpageDetailsContent } from '@island.is/web/components'
+import { SubpageMainContent } from '@island.is/web/components'
 
 import getConfig from 'next/config'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -21,8 +19,7 @@ import {
   GetNamespaceQuery, 
   QueryGetNamespaceArgs,
   GetSubpageHeaderQuery, 
-  QueryGetSubpageHeaderArgs, 
-  SubpageHeader} from '@island.is/web/graphql/schema'
+  QueryGetSubpageHeaderArgs } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY, GET_SUBPAGE_HEADER_QUERY } from '../queries'
 import { useNamespace } from '@island.is/web/hooks'
 
