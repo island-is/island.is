@@ -104,6 +104,12 @@ export const FormShell: FC<{
                         payload,
                       })
                     }
+                    goToScreen={(payload: string) => {
+                      dispatch({
+                        type: ActionTypes.GO_TO_SCREEN,
+                        payload,
+                      })
+                    }}
                     prevScreen={() =>
                       dispatch({ type: ActionTypes.PREV_SCREEN })
                     }
