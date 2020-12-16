@@ -4,6 +4,7 @@
 #root {
   min-height: 100vh;
 }
+
 table {
   border-spacing: 0;
   border-collapse: collapse;
@@ -15,10 +16,8 @@ caption {
   margin-bottom: 16px;
 }
 
-
 th,
 td {
   text-align: left;
   max-width: 224px;
 }
-
