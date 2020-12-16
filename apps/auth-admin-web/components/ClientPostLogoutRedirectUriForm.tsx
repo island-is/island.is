@@ -50,9 +50,9 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
       });
   };
 
-  const remove = async (uri) => {
+  const remove = async (uri: string) => {
     await axios
-      .delete(`/api/client-post-logout-redirect-uri/${props.clientId}/${uri}`)
+      .delete(`/api/client-post-logout-redirect-uri/${props.clientId}/${encodeURIComponent(uri)}`)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
