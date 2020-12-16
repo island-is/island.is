@@ -414,18 +414,13 @@ export const m = defineMessages({
   testEnviromentFieldDescription: {
     id: 'dpo.application:testEnviroment.fieldDescription',
     defaultMessage:
-      'Hér getur þú búið til aðgang að prófunarumhverfi. Athugið að afrita og geyma þessar upplýsingar því þær eru ekki geymdar hér í þessari umsókn. Ef upplýsingarnar glatast er hægt að búa til nýjan aðgang.',
+      'Hér getur þú búið til aðgang að prófunarumhverfi. Athugið að afrita og geyma þessar upplýsingar því þær eru ekki geymdar hér í þessari umsókn.',
     description: '',
   },
-  testEnviromentSubHeading: {
-    id: 'dpo.application:testEnviroment.subHeading',
-    defaultMessage: 'Aðgangur að pósthólfi',
-    description: '',
-  },
-  testEnviromentSubMessage: {
-    id: 'dpo.application:testEnviroment.subMessage',
+  testEnviromentStrongText: {
+    id: 'dpo.application:testEnviroment.strongText',
     defaultMessage:
-      'Hér er hægt að útbúa aðgang til að senda inn skjalatilvísanir í pósthólf',
+      'Þessar upplýsingar eru bara aðgengilegar einu sinni, ef þær glatast þarftu að hafa samband við island.is ',
     description: '',
   },
   testEnviromentErrorMessage: {
@@ -567,6 +562,12 @@ export const m = defineMessages({
     id: 'dpo.application:prodEnviroment.subTitle',
     defaultMessage:
       'Hér getur þú búið til aðgang að raunumhverfi. Athugið að afrita og geyma þessar upplýsingar því þær eru ekki geymdar hér í þessari umsókn.',
+    description: '',
+  },
+  prodEnviromentStrongText: {
+    id: 'dpo.application:testEnviroment.strongText',
+    defaultMessage:
+      'Þessar upplýsingar eru bara aðgengilegar einu sinni, ef þær glatast þarftu að hafa samband við island.is ',
     description: '',
   },
   prodEnviromentButton: {

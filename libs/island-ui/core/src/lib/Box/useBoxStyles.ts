@@ -39,7 +39,8 @@ export interface UseBoxStylesProps {
   textAlign?: ResponsiveProp<keyof typeof styleRefs.textAlign>
   border?: keyof typeof styleRefs.border
   borderRadius?: keyof typeof styleRefs.borderRadius
-  background?: keyof typeof styleRefs.background
+  background?: ResponsiveProp<keyof typeof styleRefs.background>
+  backgroundPattern?: keyof typeof styleRefs.backgroundPattern
   borderColor?: keyof typeof styleRefs.borderColor
   borderWidth?: keyof typeof styleRefs.borderWidth
   borderRightWidth?: keyof typeof styleRefs.borderRightWidth
@@ -106,6 +107,7 @@ export const useBoxStyles = ({
   borderStyle = 'solid',
   borderRadius,
   background,
+  backgroundPattern,
   boxShadow,
   transition,
   transform,
@@ -143,7 +145,16 @@ export const useBoxStyles = ({
     component !== null && resetStyles.base,
     component !== null &&
       resetStyles.element[component as keyof typeof resetStyleRefs.element],
-    styles.background[background!],
+    background !== undefined &&
+      resolveResponsiveProp(
+        background,
+        styles.background,
+        styles.backgroundSm,
+        styles.backgroundMd,
+        styles.backgroundLg,
+        styles.backgroundXl,
+      ),
+    styles.backgroundPattern[backgroundPattern!],
     styles.border[border!],
     styles.borderColor[borderColor!],
     styles.borderWidth[borderWidth!],

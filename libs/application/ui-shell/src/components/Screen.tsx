@@ -51,6 +51,7 @@ type ScreenProps = {
   numberOfScreens: number
   prevScreen(): void
   screen: FormScreen
+  goToScreen: (id: string) => void
 }
 
 function handleError(error: string, formatMessage: MessageFormatter): void {
@@ -73,6 +74,7 @@ const Screen: FC<ScreenProps> = ({
   application,
   dataSchema,
   expandRepeater,
+  goToScreen,
   answerAndGoToNextScreen,
   mode,
   numberOfScreens,
@@ -193,7 +195,7 @@ const Screen: FC<ScreenProps> = ({
           span={['12/12', '12/12', '7/9', '7/9']}
           offset={['0', '0', '1/9']}
         >
-          <Text variant="h2" marginBottom={5}>
+          <Text variant="h2" marginBottom={2}>
             {formatText(screen.name, application, formatMessage)}
           </Text>
           <Box>
@@ -223,6 +225,7 @@ const Screen: FC<ScreenProps> = ({
                 errors={errors}
                 multiField={screen}
                 application={application}
+                goToScreen={goToScreen}
               />
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
               <FormExternalDataProvider
@@ -238,6 +241,7 @@ const Screen: FC<ScreenProps> = ({
                 errors={errors}
                 field={screen}
                 application={application}
+                goToScreen={goToScreen}
               />
             )}
           </Box>

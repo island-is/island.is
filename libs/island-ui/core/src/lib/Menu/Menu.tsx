@@ -1,7 +1,7 @@
 import React, { ReactElement, ReactNode, useState } from 'react'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
-import { ModalBase } from '../ModalBase/ModalBase'
+import { ModalBase, ModalBaseProps } from '../ModalBase/ModalBase'
 import { Button } from '../Button/Button'
 
 import * as styles from './Menu.treat'
@@ -14,17 +14,17 @@ import Img from './Img'
 type RenderLinkObj = {
   className: string
   text: string
-  href: string
+  href: any
 }
 
 type Link = {
   text: string
-  href: string
+  href: any
 }
 
 type LinkWithSub = {
   text: string
-  href: string
+  href: any
   sub?: Link[]
 }
 
@@ -41,29 +41,35 @@ export interface MenuProps {
   /**
    * Render function for all links, useful for wrapping framework specific routing links
    */
-  renderLink?: (settings: RenderLinkObj) => ReactNode
+  renderLink?: (settings: RenderLinkObj, closeModal?: () => void) => ReactNode
   /**
    * Render function for Logo, useful for wrapping framework specific routing links
    */
-  renderLogo?: (logo: ReactNode) => ReactNode
+  renderLogo?: (logo: ReactNode, closeModal?: () => void) => ReactNode
   /**
    * Render function search input, useful for rendering custom search
    */
-  renderSearch?: (search: ReactNode) => ReactNode
+  renderSearch?: (search?: ReactNode, closeModal?: () => void) => ReactNode
   /**
    * Render function for my pages button, useful for adding specific logic to my pages button
    */
-  renderMyPagesButton?: (myPagesButton: ReactNode) => ReactNode
+  renderMyPagesButton?: (
+    myPagesButton: ReactNode,
+    closeModal?: () => void,
+  ) => ReactNode
   /**
    * Render function for language switch button, useful for adding specific logic to language switch button
    */
-  renderLanguageSwitch?: (languageSwitch: ReactNode) => ReactNode
+  renderLanguageSwitch?: (
+    languageSwitch: ReactNode,
+    closeModal?: () => void,
+  ) => ReactNode
   /**
    * Logo title for accessibility
    */
   logoTitle?: string
-  myPagesText: string
-  languageSwitchText: string
+  myPagesText?: string
+  languageSwitchText?: string
   /**
    * Main section title
    */
@@ -84,6 +90,11 @@ export interface MenuProps {
    * Aside bottom section links
    */
   asideBottomLinks: Link[]
+  /**
+   * Optional cb function that is fired when the modal visibility changes
+   */
+  onVisibilityChange?: ModalBaseProps['onVisibilityChange']
+  renderDisclosure?: ModalBaseProps['renderDisclosure']
 }
 
 const defaultRenderLinks = ({ text, href, className }: RenderLinkObj) => (
@@ -140,8 +151,10 @@ const AsideTopLinkWithSub = ({
           borderColor="blue200"
           marginBottom={[5, 5, 3]}
         >
-          {sub.map((link) => (
-            <Box marginBottom={1}>{link}</Box>
+          {sub.map((link, index) => (
+            <Box marginBottom={1} key={index}>
+              {link}
+            </Box>
           ))}
         </Box>
       </AnimateHeight>
@@ -165,6 +178,8 @@ export const Menu = ({
   asideTopLinks,
   asideBottomTitle,
   asideBottomLinks,
+  onVisibilityChange,
+  renderDisclosure,
 }: MenuProps) => {
   const [mainLinksCollapsed, setMainLinksCollapsed] = useState(true)
 
@@ -176,21 +191,27 @@ export const Menu = ({
   const languageSwitch = renderLanguageSwitch(
     <Button variant="utility">{languageSwitchText}</Button>,
   )
-  const mainLinksRender = mainLinks.map(({ text, href }, index) => (
-    <div className={styles.mainLinkOuter} key={index}>
-      {renderLink({
-        className: cn(getTextStyles({}), styles.mainLink),
-        text: text,
-        href: href,
-      })}
-    </div>
-  ))
+  const mainLinksRender = (closeModal: () => void) =>
+    mainLinks.map(({ text, href }, index) => (
+      <div className={styles.mainLinkOuter} key={index}>
+        {renderLink(
+          {
+            className: cn(getTextStyles({}), styles.mainLink),
+            text: text,
+            href: href,
+          },
+          closeModal,
+        )}
+      </div>
+    ))
   return (
     <ModalBase
       baseId={baseId}
       className={styles.container}
       disclosure={menuButton}
-      initialVisibility
+      aria-label="Menu"
+      onVisibilityChange={onVisibilityChange}
+      renderDisclosure={renderDisclosure}
     >
       {({ closeModal }: { closeModal: () => void }) => (
         <>
@@ -252,6 +273,7 @@ export const Menu = ({
                       icon="search"
                       iconType="outline"
                     />,
+                    closeModal,
                   )}
                 </Box>
               </Box>
@@ -260,7 +282,7 @@ export const Menu = ({
                   {mainTitle}
                 </Text>
                 <div className={styles.mainLinkContainer}>
-                  {mainLinksRender}
+                  {mainLinksRender(closeModal)}
                 </div>
               </Box>
               <Box marginTop={7} display={['block', 'block', 'none']}>
@@ -290,7 +312,7 @@ export const Menu = ({
                   height={mainLinksCollapsed ? 0 : 'auto'}
                   id="mainLinks"
                 >
-                  {mainLinksRender}
+                  {mainLinksRender(closeModal)}
                 </AnimateHeight>
               </Box>
             </div>
@@ -328,37 +350,52 @@ export const Menu = ({
                       <AsideTopLinkWithSub
                         key={index}
                         id={index}
-                        link={renderLink({
-                          className: cn(
-                            getTextStyles({ variant: 'h3', color: 'blue600' }),
-                            styles.asideLink,
-                          ),
-                          text: text,
-                          href: href,
-                        })}
-                        sub={sub.map((link) =>
-                          renderLink({
+                        link={renderLink(
+                          {
                             className: cn(
                               getTextStyles({
-                                variant: 'small',
+                                variant: 'h3',
                                 color: 'blue600',
                               }),
                               styles.asideLink,
                             ),
-                            ...link,
-                          }),
+                            text: text,
+                            href: href,
+                          },
+                          closeModal,
+                        )}
+                        sub={sub.map((link) =>
+                          renderLink(
+                            {
+                              className: cn(
+                                getTextStyles({
+                                  variant: 'small',
+                                  color: 'blue600',
+                                }),
+                                styles.asideLink,
+                              ),
+                              ...link,
+                            },
+                            closeModal,
+                          ),
                         )}
                       />
                     ) : (
-                      <Box marginBottom={[5, 5, 3]}>
-                        {renderLink({
-                          className: cn(
-                            getTextStyles({ variant: 'h3', color: 'blue600' }),
-                            styles.asideLink,
-                          ),
-                          text: text,
-                          href: href,
-                        })}
+                      <Box key={index} marginBottom={[5, 5, 3]}>
+                        {renderLink(
+                          {
+                            className: cn(
+                              getTextStyles({
+                                variant: 'h3',
+                                color: 'blue600',
+                              }),
+                              styles.asideLink,
+                            ),
+                            text: text,
+                            href: href,
+                          },
+                          closeModal,
+                        )}
                       </Box>
                     ),
                   )}
@@ -384,13 +421,16 @@ export const Menu = ({
                 />
                 {asideBottomLinks.map((link, index) => (
                   <Box marginBottom={2} key={index}>
-                    {renderLink({
-                      className: cn(
-                        getTextStyles({ variant: 'small', color: 'blue600' }),
-                        styles.asideLink,
-                      ),
-                      ...link,
-                    })}
+                    {renderLink(
+                      {
+                        className: cn(
+                          getTextStyles({ variant: 'small', color: 'blue600' }),
+                          styles.asideLink,
+                        ),
+                        ...link,
+                      },
+                      closeModal,
+                    )}
                   </Box>
                 ))}
               </div>

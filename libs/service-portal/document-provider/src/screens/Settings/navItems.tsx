@@ -2,112 +2,51 @@ import {
   NavigationScreenItem,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import { defineMessage } from 'react-intl'
+import { m } from '../../lib/messages'
 
 export const navScreenItems: NavigationScreenItem[] = [
   {
-    name: defineMessage({
-      id: 'sp.document-provider:edit-institution',
-      defaultMessage: 'Breyta stofnun',
-    }),
+    name: m.EditInstitution,
     url: ServicePortalPath.DocumentProviderSettingsEditInstituion,
-    text: defineMessage({
-      id: 'sp.document-provider:edit-institution-description',
-      defaultMessage: 'Hér getur þú breytt grunnupplýsingum fyrir stofnun',
-    }),
+    text: m.EditInstitutionDescription,
     tags: [
-      defineMessage({
-        id: 'service.portal:email',
-        defaultMessage: 'Netfang',
-      }),
-      defineMessage({
-        id: 'service.portal:tel',
-        defaultMessage: 'Símanúmer',
-      }),
+      m.EditInstitutionTagOne,
+      m.EditInstitutionTagTwo,
+      m.EditInstitutionTagThree,
+      m.EditInstitutionTagFour,
+      m.EditInstitutionTagFive,
     ],
   },
   {
-    name: defineMessage({
-      id: 'sp.document-provider:edit-responsible-contact',
-      defaultMessage: 'Breyta ábyrgðarmanni',
-    }),
+    name: m.EditResponsibleContact,
     url: ServicePortalPath.DocumentProviderSettingsEditResponsibleContact,
-    text: defineMessage({
-      id: 'sp.document-provider:edit-responsible-contact',
-      defaultMessage: 'Hér getur þú breytt upplýsingum um ábyrgðarmann',
-    }),
+    text: m.EditResponsibleContactDescription,
     tags: [
-      defineMessage({
-        id: 'service.portal:email',
-        defaultMessage: 'Netfang',
-      }),
-      defineMessage({
-        id: 'service.portal:tel',
-        defaultMessage: 'Símanúmer',
-      }),
+      m.EditResponsibleContactTagOne,
+      m.EditResponsibleContactTagTwo,
+      m.EditResponsibleContactTagThree,
     ],
   },
   {
-    name: defineMessage({
-      id: 'sp.document-provider:edit-technical-contact',
-      defaultMessage: 'Breyta tæknilegum tengilið',
-    }),
+    name: m.EditTechnicalContact,
     url: ServicePortalPath.DocumentProviderSettingsEditTechnicalContact,
-    text: defineMessage({
-      id: 'sp.document-provider:edit-technical-contact',
-      defaultMessage: 'Hér getur þú breytt upplýsingum um tæknilegan tengilið',
-    }),
+    text: m.EditTechnicalContactDescription,
     tags: [
-      defineMessage({
-        id: 'service.portal:email',
-        defaultMessage: 'Netfang',
-      }),
-      defineMessage({
-        id: 'service.portal:tel',
-        defaultMessage: 'Símanúmer',
-      }),
+      m.EditTechnicalContactTagOne,
+      m.EditTechnicalContactTagTwo,
+      m.EditTechnicalContactTagThree,
     ],
   },
   {
-    name: defineMessage({
-      id: 'sp.document-provider:edit-user-help-contact',
-      defaultMessage: 'Breyta notendaaðstoð',
-    }),
+    name: m.EditUserHelpContact,
     url: ServicePortalPath.DocumentProviderSettingsEditUserHelpContact,
-    text: defineMessage({
-      id: 'sp.document-provider:edit-user-help-contact',
-      defaultMessage: 'Hér getur þú breytt upplýsingum um notendaaðstoð',
-    }),
-    tags: [
-      defineMessage({
-        id: 'service.portal:email',
-        defaultMessage: 'Netfang',
-      }),
-      defineMessage({
-        id: 'service.portal:tel',
-        defaultMessage: 'Símanúmer',
-      }),
-    ],
+    text: m.EditUserHelpContactDescription,
+    tags: [m.EditUserHelpContactTagOne, m.EditUserHelpContactTagTwo],
   },
   {
-    name: defineMessage({
-      id: 'sp.document-provider:edit-endpoints',
-      defaultMessage: 'Breyta endapunkt',
-    }),
+    name: m.EditEndPoints,
     url: ServicePortalPath.DocumentProviderSettingsEditEndpoints,
-    text: defineMessage({
-      id: 'sp.document-provider:edit-endpoints',
-      defaultMessage: 'Hér getur þú breytt endpunkt',
-    }),
-    tags: [
-      defineMessage({
-        id: 'service.portal:email',
-        defaultMessage: 'Netfang',
-      }),
-      defineMessage({
-        id: 'service.portal:tel',
-        defaultMessage: 'Símanúmer',
-      }),
-    ],
+    text: m.EditEndPointsDescription,
+    tags: [m.EditEndPointsTagOne],
   },
 ]

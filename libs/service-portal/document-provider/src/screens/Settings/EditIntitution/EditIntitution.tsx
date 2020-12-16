@@ -1,25 +1,36 @@
 import React from 'react'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Text, toast } from '@island.is/island-ui/core'
+import { m } from '../../../lib/messages'
+import {
+  InstitutionForm,
+  InstitutionFormData,
+} from '../../../components/Forms/InstitutionForm'
 
-const EditIntitution: ServicePortalModuleComponent = ({ userInfo }) => {
+//TODO fetch values and set values
+
+const EditIntitution: ServicePortalModuleComponent = ({}) => {
   const { formatMessage } = useLocale()
+
+  const handleSubmit = (data: InstitutionFormData) => {
+    submitFormData(data)
+  }
+
+  const submitFormData = async (formData: InstitutionFormData) => {
+    //TODO: Set up submit
+    console.log(formData)
+    toast.success('Stofnun vistuð')
+  }
 
   return (
     <Box marginBottom={[2, 3, 5]}>
-      <Text variant="h1" as="h1">
-        {formatMessage({
-          id: 'sp.document-provider:edit-institution',
-          defaultMessage: 'Breyta stofnun',
-        })}
-      </Text>
-      <Text as="p">
-        {formatMessage({
-          id: 'sp.document-provider:edit-institution-description',
-          defaultMessage: 'Hér kemur form fyrir stofnun TODO',
-        })}
-      </Text>
+      <Box marginBottom={4}>
+        <Text variant="h1" as="h1">
+          {formatMessage(m.SettingsEditInstitutionTitle)}
+        </Text>
+      </Box>
+      <InstitutionForm onSubmit={handleSubmit} />
     </Box>
   )
 }

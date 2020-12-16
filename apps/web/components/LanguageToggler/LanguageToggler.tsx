@@ -14,7 +14,6 @@ import { GET_CONTENT_SLUG } from '@island.is/web/screens/queries/Article'
 import { GlobalContext } from '@island.is/web/context'
 import { ContentLanguage } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { Modal } from '../Modal/Modal'
 
 export const LanguageToggler: FC<{
   hideWhenMobile?: boolean
@@ -82,7 +81,6 @@ export const LanguageToggler: FC<{
       onClick={otherLanguage === 'en' ? null : onClick}
       aria-label={t.otherLanguageAria}
       lang={otherLanguage === 'en' ? 'en' : 'is'}
-      fluid
     >
       {t.otherLanguageName}
     </Button>

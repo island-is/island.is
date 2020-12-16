@@ -8,6 +8,9 @@ export const GET_ABOUT_SUB_PAGE_QUERY = gql`
       slug
       description
       subDescription
+      intro {
+        ...HtmlFields
+      }
       slices {
         ...AllSlices
       }

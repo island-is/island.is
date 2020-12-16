@@ -1,53 +1,21 @@
 import React, {
-  FC,
   ReactNode,
   useCallback,
   useEffect,
   useRef,
   useState,
 } from 'react'
-import cn from 'classnames'
-import { Box, Text, Divider, DividerProps } from '@island.is/island-ui/core'
-import Bullet from '../../components/Bullet/Bullet'
-import { Colors, theme } from '@island.is/island-ui/theme'
+import { Box } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import * as styles from './Sidebar.treat'
 
-type ColorConfig = {
-  main: Colors
-  secondary: Colors
-  subNavBorder: Colors
-  divider: DividerProps['weight']
-}
-
-const ColorConfig: { [key: string]: ColorConfig } = {
-  standard: {
-    main: 'blue400',
-    secondary: 'dark400',
-    divider: 'regular',
-    subNavBorder: 'blue200',
-  },
-  gradient: {
-    main: 'white',
-    secondary: 'blue100',
-    divider: 'purple400',
-    subNavBorder: 'blue400',
-  },
-}
-
 export interface SidebarProps {
-  title: string
-  type: keyof typeof ColorConfig
-  children: (p: {
-    bulletRef: (e: HTMLElement) => void
-    colors: ColorConfig
-  }) => ReactNode
+  children: ReactNode
 }
 
-const Sidebar: FC<SidebarProps> = ({ title, type, children }) => {
+const Sidebar = ({ children }: SidebarProps) => {
   const containerRef = useRef(null)
   const [divStyles, setDivStyles] = useState(null)
-  const [bullet, bulletRef] = useState(null)
-  const colors = ColorConfig[type]
 
   const onResize = useCallback(() => {
     if (containerRef?.current) {
@@ -57,6 +25,7 @@ const Sidebar: FC<SidebarProps> = ({ title, type, children }) => {
         left: containerRef.current.offsetLeft + 'px',
         width: containerRef.current.offsetWidth + 'px',
         bottom: theme.spacing[12] + 'px',
+        zIndex: 10,
       })
     }
   }, [containerRef])
@@ -72,32 +41,7 @@ const Sidebar: FC<SidebarProps> = ({ title, type, children }) => {
       <div style={divStyles}>
         <div className={styles.sticky}>
           <div className={styles.stickyInner}>
-            <div
-              className={cn(styles.background, {
-                [styles.visible]: type === 'standard',
-              })}
-            />
-            <div
-              className={cn(styles.background, styles.gradient, {
-                [styles.visible]: type === 'gradient',
-              })}
-            />
-            <Box position="relative">
-              <Box paddingX={4} paddingY={3}>
-                {title && (
-                  <>
-                    <Text variant="h3" as="h3" color={colors.main}>
-                      {title}
-                    </Text>
-                    <Box paddingY={2}>
-                      <Divider weight={colors.divider} />
-                    </Box>
-                  </>
-                )}
-                {children({ bulletRef, colors })}
-              </Box>
-            </Box>
-            {bullet && <Bullet align="left" top={bullet.offsetTop + 'px'} />}
+            <Box position="relative">{children}</Box>
           </div>
         </div>
       </div>
