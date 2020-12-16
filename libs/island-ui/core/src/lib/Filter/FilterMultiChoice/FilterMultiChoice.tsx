@@ -10,9 +10,13 @@ import { Checkbox } from '../../Checkbox/Checkbox'
 import { Stack } from '../../Stack/Stack'
 
 type FilterCategory = {
+  /** Id for the category. */
   id: string
+  /** The category label to display on screen. */
   label: string
+  /** The array of currently selected active filters. */
   selected: Array<string>
+  /** Array of available filters in this category. */
   filters: Array<FilterItem>
 }
 
@@ -22,16 +26,20 @@ type FilterItem = {
 }
 
 type FilterMultiChoiceChangeEvent = {
-  // Name of the category the selected values belongs to
+  /** Id of the category the selected values belongs to. */
   categoryId: string
-  // Array of selected items in the corresponding category
+  /** Array of selected items in the corresponding category. */
   selected: Array<string>
 }
 
 export interface FilterMultiChoiceProps {
+  /** Array of different categories grouping different filter values */
   categories: Array<FilterCategory>
+  /** Label for clear button for localization */
   labelClear: string
+  /** OnChange event handler when user checks/unchecks a value */
   onChange: (event: FilterMultiChoiceChangeEvent) => void
+  /** OnClear event handler to clear selected values for specific category */
   onClear: (categoryId: string) => void
 }
 

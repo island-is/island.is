@@ -1,40 +1,28 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Dialog, DialogDisclosure, useDialogState } from 'reakit/Dialog'
 import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
 import { Stack } from '../Stack/Stack'
 import { Text } from '../Text/Text'
+import * as styles from './Filter.treat'
 
 export interface FilterProps {
-  /**
-   * Label for the clear button.
-   * Should be used for localization.
-   */
+  /** Label for the clear button. Should be used for localization. */
   labelClear: string
-  /**
-   * Lable for open filter button
-   * when in mobile version
-   */
+
+  /** Lable for open filter button when in mobile version. */
   labelOpen: string
-  /**
-   * Label for filter title when expanded
-   * in mobile version.
-   */
+
+  /** Label for filter title when expanded in mobile version. */
   labelTitle: string
 
-  /**
-   * Label for show result button in
-   * expanded mobile version.
-   */
+  /** Label for show result button in expanded mobile version. */
   labelResult: string
 
-  /**
-   * Number of search results
-   */
+  /** Number of search results to display on the show result button. */
   resultCount: number
-  /**
-   * Event handler for clear filter event.
-   */
+
+  /** Event handler for clear filter event. */
   onFilterClear: () => void
 }
 
@@ -52,7 +40,7 @@ export const Filter: React.FC<FilterProps> = ({
   return (
     <>
       <Box display={['block', 'block', 'none']}>
-        <DialogDisclosure {...dialog} style={{ width: '100%' }}>
+        <DialogDisclosure {...dialog} className={styles.dialogDisclosure}>
           <Box
             display="flex"
             justifyContent="spaceBetween"
@@ -86,6 +74,7 @@ export const Filter: React.FC<FilterProps> = ({
             display="flex"
             justifyContent="spaceBetween"
             flexDirection="column"
+            className={styles.dialogContainer}
           >
             <Stack space={2} dividers={false}>
               <Box display="flex" justifyContent="spaceBetween">
