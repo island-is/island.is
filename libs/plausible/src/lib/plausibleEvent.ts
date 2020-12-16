@@ -1,4 +1,4 @@
-import BaseEvent from './baseEvent'
+import BaseEvent from './BaseEvent'
 
 // Fix for TypeScript error: Property 'X' does not exist on type 'Window'
 declare global {
