@@ -105,6 +105,7 @@ export const DetentionRequests: React.FC = () => {
 
   const mapCaseStateToTagVariant = (
     state: CaseState,
+    isCustodyEndDateInThePast?: boolean,
   ): { color: TagVariant; text: string } => {
     switch (state) {
       case CaseState.DRAFT || CaseState.NEW:
@@ -112,7 +113,11 @@ export const DetentionRequests: React.FC = () => {
       case CaseState.SUBMITTED:
         return { color: 'purple', text: 'Krafa staðfest' }
       case CaseState.ACCEPTED:
-        return { color: 'darkerMint', text: 'Gæsluvarðhald virkt' }
+        if (isCustodyEndDateInThePast) {
+          return { color: 'darkerBlue', text: 'Gæsluvarðhaldi lokið' }
+        } else {
+          return { color: 'darkerMint', text: 'Gæsluvarðhald virkt' }
+        }
       case CaseState.REJECTED:
         return { color: 'blue', text: 'Gæsluvarðhaldi hafnað' }
       default:
@@ -296,18 +301,22 @@ export const DetentionRequests: React.FC = () => {
                     </Text>
                   </td>
                   <td>
-                    {c.isCustodyEndDateInThePast ? (
-                      <Tag variant="darkerBlue" outlined>
-                        Gæsluvarðhaldi lokið
-                      </Tag>
-                    ) : (
-                      <Tag
-                        variant={mapCaseStateToTagVariant(c.state).color}
-                        outlined
-                      >
-                        {mapCaseStateToTagVariant(c.state).text}
-                      </Tag>
-                    )}
+                    <Tag
+                      variant={
+                        mapCaseStateToTagVariant(
+                          c.state,
+                          c.isCustodyEndDateInThePast,
+                        ).color
+                      }
+                      outlined
+                    >
+                      {
+                        mapCaseStateToTagVariant(
+                          c.state,
+                          c.isCustodyEndDateInThePast,
+                        ).text
+                      }
+                    </Tag>
                   </td>
                   <td>
                     <Text as="span">

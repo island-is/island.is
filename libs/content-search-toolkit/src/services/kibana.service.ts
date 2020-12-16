@@ -1,16 +1,29 @@
 import fetch from 'node-fetch'
 import FormData from 'form-data'
+import * as AWS from 'aws-sdk'
+import aws4 from 'aws4'
+import util from 'util'
+import fs from 'fs'
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { KibanaSavedObject } from '@island.is/content-search-indexer/types'
 
 import { environment } from '../environments/environment'
 
-const { kibana } = environment
+const readFile = util.promisify(fs.readFile)
+
+const { kibana, awsWebIdentityTokenFile, awsRoleName } = environment
 
 interface ImportSavedObjectsResponse {
   success: boolean
   successCount: number
+}
+
+interface ApiParams {
+  url: URL
+  method: 'GET' | 'POST'
+  body?: string
+  headers?: object
 }
 
 @Injectable()
@@ -19,22 +32,56 @@ export class KibanaService {
     logger.debug('Created Kibana Service')
   }
 
-  private async callApi({
+  private async fetchSignedHeaders({
     url,
     method,
     body,
-  }: {
-    url: URL
-    method: 'GET' | 'POST'
-    body?: FormData
-  }) {
+    headers,
+  }: ApiParams): Promise<object> {
+    const sts = new AWS.STS()
+    const token = await readFile(awsWebIdentityTokenFile)
+    const { Credentials } = await sts
+      .assumeRoleWithWebIdentity({
+        RoleArn: awsRoleName,
+        RoleSessionName: 'kibana',
+        WebIdentityToken: token.toString(),
+      })
+      .promise()
+
+    const opts = {
+      host: url.hostname,
+      path: url.pathname + url.search,
+      method,
+      body,
+      headers,
+    }
+    const signed = aws4.sign(opts, {
+      accessKeyId: Credentials.AccessKeyId,
+      secretAccessKey: Credentials.SecretAccessKey,
+      sessionToken: Credentials.SessionToken,
+    })
+
+    return signed.headers
+  }
+
+  private async callApi({ url, method, body, headers = {} }: ApiParams) {
     try {
+      let apiHeaders = { 'kbn-xsrf': 'true', ...headers }
+
+      if (awsWebIdentityTokenFile && awsRoleName) {
+        const signedHeaders = await this.fetchSignedHeaders({
+          url,
+          method,
+          body,
+          headers: apiHeaders,
+        })
+        apiHeaders = { ...apiHeaders, ...signedHeaders }
+      }
+
       const response = await fetch(url.href, {
         method,
         body,
-        headers: {
-          'kbn-xsrf': 'true',
-        },
+        headers: apiHeaders,
       })
 
       if (!response.ok) {
@@ -56,7 +103,12 @@ export class KibanaService {
     const url = new URL(`${kibana.url}/api/saved_objects/_import`)
     url.search = new URLSearchParams({ overwrite: 'true' }).toString()
 
-    return await this.callApi({ url, method: 'POST', body: form })
+    return await this.callApi({
+      url,
+      method: 'POST',
+      body: form.getBuffer().toString(),
+      headers: form.getHeaders(),
+    })
   }
 
   async findSavedObject(id: string, type: string): Promise<KibanaSavedObject> {
