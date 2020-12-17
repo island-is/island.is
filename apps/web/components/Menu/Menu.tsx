@@ -1,3 +1,4 @@
+import React, { FC, useRef } from 'react'
 import {
   Button,
   Menu as MenuUI,
@@ -6,13 +7,12 @@ import {
   Box,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
-import React, { FC, useRef } from 'react'
+import { LinkResolverResponse } from 'apps/web/hooks/useLinkResolver'
 import { SearchInput } from '..'
 import { LanguageToggler } from '../LanguageToggler'
-import { AnchorAttributes } from '@island.is/web/i18n/routes'
 
 interface MegaMenuLink {
-  href: AnchorAttributes
+  href: LinkResolverResponse
   text: string
   sub?: [MegaMenuLink]
 }

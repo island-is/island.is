@@ -22,13 +22,13 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { deorphanize } from '@island.is/island-ui/utils'
-import useLinkResolver from '@island.is/web/i18n/routes'
 import { useI18n } from '../../i18n'
 import { theme } from '@island.is/island-ui/theme'
 import Illustration from './illustrations/Illustration'
 import * as styles from './FrontpageTabs.treat'
 import { GlobalContext } from '@island.is/web/context'
 import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver } from 'apps/web/hooks/useLinkResolver'
 
 type TabsProps = {
   subtitle?: string

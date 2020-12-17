@@ -50,7 +50,7 @@ import {
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
 import * as styles from './Search.treat'
-import { pathNames } from '@island.is/web/i18n/routes'
+import { useLinkResolver } from 'apps/web/hooks/useLinkResolver'
 
 const PERPAGE = 10
 
@@ -91,6 +91,7 @@ const Search: Screen<CategoryProps> = ({
   const searchRef = useRef<HTMLInputElement | null>(null)
   const Router = useRouter()
   const n = useNamespace(namespace)
+  const { linkResolver } = useLinkResolver()
   const [sidebarData, setSidebarData] = useState<SidebarData>({
     totalTagCount: 0,
     tags: {},
@@ -189,8 +190,7 @@ const Search: Screen<CategoryProps> = ({
   >).map((item) => ({
     title: item.title,
     description: item.intro ?? item.seoDescription ?? item.description,
-    href: pathNames(activeLocale, item.__typename, [item.slug])?.href,
-    as: pathNames(activeLocale, item.__typename, [item.slug])?.as,
+    ...linkResolver(item.__typename, [item.slug]),
     categorySlug: item.category?.slug,
     category: item.category,
     group: item.group,
@@ -201,14 +201,14 @@ const Search: Screen<CategoryProps> = ({
 
   const onRemoveFilters = () => {
     Router.replace({
-      pathname: pathNames(activeLocale, 'search').as,
+      pathname: linkResolver('search').as,
       query: { q },
     })
   }
 
   const onSelectSidebarTag = (type: 'category' | 'type', key: string) => {
     Router.replace({
-      pathname: pathNames(activeLocale, 'search').as,
+      pathname: linkResolver('search').as,
       query: { q, [type]: key },
     })
   }
@@ -318,7 +318,7 @@ const Search: Screen<CategoryProps> = ({
       >
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs>
-            <Link {...(pathNames() as LinkProps)} passHref>
+            <Link {...linkResolver('homepage')} passHref>
               Ísland.is
             </Link>
           </Breadcrumbs>
@@ -409,7 +409,7 @@ const Search: Screen<CategoryProps> = ({
                 renderLink={(page, className, children) => (
                   <Link
                     href={{
-                      pathname: pathNames(activeLocale, 'search')?.as,
+                      pathname: linkResolver('search').as,
                       query: { ...Router.query, page },
                     }}
                   >

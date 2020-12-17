@@ -1,13 +1,13 @@
-import pathNames, { ContentType } from '../i18n/routes'
 import {
   ArticleCategory,
   MenuLinkWithChildren,
   MenuLink,
 } from '../graphql/schema'
 import { Locale } from '../i18n/I18n'
+import { linkResolver, LinkType } from '../hooks/useLinkResolver'
 
 export const formatMegaMenuLinks = (
-  lang: Locale,
+  locale: Locale,
   menuLinks: (MenuLinkWithChildren | MenuLink)[],
 ) => {
   return menuLinks
@@ -15,7 +15,7 @@ export const formatMegaMenuLinks = (
       let sub
       // if this link has children format them
       if ('childLinks' in linkData) {
-        sub = formatMegaMenuLinks(lang, linkData.childLinks)
+        sub = formatMegaMenuLinks(locale, linkData.childLinks)
       } else {
         sub = null
       }
@@ -26,9 +26,9 @@ export const formatMegaMenuLinks = (
 
       return {
         text: linkData.title,
-        href: pathNames(lang, linkData.link.type as ContentType, [
+        href: linkResolver(linkData.link.type as LinkType, [
           linkData.link.slug,
-        ]),
+        ], locale),
         sub,
       }
     })
@@ -36,10 +36,10 @@ export const formatMegaMenuLinks = (
 }
 
 export const formatMegaMenuCategoryLinks = (
-  lang: Locale,
+  locale: Locale,
   categories: ArticleCategory[],
 ) =>
   categories.map((category) => ({
     text: category.title,
-    href: pathNames(lang, category.__typename as ContentType, [category.slug]),
+    href: linkResolver(category.__typename as LinkType, [category.slug], locale),
   }))

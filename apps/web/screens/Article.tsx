@@ -26,7 +26,6 @@ import { Screen } from '@island.is/web/types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames from '@island.is/web/i18n/routeNames'
-import { ContentType, pathNames } from '@island.is/web/i18n/routes'
 import { CustomNextError } from '@island.is/web/units/errors'
 import {
   QueryGetNamespaceArgs,
@@ -39,6 +38,7 @@ import { createNavigation } from '@island.is/web/utils/navigation'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { SidebarLayout } from './Layouts/SidebarLayout'
 import { createPortal } from 'react-dom'
+import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -161,7 +161,7 @@ const TOC: FC<{
 const ArticleNavigation: FC<
   ArticleSidebarProps & { isMenuDialog?: boolean }
 > = ({ article, activeSlug, n, isMenuDialog }) => {
-  const { activeLocale } = useI18n()
+  const { linkResolver } = useLinkResolver()
   return (
     article.subArticles.length > 0 && (
       <Navigation
@@ -175,10 +175,7 @@ const ArticleNavigation: FC<
         isMenuDialog={isMenuDialog}
         renderLink={(link, { typename, slug }) => {
           return (
-            <NextLink
-              {...pathNames(activeLocale, typename as ContentType, slug)}
-              passHref
-            >
+            <NextLink {...linkResolver(typename as LinkType, slug)} passHref>
               {link}
             </NextLink>
           )

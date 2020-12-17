@@ -1,7 +1,7 @@
-import React, { useContext } from 'react'
-import { Locale, I18nContext } from './I18n'
+import { useContext } from 'react'
+import { Locale, I18nContext } from '../../i18n/I18n'
 
-interface LinkResolverResponse {
+export interface LinkResolverResponse {
   href: string
   as: string
 }
@@ -17,7 +17,7 @@ interface TypeResolverResponse {
   locale: Locale
 }
 
-type LinkType = keyof typeof routesTemplate
+export type LinkType = keyof typeof routesTemplate
 
 // the order matters, arrange from most specific to least specific for correct type resolution
 export const routesTemplate = {
@@ -82,11 +82,11 @@ const convertToRegex = (routeTemplate: string) =>
     .replace(/\[\w+\]/g, '\\[\\w+\\]') // make path variables be regex word matches
 
 // tries to return url for given type
-export const linkResolver = ({
-  linkType,
-  slugs,
-  locale,
-}: LinkResolverInput): LinkResolverResponse => {
+export const linkResolver = (
+  linkType: LinkResolverInput['linkType'],
+  slugs: LinkResolverInput['slugs'] = [],
+  locale: LinkResolverInput['locale'],
+): LinkResolverResponse => {
   let path = { as: '/', href: '/' }
   const type = String(linkType).toLowerCase()
 
@@ -125,24 +125,13 @@ export const typeResolver = (path: string): TypeResolverResponse | null => {
 
 export const useLinkResolver = () => {
   const context = useContext(I18nContext)
-  // TODO: use useCallback here
   const wrappedLinkResolver = (
     linkType: LinkResolverInput['linkType'],
     slugs: LinkResolverInput['slugs'] = [],
     locale: LinkResolverInput['locale'] = context.activeLocale,
-  ) =>
-    linkResolver({
-      locale: context.activeLocale,
-      ...{
-        linkType,
-        slugs,
-        locale,
-      },
-    })
+  ) => linkResolver(linkType, slugs, locale)
   return {
     typeResolver,
     linkResolver: wrappedLinkResolver,
   }
 }
-
-export default useLinkResolver

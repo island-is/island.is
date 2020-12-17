@@ -14,7 +14,6 @@ import {
   GridContainer,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import pathNames from '@island.is/web/i18n/routes'
 import {
   RichText,
   AnchorNavigation,
@@ -35,6 +34,7 @@ import {
 import { createNavigation } from '@island.is/web/utils/navigation'
 import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { useLinkResolver } from 'apps/web/hooks/useLinkResolver'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
@@ -47,6 +47,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
 }) => {
   useContentfulId(id)
   const n = useNamespace(namespace)
+  const { linkResolver } = useLinkResolver()
 
   const navigation = useMemo(() => {
     return createNavigation(content, { title })
@@ -87,7 +88,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
               >
                 <Box paddingBottom={[2, 2, 4]}>
                   <Breadcrumbs>
-                    <Link href={pathNames().href}>Ísland.is</Link>
+                    <Link {...linkResolver('homepage')}>Ísland.is</Link>
                     <Tag variant="blue" outlined>
                       {n('lifeEventTitle', 'Lífsviðburður')}
                     </Tag>
