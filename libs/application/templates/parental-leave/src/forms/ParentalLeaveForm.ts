@@ -1,4 +1,5 @@
 import {
+  Application,
   buildAsyncSelectField,
   buildCustomField,
   buildDataProviderItem,
@@ -74,6 +75,41 @@ export const ParentalLeaveForm: Form = buildForm({
                   type: 'ParentalLeaves',
                   title: m.existingParentalLeavesTitle,
                   subTitle: m.existingParentalLeavesSubTitle,
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'emailAndPhoneNumber',
+          name: mm.applicant.subSection,
+          children: [
+            buildMultiField({
+              id: 'contactInfo',
+              name: mm.applicant.title,
+              description: mm.applicant.description,
+              children: [
+                buildTextField({
+                  width: 'half',
+                  name: mm.applicant.email,
+                  id: 'applicant.email',
+                  variant: 'email',
+                  defaultValue: (application: Application) =>
+                    (application.externalData.userProfile?.data as {
+                      email?: string
+                    })?.email,
+                }),
+                buildTextField({
+                  width: 'half',
+                  name: mm.applicant.phoneNumber,
+                  defaultValue: (application: Application) =>
+                    (application.externalData.userProfile?.data as {
+                      mobilePhoneNumber?: string
+                    })?.mobilePhoneNumber,
+                  id: 'applicant.phoneNumber',
+                  variant: 'tel',
+                  format: '###-####',
+                  placeholder: '000-0000',
                 }),
               ],
             }),
@@ -165,7 +201,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   name: m.union,
                   id: 'payments.union',
                   width: 'half',
-                  loadingError: m.loadingError,
+                  loadingError: mm.errors.loading,
                   loadOptions: async ({ apolloClient }) => {
                     const { data } = await apolloClient.query<UnionQuery>({
                       query: GetUnions,
