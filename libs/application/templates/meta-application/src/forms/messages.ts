@@ -78,22 +78,17 @@ export const m = defineMessages({
   },
   dataName: {
     id: 'meta.application:data.name',
-    defaultMessage: 'Heiti skjals',
+    defaultMessage: 'Heiti gagna',
     description: 'Some description',
   },
   dataPublisher: {
     id: 'meta.application:data.publisher',
-    defaultMessage: 'Útgefandi skjals',
+    defaultMessage: 'Uppruni gagna',
     description: 'Some description',
   },
   dataDownload: {
     id: 'meta.application:data.download',
     defaultMessage: 'Er hægt að sækja skjal með vefþjónustu?',
-    description: 'Some description',
-  },
-  dataUpload: {
-    id: 'meta.application:data.upload',
-    defaultMessage: 'Upload af notanda',
     description: 'Some description',
   },
   dataAdd: {
@@ -119,7 +114,7 @@ export const m = defineMessages({
   },
   paymentRadio: {
     id: 'meta.application:payment.radio',
-    defaultMessage: 'Er greitt fyrir gjald fyrir þjónustuna?',
+    defaultMessage: 'Er greitt gjald fyrir þjónustuna?',
     description: 'Some description',
   },
   paymentTBR: {
@@ -134,7 +129,7 @@ export const m = defineMessages({
   },
   paymentCharge: {
     id: 'meta.application:payment.charge',
-    defaultMessage: 'Má rukka fyrirfram eða við samþykki?',
+    defaultMessage: 'Má rukka fyrir fram eða við samþykki?',
     description: 'Some description',
   },
   yesOptionLabel: {

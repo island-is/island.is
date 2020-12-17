@@ -298,10 +298,22 @@ export async function generateRulingPdf(
     .text('Krafa lögreglu')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.policeDemands, {
-      lineGap: 6,
-      paragraphGap: 0,
-    })
+    .text(
+      formatProsecutorDemands(
+        existingCase.accusedNationalId,
+        existingCase.accusedName,
+        existingCase.court,
+        existingCase.alternativeTravelBan,
+        existingCase.requestedCustodyEndDate,
+        existingCase.requestedCustodyRestrictions?.includes(
+          CaseCustodyRestrictions.ISOLATION,
+        ),
+      ),
+      {
+        lineGap: 6,
+        paragraphGap: 0,
+      },
+    )
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
