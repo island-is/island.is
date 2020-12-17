@@ -79,7 +79,7 @@ const DocumentCard: FC<Props> = ({ document }) => {
       })
       const doc = data?.getDocument
       if (!doc) {
-        throw new Error()
+        throw new Error('DocumentDetails is empty')
       }
       setDocumentDetails({ documentDetails: doc })
       if (documentIsPdf(doc) && windowRef) {
