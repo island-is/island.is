@@ -56,12 +56,9 @@ export async function generateRequestPdf(
       align: 'center',
     })
     .fontSize(16)
-    .text(
-      `Embætti: ${user.institution || 'Lögreglustjórinn á höfuðborgarsvæðinu'}`,
-      {
-        align: 'center',
-      },
-    )
+    .text(`Embætti: ${user.institution}`, {
+      align: 'center',
+    })
     .lineGap(40)
     .text(`Dómstóll: ${existingCase.court}`, { align: 'center' })
     .font('Helvetica-Bold')
@@ -90,6 +87,7 @@ export async function generateRequestPdf(
         existingCase.accusedNationalId,
         existingCase.accusedName,
         existingCase.court,
+        existingCase.alternativeTravelBan,
         existingCase.requestedCustodyEndDate,
         existingCase.requestedCustodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
@@ -349,7 +347,7 @@ export async function generateRulingPdf(
       formatConclusion(
         existingCase.accusedNationalId,
         existingCase.accusedName,
-        existingCase.rejecting,
+        existingCase.decision,
         existingCase.custodyEndDate,
         existingCase.custodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
@@ -426,7 +424,7 @@ export async function generateRulingPdf(
       })
   }
 
-  if (!existingCase.rejecting) {
+  if (!existingCase.decision) {
     doc
       .text(' ')
       .font('Helvetica-Bold')

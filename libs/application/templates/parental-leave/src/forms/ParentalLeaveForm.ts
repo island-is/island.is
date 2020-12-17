@@ -1,4 +1,5 @@
 import {
+  Application,
   buildAsyncSelectField,
   buildCustomField,
   buildDataProviderItem,
@@ -80,6 +81,41 @@ export const ParentalLeaveForm: Form = buildForm({
           ],
         }),
         buildSubSection({
+          id: 'emailAndPhoneNumber',
+          name: mm.applicant.subSection,
+          children: [
+            buildMultiField({
+              id: 'contactInfo',
+              name: mm.applicant.title,
+              description: mm.applicant.description,
+              children: [
+                buildTextField({
+                  width: 'half',
+                  name: mm.applicant.email,
+                  id: 'applicant.email',
+                  variant: 'email',
+                  defaultValue: (application: Application) =>
+                    (application.externalData.userProfile?.data as {
+                      email?: string
+                    })?.email,
+                }),
+                buildTextField({
+                  width: 'half',
+                  name: mm.applicant.phoneNumber,
+                  defaultValue: (application: Application) =>
+                    (application.externalData.userProfile?.data as {
+                      mobilePhoneNumber?: string
+                    })?.mobilePhoneNumber,
+                  id: 'applicant.phoneNumber',
+                  variant: 'tel',
+                  format: '###-####',
+                  placeholder: '000-0000',
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
           id: 'otherParent',
           name: m.otherParentSubSection,
           children: [
@@ -92,32 +128,10 @@ export const ParentalLeaveForm: Form = buildForm({
                 return true
               },
               children: [
-                buildRadioField({
+                buildCustomField({
                   id: 'otherParent',
                   name: '',
-                  options: (application) => {
-                    const [spouseName, spouseId] = getNameAndIdOfSpouse(
-                      application,
-                    )
-                    const options: Option[] = [
-                      {
-                        value: NO,
-                        label: m.noOtherParent,
-                      },
-                      { value: 'manual', label: m.otherParentOption },
-                    ]
-                    if (spouseName !== undefined && spouseId !== undefined) {
-                      options.unshift({
-                        value: 'spouse',
-                        label: () => ({
-                          ...m.otherParentSpouse,
-                          values: { spouseName, spouseId },
-                        }),
-                      })
-                    }
-                    return options
-                  },
-                  largeButtons: true,
+                  component: 'OtherParent',
                 }),
                 buildTextField({
                   id: 'otherParentName',
@@ -133,6 +147,18 @@ export const ParentalLeaveForm: Form = buildForm({
                   format: '######-####',
                   placeholder: '000000-0000',
                 }),
+              ],
+            }),
+            buildRadioField({
+              id: 'otherParentRightOfAccess',
+              largeButtons: true,
+              emphasize: true,
+              condition: (answers) => answers.otherParent === 'manual',
+              name: mm.rightOfAccess.title,
+              description: mm.rightOfAccess.description,
+              options: [
+                { label: mm.rightOfAccess.yesOption, value: YES },
+                { label: m.noOptionLabel, value: NO },
               ],
             }),
           ],
@@ -175,7 +201,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   name: m.union,
                   id: 'payments.union',
                   width: 'half',
-                  loadingError: m.loadingError,
+                  loadingError: mm.errors.loading,
                   loadOptions: async ({ apolloClient }) => {
                     const { data } = await apolloClient.query<UnionQuery>({
                       query: GetUnions,
@@ -228,6 +254,8 @@ export const ParentalLeaveForm: Form = buildForm({
             buildRadioField({
               id: 'usePersonalAllowance',
               name: m.usePersonalAllowance,
+              largeButtons: true,
+              width: 'half',
               options: [
                 { label: m.yesOptionLabel, value: YES },
                 { label: m.noOptionLabel, value: NO },
@@ -277,6 +305,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 return true
               },
               largeButtons: true,
+              width: 'half',
               options: [
                 { label: m.yesOptionLabel, value: YES },
                 { label: m.noOptionLabel, value: NO },
@@ -325,11 +354,23 @@ export const ParentalLeaveForm: Form = buildForm({
           id: 'employer',
           name: m.employerSubSection,
           children: [
+            buildRadioField({
+              id: 'isSelfEmployed',
+              name: mm.selfEmployed.title,
+              description: mm.selfEmployed.description,
+              largeButtons: true,
+              width: 'half',
+              options: [
+                { label: m.yesOptionLabel, value: YES },
+                { label: m.noOptionLabel, value: NO },
+              ],
+            }),
             buildMultiField({
               id: 'employer',
-              description:
-                'Hér vantar helling af upplýsingum, hvað ef þú ert sjálfstætt starfandi?', // TODO
+              // description:
+              //   'Hér vantar helling af upplýsingum, hvað ef þú ert sjálfstætt starfandi?', // TODO
               name: m.employerTitle,
+              condition: (answers) => answers.isSelfEmployed !== YES,
               children: [
                 buildTextField({
                   name: m.employerName,

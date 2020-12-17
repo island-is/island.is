@@ -4,7 +4,7 @@ import {
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 
-/** This data provider fetches email and phone number information from user profile service and fails if the user has not set it up in my pages **/
+/** This data provider fetches email and phone number information from user profile service and resolves even though the user has not set it up in my pages **/
 export class UserProfileProvider extends BasicDataProvider {
   readonly type = 'UserProfile'
 
@@ -21,7 +21,7 @@ export class UserProfileProvider extends BasicDataProvider {
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
-          return Promise.reject(response.errors[0].message)
+          return this.handleError()
         }
         const responseObj = response.data.getUserProfile
         if (
@@ -30,23 +30,22 @@ export class UserProfileProvider extends BasicDataProvider {
           !responseObj?.email ||
           !responseObj?.emailVerified
         ) {
-          return Promise.reject(
-            'You must go to my pages and set your email and phone number in order to continue the application process',
-          )
+          return this.handleError()
         }
         return Promise.resolve(responseObj)
       })
       .catch(() => {
-        if (process.env.NODE_ENV === 'development') {
-          return Promise.resolve({
-            email: 'mockEmail@island.is',
-            mobilePhoneNumber: '1234567',
-          })
-        }
-        return Promise.reject(
-          'You must go to my pages and set your email and phone number to in order continue the application process',
-        )
+        return this.handleError()
       })
+  }
+  handleError() {
+    if (process.env.NODE_ENV === 'development') {
+      return Promise.resolve({
+        email: 'mockEmail@island.is',
+        mobilePhoneNumber: '9999999',
+      })
+    }
+    return Promise.resolve({})
   }
   onProvideError(result: string): FailedDataProviderResult {
     return {

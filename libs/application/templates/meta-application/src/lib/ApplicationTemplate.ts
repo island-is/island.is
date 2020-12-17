@@ -16,14 +16,28 @@ type Events =
 
 const Schema = z.object({
   applicant: z.object({
-    institution: z.object({
-      id: z.string(),
-      title: z.string(),
-    }),
-    ministry: z.object({
-      id: z.string(),
-      title: z.string(),
-    }),
+    institution: z
+      .union([
+        z.string().optional(),
+        z
+          .object({
+            id: z.string().optional(),
+            title: z.string().optional(),
+          })
+          .optional(),
+      ])
+      .optional(),
+    ministry: z
+      .union([
+        z.string().optional(),
+        z
+          .object({
+            id: z.string().optional(),
+            title: z.string().optional(),
+          })
+          .optional(),
+      ])
+      .optional(),
     contact: z.string().nonempty().max(256),
     email: z.string().email(),
     phoneNumber: z.string().min(7),
@@ -32,24 +46,24 @@ const Schema = z.object({
     name: z.string().nonempty().max(256),
     countPerYear: z.string().refine((x) => {
       const asNumber = parseInt(x)
+      return !isNaN(asNumber) && asNumber >= 0
     }),
     users: z.enum(['companies', 'individuals', 'both']),
     digital: z.enum(['yes', 'no']),
-    link: z.string().optional(),
+    link: z.string().url().optional(),
   }),
   data: z.array(
     z.object({
       name: z.string(),
       publisher: z.string(),
-      download: z.string(),
-      upload: z.string(),
+      acceptsPayment: z.enum(['yes', 'no']),
     }),
   ),
   payment: z.object({
     acceptsPayment: z.enum(['yes', 'no']),
     tbr: z.string().optional(),
     amount: z.string().optional(),
-    when: z.enum(['in advance', 'on approval']).optional(),
+    when: z.enum(['inAdvance', 'onApproval']).optional(),
   }),
   info: z.string().optional(),
 })
@@ -60,14 +74,14 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.META_APPLICATION,
-  name: 'Application application',
+  name: 'Umsókn um aðild að umsóknarkerfi island.is',
   dataSchema: Schema,
   stateMachineConfig: {
     initial: 'draft',
     states: {
       draft: {
         meta: {
-          name: 'Umsókn um ökunám',
+          name: 'Umsókn',
           progress: 0.33,
           roles: [
             {
@@ -91,7 +105,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       },
       inReview: {
         meta: {
-          name: 'In Review',
+          name: 'Í vinnslu',
           progress: 0.66,
           roles: [
             {
@@ -123,7 +137,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       },
       approved: {
         meta: {
-          name: 'Approved',
+          name: 'Samþykkt',
           progress: 1,
           roles: [
             {
@@ -139,7 +153,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       },
       rejected: {
         meta: {
-          name: 'Rejected',
+          name: 'Hafnað',
           roles: [
             {
               id: 'applicant',

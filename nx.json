@@ -92,6 +92,9 @@
     "api-domains-documents": {
       "tags": []
     },
+    "api-domains-driving-license": {
+      "tags": []
+    },
     "api-domains-file-upload": {
       "tags": []
     },
@@ -319,11 +322,17 @@
     "service-portal-documents": {
       "tags": []
     },
+    "service-portal-driving-license": {
+      "tags": []
+    },
     "service-portal-e2e": {
       "tags": [],
       "implicitDependencies": ["service-portal"]
     },
     "service-portal-education": {
+      "tags": []
+    },
+    "service-portal-eligibility": {
       "tags": []
     },
     "service-portal-family": {

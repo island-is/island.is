@@ -6,7 +6,7 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.sequelize.transaction((t) =>
       queryInterface.sequelize.query(
-        `UPDATE "case" SET state = 'DRAFT' WHERE state = 'UNKNOWN' or state = 'ACTIVE' or state = 'COMPLETED';`,
+        `UPDATE "case" SET state = 'DRAFT' WHERE state = 'UNKNOWN' OR state = 'ACTIVE' OR state = 'COMPLETED';`,
         { transaction: t },
       ),
     )
@@ -24,7 +24,7 @@ module.exports = {
   down: async (queryInterface, Sequelize) => {
     await queryInterface.sequelize.transaction((t) =>
       queryInterface.sequelize.query(
-        `UPDATE "case" SET state = 'DRAFT' WHERE state = 'ACCEPTED' or state = 'REJECTED';`,
+        `UPDATE "case" SET state = 'DRAFT' WHERE state = 'ACCEPTED' OR state = 'REJECTED';`,
         { transaction: t },
       ),
     )

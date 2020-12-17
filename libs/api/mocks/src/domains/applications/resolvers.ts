@@ -18,5 +18,8 @@ export const resolvers: Resolvers = {
     getApplication: (parent, args) => {
       return store.applications.find((a) => a.id === args.input.id) || null
     },
+    nationalRegistryFamily: () => {
+      return store.familyMembers
+    },
   },
 }
