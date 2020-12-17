@@ -48,7 +48,7 @@ class ClientsList extends Component {
       <div className="clients">
         <div className="clients__wrapper">
         <div className="clients__container">
-          <h2>Clients</h2>
+          <h1>Clients</h1>
           <div className="clients__container__options">
             <div className="clients__container__button">
               <Link href={'/client'}>

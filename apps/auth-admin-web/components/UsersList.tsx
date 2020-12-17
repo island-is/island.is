@@ -129,7 +129,7 @@ const UsersList: React.FC = () => {
                     as="span"
                     errors={errors}
                     name="id"
-                    message="SubjectId is required"
+                    message="SubjectId or nationalId is required. NationalId must 10 numeric characters"
                   />
                     <input
                     type="submit"

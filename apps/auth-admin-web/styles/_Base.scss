@@ -269,6 +269,9 @@ a {
   &[class$='new'] {
     display: block;
     padding: 20px 0px;
+    color: $color-link;
+    text-decoration: none;
+    font-size: 1.1rem;
   }
 
   &[class$='button__close'] {
