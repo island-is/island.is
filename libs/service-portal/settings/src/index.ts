@@ -22,12 +22,6 @@ export const settingsModule: ServicePortalModule = {
           lazy(() => import('./screens/NavigationScreen/NavigationScreen')),
       },
       {
-        name: 'Mín réttindi',
-        path: ServicePortalPath.MyLicensesRoot,
-        render: () =>
-          lazy(() => import('./screens/DelegationGreeting/DelegationGreeting')),
-      },
-      {
         name: defineMessage({
           id: 'service.portal:profile-info',
           defaultMessage: 'Minn aðgangur',

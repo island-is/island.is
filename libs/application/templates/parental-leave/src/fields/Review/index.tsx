@@ -13,6 +13,7 @@ import {
   GridColumn,
   GridRow,
   Input,
+  SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
 import {
@@ -33,6 +34,7 @@ import { useQuery } from '@apollo/client'
 import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 import { m, mm } from '../../lib/messages'
 import { YES, NO } from '../../constants'
+import useOtherParentOptions from '../../hooks/useOtherParentOptions'
 
 type ValidOtherParentAnswer = 'no' | 'manual' | undefined
 type ValidRadioAnswer = 'yes' | 'no' | undefined
@@ -43,6 +45,10 @@ const Review: FC<FieldBaseProps> = ({
 }) => {
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
+  const {
+    options: otherParentOptions,
+    loading: loadingSpouseName,
+  } = useOtherParentOptions()
 
   const [
     statefulOtherParentConfirmed,
@@ -53,21 +59,6 @@ const Review: FC<FieldBaseProps> = ({
       'otherParent',
     ) as ValidOtherParentAnswer,
   )
-  const [spouseName, spouseId] = getNameAndIdOfSpouse(application)
-
-  const otherParentOptions: Option[] = [
-    {
-      value: NO,
-      label: formatMessage(m.noOtherParent),
-    },
-    { value: 'manual', label: formatMessage(m.otherParentOption) },
-  ]
-  if (spouseName !== undefined && spouseId !== undefined) {
-    otherParentOptions.unshift({
-      value: 'spouse',
-      label: formatMessage(m.otherParentSpouse, { spouseName, spouseId }),
-    })
-  }
 
   const [statefulPrivatePension, setStatefulPrivatePension] = useState<
     ValidRadioAnswer
@@ -126,23 +117,27 @@ const Review: FC<FieldBaseProps> = ({
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="12/12">
-                  <RadioController
-                    id="otherParent"
-                    disabled={false}
-                    name="otherParent"
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'otherParent',
-                      ) as string[]
-                    }
-                    options={otherParentOptions}
-                    onSelect={(s: string) => {
-                      setStatefulOtherParentConfirmed(
-                        s as ValidOtherParentAnswer,
-                      )
-                    }}
-                  />
+                  {loadingSpouseName ? (
+                    <SkeletonLoader repeat={3} space={1} height={48} />
+                  ) : (
+                    <RadioController
+                      id="otherParent"
+                      disabled={false}
+                      name="otherParent"
+                      defaultValue={
+                        getValueViaPath(
+                          application.answers,
+                          'otherParent',
+                        ) as string[]
+                      }
+                      options={otherParentOptions}
+                      onSelect={(s: string) => {
+                        setStatefulOtherParentConfirmed(
+                          s as ValidOtherParentAnswer,
+                        )
+                      }}
+                    />
+                  )}
                 </GridColumn>
               </GridRow>
               {statefulOtherParentConfirmed === 'manual' && (

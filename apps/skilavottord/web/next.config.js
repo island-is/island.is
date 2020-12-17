@@ -2,12 +2,13 @@ const withTreat = require('next-treat')()
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 
 const {
-  API_URL = 'http://localhost:3333/api',
+  API_URL = 'http://localhost:3333',
+  API_PATH = '/skilavottord/api',
   WEB_PUBLIC_URL = 'http://localhost:4200',
   SENTRY_DSN,
 } = process.env
 
-const graphqlPath = '/api/graphql'
+const graphqlPath = '/graphql'
 
 module.exports = withTreat(
   withHealthcheckConfig({
@@ -19,13 +20,13 @@ module.exports = withTreat(
     },
     serverRuntimeConfig: {
       // Will only be available on the server side
-      apiUrl: API_URL,
-      graphqlEndpoint: `${API_URL}${graphqlPath}`,
+      apiUrl: `${API_URL}${API_PATH}`,
+      graphqlEndpoint: `${API_URL}${API_PATH}${graphqlPath}`,
     },
     publicRuntimeConfig: {
       // Will be available on both server and client
-      apiUrl: `${WEB_PUBLIC_URL}/api`,
-      graphqlEndpoint: graphqlPath,
+      apiUrl: `${WEB_PUBLIC_URL}${API_PATH}`,
+      graphqlEndpoint: `${API_PATH}${graphqlPath}`,
       SENTRY_DSN,
     },
   }),
