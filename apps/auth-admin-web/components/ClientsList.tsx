@@ -39,13 +39,8 @@ class ClientsList extends Component {
       )
     ) {
       const response = await axios.delete(`api/clients/${clientId}`);
-      console.log(response);
       this.getClients(this.state.page, this.state.count);
     }
-  };
-
-  edit = async (client: ClientDTO) => {
-    console.log(client);
   };
 
   render() {
@@ -81,7 +76,6 @@ class ClientsList extends Component {
                     <button
                         type="button"
                         className="clients__button__edit"
-                        // onClick={() => this.edit(client)}
                         title="Edit"
                       >
                         <i className="icon__edit"></i>

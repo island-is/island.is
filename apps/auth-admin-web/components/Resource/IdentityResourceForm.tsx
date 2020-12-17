@@ -5,14 +5,14 @@ import StatusBar from '../StatusBar';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import HelpBox from '../HelpBox';
-import APIResponse from '../../models/utils/APIResponse';
 import { useRouter } from 'next/router';
+import APIResponse from 'apps/auth-admin-web/models/common/APIResponse';
 
 export default function IdentityResourceForm() {
   const { register, handleSubmit, errors, formState } = useForm<
     IdentityResourcesDTO
   >();
-  const { isDirty, isSubmitting } = formState;
+  const { isSubmitting } = formState;
   const [response, setResponse] = useState<APIResponse>(new APIResponse());
   const [resource, setResource] = useState<IdentityResourcesDTO>(
     new IdentityResourcesDTO()

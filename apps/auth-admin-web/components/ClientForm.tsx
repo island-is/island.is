@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ClientDTO from '../models/dtos/client-dto';
 import axios from 'axios';
 import StatusBar from './StatusBar';
-import APIResponse from '../models/utils/APIResponse';
+import APIResponse from '../models/common/APIResponse';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import HelpBox from './HelpBox';
@@ -63,7 +63,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
 
   
 
-  const create = async (data) => {
+  const create = async (data: any) => {
     await axios.post('/api/clients', data)
     .then((response) => {
       const res = new APIResponse();
@@ -71,51 +71,47 @@ const ClientForm: React.FC<Props> = (props: Props) => {
       res.message = response.request.statusText;
       setResponse(res);
       if (res.statusCode === 201) {
-        props.onNextButtonClick(data);
+        if (props.onNextButtonClick)
+        {
+          props.onNextButtonClick(data);
+        }
       }
     })
     .catch(function (error) {
       if (error.response) {
         setResponse(error.response.data);
-
-        // console.log(error.response.data);
-
-        // console.log(error.response.headers);
       } else {
         // TODO: Handle and show error
       }
     });
   }
 
-  const edit = async (data) => {
+  const edit = async (data: any) => {
+    const handleObject = {...data};
     delete data.clientId;
-    console.log(data);
     await axios.put(`/api/clients/${props.client.clientId}`, data)
     .then((response) => {
       const res = new APIResponse();
       res.statusCode = response.request.status;
       res.message = response.request.statusText;
       setResponse(res);
-      if (res.statusCode === 201) {
-        console.log('handle change');
-        console.log(data);
-        
+      if (res.statusCode === 200) {
+        if (props.onNextButtonClick)
+        {
+          props.onNextButtonClick(handleObject);
+        }
       }
     })
     .catch(function (error) {
       if (error.response) {
         setResponse(error.response.data);
-
-        // console.log(error.response.data);
-
-        // console.log(error.response.headers);
       } else {
         // TODO: Handle and show error
       }
     });
   }
 
-  const save = (data) => {
+  const save = (data: any) => {
     const clientObject = castToNumbers(data.client);
     if (!isEditing) {
       create(clientObject);
@@ -156,7 +152,6 @@ const ClientForm: React.FC<Props> = (props: Props) => {
         </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="client__container__fields">
-                {/* <HookField name='client.clientId' errors={errors} required={true} label="Client Id" value={client.clientId}  /> */}
                 <div className="client__container__field">
                   <label className="client__label">
                     National Id (Kennitala)
@@ -174,7 +169,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                     className="client__input"
                     placeholder="0123456789"
                     title=""
-                    maxLength="10"
+                    maxLength={10}
                     title="The nationalId (Kennitala) registered for the client"
                   />
                   <HelpBox helpText="The nationalId (Kennitala) registered for the client" />

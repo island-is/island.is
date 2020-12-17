@@ -5,14 +5,15 @@ import { ErrorMessage } from '@hookform/error-message';
 import StatusBar from './StatusBar';
 import HelpBox from './HelpBox';
 import axios from 'axios';
-import APIResponse from '../models/utils/APIResponse';
+import APIResponse from '../models/common/APIResponse';
 
 interface Props {
   clientId: string;
-  defaultUrl: string;
-  uris: [],
+  defaultUrl?: string;
+  uris?: string[],
   handleNext?: () => void;
   handleBack?: () => void;
+  handleChanges?: () => void;
 }
 
 const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
@@ -21,25 +22,11 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
   >();
   const { isSubmitting } = formState;
   const [response, setResponse] = useState(null);
-  const [uris, setUris] = useState<string[]>([]);
-
-  /** Setting the uris when updating an existing client */
-  useEffect(() => {
-    if (props.uris && uris.length > 0)
-    {
-        for(let i = 0; i < uris.length; i++){
-            uris.push(props.uris[i]);
-        }
-        setUris(uris);
-    }
-     
-  }, [props.uris]);
 
   const add = async (data) => {
     const clientRedirect = new ClientPostLogoutRedirectUriDTO();
     clientRedirect.clientId = props.clientId;
     clientRedirect.redirectUri = data.redirectUri;
-    let success = false;
 
     await axios
       .post(`/api/client-post-logout-redirect-uri`, clientRedirect)
@@ -49,7 +36,9 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
         res.message = response.request.statusText;
         setResponse(res);
         if (response.status === 201) {
-          success = true;
+          if (props.handleChanges){
+            props.handleChanges();
+          }
         }
       })
       .catch(function (error) {
@@ -59,24 +48,20 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
           // TODO: Handle and show error
         }
       });
-
-      if ( success ){
-        uris.push(clientRedirect.redirectUri);
-        setUris([...uris]);
-      }
   };
 
-  const remove = async (uri) => {
-    let success = false;
+  const remove = async (uri: string) => {
     await axios
-      .delete(`/api/client-post-logout-redirect-uri/${props.clientId}/${uri}`)
+      .delete(`/api/client-post-logout-redirect-uri/${props.clientId}/${encodeURIComponent(uri)}`)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
         res.message = response.request.statusText;
         setResponse(res);
         if (res.statusCode === 200){
-           success = true;
+           if (props.handleChanges){
+            props.handleChanges();
+          }
         }
       })
       .catch(function (error) {
@@ -86,11 +71,6 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
           // TODO: Handle and show error
         }
       });
-
-      if ( success ){
-        uris.splice(uris.indexOf(uri), 1);
-        setUris([...uris]);
-      }
   };
 
   return (
@@ -133,9 +113,12 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                 </div>
               </div>
 
-              <div className="client-post-logout__container__list">
-                {uris.map((uri: string) => {
-                  <h3>Active post logout URLs</h3>
+              <div className={`client-post-logout__container__list ${
+                    props.uris && props.uris.length > 0  ? 'show' : 'hidden'
+                  }`}>
+              <h3>Active post logout URLs</h3>
+                {props.uris?.map((uri: string) => {
+                  
                   return (
                     <div
                       className="client-post-logout__container__list__item"

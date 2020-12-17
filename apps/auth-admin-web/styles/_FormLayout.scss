@@ -6,7 +6,12 @@
 .step-end,
 .users,
 .not-found,
-.paginator {
+.paginator,
+.client-allowed-cors-origin,
+.client-allowed-scopes,
+.client-secret,
+.client-claim,
+.client-grant-types {
   &__help {
     padding: 0 10px 20px 10px;
   }
@@ -91,12 +96,14 @@
         padding: 10px 0px 0px 5px;
         text-decoration: underline;
         color: $color-link;
+        font-size: 0.8rem;
       }
 
       .list-name {
         padding: 10px 0px 0px 5px;
         text-decoration: underline;
         color: $color-link;
+        font-size: 0.8rem;
       }
 
       .list-remove {
