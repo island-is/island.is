@@ -12,7 +12,7 @@ import {
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useRouter } from 'next/router'
 import { RecyclingPartner } from '@island.is/skilavottord-web/types'
-import { BASE_PATH } from 'apps/skilavottord/web/utils/consts'
+import { BASE_PATH } from '@island.is/skilavottord-web/utils/consts'
 
 interface FormProps {
   initialValues?: RecyclingPartner

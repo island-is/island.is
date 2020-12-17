@@ -27,7 +27,7 @@ import {
   VehicleOwner,
 } from '@island.is/skilavottord-web/types'
 import { getDate, getYear } from '@island.is/skilavottord-web/utils/dateUtils'
-import { BASE_PATH } from 'apps/skilavottord/web/utils/consts'
+import { BASE_PATH } from '@island.is/skilavottord-web/utils/consts'
 
 export const skilavottordRecyclingPartnerVehiclesQuery = gql`
   query skilavottordRecyclingPartnerVehiclesQuery($partnerId: String!) {
