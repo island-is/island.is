@@ -28,7 +28,6 @@ import { useNamespace } from '@island.is/web/hooks'
 import RichText from 'apps/web/components/RichText/RichText'
 import { useI18n } from 'apps/web/i18n'
 
-
 const { publicRuntimeConfig } = getConfig()
 
 /* TEMPORARY LAYOUT CREATED TO SCAFFOLD API CATALOGUE INTO THE WEB */
@@ -40,7 +39,7 @@ interface ApiCatalogueProps {
 
 const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   subpageHeader,
-  headerNamespace
+  headerNamespace,
 }) => {
   /* DISABLE FROM WEB WHILE WIP */
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
@@ -72,17 +71,15 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                   <Text variant="h1">{subpageHeader.title}</Text>
                   <Text variant="intro">{subpageHeader.summary}</Text>
                   <Stack space={2}>
-                    {subpageHeader.body ? 
-                      <RichText 
+                    {subpageHeader.body ? (
+                      <RichText
                         body={subpageHeader.body as SliceType[]}
-                        config={{defaultPadding: [2, 2, 4]}}
+                        config={{ defaultPadding: [2, 2, 4] }}
                         locale={activeLocale}
                       />
-                      : null}
+                    ) : null}
                     <Button icon="arrowForward" variant="text">
-                      <Link href={n('handbookLink')}>
-                        {n('dgButtonTitle')}
-                      </Link>
+                      <Link href={n('handbookLink')}>{n('dgButtonTitle')}</Link>
                     </Button>
                   </Stack>
                 </Stack>
