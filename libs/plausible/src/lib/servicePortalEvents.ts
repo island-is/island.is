@@ -5,15 +5,6 @@ import {
   plausibleOutboundLinkEvent,
 } from './plausibleEvent'
 
-/**
- * Special event decleration for outbound link as described in plausible see here https://plausible.io/blog/track-outbound-link-clicks
- * Event does not require any additional metadata or featureName as it needs to have the event name Outbound Link: Click
- * @param eventName The name of the event
- */
-export default interface OutBoundLinkEvent {
-  eventName: 'Outbound Link: Click'
-}
-
 // Event sent when the search feature of documents is interacted with by the user
 export const documentsSearchDocumentsInitialized = (location: string) => {
   const event: BaseEvent = {
@@ -63,7 +54,10 @@ export const servicePortalSubmitOnBoardingModal = (location: string) => {
   plausibleCustomEvent(event)
 }
 
-// Event sent when a user clicks an outbound link in the service portal
+/*
+ * Special function for outbound link as described in plausible see here https://plausible.io/blog/track-outbound-link-clicks
+ * Event does not require any additional metadata
+ */
 export const servicePortalOutboundLink = () => {
   plausibleOutboundLinkEvent()
 }
