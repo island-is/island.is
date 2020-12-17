@@ -14,8 +14,6 @@ class MyDocument extends Document<Props> {
         <Head></Head>
         <body>
           <div className="document__wrapper">
-            <Header />
-            <Nav />
             <Main />
             <NextScript />
           </div>

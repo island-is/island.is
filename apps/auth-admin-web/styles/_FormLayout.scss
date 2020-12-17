@@ -1,4 +1,5 @@
 .client,
+.clients,
 .identity-resource,
 .client-redirect,
 .client-post-logout,
@@ -77,6 +78,11 @@
         color: $color-error;
       }
     }
+  }
+
+  &__selected__item {
+    padding: 13px;
+    font-size: 0.8rem;
   }
 
   &__container__list {

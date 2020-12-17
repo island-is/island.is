@@ -39,7 +39,6 @@ export default function IdentityResourceForm<Props>(
       })
       .catch(function (error) {
         if (error.response) {
-          console.log('error');
           setResponse(error.response.data);
         }
       });

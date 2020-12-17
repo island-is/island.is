@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { ClientPostLogoutRedirectUriDTO } from '../models/dtos/client-allowed-cors-origin-redirect-uri.dto';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import StatusBar from './StatusBar';
@@ -11,7 +10,7 @@ import { ClientAllowedCorsOriginDTO } from '../models/dtos/client-allowed-cors-o
 interface Props {
   clientId: string;
   defaultOrigin?: string;
-  origins?: string[],
+  origins?: string[];
   handleNext?: () => void;
   handleBack?: () => void;
   handleChanges?: () => void;
@@ -19,12 +18,12 @@ interface Props {
 
 const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
   const { register, handleSubmit, errors, formState } = useForm<
-  ClientPostLogoutRedirectUriDTO
+  ClientAllowedCorsOriginDTO
   >();
   const { isSubmitting } = formState;
-  const [response, setResponse] = useState(null);
+  const [response, setResponse] = useState<APIResponse>(new APIResponse());
 
-  const add = async (data) => {
+  const add = async (data: any) => {
     const clientRedirect = new ClientAllowedCorsOriginDTO();
     clientRedirect.clientId = props.clientId;
     clientRedirect.origin = data.origin;
@@ -37,7 +36,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
         res.message = response.request.statusText;
         setResponse(res);
         if (response.status === 201) {
-          if (props.handleChanges){
+          if (props.handleChanges) {
             props.handleChanges();
           }
         }
@@ -59,8 +58,8 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
         res.statusCode = response.request.status;
         res.message = response.request.statusText;
         setResponse(res);
-        if (res.statusCode === 200){
-           if (props.handleChanges){
+        if (res.statusCode === 200) {
+          if (props.handleChanges) {
             props.handleChanges();
           }
         }
@@ -81,14 +80,19 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
         <div className="client-allowed-cors-origin__container">
           <h1>Enter allowed cors origins</h1>
           <div className="client-allowed-cors-origin__container__form">
-          <div className="client-allowed-cors-origin__help">
-            <p><strong>Optional</strong> (you can configure this at a later time)</p>
-            <p>Allowed cors origins</p>
-          </div>
+            <div className="client-allowed-cors-origin__help">
+              <p>
+                <strong>Optional</strong> (you can configure this at a later
+                time)
+              </p>
+              <p>Allowed cors origins</p>
+            </div>
             <form onSubmit={handleSubmit(add)}>
               <div className="client-allowed-cors-origin__container__fields">
                 <div className="client-allowed-cors-origin__container__field">
-                  <label className="client-allowed-cors-origin__label">Allow cors origin</label>
+                  <label className="client-allowed-cors-origin__label">
+                    Allow cors origin
+                  </label>
                   <input
                     type="text"
                     name="origin"
@@ -114,12 +118,13 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
                 </div>
               </div>
 
-              <div className={`client-allowed-cors-origin__container__list ${
-                    props.origins && props.origins.length > 0  ? 'show' : 'hidden'
-                  }`}>
-              <h3>Allowed cors origins</h3>
+              <div
+                className={`client-allowed-cors-origin__container__list ${
+                  props.origins && props.origins.length > 0 ? 'show' : 'hidden'
+                }`}
+              >
+                <h3>Allowed cors origins</h3>
                 {props.origins?.map((origin: string) => {
-                  
                   return (
                     <div
                       className="client-allowed-cors-origin__container__list__item"
