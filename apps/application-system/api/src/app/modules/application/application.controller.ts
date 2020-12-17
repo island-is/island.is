@@ -75,6 +75,7 @@ import { verifyToken } from './utils/tokenUtils'
 interface DecodedToken {
   applicationId: string
 }
+
 @ApiTags('applications')
 @ApiHeader({
   name: 'authorization',
