@@ -4,11 +4,16 @@ import {
   CaseCustodyRestrictions,
   CaseGender,
   CaseState,
+  TransitionCase,
   UpdateCase,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
-import { CaseQuery, UpdateCaseMutation } from '../graphql'
+import {
+  CaseQuery,
+  TransitionCaseMutation,
+  UpdateCaseMutation,
+} from '../graphql'
 import { UserQuery } from '../shared-components/UserProvider/UserProvider'
 
 export const mockProsecutor = {
