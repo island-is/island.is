@@ -3,7 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
 import qs from 'qs'
 
-import { Text, Page } from '@island.is/island-ui/core'
+import { Text, Page, Box, LoadingIcon, Stack } from '@island.is/island-ui/core'
 import { NotFound } from '@island.is/application/ui-shell'
 
 import { ASSIGN_APPLICATION } from 'libs/application/graphql/src'
@@ -67,7 +67,14 @@ export const AssignApplication = () => {
           subTitle="Villa koma upp við að tengjast umsókn og hefur hún verið skráð"
         />
       ) : loading ? (
-        <Text variant="default">This should be a loading indicator</Text>
+        <Box display="flex" justifyContent="center" alignItems="center">
+          <Stack space={3} align="center">
+            <LoadingIcon animate size={40} />
+            <Text variant="h4" color="blue600">
+              Tengist umsókn
+            </Text>
+          </Stack>
+        </Box>
       ) : null}
     </Page>
   )
