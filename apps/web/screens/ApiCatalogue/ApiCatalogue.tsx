@@ -78,9 +78,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                         locale={activeLocale}
                       />
                     ) : null}
-                    <Button icon="arrowForward" variant="text">
-                      <Link href={n('handbookLink')}>{n('dgButtonTitle')}</Link>
-                    </Button>
                   </Stack>
                 </Stack>
               </Box>
@@ -135,8 +132,6 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
       })
       .then((res) => JSON.parse(res.data.getNamespace.fields)),
   ])
-
-  console.log(subpageHeader)
 
   return {
     subpageHeader,
