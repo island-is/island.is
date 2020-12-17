@@ -1,12 +1,10 @@
 import React, { FC, useState } from 'react'
 import { ActionCard, Modal } from '@island.is/service-portal/core'
 import { Document, DocumentDetails } from '@island.is/api/schema'
-import {  GET_DOCUMENT, client } from '@island.is/service-portal/graphql'
+import { GET_DOCUMENT, client } from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
 import * as styles from './DocumentCard.treat'
 import { toast, Text, Stack, Button, Box } from '@island.is/island-ui/core'
-import * as Sentry from '@sentry/react'
-import { mockPdfDocument, mockURLDocument,mockHtmlDocument,  mockFetch } from './mockDocument'
 
 const base64ToArrayBuffer = (base64Pdf: string) => {
   const binaryString = window.atob(base64Pdf)
@@ -22,37 +20,33 @@ const base64ToArrayBuffer = (base64Pdf: string) => {
 const getPdfURL = (base64Pdf: string) => {
   const byte = base64ToArrayBuffer(base64Pdf)
   const blob = new Blob([byte], { type: 'application/pdf' })
-  return URL.createObjectURL(blob);
+  return URL.createObjectURL(blob)
 }
-
 
 const documentIsPdf = (data: DocumentDetails) => {
   return (data?.fileType || '').toLowerCase() === 'pdf' && data?.content
 }
 
-const documentIsExternalURL = (data: DocumentDetails) => {
-  return (data?.fileType || '').toLowerCase() === 'url' && data?.url;
+const getEdgecaseDocument = (
+  document: Document,
+): DocumentDetails | undefined => {
+  const { url, fileType } = document
+  return fileType === 'url' && url
+    ? { fileType, url, content: '', html: '' }
+    : undefined
 }
-
-const getEdgecaseDocument = (document: Document): DocumentDetails | undefined => {
-  const {url, fileType} = document;
-  return fileType ===  'url' && url ? {fileType, url, content: '', html:''} : undefined
-}
-
 
 interface Props {
   document: Document
 }
 
-
 const DocumentCard: FC<Props> = ({ document }) => {
-
   const { formatMessage } = useLocale()
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [{loading, documentDetails}, setDocumentDetails] = useState<{loading?: boolean, documentDetails?: DocumentDetails}>({});
-
-
-
+  const [{ loading, documentDetails }, setDocumentDetails] = useState<{
+    loading?: boolean
+    documentDetails?: DocumentDetails
+  }>({})
 
   const displayErrorToast = () => {
     toast.error(
@@ -64,47 +58,48 @@ const DocumentCard: FC<Props> = ({ document }) => {
   }
 
   const displayDocument = (doc: DocumentDetails) => {
-    if(documentIsPdf(doc)) {
-      window.open(getPdfURL(doc.content));
+    if (documentIsPdf(doc)) {
+      window.open(getPdfURL(doc.content))
       return
     }
-   
+
     // Note: if document is not pdf, we need to log it into sentry and add it into the edge case.
     setIsModalOpen(true)
-    
   }
-  
+
   const fetchDocument = async () => {
-    setDocumentDetails({loading: true});
+    setDocumentDetails({ loading: true })
 
     // Note: opening window before fetching data, to prevent popup-blocker
     let windowRef = window.open()
     try {
-      const {data} = await client.query({query: GET_DOCUMENT, variables: {input: {id: document.id}}})
-      const doc = data?.getDocument;
-      if(!doc) {
-        throw new Error();
+      const { data } = await client.query({
+        query: GET_DOCUMENT,
+        variables: { input: { id: document.id } },
+      })
+      const doc = data?.getDocument
+      if (!doc) {
+        throw new Error()
       }
-      setDocumentDetails({documentDetails: doc});
-      if(documentIsPdf(doc) && windowRef) {
+      setDocumentDetails({ documentDetails: doc })
+      if (documentIsPdf(doc) && windowRef) {
         windowRef.location.assign(getPdfURL(doc.content))
-        return;
-      } 
-      windowRef?.close();
-      window.focus();
-      window.setTimeout(() => displayDocument(doc), 100);
+        return
+      }
+      windowRef?.close()
+      window.focus()
+      window.setTimeout(() => displayDocument(doc), 100)
     } catch (error) {
-      setDocumentDetails({});
-      windowRef?.close();
-      window.focus();
-      window.setTimeout(displayErrorToast,100)
+      setDocumentDetails({})
+      windowRef?.close()
+      window.focus()
+      window.setTimeout(displayErrorToast, 100)
     }
   }
 
-
   const onClickHandler = () => {
-    if(loading) return;
-    documentDetails ? displayDocument(documentDetails) : fetchDocument();
+    if (loading) return
+    documentDetails ? displayDocument(documentDetails) : fetchDocument()
   }
 
   const handleOnModalClose = () => {
