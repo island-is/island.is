@@ -36,9 +36,7 @@ interface ApiCatalogueProps {
   subpageHeader: GetSubpageHeaderQuery['getSubpageHeader']
 }
 
-const ApiCatalogue: Screen<ApiCatalogueProps> = ({
-  subpageHeader,
-}) => {
+const ApiCatalogue: Screen<ApiCatalogueProps> = ({ subpageHeader }) => {
   /* DISABLE FROM WEB WHILE WIP */
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
 
