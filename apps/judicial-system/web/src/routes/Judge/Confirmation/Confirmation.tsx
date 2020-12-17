@@ -29,29 +29,14 @@ import {
   SendNotificationMutation,
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
-import { gql, useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { api } from '../../../services'
 import CourtRecordAccordionItem from '../../../shared-components/CourtRecordAccordionItem/CourtRecordAccordionItem'
-
-export const RequestSignatureMutation = gql`
-  mutation RequestSignatureMutation($input: RequestSignatureInput!) {
-    requestSignature(input: $input) {
-      controlCode
-      documentToken
-    }
-  }
-`
-
-export const SignatureConfirmationQuery = gql`
-  query SignatureConfirmationQuery($input: SignatureConfirmationQueryInput!) {
-    signatureConfirmation(input: $input) {
-      documentSigned
-      code
-      message
-    }
-  }
-`
+import {
+  RequestSignatureMutation,
+  SignatureConfirmationQuery,
+} from '../../../utils/mutations'
 
 interface SigningModalProps {
   workingCase: Case

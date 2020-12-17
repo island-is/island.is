@@ -35,66 +35,7 @@ import {
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import BlueBox from '../../../../shared-components/BlueBox/BlueBox'
-
-export const CreateCaseMutation = gql`
-  mutation CreateCaseMutation($input: CreateCaseInput!) {
-    createCase(input: $input) {
-      id
-      created
-      modified
-      state
-      policeCaseNumber
-      accusedNationalId
-      accusedName
-      accusedAddress
-      accusedGender
-      requestedDefenderName
-      requestedDefenderEmail
-      court
-      arrestDate
-      requestedCourtDate
-      alternativeTravelBan
-      requestedCustodyEndDate
-      lawsBroken
-      custodyProvisions
-      requestedCustodyRestrictions
-      caseFacts
-      witnessAccounts
-      investigationProgress
-      legalArguments
-      comments
-      prosecutor {
-        name
-        title
-      }
-      courtCaseNumber
-      courtDate
-      isCourtDateInThePast
-      courtRoom
-      defenderName
-      defenderEmail
-      courtStartTime
-      courtEndTime
-      courtAttendees
-      policeDemands
-      accusedPlea
-      litigationPresentations
-      ruling
-      decision
-      custodyEndDate
-      isCustodyEndDateInThePast
-      custodyRestrictions
-      accusedAppealDecision
-      accusedAppealAnnouncement
-      prosecutorAppealDecision
-      prosecutorAppealAnnouncement
-      judge {
-        name
-        title
-      }
-    }
-  }
-`
+import { CreateCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 
 interface CaseData {
   case?: Case
