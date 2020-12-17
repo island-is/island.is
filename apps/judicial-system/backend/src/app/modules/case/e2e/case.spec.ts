@@ -58,11 +58,11 @@ const remainingCreateCaseData = {
   requestedDefenderName: 'Requested Defender Name',
   requestedDefenderEmail: 'Requested Defender Email',
   court: 'Court',
-  arrestDate: '2020-09-08T08:00:00.000Z',
-  requestedCourtDate: '2020-09-08T11:30:00.000Z',
 }
 
 const remainingProsecutorCaseData = {
+  arrestDate: '2020-09-08T08:00:00.000Z',
+  requestedCourtDate: '2020-09-08T11:30:00.000Z',
   requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
   lawsBroken: 'Broken Laws',
   custodyProvisions: [

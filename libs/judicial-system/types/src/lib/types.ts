@@ -137,9 +137,9 @@ export interface CreateCase {
   accusedName?: string
   accusedAddress?: string
   accusedGender?: CaseGender
+  requestedDefenderName?: string
+  requestedDefenderEmail?: string
   court?: string
-  arrestDate?: string
-  requestedCourtDate?: string
 }
 
 export interface UpdateCase {
