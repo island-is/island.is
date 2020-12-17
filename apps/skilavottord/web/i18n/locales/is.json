@@ -69,10 +69,10 @@
   "gdpr": {
     "title": "Þín gögn",
     "subTitles": {
-      "info": "Upplýsingar um þínar bifreiðir"
+      "info": "Upplýsingar um þín ökutækir"
     },
-    "info": "Við þurfum frekari upplýsingar um þína bíla, áður en þú getur notað þjónustuna.",
-    "checkbox": "Ég samþykki að nota megi ofangreindar upplýsingar, sem og þær upplýsingar sem koma fram við förgun á bifreiðinni.",
+    "info": "Við þurfum frekari upplýsingar um ökutækin þín, áður en þú getur notað þjónustuna.",
+    "checkbox": "Ég samþykki að nota megi ofangreindar upplýsingar, sem og þær upplýsingar sem koma fram við förgun á ökutækinu.",
     "buttons": {
       "continue": "Halda áfram"
     },
@@ -97,7 +97,7 @@
     },
     "status": {
       "coOwned": "Skráðir meðeigendur",
-      "recycle": "Skila bifreið til úrvinnslu á næstu söfnunarstöð",
+      "recycle": "Skila ökutæki til úrvinnslu hjá næsta endurvinnsluaðila",
       "done": "Endurunnin"
     },
     "buttons": {
@@ -109,16 +109,16 @@
       "link": "https://innskranning.island.is/?id=mitt.samgongustofa.is"
     },
     "error": {
-      "message": "Ekki tókst að sækja yfirlit bifreiða úr gagnagrunni, vinsamlegast prufaðu endurhlaða síðuna.",
+      "message": "Ekki tókst að sækja yfirlit ökutækis úr gagnagrunni, vinsamlegast prufaðu að endurhlaða síðuna.",
       "primaryButton": "Endurhlaða síðu"
     }
   },
   "confirm": {
-    "title": "Samþykkja úrvinnslu bifreiðar",
+    "title": "Samþykkja úrvinnslu ökutækis",
     "subTitles": {
-      "confirm": "Viltu velja þessa bifreið til úrvinnslu?"
+      "confirm": "Viltu velja þetta ökutæki til úrvinnslu?"
     },
-    "info": "Þegar ökutæki hefur verið samþykkt til úrvinnslu getur þú leitið upplýsinga hjá viðkomandi sveitarfélagi/móttökustöð hvert eigi að fara með ökutækið til að farga því. Umsóknin er ekki bindandi, ökutæki verður einungis endurunnið sé því skilað á móttökustöð.",
+    "info": "Þegar ökutæki hefur verið samþykkt til úrvinnslu getur þú leitið upplýsinga hjá viðkomandi sveitarfélagi/móttökuaðila um hvert eigi að fara með ökutækið til að farga því. Umsóknin er ekki bindandi, ökutæki verður einungis endurunnið sé því skilað til móttökuaðila.",
     "buttons": {
       "cancel": "Hætta við",
       "continue": "Rafrænt samþykki"
@@ -131,22 +131,22 @@
   "handover": {
     "titles": {
       "success": "Úrvinnsla ökutækis samþykkt",
-      "error": "Ekki tókst að merkja bifreiðina til förgunar.",
-      "loading": "Merki bíl til förgunar."
+      "error": "Ekki tókst að merkja ökutæki til förgunar.",
+      "loading": "Merki ökutæki til förgunar."
     },
-    "info": "Ökutæki hefur verið samþykkt til úrvinnslu og er nú tilbúið til afhendingar á móttökustöð.",
+    "info":"Ökutæki hefur verið samþykkt til úrvinnslu og er nú tilbúið að afhenda  móttökuaðila.",
     "subTitles": {
-      "nextStep": "Næsta skref: Fara með ökutæki til afhendingar á næstu móttökustöð",
-      "companies": "Tiltækar móttökustöðvar"
+      "nextStep": "Næsta skref: Fara með ökutæki til afhendingar hjá móttökuaðila",
+      "companies": "Tiltækir móttökuaðilar"
     },
-    "subInfo": "Afhendið ökutæki til einnar af móttökustöðvunum í listanum hér að neðan. Vakin er athygli á því að sumar móttökustöðvar bjóða upp á bifreiðaflutninga, vinsamlegast leitið upplýsinga um bifreiðaflutninga og opnunartíma á vefsíðu eða í gegnum síma hjá viðkomandi móttökustöð. Útborgun skilagjalds mun liggja fyrir tveimur virkum dögum eftir afhendingu ökutækis.",
+    "subInfo": "Afhendið ökutæki til móttökuaðila í listanum hér að neðan. Vakin er athygli á því að sumir móttökuaðilar bjóða upp á ökutækjaflutninga, vinsamlegast leitið upplýsinga um ökutækjaflutninga og opnunartíma á vefsíðu eða í gegnum síma hjá viðkomandi móttökuaðila. Útborgun skilagjalds mun liggja fyrir tveimur virkum dögum eftir afhendingu ökutækis.",
     "buttons": {
       "cancel": "Hætta við úrvinnslu ökutækis",
       "close": "Loka"
     },
     "error": {
       "title": "Tæknileg vandamál komu upp",
-      "message": "Það komu upp vandamál við að merkja bíl til förgunar. Vinsamlegast reynið aftur.",
+      "message": "Það komu upp vandamál við að merkja ökutæki til förgunar. Vinsamlegast reynið aftur.",
       "primaryButton": "Reyna aftur",
       "secondaryButton": "Hætta við"
     },
@@ -155,14 +155,14 @@
         "info": "Hætta við úrvinnslu ökutækis",
         "error": "Ekki tókst að hætta við."
       },
-      "info": "Þegar hætt er við úrvinnslu ökutækis verður ekki hægt að ganga frá endurnýtingu eða förgun ökutækis hjá móttökustöð. Hægt er að endurtaka ferlið síðar ef þér snýst hugur.",
+      "info": "Þegar hætt er við úrvinnslu ökutækis verður ekki hægt að ganga frá endurnýtingu eða förgun ökutækis hjá móttökuaðila. Hægt er að endurtaka ferlið síðar ef þér snýst hugur.",
       "buttons": {
         "cancel": "Nei",
         "continue": "Já"
       },
       "error": {
         "title": "Tæknileg vandamál komu upp",
-        "message": "Það komu upp vandamál við að merkja bíl til förgunar. Vinsamlegast reynið aftur..",
+        "message": "Það komu upp vandamál við að merkja ökutæki til förgunar. Vinsamlegast reynið aftur.",
         "primaryButton": "Reyna aftur",
         "secondaryButton": "Hætta við"
       }
@@ -175,7 +175,7 @@
       "payment": "Greiðsla"
     },
     "info": {
-      "oldDeregistration": "Bifreiðin hefur verið förguð. Ekki þarf að athafast frekar.",
+      "oldDeregistration": "Ökutæki hefur verið fargað. Ekki þarf að aðhafast frekar.",
       "payment": "Útborgun skilagjalds mun liggja fyrir tveimur virkum dögum eftir afhendingu ökutækis.",
       "paymentLinkText": "Fjármál"
     },
@@ -187,7 +187,7 @@
     },
     "error": {
       "title": "Tæknileg vandamál komu upp",
-      "message": "Það komu upp vandamál við sækja upplýsingar um bíl. Vinsamlegast reynið aftur.",
+      "message": "Það komu upp vandamál við sækja upplýsingar um ökutæki. Vinsamlegast reynið aftur.",
       "primaryButton": "Til baka"
     },
     "buttons": {
@@ -198,10 +198,10 @@
     "step": "Skref",
     "outOf": "af",
     "citizen": {
-      "title": "Endurvinna ökutæki",
+      "title": "Skil á ökutæki",
       "sections": [
         "Samþykkja úrvinnslu ökutækis",
-        "Afhenda ökutæki á móttökustöð"
+        "Afhenda ökutæki til móttökuaðila"
       ],
       "completed": "Lokið"
     },
@@ -211,13 +211,13 @@
     }
   },
   "deregisterOverview": {
-    "title": "Afskrá bifreið",
-    "info": "Ferli fer í gang þar sem bíllinn verður afskráður og greiðsla til eiganda mun fara af stað. Einnig mun förgun á bílnum fara af stað.",
+    "title": "Afskrá ökutæki",
+    "info": "Ferli fer í gang þar sem ökutæki verður afskráð og greiðsla til eiganda mun fara af stað. Einnig mun förgun ökutækis fara af stað.",
     "subtitles": {
       "history": "Saga"
     },
     "buttons": {
-      "deregister": "Afskrá bifreið"
+      "deregister": "Afskrá ökutæki"
     },
     "search": {
       "label": "Leita af skráningarnúmeri",
@@ -227,7 +227,7 @@
   },
   "companyInfo": {
     "title": "Upplýsingar fyrirtækis",
-    "info": "Þessar upplýsingar hjálpa viðskiptavinum að hafa samband við ykkur þegar hann nýtir sér stafræna endurvinnslu á bíl á island.is.",
+    "info": "Þessar upplýsingar hjálpa viðskiptavinum að hafa samband við ykkur þegar þeir nýta sér stafræna endurvinnslu ökutækja á island.is.",
     "empty": "Bættu við staðsetningu fyrirtækisins til að auðvelda viðskiptavinum að finna þig á island.is.",
     "subtitles": {
       "location": "Endurvinnslu staðsetning"
@@ -275,13 +275,13 @@
     "success": "Staðsetning var uppfærð."
   },
   "deregisterSidenav": {
-    "deregister": "Afskrá bíl",
+    "deregister": "Afskrá ökutæki",
     "companyInfo": "Upplýsingar fyrirtækis"
   },
   "deregisterVehicle": {
     "select": {
-      "title": "Velja bíl",
-      "info": "Skráðu bílnúmerið á bílnum sem á að afskrá. Einungis bílar sem staðfestir eru af eiganda á island.is er hægt að afskrá.",
+      "title": "Veldu ökutæki",
+      "info": "Skráðu númerið á ökutækinu sem á að afskrá. Einungis er hægt að afskrá ökutæki sem hafa verið staðfest af eiganda á island.is.",
       "input": {
         "label": "Skráningarnúmer",
         "placeholder": "t.d. MXE30",
@@ -298,14 +298,14 @@
     },
     "deregister": {
       "titles": {
-        "success": "Afskrá bíl",
-        "error": "Ekki hægt að afskrá bíl",
-        "loading": "Afskrái bíl",
-        "notfound": "Bíll fannst ekki"
+        "success": "Afskrá ökutæki",
+        "error": "Ekki hægt að afskrá ökutæki",
+        "loading": "Afskrái ökutæki",
+        "notfound": "Ökutæki fannst ekki"
       },
       "info": {
         "success": "Staðfesta afskráningu. Ekki er hægt að fara til baka eftir þetta skref.",
-        "error": "Enginn bíll fannst með þetta skráningarnúmer",
+        "error": "Ekkert ökutæki fannst með þetta skráningarnúmer",
         "notfound": "Þetta kann að vera því eigandinn hefur ekki merkt hann til förgunar."
       },
       "buttons": {
@@ -315,18 +315,18 @@
       "success": "Afskráning tókst.",
       "error": {
         "title": "Tæknileg vandamál komu upp",
-        "message": "Það komu upp vandamál við að merkja bíl til förgunar. Vinsamlegast reynið aftur.",
+        "message": "Það kom upp vandamál þegar ökutæki var merkt til förgunar. Vinsamlegast reynið aftur.",
         "primaryButton": "Reyna aftur",
         "secondaryButton": "Hætta við"
       }
     }
   },
   "recyclingFundOverview": {
-    "title": "Endurunnir bílar",
+    "title": "Endurunnin ökutæki",
     "subtitles": {
-      "deregistered": "Afskráðir bílar"
+      "deregistered": "Afskráð ökutæki"
     },
-    "info": "Engir endurunnir bílar",
+    "info": "Engin endurunnin ökutæki",
     "buttons": {
       "export": "Export"
     },
@@ -338,12 +338,12 @@
   },
   "recyclingFundSidenav": {
     "title": "Úrvinnslusjóður",
-    "recycled": "Endurunnir bílar",
+    "recycled": "Endurunnin ökutæki",
     "companies": "Endurvinnslu fyrirtæki"
   },
   "recyclingCompanies": {
     "title": "Endurvinnslu fyrirtæki",
-    "info": "Upplýsingar fyrirtækis hjálpa viðskiptavinum við að hafa samband þegar þeir nota stafrænu bíla endurvinnsluna.",
+    "info": "Upplýsingar til að hjálpa viðskiptavinum að hafa samband við móttökuaðila.",
     "empty": "Engin endurvinnslu fyrirtæki fundust",
     "subtitles": {
       "companies": "Endurvinnslu fyrirtæki"
