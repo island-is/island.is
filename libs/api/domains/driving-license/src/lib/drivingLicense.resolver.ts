@@ -15,8 +15,8 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 
-import { DrivingLicenseService } from './driving-license.service'
-import { DrivingLicense } from './driving-license.model'
+import { DrivingLicenseService } from './drivingLicense.service'
+import { DrivingLicense } from './drivingLicense.model'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()

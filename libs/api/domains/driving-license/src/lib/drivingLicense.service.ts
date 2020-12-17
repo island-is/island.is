@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
 import { DrivingLicenseApi } from './client'
-import { DrivingLicense } from './driving-license.model'
+import { DrivingLicense } from './drivingLicense.model'
 
 @Injectable()
 export class DrivingLicenseService {
