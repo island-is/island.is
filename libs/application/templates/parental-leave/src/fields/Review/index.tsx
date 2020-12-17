@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
   FieldBaseProps,
@@ -43,6 +43,8 @@ const Review: FC<FieldBaseProps> = ({
   application,
   goToScreen = () => undefined,
 }) => {
+  const [allItemsExpanded, toggleAllItemsExpanded] = useState(true)
+
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
   const {
@@ -108,11 +110,38 @@ const Review: FC<FieldBaseProps> = ({
   return (
     <div>
       <Box marginTop={[2, 2, 4]} marginBottom={[0, 0, 6]}>
+        <Box
+          display="flex"
+          justifyContent="flexEnd"
+          style={{
+            position: 'relative',
+            top: '1px',
+            zIndex: 1,
+          }}
+        >
+          <Box display="inlineFlex" background="white" paddingLeft={1}>
+            <Button
+              colorScheme="default"
+              iconType="filled"
+              onClick={() => {
+                toggleAllItemsExpanded(!allItemsExpanded)
+              }}
+              size="small"
+              type="button"
+              variant="text"
+            >
+              {allItemsExpanded
+                ? `${formatMessage(mm.confirmation.collapseAll)} —`
+                : `${formatMessage(mm.confirmation.epxandAll)} +`}
+            </Button>
+          </Box>
+        </Box>
+
         <Accordion singleExpand={false}>
           <AccordionItem
             id="id_4"
             label={formatMessage(m.otherParentTitle)}
-            startExpanded
+            startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
               <GridRow>
@@ -169,7 +198,7 @@ const Review: FC<FieldBaseProps> = ({
           <AccordionItem
             id="id_3"
             label={formatMessage(m.paymentInformationSubSection)}
-            startExpanded
+            startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
               <GridRow>
@@ -268,7 +297,7 @@ const Review: FC<FieldBaseProps> = ({
           <AccordionItem
             id="id_1"
             label={formatMessage(m.employerSubSection)}
-            startExpanded
+            startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
               <GridRow>
@@ -295,7 +324,7 @@ const Review: FC<FieldBaseProps> = ({
           <AccordionItem
             id="id_4"
             label={formatMessage(m.yourRights)}
-            startExpanded
+            startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
               <GridRow>
@@ -309,7 +338,7 @@ const Review: FC<FieldBaseProps> = ({
           <AccordionItem
             id="id_4"
             label={formatMessage(m.periodsSection)}
-            startExpanded
+            startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
               <GridRow>
@@ -336,7 +365,7 @@ const Review: FC<FieldBaseProps> = ({
           <AccordionItem
             id="id_4"
             label={formatMessage(mm.paymentPlan.subSection)}
-            startExpanded
+            startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
               <GridRow>
@@ -355,7 +384,7 @@ const Review: FC<FieldBaseProps> = ({
           <AccordionItem
             id="id_4"
             label={formatMessage(mm.shareInformation.subSection)}
-            startExpanded
+            startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
               <GridRow>

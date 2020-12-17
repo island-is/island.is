@@ -14,7 +14,10 @@ import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
 import { formatDate, formatYear } from '@island.is/skilavottord-web/utils'
 import { Car, WithApolloProps } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
+import {
+  ACCEPTED_TERMS_AND_CONDITION,
+  BASE_PATH,
+} from '@island.is/skilavottord-web/utils/consts'
 
 const skilavottordVehicleOwnerMutation = gql`
   mutation skilavottordVehicleOwnerMutation(
@@ -82,7 +85,7 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
   useEffect(() => {
     if (!car) {
       router.push({
-        pathname: routes.myCars,
+        pathname: `${BASE_PATH}${routes.myCars}`,
       })
     }
   }, [car, router, routes])

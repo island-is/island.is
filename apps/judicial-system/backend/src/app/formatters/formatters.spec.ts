@@ -179,7 +179,7 @@ describe('formatConclusion', () => {
     )
 
     // Assert
-    expect(res).toBe('Beiðni um gæsluvarðhald hafnað.')
+    expect(res).toBe('Kröfu um gæsluvarðhald er hafnað.')
   })
 
   test('should format conclusion for an accepted case without isolation', () => {

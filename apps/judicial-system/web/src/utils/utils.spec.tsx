@@ -332,7 +332,7 @@ describe('Step helper', () => {
       const { getByText } = render(constructConclusion(wc as Case))
 
       // Assert
-      expect(getByText('Beiðni um gæsluvarðhald hafnað')).toBeTruthy()
+      expect(getByText('Kröfu um gæsluvarðhald er hafnað.')).toBeTruthy()
     })
 
     test('should return the correct string if there are no restrictions and the case is not being rejected', () => {

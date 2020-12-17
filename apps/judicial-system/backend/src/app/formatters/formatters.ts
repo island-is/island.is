@@ -63,7 +63,7 @@ export function formatConclusion(
   isolation: boolean,
 ): string {
   return decision === CaseDecision.REJECTING
-    ? 'Beiðni um gæsluvarðhald hafnað.'
+    ? 'Kröfu um gæsluvarðhald er hafnað.'
     : `Kærði, ${accusedName}, kt. ${formatNationalId(
         accusedNationalId,
       )} skal sæta gæsluvarðhaldi, þó ekki lengur en til ${formatDate(
