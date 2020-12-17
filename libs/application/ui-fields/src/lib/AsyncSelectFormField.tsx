@@ -12,6 +12,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useApolloClient } from '@apollo/client/react'
 import { Option } from '@island.is/application/core'
+import { useDefaultValue } from '../useDefaultValue'
 
 interface Props extends FieldBaseProps {
   field: AsyncSelectField
@@ -55,6 +56,7 @@ const AsyncSelectFormField: FC<Props> = ({ application, error, field }) => {
 
       <Box paddingTop={2}>
         <SelectController
+          defaultValue={useDefaultValue(field, application)}
           label={formatText(name, application, formatMessage)}
           name={id}
           disabled={disabled}

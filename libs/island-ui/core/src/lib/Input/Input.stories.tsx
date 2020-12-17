@@ -1,10 +1,7 @@
 import React from 'react'
 import { withDesign } from 'storybook-addon-designs'
-
 import { withFigma } from '../../utils/withFigma'
 import { Input } from './Input'
-import { Box } from '../Box/Box'
-import { ContentBlock } from '../ContentBlock/ContentBlock'
 
 export default {
   title: 'Form/Input',
@@ -90,4 +87,12 @@ TextareaRequired.args = {
   required: true,
   textarea: true,
   rows: 4,
+}
+
+export const ResponsiveBackgroundColor = Template.bind({})
+ResponsiveBackgroundColor.args = {
+  label: 'This is the label',
+  placeholder: 'Try change the window size',
+  name: 'Test9',
+  backgroundColor: ['white', 'blue', 'white', 'blue', 'white'],
 }

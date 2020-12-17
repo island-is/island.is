@@ -114,6 +114,7 @@ describe('Signed Verdict Overview route', () => {
     })
 
     test('should have the correct subtitle', async () => {
+      const date = '2020-09-25T19:50:08.033Z'
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockJudgeQuery]}
@@ -134,8 +135,8 @@ describe('Signed Verdict Overview route', () => {
       expect(
         await waitFor(() =>
           screen.getByText(
-            `Gæsla til ${formatDate(new Date(), 'PPP')} kl. ${formatDate(
-              new Date(),
+            `Gæsla til ${formatDate(date, 'PPP')} kl. ${formatDate(
+              date,
               TIME_FORMAT,
             )}`,
           ),
@@ -197,12 +198,7 @@ describe('Signed Verdict Overview route', () => {
   })
 
   test('should have the correct subtitle', async () => {
-    const dateInPast = new Date(
-      new Date().getFullYear(),
-      new Date().getMonth(),
-      new Date().getDate() - 1,
-      new Date().getHours(),
-    )
+    const dateInPast = '2020-09-24T19:50:08.033Z'
 
     render(
       <MockedProvider

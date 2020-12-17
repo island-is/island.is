@@ -20,19 +20,6 @@ export const Sidebar: FC<{}> = () => {
           key={rootIndex}
           padding={4}
         >
-          {rootIndex === 1 && (
-            <Text
-              variant="eyebrow"
-              color="blueberry600"
-              fontWeight="semiBold"
-              marginBottom={2}
-            >
-              {formatMessage({
-                id: 'service.portal:other',
-                defaultMessage: 'Annað',
-              })}
-            </Text>
-          )}
           <Stack space={3}>
             {rootItem.children?.map(
               (navRoot, index) =>
@@ -50,8 +37,8 @@ export const Sidebar: FC<{}> = () => {
               {formatMessage({
                 id: 'service.portal:incoming-services-footer',
                 defaultMessage: `
-                  Unnið er að því að flytja þessar þjónustur
-                  yfir á nýjan vef Ísland.is en þjónustur eru aðgengilegar hér.
+                  Þessi virkni er enn í boði á eldri Mínum síðum.
+                  Unnið er að því að færa þessar þjónustur.
                 `,
               })}
             </Text>

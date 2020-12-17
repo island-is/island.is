@@ -1,8 +1,15 @@
-import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import * as styles from './Greeting.treat'
 import useAuth from '../../hooks/useAuth/useAuth'
+import { LEGACY_MY_PAGES_URL } from '@island.is/service-portal/constants'
 
 const Greeting: FC<{}> = () => {
   const { formatMessage } = useLocale()
@@ -13,8 +20,13 @@ const Greeting: FC<{}> = () => {
   return (
     <GridRow>
       <GridColumn span={['12/12', '7/12']}>
-        <Box marginTop={[2, 3, 8]} marginBottom={2}>
-          <Text variant="h1" as="h1">
+        <Box marginTop={[2, 3, 4]}>
+          <Text
+            variant="eyebrow"
+            marginBottom={2}
+            fontWeight="semiBold"
+            color="purple400"
+          >
             {isEveningGreeting
               ? formatMessage({
                   defaultMessage: 'Góða kvöldið,',
@@ -27,9 +39,29 @@ const Greeting: FC<{}> = () => {
                   id: 'service.portal:good-day',
                 })}
           </Text>
-          <Text variant="h3" as="h3" color="purple400">
+          <Text variant="h1" as="h1" marginBottom={1}>
             {userInfo?.profile.name}
           </Text>
+          <Text marginBottom={2}>
+            {formatMessage({
+              id: 'service.portal:greeting-intro',
+              defaultMessage: `
+              Beta útgáfa af mínum síðum er komin í loftið!
+              Ef þú finnur ekki þjónustu sem var á gömlu mínum
+              síðum þá getur þú fundið þær upplýsingar hér.
+              `,
+            })}
+          </Text>
+          <div>
+            <a href={LEGACY_MY_PAGES_URL} target="_blank">
+              <Button variant="text" icon="open" iconType="outline">
+                {formatMessage({
+                  id: 'service.portal:older-version',
+                  defaultMessage: 'Eldri útgáfa',
+                })}
+              </Button>
+            </a>
+          </div>
         </Box>
       </GridColumn>
       <GridColumn span={['12/12', '5/12']}>

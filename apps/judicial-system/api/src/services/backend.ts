@@ -22,7 +22,7 @@ class BackendAPI extends RESTDataSource {
   baseURL = `${environment.backendUrl}/api`
 
   willSendRequest(req: RequestOptions) {
-    req.headers.set('authorization', this.context.req.headers.authorizztion)
+    req.headers.set('authorization', this.context.req.headers.authorization)
     req.headers.set('cookie', this.context.req.headers.cookie)
   }
 

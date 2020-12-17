@@ -28,6 +28,7 @@ export class DocumentProviderService {
     return new ClientCredentials(
       '5016d8d5cb6ce0758107b9969ea3c301',
       '7a557951364a960a608735371db61ed8ed320d6bfc59f52fe37fc08e23dbd8d1',
+      'd6a4d279-6243-46d1-81c0-d98b825959bc',
     )
 
     // const currentProvider = await this.documentProviderRepository.getProvider(
@@ -55,6 +56,7 @@ export class DocumentProviderService {
   async registerEndpoint(
     nationalId: string,
     endpoint: string,
+    providerId: string,
   ): Promise<AudienceAndScope> {
     logger.info(`Register endpoint: ${nationalId} - ${endpoint}`)
 

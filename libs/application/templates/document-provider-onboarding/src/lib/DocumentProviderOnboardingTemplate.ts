@@ -4,6 +4,7 @@ import {
   ApplicationStateSchema,
   ApplicationTypes,
   ApplicationTemplate,
+  Application,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import * as z from 'zod'
@@ -13,6 +14,11 @@ type Events =
   | { type: 'REJECT' }
   | { type: 'SUBMIT' }
   | { type: 'ABORT' }
+
+enum Roles {
+  APPLICANT = 'applicant',
+  ASSIGNEE = 'assignee',
+}
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 
@@ -102,7 +108,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           progress: 0.25,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/DocumentProviderApplication').then((val) =>
                   Promise.resolve(val.DocumentProviderOnboarding),
@@ -135,7 +141,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           progress: 0.5,
           roles: [
             {
-              id: 'reviewer',
+              id: Roles.ASSIGNEE,
               formLoader: () =>
                 import('../forms/ReviewApplication').then((val) =>
                   Promise.resolve(val.ReviewApplication),
@@ -148,7 +154,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
               write: { answers: ['rejectionReason'] },
             },
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/PendingReview').then((val) =>
                   Promise.resolve(val.PendingReview),
@@ -168,7 +174,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           progress: 1,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/Rejected').then((val) =>
                   Promise.resolve(val.Rejected),
@@ -184,7 +190,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           progress: 0.75,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/TestPhase').then((val) =>
                   Promise.resolve(val.TestPhase),
@@ -206,7 +212,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           progress: 1,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/Finished').then((val) =>
                   Promise.resolve(val.Finished),
@@ -218,13 +224,23 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(id: string, state: string): ApplicationRole {
-    //TODO: add this to if statement
-    //&& id === '2311637949'
-    if (state === 'inReview') {
-      return 'reviewer'
+  mapUserToRole(
+    id: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    //This logic makes it so the application is not accessible to anybody but involved parties
+    //TODO: add this to second if statement
+    //&& application.assignees.includes('2311637949')
+
+    //This if statement might change depending on the "umboðskerfi"
+    if (id === application.applicant) {
+      return Roles.APPLICANT
     }
-    return 'applicant'
+    if (application.state === 'inReview') {
+      return Roles.ASSIGNEE
+    }
+    //Returns nothing if user is not same as applicant nor is part of the assignes
+    return undefined
   },
 }
 

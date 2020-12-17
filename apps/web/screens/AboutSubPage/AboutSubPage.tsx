@@ -120,7 +120,7 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
           </GridRow>
           <Box paddingTop={5}>
             <Background
-              background="dotted"
+              backgroundPattern="dotted"
               paddingTop={[4, 4, 6, 10]}
               paddingBottom={page.bottomSlices.length ? 20 : 10}
             >
