@@ -26,10 +26,9 @@ import {
 } from '../queries'
 import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useNamespace } from '@island.is/web/hooks'
-import routeNames from '@island.is/web/i18n/routeNames'
 import { Screen } from '@island.is/web/types'
-import { useI18n } from '@island.is/web/i18n'
 import { CustomNextError } from '../../units/errors'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface OrganizationProps {
   organizations: Query['getOrganizations']
@@ -42,9 +41,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   tags,
   namespace,
 }) => {
-  const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
 
   const { items: organizationsItems } = organizations
   const { items: tagsItems } = tags
@@ -59,7 +57,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
       <SidebarLayout fullWidthContent sidebarContent={null}>
         <Box paddingBottom={[2, 2, 4]}>
           <Breadcrumbs>
-            <Link href={makePath()}>Ísland.is</Link>
+            <Link {...linkResolver('homepage')}>Ísland.is</Link>
             <span>{n('organizations', 'Stofnanir')}</span>
           </Breadcrumbs>
         </Box>

@@ -9,7 +9,6 @@ import { Screen } from '@island.is/web/types'
 import { GET_LANDING_PAGE_QUERY } from '../queries'
 import { CustomNextError } from '../../units/errors'
 import Head from 'next/head'
-import { useI18n } from '@island.is/web/i18n'
 import {
   Stack,
   Button,
@@ -23,20 +22,19 @@ import {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { RichText, SidebarNavigation } from '@island.is/web/components'
 import ArticleLayout from '../Layouts/Layouts'
-import routeNames from '../../i18n/routeNames'
 import {
   QueryGetLandingPageArgs,
   GetLandingPageQuery,
 } from '../../graphql/schema'
 import { createNavigation, makeId } from '@island.is/web/utils/navigation'
+import { useLinkResolver } from 'apps/web/hooks/useLinkResolver'
 
 export interface LandingPageProps {
   page?: GetLandingPageQuery['getLandingPage']
 }
 
 const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
-  const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
   const navigation = useMemo(() => {
     return createNavigation(page.content, { title: page.title })
   }, [page])
@@ -80,7 +78,7 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
           <GridColumn span={['0', '0', '7/9']} offset={['0', '0', '1/9']}>
             <Stack space={[3, 3, 4]}>
               <Breadcrumbs>
-                <Link href={makePath()}>Ísland.is</Link>
+                <Link {...linkResolver('homepage')}>Ísland.is</Link>
                 <Link href={'/' + page.slug}>{page.title}</Link>
               </Breadcrumbs>
               <Text id={makeId(page.title)} variant="h1" as="h1">

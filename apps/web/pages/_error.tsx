@@ -4,13 +4,12 @@ import { GetUrlQuery, QueryGetUrlArgs } from '@island.is/web/graphql/schema'
 import { GET_URL_QUERY } from '@island.is/web/screens/queries'
 import { ApolloClient } from '@apollo/client/core'
 import { NormalizedCacheObject } from '@apollo/client/cache'
-
 import ErrorScreen from '../screens/Error/Error'
 import { getLocaleFromPath } from '../i18n/withLocale'
 import Layout, { LayoutProps } from '../layouts/main'
 import I18n, { Locale } from '../i18n/I18n'
 import { withApollo } from '../graphql/withApollo'
-import routeNames, { PathTypes } from '../i18n/routeNames'
+import { linkResolver, LinkType } from '../hooks/useLinkResolver'
 
 type ErrorPageProps = {
   statusCode: number
@@ -69,14 +68,12 @@ class ErrorPage extends React.Component<ErrorPageProps> {
       })
 
       if (redirectProps) {
-        const { makePath } = routeNames(locale)
-
         const { pageType, page } = redirectProps
 
         // Found an URL content type that contained this
         // path (which has a page assigned to it) so we redirect to that page
         if (pageType && page) {
-          const url = makePath(pageType as PathTypes, page.slug)
+          const url = linkResolver(pageType as LinkType, [page.slug], locale).as
 
           if (!process.browser) {
             res.writeHead(302, { Location: url })

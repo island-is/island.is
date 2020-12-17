@@ -63,7 +63,7 @@ import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '@island.is/web/utils/processMenuData'
-import { useLinkResolver } from 'apps/web/hooks/useLinkResolver'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 /**
  * TODO: Both fragments Image and EmbeddedVideo aren't used inside

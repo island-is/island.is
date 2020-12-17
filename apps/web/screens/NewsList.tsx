@@ -7,9 +7,7 @@ import Head from 'next/head'
 import { Screen } from '../types'
 import NativeSelect from '../components/Select/Select'
 import Bullet from '../components/Bullet/Bullet'
-import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import routeNames from '@island.is/web/i18n/routeNames'
 import {
   Box,
   Text,
@@ -42,6 +40,7 @@ import {
 } from '../graphql/schema'
 import { NewsCard } from '../components/NewsCard'
 import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver } from '../hooks/useLinkResolver'
 
 const PERPAGE = 10
 
@@ -67,8 +66,7 @@ const NewsList: Screen<NewsListProps> = ({
   namespace,
 }) => {
   const Router = useRouter()
-  const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
   const { getMonthByIndex } = useDateUtils()
   const n = useNamespace(namespace)
 
@@ -112,7 +110,7 @@ const NewsList: Screen<NewsListProps> = ({
     }, {})
 
     return {
-      pathname: makePath('news'),
+      pathname: linkResolver('newsoverview').as,
       query,
     }
   }
@@ -191,8 +189,8 @@ const NewsList: Screen<NewsListProps> = ({
       <SidebarLayout sidebarContent={sidebar}>
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs>
-            <Link href={makePath()}>Ísland.is</Link>
-            <Link href={makePath('news')}>
+            <Link {...linkResolver('homepage')}>Ísland.is</Link>
+            <Link {...linkResolver('newsoverview')}>
               {n('newsTitle', 'Fréttir og tilkynningar')}
             </Link>
             {!!selectedTag && (
@@ -254,9 +252,9 @@ const NewsList: Screen<NewsListProps> = ({
               introduction={newsItem.intro}
               slug={newsItem.slug}
               image={newsItem.image}
-              as={makePath('news', newsItem.slug)}
+              as={linkResolver('news', [newsItem.slug]).as}
               titleAs="h2"
-              url={makePath('news', '[slug]')}
+              url={linkResolver('news', [newsItem.slug]).href}
               date={newsItem.date}
               readMoreText={n('readMore', 'Lesa nánar')}
               tags={newsItem.genericTags.map(({ title }) => ({ title }))}
@@ -270,7 +268,7 @@ const NewsList: Screen<NewsListProps> = ({
                 renderLink={(page, className, children) => (
                   <Link
                     href={{
-                      pathname: makePath('news'),
+                      pathname: linkResolver('newsoverview').as,
                       query: { ...Router.query, page },
                     }}
                   >

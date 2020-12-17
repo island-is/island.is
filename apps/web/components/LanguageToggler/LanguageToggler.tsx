@@ -1,6 +1,5 @@
 import React, { FC, useContext, ReactElement } from 'react'
 import { useRouter } from 'next/router'
-import findKey from 'lodash/findKey'
 import { useApolloClient } from '@apollo/client/react'
 import {
   Button,
@@ -9,11 +8,12 @@ import {
   DialogPrompt,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
-import routeNames, { PathTypes, routes } from '@island.is/web/i18n/routeNames'
+import { Locale } from '@island.is/web/i18n/I18n'
 import { GET_CONTENT_SLUG } from '@island.is/web/screens/queries/Article'
 import { GlobalContext } from '@island.is/web/context'
 import { ContentLanguage } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver } from 'apps/web/hooks/useLinkResolver'
 
 export const LanguageToggler: FC<{
   hideWhenMobile?: boolean
@@ -24,40 +24,34 @@ export const LanguageToggler: FC<{
   const { contentfulId, globalNamespace } = useContext(GlobalContext)
   const { activeLocale, locale, t } = useI18n()
   const gn = useNamespace(globalNamespace)
-  const otherLanguage = activeLocale === 'en' ? 'is' : 'en'
-  const otherLanguageUrl = activeLocale === 'en' ? '/' : '/en'
-  const { makePath } = routeNames(otherLanguage)
+  const otherLanguage = (activeLocale === 'en' ? 'is' : 'en') as Locale
+  const { linkResolver, typeResolver } = useLinkResolver()
 
   const onClick = async () => {
     locale(t.otherLanguageCode)
 
     if (!contentfulId) {
-      const paths = Router.pathname.split('/').filter((x) => x)
-
-      const firstPath = paths.length
-        ? paths[activeLocale === 'is' ? 0 : 1]
-        : null
-
-      if (firstPath) {
-        const o = routes[activeLocale]
-        const type = findKey(o, (v) => v === firstPath) as PathTypes
-
-        if (type) {
-          return Router.push(makePath(type), makePath(type))
-        }
-      }
-
-      return Router.push(otherLanguageUrl, otherLanguageUrl)
+      const { type } = typeResolver(Router.asPath.split('?')[0], true)
+      return Router.push(
+        linkResolver(type, [], otherLanguage).href,
+        linkResolver(type, [], otherLanguage).as,
+      )
     } else {
       return getContentSlug(contentfulId).then((res) => {
         const slug = res.data?.getContentSlug?.slug
         const type = res.data?.getContentSlug?.type
 
         if (type && slug) {
-          return Router.push(makePath(type, '[slug]'), makePath(type, slug))
+          return Router.push(
+            linkResolver(type, [slug], otherLanguage).href,
+            linkResolver(type, [slug], otherLanguage).as,
+          )
         }
 
-        return Router.push(makePath(), makePath())
+        return Router.push(
+          linkResolver('homepage').href,
+          linkResolver('homepage').as,
+        )
       })
     }
   }

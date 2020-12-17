@@ -14,12 +14,10 @@ import {
   ColorSchemeContext,
   ColorSchemes,
 } from '@island.is/web/components/Adgerdir/UI/ColorSchemeContext/ColorSchemeContext'
-import { useI18n } from '@island.is/web/i18n'
 import { Card } from '@island.is/web/components/Adgerdir/UI/Card/Card'
-import routeNames from '@island.is/web/i18n/routeNames'
-
 import 'react-alice-carousel/lib/alice-carousel.css'
 import * as styles from './CardsSlider.treat'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface StagePaddingProps {
   paddingLeft: number
@@ -40,8 +38,7 @@ const initialSlideState = {
 } as EventObject
 
 export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
-  const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
   const { colorScheme } = useContext(ColorSchemeContext)
 
   const [height, setHeight] = useState<string>('auto')
@@ -144,8 +141,7 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
               description={description}
               title={title}
               tags={tags}
-              as={makePath('adgerdir', slug)}
-              href={makePath('adgerdir', '[slug]')}
+              {...linkResolver('adgerdirpage', [slug])}
             />
           </div>
         ))}

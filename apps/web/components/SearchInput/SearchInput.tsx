@@ -24,7 +24,6 @@ import {
   Stack,
   Link,
 } from '@island.is/island-ui/core'
-import routeNames from '@island.is/web/i18n/routeNames'
 import { Locale } from '@island.is/web/i18n/I18n'
 import {
   GetSearchResultsQuery,
@@ -40,6 +39,7 @@ import {
 } from '@island.is/web/graphql/schema'
 
 import * as styles from './SearchInput.treat'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
@@ -177,13 +177,13 @@ const useSearch = (
 
 const useSubmit = (locale: Locale, onRouting?: () => void) => {
   const Router = useRouter()
-  const { makePath } = routeNames(locale)
+  const { linkResolver } = useLinkResolver()
 
   return useCallback(
     (q: string) => {
       if (q) {
         Router.push({
-          pathname: makePath('search'),
+          pathname: linkResolver('search').as,
           query: { q },
         }).then(() => {
           window.scrollTo(0, 0)
@@ -193,7 +193,7 @@ const useSubmit = (locale: Locale, onRouting?: () => void) => {
         }
       }
     },
-    [Router, makePath],
+    [Router, linkResolver],
   )
 }
 
@@ -328,7 +328,6 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
                   search={search}
                   highlightedIndex={highlightedIndex}
                   getItemProps={getItemProps}
-                  locale={locale}
                   autosuggest={autosuggest}
                   onRouting={() => {
                     if (onRouting) {
@@ -353,15 +352,8 @@ const Results: FC<{
   getItemProps: any
   autosuggest: boolean
   onRouting?: () => void
-}> = ({
-  locale,
-  search,
-  highlightedIndex,
-  getItemProps,
-  autosuggest,
-  onRouting,
-}) => {
-  const { makePath } = routeNames(locale)
+}> = ({ search, highlightedIndex, getItemProps, autosuggest, onRouting }) => {
+  const { linkResolver } = useLinkResolver()
 
   if (!search.term) {
     const suggestions = search.suggestions.map((suggestion, i) => (
@@ -440,10 +432,7 @@ const Results: FC<{
                         onRouting()
                       }}
                     >
-                      <Link
-                        href={makePath(__typename, '[slug]')}
-                        as={makePath(__typename, slug)}
-                      >
+                      <Link {...linkResolver(__typename as LinkType, [slug])}>
                         <Text variant="h5" color="blue400">
                           {title}
                         </Text>

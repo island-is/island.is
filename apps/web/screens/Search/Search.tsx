@@ -50,7 +50,7 @@ import {
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
 import * as styles from './Search.treat'
-import { useLinkResolver } from 'apps/web/hooks/useLinkResolver'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const PERPAGE = 10
 

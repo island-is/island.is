@@ -8,7 +8,7 @@ export interface LinkResolverResponse {
 
 interface LinkResolverInput {
   linkType: LinkType
-  slugs?: Array<string>
+  slugs?: string[]
   locale?: Locale
 }
 
@@ -17,10 +17,21 @@ interface TypeResolverResponse {
   locale: Locale
 }
 
+interface RoutesTemplate {
+  [linkType: string]: {
+    is: string
+    en: string
+  }
+}
+
 export type LinkType = keyof typeof routesTemplate
 
 // the order matters, arrange from most specific to least specific for correct type resolution
-export const routesTemplate = {
+export const routesTemplate: RoutesTemplate = {
+  aboutsubpage: {
+    is: '/stofnanir/stafraent-island/[slug]',
+    en: '/en/organizations/stafraent-island/[slug]',
+  },
   page: {
     is: '/stofnanir/stafraent-island',
     en: '/en/organizations/stafraent-island',
@@ -37,33 +48,37 @@ export const routesTemplate = {
     is: '/frett/[slug]',
     en: '/en/news/[slug]',
   },
+  newsoverview: {
+    is: '/frett',
+    en: '/en/news',
+  },
   lifeeventpage: {
     is: '/lifsvidburdur/[slug]',
     en: '/en/life-event/[slug]',
-  },
-  adgerdirfrontpage: {
-    is: '/covid-adgerdir',
-    en: '/en/covid-operations',
   },
   adgerdirpage: {
     is: '/covid-adgerdir/[slug]',
     en: '/en/covid-operations/[slug]',
   },
-  homepage: {
-    is: '/',
-    en: '/en',
-  },
-  article: {
-    is: '/[slug]',
-    en: '/en/[slug]',
+  adgerdirfrontpage: {
+    is: '/covid-adgerdir',
+    en: '/en/covid-operations',
   },
   subarticle: {
     is: '/[slug]/[subSlug]',
     en: '/en/[slug]/[subSlug]',
   },
+  article: {
+    is: '/[slug]',
+    en: '/en/[slug]',
+  },
   linkurl: {
     is: '[slug]',
     en: '[slug]',
+  },
+  homepage: {
+    is: '/',
+    en: '/en',
   },
 }
 
@@ -79,7 +94,7 @@ const removeVariableFromPath = (path: string): string => {
 const convertToRegex = (routeTemplate: string) =>
   routeTemplate
     .replace(/\//g, '\\/') // escape slashes to match literal "/" in route template
-    .replace(/\[\w+\]/g, '\\[\\w+\\]') // make path variables be regex word matches
+    .replace(/\[\w+\]/g, '\\w+') // make path variables be regex word matches
 
 // tries to return url for given type
 export const linkResolver = (
@@ -107,19 +122,38 @@ export const linkResolver = (
   return path
 }
 
-// tries to return type for given path
-export const typeResolver = (path: string): TypeResolverResponse | null => {
+/*
+tries to return type for given path
+*/
+export const typeResolver = (
+  path: string,
+  skipDynamic = false,
+): TypeResolverResponse | null => {
   for (const [type, locales] of Object.entries(routesTemplate)) {
     for (const [locale, routeTemplate] of Object.entries(locales)) {
+      // we are skipping all route types that have path variables
+      if (skipDynamic && routeTemplate.includes('[')) {
+        continue
+      }
+
+      // handle homepage en path
+      if (path === '/en') {
+        return { type: 'homepage', locale: 'en' }
+      }
+
       // convert the route template string into a regex query
       const regex = convertToRegex(routeTemplate)
-
+      console.log('-----------')
+      console.log('testing', path)
+      console.log('with', regex)
       // if this path matches query return route info else continue
       if (path.match(regex)) {
+        console.log('found type', type, locale)
         return { type, locale } as TypeResolverResponse
       }
     }
   }
+  console.log('returning null')
   return null
 }
 
@@ -135,3 +169,7 @@ export const useLinkResolver = () => {
     linkResolver: wrappedLinkResolver,
   }
 }
+
+// TODO: Remove stafraent-island as root path (currentli stafraent island page are not reolve-ing correct types due to them beeing root)
+// TODO: Add redirect for root stafraent-island
+// TODO: Handle english routes for page and aboutsubpage

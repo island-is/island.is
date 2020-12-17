@@ -1,6 +1,5 @@
 import React, { FC } from 'react'
 import {
-  Box,
   Text,
   Link,
   FocusableBox,
@@ -9,11 +8,8 @@ import {
   GridColumn,
   Tag,
 } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/web/i18n'
-
-import routeNames from '@island.is/web/i18n/routeNames'
-
 import * as styles from './LifeEventInCategory.treat'
+import { useLinkResolver } from 'apps/web/hooks/useLinkResolver'
 
 export interface LifeEventInCategoryProps {
   title: string
@@ -30,14 +26,12 @@ const LifeEventInCategory: FC<LifeEventInCategoryProps> = ({
   image,
   categoryTag,
 }) => {
-  const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
 
   return (
     <FocusableBox
       component={Link}
-      href={makePath('lifeEvent', '[slug]')}
-      as={makePath('lifeEvent', slug)}
+      {...linkResolver('lifeeventpage', [slug])}
       borderColor="blue200"
       borderWidth="standard"
       height="full"

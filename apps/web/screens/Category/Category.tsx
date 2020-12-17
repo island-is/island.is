@@ -41,7 +41,7 @@ import {
   ArticleGroup,
 } from '../../graphql/schema'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { LinkType, useLinkResolver } from 'apps/web/hooks/useLinkResolver'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']

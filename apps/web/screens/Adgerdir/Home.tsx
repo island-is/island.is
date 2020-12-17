@@ -43,7 +43,6 @@ import {
   GET_ADGERDIR_FRONTPAGE_QUERY,
   GET_CATEGORIES_QUERY,
 } from '../queries'
-import routeNames from '@island.is/web/i18n/routeNames'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import * as covidStyles from '@island.is/web/components/Adgerdir/UI/styles/styles.treat'
@@ -58,6 +57,7 @@ import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '@island.is/web/utils/processMenuData'
+import { useLinkResolver } from 'apps/web/hooks/useLinkResolver'
 
 interface HomeProps {
   frontpage: Query['getAdgerdirFrontpage']
@@ -76,7 +76,7 @@ const Home: Screen<HomeProps> = ({
 }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
@@ -111,12 +111,11 @@ const Home: Screen<HomeProps> = ({
                         <Stack space={2}>
                           <span className={covidStyles.white}>
                             <Breadcrumbs color="white">
-                              <Link href={makePath()} as={makePath()}>
+                              <Link {...linkResolver('homepage')}>
                                 <a>Ísland.is</a>
                               </Link>
                               <Link
-                                href={makePath('adgerdir')}
-                                as={makePath('adgerdir')}
+                                {...linkResolver('adgerdirfrontpage')}
                               >
                                 <a>{n('covidAdgerdir', 'Covid aðgerðir')}</a>
                               </Link>

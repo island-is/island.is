@@ -10,13 +10,13 @@ import {
   Swiper,
   Hidden,
 } from '@island.is/island-ui/core'
-import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
 import { GetNewsQuery } from '@island.is/web/graphql/schema'
 import { GlobalContext } from '@island.is/web/context/GlobalContext/GlobalContext'
 import { useNamespace } from '@island.is/web/hooks'
 
 import { NewsCard } from '../NewsCard'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 // LatestNewsSection on desktop displays latest 3 news cards in grid.
 // On mobile it displays 3 news cards in a Swiper.
@@ -33,10 +33,10 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
   labelId = '',
 }) => {
   const newsItems = items.slice(0, 3)
-  const { activeLocale, t } = useI18n()
+  const { t } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(globalNamespace)
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
   const titleProps = labelId ? { id: labelId } : {}
 
   return (
@@ -50,7 +50,7 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
         <GridColumn paddingBottom={0} span="6/12" hiddenBelow="md">
           <Box display="flex" justifyContent="flexEnd" paddingBottom={2}>
             <Text variant="h5" as="p" paddingBottom={2}>
-              <Link href={makePath('news')}>
+              <Link {...linkResolver('newsoverview')}>
                 <Button
                   icon="arrowForward"
                   iconType="filled"
@@ -80,8 +80,8 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
                   readMoreText={t.readMore}
                   image={newsItem.image}
                   tags={newsItem.genericTags.map(({ title }) => ({ title }))}
-                  as={makePath('news', newsItem.slug)}
-                  url={makePath('news', '[slug]')}
+                  as={linkResolver('news', [newsItem.slug]).as}
+                  url={linkResolver('news', [newsItem.slug]).href}
                 />
               </GridColumn>
             )
@@ -99,8 +99,8 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
               slug={newsItem.slug}
               image={newsItem.image}
               tags={newsItem.genericTags.map(({ title }) => ({ title }))}
-              as={makePath('news', newsItem.slug)}
-              url={makePath('news', '[slug]')}
+              as={linkResolver('news', [newsItem.slug]).as}
+              url={linkResolver('news', [newsItem.slug]).href}
             />
           ))}
         </Swiper>

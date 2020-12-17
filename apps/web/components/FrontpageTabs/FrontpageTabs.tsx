@@ -28,7 +28,7 @@ import Illustration from './illustrations/Illustration'
 import * as styles from './FrontpageTabs.treat'
 import { GlobalContext } from '@island.is/web/context'
 import { useNamespace } from '@island.is/web/hooks'
-import { useLinkResolver } from 'apps/web/hooks/useLinkResolver'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 type TabsProps = {
   subtitle?: string
