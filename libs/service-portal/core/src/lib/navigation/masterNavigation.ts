@@ -150,6 +150,19 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           type: 'outline',
           icon: 'home',
         },
+      },
+
+      // Mín réttindi
+      {
+        name: defineMessage({
+          id: 'service.portal:delegation',
+          defaultMessage: 'Mín réttindi',
+        }),
+        path: ServicePortalPath.MyLicensesRoot,
+        icon: {
+          type: 'outline',
+          icon: 'receipt',
+        },
         children: [
           {
             name: defineMessage({
@@ -166,19 +179,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.DrivingLicense,
           },
         ],
-      },
-
-      // Mín réttindi
-      {
-        name: defineMessage({
-          id: 'service.portal:delegation',
-          defaultMessage: 'Mín réttindi',
-        }),
-        path: ServicePortalPath.MyLicensesRoot,
-        icon: {
-          type: 'outline',
-          icon: 'receipt',
-        },
       },
     ],
   },
