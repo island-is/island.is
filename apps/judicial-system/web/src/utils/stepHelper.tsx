@@ -44,7 +44,7 @@ export const constructConclusion = (workingCase: Case) => {
   if (workingCase.rejecting) {
     return (
       <Text as="span" variant="intro">
-        Beiðni um gæsluvarðhald hafnað
+        Kröfu um gæsluvarðhald er hafnað.
       </Text>
     )
   } else {

@@ -39,6 +39,7 @@ export interface BaseField extends FormItem {
   width?: FieldWidth
   condition?: Condition
   isPartOfRepeater?: boolean
+  defaultValue?: MaybeWithApplication<unknown>
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean
 }
