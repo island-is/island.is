@@ -1,4 +1,4 @@
-# Template Loader
+# API Template Utils
 
 The purpose of this library is to be able to call API utility functions from an application template.
 
