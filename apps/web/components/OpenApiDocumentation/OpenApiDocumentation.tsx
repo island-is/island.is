@@ -1,5 +1,12 @@
 import React, { FC, useEffect } from 'react'
 import { OpenApi } from '@island.is/api-catalogue/types'
+import {
+  ArrowLink,
+  Box,
+  GridColumn,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -14,6 +21,11 @@ import { OpenApi } from '@island.is/api-catalogue/types'
 
 export interface OpenApiDocumentationProps {
   spec: OpenApi
+  linkTitle?: string
+  documentationLinkText?: string
+  responsiblePartyLinkText?: string
+  bugReportLinkText?: string
+  featureRequestLinkText?: string
 }
 
 interface Window {
@@ -22,31 +34,37 @@ interface Window {
 
 declare const window: Window
 
-const showLink = (key: string, value: string) => {
-  let name: string
-  switch (key) {
-    case 'documentation':
-      name = 'Documentation'
-      break
-    case 'responsibleParty':
-      name = 'Responsible party'
-      break
-    case 'bugReport':
-      name = 'Reporting a bug'
-      break
-    case 'featureRequest':
-      name = 'Make a feature request'
-      break
-    default:
-      name = key
-  }
-
-  return <a href={value}>{name}</a>
-}
-
 export const OpenApiDocumentation: FC<OpenApiDocumentationProps> = ({
   spec,
+  linkTitle = 'Additional links',
+  documentationLinkText = 'Documentation',
+  responsiblePartyLinkText = 'Responsible party',
+  bugReportLinkText = 'Report a bug',
+  featureRequestLinkText = 'Make a feature request',
 }: OpenApiDocumentationProps) => {
+
+  const GetDefaultLinkText = (key: string) => {
+    let text: string
+    switch (key) {
+      case 'documentation':
+        text = documentationLinkText
+        break
+      case 'responsibleParty':
+        text = responsiblePartyLinkText
+        break
+      case 'bugReport':
+        text = bugReportLinkText
+        break
+      case 'featureRequest':
+        text = featureRequestLinkText
+        break
+      default:
+        text = key
+    }
+
+    return text
+  }
+
   useEffect(() => {
     window.Redoc.init(
       spec,
@@ -59,20 +77,24 @@ export const OpenApiDocumentation: FC<OpenApiDocumentationProps> = ({
   }, [spec])
 
   return (
-    <div>
-      {'x-links' in spec.info && (
-        <div>
-          <h4>Additional links</h4>
-          <div>
-            <div>
-              {Object.keys(spec?.info['x-links']).map((key) => (
-                <div key={key}>{showLink(key, spec.info['x-links'][key])}</div>
-              ))}
-            </div>
-          </div>
-        </div>
+    <Box width="full">
+      {spec !== undefined && spec !== null && 'x-links' in spec.info && (
+        <Box width="full">
+          <Text variant="h4" as="h4">
+            {linkTitle}
+          </Text>
+          <GridRow align="spaceBetween">
+            {Object.keys(spec?.info['x-links']).map((key) => (
+              <GridColumn key={key}>
+                <ArrowLink href={spec.info['x-links'][key]}>
+                  {GetDefaultLinkText(key)}
+                </ArrowLink>
+              </GridColumn>
+            ))}
+          </GridRow>
+        </Box>
       )}
-      <div id="redoc-container" />
-    </div>
+      <Box id="redoc-container" paddingTop="containerGutter" />
+    </Box>
   )
 }

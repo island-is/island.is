@@ -17,7 +17,6 @@ import {
 import { useNamespace } from '@island.is/web/hooks'
 import { OpenApi } from '@island.is/api-catalogue/types'
 import { GET_OPEN_API_QUERY } from '@island.is/web/screens/queries'
-
 import YamlParser from 'js-yaml'
 import { OpenApiDocumentation } from '..'
 
@@ -45,19 +44,76 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
           subsystemCode: x.subsystemCode,
         },
       }))
-    : [{ label: 'loading', value: null }]
+    : [
+        {
+          label: n('openApiViewNoVersion'),
+          value: {
+            instance: '',
+            memberClass: '',
+            memberCode: '',
+            serviceCode: '',
+            subsystemCode: '',
+          },
+        },
+      ]
 
-  const onSelectChange = (option: SelectOption) => {
-    console.log('onSelectChange')
-    setOpenApi(option.value)
+  const selectOptionValueToGetOpenApiInput = (
+    option: SelectOption,
+  ): GetOpenApiInput => {
+    return option.value
+      ? option.value
+      : {
+          instance: '',
+          memberClass: '',
+          memberCode: '',
+          serviceCode: '',
+          subsystemCode: '',
+        }
   }
 
-  const [openApi, setOpenApi] = useState<GetOpenApiInput>(options[0].value)
+  const [selectedOption, setSelectedOption] = useState<SelectOption>(options[0])
+
+  const onSelectChange = (option: SelectOption) => {
+    if (!option.value) return
+
+    setSelectedOption(option)
+    setOpenApi(selectOptionValueToGetOpenApiInput(option))
+  }
+
+  const [openApi, setOpenApi] = useState<GetOpenApiInput>(
+    selectOptionValueToGetOpenApiInput(selectedOption),
+  )
   const { data, loading, error } = useQuery(GET_OPEN_API_QUERY, {
     variables: {
       input: openApi,
     },
   })
+
+  const ShowOpenApiDocumentation = (theSpec: any) => {
+    const converted = YamlParser.safeLoad(theSpec)
+    if (typeof converted === 'undefined') {
+      return (
+        <Box paddingY={2}>
+          <AlertBanner
+            title={n('openApiViewQueryErrorTitle')}
+            description={n('openApiViewQueryErrorDescription')}
+            variant="error"
+          />
+        </Box>
+      )
+    }
+
+    return (
+      <OpenApiDocumentation
+        spec={converted as OpenApi}
+        linkTitle={n('openApiDocumentationLinkTitle')}
+        documentationLinkText={n('openApiDocumentationLinkDocumentation')}
+        responsiblePartyLinkText={n('openApiDocumentationLinkResponsibleParty')}
+        bugReportLinkText={n('openApiDocumentationLinkBugReport')}
+        featureRequestLinkText={n('openApiDocumentationLinkFeatureRequest')}
+      />
+    )
+  }
 
   return (
     <Box>
@@ -74,7 +130,7 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
           paddingBottom="containerGutter"
         >
           <Text color="blue600" variant="h4" as="h4">
-            {n('OpenApiDocumentationTitle')}
+            {n('openApiDocumentationTitle')}
           </Text>
         </GridColumn>
         <GridColumn
@@ -85,31 +141,28 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
           <Select
             label="Version"
             name="version"
+            disabled={options.length < 2}
             isSearchable={false}
-            defaultValue={options[0]}
+            defaultValue={selectedOption}
             options={options}
             onChange={onSelectChange}
-            noOptionsMessage="Engar útgáfuupplýsingar"
           />
         </GridColumn>
       </GridRow>
-      <Box>{}</Box>
       <Box>{loading && <LoadingIcon animate color="blue400" size={32} />}</Box>
       {error && (
         <Box paddingY={2}>
           <AlertBanner
-            title="Error loading documentation"
-            description="An error occurred when trying to load the open api documentation for this version of the service."
+            title={n('openApiViewLoadErrorTitle')}
+            description={n('openApiViewLoadErrorDescription')}
             variant="error"
           />
         </Box>
       )}
 
-      {!loading && !error && (
-        <OpenApiDocumentation
-          spec={YamlParser.safeLoad(data?.getOpenApi.spec) as OpenApi}
-        />
-      )}
+      <Box width="full">
+        {!loading && !error && ShowOpenApiDocumentation(data?.getOpenApi.spec)}
+      </Box>
     </Box>
   )
 }
