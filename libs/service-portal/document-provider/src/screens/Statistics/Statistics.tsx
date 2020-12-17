@@ -9,9 +9,11 @@ const Statistics: ServicePortalModuleComponent = ({ userInfo }) => {
 
   return (
     <Box marginBottom={[2, 3, 5]}>
-      <Text variant="h1" as="h1">
-        {formatMessage(m.StatisticsTitle)}
-      </Text>
+      <Box marginBottom={[2, 3]}>
+        <Text variant="h1" as="h1">
+          {formatMessage(m.StatisticsTitle)}
+        </Text>
+      </Box>
       <Text as="p">{formatMessage(m.StatisticsDescription)}</Text>
     </Box>
   )

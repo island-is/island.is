@@ -90,7 +90,7 @@ export const m = defineMessages({
   documentProvidersDescription: {
     id: 'sp.document-provider:document-providers-description',
     defaultMessage:
-      'Einungis fyrir starfsmenn island.is. Á þessari síðu sérð þú yfirlit yfir alla skjalaveitendur',
+      'Hér getur þú fundið alla þá skjalaveitendur sem nota pósthólf á island.is',
   },
 
   //MyCategories
