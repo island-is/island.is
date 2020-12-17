@@ -7,10 +7,12 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+import Logo from '../assets/Logo'
 
 export const OtherParentApproval: Form = buildForm({
   id: 'OtherParentApprovalForParentalLeave',
   name: 'Other parent approval for parental leave application',
+  logo: Logo,
   mode: FormModes.REVIEW,
   children: [
     buildSection({
