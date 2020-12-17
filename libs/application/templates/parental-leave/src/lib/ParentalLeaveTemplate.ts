@@ -6,6 +6,7 @@ import {
   ApplicationTypes,
   ApplicationTemplate,
   Application,
+  DefaultEvents,
 } from '@island.is/application/core'
 import { ApplicationAPITemplateAction } from '@island.is/application/api-template-utils'
 
@@ -31,11 +32,11 @@ const TEMPLATE_API_ACTIONS: ApiTemplateUtilActions = {
 }
 
 type Events =
-  | { type: 'APPROVE' }
-  | { type: 'ASSIGN' }
-  | { type: 'REJECT' }
-  | { type: 'SUBMIT' }
-  | { type: 'ABORT' }
+  | { type: DefaultEvents.APPROVE }
+  | { type: DefaultEvents.ASSIGN }
+  | { type: DefaultEvents.REJECT }
+  | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.ABORT }
 
 enum Roles {
   APPLICANT = 'applicant',
@@ -83,7 +84,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/ParentalLeaveForm').then((val) =>
                   Promise.resolve(val.ParentalLeaveForm),
                 ),
-              actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
               write: 'all',
             },
           ],
@@ -117,8 +124,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.OtherParentApproval),
                 ),
               actions: [
-                { event: 'APPROVE', name: 'Approve', type: 'primary' },
-                { event: 'REJECT', name: 'Reject', type: 'reject' },
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Approve',
+                  type: 'primary',
+                },
+                { event: DefaultEvents.REJECT, name: 'Reject', type: 'reject' },
               ],
             },
             {
@@ -131,8 +142,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          APPROVE: { target: States.EMPLOYER_WAITING_TO_ASSIGN },
-          REJECT: { target: States.OTHER_PARENT_ACTION },
+          [DefaultEvents.APPROVE]: {
+            target: States.EMPLOYER_WAITING_TO_ASSIGN,
+          },
+          [DefaultEvents.REJECT]: { target: States.OTHER_PARENT_ACTION },
         },
       },
       [States.OTHER_PARENT_ACTION]: {
@@ -172,8 +185,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          ASSIGN: { target: States.EMPLOYER_APPROVAL },
-          REJECT: { target: States.DRAFT },
+          [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVAL },
+          [DefaultEvents.REJECT]: { target: States.DRAFT },
         },
       },
       [States.EMPLOYER_APPROVAL]: {
@@ -189,8 +202,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 ),
               read: { answers: ['periods'] },
               actions: [
-                { event: 'APPROVE', name: 'Approve', type: 'primary' },
-                { event: 'REJECT', name: 'Reject', type: 'reject' },
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Approve',
+                  type: 'primary',
+                },
+                { event: DefaultEvents.REJECT, name: 'Reject', type: 'reject' },
               ],
             },
             {
@@ -207,7 +224,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          APPROVE: { target: States.VINNUMALASTOFNUN_APPROVAL },
+          [DefaultEvents.APPROVE]: { target: States.VINNUMALASTOFNUN_APPROVAL },
           ABORT: { target: States.EMPLOYER_ACTION },
         },
       },
@@ -241,8 +258,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          APPROVE: { target: States.APPROVED },
-          REJECT: { target: States.VINNUMALASTOFNUN_ACTION },
+          [DefaultEvents.APPROVE]: { target: States.APPROVED },
+          [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
         },
       },
       [States.VINNUMALASTOFNUN_ACTION]: {
