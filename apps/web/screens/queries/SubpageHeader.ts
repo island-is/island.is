@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { slices } from './fragments'
 
 export const GET_SUBPAGE_HEADER_QUERY = gql`
   query GetSubpageHeader($input: GetSubpageHeaderInput!) {
@@ -7,12 +8,12 @@ export const GET_SUBPAGE_HEADER_QUERY = gql`
       title
       summary
       featuredImage {
-        url
-        title
-        width
-        height
+        ...ImageFields
       }
-      content
+      body {
+        ...AllSlices
+      }
     }
   }
+  ${slices}
 `

@@ -22,8 +22,11 @@ import {
   GetSubpageHeaderQuery,
   QueryGetSubpageHeaderArgs,
 } from '@island.is/web/graphql/schema'
+import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import { GET_NAMESPACE_QUERY, GET_SUBPAGE_HEADER_QUERY } from '../queries'
 import { useNamespace } from '@island.is/web/hooks'
+import RichText from 'apps/web/components/RichText/RichText'
+import { useI18n } from 'apps/web/i18n'
 
 
 const { publicRuntimeConfig } = getConfig()
@@ -53,7 +56,8 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   const n = useNamespace(staticContent)
   const fn = useNamespace(filterContent)
   const navn = useNamespace(navContent)
-  const content = JSON.parse(subpageHeader.content)
+
+  const { activeLocale } = useI18n()
 
   return (
     <SubpageLayout
@@ -73,12 +77,20 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                 <Stack space={1}>
                   <Text variant="h1">{subpageHeader.title}</Text>
                   <Text variant="intro">{subpageHeader.summary}</Text>
-                  <Text>{content.text}</Text>
-                  <Button icon="arrowForward" variant="text">
+                  {subpageHeader.body ? 
+                    <RichText 
+                      body={subpageHeader.body as SliceType[]}
+                      config={{defaultPadding: [2, 2, 4]}}
+                      locale={activeLocale}
+                    />
+
+                    : null}
+                  
+                  {/* <Button icon="arrowForward" variant="text">
                     <Link href={content.handbookLink}>
                       {content.dgButtonTitle}
                     </Link>
-                  </Button>
+                  </Button> */}
                 </Stack>
               </Box>
             }
@@ -158,6 +170,8 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
       })
       .then((res) => JSON.parse(res.data.getNamespace.fields)),
   ])
+
+  console.log(subpageHeader)
 
   return {
     subpageHeader,

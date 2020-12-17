@@ -1965,8 +1965,8 @@ export interface ISubpageHeaderFields {
   /** Featured Image */
   featuredImage?: Asset | undefined
 
-  /** Content */
-  content?: Record<string, any> | undefined
+  /** Body */
+  body?: Document | undefined
 }
 
 export interface ISubpageHeader extends Entry<ISubpageHeaderFields> {
