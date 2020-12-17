@@ -1,11 +1,15 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
-import { ClientCredentials } from './models/clientCredentials.model'
-import { AudienceAndScope } from './models/audienceAndScope.model'
+
 import { DocumentProviderService } from './document-provider.service'
-import { TestResult } from './models/testResult.model'
-import { RunEndpointTestsInput } from './dto/runEndpointTests.input'
-import { RegisterEndpointInput } from './dto/registerEndpoint.input'
-import { RegisterProviderInput } from './dto/registerProvider.input'
+import { ClientCredentials, AudienceAndScope, TestResult } from './models'
+import {
+  RunEndpointTestsInput,
+  RegisterEndpointInput,
+  RegisterProviderInput,
+} from './dto'
+
+//TODO: UseGuards
+//TODO: log acting user
 
 @Resolver()
 export class DocumentProviderResolver {
@@ -15,14 +19,20 @@ export class DocumentProviderResolver {
   async registerProvider(
     @Args('input') input: RegisterProviderInput,
   ): Promise<ClientCredentials> {
-    return this.documentProviderService.registerProvider(input.nationalId)
+    return this.documentProviderService.registerProvider(
+      input.nationalId,
+      input.clientName,
+    )
   }
 
   @Mutation(() => AudienceAndScope)
   async registerEndpoint(
     @Args('input') input: RegisterEndpointInput,
   ): Promise<AudienceAndScope> {
-    return this.documentProviderService.registerEndpoint(input.endpoint)
+    return this.documentProviderService.registerEndpoint(
+      input.nationalId,
+      input.endpoint,
+    )
   }
 
   @Mutation(() => [TestResult])
@@ -30,6 +40,7 @@ export class DocumentProviderResolver {
     @Args('input') input: RunEndpointTestsInput,
   ): Promise<TestResult[]> {
     return this.documentProviderService.runEndpointTests(
+      input.nationalId,
       input.recipient,
       input.documentId,
     )
