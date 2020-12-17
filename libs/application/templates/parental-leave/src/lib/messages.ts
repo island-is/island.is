@@ -793,12 +793,12 @@ export const mm: MessageDir = {
   confirmation: defineMessages({
     epxandAll: {
       id: 'pl.application:confirmation.buttons.expandAll',
-      defaultMessage: 'Auka allt',
+      defaultMessage: 'Sýna allt',
       description: 'Expand all',
     },
     collapseAll: {
       id: 'pl.application:confirmation.buttons.collapseAll',
-      defaultMessage: 'Hrynja allt',
+      defaultMessage: 'Fela allt',
       description: 'Collapse all',
     },
     section: {
