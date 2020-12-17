@@ -8,6 +8,7 @@ export default class IdentityResourcesDTO {
     this.required = false;
     this.emphasize = false;
   }
+  
   enabled: boolean;
   name: string;
   displayName: string;

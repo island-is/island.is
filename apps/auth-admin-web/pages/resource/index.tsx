@@ -1,7 +1,6 @@
-import IdentityResourcesDTO from '../../models/dtos/identity-resources.dto';
 import React from 'react';
-import IdentityResourceForm from '../../components/IdentityResourceForm';
+import IdentityResourceForm from '../../components/Resource/IdentityResourceForm'
 
 export default function Index(){
-    return <IdentityResourceForm resource={new IdentityResourcesDTO()} />
+    return <IdentityResourceForm />
 }

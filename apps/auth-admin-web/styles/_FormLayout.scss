@@ -170,3 +170,17 @@
     font-size: 0.8rem;
   }
 }
+
+
+
+// Move to _EditResource.scss if I find out how
+.edit-resource-overview {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  height: 40em;
+
+  // div {
+  //   border: 1px solid red;
+  // }
+}

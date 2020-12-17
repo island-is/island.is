@@ -1,4 +1,5 @@
-import IdentityResources from '../../components/IdentityResourcesList'
+import IdentityResourcesList from '../../components/Resource/ResourcesList';
+
 export default function Index(){
-    return <IdentityResources />
+    return <IdentityResourcesList />
 }

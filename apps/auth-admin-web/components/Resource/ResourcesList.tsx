@@ -1,29 +1,35 @@
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
-import IdentityResourcesDTO from '../models/dtos/identity-resources.dto';
+import IdentityResourcesDTO from '../../models/dtos/identity-resources.dto';
 import axios from 'axios';
-import Paginator from './Paginator';
-import APIResponse from '../models/utils/APIResponse';
-import StatusBar from './StatusBar';
+import Paginator from '../Paginator';
+import APIResponse from '../../models/utils/APIResponse';
+import StatusBar from '../StatusBar';
+import { useRouter } from 'next/router';
 
-export default function IdentityResources() {
+export default function IdentityResourcesList() {
   const [count, setCount] = useState(1);
   const [page, setPage] = useState(1);
-  const [response, setResponse] = useState<APIResponse>(null);
+  const [response, setResponse] = useState<APIResponse>(new APIResponse());
   const [resources, setResources] = useState<IdentityResourcesDTO[]>([]);
   const [totalCount, setTotalCount] = useState(1);
   const [lastPage, setLastPage] = useState(1);
+  const router = useRouter();
+
+  useEffect(() => {
+    getResources(page, count);
+  }, [page, count]);
 
   const edit = (resource: IdentityResourcesDTO) => {
-   // TODO:
+    // TODO: implement edit function
+
+    router.push('/resources/edit/' + resource.name)
   };
 
-  const getResources = async (page, count) => {
-    console.log("getting res");
+  const getResources = async (page: number, count: number) => {
     await axios
       .get(`/api/identity-resources?page=${page}&count=${count}`)
       .then((response) => {
-        console.log("getting res then");
         const res = new APIResponse();
         res.statusCode = response.request.status;
         res.message = response.request.statusText;
@@ -36,8 +42,7 @@ export default function IdentityResources() {
       .catch(function (error) {
         if (error.response) {
           setResponse(error.response.data);
-        }
-        else {
+        } else {
           const apiError = new APIResponse();
           apiError.message = [error];
           setResponse(apiError);
@@ -46,26 +51,30 @@ export default function IdentityResources() {
   };
 
   const handlePageChange = async (page: number, countPerPage: number) => {
-    getResources(page, countPerPage);
     setPage(page);
     setCount(countPerPage);
   };
 
   const remove = async (name: string) => {
-    console.log(name);
-    if (window.confirm(`Are you sure you want to delete this Identity Resource: ${name}?`)) {
-      await axios.delete(`/api/identity-resource/${name}`).then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-      })
-      .catch(function (error) {
-        if (error.response) {
-          console.log('error');
-          setResponse(error.response.data);
-        }
-      });
+    if (
+      window.confirm(
+        `Are you sure you want to delete this Identity Resource: ${name}?`
+      )
+    ) {
+      await axios
+        .delete(`/api/identity-resource/${name}`)
+        .then((response) => {
+          const res = new APIResponse();
+          res.statusCode = response.request.status;
+          res.message = response.request.statusText;
+          setResponse(res);
+          getResources(page, count);
+        })
+        .catch(function (error) {
+          if (error.response) {
+            setResponse(error.response.data);
+          }
+        });
     }
   };
 
@@ -73,7 +82,7 @@ export default function IdentityResources() {
 
   return (
     <div className="identity-resources">
-      <StatusBar response={response} />
+      {/* <StatusBar status={response}></StatusBar> */}
       <h2>Identity Resources</h2>
       <div className="identity-resources__container__options">
         <div className="identity-resources__container__button">
@@ -105,8 +114,9 @@ export default function IdentityResources() {
                       className="identity-resources__button__edit"
                       onClick={() => edit(resource)}
                       title="Edit"
-                    ><i className="icon__edit"></i><span>
-                      Edit</span>
+                    >
+                      <i className="icon__edit"></i>
+                      <span>Edit</span>
                     </button>
                   </td>
                   <td className="identity-resources__table__button">
@@ -125,11 +135,7 @@ export default function IdentityResources() {
           </tbody>
         </table>
       </div>
-      <Paginator
-        lastPage={lastPage}
-        handlePageChange={handlePageChange}
-      />
+      <Paginator lastPage={lastPage} handlePageChange={handlePageChange} />
     </div>
   );
 }
-
