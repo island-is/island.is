@@ -79,6 +79,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
             defaultMessage: 'Birtingarnafn',
           })}
           content={person?.fullName || '...'}
+          loading={loading}
         />
         <UserInfoLine
           label={defineMessage({
@@ -86,6 +87,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
             defaultMessage: 'Kennitala',
           })}
           content={formatNationalId(nationalId)}
+          loading={loading}
         />
         <UserInfoLine
           label={defineMessage({
@@ -93,6 +95,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
             defaultMessage: 'Lögheimili',
           })}
           content={person?.address || '...'}
+          loading={loading}
         />
         <UserInfoLine
           label={defineMessage({
