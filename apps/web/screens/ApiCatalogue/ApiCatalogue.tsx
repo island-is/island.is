@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
@@ -35,16 +35,12 @@ const { publicRuntimeConfig } = getConfig()
 
 interface ApiCatalogueProps {
   subpageHeader: GetSubpageHeaderQuery['getSubpageHeader']
-  staticContent: GetNamespaceQuery['getNamespace']
-  filterContent: GetNamespaceQuery['getNamespace']
-  navContent: GetNamespaceQuery['getNamespace']
+  headerNamespace: GetNamespaceQuery['getNamespace']
 }
 
 const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   subpageHeader,
-  staticContent,
-  filterContent,
-  navContent,
+  headerNamespace
 }) => {
   /* DISABLE FROM WEB WHILE WIP */
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
@@ -53,9 +49,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
     throw new CustomNextError(404, 'Not found')
   }
   /* --- */
-  const n = useNamespace(staticContent)
-  const fn = useNamespace(filterContent)
-  const navn = useNamespace(navContent)
+  const n = useNamespace(headerNamespace)
 
   const { activeLocale } = useI18n()
 
@@ -77,20 +71,20 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                 <Stack space={1}>
                   <Text variant="h1">{subpageHeader.title}</Text>
                   <Text variant="intro">{subpageHeader.summary}</Text>
-                  {subpageHeader.body ? 
-                    <RichText 
-                      body={subpageHeader.body as SliceType[]}
-                      config={{defaultPadding: [2, 2, 4]}}
-                      locale={activeLocale}
-                    />
-
-                    : null}
-                  
-                  {/* <Button icon="arrowForward" variant="text">
-                    <Link href={content.handbookLink}>
-                      {content.dgButtonTitle}
-                    </Link>
-                  </Button> */}
+                  <Stack space={2}>
+                    {subpageHeader.body ? 
+                      <RichText 
+                        body={subpageHeader.body as SliceType[]}
+                        config={{defaultPadding: [2, 2, 4]}}
+                        locale={activeLocale}
+                      />
+                      : null}
+                    <Button icon="arrowForward" variant="text">
+                      <Link href={n('handbookLink')}>
+                        {n('dgButtonTitle')}
+                      </Link>
+                    </Button>
+                  </Stack>
                 </Stack>
               </Box>
             }
@@ -121,9 +115,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
     {
       data: { getSubpageHeader: subpageHeader },
     },
-    staticContent,
-    filterContent,
-    navContent,
+    headerNamespace,
   ] = await Promise.all([
     apolloClient.query<GetSubpageHeaderQuery, QueryGetSubpageHeaderArgs>({
       query: GET_SUBPAGE_HEADER_QUERY,
@@ -140,31 +132,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
         variables: {
           input: {
             lang: locale as ContentLanguage,
-            namespace: 'ApiCatalog',
-          },
-        },
-      })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
-
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            lang: locale as ContentLanguage,
-            namespace: 'ApiCatalogFilter',
-          },
-        },
-      })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
-
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            lang: locale as ContentLanguage,
-            namespace: 'ThrounNavigation',
+            namespace: 'VefthjonusturHome',
           },
         },
       })
@@ -175,9 +143,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   return {
     subpageHeader,
-    staticContent,
-    filterContent,
-    navContent,
+    headerNamespace,
   }
 }
 
