@@ -218,7 +218,7 @@ export const Menu = ({
           <Box
             paddingTop={[6, 6, 8]}
             paddingRight={[3, 3, 6, 6, 15]}
-            paddingBottom={4}
+            paddingBottom={[4, 4, 4, 4, 15]}
             paddingLeft={[3, 3, 6]}
             className={styles.main}
             display="flex"
