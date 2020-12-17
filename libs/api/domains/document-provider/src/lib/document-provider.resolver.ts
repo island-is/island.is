@@ -32,6 +32,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.registerEndpoint(
       input.nationalId,
       input.endpoint,
+      input.providerId,
     )
   }
 
