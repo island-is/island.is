@@ -136,6 +136,7 @@
     "graphql-middleware-sentry": "3.2.1",
     "graphql-tag": "2.10.3",
     "graphql-type-json": "0.3.2",
+    "hypher": "0.2.5",
     "intl": "1.2.5",
     "intl-locales-supported": "1.8.12",
     "ioredis": "4.17.3",
