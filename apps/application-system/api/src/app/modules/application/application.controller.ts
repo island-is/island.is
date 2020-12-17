@@ -47,7 +47,7 @@ import { ApplicationService } from './application.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
-import { mergeAnswers } from '@island.is/application/core'
+import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
 import {
@@ -242,7 +242,7 @@ export class ApplicationController {
     )
 
     const [hasChanged, newState, newApplication] = helper.changeState(
-      'ASSIGN',
+      DefaultEvents.ASSIGN,
       apiTemplateUtils,
     )
 
