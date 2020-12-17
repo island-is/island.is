@@ -3,6 +3,9 @@ export default {
   applicationSystem: {
     baseApiUrl: 'http://localhost:3333',
   },
+  drivingLicense: {
+    baseApiUrl: 'https://staging-okuskirteini-api.tmd.is',
+  },
   nationalRegistry: {
     baseSoapUrl: 'https://localhost:8443',
     user: process.env.SOFFIA_USER ?? '',

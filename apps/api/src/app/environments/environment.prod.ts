@@ -3,6 +3,9 @@ export default {
   applicationSystem: {
     baseApiUrl: process.env.APPLICATION_SYSTEM_API_URL,
   },
+  drivingLicense: {
+    baseApiUrl: process.env.DRIVING_LICENSE_REGISTRY_URL,
+  },
   nationalRegistry: {
     baseSoapUrl: process.env.SOFFIA_SOAP_URL,
     user: process.env.SOFFIA_USER,
