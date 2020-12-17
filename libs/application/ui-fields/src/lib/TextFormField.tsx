@@ -11,6 +11,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
+import { useDefaultValue } from '../useDefaultValue'
 
 interface Props extends FieldBaseProps {
   field: TextField
@@ -69,6 +70,7 @@ const TextFormField: FC<Props> = ({
             variant !== 'textarea' && variant !== 'currency' ? variant : 'text'
           }
           format={format}
+          defaultValue={useDefaultValue(field, application)}
         />
       </Box>
     </div>
