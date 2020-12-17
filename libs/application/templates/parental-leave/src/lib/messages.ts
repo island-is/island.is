@@ -618,6 +618,19 @@ export const mm: MessageDir = {
       description: 'For this length of time you will get payments up to',
     },
   }),
+  selfEmployed: defineMessages({
+    title: {
+      id: 'pl.application:selfEmployed.title',
+      defaultMessage: 'Ertu sjálfstætt starfandi?',
+      description: 'Are you self employed?',
+    },
+    description: {
+      id: 'pl.application:selfEmployed.description',
+      defaultMessage:
+        'Sjáflstætt starfandi einstaklingar þurfa að skila staðfestingu á lækkun á reiknuðu endurgjaldi ef við á.',
+      description: 'Add translation',
+    },
+  }),
   ratio: defineMessages({
     title: {
       id: 'pl.application:ratio.title',
@@ -694,6 +707,25 @@ export const mm: MessageDir = {
       defaultMessage:
         'Nei, ég vil ekki deila þessum upplýsingum að svo stöddu.',
       description: 'No, I do not want to share my information',
+    },
+  }),
+  rightOfAccess: defineMessages({
+    title: {
+      id: 'pl.application:rightOfAccess.title',
+      defaultMessage: 'Staðfesting á umgengnisrétti forsjárlauss foreldris',
+      description: 'Add translation',
+    },
+    description: {
+      id: 'pl.application:rightOfAccess.description',
+      defaultMessage:
+        'Þar sem valið foreldri er ekki skráð/ur í sambúð með þér þá þarf að staðfesta umgengnisrétt þess sem forsjárlaust foreldri.',
+      description: 'Add translation',
+    },
+    yesOption: {
+      id: 'pl.application:rightOfAccess.yesOption',
+      defaultMessage:
+        'Ég innsrkáður umsækjandi veiti forsjárlausu foreldri samþykki mitt fyrir umgengni í þessu fæðingarorlofi',
+      description: 'Add translation',
     },
   }),
   reviewScreen: defineMessages({
