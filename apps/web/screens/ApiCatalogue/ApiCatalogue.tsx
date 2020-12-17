@@ -70,6 +70,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   }
 
   const sn = useNamespace(staticContent)
+  const fn = useNamespace(filterContent)
 
   const translateTags = (): ServiceTagDisplayNames => {
     const names: ServiceTagDisplayNames = {
@@ -129,6 +130,85 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
       input: parameters,
     },
   })
+
+  const filterCategories = [
+    {
+      id: 'pricing',
+      label: fn('pricing'),
+      selected: parameters.pricing,
+      filters: [
+        {
+          value: PricingCategory.FREE,
+          label: fn('pricingFree'),
+        },
+        {
+          value: PricingCategory.PAID,
+          label: fn('pricingPaid'),
+        },
+      ],
+    },
+    {
+      id: 'data',
+      label: fn('data'),
+      selected: parameters.data,
+      filters: [
+        {
+          value: DataCategory.FINANCIAL,
+          label: fn('dataFinancial'),
+        },
+        {
+          value: DataCategory.HEALTH,
+          label: fn('dataHealth'),
+        },
+        {
+          value: DataCategory.OFFICIAL,
+          label: fn('dataOfficial'),
+        },
+        {
+          value: DataCategory.OPEN,
+          label: fn('dataOpen'),
+        },
+        {
+          value: DataCategory.PERSONAL,
+          label: fn('dataPersonal'),
+        },
+        {
+          value: DataCategory.PUBLIC,
+          label: fn('dataPublic'),
+        },
+      ],
+    },
+    {
+      id: 'type',
+      label: fn('type'),
+      selected: parameters.type,
+      filters: [
+        {
+          value: TypeCategory.REST,
+          label: fn('typeRest'),
+        },
+        {
+          value: TypeCategory.SOAP,
+          label: fn('typeSoap'),
+        },
+      ],
+    },
+    {
+      id: 'access',
+      label: fn('access'),
+      selected: parameters.access,
+      filters: [
+        {
+          value: AccessCategory.APIGW,
+          label: fn('accessApigw'),
+        },
+        {
+          value: AccessCategory.XROAD,
+          label: fn('accessXroad'),
+        },
+      ],
+    },
+  ]
 
   return (
     <SubpageLayout
