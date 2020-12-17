@@ -65,7 +65,7 @@ const loginIS = new IslandisLogin({
   audienceUrl,
 })
 
-@Controller('/api/auth')
+@Controller('/skilavottord/api/auth')
 export class AuthController {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
 

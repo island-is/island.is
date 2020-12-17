@@ -194,8 +194,14 @@
       "@island.is/service-portal/documents": [
         "libs/service-portal/documents/src/index.ts"
       ],
+      "@island.is/service-portal/driving-license": [
+        "libs/service-portal/driving-license/src/index.ts"
+      ],
       "@island.is/service-portal/education": [
         "libs/service-portal/education/src/index.ts"
+      ],
+      "@island.is/service-portal/eligibility": [
+        "libs/service-portal/eligibility/src/index.ts"
       ],
       "@island.is/service-portal/family": [
         "libs/service-portal/family/src/index.ts"
