@@ -17,6 +17,7 @@ import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseGender,
+  CaseDecision,
 } from '@island.is/judicial-system/types'
 
 import { User } from '../../user'
@@ -123,6 +124,13 @@ export class Case extends Model<Case> {
   requestedCourtDate: Date
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  alternativeTravelBan: boolean
+
+  @Column({
     type: DataType.DATE,
     allowNull: true,
   })
@@ -134,7 +142,6 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  // Lagaákvæði sem brot varða við
   lawsBroken: string
 
   @Column({
@@ -143,7 +150,6 @@ export class Case extends Model<Case> {
     values: Object.values(CaseCustodyProvisions),
   })
   @ApiProperty({ enum: CaseCustodyProvisions, isArray: true })
-  // Lagaákvæði sem krafan byggir á
   custodyProvisions: CaseCustodyProvisions[]
 
   @Column({
@@ -152,7 +158,6 @@ export class Case extends Model<Case> {
     values: Object.values(CaseCustodyRestrictions),
   })
   @ApiProperty({ enum: CaseCustodyRestrictions, isArray: true })
-  // Takmarkanir á gæslu
   requestedCustodyRestrictions: CaseCustodyRestrictions[]
 
   @Column({
@@ -160,7 +165,6 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  // Málsatvik rakin
   caseFacts: string
 
   @Column({
@@ -168,7 +172,6 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  // Lagarök
   legalArguments: string
 
   @Column({
@@ -176,7 +179,6 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  // Athugasemdir til dómara
   comments: string
 
   @ForeignKey(() => User)
@@ -196,7 +198,6 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  // Málsnúmer héraðsdóms
   courtCaseNumber: string
 
   @Column({
@@ -246,7 +247,6 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  // Viðstaddir og hlutverk þeirra
   courtAttendees: string
 
   @Column({
@@ -254,7 +254,6 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  // Krafa lögreglu
   policeDemands: string
 
   @Column({
@@ -262,7 +261,6 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  // Afstaða kærða
   accusedPlea: string
 
   @Column({
@@ -270,7 +268,6 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  // Málflutningsræður
   litigationPresentations: string
 
   @Column({
@@ -278,16 +275,15 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  // Niðurstaða úrskurðar
   ruling: string
 
   @Column({
-    type: DataType.BOOLEAN,
+    type: DataType.ENUM,
     allowNull: true,
+    values: Object.values(CaseDecision),
   })
-  @ApiProperty()
-  // Hafna kröfu
-  rejecting: boolean
+  @ApiProperty({ enum: CaseDecision })
+  decision: CaseDecision
 
   @Column({
     type: DataType.DATE,
@@ -302,7 +298,6 @@ export class Case extends Model<Case> {
     values: Object.values(CaseCustodyRestrictions),
   })
   @ApiProperty({ enum: CaseCustodyRestrictions, isArray: true })
-  // Takmarkanir á gæslu
   custodyRestrictions: CaseCustodyRestrictions[]
 
   @Column({
@@ -311,7 +306,6 @@ export class Case extends Model<Case> {
     values: Object.values(CaseAppealDecision),
   })
   @ApiProperty({ enum: CaseAppealDecision })
-  // Ákvörðun um kæru kærða
   accusedAppealDecision: CaseAppealDecision
 
   @Column({
@@ -319,7 +313,6 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  // Yfirlýsing um kæru
   accusedAppealAnnouncement: string
 
   @Column({
@@ -328,7 +321,6 @@ export class Case extends Model<Case> {
     values: Object.values(CaseAppealDecision),
   })
   @ApiProperty({ enum: CaseAppealDecision })
-  // Ákvörðun um kæru sækjanda
   prosecutorAppealDecision: CaseAppealDecision
 
   @Column({
@@ -336,7 +328,6 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  // Yfirlýsing um kæru
   prosecutorAppealAnnouncement: string
 
   @ForeignKey(() => User)
