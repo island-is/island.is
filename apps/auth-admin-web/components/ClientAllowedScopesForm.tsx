@@ -110,7 +110,7 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                   <label className="client-allowed-scopes__label" htmlFor="scopeName">
                     Scope Name
                   </label>
-                  <select className="client-allowed-scopes__select" name="scopeName" id="scopeName" ref={register({ required: true })} onChange={(e) => setSelectedItem(e.target.value)}>
+                  <select id="scopeName" className="client-allowed-scopes__select" name="scopeName" id="scopeName" ref={register({ required: true })} onChange={(e) => setSelectedItem(e.target.value)}>
                   {scopes.map((scope: any) => {
                     return (<option value={scope.name} title={scope.description}>{scope.name} - {scope.description}</option>);
                   })}
