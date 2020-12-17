@@ -340,7 +340,7 @@ export const m = defineMessages({
   userProfileInformationSubTitle: {
     id: 'pl.application:userprofile.subtitle',
     defaultMessage:
-      'Til þess að sækja um fæðingarorlof þarftu að vera búin að stilla netfang og símanúmer á mínum síðum',
+      'Til þess að auðvelda umsóknarferlið er gott að hafa stillt netfang og símanúmer á mínum síðum',
     description:
       'In order to apply for this application we need your email and phone number',
   },
@@ -453,21 +453,51 @@ export const m = defineMessages({
     description:
       'I want to customize my leave into multiple periods and/or to stretch it out over time at less than 100% time off.',
   },
-  loadingError: {
-    id: 'pl.application:loading.error',
-    defaultMessage: 'Úps! Eitthvað fór úrskeiðis',
-    description: 'Oops! Something went wrong',
-  },
-  requiredAnswerError: {
-    id: 'pl.application:required.answer.error',
-    defaultMessage: 'Þú verður að svara þessari spurningu til að halda áfram.',
-    description: 'You need to answer this question to continue.',
-  },
 })
 
 type MessageDir = Record<string, Record<string, MessageDescriptor>>
 
 export const mm: MessageDir = {
+  applicant: defineMessages({
+    subSection: {
+      id: 'pl.application:applicant.subSection',
+      defaultMessage: 'Netfang og símanúmer',
+      description: 'Email and phone number',
+    },
+    title: {
+      id: 'pl.application:applicant.title',
+      defaultMessage: 'Er þetta réttur sími og netfang?',
+      description: 'What is your email and phone number?',
+    },
+    description: {
+      id: 'pl.application:applicant.description',
+      defaultMessage: 'Vinsamlegast breyttu ef þetta er ekki rétt.',
+      description: 'Please make changes if this is invalid.',
+    },
+    email: {
+      id: 'pl.application:applicant.email',
+      defaultMessage: 'Netfang',
+      description: 'Email',
+    },
+    phoneNumber: {
+      id: 'pl.application:applicant.phoneNumber',
+      defaultMessage: 'Símanúmer',
+      description: 'Phone number',
+    },
+  }),
+  errors: defineMessages({
+    loading: {
+      id: 'pl.application:errors.loading',
+      defaultMessage: 'Úps! Eitthvað fór úrskeiðis',
+      description: 'Oops! Something went wrong',
+    },
+    requiredAnswer: {
+      id: 'pl.application:errors.required.answer',
+      defaultMessage:
+        'Þú verður að svara þessari spurningu til að halda áfram.',
+      description: 'You need to answer this question to continue.',
+    },
+  }),
   leavePlan: defineMessages({
     subSection: {
       id: 'pl.application:periods.subsection',
@@ -618,6 +648,19 @@ export const mm: MessageDir = {
       description: 'For this length of time you will get payments up to',
     },
   }),
+  selfEmployed: defineMessages({
+    title: {
+      id: 'pl.application:selfEmployed.title',
+      defaultMessage: 'Ertu sjálfstætt starfandi?',
+      description: 'Are you self employed?',
+    },
+    description: {
+      id: 'pl.application:selfEmployed.description',
+      defaultMessage:
+        'Sjáflstætt starfandi einstaklingar þurfa að skila staðfestingu á lækkun á reiknuðu endurgjaldi ef við á.',
+      description: 'Add translation',
+    },
+  }),
   ratio: defineMessages({
     title: {
       id: 'pl.application:ratio.title',
@@ -696,6 +739,25 @@ export const mm: MessageDir = {
       description: 'No, I do not want to share my information',
     },
   }),
+  rightOfAccess: defineMessages({
+    title: {
+      id: 'pl.application:rightOfAccess.title',
+      defaultMessage: 'Staðfesting á umgengnisrétti forsjárlauss foreldris',
+      description: 'Add translation',
+    },
+    description: {
+      id: 'pl.application:rightOfAccess.description',
+      defaultMessage:
+        'Þar sem valið foreldri er ekki skráð/ur í sambúð með þér þá þarf að staðfesta umgengnisrétt þess sem forsjárlaust foreldri.',
+      description: 'Add translation',
+    },
+    yesOption: {
+      id: 'pl.application:rightOfAccess.yesOption',
+      defaultMessage:
+        'Ég innsrkáður umsækjandi veiti forsjárlausu foreldri samþykki mitt fyrir umgengni í þessu fæðingarorlofi',
+      description: 'Add translation',
+    },
+  }),
   reviewScreen: defineMessages({
     titleInReview: {
       id: 'pl.application:review.titleInReview',
@@ -759,6 +821,16 @@ export const mm: MessageDir = {
     },
   }),
   confirmation: defineMessages({
+    epxandAll: {
+      id: 'pl.application:confirmation.buttons.expandAll',
+      defaultMessage: 'Sýna allt',
+      description: 'Expand all',
+    },
+    collapseAll: {
+      id: 'pl.application:confirmation.buttons.collapseAll',
+      defaultMessage: 'Fela allt',
+      description: 'Collapse all',
+    },
     section: {
       id: 'pl.application:confirmation.section',
       defaultMessage: 'Samþykkja',

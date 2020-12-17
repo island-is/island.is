@@ -5,6 +5,7 @@ import { Select, Option } from '@island.is/island-ui/core'
 interface Props {
   error?: string
   id: string
+  defaultValue?: unknown
   disabled?: boolean
   name?: string
   label: string
@@ -13,6 +14,7 @@ interface Props {
 }
 export const SelectController: FC<Props> = ({
   error,
+  defaultValue,
   disabled = false,
   id,
   name = id,
@@ -23,7 +25,7 @@ export const SelectController: FC<Props> = ({
   const { clearErrors } = useFormContext()
   return (
     <Controller
-      defaultValue=""
+      {...(defaultValue !== undefined && { defaultValue })}
       name={name}
       render={({ onChange, value }) => (
         <Select

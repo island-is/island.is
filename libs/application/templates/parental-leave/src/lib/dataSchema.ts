@@ -3,6 +3,7 @@ import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import * as kennitala from 'kennitala'
 import { NO, YES } from '../constants'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 const PersonalAllowance = z
   .object({
@@ -37,6 +38,13 @@ const Period = z.object({
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
+  applicant: z.object({
+    email: z.string().email(),
+    phoneNumber: z.string().refine((p) => {
+      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+      return phoneNumber && phoneNumber.isValid()
+    }, 'Símanúmerið þarf að vera gilt.'),
+  }),
   personalAllowance: PersonalAllowance,
   personalAllowanceFromSpouse: PersonalAllowance,
   payments: z.object({
@@ -72,6 +80,8 @@ export const dataSchema = z.object({
       (n) => n && kennitala.isValid(n) && kennitala.isPerson(n),
       'Kennitala þarf að vera gild',
     ),
+  otherParentRightOfAccess: z.enum([YES, NO]).optional(),
+  isSelfEmployed: z.enum([YES, NO]),
   usePersonalAllowance: z.enum([YES, NO]),
   usePersonalAllowanceFromSpouse: z.enum([YES, NO]),
 })
