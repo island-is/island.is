@@ -71,7 +71,7 @@ const DocumentCard: FC<Props> = ({ document }) => {
     setDocumentDetails({ loading: true })
 
     // Note: opening window before fetching data, to prevent popup-blocker
-    let windowRef = window.open()
+    const windowRef = window.open()
     try {
       const { data } = await client.query({
         query: GET_DOCUMENT,
@@ -86,12 +86,12 @@ const DocumentCard: FC<Props> = ({ document }) => {
         windowRef.location.assign(getPdfURL(doc.content))
         return
       }
-      windowRef?.close()
+      windowRef && windowRef.close()
       window.focus()
       window.setTimeout(() => displayDocument(doc), 100)
     } catch (error) {
       setDocumentDetails({})
-      windowRef?.close()
+      windowRef && windowRef.close()
       window.focus()
       window.setTimeout(displayErrorToast, 100)
     }
