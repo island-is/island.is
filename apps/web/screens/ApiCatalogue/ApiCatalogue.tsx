@@ -25,8 +25,8 @@ import {
 import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import { GET_NAMESPACE_QUERY, GET_SUBPAGE_HEADER_QUERY } from '../queries'
 import { useNamespace } from '@island.is/web/hooks'
-import RichText from 'apps/web/components/RichText/RichText'
-import { useI18n } from 'apps/web/i18n'
+import RichText from '@island.is/web/components/RichText/RichText'
+import { useI18n } from '@island.is/web/i18n'
 
 const { publicRuntimeConfig } = getConfig()
 
