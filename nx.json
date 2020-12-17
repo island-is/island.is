@@ -92,6 +92,9 @@
     "api-domains-documents": {
       "tags": []
     },
+    "api-domains-driving-license": {
+      "tags": []
+    },
     "api-domains-file-upload": {
       "tags": []
     },
