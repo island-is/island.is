@@ -337,7 +337,7 @@ export class NotificationService {
       existingCase.prosecutor?.name,
       existingCase.courtDate,
       existingCase.defenderName,
-      existingCase.rejecting,
+      existingCase.decision,
       existingCase.custodyEndDate,
       existingCase.custodyRestrictions,
       existingCase.accusedAppealDecision,

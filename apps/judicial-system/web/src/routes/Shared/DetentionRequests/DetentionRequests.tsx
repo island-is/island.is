@@ -17,32 +17,22 @@ import {
   Icon,
 } from '@island.is/island-ui/core'
 import Loading from '../../../shared-components/Loading/Loading'
-import { Case, CaseState } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseState,
+  CaseTransition,
+} from '@island.is/judicial-system/types'
 import * as styles from './DetentionRequests.treat'
 import { UserRole } from '@island.is/judicial-system/types'
 import * as Constants from '../../../utils/constants'
 import { Link } from 'react-router-dom'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { insertAt } from '../../../utils/formatters'
-import { gql, useQuery } from '@apollo/client'
+import { insertAt, parseTransition } from '../../../utils/formatters'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '../../../shared-components/UserProvider/UserProvider'
 import { useHistory } from 'react-router-dom'
-
-export const CasesQuery = gql`
-  query CasesQuery {
-    cases {
-      id
-      created
-      state
-      policeCaseNumber
-      accusedNationalId
-      accusedName
-      isCourtDateInThePast
-      custodyEndDate
-      isCustodyEndDateInThePast
-    }
-  }
-`
+import { TransitionCaseMutation } from '../../../graphql'
+import { CasesQuery } from '../../../utils/mutations'
 
 type directionType = 'ascending' | 'descending'
 interface SortConfig {
@@ -55,10 +45,24 @@ export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<Case[]>()
   const [sortConfig, setSortConfig] = useState<SortConfig>()
 
+  // The index of requset that's about to be removed
+  const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
+
   const { user } = useContext(UserContext)
   const history = useHistory()
 
   const isJudge = user?.role === UserRole.JUDGE
+
+  const { data, error, loading } = useQuery(CasesQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
+
+  const [transitionCaseMutation, { loading: isDeletingCase }] = useMutation(
+    TransitionCaseMutation,
+  )
+
+  const resCases = data?.cases
 
   useMemo(() => {
     const sortedCases = cases || []
@@ -82,23 +86,22 @@ export const DetentionRequests: React.FC = () => {
     document.title = 'Allar kröfur - Réttarvörslugátt'
   }, [])
 
-  const { data, error, loading } = useQuery(CasesQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
-  const resCases = data?.cases
-
   useEffect(() => {
     if (resCases && !cases) {
+      // Remove deleted cases
+      const casesWithoutDeleted = resCases.filter((c: Case) => {
+        return c.state !== CaseState.DELETED
+      })
+
       if (isJudge) {
-        const judgeCases = resCases.filter((c: Case) => {
+        const judgeCases = casesWithoutDeleted.filter((c: Case) => {
           // Judges should see all cases except cases with status code NEW.
           return c.state !== CaseState.NEW
         })
 
         setCases(judgeCases)
       } else {
-        setCases(resCases)
+        setCases(casesWithoutDeleted)
       }
     }
   }, [cases, isJudge, resCases, setCases])
@@ -157,6 +160,41 @@ export const DetentionRequests: React.FC = () => {
     return sortConfig.key === name ? sortConfig.direction : undefined
   }
 
+  const deleteCase = async (caseToDelete: Case) => {
+    if (
+      caseToDelete.state === CaseState.NEW ||
+      caseToDelete.state === CaseState.DRAFT
+    ) {
+      const transitionRequest = parseTransition(
+        caseToDelete.modified,
+        CaseTransition.DELETE,
+      )
+
+      try {
+        const { data } = await transitionCaseMutation({
+          variables: { input: { id: caseToDelete.id, ...transitionRequest } },
+        })
+        if (!data) {
+          return
+        }
+
+        setRequestToRemoveIndex(undefined)
+
+        setTimeout(() => {
+          setCases(
+            cases?.filter((c: Case) => {
+              return c !== caseToDelete
+            }),
+          )
+        }, 800)
+
+        clearTimeout()
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  }
+
   return (
     <div className={styles.detentionRequestsContainer}>
       {user && (
@@ -189,14 +227,14 @@ export const DetentionRequests: React.FC = () => {
             data-testid="detention-requests-table"
             aria-describedby="tableCation"
           >
-            <thead>
-              <tr>
-                <th>
+            <thead className={styles.thead}>
+              <tr className={styles.tr}>
+                <th className={styles.th}>
                   <Text as="span" fontWeight="regular">
                     LÖKE málsnr.
                   </Text>
                 </th>
-                <th>
+                <th className={styles.th}>
                   <Text as="span" fontWeight="regular">
                     <Box
                       component="button"
@@ -223,7 +261,7 @@ export const DetentionRequests: React.FC = () => {
                     </Box>
                   </Text>
                 </th>
-                <th>
+                <th className={styles.th}>
                   <Text as="span" fontWeight="regular">
                     <Box
                       component="button"
@@ -250,57 +288,62 @@ export const DetentionRequests: React.FC = () => {
                     </Box>
                   </Text>
                 </th>
-                <th>
+                <th className={styles.th}>
                   <Text as="span" fontWeight="regular">
                     Staða
                   </Text>
                 </th>
-                <th>
+                <th className={styles.th}>
                   <Text as="span" fontWeight="regular">
                     Gæsla rennur út
                   </Text>
                 </th>
+                <th></th>
+                {!isJudge && <th></th>}
               </tr>
             </thead>
             <tbody>
               {cases.map((c, i) => (
                 <tr
+                  key={i}
+                  className={cn(
+                    styles.tableRowContainer,
+                    requestToRemoveIndex === i && 'isDeleting',
+                  )}
                   data-testid="detention-requests-table-row"
                   role="button"
                   aria-label="Opna kröfu"
-                  key={i}
-                  className={styles.detentionRequestsTableRow}
                   onClick={() => {
                     handleClick(c)
                   }}
                 >
-                  <td>
+                  <td className={styles.td}>
                     <Text as="span">{c.policeCaseNumber || '-'}</Text>
                   </td>
-                  <td>
-                    <Text as="span">
-                      {c.accusedName || '-'}
+                  <td className={cn(styles.td, 'flexDirectionCol')}>
+                    <Text>{c.accusedName || '-'}</Text>
+                    <Text>
                       {c.accusedNationalId && (
-                        <Box marginLeft={1} component="span">
-                          <Text as="span" variant="small" color="dark400">
-                            {`(${
-                              insertAt(
-                                c.accusedNationalId.replace('-', ''),
-                                '-',
-                                6,
-                              ) || '-'
-                            })`}
-                          </Text>
-                        </Box>
+                        <Text as="span" variant="small" color="dark400">
+                          {`(${
+                            insertAt(
+                              c.accusedNationalId.replace('-', ''),
+                              '-',
+                              6,
+                            ) || '-'
+                          })`}
+                        </Text>
                       )}
                     </Text>
                   </td>
-                  <td>
+                  <td className={styles.td}>
                     <Text as="span">
-                      {format(parseISO(c.created), 'PP', { locale: localeIS })}
+                      {format(parseISO(c.created), 'PP', {
+                        locale: localeIS,
+                      })}
                     </Text>
                   </td>
-                  <td>
+                  <td className={styles.td}>
                     <Tag
                       variant={
                         mapCaseStateToTagVariant(
@@ -318,12 +361,50 @@ export const DetentionRequests: React.FC = () => {
                       }
                     </Tag>
                   </td>
-                  <td>
+                  <td className={styles.td}>
                     <Text as="span">
                       {c.custodyEndDate && c.state === CaseState.ACCEPTED
                         ? `${formatDate(c.custodyEndDate, 'PP')}`
                         : null}
                     </Text>
+                  </td>
+                  <td className={cn(styles.td, 'secondLast')}>
+                    {!isJudge &&
+                      (c.state === CaseState.DRAFT ||
+                        c.state === CaseState.NEW) && (
+                        <Box
+                          component="button"
+                          aria-label="Viltu eyða drögum?"
+                          className={styles.deleteButton}
+                          onClick={(evt) => {
+                            evt.stopPropagation()
+                            setRequestToRemoveIndex(
+                              requestToRemoveIndex === i ? undefined : i,
+                            )
+                          }}
+                        >
+                          <Icon icon="close" color="blue400" />
+                        </Box>
+                      )}
+                  </td>
+                  <td
+                    className={cn(
+                      styles.deleteButtonContainer,
+                      requestToRemoveIndex === i && 'open',
+                    )}
+                  >
+                    <Button
+                      colorScheme="destructive"
+                      size="small"
+                      onClick={(evt) => {
+                        evt.stopPropagation()
+                        deleteCase(cases[i])
+                      }}
+                    >
+                      <Box as="span" className={styles.deleteButtonText}>
+                        Eyða drögum
+                      </Box>
+                    </Button>
                   </td>
                 </tr>
               ))}

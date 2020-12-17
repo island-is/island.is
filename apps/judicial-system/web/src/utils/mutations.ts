@@ -1,8 +1,27 @@
 import { gql } from '@apollo/client'
 
-export const CaseQuery = gql`
-  query CaseQuery($input: CaseQueryInput!) {
-    case(input: $input) {
+export const RequestSignatureMutation = gql`
+  mutation RequestSignatureMutation($input: RequestSignatureInput!) {
+    requestSignature(input: $input) {
+      controlCode
+      documentToken
+    }
+  }
+`
+
+export const SignatureConfirmationQuery = gql`
+  query SignatureConfirmationQuery($input: SignatureConfirmationQueryInput!) {
+    signatureConfirmation(input: $input) {
+      documentSigned
+      code
+      message
+    }
+  }
+`
+
+export const CreateCaseMutation = gql`
+  mutation CreateCaseMutation($input: CreateCaseInput!) {
+    createCase(input: $input) {
       id
       created
       modified
@@ -56,44 +75,22 @@ export const CaseQuery = gql`
         name
         title
       }
-      notifications {
-        type
-      }
     }
   }
 `
 
-export const UpdateCaseMutation = gql`
-  mutation UpdateCaseMutation($input: UpdateCaseInput!) {
-    updateCase(input: $input) {
+export const CasesQuery = gql`
+  query CasesQuery {
+    cases {
       id
-      modified
-    }
-  }
-`
-
-export const TransitionCaseMutation = gql`
-  mutation TransitionCaseMutation($input: TransitionCaseInput!) {
-    transitionCase(input: $input) {
-      id
-      modified
+      created
       state
-      prosecutor {
-        name
-        title
-      }
-      judge {
-        name
-        title
-      }
-    }
-  }
-`
-
-export const SendNotificationMutation = gql`
-  mutation SendNotificationMutation($input: SendNotificationInput!) {
-    sendNotification(input: $input) {
-      notificationSent
+      policeCaseNumber
+      accusedNationalId
+      accusedName
+      isCourtDateInThePast
+      custodyEndDate
+      isCustodyEndDateInThePast
     }
   }
 `
