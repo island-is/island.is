@@ -1,0 +1,30 @@
+.clients,
+.users {
+  &__wrapper {
+    max-width: 1024px;
+  }
+
+  table {
+    thead {
+      tr {
+        th {
+          font-size: 0.9rem;
+        }
+      }
+    }
+    tbody {
+      tr {
+        th,
+        td {
+          font-size: 0.8rem;
+        }
+
+        &:hover {
+          td {
+            background-color: $color-bg-content;
+          }
+        }
+      }
+    }
+  }
+}

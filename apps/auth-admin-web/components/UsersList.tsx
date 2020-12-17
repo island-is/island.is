@@ -149,6 +149,7 @@ const UsersList: React.FC = () => {
           >
             <h3>Users found:</h3>
             <table className="users__table">
+              <thead>
               <tr>
                 <th>Subject Id</th>
                 <th>Name</th>
@@ -156,6 +157,7 @@ const UsersList: React.FC = () => {
                 <th>Provider Subject Id</th>
                 <th colSpan={2}></th>
               </tr>
+              </thead>
               <tbody>
                 {users.map((user: UserIdentityDTO) => {
                   return (

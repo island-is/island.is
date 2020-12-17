@@ -45,7 +45,8 @@ class ClientsList extends Component {
 
   render() {
     return (
-      <div className="clients__wrapper">
+      <div className="clients">
+        <div className="clients__wrapper">
         <div className="clients__container">
           <h2>Clients</h2>
           <div className="clients__container__options">
@@ -105,6 +106,7 @@ class ClientsList extends Component {
             lastPage={Math.ceil(this.state.rowCount / this.state.count)}
             handlePageChange={this.handlePageChange}
           />
+        </div>
         </div>
       </div>
     );
