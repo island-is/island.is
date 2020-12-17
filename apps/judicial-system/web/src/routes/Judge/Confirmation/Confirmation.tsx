@@ -23,6 +23,7 @@ import { AppealDecisionRole, JudgeSubsections, Sections } from '../../../types'
 import {
   Case,
   CaseAppealDecision,
+  CaseDecision,
   CaseState,
   CaseTransition,
   NotificationType,
@@ -96,7 +97,9 @@ const SigningModal: React.FC<SigningModalProps> = ({
         // Parse the transition request
         const transitionRequest = parseTransition(
           workingCase.modified,
-          workingCase.rejecting ? CaseTransition.REJECT : CaseTransition.ACCEPT,
+          workingCase.decision === CaseDecision.REJECTING
+            ? CaseTransition.REJECT
+            : CaseTransition.ACCEPT,
         )
 
         const { data } = await transitionCaseMutation({
@@ -131,7 +134,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
 
     // Expect case to already have the right state
     if (
-      workingCase.rejecting
+      workingCase.decision === CaseDecision.REJECTING
         ? workingCase.state !== CaseState.REJECTED
         : workingCase.state !== CaseState.ACCEPTED
     ) {
