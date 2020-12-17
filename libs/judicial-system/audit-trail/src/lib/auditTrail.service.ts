@@ -9,6 +9,12 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 export enum AuditedAction {
   OVERVIEW = 'OVERVIEW',
   VIEW_DETAILS = 'VIEW_DETAILS',
+  CREATE = 'CREATE',
+  UPDATE = 'UPDATE',
+  TRANSITION = 'TRANSITION',
+  REQUEST_SIGNATURE = 'REQUEST_SIGNATURE',
+  CONFIRM_SIGNATURE = 'CONFIRM_SIGNATURE',
+  SEND_NOTIFICATION = 'SEND_NOTIFICATION',
 }
 
 export interface AuditTrailOptions {
