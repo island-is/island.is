@@ -22,7 +22,7 @@ Adds soft hyphens to text, currently only supports Icelandic
 `
 
 export default {
-  title: 'Core/Hypen',
+  title: 'Core/Hyphen',
   component: Hyphen,
   decorators: [container],
   parameters: {
