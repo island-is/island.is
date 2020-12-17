@@ -15,7 +15,7 @@ declare global {
 let boost = null
 
 export const ChatPanel = () => {
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(true)
 
   useEffect(() => {
     const conversationId =
@@ -40,6 +40,7 @@ export const ChatPanel = () => {
 
       // to prevent us from opening chat where there is no space for it
       if (isABigWindow) {
+        setVisible(false)
         boost.chatPanel.show()
       }
 
