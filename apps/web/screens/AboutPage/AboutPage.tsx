@@ -82,16 +82,9 @@ interface SliceItem {
 
 const sidebarContent = (
   navigation: SliceItem[],
-  currentSliceId: string,
   sliceLinks: SliceItem[],
 ): NavigationItem[] => {
   const [navigationTitle, ...navigationList] = navigation
-
-  const items: NavigationItem[] = navigationList.map(({ id, text }) => ({
-    href: `#${id}`,
-    title: text,
-    active: id === currentSliceId,
-  }))
 
   const subPages: NavigationItem[] = sliceLinks.map(({ url, text }) => ({
     href: url,
@@ -103,7 +96,6 @@ const sidebarContent = (
     href: `#${navigationTitle.id}`,
     title: navigationTitle.text,
     active: true,
-    items: items,
   }
 
   return [currentPage].concat(subPages)
@@ -203,7 +195,7 @@ const PageHeader: FC<PageHeaderProps> = ({
               }
               baseId="LeftNavigation"
               isMenuDialog={false}
-              items={sidebarContent(navigation, currentSliceId, slice.links)}
+              items={sidebarContent(navigation, slice.links)}
               title={page.title}
             />
           </Sidebar>
@@ -226,11 +218,7 @@ const PageHeader: FC<PageHeaderProps> = ({
                     baseId="MobileMenuNavigation"
                     isMenuDialog={true}
                     activeItemTitle={slice.navigationText}
-                    items={sidebarContent(
-                      navigation,
-                      currentSliceId,
-                      slice.links,
-                    )}
+                    items={sidebarContent(navigation, slice.links)}
                     title={page.title}
                   />
                 </Box>
@@ -453,7 +441,6 @@ const AboutPageScreen: Screen<AboutPageProps> = ({
               isMenuDialog={false}
               items={sidebarContent(
                 navigation as SliceItem[],
-                page.pageHeader.id,
                 page.pageHeader.links,
               )}
               title={page.title}
