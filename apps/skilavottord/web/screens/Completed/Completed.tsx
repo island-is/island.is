@@ -27,6 +27,7 @@ import {
 } from '@island.is/skilavottord-web/types'
 import { getTime, getDate, formatYear } from '@island.is/skilavottord-web/utils'
 import compareDesc from 'date-fns/compareDesc'
+import { BASE_PATH } from '../../utils/consts'
 
 export const skilavottordRecyclingRequestQuery = gql`
   query skilavottordRecyclingRequestQuery($permno: String!) {
@@ -59,7 +60,7 @@ const Completed = ({ apolloState }: WithApolloProps) => {
   useEffect(() => {
     if (!car) {
       router.push({
-        pathname: routes.myCars,
+        pathname: `${BASE_PATH}${routes.myCars}`,
       })
     }
   }, [car, router, routes])
