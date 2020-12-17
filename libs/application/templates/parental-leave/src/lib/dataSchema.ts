@@ -41,7 +41,6 @@ export const dataSchema = z.object({
   personalAllowanceFromSpouse: PersonalAllowance,
   payments: z.object({
     bank: z.string().nonempty(),
-    personalAllowanceUsage: z.enum(['100', '75', '50', '25']),
     pensionFund: z.string(),
     privatePensionFund: z.enum(['frjalsi', '']).optional(),
     privatePensionFundPercentage: z.enum(['2', '4', '']).optional(),
@@ -51,13 +50,11 @@ export const dataSchema = z.object({
   periods: z.array(Period).nonempty(),
   employer: z.object({
     name: z.string().nonempty(),
-    nationalRegistryId: z
-      .string()
-      .nonempty()
-      .refine(
-        (n) => kennitala.isValid(n) && kennitala.isCompany(n),
-        'Kennitala þarf að vera gild',
-      ),
+    nationalRegistryId: z.string().nonempty(),
+    // .refine(
+    //   (n) => kennitala.isValid(n) && kennitala.isCompany(n),
+    //   'Kennitala þarf að vera gild',
+    // ),
     contact: z.string().optional(),
     contactId: z.string().optional(),
   }),

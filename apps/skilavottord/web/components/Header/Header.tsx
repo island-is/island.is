@@ -1,5 +1,6 @@
 import React, { FC, useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import gql from 'graphql-tag'
 
 import { Header as IslandUIHeader, Link } from '@island.is/island-ui/core'
 
@@ -9,8 +10,19 @@ import { api } from '@island.is/skilavottord-web/services'
 import { Locale } from '@island.is/skilavottord-web/i18n/I18n'
 import { getRoutefromLocale } from '@island.is/skilavottord-web/utils/routesMapper'
 import { useQuery } from '@apollo/client'
-import { USER } from '@island.is/skilavottord-web/graphql/queries'
 import { Role } from '@island.is/skilavottord-web/auth/utils'
+
+export const skilavottordUserQuery = gql`
+  query skilavottordUserQuery {
+    skilavottordUser {
+      name
+      nationalId
+      mobile
+      role
+      partnerId
+    }
+  }
+`
 
 export const Header: FC = () => {
   const router = useRouter()
@@ -21,7 +33,7 @@ export const Header: FC = () => {
     t: { header: t, routes },
   } = useI18n()
 
-  const { data } = useQuery(USER)
+  const { data } = useQuery(skilavottordUserQuery)
   const user = data?.skilavottordUser
 
   const nextLanguage = activeLocale === 'is' ? 'en' : 'is'

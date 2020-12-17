@@ -43,6 +43,7 @@ export interface TextProps {
   truncate?: boolean
   fontWeight?: keyof typeof fontWeightStyles
   lineHeight?: keyof typeof lineHeightStyles
+  title?: string
 }
 
 type GetTextStylesProps = Pick<
@@ -83,6 +84,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(
       fontWeight,
       lineHeight,
       variant = 'default',
+      title,
       as = 'p',
     },
     ref,
@@ -106,6 +108,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(
           variant,
         })}
         ref={ref}
+        title={title}
       >
         {React.Children.map<React.ReactNode, React.ReactNode>(
           children,

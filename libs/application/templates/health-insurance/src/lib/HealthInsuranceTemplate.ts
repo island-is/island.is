@@ -4,6 +4,7 @@ import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
+  Application,
 } from '@island.is/application/core'
 import * as z from 'zod'
 
@@ -92,8 +93,8 @@ const HealthInsuranceTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(id: string, state: string): ApplicationRole {
-    if (state === 'inReview') {
+  mapUserToRole(id: string, application: Application): ApplicationRole {
+    if (application.state === 'inReview') {
       return 'reviewer'
     }
     return 'applicant'

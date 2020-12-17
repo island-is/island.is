@@ -5,7 +5,6 @@ import {
   Hidden,
   ContentBlock,
   Button,
-  Inline,
   Logo,
   FocusableBox,
 } from '@island.is/island-ui/core'
@@ -14,7 +13,6 @@ import { ServicePortalPath } from '@island.is/service-portal/core'
 import { Locale, useLocale, useNamespaces } from '@island.is/localization'
 import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
-import NotificationMenuTrigger from '../Notifications/NotificationMenuTrigger'
 import UserMenuTrigger from '../UserMenuTrigger/UserMenuTrigger'
 import { BetaTag } from '../Logo/BetaTag'
 
@@ -55,33 +53,36 @@ export const Header: FC<{}> = () => {
                   <BetaTag />
                 </FocusableBox>
               </Link>
-              <Inline space={[1, 1, 1, 2]} flexWrap="nowrap">
+              <Box display="flex" alignItems="center" flexWrap="nowrap">
                 <Hidden below="lg">
-                  <Button
-                    variant="utility"
-                    onClick={handleLangClick.bind(
-                      null,
-                      lang === 'is' ? 'en' : 'is',
-                    )}
-                  >
-                    {lang === 'is' ? 'EN' : 'IS'}
-                  </Button>
+                  <Box marginRight={[1, 1, 1, 2]}>
+                    <Button
+                      variant="utility"
+                      onClick={handleLangClick.bind(
+                        null,
+                        lang === 'is' ? 'en' : 'is',
+                      )}
+                    >
+                      {lang === 'is' ? 'EN' : 'IS'}
+                    </Button>
+                  </Box>
                 </Hidden>
                 <UserMenuTrigger />
-                <NotificationMenuTrigger />
                 <Hidden above="md">
-                  <Button
-                    variant="utility"
-                    icon={mobileMenuState === 'open' ? 'close' : 'menu'}
-                    onClick={handleMobileMenuTriggerClick}
-                  >
-                    {formatMessage({
-                      id: 'service.portal:menu',
-                      defaultMessage: 'Valmynd',
-                    })}
-                  </Button>
+                  <Box marginLeft={[1, 1, 1, 2]}>
+                    <Button
+                      variant="utility"
+                      icon={mobileMenuState === 'open' ? 'close' : 'menu'}
+                      onClick={handleMobileMenuTriggerClick}
+                    >
+                      {formatMessage({
+                        id: 'service.portal:menu',
+                        defaultMessage: 'Valmynd',
+                      })}
+                    </Button>
+                  </Box>
                 </Hidden>
-              </Inline>
+              </Box>
             </Box>
           </ContentBlock>
         </Box>
