@@ -2,6 +2,7 @@ import {
   CaseAppealDecision,
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
+  CaseDecision,
   CaseGender,
 } from '@island.is/judicial-system/types'
 import {
@@ -137,13 +138,13 @@ describe('formatCourtCaseNumber', () => {
 describe('formatConclusion', () => {
   test('should format conclusion for a rejected case', () => {
     // Arrange
-    const rejecting = true
+    const decision = CaseDecision.REJECTING
 
     // Act
     const res = formatConclusion(
       undefined,
       undefined,
-      rejecting,
+      decision,
       undefined,
       undefined,
     )
@@ -156,7 +157,7 @@ describe('formatConclusion', () => {
     // Arrange
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
-    const rejecting = false
+    const decision = CaseDecision.ACCEPTING
     const custodyEndDate = new Date('2020-12-22T11:23')
     const isolation = false
 
@@ -164,7 +165,7 @@ describe('formatConclusion', () => {
     const res = formatConclusion(
       accusedNationalId,
       accusedName,
-      rejecting,
+      decision,
       custodyEndDate,
       isolation,
     )
@@ -179,7 +180,7 @@ describe('formatConclusion', () => {
     // Arrange
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
-    const rejecting = false
+    const decision = CaseDecision.ACCEPTING
     const custodyEndDate = new Date('2020-12-22T11:23')
     const isolation = true
 
@@ -187,7 +188,7 @@ describe('formatConclusion', () => {
     const res = formatConclusion(
       accusedNationalId,
       accusedName,
-      rejecting,
+      decision,
       custodyEndDate,
       isolation,
     )
@@ -447,7 +448,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     const prosecutorName = 'Siggi Sakó'
     const courtDate = new Date('2020-12-20T13:32')
     const defenderName = 'Skúli Skjöldur'
-    const rejecting = false
+    const decision = CaseDecision.ACCEPTING
     const custodyEndDate = new Date('2021-04-06T12:30')
     const custodyRestrictions = [
       CaseCustodyRestrictions.ISOLATION,
@@ -466,7 +467,7 @@ describe('formatPrisonRulingEmailNotification', () => {
       prosecutorName,
       courtDate,
       defenderName,
-      rejecting,
+      decision,
       custodyEndDate,
       custodyRestrictions,
       accusedAppealDecision,

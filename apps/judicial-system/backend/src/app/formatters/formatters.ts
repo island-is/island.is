@@ -8,6 +8,7 @@ import {
   CaseAppealDecision,
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
+  CaseDecision,
   CaseGender,
 } from '@island.is/judicial-system/types'
 
@@ -57,11 +58,11 @@ export function formatCourtCaseNumber(
 export function formatConclusion(
   accusedNationalId: string,
   accusedName: string,
-  rejecting: boolean,
+  decision: CaseDecision,
   custodyEndDate: Date,
   isolation: boolean,
 ): string {
-  return rejecting
+  return decision === CaseDecision.REJECTING
     ? 'Beiðni um gæsluvarðhald hafnað.'
     : `Kærði, ${accusedName}, kt. ${formatNationalId(
         accusedNationalId,
@@ -212,7 +213,7 @@ export function formatPrisonRulingEmailNotification(
   prosecutorName: string,
   courtDate: Date,
   defenderName: string,
-  rejecting: boolean,
+  decision: CaseDecision,
   custodyEndDate: Date,
   custodyRestrictions: CaseCustodyRestrictions[],
   accusedAppealDecision: CaseAppealDecision,
@@ -226,7 +227,7 @@ export function formatPrisonRulingEmailNotification(
   )}.<br /><br />Ákærandi: ${prosecutorName}<br />Verjandi: ${defenderName}<br /><br /><strong>Úrskurðarorð</strong><br /><br />${formatConclusion(
     accusedNationalId,
     accusedName,
-    rejecting,
+    decision,
     custodyEndDate,
     custodyRestrictions.includes(CaseCustodyRestrictions.ISOLATION),
   )}<br /><br /><strong>Ákvörðun um kæru</strong><br />${formatAppeal(

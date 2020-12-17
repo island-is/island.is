@@ -63,6 +63,12 @@ export enum CaseGender {
   OTHER = 'OTHER',
 }
 
+export enum CaseDecision {
+  ACCEPTING = 'ACCEPTING',
+  REJECTING = 'REJECTING',
+  ACCEPTING_ALTERNATIVE_TRAVEL_BAN = 'ACCEPTING_ALTERNATIVE_TRAVEL_BAN',
+}
+
 export type Gender = 'karl' | 'kona' | 'annað'
 
 export interface Case {
@@ -80,6 +86,7 @@ export interface Case {
   court?: string
   arrestDate?: string
   requestedCourtDate?: string
+  alternativeTravelBan?: boolean
   requestedCustodyEndDate?: string
   lawsBroken?: string
   custodyProvisions?: CaseCustodyProvisions[]
@@ -103,7 +110,7 @@ export interface Case {
   accusedPlea?: string
   litigationPresentations?: string
   ruling?: string
-  rejecting?: boolean
+  decision?: CaseDecision
   custodyEndDate?: string
   isCustodyEndDateInThePast?: boolean
   custodyRestrictions?: CaseCustodyRestrictions[]
@@ -153,6 +160,7 @@ export interface UpdateCase {
   court?: string
   arrestDate?: string
   requestedCourtDate?: string
+  alternativeTravelBan?: boolean
   requestedCustodyEndDate?: string
   lawsBroken?: string
   custodyProvisions?: CaseCustodyProvisions[]
@@ -172,7 +180,7 @@ export interface UpdateCase {
   accusedPlea?: string
   litigationPresentations?: string
   ruling?: string
-  rejecting?: boolean
+  decision?: CaseDecision
   custodyEndDate?: string
   custodyRestrictions?: CaseCustodyRestrictions[]
   accusedAppealDecision?: CaseAppealDecision

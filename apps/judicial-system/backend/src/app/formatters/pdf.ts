@@ -349,7 +349,7 @@ export async function generateRulingPdf(
       formatConclusion(
         existingCase.accusedNationalId,
         existingCase.accusedName,
-        existingCase.rejecting,
+        existingCase.decision,
         existingCase.custodyEndDate,
         existingCase.custodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
@@ -426,7 +426,7 @@ export async function generateRulingPdf(
       })
   }
 
-  if (!existingCase.rejecting) {
+  if (!existingCase.decision) {
     doc
       .text(' ')
       .font('Helvetica-Bold')
