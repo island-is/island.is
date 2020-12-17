@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
 import qs from 'qs'
@@ -12,7 +12,6 @@ export const AssignApplication = () => {
   const location = useLocation()
   const history = useHistory()
   const queryParams = qs.parse(location.search, { ignoreQueryPrefix: true })
-  const [tokenParsingError, setTokenParsingError] = useState<Error | null>(null)
 
   const [
     assignApplication,
@@ -24,7 +23,6 @@ export const AssignApplication = () => {
   })
 
   const isMissingToken = !queryParams.token
-  const hasInvalidToken = tokenParsingError !== null
   const couldNotAssignApplication = !!assignApplicationError
 
   useEffect(() => {
@@ -33,18 +31,14 @@ export const AssignApplication = () => {
     }
 
     const { token } = queryParams
-    try {
-      setTokenParsingError(null)
-      assignApplication({
-        variables: {
-          input: {
-            token,
-          },
+
+    assignApplication({
+      variables: {
+        input: {
+          token,
         },
-      })
-    } catch (e) {
-      setTokenParsingError(e)
-    }
+      },
+    })
   }, [])
 
   // TODO: move code from <NotFound /> into a generic <Error/> component
@@ -55,11 +49,6 @@ export const AssignApplication = () => {
         <NotFound
           title="Enginn tóki fannst"
           subTitle="Ekki er hægt að tengja umsókn án auðkenningartóka"
-        />
-      ) : hasInvalidToken ? (
-        <NotFound
-          title="Ógildur tóki"
-          subTitle="Sá tóki sem var lesinn úr slóð er ógildur og tókst því ekki að tengja umsókn"
         />
       ) : couldNotAssignApplication ? (
         <NotFound
