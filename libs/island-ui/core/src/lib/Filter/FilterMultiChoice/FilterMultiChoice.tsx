@@ -81,6 +81,7 @@ export const FilterMultiChoice: React.FC<FilterMultiChoiceProps> = ({
         >
           {categories.map((category) => (
             <AccordionItem
+              key={category.id}
               id={category.id}
               label={category.label}
               labelUse="h5"
@@ -90,6 +91,7 @@ export const FilterMultiChoice: React.FC<FilterMultiChoiceProps> = ({
               <Stack space={1}>
                 {category.filters.map((filter) => (
                   <Checkbox
+                    key={`${category.id}-${filter.value}`}
                     name={`${category.id}-${filter.value}`}
                     label={filter.label}
                     value={filter.value}
