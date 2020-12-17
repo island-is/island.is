@@ -59,7 +59,6 @@ export class DocumentProviderService {
     providerId: string,
   ): Promise<AudienceAndScope> {
     logger.info(`Register endpoint: ${nationalId} - ${endpoint}`)
-
     return new AudienceAndScope(
       'https://test-skjalaveita-island-is.azurewebsites.net',
       'https://test-skjalaveita-island-is.azurewebsites.net/api/v1/customer/.default',

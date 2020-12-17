@@ -43,6 +43,12 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
     undefined,
   ) as string
 
+  const testProviderId = getValueViaPath(
+    application.answers,
+    'testProviderId',
+    undefined,
+  ) as string
+
   const onRegisterEndpoint = async (isValid: boolean) => {
     setTestEndPointError(null)
     if (isValid) {
@@ -51,6 +57,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
           input: {
             nationalId: nationalId,
             endpoint: getValues('endPointObject.endPoint'),
+            providerId: testProviderId,
           },
         },
       })

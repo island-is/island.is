@@ -31,7 +31,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
   const [currentAnswer, setCurrentAnswer] = useState(
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
-    (formValue.productionUserExists as string) || '',
+    (formValue.prodProviderId as string) || '',
   )
   const [registerProvider] = useMutation(registerProviderMutation)
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
@@ -71,14 +71,14 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
       },
     ])
 
-    setCurrentAnswer('true')
+    setCurrentAnswer(credentials.data.registerProvider.providerId)
 
     await updateApplication({
       variables: {
         input: {
           id: application.id,
           answers: {
-            productionUserExists: 'true',
+            prodProviderId: credentials.data.registerProvider.providerId,
             ...application.answers,
           },
         },
@@ -87,7 +87,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
       application.answers = response.data?.updateApplication?.answers
     })
 
-    clearErrors('productionUserExists')
+    clearErrors('prodProviderId')
   }
 
   return (
@@ -120,7 +120,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
           type="hidden"
           value={currentAnswer}
           ref={register({ required: true })}
-          name={'productionUserExists'}
+          name={'prodProviderId'}
         />
         {error && (
           <Box color="red600" paddingY={2}>

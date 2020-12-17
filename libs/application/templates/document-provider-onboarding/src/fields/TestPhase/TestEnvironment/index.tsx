@@ -28,7 +28,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
   const [currentAnswer, setCurrentAnswer] = useState(
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
-    (formValue.testUserExists as string) || '',
+    (formValue.testProviderId as string) || '',
   )
   const [environmentError, setEnvironmentError] = useState<string | null>(null)
   const [registerProvider] = useMutation(registerProviderMutation)
@@ -69,14 +69,14 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
       },
     ])
 
-    setCurrentAnswer('true')
+    setCurrentAnswer(credentials.data.registerProvider.providerId)
 
     await updateApplication({
       variables: {
         input: {
           id: application.id,
           answers: {
-            testUserExists: 'true',
+            testProviderId: credentials.data.registerProvider.providerId,
             ...application.answers,
           },
         },
@@ -85,7 +85,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
       application.answers = response.data?.updateApplication?.answers
     })
 
-    clearErrors('testUserExists')
+    clearErrors('testProviderId')
   }
 
   return (
@@ -132,7 +132,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
           type="hidden"
           value={currentAnswer}
           ref={register({ required: true })}
-          name={'testUserExists'}
+          name={'testProviderId'}
         />
         {error && (
           <Box color="red600" paddingY={2}>

@@ -80,10 +80,10 @@ const dataSchema = z.object({
     message: 'Þú verður að samþykkja að forritun og prófunum sé lokið',
   }),
   endPointObject: endPoint,
-  testUserExists: z.string().nonempty({
+  testProviderId: z.string().nonempty({
     message: 'Þú verður að stofna aðgang til að halda áfram',
   }),
-  productionUserExists: z.string().nonempty({
+  prodProviderId: z.string().nonempty({
     message: 'Þú verður að stofna aðgang til að halda áfram',
   }),
   productionEndPointObject: productionEndPoint,
@@ -233,14 +233,12 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
     //&& application.assignees.includes('2311637949')
 
     //This if statement might change depending on the "umboðskerfi"
-    if (id === application.applicant) {
-      return Roles.APPLICANT
-    }
+
     if (application.state === 'inReview') {
       return Roles.ASSIGNEE
     }
     //Returns nothing if user is not same as applicant nor is part of the assignes
-    return undefined
+    return Roles.APPLICANT
   },
 }
 

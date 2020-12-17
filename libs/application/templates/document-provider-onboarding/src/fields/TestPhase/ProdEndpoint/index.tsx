@@ -42,6 +42,12 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
     undefined,
   ) as string
 
+  const prodProviderId = getValueViaPath(
+    application.answers,
+    'prodProviderId',
+    undefined,
+  ) as string
+
   const onRegisterEndpoint = async (isValid: boolean) => {
     if (isValid) {
       setprodEndPointError(null)
@@ -50,6 +56,7 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
           input: {
             nationalId: nationalId,
             endpoint: getValues('productionEndPointObject.prodEndPoint'),
+            providerId: prodProviderId,
           },
         },
       })
