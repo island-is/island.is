@@ -10,4 +10,8 @@ export class RegisterEndpointInput {
   @Field(() => String)
   @IsString()
   endpoint!: string
+
+  @Field(() => String)
+  @IsString()
+  providerId!: string
 }
