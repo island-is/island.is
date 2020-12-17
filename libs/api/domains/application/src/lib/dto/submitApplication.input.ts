@@ -16,9 +16,4 @@ export class SubmitApplicationInput {
   @IsObject()
   @IsOptional()
   answers?: object
-
-  @Field((type) => [String], { nullable: true })
-  @IsString({ each: true })
-  @IsOptional()
-  assignees?: string[]
 }
