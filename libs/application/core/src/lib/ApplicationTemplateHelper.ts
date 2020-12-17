@@ -80,6 +80,7 @@ export class ApplicationTemplateHelper<
    */
   changeState(
     event: Event<TEvents>,
+    // TODO: import type from application-api-template-utils
     apiTemplateUtils: any,
   ): [boolean, string, Application] {
     this.initializeStateMachine(undefined, {
