@@ -1,5 +1,5 @@
 /* eslint-disable */
-export const is = {
+export default {
   id: 'is',
   leftmin: 4,
   rightmin: 4,
