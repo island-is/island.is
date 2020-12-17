@@ -20,8 +20,9 @@
 /*/gjafakort/                                             @island-is/vice-versa
 /libs/application/templates/driving-license/              @island-is/vice-versa
 /libs/application/templates/passport/                     @island-is/vice-versa
-libs/service-portal/driving-license/                      @island-is/vice-versa
-libs/service-portal/eligibility/                          @island-is/vice-versa
+/libs/api/domains/driving-license/                        @island-is/vice-versa
+/libs/service-portal/driving-license/                     @island-is/vice-versa
+/libs/service-portal/eligibility/                         @island-is/vice-versa
 
 /apps/application-system/                                 @island-is/aranja
 /apps/reference-next-app/                                 @island-is/aranja

@@ -17,16 +17,31 @@ import {
   ServicePortalModuleComponent,
   UserInfoLine,
 } from '@island.is/service-portal/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  natRegGenderMessageDescriptorRecord,
+  natRegMaritalStatusMessageDescriptorRecord,
+} from '../../helpers/localizationHelpers'
 
 const NationalRegistryFamilyQuery = gql`
   query NationalRegistryFamilyQuery {
     nationalRegistryFamily {
+      fullName
       nationalId
+      address
+      gender
+      maritalStatus
     }
   }
 `
+const dataNotFoundMessage = defineMessage({
+  id: 'sp.family:data-not-found',
+  defaultMessage: 'Gögn fundust ekki',
+})
 
 const FamilyMember: ServicePortalModuleComponent = () => {
+  useNamespaces('sp.family')
+  const { formatMessage } = useLocale()
   const { data, loading, error } = useQuery<Query>(NationalRegistryFamilyQuery)
   const { nationalRegistryFamily } = data || {}
   const { nationalId }: { nationalId: string | undefined } = useParams()
@@ -84,14 +99,34 @@ const FamilyMember: ServicePortalModuleComponent = () => {
             id: 'service.portal:gender',
             defaultMessage: 'Kyn',
           })}
-          content={person?.gender || '...'}
+          content={
+            error
+              ? formatMessage(dataNotFoundMessage)
+              : person?.gender
+              ? formatMessage(
+                  natRegGenderMessageDescriptorRecord[person.gender],
+                )
+              : ''
+          }
+          loading={loading}
         />
         <UserInfoLine
           label={defineMessage({
             id: 'service.portal:marital-status',
             defaultMessage: 'Hjúskaparstaða',
           })}
-          content={person?.maritalStatus || '...'}
+          content={
+            error
+              ? formatMessage(dataNotFoundMessage)
+              : person?.maritalStatus
+              ? formatMessage(
+                  natRegMaritalStatusMessageDescriptorRecord[
+                    person?.maritalStatus
+                  ],
+                )
+              : ''
+          }
+          loading={loading}
         />
       </Stack>
     </>
