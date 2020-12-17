@@ -159,7 +159,7 @@ export function formatPrisonCourtDateEmailNotification(
   isolation: boolean,
   defenderName: string,
 ): string {
-  const courtText = court.replace('dómur', 'dóms')
+  const courtText = court?.replace('dómur', 'dóms')
   const courtDateText = formatDate(courtDate, 'PPPp')
   const requestedCustodyEndDateText = formatDate(
     requestedCustodyEndDate,
