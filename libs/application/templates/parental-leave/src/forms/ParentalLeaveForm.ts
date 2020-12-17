@@ -58,6 +58,12 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'approveExternalData',
               dataProviders: [
                 buildDataProviderItem({
+                  id: 'userProfile',
+                  type: 'UserProfileProvider',
+                  title: m.userProfileInformationTitle,
+                  subTitle: m.userProfileInformationSubTitle,
+                }),
+                buildDataProviderItem({
                   id: 'pregnancyStatus',
                   type: 'PregnancyStatus',
                   title: m.expectedDateOfBirthTitle,
@@ -74,30 +80,9 @@ export const ParentalLeaveForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'generalInfo',
-          name: m.generalInfoSubSection,
+          id: 'otherParent',
+          name: m.otherParentSubSection,
           children: [
-            buildMultiField({
-              id: 'contactInfo',
-              name: 'Er þetta réttur sími og netfang?',
-              description: 'Vinsamlegast breyttu ef þetta er ekki rétt',
-              children: [
-                buildTextField({
-                  width: 'half',
-                  name: 'Netfang',
-                  id: 'applicant.email',
-                  variant: 'email',
-                }),
-                buildTextField({
-                  width: 'half',
-                  name: 'Símanúmer',
-                  id: 'applicant.phoneNumber',
-                  variant: 'tel',
-                  format: '###-####',
-                  placeholder: '000-0000',
-                }),
-              ],
-            }),
             buildMultiField({
               id: 'otherParent',
               name: m.otherParentTitle,
@@ -107,32 +92,10 @@ export const ParentalLeaveForm: Form = buildForm({
                 return true
               },
               children: [
-                buildRadioField({
+                buildCustomField({
                   id: 'otherParent',
                   name: '',
-                  options: (application) => {
-                    const [spouseName, spouseId] = getNameAndIdOfSpouse(
-                      application,
-                    )
-                    const options: Option[] = [
-                      {
-                        value: NO,
-                        label: m.noOtherParent,
-                      },
-                      { value: 'manual', label: m.otherParentOption },
-                    ]
-                    if (spouseName !== undefined && spouseId !== undefined) {
-                      options.unshift({
-                        value: 'spouse',
-                        label: () => ({
-                          ...m.otherParentSpouse,
-                          values: { spouseName, spouseId },
-                        }),
-                      })
-                    }
-                    return options
-                  },
-                  largeButtons: true,
+                  component: 'OtherParent',
                 }),
                 buildTextField({
                   id: 'otherParentName',
@@ -148,6 +111,18 @@ export const ParentalLeaveForm: Form = buildForm({
                   format: '######-####',
                   placeholder: '000000-0000',
                 }),
+              ],
+            }),
+            buildRadioField({
+              id: 'otherParentRightOfAccess',
+              largeButtons: true,
+              emphasize: true,
+              condition: (answers) => answers.otherParent === 'manual',
+              name: mm.rightOfAccess.title,
+              description: mm.rightOfAccess.description,
+              options: [
+                { label: mm.rightOfAccess.yesOption, value: YES },
+                { label: m.noOptionLabel, value: NO },
               ],
             }),
           ],
@@ -243,6 +218,8 @@ export const ParentalLeaveForm: Form = buildForm({
             buildRadioField({
               id: 'usePersonalAllowance',
               name: m.usePersonalAllowance,
+              largeButtons: true,
+              width: 'half',
               options: [
                 { label: m.yesOptionLabel, value: YES },
                 { label: m.noOptionLabel, value: NO },
@@ -292,6 +269,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 return true
               },
               largeButtons: true,
+              width: 'half',
               options: [
                 { label: m.yesOptionLabel, value: YES },
                 { label: m.noOptionLabel, value: NO },
@@ -340,11 +318,23 @@ export const ParentalLeaveForm: Form = buildForm({
           id: 'employer',
           name: m.employerSubSection,
           children: [
+            buildRadioField({
+              id: 'isSelfEmployed',
+              name: mm.selfEmployed.title,
+              description: mm.selfEmployed.description,
+              largeButtons: true,
+              width: 'half',
+              options: [
+                { label: m.yesOptionLabel, value: YES },
+                { label: m.noOptionLabel, value: NO },
+              ],
+            }),
             buildMultiField({
               id: 'employer',
-              description:
-                'Hér vantar helling af upplýsingum, hvað ef þú ert sjálfstætt starfandi?', // TODO
+              // description:
+              //   'Hér vantar helling af upplýsingum, hvað ef þú ert sjálfstætt starfandi?', // TODO
               name: m.employerTitle,
+              condition: (answers) => answers.isSelfEmployed !== YES,
               children: [
                 buildTextField({
                   name: m.employerName,
@@ -679,35 +669,37 @@ export const ParentalLeaveForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirmation',
-      name: 'Confirmation',
+      name: mm.confirmation.section,
       children: [
         buildMultiField({
           id: 'confirmation',
-          name: 'Review and submit',
+          name: mm.confirmation.title,
+          description: mm.confirmation.description,
           children: [
             buildCustomField({
               id: 'confirmationScreen',
-              name: 'Final review',
-              description:
-                'Please review your information before submiting the application.',
+              name: '',
               component: 'Review',
             }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              name: 'Submit',
+              name: mm.confirmation.title,
 
-              actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: mm.confirmation.title,
+                  type: 'primary',
+                },
+              ],
             }),
           ],
         }),
         buildIntroductionField({
           id: 'thankYou',
-          name: 'All done, here are the next steps:',
-          introduction:
-            'The other parent will need to approve your request to use their shared month (if you did so). Then, ' +
-            'your employer will approve your parental leave dates.' +
-            'And finally Vinnumálastofnun will review your application.',
+          name: mm.finalScreen.title,
+          introduction: mm.finalScreen.description,
         }),
       ],
     }),

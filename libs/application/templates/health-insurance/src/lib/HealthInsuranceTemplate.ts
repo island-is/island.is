@@ -4,6 +4,7 @@ import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
+  Application,
 } from '@island.is/application/core'
 import * as z from 'zod'
 
@@ -28,16 +29,17 @@ const HealthInsuranceSchema = z.object({
     phoneNumber: z.string().optional(),
   }),
   status: z.string().nonempty(),
-  additionalInformation: z.string().optional(),
+  confirmationOfStudies: z.string().optional(),
   children: z.string().nonempty(),
-  formerCountry: z.object({
-    insuranceRegistration: z.string().nonempty(),
-    country: z.string().nonempty(),
-    id: z.string().nonempty(),
-    insuranceInstitution: z.string().nonempty(),
-    insuranceEntitlement: z.string().nonempty(),
-  }),
-  summaryInput: z.string(),
+  formerInsuranceRegistration: z.string().nonempty(),
+  formerInsuranceCountry: z.string().nonempty(),
+  formerPersonalId: z.string().nonempty(),
+  formerInsuranceInstitution: z.string().nonempty(),
+  formerInsuranceEntitlement: z.string().nonempty(),
+  additionalInfo: z.string().nonempty(),
+  additionalRemarks: z.string().optional(),
+  additionalFiles: z.string().optional(),
+  confirmCorrectInfo: z.boolean().refine((v) => v),
 })
 
 const HealthInsuranceTemplate: ApplicationTemplate<
@@ -62,9 +64,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
                 import('../forms/HealthInsuranceForm').then((module) =>
                   Promise.resolve(module.HealthInsuranceForm),
                 ),
-              actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
-              ],
+              actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
               write: 'all',
             },
           ],
@@ -75,10 +75,26 @@ const HealthInsuranceTemplate: ApplicationTemplate<
           },
         },
       },
+      inReview: {
+        meta: {
+          name: 'inReview',
+          progress: 0.5,
+          roles: [
+            {
+              id: 'applicant',
+              actions: [
+                { event: 'APPROVE', name: 'Approve', type: 'primary' },
+                { event: 'REJECT', name: 'Reject', type: 'reject' },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+      },
     },
   },
-  mapUserToRole(id: string, state: string): ApplicationRole {
-    if (state === 'inReview') {
+  mapUserToRole(id: string, application: Application): ApplicationRole {
+    if (application.state === 'inReview') {
       return 'reviewer'
     }
     return 'applicant'

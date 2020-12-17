@@ -1,6 +1,7 @@
 import React, { FC, useContext, useEffect } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
+import gql from 'graphql-tag'
 import {
   Box,
   Bullet,
@@ -23,9 +24,42 @@ import {
   OutlinedError,
   CarDetailsBox,
 } from '@island.is/skilavottord-web/components'
-import { CREATE_RECYCLING_REQUEST_COMPANY } from '@island.is/skilavottord-web/graphql/mutations'
-import { VEHICLE_TO_DEREGISTER } from '@island.is/skilavottord-web/graphql/queries'
 import { RecyclingRequestMutation } from '@island.is/skilavottord-web/types'
+
+const skilavottordVehicleReadyToDeregisteredQuery = gql`
+  query skilavottordVehicleReadyToDeregisteredQuery($permno: String!) {
+    skilavottordVehicleReadyToDeregistered(permno: $permno) {
+      vehicleId
+      vehicleType
+      newregDate
+      recyclingRequests {
+        nameOfRequestor
+      }
+    }
+  }
+`
+
+const skilavottordRecyclingRequestMutation = gql`
+  mutation skilavottordRecyclingRequestMutation(
+    $partnerId: String
+    $permno: String!
+    $requestType: String!
+  ) {
+    createSkilavottordRecyclingRequest(
+      partnerId: $partnerId
+      permno: $permno
+      requestType: $requestType
+    ) {
+      ... on RequestErrors {
+        message
+        operation
+      }
+      ... on RequestStatus {
+        status
+      }
+    }
+  }
+`
 
 const Confirm: FC = () => {
   const { user } = useContext(UserContext)
@@ -38,20 +72,26 @@ const Confirm: FC = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const { data, loading } = useQuery(VEHICLE_TO_DEREGISTER, {
-    variables: { permno: id },
-  })
+  const { data, loading } = useQuery(
+    skilavottordVehicleReadyToDeregisteredQuery,
+    {
+      variables: { permno: id },
+    },
+  )
 
   const vehicle = data?.skilavottordVehicleReadyToDeregistered
 
   const [
     setRecyclingRequest,
     { data: mutationData, error: mutationError, loading: mutationLoading },
-  ] = useMutation<RecyclingRequestMutation>(CREATE_RECYCLING_REQUEST_COMPANY, {
-    onError() {
-      return mutationError
+  ] = useMutation<RecyclingRequestMutation>(
+    skilavottordRecyclingRequestMutation,
+    {
+      onError() {
+        return mutationError
+      },
     },
-  })
+  )
 
   const mutationResponse = mutationData?.createSkilavottordRecyclingRequest
 

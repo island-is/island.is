@@ -21,13 +21,15 @@ const FormMultiField: FC<{
   errors: object
   multiField: MultiFieldScreen
   answerQuestions(answers: FormValue): void
-}> = ({ application, answerQuestions, errors, multiField }) => {
+  goToScreen: (id: string) => void
+}> = ({ application, answerQuestions, errors, goToScreen, multiField }) => {
   const { description, children } = multiField
   const { formatMessage } = useLocale()
   return (
     <GridRow>
       <ConditionHandler
         answerQuestions={answerQuestions}
+        externalData={application.externalData}
         formValue={application.answers}
         screen={multiField}
       />
@@ -52,6 +54,7 @@ const FormMultiField: FC<{
                 field={field as FieldDef}
                 key={field.id}
                 errors={errors}
+                goToScreen={goToScreen}
               />
             </Box>
           </GridColumn>

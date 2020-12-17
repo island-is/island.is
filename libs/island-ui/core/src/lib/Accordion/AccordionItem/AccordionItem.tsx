@@ -208,12 +208,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
   },
 )
 
-type AlternateAccordionItemBaseProps = Omit<
-  AccordionItemBaseProps,
-  'iconVariant'
->
-
-export const AccordionCard: FC<AlternateAccordionItemBaseProps> = (props) => {
+export const AccordionCard: FC<AccordionItemBaseProps> = (props) => {
   const [isFocused, setIsFocused] = useState<boolean>(false)
 
   const handleFocus = () => setIsFocused(true)
@@ -235,8 +230,8 @@ export const AccordionCard: FC<AlternateAccordionItemBaseProps> = (props) => {
 }
 
 export const SidebarAccordion: FC<Omit<
-  AlternateAccordionItemBaseProps,
-  'labelVariant'
+  AccordionItemBaseProps,
+  'labelVariant' | 'iconVariant'
 >> = (props) => {
   return (
     <AccordionItem {...props} labelVariant="default" iconVariant="sidebar">

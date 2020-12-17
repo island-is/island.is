@@ -3,9 +3,8 @@ import {
   ServicePortalNavigationItem,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import cn from 'classnames'
 import * as styles from './Sidebar.treat'
-import { Box, Stack } from '@island.is/island-ui/core'
+import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
 import AnimateHeight from 'react-animate-height'
 import { useLocale } from '@island.is/localization'
@@ -16,9 +15,10 @@ import { servicePortalOutboundLink } from '@island.is/plausible'
 interface Props {
   nav: ServicePortalNavigationItem
   variant: 'blue' | 'blueberry'
+  onItemClick?: () => void
 }
 
-const ModuleNavigation: FC<Props> = ({ nav, variant }) => {
+const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
   const [expand, setExpand] = useState(false)
   const { pathname } = useLocation()
   const isModuleActive =
@@ -30,12 +30,11 @@ const ModuleNavigation: FC<Props> = ({ nav, variant }) => {
     expand ||
     nav.path === pathname
   const { formatMessage } = useLocale()
-  const shouldExpand = nav.path === undefined
+  const handleExpand = () => setExpand(!expand)
 
-  const handleOnClick = (expand: boolean, external?: boolean) => {
-    if (expand) {
-      setExpand(!expand)
-    }
+  const handleRootItemClick = (external?: boolean) => {
+    if (nav.path === undefined) handleExpand()
+    if (onItemClick) onItemClick()
     if (external) {
       servicePortalOutboundLink()
     }
@@ -43,13 +42,28 @@ const ModuleNavigation: FC<Props> = ({ nav, variant }) => {
 
   return (
     <Box>
+      {nav.heading && (
+        <Text
+          variant="eyebrow"
+          color={variant === 'blue' ? 'blue600' : 'blueberry600'}
+          fontWeight="semiBold"
+          marginBottom={2}
+        >
+          {formatMessage(nav.heading)}
+        </Text>
+      )}
+      {nav.divider && (
+        <Box paddingBottom={3}>
+          <Divider />
+        </Box>
+      )}
       <NavItem
         path={nav.path}
         icon={nav.icon}
         active={isModuleActive}
         external={nav.external}
         onClick={() => {
-          handleOnClick(shouldExpand, nav.external)
+          handleRootItemClick(nav.external)
         }}
         variant={variant}
       >
@@ -69,6 +83,7 @@ const ModuleNavigation: FC<Props> = ({ nav, variant }) => {
                     }
                     external={child.external}
                     variant={variant}
+                    onClick={onItemClick}
                   >
                     {formatMessage(child.name)}
                   </SubNavItem>

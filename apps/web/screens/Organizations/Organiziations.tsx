@@ -9,8 +9,6 @@ import {
   Breadcrumbs,
   ColorSchemeContext,
   Link,
-  GridColumn,
-  GridRow,
 } from '@island.is/island-ui/core'
 import {
   Query,
@@ -26,7 +24,7 @@ import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_TAGS_QUERY,
 } from '../queries'
-import { ArticleLayout } from '@island.is/web/screens/Layouts/Layouts'
+import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useNamespace } from '@island.is/web/hooks'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { Screen } from '@island.is/web/types'
@@ -58,27 +56,18 @@ const OrganizationPage: Screen<OrganizationProps> = ({
           {n('stofnanirHeading', 'Stofnanir Íslenska Ríkisins')} | Ísland.is
         </title>
       </Head>
-      <ArticleLayout sidebar={null}>
-        <GridRow>
-          <GridColumn
-            offset={['0', '0', '1/8']}
-            span={['0', '0', '7/8']}
-            paddingBottom={2}
-          >
-            <Breadcrumbs>
-              <Link href={makePath()}>Ísland.is</Link>
-              <span>{n('organizations', 'Stofnanir')}</span>
-            </Breadcrumbs>
-          </GridColumn>
-        </GridRow>
-        <GridRow>
-          <GridColumn offset={['0', '0', '1/8']} span={['8/8', '8/8', '7/8']}>
-            <Text variant="h1" as="h1" paddingBottom={2}>
-              {n('stofnanirHeading', 'Stofnanir Íslenska Ríkisins')}
-            </Text>
-          </GridColumn>
-        </GridRow>
-      </ArticleLayout>
+      <SidebarLayout fullWidthContent sidebarContent={null}>
+        <Box paddingBottom={[2, 2, 4]}>
+          <Breadcrumbs>
+            <Link href={makePath()}>Ísland.is</Link>
+            <span>{n('organizations', 'Stofnanir')}</span>
+          </Breadcrumbs>
+        </Box>
+
+        <Text variant="h1" as="h1" paddingBottom={2}>
+          {n('stofnanirHeading', 'Stofnanir Íslenska Ríkisins')}
+        </Text>
+      </SidebarLayout>
       <Box background="blue100">
         <ContentBlock width="large">
           <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>

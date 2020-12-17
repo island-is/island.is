@@ -12,7 +12,6 @@ import {
   Text,
   Stack,
   Breadcrumbs,
-  Hidden,
   GridColumn,
   GridRow,
   Tag,
@@ -288,78 +287,63 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           <ArticleSidebar article={article} n={n} activeSlug={query.subSlug} />
         }
       >
-        <GridRow>
-          <GridColumn
-            offset={['0', '0', '0', '0', '1/9']}
-            span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-            paddingBottom={[2, 2, 4]}
-          >
-            <Breadcrumbs>
-              <Link href={makePath()}>Ísland.is</Link>
-              {!!article.category && (
-                <Link
-                  href={makePath('ArticleCategory', '/[slug]')}
-                  as={makePath('ArticleCategory', article.category.slug)}
-                >
-                  {article.category.title}
-                </Link>
-              )}
-              {!!article.group && (
-                <Link
-                  as={makePath(
-                    'ArticleCategory',
-                    article.category.slug +
-                      (article.group?.slug ? `#${article.group.slug}` : ''),
-                  )}
-                  href={makePath('ArticleCategory', '[slug]')}
-                  pureChildren
-                >
-                  <Tag variant="blue">{article.group.title}</Tag>
-                </Link>
-              )}
-            </Breadcrumbs>
-          </GridColumn>
-        </GridRow>
-        <GridRow>
-          <GridColumn
-            offset={['0', '0', '0', '0', '1/9']}
-            span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-          >
-            <Text variant="h1" as="h1">
-              <span id={slugify(article.title)}>{article.title}</span>
-            </Text>
-            <Box marginTop={3} display={['block', 'block', 'none']} printHidden>
-              <ArticleNavigation
-                article={article}
-                n={n}
-                activeSlug={query.subSlug}
-                isMenuDialog
-              />
-            </Box>
-            {!!processEntry && (
-              <Box
-                marginTop={3}
-                display={['none', 'none', 'block']}
-                printHidden
+        <Box paddingBottom={[2, 2, 4]}>
+          <Breadcrumbs>
+            <Link href={makePath()}>Ísland.is</Link>
+            {!!article.category && (
+              <Link
+                href={makePath('ArticleCategory', '/[slug]')}
+                as={makePath('ArticleCategory', article.category.slug)}
               >
-                <ProcessEntry {...processEntry} />
-              </Box>
+                {article.category.title}
+              </Link>
             )}
-            <GridRow>
-              <GridColumn span={[null, '4/7', '5/7', '4/7', '3/7']}>
-                <TOC
-                  title={n('tableOfContentTitle')}
-                  selectedSubArticle={subArticle}
-                />
-              </GridColumn>
-            </GridRow>
-            {subArticle && (
-              <Text variant="h2" as="h2" paddingTop={7}>
-                <span id={slugify(subArticle.title)}>{subArticle.title}</span>
-              </Text>
+            {!!article.group && (
+              <Link
+                as={makePath(
+                  'ArticleCategory',
+                  article.category.slug +
+                    (article.group?.slug ? `#${article.group.slug}` : ''),
+                )}
+                href={makePath('ArticleCategory', '[slug]')}
+                pureChildren
+              >
+                <Tag variant="blue">{article.group.title}</Tag>
+              </Link>
             )}
-          </GridColumn>
-        </GridRow>
+          </Breadcrumbs>
+        </Box>
+        <Box>
+          <Text variant="h1" as="h1">
+            <span id={slugify(article.title)}>{article.title}</span>
+          </Text>
+          <Box marginTop={3} display={['block', 'block', 'none']} printHidden>
+            <ArticleNavigation
+              article={article}
+              n={n}
+              activeSlug={query.subSlug}
+              isMenuDialog
+            />
+          </Box>
+          {!!processEntry && (
+            <Box marginTop={3} display={['none', 'none', 'block']} printHidden>
+              <ProcessEntry {...processEntry} />
+            </Box>
+          )}
+          <GridRow>
+            <GridColumn span={[null, '4/7', '5/7', '4/7', '3/7']}>
+              <TOC
+                title={n('tableOfContentTitle')}
+                selectedSubArticle={subArticle}
+              />
+            </GridColumn>
+          </GridRow>
+          {subArticle && (
+            <Text variant="h2" as="h2" paddingTop={7}>
+              <span id={slugify(subArticle.title)}>{subArticle.title}</span>
+            </Text>
+          )}
+        </Box>
         <Box paddingTop={subArticle ? 2 : 4}>
           <RichText
             body={(subArticle ?? article).body as SliceType[]}
