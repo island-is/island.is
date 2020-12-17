@@ -20,7 +20,10 @@ import {
 import { UserContext } from '@island.is/skilavottord-web/context'
 import CompanyList from './components/CompanyList'
 import * as styles from './Handover.treat'
-import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
+import {
+  ACCEPTED_TERMS_AND_CONDITION,
+  BASE_PATH,
+} from '@island.is/skilavottord-web/utils/consts'
 import {
   Car,
   RecyclingRequestMutation,
@@ -143,7 +146,9 @@ const Handover: FC = () => {
 
   const routeHome = () => {
     localStorage.clear()
-    router.push(routes.myCars).then(() => window.scrollTo(0, 0))
+    router
+      .push(`${BASE_PATH}${routes.myCars}`)
+      .then(() => window.scrollTo(0, 0))
   }
 
   const onCancelRecycling = () => {

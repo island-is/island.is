@@ -7,7 +7,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
-import { m, mm } from '../../lib/messages'
+import { mm } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
 type ValidAnswers = 'dateOfBirth' | 'specificDate' | undefined
@@ -78,7 +78,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
       {error && (
         <Box color="red400" padding={2}>
           <Text variant="default" color="red400">
-            {formatMessage(m.requiredAnswerError)}
+            {formatMessage(mm.errors.requiredAnswer)}
           </Text>
         </Box>
       )}

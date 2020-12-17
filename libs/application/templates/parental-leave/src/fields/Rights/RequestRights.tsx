@@ -4,7 +4,7 @@ import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import { Box, Text } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
+import { m, mm } from '../../lib/messages'
 
 type ValidAnswers = 'yes' | 'no' | undefined
 
@@ -51,7 +51,7 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
       </Box>
       {error && (
         <Box color="red400" padding={2}>
-          <Text color="red400">{formatMessage(m.requiredAnswerError)}</Text>
+          <Text color="red400">{formatMessage(mm.errors.requiredAnswer)}</Text>
         </Box>
       )}
       <BoxChart
