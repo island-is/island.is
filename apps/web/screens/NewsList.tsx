@@ -30,7 +30,7 @@ import {
   GET_NEWS_DATES_QUERY,
   GET_NEWS_QUERY,
 } from './queries'
-import { NewsListLayout } from './Layouts/Layouts'
+import { SidebarLayout } from './Layouts/SidebarLayout'
 import {
   GetNewsDatesQuery,
   QueryGetNewsDatesArgs,
@@ -143,7 +143,7 @@ const NewsList: Screen<NewsListProps> = ({
     <Stack space={3}>
       <Box background="purple100" borderRadius="large" padding={4}>
         <Stack space={3}>
-          <Text variant="h4" as="h1">
+          <Text variant="h4" as="h1" color="purple600">
             {n('newsTitle', 'Fréttir og tilkynningar')}
           </Text>
           <Divider weight="purple200" />
@@ -188,7 +188,7 @@ const NewsList: Screen<NewsListProps> = ({
       <Head>
         <title>{n('pageTitle')} | Ísland.is</title>
       </Head>
-      <NewsListLayout sidebar={sidebar}>
+      <SidebarLayout sidebarContent={sidebar}>
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs>
             <Link href={makePath()}>Ísland.is</Link>
@@ -281,7 +281,7 @@ const NewsList: Screen<NewsListProps> = ({
             </Box>
           )}
         </Stack>
-      </NewsListLayout>
+      </SidebarLayout>
     </>
   )
 }

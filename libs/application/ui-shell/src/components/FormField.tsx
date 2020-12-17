@@ -14,7 +14,8 @@ const FormField: FC<{
   field: FieldDef
   showFieldName?: boolean
   errors: object
-}> = ({ application, autoFocus, errors, field, showFieldName }) => {
+  goToScreen: (id: string) => void
+}> = ({ application, autoFocus, errors, field, goToScreen, showFieldName }) => {
   const [allFields] = useFields()
   if (!field.isNavigable) {
     return null
@@ -28,6 +29,7 @@ const FormField: FC<{
     autoFocus,
     error,
     field: field as Field,
+    goToScreen,
     showFieldName,
   }
   const Component = allFields[field.component]

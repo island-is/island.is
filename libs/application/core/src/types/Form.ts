@@ -96,6 +96,7 @@ export interface FieldBaseProps {
   field: Field
   application: Application
   showFieldName?: boolean
+  goToScreen?: (id: string) => void
 }
 
 export type RepeaterProps = {

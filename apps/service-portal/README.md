@@ -4,6 +4,10 @@
 
 TODO
 
+## Docs
+
+[How to start implementing a new library into the Service Portal](../../libs/service-portal/core/README.md)
+
 ## URLs
 
 - [Dev](https://beta.dev01.devland.is/minarsidur)
