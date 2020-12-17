@@ -20,15 +20,22 @@ import ClientGrantTypesForm from '../../components/ClientGrantTypesForm';
 const Index = () => {
   const { query } = useRouter();
   const clientId = query.client;
+  const stepQuery = query.step;
 
   const [step, setStep] = useState(1);
   const [client, setClient] = useState<Client>(new Client());
   const router = useRouter();
+  console.log("Query: " + JSON.stringify(router.query));
 
+
+  /** Load the client and set the step from query if there is one */
   useEffect(() => {
     async function loadClient() {
       if (clientId) {
         await getClient(clientId as string);
+      }
+      if (stepQuery){
+        setStep(+stepQuery);    
       }
     }
     loadClient();
