@@ -87,6 +87,7 @@ export async function generateRequestPdf(
         existingCase.accusedNationalId,
         existingCase.accusedName,
         existingCase.court,
+        existingCase.alternativeTravelBan,
         existingCase.requestedCustodyEndDate,
         existingCase.requestedCustodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,

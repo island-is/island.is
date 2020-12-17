@@ -26,6 +26,7 @@ describe('formatProsecutorDemands', () => {
     const accusedNationalId = '010101-0000'
     const accusedName = 'Glanni Glæpur'
     const court = 'Héraðsdómur Reykjavíkur'
+    const alternativeTravelBan = false
     const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = true
 
@@ -34,6 +35,7 @@ describe('formatProsecutorDemands', () => {
       accusedNationalId,
       accusedName,
       court,
+      alternativeTravelBan,
       requestedCustodyEndDate,
       isolation,
     )
@@ -49,6 +51,7 @@ describe('formatProsecutorDemands', () => {
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
     const court = 'Héraðsdómur Reykjavíkur'
+    const alternativeTravelBan = false
     const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = false
 
@@ -57,6 +60,7 @@ describe('formatProsecutorDemands', () => {
       accusedNationalId,
       accusedName,
       court,
+      alternativeTravelBan,
       requestedCustodyEndDate,
       isolation,
     )
@@ -64,6 +68,31 @@ describe('formatProsecutorDemands', () => {
     // Assert
     expect(res).toBe(
       'Þess er krafist að Glanni Glæpur kt. 010101-0000 verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi til mánudagsins 16. nóvember 2020, kl. 19:30.',
+    )
+  })
+
+  test('should format prosecutor demands with alternative travel ban', () => {
+    // Arrange
+    const accusedNationalId = '010101-0000'
+    const accusedName = 'Glanni Glæpur'
+    const court = 'Héraðsdómur Reykjavíkur'
+    const alternativeTravelBan = true
+    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
+    const isolation = true
+
+    // Act
+    const res = formatProsecutorDemands(
+      accusedNationalId,
+      accusedName,
+      court,
+      alternativeTravelBan,
+      requestedCustodyEndDate,
+      isolation,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Þess er krafist að Glanni Glæpur kt. 010101-0000 verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi, farbanni til vara, til mánudagsins 16. nóvember 2020, kl. 19:30 og verði gert að sæta einangrun meðan á gæsluvarðhaldi stendur.',
     )
   })
 })

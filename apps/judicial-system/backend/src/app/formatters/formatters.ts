@@ -16,6 +16,7 @@ export function formatProsecutorDemands(
   accusedNationalId: string,
   accusedName: string,
   court: string,
+  alternativeTravelBan: boolean,
   requestedCustodyEndDate: Date,
   isolation: boolean,
 ): string {
@@ -24,10 +25,9 @@ export function formatProsecutorDemands(
   )} verði með úrskurði ${court?.replace(
     'Héraðsdómur',
     'Héraðsdóms',
-  )} gert að sæta gæsluvarðhaldi til ${formatDate(
-    requestedCustodyEndDate,
-    'PPPPp',
-  )
+  )} gert að sæta gæsluvarðhaldi${
+    alternativeTravelBan ? ', farbanni til vara,' : ''
+  } til ${formatDate(requestedCustodyEndDate, 'PPPPp')
     ?.replace('dagur,', 'dagsins')
     ?.replace(' kl.', ', kl.')}${
     isolation
