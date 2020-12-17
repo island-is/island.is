@@ -16,9 +16,4 @@ export class UpdateApplicationStateDto {
   @IsString()
   @ApiPropertyOptional()
   readonly message?: string
-
-  @IsOptional()
-  @IsString({ each: true })
-  @ApiPropertyOptional()
-  readonly assignees?: string[]
 }
