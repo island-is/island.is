@@ -63,12 +63,18 @@ import {
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
+import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { EmailService } from '@island.is/email-service'
 import { environment } from '../../../environments'
 import { ApplicationAPITemplateUtils } from '@island.is/application/api-template-utils'
 import { NationalId } from './tools/nationalId.decorator'
+import { verifyToken } from './utils/tokenUtils'
 
 // @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
+
+interface DecodedToken {
+  applicationId: string
+}
 @ApiTags('applications')
 @ApiHeader({
   name: 'authorization',
@@ -183,6 +189,75 @@ export class ApplicationController {
     )
 
     return this.applicationService.create(application)
+  }
+
+  @Put('applications/assign')
+  @ApiOkResponse({ type: ApplicationResponseDto })
+  @UseInterceptors(ApplicationSerializer)
+  async assignApplication(
+    @Body() assignApplicationDto: AssignApplicationDto,
+    @NationalId() nationalId: string,
+  ): Promise<ApplicationResponseDto> {
+    const decodedToken = verifyToken<DecodedToken>(assignApplicationDto.token)
+
+    if (decodedToken === null) {
+      throw new BadRequestException('Invalid token')
+    }
+
+    const existingApplication = await this.applicationService.findById(
+      decodedToken.applicationId,
+    )
+
+    if (existingApplication === null) {
+      throw new NotFoundException('No application found')
+    }
+
+    const template = await getApplicationTemplateByTypeId(
+      existingApplication.typeId as ApplicationTypes,
+    )
+    // TODO
+    if (template === null) {
+      throw new BadRequestException(
+        `No application template exists for type: ${existingApplication.typeId}`,
+      )
+    }
+
+    const assignees = [nationalId]
+
+    const mergedApplication: BaseApplication = {
+      ...(existingApplication.toJSON() as BaseApplication),
+      assignees,
+    }
+
+    const helper = new ApplicationTemplateHelper(mergedApplication, template)
+
+    const apiTemplateUtils = new ApplicationAPITemplateUtils(
+      mergedApplication,
+      {
+        jwtSecret: environment.auth.jwtSecret,
+        emailService: this.emailService,
+      },
+    )
+
+    const [hasChanged, newState, newApplication] = helper.changeState(
+      'ASSIGN',
+      apiTemplateUtils,
+    )
+
+    if (hasChanged) {
+      const {
+        updatedApplication,
+      } = await this.applicationService.updateApplicationState(
+        existingApplication.id,
+        newState, // TODO maybe ban more complicated states....
+        newApplication.answers,
+        newApplication.assignees,
+      )
+
+      return updatedApplication
+    }
+
+    return existingApplication
   }
 
   @Put('applications/:id')

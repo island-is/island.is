@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
-import decode from 'jwt-decode'
 import qs from 'qs'
 
 import { Text, Page } from '@island.is/island-ui/core'
 import { NotFound } from '@island.is/application/ui-shell'
 
-import useAuth from '../hooks/useAuth'
-import { SUBMIT_APPLICATION } from 'libs/application/graphql/src'
-
-interface DecodedToken {
-  applicationId: string
-}
+import { ASSIGN_APPLICATION } from 'libs/application/graphql/src'
 
 export const AssignApplication = () => {
   const location = useLocation()
@@ -21,34 +15,17 @@ export const AssignApplication = () => {
   const [tokenParsingError, setTokenParsingError] = useState<Error | null>(null)
 
   const [
-    submitApplication,
+    assignApplication,
     { loading, error: assignApplicationError },
-  ] = useMutation(SUBMIT_APPLICATION, {
-    onCompleted({ submitApplication }) {
-      history.push(`../application/${submitApplication.id}`)
+  ] = useMutation(ASSIGN_APPLICATION, {
+    onCompleted({ assignApplication }) {
+      history.push(`../application/${assignApplication.id}`)
     },
   })
-
-  const { userInfo } = useAuth()
 
   const isMissingToken = !queryParams.token
   const hasInvalidToken = tokenParsingError !== null
   const couldNotAssignApplication = !!assignApplicationError
-
-  const assignUserToApplication = (
-    applicationId: string,
-    newAssigneeNationalRegistryId: string,
-  ) => {
-    submitApplication({
-      variables: {
-        input: {
-          id: applicationId,
-          event: 'APPROVE',
-          assignees: [newAssigneeNationalRegistryId],
-        },
-      },
-    })
-  }
 
   useEffect(() => {
     if (isMissingToken) {
@@ -58,11 +35,13 @@ export const AssignApplication = () => {
     const { token } = queryParams
     try {
       setTokenParsingError(null)
-      const decoded = decode(token as string) as DecodedToken
-      assignUserToApplication(
-        decoded.applicationId,
-        userInfo?.profile.nationalId,
-      )
+      assignApplication({
+        variables: {
+          input: {
+            token,
+          },
+        },
+      })
     } catch (e) {
       setTokenParsingError(e)
     }

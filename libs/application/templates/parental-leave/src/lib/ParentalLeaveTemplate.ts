@@ -32,6 +32,7 @@ const TEMPLATE_API_ACTIONS: ApiTemplateUtilActions = {
 
 type Events =
   | { type: 'APPROVE' }
+  | { type: 'ASSIGN' }
   | { type: 'REJECT' }
   | { type: 'SUBMIT' }
   | { type: 'ABORT' }
@@ -171,7 +172,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          APPROVE: { target: States.EMPLOYER_APPROVAL },
+          ASSIGN: { target: States.EMPLOYER_APPROVAL },
           REJECT: { target: States.DRAFT },
         },
       },
