@@ -34,12 +34,10 @@ const { publicRuntimeConfig } = getConfig()
 
 interface ApiCatalogueProps {
   subpageHeader: GetSubpageHeaderQuery['getSubpageHeader']
-  headerNamespace: GetNamespaceQuery['getNamespace']
 }
 
 const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   subpageHeader,
-  headerNamespace,
 }) => {
   /* DISABLE FROM WEB WHILE WIP */
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
@@ -48,8 +46,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
     throw new CustomNextError(404, 'Not found')
   }
   /* --- */
-  const n = useNamespace(headerNamespace)
-
   const { activeLocale } = useI18n()
 
   return (
@@ -120,22 +116,10 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            lang: locale as ContentLanguage,
-            namespace: 'VefthjonusturHome',
-          },
-        },
-      })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
   ])
 
   return {
     subpageHeader,
-    headerNamespace,
   }
 }
 
