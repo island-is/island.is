@@ -131,8 +131,8 @@ export class NationalRegistryApi {
           ({
             fullName: familyMember.Nafn,
             nationalId: familyMember.Kennitala,
-            gender: familyMember.Kyn,
-            maritalStatus: familyMember.Hjuskapur,
+            gender: this.formatGender(familyMember.KynKodi),
+            maritalStatus: this.formatMaritalStatus(familyMember.Hjusk),
             familyRelation: this.getFamilyRelation(familyMember),
             address: `${familyMember.Husheiti}, ${familyMember.Pnr} ${familyMember.Sveitarfelag}`,
           } as FamilyMember),
