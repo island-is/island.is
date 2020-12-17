@@ -2,15 +2,21 @@ import { SendMailOptions } from 'nodemailer'
 import { dedent } from 'ts-dedent'
 import { Application } from '@island.is/application/core'
 
-export default (application: Application, token: string): SendMailOptions => ({
+export default (
+  {
+    application,
+    clientLocationOrigin,
+  }: { application: Application; clientLocationOrigin: string },
+  token: string,
+): SendMailOptions => ({
   // TODO: place strings in translation file
   from: {
     name: 'Fæðingarorlofssjóður',
-    address: 'baering@aranja.com',
+    address: 'todo@aranja.com',
   },
   replyTo: {
     name: 'Fæðingarorlofssjóður',
-    address: 'baering@aranja.com',
+    address: 'todo@aranja.com',
   },
   to: [
     {
@@ -19,13 +25,13 @@ export default (application: Application, token: string): SendMailOptions => ({
     },
   ],
   subject: ``,
-  // TODO: get client origin from environment to replace http://localhost:4200
+  // TODO: clickable link
   text: dedent(`
     Góðan dag.
     
     Umsækjandi með kennitölu ${application.applicant} hefur skráð þig sem foreldri í umsókn sinni.
     
-    Ef þú áttir von á þessum tölvupósti þá getur þú haldið áfram hingað til þess að fara yfir umsóknina: http://localhost:4200/tengjast-umsokn?token=${token}
+    Ef þú áttir von á þessum tölvupósti þá getur þú haldið áfram hingað til þess að fara yfir umsóknina: ${clientLocationOrigin}/tengjast-umsokn?token=${token}
 
     Með kveðju.
     Starfsfólk fæðingarorlofssjóðs

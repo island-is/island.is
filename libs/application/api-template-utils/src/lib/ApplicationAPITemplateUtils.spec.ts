@@ -41,6 +41,7 @@ const mockEmailService = {
 }
 
 const testToken = 'verysecrettoken'
+const clientLocationOrigin = 'http://localhost:test'
 
 describe('ApplicationAPITemplateUtils', () => {
   let apiTemplateUtils: ApplicationAPITemplateUtils
@@ -51,6 +52,7 @@ describe('ApplicationAPITemplateUtils', () => {
     apiTemplateUtils = new ApplicationAPITemplateUtils(mockApplication, {
       jwtSecret: testToken,
       emailService: mockEmailService,
+      clientLocationOrigin,
     })
   })
 
@@ -81,6 +83,7 @@ describe('ApplicationAPITemplateUtils', () => {
       apiTemplateUtils = new ApplicationAPITemplateUtils(mockApplication, {
         jwtSecret: testToken,
         emailService: mockEmailService,
+        clientLocationOrigin,
       })
 
       const sendEmailSpy = jest.spyOn(mockEmailService, 'sendEmail')
@@ -88,14 +91,14 @@ describe('ApplicationAPITemplateUtils', () => {
       expect(sendEmailSpy).toHaveBeenCalledTimes(0)
 
       const generateTemplate: AssignApplicationThroughEmail['generateTemplate'] = (
-        application,
+        props,
         token,
       ) => ({
-        text: `Test ${application.answers.email} ${application.id} ${token}`,
+        text: `Test ${props.application.answers.email} ${props.application.id} ${props.clientLocationOrigin}/tengjast-umsokn?token=${token}`,
       })
 
       const expectedTemplate = generateTemplate(
-        mockApplication,
+        apiTemplateUtils.createEmailTemplateGeneratorProps(),
         mockSignedToken,
       )
 

@@ -2,6 +2,7 @@ export default {
   production: true,
   environment: process.env.ENVIRONMENT,
   baseApiUrl: '',
+  clientLocationOrigin: process.env.CLIENT_LOCATION_ORIGIN,
   identityServer: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '',

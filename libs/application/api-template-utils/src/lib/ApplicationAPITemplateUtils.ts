@@ -13,12 +13,19 @@ type GenericEmailService = Pick<EmailService, 'sendEmail'>
 interface ApplicationAPITemplateUtilsConfig {
   jwtSecret: string
   emailService: GenericEmailService
+  clientLocationOrigin: string
+}
+
+interface EmailTemplateGeneratorProps {
+  application: Application
+  clientLocationOrigin: string
 }
 
 class ApplicationAPITemplateUtils {
   private readonly application: Application
   private readonly emailService: GenericEmailService
   private readonly jwtSecret: string
+  private readonly clientLocationOrigin: string
 
   constructor(
     application: Application,
@@ -27,6 +34,14 @@ class ApplicationAPITemplateUtils {
     this.application = application
     this.emailService = config.emailService
     this.jwtSecret = config.jwtSecret
+    this.clientLocationOrigin = config.clientLocationOrigin
+  }
+
+  createEmailTemplateGeneratorProps(): EmailTemplateGeneratorProps {
+    return {
+      application: this.application,
+      clientLocationOrigin: this.clientLocationOrigin,
+    }
   }
 
   async sendEmail({ template }: SendEmail) {
@@ -37,7 +52,10 @@ class ApplicationAPITemplateUtils {
     generateTemplate,
   }: AssignApplicationThroughEmail) {
     const token = createAssignToken(this.application, this.jwtSecret)
-    const template = generateTemplate(this.application, token)
+    const template = generateTemplate(
+      this.createEmailTemplateGeneratorProps(),
+      token,
+    )
 
     return this.performAction({ type: 'sendEmail', template })
   }

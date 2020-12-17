@@ -236,6 +236,7 @@ export class ApplicationController {
       {
         jwtSecret: environment.auth.jwtSecret,
         emailService: this.emailService,
+        clientLocationOrigin: environment.clientLocationOrigin,
       },
     )
 
@@ -413,6 +414,7 @@ export class ApplicationController {
       {
         jwtSecret: environment.auth.jwtSecret,
         emailService: this.emailService,
+        clientLocationOrigin: environment.clientLocationOrigin,
       },
     )
 

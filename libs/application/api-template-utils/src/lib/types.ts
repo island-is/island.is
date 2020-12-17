@@ -2,9 +2,17 @@ import { SendMailOptions } from 'nodemailer'
 
 import { Application } from '@island.is/application/core'
 
+export interface EmailTemplateGeneratorProps {
+  application: Application
+  clientLocationOrigin: string
+}
+
 export type AssignApplicationThroughEmail = {
   type: 'assignThroughEmail'
-  generateTemplate: (application: Application, token: string) => SendMailOptions
+  generateTemplate: (
+    props: EmailTemplateGeneratorProps,
+    token: string,
+  ) => SendMailOptions
 }
 export type SendEmail = { type: 'sendEmail'; template: SendMailOptions }
 
