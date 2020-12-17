@@ -21,6 +21,8 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
   >();
   const { isSubmitting } = formState;
   const [response, setResponse] = useState<APIResponse>(new APIResponse());
+  const [scopes, setScopes] = useState<any>([]);
+  const [selectedScope, setSelectedScope] = useState<any>(null);
 
   const add = async (data: any) => {
     const allowedScope = new ClientAllowedScopeDTO();
@@ -48,6 +50,22 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
         }
       });
   };
+
+  useEffect(() => {
+    getAvailableScopes();
+  }, []);
+
+  const getAvailableScopes = () => {
+    // Dummy scopes
+    const scope1 = { enabled: true, name: "Scope Name 1", displayName: "Display Name 1", description: "Description 1", required: true, showInDiscoveryDocument: true, emphasize: true };
+    const scope2 = { enabled: true, name: "Scope Name 2", displayName: "Display Name 2", description: "Description 2", required: true, showInDiscoveryDocument: true, emphasize: true }; 
+    setScopes([ scope1, scope2 ]);
+  }
+
+  const setSelectedItem = (scopeName: string) => {
+    const selected = scopes.find(e => e.name == scopeName);
+    setSelectedScope(selected);
+  }
 
   const remove = async (scope: string) => {
     await axios
@@ -89,19 +107,15 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
             <form onSubmit={handleSubmit(add)}>
               <div className="client-allowed-scopes__container__fields">
                 <div className="client-allowed-scopes__container__field">
-                  <label className="client-allowed-scopes__label">
+                  <label className="client-allowed-scopes__label" htmlFor="scopeName">
                     Scope Name
                   </label>
-                  <input
-                    type="text"
-                    name="scopeName"
-                    ref={register({ required: true })}
-                    defaultValue={''}
-                    className="client-allowed-scopes__input"
-                    placeholder="@example/scope"
-                    title="Allowed scopen"
-                  />
-                  <HelpBox helpText="Lorem Ipsum" />
+                  <select id="scopeName" className="client-allowed-scopes__select" name="scopeName" id="scopeName" ref={register({ required: true })} onChange={(e) => setSelectedItem(e.target.value)}>
+                  {scopes.map((scope: any) => {
+                    return (<option value={scope.name} title={scope.description}>{scope.name} - {scope.description}</option>);
+                  })}
+                  </select>
+                  <HelpBox helpText="Select an allowed scope" />
                   <ErrorMessage
                     as="span"
                     errors={errors}
@@ -115,6 +129,9 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                     value="Add"
                   />
                 </div>
+                <div className={`client-allowed-scopes__selected__item ${selectedScope ? 'show' : 'hidden'}`}>
+                    {selectedScope?.name} - {selectedScope?.displayName} - {selectedScope?.description}
+                  </div>
               </div>
 
               <div

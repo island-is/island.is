@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react';
 
 import axios from 'axios';
-import { Step } from '../../models/common/Step';
+import { ClientStep } from '../../models/common/ClientStep';
 import { Client } from '../../models/client.model';
 import ClientAllowedCorsOriginsForm from '../../components/ClientAllowedCorsOriginsForm';
 import ClientAllowedScopes from '../../components/ClientAllowedScopesForm';
@@ -16,6 +16,7 @@ import ClientSecretForm from '../../components/ClientSecretForm';
 import { ClaimDTO } from '../../models/dtos/claim.dto';
 import ClientClaimForm from '../../components/ClientClaimForm';
 import ClientGrantTypesForm from '../../components/ClientGrantTypesForm';
+import ContentWrapper from 'apps/auth-admin-web/components/common/ContentWrapper';
 
 const Index = () => {
   const { query } = useRouter();
@@ -25,8 +26,6 @@ const Index = () => {
   const [step, setStep] = useState(1);
   const [client, setClient] = useState<Client>(new Client());
   const router = useRouter();
-  console.log("Query: " + JSON.stringify(router.query));
-
 
   /** Load the client and set the step from query if there is one */
   useEffect(() => {
@@ -34,8 +33,8 @@ const Index = () => {
       if (clientId) {
         await getClient(clientId as string);
       }
-      if (stepQuery){
-        setStep(+stepQuery);    
+      if (stepQuery) {
+        setStep(+stepQuery);
       }
     }
     loadClient();
@@ -62,7 +61,7 @@ const Index = () => {
     setStep(step + 1);
   };
 
-  const handleStepChange = (step: Step) => {
+  const handleStepChange = (step: ClientStep) => {
     setStep(step);
   };
 
@@ -82,123 +81,141 @@ const Index = () => {
   };
 
   switch (step) {
-    case Step.Client:
+    case ClientStep.Client:
       return (
-        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
-          <ClientForm
-            handleCancel={handleCancel}
-            client={client as ClientDTO}
-            onNextButtonClick={handleClientSaved}
-          />
-        </ClientStepNav>
+        <ContentWrapper>
+          <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+            <ClientForm
+              handleCancel={handleCancel}
+              client={client as ClientDTO}
+              onNextButtonClick={handleClientSaved}
+            />
+          </ClientStepNav>
+        </ContentWrapper>
       );
-    case Step.ClientRedirectUri: {
+    case ClientStep.ClientRedirectUri: {
       return (
-        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
-          <ClientRedirectUriForm
-            clientId={client.clientId}
-            defaultUrl={client.clientUri}
-            uris={client.redirectUris?.map((r) => r.redirectUri)}
-            handleNext={handleNext}
-            handleBack={handleBack}
-            handleChanges={changesMade}
-          />
-        </ClientStepNav>
-      );
-    }
-    case Step.ClientIdpRestrictions: {
-      return (
-        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
-          <ClientIdpRestrictionsForm
-            clientId={client.clientId}
-            restrictions={client.identityProviderRestrictions?.map(
-              (r) => r.name
-            )}
-            handleNext={handleNext}
-            handleBack={handleBack}
-            handleChanges={changesMade}
-          />
-        </ClientStepNav>
+        <ContentWrapper>
+          <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+            <ClientRedirectUriForm
+              clientId={client.clientId}
+              defaultUrl={client.clientUri}
+              uris={client.redirectUris?.map((r) => r.redirectUri)}
+              handleNext={handleNext}
+              handleBack={handleBack}
+              handleChanges={changesMade}
+            />
+          </ClientStepNav>
+        </ContentWrapper>
       );
     }
-    case Step.ClientPostLogoutRedirectUri: {
+    case ClientStep.ClientIdpRestrictions: {
       return (
-        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
-          <ClientPostLogoutRedirectUriForm
-            clientId={client.clientId}
-            defaultUrl={client.clientUri}
-            uris={client.postLogoutRedirectUris?.map((p) => p.redirectUri)}
-            handleNext={handleNext}
-            handleBack={handleBack}
-            handleChanges={changesMade}
-          />
-        </ClientStepNav>
+        <ContentWrapper>
+          <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+            <ClientIdpRestrictionsForm
+              clientId={client.clientId}
+              restrictions={client.identityProviderRestrictions?.map(
+                (r) => r.name
+              )}
+              handleNext={handleNext}
+              handleBack={handleBack}
+              handleChanges={changesMade}
+            />
+          </ClientStepNav>
+        </ContentWrapper>
       );
     }
-    case Step.ClientAllowedCorsOrigin: {
+    case ClientStep.ClientPostLogoutRedirectUri: {
       return (
-        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
-          <ClientAllowedCorsOriginsForm
-            clientId={client.clientId}
-            defaultOrigin={client.clientUri}
-            origins={client.allowedCorsOrigins?.map((a) => a.origin)}
-            handleNext={handleNext}
-            handleBack={handleBack}
-            handleChanges={changesMade}
-          />
-        </ClientStepNav>
+        <ContentWrapper>
+          <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+            <ClientPostLogoutRedirectUriForm
+              clientId={client.clientId}
+              defaultUrl={client.clientUri}
+              uris={client.postLogoutRedirectUris?.map((p) => p.redirectUri)}
+              handleNext={handleNext}
+              handleBack={handleBack}
+              handleChanges={changesMade}
+            />
+          </ClientStepNav>
+        </ContentWrapper>
       );
     }
-    case Step.ClientGrantTypes: {
+    case ClientStep.ClientAllowedCorsOrigin: {
       return (
-        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
-          <ClientGrantTypesForm
-            clientId={client.clientId}
-            grantTypes={client.allowedGrantTypes?.map((a) => a.grantType)}
-            handleBack={handleBack}
-            handleChanges={changesMade}
-            handleNext={handleNext}
-          />
-        </ClientStepNav>
+        <ContentWrapper>
+          <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+            <ClientAllowedCorsOriginsForm
+              clientId={client.clientId}
+              defaultOrigin={client.clientUri}
+              origins={client.allowedCorsOrigins?.map((a) => a.origin)}
+              handleNext={handleNext}
+              handleBack={handleBack}
+              handleChanges={changesMade}
+            />
+          </ClientStepNav>
+        </ContentWrapper>
       );
     }
-    case Step.ClientAllowedScopes: {
+    case ClientStep.ClientGrantTypes: {
       return (
-        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
-          <ClientAllowedScopes
-            clientId={client.clientId}
-            scopes={client.allowedScopes?.map((s) => s.scopeName)}
-            handleChanges={changesMade}
-            handleNext={handleNext}
-            handleBack={handleBack}
-          />
-        </ClientStepNav>
+        <ContentWrapper>
+          <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+            <ClientGrantTypesForm
+              clientId={client.clientId}
+              grantTypes={client.allowedGrantTypes?.map((a) => a.grantType)}
+              handleBack={handleBack}
+              handleChanges={changesMade}
+              handleNext={handleNext}
+            />
+          </ClientStepNav>
+        </ContentWrapper>
       );
     }
-    case Step.ClientClaims: {
+    case ClientStep.ClientAllowedScopes: {
       return (
-        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
-          <ClientClaimForm
-            clientId={client.clientId}
-            claims={client.claims}
-            handleNext={handleNext}
-            handleBack={handleBack}
-            handleChanges={changesMade}
-          ></ClientClaimForm>
-        </ClientStepNav>
+        <ContentWrapper>
+          <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+            <ClientAllowedScopes
+              clientId={client.clientId}
+              scopes={client.allowedScopes?.map((s) => s.scopeName)}
+              handleChanges={changesMade}
+              handleNext={handleNext}
+              handleBack={handleBack}
+            />
+          </ClientStepNav>
+        </ContentWrapper>
       );
     }
-    case Step.ClientSecret: {
+    case ClientStep.ClientClaims: {
       return (
-        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
-          <ClientSecretForm
-            secrets={client.clientSecrets}
-            clientId={client.clientId}
-            handleBack={handleBack}
-            handleNext={handleNext}
-            handleChanges={changesMade}
-          />
-        </ClientStepNav>
+        <ContentWrapper>
+          <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+            <ClientClaimForm
+              clientId={client.clientId}
+              claims={client.claims}
+              handleNext={handleNext}
+              handleBack={handleBack}
+              handleChanges={changesMade}
+            ></ClientClaimForm>
+          </ClientStepNav>
+        </ContentWrapper>
+      );
+    }
+    case ClientStep.ClientSecret: {
+      return (
+        <ContentWrapper>
+          <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+            <ClientSecretForm
+              secrets={client.clientSecrets}
+              clientId={client.clientId}
+              handleBack={handleBack}
+              handleNext={handleNext}
+              handleChanges={changesMade}
+            />
+          </ClientStepNav>
+        </ContentWrapper>
       );
     }
     default: {

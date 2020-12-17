@@ -79,6 +79,11 @@
     }
   }
 
+  &__selected__item {
+    padding: 13px;
+    font-size: 0.8rem;
+  }
+
   &__container__list {
     flex-direction: row;
     text-align: left;

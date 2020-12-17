@@ -2,6 +2,7 @@ import ClientDTO from '../../models/dtos/client-dto';
 import ClientForm from '../../components/ClientForm';
 import React from 'react';
 import { useRouter } from 'next/router';
+import ContentWrapper from 'apps/auth-admin-web/components/common/ContentWrapper';
 
 export default function Index() {
   const router = useRouter();
@@ -16,10 +17,12 @@ export default function Index() {
   };
 
   return (
-    <ClientForm
-      handleCancel={handleCancel}
-      client={new ClientDTO()}
-      onNextButtonClick={handleClientSaved}
-    />
+    <ContentWrapper>
+      <ClientForm
+        handleCancel={handleCancel}
+        client={new ClientDTO()}
+        onNextButtonClick={handleClientSaved}
+      />
+    </ContentWrapper>
   );
 }

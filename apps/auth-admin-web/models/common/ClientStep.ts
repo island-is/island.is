@@ -1,4 +1,4 @@
-export enum Step {
+export enum ClientStep {
   Client = 1,
   ClientRedirectUri = 2,
   ClientIdpRestrictions = 3,
