@@ -1,5 +1,5 @@
 import React from 'react';
-import { ApiResourceStep } from 'apps/auth-admin-web/models/common/ApiResourceStep';
+import { ApiResourceStep } from './../../../entities/common/ApiResourceStep';
 
 interface Props {
   handleStepChange: (step: ApiResourceStep) => void;

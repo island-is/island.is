@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import React from 'react';
-import ContentWrapper from '../components/common/ContentWrapper';
-import Nav from '../components/Nav';
+import ContentWrapper from '../components/Layout/ContentWrapper';
+import Nav from '../components/Layout/Nav';
 
 export default function Home() {
   return (

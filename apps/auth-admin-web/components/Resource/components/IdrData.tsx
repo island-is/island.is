@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import IdentityResourcesDTO from 'apps/auth-admin-web/models/dtos/identity-resources.dto';
+import IdentityResourcesDTO from './../../../entities/dtos/identity-resources.dto';
 import { useRouter } from 'next/router';
 import ResourceEditForm from './forms/ResourceEditForm';
 

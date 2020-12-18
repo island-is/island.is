@@ -1,8 +1,8 @@
-import APIResponse from 'apps/auth-admin-web/models/common/APIResponse';
+import APIResponse from './../../entities/common/APIResponse'
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import axios from 'axios';
-import { ApiResourcesDTO } from 'apps/auth-admin-web/models/dtos/api-resources-dto';
+import { ApiResourcesDTO } from 'apps/auth-admin-web/entities/dtos/api-resources-dto';
 import ResourceCreateForm from './components/forms/ResourceCreateForm';
 
 export default function ApiResourceForm() {

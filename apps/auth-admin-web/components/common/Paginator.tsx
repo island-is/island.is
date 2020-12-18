@@ -7,7 +7,7 @@ interface Props {
 
 const Paginator: React.FC<Props> = (props: Props) =>{
   const [page, setPage] = useState<number>(1); 
-  const [count, setCount] = useState<number>(30); // TODO: Set to something that makes sense 30 
+  const [count, setCount] = useState<number>(30);
 
   // Runs only once and trickers initial page change of parent
   useEffect(() => {

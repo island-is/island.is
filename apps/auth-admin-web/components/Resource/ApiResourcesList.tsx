@@ -1,5 +1,5 @@
-import APIResponse from 'apps/auth-admin-web/models/common/APIResponse';
-import { ApiResourcesDTO } from 'apps/auth-admin-web/models/dtos/api-resources-dto';
+import APIResponse from './../../entities/common/APIResponse'
+import { ApiResourcesDTO } from './../../entities/dtos/api-resources-dto';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import axios from 'axios';

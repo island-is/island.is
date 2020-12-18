@@ -1,4 +1,4 @@
-import Paginator from '../../Paginator';
+import Paginator from '../../Common/Paginator';
 import Link from 'next/link';
 
 interface Props {

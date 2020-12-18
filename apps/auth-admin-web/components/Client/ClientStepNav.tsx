@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link'
-import { ClientStep } from '../models/common/ClientStep';
+import { ClientStep } from '../../entities/common/ClientStep';
 
 interface Props {
     handleStepChange: (step: ClientStep) => void;
