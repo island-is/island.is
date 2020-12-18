@@ -3,9 +3,9 @@ import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import StatusBar from './StatusBar';
 import HelpBox from './HelpBox';
-import axios from 'axios';
 import APIResponse from '../models/common/APIResponse';
 import { ClientAllowedScopeDTO } from '../models/dtos/client-allowed-scope.dto';
+import api from '../services/api'
 
 interface Props {
   clientId: string;
@@ -29,8 +29,8 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
     allowedScope.clientId = props.clientId;
     allowedScope.scopeName = data.scopeName;
 
-    await axios
-      .post(`/api/client-allowed-scope`, allowedScope)
+    await api
+      .post(`client-allowed-scope`, allowedScope)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
@@ -68,9 +68,9 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
   }
 
   const remove = async (scope: string) => {
-    await axios
+    await api
       .delete(
-        `/api/client-allowed-scope/${props.clientId}/${encodeURIComponent(
+        `client-allowed-scope/${props.clientId}/${encodeURIComponent(
           scope
         )}`
       )

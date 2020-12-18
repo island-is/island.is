@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import StatusBar from './StatusBar';
 import HelpBox from './HelpBox';
-import axios from 'axios';
 import APIResponse from '../models/common/APIResponse';
 import { GrantType } from '../models/grant-type.model';
 import { ClientGrantTypeDTO } from '../models/dtos/client-grant-type.dto';
 import { ClientGrantType } from '../models/client-grant-type.model';
+import api from '../services/api'
 
 interface Props {
   clientId: string;
@@ -24,8 +24,8 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
   }, []);
 
   const getGrantTypes = async () => {
-    await axios
-      .get(`/api/grants`)
+    await api
+      .get(`grants`)
       .then((response) => {
         setGrantTypes(response.data);
       })
@@ -44,8 +44,8 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
       clientId: props.clientId,
     };
 
-    await axios
-      .post(`/api/client-grant-type`, createObj)
+    await api
+      .post(`client-grant-type`, createObj)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
@@ -65,8 +65,8 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
   };
 
   const remove = async (grantType: string) => {
-    await axios
-      .delete(`/api/client-grant-type/${props.clientId}/${grantType}`)
+    await api
+      .delete(`client-grant-type/${props.clientId}/${grantType}`)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
