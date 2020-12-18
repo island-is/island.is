@@ -41,7 +41,7 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
     if (userProfile && userProfile.email) {
       try {
         await updateUserProfile({
-          email
+          email,
         })
         toast.info(
           formatMessage({
@@ -49,11 +49,14 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
             defaultMessage: 'Þú hefur fengið sendan nýjan staðfestingarpóst',
           }),
         )
-      } catch(err) {
-        toast.error(formatMessage({
-          id: 'sp.settings:email-confirmation-resend-error',
-          defaultMessage: 'Ekki tókst að senda nýjan staðfestingarpóst, eitthvað fór úrskeiðis'
-        }))
+      } catch (err) {
+        toast.error(
+          formatMessage({
+            id: 'sp.settings:email-confirmation-resend-error',
+            defaultMessage:
+              'Ekki tókst að senda nýjan staðfestingarpóst, eitthvað fór úrskeiðis',
+          }),
+        )
       }
     }
   }
