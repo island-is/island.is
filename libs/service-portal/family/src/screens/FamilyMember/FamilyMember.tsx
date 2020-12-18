@@ -28,9 +28,7 @@ const NationalRegistryFamilyQuery = gql`
     nationalRegistryFamily {
       fullName
       nationalId
-      address
       gender
-      maritalStatus
     }
   }
 `
@@ -91,14 +89,6 @@ const FamilyMember: ServicePortalModuleComponent = () => {
         />
         <UserInfoLine
           label={defineMessage({
-            id: 'service.portal:legal-residence',
-            defaultMessage: 'Lögheimili',
-          })}
-          content={person?.address || '...'}
-          loading={loading}
-        />
-        <UserInfoLine
-          label={defineMessage({
             id: 'service.portal:gender',
             defaultMessage: 'Kyn',
           })}
@@ -108,24 +98,6 @@ const FamilyMember: ServicePortalModuleComponent = () => {
               : person?.gender
               ? formatMessage(
                   natRegGenderMessageDescriptorRecord[person.gender],
-                )
-              : ''
-          }
-          loading={loading}
-        />
-        <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:marital-status',
-            defaultMessage: 'Hjúskaparstaða',
-          })}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : person?.maritalStatus
-              ? formatMessage(
-                  natRegMaritalStatusMessageDescriptorRecord[
-                    person?.maritalStatus
-                  ],
                 )
               : ''
           }
