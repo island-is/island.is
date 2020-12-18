@@ -7,6 +7,7 @@ import APIResponse from '../models/common/APIResponse';
 import { ClientSecretDTO } from '../models/dtos/client-secret.dto';
 import { ClientSecret } from '../models/client-secret.model';
 import api from '../services/api'
+import NoActiveConnections from './common/NoActiveConnections';
 
 interface Props {
   clientId: string;
@@ -187,6 +188,9 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                   />
                 </div>
               </div>
+
+              <NoActiveConnections title="No secrets are defined" show={!props.secrets || props.secrets.length === 0} helpText="Add a secret and push the Add button">
+              </NoActiveConnections>
 
               <div
                 className={`client-secret__container__list ${

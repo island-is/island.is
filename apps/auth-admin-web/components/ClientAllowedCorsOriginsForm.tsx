@@ -6,6 +6,7 @@ import HelpBox from './HelpBox';
 import APIResponse from '../models/common/APIResponse';
 import { ClientAllowedCorsOriginDTO } from '../models/dtos/client-allowed-cors-origin.dto';
 import api from '../services/api'
+import NoActiveConnections from './common/NoActiveConnections';
 
 interface Props {
   clientId: string;
@@ -81,10 +82,6 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
           <h1>Enter allowed cors origins</h1>
           <div className="client-allowed-cors-origin__container__form">
             <div className="client-allowed-cors-origin__help">
-              <p>
-                <strong>Optional</strong> (you can configure this at a later
-                time)
-              </p>
               <p>Allowed cors origins</p>
             </div>
             <form onSubmit={handleSubmit(add)}>
@@ -117,6 +114,9 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
                   />
                 </div>
               </div>
+
+              <NoActiveConnections title="No active cors origins" show={!props.origins || props.origins.length === 0} helpText="Define a cors origin and push the Add button to add a cors origin">
+              </NoActiveConnections>
 
               <div
                 className={`client-allowed-cors-origin__container__list ${

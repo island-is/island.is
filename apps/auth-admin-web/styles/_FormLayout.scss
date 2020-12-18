@@ -83,6 +83,17 @@
   &__selected__item {
     padding: 13px;
     font-size: 0.8rem;
+    display: flex;
+
+    .selected-item-property {
+      flex: 1;
+      .selected-item-property-name {
+        font-weight: $weight-semi-bold;
+        margin-bottom: 8px;
+      }
+      .selected-item-property-value {
+      }
+    }
   }
 
   &__container__list {

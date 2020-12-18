@@ -5,7 +5,9 @@ import StatusBar from './StatusBar';
 import HelpBox from './HelpBox';
 import APIResponse from '../models/common/APIResponse';
 import { ClientAllowedScopeDTO } from '../models/dtos/client-allowed-scope.dto';
-import api from '../services/api'
+import api from '../services/api';
+import { waitForElement } from '@testing-library/react';
+import NoActiveConnections from './common/NoActiveConnections';
 
 interface Props {
   clientId: string;
@@ -55,24 +57,39 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
     getAvailableScopes();
   }, []);
 
-  const getAvailableScopes = () => {
-    // Dummy scopes
-    const scope1 = { enabled: true, name: "Scope Name 1", displayName: "Display Name 1", description: "Description 1", required: true, showInDiscoveryDocument: true, emphasize: true };
-    const scope2 = { enabled: true, name: "Scope Name 2", displayName: "Display Name 2", description: "Description 2", required: true, showInDiscoveryDocument: true, emphasize: true }; 
-    setScopes([ scope1, scope2 ]);
-  }
+  const getAvailableScopes = async () => {
+    await api
+      .get(`client-allowed-scope`)
+      .then((response) => {
+        const res = new APIResponse();
+        res.statusCode = response.request.status;
+        res.message = response.request.statusText;
+        setResponse(res);
+        setScopes(response.data);
+        if (response.status === 201) {
+          if (props.handleChanges) {
+            props.handleChanges();
+          }
+        }
+      })
+      .catch(function (error) {
+        if (error.response) {
+          setResponse(error.response.data);
+        } else {
+          // TODO: Handle and show error
+        }
+      });
+  };
 
   const setSelectedItem = (scopeName: string) => {
-    const selected = scopes.find(e => e.name == scopeName);
+    const selected = scopes.find((e) => e.name == scopeName);
     setSelectedScope(selected);
-  }
+  };
 
   const remove = async (scope: string) => {
     await api
       .delete(
-        `client-allowed-scope/${props.clientId}/${encodeURIComponent(
-          scope
-        )}`
+        `client-allowed-scope/${props.clientId}/${encodeURIComponent(scope)}`
       )
       .then((response) => {
         const res = new APIResponse();
@@ -107,13 +124,27 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
             <form onSubmit={handleSubmit(add)}>
               <div className="client-allowed-scopes__container__fields">
                 <div className="client-allowed-scopes__container__field">
-                  <label className="client-allowed-scopes__label" htmlFor="scopeName">
+                  <label
+                    className="client-allowed-scopes__label"
+                    htmlFor="scopeName"
+                  >
                     Scope Name
                   </label>
-                  <select id="scopeName" className="client-allowed-scopes__select" name="scopeName" id="scopeName" ref={register({ required: true })} onChange={(e) => setSelectedItem(e.target.value)}>
-                  {scopes.map((scope: any) => {
-                    return (<option value={scope.name} title={scope.description}>{scope.name} - {scope.description}</option>);
-                  })}
+                  <select
+                    id="scopeName"
+                    className="client-allowed-scopes__select"
+                    name="scopeName"
+                    id="scopeName"
+                    ref={register({ required: true })}
+                    onChange={(e) => setSelectedItem(e.target.value)}
+                  >
+                    {scopes.map((scope: any) => {
+                      return (
+                        <option value={scope.name}>
+                          {scope.name}
+                        </option>
+                      );
+                    })}
                   </select>
                   <HelpBox helpText="Select an allowed scope" />
                   <ErrorMessage
@@ -129,10 +160,40 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                     value="Add"
                   />
                 </div>
-                <div className={`client-allowed-scopes__selected__item ${selectedScope ? 'show' : 'hidden'}`}>
-                    {selectedScope?.name} - {selectedScope?.displayName} - {selectedScope?.description}
+                <div
+                  className={`client-allowed-scopes__selected__item ${
+                    selectedScope?.name ? 'show' : 'hidden'
+                  }`}
+                >
+                  <div className="selected-item-property">
+                    <div className="selected-item-property-name">
+                      Scope Name
+                    </div>
+                    <div className="selected-item-property-value">
+                      {selectedScope?.name}
+                    </div>
                   </div>
+                  <div className="selected-item-property">
+                    <div className="selected-item-property-name">
+                      Display name
+                    </div>
+                    <div className="selected-item-property-value">
+                      {selectedScope?.displayName}
+                    </div>
+                  </div>
+                  <div className="selected-item-property">
+                    <div className="selected-item-property-name">
+                      Description
+                    </div>
+                    <div className="selected-item-property-value">
+                      {selectedScope?.description}
+                    </div>
+                  </div>
+                </div>
               </div>
+
+              <NoActiveConnections title="No active scopes" show={!props.scopes || props.scopes.length === 0} helpText="Select a scope and push the Add button to add a scope">
+              </NoActiveConnections>
 
               <div
                 className={`client-allowed-scopes__container__list ${

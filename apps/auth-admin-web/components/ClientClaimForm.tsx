@@ -7,6 +7,7 @@ import { ClientClaimDTO } from '../models/dtos/client-claim.dto';
 import HelpBox from './HelpBox';
 import StatusBar from './StatusBar';
 import api from '../services/api'
+import NoActiveConnections from './common/NoActiveConnections';
 
 interface Props {
   clientId: string;
@@ -138,6 +139,9 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                   />
                 </div>
               </div>
+
+              <NoActiveConnections title="No active claims" show={!props.claims || props.claims.length === 0} helpText="Fill out the form and push the Add button to add a claim">
+              </NoActiveConnections>
 
               <div
                 className={`client-claim__container__list ${

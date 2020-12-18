@@ -6,6 +6,7 @@ import StatusBar from './StatusBar';
 import HelpBox from './HelpBox';
 import APIResponse from '../models/common/APIResponse';
 import api from '../services/api'
+import NoActiveConnections from './common/NoActiveConnections';
 
 interface Props {
   clientId: string;
@@ -81,7 +82,6 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
           <h1>Enter a post logout redirect URL</h1>
           <div className="client-post-logout__container__form">
           <div className="client-post-logout__help">
-            <p><strong>Optional</strong> (you can configure this at a later time)</p>
             <p>Users can be returned to this URL(s) after logging out</p>
           </div>
             <form onSubmit={handleSubmit(add)}>
@@ -113,6 +113,9 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                 </div>
               </div>
 
+              <NoActiveConnections title="No client post logout redirect uris are defined" show={!props.uris || props.uris.length === 0} helpText="Add a post logout uri (if needed) and push the Add button. If a uri exists in the form, it's the display uri defined in the Client form">
+              </NoActiveConnections>
+            
               <div className={`client-post-logout__container__list ${
                     props.uris && props.uris.length > 0  ? 'show' : 'hidden'
                   }`}>

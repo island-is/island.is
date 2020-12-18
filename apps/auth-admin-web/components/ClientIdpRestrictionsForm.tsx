@@ -3,6 +3,7 @@ import StatusBar from './StatusBar';
 import HelpBox from './HelpBox';
 import APIResponse from '../models/common/APIResponse';
 import api from '../services/api'
+import NoActiveConnections from './common/NoActiveConnections';
 
 interface Props {
   clientId: string;
@@ -86,8 +87,8 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
 
           <div className="client-idp-restriction__container__form">
             <div className="client-idp-restriction__help">
-              Select the types of authentication that are allowed for this
-              Client
+              Select the types of authentication that are <strong>allowed</strong> for this
+              Client. This restricts the IDS to just allow the authenication types selected for this client.
             </div>
             <div className="client-idp-restriction__container__fields">
               <div className="client-idp-restriction__container__checkbox__field">
@@ -120,6 +121,9 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
                 <HelpBox helpText="Allows users to login with identity cards" />
               </div>
             </div>
+
+            <NoActiveConnections title="No IDP Restrictions are enabled" show={!props.restrictions || props.restrictions.length === 0} helpText="Check the appropriate authentication type for the client">
+            </NoActiveConnections>
 
             <div className="client-idp-restriction__buttons__container">
               <div className="client-idp-restriction__button__container">

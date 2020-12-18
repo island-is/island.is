@@ -6,6 +6,7 @@ import { GrantType } from '../models/grant-type.model';
 import { ClientGrantTypeDTO } from '../models/dtos/client-grant-type.dto';
 import { ClientGrantType } from '../models/client-grant-type.model';
 import api from '../services/api'
+import NoActiveConnections from './common/NoActiveConnections';
 
 interface Props {
   clientId: string;
@@ -98,7 +99,7 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
       <StatusBar status={response}></StatusBar>
       <div className="client-grant-types__wrapper">
         <div className="client-grant-types__container">
-          <h1>Select authentication types</h1>
+          <h1>Select the appropriate grant type</h1>
 
           <div className="client-grant-types__container__form">
             <div className="client-grant-types__help">
@@ -135,6 +136,10 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
                 );
               })}
             </div>
+
+            
+            <NoActiveConnections title="No grant types are defined" show={!props.grantTypes || props.grantTypes.length === 0} helpText="Check the appropriate grant type(s) for the client">
+            </NoActiveConnections>
 
             <div className="client-grant-types__buttons__container">
               <div className="client-grant-types__button__container">
