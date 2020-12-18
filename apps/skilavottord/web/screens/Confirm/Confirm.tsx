@@ -147,7 +147,7 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
   const routeToAuthCheck = () => {
     localStorage.setItem(ACCEPTED_TERMS_AND_CONDITION, id.toString())
     router.replace(
-      `${AUTH_URL['citizen']}/login?returnUrl=${routes.recycleVehicle.baseRoute}/${id}/handover`,
+      `${AUTH_URL['citizen']}/login?returnUrl=${BASE_PATH}${routes.recycleVehicle.baseRoute}/${id}/handover`,
     )
   }
 

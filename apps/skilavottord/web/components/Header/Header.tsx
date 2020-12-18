@@ -74,7 +74,7 @@ export const Header: FC = () => {
       userName={user?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={() => {
-        api.logout().then(() => router.push(`${BASE_PATH}${homeRoute}`))
+        api.logout().then(() => router.push('/'))
       }}
     />
   )

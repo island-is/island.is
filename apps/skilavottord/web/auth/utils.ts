@@ -1,5 +1,4 @@
 import cookies from 'next-cookies'
-import { BASE_PATH } from '../utils/consts'
 
 const CSRF_COOKIE_NAME = 'skilavottord.csrf'
 
@@ -41,6 +40,6 @@ export const hasPermission = (page: Page, role: Role) => {
 }
 
 export const AUTH_URL = {
-  citizen: `${BASE_PATH}/api/auth/citizen`,
-  recyclingPartner: `${BASE_PATH}/api/auth/company`,
+  citizen: '/api/auth/citizen',
+  recyclingPartner: '/api/auth/company',
 }
