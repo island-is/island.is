@@ -28,6 +28,8 @@ import {
 import { GetPensionFunds, GetUnions } from '../graphql/queries'
 import { NO, YES } from '../constants'
 
+import Logo from '../assets/Logo'
+
 interface SelectItem {
   id: string
   name: string
@@ -44,6 +46,7 @@ type PensionFundsQuery = {
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
   name: 'Fæðingarorlof',
+  logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
@@ -386,22 +389,11 @@ export const ParentalLeaveForm: Form = buildForm({
                   format: '######-####',
                   placeholder: '000000-0000',
                 }),
-                // TODO this is no longer needed
-                // buildDividerField({
-                //   color: 'dark400',
-                //   name:
-                //     'Who on behalf of your employer will have to approve this application?',
-                // }),
-                // buildTextField({
-                //   name: 'Contact name',
-                //   width: 'half',
-                //   id: 'employer.contact',
-                // }),
-                // buildTextField({
-                //   name: 'Contact social security nr',
-                //   width: 'half',
-                //   id: 'employer.contactId',
-                // }),
+                buildTextField({
+                  name: m.employerEmail,
+                  width: 'full',
+                  id: 'employer.email',
+                }),
               ],
             }),
           ],

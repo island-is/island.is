@@ -59,6 +59,7 @@ export const dataSchema = z.object({
   employer: z.object({
     name: z.string().nonempty(),
     nationalRegistryId: z.string().nonempty(),
+    email: z.string().email().nonempty(),
     // .refine(
     //   (n) => kennitala.isValid(n) && kennitala.isCompany(n),
     //   'Kennitala þarf að vera gild',

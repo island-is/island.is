@@ -5,6 +5,8 @@ import {
   IdentityResource,
   IdentityResourcesDTO,
   ResourcesService,
+  IdentityResourceUserClaim,
+  ApiResourcesDTO,
 } from '@island.is/auth-api-lib'
 import {
   BadRequestException,
@@ -135,6 +137,13 @@ export class ResourcesController {
     }
   }
 
+  @Get('identity-resource/:id')
+  async GetIdentityResourceByName(
+    @Param('id') name: string,
+  ): Promise<IdentityResource> {
+    return await this.resourcesService.getIdentityResourceByName(name)
+  }
+
   /** Creates a new Identity Resource */
   @Post('identity-resource')
   @ApiCreatedResponse({ type: IdentityResource })
@@ -179,6 +188,15 @@ export class ResourcesController {
     return await this.resourcesService.createApiScope(apiScope)
   }
 
+  /** Creates a new Api Scope */
+  @Post('api-resource')
+  @ApiCreatedResponse({ type: ApiResource })
+  async createApiResource(
+    @Body() apiResource: ApiResourcesDTO,
+  ): Promise<ApiResource> {
+    return await this.resourcesService.createApiResource(apiResource)
+  }
+
   /** Updates an existing Api Scope */
   @Put('api-scope/:name')
   @ApiOkResponse({ type: ApiScope })
@@ -193,8 +211,22 @@ export class ResourcesController {
     return await this.resourcesService.updateApiScope(apiScope, name)
   }
 
+  /** Updates an existing Api Scope */
+  @Put('api-resource/:name')
+  @ApiOkResponse({ type: ApiResource })
+  async updateApiResource(
+    @Body() apiResource: ApiResourcesDTO,
+    @Param('name') name: string,
+  ): Promise<ApiResource> {
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
+    }
+
+    return await this.resourcesService.updateApiResource(apiResource, name)
+  }
+
   /** Deletes an existing Api Scope by it's name */
-  @Delete('api-scope/:id')
+  @Delete('api-scope/:name')
   @ApiOkResponse()
   async deleteApiScope(@Param('name') name: string): Promise<number> {
     if (!name) {
@@ -202,5 +234,61 @@ export class ResourcesController {
     }
 
     return await this.resourcesService.deleteApiScope(name)
+  }
+
+  /** Deletes an existing Api resource by it's name */
+  @Delete('api-resource/:name')
+  @ApiOkResponse()
+  async deleteApiResource(@Param('name') name: string): Promise<number> {
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
+    }
+
+    return await this.resourcesService.deleteApiResource(name)
+  }
+
+  @Get('user-claims/:name')
+  async getResourceUserClaims(@Param('name') name: string): Promise<any> {
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
+    }
+
+    return await this.resourcesService.getResourceUserClaims(name)
+  }
+
+  @Post('user-claims/:identityResourceName/:claimName')
+  async addResourceUserClaim(
+    @Param('identityResourceName') identityResourceName: string,
+    @Param('claimName') claimName: string,
+  ): Promise<IdentityResourceUserClaim | null> {
+    return await this.resourcesService.addResourceUserClaim(
+      identityResourceName,
+      claimName,
+    )
+  }
+
+  @Delete('user-claims/:identityResourceName/:claimName')
+  async removeResourceUserClaim(
+    @Param('identityResourceName') identityResourceName: string,
+    @Param('claimName') claimName: string,
+  ): Promise<number> {
+    return await this.resourcesService.removeResourceUserClaim(
+      identityResourceName,
+      claimName,
+    )
+  }
+
+  @Get('api-scope/:name')
+  async getApiScopeByName(
+    @Param('name') name: string,
+  ): Promise<ApiScope | null> {
+    return await this.resourcesService.getApiScopeByName(name)
+  }
+
+  @Get('api-resource/:name')
+  async getApiResourceByName(
+    @Param('name') name: string,
+  ): Promise<ApiResource | null> {
+    return await this.resourcesService.getApiResourceByName(name)
   }
 }

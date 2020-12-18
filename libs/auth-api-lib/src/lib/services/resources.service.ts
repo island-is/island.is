@@ -1,7 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Op, WhereOptions } from 'sequelize'
+import { Op, Sequelize, WhereOptions } from 'sequelize'
 import { IdentityResource } from '../entities/models/identity-resource.model'
 import { ApiScope } from '../entities/models/api-scope.model'
 import { ApiResource } from '../entities/models/api-resource.model'
@@ -12,6 +12,7 @@ import { ApiResourceUserClaim } from '../entities/models/api-resource-user-claim
 import { ApiScopeUserClaim } from '../entities/models/api-scope-user-claim.model'
 import { IdentityResourcesDTO } from '../entities/dto/identity-resources.dto'
 import { ApiScopesDTO } from '../entities/dto/api-scopes.dto'
+import { ApiResourcesDTO } from '../entities/dto/api-resources.dto'
 
 @Injectable()
 export class ResourcesService {
@@ -24,8 +25,12 @@ export class ResourcesService {
     private apiResourceModel: typeof ApiResource,
     @InjectModel(ApiResourceScope)
     private apiResourceScopeModel: typeof ApiResourceScope,
+    @InjectModel(IdentityResourceUserClaim)
+    private identityResourceUserClaimModel: typeof IdentityResourceUserClaim,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    @Inject(Sequelize)
+    private sequelize: Sequelize,
   ) {}
 
   /** Get's all identity resources and total count of rows */
@@ -104,6 +109,17 @@ export class ResourcesService {
     }
 
     return this.apiScopeModel.findByPk(name)
+  }
+
+  /** Gets API scope by name */
+  async getApiResourceByName(name: string): Promise<ApiResource | null> {
+    this.logger.debug('Getting data about api scope with name: ', name)
+
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
+    }
+
+    return this.apiResourceModel.findByPk(name)
   }
 
   /** Get identity resources by scope names */
@@ -230,6 +246,13 @@ export class ResourcesService {
     return await this.identityResourceModel.destroy({ where: { name: name } })
   }
 
+  /** Creates a new Api Resource */
+  async createApiResource(apiResource: ApiResourcesDTO): Promise<ApiResource> {
+    this.logger.debug('Creating a new api resource')
+
+    return await this.apiResourceModel.create({ ...apiResource })
+  }
+
   /** Creates a new Api Scope */
   async createApiScope(apiScope: ApiScopesDTO): Promise<ApiScope> {
     this.logger.debug('Creating a new api scope')
@@ -253,6 +276,25 @@ export class ResourcesService {
     return this.getApiScopeByName(name)
   }
 
+  /** Updates an existing API scope */
+  async updateApiResource(
+    apiResource: ApiResourcesDTO,
+    name: string,
+  ): Promise<ApiResource | null> {
+    this.logger.debug('Updating api resource with name: ', name)
+
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
+    }
+
+    await this.apiResourceModel.update(
+      { ...apiResource },
+      { where: { name: name } },
+    )
+
+    return this.getApiResourceByName(name)
+  }
+
   /** Deletes an API scope */
   async deleteApiScope(name: string): Promise<number> {
     this.logger.debug('Deleting api scope with name: ', name)
@@ -262,5 +304,72 @@ export class ResourcesService {
     }
 
     return await this.apiScopeModel.destroy({ where: { name: name } })
+  }
+
+  /** Deletes an API resource */
+  async deleteApiResource(name: string): Promise<number> {
+    this.logger.debug('Deleting api resource with name: ', name)
+
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
+    }
+
+    return await this.apiResourceModel.destroy({ where: { name: name } })
+  }
+
+  async getResourceUserClaims(name: string): Promise<any> {
+    this.logger.debug('Getting user claims with name: ', name)
+
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
+    }
+
+    // TODO: Create a table with all the claim names and get that list instead of distinct I.claim_name
+    const [results, metadata] = await this.sequelize.query(
+      `select distinct I.claim_name, (
+        SELECT CAST(
+           CASE WHEN EXISTS(
+             SELECT * FROM identity_resource_user_claim where identity_resource_name like '${name}' and claim_name = I.claim_name
+            ) THEN True 
+           ELSE False
+           END 
+        AS BOOLEAN)
+      ) as exists, 'Lorem ipsum' as claim_description
+      from identity_resource_user_claim I
+      order by exists desc
+      LIMIT 8`,
+    )
+
+    return results
+  }
+
+  async addResourceUserClaim(
+    identityResourceName: string,
+    claimName: string,
+  ): Promise<IdentityResourceUserClaim> {
+    if (!identityResourceName || !claimName) {
+      throw new BadRequestException('Name and resourceName must be provided')
+    }
+
+    return await this.identityResourceUserClaimModel.create({
+      identityResourceName: identityResourceName,
+      claimName: claimName,
+    })
+  }
+
+  async removeResourceUserClaim(
+    identityResourceName: string,
+    claimName: string,
+  ): Promise<number> {
+    if (!identityResourceName || !claimName) {
+      throw new BadRequestException('Name and resourceName must be provided')
+    }
+
+    return await this.identityResourceUserClaimModel.destroy({
+      where: {
+        identityResourceName: identityResourceName,
+        claimName: claimName,
+      },
+    })
   }
 }
