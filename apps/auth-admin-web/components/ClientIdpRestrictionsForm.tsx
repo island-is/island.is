@@ -83,12 +83,12 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
       <StatusBar status={response}></StatusBar>
       <div className="client-idp-restriction__wrapper">
         <div className="client-idp-restriction__container">
-          <h1>Select authentication types</h1>
+          <h1>Identity provider restrictions</h1>
 
           <div className="client-idp-restriction__container__form">
             <div className="client-idp-restriction__help">
-              Select the types of authentication that are <strong>allowed</strong> for this
-              Client. This restricts the IDS to just allow the authenication types selected for this client.
+            Specifies which external IdPs can be used with this client.
+            <p><strong>If selection is empty all IdPs are allowed</strong></p>
             </div>
             <div className="client-idp-restriction__container__fields">
               <div className="client-idp-restriction__container__checkbox__field">
@@ -122,7 +122,7 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
               </div>
             </div>
 
-            <NoActiveConnections title="No IDP Restrictions are enabled" show={!props.restrictions || props.restrictions.length === 0} helpText="Check the appropriate authentication type for the client">
+            <NoActiveConnections title="All external IdPs are enabled" show={!props.restrictions || props.restrictions.length === 0} helpText="Check the appropriate external IdPs for the client. If nothing is selected then all methods are allowed">
             </NoActiveConnections>
 
             <div className="client-idp-restriction__buttons__container">

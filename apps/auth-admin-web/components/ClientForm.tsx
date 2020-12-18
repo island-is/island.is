@@ -267,7 +267,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                     placeholder="https://localhost:4200"
                     title="Application URL that will be seen on consent screens"
                   />
-                  <HelpBox helpText="Application URL that will be seen on consent screens" />
+                  <HelpBox helpText="URI to further information about client (used on consent screen)" />
                 </div>
                 <div className="client__container__field">
                   <label className="client__label">Description</label>
@@ -296,7 +296,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                     }
                     className="client__input"
                   />
-                  <HelpBox helpText="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem architecto a odit ea distinctio consequatur autem nesciunt cupiditate eos, error reprehenderit illum dolor, mollitia modi vitae. Ducimus esse eos explicabo." />
+                  <HelpBox helpText="If set, the prefix client claim types will be prefixed with. Defaults to client_. The intent is to make sure they don’t accidentally collide with user claims." />
                   <ErrorMessage
                     as="span"
                     errors={errors}
@@ -389,6 +389,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       name="client.pairWiseSubjectSalt"
                       ref={register}
                     />
+                    <HelpBox helpText="Salt value used in pair-wise subjectId generation for users of this client." />
                   </div>
 
                   <div className="client__container__field">
@@ -400,6 +401,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       className="client__input"
                       ref={register}
                     />
+                    <HelpBox helpText="Specifies the type of user code to use for the client. Otherwise falls back to default" />
                   </div>
 
                   {/* Number inputs */}
@@ -412,6 +414,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       defaultValue={client.accessTokenType}
                       className="client__input"
                     />
+                    <HelpBox helpText="Specifies whether the access token is a reference token or a self contained JWT token (defaults to Jwt)." />
                     <ErrorMessage
                       as="span"
                       errors={errors}
@@ -431,6 +434,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       defaultValue={client.absoluteRefreshTokenLifetime}
                       className="client__input"
                     />
+                    <HelpBox helpText="Maximum lifetime of a refresh token in seconds. Defaults to 2592000 seconds / 30 days" />
                     <ErrorMessage
                       as="span"
                       errors={errors}
@@ -450,6 +454,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       defaultValue={client.accessTokenLifetime}
                       className="client__input"
                     />
+                    <HelpBox helpText="Lifetime of access token in seconds (defaults to 3600 seconds / 1 hour)" />
                     <ErrorMessage
                       as="span"
                       errors={errors}
@@ -468,6 +473,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       ref={register({ required: true })}
                       className="client__input"
                     />
+                    <HelpBox helpText="Lifetime of authorization code in seconds (defaults to 300 seconds / 5 minutes)" />
                     <ErrorMessage
                       as="span"
                       errors={errors}
@@ -484,6 +490,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       className="client__input"
                       ref={register}
                     />
+                    <HelpBox helpText="Lifetime of a user consent in seconds. Defaults to null (no expiration)." />
                   </div>
                   <div className="client__container__field">
                     <label className="client__label">
@@ -496,6 +503,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       defaultValue={client.deviceCodeLifetime}
                       className="client__input"
                     />
+                    <HelpBox helpText="Lifetime to device code in seconds (defaults to 300 seconds / 5 minutes)" />
                     <ErrorMessage
                       as="span"
                       errors={errors}
@@ -513,6 +521,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       className="client__input"
                       ref={register}
                     />
+                    <HelpBox helpText="The maximum duration (in seconds) since the last time the user authenticated. (Default null)" />
                   </div>
 
                   <div className="client__container__field">
@@ -526,6 +535,9 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       className="client__input"
                       name="client.refreshTokenExpiration"
                     />
+                    <HelpBox helpText="Absolute the refresh token will expire on a fixed point in time (specified by the AbsoluteRefreshTokenLifetime)
+
+Sliding when refreshing the token, the lifetime of the refresh token will be renewed (by the amount specified in SlidingRefreshTokenLifetime). The lifetime will not exceed AbsoluteRefreshTokenLifetime." />
                   </div>
 
                   <div className="client__container__field">
@@ -537,6 +549,9 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       className="client__input"
                       name="client.refreshTokenUsage"
                     />
+                    <HelpBox helpText="ReUse the refresh token handle will stay the same when refreshing tokens
+
+OneTime the refresh token handle will be updated when refreshing tokens. This is the default" />
                   </div>
 
                   <div className="client__container__field">
@@ -550,6 +565,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       className="client__input"
                       ref={register}
                     />
+                    <HelpBox helpText="Sliding lifetime of a refresh token in seconds. Defaults to 1296000 seconds / 15 days" />
                   </div>
 
                   <div className="client__container__field">
@@ -563,6 +579,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       ref={register({ required: true })}
                       className="client__input"
                     />
+                    <HelpBox helpText="Lifetime to identity token in seconds (defaults to 300 seconds / 5 minutes)" />
                     <ErrorMessage
                       as="span"
                       errors={errors}
@@ -574,7 +591,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                   {/* Checkboxes */}
                   <div className="client__container__checkbox__field">
                     <label className="client__label">
-                      allow access token via browser
+                      Allow access token via browser
                     </label>
                     <input
                       type="checkbox"
@@ -583,6 +600,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       className="client__input"
                       ref={register}
                     />
+                    <HelpBox helpText="Specifies whether this client is allowed to receive access tokens via the browser. This is useful to harden flows that allow multiple response types (e.g. by disallowing a hybrid flow client that is supposed to use code id_token to add the token response type and thus leaking the token to the browser." />
                   </div>
                   <div className="client__container__checkbox__field">
                     <label className="client__label">
@@ -607,6 +625,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       className="client__input"
                       ref={register}
                     />
+                    <HelpBox helpText="Specifies whether clients using PKCE can use a plain text code challenge (not recommended)" />
                   </div>
                   <div className="client__container__checkbox__field">
                     <label className="client__label">
@@ -619,6 +638,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       className="client__input"
                       ref={register}
                     />
+                    <HelpBox helpText="Specifies whether user can choose to store consent decisions." />
                   </div>
                   <div className="client__container__checkbox__field">
                     <label className="client__label">
@@ -631,6 +651,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       className="client__input"
                       ref={register}
                     />
+                    <HelpBox helpText="When requesting both an id token and access token, should the user claims always be added to the id token instead of requring the client to use the userinfo endpoint. Default is false." />
                   </div>
                   <div className="client__container__checkbox__field">
                     <label className="client__label">
@@ -643,6 +664,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       className="client__input"
                       ref={register}
                     />
+                    <HelpBox helpText="If set, the client claims will be sent for every flow. If not, only for client credentials flow (default is false)" />
                   </div>
 
                   <div className="client__container__checkbox__field">
@@ -656,6 +678,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       className="client__input"
                       ref={register}
                     />
+                    <HelpBox helpText="Specifies if the user’s session id should be sent in the request to the BackChannelLogoutUri" />
                   </div>
 
                   <div className="client__container__checkbox__field">
@@ -667,6 +690,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       name="client.enableLocalLogin"
                       ref={register}
                     />
+                    <HelpBox helpText="Specifies if this client can use local accounts, or external IdPs only" />
                   </div>
 
                   <div className="client__container__checkbox__field">
@@ -680,6 +704,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       className="client__input"
                       ref={register}
                     />
+                    <HelpBox helpText="Specifies if the user’s session id should be sent to the FrontChannelLogoutUri" />
                   </div>
 
                   <div className="client__container__checkbox__field">
@@ -691,6 +716,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       name="client.includeJwtId"
                       ref={register}
                     />
+                    <HelpBox helpText="Specifies whether JWT access tokens should have an embedded unique ID (via the jti claim)" />
                   </div>
 
                   <div className="client__container__checkbox__field">
@@ -704,6 +730,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       name="client.requireClientSecret"
                       ref={register}
                     />
+                    <HelpBox helpText="Specifies whether this client needs a secret to request tokens from the token endpoint" />
                   </div>
 
                   <div className="client__container__checkbox__field">
@@ -715,6 +742,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       className="client__input"
                       ref={register}
                     />
+                    <HelpBox helpText="Specifies whether clients using an authorization code based grant type must send a proof key" />
                   </div>
 
                   <div className="client__container__checkbox__field">
@@ -728,6 +756,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       className="client__input"
                       ref={register}
                     />
+                    <HelpBox helpText="Gets or sets a value indicating whether the access token (and its claims) should be updated on a refresh token request." />
                   </div>
                 </div>
               </div>

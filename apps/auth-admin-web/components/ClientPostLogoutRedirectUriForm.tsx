@@ -82,7 +82,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
           <h1>Enter a post logout redirect URL</h1>
           <div className="client-post-logout__container__form">
           <div className="client-post-logout__help">
-            <p>Users can be returned to this URL(s) after logging out</p>
+          Specifies allowed URIs to redirect to after logout. See the <a href="https://openid.net/specs/openid-connect-session-1_0.html" target="_blank">OIDC Connect Session Management spec</a> for more details.
           </div>
             <form onSubmit={handleSubmit(add)}>
               <div className="client-post-logout__container__fields">
