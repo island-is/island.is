@@ -12,7 +12,7 @@ class ClientsList extends Component {
     page: 1,
   };
 
-  getClients = async (page, count) => {
+  getClients = async (page: number, count: number) => {
     const response = await api.get(
       `clients/?page=${page}&count=${count}`
     );
@@ -21,10 +21,6 @@ class ClientsList extends Component {
       clients: response.data.rows,
       rowCount: response.data.count,
     });
-  };
-
-  componentDidMount = async () => {
-    // this.getClients(this.state.page, this.state.count)
   };
 
   handlePageChange = async (page: number, count: number) => {

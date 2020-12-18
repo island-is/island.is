@@ -6,7 +6,6 @@ import HelpBox from '../Common/HelpBox';
 import APIResponse from '../../entities/common/APIResponse';
 import { ClientAllowedScopeDTO } from '../../entities/dtos/client-allowed-scope.dto';
 import api from '../../services/api';
-import { waitForElement } from '@testing-library/react';
 import NoActiveConnections from '../Common/NoActiveConnections';
 
 interface Props {
@@ -134,7 +133,6 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                     id="scopeName"
                     className="client-allowed-scopes__select"
                     name="scopeName"
-                    id="scopeName"
                     ref={register({ required: true })}
                     onChange={(e) => setSelectedItem(e.target.value)}
                   >

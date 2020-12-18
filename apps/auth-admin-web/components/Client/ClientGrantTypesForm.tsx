@@ -4,7 +4,6 @@ import HelpBox from '../Common/HelpBox';
 import APIResponse from '../../entities/common/APIResponse';
 import { GrantType } from '../../entities/models/grant-type.model';
 import { ClientGrantTypeDTO } from '../../entities/dtos/client-grant-type.dto';
-import { ClientGrantType } from '../entities/client-grant-type.model';
 import api from '../../services/api'
 import NoActiveConnections from '../Common/NoActiveConnections';
 

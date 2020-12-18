@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import StatusBar from '../Layout/StatusBar';
@@ -25,11 +25,11 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
   const [response, setResponse] = useState<APIResponse>(new APIResponse());
 
   const makeDefaultSecret = (length: number) => {
-    var result = '';
-    var characters =
+    let result = '';
+    const characters =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;

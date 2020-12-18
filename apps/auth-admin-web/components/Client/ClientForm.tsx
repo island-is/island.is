@@ -167,7 +167,6 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                     defaultValue={client.nationalId}
                     className="client__input"
                     placeholder="0123456789"
-                    title=""
                     maxLength={10}
                     title="The nationalId (Kennitala) registered for the client"
                   />
