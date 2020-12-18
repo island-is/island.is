@@ -120,7 +120,7 @@ export const Filter: React.FC<FilterProps> = ({
         <Stack space={2} dividers={false}>
           {children}
         </Stack>
-        <Box textAlign="right">
+        <Box textAlign="right" paddingTop={2}>
           <Button
             icon="reload"
             size="small"

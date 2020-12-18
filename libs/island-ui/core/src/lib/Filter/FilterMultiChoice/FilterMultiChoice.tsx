@@ -86,6 +86,9 @@ export const FilterMultiChoice: React.FC<FilterMultiChoiceProps> = ({
               label={category.label}
               labelUse="h5"
               labelVariant="h5"
+              labelColor={
+                category.selected.length > 0 ? 'blue400' : 'currentColor'
+              }
               iconVariant="small"
             >
               <Stack space={1}>
