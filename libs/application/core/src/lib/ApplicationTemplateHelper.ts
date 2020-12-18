@@ -3,14 +3,12 @@ import {
   Event,
   EventObject,
   MachineOptions,
-  ServiceConfig,
   InvokeMeta,
   InvokeSourceDefinition,
   ActionTypes,
 } from 'xstate'
 import { Application, ExternalData, FormValue } from '../types/Application'
 import merge from 'lodash/merge'
-import { SendMailOptions } from 'nodemailer'
 
 import {
   ApplicationContext,
@@ -23,8 +21,11 @@ import {
 } from '../types/StateMachine'
 import { ApplicationTemplate } from '../types/ApplicationTemplate'
 
-interface EmailServiceInvokeSourceDefinition extends InvokeSourceDefinition {
-  emailTemplate: (context: ApplicationContext) => SendMailOptions
+interface APITemplateUtilsServiceInvokeSourceDefinition
+  extends InvokeSourceDefinition {
+  // TODO: use action type from apiTemplateUtils
+  // import { ApplicationAPITemplateAction } from '@island.is/application/api-template-utils'
+  action: any
 }
 
 export class ApplicationTemplateHelper<
@@ -79,11 +80,12 @@ export class ApplicationTemplateHelper<
    */
   changeState(
     event: Event<TEvents>,
-    sendEmail: (emailTemplate: SendMailOptions) => Promise<string>,
+    // TODO: import type from application-api-template-utils
+    apiTemplateUtils: any,
   ): [boolean, string, Application] {
     this.initializeStateMachine(undefined, {
       services: {
-        emailService: (
+        apiTemplateUtils: (
           context: TContext,
           event: TEvents,
           { src }: InvokeMeta,
@@ -93,15 +95,18 @@ export class ApplicationTemplateHelper<
             return Promise.reject('')
           }
 
-          const emailTemplate = (src as EmailServiceInvokeSourceDefinition).emailTemplate(
-            context,
-          )
+          const {
+            action,
+          } = src as APITemplateUtilsServiceInvokeSourceDefinition
 
-          if (!emailTemplate) {
-            return Promise.reject('No email template provided')
+          try {
+            return apiTemplateUtils.performAction(action)
+          } catch (e) {
+            console.log(e)
+            // pass
           }
 
-          return sendEmail(emailTemplate)
+          return Promise.reject('')
         },
       },
     })

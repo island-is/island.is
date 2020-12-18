@@ -3,6 +3,7 @@ import { onError, ErrorResponse } from '@apollo/client/link/error'
 import Router from 'next/router'
 
 import { NotificationService, api } from '../services'
+import { BASE_PATH } from '../utils/consts'
 
 export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   if (networkError) {
@@ -15,7 +16,7 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
         case 'UNAUTHENTICATED':
           return api.logout().then(() => Router.reload())
         case 'FORBIDDEN':
-          return Router.push('/404')
+          return Router.push(`${BASE_PATH}/404`)
         default:
           return NotificationService.onGraphQLError({
             graphQLErrors,

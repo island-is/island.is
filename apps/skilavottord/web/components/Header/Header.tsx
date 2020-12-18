@@ -11,6 +11,7 @@ import { Locale } from '@island.is/skilavottord-web/i18n/I18n'
 import { getRoutefromLocale } from '@island.is/skilavottord-web/utils/routesMapper'
 import { useQuery } from '@apollo/client'
 import { Role } from '@island.is/skilavottord-web/auth/utils'
+import { BASE_PATH } from '../../utils/consts'
 
 export const skilavottordUserQuery = gql`
   query skilavottordUserQuery {
@@ -73,7 +74,7 @@ export const Header: FC = () => {
       userName={user?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={() => {
-        api.logout().then(() => router.push(homeRoute))
+        api.logout().then(() => router.push(`${BASE_PATH}${homeRoute}`))
       }}
     />
   )

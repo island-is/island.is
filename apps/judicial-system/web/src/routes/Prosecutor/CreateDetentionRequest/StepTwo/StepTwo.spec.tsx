@@ -64,14 +64,9 @@ describe('Create detention request, step two', () => {
     )
 
     // Act and Assert
+    // Arrest date is optional
     userEvent.type(
-      await waitFor(() => screen.getAllByLabelText(/Veldu dagsetningu/)[0]),
-      '15.11.2020',
-    )
-    userEvent.type(screen.getByLabelText('Tímasetning *'), '13:37')
-
-    userEvent.type(
-      screen.getAllByLabelText(/Veldu dagsetningu/)[1],
+      await waitFor(() => screen.getAllByLabelText(/Veldu dagsetningu/)[1]),
       `${formattedTodaysDate}.${new Date().getMonth() + 1}.2020`,
     )
 
@@ -179,10 +174,7 @@ describe('Create detention request, step two', () => {
     // Assert
     expect(
       await waitFor(
-        () =>
-          screen.getAllByLabelText(
-            'Veldu dagsetningu *',
-          )[1] as HTMLInputElement,
+        () => screen.getByLabelText('Veldu dagsetningu *') as HTMLInputElement,
       ),
     ).toBeDisabled()
   })
