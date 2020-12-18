@@ -8,7 +8,7 @@ export interface LinkResolverResponse {
 
 interface LinkResolverInput {
   linkType: LinkType
-  slugs?: string[]
+  variables?: string[]
   locale?: Locale
 }
 
@@ -19,7 +19,12 @@ interface TypeResolverResponse {
 
 export type LinkType = keyof typeof routesTemplate
 
-// the order matters, arrange from most specific to least specific for correct type resolution
+/*
+The order here matters for type resolution, arrange overlapping types from most specific to least specific for correct type resolution.
+This should only include one entry for each type.
+This should only include one instance of a pathTemplate
+A locale can be ignored by setting it's value to an empty string
+*/
 export const routesTemplate = {
   aboutsubpage: {
     is: '/stafraent-island/[slug]',
@@ -75,54 +80,61 @@ export const routesTemplate = {
   },
 }
 
+// This considers one block ("[someVar]") to be one variable and ignores the path variables name
 const replaceVariableInPath = (path: string, replacement: string): string => {
   return path.replace(/\[\w+\]/, replacement)
 }
 
-// returns a regex query for a given route template
+// converts a path template to a regex query for matching
 const convertToRegex = (routeTemplate: string) =>
   routeTemplate
     .replace(/\//g, '\\/') // escape slashes to match literal "/" in route template
     .replace(/\[\w+\]/g, '\\w+') // make path variables be regex word matches
 
-// tries to return url for given type
+/*
+Finds the correct path for a given type and locale.
+Returns /404 if no path is found
+*/
 export const linkResolver = (
   linkType: LinkResolverInput['linkType'],
-  slugs: LinkResolverInput['slugs'] = [],
+  variables: LinkResolverInput['variables'] = [],
   locale: LinkResolverInput['locale'],
 ): LinkResolverResponse => {
+  // we lowercase here to allow components to pass unmodified __typename fields
   const type = linkType.toLowerCase()
 
+  // We consider path not found if it has no entry in routesTemplate or if the found path is empty
   if (routesTemplate[type] && routesTemplate[type][locale]) {
     const typePath = routesTemplate[type][locale]
 
-    if (slugs.length) {
+    if (variables.length) {
       // populate path templates with variables
       return {
         href: typePath,
-        as: slugs.reduce(
+        as: variables.reduce(
           (asPath, slug) => replaceVariableInPath(asPath, slug),
           typePath,
         ),
       }
     } else {
-      // there are no slugs, return found path
+      // there are no variables, return path template as path
       return {
         as: typePath,
         href: typePath,
       }
     }
   } else {
-    // we return to the homepage if requested path is not found
+    // we return to 404 page if no path is found, if this happens we have a bug
     return {
-      as: routesTemplate['homepage'][locale],
-      href: routesTemplate['homepage'][locale],
+      as: '/404',
+      href: '/404',
     }
   }
 }
 
 /*
-tries to return type for given path
+The type resolver returns a best guess type for a given path
+This should be reliable as long as we are able to arrange routesTemplate in a uniquely resolvable order
 */
 export const typeResolver = (
   path: string,
@@ -151,13 +163,17 @@ export const typeResolver = (
   return null
 }
 
+/*
+The link resolver hook handles locale automatically
+this allows components to be language agnostic
+*/
 export const useLinkResolver = () => {
   const context = useContext(I18nContext)
   const wrappedLinkResolver = (
     linkType: LinkResolverInput['linkType'],
-    slugs: LinkResolverInput['slugs'] = [],
+    variables: LinkResolverInput['variables'] = [],
     locale: LinkResolverInput['locale'] = context.activeLocale,
-  ) => linkResolver(linkType, slugs, locale)
+  ) => linkResolver(linkType, variables, locale)
   return {
     typeResolver,
     linkResolver: wrappedLinkResolver,
