@@ -72,7 +72,7 @@
       "info": "Upplýsingar um þín ökutækir"
     },
     "info": "Við þurfum frekari upplýsingar um ökutækin þín, áður en þú getur notað þjónustuna.",
-    "checkbox": "Ég samþykki að nota megi ofangreindar upplýsingar, sem og þær upplýsingar sem koma fram við förgun á ökutækinu.",
+    "checkbox": "Ég samþykki að nota megi ofangreindar upplýsingar, sem og þær upplýsingar sem koma fram við úrvinnslu á ökutækinu.",
     "buttons": {
       "continue": "Halda áfram"
     },
@@ -86,18 +86,18 @@
     "subTitles": {
       "pending": "Beiðnir í vinnslu",
       "active": "Þín ökutæki",
-      "done": "Endurnýtt eða förguð ökutæki"
+      "done": "Förguð ökutæki"
     },
     "info": {
       "noCarsAvailable": "Engin ökutæki eru skráð á þessa kennitölu"
     },
     "actions": {
-      "valid": "Endurvinna ökutæki",
+      "valid": "Ökutæki til úrvinnslu",
       "invalid": "Óendurvinnanlegt"
     },
     "status": {
       "coOwned": "Skráðir meðeigendur",
-      "recycle": "Skila ökutæki til úrvinnslu hjá næsta endurvinnsluaðila",
+      "recycle": "Skila ökutæki til úrvinnslu hjá næsta móttökuaðila",
       "done": "Endurunnin"
     },
     "buttons": {
@@ -131,10 +131,10 @@
   "handover": {
     "titles": {
       "success": "Úrvinnsla ökutækis samþykkt",
-      "error": "Ekki tókst að merkja ökutæki til förgunar.",
-      "loading": "Merki ökutæki til förgunar."
+      "error": "Ekki tókst að merkja ökutæki til úrvinnslu.",
+      "loading": "Merki ökutæki til úrvinnslu."
     },
-    "info":"Ökutæki hefur verið samþykkt til úrvinnslu og er nú tilbúið að afhenda  móttökuaðila.",
+    "info": "Ökutæki hefur verið samþykkt til úrvinnslu og er nú tilbúið að afhenda móttökuaðila.",
     "subTitles": {
       "nextStep": "Næsta skref: Fara með ökutæki til afhendingar hjá móttökuaðila",
       "companies": "Tiltækir móttökuaðilar"
@@ -146,7 +146,7 @@
     },
     "error": {
       "title": "Tæknileg vandamál komu upp",
-      "message": "Það komu upp vandamál við að merkja ökutæki til förgunar. Vinsamlegast reynið aftur.",
+      "message": "Það komu upp vandamál við að merkja ökutæki til úrvinnslu. Vinsamlegast reynið aftur.",
       "primaryButton": "Reyna aftur",
       "secondaryButton": "Hætta við"
     },
@@ -155,14 +155,14 @@
         "info": "Hætta við úrvinnslu ökutækis",
         "error": "Ekki tókst að hætta við."
       },
-      "info": "Þegar hætt er við úrvinnslu ökutækis verður ekki hægt að ganga frá endurnýtingu eða förgun ökutækis hjá móttökuaðila. Hægt er að endurtaka ferlið síðar ef þér snýst hugur.",
+      "info": "Þegar hætt er við úrvinnslu ökutækis verður ekki hægt að ganga frá endurnýtingu eða úrvinnslu ökutækis hjá móttökuaðila. Hægt er að endurtaka ferlið síðar ef þér snýst hugur.",
       "buttons": {
         "cancel": "Nei",
         "continue": "Já"
       },
       "error": {
         "title": "Tæknileg vandamál komu upp",
-        "message": "Það komu upp vandamál við að merkja ökutæki til förgunar. Vinsamlegast reynið aftur.",
+        "message": "Það komu upp vandamál við að merkja ökutæki til úrvinnslu. Vinsamlegast reynið aftur.",
         "primaryButton": "Reyna aftur",
         "secondaryButton": "Hætta við"
       }
@@ -212,7 +212,7 @@
   },
   "deregisterOverview": {
     "title": "Afskrá ökutæki",
-    "info": "Ferli fer í gang þar sem ökutæki verður afskráð og greiðsla til eiganda mun fara af stað. Einnig mun förgun ökutækis fara af stað.",
+    "info": "Ferli fer í gang þar sem ökutæki verður afskráð og greiðsla til eiganda mun fara af stað. Einnig mun úrvinnsla ökutækis fara af stað.",
     "subtitles": {
       "history": "Saga"
     },
@@ -306,7 +306,7 @@
       "info": {
         "success": "Staðfesta afskráningu. Ekki er hægt að fara til baka eftir þetta skref.",
         "error": "Ekkert ökutæki fannst með þetta skráningarnúmer",
-        "notfound": "Þetta kann að vera því eigandinn hefur ekki merkt hann til förgunar."
+        "notfound": "Þetta kann að vera því eigandinn hefur ekki merkt hann til úrvinnslu."
       },
       "buttons": {
         "back": "Til baka",
@@ -315,18 +315,18 @@
       "success": "Afskráning tókst.",
       "error": {
         "title": "Tæknileg vandamál komu upp",
-        "message": "Það kom upp vandamál þegar ökutæki var merkt til förgunar. Vinsamlegast reynið aftur.",
+        "message": "Það kom upp vandamál þegar ökutæki var merkt til úrvinnslu. Vinsamlegast reynið aftur.",
         "primaryButton": "Reyna aftur",
         "secondaryButton": "Hætta við"
       }
     }
   },
   "recyclingFundOverview": {
-    "title": "Endurunnin ökutæki",
+    "title": "Meðhöndluð ökutæki",
     "subtitles": {
       "deregistered": "Afskráð ökutæki"
     },
-    "info": "Engin endurunnin ökutæki",
+    "info": "Engin meðhöndluð ökutæki",
     "buttons": {
       "export": "Export"
     },
@@ -338,22 +338,22 @@
   },
   "recyclingFundSidenav": {
     "title": "Úrvinnslusjóður",
-    "recycled": "Endurunnin ökutæki",
-    "companies": "Endurvinnslu fyrirtæki"
+    "recycled": "Meðhöndluð ökutæki",
+    "companies": "Móttökuaðilar"
   },
   "recyclingCompanies": {
-    "title": "Endurvinnslu fyrirtæki",
+    "title": "Móttökuaðilar",
     "info": "Upplýsingar til að hjálpa viðskiptavinum að hafa samband við móttökuaðila.",
-    "empty": "Engin endurvinnslu fyrirtæki fundust",
+    "empty": "Engin móttökuaðili fannst",
     "subtitles": {
-      "companies": "Endurvinnslu fyrirtæki"
+      "companies": "Móttökuaðilar"
     },
     "status": {
       "active": "Virkt",
       "inactive": "Óvirkt"
     },
     "buttons": {
-      "add": "Bæta við endurvinnslu fyrirtæki",
+      "add": "Bæta við móttökuaðila",
       "edit": "Breyta"
     }
   },
