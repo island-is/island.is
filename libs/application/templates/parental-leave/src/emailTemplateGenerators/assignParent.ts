@@ -15,11 +15,11 @@ export default (
     // TODO: place strings in translation file
     from: {
       name: 'Fæðingarorlofssjóður',
-      address: 'todo@aranja.com',
+      address: 'development@island.is',
     },
     replyTo: {
       name: 'Fæðingarorlofssjóður',
-      address: 'todo@aranja.com',
+      address: 'baering@aranja.com',
     },
     to: [
       {
@@ -30,9 +30,9 @@ export default (
     subject: ``,
     text: dedent(`
     Góðan dag.
-    
+
     Umsækjandi með kennitölu ${application.applicant} hefur skráð þig sem foreldri í umsókn sinni.
-    
+
     Ef þú áttir von á þessum tölvupósti þá getur þú haldið áfram hingað til þess að fara yfir umsóknina: ${assignLink}
 
     Með kveðju.
