@@ -23,7 +23,8 @@ export const ChatPanel = () => {
     const conversationId =
       window.sessionStorage.getItem(CONVERSATION_KEY) ?? null
 
-    if (!boost && window.boostInit) {
+    const hasChat = !boost && window.boostInit
+    if (hasChat) {
       const settings = {
         chatPanel: {
           ...config.chatPanel,
@@ -48,10 +49,15 @@ export const ChatPanel = () => {
         'conversationIdChanged',
         onConversationIdChanged,
       )
-      boost.chatPanel.removeEventListener(
-        'conversationIdChanged',
-        onConversationIdChanged,
-      )
+    }
+
+    return () => {
+      if (hasChat) {
+        boost.chatPanel.removeEventListener(
+          'conversationIdChanged',
+          onConversationIdChanged,
+        )
+      }
     }
   }, [])
 
