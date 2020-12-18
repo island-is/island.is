@@ -389,22 +389,11 @@ export const ParentalLeaveForm: Form = buildForm({
                   format: '######-####',
                   placeholder: '000000-0000',
                 }),
-                // TODO this is no longer needed
-                // buildDividerField({
-                //   color: 'dark400',
-                //   name:
-                //     'Who on behalf of your employer will have to approve this application?',
-                // }),
-                // buildTextField({
-                //   name: 'Contact name',
-                //   width: 'half',
-                //   id: 'employer.contact',
-                // }),
-                // buildTextField({
-                //   name: 'Contact social security nr',
-                //   width: 'half',
-                //   id: 'employer.contactId',
-                // }),
+                buildTextField({
+                  name: m.employerEmail,
+                  width: 'full',
+                  id: 'employer.email',
+                }),
               ],
             }),
           ],
