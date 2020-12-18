@@ -3,10 +3,7 @@ import { render, waitFor, screen } from '@testing-library/react'
 import StepTwo from './StepTwo'
 import { MemoryRouter, Route } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
-import {
-  CaseCustodyProvisions,
-  UpdateCase,
-} from '@island.is/judicial-system/types'
+import { UpdateCase } from '@island.is/judicial-system/types'
 import * as Constants from '../../../../utils/constants'
 import {
   mockCaseQueries,
@@ -19,6 +16,8 @@ import { UserProvider } from '@island.is/judicial-system-web/src/shared-componen
 describe('Create detention request, step two', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
+    const todaysDate = new Date().getDate()
+    const formattedTodaysDate = todaysDate < 10 ? `0${todaysDate}` : todaysDate
 
     render(
       <MockedProvider
@@ -27,29 +26,33 @@ describe('Create detention request, step two', () => {
           ...mockProsecutorQuery,
           ...mockUpdateCaseMutation([
             {
-              requestedCustodyEndDate: '2020-09-16T13:37:00Z',
+              arrestDate: '2020-11-15',
             } as UpdateCase,
             {
-              custodyEndDate: '2020-09-16T13:37:00Z',
+              id: 'test_id_6',
+              arrestDate: '2020-11-15T13:37:00Z',
             } as UpdateCase,
             {
-              lawsBroken:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
+              requestedCourtDate: '2020-11-20',
             } as UpdateCase,
             {
-              custodyProvisions: [CaseCustodyProvisions._95_1_C],
+              id: 'test_id_6',
+              requestedCourtDate: `2020-${
+                new Date().getMonth() + 1
+              }-${formattedTodaysDate}T13:37:00Z`,
             } as UpdateCase,
-            { caseFacts: 'Lorem ipsum dolor sit amet,' } as UpdateCase,
             {
-              legalArguments:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
+              requestedCustodyEndDate: '2020-11-25',
+            } as UpdateCase,
+            {
+              requestedCustodyEndDate: '2020-11-25T13:37:00.00Z',
             } as UpdateCase,
           ]),
         ]}
         addTypename={false}
       >
         <MemoryRouter
-          initialEntries={[`${Constants.STEP_TWO_ROUTE}/test_id_2`]}
+          initialEntries={[`${Constants.STEP_TWO_ROUTE}/test_id_6`]}
         >
           <UserProvider>
             <Route path={`${Constants.STEP_TWO_ROUTE}/:id`}>
@@ -61,13 +64,13 @@ describe('Create detention request, step two', () => {
     )
 
     // Act and Assert
+    // Arrest date is optional
     userEvent.type(
-      await waitFor(
-        () => screen.getByLabelText('Tímasetning *') as HTMLInputElement,
-      ),
-      '13:37',
+      await waitFor(() => screen.getAllByLabelText(/Veldu dagsetningu/)[1]),
+      `${formattedTodaysDate}.${new Date().getMonth() + 1}.2020`,
     )
-    userEvent.tab()
+
+    userEvent.type(screen.getByLabelText('Ósk um tíma (kk:mm) *'), '13:37')
     expect(
       screen.getByRole('button', {
         name: /Halda áfram/i,
@@ -75,47 +78,17 @@ describe('Create detention request, step two', () => {
     ).toBeDisabled()
 
     userEvent.type(
-      screen.getByLabelText(
-        'Lagaákvæði sem ætluð brot kærða þykja varða við *',
-      ) as HTMLInputElement,
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
+      screen.getByLabelText(/Gæsluvarðhald til/),
+      `${formattedTodaysDate}.${new Date().getMonth() + 1}.2020`,
     )
-    userEvent.tab()
-    expect(
-      screen.getByRole('button', {
-        name: /Halda áfram/i,
-      }) as HTMLButtonElement,
-    ).toBeDisabled()
+    userEvent.type(screen.getByLabelText('Tímasetning (kk:mm) *'), '13:37')
 
-    userEvent.click(
-      screen.getByRole('checkbox', { name: 'c-lið 1. mgr. 95. gr.' }),
-    )
-    expect(
-      screen.getByRole('button', {
-        name: /Halda áfram/i,
-      }) as HTMLButtonElement,
-    ).toBeDisabled()
-    userEvent.type(
-      screen.getByLabelText('Málsatvik *') as HTMLInputElement,
-      'Lorem ipsum dolor sit amet,',
-    )
-    userEvent.tab()
-    expect(
-      screen.getByRole('button', {
-        name: /Halda áfram/i,
-      }) as HTMLButtonElement,
-    ).toBeDisabled()
-    userEvent.type(
-      screen.getByLabelText('Lagarök *') as HTMLInputElement,
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
-    )
-    userEvent.tab()
     expect(
       screen.getByRole('button', {
         name: /Halda áfram/i,
       }) as HTMLButtonElement,
     ).not.toBeDisabled()
-  }, 10000)
+  })
 
   test('should not have a disabled continue button if step is valid when a valid request is opened', async () => {
     // Arrange
@@ -126,7 +99,7 @@ describe('Create detention request, step two', () => {
         mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter initialEntries={['/stofna-krofu/lagaakvaedi/test_id']}>
+        <MemoryRouter initialEntries={[`${Constants.STEP_TWO_ROUTE}/test_id`]}>
           <UserProvider>
             <Route path={`${Constants.STEP_TWO_ROUTE}/:id`}>
               <StepTwo />
@@ -170,9 +143,39 @@ describe('Create detention request, step two', () => {
     expect(
       (
         await waitFor(
-          () => screen.getByLabelText('Tímasetning *') as HTMLInputElement,
+          () =>
+            screen.getByLabelText('Tímasetning (kk:mm) *') as HTMLInputElement,
         )
       ).value,
     ).toEqual('19:51')
   }, 10000)
+
+  test('should have a disabled requestedCourtDate if judge has set a court date', async () => {
+    // Arrange
+
+    // Act
+    render(
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.STEP_TWO_ROUTE}/test_id_3`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.STEP_TWO_ROUTE}/:id`}>
+              <StepTwo />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    // Assert
+    expect(
+      await waitFor(
+        () => screen.getByLabelText('Veldu dagsetningu *') as HTMLInputElement,
+      ),
+    ).toBeDisabled()
+  })
 })

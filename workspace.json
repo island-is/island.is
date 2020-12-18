@@ -58,11 +58,10 @@
             "passWithNoTests": true
           }
         },
-        "schemas/build-schema": {
+        "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "outputPath": "apps/air-discount-scheme/api.graphql",
-            "command": "yarn ts-node -P apps/air-discount-scheme/api/tsconfig.app.json apps/air-discount-scheme/api/src/buildSchema.ts"
+            "command": "yarn ts-node -P apps/air-discount-scheme/api/tsconfig.json scripts/build-graphql-schema.ts apps/air-discount-scheme/api/src/app/app.module"
           }
         },
         "schemas/codegen": {
@@ -402,11 +401,10 @@
             "command": "./scripts/secrets.sh api --reset"
           }
         },
-        "schemas/build-schema": {
+        "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "outputPath": "apps/api/src/api.graphql",
-            "command": "yarn ts-node -P apps/api/tsconfig.app.json apps/api/src/buildSchema.ts"
+            "command": "yarn ts-node -P apps/api/tsconfig.json scripts/build-graphql-schema.ts apps/api/src/app/app.module"
           }
         },
         "schemas/codegen": {
@@ -886,6 +884,35 @@
         }
       }
     },
+    "api-domains-driving-license": {
+      "root": "libs/api/domains/driving-license",
+      "sourceRoot": "libs/api/domains/driving-license/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/driving-license/tsconfig.lib.json",
+              "libs/api/domains/driving-license/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/driving-license/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/driving-license/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-file-upload": {
       "root": "libs/api/domains/file-upload",
       "sourceRoot": "libs/api/domains/file-upload/src",
@@ -1056,6 +1083,35 @@
             "linter": "eslint",
             "tsConfig": ["libs/api/schema/tsconfig.lib.json"],
             "exclude": ["**/node_modules/**", "!libs/api/schema/**/*"]
+          }
+        }
+      }
+    },
+    "application-api-template-utils": {
+      "root": "libs/application/api-template-utils",
+      "sourceRoot": "libs/application/api-template-utils/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/api-template-utils/tsconfig.lib.json",
+              "libs/application/api-template-utils/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/api-template-utils/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/api-template-utils/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }
@@ -1273,6 +1329,7 @@
             "tsConfig": "apps/application-system/form/tsconfig.app.json",
             "assets": [
               "apps/application-system/form/src/favicon.ico",
+              "apps/application-system/form/src/mockServiceWorker.js",
               "apps/application-system/form/src/assets"
             ],
             "styles": ["apps/application-system/form/src/styles.css"],
@@ -1593,7 +1650,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/templates/parental-leave/src/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node libs/localization/scripts/extract libs/application/templates/parental-leave/src/lib/messages.ts"
           }
         }
       }
@@ -2367,11 +2424,11 @@
           "options": {
             "cypressConfig": "apps/gjafakort/web-e2e/cypress.json",
             "tsConfig": "apps/gjafakort/web-e2e/tsconfig.e2e.json",
-            "devServerTarget": "gjafakort/web:serve"
+            "devServerTarget": "gjafakort-web:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "gjafakort/web:serve:production"
+              "devServerTarget": "gjafakort-web:serve:production"
             }
           }
         },
@@ -2703,10 +2760,10 @@
             "passWithNoTests": true
           }
         },
-        "schemas/build-schema": {
+        "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P apps/judicial-system/api/tsconfig.app.json apps/judicial-system/api/src/buildSchema.ts"
+            "command": "yarn ts-node -P apps/judicial-system/api/tsconfig.json scripts/build-graphql-schema.ts apps/judicial-system/api/src/app/app.module"
           }
         },
         "schemas/codegen": {
@@ -2990,7 +3047,10 @@
             "main": "apps/judicial-system/web/src/main.tsx",
             "polyfills": "apps/judicial-system/web/src/polyfills.ts",
             "tsConfig": "apps/judicial-system/web/tsconfig.app.json",
-            "assets": ["apps/judicial-system/web/src/favicon.ico"],
+            "assets": [
+              "apps/judicial-system/web/src/favicon.ico",
+              "apps/judicial-system/web/src/mockServiceWorker.js"
+            ],
             "styles": ["apps/judicial-system/web/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/judicial-system/web/webpack.config.js",
@@ -3358,6 +3418,7 @@
             "tsConfig": "apps/service-portal/tsconfig.app.json",
             "assets": [
               "apps/service-portal/src/favicon.ico",
+              "apps/service-portal/src/mockServiceWorker.js",
               "apps/service-portal/src/assets"
             ],
             "scripts": [],
@@ -3558,7 +3619,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/core/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/core/src/{lib,components,helpers,screens}/**/*.{js,ts,tsx}"
           }
         }
       }
@@ -3627,6 +3688,35 @@
         }
       }
     },
+    "service-portal-driving-license": {
+      "root": "libs/service-portal/driving-license",
+      "sourceRoot": "libs/service-portal/driving-license/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/service-portal/driving-license/tsconfig.lib.json",
+              "libs/service-portal/driving-license/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/driving-license/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/driving-license/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "service-portal-e2e": {
       "root": "apps/service-portal-e2e",
       "sourceRoot": "apps/service-portal-e2e/src",
@@ -3686,6 +3776,35 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/education/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+          }
+        }
+      }
+    },
+    "service-portal-eligibility": {
+      "root": "libs/service-portal/eligibility",
+      "sourceRoot": "libs/service-portal/eligibility/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/service-portal/eligibility/tsconfig.lib.json",
+              "libs/service-portal/eligibility/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/eligibility/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/eligibility/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }
@@ -4087,8 +4206,8 @@
         "migrate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "node migrate.js",
-            "cwd": "dist/apps/services/search-indexer"
+            "command": "yarn ts-node -P apps/services/search-indexer/tsconfig.app.json apps/services/search-indexer/src/migrate/index.ts",
+            "cwd": "apps/services/search-indexer"
           }
         },
         "lint": {
@@ -4604,11 +4723,10 @@
             "passWithNoTests": true
           }
         },
-        "schemas/build-schema": {
+        "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "outputPath": "apps/skilavottord/ws/src/app/api.graphql",
-            "command": "yarn ts-node -P apps/skilavottord/ws/tsconfig.app.json apps/skilavottord/ws/src/buildSchema.ts"
+            "command": "yarn ts-node -P apps/skilavottord/ws/tsconfig.json scripts/build-graphql-schema.ts apps/skilavottord/ws/src/app/app.module"
           }
         },
         "migrate": {

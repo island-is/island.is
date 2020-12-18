@@ -17,7 +17,8 @@ import { m } from './messages'
 
 export const Review: Form = buildForm({
   id: ApplicationTypes.META_APPLICATION,
-  name: FormModes.REVIEW,
+  name: 'Úrvinnsla',
+  mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'intro',
@@ -25,7 +26,7 @@ export const Review: Form = buildForm({
       children: [
         buildMultiField({
           id: 'general',
-          name: '',
+          name: 'Umsókn um aðild að umsóknarkerfinu',
           children: [
             buildDividerField({ name: 'Grunnuppplýingar' }),
             buildCustomField(
@@ -40,7 +41,6 @@ export const Review: Form = buildForm({
               id: 'applicant.contact',
               name: m.contact,
               disabled: true,
-              width: 'half',
             }),
             buildTextField({
               id: 'applicant.email',
@@ -64,7 +64,7 @@ export const Review: Form = buildForm({
               width: 'half',
             }),
             buildTextField({
-              id: 'service.countPerYEar',
+              id: 'service.countPerYear',
               name: m.serviceCount,
               disabled: true,
               width: 'half',
@@ -73,6 +73,8 @@ export const Review: Form = buildForm({
             buildRadioField({
               id: 'service.users',
               name: m.serviceUsers,
+              largeButtons: true,
+              width: 'half',
               disabled: true,
               options: [
                 { value: 'companies', label: m.companiesOptionLabel },
@@ -83,6 +85,8 @@ export const Review: Form = buildForm({
             buildRadioField({
               id: 'service.digital',
               name: m.serviceDigital,
+              largeButtons: true,
+              width: 'half',
               disabled: true,
               options: [
                 { value: 'yes', label: m.yesOptionLabel },
@@ -92,7 +96,7 @@ export const Review: Form = buildForm({
             buildTextField({
               id: 'service.link',
               name: m.serviceLink,
-              width: 'half',
+              disabled: true,
               condition: (formValue: FormValue) => {
                 return (
                   (formValue as { service: { digital: string } })?.service
@@ -111,6 +115,8 @@ export const Review: Form = buildForm({
               id: 'payment.radio',
               name: m.paymentRadio,
               disabled: true,
+              largeButtons: true,
+              width: 'half',
               options: [
                 { value: 'yes', label: m.yesOptionLabel },
                 { value: 'no', label: m.noOptionLabel },
@@ -143,9 +149,11 @@ export const Review: Form = buildForm({
               id: 'payment.charge',
               name: m.paymentCharge,
               disabled: true,
+              largeButtons: true,
+              width: 'half',
               options: [
-                { value: 'in advance', label: m.inAdvanceOptionLabel },
-                { value: 'on approval', label: m.onApprovalOptionLabel },
+                { value: 'inAdvance', label: m.inAdvanceOptionLabel },
+                { value: 'onApproval', label: m.onApprovalOptionLabel },
               ],
               condition: (formValue: FormValue) => {
                 return (
@@ -164,10 +172,10 @@ export const Review: Form = buildForm({
             buildSubmitField({
               id: 'approvedByReviewer',
               name: m.reviewQuestion,
-              placement: 'screen',
+              placement: 'footer',
               actions: [
-                { event: 'APPROVE', name: m.approveOption, type: 'primary' },
                 { event: 'REJECT', name: m.declineOption, type: 'reject' },
+                { event: 'APPROVE', name: m.approveOption, type: 'primary' },
               ],
             }),
           ],

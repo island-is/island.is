@@ -7,6 +7,7 @@ import {
   Link,
   LoadingIcon,
   FocusableBox,
+  ArrowLink,
 } from '@island.is/island-ui/core'
 import * as styles from './ActionCard.treat'
 import format from 'date-fns/format'
@@ -17,6 +18,7 @@ interface Props {
   date: Date
   loading?: boolean
   cta: {
+    externalUrl?: string
     label: string
     onClick: () => void
   }
@@ -57,17 +59,32 @@ export const ActionCard: FC<Props> = ({ label, title, date, cta, loading }) => {
             marginTop={[1, 0]}
             marginLeft={[0, 3]}
           >
-            <Button
-              icon="download"
-              colorScheme="default"
-              iconType="outline"
-              onClick={cta.onClick}
-              size="small"
-              type="button"
-              variant="text"
-            >
-              {cta.label}
-            </Button>
+            {cta.externalUrl ? (
+              <Link href={cta.externalUrl}>
+                <Button
+                  icon="open"
+                  colorScheme="default"
+                  iconType="outline"
+                  size="small"
+                  type="button"
+                  variant="text"
+                >
+                  {cta.label}
+                </Button>
+              </Link>
+            ) : (
+              <Button
+                icon="open"
+                colorScheme="default"
+                iconType="outline"
+                onClick={cta.onClick}
+                size="small"
+                type="button"
+                variant="text"
+              >
+                {cta.label}
+              </Button>
+            )}
           </Box>
         </Box>
       </Stack>

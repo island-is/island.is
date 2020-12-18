@@ -13,6 +13,9 @@ import { NewsList } from './models/newsList.model'
 import { GetNewsDatesInput } from './dto/getNewsDates.input'
 import { AboutPage } from './models/aboutPage.model'
 import { SearchIndexes } from '@island.is/content-search-indexer/types'
+import { Menu } from './models/menu.model'
+import { GetMenuInput } from './dto/getMenu.input'
+import { GetSingleMenuInput } from './dto/getSingleMenu.input'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -153,11 +156,32 @@ export class CmsElasticsearchService {
       query,
     )
     const response = newsResponse.hits.hits?.[0]?._source?.response
-    if (response) {
-      return JSON.parse(response)
-    } else {
-      return null
-    }
+    return response ? JSON.parse(response) : null
+  }
+
+  async getSingleMenuByName(
+    index: SearchIndexes,
+    { name }: GetMenuInput,
+  ): Promise<Menu | null> {
+    // return a single news item by slug
+    const query = { types: ['webMenu'], tags: [{ type: 'name', key: name }] }
+    const menuResponse = await this.elasticService.getDocumentsByMetaData(
+      index,
+      query,
+    )
+
+    const response = menuResponse.hits.hits?.[0]?._source?.response
+    return response ? JSON.parse(response) : null
+  }
+
+  async getSingleMenu<RequestedMenuType>(
+    index: SearchIndexes,
+    { id }: GetSingleMenuInput,
+  ): Promise<RequestedMenuType | null> {
+    // return a single menu by id
+    const menuResponse = await this.elasticService.findById(index, id)
+    const response = menuResponse.body?._source?.response
+    return response ? JSON.parse(response) : null
   }
 
   async getSingleAboutPage(

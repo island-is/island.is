@@ -9,7 +9,15 @@ import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
 import { Form, FormText } from './Form'
 import { Application } from './Application'
 
-export type ApplicationRole = 'applicant' | 'reviewer' | string
+export type ApplicationRole = 'applicant' | 'assignee' | string
+
+export enum DefaultEvents {
+  APPROVE = 'APPROVE',
+  ASSIGN = 'ASSIGN',
+  REJECT = 'REJECT',
+  SUBMIT = 'SUBMIT',
+  ABORT = 'ABORT',
+}
 
 export type ReadWriteValues =
   | 'all'

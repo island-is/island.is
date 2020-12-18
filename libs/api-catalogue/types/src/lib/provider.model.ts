@@ -2,9 +2,12 @@ import { ProviderType } from '@island.is/api-catalogue/consts'
 import { XroadIdentifier } from './xroadIdentifier.model'
 
 export interface Provider {
-  type: ProviderType
   name: string
+  type: ProviderType
   xroadInfo: XroadIdentifier
+}
+export type Providers = {
+  [type in ProviderType]: Array<Provider>
 }
 
 export const providerToString = (provider: Provider): string => {

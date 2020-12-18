@@ -26,6 +26,7 @@ import {
   ApiParam,
   ApiTags,
   ApiQuery,
+  ApiHeader,
 } from '@nestjs/swagger'
 import { Op } from 'sequelize'
 import {
@@ -46,7 +47,7 @@ import { ApplicationService } from './application.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
-import { mergeAnswers } from '@island.is/application/core'
+import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
 import {
@@ -62,9 +63,24 @@ import {
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
+import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { EmailService } from '@island.is/email-service'
+import { environment } from '../../../environments'
+import { ApplicationAPITemplateUtils } from '@island.is/application/api-template-utils'
+import { NationalId } from './tools/nationalId.decorator'
+import { verifyToken } from './utils/tokenUtils'
+
 // @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
+
+interface DecodedToken {
+  applicationId: string
+}
+
 @ApiTags('applications')
+@ApiHeader({
+  name: 'authorization',
+  description: 'Bearer token authorization',
+})
 @Controller()
 export class ApplicationController {
   constructor(
@@ -176,6 +192,76 @@ export class ApplicationController {
     return this.applicationService.create(application)
   }
 
+  @Put('applications/assign')
+  @ApiOkResponse({ type: ApplicationResponseDto })
+  @UseInterceptors(ApplicationSerializer)
+  async assignApplication(
+    @Body() assignApplicationDto: AssignApplicationDto,
+    @NationalId() nationalId: string,
+  ): Promise<ApplicationResponseDto> {
+    const decodedToken = verifyToken<DecodedToken>(assignApplicationDto.token)
+
+    if (decodedToken === null) {
+      throw new BadRequestException('Invalid token')
+    }
+
+    const existingApplication = await this.applicationService.findById(
+      decodedToken.applicationId,
+    )
+
+    if (existingApplication === null) {
+      throw new NotFoundException('No application found')
+    }
+
+    const template = await getApplicationTemplateByTypeId(
+      existingApplication.typeId as ApplicationTypes,
+    )
+    // TODO
+    if (template === null) {
+      throw new BadRequestException(
+        `No application template exists for type: ${existingApplication.typeId}`,
+      )
+    }
+
+    const assignees = [nationalId]
+
+    const mergedApplication: BaseApplication = {
+      ...(existingApplication.toJSON() as BaseApplication),
+      assignees,
+    }
+
+    const helper = new ApplicationTemplateHelper(mergedApplication, template)
+
+    const apiTemplateUtils = new ApplicationAPITemplateUtils(
+      mergedApplication,
+      {
+        jwtSecret: environment.auth.jwtSecret,
+        emailService: this.emailService,
+        clientLocationOrigin: environment.clientLocationOrigin,
+      },
+    )
+
+    const [hasChanged, newState, newApplication] = helper.changeState(
+      DefaultEvents.ASSIGN,
+      apiTemplateUtils,
+    )
+
+    if (hasChanged) {
+      const {
+        updatedApplication,
+      } = await this.applicationService.updateApplicationState(
+        existingApplication.id,
+        newState, // TODO maybe ban more complicated states....
+        newApplication.answers,
+        newApplication.assignees,
+      )
+
+      return updatedApplication
+    }
+
+    return existingApplication
+  }
+
   @Put('applications/:id')
   @ApiParam({
     name: 'id',
@@ -191,11 +277,14 @@ export class ApplicationController {
     existingApplication: Application,
     @Body()
     application: UpdateApplicationDto,
+    @NationalId() nationalId: string,
   ): Promise<ApplicationResponseDto> {
     const newAnswers = application.answers as FormValue
     await validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
+      nationalId,
+      true,
     )
 
     await validateApplicationSchema(
@@ -229,18 +318,25 @@ export class ApplicationController {
     existingApplication: Application,
     @Body()
     externalDataDto: PopulateExternalDataDto,
+    @Req() req: Request,
+    @NationalId() nationalId: string,
   ): Promise<ApplicationResponseDto> {
     await validateIncomingExternalDataProviders(
       existingApplication as BaseApplication,
       externalDataDto,
+      nationalId,
     )
-
     const templateDataProviders = await getApplicationDataProviders(
       (existingApplication as BaseApplication).typeId,
     )
+    const headers = (req.headers as unknown) as { authorization?: string }
 
     const results = await callDataProviders(
-      buildDataProviders(externalDataDto, templateDataProviders),
+      buildDataProviders(
+        externalDataDto,
+        templateDataProviders,
+        headers.authorization ?? '',
+      ),
       existingApplication as BaseApplication,
     )
     const {
@@ -273,6 +369,7 @@ export class ApplicationController {
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     existingApplication: Application,
     @Body() updateApplicationStateDto: UpdateApplicationStateDto,
+    @NationalId() nationalId: string,
   ): Promise<ApplicationResponseDto> {
     const template = await getApplicationTemplateByTypeId(
       existingApplication.typeId as ApplicationTypes,
@@ -289,6 +386,7 @@ export class ApplicationController {
     const permittedAnswers = await validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
+      nationalId,
       false,
     )
 
@@ -301,20 +399,25 @@ export class ApplicationController {
       permittedAnswers,
     )
 
-    const helper = new ApplicationTemplateHelper(
+    const mergedApplication: BaseApplication = {
+      ...(existingApplication.toJSON() as BaseApplication),
+      answers: mergedAnswers,
+    }
+
+    const helper = new ApplicationTemplateHelper(mergedApplication, template)
+
+    const apiTemplateUtils = new ApplicationAPITemplateUtils(
+      mergedApplication,
       {
-        ...(existingApplication.toJSON() as BaseApplication),
-        answers: mergedAnswers,
-      } as BaseApplication,
-      template,
+        jwtSecret: environment.auth.jwtSecret,
+        emailService: this.emailService,
+        clientLocationOrigin: environment.clientLocationOrigin,
+      },
     )
 
-    const [
-      hasChanged,
-      newState,
-      newApplication,
-    ] = helper.changeState(updateApplicationStateDto.event, (emailTemplate) =>
-      this.emailService.sendEmail(emailTemplate),
+    const [hasChanged, newState, newApplication] = helper.changeState(
+      updateApplicationStateDto.event,
+      apiTemplateUtils,
     )
 
     if (hasChanged) {

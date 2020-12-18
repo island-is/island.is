@@ -1,10 +1,12 @@
 import {
-  ApplicationTemplate,
-  ApplicationTypes,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
+  ApplicationTypes,
+  ApplicationTemplate,
+  Application,
 } from '@island.is/application/core'
+import { assign } from 'xstate'
 import * as z from 'zod'
 
 type Events =
@@ -12,6 +14,11 @@ type Events =
   | { type: 'REJECT' }
   | { type: 'SUBMIT' }
   | { type: 'ABORT' }
+
+enum Roles {
+  APPLICANT = 'applicant',
+  ASSIGNEE = 'assignee',
+}
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 
@@ -49,19 +56,37 @@ const termsOfAgreement = z.object({
   }),
 })
 
+const endPoint = z.object({
+  endPoint: z.string().url().nonempty(),
+  endPointExists: z.string().nonempty({
+    message: 'Þú verður að vista endapunkt til að halda áfram',
+  }),
+})
+
+const productionEndPoint = z.object({
+  prodEndPoint: z.string().url().nonempty(),
+  prodEndPointExists: z.string().nonempty({
+    message: 'Þú verður að vista endapunkt til að halda áfram',
+  }),
+})
+
 const dataSchema = z.object({
   termsOfAgreement: termsOfAgreement,
   applicant: applicant,
   administrativeContact: contact,
   technicalContact: contact,
   helpDesk: helpDeskContact,
-  //Not sure if we want this ? Confirmation that tests have finished...
   technicalAnswer: z.boolean().refine((v) => v, {
-    //When to show these ?
     message: 'Þú verður að samþykkja að forritun og prófunum sé lokið',
   }),
-  endPoint: z.string().url().nonempty(),
-  prodEndPoint: z.string().url().nonempty(),
+  endPointObject: endPoint,
+  testProviderId: z.string().nonempty({
+    message: 'Þú verður að stofna aðgang til að halda áfram',
+  }),
+  prodProviderId: z.string().nonempty({
+    message: 'Þú verður að stofna aðgang til að halda áfram',
+  }),
+  productionEndPointObject: productionEndPoint,
   rejectionReason: z.string(),
   approvedByReviewer: z.enum(['APPROVE', 'REJECT']),
 })
@@ -83,7 +108,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           progress: 0.25,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/DocumentProviderApplication').then((val) =>
                   Promise.resolve(val.DocumentProviderOnboarding),
@@ -102,12 +127,21 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         },
       },
       inReview: {
+        entry: assign((context) => {
+          return {
+            ...context,
+            application: {
+              ...context.application,
+              assignees: ['2311637949'],
+            },
+          }
+        }),
         meta: {
           name: 'In Review',
           progress: 0.5,
           roles: [
             {
-              id: 'reviewer',
+              id: Roles.ASSIGNEE,
               formLoader: () =>
                 import('../forms/ReviewApplication').then((val) =>
                   Promise.resolve(val.ReviewApplication),
@@ -120,7 +154,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
               write: { answers: ['rejectionReason'] },
             },
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/PendingReview').then((val) =>
                   Promise.resolve(val.PendingReview),
@@ -140,7 +174,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           progress: 1,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/Rejected').then((val) =>
                   Promise.resolve(val.Rejected),
@@ -156,7 +190,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           progress: 0.75,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/TestPhase').then((val) =>
                   Promise.resolve(val.TestPhase),
@@ -178,7 +212,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           progress: 1,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/Finished').then((val) =>
                   Promise.resolve(val.Finished),
@@ -190,11 +224,23 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(id: string, state: string): ApplicationRole {
-    if (state === 'inReview') {
-      return 'reviewer'
+  mapUserToRole(
+    id: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    //This logic makes it so the application is not accessible to anybody but involved parties
+    //TODO: add this to second if statement
+    //&& application.assignees.includes('2311637949')
+
+    //This if statement might change depending on the "umboðskerfi"
+    if (id === application.applicant) {
+      return Roles.APPLICANT
     }
-    return 'applicant'
+    if (application.state === 'inReview') {
+      return Roles.ASSIGNEE
+    }
+    //Returns nothing if user is not same as applicant nor is part of the assignes
+    return undefined
   },
 }
 

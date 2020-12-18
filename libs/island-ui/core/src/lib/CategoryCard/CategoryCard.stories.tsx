@@ -163,3 +163,12 @@ export const OnlyLabelTag = () => (
     tags={[{ label: 'Not clickable' }]}
   />
 )
+
+export const TruncatedHeading = () => (
+  <CategoryCard
+    heading="Unbroken.Very.Long.String.Used.As.The.Heading"
+    truncateHeading
+    text="The heading above is truncated instead of overflowing"
+    tags={getDemoTags(4)}
+  />
+)

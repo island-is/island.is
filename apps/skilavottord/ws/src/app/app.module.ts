@@ -11,22 +11,21 @@ import { RecyclingRequestModule } from './modules/recycling.request/recycling.re
 import { VehicleOwnerModule } from './modules/vehicle.owner/vehicle.owner.module'
 import { SamgongustofaModule } from './modules/samgongustofa/samgongustofa.module'
 import { FjarsyslaModule } from './modules/fjarsysla/fjarsysla.module'
+import { environment } from '../environments'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
-const autoSchemaFile = debug ? 'apps/skilavottord/ws/src/app/api.graphql' : true
+const autoSchemaFile = environment.production
+  ? true
+  : 'apps/skilavottord/ws/src/app/api.graphql'
 
-/*
- * When adding new resolvers through your modules don't forget to add them to buildSchema.ts as well.
- * So the automatically generated schemas won't be failing when running.
- */
 @Module({
   imports: [
     GraphQLModule.forRoot({
       debug,
       playground,
       autoSchemaFile,
-      path: '/api/graphql',
+      path: '/skilavottord/api/graphql',
     }),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,

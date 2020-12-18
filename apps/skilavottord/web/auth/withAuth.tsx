@@ -3,14 +3,18 @@ import Router from 'next/router'
 import { NextComponentType } from 'next'
 
 import { AUTH_URL, isAuthenticated } from './utils'
+import { BASE_PATH } from '@island.is/skilavottord/consts'
 
 type AuthType = 'citizen' | 'recyclingPartner'
+
+const USER_MOCKED =
+  process.env.NODE_ENV === 'development' && process.env.API_MOCKS === 'true'
 
 const withAuth = (WrappedComponent: NextComponentType, authType: AuthType) =>
   class extends Component {
     static async getInitialProps(ctx: any) {
-      if (!isAuthenticated(ctx)) {
-        const authUrl = `${AUTH_URL[authType]}/login?returnUrl=${ctx.asPath}`
+      if (!isAuthenticated(ctx) && !USER_MOCKED) {
+        const authUrl = `${BASE_PATH}${AUTH_URL[authType]}/login?returnUrl=${BASE_PATH}${ctx.asPath}`
         const { res } = ctx
         if (res) {
           res.writeHead(302, {

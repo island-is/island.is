@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import cn from 'classnames'
 import { Button, Icon } from '@island.is/island-ui/core'
 import { config, ID, CONVERSATION_KEY } from './config'
+import { theme } from '@island.is/island-ui/theme'
+import { useWindowSize } from 'react-use'
 
 import * as styles from './ChatPanel.treat'
 
@@ -15,13 +17,14 @@ declare global {
 let boost = null
 
 export const ChatPanel = () => {
-  const [visible, setVisible] = useState(false)
+  const { width } = useWindowSize()
 
   useEffect(() => {
     const conversationId =
       window.sessionStorage.getItem(CONVERSATION_KEY) ?? null
 
-    if (!boost && window.boostInit) {
+    const hasChat = !boost && window.boostInit
+    if (hasChat) {
       const settings = {
         chatPanel: {
           ...config.chatPanel,
@@ -36,8 +39,12 @@ export const ChatPanel = () => {
       }
 
       boost = window.boostInit(ID, settings)
-      boost.chatPanel.show()
-      boost.chatPanel.addEventListener('chatPanelClosed', onChatPanelClosed)
+
+      // to prevent us from opening chat where there is no space for it
+      if (width > theme.breakpoints.md) {
+        boost.chatPanel.show()
+      }
+
       boost.chatPanel.addEventListener(
         'conversationIdChanged',
         onConversationIdChanged,
@@ -45,33 +52,28 @@ export const ChatPanel = () => {
     }
 
     return () => {
-      boost.chatPanel.removeEventListener('chatPanelClosed', onChatPanelClosed)
-      boost.chatPanel.removeEventListener(
-        'conversationIdChanged',
-        onConversationIdChanged,
-      )
+      if (hasChat) {
+        boost.chatPanel.removeEventListener(
+          'conversationIdChanged',
+          onConversationIdChanged,
+        )
+      }
     }
   }, [])
-
-  const onChatPanelClosed = () => {
-    setVisible(true)
-  }
 
   const onConversationIdChanged = (e) => {
     window.sessionStorage.setItem(CONVERSATION_KEY, e.detail.conversationId)
   }
 
   return (
-    <div className={cn(styles.root, { [styles.hidden]: !boost || !visible })}>
+    <div className={cn(styles.root, { [styles.hidden]: !boost })}>
       <Button
         variant="primary"
         circle
-        disabled={!visible}
         size="large"
         iconType="filled"
         onClick={() => {
           boost.chatPanel.show()
-          setVisible(false)
         }}
       >
         <Icon icon="chatbubble" color="white" size="large" type="outline" />

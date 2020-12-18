@@ -1,57 +1,47 @@
-import React, { FC, useState, useMemo, ReactNode, Fragment } from 'react'
-import { useFirstMountState } from 'react-use'
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
+import NextLink from 'next/link'
 import { BLOCKS } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
 import {
-  ProcessEntryLinkButton,
   Slice as SliceType,
+  ProcessEntry,
 } from '@island.is/island-ui/contentful'
 import {
   Box,
   Text,
   Stack,
   Breadcrumbs,
-  Hidden,
   GridColumn,
   GridRow,
   Tag,
-  Divider,
   Link,
+  Navigation,
+  TableOfContents,
 } from '@island.is/island-ui/core'
-import {
-  DrawerMenu,
-  SidebarBox,
-  Bullet,
-  SidebarSubNav,
-  RichText,
-  HeadWithSocialSharing,
-} from '@island.is/web/components'
+import { RichText, HeadWithSocialSharing } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
-import { ArticleLayout } from '@island.is/web/screens/Layouts/Layouts'
 import { Screen } from '@island.is/web/types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames from '@island.is/web/i18n/routeNames'
+import { ContentType, pathNames } from '@island.is/web/i18n/routes'
 import { CustomNextError } from '@island.is/web/units/errors'
 import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
   AllSlicesFragment as Slice,
-  AllSlicesProcessEntryFragment as ProcessEntry,
   GetSingleArticleQuery,
   QueryGetSingleArticleArgs,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
-import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { SidebarLayout } from './Layouts/SidebarLayout'
+import { createPortal } from 'react-dom'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
-
-const maybeBold = (content: ReactNode, condition: boolean): ReactNode =>
-  condition ? <b>{content}</b> : content
 
 const createSubArticleNavigation = (body: Slice[]) => {
   // on sub-article page the main article title is h1, sub-article title is h2
@@ -118,12 +108,11 @@ const RelatedArticles: FC<{
   if (articles.length === 0) return null
 
   return (
-    <SidebarBox>
+    <Box background="purple100" borderRadius="large" padding={[3, 3, 4]}>
       <Stack space={[1, 1, 2]}>
-        <Text variant="h4" as="h2">
+        <Text variant="eyebrow" as="h2">
           {title}
         </Text>
-        <Divider weight="alternate" />
         {articles.map((article) => (
           <Link
             key={article.slug}
@@ -137,208 +126,96 @@ const RelatedArticles: FC<{
           </Link>
         ))}
       </Stack>
-    </SidebarBox>
+    </Box>
   )
 }
 
-const ActionButton: FC<{ content: Slice[]; defaultText: string }> = ({
-  content,
-}) => {
-  const processEntries = content.filter((slice): slice is ProcessEntry => {
-    return slice.__typename === 'ProcessEntry' && Boolean(slice.processLink)
-  })
-
-  // we'll only show the button if there is exactly one process entry on the page
-  if (processEntries.length !== 1) return null
-
-  const {
-    processTitle,
-    buttonText,
-    processLink,
-    openLinkInModal,
-  } = processEntries[0]
-
-  return (
-    <SidebarBox>
-      <ProcessEntryLinkButton
-        processTitle={processTitle}
-        buttonText={buttonText}
-        processLink={processLink}
-        openLinkInModal={openLinkInModal}
-        fluid
-      />
-    </SidebarBox>
-  )
-}
-
-const SubArticleNavigation: FC<{
-  title: string
-  article: Article
+const TOC: FC<{
   selectedSubArticle: SubArticle
-}> = ({ title, article, selectedSubArticle }) => {
-  const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale)
-  const [bullet, setBullet] = useState<HTMLDivElement>(null)
-  const isFirstMount = useFirstMountState()
+  title: string
+}> = ({ selectedSubArticle, title }) => {
   const navigation = useMemo(() => {
     return createSubArticleNavigation(selectedSubArticle?.body ?? [])
   }, [selectedSubArticle?.body])
-
-  const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
-  const [activeId, navigate] = useScrollSpy(ids)
-
+  if (navigation.length === 0) {
+    return null
+  }
   return (
-    <SidebarBox position="relative">
-      {/*
-        first render sets the bullet ref, which means we don't know on first render
-        where to show the bullet. When navigating between sub-articles there
-        is also one render call with bullet=null, but in that case we don't
-        want to remove the bullet element because we'd lose the movement animation
-      */}
-      {!isFirstMount && <Bullet align="left" top={bullet?.offsetTop ?? 0} />}
-
-      <Stack space={[1, 1, 2]}>
-        <Text variant="h4" as="h4">
-          {title}
-        </Text>
-        <Divider weight="alternate" />
-        <div ref={!selectedSubArticle ? setBullet : null}>
-          <Link
-            shallow
-            href={makePath('article', '[slug]')}
-            as={makePath('article', article.slug)}
-          >
-            <Text>
-              {maybeBold(
-                article.shortTitle || article.title,
-                !selectedSubArticle,
-              )}
-            </Text>
-          </Link>
-        </div>
-        {article.subArticles.map((subArticle, id) => (
-          <Fragment key={id}>
-            <div
-              ref={
-                subArticle === selectedSubArticle && navigation.length === 0
-                  ? setBullet
-                  : null
-              }
-            >
-              <Link
-                shallow
-                href={makePath('article', '[slug]/[subSlug]')}
-                as={makePath('article', `${article.slug}/${subArticle.slug}`)}
-              >
-                <Text as="span">
-                  {maybeBold(
-                    subArticle.title,
-                    subArticle === selectedSubArticle,
-                  )}
-                </Text>
-              </Link>
-            </div>
-            {subArticle === selectedSubArticle && navigation.length > 0 && (
-              <SidebarSubNav>
-                <Stack space={1}>
-                  {navigation.map(({ id, text }) => (
-                    <div key={id} ref={id === activeId ? setBullet : null}>
-                      <Box
-                        component="button"
-                        type="button"
-                        textAlign="left"
-                        onClick={() => navigate(id)}
-                      >
-                        <Text variant="small">
-                          {maybeBold(text, id === activeId)}
-                        </Text>
-                      </Box>
-                    </div>
-                  ))}
-                </Stack>
-              </SidebarSubNav>
-            )}
-          </Fragment>
-        ))}
-      </Stack>
-    </SidebarBox>
+    <Box marginTop={3}>
+      <TableOfContents
+        tableOfContentsTitle={title}
+        headings={navigation.map(({ id, text }) => ({
+          headingTitle: text,
+          headingId: id,
+        }))}
+        onClick={(id) =>
+          document.getElementById(id).scrollIntoView({
+            behavior: 'smooth',
+          })
+        }
+      />
+    </Box>
   )
 }
 
-const ArticleNavigation: FC<{ title: string; article: Article }> = ({
-  title,
-  article,
-}) => {
-  const [bullet, setBullet] = useState<HTMLElement>(null)
-
-  const navigation = useMemo(() => {
-    return createNavigation(article.body, {
-      title: article.shortTitle || article.title,
-    })
-  }, [article])
-
-  const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
-  const [activeId, navigate] = useScrollSpy(ids)
-
+const ArticleNavigation: FC<
+  ArticleSidebarProps & { isMenuDialog?: boolean }
+> = ({ article, activeSlug, n, isMenuDialog }) => {
+  const { activeLocale } = useI18n()
   return (
-    <SidebarBox position="relative">
-      {bullet && <Bullet align="left" top={bullet.offsetTop} />}
-
-      <Stack space={[1, 1, 2]}>
-        <Text variant="h4" as="h2">
-          {title}
-        </Text>
-        <Divider weight="alternate" />
-
-        {navigation.map(({ id, text }) => (
-          <Box
-            ref={id === activeId ? setBullet : null}
-            key={id}
-            component="button"
-            type="button"
-            textAlign="left"
-            onClick={() => navigate(id)}
-          >
-            <Text>{id === activeId ? <strong>{text}</strong> : text}</Text>
-          </Box>
-        ))}
-      </Stack>
-    </SidebarBox>
+    article.subArticles.length > 0 && (
+      <Navigation
+        baseId="articleNav"
+        title={n('sidebarHeader')}
+        activeItemTitle={
+          !activeSlug
+            ? article.shortTitle ?? article.title
+            : article.subArticles.find((sub) => activeSlug === sub.slug).title
+        }
+        isMenuDialog={isMenuDialog}
+        renderLink={(link, { typename, slug }) => {
+          return (
+            <NextLink
+              {...pathNames(activeLocale, typename as ContentType, slug)}
+              passHref
+            >
+              {link}
+            </NextLink>
+          )
+        }}
+        items={[
+          {
+            title: article.shortTitle ?? article.title,
+            typename: article.__typename,
+            slug: [article.slug],
+            active: !activeSlug,
+          },
+          ...article.subArticles.map((item) => ({
+            title: item.title,
+            typename: item.__typename,
+            slug: [article.slug, item.slug],
+            active: activeSlug === item.slug,
+          })),
+        ]}
+      />
+    )
   )
 }
 
 interface ArticleSidebarProps {
   article: Article
-  subArticle: SubArticle
-  showActionButton: boolean
+  activeSlug?: string | string[]
   n: (s: string) => string
 }
 
 const ArticleSidebar: FC<ArticleSidebarProps> = ({
   article,
-  subArticle,
-  showActionButton,
+  activeSlug,
   n,
 }) => {
   return (
     <Stack space={3}>
-      {!!showActionButton && (
-        <Hidden print={true}>
-          <ActionButton
-            content={article.body}
-            defaultText={n('processLinkButtonText')}
-          />
-        </Hidden>
-      )}
-      {article.subArticles.length === 0 ? (
-        <ArticleNavigation title={n('sidebarHeader')} article={article} />
-      ) : (
-        <SubArticleNavigation
-          title={n('sidebarHeader')}
-          article={article}
-          selectedSubArticle={subArticle}
-        />
-      )}
+      <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
       <RelatedArticles
         title={n('relatedMaterial')}
         articles={article.relatedArticles}
@@ -353,6 +230,12 @@ export interface ArticleProps {
 }
 
 const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
+  const portalRef = useRef()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    portalRef.current = document.querySelector('#__next')
+    setMounted(true)
+  }, [])
   useContentfulId(article.id)
   const n = useNamespace(namespace)
   const { query } = useRouter()
@@ -388,14 +271,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   }
 
   const metaTitle = `${article.title} | Ísland.is`
-
-  const processEntries = article?.body?.length
-    ? article.body.filter((x) => x.__typename === 'ProcessEntry')
-    : []
-
-  // tmp fix
-  const processEntry =
-    processEntries.length === 1 ? (processEntries[0] as ProcessEntry) : null
+  const processEntry = article.processEntry
 
   return (
     <>
@@ -406,88 +282,94 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         imageWidth={article.featuredImage?.width.toString()}
         imageHeight={article.featuredImage?.height.toString()}
       />
-      <ArticleLayout
-        sidebar={
-          <ArticleSidebar
-            showActionButton={Boolean(processEntry)}
-            article={article}
-            subArticle={subArticle}
-            n={n}
-          />
+      <SidebarLayout
+        sidebarContent={
+          <ArticleSidebar article={article} n={n} activeSlug={query.subSlug} />
         }
       >
-        <GridRow>
-          <GridColumn
-            offset={['0', '0', '0', '0', '1/9']}
-            span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-            paddingBottom={[2, 2, 4]}
-          >
-            <Breadcrumbs>
-              <Link href={makePath()}>Ísland.is</Link>
-              {!!article.category && (
-                <Link
-                  href={makePath('ArticleCategory', '/[slug]')}
-                  as={makePath('ArticleCategory', article.category.slug)}
-                >
-                  {article.category.title}
-                </Link>
-              )}
-              {!!article.group && (
-                <Link
-                  as={makePath(
-                    'ArticleCategory',
-                    article.category.slug +
-                      (article.group?.slug ? `#${article.group.slug}` : ''),
-                  )}
-                  href={makePath('ArticleCategory', '[slug]')}
-                  pureChildren
-                >
-                  <Tag variant="blue">{article.group.title}</Tag>
-                </Link>
-              )}
-            </Breadcrumbs>
-          </GridColumn>
-        </GridRow>
-        {!!contentOverviewOptions.length && (
-          <Hidden print={true} above="sm">
-            <DrawerMenu categories={combinedMobileNavigation} />
-          </Hidden>
-        )}
-        <GridRow>
-          <GridColumn
-            offset={['0', '0', '0', '0', '1/9']}
-            span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-          >
-            <Text variant="h1" as="h1">
-              <span id={slugify(article.title)}>{article.title}</span>
+        <Box paddingBottom={[2, 2, 4]}>
+          <Breadcrumbs>
+            <Link href={makePath()}>Ísland.is</Link>
+            {!!article.category && (
+              <Link
+                href={makePath('ArticleCategory', '/[slug]')}
+                as={makePath('ArticleCategory', article.category.slug)}
+              >
+                {article.category.title}
+              </Link>
+            )}
+            {!!article.group && (
+              <Link
+                as={makePath(
+                  'ArticleCategory',
+                  article.category.slug +
+                    (article.group?.slug ? `#${article.group.slug}` : ''),
+                )}
+                href={makePath('ArticleCategory', '[slug]')}
+                pureChildren
+              >
+                <Tag variant="blue">{article.group.title}</Tag>
+              </Link>
+            )}
+          </Breadcrumbs>
+        </Box>
+        <Box>
+          <Text variant="h1" as="h1">
+            <span id={slugify(article.title)}>{article.title}</span>
+          </Text>
+          <Box marginTop={3} display={['block', 'block', 'none']} printHidden>
+            <ArticleNavigation
+              article={article}
+              n={n}
+              activeSlug={query.subSlug}
+              isMenuDialog
+            />
+          </Box>
+          {!!processEntry && (
+            <Box marginTop={3} display={['none', 'none', 'block']} printHidden>
+              <ProcessEntry {...processEntry} />
+            </Box>
+          )}
+          <GridRow>
+            <GridColumn span={[null, '4/7', '5/7', '4/7', '3/7']}>
+              <TOC
+                title={n('tableOfContentTitle')}
+                selectedSubArticle={subArticle}
+              />
+            </GridColumn>
+          </GridRow>
+          {subArticle && (
+            <Text variant="h2" as="h2" paddingTop={7}>
+              <span id={slugify(subArticle.title)}>{subArticle.title}</span>
             </Text>
-            {subArticle && (
-              <Text variant="h2" as="h2" paddingTop={7}>
-                <span id={slugify(subArticle.title)}>{subArticle.title}</span>
-              </Text>
-            )}
-            {!!processEntry && (
-              <Hidden print={true} above="sm">
-                <Box
-                  background="blue100"
-                  padding={3}
-                  marginY={3}
-                  borderRadius="large"
-                >
-                  <ProcessEntryLinkButton variant="text" {...processEntry} />
-                </Box>
-              </Hidden>
-            )}
-          </GridColumn>
-        </GridRow>
+          )}
+        </Box>
         <Box paddingTop={subArticle ? 2 : 4}>
           <RichText
             body={(subArticle ?? article).body as SliceType[]}
             config={{ defaultPadding: [2, 2, 4] }}
             locale={activeLocale}
           />
+          <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
+            {!!processEntry && <ProcessEntry {...processEntry} />}
+            <Box marginTop={3}>
+              <ArticleSidebar
+                article={article}
+                n={n}
+                activeSlug={query.subSlug}
+              />
+            </Box>
+          </Box>
         </Box>
-      </ArticleLayout>
+        {!!processEntry &&
+          mounted &&
+          createPortal(
+            <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
+              <ProcessEntry fixed {...processEntry} />
+            </Box>,
+            portalRef.current,
+          )}
+      </SidebarLayout>
     </>
   )
 }
@@ -535,4 +417,4 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   }
 }
 
-export default withMainLayout(ArticleScreen, { hasDrawerMenu: true })
+export default withMainLayout(ArticleScreen)

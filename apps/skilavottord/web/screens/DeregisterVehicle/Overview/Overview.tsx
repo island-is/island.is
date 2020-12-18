@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useQuery } from '@apollo/client'
+import gql from 'graphql-tag'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import {
@@ -20,16 +21,40 @@ import {
 } from '@island.is/skilavottord-web/components'
 import { CarsTable } from './components/CarsTable'
 import {
-  ALL_RECYCLING_PARTNERS,
-  VEHICLES_BY_PARTNER_ID,
-} from '@island.is/skilavottord-web/graphql/queries'
-import {
   RecyclingPartner,
   RecyclingRequest,
   Vehicle,
   VehicleOwner,
 } from '@island.is/skilavottord-web/types'
 import { getDate, getYear } from '@island.is/skilavottord-web/utils/dateUtils'
+
+export const skilavottordRecyclingPartnerVehiclesQuery = gql`
+  query skilavottordRecyclingPartnerVehiclesQuery($partnerId: String!) {
+    skilavottordRecyclingPartnerVehicles(partnerId: $partnerId) {
+      nationalId
+      vehicles {
+        vehicleId
+        vehicleType
+        newregDate
+        recyclingRequests {
+          id
+          requestType
+          nameOfRequestor
+          createdAt
+        }
+      }
+    }
+  }
+`
+
+const skilavottordAllRecyclingPartnersQuery = gql`
+  query skilavottordAllRecyclingPartnersQuery {
+    skilavottordAllRecyclingPartners {
+      companyId
+      companyName
+    }
+  }
+`
 
 export interface DeregisteredVehicle {
   vehicleId: string
@@ -47,15 +72,21 @@ const Overview: FC = () => {
   const router = useRouter()
 
   const partnerId = user?.partnerId
-  const { data: vehicleData } = useQuery(VEHICLES_BY_PARTNER_ID, {
-    variables: { partnerId },
-    fetchPolicy: 'cache-and-network',
-    skip: !partnerId,
-  })
+  const { data: vehicleData } = useQuery(
+    skilavottordRecyclingPartnerVehiclesQuery,
+    {
+      variables: { partnerId },
+      fetchPolicy: 'cache-and-network',
+      skip: !partnerId,
+    },
+  )
 
-  const { data: partnerData } = useQuery(ALL_RECYCLING_PARTNERS, {
-    variables: { partnerId },
-  })
+  const { data: partnerData } = useQuery(
+    skilavottordAllRecyclingPartnersQuery,
+    {
+      variables: { partnerId },
+    },
+  )
 
   const vehicleOwners = vehicleData?.skilavottordRecyclingPartnerVehicles
   const recyclingPartners = partnerData?.skilavottordAllRecyclingPartners
@@ -94,7 +125,7 @@ const Overview: FC = () => {
   }
 
   const handleDeregister = () => {
-    router.push(routes.deregisterVehicle.select)
+    router.push(`${routes.deregisterVehicle.select}`)
   }
 
   if (!user) {

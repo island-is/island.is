@@ -21,6 +21,7 @@ import { Text } from '../../Text/Text'
 import { TextVariants } from '../../Text/Text.treat'
 import { AccordionContext } from '../../Accordion/Accordion'
 import * as styles from './AccordionItem.treat'
+import { Colors } from '@island.is/island-ui/theme'
 
 type IconVariantTypes = 'default' | 'small' | 'sidebar'
 
@@ -31,6 +32,7 @@ export type AccordionItemBaseProps = {
   label: string
   labelVariant?: TextVariants
   labelUse?: AccordionItemLabelTags
+  labelColor?: Colors
   iconVariant?: IconVariantTypes
   visibleContent?: ReactNode
   children: ReactNode
@@ -55,6 +57,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       label,
       labelVariant = 'h4',
       labelUse = 'h3',
+      labelColor = 'currentColor',
       iconVariant = 'default',
       visibleContent,
       expanded: expandedProp,
@@ -152,7 +155,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                   display="flex"
                   alignItems="center"
                 >
-                  <Text variant={labelVariant} as={labelUse}>
+                  <Text variant={labelVariant} as={labelUse} color={labelColor}>
                     {label}
                   </Text>
                 </Box>
@@ -208,12 +211,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
   },
 )
 
-type AlternateAccordionItemBaseProps = Omit<
-  AccordionItemBaseProps,
-  'iconVariant'
->
-
-export const AccordionCard: FC<AlternateAccordionItemBaseProps> = (props) => {
+export const AccordionCard: FC<AccordionItemBaseProps> = (props) => {
   const [isFocused, setIsFocused] = useState<boolean>(false)
 
   const handleFocus = () => setIsFocused(true)
@@ -235,8 +233,8 @@ export const AccordionCard: FC<AlternateAccordionItemBaseProps> = (props) => {
 }
 
 export const SidebarAccordion: FC<Omit<
-  AlternateAccordionItemBaseProps,
-  'labelVariant'
+  AccordionItemBaseProps,
+  'labelVariant' | 'iconVariant'
 >> = (props) => {
   return (
     <AccordionItem {...props} labelVariant="default" iconVariant="sidebar">

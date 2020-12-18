@@ -1,9 +1,9 @@
 import * as z from 'zod'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
 import { NO, YES } from '../constants'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 const PersonalAllowance = z
   .object({
@@ -11,16 +11,7 @@ const PersonalAllowance = z
       .string()
       .refine((x) => parseFloat(x) >= 0 && parseFloat(x) <= 100)
       .optional(),
-    usedAmount: z
-      .string()
-      .refine((x) => parseInt(x, 10) >= 0)
-      .optional(),
-    accumulatedUsage: z
-      .string()
-      .refine((x) => parseInt(x, 10) >= 0)
-      .optional(),
-    periodFrom: z.string().refine((d) => isValid(parseISO(d))),
-    periodTo: z.string().refine((d) => isValid(parseISO(d))),
+    useAsMuchAsPossible: z.enum([YES, NO]).optional(),
   })
   .optional()
 
@@ -41,13 +32,12 @@ export const dataSchema = z.object({
     phoneNumber: z.string().refine((p) => {
       const phoneNumber = parsePhoneNumberFromString(p, 'IS')
       return phoneNumber && phoneNumber.isValid()
-    }, 'Símanúmer þarf að vera gilt'),
+    }, 'Símanúmerið þarf að vera gilt.'),
   }),
   personalAllowance: PersonalAllowance,
   personalAllowanceFromSpouse: PersonalAllowance,
   payments: z.object({
     bank: z.string().nonempty(),
-    personalAllowanceUsage: z.enum(['100', '75', '50', '25']),
     pensionFund: z.string(),
     privatePensionFund: z.enum(['frjalsi', '']).optional(),
     privatePensionFundPercentage: z.enum(['2', '4', '']).optional(),
@@ -56,16 +46,8 @@ export const dataSchema = z.object({
   usePrivatePensionFund: z.enum([YES, NO]),
   periods: z.array(Period).nonempty(),
   employer: z.object({
-    name: z.string().nonempty(),
-    nationalRegistryId: z
-      .string()
-      .nonempty()
-      .refine(
-        (n) => kennitala.isValid(n) && kennitala.isCompany(n),
-        'Kennitala þarf að vera gild',
-      ),
-    contact: z.string().optional(),
-    contactId: z.string().optional(),
+    isSelfEmployed: z.enum([YES, NO]),
+    email: z.string().email().nonempty(),
   }),
   requestRights: z.enum([YES, NO]),
   giveRights: z.enum([YES, NO]),
@@ -81,6 +63,7 @@ export const dataSchema = z.object({
       (n) => n && kennitala.isValid(n) && kennitala.isPerson(n),
       'Kennitala þarf að vera gild',
     ),
+  otherParentRightOfAccess: z.enum([YES, NO]).optional(),
   usePersonalAllowance: z.enum([YES, NO]),
   usePersonalAllowanceFromSpouse: z.enum([YES, NO]),
 })

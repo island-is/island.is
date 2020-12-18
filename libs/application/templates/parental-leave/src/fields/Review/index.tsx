@@ -1,21 +1,22 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
   FieldBaseProps,
-  formatText,
   getValueViaPath,
+  Option,
 } from '@island.is/application/core'
 import {
   Accordion,
   AccordionItem,
   Box,
+  Button,
   GridColumn,
   GridRow,
   Input,
+  SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
 import {
-  FieldDescription,
   RadioController,
   SelectController,
 } from '@island.is/shared/form-fields'
@@ -31,14 +32,25 @@ import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 import YourRightsBoxChart from '../Rights/YourRightsBoxChart'
 import { useQuery } from '@apollo/client'
 import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
+import { m, mm } from '../../lib/messages'
+import { YES, NO } from '../../constants'
+import useOtherParentOptions from '../../hooks/useOtherParentOptions'
 
 type ValidOtherParentAnswer = 'no' | 'manual' | undefined
 type ValidRadioAnswer = 'yes' | 'no' | undefined
 
-const Review: FC<FieldBaseProps> = ({ field, application }) => {
-  const { description } = field
+const Review: FC<FieldBaseProps> = ({
+  application,
+  goToScreen = () => undefined,
+}) => {
+  const [allItemsExpanded, toggleAllItemsExpanded] = useState(true)
+
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
+  const {
+    options: otherParentOptions,
+    loading: loadingSpouseName,
+  } = useOtherParentOptions()
 
   const [
     statefulOtherParentConfirmed,
@@ -49,24 +61,6 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
       'otherParent',
     ) as ValidOtherParentAnswer,
   )
-  const [spouseName, spouseId] = getNameAndIdOfSpouse(application)
-  const otherParentInfoAvailable =
-    spouseName !== undefined && spouseId !== undefined
-
-  const otherParentOptions = [
-    {
-      value: 'no',
-      label: 'I do not want to confirm the other parent at this time ',
-    },
-    { value: 'manual', label: 'The other parent is:' },
-  ]
-
-  if (otherParentInfoAvailable) {
-    otherParentOptions.unshift({
-      value: 'spouse',
-      label: `The other parent is ${spouseName} (kt. ${spouseId})`,
-    })
-  }
 
   const [statefulPrivatePension, setStatefulPrivatePension] = useState<
     ValidRadioAnswer
@@ -115,58 +109,64 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
 
   return (
     <div>
-      {description && (
-        <FieldDescription
-          description={formatText(description, application, formatMessage)}
-        />
-      )}
+      <Box marginTop={[2, 2, 4]} marginBottom={[0, 0, 6]}>
+        <Box
+          display="flex"
+          justifyContent="flexEnd"
+          style={{
+            position: 'relative',
+            top: '1px',
+            zIndex: 1,
+          }}
+        >
+          <Box display="inlineFlex" background="white" paddingLeft={1}>
+            <Button
+              colorScheme="default"
+              iconType="filled"
+              onClick={() => {
+                toggleAllItemsExpanded(!allItemsExpanded)
+              }}
+              size="small"
+              type="button"
+              variant="text"
+            >
+              {allItemsExpanded
+                ? `${formatMessage(mm.confirmation.collapseAll)} —`
+                : `${formatMessage(mm.confirmation.epxandAll)} +`}
+            </Button>
+          </Box>
+        </Box>
 
-      <Box marginTop={[4, 4, 8]} marginBottom={[0, 0, 6]}>
         <Accordion singleExpand={false}>
-          <AccordionItem id="id_1" label="Contact information">
-            <Box paddingY={4}>
-              <GridRow>
-                <GridColumn span="6/12">
-                  <Input
-                    id={'applicant.email'}
-                    name={'applicant.email'}
-                    label={'Email'}
-                    ref={register}
-                  />
-                </GridColumn>
-                <GridColumn span="6/12">
-                  <Input
-                    id={'applicant.phoneNumber'}
-                    name={'applicant.phoneNumber'}
-                    label={'Phone number'}
-                    ref={register}
-                  />
-                </GridColumn>
-              </GridRow>
-            </Box>
-          </AccordionItem>
-
-          <AccordionItem id="id_4" label="Other parent confirmation">
+          <AccordionItem
+            id="id_4"
+            label={formatMessage(m.otherParentTitle)}
+            startExpanded={allItemsExpanded}
+          >
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="12/12">
-                  <RadioController
-                    id={'otherParent'}
-                    disabled={false}
-                    name={'otherParent'}
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'otherParent',
-                      ) as string[]
-                    }
-                    options={otherParentOptions}
-                    onSelect={(s: string) => {
-                      setStatefulOtherParentConfirmed(
-                        s as ValidOtherParentAnswer,
-                      )
-                    }}
-                  />
+                  {loadingSpouseName ? (
+                    <SkeletonLoader repeat={3} space={1} height={48} />
+                  ) : (
+                    <RadioController
+                      id="otherParent"
+                      disabled={false}
+                      name="otherParent"
+                      defaultValue={
+                        getValueViaPath(
+                          application.answers,
+                          'otherParent',
+                        ) as string[]
+                      }
+                      options={otherParentOptions}
+                      onSelect={(s: string) => {
+                        setStatefulOtherParentConfirmed(
+                          s as ValidOtherParentAnswer,
+                        )
+                      }}
+                    />
+                  )}
                 </GridColumn>
               </GridRow>
               {statefulOtherParentConfirmed === 'manual' && (
@@ -175,17 +175,17 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                   <GridRow>
                     <GridColumn span="6/12">
                       <Input
-                        id={'otherParentName'}
-                        name={'otherParentName'}
-                        label={'Name of other parent'}
+                        id="otherParentName"
+                        name="otherParentName"
+                        label={formatMessage(m.otherParentName)}
                         ref={register}
                       />
                     </GridColumn>
                     <GridColumn span="6/12">
                       <Input
-                        id={'otherParentId'}
-                        name={'otherParentId'}
-                        label={'National ID of other parent'}
+                        id="otherParentId"
+                        name="otherParentId"
+                        label={formatMessage(m.otherParentID)}
                         ref={register}
                       />
                     </GridColumn>
@@ -195,49 +195,44 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
             </Box>
           </AccordionItem>
 
-          <AccordionItem id="id_3" label="Payment details">
+          <AccordionItem
+            id="id_3"
+            label={formatMessage(m.paymentInformationSubSection)}
+            startExpanded={allItemsExpanded}
+          >
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="6/12">
                   <Input
-                    id={'payments.bank'}
-                    name={'payments.bank'}
-                    label={'Bank'}
+                    id="payments.bank"
+                    name="payments.bank"
+                    label={formatMessage(m.paymentInformationBank)}
                     ref={register}
                   />
                 </GridColumn>
                 <GridColumn span="6/12">
-                  <SelectController
-                    label={'Personal discount'}
-                    name={'payments.personalAllowanceUsage'}
-                    disabled={false}
-                    id={'payments.personalAllowanceUsage'}
-                    options={[
-                      { label: '100%', value: '100' },
-                      { label: '75%', value: '75' },
-                      { label: '50%', value: '50' },
-                      { label: '25%', value: '25' },
-                    ]}
-                  />
+                  {
+                    //TODO add the personal allowance questions when finished
+                  }
                 </GridColumn>
               </GridRow>
               <Box marginTop={3} />
               <GridRow>
                 <GridColumn span="6/12">
                   <SelectController
-                    label={'Pension fund (optional)'}
-                    name={'payments.pensionFund'}
+                    label={formatMessage(m.salaryLabelPensionFund)}
+                    name="payments.pensionFund"
                     disabled={false}
-                    id={'payments.pensionFund'}
+                    id="payments.pensionFund"
                     options={[{ label: 'TODO', value: 'todo' }]}
                   />
                 </GridColumn>
                 <GridColumn span="6/12">
                   <SelectController
-                    label={'Union (optional)'}
-                    name={'payments.union'}
+                    label={formatMessage(m.union)}
+                    name="payments.union"
                     disabled={false}
-                    id={'payments.union'}
+                    id="payments.union"
                     options={[{ label: 'TODO', value: 'todo' }]}
                   />
                 </GridColumn>
@@ -247,14 +242,14 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                 <GridColumn span="12/12">
                   <Box marginTop={1} marginBottom={2} marginLeft={4}>
                     <Text variant="h5">
-                      Do you wish to pay to a private pension fund?
+                      {formatMessage(m.privatePensionFundName)}
                     </Text>
                   </Box>
 
                   <RadioController
-                    id={'usePrivatePensionFund'}
+                    id="usePrivatePensionFund"
                     disabled={false}
-                    name={'usePrivatePensionFund'}
+                    name="usePrivatePensionFund"
                     defaultValue={
                       getValueViaPath(
                         application.answers,
@@ -262,8 +257,8 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                       ) as string[]
                     }
                     options={[
-                      { label: 'Yes', value: 'yes' },
-                      { label: 'No', value: 'no' },
+                      { label: formatMessage(m.yesOptionLabel), value: YES },
+                      { label: formatMessage(m.noOptionLabel), value: NO },
                     ]}
                     onSelect={(s: string) => {
                       setStatefulPrivatePension(s as ValidRadioAnswer)
@@ -272,22 +267,22 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                 </GridColumn>
               </GridRow>
 
-              {statefulPrivatePension === 'yes' && (
+              {statefulPrivatePension === YES && (
                 <>
                   <Box marginTop={3} />
                   <GridRow>
                     <GridColumn span="6/12">
                       <SelectController
-                        label={'Pension fund (optional)'}
-                        name={'payments.pensionFund'}
+                        label={formatMessage(m.privatePensionFund)}
+                        name="payments.pensionFund"
                         disabled={false}
-                        id={'payments.pensionFund'}
+                        id="payments.pensionFund"
                         options={[{ label: 'TODO', value: 'todo' }]}
                       />
                     </GridColumn>
                     <GridColumn span="6/12">
                       <SelectController
-                        label={'Union (optional)'}
+                        label={formatMessage(m.union)}
                         name={'payments.union'}
                         disabled={false}
                         id={'payments.union'}
@@ -299,41 +294,18 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               )}
             </Box>
           </AccordionItem>
-          <AccordionItem id="id_1" label="Employer">
+          <AccordionItem
+            id="id_1"
+            label={formatMessage(mm.employer.subSection)}
+            startExpanded={allItemsExpanded}
+          >
             <Box paddingY={4}>
               <GridRow>
-                <GridColumn span="6/12">
+                <GridColumn span="12/12">
                   <Input
-                    id={'employer.name'}
-                    name={'employer.name'}
-                    label={'Name'}
-                    ref={register}
-                  />
-                </GridColumn>
-                <GridColumn span="6/12">
-                  <Input
-                    id={'employer.nationalRegistryId'}
-                    name={'employer.nationalRegistryId'}
-                    label={'Social security nr of employer'}
-                    ref={register}
-                  />
-                </GridColumn>
-              </GridRow>
-              <Box marginTop={3} />
-              <GridRow>
-                <GridColumn span="6/12">
-                  <Input
-                    id={'employer.contact'}
-                    name={'employer.contact'}
-                    label={'Contact name'}
-                    ref={register}
-                  />
-                </GridColumn>
-                <GridColumn span="6/12">
-                  <Input
-                    id={'employer.contactId'}
-                    name={'employer.contactId'}
-                    label={'Contact social security nr'}
+                    id={'employer.email'}
+                    name={'employer.email'}
+                    label={formatMessage(mm.employer.email)}
                     ref={register}
                   />
                 </GridColumn>
@@ -341,7 +313,11 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
             </Box>
           </AccordionItem>
 
-          <AccordionItem id="id_4" label="Your leave rights">
+          <AccordionItem
+            id="id_4"
+            label={formatMessage(m.yourRights)}
+            startExpanded={allItemsExpanded}
+          >
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="12/12">
@@ -351,28 +327,38 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
             </Box>
           </AccordionItem>
 
-          <AccordionItem id="id_4" label="Your periods">
+          <AccordionItem
+            id="id_4"
+            label={formatMessage(m.periodsSection)}
+            startExpanded={allItemsExpanded}
+          >
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="12/12">
                   <Timeline
                     initDate={dobDate}
-                    title="Expected birth date"
-                    titleSmall="Birth date"
+                    title={formatMessage(m.expectedDateOfBirthTitle)}
+                    titleSmall={formatMessage(m.dateOfBirthTitle)}
                     periods={formatPeriods(
                       application.answers.periods as Period[],
                       otherParentPeriods,
                     )}
-                    onDeletePeriod={() => {
-                      // TODO
-                    }}
                   />
+                  <Box paddingTop={3}>
+                    <Button size="small" onClick={() => goToScreen('periods')}>
+                      {formatMessage(mm.leavePlan.change)}
+                    </Button>
+                  </Box>
                 </GridColumn>
               </GridRow>
             </Box>
           </AccordionItem>
 
-          <AccordionItem id="id_4" label="Payment plan">
+          <AccordionItem
+            id="id_4"
+            label={formatMessage(mm.paymentPlan.subSection)}
+            startExpanded={allItemsExpanded}
+          >
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="12/12">
@@ -387,14 +373,17 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
             </Box>
           </AccordionItem>
 
-          <AccordionItem id="id_4" label="Share information">
+          <AccordionItem
+            id="id_4"
+            label={formatMessage(mm.shareInformation.subSection)}
+            startExpanded={allItemsExpanded}
+          >
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="12/12">
                   <Box marginTop={1} marginBottom={2} marginLeft={4}>
                     <Text variant="h5">
-                      Do you want to share your leave information with the other
-                      parent?
+                      {formatMessage(mm.shareInformation.title)}
                     </Text>
                   </Box>
 
@@ -409,8 +398,8 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                       ) as string[]
                     }
                     options={[
-                      { label: 'Yes', value: 'yes' },
-                      { label: 'No', value: 'no' },
+                      { label: formatMessage(m.yesOptionLabel), value: YES },
+                      { label: formatMessage(m.noOptionLabel), value: NO },
                     ]}
                   />
                 </GridColumn>

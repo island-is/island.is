@@ -1,16 +1,25 @@
 import React, { useContext } from 'react'
 import { NextComponentType } from 'next'
+import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
 import { SkeletonLoader } from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { GDPR_INFO_BY_NATIONAL_ID } from '@island.is/skilavottord-web/graphql/queries'
 import { PageLayout, GDPR } from '@island.is/skilavottord-web/components'
+
+export const skilavottordGdprQuery = gql`
+  query skilavottordGdprQuery($nationalId: String!) {
+    skilavottordGdpr(nationalId: $nationalId) {
+      nationalId
+      gdprStatus
+    }
+  }
+`
 
 export const withGDPR = (WrappedComponent: NextComponentType) => () => {
   const { user } = useContext(UserContext)
 
   const nationalId = user?.nationalId ?? ''
-  const { data, loading } = useQuery(GDPR_INFO_BY_NATIONAL_ID, {
+  const { data, loading } = useQuery(skilavottordGdprQuery, {
     variables: { nationalId },
   })
 
@@ -20,7 +29,7 @@ export const withGDPR = (WrappedComponent: NextComponentType) => () => {
         <SkeletonLoader space={2} repeat={4} />
       </PageLayout>
     )
-  } else if (data) {
+  } else if (data?.skilavottordGdpr?.gdprStatus === 'true') {
     return <WrappedComponent />
   }
 

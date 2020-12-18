@@ -1,11 +1,12 @@
+import { Gender } from './gender.enum'
+import { MaritalStatus } from './maritalStatus.enum'
+
 export interface User {
   nationalId: string
   fullName: string
-  gender: string | null
-  legalResidence: string | null
-  birthPlace: string | null
   citizenship: string
-  religion: string | null
-  maritalStatus: string | null
-  banMarking: string | null
+  gender: Gender
+  maritalStatus: MaritalStatus
+  houseCode: string
+  municipalCode: string
 }

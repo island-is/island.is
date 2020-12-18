@@ -8,8 +8,15 @@ import {
   FormValue,
   Schema,
   formatText,
+  MessageFormatter,
 } from '@island.is/application/core'
-import { Box, GridColumn, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  Text,
+  ToastContainer,
+  toast,
+} from '@island.is/island-ui/core'
 import {
   SUBMIT_APPLICATION,
   UPDATE_APPLICATION,
@@ -44,6 +51,20 @@ type ScreenProps = {
   numberOfScreens: number
   prevScreen(): void
   screen: FormScreen
+  goToScreen: (id: string) => void
+}
+
+function handleError(error: string, formatMessage: MessageFormatter): void {
+  toast.error(
+    formatMessage(
+      {
+        id: 'application.system:submit.error',
+        defaultMessage: 'Eitthvað fór úrskeiðis: {error}',
+        description: 'Error message on submit',
+      },
+      { error },
+    ),
+  )
 }
 
 const Screen: FC<ScreenProps> = ({
@@ -53,6 +74,7 @@ const Screen: FC<ScreenProps> = ({
   application,
   dataSchema,
   expandRepeater,
+  goToScreen,
   answerAndGoToNextScreen,
   mode,
   numberOfScreens,
@@ -71,9 +93,14 @@ const Screen: FC<ScreenProps> = ({
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION)
+  const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION, {
+    onError: (e) => handleError(e.message, formatMessage),
+  })
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
+    {
+      onError: (e) => handleError(e.message, formatMessage),
+    },
   )
   const { handleSubmit, errors, reset } = hookFormData
 
@@ -86,6 +113,7 @@ const Screen: FC<ScreenProps> = ({
   }, [formValue, prevScreen, reset])
 
   const onSubmit: SubmitHandler<FormValue> = async (data, e) => {
+    let response
     if (submitField !== undefined) {
       const finalAnswers = { ...formValue, ...data }
       let event: string
@@ -101,7 +129,7 @@ const Screen: FC<ScreenProps> = ({
           event = nativeEvent?.submitter?.id ?? 'SUBMIT'
         }
       }
-      await submitApplication({
+      response = await submitApplication({
         variables: {
           input: {
             id: applicationId,
@@ -111,7 +139,7 @@ const Screen: FC<ScreenProps> = ({
         },
       })
     } else {
-      await updateApplication({
+      response = await updateApplication({
         variables: {
           input: {
             id: applicationId,
@@ -120,7 +148,9 @@ const Screen: FC<ScreenProps> = ({
         },
       })
     }
-    answerAndGoToNextScreen(data)
+    if (response?.data) {
+      answerAndGoToNextScreen(data)
+    }
   }
 
   function canProceed(): boolean {
@@ -165,7 +195,7 @@ const Screen: FC<ScreenProps> = ({
           span={['12/12', '12/12', '7/9', '7/9']}
           offset={['0', '0', '1/9']}
         >
-          <Text variant="h2" marginBottom={5}>
+          <Text variant="h2" marginBottom={2}>
             {formatText(screen.name, application, formatMessage)}
           </Text>
           <Box>
@@ -195,6 +225,7 @@ const Screen: FC<ScreenProps> = ({
                 errors={errors}
                 multiField={screen}
                 application={application}
+                goToScreen={goToScreen}
               />
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
               <FormExternalDataProvider
@@ -210,10 +241,12 @@ const Screen: FC<ScreenProps> = ({
                 errors={errors}
                 field={screen}
                 application={application}
+                goToScreen={goToScreen}
               />
             )}
           </Box>
         </GridColumn>
+        <ToastContainer hideProgressBar closeButton useKeyframeStyles={false} />
         <ScreenFooter
           application={application}
           activeScreenIndex={activeScreenIndex}

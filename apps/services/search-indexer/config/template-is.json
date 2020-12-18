@@ -1,6 +1,6 @@
 {
   "order": 0,
-  "version": 12,
+  "version": 13,
   "index_patterns": ["island-is-v*"],
   "settings": {
     "analysis": {
@@ -122,8 +122,8 @@
       "contentWordCount": {
         "type": "integer"
       },
-      "hasProcessEntry": {
-        "type": "boolean"
+      "processEntryCount": {
+        "type": "integer"
       },
       "fillAndSignLinks": {
         "type": "integer"

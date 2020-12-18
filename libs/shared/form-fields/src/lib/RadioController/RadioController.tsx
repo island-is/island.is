@@ -47,7 +47,11 @@ export const RadioController: FC<Props> = ({
       render={({ value, onChange }) => (
         <GridRow>
           {options.map((option, index) => (
-            <GridColumn span={['1/1', split]} paddingBottom={2}>
+            <GridColumn
+              span={['1/1', split]}
+              paddingBottom={2}
+              key={`option-${option.value}`}
+            >
               <RadioButton
                 large={largeButtons || emphasize}
                 filled={emphasize}

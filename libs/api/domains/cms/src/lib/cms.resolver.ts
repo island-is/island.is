@@ -63,6 +63,10 @@ import { NewsList } from './models/newsList.model'
 import { GetTellUsAStoryInput } from './dto/getTellUsAStory.input'
 import { TellUsAStory } from './models/tellUsAStory.model'
 import { SearchIndexes } from '@island.is/content-search-indexer/types'
+import { GroupedMenu } from './models/groupedMenu.model'
+import { GetSingleMenuInput } from './dto/getSingleMenu.input'
+import { SubpageHeader } from './models/subpageHeader.model'
+import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 
 const { cacheTime } = environment
 
@@ -210,15 +214,6 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => Menu, { nullable: true })
-  getMenu(@Args('input') input: GetMenuInput): Promise<Menu | null> {
-    return this.cmsContentfulService.getMenu(
-      input?.name ?? '',
-      input?.lang ?? 'is-IS',
-    )
-  }
-
-  @Directive(cacheControlDirective())
   @Query(() => LifeEventPage, { nullable: true })
   getLifeEventPage(
     @Args('input') input: GetLifeEventPageInput,
@@ -260,6 +255,12 @@ export class CmsResolver {
     @Args('input') input: GetTellUsAStoryInput,
   ): Promise<TellUsAStory> {
     return this.cmsContentfulService.getTellUsAStory(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => Homepage)
+  getHomepage(@Args('input') input: GetHomepageInput): Promise<Homepage> {
+    return this.cmsContentfulService.getHomepage(input)
   }
 
   @Directive(cacheControlDirective())
@@ -323,9 +324,31 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => Homepage)
-  getHomepage(@Args('input') input: GetHomepageInput): Promise<Homepage> {
-    return this.cmsContentfulService.getHomepage(input)
+  @Query(() => Menu, { nullable: true })
+  getMenu(@Args('input') input: GetMenuInput): Promise<Menu | null> {
+    return this.cmsElasticsearchService.getSingleMenuByName(
+      SearchIndexes[input.lang],
+      { ...input },
+    )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => GroupedMenu, { nullable: true })
+  getGroupedMenu(
+    @Args('input') input: GetSingleMenuInput,
+  ): Promise<GroupedMenu | null> {
+    return this.cmsElasticsearchService.getSingleMenu<GroupedMenu>(
+      SearchIndexes[input.lang],
+      input,
+    )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => SubpageHeader, { nullable: true })
+  getSubpageHeader(
+    @Args('input') input: GetSubpageHeaderInput,
+  ): Promise<SubpageHeader | null> {
+    return this.cmsContentfulService.getSubpageHeader(input)
   }
 }
 

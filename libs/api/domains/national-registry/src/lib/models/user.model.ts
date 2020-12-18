@@ -1,4 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Gender, MaritalStatus } from '../types'
+import { BanMarking } from './banMarking.model'
 
 @ObjectType()
 export class NationalRegistryUser {
@@ -8,8 +10,8 @@ export class NationalRegistryUser {
   @Field(() => String)
   fullName!: string
 
-  @Field(() => String, { nullable: true })
-  gender?: string
+  @Field(() => Gender, { nullable: true })
+  gender?: Gender
 
   @Field(() => String, { nullable: true })
   legalResidence?: string
@@ -23,9 +25,9 @@ export class NationalRegistryUser {
   @Field(() => String, { nullable: true })
   religion?: string
 
-  @Field(() => String, { nullable: true })
-  maritalStatus?: string
+  @Field(() => MaritalStatus, { nullable: true })
+  maritalStatus?: MaritalStatus
 
-  @Field(() => String, { nullable: true })
-  banMarking?: string
+  @Field(() => BanMarking, { nullable: true })
+  banMarking?: BanMarking
 }

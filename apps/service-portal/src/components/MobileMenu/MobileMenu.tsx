@@ -4,23 +4,23 @@ import {
   GridColumn,
   GridRow,
   Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { Locale, useLocale, useNamespaces } from '@island.is/localization'
 import { ISLAND_IS_URL } from '@island.is/service-portal/constants'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import React, { FC } from 'react'
+import React, { FC, useRef } from 'react'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { ActionType } from '../../store/actions'
 import { useStore } from '../../store/stateProvider'
+import ModuleNavigation from '../Sidebar/ModuleNavigation'
 import * as styles from './MobileMenu.treat'
-import MobileMenuItem from './MobileMenuItem'
 
 const MobileMenu: FC<{}> = () => {
+  const ref = useRef(null)
   const [{ mobileMenuState }, dispatch] = useStore()
   const { lang, formatMessage } = useLocale()
   const navigation = useNavigation()
-  const info = navigation[0]
-  const actions = navigation[1]
   const { changeLanguage } = useNamespaces()
 
   const handleLangClick = (value: Locale) => changeLanguage(value)
@@ -39,12 +39,11 @@ const MobileMenu: FC<{}> = () => {
       right={0}
       bottom={0}
       left={0}
-      paddingX={3}
-      paddingBottom={3}
       background="white"
       className={styles.wrapper}
+      ref={ref}
     >
-      <Box marginBottom={2}>
+      <Box paddingX={3}>
         <GridRow>
           <GridColumn span="4/6">
             <a href={ISLAND_IS_URL}>
@@ -67,32 +66,38 @@ const MobileMenu: FC<{}> = () => {
           </GridColumn>
         </GridRow>
       </Box>
-      <Stack space={[0, 2, 2, 0]}>
-        <GridRow>
-          {info?.children?.map((navItem, index) => {
-            if (navItem.path === ServicePortalPath.MinarSidurRoot) return null
-            return (
-              <MobileMenuItem
-                key={`info-${index}`}
-                item={navItem}
-                onClick={handleLinkClick}
-                itemName={formatMessage(navItem.name)}
-              />
-            )
-          }) || null}
-          {actions?.children?.map((navItem, index) => {
-            if (navItem.path === ServicePortalPath.MinarSidurRoot) return null
-            return (
-              <MobileMenuItem
-                key={`action-${index}`}
-                item={navItem}
-                onClick={handleLinkClick}
-                itemName={formatMessage(navItem.name)}
-              />
-            )
-          }) || null}
-        </GridRow>
-      </Stack>
+      {navigation.map((rootItem, rootIndex) => (
+        <Box
+          background={rootIndex === 0 ? 'white' : 'blueberry100'}
+          key={rootIndex}
+          padding={4}
+        >
+          <Stack space={3}>
+            {rootItem.children?.map(
+              (navRoot, index) =>
+                navRoot.path !== ServicePortalPath.MinarSidurRoot && (
+                  <ModuleNavigation
+                    key={index}
+                    nav={navRoot}
+                    variant={rootIndex === 0 ? 'blue' : 'blueberry'}
+                    onItemClick={handleLinkClick}
+                  />
+                ),
+            )}
+          </Stack>
+          {rootIndex === 1 && (
+            <Text variant="small" color="blueberry600" marginTop={3}>
+              {formatMessage({
+                id: 'service.portal:incoming-services-footer',
+                defaultMessage: `
+                  Þessi virkni er enn í boði á eldri Mínum síðum.
+                  Unnið er að því að færa þessar þjónustur.
+                `,
+              })}
+            </Text>
+          )}
+        </Box>
+      ))}
     </Box>
   )
 }

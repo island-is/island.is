@@ -5,8 +5,9 @@ import {
   GridColumn,
   GridRow,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ServicePortalModuleComponent,
@@ -57,6 +58,12 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
         })
       }
       setStatus('success')
+      toast.success(
+        formatMessage({
+          id: 'sp.settings:phone-confirmed-success-subtext',
+          defaultMessage: 'Þú hefur vistað nýtt símanúmer hjá Stafrænt Ísland',
+        }),
+      )
     } catch (err) {
       setStatus('error')
     }
@@ -113,20 +120,6 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
       />
       {status !== 'passive' && (
         <Box marginTop={[5, 7, 15]}>
-          {status === 'success' && (
-            <AlertMessage
-              type="success"
-              title={formatMessage({
-                id: 'sp.settings:phone-confirmed-success-title',
-                defaultMessage: 'Nýtt símanúmer hefur verið vistað',
-              })}
-              message={formatMessage({
-                id: 'sp.settings:phone-confirmed-success-subtext',
-                defaultMessage:
-                  'Þú hefur vistað nýtt símanúmer hjá Stafrænt Ísland',
-              })}
-            />
-          )}
           {status === 'error' && (
             <AlertMessage
               type="error"
@@ -142,6 +135,9 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
             />
           )}
         </Box>
+      )}
+      {status === 'success' && (
+        <Redirect to={ServicePortalPath.UserProfileRoot} />
       )}
     </>
   )

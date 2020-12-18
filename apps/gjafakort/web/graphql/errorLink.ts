@@ -13,7 +13,7 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
 
   if (graphQLErrors) {
     graphQLErrors.forEach((err) => {
-      switch (err.extensions.code) {
+      switch (err.extensions?.code) {
         case 'UNAUTHENTICATED':
           return api.logout().then(() => Router.reload())
         case 'FORBIDDEN':

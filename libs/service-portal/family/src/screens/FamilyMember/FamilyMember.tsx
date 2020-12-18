@@ -1,3 +1,9 @@
+import React from 'react'
+import { defineMessage } from 'react-intl'
+import { useParams } from 'react-router-dom'
+import { useQuery, gql } from '@apollo/client'
+
+import { Query } from '@island.is/api/schema'
 import {
   Box,
   GridColumn,
@@ -11,21 +17,37 @@ import {
   ServicePortalModuleComponent,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-import { useNationalRegistryFamilyInfo } from '@island.is/service-portal/graphql'
-import React from 'react'
-import { defineMessage } from 'react-intl'
-import { useParams } from 'react-router-dom'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  natRegGenderMessageDescriptorRecord,
+  natRegMaritalStatusMessageDescriptorRecord,
+} from '../../helpers/localizationHelpers'
+
+const NationalRegistryFamilyQuery = gql`
+  query NationalRegistryFamilyQuery {
+    nationalRegistryFamily {
+      fullName
+      nationalId
+      address
+      gender
+      maritalStatus
+    }
+  }
+`
+const dataNotFoundMessage = defineMessage({
+  id: 'sp.family:data-not-found',
+  defaultMessage: 'Gögn fundust ekki',
+})
 
 const FamilyMember: ServicePortalModuleComponent = () => {
-  const {
-    data: natRegFamilyInfo,
-    loading,
-    error,
-  } = useNationalRegistryFamilyInfo()
+  useNamespaces('sp.family')
+  const { formatMessage } = useLocale()
+  const { data, loading, error } = useQuery<Query>(NationalRegistryFamilyQuery)
+  const { nationalRegistryFamily } = data || {}
   const { nationalId }: { nationalId: string | undefined } = useParams()
 
   const person =
-    natRegFamilyInfo?.find((x) => x.nationalId === nationalId) || null
+    nationalRegistryFamily?.find((x) => x.nationalId === nationalId) || null
 
   if (!nationalId || error || (!loading && !person))
     return (
@@ -57,6 +79,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
             defaultMessage: 'Birtingarnafn',
           })}
           content={person?.fullName || '...'}
+          loading={loading}
         />
         <UserInfoLine
           label={defineMessage({
@@ -64,6 +87,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
             defaultMessage: 'Kennitala',
           })}
           content={formatNationalId(nationalId)}
+          loading={loading}
         />
         <UserInfoLine
           label={defineMessage({
@@ -71,20 +95,41 @@ const FamilyMember: ServicePortalModuleComponent = () => {
             defaultMessage: 'Lögheimili',
           })}
           content={person?.address || '...'}
+          loading={loading}
         />
         <UserInfoLine
           label={defineMessage({
             id: 'service.portal:gender',
             defaultMessage: 'Kyn',
           })}
-          content={person?.gender || '...'}
+          content={
+            error
+              ? formatMessage(dataNotFoundMessage)
+              : person?.gender
+              ? formatMessage(
+                  natRegGenderMessageDescriptorRecord[person.gender],
+                )
+              : ''
+          }
+          loading={loading}
         />
         <UserInfoLine
           label={defineMessage({
             id: 'service.portal:marital-status',
             defaultMessage: 'Hjúskaparstaða',
           })}
-          content={person?.maritalStatus || '...'}
+          content={
+            error
+              ? formatMessage(dataNotFoundMessage)
+              : person?.maritalStatus
+              ? formatMessage(
+                  natRegMaritalStatusMessageDescriptorRecord[
+                    person?.maritalStatus
+                  ],
+                )
+              : ''
+          }
+          loading={loading}
         />
       </Stack>
     </>

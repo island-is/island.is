@@ -1,4 +1,4 @@
-# Reference next app
+# Reference Next App
 
 ## About
 

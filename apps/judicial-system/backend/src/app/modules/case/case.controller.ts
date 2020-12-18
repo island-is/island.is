@@ -22,8 +22,19 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { User, UserRole } from '@island.is/judicial-system/types'
-import { CurrentHttpUser, JwtAuthGuard } from '@island.is/judicial-system/auth'
+import {
+  CaseTransition,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
+import {
+  CurrentHttpUser,
+  JwtAuthGuard,
+  RolesRules,
+  RolesGuard,
+  RolesRule,
+  RulesType,
+} from '@island.is/judicial-system/auth'
 
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
@@ -31,6 +42,86 @@ import { transitionCase } from './state'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './pipes'
 
+// Allows prosecutors to perform any action
+const prosecutorRule = UserRole.PROSECUTOR as RolesRule
+
+// Allows judges to perform any action
+const judgeRule = UserRole.JUDGE as RolesRule
+
+// Allows prosecutors to update a specific set of fields
+const prosecutorUpdateRule = {
+  role: UserRole.PROSECUTOR,
+  type: RulesType.FIELD,
+  dtoFields: [
+    'policeCaseNumber',
+    'accusedNationalId',
+    'accusedName',
+    'accusedAddress',
+    'accusedGender',
+    'requestedDefenderName',
+    'requestedDefenderEmail',
+    'court',
+    'arrestDate',
+    'requestedCourtDate',
+    'alternativeTravelBan',
+    'requestedCustodyEndDate',
+    'lawsBroken',
+    'custodyProvisions',
+    'requestedCustodyRestrictions',
+    'caseFacts',
+    'legalArguments',
+    'comments',
+  ],
+} as RolesRule
+
+// Allows judges to update a specific set of fields
+const judgeUpdateRule = {
+  role: UserRole.JUDGE,
+  type: RulesType.FIELD,
+  dtoFields: [
+    'courtCaseNumber',
+    'courtDate',
+    'courtRoom',
+    'defenderName',
+    'defenderEmail',
+    'courtStartTime',
+    'courtEndTime',
+    'courtAttendees',
+    'policeDemands',
+    'accusedPlea',
+    'litigationPresentations',
+    'ruling',
+    'decision',
+    'custodyEndDate',
+    'custodyRestrictions',
+    'accusedAppealDecision',
+    'accusedAppealAnnouncement',
+    'prosecutorAppealDecision',
+    'prosecutorAppealAnnouncement',
+  ],
+} as RolesRule
+
+// Allows prosecutors to open, submit and delete cases
+const prosecutorTransitionRule = {
+  role: UserRole.PROSECUTOR,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [
+    CaseTransition.OPEN,
+    CaseTransition.SUBMIT,
+    CaseTransition.DELETE,
+  ],
+} as RolesRule
+
+// Allows judges to accept and reject cases
+const judgeTransitionRule = {
+  role: UserRole.JUDGE,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [CaseTransition.ACCEPT, CaseTransition.REJECT],
+} as RolesRule
+
+@UseGuards(RolesGuard)
 @UseGuards(JwtAuthGuard)
 @Controller('api')
 @ApiTags('cases')
@@ -50,6 +141,7 @@ export class CaseController {
     return existingCase
   }
 
+  @RolesRules(prosecutorRule)
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   create(
@@ -59,6 +151,7 @@ export class CaseController {
     return this.caseService.create(caseToCreate)
   }
 
+  @RolesRules(prosecutorUpdateRule, judgeUpdateRule)
   @Put('case/:id')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
@@ -77,6 +170,7 @@ export class CaseController {
     return updatedCase
   }
 
+  @RolesRules(prosecutorTransitionRule, judgeTransitionRule)
   @Put('case/:id/state')
   @ApiOkResponse({
     type: Case,
@@ -91,12 +185,12 @@ export class CaseController {
 
     const existingCase = await this.findCaseById(id)
 
-    const update = transitionCase(
-      transition.transition,
-      existingCase.state,
-      user.id,
-      user.role,
-    )
+    const update = {
+      state: transitionCase(transition.transition, existingCase.state),
+    } as UpdateCaseDto
+
+    update[user.role === UserRole.PROSECUTOR ? 'prosecutorId' : 'judgeId'] =
+      user.id
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,
@@ -128,6 +222,7 @@ export class CaseController {
     return this.findCaseById(id)
   }
 
+  @RolesRules(judgeRule)
   @Get('case/:id/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -154,6 +249,7 @@ export class CaseController {
     return stream.pipe(res)
   }
 
+  @RolesRules(judgeRule)
   @Post('case/:id/signature')
   @ApiCreatedResponse({
     type: SigningServiceResponse,
@@ -188,6 +284,7 @@ export class CaseController {
     }
   }
 
+  @RolesRules(judgeRule)
   @Get('case/:id/signature')
   @ApiOkResponse({
     type: SignatureConfirmationResponse,

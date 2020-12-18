@@ -1,3 +1,4 @@
+import '@island.is/api/mocks'
 import { withLocale } from '../i18n'
 import { Home } from '../screens'
 

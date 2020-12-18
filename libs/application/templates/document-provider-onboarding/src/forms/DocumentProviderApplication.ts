@@ -167,8 +167,9 @@ export const DocumentProviderOnboarding: Form = buildForm({
           name: m.confirmationTitle,
           description: m.confirmationSubTitle,
           children: [
+            //Error in dev tools, missing keys on divider fields...
             buildDividerField({
-              name: m.applicantSection.defaultMessage,
+              name: m.applicantSection,
               color: 'currentColor',
             }),
             buildTextField({
@@ -201,8 +202,9 @@ export const DocumentProviderOnboarding: Form = buildForm({
               format: '###-####',
               placeholder: '000-0000',
             }),
+            //Error in dev tools, missing keys on divider fields...
             buildDividerField({
-              name: m.administrativeContactSection.defaultMessage,
+              name: m.administrativeContactSection,
               color: 'currentColor',
             }),
             buildTextField({
@@ -221,8 +223,9 @@ export const DocumentProviderOnboarding: Form = buildForm({
               format: '###-####',
               placeholder: '000-0000',
             }),
+            //Error in dev tools, missing keys on divider fields...
             buildDividerField({
-              name: m.technicalContactSection.defaultMessage,
+              name: m.technicalContactSection,
               color: 'currentColor',
             }),
             buildTextField({
@@ -241,8 +244,9 @@ export const DocumentProviderOnboarding: Form = buildForm({
               format: '###-####',
               placeholder: '000-0000',
             }),
+            //Error in dev tools, missing keys on divider fields...
             buildDividerField({
-              name: m.helpDeskSection.defaultMessage,
+              name: m.helpDeskSection,
               color: 'currentColor',
             }),
             //CustomField is a workaround because of a bug in react-hook-form

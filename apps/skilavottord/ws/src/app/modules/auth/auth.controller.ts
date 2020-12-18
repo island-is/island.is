@@ -17,6 +17,7 @@ import {
   CSRF_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
   SSN_IS_NOT_A_PERSON,
+  BASE_PATH,
 } from '@island.is/skilavottord/consts'
 import { environment } from '../../../environments'
 import { Cookie, CookieOptions, Credentials } from './auth.types'
@@ -65,7 +66,7 @@ const loginIS = new IslandisLogin({
   audienceUrl,
 })
 
-@Controller('/api/auth')
+@Controller(`${BASE_PATH}/api/auth`)
 export class AuthController {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
 
@@ -199,11 +200,11 @@ export class AuthController {
     this.logger.info(`  - Role for ${user.fullname} is ${RoleForUser}`)
     let returnUrlComp: string
     if (RoleForUser.includes('recyclingCompany')) {
-      returnUrlComp = '/deregister-vehicle'
+      returnUrlComp = `${BASE_PATH}/deregister-vehicle`
     } else if (RoleForUser.includes('recyclingFund')) {
-      returnUrlComp = '/recycled-vehicles'
+      returnUrlComp = `${BASE_PATH}/recycled-vehicles`
     } else if (RoleForUser.includes('developer')) {
-      returnUrlComp = '/recycled-vehicles'
+      returnUrlComp = `${BASE_PATH}/recycled-vehicles`
     } else {
       return '/error'
     }

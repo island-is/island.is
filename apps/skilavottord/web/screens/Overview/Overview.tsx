@@ -2,6 +2,7 @@ import React, { FC, useContext } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
+import gql from 'graphql-tag'
 import {
   Box,
   Stack,
@@ -15,7 +16,21 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { RecycleActionTypes } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { filterCarsByStatus } from '@island.is/skilavottord-web/utils'
-import { VEHICLES_BY_NATIONAL_ID } from '@island.is/skilavottord-web/graphql/queries'
+
+const skilavottordVehiclesQuery = gql`
+  query skilavottordVehiclesQuery($nationalId: String!) {
+    skilavottordVehicles(nationalId: $nationalId) {
+      permno
+      vinNumber
+      type
+      color
+      firstRegDate
+      isRecyclable
+      hasCoOwner
+      status
+    }
+  }
+`
 
 const Overview: FC = () => {
   const { user } = useContext(UserContext)
@@ -31,7 +46,7 @@ const Overview: FC = () => {
   const router = useRouter()
 
   const nationalId = user?.nationalId
-  const { data, loading, error } = useQuery(VEHICLES_BY_NATIONAL_ID, {
+  const { data, loading, error } = useQuery(skilavottordVehiclesQuery, {
     variables: { nationalId },
     fetchPolicy: 'cache-and-network',
     skip: !nationalId,
@@ -45,7 +60,7 @@ const Overview: FC = () => {
 
   const onContinue = (id: string, actionType: RecycleActionTypes) => {
     router
-      .push(routes[actionType], `${routes.baseRoute}/${id}/${actionType}`)
+      .push(`${routes[actionType]}`, `${routes.baseRoute}/${id}/${actionType}`)
       .then(() => window.scrollTo(0, 0))
   }
 

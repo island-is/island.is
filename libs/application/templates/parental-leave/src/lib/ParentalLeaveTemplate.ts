@@ -1,21 +1,60 @@
+import { assign } from 'xstate'
 import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
   ApplicationTypes,
   ApplicationTemplate,
+  Application,
+  DefaultEvents,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
+import { ApplicationAPITemplateAction } from '@island.is/application/api-template-utils'
 
-import assignParentTemplate from '../emailTemplates/assignToParent'
-import assignEmployerTemplate from '../emailTemplates/assignToEmployer'
+import {
+  generateAssignParentTemplate,
+  generateAssignReviewerTemplate,
+} from '../emailTemplateGenerators'
 import { dataSchema, SchemaFormValues } from './dataSchema'
 
+interface ApiTemplateUtilActions {
+  [key: string]: ApplicationAPITemplateAction
+}
+
+const TEMPLATE_API_ACTIONS: ApiTemplateUtilActions = {
+  assignParentThroughEmail: {
+    type: 'assignThroughEmail',
+    generateTemplate: generateAssignParentTemplate,
+  },
+  assignReviewerThroughEmail: {
+    type: 'assignThroughEmail',
+    generateTemplate: generateAssignReviewerTemplate,
+  },
+}
+
 type Events =
-  | { type: 'APPROVE' }
-  | { type: 'REJECT' }
-  | { type: 'SUBMIT' }
-  | { type: 'ABORT' }
+  | { type: DefaultEvents.APPROVE }
+  | { type: DefaultEvents.ASSIGN }
+  | { type: DefaultEvents.REJECT }
+  | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.ABORT }
+
+enum Roles {
+  APPLICANT = 'applicant',
+  ASSIGNEE = 'assignee',
+}
+
+enum States {
+  DRAFT = 'draft',
+  OTHER_PARENT_APPROVAL = 'otherParentApproval',
+  OTHER_PARENT_ACTION = 'otherParentRequiresAction',
+  VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
+  VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
+  EMPLOYER_WAITING_TO_ASSIGN = 'employerWaitingToAssign',
+  EMPLOYER_APPROVAL = 'employerApproval',
+  EMPLOYER_ACTION = 'employerRequiresAction',
+  IN_REVIEW = 'inReview',
+  APPROVED = 'approved',
+}
 
 function needsOtherParentApproval(context: ApplicationContext) {
   const currentApplicationAnswers = context.application
@@ -32,20 +71,26 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   name: 'Umsókn um fæðingarorlof',
   dataSchema,
   stateMachineConfig: {
-    initial: 'draft',
+    initial: States.DRAFT,
     states: {
-      draft: {
+      [States.DRAFT]: {
         meta: {
-          name: 'draft',
+          name: States.DRAFT,
           progress: 0.25,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/ParentalLeaveForm').then((val) =>
                   Promise.resolve(val.ParentalLeaveForm),
                 ),
-              actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
               write: 'all',
             },
           ],
@@ -53,19 +98,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         on: {
           SUBMIT: [
             {
-              target: 'otherParentApproval',
+              target: States.OTHER_PARENT_APPROVAL,
               cond: needsOtherParentApproval,
             },
-            { target: 'employerApproval' },
+            { target: States.EMPLOYER_WAITING_TO_ASSIGN },
           ],
         },
       },
-      otherParentApproval: {
+      [States.OTHER_PARENT_APPROVAL]: {
         entry: 'assignToOtherParent',
         invoke: {
           src: {
-            type: 'emailService',
-            emailTemplate: assignParentTemplate,
+            type: 'apiTemplateUtils',
+            action: TEMPLATE_API_ACTIONS.assignParentThroughEmail,
           },
         },
         meta: {
@@ -73,49 +118,104 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 0.4,
           roles: [
             {
-              id: 'otherParent',
+              id: Roles.ASSIGNEE,
               formLoader: () =>
                 import('../forms/OtherParentApproval').then((val) =>
                   Promise.resolve(val.OtherParentApproval),
                 ),
               actions: [
-                { event: 'APPROVE', name: 'Approve', type: 'primary' },
-                { event: 'REJECT', name: 'Reject', type: 'reject' },
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Approve',
+                  type: 'primary',
+                },
+                { event: DefaultEvents.REJECT, name: 'Reject', type: 'reject' },
               ],
+            },
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
             },
           ],
         },
         on: {
-          APPROVE: { target: 'employerApproval' },
-          REJECT: { target: 'draft' },
+          [DefaultEvents.APPROVE]: {
+            target: States.EMPLOYER_WAITING_TO_ASSIGN,
+          },
+          [DefaultEvents.REJECT]: { target: States.OTHER_PARENT_ACTION },
         },
       },
-      employerApproval: {
-        entry: 'assignToEmployer',
+      [States.OTHER_PARENT_ACTION]: {
+        meta: {
+          name: 'Other parent requires action',
+          progress: 0.4,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+            },
+          ],
+        },
+      },
+      [States.EMPLOYER_WAITING_TO_ASSIGN]: {
         invoke: {
           src: {
-            type: 'emailService',
-            emailTemplate: assignEmployerTemplate,
+            type: 'apiTemplateUtils',
+            action: TEMPLATE_API_ACTIONS.assignReviewerThroughEmail,
+            // TODO: handle async onDone / onError when transitioning states
           },
         },
+        meta: {
+          name: 'Waiting to assign employer',
+          progress: 0.4,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVAL },
+          [DefaultEvents.REJECT]: { target: States.DRAFT },
+        },
+      },
+      [States.EMPLOYER_APPROVAL]: {
         meta: {
           name: 'Employer Approval',
           progress: 0.5,
           roles: [
             {
-              id: 'employer',
+              id: Roles.ASSIGNEE,
               formLoader: () =>
                 import('../forms/EmployerApproval').then((val) =>
                   Promise.resolve(val.EmployerApproval),
                 ),
-              read: { answers: ['periods'] },
+              read: { answers: ['periods'], externalData: ['pregnancyStatus'] },
               actions: [
-                { event: 'APPROVE', name: 'Approve', type: 'primary' },
-                { event: 'REJECT', name: 'Reject', type: 'reject' },
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Approve',
+                  type: 'primary',
+                },
+                { event: DefaultEvents.REJECT, name: 'Reject', type: 'reject' },
               ],
             },
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
               read: {
                 answers: ['spread', 'periods'],
                 externalData: ['pregnancyStatus', 'parentalLeaves'],
@@ -124,31 +224,65 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          APPROVE: { target: 'inReview' },
-          ABORT: { target: 'draft' },
+          [DefaultEvents.APPROVE]: { target: States.VINNUMALASTOFNUN_APPROVAL },
+          ABORT: { target: States.EMPLOYER_ACTION },
         },
       },
-      inReview: {
+      [States.EMPLOYER_ACTION]: {
         meta: {
-          name: 'In Review',
+          name: 'Employer requires action',
+          progress: 0.5,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+            },
+          ],
+        },
+      },
+      [States.VINNUMALASTOFNUN_APPROVAL]: {
+        meta: {
+          name: 'Vinnumálastofnun Approval',
           progress: 0.75,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+            },
+          ],
         },
         on: {
-          APPROVE: { target: 'approved' },
-          REJECT: { target: 'draft' },
+          [DefaultEvents.APPROVE]: { target: States.APPROVED },
+          [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
         },
       },
-      approved: {
+      [States.VINNUMALASTOFNUN_ACTION]: {
+        meta: {
+          name: 'Vinnumálastofnun requires action',
+          progress: 0.5,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+            },
+          ],
+        },
+      },
+      [States.APPROVED]: {
         meta: {
           name: 'Approved',
           progress: 1,
         },
         type: 'final' as const,
-      },
-      rejected: {
-        meta: {
-          name: 'Rejected',
-        },
       },
     },
   },
@@ -172,35 +306,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         }
         return context
       }),
-      assignToEmployer: assign((context) => {
-        // here we might go the email route instead.
-        const currentApplicationAnswers = context.application
-          .answers as SchemaFormValues
-        if (
-          currentApplicationAnswers.employer.nationalRegistryId !== undefined &&
-          currentApplicationAnswers.employer.nationalRegistryId !== ''
-        ) {
-          return {
-            ...context,
-            application: {
-              ...context.application,
-              assignees: [
-                currentApplicationAnswers.employer.nationalRegistryId,
-              ],
-            },
-          }
-        }
-        return context
-      }),
     },
   },
-  mapUserToRole(id, state): ApplicationRole {
-    if (state === 'employerApproval') {
-      return 'employer'
-    } else if (state === 'otherParentApproval') {
-      return 'otherParent'
+  mapUserToRole(
+    id: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    if (id === application.applicant) {
+      return Roles.APPLICANT
     }
-    return 'applicant'
+    if (application.assignees.includes(id)) {
+      return Roles.ASSIGNEE
+    }
+    return undefined
   },
 }
 

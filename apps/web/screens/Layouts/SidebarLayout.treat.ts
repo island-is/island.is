@@ -6,8 +6,8 @@ const top = STICKY_NAV_HEIGHT + theme.spacing[1]
 
 export const sidebarWrapper = style({
   top,
-  minWidth: '246px',
-  maxWidth: '246px',
+  minWidth: '318px',
+  maxWidth: '318px',
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.lg}px)`]: {
       maxWidth: '230px',

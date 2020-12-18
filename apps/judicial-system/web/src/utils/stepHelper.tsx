@@ -10,6 +10,7 @@ import {
   Case,
   CaseAppealDecision,
   CaseCustodyRestrictions,
+  CaseDecision,
   CaseGender,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
@@ -41,10 +42,10 @@ export const getAppealDecitionText = (
 }
 
 export const constructConclusion = (workingCase: Case) => {
-  if (workingCase.rejecting) {
+  if (workingCase.decision === CaseDecision.REJECTING) {
     return (
       <Text as="span" variant="intro">
-        Beiðni um gæsluvarðhald hafnað
+        Kröfu um gæsluvarðhald er hafnað.
       </Text>
     )
   } else {
@@ -52,7 +53,9 @@ export const constructConclusion = (workingCase: Case) => {
       <>
         <Text as="span" variant="intro">{`Kærði, `}</Text>
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
-          {`${workingCase.accusedName} kt.${workingCase.accusedNationalId} `}
+          {`${workingCase.accusedName} kt. ${formatNationalId(
+            workingCase.accusedNationalId,
+          )} `}
         </Text>
         <Text as="span" variant="intro">
           skal sæta gæsluvarðhaldi, þó ekki lengur en til
@@ -146,8 +149,8 @@ export const constructProsecutorDemands = (workingCase: Case) => {
     <Text>
       Þess er krafist að
       <Text as="span" fontWeight="semiBold">
-        {` ${workingCase.accusedName}
-    ${formatNationalId(workingCase.accusedNationalId)}`}
+        {` ${workingCase.accusedName}, kt.
+        ${formatNationalId(workingCase.accusedNationalId)} `}
       </Text>
       , verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi
       til

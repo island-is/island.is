@@ -11,7 +11,6 @@ import {
   Tag,
   Text,
   Box,
-  Hidden,
   GridContainer,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -54,7 +53,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
   }, [content, title])
 
   return (
-    <>
+    <Box paddingBottom={[2, 2, 10]}>
       <HeadWithSocialSharing
         title={`${title} | Ísland.is`}
         description={intro}
@@ -63,97 +62,80 @@ export const LifeEvent: Screen<LifeEventProps> = ({
         imageHeight={image.height.toString()}
       />
       <GridRow>
-        <GridColumn span={'12/12'}>
-          <Box
-            marginBottom={[4, 4, 4, 8]}
-            display="inlineBlock"
-            width="full"
-            paddingX={[0, 0, 0, 4]}
-          >
-            <Hidden print={true}>
-              <BackgroundImage
-                ratio="12:4"
-                background="transparent"
-                boxProps={{ background: 'white' }}
-                image={image}
-              />
-            </Hidden>
-          </Box>
-        </GridColumn>
+        <Box
+          marginBottom={[4, 4, 4, 8]}
+          display="inlineBlock"
+          width="full"
+          printHidden
+        >
+          <BackgroundImage
+            ratio="12:4"
+            background="transparent"
+            boxProps={{ background: 'white' }}
+            image={image}
+          />
+        </Box>
       </GridRow>
 
       <GridContainer>
-        <Box paddingBottom={[2, 2, 10]}>
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '12/12', '8/12', '9/12']}>
-              <>
-                <GridRow>
-                  <GridColumn
-                    offset={['0', '0', '0', '0', '1/9']}
-                    span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-                    paddingBottom={[2, 2, 4]}
-                  >
-                    <Breadcrumbs>
-                      <Link href={pathNames()}>Ísland.is</Link>
-                      <Tag variant="blue" outlined>
-                        {n('lifeEventTitle', 'Lífsviðburður')}
-                      </Tag>
-                    </Breadcrumbs>
-                  </GridColumn>
-                </GridRow>
-                <GridRow>
-                  <GridColumn
-                    offset={['0', '0', '0', '0', '1/9']}
-                    span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-                  >
-                    <Text variant="h1" as="h1">
-                      <span id={slugify(title)}>{title}</span>
-                    </Text>
-                    {intro && (
-                      <Text variant="intro" as="p" paddingTop={2}>
-                        <span id={slugify(intro)}>{intro}</span>
-                      </Text>
-                    )}
-                  </GridColumn>
-                </GridRow>
-                <Hidden print above="md">
-                  <GridRow>
-                    <GridColumn paddingTop={6} paddingBottom={2} span={'9/9'}>
-                      <AnchorNavigation
-                        title={n('categoryOverview', 'Á þessari síðu')}
-                        navigation={navigation}
-                        position="right"
-                      />
-                    </GridColumn>
-                  </GridRow>
-                </Hidden>
-
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '8/12', '9/12']}>
+            <GridRow>
+              <GridColumn
+                offset={['0', '0', '0', '0', '1/9']}
+                span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+              >
+                <Box paddingBottom={[2, 2, 4]}>
+                  <Breadcrumbs>
+                    <Link href={pathNames().href}>Ísland.is</Link>
+                    <Tag variant="blue" outlined>
+                      {n('lifeEventTitle', 'Lífsviðburður')}
+                    </Tag>
+                  </Breadcrumbs>
+                </Box>
+                <Text variant="h1" as="h1">
+                  <span id={slugify(title)}>{title}</span>
+                </Text>
+                {intro && (
+                  <Text variant="intro" as="p" paddingTop={2}>
+                    <span id={slugify(intro)}>{intro}</span>
+                  </Text>
+                )}
+                <Box
+                  printHidden
+                  display={['block', 'block', 'block', 'none']}
+                  paddingTop={6}
+                  paddingBottom={2}
+                >
+                  <AnchorNavigation
+                    title={n('categoryOverview', 'Á þessari síðu')}
+                    navigation={navigation}
+                    position="right"
+                  />
+                </Box>
                 <Box paddingTop={[3, 3, 4]}>
                   <RichText
                     body={content as SliceType[]}
                     config={{ defaultPadding: [2, 2, 4] }}
                   />
                 </Box>
-              </>
-            </GridColumn>
-            <GridColumn
-              hiddenBelow="lg"
-              span={['0', '0', '4/12', '4/12', '3/12']}
-            >
-              <Box printHidden height="full" marginTop={10} marginLeft={4}>
-                <Sticky>
-                  <AnchorNavigation
-                    title={n('categoryOverview', 'Á þessari síðu')}
-                    navigation={navigation}
-                    position="right"
-                  />
-                </Sticky>
-              </Box>
-            </GridColumn>
-          </GridRow>
-        </Box>
+              </GridColumn>
+            </GridRow>
+          </GridColumn>
+          <GridColumn hiddenBelow="lg" span={['0', '0', '0', '4/12', '3/12']}>
+            <Box printHidden height="full" marginTop={10} paddingLeft={4}>
+              <Sticky>
+                <AnchorNavigation
+                  title={n('categoryOverview', 'Á þessari síðu')}
+                  navigation={navigation}
+                  position="right"
+                />
+              </Sticky>
+            </Box>
+          </GridColumn>
+        </GridRow>
       </GridContainer>
-    </>
+    </Box>
   )
 }
 

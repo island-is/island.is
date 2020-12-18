@@ -14,7 +14,7 @@ import {
 import {
   createTerms,
   extractStringsFromObject,
-  hasProcessEntry,
+  numberOfProcessEntries,
   numberOfLinks,
 } from './utils'
 
@@ -46,7 +46,7 @@ export class AdgerdirPageSyncService
             title: mapped.title,
             content,
             contentWordCount: content.split(/\s+/).length,
-            hasProcessEntry: hasProcessEntry(mapped.content),
+            processEntryCount: numberOfProcessEntries(mapped.content),
             ...numberOfLinks(mapped.content),
             type: 'webAdgerdirPage',
             termPool: createTerms([mapped.title]),

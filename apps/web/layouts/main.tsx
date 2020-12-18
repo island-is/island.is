@@ -16,13 +16,13 @@ import Cookies from 'js-cookie'
 import * as Sentry from '@sentry/node'
 import { RewriteFrames } from '@sentry/integrations'
 import { useRouter } from 'next/router'
-
 import { Header, Main, PageLoader } from '../components'
-import { GET_MENU_QUERY } from '../screens/queries/Menu'
+import { GET_GROUPED_MENU_QUERY, GET_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import {
   QueryGetMenuArgs,
   GetMenuQuery,
+  GetGroupedMenuQuery,
   GetNamespaceQuery,
   QueryGetNamespaceArgs,
   ContentLanguage,
@@ -30,6 +30,7 @@ import {
   QueryGetAlertBannerArgs,
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
+  QueryGetGroupedMenuArgs,
 } from '../graphql/schema'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
@@ -38,6 +39,11 @@ import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { environment } from '../environments/environment'
 import { useNamespace } from '../hooks'
+import {
+  formatMegaMenuCategoryLinks,
+  formatMegaMenuLinks,
+} from '../utils/processMenuData'
+import { Locale } from '../i18n/I18n'
 
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
@@ -60,7 +66,6 @@ export interface LayoutProps {
   wrapContent?: boolean
   showHeader?: boolean
   showFooter?: boolean
-  hasDrawerMenu?: boolean
   categories: GetArticleCategoriesQuery['getArticleCategories']
   topMenuCustomLinks?: FooterLinkProps[]
   footerUpperInfo?: FooterLinkProps[]
@@ -71,6 +76,7 @@ export interface LayoutProps {
   namespace: Record<string, string | string[]>
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   respOrigin
+  megaMenuData
 }
 
 if (environment.sentryDsn) {
@@ -97,7 +103,6 @@ const Layout: NextComponentType<
   wrapContent = true,
   showHeader = true,
   showFooter = true,
-  hasDrawerMenu = false,
   categories,
   topMenuCustomLinks,
   footerUpperInfo,
@@ -109,6 +114,7 @@ const Layout: NextComponentType<
   alertBannerContent,
   respOrigin,
   children,
+  megaMenuData,
 }) => {
   const { activeLocale, t } = useI18n()
   const { makePath } = routeNames(activeLocale)
@@ -256,7 +262,12 @@ const Layout: NextComponentType<
             menuTabs,
           }}
         >
-          {showHeader && <Header showSearchInHeader={showSearchInHeader} />}
+          {showHeader && (
+            <Header
+              showSearchInHeader={showSearchInHeader}
+              megaMenuData={megaMenuData}
+            />
+          )}
           <Main>
             {wrapContent ? <Box width="full">{children}</Box> : children}
           </Main>
@@ -278,7 +289,6 @@ const Layout: NextComponentType<
               }}
               showMiddleLinks
               showTagLinks
-              hasDrawerMenu
             />
           </Hidden>
         )}
@@ -341,7 +351,6 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
   const respOrigin = `${origin}`
   const [
     categories,
-    topMenuCustomLinks,
     alertBanner,
     upperMenuInfo,
     upperMenuContact,
@@ -349,6 +358,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
     middleMenu,
     tagsMenu,
     namespace,
+    megaMenuData,
   ] = await Promise.all([
     apolloClient
       .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
@@ -360,14 +370,6 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
         },
       })
       .then((res) => res.data.getArticleCategories),
-    apolloClient
-      .query<GetMenuQuery, QueryGetMenuArgs>({
-        query: GET_MENU_QUERY,
-        variables: {
-          input: { name: 'Top menu custom links', lang },
-        },
-      })
-      .then((res) => res.data.getMenu),
     apolloClient
       .query<GetAlertBannerQuery, QueryGetAlertBannerArgs>({
         query: GET_ALERT_BANNER_QUERY,
@@ -430,16 +432,20 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
         // map data here to reduce data processing in component
         return JSON.parse(res.data.getNamespace.fields)
       }),
+    apolloClient
+      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
+        query: GET_GROUPED_MENU_QUERY,
+        variables: {
+          input: { id: '5prHB8HLyh4Y35LI4bnhh2', lang },
+        },
+      })
+      .then((res) => res.data.getGroupedMenu),
   ])
+
+  const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
   return {
     categories,
-    topMenuCustomLinks: (topMenuCustomLinks.links ?? []).map(
-      ({ text, url }) => ({
-        title: text,
-        href: url,
-      }),
-    ),
     alertBannerContent: alertBanner,
     footerUpperInfo: (upperMenuInfo.links ?? []).map(({ text, url }) => ({
       title: text,
@@ -463,6 +469,18 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
     })),
     namespace,
     respOrigin,
+    megaMenuData: {
+      asideTopLinks: formatMegaMenuLinks(
+        lang as Locale,
+        asideTopLinksData.menuLinks,
+      ),
+      asideBottomTitle: asideBottomLinksData.title,
+      asideBottomLinks: formatMegaMenuLinks(
+        lang as Locale,
+        asideBottomLinksData.menuLinks,
+      ),
+      mainLinks: formatMegaMenuCategoryLinks(lang as Locale, categories),
+    },
   }
 }
 

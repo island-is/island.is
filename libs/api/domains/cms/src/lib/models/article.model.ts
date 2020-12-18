@@ -1,13 +1,14 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { IArticle } from '../generated/contentfulTypes'
-import { mapDocument } from './slice.model'
 import { Image, mapImage } from './image.model'
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { ArticleGroup, mapArticleGroup } from './articleGroup.model'
 import { ArticleSubgroup, mapArticleSubgroup } from './articleSubgroup.model'
 import { Organization, mapOrganization } from './organization.model'
 import { SubArticle, mapSubArticle } from './subArticle.model'
-import { SliceUnion } from '../unions/slice.union'
+import { mapDocument, SliceUnion } from '../unions/slice.union'
+import { mapProcessEntry, ProcessEntry } from './processEntry.model'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class Article {
@@ -27,13 +28,13 @@ export class Article {
   intro?: string
 
   @Field({ nullable: true })
-  containsApplicationForm: boolean
-
-  @Field({ nullable: true })
   importance: number
 
   @Field(() => [SliceUnion])
   body: Array<typeof SliceUnion>
+
+  @Field(() => ProcessEntry, { nullable: true })
+  processEntry?: ProcessEntry
 
   @Field(() => ArticleCategory, { nullable: true })
   category?: ArticleCategory
@@ -66,15 +67,21 @@ export class Article {
   featuredImage?: Image
 }
 
-export const mapArticle = ({ fields, sys }: IArticle): Article => ({
+export const mapArticle = ({
+  fields,
+  sys,
+}: IArticle): SystemMetadata<Article> => ({
+  typename: 'Article',
   id: sys.id,
   title: fields.title ?? '',
   shortTitle: fields.shortTitle ?? '',
   slug: fields.slug ?? '',
   intro: fields.intro ?? '',
-  containsApplicationForm: fields.containsApplicationForm ?? false,
   importance: fields.importance ?? 0,
   body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
+  processEntry: fields.processEntry
+    ? mapProcessEntry(fields.processEntry)
+    : null,
   category: fields.category ? mapArticleCategory(fields.category) : null,
   otherCategories: (fields.otherCategories ?? []).map(mapArticleCategory),
   group: fields.group ? mapArticleGroup(fields.group) : null,

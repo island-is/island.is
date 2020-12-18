@@ -12,7 +12,7 @@ import * as styles from './PageLayout.treat'
 import { JudgeLogo, ProsecutorLogo } from '../Logos'
 import Loading from '../Loading/Loading'
 import * as Constants from '../../utils/constants'
-import { UserRole } from '@island.is/judicial-system/types'
+import { CaseDecision, UserRole } from '@island.is/judicial-system/types'
 import { Link } from 'react-router-dom'
 import { UserContext } from '../UserProvider/UserProvider'
 
@@ -24,6 +24,7 @@ interface PageProps {
   activeSubSection?: number
   // Only needed for the SignedVerdictOverview screen
   rejectedCase?: boolean
+  decision?: CaseDecision
   isCustodyEndDateInThePast?: boolean
 }
 
@@ -34,6 +35,7 @@ export const PageLayout: FC<PageProps> = ({
   isLoading,
   notFound,
   rejectedCase,
+  decision,
   isCustodyEndDateInThePast,
 }) => {
   const { user } = useContext(UserContext)
@@ -78,9 +80,20 @@ export const PageLayout: FC<PageProps> = ({
                   {
                     name: 'Krafa um gæsluvarðhald',
                     children: [
-                      { type: 'SUB_SECTION', name: 'Grunnupplýsingar' },
-                      { type: 'SUB_SECTION', name: 'Málsatvik og lagarök' },
-                      { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
+                      { type: 'SUB_SECTION', name: 'Sakborningur' },
+                      { type: 'SUB_SECTION', name: 'Dómkröfur' },
+                      {
+                        type: 'SUB_SECTION',
+                        name: 'Lagagrundvöllur og takmarkanir',
+                      },
+                      {
+                        type: 'SUB_SECTION',
+                        name: 'Greinargerð',
+                      },
+                      {
+                        type: 'SUB_SECTION',
+                        name: 'Yfirlit kröfu',
+                      },
                     ],
                   },
                   {
@@ -96,9 +109,15 @@ export const PageLayout: FC<PageProps> = ({
                   },
                   {
                     name: rejectedCase
-                      ? 'Gæsluvarðhaldi hafnað'
+                      ? 'Kröfu hafnað'
                       : isCustodyEndDateInThePast
-                      ? 'Gæsluvarðhaldi lokið'
+                      ? decision ===
+                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                        ? 'Farbanni lokið'
+                        : 'Gæsluvarðhaldi lokið'
+                      : decision ===
+                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                      ? 'Farbann virkt'
                       : 'Gæsluvarðhald virkt',
                   },
                 ]}

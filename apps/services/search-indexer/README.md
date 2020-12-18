@@ -1,4 +1,4 @@
-# Search indexer
+# Search Indexer
 
 ## About
 

@@ -16,6 +16,7 @@ interface Props {
   language: LanguageFormOption | null
   renderBackButton?: () => JSX.Element
   renderSubmitButton?: () => JSX.Element
+  onValueChange?: (data: LanguageFormData) => void
   onSubmit: (data: LanguageFormData) => void
 }
 
@@ -23,6 +24,7 @@ export const LanguageForm: FC<Props> = ({
   language,
   renderBackButton,
   renderSubmitButton,
+  onValueChange,
   onSubmit,
 }) => {
   const { handleSubmit, control, reset } = useForm()
@@ -46,7 +48,13 @@ export const LanguageForm: FC<Props> = ({
             <Select
               name={name}
               value={value}
-              onChange={onChange}
+              onChange={(value, actionMeta) => {
+                onChange(value, actionMeta)
+                if (onValueChange)
+                  onValueChange({
+                    language: value as LanguageFormOption,
+                  })
+              }}
               label={formatMessage({
                 id: 'service.portal:language',
                 defaultMessage: 'Tungumál',

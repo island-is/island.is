@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   formName: {
     id: 'dpo.application:form.name',
-    defaultMessage: 'Almennar upplýsingar um skjalaveitanda',
+    defaultMessage: 'Umsókn skjalaveitu',
     description: '',
   },
 
@@ -34,6 +34,11 @@ export const m = defineMessages({
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nibh metus, ornare sed neque id, efficitur mollis mauris. Proin eget metus cursus, eleifend sapien ut, consectetur ex. Sed vel ante ac magna pretium scelerisque faucibus sodales diam. Donec id leo posuere, tincidunt erat quis, venenatis purus. Ut sollicitudin mauris vitae ipsum mattis, vel iaculis ante pellentesque. Nam sed facilisis sapien. Proin facilisis porta blandit. Nunc ac dictum nisl, sit amet varius tortor. Suspendisse a lacinia lacus, non lobortis purus. Nullam eget nisi vitae augue iaculis euismod. Nulla rhoncus est vitae mi condimentum, nec convallis diam ullamcorper. Mun koma ur messages ? Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nibh metus, ornare sed neque id, efficitur mollis mauris. Proin eget metus cursus, eleifend sapien ut, consectetur ex. Sed vel ante ac magna pretium scelerisque faucibus sodales diam. Donec id leo posuere, tincidunt erat quis, venenatis purus. Ut sollicitudin mauris vitae ipsum mattis, vel iaculis ante pellentesque. Nam sed facilisis sapien. Proin facilisis porta blandit. Nunc ac dictum nisl, sit amet varius tortor. Suspendisse a lacinia lacus, non lobortis purus. Nullam eget nisi vitae augue iaculis euismod. Nulla rhoncus est vitae mi condimentum, nec convallis diam ullamcorper. Mun koma ur messages ? Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nibh metus, ornare sed neque id, efficitur mollis mauris. Proin eget metus cursus, eleifend sapien ut, consectetur ex. Sed vel ante ac magna pretium scelerisque faucibus sodales diam. Donec id leo posuere, tincidunt erat quis, venenatis purus. Ut sollicitudin mauris vitae ipsum mattis, vel iaculis ante pellentesque. Nam sed facilisis sapien. Proin facilisis porta blandit. Nunc ac dictum nisl, sit amet varius tortor. Suspendisse a lacinia lacus, non lobortis purus. Nullam eget nisi vitae augue iaculis euismod. Nulla rhoncus est vitae mi condimentum, nec convallis diam ullamcorper.',
     description: 'Some description',
   },
+  termsUserAgreementRequiredMessage: {
+    id: 'dpo.application:terms.userAgreementRequiredMessage',
+    defaultMessage: 'Þú verður að samþykkja notendaskilmálar',
+    description: 'Some description',
+  },
   termsSafetyAgreementTitle: {
     id: 'dpo.application:terms.safetyAgreementLabel',
     defaultMessage: 'Öryggisskilmálar',
@@ -43,6 +48,11 @@ export const m = defineMessages({
     id: 'dpo.application:terms.safetyAgreementLabel',
     defaultMessage:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nibh metus, ornare sed neque id, efficitur mollis mauris. Proin eget metus cursus, eleifend sapien ut, consectetur ex. Sed vel ante ac magna pretium scelerisque faucibus sodales diam. Donec id leo posuere, tincidunt erat quis, venenatis purus. Ut sollicitudin mauris vitae ipsum mattis, vel iaculis ante pellentesque. Nam sed facilisis sapien. Proin facilisis porta blandit. Nunc ac dictum nisl, sit amet varius tortor. Suspendisse a lacinia lacus, non lobortis purus. Nullam eget nisi vitae augue iaculis euismod. Nulla rhoncus est vitae mi condimentum, nec convallis diam ullamcorper.',
+    description: 'Some description',
+  },
+  termsSafetyAgreementRequiredMessage: {
+    id: 'dpo.application:terms.safetyAgreementLabel',
+    defaultMessage: 'Þú verður að samþykkja öryggisskilmála',
     description: 'Some description',
   },
   userAgreementOptionLabel: {
@@ -295,7 +305,7 @@ export const m = defineMessages({
   },
   reviewTitle: {
     id: 'dpo.application:review.title',
-    defaultMessage: 'Umsókn um að gerast skjalaveitandi',
+    defaultMessage: 'Úrvinnsla umsóknar',
     description: '',
   },
   reviewSubTitle: {
@@ -323,6 +333,11 @@ export const m = defineMessages({
   rejectedSubTitle: {
     id: 'dpo.application:rejected.subTitle',
     defaultMessage: 'Umsókn þinni til að gerast skjalaveitandi var hafnað',
+    description: '',
+  },
+  rejectedSubHeading: {
+    id: 'dpo.application:rejected.subHeading',
+    defaultMessage: 'Ástæða',
     description: '',
   },
 
@@ -391,7 +406,7 @@ export const m = defineMessages({
   },
   testPhaseInfoFooterMessage: {
     id: 'dpo.application:testPhaseInfo.footerMessage',
-    defaultMessage: 'Öryggiskröfur sem gerðar eru til skjalaveitna',
+    defaultMessage: 'Skjöl þurfa að vera á PDF formi',
     description: '',
   },
 
@@ -409,18 +424,18 @@ export const m = defineMessages({
   testEnviromentFieldDescription: {
     id: 'dpo.application:testEnviroment.fieldDescription',
     defaultMessage:
-      'Hér getur þú búið til aðgang að prófunarumhverfi. Athugið að afrita og geyma þessar upplýsingar því þær eru ekki geymdar hér í þessari umsókn. Ef upplýsingarnar glatast er hægt að búa til nýjan aðgang.',
+      'Hér getur þú búið til aðgang að prófunarumhverfi. Athugið að afrita og geyma þessar upplýsingar því þær eru ekki geymdar hér í þessari umsókn.',
     description: '',
   },
-  testEnviromentSubHeading: {
-    id: 'dpo.application:testEnviroment.subHeading',
-    defaultMessage: 'Aðgangur að pósthólfi',
-    description: '',
-  },
-  testEnviromentSubMessage: {
-    id: 'dpo.application:testEnviroment.subMessage',
+  testEnviromentStrongText: {
+    id: 'dpo.application:testEnviroment.strongText',
     defaultMessage:
-      'Hér er hægt að útbúa aðgang til að senda inn skjalatilvísanir í pósthólf',
+      'Þessar upplýsingar eru bara aðgengilegar einu sinni, ef þær glatast þarftu að hafa samband við island.is ',
+    description: '',
+  },
+  testEnviromentErrorMessage: {
+    id: 'dpo.application:testEnviroment.subMessage',
+    defaultMessage: 'Eitthvað fór úrskeiðis. Ekki tókst að búa til aðgang.',
     description: '',
   },
 
@@ -439,6 +454,11 @@ export const m = defineMessages({
     id: 'dpo.application:testEndPoint.subTitle',
     defaultMessage:
       'Til að hægt sé að sækja skjöl til skjalaveitu þarf að tilgreina endapunkt. Þegar endapunktur er vistaður er búnar til Audience og Scope breytur.',
+    description: '',
+  },
+  testEndPointErrorMessage: {
+    id: 'dpo.application:testEnviroment.subMessage',
+    defaultMessage: 'Eitthvað fór úrskeiðis. Ekki tókst að vista endapunkt.',
     description: '',
   },
 
@@ -510,9 +530,19 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala móttakanda',
     description: '',
   },
+  automatedTestsNationalIdPlaceholder: {
+    id: 'dpo.application:automatedTests.nationalIdPlaceholder',
+    defaultMessage: 'Skráðu inn kennitölu',
+    description: '',
+  },
   automatedTestsDocIdLabel: {
     id: 'dpo.application:automatedTests.docIdLabel',
     defaultMessage: 'Id skjals',
+    description: '',
+  },
+  automatedTestsDocIdPlaceholder: {
+    id: 'dpo.application:automatedTests.docIdPlaceholder',
+    defaultMessage: 'Skráðu inn Id skjals',
     description: '',
   },
   automatedTestsNationalIdErrorMessage: {
@@ -528,6 +558,12 @@ export const m = defineMessages({
   automatedTestsButton: {
     id: 'dpo.application:automatedTests.button',
     defaultMessage: 'Hefja próf',
+    description: '',
+  },
+  automatedTestsErrorMessage: {
+    id: 'dpo.application:testEnviroment.subMessage',
+    defaultMessage:
+      'Eitthvað fór úrskeiðis. Ekki tókst að hefja sjálfvirk próf.',
     description: '',
   },
 
@@ -548,9 +584,20 @@ export const m = defineMessages({
       'Hér getur þú búið til aðgang að raunumhverfi. Athugið að afrita og geyma þessar upplýsingar því þær eru ekki geymdar hér í þessari umsókn.',
     description: '',
   },
+  prodEnviromentStrongText: {
+    id: 'dpo.application:testEnviroment.strongText',
+    defaultMessage:
+      'Þessar upplýsingar eru bara aðgengilegar einu sinni, ef þær glatast þarftu að hafa samband við island.is ',
+    description: '',
+  },
   prodEnviromentButton: {
     id: 'dpo.application:prodEnviroment.button',
     defaultMessage: 'Búa til aðgang',
+    description: '',
+  },
+  prodEnviromentErrorMessage: {
+    id: 'dpo.application:testEnviroment.subMessage',
+    defaultMessage: 'Eitthvað fór úrskeiðis. Ekki tókst að búa til aðgang.',
     description: '',
   },
 
@@ -569,6 +616,11 @@ export const m = defineMessages({
     id: 'dpo.application:prodEndPoint.subTitle',
     defaultMessage:
       'Til að hægt sé að sækja skjöl til skjalaveitu þarf að tilgreina endapunkt. Þegar endapunktur er vistaður er búnar til Audience og Scope breytur.',
+    description: '',
+  },
+  prodEndPointErrorMessage: {
+    id: 'dpo.application:testEnviroment.subMessage',
+    defaultMessage: 'Eitthvað fór úrskeiðis. Ekki tókst að vista endapunkt.',
     description: '',
   },
 

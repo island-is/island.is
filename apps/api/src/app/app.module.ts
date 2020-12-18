@@ -4,6 +4,7 @@ import { TerminusModule } from '@nestjs/terminus'
 import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/api/domains/cms'
+import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 import { ApplicationModule } from '@island.is/api/domains/application'
 import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of-labour'
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
@@ -20,12 +21,10 @@ import { DocumentProviderModule } from '@island.is/api/domains/document-provider
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
-const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
+const autoSchemaFile = environment.production
+  ? true
+  : 'apps/api/src/api.graphql'
 
-/*
- * When adding new resolvers through your modules don't forget to add them to buildSchema.ts as well.
- * So the automatically generated schemas won't be failing when running.
- */
 @Module({
   controllers: [HealthController],
   imports: [
@@ -49,6 +48,9 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     }),
     ContentSearchModule,
     CmsModule,
+    DrivingLicenseModule.register({
+      baseApiUrl: environment.drivingLicense.baseApiUrl,
+    }),
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl,
     }),
@@ -60,7 +62,20 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
       clientSecret: environment.documentService.clientSecret,
       tokenUrl: environment.documentService.tokenUrl,
     }),
-    DocumentProviderModule,
+    DocumentProviderModule.register({
+      test: {
+        basePath: environment.documentProviderService.test.basePath,
+        clientId: environment.documentProviderService.test.clientId,
+        clientSecret: environment.documentProviderService.test.clientSecret,
+        tokenUrl: environment.documentProviderService.test.tokenUrl,
+      },
+      prod: {
+        basePath: environment.documentProviderService.prod.basePath,
+        clientId: environment.documentProviderService.prod.clientId,
+        clientSecret: environment.documentProviderService.prod.clientSecret,
+        tokenUrl: environment.documentProviderService.prod.tokenUrl,
+      },
+    }),
     TranslationsModule,
     TerminusModule,
     NationalRegistryModule.register({

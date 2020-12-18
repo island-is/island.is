@@ -75,12 +75,6 @@ describe('/domari-krafa/thingbok', () => {
     )
     userEvent.tab()
 
-    userEvent.type(
-      screen.getByLabelText('Þinghaldi lauk *') as HTMLInputElement,
-      '12:32',
-    )
-    userEvent.tab()
-
     expect(document.title).toEqual('Þingbók - Réttarvörslugátt')
 
     expect(
@@ -122,7 +116,9 @@ describe('/domari-krafa/thingbok', () => {
     ).toBeDisabled()
 
     userEvent.type(
-      screen.getByLabelText('Málflutningsræður *') as HTMLInputElement,
+      screen.getByLabelText(
+        'Málflutningur og aðrar bókanir *',
+      ) as HTMLInputElement,
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nihilne est in his rebus, quod dignum libero aut indignum esse ducamus? Haec quo modo conveniant, non sane intellego. Facit enim ille duo seiuncta ultima bonorum, quae ut essent vera, coniungi debuerunt; Etenim semper illud extra est, quod arte comprehenditur. Paulum, cum regem Persem captum adduceret, eodem flumine invectio? Nunc haec primum fortasse audientis servire debemus. Duo Reges: constructio interrete. Quare hoc videndum est, possitne nobis hoc ratio philosophorum dare.',
     )
     userEvent.tab()

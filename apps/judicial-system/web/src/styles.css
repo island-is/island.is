@@ -4,9 +4,11 @@
 #root {
   min-height: 100vh;
 }
+
 table {
   border-spacing: 0;
   border-collapse: collapse;
+  overflow: hidden;
 }
 
 caption {
@@ -14,25 +16,8 @@ caption {
   margin-bottom: 16px;
 }
 
-thead {
-  background: #f2f7ff;
-  box-shadow: inset 0px -1px 0px #ccdfff;
-}
-
 th,
 td {
   text-align: left;
   max-width: 224px;
-}
-
-th {
-  padding: 12px 24px;
-}
-
-td {
-  padding: 6px 24px;
-}
-
-td:last-child {
-  text-align: right;
 }
