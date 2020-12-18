@@ -36,8 +36,6 @@ export class ApiScopesDTO {
   })
   readonly showInDiscoveryDocument!: boolean
 
-  // Common properties end
-
   @IsBoolean()
   @ApiProperty({
     example: false,
