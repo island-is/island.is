@@ -20,6 +20,7 @@ import { MessageDescriptor } from 'react-intl'
 export function buildForm(data: {
   id: string
   name: MessageDescriptor | string
+  logo?: React.FC
   mode?: FormModes
   children: FormChildren[]
   icon?: string

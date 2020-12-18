@@ -24,7 +24,6 @@ export class ApiScopesDTO {
   readonly displayName!: string
 
   @IsString()
-  @IsNotEmpty()
   @ApiProperty({
     example: 'set_description',
   })
@@ -36,8 +35,6 @@ export class ApiScopesDTO {
     example: true,
   })
   readonly showInDiscoveryDocument!: boolean
-
-  // Common properties end
 
   @IsBoolean()
   @ApiProperty({
