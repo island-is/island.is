@@ -24,7 +24,7 @@ export const DocumentProvidersSearch: FC<Props> = ({ data }) => {
       item.name.toLowerCase().includes(searchTerm.toLowerCase()),
     )
     setSearchResults(results)
-  }, [data])
+  }, [searchTerm, data])
 
   const history = useHistory()
   return (

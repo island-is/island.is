@@ -1,7 +1,5 @@
-import React, { FC, useState, useEffect } from 'react'
-import { useParams, useHistory } from 'react-router-dom'
-import { Box, Text, Input, ActionCard } from '@island.is/island-ui/core'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import React, { FC } from 'react'
+import { Box, Text, Input } from '@island.is/island-ui/core'
 
 //Interface will be deleted, when graphql is ready.
 interface Applicant {
