@@ -20,10 +20,11 @@ interface TypeResolverResponse {
 export type LinkType = keyof typeof routesTemplate
 
 /*
-The order here matters for type resolution, arrange overlapping types from most specific to least specific for correct type resolution.
-This should only include one entry for each type.
+The order here matters for type resolution, arrange overlapping types from most specific to least specific for correct type resolution
+This should only include one entry for each type
 This should only include one instance of a pathTemplate
 A locale can be ignored by setting it's value to an empty string
+Keys in routesTemplate should ideally match lowercased __typename of graphql api types to allow them to be passed in directly
 */
 export const routesTemplate = {
   aboutsubpage: {
@@ -100,8 +101,11 @@ export const linkResolver = (
   variables: LinkResolverInput['variables'] = [],
   locale: LinkResolverInput['locale'],
 ): LinkResolverResponse => {
-  // we lowercase here to allow components to pass unmodified __typename fields
-  const type = linkType.toLowerCase()
+  /*
+  We lowercase here to allow components to pass unmodified __typename fields
+  The __typename fields seem to have case issues, that will be addressed at a later time
+  */
+  const type = linkType?.toLowerCase() ?? ''
 
   // We consider path not found if it has no entry in routesTemplate or if the found path is empty
   if (routesTemplate[type] && routesTemplate[type][locale]) {
@@ -155,7 +159,7 @@ export const typeResolver = (
       // convert the route template string into a regex query
       const regex = convertToRegex(routeTemplate)
       // if this path matches query return route info else continue
-      if (path.match(regex)) {
+      if (path?.match(regex)) {
         return { type, locale } as TypeResolverResponse
       }
     }

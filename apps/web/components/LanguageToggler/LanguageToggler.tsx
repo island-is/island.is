@@ -32,10 +32,17 @@ export const LanguageToggler: FC<{
 
     if (!contentfulId) {
       const { type } = typeResolver(Router.asPath.split('?')[0], true)
-      return Router.push(
-        linkResolver(type, [], otherLanguage).href,
-        linkResolver(type, [], otherLanguage).as,
-      )
+      const pagePath = linkResolver(type, [], otherLanguage)
+      if (pagePath.as === '/404') {
+        // if we can't resolve the path go to homepage
+        return Router.push(
+          linkResolver('homepage').href,
+          linkResolver('homepage').as,
+        )
+      } else {
+        // go to the resolved path if able
+        return Router.push(pagePath.href, pagePath.as)
+      }
     } else {
       return getContentSlug(contentfulId).then((res) => {
         const slug = res.data?.getContentSlug?.slug

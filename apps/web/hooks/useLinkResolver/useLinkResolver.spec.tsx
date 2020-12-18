@@ -1,75 +1,46 @@
-export {}
-/*
-TODO: Write tests
-import {
-  pathNames,
-  AnchorAttributes,
-  removeSlugFromPath,
-  replaceSlugInPath,
-} from './useLinkResolver'
+import { linkResolver, typeResolver, LinkType } from './useLinkResolver'
 
-describe('Generating routes', () => {
-  it('should return correct path to covid-adgerdir with slug', () => {
-    const nextLinks: AnchorAttributes = pathNames('is', 'adgerdirfrontpage', [
-      'cat',
-    ])
+describe('Link resolver', () => {
+  it('should return correct path to type with out variable', () => {
+    const nextLinks = linkResolver('adgerdirfrontpage', [], 'is')
     expect(nextLinks).toEqual({
       as: '/covid-adgerdir',
       href: '/covid-adgerdir',
     })
   })
 
-  it('should return correct path to life events with slug', () => {
-    const nextLinks: AnchorAttributes = pathNames('is', 'lifeeventpage', [
-      'cat',
-    ])
+  it('should return correct path to type with variable', () => {
+    const nextLinks = linkResolver('lifeeventpage', ['cat'], 'is')
     expect(nextLinks).toEqual({
       as: '/lifsvidburdur/cat',
       href: '/lifsvidburdur/[slug]',
     })
   })
 
-  it('should return correct path to life events without slug', () => {
-    const nextLinks: AnchorAttributes = pathNames('is', 'lifeeventpage')
-    expect(nextLinks).toEqual({
-      as: '/lifsvidburdur',
-      href: '/lifsvidburdur',
-    })
-  })
-
-  it('should return correct path to news with slug', () => {
-    const nextLinks: AnchorAttributes = pathNames('is', 'news', ['dog'])
-    expect(nextLinks).toEqual({
-      as: '/frett/dog',
+  it('should return correct path for all locales', () => {
+    const nextIsLinks = linkResolver('news', ['hundur'], 'is')
+    expect(nextIsLinks).toEqual({
+      as: '/frett/hundur',
       href: '/frett/[slug]',
     })
-  })
 
-  it('should return correct path to news without slug', () => {
-    const nextLinks: AnchorAttributes = pathNames('is', 'news')
-    expect(nextLinks).toEqual({
-      as: '/frett',
-      href: '/frett',
+    const nextEnLinks = linkResolver('news', ['dog'], 'en')
+    expect(nextEnLinks).toEqual({
+      as: '/en/news/dog',
+      href: '/en/news/[slug]',
     })
   })
-})
 
-describe('Special cases routes', () => {
-  it('should return as and href identical', () => {
-    const nextLinks: AnchorAttributes = pathNames('is', 'page', [
-      'stafraent-island',
-    ])
-    expect(nextLinks).toEqual({
-      as: '/stofnanir/stafraent-island',
-      href: '/stofnanir/stafraent-island',
+  it('should direct unresolvable links to 404', () => {
+    const nextEnLink = linkResolver('page', [], 'en')
+    expect(nextEnLink).toEqual({
+      as: '/404',
+      href: '/404',
     })
   })
-})
 
-describe('Route exceptions', () => {
   it('should handle content type with uppercase', () => {
-    const lifeEvent: any = 'lifeEvent'
-    const nextLinks: AnchorAttributes = pathNames('is', lifeEvent, ['cat'])
+    const nextLinks = linkResolver('lifeEventPage' as LinkType, ['cat'], 'is')
     expect(nextLinks).toEqual({
       as: '/lifsvidburdur/cat',
       href: '/lifsvidburdur/[slug]',
@@ -77,59 +48,81 @@ describe('Route exceptions', () => {
   })
 
   it('should handle wrong content type ', () => {
-    const contentType: any = 'dogPark'
-    const nextLinks: AnchorAttributes = pathNames('is', contentType, ['cat'])
-    expect(nextLinks).toEqual({
-      as: '/',
-      href: '/',
+    const nextLinks = [
+      linkResolver('dogPark' as LinkType, [''], 'is'),
+      linkResolver('dogPark' as LinkType, ['cat'], 'is'),
+    ]
+    nextLinks.map((link) => {
+      expect(link).toEqual({
+        as: '/404',
+        href: '/404',
+      })
     })
   })
 
   it('should handle content type as empty string', () => {
-    const contentType: any = ''
-    const nextLinks: AnchorAttributes = pathNames('is', contentType, ['cat'])
+    const nextLinks = linkResolver('' as LinkType, [], 'is')
     expect(nextLinks).toEqual({
-      as: '/',
-      href: '/',
+      as: '/404',
+      href: '/404',
     })
   })
 
   it('should handle content type as undefined', () => {
-    const contentType = undefined
-    const nextLinks: AnchorAttributes = pathNames('is', contentType, ['cat'])
+    const nextLinks = linkResolver(undefined as LinkType, [], 'is')
     expect(nextLinks).toEqual({
-      as: '/',
-      href: '/',
+      as: '/404',
+      href: '/404',
     })
   })
 })
 
-describe('Regex operations', () => {
-  it('should replace first slug in path with "bunny"', () => {
-    const path = '/lifsvidburdur/[slug]'
-    const resolvedPath: string = replaceSlugInPath(path, 'bunny')
-    expect(resolvedPath).toEqual('/lifsvidburdur/bunny')
+describe('Type resolver', () => {
+  it('Should find path with variables', () => {
+    const types = typeResolver('/flokkur/mycustomcategory')
+    expect(types).toEqual({
+      type: 'articlecategory',
+      locale: 'is',
+    })
   })
 
-  it('should replace slugs in path with replacement strings', () => {
-    const slugs: string[] = ['bird', 'hamster', 'fish']
-    let path = '/sky/[slug]/cage/[slug]/tank/[subslug]'
-    for (let i = 0; i < slugs.length; i++) {
-      path = replaceSlugInPath(path, slugs[i])
-    }
-    expect(path).toEqual('/sky/bird/cage/hamster/tank/fish')
+  it('Should match path without variables', () => {
+    const types = typeResolver('/frett')
+    expect(types).toEqual({
+      type: 'newsoverview',
+      locale: 'is',
+    })
   })
 
-  it('should remove slug from path', () => {
-    const path = '/lifsvidburdur/[slug]'
-    const resolvedPath: string = removeSlugFromPath(path)
-    expect(resolvedPath).toEqual('/lifsvidburdur')
+  it('Should support multiple locales', () => {
+    const typesIs = typeResolver('/frett/mycustomnews')
+    expect(typesIs).toEqual({
+      type: 'news',
+      locale: 'is',
+    })
+
+    const typesEn = typeResolver('/en/news/mycustomnews')
+    expect(typesEn).toEqual({
+      type: 'news',
+      locale: 'en',
+    })
   })
 
-  it('should remove all slugs from path', () => {
-    const path = '/sky/[slug]/cage/[slug]/tank/[subslug]'
-    const resolvedPath: string = removeSlugFromPath(path)
-    expect(resolvedPath).toEqual('/sky/cage/tank')
+  it('Should handle undefined', () => {
+    const types = typeResolver(undefined)
+    expect(types).toEqual(null)
+  })
+
+  it('Should handle empty path', () => {
+    const types = typeResolver('')
+    expect(types).toEqual(null)
+  })
+
+  it('Should ignore dynamic paths', () => {
+    const types = typeResolver('/frett/mycustomnews', true)
+    expect(types).toEqual({
+      type: 'newsoverview',
+      locale: 'is',
+    })
   })
 })
-*/
