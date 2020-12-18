@@ -12,6 +12,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { buildOptions } from '../utils'
+import { useDefaultValue } from '../useDefaultValue'
 
 interface Props extends FieldBaseProps {
   field: CheckboxField
@@ -48,7 +49,8 @@ const CheckboxFormField: FC<Props> = ({
           disabled={disabled}
           name={`${id}`}
           defaultValue={
-            getValueViaPath(application.answers, id, []) as string[]
+            (getValueViaPath(application.answers, id) as string[]) ??
+            useDefaultValue(field, application)
           }
           error={error}
           options={finalOptions.map(({ label, tooltip, ...o }) => ({

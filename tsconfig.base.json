@@ -62,6 +62,9 @@
       "@island.is/api/domains/documents": [
         "libs/api/domains/documents/src/index.ts"
       ],
+      "@island.is/api/domains/driving-license": [
+        "libs/api/domains/driving-license/src/index.ts"
+      ],
       "@island.is/api/domains/file-upload": [
         "libs/api/domains/file-upload/src/index.ts"
       ],
@@ -80,6 +83,9 @@
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
+      "@island.is/application/api-template-utils": [
+        "libs/application/api-template-utils/src/index.ts"
+      ],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/data-providers": [
         "libs/application/data-providers/src/index.ts"

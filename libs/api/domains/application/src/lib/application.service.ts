@@ -8,6 +8,7 @@ import { ApolloError } from 'apollo-server-express'
 import { ApplicationsApi } from '../../gen/fetch'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
+import { AssignApplicationInput } from './dto/assignApplication.input'
 import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch/models/ApplicationResponseDto'
 
 const handleError = (error: any) => {
@@ -136,6 +137,16 @@ export class ApplicationService {
     return this.applicationApi.applicationControllerSubmitApplication({
       id,
       updateApplicationStateDto,
+      authorization,
+    })
+  }
+
+  async assignApplication(
+    input: AssignApplicationInput,
+    authorization: string,
+  ) {
+    return this.applicationApi.applicationControllerAssignApplication({
+      assignApplicationDto: input,
       authorization,
     })
   }

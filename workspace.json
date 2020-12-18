@@ -884,6 +884,35 @@
         }
       }
     },
+    "api-domains-driving-license": {
+      "root": "libs/api/domains/driving-license",
+      "sourceRoot": "libs/api/domains/driving-license/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/driving-license/tsconfig.lib.json",
+              "libs/api/domains/driving-license/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/driving-license/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/driving-license/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-file-upload": {
       "root": "libs/api/domains/file-upload",
       "sourceRoot": "libs/api/domains/file-upload/src",
@@ -1054,6 +1083,35 @@
             "linter": "eslint",
             "tsConfig": ["libs/api/schema/tsconfig.lib.json"],
             "exclude": ["**/node_modules/**", "!libs/api/schema/**/*"]
+          }
+        }
+      }
+    },
+    "application-api-template-utils": {
+      "root": "libs/application/api-template-utils",
+      "sourceRoot": "libs/application/api-template-utils/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/api-template-utils/tsconfig.lib.json",
+              "libs/application/api-template-utils/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/api-template-utils/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/api-template-utils/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }
