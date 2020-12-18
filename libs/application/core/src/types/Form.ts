@@ -31,6 +31,7 @@ export enum FormModes {
 export interface Form {
   id: string
   name: StaticText
+  logo?: React.FC
   type: FormItemTypes.FORM
   mode?: FormModes
   icon?: string

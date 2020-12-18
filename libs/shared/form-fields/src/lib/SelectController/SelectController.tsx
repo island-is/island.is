@@ -11,6 +11,7 @@ interface Props {
   label: string
   options?: Option[]
   placeholder?: string
+  onSelect?: (s: Option, onChange: (t: unknown) => void) => void
 }
 export const SelectController: FC<Props> = ({
   error,
@@ -21,6 +22,7 @@ export const SelectController: FC<Props> = ({
   label,
   options = [],
   placeholder,
+  onSelect,
 }) => {
   const { clearErrors } = useFormContext()
   return (
@@ -41,6 +43,9 @@ export const SelectController: FC<Props> = ({
           onChange={(newVal) => {
             clearErrors(id)
             onChange((newVal as Option).value)
+            if (onSelect) {
+              onSelect(newVal as Option, onChange)
+            }
           }}
         />
       )}

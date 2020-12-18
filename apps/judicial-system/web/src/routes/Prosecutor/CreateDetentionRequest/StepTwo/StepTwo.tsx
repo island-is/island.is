@@ -195,14 +195,6 @@ export const StepTwo: React.FC = () => {
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
       {
-        value: workingCase?.arrestDate || '',
-        validations: ['empty'],
-      },
-      {
-        value: arrestTime || '',
-        validations: ['empty', 'time-format'],
-      },
-      {
         value: workingCase?.requestedCourtDate || '',
         validations: ['empty'],
       },
@@ -369,12 +361,6 @@ export const StepTwo: React.FC = () => {
                       setArrestDateErrorMessage,
                     )
                   }
-                  handleCloseCalendar={(date: Date | null) => {
-                    if (date === null || !isValid(date)) {
-                      setArrestDateErrorMessage('Reitur má ekki vera tómur')
-                    }
-                  }}
-                  required
                 />
               </GridColumn>
               <GridColumn span="3/8">
@@ -408,12 +394,11 @@ export const StepTwo: React.FC = () => {
                   <Input
                     data-testid="arrestTime"
                     name="arrestTime"
-                    label="Tímasetning"
+                    label="Tímasetning (kk:mm)"
                     placeholder="Settu inn tíma"
                     errorMessage={arrestTimeErrorMessage}
                     hasError={arrestTimeErrorMessage !== ''}
                     defaultValue={arrestTime}
-                    required
                   />
                 </TimeInputField>
               </GridColumn>
