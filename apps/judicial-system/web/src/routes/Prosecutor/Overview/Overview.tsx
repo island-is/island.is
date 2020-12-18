@@ -224,18 +224,20 @@ export const Overview: React.FC = () => {
               </Box>
               <Text variant="h3">{workingCase.court}</Text>
             </Box>
-            <Box marginBottom={5}>
-              <Box marginBottom={1}>
-                <Text variant="eyebrow" color="blue400">
-                  Tími handtöku
+            {workingCase.arrestDate && (
+              <Box marginBottom={5}>
+                <Box marginBottom={1}>
+                  <Text variant="eyebrow" color="blue400">
+                    Tími handtöku
+                  </Text>
+                </Box>
+                <Text variant="h3">
+                  {`${capitalize(
+                    formatDate(workingCase.arrestDate, 'PPPP') || '',
+                  )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
                 </Text>
               </Box>
-              <Text variant="h3">
-                {`${capitalize(
-                  formatDate(workingCase.arrestDate, 'PPPP') || '',
-                )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
-              </Text>
-            </Box>
+            )}
             {workingCase.requestedCourtDate && (
               <Box marginBottom={9}>
                 <Box marginBottom={1}>

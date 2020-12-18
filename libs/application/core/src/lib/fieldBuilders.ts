@@ -20,9 +20,14 @@ import {
   Context,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
-import { FormText } from '..'
+import { FormText } from '../types/Form'
 import { Colors } from '@island.is/island-ui/theme'
 import { FormatInputValueFunction } from 'react-number-format'
+
+interface SelectOption {
+  label: string
+  value: string | number
+}
 
 export function buildCheckboxField(data: {
   condition?: Condition
@@ -32,6 +37,7 @@ export function buildCheckboxField(data: {
   options: MaybeWithApplication<Option[]>
   disabled?: boolean
   width?: FieldWidth
+  defaultValue?: MaybeWithApplication<unknown>
 }): CheckboxField {
   const {
     condition,
@@ -41,9 +47,11 @@ export function buildCheckboxField(data: {
     options,
     disabled = false,
     width = 'full',
+    defaultValue,
   } = data
   return {
     children: undefined,
+    defaultValue,
     disabled,
     width,
     condition,
@@ -66,12 +74,14 @@ export function buildDateField(data: {
   minDate?: Date
   disabled?: boolean
   width?: FieldWidth
+  defaultValue?: MaybeWithApplication<unknown>
 }): DateField {
   const {
     condition,
     id,
     name,
     description,
+    defaultValue,
     maxDate,
     minDate,
     disabled = false,
@@ -81,6 +91,7 @@ export function buildDateField(data: {
   return {
     children: undefined,
     condition,
+    defaultValue,
     id,
     placeholder,
     disabled,
@@ -122,12 +133,14 @@ export function buildRadioField(data: {
   largeButtons?: boolean
   disabled?: boolean
   width?: FieldWidth
+  defaultValue?: MaybeWithApplication<unknown>
 }): RadioField {
   const {
     condition,
     id,
     name,
     description,
+    defaultValue,
     options,
     emphasize = false,
     largeButtons = false,
@@ -136,6 +149,8 @@ export function buildRadioField(data: {
   } = data
   return {
     children: undefined,
+    defaultValue,
+
     emphasize,
     largeButtons,
     disabled,
@@ -159,9 +174,12 @@ export function buildSelectField(data: {
   options: MaybeWithApplication<Option[]>
   disabled?: boolean
   width?: FieldWidth
+  onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
+  defaultValue?: MaybeWithApplication<unknown>
 }): SelectField {
   const {
     condition,
+    defaultValue,
     id,
     name,
     description,
@@ -169,9 +187,11 @@ export function buildSelectField(data: {
     placeholder,
     disabled = false,
     width = 'full',
+    onSelect,
   } = data
   return {
     children: undefined,
+    defaultValue,
     placeholder,
     disabled,
     width,
@@ -182,6 +202,7 @@ export function buildSelectField(data: {
     options,
     type: FieldTypes.SELECT,
     component: FieldComponents.SELECT,
+    onSelect,
   }
 }
 
@@ -190,14 +211,17 @@ export function buildAsyncSelectField(data: {
   id: string
   name: FormText
   description?: FormText
-  placeholder?: string
+  placeholder?: FormText
   loadOptions: (c: Context) => Promise<Option[]>
   loadingError?: FormText
   disabled?: boolean
   width?: FieldWidth
+  onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
+  defaultValue?: MaybeWithApplication<unknown>
 }): AsyncSelectField {
   const {
     condition,
+    defaultValue,
     id,
     name,
     description,
@@ -206,9 +230,11 @@ export function buildAsyncSelectField(data: {
     placeholder,
     disabled = false,
     width = 'full',
+    onSelect,
   } = data
   return {
     children: undefined,
+    defaultValue,
     placeholder,
     disabled,
     width,
@@ -220,6 +246,7 @@ export function buildAsyncSelectField(data: {
     loadingError,
     type: FieldTypes.ASYNC_SELECT,
     component: FieldComponents.ASYNC_SELECT,
+    onSelect,
   }
 }
 
@@ -233,9 +260,11 @@ export function buildTextField(data: {
   variant?: TextFieldVariant
   placeholder?: FormText
   format?: string | FormatInputValueFunction
+  defaultValue?: MaybeWithApplication<unknown>
 }): TextField {
   const {
     condition,
+    defaultValue,
     id,
     name,
     description,
@@ -247,6 +276,7 @@ export function buildTextField(data: {
   } = data
   return {
     children: undefined,
+    defaultValue,
     placeholder,
     disabled,
     width,
@@ -268,12 +298,14 @@ export function buildCustomField(
     name: FormText
     description?: FormText
     component: string
+    defaultValue?: MaybeWithApplication<unknown>
   },
   props?: object,
 ): CustomField {
-  const { condition, id, name, description, component } = data
+  const { condition, defaultValue, id, name, description, component } = data
   return {
     children: undefined,
+    defaultValue,
     condition,
     id,
     name,

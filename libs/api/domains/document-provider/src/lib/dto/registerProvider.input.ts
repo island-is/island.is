@@ -6,4 +6,8 @@ export class RegisterProviderInput {
   @Field(() => String)
   @IsString()
   nationalId!: string
+
+  @Field(() => String)
+  @IsString()
+  clientName!: string
 }
