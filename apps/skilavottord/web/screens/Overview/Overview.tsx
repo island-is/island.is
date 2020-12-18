@@ -61,10 +61,7 @@ const Overview: FC = () => {
 
   const onContinue = (id: string, actionType: RecycleActionTypes) => {
     router
-      .push(
-        `${BASE_PATH}${routes[actionType]}`,
-        `${BASE_PATH}${routes.baseRoute}/${id}/${actionType}`,
-      )
+      .push(`${routes[actionType]}`, `${routes.baseRoute}/${id}/${actionType}`)
       .then(() => window.scrollTo(0, 0))
   }
 

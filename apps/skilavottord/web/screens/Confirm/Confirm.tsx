@@ -85,7 +85,7 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
   useEffect(() => {
     if (!car) {
       router.push({
-        pathname: `${BASE_PATH}${routes.myCars}`,
+        pathname: `${routes.myCars}`,
       })
     }
   }, [car, router, routes])
