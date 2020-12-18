@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import cn from 'classnames'
 import { Button, Icon } from '@island.is/island-ui/core'
 import { config, ID, CONVERSATION_KEY } from './config'
+import { theme } from '@island.is/island-ui/theme'
+import { useWindowSize } from 'react-use'
 
 import * as styles from './ChatPanel.treat'
 
@@ -15,10 +17,11 @@ declare global {
 let boost = null
 
 export const ChatPanel = () => {
+  const { width } = useWindowSize()
+
   useEffect(() => {
     const conversationId =
       window.sessionStorage.getItem(CONVERSATION_KEY) ?? null
-    const isABigWindow = window.innerWidth > 768
 
     if (!boost && window.boostInit) {
       const settings = {
@@ -37,7 +40,7 @@ export const ChatPanel = () => {
       boost = window.boostInit(ID, settings)
 
       // to prevent us from opening chat where there is no space for it
-      if (isABigWindow) {
+      if (width > theme.breakpoints.md) {
         boost.chatPanel.show()
       }
 
