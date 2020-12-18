@@ -1,4 +1,5 @@
 import {
+  Application,
   buildAsyncSelectField,
   buildCustomField,
   buildDataProviderItem,
@@ -27,6 +28,8 @@ import {
 import { GetPensionFunds, GetUnions } from '../graphql/queries'
 import { NO, YES } from '../constants'
 
+import Logo from '../assets/Logo'
+
 interface SelectItem {
   id: string
   name: string
@@ -43,6 +46,7 @@ type PensionFundsQuery = {
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
   name: 'Fæðingarorlof',
+  logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
@@ -74,6 +78,41 @@ export const ParentalLeaveForm: Form = buildForm({
                   type: 'ParentalLeaves',
                   title: m.existingParentalLeavesTitle,
                   subTitle: m.existingParentalLeavesSubTitle,
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'emailAndPhoneNumber',
+          name: mm.applicant.subSection,
+          children: [
+            buildMultiField({
+              id: 'contactInfo',
+              name: mm.applicant.title,
+              description: mm.applicant.description,
+              children: [
+                buildTextField({
+                  width: 'half',
+                  name: mm.applicant.email,
+                  id: 'applicant.email',
+                  variant: 'email',
+                  defaultValue: (application: Application) =>
+                    (application.externalData.userProfile?.data as {
+                      email?: string
+                    })?.email,
+                }),
+                buildTextField({
+                  width: 'half',
+                  name: mm.applicant.phoneNumber,
+                  defaultValue: (application: Application) =>
+                    (application.externalData.userProfile?.data as {
+                      mobilePhoneNumber?: string
+                    })?.mobilePhoneNumber,
+                  id: 'applicant.phoneNumber',
+                  variant: 'tel',
+                  format: '###-####',
+                  placeholder: '000-0000',
                 }),
               ],
             }),
@@ -165,7 +204,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   name: m.union,
                   id: 'payments.union',
                   width: 'half',
-                  loadingError: m.loadingError,
+                  loadingError: mm.errors.loading,
                   loadOptions: async ({ apolloClient }) => {
                     const { data } = await apolloClient.query<UnionQuery>({
                       query: GetUnions,
@@ -350,22 +389,11 @@ export const ParentalLeaveForm: Form = buildForm({
                   format: '######-####',
                   placeholder: '000000-0000',
                 }),
-                // TODO this is no longer needed
-                // buildDividerField({
-                //   color: 'dark400',
-                //   name:
-                //     'Who on behalf of your employer will have to approve this application?',
-                // }),
-                // buildTextField({
-                //   name: 'Contact name',
-                //   width: 'half',
-                //   id: 'employer.contact',
-                // }),
-                // buildTextField({
-                //   name: 'Contact social security nr',
-                //   width: 'half',
-                //   id: 'employer.contactId',
-                // }),
+                buildTextField({
+                  name: m.employerEmail,
+                  width: 'full',
+                  id: 'employer.email',
+                }),
               ],
             }),
           ],

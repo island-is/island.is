@@ -107,5 +107,5 @@ describe('Create detention request, step three', () => {
           }) as HTMLButtonElement,
       ),
     ).not.toBeDisabled()
-  })
+  }, 10000)
 })

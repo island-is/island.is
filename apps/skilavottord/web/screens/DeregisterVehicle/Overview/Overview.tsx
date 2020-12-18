@@ -125,7 +125,7 @@ const Overview: FC = () => {
   }
 
   const handleDeregister = () => {
-    router.push(routes.deregisterVehicle.select)
+    router.push(`${routes.deregisterVehicle.select}`)
   }
 
   if (!user) {

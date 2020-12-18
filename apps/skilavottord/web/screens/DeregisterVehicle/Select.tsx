@@ -36,11 +36,14 @@ const Select: FC = () => {
     const registrationNumber = formData.registrationNumber
       .replace(' ', '')
       .replace('-', '')
-    router.push(routes.deregister, `${routes.baseRoute}/${registrationNumber}`)
+    router.push(
+      `${routes.deregister}`,
+      `${routes.baseRoute}/${registrationNumber}`,
+    )
   }
 
   const handleCancel = () => {
-    router.push(routes.baseRoute)
+    router.push(`${routes.baseRoute}`)
   }
 
   const validateRegNumber = (value: string) => {

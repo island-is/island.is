@@ -80,10 +80,10 @@ const dataSchema = z.object({
     message: 'Þú verður að samþykkja að forritun og prófunum sé lokið',
   }),
   endPointObject: endPoint,
-  testUserExists: z.string().nonempty({
+  testProviderId: z.string().nonempty({
     message: 'Þú verður að stofna aðgang til að halda áfram',
   }),
-  productionUserExists: z.string().nonempty({
+  prodProviderId: z.string().nonempty({
     message: 'Þú verður að stofna aðgang til að halda áfram',
   }),
   productionEndPointObject: productionEndPoint,

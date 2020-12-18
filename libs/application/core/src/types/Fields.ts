@@ -13,6 +13,11 @@ export interface Option {
   excludeOthers?: boolean
 }
 
+interface SelectOption {
+  label: string
+  value: string | number
+}
+
 export type MaybeWithApplication<T> = T | ((a: Application) => T)
 
 export type FieldWidth = 'full' | 'half'
@@ -39,6 +44,7 @@ export interface BaseField extends FormItem {
   width?: FieldWidth
   condition?: Condition
   isPartOfRepeater?: boolean
+  defaultValue?: MaybeWithApplication<unknown>
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean
 }
@@ -103,6 +109,7 @@ export interface SelectField extends BaseField {
   readonly type: FieldTypes.SELECT
   component: FieldComponents.SELECT
   options: MaybeWithApplication<Option[]>
+  onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   placeholder?: FormText
 }
 
@@ -111,6 +118,7 @@ export interface AsyncSelectField extends BaseField {
   component: FieldComponents.ASYNC_SELECT
   placeholder?: FormText
   loadOptions: (c: Context) => Promise<Option[]>
+  onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   loadingError?: FormText
 }
 

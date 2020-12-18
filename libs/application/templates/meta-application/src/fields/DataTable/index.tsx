@@ -1,14 +1,6 @@
 import React, { FC, useMemo } from 'react'
-import {
-  Application,
-  formatText,
-  RepeaterProps,
-} from '@island.is/application/core'
-import {
-  Box,
-  ButtonDeprecated as Button,
-  Text,
-} from '@island.is/island-ui/core'
+import { Application, formatText } from '@island.is/application/core'
+import { Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Table } from '@island.is/shared/table'
 
@@ -23,7 +15,6 @@ interface Data {
   name: string
   publisher: string
   download: string
-  upload: string
 }
 
 const DataTable: FC<DataTableProps> = ({ application }) => {
@@ -53,10 +44,6 @@ const DataTable: FC<DataTableProps> = ({ application }) => {
       {
         Header: formatText(m.dataDownload, application, formatMessage),
         accessor: 'download',
-      } as const,
-      {
-        Header: formatText(m.dataUpload, application, formatMessage),
-        accessor: 'upload',
       } as const,
     ],
     [application, formatMessage],

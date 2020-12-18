@@ -1,7 +1,7 @@
 describe('skilavottord-web', () => {
   it('should show gdpr accept', () => {
     // Custom command example, see `../support/commands.ts` file
-    cy.visit('/my-cars')
+    cy.visit('skilavottord/my-cars')
 
     cy.get('input').click()
 
