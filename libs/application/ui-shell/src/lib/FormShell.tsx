@@ -53,6 +53,7 @@ export const FormShell: FC<{
   const showProgressTag = mode !== FormModes.APPLYING
 
   const currentScreen = screens[activeScreen]
+  const FormLogo = form.logo
 
   return (
     <Box
@@ -126,6 +127,9 @@ export const FormShell: FC<{
               className={styles.sidebarContainer}
             >
               <Box
+                display="flex"
+                flexDirection="column"
+                justifyContent="spaceBetween"
                 height="full"
                 paddingTop={[0, 0, 8]}
                 paddingLeft={[0, 0, 0, 4]}
@@ -139,6 +143,17 @@ export const FormShell: FC<{
                   sections={sections}
                   screen={currentScreen}
                 />
+                {FormLogo && (
+                  <Box
+                    display={['none', 'none', 'flex']}
+                    alignItems="center"
+                    justifyContent="center"
+                    marginRight={[0, 0, 0, 4]}
+                    paddingBottom={4}
+                  >
+                    <FormLogo />
+                  </Box>
+                )}
               </Box>
             </GridColumn>
           </GridRow>

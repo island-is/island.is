@@ -13,6 +13,7 @@ import { AppealDecisionRole, JudgeSubsections, Sections } from '../../../types'
 import {
   Case,
   CaseAppealDecision,
+  CaseDecision,
   CaseState,
   CaseTransition,
   NotificationType,
@@ -28,29 +29,14 @@ import {
   SendNotificationMutation,
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
-import { gql, useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { api } from '../../../services'
 import CourtRecordAccordionItem from '../../../shared-components/CourtRecordAccordionItem/CourtRecordAccordionItem'
-
-export const RequestSignatureMutation = gql`
-  mutation RequestSignatureMutation($input: RequestSignatureInput!) {
-    requestSignature(input: $input) {
-      controlCode
-      documentToken
-    }
-  }
-`
-
-export const SignatureConfirmationQuery = gql`
-  query SignatureConfirmationQuery($input: SignatureConfirmationQueryInput!) {
-    signatureConfirmation(input: $input) {
-      documentSigned
-      code
-      message
-    }
-  }
-`
+import {
+  RequestSignatureMutation,
+  SignatureConfirmationQuery,
+} from '../../../utils/mutations'
 
 interface SigningModalProps {
   workingCase: Case
@@ -92,7 +78,9 @@ const SigningModal: React.FC<SigningModalProps> = ({
         // Parse the transition request
         const transitionRequest = parseTransition(
           workingCase.modified,
-          workingCase.rejecting ? CaseTransition.REJECT : CaseTransition.ACCEPT,
+          workingCase.decision === CaseDecision.REJECTING
+            ? CaseTransition.REJECT
+            : CaseTransition.ACCEPT,
         )
 
         const { data } = await transitionCaseMutation({
@@ -127,7 +115,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
 
     // Expect case to already have the right state
     if (
-      workingCase.rejecting
+      workingCase.decision === CaseDecision.REJECTING
         ? workingCase.state !== CaseState.REJECTED
         : workingCase.state !== CaseState.ACCEPTED
     ) {

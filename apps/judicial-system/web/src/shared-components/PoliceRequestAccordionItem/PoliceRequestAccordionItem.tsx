@@ -38,23 +38,27 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       <Box marginBottom={3}>
         <Text>Lögheimili: {workingCase.accusedAddress}</Text>
       </Box>
-      <AccordionListItem title="Tími handtöku">
-        <Text>
-          {`${capitalize(
-            formatDate(workingCase.arrestDate, 'PPPP') || '',
-          )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
-        </Text>
-      </AccordionListItem>
-      <AccordionListItem title="Ósk um fyrirtökudag og tíma">
-        <Text>
-          {`${capitalize(
-            formatDate(workingCase.requestedCourtDate, 'PPPP') || '',
-          )} eftir kl. ${formatDate(
-            workingCase.requestedCourtDate,
-            TIME_FORMAT,
-          )}`}
-        </Text>
-      </AccordionListItem>
+      {workingCase.arrestDate && (
+        <AccordionListItem title="Tími handtöku">
+          <Text>
+            {`${capitalize(
+              formatDate(workingCase.arrestDate, 'PPPP') || '',
+            )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
+          </Text>
+        </AccordionListItem>
+      )}
+      {workingCase.requestedCourtDate && (
+        <AccordionListItem title="Ósk um fyrirtökudag og tíma">
+          <Text>
+            {`${capitalize(
+              formatDate(workingCase.requestedCourtDate, 'PPPP') || '',
+            )} eftir kl. ${formatDate(
+              workingCase.requestedCourtDate,
+              TIME_FORMAT,
+            )}`}
+          </Text>
+        </AccordionListItem>
+      )}
       <AccordionListItem title="Dómkröfur">
         {constructProsecutorDemands(workingCase)}
       </AccordionListItem>

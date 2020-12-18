@@ -9,6 +9,7 @@ import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
 import { Signin } from '../routes/SignIn'
 import { SilentSignIn } from '../routes/SilentSignin'
+import { AssignApplication } from '../routes/AssignApplication'
 import { AuthProvider } from '../context/AuthProvider'
 import Header from '../components/Header'
 import Authenticator from '../components/Authenticator'
@@ -33,6 +34,12 @@ export const App = () => {
               <Redirect from="/application/:id" to="/umsokn/:id" />
               <Authenticator>
                 <Switch>
+                  <Route
+                    strict
+                    exact
+                    path="/tengjast-umsokn"
+                    component={AssignApplication}
+                  />
                   <Route
                     strict
                     exact
