@@ -29,5 +29,15 @@ module.exports = withTreat(
       graphqlEndpoint: `${API_PATH}${graphqlPath}`,
       SENTRY_DSN,
     },
+    basePath: '/skilavottord',
+    async redirects() {
+      return [
+        {
+          source: '/',
+          destination: '/my-cars',
+          permanent: true,
+        },
+      ]
+    },
   }),
 )
