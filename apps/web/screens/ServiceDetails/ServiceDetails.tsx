@@ -27,11 +27,13 @@ const { publicRuntimeConfig } = getConfig()
 
 interface ServiceDetailsProps {
   strings: GetNamespaceQuery['getNamespace']
+  openApiContent: GetNamespaceQuery['getNamespace']
   service: ApiService
 }
 
 const ServiceDetails: Screen<ServiceDetailsProps> = ({
   strings,
+  openApiContent,
   service = null,
 }) => {
   useScript(
@@ -41,7 +43,6 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   )
 
   const n = useNamespace(strings)
-
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
 
   if (disablePage === 'true') {
@@ -68,7 +69,11 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
         </SidebarLayout>
       }
       details={
-        !service ? <></> : <OpenApiView strings={strings} service={service} />
+        !service ? (
+          <></>
+        ) : (
+          <OpenApiView strings={openApiContent} service={service} />
+        )
       }
     />
   )
@@ -77,13 +82,24 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
 ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
   const serviceId = String(query.slug)
 
-  const [filterContent, { data }] = await Promise.all([
+  const [filterContent, openApiContent, { data }] = await Promise.all([
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
             namespace: 'ApiCatalogFilter',
+            lang: locale,
+          },
+        },
+      })
+      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'OpenApiView',
             lang: locale,
           },
         },
@@ -102,6 +118,7 @@ ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
   return {
     serviceId: serviceId,
     strings: filterContent,
+    openApiContent: openApiContent,
     service: data?.getApiServiceById,
   }
 }

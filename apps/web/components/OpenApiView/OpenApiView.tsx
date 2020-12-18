@@ -46,7 +46,7 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
       }))
     : [
         {
-          label: n('openApiViewNoVersion'),
+          label: n('noVersion'),
           value: {
             instance: '',
             memberClass: '',
@@ -95,8 +95,8 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
       return (
         <Box paddingY={2}>
           <AlertBanner
-            title={n('openApiViewQueryErrorTitle')}
-            description={n('openApiViewQueryErrorDescription')}
+            title={n('queryErrorTitle')}
+            description={n('queryErrorText')}
             variant="error"
           />
         </Box>
@@ -106,11 +106,11 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
     return (
       <OpenApiDocumentation
         spec={converted as OpenApi}
-        linkTitle={n('openApiDocumentationLinkTitle')}
-        documentationLinkText={n('openApiDocumentationLinkDocumentation')}
-        responsiblePartyLinkText={n('openApiDocumentationLinkResponsibleParty')}
-        bugReportLinkText={n('openApiDocumentationLinkBugReport')}
-        featureRequestLinkText={n('openApiDocumentationLinkFeatureRequest')}
+        linkTitle={n('linkTitle')}
+        documentationLinkText={n('linkDocumentation')}
+        responsiblePartyLinkText={n('linkResponsibleParty')}
+        bugReportLinkText={n('linkBugReport')}
+        featureRequestLinkText={n('linkFeatureRequest')}
       />
     )
   }
@@ -124,7 +124,7 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
           paddingBottom="containerGutter"
         >
           <Text color="blue600" variant="h4" as="h4">
-            {n('openApiDocumentationTitle')}
+            {n('title')}
           </Text>
         </GridColumn>
         <GridColumn
@@ -147,8 +147,8 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
       {error && (
         <Box paddingY={2}>
           <AlertBanner
-            title={n('openApiViewLoadErrorTitle')}
-            description={n('openApiViewLoadErrorDescription')}
+            title={n('loadErrorTitle')}
+            description={n('loadErrorText')}
             variant="error"
           />
         </Box>
