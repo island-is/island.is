@@ -47,7 +47,10 @@ export class NationalRegistryApi {
   }
 
   public async getReligion(nationalId: User['nationalId']): Promise<string> {
-    const response = await this.getViewKennitalaOgTrufelag(nationalId)
+    const response: GetViewReligionDto = await this.signal(
+      'GetViewKennitalaOgTrufelag',
+      { Kennitala: nationalId },
+    )
     if (!response) {
       return ''
     }
@@ -58,7 +61,10 @@ export class NationalRegistryApi {
   public async getBirthPlace(
     municipalCode: User['municipalCode'],
   ): Promise<string> {
-    const response = await this.getViewSveitarfelag(municipalCode)
+    const response: GetViewMunicipalityDto = await this.signal(
+      'GetViewSveitarfelag',
+      { SvfNr: municipalCode },
+    )
 
     if (!response) {
       return ''
@@ -69,7 +75,10 @@ export class NationalRegistryApi {
   public async getBanMarking(
     nationalId: User['nationalId'],
   ): Promise<BanMarking | null> {
-    const response = await this.getViewKennitalaOgBannmerking(nationalId)
+    const response: GetViewBanmarkingDto = await this.signal(
+      'GetViewKennitalaOgBannmerking',
+      { Kennitala: nationalId },
+    )
 
     if (!response) {
       return null
@@ -87,7 +96,9 @@ export class NationalRegistryApi {
   public async getLegalResidence(
     houseCode: User['houseCode'],
   ): Promise<string> {
-    const response = await this.getViewHusaskra(houseCode)
+    const response: GetViewHomeDto = await this.signal('GetViewHusaskra', {
+      HusKodi: houseCode,
+    })
     if (!response) {
       return ''
     }
@@ -96,7 +107,9 @@ export class NationalRegistryApi {
   }
 
   public async getMyInfo(nationalId: User['nationalId']): Promise<User> {
-    const response = await this.getViewThjodskra(nationalId)
+    const response: GetViewRegistryDto = await this.signal('GetViewThjodskra', {
+      Kennitala: nationalId,
+    })
 
     if (!response)
       throw new NotFoundException(
@@ -116,7 +129,9 @@ export class NationalRegistryApi {
   }
 
   public async getMyFamily(nationalId: string): Promise<FamilyMember[]> {
-    const response = await this.getViewFjolskyldan(nationalId)
+    const response: GetViewFamilyDto = await this.signal('GetViewFjolskyldan', {
+      Kennitala: nationalId,
+    })
 
     if (!response)
       throw new NotFoundException(
@@ -220,227 +235,43 @@ export class NationalRegistryApi {
     }
   }
 
-  public async getViewThjodskra(
-    nationalId: string,
-  ): Promise<GetViewRegistryDto | null> {
-    return await new Promise((resolve, _reject) => {
-      if (!this.client)
+  private async signal(
+    functionName: string,
+    args: Record<string, string>,
+  ): Promise<any> {
+    return new Promise((resolve, reject) => {
+      if (!this.client) {
         throw new InternalServerErrorException('Client not initialized')
-      this.client.GetViewThjodskra(
-        {
-          ':SortColumn': 1,
-          ':SortAscending': true,
-          ':S5Username': this.clientUser,
-          ':S5Password': this.clientPassword,
-          ':Kennitala': nationalId,
-        },
-        (
-          // eslint-disable-next-line
-          error: any,
-          {
-            GetViewThjodskraResult: result,
-          }: { GetViewThjodskraResult: GetViewRegistryDto },
-        ) => {
-          if (result != null) {
-            if (!result.success) {
-              logger.error(result.message)
-              _reject(result)
-            }
-            if (error) {
-              logger.error(error)
-              _reject(error)
-            }
-            resolve(result.table.diffgram ? result : null)
-          }
-          resolve(null)
-        },
-      )
-    })
-  }
+      }
 
-  public async getViewHusaskra(
-    houseCode: string,
-  ): Promise<GetViewHomeDto | null> {
-    return await new Promise((resolve, _reject) => {
-      if (!this.client)
-        throw new InternalServerErrorException('Client not initialized')
-      this.client.GetViewHusaskra(
+      this.client[functionName](
         {
           ':SortColumn': 1,
           ':SortAscending': true,
           ':S5Username': this.clientUser,
           ':S5Password': this.clientPassword,
-          ':HusKodi': houseCode,
+          ...Object.keys(args).reduce(
+            (acc: Record<string, string>, key: string) => ({
+              ...acc,
+              [`:${key}`]: args[key],
+            }),
+            {},
+          ),
         },
         (
           // eslint-disable-next-line
           error: any,
-          {
-            GetViewHusaskraResult: result,
-          }: { GetViewHusaskraResult: GetViewHomeDto },
+          response: any,
         ) => {
+          const result = response[`${functionName}Result`]
           if (result != null) {
             if (!result.success) {
               logger.error(result.message)
-              _reject(result)
+              reject(result)
             }
             if (error) {
               logger.error(error)
-              _reject(error)
-            }
-            resolve(result.table.diffgram ? result : null)
-          }
-          resolve(null)
-        },
-      )
-    })
-  }
-
-  public async getViewKennitalaOgTrufelag(
-    nationalId: string,
-  ): Promise<GetViewReligionDto | null> {
-    return await new Promise((resolve, _reject) => {
-      if (!this.client)
-        throw new InternalServerErrorException('Client not initialized')
-      this.client.GetViewKennitalaOgTrufelag(
-        {
-          ':SortColumn': 1,
-          ':SortAscending': true,
-          ':S5Username': this.clientUser,
-          ':S5Password': this.clientPassword,
-          ':Kennitala': nationalId,
-        },
-        (
-          // eslint-disable-next-line
-          error: any,
-          {
-            GetViewKennitalaOgTrufelagResult: result,
-          }: { GetViewKennitalaOgTrufelagResult: GetViewReligionDto },
-        ) => {
-          if (result != null) {
-            if (!result.success) {
-              logger.error(result.message)
-              _reject(result)
-            }
-            if (error) {
-              logger.error(error)
-              _reject(error)
-            }
-            resolve(result.table.diffgram ? result : null)
-          }
-          resolve(null)
-        },
-      )
-    })
-  }
-
-  public async getViewSveitarfelag(
-    municipalCode: string,
-  ): Promise<GetViewMunicipalityDto | null> {
-    return await new Promise((resolve, _reject) => {
-      if (!this.client)
-        throw new InternalServerErrorException('Client not initialized')
-      this.client.GetViewSveitarfelag(
-        {
-          ':SortColumn': 1,
-          ':SortAscending': true,
-          ':S5Username': this.clientUser,
-          ':S5Password': this.clientPassword,
-          ':SvfNr': municipalCode,
-        },
-        (
-          // eslint-disable-next-line
-          error: any,
-          {
-            GetViewSveitarfelagResult: result,
-          }: { GetViewSveitarfelagResult: GetViewMunicipalityDto },
-        ) => {
-          if (result != null) {
-            if (!result.success) {
-              logger.error(result.message)
-              _reject(result)
-            }
-            if (error) {
-              logger.error(error)
-              _reject(error)
-            }
-            resolve(result.table.diffgram ? result : null)
-          }
-          resolve(null)
-        },
-      )
-    })
-  }
-
-  public async getViewFjolskyldan(
-    nationalId: string,
-  ): Promise<GetViewFamilyDto | null> {
-    return await new Promise((resolve, _reject) => {
-      if (!this.client)
-        throw new InternalServerErrorException('Client not initialized')
-      this.client.GetViewFjolskyldan(
-        {
-          ':SortColumn': 1,
-          ':SortAscending': true,
-          ':S5Username': this.clientUser,
-          ':S5Password': this.clientPassword,
-          ':Kennitala': nationalId,
-        },
-        (
-          // eslint-disable-next-line
-          error: any,
-          {
-            GetViewFjolskyldanResult: result,
-          }: { GetViewFjolskyldanResult: GetViewFamilyDto },
-        ) => {
-          if (result != null) {
-            if (!result.success) {
-              logger.error(result.message)
-              _reject(result)
-            }
-            if (error) {
-              logger.error(error)
-              _reject(error)
-            }
-            resolve(result.table.diffgram ? result : null)
-          }
-          resolve(null)
-        },
-      )
-    })
-  }
-
-  public async getViewKennitalaOgBannmerking(
-    nationalId: string,
-  ): Promise<GetViewBanmarkingDto | null> {
-    return await new Promise((resolve, _reject) => {
-      if (!this.client)
-        throw new InternalServerErrorException('Client not initialized')
-      this.client.GetViewKennitalaOgBannmerking(
-        {
-          ':SortColumn': 1,
-          ':SortAscending': true,
-          ':S5Username': this.clientUser,
-          ':S5Password': this.clientPassword,
-          ':Kennitala': nationalId,
-        },
-        (
-          // eslint-disable-next-line
-          error: any,
-          {
-            GetViewKennitalaOgBannmerkingResult: result,
-          }: {
-            GetViewKennitalaOgBannmerkingResult: GetViewBanmarkingDto
-          },
-        ) => {
-          if (result != null) {
-            if (!result.success) {
-              logger.error(result.message)
-              _reject(result)
-            }
-            if (error) {
-              logger.error(error)
-              _reject(error)
+              reject(error)
             }
             resolve(result.table.diffgram ? result : null)
           }
