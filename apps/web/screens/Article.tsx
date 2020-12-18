@@ -131,12 +131,12 @@ const RelatedArticles: FC<{
 }
 
 const TOC: FC<{
-  selectedSubArticle: SubArticle
+  body: SubArticle['body']
   title: string
-}> = ({ selectedSubArticle, title }) => {
+}> = ({ body, title }) => {
   const navigation = useMemo(() => {
-    return createSubArticleNavigation(selectedSubArticle?.body ?? [])
-  }, [selectedSubArticle?.body])
+    return createSubArticleNavigation(body ?? [])
+  }, [body])
   if (navigation.length === 0) {
     return null
   }
@@ -242,6 +242,8 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
 
+  console.log(article)
+
   const subArticle = article.subArticles.find((sub) => {
     return sub.slug === query.subSlug
   })
@@ -330,14 +332,16 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
               <ProcessEntry {...processEntry} />
             </Box>
           )}
+          {/* ((subArticle ? subArticle.showTableOfContent : article.showTableOfContent) && */}
           <GridRow>
             <GridColumn span={[null, '4/7', '5/7', '4/7', '3/7']}>
               <TOC
                 title={n('tableOfContentTitle')}
-                selectedSubArticle={subArticle}
+                body={subArticle ? subArticle.body : article.body}
               />
             </GridColumn>
           </GridRow>
+          {/* )} */}
           {subArticle && (
             <Text variant="h2" as="h2" paddingTop={7}>
               <span id={slugify(subArticle.title)}>{subArticle.title}</span>
