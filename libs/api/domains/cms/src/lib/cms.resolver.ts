@@ -78,7 +78,7 @@ export class CmsResolver {
   constructor(
     private readonly cmsContentfulService: CmsContentfulService,
     private readonly cmsElasticsearchService: CmsElasticsearchService,
-  ) {}
+  ) { }
 
   @Directive(cacheControlDirective())
   @Query(() => Namespace, { nullable: true })
@@ -115,6 +115,7 @@ export class CmsResolver {
     return this.cmsContentfulService.getLandingPage(input)
   }
 
+  // TODO: Change this so this won't link to non existing entries e.g. articles
   @Directive(cacheControlDirective())
   @Query(() => ContentSlug, { nullable: true })
   getContentSlug(
@@ -354,7 +355,7 @@ export class CmsResolver {
 
 @Resolver(() => LatestNewsSlice)
 export class LatestNewsSliceResolver {
-  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) { }
 
   @ResolveField(() => [News])
   async news(@Parent() { news: input }: LatestNewsSlice): Promise<News[]> {
@@ -368,7 +369,7 @@ export class LatestNewsSliceResolver {
 
 @Resolver(() => Article)
 export class ArticleResolver {
-  constructor(private cmsContentfulService: CmsContentfulService) {}
+  constructor(private cmsContentfulService: CmsContentfulService) { }
 
   @ResolveField(() => [Article])
   async relatedArticles(@Parent() article: Article) {
@@ -378,7 +379,7 @@ export class ArticleResolver {
 
 @Resolver(() => AboutSubPage)
 export class AboutSubPageResolver {
-  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) { }
 
   @ResolveField(() => AboutPage)
   async parent(@Parent() { parent }: AboutSubPage) {

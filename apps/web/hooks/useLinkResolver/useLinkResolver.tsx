@@ -17,24 +17,17 @@ interface TypeResolverResponse {
   locale: Locale
 }
 
-interface RoutesTemplate {
-  [linkType: string]: {
-    is: string
-    en: string
-  }
-}
-
 export type LinkType = keyof typeof routesTemplate
 
 // the order matters, arrange from most specific to least specific for correct type resolution
-export const routesTemplate: RoutesTemplate = {
+export const routesTemplate = {
   aboutsubpage: {
-    is: '/stofnanir/stafraent-island/[slug]',
-    en: '/en/organizations/stafraent-island/[slug]',
+    is: '/stafraent-island/[slug]',
+    en: '',
   },
   page: {
-    is: '/stofnanir/stafraent-island',
-    en: '/en/organizations/stafraent-island',
+    is: '/stafraent-island',
+    en: '',
   },
   search: {
     is: '/leit',
@@ -86,10 +79,6 @@ const replaceVariableInPath = (path: string, replacement: string): string => {
   return path.replace(/\[\w+\]/, replacement)
 }
 
-const removeVariableFromPath = (path: string): string => {
-  return path.replace(/\/\[\w+\]/g, '')
-}
-
 // returns a regex query for a given route template
 const convertToRegex = (routeTemplate: string) =>
   routeTemplate
@@ -102,24 +91,34 @@ export const linkResolver = (
   slugs: LinkResolverInput['slugs'] = [],
   locale: LinkResolverInput['locale'],
 ): LinkResolverResponse => {
-  let path = { as: '/', href: '/' }
-  const type = String(linkType).toLowerCase()
+  const type = linkType.toLowerCase()
 
-  if (routesTemplate[type]) {
-    const typePath: string = routesTemplate[type][locale]
-    path = { as: typePath, href: typePath }
+  if (routesTemplate[type] && routesTemplate[type][locale]) {
+    const typePath = routesTemplate[type][locale]
 
-    if (slugs && slugs.length > 0) {
-      for (let i = 0; i < slugs.length; i++) {
-        path.as = replaceVariableInPath(path.as, slugs[i])
+    if (slugs.length) {
+      // populate path templates with variables
+      return {
+        href: typePath,
+        as: slugs.reduce(
+          (asPath, slug) => replaceVariableInPath(asPath, slug),
+          typePath,
+        ),
       }
     } else {
-      path.as = removeVariableFromPath(path.as)
-      path.href = removeVariableFromPath(path.href)
+      // there are no slugs, return found path
+      return {
+        as: typePath,
+        href: typePath,
+      }
     }
-    return path
+  } else {
+    // we return to the homepage if requested path is not found
+    return {
+      as: routesTemplate['homepage'][locale],
+      href: routesTemplate['homepage'][locale],
+    }
   }
-  return path
 }
 
 /*
@@ -131,8 +130,8 @@ export const typeResolver = (
 ): TypeResolverResponse | null => {
   for (const [type, locales] of Object.entries(routesTemplate)) {
     for (const [locale, routeTemplate] of Object.entries(locales)) {
-      // we are skipping all route types that have path variables
-      if (skipDynamic && routeTemplate.includes('[')) {
+      // we are skipping all route types that have path variables and all locales that have no path templates
+      if ((skipDynamic && routeTemplate.includes('[')) || !routeTemplate) {
         continue
       }
 
@@ -143,17 +142,12 @@ export const typeResolver = (
 
       // convert the route template string into a regex query
       const regex = convertToRegex(routeTemplate)
-      console.log('-----------')
-      console.log('testing', path)
-      console.log('with', regex)
       // if this path matches query return route info else continue
       if (path.match(regex)) {
-        console.log('found type', type, locale)
         return { type, locale } as TypeResolverResponse
       }
     }
   }
-  console.log('returning null')
   return null
 }
 
@@ -169,7 +163,3 @@ export const useLinkResolver = () => {
     linkResolver: wrappedLinkResolver,
   }
 }
-
-// TODO: Remove stafraent-island as root path (currentli stafraent island page are not reolve-ing correct types due to them beeing root)
-// TODO: Add redirect for root stafraent-island
-// TODO: Handle english routes for page and aboutsubpage
