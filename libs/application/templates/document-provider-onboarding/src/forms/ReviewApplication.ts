@@ -25,7 +25,6 @@ export const ReviewApplication: Form = buildForm({
         buildMultiField({
           id: 'review',
           name: m.reviewTitle,
-          description: m.reviewSubTitle,
           children: [
             //Error in dev tools, missing keys on divider fields...
             buildDividerField({ name: m.applicantTitle }),

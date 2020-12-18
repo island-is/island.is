@@ -233,14 +233,14 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
     //&& application.assignees.includes('2311637949')
 
     //This if statement might change depending on the "umboðskerfi"
-    if (id === application.applicant) {
-      return Roles.APPLICANT
-    }
+    // if (id === application.applicant) {
+    //   return Roles.APPLICANT
+    // }
     if (application.state === 'inReview') {
       return Roles.ASSIGNEE
     }
     //Returns nothing if user is not same as applicant nor is part of the assignes
-    return undefined
+    return Roles.APPLICANT
   },
 }
 
