@@ -1,23 +1,5 @@
-import React, { useState } from 'react'
-import getConfig from 'next/config'
-
+import React, { useEffect, useState } from 'react'
 import { Screen } from '@island.is/web/types'
-import { CustomNextError } from '@island.is/web/units/errors'
-
-import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
-import {
-  Query,
-  QueryGetApiCatalogueArgs,
-  QueryGetNamespaceArgs,
-  GetApiCatalogueInput,
-} from '@island.is/api/schema'
-
-import {
-  GET_NAMESPACE_QUERY,
-  GET_CATALOGUE_QUERY,
-} from '@island.is/web/screens/queries'
-import { useNamespace } from '../../hooks'
-
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
@@ -28,8 +10,17 @@ import {
   Box,
   Link,
   Button,
+  GridContainer,
+  LoadingIcon,
+  Filter,
+  FilterInput,
+  FilterMultiChoice,
 } from '@island.is/island-ui/core'
-import { SubpageMainContent } from '@island.is/web/components'
+import {
+  ServiceList,
+  SubpageDetailsContent,
+  SubpageMainContent,
+} from '@island.is/web/components'
 
 import getConfig from 'next/config'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -40,58 +31,54 @@ import {
   GetSubpageHeaderQuery,
   QueryGetSubpageHeaderArgs,
 } from '@island.is/web/graphql/schema'
+import {
+  Query,
+  QueryGetApiCatalogueArgs,
+  GetApiCatalogueInput,
+} from '@island.is/api/schema'
 import { Slice as SliceType } from '@island.is/island-ui/contentful'
-import { GET_NAMESPACE_QUERY, GET_SUBPAGE_HEADER_QUERY } from '../queries'
+import {
+  GET_CATALOGUE_QUERY,
+  GET_NAMESPACE_QUERY,
+  GET_SUBPAGE_HEADER_QUERY,
+} from '../queries'
 import { useNamespace } from '@island.is/web/hooks'
 import RichText from '@island.is/web/components/RichText/RichText'
 import { useI18n } from '@island.is/web/i18n'
+import { useQuery } from '@apollo/client'
+import {
+  AccessCategory,
+  DataCategory,
+  PricingCategory,
+  TypeCategory,
+} from '@island.is/api-catalogue/consts'
 
 const { publicRuntimeConfig } = getConfig()
+const LIMIT = 20
 
 /* TEMPORARY LAYOUT CREATED TO SCAFFOLD API CATALOGUE INTO THE WEB */
 
 interface ApiCatalogueProps {
   subpageHeader: GetSubpageHeaderQuery['getSubpageHeader']
+  staticContent: GetNamespaceQuery['getNamespace']
+  filterContent: GetNamespaceQuery['getNamespace']
 }
 
-const ApiCatalogue: Screen<ApiCatalogueProps> = ({ subpageHeader }) => {
-  /* DISABLE FROM WEB WHILE WIP */
-  const { disableApiCatalog: disablePage } = publicRuntimeConfig
-
 const ApiCatalogue: Screen<ApiCatalogueProps> = ({
-  mainContent,
+  subpageHeader,
   staticContent,
   filterContent,
 }) => {
+  /* DISABLE FROM WEB WHILE WIP */
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
 
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
   }
-
-  const sn = useNamespace(staticContent)
-  const fn = useNamespace(filterContent)
-
-  const translateTags = (): ServiceTagDisplayNames => {
-    const names: ServiceTagDisplayNames = {
-      APIGW: fn('accessApigw'),
-      XROAD: fn('accessXroad'),
-      FINANCIAL: fn('dataFinancial'),
-      HEALTH: fn('dataHealth'),
-      OFFICIAL: fn('dataOfficial'),
-      PERSONAL: fn('dataPersonal'),
-      PUBLIC: fn('dataPublic'),
-      FREE: fn('pricingFree'),
-      PAID: fn('pricingPaid'),
-      GRAPHQL: fn('typeGraphql'),
-      REST: fn('typeRest'),
-      SOAP: fn('typeSoap'),
-      OPEN: 'OPEN', //tag not currently used
-    }
-    return names
-  }
   /* --- */
   const { activeLocale } = useI18n()
+  const sn = useNamespace(staticContent)
+  const fn = useNamespace(filterContent)
 
   const onLoadMore = () => {
     if (data?.getApiCatalogue.pageInfo?.nextCursor === null) {
@@ -111,7 +98,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
       },
     })
   }
-
   const [parameters, setParameters] = useState<GetApiCatalogueInput>({
     cursor: null,
     limit: LIMIT,
@@ -130,6 +116,10 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
       input: parameters,
     },
   })
+
+  useEffect(() => {
+    refetch()
+  }, [parameters])
 
   const filterCategories = [
     {
@@ -258,6 +248,97 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
           />
         </SidebarLayout>
       }
+      details={
+        <SubpageDetailsContent
+          header={
+            <Text variant="h4" color="blue600">
+              {sn('title')}
+            </Text>
+          }
+          content={
+            <SidebarLayout
+              sidebarContent={
+                <Box paddingRight={[0, 0, 3]}>
+                  <Filter
+                    labelClear={fn('clear')}
+                    labelOpen={fn('openFilterButton')}
+                    labelResult={fn('mobileResult')}
+                    labelTitle={fn('mobileTitle')}
+                    resultCount={data?.getApiCatalogue?.services?.length ?? 0}
+                    onFilterClear={() =>
+                      setParameters({
+                        query: '',
+                        pricing: [],
+                        data: [],
+                        type: [],
+                        access: [],
+                      })
+                    }
+                  >
+                    <FilterInput
+                      placeholder={fn('search')}
+                      name="filterInput"
+                      value={parameters.query}
+                      onChange={(value) =>
+                        setParameters({ ...parameters, query: value })
+                      }
+                    ></FilterInput>
+                    <FilterMultiChoice
+                      labelClear={fn('clearCategory')}
+                      onChange={({ categoryId, selected }) => {
+                        console.log(categoryId, selected)
+                        setParameters({
+                          ...parameters,
+                          [categoryId]: selected,
+                        })
+                        console.log(parameters)
+                      }}
+                      onClear={(categoryId) =>
+                        setParameters({
+                          ...parameters,
+                          [categoryId]: [],
+                        })
+                      }
+                      categories={filterCategories}
+                    ></FilterMultiChoice>
+                  </Filter>
+                </Box>
+              }
+            >
+              {(error || data?.getApiCatalogue?.services.length < 1) && (
+                <GridContainer>
+                  {error ? (
+                    <Text>{sn('errorHeading')}</Text>
+                  ) : loading ? (
+                    <LoadingIcon animate color="blue400" size={32} />
+                  ) : (
+                    <Text>{sn('notFound')}</Text>
+                  )}
+                </GridContainer>
+              )}
+              {data?.getApiCatalogue?.services.length > 0 && (
+                <GridContainer>
+                  <ServiceList
+                    services={data?.getApiCatalogue?.services}
+                    tagDisplayNames={filterContent}
+                  />
+                  {data?.getApiCatalogue?.pageInfo?.nextCursor != null && (
+                    <Box display="flex" justifyContent="center">
+                      <Button onClick={() => onLoadMore()} variant="ghost">
+                        {!loading ? (
+                          sn('fmButton')
+                        ) : (
+                          <LoadingIcon animate color="blue400" size={16} />
+                        )}
+                      </Button>
+                    </Box>
+                  )}
+                </GridContainer>
+              )}
+            </SidebarLayout>
+          }
+        />
+      }
     />
   )
 }
@@ -267,7 +348,8 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
     {
       data: { getSubpageHeader: subpageHeader },
     },
-    headerNamespace,
+    staticContent,
+    filterContent,
   ] = await Promise.all([
     apolloClient.query<GetSubpageHeaderQuery, QueryGetSubpageHeaderArgs>({
       query: GET_SUBPAGE_HEADER_QUERY,
@@ -278,10 +360,34 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'ApiCatalog',
+            lang: locale,
+          },
+        },
+      })
+      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'ApiCatalogFilter',
+            lang: locale,
+          },
+        },
+      })
+      .then((res) => JSON.parse(res.data.getNamespace.fields)),
   ])
 
   return {
     subpageHeader,
+    staticContent,
+    filterContent,
   }
 }
 
