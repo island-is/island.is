@@ -21,7 +21,7 @@ import { Text } from '../../Text/Text'
 import { TextVariants } from '../../Text/Text.treat'
 import { AccordionContext } from '../../Accordion/Accordion'
 import * as styles from './AccordionItem.treat'
-import { Colors } from 'libs/island-ui/theme/src'
+import { Colors } from '@island.is/island-ui/theme'
 
 type IconVariantTypes = 'default' | 'small' | 'sidebar'
 
