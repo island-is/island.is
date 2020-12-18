@@ -61,17 +61,13 @@ class ApplicationAPITemplateUtils {
   }
 
   async performAction(action: ApplicationAPITemplateAction): Promise<string> {
-    try {
-      switch (action.type) {
-        case 'assignThroughEmail':
-          return this.assignApplicationThroughEmail(action)
-        case 'sendEmail':
-          return this.sendEmail(action)
-        default:
-          throw new Error('Invalid action')
-      }
-    } catch (e) {
-      throw e
+    switch (action.type) {
+      case 'assignThroughEmail':
+        return this.assignApplicationThroughEmail(action)
+      case 'sendEmail':
+        return this.sendEmail(action)
+      default:
+        throw new Error('Invalid action')
     }
   }
 }

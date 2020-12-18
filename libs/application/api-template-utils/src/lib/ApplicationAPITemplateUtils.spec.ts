@@ -117,6 +117,7 @@ describe('ApplicationAPITemplateUtils', () => {
     it('when called with an invalid action', () => {
       expect(
         apiTemplateUtils.performAction({
+          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
           // @ts-ignore
           type: 'invalid',
         }),

@@ -6,7 +6,7 @@ import qs from 'qs'
 import { Text, Page, Box, LoadingIcon, Stack } from '@island.is/island-ui/core'
 import { NotFound } from '@island.is/application/ui-shell'
 
-import { ASSIGN_APPLICATION } from 'libs/application/graphql/src'
+import { ASSIGN_APPLICATION } from '@island.is/application/graphql'
 
 export const AssignApplication = () => {
   const location = useLocation()
@@ -39,6 +39,7 @@ export const AssignApplication = () => {
         },
       },
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // TODO: move code from <NotFound /> into a generic <Error/> component
