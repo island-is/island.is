@@ -1,5 +1,6 @@
 import React, { FC, ReactNode, useMemo, forwardRef } from 'react'
 import pathNames from '@island.is/web/i18n/routes'
+import NextLink from 'next/link'
 import {
   GET_ABOUT_PAGE_QUERY,
   GET_CATEGORIES_QUERY,
@@ -21,6 +22,7 @@ import {
   Box,
   BoxProps,
   Breadcrumbs,
+  NewBreadcrumbs,
   Stack,
   Link,
   ColorSchemeContext,
@@ -208,10 +210,22 @@ const PageHeader: FC<PageHeaderProps> = ({
               span={['12/12', '12/12', '12/12', '8/9']}
             >
               <Stack space={2}>
-                <Breadcrumbs color="blue300" separatorColor="blue300">
-                  <Link href={pathNames().href}>Ísland.is</Link>
-                  <span>{page.title}</span>
-                </Breadcrumbs>
+                <NewBreadcrumbs
+                  color="white"
+                  items={[
+                    {
+                      title: 'Ísland.is',
+                      href: '/',
+                    },
+                  ]}
+                  renderLink={(link) => {
+                    return (
+                      <NextLink {...pathNames()} passHref>
+                        {link}
+                      </NextLink>
+                    )
+                  }}
+                />
                 <Box display={['block', 'block', 'block', 'none']}>
                   <Navigation
                     colorScheme={'darkBlue'}

@@ -2,11 +2,14 @@ import React, { useMemo } from 'react'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import slugify from '@sindresorhus/slugify'
+import NextLink from 'next/link'
 import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   GridRow,
   GridColumn,
   Breadcrumbs,
+  NewBreadcrumbs,
+  BreadCrumbItem,
   Link,
   Tag,
   Text,
@@ -14,7 +17,7 @@ import {
   GridContainer,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import pathNames from '@island.is/web/i18n/routes'
+import pathNames, { ContentType } from '@island.is/web/i18n/routes'
 import {
   RichText,
   AnchorNavigation,
@@ -40,6 +43,26 @@ interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
   namespace: GetNamespaceQuery['getNamespace']
 }
+
+const items: BreadCrumbItem[] = [
+  {
+    title: 'Ísland.is',
+    href: '/',
+  },
+  {
+    title: 'Ferðagjöf til einstaklinga',
+    typename: 'article',
+    slug: ['ferdagjof-til-einstaklinga'],
+  },
+  {
+    title: 'Að eignast barn',
+    typename: 'lifeevent',
+    slug: ['ad-eignast-barn'],
+  },
+  {
+    title: 'Lífsins viðburður',
+  },
+]
 
 export const LifeEvent: Screen<LifeEventProps> = ({
   lifeEvent: { id, image, title, intro, content },
@@ -86,12 +109,22 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                 span={['9/9', '9/9', '9/9', '9/9', '7/9']}
               >
                 <Box paddingBottom={[2, 2, 4]}>
-                  <Breadcrumbs>
-                    <Link href={pathNames()}>Ísland.is</Link>
-                    <Tag variant="blue" outlined>
-                      {n('lifeEventTitle', 'Lífsviðburður')}
-                    </Tag>
-                  </Breadcrumbs>
+                  <NewBreadcrumbs
+                    items={[
+                      {
+                        title: 'Ísland.is',
+                        href: '/',
+                      },
+                    ]}
+                    tags={[n('lifeEventTitle', 'Lífsviðburður')]}
+                    renderLink={(link) => {
+                      return (
+                        <NextLink {...pathNames()} passHref>
+                          {link}
+                        </NextLink>
+                      )
+                    }}
+                  />
                 </Box>
                 <Text variant="h1" as="h1">
                   <span id={slugify(title)}>{title}</span>

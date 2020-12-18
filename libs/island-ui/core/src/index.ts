@@ -73,6 +73,7 @@ export * from './lib/Divider/Divider'
 
 // Navigation
 export * from './lib/Breadcrumbs/Breadcrumbs'
+export * from './lib/Breadcrumbs/New_Breadcrumbs'
 export * from './lib/Navigation/Navigation'
 export * from './lib/FormStepper/FormStepper'
 export * from './lib/FormStepper/types'

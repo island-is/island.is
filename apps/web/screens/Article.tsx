@@ -12,6 +12,7 @@ import {
   Text,
   Stack,
   Breadcrumbs,
+  NewBreadcrumbs,
   GridColumn,
   GridRow,
   Tag,
@@ -288,30 +289,37 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         }
       >
         <Box paddingBottom={[2, 2, 4]}>
-          <Breadcrumbs>
-            <Link href={makePath()}>Ísland.is</Link>
-            {!!article.category && (
-              <Link
-                href={makePath('ArticleCategory', '/[slug]')}
-                as={makePath('ArticleCategory', article.category.slug)}
-              >
-                {article.category.title}
-              </Link>
-            )}
-            {!!article.group && (
-              <Link
-                as={makePath(
-                  'ArticleCategory',
+          <NewBreadcrumbs
+            items={[
+              {
+                title: 'Ísland.is',
+                href: '/',
+              },
+              !!article.category && {
+                title: article.category.title,
+                typename: article.category.__typename,
+                slug: [article.category.slug],
+              },
+              !!article.group && {
+                title: article.group.title,
+                typename: article.category.__typename,
+                slug: [
                   article.category.slug +
                     (article.group?.slug ? `#${article.group.slug}` : ''),
-                )}
-                href={makePath('ArticleCategory', '[slug]')}
-                pureChildren
-              >
-                <Tag variant="blue">{article.group.title}</Tag>
-              </Link>
-            )}
-          </Breadcrumbs>
+                ],
+              },
+            ]}
+            renderLink={(link, { typename, slug }) => {
+              return (
+                <NextLink
+                  {...pathNames(activeLocale, typename as ContentType, slug)}
+                  passHref
+                >
+                  {link}
+                </NextLink>
+              )
+            }}
+          />
         </Box>
         <Box>
           <Text variant="h1" as="h1">
