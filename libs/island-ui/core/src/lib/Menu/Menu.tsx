@@ -10,6 +10,10 @@ import { Input } from '../Input/Input'
 import { Box } from '../Box/Box'
 import { Text, getTextStyles } from '../Text/Text'
 import Img from './Img'
+import { GridContainer } from '../Grid/GridContainer/GridContainer'
+import { GridRow } from '../Grid/GridRow/GridRow'
+import { GridColumn } from '../Grid/GridColumn/GridColumn'
+import { useBoxStyles } from '../Box/useBoxStyles'
 
 type RenderLinkObj = {
   className: string
@@ -182,6 +186,7 @@ export const Menu = ({
   renderDisclosure,
 }: MenuProps) => {
   const [mainLinksCollapsed, setMainLinksCollapsed] = useState(true)
+  const fullHeight = useBoxStyles({ component: 'div', height: 'full' })
 
   const myPages = renderMyPagesButton(
     <Button variant="utility" icon="person">
@@ -214,229 +219,249 @@ export const Menu = ({
       renderDisclosure={renderDisclosure}
     >
       {({ closeModal }: { closeModal: () => void }) => (
-        <>
-          <Box
-            paddingTop={[6, 6, 8]}
-            paddingRight={[3, 3, 6, 6, 15]}
-            paddingBottom={[4, 4, 4, 4, 15]}
-            paddingLeft={[3, 3, 6]}
-            className={styles.main}
-            display="flex"
-            justifyContent="flexEnd"
-          >
-            <div className={styles.mainContainer}>
+        <GridContainer>
+          <GridRow className={fullHeight}>
+            <GridColumn span={['12/12', '12/12', '12/12', '7/12', '8/12']}>
               <Box
+                paddingTop={4}
+                paddingRight={[0, 0, 0, 6, 15]}
+                paddingBottom={[4, 4, 4, 4, 20]}
                 display="flex"
-                justifyContent="spaceBetween"
-                alignItems="center"
-                flexWrap={['wrap', 'wrap', 'nowrap']}
+                justifyContent="flexEnd"
+                position="relative"
               >
-                {renderLogo(
-                  <>
+                <div className={styles.mainContainer}>
+                  <Box
+                    display="flex"
+                    justifyContent="spaceBetween"
+                    alignItems="center"
+                    flexWrap={['wrap', 'wrap', 'wrap', 'nowrap']}
+                  >
+                    {renderLogo(
+                      <>
+                        <Box
+                          display={['block', 'block', 'block', 'none']}
+                          marginRight={[1, 4]}
+                        >
+                          <Logo width={40} iconOnly title={logoTitle} />
+                        </Box>
+                        <Box
+                          display={['none', 'none', 'none', 'block']}
+                          marginRight={4}
+                        >
+                          <Logo width={160} title={logoTitle} />
+                        </Box>
+                      </>,
+                    )}
                     <Box
-                      display={['block', 'block', 'block', 'none']}
-                      marginRight={[1, 4]}
+                      display={['flex', 'flex', 'flex', 'none']}
+                      justifyContent="flexEnd"
+                      alignItems="center"
                     >
-                      <Logo width={40} iconOnly title={logoTitle} />
+                      <Box display="flex">
+                        <Box marginRight={[1, 2]}>{myPages}</Box>
+                        <Box marginRight={[2, 3]}>{languageSwitch}</Box>
+                      </Box>
+                      <Button
+                        onClick={closeModal}
+                        circle
+                        icon="close"
+                        colorScheme="light"
+                      />
                     </Box>
                     <Box
-                      display={['none', 'none', 'none', 'block']}
-                      marginRight={4}
+                      marginTop={[5, 5, 5, 0]}
+                      className={styles.searchContainer}
                     >
-                      <Logo width={160} title={logoTitle} />
+                      {renderSearch(
+                        <Input
+                          placeholder="Leitaðu á Ísland.is"
+                          backgroundColor="blue"
+                          size="sm"
+                          name="search"
+                          icon="search"
+                          iconType="outline"
+                        />,
+                        closeModal,
+                      )}
                     </Box>
-                  </>,
-                )}
-                <Box
-                  display={['flex', 'flex', 'none']}
-                  justifyContent="flexEnd"
-                  alignItems="center"
-                >
-                  <Box display="flex">
-                    <Box marginRight={[1, 2]}>{myPages}</Box>
-                    <Box marginRight={[2, 3]}>{languageSwitch}</Box>
                   </Box>
-                  <Button
-                    onClick={closeModal}
-                    circle
-                    icon="close"
-                    colorScheme="light"
-                  />
-                </Box>
-                <Box marginTop={[5, 5, 0]} className={styles.searchContainer}>
-                  {renderSearch(
-                    <Input
-                      placeholder="Leitaðu á Ísland.is"
-                      backgroundColor="blue"
-                      size="sm"
-                      name="search"
-                      icon="search"
-                      iconType="outline"
-                    />,
-                    closeModal,
-                  )}
-                </Box>
-              </Box>
-              <Box marginTop={9} display={['none', 'none', 'block']}>
-                <Text variant="h3" marginBottom={2}>
-                  {mainTitle}
-                </Text>
-                <div className={styles.mainLinkContainer}>
-                  {mainLinksRender(closeModal)}
+                  <Box
+                    marginTop={9}
+                    display={['none', 'none', 'none', 'block']}
+                  >
+                    <Text variant="h3" marginBottom={2}>
+                      {mainTitle}
+                    </Text>
+                    <div className={styles.mainLinkContainer}>
+                      {mainLinksRender(closeModal)}
+                    </div>
+                  </Box>
+                  <Box
+                    marginTop={7}
+                    display={['block', 'block', 'block', 'none']}
+                  >
+                    <Box
+                      display="flex"
+                      justifyContent="spaceBetween"
+                      alignItems="center"
+                    >
+                      <Box
+                        className={getTextStyles({ variant: 'h3' })}
+                        marginBottom={2}
+                        marginRight={4}
+                      >
+                        {mainTitle}
+                      </Box>
+                      <Button
+                        circle
+                        colorScheme="light"
+                        icon={mainLinksCollapsed ? 'add' : 'remove'}
+                        aria-expanded={!mainLinksCollapsed}
+                        aria-controls="mainLinks"
+                        onClick={() =>
+                          setMainLinksCollapsed(!mainLinksCollapsed)
+                        }
+                      />
+                    </Box>
+                    <AnimateHeight
+                      duration={300}
+                      height={mainLinksCollapsed ? 0 : 'auto'}
+                      id="mainLinks"
+                    >
+                      {mainLinksRender(closeModal)}
+                    </AnimateHeight>
+                  </Box>
                 </div>
+                <Box className={styles.bg}>
+                  <Img />
+                </Box>
               </Box>
-              <Box marginTop={7} display={['block', 'block', 'none']}>
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12', '4/12']}>
+              <Box
+                flexGrow={1}
+                display="flex"
+                flexDirection="column"
+                height="full"
+              >
                 <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  alignItems="center"
+                  paddingTop={4}
+                  paddingBottom={6}
+                  paddingLeft={[0, 0, 0, 6, 12]}
+                  className={styles.asideTop}
+                  flexGrow={1}
                 >
                   <Box
-                    className={getTextStyles({ variant: 'h3' })}
-                    marginBottom={2}
-                    marginRight={4}
+                    display={['none', 'none', 'none', 'flex']}
+                    justifyContent="spaceBetween"
                   >
-                    {mainTitle}
+                    <Box display="flex">
+                      <Box marginRight={2}>{myPages}</Box>
+                      {languageSwitch}
+                    </Box>
+                    <Button
+                      onClick={closeModal}
+                      circle
+                      icon="close"
+                      colorScheme="negative"
+                    />
                   </Box>
-                  <Button
-                    circle
-                    colorScheme="light"
-                    icon={mainLinksCollapsed ? 'add' : 'remove'}
-                    aria-expanded={!mainLinksCollapsed}
-                    aria-controls="mainLinks"
-                    onClick={() => setMainLinksCollapsed(!mainLinksCollapsed)}
-                  />
-                </Box>
-                <AnimateHeight
-                  duration={300}
-                  height={mainLinksCollapsed ? 0 : 'auto'}
-                  id="mainLinks"
-                >
-                  {mainLinksRender(closeModal)}
-                </AnimateHeight>
-              </Box>
-            </div>
-            <Box className={styles.bg}>
-              <Img />
-            </Box>
-          </Box>
-          <div className={styles.aside}>
-            <Box
-              paddingTop={8}
-              paddingRight={[3, 3, 3, 6]}
-              paddingBottom={6}
-              paddingLeft={[3, 3, 3, 6, 12]}
-              className={styles.asideTop}
-            >
-              <div className={styles.asideContainer}>
-                <Box
-                  display={['none', 'none', 'flex']}
-                  justifyContent="spaceBetween"
-                >
-                  <Box display="flex">
-                    <Box marginRight={2}>{myPages}</Box>
-                    {languageSwitch}
-                  </Box>
-                  <Button
-                    onClick={closeModal}
-                    circle
-                    icon="close"
-                    colorScheme="negative"
-                  />
-                </Box>
-                <Box marginTop={[0, 0, 9]}>
-                  {asideTopLinks.map(({ text, href, sub }, index) =>
-                    sub && sub.length > 0 ? (
-                      <AsideTopLinkWithSub
-                        key={index}
-                        id={index}
-                        link={renderLink(
-                          {
-                            className: cn(
-                              getTextStyles({
-                                variant: 'h3',
-                                color: 'blue600',
-                              }),
-                              styles.asideLink,
-                            ),
-                            text: text,
-                            href: href,
-                          },
-                          closeModal,
-                        )}
-                        sub={sub.map((link) =>
-                          renderLink(
+                  <Box marginTop={[0, 0, 0, 9]}>
+                    {asideTopLinks.map(({ text, href, sub }, index) =>
+                      sub && sub.length > 0 ? (
+                        <AsideTopLinkWithSub
+                          key={index}
+                          id={index}
+                          link={renderLink(
                             {
                               className: cn(
                                 getTextStyles({
-                                  variant: 'small',
+                                  variant: 'h3',
                                   color: 'blue600',
                                 }),
                                 styles.asideLink,
                               ),
-                              ...link,
+                              text: text,
+                              href: href,
                             },
                             closeModal,
-                          ),
-                        )}
-                      />
-                    ) : (
-                      <Box key={index} marginBottom={[5, 5, 3]}>
-                        {renderLink(
-                          {
-                            className: cn(
-                              getTextStyles({
-                                variant: 'h3',
-                                color: 'blue600',
-                              }),
-                              styles.asideLink,
+                          )}
+                          sub={sub.map((link) =>
+                            renderLink(
+                              {
+                                className: cn(
+                                  getTextStyles({
+                                    variant: 'small',
+                                    color: 'blue600',
+                                  }),
+                                  styles.asideLink,
+                                ),
+                                ...link,
+                              },
+                              closeModal,
                             ),
-                            text: text,
-                            href: href,
-                          },
-                          closeModal,
-                        )}
-                      </Box>
-                    ),
-                  )}
-                </Box>
-              </div>
-            </Box>
-            <Box
-              paddingTop={5}
-              paddingRight={[3, 3, 3, 6]}
-              paddingBottom={6}
-              paddingLeft={[3, 3, 3, 6, 12]}
-              className={styles.asideBottom}
-            >
-              <div className={styles.asideContainer}>
-                <Text color="blue600" variant="eyebrow">
-                  {asideBottomTitle}
-                </Text>
-                <Box
-                  borderTopWidth="standard"
-                  borderColor="blue300"
-                  marginTop={3}
-                  marginBottom={3}
-                />
-                {asideBottomLinks.map((link, index) => (
-                  <Box marginBottom={2} key={index}>
-                    {renderLink(
-                      {
-                        className: cn(
-                          getTextStyles({ variant: 'small', color: 'blue600' }),
-                          styles.asideLink,
-                        ),
-                        ...link,
-                      },
-                      closeModal,
+                          )}
+                        />
+                      ) : (
+                        <Box key={index} marginBottom={[5, 5, 5, 3]}>
+                          {renderLink(
+                            {
+                              className: cn(
+                                getTextStyles({
+                                  variant: 'h3',
+                                  color: 'blue600',
+                                }),
+                                styles.asideLink,
+                              ),
+                              text: text,
+                              href: href,
+                            },
+                            closeModal,
+                          )}
+                        </Box>
+                      ),
                     )}
                   </Box>
-                ))}
-              </div>
-            </Box>
-          </div>
-        </>
+                </Box>
+                <Box
+                  paddingTop={5}
+                  paddingBottom={6}
+                  paddingLeft={[0, 0, 0, 6, 12]}
+                  className={styles.asideBottom}
+                  flexGrow={1}
+                >
+                  <Text color="blue600" variant="eyebrow">
+                    {asideBottomTitle}
+                  </Text>
+                  <Box
+                    borderTopWidth="standard"
+                    borderColor="blue300"
+                    marginTop={3}
+                    marginBottom={3}
+                  />
+                  {asideBottomLinks.map((link, index) => (
+                    <Box marginBottom={2} key={index}>
+                      {renderLink(
+                        {
+                          className: cn(
+                            getTextStyles({
+                              variant: 'small',
+                              color: 'blue600',
+                            }),
+                            styles.asideLink,
+                          ),
+                          ...link,
+                        },
+                        closeModal,
+                      )}
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
       )}
     </ModalBase>
   )
