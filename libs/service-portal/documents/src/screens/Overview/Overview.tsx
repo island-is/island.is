@@ -28,7 +28,7 @@ import { ValueType } from 'react-select'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { defineMessage } from 'react-intl'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
-import { useLocation } from 'react-use'
+import { useLocation } from 'react-router-dom'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 6
@@ -149,7 +149,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const handleSearchChange = useCallback((value: string) => {
     setPage(1)
     setFilterValue({ ...defaultFilterValues, searchQuery: value })
-    if (!searchInteractionEventSent && pathname) {
+    if (!searchInteractionEventSent) {
       documentsSearchDocumentsInitialized(pathname)
       setSearchInteractionEventSent(true)
     }

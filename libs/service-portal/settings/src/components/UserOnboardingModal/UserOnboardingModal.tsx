@@ -19,7 +19,7 @@ import {
   servicePortalCloseOnBoardingModal,
   servicePortalSubmitOnBoardingModal,
 } from '@island.is/plausible'
-import { useLocation } from 'react-use'
+import { useLocation } from 'react-router-dom'
 
 export type OnboardingStep =
   | 'language-form'
@@ -48,9 +48,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   // On close side effects
   const dropOnboardingSideEffects = () => {
     toast.info('Notendaupplýsingum er hægt að breyta í stillingum')
-    if (pathname) {
-      servicePortalCloseOnBoardingModal(pathname)
-    }
+    servicePortalCloseOnBoardingModal(pathname)
   }
 
   // Handles a close event directly in the onboarding component

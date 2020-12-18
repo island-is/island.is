@@ -5,7 +5,7 @@ import { useLazyDocumentDetail } from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
 import * as styles from './DocumentCard.treat'
 import { toast, Text, Stack, Button, Box } from '@island.is/island-ui/core'
-import { useLocation } from 'react-use'
+import { useLocation } from 'react-router-dom'
 import { documentsOpenDocument } from '@island.is/plausible'
 
 const base64ToArrayBuffer = (base64Pdf: string) => {
@@ -70,9 +70,7 @@ const DocumentCard: FC<Props> = ({ document }) => {
     if (loading) {
       return
     }
-    if (pathname) {
-      documentsOpenDocument(pathname, document.subject)
-    }
+    documentsOpenDocument(pathname, document.subject)
     if (!data) {
       fetchDocument()
     } else {
