@@ -19,13 +19,23 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
     undefined,
   ) as ValidAnswers
 
+  const requestDaysAnswerId = 'requestDays'
+
   const { clearErrors } = useFormContext()
 
   const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(
     currentAnswer,
   )
 
-  const [chosenRequestDays, setChosenRequestDays] = useState<number>(1)
+  const requestDaysAnswer = getValueViaPath(
+    application.answers,
+    requestDaysAnswerId,
+    undefined,
+  ) as number
+
+  const [chosenRequestDays, setChosenRequestDays] = useState<number>(
+    requestDaysAnswer || 1,
+  )
 
   const numberOfBoxes = statefulAnswer === 'no' ? 6 : 7
 
@@ -35,12 +45,17 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
       bulletStyle: 'blue',
     },
   ]
+
+  const daysStringKey =
+    chosenRequestDays > 1 ? m.requestRightsDays : m.requestRightsDay
+
   if (statefulAnswer === 'yes') {
     boxChartKeys.push({
-      label: m.requestRightsMonths,
+      label: () => ({ ...daysStringKey, values: { day: chosenRequestDays } }),
       bulletStyle: 'greenWithLines',
     })
   }
+
   return (
     <Box marginTop={3} marginBottom={2} key={field.id}>
       <Box paddingY={3}>
@@ -60,16 +75,16 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
       {statefulAnswer === 'yes' && (
         <Box marginBottom={12}>
           <Text marginBottom={4} variant="h3">
-            How many days would you like to request?
+            {formatMessage(m.requestRightsDaysTitle)}
           </Text>
           <Controller
             defaultValue={chosenRequestDays}
-            name={'requestDays'}
+            name={requestDaysAnswerId}
             render={({ onChange, value }) => (
               <Slider
                 label={{
-                  singular: 'Day',
-                  plural: 'Days',
+                  singular: formatMessage(m.day),
+                  plural: formatMessage(m.days),
                 }}
                 min={1}
                 max={30}
@@ -84,7 +99,7 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
                   }
                 }}
                 onChange={(newValue: number) => {
-                  clearErrors('requestDays')
+                  clearErrors(requestDaysAnswerId)
                   onChange(newValue)
                   setChosenRequestDays(newValue)
                 }}

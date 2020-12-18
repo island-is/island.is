@@ -143,6 +143,16 @@ export const m = defineMessages({
     defaultMessage: '{months} mánuðir sjálfstæður réttur',
     description: '{months} months individual rights',
   },
+  yourRightsInMonthsAndDay: {
+    id: 'pl.application:rights.months',
+    defaultMessage: '{months} mánuðir og {day} dagur sjálfstæður réttur',
+    description: '{months} months and {day} day individual rights',
+  },
+  yourRightsInMonthsAndDays: {
+    id: 'pl.application:rights.months',
+    defaultMessage: '{months} mánuðir og {day} dagar sjálfstæður réttur',
+    description: '{months} months {day} days individual rights',
+  },
   theseAreYourRights: {
     id: 'pl.application:these.are.your.rights',
     defaultMessage: 'Þetta eru réttindin þín',
@@ -161,10 +171,15 @@ export const m = defineMessages({
       'Óskarðu eftir að fá allt að einn mánuð af réttindum hins foreldrisins yfirfært yfir á þig?',
     description: 'Do you want to request extra time from the other parent?',
   },
-  requestRightsMonths: {
-    id: 'pl.application:request.rights.months',
-    defaultMessage: '1 mánuður óskað eftir af rétti hins foreldrisins',
-    description: "1 month requested from the other parent's rights",
+  day: {
+    id: 'pl.application:day',
+    defaultMessage: 'dagur',
+    description: 'day',
+  },
+  days: {
+    id: 'pl.application:days',
+    defaultMessage: 'dagar',
+    description: 'days',
   },
   month: {
     id: 'pl.application:month',
@@ -175,6 +190,26 @@ export const m = defineMessages({
     id: 'pl.application:months',
     defaultMessage: 'mánuðir',
     description: 'months',
+  },
+  requestRightsDaysTitle: {
+    id: 'pl.application:request.rights.daysTitle',
+    defaultMessage: 'Hversu marga daga viltu biðja um?',
+    description: 'How many days would you like to request?',
+  },
+  requestRightsDay: {
+    id: 'pl.application:request.rights.months',
+    defaultMessage: '{day} dagur óskað eftir af rétti hins foreldrisins',
+    description: "{day} day requested from the other parent's rights",
+  },
+  requestRightsDays: {
+    id: 'pl.application:request.rights.months',
+    defaultMessage: '{day} dagar óskað eftir af rétti hins foreldrisins',
+    description: "{day} days requested from the other parent's rights",
+  },
+  requestRightsMonths: {
+    id: 'pl.application:request.rights.months',
+    defaultMessage: 'óskað eftir af rétti hins foreldrisins',
+    description: "1 month requested from the other parent's rights",
   },
   monthsTotal: {
     id: 'pl.application:months.total',
@@ -216,11 +251,26 @@ export const m = defineMessages({
     description:
       'Do you want to transfer up to one month of your parental leave rights to the other parent?',
   },
+  giveRightsDaysTitle: {
+    id: 'pl.application:request.rights.daysTitle',
+    defaultMessage: 'Hve marga daga viltu gefa?',
+    description: 'How many days would you like to give?',
+  },
   giveRightsDescription: {
     id: 'pl.application:give.rights.description',
     defaultMessage:
       'Þú getur yfirfært allt að einn mánuð af þínum réttindum yfir á hitt foreldrið',
     description: 'You can give the other parent one month of your rights',
+  },
+  giveRightsDay: {
+    id: 'pl.application:request.rights.months',
+    defaultMessage: '{day} dagur yfirfærður til hins foreldrisins',
+    description: '{day} day given to the other parent',
+  },
+  giveRightsDays: {
+    id: 'pl.application:request.rights.months',
+    defaultMessage: '{day} dagar yfirfærður til hins foreldrisins',
+    description: '{day} days given to the other parent',
   },
   giveRightsMonths: {
     id: 'pl.application:give.rights.months',
