@@ -32,7 +32,7 @@ export type AccordionItemBaseProps = {
   label: string
   labelVariant?: TextVariants
   labelUse?: AccordionItemLabelTags
-  labelColor: Colors
+  labelColor?: Colors
   iconVariant?: IconVariantTypes
   visibleContent?: ReactNode
   children: ReactNode
