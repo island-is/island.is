@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import ClientDTO from '../models/dtos/client-dto';
-import Paginator from './Paginator';
+import ClientDTO from '../../entities/dtos/client-dto';
+import Paginator from '../Common/Paginator';
 import Link from 'next/link';
-import api from '../services/api'
+import api from '../../services/api'
 
 class ClientsList extends Component {
   state = {

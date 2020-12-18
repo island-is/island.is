@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { ApiScopesDTO } from 'apps/auth-admin-web/models/dtos/api-scopes-dto';
+import { ApiScopesDTO } from './../../../entities/dtos/api-scopes-dto';
 import ResourceEditForm from './forms/ResourceEditForm';
 import { useRouter } from 'next/router';
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import ResourceUserClaim from 'apps/auth-admin-web/models/interfaces/resource-user-claims';
-import HelpBox from '../../HelpBox';
+import ResourceUserClaim from './../../../entities/models/resource-user-claims';
+import HelpBox from '../../Common/HelpBox';
 
 interface Props {
   identityResourceId: string;

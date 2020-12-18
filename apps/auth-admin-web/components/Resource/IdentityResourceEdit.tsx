@@ -1,3 +1,4 @@
+import React from 'react';
 import { useRouter } from 'next/router';
 import IdentityResourceUserClaim from './components/IdrUserClaim';
 import IdentityResourceData from './components/IdrData'

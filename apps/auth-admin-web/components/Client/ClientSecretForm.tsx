@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import StatusBar from './StatusBar';
-import HelpBox from './HelpBox';
-import APIResponse from '../models/common/APIResponse';
-import { ClientSecretDTO } from '../models/dtos/client-secret.dto';
-import { ClientSecret } from '../models/client-secret.model';
-import api from '../services/api'
-import NoActiveConnections from './common/NoActiveConnections';
+import StatusBar from '../Layout/StatusBar';
+import HelpBox from '../Common/HelpBox';
+import APIResponse from '../../entities/common/APIResponse';
+import { ClientSecretDTO } from '../../entities/dtos/client-secret.dto';
+import { ClientSecret } from '../../entities/models/client-secret.model';
+import api from '../../services/api'
+import NoActiveConnections from '../Common/NoActiveConnections';
 
 interface Props {
   clientId: string;

@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
-import IdentityResourcesDTO from '../../models/dtos/identity-resources.dto';
+import IdentityResourcesDTO from '../../entities/dtos/identity-resources.dto';
 import axios from 'axios';
-import Paginator from '../Paginator';
+import Paginator from '../Common/Paginator';
 // import StatusBar from '../StatusBar';
 import { useRouter } from 'next/router';
-import APIResponse from 'apps/auth-admin-web/models/common/APIResponse';
+import APIResponse from './../../entities/common/APIResponse'
 import ResourceListDisplay from './components/ListDisplay';
 
 export default function IdentityResourcesList() {
