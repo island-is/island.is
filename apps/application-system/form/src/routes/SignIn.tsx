@@ -26,6 +26,7 @@ export const Signin = () => {
         // TODO: Handle error
         console.log('error in SIGNING', error)
       })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return <AuthenticationLoading />

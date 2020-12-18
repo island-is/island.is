@@ -87,7 +87,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
               >
                 <Box paddingBottom={[2, 2, 4]}>
                   <Breadcrumbs>
-                    <Link href={pathNames()}>Ísland.is</Link>
+                    <Link href={pathNames().href}>Ísland.is</Link>
                     <Tag variant="blue" outlined>
                       {n('lifeEventTitle', 'Lífsviðburður')}
                     </Tag>

@@ -116,14 +116,15 @@ export const TechnicalContactForm: FC<Props> = ({ onSubmit }) => {
       >
         <Box marginTop={[1, 0]}>
           <Link to={ServicePortalPath.DocumentProviderSettingsRoot}>
-            <Button variant="ghost">Til baka</Button>
+            <Button variant="ghost">
+              {formatMessage(m.SettingsEditTechnicalContactBackButton)}
+            </Button>
           </Link>
         </Box>
         <Button type="submit" variant="primary" icon="arrowForward">
-          Vista breytingar
+          {formatMessage(m.SettingsEditTechnicalContactSaveButton)}
         </Button>
       </Box>
-      )
     </form>
   )
 }
