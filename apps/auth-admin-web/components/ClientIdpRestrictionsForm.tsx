@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import StatusBar from './StatusBar';
 import HelpBox from './HelpBox';
-import axios from 'axios';
 import APIResponse from '../models/common/APIResponse';
+import api from '../services/api'
 
 interface Props {
   clientId: string;
@@ -20,8 +20,8 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
       name: name,
       clientId: props.clientId,
     };
-    await axios
-      .post(`/api/idp-restriction`, createObj)
+    await api
+      .post(`idp-restriction`, createObj)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
@@ -41,8 +41,8 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
   };
 
   const remove = async (name: string) => {
-    await axios
-      .delete(`/api/idp-restriction/${props.clientId}/${name}`)
+    await api
+      .delete(`idp-restriction/${props.clientId}/${name}`)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;

@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import ClientDTO from '../models/dtos/client-dto';
-import axios from 'axios';
 import StatusBar from './StatusBar';
 import APIResponse from '../models/common/APIResponse';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import HelpBox from './HelpBox';
-
+import api from '../services/api'
 
 interface Props {
   client: ClientDTO;
@@ -64,7 +63,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
   
 
   const create = async (data: any) => {
-    await axios.post('/api/clients', data)
+    await api.post('clients', data)
     .then((response) => {
       const res = new APIResponse();
       res.statusCode = response.request.status;
@@ -89,7 +88,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
   const edit = async (data: any) => {
     const handleObject = {...data};
     delete data.clientId;
-    await axios.put(`/api/clients/${props.client.clientId}`, data)
+    await api.put(`clients/${props.client.clientId}`, data)
     .then((response) => {
       const res = new APIResponse();
       res.statusCode = response.request.status;
@@ -123,8 +122,8 @@ const ClientForm: React.FC<Props> = (props: Props) => {
 
   const checkAvailability = async (clientId: string) => {
     setClientIdLength(clientId.length);
-    await axios
-      .get(`/api/clients/${clientId}`)
+    await api
+      .get(`clients/${clientId}`)
       .then((response) => {
         if (response.request.status !== 404) setAvailable(false);
       })

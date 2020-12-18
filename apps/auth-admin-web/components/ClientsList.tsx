@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import ClientDTO from '../models/dtos/client-dto';
 import Paginator from './Paginator';
 import Link from 'next/link';
+import api from '../services/api'
 
 class ClientsList extends Component {
   state = {
@@ -13,8 +13,8 @@ class ClientsList extends Component {
   };
 
   getClients = async (page, count) => {
-    const response = await axios.get(
-      `/api/clients?page=${page}&count=${count}`
+    const response = await api.get(
+      `clients/?page=${page}&count=${count}`
     );
 
     this.setState({
@@ -38,7 +38,7 @@ class ClientsList extends Component {
         `Are you sure you want to delete this client: "${clientId}"?`
       )
     ) {
-      const response = await axios.delete(`api/clients/${clientId}`);
+      const response = await api.delete(`clients/${clientId}`);
       this.getClients(this.state.page, this.state.count);
     }
   };

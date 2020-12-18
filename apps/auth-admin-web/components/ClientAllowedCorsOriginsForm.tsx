@@ -3,9 +3,9 @@ import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import StatusBar from './StatusBar';
 import HelpBox from './HelpBox';
-import axios from 'axios';
 import APIResponse from '../models/common/APIResponse';
 import { ClientAllowedCorsOriginDTO } from '../models/dtos/client-allowed-cors-origin.dto';
+import api from '../services/api'
 
 interface Props {
   clientId: string;
@@ -28,8 +28,8 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
     clientRedirect.clientId = props.clientId;
     clientRedirect.origin = data.origin;
 
-    await axios
-      .post(`/api/cors`, clientRedirect)
+    await api
+      .post(`cors`, clientRedirect)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
@@ -51,8 +51,8 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
   };
 
   const remove = async (origin: string) => {
-    await axios
-      .delete(`/api/cors/${props.clientId}/${encodeURIComponent(origin)}`)
+    await api
+      .delete(`cors/${props.clientId}/${encodeURIComponent(origin)}`)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;

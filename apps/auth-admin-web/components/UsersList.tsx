@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { UserIdentityDTO } from '../models/dtos/user-identity.dto';
 import APIResponse from '../models/common/APIResponse';
 import { useForm } from 'react-hook-form';
@@ -7,6 +6,7 @@ import { ErrorMessage } from '@hookform/error-message';
 import HelpBox from './HelpBox';
 import { ClaimDTO } from '../models/dtos/claim.dto';
 import NotFound from './common/NotFound';
+import api from '../services/api'
 
 interface ClaimShow {
   subjectId: string;
@@ -34,8 +34,8 @@ const UsersList: React.FC = () => {
 
   const getUser = async (data) => {
     setShowNotFound(false);
-    await axios
-      .get(`api/user-identities/${data.id}`)
+    await api
+      .get(`user-identities/${data.id}`)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
@@ -59,8 +59,8 @@ const UsersList: React.FC = () => {
   };
 
   const toggleActive = async (user: UserIdentityDTO) => {
-    await axios
-      .patch(`api/user-identities/${user.subjectId}`, { active: !user.active })
+    await api
+      .patch(`user-identities/${user.subjectId}`, { active: !user.active })
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;

@@ -7,7 +7,6 @@ import ClientStepNav from '../../components/ClientStepNav';
 import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react';
 
-import axios from 'axios';
 import { ClientStep } from '../../models/common/ClientStep';
 import { Client } from '../../models/client.model';
 import ClientAllowedCorsOriginsForm from '../../components/ClientAllowedCorsOriginsForm';
@@ -17,6 +16,7 @@ import { ClaimDTO } from '../../models/dtos/claim.dto';
 import ClientClaimForm from '../../components/ClientClaimForm';
 import ClientGrantTypesForm from '../../components/ClientGrantTypesForm';
 import ContentWrapper from 'apps/auth-admin-web/components/common/ContentWrapper';
+import api from '../../services/api'
 
 const Index = () => {
   const { query } = useRouter();
@@ -42,8 +42,8 @@ const Index = () => {
   }, [clientId]);
 
   const getClient = async (clientId: string) => {
-    await axios
-      .get(`/api/clients/${clientId}`)
+    await api
+      .get(`clients/${clientId}`)
       .then((response) => {
         setClient(response.data);
       })
