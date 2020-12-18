@@ -114,9 +114,7 @@ const Home: Screen<HomeProps> = ({
                               <Link {...linkResolver('homepage')}>
                                 <a>Ísland.is</a>
                               </Link>
-                              <Link
-                                {...linkResolver('adgerdirfrontpage')}
-                              >
+                              <Link {...linkResolver('adgerdirfrontpage')}>
                                 <a>{n('covidAdgerdir', 'Covid aðgerðir')}</a>
                               </Link>
                             </Breadcrumbs>

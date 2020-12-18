@@ -26,9 +26,11 @@ export const formatMegaMenuLinks = (
 
       return {
         text: linkData.title,
-        href: linkResolver(linkData.link.type as LinkType, [
-          linkData.link.slug,
-        ], locale),
+        href: linkResolver(
+          linkData.link.type as LinkType,
+          [linkData.link.slug],
+          locale,
+        ),
         sub,
       }
     })
@@ -41,5 +43,9 @@ export const formatMegaMenuCategoryLinks = (
 ) =>
   categories.map((category) => ({
     text: category.title,
-    href: linkResolver(category.__typename as LinkType, [category.slug], locale),
+    href: linkResolver(
+      category.__typename as LinkType,
+      [category.slug],
+      locale,
+    ),
   }))
