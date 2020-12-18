@@ -1,15 +1,18 @@
 import {
+  buildCheckboxField,
+  buildCustomField,
+  buildDataProviderItem,
+  buildDateField,
+  buildDividerField,
+  buildExternalDataProvider,
   buildForm,
   buildDescriptionField,
   buildMultiField,
-  buildSection,
-  buildSubmitField,
-  buildCheckboxField,
-  buildTextField,
-  buildCustomField,
   buildRadioField,
+  buildSection,
   buildSelectField,
-  buildDividerField,
+  buildSubmitField,
+  buildTextField,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -20,6 +23,36 @@ export const application: Form = buildForm({
   title: 'Ökuskilríki',
   mode: FormModes.APPLYING,
   children: [
+    buildSection({
+      id: 'externalData',
+      name: 'Sækja gögn',
+      children: [
+        buildExternalDataProvider({
+          name: 'Sækja gögn',
+          id: 'approveExternalData',
+          dataProviders: [
+            buildDataProviderItem({
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: 'Persónuuplýsingar úr Þjóðskrá',
+              subTitle: 'Til þess að auðvelda fyrir sækjum við persónuuplýsingar úr Þjóðskrá til þess að fylla út í umsóknina',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'check',
+      name: '',
+      condition: () => false,
+      children: [
+        buildIntroductionField({
+          id: 'final',
+          name: 'No way',
+          introduction: 'Engir punktar',
+        }),
+      ],
+    }),
     buildSection({
       id: 'type',
       title: 'Tegund ökuréttinda',
