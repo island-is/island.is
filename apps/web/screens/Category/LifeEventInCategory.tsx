@@ -9,7 +9,7 @@ import {
   Tag,
 } from '@island.is/island-ui/core'
 import * as styles from './LifeEventInCategory.treat'
-import { useLinkResolver } from 'apps/web/hooks/useLinkResolver'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 export interface LifeEventInCategoryProps {
   title: string

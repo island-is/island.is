@@ -13,7 +13,7 @@ import { GET_CONTENT_SLUG } from '@island.is/web/screens/queries/Article'
 import { GlobalContext } from '@island.is/web/context'
 import { ContentLanguage } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { useLinkResolver } from 'apps/web/hooks/useLinkResolver'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 export const LanguageToggler: FC<{
   hideWhenMobile?: boolean

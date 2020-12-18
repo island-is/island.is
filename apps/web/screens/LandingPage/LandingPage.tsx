@@ -27,7 +27,7 @@ import {
   GetLandingPageQuery,
 } from '../../graphql/schema'
 import { createNavigation, makeId } from '@island.is/web/utils/navigation'
-import { useLinkResolver } from 'apps/web/hooks/useLinkResolver'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 export interface LandingPageProps {
   page?: GetLandingPageQuery['getLandingPage']
