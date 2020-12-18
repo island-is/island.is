@@ -2,7 +2,12 @@ body {
   background: $color-body-bg;
   box-sizing: border-box;
   font-family: $font-family-primary;
-  margin: 0 40px;
+  margin: 0;
+}
+
+.document__wrapper {
+  min-height: calc(100vh - 112px);
+  margin: 0 40px 25px 40px;
 }
 
 input,
@@ -257,13 +262,16 @@ nav[class$='pagination'] {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 a {
   &[class$='new'] {
     display: block;
     padding: 20px 0px;
+    color: $color-link;
+    text-decoration: none;
+    font-size: 1.1rem;
   }
 
   &[class$='button__close'] {
@@ -316,5 +324,8 @@ a {
 }
 
 footer {
-  margin-top: 300px;
+  height: 50px;
+  background: $color-bg-content;
+  padding: 24px 12px 12px 12px;
+  text-align: center;
 }

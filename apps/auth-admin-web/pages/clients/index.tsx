@@ -1,5 +1,6 @@
-import Clients from './../../components/Clients'
+import ContentWrapper from 'apps/auth-admin-web/components/common/ContentWrapper'
+import ClientsList from '../../components/ClientsList'
 export default function Index(){
-    return <Clients /> 
+    return <ContentWrapper><ClientsList /></ContentWrapper>
 
 }

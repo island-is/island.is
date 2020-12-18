@@ -6,7 +6,13 @@
 .step-end,
 .users,
 .not-found,
-.paginator {
+.paginator,
+.client-allowed-cors-origin,
+.client-allowed-scopes,
+.client-secret,
+.client-claim,
+.client-grant-types,
+.api-scope-form {
   &__help {
     padding: 0 10px 20px 10px;
   }
@@ -74,6 +80,22 @@
     }
   }
 
+  &__selected__item {
+    padding: 13px;
+    font-size: 0.8rem;
+    display: flex;
+
+    .selected-item-property {
+      flex: 1;
+      .selected-item-property-name {
+        font-weight: $weight-semi-bold;
+        margin-bottom: 8px;
+      }
+      .selected-item-property-value {
+      }
+    }
+  }
+
   &__container__list {
     flex-direction: row;
     text-align: left;
@@ -91,12 +113,14 @@
         padding: 10px 0px 0px 5px;
         text-decoration: underline;
         color: $color-link;
+        font-size: 0.8rem;
       }
 
       .list-name {
         padding: 10px 0px 0px 5px;
         text-decoration: underline;
         color: $color-link;
+        font-size: 0.8rem;
       }
 
       .list-remove {
@@ -169,4 +193,16 @@
     opacity: 0.5;
     font-size: 0.8rem;
   }
+}
+
+// Move to _EditResource.scss if I find out how
+.edit-resource-overview {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  height: 40em;
+
+  // div {
+  //   border: 1px solid red;
+  // }
 }
