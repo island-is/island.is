@@ -111,7 +111,8 @@ export const DetentionRequests: React.FC = () => {
     isCustodyEndDateInThePast?: boolean,
   ): { color: TagVariant; text: string } => {
     switch (state) {
-      case CaseState.DRAFT || CaseState.NEW:
+      case CaseState.NEW:
+      case CaseState.DRAFT:
         return { color: 'red', text: 'Drög' }
       case CaseState.SUBMITTED:
         return { color: 'purple', text: 'Krafa staðfest' }
