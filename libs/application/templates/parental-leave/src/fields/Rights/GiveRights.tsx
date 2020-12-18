@@ -54,7 +54,7 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
           {
             label: () => ({
               ...yourRightsWithGivenDaysStringKey,
-              values: { months: '5' },
+              values: { months: '5', day: maxDaysToGive - chosenGiveDays },
             }),
             bulletStyle: 'blue',
           },
