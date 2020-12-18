@@ -22,6 +22,8 @@ import { ClientPostLogoutRedirectUriDTO } from '../entities/dto/client-post-logo
 import { ClientSecretDTO } from '../entities/dto/client-secret.dto'
 import sha256 from 'crypto-js/sha256'
 import Base64 from 'crypto-js/enc-base64'
+import { IdentityResource } from '../entities/models/identity-resource.model'
+import { ApiScope } from '../..'
 
 @Injectable()
 export class ClientsService {
@@ -44,6 +46,10 @@ export class ClientsService {
     private clientClaim: typeof ClientClaim,
     @InjectModel(ClientPostLogoutRedirectUri)
     private clientPostLogoutUri: typeof ClientPostLogoutRedirectUri,
+    @InjectModel(ApiScope)
+    private apiScopeModel: typeof ApiScope,
+    @InjectModel(IdentityResource)
+    private identityResourceModel: typeof IdentityResource,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -478,5 +484,15 @@ export class ClientsService {
         value: clientSecret.value,
       },
     })
+  }
+
+  /** Finds available scopes for AdminUI to select allowed scopes */
+  async FindAvailabeScopes(): Promise<ApiScope[]> {
+    const identityResources = (await this.identityResourceModel.findAll()) as unknown
+    const apiScopes = await this.apiScopeModel.findAll()
+    const arrJoined: ApiScope[] = []
+    arrJoined.push(...apiScopes)
+    arrJoined.push(...(identityResources as ApiScope[]))
+    return arrJoined
   }
 }
