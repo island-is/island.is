@@ -27,7 +27,6 @@ import {
   VehicleOwner,
 } from '@island.is/skilavottord-web/types'
 import { getDate, getYear } from '@island.is/skilavottord-web/utils/dateUtils'
-import { BASE_PATH } from '@island.is/skilavottord-web/utils/consts'
 
 export const skilavottordRecyclingPartnerVehiclesQuery = gql`
   query skilavottordRecyclingPartnerVehiclesQuery($partnerId: String!) {
@@ -126,7 +125,7 @@ const Overview: FC = () => {
   }
 
   const handleDeregister = () => {
-    router.push(`${BASE_PATH}${routes.deregisterVehicle.select}`)
+    router.push(`${routes.deregisterVehicle.select}`)
   }
 
   if (!user) {
