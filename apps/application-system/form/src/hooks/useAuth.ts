@@ -11,26 +11,19 @@ const useAuth = () => {
       type: ActionType.SET_USER_PENDING,
     })
 
-    const user = await userManager.getUser()
-    if (user) {
-      setClientAuthToken(user.access_token)
-      dispatch({
-        type: ActionType.SET_USER_FULFILLED,
-        payload: user,
-      })
-    } else {
-      try {
-        const userSilentlySignedIn = await userManager.signinSilent()
-        setClientAuthToken(userSilentlySignedIn.access_token)
+    try {
+      const user = await userManager.verifyAuthentication()
+      if (user) {
+        setClientAuthToken(user.access_token)
         dispatch({
           type: ActionType.SET_USER_FULFILLED,
-          payload: userSilentlySignedIn,
-        })
-      } catch (exception) {
-        await userManager.signinRedirect({
-          state: { redirect: `${pathname}${search}` },
+          payload: user,
         })
       }
+    } catch {
+      await userManager.signinRedirect({
+        state: { redirect: `${pathname}${search}` },
+      })
     }
   }
 

@@ -68,7 +68,6 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
     setIsLoading(false)
   }
   //TODO finish loading state
-  //TODO færa placeholders í messages
   return (
     <Box>
       <Box marginBottom={3}>
@@ -106,7 +105,11 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
                 })}
                 required
                 defaultValue=""
-                placeholder="Skráðu inn kennitölu"
+                placeholder={formatText(
+                  m.automatedTestsNationalIdPlaceholder,
+                  application,
+                  formatMessage,
+                )}
                 hasError={errors.nationalId !== undefined}
                 errorMessage={formatText(
                   m.automatedTestsNationalIdErrorMessage,
@@ -125,7 +128,11 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
                 )}
                 name="docId"
                 required
-                placeholder="Skráðu inn Id skjals"
+                placeholder={formatText(
+                  m.automatedTestsDocIdPlaceholder,
+                  application,
+                  formatMessage,
+                )}
                 ref={register({ required: true })}
                 hasError={errors.docId !== undefined}
                 errorMessage={formatText(

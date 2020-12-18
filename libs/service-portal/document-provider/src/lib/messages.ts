@@ -10,6 +10,10 @@ export const m = defineMessages({
     id: 'service.portal:document-provider-document-providers',
     defaultMessage: 'Skjalaveitendur',
   },
+  documentProviderSingle: {
+    id: 'service.portal:document-provider-document-provider-single',
+    defaultMessage: 'Skjalaveitandi',
+  },
   MyCategories: {
     id: 'service.portal:document-provider-my-categories',
     defaultMessage: 'Mínir flokkar',
@@ -21,6 +25,10 @@ export const m = defineMessages({
   TechnicalInformation: {
     id: 'service.portal:document-provider-technical-information',
     defaultMessage: 'Tæknileg útfærsla',
+  },
+  Statistics: {
+    id: 'service.portal:document-provider-statistics',
+    defaultMessage: 'Tölfræði',
   },
 
   //Screens
@@ -73,6 +81,10 @@ export const m = defineMessages({
       'service.portal:document-provider-dashboard-statistics-date-to-placeholder',
     defaultMessage: 'Veldu dagsetningu',
   },
+  DashBoardStatisticsSearchButton: {
+    id: 'service.portal:document-provider-dashboard-statistics-search-button',
+    defaultMessage: 'Skoða tölfræði',
+  },
 
   //DocumentProviders
   documentProvidersTitle: {
@@ -82,7 +94,12 @@ export const m = defineMessages({
   documentProvidersDescription: {
     id: 'sp.document-provider:document-providers-description',
     defaultMessage:
-      'Einungis fyrir starfsmenn island.is. Á þessari síðu sérð þú yfirlit yfir alla skjalaveitendur',
+      'Hér getur þú fundið alla þá skjalaveitendur sem nota pósthólf á island.is',
+  },
+  //DocumentProvidersSingle
+  documentProvidersSingleDescription: {
+    id: 'sp.document-provider:document-providers-single-description',
+    defaultMessage: 'Ýtarlegar upplýsingar um skjalaveitu',
   },
 
   //MyCategories
@@ -273,6 +290,14 @@ export const m = defineMessages({
       'sp.document-provider:settings-edit-institution-tel-wrong-format-message',
     defaultMessage: 'Símanúmerið er ekki á réttu formi',
   },
+  SettingsEditInstitutionSaveButton: {
+    id: 'sp.document-provider:settings-edit-institution-save-button',
+    defaultMessage: 'Vista breytingar',
+  },
+  SettingsEditInstitutionBackButton: {
+    id: 'sp.document-provider:settings-edit-institution-back-button',
+    defaultMessage: 'Til baka',
+  },
 
   //EditResponsibleContact
   SettingsEditResponsibleContactTitle: {
@@ -319,6 +344,14 @@ export const m = defineMessages({
     id:
       'sp.document-provider:settings-edit-responsible-contact-tel-wrong-format-message',
     defaultMessage: 'Símanúmerið er á vitlausu formi',
+  },
+  SettingsEditResponsibleContactSaveButton: {
+    id: 'sp.document-provider:settings-edit-responsible-contact-save-button',
+    defaultMessage: 'Vista breytingar',
+  },
+  SettingsEditResponsibleContactBackButton: {
+    id: 'sp.document-provider:settings-edit-responsible-contact-back-button',
+    defaultMessage: 'Til baka',
   },
 
   //EditTechnicalContact
@@ -368,6 +401,14 @@ export const m = defineMessages({
       'sp.document-provider:settings-edit-technical-contact-tel-wrong-format-message',
     defaultMessage: 'Símanúmerið er ekki á réttu formi',
   },
+  SettingsEditTechnicalContactSaveButton: {
+    id: 'sp.document-provider:settings-edit-technical-contact-save-button',
+    defaultMessage: 'Vista breytingar',
+  },
+  SettingsEditTechnicalContactBackButton: {
+    id: 'sp.document-provider:settings-edit-technical-contact-back-button',
+    defaultMessage: 'Til baka',
+  },
 
   //EditUserHelpContact
   SettingsEditUserHelpContactTitle: {
@@ -406,6 +447,14 @@ export const m = defineMessages({
       'sp.document-provider:settings-edit-user-help-contact-tel-wrong-format-message',
     defaultMessage: 'Símanúmerið er ekki á réttu formi',
   },
+  SettingsEditHelpContactSaveButton: {
+    id: 'sp.document-provider:settings-edit-help-contact-save-button',
+    defaultMessage: 'Vista breytingar',
+  },
+  SettingsEditHelpContactBackButton: {
+    id: 'sp.document-provider:settings-edit-help-contact-back-button',
+    defaultMessage: 'Til baka',
+  },
 
   //EditEndPoints
   SettingsEditEndPointsTitle: {
@@ -428,6 +477,15 @@ export const m = defineMessages({
     id: 'sp.document-provider:settings-edit-endpoints-url-wrong-format-message',
     defaultMessage: 'Endapunkturinn er ekki á réttu formi',
   },
+  SettingsEditEndPointsSaveButton: {
+    id: 'sp.document-provider:settings-edit-endpoints-save-button',
+    defaultMessage: 'Vista breytingar',
+  },
+  SettingsEditEndPointsBackButton: {
+    id: 'sp.document-provider:settings-edit-endpoints-back-button',
+    defaultMessage: 'Til baka',
+  },
+
   //TechnicalInformation
   TechnicalInformationTitle: {
     id: 'sp.document-provider:technical-information-title',
@@ -436,5 +494,15 @@ export const m = defineMessages({
   TechnicalInformationDescription: {
     id: 'sp.document-provider:technical-information-description',
     defaultMessage: 'Á þessari síðu sérð þú upplýsingar um tæknileg atriði',
+  },
+
+  //Statistics
+  StatisticsTitle: {
+    id: 'sp.document-provider:statistics-information-title',
+    defaultMessage: 'Tölfræði',
+  },
+  StatisticsDescription: {
+    id: 'sp.document-provider:statistics-information-description',
+    defaultMessage: 'Á þessari síðu sérð þú upplýsingar um tölfræði',
   },
 })

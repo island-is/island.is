@@ -16,7 +16,6 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { RecycleActionTypes } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { filterCarsByStatus } from '@island.is/skilavottord-web/utils'
-import { BASE_PATH } from '../../utils/consts'
 
 const skilavottordVehiclesQuery = gql`
   query skilavottordVehiclesQuery($nationalId: String!) {
@@ -61,10 +60,7 @@ const Overview: FC = () => {
 
   const onContinue = (id: string, actionType: RecycleActionTypes) => {
     router
-      .push(
-        `${BASE_PATH}${routes[actionType]}`,
-        `${BASE_PATH}${routes.baseRoute}/${id}/${actionType}`,
-      )
+      .push(`${routes[actionType]}`, `${routes.baseRoute}/${id}/${actionType}`)
       .then(() => window.scrollTo(0, 0))
   }
 
