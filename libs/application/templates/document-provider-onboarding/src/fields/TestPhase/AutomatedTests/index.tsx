@@ -1,7 +1,11 @@
 import React, { FC, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  formatText,
+  getValueViaPath,
+} from '@island.is/application/core'
 import {
   Box,
   GridColumn,
@@ -32,8 +36,14 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
   const [automatedTestsError, setautomatedTestsError] = useState<string | null>(
     null,
   )
-  const { register, errors, trigger } = useForm()
+  const { register, errors, trigger, getValues } = useForm()
   const [runEndpointTests] = useMutation(runEndpointTestsMutation)
+
+  const nationalId = getValueViaPath(
+    application.answers,
+    'applicant.nationalId',
+    undefined,
+  ) as string
 
   const validateEndpoint = async () => {
     setautomatedTestsError(null)
@@ -42,10 +52,10 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
     const results = await runEndpointTests({
       variables: {
         input: {
-          nationalId: '2404805659',
-          recipient: '2404805659',
-          documentId: '123456',
-        }, //TODO set real data
+          nationalId: nationalId,
+          recipient: getValues('nationalId'),
+          documentId: getValues('docId'),
+        },
       },
     })
 

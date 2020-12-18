@@ -11,6 +11,7 @@ import {
   CaseAppealDecision,
   CaseGender,
   User as TUser,
+  CaseDecision,
 } from '@island.is/judicial-system/types'
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
@@ -58,11 +59,12 @@ const remainingCreateCaseData = {
   requestedDefenderName: 'Requested Defender Name',
   requestedDefenderEmail: 'Requested Defender Email',
   court: 'Court',
-  arrestDate: '2020-09-08T08:00:00.000Z',
-  requestedCourtDate: '2020-09-08T11:30:00.000Z',
 }
 
 const remainingProsecutorCaseData = {
+  arrestDate: '2020-09-08T08:00:00.000Z',
+  requestedCourtDate: '2020-09-08T11:30:00.000Z',
+  alternativeTravelBan: false,
   requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
   lawsBroken: 'Broken Laws',
   custodyProvisions: [
@@ -91,7 +93,7 @@ const remainingJudgeCaseData = {
   accusedPlea: 'Accused Plea',
   litigationPresentations: 'Litigation Presentations',
   ruling: 'Ruling',
-  rejecting: false,
+  decision: CaseDecision.ACCEPTING,
   custodyEndDate: '2020-09-28T12:00:00.000Z',
   custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
   accusedAppealDecision: CaseAppealDecision.APPEAL,
@@ -178,6 +180,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.requestedCourtDate || null).toBe(
     caseTwo.requestedCourtDate || null,
   )
+  expect(parseBoolean(caseOne.alternativeTravelBan)).toBe(
+    parseBoolean(caseTwo.alternativeTravelBan),
+  )
   expect(caseOne.requestedCustodyEndDate || null).toBe(
     caseTwo.requestedCustodyEndDate || null,
   )
@@ -209,7 +214,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
     caseTwo.litigationPresentations || null,
   )
   expect(caseOne.ruling || null).toBe(caseTwo.ruling || null)
-  expect(parseBoolean(caseOne.rejecting)).toBe(parseBoolean(caseTwo.rejecting))
+  expect(caseOne.decision || null).toBe(caseTwo.decision || null)
   expect(caseOne.custodyEndDate || null).toBe(caseTwo.custodyEndDate || null)
   expect(caseOne.custodyRestrictions || null).toStrictEqual(
     caseTwo.custodyRestrictions || null,

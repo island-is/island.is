@@ -31,11 +31,14 @@ export const TestPhase: Form = buildForm({
       id: 'testAccountSection',
       name: m.testEnviromentSection,
       children: [
-        buildCustomField({
-          id: 'testUserExists',
-          name: m.testEnviromentTitle,
-          component: 'TestEnvironment',
-        }),
+        buildCustomField(
+          {
+            id: 'testProviderId',
+            name: m.testEnviromentTitle,
+            component: 'TestEnvironment',
+          },
+          {},
+        ),
       ],
     }),
     buildSection({
@@ -81,11 +84,14 @@ export const TestPhase: Form = buildForm({
           name: m.prodEnviromentTitle,
           description: m.prodEnviromentsubTitle,
           children: [
-            buildCustomField({
-              id: 'productionUserExists',
-              name: 'Aðgangur að raun',
-              component: 'ProdEnvironment',
-            }),
+            buildCustomField(
+              {
+                id: 'prodProviderId',
+                name: 'Aðgangur að raun',
+                component: 'ProdEnvironment',
+              },
+              {},
+            ),
           ],
         }),
       ],

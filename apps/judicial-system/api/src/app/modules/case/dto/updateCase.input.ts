@@ -6,6 +6,7 @@ import {
   CaseAppealDecision,
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
+  CaseDecision,
   CaseGender,
   UpdateCase,
 } from '@island.is/judicial-system/types'
@@ -55,6 +56,10 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly requestedCourtDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly alternativeTravelBan?: boolean
 
   @Allow()
   @Field({ nullable: true })
@@ -133,8 +138,8 @@ export class UpdateCaseInput implements UpdateCase {
   readonly ruling?: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly rejecting?: boolean
+  @Field(() => String, { nullable: true })
+  readonly decision?: CaseDecision
 
   @Allow()
   @Field({ nullable: true })
