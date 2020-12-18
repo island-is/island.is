@@ -36,8 +36,6 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
 
   const { setValue, errors, getValues } = useFormContext()
 
-  console.log(currentUserTerms)
-
   return (
     <Box>
       <Box marginBottom={5}>
