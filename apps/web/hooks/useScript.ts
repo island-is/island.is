@@ -15,5 +15,5 @@ export const useScript = (url: string, async: boolean, id: string) => {
     return () => {
       document.body.removeChild(script)
     }
-  }, [url])
+  }, [url, async, id])
 }

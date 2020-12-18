@@ -108,7 +108,7 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
         spec={converted as OpenApi}
         linkTitle={n('linkTitle')}
         documentationLinkText={n('linkDocumentation')}
-        responsiblePartyLinkText={n('linkResponsibleParty')}
+        responsiblePartyLinkText={n('linkResponsible')}
         bugReportLinkText={n('linkBugReport')}
         featureRequestLinkText={n('linkFeatureRequest')}
       />
