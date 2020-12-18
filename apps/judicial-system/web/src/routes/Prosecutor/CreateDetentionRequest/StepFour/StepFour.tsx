@@ -204,19 +204,19 @@ export const StepFour: React.FC = () => {
             <Box component="section" marginBottom={7}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  Skilaboð til dómara{' '}
+                  Athugasemdir vegna málsmeðferðar{' '}
                   <Tooltip
                     placement="right"
                     as="span"
-                    text="Hér er hægt að skrá athugasemdir eða skilaboð til dómara sem verður ekki vistað sem hluti af kröfunni. Til dæmis aðrar upplýsingar en koma fram í kröfunni og/eða upplýsingar um ástand sakbornings."
+                    text="Hér er hægt að skrá athugasemdir til dómara og dómritara um hagnýt atriði sem tengjast fyrirtökunni eða málsmeðferðinni, og eru ekki hluti af sjálfri kröfunni."
                   />
                 </Text>
               </Box>
               <Box marginBottom={3}>
                 <Input
                   name="comments"
-                  label="Skilaboð til dómara"
-                  placeholder="Er eitthvað sem þú vilt koma á framfæri við dómara sem tengist kröfunni eða ástandi sakbornings?"
+                  label="Athugasemdir"
+                  placeholder="Er eitthvað sem þú vilt koma á framfæri við dómstólinn varðandi fyrirtökuna eða málsmeðferðina?"
                   defaultValue={workingCase?.comments}
                   onChange={(event) =>
                     removeTabsValidateAndSet(

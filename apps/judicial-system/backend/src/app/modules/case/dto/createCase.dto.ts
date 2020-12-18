@@ -44,14 +44,4 @@ export class CreateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly court?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly arrestDate?: Date
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly requestedCourtDate?: Date
 }
