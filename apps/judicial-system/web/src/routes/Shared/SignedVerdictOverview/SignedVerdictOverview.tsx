@@ -108,14 +108,24 @@ export const SignedVerdictOverview: React.FC = () => {
                         TIME_FORMAT,
                       )}`
                     : workingCase.isCustodyEndDateInThePast
-                    ? `Gæsla rann út ${formatDate(
+                    ? `${
+                        workingCase.decision ===
+                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                          ? 'Farbann'
+                          : 'Gæsla'
+                      } rann út ${formatDate(
                         workingCase.custodyEndDate,
                         'PPP',
                       )} kl. ${formatDate(
                         workingCase.custodyEndDate,
                         TIME_FORMAT,
                       )}`
-                    : `Gæsla til ${formatDate(
+                    : `${
+                        workingCase.decision ===
+                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                          ? 'Farbann'
+                          : 'Gæsla'
+                      } til ${formatDate(
                         workingCase.custodyEndDate,
                         'PPP',
                       )} kl. ${formatDate(
