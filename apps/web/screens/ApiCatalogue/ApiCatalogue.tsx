@@ -286,12 +286,10 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                     <FilterMultiChoice
                       labelClear={fn('clearCategory')}
                       onChange={({ categoryId, selected }) => {
-                        console.log(categoryId, selected)
                         setParameters({
                           ...parameters,
                           [categoryId]: selected,
                         })
-                        console.log(parameters)
                       }}
                       onClear={(categoryId) =>
                         setParameters({
