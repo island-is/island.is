@@ -29,6 +29,7 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
     currentAnswer,
   )
 
+  const maxDaysToGive = 30
   const giveDaysAnswerId = 'giveDays'
   const requestDaysAnswer = getValueViaPath(
     application.answers,
@@ -42,11 +43,19 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
 
   const daysStringKey = chosenGiveDays > 1 ? m.giveRightsDays : m.giveRightsDay
 
+  const yourRightsWithGivenDaysStringKey =
+    maxDaysToGive - chosenGiveDays === 1
+      ? m.yourRightsInMonthsAndDay
+      : m.yourRightsInMonthsAndDays
+
   const boxChartKeys =
     statefulAnswer === 'yes'
       ? [
           {
-            label: () => ({ ...m.yourRightsInMonths, values: { months: '5' } }),
+            label: () => ({
+              ...yourRightsWithGivenDaysStringKey,
+              values: { months: '5' },
+            }),
             bulletStyle: 'blue',
           },
           {
