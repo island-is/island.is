@@ -13,7 +13,7 @@ export default function IdentityResourcesEdit() {
                     <IdentityResourceData identityResourceId={identityResourceId.toString()}></IdentityResourceData>
                 </div>
                 <div>
-                    <IdentityResourceUserClaim identityResourceId={identityResourceId.toString()}></IdentityResourceUserClaim>               
+                    {/* <IdentityResourceUserClaim identityResourceId={identityResourceId.toString()}></IdentityResourceUserClaim>*/}
                 </div>
             </div>
         )

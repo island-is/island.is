@@ -1,41 +1,30 @@
-import React, { useState } from 'react';
-import IdentityResourcesDTO from '../../models/dtos/identity-resources.dto';
-import axios from 'axios';
-import StatusBar from '../StatusBar';
-import { useForm } from 'react-hook-form';
-import { ErrorMessage } from '@hookform/error-message';
-import HelpBox from '../HelpBox';
-import { useRouter } from 'next/router';
 import APIResponse from 'apps/auth-admin-web/models/common/APIResponse';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import axios from 'axios';
+import { ApiResourcesDTO } from 'apps/auth-admin-web/models/dtos/api-resources-dto';
 import ResourceCreateForm from './components/forms/ResourceCreateForm';
 
-
-export default function IdentityResourceForm() {
-  const { register, handleSubmit, errors, formState } = useForm<
-    IdentityResourcesDTO
-  >();
-  const { isSubmitting } = formState;
+export default function ApiResourceForm() {
   const [response, setResponse] = useState<APIResponse>(new APIResponse());
-  const [resource, setResource] = useState<IdentityResourcesDTO>(
-    new IdentityResourcesDTO()
+  const [apiResource, setApiResource] = useState<ApiResourcesDTO>(
+    new ApiResourcesDTO()
   );
   const router = useRouter();
 
-  const back = () => {
-    router.back();
-  };
-
   const save = async (data: any) => {
+    delete data.resource.emphasize;
+    delete data.resource.required;
+
     await axios
-      .post('/api/identity-resource', data.resource)
+      .post('/api/api-resource', data.resource)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
         res.message = response.request.statusText;
         setResponse(res);
 
-        // This is how we can direct to another page
-        router.push('edit/identity-resource/' + data.resource.name)
+        router.push('edit/api-resource/' + data.resource.name);
       })
       .catch(function (error) {
         if (error.response) {
@@ -47,14 +36,14 @@ export default function IdentityResourceForm() {
   return (
     <ResourceCreateForm
       save={save}
-      hideBooleanValues={false}
+      hideBooleanValues={true}
       texts={{
-        header: 'Create new identity resource',
+        header: 'Create new Api resource',
         details:
-          "Enter some basic details for this new identity resource. You will then be directed to it's page to continue adding additional information.",
+          "Enter some basic details for this new api resource. You will then be directed to it's page to continue adding additional information.",
         enabled: 'Specifies if the resource is enabled',
         name: "The resource's unique name",
-        displayName: 'The name that will be used to display the resource',
+        displayName: 'The name that will be used to display the scope',
         description:
           'It is optional to write some text to describe this resource',
         showInDiscoveryDocument:

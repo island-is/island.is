@@ -11,7 +11,8 @@
 .client-allowed-scopes,
 .client-secret,
 .client-claim,
-.client-grant-types {
+.client-grant-types,
+.api-scope-form {
   &__help {
     padding: 0 10px 20px 10px;
   }
@@ -177,8 +178,6 @@
     font-size: 0.8rem;
   }
 }
-
-
 
 // Move to _EditResource.scss if I find out how
 .edit-resource-overview {

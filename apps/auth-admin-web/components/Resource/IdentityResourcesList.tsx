@@ -6,6 +6,7 @@ import Paginator from '../Paginator';
 // import StatusBar from '../StatusBar';
 import { useRouter } from 'next/router';
 import APIResponse from 'apps/auth-admin-web/models/common/APIResponse';
+import ResourceListDisplay from './components/ListDisplay';
 
 export default function IdentityResourcesList() {
   const [count, setCount] = useState(1);
@@ -21,9 +22,7 @@ export default function IdentityResourcesList() {
   }, [page, count]);
 
   const edit = (resource: IdentityResourcesDTO) => {
-    // TODO: implement edit function
-
-    router.push('/resources/edit/' + resource.name)
+    router.push('/resource/edit/identity-resource/' + resource.name)
   };
 
   const getResources = async (page: number, count: number) => {
@@ -78,64 +77,16 @@ export default function IdentityResourcesList() {
     }
   };
 
-  // getResources(page, count);
-
   return (
-    <div className="identity-resources">
-      {/* <StatusBar status={response}></StatusBar> */}
-      <h2>Identity Resources</h2>
-      <div className="identity-resources__container__options">
-        <div className="identity-resources__container__button">
-          <Link href={'/resource'}>
-            <a className="identity-resources__button__new">
-              <i className="icon__new"></i>
-              Create new Identity Resource
-            </a>
-          </Link>
-        </div>
-      </div>
-      <div className="client__container__table">
-        <table className="identity-resources__table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Display Name</th>
-              <th colSpan={2}></th>
-            </tr>
-          </thead>
-          <tbody>
-            {resources.map((resource: IdentityResourcesDTO) => {
-              return (
-                <tr key={resource.name}>
-                  <td>{resource.name}</td>
-                  <td>{resource.displayName}</td>
-                  <td className="identity-resources__table__button">
-                    <button
-                      className="identity-resources__button__edit"
-                      onClick={() => edit(resource)}
-                      title="Edit"
-                    >
-                      <i className="icon__edit"></i>
-                      <span>Edit</span>
-                    </button>
-                  </td>
-                  <td className="identity-resources__table__button">
-                    <button
-                      className="identity-resources__button__delete"
-                      onClick={() => remove(resource.name)}
-                      title="Delete"
-                    >
-                      <i className="icon__delete"></i>
-                      <span>Delete</span>
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-      <Paginator lastPage={lastPage} handlePageChange={handlePageChange} />
-    </div>
+    <ResourceListDisplay
+      list={resources}
+      header={'Identity resources'}
+      linkHeader={'Create new Identity Resource'}
+      createUri={'/resource/identity-resource'}
+      lastPage={lastPage}
+      handlePageChange={handlePageChange}
+      edit={edit}
+      remove={remove}
+    ></ResourceListDisplay>
   );
 }

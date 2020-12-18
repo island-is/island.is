@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import IdentityResourcesDTO from 'apps/auth-admin-web/models/dtos/identity-resources.dto';
-import { useRouter } from 'next/router';
 import ResourceEditForm from './forms/ResourceEditForm';
+import { ApiResourcesDTO } from 'apps/auth-admin-web/models/dtos/api-resources-dto';
+import { useRouter } from 'next/router';
 
 interface Props {
-  identityResourceId: string;
+  apiResourceId: string;
 }
 
-const IdentityResourceData: React.FC<Props> = ({ identityResourceId }) => {
+const ApiResourceData: React.FC<Props> = ({ apiResourceId }) => {
   const [loaded] = useState<boolean>(false);
-  const [resource, setResource] = useState<IdentityResourcesDTO>(
-    new IdentityResourcesDTO()
+  const [apiResource, setApiResource] = useState<ApiResourcesDTO>(
+    new ApiResourcesDTO()
   );
   const router = useRouter();
 
@@ -20,27 +20,28 @@ const IdentityResourceData: React.FC<Props> = ({ identityResourceId }) => {
   }, [loaded]);
 
   const getResource = async () => {
-    await axios
-      .get(`/api/identity-resource/` + identityResourceId)
-      .then((response) => {
-        setResource(response.data);
-      });
+    await axios.get(`/api/api-resource/` + apiResourceId).then((response) => {
+      setApiResource(response.data);
+    });
   };
 
   const save = async (data: any) => {
-    data.resource.name = identityResourceId;
+    data.resource.name = apiResourceId;
+    delete data.resource.emphasize;
+    delete data.resource.required;
+
     await axios
-      .put(`/api/identity-resource/` + identityResourceId, data.resource)
+      .put(`/api/api-resource/` + apiResourceId, data.resource)
       .then(() => {
-        router.back();
+        // router.back();
       });
   };
 
   return (
     <ResourceEditForm
-      data={resource}
+      data={apiResource}
       save={save}
-      hideBooleanValues={false}
+      hideBooleanValues={true}
       texts={{
         enabled: 'Specifies if the resource is enabled',
         name: "The resource's unique name can't be changed",
@@ -52,10 +53,10 @@ const IdentityResourceData: React.FC<Props> = ({ identityResourceId }) => {
         required:
           'Specifies whether the user can de-select the resource on the consent screen (if the consent screen wants to implement such a feature)',
         emphasize:
-          'Specifies whether the consent screen will emphasize this resource (if the consent screen wants to implement such a feature). Use this setting for sensitive or important resources.',
+          'Specifies whether the consent screen will emphasize this resource (if the consent screen wants to implement such a feature). Use this setting for sensitive or important scopes.',
       }}
     />
   );
 };
 
-export default IdentityResourceData;
+export default ApiResourceData;
