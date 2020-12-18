@@ -345,7 +345,6 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 )
 
 const Results: FC<{
-  locale: Locale
   search: SearchState
   highlightedIndex: number
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

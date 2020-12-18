@@ -73,7 +73,14 @@ class ErrorPage extends React.Component<ErrorPageProps> {
         // Found an URL content type that contained this
         // path (which has a page assigned to it) so we redirect to that page
         if (pageType && page) {
-          const url = linkResolver(pageType as LinkType, [page.slug], locale).as
+          let type: string
+          if (pageType === 'vidspyrna-frontpage') {
+            type = 'adgerdirfrontpage'
+          } else {
+            type = pageType
+          }
+
+          const url = linkResolver(type as LinkType, [page.slug], locale).as
 
           if (!process.browser) {
             res.writeHead(302, { Location: url })
