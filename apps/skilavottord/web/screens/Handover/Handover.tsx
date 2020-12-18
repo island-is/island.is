@@ -2,6 +2,7 @@ import React, { FC, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useMutation, useQuery } from '@apollo/client'
+import gql from 'graphql-tag'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import {
   Box,
@@ -17,16 +18,48 @@ import {
   OutlinedError,
 } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { CREATE_RECYCLING_REQUEST_CITIZEN } from '@island.is/skilavottord-web/graphql/mutations'
-import { VEHICLES_BY_NATIONAL_ID } from '@island.is/skilavottord-web/graphql/queries'
 import CompanyList from './components/CompanyList'
 import * as styles from './Handover.treat'
-import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
+import {
+  ACCEPTED_TERMS_AND_CONDITION,
+  BASE_PATH,
+} from '@island.is/skilavottord-web/utils/consts'
 import {
   Car,
   RecyclingRequestMutation,
   RecyclingRequestTypes,
 } from '@island.is/skilavottord-web/types'
+
+const skilavottordVehiclesQuery = gql`
+  query skilavottordVehiclesQuery($nationalId: String!) {
+    skilavottordVehicles(nationalId: $nationalId) {
+      permno
+      status
+    }
+  }
+`
+
+const skilavottordRecyclingRequestMutation = gql`
+  mutation skilavottordRecyclingRequestMutation(
+    $nameOfRequestor: String
+    $permno: String!
+    $requestType: String!
+  ) {
+    createSkilavottordRecyclingRequest(
+      nameOfRequestor: $nameOfRequestor
+      permno: $permno
+      requestType: $requestType
+    ) {
+      ... on RequestErrors {
+        message
+        operation
+      }
+      ... on RequestStatus {
+        status
+      }
+    }
+  }
+`
 
 const Handover: FC = () => {
   const { user } = useContext(UserContext)
@@ -44,7 +77,7 @@ const Handover: FC = () => {
   const { id } = router.query
 
   const nationalId = user?.nationalId
-  const { data, loading, error } = useQuery(VEHICLES_BY_NATIONAL_ID, {
+  const { data, loading, error } = useQuery(skilavottordVehiclesQuery, {
     variables: { nationalId },
     skip: !nationalId,
   })
@@ -55,17 +88,20 @@ const Handover: FC = () => {
   const [
     setRecyclingRequest,
     { data: mutationData, error: mutationError, loading: mutationLoading },
-  ] = useMutation<RecyclingRequestMutation>(CREATE_RECYCLING_REQUEST_CITIZEN, {
-    onCompleted() {
-      if (requestType === 'cancelled') {
-        setModal(false)
-        routeHome()
-      }
+  ] = useMutation<RecyclingRequestMutation>(
+    skilavottordRecyclingRequestMutation,
+    {
+      onCompleted() {
+        if (requestType === 'cancelled') {
+          setModal(false)
+          routeHome()
+        }
+      },
+      onError() {
+        return mutationError
+      },
     },
-    onError() {
-      return mutationError
-    },
-  })
+  )
 
   const mutationResponse = mutationData?.createSkilavottordRecyclingRequest
 
@@ -110,7 +146,9 @@ const Handover: FC = () => {
 
   const routeHome = () => {
     localStorage.clear()
-    router.push(routes.myCars).then(() => window.scrollTo(0, 0))
+    router
+      .push(`${BASE_PATH}${routes.myCars}`)
+      .then(() => window.scrollTo(0, 0))
   }
 
   const onCancelRecycling = () => {

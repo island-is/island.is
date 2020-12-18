@@ -14,6 +14,7 @@ import { FormFooter } from '../../../../shared-components/FormFooter'
 import {
   Case,
   CaseCustodyRestrictions,
+  CaseDecision,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as Constants from '../../../../utils/constants'
@@ -203,14 +204,21 @@ export const RulingStepOne: React.FC = () => {
                   onChange={({ target }) => {
                     setWorkingCase({
                       ...workingCase,
-                      rejecting: target.checked,
+                      decision: target.checked
+                        ? CaseDecision.REJECTING
+                        : CaseDecision.ACCEPTING,
                     })
                     updateCase(
                       workingCase.id,
-                      parseString('rejecting', target.checked),
+                      parseString(
+                        'decision',
+                        target.checked
+                          ? CaseDecision.REJECTING
+                          : CaseDecision.ACCEPTING,
+                      ),
                     )
                   }}
-                  checked={workingCase.rejecting}
+                  checked={workingCase.decision === CaseDecision.REJECTING}
                   large
                 />
               </GridColumn>
