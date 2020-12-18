@@ -1,7 +1,11 @@
 import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  formatText,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -24,17 +28,29 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
   const [currentAnswer, setCurrentAnswer] = useState(
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
-    (formValue.testUserExists as string) || '',
+    (formValue.testProviderId as string) || '',
   )
   const [environmentError, setEnvironmentError] = useState<string | null>(null)
   const [registerProvider] = useMutation(registerProviderMutation)
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
+  const nationalId = getValueViaPath(
+    application.answers,
+    'applicant.nationalId',
+    undefined,
+  ) as string
+
+  const clientName = getValueViaPath(
+    application.answers,
+    'applicant.name',
+    undefined,
+  ) as string
+
   const onRegister = async () => {
     setEnvironmentError(null)
     const credentials = await registerProvider({
       variables: {
-        input: { nationalId: '2404805659', clientName: 'Nafn stofnunar' }, //TODO setja gögn úr umsókn
+        input: { nationalId: nationalId, clientName: clientName },
       },
     })
 
@@ -53,14 +69,14 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
       },
     ])
 
-    setCurrentAnswer('true')
+    setCurrentAnswer(credentials.data.registerProvider.providerId)
 
     await updateApplication({
       variables: {
         input: {
           id: application.id,
           answers: {
-            testUserExists: 'true',
+            testProviderId: credentials.data.registerProvider.providerId,
             ...application.answers,
           },
         },
@@ -69,7 +85,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
       application.answers = response.data?.updateApplication?.answers
     })
 
-    clearErrors('testUserExists')
+    clearErrors('testProviderId')
   }
 
   return (
@@ -116,7 +132,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
           type="hidden"
           value={currentAnswer}
           ref={register({ required: true })}
-          name={'testUserExists'}
+          name={'testProviderId'}
         />
         {error && (
           <Box color="red600" paddingY={2}>
