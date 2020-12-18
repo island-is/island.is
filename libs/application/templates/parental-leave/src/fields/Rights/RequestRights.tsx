@@ -1,10 +1,13 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import { Controller, useFormContext } from 'react-hook-form'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import { Box, Text } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m, mm } from '../../lib/messages'
+import Slider from '../components/Slider'
 
 type ValidAnswers = 'yes' | 'no' | undefined
 
@@ -15,9 +18,14 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
     field.id,
     undefined,
   ) as ValidAnswers
+
+  const { clearErrors } = useFormContext()
+
   const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(
     currentAnswer,
   )
+
+  const [chosenRequestDays, setChosenRequestDays] = useState<number>(1)
 
   const numberOfBoxes = statefulAnswer === 'no' ? 6 : 7
 
@@ -34,8 +42,8 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
     })
   }
   return (
-    <Box marginY={3} key={field.id}>
-      <Box paddingY={3} marginBottom={3}>
+    <Box marginTop={3} marginBottom={2} key={field.id}>
+      <Box paddingY={3}>
         <RadioController
           id={field.id}
           defaultValue={
@@ -49,6 +57,42 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
           largeButtons
         />
       </Box>
+      {statefulAnswer === 'yes' && (
+        <Box marginBottom={12}>
+          <Text marginBottom={4} variant="h3">
+            How many days would you like to request?
+          </Text>
+          <Controller
+            defaultValue={chosenRequestDays}
+            name={'requestDays'}
+            render={({ onChange, value }) => (
+              <Slider
+                label={{
+                  singular: 'Day',
+                  plural: 'Days',
+                }}
+                min={1}
+                max={30}
+                step={1}
+                currentIndex={value || chosenRequestDays}
+                showMinMaxLabels
+                showToolTip
+                trackStyle={{ gridTemplateRows: 8 }}
+                calculateCellStyle={() => {
+                  return {
+                    background: theme.color.dark200,
+                  }
+                }}
+                onChange={(newValue: number) => {
+                  clearErrors('requestDays')
+                  onChange(newValue)
+                  setChosenRequestDays(newValue)
+                }}
+              />
+            )}
+          />
+        </Box>
+      )}
       {error && (
         <Box color="red400" padding={2}>
           <Text color="red400">{formatMessage(mm.errors.requiredAnswer)}</Text>
