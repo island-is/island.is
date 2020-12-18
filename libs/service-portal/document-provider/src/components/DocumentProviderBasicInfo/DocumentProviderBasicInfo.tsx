@@ -25,7 +25,7 @@ interface TechnicalContact {
   phoneNumber: string
 }
 
-interface helpDeskContact {
+interface HelpDeskContact {
   email: string
   phoneNumber: string
 }
@@ -34,7 +34,7 @@ interface Data {
   applicant: Applicant
   administrativeContact: AdministrativeContact
   technicalContact: TechnicalContact
-  helpDeskContact: helpDeskContact
+  helpDeskContact: HelpDeskContact
   id: string
 }
 

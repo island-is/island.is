@@ -28,7 +28,7 @@ const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
     phoneNumber: string
   }
 
-  interface helpDeskContact {
+  interface HelpDeskContact {
     email: string
     phoneNumber: string
   }
@@ -37,7 +37,7 @@ const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
     applicant: Applicant
     administrativeContact: AdministrativeContact
     technicalContact: TechnicalContact
-    helpDeskContact: helpDeskContact
+    helpDeskContact: HelpDeskContact
     id: string
   }
   const { formatMessage } = useLocale()
