@@ -18,6 +18,7 @@ interface Props {
   textarea?: boolean
   currency?: boolean
   type?: 'text' | 'email' | 'number' | 'tel'
+  suffix?: string
   format?: string | FormatInputValueFunction
 }
 
@@ -42,6 +43,7 @@ export const InputController: FC<Props> = ({
   type = 'text',
   format,
   onChange: onInputChange,
+  suffix,
 }) => {
   function renderChildInput(c: ChildParams) {
     const { value, onChange, ...props } = c
@@ -57,6 +59,25 @@ export const InputController: FC<Props> = ({
           decimalSeparator=","
           thousandSeparator="."
           suffix=" kr."
+          value={value}
+          format={format}
+          onValueChange={({ value }) => {
+            onChange(value)
+          }}
+          hasError={error !== undefined}
+          errorMessage={error}
+          {...props}
+        />
+      )
+    } else if (type === 'number' && suffix) {
+      return (
+        <NumberFormat
+          customInput={Input}
+          id={id}
+          disabled={disabled}
+          placeholder={placeholder}
+          label={label}
+          suffix={suffix}
           value={value}
           format={format}
           onValueChange={({ value }) => {

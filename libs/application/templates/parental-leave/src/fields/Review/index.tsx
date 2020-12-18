@@ -296,32 +296,16 @@ const Review: FC<FieldBaseProps> = ({
           </AccordionItem>
           <AccordionItem
             id="id_1"
-            label={formatMessage(m.employerSubSection)}
+            label={formatMessage(mm.employer.subSection)}
             startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
               <GridRow>
-                <GridColumn span="6/12">
-                  <Input
-                    id={'employer.name'}
-                    name={'employer.name'}
-                    label={formatMessage(m.employerName)}
-                    ref={register}
-                  />
-                </GridColumn>
-                <GridColumn span="6/12">
-                  <Input
-                    id={'employer.nationalRegistryId'}
-                    name={'employer.nationalRegistryId'}
-                    label={formatMessage(m.employerId)}
-                    ref={register}
-                  />
-                </GridColumn>
                 <GridColumn span="12/12">
                   <Input
                     id={'employer.email'}
                     name={'employer.email'}
-                    label={m.employerEmail.defaultMessage}
+                    label={formatMessage(mm.employer.email)}
                     ref={register}
                   />
                 </GridColumn>
