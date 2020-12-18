@@ -10,14 +10,14 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './Header.treat'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import { Locale, useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
 import UserMenuTrigger from '../UserMenuTrigger/UserMenuTrigger'
 import { BetaTag } from '../Logo/BetaTag'
 
 export const Header: FC<{}> = () => {
-  const { lang, formatMessage } = useLocale()
+  const { formatMessage } = useLocale()
   const [{ mobileMenuState }, dispatch] = useStore()
 
   const handleMobileMenuTriggerClick = () =>

@@ -1,10 +1,8 @@
-import React, { FC, useState, useRef } from 'react'
+import React, { FC } from 'react'
 import { useStore } from '../../store/stateProvider'
 import {
-  ArrowLink,
   Box,
   Button,
-  Hidden,
   Icon,
   Option,
   Select,
@@ -18,7 +16,6 @@ import {
 } from '@island.is/service-portal/core'
 import useAuth from '../../hooks/useAuth/useAuth'
 import * as styles from './UserMenu.treat'
-import NavItem from '../Sidebar/NavItem/NavItem'
 import { useLocale, useNamespaces, Locale } from '@island.is/localization'
 import { MenuState } from '../../store/actions'
 import { ValueType } from 'react-select'
@@ -33,7 +30,11 @@ interface Props {
 
 const UserMenu: FC<Props> = ({ state, onClose, onRouteChange }) => {
   const { lang, formatMessage } = useLocale()
-  const { changeLanguage } = useNamespaces(['sp.settings', 'sp.messages'])
+  const { changeLanguage } = useNamespaces([
+    'sp.settings',
+    'sp.messages',
+    'global',
+  ])
   const [{ userInfo }] = useStore()
   const { data: userProfile } = useUserProfile()
   const { signOutUser } = useAuth()
