@@ -272,6 +272,45 @@ describe('ApplicationFormReducer', () => {
       )
     })
   })
+  describe('go to screen', () => {
+    it('should go to a screen with a specific id', () => {
+      const updatedState = ApplicationReducer(initializedState, {
+        type: ActionTypes.GO_TO_SCREEN,
+        payload: 'house',
+      })
+      expect(updatedState.activeScreen).toBe(2)
+      const nextState = ApplicationReducer(updatedState, {
+        type: ActionTypes.GO_TO_SCREEN,
+        payload: 'person',
+      })
+      expect(nextState.activeScreen).toBe(0)
+      const anotherState = ApplicationReducer(nextState, {
+        type: ActionTypes.GO_TO_SCREEN,
+        payload: 'familyName',
+      })
+      expect(anotherState.activeScreen).toBe(1)
+      const finalState = ApplicationReducer(anotherState, {
+        type: ActionTypes.GO_TO_SCREEN,
+        payload: 'garden',
+      })
+      expect(finalState.activeScreen).toBe(3)
+    })
+    it('should not go to any screen if no screen in the form has the desired id', () => {
+      const updatedState = ApplicationReducer(initializedState, {
+        type: ActionTypes.GO_TO_SCREEN,
+        payload: 'someRandomID',
+      })
+      expect(updatedState.activeScreen).toBe(initializedState.activeScreen)
+      const anotherState = ApplicationReducer(
+        { ...initializedState, activeScreen: 2 },
+        {
+          type: ActionTypes.GO_TO_SCREEN,
+          payload: 'someRandomID',
+        },
+      )
+      expect(anotherState.activeScreen).toBe(2)
+    })
+  })
   describe('answer', () => {
     const type = ActionTypes.ANSWER
     it('should store new answers', () => {

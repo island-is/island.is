@@ -2,6 +2,7 @@ export default {
   production: true,
   environment: process.env.ENVIRONMENT,
   baseApiUrl: '',
+  clientLocationOrigin: process.env.CLIENT_LOCATION_ORIGIN,
   identityServer: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '',
@@ -15,5 +16,8 @@ export default {
     options: {
       region: process.env.EMAIL_REGION,
     },
+  },
+  auth: {
+    jwtSecret: process.env.AUTH_JWT_SECRET,
   },
 }

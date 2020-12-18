@@ -24,7 +24,6 @@ export class IdentityResourcesDTO {
   readonly displayName!: string
 
   @IsString()
-  @IsNotEmpty()
   @ApiProperty({
     example: 'set_description',
   })

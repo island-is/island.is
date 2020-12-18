@@ -3,9 +3,8 @@ import {
   ServicePortalNavigationItem,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import cn from 'classnames'
 import * as styles from './Sidebar.treat'
-import { Box, Stack } from '@island.is/island-ui/core'
+import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
 import AnimateHeight from 'react-animate-height'
 import { useLocale } from '@island.is/localization'
@@ -15,9 +14,10 @@ import SubNavItem from './NavItem/SubNavItem'
 interface Props {
   nav: ServicePortalNavigationItem
   variant: 'blue' | 'blueberry'
+  onItemClick?: () => void
 }
 
-const ModuleNavigation: FC<Props> = ({ nav, variant }) => {
+const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
   const [expand, setExpand] = useState(false)
   const { pathname } = useLocation()
   const isModuleActive =
@@ -29,16 +29,37 @@ const ModuleNavigation: FC<Props> = ({ nav, variant }) => {
     expand ||
     nav.path === pathname
   const { formatMessage } = useLocale()
+
   const handleExpand = () => setExpand(!expand)
+
+  const handleRootItemClick = () => {
+    if (nav.path === undefined) handleExpand()
+    if (onItemClick) onItemClick()
+  }
 
   return (
     <Box>
+      {nav.heading && (
+        <Text
+          variant="eyebrow"
+          color={variant === 'blue' ? 'blue600' : 'blueberry600'}
+          fontWeight="semiBold"
+          marginBottom={2}
+        >
+          {formatMessage(nav.heading)}
+        </Text>
+      )}
+      {nav.divider && (
+        <Box paddingBottom={3}>
+          <Divider />
+        </Box>
+      )}
       <NavItem
         path={nav.path}
         icon={nav.icon}
         active={isModuleActive}
         external={nav.external}
-        onClick={nav.path === undefined ? handleExpand : undefined}
+        onClick={handleRootItemClick}
         variant={variant}
       >
         {formatMessage(nav.name)}
@@ -57,6 +78,7 @@ const ModuleNavigation: FC<Props> = ({ nav, variant }) => {
                     }
                     external={child.external}
                     variant={variant}
+                    onClick={onItemClick}
                   >
                     {formatMessage(child.name)}
                   </SubNavItem>

@@ -33,7 +33,7 @@ export const TestPhase: Form = buildForm({
       children: [
         buildCustomField(
           {
-            id: 'testUserExists',
+            id: 'testProviderId',
             name: m.testEnviromentTitle,
             component: 'TestEnvironment',
           },
@@ -95,7 +95,7 @@ export const TestPhase: Form = buildForm({
           children: [
             buildCustomField(
               {
-                id: 'productionUserExists',
+                id: 'prodProviderId',
                 name: 'Aðgangur að raun',
                 component: 'ProdEnvironment',
               },

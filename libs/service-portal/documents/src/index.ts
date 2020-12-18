@@ -12,13 +12,7 @@ const rootName = defineMessage({
 
 export const documentsModule: ServicePortalModule = {
   name: rootName,
-  widgets: () => [
-    {
-      name: rootName,
-      render: () => lazy(() => import('./widgets/documentList')),
-      weight: 0,
-    },
-  ],
+  widgets: () => [],
   routes: () => [
     {
       name: rootName,

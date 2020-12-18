@@ -884,6 +884,35 @@
         }
       }
     },
+    "api-domains-driving-license": {
+      "root": "libs/api/domains/driving-license",
+      "sourceRoot": "libs/api/domains/driving-license/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/driving-license/tsconfig.lib.json",
+              "libs/api/domains/driving-license/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/driving-license/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/driving-license/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-file-upload": {
       "root": "libs/api/domains/file-upload",
       "sourceRoot": "libs/api/domains/file-upload/src",
@@ -1054,6 +1083,35 @@
             "linter": "eslint",
             "tsConfig": ["libs/api/schema/tsconfig.lib.json"],
             "exclude": ["**/node_modules/**", "!libs/api/schema/**/*"]
+          }
+        }
+      }
+    },
+    "application-api-template-utils": {
+      "root": "libs/application/api-template-utils",
+      "sourceRoot": "libs/application/api-template-utils/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/api-template-utils/tsconfig.lib.json",
+              "libs/application/api-template-utils/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/api-template-utils/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/api-template-utils/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }
@@ -1592,7 +1650,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/templates/parental-leave/src/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node libs/localization/scripts/extract libs/application/templates/parental-leave/src/lib/messages.ts"
           }
         }
       }
@@ -3630,6 +3688,35 @@
         }
       }
     },
+    "service-portal-driving-license": {
+      "root": "libs/service-portal/driving-license",
+      "sourceRoot": "libs/service-portal/driving-license/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/service-portal/driving-license/tsconfig.lib.json",
+              "libs/service-portal/driving-license/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/driving-license/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/driving-license/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "service-portal-e2e": {
       "root": "apps/service-portal-e2e",
       "sourceRoot": "apps/service-portal-e2e/src",
@@ -3689,6 +3776,35 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/education/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+          }
+        }
+      }
+    },
+    "service-portal-eligibility": {
+      "root": "libs/service-portal/eligibility",
+      "sourceRoot": "libs/service-portal/eligibility/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/service-portal/eligibility/tsconfig.lib.json",
+              "libs/service-portal/eligibility/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/eligibility/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/eligibility/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }
