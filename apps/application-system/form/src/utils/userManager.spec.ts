@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { ExtendedUserManager, settings } from './userManager'
 
 // seconds
@@ -16,8 +17,6 @@ const MOCK_USER = {
 jest.mock('oidc-client', () => ({
   __esModule: true,
   UserManager: class MockUserManager {
-    constructor() {}
-
     async getUser() {
       return MOCK_USER
     }
@@ -76,6 +75,7 @@ describe('UserManager', () => {
         .spyOn(global.Date, 'now')
         .mockImplementationOnce(() => valueGreaterThanExpiry)
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
       // @ts-ignore
       userManager.signinSilent = () => {
         throw new Error('')
