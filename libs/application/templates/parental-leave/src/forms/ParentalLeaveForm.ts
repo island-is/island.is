@@ -28,6 +28,8 @@ import {
 import { GetPensionFunds, GetUnions } from '../graphql/queries'
 import { NO, YES } from '../constants'
 
+import Logo from '../assets/Logo'
+
 interface SelectItem {
   id: string
   name: string
@@ -44,6 +46,7 @@ type PensionFundsQuery = {
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
   name: 'Fæðingarorlof',
+  logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
