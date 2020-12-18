@@ -31,7 +31,7 @@ describe('Signed Verdict Overview route', () => {
 
       expect(
         await waitFor(() =>
-          screen.getByText('Gæsluvarðhaldi hafnað', { selector: 'h1' }),
+          screen.getByText('Kröfu hafnað', { selector: 'h1' }),
         ),
       ).toBeInTheDocument()
     })
@@ -192,6 +192,60 @@ describe('Signed Verdict Overview route', () => {
       expect(
         await waitFor(() =>
           screen.getByText('Gæsluvarðhaldi lokið', { selector: 'h1' }),
+        ),
+      ).toBeInTheDocument()
+    })
+  })
+
+  describe('Accepted case with active travel ban', () => {
+    test('should have the correct title', async () => {
+      render(
+        <MockedProvider
+          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          addTypename={false}
+        >
+          <MemoryRouter
+            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_7`]}
+          >
+            <UserProvider>
+              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
+                <SignedVerdictOverview />
+              </Route>
+            </UserProvider>
+          </MemoryRouter>
+        </MockedProvider>,
+      )
+
+      expect(
+        await waitFor(() =>
+          screen.getByText('Farbann virkt', { selector: 'h1' }),
+        ),
+      ).toBeInTheDocument()
+    })
+  })
+
+  describe('Accepted case with travel ban end time in the past', () => {
+    test('should have the correct title', async () => {
+      render(
+        <MockedProvider
+          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          addTypename={false}
+        >
+          <MemoryRouter
+            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_8`]}
+          >
+            <UserProvider>
+              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
+                <SignedVerdictOverview />
+              </Route>
+            </UserProvider>
+          </MemoryRouter>
+        </MockedProvider>,
+      )
+
+      expect(
+        await waitFor(() =>
+          screen.getByText('Farbanni lokið', { selector: 'h1' }),
         ),
       ).toBeInTheDocument()
     })
