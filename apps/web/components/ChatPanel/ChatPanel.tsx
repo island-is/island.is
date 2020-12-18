@@ -15,8 +15,6 @@ declare global {
 let boost = null
 
 export const ChatPanel = () => {
-  const [visible, setVisible] = useState(false)
-
   useEffect(() => {
     const conversationId =
       window.sessionStorage.getItem(CONVERSATION_KEY) ?? null
@@ -43,15 +41,10 @@ export const ChatPanel = () => {
         boost.chatPanel.show()
       }
 
-      boost.chatPanel.addEventListener('chatPanelClosed', onChatPanelClosed)
       boost.chatPanel.addEventListener(
         'conversationIdChanged',
         onConversationIdChanged,
       )
-    }
-
-    return () => {
-      boost.chatPanel.removeEventListener('chatPanelClosed', onChatPanelClosed)
       boost.chatPanel.removeEventListener(
         'conversationIdChanged',
         onConversationIdChanged,
@@ -59,25 +52,19 @@ export const ChatPanel = () => {
     }
   }, [])
 
-  const onChatPanelClosed = () => {
-    setVisible(true)
-  }
-
   const onConversationIdChanged = (e) => {
     window.sessionStorage.setItem(CONVERSATION_KEY, e.detail.conversationId)
   }
 
   return (
-    <div className={cn(styles.root, { [styles.hidden]: !boost || !visible })}>
+    <div className={cn(styles.root, { [styles.hidden]: !boost })}>
       <Button
         variant="primary"
         circle
-        disabled={!visible}
         size="large"
         iconType="filled"
         onClick={() => {
           boost.chatPanel.show()
-          setVisible(false)
         }}
       >
         <Icon icon="chatbubble" color="white" size="large" type="outline" />
