@@ -36,6 +36,11 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               name="helpDesk.email"
               label={formatText(m.helpDeskEmail, application, formatMessage)}
               defaultValue={getValue('helpDesk.email')}
+              placeholder={formatText(
+                m.helpDeskEmailPlaceholder,
+                application,
+                formatMessage,
+              )}
               ref={register}
             />
           </GridColumn>
@@ -49,6 +54,11 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                 formatMessage,
               )}
               defaultValue={getValue('helpDesk.phoneNumber')}
+              placeholder={formatText(
+                m.helpDeskPhoneNumberPlaceholder,
+                application,
+                formatMessage,
+              )}
               ref={register}
             />
           </GridColumn>
