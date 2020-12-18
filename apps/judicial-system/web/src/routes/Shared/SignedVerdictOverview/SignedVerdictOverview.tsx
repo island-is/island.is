@@ -5,7 +5,7 @@ import {
   formatDate,
   getShortRestrictionByValue,
 } from '@island.is/judicial-system/formatters'
-import { Case, CaseState } from '@island.is/judicial-system/types'
+import { Case, CaseDecision, CaseState } from '@island.is/judicial-system/types'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CaseQuery } from '../../../graphql'
@@ -79,13 +79,22 @@ export const SignedVerdictOverview: React.FC = () => {
                      * this screen is only rendered if the case is either accepted
                      * or rejected. Here we are first handling the case where a case
                      * is rejected, then the case where a case is accepted and the
-                     * custody end date is in the past and finally we assume that
+                     * custody end date is in the past and then we assume that
                      * the case is accepted and the custody end date has not come yet.
+                     * For accepted cases, we first handle the case where the judge
+                     * decided only accept an alternative travel ban and finally we
+                     * assume that the actual custody was accepted.
                      */}
                     {workingCase.state === CaseState.REJECTED
-                      ? 'Gæsluvarðhaldi hafnað'
+                      ? 'Kröfu hafnað'
                       : workingCase.isCustodyEndDateInThePast
-                      ? 'Gæsluvarðhaldi lokið'
+                      ? workingCase.decision ===
+                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                        ? 'Farbanni lokið'
+                        : 'Gæsluvarðhaldi lokið'
+                      : workingCase.decision ===
+                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                      ? 'Farbann virkt'
                       : 'Gæsluvarðhald virkt'}
                   </Text>
                 </Box>
@@ -99,14 +108,24 @@ export const SignedVerdictOverview: React.FC = () => {
                         TIME_FORMAT,
                       )}`
                     : workingCase.isCustodyEndDateInThePast
-                    ? `Gæsla rann út ${formatDate(
+                    ? `${
+                        workingCase.decision ===
+                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                          ? 'Farbann'
+                          : 'Gæsla'
+                      } rann út ${formatDate(
                         workingCase.custodyEndDate,
                         'PPP',
                       )} kl. ${formatDate(
                         workingCase.custodyEndDate,
                         TIME_FORMAT,
                       )}`
-                    : `Gæsla til ${formatDate(
+                    : `${
+                        workingCase.decision ===
+                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                          ? 'Farbann'
+                          : 'Gæsla'
+                      } til ${formatDate(
                         workingCase.custodyEndDate,
                         'PPP',
                       )} kl. ${formatDate(
