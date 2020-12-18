@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react'
-import { useParams, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { Box, Text, Input, ActionCard } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 
@@ -20,14 +20,9 @@ export const DocumentProvidersSearch: FC<Props> = ({ data }) => {
   }
 
   useEffect(() => {
-    console.log('in child ', data)
     const results = data.filter((item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase()),
     )
-    // console.log('results', results)
-    // console.log('searchResults', searchResults)
-    // console.log('searchTerm', searchTerm)
-    // console.log('data', data)
     setSearchResults(results)
   }, [searchTerm])
 
@@ -59,10 +54,12 @@ export const DocumentProvidersSearch: FC<Props> = ({ data }) => {
                   label: 'Skoða nánar',
                   variant: 'secondary',
                   onClick: () => {
-                    history.push(ServicePortalPath.DocumentProviderDocumentProvidersSingle.replace(
-                      ':id',
-                      Data.id,
-                    ))
+                    history.push(
+                      ServicePortalPath.DocumentProviderDocumentProvidersSingle.replace(
+                        ':id',
+                        Data.id,
+                      ),
+                    )
                   },
                 }}
               />
