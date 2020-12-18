@@ -21,6 +21,14 @@ export const documentProviderModule: ServicePortalModule = {
         lazy(() => import('./screens/DocumentProviders/DocumentProviders')),
     },
     {
+      name: m.documentProviderSingle,
+      path: ServicePortalPath.DocumentProviderDocumentProvidersSingle,
+      render: () =>
+        lazy(() =>
+          import('./screens/SingleDocumentProvider/SingleDocumentProvider'),
+        ),
+    },
+    {
       name: m.MyCategories,
       path: ServicePortalPath.DocumentProviderMyCategories,
       render: () => lazy(() => import('./screens/MyCategories/MyCategories')),

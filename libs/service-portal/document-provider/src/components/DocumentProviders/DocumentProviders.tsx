@@ -1,6 +1,7 @@
 import React, { FC, useState, useEffect } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import { Box, Text, Input, ActionCard } from '@island.is/island-ui/core'
+import { ServicePortalPath } from '@island.is/service-portal/core'
 
 interface Data {
   name: string
@@ -57,7 +58,12 @@ export const DocumentProvidersSearch: FC<Props> = ({ data }) => {
                 cta={{
                   label: 'Skoða nánar',
                   variant: 'secondary',
-                  onClick: () => history.push(`../skjalaveitababa`),
+                  onClick: () => {
+                    history.push(ServicePortalPath.DocumentProviderDocumentProvidersSingle.replace(
+                      ':id',
+                      Data.id,
+                    ))
+                  },
                 }}
               />
             </Box>

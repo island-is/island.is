@@ -10,6 +10,10 @@ export const m = defineMessages({
     id: 'service.portal:document-provider-document-providers',
     defaultMessage: 'Skjalaveitendur',
   },
+  documentProviderSingle: {
+    id: 'service.portal:document-provider-document-provider-single',
+    defaultMessage: 'Skjalaveitandi',
+  },
   MyCategories: {
     id: 'service.portal:document-provider-my-categories',
     defaultMessage: 'Mínir flokkar',
@@ -91,6 +95,11 @@ export const m = defineMessages({
     id: 'sp.document-provider:document-providers-description',
     defaultMessage:
       'Hér getur þú fundið alla þá skjalaveitendur sem nota pósthólf á island.is',
+  },
+  //DocumentProvidersSingle
+  documentProvidersSingleDescription: {
+    id: 'sp.document-provider:document-providers-single-description',
+    defaultMessage: 'Ýtarlegar upplýsingar um skjalaveitu',
   },
 
   //MyCategories
