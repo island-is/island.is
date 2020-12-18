@@ -1,6 +1,5 @@
 import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { AxiosRequestConfig } from 'axios'
-import { logger } from '@island.is/logging'
 
 import { DocumentOauthConnection } from './documentProvider.connection'
 import {
@@ -53,7 +52,6 @@ export class DocumentProviderClientProd {
   }
 
   private async postRequest<T>(requestRoute: string): Promise<T> {
-    logger.debug(`POST prod: ${requestRoute}`)
     await this.rehydrateToken()
     const config: AxiosRequestConfig = {
       headers: {
@@ -66,8 +64,6 @@ export class DocumentProviderClientProd {
     } = await this.httpService
       .post(`${this.clientConfig.basePath}${requestRoute}`, null, config)
       .toPromise()
-
-    logger.debug(`POST prod response: ${response.data}`)
 
     return response.data
   }

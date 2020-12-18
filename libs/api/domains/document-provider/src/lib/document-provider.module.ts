@@ -2,7 +2,6 @@ import { DynamicModule, HttpModule } from '@nestjs/common'
 
 import { DocumentProviderResolver } from './document-provider.resolver'
 import { DocumentProviderService } from './document-provider.service'
-import { DocumentProviderRepository } from './document-provider.repository'
 import { DocumentProviderClientProd } from './client/documentProviderClientProd'
 import {
   DocumentProviderConfig,
@@ -23,7 +22,6 @@ export class DocumentProviderModule {
       providers: [
         DocumentProviderResolver,
         DocumentProviderService,
-        DocumentProviderRepository,
         DocumentProviderClientTest,
         {
           provide: DOCUMENT_PROVIDER_CLIENT_CONFIG_TEST,

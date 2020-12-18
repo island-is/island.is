@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { useMutation } from '@apollo/client'
+import { gql, useMutation } from '@apollo/client'
 import { useFormContext, Controller } from 'react-hook-form'
 import {
   FieldBaseProps,
@@ -11,8 +11,16 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
-import { registerEndpointMutation } from '../../../graphql/mutations/registerEndpointMutation'
 import { m } from '../../../forms/messages'
+
+export const updateEndpointMutation = gql`
+  mutation UpdateEndpoint($input: UpdateEndpointInput!) {
+    updateEndpoint(input: $input) {
+      audience
+      scope
+    }
+  }
+`
 
 const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -34,7 +42,7 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
     // @ts-ignore
     formValue.productionEndPointObject?.prodEndPointExists || '',
   )
-  const [registerEndpoint] = useMutation(registerEndpointMutation)
+  const [updateEndpoint] = useMutation(updateEndpointMutation)
 
   const nationalId = getValueViaPath(
     application.answers,
@@ -48,10 +56,10 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
     undefined,
   ) as string
 
-  const onRegisterEndpoint = async (isValid: boolean) => {
+  const onUpdateEndpoint = async (isValid: boolean) => {
     if (isValid) {
       setprodEndPointError(null)
-      const result = await registerEndpoint({
+      const result = await updateEndpoint({
         variables: {
           input: {
             nationalId: nationalId,
@@ -70,9 +78,9 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
         {
           id: '1',
           name: 'Audience',
-          value: result.data.registerEndpoint.audience,
+          value: result.data.updateEndpoint.audience,
         },
-        { id: '2', name: 'Scope', value: result.data.registerEndpoint.scope },
+        { id: '2', name: 'Scope', value: result.data.updateEndpoint.scope },
       ])
       setprodEndPointExists('true')
       clearErrors()
@@ -123,7 +131,7 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
           size="small"
           onClick={() => {
             trigger(['productionEndPointObject.prodEndPoint']).then((answer) =>
-              onRegisterEndpoint(answer),
+              onUpdateEndpoint(answer),
             )
           }}
         >
