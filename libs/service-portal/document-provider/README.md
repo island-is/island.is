@@ -84,6 +84,7 @@ and add the paths underneath **DocumentProviderRoot** inside `libs/service-porta
 
 ```ts
   DocumentProviderDocumentProviders = '/skjalaveita/skjalaveitendur',
+  DocumentProviderDocumentProvidersSingle = '/skjalaveita/skjalaveitendur/:id',
   DocumentProviderMyCategories = '/skjalaveita/minir-flokkar',
   DocumentProviderSettingsRoot = '/skjalaveita/skjalaveita-stillingar',
   DocumentProviderSettingsEditInstituion = '/skjalaveita/skjalaveita-stillingar/breyta-stofnun',

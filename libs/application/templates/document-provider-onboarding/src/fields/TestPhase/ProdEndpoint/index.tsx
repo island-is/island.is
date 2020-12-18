@@ -97,16 +97,28 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
             name={'productionEndPointObject.prodEndPoint'}
             render={() => (
               <Input
-                label="Endapunktur"
+                label={formatText(
+                  m.prodEndpointLabel,
+                  application,
+                  formatMessage,
+                )}
                 name={'productionEndPointObject.prodEndPoint'}
                 id={'productionEndPointObject.prodEndPoint'}
                 ref={register}
                 defaultValue=""
-                placeholder="Skráðu inn endapunkt"
+                placeholder={formatText(
+                  m.prodEndpointPlaceholder,
+                  application,
+                  formatMessage,
+                )}
                 hasError={
                   errors.productionEndPointObject?.prodEndPoint !== undefined
                 }
-                errorMessage="Þú verður að skrá inn endapunkt"
+                errorMessage={formatText(
+                  m.prodEndpointInputErrorMessage,
+                  application,
+                  formatMessage,
+                )}
               />
             )}
           />

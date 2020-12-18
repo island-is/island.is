@@ -20,11 +20,20 @@ const ThankYouScreen: FC<FieldBaseProps> = ({ application }) => {
           {formatText(m.thankYouScreenFirstMessage, application, formatMessage)}
         </Text>
       </Box>
-      <Box marginTop={3}>
-        <Box>
+      <Box>
+        <Box marginBottom={2}>
           <Text>
             {formatText(
               m.thankYouScreenSecondMessage,
+              application,
+              formatMessage,
+            )}
+          </Text>
+        </Box>
+        <Box>
+          <Text>
+            {formatText(
+              m.thankYouScreenThirdMessage,
               application,
               formatMessage,
             )}
