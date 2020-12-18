@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import ContentWrapper from '../components/common/ContentWrapper';
 
-export default function () {
+export default function ErrorPage() {
   const router = useRouter();
 
   const toMainPage = () => {

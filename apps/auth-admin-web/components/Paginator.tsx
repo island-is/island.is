@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 interface Props {
   lastPage: number;
-  handlePageChange?: (page: number, count: number) => void,
+  handlePageChange: (page: number, count: number) => void,
 }
 
 const Paginator: React.FC<Props> = (props: Props) =>{

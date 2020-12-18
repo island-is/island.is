@@ -1,26 +1,24 @@
 import React, { Component } from 'react';
 import APIResponse from '../models/common/APIResponse';
 
-class StatusBar extends Component<{ status: APIResponse | null }> {
+class StatusBar extends Component<{ status: APIResponse }> {
   getMessage = () => {
-    if (this.props.status && this.props.status.message){
-      if (typeof this.props.status.message === 'string') {
-        return <span>{this.props.status.message}</span>;
-      } else {
-        return this.props.status.message.map((item, i) => <span>{item}</span>);
-      }
+    if (typeof this.props.status?.message === 'string') {
+      return <span>{this.props.status.message}</span>;
+    } else {
+      return this.props.status?.message.map((item, i) => <span>{item}</span>);
     }
   };
 
   render() {
-    if (!this.props.status || !this.props.status.statusCode ) {
+    if (!this.props.status) {
       return '';
     }
 
     return (
       <div
         className={`statusbar ${
-          this.props.status.statusCode > 399 ? 'error' : ''
+          this.props.status?.statusCode > 399 ? 'error' : ''
         }`}
       >
         <div className="statusbar__message">{this.getMessage()}</div>

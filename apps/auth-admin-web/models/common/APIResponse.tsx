@@ -1,14 +1,14 @@
 class APIResponse {
     constructor()
     {
-        this.statusCode = null;
-        this.message = null;
-        this.error = null;
+        this.statusCode = 0;
+        this.message = [];
+        this.error = "";
     }
 
-    statusCode?: number;
-    message?: string[];
-    error?: string;
+    statusCode: number;
+    message: string[];
+    error: string;
 }
 
 export default APIResponse;
