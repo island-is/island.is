@@ -1,20 +1,22 @@
 import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { AxiosRequestConfig } from 'axios'
+import { logger } from '@island.is/logging'
 
 import { DocumentOauthConnection } from './documentProvider.connection'
-import { DocumentProviderClientConfig } from './documentProviderClientConfig'
+import {
+  DocumentProviderClientConfig,
+  DOCUMENT_PROVIDER_CLIENT_CONFIG_TEST,
+} from './documentProviderClientConfig'
 import { ClientCredentials, AudienceAndScope, TestResult } from './models'
 
-export const DOCUMENT_PROVIDER_CLIENT_CONFIG = 'DOCUMENT_PROVIDER_CLIENT_CONFIG'
-
 @Injectable()
-export class DocumentProviderClient {
+export class DocumentProviderClientTest {
   private accessToken!: string
   private accessTokenExpiryDate!: Date
 
   constructor(
     private httpService: HttpService,
-    @Inject(DOCUMENT_PROVIDER_CLIENT_CONFIG)
+    @Inject(DOCUMENT_PROVIDER_CLIENT_CONFIG_TEST)
     private clientConfig: DocumentProviderClientConfig,
   ) {}
 
@@ -51,6 +53,7 @@ export class DocumentProviderClient {
   }
 
   private async postRequest<T>(requestRoute: string): Promise<T> {
+    logger.debug(`POST test: ${requestRoute}`)
     await this.rehydrateToken()
     const config: AxiosRequestConfig = {
       headers: {
@@ -63,6 +66,8 @@ export class DocumentProviderClient {
     } = await this.httpService
       .post(`${this.clientConfig.basePath}${requestRoute}`, null, config)
       .toPromise()
+
+    logger.debug(`POST test response: ${response.data}`)
 
     return response.data
   }
@@ -89,7 +94,6 @@ export class DocumentProviderClient {
     documentId: string,
   ): Promise<TestResult[]> {
     const requestRoute = `/api/documentprovider/runtests?providerId=${providerId}&recipient=${recipient}&documentId=${documentId}`
-    //api/documentprovider/runtests?providerId=31bca5e1-586b-4cfc-b922-c89e9224f5e9&recipient=2404805659&documentId=123456
     return await this.postRequest<TestResult[]>(requestRoute)
   }
 }

@@ -2,7 +2,7 @@
 import axios from 'axios'
 import qs from 'qs'
 import { logger } from '@island.is/logging'
-import { DocumentProviderClientConfig } from './documentProviderClient'
+import { DocumentProviderClientConfig } from './documentProviderClientConfig'
 
 export interface OauthConnectionResponse {
   token: string
