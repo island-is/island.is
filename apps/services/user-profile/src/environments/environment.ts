@@ -2,10 +2,10 @@ export default {
   production: false,
   port: 3366,
   email: {
-    fromEmail: 'olafur@sendiradid.is',
-    fromName: 'Olafur',
-    replyToEmail: 'olafur@sendiradid.is',
-    replyToName: 'Ólafur Björn Magnússon',
+    fromEmail: 'noreply@island.is',
+    fromName: 'island.is',
+    replyToEmail: 'noreply@island.is',
+    replyToName: 'island.is',
     servicePortalBaseUrl: 'http://localhost:4200',
   },
   smsOptions: {
