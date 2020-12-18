@@ -8,7 +8,8 @@ export const LIST_DOCUMENTS = gql`
       senderName
       senderNatReg
       date
-      opened
+      fileType
+      url
     }
   }
 `
