@@ -22,7 +22,7 @@ export default (
     // TODO: place strings in translation file
     from: {
       name: 'Devland.is',
-      address: 'development@aranja.com',
+      address: 'development@island.is',
     },
     replyTo: {
       name: 'Bæring Gunnar Steinþórsson',
