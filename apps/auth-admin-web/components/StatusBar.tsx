@@ -11,7 +11,7 @@ class StatusBar extends Component<{ status: APIResponse }> {
   };
 
   render() {
-    if (!this.props.status) {
+    if (!this.props.status || this.props.status.statusCode === 0 || this.props.status.statusCode === 200 || this.props.status.statusCode === 201) {
       return '';
     }
 

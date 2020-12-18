@@ -84,7 +84,7 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
 
           <div className="client-redirect__container__form">
           <div className="client-redirect__help">
-            Tokens will be sent to this endpoint
+          Specifies the allowed URIs to return tokens or authorization codes to
           </div>
             <form onSubmit={handleSubmit(add)}>
               <div className="client-redirect__container__fields">

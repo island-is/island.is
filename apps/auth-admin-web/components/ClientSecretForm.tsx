@@ -118,7 +118,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
           <h1>Client Secrets</h1>
           <div className="client-secret__container__form">
             <div className="client-secret__help">
-              Add client secret for client
+              List of client secrets - credentials to access the token endpoint.
             </div>
             <form onSubmit={handleSubmit(add)}>
               <div className="client-secret__container__fields">
@@ -189,7 +189,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                 </div>
               </div>
 
-              <NoActiveConnections title="No secrets are defined" show={!props.secrets || props.secrets.length === 0} helpText="Add a secret and push the Add button">
+              <NoActiveConnections title="No secrets are defined" show={!props.secrets || props.secrets.length === 0} helpText="Add a secret and push the Add button. A random string has been generated for you that you can use if you decide to.">
               </NoActiveConnections>
 
               <div

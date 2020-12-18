@@ -119,7 +119,7 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
           <h1>Allowed scopes</h1>
           <div className="client-allowed-scopes__container__form">
             <div className="client-allowed-scopes__help">
-              Allowed scopes for client
+            By default a client has no access to any resources. Specify the allowed resources by adding the corresponding scopes names
             </div>
             <form onSubmit={handleSubmit(add)}>
               <div className="client-allowed-scopes__container__fields">
