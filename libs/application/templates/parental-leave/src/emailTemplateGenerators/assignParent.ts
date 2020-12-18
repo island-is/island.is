@@ -14,11 +14,11 @@ export default (
   return {
     // TODO: place strings in translation file
     from: {
-      name: 'Fæðingarorlofssjóður',
+      name: 'Devland.is',
       address: 'development@island.is',
     },
     replyTo: {
-      name: 'Fæðingarorlofssjóður',
+      name: 'Bæring Gunnar Steinþórsson',
       address: 'baering@aranja.com',
     },
     to: [
