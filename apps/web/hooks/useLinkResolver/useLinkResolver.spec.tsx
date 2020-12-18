@@ -1,4 +1,9 @@
-import { linkResolver, typeResolver, LinkType } from './useLinkResolver'
+import {
+  linkResolver,
+  typeResolver,
+  LinkType,
+  routesTemplate,
+} from './useLinkResolver'
 
 describe('Link resolver', () => {
   it('should return correct path to type with out variable', () => {
@@ -75,6 +80,39 @@ describe('Link resolver', () => {
       href: '/404',
     })
   })
+
+  it('should return external urls as next links objects', () => {
+    const nextLinks = linkResolver(
+      'linkurl' as LinkType,
+      ['https://example.com'],
+      'is',
+    )
+    expect(nextLinks).toEqual({
+      as: 'https://example.com',
+      href: 'https://example.com',
+    })
+  })
+
+  it('should have no path repetition', () => {
+    const types = Object.values(routesTemplate).reduce(
+      (types, templateObject) => {
+        if (templateObject.en) {
+          types.push(templateObject.en)
+        }
+        if (templateObject.is) {
+          types.push(templateObject.is)
+        }
+        return types
+      },
+      [],
+    )
+    expect(types.length === new Set(types).size).toBeTruthy()
+  })
+
+  it('should have no link type repetition', () => {
+    const types = Object.keys(routesTemplate).map((type) => type.toLowerCase())
+    expect(types.length === new Set(types).size).toBeTruthy()
+  })
 })
 
 describe('Type resolver', () => {
@@ -110,12 +148,12 @@ describe('Type resolver', () => {
 
   it('Should handle undefined', () => {
     const types = typeResolver(undefined)
-    expect(types).toEqual(null)
+    expect(types).toBeNull()
   })
 
   it('Should handle empty path', () => {
     const types = typeResolver('')
-    expect(types).toEqual(null)
+    expect(types).toBeNull()
   })
 
   it('Should ignore dynamic paths', () => {
