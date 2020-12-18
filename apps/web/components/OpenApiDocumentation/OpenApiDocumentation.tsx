@@ -8,16 +8,24 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 
-////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
 //
-// To use this component the parent component must include the following script:
+// To use this component the parent component or page must include the following
+//  script and it must be loaded:
 //
 //  <script
 //    id="redoc" type="text/javascript"
 //    src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"
 //  >
 //  </script>
-////////////////////////////////////////////////////////////////////////////////
+//
+//  alternatively use the apps/web useScript hook like this
+//    useScript(
+//      'https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js',
+//      true,
+//      'redoc'
+//    )
+////////////////////////////////////////////////////////////////////////////////////////
 
 export interface OpenApiDocumentationProps {
   spec: OpenApi
@@ -42,7 +50,6 @@ export const OpenApiDocumentation: FC<OpenApiDocumentationProps> = ({
   bugReportLinkText = 'Report a bug',
   featureRequestLinkText = 'Make a feature request',
 }: OpenApiDocumentationProps) => {
-
   const GetDefaultLinkText = (key: string) => {
     let text: string
     switch (key) {

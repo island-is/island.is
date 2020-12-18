@@ -117,12 +117,6 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
 
   return (
     <Box>
-      <script
-        id="redoc"
-        type="text/javascript"
-        src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"
-      ></script>
-
       <GridRow align="spaceBetween">
         <GridColumn
           span={['8/8', '4/8', '4/8', '2/8']}

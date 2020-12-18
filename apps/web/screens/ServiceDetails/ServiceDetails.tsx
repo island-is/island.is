@@ -21,6 +21,7 @@ import { SubpageLayout } from '../Layouts/Layouts'
 import SidebarLayout from '../Layouts/SidebarLayout'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useNamespace } from '../../hooks'
+import { useScript } from '../../hooks/useScript'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -33,6 +34,12 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   strings,
   service = null,
 }) => {
+  useScript(
+    'https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js',
+    true,
+    'redoc',
+  )
+
   const n = useNamespace(strings)
 
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
