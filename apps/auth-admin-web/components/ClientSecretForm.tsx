@@ -3,10 +3,10 @@ import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import StatusBar from './StatusBar';
 import HelpBox from './HelpBox';
-import axios from 'axios';
 import APIResponse from '../models/common/APIResponse';
 import { ClientSecretDTO } from '../models/dtos/client-secret.dto';
 import { ClientSecret } from '../models/client-secret.model';
+import api from '../services/api'
 
 interface Props {
   clientId: string;
@@ -55,8 +55,8 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
     secretObj.type = data.type;
     secretObj.value = data.value;
 
-    await axios
-      .post(`/api/client-secret`, secretObj)
+    await api
+      .post(`client-secret`, secretObj)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
@@ -87,8 +87,8 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
     secretDTO.type = secret.type;
     secretDTO.description = secret.description;
 
-    await axios
-      .delete(`/api/client-secret`, { data: secretDTO })
+    await api
+      .delete(`client-secret`, { data: secretDTO })
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;

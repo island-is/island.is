@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import IdentityResourcesDTO from '../models/dtos/identity-resources.dto';
-import axios from 'axios';
 import Paginator from './Paginator';
 import APIResponse from '../models/common/APIResponse';
 import StatusBar from './StatusBar';
+import api from '../services/api'
 
 export default function IdentityResources() {
   const [count, setCount] = useState(1);
@@ -20,8 +20,8 @@ export default function IdentityResources() {
 
   const getResources = async (page, count) => {
     console.log("getting res");
-    await axios
-      .get(`/api/identity-resources?page=${page}&count=${count}`)
+    await api
+      .get(`identity-resources?page=${page}&count=${count}`)
       .then((response) => {
         console.log("getting res then");
         const res = new APIResponse();
@@ -54,7 +54,7 @@ export default function IdentityResources() {
   const remove = async (name: string) => {
     console.log(name);
     if (window.confirm(`Are you sure you want to delete this Identity Resource: ${name}?`)) {
-      await axios.delete(`/api/identity-resource/${name}`).then((response) => {
+      await api.delete(`identity-resource/${name}`).then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
         res.message = response.request.statusText;

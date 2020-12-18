@@ -4,8 +4,8 @@ import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import StatusBar from './StatusBar';
 import HelpBox from './HelpBox';
-import axios from 'axios';
 import APIResponse from '../models/common/APIResponse';
+import api from '../services/api'
 
 interface Props {
   clientId: string;
@@ -28,8 +28,8 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
     clientRedirect.clientId = props.clientId;
     clientRedirect.redirectUri = data.redirectUri;
 
-    await axios
-      .post(`/api/redirect-uri`, clientRedirect)
+    await api
+      .post(`redirect-uri`, clientRedirect)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
@@ -51,8 +51,8 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
   };
 
   const remove = async (uri: string) => {
-    await axios
-      .delete(`/api/redirect-uri/${props.clientId}/${encodeURIComponent(uri)}`)
+    await api
+      .delete(`redirect-uri/${props.clientId}/${encodeURIComponent(uri)}`)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;

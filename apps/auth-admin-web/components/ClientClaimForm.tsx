@@ -6,7 +6,7 @@ import APIResponse from '../models/common/APIResponse';
 import { ClientClaimDTO } from '../models/dtos/client-claim.dto';
 import HelpBox from './HelpBox';
 import StatusBar from './StatusBar';
-import axios from 'axios';
+import api from '../services/api'
 
 interface Props {
   clientId: string;
@@ -29,8 +29,8 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
     clientClaim.type = data.type;
     clientClaim.value = data.value;
 
-    await axios
-      .post(`/api/client-claim`, clientClaim)
+    await api
+      .post(`client-claim`, clientClaim)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
@@ -52,9 +52,9 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
   };
 
   const remove = async (claim: ClientClaim) => {
-    await axios
+    await api
       .delete(
-        `/api/client-claim/${claim.clientId}/${encodeURIComponent(
+        `client-claim/${claim.clientId}/${encodeURIComponent(
           claim.type
         )}/${encodeURIComponent(claim.value)}`
       )

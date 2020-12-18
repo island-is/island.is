@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import IdentityResourcesDTO from '../models/dtos/identity-resources.dto';
-import axios from 'axios';
 import StatusBar from './StatusBar';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import HelpBox from './HelpBox';
 import APIResponse from '../models/common/APIResponse';
+import api from '../services/api'
 
 type Props = {
   resource: IdentityResourcesDTO;
@@ -29,8 +29,8 @@ export default function IdentityResourceForm<Props>(
   };
 
   const save = async (data) => {
-    await axios
-      .post('api/identity-resource', data.resource)
+    await api
+      .post('identity-resource', data.resource)
       .then((response) => {
         const res = new APIResponse();
         res.statusCode = response.request.status;
