@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 
-import { DocumentProviderClient } from './client/documentProviderClient'
 import { DocumentProviderRepository } from './document-provider.repository'
 import { AudienceAndScope, ClientCredentials, TestResult } from './models'
 import { DocumentProviderClientTest } from './client/documentProviderClientTest'
@@ -61,7 +60,9 @@ export class DocumentProviderService {
     endpoint: string,
     providerId: string,
   ): Promise<AudienceAndScope> {
-    logger.info(`Register endpoint: ${nationalId} - ${endpoint}`)
+    logger.info(
+      `Register endpoint: ${nationalId} - ${endpoint} - ${providerId}`,
+    )
 
     return new AudienceAndScope(
       'https://test-skjalaveita-island-is.azurewebsites.net',
@@ -89,6 +90,9 @@ export class DocumentProviderService {
     recipient: string,
     documentId: string,
   ): Promise<TestResult[]> {
+    logger.info(
+      `Register endpoint: ${nationalId} - ${recipient} - ${documentId}`,
+    )
     return [new TestResult('getMessageFromMailbox', true, 'Skjal fannst.')]
 
     // const providerId = await this.documentProviderRepository.getProvider(
@@ -147,7 +151,9 @@ export class DocumentProviderService {
     endpoint: string,
     providerId: string,
   ): Promise<AudienceAndScope> {
-    logger.info(`Register endpoint: ${nationalId} - ${endpoint}`)
+    logger.info(
+      `Register endpoint: ${providerId} - ${nationalId} - ${endpoint}`,
+    )
 
     return new AudienceAndScope(
       'https://test-skjalaveita-island-is.azurewebsites.net',
