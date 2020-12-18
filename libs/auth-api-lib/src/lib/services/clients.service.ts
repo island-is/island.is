@@ -493,6 +493,6 @@ export class ClientsService {
     const arrJoined: ApiScope[] = []
     arrJoined.push(...apiScopes)
     arrJoined.push(...(identityResources as ApiScope[]))
-    return arrJoined
+    return arrJoined.sort((a, b) => a.name.localeCompare(b.name))
   }
 }
