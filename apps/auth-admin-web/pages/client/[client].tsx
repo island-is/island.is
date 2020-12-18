@@ -1,22 +1,22 @@
-import ClientDTO from '../../models/dtos/client-dto';
-import ClientForm from '../../components/ClientForm';
-import ClientRedirectUriForm from '../../components/ClientRedirectUriForm';
-import ClientIdpRestrictionsForm from '../../components/ClientIdpRestrictionsForm';
-import ClientPostLogoutRedirectUriForm from '../../components/ClientPostLogoutRedirectUriForm';
-import ClientStepNav from '../../components/ClientStepNav';
+import ClientDTO from '../../entities/dtos/client-dto';
+import ClientForm from '../../components/Client/ClientForm';
+import ClientRedirectUriForm from '../../components/Client/ClientRedirectUriForm';
+import ClientIdpRestrictionsForm from '../../components/Client/ClientIdpRestrictionsForm';
+import ClientPostLogoutRedirectUriForm from '../../components/Client/ClientPostLogoutRedirectUriForm';
+import ClientStepNav from '../../components/Client/ClientStepNav';
 import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react';
 
-import { ClientStep } from '../../models/common/ClientStep';
-import { Client } from '../../models/client.model';
-import ClientAllowedCorsOriginsForm from '../../components/ClientAllowedCorsOriginsForm';
-import ClientAllowedScopes from '../../components/ClientAllowedScopesForm';
-import ClientSecretForm from '../../components/ClientSecretForm';
-import ClientClaimForm from '../../components/ClientClaimForm';
-import ClientGrantTypesForm from '../../components/ClientGrantTypesForm';
-import ContentWrapper from 'apps/auth-admin-web/components/common/ContentWrapper';
+import { ClientStep } from '../../entities/common/ClientStep';
+import { Client } from '../../entities/models/client.model';
+import ClientAllowedCorsOriginsForm from '../../components/Client/ClientAllowedCorsOriginsForm';
+import ClientAllowedScopes from '../../components/Client/ClientAllowedScopesForm';
+import ClientSecretForm from '../../components/Client/ClientSecretForm';
+import ClientClaimForm from '../../components/Client/ClientClaimForm';
+import ClientGrantTypesForm from '../../components/Client/ClientGrantTypesForm';
+import ContentWrapper from 'apps/auth-admin-web/components/Layout/ContentWrapper';
 import api from '../../services/api'
-import StepEnd from 'apps/auth-admin-web/components/common/StepEnd';
+import StepEnd from 'apps/auth-admin-web/components/Common/StepEnd';
 
 const Index = () => {
   const { query } = useRouter();

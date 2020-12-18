@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import StatusBar from './StatusBar';
-import HelpBox from './HelpBox';
-import APIResponse from '../models/common/APIResponse';
-import { ClientAllowedCorsOriginDTO } from '../models/dtos/client-allowed-cors-origin.dto';
-import api from '../services/api'
-import NoActiveConnections from './common/NoActiveConnections';
+import StatusBar from '../Layout/StatusBar';
+import HelpBox from '../Common/HelpBox';
+import APIResponse from '../../entities/common/APIResponse';
+import { ClientAllowedCorsOriginDTO } from '../../entities/dtos/client-allowed-cors-origin.dto';
+import api from '../../services/api'
+import NoActiveConnections from '../Common/NoActiveConnections';
 
 interface Props {
   clientId: string;

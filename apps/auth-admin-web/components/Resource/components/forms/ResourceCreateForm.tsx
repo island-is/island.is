@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import HelpBox from '../../../HelpBox';
+import HelpBox from '../../../Common/HelpBox';
 import { ErrorMessage } from '@hookform/error-message';
 
 interface Texts {

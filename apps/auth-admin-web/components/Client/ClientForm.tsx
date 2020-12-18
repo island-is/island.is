@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import ClientDTO from '../models/dtos/client-dto';
-import StatusBar from './StatusBar';
-import APIResponse from '../models/common/APIResponse';
+import ClientDTO from '../../entities/dtos/client-dto';
+import StatusBar from '../Layout/StatusBar';
+import APIResponse from '../../entities/common/APIResponse';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import HelpBox from './HelpBox';
-import api from '../services/api'
+import HelpBox from '../Common/HelpBox';
+import api from '../../services/api'
 
 interface Props {
   client: ClientDTO;
@@ -167,7 +167,6 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                     defaultValue={client.nationalId}
                     className="client__input"
                     placeholder="0123456789"
-                    title=""
                     maxLength={10}
                     title="The nationalId (Kennitala) registered for the client"
                   />

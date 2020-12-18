@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import ContentWrapper from '../components/common/ContentWrapper';
+import ContentWrapper from '../components/Layout/ContentWrapper';
 
 export default function ErrorPage() {
   const router = useRouter();

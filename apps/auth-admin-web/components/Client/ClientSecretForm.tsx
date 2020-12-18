@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import StatusBar from './StatusBar';
-import HelpBox from './HelpBox';
-import APIResponse from '../models/common/APIResponse';
-import { ClientSecretDTO } from '../models/dtos/client-secret.dto';
-import { ClientSecret } from '../models/client-secret.model';
-import api from '../services/api'
-import NoActiveConnections from './common/NoActiveConnections';
+import StatusBar from '../Layout/StatusBar';
+import HelpBox from '../Common/HelpBox';
+import APIResponse from '../../entities/common/APIResponse';
+import { ClientSecretDTO } from '../../entities/dtos/client-secret.dto';
+import { ClientSecret } from '../../entities/models/client-secret.model';
+import api from '../../services/api'
+import NoActiveConnections from '../Common/NoActiveConnections';
 
 interface Props {
   clientId: string;
@@ -25,11 +25,11 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
   const [response, setResponse] = useState<APIResponse>(new APIResponse());
 
   const makeDefaultSecret = (length: number) => {
-    var result = '';
-    var characters =
+    let result = '';
+    const characters =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;

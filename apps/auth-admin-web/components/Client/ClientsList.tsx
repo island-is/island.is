@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import ClientDTO from '../models/dtos/client-dto';
-import Paginator from './Paginator';
+import ClientDTO from '../../entities/dtos/client-dto';
+import Paginator from '../Common/Paginator';
 import Link from 'next/link';
-import api from '../services/api'
+import api from '../../services/api'
 
 class ClientsList extends Component {
   state = {
@@ -12,7 +12,7 @@ class ClientsList extends Component {
     page: 1,
   };
 
-  getClients = async (page, count) => {
+  getClients = async (page: number, count: number) => {
     const response = await api.get(
       `clients/?page=${page}&count=${count}`
     );
@@ -21,10 +21,6 @@ class ClientsList extends Component {
       clients: response.data.rows,
       rowCount: response.data.count,
     });
-  };
-
-  componentDidMount = async () => {
-    // this.getClients(this.state.page, this.state.count)
   };
 
   handlePageChange = async (page: number, count: number) => {

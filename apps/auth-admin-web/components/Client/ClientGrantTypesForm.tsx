@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import StatusBar from './StatusBar';
-import HelpBox from './HelpBox';
-import APIResponse from '../models/common/APIResponse';
-import { GrantType } from '../models/grant-type.model';
-import { ClientGrantTypeDTO } from '../models/dtos/client-grant-type.dto';
-import { ClientGrantType } from '../models/client-grant-type.model';
-import api from '../services/api'
-import NoActiveConnections from './common/NoActiveConnections';
+import StatusBar from '../Layout/StatusBar';
+import HelpBox from '../Common/HelpBox';
+import APIResponse from '../../entities/common/APIResponse';
+import { GrantType } from '../../entities/models/grant-type.model';
+import { ClientGrantTypeDTO } from '../../entities/dtos/client-grant-type.dto';
+import api from '../../services/api'
+import NoActiveConnections from '../Common/NoActiveConnections';
 
 interface Props {
   clientId: string;

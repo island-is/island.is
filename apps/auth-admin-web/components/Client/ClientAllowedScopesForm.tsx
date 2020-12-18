@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import StatusBar from './StatusBar';
-import HelpBox from './HelpBox';
-import APIResponse from '../models/common/APIResponse';
-import { ClientAllowedScopeDTO } from '../models/dtos/client-allowed-scope.dto';
-import api from '../services/api';
-import { waitForElement } from '@testing-library/react';
-import NoActiveConnections from './common/NoActiveConnections';
+import StatusBar from '../Layout/StatusBar';
+import HelpBox from '../Common/HelpBox';
+import APIResponse from '../../entities/common/APIResponse';
+import { ClientAllowedScopeDTO } from '../../entities/dtos/client-allowed-scope.dto';
+import api from '../../services/api';
+import NoActiveConnections from '../Common/NoActiveConnections';
 
 interface Props {
   clientId: string;
@@ -134,7 +133,6 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                     id="scopeName"
                     className="client-allowed-scopes__select"
                     name="scopeName"
-                    id="scopeName"
                     ref={register({ required: true })}
                     onChange={(e) => setSelectedItem(e.target.value)}
                   >

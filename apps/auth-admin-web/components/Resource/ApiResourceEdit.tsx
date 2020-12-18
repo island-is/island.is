@@ -1,6 +1,6 @@
-import { ApiResourceStep } from 'apps/auth-admin-web/models/common/ApiResourceStep';
+import { ApiResourceStep } from './../../entities/common/ApiResourceStep'
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import ApiResourceStepNav from './components/ApiResourceStepper'
 import ApiResourceOverview from './overview/ApiResourceOverview'
 
@@ -12,7 +12,7 @@ export default function ApiResourceEdit() {
   const { query } = useRouter();
   const apiResourceId = query.edit;
 
-  if (apiResourceId != undefined) {
+  if (apiResourceId) {
     return (
       <div>
         <ApiResourceStepNav

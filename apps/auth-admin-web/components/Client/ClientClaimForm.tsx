@@ -1,13 +1,13 @@
 import { ErrorMessage } from '@hookform/error-message';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { ClientClaim } from '../models/client-claim.model';
-import APIResponse from '../models/common/APIResponse';
-import { ClientClaimDTO } from '../models/dtos/client-claim.dto';
-import HelpBox from './HelpBox';
-import StatusBar from './StatusBar';
-import api from '../services/api'
-import NoActiveConnections from './common/NoActiveConnections';
+import { ClientClaim } from '../../entities/models/client-claim.model';
+import APIResponse from '../../entities/common/APIResponse';
+import { ClientClaimDTO } from '../../entities/dtos/client-claim.dto';
+import HelpBox from '../Common/HelpBox';
+import StatusBar from '../Layout/StatusBar';
+import api from '../../services/api'
+import NoActiveConnections from '../Common/NoActiveConnections';
 
 interface Props {
   clientId: string;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ApiResourceStep } from 'apps/auth-admin-web/models/common/ApiResourceStep';
+import { ApiResourceStep } from './../../../entities/common/ApiResourceStep';
 import ApiResourceData from '../components/ApiResourceData';
 import ApiResourceScopes from '../api-resource-connection-tables/ApiResourceScopes';
 import ApiResourceSecrets from '../api-resource-connection-tables/ApiResourceSecrets';

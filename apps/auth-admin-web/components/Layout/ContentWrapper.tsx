@@ -1,6 +1,6 @@
 import React from "react";
-import Header from '../Header';
-import Nav from '../Nav';
+import Header from './Header';
+import Nav from './Nav';
 
 const ContentWrapper: React.FC = ({children}) =>{
   return( 
