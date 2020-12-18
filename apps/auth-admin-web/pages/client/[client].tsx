@@ -12,11 +12,11 @@ import { Client } from '../../models/client.model';
 import ClientAllowedCorsOriginsForm from '../../components/ClientAllowedCorsOriginsForm';
 import ClientAllowedScopes from '../../components/ClientAllowedScopesForm';
 import ClientSecretForm from '../../components/ClientSecretForm';
-import { ClaimDTO } from '../../models/dtos/claim.dto';
 import ClientClaimForm from '../../components/ClientClaimForm';
 import ClientGrantTypesForm from '../../components/ClientGrantTypesForm';
 import ContentWrapper from 'apps/auth-admin-web/components/common/ContentWrapper';
 import api from '../../services/api'
+import StepEnd from 'apps/auth-admin-web/components/common/StepEnd';
 
 const Index = () => {
   const { query } = useRouter();
@@ -219,8 +219,11 @@ const Index = () => {
       );
     }
     default: {
-      // TODO: Temp
-      return <div>Step not found</div>;
+     return <ContentWrapper>
+      <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+        <StepEnd buttonText="Go back" title="Steps completed" handleButtonFinishedClick={() => setStep(1)}>The steps needed, to create a client, have been completed</StepEnd>
+      </ClientStepNav>
+    </ContentWrapper>
     }
   }
 };

@@ -6,6 +6,7 @@ import StatusBar from './StatusBar';
 import HelpBox from './HelpBox';
 import APIResponse from '../models/common/APIResponse';
 import api from '../services/api'
+import NoActiveConnections from './common/NoActiveConnections';
 
 interface Props {
   clientId: string;
@@ -114,6 +115,9 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                 </div>
               </div>
               </form>
+
+              <NoActiveConnections title="No client redirect uris (Callback uris) are defined" show={!props.uris || props.uris.length === 0} helpText="Add a redirect uri and push the Add button. If a uri exists in the form, it's the display uri defined in the Client form">
+              </NoActiveConnections>
              
               <div className={`client-redirect__container__list ${
                     props.uris && props.uris.length > 0  ? 'show' : 'hidden'
