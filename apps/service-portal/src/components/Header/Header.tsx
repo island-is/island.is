@@ -19,9 +19,7 @@ import { BetaTag } from '../Logo/BetaTag'
 export const Header: FC<{}> = () => {
   const { lang, formatMessage } = useLocale()
   const [{ mobileMenuState }, dispatch] = useStore()
-  const { changeLanguage } = useNamespaces(['service.portal', 'global'])
 
-  const handleLangClick = (value: Locale) => changeLanguage(value)
   const handleMobileMenuTriggerClick = () =>
     dispatch({
       type: ActionType.SetMobileMenuState,
@@ -54,19 +52,6 @@ export const Header: FC<{}> = () => {
                 </FocusableBox>
               </Link>
               <Box display="flex" alignItems="center" flexWrap="nowrap">
-                <Hidden below="lg">
-                  <Box marginRight={[1, 1, 1, 2]}>
-                    <Button
-                      variant="utility"
-                      onClick={handleLangClick.bind(
-                        null,
-                        lang === 'is' ? 'en' : 'is',
-                      )}
-                    >
-                      {lang === 'is' ? 'EN' : 'IS'}
-                    </Button>
-                  </Box>
-                </Hidden>
                 <UserMenuTrigger />
                 <Hidden above="md">
                   <Box marginLeft={[1, 1, 1, 2]}>
