@@ -33,9 +33,10 @@ module.exports = withTreat(
     async redirects() {
       return [
         {
-          source: '/',
-          destination: '/my-cars',
-          permanent: true,
+          source: '/skilavottord',
+          destination: '/',
+          basePath: false,
+          permanent: false,
         },
       ]
     },
