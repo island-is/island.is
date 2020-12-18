@@ -8,9 +8,11 @@ const ThankYouScreen: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   return (
     <Box marginBottom={8}>
-      <Box marginBottom={2}>
-        <Text variant="h3">
-          {formatText(m.thankYouScreenSubTitle, application, formatMessage)}{' '}
+      <Box marginTop={7} marginBottom={3}>
+        <Text>
+          <strong>
+            {formatText(m.thankYouScreenSubTitle, application, formatMessage)}
+          </strong>
         </Text>
       </Box>
       <Box marginBottom={2}>
