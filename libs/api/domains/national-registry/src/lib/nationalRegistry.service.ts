@@ -26,7 +26,15 @@ export class NationalRegistryService {
     return this.nationalRegistryApi.getBanMarking(nationalId)
   }
 
-  getLegalResidence(houseCode: User['houseCode']): Promise<string> {
-    return this.nationalRegistryApi.getLegalResidence(houseCode)
+  async getLegalResidence(houseCode: User['houseCode']): Promise<string> {
+    const address = await this.nationalRegistryApi.getAddress(houseCode)
+    if (!address) {
+      return ''
+    }
+    return `${address.streetAddress}, ${address.postalCode} ${address.city}`
+  }
+
+  getAddress(houseCode: User['houseCode']) {
+    return this.nationalRegistryApi.getAddress(houseCode)
   }
 }

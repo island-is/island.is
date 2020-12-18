@@ -19,6 +19,7 @@ import {
   Gender,
   MaritalStatus,
   BanMarking,
+  Address,
 } from '../types'
 
 export class NationalRegistryApi {
@@ -84,15 +85,19 @@ export class NationalRegistryApi {
     }
   }
 
-  public async getLegalResidence(
+  public async getAddress(
     houseCode: User['houseCode'],
-  ): Promise<string> {
+  ): Promise<Address | null> {
     const response = await this.getViewHusaskra(houseCode)
     if (!response) {
-      return ''
+      return null
     }
     const houseInfo = response.table.diffgram.DocumentElement.Husaskra
-    return `${houseInfo.HusHeiti}, ${houseInfo.PostNr} ${houseInfo.Nafn}`
+    return {
+      streetAddress: houseInfo.HusHeiti,
+      postalCode: houseInfo.PostNr,
+      city: houseInfo.Nafn,
+    }
   }
 
   public async getMyInfo(nationalId: User['nationalId']): Promise<User> {
