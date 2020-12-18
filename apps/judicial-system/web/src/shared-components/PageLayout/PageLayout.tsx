@@ -12,7 +12,7 @@ import * as styles from './PageLayout.treat'
 import { JudgeLogo, ProsecutorLogo } from '../Logos'
 import Loading from '../Loading/Loading'
 import * as Constants from '../../utils/constants'
-import { UserRole } from '@island.is/judicial-system/types'
+import { CaseDecision, UserRole } from '@island.is/judicial-system/types'
 import { Link } from 'react-router-dom'
 import { UserContext } from '../UserProvider/UserProvider'
 
@@ -24,6 +24,7 @@ interface PageProps {
   activeSubSection?: number
   // Only needed for the SignedVerdictOverview screen
   rejectedCase?: boolean
+  decision?: CaseDecision
   isCustodyEndDateInThePast?: boolean
 }
 
@@ -34,6 +35,7 @@ export const PageLayout: FC<PageProps> = ({
   isLoading,
   notFound,
   rejectedCase,
+  decision,
   isCustodyEndDateInThePast,
 }) => {
   const { user } = useContext(UserContext)
@@ -107,9 +109,15 @@ export const PageLayout: FC<PageProps> = ({
                   },
                   {
                     name: rejectedCase
-                      ? 'Gæsluvarðhaldi hafnað'
+                      ? 'Kröfu hafnað'
                       : isCustodyEndDateInThePast
-                      ? 'Gæsluvarðhaldi lokið'
+                      ? decision ===
+                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                        ? 'Farbanni lokið'
+                        : 'Gæsluvarðhaldi lokið'
+                      : decision ===
+                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                      ? 'Farbann virkt'
                       : 'Gæsluvarðhald virkt',
                   },
                 ]}

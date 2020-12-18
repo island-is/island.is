@@ -130,6 +130,50 @@ control the size.
   </Story>
 </Canvas>
 
+### With colored label
+
+We can use `labelColor` to change the color on the label for the `AccordionItem`
+
+<Canvas>
+  <Story name="Colored label">
+    <Accordion singleExpand>
+      <AccordionItem
+        id="id_1"
+        label="Hvenær þarf að skila umsókn?"
+        labelColor="blue400"
+      >
+        <Text>
+          Hægt er að senda umsóknir og önnur gögn með pósti, tölvupósti eða
+          faxi. Læknisvottorð verða að berast með pósti þar sem við þurfum
+          frumritið.
+        </Text>
+      </AccordionItem>
+      <AccordionItem
+        id="id_2"
+        label="Er hægt að leggja inn greiðslur á bankareikning maka?"
+        labelColor="blue400"
+      >
+        <Text>
+          Hægt er að senda umsóknir og önnur gögn með pósti, tölvupósti eða
+          faxi. Læknisvottorð verða að berast með pósti þar sem við þurfum
+          frumritið.
+        </Text>
+      </AccordionItem>
+      <AccordionItem
+        id="id_3"
+        label="Hvernig kem ég umsókninni til ykkar?"
+        labelColor="blue400"
+      >
+        <Text>
+          Hægt er að senda umsóknir og önnur gögn með pósti, tölvupósti eða
+          faxi. Læknisvottorð verða að berast með pósti þar sem við þurfum
+          frumritið.
+        </Text>
+      </AccordionItem>
+    </Accordion>
+  </Story>
+</Canvas>
+
 ### With single card
 
 We use the standalone `<AccordionCard />` component

@@ -39,13 +39,13 @@ const CompanyInfoForm: FC<FormProps> = ({
 
   const onSubmit = (formData: RecyclingPartner) => {
     console.log(formData)
-    router.push(routes.companyInfo.baseRoute).then(() => {
+    router.push(`${routes.companyInfo.baseRoute}`).then(() => {
       toast.success(t.success)
     })
   }
 
   const handleCancel = () => {
-    router.push(routes.companyInfo.baseRoute)
+    router.push(`${routes.companyInfo.baseRoute}`)
   }
 
   return (

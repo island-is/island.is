@@ -15,6 +15,7 @@ import { formatDate, formatYear } from '@island.is/skilavottord-web/utils'
 import { Car, WithApolloProps } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
+import { BASE_PATH } from '@island.is/skilavottord/consts'
 
 const skilavottordVehicleOwnerMutation = gql`
   mutation skilavottordVehicleOwnerMutation(
@@ -82,7 +83,7 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
   useEffect(() => {
     if (!car) {
       router.push({
-        pathname: routes.myCars,
+        pathname: `${routes.myCars}`,
       })
     }
   }, [car, router, routes])
@@ -144,7 +145,7 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
   const routeToAuthCheck = () => {
     localStorage.setItem(ACCEPTED_TERMS_AND_CONDITION, id.toString())
     router.replace(
-      `${AUTH_URL['citizen']}/login?returnUrl=${routes.recycleVehicle.baseRoute}/${id}/handover`,
+      `${AUTH_URL['citizen']}/login?returnUrl=${BASE_PATH}${routes.recycleVehicle.baseRoute}/${id}/handover`,
     )
   }
 

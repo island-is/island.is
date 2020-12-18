@@ -18,7 +18,7 @@ import {
   CaseState,
   CaseGender,
 } from '@island.is/judicial-system/types'
-import { gql, useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   UpdateCaseMutation,
@@ -35,65 +35,7 @@ import {
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import BlueBox from '../../../../shared-components/BlueBox/BlueBox'
-
-export const CreateCaseMutation = gql`
-  mutation CreateCaseMutation($input: CreateCaseInput!) {
-    createCase(input: $input) {
-      id
-      created
-      modified
-      state
-      policeCaseNumber
-      accusedNationalId
-      accusedName
-      accusedAddress
-      accusedGender
-      requestedDefenderName
-      requestedDefenderEmail
-      court
-      arrestDate
-      requestedCourtDate
-      requestedCustodyEndDate
-      lawsBroken
-      custodyProvisions
-      requestedCustodyRestrictions
-      caseFacts
-      witnessAccounts
-      investigationProgress
-      legalArguments
-      comments
-      prosecutor {
-        name
-        title
-      }
-      courtCaseNumber
-      courtDate
-      isCourtDateInThePast
-      courtRoom
-      defenderName
-      defenderEmail
-      courtStartTime
-      courtEndTime
-      courtAttendees
-      policeDemands
-      accusedPlea
-      litigationPresentations
-      ruling
-      rejecting
-      custodyEndDate
-      isCustodyEndDateInThePast
-      custodyRestrictions
-      accusedAppealDecision
-      accusedAppealAnnouncement
-      prosecutorAppealDecision
-      prosecutorAppealAnnouncement
-      judge {
-        name
-        title
-      }
-    }
-  }
-`
+import { CreateCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 
 interface CaseData {
   case?: Case
@@ -146,9 +88,9 @@ export const StepOne: React.FC = () => {
             accusedNationalId: workingCase?.accusedNationalId.replace('-', ''),
             accusedName: workingCase?.accusedName,
             accusedAddress: workingCase?.accusedAddress,
+            accusedGender: workingCase?.accusedGender,
             requestedDefenderName: workingCase?.requestedDefenderName,
             requestedDefenderEmail: workingCase?.requestedDefenderEmail,
-            accusedGender: workingCase?.accusedGender,
             court: 'Héraðsdómur Reykjavíkur',
           },
         },

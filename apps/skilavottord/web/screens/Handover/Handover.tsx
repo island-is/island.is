@@ -143,7 +143,7 @@ const Handover: FC = () => {
 
   const routeHome = () => {
     localStorage.clear()
-    router.push(routes.myCars).then(() => window.scrollTo(0, 0))
+    router.push(`${routes.myCars}`).then(() => window.scrollTo(0, 0))
   }
 
   const onCancelRecycling = () => {

@@ -87,6 +87,7 @@ export async function generateRequestPdf(
         existingCase.accusedNationalId,
         existingCase.accusedName,
         existingCase.court,
+        existingCase.alternativeTravelBan,
         existingCase.requestedCustodyEndDate,
         existingCase.requestedCustodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
@@ -297,10 +298,22 @@ export async function generateRulingPdf(
     .text('Krafa lögreglu')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.policeDemands, {
-      lineGap: 6,
-      paragraphGap: 0,
-    })
+    .text(
+      formatProsecutorDemands(
+        existingCase.accusedNationalId,
+        existingCase.accusedName,
+        existingCase.court,
+        existingCase.alternativeTravelBan,
+        existingCase.requestedCustodyEndDate,
+        existingCase.requestedCustodyRestrictions?.includes(
+          CaseCustodyRestrictions.ISOLATION,
+        ),
+      ),
+      {
+        lineGap: 6,
+        paragraphGap: 0,
+      },
+    )
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -346,7 +359,7 @@ export async function generateRulingPdf(
       formatConclusion(
         existingCase.accusedNationalId,
         existingCase.accusedName,
-        existingCase.rejecting,
+        existingCase.decision,
         existingCase.custodyEndDate,
         existingCase.custodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
@@ -423,7 +436,7 @@ export async function generateRulingPdf(
       })
   }
 
-  if (!existingCase.rejecting) {
+  if (!existingCase.decision) {
     doc
       .text(' ')
       .font('Helvetica-Bold')
