@@ -407,13 +407,10 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                   {/* Number inputs */}
                   <div className="client__container__field">
                     <label className="client__label">Access Token Type</label>
-                    <input
-                      type="number"
-                      ref={register({ required: true })}
-                      name="client.accessTokenType"
-                      defaultValue={client.accessTokenType}
-                      className="client__input"
-                    />
+                    <select name="client.accessTokenType" className="client__select" defaultValue={client.accessTokenType} ref={register({ required: true })}>
+                      <option value={0}>JWT</option>
+                      <option value={1}>Reference</option>
+                    </select>
                     <HelpBox helpText="Specifies whether the access token is a reference token or a self contained JWT token (defaults to Jwt)." />
                     <ErrorMessage
                       as="span"
@@ -528,13 +525,10 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                     <label className="client__label">
                       Refresh token expiration
                     </label>
-                    <input
-                      type="number"
-                      defaultValue={client.refreshTokenExpiration}
-                      ref={register({ required: true })}
-                      className="client__input"
-                      name="client.refreshTokenExpiration"
-                    />
+                    <select name="client.refreshTokenExpiration" className="client__select" defaultValue={client.refreshTokenExpiration} ref={register({ required: true })}>
+                      <option value={0}>Sliding</option>
+                      <option value={1}>Absolute</option>
+                    </select>
                     <HelpBox helpText="Absolute the refresh token will expire on a fixed point in time (specified by the AbsoluteRefreshTokenLifetime)
 
 Sliding when refreshing the token, the lifetime of the refresh token will be renewed (by the amount specified in SlidingRefreshTokenLifetime). The lifetime will not exceed AbsoluteRefreshTokenLifetime." />
@@ -542,16 +536,12 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
 
                   <div className="client__container__field">
                     <label className="client__label">Refresh Token Usage</label>
-                    <input
-                      type="number"
-                      defaultValue={client.refreshTokenUsage}
-                      ref={register({ required: true })}
-                      className="client__input"
-                      name="client.refreshTokenUsage"
-                    />
+                    <select name="client.refreshTokenUsage" className="client__select" defaultValue={client.refreshTokenUsage} ref={register({ required: true })}>
+                      <option value={0}>ReUse</option>
+                      <option value={1}>OneTime</option>
+                    </select>
                     <HelpBox helpText="ReUse the refresh token handle will stay the same when refreshing tokens
-
-OneTime the refresh token handle will be updated when refreshing tokens. This is the default" />
+                    OneTime the refresh token handle will be updated when refreshing tokens. This is the default" />
                   </div>
 
                   <div className="client__container__field">
