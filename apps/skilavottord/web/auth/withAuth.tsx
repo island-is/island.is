@@ -3,7 +3,7 @@ import Router from 'next/router'
 import { NextComponentType } from 'next'
 
 import { AUTH_URL, isAuthenticated } from './utils'
-import { BASE_PATH } from '../utils/consts'
+import { BASE_PATH } from '@island.is/skilavottord/consts'
 
 type AuthType = 'citizen' | 'recyclingPartner'
 

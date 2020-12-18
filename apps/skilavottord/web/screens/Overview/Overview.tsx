@@ -16,7 +16,6 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { RecycleActionTypes } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { filterCarsByStatus } from '@island.is/skilavottord-web/utils'
-import { BASE_PATH } from '../../utils/consts'
 
 const skilavottordVehiclesQuery = gql`
   query skilavottordVehiclesQuery($nationalId: String!) {
