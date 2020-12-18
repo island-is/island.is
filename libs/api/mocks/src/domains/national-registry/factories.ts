@@ -13,7 +13,11 @@ export const banMarking = factory<BanMarking>({
 })
 
 export const getMinorGender = () => {
-  const genderArr: Gender[] = ['FEMALE_MINOR', 'MALE_MINOR', 'TRANSGENDER_MINOR']
+  const genderArr: Gender[] = [
+    'FEMALE_MINOR',
+    'MALE_MINOR',
+    'TRANSGENDER_MINOR',
+  ]
   return faker.random.arrayElement(genderArr)
 }
 
@@ -23,7 +27,12 @@ export const getGender = () => {
 }
 
 export const getMaritalStatus = () => {
-  const genderArr: MaritalStatus[] = ['DIVORCED', 'SEPARATED', 'MARRIED', 'UNMARRIED']
+  const genderArr: MaritalStatus[] = [
+    'DIVORCED',
+    'SEPARATED',
+    'MARRIED',
+    'UNMARRIED',
+  ]
   return faker.random.arrayElement(genderArr)
 }
 
@@ -61,5 +70,3 @@ export const child = factory<NationalRegistryFamilyMember>({
   address: address,
   familyRelation: 'child',
 })
-
-

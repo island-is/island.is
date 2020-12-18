@@ -9,8 +9,7 @@ export const resolvers: Resolvers = {
   },
   Query: {
     getUserProfile: (parent, args) => {
-      if (store.profile.locale === '')
-        return null
+      if (store.profile.locale === '') return null
       return store.profile
     },
   },
@@ -18,7 +17,8 @@ export const resolvers: Resolvers = {
     createProfile: (parent, args) => {
       if (args.input.email) store.profile.email = args.input.email
       if (args.input.locale) store.profile.locale = args.input.locale
-      if (args.input.mobilePhoneNumber) store.profile.mobilePhoneNumber = args.input.mobilePhoneNumber
+      if (args.input.mobilePhoneNumber)
+        store.profile.mobilePhoneNumber = args.input.mobilePhoneNumber
       store.profile.mobilePhoneNumberVerified = true
 
       return store.profile

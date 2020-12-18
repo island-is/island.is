@@ -7,6 +7,6 @@ export const store = createStore(() => {
   const profile = userProfile()
 
   return {
-    profile
+    profile,
   }
 })
