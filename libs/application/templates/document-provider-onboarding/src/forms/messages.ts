@@ -36,7 +36,7 @@ export const m = defineMessages({
   },
   termsUserAgreementRequiredMessage: {
     id: 'dpo.application:terms.userAgreementRequiredMessage',
-    defaultMessage: 'Þú verður að samþykkja notandaskilmála',
+    defaultMessage: 'Þú verður að samþykkja notendaskilmálar',
     description: 'Some description',
   },
   termsSafetyAgreementTitle: {
