@@ -7,15 +7,22 @@ export const resolvers: Resolvers = {
       return parent.__typename as never
     },
   },
-
   Query: {
     getUserProfile: (parent, args) => {
-      //if (store.profile.locale === '')
-      //return store.nullProfile
+      if (store.profile.locale === '')
+        return null
       return store.profile
     },
   },
   Mutation: {
+    createProfile: (parent, args) => {
+      if (args.input.email) store.profile.email = args.input.email
+      if (args.input.locale) store.profile.locale = args.input.locale
+      if (args.input.mobilePhoneNumber) store.profile.mobilePhoneNumber = args.input.mobilePhoneNumber
+      store.profile.mobilePhoneNumberVerified = true
+
+      return store.profile
+    },
     updateProfile: (parent, args) => {
       if (args.input.email) store.profile.email = args.input.email
       if (args.input.locale) store.profile.locale = args.input.locale

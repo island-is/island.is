@@ -9,3 +9,4 @@ export const userProfile = factory<UserProfile>({
   mobilePhoneNumberVerified: false,
   locale: '',
 })
+
