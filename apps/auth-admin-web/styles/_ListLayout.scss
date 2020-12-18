@@ -1,0 +1,40 @@
+.clients,
+.users {
+  &__wrapper {
+    max-width: 1024px;
+  }
+
+  &__container {
+    h1 {
+      font-style: normal;
+      font-weight: $weight-semi-bold;
+      font-size: 42px;
+      line-height: 52px;
+      color: $color-text-primary;
+    }
+  }
+
+  table {
+    thead {
+      tr {
+        th {
+          font-size: 0.9rem;
+        }
+      }
+    }
+    tbody {
+      tr {
+        th,
+        td {
+          font-size: 0.8rem;
+        }
+
+        &:hover {
+          td {
+            background-color: $color-bg-content;
+          }
+        }
+      }
+    }
+  }
+}

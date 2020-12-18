@@ -3,7 +3,7 @@ import React, { Component } from "react";
 
 class Header extends Component {
   logout = () => {
-    // TODO: Logout
+    alert("logout");
   };
 
   render() {

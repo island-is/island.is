@@ -129,7 +129,7 @@ const UsersList: React.FC = () => {
                     as="span"
                     errors={errors}
                     name="id"
-                    message="SubjectId is required"
+                    message="SubjectId or nationalId is required. NationalId must 10 numeric characters"
                   />
                     <input
                     type="submit"
@@ -149,6 +149,7 @@ const UsersList: React.FC = () => {
           >
             <h3>Users found:</h3>
             <table className="users__table">
+              <thead>
               <tr>
                 <th>Subject Id</th>
                 <th>Name</th>
@@ -156,6 +157,7 @@ const UsersList: React.FC = () => {
                 <th>Provider Subject Id</th>
                 <th colSpan={2}></th>
               </tr>
+              </thead>
               <tbody>
                 {users.map((user: UserIdentityDTO) => {
                   return (

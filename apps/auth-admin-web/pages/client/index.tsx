@@ -1,148 +1,28 @@
 import ClientDTO from '../../models/dtos/client-dto';
 import ClientForm from '../../components/ClientForm';
-import React, { useState } from 'react';
-import axios from 'axios';
-import ClientClaimForm from '../../components/ClientClaimForm';
-import ClientRedirectUriForm from '../../components/ClientRedirectUriForm';
-import ClientIdpRestrictionsForm from '../../components/ClientIdpRestrictionsForm';
-import ClientPostLogoutRedirectUriForm from '../../components/ClientPostLogoutRedirectUriForm';
-
+import React from 'react';
 import { useRouter } from 'next/router';
-import StepEnd from './../../components/common/StepEnd';
-import { Step } from '../../models/common/Step';
-import { Client } from './../../models/client.model';
-import ClientAllowedCorsOriginsForm from '../../components/ClientAllowedCorsOriginsForm';
-import ClientAllowedScopes from '../../components/ClientAllowedScopesForm';
-import ClientGrantTypesForm from '../../components/ClientGrantTypesForm';
-import { ClaimDTO } from '../../models/dtos/claim.dto';
-import ClientSecretForm from '../../components/ClientSecretForm';
+import ContentWrapper from 'apps/auth-admin-web/components/common/ContentWrapper';
 
 export default function Index() {
-  const [step, setStep] = useState(1);
-  const [client, setClient] = useState<Client>(new Client());
   const router = useRouter();
-
-  const getClient = async (clientId: string) => {
-    await axios.get(`/api/clients/${clientId}`)
-      .then((response) => {
-        setClient(response.data);
-      })
-      .catch(function (error) {
-        if (error.response) {
-        }
-      });
-  };
-
-  const changesMade = () => {
-    getClient(client.clientId);
-  }
-
-  const handleNext = () => {
-    setStep(step + 1);
-  };
-
-  const handleBack = () => {
-    setStep(step - 1);
-  };
-
   const handleCancel = () => {
     router.back();
   };
 
-  const handleFinished = () => {
-    router.push('/');
-  };
-
   const handleClientSaved = (clientSaved: ClientDTO) => {
     if (clientSaved.clientId) {
-      getClient(clientSaved.clientId);
+      router.push(`/client/${clientSaved.clientId}?step=2`);
     }
   };
 
-  switch (step) {
-    case Step.Client:
-      return (
-        <ClientForm
-          handleCancel={handleCancel}
-          client={client.clientId ? client as ClientDTO : new ClientDTO()}
-          onNextButtonClick={handleClientSaved}
-        />
-      );
-    case Step.ClientRedirectUri: {
-      // Set the callback URI .. ALLT
-      return (
-        <ClientRedirectUriForm
-          clientId={client.clientId}
-          defaultUrl={client.clientUri}
-          uris={client.redirectUris?.map(r => r.redirectUri)}
-          handleNext={handleNext}
-          handleBack={handleBack}
-          handleChanges={changesMade}
-        />
-      );
-    }
-    case Step.ClientIdpRestrictions: {
-      return (
-        <ClientIdpRestrictionsForm
-          clientId={client.clientId}
-          restrictions={client.identityProviderRestrictions?.map(r => r.name)}
-          handleNext={handleNext}
-          handleBack={handleBack}
-          handleChanges={changesMade}
-        />
-      );
-    }
-    case Step.ClientPostLogoutRedirectUri: {
-      return (
-        <ClientPostLogoutRedirectUriForm
-          clientId={client.clientId}
-          defaultUrl={client.clientUri}
-          uris={client.postLogoutRedirectUris?.map(p => p.redirectUri)}
-          handleNext={handleNext}
-          handleBack={handleBack}
-          handleChanges={changesMade}
-        />
-      );
-    }
-    case Step.ClientAllowedCorsOrigin: {
-      return <ClientAllowedCorsOriginsForm
-          clientId={client.clientId}
-          defaultOrigin={client.clientUri}
-          origins={client.allowedCorsOrigins?.map(a => a.origin)}
-          handleNext={handleNext}
-          handleBack={handleBack}
-          handleChanges={changesMade}
-        />
-    }
-    case Step.ClientGrantTypes: {
-      return <ClientGrantTypesForm clientId={client.clientId} grantTypes={client.allowedGrantTypes?.map(a => a.grantType)} handleBack={handleBack} handleChanges={changesMade} handleNext={handleNext} />
-      
-    }
-    case Step.ClientAllowedScopes: {
-      return <ClientAllowedScopes
-      clientId={client.clientId}
-      scopes={client.allowedScopes?.map((s) => s.scopeName)}
-      handleChanges={changesMade}
-      handleNext={handleNext}
-      handleBack={handleBack}
-    />
-    }
-    case Step.ClientClaims: {
-      return <ClientClaimForm clientId={client.clientId} claims={client.claims} handleNext={handleNext} handleBack={handleBack} handleChanges={changesMade}></ClientClaimForm>
-    }
-    case Step.ClientSecret: {
-      return <ClientSecretForm clientId={client.clientId} handleBack={handleBack} handleNext={handleNext} handleChanges={changesMade} />
-    }
-    default: {
-      return (
-        <StepEnd
-          buttonText="Home"
-          handleButtonFinishedClick={handleFinished}
-          title="Success"
-        >
-          Client has been created
-        </StepEnd>
-      );
-    }
-  }
+  return (
+    <ContentWrapper>
+      <ClientForm
+        handleCancel={handleCancel}
+        client={new ClientDTO()}
+        onNextButtonClick={handleClientSaved}
+      />
+    </ContentWrapper>
+  );
 }
