@@ -19,6 +19,7 @@ import {
 import Loading from '../../../shared-components/Loading/Loading'
 import {
   Case,
+  CaseDecision,
   CaseState,
   CaseTransition,
 } from '@island.is/judicial-system/types'
@@ -28,7 +29,7 @@ import * as Constants from '../../../utils/constants'
 import { Link } from 'react-router-dom'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { insertAt, parseTransition } from '../../../utils/formatters'
-import { gql, useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '../../../shared-components/UserProvider/UserProvider'
 import { useHistory } from 'react-router-dom'
 import { TransitionCaseMutation } from '../../../graphql'
@@ -58,9 +59,7 @@ export const DetentionRequests: React.FC = () => {
     errorPolicy: 'all',
   })
 
-  const [transitionCaseMutation, { loading: isDeletingCase }] = useMutation(
-    TransitionCaseMutation,
-  )
+  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
 
   const resCases = data?.cases
 
@@ -108,22 +107,36 @@ export const DetentionRequests: React.FC = () => {
 
   const mapCaseStateToTagVariant = (
     state: CaseState,
+    decision?: CaseDecision,
     isCustodyEndDateInThePast?: boolean,
   ): { color: TagVariant; text: string } => {
+    console.log(decision)
     switch (state) {
       case CaseState.NEW:
       case CaseState.DRAFT:
         return { color: 'red', text: 'Drög' }
       case CaseState.SUBMITTED:
-        return { color: 'purple', text: 'Krafa staðfest' }
+        return { color: 'purple', text: 'Krafa send' }
       case CaseState.ACCEPTED:
         if (isCustodyEndDateInThePast) {
-          return { color: 'darkerBlue', text: 'Gæsluvarðhaldi lokið' }
+          return {
+            color: 'darkerBlue',
+            text:
+              decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                ? 'Farbanni lokið'
+                : 'Gæsluvarðhaldi lokið',
+          }
         } else {
-          return { color: 'darkerMint', text: 'Gæsluvarðhald virkt' }
+          return {
+            color: 'blue',
+            text:
+              decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                ? 'Farbann virkt'
+                : 'Gæsluvarðhald virkt',
+          }
         }
       case CaseState.REJECTED:
-        return { color: 'blue', text: 'Gæsluvarðhaldi hafnað' }
+        return { color: 'rose', text: 'Kröfu hafnað' }
       default:
         return { color: 'white', text: 'Óþekkt' }
     }
@@ -296,7 +309,7 @@ export const DetentionRequests: React.FC = () => {
                 </th>
                 <th className={styles.th}>
                   <Text as="span" fontWeight="regular">
-                    Gæsla rennur út
+                    Gildir til
                   </Text>
                 </th>
                 <th></th>
@@ -349,6 +362,7 @@ export const DetentionRequests: React.FC = () => {
                       variant={
                         mapCaseStateToTagVariant(
                           c.state,
+                          c.decision,
                           c.isCustodyEndDateInThePast,
                         ).color
                       }
@@ -357,6 +371,7 @@ export const DetentionRequests: React.FC = () => {
                       {
                         mapCaseStateToTagVariant(
                           c.state,
+                          c.decision,
                           c.isCustodyEndDateInThePast,
                         ).text
                       }

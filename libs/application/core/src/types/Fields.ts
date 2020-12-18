@@ -131,6 +131,7 @@ export interface TextField extends BaseField {
   placeholder?: FormText
   variant?: TextFieldVariant
   format?: string | FormatInputValueFunction
+  suffix?: string
 }
 
 export interface FileUploadField extends BaseField {

@@ -99,14 +99,26 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
             name={'endPointObject.endPoint'}
             render={() => (
               <Input
-                label="Endapunktur"
+                label={formatText(
+                  m.testEndpointLabel,
+                  application,
+                  formatMessage,
+                )}
                 name={'endPointObject.endPoint'}
                 id={'endPointObject.endPoint'}
                 ref={register}
                 defaultValue=""
-                placeholder="Skráðu inn endapunkt"
+                placeholder={formatText(
+                  m.testEndpointPlaceholder,
+                  application,
+                  formatMessage,
+                )}
                 hasError={errors.endPointObject?.endPoint !== undefined}
-                errorMessage="Þú verður að skrá inn endapunkt"
+                errorMessage={formatText(
+                  m.testEndpointInputErrorMessage,
+                  application,
+                  formatMessage,
+                )}
               />
             )}
           />
