@@ -8,7 +8,7 @@ import {
   User as AuthUser,
 } from '@island.is/auth-nest-tools'
 
-import { NationalRegistryUser, BanMarking } from './models'
+import { NationalRegistryUser } from './models'
 import { NationalRegistryService } from '../nationalRegistry.service'
 import { User } from '../types'
 

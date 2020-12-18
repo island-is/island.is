@@ -1,6 +1,7 @@
 import { InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import Soap from 'soap'
 
+import { User } from '@island.is/auth-nest-tools'
 import { logger } from '@island.is/logging'
 import {
   GetViewISLFjolskyldanDto,
@@ -8,13 +9,6 @@ import {
   ISLFjolskyldan,
   ISLEinstaklingur,
 } from './dto'
-import {
-  FamilyMember,
-  User,
-  FamilyRelation,
-  Gender,
-  MaritalStatus,
-} from '../types'
 
 export class NationalRegistryApi {
   private readonly client: Soap.Client | null
