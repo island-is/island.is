@@ -21,6 +21,12 @@ export class Document {
   @Field(() => Boolean)
   opened: boolean
 
+  @Field(() => String)
+  fileType: string
+
+  @Field(() => String)
+  url: string
+
   static fromDocumentInfo(docInfo: DocumentInfoDTO): Document {
     const doc = new Document()
     doc.date = new Date(docInfo.documentDate)

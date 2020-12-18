@@ -5,6 +5,7 @@ export const registerProviderMutation = gql`
     registerProvider(input: $input) {
       clientId
       clientSecret
+      providerId
     }
   }
 `
