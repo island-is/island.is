@@ -213,11 +213,11 @@ export class ResourcesController {
 
   /** Updates an existing Api Scope */
   @Put('api-resource/:name')
-  @ApiOkResponse({ type: ApiScope })
+  @ApiOkResponse({ type: ApiResource })
   async updateApiResource(
     @Body() apiResource: ApiResourcesDTO,
     @Param('name') name: string,
-  ): Promise<ApiScope> {
+  ): Promise<ApiResource> {
     if (!name) {
       throw new BadRequestException('Name must be provided')
     }
@@ -271,7 +271,7 @@ export class ResourcesController {
   async removeResourceUserClaim(
     @Param('identityResourceName') identityResourceName: string,
     @Param('claimName') claimName: string,
-  ): Promise<IdentityResourceUserClaim | null> {
+  ): Promise<number> {
     return await this.resourcesService.removeResourceUserClaim(
       identityResourceName,
       claimName,
