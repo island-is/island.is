@@ -7,6 +7,7 @@ import cn from 'classnames'
 interface LogoProps {
   id?: string
   width?: number
+  height?: number
   solid?: boolean
   solidColor?: string
   iconOnly?: boolean
@@ -18,6 +19,7 @@ export const Logo = forwardRef<SVGSVGElement, LogoProps>(
     {
       id = '',
       width,
+      height,
       solid = false,
       solidColor = '#fff',
       iconOnly = false,
@@ -29,6 +31,7 @@ export const Logo = forwardRef<SVGSVGElement, LogoProps>(
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width={width ?? 40}
+        height={height ?? 40}
         fill="none"
         viewBox="0 0 40 40"
         className={cn(styles.root)}
