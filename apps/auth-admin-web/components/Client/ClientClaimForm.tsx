@@ -41,6 +41,7 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
           if (props.handleChanges) {
             props.handleChanges();
           }
+          document.getElementById('claimForm').reset();
         }
       })
       .catch(function (error) {
@@ -53,6 +54,11 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
   };
 
   const remove = async (claim: ClientClaim) => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete this claim: "${claim.type} - ${claim.value}" ?`
+      )
+    ){
     await api
       .delete(
         `client-claim/${claim.clientId}/${encodeURIComponent(
@@ -77,6 +83,7 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
           // TODO: Handle and show error
         }
       });
+    }
   };
 
   return (
@@ -89,7 +96,7 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
             Allows settings claims for the client (will be included in the
             access token).
           </div>
-          <form onSubmit={handleSubmit(add)}>
+          <form id="claimForm" onSubmit={handleSubmit(add)}>
             <div className="client-claim__container__form">
               <div className="client-claim__container__fields">
                 <div className="client-claim__container__field">

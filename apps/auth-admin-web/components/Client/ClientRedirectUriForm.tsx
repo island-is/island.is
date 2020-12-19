@@ -23,6 +23,7 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
   >();
   const { isSubmitting } = formState;
   const [response, setResponse] = useState(null);
+  const [defaultUrl, setDefaultUrl] = useState(!props.uris || props.uris.length === 0 ? props.defaultUrl : "");
 
   const add = async (data) => {
     const clientRedirect = new ClientRedirectUriDTO();
@@ -40,6 +41,9 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
           if (props.handleChanges){
             props.handleChanges();
           }
+
+          document.getElementById('redirectForm').reset();
+          setDefaultUrl("");
         }
       })
       .catch(function (error) {
@@ -52,6 +56,11 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
   };
 
   const remove = async (uri: string) => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete this redirect url: "${uri}" ?`
+      )
+    ){
     await api
       .delete(`redirect-uri/${props.clientId}/${encodeURIComponent(uri)}`)
       .then((response) => {
@@ -72,6 +81,7 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
           // TODO: Handle and show error
         }
       });
+    }
   };
 
   return (
@@ -86,7 +96,7 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
           <div className="client-redirect__help">
           Specifies the allowed URIs to return tokens or authorization codes to
           </div>
-            <form onSubmit={handleSubmit(add)}>
+            <form id="redirectForm" onSubmit={handleSubmit(add)}>
               <div className="client-redirect__container__fields">
                 <div className="client-redirect__container__field">
                   <label className="client-redirect__label">Callback URL</label>
@@ -94,7 +104,7 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                     type="text"
                     name="redirectUri"
                     ref={register({ required: true })}
-                    defaultValue={props.defaultUrl ?? ''}
+                    defaultValue={defaultUrl ?? ''}
                     className="client-redirect__input"
                     placeholder="https://localhost:4200/signin-oidc"
                     title="Full path of the redirect URL. These protocols rely upon TLS in production"

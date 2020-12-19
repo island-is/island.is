@@ -86,6 +86,11 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
   };
 
   const remove = async (scope: string) => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete this scope: "${scope}"?`
+      )
+    ){
     await api
       .delete(
         `client-allowed-scope/${props.clientId}/${encodeURIComponent(scope)}`
@@ -108,6 +113,7 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
           // TODO: Handle and show error
         }
       });
+    }
   };
 
   return (

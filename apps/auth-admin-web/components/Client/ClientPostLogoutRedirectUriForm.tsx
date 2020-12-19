@@ -23,6 +23,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
   >();
   const { isSubmitting } = formState;
   const [response, setResponse] = useState(null);
+  const [defaultUrl, setDefaultUrl] = useState(!props.uris || props.uris.length === 0 ? props.defaultUrl : "");
 
   const add = async (data) => {
     const clientRedirect = new ClientPostLogoutRedirectUriDTO();
@@ -40,6 +41,8 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
           if (props.handleChanges){
             props.handleChanges();
           }
+          document.getElementById('postLogoutForm').reset();
+          setDefaultUrl("");
         }
       })
       .catch(function (error) {
@@ -52,6 +55,11 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
   };
 
   const remove = async (uri: string) => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete this post logout url: "${uri}" ?`
+      )
+    ){
     await api
       .delete(`client-post-logout-redirect-uri/${props.clientId}/${encodeURIComponent(uri)}`)
       .then((response) => {
@@ -72,6 +80,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
           // TODO: Handle and show error
         }
       });
+    }
   };
 
   return (
@@ -84,7 +93,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
           <div className="client-post-logout__help">
           Specifies allowed URIs to redirect to after logout. See the <a href="https://openid.net/specs/openid-connect-session-1_0.html" target="_blank">OIDC Connect Session Management spec</a> for more details.
           </div>
-            <form onSubmit={handleSubmit(add)}>
+            <form id="postLogoutForm" onSubmit={handleSubmit(add)}>
               <div className="client-post-logout__container__fields">
                 <div className="client-post-logout__container__field">
                   <label className="client-post-logout__label">Logout URL</label>
@@ -92,7 +101,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                     type="text"
                     name="redirectUri"
                     ref={register({ required: true })}
-                    defaultValue={props.defaultUrl}
+                    defaultValue={defaultUrl}
                     className="client-post-logout__input"
                     placeholder="https://localhost:4200"
                     title="Users can be returned to this URL after logging out. These protocols rely upon TLS in production"

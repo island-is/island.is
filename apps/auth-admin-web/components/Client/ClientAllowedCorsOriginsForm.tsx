@@ -23,6 +23,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
   >();
   const { isSubmitting } = formState;
   const [response, setResponse] = useState<APIResponse>(new APIResponse());
+  const [defaultOrigin, setDefaultOrigin] = useState(!props.origins || props.origins.length === 0 ? props.defaultOrigin : "");
 
   const add = async (data: any) => {
     const clientRedirect = new ClientAllowedCorsOriginDTO();
@@ -40,6 +41,8 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
           if (props.handleChanges) {
             props.handleChanges();
           }
+          setDefaultOrigin("");
+          document.getElementById('corsForm').reset();
         }
       })
       .catch(function (error) {
@@ -52,7 +55,12 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
   };
 
   const remove = async (origin: string) => {
-    await api
+    if (
+      window.confirm(
+        `Are you sure you want to delete this cors origin: "${origin}"?`
+      )
+    ){
+      await api
       .delete(`cors/${props.clientId}/${encodeURIComponent(origin)}`)
       .then((response) => {
         const res = new APIResponse();
@@ -72,6 +80,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
           // TODO: Handle and show error
         }
       });
+    }
   };
 
   return (
@@ -84,7 +93,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
             <div className="client-allowed-cors-origin__help">
               <p>Allowed cors origins</p>
             </div>
-            <form onSubmit={handleSubmit(add)}>
+            <form id="corsForm" onSubmit={handleSubmit(add)}>
               <div className="client-allowed-cors-origin__container__fields">
                 <div className="client-allowed-cors-origin__container__field">
                   <label className="client-allowed-cors-origin__label">
@@ -94,7 +103,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
                     type="text"
                     name="origin"
                     ref={register({ required: true })}
-                    defaultValue={props.defaultOrigin}
+                    defaultValue={defaultOrigin}
                     className="client-allowed-cors-origin__input"
                     placeholder="https://localhost:4200"
                     title="Users can be returned to this URL after logging out. These protocols rely upon TLS in production"
