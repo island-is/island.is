@@ -112,120 +112,141 @@ const ResourceEditForm: React.FC<Props> = ({
   }
 
   return (
-    <form onSubmit={handleSubmit(save)}>
-      <div className="api-scope-form__container__fields">
-        <div className="api-scope-form__container__field">
-          <label htmlFor="name" className="api-scope-form__label">
-            Name
-          </label>
-          <input
-            ref={register({ required: true })}
-            id="name"
-            name="resource.name"
-            type="text"
-            className="api-scope-form__input"
-            defaultValue={resource.name}
-            disabled={true}
-          />
-          <HelpBox helpText={texts.name} />
-          <ErrorMessage
-            as="span"
-            errors={errors}
-            name="resource.name"
-            message="Name is required"
-          />
-        </div>
-        <div className="api-scope-form__container__field">
-          <label htmlFor="displayName" className="api-scope-form__label">
-            Display Name
-          </label>
-          <input
-            ref={register({ required: true })}
-            id="displayName"
-            name="resource.displayName"
-            type="text"
-            className="api-scope-form__input"
-            defaultValue={resource.displayName}
-          />
-          <HelpBox helpText={texts.displayName} />
-          <ErrorMessage
-            as="span"
-            errors={errors}
-            name="resource.displayName"
-            message="Display Name is required"
-          />
-        </div>
-        <div className="api-scope-form__container__field">
-          <label htmlFor="description" className="api-scope-form__label">
-            Description
-          </label>
-          <input
-            ref={register({ required: false })}
-            id="description"
-            name="resource.description"
-            type="text"
-            defaultValue={resource.description}
-            className="api-scope-form__input"
-          />
-          <HelpBox helpText={texts.description} />
-        </div>
+    <div className="api-scope-form">
+      <div className="api-scope-form__wrapper">
+        <div className="api-scope-form__container">
+          <h1>Needs title input</h1>
+          <div className="api-scope-form__container__form">
+            <div className="api-scope__help">
+              Needs help input
+            </div>
+            <form onSubmit={handleSubmit(save)}>
+              <div className="api-scope-form__container__fields">
+                <div className="api-scope-form__container__field">
+                  <label htmlFor="name" className="api-scope-form__label">
+                    Name
+                  </label>
+                  <input
+                    ref={register({ required: true })}
+                    id="name"
+                    name="resource.name"
+                    type="text"
+                    className="api-scope-form__input"
+                    defaultValue={resource.name}
+                    disabled={true}
+                  />
+                  <HelpBox helpText={texts.name} />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="resource.name"
+                    message="Name is required"
+                  />
+                </div>
+                <div className="api-scope-form__container__field">
+                  <label
+                    htmlFor="displayName"
+                    className="api-scope-form__label"
+                  >
+                    Display Name
+                  </label>
+                  <input
+                    ref={register({ required: true })}
+                    id="displayName"
+                    name="resource.displayName"
+                    type="text"
+                    className="api-scope-form__input"
+                    defaultValue={resource.displayName}
+                  />
+                  <HelpBox helpText={texts.displayName} />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="resource.displayName"
+                    message="Display Name is required"
+                  />
+                </div>
+                <div className="api-scope-form__container__field">
+                  <label
+                    htmlFor="description"
+                    className="api-scope-form__label"
+                  >
+                    Description
+                  </label>
+                  <input
+                    ref={register({ required: false })}
+                    id="description"
+                    name="resource.description"
+                    type="text"
+                    defaultValue={resource.description}
+                    className="api-scope-form__input"
+                  />
+                  <HelpBox helpText={texts.description} />
+                </div>
 
-        <div className="api-scope-form__container__checkbox__field">
-          <label htmlFor="enabled" className="api-scope-form__label">
-            Enabled
-          </label>
-          <input
-            ref={register}
-            id="enabled"
-            name="resource.enabled"
-            type="checkbox"
-            className="api-scope-form__checkbox"
-            // defaultChecked={resource.enabled}
-            checked={resource.enabled}
-            onChange={(e) => changeEnabled()}
-          />
-          <HelpBox helpText={texts.enabled} />
-        </div>
+                <div className="api-scope-form__container__checkbox__field">
+                  <label htmlFor="enabled" className="api-scope-form__label">
+                    Enabled
+                  </label>
+                  <input
+                    ref={register}
+                    id="enabled"
+                    name="resource.enabled"
+                    type="checkbox"
+                    className="api-scope-form__checkbox"
+                    // defaultChecked={resource.enabled}
+                    checked={resource.enabled}
+                    onChange={(e) => changeEnabled()}
+                  />
+                  <HelpBox helpText={texts.enabled} />
+                </div>
 
-        {extraBooleanValuesHtml}
+                {extraBooleanValuesHtml}
 
-        <div className="api-scope-form__container__checkbox__field">
-          <label
-            htmlFor="showInDiscoveryDocument"
-            className="api-scope-form__label"
-          >
-            Show In Discovery Document
-          </label>
-          <input
-            ref={register}
-            id="showInDiscoveryDocument"
-            name="resource.showInDiscoveryDocument"
-            type="checkbox"
-            className="api-scope-form__checkbox"
-            // defaultChecked={resource.showInDiscoveryDocument}
-            checked={resource.showInDiscoveryDocument}
-            onChange={(e) => changeDiscoveryDocument()}
-          />
-          <HelpBox helpText={texts.showInDiscoveryDocument} />
-        </div>
+                <div className="api-scope-form__container__checkbox__field">
+                  <label
+                    htmlFor="showInDiscoveryDocument"
+                    className="api-scope-form__label"
+                  >
+                    Show In Discovery Document
+                  </label>
+                  <input
+                    ref={register}
+                    id="showInDiscoveryDocument"
+                    name="resource.showInDiscoveryDocument"
+                    type="checkbox"
+                    className="api-scope-form__checkbox"
+                    // defaultChecked={resource.showInDiscoveryDocument}
+                    checked={resource.showInDiscoveryDocument}
+                    onChange={(e) => changeDiscoveryDocument()}
+                  />
+                  <HelpBox helpText={texts.showInDiscoveryDocument} />
+                </div>
 
-        <div className="api-scope-form__buttons__container">
-          <div className="api-scope-form__button__container">
-            <button className="api-scope-form__button__cancel" onClick={back}>
-              Cancel
-            </button>
-          </div>
-          <div className="api-scope-form__button__container">
-            <input
-              type="submit"
-              className="api-scope-form__button__save"
-              disabled={isSubmitting}
-              value="Save"
-            />
+                <div className="api-scope-form__buttons__container">
+                  <div className="api-scope-form__button__container">
+                    <button
+                      className="api-scope-form__button__cancel"
+                      onClick={back}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  <div className="api-scope-form__button__container">
+                    <input
+                      type="submit"
+                      className="api-scope-form__button__save"
+                      disabled={isSubmitting}
+                      value="Save"
+                    />
+                  </div>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>
-    </form>
+    </div>
   );
 };
 

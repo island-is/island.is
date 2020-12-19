@@ -10,7 +10,7 @@ body {
 }
 
 .document__wrapper {
-  min-height: calc(100vh - 112px);
+  min-height: calc(100vh - 80px);
   margin: 0 40px 25px 40px;
 }
 
@@ -75,7 +75,7 @@ button {
   }
 
   &[class$='cancel'] {
-    background: rgb(228, 226, 226);
+    background: $color-cancel;
     color: $color-text-primary;
   }
 

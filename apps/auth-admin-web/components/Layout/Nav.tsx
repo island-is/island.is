@@ -8,7 +8,7 @@ const Nav = () => {
         <ul>
             <li className="nav__container"><Link href='/'><a className={router?.pathname === '/' ? 'active' : ''}>Home</a></Link></li>
             <li className="nav__container"><Link href='/clients'><a className={router?.pathname === '/clients' || router?.pathname === '/client' ? 'active' : ''}>Clients</a></Link></li>
-            <li className="nav__container"><Link href='/resources'><a className={router?.pathname === '/resources' ? 'active' : ''}>Resources</a></Link></li>
+            <li className="nav__container"><Link href='/resources'><a className={router?.pathname.includes('resource') ? 'active' : ''}>Resources</a></Link></li>
             <li className="nav__container"><Link href='/users'><a className={router?.pathname === '/users' ? 'active' : ''}>Users</a></Link></li>
         </ul>
     </nav>
