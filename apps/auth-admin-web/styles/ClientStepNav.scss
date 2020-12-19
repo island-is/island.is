@@ -6,10 +6,16 @@
       padding: 0;
       display: inline-block;
 
+      &:not(:last-child)::after {
+        padding-left: 20px;
+        font-family: FontAwesome;
+        content: '\f178';
+      }
+
       a {
         font-size: 0.8rem;
         cursor: pointer;
-
+        padding: 5px;
         &:hover {
           color: $color-link;
         }
