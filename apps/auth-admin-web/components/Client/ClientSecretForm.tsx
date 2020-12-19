@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import StatusBar from '../Layout/StatusBar';
@@ -6,7 +6,7 @@ import HelpBox from '../Common/HelpBox';
 import APIResponse from '../../entities/common/APIResponse';
 import { ClientSecretDTO } from '../../entities/dtos/client-secret.dto';
 import { ClientSecret } from '../../entities/models/client-secret.model';
-import api from '../../services/api'
+import api from '../../services/api';
 import NoActiveConnections from '../Common/NoActiveConnections';
 
 interface Props {
@@ -23,6 +23,8 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
   >();
   const { isSubmitting } = formState;
   const [response, setResponse] = useState<APIResponse>(new APIResponse());
+  const defaultSecretLength = 25;
+  const [defaultSecret, setDefaultSecret] = useState<string>(null)
 
   const makeDefaultSecret = (length: number) => {
     let result = '';
@@ -34,6 +36,10 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
     }
     return result;
   };
+
+  useEffect(() => {
+    setDefaultSecret(makeDefaultSecret(defaultSecretLength))
+  }, [])
 
   const copyToClipboard = (val: string) => {
     const selBox = document.createElement('textarea');
@@ -68,7 +74,12 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
             props.handleChanges();
             copyToClipboard(data.value);
             // TODO: We should use something else that alert
-            alert(`Your secret has been copied to your clipboard.\r\nDon't lose it, you won't be able to see it again:\r\n${data.value}`);
+            alert(
+              `Your secret has been copied to your clipboard.\r\nDon't lose it, you won't be able to see it again:\r\n${data.value}`
+            );
+            
+            document.getElementById('secretForm').reset();
+            setDefaultSecret(makeDefaultSecret(defaultSecretLength))
           }
         }
       })
@@ -82,32 +93,38 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
   };
 
   const remove = async (secret: ClientSecret) => {
-    const secretDTO = new ClientSecretDTO();
-    secretDTO.clientId = secret.clientId;
-    secretDTO.value = secret.value;
-    secretDTO.type = secret.type;
-    secretDTO.description = secret.description;
+    if (
+      window.confirm(
+        `Are you sure you want to delete this secret: "${secret.type} - ${secret.description}" ?`
+      )
+    ) {
+      const secretDTO = new ClientSecretDTO();
+      secretDTO.clientId = secret.clientId;
+      secretDTO.value = secret.value;
+      secretDTO.type = secret.type;
+      secretDTO.description = secret.description;
 
-    await api
-      .delete(`client-secret`, { data: secretDTO })
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-        if (response.status === 200) {
-          if (props.handleChanges) {
-            props.handleChanges();
+      await api
+        .delete(`client-secret`, { data: secretDTO })
+        .then((response) => {
+          const res = new APIResponse();
+          res.statusCode = response.request.status;
+          res.message = response.request.statusText;
+          setResponse(res);
+          if (response.status === 200) {
+            if (props.handleChanges) {
+              props.handleChanges();
+            }
           }
-        }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
+        })
+        .catch(function (error) {
+          if (error.response) {
+            setResponse(error.response.data);
+          } else {
+            // TODO: Handle and show error
+          }
+        });
+    }
   };
 
   return (
@@ -120,7 +137,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
             <div className="client-secret__help">
               List of client secrets - credentials to access the token endpoint.
             </div>
-            <form onSubmit={handleSubmit(add)}>
+            <form id="secretForm" onSubmit={handleSubmit(add)}>
               <div className="client-secret__container__fields">
                 <div className="client-secret__container__field">
                   <label className="client-secret__label">Client Secret</label>
@@ -129,7 +146,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                     type="text"
                     name="value"
                     ref={register({ required: true })}
-                    defaultValue={makeDefaultSecret(25)}
+                    defaultValue={defaultSecret}
                     className="client-secret__input"
                     placeholder="Some secret text"
                     title="The secret value"
@@ -169,8 +186,9 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                   />
                 </div>
                 <div className="client-secret__container__field">
-                  <label className="client-secret__label">Description</label>
+                  <label className="client-secret__label" htmlFor="description">Description</label>
                   <input
+                    id="description"
                     type="text"
                     name="description"
                     ref={register({ required: true })}
@@ -189,8 +207,11 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                 </div>
               </div>
 
-              <NoActiveConnections title="No secrets are defined" show={!props.secrets || props.secrets.length === 0} helpText="Add a secret and push the Add button. A random string has been generated for you that you can use if you decide to.">
-              </NoActiveConnections>
+              <NoActiveConnections
+                title="No secrets are defined"
+                show={!props.secrets || props.secrets.length === 0}
+                helpText="Add a secret and push the Add button. A random string has been generated for you that you can use if you decide to."
+              ></NoActiveConnections>
 
               <div
                 className={`client-secret__container__list ${
@@ -206,7 +227,9 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                     >
                       <div className="list-value">{secret.type}</div>
                       <div className="list-name">{secret.description}</div>
-                      <div className="list-value">{new Date(secret.created).toDateString()}</div>
+                      <div className="list-value">
+                        {new Date(secret.created).toDateString()}
+                      </div>
                       <div className="list-remove">
                         <button
                           type="button"
