@@ -9,8 +9,8 @@ interface Props {
 const ResourceStepNav: React.FC<Props> = ({ handleStepChange, activeStep, children }) => {
     return <div><nav className="client-step-nav">
         <ul>
-            <li><a onClick={() => handleStepChange(ResourceStep.ApiResourceScopes)} className={activeStep === ResourceStep.ApiResourceScopes ? 'active' : ''}>Api resources</a></li>
             <li><a onClick={() => handleStepChange(ResourceStep.ApiScopes)}  className={activeStep === ResourceStep.ApiScopes ? 'active' : ''}>Api scopes</a></li>
+            <li><a onClick={() => handleStepChange(ResourceStep.ApiResourceScopes)} className={activeStep === ResourceStep.ApiResourceScopes ? 'active' : ''}>Api resources</a></li>
             <li><a onClick={() => handleStepChange(ResourceStep.IdentityResource)} className={activeStep === ResourceStep.IdentityResource ? 'active' : ''}>Identity Resource</a></li>
         </ul>
     </nav>

@@ -1,4 +1,5 @@
-import Paginator from '../../Common/Paginator';
+import React from 'react';
+import Paginator from './../../Common/Paginator';
 import Link from 'next/link';
 
 interface Props {
@@ -9,14 +10,25 @@ interface Props {
   lastPage: number;
   handlePageChange: (page: number, count: number) => void;
   edit: (object: any) => void;
-  remove: (name: string) => void
+  remove: (name: string) => void;
 }
 
-const ResourceListDisplay: React.FC<Props> = ({ list, header, linkHeader, createUri, lastPage, handlePageChange, edit, remove }) => {
-    return (
-        <div className="identity-resources">
-          {/* <StatusBar status={response}></StatusBar> */}
-          <h2>{header}</h2>
+const ResourceListDisplay: React.FC<Props> = ({
+  list,
+  header,
+  linkHeader,
+  createUri,
+  lastPage,
+  handlePageChange,
+  edit,
+  remove,
+}) => {
+  return (
+    <div className="identity-resources">
+      {/* <StatusBar status={response}></StatusBar> */}
+      <div className="identity-resources__wrapper">
+        <div className="identity-resources__container">
+          <h1>{header}</h1>
           <div className="identity-resources__container__options">
             <div className="identity-resources__container__button">
               {/* Change href link */}
@@ -71,7 +83,9 @@ const ResourceListDisplay: React.FC<Props> = ({ list, header, linkHeader, create
           </div>
           <Paginator lastPage={lastPage} handlePageChange={handlePageChange} />
         </div>
-      );
+      </div>
+    </div>
+  );
 };
 
 export default ResourceListDisplay;
