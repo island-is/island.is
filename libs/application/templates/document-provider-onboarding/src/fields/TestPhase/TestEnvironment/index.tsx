@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { useMutation } from '@apollo/client'
+import { gql, useMutation } from '@apollo/client'
 import {
   FieldBaseProps,
   formatText,
@@ -13,7 +13,16 @@ import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { m } from '../../../forms/messages'
-import { registerProviderMutation } from '../../../graphql/mutations/registerProviderMutation'
+
+export const createTestProviderMutation = gql`
+  mutation CreateTestProvider($input: CreateProviderInput!) {
+    createTestProvider(input: $input) {
+      clientId
+      clientSecret
+      providerId
+    }
+  }
+`
 
 const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
   const { formatMessage } = useLocale()
@@ -31,7 +40,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
     (formValue.testProviderId as string) || '',
   )
   const [environmentError, setEnvironmentError] = useState<string | null>(null)
-  const [registerProvider] = useMutation(registerProviderMutation)
+  const [createTestProvider] = useMutation(createTestProviderMutation)
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
   const nationalId = getValueViaPath(
@@ -48,7 +57,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
 
   const onRegister = async () => {
     setEnvironmentError(null)
-    const credentials = await registerProvider({
+    const credentials = await createTestProvider({
       variables: {
         input: { nationalId: nationalId, clientName: clientName },
       },
@@ -61,22 +70,22 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
     setKeys([
       {
         name: 'Client ID',
-        value: credentials.data.registerProvider.clientId,
+        value: credentials.data.createTestProvider.clientId,
       },
       {
         name: 'Secret key',
-        value: credentials.data.registerProvider.clientSecret,
+        value: credentials.data.createTestProvider.clientSecret,
       },
     ])
 
-    setCurrentAnswer(credentials.data.registerProvider.providerId)
+    setCurrentAnswer(credentials.data.createTestProvider.providerId)
 
     await updateApplication({
       variables: {
         input: {
           id: application.id,
           answers: {
-            testProviderId: credentials.data.registerProvider.providerId,
+            testProviderId: credentials.data.createTestProvider.providerId,
             ...application.answers,
           },
         },

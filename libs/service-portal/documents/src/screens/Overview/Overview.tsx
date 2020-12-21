@@ -27,27 +27,18 @@ import isEqual from 'lodash/isEqual'
 import { ValueType } from 'react-select'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { defineMessage } from 'react-intl'
+import * as Sentry from '@sentry/react'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 6
 const defaultStartDate = new Date('2000-01-01')
 const defaultEndDate = startOfTomorrow()
 
-// type FuseItem = {
-//   item: Document
-//   refIndex: number
-// }
-
 const defaultFilterValues = {
   dateFrom: defaultStartDate,
   dateTo: defaultEndDate,
   activeCategory: defaultCategory,
   searchQuery: '',
-}
-
-const defaultSearchOptions = {
-  threshold: 0.3,
-  keys: ['senderName', 'senderNatReg', 'sender', 'subject'],
 }
 
 type FilterValues = {
@@ -75,14 +66,6 @@ const getFilteredDocuments = (
     )
   }
 
-  // if (searchQuery) {
-  //   const fuse = new Fuse(filteredDocuments, defaultSearchOptions)
-  //   return fuse.search(searchQuery).map((elem) => {
-  //     // const fuseItem = (elem as unknown) as FuseItem
-  //     // return fuseItem.item
-  //     return elem.item
-  //   })
-  // }
   if (searchQuery) {
     return filteredDocuments.filter((x) =>
       x.subject.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -96,6 +79,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
 }) => {
   useNamespaces('sp.documents')
+  Sentry.configureScope((scope) =>
+    scope.setTransactionName('Electronic-Documents'),
+  )
+
   const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
   const { scrollToRef } = useScrollToRefOnUpdate([page])

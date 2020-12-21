@@ -58,6 +58,13 @@ For development purposes you can add it to the individual's service portal navig
         }),
         path: ServicePortalPath.DocumentProviderTechnicalInfo,
       },
+      {
+        name: defineMessage({
+          id: 'service.portal:document-provider-statistics',
+          defaultMessage: 'Tölfræði',
+        }),
+        path: ServicePortalPath.DocumentProviderStatistics,
+      },
     ],
   },
 ```
@@ -77,6 +84,7 @@ and add the paths underneath **DocumentProviderRoot** inside `libs/service-porta
 
 ```ts
   DocumentProviderDocumentProviders = '/skjalaveita/skjalaveitendur',
+  DocumentProviderDocumentProvidersSingle = '/skjalaveita/skjalaveitendur/:id',
   DocumentProviderMyCategories = '/skjalaveita/minir-flokkar',
   DocumentProviderSettingsRoot = '/skjalaveita/skjalaveita-stillingar',
   DocumentProviderSettingsEditInstituion = '/skjalaveita/skjalaveita-stillingar/breyta-stofnun',
@@ -85,4 +93,5 @@ and add the paths underneath **DocumentProviderRoot** inside `libs/service-porta
   DocumentProviderSettingsEditUserHelpContact = '/skjalaveita/skjalaveita-stillingar/breyta-notendaadstod',
   DocumentProviderSettingsEditEndpoints = '/skjalaveita/skjalaveita-stillingar/breyta-endapunkt',
   DocumentProviderTechnicalInfo = '/skjalaveita/taeknilegar-upplysingar',
+  DocumentProviderStatistics = '/skjalaveita/tolfraedi',
 ```

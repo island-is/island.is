@@ -1,67 +1,84 @@
-import React, { useState } from 'react'
-import getConfig from 'next/config'
-
+import React, { useEffect, useState } from 'react'
 import { Screen } from '@island.is/web/types'
-import { CustomNextError } from '@island.is/web/units/errors'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import {
+  Text,
+  Stack,
+  Breadcrumbs,
+  Box,
+  Link,
+  Button,
+  GridContainer,
+  LoadingIcon,
+  Filter,
+  FilterInput,
+  FilterMultiChoice,
+} from '@island.is/island-ui/core'
+import {
+  ServiceList,
+  SubpageDetailsContent,
+  SubpageMainContent,
+} from '@island.is/web/components'
 
-import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import getConfig from 'next/config'
+import { CustomNextError } from '@island.is/web/units/errors'
+import {
+  ContentLanguage,
+  GetNamespaceQuery,
+  QueryGetNamespaceArgs,
+  GetSubpageHeaderQuery,
+  QueryGetSubpageHeaderArgs,
+} from '@island.is/web/graphql/schema'
 import {
   Query,
   QueryGetApiCatalogueArgs,
-  QueryGetNamespaceArgs,
   GetApiCatalogueInput,
 } from '@island.is/api/schema'
-
+import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
-  GET_NAMESPACE_QUERY,
   GET_CATALOGUE_QUERY,
-} from '@island.is/web/screens/queries'
-import { useNamespace } from '../../hooks'
-
-import { withMainLayout } from '@island.is/web/layouts/main'
+  GET_NAMESPACE_QUERY,
+  GET_SUBPAGE_HEADER_QUERY,
+} from '../queries'
+import { useNamespace } from '@island.is/web/hooks'
+import RichText from '@island.is/web/components/RichText/RichText'
+import { useI18n } from '@island.is/web/i18n'
 import { useQuery } from '@apollo/client'
-import { SidebarLayout } from '../Layouts/SidebarLayout'
-
 import {
-  ServiceList,
-  SubpageMainContent,
-  SubpageDetailsContent,
-} from '@island.is/web/components'
+  AccessCategory,
+  DataCategory,
+  PricingCategory,
+  TypeCategory,
+} from '@island.is/api-catalogue/consts'
 
-import { SubpageLayout } from '../Layouts/Layouts'
-import {
-  Box,
-  Stack,
-  Text,
-  Button,
-  Link,
-  LoadingIcon,
-  GridContainer,
-} from '@island.is/island-ui/core'
 const { publicRuntimeConfig } = getConfig()
+const LIMIT = 20
 
 /* TEMPORARY LAYOUT CREATED TO SCAFFOLD API CATALOGUE INTO THE WEB */
 
 interface ApiCatalogueProps {
-  mainContent: GetNamespaceQuery['getNamespace']
+  subpageHeader: GetSubpageHeaderQuery['getSubpageHeader']
   staticContent: GetNamespaceQuery['getNamespace']
   filterContent: GetNamespaceQuery['getNamespace']
 }
 
-const LIMIT = 20
-
 const ApiCatalogue: Screen<ApiCatalogueProps> = ({
-  mainContent,
+  subpageHeader,
   staticContent,
   filterContent,
 }) => {
+  /* DISABLE FROM WEB WHILE WIP */
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
 
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
   }
-
+  /* --- */
+  const { activeLocale } = useI18n()
   const sn = useNamespace(staticContent)
+  const fn = useNamespace(filterContent)
 
   const onLoadMore = () => {
     if (data?.getApiCatalogue.pageInfo?.nextCursor === null) {
@@ -81,7 +98,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
       },
     })
   }
-
   const [parameters, setParameters] = useState<GetApiCatalogueInput>({
     cursor: null,
     limit: LIMIT,
@@ -101,11 +117,135 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
     },
   })
 
+  useEffect(() => {
+    refetch()
+  }, [parameters])
+
+  const filterCategories = [
+    {
+      id: 'pricing',
+      label: fn('pricing'),
+      selected: parameters.pricing,
+      filters: [
+        {
+          value: PricingCategory.FREE,
+          label: fn('pricingFree'),
+        },
+        {
+          value: PricingCategory.PAID,
+          label: fn('pricingPaid'),
+        },
+      ],
+    },
+    {
+      id: 'data',
+      label: fn('data'),
+      selected: parameters.data,
+      filters: [
+        {
+          value: DataCategory.FINANCIAL,
+          label: fn('dataFinancial'),
+        },
+        {
+          value: DataCategory.HEALTH,
+          label: fn('dataHealth'),
+        },
+        {
+          value: DataCategory.OFFICIAL,
+          label: fn('dataOfficial'),
+        },
+        {
+          value: DataCategory.OPEN,
+          label: fn('dataOpen'),
+        },
+        {
+          value: DataCategory.PERSONAL,
+          label: fn('dataPersonal'),
+        },
+        {
+          value: DataCategory.PUBLIC,
+          label: fn('dataPublic'),
+        },
+      ],
+    },
+    {
+      id: 'type',
+      label: fn('type'),
+      selected: parameters.type,
+      filters: [
+        {
+          value: TypeCategory.REST,
+          label: fn('typeRest'),
+        },
+        {
+          value: TypeCategory.SOAP,
+          label: fn('typeSoap'),
+        },
+      ],
+    },
+    {
+      id: 'access',
+      label: fn('access'),
+      selected: parameters.access,
+      filters: [
+        {
+          value: AccessCategory.APIGW,
+          label: fn('accessApigw'),
+        },
+        {
+          value: AccessCategory.XROAD,
+          label: fn('accessXroad'),
+        },
+      ],
+    },
+  ]
+
   return (
     <SubpageLayout
       main={
-        <SidebarLayout sidebarContent={<div>Navigation menu here</div>}>
-          <SubpageMainContent main={<div>Main content here</div>} />
+        <SidebarLayout sidebarContent={<>Navigation goes here</>}>
+          <SubpageMainContent
+            main={
+              <Box>
+                <Box marginBottom={2}>
+                  <Breadcrumbs>
+                    <Link href="/">Ísland.is</Link>
+                    <a href="/throun">Þróun</a>
+                    <a href="/throun/vefthjonustur">Vefþjónustur</a>
+                    <span>{subpageHeader.title}</span>
+                  </Breadcrumbs>
+                </Box>
+                <Stack space={1}>
+                  <Text variant="h1">{subpageHeader.title}</Text>
+                  <Text variant="intro">{subpageHeader.summary}</Text>
+                  <Stack space={2}>
+                    {subpageHeader.body ? (
+                      <RichText
+                        body={subpageHeader.body as SliceType[]}
+                        config={{ defaultPadding: [2, 2, 4] }}
+                        locale={activeLocale}
+                      />
+                    ) : null}
+                  </Stack>
+                </Stack>
+              </Box>
+            }
+            image={
+              <Box
+                width="full"
+                height="full"
+                display="flex"
+                alignItems="center"
+              >
+                <img
+                  src={subpageHeader.featuredImage.url}
+                  alt={subpageHeader.featuredImage.title}
+                  width={subpageHeader.featuredImage.width}
+                  height={subpageHeader.featuredImage.height}
+                />
+              </Box>
+            }
+          />
         </SidebarLayout>
       }
       details={
@@ -116,7 +256,53 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
             </Text>
           }
           content={
-            <SidebarLayout sidebarContent={<>List filter here</>}>
+            <SidebarLayout
+              sidebarContent={
+                <Box paddingRight={[0, 0, 3]}>
+                  <Filter
+                    labelClear={fn('clear')}
+                    labelOpen={fn('openFilterButton')}
+                    labelResult={fn('mobileResult')}
+                    labelTitle={fn('mobileTitle')}
+                    resultCount={data?.getApiCatalogue?.services?.length ?? 0}
+                    onFilterClear={() =>
+                      setParameters({
+                        query: '',
+                        pricing: [],
+                        data: [],
+                        type: [],
+                        access: [],
+                      })
+                    }
+                  >
+                    <FilterInput
+                      placeholder={fn('search')}
+                      name="filterInput"
+                      value={parameters.query}
+                      onChange={(value) =>
+                        setParameters({ ...parameters, query: value })
+                      }
+                    ></FilterInput>
+                    <FilterMultiChoice
+                      labelClear={fn('clearCategory')}
+                      onChange={({ categoryId, selected }) => {
+                        setParameters({
+                          ...parameters,
+                          [categoryId]: selected,
+                        })
+                      }}
+                      onClear={(categoryId) =>
+                        setParameters({
+                          ...parameters,
+                          [categoryId]: [],
+                        })
+                      }
+                      categories={filterCategories}
+                    ></FilterMultiChoice>
+                  </Filter>
+                </Box>
+              }
+            >
               {(error || data?.getApiCatalogue?.services.length < 1) && (
                 <GridContainer>
                   {error ? (
@@ -156,18 +342,22 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
 }
 
 ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const [mainContent, staticContent, filterContent] = await Promise.all([
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'VefthjonusturHome',
-            lang: locale,
-          },
+  const [
+    {
+      data: { getSubpageHeader: subpageHeader },
+    },
+    staticContent,
+    filterContent,
+  ] = await Promise.all([
+    apolloClient.query<GetSubpageHeaderQuery, QueryGetSubpageHeaderArgs>({
+      query: GET_SUBPAGE_HEADER_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+          id: 'VefthjonusturHome',
         },
-      })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      },
+    }),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -193,7 +383,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
   ])
 
   return {
-    mainContent,
+    subpageHeader,
     staticContent,
     filterContent,
   }

@@ -65,6 +65,8 @@ import { TellUsAStory } from './models/tellUsAStory.model'
 import { SearchIndexes } from '@island.is/content-search-indexer/types'
 import { GroupedMenu } from './models/groupedMenu.model'
 import { GetSingleMenuInput } from './dto/getSingleMenu.input'
+import { SubpageHeader } from './models/subpageHeader.model'
+import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 
 const { cacheTime } = environment
 
@@ -339,6 +341,14 @@ export class CmsResolver {
       SearchIndexes[input.lang],
       input,
     )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => SubpageHeader, { nullable: true })
+  getSubpageHeader(
+    @Args('input') input: GetSubpageHeaderInput,
+  ): Promise<SubpageHeader | null> {
+    return this.cmsContentfulService.getSubpageHeader(input)
   }
 }
 
