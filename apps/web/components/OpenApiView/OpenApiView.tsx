@@ -31,6 +31,7 @@ type SelectOption = {
 }
 
 export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
+  
   const n = useNamespace(strings)
 
   const options: Array<SelectOption> = service
