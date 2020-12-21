@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { useMutation } from '@apollo/client'
+import { gql, useMutation } from '@apollo/client'
 import {
   FieldBaseProps,
   formatText,
@@ -11,8 +11,17 @@ import { useLocale } from '@island.is/localization'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
-import { registerProviderMutation } from '../../../graphql/mutations/registerProviderMutation'
 import { m } from '../../../forms/messages'
+
+export const createProviderMutation = gql`
+  mutation CreateProvider($input: CreateProviderInput!) {
+    createProvider(input: $input) {
+      clientId
+      clientSecret
+      providerId
+    }
+  }
+`
 
 const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
   const { formatMessage } = useLocale()
@@ -33,7 +42,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
     // @ts-ignore
     (formValue.prodProviderId as string) || '',
   )
-  const [registerProvider] = useMutation(registerProviderMutation)
+  const [createProvider] = useMutation(createProviderMutation)
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
   const nationalId = getValueViaPath(
@@ -48,9 +57,9 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
     undefined,
   ) as string
 
-  const onRegister = async () => {
+  const onCreateProvider = async () => {
     setProdEnvironmentErrorError(null)
-    const credentials = await registerProvider({
+    const credentials = await createProvider({
       variables: {
         input: { nationalId: nationalId, clientName: clientName },
       },
@@ -63,22 +72,22 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
     setKeys([
       {
         name: 'Client ID',
-        value: credentials.data.registerProvider.clientId,
+        value: credentials.data.createProvider.clientId,
       },
       {
         name: 'Secret key',
-        value: credentials.data.registerProvider.clientSecret,
+        value: credentials.data.createProvider.clientSecret,
       },
     ])
 
-    setCurrentAnswer(credentials.data.registerProvider.providerId)
+    setCurrentAnswer(credentials.data.createProvider.providerId)
 
     await updateApplication({
       variables: {
         input: {
           id: application.id,
           answers: {
-            prodProviderId: credentials.data.registerProvider.providerId,
+            prodProviderId: credentials.data.createProvider.providerId,
             ...application.answers,
           },
         },
@@ -111,7 +120,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
           size="small"
           disabled={currentAnswer !== ''}
           onClick={() => {
-            onRegister()
+            onCreateProvider()
           }}
         >
           {formatText(m.prodEnviromentButton, application, formatMessage)}

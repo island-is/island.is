@@ -18,7 +18,7 @@ import {
   CaseState,
   CaseGender,
 } from '@island.is/judicial-system/types'
-import { gql, useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   UpdateCaseMutation,

@@ -14,4 +14,8 @@ export class RunEndpointTestsInput {
   @Field(() => String)
   @IsString()
   documentId!: string
+
+  @Field(() => String)
+  @IsString()
+  providerId!: string
 }

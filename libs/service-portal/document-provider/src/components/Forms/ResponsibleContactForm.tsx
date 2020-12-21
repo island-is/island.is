@@ -117,14 +117,15 @@ export const ResponsibleContactForm: FC<Props> = ({ onSubmit }) => {
       >
         <Box marginTop={[1, 0]}>
           <Link to={ServicePortalPath.DocumentProviderSettingsRoot}>
-            <Button variant="ghost">Til baka</Button>
+            <Button variant="ghost">
+              {formatMessage(m.SettingsEditResponsibleContactBackButton)}
+            </Button>
           </Link>
         </Box>
         <Button type="submit" variant="primary" icon="arrowForward">
-          Vista breytingar
+          {formatMessage(m.SettingsEditResponsibleContactSaveButton)}
         </Button>
       </Box>
-      )
     </form>
   )
 }

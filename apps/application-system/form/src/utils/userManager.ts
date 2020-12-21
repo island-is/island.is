@@ -1,12 +1,14 @@
+import get from 'lodash/get'
 import {
   UserManager,
   UserManagerSettings,
   WebStorageStateStore,
+  User,
 } from 'oidc-client'
 
 import { environment } from '../environments'
 
-const settings: UserManagerSettings = {
+export const settings: UserManagerSettings = {
   authority: environment.identityServer.authority,
   // eslint-disable-next-line @typescript-eslint/camelcase
   client_id: 'island-is-1',
@@ -23,4 +25,39 @@ const settings: UserManagerSettings = {
   userStore: new WebStorageStateStore({ store: window.sessionStorage }),
 }
 
-export const userManager = new UserManager(settings)
+const userTokenIsValid = (user: User) => {
+  const expiresAtSeconds = get(user, 'expires_at', null)
+
+  if (expiresAtSeconds === null) {
+    return false
+  } else if (typeof expiresAtSeconds !== 'number') {
+    return false
+  }
+
+  const msWhenExpired = expiresAtSeconds * 1000
+  const msNow = Date.now()
+
+  return msWhenExpired > msNow
+}
+
+export class ExtendedUserManager extends UserManager {
+  constructor(settings: UserManagerSettings) {
+    super(settings)
+  }
+
+  async verifyAuthentication() {
+    let user = await this.getUser()
+
+    try {
+      if (user === null || !userTokenIsValid(user)) {
+        user = await this.signinSilent()
+      }
+    } catch {
+      throw new Error('Unauthorized')
+    }
+
+    return user
+  }
+}
+
+export const userManager = new ExtendedUserManager(settings)
