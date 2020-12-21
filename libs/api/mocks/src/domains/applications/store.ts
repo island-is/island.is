@@ -14,14 +14,12 @@ export const store = createStore(() => {
       nationalId: '1234567890',
       fullName: 'Jóna Jónsdóttir',
       gender: 'FEMALE',
-      address: '',
       familyRelation: 'spouse',
     },
     {
       nationalId: '0987654321',
       fullName: 'Bjarni sonur þinn',
       gender: 'MALE',
-      address: '',
       familyRelation: 'child',
     },
   ]

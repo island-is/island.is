@@ -21,12 +21,12 @@ export default (
   return {
     // TODO: place strings in translation file
     from: {
-      name: 'Fæðingarorlofssjóður',
-      address: 'todo@aranja.com',
+      name: 'Devland.is',
+      address: 'development@island.is',
     },
     replyTo: {
-      name: 'Fæðingarorlofssjóður',
-      address: 'todo@aranja.com',
+      name: 'Bæring Gunnar Steinþórsson',
+      address: 'baering@aranja.com',
     },
     to: [
       {
@@ -37,11 +37,11 @@ export default (
     subject: ``,
     text: dedent(`
       Góðan dag.
-      
+
       Umsækjandi með kennitölu ${application.applicant} hefur skráð þig sem atvinnuveitanda í umsókn sinni.
-      
+
       Ef þú áttir von á þessum tölvupósti þá getur þú haldið áfram hingað til þess að fara yfir umsóknina: ${assignLink}
-  
+
       Með kveðju.
       Starfsfólk fæðingarorlofssjóðs
     `),

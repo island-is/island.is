@@ -1,14 +1,27 @@
 import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { useMutation } from '@apollo/client'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { gql, useMutation } from '@apollo/client'
+import {
+  FieldBaseProps,
+  formatText,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
-import { registerProviderMutation } from '../../../graphql/mutations/registerProviderMutation'
 import { m } from '../../../forms/messages'
+
+export const createProviderMutation = gql`
+  mutation CreateProvider($input: CreateProviderInput!) {
+    createProvider(input: $input) {
+      clientId
+      clientSecret
+      providerId
+    }
+  }
+`
 
 const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
   const { formatMessage } = useLocale()
@@ -27,16 +40,28 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
   const [currentAnswer, setCurrentAnswer] = useState(
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
-    (formValue.productionUserExists as string) || '',
+    (formValue.prodProviderId as string) || '',
   )
-  const [registerProvider] = useMutation(registerProviderMutation)
+  const [createProvider] = useMutation(createProviderMutation)
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
-  const onRegister = async () => {
+  const nationalId = getValueViaPath(
+    application.answers,
+    'applicant.nationalId',
+    undefined,
+  ) as string
+
+  const clientName = getValueViaPath(
+    application.answers,
+    'applicant.name',
+    undefined,
+  ) as string
+
+  const onCreateProvider = async () => {
     setProdEnvironmentErrorError(null)
-    const credentials = await registerProvider({
+    const credentials = await createProvider({
       variables: {
-        input: { nationalId: '2404805659', clientName: 'Nafn stofnunar' }, //TODO gögn úr umsókn
+        input: { nationalId: nationalId, clientName: clientName },
       },
     })
 
@@ -47,22 +72,22 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
     setKeys([
       {
         name: 'Client ID',
-        value: credentials.data.registerProvider.clientId,
+        value: credentials.data.createProvider.clientId,
       },
       {
         name: 'Secret key',
-        value: credentials.data.registerProvider.clientSecret,
+        value: credentials.data.createProvider.clientSecret,
       },
     ])
 
-    setCurrentAnswer('true')
+    setCurrentAnswer(credentials.data.createProvider.providerId)
 
     await updateApplication({
       variables: {
         input: {
           id: application.id,
           answers: {
-            productionUserExists: 'true',
+            prodProviderId: credentials.data.createProvider.providerId,
             ...application.answers,
           },
         },
@@ -71,7 +96,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
       application.answers = response.data?.updateApplication?.answers
     })
 
-    clearErrors('productionUserExists')
+    clearErrors('prodProviderId')
   }
 
   return (
@@ -95,7 +120,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
           size="small"
           disabled={currentAnswer !== ''}
           onClick={() => {
-            onRegister()
+            onCreateProvider()
           }}
         >
           {formatText(m.prodEnviromentButton, application, formatMessage)}
@@ -104,7 +129,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
           type="hidden"
           value={currentAnswer}
           ref={register({ required: true })}
-          name={'productionUserExists'}
+          name={'prodProviderId'}
         />
         {error && (
           <Box color="red600" paddingY={2}>

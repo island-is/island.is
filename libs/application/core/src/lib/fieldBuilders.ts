@@ -260,6 +260,7 @@ export function buildTextField(data: {
   variant?: TextFieldVariant
   placeholder?: FormText
   format?: string | FormatInputValueFunction
+  suffix?: string
   defaultValue?: MaybeWithApplication<unknown>
 }): TextField {
   const {
@@ -273,6 +274,7 @@ export function buildTextField(data: {
     width = 'full',
     variant = 'text',
     format,
+    suffix,
   } = data
   return {
     children: undefined,
@@ -286,6 +288,7 @@ export function buildTextField(data: {
     description,
     variant,
     format,
+    suffix,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
   }

@@ -5,6 +5,7 @@ import { logger } from '@island.is/logging'
 import { DocumentDetails } from './models/documentDetails.model'
 import { DocumentCategory } from './models/documentCategory.model'
 import { DocumentClient } from './client/documentClient'
+import { DocumentBuilder } from './documentUrlBuilder'
 
 @Injectable()
 export class DocumentService {
@@ -45,7 +46,7 @@ export class DocumentService {
         documentMessage: DocumentInfoDTO,
       ) {
         if (documentMessage)
-          result.push(Document.fromDocumentInfo(documentMessage))
+          result.push(DocumentBuilder.buildDocument(documentMessage))
         return result
       },
       [])

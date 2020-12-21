@@ -14,7 +14,6 @@ import { Controller, useForm } from 'react-hook-form'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import { NotFound } from '@island.is/skilavottord-web/components'
-import { BASE_PATH } from '../../utils/consts'
 
 type FormData = {
   registrationNumber: string
@@ -38,13 +37,13 @@ const Select: FC = () => {
       .replace(' ', '')
       .replace('-', '')
     router.push(
-      `${BASE_PATH}${routes.deregister}`,
-      `${BASE_PATH}${routes.baseRoute}/${registrationNumber}`,
+      `${routes.deregister}`,
+      `${routes.baseRoute}/${registrationNumber}`,
     )
   }
 
   const handleCancel = () => {
-    router.push(`${BASE_PATH}${routes.baseRoute}`)
+    router.push(`${routes.baseRoute}`)
   }
 
   const validateRegNumber = (value: string) => {

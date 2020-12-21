@@ -1,105 +1,102 @@
-export interface GetViewMunicipalityDto {
+export interface GetViewISLFjolskyldanDto {
   message: string
   table: Table
   success: boolean
 }
 
-export interface Table {
+interface Table {
   schema: Schema
   diffgram: Diffgram
 }
 
-export interface Diffgram {
+interface Diffgram {
   DocumentElement: DocumentElement
 }
 
-export interface DocumentElement {
-  Sveitarfelag: Sveitarfelag
+interface DocumentElement {
+  ISLFjolskyldan: ISLFjolskyldan[]
 }
 
-export interface Sveitarfelag {
-  attributes: SveitarfelagAttributes
-  _x0031_: string
-  SvfNr: null
-  PostNr: null
-  _x0032_: string
-  Sokn: string
-  _x0033_: string
+export interface ISLFjolskyldan {
+  attributes: ISLFjolskyldanAttributes
+  Kennitala: string
   Nafn: string
-  _x0034_: string
-  _x0035_: string
-  NafnThgf: null
+  Fjolsknr: string
+  Kyn: string
+  Kynheiti: string
+  Faedingardagur: string
+  MakiBarn: string
 }
 
-export interface SveitarfelagAttributes {
+interface ISLFjolskyldanAttributes {
   'diffgr:id': string
   'msdata:rowOrder': string
   'diffgr:hasChanges': string
 }
 
-export interface Schema {
+interface Schema {
   attributes: SchemaAttributes
   element: SchemaElement
 }
 
-export interface SchemaAttributes {
+interface SchemaAttributes {
   id: string
 }
 
-export interface SchemaElement {
+interface SchemaElement {
   attributes: PurpleAttributes
   complexType: PurpleComplexType
 }
 
-export interface PurpleAttributes {
+interface PurpleAttributes {
   name: string
   'msdata:IsDataSet': string
   'msdata:MainDataTable': string
   'msdata:UseCurrentLocale': string
 }
 
-export interface PurpleComplexType {
+interface PurpleComplexType {
   choice: Choice
 }
 
-export interface Choice {
+interface Choice {
   attributes: ChoiceAttributes
   element: ChoiceElement
 }
 
-export interface ChoiceAttributes {
+interface ChoiceAttributes {
   minOccurs: string
   maxOccurs: string
 }
 
-export interface ChoiceElement {
+interface ChoiceElement {
   attributes: FluffyAttributes
   complexType: FluffyComplexType
 }
 
-export interface FluffyAttributes {
+interface FluffyAttributes {
   name: string
 }
 
-export interface FluffyComplexType {
+interface FluffyComplexType {
   sequence: Sequence
 }
 
-export interface Sequence {
+interface Sequence {
   element: ElementElement[]
 }
 
-export interface ElementElement {
+interface ElementElement {
   attributes: TentacledAttributes
 }
 
-export interface TentacledAttributes {
+interface TentacledAttributes {
   name: string
   'msprop:ColumnId': string
   type: Type
   minOccurs: string
 }
 
-export enum Type {
+enum Type {
   XsString = 'xs:string',
 }

@@ -25,6 +25,10 @@ const skilavottordAllActiveRecyclingPartnersQuery = gql`
     skilavottordAllActiveRecyclingPartners {
       companyId
       companyName
+      address
+      postnumber
+      phone
+      website
     }
   }
 `
