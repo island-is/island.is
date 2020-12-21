@@ -332,6 +332,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
               <ProcessEntry {...processEntry} />
             </Box>
           )}
+          {console.log(subArticle, article)}
           {/* ((subArticle ? subArticle.showTableOfContent : article.showTableOfContent) && */}
           <GridRow>
             <GridColumn span={[null, '4/7', '5/7', '4/7', '3/7']}>
