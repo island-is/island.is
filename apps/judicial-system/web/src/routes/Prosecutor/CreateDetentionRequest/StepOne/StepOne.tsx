@@ -18,7 +18,7 @@ import {
   CaseState,
   CaseGender,
 } from '@island.is/judicial-system/types'
-import { gql, useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   UpdateCaseMutation,
@@ -88,9 +88,9 @@ export const StepOne: React.FC = () => {
             accusedNationalId: workingCase?.accusedNationalId.replace('-', ''),
             accusedName: workingCase?.accusedName,
             accusedAddress: workingCase?.accusedAddress,
+            accusedGender: workingCase?.accusedGender,
             requestedDefenderName: workingCase?.requestedDefenderName,
             requestedDefenderEmail: workingCase?.requestedDefenderEmail,
-            accusedGender: workingCase?.accusedGender,
             court: 'Héraðsdómur Reykjavíkur',
           },
         },

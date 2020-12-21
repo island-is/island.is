@@ -45,31 +45,35 @@ export const DocumentProviderOnboarding: Form = buildForm({
               id: 'applicant.nationalId',
               name: m.applicantNationalId,
               format: '######-####',
-              placeholder: '000000-0000',
+              placeholder: m.applicantNationalIdPlaceholder,
             }),
             buildTextField({
               id: 'applicant.name',
               name: m.applicantName,
+              placeholder: m.applicantNamePlaceholder,
             }),
             buildTextField({
               id: 'applicant.address',
               name: m.applicantAddress,
+              placeholder: m.applicantAddressPlaceholder,
             }),
             buildTextField({
               id: 'applicant.zipCode',
               name: m.applicantZipCode,
+              placeholder: m.applicantZipCodePlaceholder,
             }),
             buildTextField({
               id: 'applicant.email',
               name: m.applicantEmail,
               variant: 'email',
+              placeholder: m.applicantEmailPlaceholder,
             }),
             buildTextField({
               id: 'applicant.phoneNumber',
               name: m.applicantPhoneNumber,
               variant: 'tel',
               format: '###-####',
-              placeholder: '000-0000',
+              placeholder: m.applicantPhoneNumberPlaceholder,
             }),
           ],
         }),
@@ -87,18 +91,20 @@ export const DocumentProviderOnboarding: Form = buildForm({
             buildTextField({
               id: 'administrativeContact.name',
               name: m.administrativeContactName,
+              placeholder: m.administrativeContactNamePlaceholder,
             }),
             buildTextField({
               id: 'administrativeContact.email',
               name: m.administrativeContactEmail,
               variant: 'email',
+              placeholder: m.administrativeContactEmailPlaceholder,
             }),
             buildTextField({
               id: 'administrativeContact.phoneNumber',
               name: m.administrativeContactPhoneNumber,
               variant: 'tel',
               format: '###-####',
-              placeholder: '000-0000',
+              placeholder: m.administrativeContactPhoneNumberPlaceholder,
             }),
           ],
         }),
@@ -116,18 +122,20 @@ export const DocumentProviderOnboarding: Form = buildForm({
             buildTextField({
               id: 'technicalContact.name',
               name: m.technicalContactName,
+              placeholder: m.technicalContactNamePlaceHolder,
             }),
             buildTextField({
               id: 'technicalContact.email',
               name: m.technicalContactEmail,
               variant: 'email',
+              placeholder: m.technicalContactEmailPlaceHolder,
             }),
             buildTextField({
               id: 'technicalContact.phoneNumber',
               name: m.technicalContactPhoneNumber,
               variant: 'tel',
               format: '###-####',
-              placeholder: '000-0000',
+              placeholder: m.technicalContactPhoneNumberPlaceHolder,
             }),
           ],
         }),
@@ -146,13 +154,14 @@ export const DocumentProviderOnboarding: Form = buildForm({
               id: 'helpDesk.email',
               name: m.helpDeskEmail,
               variant: 'email',
+              placeholder: m.helpDeskEmailPlaceholder,
             }),
             buildTextField({
               id: 'helpDesk.phoneNumber',
               name: m.helpDeskPhoneNumber,
               variant: 'tel',
               format: '###-####',
-              placeholder: '000-0000',
+              placeholder: m.helpDeskPhoneNumberPlaceholder,
             }),
           ],
         }),
@@ -167,6 +176,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
           name: m.confirmationTitle,
           description: m.confirmationSubTitle,
           children: [
+            //Error in dev tools, missing keys on divider fields...
             buildDividerField({
               name: m.applicantSection,
               color: 'currentColor',
@@ -175,32 +185,37 @@ export const DocumentProviderOnboarding: Form = buildForm({
               id: 'applicant.nationalId',
               name: m.applicantNationalId,
               format: '######-####',
-              placeholder: '000000-0000',
+              placeholder: m.applicantNationalIdPlaceholder,
             }),
             buildTextField({
               id: 'applicant.name',
               name: m.applicantName,
+              placeholder: m.applicantNamePlaceholder,
             }),
             buildTextField({
               id: 'applicant.address',
               name: m.applicantAddress,
+              placeholder: m.applicantAddressPlaceholder,
             }),
             buildTextField({
               id: 'applicant.zipCode',
               name: m.applicantZipCode,
+              placeholder: m.applicantZipCodePlaceholder,
             }),
             buildTextField({
               id: 'applicant.email',
               name: m.applicantEmail,
               variant: 'email',
+              placeholder: m.applicantEmailPlaceholder,
             }),
             buildTextField({
               id: 'applicant.phoneNumber',
               name: m.applicantPhoneNumber,
               variant: 'tel',
               format: '###-####',
-              placeholder: '000-0000',
+              placeholder: m.applicantPhoneNumberPlaceholder,
             }),
+            //Error in dev tools, missing keys on divider fields...
             buildDividerField({
               name: m.administrativeContactSection,
               color: 'currentColor',
@@ -208,19 +223,22 @@ export const DocumentProviderOnboarding: Form = buildForm({
             buildTextField({
               id: 'administrativeContact.name',
               name: m.administrativeContactName,
+              placeholder: m.administrativeContactNamePlaceholder,
             }),
             buildTextField({
               id: 'administrativeContact.email',
               name: m.administrativeContactEmail,
               variant: 'email',
+              placeholder: m.administrativeContactEmailPlaceholder,
             }),
             buildTextField({
               id: 'administrativeContact.phoneNumber',
               name: m.administrativeContactPhoneNumber,
               variant: 'tel',
               format: '###-####',
-              placeholder: '000-0000',
+              placeholder: m.administrativeContactPhoneNumberPlaceholder,
             }),
+            //Error in dev tools, missing keys on divider fields...
             buildDividerField({
               name: m.technicalContactSection,
               color: 'currentColor',
@@ -228,19 +246,22 @@ export const DocumentProviderOnboarding: Form = buildForm({
             buildTextField({
               id: 'technicalContact.name',
               name: m.technicalContactName,
+              placeholder: m.technicalContactNamePlaceHolder,
             }),
             buildTextField({
               id: 'technicalContact.email',
               name: m.technicalContactEmail,
               variant: 'email',
+              placeholder: m.technicalContactEmailPlaceHolder,
             }),
             buildTextField({
               id: 'technicalContact.phoneNumber',
               name: m.technicalContactPhoneNumber,
               variant: 'tel',
               format: '###-####',
-              placeholder: '000-0000',
+              placeholder: m.technicalContactPhoneNumberPlaceHolder,
             }),
+            //Error in dev tools, missing keys on divider fields...
             buildDividerField({
               name: m.helpDeskSection,
               color: 'currentColor',

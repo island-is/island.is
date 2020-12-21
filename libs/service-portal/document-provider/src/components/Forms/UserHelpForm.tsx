@@ -89,11 +89,13 @@ export const UserHelpForm: FC<Props> = ({ onSubmit }) => {
       >
         <Box marginTop={[1, 0]}>
           <Link to={ServicePortalPath.DocumentProviderSettingsRoot}>
-            <Button variant="ghost">Til baka</Button>
+            <Button variant="ghost">
+              {formatMessage(m.SettingsEditHelpContactBackButton)}
+            </Button>
           </Link>
         </Box>
         <Button type="submit" variant="primary" icon="arrowForward">
-          Vista breytingar
+          {formatMessage(m.SettingsEditHelpContactSaveButton)}
         </Button>
       </Box>
     </form>

@@ -1,10 +1,8 @@
 import { DynamicModule } from '@nestjs/common'
 
-import { UserResolver } from './user.resolver'
-import { FamilyMemberResolver } from './familyMember.resolver'
+import { FamilyMemberResolver, UserResolver } from './graphql'
 import { NationalRegistryService } from './nationalRegistry.service'
-import { NationalRegistryApi } from './soap/nationalRegistryApi'
-import { SoapClient } from './soap/soapClient'
+import { NationalRegistryApi, SoapClient } from './soap'
 
 export interface Config {
   baseSoapUrl: string

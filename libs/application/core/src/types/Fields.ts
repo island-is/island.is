@@ -13,6 +13,11 @@ export interface Option {
   excludeOthers?: boolean
 }
 
+interface SelectOption {
+  label: string
+  value: string | number
+}
+
 export type MaybeWithApplication<T> = T | ((a: Application) => T)
 
 export type FieldWidth = 'full' | 'half'
@@ -104,6 +109,7 @@ export interface SelectField extends BaseField {
   readonly type: FieldTypes.SELECT
   component: FieldComponents.SELECT
   options: MaybeWithApplication<Option[]>
+  onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   placeholder?: FormText
 }
 
@@ -112,6 +118,7 @@ export interface AsyncSelectField extends BaseField {
   component: FieldComponents.ASYNC_SELECT
   placeholder?: FormText
   loadOptions: (c: Context) => Promise<Option[]>
+  onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   loadingError?: FormText
 }
 
@@ -124,6 +131,7 @@ export interface TextField extends BaseField {
   placeholder?: FormText
   variant?: TextFieldVariant
   format?: string | FormatInputValueFunction
+  suffix?: string
 }
 
 export interface FileUploadField extends BaseField {

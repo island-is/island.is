@@ -16,7 +16,7 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { RecycleActionTypes } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { filterCarsByStatus } from '@island.is/skilavottord-web/utils'
-import { BASE_PATH } from '../../utils/consts'
+import { BASE_PATH } from '@island.is/skilavottord/consts'
 
 const skilavottordVehiclesQuery = gql`
   query skilavottordVehiclesQuery($nationalId: String!) {
@@ -61,10 +61,7 @@ const Overview: FC = () => {
 
   const onContinue = (id: string, actionType: RecycleActionTypes) => {
     router
-      .push(
-        `${BASE_PATH}${routes[actionType]}`,
-        `${BASE_PATH}${routes.baseRoute}/${id}/${actionType}`,
-      )
+      .push(`${routes[actionType]}`, `${routes.baseRoute}/${id}/${actionType}`)
       .then(() => window.scrollTo(0, 0))
   }
 
@@ -73,7 +70,7 @@ const Overview: FC = () => {
       <PageLayout>
         <Box paddingBottom={[3, 3, 6, 6]}>
           <Breadcrumbs>
-            <Link href={homeRoute}>Ísland.is</Link>
+            <Link href={`${BASE_PATH}${homeRoute}`}>Ísland.is</Link>
             <span>{t.title}</span>
           </Breadcrumbs>
         </Box>
@@ -100,7 +97,7 @@ const Overview: FC = () => {
     <PageLayout>
       <Box paddingBottom={[3, 3, 6, 6]}>
         <Breadcrumbs>
-          <Link href={homeRoute}>Ísland.is</Link>
+          <Link href={`${BASE_PATH}${homeRoute}`}>Ísland.is</Link>
           <span>{t.title}</span>
         </Breadcrumbs>
       </Box>
