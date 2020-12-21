@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import StatusBar from '../Layout/StatusBar';
 import HelpBox from '../Common/HelpBox';
-import APIResponse from '../../entities/common/APIResponse';
 import { ClientAllowedScopeDTO } from '../../entities/dtos/client-allowed-scope.dto';
-import api from '../../services/api';
 import NoActiveConnections from '../Common/NoActiveConnections';
 import { ClientService } from './../../services/ClientService';
 
@@ -22,7 +19,6 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
     ClientAllowedScopeDTO
   >();
   const { isSubmitting } = formState;
-  const [response, setResponse] = useState<APIResponse>(new APIResponse());
   const [scopes, setScopes] = useState<any>([]);
   const [selectedScope, setSelectedScope] = useState<any>(null);
 
@@ -31,26 +27,12 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
     allowedScope.clientId = props.clientId;
     allowedScope.scopeName = data.scopeName;
 
-    await api
-      .post(`client-allowed-scope`, allowedScope)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-        if (response.status === 201) {
-          if (props.handleChanges) {
-            props.handleChanges();
-          }
-        }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
+    const response = await ClientService.addAllowedScope(allowedScope);
+    if (response) {
+      if (props.handleChanges) {
+        props.handleChanges();
+      }
+    }
   };
 
   useEffect(() => {
@@ -69,44 +51,29 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
 
   const remove = async (scope: string) => {
     if (
-      window.confirm(
-        `Are you sure you want to delete this scope: "${scope}"?`
-      )
-    ){
-    await api
-      .delete(
-        `client-allowed-scope/${props.clientId}/${encodeURIComponent(scope)}`
-      )
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-        if (res.statusCode === 200) {
-          if (props.handleChanges) {
-            props.handleChanges();
-          }
+      window.confirm(`Are you sure you want to delete this scope: "${scope}"?`)
+    ) {
+      const response = await ClientService.removeAllowedScope(
+        props.clientId,
+        scope
+      );
+      if (response) {
+        if (props.handleChanges) {
+          props.handleChanges();
         }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
+      }
     }
-  };
+  }
 
   return (
     <div className="client-allowed-scopes">
-      <StatusBar status={response}></StatusBar>
       <div className="client-allowed-scopes__wrapper">
         <div className="client-allowed-scopes__container">
           <h1>Allowed scopes</h1>
           <div className="client-allowed-scopes__container__form">
             <div className="client-allowed-scopes__help">
-            By default a client has no access to any resources. Specify the allowed resources by adding the corresponding scopes names
+              By default a client has no access to any resources. Specify the
+              allowed resources by adding the corresponding scopes names
             </div>
             <form onSubmit={handleSubmit(add)}>
               <div className="client-allowed-scopes__container__fields">
@@ -125,11 +92,7 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                     onChange={(e) => setSelectedItem(e.target.value)}
                   >
                     {scopes.map((scope: any) => {
-                      return (
-                        <option value={scope.name}>
-                          {scope.name}
-                        </option>
-                      );
+                      return <option value={scope.name}>{scope.name}</option>;
                     })}
                   </select>
                   <HelpBox helpText="Select an allowed scope" />
@@ -178,8 +141,11 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                 </div>
               </div>
 
-              <NoActiveConnections title="No active scopes" show={!props.scopes || props.scopes.length === 0} helpText="Select a scope and push the Add button to add a scope">
-              </NoActiveConnections>
+              <NoActiveConnections
+                title="No active scopes"
+                show={!props.scopes || props.scopes.length === 0}
+                helpText="Select a scope and push the Add button to add a scope"
+              ></NoActiveConnections>
 
               <div
                 className={`client-allowed-scopes__container__list ${

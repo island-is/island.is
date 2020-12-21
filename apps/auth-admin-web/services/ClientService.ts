@@ -1,8 +1,12 @@
 import { ClientAllowedCorsOriginDTO } from '../entities/dtos/client-allowed-cors-origin.dto';
+import { ClientAllowedScopeDTO } from '../entities/dtos/client-allowed-scope.dto';
+import { ClientClaimDTO } from '../entities/dtos/client-claim.dto';
 import { ClientPostLogoutRedirectUriDTO } from '../entities/dtos/client-post-logout-redirect-uri.dto';
 import { ClientSecretDTO } from '../entities/dtos/client-secret.dto';
 import { ApiScope } from '../entities/models/api-scope.model';
 import { ClientAllowedCorsOrigin } from '../entities/models/client-allowed-cors-origin.model';
+import { ClientAllowedScope } from '../entities/models/client-allowed-scope.model';
+import { ClientClaim } from '../entities/models/client-claim.model';
 import { ClientPostLogoutRedirectUri } from '../entities/models/client-post-logout-redirect-uri.model';
 import { ClientSecret } from '../entities/models/client-secret.model';
 import { Client } from '../entities/models/client.model';
@@ -72,6 +76,41 @@ export class ClientService extends BaseService {
       `client-post-logout-redirect-uri/${clientId}/${encodeURIComponent(
         redirectUri
       )}`
+    );
+  }
+
+  /** Adds an claim to client */
+  static async addClaim(claim: ClientClaimDTO): Promise<ClientClaim | null> {
+    return BaseService.POST(`client-claim`, claim);
+  }
+
+  /** Removes an claim from client */
+  static async removeClaim(
+    clientId: string,
+    claimType: string,
+    claimValue: string
+  ): Promise<number | null> {
+    return BaseService.DELETE(
+      `client-claim/${clientId}/${encodeURIComponent(
+        claimType
+      )}/${encodeURIComponent(claimValue)}`
+    );
+  }
+
+  /** Adds an allowed scope to client */
+  static async addAllowedScope(
+    clientAllowedScope: ClientAllowedScopeDTO
+  ): Promise<ClientAllowedScope | null> {
+    return BaseService.POST(`client-allowed-scope`, clientAllowedScope);
+  }
+
+  /** Removes an allowed scope from client */
+  static async removeAllowedScope(
+    clientId: string,
+    scopeName: string
+  ): Promise<number | null> {
+    return BaseService.DELETE(
+      `client-allowed-scope/${clientId}/${encodeURIComponent(scopeName)}`
     );
   }
 }
