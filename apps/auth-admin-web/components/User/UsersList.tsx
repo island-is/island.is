@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { UserIdentityDTO } from '../../entities/dtos/user-identity.dto';
-import APIResponse from '../../entities/common/APIResponse';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import HelpBox from '../Common/HelpBox';
 import { ClaimDTO } from '../../entities/dtos/claim.dto';
 import NotFound from '../Common/NotFound';
-import api from '../../services/api'
+import { UserService } from './../../services/UserService';
 
 interface ClaimShow {
   subjectId: string;
@@ -32,48 +31,23 @@ const UsersList: React.FC = () => {
     return -1;
   }
 
-  const getUser = async (data) => {
+  const getUser = async (data: any) => {
     setShowNotFound(false);
-    await api
-      .get(`user-identities/${data.id}`)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setUsers(response.data);
-      })
-      .catch(function (error) {
-        if (error.response) {
-        // TODO: Set response                
-//          setResponse(error.response.data);
-        } else {
-          
-          // TODO: Handle and show error
-        }
-        setShowNotFound(true);
-        setUsers([]);
-      });
+    const response = await UserService.findUser(data.id);
+    if (response) {
+      setUsers(response);
+    }
+    else{
+      setShowNotFound(true);
+      setUsers([]);
+    }
 
-      setId(data.id);
-      setType(data.type);
+    setId(data.id);
+    setType(data.type);
   };
 
   const toggleActive = async (user: UserIdentityDTO) => {
-    await api
-      .patch(`user-identities/${user.subjectId}`, { active: !user.active })
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-      })
-      .catch(function (error) {
-        if (error.response) {
-          // setResponse(error.response.data);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
-
+    await UserService.toggleActive(user.subjectId, !user.active);
     getUser({ id: id, type: type });
   };
 

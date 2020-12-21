@@ -47,6 +47,15 @@ export class BaseService {
     }
   }
 
+  protected static async PATCH(path: string, body: any) {
+    try {
+      const response = await api.patch(path, body);
+      return BaseService.handleResponse(response);
+    } catch (error) {
+      return BaseService.handleError(error);
+    }
+  }
+
   protected static handleResponse(response: any) {
     const res = new APIResponse();
     res.statusCode = response.request.status;
