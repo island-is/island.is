@@ -44,7 +44,7 @@ export default function ApiResourcesList() {
     const response = await ResourcesService.findAndCountAllApiResources(page, count);
     if ( response ){
       setApiResources(response.rows);
-      setTotalCount(response.data.count);
+      setTotalCount(response.count);
       setLastPage(Math.ceil(totalCount / count));
     }
   };
