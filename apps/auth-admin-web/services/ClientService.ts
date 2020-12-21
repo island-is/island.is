@@ -1,12 +1,14 @@
 import { ClientAllowedCorsOriginDTO } from '../entities/dtos/client-allowed-cors-origin.dto';
 import { ClientAllowedScopeDTO } from '../entities/dtos/client-allowed-scope.dto';
 import { ClientClaimDTO } from '../entities/dtos/client-claim.dto';
+import { ClientGrantTypeDTO } from '../entities/dtos/client-grant-type.dto';
 import { ClientPostLogoutRedirectUriDTO } from '../entities/dtos/client-post-logout-redirect-uri.dto';
 import { ClientSecretDTO } from '../entities/dtos/client-secret.dto';
 import { ApiScope } from '../entities/models/api-scope.model';
 import { ClientAllowedCorsOrigin } from '../entities/models/client-allowed-cors-origin.model';
 import { ClientAllowedScope } from '../entities/models/client-allowed-scope.model';
 import { ClientClaim } from '../entities/models/client-claim.model';
+import { ClientGrantType } from '../entities/models/client-grant-type.model';
 import { ClientPostLogoutRedirectUri } from '../entities/models/client-post-logout-redirect-uri.model';
 import { ClientSecret } from '../entities/models/client-secret.model';
 import { Client } from '../entities/models/client.model';
@@ -112,5 +114,20 @@ export class ClientService extends BaseService {
     return BaseService.DELETE(
       `client-allowed-scope/${clientId}/${encodeURIComponent(scopeName)}`
     );
+  }
+
+  /** Adds a grant type to client */
+  static async addGrantType(
+    grantTypeObj: ClientGrantTypeDTO
+  ): Promise<ClientGrantType | null> {
+    return BaseService.POST(`client-grant-type`, grantTypeObj);
+  }
+
+  /** Removes a grant type for client */
+  static async removeGrantType(
+    clientId: string,
+    grantType: string
+  ): Promise<number | null> {
+    return BaseService.DELETE(`client-grant-type/${clientId}/${grantType}`);
   }
 }
