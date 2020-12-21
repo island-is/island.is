@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import ClientDTO from '../../entities/dtos/client-dto';
 import Paginator from '../Common/Paginator';
 import Link from 'next/link';
-import api from '../../services/api'
 import { ClientService } from './../../services/ClientService';
+
 
 class ClientsList extends Component {
   state = {
@@ -14,7 +14,8 @@ class ClientsList extends Component {
   };
 
   getClients = async (page: number, count: number) => {
-    const response = await ClientService.getClients(page, count);
+    const response = await ClientService.findAndCountAll(page, count);
+    console.log(response);
     if ( response ){
       this.setState({
         clients: response.rows,
@@ -34,7 +35,7 @@ class ClientsList extends Component {
         `Are you sure you want to delete this client: "${clientId}"?`
       )
     ) {
-      const response = await api.delete(`clients/${clientId}`);
+      await ClientService.deleteClient(clientId);
       this.getClients(this.state.page, this.state.count);
     }
   };

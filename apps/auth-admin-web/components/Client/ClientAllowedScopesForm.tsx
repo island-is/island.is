@@ -7,6 +7,7 @@ import APIResponse from '../../entities/common/APIResponse';
 import { ClientAllowedScopeDTO } from '../../entities/dtos/client-allowed-scope.dto';
 import api from '../../services/api';
 import NoActiveConnections from '../Common/NoActiveConnections';
+import { ClientService } from './../../services/ClientService';
 
 interface Props {
   clientId: string;
@@ -57,27 +58,8 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
   }, []);
 
   const getAvailableScopes = async () => {
-    await api
-      .get(`client-allowed-scope`)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-        setScopes(response.data);
-        if (response.status === 201) {
-          if (props.handleChanges) {
-            props.handleChanges();
-          }
-        }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
+    const response = await ClientService.FindAvailabeScopes();
+    setScopes(response);
   };
 
   const setSelectedItem = (scopeName: string) => {
