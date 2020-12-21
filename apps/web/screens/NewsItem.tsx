@@ -2,7 +2,7 @@
 import React from 'react'
 import {
   Text,
-  Breadcrumbs,
+  NewBreadcrumbs as Breadcrumbs,
   Box,
   Link,
   GridRow,
@@ -32,6 +32,8 @@ import {
 import { RichText } from '../components/RichText/RichText'
 import { SidebarBox, Sticky, HeadWithSocialSharing, Main } from '../components'
 import { useNamespace } from '@island.is/web/hooks'
+import { ContentType, pathNames } from '@island.is/web/i18n/routes'
+import NextLink from 'next/link'
 
 interface NewsItemProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
@@ -47,31 +49,29 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
 
   const metaTitle = `${newsItem.title} | Ísland.is`
 
-  const sidebar = (
-    <SidebarBox>
-      <Stack space={3}>
-        {Boolean(newsItem.author) && (
-          <Stack space={1}>
-            <Text variant="eyebrow" as="p" color="blue400">
-              {n('author', 'Höfundur')}
-            </Text>
-            <Text variant="h5" as="p">
-              {newsItem.author.name}
-            </Text>
-          </Stack>
-        )}
-        {Boolean(newsItem.date) && (
-          <Stack space={1}>
-            <Text variant="eyebrow" as="p" color="blue400">
-              {n('published', 'Birt')}
-            </Text>
-            <Text variant="h5" as="p">
-              {format(new Date(newsItem.date), 'do MMMM yyyy')}
-            </Text>
-          </Stack>
-        )}
-      </Stack>
-    </SidebarBox>
+  const breadCrumbTags =
+    !!newsItem.genericTags.length &&
+    newsItem.genericTags.map(({ id, title }) => {
+      return {
+        isTag: true,
+        title: title,
+        typename: newsItem.__typename,
+        slug: [`?tag=${id}`],
+      }
+    })
+
+  console.log(
+    breadCrumbTags,
+    [
+      {
+        title: 'Ísland.is',
+        href: '/',
+      },
+      {
+        title: t.newsAndAnnouncements,
+        typename: newsItem.__typename,
+      },
+    ].concat(breadCrumbTags ?? []),
   )
 
   return (
@@ -93,30 +93,34 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
                     offset={['0', '0', '0', '0', '1/9']}
                     span={['9/9', '9/9', '9/9', '9/9', '7/9']}
                   >
-                    <Breadcrumbs>
-                      <Link href={makePath()} as={makePath()}>
-                        Ísland.is
-                      </Link>
-                      <Link href={makePath('news')} as={makePath('news')}>
-                        {t.newsAndAnnouncements}
-                      </Link>
-                      {!!newsItem.genericTags.length &&
-                        newsItem.genericTags.map(({ id, title }, index) => {
-                          return (
-                            <Link
-                              key={index}
-                              href={{
-                                pathname: makePath('news'),
-                                query: { tag: id },
-                              }}
-                              as={makePath('news', `?tag=${id}`)}
-                              pureChildren
-                            >
-                              <Tag variant="blue">{title}</Tag>
-                            </Link>
-                          )
-                        })}
-                    </Breadcrumbs>
+                    <Breadcrumbs
+                      items={[
+                        {
+                          title: 'Ísland.is',
+                          href: '/',
+                        },
+                        {
+                          title: t.newsAndAnnouncements,
+                          typename: newsItem.__typename,
+                          slug: [''],
+                        },
+                      ].concat(breadCrumbTags)}
+                      renderLink={(link, { typename, slug }) => {
+                        return (
+                          <NextLink
+                            {...pathNames(
+                              activeLocale,
+                              typename as ContentType,
+                              slug,
+                            )}
+                            passHref
+                          >
+                            {link}
+                          </NextLink>
+                        )
+                      }}
+                    />
+
                     <Text variant="h1" as="h1" paddingTop={1} paddingBottom={2}>
                       {newsItem.title}
                     </Text>

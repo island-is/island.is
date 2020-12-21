@@ -10,15 +10,18 @@ export const wrapper = style({
   alignItems: 'center',
 })
 
-type ColorScheme = (text: string, hover: string) => Style
-
-const colorScheme: ColorScheme = (text, hover) => ({
+const colorScheme = (text: string, hover: string) => ({
   color: text,
   outline: 'none',
-  transition: 'background-color 150ms ease-in-out, color 150ms ease-in-out',
+  transition: 'color 150ms ease-in-out',
   ':hover': {
     color: hover,
   },
+})
+
+const focusColors = (text: string) => ({
+  outline: 'none',
+  transition: 'background-color 150ms ease-in-out',
   ':active': {
     backgroundColor: theme.color.mint400,
     color: theme.color.dark400,
@@ -37,6 +40,12 @@ const colorScheme: ColorScheme = (text, hover) => ({
 export const breadcrumb = styleMap({
   blue400: colorScheme(theme.color.blue400, theme.color.blueberry400),
   white: colorScheme(theme.color.white, theme.color.white),
+  // TODO: think about off brand colors??
+})
+
+export const focusable = styleMap({
+  blue400: focusColors(theme.color.blue400),
+  white: focusColors(theme.color.white),
   // TODO: think about off brand colors??
 })
 

@@ -301,6 +301,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                 slug: [article.category.slug],
               },
               !!article.group && {
+                isTag: true,
                 title: article.group.title,
                 typename: article.category.__typename,
                 slug: [
@@ -308,6 +309,10 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                     (article.group?.slug ? `#${article.group.slug}` : ''),
                 ],
               },
+              {isTag: true, title: "href", href: "/"},
+              {isTag: true, title: "text"},
+              { title: "href", href: "/"},
+              { title: "text", }
             ]}
             renderLink={(link, { typename, slug }) => {
               return (

@@ -115,8 +115,11 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                         title: 'Ísland.is',
                         href: '/',
                       },
+                      {
+                        isTag: true,
+                        title: n('lifeEventTitle', 'Lífsviðburður'),
+                      },
                     ]}
-                    tags={[n('lifeEventTitle', 'Lífsviðburður')]}
                     renderLink={(link) => {
                       return (
                         <NextLink {...pathNames()} passHref>

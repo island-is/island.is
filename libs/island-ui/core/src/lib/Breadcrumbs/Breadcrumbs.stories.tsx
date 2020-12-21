@@ -2,11 +2,11 @@ import React from 'react'
 import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
-import { Breadcrumbs } from './Breadcrumbs'
+import { NewBreadcrumbs } from './NewBreadcrumbs'
 
 export default {
   title: 'Navigation/Breadcrumbs',
-  component: Breadcrumbs,
+  component: NewBreadcrumbs,
   decorators: [withDesign],
   parameters: withFigma({
     desktop:
@@ -17,9 +17,12 @@ export default {
 }
 
 export const Default = () => (
-  <Breadcrumbs>
-    <span>Ísland.is</span>
-    <a href="/">Dómstólar og réttarfar</a>
-    <a href="/">Lögregluembætti</a>
-  </Breadcrumbs>
+  <NewBreadcrumbs
+    items={[
+      { title: 'href', href: '/' },
+      { title: 'text' },
+      { isTag: true, title: 'href tag', href: '/' },
+      { isTag: true, title: 'text tag' },
+    ]}
+  />
 )
