@@ -6,18 +6,8 @@ export const container = style({
   minHeight: '100%',
   background: theme.color.white,
   ...themeUtils.responsiveStyle({
-    md: {
+    lg: {
       display: 'flex',
-    },
-  }),
-})
-
-export const main = style({
-  position: 'relative',
-  ...themeUtils.responsiveStyle({
-    md: {
-      flexBasis: '66.66666%',
-      flexGrow: 1,
     },
   }),
 })
@@ -39,7 +29,7 @@ export const mainContainer = style({
   zIndex: 1,
   width: '100%',
   ...themeUtils.responsiveStyle({
-    md: {
+    lg: {
       maxWidth: 829,
     },
   }),
@@ -47,35 +37,68 @@ export const mainContainer = style({
 export const searchContainer = style({
   width: '100%',
   ...themeUtils.responsiveStyle({
-    md: {
+    lg: {
       maxWidth: 342,
-    },
-  }),
-})
-
-export const aside = style({
-  ...themeUtils.responsiveStyle({
-    md: {
-      flexBasis: '33.33333%',
-      display: 'flex',
-      flexDirection: 'column',
-      flexGrow: 1,
     },
   }),
 })
 
 export const asideTop = style({
-  backgroundColor: theme.color.blue100,
+  position: 'relative',
+  zIndex: 0,
+  selectors: {
+    '&:before': {
+      content: '""',
+      backgroundColor: theme.color.blue100,
+      transform: 'translateX(-50%)',
+      position: 'absolute',
+      zIndex: -1,
+      top: 0,
+      bottom: 0,
+      left: '50%',
+      right: 0,
+      width: '100vw',
+    },
+  },
+  ...themeUtils.responsiveStyle({
+    lg: {
+      selectors: {
+        '&:before': {
+          left: 0,
+          transform: 'none',
+          width: '100vw',
+        },
+      },
+    },
+  }),
 })
 
 export const asideBottom = style({
-  backgroundColor: theme.color.blue200,
-  flexGrow: 1,
-})
-export const asideContainer = style({
+  position: 'relative',
+  zIndex: 0,
+  selectors: {
+    '&:before': {
+      content: '""',
+      backgroundColor: theme.color.blue200,
+      transform: 'translateX(-50%)',
+      position: 'absolute',
+      zIndex: -1,
+      top: 0,
+      bottom: 0,
+      left: '50%',
+      right: 0,
+      width: '100vw',
+    },
+  },
   ...themeUtils.responsiveStyle({
-    md: {
-      maxWidth: 342,
+    lg: {
+      selectors: {
+        '&:before': {
+          left: 0,
+          transform: 'none',
+          width: '100vw',
+        },
+      },
     },
   }),
 })

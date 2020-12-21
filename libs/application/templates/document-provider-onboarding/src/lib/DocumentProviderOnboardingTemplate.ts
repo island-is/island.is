@@ -236,7 +236,10 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
-    if (application.state === 'inReview') {
+    if (
+      application.state === 'inReview' &&
+      application.assignees.includes('2311637949')
+    ) {
       return Roles.ASSIGNEE
     }
     //Returns nothing if user is not same as applicant nor is part of the assignes
