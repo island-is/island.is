@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { ClientRedirectUriDTO } from '../../entities/dtos/client-redirect-uri.dto';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import StatusBar from '../Layout/StatusBar';
 import HelpBox from '../Common/HelpBox';
 import NoActiveConnections from '../Common/NoActiveConnections';
 import { ClientService } from './../../services/ClientService';
@@ -65,7 +64,6 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
       <div className="client-redirect__wrapper">
         <div className="client-redirect__container">
           <h1>Enter a callback URL</h1>
-
           <div className="client-redirect__container__form">
             <div className="client-redirect__help">
               Specifies the allowed URIs to return tokens or authorization codes

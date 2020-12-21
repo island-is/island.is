@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import StatusBar from '../Layout/StatusBar';
 import HelpBox from '../Common/HelpBox';
-import APIResponse from '../../entities/common/APIResponse';
 import { ClientAllowedCorsOriginDTO } from '../../entities/dtos/client-allowed-cors-origin.dto';
-import api from '../../services/api';
 import NoActiveConnections from '../Common/NoActiveConnections';
-import { ClientService } from 'apps/auth-admin-web/services/ClientService';
+import { ClientService } from './../../services/ClientService';
 
 interface Props {
   clientId: string;
@@ -23,7 +20,6 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
     ClientAllowedCorsOriginDTO
   >();
   const { isSubmitting } = formState;
-  const [response, setResponse] = useState<APIResponse>(new APIResponse());
   const [defaultOrigin, setDefaultOrigin] = useState(
     !props.origins || props.origins.length === 0 ? props.defaultOrigin : ''
   );
@@ -65,7 +61,6 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
 
   return (
     <div className="client-allowed-cors-origin">
-      <StatusBar status={response}></StatusBar>
       <div className="client-allowed-cors-origin__wrapper">
         <div className="client-allowed-cors-origin__container">
           <h1>Enter allowed cors origins</h1>

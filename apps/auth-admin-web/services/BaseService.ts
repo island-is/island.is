@@ -40,7 +40,7 @@ export class BaseService {
 
   protected static async PUT(path: string, body: any) {
     try {
-      const response = await api.post(path, body);
+      const response = await api.put(path, body);
       return BaseService.handleResponse(response);
     } catch (error) {
       return BaseService.handleError(error);

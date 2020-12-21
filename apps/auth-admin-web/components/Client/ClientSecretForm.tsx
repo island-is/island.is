@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import StatusBar from '../Layout/StatusBar';
 import HelpBox from '../Common/HelpBox';
-import APIResponse from '../../entities/common/APIResponse';
 import { ClientSecretDTO } from '../../entities/dtos/client-secret.dto';
 import { ClientSecret } from '../../entities/models/client-secret.model';
 import NoActiveConnections from '../Common/NoActiveConnections';
@@ -22,7 +20,6 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
     ClientSecretDTO
   >();
   const { isSubmitting } = formState;
-  const [response, setResponse] = useState<APIResponse>(new APIResponse());
   const defaultSecretLength = 25;
   const [defaultSecret, setDefaultSecret] = useState<string>(null);
 
@@ -101,7 +98,6 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
 
   return (
     <div className="client-secret">
-      <StatusBar status={response}></StatusBar>
       <div className="client-secret__wrapper">
         <div className="client-secret__container">
           <h1>Client Secrets</h1>

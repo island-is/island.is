@@ -1,6 +1,7 @@
 import { ClientAllowedCorsOriginDTO } from '../entities/dtos/client-allowed-cors-origin.dto';
 import { ClientAllowedScopeDTO } from '../entities/dtos/client-allowed-scope.dto';
 import { ClientClaimDTO } from '../entities/dtos/client-claim.dto';
+import ClientDTO from '../entities/dtos/client-dto';
 import { ClientGrantTypeDTO } from '../entities/dtos/client-grant-type.dto';
 import { ClientPostLogoutRedirectUriDTO } from '../entities/dtos/client-post-logout-redirect-uri.dto';
 import { ClientRedirectUriDTO } from '../entities/dtos/client-redirect-uri.dto';
@@ -27,8 +28,24 @@ export class ClientService extends BaseService {
     return BaseService.GET(`clients/?page=${page}&count=${count}`);
   }
 
+  /** Gets a client by it's id */
+  static async findClientById(id: string): Promise<Client | null> {
+    return BaseService.GET(`clients/${id}`);
+  }
+
+  /** Creates a new client */
+  static async create(client: ClientDTO): Promise<Client | null> {
+    return BaseService.POST('clients', client);
+  }
+
+  /** Updates an existing client */
+  static async update(client: ClientDTO, id: string): Promise<Client | null> {
+    delete client.clientId;
+    return BaseService.PUT(`clients/${id}`, client);
+  }
+
   /** Deletes client */
-  static async deleteClient(clientId: string): Promise<number | null> {
+  static async delete(clientId: string): Promise<number | null> {
     return BaseService.DELETE(`clients/${clientId}`);
   }
 
