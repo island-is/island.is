@@ -36,8 +36,6 @@ export default function ApiResourcesList() {
       const response = await ResourcesService.deleteApiResource(name);
       if (response) {
         getResources(page, count);
-        setTotalCount(response.data.count);
-        setLastPage(Math.ceil(totalCount / count));
       }
     }
   };
@@ -46,6 +44,8 @@ export default function ApiResourcesList() {
     const response = await ResourcesService.findAndCountAllApiResources(page, count);
     if ( response ){
       setApiResources(response.rows);
+      setTotalCount(response.data.count);
+      setLastPage(Math.ceil(totalCount / count));
     }
   };
 
