@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import ClientDTO from '../../entities/dtos/client-dto';
-import StatusBar from '../Layout/StatusBar';
-import APIResponse from '../../entities/common/APIResponse';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import HelpBox from '../Common/HelpBox';
 import api from '../../services/api'
-
+import { ClientService } from './../../services/ClientService';
 interface Props {
   client: ClientDTO;
   onNextButtonClick?: (client: ClientDTO) => void;
@@ -19,12 +17,9 @@ const ClientForm: React.FC<Props> = (props: Props) => {
   >();
   const { isSubmitting } = formState;
   const [show, setShow] = useState(false);
-  const [response, setResponse] = useState<APIResponse>(null);
   const [available, setAvailable] = useState<boolean>(false);
   const [clientIdLength, setClientIdLength] = useState<number>(0);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-
-  // TODO: Fix
   const client = props.client;
 
   const castToNumbers = (obj: ClientDTO): ClientDTO => {
@@ -60,54 +55,27 @@ const ClientForm: React.FC<Props> = (props: Props) => {
     }
   }, [props.client])
 
-  
-
   const create = async (data: any) => {
-    await api.post('clients', data)
-    .then((response) => {
-      const res = new APIResponse();
-      res.statusCode = response.request.status;
-      res.message = response.request.statusText;
-      setResponse(res);
-      if (res.statusCode === 201) {
-        if (props.onNextButtonClick)
-        {
-          props.onNextButtonClick(data);
-        }
+    const response = await ClientService.create(data);
+    if (response){
+      if (props.onNextButtonClick)
+      {
+        props.onNextButtonClick(data);
       }
-    })
-    .catch(function (error) {
-      if (error.response) {
-        setResponse(error.response.data);
-      } else {
-        // TODO: Handle and show error
-      }
-    });
+    }
   }
 
   const edit = async (data: any) => {
     const handleObject = {...data};
-    delete data.clientId;
-    await api.put(`clients/${props.client.clientId}`, data)
-    .then((response) => {
-      const res = new APIResponse();
-      res.statusCode = response.request.status;
-      res.message = response.request.statusText;
-      setResponse(res);
-      if (res.statusCode === 200) {
-        if (props.onNextButtonClick)
-        {
-          props.onNextButtonClick(handleObject);
-        }
+    const response = await ClientService.update(data, props.client.clientId);
+    
+    if(response)
+    {
+      if (props.onNextButtonClick)
+      {
+        props.onNextButtonClick(handleObject);
       }
-    })
-    .catch(function (error) {
-      if (error.response) {
-        setResponse(error.response.data);
-      } else {
-        // TODO: Handle and show error
-      }
-    });
+    }
   }
 
   const save = (data: any) => {
@@ -138,10 +106,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
 
   return (
     <div className="client">
-      <StatusBar status={response}></StatusBar>
       <div className="client__wrapper">
-        
-
         <div className="client__container">
           <h1>{ isEditing ? "Edit Client" : "Create a new Client"}</h1>
           <div className="client__container__form">

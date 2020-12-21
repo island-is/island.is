@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import StatusBar from '../Layout/StatusBar';
 import HelpBox from '../Common/HelpBox';
-import APIResponse from '../../entities/common/APIResponse';
 import { GrantType } from '../../entities/models/grant-type.model';
 import { ClientGrantTypeDTO } from '../../entities/dtos/client-grant-type.dto';
-import api from '../../services/api'
 import NoActiveConnections from '../Common/NoActiveConnections';
+import { ClientService } from './../../services/ClientService';
+import { GrantService } from './../../services/GrantService';
 
 interface Props {
   clientId: string;
@@ -16,7 +15,6 @@ interface Props {
 }
 
 const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
-  const [response, setResponse] = useState<APIResponse>(new APIResponse());
   const [grantTypes, setGrantTypes] = useState<GrantType[]>([]);
 
   useEffect(() => {
@@ -24,18 +22,10 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
   }, []);
 
   const getGrantTypes = async () => {
-    await api
-      .get(`grants`)
-      .then((response) => {
-        setGrantTypes(response.data);
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
+    const response = await GrantService.findAll();
+    if (response){
+      setGrantTypes(response);
+    }
   };
 
   const add = async (grantType: string) => {
@@ -44,46 +34,22 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
       clientId: props.clientId,
     };
 
-    await api
-      .post(`client-grant-type`, createObj)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-        if (props.handleChanges) {
-          props.handleChanges();
-        }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
-  };
+    const response = await ClientService.addGrantType(createObj);
+    if (response){
+      if (props.handleChanges) {
+        props.handleChanges();
+      }
+    }
+  }
 
   const remove = async (grantType: string) => {
-    await api
-      .delete(`client-grant-type/${props.clientId}/${grantType}`)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-        if (props.handleChanges) {
-          props.handleChanges();
-        }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
-  };
+    const response = await ClientService.removeGrantType(props.clientId, grantType);
+    if (response){
+      if (props.handleChanges) {
+        props.handleChanges();
+      }
+    }
+  }
 
   const setValue = (grantType: string, value: boolean) => {
     if (value) {
@@ -91,11 +57,10 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
     } else {
       remove(grantType);
     }
-  };
+  }
 
   return (
     <div className="client-grant-types">
-      <StatusBar status={response}></StatusBar>
       <div className="client-grant-types__wrapper">
         <div className="client-grant-types__container">
           <h1>Select the appropriate grant type</h1>

@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import StatusBar from '../Layout/StatusBar';
 import HelpBox from '../Common/HelpBox';
-import APIResponse from '../../entities/common/APIResponse';
 import { ClientAllowedCorsOriginDTO } from '../../entities/dtos/client-allowed-cors-origin.dto';
-import api from '../../services/api'
 import NoActiveConnections from '../Common/NoActiveConnections';
+import { ClientService } from './../../services/ClientService';
 
 interface Props {
   clientId: string;
@@ -19,39 +17,28 @@ interface Props {
 
 const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
   const { register, handleSubmit, errors, formState } = useForm<
-  ClientAllowedCorsOriginDTO
+    ClientAllowedCorsOriginDTO
   >();
   const { isSubmitting } = formState;
-  const [response, setResponse] = useState<APIResponse>(new APIResponse());
-  const [defaultOrigin, setDefaultOrigin] = useState(!props.origins || props.origins.length === 0 ? props.defaultOrigin : "");
+  const [defaultOrigin, setDefaultOrigin] = useState(
+    !props.origins || props.origins.length === 0 ? props.defaultOrigin : ''
+  );
 
   const add = async (data: any) => {
-    const clientRedirect = new ClientAllowedCorsOriginDTO();
-    clientRedirect.clientId = props.clientId;
-    clientRedirect.origin = data.origin;
+    const allowedCorsOrigin = new ClientAllowedCorsOriginDTO();
+    allowedCorsOrigin.clientId = props.clientId;
+    allowedCorsOrigin.origin = data.origin;
 
-    await api
-      .post(`cors`, clientRedirect)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-        if (response.status === 201) {
-          if (props.handleChanges) {
-            props.handleChanges();
-          }
-          setDefaultOrigin("");
-          document.getElementById('corsForm').reset();
-        }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
+    const response = await ClientService.addAllowedCorsOrigin(
+      allowedCorsOrigin
+    );
+    if (response) {
+      if (props.handleChanges) {
+        props.handleChanges();
+      }
+      setDefaultOrigin('');
+      document.getElementById('corsForm').reset();
+    }
   };
 
   const remove = async (origin: string) => {
@@ -59,33 +46,21 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
       window.confirm(
         `Are you sure you want to delete this cors origin: "${origin}"?`
       )
-    ){
-      await api
-      .delete(`cors/${props.clientId}/${encodeURIComponent(origin)}`)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-        if (res.statusCode === 200) {
-          if (props.handleChanges) {
-            props.handleChanges();
-          }
+    ) {
+      const response = await ClientService.removeAllowedCorsOrigin(
+        props.clientId,
+        origin
+      );
+      if (response) {
+        if (props.handleChanges) {
+          props.handleChanges();
         }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
+      }
     }
   };
 
   return (
     <div className="client-allowed-cors-origin">
-      <StatusBar status={response}></StatusBar>
       <div className="client-allowed-cors-origin__wrapper">
         <div className="client-allowed-cors-origin__container">
           <h1>Enter allowed cors origins</h1>
@@ -124,8 +99,11 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
                 </div>
               </div>
 
-              <NoActiveConnections title="No active cors origins" show={!props.origins || props.origins.length === 0} helpText="Define a cors origin and push the Add button to add a cors origin">
-              </NoActiveConnections>
+              <NoActiveConnections
+                title="No active cors origins"
+                show={!props.origins || props.origins.length === 0}
+                helpText="Define a cors origin and push the Add button to add a cors origin"
+              ></NoActiveConnections>
 
               <div
                 className={`client-allowed-cors-origin__container__list ${

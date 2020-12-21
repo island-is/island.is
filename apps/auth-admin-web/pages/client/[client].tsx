@@ -1,22 +1,22 @@
-import ClientDTO from '../../entities/dtos/client-dto';
-import ClientForm from '../../components/Client/ClientForm';
+import ClientDTO from './../../entities/dtos/client-dto';
+import ClientForm from './../../components/Client/ClientForm';
 import ClientRedirectUriForm from '../../components/Client/ClientRedirectUriForm';
-import ClientIdpRestrictionsForm from '../../components/Client/ClientIdpRestrictionsForm';
-import ClientPostLogoutRedirectUriForm from '../../components/Client/ClientPostLogoutRedirectUriForm';
-import ClientStepNav from '../../components/Client/ClientStepNav';
+import ClientIdpRestrictionsForm from './../../components/Client/ClientIdpRestrictionsForm';
+import ClientPostLogoutRedirectUriForm from './../../components/Client/ClientPostLogoutRedirectUriForm';
+import ClientStepNav from './../../components/Client/ClientStepNav';
 import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react';
 
-import { ClientStep } from '../../entities/common/ClientStep';
-import { Client } from '../../entities/models/client.model';
-import ClientAllowedCorsOriginsForm from '../../components/Client/ClientAllowedCorsOriginsForm';
+import { ClientStep } from './../../entities/common/ClientStep';
+import { Client } from './../../entities/models/client.model';
+import ClientAllowedCorsOriginsForm from './../../components/Client/ClientAllowedCorsOriginsForm';
 import ClientAllowedScopes from '../../components/Client/ClientAllowedScopesForm';
 import ClientSecretForm from '../../components/Client/ClientSecretForm';
 import ClientClaimForm from '../../components/Client/ClientClaimForm';
-import ClientGrantTypesForm from '../../components/Client/ClientGrantTypesForm';
-import ContentWrapper from 'apps/auth-admin-web/components/Layout/ContentWrapper';
-import api from '../../services/api'
-import StepEnd from 'apps/auth-admin-web/components/Common/StepEnd';
+import ClientGrantTypesForm from './../../components/Client/ClientGrantTypesForm';
+import ContentWrapper from './../../components/Layout/ContentWrapper';
+import StepEnd from './../../components/Common/StepEnd';
+import { ClientService } from './../../services/ClientService';
 
 const Index = () => {
   const { query } = useRouter();
@@ -42,16 +42,11 @@ const Index = () => {
   }, [clientId]);
 
   const getClient = async (clientId: string) => {
-    await api
-      .get(`clients/${clientId}`)
-      .then((response) => {
-        setClient(response.data);
-      })
-      .catch(function (error) {
-        if (error.response) {
-        }
-      });
-  };
+    const response = await ClientService.findClientById(clientId);
+    if (response ){
+      setClient(response);
+    }
+  }
 
   const changesMade = () => {
     getClient(clientId as string);

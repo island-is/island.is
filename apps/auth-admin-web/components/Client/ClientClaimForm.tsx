@@ -1,13 +1,11 @@
 import { ErrorMessage } from '@hookform/error-message';
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { ClientClaim } from '../../entities/models/client-claim.model';
-import APIResponse from '../../entities/common/APIResponse';
 import { ClientClaimDTO } from '../../entities/dtos/client-claim.dto';
 import HelpBox from '../Common/HelpBox';
-import StatusBar from '../Layout/StatusBar';
-import api from '../../services/api'
 import NoActiveConnections from '../Common/NoActiveConnections';
+import { ClientService } from './../../services/ClientService';
 
 interface Props {
   clientId: string;
@@ -18,7 +16,6 @@ interface Props {
 }
 
 const ClientClaimForm: React.FC<Props> = (props: Props) => {
-  const [response, setResponse] = useState<APIResponse>(new APIResponse());
   const { register, handleSubmit, errors, formState } = useForm<
     ClientClaimDTO
   >();
@@ -30,27 +27,13 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
     clientClaim.type = data.type;
     clientClaim.value = data.value;
 
-    await api
-      .post(`client-claim`, clientClaim)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-        if (response.status === 201) {
-          if (props.handleChanges) {
-            props.handleChanges();
-          }
-          document.getElementById('claimForm').reset();
-        }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
+    const response = ClientService.addClaim(clientClaim);
+    if (response) {
+      if (props.handleChanges) {
+        props.handleChanges();
+      }
+      document.getElementById('claimForm').reset();
+    }
   };
 
   const remove = async (claim: ClientClaim) => {
@@ -58,37 +41,22 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
       window.confirm(
         `Are you sure you want to delete this claim: "${claim.type} - ${claim.value}" ?`
       )
-    ){
-    await api
-      .delete(
-        `client-claim/${claim.clientId}/${encodeURIComponent(
-          claim.type
-        )}/${encodeURIComponent(claim.value)}`
-      )
-      .then((response: any) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-        if (res.statusCode === 200) {
-          if (props.handleChanges) {
-            props.handleChanges();
-          }
+    ) {
+      const response = await ClientService.removeClaim(
+        claim.clientId,
+        claim.type,
+        claim.value
+      );
+      if (response) {
+        if (props.handleChanges) {
+          props.handleChanges();
         }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
+      }
     }
   };
 
   return (
     <div className="client-claim">
-      <StatusBar status={response}></StatusBar>
       <div className="client-claim__wrapper">
         <div className="client-claim__container">
           <h1>Add claims for the Client</h1>
@@ -147,8 +115,11 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                 </div>
               </div>
 
-              <NoActiveConnections title="No active claims" show={!props.claims || props.claims.length === 0} helpText="Fill out the form and push the Add button to add a claim">
-              </NoActiveConnections>
+              <NoActiveConnections
+                title="No active claims"
+                show={!props.claims || props.claims.length === 0}
+                helpText="Fill out the form and push the Add button to add a claim"
+              ></NoActiveConnections>
 
               <div
                 className={`client-claim__container__list ${

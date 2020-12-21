@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ClientPostLogoutRedirectUriDTO } from '../../entities/dtos/client-post-logout-redirect-uri.dto';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import StatusBar from '../Layout/StatusBar';
 import HelpBox from '../Common/HelpBox';
-import APIResponse from '../../entities/common/APIResponse';
-import api from '../../services/api'
 import NoActiveConnections from '../Common/NoActiveConnections';
+import { ClientService } from './../../services/ClientService';
 
 interface Props {
   clientId: string;
   defaultUrl?: string;
-  uris?: string[],
+  uris?: string[];
   handleNext?: () => void;
   handleBack?: () => void;
   handleChanges?: () => void;
@@ -19,39 +17,26 @@ interface Props {
 
 const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
   const { register, handleSubmit, errors, formState } = useForm<
-  ClientPostLogoutRedirectUriDTO
+    ClientPostLogoutRedirectUriDTO
   >();
   const { isSubmitting } = formState;
-  const [response, setResponse] = useState(null);
-  const [defaultUrl, setDefaultUrl] = useState(!props.uris || props.uris.length === 0 ? props.defaultUrl : "");
+  const [defaultUrl, setDefaultUrl] = useState(
+    !props.uris || props.uris.length === 0 ? props.defaultUrl : ''
+  );
 
   const add = async (data) => {
-    const clientRedirect = new ClientPostLogoutRedirectUriDTO();
-    clientRedirect.clientId = props.clientId;
-    clientRedirect.redirectUri = data.redirectUri;
+    const postLogoutUri = new ClientPostLogoutRedirectUriDTO();
+    postLogoutUri.clientId = props.clientId;
+    postLogoutUri.redirectUri = data.redirectUri;
 
-    await api
-      .post(`client-post-logout-redirect-uri`, clientRedirect)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-        if (response.status === 201) {
-          if (props.handleChanges){
-            props.handleChanges();
-          }
-          document.getElementById('postLogoutForm').reset();
-          setDefaultUrl("");
-        }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
+    const response = ClientService.addPostLogoutRedirectUri(postLogoutUri);
+    if (response) {
+      if (props.handleChanges) {
+        props.handleChanges();
+      }
+      document.getElementById('postLogoutForm').reset();
+      setDefaultUrl('');
+    }
   };
 
   const remove = async (uri: string) => {
@@ -59,44 +44,42 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
       window.confirm(
         `Are you sure you want to delete this post logout url: "${uri}" ?`
       )
-    ){
-    await api
-      .delete(`client-post-logout-redirect-uri/${props.clientId}/${encodeURIComponent(uri)}`)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-        if (res.statusCode === 200){
-           if (props.handleChanges){
-            props.handleChanges();
-          }
+    ) {
+      const response = ClientService.removePostLogoutRedirectUri(
+        props.clientId,
+        uri
+      );
+
+      if (response) {
+        if (props.handleChanges) {
+          props.handleChanges();
         }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
+      }
     }
   };
 
   return (
     <div className="client-post-logout">
-      <StatusBar status={response}></StatusBar>
       <div className="client-post-logout__wrapper">
         <div className="client-post-logout__container">
           <h1>Enter a post logout redirect URL</h1>
           <div className="client-post-logout__container__form">
-          <div className="client-post-logout__help">
-          Specifies allowed URIs to redirect to after logout. See the <a href="https://openid.net/specs/openid-connect-session-1_0.html" target="_blank">OIDC Connect Session Management spec</a> for more details.
-          </div>
+            <div className="client-post-logout__help">
+              Specifies allowed URIs to redirect to after logout. See the{' '}
+              <a
+                href="https://openid.net/specs/openid-connect-session-1_0.html"
+                target="_blank"
+              >
+                OIDC Connect Session Management spec
+              </a>{' '}
+              for more details.
+            </div>
             <form id="postLogoutForm" onSubmit={handleSubmit(add)}>
               <div className="client-post-logout__container__fields">
                 <div className="client-post-logout__container__field">
-                  <label className="client-post-logout__label">Logout URL</label>
+                  <label className="client-post-logout__label">
+                    Logout URL
+                  </label>
                   <input
                     type="text"
                     name="redirectUri"
@@ -122,15 +105,19 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                 </div>
               </div>
 
-              <NoActiveConnections title="No client post logout redirect uris are defined" show={!props.uris || props.uris.length === 0} helpText="Add a post logout uri (if needed) and push the Add button. If a uri exists in the form, it's the display uri defined in the Client form">
-              </NoActiveConnections>
-            
-              <div className={`client-post-logout__container__list ${
-                    props.uris && props.uris.length > 0  ? 'show' : 'hidden'
-                  }`}>
-              <h3>Active post logout URLs</h3>
+              <NoActiveConnections
+                title="No client post logout redirect uris are defined"
+                show={!props.uris || props.uris.length === 0}
+                helpText="Add a post logout uri (if needed) and push the Add button. If a uri exists in the form, it's the display uri defined in the Client form"
+              ></NoActiveConnections>
+
+              <div
+                className={`client-post-logout__container__list ${
+                  props.uris && props.uris.length > 0 ? 'show' : 'hidden'
+                }`}
+              >
+                <h3>Active post logout URLs</h3>
                 {props.uris?.map((uri: string) => {
-                  
                   return (
                     <div
                       className="client-post-logout__container__list__item"

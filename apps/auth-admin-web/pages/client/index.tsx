@@ -1,8 +1,8 @@
-import ClientDTO from '../../entities/dtos/client-dto';
-import ClientForm from '../../components/Client/ClientForm';
+import ClientDTO from './../../entities/dtos/client-dto';
+import ClientForm from './../../components/Client/ClientForm';
 import React from 'react';
 import { useRouter } from 'next/router';
-import ContentWrapper from 'apps/auth-admin-web/components/Layout/ContentWrapper';
+import ContentWrapper from './../../components/Layout/ContentWrapper'
 
 export default function Index() {
   const router = useRouter();
