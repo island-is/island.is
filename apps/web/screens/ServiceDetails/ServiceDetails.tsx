@@ -19,7 +19,7 @@ import {
 } from '../../components'
 import { SubpageLayout } from '../Layouts/Layouts'
 import SidebarLayout from '../Layouts/SidebarLayout'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Breadcrumbs, Link, Text } from '@island.is/island-ui/core'
 import { useNamespace } from '../../hooks'
 import { useScript } from '../../hooks/useScript'
 
@@ -27,12 +27,14 @@ const { publicRuntimeConfig } = getConfig()
 
 interface ServiceDetailsProps {
   strings: GetNamespaceQuery['getNamespace']
+  filterContent: GetNamespaceQuery['getNamespace']
   openApiContent: GetNamespaceQuery['getNamespace']
   service: ApiService
 }
 
 const ServiceDetails: Screen<ServiceDetailsProps> = ({
   strings,
+  filterContent,
   openApiContent,
   service = null,
 }) => {
@@ -43,6 +45,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   )
 
   const n = useNamespace(strings)
+  const nfc = useNamespace(filterContent)
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
 
   if (disablePage === 'true') {
@@ -55,15 +58,30 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
         <SidebarLayout sidebarContent={<></>}>
           <SubpageMainContent
             main={
-              !service ? (
-                <Box>
-                  <Text variant="h3" as="h3">
-                    {n('serviceNotFound')}
-                  </Text>
+              <Box>
+                <Box marginBottom={2}>
+                  <Breadcrumbs>
+                    <Link href="/">Ísland.is</Link>
+                    <a href="/throun">{n('linkTextThroun')}</a>
+                    <a href="/throun/vefthjonustur/vorulisti">
+                      {n('linkTextVefthjonustur')}
+                    </a>
+                    <span>{n('linkTextLast')}</span>
+                  </Breadcrumbs>
                 </Box>
-              ) : (
-                <ServiceInformation strings={strings} service={service} />
-              )
+                {!service ? (
+                  <Box>
+                    <Text variant="h3" as="h3">
+                      {nfc('serviceNotFound')}
+                    </Text>
+                  </Box>
+                ) : (
+                  <ServiceInformation
+                    strings={filterContent}
+                    service={service}
+                  />
+                )}
+              </Box>
             }
           />
         </SidebarLayout>
@@ -82,7 +100,23 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
 ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
   const serviceId = String(query.slug)
 
-  const [filterContent, openApiContent, { data }] = await Promise.all([
+  const [
+    serviceDetails,
+    filterContent,
+    openApiContent,
+    { data },
+  ] = await Promise.all([
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'ServiceDetails',
+            lang: locale,
+          },
+        },
+      })
+      .then((res) => JSON.parse(res.data.getNamespace.fields)),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -117,7 +151,8 @@ ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   return {
     serviceId: serviceId,
-    strings: filterContent,
+    strings: serviceDetails,
+    filterContent: filterContent,
     openApiContent: openApiContent,
     service: data?.getApiServiceById,
   }
