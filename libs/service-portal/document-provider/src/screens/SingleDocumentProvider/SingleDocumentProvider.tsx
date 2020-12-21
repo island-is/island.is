@@ -123,16 +123,10 @@ const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
         </Text>
       </Box>
       <Box marginBottom={[2, 3]}>
-        <Text as="p">
-          {formatMessage(m.documentProvidersSingleDescription)}
-        </Text>
+        <Text as="p">{formatMessage(m.SingleProviderDescription)}</Text>
       </Box>
       <Box>
-        <Tabs
-          label="This is used as the aria-label as well"
-          tabs={tabs}
-          contentBackground="white"
-        />
+        <Tabs label="Flipar" tabs={tabs} contentBackground="white" />
       </Box>
     </Box>
   )
