@@ -242,8 +242,6 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
 
-  console.log(article)
-
   const subArticle = article.subArticles.find((sub) => {
     return sub.slug === query.subSlug
   })
@@ -332,17 +330,18 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
               <ProcessEntry {...processEntry} />
             </Box>
           )}
-          {console.log(subArticle, article)}
-          {/* ((subArticle ? subArticle.showTableOfContent : article.showTableOfContent) && */}
-          <GridRow>
-            <GridColumn span={[null, '4/7', '5/7', '4/7', '3/7']}>
-              <TOC
-                title={n('tableOfContentTitle')}
-                body={subArticle ? subArticle.body : article.body}
-              />
-            </GridColumn>
-          </GridRow>
-          {/* )} */}
+          {(subArticle
+            ? subArticle.showTableOfContents
+            : article.showTableOfContents) && (
+            <GridRow>
+              <GridColumn span={[null, '4/7', '5/7', '4/7', '3/7']}>
+                <TOC
+                  title={n('tableOfContentTitle')}
+                  body={subArticle ? subArticle.body : article.body}
+                />
+              </GridColumn>
+            </GridRow>
+          )}
           {subArticle && (
             <Text variant="h2" as="h2" paddingTop={7}>
               <span id={slugify(subArticle.title)}>{subArticle.title}</span>

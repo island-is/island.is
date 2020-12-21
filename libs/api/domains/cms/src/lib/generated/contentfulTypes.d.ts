@@ -143,6 +143,9 @@ export interface IArticleFields {
   /** Content */
   content?: Document | undefined
 
+  /** Show Table Of Contents */
+  showTableOfContents?: boolean | undefined
+
   /** Process Entry */
   processEntry?: IProcessEntry | undefined
 
@@ -184,9 +187,6 @@ export interface IArticleFields {
 
   /** Featured image */
   featuredImage?: Asset | undefined
-
-  /** Show Table Of Contents */
-  showTableOfContents?: boolean | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
