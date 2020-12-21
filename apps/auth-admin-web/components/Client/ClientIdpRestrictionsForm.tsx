@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
-import StatusBar from '../Layout/StatusBar';
+import React from 'react';
 import HelpBox from '../Common/HelpBox';
-import APIResponse from '../../entities/common/APIResponse';
-import api from '../../services/api'
 import NoActiveConnections from '../Common/NoActiveConnections';
+import { ClientService } from './../../services/ClientService';
 
 interface Props {
   clientId: string;
@@ -14,53 +12,28 @@ interface Props {
 }
 
 const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
-  const [response, setResponse] = useState<APIResponse>(new APIResponse());
-
   const add = async (name: string) => {
     const createObj = {
       name: name,
       clientId: props.clientId,
     };
-    await api
-      .post(`idp-restriction`, createObj)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-        if (props.handleChanges){
-          props.handleChanges();
-        }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
+
+    const response = await ClientService.addIdpRestriction(createObj);
+    if ( response ){
+      if (props.handleChanges){
+        props.handleChanges();
+      }
+    }
   };
 
   const remove = async (name: string) => {
-    await api
-      .delete(`idp-restriction/${props.clientId}/${name}`)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-        if (props.handleChanges){
-          props.handleChanges();
-        }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
-  };
+    const response = await ClientService.removeIdpRestriction(props.clientId, name);
+    if (response){
+      if (props.handleChanges){
+        props.handleChanges();
+      }
+    }
+  }
 
   const setSim = (sim: boolean) => {
     if (sim) {
@@ -80,7 +53,6 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
 
   return (
     <div className="client-idp-restriction">
-      <StatusBar status={response}></StatusBar>
       <div className="client-idp-restriction__wrapper">
         <div className="client-idp-restriction__container">
           <h1>Identity provider restrictions</h1>
