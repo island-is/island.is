@@ -1,13 +1,12 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import IdentityResourceUserClaim from './components/IdrUserClaim';
 import IdentityResourceData from './components/IdrData'
 
 export default function IdentityResourcesEdit() {
     const { query } = useRouter();
     const identityResourceId = query.edit;
 
-    if (identityResourceId != undefined) {
+    if (identityResourceId) {
         return (
             <div className='edit-resource-overview'>
                 <div>

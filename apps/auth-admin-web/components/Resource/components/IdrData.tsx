@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import IdentityResourcesDTO from './../../../entities/dtos/identity-resources.dto';
 import { useRouter } from 'next/router';
 import ResourceEditForm from './forms/ResourceEditForm';
+import { ResourcesService } from './../../../services/ResourcesService';
+import { IdentityResource } from './../../../entities/models/identity-resource.model';
 
 interface Props {
   identityResourceId: string;
@@ -10,8 +10,8 @@ interface Props {
 
 const IdentityResourceData: React.FC<Props> = ({ identityResourceId }) => {
   const [loaded] = useState<boolean>(false);
-  const [resource, setResource] = useState<IdentityResourcesDTO>(
-    new IdentityResourcesDTO()
+  const [resource, setResource] = useState<IdentityResource>(
+    new IdentityResource()
   );
   const router = useRouter();
 
@@ -20,26 +20,24 @@ const IdentityResourceData: React.FC<Props> = ({ identityResourceId }) => {
   }, [loaded]);
 
   const getResource = async () => {
-    await axios
-      .get(`/api/identity-resource/` + identityResourceId)
-      .then((response) => {
-        setResource(response.data);
-      });
+    const response = await ResourcesService.getIdentityResourceByName(identityResourceId);
+    if (response){
+      setResource(response);
+    }
   };
 
-  const save = async (data: any) => {
+  const update = async (data: any) => {
     data.resource.name = identityResourceId;
-    await axios
-      .put(`/api/identity-resource/` + identityResourceId, data.resource)
-      .then(() => {
-        router.back();
-      });
+    const response = await ResourcesService.updateIdentityResource(data.resource,identityResourceId);
+    if (response){
+      router.back();
+    }
   };
 
   return (
     <ResourceEditForm
       data={resource}
-      save={save}
+      save={update}
       hideBooleanValues={false}
       texts={{
         enabled: 'Specifies if the resource is enabled',

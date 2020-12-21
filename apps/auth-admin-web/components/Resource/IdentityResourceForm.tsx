@@ -1,47 +1,35 @@
 import React, { useState } from 'react';
 import IdentityResourcesDTO from '../../entities/dtos/identity-resources.dto';
-import axios from 'axios';
-import StatusBar from '../Layout/StatusBar';
+
 import { useForm } from 'react-hook-form';
-import { ErrorMessage } from '@hookform/error-message';
-import HelpBox from '../Common/HelpBox';
+
+
 import { useRouter } from 'next/router';
-import APIResponse from './../../entities/common/APIResponse'
 import ResourceCreateForm from './components/forms/ResourceCreateForm';
+import { ResourcesService } from './../../services/ResourcesService';
 
 
 export default function IdentityResourceForm() {
+  // TODO: What's the plan here? Unused?
   const { register, handleSubmit, errors, formState } = useForm<
     IdentityResourcesDTO
-  >();
-  const { isSubmitting } = formState;
-  const [response, setResponse] = useState<APIResponse>(new APIResponse());
+  >();  
+  // TODO: What was the plan here?
   const [resource, setResource] = useState<IdentityResourcesDTO>(
     new IdentityResourcesDTO()
   );
-  const router = useRouter();
-
+  const { isSubmitting } = formState;
   const back = () => {
     router.back();
   };
 
-  const save = async (data: any) => {
-    await axios
-      .post('/api/identity-resource', data.resource)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
+  const router = useRouter();
 
-        // This is how we can direct to another page
-        router.push('edit/identity-resource/' + data.resource.name)
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        }
-      });
+  const save = async (data: any) => {
+    const response = await ResourcesService.createIdentityResource(data.resource);
+    if (response){
+      router.push('edit/identity-resource/' + data.resource.name)
+    }
   };
 
   return (

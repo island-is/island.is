@@ -25,7 +25,6 @@ const ResourceListDisplay: React.FC<Props> = ({
 }) => {
   return (
     <div className="identity-resources">
-      {/* <StatusBar status={response}></StatusBar> */}
       <div className="identity-resources__wrapper">
         <div className="identity-resources__container">
           <h1>{header}</h1>

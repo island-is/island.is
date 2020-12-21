@@ -1,32 +1,22 @@
-import APIResponse from './../../entities/common/APIResponse'
+import React from 'react';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
-import axios from 'axios';
 import ResourceCreateForm from './components/forms/ResourceCreateForm';
+import { ResourcesService } from './../../services/ResourcesService';
 
 export default function ApiScopeForm() {
-  const [response, setResponse] = useState<APIResponse>(new APIResponse());
+  
   const router = useRouter();
 
+  // TODO: Whats the plan here? Not used?
   const back = () => {
     router.back();
   };
 
   const save = async (data: any) => {
-    await axios
-      .post('/api/api-scope', data.resource)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-
-        router.push('edit/api-scope/' + data.resource.name)
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        }
-      });
+    const response = ResourcesService.createApiScope(data.resource);
+    if (response) {
+      router.push('edit/api-scope/' + data.resource.name)
+    }
   };
 
   return (

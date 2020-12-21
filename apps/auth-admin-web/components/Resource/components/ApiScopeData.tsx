@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { ApiScopesDTO } from './../../../entities/dtos/api-scopes-dto';
 import ResourceEditForm from './forms/ResourceEditForm';
 import { useRouter } from 'next/router';
+import { ResourcesService } from './../../../services/ResourcesService';
+import { ApiScope } from './../../../entities/models/api-scope.model';
 
 interface Props {
   apiScopeId: string;
@@ -10,7 +10,7 @@ interface Props {
 
 const ApiScopeData: React.FC<Props> = ({ apiScopeId }) => {
   const [loaded] = useState<boolean>(false);
-  const [apiScope, setApiScope] = useState<ApiScopesDTO>(new ApiScopesDTO());
+  const [apiScope, setApiScope] = useState<ApiScope>(new ApiScope());
   const router = useRouter();
 
   useEffect(() => {
@@ -18,17 +18,18 @@ const ApiScopeData: React.FC<Props> = ({ apiScopeId }) => {
   }, [loaded]);
 
   const getResource = async () => {
-    await axios.get(`/api/api-scope/` + apiScopeId).then((response) => {
-      setApiScope(response.data);
-    });
+    const response = await ResourcesService.getApiScopeByName(apiScopeId);
+    if (response) {
+      setApiScope(response);
+    }
   };
 
   const save = async (data: any) => {
     data.resource.name = apiScopeId;
-
-    await axios.put(`/api/api-scope/` + apiScopeId, data.resource).then(() => {
+    const response = await ResourcesService.updateApiScope(data.resource);
+    if (response) {
       router.back();
-    });
+    }
   };
 
   return (

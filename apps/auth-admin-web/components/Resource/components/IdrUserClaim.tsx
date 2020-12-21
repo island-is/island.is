@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import ResourceUserClaim from './../../../entities/models/resource-user-claims';
-import HelpBox from '../../Common/HelpBox';
+import HelpBox from './../../Common/HelpBox';
+import { ResourcesService } from './../../../services/ResourcesService';
 
 interface Props {
   identityResourceId: string;
@@ -9,31 +9,28 @@ interface Props {
 
 const IdentityResourceUserClaim: React.FC<Props> = ({ identityResourceId }) => {
   const [claims, setClaims] = useState<ResourceUserClaim[]>([]);
-  const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     getResources();
-  }, [loaded]);
+  }, []);
 
   const getResources = async () => {
-    await axios
-      .get(`/api/user-claims/${identityResourceId}`)
-      .then((response) => {
-        setClaims(response.data);
-      });
+    const response = await ResourcesService.getResourceUserClaims(identityResourceId);
+    if(response){
+      setClaims(response.data);
+    }
   };
 
   const changeClaimResource = async (claim: ResourceUserClaim) => {
     claim.exists = !claim.exists;
 
-    if (claim.exists == true) {
-      await axios.post(
-        `/api/user-claims/${identityResourceId}/${claim.claim_name}`
-      );
+    if (claim.exists) {
+      const response = await ResourcesService.addResourceUserClaim(identityResourceId, claim.claim_name);
+      // TODO: What should happen now?
+      
     } else {
-      await axios.delete(
-        `/api/user-claims/${identityResourceId}/${claim.claim_name}`
-      );
+      const response = await ResourcesService.removeResourceUserClaim(identityResourceId, claim.claim_name);
+      // TODO: What should happen now?
     }
   };
 

@@ -19,17 +19,26 @@ export class BaseService {
       } catch (error) {
         return BaseService.handleError(error);
       }
-    } else {
+    }
+
+    try {
+      const response = await api.delete(path, { data: body });
+      return BaseService.handleResponse(response);
+    } catch (error) {
+      return BaseService.handleError(error);
+    }
+  }
+
+  protected static async POST(path: string, body: any = null) {
+    if (!body) {
       try {
-        const response = await api.delete(path, { data: body });
+        const response = await api.post(path);
         return BaseService.handleResponse(response);
       } catch (error) {
         return BaseService.handleError(error);
       }
     }
-  }
 
-  protected static async POST(path: string, body: any) {
     try {
       const response = await api.post(path, body);
       return BaseService.handleResponse(response);
