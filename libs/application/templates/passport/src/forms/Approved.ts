@@ -7,12 +7,12 @@ import {
 
 export const Approved: Form = buildForm({
   id: 'ApprovedPassportApplication',
-  name: 'Samþykkt',
+  title: 'Samþykkt',
   mode: FormModes.APPROVED,
   children: [
     buildDescriptionField({
       id: 'approved',
-      name: 'Til hamingju!',
+      title: 'Til hamingju!',
       description:
         'Umsókn þín um nýtt vegabréf hefur verið samþykkt! Það er mikið gleðiefni.',
     }),

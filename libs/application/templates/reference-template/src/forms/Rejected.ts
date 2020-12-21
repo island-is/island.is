@@ -7,12 +7,12 @@ import {
 
 export const Rejected: Form = buildForm({
   id: 'ExampleRejected',
-  name: 'Hafnað',
+  title: 'Hafnað',
   mode: FormModes.REJECTED,
   children: [
     buildDescriptionField({
       id: 'rejected',
-      name: 'Því miður...',
+      title: 'Því miður...',
       description: 'Umsókn þinni verið hafnað! Það er frekar leiðinlegt.',
     }),
   ],

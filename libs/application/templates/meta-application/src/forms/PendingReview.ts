@@ -9,12 +9,12 @@ import { m } from './messages'
 
 export const PendingReview: Form = buildForm({
   id: ApplicationTypes.META_APPLICATION,
-  name: m.pendingReview,
+  title: m.pendingReview,
   mode: FormModes.PENDING,
   children: [
     buildDescriptionField({
       id: 'inReview',
-      name: m.pendingReviewName,
+      title: m.pendingReviewName,
       description: m.pendingReviewIntroduction,
     }),
   ],

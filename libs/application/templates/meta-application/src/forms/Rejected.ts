@@ -9,12 +9,12 @@ import { m } from './messages'
 
 export const Rejected: Form = buildForm({
   id: ApplicationTypes.META_APPLICATION,
-  name: m.rejected,
+  title: m.rejected,
   mode: FormModes.REJECTED,
   children: [
     buildDescriptionField({
       id: 'rejected',
-      name: m.rejectedName,
+      title: m.rejectedName,
       description: m.rejectedIntroduction,
     }),
   ],

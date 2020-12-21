@@ -20,44 +20,44 @@ import { m } from './messages'
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',
-  name: m.formName,
+  title: m.formName,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'personalInfo',
-      name: m.personalInfoSection,
+      title: m.personalInfoSection,
       children: [
         buildMultiField({
           id: 'personalInfo',
-          name: m.personalInfoTitle,
+          title: m.personalInfoTitle,
           children: [
             buildTextField({
               id: 'personalInfo.name',
-              name: m.personalInfoName,
+              title: m.personalInfoName,
             }),
             buildTextField({
               id: 'personalInfo.nationalId',
-              name: m.nationalId,
+              title: m.nationalId,
               width: 'half',
             }),
             buildTextField({
               id: 'personalInfo.phoneNumber',
-              name: m.phoneNumber,
+              title: m.phoneNumber,
               width: 'half',
             }),
             buildTextField({
               id: 'personalInfo.email',
-              name: m.email,
+              title: m.email,
               width: 'half',
             }),
             buildTextField({
               id: 'personalInfo.otherEmail',
-              name: m.otherEmail,
+              title: m.otherEmail,
               width: 'half',
             }),
             buildTextField({
               id: 'personalInfo.height',
-              name: m.height,
+              title: m.height,
               width: 'half',
             }),
           ],
@@ -66,15 +66,15 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: 'service',
-      name: m.serviceSection,
+      title: m.serviceSection,
       children: [
         buildMultiField({
           id: 'service',
-          name: m.serviceTitle,
+          title: m.serviceTitle,
           children: [
             buildRadioField({
               id: 'service.type',
-              name: m.serviceType,
+              title: m.serviceType,
               options: [
                 { value: 'regular', label: m.regularService },
                 { value: 'express', label: m.expressService },
@@ -83,7 +83,7 @@ export const Draft: Form = buildForm({
 
             buildSelectField({
               id: 'service.dropLocation',
-              name: m.dropLocation,
+              title: m.dropLocation,
               placeholder: m.dropLocationPlaceholder.defaultMessage,
               options: [
                 {
@@ -103,7 +103,7 @@ export const Draft: Form = buildForm({
 
             buildCheckboxField({
               id: 'service.extraOptions',
-              name: m.extraOptions,
+              title: m.extraOptions,
               options: [
                 {
                   label: m.extraOptionsBringOwnPhoto,
@@ -117,10 +117,10 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: 'approveExternalData',
-      name: m.fetchDataSection,
+      title: m.fetchDataSection,
       children: [
         buildExternalDataProvider({
-          name: m.fetchData,
+          title: m.fetchData,
           id: 'fetchData',
           dataProviders: [
             buildDataProviderItem({
@@ -135,11 +135,11 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: 'payment',
-      name: m.paymentSection,
+      title: m.paymentSection,
       children: [
         buildMultiField({
           id: 'payment',
-          name: 'Yfirlit yfir greiðslu',
+          title: 'Yfirlit yfir greiðslu',
           children: [
             /*
              * TODO Finish payment section when payment connection is ready
@@ -147,7 +147,7 @@ export const Draft: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              name: 'sick',
+              title: 'sick',
               actions: [
                 {
                   event: 'SUBMIT',
@@ -160,7 +160,7 @@ export const Draft: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'final',
-          name: 'Takk',
+          title: 'Takk',
           description: 'Umsókn þín er samþykkt',
         }),
       ],

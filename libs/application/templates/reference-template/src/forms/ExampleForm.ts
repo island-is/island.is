@@ -18,20 +18,20 @@ import { m } from './messages'
 
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',
-  name: 'Atvinnuleysisbætur',
+  title: 'Atvinnuleysisbætur',
   mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'intro',
-      name: m.introSection,
+      title: m.introSection,
       children: [
         buildTextField({
           id: 'person.name',
-          name: m.name,
+          title: m.name,
         }),
         buildDescriptionField({
           id: 'field',
-          name: m.introField,
+          title: m.introField,
           description: (application) => ({
             ...m.introIntroduction,
             // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -41,23 +41,23 @@ export const ExampleForm: Form = buildForm({
         }),
         buildMultiField({
           id: 'about',
-          name: m.about,
+          title: m.about,
           children: [
             buildTextField({
               id: 'person.nationalId',
-              name: m.nationalId,
+              title: m.nationalId,
             }),
             buildTextField({
               id: 'person.age',
-              name: m.age,
+              title: m.age,
             }),
             buildTextField({
               id: 'person.email',
-              name: m.email,
+              title: m.email,
             }),
             buildTextField({
               id: 'person.phoneNumber',
-              name: m.phoneNumber,
+              title: m.phoneNumber,
               condition: {
                 questionId: 'person.age',
                 isMultiCheck: false,
@@ -71,15 +71,15 @@ export const ExampleForm: Form = buildForm({
     }),
     buildSection({
       id: 'career',
-      name: m.career,
+      title: m.career,
       children: [
         buildSubSection({
           id: 'history',
-          name: m.history,
+          title: m.history,
           children: [
             buildRadioField({
               id: 'careerHistory',
-              name: m.careerHistory,
+              title: m.careerHistory,
               options: [
                 { value: 'yes', label: m.yesOptionLabel },
                 { value: 'no', label: m.noOptionLabel },
@@ -93,7 +93,7 @@ export const ExampleForm: Form = buildForm({
             }),
             buildCheckboxField({
               id: 'careerHistoryCompanies',
-              name: m.careerHistoryCompanies,
+              title: m.careerHistoryCompanies,
               options: [
                 { value: 'government', label: m.governmentOptionLabel },
                 { value: 'aranja', label: 'Aranja' },
@@ -104,11 +104,11 @@ export const ExampleForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'future',
-          name: m.future,
+          title: m.future,
           children: [
             buildTextField({
               id: 'dreamJob',
-              name: m.dreamJob,
+              title: m.dreamJob,
             }),
           ],
         }),
@@ -116,22 +116,22 @@ export const ExampleForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirmation',
-      name: 'Staðfesta',
+      title: 'Staðfesta',
       children: [
         buildMultiField({
-          name: '',
+          title: '',
           children: [
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              name: 'Senda inn umsókn',
+              title: 'Senda inn umsókn',
               actions: [
                 { event: 'SUBMIT', name: 'Senda inn umsókn', type: 'primary' },
               ],
             }),
             buildDescriptionField({
               id: 'overview',
-              name: 'Takk fyrir að sækja um',
+              title: 'Takk fyrir að sækja um',
               description:
                 'Með því að smella á "Senda" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
             }),
@@ -139,7 +139,7 @@ export const ExampleForm: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'final',
-          name: 'Takk',
+          title: 'Takk',
           description: 'Umsókn þín er komin í vinnslu',
         }),
       ],

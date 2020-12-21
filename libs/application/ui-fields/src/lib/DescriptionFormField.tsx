@@ -19,7 +19,7 @@ const DescriptionFormField: FC<{
     <div>
       {showFieldName && (
         <Text variant="h2">
-          {formatText(field.name, application, formatMessage)}
+          {formatText(field.title, application, formatMessage)}
         </Text>
       )}
       <Markdown>

@@ -7,12 +7,12 @@ import {
 
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
-  name: 'Samþykkt',
+  title: 'Samþykkt',
   mode: FormModes.APPROVED,
   children: [
     buildDescriptionField({
       id: 'approved',
-      name: 'Til hamingju!',
+      title: 'Til hamingju!',
       description: 'Umsókn þín hefur verið samþykkt!',
     }),
   ],

@@ -37,7 +37,7 @@ export type Context = {
 export interface BaseField extends FormItem {
   readonly id: string
   readonly component: FieldComponents | string
-  readonly name: FormText
+  readonly title: FormText
   readonly description?: FormText
   readonly children: undefined
   disabled?: boolean

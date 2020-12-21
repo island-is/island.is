@@ -21,32 +21,32 @@ import {
 
 const ExampleForm: Form = buildForm({
   id: ApplicationTypes.EXAMPLE,
-  name: 'Atvinnuleysisbætur',
+  title: 'Atvinnuleysisbætur',
   children: [
     buildSection({
       id: 'intro',
-      name: 'name',
+      title: 'name',
       children: [
         buildDescriptionField({
           id: 'field',
-          name: 'name',
+          title: 'name',
           description: 'Þessi umsókn snýr að atvinnuleysisbótum',
         }),
         buildMultiField({
           id: 'about',
-          name: 'name',
+          title: 'name',
           children: [
             buildTextField({
               id: 'person.name',
-              name: 'name',
+              title: 'name',
             }),
             buildTextField({
               id: 'person.nationalId',
-              name: 'name',
+              title: 'name',
             }),
             buildTextField({
               id: 'person.phoneNumber',
-              name: 'name',
+              title: 'name',
               condition: {
                 questionId: 'person.age',
                 isMultiCheck: false,
@@ -60,11 +60,11 @@ const ExampleForm: Form = buildForm({
     }),
     buildSection({
       id: 'career',
-      name: 'name',
+      title: 'name',
       children: [
         buildRadioField({
           id: 'careerHistory',
-          name: 'name',
+          title: 'name',
           options: [
             { value: 'yes', label: 'name' },
             { value: 'no', label: 'name' },
@@ -72,7 +72,7 @@ const ExampleForm: Form = buildForm({
         }),
         buildCheckboxField({
           id: 'careerHistoryCompanies',
-          name: 'name',
+          title: 'name',
           options: [
             { value: 'government', label: 'name' },
             { value: 'aranja', label: 'Aranja' },
@@ -81,7 +81,7 @@ const ExampleForm: Form = buildForm({
         }),
         buildTextField({
           id: 'dreamJob',
-          name: 'name',
+          title: 'name',
         }),
       ],
     }),
@@ -157,28 +157,28 @@ describe('formatText', () => {
 describe('extractRepeaterIndexFromField', () => {
   it('should return the valid repeater index from a field inside a repeater', () => {
     const field = {
-      ...buildTextField({ id: 'periods[123].id', name: '' }),
+      ...buildTextField({ id: 'periods[123].id', title: '' }),
       isPartOfRepeater: true,
     } as TextField
     expect(extractRepeaterIndexFromField(field)).toBe(123)
   })
   it('should return the first valid repeater index from a field inside a repeater', () => {
     const field = {
-      ...buildTextField({ id: 'periods[123].id[456].asIso[789]', name: '' }),
+      ...buildTextField({ id: 'periods[123].id[456].asIso[789]', title: '' }),
       isPartOfRepeater: true,
     } as TextField
     expect(extractRepeaterIndexFromField(field)).toBe(123)
   })
   it('should return -1 if the field is not inside a repeater', () => {
     const field = {
-      ...buildTextField({ id: 'periods[123].id', name: '' }),
+      ...buildTextField({ id: 'periods[123].id', title: '' }),
       isPartOfRepeater: false,
     } as TextField
     expect(extractRepeaterIndexFromField(field)).toBe(-1)
   })
   it('should return -1 if the field has invalid index', () => {
     const field = {
-      ...buildTextField({ id: 'periods[1a1].id', name: '' }),
+      ...buildTextField({ id: 'periods[1a1].id', title: '' }),
       isPartOfRepeater: true,
     } as TextField
     expect(extractRepeaterIndexFromField(field)).toBe(-1)

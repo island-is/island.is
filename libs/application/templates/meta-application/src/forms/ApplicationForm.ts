@@ -67,20 +67,20 @@ const GET_ORGANIZATION_TAGS_QUERY = gql`
 
 export const ApplicationForm: Form = buildForm({
   id: ApplicationTypes.META_APPLICATION,
-  name: 'Meta application',
+  title: 'Meta application',
   mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'intro',
-      name: m.generalInfo,
+      title: m.generalInfo,
       children: [
         buildMultiField({
           id: 'general',
-          name: m.generalInfo,
+          title: m.generalInfo,
           children: [
             buildAsyncSelectField({
               id: 'applicant.institution',
-              name: m.institution,
+              title: m.institution,
               placeholder: m.institution,
               loadOptions: async ({ apolloClient }) => {
                 const { data } = await apolloClient.query<GetOrganizations>({
@@ -100,7 +100,7 @@ export const ApplicationForm: Form = buildForm({
             }),
             buildAsyncSelectField({
               id: 'applicant.ministry',
-              name: m.ministry,
+              title: m.ministry,
               placeholder: m.ministry,
               loadOptions: async ({ apolloClient }) => {
                 const { data } = await apolloClient.query<GetOrganizationTags>({
@@ -120,17 +120,17 @@ export const ApplicationForm: Form = buildForm({
             }),
             buildTextField({
               id: 'applicant.contact',
-              name: m.contact,
+              title: m.contact,
             }),
             buildTextField({
               id: 'applicant.email',
-              name: m.email,
+              title: m.email,
               width: 'half',
               variant: 'email',
             }),
             buildTextField({
               id: 'applicant.phoneNumber',
-              name: m.phoneNumber,
+              title: m.phoneNumber,
               width: 'half',
               variant: 'tel',
               format: '###-####',
@@ -142,30 +142,30 @@ export const ApplicationForm: Form = buildForm({
     }),
     buildSection({
       id: 'service',
-      name: m.service,
+      title: m.service,
       children: [
         buildSubSection({
           id: 'service.general',
-          name: m.serviceGeneral,
+          title: m.serviceGeneral,
           children: [
             buildMultiField({
               id: 'service.general.fields',
-              name: m.serviceGeneral,
+              title: m.serviceGeneral,
               children: [
                 buildTextField({
                   id: 'service.name',
-                  name: m.serviceName,
+                  title: m.serviceName,
                   width: 'half',
                 }),
                 buildTextField({
                   id: 'service.countPerYear',
-                  name: m.serviceCount,
+                  title: m.serviceCount,
                   width: 'half',
                   variant: 'number',
                 }),
                 buildRadioField({
                   id: 'service.users',
-                  name: m.serviceUsers,
+                  title: m.serviceUsers,
                   largeButtons: true,
                   options: [
                     { value: 'companies', label: m.companiesOptionLabel },
@@ -179,15 +179,15 @@ export const ApplicationForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'service.current',
-          name: m.serviceCurrent,
+          title: m.serviceCurrent,
           children: [
             buildMultiField({
               id: 'service.current.fields',
-              name: m.serviceCurrent,
+              title: m.serviceCurrent,
               children: [
                 buildRadioField({
                   id: 'service.digital',
-                  name: m.serviceDigital,
+                  title: m.serviceDigital,
                   largeButtons: true,
                   width: 'half',
                   options: [
@@ -197,7 +197,7 @@ export const ApplicationForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'service.link',
-                  name: m.serviceLink,
+                  title: m.serviceLink,
                   placeholder: 'https://www.someUrl.is',
                   condition: (formValue: FormValue) => {
                     return (
@@ -214,30 +214,30 @@ export const ApplicationForm: Form = buildForm({
     }),
     buildSection({
       id: 'dataCollection',
-      name: m.data,
+      title: m.data,
       children: [
         buildRepeater({
           id: 'data',
-          name: 'Hvaða gögn þurfa að fylgja umsókninni?',
+          title: 'Hvaða gögn þurfa að fylgja umsókninni?',
           component: 'DataRepeater',
           children: [
             buildMultiField({
               id: 'data.fields',
-              name: m.data,
+              title: m.data,
               children: [
                 buildTextField({
                   id: 'name',
-                  name: m.dataName,
+                  title: m.dataName,
                   width: 'half',
                 }),
                 buildTextField({
                   id: 'publisher',
-                  name: m.dataPublisher,
+                  title: m.dataPublisher,
                   width: 'half',
                 }),
                 buildRadioField({
                   id: 'download',
-                  name: m.dataDownload,
+                  title: m.dataDownload,
                   width: 'half',
                   largeButtons: true,
                   options: [
@@ -253,15 +253,15 @@ export const ApplicationForm: Form = buildForm({
     }),
     buildSection({
       id: 'payment',
-      name: m.payment,
+      title: m.payment,
       children: [
         buildMultiField({
           id: 'payment.fields',
-          name: m.payment,
+          title: m.payment,
           children: [
             buildRadioField({
               id: 'payment.radio',
-              name: m.paymentRadio,
+              title: m.paymentRadio,
               largeButtons: true,
               width: 'half',
               options: [
@@ -271,7 +271,7 @@ export const ApplicationForm: Form = buildForm({
             }),
             buildTextField({
               id: 'payment.tbr',
-              name: m.paymentTBR,
+              title: m.paymentTBR,
               condition: (formValue: FormValue) => {
                 return (
                   (formValue as { payment: { radio: string } })?.payment
@@ -281,7 +281,7 @@ export const ApplicationForm: Form = buildForm({
             }),
             buildTextField({
               id: 'payment.amount',
-              name: m.paymentAmount,
+              title: m.paymentAmount,
               variant: 'currency',
               placeholder: 'kr.',
               condition: (formValue: FormValue) => {
@@ -293,7 +293,7 @@ export const ApplicationForm: Form = buildForm({
             }),
             buildRadioField({
               id: 'payment.charge',
-              name: m.paymentCharge,
+              title: m.paymentCharge,
               largeButtons: true,
               width: 'half',
               options: [
@@ -313,21 +313,21 @@ export const ApplicationForm: Form = buildForm({
     }),
     buildSection({
       id: 'other',
-      name: m.other,
+      title: m.other,
       children: [
         buildMultiField({
           id: 'confirmation',
-          name: m.otherInfo,
+          title: m.otherInfo,
           children: [
             buildTextField({
               id: 'info',
-              name: '',
+              title: '',
               variant: 'textarea',
             }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              name: m.submit,
+              title: m.submit,
               actions: [{ event: 'SUBMIT', name: m.submit, type: 'primary' }],
             }),
           ],
@@ -336,11 +336,11 @@ export const ApplicationForm: Form = buildForm({
     }),
     buildSection({
       id: 'final',
-      name: m.final,
+      title: m.final,
       children: [
         buildDescriptionField({
           id: 'final.intro',
-          name: 'Takk fyrir',
+          title: 'Takk fyrir',
           description: 'Umsókn þín hefur verið send',
         }),
       ],

@@ -7,12 +7,12 @@ import {
 
 export const PendingReview: Form = buildForm({
   id: 'ExamplePending',
-  name: 'Í vinnslu',
+  title: 'Í vinnslu',
   mode: FormModes.PENDING,
   children: [
     buildDescriptionField({
       id: 'inReview',
-      name: 'Í vinnslu',
+      title: 'Í vinnslu',
       description: 'Umsókn þín um ökunám er nú í vinnslu. ',
     }),
   ],

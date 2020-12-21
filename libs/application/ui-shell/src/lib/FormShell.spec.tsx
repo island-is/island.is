@@ -31,11 +31,11 @@ describe(' FormShell', () => {
   }
   const form: Form = buildForm({
     id: 'ParentalLeaveForm',
-    name: 'Umsókn um fæðingarorlof',
+    title: 'Umsókn um fæðingarorlof',
     children: [
       buildDescriptionField({
         id: 'intro',
-        name: 'velkomin',
+        title: 'velkomin',
         description: 'This is an awesome application',
       }),
     ],
