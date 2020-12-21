@@ -12,6 +12,11 @@ on:
       - docker-build-*
   workflow_dispatch:
   create:
+  pull_request:
+    branches:
+      - 'feature/**'
+    types:
+      - labeled
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
@@ -45,14 +50,21 @@ jobs:
                 echo "Checking branch against pattern '$pattern'"
                 if [[ "$GIT_BRANCH" =~ $pattern ]]; then
                   echo "'$GIT_BRANCH' matches '$pattern', continuing with build"
-                  echo "::set-output name=PRE_CHECK_OK::$GITHUB_EVENT_NAME"
+                  echo "::set-output name=PRE_CHECK_OK::true"
                   exit 0
                 fi
             done
-            echo "No pattern matches '$GIT_BRANCH', exiting with exit code 1"
-            exit 1
+            echo "No pattern matches '$GIT_BRANCH', exiting."
+            exit 0
           fi
-          echo "::set-output name=PRE_CHECK_OK::$GITHUB_EVENT_NAME"
+          if [[ "$GITHUB_EVENT_NAME" == "labeled" ]]; then
+            if [[ "${{ github.event.label.name }}" != "deploy-feature" ]]; then
+              echo "In a feature branch that's not labeled with 'deploy-feature'. Not deploying."
+              exit 0
+            fi
+          fi
+          echo "::set-output name=PRE_CHECK_OK::true"
+
   prepare:
     runs-on: ubuntu-20.04
     timeout-minutes: 30
@@ -272,7 +284,7 @@ jobs:
   retag-unaffected:
     runs-on: ubuntu-20.04
     timeout-minutes: 5
-    if: always() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped'
+    if: always() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped' && !startsWith(github.ref, 'feature/')
     needs:
       - pre-checks
       - docker-build
@@ -302,8 +314,9 @@ jobs:
       - pre-checks
       - prepare
     env:
-      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
+      BUILD_CHUNKS: ${{ needs.prepare.outputs.BUILD_CHUNKS }}
     strategy:
       matrix:
         service:
@@ -320,9 +333,13 @@ jobs:
         run: |
           curl -v $SPINNAKER_URL/webhooks/webhook/${{matrix.service}} -H "content-type: application/json" --data-binary @- <<BODY
           {
-          "token": "$SPINNAKER_WEBHOOK_TOKEN",
-          "branch": "$GIT_BRANCH",
-          "parameters": { "docker_tag": "$DOCKER_TAG" }
+            "token": "$SPINNAKER_WEBHOOK_TOKEN",
+            "branch": "$GIT_BRANCH",
+            "parameters": {
+              "docker_tag": "$DOCKER_TAG",
+              "feature_name": "$(echo "$GIT_BRANCH" | cut -d"/" -f2- | tr -cd '[:alnum:]._-')",
+              "images": "$(echo $BUILD_CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"
+            }
           }
           BODY
 
