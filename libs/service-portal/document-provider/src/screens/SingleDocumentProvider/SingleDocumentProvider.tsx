@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import { Box, Text, Tabs } from '@island.is/island-ui/core'
+import { Box, Text, Tabs, toast } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { DocumentProviderBasicInfo } from '../../components/DocumentProviderBasicInfo/DocumentProviderBasicInfo'
+import {
+  DocumentProviderBasicInfo,
+  FormData,
+} from '../../components/DocumentProviderBasicInfo/DocumentProviderBasicInfo'
 
 const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
   //Interface will be deleted, when graphql is ready.
@@ -80,9 +83,18 @@ const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
     })
   }
 
-  const basicUserInfo = (
+  const submitFormData = async (formData: FormData) => {
+    console.log('formData', formData)
+    toast.success('Endapunktur vistaður')
+  }
+
+  const handleSubmit = (data: FormData) => {
+    submitFormData(data)
+  }
+
+  const basicUserInfo = data && (
     <Box>
-      <DocumentProviderBasicInfo data={data} />
+      <DocumentProviderBasicInfo data={data!} onSubmit={handleSubmit} />
     </Box>
   )
 
