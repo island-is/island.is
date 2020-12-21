@@ -1,5 +1,6 @@
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import md5 from 'crypto-js/md5'
+import Base64 from 'crypto-js/enc-base64'
 
 import { logger } from '@island.is/logging'
 
@@ -41,12 +42,11 @@ class YayAPI extends RESTDataSource {
   willSendRequest(request: RequestOptions) {
     request.headers.set('Content-Type', 'application/json')
     const timestamp = new Date().toISOString()
+    const words = md5(`${yay.apiKey}-${yay.secretKey}-${timestamp}`)
+    const signature = Base64.stringify(words)
     request.headers.set('ApiKey', yay.apiKey)
     request.headers.set('X-Timestamp', timestamp)
-    request.headers.set(
-      'X-Signature',
-      md5(`${yay.apiKey}-${yay.secretKey}-${timestamp}`),
-    )
+    request.headers.set('X-Signature', signature)
   }
 
   async getGiftCards(
