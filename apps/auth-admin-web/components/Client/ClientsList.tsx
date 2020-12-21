@@ -3,6 +3,7 @@ import ClientDTO from '../../entities/dtos/client-dto';
 import Paginator from '../Common/Paginator';
 import Link from 'next/link';
 import api from '../../services/api'
+import { ClientService } from './../../services/ClientService';
 
 class ClientsList extends Component {
   state = {
@@ -13,14 +14,13 @@ class ClientsList extends Component {
   };
 
   getClients = async (page: number, count: number) => {
-    const response = await api.get(
-      `clients/?page=${page}&count=${count}`
-    );
-
-    this.setState({
-      clients: response.data.rows,
-      rowCount: response.data.count,
-    });
+    const response = await ClientService.getClients(page, count);
+    if ( response ){
+      this.setState({
+        clients: response.rows,
+        rowCount: response.count,
+      });
+    }
   };
 
   handlePageChange = async (page: number, count: number) => {
