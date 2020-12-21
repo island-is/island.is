@@ -218,21 +218,29 @@ const Institution = ({
   institutionTitle,
   institution,
 }: InstitutionProps) => {
+  const { activeLocale } = useI18n()
   return (
     <Box
       background="purple100"
       borderRadius="large"
       padding={[3, 3, 4]}
       display="flex"
-      alignItems="flexStart"
+      alignItems="center"
     >
-      <img src={img} width={65} />
+      <div style={{ width: 64 }}>
+        <img src={img} width="100%" />
+      </div>
       <Box marginLeft={3}>
         <Text variant="eyebrow" color="purple600">
           {institutionTitle}
         </Text>
-        <Text variant="h3" color="purple600" lineHeight="sm">
-          <Hyphen locale="is">{institution}</Hyphen>
+        <Text
+          variant={institution.length > 24 ? 'h5' : 'h3'}
+          as="h3"
+          color="purple600"
+          lineHeight="sm"
+        >
+          <Hyphen locale={activeLocale}>{institution}</Hyphen>
         </Text>
       </Box>
     </Box>
@@ -270,14 +278,18 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
           </Link>
         </Box>
       )}
-      <Institution
-        img={
-          'https://upload.wikimedia.org/wikipedia/commons/9/90/Coat_of_arms_of_Iceland.svg'
-        }
-        institutionTitle={'Stofnun'}
-        institution={article.organization[0].title}
-      />
-      <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
+      {article.organization.length > 0 && (
+        <Institution
+          img={
+            'https://upload.wikimedia.org/wikipedia/commons/9/90/Coat_of_arms_of_Iceland.svg'
+          }
+          institutionTitle={'Stofnun'}
+          institution={article.organization[0].title}
+        />
+      )}
+      {article.subArticles.length > 0 && (
+        <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
+      )}
       <RelatedArticles
         title={n('relatedMaterial')}
         articles={article.relatedArticles}
