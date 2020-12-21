@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ClientRedirectUriDTO } from '../../entities/dtos/client-redirect-uri.dto';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import StatusBar from '../Layout/StatusBar';
 import HelpBox from '../Common/HelpBox';
-import APIResponse from '../../entities/common/APIResponse';
-import api from '../../services/api'
 import NoActiveConnections from '../Common/NoActiveConnections';
+import { ClientService } from './../../services/ClientService';
 
 interface Props {
   clientId: string;
@@ -22,37 +21,25 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
     ClientRedirectUriDTO
   >();
   const { isSubmitting } = formState;
-  const [response, setResponse] = useState(null);
-  const [defaultUrl, setDefaultUrl] = useState(!props.uris || props.uris.length === 0 ? props.defaultUrl : "");
+  const [defaultUrl, setDefaultUrl] = useState(
+    !props.uris || props.uris.length === 0 ? props.defaultUrl : ''
+  );
 
   const add = async (data) => {
     const clientRedirect = new ClientRedirectUriDTO();
     clientRedirect.clientId = props.clientId;
     clientRedirect.redirectUri = data.redirectUri;
 
-    await api
-      .post(`redirect-uri`, clientRedirect)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-        if (response.status === 201) {
-          if (props.handleChanges){
-            props.handleChanges();
-          }
+    const response = await ClientService.addRedirectUri(clientRedirect);
+    
+    if (response) {
+      if (props.handleChanges) {
+        props.handleChanges();
+      }
 
-          document.getElementById('redirectForm').reset();
-          setDefaultUrl("");
-        }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
+      document.getElementById('redirectForm').reset();
+      setDefaultUrl('');
+    }
   };
 
   const remove = async (uri: string) => {
@@ -60,42 +47,30 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
       window.confirm(
         `Are you sure you want to delete this redirect url: "${uri}" ?`
       )
-    ){
-    await api
-      .delete(`redirect-uri/${props.clientId}/${encodeURIComponent(uri)}`)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-        if (res.statusCode === 200) {
-          if (props.handleChanges){
-            props.handleChanges();
-          }
+    ) {
+      const response = await ClientService.removeRedirectUri(
+        props.clientId,
+        uri
+      );
+      if (response) {
+        if (props.handleChanges) {
+          props.handleChanges();
         }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
+      }
     }
   };
 
   return (
     <div className="client-redirect">
-      <StatusBar status={response}></StatusBar>
       <div className="client-redirect__wrapper">
         <div className="client-redirect__container">
           <h1>Enter a callback URL</h1>
-        
 
           <div className="client-redirect__container__form">
-          <div className="client-redirect__help">
-          Specifies the allowed URIs to return tokens or authorization codes to
-          </div>
+            <div className="client-redirect__help">
+              Specifies the allowed URIs to return tokens or authorization codes
+              to
+            </div>
             <form id="redirectForm" onSubmit={handleSubmit(add)}>
               <div className="client-redirect__container__fields">
                 <div className="client-redirect__container__field">
@@ -124,62 +99,65 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                   />
                 </div>
               </div>
-              </form>
+            </form>
 
-              <NoActiveConnections title="No client redirect uris (Callback uris) are defined" show={!props.uris || props.uris.length === 0} helpText="Add a redirect uri and push the Add button. If a uri exists in the form, it's the display uri defined in the Client form">
-              </NoActiveConnections>
-             
-              <div className={`client-redirect__container__list ${
-                    props.uris && props.uris.length > 0  ? 'show' : 'hidden'
-                  }`}>
-                    <h3>Active callback URLs</h3>
-                {props.uris?.map((uri: string) => {
-                  return (
-                    <div
-                      className="client-redirect__container__list__item"
-                      key={uri}
-                    >
-                      <div className="list-value">{uri}</div>
-                      <div className="list-remove">
-                        <button
-                          type="button"
-                          onClick={() => remove(uri)}
-                          className="client-redirect__container__list__button__remove"
-                          title="Remove"
-                        >
-                          <i className="icon__delete"></i>
+            <NoActiveConnections
+              title="No client redirect uris (Callback uris) are defined"
+              show={!props.uris || props.uris.length === 0}
+              helpText="Add a redirect uri and push the Add button. If a uri exists in the form, it's the display uri defined in the Client form"
+            ></NoActiveConnections>
+
+            <div
+              className={`client-redirect__container__list ${
+                props.uris && props.uris.length > 0 ? 'show' : 'hidden'
+              }`}
+            >
+              <h3>Active callback URLs</h3>
+              {props.uris?.map((uri: string) => {
+                return (
+                  <div
+                    className="client-redirect__container__list__item"
+                    key={uri}
+                  >
+                    <div className="list-value">{uri}</div>
+                    <div className="list-remove">
+                      <button
+                        type="button"
+                        onClick={() => remove(uri)}
+                        className="client-redirect__container__list__button__remove"
+                        title="Remove"
+                      >
+                        <i className="icon__delete"></i>
                         <span>Remove</span>
-                          
-                        </button>
-                      </div>
+                      </button>
                     </div>
-                  );
-                })}
-              </div>
+                  </div>
+                );
+              })}
+            </div>
 
-              <div className="client-redirect__buttons__container">
-                <div className="client-redirect__button__container">
-                  <button
-                    type="button"
-                    className="client-redirect__button__cancel"
-                    title="Back"
-                    onClick={props.handleBack}
-                  >
-                    Back
-                  </button>
-                </div>
-                <div className="client-redirect__button__container">
-                  <button
-                    type="button"
-                    className="client-redirect__button__save"
-                    onClick={props.handleNext}
-                    title="Next"
-                  >
-                    Next
-                  </button>
-                </div>
+            <div className="client-redirect__buttons__container">
+              <div className="client-redirect__button__container">
+                <button
+                  type="button"
+                  className="client-redirect__button__cancel"
+                  title="Back"
+                  onClick={props.handleBack}
+                >
+                  Back
+                </button>
               </div>
-            
+              <div className="client-redirect__button__container">
+                <button
+                  type="button"
+                  className="client-redirect__button__save"
+                  onClick={props.handleNext}
+                  title="Next"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

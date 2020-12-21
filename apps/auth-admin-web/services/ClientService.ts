@@ -3,6 +3,7 @@ import { ClientAllowedScopeDTO } from '../entities/dtos/client-allowed-scope.dto
 import { ClientClaimDTO } from '../entities/dtos/client-claim.dto';
 import { ClientGrantTypeDTO } from '../entities/dtos/client-grant-type.dto';
 import { ClientPostLogoutRedirectUriDTO } from '../entities/dtos/client-post-logout-redirect-uri.dto';
+import { ClientRedirectUriDTO } from '../entities/dtos/client-redirect-uri.dto';
 import { ClientSecretDTO } from '../entities/dtos/client-secret.dto';
 import { ApiScope } from '../entities/models/api-scope.model';
 import { ClientAllowedCorsOrigin } from '../entities/models/client-allowed-cors-origin.model';
@@ -10,6 +11,7 @@ import { ClientAllowedScope } from '../entities/models/client-allowed-scope.mode
 import { ClientClaim } from '../entities/models/client-claim.model';
 import { ClientGrantType } from '../entities/models/client-grant-type.model';
 import { ClientPostLogoutRedirectUri } from '../entities/models/client-post-logout-redirect-uri.model';
+import { ClientRedirectUri } from '../entities/models/client-redirect-uri.model';
 import { ClientSecret } from '../entities/models/client-secret.model';
 import { Client } from '../entities/models/client.model';
 import { BaseService } from './BaseService';
@@ -129,5 +131,22 @@ export class ClientService extends BaseService {
     grantType: string
   ): Promise<number | null> {
     return BaseService.DELETE(`client-grant-type/${clientId}/${grantType}`);
+  }
+
+  /** Adds an redirect uri for client */
+  static async addRedirectUri(
+    redirectObject: ClientRedirectUriDTO
+  ): Promise<ClientRedirectUri | null> {
+    return BaseService.POST(`redirect-uri`, redirectObject);
+  }
+
+  /** Removes an redirect uri for client */
+  static async removeRedirectUri(
+    clientId: string,
+    redirectUri: string
+  ): Promise<number | null> {
+    return BaseService.DELETE(
+      `redirect-uri/${clientId}/${encodeURIComponent(redirectUri)}`
+    );
   }
 }
