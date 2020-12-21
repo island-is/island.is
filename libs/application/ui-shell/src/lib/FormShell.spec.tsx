@@ -8,7 +8,7 @@ import {
   Application,
   ApplicationTypes,
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   Form,
 } from '@island.is/application/core'
 import { initializeClient } from '@island.is/application/graphql'
@@ -33,10 +33,10 @@ describe(' FormShell', () => {
     id: 'ParentalLeaveForm',
     name: 'Umsókn um fæðingarorlof',
     children: [
-      buildIntroductionField({
+      buildDescriptionField({
         id: 'intro',
         name: 'velkomin',
-        introduction: 'This is an awesome application',
+        description: 'This is an awesome application',
       }),
     ],
   })

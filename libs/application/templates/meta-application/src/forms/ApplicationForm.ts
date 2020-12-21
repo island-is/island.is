@@ -2,7 +2,7 @@ import {
   ApplicationTypes,
   buildAsyncSelectField,
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildRepeater,
@@ -338,10 +338,10 @@ export const ApplicationForm: Form = buildForm({
       id: 'final',
       name: m.final,
       children: [
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'final.intro',
           name: 'Takk fyrir',
-          introduction: 'Umsókn þín hefur verið send',
+          description: 'Umsókn þín hefur verið send',
         }),
       ],
     }),

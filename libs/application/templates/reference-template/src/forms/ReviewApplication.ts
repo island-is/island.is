@@ -2,7 +2,7 @@ import {
   buildCheckboxField,
   buildDividerField,
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -94,10 +94,10 @@ export const ReviewApplication: Form = buildForm({
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'final',
           name: 'Takk fyrir',
-          introduction:
+          description:
             'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
         }),
       ],

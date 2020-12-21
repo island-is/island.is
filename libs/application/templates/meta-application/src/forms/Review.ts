@@ -11,7 +11,7 @@ import {
   buildSubmitField,
   FormModes,
   buildCustomField,
-  buildIntroductionField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { m } from './messages'
 
@@ -180,10 +180,10 @@ export const Review: Form = buildForm({
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'final',
           name: 'Takk fyrir',
-          introduction:
+          description:
             'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
         }),
       ],

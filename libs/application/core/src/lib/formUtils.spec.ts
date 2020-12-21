@@ -8,7 +8,7 @@ import {
   ApplicationTypes,
   buildCheckboxField,
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -27,10 +27,10 @@ const ExampleForm: Form = buildForm({
       id: 'intro',
       name: 'name',
       children: [
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'field',
           name: 'name',
-          introduction: 'Þessi umsókn snýr að atvinnuleysisbótum',
+          description: 'Þessi umsókn snýr að atvinnuleysisbótum',
         }),
         buildMultiField({
           id: 'about',

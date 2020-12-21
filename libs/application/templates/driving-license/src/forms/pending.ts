@@ -1,6 +1,6 @@
 import {
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -18,10 +18,10 @@ export const pending: Form = buildForm({
   name: 'Í vinnslu',
   mode: FormModes.PENDING,
   children: [
-    buildIntroductionField({
+    buildDescriptionField({
       id: 'inReview',
       name: 'Í vinnslu',
-      introduction: 'Umsókn þín um ökuskilríki er nú í vinnslu.',
+      description: 'Umsókn þín um ökuskilríki er nú í vinnslu.',
     }),
   ],
 })

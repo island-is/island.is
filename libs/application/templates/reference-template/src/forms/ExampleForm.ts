@@ -1,7 +1,7 @@
 import {
   buildCheckboxField,
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -29,10 +29,10 @@ export const ExampleForm: Form = buildForm({
           id: 'person.name',
           name: m.name,
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'field',
           name: m.introField,
-          introduction: (application) => ({
+          description: (application) => ({
             ...m.introIntroduction,
             // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
             // @ts-ignore
@@ -129,18 +129,18 @@ export const ExampleForm: Form = buildForm({
                 { event: 'SUBMIT', name: 'Senda inn umsókn', type: 'primary' },
               ],
             }),
-            buildIntroductionField({
+            buildDescriptionField({
               id: 'overview',
               name: 'Takk fyrir að sækja um',
-              introduction:
+              description:
                 'Með því að smella á "Senda" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'final',
           name: 'Takk',
-          introduction: 'Umsókn þín er komin í vinnslu',
+          description: 'Umsókn þín er komin í vinnslu',
         }),
       ],
     }),

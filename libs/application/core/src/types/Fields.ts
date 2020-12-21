@@ -53,7 +53,7 @@ export enum FieldTypes {
   CHECKBOX = 'CHECKBOX',
   CUSTOM = 'CUSTOM',
   DATE = 'DATE',
-  INTRO = 'INTRO',
+  DESCRIPTION = 'DESCRIPTION',
   RADIO = 'RADIO',
   EMAIL = 'EMAIL',
   SELECT = 'SELECT',
@@ -68,7 +68,7 @@ export enum FieldComponents {
   CHECKBOX = 'CheckboxFormField',
   DATE = 'DateFormField',
   TEXT = 'TextFormField',
-  INTRO = 'IntroductionFormField',
+  DESCRIPTION = 'DescriptionFormField',
   RADIO = 'RadioFormField',
   SELECT = 'SelectFormField',
   FILEUPLOAD = 'FileUploadFormField',
@@ -91,10 +91,10 @@ export interface DateField extends BaseField {
   minDate?: Date
 }
 
-export interface IntroductionField extends BaseField {
-  readonly type: FieldTypes.INTRO
-  component: FieldComponents.INTRO
-  readonly introduction: FormText
+export interface DescriptionField extends BaseField {
+  readonly type: FieldTypes.DESCRIPTION
+  component: FieldComponents.DESCRIPTION
+  readonly description: FormText
 }
 
 export interface RadioField extends BaseField {
@@ -168,7 +168,7 @@ export type Field =
   | CheckboxField
   | CustomField
   | DateField
-  | IntroductionField
+  | DescriptionField
   | RadioField
   | SelectField
   | TextField

@@ -1,6 +1,6 @@
 import {
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -18,10 +18,10 @@ export const approved: Form = buildForm({
   name: 'Samþykkt',
   mode: FormModes.APPROVED,
   children: [
-    buildIntroductionField({
+    buildDescriptionField({
       id: 'approved',
       name: 'Samþykkt',
-      introduction: 'Umsókn þín um ökuskilríki hefur verið samþykkt.',
+      description: 'Umsókn þín um ökuskilríki hefur verið samþykkt.',
     }),
   ],
 })

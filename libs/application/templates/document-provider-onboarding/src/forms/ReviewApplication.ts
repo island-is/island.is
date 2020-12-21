@@ -3,7 +3,7 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
-  buildIntroductionField,
+  buildDescriptionField,
   buildTextField,
   Form,
   ApplicationTypes,
@@ -137,10 +137,10 @@ export const ReviewApplication: Form = buildForm({
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'reviewProcessed',
           name: m.reviewProcessedTitle,
-          introduction: m.reviewProcessedIntroduction,
+          description: m.reviewProcessedIntroduction,
         }),
       ],
     }),

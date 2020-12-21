@@ -5,7 +5,7 @@ import {
   buildExternalDataProvider,
   buildFileUploadField,
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -91,10 +91,10 @@ export const HealthInsuranceForm: Form = buildForm({
               width: 'half',
               disabled: true,
             }),
-            buildIntroductionField({
+            buildDescriptionField({
               id: 'editNationalRegistryData',
               name: '',
-              introduction: m.editNationalRegistryData,
+              description: m.editNationalRegistryData,
             }),
             buildDividerField({ name: ' ', color: 'transparent' }),
             buildTextField({
@@ -111,10 +111,10 @@ export const HealthInsuranceForm: Form = buildForm({
               format: '###-####',
               placeholder: '000-0000',
             }),
-            buildIntroductionField({
+            buildDescriptionField({
               id: 'editDigitalIslandData',
               name: '',
-              introduction: m.editDigitalIslandData,
+              description: m.editDigitalIslandData,
             }),
           ],
         }),
@@ -191,10 +191,10 @@ export const HealthInsuranceForm: Form = buildForm({
                 { label: m.yesOptionLabel, value: YES },
               ],
             }),
-            buildIntroductionField({
+            buildDescriptionField({
               id: 'formerInsuranceDetails',
               name: '',
-              introduction: m.formerInsuranceDetails,
+              description: m.formerInsuranceDetails,
             }),
             buildTextField({
               id: 'formerInsuranceCountry',
@@ -277,10 +277,10 @@ export const HealthInsuranceForm: Form = buildForm({
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'successfulSubmission',
           name: m.succesfulSubmissionTitle,
-          introduction: m.succesfulSubmissionMessage,
+          description: m.succesfulSubmissionMessage,
         }),
       ],
     }),

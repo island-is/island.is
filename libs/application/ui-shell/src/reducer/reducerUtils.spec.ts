@@ -5,7 +5,7 @@ import {
 } from './reducerUtils'
 import {
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildRepeater,
   buildSection,
@@ -22,10 +22,10 @@ describe('reducerUtils', () => {
       sectionIndex = -1,
       subSectionIndex = -1,
     ) => ({
-      ...buildIntroductionField({
+      ...buildDescriptionField({
         id,
         name: 'Introduction',
-        introduction: 'welcome',
+        description: 'welcome',
       }),
       isNavigable,
       sectionIndex,

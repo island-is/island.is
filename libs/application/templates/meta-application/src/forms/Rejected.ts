@@ -1,7 +1,7 @@
 import {
   ApplicationTypes,
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -12,10 +12,10 @@ export const Rejected: Form = buildForm({
   name: m.rejected,
   mode: FormModes.REJECTED,
   children: [
-    buildIntroductionField({
+    buildDescriptionField({
       id: 'rejected',
       name: m.rejectedName,
-      introduction: m.rejectedIntroduction,
+      description: m.rejectedIntroduction,
     }),
   ],
 })

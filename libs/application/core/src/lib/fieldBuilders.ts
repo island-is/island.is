@@ -8,7 +8,7 @@ import {
   FieldTypes,
   FieldWidth,
   FileUploadField,
-  IntroductionField,
+  DescriptionField,
   Option,
   RadioField,
   SubmitField,
@@ -105,21 +105,21 @@ export function buildDateField(data: {
   }
 }
 
-export function buildIntroductionField(data: {
+export function buildDescriptionField(data: {
   condition?: Condition
   id: string
   name: FormText
-  introduction: FormText
-}): IntroductionField {
-  const { condition, id, name, introduction } = data
+  description: FormText
+}): DescriptionField {
+  const { condition, id, name, description } = data
   return {
     children: undefined,
     condition,
-    introduction,
+    description,
     id,
     name,
-    type: FieldTypes.INTRO,
-    component: FieldComponents.INTRO,
+    type: FieldTypes.DESCRIPTION,
+    component: FieldComponents.DESCRIPTION,
   }
 }
 

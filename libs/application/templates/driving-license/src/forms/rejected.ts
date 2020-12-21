@@ -1,6 +1,6 @@
 import {
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -18,10 +18,10 @@ export const rejected: Form = buildForm({
   name: 'Í vinnslu',
   mode: FormModes.REJECTED,
   children: [
-    buildIntroductionField({
+    buildDescriptionField({
       id: 'rejected',
       name: 'Höfnuð',
-      introduction: 'Umsókn þín um ökuskilríki hefur verið höfnuð.',
+      description: 'Umsókn þín um ökuskilríki hefur verið höfnuð.',
     }),
   ],
 })

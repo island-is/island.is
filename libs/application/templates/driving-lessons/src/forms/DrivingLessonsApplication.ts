@@ -3,7 +3,7 @@ import {
   buildDateField,
   buildExternalDataProvider,
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -235,17 +235,17 @@ export const DrivingLessonsApplication: Form = buildForm({
                 },
               ],
             }),
-            buildIntroductionField({
+            buildDescriptionField({
               id: 'overview',
               name: '',
-              introduction: m.overviewIntro,
+              description: m.overviewIntro,
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'final',
           name: 'Takk',
-          introduction: 'Umsókn þín er komin í vinnslu',
+          description: 'Umsókn þín er komin í vinnslu',
         }),
       ],
     }),

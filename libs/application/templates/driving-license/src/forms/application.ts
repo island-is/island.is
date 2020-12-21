@@ -1,6 +1,6 @@
 import {
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -211,18 +211,18 @@ Veitir ökuréttindi til að stjórna bifhjóli:
                 },
               ],
             }),
-            buildIntroductionField({
+            buildDescriptionField({
               id: 'overview',
               name: '',
-              introduction:
+              description:
                 'Með því að smella á "Senda" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'final',
           name: 'Takk',
-          introduction: 'Umsókn þín er komin í vinnslu',
+          description: 'Umsókn þín er komin í vinnslu',
         }),
       ],
     }),

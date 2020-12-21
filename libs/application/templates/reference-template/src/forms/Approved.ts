@@ -1,6 +1,6 @@
 import {
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -10,10 +10,10 @@ export const Approved: Form = buildForm({
   name: 'Samþykkt',
   mode: FormModes.APPROVED,
   children: [
-    buildIntroductionField({
+    buildDescriptionField({
       id: 'approved',
       name: 'Til hamingju!',
-      introduction: 'Umsókn þín hefur verið samþykkt!',
+      description: 'Umsókn þín hefur verið samþykkt!',
     }),
   ],
 })

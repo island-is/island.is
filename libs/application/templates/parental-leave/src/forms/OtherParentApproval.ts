@@ -1,6 +1,6 @@
 import {
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -24,10 +24,10 @@ export const OtherParentApproval: Form = buildForm({
           name:
             'Do you want to give away one month of your parental leave rights?',
           children: [
-            buildIntroductionField({
+            buildDescriptionField({
               id: 'intro',
               name: '',
-              introduction:
+              description:
                 'You are apparently expecting a baby with some person that wishes to use one month of your rights. That means your rights will be 5 months at most. Do you agree?',
             }),
             buildSubmitField({
@@ -41,10 +41,10 @@ export const OtherParentApproval: Form = buildForm({
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'final',
           name: 'Takk fyrir',
-          introduction:
+          description:
             'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
         }),
       ],

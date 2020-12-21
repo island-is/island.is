@@ -4,7 +4,7 @@ import {
   buildDateField,
   buildExternalDataProvider,
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -158,10 +158,10 @@ export const Draft: Form = buildForm({
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'final',
           name: 'Takk',
-          introduction: 'Umsókn þín er samþykkt',
+          description: 'Umsókn þín er samþykkt',
         }),
       ],
     }),

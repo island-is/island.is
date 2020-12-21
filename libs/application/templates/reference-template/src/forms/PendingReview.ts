@@ -1,6 +1,6 @@
 import {
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -10,10 +10,10 @@ export const PendingReview: Form = buildForm({
   name: 'Í vinnslu',
   mode: FormModes.PENDING,
   children: [
-    buildIntroductionField({
+    buildDescriptionField({
       id: 'inReview',
       name: 'Í vinnslu',
-      introduction: 'Umsókn þín um ökunám er nú í vinnslu. ',
+      description: 'Umsókn þín um ökunám er nú í vinnslu. ',
     }),
   ],
 })
