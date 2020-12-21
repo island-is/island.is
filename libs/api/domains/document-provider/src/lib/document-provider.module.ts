@@ -2,15 +2,16 @@ import { DynamicModule, HttpModule } from '@nestjs/common'
 
 import { DocumentProviderResolver } from './document-provider.resolver'
 import { DocumentProviderService } from './document-provider.service'
+import { DocumentProviderClientProd } from './client/documentProviderClientProd'
 import {
-  DocumentProviderClient,
-  DocumentProviderClientConfig,
-  DOCUMENT_PROVIDER_CLIENT_CONFIG,
-} from './client/documentProviderClient'
-import { DocumentProviderRepository } from './document-provider.repository'
+  DocumentProviderConfig,
+  DOCUMENT_PROVIDER_CLIENT_CONFIG_PROD,
+  DOCUMENT_PROVIDER_CLIENT_CONFIG_TEST,
+} from './client/documentProviderClientConfig'
+import { DocumentProviderClientTest } from './client/documentProviderClientTest'
 
 export class DocumentProviderModule {
-  static register(config: DocumentProviderClientConfig): DynamicModule {
+  static register(config: DocumentProviderConfig): DynamicModule {
     return {
       module: DocumentProviderModule,
       imports: [
@@ -21,11 +22,15 @@ export class DocumentProviderModule {
       providers: [
         DocumentProviderResolver,
         DocumentProviderService,
-        DocumentProviderRepository,
-        DocumentProviderClient,
+        DocumentProviderClientTest,
         {
-          provide: DOCUMENT_PROVIDER_CLIENT_CONFIG,
-          useValue: config,
+          provide: DOCUMENT_PROVIDER_CLIENT_CONFIG_TEST,
+          useValue: config.test,
+        },
+        DocumentProviderClientProd,
+        {
+          provide: DOCUMENT_PROVIDER_CLIENT_CONFIG_PROD,
+          useValue: config.prod,
         },
       ],
     }

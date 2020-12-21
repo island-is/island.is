@@ -88,12 +88,6 @@ const Handover: FC = () => {
   ] = useMutation<RecyclingRequestMutation>(
     skilavottordRecyclingRequestMutation,
     {
-      onCompleted() {
-        if (requestType === 'cancelled') {
-          setModal(false)
-          routeHome()
-        }
-      },
       onError() {
         return mutationError
       },
@@ -158,6 +152,14 @@ const Handover: FC = () => {
         nameOfRequestor: user?.name,
         requestType: 'cancelled',
       },
+    }).then(({ data }) => {
+      // setRecyclingRequest is completed with no mutationErrors
+      // errors are returned in mutationResponse.message,
+      // we must therefore double check for errors in this way before closing modal and routing home
+      if (!data?.createSkilavottordRecyclingRequest?.message) {
+        setModal(false)
+        routeHome()
+      }
     })
   }
 
@@ -166,10 +168,10 @@ const Handover: FC = () => {
   }
 
   if (
-    (requestType !== 'cancelled' && (mutationError || mutationLoading)) ||
+    (requestType !== 'cancelled' &&
+      (mutationError || mutationLoading || mutationResponse?.message)) ||
     error ||
     isInvalidCar ||
-    mutationResponse?.message ||
     (loading && !data)
   ) {
     return (
@@ -261,7 +263,7 @@ const Handover: FC = () => {
         continueButtonText={t.cancelModal.buttons.continue}
         cancelButtonText={t.cancelModal.buttons.cancel}
         loading={mutationLoading}
-        error={mutationError}
+        error={mutationResponse?.message || mutationError}
         errorText={t.cancelModal.error}
       />
     </ProcessPageLayout>

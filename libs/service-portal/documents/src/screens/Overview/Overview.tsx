@@ -29,6 +29,7 @@ import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { defineMessage } from 'react-intl'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
 import { useLocation } from 'react-router-dom'
+import * as Sentry from '@sentry/react'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 6
@@ -80,6 +81,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
 }) => {
   useNamespaces('sp.documents')
+  Sentry.configureScope((scope) =>
+    scope.setTransactionName('Electronic-Documents'),
+  )
+
   const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
   const [searchInteractionEventSent, setSearchInteractionEventSent] = useState(

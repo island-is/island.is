@@ -65,7 +65,6 @@ export class ClientsController {
   @Post()
   @ApiCreatedResponse({ type: Client })
   async create(@Body() client: ClientDTO): Promise<Client> {
-    console.log(client)
     return await this.clientsService.create(client)
   }
 

@@ -23,7 +23,7 @@ export interface ModalProps {
   continueButtonText: string
   cancelButtonText: string
   loading?: boolean
-  error?: ApolloError
+  error?: ApolloError | string
   errorText?: Errors
 }
 

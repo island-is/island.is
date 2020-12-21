@@ -7,6 +7,7 @@ import * as styles from './DocumentCard.treat'
 import { toast, Text, Stack, Button, Box } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
 import { documentsOpenDocument } from '@island.is/plausible'
+import * as Sentry from '@sentry/react'
 
 const base64ToArrayBuffer = (base64Pdf: string) => {
   const binaryString = window.atob(base64Pdf)
@@ -65,14 +66,25 @@ const DocumentCard: FC<Props> = ({ document }) => {
       window.open(getPdfURL(doc.content))
       return
     }
+    Sentry.captureMessage('Unsupported document', Sentry.Severity.Error)
 
-    // Note: if document is not pdf, we need to log it into sentry and add it into the edge case.
     setIsModalOpen(true)
   }
 
   const fetchDocument = async () => {
     setDocumentDetails({ loading: true })
-
+    Sentry.addBreadcrumb({
+      category: 'Document',
+      type: 'Document-Info',
+      message: `Fetching single document`,
+      data: {
+        id: document.id,
+        fileType: document.fileType,
+        subject: document.subject,
+        senderName: document.senderName,
+      },
+      level: Sentry.Severity.Info,
+    })
     // Note: opening window before fetching data, to prevent popup-blocker
     const windowRef = window.open()
     try {
@@ -84,6 +96,20 @@ const DocumentCard: FC<Props> = ({ document }) => {
       if (!doc) {
         throw new Error('DocumentDetails is empty')
       }
+
+      Sentry.addBreadcrumb({
+        category: 'Document',
+        type: 'Document-Info',
+        message: `DocumentDetails received`,
+        data: {
+          id: document.id,
+          fileType: doc.fileType,
+          includesBase64Content: (!!doc.content).toString(),
+          includesHtml: (!!doc.html).toString(),
+          includesUrl: (!!doc.url).toString(),
+        },
+        level: Sentry.Severity.Info,
+      })
       setDocumentDetails({ documentDetails: doc })
       documentsOpenDocument(pathname, document.subject)
       if (documentIsPdf(doc) && windowRef) {
@@ -98,6 +124,7 @@ const DocumentCard: FC<Props> = ({ document }) => {
       windowRef && windowRef.close()
       window.focus()
       window.setTimeout(displayErrorToast, 100)
+      Sentry.captureException(error)
     }
   }
 
