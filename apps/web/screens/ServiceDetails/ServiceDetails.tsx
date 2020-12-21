@@ -12,25 +12,37 @@ import {
   ApiService,
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY, GET_API_SERVICE_QUERY } from '../queries'
-import { SubpageMainContent, ServiceInformation } from '../../components'
+import {
+  SubpageMainContent,
+  ServiceInformation,
+  OpenApiView,
+} from '../../components'
 import { SubpageLayout } from '../Layouts/Layouts'
 import SidebarLayout from '../Layouts/SidebarLayout'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useNamespace } from '../../hooks'
+import { useScript } from '../../hooks/useScript'
 
 const { publicRuntimeConfig } = getConfig()
 
 interface ServiceDetailsProps {
   strings: GetNamespaceQuery['getNamespace']
+  openApiContent: GetNamespaceQuery['getNamespace']
   service: ApiService
 }
 
 const ServiceDetails: Screen<ServiceDetailsProps> = ({
   strings,
+  openApiContent,
   service = null,
 }) => {
-  const n = useNamespace(strings)
+  useScript(
+    'https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js',
+    true,
+    'redoc',
+  )
 
+  const n = useNamespace(strings)
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
 
   if (disablePage === 'true') {
@@ -56,7 +68,13 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
           />
         </SidebarLayout>
       }
-      details={<></>}
+      details={
+        !service ? (
+          <></>
+        ) : (
+          <OpenApiView strings={openApiContent} service={service} />
+        )
+      }
     />
   )
 }
@@ -64,13 +82,24 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
 ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
   const serviceId = String(query.slug)
 
-  const [filterContent, { data }] = await Promise.all([
+  const [filterContent, openApiContent, { data }] = await Promise.all([
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
             namespace: 'ApiCatalogFilter',
+            lang: locale,
+          },
+        },
+      })
+      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'OpenApiView',
             lang: locale,
           },
         },
@@ -89,6 +118,7 @@ ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
   return {
     serviceId: serviceId,
     strings: filterContent,
+    openApiContent: openApiContent,
     service: data?.getApiServiceById,
   }
 }

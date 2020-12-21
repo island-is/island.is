@@ -19,6 +19,11 @@ import { ClientGrantTypeDTO } from '../entities/dto/client-grant-type.dto'
 import { ClientAllowedScopeDTO } from '../entities/dto/client-allowed-scope.dto'
 import { ClientClaimDTO } from '../entities/dto/client-claim.dto'
 import { ClientPostLogoutRedirectUriDTO } from '../entities/dto/client-post-logout-redirect-uri.dto'
+import { ClientSecretDTO } from '../entities/dto/client-secret.dto'
+import sha256 from 'crypto-js/sha256'
+import Base64 from 'crypto-js/enc-base64'
+import { IdentityResource } from '../entities/models/identity-resource.model'
+import { ApiScope } from '../..'
 
 @Injectable()
 export class ClientsService {
@@ -41,6 +46,10 @@ export class ClientsService {
     private clientClaim: typeof ClientClaim,
     @InjectModel(ClientPostLogoutRedirectUri)
     private clientPostLogoutUri: typeof ClientPostLogoutRedirectUri,
+    @InjectModel(ApiScope)
+    private apiScopeModel: typeof ApiScope,
+    @InjectModel(IdentityResource)
+    private identityResourceModel: typeof IdentityResource,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -452,5 +461,38 @@ export class ClientsService {
     return await this.clientPostLogoutUri.destroy({
       where: { clientId: clientId, redirectUri: redirectUri },
     })
+  }
+
+  /** Add secret to Client */
+  async addClientSecret(clientSecret: ClientSecretDTO): Promise<ClientSecret> {
+    const words = sha256(clientSecret.value)
+    const secret = Base64.stringify(words)
+
+    return this.clientSecret.create({
+      clientId: clientSecret.clientId,
+      value: secret,
+      description: clientSecret.description,
+      type: clientSecret.type,
+    })
+  }
+
+  /** Remove a secret from Client */
+  async removeClientSecret(clientSecret: ClientSecretDTO): Promise<number> {
+    return this.clientSecret.destroy({
+      where: {
+        clientId: clientSecret.clientId,
+        value: clientSecret.value,
+      },
+    })
+  }
+
+  /** Finds available scopes for AdminUI to select allowed scopes */
+  async FindAvailabeScopes(): Promise<ApiScope[]> {
+    const identityResources = (await this.identityResourceModel.findAll()) as unknown
+    const apiScopes = await this.apiScopeModel.findAll()
+    const arrJoined: ApiScope[] = []
+    arrJoined.push(...apiScopes)
+    arrJoined.push(...(identityResources as ApiScope[]))
+    return arrJoined.sort((a, b) => a.name.localeCompare(b.name))
   }
 }
