@@ -19,6 +19,13 @@ export class BaseService {
       } catch (error) {
         return BaseService.handleError(error);
       }
+    } else {
+      try {
+        const response = await api.delete(path, { data: body });
+        return BaseService.handleResponse(response);
+      } catch (error) {
+        return BaseService.handleError(error);
+      }
     }
   }
 

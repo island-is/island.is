@@ -6,8 +6,8 @@ import HelpBox from '../Common/HelpBox';
 import APIResponse from '../../entities/common/APIResponse';
 import { ClientSecretDTO } from '../../entities/dtos/client-secret.dto';
 import { ClientSecret } from '../../entities/models/client-secret.model';
-import api from '../../services/api';
 import NoActiveConnections from '../Common/NoActiveConnections';
+import { ClientService } from './../../services/ClientService';
 
 interface Props {
   clientId: string;
@@ -24,7 +24,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
   const { isSubmitting } = formState;
   const [response, setResponse] = useState<APIResponse>(new APIResponse());
   const defaultSecretLength = 25;
-  const [defaultSecret, setDefaultSecret] = useState<string>(null)
+  const [defaultSecret, setDefaultSecret] = useState<string>(null);
 
   const makeDefaultSecret = (length: number) => {
     let result = '';
@@ -38,8 +38,8 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
   };
 
   useEffect(() => {
-    setDefaultSecret(makeDefaultSecret(defaultSecretLength))
-  }, [])
+    setDefaultSecret(makeDefaultSecret(defaultSecretLength));
+  }, []);
 
   const copyToClipboard = (val: string) => {
     const selBox = document.createElement('textarea');
@@ -62,34 +62,20 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
     secretObj.type = data.type;
     secretObj.value = data.value;
 
-    await api
-      .post(`client-secret`, secretObj)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-        if (response.status === 201) {
-          if (props.handleChanges) {
-            props.handleChanges();
-            copyToClipboard(data.value);
-            // TODO: We should use something else that alert
-            alert(
-              `Your secret has been copied to your clipboard.\r\nDon't lose it, you won't be able to see it again:\r\n${data.value}`
-            );
-            
-            document.getElementById('secretForm').reset();
-            setDefaultSecret(makeDefaultSecret(defaultSecretLength))
-          }
-        }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        } else {
-          // TODO: Handle and show error
-        }
-      });
+    const response = await ClientService.addClientSecret(secretObj);
+    if (response) {
+      if (props.handleChanges) {
+        props.handleChanges();
+      }
+      copyToClipboard(data.value);
+      // TODO: We should use something else that alert
+      alert(
+        `Your secret has been copied to your clipboard.\r\nDon't lose it, you won't be able to see it again:\r\n${data.value}`
+      );
+
+      document.getElementById('secretForm').reset();
+      setDefaultSecret(makeDefaultSecret(defaultSecretLength));
+    }
   };
 
   const remove = async (secret: ClientSecret) => {
@@ -104,26 +90,12 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
       secretDTO.type = secret.type;
       secretDTO.description = secret.description;
 
-      await api
-        .delete(`client-secret`, { data: secretDTO })
-        .then((response) => {
-          const res = new APIResponse();
-          res.statusCode = response.request.status;
-          res.message = response.request.statusText;
-          setResponse(res);
-          if (response.status === 200) {
-            if (props.handleChanges) {
-              props.handleChanges();
-            }
-          }
-        })
-        .catch(function (error) {
-          if (error.response) {
-            setResponse(error.response.data);
-          } else {
-            // TODO: Handle and show error
-          }
-        });
+      const response = await ClientService.removeClientSecret(secretDTO);
+      if (response) {
+        if (props.handleChanges) {
+          props.handleChanges();
+        }
+      }
     }
   };
 
@@ -186,7 +158,9 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                   />
                 </div>
                 <div className="client-secret__container__field">
-                  <label className="client-secret__label" htmlFor="description">Description</label>
+                  <label className="client-secret__label" htmlFor="description">
+                    Description
+                  </label>
                   <input
                     id="description"
                     type="text"
