@@ -19,9 +19,12 @@ import {
 } from '../../components'
 import { SubpageLayout } from '../Layouts/Layouts'
 import SidebarLayout from '../Layouts/SidebarLayout'
-import { Box, Breadcrumbs, Link, Text } from '@island.is/island-ui/core'
+import { Box, Breadcrumbs, Button, Link, Text } from '@island.is/island-ui/core'
 import { useNamespace } from '../../hooks'
 import { useScript } from '../../hooks/useScript'
+import classNames from 'classnames'
+
+import * as styles from './ServiceDetails.treat'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -47,6 +50,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   const n = useNamespace(strings)
   const nfc = useNamespace(filterContent)
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
+  const serviceListLink = '/throun/vefthjonustur/vorulisti'
 
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
@@ -60,14 +64,30 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
             main={
               <Box>
                 <Box marginBottom={2}>
-                  <Breadcrumbs>
-                    <Link href="/">Ísland.is</Link>
-                    <a href="/throun">{n('linkTextThroun')}</a>
-                    <a href="/throun/vefthjonustur/vorulisti">
+                  <Link
+                    className={classNames(styles.showMobile)}
+                    href={serviceListLink}
+                  >
+                    <Button
+                      colorScheme="default"
+                      iconType="filled"
+                      preTextIcon="arrowBack"
+                      preTextIconType="filled"
+                      size="small"
+                      type="button"
+                      variant="text"
+                    >
                       {n('linkTextVefthjonustur')}
-                    </a>
-                    <span>{n('linkTextLast')}</span>
-                  </Breadcrumbs>
+                    </Button>
+                  </Link>
+                  <span className={classNames(styles.showDesktop)}>
+                    <Breadcrumbs>
+                      <Link href="/">Ísland.is</Link>
+                      <a href="/throun">{n('linkTextThroun')}</a>
+                      <a href={serviceListLink}>{n('linkTextVefthjonustur')}</a>
+                      <span>{n('linkTextLast')}</span>
+                    </Breadcrumbs>
+                  </span>
                 </Box>
                 {!service ? (
                   <Box>
