@@ -17,7 +17,6 @@ export const useRoutes = () => {
     modules: ServicePortalModule[],
     client: ApolloClient<NormalizedCacheObject>,
   ) => {
-    console.log('were only running once right')
     const routes = await Promise.all(
       modules.map((module) =>
         module.routes({
