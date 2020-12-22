@@ -1,11 +1,22 @@
 import React from 'react';
 import ContentWrapper from './../../../components/Layout/ContentWrapper';
-import IdentityResourceForm from '../../../components/Resource/IdentityResourceForm';
+import IdentityResourceCreateForm from '../../../components/Resource/components/forms/IdentityResourceCreateForm';
+import IdentityResourcesDTO from './../../../entities/dtos/identity-resources.dto';
+import { useRouter } from 'next/router';
 
 export default function Index() {
+  const router = useRouter();
+  const handleSave = (data: IdentityResourcesDTO) => {
+    router.push(`edit/identity-resource/${data.name}`);
+  }
+
+  const handleCancel = () => {
+    router.back();
+  }
+
   return (
     <ContentWrapper>
-      <IdentityResourceForm />
+      <IdentityResourceCreateForm identityResource={new IdentityResourcesDTO()} handleSave={handleSave} handleCancel={handleCancel} />
     </ContentWrapper>
   );
 }
