@@ -49,7 +49,7 @@ export const Link: React.FC<LinkProps> = ({
       : undefined,
     className,
     {
-      [styles.pointer]: href,
+      [styles.pointer]: href || linkProps.onClick,
     },
   )
 
@@ -58,7 +58,11 @@ export const Link: React.FC<LinkProps> = ({
   const prefetchDefault = !as ? false : prefetch
 
   if (!href) {
-    return <span className={classNames}>{children}</span>
+    return (
+      <span className={classNames} {...linkProps}>
+        {children}
+      </span>
+    )
   }
 
   if (isInternal) {
