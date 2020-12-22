@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import ResourceEditForm from './forms/ResourceEditForm';
-import { ApiResourcesDTO } from './../../../entities/dtos/api-resources-dto';
 import { useRouter } from 'next/router';
+import { ResourcesService } from './../../../services/ResourcesService';
+import { ApiResource } from './../../../entities/models/api-resource.model';
+
 
 interface Props {
   apiResourceId: string;
@@ -10,8 +11,8 @@ interface Props {
 
 const ApiResourceData: React.FC<Props> = ({ apiResourceId }) => {
   const [loaded] = useState<boolean>(false);
-  const [apiResource, setApiResource] = useState<ApiResourcesDTO>(
-    new ApiResourcesDTO()
+  const [apiResource, setApiResource] = useState<ApiResource>(
+    new ApiResource()
   );
   const router = useRouter();
 
@@ -20,27 +21,31 @@ const ApiResourceData: React.FC<Props> = ({ apiResourceId }) => {
   }, [loaded]);
 
   const getResource = async () => {
-    await axios.get(`/api/api-resource/` + apiResourceId).then((response) => {
-      setApiResource(response.data);
-    });
+    const response = await ResourcesService.getApiResourceByName(apiResourceId);
+    if ( response ){
+      setApiResource(response);
+    }
   };
 
-  const save = async (data: any) => {
+  const update = async (data: any) => {
     data.resource.name = apiResourceId;
+    // TODO: USB -> Þarf að taka deep copy af þessu áður en þú eyðir Stulli?
     delete data.resource.emphasize;
     delete data.resource.required;
 
-    await axios
-      .put(`/api/api-resource/` + apiResourceId, data.resource)
-      .then(() => {
-        // router.back();
-      });
+    const response = await ResourcesService.updateApiResource(data, apiResourceId);
+    if ( response)
+    {
+      // TODO: USB -> What now? :)
+      // This is commented out. Should it Go back?
+  // router.back();
+    }
   };
 
   return (
     <ResourceEditForm
       data={apiResource}
-      save={save}
+      save={update}
       hideBooleanValues={true}
       texts={{
         enabled: 'Specifies if the resource is enabled',

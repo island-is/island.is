@@ -3,12 +3,20 @@ import { ResourceStep } from './../../../entities/common/ResourceStep';
 import IdentityResourcesList from '../IdentityResourcesList';
 import ApiResourcesList from '../ApiResourcesList'
 import ApiScopeList from '../ApiScopeList'
+import StepEnd from '../../Common/StepEnd';
 
 interface Props {
   activeStep: ResourceStep;
 }
 
+
+
 const Overview: React.FC<Props> = ({ activeStep, children }) => {
+
+  const finishedPushed = () => {
+    // TODO: What should happen now?
+  }
+
   switch (activeStep) {
     case ResourceStep.ApiScopes:
       return <ApiScopeList />;
@@ -17,8 +25,8 @@ const Overview: React.FC<Props> = ({ activeStep, children }) => {
     case ResourceStep.IdentityResource:
       return <IdentityResourcesList />;
     default:
-      // TODO: Temp
-      return <div>Step not found</div>;
+     return <StepEnd buttonText="Go back" title="Steps completed" handleButtonFinishedClick={() => finishedPushed()}>The steps needed, to create a client, have been completed</StepEnd>
+      
   }
 };
 

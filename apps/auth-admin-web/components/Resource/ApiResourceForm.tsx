@@ -1,37 +1,27 @@
-import APIResponse from './../../entities/common/APIResponse'
+import React from 'react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import axios from 'axios';
-import { ApiResourcesDTO } from 'apps/auth-admin-web/entities/dtos/api-resources-dto';
+import { ApiResourcesDTO } from './../../entities/dtos/api-resources-dto';
 import ResourceCreateForm from './components/forms/ResourceCreateForm';
+import { ResourcesService } from './../../services/ResourcesService';
 
 export default function ApiResourceForm() {
-  const [response, setResponse] = useState<APIResponse>(new APIResponse());
+  // TODO: What was the plan with this? Not Used?
   const [apiResource, setApiResource] = useState<ApiResourcesDTO>(
     new ApiResourcesDTO()
   );
   const router = useRouter();
 
   const save = async (data: any) => {
+    // Api resource does not have these two fields
     delete data.resource.emphasize;
     delete data.resource.required;
 
-    await axios
-      .post('/api/api-resource', data.resource)
-      .then((response) => {
-        const res = new APIResponse();
-        res.statusCode = response.request.status;
-        res.message = response.request.statusText;
-        setResponse(res);
-
-        router.push('edit/api-resource/' + data.resource.name);
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setResponse(error.response.data);
-        }
-      });
-  };
+    const response = ResourcesService.createApiResource(data);
+    if ( response){
+      router.push('edit/api-resource/' + data.resource.name);
+    }
+  }
 
   return (
     <ResourceCreateForm
