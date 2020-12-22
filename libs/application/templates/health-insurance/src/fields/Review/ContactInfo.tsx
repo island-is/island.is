@@ -91,7 +91,6 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
             )}
           />
         </Box>
-
         <Box>
           <GridRow>
             <GridColumn span="6/12">

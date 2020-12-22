@@ -2,13 +2,14 @@ import React, { FC } from 'react'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Input, Hidden } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
+import { MissingInfoType } from '../../types'
 
 const HiddenDateField: FC<FieldBaseProps> = ({ application }) => {
   const { register } = useFormContext()
   const missingInfo = getValueViaPath(
     application.answers,
     'missingInfo',
-  ) as string[]
+  ) as MissingInfoType[]
 
   let index = 0
 

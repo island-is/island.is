@@ -1,17 +1,26 @@
 import React, { FC } from 'react'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  formatText,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { Accordion, AccordionItem, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../forms/messages'
-
 import FormerInsurance from './FormerInsurance'
 import StatusAndChildren from './StatusAndChildren'
 import ContactInfo from './ContactInfo'
+import ReviewMissingInfo from './ReviewMissingInfo'
+import { MissingInfoType } from '../../types'
 
 const Review: FC<FieldBaseProps> = ({ field, application }) => {
   const { formatMessage } = useLocale()
 
   const isEditable = field.id !== 'submittedData'
+  const previousMissingInfo = getValueViaPath(
+    application.answers,
+    'missingInfo',
+  ) as MissingInfoType[]
 
   return (
     <Box marginBottom={[1, 1, 3]}>
@@ -46,6 +55,23 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
             isEditable={isEditable}
           />
         </AccordionItem>
+        {field.id === 'submittedData' &&
+          previousMissingInfo.length > 0 &&
+          previousMissingInfo.map((missingInfo, index) => (
+            <AccordionItem
+              id={`id_${4 + index}`}
+              key={`id_${4 + index}`}
+              label={`Missing information ${index + 1}`}
+            >
+              <ReviewMissingInfo
+                application={application}
+                field={field}
+                isEditable={isEditable}
+                missingInfo={missingInfo}
+                index={index}
+              />
+            </AccordionItem>
+          ))}
       </Accordion>
     </Box>
   )

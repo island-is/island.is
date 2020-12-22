@@ -99,7 +99,6 @@ const FormerInsurance: FC<ReviewFieldProps> = ({ application, isEditable }) => {
           />
         </Box>
       </Stack>
-
       <Stack space={2}>
         <FieldDescription
           description={formatText(

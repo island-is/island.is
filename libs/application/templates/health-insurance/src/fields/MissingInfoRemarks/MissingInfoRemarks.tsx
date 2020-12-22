@@ -1,25 +1,25 @@
 import React, { FC } from 'react'
-import {
-  FieldBaseProps,
-  formatText,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
 import { Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
 import { m } from '../../forms/messages'
+import { MissingInfoType, ReviewFieldProps } from '../../types'
 
-const AddMissingInfo: FC<FieldBaseProps> = ({ application }) => {
+const MissingInfoRemarks: FC<ReviewFieldProps> = ({
+  application,
+  isEditable = true,
+  index = 0,
+}) => {
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
 
   const missingInfo = getValueViaPath(
     application.answers,
     'missingInfo',
-  ) as string[]
+  ) as MissingInfoType[]
 
-  let index = 0
-  if (missingInfo.length > 0) {
+  if (missingInfo.length > 0 && isEditable) {
     index = missingInfo.length
   }
 
@@ -34,10 +34,10 @@ const AddMissingInfo: FC<FieldBaseProps> = ({ application }) => {
         formatMessage,
       )}
       ref={register}
-      // disabled={!isEditable}
+      disabled={!isEditable}
       textarea
     />
   )
 }
 
-export default AddMissingInfo
+export default MissingInfoRemarks
