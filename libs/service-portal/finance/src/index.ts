@@ -8,7 +8,7 @@ import { lazy } from 'react'
 export const financeModule: ServicePortalModule = {
   name: 'Fjármál',
   widgets: () => [],
-  routes: () => {
+  routes: async () => {
     const routes: ServicePortalRoute[] = [
       {
         name: 'Fjármál',
