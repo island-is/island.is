@@ -5,7 +5,7 @@ import { Action, ActionType } from '../../store/actions'
 import { useModuleProps } from '../useModuleProps/useModuleProps'
 import { User } from 'oidc-client'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
-import { flatten } from 'lodash'
+import flatten from 'lodash/flatten'
 
 export const useRoutes = () => {
   const [{ modules }, dispatch] = useStore()
