@@ -110,31 +110,23 @@ const Review: FC<FieldBaseProps> = ({
   return (
     <div>
       <Box marginTop={[2, 2, 4]} marginBottom={[0, 0, 6]}>
-        <Box
-          display="flex"
-          justifyContent="flexEnd"
-          style={{
-            position: 'relative',
-            top: '1px',
-            zIndex: 1,
-          }}
-        >
-          <Box display="inlineFlex" background="white" paddingLeft={1}>
-            <Button
-              colorScheme="default"
-              iconType="filled"
-              onClick={() => {
-                toggleAllItemsExpanded(!allItemsExpanded)
-              }}
-              size="small"
-              type="button"
-              variant="text"
-            >
-              {allItemsExpanded
-                ? `${formatMessage(mm.confirmation.collapseAll)} —`
-                : `${formatMessage(mm.confirmation.epxandAll)} +`}
-            </Button>
-          </Box>
+        <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
+          <Button
+            colorScheme="default"
+            iconType="filled"
+            icon={allItemsExpanded ? 'remove' : 'add'}
+            onClick={() => {
+              toggleAllItemsExpanded(!allItemsExpanded)
+            }}
+            preTextIconType="filled"
+            size="default"
+            type="button"
+            variant="utility"
+          >
+            {allItemsExpanded
+              ? `${formatMessage(mm.confirmation.collapseAll)}`
+              : `${formatMessage(mm.confirmation.epxandAll)}`}
+          </Button>
         </Box>
 
         <Accordion singleExpand={false}>
