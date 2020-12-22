@@ -15,3 +15,7 @@ export const avatar = style({
   width: 56,
   height: 56,
 })
+
+export const breakWord = style({
+  wordBreak: 'break-word',
+})
