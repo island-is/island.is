@@ -8,7 +8,6 @@ import {
   Stack,
   Breadcrumbs,
   Box,
-  Link,
   Button,
   GridContainer,
   LoadingIcon,
@@ -208,12 +207,26 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
             main={
               <Box>
                 <Box marginBottom={2}>
-                  <Breadcrumbs>
-                    <Link href="/">Ísland.is</Link>
-                    <a href="/throun">Þróun</a>
-                    <a href="/throun/vefthjonustur">Vefþjónustur</a>
-                    <span>{subpageHeader.title}</span>
-                  </Breadcrumbs>
+                  <Breadcrumbs
+                    items={[
+                      {
+                        title: 'Ísland.is',
+                        href: '/',
+                      },
+
+                      {
+                        title: 'Þróun',
+                        href: '/throun',
+                      },
+                      {
+                        title: 'Vefþjónustur',
+                        href: '/throun/vefthjonustur',
+                      },
+                      {
+                        title: subpageHeader.title,
+                      },
+                    ]}
+                  />
                 </Box>
                 <Stack space={1}>
                   <Text variant="h1">{subpageHeader.title}</Text>
