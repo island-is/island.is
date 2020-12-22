@@ -22,9 +22,6 @@ import SidebarLayout from '../Layouts/SidebarLayout'
 import { Box, Breadcrumbs, Button, Link, Text } from '@island.is/island-ui/core'
 import { useNamespace } from '../../hooks'
 import { useScript } from '../../hooks/useScript'
-import classNames from 'classnames'
-
-import * as styles from './ServiceDetails.treat'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -64,30 +61,29 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
             main={
               <Box>
                 <Box marginBottom={2}>
-                  <Link
-                    className={classNames(styles.showMobile)}
-                    href={serviceListLink}
-                  >
-                    <Button
-                      colorScheme="default"
-                      iconType="filled"
-                      preTextIcon="arrowBack"
-                      preTextIconType="filled"
-                      size="small"
-                      type="button"
-                      variant="text"
-                    >
-                      {n('linkTextVefthjonustur')}
-                    </Button>
-                  </Link>
-                  <span className={classNames(styles.showDesktop)}>
+                  <Box display={['inline', 'none']}>
+                    <Link href={serviceListLink}>
+                      <Button
+                        colorScheme="default"
+                        iconType="filled"
+                        preTextIcon="arrowBack"
+                        preTextIconType="filled"
+                        size="small"
+                        type="button"
+                        variant="text"
+                      >
+                        {n('linkTextVefthjonustur')}
+                      </Button>
+                    </Link>
+                  </Box>
+                  <Box display={['none', 'inline']}>
                     <Breadcrumbs>
                       <Link href="/">Ísland.is</Link>
                       <a href="/throun">{n('linkTextThroun')}</a>
                       <a href={serviceListLink}>{n('linkTextVefthjonustur')}</a>
                       <span>{n('linkTextLast')}</span>
                     </Breadcrumbs>
-                  </span>
+                  </Box>
                 </Box>
                 {!service ? (
                   <Box>
