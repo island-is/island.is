@@ -13,7 +13,7 @@ export default function ApiResourceForm() {
   const router = useRouter();
 
   const save = async (data: any) => {
-    // TODO: USB -> Why are you deleting this Stulli? Aren't you creating a new resource
+    // Api resource does not have these two fields
     delete data.resource.emphasize;
     delete data.resource.required;
 
