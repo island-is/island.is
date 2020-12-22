@@ -21,7 +21,11 @@ import {
   Button,
   Hyphen,
 } from '@island.is/island-ui/core'
-import { RichText, HeadWithSocialSharing } from '@island.is/web/components'
+import {
+  RichText,
+  HeadWithSocialSharing,
+  InstitutionPanel,
+} from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { Screen } from '@island.is/web/types'
@@ -206,47 +210,6 @@ const ArticleNavigation: FC<
     )
   )
 }
-
-interface InstitutionProps {
-  img: string
-  institutionTitle: string
-  institution: string
-}
-
-const Institution = ({
-  img,
-  institutionTitle,
-  institution,
-}: InstitutionProps) => {
-  const { activeLocale } = useI18n()
-  return (
-    <Box
-      background="purple100"
-      borderRadius="large"
-      padding={[3, 3, 4]}
-      display="flex"
-      alignItems="center"
-    >
-      <div style={{ width: 64 }}>
-        <img src={img} width="100%" />
-      </div>
-      <Box marginLeft={3}>
-        <Text variant="eyebrow" color="purple600">
-          {institutionTitle}
-        </Text>
-        <Text
-          variant={institution.length > 24 ? 'h5' : 'h3'}
-          as="h3"
-          color="purple600"
-          lineHeight="sm"
-        >
-          <Hyphen locale={activeLocale}>{institution}</Hyphen>
-        </Text>
-      </Box>
-    </Box>
-  )
-}
-
 interface ArticleSidebarProps {
   article: Article
   activeSlug?: string | string[]
@@ -259,8 +222,7 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
   n,
 }) => {
   const { linkResolver } = useLinkResolver()
-
-  console.log(article)
+  const { activeLocale } = useI18n()
   return (
     <Stack space={3}>
       {!!article.category && (
@@ -279,21 +241,24 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
         </Box>
       )}
       {article.organization.length > 0 && (
-        <Institution
-          img={
-            'https://upload.wikimedia.org/wikipedia/commons/9/90/Coat_of_arms_of_Iceland.svg'
-          }
+        <InstitutionPanel
+          img={article.organization[0].logo?.url}
           institutionTitle={'Stofnun'}
           institution={article.organization[0].title}
+          locale={activeLocale}
+          linkProps={{ href: article.organization[0].link }}
+          imgContainerDisplay={['block', 'block', 'none', 'block']}
         />
       )}
       {article.subArticles.length > 0 && (
         <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
       )}
-      <RelatedArticles
-        title={n('relatedMaterial')}
-        articles={article.relatedArticles}
-      />
+      {article.relatedArticles.length > 0 && (
+        <RelatedArticles
+          title={n('relatedMaterial')}
+          articles={article.relatedArticles}
+        />
+      )}
     </Stack>
   )
 }
