@@ -67,7 +67,11 @@ export default function Index() {
     case 1: {
       return (
         <ContentWrapper>
-          <ApiResourceCreateForm apiResource={apiResource} handleSave={handleApiResourceSaved} handleCancel={handleBack} />
+          <ApiResourceCreateForm
+            apiResource={apiResource}
+            handleSave={handleApiResourceSaved}
+            handleCancel={handleBack}
+          />
         </ContentWrapper>
       );
     }
