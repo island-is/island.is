@@ -51,7 +51,7 @@ export const FixedNav: FC = () => {
           justifyContent="spaceBetween"
         >
           <FocusableBox href={makePath()} marginRight={2}>
-            <Logo width={40} iconOnly solid={true} />
+            <Logo iconOnly solid={true} />
           </FocusableBox>
           <Box
             display="flex"

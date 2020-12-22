@@ -2,12 +2,14 @@ import {
   ClientsService,
   ClientAllowedScopeDTO,
   ClientAllowedScope,
+  ApiScope,
 } from '@island.is/auth-api-lib'
 import {
   BadRequestException,
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Post,
 } from '@nestjs/common'
@@ -21,7 +23,13 @@ import { ApiCreatedResponse, ApiOAuth2, ApiTags } from '@nestjs/swagger'
 export class ClientAllowedScopeController {
   constructor(private readonly clientsService: ClientsService) {}
 
-  /** Adds new claim to client */
+  /** Gets all scopes for client to select from */
+  @Get()
+  async FindAvailabeScopes(): Promise<ApiScope[]> {
+    return await this.clientsService.FindAvailabeScopes()
+  }
+
+  /** Adds new scope to client */
   @Post()
   @ApiCreatedResponse({ type: ClientAllowedScope })
   async create(
@@ -30,7 +38,7 @@ export class ClientAllowedScopeController {
     return await this.clientsService.addAllowedScope(scope)
   }
 
-  /** Removes a claim from client */
+  /** Removes a scope from client */
   @Delete(':clientId/:scopeName')
   @ApiCreatedResponse()
   async delete(

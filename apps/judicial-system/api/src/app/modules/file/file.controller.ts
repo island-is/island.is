@@ -13,11 +13,11 @@ import {
 } from '@nestjs/common'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { JwtAuthGuard } from '@island.is/judicial-system/auth'
+import { JwtInjectBearerAuthGuard } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../environments'
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtInjectBearerAuthGuard)
 @Controller('api')
 export class FileController {
   constructor(

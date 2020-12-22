@@ -175,14 +175,15 @@ export const InstitutionForm: FC<Props> = ({ onSubmit }) => {
       >
         <Box marginTop={[1, 0]}>
           <Link to={ServicePortalPath.DocumentProviderSettingsRoot}>
-            <Button variant="ghost">Til baka</Button>
+            <Button variant="ghost">
+              {formatMessage(m.SettingsEditInstitutionBackButton)}
+            </Button>
           </Link>
         </Box>
         <Button type="submit" variant="primary" icon="arrowForward">
-          Vista breytingar
+          {formatMessage(m.SettingsEditInstitutionSaveButton)}
         </Button>
       </Box>
-      )
     </form>
   )
 }

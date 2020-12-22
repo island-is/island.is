@@ -8,6 +8,7 @@ export type Icon =
   | 'attach'
   | 'business'
   | 'calendar'
+  | 'call'
   | 'car'
   | 'caretDown'
   | 'cellular'
@@ -30,6 +31,7 @@ export type Icon =
   | 'informationCircle'
   | 'lockClosed'
   | 'logOut'
+  | 'mail'
   | 'menu'
   | 'notifications'
   | 'open'
@@ -56,6 +58,7 @@ export default {
     attach: 'Attach',
     business: 'Business',
     calendar: 'Calendar',
+    call: 'Call',
     car: 'Car',
     caretDown: 'CaretDown',
     cellular: 'Cellular',
@@ -78,6 +81,7 @@ export default {
     informationCircle: 'InformationCircle',
     lockClosed: 'LockClosed',
     logOut: 'LogOut',
+    mail: 'Mail',
     menu: 'Menu',
     notifications: 'Notifications',
     open: 'Open',
@@ -103,6 +107,7 @@ export default {
     attach: 'AttachOutline',
     business: 'BusinessOutline',
     calendar: 'CalendarOutline',
+    call: 'CallOutline',
     car: 'CarOutline',
     caretDown: 'CaretDownOutline',
     cellular: 'CellularOutline',
@@ -125,6 +130,7 @@ export default {
     informationCircle: 'InformationCircleOutline',
     lockClosed: 'LockClosedOutline',
     logOut: 'LogOutOutline',
+    mail: 'MailOutline',
     menu: 'MenuOutline',
     notifications: 'NotificationsOutline',
     open: 'OpenOutline',

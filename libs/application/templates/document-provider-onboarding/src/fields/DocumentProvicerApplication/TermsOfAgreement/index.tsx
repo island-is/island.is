@@ -34,7 +34,7 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
     false,
   ) as boolean
 
-  const { setValue } = useFormContext()
+  const { setValue, errors, getValues } = useFormContext()
 
   return (
     <Box>
@@ -100,6 +100,15 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
                 }}
                 checked={value}
                 name="termsOfAgreement.userTerms"
+                hasError={
+                  errors['termsOfAgreement.userTerms'] &&
+                  getValues('termsOfAgreement.userTerms') === false
+                }
+                errorMessage={formatText(
+                  m.termsUserAgreementRequiredMessage,
+                  application,
+                  formatMessage,
+                )}
                 label={formatText(
                   m.userAgreementOptionLabel,
                   application,
@@ -128,6 +137,15 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
                 }}
                 checked={value}
                 name="termsOfAgreement.securityTerms"
+                hasError={
+                  errors['termsOfAgreement.securityTerms'] &&
+                  getValues('termsOfAgreement.securityTerms') === false
+                }
+                errorMessage={formatText(
+                  m.termsSafetyAgreementRequiredMessage,
+                  application,
+                  formatMessage,
+                )}
                 label={formatText(
                   m.safetyAgreementOptionLabel,
                   application,

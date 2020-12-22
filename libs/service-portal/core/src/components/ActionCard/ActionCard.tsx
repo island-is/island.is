@@ -7,6 +7,7 @@ import {
   Link,
   LoadingIcon,
   FocusableBox,
+  ArrowLink,
 } from '@island.is/island-ui/core'
 import * as styles from './ActionCard.treat'
 import format from 'date-fns/format'
@@ -17,6 +18,7 @@ interface Props {
   date: Date
   loading?: boolean
   cta: {
+    externalUrl?: string
     label: string
     onClick: () => void
   }
@@ -26,37 +28,46 @@ export const ActionCard: FC<Props> = ({ label, title, date, cta, loading }) => {
   return (
     <Box
       className={styles.wrapper}
-      paddingTop={[2, 4]}
+      paddingTop={[2, 3]}
       paddingBottom={[2, 3]}
-      paddingX={[2, 4]}
+      paddingX={[2, 3]}
       border="standard"
       borderRadius="large"
       position="relative"
     >
-      <Stack space={1}>
-        <Box display="flex" alignItems="center" justifyContent="spaceBetween">
-          <Text variant="eyebrow" color="purple400">
-            {label}
+      <Box display="flex" alignItems="center" justifyContent="spaceBetween">
+        <Text variant="eyebrow" color="purple400">
+          {label}
+        </Text>
+        <Text variant="small" as="span" color="dark400">
+          {format(date, 'dd.MM.yyyy')}
+        </Text>
+      </Box>
+      <Box
+        display={['block', 'flex']}
+        justifyContent="spaceBetween"
+        alignItems="center"
+      >
+        <FocusableBox component="button" onClick={cta.onClick}>
+          <Text variant="h4" as="h4" color="blue400">
+            {title}
           </Text>
-          <Text variant="small" as="span" color="dark400">
-            {format(date, 'dd.MM.yyyy')}
-          </Text>
-        </Box>
-        <Box
-          display={['block', 'flex']}
-          justifyContent="spaceBetween"
-          alignItems="center"
-        >
-          <FocusableBox component="button" onClick={cta.onClick}>
-            <Text variant="h4" as="h4">
-              {title}
-            </Text>
-          </FocusableBox>
-          <Box
-            className={styles.buttonWrapper}
-            marginTop={[1, 0]}
-            marginLeft={[0, 3]}
-          >
+        </FocusableBox>
+        <Box className={styles.buttonWrapper} marginLeft={[0, 3]}>
+          {cta.externalUrl ? (
+            <Link href={cta.externalUrl}>
+              <Button
+                icon="open"
+                colorScheme="default"
+                iconType="outline"
+                size="small"
+                type="button"
+                variant="text"
+              >
+                {cta.label}
+              </Button>
+            </Link>
+          ) : (
             <Button
               icon="open"
               colorScheme="default"
@@ -68,9 +79,9 @@ export const ActionCard: FC<Props> = ({ label, title, date, cta, loading }) => {
             >
               {cta.label}
             </Button>
-          </Box>
+          )}
         </Box>
-      </Stack>
+      </Box>
       {loading && (
         <Box
           className={styles.isLoadingContainer}

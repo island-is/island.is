@@ -8,14 +8,14 @@ export class SoapClient {
   ): Promise<Soap.Client | null> {
     const promise = new Promise<Soap.Client>((resolve) => {
       Soap.createClient(
-        `${baseUrl}/lisaws/service.asmx?WSDL`,
+        `${baseUrl}/islws/service.asmx?WSDL`,
         {
           // eslint-disable-next-line
           wsdl_headers: { Host: host },
         },
         (error, client) => {
           if (client) {
-            client.setEndpoint(`${baseUrl}/lisaws/service.asmx`)
+            client.setEndpoint(`${baseUrl}/islws/service.asmx`)
             client.addHttpHeader('Host', host)
             resolve(client)
           } else {

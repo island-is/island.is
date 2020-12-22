@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
   FieldBaseProps,
@@ -13,6 +13,7 @@ import {
   GridColumn,
   GridRow,
   Input,
+  SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
 import {
@@ -33,6 +34,7 @@ import { useQuery } from '@apollo/client'
 import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 import { m, mm } from '../../lib/messages'
 import { YES, NO } from '../../constants'
+import useOtherParentOptions from '../../hooks/useOtherParentOptions'
 
 type ValidOtherParentAnswer = 'no' | 'manual' | undefined
 type ValidRadioAnswer = 'yes' | 'no' | undefined
@@ -41,8 +43,14 @@ const Review: FC<FieldBaseProps> = ({
   application,
   goToScreen = () => undefined,
 }) => {
+  const [allItemsExpanded, toggleAllItemsExpanded] = useState(true)
+
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
+  const {
+    options: otherParentOptions,
+    loading: loadingSpouseName,
+  } = useOtherParentOptions()
 
   const [
     statefulOtherParentConfirmed,
@@ -53,21 +61,6 @@ const Review: FC<FieldBaseProps> = ({
       'otherParent',
     ) as ValidOtherParentAnswer,
   )
-  const [spouseName, spouseId] = getNameAndIdOfSpouse(application)
-
-  const otherParentOptions: Option[] = [
-    {
-      value: NO,
-      label: formatMessage(m.noOtherParent),
-    },
-    { value: 'manual', label: formatMessage(m.otherParentOption) },
-  ]
-  if (spouseName !== undefined && spouseId !== undefined) {
-    otherParentOptions.unshift({
-      value: 'spouse',
-      label: formatMessage(m.otherParentSpouse, { spouseName, spouseId }),
-    })
-  }
 
   const [statefulPrivatePension, setStatefulPrivatePension] = useState<
     ValidRadioAnswer
@@ -117,32 +110,63 @@ const Review: FC<FieldBaseProps> = ({
   return (
     <div>
       <Box marginTop={[2, 2, 4]} marginBottom={[0, 0, 6]}>
+        <Box
+          display="flex"
+          justifyContent="flexEnd"
+          style={{
+            position: 'relative',
+            top: '1px',
+            zIndex: 1,
+          }}
+        >
+          <Box display="inlineFlex" background="white" paddingLeft={1}>
+            <Button
+              colorScheme="default"
+              iconType="filled"
+              onClick={() => {
+                toggleAllItemsExpanded(!allItemsExpanded)
+              }}
+              size="small"
+              type="button"
+              variant="text"
+            >
+              {allItemsExpanded
+                ? `${formatMessage(mm.confirmation.collapseAll)} —`
+                : `${formatMessage(mm.confirmation.epxandAll)} +`}
+            </Button>
+          </Box>
+        </Box>
+
         <Accordion singleExpand={false}>
           <AccordionItem
             id="id_4"
             label={formatMessage(m.otherParentTitle)}
-            startExpanded
+            startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="12/12">
-                  <RadioController
-                    id="otherParent"
-                    disabled={false}
-                    name="otherParent"
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'otherParent',
-                      ) as string[]
-                    }
-                    options={otherParentOptions}
-                    onSelect={(s: string) => {
-                      setStatefulOtherParentConfirmed(
-                        s as ValidOtherParentAnswer,
-                      )
-                    }}
-                  />
+                  {loadingSpouseName ? (
+                    <SkeletonLoader repeat={3} space={1} height={48} />
+                  ) : (
+                    <RadioController
+                      id="otherParent"
+                      disabled={false}
+                      name="otherParent"
+                      defaultValue={
+                        getValueViaPath(
+                          application.answers,
+                          'otherParent',
+                        ) as string[]
+                      }
+                      options={otherParentOptions}
+                      onSelect={(s: string) => {
+                        setStatefulOtherParentConfirmed(
+                          s as ValidOtherParentAnswer,
+                        )
+                      }}
+                    />
+                  )}
                 </GridColumn>
               </GridRow>
               {statefulOtherParentConfirmed === 'manual' && (
@@ -174,7 +198,7 @@ const Review: FC<FieldBaseProps> = ({
           <AccordionItem
             id="id_3"
             label={formatMessage(m.paymentInformationSubSection)}
-            startExpanded
+            startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
               <GridRow>
@@ -272,24 +296,16 @@ const Review: FC<FieldBaseProps> = ({
           </AccordionItem>
           <AccordionItem
             id="id_1"
-            label={formatMessage(m.employerSubSection)}
-            startExpanded
+            label={formatMessage(mm.employer.subSection)}
+            startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
               <GridRow>
-                <GridColumn span="6/12">
+                <GridColumn span="12/12">
                   <Input
-                    id={'employer.name'}
-                    name={'employer.name'}
-                    label={formatMessage(m.employerName)}
-                    ref={register}
-                  />
-                </GridColumn>
-                <GridColumn span="6/12">
-                  <Input
-                    id={'employer.nationalRegistryId'}
-                    name={'employer.nationalRegistryId'}
-                    label={formatMessage(m.employerId)}
+                    id={'employer.email'}
+                    name={'employer.email'}
+                    label={formatMessage(mm.employer.email)}
                     ref={register}
                   />
                 </GridColumn>
@@ -300,7 +316,7 @@ const Review: FC<FieldBaseProps> = ({
           <AccordionItem
             id="id_4"
             label={formatMessage(m.yourRights)}
-            startExpanded
+            startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
               <GridRow>
@@ -314,7 +330,7 @@ const Review: FC<FieldBaseProps> = ({
           <AccordionItem
             id="id_4"
             label={formatMessage(m.periodsSection)}
-            startExpanded
+            startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
               <GridRow>
@@ -341,7 +357,7 @@ const Review: FC<FieldBaseProps> = ({
           <AccordionItem
             id="id_4"
             label={formatMessage(mm.paymentPlan.subSection)}
-            startExpanded
+            startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
               <GridRow>
@@ -360,7 +376,7 @@ const Review: FC<FieldBaseProps> = ({
           <AccordionItem
             id="id_4"
             label={formatMessage(mm.shareInformation.subSection)}
-            startExpanded
+            startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
               <GridRow>

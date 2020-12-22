@@ -149,7 +149,7 @@ export const StatisticForm: FC<Props> = ({ onSubmit }) => {
         </GridRow>
         <Box marginTop={2} display="flex" justifyContent="flexEnd">
           <Button type="submit" variant="primary" icon="arrowForward">
-            Leitaðu
+            {formatMessage(m.DashBoardStatisticsSearchButton)}
           </Button>
         </Box>
       </Box>

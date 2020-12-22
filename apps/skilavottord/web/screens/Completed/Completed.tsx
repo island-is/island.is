@@ -59,7 +59,7 @@ const Completed = ({ apolloState }: WithApolloProps) => {
   useEffect(() => {
     if (!car) {
       router.push({
-        pathname: routes.myCars,
+        pathname: `${routes.myCars}`,
       })
     }
   }, [car, router, routes])

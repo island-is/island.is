@@ -27,6 +27,7 @@ import {
   VehicleOwner,
 } from '@island.is/skilavottord-web/types'
 import { getDate, getYear } from '@island.is/skilavottord-web/utils/dateUtils'
+import { BASE_PATH } from '@island.is/skilavottord/consts'
 
 export const skilavottordRecyclingPartnerVehiclesQuery = gql`
   query skilavottordRecyclingPartnerVehiclesQuery($partnerId: String!) {
@@ -125,7 +126,7 @@ const Overview: FC = () => {
   }
 
   const handleDeregister = () => {
-    router.push(routes.deregisterVehicle.select)
+    router.push(`${routes.deregisterVehicle.select}`)
   }
 
   if (!user) {
@@ -161,7 +162,9 @@ const Overview: FC = () => {
         <GridColumn span={['8/8', '8/8', '7/8', '7/8']}>
           <Stack space={4}>
             <Breadcrumbs>
-              <Link href={routes.home['recyclingCompany']}>Ísland.is</Link>
+              <Link href={`${BASE_PATH}${routes.home['recyclingCompany']}`}>
+                Ísland.is
+              </Link>
               <span>{t.title}</span>
             </Breadcrumbs>
             <Stack space={2}>

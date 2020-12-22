@@ -75,12 +75,6 @@ describe('/domari-krafa/thingbok', () => {
     )
     userEvent.tab()
 
-    userEvent.type(
-      screen.getByLabelText('Þinghaldi lauk *') as HTMLInputElement,
-      '12:32',
-    )
-    userEvent.tab()
-
     expect(document.title).toEqual('Þingbók - Réttarvörslugátt')
 
     expect(

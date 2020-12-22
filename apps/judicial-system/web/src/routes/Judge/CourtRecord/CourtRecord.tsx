@@ -44,10 +44,6 @@ export const CourtRecord: React.FC = () => {
     courtDocumentStartErrorMessage,
     setCourtDocumentStartErrorMessage,
   ] = useState('')
-  const [
-    courtDocumentEndErrorMessage,
-    setCourtDocumentEndErrorMessage,
-  ] = useState('')
   const [courtAttendeesErrorMessage, setCourtAttendeesMessage] = useState('')
   const [policeDemandsErrorMessage, setPoliceDemandsMessage] = useState('')
   const [accusedPleaErrorMessage, setAccusedPleaMessage] = useState('')
@@ -355,52 +351,6 @@ export const CourtRecord: React.FC = () => {
                 required
               />
             </Box>
-
-            <GridContainer>
-              <GridRow>
-                <GridColumn>
-                  <TimeInputField
-                    onChange={(evt) =>
-                      validateAndSetTime(
-                        'courtEndTime',
-                        new Date().toString(),
-                        evt.target.value,
-                        ['empty', 'time-format'],
-                        workingCase,
-                        setWorkingCase,
-                        courtDocumentEndErrorMessage,
-                        setCourtDocumentEndErrorMessage,
-                      )
-                    }
-                    onBlur={(evt) =>
-                      validateAndSendTimeToServer(
-                        'courtEndTime',
-                        new Date().toString(),
-                        evt.target.value,
-                        ['empty', 'time-format'],
-                        workingCase,
-                        updateCase,
-                        setCourtDocumentEndErrorMessage,
-                      )
-                    }
-                  >
-                    <Input
-                      data-testid="courtEndTime"
-                      name="courtEndTime"
-                      label="Þinghaldi lauk"
-                      placeholder="Veldu tíma"
-                      defaultValue={formatDate(
-                        workingCase.courtEndTime,
-                        TIME_FORMAT,
-                      )}
-                      errorMessage={courtDocumentEndErrorMessage}
-                      hasError={courtDocumentEndErrorMessage !== ''}
-                      required
-                    />
-                  </TimeInputField>
-                </GridColumn>
-              </GridRow>
-            </GridContainer>
           </Box>
           <FormFooter
             nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
@@ -408,10 +358,6 @@ export const CourtRecord: React.FC = () => {
               {
                 value:
                   formatDate(workingCase.courtStartTime, TIME_FORMAT) || '',
-                validations: ['empty', 'time-format'],
-              },
-              {
-                value: formatDate(workingCase.courtEndTime, TIME_FORMAT) || '',
                 validations: ['empty', 'time-format'],
               },
               {

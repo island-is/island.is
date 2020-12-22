@@ -80,10 +80,10 @@ const dataSchema = z.object({
     message: 'Þú verður að samþykkja að forritun og prófunum sé lokið',
   }),
   endPointObject: endPoint,
-  testUserExists: z.string().nonempty({
+  testProviderId: z.string().nonempty({
     message: 'Þú verður að stofna aðgang til að halda áfram',
   }),
-  productionUserExists: z.string().nonempty({
+  prodProviderId: z.string().nonempty({
     message: 'Þú verður að stofna aðgang til að halda áfram',
   }),
   productionEndPointObject: productionEndPoint,
@@ -229,14 +229,21 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined {
     //This logic makes it so the application is not accessible to anybody but involved parties
-    //TODO: add this to second if statement
-    //&& application.assignees.includes('2311637949')
 
     //This if statement might change depending on the "umboðskerfi"
+    if (
+      process.env.NODE_ENV === 'development' &&
+      application.state === 'inReview'
+    ) {
+      return Roles.ASSIGNEE
+    }
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
-    if (application.state === 'inReview') {
+    if (
+      application.state === 'inReview' &&
+      application.assignees.includes(id)
+    ) {
       return Roles.ASSIGNEE
     }
     //Returns nothing if user is not same as applicant nor is part of the assignes

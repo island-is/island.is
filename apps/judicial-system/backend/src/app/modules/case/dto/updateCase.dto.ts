@@ -7,6 +7,7 @@ import {
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseGender,
+  CaseDecision,
 } from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
@@ -59,6 +60,11 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly requestedCourtDate?: Date
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly alternativeTravelBan?: boolean
 
   @IsOptional()
   @IsString()
@@ -156,9 +162,9 @@ export class UpdateCaseDto {
   readonly ruling?: string
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: String })
-  readonly rejecting?: boolean
+  @IsEnum(CaseDecision)
+  @ApiPropertyOptional({ enum: CaseDecision })
+  readonly decision?: CaseDecision
 
   @IsOptional()
   @IsString()
@@ -171,7 +177,7 @@ export class UpdateCaseDto {
   readonly custodyRestrictions?: CaseCustodyRestrictions[]
 
   @IsOptional()
-  @IsEnum(CaseAppealDecision, { each: true })
+  @IsEnum(CaseAppealDecision)
   @ApiPropertyOptional({ enum: CaseAppealDecision })
   readonly accusedAppealDecision?: CaseAppealDecision
 
@@ -181,7 +187,7 @@ export class UpdateCaseDto {
   readonly accusedAppealAnnouncement?: string
 
   @IsOptional()
-  @IsEnum(CaseAppealDecision, { each: true })
+  @IsEnum(CaseAppealDecision)
   @ApiPropertyOptional({ enum: CaseAppealDecision })
   readonly prosecutorAppealDecision?: CaseAppealDecision
 

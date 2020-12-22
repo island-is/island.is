@@ -23,6 +23,9 @@ export * from './lib/Header/Header'
 export * from './lib/Footer/Footer'
 export * from './lib/DialogPrompt/DialogPrompt'
 export * from './lib/ModalBase/ModalBase'
+export * from './lib/Filter/Filter'
+export * from './lib/Filter/FilterMultiChoice/FilterMultiChoice'
+export * from './lib/Filter/FilterInput/FilterInput'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'
@@ -42,6 +45,7 @@ export * from './lib/Icon/IconTypes'
 export * from './lib/IconRC/Icon'
 export * from './lib/Typography/Typography'
 export * from './lib/Text/Text'
+export * from './lib/Hyphen/Hyphen'
 
 // Form
 export * from './lib/Checkbox/Checkbox'
