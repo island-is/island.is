@@ -15,6 +15,9 @@ export class SubArticle {
 
   @Field(() => [SliceUnion])
   body: Array<typeof SliceUnion>
+
+  @Field({ nullable: true })
+  showTableOfContents?: boolean
 }
 
 export const mapSubArticle = ({ sys, fields }: ISubArticle): SubArticle => ({
@@ -22,4 +25,5 @@ export const mapSubArticle = ({ sys, fields }: ISubArticle): SubArticle => ({
   title: fields.title ?? '',
   slug: fields.slug ?? '',
   body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
+  showTableOfContents: fields.showTableOfContents ?? false,
 })

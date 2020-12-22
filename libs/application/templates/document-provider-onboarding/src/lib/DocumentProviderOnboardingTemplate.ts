@@ -229,16 +229,20 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined {
     //This logic makes it so the application is not accessible to anybody but involved parties
-    //TODO: add this to second if statement
-    //&& application.assignees.includes('2311637949')
 
     //This if statement might change depending on the "umboðskerfi"
+    if (
+      process.env.NODE_ENV === 'development' &&
+      application.state === 'inReview'
+    ) {
+      return Roles.ASSIGNEE
+    }
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
     if (
       application.state === 'inReview' &&
-      application.assignees.includes('2311637949')
+      application.assignees.includes(id)
     ) {
       return Roles.ASSIGNEE
     }
