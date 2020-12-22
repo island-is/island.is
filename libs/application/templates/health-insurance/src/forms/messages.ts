@@ -117,12 +117,12 @@ export const m = defineMessages({
     description: 'What is you current status?',
   },
   statusEmployed: {
-    id: 'hi.application:status.Employed',
+    id: 'hi.application:status.employed',
     defaultMessage: 'Employed',
     description: 'Employed',
   },
   statusEmployedInformation: {
-    id: 'hi.application:status.Employed',
+    id: 'hi.application:status.employed.information',
     defaultMessage: 'You were employed by a company or self-employed',
     description: 'Employed description',
   },
