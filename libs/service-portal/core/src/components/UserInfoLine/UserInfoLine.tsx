@@ -11,6 +11,8 @@ import {
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import { Link } from 'react-router-dom'
+import { servicePortalOutboundLink } from '@island.is/plausible'
+
 import * as styles from './UserInfoLine.treat'
 
 interface Props {
@@ -38,6 +40,9 @@ export const UserInfoLine: FC<Props> = ({
   loading,
   editLink,
 }) => {
+  const trackExternalLinkClick = () => {
+    servicePortalOutboundLink()
+  }
   const { formatMessage } = useLocale()
 
   return (
@@ -91,6 +96,7 @@ export const UserInfoLine: FC<Props> = ({
                 <a
                   href={editLink.url}
                   rel="noopener noreferrer"
+                  onClick={trackExternalLinkClick}
                   target="_blank"
                 >
                   <Button

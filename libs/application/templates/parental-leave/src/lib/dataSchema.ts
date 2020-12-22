@@ -11,18 +11,7 @@ const PersonalAllowance = z
       .string()
       .refine((x) => parseFloat(x) >= 0 && parseFloat(x) <= 100)
       .optional(),
-    usedAmount: z
-      .string()
-      .refine((x) => parseInt(x, 10) >= 0)
-      .optional(),
-    periodFrom: z
-      .string()
-      .refine((d) => isValid(parseISO(d)))
-      .optional(),
-    periodTo: z
-      .string()
-      .refine((d) => isValid(parseISO(d)))
-      .optional(),
+    useAsMuchAsPossible: z.enum([YES, NO]).optional(),
   })
   .optional()
 
@@ -57,15 +46,8 @@ export const dataSchema = z.object({
   usePrivatePensionFund: z.enum([YES, NO]),
   periods: z.array(Period).nonempty(),
   employer: z.object({
-    name: z.string().nonempty(),
-    nationalRegistryId: z.string().nonempty(),
+    isSelfEmployed: z.enum([YES, NO]),
     email: z.string().email().nonempty(),
-    // .refine(
-    //   (n) => kennitala.isValid(n) && kennitala.isCompany(n),
-    //   'Kennitala þarf að vera gild',
-    // ),
-    contact: z.string().optional(),
-    contactId: z.string().optional(),
   }),
   requestRights: z.enum([YES, NO]),
   giveRights: z.enum([YES, NO]),
@@ -82,7 +64,6 @@ export const dataSchema = z.object({
       'Kennitala þarf að vera gild',
     ),
   otherParentRightOfAccess: z.enum([YES, NO]).optional(),
-  isSelfEmployed: z.enum([YES, NO]),
   usePersonalAllowance: z.enum([YES, NO]),
   usePersonalAllowanceFromSpouse: z.enum([YES, NO]),
 })

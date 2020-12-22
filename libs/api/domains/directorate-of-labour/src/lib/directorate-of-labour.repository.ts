@@ -36,7 +36,7 @@ export class DirectorateOfLabourRepository {
     return [
       {
         id: 'id',
-        name: 'Name',
+        name: 'VR',
       },
     ]
   }
@@ -45,7 +45,7 @@ export class DirectorateOfLabourRepository {
     return [
       {
         id: 'id',
-        name: 'Name',
+        name: 'Frjalsi',
       },
     ]
   }
