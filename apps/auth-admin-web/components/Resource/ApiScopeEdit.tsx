@@ -9,6 +9,6 @@ export default function ApiScopeEdit() {
   if (apiScopeId) {
     return <ApiScopeData apiScopeId={apiScopeId.toString()}/>;
   } else {
-    return "";
+    return <div></div>;
   }
 }

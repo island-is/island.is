@@ -1,5 +1,6 @@
-import ApiResourceEdit from '../../../../components/Resource/ApiResourceEdit';
-import ContentWrapper from 'apps/auth-admin-web/components/Layout/ContentWrapper';
+import React from 'react';
+import ApiResourceEdit from './../../../../components/Resource/ApiResourceEdit';
+import ContentWrapper from './../../../../components/Layout/ContentWrapper';
 
 export default function Index() {
   return (
