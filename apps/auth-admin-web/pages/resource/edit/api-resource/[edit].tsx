@@ -16,7 +16,7 @@ export default function Index() {
   );
   const router = useRouter();
 
-  /** Load the client and set the step from query if there is one */
+  /** Load the api resource and set the step from query if there is one */
   useEffect(() => {
     async function loadResource() {
       if (resourceId) {
