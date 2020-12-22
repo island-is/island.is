@@ -23,8 +23,13 @@ import { RichText } from '@island.is/web/components'
 import { useRouter } from 'next/router'
 import { CustomNextError } from '@island.is/web/units/errors'
 import Head from 'next/head'
-import { Background, Slice as SliceType } from '@island.is/island-ui/contentful'
+import {
+  Background,
+  renderHtml,
+  Slice as SliceType,
+} from '@island.is/island-ui/contentful'
 import { SidebarLayout } from '../Layouts/SidebarLayout'
+import { Document } from '@contentful/rich-text-types'
 
 export interface AboutSubPageProps {
   page: GetAboutSubPageQuery['getAboutSubPage']
@@ -106,6 +111,9 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
                 )}
                 {Boolean(page.subDescription) && (
                   <Text>{page.subDescription}</Text>
+                )}
+                {Boolean(page.intro) && (
+                  <Box>{renderHtml(page.intro.document as Document)}</Box>
                 )}
               </Stack>
             </GridColumn>
