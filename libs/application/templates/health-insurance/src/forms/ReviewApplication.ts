@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildForm,
   buildIntroductionField,
   buildMultiField,
@@ -26,7 +25,7 @@ export const ReviewApplication: Form = buildForm({
           description: '',
           children: [
             buildTextField({
-              id: 'agentComments',
+              id: 'agentComments[0]',
               name: m.additionalRemarks,
               variant: 'textarea',
               placeholder: m.additionalRemarksPlaceholder,

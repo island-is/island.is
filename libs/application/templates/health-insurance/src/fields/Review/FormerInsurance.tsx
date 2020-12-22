@@ -33,8 +33,8 @@ const FormerInsurance: FC<ReviewFieldProps> = ({ application, isEditable }) => {
           )}
         />
         <RadioController
-          id={'formerInsuranceRegistration'}
-          name={'formerInsuranceRegistration'}
+          id={'formerInsurance.registration'}
+          name={'formerInsurance.registration'}
           disabled={!isEditable}
           largeButtons={true}
           options={[
@@ -64,8 +64,8 @@ const FormerInsurance: FC<ReviewFieldProps> = ({ application, isEditable }) => {
         <GridRow>
           <GridColumn span="6/12">
             <Input
-              id={'formerInsuranceCountry'}
-              name={'formerInsuranceCountry'}
+              id={'formerInsurance.country'}
+              name={'formerInsurance.country'}
               label={formatText(
                 m.formerInsuranceCountry,
                 application,
@@ -77,8 +77,8 @@ const FormerInsurance: FC<ReviewFieldProps> = ({ application, isEditable }) => {
           </GridColumn>
           <GridColumn span="6/12">
             <Input
-              id={'formerPersonalId'}
-              name={'formerPersonalId'}
+              id={'formerInsurance.personalId'}
+              name={'formerInsurance.personalId'}
               label={formatText(m.formerPersonalId, application, formatMessage)}
               ref={register}
               disabled={!isEditable}
@@ -87,8 +87,8 @@ const FormerInsurance: FC<ReviewFieldProps> = ({ application, isEditable }) => {
         </GridRow>
         <Box paddingBottom={4}>
           <Input
-            id={'formerInsuranceInstitution'}
-            name={'formerInsuranceInstitution'}
+            id={'formerInsurance.institution'}
+            name={'formerInsurance.institution'}
             label={formatText(
               m.formerInsuranceInstitution,
               application,
@@ -109,8 +109,8 @@ const FormerInsurance: FC<ReviewFieldProps> = ({ application, isEditable }) => {
           )}
         />
         <RadioController
-          id={'formerInsuranceEntitlement'}
-          name={'formerInsuranceEntitlement'}
+          id={'formerInsurance.entitlement'}
+          name={'formerInsurance.entitlement'}
           disabled={!isEditable}
           largeButtons={true}
           split={'1/2'}

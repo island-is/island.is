@@ -7,7 +7,6 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
-  buildTextField,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -38,14 +37,13 @@ export const MissingInfoForm: Form = buildForm({
               name: '',
               component: 'HiddenDateField',
             }),
-            buildTextField({
-              id: 'missingInfo.remarks',
-              name: m.additionalRemarks,
-              placeholder: m.additionalRemarksPlaceholder,
-              variant: 'textarea',
+            buildCustomField({
+              id: 'missingInfo',
+              name: '',
+              component: 'AddMissingInfo',
             }),
             buildFileUploadField({
-              id: 'missingInfo.files',
+              id: 'missingInfo[0].files',
               name: '',
               introduction: '',
             }),

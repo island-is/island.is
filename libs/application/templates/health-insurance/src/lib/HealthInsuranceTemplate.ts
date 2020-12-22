@@ -7,6 +7,7 @@ import {
   Application,
 } from '@island.is/application/core'
 import * as z from 'zod'
+import { NO, YES } from '../constants'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 
@@ -32,16 +33,27 @@ const HealthInsuranceSchema = z.object({
   status: z.string().nonempty(),
   confirmationOfStudies: z.string().optional(),
   children: z.string().nonempty(),
-  formerInsuranceRegistration: z.string().nonempty(),
-  formerInsuranceCountry: z.string().nonempty(),
-  formerPersonalId: z.string().nonempty(),
-  formerInsuranceInstitution: z.string().nonempty(),
-  formerInsuranceEntitlement: z.string().nonempty(),
-  additionalInfo: z.string().nonempty(),
-  additionalRemarks: z.string().optional(),
-  additionalFiles: z.string().optional(),
+  additionalInfo: z.object({
+    hasAdditionalInfo: z.enum([YES, NO]),
+    files: z.array(z.string()),
+    remarks: z.string(),
+  }),
   confirmCorrectInfo: z.boolean().refine((v) => v),
-  agentComments: z.string().nonempty(),
+  agentComments: z.array(z.string().nonempty()),
+  formerInsurance: z.object({
+    country: z.string().nonempty(),
+    registration: z.string().nonempty(),
+    personalId: z.string().nonempty(),
+    institution: z.string().nonempty(),
+    entitlement: z.enum([YES, NO]),
+  }),
+  missingInfo: z.array(
+    z.object({
+      date: z.string(),
+      remarks: z.string().nonempty(),
+      files: z.array(z.string()),
+    }),
+  ),
 })
 
 const HealthInsuranceTemplate: ApplicationTemplate<
@@ -77,6 +89,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
           },
         },
       },
+      // TODO: Remove inReview section (and related files) when adding agent comments feature is implemented in backend/other system
       inReview: {
         meta: {
           name: 'In Review',
@@ -118,7 +131,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
                   Promise.resolve(val.MissingInfoForm),
                 ),
               actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
-              write: { answers: ['missingInfoRemarks', 'missingInfoFiles'] },
+              write: { answers: ['missingInfo'] },
               read: 'all',
             },
           ],
@@ -128,18 +141,8 @@ const HealthInsuranceTemplate: ApplicationTemplate<
             target: 'inReview',
           },
           SUBMIT: {
-            target: 'approved',
+            target: 'inReview',
           },
-        },
-      },
-      approved: {
-        meta: {
-          name: 'Rejected',
-          roles: [
-            {
-              id: 'applicant',
-            },
-          ],
         },
       },
     },
