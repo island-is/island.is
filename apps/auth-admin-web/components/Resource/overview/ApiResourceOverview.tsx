@@ -16,13 +16,17 @@ const ApiResourceOverview: React.FC<Props> = ({
   apiResourceId,
 }) => {
 
+  const handleNext = () => {
+    
+  }
+
   const finishedPushed = () => {
     // TODO: What should happen now?
   }
   
   switch (activeStep) {
     case ApiResourceStep.ApiResourceBasics:
-      return <ApiResourceData apiResourceId={apiResourceId} />;
+      return <ApiResourceData apiResourceId={apiResourceId} handleNext={handleNext()} />;
     case ApiResourceStep.ApiResourceScopes:
       return <ApiResourceScopes apiResourceId={apiResourceId}/>;
     case ApiResourceStep.ApiResourceSecrets:
