@@ -27,6 +27,8 @@ import isEqual from 'lodash/isEqual'
 import { ValueType } from 'react-select'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { defineMessage } from 'react-intl'
+import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
+import { useLocation } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
@@ -85,13 +87,16 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
 
   const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
+  const [searchInteractionEventSent, setSearchInteractionEventSent] = useState(
+    false,
+  )
   const { scrollToRef } = useScrollToRefOnUpdate([page])
+  const { pathname } = useLocation()
 
   const [filterValue, setFilterValue] = useState<FilterValues>(
     defaultFilterValues,
   )
   const { data, loading, error } = useListDocuments(userInfo.profile.nationalId)
-
   const categories = [defaultCategory, ...data.categories]
   const filteredDocuments = getFilteredDocuments(data.documents, filterValue)
   const pagedDocuments = {
@@ -131,6 +136,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const handleSearchChange = useCallback((value: string) => {
     setPage(1)
     setFilterValue({ ...defaultFilterValues, searchQuery: value })
+    if (!searchInteractionEventSent) {
+      documentsSearchDocumentsInitialized(pathname)
+      setSearchInteractionEventSent(true)
+    }
   }, [])
 
   const handleClearFilters = useCallback(() => {

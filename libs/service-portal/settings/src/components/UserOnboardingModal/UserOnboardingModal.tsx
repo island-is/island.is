@@ -15,6 +15,11 @@ import { FormSubmittedStep } from './Steps/FormSubmittedStep'
 import { LanguageStep } from './Steps/LanguageStep'
 import { PhoneStep } from './Steps/PhoneStep'
 import { SubmitFormStep } from './Steps/SubmitFormStep'
+import {
+  servicePortalCloseOnBoardingModal,
+  servicePortalSubmitOnBoardingModal,
+} from '@island.is/plausible'
+import { useLocation } from 'react-router-dom'
 
 export type OnboardingStep =
   | 'language-form'
@@ -38,10 +43,12 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   )
   const { createUserProfile } = useCreateUserProfile()
   const { changeLanguage } = useNamespaces()
+  const { pathname } = useLocation()
 
   // On close side effects
   const dropOnboardingSideEffects = () => {
     toast.info('Notendaupplýsingum er hægt að breyta í stillingum')
+    servicePortalCloseOnBoardingModal(pathname)
   }
 
   // Handles a close event directly in the onboarding component
@@ -72,6 +79,9 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
         mobilePhoneNumber,
       })
       gotoStep('form-submitted')
+      if (pathname) {
+        servicePortalSubmitOnBoardingModal(pathname)
+      }
     } catch (err) {
       gotoStep('email-form')
       toast.error(

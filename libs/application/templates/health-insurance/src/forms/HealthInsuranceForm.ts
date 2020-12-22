@@ -136,14 +136,19 @@ export const HealthInsuranceForm: Form = buildForm({
               largeButtons: true,
               options: [
                 {
-                  label: m.statusPensioner,
-                  value: StatusTypes.PENSIONER,
-                  tooltip: m.statusPensionerInformation,
+                  label: m.statusEmployed,
+                  value: StatusTypes.EMPLOYED,
+                  tooltip: m.statusEmployedInformation,
                 },
                 {
                   label: m.statusStudent,
                   value: StatusTypes.STUDENT,
                   tooltip: m.statusStudentInformation,
+                },
+                {
+                  label: m.statusPensioner,
+                  value: StatusTypes.PENSIONER,
+                  tooltip: m.statusPensionerInformation,
                 },
                 {
                   label: m.statusOther,

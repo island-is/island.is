@@ -65,6 +65,9 @@ export class Article {
 
   @Field(() => Image, { nullable: true })
   featuredImage?: Image
+
+  @Field({ nullable: true })
+  showTableOfContents?: boolean
 }
 
 export const mapArticle = ({
@@ -98,4 +101,5 @@ export const mapArticle = ({
     .map(mapSubArticle),
   relatedArticles: [], // populated by resolver
   featuredImage: mapImage(fields.featuredImage),
+  showTableOfContents: fields.showTableOfContents ?? false,
 })
