@@ -21,6 +21,7 @@ import { environment } from '../environments'
     ClientsModule,
     ResourcesModule,
     GrantsModule,
+    ClaimsModule,
   ],
 })
 export class AppModule {}
