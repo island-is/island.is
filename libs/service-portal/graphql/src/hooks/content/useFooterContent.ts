@@ -24,7 +24,7 @@ export const useFooterContent = (
 ): ServicePortalFooterContent => {
   const { data: upper } = useQuery<Query, QueryGetMenuArgs>(
     GET_MENU,
-    getVariables('Footer upper', locale),
+    getVariables('Footer upper info', locale),
   )
   const { data: lower } = useQuery<Query, QueryGetMenuArgs>(
     GET_MENU,

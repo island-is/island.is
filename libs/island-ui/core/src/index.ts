@@ -45,6 +45,7 @@ export * from './lib/Icon/IconTypes'
 export * from './lib/IconRC/Icon'
 export * from './lib/Typography/Typography'
 export * from './lib/Text/Text'
+export * from './lib/Hyphen/Hyphen'
 
 // Form
 export * from './lib/Checkbox/Checkbox'

@@ -1087,6 +1087,35 @@
         }
       }
     },
+    "application-api-template-utils": {
+      "root": "libs/application/api-template-utils",
+      "sourceRoot": "libs/application/api-template-utils/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/api-template-utils/tsconfig.lib.json",
+              "libs/application/api-template-utils/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/api-template-utils/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/api-template-utils/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "application-core": {
       "root": "libs/application/core",
       "sourceRoot": "libs/application/core/src",
@@ -3215,6 +3244,32 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/nova-sms/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "plausible": {
+      "root": "libs/plausible",
+      "sourceRoot": "libs/plausible/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/plausible/tsconfig.lib.json",
+              "libs/plausible/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/plausible/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/plausible/jest.config.js",
             "passWithNoTests": true
           }
         }

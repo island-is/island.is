@@ -3,6 +3,7 @@ import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import * as kennitala from 'kennitala'
 import { NO, YES } from '../constants'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 const PersonalAllowance = z
   .object({
@@ -10,18 +11,7 @@ const PersonalAllowance = z
       .string()
       .refine((x) => parseFloat(x) >= 0 && parseFloat(x) <= 100)
       .optional(),
-    usedAmount: z
-      .string()
-      .refine((x) => parseInt(x, 10) >= 0)
-      .optional(),
-    periodFrom: z
-      .string()
-      .refine((d) => isValid(parseISO(d)))
-      .optional(),
-    periodTo: z
-      .string()
-      .refine((d) => isValid(parseISO(d)))
-      .optional(),
+    useAsMuchAsPossible: z.enum([YES, NO]).optional(),
   })
   .optional()
 
@@ -37,6 +27,13 @@ const Period = z.object({
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
+  applicant: z.object({
+    email: z.string().email(),
+    phoneNumber: z.string().refine((p) => {
+      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+      return phoneNumber && phoneNumber.isValid()
+    }, 'Símanúmerið þarf að vera gilt.'),
+  }),
   personalAllowance: PersonalAllowance,
   personalAllowanceFromSpouse: PersonalAllowance,
   payments: z.object({
@@ -49,14 +46,8 @@ export const dataSchema = z.object({
   usePrivatePensionFund: z.enum([YES, NO]),
   periods: z.array(Period).nonempty(),
   employer: z.object({
-    name: z.string().nonempty(),
-    nationalRegistryId: z.string().nonempty(),
-    // .refine(
-    //   (n) => kennitala.isValid(n) && kennitala.isCompany(n),
-    //   'Kennitala þarf að vera gild',
-    // ),
-    contact: z.string().optional(),
-    contactId: z.string().optional(),
+    isSelfEmployed: z.enum([YES, NO]),
+    email: z.string().email().nonempty(),
   }),
   requestRights: z.enum([YES, NO]),
   giveRights: z.enum([YES, NO]),
@@ -73,7 +64,6 @@ export const dataSchema = z.object({
       'Kennitala þarf að vera gild',
     ),
   otherParentRightOfAccess: z.enum([YES, NO]).optional(),
-  isSelfEmployed: z.enum([YES, NO]),
   usePersonalAllowance: z.enum([YES, NO]),
   usePersonalAllowanceFromSpouse: z.enum([YES, NO]),
 })

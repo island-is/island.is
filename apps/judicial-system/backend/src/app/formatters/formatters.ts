@@ -8,6 +8,7 @@ import {
   CaseAppealDecision,
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
+  CaseDecision,
   CaseGender,
 } from '@island.is/judicial-system/types'
 
@@ -15,6 +16,7 @@ export function formatProsecutorDemands(
   accusedNationalId: string,
   accusedName: string,
   court: string,
+  alternativeTravelBan: boolean,
   requestedCustodyEndDate: Date,
   isolation: boolean,
 ): string {
@@ -23,10 +25,9 @@ export function formatProsecutorDemands(
   )} verði með úrskurði ${court?.replace(
     'Héraðsdómur',
     'Héraðsdóms',
-  )} gert að sæta gæsluvarðhaldi til ${formatDate(
-    requestedCustodyEndDate,
-    'PPPPp',
-  )
+  )} gert að sæta gæsluvarðhaldi${
+    alternativeTravelBan ? ', farbanni til vara,' : ''
+  } til ${formatDate(requestedCustodyEndDate, 'PPPPp')
     ?.replace('dagur,', 'dagsins')
     ?.replace(' kl.', ', kl.')}${
     isolation
@@ -57,12 +58,12 @@ export function formatCourtCaseNumber(
 export function formatConclusion(
   accusedNationalId: string,
   accusedName: string,
-  rejecting: boolean,
+  decision: CaseDecision,
   custodyEndDate: Date,
   isolation: boolean,
 ): string {
-  return rejecting
-    ? 'Beiðni um gæsluvarðhald hafnað.'
+  return decision === CaseDecision.REJECTING
+    ? 'Kröfu um gæsluvarðhald er hafnað.'
     : `Kærði, ${accusedName}, kt. ${formatNationalId(
         accusedNationalId,
       )} skal sæta gæsluvarðhaldi, þó ekki lengur en til ${formatDate(
@@ -158,7 +159,7 @@ export function formatPrisonCourtDateEmailNotification(
   isolation: boolean,
   defenderName: string,
 ): string {
-  const courtText = court.replace('dómur', 'dóms')
+  const courtText = court?.replace('dómur', 'dóms')
   const courtDateText = formatDate(courtDate, 'PPPp')
   const requestedCustodyEndDateText = formatDate(
     requestedCustodyEndDate,
@@ -212,7 +213,7 @@ export function formatPrisonRulingEmailNotification(
   prosecutorName: string,
   courtDate: Date,
   defenderName: string,
-  rejecting: boolean,
+  decision: CaseDecision,
   custodyEndDate: Date,
   custodyRestrictions: CaseCustodyRestrictions[],
   accusedAppealDecision: CaseAppealDecision,
@@ -226,7 +227,7 @@ export function formatPrisonRulingEmailNotification(
   )}.<br /><br />Ákærandi: ${prosecutorName}<br />Verjandi: ${defenderName}<br /><br /><strong>Úrskurðarorð</strong><br /><br />${formatConclusion(
     accusedNationalId,
     accusedName,
-    rejecting,
+    decision,
     custodyEndDate,
     custodyRestrictions.includes(CaseCustodyRestrictions.ISOLATION),
   )}<br /><br /><strong>Ákvörðun um kæru</strong><br />${formatAppeal(

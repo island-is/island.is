@@ -1,14 +1,26 @@
 import React, { FC, useState } from 'react'
-import { useMutation } from '@apollo/client'
+import { gql, useMutation } from '@apollo/client'
 import { useFormContext, Controller } from 'react-hook-form'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  formatText,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
-import { registerEndpointMutation } from '../../../graphql/mutations/registerEndpointMutation'
 import { m } from '../../../forms/messages'
+
+export const updateTestEndpointMutation = gql`
+  mutation UpdateTestEndpoint($input: UpdateEndpointInput!) {
+    updateTestEndpoint(input: $input) {
+      audience
+      scope
+    }
+  }
+`
 
 const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -31,16 +43,29 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
     // @ts-ignore
     formValue.endPointObject?.endPointExists || '',
   )
-  const [registerEndpoint] = useMutation(registerEndpointMutation)
+  const [updateEndpoint] = useMutation(updateTestEndpointMutation)
 
-  const onRegisterEndpoint = async (isValid: boolean) => {
+  const nationalId = getValueViaPath(
+    application.answers,
+    'applicant.nationalId',
+    undefined,
+  ) as string
+
+  const testProviderId = getValueViaPath(
+    application.answers,
+    'testProviderId',
+    undefined,
+  ) as string
+
+  const onUpdateEndpoint = async (isValid: boolean) => {
     setTestEndPointError(null)
     if (isValid) {
-      const result = await registerEndpoint({
+      const result = await updateEndpoint({
         variables: {
           input: {
-            nationalId: '2404805659', //TODO: setja gögn úr umsókn
+            nationalId: nationalId,
             endpoint: getValues('endPointObject.endPoint'),
+            providerId: testProviderId,
           },
         },
       })
@@ -53,9 +78,9 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
         {
           id: '1',
           name: 'Audience',
-          value: result.data.registerEndpoint.audience,
+          value: result.data.updateTestEndpoint.audience,
         },
-        { id: '2', name: 'Scope', value: result.data.registerEndpoint.scope },
+        { id: '2', name: 'Scope', value: result.data.updateTestEndpoint.scope },
       ])
 
       setendpointExists('true')
@@ -82,14 +107,26 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
             name={'endPointObject.endPoint'}
             render={() => (
               <Input
-                label="Endapunktur"
+                label={formatText(
+                  m.testEndpointLabel,
+                  application,
+                  formatMessage,
+                )}
                 name={'endPointObject.endPoint'}
                 id={'endPointObject.endPoint'}
                 ref={register}
                 defaultValue=""
-                placeholder="Skráðu inn endapunkt"
+                placeholder={formatText(
+                  m.testEndpointPlaceholder,
+                  application,
+                  formatMessage,
+                )}
                 hasError={errors.endPointObject?.endPoint !== undefined}
-                errorMessage="Þú verður að skrá inn endapunkt"
+                errorMessage={formatText(
+                  m.testEndpointInputErrorMessage,
+                  application,
+                  formatMessage,
+                )}
               />
             )}
           />
@@ -106,7 +143,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
           size="small"
           onClick={() => {
             trigger(['endPointObject.endPoint']).then((answer) =>
-              onRegisterEndpoint(answer),
+              onUpdateEndpoint(answer),
             )
           }}
         >

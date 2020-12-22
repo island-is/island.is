@@ -11,12 +11,21 @@ import {
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { buildOptions } from '../utils'
+import { useDefaultValue } from '../useDefaultValue'
 
 interface Props extends FieldBaseProps {
   field: SelectField
 }
 const SelectFormField: FC<Props> = ({ application, error, field }) => {
-  const { id, name, description, options, placeholder, disabled } = field
+  const {
+    id,
+    name,
+    description,
+    options,
+    placeholder,
+    disabled,
+    onSelect,
+  } = field
   const { formatMessage } = useLocale()
   const finalOptions = useMemo(() => buildOptions(options, application), [
     options,
@@ -32,6 +41,7 @@ const SelectFormField: FC<Props> = ({ application, error, field }) => {
 
       <Box paddingTop={2}>
         <SelectController
+          defaultValue={useDefaultValue(field, application)}
           label={formatText(name, application, formatMessage)}
           name={id}
           disabled={disabled}
@@ -49,6 +59,7 @@ const SelectFormField: FC<Props> = ({ application, error, field }) => {
               ? formatText(placeholder as string, application, formatMessage)
               : undefined
           }
+          onSelect={onSelect}
         />
       </Box>
     </div>

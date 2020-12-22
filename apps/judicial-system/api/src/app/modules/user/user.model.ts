@@ -32,5 +32,8 @@ export class User implements TUser {
   readonly role!: UserRole
 
   @Field()
+  readonly institution!: string
+
+  @Field()
   readonly active!: boolean
 }

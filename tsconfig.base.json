@@ -83,6 +83,9 @@
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
+      "@island.is/application/api-template-utils": [
+        "libs/application/api-template-utils/src/index.ts"
+      ],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/data-providers": [
         "libs/application/data-providers/src/index.ts"
@@ -179,6 +182,7 @@
       "@island.is/logging": ["libs/logging/src/index.ts"],
       "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
+      "@island.is/plausible": ["libs/plausible/src/index.ts"],
       "@island.is/service-portal/applications": [
         "libs/service-portal/applications/src/index.ts"
       ],

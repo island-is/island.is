@@ -143,6 +143,9 @@ export interface IArticleFields {
   /** Content */
   content?: Document | undefined
 
+  /** Show Table Of Contents */
+  showTableOfContents?: boolean | undefined
+
   /** Process Entry */
   processEntry?: IProcessEntry | undefined
 
@@ -698,7 +701,10 @@ export interface IGroupedMenu extends Entry<IGroupedMenuFields> {
 }
 
 export interface IHomepageFields {
-  /** Featured articles */
+  /** Title */
+  title?: string | undefined
+
+  /** Featured */
   featured?: IFeatured[] | undefined
 }
 
@@ -1931,6 +1937,9 @@ export interface ISubArticleFields {
 
   /** Content */
   content: Document
+
+  /** Show Table Of Contents */
+  showTableOfContents?: boolean | undefined
 }
 
 /** A sub article that's a part of another main article */
@@ -1965,8 +1974,8 @@ export interface ISubpageHeaderFields {
   /** Featured Image */
   featuredImage?: Asset | undefined
 
-  /** Content */
-  content?: Record<string, any> | undefined
+  /** Body */
+  body?: Document | undefined
 }
 
 export interface ISubpageHeader extends Entry<ISubpageHeaderFields> {

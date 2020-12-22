@@ -10,6 +10,7 @@ interface ArrowLinkProps {
   as?: string
   color?: LinkColor
   arrowHeight?: number
+  onClick?: () => void
 }
 
 // ArrowLink has the "arrow" icon and a permanent custom underline.
@@ -21,6 +22,7 @@ export const ArrowLink: React.FC<ArrowLinkProps> = ({
   children,
   color = 'blue400',
   arrowHeight = 12,
+  onClick,
 }) => (
   <Box
     component={href ? Link : 'div'}
@@ -28,6 +30,7 @@ export const ArrowLink: React.FC<ArrowLinkProps> = ({
     as={as}
     color={color}
     className={styles.root}
+    onClick={onClick}
   >
     <Text variant="eyebrow" color={color}>
       {children}

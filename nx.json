@@ -113,6 +113,9 @@
     "api-schema": {
       "tags": []
     },
+    "application-api-template-utils": {
+      "tags": []
+    },
     "application-core": {
       "tags": []
     },
@@ -290,6 +293,9 @@
       "tags": []
     },
     "nova-sms": {
+      "tags": []
+    },
+    "plausible": {
       "tags": []
     },
     "reference-backend": {
