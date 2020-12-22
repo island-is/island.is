@@ -38,8 +38,6 @@ export default function Index() {
       resourceId
     );
     if (response) {
-      console.log("IDS");
-      console.log(response);
       setIdentityResource(response);
     }
   };
@@ -53,7 +51,6 @@ export default function Index() {
   };
 
   const handleStepChange = (step: number) => {
-    console.log("STEP: " + step);
     setStep(step);
   };
 
@@ -79,7 +76,7 @@ export default function Index() {
           <IdentityResourceCreateForm
             identityResource={identityResource}
             handleSave={handleIdentityResourceSaved}
-            handleCancel={handleBack}
+            handleCancel={handleCancel}
           />
           </IdentityResourceStepNav>
         </ContentWrapper>
