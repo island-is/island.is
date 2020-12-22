@@ -5,6 +5,9 @@ import ContentWrapper from './../../../../components/Layout/ContentWrapper';
 import { useRouter } from 'next/router';
 import { ResourcesService } from './../../../../services/ResourcesService';
 import { IdentityResource } from './../../../../entities/models/identity-resource.model';
+import IdentityResourceStepNav from './../../../../components/Resource/IdentityResourceStepNav';
+import { IdentityResourceStep } from './../../../../entities/common/IdentityResourcesStep';
+import IdentityResourceUserClaimsForm from './../../../../components/Resource/IdentityResourceUserClaimsForm';
 
 export default function Index() {
   const { query } = useRouter();
@@ -35,6 +38,8 @@ export default function Index() {
       resourceId
     );
     if (response) {
+      console.log("IDS");
+      console.log(response);
       setIdentityResource(response);
     }
   };
@@ -48,6 +53,7 @@ export default function Index() {
   };
 
   const handleStepChange = (step: number) => {
+    console.log("STEP: " + step);
     setStep(step);
   };
 
@@ -66,14 +72,25 @@ export default function Index() {
   };
 
   switch (step) {
-    case 1: {
+    case IdentityResourceStep.IdentityResource: {
       return (
         <ContentWrapper>
+          <IdentityResourceStepNav activeStep={step} handleStepChange={handleStepChange}>
           <IdentityResourceCreateForm
             identityResource={identityResource}
             handleSave={handleIdentityResourceSaved}
             handleCancel={handleBack}
           />
+          </IdentityResourceStepNav>
+        </ContentWrapper>
+      );
+    }
+    case IdentityResourceStep.Claims: {
+      return (
+        <ContentWrapper>
+          <IdentityResourceStepNav activeStep={step} handleStepChange={handleStepChange}>
+          <IdentityResourceUserClaimsForm identityResourceName={identityResource.name} handleBack={handleBack} handleNext={handleNext} claims={identityResource.userClaims?.map(x => x.claimName)} handleChanges={changesMade} />
+          </IdentityResourceStepNav>
         </ContentWrapper>
       );
     }

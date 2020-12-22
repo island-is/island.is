@@ -54,7 +54,7 @@ export class ResourcesService extends BaseService {
 
   /** Gets user claims for a resource */
   static async getResourceUserClaims(name: string): Promise<any | null> {
-    return BaseService.GET(`/api/user-claims/${name}`);
+    return BaseService.GET(`user-claims/${name}`);
   }
 
   /** */
@@ -133,6 +133,6 @@ export class ResourcesService extends BaseService {
 
   /** Deletes an identity resource by name */
   static async deleteIdentityResource(name: string): Promise<number> {
-    return BaseService.DELETE(`/api/identity-resource/${name}`);
+    return BaseService.DELETE(`identity-resource/${name}`);
   }
 }
