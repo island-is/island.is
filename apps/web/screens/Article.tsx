@@ -12,10 +12,8 @@ import {
   Text,
   Stack,
   Breadcrumbs,
-  NewBreadcrumbs,
   GridColumn,
   GridRow,
-  Tag,
   Link,
   Navigation,
   TableOfContents,
@@ -289,7 +287,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         }
       >
         <Box paddingBottom={[2, 2, 4]}>
-          <NewBreadcrumbs
+          <Breadcrumbs
             items={[
               {
                 title: 'Ísland.is',
@@ -309,10 +307,6 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                     (article.group?.slug ? `#${article.group.slug}` : ''),
                 ],
               },
-              {isTag: true, title: "href", href: "/"},
-              {isTag: true, title: "text"},
-              { title: "href", href: "/"},
-              { title: "text", }
             ]}
             renderLink={(link, { typename, slug }) => {
               return (

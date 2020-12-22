@@ -1,12 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
+import NextLink from 'next/link'
 import {
   Box,
   ContentBlock,
   Text,
   Stack,
   Breadcrumbs,
-  Link,
   GridColumn,
   Hidden,
   GridRow,
@@ -28,6 +28,7 @@ import {
 } from '@island.is/web/components'
 import { ColorSchemeContext as CovidColorSchemeContext } from '@island.is/web/components/Adgerdir/UI/ColorSchemeContext/ColorSchemeContext'
 import { useI18n } from '@island.is/web/i18n'
+import { pathNames } from '@island.is/web/i18n/routes'
 import {
   Query,
   QueryGetNamespaceArgs,
@@ -43,7 +44,6 @@ import {
   GET_ADGERDIR_FRONTPAGE_QUERY,
   GET_CATEGORIES_QUERY,
 } from '../queries'
-import routeNames from '@island.is/web/i18n/routeNames'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import * as covidStyles from '@island.is/web/components/Adgerdir/UI/styles/styles.treat'
@@ -76,7 +76,6 @@ const Home: Screen<HomeProps> = ({
 }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
-  const { makePath } = routeNames(activeLocale)
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
@@ -110,17 +109,25 @@ const Home: Screen<HomeProps> = ({
                       >
                         <Stack space={2}>
                           <span className={covidStyles.white}>
-                            <Breadcrumbs color="white">
-                              <Link href={makePath()} as={makePath()}>
-                                <a>Ísland.is</a>
-                              </Link>
-                              <Link
-                                href={makePath('adgerdir')}
-                                as={makePath('adgerdir')}
-                              >
-                                <a>{n('covidAdgerdir', 'Covid aðgerðir')}</a>
-                              </Link>
-                            </Breadcrumbs>
+                            <Breadcrumbs
+                              color="white"
+                              items={[
+                                {
+                                  title: 'Ísland.is',
+                                  href: '/',
+                                },
+                                {
+                                  title: n('covidAdgerdir', 'Covid aðgerðir'),
+                                },
+                              ]}
+                              renderLink={(link) => {
+                                return (
+                                  <NextLink {...pathNames()} passHref>
+                                    {link}
+                                  </NextLink>
+                                )
+                              }}
+                            />
                           </span>
                           <Text variant="h1" as="h1" color="white">
                             {frontpage.title}

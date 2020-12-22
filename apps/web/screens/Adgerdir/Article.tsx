@@ -4,7 +4,7 @@ import {
   ContentBlock,
   Box,
   Stack,
-  Breadcrumbs,
+  BreadcrumbsDeprecated as Breadcrumbs,
   Link,
   Inline,
   GridRow,

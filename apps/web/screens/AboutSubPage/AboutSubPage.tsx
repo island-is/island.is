@@ -9,7 +9,6 @@ import {
 import { GET_ABOUT_SUB_PAGE_QUERY, GET_ABOUT_PAGE_NAVIGATION } from '../queries'
 import {
   Breadcrumbs,
-  Link,
   Stack,
   Text,
   Box,
@@ -88,10 +87,19 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
               span={['12/12', '12/12', '12/12', '8/9']}
             >
               <Stack space={2}>
-                <Breadcrumbs>
-                  <Link href="/">Ísland.is</Link>
-                  <Link href="/stafraent-island">{parentPage.title}</Link>
-                </Breadcrumbs>
+                <Breadcrumbs
+                  items={[
+                    {
+                      title: 'Ísland.is',
+                      href: '/',
+                    },
+
+                    {
+                      title: parentPage.title,
+                      href: '/stafraent-island',
+                    },
+                  ]}
+                />
                 <Box display={['block', 'block', 'none']}>
                   <Navigation
                     baseId={'mobileNav'}

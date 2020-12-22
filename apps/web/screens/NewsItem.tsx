@@ -2,20 +2,18 @@
 import React from 'react'
 import {
   Text,
-  NewBreadcrumbs as Breadcrumbs,
+  Breadcrumbs,
+  BreadCrumbItem,
   Box,
-  Link,
   GridRow,
   GridColumn,
   Stack,
   GridContainer,
-  Tag,
 } from '@island.is/island-ui/core'
 import { Image, Slice as SliceType } from '@island.is/island-ui/contentful'
 import { Screen } from '@island.is/web/types'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import routeNames from '@island.is/web/i18n/routeNames'
 import {
   GET_NAMESPACE_QUERY,
   GET_SINGLE_NEWS_ITEM_QUERY,
@@ -43,13 +41,23 @@ interface NewsItemProps {
 const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
   useContentfulId(newsItem?.id)
   const { activeLocale, t } = useI18n()
-  const { makePath } = routeNames(activeLocale)
   const { format } = useDateUtils()
   const n = useNamespace(namespace)
 
   const metaTitle = `${newsItem.title} | Ísland.is`
 
-  const breadCrumbTags =
+  const breadCrumbs: BreadCrumbItem[] = [
+    {
+      title: 'Ísland.is',
+      href: '/',
+    },
+    {
+      title: t.newsAndAnnouncements,
+      typename: newsItem.__typename,
+      href: '/',
+    },
+  ]
+  const breadCrumbTags: BreadCrumbItem[] =
     !!newsItem.genericTags.length &&
     newsItem.genericTags.map(({ id, title }) => {
       return {
@@ -59,20 +67,6 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
         slug: [`?tag=${id}`],
       }
     })
-
-  console.log(
-    breadCrumbTags,
-    [
-      {
-        title: 'Ísland.is',
-        href: '/',
-      },
-      {
-        title: t.newsAndAnnouncements,
-        typename: newsItem.__typename,
-      },
-    ].concat(breadCrumbTags ?? []),
-  )
 
   return (
     <>
@@ -94,17 +88,11 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
                     span={['9/9', '9/9', '9/9', '9/9', '7/9']}
                   >
                     <Breadcrumbs
-                      items={[
-                        {
-                          title: 'Ísland.is',
-                          href: '/',
-                        },
-                        {
-                          title: t.newsAndAnnouncements,
-                          typename: newsItem.__typename,
-                          slug: [''],
-                        },
-                      ].concat(breadCrumbTags)}
+                      items={
+                        breadCrumbTags
+                          ? breadCrumbs.concat(breadCrumbTags)
+                          : breadCrumbs
+                      }
                       renderLink={(link, { typename, slug }) => {
                         return (
                           <NextLink

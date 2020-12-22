@@ -7,7 +7,7 @@ import {
   Box,
   Stack,
   Text,
-  Breadcrumbs,
+  BreadcrumbsDeprecated as Breadcrumbs,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { PageLayout, InlineError } from '@island.is/skilavottord-web/components'

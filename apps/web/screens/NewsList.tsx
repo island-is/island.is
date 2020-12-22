@@ -3,6 +3,7 @@ import React from 'react'
 import transform from 'lodash/transform'
 import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
+import NextLink from 'next/link'
 import Head from 'next/head'
 import { Screen } from '../types'
 import NativeSelect from '../components/Select/Select'
@@ -15,6 +16,7 @@ import {
   Text,
   Stack,
   Breadcrumbs,
+  BreadCrumbItem,
   Divider,
   Pagination,
   Hidden,
@@ -22,7 +24,6 @@ import {
   Option,
   Link,
   GridColumn,
-  Tag,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -42,6 +43,7 @@ import {
 } from '../graphql/schema'
 import { NewsCard } from '../components/NewsCard'
 import { useNamespace } from '@island.is/web/hooks'
+import { ContentType, pathNames } from '@island.is/web/i18n/routes'
 
 const PERPAGE = 10
 
@@ -139,6 +141,23 @@ const NewsList: Screen<NewsListProps> = ({
       { id: '', title: '' },
     )
 
+  const breadCrumbs: BreadCrumbItem[] = [
+    {
+      title: 'Ísland.is',
+      href: '/',
+    },
+    {
+      title: n('newsTitle', 'Fréttir og tilkynningar'),
+      typename: 'news',
+      href: '/',
+    },
+  ]
+  const breadCrumbTags: BreadCrumbItem = !!selectedTag && {
+    isTag: true,
+    title: selectedTag.title,
+    typename: 'news',
+  }
+
   const sidebar = (
     <Stack space={3}>
       <Box background="purple100" borderRadius="large" padding={4}>
@@ -190,17 +209,22 @@ const NewsList: Screen<NewsListProps> = ({
       </Head>
       <SidebarLayout sidebarContent={sidebar}>
         <Stack space={[3, 3, 4]}>
-          <Breadcrumbs>
-            <Link href={makePath()}>Ísland.is</Link>
-            <Link href={makePath('news')}>
-              {n('newsTitle', 'Fréttir og tilkynningar')}
-            </Link>
-            {!!selectedTag && (
-              <Tag variant="blue" outlined>
-                {selectedTag.title}
-              </Tag>
-            )}
-          </Breadcrumbs>
+          <Breadcrumbs
+            items={
+              breadCrumbTags ? [...breadCrumbs, breadCrumbTags] : breadCrumbs
+            }
+            renderLink={(link, { typename }) => {
+              return (
+                <NextLink
+                  {...pathNames(activeLocale, typename as ContentType)}
+                  passHref
+                >
+                  {link}
+                </NextLink>
+              )
+            }}
+          />
+
           {selectedYear && (
             <Hidden below="lg">
               <Text variant="h1" as="h1">

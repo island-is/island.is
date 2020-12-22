@@ -8,16 +8,13 @@ import {
   GridRow,
   GridColumn,
   Breadcrumbs,
-  NewBreadcrumbs,
   BreadCrumbItem,
-  Link,
-  Tag,
   Text,
   Box,
   GridContainer,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import pathNames, { ContentType } from '@island.is/web/i18n/routes'
+import pathNames from '@island.is/web/i18n/routes'
 import {
   RichText,
   AnchorNavigation,
@@ -43,26 +40,6 @@ interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
   namespace: GetNamespaceQuery['getNamespace']
 }
-
-const items: BreadCrumbItem[] = [
-  {
-    title: 'Ísland.is',
-    href: '/',
-  },
-  {
-    title: 'Ferðagjöf til einstaklinga',
-    typename: 'article',
-    slug: ['ferdagjof-til-einstaklinga'],
-  },
-  {
-    title: 'Að eignast barn',
-    typename: 'lifeevent',
-    slug: ['ad-eignast-barn'],
-  },
-  {
-    title: 'Lífsins viðburður',
-  },
-]
 
 export const LifeEvent: Screen<LifeEventProps> = ({
   lifeEvent: { id, image, title, intro, content },
@@ -109,7 +86,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                 span={['9/9', '9/9', '9/9', '9/9', '7/9']}
               >
                 <Box paddingBottom={[2, 2, 4]}>
-                  <NewBreadcrumbs
+                  <Breadcrumbs
                     items={[
                       {
                         title: 'Ísland.is',

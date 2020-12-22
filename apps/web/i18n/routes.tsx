@@ -118,14 +118,9 @@ export const pathNames = (
 
     if (slugs && slugs.length > 0) {
       for (let i = 0; i < slugs.length; i++) {
-        if (slugs[i] !== '') {
-          path.as = replaceSlugInPath(path.as, slugs[i])
-          if (type === 'page' && slugs[i] === 'stafraent-island') {
-            path.href = path.as
-          }
-        } else {
-          path.as = removeSlugFromPath(path.as)
-          path.href = removeSlugFromPath(path.href)
+        path.as = replaceSlugInPath(path.as, slugs[i])
+        if (type === 'page' && slugs[i] === 'stafraent-island') {
+          path.href = path.as
         }
       }
     } else {

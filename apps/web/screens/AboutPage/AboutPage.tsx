@@ -22,9 +22,7 @@ import {
   Box,
   BoxProps,
   Breadcrumbs,
-  NewBreadcrumbs,
   Stack,
-  Link,
   ColorSchemeContext,
   GridContainer,
   GridColumn,
@@ -210,7 +208,7 @@ const PageHeader: FC<PageHeaderProps> = ({
               span={['12/12', '12/12', '12/12', '8/9']}
             >
               <Stack space={2}>
-                <NewBreadcrumbs
+                <Breadcrumbs
                   color="white"
                   items={[
                     {

@@ -1,4 +1,4 @@
-import { style, Style, styleMap } from 'treat'
+import { style, styleMap } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const divider = style({
@@ -29,6 +29,7 @@ const focusColors = (text: string) => ({
   ':focus': {
     backgroundColor: theme.color.mint400,
     color: theme.color.dark400,
+    textDecoration: 'none',
   },
   selectors: {
     '&:focus:active': {
@@ -40,13 +41,11 @@ const focusColors = (text: string) => ({
 export const breadcrumb = styleMap({
   blue400: colorScheme(theme.color.blue400, theme.color.blueberry400),
   white: colorScheme(theme.color.white, theme.color.white),
-  // TODO: think about off brand colors??
 })
 
 export const focusable = styleMap({
   blue400: focusColors(theme.color.blue400),
   white: focusColors(theme.color.white),
-  // TODO: think about off brand colors??
 })
 
 export const bullet = style({
@@ -60,5 +59,4 @@ export const bullet = style({
 export const color = styleMap({
   blue400: { backgroundColor: theme.color.blue400 },
   white: { backgroundColor: theme.color.white },
-  // TODO: think about off brand colors??
 })
