@@ -10,6 +10,7 @@ import AnimateHeight from 'react-animate-height'
 import { useLocale } from '@island.is/localization'
 import NavItem from './NavItem/NavItem'
 import SubNavItem from './NavItem/SubNavItem'
+import { useStore } from '../../store/stateProvider'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 
 interface Props {
@@ -20,6 +21,7 @@ interface Props {
 
 const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
   const [expand, setExpand] = useState(false)
+  const [{ routes }] = useStore()
   const { pathname } = useLocation()
   const isModuleActive =
     (nav.path &&
@@ -39,6 +41,8 @@ const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
       servicePortalOutboundLink()
     }
   }
+
+  const notifications = routes.find((r) => r.path === nav.path)?.notifications
 
   return (
     <Box>
@@ -62,6 +66,7 @@ const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
         icon={nav.icon}
         active={isModuleActive}
         external={nav.external}
+        notifications={notifications}
         onClick={() => {
           handleRootItemClick(nav.external)
         }}
