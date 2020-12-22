@@ -1,107 +1,72 @@
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import HelpBox from '../../../Common/HelpBox';
 import { ErrorMessage } from '@hookform/error-message';
-
-interface Texts {
-  header: string;
-  details: string;
-  enabled: string;
-  name: string;
-  displayName: string;
-  description: string;
-  showInDiscoveryDocument: string;
-  required: string;
-  emphasize: string;
-}
-
-class Data {
-  constructor() {
-    this.enabled = true;
-    this.name = '';
-    this.displayName = '';
-    this.description = '';
-    this.showInDiscoveryDocument = true;
-    this.required = false;
-    this.emphasize = false;
-  }
-
-  enabled: boolean;
-  name: string;
-  displayName: string;
-  description: string;
-  showInDiscoveryDocument: boolean;
-  required: boolean;
-  emphasize: boolean;
-}
+import { ApiResourcesDTO } from './../../../../entities/dtos/api-resources-dto';
+import { ResourcesService } from './../../../../services/ResourcesService';
 
 interface Props {
-  save: (object: any) => void;
-  texts: Texts;
-  hideBooleanValues: boolean;
+  handleSave?: (object: any) => void;
+  handleCancel?: () => void;
+  apiResource: ApiResourcesDTO;
 }
 
-const ResourceCreateForm: React.FC<Props> = ({
-  save,
-  texts,
-  hideBooleanValues,
-}) => {
-  const { register, handleSubmit, errors, formState } = useForm<Data>();
+const ResourceCreateForm: React.FC<Props> = (props) => {
+  const { register, handleSubmit, errors, formState } = useForm<
+    ApiResourcesDTO
+  >();
   const { isSubmitting } = formState;
-  const [resource, setApiResource] = useState<Data>(new Data());
-  const router = useRouter();
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [available, setAvailable] = useState<boolean>(false);
+  const [nameLength, setNameLength] = useState(0);
 
-  const back = () => {
-    router.back();
+  useEffect(() => {
+    if (props.apiResource && props.apiResource.name) {
+      setIsEditing(true);
+      setAvailable(true);
+    }
+  }, [props.apiResource]);
+
+  const checkAvailability = async (name: string) => {
+    setNameLength(name.length);
+    const response = await ResourcesService.getApiResourceByName(name);
+    if (response) {
+      setAvailable(false);
+    } else {
+      setAvailable(true);
+    }
   };
 
-  let extraBooleanValuesHtml = <div></div>;
-  if (!hideBooleanValues) {
-    extraBooleanValuesHtml = (
-      <div>
-        <div className="api-scope-form__container__checkbox__field">
-          <label htmlFor="emphasize" className="api-scope-form__label">
-            Emphasize
-          </label>
-          <input
-            ref={register}
-            id="emphasize"
-            name="resource.emphasize"
-            defaultChecked={resource.emphasize}
-            type="checkbox"
-            className="api-scope-form__checkbox"
-          />
-          <HelpBox helpText={texts.emphasize} />
-        </div>
+  const save = async (data: any) => {
+      console.log(data);
+    let response = null;
 
-        <div className="api-scope-form__container__checkbox__field">
-          <label htmlFor="required" className="api-scope-form__label">
-            Required
-          </label>
-          <input
-            ref={register}
-            id="required"
-            name="resource.required"
-            defaultChecked={resource.required}
-            type="checkbox"
-            className="api-scope-form__checkbox"
-          />
-          <HelpBox helpText={texts.required} />
-        </div>
-      </div>
-    );
+    if (!isEditing) {
+      response = await ResourcesService.createApiResource(data);
+    } else {
+      response = await ResourcesService.updateApiResource(data, data.name);
+    }
+    
+    if (response) {
+      if (props.handleSave) {
+        props.handleSave(data);
+      }
+    }
   }
 
   return (
     <div className="api-scope-form">
-      {/* <StatusBar status={response}></StatusBar> */}
       <div className="api-scope-form__wrapper">
         <div className="api-scope-form__container">
-          <h1>{texts.header}</h1>
+          <h1>{isEditing ? 'Edit Api Resource' : 'Create Api Resource'}</h1>
           <div className="api-scope-form__container__form">
-            <div className="api-scope-form__help">{texts.details}</div>
-
+            <div className="api-scope-form__help">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque
+              officia id delectus hic a, laudantium consequatur laborum amet
+              illo accusantium ut tenetur quis porro quia esse voluptate!
+              Eligendi, possimus illum.
+            </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="api-scope-form__container__fields">
                 <div className="api-scope-form__container__field">
@@ -111,16 +76,25 @@ const ResourceCreateForm: React.FC<Props> = ({
                   <input
                     ref={register({ required: true })}
                     id="name"
-                    name="resource.name"
+                    name="name"
                     type="text"
                     className="api-scope-form__input"
-                    defaultValue={resource.name}
+                    defaultValue={props.apiResource.name}
+                    readOnly={isEditing}
+                    onChange={(e) => checkAvailability(e.target.value)}
                   />
-                  <HelpBox helpText={texts.name} />
+                  <div
+                    className={`api-scope-form__container__field__available ${
+                      available ? 'ok ' : 'taken '
+                    } ${nameLength > 0 ? 'show' : 'hidden'}`}
+                  >
+                    {available ? 'Available' : 'Unavailable'}
+                  </div>
+                  <HelpBox helpText="The resource's unique name can't be changed" />
                   <ErrorMessage
                     as="span"
                     errors={errors}
-                    name="resource.name"
+                    name="name"
                     message="Name is required"
                   />
                 </div>
@@ -134,16 +108,16 @@ const ResourceCreateForm: React.FC<Props> = ({
                   <input
                     ref={register({ required: true })}
                     id="displayName"
-                    name="resource.displayName"
+                    name="displayName"
                     type="text"
                     className="api-scope-form__input"
-                    defaultValue={resource.displayName}
+                    defaultValue={props.apiResource.displayName}
                   />
-                  <HelpBox helpText={texts.displayName} />
+                  <HelpBox helpText="The name that will be used to display the resource" />
                   <ErrorMessage
                     as="span"
                     errors={errors}
-                    name="resource.displayName"
+                    name="displayName"
                     message="Display name is required"
                   />
                 </div>
@@ -157,12 +131,12 @@ const ResourceCreateForm: React.FC<Props> = ({
                   <input
                     ref={register({ required: false })}
                     id="description"
-                    name="resource.description"
+                    name="description"
                     type="text"
-                    defaultValue={resource.description}
+                    defaultValue={props.apiResource.description}
                     className="api-scope-form__input"
                   />
-                  <HelpBox helpText={texts.description} />
+                  <HelpBox helpText="Describe this Api resource" />
                 </div>
 
                 <div className="api-scope-form__container__checkbox__field">
@@ -172,15 +146,13 @@ const ResourceCreateForm: React.FC<Props> = ({
                   <input
                     ref={register}
                     id="enabled"
-                    name="resource.enabled"
+                    name="enabled"
                     type="checkbox"
-                    defaultChecked={resource.enabled}
+                    defaultChecked={props.apiResource.enabled}
                     className="api-scope-form__checkbox"
                   />
-                  <HelpBox helpText={texts.enabled} />
+                  <HelpBox helpText="Specifies if the resource is enabled" />
                 </div>
-
-                {extraBooleanValuesHtml}
 
                 <div className="api-scope-form__container__checkbox__field">
                   <label
@@ -192,19 +164,19 @@ const ResourceCreateForm: React.FC<Props> = ({
                   <input
                     ref={register}
                     id="showInDiscoveryDocument"
-                    name="resource.showInDiscoveryDocument"
+                    name="showInDiscoveryDocument"
                     type="checkbox"
-                    defaultChecked={resource.showInDiscoveryDocument}
+                    defaultChecked={props.apiResource.showInDiscoveryDocument}
                     className="api-scope-form__checkbox"
                   />
-                  <HelpBox helpText={texts.showInDiscoveryDocument} />
+                  <HelpBox helpText="Specifies whether this resource is shown in the discovery document." />
                 </div>
 
                 <div className="api-scope-form__buttons__container">
                   <div className="api-scope-form__button__container">
                     <button
                       className="api-scope-form__button__cancel"
-                      onClick={back}
+                      onClick={props.handleCancel}
                     >
                       Cancel
                     </button>
@@ -213,8 +185,8 @@ const ResourceCreateForm: React.FC<Props> = ({
                     <input
                       type="submit"
                       className="api-scope-form__button__save"
-                      disabled={isSubmitting}
-                      value="Save"
+                      disabled={isSubmitting || !available}
+                      value="Next"
                     />
                   </div>
                 </div>

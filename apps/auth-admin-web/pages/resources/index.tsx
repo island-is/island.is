@@ -1,8 +1,8 @@
+import React, { useState } from 'react';
 import ResourceStepNav from '../../components/Resource/components/ResourceStepper';
 import Overview from '../../components/Resource/components/Overview';
-import { ResourceStep } from 'apps/auth-admin-web/entities/common/ResourceStep';
-import { useState } from 'react';
-import ContentWrapper from '../../components/Layout/ContentWrapper'
+import { ResourceStep } from './../../entities/common/ResourceStep';
+import ContentWrapper from './../../components/Layout/ContentWrapper'
 
 export default function Index() {
   const [step, setStep] = useState(1);

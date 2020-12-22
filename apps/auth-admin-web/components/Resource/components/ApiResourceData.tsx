@@ -7,9 +7,12 @@ import { ApiResource } from './../../../entities/models/api-resource.model';
 
 interface Props {
   apiResourceId: string;
+  handleNext?: () => void;
+  handleBack?: () => void;
+  handleChanges?: () => void;
 }
 
-const ApiResourceData: React.FC<Props> = ({ apiResourceId }) => {
+const ApiResourceData: React.FC<Props> = ({ apiResourceId, handleNext, handleBack }) => {
   const [loaded] = useState<boolean>(false);
   const [apiResource, setApiResource] = useState<ApiResource>(
     new ApiResource()
@@ -36,9 +39,9 @@ const ApiResourceData: React.FC<Props> = ({ apiResourceId }) => {
     const response = await ResourcesService.updateApiResource(data, apiResourceId);
     if ( response)
     {
-      // TODO: USB -> What now? :)
-      // This is commented out. Should it Go back?
-  // router.back();
+      if (handleNext){
+        handleNext();
+      }
     }
   };
 
