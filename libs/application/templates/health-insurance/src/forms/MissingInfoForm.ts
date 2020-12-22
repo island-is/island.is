@@ -19,11 +19,11 @@ export const MissingInfoForm: Form = buildForm({
   children: [
     buildSection({
       id: 'missingInfoSection',
-      name: 'Missing informaton',
+      name: m.missingInfoSection,
       children: [
         buildMultiField({
           id: 'missingInfoFields',
-          name: 'Missing information',
+          name: m.missingInfoSection,
           description: '',
           children: [
             buildCustomField({
@@ -31,7 +31,10 @@ export const MissingInfoForm: Form = buildForm({
               name: 'Agent comments',
               component: 'AgentComment',
             }),
-            buildDividerField({ name: 'Your answer', color: 'dark400' }),
+            buildDividerField({
+              name: m.missingInfoAnswersTitle,
+              color: 'dark400',
+            }),
             buildCustomField({
               id: 'missingInfo.date',
               name: '',
@@ -47,7 +50,10 @@ export const MissingInfoForm: Form = buildForm({
               name: '',
               introduction: '',
             }),
-            buildDividerField({ name: 'Previous answers', color: 'dark400' }),
+            buildDividerField({
+              name: m.previousAnswersTitle,
+              color: 'dark400',
+            }),
             buildCustomField({
               id: 'submittedData',
               name: '',

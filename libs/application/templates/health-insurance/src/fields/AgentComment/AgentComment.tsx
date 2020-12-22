@@ -17,11 +17,13 @@ const AgentComment: FC<FieldBaseProps> = ({ application }) => {
 
   return (
     <Stack space={1}>
-      <Text variant="h4">Comment from Health Insurance in Iceland</Text>
+      <Text variant="h4">
+        {formatText(m.agentCommentsTitle, application, formatMessage)}
+      </Text>
       <Text>
         {agentComments
           ? agentComments
-          : 'Agent did not leave any comments for you'}
+          : formatText(m.agentCommentsEmpty, application, formatMessage)}
       </Text>
     </Stack>
   )

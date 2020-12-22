@@ -61,7 +61,11 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
             <AccordionItem
               id={`id_${4 + index}`}
               key={`id_${4 + index}`}
-              label={`Missing information ${index + 1}`}
+              label={`${formatText(
+                m.missingInfoSection,
+                application,
+                formatMessage,
+              )} ${index + 1}`}
             >
               <ReviewMissingInfo
                 application={application}

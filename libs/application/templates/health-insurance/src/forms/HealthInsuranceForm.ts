@@ -258,7 +258,7 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'additionalInfo.remarks',
               title: m.additionalRemarks,
               variant: 'textarea',
-              placeholder: m.additionalRemarksPlacehokder,
+              placeholder: m.additionalRemarksPlaceholder,
               condition: (answers) =>
                 answers.additionalInfo?.hasAdditionalInfo === YES,
             }),
