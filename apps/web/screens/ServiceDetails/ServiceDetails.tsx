@@ -114,7 +114,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
             main={
               <Box>
                 <Box display={['inline', 'inline', 'none']}>
-                  {/* Show only on a device */}
+                  {/* Show when a device */}
                   <Box paddingBottom="gutter">
                     <Link href={n('linkServiceList')}>
                       <Button
