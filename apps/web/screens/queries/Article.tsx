@@ -10,6 +10,7 @@ export const GET_ARTICLE_QUERY = gql`
       shortTitle
       intro
       importance
+      showTableOfContents
       body {
         ...AllSlices
       }
@@ -42,6 +43,7 @@ export const GET_ARTICLE_QUERY = gql`
         body {
           ...AllSlices
         }
+        showTableOfContents
       }
       featuredImage {
         url
