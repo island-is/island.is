@@ -97,7 +97,9 @@ export class ResourcesService {
       throw new BadRequestException('Name must be provided')
     }
 
-    return this.identityResourceModel.findByPk(name)
+    return this.identityResourceModel.findByPk(name, {
+      include: [IdentityResourceUserClaim],
+    })
   }
 
   /** Gets API scope by name */
