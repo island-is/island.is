@@ -25,7 +25,7 @@ export class ResourcesService extends BaseService {
     return BaseService.PUT(`api-resource/${name}`, apiResource);
   }
 
-  /** Creates a new Api Scope */
+  /** Update an Api Scope */
   static async updateApiScope(apiScope: ApiScopesDTO): Promise<ApiScope> {
     return BaseService.PUT(`api-scope/${apiScope.name}`, apiScope);
   }
