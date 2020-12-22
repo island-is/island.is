@@ -295,6 +295,9 @@
     "nova-sms": {
       "tags": []
     },
+    "plausible": {
+      "tags": []
+    },
     "reference-backend": {
       "tags": []
     },
