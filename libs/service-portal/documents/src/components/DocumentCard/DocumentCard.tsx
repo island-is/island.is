@@ -5,6 +5,8 @@ import { GET_DOCUMENT, client } from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
 import * as styles from './DocumentCard.treat'
 import { toast, Text, Stack, Button, Box } from '@island.is/island-ui/core'
+import { useLocation } from 'react-router-dom'
+import { documentsOpenDocument } from '@island.is/plausible'
 import * as Sentry from '@sentry/react'
 
 const base64ToArrayBuffer = (base64Pdf: string) => {
@@ -44,6 +46,7 @@ interface Props {
 const DocumentCard: FC<Props> = ({ document }) => {
   const { formatMessage } = useLocale()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const { pathname } = useLocation()
   const [{ loading, documentDetails }, setDocumentDetails] = useState<{
     loading?: boolean
     documentDetails?: DocumentDetails
@@ -108,6 +111,7 @@ const DocumentCard: FC<Props> = ({ document }) => {
         level: Sentry.Severity.Info,
       })
       setDocumentDetails({ documentDetails: doc })
+      documentsOpenDocument(pathname, document.subject)
       if (documentIsPdf(doc) && windowRef) {
         windowRef.location.assign(getPdfURL(doc.content))
         return
