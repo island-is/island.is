@@ -2,7 +2,7 @@ import React from 'react'
 
 function ManWithStrollerIllustration() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 546 563">
+    <>
       <defs>
         <linearGradient
           id="illustration_stroller_linear-gradient"
@@ -146,7 +146,7 @@ function ManWithStrollerIllustration() {
         className="illustration_stroller_cls-3"
         d="M335.82 230.76s14.43 4.23 23.68-9.9M314.72 266.89v10.49"
       />
-    </svg>
+    </>
   )
 }
 
