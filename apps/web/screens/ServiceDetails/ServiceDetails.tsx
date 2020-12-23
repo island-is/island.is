@@ -115,7 +115,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
             main={
               <Box>
                 <Box display={['inline', 'inline', 'none']}>
-                  {/* Show when a device */}
+                  {/* Show when a device  */}
                   <Box paddingBottom="gutter">
                     <NextLink passHref href={n('linkServiceList')}>
                       <a href={n('linkServiceList')}>
