@@ -474,7 +474,7 @@ export class ResourcesService {
   ): Promise<number> {
     return this.apiResourceSecret.destroy({
       where: {
-        apiResourceName: apiSecret.value,
+        apiResourceName: apiSecret.apiResourceName,
         value: apiSecret.value,
       },
     })

@@ -285,6 +285,7 @@ export class ResourcesController {
   }
 
   @Post('api-scope-user-claims/:apiScopeName/:claimName')
+  @ApiCreatedResponse({ type: ApiScopeUserClaim })
   async addApiScopeUserClaim(
     @Param('apiScopeName') apiScopeName: string,
     @Param('claimName') claimName: string,
@@ -353,23 +354,27 @@ export class ResourcesController {
 
   /** Add secret to ApiResource */
   @Post('api-resource-secret')
+  @ApiCreatedResponse({ type: ApiResourceSecret })
   async addApiResourceSecret(
-    apiSecret: ApiResourceSecretDTO,
+    @Body() apiSecret: ApiResourceSecretDTO,
   ): Promise<ApiResourceSecret> {
+    console.log(apiSecret)
     if (!apiSecret) {
-      throw new BadRequestException('apiSecret object must be provided')
+      throw new BadRequestException('The apiSecret object must be provided')
     }
 
     return this.resourcesService.addApiResourceSecret(apiSecret)
   }
 
   /** Remove a secret from Api Resource */
-  @Post('api-resource-secret')
+  @Delete('api-resource-secret')
   async removeApiResourceSecret(
-    apiSecret: ApiResourceSecretDTO,
+    @Body() apiSecret: ApiResourceSecretDTO,
   ): Promise<number | null> {
     if (!apiSecret) {
-      throw new BadRequestException('apiSecret object must be provided')
+      throw new BadRequestException(
+        'apiSecret object must be provided when deleting',
+      )
     }
 
     return this.resourcesService.removeApiResourceSecret(apiSecret)
@@ -379,7 +384,7 @@ export class ResourcesController {
   @Post('api-resources-allowed-scope')
   @ApiCreatedResponse({ type: ApiResourceScope })
   async addApiResourceAllowedScope(
-    resourceAllowedScope: ApiResourceScopeDTO,
+    @Body() resourceAllowedScope: ApiResourceScopeDTO,
   ): Promise<ApiResourceScope | null> {
     if (!resourceAllowedScope) {
       throw new BadRequestException(
