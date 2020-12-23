@@ -26,8 +26,16 @@ import { Locale } from '@island.is/web/i18n/I18n'
 import { pathNames, AnchorAttributes } from '@island.is/web/i18n/routes'
 import { useI18n } from '../../i18n'
 import { theme } from '@island.is/island-ui/theme'
-import Illustration from './illustrations/Illustration'
+import LottieIllustration from './illustrations/LottieIllustration'
 import * as styles from './FrontpageSlider.treat'
+import TestJSON from './json/slide1.json'
+
+const test = {
+  0: undefined,
+  1: undefined,
+  2: undefined,
+  3: TestJSON
+}
 
 type TabsProps = {
   subtitle?: string
@@ -313,8 +321,7 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
             height="full"
             justifyContent="center"
           >
-            <Illustration />
-            {/* <img src={testStatic} /> */}
+            <LottieIllustration animationData={test[selectedIndex]} />
           </Box>
         </GridColumn>
         <GridColumn hiddenBelow="lg" span="1/12" />
@@ -323,5 +330,4 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
   )
 }
 
-// {/* <Lottie animationData={test} /> */}
 export default FrontpageSlider

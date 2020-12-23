@@ -1,9 +1,9 @@
+import React from 'react'
 
-function SvgComponent(props) {
+function InitialSlide() {
   return (
     <svg
-      id="Layer_1"
-      data-name="Layer 1"
+      id="initial_slide"
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
       viewBox="0 0 470 520"
@@ -629,4 +629,4 @@ function SvgComponent(props) {
   )
 }
 
-export default SvgComponent
+export default InitialSlide
