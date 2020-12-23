@@ -9,6 +9,7 @@ import ApiResourceStepNav from './../../../../components/Resource/ApiResourceSte
 import { ApiResourceStep } from 'apps/auth-admin-web/entities/common/ApiResourceStep';
 import StepEnd from 'apps/auth-admin-web/components/Common/StepEnd';
 import ApiResourceSecretForm from 'apps/auth-admin-web/components/Resource/forms/ApiResourceSecretForm';
+import ApiResourceScopeForm from 'apps/auth-admin-web/components/Resource/forms/ApiResourceScopeForm';
 
 export default function Index() {
   const { query } = useRouter();
@@ -81,6 +82,24 @@ export default function Index() {
               handleSave={handleApiResourceSaved}
               handleCancel={handleBack}
             />
+          </ApiResourceStepNav>
+        </ContentWrapper>
+      );
+    }
+    case ApiResourceStep.ApiResourceScopes: {
+      return (
+        <ContentWrapper>
+          <ApiResourceStepNav
+            activeStep={step}
+            handleStepChange={handleStepChange}
+          >
+            <ApiResourceScopeForm
+              apiResourceName={apiResource.name}
+              scopes={apiResource.scopes?.map((x) => x.scopeName)}
+              handleChanges={changesMade}
+              handleNext={handleNext}
+              handleBack={handleBack}
+            ></ApiResourceScopeForm>
           </ApiResourceStepNav>
         </ContentWrapper>
       );

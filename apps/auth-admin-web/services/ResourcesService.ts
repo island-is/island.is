@@ -215,7 +215,9 @@ export class ResourcesService extends BaseService {
     scopeName: string
   ): Promise<number | null> {
     return BaseService.DELETE(
-      `api-resources-allowed-scope/${apiResourceName}/${scopeName}`
+      `api-resources-allowed-scope/${apiResourceName}/${encodeURIComponent(
+        scopeName
+      )}`
     );
   }
 }
