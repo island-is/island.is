@@ -1,4 +1,4 @@
-import { IdentityResourceUserClaim } from './../../entities/models/identity-resource-user-claim.model';
+import { ClaimService } from 'apps/auth-admin-web/services/ClaimService';
 import React, { useEffect, useState } from 'react';
 import HelpBox from '../Common/HelpBox';
 import NoActiveConnections from '../Common/NoActiveConnections';
@@ -20,8 +20,10 @@ const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
   }, []);
 
   const getGrantTypes = async () => {
-    const dummy = ["name", "nationalId"];
-    setClaims(dummy);
+    const response = await ClaimService.findAll();
+    if(response){
+      setClaims(response.map(x => x.type));
+    }
   };
 
   const add = async (claimName: string) => {
