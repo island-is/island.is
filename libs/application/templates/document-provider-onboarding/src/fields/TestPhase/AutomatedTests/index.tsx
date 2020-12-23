@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useMutation } from '@apollo/client'
+import { gql, useMutation } from '@apollo/client'
 import {
   FieldBaseProps,
   formatText,
@@ -20,7 +20,16 @@ import {
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../forms/messages'
-import { runEndpointTestsMutation } from '../../../graphql/mutations/runEndpointTestsMutation'
+
+export const runEndpointTestsMutation = gql`
+  mutation RunEndpointTests($input: RunEndpointTestsInput!) {
+    runEndpointTests(input: $input) {
+      id
+      isValid
+      message
+    }
+  }
+`
 
 const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -49,12 +58,19 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
     setautomatedTestsError(null)
     setIsLoading(true)
 
+    const testProviderId = getValueViaPath(
+      application.answers,
+      'testProviderId',
+      undefined,
+    ) as string
+
     const results = await runEndpointTests({
       variables: {
         input: {
           nationalId: nationalId,
           recipient: getValues('nationalId'),
           documentId: getValues('docId'),
+          providerId: testProviderId,
         },
       },
     })
