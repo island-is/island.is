@@ -62,6 +62,7 @@ export default function Index() {
   const handleApiScopeSaved = (apiScopeSaved: ApiScopesDTO) => {
     if (apiScopeSaved) {
       getApiScope(apiScopeName as string);
+      handleNext();
     }
   };
 

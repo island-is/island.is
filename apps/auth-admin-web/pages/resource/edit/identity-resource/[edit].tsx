@@ -66,6 +66,7 @@ export default function Index() {
   const handleIdentityResourceSaved = (resourceSaved: IdentityResourcesDTO) => {
     if (resourceSaved) {
       getResource(resourceId as string);
+      handleNext();
     }
   };
 

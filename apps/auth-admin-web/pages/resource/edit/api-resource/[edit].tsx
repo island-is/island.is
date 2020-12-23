@@ -67,6 +67,7 @@ export default function Index() {
   const handleApiResourceSaved = (resourceSaved: ApiResourcesDTO) => {
     if (resourceSaved) {
       getResource(resourceId as string);
+      handleNext();
     }
   };
 
