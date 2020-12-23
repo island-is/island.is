@@ -1,6 +1,7 @@
 import {
   ApiResource,
   ApiScope,
+  ApiScopeUserClaim,
   ApiScopesDTO,
   IdentityResource,
   IdentityResourcesDTO,
@@ -282,7 +283,7 @@ export class ResourcesController {
   async addApiScopeUserClaim(
     @Param('apiScopeName') apiScopeName: string,
     @Param('claimName') claimName: string,
-  ): Promise<IdentityResourceUserClaim | null> {
+  ): Promise<ApiScopeUserClaim | null> {
     return await this.resourcesService.addApiScopeUserClaim(
       apiScopeName,
       claimName,
