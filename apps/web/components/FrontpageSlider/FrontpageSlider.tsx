@@ -7,6 +7,7 @@ import React, {
   useCallback,
   useEffect,
 } from 'react'
+import Lottie from 'lottie-react'
 import Link from 'next/link'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
@@ -26,7 +27,7 @@ import { pathNames, AnchorAttributes } from '@island.is/web/i18n/routes'
 import { useI18n } from '../../i18n'
 import { theme } from '@island.is/island-ui/theme'
 import Illustration from './illustrations/Illustration'
-import * as styles from './FrontpageTabs.treat'
+import * as styles from './FrontpageSlider.treat'
 
 type TabsProps = {
   subtitle?: string
@@ -40,7 +41,7 @@ export const RIGHT = 'Right'
 export const UP = 'Up'
 export const DOWN = 'Down'
 
-export interface FrontpageTabsProps {
+export interface FrontpageSliderProps {
   tabs: TabsProps[]
   searchContent: ReactNode
 }
@@ -59,7 +60,7 @@ const TabBullet: FC<TabBulletProps> = ({ selected }) => {
   )
 }
 
-export const FrontpageTabs: FC<FrontpageTabsProps> = ({
+export const FrontpageSlider: FC<FrontpageSliderProps> = ({
   tabs,
   searchContent,
 }) => {
@@ -75,14 +76,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   const { activeLocale, t } = useI18n()
   const { width } = useWindowSize()
 
-  const nextSlide = useCallback(() => {
-    tab.next()
-  }, [tab])
-
-  const prevSlide = useCallback(() => {
-    tab.previous()
-  }, [tab])
-
   useEffect(() => {
     const newSelectedIndex = tab.items.findIndex((x) => x.id === tab.currentId)
     setSelectedIndex(newSelectedIndex)
@@ -91,10 +84,10 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   const goTo = (direction: string) => {
     switch (direction) {
       case 'prev':
-        prevSlide()
+        tab.previous()
         break
       case 'next':
-        nextSlide()
+        tab.next()
         break
       default:
         break
@@ -170,7 +163,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
             >
               {tabs.map(({ title = '' }, index) => {
                 return (
-                  <Tab key={index} {...tab} className={cn(styles.tabContainer)}>
+                  <Tab key={index} {...tab} className={styles.tabContainer}>
                     <TabBullet selected={selectedIndex === index} />
                     <span className={styles.srOnly}>{title}</span>
                   </Tab>
@@ -320,7 +313,8 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
             height="full"
             justifyContent="center"
           >
-            <Illustration illustrationIndex={selectedIndex} />
+            <Illustration />
+            {/* <img src={testStatic} /> */}
           </Box>
         </GridColumn>
         <GridColumn hiddenBelow="lg" span="1/12" />
@@ -329,4 +323,5 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   )
 }
 
-export default FrontpageTabs
+// {/* <Lottie animationData={test} /> */}
+export default FrontpageSlider
