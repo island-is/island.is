@@ -6,6 +6,7 @@ import { ClientClaimDTO } from '../../entities/dtos/client-claim.dto';
 import HelpBox from '../Common/HelpBox';
 import NoActiveConnections from '../Common/NoActiveConnections';
 import { ClientService } from './../../services/ClientService';
+import ConfirmModal from './../common/ConfirmModal';
 
 interface Props {
   clientId: string;
@@ -20,6 +21,10 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
     ClientClaimDTO
   >();
   const { isSubmitting } = formState;
+  const [modalIsOpen, setIsOpen] = React.useState(false);
+  const [claimToRemove, setClaimToRemove] = React.useState<ClientClaimDTO>(
+    new ClientClaimDTO()
+  );
 
   const add = async (data: any) => {
     const clientClaim = new ClientClaimDTO();
@@ -36,23 +41,37 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
     }
   };
 
-  const remove = async (claim: ClientClaim) => {
-    if (
-      window.confirm(
-        `Are you sure you want to delete this claim: "${claim.type} - ${claim.value}" ?`
-      )
-    ) {
-      const response = await ClientService.removeClaim(
-        claim.clientId,
-        claim.type,
-        claim.value
-      );
-      if (response) {
-        if (props.handleChanges) {
-          props.handleChanges();
-        }
+  const remove = async () => {
+    const response = await ClientService.removeClaim(
+      claimToRemove.clientId,
+      claimToRemove.type,
+      claimToRemove.value
+    );
+    if (response) {
+      if (props.handleChanges) {
+        props.handleChanges();
       }
     }
+
+    closeModal();
+  };
+
+  const confirmRemove = async (claim: ClientClaimDTO) => {
+    setClaimToRemove(claim);
+    setIsOpen(true);
+  };
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  const setHeaderElement = () => {
+    return (
+      <p>
+        Are you sure want to delete this claim:{' '}
+        <span>{claimToRemove.type}</span> - <span>{claimToRemove.value}</span>
+      </p>
+    );
   };
 
   return (
@@ -134,11 +153,11 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                       key={claim.type}
                     >
                       <div className="list-name">{claim.type}</div>
-                      <div className="list-value">{claim.type}</div>
+                      <div className="list-value">{claim.value}</div>
                       <div className="list-remove">
                         <button
                           type="button"
-                          onClick={() => remove(claim)}
+                          onClick={() => confirmRemove(claim)}
                           className="client-claim__container__list__button__remove"
                           title="Remove"
                         >
@@ -175,6 +194,13 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
           </form>
         </div>
       </div>
+      <ConfirmModal
+        modalIsOpen={modalIsOpen}
+        headerElement={setHeaderElement()}
+        closeModal={closeModal}
+        confirmation={remove}
+        confirmationText="Delete"
+      ></ConfirmModal>
     </div>
   );
 };

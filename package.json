@@ -28,18 +28,20 @@
   "private": true,
   "dependencies": {
     "@hookform/error-message": "^0.0.4",
+    "@types/react-modal": "^3.10.6",
     "@types/react-router-dom": "^5.1.6",
     "@types/yup": "^0.29.9",
     "document-register-element": "1.13.1",
     "font-awesome": "^4.7.0",
     "formik": "^2.2.5",
     "next": "9.5.2",
+    "next-auth": "^3.1.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-hook-form": "^6.11.2",
+    "react-modal": "^3.12.1",
     "react-router-dom": "^5.2.0",
-    "yup": "^0.29.3",
-    "next-auth": "^3.1.0"
+    "yup": "^0.29.3"
   },
   "devDependencies": {
     "@babel/core": "7.9.6",

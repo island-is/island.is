@@ -36,7 +36,6 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
   };
 
   const save = async (data: any) => {
-    console.log(data);
     let response = null;
 
     if (!isEditing) {

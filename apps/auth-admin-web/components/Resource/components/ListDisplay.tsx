@@ -24,63 +24,68 @@ const ResourceListDisplay: React.FC<Props> = ({
   remove,
 }) => {
   return (
-    <div className="identity-resources">
-      <div className="identity-resources__wrapper">
-        <div className="identity-resources__container">
-          <h1>{header}</h1>
-          <div className="identity-resources__container__options">
-            <div className="identity-resources__container__button">
-              {/* Change href link */}
-              <Link href={createUri}>
-                <a className="identity-resources__button__new">
-                  <i className="icon__new"></i>
-                  {linkHeader}
-                </a>
-              </Link>
+    <div>
+      <div className="identity-resources">
+        <div className="identity-resources__wrapper">
+          <div className="identity-resources__container">
+            <h1>{header}</h1>
+            <div className="identity-resources__container__options">
+              <div className="identity-resources__container__button">
+                {/* Change href link */}
+                <Link href={createUri}>
+                  <a className="identity-resources__button__new">
+                    <i className="icon__new"></i>
+                    {linkHeader}
+                  </a>
+                </Link>
+              </div>
             </div>
+            <div className="client__container__table">
+              <table className="identity-resources__table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Display Name</th>
+                    <th colSpan={2}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {list.map((resource: any) => {
+                    return (
+                      <tr key={resource.name}>
+                        <td>{resource.name}</td>
+                        <td>{resource.displayName}</td>
+                        <td className="identity-resources__table__button">
+                          <button
+                            className="identity-resources__button__edit"
+                            onClick={() => edit(resource)}
+                            title="Edit"
+                          >
+                            <i className="icon__edit"></i>
+                            <span>Edit</span>
+                          </button>
+                        </td>
+                        <td className="identity-resources__table__button">
+                          <button
+                            className="identity-resources__button__delete"
+                            onClick={() => remove(resource.name)}
+                            title="Delete"
+                          >
+                            <i className="icon__delete"></i>
+                            <span>Delete</span>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <Paginator
+              lastPage={lastPage}
+              handlePageChange={handlePageChange}
+            />
           </div>
-          <div className="client__container__table">
-            <table className="identity-resources__table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Display Name</th>
-                  <th colSpan={2}></th>
-                </tr>
-              </thead>
-              <tbody>
-                {list.map((resource: any) => {
-                  return (
-                    <tr key={resource.name}>
-                      <td>{resource.name}</td>
-                      <td>{resource.displayName}</td>
-                      <td className="identity-resources__table__button">
-                        <button
-                          className="identity-resources__button__edit"
-                          onClick={() => edit(resource)}
-                          title="Edit"
-                        >
-                          <i className="icon__edit"></i>
-                          <span>Edit</span>
-                        </button>
-                      </td>
-                      <td className="identity-resources__table__button">
-                        <button
-                          className="identity-resources__button__delete"
-                          onClick={() => remove(resource.name)}
-                          title="Delete"
-                        >
-                          <i className="icon__delete"></i>
-                          <span>Delete</span>
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-          <Paginator lastPage={lastPage} handlePageChange={handlePageChange} />
         </div>
       </div>
     </div>

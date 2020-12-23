@@ -1,0 +1,18 @@
+.confirm-modal {
+    z-index: 100;
+
+    p {
+        font-size: 0.95em;
+
+        span {
+            font-weight: bold;
+        }
+    }
+
+    .buttons {
+        width: 100%;
+        margin-top: 3em;
+        display: grid;
+        grid-template-columns: 7% 38% 10% 38% 7%;
+    }
+}

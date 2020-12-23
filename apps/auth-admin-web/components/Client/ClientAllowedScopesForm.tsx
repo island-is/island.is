@@ -63,7 +63,7 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
         }
       }
     }
-  }
+  };
 
   return (
     <div className="client-allowed-scopes">
