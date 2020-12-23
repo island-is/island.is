@@ -8,7 +8,7 @@ export default function Index() {
   const router = useRouter();
   
   const handleSave = (data: ApiResourcesDTO) => {
-    router.push(`edit/api-resource/${data.name}`);
+    router.push(`edit/api-resource/${data.name}?step=2`);
   }
 
   const handleCancel = () => {

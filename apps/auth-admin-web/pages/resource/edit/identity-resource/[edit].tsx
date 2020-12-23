@@ -8,6 +8,7 @@ import { IdentityResource } from './../../../../entities/models/identity-resourc
 import IdentityResourceStepNav from './../../../../components/Resource/IdentityResourceStepNav';
 import { IdentityResourceStep } from './../../../../entities/common/IdentityResourcesStep';
 import IdentityResourceUserClaimsForm from './../../../../components/Resource/IdentityResourceUserClaimsForm';
+import StepEnd from 'apps/auth-admin-web/components/Common/StepEnd';
 
 export default function Index() {
   const { query } = useRouter();
@@ -92,7 +93,13 @@ export default function Index() {
       );
     }
     default: {
-      return <div>Step not found</div>;
+      return (
+        <ContentWrapper>
+          <IdentityResourceStepNav activeStep={step} handleStepChange={handleStepChange}>
+          <StepEnd buttonText="Go back" title="Steps completed" handleButtonFinishedClick={() => setStep(1)}>The steps needed, to create the Identity Resource, have been completed</StepEnd>
+          </IdentityResourceStepNav>
+        </ContentWrapper>
+      );
     }
   }
 }

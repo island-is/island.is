@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 export default function Index() {
   const router = useRouter();
   const handleSave = (data: IdentityResourcesDTO) => {
-    router.push(`edit/identity-resource/${data.name}`);
+    router.push(`edit/identity-resource/${data.name}?step=2`);
   }
 
   const handleCancel = () => {

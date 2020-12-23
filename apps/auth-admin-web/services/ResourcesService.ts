@@ -3,6 +3,7 @@ import { ApiScopesDTO } from '../entities/dtos/api-scopes-dto';
 import IdentityResourcesDTO from '../entities/dtos/identity-resources.dto';
 import { ApiResource } from '../entities/models/api-resource.model';
 import { ApiScope } from '../entities/models/api-scope.model';
+import { IdentityResourceUserClaim } from '../entities/models/identity-resource-user-claim.model';
 import { IdentityResource } from '../entities/models/identity-resource.model';
 import { BaseService } from './BaseService';
 
@@ -57,20 +58,43 @@ export class ResourcesService extends BaseService {
     return BaseService.GET(`user-claims/${name}`);
   }
 
-  /** */
-  static async addResourceUserClaim(
+  /** Add User Claim to Identity Resource */
+  static async addIdentityResourceUserClaim(
     identityResourceName: string,
     claimName: string
-  ): Promise<IdentityResourceUserClaim> {
-    return BaseService.POST(`user-claims/${identityResourceName}/${claimName}`);
+  ): Promise<IdentityResourceUserClaim | null> {
+    return BaseService.POST(
+      `identity-resource-user-claims/${identityResourceName}/${claimName}`
+    );
   }
 
-  static async removeResourceUserClaim(
+  /** Removes User claim from Identity resource */
+  static async removeIdentityResourceUserClaim(
     identityResourceName: string,
     claimName: string
   ): Promise<number> {
     return BaseService.DELETE(
-      `user-claims/${identityResourceName}/${claimName}`
+      `identity-resource-user-claims/${identityResourceName}/${claimName}`
+    );
+  }
+
+  /** Adds user claim to Api Scope */
+  static async addApiScopeUserClaim(
+    apiScopeName: string,
+    claimName: string
+  ): Promise<IdentityResourceUserClaim | null> {
+    return BaseService.POST(
+      `api-scope-user-claims/${apiScopeName}/${claimName}`
+    );
+  }
+
+  /** Removes user claim from Api Scope */
+  static async removeApiScopeUserClaim(
+    apiScopeName: string,
+    claimName: string
+  ): Promise<number> {
+    return BaseService.DELETE(
+      `api-scope-user-claims/${apiScopeName}/${claimName}`
     );
   }
 

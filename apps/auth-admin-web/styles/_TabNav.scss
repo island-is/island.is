@@ -1,17 +1,12 @@
-.client-step-nav,
-.identity-resource-step-nav {
+.resource-tab-nav {
   ul {
     padding-inline-start: 0;
 
     li {
-      padding: 0;
+      padding: 10px 0;
       display: inline-block;
-
-      &:not(:last-child)::after {
-        padding-left: 20px;
-        font-family: FontAwesome;
-        content: '\f178';
-      }
+      border: solid 1px $color-border;
+      border-radius: 5px;
 
       a {
         font-size: 0.8rem;
@@ -24,7 +19,6 @@
         &.active {
           color: $color-link;
           font-weight: $weight-semi-bold;
-          border-bottom: solid 2px $color-link;
         }
       }
     }

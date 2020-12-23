@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import ContentWrapper from './../../../../components/Layout/ContentWrapper';
-import ApiScopeEdit from './../../../../components/Resource/ApiScopeEdit';
 import { ApiScope } from './../../../../entities/models/api-scope.model';
 import { ApiScopesDTO } from './../../../../entities/dtos/api-scopes-dto';
 import { ResourcesService } from './../../../../services/ResourcesService';
 import ApiScopeCreateForm from './../../../../components/Resource/components/forms/ApiScopeCreateForm';
+import ApiScopeStepNav from './../../../../components/Resource/ApiScopeStepNav';
+import StepEnd from './../../../../components/Common/StepEnd';
+import { ApiScopeStep } from './../../../../entities/common/ApiScopeStep';
+import ApiScopeUserClaims from './../../../../components/Resource/ApiScopeUserClaims';
 
 export default function Index() {
   const { query } = useRouter();
   const stepQuery = query.step;
   const apiScopeName = query.edit;
   const [step, setStep] = useState(1);
-  const [apiScope, setApiScope] = useState<ApiScope>(
-    new ApiScope()
-  );
+  const [apiScope, setApiScope] = useState<ApiScope>(new ApiScope());
   const router = useRouter();
 
   /** Load the api Scope and set the step from query if there is one */
@@ -65,15 +66,59 @@ export default function Index() {
   };
 
   switch (step) {
-    case 1: {
+    case ApiScopeStep.ApiScope: {
       return (
         <ContentWrapper>
-          <ApiScopeCreateForm apiScope={apiScope} handleSave={handleApiScopeSaved} handleCancel={handleBack} />
+          <ApiScopeStepNav
+            activeStep={step}
+            handleStepChange={handleStepChange}
+          >
+            <ApiScopeCreateForm
+              apiScope={apiScope}
+              handleSave={handleApiScopeSaved}
+              handleCancel={handleCancel}
+            />
+          </ApiScopeStepNav>
         </ContentWrapper>
       );
     }
+
+    case ApiScopeStep.Claims: {
+      return (
+        <ContentWrapper>
+          <ApiScopeStepNav
+            activeStep={step}
+            handleStepChange={handleStepChange}
+          >
+            <ApiScopeUserClaims
+              apiScopeName={apiScope.name}
+              claims={apiScope.userClaims?.map(claim => claim.claimName)}
+              handleChanges={changesMade}
+              handleNext={handleNext}
+              handleBack={handleBack}
+            />
+          </ApiScopeStepNav>
+        </ContentWrapper>
+      );
+    }
+
     default: {
-      return <div>Step not found</div>;
+      return (
+        <ContentWrapper>
+          <ApiScopeStepNav
+            activeStep={step}
+            handleStepChange={handleStepChange}
+          >
+            <StepEnd
+              buttonText="Go back"
+              title="Steps completed"
+              handleButtonFinishedClick={() => setStep(1)}
+            >
+              The steps needed, to create the Api Scope, have been completed
+            </StepEnd>
+          </ApiScopeStepNav>
+        </ContentWrapper>
+      );
     }
   }
 }

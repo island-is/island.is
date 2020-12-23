@@ -1,0 +1,33 @@
+.client-step-nav,
+.identity-resource-step-nav,
+.api-scope-step-nav {
+  ul {
+    padding-inline-start: 0;
+
+    li {
+      padding: 0;
+      display: inline-block;
+
+      &:not(:last-child)::after {
+        padding-left: 20px;
+        font-family: FontAwesome;
+        content: '\f178';
+      }
+
+      a {
+        font-size: 0.8rem;
+        cursor: pointer;
+        padding: 5px;
+        &:hover {
+          color: $color-link;
+        }
+
+        &.active {
+          color: $color-link;
+          font-weight: $weight-semi-bold;
+          border-bottom: solid 2px $color-link;
+        }
+      }
+    }
+  }
+}
