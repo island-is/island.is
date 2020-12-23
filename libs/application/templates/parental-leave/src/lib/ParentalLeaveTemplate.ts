@@ -15,6 +15,7 @@ import {
   generateAssignReviewerTemplate,
 } from '../emailTemplateGenerators'
 import { dataSchema, SchemaFormValues } from './dataSchema'
+import { answerValidators } from './answerValidators'
 
 interface ApiTemplateUtilActions {
   [key: string]: ApplicationAPITemplateAction
@@ -320,6 +321,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
     }
     return undefined
   },
+  answerValidators,
 }
 
 export default ParentalLeaveTemplate

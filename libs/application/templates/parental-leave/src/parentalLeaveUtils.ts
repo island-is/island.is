@@ -1,9 +1,9 @@
 import { Application, DataProviderResult } from '@island.is/application/core'
 import { theme } from '@island.is/island-ui/theme'
 
-import { TimelinePeriod } from './components/Timeline'
-import { Period } from '../types'
-import { ParentalLeave, PregnancyStatus } from '../dataProviders/APIDataTypes'
+import { TimelinePeriod } from './fields/components/Timeline'
+import { Period } from './types'
+import { ParentalLeave, PregnancyStatus } from './dataProviders/APIDataTypes'
 import { NationalRegistryFamilyMember } from '@island.is/api/schema'
 
 export function getExpectedDateOfBirth(

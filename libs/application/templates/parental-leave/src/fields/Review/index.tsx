@@ -26,7 +26,7 @@ import {
   formatPeriods,
   getExpectedDateOfBirth,
   getNameAndIdOfSpouse,
-} from '../parentalLeaveUtils'
+} from '../../parentalLeaveUtils'
 import { Period } from '../../types'
 import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 import YourRightsBoxChart from '../Rights/YourRightsBoxChart'

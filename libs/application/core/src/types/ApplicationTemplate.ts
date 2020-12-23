@@ -8,6 +8,7 @@ import { ApplicationTypes } from './ApplicationTypes'
 import { Schema } from './Form'
 import { EventObject, MachineConfig } from 'xstate'
 import { MachineOptions, StatesConfig } from 'xstate/lib/types'
+import { AnswerValidator } from '../validation/AnswerValidator'
 
 export interface ApplicationTemplate<
   TContext extends ApplicationContext,
@@ -30,4 +31,7 @@ export interface ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined
+  answerValidators?: {
+    [path: string]: AnswerValidator
+  }
 }

@@ -9,6 +9,7 @@ import {
   Schema,
   formatText,
   MessageFormatter,
+  mergeAnswers,
 } from '@island.is/application/core'
 import {
   Box,
@@ -143,7 +144,10 @@ const Screen: FC<ScreenProps> = ({
         variables: {
           input: {
             id: applicationId,
-            answers: extractAnswersToSubmitFromScreen(data, screen),
+            answers: extractAnswersToSubmitFromScreen(
+              mergeAnswers(formValue, data),
+              screen,
+            ),
           },
         },
       })

@@ -14,7 +14,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import Slider from '../components/Slider'
 import * as styles from './Duration.treat'
-import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
+import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
 import { m, mm } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 

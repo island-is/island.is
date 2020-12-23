@@ -4,7 +4,11 @@ import {
   FormValue,
   validateAnswers,
 } from '@island.is/application/core'
-import { BadRequestException, UnauthorizedException } from '@nestjs/common'
+import {
+  BadRequestException,
+  HttpException,
+  UnauthorizedException,
+} from '@nestjs/common'
 
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 
@@ -38,7 +42,7 @@ export async function validateApplicationSchema(
 
   if (schemaFormValidationError) {
     // TODO improve error message
-    throw new BadRequestException(`Schema validation has failed`)
+    throw new HttpException(`Schema validation has failed`, 403)
   }
 }
 
@@ -62,33 +66,41 @@ export async function validateIncomingAnswers(
   const writableAnswersAndExternalData = helper.getWritableAnswersAndExternalData(
     role,
   )
+  let trimmedAnswers: FormValue
   if (writableAnswersAndExternalData === 'all') {
-    return newAnswers
-  }
-  if (
-    isStrict &&
-    (!writableAnswersAndExternalData ||
-      !writableAnswersAndExternalData?.answers)
-  ) {
-    throw new BadRequestException(
-      `Current user is not permitted to update answers in this state: ${application.state}`,
-    )
-  }
-  const permittedAnswers = writableAnswersAndExternalData?.answers ?? []
-  const trimmedAnswers: FormValue = {}
-  const illegalAnswers: string[] = []
-
-  Object.keys(newAnswers).forEach((key) => {
-    if (permittedAnswers.indexOf(key) === -1) {
-      illegalAnswers.push(key)
-    } else {
-      trimmedAnswers[key] = newAnswers[key]
+    trimmedAnswers = newAnswers
+  } else {
+    if (
+      isStrict &&
+      (!writableAnswersAndExternalData ||
+        !writableAnswersAndExternalData?.answers)
+    ) {
+      throw new HttpException(
+        `Current user is not permitted to update answers in this state: ${application.state}`,
+        403,
+      )
     }
-  })
-  if (isStrict && illegalAnswers.length > 0) {
-    throw new BadRequestException(
-      `Current user is not permitted to update the following answers: ${illegalAnswers.toString()}`,
-    )
+    const permittedAnswers = writableAnswersAndExternalData?.answers ?? []
+    trimmedAnswers = {}
+    const illegalAnswers: string[] = []
+
+    Object.keys(newAnswers).forEach((key) => {
+      if (permittedAnswers.indexOf(key) === -1) {
+        illegalAnswers.push(key)
+      } else {
+        trimmedAnswers[key] = newAnswers[key]
+      }
+    })
+    if (isStrict && illegalAnswers.length > 0) {
+      throw new HttpException(
+        `Current user is not permitted to update the following answers: ${illegalAnswers.toString()}`,
+        403,
+      )
+    }
+  }
+  const validationErrors = await helper.applyAnswerValidators(newAnswers)
+  if (validationErrors !== undefined) {
+    throw new HttpException(validationErrors, 403)
   }
   return trimmedAnswers
 }

@@ -6,7 +6,7 @@ import {
   RadioController,
 } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
-import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
+import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
 import { mm } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
