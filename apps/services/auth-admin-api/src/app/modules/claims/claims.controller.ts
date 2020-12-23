@@ -11,7 +11,7 @@ export class ClaimsController {
   constructor(private readonly claimsService: ClaimsService) {}
 
   /** Gets all Claims */
-  @Get()
+  @Get('claims')
   @ApiOkResponse({ type: Claim, isArray: true })
   async findAll(): Promise<Claim[] | null> {
     const claimsPaging = await this.claimsService.findAll()

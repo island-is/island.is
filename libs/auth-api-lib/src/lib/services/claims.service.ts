@@ -16,18 +16,11 @@ export class ClaimsService {
     private logger: Logger,
   ) {}
 
-  /** Get's all claims with total count of rows */
-  async findAndCountAll(): Promise<{
-    rows: Claim[]
-    count: number
-  } | null> {
-    return this.claimModel.findAndCountAll({
-      distinct: true,
-    })
-  }
-
-  /** Get's all Claims */
+  /** Get's all Claim Types */
   async findAll(): Promise<Claim[] | null> {
-    return this.claimModel.findAll()
+    // return this.claimModel.aggregate('type', 'DISTINCT', { plain: false })
+    return this.claimModel.findAll({
+      attributes: [Sequelize.fn('DISTINCT', Sequelize.col('type')), 'type'],
+    })
   }
 }
