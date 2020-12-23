@@ -1,13 +1,10 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
-import { Controller, useFormContext } from 'react-hook-form'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import { Box, Text } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m, mm } from '../../lib/messages'
-import Slider from '../components/Slider'
 
 type ValidAnswers = 'yes' | 'no' | undefined
 
@@ -19,9 +16,7 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
     undefined,
   ) as ValidAnswers
 
-  const requestDaysAnswerId = 'requestDays'
-
-  const { clearErrors } = useFormContext()
+  const requestDaysAnswerId = 'requestRights.requestDays'
 
   const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(
     currentAnswer,
@@ -33,9 +28,9 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
     undefined,
   ) as number
 
-  const [chosenRequestDays, setChosenRequestDays] = useState<number>(
-    requestDaysAnswer || 1,
-  )
+  // const [chosenRequestDays, setChosenRequestDays] = useState<number>(
+  //   requestDaysAnswer || 1,
+  // )
 
   const numberOfBoxes = statefulAnswer === 'no' ? 6 : 7
 
@@ -46,18 +41,8 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
     },
   ]
 
-  const daysStringKey =
-    chosenRequestDays > 1 ? m.requestRightsDays : m.requestRightsDay
-
-  if (statefulAnswer === 'yes') {
-    boxChartKeys.push({
-      label: () => ({ ...daysStringKey, values: { day: chosenRequestDays } }),
-      bulletStyle: 'greenWithLines',
-    })
-  }
-
   return (
-    <Box marginTop={3} marginBottom={2} key={field.id}>
+    <Box marginTop={3} marginBottom={1} key={field.id}>
       <Box paddingY={3}>
         <RadioController
           id={field.id}
@@ -68,65 +53,46 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
             { label: formatMessage(m.requestRightsYes), value: 'yes' },
             { label: formatMessage(m.requestRightsNo), value: 'no' },
           ]}
-          onSelect={(newAnswer) => setStatefulAnswer(newAnswer as ValidAnswers)}
+          onSelect={(newAnswer) => {
+            setStatefulAnswer(newAnswer as ValidAnswers)
+          }}
           largeButtons
         />
       </Box>
-      {statefulAnswer === 'yes' && (
-        <Box marginBottom={12}>
-          <Text marginBottom={4} variant="h3">
-            {formatMessage(m.requestRightsDaysTitle)}
-          </Text>
-          <Controller
-            defaultValue={chosenRequestDays}
-            name={requestDaysAnswerId}
-            render={({ onChange, value }) => (
-              <Slider
-                label={{
-                  singular: formatMessage(m.day),
-                  plural: formatMessage(m.days),
-                }}
-                min={1}
-                max={30}
-                step={1}
-                currentIndex={value || chosenRequestDays}
-                showMinMaxLabels
-                showToolTip
-                trackStyle={{ gridTemplateRows: 8 }}
-                calculateCellStyle={() => {
-                  return {
-                    background: theme.color.dark200,
-                  }
-                }}
-                onChange={(newValue: number) => {
-                  clearErrors(requestDaysAnswerId)
-                  onChange(newValue)
-                  setChosenRequestDays(newValue)
-                }}
-              />
-            )}
-          />
-        </Box>
-      )}
       {error && (
         <Box color="red400" padding={2}>
           <Text color="red400">{formatMessage(mm.errors.requiredAnswer)}</Text>
         </Box>
       )}
-      <BoxChart
-        application={application}
-        boxes={numberOfBoxes}
-        calculateBoxStyle={(index) => {
-          if (index === 6) {
-            if (statefulAnswer === 'yes') {
-              return 'greenWithLines'
+
+      {/* No answer yet, so show them the last box as gray */}
+      {!statefulAnswer && (
+        <BoxChart
+          application={application}
+          boxes={numberOfBoxes}
+          calculateBoxStyle={(index) => {
+            if (index === 6) {
+              return 'grayWithLines'
             }
-            return 'grayWithLines'
-          }
-          return 'blue'
-        }}
-        keys={boxChartKeys as BoxChartKey[]}
-      />
+            return 'blue'
+          }}
+          keys={boxChartKeys as BoxChartKey[]}
+        />
+      )}
+
+      {/* They won't request time, so show all as blue */}
+      {statefulAnswer === 'no' && (
+        <BoxChart
+          application={application}
+          boxes={numberOfBoxes}
+          calculateBoxStyle={() => {
+            return 'blue'
+          }}
+          keys={boxChartKeys as BoxChartKey[]}
+        />
+      )}
+
+      {/* They will request time, so the form will show the slider field which will include its own BoxChart */}
     </Box>
   )
 }

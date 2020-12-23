@@ -16,31 +16,31 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
-  const maxDaysToGive = 30
+  const maxDaysToGive = 45
 
   // Yes/No
   const requestRightsAnswer = getValueViaPath(
     application.answers,
-    'requestRights',
+    'requestRights.isRequestingRights',
     undefined,
   )
   // How many days requested?
   const requestDaysAnswer = getValueViaPath(
     application.answers,
-    'requestDays',
+    'requestRights.requestDays',
     undefined,
   ) as number
 
   // Yes/No
   const giveRightsAnswer = getValueViaPath(
     application.answers,
-    'giveRights',
+    'giveRights.isGivingRights',
     undefined,
   )
   // How many days given?
   const giveDaysAnswer = getValueViaPath(
     application.answers,
-    'giveDays',
+    'giveRights.giveDays',
     undefined,
   ) as number
 

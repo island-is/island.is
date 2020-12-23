@@ -413,27 +413,54 @@ export const ParentalLeaveForm: Form = buildForm({
               ],
             }),
             buildMultiField({
-              id: 'requestRights',
+              id: 'requestRights.isRequestingRights',
               name: m.requestRightsName,
               description: m.requestRightsDescription,
               children: [
                 buildCustomField({
-                  id: 'requestRights',
+                  id: 'requestRights.isRequestingRights',
                   name: '',
                   component: 'RequestRights',
+                }),
+                buildCustomField({
+                  id: 'requestRights.requestDays',
+                  name: '',
+                  condition: (formValue) => {
+                    const val = formValue.requestRights as {
+                      isRequestingRights: string
+                    }
+                    return val.isRequestingRights === YES
+                  },
+                  component: 'RequestDaysSlider',
                 }),
               ],
             }),
             buildMultiField({
-              id: 'giveRights',
+              id: 'giveRights.isGivingRights',
               name: m.giveRightsName,
               description: m.giveRightsDescription,
-              condition: (formValue) => formValue.requestRights === NO,
+              condition: (formValue) => {
+                const val = formValue.requestRights as {
+                  isRequestingRights: string
+                }
+                return val.isRequestingRights === NO
+              },
               children: [
                 buildCustomField({
-                  id: 'giveRights',
+                  id: 'giveRights.isGivingRights',
                   name: '',
                   component: 'GiveRights',
+                }),
+                buildCustomField({
+                  id: 'giveRights.giveDays',
+                  name: '',
+                  condition: (formValue) => {
+                    const val = formValue.giveRights as {
+                      isGivingRights: string
+                    }
+                    return val.isGivingRights === YES
+                  },
+                  component: 'GiveDaysSlider',
                 }),
               ],
             }),

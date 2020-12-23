@@ -59,7 +59,7 @@ enum States {
 function needsOtherParentApproval(context: ApplicationContext) {
   const currentApplicationAnswers = context.application
     .answers as SchemaFormValues
-  return currentApplicationAnswers.requestRights === 'yes'
+  return currentApplicationAnswers.requestRights.isRequestingRights === 'yes'
 }
 
 const ParentalLeaveTemplate: ApplicationTemplate<
@@ -292,7 +292,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const currentApplicationAnswers = context.application
           .answers as SchemaFormValues
         if (
-          currentApplicationAnswers.requestRights === 'yes' &&
+          currentApplicationAnswers.requestRights.isRequestingRights ===
+            'yes' &&
           currentApplicationAnswers.otherParentId !== undefined &&
           currentApplicationAnswers.otherParentId !== ''
         ) {
