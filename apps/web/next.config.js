@@ -14,9 +14,15 @@ const transpileModules = [
   'escape-string-regexp', // Used by slugify.
 ]
 const withTM = require('next-transpile-modules')(transpileModules)
-const { API_URL = 'http://localhost:4444', SENTRY_DSN } = process.env
 const graphqlPath = '/api/graphql'
-const { DISABLE_API_CATALOGUE } = process.env
+const {
+  API_MOCKS,
+  API_URL = 'http://localhost:4444',
+  SENTRY_DSN,
+  DISABLE_API_CATALOGUE,
+  CONTENTFUL_SPACE,
+  CONTENTFUL_EDIT_BUTTON_ENABLE,
+} = process.env
 
 module.exports = withTreat(
   withTM(
@@ -82,7 +88,9 @@ module.exports = withTreat(
       },
 
       env: {
-        API_MOCKS: process.env.API_MOCKS,
+        API_MOCKS,
+        CONTENTFUL_SPACE,
+        CONTENTFUL_EDIT_BUTTON_ENABLE,
       },
     }),
   ),
