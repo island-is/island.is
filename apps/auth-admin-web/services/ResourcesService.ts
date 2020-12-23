@@ -176,7 +176,7 @@ export class ResourcesService extends BaseService {
   }
 
   /** Removes user claim from Api Resource */
-  async removeApiResourceUserClaim(
+  static async removeApiResourceUserClaim(
     apiResourceName: string,
     claimName: string
   ): Promise<number | null> {
@@ -186,17 +186,17 @@ export class ResourcesService extends BaseService {
   }
 
   /** Add secret to ApiResource */
-  async addApiResourceSecret(
+  static async addApiResourceSecret(
     apiSecret: ApiResourceSecretDTO
   ): Promise<ApiResourceSecret | null> {
-    return BaseService.POST(`api-resource-secret`, apiSecret);
+    return BaseService.POST('api-resource-secret', apiSecret);
   }
 
   /** Remove a secret from Api Resource */
-  async removeApiResourceSecret(
+  static async removeApiResourceSecret(
     apiSecret: ApiResourceSecretDTO
   ): Promise<number | null> {
-    return BaseService.POST('api-resource-secret', apiSecret);
+    return BaseService.DELETE('api-resource-secret', apiSecret);
   }
 
   /** Adds an allowed scope to api resource */

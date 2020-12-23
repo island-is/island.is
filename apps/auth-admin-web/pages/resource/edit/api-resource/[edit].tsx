@@ -6,6 +6,9 @@ import { ResourcesService } from './../../../../services/ResourcesService';
 import ApiResourceCreateForm from '../../../../components/Resource/forms/ApiResourceCreateForm';
 import { ApiResourcesDTO } from './../../../../entities/dtos/api-resources-dto';
 import ApiResourceStepNav from './../../../../components/Resource/ApiResourceStepNav';
+import { ApiResourceStep } from 'apps/auth-admin-web/entities/common/ApiResourceStep';
+import StepEnd from 'apps/auth-admin-web/components/Common/StepEnd';
+import ApiResourceSecretForm from 'apps/auth-admin-web/components/Resource/forms/ApiResourceSecretForm';
 
 export default function Index() {
   const { query } = useRouter();
@@ -34,6 +37,7 @@ export default function Index() {
   const getResource = async (resourceId: string) => {
     const response = await ResourcesService.getApiResourceByName(resourceId);
     if (response) {
+      console.log(response);
       setApiResource(response);
     }
   };
@@ -65,7 +69,7 @@ export default function Index() {
   };
 
   switch (step) {
-    case 1: {
+    case ApiResourceStep.ApiResourceBasics: {
       return (
         <ContentWrapper>
           <ApiResourceStepNav
@@ -81,8 +85,42 @@ export default function Index() {
         </ContentWrapper>
       );
     }
+    case ApiResourceStep.ApiResourceSecrets: {
+      return (
+        <ContentWrapper>
+          <ApiResourceStepNav
+            activeStep={step}
+            handleStepChange={handleStepChange}
+          >
+            <ApiResourceSecretForm
+              apiResourceName={apiResource.name}
+              secrets={apiResource.apiSecrets ?? []}
+              handleChanges={changesMade}
+              handleNext={handleNext}
+              handleBack={handleBack}
+            />
+          </ApiResourceStepNav>
+        </ContentWrapper>
+      );
+    }
+
     default: {
-      return <div>Step not found</div>;
+      return (
+        <ContentWrapper>
+          <ApiResourceStepNav
+            activeStep={step}
+            handleStepChange={handleStepChange}
+          >
+            <StepEnd
+              buttonText="Go back"
+              title="Steps completed"
+              handleButtonFinishedClick={() => setStep(1)}
+            >
+              The steps needed, to create the Api resource, have been completed
+            </StepEnd>
+          </ApiResourceStepNav>
+        </ContentWrapper>
+      );
     }
   }
 }
