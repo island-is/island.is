@@ -12,6 +12,7 @@ import {
   ApiResourceSecret,
   ApiResourceScope,
   ApiResourceScopeDTO,
+  ApiResourceUserClaim,
 } from '@island.is/auth-api-lib'
 import {
   BadRequestException,
