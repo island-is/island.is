@@ -1,12 +1,12 @@
 import React from 'react';
-import { ResourceTabs } from '../../../entities/common/ResourceTabs';
+import { ResourceTabs } from '../../entities/common/ResourceTabs';
 
 interface Props {
     handleStepChange: (step: ResourceTabs) => void;
     activeStep: ResourceTabs;
 }
 
-const ResourceTabsNav: React.FC<Props> = ({ handleStepChange, activeStep, children }) => {
+const ResourcesTabsNav: React.FC<Props> = ({ handleStepChange, activeStep, children }) => {
     return <div><nav className="resource-tab-nav">
         <ul>
             <li><a onClick={() => handleStepChange(ResourceTabs.ApiScopes)}  className={activeStep === ResourceTabs.ApiScopes ? 'active' : ''}>Api scopes</a></li>
@@ -18,4 +18,4 @@ const ResourceTabsNav: React.FC<Props> = ({ handleStepChange, activeStep, childr
     </div>
 }
 
-export default ResourceTabsNav;
+export default ResourcesTabsNav;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ResourceTabsNav from '../../components/Resource/components/ResourceTabsNav';
+import ResourcesTabsNav from '../../components/Resource/ResourcesTabsNav';
 import Overview from '../../components/Resource/components/Overview';
 import { ResourceTabs } from '../../entities/common/ResourceTabs';
 import ContentWrapper from './../../components/Layout/ContentWrapper'
@@ -14,10 +14,10 @@ export default function Index() {
   return (
     <ContentWrapper>
       <div>
-        <ResourceTabsNav
+        <ResourcesTabsNav
           handleStepChange={handleStep}
           activeStep={step}
-        ></ResourceTabsNav>
+        ></ResourcesTabsNav>
 
         <Overview activeStep={step}></Overview>
       </div>

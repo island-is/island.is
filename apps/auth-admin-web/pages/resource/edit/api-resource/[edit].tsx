@@ -5,6 +5,7 @@ import { ApiResource } from './../../../../entities/models/api-resource.model';
 import { ResourcesService } from './../../../../services/ResourcesService';
 import ApiResourceCreateForm from './../../../../components/Resource/components/forms/ApiResourceCreateForm';
 import { ApiResourcesDTO } from './../../../../entities/dtos/api-resources-dto';
+import ApiResourceStepNav from './../../../../components/Resource/ApiResourceStepNav';
 
 export default function Index() {
   const { query } = useRouter();
@@ -67,11 +68,16 @@ export default function Index() {
     case 1: {
       return (
         <ContentWrapper>
-          <ApiResourceCreateForm
-            apiResource={apiResource}
-            handleSave={handleApiResourceSaved}
-            handleCancel={handleBack}
-          />
+          <ApiResourceStepNav
+            activeStep={step}
+            handleStepChange={handleStepChange}
+          >
+            <ApiResourceCreateForm
+              apiResource={apiResource}
+              handleSave={handleApiResourceSaved}
+              handleCancel={handleBack}
+            />
+          </ApiResourceStepNav>
         </ContentWrapper>
       );
     }
