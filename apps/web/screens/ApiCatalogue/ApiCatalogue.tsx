@@ -3,6 +3,8 @@ import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { default as NextLink } from 'next/link'
+
 import {
   Text,
   Stack,
@@ -17,6 +19,7 @@ import {
   FilterMultiChoice,
   Navigation,
 } from '@island.is/island-ui/core'
+
 import {
   ServiceList,
   SubpageDetailsContent,
@@ -257,19 +260,21 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                 <Box display={['inline', 'inline', 'none']}>
                   {/* Show when a device */}
                   <Box paddingBottom="gutter">
-                    <Link href={nn('linkServices')}>
-                      <Button
-                        colorScheme="default"
-                        iconType="filled"
-                        preTextIcon="arrowBack"
-                        preTextIconType="filled"
-                        size="small"
-                        type="button"
-                        variant="text"
-                      >
-                        {nn('linkServicesText')}
-                      </Button>
-                    </Link>
+                    <NextLink passHref href={nn('linkServices')}>
+                      <a href={nn('linkServices')}>
+                        <Button
+                          colorScheme="default"
+                          iconType="filled"
+                          preTextIcon="arrowBack"
+                          preTextIconType="filled"
+                          size="small"
+                          type="button"
+                          variant="text"
+                        >
+                          {nn('linkServicesText')}
+                        </Button>
+                      </a>
+                    </NextLink>
                   </Box>
                   <Box marginBottom="gutter">
                     <Navigation

@@ -2,6 +2,7 @@ import React from 'react'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import getConfig from 'next/config'
+import { default as NextLink } from 'next/link'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
@@ -116,19 +117,21 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                 <Box display={['inline', 'inline', 'none']}>
                   {/* Show when a device */}
                   <Box paddingBottom="gutter">
-                    <Link href={n('linkServiceList')}>
-                      <Button
-                        colorScheme="default"
-                        iconType="filled"
-                        preTextIcon="arrowBack"
-                        preTextIconType="filled"
-                        size="small"
-                        type="button"
-                        variant="text"
-                      >
-                        {n('linkServiceListText')}
-                      </Button>
-                    </Link>
+                    <NextLink passHref href={n('linkServiceList')}>
+                      <a href={n('linkServiceList')}>
+                        <Button
+                          colorScheme="default"
+                          iconType="filled"
+                          preTextIcon="arrowBack"
+                          preTextIconType="filled"
+                          size="small"
+                          type="button"
+                          variant="text"
+                        >
+                          {n('linkServiceListText')}
+                        </Button>
+                      </a>
+                    </NextLink>
                   </Box>
                   <Box marginBottom="gutter">
                     <Navigation
