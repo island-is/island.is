@@ -3,9 +3,9 @@ import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import HelpBox from './../../Common/HelpBox';
 import NoActiveConnections from './../../Common/NoActiveConnections';
-import { ApiResourceSecret } from 'apps/auth-admin-web/entities/models/api-resource-secret.model';
-import { ApiResourceSecretDTO } from 'apps/auth-admin-web/entities/dtos/api-resource-secret.dto';
-import { ResourcesService } from 'apps/auth-admin-web/services/ResourcesService';
+import { ApiResourceSecret } from './../../../entities/models/api-resource-secret.model';
+import { ApiResourceSecretDTO } from './../../../entities/dtos/api-resource-secret.dto';
+import { ResourcesService } from './../../../services/ResourcesService';
 
 
 interface Props {

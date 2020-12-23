@@ -6,11 +6,11 @@ import { ResourcesService } from './../../../../services/ResourcesService';
 import ApiResourceCreateForm from '../../../../components/Resource/forms/ApiResourceCreateForm';
 import { ApiResourcesDTO } from './../../../../entities/dtos/api-resources-dto';
 import ApiResourceStepNav from './../../../../components/Resource/ApiResourceStepNav';
-import { ApiResourceStep } from 'apps/auth-admin-web/entities/common/ApiResourceStep';
-import StepEnd from 'apps/auth-admin-web/components/Common/StepEnd';
-import ApiResourceSecretForm from 'apps/auth-admin-web/components/Resource/forms/ApiResourceSecretForm';
-import ApiResourceScopeForm from 'apps/auth-admin-web/components/Resource/forms/ApiResourceScopeForm';
-import ApiResourceUserClaimForm from 'apps/auth-admin-web/components/Resource/forms/ApiResourceUserClaimForm';
+import { ApiResourceStep } from './../../../../entities/common/ApiResourceStep';
+import StepEnd from './../../../../components/Common/StepEnd';
+import ApiResourceSecretForm from './../../../../components/Resource/forms/ApiResourceSecretForm';
+import ApiResourceScopeForm from './../../../../components/Resource/forms/ApiResourceScopeForm';
+import ApiResourceUserClaimForm from './../../../../components/Resource/forms/ApiResourceUserClaimForm';
 
 export default function Index() {
   const { query } = useRouter();

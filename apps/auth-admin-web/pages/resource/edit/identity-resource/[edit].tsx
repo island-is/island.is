@@ -8,7 +8,7 @@ import { IdentityResource } from './../../../../entities/models/identity-resourc
 import IdentityResourceStepNav from './../../../../components/Resource/IdentityResourceStepNav';
 import { IdentityResourceStep } from './../../../../entities/common/IdentityResourcesStep';
 import IdentityResourceUserClaimsForm from '../../../../components/Resource/forms/IdentityResourceUserClaimsForm';
-import StepEnd from 'apps/auth-admin-web/components/Common/StepEnd';
+import StepEnd from './../../../../components/Common/StepEnd';
 
 export default function Index() {
   const { query } = useRouter();
