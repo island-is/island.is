@@ -30,7 +30,7 @@ export enum FormModes {
 
 export interface Form {
   id: string
-  name: StaticText
+  title: StaticText
   logo?: React.FC
   type: FormItemTypes.FORM
   mode?: FormModes
@@ -47,7 +47,7 @@ export interface FormItem {
   readonly id?: string
   condition?: Condition
   readonly type: string
-  readonly name: FormText
+  readonly title: FormText
 }
 
 export interface Section extends FormItem {

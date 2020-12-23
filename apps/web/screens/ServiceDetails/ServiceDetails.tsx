@@ -2,6 +2,7 @@ import React from 'react'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import getConfig from 'next/config'
+import { default as NextLink } from 'next/link'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
@@ -19,7 +20,14 @@ import {
 } from '../../components'
 import { SubpageLayout } from '../Layouts/Layouts'
 import SidebarLayout from '../Layouts/SidebarLayout'
-import { Box, Breadcrumbs, Button, Link, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Breadcrumbs,
+  Button,
+  Link,
+  Navigation,
+  Text,
+} from '@island.is/island-ui/core'
 import { useNamespace } from '../../hooks'
 import { useScript } from '../../hooks/useScript'
 
@@ -47,43 +55,110 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   const n = useNamespace(strings)
   const nfc = useNamespace(filterContent)
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
-  const serviceListLink = '/throun/vefthjonustur/vorulisti'
 
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
   }
 
+  const navigationItems = [
+    {
+      active: true,
+      href: n('linkServices'),
+      title: n('linkServicesText'),
+      items: [
+        {
+          href: n('linkServiceList'),
+          title: n('linkServiceListText'),
+        },
+        {
+          href: n('linkDesignGuide'),
+          title: n('linkDesignGuideText'),
+        },
+        {
+          active: true,
+          title: n('linkDetailsLastText'),
+        },
+      ],
+    },
+    {
+      href: n('linkIslandUI'),
+      title: n('linkIslandUIText'),
+    },
+    {
+      href: n('linkDesignSystem'),
+      title: n('linkDesignSystemText'),
+    },
+    {
+      href: n('linkContentPolicy'),
+      title: n('linkContentPolicyText'),
+    },
+  ]
+
   return (
     <SubpageLayout
       main={
-        <SidebarLayout sidebarContent={<></>}>
+        <SidebarLayout
+          sidebarContent={
+            <Navigation
+              baseId="service-details-navigation"
+              colorScheme="blue"
+              items={navigationItems}
+              title={n('linkThrounText')}
+              titleLink={{
+                active: true,
+                href: n('linkThroun'),
+              }}
+            />
+          }
+        >
           <SubpageMainContent
             main={
               <Box>
-                <Box marginBottom={2}>
-                  <Box display={['inline', 'none']}>
-                    <Link href={serviceListLink}>
-                      <Button
-                        colorScheme="default"
-                        iconType="filled"
-                        preTextIcon="arrowBack"
-                        preTextIconType="filled"
-                        size="small"
-                        type="button"
-                        variant="text"
-                      >
-                        {n('linkTextVefthjonustur')}
-                      </Button>
+                <Box display={['inline', 'inline', 'none']}>
+                  {/* Show when a device */}
+                  <Box paddingBottom="gutter">
+                    <NextLink passHref href={n('linkServiceList')}>
+                      <a href={n('linkServiceList')}>
+                        <Button
+                          colorScheme="default"
+                          iconType="filled"
+                          preTextIcon="arrowBack"
+                          preTextIconType="filled"
+                          size="small"
+                          type="button"
+                          variant="text"
+                        >
+                          {n('linkServiceListText')}
+                        </Button>
+                      </a>
+                    </NextLink>
+                  </Box>
+                  <Box marginBottom="gutter">
+                    <Navigation
+                      baseId="service-details-navigation"
+                      colorScheme="blue"
+                      isMenuDialog
+                      items={navigationItems}
+                      title={n('linkThrounText')}
+                      titleLink={{
+                        active: true,
+                        href: n('linkThroun'),
+                      }}
+                    />
+                  </Box>
+                </Box>
+                <Box marginBottom={2} display={['none', 'none', 'inline']}>
+                  {/* Show when NOT a device */}
+                  <Breadcrumbs>
+                    <Link href={n('linkIslandIs')}>
+                      {n('linkIslandIsText')}
                     </Link>
-                  </Box>
-                  <Box display={['none', 'inline']}>
-                    <Breadcrumbs>
-                      <Link href="/">Ísland.is</Link>
-                      <a href="/throun">{n('linkTextThroun')}</a>
-                      <a href={serviceListLink}>{n('linkTextVefthjonustur')}</a>
-                      <span>{n('linkTextLast')}</span>
-                    </Breadcrumbs>
-                  </Box>
+                    <a href={n('linkThroun')}>{n('linkThrounText')}</a>
+                    <a href={n('linkServiceList')}>
+                      {n('linkServiceListText')}
+                    </a>
+                    <span>{n('linkDetailsLastText')}</span>
+                  </Breadcrumbs>
                 </Box>
                 {!service ? (
                   <Box>
@@ -117,7 +192,7 @@ ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
   const serviceId = String(query.slug)
 
   const [
-    serviceDetails,
+    linkStrings,
     filterContent,
     openApiContent,
     { data },
@@ -127,7 +202,7 @@ ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'ServiceDetails',
+            namespace: 'ApiCatalogueLinks',
             lang: locale,
           },
         },
@@ -167,7 +242,7 @@ ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   return {
     serviceId: serviceId,
-    strings: serviceDetails,
+    strings: linkStrings,
     filterContent: filterContent,
     openApiContent: openApiContent,
     service: data?.getApiServiceById,

@@ -2,7 +2,7 @@ import React from 'react'
 
 function WomanWithLaptopIllustration() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 546 563">
+    <>
       <defs>
         <linearGradient
           id="linear-gradient"
@@ -61,7 +61,7 @@ function WomanWithLaptopIllustration() {
         d="M179.709 223.509h13.933m-37.528-1.418h-16.478a6.872 6.872 0 00-6.872 6.872"
         className="cls-1"
       ></path>
-    </svg>
+    </>
   )
 }
 

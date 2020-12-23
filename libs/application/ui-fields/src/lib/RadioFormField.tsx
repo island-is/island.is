@@ -28,7 +28,7 @@ const RadioFormField: FC<Props> = ({
   const {
     disabled,
     id,
-    name,
+    title,
     description,
     options,
     width,
@@ -46,7 +46,7 @@ const RadioFormField: FC<Props> = ({
     <div>
       {showFieldName && (
         <Text variant={'h4'}>
-          {formatText(name, application, formatMessage)}
+          {formatText(title, application, formatMessage)}
         </Text>
       )}
 

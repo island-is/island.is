@@ -23,7 +23,7 @@ const CheckboxFormField: FC<Props> = ({
   field,
   application,
 }) => {
-  const { id, name, description, options, disabled } = field
+  const { id, title, description, options, disabled } = field
   const { formatMessage } = useLocale()
 
   const finalOptions = useMemo(() => buildOptions(options, application), [
@@ -34,7 +34,7 @@ const CheckboxFormField: FC<Props> = ({
   return (
     <div>
       {showFieldName && (
-        <Text>{formatText(name, application, formatMessage)}</Text>
+        <Text>{formatText(title, application, formatMessage)}</Text>
       )}
 
       {description && (
