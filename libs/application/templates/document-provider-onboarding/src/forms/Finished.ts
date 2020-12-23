@@ -10,17 +10,17 @@ import { m } from './messages'
 
 export const Finished: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
-  name: m.thankYouImageScreenTitle,
+  title: m.thankYouImageScreenTitle,
   mode: FormModes.APPROVED,
   children: [
     buildMultiField({
       id: 'finished',
-      name: m.thankYouImageScreenTitle,
+      title: m.thankYouImageScreenTitle,
       description: m.thankYouImageScreenScreenSubTitle,
       children: [
         buildCustomField({
           id: 'thankYouImage',
-          name: m.thankYouScreenTitle,
+          title: m.thankYouScreenTitle,
           component: 'WomanWithLaptopIllustrationPeriods',
         }),
       ],

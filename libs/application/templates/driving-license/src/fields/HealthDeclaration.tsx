@@ -29,7 +29,7 @@ buildMultiField({
   id: 'healthDeclaration',
   name: 'Heilbrigðisyfirlýsing',
   children: [
-    buildIntroductionField({
+    buildDescriptionField({
       id: 'intro',
       name: '',
       introduction:

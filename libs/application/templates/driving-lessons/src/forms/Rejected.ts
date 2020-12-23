@@ -1,19 +1,19 @@
 import {
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   Form,
   FormModes,
 } from '@island.is/application/core'
 
 export const Rejected: Form = buildForm({
   id: 'DrivingLessonsRejected',
-  name: 'Hafnað',
+  title: 'Hafnað',
   mode: FormModes.REJECTED,
   children: [
-    buildIntroductionField({
+    buildDescriptionField({
       id: 'rejected',
-      name: 'Því miður...',
-      introduction:
+      title: 'Því miður...',
+      description:
         'Umsókn þinni um ökunám hefur verið hafnað! Það er frekar leiðinlegt.',
     }),
   ],
