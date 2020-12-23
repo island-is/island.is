@@ -1,6 +1,7 @@
 import {
   ApiResource,
   ApiScope,
+  ApiScopeUserClaim,
   ApiScopesDTO,
   IdentityResource,
   IdentityResourcesDTO,
@@ -256,7 +257,7 @@ export class ResourcesController {
     return await this.resourcesService.getResourceUserClaims(name)
   }
 
-  @Post('user-claims/:identityResourceName/:claimName')
+  @Post('identity-resource-user-claims/:identityResourceName/:claimName')
   async addResourceUserClaim(
     @Param('identityResourceName') identityResourceName: string,
     @Param('claimName') claimName: string,
@@ -267,13 +268,35 @@ export class ResourcesController {
     )
   }
 
-  @Delete('user-claims/:identityResourceName/:claimName')
+  @Delete('identity-resource-user-claims/:identityResourceName/:claimName')
   async removeResourceUserClaim(
     @Param('identityResourceName') identityResourceName: string,
     @Param('claimName') claimName: string,
   ): Promise<number> {
     return await this.resourcesService.removeResourceUserClaim(
       identityResourceName,
+      claimName,
+    )
+  }
+
+  @Post('api-scope-user-claims/:apiScopeName/:claimName')
+  async addApiScopeUserClaim(
+    @Param('apiScopeName') apiScopeName: string,
+    @Param('claimName') claimName: string,
+  ): Promise<ApiScopeUserClaim | null> {
+    return await this.resourcesService.addApiScopeUserClaim(
+      apiScopeName,
+      claimName,
+    )
+  }
+
+  @Delete('api-scope-user-claims/:apiScopeName/:claimName')
+  async removeApiScopeUserClaim(
+    @Param('apiScopeName') apiScopeName: string,
+    @Param('claimName') claimName: string,
+  ): Promise<number> {
+    return await this.resourcesService.removeApiScopeUserClaim(
+      apiScopeName,
       claimName,
     )
   }
