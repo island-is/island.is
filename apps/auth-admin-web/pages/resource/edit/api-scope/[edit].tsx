@@ -4,11 +4,11 @@ import ContentWrapper from './../../../../components/Layout/ContentWrapper';
 import { ApiScope } from './../../../../entities/models/api-scope.model';
 import { ApiScopesDTO } from './../../../../entities/dtos/api-scopes-dto';
 import { ResourcesService } from './../../../../services/ResourcesService';
-import ApiScopeCreateForm from './../../../../components/Resource/components/forms/ApiScopeCreateForm';
+import ApiScopeCreateForm from '../../../../components/Resource/forms/ApiScopeCreateForm';
 import ApiScopeStepNav from './../../../../components/Resource/ApiScopeStepNav';
 import StepEnd from './../../../../components/Common/StepEnd';
 import { ApiScopeStep } from './../../../../entities/common/ApiScopeStep';
-import ApiScopeUserClaims from './../../../../components/Resource/ApiScopeUserClaims';
+import ApiScopeUserClaimsForm from '../../../../components/Resource/forms/ApiScopeUserClaimsForm';
 
 export default function Index() {
   const { query } = useRouter();
@@ -90,7 +90,7 @@ export default function Index() {
             activeStep={step}
             handleStepChange={handleStepChange}
           >
-            <ApiScopeUserClaims
+            <ApiScopeUserClaimsForm
               apiScopeName={apiScope.name}
               claims={apiScope.userClaims?.map(claim => claim.claimName)}
               handleChanges={changesMade}

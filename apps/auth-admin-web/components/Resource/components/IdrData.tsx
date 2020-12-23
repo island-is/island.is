@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import ResourceEditForm from './forms/ResourceEditForm';
+import ResourceEditForm from '../forms/ResourceEditForm';
 import { ResourcesService } from './../../../services/ResourcesService';
 import { IdentityResource } from './../../../entities/models/identity-resource.model';
 

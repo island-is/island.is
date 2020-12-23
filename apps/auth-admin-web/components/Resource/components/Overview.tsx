@@ -6,18 +6,13 @@ import ApiScopeList from '../ApiScopeList'
 import StepEnd from '../../Common/StepEnd';
 
 interface Props {
-  activeStep: ResourceTabs;
+  activeTab: ResourceTabs;
 }
 
 
 
-const Overview: React.FC<Props> = ({ activeStep, children }) => {
-
-  const finishedPushed = () => {
-    // TODO: What should happen now?
-  }
-
-  switch (activeStep) {
+const Overview: React.FC<Props> = ({ activeTab, children }) => {
+  switch (activeTab) {
     case ResourceTabs.ApiScopes:
       return <ApiScopeList />;
     case ResourceTabs.ApiResourceScopes:
@@ -25,8 +20,7 @@ const Overview: React.FC<Props> = ({ activeStep, children }) => {
     case ResourceTabs.IdentityResource:
       return <IdentityResourcesList />;
     default:
-     return <StepEnd buttonText="Go back" title="Steps completed" handleButtonFinishedClick={() => finishedPushed()}>The steps needed, to create a client, have been completed</StepEnd>
-      
+     return <div></div>
   }
 };
 

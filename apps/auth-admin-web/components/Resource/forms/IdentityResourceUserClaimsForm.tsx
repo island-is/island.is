@@ -1,18 +1,18 @@
-import { ClaimService } from './../../services/ClaimService';
+import { ClaimService } from '../../../services/ClaimService';
 import React, { useEffect, useState } from 'react';
-import HelpBox from '../Common/HelpBox';
-import NoActiveConnections from '../Common/NoActiveConnections';
-import { ResourcesService } from './../../services/ResourcesService';
+import HelpBox from '../../Common/HelpBox';
+import NoActiveConnections from '../../Common/NoActiveConnections';
+import { ResourcesService } from '../../../services/ResourcesService';
 
 interface Props {
-  apiScopeName: string;
+  identityResourceName: string;
   claims?: string[]; 
   handleNext?: () => void;
   handleBack?: () => void;
   handleChanges?: () => void;
 }
 
-const ApiScopeUserClaims: React.FC<Props> = (props: Props) => {
+const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
   const [claims, setClaims] = useState<string[]>([]);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const ApiScopeUserClaims: React.FC<Props> = (props: Props) => {
   };
 
   const add = async (claimName: string) => {
-    const response = await ResourcesService.addApiScopeUserClaim(props.apiScopeName, claimName);
+    const response = await ResourcesService.addIdentityResourceUserClaim(props.identityResourceName, claimName);
     if (response){
       if (props.handleChanges) {
         props.handleChanges();
@@ -36,7 +36,7 @@ const ApiScopeUserClaims: React.FC<Props> = (props: Props) => {
   }
 
   const remove = async (claimName: string) => {
-    const response = await ResourcesService.removeApiScopeUserClaim(props.apiScopeName, claimName);
+    const response = await ResourcesService.removeIdentityResourceUserClaim(props.identityResourceName, claimName);
     if (response){
       if (props.handleChanges) {
         props.handleChanges();
@@ -53,24 +53,24 @@ const ApiScopeUserClaims: React.FC<Props> = (props: Props) => {
   }
 
   return (
-    <div className="api-scope-user-claims">
-      <div className="api-scope-user-claims__wrapper">
-        <div className="api-scope-user-claims__container">
+    <div className="identity-resource-user-claims">
+      <div className="identity-resource-user-claims__wrapper">
+        <div className="identity-resource-user-claims__container">
           <h1>Select the appropriate user claims</h1>
 
-          <div className="api-scope-user-claims__container__form">
-            <div className="api-scope-user-claims__help">
+          <div className="identity-resource-user-claims__container__form">
+            <div className="identity-resource-user-claims__help">
               Select all user claims for this Identity Resource
             </div>
-            <div className="api-scope-user-claims__container__fields">
+            <div className="identity-resource-user-claims__container__fields">
               {claims?.map((claim: string) => {
                 return (
                   <div
-                    className="api-scope-user-claims__container__checkbox__field"
+                    className="identity-resource-user-claims__container__checkbox__field"
                     key={claim}
                   >
                     <label
-                      className="api-scope-user-claims__label"
+                      className="identity-resource-user-claims__label"
                       title={claim}
                     >
                       {claim}
@@ -95,20 +95,20 @@ const ApiScopeUserClaims: React.FC<Props> = (props: Props) => {
             <NoActiveConnections title="No User Claims are defined" show={!props.claims || props.claims.length === 0} helpText="Check the appropriate claims">
             </NoActiveConnections>
 
-            <div className="api-scope-user-claims__buttons__container">
-              <div className="api-scope-user-claims__button__container">
+            <div className="identity-resource-user-claims__buttons__container">
+              <div className="identity-resource-user-claims__button__container">
                 <button
                   type="button"
-                  className="api-scope-user-claims__button__cancel"
+                  className="identity-resource-user-claims__button__cancel"
                   onClick={props.handleBack}
                 >
                   Back
                 </button>
               </div>
-              <div className="api-scope-user-claims__button__container">
+              <div className="identity-resource-user-claims__button__container">
                 <button
                   type="button"
-                  className="api-scope-user-claims__button__save"
+                  className="identity-resource-user-claims__button__save"
                   value="Next"
                   onClick={props.handleNext}
                 >
@@ -122,4 +122,4 @@ const ApiScopeUserClaims: React.FC<Props> = (props: Props) => {
     </div>
   );
 };
-export default ApiScopeUserClaims;
+export default IdentityResourceUserClaims;

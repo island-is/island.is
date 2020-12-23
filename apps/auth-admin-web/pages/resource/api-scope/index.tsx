@@ -1,6 +1,6 @@
 import ContentWrapper from './../../../components/Layout/ContentWrapper';
 import React from 'react';
-import ApiScopeCreateForm from './../../../components/Resource/components/forms/ApiScopeCreateForm';
+import ApiScopeCreateForm from '../../../components/Resource/forms/ApiScopeCreateForm';
 import { ApiScopesDTO } from './../../../entities/dtos/api-scopes-dto';
 import { useRouter } from 'next/router';
 

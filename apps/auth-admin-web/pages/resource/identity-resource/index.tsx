@@ -1,6 +1,6 @@
 import React from 'react';
 import ContentWrapper from './../../../components/Layout/ContentWrapper';
-import IdentityResourceCreateForm from '../../../components/Resource/components/forms/IdentityResourceCreateForm';
+import IdentityResourceCreateForm from '../../../components/Resource/forms/IdentityResourceCreateForm';
 import IdentityResourcesDTO from './../../../entities/dtos/identity-resources.dto';
 import { useRouter } from 'next/router';
 

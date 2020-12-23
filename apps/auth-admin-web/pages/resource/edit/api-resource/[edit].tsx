@@ -3,7 +3,7 @@ import ContentWrapper from './../../../../components/Layout/ContentWrapper';
 import { useRouter } from 'next/router';
 import { ApiResource } from './../../../../entities/models/api-resource.model';
 import { ResourcesService } from './../../../../services/ResourcesService';
-import ApiResourceCreateForm from './../../../../components/Resource/components/forms/ApiResourceCreateForm';
+import ApiResourceCreateForm from '../../../../components/Resource/forms/ApiResourceCreateForm';
 import { ApiResourcesDTO } from './../../../../entities/dtos/api-resources-dto';
 import ApiResourceStepNav from './../../../../components/Resource/ApiResourceStepNav';
 

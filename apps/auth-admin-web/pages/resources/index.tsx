@@ -19,7 +19,7 @@ export default function Index() {
           activeStep={step}
         ></ResourcesTabsNav>
 
-        <Overview activeStep={step}></Overview>
+        <Overview activeTab={step}></Overview>
       </div>
     </ContentWrapper>
   );

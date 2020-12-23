@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import IdentityResourceCreateForm from '../../../../components/Resource/components/forms/IdentityResourceCreateForm';
+import IdentityResourceCreateForm from '../../../../components/Resource/forms/IdentityResourceCreateForm';
 import IdentityResourcesDTO from './../../../../entities/dtos/identity-resources.dto';
 import ContentWrapper from './../../../../components/Layout/ContentWrapper';
 import { useRouter } from 'next/router';
@@ -7,7 +7,7 @@ import { ResourcesService } from './../../../../services/ResourcesService';
 import { IdentityResource } from './../../../../entities/models/identity-resource.model';
 import IdentityResourceStepNav from './../../../../components/Resource/IdentityResourceStepNav';
 import { IdentityResourceStep } from './../../../../entities/common/IdentityResourcesStep';
-import IdentityResourceUserClaimsForm from './../../../../components/Resource/IdentityResourceUserClaimsForm';
+import IdentityResourceUserClaimsForm from '../../../../components/Resource/forms/IdentityResourceUserClaimsForm';
 import StepEnd from 'apps/auth-admin-web/components/Common/StepEnd';
 
 export default function Index() {
