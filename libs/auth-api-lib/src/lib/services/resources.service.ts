@@ -110,7 +110,7 @@ export class ResourcesService {
       throw new BadRequestException('Name must be provided')
     }
 
-    return this.apiScopeModel.findByPk(name)
+    return this.apiScopeModel.findByPk(name, { include: [ApiScopeUserClaim] })
   }
 
   /** Gets API scope by name */
