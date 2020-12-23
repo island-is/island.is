@@ -46,6 +46,7 @@ export * from './lib/services/grant-types.service'
 export * from './lib/services/grants.service'
 export * from './lib/services/resources.service'
 export * from './lib/services/user-identities.service'
+export * from './lib/services/claims.service'
 export * from './lib/services/sequelizeConfig.service'
 
 // Config

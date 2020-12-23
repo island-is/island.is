@@ -6,7 +6,7 @@ import {
   buildDateField,
   buildExternalDataProvider,
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildRepeater,
@@ -40,20 +40,20 @@ type PensionFundsQuery = {
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
-  name: 'Fæðingarorlof',
+  title: 'Fæðingarorlof',
   logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'theApplicant',
-      name: m.applicantSection,
+      title: m.applicantSection,
       children: [
         buildSubSection({
           id: 'externalData',
-          name: m.externalDataSubSection,
+          title: m.externalDataSubSection,
           children: [
             buildExternalDataProvider({
-              name: m.introductionProvider,
+              title: m.introductionProvider,
               id: 'approveExternalData',
               dataProviders: [
                 buildDataProviderItem({
@@ -80,16 +80,16 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'emailAndPhoneNumber',
-          name: mm.applicant.subSection,
+          title: mm.applicant.subSection,
           children: [
             buildMultiField({
               id: 'contactInfo',
-              name: mm.applicant.title,
+              title: mm.applicant.title,
               description: mm.applicant.description,
               children: [
                 buildTextField({
                   width: 'half',
-                  name: mm.applicant.email,
+                  title: mm.applicant.email,
                   id: 'applicant.email',
                   variant: 'email',
                   defaultValue: (application: Application) =>
@@ -99,7 +99,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildTextField({
                   width: 'half',
-                  name: mm.applicant.phoneNumber,
+                  title: mm.applicant.phoneNumber,
                   defaultValue: (application: Application) =>
                     (application.externalData.userProfile?.data as {
                       mobilePhoneNumber?: string
@@ -115,11 +115,11 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'otherParent',
-          name: m.otherParentSubSection,
+          title: m.otherParentSubSection,
           children: [
             buildMultiField({
               id: 'otherParent',
-              name: m.otherParentTitle,
+              title: m.otherParentTitle,
               description: m.otherParentDescription,
               condition: () => {
                 // TODO this screen is only for the primary parent
@@ -128,19 +128,19 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildCustomField({
                   id: 'otherParent',
-                  name: '',
+                  title: '',
                   component: 'OtherParent',
                 }),
                 buildTextField({
                   id: 'otherParentName',
                   condition: (answers) => answers.otherParent === 'manual',
-                  name: m.otherParentName,
+                  title: m.otherParentName,
                   width: 'half',
                 }),
                 buildTextField({
                   id: 'otherParentId',
                   condition: (answers) => answers.otherParent === 'manual',
-                  name: m.otherParentID,
+                  title: m.otherParentID,
                   width: 'half',
                   format: '######-####',
                   placeholder: '000000-0000',
@@ -152,7 +152,7 @@ export const ParentalLeaveForm: Form = buildForm({
               largeButtons: true,
               emphasize: true,
               condition: (answers) => answers.otherParent === 'manual',
-              name: mm.rightOfAccess.title,
+              title: mm.rightOfAccess.title,
               description: mm.rightOfAccess.description,
               options: [
                 { label: mm.rightOfAccess.yesOption, value: YES },
@@ -163,20 +163,20 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'payments',
-          name: m.paymentInformationSubSection,
+          title: m.paymentInformationSubSection,
           children: [
             buildMultiField({
-              name: m.paymentInformationName,
+              title: m.paymentInformationName,
               id: 'payments',
               children: [
                 buildTextField({
-                  name: m.paymentInformationBank,
+                  title: m.paymentInformationBank,
                   id: 'payments.bank',
                   format: '####-##-######',
                   placeholder: '0000-00-000000',
                 }),
                 buildAsyncSelectField({
-                  name: m.pensionFund,
+                  title: m.pensionFund,
                   id: 'payments.pensionFund',
                   width: 'half',
                   loadOptions: async ({ apolloClient }) => {
@@ -195,7 +195,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   },
                 }),
                 buildAsyncSelectField({
-                  name: m.union,
+                  title: m.union,
                   id: 'payments.union',
                   width: 'half',
                   loadingError: mm.errors.loading,
@@ -216,7 +216,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   emphasize: true,
                   largeButtons: false,
                   id: 'usePrivatePensionFund',
-                  name: m.privatePensionFundName,
+                  title: m.privatePensionFundName,
                   description: m.privatePensionFundDescription,
                   options: [
                     { label: m.yesOptionLabel, value: YES },
@@ -226,14 +226,14 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildSelectField({
                   condition: (answers) => answers.usePrivatePensionFund === YES,
                   id: 'payments.privatePensionFund',
-                  name: m.privatePensionFund,
+                  title: m.privatePensionFund,
                   width: 'half',
                   options: [{ label: 'Frjalsi', value: 'frjalsi' }],
                 }),
                 buildSelectField({
                   condition: (answers) => answers.usePrivatePensionFund === YES,
                   id: 'payments.privatePensionFundPercentage',
-                  name: m.privatePensionFundRatio,
+                  title: m.privatePensionFundRatio,
                   width: 'half',
                   options: [
                     { label: '2%', value: '2' },
@@ -246,11 +246,11 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'personalAllowanceSubSection',
-          name: mm.personalAllowance.title,
+          title: mm.personalAllowance.title,
           children: [
             buildRadioField({
               id: 'usePersonalAllowance',
-              name: mm.personalAllowance.useYours,
+              title: mm.personalAllowance.useYours,
               largeButtons: true,
               width: 'half',
               options: [
@@ -261,12 +261,12 @@ export const ParentalLeaveForm: Form = buildForm({
             buildMultiField({
               id: 'personalAllowance',
               condition: (answers) => answers.usePersonalAllowance === YES,
-              name: mm.personalAllowance.title,
+              title: mm.personalAllowance.title,
               description: mm.personalAllowance.description,
               children: [
                 buildRadioField({
                   id: 'personalAllowance.useAsMuchAsPossible',
-                  name: mm.personalAllowance.useAsMuchAsPossible,
+                  title: mm.personalAllowance.useAsMuchAsPossible,
                   width: 'half',
                   largeButtons: true,
                   options: [
@@ -276,7 +276,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'personalAllowance.usage',
-                  name: mm.personalAllowance.zeroToHundred,
+                  title: mm.personalAllowance.zeroToHundred,
                   description: mm.personalAllowance.manual,
                   suffix: '%',
                   condition: (answers) =>
@@ -291,7 +291,7 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
             buildRadioField({
               id: 'usePersonalAllowanceFromSpouse',
-              name: mm.personalAllowance.useFromSpouse,
+              title: mm.personalAllowance.useFromSpouse,
               condition: (answers) => {
                 // TODO add check if this person has a spouse...
                 return true
@@ -307,12 +307,12 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'personalAllowanceFromSpouse',
               condition: (answers) =>
                 answers.usePersonalAllowanceFromSpouse === YES,
-              name: mm.personalAllowance.spouseTitle,
+              title: mm.personalAllowance.spouseTitle,
               description: mm.personalAllowance.spouseDescription,
               children: [
                 buildRadioField({
                   id: 'personalAllowanceFromSpouse.useAsMuchAsPossible',
-                  name: mm.personalAllowance.useAsMuchAsPossible,
+                  title: mm.personalAllowance.useAsMuchAsPossible,
                   width: 'half',
                   largeButtons: true,
                   options: [
@@ -322,7 +322,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'personalAllowanceFromSpouse.usage',
-                  name: mm.personalAllowance.zeroToHundred,
+                  title: mm.personalAllowance.zeroToHundred,
                   description: mm.personalAllowance.manual,
                   suffix: '%',
                   condition: (answers) =>
@@ -341,11 +341,11 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'employer',
-          name: mm.employer.subSection,
+          title: mm.employer.subSection,
           children: [
             buildRadioField({
               id: 'employer.isSelfEmployed',
-              name: mm.selfEmployed.title,
+              title: mm.selfEmployed.title,
               description: mm.selfEmployed.description,
               largeButtons: true,
               width: 'half',
@@ -356,7 +356,7 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
             buildMultiField({
               id: 'employer',
-              name: mm.employer.title,
+              title: mm.employer.title,
               description: mm.employer.description,
               condition: (answers) =>
                 (answers as {
@@ -366,7 +366,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 })?.employer?.isSelfEmployed !== YES,
               children: [
                 buildTextField({
-                  name: mm.employer.email,
+                  title: mm.employer.email,
                   width: 'full',
                   id: 'employer.email',
                 }),
@@ -378,21 +378,21 @@ export const ParentalLeaveForm: Form = buildForm({
     }),
     buildSection({
       id: 'rights',
-      name: m.rightsSection,
+      title: m.rightsSection,
       children: [
         buildSubSection({
           id: 'rightsQuestions',
-          name: m.yourRights,
+          title: m.yourRights,
           children: [
             buildMultiField({
               id: 'rightsIntro',
-              name: m.theseAreYourRights,
+              title: m.theseAreYourRights,
               description: m.rightsDescription,
               children: [
                 buildCustomField(
                   {
                     id: 'rightsIntro',
-                    name: '',
+                    title: '',
                     component: 'BoxChart',
                   },
                   {
@@ -414,25 +414,25 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
             buildMultiField({
               id: 'requestRights',
-              name: m.requestRightsName,
+              title: m.requestRightsName,
               description: m.requestRightsDescription,
               children: [
                 buildCustomField({
                   id: 'requestRights',
-                  name: '',
+                  title: '',
                   component: 'RequestRights',
                 }),
               ],
             }),
             buildMultiField({
               id: 'giveRights',
-              name: m.giveRightsName,
+              title: m.giveRightsName,
               description: m.giveRightsDescription,
               condition: (formValue) => formValue.requestRights === NO,
               children: [
                 buildCustomField({
                   id: 'giveRights',
-                  name: '',
+                  title: '',
                   component: 'GiveRights',
                 }),
               ],
@@ -441,11 +441,11 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'rightsReview',
-          name: m.rightsSummarySubSection,
+          title: m.rightsSummarySubSection,
           children: [
             buildMultiField({
               id: 'reviewRights',
-              name: m.rightsSummaryName,
+              title: m.rightsSummaryName,
               description: (application) =>
                 `${formatIsk(
                   getEstimatedMonthlyPay(application),
@@ -453,7 +453,7 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildCustomField({
                   id: 'reviewRights',
-                  name: '',
+                  title: '',
                   component: 'ReviewRights',
                 }),
               ],
@@ -464,20 +464,20 @@ export const ParentalLeaveForm: Form = buildForm({
     }),
     buildSection({
       id: 'leavePeriods',
-      name: m.periodsSection,
+      title: m.periodsSection,
       children: [
         buildCustomField({
           id: 'periodsImageScreen',
-          name: m.periodsImageTitle,
+          title: m.periodsImageTitle,
           component: 'PeriodsSectionImage',
         }),
         buildSubSection({
           id: 'firstPeriod',
-          name: m.firstPeriodName,
+          title: m.firstPeriodName,
           children: [
             buildRadioField({
               id: 'singlePeriod',
-              name: m.periodAllAtOnce,
+              title: m.periodAllAtOnce,
               description: m.periodAllAtOnceDescription,
               largeButtons: true,
               options: [
@@ -493,27 +493,27 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
             buildCustomField({
               id: 'firstPeriodStart',
-              name: mm.firstPeriodStart.title,
+              title: mm.firstPeriodStart.title,
               component: 'FirstPeriodStart',
             }),
             buildMultiField({
               id: 'startDate',
               condition: (formValue) =>
                 formValue.firstPeriodStart === 'specificDate',
-              name: mm.startDate.title,
+              title: mm.startDate.title,
               description: mm.startDate.description,
               children: [
                 buildDateField({
                   id: 'periods[0].startDate',
                   width: 'half',
-                  name: mm.startDate.label,
+                  title: mm.startDate.label,
                   placeholder: mm.startDate.placeholder,
                 }),
               ],
             }),
             buildRadioField({
               id: 'confirmLeaveDuration',
-              name: mm.duration.title,
+              title: mm.duration.title,
               description: mm.duration.description,
               largeButtons: true,
               options: [
@@ -528,13 +528,13 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'endDate',
               condition: (formValue) =>
                 formValue.confirmLeaveDuration === 'specificDate',
-              name: mm.endDate.title,
+              title: mm.endDate.title,
               description: mm.endDate.description,
               children: [
                 buildDateField({
                   id: 'periods[0].endDate',
                   width: 'half',
-                  name: mm.endDate.label,
+                  title: mm.endDate.label,
                   placeholder: mm.endDate.placeholder,
                 }),
               ],
@@ -544,20 +544,20 @@ export const ParentalLeaveForm: Form = buildForm({
                 id: 'periods[0].endDate',
                 condition: (formValue) =>
                   formValue.confirmLeaveDuration === 'duration',
-                name: mm.duration.title,
+                title: mm.duration.title,
                 component: 'ParentalLeaveDuration',
               },
               {},
             ),
             buildMultiField({
               id: 'periods[0].ratio',
-              name: mm.ratio.title,
+              title: mm.ratio.title,
               description: mm.ratio.description,
               children: [
                 buildSelectField({
                   id: 'periods[0].ratio',
                   width: 'half',
-                  name: mm.ratio.label,
+                  title: mm.ratio.label,
                   placeholder: mm.ratio.placeholder,
                   defaultValue: '100',
                   options: [
@@ -573,27 +573,27 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'addMorePeriods',
-          name: mm.leavePlan.subSection,
+          title: mm.leavePlan.subSection,
           children: [
             buildRepeater({
               id: 'periods',
-              name: mm.leavePlan.title,
+              title: mm.leavePlan.title,
               component: 'PeriodsRepeater',
               children: [
                 buildDateField({
                   id: 'startDate',
-                  name: mm.startDate.title,
+                  title: mm.startDate.title,
                   description: mm.startDate.description,
                   placeholder: mm.startDate.placeholder,
                 }),
                 buildMultiField({
                   id: 'endDate',
-                  name: mm.endDate.title,
+                  title: mm.endDate.title,
                   description: mm.endDate.description,
                   children: [
                     buildDateField({
                       id: 'endDate',
-                      name: mm.endDate.label,
+                      title: mm.endDate.label,
                       placeholder: mm.endDate.placeholder,
                     }),
                   ],
@@ -611,13 +611,13 @@ export const ParentalLeaveForm: Form = buildForm({
                 // ),
                 buildMultiField({
                   id: 'ratio',
-                  name: mm.ratio.title,
+                  title: mm.ratio.title,
                   description: mm.ratio.description,
                   children: [
                     buildSelectField({
                       id: 'ratio',
                       width: 'half',
-                      name: mm.ratio.label,
+                      title: mm.ratio.label,
                       defaultValue: '100',
                       placeholder: mm.ratio.placeholder,
                       options: [
@@ -635,12 +635,12 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'paymentPlan',
-          name: mm.paymentPlan.subSection,
+          title: mm.paymentPlan.subSection,
           children: [
             buildCustomField(
               {
                 id: 'paymentPlan',
-                name: mm.paymentPlan.title,
+                title: mm.paymentPlan.title,
                 description: mm.paymentPlan.description,
                 component: 'PaymentSchedule',
               },
@@ -650,11 +650,11 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'shareInformation',
-          name: mm.shareInformation.subSection,
+          title: mm.shareInformation.subSection,
           children: [
             buildRadioField({
               id: 'shareInformationWithOtherParent',
-              name: mm.shareInformation.title,
+              title: mm.shareInformation.title,
               description: mm.shareInformation.description,
               emphasize: false,
               largeButtons: true,
@@ -675,22 +675,22 @@ export const ParentalLeaveForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirmation',
-      name: mm.confirmation.section,
+      title: mm.confirmation.section,
       children: [
         buildMultiField({
           id: 'confirmation',
-          name: mm.confirmation.title,
+          title: mm.confirmation.title,
           description: mm.confirmation.description,
           children: [
             buildCustomField({
               id: 'confirmationScreen',
-              name: '',
+              title: '',
               component: 'Review',
             }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              name: mm.confirmation.title,
+              title: mm.confirmation.title,
 
               actions: [
                 {
@@ -702,10 +702,10 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'thankYou',
-          name: mm.finalScreen.title,
-          introduction: mm.finalScreen.description,
+          title: mm.finalScreen.title,
+          description: mm.finalScreen.description,
         }),
       ],
     }),

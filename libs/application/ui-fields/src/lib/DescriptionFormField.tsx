@@ -2,15 +2,15 @@ import React, { FC } from 'react'
 import {
   Application,
   formatText,
-  IntroductionField,
+  DescriptionField,
 } from '@island.is/application/core'
 import { Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import Markdown from 'markdown-to-jsx'
 
-const IntroductionFormField: FC<{
+const DescriptionFormField: FC<{
   application: Application
-  field: IntroductionField
+  field: DescriptionField
   showFieldName: boolean
 }> = ({ application, field, showFieldName }) => {
   const { formatMessage } = useLocale()
@@ -19,14 +19,14 @@ const IntroductionFormField: FC<{
     <div>
       {showFieldName && (
         <Text variant="h2">
-          {formatText(field.name, application, formatMessage)}
+          {formatText(field.title, application, formatMessage)}
         </Text>
       )}
       <Markdown>
-        {formatText(field.introduction, application, formatMessage)}
+        {formatText(field.description, application, formatMessage)}
       </Markdown>
     </div>
   )
 }
 
-export default IntroductionFormField
+export default DescriptionFormField
