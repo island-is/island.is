@@ -7,6 +7,7 @@ import { ClientsModule } from './modules/clients/clients.module'
 import { ResourcesModule } from './modules/resources/resources.module'
 import { SequelizeConfigService } from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
+import { ClaimsModule } from './modules/claims/claims.module'
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AuthModule } from '@island.is/auth-nest-tools'
     ClientsModule,
     ResourcesModule,
     GrantTypesModule,
+    ClaimsModule,
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.secret'],
     }),
