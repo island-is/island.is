@@ -17,7 +17,7 @@
 /libs/api/domains/cms/                                    @island-is/kosmos-kaos @island-is/aranja
 
 /*/air-discount-scheme/                                   @island-is/vice-versa
-/*/gjafakort/                                             @island-is/vice-versa
+/*/gjafakort/                                             @island-is/vice-versa @island-is/kosmos-kaos
 /libs/application/templates/driving-license/              @island-is/vice-versa
 /libs/application/templates/passport/                     @island-is/vice-versa
 /libs/api/domains/driving-license/                        @island-is/vice-versa
