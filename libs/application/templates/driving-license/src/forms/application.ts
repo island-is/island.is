@@ -1,6 +1,6 @@
 import {
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -17,20 +17,20 @@ import { m } from '../lib/messages'
 
 export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
-  name: 'Ökuskilríki',
+  title: 'Ökuskilríki',
   mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'type',
-      name: 'Tegund ökuréttinda',
+      title: 'Tegund ökuréttinda',
       children: [
         buildMultiField({
           id: 'user',
-          name: 'Ég er að sækja um:',
+          title: 'Ég er að sækja um:',
           children: [
             buildRadioField({
               id: 'type',
-              name: 'Tegund ökutækja',
+              title: 'Tegund ökutækja',
               largeButtons: true,
               width: 'half',
               options: [
@@ -46,12 +46,12 @@ export const application: Form = buildForm({
         }),
         buildMultiField({
           id: 'bikeType',
-          name: 'Tegund bifhjólaréttinda sem sótt er um',
+          title: 'Tegund bifhjólaréttinda sem sótt er um',
           condition: ({ type }) => type === 'bike',
           children: [
             buildRadioField({
               id: 'bikeType',
-              name: 'Ég sæki um nýjan flokk ökuréttinda',
+              title: 'Ég sæki um nýjan flokk ökuréttinda',
               options: [
                 { value: 'A', label: '<b>A</b> - Bifhjól' },
                 { value: 'A1', label: '<b>A1</b> - Bifhjól' },
@@ -77,12 +77,12 @@ Veitir ökuréttindi til að stjórna bifhjóli:
         }),
         buildMultiField({
           id: 'truckType',
-          name: 'Tegund vöru- eða hópbifreiðaréttinda sem sótt er um',
+          title: 'Tegund vöru- eða hópbifreiðaréttinda sem sótt er um',
           condition: ({ type }) => type === 'truck',
           children: [
             buildRadioField({
               id: 'truckType',
-              name: 'Ég sæki um nýjan flokk ökuréttinda',
+              title: 'Ég sæki um nýjan flokk ökuréttinda',
               options: [
                 { value: 'C', label: '<b>C</b> - Vörubifreið' },
                 { value: 'CE', label: '<b>CE</b> - Vörubifreið með eftirvagn' },
@@ -103,7 +103,7 @@ Veitir ökuréttindi til að stjórna bifhjóli:
             buildDividerField({}),
             buildCheckboxField({
               id: 'isBusiness',
-              name: '',
+              title: '',
               options: [
                 {
                   value: 'isBusiness',
@@ -117,50 +117,50 @@ Veitir ökuréttindi til að stjórna bifhjóli:
     }),
     buildSection({
       id: 'user',
-      name: 'Upplýsingar',
+      title: 'Upplýsingar',
       children: [
         buildMultiField({
           id: 'info',
-          name: 'Upplýsingar',
+          title: 'Upplýsingar',
           children: [
             buildTextField({
               id: 'user.name',
-              name: 'Nafn',
+              title: 'Nafn',
               width: 'half',
             }),
             buildTextField({
               id: 'address.home',
-              name: 'Heimili',
+              title: 'Heimili',
               width: 'half',
             }),
             buildTextField({
               id: 'address.postcode',
-              name: 'Póstnúmer',
+              title: 'Póstnúmer',
               width: 'half',
             }),
             buildTextField({
               id: 'address.city',
-              name: 'Staður',
+              title: 'Staður',
               width: 'half',
             }),
             buildTextField({
               id: 'user.phoneNumber',
-              name: 'Sími',
+              title: 'Sími',
               width: 'half',
             }),
             buildTextField({
               id: 'user.nationalId',
-              name: 'Kennitala',
+              title: 'Kennitala',
               width: 'half',
             }),
             buildTextField({
               id: 'user.email',
-              name: 'Netfang',
+              title: 'Netfang',
               width: 'half',
             }),
             buildSelectField({
               id: 'user.country',
-              name: 'Fæðingarland',
+              title: 'Fæðingarland',
               width: 'half',
               options: [
                 { label: 'Ísland', value: 'IS' },
@@ -168,12 +168,12 @@ Veitir ökuréttindi til að stjórna bifhjóli:
               ],
             }),
             buildDividerField({
-              name: 'Ökukennari',
+              title: 'Ökukennari',
               color: 'dark400',
             }),
             buildTextField({
               id: 'teacher',
-              name: 'Ökukennari',
+              title: 'Ökukennari',
               width: 'half',
             }),
           ],
@@ -182,27 +182,27 @@ Veitir ökuréttindi til að stjórna bifhjóli:
     }),
     buildSection({
       id: 'healthDeclaration',
-      name: '',
+      title: '',
       children: [
         buildCustomField({
           id: 'healthDeclaration',
-          name: 'Heilbrigðisyfirlýsing',
+          title: 'Heilbrigðisyfirlýsing',
           component: 'HealthDeclaration',
         }),
       ],
     }),
     buildSection({
       id: 'confirmation',
-      name: 'Staðfesta',
+      title: 'Staðfesta',
       children: [
         buildMultiField({
           id: 'submit',
-          name: 'Takk fyrir að sækja um',
+          title: 'Takk fyrir að sækja um',
           children: [
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              name: 'sick',
+              title: 'sick',
               actions: [
                 {
                   event: 'SUBMIT',
@@ -211,18 +211,18 @@ Veitir ökuréttindi til að stjórna bifhjóli:
                 },
               ],
             }),
-            buildIntroductionField({
+            buildDescriptionField({
               id: 'overview',
-              name: '',
-              introduction:
+              title: '',
+              description:
                 'Með því að smella á "Senda" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'final',
-          name: 'Takk',
-          introduction: 'Umsókn þín er komin í vinnslu',
+          title: 'Takk',
+          description: 'Umsókn þín er komin í vinnslu',
         }),
       ],
     }),

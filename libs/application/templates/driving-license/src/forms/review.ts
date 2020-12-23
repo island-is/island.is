@@ -1,6 +1,6 @@
 import {
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -15,7 +15,7 @@ import {
 
 export const review: Form = buildForm({
   id: 'Review',
-  name: 'Úrvinnsla umsóknar um ökuskilríki',
+  title: 'Úrvinnsla umsóknar um ökuskilríki',
   mode: FormModes.REVIEW,
   children: [],
 })
