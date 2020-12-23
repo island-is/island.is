@@ -12,7 +12,7 @@ interface Props {
   handleChanges?: () => void;
 }
 
-const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
+const ApiResourceUserClaimsForm: React.FC<Props> = (props: Props) => {
   const [claims, setClaims] = useState<string[]>([]);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
   };
 
   const add = async (claimName: string) => {
-    const response = await ResourcesService.addApiScopeUserClaim(props.apiResourceName, claimName);
+    const response = await ResourcesService.addApiResourceUserClaim(props.apiResourceName, claimName);
     if (response){
       if (props.handleChanges) {
         props.handleChanges();
@@ -36,7 +36,7 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
   }
 
   const remove = async (claimName: string) => {
-    const response = await ResourcesService.removeApiScopeUserClaim(props.apiResourceName, claimName);
+    const response = await ResourcesService.removeApiResourceUserClaim(props.apiResourceName, claimName);
     if (response){
       if (props.handleChanges) {
         props.handleChanges();
@@ -60,7 +60,7 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
 
           <div className="api-resource-user-claims__container__form">
             <div className="api-resource-user-claims__help">
-              Select all user claims for this Identity Resource
+              Select all user claims for this Api Resource
             </div>
             <div className="api-resource-user-claims__container__fields">
               {claims?.map((claim: string) => {
@@ -122,4 +122,4 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
     </div>
   );
 };
-export default ApiScopeUserClaimsForm;
+export default ApiResourceUserClaimsForm;
