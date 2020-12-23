@@ -27,6 +27,8 @@ export class ResourcesService {
     private apiResourceScopeModel: typeof ApiResourceScope,
     @InjectModel(IdentityResourceUserClaim)
     private identityResourceUserClaimModel: typeof IdentityResourceUserClaim,
+    @InjectModel(ApiScopeUserClaim)
+    private apiScopeUserClaimModel: typeof ApiScopeUserClaim,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     @Inject(Sequelize)
@@ -370,6 +372,38 @@ export class ResourcesService {
     return await this.identityResourceUserClaimModel.destroy({
       where: {
         identityResourceName: identityResourceName,
+        claimName: claimName,
+      },
+    })
+  }
+
+  /** Adds user claim to Api Scope */
+  async addApiScopeUserClaim(
+    apiScopeName: string,
+    claimName: string,
+  ): Promise<ApiScopeUserClaim> {
+    if (!apiScopeName || !claimName) {
+      throw new BadRequestException('Name and apiScopeName must be provided')
+    }
+
+    return await this.apiScopeUserClaimModel.create({
+      apiScopeName: apiScopeName,
+      claimName: claimName,
+    })
+  }
+
+  /** Removes user claim from Api Scope */
+  async removeApiScopeUserClaim(
+    apiScopeName: string,
+    claimName: string,
+  ): Promise<number> {
+    if (!apiScopeName || !claimName) {
+      throw new BadRequestException('Name and apiScopeName must be provided')
+    }
+
+    return await this.apiScopeUserClaimModel.destroy({
+      where: {
+        apiScopeName: apiScopeName,
         claimName: claimName,
       },
     })
