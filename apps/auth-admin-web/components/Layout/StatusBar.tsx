@@ -1,32 +1,44 @@
-import React, { Component } from 'react';
-import APIResponse from '../../entities/common/APIResponse';
+import { ApiStatusStore } from './../../store/ApiStatusStore';
+import React, { useEffect, useState } from 'react';
+import APIResponse from './../../entities/common/APIResponse';
+import { BehaviorSubject } from 'rxjs';
 
-class StatusBar extends Component<{ status: APIResponse }> {
-  getMessage = () => {
-    if (typeof this.props.status?.message === 'string') {
-      return <span>{this.props.status.message}</span>;
+const StatusBar = ({ status = null }) => {
+  const status$ = React.useRef(new BehaviorSubject(status));
+
+  useEffect(() => {
+    status$.current.next(status);
+  }, [status]);
+
+  const [state, setState] = useState(new APIResponse());
+
+  useEffect(() => {
+    const subscription = ApiStatusStore.getInstance().status.subscribe(
+      (value) => setState(value)
+    );
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [status$]);
+
+  const getMessage = (value: APIResponse) => {
+    if (typeof value?.message === 'string') {
+      return <span>{value.message}</span>;
     } else {
-      return this.props.status?.message.map((item, i) => <span>{item}</span>);
+      return value?.message.map((item, i) => <span>{item}</span>);
     }
   };
 
-  render() {
-    if (!this.props.status || this.props.status.statusCode === 0 || this.props.status.statusCode === 200 || this.props.status.statusCode === 201) {
-      return '';
-    }
+  if (state.statusCode === 0) return '';
 
-    return (
-      <div
-        className={`statusbar ${
-          this.props.status?.statusCode > 399 ? 'error' : ''
-        }`}
-      >
-        <div className="statusbar__message">{this.getMessage()}</div>
-        <div className="statusbar__code">{this.props.status.statusCode}</div>
-        <div className="statusbar__error">{this.props.status.error}</div>
-      </div>
-    );
-  }
-}
+  return (
+    <div className={`statusbar ${state?.statusCode > 399 ? 'error' : ''}`}>
+      <div className="statusbar__message">{getMessage(state)}</div>
+      <div className="statusbar__code">{state.statusCode}</div>
+      <div className="statusbar__error">{state.error}</div>
+    </div>
+  );
+};
 
 export default StatusBar;
