@@ -11,7 +11,7 @@ import {
   ApiResourceSecretDTO,
   ApiResourceSecret,
   ApiResourceScope,
-  ApiResourceScopeDTO,
+  ApiResourceAllowedScopeDTO,
   ApiResourceUserClaim,
 } from '@island.is/auth-api-lib'
 import {
@@ -323,8 +323,8 @@ export class ResourcesController {
 
   @Post('api-resource-claims/:apiResourceName/:claimName')
   async addApiResourceUserClaim(
-    apiResourceName: string,
-    claimName: string,
+    @Param('apiResourceName') apiResourceName: string,
+    @Param('claimName') claimName: string,
   ): Promise<ApiResourceUserClaim> {
     if (!apiResourceName || !claimName) {
       throw new BadRequestException('Name and apiResourceName must be provided')
@@ -339,8 +339,8 @@ export class ResourcesController {
   /** Removes user claim from Api Resource */
   @Delete('api-resource-claims/:apiResourceName/:claimName')
   async removeApiResourceUserClaim(
-    apiResourceName: string,
-    claimName: string,
+    @Param('apiResourceName') apiResourceName: string,
+    @Param('claimName') claimName: string,
   ): Promise<number> {
     if (!apiResourceName || !claimName) {
       throw new BadRequestException('Name and apiResourceName must be provided')
@@ -384,7 +384,7 @@ export class ResourcesController {
   @Post('api-resources-allowed-scope')
   @ApiCreatedResponse({ type: ApiResourceScope })
   async addApiResourceAllowedScope(
-    @Body() resourceAllowedScope: ApiResourceScopeDTO,
+    @Body() resourceAllowedScope: ApiResourceAllowedScopeDTO,
   ): Promise<ApiResourceScope | null> {
     if (!resourceAllowedScope) {
       throw new BadRequestException(
@@ -392,7 +392,7 @@ export class ResourcesController {
       )
     }
 
-    return await this.resourcesService.addApiResourceAllowedScope(
+    return this.resourcesService.addApiResourceAllowedScope(
       resourceAllowedScope,
     )
   }
@@ -400,8 +400,8 @@ export class ResourcesController {
   /** Removes an allowed scope from api Resource */
   @Delete('api-resources-allowed-scope/:apiResourceName/:scopeName')
   async removeApiResourceAllowedScope(
-    apiResourceName: string,
-    scopeName: string,
+    @Param('apiResourceName') apiResourceName: string,
+    @Param('scopeName') scopeName: string,
   ): Promise<number | null> {
     if (!apiResourceName || !scopeName) {
       throw new BadRequestException(

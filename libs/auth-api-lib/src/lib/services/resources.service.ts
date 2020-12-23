@@ -16,7 +16,7 @@ import { ApiResourcesDTO } from '../entities/dto/api-resources.dto'
 import sha256 from 'crypto-js/sha256'
 import Base64 from 'crypto-js/enc-base64'
 import { ApiResourceSecretDTO } from '../entities/dto/api-resource-secret.dto'
-import { ApiResourceScopeDTO } from '../entities/dto/api-resource-allowed-scope.dto'
+import { ApiResourceAllowedScopeDTO } from '../entities/dto/api-resource-allowed-scope.dto'
 
 @Injectable()
 export class ResourcesService {
@@ -482,7 +482,7 @@ export class ResourcesService {
 
   /** Adds an allowed scope to api resource */
   async addApiResourceAllowedScope(
-    resourceAllowedScope: ApiResourceScopeDTO,
+    resourceAllowedScope: ApiResourceAllowedScopeDTO,
   ): Promise<ApiResourceScope> {
     this.logger.debug(
       `Adding allowed scope - "${resourceAllowedScope.scopeName}" to api resource - "${resourceAllowedScope.apiResourceName}"`,
