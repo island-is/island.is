@@ -1,33 +1,46 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
+import { signIn, signOut, useSession } from 'next-auth/client';
 
+const Header: React.FC = () => {
+  const [session, loading] = useSession();
 
-class Header extends Component {
-  logout = () => {
-    alert("logout");
+  const login = async () => {
+    signIn('identity-server');
   };
 
-  render() {
-    return (
-      <header className="header__container">
-        <div className="header__container__logo">
-          <h1>IDS management</h1>
-        </div>
-        <div className="header__container__options">
+  const logout = () => {
+    signOut();
+  };
+
+  return (
+    <header className="header__container">
+      <div className="header__container__logo">
+        <h1>IDS management</h1>
+      </div>
+      <div className="header__container__options">
+        {session && (
           <div className="header__container__user">
-            <div className="header__username">Unnar Snær Bjarnason</div>
+            <div className="header__username">{session.user.name}</div>
             <div className="header__container__logout">
               <button
                 className="header__button__logout"
-                onClick={() => this.logout()}
+                onClick={() => logout()}
               >
                 Logout
               </button>
             </div>
           </div>
-        </div>
-      </header>
-    );
-  }
-}
+        )}
+        {!session && (
+          <div className="header__container__logout">
+            <button className="header__button__logout" onClick={() => login()}>
+              Login
+            </button>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+};
 
 export default Header;
