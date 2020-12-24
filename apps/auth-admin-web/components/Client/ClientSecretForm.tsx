@@ -58,7 +58,6 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
   };
 
   const add = async (data: any) => {
-    console.log('Hello')
     const secretObj = new ClientSecretDTO();
     secretObj.clientId = props.clientId;
     secretObj.description = data.description;
