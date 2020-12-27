@@ -13,6 +13,10 @@ import { ApiScopeUserClaim } from '../entities/models/api-scope-user-claim.model
 import { IdentityResourcesDTO } from '../entities/dto/identity-resources.dto'
 import { ApiScopesDTO } from '../entities/dto/api-scopes.dto'
 import { ApiResourcesDTO } from '../entities/dto/api-resources.dto'
+import sha256 from 'crypto-js/sha256'
+import Base64 from 'crypto-js/enc-base64'
+import { ApiResourceSecretDTO } from '../entities/dto/api-resource-secret.dto'
+import { ApiResourceAllowedScopeDTO } from '../entities/dto/api-resource-allowed-scope.dto'
 
 @Injectable()
 export class ResourcesService {
@@ -29,6 +33,12 @@ export class ResourcesService {
     private identityResourceUserClaimModel: typeof IdentityResourceUserClaim,
     @InjectModel(ApiScopeUserClaim)
     private apiScopeUserClaimModel: typeof ApiScopeUserClaim,
+    @InjectModel(ApiResourceUserClaim)
+    private apiResourceUserClaim: typeof ApiResourceUserClaim,
+    @InjectModel(ApiResourceSecret)
+    private apiResourceSecret: typeof ApiResourceSecret,
+    @InjectModel(ApiResourceScope)
+    private apiResourceScope: typeof ApiResourceScope,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     @Inject(Sequelize)
@@ -123,7 +133,9 @@ export class ResourcesService {
       throw new BadRequestException('Name must be provided')
     }
 
-    return this.apiResourceModel.findByPk(name)
+    return this.apiResourceModel.findByPk(name, {
+      include: [ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret],
+    })
   }
 
   /** Get identity resources by scope names */
@@ -406,6 +418,102 @@ export class ResourcesService {
         apiScopeName: apiScopeName,
         claimName: claimName,
       },
+    })
+  }
+
+  /** Adds user claim to Api Resource */
+  async addApiResourceUserClaim(
+    apiResourceName: string,
+    claimName: string,
+  ): Promise<ApiResourceUserClaim> {
+    if (!apiResourceName || !claimName) {
+      throw new BadRequestException('Name and apiResourceName must be provided')
+    }
+
+    return await this.apiResourceUserClaim.create({
+      apiResourceName: apiResourceName,
+      claimName: claimName,
+    })
+  }
+
+  /** Removes user claim from Api Resource */
+  async removeApiResourceUserClaim(
+    apiResourceName: string,
+    claimName: string,
+  ): Promise<number> {
+    if (!apiResourceName || !claimName) {
+      throw new BadRequestException('Name and apiScopeName must be provided')
+    }
+
+    return await this.apiResourceUserClaim.destroy({
+      where: {
+        apiResourceName: apiResourceName,
+        claimName: claimName,
+      },
+    })
+  }
+
+  /** Add secret to ApiResource */
+  async addApiResourceSecret(
+    apiSecret: ApiResourceSecretDTO,
+  ): Promise<ApiResourceSecret> {
+    const words = sha256(apiSecret.value)
+    const secret = Base64.stringify(words)
+
+    return this.apiResourceSecret.create({
+      apiResourceName: apiSecret.apiResourceName,
+      value: secret,
+      description: apiSecret.description,
+      type: apiSecret.type,
+    })
+  }
+
+  /** Remove a secret from Api Resource */
+  async removeApiResourceSecret(
+    apiSecret: ApiResourceSecretDTO,
+  ): Promise<number> {
+    return this.apiResourceSecret.destroy({
+      where: {
+        apiResourceName: apiSecret.apiResourceName,
+        value: apiSecret.value,
+      },
+    })
+  }
+
+  /** Adds an allowed scope to api resource */
+  async addApiResourceAllowedScope(
+    resourceAllowedScope: ApiResourceAllowedScopeDTO,
+  ): Promise<ApiResourceScope> {
+    this.logger.debug(
+      `Adding allowed scope - "${resourceAllowedScope.scopeName}" to api resource - "${resourceAllowedScope.apiResourceName}"`,
+    )
+
+    if (!resourceAllowedScope) {
+      throw new BadRequestException(
+        'resourceAllowedScope object must be provided',
+      )
+    }
+
+    return await this.apiResourceScope.create({ ...resourceAllowedScope })
+  }
+
+  /** Removes an allowed scope from api Resource */
+  async removeApiResourceAllowedScope(
+    apiResourceName: string,
+    scopeName: string,
+  ): Promise<number> {
+    this.logger.debug(
+      `Removing scope - "${scopeName}" from api resource - "${apiResourceName}"`,
+    )
+
+    if (!apiResourceName || !scopeName) {
+      throw new BadRequestException(
+        'scopeName and apiResourceName must be provided',
+      )
+    }
+
+    return await this.apiResourceScope.destroy({
+      where: { apiResourceName: apiResourceName, scopeName: scopeName },
     })
   }
 }
