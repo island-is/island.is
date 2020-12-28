@@ -45,10 +45,9 @@ export class ClientService extends BaseService {
   }
 
   /** Deletes client */
-  // Commented out for now because it needs to be changed and renamed on the service side
-  // static async delete(clientId: string): Promise<number | null> {
-  //   return BaseService.DELETE(`clients/${clientId}`);
-  // }
+  static async delete(clientId: string): Promise<number | null> {
+    return BaseService.DELETE(`clients/${clientId}`);
+  }
 
   /** Adds Allowed CORS origin for client */
   static async addAllowedCorsOrigin(
