@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
-import ResourceStepNav from '../../components/Resource/components/ResourceStepper';
+import ResourcesTabsNav from '../../components/Resource/ResourcesTabsNav';
 import Overview from '../../components/Resource/components/Overview';
-import { ResourceStep } from './../../entities/common/ResourceStep';
+import { ResourceTabs } from '../../entities/common/ResourceTabs';
 import ContentWrapper from './../../components/Layout/ContentWrapper'
 
 export default function Index() {
   const [step, setStep] = useState(1);
 
-  const handleStep = (step: ResourceStep) => {
+  const handleStep = (step: ResourceTabs) => {
     setStep(step);
   };
 
   return (
     <ContentWrapper>
       <div>
-        <ResourceStepNav
+        <ResourcesTabsNav
           handleStepChange={handleStep}
           activeStep={step}
-        ></ResourceStepNav>
+        ></ResourcesTabsNav>
 
-        <Overview activeStep={step}></Overview>
+        <Overview activeTab={step}></Overview>
       </div>
     </ContentWrapper>
   );

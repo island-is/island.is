@@ -1,8 +1,14 @@
+import { ApiResourceScopeDTO } from '../entities/dtos/api-resource-allowed-scope.dto';
+import { ApiResourceSecretDTO } from '../entities/dtos/api-resource-secret.dto';
 import { ApiResourcesDTO } from '../entities/dtos/api-resources-dto';
 import { ApiScopesDTO } from '../entities/dtos/api-scopes-dto';
 import IdentityResourcesDTO from '../entities/dtos/identity-resources.dto';
+import { ApiResourceScope } from '../entities/models/api-resource-scope.model';
+import { ApiResourceSecret } from '../entities/models/api-resource-secret.model';
+import { ApiResourceUserClaim } from '../entities/models/api-resource-user-claim.model';
 import { ApiResource } from '../entities/models/api-resource.model';
 import { ApiScope } from '../entities/models/api-scope.model';
+import { IdentityResourceUserClaim } from '../entities/models/identity-resource-user-claim.model';
 import { IdentityResource } from '../entities/models/identity-resource.model';
 import { BaseService } from './BaseService';
 
@@ -54,23 +60,46 @@ export class ResourcesService extends BaseService {
 
   /** Gets user claims for a resource */
   static async getResourceUserClaims(name: string): Promise<any | null> {
-    return BaseService.GET(`/api/user-claims/${name}`);
+    return BaseService.GET(`user-claims/${name}`);
   }
 
-  /** */
-  static async addResourceUserClaim(
+  /** Add User Claim to Identity Resource */
+  static async addIdentityResourceUserClaim(
     identityResourceName: string,
     claimName: string
-  ): Promise<IdentityResourceUserClaim> {
-    return BaseService.POST(`user-claims/${identityResourceName}/${claimName}`);
+  ): Promise<IdentityResourceUserClaim | null> {
+    return BaseService.POST(
+      `identity-resource-user-claims/${identityResourceName}/${claimName}`
+    );
   }
 
-  static async removeResourceUserClaim(
+  /** Removes User claim from Identity resource */
+  static async removeIdentityResourceUserClaim(
     identityResourceName: string,
     claimName: string
   ): Promise<number> {
     return BaseService.DELETE(
-      `user-claims/${identityResourceName}/${claimName}`
+      `identity-resource-user-claims/${identityResourceName}/${claimName}`
+    );
+  }
+
+  /** Adds user claim to Api Scope */
+  static async addApiScopeUserClaim(
+    apiScopeName: string,
+    claimName: string
+  ): Promise<IdentityResourceUserClaim | null> {
+    return BaseService.POST(
+      `api-scope-user-claims/${apiScopeName}/${claimName}`
+    );
+  }
+
+  /** Removes user claim from Api Scope */
+  static async removeApiScopeUserClaim(
+    apiScopeName: string,
+    claimName: string
+  ): Promise<number> {
+    return BaseService.DELETE(
+      `api-scope-user-claims/${apiScopeName}/${claimName}`
     );
   }
 
@@ -133,6 +162,62 @@ export class ResourcesService extends BaseService {
 
   /** Deletes an identity resource by name */
   static async deleteIdentityResource(name: string): Promise<number> {
-    return BaseService.DELETE(`/api/identity-resource/${name}`);
+    return BaseService.DELETE(`identity-resource/${name}`);
+  }
+
+  /** Adds claim to Api resource */
+  static async addApiResourceUserClaim(
+    apiResourceName: string,
+    claimName: string
+  ): Promise<ApiResourceUserClaim> {
+    return BaseService.POST(
+      `api-resource-claims/${apiResourceName}/${claimName}`
+    );
+  }
+
+  /** Removes user claim from Api Resource */
+  static async removeApiResourceUserClaim(
+    apiResourceName: string,
+    claimName: string
+  ): Promise<number | null> {
+    return BaseService.DELETE(
+      `api-resource-claims/${apiResourceName}/${claimName}`
+    );
+  }
+
+  /** Add secret to ApiResource */
+  static async addApiResourceSecret(
+    apiSecret: ApiResourceSecretDTO
+  ): Promise<ApiResourceSecret | null> {
+    return BaseService.POST('api-resource-secret', apiSecret);
+  }
+
+  /** Remove a secret from Api Resource */
+  static async removeApiResourceSecret(
+    apiSecret: ApiResourceSecretDTO
+  ): Promise<number | null> {
+    return BaseService.DELETE('api-resource-secret', apiSecret);
+  }
+
+  /** Adds an allowed scope to api resource */
+  static async addApiResourceAllowedScope(
+    resourceAllowedScope: ApiResourceScopeDTO
+  ): Promise<ApiResourceScope | null> {
+    return BaseService.POST(
+      'api-resources-allowed-scope',
+      resourceAllowedScope
+    );
+  }
+
+  /** Removes an allowed scope from api Resource */
+  static async removeApiResourceAllowedScope(
+    apiResourceName: string,
+    scopeName: string
+  ): Promise<number | null> {
+    return BaseService.DELETE(
+      `api-resources-allowed-scope/${apiResourceName}/${encodeURIComponent(
+        scopeName
+      )}`
+    );
   }
 }

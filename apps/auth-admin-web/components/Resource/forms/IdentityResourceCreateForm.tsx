@@ -1,33 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import HelpBox from '../../../Common/HelpBox';
+import HelpBox from '../../Common/HelpBox';
 import { ErrorMessage } from '@hookform/error-message';
-import { ApiScopesDTO } from './../../../../entities/dtos/api-scopes-dto';
-import { ResourcesService } from './../../../../services/ResourcesService';
+import { ResourcesService } from '../../../services/ResourcesService';
+import IdentityResourcesDTO from '../../../entities/dtos/identity-resources.dto';
 
 interface Props {
   handleSave?: (object: any) => void;
   handleCancel?: () => void;
-  apiScope: ApiScopesDTO;
+  identityResource: IdentityResourcesDTO;
 }
 
-const ResourceCreateForm: React.FC<Props> = (props) => {
-  const { register, handleSubmit, errors, formState } = useForm<ApiScopesDTO>();
+const IdentityResourceCreateForm: React.FC<Props> = (props) => {
+  const { register, handleSubmit, errors, formState } = useForm<IdentityResourcesDTO>();
   const { isSubmitting } = formState;
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [available, setAvailable] = useState<boolean>(false);
   const [nameLength, setNameLength] = useState(0);
 
   useEffect(() => {
-    if (props.apiScope && props.apiScope.name) {
+    if (props.identityResource && props.identityResource.name) {
       setIsEditing(true);
       setAvailable(true);
     }
-  }, [props.apiScope]);
+  }, [props.identityResource]);
 
   const checkAvailability = async (name: string) => {
     setNameLength(name.length);
-    const response = await ResourcesService.getApiScopeByName(name);
+    const response = await ResourcesService.getIdentityResourceByName(name);
     if (response) {
       setAvailable(false);
     } else {
@@ -39,9 +39,9 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
     let response = null;
 
     if (!isEditing) {
-      response = await ResourcesService.createApiScope(data);
+      response = await ResourcesService.createIdentityResource(data);
     } else {
-      response = await ResourcesService.updateApiScope(data);
+      response = await ResourcesService.updateIdentityResource(data, data.name);
     }
 
     if (response) {
@@ -75,7 +75,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     name="name"
                     type="text"
                     className="api-scope-form__input"
-                    defaultValue={props.apiScope.name}
+                    defaultValue={props.identityResource.name}
                     readOnly={isEditing}
                     onChange={(e) => checkAvailability(e.target.value)}
                   />
@@ -107,7 +107,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     name="displayName"
                     type="text"
                     className="api-scope-form__input"
-                    defaultValue={props.apiScope.displayName}
+                    defaultValue={props.identityResource.displayName}
                   />
                   <HelpBox helpText="The name that will be used to display the scope" />
                   <ErrorMessage
@@ -129,7 +129,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     id="description"
                     name="description"
                     type="text"
-                    defaultValue={props.apiScope.description}
+                    defaultValue={props.identityResource.description}
                     className="api-scope-form__input"
                   />
                   <HelpBox helpText="Describe this Api Scope" />
@@ -144,7 +144,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     id="enabled"
                     name="enabled"
                     type="checkbox"
-                    defaultChecked={props.apiScope.enabled}
+                    defaultChecked={props.identityResource.enabled}
                     className="api-scope-form__checkbox"
                   />
                   <HelpBox helpText="Specifies if the scope is enabled" />
@@ -162,7 +162,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     id="showInDiscoveryDocument"
                     name="showInDiscoveryDocument"
                     type="checkbox"
-                    defaultChecked={props.apiScope.showInDiscoveryDocument}
+                    defaultChecked={props.identityResource.showInDiscoveryDocument}
                     className="api-scope-form__checkbox"
                   />
                   <HelpBox helpText="Specifies whether this scope is shown in the discovery document." />
@@ -176,7 +176,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     ref={register}
                     id="emphasize"
                     name="emphasize"
-                    defaultChecked={props.apiScope.emphasize}
+                    defaultChecked={props.identityResource.emphasize}
                     type="checkbox"
                     className="api-scope-form__checkbox"
                   />
@@ -191,7 +191,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     ref={register}
                     id="required"
                     name="required"
-                    defaultChecked={props.apiScope.required}
+                    defaultChecked={props.identityResource.required}
                     type="checkbox"
                     className="api-scope-form__checkbox"
                   />
@@ -225,4 +225,4 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
   );
 };
 
-export default ResourceCreateForm;
+export default IdentityResourceCreateForm;

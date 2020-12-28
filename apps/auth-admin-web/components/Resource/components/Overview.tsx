@@ -1,32 +1,23 @@
 import React from 'react';
-import { ResourceStep } from './../../../entities/common/ResourceStep';
+import { ResourceTabs } from '../../../entities/common/ResourceTabs';
 import IdentityResourcesList from '../IdentityResourcesList';
 import ApiResourcesList from '../ApiResourcesList'
 import ApiScopeList from '../ApiScopeList'
-import StepEnd from '../../Common/StepEnd';
 
 interface Props {
-  activeStep: ResourceStep;
+  activeTab: ResourceTabs;
 }
 
-
-
-const Overview: React.FC<Props> = ({ activeStep, children }) => {
-
-  const finishedPushed = () => {
-    // TODO: What should happen now?
-  }
-
-  switch (activeStep) {
-    case ResourceStep.ApiScopes:
+const Overview: React.FC<Props> = ({ activeTab, children }) => {
+  switch (activeTab) {
+    case ResourceTabs.ApiScopes:
       return <ApiScopeList />;
-    case ResourceStep.ApiResourceScopes:
+    case ResourceTabs.ApiResourceScopes:
       return <ApiResourcesList />;
-    case ResourceStep.IdentityResource:
+    case ResourceTabs.IdentityResource:
       return <IdentityResourcesList />;
     default:
-     return <StepEnd buttonText="Go back" title="Steps completed" handleButtonFinishedClick={() => finishedPushed()}>The steps needed, to create a client, have been completed</StepEnd>
-      
+     return <div></div>
   }
 };
 

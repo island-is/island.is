@@ -1,5 +1,5 @@
 import React from 'react';
-import { ApiResourceStep } from './../../../entities/common/ApiResourceStep';
+import { ApiResourceStep } from '../../entities/common/ApiResourceStep';
 
 interface Props {
   handleStepChange: (step: ApiResourceStep) => void;
@@ -13,7 +13,7 @@ const ApiResourceStepNav: React.FC<Props> = ({
 }) => {
   return (
     <div>
-      <nav className="client-step-nav">
+      <nav className="api-resource-step-nav">
         <ul>
           <li>
             <a
@@ -69,7 +69,7 @@ const ApiResourceStepNav: React.FC<Props> = ({
           </li>
         </ul>
       </nav>
-      <div className="client-step-nav__container__content">{children}</div>
+      <div className="api-resource__container__content">{children}</div>
     </div>
   );
 };

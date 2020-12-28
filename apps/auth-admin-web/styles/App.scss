@@ -5,7 +5,8 @@
 
 @import './Header';
 @import './Nav';
-@import './ClientStepNav';
+@import './StepNav';
+@import './TabNav';
 @import './StatusBar';
 @import './Login';
 @import './FormLayout';
@@ -15,4 +16,4 @@
 @import './Users';
 @import './ClientSecretForm';
 @import './NoActiveConnections';
-@import './ConfirmModal.scss'
+@import './ConfirmModal.scss';

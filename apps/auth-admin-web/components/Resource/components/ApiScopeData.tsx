@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ResourceEditForm from './forms/ResourceEditForm';
+import ResourceEditForm from '../forms/ResourceEditForm';
 import { useRouter } from 'next/router';
 import { ResourcesService } from './../../../services/ResourcesService';
 import { ApiScope } from './../../../entities/models/api-scope.model';

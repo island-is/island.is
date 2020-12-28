@@ -1,10 +1,10 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import HelpBox from '../../../Common/HelpBox';
+import HelpBox from '../../Common/HelpBox';
 import { ErrorMessage } from '@hookform/error-message';
-import { ApiResourcesDTO } from './../../../../entities/dtos/api-resources-dto';
-import { ResourcesService } from './../../../../services/ResourcesService';
+import { ApiResourcesDTO } from '../../../entities/dtos/api-resources-dto';
+import { ResourcesService } from '../../../services/ResourcesService';
 
 interface Props {
   handleSave?: (object: any) => void;
