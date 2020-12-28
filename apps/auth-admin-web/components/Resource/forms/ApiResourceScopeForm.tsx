@@ -6,6 +6,7 @@ import NoActiveConnections from './../../Common/NoActiveConnections';
 import { ClientService } from './../../../services/ClientService';
 import { ApiResourceScopeDTO } from './../../../entities/dtos/api-resource-allowed-scope.dto';
 import { ResourcesService } from './../../../services/ResourcesService';
+import ConfirmModal from '../../Common/ConfirmModal';
 
 interface Props {
   apiResourceName: string;
@@ -22,13 +23,17 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
   const { isSubmitting } = formState;
   const [scopes, setScopes] = useState<any>([]);
   const [selectedScope, setSelectedScope] = useState<any>(null);
+  const [scopeForDelete, setScopeForDelete] = useState<string>('');
+  const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false);
 
   const add = async (data: any) => {
     const allowedScope = new ApiResourceScopeDTO();
     allowedScope.apiResourceName = props.apiResourceName;
     allowedScope.scopeName = data.scopeName;
 
-    const response = await ResourcesService.addApiResourceAllowedScope(allowedScope);
+    const response = await ResourcesService.addApiResourceAllowedScope(
+      allowedScope
+    );
     if (response) {
       if (props.handleChanges) {
         props.handleChanges();
@@ -50,20 +55,34 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
     setSelectedScope(selected);
   };
 
-  const remove = async (scope: string) => {
-    if (
-      window.confirm(`Are you sure you want to delete this scope: "${scope}"?`)
-    ) {
-      const response = await ResourcesService.removeApiResourceAllowedScope(
-        props.apiResourceName,
-        scope
-      );
-      if (response) {
-        if (props.handleChanges) {
-          props.handleChanges();
-        }
+  const remove = async () => {
+    const response = await ResourcesService.removeApiResourceAllowedScope(
+      props.apiResourceName,
+      scopeForDelete
+    );
+    if (response) {
+      if (props.handleChanges) {
+        props.handleChanges();
       }
     }
+    closeConfirmModal();
+  };
+
+  const closeConfirmModal = () => {
+    setConfirmModalIsOpen(false);
+  };
+
+  const confirmRemove = async (scope: string) => {
+    setScopeForDelete(scope);
+    setConfirmModalIsOpen(true);
+  };
+
+  const setHeaderElement = () => {
+    return (
+      <p>
+        Are you sure want to delete this scope: <span>{scopeForDelete}</span>
+      </p>
+    );
   };
 
   return (
@@ -73,7 +92,10 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
           <h1>Allowed scopes</h1>
           <div className="api-resource-scope-form__container__form">
             <div className="api-resource-scope-form__help">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Incidunt amet velit aspernatur beatae quas fuga quae dicta veritatis ipsam iure natus, accusantium ratione, sit asperiores accusamus doloremque. Autem, assumenda incidunt?
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Incidunt
+              amet velit aspernatur beatae quas fuga quae dicta veritatis ipsam
+              iure natus, accusantium ratione, sit asperiores accusamus
+              doloremque. Autem, assumenda incidunt?
             </div>
             <form onSubmit={handleSubmit(add)}>
               <div className="api-resource-scope-form__container__fields">
@@ -163,7 +185,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                       <div className="list-remove">
                         <button
                           type="button"
-                          onClick={() => remove(scope)}
+                          onClick={() => confirmRemove(scope)}
                           className="api-resource-scope-form__container__list__button__remove"
                           title="Remove"
                         >
@@ -199,6 +221,13 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
           </div>
         </div>
       </div>
+      <ConfirmModal
+        modalIsOpen={confirmModalIsOpen}
+        headerElement={setHeaderElement()}
+        closeModal={closeConfirmModal}
+        confirmation={remove}
+        confirmationText="Delete"
+      ></ConfirmModal>
     </div>
   );
 };
