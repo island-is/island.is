@@ -3,13 +3,10 @@ import { ResourceTabs } from '../../../entities/common/ResourceTabs';
 import IdentityResourcesList from '../IdentityResourcesList';
 import ApiResourcesList from '../ApiResourcesList'
 import ApiScopeList from '../ApiScopeList'
-import StepEnd from '../../Common/StepEnd';
 
 interface Props {
   activeTab: ResourceTabs;
 }
-
-
 
 const Overview: React.FC<Props> = ({ activeTab, children }) => {
   switch (activeTab) {
