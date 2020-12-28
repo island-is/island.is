@@ -6,7 +6,7 @@ import { ClientSecretDTO } from '../../entities/dtos/client-secret.dto';
 import { ClientSecret } from '../../entities/models/client-secret.model';
 import NoActiveConnections from '../Common/NoActiveConnections';
 import { ClientService } from './../../services/ClientService';
-import ConfirmModal from './../common/ConfirmModal';
+import ConfirmModal from './../Common/ConfirmModal';
 import InfoModal from '../Common/InfoModal';
 
 interface Props {

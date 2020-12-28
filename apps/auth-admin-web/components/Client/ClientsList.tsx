@@ -3,7 +3,7 @@ import ClientDTO from '../../entities/dtos/client-dto';
 import Paginator from './../Common/Paginator';
 import Link from 'next/link';
 import { ClientService } from './../../services/ClientService';
-import ConfirmModal from './../common/ConfirmModal';
+import ConfirmModal from './../Common/ConfirmModal';
 
 class ClientsList extends Component {
   state = {

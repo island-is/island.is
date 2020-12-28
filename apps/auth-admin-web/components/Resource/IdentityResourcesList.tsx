@@ -3,7 +3,7 @@ import IdentityResourcesDTO from '../../entities/dtos/identity-resources.dto';
 import { useRouter } from 'next/router';
 import ResourceListDisplay from './components/ListDisplay';
 import { ResourcesService } from './../../services/ResourcesService';
-import ConfirmModal from './../common/ConfirmModal';
+import ConfirmModal from './../Common/ConfirmModal';
 
 export default function IdentityResourcesList() {
   const [count, setCount] = useState(1);

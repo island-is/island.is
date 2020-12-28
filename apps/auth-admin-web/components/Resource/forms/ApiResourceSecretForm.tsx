@@ -6,7 +6,7 @@ import NoActiveConnections from './../../Common/NoActiveConnections';
 import { ApiResourceSecret } from './../../../entities/models/api-resource-secret.model';
 import { ApiResourceSecretDTO } from './../../../entities/dtos/api-resource-secret.dto';
 import { ResourcesService } from './../../../services/ResourcesService';
-import ConfirmModal from './../../common/ConfirmModal';
+import ConfirmModal from './../../Common/ConfirmModal';
 import InfoModal from './../../Common/InfoModal';
 
 interface Props {
