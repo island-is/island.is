@@ -83,7 +83,7 @@ const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
                       onChange={(e) =>
                         setValue(claim, e.target.checked)
                       }
-                      title={`Set claim ${claim} as active og inactive`}
+                      title={`Set claim ${claim} as active or inactive`}
                     />
                     <HelpBox helpText={claim} />
                   </div>
