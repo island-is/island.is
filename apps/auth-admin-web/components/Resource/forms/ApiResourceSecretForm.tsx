@@ -6,7 +6,8 @@ import NoActiveConnections from './../../Common/NoActiveConnections';
 import { ApiResourceSecret } from './../../../entities/models/api-resource-secret.model';
 import { ApiResourceSecretDTO } from './../../../entities/dtos/api-resource-secret.dto';
 import { ResourcesService } from './../../../services/ResourcesService';
-
+import ConfirmModal from './../../common/ConfirmModal';
+import InfoModal from './../../Common/InfoModal';
 
 interface Props {
   apiResourceName: string;
@@ -23,6 +24,12 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
   const { isSubmitting } = formState;
   const defaultSecretLength = 25;
   const [defaultSecret, setDefaultSecret] = useState<string>('');
+  const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false);
+  const [infoModalIsOpen, setInfoModalIsOpen] = useState(false);
+  const [secretValue, setSecretValue] = useState<string>('');
+  const [secretToRemove, setSecretToRemove] = useState<ApiResourceSecret>(
+    new ApiResourceSecret()
+  );
 
   const makeDefaultSecret = (length: number) => {
     let result = '';
@@ -65,36 +72,54 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
       if (props.handleChanges) {
         props.handleChanges();
       }
+
       copyToClipboard(data.value);
-      // TODO: We should use something else that alert
-      alert(
-        `Your secret has been copied to your clipboard.\r\nDon't lose it, you won't be able to see it again:\r\n${data.value}`
-      );
+      setSecretValue(data.value);
+      setInfoModalIsOpen(true);
 
       document.getElementById('secretForm').reset();
       setDefaultSecret(makeDefaultSecret(defaultSecretLength));
     }
   };
 
-  const remove = async (secret: ApiResourceSecret) => {
-    if (
-      window.confirm(
-        `Are you sure you want to delete this secret: "${secret.type} - ${secret.description}" ?`
-      )
-    ) {
-      const secretDTO = new ApiResourceSecretDTO();
-      secretDTO.apiResourceName = secret.apiResourceName;
-      secretDTO.value = secret.value;
-      secretDTO.type = secret.type;
-      secretDTO.description = secret.description;
+  const closeInfoModal = () => {
+    setInfoModalIsOpen(false);
+  };
 
-      const response = await ResourcesService.removeApiResourceSecret(secretDTO);
-      if (response) {
-        if (props.handleChanges) {
-          props.handleChanges();
-        }
+  const remove = async () => {
+    const secretDTO = new ApiResourceSecretDTO();
+    secretDTO.apiResourceName = secretToRemove.apiResourceName;
+    secretDTO.value = secretToRemove.value;
+    secretDTO.type = secretToRemove.type;
+    secretDTO.description = secretToRemove.description;
+
+    const response = await ResourcesService.removeApiResourceSecret(secretDTO);
+    if (response) {
+      if (props.handleChanges) {
+        props.handleChanges();
       }
     }
+
+    closeConfirmModal();
+  };
+
+  const closeConfirmModal = () => {
+    setConfirmModalIsOpen(false);
+  };
+
+  const confirmRemove = async (secret: ApiResourceSecret) => {
+    setSecretToRemove(secret);
+    setConfirmModalIsOpen(true);
+  };
+
+  const setHeaderElement = () => {
+    return (
+      <p>
+        Are you sure want to delete this secret:{' '}
+        <span>{secretToRemove.type}</span> -{' '}
+        <span>{secretToRemove.description}</span>
+      </p>
+    );
   };
 
   return (
@@ -104,12 +129,15 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
           <h1>Api Resource Secrets</h1>
           <div className="api-resource-secret-form__container__form">
             <div className="api-resource-secret-form__help">
-              List of Api resources secrets - credentials to access the token endpoint.
+              List of Api resources secrets - credentials to access the token
+              endpoint.
             </div>
             <form id="secretForm" onSubmit={handleSubmit(add)}>
               <div className="api-resource-secret-form__container__fields">
                 <div className="api-resource-secret-form__container__field">
-                  <label className="api-resource-secret-form__label">Api resource Secret</label>
+                  <label className="api-resource-secret-form__label">
+                    Api resource Secret
+                  </label>
                   <input
                     id="secretValue"
                     type="text"
@@ -135,7 +163,9 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                   />
                 </div>
                 <div className="api-resource-secret-form__container__field">
-                  <label className="api-resource-secret-form__label">Type</label>
+                  <label className="api-resource-secret-form__label">
+                    Type
+                  </label>
                   <input
                     type="text"
                     name="type"
@@ -155,7 +185,10 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                   />
                 </div>
                 <div className="api-resource-secret-form__container__field">
-                  <label className="api-resource-secret-form__label" htmlFor="description">
+                  <label
+                    className="api-resource-secret-form__label"
+                    htmlFor="description"
+                  >
                     Description
                   </label>
                   <input
@@ -190,7 +223,7 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                 }`}
               >
                 <h3>Active secrets</h3>
-                {props.secrets?.map((secret: ApiResourceSecret)=> {
+                {props.secrets?.map((secret: ApiResourceSecret) => {
                   return (
                     <div
                       className="api-resource-secret-form__container__list__item"
@@ -204,7 +237,7 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                       <div className="list-remove">
                         <button
                           type="button"
-                          onClick={() => remove(secret)}
+                          onClick={() => confirmRemove(secret)}
                           className="api-resource-secret-form__container__list__button__remove"
                           title="Remove"
                         >
@@ -240,6 +273,21 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
           </div>
         </div>
       </div>
+      <ConfirmModal
+        modalIsOpen={confirmModalIsOpen}
+        headerElement={setHeaderElement()}
+        closeModal={closeConfirmModal}
+        confirmation={remove}
+        confirmationText="Delete"
+      ></ConfirmModal>
+      <InfoModal
+        modalIsOpen={infoModalIsOpen}
+        headerText="Your secret has been copied to your clipboard. Don't lose it, you won't be able to see it again:"
+        closeModal={closeInfoModal}
+        handleButtonClicked={closeInfoModal}
+        infoText={secretValue}
+        buttonText="Ok"
+      ></InfoModal>
     </div>
   );
 };

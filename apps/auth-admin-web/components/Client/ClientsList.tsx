@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ClientDTO from '../../entities/dtos/client-dto';
-import Paginator from '../common/Paginator';
+import Paginator from './../Common/Paginator';
 import Link from 'next/link';
 import { ClientService } from './../../services/ClientService';
 import ConfirmModal from './../common/ConfirmModal';
@@ -55,6 +55,8 @@ class ClientsList extends Component {
       </p>
     );
   };
+
+  
 
   render() {
     return (
