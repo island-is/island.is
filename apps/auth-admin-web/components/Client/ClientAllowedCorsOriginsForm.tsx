@@ -5,7 +5,7 @@ import HelpBox from '../Common/HelpBox';
 import { ClientAllowedCorsOriginDTO } from '../../entities/dtos/client-allowed-cors-origin.dto';
 import NoActiveConnections from '../Common/NoActiveConnections';
 import { ClientService } from './../../services/ClientService';
-import ConfirmModal from './../common/ConfirmModal';
+import ConfirmModal from './../Common/ConfirmModal';
 
 interface Props {
   clientId: string;

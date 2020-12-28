@@ -1,18 +1,23 @@
 .confirm-modal {
-    z-index: 100;
+  z-index: 2;
 
-    p {
-        font-size: 0.95em;
+  p {
+    font-size: 0.95rem;
 
-        span {
-            font-weight: $weight-semi-bold;
-        }
+    span {
+      font-weight: $weight-semi-bold;
     }
+  }
 
-    .buttons {
-        width: 100%;
-        margin-top: 3em;
-        display: grid;
-        grid-template-columns: 7% 38% 10% 38% 7%;
+  &__container__buttons {
+    display: flex;
+
+    .confirm-modal__container__button:last-child {
+      text-align: right;
     }
+  }
+
+  &__container__button {
+    flex: 1;
+  }
 }

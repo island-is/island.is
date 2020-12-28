@@ -27,12 +27,15 @@ const ConfirmModal: React.FC<Props> = (props: Props) => {
       <div className="confirm-modal">
         {props.headerElement}
 
-        <div className="buttons">
-          <div></div>
-          <button onClick={props.closeModal}>Cancel</button>
-          <div></div>
-          <button onClick={props.confirmation}>{props.confirmationText}</button>
-          <div></div>
+        <div className="confirm-modal__container__buttons">
+          <div className="confirm-modal__container__button">
+            <button onClick={props.closeModal} className="confirm-modal__button__cancel">Cancel</button>
+          </div>
+          <div className="confirm-modal__container__button">
+            <button onClick={props.confirmation} className="confirm-modal__button__delete">
+              {props.confirmationText}
+            </button>
+          </div>
         </div>
       </div>
     </Modal>

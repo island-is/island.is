@@ -39,7 +39,6 @@ export default function Index() {
   const getResource = async (resourceId: string) => {
     const response = await ResourcesService.getApiResourceByName(resourceId);
     if (response) {
-      console.log(response);
       setApiResource(response);
     }
   };

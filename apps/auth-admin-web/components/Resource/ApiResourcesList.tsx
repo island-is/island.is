@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import ResourceListDisplay from './components/ListDisplay';
 import { ResourcesService } from './../../services/ResourcesService';
 import { ApiResource } from './../../entities/models/api-resource.model';
-import ConfirmModal from './../common/ConfirmModal';
+import ConfirmModal from './../Common/ConfirmModal';
 
 export default function ApiResourcesList() {
   const [count, setCount] = useState(1);
