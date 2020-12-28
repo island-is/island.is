@@ -135,6 +135,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                   className={`api-resource-scope-form__selected__item ${
                     selectedScope?.name ? 'show' : 'hidden'
                   }`}
+                  key={selectedScope?.name}
                 >
                   <div className="selected-item-property">
                     <div className="selected-item-property-name">

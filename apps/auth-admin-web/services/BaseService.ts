@@ -75,8 +75,17 @@ export class BaseService {
     const res = new APIResponse();
     res.statusCode = response.request.status;
     res.message = response.request.statusText;
-    ApiStatusStore.getInstance().setStatus(res);
+    if (BaseService.isError(res)) {
+      ApiStatusStore.getInstance().setStatus(res);
+    }
     return response.data;
+  }
+
+  private static isError(res: APIResponse) {
+    if (res.statusCode > 299) {
+      return true;
+    }
+    return false;
   }
 
   protected static handleError(error: any) {
@@ -87,9 +96,9 @@ export class BaseService {
       ApiStatusStore.getInstance().setStatus(res);
     } else {
       ApiStatusStore.getInstance().setStatus({
-        error: 'Custom',
+        error: 'Unknown error',
         message: ['Could not connect to API'],
-        statusCode: 525,
+        statusCode: 0,
       });
     }
     return null;
