@@ -3,6 +3,8 @@ import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { default as NextLink } from 'next/link'
+
 import {
   Text,
   Stack,
@@ -14,7 +16,9 @@ import {
   Filter,
   FilterInput,
   FilterMultiChoice,
+  Navigation,
 } from '@island.is/island-ui/core'
+
 import {
   ServiceList,
   SubpageDetailsContent,
@@ -61,12 +65,14 @@ interface ApiCatalogueProps {
   subpageHeader: GetSubpageHeaderQuery['getSubpageHeader']
   staticContent: GetNamespaceQuery['getNamespace']
   filterContent: GetNamespaceQuery['getNamespace']
+  navigationLinks: GetNamespaceQuery['getNamespace']
 }
 
 const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   subpageHeader,
   staticContent,
   filterContent,
+  navigationLinks,
 }) => {
   /* DISABLE FROM WEB WHILE WIP */
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
@@ -78,6 +84,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   const { activeLocale } = useI18n()
   const sn = useNamespace(staticContent)
   const fn = useNamespace(filterContent)
+  const nn = useNamespace(navigationLinks)
 
   const onLoadMore = () => {
     if (data?.getApiCatalogue.pageInfo?.nextCursor === null) {
@@ -199,31 +206,108 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
     },
   ]
 
+  const navigationItems = [
+    {
+      active: true,
+      href: nn('linkServices'),
+      title: nn('linkServicesText'),
+      items: [
+        {
+          active: true,
+          title: nn('linkServiceListText'),
+        },
+        {
+          href: nn('linkDesignGuide'),
+          title: nn('linkDesignGuideText'),
+        },
+      ],
+    },
+    {
+      href: nn('linkIslandUI'),
+      title: nn('linkIslandUIText'),
+    },
+    {
+      href: nn('linkDesignSystem'),
+      title: nn('linkDesignSystemText'),
+    },
+    {
+      href: nn('linkContentPolicy'),
+      title: nn('linkContentPolicyText'),
+    },
+  ]
+
   return (
     <SubpageLayout
       main={
-        <SidebarLayout sidebarContent={<>Navigation goes here</>}>
+        <SidebarLayout
+          sidebarContent={
+            <Navigation
+              baseId="service-list-navigation"
+              colorScheme="blue"
+              items={navigationItems}
+              title={nn('linkThrounText')}
+              titleLink={{
+                active: true,
+                href: nn('linkThroun'),
+              }}
+            />
+          }
+        >
           <SubpageMainContent
             main={
               <Box>
-                <Box marginBottom={2}>
+                <Box display={['inline', 'inline', 'none']}>
+                  {/* Show when a device */}
+                  <Box paddingBottom="gutter">
+                    <NextLink passHref href={nn('linkServices')}>
+                      <a href={nn('linkServices')}>
+                        <Button
+                          colorScheme="default"
+                          iconType="filled"
+                          preTextIcon="arrowBack"
+                          preTextIconType="filled"
+                          size="small"
+                          type="button"
+                          variant="text"
+                        >
+                          {nn('linkServicesText')}
+                        </Button>
+                      </a>
+                    </NextLink>
+                  </Box>
+                  <Box marginBottom="gutter">
+                    <Navigation
+                      baseId="service-list-navigation"
+                      colorScheme="blue"
+                      isMenuDialog
+                      items={navigationItems}
+                      title={nn('linkThrounText')}
+                      titleLink={{
+                        active: true,
+                        href: nn('linkThroun'),
+                      }}
+                    />
+                  </Box>
+                </Box>
+                <Box marginBottom={2} display={['none', 'none', 'inline']}>
+                  {/* Show when NOT a device */}
                   <Breadcrumbs
                     items={[
                       {
-                        title: 'Ísland.is',
-                        href: '/',
+                        title: nn('linkIslandIsText'),
+                        href: nn('linkIslandIs'),
                       },
 
                       {
-                        title: 'Þróun',
-                        href: '/throun',
+                        title: nn('linkThrounText'),
+                        href: nn('linkThroun'),
                       },
                       {
-                        title: 'Vefþjónustur',
-                        href: '/throun/vefthjonustur',
+                        title: nn('linkServicesText'),
+                        href: nn('linkServices'),
                       },
                       {
-                        title: subpageHeader.title,
+                        title: nn('linkServiceListText'),
                       },
                     ]}
                   />
@@ -361,6 +445,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
     },
     staticContent,
     filterContent,
+    navigationLinks,
   ] = await Promise.all([
     apolloClient.query<GetSubpageHeaderQuery, QueryGetSubpageHeaderArgs>({
       query: GET_SUBPAGE_HEADER_QUERY,
@@ -393,12 +478,24 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       })
       .then((res) => JSON.parse(res.data.getNamespace.fields)),
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'ApiCatalogueLinks',
+            lang: locale,
+          },
+        },
+      })
+      .then((res) => JSON.parse(res.data.getNamespace.fields)),
   ])
 
   return {
     subpageHeader,
     staticContent,
     filterContent,
+    navigationLinks,
   }
 }
 
