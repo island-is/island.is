@@ -13,8 +13,6 @@ on:
   workflow_dispatch:
   create:
   pull_request:
-    branches:
-      - 'feature/**'
     types:
       - labeled
 
