@@ -13,8 +13,6 @@ on:
   workflow_dispatch:
   create:
   pull_request:
-    branches:
-      - 'feature/**'
     types:
       - labeled
 
@@ -330,6 +328,12 @@ jobs:
           SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
+          if [[ "$GITHUB_EVENT_NAME" == "labeled" ]]; then
+            if [[ ! ("$GIT_BRANCH" =~ "feature") ]]; then
+              # If pr was labeled but branch is not prefixed with feature/
+              GIT_BRANCH=feature/$GIT_BRANCH
+            fi
+          fi
           curl -v $SPINNAKER_URL/webhooks/webhook/${{matrix.service}} -H "content-type: application/json" --data-binary @- <<BODY
           {
             "token": "$SPINNAKER_WEBHOOK_TOKEN",
