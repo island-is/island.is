@@ -31,11 +31,10 @@ class ClientsList extends Component {
   };
 
   archive = async () => {
-    this.closeModal();
+    await ClientService.delete(this.state.clientToRemove);
+    this.getClients(this.state.page, this.state.count);
 
-    alert(
-      'Add archived value to client table to be able to finish this function'
-    );
+    this.closeModal();
   };
 
   confirmArchive = async (clientId: string) => {
