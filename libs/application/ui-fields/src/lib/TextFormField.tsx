@@ -26,7 +26,7 @@ const TextFormField: FC<Props> = ({
   const {
     id,
     disabled,
-    name,
+    title,
     description,
     placeholder,
     format,
@@ -55,7 +55,7 @@ const TextFormField: FC<Props> = ({
           )}
           label={
             showFieldName
-              ? formatText(name, application, formatMessage)
+              ? formatText(title, application, formatMessage)
               : undefined
           }
           autoFocus={autoFocus}

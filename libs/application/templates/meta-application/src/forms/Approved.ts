@@ -1,7 +1,7 @@
 import {
   ApplicationTypes,
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -9,13 +9,13 @@ import { m } from './messages'
 
 export const Approved: Form = buildForm({
   id: ApplicationTypes.META_APPLICATION,
-  name: m.approved,
+  title: m.approved,
   mode: FormModes.APPROVED,
   children: [
-    buildIntroductionField({
+    buildDescriptionField({
       id: 'approved',
-      name: m.approvedName,
-      introduction: m.approvedIntroduction,
+      title: m.approvedName,
+      description: m.approvedIntroduction,
     }),
   ],
 })

@@ -10,12 +10,12 @@ import { m } from './messages'
 
 export const PendingReview: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
-  name: m.pendingReviewthankYouScreenTitle,
+  title: m.pendingReviewthankYouScreenTitle,
   mode: FormModes.PENDING,
   children: [
     buildCustomField({
       id: 'pendingReviewThankYouScreen',
-      name: m.pendingReviewthankYouScreenTitle,
+      title: m.pendingReviewthankYouScreenTitle,
       component: 'ThankYouScreen',
     }),
   ],

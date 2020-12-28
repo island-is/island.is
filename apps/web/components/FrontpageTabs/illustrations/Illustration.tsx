@@ -8,6 +8,7 @@ type IllustrationProps = {
 }
 
 const illustrations = [
+  dynamic(() => import('./ChristmasTreeIllustration')),
   dynamic(() => import('./ManWithPhoneIllustration')),
   dynamic(() => import('./WomanWithLaptopIllustration')),
   dynamic(() => import('./WomanFeedingBabyIllustration')),

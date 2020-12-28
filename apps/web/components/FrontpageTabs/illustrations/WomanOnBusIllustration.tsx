@@ -2,7 +2,7 @@ import React from 'react'
 
 function WomanOnBusIllstration() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 546 563">
+    <>
       <defs>
         <linearGradient
           id="illustration_woman-bus_linear-gradient"
@@ -112,7 +112,7 @@ function WomanOnBusIllstration() {
         strokeLinejoin="round"
         strokeWidth={3}
       />
-    </svg>
+    </>
   )
 }
 
