@@ -38,7 +38,6 @@ jobs:
           echo "::set-output name=GIT_BRANCH::${GIT_BRANCH}"
           echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
       - name: Check if we want to run workflow
-        continue-on-error: true
         id: branch-name-check
         run: |
           echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
@@ -55,12 +54,12 @@ jobs:
                 fi
             done
             echo "No pattern matches '$GIT_BRANCH', exiting."
-            exit 0
+            exit 1
           fi
           if [[ "$GITHUB_EVENT_NAME" == "labeled" ]]; then
             if [[ "${{ github.event.label.name }}" != "deploy-feature" ]]; then
               echo "In a feature branch that's not labeled with 'deploy-feature'. Not deploying."
-              exit 0
+              exit 1
             fi
           fi
           echo "::set-output name=PRE_CHECK_OK::true"
@@ -361,8 +360,9 @@ jobs:
 
   failure-notification:
     runs-on: ubuntu-20.04
-    if: failure()
+    if: failure() && needs.pre-checks.outputs.PRE_CHECK_OK
     needs:
+      - pre-checks
       - prepare
       - docker-build
       - retag-unaffected
