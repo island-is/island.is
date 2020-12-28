@@ -8,6 +8,8 @@ export class BaseService {
     ApiStatusStore.getInstance().clearStatus();
     const session = await getSession();
 
+    if (!session) return BaseService.handleNoSession();
+
     try {
       const response = await api.get(path, BaseService.getConfig(session));
       return BaseService.handleResponse(response);
@@ -19,6 +21,8 @@ export class BaseService {
   protected static async DELETE(path: string, body: any = null) {
     ApiStatusStore.getInstance().clearStatus();
     const session = await getSession();
+
+    if (!session) return BaseService.handleNoSession();
 
     if (!body) {
       try {
@@ -43,6 +47,8 @@ export class BaseService {
   protected static async POST(path: string, body: any = null) {
     ApiStatusStore.getInstance().clearStatus();
     const session = await getSession();
+
+    if (!session) return BaseService.handleNoSession();
 
     if (!body) {
       try {
@@ -73,6 +79,8 @@ export class BaseService {
     ApiStatusStore.getInstance().clearStatus();
     const session = await getSession();
 
+    if (!session) return BaseService.handleNoSession();
+
     try {
       const response = await api.put(
         path,
@@ -88,6 +96,8 @@ export class BaseService {
   protected static async PATCH(path: string, body: any) {
     ApiStatusStore.getInstance().clearStatus();
     const session = await getSession();
+
+    if (!session) return BaseService.handleNoSession();
 
     try {
       const response = await api.patch(
@@ -128,10 +138,18 @@ export class BaseService {
       ApiStatusStore.getInstance().setStatus({
         error: 'Unknown error',
         message: ['Could not connect to API'],
-        statusCode: 0,
+        statusCode: 1000, // TODO: What should the status code be? (at least nonzero)
       });
     }
     return null;
+  }
+
+  private static handleNoSession() {
+    ApiStatusStore.getInstance().setStatus({
+      error: 'Unauthorized',
+      message: ['Not authenticated.'],
+      statusCode: 401,
+    });
   }
 
   private static getConfig(session: any) {
