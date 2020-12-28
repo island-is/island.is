@@ -5,6 +5,7 @@ import HelpBox from '../Common/HelpBox';
 import { ClientAllowedScopeDTO } from '../../entities/dtos/client-allowed-scope.dto';
 import NoActiveConnections from '../Common/NoActiveConnections';
 import { ClientService } from './../../services/ClientService';
+import ConfirmModal from '../Common/ConfirmModal';
 
 interface Props {
   clientId: string;
@@ -21,6 +22,8 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
   const { isSubmitting } = formState;
   const [scopes, setScopes] = useState<any>([]);
   const [selectedScope, setSelectedScope] = useState<any>(null);
+  const [scopeForDelete, setScopeForDelete] = useState<string>('');
+  const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false);
 
   const add = async (data: any) => {
     const allowedScope = new ClientAllowedScopeDTO();
@@ -49,20 +52,35 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
     setSelectedScope(selected);
   };
 
-  const remove = async (scope: string) => {
-    if (
-      window.confirm(`Are you sure you want to delete this scope: "${scope}"?`)
-    ) {
-      const response = await ClientService.removeAllowedScope(
-        props.clientId,
-        scope
-      );
-      if (response) {
-        if (props.handleChanges) {
-          props.handleChanges();
-        }
+  const remove = async () => {
+    const response = await ClientService.removeAllowedScope(
+      props.clientId,
+      scopeForDelete
+    );
+    if (response) {
+      if (props.handleChanges) {
+        props.handleChanges();
       }
     }
+
+    closeConfirmModal();
+  };
+
+  const closeConfirmModal = () => {
+    setConfirmModalIsOpen(false);
+  };
+
+  const confirmRemove = async (scope: string) => {
+    setScopeForDelete(scope);
+    setConfirmModalIsOpen(true);
+  };
+
+  const setHeaderElement = () => {
+    return (
+      <p>
+        Are you sure want to delete this scope: <span>{scopeForDelete}</span>
+      </p>
+    );
   };
 
   return (
@@ -163,7 +181,7 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                       <div className="list-remove">
                         <button
                           type="button"
-                          onClick={() => remove(scope)}
+                          onClick={() => confirmRemove(scope)}
                           className="client-allowed-scopes__container__list__button__remove"
                           title="Remove"
                         >
@@ -199,6 +217,13 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
           </div>
         </div>
       </div>
+      <ConfirmModal
+        modalIsOpen={confirmModalIsOpen}
+        headerElement={setHeaderElement()}
+        closeModal={closeConfirmModal}
+        confirmation={remove}
+        confirmationText="Delete"
+      ></ConfirmModal>
     </div>
   );
 };
