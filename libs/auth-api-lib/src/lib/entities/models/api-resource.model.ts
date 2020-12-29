@@ -28,6 +28,15 @@ export class ApiResource extends Model<ApiResource> {
   name!: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty({
+    example: '1234567890',
+  })
+  nationalId!: string
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: true,
