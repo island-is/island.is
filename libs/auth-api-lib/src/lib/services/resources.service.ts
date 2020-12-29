@@ -79,8 +79,8 @@ export class ResourcesService {
       include: [ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret],
       distinct: true,
       where: {
-        archived: null
-      }
+        archived: null,
+      },
     })
   }
 
