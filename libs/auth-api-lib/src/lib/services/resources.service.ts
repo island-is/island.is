@@ -78,6 +78,9 @@ export class ResourcesService {
       offset: offset,
       include: [ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret],
       distinct: true,
+      where: {
+        archived: null
+      }
     })
   }
 
@@ -322,15 +325,20 @@ export class ResourcesService {
     return await this.apiScopeModel.destroy({ where: { name: name } })
   }
 
-  /** Deletes an API resource */
-  async deleteApiResource(name: string): Promise<number> {
-    this.logger.debug('Deleting api resource with name: ', name)
+  /** Archives an API resource */
+  async archiveApiResource(name: string): Promise<number> {
+    this.logger.debug('Archiving api resource with name: ', name)
 
     if (!name) {
       throw new BadRequestException('Name must be provided')
     }
 
-    return await this.apiResourceModel.destroy({ where: { name: name } })
+    const result = await this.apiResourceModel.update(
+      { archived: new Date() },
+      { where: { name: name } },
+    )
+
+    return result[0]
   }
 
   async getResourceUserClaims(name: string): Promise<any> {

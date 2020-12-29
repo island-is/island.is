@@ -66,6 +66,11 @@ export class ClientsService {
         ClientPostLogoutRedirectUri,
         ClientGrantType,
         ClientClaim,
+        {
+          where: {
+            archived: null,
+          },
+        },
       ],
     })
   }
@@ -81,6 +86,9 @@ export class ClientsService {
       limit: count,
       offset: offset,
       distinct: true,
+      where: {
+        archived: null,
+      },
     })
   }
 
@@ -177,43 +185,22 @@ export class ClientsService {
     return await this.findClientById(id)
   }
 
-  /** Deletes a client by id */
-  async delete(id: string): Promise<number> {
-    this.logger.debug('Deleting client with id: ', id)
+  /** Archives a client by id */
+  async archive(id: string): Promise<number> {
+    this.logger.debug('Archiving client with id: ', id)
 
     if (!id) {
       throw new BadRequestException('id must be provided')
     }
 
-    // Delete associations
-    await this.clientAllowedCorsOrigin.destroy({
-      where: { clientId: id },
-    })
+    const result = await this.clientModel.update(
+      { archived: new Date() },
+      {
+        where: { clientId: id },
+      },
+    )
 
-    await this.clientIdpRestriction.destroy({
-      where: { clientId: id },
-    })
-
-    await this.clientRedirectUri.destroy({
-      where: { clientId: id },
-    })
-
-    await this.clientSecret.destroy({
-      where: { clientId: id },
-    })
-
-    await this.clientPostLogoutUri.destroy({
-      where: { clientId: id },
-    })
-
-    await this.clientGrantType.destroy({
-      where: { clientId: id },
-    })
-
-    // Delete Client
-    return await this.clientModel.destroy({
-      where: { clientId: id },
-    })
+    return result[0]
   }
 
   /** Finds allowed cors origins by origin */

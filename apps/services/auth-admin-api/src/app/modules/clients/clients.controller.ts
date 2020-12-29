@@ -82,14 +82,14 @@ export class ClientsController {
     return await this.clientsService.update(client, id)
   }
 
-  /** Deletes a client by Id */
-  @Delete(':id')
+  /** Archive a client by Id */
+  @Put('archive/:id')
   @ApiCreatedResponse()
-  async delete(@Param('id') id: string): Promise<number> {
+  async archive(@Param('id') id: string): Promise<number> {
     if (!id) {
       throw new BadRequestException('Id must be provided')
     }
 
-    return await this.clientsService.delete(id)
+    return await this.clientsService.archive(id)
   }
 }

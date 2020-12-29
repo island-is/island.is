@@ -57,6 +57,16 @@ export class ApiResource extends Model<ApiResource> {
   @ApiProperty()
   showInDiscoveryDocument!: boolean
 
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: null,
+  })
+  @ApiProperty({
+    example: null,
+  })
+  archived!: Date
+
   @HasMany(() => ApiResourceUserClaim)
   @ApiProperty()
   public userClaims?: ApiResourceUserClaim[]

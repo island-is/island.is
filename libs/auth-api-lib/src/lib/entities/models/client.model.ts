@@ -415,6 +415,16 @@ export class Client extends Model<Client> {
   })
   requireClientSecret!: boolean
 
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: null,
+  })
+  @ApiProperty({
+    example: null,
+  })
+  archived!: Date
+
   @CreatedAt
   @ApiProperty()
   readonly created!: Date

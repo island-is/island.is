@@ -45,7 +45,7 @@ export class ResourcesController {
   @Get('identity-resources')
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
-  // TODO: Figure this out: @ApiOkResponse({  type: { rows: IdentityResource[]; count: number }, isArray: true })
+  @ApiOkResponse({ type: IdentityResource, isArray: true })
   async findAndCountAllIdentityResources(
     @Query('page') page: number,
     @Query('count') count: number,
@@ -61,7 +61,7 @@ export class ResourcesController {
   @Get('api-scopes')
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
-  // TODO: Figure this out: @ApiOkResponse({  type: { rows: ApiScope[]; count: number }, isArray: true })
+  @ApiOkResponse({ type: ApiScope, isArray: true })
   async findAndCountAllApiScopes(
     @Query('page') page: number,
     @Query('count') count: number,
@@ -77,7 +77,7 @@ export class ResourcesController {
   @Get('api-resources')
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
-  // TODO: Figure this out: @ApiOkResponse({  type: { rows: ApiResource[]; count: number }, isArray: true })
+  @ApiOkResponse({ type: ApiResource, isArray: true })
   async findAndCountAllApiResources(
     @Query('page') page: number,
     @Query('count') count: number,
@@ -242,15 +242,15 @@ export class ResourcesController {
     return await this.resourcesService.deleteApiScope(name)
   }
 
-  /** Deletes an existing Api resource by it's name */
-  @Delete('api-resource/:name')
+  /** Archives an Api resource by it's name */
+  @Put('api-resource/archive/:name')
   @ApiOkResponse()
-  async deleteApiResource(@Param('name') name: string): Promise<number> {
+  async archiveApiResource(@Param('name') name: string): Promise<number> {
     if (!name) {
       throw new BadRequestException('Name must be provided')
     }
 
-    return await this.resourcesService.deleteApiResource(name)
+    return await this.resourcesService.archiveApiResource(name)
   }
 
   @Get('user-claims/:name')
