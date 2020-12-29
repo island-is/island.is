@@ -1,5 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-import { style } from 'treat'
+import { style, styleMap } from 'treat'
 import { hexToRgba } from '@island.is/island-ui/utils'
 
 export const backdrop = style({
@@ -10,7 +10,6 @@ export const backdrop = style({
   height: '100%',
   overflowX: 'hidden',
   overflowY: 'auto',
-  backgroundColor: hexToRgba(theme.color.blue100, 0.7),
   transition: `opacity 250ms ease-in-out`,
   opacity: 0,
   zIndex: 10000,
@@ -18,6 +17,15 @@ export const backdrop = style({
     '&[data-enter]': {
       opacity: 1,
     },
+  },
+})
+
+export const backdropColor = styleMap({
+  default: {
+    backgroundColor: hexToRgba(theme.color.blue100, 0.7),
+  },
+  white: {
+    backgroundColor: theme.color.white,
   },
 })
 
