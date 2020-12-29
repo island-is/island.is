@@ -8,14 +8,12 @@ module.exports = {
         allowNull: true,
       }),
       queryInterface.addColumn('api_resource', 'archived', {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
+        type: Sequelize.DATE,
+        allowNull: true,
       }),
       queryInterface.addColumn('client', 'archived', {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
+        type: Sequelize.DATE,
+        allowNull: true,
       }),
     ])
   },
