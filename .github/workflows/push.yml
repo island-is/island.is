@@ -334,6 +334,7 @@ jobs:
               GIT_BRANCH=feature/$GIT_BRANCH
             fi
           fi
+          echo "Sending webhook with branch: '$GIT_BRANCH'"
           curl -v $SPINNAKER_URL/webhooks/webhook/${{matrix.service}} -H "content-type: application/json" --data-binary @- <<BODY
           {
             "token": "$SPINNAKER_WEBHOOK_TOKEN",
