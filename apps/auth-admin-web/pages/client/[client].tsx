@@ -31,7 +31,8 @@ const Index = () => {
   useEffect(() => {
     async function loadClient() {
       if (clientId) {
-        await getClient(clientId as string);
+        const decoded = decodeURIComponent(clientId as string);
+        await getClient(decoded);
       }
       if (stepQuery) {
         setStep(+stepQuery);

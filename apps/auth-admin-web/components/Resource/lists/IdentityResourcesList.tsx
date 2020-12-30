@@ -20,7 +20,7 @@ export default function IdentityResourcesList() {
   }, [page, count]);
 
   const edit = (resource: IdentityResourcesDTO) => {
-    router.push('/resource/edit/identity-resource/' + resource.name);
+    router.push(`/resource/identity-resource/${encodeURIComponent(resource.name)}`);
   };
 
   const getResources = async (page: number, count: number) => {

@@ -8,16 +8,22 @@
       border: solid 1px $color-border;
       border-radius: 5px;
 
+      &.active {
+        background: $color-bg-content;
+      }
+
       a {
         font-size: 0.8rem;
         cursor: pointer;
-        padding: 5px;
+        padding: 0px;
         &:hover {
           color: $color-link;
         }
 
         &.active {
           color: $color-link;
+          text-decoration: none;
+          border-bottom: none;
           font-weight: $weight-semi-bold;
         }
       }
