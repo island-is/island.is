@@ -22,7 +22,6 @@ import {
   ApiOkResponse,
   ApiQuery,
   ApiTags,
-  getSchemaPath,
 } from '@nestjs/swagger'
 
 @ApiOAuth2(['@identityserver.api/read'])
@@ -37,24 +36,6 @@ export class ClientsController {
   @Get()
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
-  @ApiOkResponse({
-    schema: {
-      allOf: [
-        {
-          properties: {
-            count: {
-              type: 'number',
-              example: 1,
-            },
-            rows: {
-              type: 'array',
-              items: { $ref: getSchemaPath(Client) },
-            },
-          },
-        },
-      ],
-    },
-  })
   async findAndCountAll(
     @Query('page') page: number,
     @Query('count') count: number,
@@ -101,7 +82,7 @@ export class ClientsController {
     return await this.clientsService.update(client, id)
   }
 
-  /** Soft deleting a client by Id */
+  /** Deletes a client by Id */
   @Delete(':id')
   @ApiCreatedResponse()
   async delete(@Param('id') id: string): Promise<number> {
