@@ -66,11 +66,6 @@ export class ClientsService {
         ClientPostLogoutRedirectUri,
         ClientGrantType,
         ClientClaim,
-        {
-          where: {
-            archived: null,
-          },
-        },
       ],
     })
   }

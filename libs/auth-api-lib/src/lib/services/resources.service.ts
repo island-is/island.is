@@ -78,9 +78,6 @@ export class ResourcesService {
       offset: offset,
       include: [ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret],
       distinct: true,
-      where: {
-        archived: null,
-      },
     })
   }
 
