@@ -39,6 +39,8 @@ export * from './lib/entities/dto/client-allowed-scope.dto'
 export * from './lib/entities/dto/client-post-logout-redirect-uri.dto'
 export * from './lib/entities/dto/client-secret.dto'
 export * from './lib/entities/dto/api-resources.dto'
+export * from './lib/entities/dto/api-resource-secret.dto'
+export * from './lib/entities/dto/api-resource-allowed-scope.dto'
 
 // Services
 export * from './lib/services/clients.service'
