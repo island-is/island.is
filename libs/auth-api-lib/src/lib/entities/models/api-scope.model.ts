@@ -85,6 +85,16 @@ export class ApiScope extends Model<ApiScope> {
   })
   emphasize!: boolean
 
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: null,
+  })
+  @ApiProperty({
+    example: null,
+  })
+  archived!: Date
+
   @CreatedAt
   @ApiProperty()
   readonly created!: Date
