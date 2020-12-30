@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth';
 import Providers from 'next-auth/providers';
+import jwt from 'next-auth/jwt';
 
 const providers = [
   Providers.IdentityServer4({
@@ -38,8 +39,20 @@ callbacks.jwt = async function jwt(token, user) {
 
 callbacks.session = async function session(session, token) {
   session.accessToken = token.accessToken;
+  const decoded = parseJwt(session.accessToken);
+  session.expires = new Date(decoded.exp * 1000);
   return session;
 };
+
+function parseJwt(token) {
+  let base64Url = token.split('.')[1];
+  let base64 = base64Url.replace('-', '+').replace('_', '/');
+  let decodedData = JSON.parse(
+    Buffer.from(base64, 'base64').toString('binary')
+  );
+
+  return decodedData;
+}
 
 const options = { providers, callbacks };
 
