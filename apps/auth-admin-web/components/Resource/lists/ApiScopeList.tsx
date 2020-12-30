@@ -22,7 +22,7 @@ export default function ApiScopeList() {
   }, [page, count]);
 
   const edit = (apiScope: ApiScopesDTO) => {
-    router.push('resource/edit/api-scope/' + apiScope.name);
+    router.push(`resource/edit/api-scope/${encodeURIComponent(apiScope.name)}`);
   };
 
   const getResources = async (page: number, count: number) => {

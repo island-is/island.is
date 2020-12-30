@@ -20,7 +20,7 @@ export class ResourcesService extends BaseService {
 
   /** Gets API scope by name */
   static async getApiScopeByName(name: string): Promise<ApiScope | null> {
-    return BaseService.GET(`api-scope/${name}`);
+    return BaseService.GET(`api-scope/${encodeURIComponent(name)}`);
   }
 
   /** Updates an existing Api Scope */
@@ -89,7 +89,7 @@ export class ResourcesService extends BaseService {
     claimName: string
   ): Promise<IdentityResourceUserClaim | null> {
     return BaseService.POST(
-      `api-scope-user-claims/${apiScopeName}/${claimName}`
+      `api-scope-user-claims/${encodeURIComponent(apiScopeName)}/${claimName}`
     );
   }
 
@@ -99,7 +99,7 @@ export class ResourcesService extends BaseService {
     claimName: string
   ): Promise<number> {
     return BaseService.DELETE(
-      `api-scope-user-claims/${apiScopeName}/${claimName}`
+      `api-scope-user-claims/${encodeURIComponent(apiScopeName)}/${claimName}`
     );
   }
 
