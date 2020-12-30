@@ -81,9 +81,6 @@ export class ClientsService {
       limit: count,
       offset: offset,
       distinct: true,
-      where: {
-        archived: null,
-      },
     })
   }
 
