@@ -1,5 +1,5 @@
 import React from 'react';
-import { ApiScopeStep } from '../../entities/common/ApiScopeStep';
+import { ApiScopeStep } from '../../../entities/common/ApiScopeStep';
 
 interface Props {
   handleStepChange: (step: ApiScopeStep) => void;

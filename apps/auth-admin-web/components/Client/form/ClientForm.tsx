@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import ClientDTO from '../../entities/dtos/client-dto';
+import ClientDTO from '../../../entities/dtos/client-dto';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import HelpBox from '../Common/HelpBox';
-import api from '../../services/api'
-import { ClientService } from './../../services/ClientService';
+import HelpBox from '../../Common/HelpBox';
+import api from '../../../services/api'
+import { ClientService } from '../../../services/ClientService';
 interface Props {
   client: ClientDTO;
   onNextButtonClick?: (client: ClientDTO) => void;

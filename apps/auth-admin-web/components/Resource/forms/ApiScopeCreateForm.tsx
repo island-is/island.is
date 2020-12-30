@@ -11,7 +11,7 @@ interface Props {
   apiScope: ApiScopesDTO;
 }
 
-const ResourceCreateForm: React.FC<Props> = (props) => {
+const ApiScopeCreateForm: React.FC<Props> = (props) => {
   const { register, handleSubmit, errors, formState } = useForm<ApiScopesDTO>();
   const { isSubmitting } = formState;
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -225,4 +225,4 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
   );
 };
 
-export default ResourceCreateForm;
+export default ApiScopeCreateForm;

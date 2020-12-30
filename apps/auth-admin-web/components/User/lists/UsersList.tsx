@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { UserIdentityDTO } from '../../entities/dtos/user-identity.dto';
+import { UserIdentityDTO } from '../../../entities/dtos/user-identity.dto';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import HelpBox from '../Common/HelpBox';
-import { ClaimDTO } from '../../entities/dtos/claim.dto';
-import NotFound from '../Common/NotFound';
-import { UserService } from './../../services/UserService';
+import HelpBox from '../../Common/HelpBox';
+import { ClaimDTO } from '../../../entities/dtos/claim.dto';
+import NotFound from '../../Common/NotFound';
+import { UserService } from '../../../services/UserService';
 
 interface ClaimShow {
   subjectId: string;

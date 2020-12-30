@@ -1,7 +1,7 @@
 import React from 'react';
-import HelpBox from '../Common/HelpBox';
-import NoActiveConnections from '../Common/NoActiveConnections';
-import { ClientService } from './../../services/ClientService';
+import HelpBox from '../../Common/HelpBox';
+import NoActiveConnections from '../../Common/NoActiveConnections';
+import { ClientService } from '../../../services/ClientService';
 
 interface Props {
   clientId: string;

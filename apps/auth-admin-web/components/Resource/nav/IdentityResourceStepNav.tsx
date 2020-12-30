@@ -1,5 +1,5 @@
 import React from 'react';
-import { IdentityResourceStep } from '../../entities/common/IdentityResourcesStep';
+import { IdentityResourceStep } from '../../../entities/common/IdentityResourcesStep';
 
 interface Props {
   handleStepChange: (step: IdentityResourceStep) => void;

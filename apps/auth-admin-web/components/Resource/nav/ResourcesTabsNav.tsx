@@ -1,5 +1,5 @@
 import React from 'react';
-import { ResourceTabs } from '../../entities/common/ResourceTabs';
+import { ResourceTabs } from '../../../entities/common/ResourceTabs';
 
 interface Props {
     handleStepChange: (step: ResourceTabs) => void;

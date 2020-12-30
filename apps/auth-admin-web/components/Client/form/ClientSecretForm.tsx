@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import HelpBox from '../Common/HelpBox';
-import { ClientSecretDTO } from '../../entities/dtos/client-secret.dto';
-import { ClientSecret } from '../../entities/models/client-secret.model';
-import NoActiveConnections from '../Common/NoActiveConnections';
-import { ClientService } from './../../services/ClientService';
-import ConfirmModal from './../Common/ConfirmModal';
-import InfoModal from '../Common/InfoModal';
+import HelpBox from '../../Common/HelpBox';
+import { ClientSecretDTO } from '../../../entities/dtos/client-secret.dto';
+import { ClientSecret } from '../../../entities/models/client-secret.model';
+import NoActiveConnections from '../../Common/NoActiveConnections';
+import { ClientService } from '../../../services/ClientService';
+import ConfirmModal from '../../Common/ConfirmModal';
+import InfoModal from '../../Common/InfoModal';
 
 interface Props {
   clientId: string;

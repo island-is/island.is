@@ -1,12 +1,12 @@
 import { ErrorMessage } from '@hookform/error-message';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { ClientClaim } from '../../entities/models/client-claim.model';
-import { ClientClaimDTO } from '../../entities/dtos/client-claim.dto';
-import HelpBox from '../Common/HelpBox';
-import NoActiveConnections from '../Common/NoActiveConnections';
-import { ClientService } from './../../services/ClientService';
-import ConfirmModal from './../Common/ConfirmModal';
+import { ClientClaim } from '../../../entities/models/client-claim.model';
+import { ClientClaimDTO } from '../../../entities/dtos/client-claim.dto';
+import HelpBox from '../../Common/HelpBox';
+import NoActiveConnections from '../../Common/NoActiveConnections';
+import { ClientService } from '../../../services/ClientService';
+import ConfirmModal from '../../Common/ConfirmModal';
 
 interface Props {
   clientId: string;
