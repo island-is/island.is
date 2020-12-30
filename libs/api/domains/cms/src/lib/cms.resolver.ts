@@ -115,6 +115,7 @@ export class CmsResolver {
     return this.cmsContentfulService.getLandingPage(input)
   }
 
+  // TODO: Change this so this won't link to non existing entries e.g. articles
   @Directive(cacheControlDirective())
   @Query(() => ContentSlug, { nullable: true })
   getContentSlug(
