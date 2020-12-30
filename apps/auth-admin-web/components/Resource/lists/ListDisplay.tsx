@@ -1,5 +1,5 @@
 import React from 'react';
-import Paginator from './../../Common/Paginator';
+import Paginator from '../../Common/Paginator';
 import Link from 'next/link';
 
 interface Props {

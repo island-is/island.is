@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClientStep } from '../../entities/common/ClientStep';
+import { ClientStep } from '../../../entities/common/ClientStep';
 
 interface Props {
     handleStepChange: (step: ClientStep) => void;

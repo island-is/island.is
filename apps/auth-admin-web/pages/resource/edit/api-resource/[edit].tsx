@@ -5,7 +5,7 @@ import { ApiResource } from './../../../../entities/models/api-resource.model';
 import { ResourcesService } from './../../../../services/ResourcesService';
 import ApiResourceCreateForm from '../../../../components/Resource/forms/ApiResourceCreateForm';
 import { ApiResourcesDTO } from './../../../../entities/dtos/api-resources-dto';
-import ApiResourceStepNav from './../../../../components/Resource/ApiResourceStepNav';
+import ApiResourceStepNav from '../../../../components/Resource/nav/ApiResourceStepNav';
 import { ApiResourceStep } from './../../../../entities/common/ApiResourceStep';
 import StepEnd from './../../../../components/Common/StepEnd';
 import ApiResourceSecretForm from './../../../../components/Resource/forms/ApiResourceSecretForm';

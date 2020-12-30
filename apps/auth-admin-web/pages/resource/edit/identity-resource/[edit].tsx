@@ -5,7 +5,7 @@ import ContentWrapper from './../../../../components/Layout/ContentWrapper';
 import { useRouter } from 'next/router';
 import { ResourcesService } from './../../../../services/ResourcesService';
 import { IdentityResource } from './../../../../entities/models/identity-resource.model';
-import IdentityResourceStepNav from './../../../../components/Resource/IdentityResourceStepNav';
+import IdentityResourceStepNav from '../../../../components/Resource/nav/IdentityResourceStepNav';
 import { IdentityResourceStep } from './../../../../entities/common/IdentityResourcesStep';
 import IdentityResourceUserClaimsForm from '../../../../components/Resource/forms/IdentityResourceUserClaimsForm';
 import StepEnd from './../../../../components/Common/StepEnd';

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import HelpBox from '../Common/HelpBox';
-import { ClientAllowedCorsOriginDTO } from '../../entities/dtos/client-allowed-cors-origin.dto';
-import NoActiveConnections from '../Common/NoActiveConnections';
-import { ClientService } from './../../services/ClientService';
-import ConfirmModal from './../Common/ConfirmModal';
+import HelpBox from '../../Common/HelpBox';
+import { ClientAllowedCorsOriginDTO } from '../../../entities/dtos/client-allowed-cors-origin.dto';
+import NoActiveConnections from '../../Common/NoActiveConnections';
+import { ClientService } from '../../../services/ClientService';
+import ConfirmModal from '../../Common/ConfirmModal';
 
 interface Props {
   clientId: string;

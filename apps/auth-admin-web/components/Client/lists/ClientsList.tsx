@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import ClientDTO from '../../entities/dtos/client-dto';
-import Paginator from './../Common/Paginator';
+import ClientDTO from '../../../entities/dtos/client-dto';
+import Paginator from '../../Common/Paginator';
 import Link from 'next/link';
-import { ClientService } from './../../services/ClientService';
-import ConfirmModal from './../Common/ConfirmModal';
+import { ClientService } from '../../../services/ClientService';
+import ConfirmModal from '../../Common/ConfirmModal';
 
 class ClientsList extends Component {
   state = {

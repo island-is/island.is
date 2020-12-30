@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import HelpBox from '../Common/HelpBox';
-import { GrantType } from '../../entities/models/grant-type.model';
-import { ClientGrantTypeDTO } from '../../entities/dtos/client-grant-type.dto';
-import NoActiveConnections from '../Common/NoActiveConnections';
-import { ClientService } from './../../services/ClientService';
-import { GrantService } from './../../services/GrantService';
+import HelpBox from '../../Common/HelpBox';
+import { GrantType } from '../../../entities/models/grant-type.model';
+import { ClientGrantTypeDTO } from '../../../entities/dtos/client-grant-type.dto';
+import NoActiveConnections from '../../Common/NoActiveConnections';
+import { ClientService } from '../../../services/ClientService';
+import { GrantService } from '../../../services/GrantService';
 
 interface Props {
   clientId: string;

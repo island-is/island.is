@@ -1,5 +1,5 @@
 import ClientDTO from './../../entities/dtos/client-dto';
-import ClientForm from './../../components/Client/ClientForm';
+import ClientForm from '../../components/Client/form/ClientForm';
 import React from 'react';
 import { useRouter } from 'next/router';
 import ContentWrapper from './../../components/Layout/ContentWrapper'

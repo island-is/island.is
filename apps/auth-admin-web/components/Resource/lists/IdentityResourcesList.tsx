@@ -1,17 +1,15 @@
-import React from 'react';
-import { ApiResourcesDTO } from './../../entities/dtos/api-resources-dto';
+import React, { useState, useEffect } from 'react';
+import IdentityResourcesDTO from '../../../entities/dtos/identity-resources.dto';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import ResourceListDisplay from './components/ListDisplay';
-import { ResourcesService } from './../../services/ResourcesService';
-import { ApiResource } from './../../entities/models/api-resource.model';
-import ConfirmModal from './../Common/ConfirmModal';
+import ResourceListDisplay from './ListDisplay';
+import { ResourcesService } from '../../../services/ResourcesService';
+import ConfirmModal from '../../Common/ConfirmModal';
 
-export default function ApiResourcesList() {
+export default function IdentityResourcesList() {
   const [count, setCount] = useState(1);
   const [page, setPage] = useState(1);
-  const [apiResources, setApiResources] = useState<ApiResource[]>([]);
-  const [totalCount, setTotalCount] = useState(1);
+  const [resources, setResources] = useState<IdentityResourcesDTO[]>([]);
+  const [totalCount, setTotalCount] = useState(30);
   const [lastPage, setLastPage] = useState(1);
   const router = useRouter();
   const [modalIsOpen, setIsOpen] = React.useState(false);
@@ -21,8 +19,20 @@ export default function ApiResourcesList() {
     getResources(page, count);
   }, [page, count]);
 
-  const edit = (apiResource: ApiResourcesDTO) => {
-    router.push('resource/edit/api-resource/' + apiResource.name);
+  const edit = (resource: IdentityResourcesDTO) => {
+    router.push('/resource/edit/identity-resource/' + resource.name);
+  };
+
+  const getResources = async (page: number, count: number) => {
+    const response = await ResourcesService.findAndCountAllIdentityResources(
+      page,
+      count
+    );
+    if (response) {
+      setResources(response.rows);
+      setTotalCount(response.count);
+      setLastPage(Math.ceil(totalCount / count));
+    }
   };
 
   const handlePageChange = async (page: number, countPerPage: number) => {
@@ -31,24 +41,14 @@ export default function ApiResourcesList() {
   };
 
   const remove = async () => {
-    const response = await ResourcesService.deleteApiResource(resourceToRemove);
+    const response = await ResourcesService.deleteIdentityResource(
+      resourceToRemove
+    );
     if (response) {
       getResources(page, count);
     }
 
     closeModal();
-  };
-
-  const getResources = async (page: number, count: number) => {
-    const response = await ResourcesService.findAndCountAllApiResources(
-      page,
-      count
-    );
-    if (response) {
-      setApiResources(response.rows);
-      setTotalCount(response.count);
-      setLastPage(Math.ceil(totalCount / count));
-    }
   };
 
   const confirmRemove = async (name: string) => {
@@ -63,7 +63,7 @@ export default function ApiResourcesList() {
   const setHeaderElement = () => {
     return (
       <p>
-        Are you sure want to delete this Api resource:{' '}
+        Are you sure want to delete this Identity resource:{' '}
         <span>{resourceToRemove}</span>
       </p>
     );
@@ -72,10 +72,10 @@ export default function ApiResourcesList() {
   return (
     <div>
       <ResourceListDisplay
-        list={apiResources}
-        header={'Api resource'}
-        linkHeader={'Create new Api resource'}
-        createUri={'/resource/api-resource'}
+        list={resources}
+        header={'Identity resources'}
+        linkHeader={'Create new Identity Resource'}
+        createUri={'/resource/identity-resource'}
         lastPage={lastPage}
         handlePageChange={handlePageChange}
         edit={edit}

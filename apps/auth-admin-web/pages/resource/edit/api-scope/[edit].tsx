@@ -5,7 +5,7 @@ import { ApiScope } from './../../../../entities/models/api-scope.model';
 import { ApiScopesDTO } from './../../../../entities/dtos/api-scopes-dto';
 import { ResourcesService } from './../../../../services/ResourcesService';
 import ApiScopeCreateForm from '../../../../components/Resource/forms/ApiScopeCreateForm';
-import ApiScopeStepNav from './../../../../components/Resource/ApiScopeStepNav';
+import ApiScopeStepNav from '../../../../components/Resource/nav/ApiScopeStepNav';
 import StepEnd from './../../../../components/Common/StepEnd';
 import { ApiScopeStep } from './../../../../entities/common/ApiScopeStep';
 import ApiScopeUserClaimsForm from '../../../../components/Resource/forms/ApiScopeUserClaimsForm';

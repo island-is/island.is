@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { ClientPostLogoutRedirectUriDTO } from '../../entities/dtos/client-post-logout-redirect-uri.dto';
+import { ClientPostLogoutRedirectUriDTO } from '../../../entities/dtos/client-post-logout-redirect-uri.dto';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import HelpBox from '../Common/HelpBox';
-import NoActiveConnections from '../Common/NoActiveConnections';
-import { ClientService } from './../../services/ClientService';
-import ConfirmModal from './../Common/ConfirmModal';
+import HelpBox from '../../Common/HelpBox';
+import NoActiveConnections from '../../Common/NoActiveConnections';
+import { ClientService } from '../../../services/ClientService';
+import ConfirmModal from '../../Common/ConfirmModal';
 
 interface Props {
   clientId: string;

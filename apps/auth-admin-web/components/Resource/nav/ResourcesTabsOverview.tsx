@@ -1,14 +1,14 @@
 import React from 'react';
 import { ResourceTabs } from '../../../entities/common/ResourceTabs';
-import IdentityResourcesList from '../IdentityResourcesList';
-import ApiResourcesList from '../ApiResourcesList'
-import ApiScopeList from '../ApiScopeList'
+import IdentityResourcesList from '../lists/IdentityResourcesList';
+import ApiResourcesList from '../lists/ApiResourcesList'
+import ApiScopeList from '../lists/ApiScopeList'
 
 interface Props {
   activeTab: ResourceTabs;
 }
 
-const Overview: React.FC<Props> = ({ activeTab, children }) => {
+const ResourcesTabsOverview: React.FC<Props> = ({ activeTab, children }) => {
   switch (activeTab) {
     case ResourceTabs.ApiScopes:
       return <ApiScopeList />;
@@ -21,4 +21,4 @@ const Overview: React.FC<Props> = ({ activeTab, children }) => {
   }
 };
 
-export default Overview;
+export default ResourcesTabsOverview;
