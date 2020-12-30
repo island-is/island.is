@@ -254,15 +254,20 @@ export class ResourcesService {
     return await this.getIdentityResourceByName(name)
   }
 
-  /** Deletes an identity resource by name */
+  /** Soft delete on an identity resource by name */
   async deleteIdentityResource(name: string): Promise<number> {
-    this.logger.debug('Removing identity resource with name: ', name)
+    this.logger.debug('Soft deleting an identity resource with name: ', name)
 
     if (!name) {
       throw new BadRequestException('Name must be provided')
     }
 
-    return await this.identityResourceModel.destroy({ where: { name: name } })
+    const result = await this.identityResourceModel.update(
+      { archived: new Date(), enabled: false },
+      { where: { name: name } },
+    )
+
+    return result[0]
   }
 
   /** Creates a new Api Resource */
@@ -314,27 +319,32 @@ export class ResourcesService {
     return this.getApiResourceByName(name)
   }
 
-  /** Deletes an API scope */
+  /** Soft delete on an API scope */
   async deleteApiScope(name: string): Promise<number> {
-    this.logger.debug('Deleting api scope with name: ', name)
+    this.logger.debug('Soft deleting api scope with name: ', name)
 
     if (!name) {
       throw new BadRequestException('Name must be provided')
     }
 
-    return await this.apiScopeModel.destroy({ where: { name: name } })
+    const result = await this.apiScopeModel.update(
+      { archived: new Date(), enabled: false },
+      { where: { name: name } },
+    )
+
+    return result[0]
   }
 
-  /** Archives an API resource */
-  async archiveApiResource(name: string): Promise<number> {
-    this.logger.debug('Archiving api resource with name: ', name)
+  /** Soft delete on an API resource */
+  async deleteApiResource(name: string): Promise<number> {
+    this.logger.debug('Soft deleting an api resource with name: ', name)
 
     if (!name) {
       throw new BadRequestException('Name must be provided')
     }
 
     const result = await this.apiResourceModel.update(
-      { archived: new Date() },
+      { archived: new Date(), enabled: false },
       { where: { name: name } },
     )
 
@@ -348,7 +358,11 @@ export class ResourcesService {
       throw new BadRequestException('Name must be provided')
     }
 
-    // TODO: Create a table with all the claim names and get that list instead of distinct I.claim_name
+    /* 
+    TODO: Create a table with all the claim names and get that list instead of distinct I.claim_name 
+    TODO: Find out how to return an interface instead of any. 
+          'sequelize.query' seems to support it with sequelize.query<T> but having difficulties implementing it error free
+    */
     const [results, metadata] = await this.sequelize.query(
       `select distinct I.claim_name, (
         SELECT CAST(

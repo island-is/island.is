@@ -185,16 +185,16 @@ export class ClientsService {
     return await this.findClientById(id)
   }
 
-  /** Archives a client by id */
-  async archive(id: string): Promise<number> {
-    this.logger.debug('Archiving client with id: ', id)
+  /** Soft delete on a client by id */
+  async delete(id: string): Promise<number> {
+    this.logger.debug('Soft deleting a client with id: ', id)
 
     if (!id) {
       throw new BadRequestException('id must be provided')
     }
 
     const result = await this.clientModel.update(
-      { archived: new Date() },
+      { archived: new Date(), enabled: false },
       {
         where: { clientId: id },
       },

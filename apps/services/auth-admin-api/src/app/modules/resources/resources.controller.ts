@@ -31,6 +31,7 @@ import {
   ApiOkResponse,
   ApiQuery,
   ApiTags,
+  getSchemaPath,
 } from '@nestjs/swagger'
 
 @ApiOAuth2(['@identityserver.api/read'])
@@ -45,7 +46,24 @@ export class ResourcesController {
   @Get('identity-resources')
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
-  @ApiOkResponse({ type: IdentityResource, isArray: true })
+  @ApiOkResponse({
+    schema: {
+      allOf: [
+        {
+          properties: {
+            count: {
+              type: 'number',
+              example: 1,
+            },
+            rows: {
+              type: 'array',
+              items: { $ref: getSchemaPath(IdentityResource) },
+            },
+          },
+        },
+      ],
+    },
+  })
   async findAndCountAllIdentityResources(
     @Query('page') page: number,
     @Query('count') count: number,
@@ -61,7 +79,24 @@ export class ResourcesController {
   @Get('api-scopes')
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
-  @ApiOkResponse({ type: ApiScope, isArray: true })
+  @ApiOkResponse({
+    schema: {
+      allOf: [
+        {
+          properties: {
+            count: {
+              type: 'number',
+              example: 1,
+            },
+            rows: {
+              type: 'array',
+              items: { $ref: getSchemaPath(ApiScope) },
+            },
+          },
+        },
+      ],
+    },
+  })
   async findAndCountAllApiScopes(
     @Query('page') page: number,
     @Query('count') count: number,
@@ -77,7 +112,24 @@ export class ResourcesController {
   @Get('api-resources')
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
-  @ApiOkResponse({ type: ApiResource, isArray: true })
+  @ApiOkResponse({
+    schema: {
+      allOf: [
+        {
+          properties: {
+            count: {
+              type: 'number',
+              example: 1,
+            },
+            rows: {
+              type: 'array',
+              items: { $ref: getSchemaPath(ApiResource) },
+            },
+          },
+        },
+      ],
+    },
+  })
   async findAndCountAllApiResources(
     @Query('page') page: number,
     @Query('count') count: number,
@@ -242,15 +294,15 @@ export class ResourcesController {
     return await this.resourcesService.deleteApiScope(name)
   }
 
-  /** Archives an Api resource by it's name */
-  @Put('api-resource/archive/:name')
+  /** Performs a soft delete on an Api resource by it's name */
+  @Delete('api-resource/:name')
   @ApiOkResponse()
-  async archiveApiResource(@Param('name') name: string): Promise<number> {
+  async deleteApiResource(@Param('name') name: string): Promise<number> {
     if (!name) {
       throw new BadRequestException('Name must be provided')
     }
 
-    return await this.resourcesService.archiveApiResource(name)
+    return await this.resourcesService.deleteApiResource(name)
   }
 
   @Get('user-claims/:name')
