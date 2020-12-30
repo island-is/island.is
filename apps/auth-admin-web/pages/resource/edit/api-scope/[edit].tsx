@@ -22,7 +22,8 @@ export default function Index() {
   useEffect(() => {
     async function loadResource() {
       if (apiScopeName) {
-        await getApiScope(apiScopeName as string);
+        const decode = decodeURIComponent(apiScopeName as string);
+        await getApiScope(decode);
       }
       if (stepQuery) {
         setStep(+stepQuery);
