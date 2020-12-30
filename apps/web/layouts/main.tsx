@@ -34,7 +34,6 @@ import {
 } from '../graphql/schema'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
-import routeNames from '../i18n/routeNames'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { environment } from '../environments/environment'
@@ -44,6 +43,7 @@ import {
   formatMegaMenuLinks,
 } from '../utils/processMenuData'
 import { Locale } from '../i18n/I18n'
+import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
@@ -117,7 +117,7 @@ const Layout: NextComponentType<
   megaMenuData,
 }) => {
   const { activeLocale, t } = useI18n()
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
   const { route, pathname, query, asPath } = useRouter()
   const fullUrl = `${respOrigin}${asPath}`
@@ -146,8 +146,7 @@ const Layout: NextComponentType<
       links: categories.map((x) => {
         return {
           title: x.title,
-          as: makePath(x.__typename, x.slug),
-          href: makePath(x.__typename, '[slug]'),
+          ...linkResolver(x.__typename as LinkType, [x.slug]),
         }
       }),
     },
