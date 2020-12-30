@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  // baseURL: process.env.BACKEND_URL, // This should work according to docs, but doesn't
-  baseURL: 'http://localhost:4200/backend/',
+  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
   responseType: 'json',
 });
 
