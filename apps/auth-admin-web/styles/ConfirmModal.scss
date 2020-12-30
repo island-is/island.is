@@ -1,5 +1,9 @@
-.confirm-modal {
+.ReactModal__Overlay {
   z-index: 2;
+}
+
+.confirm-modal {
+  z-index: 3;
 
   p {
     font-size: 0.95rem;
