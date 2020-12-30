@@ -102,9 +102,9 @@ export class ClientsController {
   }
 
   /** Soft deleting a client by Id */
-  @Delete('archive/:id')
+  @Delete(':id')
   @ApiCreatedResponse()
-  async archive(@Param('id') id: string): Promise<number> {
+  async delete(@Param('id') id: string): Promise<number> {
     if (!id) {
       throw new BadRequestException('Id must be provided')
     }
