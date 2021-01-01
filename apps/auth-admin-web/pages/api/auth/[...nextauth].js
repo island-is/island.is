@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
 import Providers from 'next-auth/providers';
 import jwt from 'next-auth/jwt';
+import { TokenService } from '../../../services/TokenService';
 
 const providers = [
   Providers.IdentityServer4({
@@ -19,6 +20,7 @@ callbacks.signIn = async function signIn(user, account, profile) {
   if (account.provider === 'identity-server') {
     user.nationalId = profile.nationalId;
     user.accessToken = account.accessToken;
+    user.refreshToken = account.refreshToken;
     return true;
   }
 
@@ -31,7 +33,21 @@ callbacks.jwt = async function jwt(token, user) {
       nationalId: user.nationalId,
       name: user.name,
       accessToken: user.accessToken,
+      refreshToken: user.refreshToken,
     };
+  }
+
+  const decoded = parseJwt(token.accessToken);
+
+  if (decoded?.exp && new Date() > new Date(decoded.exp * 1000)) {
+    try {
+      [
+        token.accessToken,
+        token.refreshToken,
+      ] = await TokenService.refreshAccessToken(token.refreshToken);
+    } catch (error) {
+      console.error(error, 'Error refreshing access token.');
+    }
   }
 
   return token;
@@ -39,6 +55,7 @@ callbacks.jwt = async function jwt(token, user) {
 
 callbacks.session = async function session(session, token) {
   session.accessToken = token.accessToken;
+  session.refreshToken = token.refreshToken;
   const decoded = parseJwt(session.accessToken);
   session.expires = new Date(decoded.exp * 1000);
   return session;
