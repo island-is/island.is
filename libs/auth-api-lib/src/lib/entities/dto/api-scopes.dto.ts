@@ -47,10 +47,4 @@ export class ApiScopesDTO {
     example: false,
   })
   readonly emphasize!: boolean
-
-  @IsDate()
-  @ApiProperty({
-    example: null,
-  })
-  archived!: Date
 }
