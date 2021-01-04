@@ -42,10 +42,4 @@ export class ApiResourcesDTO {
     example: true,
   })
   readonly showInDiscoveryDocument!: boolean
-
-  @IsDate()
-  @ApiProperty({
-    example: null,
-  })
-  archived!: Date
 }
