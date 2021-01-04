@@ -316,5 +316,5 @@ export const m = defineMessages({
     id: 'hi.application:attachedFiles.title',
     defaultMessage: 'Attached files',
     description: 'Attached files',
-  }
+  },
 })

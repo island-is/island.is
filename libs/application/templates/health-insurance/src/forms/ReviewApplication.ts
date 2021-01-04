@@ -1,6 +1,6 @@
 import {
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -12,28 +12,28 @@ import { m } from './messages'
 
 export const ReviewApplication: Form = buildForm({
   id: 'HealthInsuranceDraft',
-  name: m.formTitle,
+  title: m.formTitle,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'approveSection',
-      name: 'Approve form',
+      title: 'Approve form',
       children: [
         buildMultiField({
           id: 'missingInfoFields',
-          name: 'Approve application for mocking',
+          title: 'Approve application for mocking',
           description: '',
           children: [
             buildTextField({
               id: 'agentComments[0]',
-              name: m.additionalRemarks,
+              title: m.additionalRemarks,
               variant: 'textarea',
               placeholder: m.additionalRemarksPlaceholder,
             }),
             buildSubmitField({
               id: 'approval',
               placement: 'screen',
-              name: 'Do you approve this application?',
+              title: 'Do you approve this application?',
               actions: [
                 {
                   event: 'MISSING_INFO',
@@ -44,10 +44,10 @@ export const ReviewApplication: Form = buildForm({
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'successfulSubmission',
-          name: m.succesfulSubmissionTitle,
-          introduction: m.succesfulSubmissionMessage,
+          title: m.succesfulSubmissionTitle,
+          description: m.succesfulSubmissionMessage,
         }),
       ],
     }),

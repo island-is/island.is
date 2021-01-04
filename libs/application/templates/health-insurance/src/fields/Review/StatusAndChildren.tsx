@@ -16,7 +16,10 @@ import { ReviewFieldProps, StatusTypes } from '../../types'
 
 import { m } from '../../forms/messages'
 
-const StatusAndChildren: FC<ReviewFieldProps> = ({ application, isEditable }) => {
+const StatusAndChildren: FC<ReviewFieldProps> = ({
+  application,
+  isEditable,
+}) => {
   const { formatMessage } = useLocale()
 
   const [status, setStatus] = useState(

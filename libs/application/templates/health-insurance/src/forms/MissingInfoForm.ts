@@ -3,7 +3,7 @@ import {
   buildDividerField,
   buildFileUploadField,
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -14,59 +14,59 @@ import { m } from './messages'
 
 export const MissingInfoForm: Form = buildForm({
   id: 'HealthInsuranceReview',
-  name: m.formTitle,
+  title: m.formTitle,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'missingInfoSection',
-      name: m.missingInfoSection,
+      title: m.missingInfoSection,
       children: [
         buildMultiField({
           id: 'missingInfoFields',
-          name: m.missingInfoSection,
+          title: m.missingInfoSection,
           description: '',
           children: [
             buildCustomField({
               id: 'description',
-              name: 'Agent comments',
+              title: 'Agent comments',
               component: 'AgentComment',
             }),
             buildDividerField({
-              name: m.missingInfoAnswersTitle,
+              title: m.missingInfoAnswersTitle,
               color: 'dark400',
             }),
             buildCustomField({
               id: 'missingInfo.date',
-              name: '',
+              title: '',
               component: 'HiddenDateField',
             }),
             buildCustomField({
               id: 'missingInfo.remarks',
-              name: '',
+              title: '',
               component: 'MissingInfoRemarks',
             }),
             buildFileUploadField({
               id: 'missingInfo[0].files',
-              name: '',
+              title: '',
               introduction: '',
             }),
             buildDividerField({
-              name: m.previousAnswersTitle,
+              title: m.previousAnswersTitle,
               color: 'dark400',
             }),
             buildCustomField({
               id: 'submittedData',
-              name: '',
+              title: '',
               component: 'Review',
             }),
             buildCustomField({
               id: 'confirmCorrectInfo',
-              name: '',
+              title: '',
               component: 'ConfirmCheckbox',
             }),
             buildSubmitField({
               id: 'submit',
-              name: m.submitLabel,
+              title: m.submitLabel,
               placement: 'footer',
               actions: [
                 { event: 'REJECT', name: 'Back to inReview', type: 'subtle' },
@@ -75,10 +75,10 @@ export const MissingInfoForm: Form = buildForm({
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'successfulSubmission',
-          name: m.succesfulSubmissionTitle,
-          introduction: m.succesfulSubmissionMessage,
+          title: m.succesfulSubmissionTitle,
+          description: m.succesfulSubmissionMessage,
         }),
       ],
     }),
