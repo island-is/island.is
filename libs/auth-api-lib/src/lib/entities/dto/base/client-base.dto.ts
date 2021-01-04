@@ -275,10 +275,4 @@ export abstract class ClientBaseDTO {
     example: true,
   })
   readonly requireClientSecret!: boolean
-
-  @IsDate()
-  @ApiProperty({
-    example: null,
-  })
-  archived!: Date
 }
