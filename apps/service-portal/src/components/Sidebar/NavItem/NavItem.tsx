@@ -11,6 +11,7 @@ interface Props {
   external?: boolean
   variant?: 'blue' | 'blueberry'
   onClick?: () => void
+  notifications?: number
 }
 
 const NavItemContent: FC<Props> = ({
@@ -18,41 +19,60 @@ const NavItemContent: FC<Props> = ({
   active,
   onClick,
   variant = 'blue',
+  notifications,
   children,
 }) => {
   return (
     <Box
       display="flex"
       alignItems="center"
+      justifyContent="spaceBetween"
       cursor="pointer"
       position="relative"
       onClick={onClick}
       className={styles.navItem}
     >
-      {icon ? (
-        <Box display="flex" height="full" alignItems="center" marginRight={2}>
-          <Icon
-            type={icon.type}
-            icon={icon.icon}
-            size="medium"
-            color={
-              active
-                ? variant === 'blue'
-                  ? 'blue600'
-                  : 'blueberry600'
-                : variant === 'blue'
-                ? 'blue300'
-                : 'blueberry300'
-            }
-          />
+      <Box display="flex" height="full" alignItems="center">
+        {icon ? (
+          <Box display="flex" alignItems="center" marginRight={2}>
+            <Icon
+              type={icon.type}
+              icon={icon.icon}
+              size="medium"
+              color={
+                active
+                  ? variant === 'blue'
+                    ? 'blue600'
+                    : 'blueberry600'
+                  : variant === 'blue'
+                  ? 'blue300'
+                  : 'blueberry300'
+              }
+            />
+          </Box>
+        ) : null}
+        <Text
+          fontWeight={active ? 'semiBold' : 'regular'}
+          color={variant === 'blue' ? 'blue600' : 'blueberry600'}
+        >
+          {children}
+        </Text>
+      </Box>
+      {notifications ? (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          marginLeft={1}
+          borderRadius="circle"
+          className={styles.notification}
+          background={variant === 'blue' ? 'blue400' : 'blueberry400'}
+        >
+          <Text variant="small" fontWeight="semiBold" color="white">
+            {notifications}
+          </Text>
         </Box>
       ) : null}
-      <Text
-        fontWeight={active ? 'semiBold' : 'regular'}
-        color={variant === 'blue' ? 'blue600' : 'blueberry600'}
-      >
-        {children}
-      </Text>
     </Box>
   )
 }

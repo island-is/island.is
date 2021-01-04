@@ -9,7 +9,7 @@ import { lazy } from 'react'
 export const healthModule: ServicePortalModule = {
   name: 'Heilsa',
   widgets: () => [],
-  routes: () => {
+  routes: async () => {
     const routes: ServicePortalRoute[] = [
       {
         name: 'Heilsa',

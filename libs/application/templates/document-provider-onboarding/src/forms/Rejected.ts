@@ -9,22 +9,22 @@ import {
 import { m } from './messages'
 export const Rejected: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
-  name: m.rejectedTitle,
+  title: m.rejectedTitle,
   mode: FormModes.REJECTED,
   children: [
     buildMultiField({
       id: 'rejected',
-      name: m.rejectedTitle,
+      title: m.rejectedTitle,
       description: m.rejectedSubTitle,
       children: [
         buildCustomField({
           id: 'RejectionScreen',
-          name: 'RejectionScreen',
+          title: 'RejectionScreen',
           component: 'RejectionScreen',
         }),
         buildCustomField({
           id: 'ManOnBench',
-          name: 'ManOnBench',
+          title: 'ManOnBench',
           component: 'ManOnBenchIllustrationPeriods',
         }),
       ],

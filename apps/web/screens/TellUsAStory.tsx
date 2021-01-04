@@ -12,13 +12,13 @@ import { Screen } from '@island.is/web/types'
 import { TellUsAStory } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useI18n } from '@island.is/web/i18n'
-import routeNames from '@island.is/web/i18n/routeNames'
 import {
   GetTellUsAStoryQuery,
   QueryGetTellUsAStoryArgs,
 } from '../graphql/schema'
 import { GET_TELL_US_A_STORY_DATA } from './queries'
 import { CustomNextError } from '../units/errors'
+import { useLinkResolver } from '../hooks/useLinkResolver'
 
 interface TellUsAStoryProps {
   data: GetTellUsAStoryQuery['getTellUsAStory']
@@ -26,7 +26,7 @@ interface TellUsAStoryProps {
 
 const TellUsAStoryPage: Screen<TellUsAStoryProps> = ({ data }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
 
   return (
     <Box paddingY={[2, 2, 10]}>
@@ -35,7 +35,7 @@ const TellUsAStoryPage: Screen<TellUsAStoryProps> = ({ data }) => {
           <GridColumn>
             <Box paddingX={[3, 3, 8]}>
               <Breadcrumbs>
-                <Link href={makePath()}>Ísland.is</Link>
+                <Link {...linkResolver('homepage')}>Ísland.is</Link>
                 <span>{data.introTitle}</span>
               </Breadcrumbs>
             </Box>

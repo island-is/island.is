@@ -2,7 +2,7 @@ import React from 'react'
 
 function WomanFeedingBabyIllustration() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 546 563">
+    <>
       <defs>
         <linearGradient
           id="linear-gradient"
@@ -95,7 +95,7 @@ function WomanFeedingBabyIllustration() {
         d="M48.284 425.391c8.986 12.931 5.918 27.4 0 39.67a31.65 31.65 0 0011.175 40.171m-34.074 1.011h130.506m77.872-339.28s-2.4 12.73-4.9 15.607m-8.8-2.164s1.028 5.532 5.534 6.142"
         className="cls-1"
       ></path>
-    </svg>
+    </>
   )
 }
 

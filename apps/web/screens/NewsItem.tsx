@@ -15,7 +15,6 @@ import { Image, Slice as SliceType } from '@island.is/island-ui/contentful'
 import { Screen } from '@island.is/web/types'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import routeNames from '@island.is/web/i18n/routeNames'
 import {
   GET_NAMESPACE_QUERY,
   GET_SINGLE_NEWS_ITEM_QUERY,
@@ -32,6 +31,7 @@ import {
 import { RichText } from '../components/RichText/RichText'
 import { SidebarBox, Sticky, HeadWithSocialSharing, Main } from '../components'
 import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver } from '../hooks/useLinkResolver'
 
 interface NewsItemProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
@@ -40,8 +40,8 @@ interface NewsItemProps {
 
 const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
   useContentfulId(newsItem?.id)
-  const { activeLocale, t } = useI18n()
-  const { makePath } = routeNames(activeLocale)
+  const { t } = useI18n()
+  const { linkResolver } = useLinkResolver()
   const { format } = useDateUtils()
   const n = useNamespace(namespace)
 
@@ -94,10 +94,8 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
                     span={['9/9', '9/9', '9/9', '9/9', '7/9']}
                   >
                     <Breadcrumbs>
-                      <Link href={makePath()} as={makePath()}>
-                        Ísland.is
-                      </Link>
-                      <Link href={makePath('news')} as={makePath('news')}>
+                      <Link {...linkResolver('homepage')}>Ísland.is</Link>
+                      <Link {...linkResolver('newsoverview')}>
                         {t.newsAndAnnouncements}
                       </Link>
                       {!!newsItem.genericTags.length &&
@@ -106,10 +104,12 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
                             <Link
                               key={index}
                               href={{
-                                pathname: makePath('news'),
+                                pathname: linkResolver('newsoverview').href,
                                 query: { tag: id },
                               }}
-                              as={makePath('news', `?tag=${id}`)}
+                              as={`${
+                                linkResolver('newsoverview').as
+                              }?tag=${id}`}
                               pureChildren
                             >
                               <Tag variant="blue">{title}</Tag>

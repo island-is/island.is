@@ -13,7 +13,7 @@ interface Props extends FieldBaseProps {
 }
 
 const SubmitFormField: FC<Props> = ({ application, field, error }) => {
-  const { id, name, actions, placement } = field
+  const { id, title, actions, placement } = field
   const { formatMessage } = useLocale()
   const actionsAsOptions = useMemo(() => {
     return actions.map((a) => {
@@ -34,7 +34,7 @@ const SubmitFormField: FC<Props> = ({ application, field, error }) => {
       padding={4}
       marginTop={4}
     >
-      <Text variant="h4">{formatText(name, application, formatMessage)}</Text>
+      <Text variant="h4">{formatText(title, application, formatMessage)}</Text>
       <Box paddingTop={1}>
         <RadioController id={id} options={actionsAsOptions} error={error} />
       </Box>

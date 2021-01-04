@@ -196,7 +196,7 @@ const Screen: FC<ScreenProps> = ({
           offset={['0', '0', '1/9']}
         >
           <Text variant="h2" marginBottom={2}>
-            {formatText(screen.name, application, formatMessage)}
+            {formatText(screen.title, application, formatMessage)}
           </Text>
           <Box>
             {screen.type === FormItemTypes.REPEATER ? (

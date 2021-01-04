@@ -6,6 +6,7 @@ import React, {
   useState,
   useCallback,
   useEffect,
+  useContext,
 } from 'react'
 import Link from 'next/link'
 import cn from 'classnames'
@@ -21,12 +22,13 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { deorphanize } from '@island.is/island-ui/utils'
-import { Locale } from '@island.is/web/i18n/I18n'
-import { pathNames, AnchorAttributes } from '@island.is/web/i18n/routes'
 import { useI18n } from '../../i18n'
 import { theme } from '@island.is/island-ui/theme'
 import Illustration from './illustrations/Illustration'
 import * as styles from './FrontpageTabs.treat'
+import { GlobalContext } from '@island.is/web/context'
+import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 type TabsProps = {
   subtitle?: string
@@ -63,6 +65,9 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   tabs,
   searchContent,
 }) => {
+  const { globalNamespace } = useContext(GlobalContext)
+  const gn = useNamespace(globalNamespace)
+
   const contentRef = useRef(null)
   const [minHeight, setMinHeight] = useState<number>(0)
   const itemRefs = useRef<Array<HTMLElement | null>>([])
@@ -72,7 +77,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     baseId: 'frontpage-tab',
   })
 
-  const { activeLocale, t } = useI18n()
+  const { t } = useI18n()
   const { width } = useWindowSize()
 
   const nextSlide = useCallback(() => {
@@ -88,6 +93,8 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     setSelectedIndex(newSelectedIndex)
   }, [tab])
 
+  const { linkResolver } = useLinkResolver()
+
   const goTo = (direction: string) => {
     switch (direction) {
       case 'prev':
@@ -101,7 +108,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     }
   }
 
-  const generateUrls = (link: string): AnchorAttributes => {
+  const generateUrls = (link: string) => {
     if (link) {
       const linkData = JSON.parse(link)
       const contentId = linkData.sys?.contentType?.sys?.id
@@ -116,7 +123,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
         } else {
           type = contentId
         }
-        return pathNames(activeLocale as Locale, type, [slug])
+        return linkResolver(type, [slug])
       }
       return { href: null, as: null }
     }
@@ -250,7 +257,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                                 icon="arrowForward"
                                 aria-labelledby={tabTitleId}
                               >
-                                Sjá nánar
+                                {gn('seeMore')}
                               </Button>
                             </Link>
                           </span>

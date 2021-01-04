@@ -2,7 +2,7 @@ import {
   buildCheckboxField,
   buildDividerField,
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -15,51 +15,51 @@ import { m } from './messages'
 
 export const ReviewApplication: Form = buildForm({
   id: 'ExampleInReview',
-  name: 'Úrvinnsla umsóknar um atvinnuleysisbætur',
+  title: 'Úrvinnsla umsóknar um atvinnuleysisbætur',
   mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'intro',
-      name: m.introSection,
+      title: m.introSection,
       children: [
         buildMultiField({
           id: 'about',
-          name: m.about,
+          title: m.about,
           children: [
-            buildDividerField({ name: 'Umsækjandi' }),
+            buildDividerField({ title: 'Umsækjandi' }),
             buildTextField({
               id: 'person.name',
-              name: m.name,
+              title: m.name,
               disabled: true,
             }),
             buildTextField({
               id: 'person.nationalId',
-              name: m.nationalId,
+              title: m.nationalId,
               disabled: true,
               width: 'half',
             }),
             buildTextField({
               id: 'person.age',
-              name: m.age,
+              title: m.age,
               disabled: true,
               width: 'half',
             }),
             buildTextField({
               id: 'person.email',
-              name: m.email,
+              title: m.email,
               disabled: true,
               width: 'half',
             }),
             buildTextField({
               id: 'person.phoneNumber',
-              name: m.phoneNumber,
+              title: m.phoneNumber,
               disabled: true,
               width: 'half',
             }),
-            buildDividerField({ name: 'Atvinna' }),
+            buildDividerField({ title: 'Atvinna' }),
             buildRadioField({
               id: 'careerHistory',
-              name: m.careerHistory,
+              title: m.careerHistory,
               width: 'half',
               disabled: true,
               options: [
@@ -69,7 +69,7 @@ export const ReviewApplication: Form = buildForm({
             }),
             buildCheckboxField({
               id: 'careerHistoryCompanies',
-              name: m.careerHistoryCompanies,
+              title: m.careerHistoryCompanies,
               disabled: true,
               width: 'half',
               options: [
@@ -80,13 +80,13 @@ export const ReviewApplication: Form = buildForm({
             }),
             buildTextField({
               id: 'dreamJob',
-              name: m.dreamJob,
+              title: m.dreamJob,
               disabled: true,
             }),
             buildSubmitField({
               id: 'approvedByReviewer',
               placement: 'screen',
-              name: 'Samþykkirðu þessa umsókn?',
+              title: 'Samþykkirðu þessa umsókn?',
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
                 { event: 'REJECT', name: 'Hafna', type: 'reject' },
@@ -94,10 +94,10 @@ export const ReviewApplication: Form = buildForm({
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'final',
-          name: 'Takk fyrir',
-          introduction:
+          title: 'Takk fyrir',
+          description:
             'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
         }),
       ],

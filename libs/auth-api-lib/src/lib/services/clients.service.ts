@@ -23,7 +23,7 @@ import { ClientSecretDTO } from '../entities/dto/client-secret.dto'
 import sha256 from 'crypto-js/sha256'
 import Base64 from 'crypto-js/enc-base64'
 import { IdentityResource } from '../entities/models/identity-resource.model'
-import { ApiScope } from '../..'
+import { ApiScope } from '../entities/models/api-scope.model'
 
 @Injectable()
 export class ClientsService {
