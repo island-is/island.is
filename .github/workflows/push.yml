@@ -41,7 +41,6 @@ jobs:
       - name: Check if we want to run workflow
         id: should-run
         run: |
-          echo "sha from pull request event: '${{ github.event.pull_request.head.sha }}'"
           echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
           if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
             echo "Workflow was created because of branch creation. Branch name is '$GIT_BRANCH'"
@@ -63,7 +62,9 @@ jobs:
             echo "deployFeature: $deployFeature"
             exit 1
           fi
-          exit 22
+          if [[ $GITHUB_EVENT_NAME == "push" ]]; then
+            exit 22
+          fi
           echo "::set-output name=PRE_CHECK_OK::true"
 
   prepare:
@@ -358,7 +359,7 @@ jobs:
           }
           BODY
 
-  success:
+  push-success:
     runs-on: ubuntu-20.04
     if: always()
     needs:
