@@ -6,6 +6,7 @@ on:
       - 'main'
       - 'release/**'
       - 'hotfix/**'
+      - 'feature-deployment-harden-and-cleanup'
     paths-ignore:
       - '**/*.md'
     tags:
@@ -14,7 +15,9 @@ on:
   create:
   pull_request:
     types:
-      - labeled
+      - opened
+      - edited
+      - closed
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
@@ -27,7 +30,7 @@ jobs:
       CREATE_PATTERNS: ^release/,^hotfix/
     outputs:
       GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
-      PRE_CHECK_OK: ${{ steps.branch-name-check.outputs.PRE_CHECK_OK }}
+      PRE_CHECK_OK: ${{ steps.should-run.outputs.PRE_CHECK_OK }}
     steps:
       - name: Get git branch
         id: git-branch
@@ -36,8 +39,9 @@ jobs:
           echo "::set-output name=GIT_BRANCH::${GIT_BRANCH}"
           echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
       - name: Check if we want to run workflow
-        id: branch-name-check
+        id: should-run
         run: |
+          echo "sha from pull request event: '${{ github.event.pull_request.head.sha }}'"
           echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
           if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
             echo "Workflow was created because of branch creation. Branch name is '$GIT_BRANCH'"
@@ -54,12 +58,12 @@ jobs:
             echo "No pattern matches '$GIT_BRANCH', exiting."
             exit 1
           fi
-          if [[ "$GITHUB_EVENT_NAME" == "labeled" ]]; then
-            if [[ "${{ github.event.label.name }}" != "deploy-feature" ]]; then
-              echo "In a feature branch that's not labeled with 'deploy-feature'. Not deploying."
-              exit 1
-            fi
+          if [[ "$GITHUB_EVENT_NAME" == "opened" ]] || [[ "$GITHUB_EVENT_NAME" == "edited" ]]; then
+            deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+            echo "deployFeature: $deployFeature"
+            exit 1
           fi
+          exit 22
           echo "::set-output name=PRE_CHECK_OK::true"
 
   prepare:
@@ -106,7 +110,14 @@ jobs:
         id: docker_tags
         run: |
           export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH} | tr "/." "-" )
-          export DOCKER_TAG=${GITHUB_RUN_NUMBER}_${DOCKER_BRANCH_TAG}_${GITHUB_SHA:0:7}
+          SHA="${{ github.event.pull_request.head.sha }}"
+          echo "SHA='$SHA' retrieved from event"
+          if [[ "$SHA" == "" ]]; then
+            SHA=$GITHUB_SHA
+            echo "SHA='$SHA', retrived from action environment"
+          fi
+          echo "Using SHA='$SHA' as docker tag sha"
+          export DOCKER_TAG=${GITHUB_RUN_NUMBER}_${DOCKER_BRANCH_TAG}_${SHA:0:7}
           echo "Docker tag will be ${DOCKER_TAG}"
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
           echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
@@ -334,7 +345,8 @@ jobs:
               GIT_BRANCH=feature/$GIT_BRANCH
             fi
           fi
-          curl -v $SPINNAKER_URL/webhooks/webhook/${{matrix.service}} -H "content-type: application/json" --data-binary @- <<BODY
+          echo "Sending webhook with branch: '$GIT_BRANCH'"
+          curl $SPINNAKER_URL/webhooks/webhook/${{matrix.service}} -H "content-type: application/json" --data-binary @- <<BODY
           {
             "token": "$SPINNAKER_WEBHOOK_TOKEN",
             "branch": "$GIT_BRANCH",
