@@ -17,6 +17,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/document-provider-onboarding'),
   [ApplicationTypes.HEALTH_INSURANCE]: () =>
     import('@island.is/application/templates/health-insurance'),
+  [ApplicationTypes.STRAUMURINN]: () =>
+    import('@island.is/application/templates/straumurinn-application'),
 }
 
 export default templates

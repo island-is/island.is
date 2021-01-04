@@ -15,59 +15,52 @@ type Events =
   | { type: 'ABORT' }
 
 const Schema = z.object({
+  institution: z.object({
+    institutionName: z.string().nonempty().max(256),
+    institutionSSN: z.string().nonempty().max(10),
+  }),
   applicant: z.object({
-    // institution: z.object({
-    //   id: z.string(),
-    //   title: z.string(),
-    // }),
-    // ministry: z.object({
-    //   id: z.string(),
-    //   title: z.string(),
-    // }),
     contact: z.string().nonempty().max(256),
+    ssn: z.string().nonempty().max(10),
     email: z.string().email(),
-    phoneNumber: z.string().min(7),
+    phone: z.string().min(7),
+    isValidApplicant: z.array(z.enum(['isValidApplicant'])),
   }),
-  service: z.object({
-    name: z.string().nonempty().max(256),
-    countPerYear: z.string().refine((x) => {
-      const asNumber = parseInt(x)
-    }),
-    users: z.enum(['companies', 'individuals', 'both']),
-    digital: z.enum(['yes', 'no']),
-    link: z.string().optional(),
-  }),
-  data: z.array(
+  technicalContact: z.array(
     z.object({
       name: z.string(),
-      publisher: z.string(),
-      download: z.string(),
-      upload: z.string(),
+      ssn: z.string(),
+      email: z.string(),
+      phone: z.string(),
     }),
   ),
-  payment: z.object({
-    acceptsPayment: z.enum(['yes', 'no']),
-    tbr: z.string().optional(),
-    amount: z.string().optional(),
-    when: z.enum(['in advance', 'on approval']).optional(),
+  businessContact: z.array(
+    z.object({
+      name: z.string(),
+      ssn: z.string(),
+      email: z.string(),
+      phone: z.string(),
+    }),
+  ),
+  confirmation: z.object({
+    isTermsAccepted: z.array(z.enum(['isTermsAccepted'])),
   }),
-  info: z.string().optional(),
 })
 
-const ReferenceApplicationTemplate: ApplicationTemplate<
+const StraumurinnApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.META_APPLICATION,
-  name: 'Application application',
+  type: ApplicationTypes.STRAUMURINN,
+  name: 'Umsókn um aðild að Straumnum',
   dataSchema: Schema,
   stateMachineConfig: {
     initial: 'draft',
     states: {
       draft: {
         meta: {
-          name: 'Umsókn um ökunám',
+          name: 'Sækja um aðild að straumnum',
           progress: 0.33,
           roles: [
             {
@@ -162,4 +155,4 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   },
 }
 
-export default ReferenceApplicationTemplate
+export default StraumurinnApplicationTemplate

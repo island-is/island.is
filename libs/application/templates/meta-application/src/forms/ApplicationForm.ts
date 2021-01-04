@@ -29,11 +29,11 @@ export const ApplicationForm: Form = buildForm({
           id: 'general',
           name: m.generalInfo,
           children: [
-            buildCustomField({
-              id: 'applicant.institution',
-              name: m.institution,
-              component: 'OrganizationField',
-            }),
+            // buildCustomField({
+            //   id: 'applicant.institution',
+            //   name: m.institution,
+            //   component: 'OrganizationField',
+            // }),
             buildTextField({
               id: 'applicant.contact',
               name: m.contact,

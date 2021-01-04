@@ -153,7 +153,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           <Text variant="h3">{heading}</Text>
           <Text paddingTop={1}>{text}</Text>
         </Box>
-
         <Box
           alignItems="flexEnd"
           display="flex"
