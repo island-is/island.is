@@ -30,7 +30,7 @@ import {
 import { RichText } from '../components/RichText/RichText'
 import { SidebarBox, Sticky, HeadWithSocialSharing, Main } from '../components'
 import { useNamespace } from '@island.is/web/hooks'
-import { ContentType, pathNames } from '@island.is/web/i18n/routes'
+import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 import NextLink from 'next/link'
 
 interface NewsItemProps {
@@ -40,7 +40,8 @@ interface NewsItemProps {
 
 const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
   useContentfulId(newsItem?.id)
-  const { activeLocale, t } = useI18n()
+  const { t } = useI18n()
+  const { linkResolver } = useLinkResolver()
   const { format } = useDateUtils()
   const n = useNamespace(namespace)
 
@@ -49,11 +50,12 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
   const breadCrumbs: BreadCrumbItem[] = [
     {
       title: 'Ísland.is',
+      typename: 'homepage',
       href: '/',
     },
     {
       title: t.newsAndAnnouncements,
-      typename: newsItem.__typename,
+      typename: 'newsoverview',
       href: '/',
     },
   ]
@@ -63,7 +65,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
       return {
         isTag: true,
         title: title,
-        typename: newsItem.__typename,
+        typename: 'newsoverview',
         slug: [`?tag=${id}`],
       }
     })
@@ -96,11 +98,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
                       renderLink={(link, { typename, slug }) => {
                         return (
                           <NextLink
-                            {...pathNames(
-                              activeLocale,
-                              typename as ContentType,
-                              slug,
-                            )}
+                            {...linkResolver(typename as LinkType, slug)}
                             passHref
                           >
                             {link}

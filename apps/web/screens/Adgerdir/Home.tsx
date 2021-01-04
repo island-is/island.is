@@ -28,7 +28,6 @@ import {
 } from '@island.is/web/components'
 import { ColorSchemeContext as CovidColorSchemeContext } from '@island.is/web/components/Adgerdir/UI/ColorSchemeContext/ColorSchemeContext'
 import { useI18n } from '@island.is/web/i18n'
-import { pathNames } from '@island.is/web/i18n/routes'
 import {
   Query,
   QueryGetNamespaceArgs,
@@ -58,6 +57,7 @@ import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '@island.is/web/utils/processMenuData'
+import { useLinkResolver, LinkType } from '@island.is/web/hooks/useLinkResolver'
 
 interface HomeProps {
   frontpage: Query['getAdgerdirFrontpage']
@@ -76,6 +76,7 @@ const Home: Screen<HomeProps> = ({
 }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
+  const { linkResolver } = useLinkResolver()
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
@@ -114,15 +115,21 @@ const Home: Screen<HomeProps> = ({
                               items={[
                                 {
                                   title: 'Ísland.is',
+                                  typename: 'homepage',
                                   href: '/',
                                 },
                                 {
                                   title: n('covidAdgerdir', 'Covid aðgerðir'),
+                                  typename: 'adgerdirfrontpage',
+                                  href: '/',
                                 },
                               ]}
-                              renderLink={(link) => {
+                              renderLink={(link, { typename }) => {
                                 return (
-                                  <NextLink {...pathNames()} passHref>
+                                  <NextLink
+                                    {...linkResolver(typename as LinkType)}
+                                    passHref
+                                  >
                                     {link}
                                   </NextLink>
                                 )

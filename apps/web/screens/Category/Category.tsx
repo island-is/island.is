@@ -15,7 +15,6 @@ import {
 } from '@island.is/island-ui/core'
 import { Card } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
-import pathNames, { ContentType } from '@island.is/web/i18n/routes'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 import {
@@ -41,6 +40,7 @@ import {
   ArticleGroup,
 } from '../../graphql/schema'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
@@ -65,6 +65,7 @@ const Category: Screen<CategoryProps> = ({
   const { activeLocale, t } = useI18n()
   const Router = useRouter()
   const n = useNamespace(namespace)
+  const { linkResolver } = useLinkResolver()
 
   const getCurrentCategory = () => categories.find((x) => x.slug === slug)
 
@@ -187,11 +188,7 @@ const Category: Screen<CategoryProps> = ({
 
     setHash(newHash)
 
-    const url = pathNames(
-      activeLocale,
-      category.__typename.toLowerCase() as ContentType,
-      [slug],
-    )
+    const url = linkResolver(category.__typename as LinkType, [slug])
     Router.replace(url.href, url.as + `#${newHash}`)
   }
 
@@ -263,7 +260,7 @@ const Category: Screen<CategoryProps> = ({
             renderLink={(link, { typename, slug }) => {
               return (
                 <NextLink
-                  {...pathNames(activeLocale, typename as ContentType, slug)}
+                  {...linkResolver(typename as LinkType, slug)}
                   passHref
                 >
                   {link}
@@ -283,7 +280,7 @@ const Category: Screen<CategoryProps> = ({
             ]}
             renderLink={(link) => {
               return (
-                <NextLink {...pathNames()} passHref>
+                <NextLink {...linkResolver('homepage')} passHref>
                   {link}
                 </NextLink>
               )
@@ -307,7 +304,7 @@ const Category: Screen<CategoryProps> = ({
             renderLink={(link, { typename, slug }) => {
               return (
                 <NextLink
-                  {...pathNames(activeLocale, typename as ContentType, slug)}
+                  {...linkResolver(typename as LinkType, slug)}
                   passHref
                 >
                   {link}
@@ -386,9 +383,8 @@ const Category: Screen<CategoryProps> = ({
                           <Stack space={2}>
                             {sortedArticles.map(
                               ({ __typename, title, slug, processEntry }) => {
-                                const url = pathNames(
-                                  activeLocale,
-                                  __typename.toLowerCase() as ContentType,
+                                const url = linkResolver(
+                                  __typename.toLowerCase() as LinkType,
                                   [slug],
                                 )
                                 return (
@@ -424,11 +420,7 @@ const Category: Screen<CategoryProps> = ({
           })}
           {lifeEvents.map(
             ({ __typename, title, slug, intro, thumbnail, image }, index) => {
-              const url = pathNames(
-                activeLocale,
-                __typename.toLowerCase() as ContentType,
-                [slug],
-              )
+              const url = linkResolver(__typename as LinkType, [slug])
               return (
                 <Card
                   key={index}
@@ -447,11 +439,7 @@ const Category: Screen<CategoryProps> = ({
             },
           )}
           {cards.map(({ __typename, title, content, slug }, index) => {
-            const url = pathNames(
-              activeLocale,
-              __typename.toLowerCase() as ContentType,
-              [slug],
-            )
+            const url = linkResolver(__typename as LinkType, [slug])
             return (
               <Card
                 key={index}

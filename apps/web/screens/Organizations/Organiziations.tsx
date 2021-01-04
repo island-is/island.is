@@ -25,9 +25,9 @@ import {
 } from '../queries'
 import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useNamespace } from '@island.is/web/hooks'
-import { pathNames } from '@island.is/web/i18n/routes'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '../../units/errors'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface OrganizationProps {
   organizations: Query['getOrganizations']
@@ -41,6 +41,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   namespace,
 }) => {
   const n = useNamespace(namespace)
+  const { linkResolver } = useLinkResolver()
 
   const { items: organizationsItems } = organizations
   const { items: tagsItems } = tags
@@ -66,7 +67,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
             ]}
             renderLink={(link) => {
               return (
-                <NextLink {...pathNames()} passHref>
+                <NextLink {...linkResolver('homepage')} passHref>
                   {link}
                 </NextLink>
               )

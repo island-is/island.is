@@ -8,7 +8,6 @@ import {
   Breadcrumbs,
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
-import { pathNames } from '@island.is/web/i18n/routes'
 import { Screen } from '@island.is/web/types'
 import { TellUsAStory } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -19,6 +18,7 @@ import {
 } from '../graphql/schema'
 import { GET_TELL_US_A_STORY_DATA } from './queries'
 import { CustomNextError } from '../units/errors'
+import { useLinkResolver } from '../hooks/useLinkResolver'
 
 interface TellUsAStoryProps {
   data: GetTellUsAStoryQuery['getTellUsAStory']
@@ -26,6 +26,7 @@ interface TellUsAStoryProps {
 
 const TellUsAStoryPage: Screen<TellUsAStoryProps> = ({ data }) => {
   const { activeLocale } = useI18n()
+  const { linkResolver } = useLinkResolver()
 
   return (
     <Box paddingY={[2, 2, 10]}>
@@ -45,7 +46,7 @@ const TellUsAStoryPage: Screen<TellUsAStoryProps> = ({ data }) => {
                 ]}
                 renderLink={(link) => {
                   return (
-                    <NextLink {...pathNames()} passHref>
+                    <NextLink {...linkResolver('homepage')} passHref>
                       {link}
                     </NextLink>
                   )

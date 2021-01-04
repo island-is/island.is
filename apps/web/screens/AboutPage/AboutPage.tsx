@@ -1,5 +1,4 @@
 import React, { FC, ReactNode, useMemo, forwardRef } from 'react'
-import pathNames from '@island.is/web/i18n/routes'
 import NextLink from 'next/link'
 import {
   GET_ABOUT_PAGE_QUERY,
@@ -64,6 +63,7 @@ import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '@island.is/web/utils/processMenuData'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 /**
  * TODO: Both fragments Image and EmbeddedVideo aren't used inside
@@ -172,6 +172,7 @@ const PageHeader: FC<PageHeaderProps> = ({
   const slice = page.pageHeader
 
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
+  const { linkResolver } = useLinkResolver()
   const [currentSliceId] = useScrollSpy(ids, { marginTop: 220 })
 
   return (
@@ -218,7 +219,7 @@ const PageHeader: FC<PageHeaderProps> = ({
                   ]}
                   renderLink={(link) => {
                     return (
-                      <NextLink {...pathNames()} passHref>
+                      <NextLink {...linkResolver('homepage')} passHref>
                         {link}
                       </NextLink>
                     )
