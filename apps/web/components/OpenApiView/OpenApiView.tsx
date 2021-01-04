@@ -57,6 +57,9 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
         },
       ]
 
+  //sort in descending order, highest version first
+  options.sort((a, b) => (a.value.serviceCode < b.value.serviceCode ? 1 : -1))
+
   const selectOptionValueToGetOpenApiInput = (
     option: SelectOption,
   ): GetOpenApiInput => {
