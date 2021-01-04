@@ -6,7 +6,6 @@ on:
       - 'main'
       - 'release/**'
       - 'hotfix/**'
-      - 'feature-deployment-harden-and-cleanup'
     paths-ignore:
       - '**/*.md'
     tags:
@@ -62,9 +61,6 @@ jobs:
             deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
             echo "deployFeature: $deployFeature"
             exit 1
-          fi
-          if [[ $GITHUB_EVENT_NAME == "push" ]]; then
-            exit 22
           fi
           exit 77
           echo "::set-output name=PRE_CHECK_OK::true"
