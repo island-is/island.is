@@ -348,7 +348,7 @@ const Search: Screen<CategoryProps> = ({
           {filteredItems.length === 0 ? (
             <>
               <Text variant="intro" as="p">
-                {n('nothingFoundWhenSearchingFor', 'Ekkert fannst við leit á')}
+                {n('nothingFoundWhenSearchingFor', 'Ekkert fannst við leit á')}{' '}
                 <strong>{q}</strong>
               </Text>
 
@@ -358,7 +358,7 @@ const Search: Screen<CategoryProps> = ({
             </>
           ) : (
             <Text variant="intro" as="p">
-              {totalSearchResults}
+              {totalSearchResults}{' '}
               {totalSearchResults === 1
                 ? n('searchResult', 'leitarniðurstaða')
                 : n('searchResults', 'leitarniðurstöður')}
