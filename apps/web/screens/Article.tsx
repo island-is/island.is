@@ -25,8 +25,6 @@ import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { Screen } from '@island.is/web/types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
-import routeNames from '@island.is/web/i18n/routeNames'
-import { ContentType, pathNames } from '@island.is/web/i18n/routes'
 import { CustomNextError } from '@island.is/web/units/errors'
 import {
   QueryGetNamespaceArgs,
@@ -39,6 +37,12 @@ import { createNavigation } from '@island.is/web/utils/navigation'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { SidebarLayout } from './Layouts/SidebarLayout'
 import { createPortal } from 'react-dom'
+import {
+  LinkResolverResponse,
+  LinkType,
+  useLinkResolver,
+} from '../hooks/useLinkResolver'
+import { Locale } from '../i18n/I18n'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -57,7 +61,11 @@ const createSubArticleNavigation = (body: Slice[]) => {
 const createArticleNavigation = (
   article: Article,
   selectedSubArticle: SubArticle,
-  makePath: (t: string, p: string) => string,
+  linkResolver: (
+    linkType: LinkType,
+    slugs?: string[],
+    locale?: Locale,
+  ) => LinkResolverResponse,
 ): Array<{ url: string; title: string }> => {
   if (article.subArticles.length === 0) {
     return createNavigation(article.body, {
@@ -72,15 +80,15 @@ const createArticleNavigation = (
 
   nav.push({
     title: article.title,
-    url: makePath('article', '[slug]'),
-    as: makePath('article', article.slug),
+    url: linkResolver('article', [article.slug]).href,
+    as: linkResolver('article', [article.slug]).as,
   })
 
   for (const subArticle of article.subArticles) {
     nav.push({
       title: subArticle.title,
-      url: makePath('article', '[slug]/[subSlug]'),
-      as: makePath('article', `${article.slug}/${subArticle.slug}`),
+      url: linkResolver('article', [article.slug, subArticle.slug]).href,
+      as: linkResolver('article', [article.slug, subArticle.slug]).as,
     })
 
     // expand sub-article navigation for selected sub-article
@@ -102,8 +110,7 @@ const RelatedArticles: FC<{
   title: string
   articles: Array<{ slug: string; title: string }>
 }> = ({ title, articles }) => {
-  const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
 
   if (articles.length === 0) return null
 
@@ -116,8 +123,7 @@ const RelatedArticles: FC<{
         {articles.map((article) => (
           <Link
             key={article.slug}
-            href={makePath('article', '[slug]')}
-            as={makePath('article', article.slug)}
+            {...linkResolver('article', [article.slug])}
             underline="normal"
           >
             <Text key={article.slug} as="span">
@@ -131,12 +137,12 @@ const RelatedArticles: FC<{
 }
 
 const TOC: FC<{
-  selectedSubArticle: SubArticle
+  body: SubArticle['body']
   title: string
-}> = ({ selectedSubArticle, title }) => {
+}> = ({ body, title }) => {
   const navigation = useMemo(() => {
-    return createSubArticleNavigation(selectedSubArticle?.body ?? [])
-  }, [selectedSubArticle?.body])
+    return createSubArticleNavigation(body ?? [])
+  }, [body])
   if (navigation.length === 0) {
     return null
   }
@@ -161,7 +167,7 @@ const TOC: FC<{
 const ArticleNavigation: FC<
   ArticleSidebarProps & { isMenuDialog?: boolean }
 > = ({ article, activeSlug, n, isMenuDialog }) => {
-  const { activeLocale } = useI18n()
+  const { linkResolver } = useLinkResolver()
   return (
     article.subArticles.length > 0 && (
       <Navigation
@@ -175,10 +181,7 @@ const ArticleNavigation: FC<
         isMenuDialog={isMenuDialog}
         renderLink={(link, { typename, slug }) => {
           return (
-            <NextLink
-              {...pathNames(activeLocale, typename as ContentType, slug)}
-              passHref
-            >
+            <NextLink {...linkResolver(typename as LinkType, slug)} passHref>
               {link}
             </NextLink>
           )
@@ -240,20 +243,20 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const n = useNamespace(namespace)
   const { query } = useRouter()
   const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
 
   const subArticle = article.subArticles.find((sub) => {
     return sub.slug === query.subSlug
   })
 
   const contentOverviewOptions = useMemo(() => {
-    return createArticleNavigation(article, subArticle, makePath)
-  }, [article, subArticle, makePath])
+    return createArticleNavigation(article, subArticle, linkResolver)
+  }, [article, subArticle, linkResolver])
 
   const relatedLinks = (article.relatedArticles ?? []).map((article) => ({
     title: article.title,
-    url: makePath('article', '[slug]'),
-    as: makePath('article', article.slug),
+    url: linkResolver('article', [article.slug]).href,
+    as: linkResolver('article', [article.slug]).as,
   }))
 
   const combinedMobileNavigation = [
@@ -289,23 +292,23 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
       >
         <Box paddingBottom={[2, 2, 4]}>
           <Breadcrumbs>
-            <Link href={makePath()}>Ísland.is</Link>
+            <Link {...linkResolver('homepage')}>Ísland.is</Link>
             {!!article.category && (
               <Link
-                href={makePath('ArticleCategory', '/[slug]')}
-                as={makePath('ArticleCategory', article.category.slug)}
+                {...linkResolver('articlecategory', [article.category.slug])}
               >
                 {article.category.title}
               </Link>
             )}
             {!!article.group && (
               <Link
-                as={makePath(
-                  'ArticleCategory',
-                  article.category.slug +
-                    (article.group?.slug ? `#${article.group.slug}` : ''),
-                )}
-                href={makePath('ArticleCategory', '[slug]')}
+                href={
+                  linkResolver('articlecategory', [article.category.slug]).href
+                }
+                as={
+                  linkResolver('articlecategory', [article.category.slug]).as +
+                  (article.group?.slug ? `#${article.group.slug}` : '')
+                }
                 pureChildren
               >
                 <Tag variant="blue">{article.group.title}</Tag>
@@ -330,14 +333,18 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
               <ProcessEntry {...processEntry} />
             </Box>
           )}
-          <GridRow>
-            <GridColumn span={[null, '4/7', '5/7', '4/7', '3/7']}>
-              <TOC
-                title={n('tableOfContentTitle')}
-                selectedSubArticle={subArticle}
-              />
-            </GridColumn>
-          </GridRow>
+          {(subArticle
+            ? subArticle.showTableOfContents
+            : article.showTableOfContents) && (
+            <GridRow>
+              <GridColumn span={[null, '4/7', '5/7', '4/7', '3/7']}>
+                <TOC
+                  title={n('tableOfContentTitle')}
+                  body={subArticle ? subArticle.body : article.body}
+                />
+              </GridColumn>
+            </GridRow>
+          )}
           {subArticle && (
             <Text variant="h2" as="h2" paddingTop={7}>
               <span id={slugify(subArticle.title)}>{subArticle.title}</span>

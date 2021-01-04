@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, {
   FC,
   ReactNode,
@@ -6,8 +5,8 @@ import React, {
   useState,
   useCallback,
   useEffect,
+  useContext,
 } from 'react'
-import Lottie from 'lottie-react'
 import Link from 'next/link'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
@@ -22,26 +21,20 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { deorphanize } from '@island.is/island-ui/utils'
-import { Locale } from '@island.is/web/i18n/I18n'
-import { pathNames, AnchorAttributes } from '@island.is/web/i18n/routes'
 import { useI18n } from '../../i18n'
 import { theme } from '@island.is/island-ui/theme'
-import LottieIllustration from './illustrations/LottieIllustration'
+import LottieLoader from './LottiePlayer/LottieLoader'
+import { GlobalContext } from '@island.is/web/context'
+import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import * as styles from './FrontpageSlider.treat'
-import TestJSON from './json/slide1.json'
 
-const test = {
-  0: undefined,
-  1: undefined,
-  2: undefined,
-  3: TestJSON
-}
-
-type TabsProps = {
+type Slides = {
   subtitle?: string
   title?: string
   content?: string
   link?: string
+  animationJson: any
 }
 
 export const LEFT = 'Left'
@@ -50,7 +43,7 @@ export const UP = 'Up'
 export const DOWN = 'Down'
 
 export interface FrontpageSliderProps {
-  tabs: TabsProps[]
+  slides: Slides[]
   searchContent: ReactNode
 }
 
@@ -69,25 +62,31 @@ const TabBullet: FC<TabBulletProps> = ({ selected }) => {
 }
 
 export const FrontpageSlider: FC<FrontpageSliderProps> = ({
-  tabs,
+  slides,
   searchContent,
 }) => {
+  const { globalNamespace } = useContext(GlobalContext)
+  const gn = useNamespace(globalNamespace)
+
   const contentRef = useRef(null)
   const [minHeight, setMinHeight] = useState<number>(0)
   const itemRefs = useRef<Array<HTMLElement | null>>([])
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
+  const [animationData, setAnimationData] = useState([])
 
   const tab = useTabState({
     baseId: 'frontpage-tab',
   })
 
-  const { activeLocale, t } = useI18n()
+  const { t } = useI18n()
   const { width } = useWindowSize()
 
   useEffect(() => {
     const newSelectedIndex = tab.items.findIndex((x) => x.id === tab.currentId)
     setSelectedIndex(newSelectedIndex)
   }, [tab])
+
+  const { linkResolver } = useLinkResolver()
 
   const goTo = (direction: string) => {
     switch (direction) {
@@ -102,7 +101,7 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
     }
   }
 
-  const generateUrls = (link: string): AnchorAttributes => {
+  const generateUrls = (link: string) => {
     if (link) {
       const linkData = JSON.parse(link)
       const contentId = linkData.sys?.contentType?.sys?.id
@@ -117,11 +116,20 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
         } else {
           type = contentId
         }
-        return pathNames(activeLocale as Locale, type, [slug])
+        return linkResolver(type, [slug])
       }
       return { href: null, as: null }
     }
   }
+
+  useEffect(() => {
+    if (!animationData.length) {
+      const data = slides.map((x) =>
+        x.animationJson ? JSON.parse(x.animationJson) : null,
+      )
+      setAnimationData(data)
+    }
+  }, [slides, animationData])
 
   const onResize = useCallback(() => {
     setMinHeight(0)
@@ -169,7 +177,7 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
               aria-label={t.carouselTitle}
               className={styles.tabWrapper}
             >
-              {tabs.map(({ title = '' }, index) => {
+              {slides.map(({ title = '' }, index) => {
                 return (
                   <Tab key={index} {...tab} className={styles.tabContainer}>
                     <TabBullet selected={selectedIndex === index} />
@@ -179,7 +187,7 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
               })}
             </TabList>
             <Box className={styles.tabPanelWrapper}>
-              {tabs.map(({ title, subtitle, content, link }, index) => {
+              {slides.map(({ title, subtitle, content, link }, index) => {
                 const linkUrls = generateUrls(link)
 
                 // If none are found (during SSR) findIndex returns -1. We want 0 instead.
@@ -251,7 +259,7 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
                                 icon="arrowForward"
                                 aria-labelledby={tabTitleId}
                               >
-                                Sjá nánar
+                                {gn('seeMore')}
                               </Button>
                             </Link>
                           </span>
@@ -321,7 +329,10 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
             height="full"
             justifyContent="center"
           >
-            <LottieIllustration animationData={test[selectedIndex]} />
+            <LottieLoader
+              animationData={animationData}
+              selectedIndex={selectedIndex}
+            />
           </Box>
         </GridColumn>
         <GridColumn hiddenBelow="lg" span="1/12" />

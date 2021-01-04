@@ -18,10 +18,8 @@ import {
   LoadingIcon,
   SleeveContext,
 } from '@island.is/island-ui/core'
-import routeNames from '@island.is/web/i18n/routeNames'
 import { AdgerdirPage, AdgerdirTag } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { useI18n } from '@island.is/web/i18n'
 import { Card } from '@island.is/web/components/Adgerdir/UI/Card/Card'
 import { Button } from '@island.is/web/components/Adgerdir/UI/Button/Button'
 import { Tag } from '@island.is/web/components/Adgerdir/UI/Tag/Tag'
@@ -33,6 +31,7 @@ import {
 
 import * as styles from './AdgerdirArticles.treat'
 import * as covidStyles from '@island.is/web/components/Adgerdir/UI/styles/styles.treat'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const FILTER_TIMER = 300
 const ITEMS_PER_SHOW = 9
@@ -58,11 +57,10 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
   namespace,
   startingIds = [],
 }) => {
-  const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
   const { colorScheme } = useContext(ColorSchemeContext)
   const { isOpen: sleeveIsOpen, setIsOpen } = useContext(SleeveContext)
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
   const [filterString, setFilterString] = useState<string>('')
   const [usableFilters, setUsableFilters] = useState<Array<AdgerdirTag['id']>>(
     [],
@@ -317,8 +315,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
                       },
                     }
                   })}
-                  as={makePath('adgerdir', slug)}
-                  href={makePath('adgerdir', '[slug]')}
+                  {...linkResolver('adgerdirpage', [slug])}
                 />
               )
             },

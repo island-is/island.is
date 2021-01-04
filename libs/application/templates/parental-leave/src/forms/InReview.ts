@@ -10,17 +10,17 @@ import { mm } from '../lib/messages'
 
 export const InReview: Form = buildForm({
   id: 'ParentalLeaveInReview',
-  name: 'Parental Leave',
+  title: 'Parental Leave',
   logo: Logo,
   mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'review',
-      name: '',
+      title: '',
       children: [
         buildCustomField({
           id: 'InReviewSteps',
-          name: (application) =>
+          title: (application) =>
             application.state === 'approved'
               ? mm.reviewScreen.titleApproved
               : mm.reviewScreen.titleInReview,

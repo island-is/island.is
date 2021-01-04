@@ -1,40 +1,35 @@
-import { theme } from 'libs/island-ui/theme/src'
-import { forwardRef, useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
+import { useLifecycles } from 'react-use'
 import { useLottie } from 'lottie-react'
-import { useWindowSize } from 'react-use'
 
 type Props = {
-  onLoaded: () => void
   animationData: any
+  isVisible: boolean
+  onLoaded: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const LottiePlayer = ({ onLoaded, animationData }: Props) => {
+const LottiePlayer = ({ animationData, isVisible, onLoaded }: Props) => {
   const options = {
     animationData,
     loop: true,
-    autoplay: true,
+    autoplay: false,
   }
 
-  const { View, destroy } = useLottie(options)
+  const { View, destroy, stop, play } = useLottie(options)
 
-  const isMobile = useWindowSize().width < theme.breakpoints.md
+  useLifecycles(() => {
+    onLoaded(true)
+  }, destroy)
 
   useEffect(() => {
-    if (animationData) {
-      console.log(animationData)
-      onLoaded()
+    if (isVisible) {
+      play()
+    } else {
+      stop()
     }
+  }, [isVisible])
 
-    return function cleanup() {
-      destroy()
-    }
-  }, [animationData])
-
-  if (isMobile) {
-    return null
-  }
-
-  return View
+  return <div style={{ display: isVisible ? 'block' : 'none' }}>{View}</div>
 }
 
 export default LottiePlayer

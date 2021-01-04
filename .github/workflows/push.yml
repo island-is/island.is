@@ -12,6 +12,9 @@ on:
       - docker-build-*
   workflow_dispatch:
   create:
+  pull_request:
+    types:
+      - labeled
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
@@ -33,7 +36,6 @@ jobs:
           echo "::set-output name=GIT_BRANCH::${GIT_BRANCH}"
           echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
       - name: Check if we want to run workflow
-        continue-on-error: true
         id: branch-name-check
         run: |
           echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
@@ -45,14 +47,21 @@ jobs:
                 echo "Checking branch against pattern '$pattern'"
                 if [[ "$GIT_BRANCH" =~ $pattern ]]; then
                   echo "'$GIT_BRANCH' matches '$pattern', continuing with build"
-                  echo "::set-output name=PRE_CHECK_OK::$GITHUB_EVENT_NAME"
+                  echo "::set-output name=PRE_CHECK_OK::true"
                   exit 0
                 fi
             done
-            echo "No pattern matches '$GIT_BRANCH', exiting with exit code 1"
+            echo "No pattern matches '$GIT_BRANCH', exiting."
             exit 1
           fi
-          echo "::set-output name=PRE_CHECK_OK::$GITHUB_EVENT_NAME"
+          if [[ "$GITHUB_EVENT_NAME" == "labeled" ]]; then
+            if [[ "${{ github.event.label.name }}" != "deploy-feature" ]]; then
+              echo "In a feature branch that's not labeled with 'deploy-feature'. Not deploying."
+              exit 1
+            fi
+          fi
+          echo "::set-output name=PRE_CHECK_OK::true"
+
   prepare:
     runs-on: ubuntu-20.04
     timeout-minutes: 30
@@ -272,7 +281,7 @@ jobs:
   retag-unaffected:
     runs-on: ubuntu-20.04
     timeout-minutes: 5
-    if: always() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped'
+    if: always() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped' && !startsWith(github.ref, 'feature/')
     needs:
       - pre-checks
       - docker-build
@@ -302,8 +311,9 @@ jobs:
       - pre-checks
       - prepare
     env:
-      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
+      BUILD_CHUNKS: ${{ needs.prepare.outputs.BUILD_CHUNKS }}
     strategy:
       matrix:
         service:
@@ -318,11 +328,21 @@ jobs:
           SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
+          if [[ "$GITHUB_EVENT_NAME" == "labeled" ]]; then
+            if [[ ! ("$GIT_BRANCH" =~ "feature") ]]; then
+              # If pr was labeled but branch is not prefixed with feature/
+              GIT_BRANCH=feature/$GIT_BRANCH
+            fi
+          fi
           curl -v $SPINNAKER_URL/webhooks/webhook/${{matrix.service}} -H "content-type: application/json" --data-binary @- <<BODY
           {
-          "token": "$SPINNAKER_WEBHOOK_TOKEN",
-          "branch": "$GIT_BRANCH",
-          "parameters": { "docker_tag": "$DOCKER_TAG" }
+            "token": "$SPINNAKER_WEBHOOK_TOKEN",
+            "branch": "$GIT_BRANCH",
+            "parameters": {
+              "docker_tag": "$DOCKER_TAG",
+              "feature_name": "$(echo "$GIT_BRANCH" | cut -d"/" -f2- | tr -cd '[:alnum:]._-')",
+              "images": "$(echo $BUILD_CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"
+            }
           }
           BODY
 
@@ -344,8 +364,9 @@ jobs:
 
   failure-notification:
     runs-on: ubuntu-20.04
-    if: failure()
+    if: failure() && needs.pre-checks.outputs.PRE_CHECK_OK
     needs:
+      - pre-checks
       - prepare
       - docker-build
       - retag-unaffected

@@ -19,7 +19,7 @@ interface Props extends FieldBaseProps {
 const SelectFormField: FC<Props> = ({ application, error, field }) => {
   const {
     id,
-    name,
+    title,
     description,
     options,
     placeholder,
@@ -42,7 +42,7 @@ const SelectFormField: FC<Props> = ({ application, error, field }) => {
       <Box paddingTop={2}>
         <SelectController
           defaultValue={useDefaultValue(field, application)}
-          label={formatText(name, application, formatMessage)}
+          label={formatText(title, application, formatMessage)}
           name={id}
           disabled={disabled}
           error={error}

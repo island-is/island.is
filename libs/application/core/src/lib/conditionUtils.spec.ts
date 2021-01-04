@@ -15,7 +15,7 @@ describe('conditions', () => {
       shouldShowFormItem(
         buildTextField({
           id: 'asdf',
-          name: 'asdf',
+          title: 'asdf',
         }),
         {},
       ),
@@ -27,7 +27,7 @@ describe('conditions', () => {
         shouldShowFormItem(
           buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: () => true,
           }),
           { money: 100 },
@@ -37,7 +37,7 @@ describe('conditions', () => {
         shouldShowFormItem(
           buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: (formValue: FormValue) => formValue.money > 0,
           }),
           { money: 100 },
@@ -47,7 +47,7 @@ describe('conditions', () => {
         shouldShowFormItem(
           buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: (formValue: FormValue) =>
               formValue.money > formValue.price,
           }),
@@ -60,7 +60,7 @@ describe('conditions', () => {
         shouldShowFormItem(
           buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: () => false,
           }),
           { money: 100 },
@@ -70,7 +70,7 @@ describe('conditions', () => {
         shouldShowFormItem(
           buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: (formValue: FormValue) => formValue.money > 0,
           }),
           { money: 0 },
@@ -80,7 +80,7 @@ describe('conditions', () => {
         shouldShowFormItem(
           buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: (formValue: FormValue) =>
               formValue.money > formValue.price,
           }),
@@ -93,7 +93,7 @@ describe('conditions', () => {
         shouldShowFormItem(
           buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: (formValue: FormValue, externalData) =>
               formValue.money > formValue.price &&
               externalData.userProfile.status === 'success' &&
@@ -115,12 +115,12 @@ describe('conditions', () => {
     it('should show a section which has a fulfilled static condition', () => {
       const field = buildTextField({
         id: 'asdf',
-        name: 'asdf',
+        title: 'asdf',
       })
 
       const section = buildSection({
         id: 'section',
-        name: 'Section title',
+        title: 'Section title',
         children: [field],
         condition: {
           questionId: 'anotherQuestion',
@@ -139,12 +139,12 @@ describe('conditions', () => {
     it('should show a sub-section which has a fulfilled static condition', () => {
       const field = buildTextField({
         id: 'asdf',
-        name: 'asdf',
+        title: 'asdf',
       })
 
       const subSection = buildSubSection({
         id: 'section',
-        name: 'Section title',
+        title: 'Section title',
         children: [field],
         condition: {
           questionId: 'anotherQuestion',
@@ -163,7 +163,7 @@ describe('conditions', () => {
     it('should show a field which has a fulfilled static condition', () => {
       const field = buildTextField({
         id: 'asdf',
-        name: 'asdf',
+        title: 'asdf',
         condition: {
           questionId: 'anotherQuestion',
           value: 'Great Answer',
@@ -181,7 +181,7 @@ describe('conditions', () => {
     it('should show a field which has a fulfilled static condition for a separate nested field', () => {
       const field = buildTextField({
         id: 'asdf',
-        name: 'asdf',
+        title: 'asdf',
         condition: {
           questionId: 'nested.question',
           value: 'Great Answer',
@@ -229,7 +229,7 @@ describe('conditions', () => {
       it('if it has an "ALL" condition with no checks', () => {
         const field = buildTextField({
           id: 'asdf',
-          name: 'asdf',
+          title: 'asdf',
           condition: {
             isMultiCheck: true,
             show: true,
@@ -243,7 +243,7 @@ describe('conditions', () => {
         it('where an answer should be equal to some value', () => {
           const field = buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: buildMultiConditionWithOneStaticCheck({}),
           })
 
@@ -257,7 +257,7 @@ describe('conditions', () => {
         it('where an answer should NOT equal to some value', () => {
           const field = buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.NOT_EQUAL,
             }),
@@ -275,7 +275,7 @@ describe('conditions', () => {
         it('where an answer should be less than some value', () => {
           const field = buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.LT,
               on: AllOrAny.ANY,
@@ -297,7 +297,7 @@ describe('conditions', () => {
         it('where an answer should be less than or equal to some value', () => {
           const field = buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.LTE,
             }),
@@ -318,7 +318,7 @@ describe('conditions', () => {
         it('where an answer should be greater than some value', () => {
           const field = buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.GT,
             }),
@@ -337,7 +337,7 @@ describe('conditions', () => {
         it('where an answer should be greater than or equal to some value', () => {
           const field = buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.GTE,
               on: AllOrAny.ANY,
@@ -359,7 +359,7 @@ describe('conditions', () => {
         it('where ALL checks are valid', () => {
           const field = buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: buildMultiCheckCondition({
               check: [
                 {
@@ -414,7 +414,7 @@ describe('conditions', () => {
         it('where ANY of the checks are valid', () => {
           const field = buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: buildMultiCheckCondition({
               on: AllOrAny.ANY,
               check: [
@@ -479,7 +479,7 @@ describe('conditions', () => {
       it('if it has an "ANY" condition with no checks whatsoever', () => {
         const field = buildTextField({
           id: 'asdf',
-          name: 'asdf',
+          title: 'asdf',
           condition: {
             isMultiCheck: true,
             show: true,
@@ -492,7 +492,7 @@ describe('conditions', () => {
       it('if it has an "ALL" condition but not answers that are needed for the condition checks', () => {
         const field = buildTextField({
           id: 'asdf',
-          name: 'asdf',
+          title: 'asdf',
           condition: buildMultiCheckCondition({
             check: [
               {
@@ -546,7 +546,7 @@ describe('conditions', () => {
       it('if it has an "ANY" condition but no answers that are needed for the condition checks', () => {
         const field = buildTextField({
           id: 'asdf',
-          name: 'asdf',
+          title: 'asdf',
           condition: buildMultiCheckCondition({
             on: AllOrAny.ANY,
             check: [
@@ -575,7 +575,7 @@ describe('conditions', () => {
         it('an answer that should be equal to some value', () => {
           const field = buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: buildMultiConditionWithOneStaticCheck({ show: false }),
           })
 
@@ -589,7 +589,7 @@ describe('conditions', () => {
         it('an answer that should NOT equal to some value', () => {
           const field = buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.NOT_EQUAL,
               show: false,
@@ -608,7 +608,7 @@ describe('conditions', () => {
         it('an answer that should be less than some value', () => {
           const field = buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.LT,
               on: AllOrAny.ANY,
@@ -631,7 +631,7 @@ describe('conditions', () => {
         it('an answer that should be less than or equal to some value', () => {
           const field = buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.LTE,
               show: false,
@@ -653,7 +653,7 @@ describe('conditions', () => {
         it('an answer that should be greater than some value', () => {
           const field = buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.GT,
               show: false,
@@ -673,7 +673,7 @@ describe('conditions', () => {
         it('an answer that should be greater than or equal to some value', () => {
           const field = buildTextField({
             id: 'asdf',
-            name: 'asdf',
+            title: 'asdf',
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.GTE,
               on: AllOrAny.ANY,
