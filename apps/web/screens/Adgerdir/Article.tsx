@@ -40,11 +40,10 @@ import {
 import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import { Screen } from '@island.is/web/types'
 import { useI18n } from '@island.is/web/i18n'
-import routeNames from '@island.is/web/i18n/routeNames'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useNamespace } from '@island.is/web/hooks'
-
 import * as covidStyles from '@island.is/web/components/Adgerdir/UI/styles/styles.treat'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface AdgerdirArticleProps {
   article: Query['getAdgerdirPage']
@@ -61,7 +60,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
 }) => {
   const n = useNamespace(namespace)
   const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
 
   const { items: pagesItems } = pages
   const { items: tagsItems } = tags
@@ -115,12 +114,12 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
         <Box paddingBottom={[2, 2, 4]}>
           <Breadcrumbs>
             <span className={covidStyles.text}>
-              <Link href={makePath()} as={makePath()}>
+              <Link {...linkResolver('homepage')}>
                 <a>Ísland.is</a>
               </Link>
             </span>
             <span className={covidStyles.text}>
-              <Link href={makePath('adgerdir')} as={makePath('adgerdir')}>
+              <Link {...linkResolver('adgerdirfrontpage')}>
                 <a>{n('covidAdgerdir', 'Covid aðgerðir')}</a>
               </Link>
             </span>

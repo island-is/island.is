@@ -10,8 +10,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { useNamespace } from '@island.is/web/hooks'
-import routeNames from '@island.is/web/i18n/routeNames'
-import { useI18n } from '@island.is/web/i18n'
 import {
   AllSlicesImageFragment as Image,
   GetNamespaceQuery,
@@ -19,6 +17,7 @@ import {
 
 import * as styles from './AboutLatestNews.treat'
 import NewsCard from '../NewsCard/NewsCard'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 // This component is used to display latest news on the About page only.
 // It's not how we display the latest news on the front page.
@@ -45,8 +44,7 @@ export const AboutLatestNews: FC<LatestNewsProps> = ({
   news,
   namespace,
 }) => {
-  const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
   const [first, ...rest] = news
   const n = useNamespace(namespace)
 
@@ -63,8 +61,7 @@ export const AboutLatestNews: FC<LatestNewsProps> = ({
         {first && (
           <BigNewsItem
             news={first}
-            href={makePath('news', '[slug]')}
-            as={makePath('news', first.slug)}
+            {...linkResolver('news', [first.slug])}
             readMore={n('readMore', 'Lesa nánar')}
           />
         )}
@@ -83,8 +80,8 @@ export const AboutLatestNews: FC<LatestNewsProps> = ({
               introduction={newsItem.intro}
               slug={newsItem.slug}
               image={newsItem.image}
-              url={makePath('news', '[slug]')}
-              as={makePath('news', newsItem.slug)}
+              url={linkResolver('news', [newsItem.slug]).href}
+              as={linkResolver('news', [newsItem.slug]).as}
               readMoreText={n('readMore', 'Lesa nánar')}
             />
           </GridColumn>
