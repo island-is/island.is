@@ -298,7 +298,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                     </Link>
                     <a href={nn('linkThroun')}>{nn('linkThrounText')}</a>
                     <a href={nn('linkServices')}>{nn('linkServicesText')}</a>
-                    <span>{nn('linkServiceListText')}</span>
                   </Breadcrumbs>
                 </Box>
                 <Stack space={1}>
