@@ -42,6 +42,7 @@ export enum CaseCustodyProvisions {
   _95_1_D = '_95_1_D', // d-lið 1. mgr. 95. gr.
   _95_2 = '_95_2', // 2. mgr. 95. gr.
   _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
+  _100_1 = '_100_1', // 1. mgr. 100. gr. sml.
 }
 
 export enum CaseCustodyRestrictions {
