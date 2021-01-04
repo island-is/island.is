@@ -36,9 +36,9 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       href,
       onClick,
       variant = 'blue',
-      active = false,
-      disabled = false,
-      outlined = false,
+      active,
+      disabled,
+      outlined,
       attention,
       ...props
     }: TagProps,

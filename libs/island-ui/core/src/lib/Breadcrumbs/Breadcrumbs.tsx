@@ -46,27 +46,24 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
 
         return (
           <span key={index} className={styles.wrapper}>
-            {renderLink(
-              isLink ? (
-                <a
-                  href={item?.href}
-                  tabIndex={item.isTag ? -1 : undefined}
-                  style={{
-                    textDecoration: item.isTag ? 'none' : undefined,
-                    display: 'inline-flex',
-                  }}
-                  className={cn(styles.breadcrumb[color], {
-                    [styles.focusable[color]]: isLink,
-                  })}
-                >
-                  {renderCrumb}
-                </a>
-              ) : (
-                renderCrumb
-              ),
-
-              item,
-            )}
+            {isLink
+              ? renderLink(
+                  <a
+                    href={item?.href}
+                    tabIndex={item.isTag ? -1 : undefined}
+                    style={{
+                      textDecoration: item.isTag ? 'none' : undefined,
+                      display: 'inline-flex',
+                    }}
+                    className={cn(styles.breadcrumb[color], {
+                      [styles.focusable[color]]: isLink,
+                    })}
+                  >
+                    {renderCrumb}
+                  </a>,
+                  item,
+                )
+              : renderCrumb}
             {items.length - 1 > index && (
               <span className={cn(styles.bullet, styles.color[color])}></span>
             )}

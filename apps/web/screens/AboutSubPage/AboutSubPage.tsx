@@ -1,4 +1,5 @@
 import React from 'react'
+import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
 import { QueryGetAboutSubPageArgs } from '@island.is/api/schema'
 import {
@@ -29,6 +30,7 @@ import {
 } from '@island.is/island-ui/contentful'
 import { SidebarLayout } from '../Layouts/SidebarLayout'
 import { Document } from '@contentful/rich-text-types'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 export interface AboutSubPageProps {
   page: GetAboutSubPageQuery['getAboutSubPage']
@@ -40,6 +42,7 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
   parentPage,
 }) => {
   const { asPath } = useRouter()
+  const { linkResolver } = useLinkResolver()
 
   const parentPageLink: NavigationItem = {
     title: parentPage.pageHeader.navigationText,
@@ -91,14 +94,26 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
                   items={[
                     {
                       title: 'Ísland.is',
+                      typename: 'homepage',
                       href: '/',
                     },
 
                     {
                       title: parentPage.title,
-                      href: '/stafraent-island',
+                      typename: 'page',
+                      href: '/',
                     },
                   ]}
+                  renderLink={(link, { typename }) => {
+                    return (
+                      <NextLink
+                        {...linkResolver(typename as LinkType)}
+                        passHref
+                      >
+                        {link}
+                      </NextLink>
+                    )
+                  }}
                 />
                 <Box display={['block', 'block', 'none']}>
                   <Navigation

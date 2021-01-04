@@ -4,6 +4,7 @@ import { Text } from '../Text/Text'
 import { Icon } from '../Icon/Icon'
 import { Colors } from '@island.is/island-ui/theme'
 import * as styles from './Breadcrumbs.treat'
+import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 
 interface BreadcrumbsProps {
   label?: string
@@ -17,6 +18,7 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
   separatorColor = 'blue400',
   children,
 }) => {
+  useDeprecatedComponent('BreadcrumbsDeprecated', 'Breadcrumbs')
   const crumbs = Children.toArray(children).filter((c) => c)
 
   return (
