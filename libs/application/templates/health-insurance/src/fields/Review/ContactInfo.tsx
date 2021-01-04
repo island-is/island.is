@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
 import {
   Box,
   GridColumn,
@@ -11,8 +11,9 @@ import {
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { m } from '../../forms/messages'
+import { ReviewFieldProps } from '../../types'
 
-const ContactInfo: FC<FieldBaseProps> = ({ application }) => {
+const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -90,7 +91,6 @@ const ContactInfo: FC<FieldBaseProps> = ({ application }) => {
             )}
           />
         </Box>
-
         <Box>
           <GridRow>
             <GridColumn span="6/12">
@@ -99,6 +99,7 @@ const ContactInfo: FC<FieldBaseProps> = ({ application }) => {
                 name={'applicant.email'}
                 label={formatText(m.email, application, formatMessage)}
                 ref={register}
+                disabled={!isEditable}
               />
             </GridColumn>
             <GridColumn span="6/12">
@@ -107,6 +108,7 @@ const ContactInfo: FC<FieldBaseProps> = ({ application }) => {
                 name={'applicant.phoneNumber'}
                 label={formatText(m.phoneNumber, application, formatMessage)}
                 ref={register}
+                disabled={!isEditable}
               />
             </GridColumn>
           </GridRow>

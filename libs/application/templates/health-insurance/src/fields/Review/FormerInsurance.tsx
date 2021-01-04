@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
 import {
   GridColumn,
   GridRow,
@@ -16,8 +16,9 @@ import {
 import { YES, NO } from '../../constants'
 
 import { m } from '../../forms/messages'
+import { ReviewFieldProps } from '../../types'
 
-const FormerInsurance: FC<FieldBaseProps> = ({ application }) => {
+const FormerInsurance: FC<ReviewFieldProps> = ({ application, isEditable }) => {
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -32,9 +33,9 @@ const FormerInsurance: FC<FieldBaseProps> = ({ application }) => {
           )}
         />
         <RadioController
-          id={'formerInsuranceRegistration'}
-          disabled={false}
-          name={'formerInsuranceRegistration'}
+          id={'formerInsurance.registration'}
+          name={'formerInsurance.registration'}
+          disabled={!isEditable}
           largeButtons={true}
           options={[
             {
@@ -63,39 +64,41 @@ const FormerInsurance: FC<FieldBaseProps> = ({ application }) => {
         <GridRow>
           <GridColumn span="6/12">
             <Input
-              id={'formerInsuranceCountry'}
-              name={'formerInsuranceCountry'}
+              id={'formerInsurance.country'}
+              name={'formerInsurance.country'}
               label={formatText(
                 m.formerInsuranceCountry,
                 application,
                 formatMessage,
               )}
               ref={register}
+              disabled={!isEditable}
             />
           </GridColumn>
           <GridColumn span="6/12">
             <Input
-              id={'formerPersonalId'}
-              name={'formerPersonalId'}
+              id={'formerInsurance.personalId'}
+              name={'formerInsurance.personalId'}
               label={formatText(m.formerPersonalId, application, formatMessage)}
               ref={register}
+              disabled={!isEditable}
             />
           </GridColumn>
         </GridRow>
         <Box paddingBottom={4}>
           <Input
-            id={'formerInsuranceInstitution'}
-            name={'formerInsuranceInstitution'}
+            id={'formerInsurance.institution'}
+            name={'formerInsurance.institution'}
             label={formatText(
               m.formerInsuranceInstitution,
               application,
               formatMessage,
             )}
             ref={register}
+            disabled={!isEditable}
           />
         </Box>
       </Stack>
-
       <Stack space={2}>
         <FieldDescription
           description={formatText(
@@ -105,8 +108,9 @@ const FormerInsurance: FC<FieldBaseProps> = ({ application }) => {
           )}
         />
         <RadioController
-          id={'formerInsuranceEntitlement'}
-          name={'formerInsuranceEntitlement'}
+          id={'formerInsurance.entitlement'}
+          name={'formerInsurance.entitlement'}
+          disabled={!isEditable}
           largeButtons={true}
           split={'1/2'}
           options={[

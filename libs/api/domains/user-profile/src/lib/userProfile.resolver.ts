@@ -54,6 +54,14 @@ export class UserProfileResolver {
     return Promise.resolve({ created: true })
   }
 
+  @Mutation(() => Response, { nullable: true })
+  async resendEmailVerification(@CurrentUser() user: User): Promise<Response> {
+    const response = await this.userUserProfileService.resendEmailVerification(
+      user.nationalId,
+    )
+    return Promise.resolve({ created: !!response })
+  }
+
   @Mutation(() => ConfirmResponse, { nullable: true })
   async confirmSmsVerification(
     @Args('input') input: ConfirmSmsVerificationInput,

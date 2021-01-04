@@ -13,6 +13,7 @@ import {
   buildTextField,
   Form,
   FormModes,
+  Comparators,
 } from '@island.is/application/core'
 import { m } from './messages'
 import { YES, NO } from '../constants'
@@ -187,7 +188,7 @@ export const HealthInsuranceForm: Form = buildForm({
           title: m.formerInsuranceTitle,
           children: [
             buildRadioField({
-              id: 'formerInsuranceRegistration',
+              id: 'formerInsurance.registration',
               title: '',
               description: m.formerInsuranceRegistration,
               largeButtons: true,
@@ -197,26 +198,26 @@ export const HealthInsuranceForm: Form = buildForm({
               ],
             }),
             buildDescriptionField({
-              id: 'formerInsuranceDetails',
+              id: 'formerInsurance.details',
               title: '',
               description: m.formerInsuranceDetails,
             }),
             buildTextField({
-              id: 'formerInsuranceCountry',
+              id: 'formerInsurance.country',
               title: m.formerInsuranceCountry,
               width: 'half',
             }),
             buildTextField({
-              id: 'formerPersonalId',
+              id: 'formerInsurance.personalId',
               title: m.formerPersonalId,
               width: 'half',
             }),
             buildTextField({
-              id: 'formerInsuranceInstitution',
+              id: 'formerInsurance.institution',
               title: m.formerInsuranceInstitution,
             }),
             buildRadioField({
-              id: 'formerInsuranceEntitlement',
+              id: 'formerInsurance.entitlement',
               title: '',
               description: m.formerInsuranceEntitlement,
               width: 'half',
@@ -244,7 +245,7 @@ export const HealthInsuranceForm: Form = buildForm({
               component: 'Review',
             }),
             buildRadioField({
-              id: 'additionalInfo',
+              id: 'additionalInfo.hasAdditionalInfo',
               title: '',
               description: m.additionalInfo,
               largeButtons: true,
@@ -255,17 +256,27 @@ export const HealthInsuranceForm: Form = buildForm({
               ],
             }),
             buildTextField({
-              id: 'additionalRemarks',
+              id: 'additionalInfo.remarks',
               title: m.additionalRemarks,
               variant: 'textarea',
-              placeholder: m.additionalRemarksPlacehokder,
-              condition: (answers) => answers.additionalInfo === YES,
+              placeholder: m.additionalRemarksPlaceholder,
+              condition: {
+                questionId: 'additionalInfo.hasAdditionalInfo',
+                isMultiCheck: false,
+                comparator: Comparators.GTE,
+                value: YES,
+              },
             }),
             buildFileUploadField({
-              id: 'additionalFiles',
+              id: 'additionalInfo.files',
               title: '',
               introduction: '',
-              condition: (answers) => answers.additionalInfo === YES,
+              condition: {
+                questionId: 'additionalInfo.hasAdditionalInfo',
+                isMultiCheck: false,
+                comparator: Comparators.GTE,
+                value: YES,
+              },
             }),
             buildCustomField({
               id: 'confirmCorrectInfo',
