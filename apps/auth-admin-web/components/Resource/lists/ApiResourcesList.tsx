@@ -22,7 +22,7 @@ export default function ApiResourcesList() {
   }, [page, count]);
 
   const edit = (apiResource: ApiResourcesDTO) => {
-    router.push('resource/edit/api-resource/' + apiResource.name);
+    router.push(`/resource/api-resource/${apiResource.name}`);
   };
 
   const handlePageChange = async (page: number, countPerPage: number) => {

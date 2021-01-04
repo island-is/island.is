@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import ContentWrapper from './../../../../components/Layout/ContentWrapper';
-import { ApiScope } from './../../../../entities/models/api-scope.model';
-import { ApiScopesDTO } from './../../../../entities/dtos/api-scopes-dto';
-import { ResourcesService } from './../../../../services/ResourcesService';
-import ApiScopeCreateForm from '../../../../components/Resource/forms/ApiScopeCreateForm';
-import ApiScopeStepNav from '../../../../components/Resource/nav/ApiScopeStepNav';
-import StepEnd from './../../../../components/Common/StepEnd';
-import { ApiScopeStep } from './../../../../entities/common/ApiScopeStep';
-import ApiScopeUserClaimsForm from '../../../../components/Resource/forms/ApiScopeUserClaimsForm';
+import ContentWrapper from '../../../components/Layout/ContentWrapper';
+import { ApiScope } from '../../../entities/models/api-scope.model';
+import { ApiScopesDTO } from '../../../entities/dtos/api-scopes-dto';
+import { ResourcesService } from '../../../services/ResourcesService';
+import ApiScopeCreateForm from '../../../components/Resource/forms/ApiScopeCreateForm';
+import ApiScopeStepNav from '../../../components/Resource/nav/ApiScopeStepNav';
+import StepEnd from '../../../components/Common/StepEnd';
+import { ApiScopeStep } from '../../../entities/common/ApiScopeStep';
+import ApiScopeUserClaimsForm from '../../../components/Resource/forms/ApiScopeUserClaimsForm';
+import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav';
 
 export default function Index() {
   const { query } = useRouter();
@@ -71,6 +72,7 @@ export default function Index() {
     case ApiScopeStep.ApiScope: {
       return (
         <ContentWrapper>
+          <ResourcesTabsNav />         
           <ApiScopeStepNav
             activeStep={step}
             handleStepChange={handleStepChange}
@@ -88,6 +90,7 @@ export default function Index() {
     case ApiScopeStep.Claims: {
       return (
         <ContentWrapper>
+          <ResourcesTabsNav />         
           <ApiScopeStepNav
             activeStep={step}
             handleStepChange={handleStepChange}
@@ -107,6 +110,7 @@ export default function Index() {
     default: {
       return (
         <ContentWrapper>
+          <ResourcesTabsNav />         
           <ApiScopeStepNav
             activeStep={step}
             handleStepChange={handleStepChange}

@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import ContentWrapper from './../../../../components/Layout/ContentWrapper';
+import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import { useRouter } from 'next/router';
-import { ApiResource } from './../../../../entities/models/api-resource.model';
-import { ResourcesService } from './../../../../services/ResourcesService';
-import ApiResourceCreateForm from '../../../../components/Resource/forms/ApiResourceCreateForm';
-import { ApiResourcesDTO } from './../../../../entities/dtos/api-resources-dto';
-import ApiResourceStepNav from '../../../../components/Resource/nav/ApiResourceStepNav';
-import { ApiResourceStep } from './../../../../entities/common/ApiResourceStep';
-import StepEnd from './../../../../components/Common/StepEnd';
-import ApiResourceSecretForm from './../../../../components/Resource/forms/ApiResourceSecretForm';
-import ApiResourceScopeForm from './../../../../components/Resource/forms/ApiResourceScopeForm';
-import ApiResourceUserClaimForm from './../../../../components/Resource/forms/ApiResourceUserClaimForm';
+import { ApiResource } from '../../../entities/models/api-resource.model';
+import { ResourcesService } from '../../../services/ResourcesService';
+import ApiResourceCreateForm from '../../../components/Resource/forms/ApiResourceCreateForm';
+import { ApiResourcesDTO } from '../../../entities/dtos/api-resources-dto';
+import ApiResourceStepNav from '../../../components/Resource/nav/ApiResourceStepNav';
+import { ApiResourceStep } from '../../../entities/common/ApiResourceStep';
+import StepEnd from '../../../components/Common/StepEnd';
+import ApiResourceSecretForm from '../../../components/Resource/forms/ApiResourceSecretForm';
+import ApiResourceScopeForm from '../../../components/Resource/forms/ApiResourceScopeForm';
+import ApiResourceUserClaimForm from '../../../components/Resource/forms/ApiResourceUserClaimForm';
+import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav';
 
 export default function Index() {
   const { query } = useRouter();
@@ -26,7 +27,8 @@ export default function Index() {
   useEffect(() => {
     async function loadResource() {
       if (resourceId) {
-        await getResource(resourceId as string);
+        const decoded = decodeURIComponent(resourceId as string)
+        await getResource(decoded);
       }
       if (stepQuery) {
         setStep(+stepQuery);
@@ -74,6 +76,7 @@ export default function Index() {
     case ApiResourceStep.ApiResourceBasics: {
       return (
         <ContentWrapper>
+          <ResourcesTabsNav />         
           <ApiResourceStepNav
             activeStep={step}
             handleStepChange={handleStepChange}
@@ -90,6 +93,7 @@ export default function Index() {
     case ApiResourceStep.ApiResourceScopes: {
       return (
         <ContentWrapper>
+          <ResourcesTabsNav />         
           <ApiResourceStepNav
             activeStep={step}
             handleStepChange={handleStepChange}
@@ -108,6 +112,7 @@ export default function Index() {
     case ApiResourceStep.ApiResourceSecrets: {
       return (
         <ContentWrapper>
+          <ResourcesTabsNav />         
           <ApiResourceStepNav
             activeStep={step}
             handleStepChange={handleStepChange}
@@ -126,6 +131,7 @@ export default function Index() {
     case ApiResourceStep.ApiResourceUserClaims: {
       return (
         <ContentWrapper>
+          <ResourcesTabsNav />   
           <ApiResourceStepNav
             activeStep={step}
             handleStepChange={handleStepChange}
@@ -145,6 +151,7 @@ export default function Index() {
     default: {
       return (
         <ContentWrapper>
+          <ResourcesTabsNav />   
           <ApiResourceStepNav
             activeStep={step}
             handleStepChange={handleStepChange}

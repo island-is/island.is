@@ -3,6 +3,7 @@ import { ApiResourceSecret } from './api-resource-secret.model';
 import { ApiResourceUserClaim } from './api-resource-user-claim.model';
 
 export class ApiResource {
+  nationalId!: string;
   name!: string;
   enabled!: boolean;
   displayName!: string;

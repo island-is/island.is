@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import IdentityResourceCreateForm from '../../../../components/Resource/forms/IdentityResourceCreateForm';
-import IdentityResourcesDTO from './../../../../entities/dtos/identity-resources.dto';
-import ContentWrapper from './../../../../components/Layout/ContentWrapper';
+import IdentityResourceCreateForm from '../../../components/Resource/forms/IdentityResourceCreateForm';
+import IdentityResourcesDTO from '../../../entities/dtos/identity-resources.dto';
+import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import { useRouter } from 'next/router';
-import { ResourcesService } from './../../../../services/ResourcesService';
-import { IdentityResource } from './../../../../entities/models/identity-resource.model';
-import IdentityResourceStepNav from '../../../../components/Resource/nav/IdentityResourceStepNav';
-import { IdentityResourceStep } from './../../../../entities/common/IdentityResourcesStep';
-import IdentityResourceUserClaimsForm from '../../../../components/Resource/forms/IdentityResourceUserClaimsForm';
-import StepEnd from './../../../../components/Common/StepEnd';
+import { ResourcesService } from '../../../services/ResourcesService';
+import { IdentityResource } from '../../../entities/models/identity-resource.model';
+import IdentityResourceStepNav from '../../../components/Resource/nav/IdentityResourceStepNav';
+import { IdentityResourceStep } from '../../../entities/common/IdentityResourcesStep';
+import IdentityResourceUserClaimsForm from '../../../components/Resource/forms/IdentityResourceUserClaimsForm';
+import StepEnd from '../../../components/Common/StepEnd';
+import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav';
 
 export default function Index() {
   const { query } = useRouter();
@@ -24,7 +25,8 @@ export default function Index() {
   useEffect(() => {
     async function loadResource() {
       if (resourceId) {
-        await getResource(resourceId as string);
+        const decoded = decodeURIComponent(resourceId as string);
+        await getResource(decoded);
       }
       if (stepQuery) {
         setStep(+stepQuery);
@@ -74,6 +76,7 @@ export default function Index() {
     case IdentityResourceStep.IdentityResource: {
       return (
         <ContentWrapper>
+          <ResourcesTabsNav />         
           <IdentityResourceStepNav activeStep={step} handleStepChange={handleStepChange}>
           <IdentityResourceCreateForm
             identityResource={identityResource}
@@ -87,6 +90,7 @@ export default function Index() {
     case IdentityResourceStep.Claims: {
       return (
         <ContentWrapper>
+          <ResourcesTabsNav />         
           <IdentityResourceStepNav activeStep={step} handleStepChange={handleStepChange}>
           <IdentityResourceUserClaimsForm identityResourceName={identityResource.name} handleBack={handleBack} handleNext={handleNext} claims={identityResource.userClaims?.map(x => x.claimName)} handleChanges={changesMade} />
           </IdentityResourceStepNav>
@@ -96,6 +100,7 @@ export default function Index() {
     default: {
       return (
         <ContentWrapper>
+          <ResourcesTabsNav />         
           <IdentityResourceStepNav activeStep={step} handleStepChange={handleStepChange}>
           <StepEnd buttonText="Go back" title="Steps completed" handleButtonFinishedClick={() => setStep(1)}>The steps needed, to create the Identity Resource, have been completed</StepEnd>
           </IdentityResourceStepNav>
