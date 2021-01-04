@@ -9,7 +9,7 @@ export class AccessService {
     private adminAccessModel: typeof AdminAccess,
   ) {}
 
-  /** Checks if nationalId has access */
+  /** Checks if nationalId has admin access */
   async hasAccess(nationalId: string): Promise<boolean> {
     const access = await this.adminAccessModel.findByPk(nationalId)
 
