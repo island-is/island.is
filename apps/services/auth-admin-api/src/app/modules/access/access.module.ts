@@ -1,8 +1,10 @@
-import { Module } from '@nestjs/common'
-import { NationalIdGuard } from './national-id-guard'
+import { Global, Module } from '@nestjs/common'
+import { AccessService, AdminAccess } from '@island.is/auth-api-lib'
+import { SequelizeModule } from '@nestjs/sequelize'
 
+Global()
 @Module({
-  imports: [NationalIdGuard],
-  exports: [NationalIdGuard],
+  imports: [SequelizeModule.forFeature([AdminAccess])],
+  providers: [AccessService],
 })
 export class AccessModule {}

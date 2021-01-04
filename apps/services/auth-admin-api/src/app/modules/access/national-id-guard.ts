@@ -1,18 +1,18 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { Observable } from 'rxjs'
-import { Reflector } from '@nestjs/core'
 import { GqlExecutionContext } from '@nestjs/graphql'
+import { AccessService } from '@island.is/auth-api-lib'
 
 @Injectable()
 export class NationalIdGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
+  constructor(private readonly accessService: AccessService) {}
 
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const userNationalId = this.getUserNationalId(context)
 
-    return this.allowedNationalIds.includes(userNationalId)
+    return this.accessService.hasAccess(userNationalId)
   }
 
   private getUserNationalId(context: ExecutionContext): string {
@@ -25,11 +25,4 @@ export class NationalIdGuard implements CanActivate {
       return ctx.getContext().req.user.nationalId
     }
   }
-
-  // Hardcoded list of nationalIds with access to the admin backend
-  private allowedNationalIds: string[] = [
-    '0907704039',
-    '3004764579',
-    '2809923489',
-  ]
 }
