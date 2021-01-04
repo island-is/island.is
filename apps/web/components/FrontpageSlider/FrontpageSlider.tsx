@@ -34,7 +34,7 @@ type Slides = {
   title?: string
   content?: string
   link?: string
-  animationJson: any
+  animationJson?: any
 }
 
 export const LEFT = 'Left'
