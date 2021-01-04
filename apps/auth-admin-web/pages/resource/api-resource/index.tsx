@@ -9,7 +9,7 @@ export default function Index() {
   const router = useRouter();
   
   const handleSave = (data: ApiResourcesDTO) => {
-    router.push(`/resource/api-resource/${data.name}?step=2`);
+    router.push(`/resource/api-resource/${encodeURIComponent(data.name)}?step=2`);
   }
 
   const handleCancel = () => {

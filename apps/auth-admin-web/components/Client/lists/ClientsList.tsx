@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { ClientService } from '../../../services/ClientService';
 import ConfirmModal from '../../Common/ConfirmModal';
 import { Client } from './../../../entities/models/client.model';
-import { SSL_OP_PKCS1_CHECK_2 } from 'constants';
 
 class ClientsList extends Component {
   state = {

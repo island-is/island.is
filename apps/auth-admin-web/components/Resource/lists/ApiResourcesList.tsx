@@ -8,24 +8,20 @@ import { ApiResource } from '../../../entities/models/api-resource.model';
 import ConfirmModal from '../../Common/ConfirmModal';
 
 export default function ApiResourcesList() {
-  const [count, setCount] = useState(1);
+  const [count, setCount] = useState(0);
   const [page, setPage] = useState(1);
   const [apiResources, setApiResources] = useState<ApiResource[]>([]);
-  const [totalCount, setTotalCount] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const router = useRouter();
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [resourceToRemove, setResourceToRemove] = React.useState('');
 
-  useEffect(() => {
-    getResources(page, count);
-  }, [page, count]);
-
   const edit = (apiResource: ApiResourcesDTO) => {
-    router.push(`/resource/api-resource/${apiResource.name}`);
+    router.push(`/resource/api-resource/${encodeURIComponent(apiResource.name)}`);
   };
 
   const handlePageChange = async (page: number, countPerPage: number) => {
+    getResources(page, countPerPage);
     setPage(page);
     setCount(countPerPage);
   };
@@ -52,8 +48,7 @@ export default function ApiResourcesList() {
         return 0;
       });
       setApiResources(resourceArr.reverse());
-      setTotalCount(response.count);
-      setLastPage(Math.ceil(totalCount / count));
+      setLastPage(Math.ceil(response.count / count));
     }
   };
 

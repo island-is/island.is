@@ -8,18 +8,13 @@ import { ApiScope } from '../../../entities/models/api-scope.model';
 import ConfirmModal from '../../Common/ConfirmModal';
 
 export default function ApiScopeList() {
-  const [count, setCount] = useState(1);
+  const [count, setCount] = useState(0);
   const [page, setPage] = useState(1);
   const [apiScopes, setApiScopes] = useState<ApiScope[]>([]);
-  const [totalCount, setTotalCount] = useState(30);
   const [lastPage, setLastPage] = useState(1);
   const router = useRouter();
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [scopeToRemove, setScopeToRemove] = React.useState('');
-
-  useEffect(() => {
-    getResources(page, count);
-  }, [page, count]);
 
   const edit = (apiScope: ApiScopesDTO) => {
     router.push(`/resource/api-scope/${encodeURIComponent(apiScope.name)}`);
@@ -31,13 +26,19 @@ export default function ApiScopeList() {
       count
     );
     if (response) {
-      setApiScopes(response.rows);
-      setTotalCount(response.count);
-      setLastPage(Math.ceil(totalCount / count));
+      const resourceArr = response.rows.sort((c1, c2) => {
+        if (!c1.archived && !c2.archived) return 0;
+        if (!c1.archived && c2.archived) return 1;
+        if (c1.archived && !c2.archived) return -1;
+        return 0;
+      });
+      setApiScopes(resourceArr.reverse());
+      setLastPage(Math.ceil(response.count / count));
     }
   };
 
   const handlePageChange = async (page: number, countPerPage: number) => {
+    getResources(page, countPerPage);
     setPage(page);
     setCount(countPerPage);
   };
@@ -63,7 +64,7 @@ export default function ApiScopeList() {
   const setHeaderElement = () => {
     return (
       <p>
-        Are you sure want to delete this Api scope: <span>{scopeToRemove}</span>
+        Are you sure want to archive this Api scope: <span>{scopeToRemove}</span>
       </p>
     );
   };
@@ -85,7 +86,7 @@ export default function ApiScopeList() {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={remove}
-        confirmationText="Delete"
+        confirmationText="Archive"
       ></ConfirmModal>
     </div>
   );

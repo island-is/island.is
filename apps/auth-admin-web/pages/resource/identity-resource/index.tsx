@@ -8,7 +8,7 @@ import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
 export default function Index() {
   const router = useRouter();
   const handleSave = (data: IdentityResourcesDTO) => {
-    router.push(`/resource/identity-resource/${data.name}?step=2`);
+    router.push(`/resource/identity-resource/${encodeURIComponent(data.name)}?step=2`);
   }
 
   const handleCancel = () => {
