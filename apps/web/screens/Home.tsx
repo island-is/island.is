@@ -126,7 +126,10 @@ const Home: Screen<HomeProps> = ({
   return (
     <>
       <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
-        <FrontpageSlider slides={frontpageSlides} searchContent={searchContent} />
+        <FrontpageSlider
+          slides={frontpageSlides}
+          searchContent={searchContent}
+        />
       </Section>
       <Section
         aria-labelledby="lifeEventsTitle"
