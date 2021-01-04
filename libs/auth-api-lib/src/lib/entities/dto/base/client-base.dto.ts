@@ -4,6 +4,7 @@ import {
   IsNumber,
   IsOptional,
   IsNotEmpty,
+  IsDate,
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -274,4 +275,10 @@ export abstract class ClientBaseDTO {
     example: true,
   })
   readonly requireClientSecret!: boolean
+
+  @IsDate()
+  @ApiProperty({
+    example: null,
+  })
+  archived!: Date
 }
