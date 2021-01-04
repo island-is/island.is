@@ -15,14 +15,6 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: true,
       }),
-      queryInterface.addColumn('api_scope', 'archived', {
-        type: Sequelize.DATE,
-        allowNull: true,
-      }),
-      queryInterface.addColumn('identity_resource', 'archived', {
-        type: Sequelize.DATE,
-        allowNull: true,
-      }),
     ])
   },
 
@@ -31,8 +23,6 @@ module.exports = {
       queryInterface.removeColumn('api_resource', 'national_id'),
       queryInterface.removeColumn('api_resource', 'archived'),
       queryInterface.removeColumn('client', 'archived'),
-      queryInterface.removeColumn('api_scope', 'archived'),
-      queryInterface.removeColumn('identity_resource', 'archived'),
     ])
   },
 }
