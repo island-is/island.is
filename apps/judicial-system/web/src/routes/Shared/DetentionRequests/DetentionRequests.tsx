@@ -110,7 +110,6 @@ export const DetentionRequests: React.FC = () => {
     decision?: CaseDecision,
     isCustodyEndDateInThePast?: boolean,
   ): { color: TagVariant; text: string } => {
-    console.log(decision)
     switch (state) {
       case CaseState.NEW:
       case CaseState.DRAFT:
