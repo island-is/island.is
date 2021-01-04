@@ -7,7 +7,7 @@
   "supportFile": "./src/support/index.ts",
   "video": true,
   "pageLoadTimeout": 240000,
-  "responseTimeout": 120000,
+  "responseTimeout": 240000,
   "videosFolder": "../../dist/cypress/apps/web-e2e/videos",
   "screenshotsFolder": "../../dist/cypress/apps/web-e2e/screenshots",
   "chromeWebSecurity": false
