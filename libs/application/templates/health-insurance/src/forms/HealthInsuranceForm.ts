@@ -171,8 +171,8 @@ export const HealthInsuranceForm: Form = buildForm({
               width: 'half',
               largeButtons: true,
               options: [
-                { label: m.yesOptionLabel, value: YES },
                 { label: m.noOptionLabel, value: NO },
+                { label: m.yesOptionLabel, value: YES },
               ],
             }),
           ],
@@ -227,6 +227,15 @@ export const HealthInsuranceForm: Form = buildForm({
                 { label: m.yesOptionLabel, value: YES },
               ],
             }),
+            buildTextField({
+              id: 'formerInsurance.additionalInformation',
+              title: m.formerInsuranceAdditionalInformation,
+              placeholder: m.formerInsuranceAdditionalInformationPlaceholder,
+              variant: 'textarea',
+              condition: (answers) => (answers as { 
+                formerInsurance: { entitlement: string }
+              })?.formerInsurance?.entitlement === YES,
+            })
           ],
         }),
       ],

@@ -124,6 +124,14 @@ const FormerInsurance: FC<ReviewFieldProps> = ({ application, isEditable }) => {
             },
           ]}
         />
+        <Input
+          id={'formerInsurance.additionalInformation'}
+          name={'formerInsurance.additionalInformation'}
+          label={formatText(m.formerInsuranceAdditionalInformation, application, formatMessage)}
+          ref={register}
+          disabled={!isEditable}
+          textarea={true}
+        />
       </Stack>
     </Box>
   )

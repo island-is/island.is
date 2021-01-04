@@ -222,6 +222,17 @@ export const m = defineMessages({
       'Are you entitled to continued insurance in your former country of residence while living in Iceland?',
     description: 'Former insurance entitlement',
   },
+  formerInsuranceAdditionalInformation: {
+    id: 'hi.application:formerInsurance.additionalInformation',
+    defaultMessage: 'Please explain why',
+    description: 'Former insurance additional information on entitlement',
+  },
+  formerInsuranceAdditionalInformationPlaceholder: {
+    id: 'hi.application:formerInsurance.additionalInformationPlaceholder',
+    defaultMessage:
+      'I´m still entitled to health insurance because...',
+    description: 'additional infromation placeholder',
+  },
   formerInsuranceNoOption: {
     id: 'hi.application:formerInsurance.noOption',
     defaultMessage: 'No, only private insurance or no insurance',

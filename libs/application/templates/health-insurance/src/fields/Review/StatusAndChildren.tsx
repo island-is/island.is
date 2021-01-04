@@ -49,10 +49,10 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
           onSelect={(value) => setStatus(value as StatusTypes)}
           options={[
             {
-              label: formatText(m.statusPensioner, application, formatMessage),
-              value: StatusTypes.PENSIONER,
+              label: m.statusEmployed.defaultMessage,
+              value: StatusTypes.EMPLOYED,
               tooltip: formatText(
-                m.statusPensionerInformation,
+                m.statusEmployedInformation,
                 application,
                 formatMessage,
               ),
@@ -62,6 +62,15 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
               value: StatusTypes.STUDENT,
               tooltip: formatText(
                 m.statusStudentInformation,
+                application,
+                formatMessage,
+              ),
+            },
+            {
+              label: formatText(m.statusPensioner, application, formatMessage),
+              value: StatusTypes.PENSIONER,
+              tooltip: formatText(
+                m.statusPensionerInformation,
                 application,
                 formatMessage,
               ),
@@ -135,12 +144,12 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
           split={'1/2'}
           options={[
             {
-              label: formatText(m.yesOptionLabel, application, formatMessage),
-              value: YES,
-            },
-            {
               label: formatText(m.noOptionLabel, application, formatMessage),
               value: NO,
+            },
+            {
+              label: formatText(m.yesOptionLabel, application, formatMessage),
+              value: YES,
             },
           ]}
         />
