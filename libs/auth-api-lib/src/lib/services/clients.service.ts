@@ -23,7 +23,7 @@ import { ClientSecretDTO } from '../entities/dto/client-secret.dto'
 import sha256 from 'crypto-js/sha256'
 import Base64 from 'crypto-js/enc-base64'
 import { IdentityResource } from '../entities/models/identity-resource.model'
-import { ApiScope } from '../..'
+import { ApiScope } from '../entities/models/api-scope.model'
 
 @Injectable()
 export class ClientsService {
@@ -177,43 +177,22 @@ export class ClientsService {
     return await this.findClientById(id)
   }
 
-  /** Deletes a client by id */
+  /** Soft delete on a client by id */
   async delete(id: string): Promise<number> {
-    this.logger.debug('Deleting client with id: ', id)
+    this.logger.debug('Soft deleting a client with id: ', id)
 
     if (!id) {
       throw new BadRequestException('id must be provided')
     }
 
-    // Delete associations
-    await this.clientAllowedCorsOrigin.destroy({
-      where: { clientId: id },
-    })
+    const result = await this.clientModel.update(
+      { archived: new Date(), enabled: false },
+      {
+        where: { clientId: id },
+      },
+    )
 
-    await this.clientIdpRestriction.destroy({
-      where: { clientId: id },
-    })
-
-    await this.clientRedirectUri.destroy({
-      where: { clientId: id },
-    })
-
-    await this.clientSecret.destroy({
-      where: { clientId: id },
-    })
-
-    await this.clientPostLogoutUri.destroy({
-      where: { clientId: id },
-    })
-
-    await this.clientGrantType.destroy({
-      where: { clientId: id },
-    })
-
-    // Delete Client
-    return await this.clientModel.destroy({
-      where: { clientId: id },
-    })
+    return result[0]
   }
 
   /** Finds allowed cors origins by origin */

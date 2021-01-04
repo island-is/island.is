@@ -1,7 +1,7 @@
 import {
   buildDividerField,
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -17,56 +17,56 @@ const noOption = { value: 'no', label: 'Nei' }
 
 export const ReviewApplication: Form = buildForm({
   id: 'ReviewDrivingLessonsApplication',
-  name: 'Úrvinnsla umsóknar um ökunám',
+  title: 'Úrvinnsla umsóknar um ökunám',
   mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'student',
-      name: 'Nemandi',
+      title: 'Nemandi',
       children: [
         buildMultiField({
           id: 'overview',
-          name: 'Umsókn um ökunám:',
+          title: 'Umsókn um ökunám:',
           children: [
-            buildDividerField({ name: 'Umsækjandi' }),
+            buildDividerField({ title: 'Umsækjandi' }),
             buildTextField({
               id: 'student.name',
-              name: 'Nafn nemandi',
+              title: 'Nafn nemandi',
               disabled: true,
             }),
             buildTextField({
               id: 'student.parentEmail',
-              name: 'Netfang forráðamans',
+              title: 'Netfang forráðamans',
               disabled: true,
             }),
             buildTextField({
               id: 'student.nationalId',
-              name: 'Kennitala nemanda',
+              title: 'Kennitala nemanda',
               disabled: true,
               width: 'half',
             }),
             buildTextField({
               id: 'student.phoneNumber',
-              name: 'Símanúmer',
+              title: 'Símanúmer',
               disabled: true,
               width: 'half',
             }),
             buildTextField({
               id: 'student.address',
-              name: 'Heimilisfang',
+              title: 'Heimilisfang',
               disabled: true,
               width: 'half',
             }),
             buildTextField({
               id: 'student.zipCode',
-              name: 'Póstnúmer og staður',
+              title: 'Póstnúmer og staður',
               disabled: true,
               width: 'half',
             }),
-            buildDividerField({ name: 'Ökunámið sjálft' }),
+            buildDividerField({ title: 'Ökunámið sjálft' }),
             buildSelectField({
               id: 'type',
-              name: 'Tegund ökunáms',
+              title: 'Tegund ökunáms',
               disabled: true,
               options: [
                 {
@@ -109,7 +109,7 @@ export const ReviewApplication: Form = buildForm({
             }),
             buildSelectField({
               id: 'teacher',
-              name: 'Ökukennari',
+              title: 'Ökukennari',
               placeholder: 'Veldu ökukennara',
               options: [
                 {
@@ -134,7 +134,7 @@ export const ReviewApplication: Form = buildForm({
             }),
             buildSelectField({
               id: 'school',
-              name: 'Ökuskóli',
+              title: 'Ökuskóli',
               placeholder: 'Veldu ökuskóla',
               options: [
                 {
@@ -149,24 +149,24 @@ export const ReviewApplication: Form = buildForm({
               disabled: true,
               width: 'half',
             }),
-            buildDividerField({ name: 'Heilbrigðisupplýsingar' }),
+            buildDividerField({ title: 'Heilbrigðisupplýsingar' }),
             buildRadioField({
               id: 'useGlasses',
-              name: 'Notar þú gleraugu eða snertilinsur?',
+              title: 'Notar þú gleraugu eða snertilinsur?',
               options: [yesOption, noOption],
               disabled: true,
               width: 'half',
             }),
             buildRadioField({
               id: 'damagedEyeSight',
-              name: 'Hefur þú skerta sjón á öðru auga eða báðum?',
+              title: 'Hefur þú skerta sjón á öðru auga eða báðum?',
               options: [yesOption, noOption],
               disabled: true,
               width: 'half',
             }),
             buildRadioField({
               id: 'limitedFieldOfView',
-              name: 'Hefur þú skert sjónsvið til annarrar hliðar eða beggja?',
+              title: 'Hefur þú skert sjónsvið til annarrar hliðar eða beggja?',
               options: [yesOption, noOption],
               disabled: true,
               width: 'half',
@@ -174,7 +174,7 @@ export const ReviewApplication: Form = buildForm({
             buildSubmitField({
               id: 'approvedByReviewer',
               placement: 'screen',
-              name: 'Samþykkirðu þessa umsókn?',
+              title: 'Samþykkirðu þessa umsókn?',
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
                 { event: 'REJECT', name: 'Hafna', type: 'reject' },
@@ -182,10 +182,10 @@ export const ReviewApplication: Form = buildForm({
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'final',
-          name: 'Takk fyrir',
-          introduction:
+          title: 'Takk fyrir',
+          description:
             'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
         }),
       ],

@@ -2,11 +2,9 @@ import React, { FC } from 'react'
 import { Button, Text, Stack, Link } from '@island.is/island-ui/core'
 import IconBullet from '../IconBullet/IconBullet'
 import { ContentLink } from '@island.is/web/components'
-import { useI18n } from '@island.is/web/i18n'
-import routeNames from '@island.is/web/i18n/routeNames'
 import { PROJECT_STORIES_TAG_ID } from '@island.is/web/constants'
-
 import * as styles from './StoryList.treat'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 export interface StoryProps {
   logoUrl: string
@@ -27,8 +25,7 @@ export const StoryList: FC<StoryListProps> = ({
   readMoreText,
   stories = [],
 }) => {
-  const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
 
   return (
     <Stack space={8}>
@@ -39,10 +36,12 @@ export const StoryList: FC<StoryListProps> = ({
         <div className={styles.margin}>
           <Link
             href={{
-              pathname: makePath('news'),
+              pathname: linkResolver('newsoverview').href,
               query: { tag: PROJECT_STORIES_TAG_ID },
             }}
-            as={makePath('news', `?tag=${PROJECT_STORIES_TAG_ID}`)}
+            as={`${
+              linkResolver('newsoverview').as
+            }?tag=${PROJECT_STORIES_TAG_ID}`}
             pureChildren
           >
             <Button variant="ghost" colorScheme="negative">

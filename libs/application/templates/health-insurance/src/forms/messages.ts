@@ -116,6 +116,16 @@ export const m = defineMessages({
     defaultMessage: 'What is you current status?',
     description: 'What is you current status?',
   },
+  statusEmployed: {
+    id: 'hi.application:status.employed',
+    defaultMessage: 'Employed',
+    description: 'Employed',
+  },
+  statusEmployedInformation: {
+    id: 'hi.application:status.employed.information',
+    defaultMessage: 'You were employed by a company or self-employed',
+    description: 'Employed description',
+  },
   statusOther: {
     id: 'hi.application:status.other',
     defaultMessage: 'Other',
@@ -252,7 +262,7 @@ export const m = defineMessages({
     defaultMessage: 'Remarks or additional information',
     description: 'Remarks or additional information',
   },
-  additionalRemarksPlacehokder: {
+  additionalRemarksPlaceholder: {
     id: 'hi.application.additionalRemarks.placeholder',
     defaultMessage: 'Enter text here',
     description: 'Enter text here',
@@ -276,5 +286,35 @@ export const m = defineMessages({
     id: 'hi.application:successfulSubmission.message',
     defaultMessage: 'We have received your application',
     description: 'We have received your application',
+  },
+  missingInfoSection: {
+    id: 'hi.application:missingInfo.section',
+    defaultMessage: 'Missing information',
+    description: 'Missing information',
+  },
+  agentCommentsTitle: {
+    id: 'hi.application:agentComments.title',
+    defaultMessage: 'Comment from Health Insurance in Iceland',
+    description: 'Comment from Health Insurance in Iceland',
+  },
+  agentCommentsEmpty: {
+    id: 'hi.application:agentComments.empty',
+    defaultMessage: 'Agent did not leave any comments for you',
+    description: 'Agent did not leave any comments for you',
+  },
+  missingInfoAnswersTitle: {
+    id: 'hi.application:missingInfo.addInfo.title',
+    defaultMessage: 'Your answer',
+    description: 'Your answer',
+  },
+  previousAnswersTitle: {
+    id: 'hi.application:previousInfo.title',
+    defaultMessage: 'Previous answer',
+    description: 'Previous answer',
+  },
+  attachedFilesTitle: {
+    id: 'hi.application:attachedFiles.title',
+    defaultMessage: 'Attached files',
+    description: 'Attached files',
   },
 })

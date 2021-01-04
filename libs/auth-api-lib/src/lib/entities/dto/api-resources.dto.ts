@@ -1,7 +1,14 @@
-import { IsString, IsBoolean, IsNotEmpty } from 'class-validator'
+import { IsString, IsBoolean, IsNotEmpty, IsDate } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class ApiResourcesDTO {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: '1234567890',
+  })
+  readonly nationalId!: string
+
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
@@ -35,4 +42,10 @@ export class ApiResourcesDTO {
     example: true,
   })
   readonly showInDiscoveryDocument!: boolean
+
+  @IsDate()
+  @ApiProperty({
+    example: null,
+  })
+  archived!: Date
 }

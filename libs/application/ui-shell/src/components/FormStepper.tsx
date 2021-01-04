@@ -18,7 +18,7 @@ import { FormScreen } from '@island.is/application/ui-shell'
 interface FormStepperProps {
   application: Application
   form: {
-    name: MessageDescriptor | string
+    title: MessageDescriptor | string
     icon?: string
   }
   mode: FormModes
@@ -48,13 +48,13 @@ const FormStepper: FC<FormStepperProps> = ({
   // Cannot infers type because of circular loop
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formattedChildren = (child: SectionChildren): any => ({
-    name: formatText(child.name, application, formatMessage),
+    name: formatText(child.title, application, formatMessage),
     type: child.type,
     children: (child.children ?? []).map((c) => formattedChildren(c)),
   })
 
   const formattedSections = sections.map((section: Section) => ({
-    name: formatText(section.name, application, formatMessage),
+    name: formatText(section.title, application, formatMessage),
     type: section.type,
     children: section.children.map((child) => formattedChildren(child)),
   }))
@@ -92,7 +92,7 @@ const FormStepper: FC<FormStepperProps> = ({
     <CoreFormStepper
       theme={progressTheme[mode]}
       tag={showTag && <ProgressTag />}
-      formName={formatMessage(form.name)}
+      formName={formatMessage(form.title)}
       formIcon={form.icon}
       sections={formattedSections}
       activeSection={screen.sectionIndex}
