@@ -57,7 +57,8 @@ jobs:
             echo "No pattern matches '$GIT_BRANCH', exiting."
             exit 1
           fi
-          if [[ "$GITHUB_EVENT_NAME" == "opened" ]] || [[ "$GITHUB_EVENT_NAME" == "edited" ]]; then
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            echo "action: '${{ github.event.pull_request.action }}"
             deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
             echo "deployFeature: $deployFeature"
             exit 1
@@ -65,6 +66,7 @@ jobs:
           if [[ $GITHUB_EVENT_NAME == "push" ]]; then
             exit 22
           fi
+          exit 77
           echo "::set-output name=PRE_CHECK_OK::true"
 
   prepare:
