@@ -45,7 +45,13 @@ export default function ApiResourcesList() {
       count
     );
     if (response) {
-      setApiResources(response.rows);
+      const resourceArr = response.rows.sort((c1, c2) => {
+        if (!c1.archived && !c2.archived) return 0;
+        if (!c1.archived && c2.archived) return 1;
+        if (c1.archived && !c2.archived) return -1;
+        return 0;
+      });
+      setApiResources(resourceArr.reverse());
       setTotalCount(response.count);
       setLastPage(Math.ceil(totalCount / count));
     }
@@ -63,7 +69,7 @@ export default function ApiResourcesList() {
   const setHeaderElement = () => {
     return (
       <p>
-        Are you sure want to delete this Api resource:{' '}
+        Are you sure want to archive this Api resource:{' '}
         <span>{resourceToRemove}</span>
       </p>
     );
@@ -86,7 +92,7 @@ export default function ApiResourcesList() {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={remove}
-        confirmationText="Delete"
+        confirmationText="Archive"
       ></ConfirmModal>
     </div>
   );

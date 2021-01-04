@@ -46,7 +46,7 @@ export class ClientService extends BaseService {
 
   /** Deletes client */
   static async delete(clientId: string): Promise<number | null> {
-    return BaseService.DELETE(`clients/${clientId}`);
+    return BaseService.DELETE(`clients/${encodeURIComponent(clientId)}`);
   }
 
   /** Adds Allowed CORS origin for client */

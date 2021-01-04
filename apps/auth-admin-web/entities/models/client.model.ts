@@ -48,6 +48,7 @@ export class Client {
   description?: string;
   protocolType!: string;
   requireClientSecret!: boolean;
+  archived!: Date;
   readonly created!: Date;
   readonly modified?: Date;
   allowedScopes?: ClientAllowedScope[];
