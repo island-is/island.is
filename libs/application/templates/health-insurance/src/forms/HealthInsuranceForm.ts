@@ -14,6 +14,7 @@ import {
   Form,
   FormModes,
   Comparators,
+  Application,
 } from '@island.is/application/core'
 import { m } from './messages'
 import { YES, NO } from '../constants'
@@ -32,6 +33,7 @@ export const HealthInsuranceForm: Form = buildForm({
           title: m.externalDataTitle,
           id: 'approveExternalData',
           dataProviders: [
+            // TODO: Add UserProfilProvider for email and phone data
             buildDataProviderItem({
               id: 'nationalRegistry',
               type: 'NationalRegistry',
@@ -61,36 +63,60 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.name,
               width: 'half',
               disabled: true,
+              defaultValue: (application: Application) =>
+                (application.externalData.nationalRegistry?.data as {
+                  name?: string
+                })?.name,
             }),
             buildTextField({
               id: 'applicant.nationalId',
               title: m.nationalId,
               width: 'half',
               disabled: true,
+              defaultValue: (application: Application) =>
+                (application.externalData.nationalRegistry?.data as {
+                  nationalId?: string
+                })?.nationalId,
             }),
             buildTextField({
               id: 'applicant.address',
               title: m.address,
               width: 'half',
               disabled: true,
+              defaultValue: (application: Application) =>
+                (application.externalData.nationalRegistry?.data as {
+                  address?: string
+                })?.address,
             }),
             buildTextField({
               id: 'applicant.postalCode',
               title: m.postalCode,
               width: 'half',
               disabled: true,
+              defaultValue: (application: Application) =>
+                (application.externalData.nationalRegistry?.data as {
+                  postalCode?: string
+                })?.postalCode,
             }),
             buildTextField({
               id: 'applicant.city',
               title: m.city,
               width: 'half',
               disabled: true,
+              defaultValue: (application: Application) =>
+                (application.externalData.nationalRegistry?.data as {
+                  city?: string
+                })?.city,
             }),
             buildTextField({
               id: 'applicant.nationality',
               title: m.nationality,
               width: 'half',
               disabled: true,
+              defaultValue: (application: Application) =>
+                (application.externalData.nationalRegistry?.data as {
+                  nationality?: string
+                })?.nationality,
             }),
             buildDescriptionField({
               id: 'editNationalRegistryData',
@@ -103,6 +129,10 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.email,
               width: 'half',
               variant: 'email',
+              defaultValue: (application: Application) =>
+                (application.externalData.userProfile?.data as {
+                  email?: string
+                })?.email,
             }),
             buildTextField({
               id: 'applicant.phoneNumber',
@@ -111,6 +141,10 @@ export const HealthInsuranceForm: Form = buildForm({
               variant: 'tel',
               format: '###-####',
               placeholder: '000-0000',
+              defaultValue: (application: Application) =>
+                (application.externalData.userProfile?.data as {
+                  mobilePhoneNumber?: string
+                })?.mobilePhoneNumber,
             }),
             buildDescriptionField({
               id: 'editDigitalIslandData',
