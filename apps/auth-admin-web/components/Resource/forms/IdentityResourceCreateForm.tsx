@@ -55,13 +55,10 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
     <div className="api-scope-form">
       <div className="api-scope-form__wrapper">
         <div className="api-scope-form__container">
-          <h1>{isEditing ? 'Edit Api Resource' : 'Create Api Resource'}</h1>
+          <h1>{isEditing ? 'Edit Identity Resource' : 'Create Identity Resource'}</h1>
           <div className="api-scope-form__container__form">
             <div className="api-scope-form__help">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque
-              officia id delectus hic a, laudantium consequatur laborum amet
-              illo accusantium ut tenetur quis porro quia esse voluptate!
-              Eligendi, possimus illum.
+            Identity resources are data like user ID, name, or email address of a user. An identity resource has a unique name, and you can assign arbitrary claim types to it. These claims will then be included in the identity token for the user. The client will use the scope parameter to request access to an identity resource.
             </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="api-scope-form__container__fields">
