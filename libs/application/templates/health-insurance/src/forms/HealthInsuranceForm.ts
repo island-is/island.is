@@ -13,6 +13,7 @@ import {
   buildTextField,
   Form,
   FormModes,
+  Comparators,
 } from '@island.is/application/core'
 import { m } from './messages'
 import { YES, NO } from '../constants'
@@ -259,15 +260,23 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.additionalRemarks,
               variant: 'textarea',
               placeholder: m.additionalRemarksPlaceholder,
-              condition: (answers) =>
-                answers.additionalInfo?.hasAdditionalInfo === YES,
+              condition: {
+                questionId: 'additionalInfo.hasAdditionalInfo',
+                isMultiCheck: false,
+                comparator: Comparators.GTE,
+                value: YES,
+              },
             }),
             buildFileUploadField({
               id: 'additionalInfo.files',
               title: '',
               introduction: '',
-              condition: (answers) =>
-                answers.additionalInfo?.hasAdditionalInfo === YES,
+              condition: {
+                questionId: 'additionalInfo.hasAdditionalInfo',
+                isMultiCheck: false,
+                comparator: Comparators.GTE,
+                value: YES,
+              },
             }),
             buildCustomField({
               id: 'confirmCorrectInfo',
