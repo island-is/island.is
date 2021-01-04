@@ -15,7 +15,7 @@ import { BaseService } from './BaseService';
 export class ResourcesService extends BaseService {
   /** Gets API scope by name */
   static async getApiResourceByName(name: string): Promise<ApiResource | null> {
-    return BaseService.GET(`api-resource/${name}`);
+    return BaseService.GET(`api-resource/${encodeURIComponent(name)}`);
   }
 
   /** Gets API scope by name */
@@ -28,19 +28,25 @@ export class ResourcesService extends BaseService {
     apiResource: ApiResourcesDTO,
     name: string
   ): Promise<ApiResource | null> {
-    return BaseService.PUT(`api-resource/${name}`, apiResource);
+    return BaseService.PUT(
+      `api-resource/${encodeURIComponent(name)}`,
+      apiResource
+    );
   }
 
   /** Update an Api Scope */
   static async updateApiScope(apiScope: ApiScopesDTO): Promise<ApiScope> {
-    return BaseService.PUT(`api-scope/${apiScope.name}`, apiScope);
+    return BaseService.PUT(
+      `api-scope/${encodeURIComponent(apiScope.name)}`,
+      apiScope
+    );
   }
 
   /** Gets Identity resource by name */
   static async getIdentityResourceByName(
     name: string
   ): Promise<IdentityResource | null> {
-    return BaseService.GET(`identity-resource/${name}`);
+    return BaseService.GET(`identity-resource/${encodeURIComponent(name)}`);
   }
 
   /** Creates a new identity resource */
@@ -55,12 +61,15 @@ export class ResourcesService extends BaseService {
     identityResource: IdentityResourcesDTO,
     name: string
   ): Promise<IdentityResource | null> {
-    return BaseService.PUT(`identity-resource/${name}`, identityResource);
+    return BaseService.PUT(
+      `identity-resource/${encodeURIComponent(name)}`,
+      identityResource
+    );
   }
 
   /** Gets user claims for a resource */
   static async getResourceUserClaims(name: string): Promise<any | null> {
-    return BaseService.GET(`user-claims/${name}`);
+    return BaseService.GET(`user-claims/${encodeURIComponent(name)}`);
   }
 
   /** Add User Claim to Identity Resource */
@@ -69,7 +78,9 @@ export class ResourcesService extends BaseService {
     claimName: string
   ): Promise<IdentityResourceUserClaim | null> {
     return BaseService.POST(
-      `identity-resource-user-claims/${identityResourceName}/${claimName}`
+      `identity-resource-user-claims/${encodeURIComponent(
+        identityResourceName
+      )}/${encodeURIComponent(claimName)}`
     );
   }
 
@@ -79,7 +90,9 @@ export class ResourcesService extends BaseService {
     claimName: string
   ): Promise<number> {
     return BaseService.DELETE(
-      `identity-resource-user-claims/${identityResourceName}/${claimName}`
+      `identity-resource-user-claims/${encodeURIComponent(
+        identityResourceName
+      )}/${encodeURIComponent(claimName)}`
     );
   }
 
@@ -89,7 +102,9 @@ export class ResourcesService extends BaseService {
     claimName: string
   ): Promise<IdentityResourceUserClaim | null> {
     return BaseService.POST(
-      `api-scope-user-claims/${encodeURIComponent(apiScopeName)}/${claimName}`
+      `api-scope-user-claims/${encodeURIComponent(
+        apiScopeName
+      )}/${encodeURIComponent(claimName)}`
     );
   }
 
@@ -99,7 +114,9 @@ export class ResourcesService extends BaseService {
     claimName: string
   ): Promise<number> {
     return BaseService.DELETE(
-      `api-scope-user-claims/${encodeURIComponent(apiScopeName)}/${claimName}`
+      `api-scope-user-claims/${encodeURIComponent(
+        apiScopeName
+      )}/${encodeURIComponent(claimName)}`
     );
   }
 
@@ -112,7 +129,7 @@ export class ResourcesService extends BaseService {
 
   /** Deletes an API resource */
   static async deleteApiResource(name: string): Promise<number> {
-    return BaseService.DELETE(`api-resource/${name}`);
+    return BaseService.DELETE(`api-resource/${encodeURIComponent(name)}`);
   }
 
   /** Get's all Api resources and total count of rows */
@@ -146,7 +163,7 @@ export class ResourcesService extends BaseService {
 
   /** Deletes an API scope */
   static async deleteApiScope(name: string): Promise<number> {
-    return BaseService.DELETE(`api-scope/${name}`);
+    return BaseService.DELETE(`api-scope/${encodeURIComponent(name)}`);
   }
 
   /** Get's all identity resources and total count of rows */
@@ -162,7 +179,7 @@ export class ResourcesService extends BaseService {
 
   /** Deletes an identity resource by name */
   static async deleteIdentityResource(name: string): Promise<number> {
-    return BaseService.DELETE(`identity-resource/${name}`);
+    return BaseService.DELETE(`identity-resource/${encodeURIComponent(name)}`);
   }
 
   /** Adds claim to Api resource */
@@ -171,7 +188,9 @@ export class ResourcesService extends BaseService {
     claimName: string
   ): Promise<ApiResourceUserClaim> {
     return BaseService.POST(
-      `api-resource-claims/${apiResourceName}/${claimName}`
+      `api-resource-claims/${encodeURIComponent(
+        apiResourceName
+      )}/${encodeURIComponent(claimName)}`
     );
   }
 
@@ -181,7 +200,9 @@ export class ResourcesService extends BaseService {
     claimName: string
   ): Promise<number | null> {
     return BaseService.DELETE(
-      `api-resource-claims/${apiResourceName}/${claimName}`
+      `api-resource-claims/${encodeURIComponent(
+        apiResourceName
+      )}/${encodeURIComponent(claimName)}`
     );
   }
 
@@ -215,9 +236,9 @@ export class ResourcesService extends BaseService {
     scopeName: string
   ): Promise<number | null> {
     return BaseService.DELETE(
-      `api-resources-allowed-scope/${apiResourceName}/${encodeURIComponent(
-        scopeName
-      )}`
+      `api-resources-allowed-scope/${encodeURIComponent(
+        apiResourceName
+      )}/${encodeURIComponent(scopeName)}`
     );
   }
 }

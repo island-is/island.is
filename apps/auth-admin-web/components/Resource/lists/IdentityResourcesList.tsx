@@ -6,18 +6,13 @@ import { ResourcesService } from '../../../services/ResourcesService';
 import ConfirmModal from '../../Common/ConfirmModal';
 
 export default function IdentityResourcesList() {
-  const [count, setCount] = useState(1);
+  const [count, setCount] = useState(0);
   const [page, setPage] = useState(1);
   const [resources, setResources] = useState<IdentityResourcesDTO[]>([]);
-  const [totalCount, setTotalCount] = useState(30);
   const [lastPage, setLastPage] = useState(1);
   const router = useRouter();
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [resourceToRemove, setResourceToRemove] = React.useState('');
-
-  useEffect(() => {
-    getResources(page, count);
-  }, [page, count]);
 
   const edit = (resource: IdentityResourcesDTO) => {
     router.push(`/resource/identity-resource/${encodeURIComponent(resource.name)}`);
@@ -29,13 +24,19 @@ export default function IdentityResourcesList() {
       count
     );
     if (response) {
-      setResources(response.rows);
-      setTotalCount(response.count);
-      setLastPage(Math.ceil(totalCount / count));
+      const resourceArr = response.rows.sort((c1, c2) => {
+        if (!c1.archived && !c2.archived) return 0;
+        if (!c1.archived && c2.archived) return 1;
+        if (c1.archived && !c2.archived) return -1;
+        return 0;
+      });
+      setResources(resourceArr.reverse());
+      setLastPage(Math.ceil(response.count / count));
     }
   };
 
   const handlePageChange = async (page: number, countPerPage: number) => {
+    getResources(page, countPerPage);
     setPage(page);
     setCount(countPerPage);
   };
@@ -63,7 +64,7 @@ export default function IdentityResourcesList() {
   const setHeaderElement = () => {
     return (
       <p>
-        Are you sure want to delete this Identity resource:{' '}
+        Are you sure want to archive this Identity resource:{' '}
         <span>{resourceToRemove}</span>
       </p>
     );
@@ -86,7 +87,7 @@ export default function IdentityResourcesList() {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={remove}
-        confirmationText="Delete"
+        confirmationText="Archive"
       ></ConfirmModal>
     </div>
   );

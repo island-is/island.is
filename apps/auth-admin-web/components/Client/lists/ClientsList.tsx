@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import ClientDTO from '../../../entities/dtos/client-dto';
 import Paginator from '../../Common/Paginator';
 import Link from 'next/link';
 import { ClientService } from '../../../services/ClientService';
 import ConfirmModal from '../../Common/ConfirmModal';
+import { Client } from './../../../entities/models/client.model';
 
 class ClientsList extends Component {
   state = {
@@ -18,8 +18,15 @@ class ClientsList extends Component {
   getClients = async (page: number, count: number) => {
     const response = await ClientService.findAndCountAll(page, count);
     if (response) {
+      const clientsArr = response.rows.sort((c1, c2) => {
+        if (!c1.archived && !c2.archived) return 0;
+        if (!c1.archived && c2.archived) return 1;
+        if (c1.archived && !c2.archived) return -1;
+        return 0;
+      });
+
       this.setState({
-        clients: response.rows,
+        clients: clientsArr.reverse(),
         rowCount: response.count,
       });
     }
@@ -56,8 +63,6 @@ class ClientsList extends Component {
     );
   };
 
-  
-
   render() {
     return (
       <div>
@@ -84,16 +89,21 @@ class ClientsList extends Component {
                     </tr>
                   </thead>
                   <tbody>
-                    {this.state.clients.map((client: ClientDTO) => {
+                    {this.state.clients.map((client: Client) => {
                       return (
-                        <tr key={client.clientId}>
+                        <tr
+                          key={client.clientId}
+                          className={client.archived ? 'archived' : ''}
+                        >
                           <td>{client.clientId}</td>
                           <td>{client.description}</td>
                           <td className="clients__table__button">
                             <Link href={`client/${encodeURIComponent(client.clientId)}`}>
                               <button
                                 type="button"
-                                className="clients__button__edit"
+                                className={`clients__button__edit${
+                                  client.archived ? ' hidden' : ''
+                                }`}
                                 title="Edit"
                               >
                                 <i className="icon__edit"></i>
@@ -104,7 +114,9 @@ class ClientsList extends Component {
                           <td className="clients__table__button">
                             <button
                               type="button"
-                              className="clients__button__delete"
+                              className={`clients__button__delete${
+                                client.archived ? ' hidden' : ''
+                              }`}
                               title="Delete"
                               onClick={() =>
                                 this.confirmArchive(client.clientId)

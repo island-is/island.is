@@ -35,6 +35,13 @@
             background-color: $color-bg-content;
           }
         }
+
+        &.archived {
+          td {
+            background: #eee;
+            color: #ccc;
+          }
+        }
       }
     }
   }

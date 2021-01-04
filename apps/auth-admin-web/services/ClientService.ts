@@ -30,7 +30,7 @@ export class ClientService extends BaseService {
 
   /** Gets a client by it's id */
   static async findClientById(id: string): Promise<Client | null> {
-    return BaseService.GET(`clients/${id}`);
+    return BaseService.GET(`clients/${encodeURIComponent(id)}`);
   }
 
   /** Creates a new client */
@@ -41,12 +41,12 @@ export class ClientService extends BaseService {
   /** Updates an existing client */
   static async update(client: ClientDTO, id: string): Promise<Client | null> {
     delete client.clientId;
-    return BaseService.PUT(`clients/${id}`, client);
+    return BaseService.PUT(`clients/${encodeURIComponent(id)}`, client);
   }
 
   /** Deletes client */
   static async delete(clientId: string): Promise<number | null> {
-    return BaseService.DELETE(`clients/${clientId}`);
+    return BaseService.DELETE(`clients/${encodeURIComponent(clientId)}`);
   }
 
   /** Adds Allowed CORS origin for client */
@@ -61,7 +61,9 @@ export class ClientService extends BaseService {
     clientId: string,
     origin: string
   ): Promise<number | null> {
-    return BaseService.DELETE(`cors/${clientId}/${encodeURIComponent(origin)}`);
+    return BaseService.DELETE(
+      `cors/${encodeURIComponent(clientId)}/${encodeURIComponent(origin)}`
+    );
   }
 
   /** Finds available scopes for AdminUI to select allowed scopes */
@@ -96,9 +98,9 @@ export class ClientService extends BaseService {
     redirectUri: string
   ): Promise<number | null> {
     return BaseService.DELETE(
-      `client-post-logout-redirect-uri/${clientId}/${encodeURIComponent(
-        redirectUri
-      )}`
+      `client-post-logout-redirect-uri/${encodeURIComponent(
+        clientId
+      )}/${encodeURIComponent(redirectUri)}`
     );
   }
 
@@ -114,7 +116,7 @@ export class ClientService extends BaseService {
     claimValue: string
   ): Promise<number | null> {
     return BaseService.DELETE(
-      `client-claim/${clientId}/${encodeURIComponent(
+      `client-claim/${encodeURIComponent(clientId)}/${encodeURIComponent(
         claimType
       )}/${encodeURIComponent(claimValue)}`
     );
@@ -149,7 +151,11 @@ export class ClientService extends BaseService {
     clientId: string,
     grantType: string
   ): Promise<number | null> {
-    return BaseService.DELETE(`client-grant-type/${clientId}/${grantType}`);
+    return BaseService.DELETE(
+      `client-grant-type/${encodeURIComponent(clientId)}/${encodeURIComponent(
+        grantType
+      )}`
+    );
   }
 
   /** Adds an redirect uri for client */
@@ -181,6 +187,10 @@ export class ClientService extends BaseService {
     clientId: string,
     name: string
   ): Promise<number | null> {
-    return BaseService.DELETE(`idp-restriction/${clientId}/${name}`);
+    return BaseService.DELETE(
+      `idp-restriction/${encodeURIComponent(clientId)}/${encodeURIComponent(
+        name
+      )}`
+    );
   }
 }

@@ -9,6 +9,7 @@ export class ApiResource {
   displayName!: string;
   description!: string;
   showInDiscoveryDocument!: boolean;
+  archived!: Date;
   public userClaims?: ApiResourceUserClaim[];
   readonly created!: Date;
   readonly modified?: Date;

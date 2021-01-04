@@ -6,6 +6,7 @@ export class IdentityResource {
   displayName!: string;
   description!: string;
   showInDiscoveryDocument!: boolean;
+  archived!: Date;
   public userClaims?: IdentityResourceUserClaim[];
   required!: boolean;
   emphasize!: boolean;

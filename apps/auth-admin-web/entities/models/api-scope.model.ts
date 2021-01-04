@@ -6,6 +6,7 @@ export class ApiScope {
   displayName!: string;
   description!: string;
   showInDiscoveryDocument!: boolean;
+  archived!: Date;
   public userClaims?: ApiScopeUserClaim[];
   required!: boolean;
   emphasize!: boolean;
