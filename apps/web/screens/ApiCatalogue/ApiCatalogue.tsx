@@ -306,9 +306,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                         title: nn('linkServicesText'),
                         href: nn('linkServices'),
                       },
-                      {
-                        title: nn('linkServiceListText'),
-                      },
                     ]}
                   />
                 </Box>

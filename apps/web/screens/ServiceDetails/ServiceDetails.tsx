@@ -157,7 +157,6 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                         title: n('linkServiceListText'),
                         href: n('linkServiceList'),
                       },
-                      { title: n('linkDetailsLastText') },
                     ]}
                   />
                 </Box>
