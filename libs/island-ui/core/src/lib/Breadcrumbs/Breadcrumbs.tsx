@@ -39,7 +39,11 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
             {item.title}
           </Tag>
         ) : (
-          <Text as="span" variant={'eyebrow'} color={color}>
+          <Text
+            as="span"
+            variant={'eyebrow'}
+            color={isLink ? undefined : color}
+          >
             {item.title}
           </Text>
         )
@@ -55,9 +59,10 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
                       textDecoration: item.isTag ? 'none' : undefined,
                       display: 'inline-flex',
                     }}
-                    className={cn(styles.breadcrumb[color], {
-                      [styles.focusable[color]]: isLink,
-                    })}
+                    className={cn(
+                      styles.breadcrumb[color],
+                      styles.focusable[color],
+                    )}
                   >
                     {renderCrumb}
                   </a>,

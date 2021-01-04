@@ -44,7 +44,7 @@ export const breadcrumb = styleMap({
 })
 
 export const focusable = styleMap({
-  blue400: focusColors(theme.color.blue400),
+  blue400: focusColors(theme.color.dark400),
   white: focusColors(theme.color.white),
 })
 
