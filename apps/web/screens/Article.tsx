@@ -17,6 +17,7 @@ import {
   Link,
   Navigation,
   TableOfContents,
+  Button,
 } from '@island.is/island-ui/core'
 import { RichText, HeadWithSocialSharing } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -215,8 +216,25 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
   activeSlug,
   n,
 }) => {
+  const { linkResolver } = useLinkResolver()
+
   return (
     <Stack space={3}>
+      {!!article.category && (
+        <Box display={['none', 'none', 'block']} printHidden>
+          <Link {...linkResolver('articlecategory', [article.category.slug])}>
+            <Button
+              preTextIcon="arrowBack"
+              preTextIconType="filled"
+              size="small"
+              type="button"
+              variant="text"
+            >
+              {article.category.title}
+            </Button>
+          </Link>
+        </Box>
+      )}
       <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
       <RelatedArticles
         title={n('relatedMaterial')}
@@ -289,7 +307,11 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           <ArticleSidebar article={article} n={n} activeSlug={query.subSlug} />
         }
       >
-        <Box paddingBottom={[2, 2, 4]}>
+        <Box
+          paddingBottom={[2, 2, 4]}
+          display={['none', 'none', 'block']}
+          printHidden
+        >
           <Breadcrumbs
             items={[
               {
@@ -323,6 +345,25 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
               )
             }}
           />
+        </Box>
+        <Box
+          paddingBottom={[2, 2, 4]}
+          display={['block', 'block', 'none']}
+          printHidden
+        >
+          {!!article.category && (
+            <Link {...linkResolver('articlecategory', [article.category.slug])}>
+              <Button
+                preTextIcon="arrowBack"
+                preTextIconType="filled"
+                size="small"
+                type="button"
+                variant="text"
+              >
+                {article.category.title}
+              </Button>
+            </Link>
+          )}
         </Box>
         <Box>
           <Text variant="h1" as="h1">
