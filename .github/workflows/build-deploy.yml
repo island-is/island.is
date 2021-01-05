@@ -1,4 +1,4 @@
-name: Monorepo pipeline - push
+name: Monorepo pipeline - build and deploy
 
 on:
   push:
@@ -17,7 +17,6 @@ on:
       - opened
       - synchronize
       - labeled
-      - closed
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
@@ -76,27 +75,13 @@ jobs:
             exit 1
           fi
           if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
-            action="${{ github.event.action }}"
-            if [[ "$action" == "closed" ]]; then
-              # If pull request is closed, we want to notify spinnaker and remove the feature namespace
-              curl $SPINNAKER_URL/webhooks/webhook/feature-cleanup -H "content-type: application/json" --data-binary @- <<BODY
-              {
-                "token": "$SPINNAKER_WEBHOOK_TOKEN",
-                "parameters": {
-                  "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]._-')"
-                }
-              }
-          BODY
-              exit 1
-            else
-              deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
-              if [[ "$deployFeature" == "true" ]]; then
-                echo "Pull request contains deploy-feature label, continuing with feature deployment"
-                echo "::set-output name=PRE_CHECK::feature-deploy"
-                exit 0
-              fi
-              echo "Pull request does not have deploy-feature label, exiting..."
+            deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+            if [[ "$deployFeature" == "true" ]]; then
+              echo "Pull request contains deploy-feature label, continuing with feature deployment"
+              echo "::set-output name=PRE_CHECK::feature-deploy"
+              exit 0
             fi
+            echo "Pull request does not have deploy-feature label, exiting..."
             exit 1
           fi
           echo "::set-output name=PRE_CHECK::push"
