@@ -28,7 +28,7 @@ describe('Confirmation route', () => {
           ...mockJudgeQuery,
           ...mockUpdateCaseMutation([
             {
-              courtStartTime: '2020-09-16T15:55:000Z',
+              courtEndTime: '2020-09-16T15:55:000Z',
             } as UpdateCase,
           ]),
         ]}
