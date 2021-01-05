@@ -11,12 +11,6 @@ const whenMobile = (style: ThemedStyle<Style, ThemeOrAny>) => ({
   },
 })
 
-export const link = style({
-  ':hover': {
-    textDecoration: 'none',
-  },
-})
-
 export const tabWrapper = style({
   display: 'inline-flex',
 })
