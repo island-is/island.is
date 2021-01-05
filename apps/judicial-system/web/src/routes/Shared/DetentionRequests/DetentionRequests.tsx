@@ -28,7 +28,7 @@ import * as Constants from '../../../utils/constants'
 import { Link } from 'react-router-dom'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { insertAt, parseTransition } from '../../../utils/formatters'
-import { gql, useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '../../../shared-components/UserProvider/UserProvider'
 import { useHistory } from 'react-router-dom'
 import { TransitionCaseMutation } from '../../../graphql'
@@ -58,9 +58,7 @@ export const DetentionRequests: React.FC = () => {
     errorPolicy: 'all',
   })
 
-  const [transitionCaseMutation, { loading: isDeletingCase }] = useMutation(
-    TransitionCaseMutation,
-  )
+  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
 
   const resCases = data?.cases
 

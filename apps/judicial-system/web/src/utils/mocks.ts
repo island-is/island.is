@@ -4,16 +4,11 @@ import {
   CaseCustodyRestrictions,
   CaseGender,
   CaseState,
-  TransitionCase,
   UpdateCase,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
-import {
-  CaseQuery,
-  TransitionCaseMutation,
-  UpdateCaseMutation,
-} from '../graphql'
+import { CaseQuery, UpdateCaseMutation } from '../graphql'
 import { UserQuery } from '../shared-components/UserProvider/UserProvider'
 
 export const mockProsecutor = {
@@ -246,7 +241,7 @@ const testCase5 = {
   courtCaseNumber: null,
   courtDate: null,
   courtStartTime: null,
-  courtEndTime: '2020-09-16T19:51:28.224Z',
+  courtEndTime: '2020-09-16',
   courtAttendees: null,
   policeDemands: null,
   accusedPlea: null,

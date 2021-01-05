@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const detentionRequestsContainer = style({
@@ -45,7 +45,7 @@ export const deleteButtonContainer = style({
   transition: 'all .5s ease-in-out',
 
   selectors: {
-    ['&.open']: {
+    '&.open': {
       width: '150px',
       visibility: 'visible',
     },
@@ -69,7 +69,7 @@ export const tableRowContainer = style({
   transition: 'all .5s ease-in-out',
 
   selectors: {
-    ['&.isDeleting']: {
+    '&.isDeleting': {
       minWidth: 'calc(100% + 100px)',
     },
   },
@@ -94,14 +94,14 @@ export const td = style({
   width: 'auto',
 
   selectors: {
-    ['&.secondLast']: {
+    '&.secondLast': {
       flex: 0,
       justifyContent: 'flex-end',
       marginLeft: 'auto',
       height: '100%',
       padding: 0,
     },
-    ['&.flexDirectionCol']: {
+    '&.flexDirectionCol': {
       flexDirection: 'column',
     },
   },
