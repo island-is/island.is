@@ -8,6 +8,7 @@ export const GET_FRONTPAGE_SLIDES_QUERY = gql`
         title
         content
         link
+        animationJson
       }
     }
   }
