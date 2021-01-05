@@ -14,10 +14,11 @@ const MissingInfoRemarks: FC<ReviewFieldProps> = ({
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
 
-  const missingInfo = getValueViaPath(
-    application.answers,
-    'missingInfo',
-  ) as MissingInfoType[]
+  const missingInfo =
+    (getValueViaPath(
+      application.answers,
+      'missingInfo',
+    ) as MissingInfoType[]) || []
 
   if (missingInfo.length > 0 && isEditable) {
     index = missingInfo.length
