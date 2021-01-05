@@ -33,7 +33,7 @@ import {
   Section,
   Categories,
   SearchInput,
-  FrontpageTabs,
+  FrontpageSlider,
   LatestNewsSection,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -126,7 +126,10 @@ const Home: Screen<HomeProps> = ({
   return (
     <>
       <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
-        <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
+        <FrontpageSlider
+          slides={frontpageSlides}
+          searchContent={searchContent}
+        />
       </Section>
       <Section
         aria-labelledby="lifeEventsTitle"
