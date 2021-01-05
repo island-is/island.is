@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, {
   FC,
   ReactNode,
@@ -25,14 +24,15 @@ import { Locale } from '@island.is/web/i18n/I18n'
 import { pathNames, AnchorAttributes } from '@island.is/web/i18n/routes'
 import { useI18n } from '../../i18n'
 import { theme } from '@island.is/island-ui/theme'
-import Illustration from './illustrations/Illustration'
-import * as styles from './FrontpageTabs.treat'
+import LottieLoader from './LottiePlayer/LottieLoader'
+import * as styles from './FrontpageSlider.treat'
 
-type TabsProps = {
+type Slides = {
   subtitle?: string
   title?: string
   content?: string
   link?: string
+  animationJson?: any
 }
 
 export const LEFT = 'Left'
@@ -40,8 +40,8 @@ export const RIGHT = 'Right'
 export const UP = 'Up'
 export const DOWN = 'Down'
 
-export interface FrontpageTabsProps {
-  tabs: TabsProps[]
+export interface FrontpageSliderProps {
+  slides: Slides[]
   searchContent: ReactNode
 }
 
@@ -59,14 +59,15 @@ const TabBullet: FC<TabBulletProps> = ({ selected }) => {
   )
 }
 
-export const FrontpageTabs: FC<FrontpageTabsProps> = ({
-  tabs,
+export const FrontpageSlider: FC<FrontpageSliderProps> = ({
+  slides,
   searchContent,
 }) => {
   const contentRef = useRef(null)
   const [minHeight, setMinHeight] = useState<number>(0)
   const itemRefs = useRef<Array<HTMLElement | null>>([])
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
+  const [animationData, setAnimationData] = useState([])
 
   const tab = useTabState({
     baseId: 'frontpage-tab',
@@ -74,14 +75,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
   const { activeLocale, t } = useI18n()
   const { width } = useWindowSize()
-
-  const nextSlide = useCallback(() => {
-    tab.next()
-  }, [tab])
-
-  const prevSlide = useCallback(() => {
-    tab.previous()
-  }, [tab])
 
   useEffect(() => {
     const newSelectedIndex = tab.items.findIndex((x) => x.id === tab.currentId)
@@ -91,10 +84,10 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   const goTo = (direction: string) => {
     switch (direction) {
       case 'prev':
-        prevSlide()
+        tab.previous()
         break
       case 'next':
-        nextSlide()
+        tab.next()
         break
       default:
         break
@@ -121,6 +114,15 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
       return { href: null, as: null }
     }
   }
+
+  useEffect(() => {
+    if (!animationData.length) {
+      const data = slides.map((x) =>
+        x.animationJson ? JSON.parse(x.animationJson) : null,
+      )
+      setAnimationData(data)
+    }
+  }, [slides, animationData])
 
   const onResize = useCallback(() => {
     setMinHeight(0)
@@ -168,9 +170,9 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
               aria-label={t.carouselTitle}
               className={styles.tabWrapper}
             >
-              {tabs.map(({ title = '' }, index) => {
+              {slides.map(({ title = '' }, index) => {
                 return (
-                  <Tab key={index} {...tab} className={cn(styles.tabContainer)}>
+                  <Tab key={index} {...tab} className={styles.tabContainer}>
                     <TabBullet selected={selectedIndex === index} />
                     <span className={styles.srOnly}>{title}</span>
                   </Tab>
@@ -178,7 +180,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
               })}
             </TabList>
             <Box className={styles.tabPanelWrapper}>
-              {tabs.map(({ title, subtitle, content, link }, index) => {
+              {slides.map(({ title, subtitle, content, link }, index) => {
                 const linkUrls = generateUrls(link)
 
                 // If none are found (during SSR) findIndex returns -1. We want 0 instead.
@@ -320,7 +322,10 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
             height="full"
             justifyContent="center"
           >
-            <Illustration illustrationIndex={selectedIndex} />
+            <LottieLoader
+              animationData={animationData}
+              selectedIndex={selectedIndex}
+            />
           </Box>
         </GridColumn>
         <GridColumn hiddenBelow="lg" span="1/12" />
@@ -329,4 +334,4 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   )
 }
 
-export default FrontpageTabs
+export default FrontpageSlider
