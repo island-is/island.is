@@ -18,10 +18,12 @@ import {
 import { m } from './messages'
 import { YES, NO } from '../constants'
 import { StatusTypes } from '../types'
+import Logo from '../assets/Logo'
 
 export const HealthInsuranceForm: Form = buildForm({
   id: 'HealthInsuranceDraft',
   title: m.formTitle,
+  logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({

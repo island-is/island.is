@@ -2,6 +2,10 @@
 
 We ignore all the auto-generated files from the repository to avoid noises, make reviews easier on PRs, and only notifies teams with code reviews when needed.
 
+{% hint style="warning" %}
+You will need `java` installed on your machine to be able to run the `yarn schemas` command, more precisely the `openapi-generator` sub-command. Find more about the installation [here](https://github.com/OpenAPITools/openapi-generator#13---download-jar).
+{% endhint %}
+
 ## Understanding how automatic schemas works
 
 We are only tracking file that are coming from an external source, e.g. `contentfulTypes.d.ts` that depends on contentful to be generated. The same goes for an `openapi.yaml` file that comes from an external service.
