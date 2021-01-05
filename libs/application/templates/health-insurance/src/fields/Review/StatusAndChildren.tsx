@@ -14,12 +14,14 @@ import {
 } from '@island.is/shared/form-fields'
 import { YES, NO } from '../../constants'
 import { ReviewFieldProps, StatusTypes } from '../../types'
+import InfoMessage from '../InfoMessage/InfoMessage'
 
 import { m } from '../../forms/messages'
 
 const StatusAndChildren: FC<ReviewFieldProps> = ({
   application,
   isEditable,
+  field,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -160,19 +162,7 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
           ]}
         />
         {children === YES && (
-          <AlertMessage
-            type={'info'}
-            title={formatText(
-              m.childrenInfoMessageTitle,
-              application,
-              formatMessage,
-            )}
-            message={formatText(
-              m.childrenInfoMessageText,
-              application,
-              formatMessage,
-            )}
-          />
+          <InfoMessage application={application} field={field} />
         )}
       </Stack>
     </Stack>

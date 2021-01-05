@@ -141,6 +141,11 @@ const FormerInsurance: FC<ReviewFieldProps> = ({ application, isEditable }) => {
               application,
               formatMessage,
             )}
+            placeholder={formatText(
+              m.formerInsuranceAdditionalInformationPlaceholder,
+              application,
+              formatMessage,
+            )}
             ref={register}
             disabled={!isEditable}
             textarea={true}
