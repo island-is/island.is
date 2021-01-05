@@ -22,6 +22,16 @@ export const GET_ARTICLE_QUERY = gql`
         openLinkInModal
         buttonText
       }
+      organization {
+        title
+        slug
+        link
+        logo {
+          url
+          width
+          height
+        }
+      }
       group {
         title
         slug
