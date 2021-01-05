@@ -19,6 +19,8 @@ import { OpenApi } from '@island.is/api-catalogue/types'
 import { GET_OPEN_API_QUERY } from '@island.is/web/screens/queries'
 import YamlParser from 'js-yaml'
 import { OpenApiDocumentation } from '..'
+import * as styles from './OpenApiView.treat'
+import cn from 'classnames'
 
 export interface OpenApiViewProps {
   service: ApiService
@@ -134,6 +136,7 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
           span={['8/8', '4/8', '4/8', '2/8']}
           paddingTop="containerGutter"
           paddingBottom="containerGutter"
+          className={cn(styles.wrapper)}
         >
           <Select
             label="Version"
