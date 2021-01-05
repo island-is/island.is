@@ -182,7 +182,7 @@ export const validateAndSendTimeToServer = async (
 
 export const setAndSendToServer = (
   field: string,
-  value: string,
+  value: string | boolean,
   theCase: Case,
   setCase: (value: React.SetStateAction<Case | undefined>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
