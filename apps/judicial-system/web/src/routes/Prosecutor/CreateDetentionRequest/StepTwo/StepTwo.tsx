@@ -184,10 +184,6 @@ export const StepTwo: React.FC = () => {
         value: requestedCourtTime || '',
         validations: ['empty', 'time-format'],
       },
-      {
-        value: workingCase?.requestedCustodyEndDate || '',
-        validations: ['empty'],
-      },
     ]
 
     if (workingCase) {
