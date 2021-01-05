@@ -1,5 +1,5 @@
 import * as React from 'react'
-import NextLink, { LinkProps } from 'next/link'
+import NextLink, { LinkProps as NextLinkProps } from 'next/link'
 import cn from 'classnames'
 import * as styles from './Link.treat'
 
@@ -13,7 +13,7 @@ export type LinkColor = 'white' | 'blue400' | 'blue600'
 export type UnderlineVisibility = 'always' | 'hover'
 export type UnderlineVariants = 'normal' | 'small'
 
-interface Props extends LinkProps {
+export interface LinkProps extends NextLinkProps {
   color?: LinkColor
   className?: string
   underline?: UnderlineVariants
@@ -23,7 +23,7 @@ interface Props extends LinkProps {
 }
 
 // Next link that can handle external urls
-export const Link: React.FC<Props> = ({
+export const Link: React.FC<LinkProps> = ({
   children,
   href,
   as,
@@ -48,11 +48,22 @@ export const Link: React.FC<Props> = ({
       ? styles.underlineVisibilities[underlineVisibility]
       : undefined,
     className,
+    {
+      [styles.pointer]: href || linkProps.onClick,
+    },
   )
 
   // In next 9.5.3 and later, this will be unnecessary, since the as parameter will be
   // optiona - but as things stand, as is needed if you have a dynamic href
   const prefetchDefault = !as ? false : prefetch
+
+  if (!href) {
+    return (
+      <span className={classNames} {...linkProps}>
+        {children}
+      </span>
+    )
+  }
 
   if (isInternal) {
     return (

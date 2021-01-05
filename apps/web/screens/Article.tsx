@@ -19,8 +19,13 @@ import {
   Navigation,
   TableOfContents,
   Button,
+  Hyphen,
 } from '@island.is/island-ui/core'
-import { RichText, HeadWithSocialSharing } from '@island.is/web/components'
+import {
+  RichText,
+  HeadWithSocialSharing,
+  InstitutionPanel,
+} from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { Screen } from '@island.is/web/types'
@@ -202,7 +207,6 @@ const ArticleNavigation: FC<
     )
   )
 }
-
 interface ArticleSidebarProps {
   article: Article
   activeSlug?: string | string[]
@@ -215,7 +219,7 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
   n,
 }) => {
   const { linkResolver } = useLinkResolver()
-
+  const { activeLocale } = useI18n()
   return (
     <Stack space={3}>
       {!!article.category && (
@@ -233,11 +237,25 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
           </Link>
         </Box>
       )}
-      <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
-      <RelatedArticles
-        title={n('relatedMaterial')}
-        articles={article.relatedArticles}
-      />
+      {article.organization.length > 0 && (
+        <InstitutionPanel
+          img={article.organization[0].logo?.url}
+          institutionTitle={'Stofnun'}
+          institution={article.organization[0].title}
+          locale={activeLocale}
+          linkProps={{ href: article.organization[0].link }}
+          imgContainerDisplay={['block', 'block', 'none', 'block']}
+        />
+      )}
+      {article.subArticles.length > 0 && (
+        <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
+      )}
+      {article.relatedArticles.length > 0 && (
+        <RelatedArticles
+          title={n('relatedMaterial')}
+          articles={article.relatedArticles}
+        />
+      )}
     </Stack>
   )
 }
