@@ -42,12 +42,6 @@ describe('Create detention request, step two', () => {
               id: 'test_id_6',
               requestedCourtDate: `${todaysDate.getFullYear()}-${formattedTodaysMonth}-${formattedTodaysDate}T13:37:00Z`,
             } as UpdateCase,
-            {
-              requestedCustodyEndDate: '2020-11-25',
-            } as UpdateCase,
-            {
-              requestedCustodyEndDate: '2020-11-25T13:37:00.00Z',
-            } as UpdateCase,
           ]),
         ]}
         addTypename={false}
@@ -66,23 +60,21 @@ describe('Create detention request, step two', () => {
 
     // Act and Assert
     // Arrest date is optional
+    expect(
+      await waitFor(
+        () =>
+          screen.getByRole('button', {
+            name: /Halda áfram/i,
+          }) as HTMLButtonElement,
+      ),
+    ).toBeDisabled()
+
     userEvent.type(
-      await waitFor(() => screen.getAllByLabelText(/Veldu dagsetningu/)[1]),
+      screen.getAllByLabelText(/Veldu dagsetningu/)[1],
       `${formattedTodaysDate}.${formattedTodaysMonth}.${todaysDate.getFullYear()}`,
     )
 
     userEvent.type(screen.getByLabelText('Ósk um tíma (kk:mm) *'), '13:37')
-    expect(
-      screen.getByRole('button', {
-        name: /Halda áfram/i,
-      }) as HTMLButtonElement,
-    ).toBeDisabled()
-
-    userEvent.type(
-      screen.getByLabelText(/Gæsluvarðhald til/),
-      `${formattedTodaysDate}.${formattedTodaysMonth}.${todaysDate.getFullYear()}`,
-    )
-    userEvent.type(screen.getByLabelText('Tímasetning (kk:mm) *'), '13:37')
 
     expect(
       screen.getByRole('button', {
@@ -119,36 +111,6 @@ describe('Create detention request, step two', () => {
           }) as HTMLButtonElement,
       ),
     ).not.toBeDisabled()
-  }, 10000)
-
-  test('should display the correct requestedCustodyEndTime from api', async () => {
-    // Arrange
-
-    // Act
-    render(
-      <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
-        addTypename={false}
-      >
-        <MemoryRouter initialEntries={[`${Constants.STEP_TWO_ROUTE}/test_id`]}>
-          <UserProvider>
-            <Route path={`${Constants.STEP_TWO_ROUTE}/:id`}>
-              <StepTwo />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
-      </MockedProvider>,
-    )
-
-    // Assert
-    expect(
-      (
-        await waitFor(
-          () =>
-            screen.getByLabelText('Tímasetning (kk:mm) *') as HTMLInputElement,
-        )
-      ).value,
-    ).toEqual('19:51')
   }, 10000)
 
   test('should have a disabled requestedCourtDate if judge has set a court date', async () => {
