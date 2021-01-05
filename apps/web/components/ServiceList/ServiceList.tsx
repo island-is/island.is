@@ -4,9 +4,6 @@ import {
   GridRow,
   GridColumn,
   CategoryCard,
-  LoadingIcon,
-  Box,
-  Button,
 } from '@island.is/island-ui/core'
 import { ApiService } from '@island.is/api/schema'
 import { GetNamespaceQuery } from '@island.is/web/graphql/schema'

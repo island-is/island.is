@@ -412,6 +412,9 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
               {data?.getApiCatalogue?.services.length > 0 && (
                 <GridContainer>
                   <ServiceList
+                    baseUrl={
+                      activeLocale === 'en' ? './catalogue/' : './vorulisti/'
+                    }
                     services={data?.getApiCatalogue?.services}
                     tagDisplayNames={filterContent}
                   />
@@ -460,7 +463,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
         variables: {
           input: {
             namespace: 'ApiCatalog',
-            lang: locale,
+            lang: locale as ContentLanguage,
           },
         },
       })
@@ -471,7 +474,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
         variables: {
           input: {
             namespace: 'ApiCatalogFilter',
-            lang: locale,
+            lang: locale as ContentLanguage,
           },
         },
       })
@@ -482,7 +485,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
         variables: {
           input: {
             namespace: 'ApiCatalogueLinks',
-            lang: locale,
+            lang: locale as ContentLanguage,
           },
         },
       })

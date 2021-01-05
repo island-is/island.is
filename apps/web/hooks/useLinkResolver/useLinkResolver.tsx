@@ -63,6 +63,18 @@ export const routesTemplate = {
     is: '/covid-adgerdir',
     en: '/en/covid-operations',
   },
+  webservicedetailpage: {
+    is: '/throun/vefthjonustur/vorulisti/[slug]',
+    en: '/en/developers/webservices/catalogue/[slug]',
+  },
+  webservicespage: {
+    is: '/throun/vefthjonustur/vorulisti',
+    en: '/en/developers/webservices/catalogue',
+  },
+  developerspage: {
+    is: '/throun',
+    en: '/en/developers',
+  },
   subarticle: {
     is: '/[slug]/[subSlug]',
     en: '/en/[slug]/[subSlug]',
