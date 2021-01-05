@@ -49,10 +49,4 @@ export class IdentityResourcesDTO {
     example: false,
   })
   readonly emphasize!: boolean
-
-  @IsDate()
-  @ApiProperty({
-    example: null,
-  })
-  archived!: Date
 }
