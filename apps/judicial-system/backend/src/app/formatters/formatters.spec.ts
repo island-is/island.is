@@ -118,6 +118,7 @@ describe('formatCustodyProvisions', () => {
       CaseCustodyProvisions._95_1_D,
       CaseCustodyProvisions._95_2,
       CaseCustodyProvisions._99_1_B,
+      CaseCustodyProvisions._100_1,
     ]
 
     // Act
@@ -125,7 +126,7 @@ describe('formatCustodyProvisions', () => {
 
     // Assert
     expect(res).toBe(
-      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.',
+      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.\n1. mgr. 100. gr. sml.',
     )
   })
 
@@ -138,6 +139,7 @@ describe('formatCustodyProvisions', () => {
       CaseCustodyProvisions._95_2,
       CaseCustodyProvisions._99_1_B,
       CaseCustodyProvisions._95_1_B,
+      CaseCustodyProvisions._100_1,
     ]
 
     // Act
@@ -145,7 +147,7 @@ describe('formatCustodyProvisions', () => {
 
     // Assert
     expect(res).toBe(
-      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.',
+      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.\n1. mgr. 100. gr. sml.',
     )
   })
 })

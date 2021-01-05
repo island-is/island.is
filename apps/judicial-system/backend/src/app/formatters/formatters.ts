@@ -36,11 +36,42 @@ export function formatProsecutorDemands(
   }.`
 }
 
+function custodyProvisionsOrder(p: CaseCustodyProvisions) {
+  switch (p) {
+    case CaseCustodyProvisions._95_1_A:
+      return 0
+    case CaseCustodyProvisions._95_1_B:
+      return 1
+    case CaseCustodyProvisions._95_1_C:
+      return 2
+    case CaseCustodyProvisions._95_1_D:
+      return 3
+    case CaseCustodyProvisions._95_2:
+      return 4
+    case CaseCustodyProvisions._99_1_B:
+      return 5
+    case CaseCustodyProvisions._100_1:
+      return 6
+    default:
+      return 999
+  }
+}
+
+function custodyProvisionsCompare(
+  p1: CaseCustodyProvisions,
+  p2: CaseCustodyProvisions,
+) {
+  const o1 = custodyProvisionsOrder(p1)
+  const o2 = custodyProvisionsOrder(p2)
+
+  return o1 < o2 ? -1 : o1 > o2 ? 1 : 0
+}
+
 export function formatCustodyProvisions(
   custodyProvisions: CaseCustodyProvisions[],
 ): string {
   return custodyProvisions
-    ?.sort()
+    ?.sort((p1, p2) => custodyProvisionsCompare(p1, p2))
     .reduce((s, l) => `${s}${laws[l]}\n`, '')
     .slice(0, -1)
 }
