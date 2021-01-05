@@ -467,8 +467,14 @@ export class ClientsService {
 
   /** Finds available scopes for AdminUI to select allowed scopes */
   async FindAvailabeScopes(): Promise<ApiScope[]> {
-    const identityResources = (await this.identityResourceModel.findAll()) as unknown
-    const apiScopes = await this.apiScopeModel.findAll()
+    const identityResources = (await this.identityResourceModel.findAll({
+      where: { archived: null },
+    })) as unknown
+    const apiScopes = await this.apiScopeModel.findAll({
+      where: {
+        archived: null,
+      },
+    })
     const arrJoined: ApiScope[] = []
     arrJoined.push(...apiScopes)
     arrJoined.push(...(identityResources as ApiScope[]))

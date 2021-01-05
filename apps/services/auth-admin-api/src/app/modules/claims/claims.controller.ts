@@ -1,10 +1,11 @@
 import { ClaimsService, Claim } from '@island.is/auth-api-lib'
-import { Controller, Get } from '@nestjs/common'
+import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ApiOAuth2, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { IdsAuthGuard } from '@island.is/auth-nest-tools'
+import { NationalIdGuard } from '../access/national-id-guard'
 
-@ApiOAuth2(['@identityserver.api/read'])
-// TODO: Add guards when functional
-// @UseGuards(AuthGuard('jwt'))
+// @ApiOAuth2(['@identityserver.api/read'])
+@UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('claims')
 @Controller()
 export class ClaimsController {
