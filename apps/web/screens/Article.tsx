@@ -222,17 +222,19 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
   return (
     <Stack space={3}>
       {!!article.category && (
-        <Link {...linkResolver('articlecategory', [article.category.slug])}>
-          <Button
-            preTextIcon="arrowBack"
-            preTextIconType="filled"
-            size="small"
-            type="button"
-            variant="text"
-          >
-            {article.category.title}
-          </Button>
-        </Link>
+        <Box display={['none', 'none', 'block']} printHidden>
+          <Link {...linkResolver('articlecategory', [article.category.slug])}>
+            <Button
+              preTextIcon="arrowBack"
+              preTextIconType="filled"
+              size="small"
+              type="button"
+              variant="text"
+            >
+              {article.category.title}
+            </Button>
+          </Link>
+        </Box>
       )}
       <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
       <RelatedArticles
