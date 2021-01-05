@@ -103,7 +103,7 @@
     "aws-elasticsearch-connector": "9.0.0",
     "aws-sdk": "2.678.0",
     "aws4": "1.11.0",
-    "axios": "0.20.0",
+    "axios": "0.21.1",
     "bottleneck": "2.19.5",
     "bull": "3.18.0",
     "cache-manager": "3.3.0",
