@@ -9,7 +9,7 @@ const HiddenDateField: FC<FieldBaseProps> = ({ application }) => {
   const missingInfo = getValueViaPath(
     application.answers,
     'missingInfo',
-  ) as MissingInfoType[]
+  ) as MissingInfoType[] || []
 
   let index = 0
 

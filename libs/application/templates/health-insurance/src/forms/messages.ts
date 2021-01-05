@@ -299,15 +299,34 @@ export const m = defineMessages({
     defaultMessage: 'Submit',
     description: 'Submit',
   },
-  succesfulSubmissionTitle: {
+  successfulSubmissionTitle: {
     id: 'hi.application:successfulSubmission.title',
     defaultMessage: 'We have received your application',
     description: 'We have received your application',
   },
-  succesfulSubmissionMessage: {
+  successfulSubmissionMissingInfoTitle: {
+    id: 'hi.application:successfulSubmission.missingInfoTitle',
+    defaultMessage: 'We have received your answer!',
+    description: 'We have received your answer!',
+  },
+  successfulSubmissionMessage: {
     id: 'hi.application:successfulSubmission.message',
-    defaultMessage: 'We have received your application',
-    description: 'We have received your application',
+    defaultMessage:
+      'Your application number is **{applicationNumber}**. A confirmation e-mail has also been sent. ',
+    description: 'Application number and confirmation',
+  },
+  nextStepReviewTime: {
+    id: 'hi.application:nextStep.duration',
+    defaultMessage:
+      'An application may take up to 2–6 weeks to process. Depending on how fast your former country of insurance to responds to our request, it could take a longer.',
+    description: 'Estimated review time of the application',
+  },
+  nextStepStatusCheck: {
+    id: 'hi.application:nextStep.currentStatus',
+    defaultMessage:
+      'You can always see the current status of your application in My Pages.',
+    description:
+      'You can always see the current status of your application in My Pages.',
   },
   missingInfoSection: {
     id: 'hi.application:missingInfo.section',

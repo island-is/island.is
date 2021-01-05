@@ -343,10 +343,10 @@ export const HealthInsuranceForm: Form = buildForm({
             }),
           ],
         }),
-        buildDescriptionField({
+        buildCustomField({
           id: 'successfulSubmission',
-          title: m.succesfulSubmissionTitle,
-          description: m.succesfulSubmissionMessage,
+          title: '',
+          component: 'ConfirmationScreen',
         }),
       ],
     }),
