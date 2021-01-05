@@ -187,7 +187,7 @@ export const Navigation: FC<NavigationProps> = ({
             onClick={() => menu.show}
           >
             <MobileButton
-              title={activeItemTitle ?? title}
+              title={activeItemTitle ? activeItemTitle : title}
               colorScheme={colorScheme}
               aria-expanded={!mobileMenuOpen}
               aria-controls={'OpenNavigationDialog'}
