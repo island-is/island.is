@@ -11,6 +11,8 @@ import {
   ApiResourceScope,
   ApiScope,
   IdentityResourceUserClaim,
+  AccessService,
+  AdminAccess,
 } from '@island.is/auth-api-lib'
 
 @Module({
@@ -24,9 +26,10 @@ import {
       ApiResourceUserClaim,
       ApiResourceScope,
       ApiResourceSecret,
+      AdminAccess,
     ]),
   ],
   controllers: [ResourcesController],
-  providers: [ResourcesService],
+  providers: [ResourcesService, AccessService],
 })
 export class ResourcesModule {}

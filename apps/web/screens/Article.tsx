@@ -176,7 +176,7 @@ const ArticleNavigation: FC<
         title={n('sidebarHeader')}
         activeItemTitle={
           !activeSlug
-            ? article.shortTitle ?? article.title
+            ? article.shortTitle || article.title
             : article.subArticles.find((sub) => activeSlug === sub.slug).title
         }
         isMenuDialog={isMenuDialog}
@@ -189,7 +189,7 @@ const ArticleNavigation: FC<
         }}
         items={[
           {
-            title: article.shortTitle ?? article.title,
+            title: article.shortTitle || article.title,
             typename: article.__typename,
             slug: [article.slug],
             active: !activeSlug,

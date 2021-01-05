@@ -169,6 +169,18 @@ export const m = defineMessages({
       'Are there any children under the age of 18 moving with you?',
     description: 'To fill in for those with children moving with them.',
   },
+  childrenInfoMessageTitle: {
+    id: 'hi.application:children.infoMessageTitle',
+    defaultMessage: 'Health insurance for children',
+    description: 'Health insurance for children info title',
+  },
+  childrenInfoMessageText: {
+    id: 'hi.application:children.infoMessageText',
+    defaultMessage:
+      'Any children registered to you will automatically get health in surance once you get insured',
+    description:
+      'additional information for the people that bring children under 18 with them to iceland',
+  },
   yesOptionLabel: {
     id: 'hi.application:option.yes',
     defaultMessage: 'Yes',
@@ -221,6 +233,16 @@ export const m = defineMessages({
     defaultMessage:
       'Are you entitled to continued insurance in your former country of residence while living in Iceland?',
     description: 'Former insurance entitlement',
+  },
+  formerInsuranceAdditionalInformation: {
+    id: 'hi.application:formerInsurance.additionalInformation',
+    defaultMessage: 'Please explain why',
+    description: 'Former insurance additional information on entitlement',
+  },
+  formerInsuranceAdditionalInformationPlaceholder: {
+    id: 'hi.application:formerInsurance.additionalInformationPlaceholder',
+    defaultMessage: 'I´m still entitled to health insurance because...',
+    description: 'additional infromation placeholder',
   },
   formerInsuranceNoOption: {
     id: 'hi.application:formerInsurance.noOption',

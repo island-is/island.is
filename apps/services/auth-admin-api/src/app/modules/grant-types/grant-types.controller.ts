@@ -5,13 +5,15 @@ import {
   NotFoundException,
   Param,
   Query,
+  UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { GrantType, GrantTypeService } from '@island.is/auth-api-lib'
 import { Scopes } from '@island.is/auth-nest-tools'
+import { IdsAuthGuard } from '@island.is/auth-nest-tools'
+import { NationalIdGuard } from '../access/national-id-guard'
 
-// TODO: Add guards after getting communications to work properly with IDS4
-// @UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('grants')
 @Controller('grants')
 export class GrantTypeController {
