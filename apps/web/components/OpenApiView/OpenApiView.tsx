@@ -135,7 +135,7 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
           span={['8/8', '4/8', '4/8', '2/8']}
           paddingTop="containerGutter"
           paddingBottom="containerGutter"
-          className={styles.wrapper}
+          className={styles.bringFront}
         >
           <Select
             label="Version"

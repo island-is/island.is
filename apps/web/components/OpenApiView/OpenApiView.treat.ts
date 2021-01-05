@@ -1,5 +1,5 @@
 import { style } from 'treat'
 
-export const wrapper = style({
+export const bringFront = style({
   zIndex: 2,
 })
