@@ -56,6 +56,7 @@ export interface ButtonProps {
   lang?: string
   loading?: boolean
   nowrap?: boolean
+  title?: string
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
