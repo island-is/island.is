@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Text,
   GridContainer,
@@ -7,6 +7,7 @@ import {
   Box,
   Input,
   Checkbox,
+  DatePicker,
 } from '@island.is/island-ui/core'
 import {
   Case,
@@ -33,21 +34,45 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
+  setAndSendDateToServer,
+  validateAndSetTime,
+  validateAndSendTimeToServer,
+  getTimeFromDate,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import BlueBox from '../../../../shared-components/BlueBox/BlueBox'
+import parseISO from 'date-fns/parseISO'
+import isNull from 'lodash/isNull'
+import isValid from 'date-fns/isValid'
+import TimeInputField from '../../../../shared-components/TimeInputField/TimeInputField'
+
+interface CaseData {
+  case?: Case
+}
 
 export const StepThree: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
-  const requestedCustodyEndTimeRef = useRef<HTMLInputElement>(null)
   const { id } = useParams<{ id: string }>()
 
   const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
     '',
   )
 
-  const { data } = useQuery(CaseQuery, {
+  const [requestedCustodyEndTime, setRequestedCustodyEndTime] = useState<
+    string
+  >()
+
+  const [
+    requestedCustodyEndDateErrorMessage,
+    setRequestedCustodyEndDateErrorMessage,
+  ] = useState<string>('')
+
+  const [
+    requestedCustodyEndTimeErrorMessage,
+    setRequestedCustodyEndTimeErrorMessage,
+  ] = useState<string>('')
+
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
@@ -125,15 +150,14 @@ export const StepThree: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setIsLoading(true)
+    if (!workingCase && resCase) {
+      setRequestedCustodyEndTime(
+        getTimeFromDate(resCase.requestedCustodyEndDate),
+      )
+
       setWorkingCase(resCase)
-      setIsLoading(false)
     }
-    if (id && !workingCase && resCase) {
-      getCurrentCase()
-    }
-  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
+  }, [workingCase, setWorkingCase, resCase])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
@@ -141,12 +165,16 @@ export const StepThree: React.FC = () => {
         value: workingCase?.lawsBroken || '',
         validations: ['empty'],
       },
+      {
+        value: requestedCustodyEndTime || '',
+        validations: ['empty', 'time-format'],
+      },
     ]
 
     if (workingCase) {
       setIsStepIllegal(isNextDisabled(requiredFields))
     }
-  }, [workingCase, setIsStepIllegal, requestedCustodyEndTimeRef.current?.value])
+  }, [workingCase, setIsStepIllegal, requestedCustodyEndTime])
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
 
@@ -171,7 +199,7 @@ export const StepThree: React.FC = () => {
       activeSubSection={
         ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_THREE
       }
-      isLoading={isLoading}
+      isLoading={loading}
       notFound={data?.case === undefined}
     >
       {workingCase ? (
@@ -319,6 +347,94 @@ export const StepThree: React.FC = () => {
                   ))}
                 </GridRow>
               </GridContainer>
+            </BlueBox>
+          </Box>
+          <Box component="section" marginBottom={10}>
+            <Box marginBottom={3}>
+              <Text as="h3" variant="h3">
+                Dómkröfur
+              </Text>
+            </Box>
+            <BlueBox>
+              <GridRow>
+                <GridColumn span="5/8">
+                  <DatePicker
+                    id="reqCustodyEndDate"
+                    label="Gæsluvarðhald til"
+                    placeholderText="Veldu dagsetningu"
+                    selected={
+                      workingCase.requestedCustodyEndDate
+                        ? parseISO(
+                            workingCase.requestedCustodyEndDate?.toString(),
+                          )
+                        : null
+                    }
+                    locale="is"
+                    minDate={new Date()}
+                    hasError={requestedCustodyEndDateErrorMessage !== ''}
+                    errorMessage={requestedCustodyEndDateErrorMessage}
+                    handleChange={(date) =>
+                      setAndSendDateToServer(
+                        'requestedCustodyEndDate',
+                        workingCase.requestedCustodyEndDate,
+                        date,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                        setRequestedCustodyEndDateErrorMessage,
+                      )
+                    }
+                    handleCloseCalendar={(date: Date | null) => {
+                      if (isNull(date) || !isValid(date)) {
+                        setRequestedCustodyEndDateErrorMessage(
+                          'Reitur má ekki vera tómur',
+                        )
+                      }
+                    }}
+                    required
+                  />
+                </GridColumn>
+                <GridColumn span="3/8">
+                  <TimeInputField
+                    disabled={!workingCase?.requestedCustodyEndDate}
+                    onChange={(evt) =>
+                      validateAndSetTime(
+                        'requestedCustodyEndDate',
+                        workingCase.requestedCustodyEndDate,
+                        evt.target.value,
+                        ['empty', 'time-format'],
+                        workingCase,
+                        setWorkingCase,
+                        requestedCustodyEndTimeErrorMessage,
+                        setRequestedCustodyEndTimeErrorMessage,
+                        setRequestedCustodyEndTime,
+                      )
+                    }
+                    onBlur={(evt) =>
+                      validateAndSendTimeToServer(
+                        'requestedCustodyEndDate',
+                        workingCase.arrestDate,
+                        evt.target.value,
+                        ['empty', 'time-format'],
+                        workingCase,
+                        updateCase,
+                        setRequestedCustodyEndTimeErrorMessage,
+                      )
+                    }
+                  >
+                    <Input
+                      data-testid="requestedCustodyEndTime"
+                      name="requestedCustodyEndTime"
+                      label="Tímasetning (kk:mm)"
+                      placeholder="Settu inn tíma"
+                      defaultValue={requestedCustodyEndTime}
+                      errorMessage={requestedCustodyEndTimeErrorMessage}
+                      hasError={requestedCustodyEndTimeErrorMessage !== ''}
+                      required
+                    />
+                  </TimeInputField>
+                </GridColumn>
+              </GridRow>
             </BlueBox>
           </Box>
           <FormFooter
