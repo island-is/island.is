@@ -175,6 +175,12 @@ export const HealthInsuranceForm: Form = buildForm({
                 { label: m.yesOptionLabel, value: YES },
               ],
             }),
+            buildCustomField({
+              id: 'childrenInfo',
+              title: '',
+              component: 'InfoMessage',
+              condition: (answers) => answers.children === YES,
+            }),
           ],
         }),
       ],
@@ -232,10 +238,11 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.formerInsuranceAdditionalInformation,
               placeholder: m.formerInsuranceAdditionalInformationPlaceholder,
               variant: 'textarea',
-              condition: (answers) => (answers as { 
-                formerInsurance: { entitlement: string }
-              })?.formerInsurance?.entitlement === YES,
-            })
+              condition: (answers) =>
+                (answers as {
+                  formerInsurance: { entitlement: string }
+                })?.formerInsurance?.entitlement === YES,
+            }),
           ],
         }),
       ],

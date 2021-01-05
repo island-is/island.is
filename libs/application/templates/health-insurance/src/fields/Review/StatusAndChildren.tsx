@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
+  AlertMessage,
   Box,
   InputFileUpload,
   Stack,
@@ -24,6 +25,10 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
 
   const [status, setStatus] = useState(
     getValueViaPath(application.answers, 'status') as StatusTypes,
+  )
+
+  const [children, setChildren] = useState(
+    getValueViaPath(application.answers, 'children') as string,
   )
 
   const [fileList, setFileList] = useState(
@@ -140,6 +145,7 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
           defaultValue={
             getValueViaPath(application.answers, 'children') as string[]
           }
+          onSelect={(value) => setChildren(value as string)}
           largeButtons={true}
           split={'1/2'}
           options={[
@@ -153,6 +159,21 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
             },
           ]}
         />
+        {children === YES && (
+          <AlertMessage
+            type={'info'}
+            title={formatText(
+              m.childrenInfoMessageTitle,
+              application,
+              formatMessage,
+            )}
+            message={formatText(
+              m.childrenInfoMessageText,
+              application,
+              formatMessage,
+            )}
+          />
+        )}
       </Stack>
     </Stack>
   )

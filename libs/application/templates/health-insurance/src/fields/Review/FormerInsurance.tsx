@@ -1,6 +1,6 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { formatText } from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
   GridColumn,
   GridRow,
@@ -21,6 +21,13 @@ import { ReviewFieldProps } from '../../types'
 const FormerInsurance: FC<ReviewFieldProps> = ({ application, isEditable }) => {
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
+
+  const [entitlement, setEntitlement] = useState(
+    getValueViaPath(
+      application.answers,
+      'formerInsurance.entitlement',
+    ) as string,
+  )
 
   return (
     <Box>
@@ -110,6 +117,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({ application, isEditable }) => {
         <RadioController
           id={'formerInsurance.entitlement'}
           name={'formerInsurance.entitlement'}
+          onSelect={(value) => setEntitlement(value as string)}
           disabled={!isEditable}
           largeButtons={true}
           split={'1/2'}
@@ -124,14 +132,20 @@ const FormerInsurance: FC<ReviewFieldProps> = ({ application, isEditable }) => {
             },
           ]}
         />
-        <Input
-          id={'formerInsurance.additionalInformation'}
-          name={'formerInsurance.additionalInformation'}
-          label={formatText(m.formerInsuranceAdditionalInformation, application, formatMessage)}
-          ref={register}
-          disabled={!isEditable}
-          textarea={true}
-        />
+        {entitlement === YES && (
+          <Input
+            id={'formerInsurance.additionalInformation'}
+            name={'formerInsurance.additionalInformation'}
+            label={formatText(
+              m.formerInsuranceAdditionalInformation,
+              application,
+              formatMessage,
+            )}
+            ref={register}
+            disabled={!isEditable}
+            textarea={true}
+          />
+        )}
       </Stack>
     </Box>
   )
