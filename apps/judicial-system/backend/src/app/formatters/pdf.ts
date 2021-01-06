@@ -437,7 +437,7 @@ export async function generateRulingPdf(
       })
   }
 
-  if (existingCase.decision !== CaseDecision.REJECTING) {
+  if (existingCase.decision === CaseDecision.ACCEPTING) {
     doc
       .text(' ')
       .font('Helvetica-Bold')
