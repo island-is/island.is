@@ -4,6 +4,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { Application, getValueViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import config from '../../config'
 
 interface YourRightsBoxChartProps {
   application: Application
@@ -16,7 +17,7 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
-  const maxDaysToGive = 45
+  const maxDays = config.maxDaysToGiveOrReceive
 
   // Yes/No
   const requestRightsAnswer = getValueViaPath(
@@ -48,7 +49,7 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
     requestDaysAnswer === 1 ? m.requestRightsDay : m.requestRightsDays
 
   const yourRightsWithGivenDaysStringKey =
-    maxDaysToGive - giveDaysAnswer === 1
+    maxDays - giveDaysAnswer === 1
       ? m.yourRightsInMonthsAndDay
       : m.yourRightsInMonthsAndDays
 
@@ -59,7 +60,10 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
     requestRightsAnswer === 'yes'
       ? [
           {
-            label: () => ({ ...m.yourRightsInMonths, values: { months: '6' } }),
+            label: () => ({
+              ...m.yourRightsInMonths,
+              values: { months: config.defaultMonths },
+            }),
             bulletStyle: 'blue',
           },
           {
@@ -76,8 +80,8 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
             label: () => ({
               ...yourRightsWithGivenDaysStringKey,
               values: {
-                months: '5',
-                day: maxDaysToGive - giveDaysAnswer,
+                months: config.defaultMonths - 1,
+                day: maxDays - giveDaysAnswer,
               },
             }),
             bulletStyle: 'blue',
@@ -87,7 +91,7 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
           {
             label: () => ({
               ...m.yourRightsInMonths,
-              values: { months: '6' },
+              values: { months: config.defaultMonths },
             }),
             bulletStyle: 'blue',
           },
@@ -103,7 +107,10 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
     })
   }
 
-  const numberOfBoxes = requestRightsAnswer === 'yes' ? 7 : 6
+  const numberOfBoxes =
+    requestRightsAnswer === 'yes'
+      ? config.defaultMonths + 1
+      : config.defaultMonths
 
   return (
     <Box marginY={3} key={'YourRightsBoxChart'}>
@@ -115,10 +122,13 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
         })}
         boxes={numberOfBoxes}
         calculateBoxStyle={(index) => {
-          if (index === 5 && giveRightsAnswer === 'yes') {
+          if (
+            index === config.defaultMonths - 1 &&
+            giveRightsAnswer === 'yes'
+          ) {
             return 'grayWithLines'
           }
-          if (index === 6 && requestRightsAnswer === 'yes') {
+          if (index === config.defaultMonths && requestRightsAnswer === 'yes') {
             return 'greenWithLines'
           }
           return 'blue'

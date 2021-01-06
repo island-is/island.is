@@ -230,8 +230,8 @@ export const m = defineMessages({
   requestRightsDescription: {
     id: 'pl.application:request.rights.description',
     defaultMessage:
-      'Hitt foreldrið má yfirfæra allt að einn mánuð af réttindum þess yfir á þig. Kjósir þú að óska eftir þessu, þá þarf hitt foreldrið að samþykkja beiðni þína.',
-    description: 'The other parent can transfer to 1 month of their rights',
+      'Hitt foreldrið má yfirfæra allt að 45 dagar af réttindum þess yfir á þig. Kjósir þú að óska eftir þessu, þá þarf hitt foreldrið að samþykkja beiðni þína.',
+    description: 'The other parent can transfer to 45 days of their rights',
   },
   requestRightsYes: {
     id: 'pl.application:request.rights.yes',
@@ -259,7 +259,7 @@ export const m = defineMessages({
   giveRightsDescription: {
     id: 'pl.application:give.rights.description',
     defaultMessage:
-      'Þú getur yfirfært allt að einn mánuð af þínum réttindum yfir á hitt foreldrið',
+      'Þú getur yfirfært allt að 45 dagar af þínum réttindum yfir á hitt foreldrið',
     description: 'You can give the other parent one month of your rights',
   },
   giveRightsDay: {

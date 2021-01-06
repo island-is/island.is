@@ -7,9 +7,10 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import Slider from '../components/Slider'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
+import config from '../../config'
 
 const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
-  const maxDays = 45
+  const maxDays = config.maxDaysToGiveOrReceive
   const { id } = field
   const { formatMessage } = useLocale()
   const currentAnswer = getValueViaPath(
@@ -17,8 +18,6 @@ const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
     field.id,
     undefined,
   ) as number
-
-  const maxDaysToGive = 45
 
   const { clearErrors } = useFormContext()
 
@@ -29,7 +28,7 @@ const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   const daysStringKey = chosenGiveDays > 1 ? m.giveRightsDays : m.giveRightsDay
 
   const yourRightsWithGivenDaysStringKey =
-    maxDaysToGive - chosenGiveDays === 1
+    maxDays - chosenGiveDays === 1
       ? m.yourRightsInMonthsAndDay
       : m.yourRightsInMonthsAndDays
 
@@ -37,7 +36,7 @@ const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
     {
       label: () => ({
         ...yourRightsWithGivenDaysStringKey,
-        values: { months: '5', day: maxDaysToGive - chosenGiveDays },
+        values: { months: '5', day: maxDays - chosenGiveDays },
       }),
       bulletStyle: 'blue',
     },
@@ -85,9 +84,9 @@ const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
       </Box>
       <BoxChart
         application={application}
-        boxes={6}
+        boxes={config.defaultMonths}
         calculateBoxStyle={(index) => {
-          if (index === 5) {
+          if (index === config.defaultMonths - 1) {
             return 'grayWithLines'
           }
           return 'blue'

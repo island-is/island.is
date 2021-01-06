@@ -5,6 +5,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m, mm } from '../../lib/messages'
+import config from '../../config'
 
 type ValidAnswers = 'yes' | 'no' | undefined
 
@@ -16,27 +17,19 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
     undefined,
   ) as ValidAnswers
 
-  const requestDaysAnswerId = 'requestRights.requestDays'
-
   const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(
     currentAnswer,
   )
 
-  const requestDaysAnswer = getValueViaPath(
-    application.answers,
-    requestDaysAnswerId,
-    undefined,
-  ) as number
-
-  // const [chosenRequestDays, setChosenRequestDays] = useState<number>(
-  //   requestDaysAnswer || 1,
-  // )
-
-  const numberOfBoxes = statefulAnswer === 'no' ? 6 : 7
+  const numberOfBoxes =
+    statefulAnswer === 'no' ? config.defaultMonths : config.defaultMonths + 1
 
   const boxChartKeys: BoxChartKey[] = [
     {
-      label: () => ({ ...m.yourRightsInMonths, values: { months: '6' } }),
+      label: () => ({
+        ...m.yourRightsInMonths,
+        values: { months: config.defaultMonths },
+      }),
       bulletStyle: 'blue',
     },
   ]
@@ -71,7 +64,7 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
           application={application}
           boxes={numberOfBoxes}
           calculateBoxStyle={(index) => {
-            if (index === 6) {
+            if (index === config.defaultMonths) {
               return 'grayWithLines'
             }
             return 'blue'

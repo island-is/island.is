@@ -7,9 +7,10 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import Slider from '../components/Slider'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
+import config from '../../config'
 
 const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
-  const maxDays = 45
+  const maxDays = config.maxDaysToGiveOrReceive
   const { id } = field
   const { formatMessage } = useLocale()
   const currentAnswer = getValueViaPath(
@@ -29,7 +30,10 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
 
   const boxChartKeys: BoxChartKey[] = [
     {
-      label: () => ({ ...m.yourRightsInMonths, values: { months: '6' } }),
+      label: () => ({
+        ...m.yourRightsInMonths,
+        values: { months: config.defaultMonths },
+      }),
       bulletStyle: 'blue',
     },
     {
@@ -76,9 +80,9 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
       </Box>
       <BoxChart
         application={application}
-        boxes={7}
+        boxes={config.defaultMonths + 1}
         calculateBoxStyle={(index) => {
-          if (index === 6) {
+          if (index === config.defaultMonths) {
             return 'greenWithLines'
           }
           return 'blue'
