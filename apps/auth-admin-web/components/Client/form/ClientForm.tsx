@@ -380,29 +380,11 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       as="span"
                       errors={errors}
                       name="client.accessTokenType"
-                      message="Absolute Refresh Token Lifetime is required"
+                      message="Access Token Type is required"
                     />
                   </div>
 
-                  <div className="client__container__field">
-                    <label className="client__label">
-                      Absolute Refresh Token Lifetime
-                    </label>
-                    <input
-                      type="number"
-                      ref={register({ required: true })}
-                      name="client.absoluteRefreshTokenLifetime"
-                      defaultValue={client.absoluteRefreshTokenLifetime}
-                      className="client__input"
-                    />
-                    <HelpBox helpText="Maximum lifetime of a refresh token in seconds. Defaults to 2592000 seconds / 30 days" />
-                    <ErrorMessage
-                      as="span"
-                      errors={errors}
-                      name="client.absoluteRefreshTokenLifetime"
-                      message="Absolute Refresh Token Lifetime is required"
-                    />
-                  </div>
+                  
                   <div className="client__container__field">
                     <label className="client__label">
                       Access Token Lifetime
@@ -520,6 +502,26 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                       ref={register}
                     />
                     <HelpBox helpText="Sliding lifetime of a refresh token in seconds. Defaults to 1296000 seconds / 15 days" />
+                  </div>
+
+                  <div className="client__container__field">
+                    <label className="client__label">
+                      Absolute Refresh Token Lifetime
+                    </label>
+                    <input
+                      type="number"
+                      ref={register({ required: true })}
+                      name="client.absoluteRefreshTokenLifetime"
+                      defaultValue={client.absoluteRefreshTokenLifetime}
+                      className="client__input"
+                    />
+                    <HelpBox helpText="Maximum lifetime of a refresh token in seconds. Defaults to 2592000 seconds / 30 days" />
+                    <ErrorMessage
+                      as="span"
+                      errors={errors}
+                      name="client.absoluteRefreshTokenLifetime"
+                      message="Absolute Refresh Token Lifetime is required"
+                    />
                   </div>
 
                   <div className="client__container__field">
