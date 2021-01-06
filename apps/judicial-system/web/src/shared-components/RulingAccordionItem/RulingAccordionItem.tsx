@@ -109,7 +109,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             )}
         </Box>
       )}
-      {workingCase.decision !== CaseDecision.REJECTING && (
+      {workingCase.decision === CaseDecision.ACCEPTING && (
         <Box>
           <Box marginBottom={1}>
             <Text as="h3" variant="h3">

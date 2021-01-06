@@ -66,11 +66,13 @@ export function formatConclusion(
     ? 'Kröfu um gæsluvarðhald er hafnað.'
     : `Kærði, ${accusedName}, kt. ${formatNationalId(
         accusedNationalId,
-      )} skal sæta gæsluvarðhaldi, þó ekki lengur en til ${formatDate(
-        custodyEndDate,
-        'PPPPp',
-      )?.replace('dagur,', 'dagsins')}.${
-        isolation
+      )}, skal sæta ${
+        decision === CaseDecision.ACCEPTING ? 'gæsluvarðhaldi' : 'farbanni'
+      }, þó ekki lengur en til ${formatDate(custodyEndDate, 'PPPPp')?.replace(
+        'dagur,',
+        'dagsins',
+      )}.${
+        decision === CaseDecision.ACCEPTING && isolation
           ? ' Kærði skal sæta einangrun meðan á gæsluvarðhaldi stendur.'
           : ''
       }`
@@ -235,7 +237,7 @@ export function formatPrisonRulingEmailNotification(
     'Kærði',
     false,
   )}<br />${formatAppeal(prosecutorAppealDecision, 'Sækjandi', false)}${
-    decision !== CaseDecision.REJECTING
+    decision === CaseDecision.ACCEPTING
       ? `<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${formatRestrictions(
           custodyRestrictions,
         )}`
