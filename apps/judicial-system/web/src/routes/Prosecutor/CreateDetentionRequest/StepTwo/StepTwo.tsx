@@ -363,7 +363,7 @@ export const StepTwo: React.FC = () => {
                     data-testid="arrestTime"
                     name="arrestTime"
                     label="Tímasetning (kk:mm)"
-                    placeholder="Settu inn tíma"
+                    placeholder="Veldu tíma"
                     errorMessage={arrestTimeErrorMessage}
                     hasError={arrestTimeErrorMessage !== ''}
                     defaultValue={arrestTime}
@@ -451,7 +451,7 @@ export const StepTwo: React.FC = () => {
                     data-testid="requestedCourtDate"
                     name="requestedCourtDate"
                     label="Ósk um tíma (kk:mm)"
-                    placeholder="Settu inn tíma"
+                    placeholder="Veldu tíma"
                     errorMessage={requestedCourtTimeErrorMessage}
                     hasError={requestedCourtTimeErrorMessage !== ''}
                     defaultValue={requestedCourtTime}
