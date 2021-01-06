@@ -347,6 +347,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                   <Filter
                     labelClear={fn('clear')}
                     labelOpen={fn('openFilterButton')}
+                    labelClose={fn('closeFilter')}
                     labelResult={fn('mobileResult')}
                     labelTitle={fn('mobileTitle')}
                     resultCount={data?.getApiCatalogue?.services?.length ?? 0}
