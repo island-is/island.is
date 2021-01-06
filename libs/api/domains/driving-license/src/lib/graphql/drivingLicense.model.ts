@@ -6,8 +6,8 @@ export class DrivingLicense {
   id!: string
 
   @Field(() => String)
-  name!: string
+  type!: string
 
-  @Field(() => String)
-  nationalId!: string
+  @Field(() => Date)
+  expires!: Date
 }
