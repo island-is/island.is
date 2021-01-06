@@ -118,14 +118,18 @@ export const RulingStepOne: React.FC = () => {
   }, [workingCase, setWorkingCase, data, updateCase])
 
   useEffect(() => {
-    const requiredFields: { value: string; validations: Validation[] }[] = [
+    let requiredFields: { value: string; validations: Validation[] }[] = [
       { value: workingCase?.ruling || '', validations: ['empty'] },
-      { value: workingCase?.custodyEndDate || '', validations: ['empty'] },
-      {
-        value: custodyEndTimeRef.current?.value || '',
-        validations: ['empty', 'time-format'],
-      },
     ]
+    if (workingCase?.decision !== CaseDecision.REJECTING) {
+      requiredFields = requiredFields.concat([
+        { value: workingCase?.custodyEndDate || '', validations: ['empty'] },
+        {
+          value: custodyEndTimeRef.current?.value || '',
+          validations: ['empty', 'time-format'],
+        },
+      ])
+    }
 
     if (workingCase) {
       setIsStepIllegal(isNextDisabled(requiredFields))
@@ -224,158 +228,162 @@ export const RulingStepOne: React.FC = () => {
               </GridColumn>
             </GridRow>
           </Box>
-          <Box component="section" marginBottom={8}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Gæsluvarðhaldstími
-              </Text>
-            </Box>
-            <GridRow>
-              <GridColumn span="6/12">
-                <DatePicker
-                  id="custodyEndDate"
-                  label="Gæsluvarðhald til"
-                  placeholderText="Veldu dagsetningu"
-                  locale="is"
-                  selected={
-                    workingCase.custodyEndDate
-                      ? new Date(workingCase.custodyEndDate)
-                      : workingCase.requestedCustodyEndDate
-                      ? new Date(workingCase.requestedCustodyEndDate)
-                      : null
-                  }
-                  handleChange={(date) =>
-                    setAndSendDateToServer(
-                      'custodyEndDate',
-                      workingCase.custodyEndDate,
-                      date,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                    )
-                  }
-                  required
-                />
-              </GridColumn>
-              <GridColumn span="5/12">
-                <TimeInputField
-                  onChange={(evt) =>
-                    validateAndSetTime(
-                      'custodyEndDate',
-                      workingCase.custodyEndDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
-                      workingCase,
-                      setWorkingCase,
-                      custodyEndTimeErrorMessage,
-                      setCustodyEndTimeErrorMessage,
-                    )
-                  }
-                  onBlur={(evt) =>
-                    validateAndSendTimeToServer(
-                      'custodyEndDate',
-                      workingCase.custodyEndDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
-                      workingCase,
-                      updateCase,
-                      setCustodyEndTimeErrorMessage,
-                    )
-                  }
-                >
-                  <Input
-                    data-testid="custodyEndTime"
-                    name="custodyEndTime"
-                    label="Tímasetning"
-                    ref={custodyEndTimeRef}
-                    defaultValue={
-                      workingCase.custodyEndDate?.includes('T')
-                        ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
-                        : workingCase.requestedCustodyEndDate?.includes('T')
-                        ? formatDate(
-                            workingCase.requestedCustodyEndDate,
-                            TIME_FORMAT,
-                          )
-                        : undefined
-                    }
-                    hasError={custodyEndTimeErrorMessage !== ''}
-                    errorMessage={custodyEndTimeErrorMessage}
-                    required
-                  />
-                </TimeInputField>
-              </GridColumn>
-            </GridRow>
-          </Box>
-          <Box component="section" marginBottom={8}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Takmarkanir á gæslu
-              </Text>
-            </Box>
-            <Box marginBottom={1}>
+          {workingCase.decision !== CaseDecision.REJECTING && (
+            <Box component="section" marginBottom={8}>
+              <Box marginBottom={2}>
+                <Text as="h3" variant="h3">
+                  Gæsluvarðhaldstími
+                </Text>
+              </Box>
               <GridRow>
                 <GridColumn span="6/12">
-                  <Checkbox
-                    name="B - Einangrun"
-                    label="Kærði skal sæta einangrun"
-                    tooltip="Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum."
-                    value={CaseCustodyRestrictions.ISOLATION}
-                    checked={workingCase.custodyRestrictions?.includes(
-                      CaseCustodyRestrictions.ISOLATION,
-                    )}
-                    onChange={({ target }) => {
-                      // Create a copy of the state
-                      const copyOfState = Object.assign(workingCase, {})
-
-                      const restrictionIsSelected = copyOfState.custodyRestrictions?.includes(
-                        target.value as CaseCustodyRestrictions,
+                  <DatePicker
+                    id="custodyEndDate"
+                    label="Gæsluvarðhald til"
+                    placeholderText="Veldu dagsetningu"
+                    locale="is"
+                    selected={
+                      workingCase.custodyEndDate
+                        ? new Date(workingCase.custodyEndDate)
+                        : workingCase.requestedCustodyEndDate
+                        ? new Date(workingCase.requestedCustodyEndDate)
+                        : null
+                    }
+                    handleChange={(date) =>
+                      setAndSendDateToServer(
+                        'custodyEndDate',
+                        workingCase.custodyEndDate,
+                        date,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
                       )
-
-                      // Toggle the checkbox on or off
-                      setIsolationCheckbox(!restrictionIsSelected)
-
-                      // If the user is checking the box, add the restriction to the state
-                      if (!restrictionIsSelected) {
-                        if (copyOfState.custodyRestrictions === null) {
-                          copyOfState.custodyRestrictions = []
-                        }
-
-                        copyOfState.custodyRestrictions &&
-                          copyOfState.custodyRestrictions.push(
-                            target.value as CaseCustodyRestrictions,
-                          )
-                      }
-                      // If the user is unchecking the box, remove the restriction from the state
-                      else {
-                        copyOfState.custodyRestrictions &&
-                          copyOfState.custodyRestrictions.splice(
-                            copyOfState.custodyRestrictions.indexOf(
-                              target.value as CaseCustodyRestrictions,
-                            ),
-                            1,
-                          )
-                      }
-
-                      setWorkingCase({
-                        ...workingCase,
-                        custodyRestrictions: copyOfState.custodyRestrictions,
-                      })
-
-                      // Save case
-                      updateCase(
-                        workingCase.id,
-                        parseArray(
-                          'custodyRestrictions',
-                          copyOfState.custodyRestrictions || [],
-                        ),
-                      )
-                    }}
-                    large
+                    }
+                    required
                   />
+                </GridColumn>
+                <GridColumn span="5/12">
+                  <TimeInputField
+                    onChange={(evt) =>
+                      validateAndSetTime(
+                        'custodyEndDate',
+                        workingCase.custodyEndDate,
+                        evt.target.value,
+                        ['empty', 'time-format'],
+                        workingCase,
+                        setWorkingCase,
+                        custodyEndTimeErrorMessage,
+                        setCustodyEndTimeErrorMessage,
+                      )
+                    }
+                    onBlur={(evt) =>
+                      validateAndSendTimeToServer(
+                        'custodyEndDate',
+                        workingCase.custodyEndDate,
+                        evt.target.value,
+                        ['empty', 'time-format'],
+                        workingCase,
+                        updateCase,
+                        setCustodyEndTimeErrorMessage,
+                      )
+                    }
+                  >
+                    <Input
+                      data-testid="custodyEndTime"
+                      name="custodyEndTime"
+                      label="Tímasetning"
+                      ref={custodyEndTimeRef}
+                      defaultValue={
+                        workingCase.custodyEndDate?.includes('T')
+                          ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
+                          : workingCase.requestedCustodyEndDate?.includes('T')
+                          ? formatDate(
+                              workingCase.requestedCustodyEndDate,
+                              TIME_FORMAT,
+                            )
+                          : undefined
+                      }
+                      hasError={custodyEndTimeErrorMessage !== ''}
+                      errorMessage={custodyEndTimeErrorMessage}
+                      required
+                    />
+                  </TimeInputField>
                 </GridColumn>
               </GridRow>
             </Box>
-          </Box>
+          )}
+          {workingCase.decision !== CaseDecision.REJECTING && (
+            <Box component="section" marginBottom={8}>
+              <Box marginBottom={2}>
+                <Text as="h3" variant="h3">
+                  Takmarkanir á gæslu
+                </Text>
+              </Box>
+              <Box marginBottom={1}>
+                <GridRow>
+                  <GridColumn span="6/12">
+                    <Checkbox
+                      name="B - Einangrun"
+                      label="Kærði skal sæta einangrun"
+                      tooltip="Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum."
+                      value={CaseCustodyRestrictions.ISOLATION}
+                      checked={workingCase.custodyRestrictions?.includes(
+                        CaseCustodyRestrictions.ISOLATION,
+                      )}
+                      onChange={({ target }) => {
+                        // Create a copy of the state
+                        const copyOfState = Object.assign(workingCase, {})
+
+                        const restrictionIsSelected = copyOfState.custodyRestrictions?.includes(
+                          target.value as CaseCustodyRestrictions,
+                        )
+
+                        // Toggle the checkbox on or off
+                        setIsolationCheckbox(!restrictionIsSelected)
+
+                        // If the user is checking the box, add the restriction to the state
+                        if (!restrictionIsSelected) {
+                          if (copyOfState.custodyRestrictions === null) {
+                            copyOfState.custodyRestrictions = []
+                          }
+
+                          copyOfState.custodyRestrictions &&
+                            copyOfState.custodyRestrictions.push(
+                              target.value as CaseCustodyRestrictions,
+                            )
+                        }
+                        // If the user is unchecking the box, remove the restriction from the state
+                        else {
+                          copyOfState.custodyRestrictions &&
+                            copyOfState.custodyRestrictions.splice(
+                              copyOfState.custodyRestrictions.indexOf(
+                                target.value as CaseCustodyRestrictions,
+                              ),
+                              1,
+                            )
+                        }
+
+                        setWorkingCase({
+                          ...workingCase,
+                          custodyRestrictions: copyOfState.custodyRestrictions,
+                        })
+
+                        // Save case
+                        updateCase(
+                          workingCase.id,
+                          parseArray(
+                            'custodyRestrictions',
+                            copyOfState.custodyRestrictions || [],
+                          ),
+                        )
+                      }}
+                      large
+                    />
+                  </GridColumn>
+                </GridRow>
+              </Box>
+            </Box>
+          )}
           <FormFooter
             nextUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${id}`}
             nextIsDisabled={isStepIllegal}
