@@ -147,6 +147,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           }}
           startDate={startDate}
           required={required}
+          autoComplete="off"
           calendarClassName={cn({
             [styles.backgroundBlue]: backgroundColor === 'blue',
           })}
