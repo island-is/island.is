@@ -2,7 +2,7 @@ import React from 'react'
 import { Layout } from '../../components'
 import {
   Box,
-  Breadcrumbs,
+  BreadcrumbsDeprecated as Breadcrumbs,
   Stack,
   Text,
   Button,

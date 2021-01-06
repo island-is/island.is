@@ -3,7 +3,7 @@ import {
   Accordion,
   AccordionItem,
   Box,
-  Breadcrumbs,
+  BreadcrumbsDeprecated as Breadcrumbs,
   LoadingIcon,
   Select,
   Text,

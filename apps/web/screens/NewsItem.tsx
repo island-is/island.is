@@ -3,13 +3,12 @@ import React from 'react'
 import {
   Text,
   Breadcrumbs,
+  BreadCrumbItem,
   Box,
-  Link,
   GridRow,
   GridColumn,
   Stack,
   GridContainer,
-  Tag,
 } from '@island.is/island-ui/core'
 import { Image, Slice as SliceType } from '@island.is/island-ui/contentful'
 import { Screen } from '@island.is/web/types'
@@ -31,7 +30,8 @@ import {
 import { RichText } from '../components/RichText/RichText'
 import { SidebarBox, Sticky, HeadWithSocialSharing, Main } from '../components'
 import { useNamespace } from '@island.is/web/hooks'
-import { useLinkResolver } from '../hooks/useLinkResolver'
+import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
+import NextLink from 'next/link'
 
 interface NewsItemProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
@@ -47,32 +47,28 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
 
   const metaTitle = `${newsItem.title} | Ísland.is`
 
-  const sidebar = (
-    <SidebarBox>
-      <Stack space={3}>
-        {Boolean(newsItem.author) && (
-          <Stack space={1}>
-            <Text variant="eyebrow" as="p" color="blue400">
-              {n('author', 'Höfundur')}
-            </Text>
-            <Text variant="h5" as="p">
-              {newsItem.author.name}
-            </Text>
-          </Stack>
-        )}
-        {Boolean(newsItem.date) && (
-          <Stack space={1}>
-            <Text variant="eyebrow" as="p" color="blue400">
-              {n('published', 'Birt')}
-            </Text>
-            <Text variant="h5" as="p">
-              {format(new Date(newsItem.date), 'do MMMM yyyy')}
-            </Text>
-          </Stack>
-        )}
-      </Stack>
-    </SidebarBox>
-  )
+  const breadCrumbs: BreadCrumbItem[] = [
+    {
+      title: 'Ísland.is',
+      typename: 'homepage',
+      href: '/',
+    },
+    {
+      title: t.newsAndAnnouncements,
+      typename: 'newsoverview',
+      href: '/',
+    },
+  ]
+  const breadCrumbTags: BreadCrumbItem[] =
+    !!newsItem.genericTags.length &&
+    newsItem.genericTags.map(({ id, title }) => {
+      return {
+        isTag: true,
+        title: title,
+        typename: 'newsoverview',
+        slug: [`?tag=${id}`],
+      }
+    })
 
   return (
     <>
@@ -93,30 +89,24 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
                     offset={['0', '0', '0', '0', '1/9']}
                     span={['9/9', '9/9', '9/9', '9/9', '7/9']}
                   >
-                    <Breadcrumbs>
-                      <Link {...linkResolver('homepage')}>Ísland.is</Link>
-                      <Link {...linkResolver('newsoverview')}>
-                        {t.newsAndAnnouncements}
-                      </Link>
-                      {!!newsItem.genericTags.length &&
-                        newsItem.genericTags.map(({ id, title }, index) => {
-                          return (
-                            <Link
-                              key={index}
-                              href={{
-                                pathname: linkResolver('newsoverview').href,
-                                query: { tag: id },
-                              }}
-                              as={`${
-                                linkResolver('newsoverview').as
-                              }?tag=${id}`}
-                              pureChildren
-                            >
-                              <Tag variant="blue">{title}</Tag>
-                            </Link>
-                          )
-                        })}
-                    </Breadcrumbs>
+                    <Breadcrumbs
+                      items={
+                        breadCrumbTags
+                          ? breadCrumbs.concat(breadCrumbTags)
+                          : breadCrumbs
+                      }
+                      renderLink={(link, { typename, slug }) => {
+                        return (
+                          <NextLink
+                            {...linkResolver(typename as LinkType, slug)}
+                            passHref
+                          >
+                            {link}
+                          </NextLink>
+                        )
+                      }}
+                    />
+
                     <Text variant="h1" as="h1" paddingTop={1} paddingBottom={2}>
                       {newsItem.title}
                     </Text>

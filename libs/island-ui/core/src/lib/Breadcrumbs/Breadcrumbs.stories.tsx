@@ -17,9 +17,12 @@ export default {
 }
 
 export const Default = () => (
-  <Breadcrumbs>
-    <span>Ísland.is</span>
-    <a href="/">Dómstólar og réttarfar</a>
-    <a href="/">Lögregluembætti</a>
-  </Breadcrumbs>
+  <Breadcrumbs
+    items={[
+      { title: 'link', href: '/' },
+      { title: 'text' },
+      { isTag: true, title: 'link tag', href: '/' },
+      { isTag: true, title: 'text tag' },
+    ]}
+  />
 )

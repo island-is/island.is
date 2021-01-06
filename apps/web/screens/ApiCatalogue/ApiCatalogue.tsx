@@ -10,7 +10,6 @@ import {
   Stack,
   Breadcrumbs,
   Box,
-  Link,
   Button,
   GridContainer,
   LoadingIcon,
@@ -292,13 +291,23 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                 </Box>
                 <Box marginBottom={2} display={['none', 'none', 'inline']}>
                   {/* Show when NOT a device */}
-                  <Breadcrumbs>
-                    <Link href={nn('linkIslandIs')}>
-                      {nn('linkIslandIsText')}
-                    </Link>
-                    <a href={nn('linkThroun')}>{nn('linkThrounText')}</a>
-                    <a href={nn('linkServices')}>{nn('linkServicesText')}</a>
-                  </Breadcrumbs>
+                  <Breadcrumbs
+                    items={[
+                      {
+                        title: nn('linkIslandIsText'),
+                        href: nn('linkIslandIs'),
+                      },
+
+                      {
+                        title: nn('linkThrounText'),
+                        href: nn('linkThroun'),
+                      },
+                      {
+                        title: nn('linkServicesText'),
+                        href: nn('linkServices'),
+                      },
+                    ]}
+                  />
                 </Box>
                 <Stack space={1}>
                   <Text variant="h1">{subpageHeader.title}</Text>
