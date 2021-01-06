@@ -14,7 +14,6 @@ import {
   Breadcrumbs,
   GridColumn,
   GridRow,
-  Tag,
   Link,
   Navigation,
   TableOfContents,
@@ -331,30 +330,39 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           display={['none', 'none', 'block']}
           printHidden
         >
-          <Breadcrumbs>
-            <Link {...linkResolver('homepage')}>Ísland.is</Link>
-            {!!article.category && (
-              <Link
-                {...linkResolver('articlecategory', [article.category.slug])}
-              >
-                {article.category.title}
-              </Link>
-            )}
-            {!!article.group && (
-              <Link
-                href={
-                  linkResolver('articlecategory', [article.category.slug]).href
-                }
-                as={
-                  linkResolver('articlecategory', [article.category.slug]).as +
-                  (article.group?.slug ? `#${article.group.slug}` : '')
-                }
-                pureChildren
-              >
-                <Tag variant="blue">{article.group.title}</Tag>
-              </Link>
-            )}
-          </Breadcrumbs>
+          <Breadcrumbs
+            items={[
+              {
+                title: 'Ísland.is',
+                typename: 'homepage',
+                href: '/',
+              },
+              !!article.category && {
+                title: article.category.title,
+                typename: 'articlecategory',
+                slug: [article.category.slug],
+              },
+              !!article.group && {
+                isTag: true,
+                title: article.group.title,
+                typename: 'articlecategory',
+                slug: [
+                  article.category.slug +
+                    (article.group?.slug ? `#${article.group.slug}` : ''),
+                ],
+              },
+            ]}
+            renderLink={(link, { typename, slug }) => {
+              return (
+                <NextLink
+                  {...linkResolver(typename as LinkType, slug)}
+                  passHref
+                >
+                  {link}
+                </NextLink>
+              )
+            }}
+          />
         </Box>
         <Box
           paddingBottom={[2, 2, 4]}

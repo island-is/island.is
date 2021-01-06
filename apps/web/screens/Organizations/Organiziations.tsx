@@ -1,14 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-// import cn from 'classnames'
 import Head from 'next/head'
+import NextLink from 'next/link'
 import {
   ContentBlock,
   Box,
   Text,
   Breadcrumbs,
   ColorSchemeContext,
-  Link,
 } from '@island.is/island-ui/core'
 import {
   Query,
@@ -56,10 +55,24 @@ const OrganizationPage: Screen<OrganizationProps> = ({
       </Head>
       <SidebarLayout fullWidthContent sidebarContent={null}>
         <Box paddingBottom={[2, 2, 4]}>
-          <Breadcrumbs>
-            <Link {...linkResolver('homepage')}>Ísland.is</Link>
-            <span>{n('organizations', 'Stofnanir')}</span>
-          </Breadcrumbs>
+          <Breadcrumbs
+            items={[
+              {
+                title: 'Ísland.is',
+                href: '/',
+              },
+              {
+                title: n('organizations', 'Stofnanir'),
+              },
+            ]}
+            renderLink={(link) => {
+              return (
+                <NextLink {...linkResolver('homepage')} passHref>
+                  {link}
+                </NextLink>
+              )
+            }}
+          />
         </Box>
 
         <Text variant="h1" as="h1" paddingBottom={2}>

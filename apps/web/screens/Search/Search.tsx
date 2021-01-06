@@ -2,7 +2,7 @@
 import React, { useRef, useEffect, useState } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { LinkProps } from 'next/link'
+import NextLink from 'next/link'
 import { Screen } from '../../types'
 import {
   Sidebar,
@@ -317,11 +317,22 @@ const Search: Screen<CategoryProps> = ({
         }
       >
         <Stack space={[3, 3, 4]}>
-          <Breadcrumbs>
-            <Link {...linkResolver('homepage')} passHref>
-              Ísland.is
-            </Link>
-          </Breadcrumbs>
+          <Breadcrumbs
+            items={[
+              {
+                title: 'Ísland.is',
+                href: '/',
+              },
+            ]}
+            renderLink={(link) => {
+              return (
+                <NextLink {...linkResolver('homepage')} passHref>
+                  {link}
+                </NextLink>
+              )
+            }}
+          />
+
           <SearchInput
             id="search_input_search_page"
             ref={searchRef}

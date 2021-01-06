@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import intersection from 'lodash/intersection'
-import NextLink, { LinkProps } from 'next/link'
+import NextLink from 'next/link'
 import {
   Text,
   Stack,
@@ -10,7 +10,6 @@ import {
   Breadcrumbs,
   AccordionCard,
   LinkCard,
-  Link,
   FocusableBox,
   Navigation,
 } from '@island.is/island-ui/core'
@@ -272,11 +271,21 @@ const Category: Screen<CategoryProps> = ({
         }
       >
         <Box paddingBottom={[2, 2, 4]}>
-          <Breadcrumbs>
-            <Link {...linkResolver('homepage')} passHref>
-              Ísland.is
-            </Link>
-          </Breadcrumbs>
+          <Breadcrumbs
+            items={[
+              {
+                title: 'Ísland.is',
+                href: '/',
+              },
+            ]}
+            renderLink={(link) => {
+              return (
+                <NextLink {...linkResolver('homepage')} passHref>
+                  {link}
+                </NextLink>
+              )
+            }}
+          />
         </Box>
         <Box paddingBottom={[5, 5, 10]}>
           <Text variant="h1" as="h1" paddingTop={[4, 4, 0]} paddingBottom={2}>

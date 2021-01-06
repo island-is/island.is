@@ -6,11 +6,14 @@ import { Breadcrumbs } from './Breadcrumbs'
 describe('Breadcrumbs', () => {
   it('should render successfully', () => {
     const { baseElement } = render(
-      <Breadcrumbs>
-        <a href="/">Link 1</a>
-        <a href="/">Link 2</a>
-        <a href="/">Link 3</a>
-      </Breadcrumbs>,
+      <Breadcrumbs
+        items={[
+          { title: 'href', href: '/' },
+          { title: 'text' },
+          { isTag: true, title: 'href tag', href: '/' },
+          { isTag: true, title: 'text tag' },
+        ]}
+      />,
     )
     expect(baseElement).toBeTruthy()
   })
