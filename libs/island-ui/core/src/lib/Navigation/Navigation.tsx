@@ -356,7 +356,7 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
           (active || expand) && items.length && nextLevel <= MAX_LEVELS
 
         return (
-          <Fragment key={index}>
+          <li key={index}>
             {renderLink(
               <FocusableBox
                 component="a"
@@ -403,7 +403,7 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
                 menuState={menuState}
               />
             ) : null}
-          </Fragment>
+          </li>
         )
       })}
     </Box>
