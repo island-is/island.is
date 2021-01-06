@@ -1,1 +1,1 @@
-export * from './lib/driving-license.module'
+export * from './lib/drivingLicense.module'

@@ -8,7 +8,7 @@ import {
 } from '@island.is/service-portal/core'
 
 export const drivingLicenseModule: ServicePortalModule = {
-  name: 'Mín réttindi',
+  name: 'Ökuréttindi',
   widgets: () => [],
   routes: async () => [
     {
