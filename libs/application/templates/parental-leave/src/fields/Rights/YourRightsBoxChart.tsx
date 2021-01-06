@@ -5,6 +5,7 @@ import { Application, getValueViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import config from '../../config'
+import { YES, NO } from '../../constants'
 
 interface YourRightsBoxChartProps {
   application: Application
@@ -57,7 +58,7 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
     giveDaysAnswer === 1 ? m.giveRightsDay : m.giveRightsDays
 
   const boxChartKeys =
-    requestRightsAnswer === 'yes'
+    requestRightsAnswer === YES
       ? [
           {
             label: () => ({
@@ -74,7 +75,7 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
             bulletStyle: 'greenWithLines',
           },
         ]
-      : giveRightsAnswer === 'yes'
+      : giveRightsAnswer === YES
       ? [
           {
             label: () => ({
@@ -97,7 +98,7 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
           },
         ]
 
-  if (giveRightsAnswer === 'yes') {
+  if (giveRightsAnswer === YES) {
     boxChartKeys.push({
       label: () => ({
         ...giveDaysStringKey,
@@ -108,7 +109,7 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
   }
 
   const numberOfBoxes =
-    requestRightsAnswer === 'yes'
+    requestRightsAnswer === YES
       ? config.defaultMonths + 1
       : config.defaultMonths
 
@@ -122,10 +123,7 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
         })}
         boxes={numberOfBoxes}
         calculateBoxStyle={(index) => {
-          if (
-            index === config.defaultMonths - 1 &&
-            giveRightsAnswer === 'yes'
-          ) {
+          if (index === config.defaultMonths - 1 && giveRightsAnswer === YES) {
             return 'grayWithLines'
           }
           if (index === config.defaultMonths && requestRightsAnswer === 'yes') {
