@@ -46,6 +46,7 @@ const HealthInsuranceSchema = z.object({
     personalId: z.string().nonempty(),
     institution: z.string().nonempty(),
     entitlement: z.enum([YES, NO]),
+    additionalInformation: z.string().nonempty(),
   }),
   missingInfo: z.array(
     z.object({

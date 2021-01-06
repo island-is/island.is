@@ -17,10 +17,11 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
   const { formatMessage } = useLocale()
 
   const isEditable = field.id !== 'submittedData'
-  const previousMissingInfo = getValueViaPath(
-    application.answers,
-    'missingInfo',
-  ) as MissingInfoType[]
+  const previousMissingInfo =
+    (getValueViaPath(
+      application.answers,
+      'missingInfo',
+    ) as MissingInfoType[]) || []
 
   return (
     <Box marginBottom={[1, 1, 3]}>

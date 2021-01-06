@@ -160,6 +160,7 @@ export const Circle = Template.bind({})
 Circle.args = {
   circle: true,
   icon: 'arrowForward',
+  title: 'Go forward',
 }
 
 export const CircleSmall = Template.bind({})
@@ -167,6 +168,7 @@ CircleSmall.args = {
   circle: true,
   icon: 'arrowForward',
   size: 'small',
+  title: 'Go forward',
 }
 
 export const CircleLarge = Template.bind({})
@@ -174,6 +176,7 @@ CircleLarge.args = {
   circle: true,
   icon: 'arrowForward',
   size: 'large',
+  title: 'Go forward',
 }
 
 export const CircleDestructive = Template.bind({})
