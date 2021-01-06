@@ -269,25 +269,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                   />
                 </div>
 
-                <div className="client__container__field">
-                  <label className="client__label">Protocol Type</label>
-                  <input
-                    ref={register({ required: true })}
-                    type="text"
-                    name="client.protocolType"
-                    defaultValue={
-                      client.protocolType ? client.protocolType : 'oidc'
-                    }
-                    className="client__input"
-                  />
-                  <HelpBox helpText="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem architecto a odit ea distinctio consequatur autem nesciunt cupiditate eos, error reprehenderit illum dolor, mollitia modi vitae. Ducimus esse eos explicabo." />
-                  <ErrorMessage
-                    as="span"
-                    errors={errors}
-                    name="client.protocolType"
-                    message="Protocol Type is required"
-                  />
-                </div>
+              
 
                 <div className="client__container__checkbox__field">
                   <label className="client__label">Require consent</label>
@@ -545,6 +527,26 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                       message="Key is required"
                     />
                   </div>
+
+                  <div className="client__container__field">
+                  <label className="client__label">Protocol Type</label>
+                  <input
+                    ref={register({ required: true })}
+                    type="text"
+                    name="client.protocolType"
+                    defaultValue={
+                      client.protocolType ? client.protocolType : 'oidc'
+                    }
+                    className="client__input"
+                  />
+                  <HelpBox helpText="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem architecto a odit ea distinctio consequatur autem nesciunt cupiditate eos, error reprehenderit illum dolor, mollitia modi vitae. Ducimus esse eos explicabo." />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="client.protocolType"
+                    message="Protocol Type is required"
+                  />
+                </div>
 
                   {/* Checkboxes */}
                   <div className="client__container__checkbox__field">
