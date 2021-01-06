@@ -24,7 +24,7 @@ import { GetPensionFunds, GetUnions } from '../graphql/queries'
 import { NO, YES } from '../constants'
 
 import Logo from '../assets/Logo'
-import config from '../config'
+import { defaultMonths } from '../config'
 
 interface SelectItem {
   id: string
@@ -397,14 +397,14 @@ export const ParentalLeaveForm: Form = buildForm({
                     component: 'BoxChart',
                   },
                   {
-                    boxes: config.defaultMonths,
+                    boxes: defaultMonths,
                     application: {},
                     calculateBoxStyle: () => 'blue',
                     keys: [
                       {
                         label: () => ({
                           ...m.yourRightsInMonths,
-                          values: { months: config.defaultMonths },
+                          values: { months: defaultMonths },
                         }),
                         bulletStyle: 'blue',
                       },

@@ -9,7 +9,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { RadioController } from '@island.is/shared/form-fields'
 import { m, mm } from '../../lib/messages'
-import config from '../../config'
+import { defaultMonths } from '../../config'
 import { YES, NO } from '../../constants'
 
 type ValidAnswers = 'yes' | 'no' | undefined
@@ -31,7 +31,7 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
     {
       label: () => ({
         ...m.yourRightsInMonths,
-        values: { months: config.defaultMonths },
+        values: { months: defaultMonths },
       }),
       bulletStyle: 'blue',
     },
@@ -69,7 +69,7 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
       {statefulAnswer === NO && (
         <BoxChart
           application={application}
-          boxes={config.defaultMonths}
+          boxes={defaultMonths}
           calculateBoxStyle={() => {
             return 'blue'
           }}

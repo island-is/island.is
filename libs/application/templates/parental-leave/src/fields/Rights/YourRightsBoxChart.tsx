@@ -4,8 +4,8 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { Application, getValueViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import config from '../../config'
-import { YES, NO } from '../../constants'
+import { maxDaysToGiveOrReceive, defaultMonths } from '../../config'
+import { YES } from '../../constants'
 
 interface YourRightsBoxChartProps {
   application: Application
@@ -18,7 +18,7 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
-  const maxDays = config.maxDaysToGiveOrReceive
+  const maxDays = maxDaysToGiveOrReceive
 
   // Yes/No
   const requestRightsAnswer = getValueViaPath(
@@ -63,7 +63,7 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
           {
             label: () => ({
               ...m.yourRightsInMonths,
-              values: { months: config.defaultMonths },
+              values: { months: defaultMonths },
             }),
             bulletStyle: 'blue',
           },
@@ -81,7 +81,7 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
             label: () => ({
               ...yourRightsWithGivenDaysStringKey,
               values: {
-                months: config.defaultMonths - 1,
+                months: defaultMonths - 1,
                 day: maxDays - giveDaysAnswer,
               },
             }),
@@ -92,7 +92,7 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
           {
             label: () => ({
               ...m.yourRightsInMonths,
-              values: { months: config.defaultMonths },
+              values: { months: defaultMonths },
             }),
             bulletStyle: 'blue',
           },
@@ -109,9 +109,7 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
   }
 
   const numberOfBoxes =
-    requestRightsAnswer === YES
-      ? config.defaultMonths + 1
-      : config.defaultMonths
+    requestRightsAnswer === YES ? defaultMonths + 1 : defaultMonths
 
   return (
     <Box marginY={3} key={'YourRightsBoxChart'}>
@@ -123,10 +121,10 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
         })}
         boxes={numberOfBoxes}
         calculateBoxStyle={(index) => {
-          if (index === config.defaultMonths - 1 && giveRightsAnswer === YES) {
+          if (index === defaultMonths - 1 && giveRightsAnswer === YES) {
             return 'grayWithLines'
           }
-          if (index === config.defaultMonths && requestRightsAnswer === 'yes') {
+          if (index === defaultMonths && requestRightsAnswer === 'yes') {
             return 'greenWithLines'
           }
           return 'blue'
