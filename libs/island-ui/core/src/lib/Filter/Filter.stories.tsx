@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { useState } from 'react'
 import { Box } from '../Box/Box'
 import { Filter } from './Filter'
 import { FilterMultiChoice } from './FilterMultiChoice/FilterMultiChoice'
@@ -59,10 +59,10 @@ export const Default = () => {
         <Filter
           labelClear="Hreinsa síu"
           labelOpen="Opna síu"
+          labelClose="Loka síu"
           labelTitle="Sía API Vörulista"
           labelResult="Sýna niðurstöður"
           resultCount={64}
-          isDialog={false}
           onFilterClear={() =>
             setFilter({
               price: [],
@@ -104,10 +104,11 @@ export const Default = () => {
         <Filter
           labelClear="Hreinsa síu"
           labelOpen="Opna síu"
+          labelClose="Loka síu"
           labelTitle="Sía API Vörulista"
           labelResult="Sýna niðurstöður"
           resultCount={64}
-          isDialog={true}
+          isDialog
           onFilterClear={() =>
             setFilter({
               price: [],
