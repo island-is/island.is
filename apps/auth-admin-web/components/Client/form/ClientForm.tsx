@@ -247,27 +247,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                   <HelpBox helpText="Application description for use within IDS management" />
                 </div>
 
-                <div className="client__container__field">
-                  <label className="client__label">Client claims prefix</label>
-                  <input
-                    ref={register({ required: true })}
-                    type="text"
-                    name="client.clientClaimsPrefix"
-                    defaultValue={
-                      client.clientClaimsPrefix
-                        ? client.clientClaimsPrefix
-                        : 'client__'
-                    }
-                    className="client__input"
-                  />
-                  <HelpBox helpText="If set, the prefix client claim types will be prefixed with. Defaults to client_. The intent is to make sure they don’t accidentally collide with user claims." />
-                  <ErrorMessage
-                    as="span"
-                    errors={errors}
-                    name="client.clientClaimsPrefix"
-                    message="Client claims prefix is required"
-                  />
-                </div>
+                
 
               
 
@@ -539,12 +519,34 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                     }
                     className="client__input"
                   />
-                  <HelpBox helpText="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem architecto a odit ea distinctio consequatur autem nesciunt cupiditate eos, error reprehenderit illum dolor, mollitia modi vitae. Ducimus esse eos explicabo." />
+                  <HelpBox helpText="Typically set to oidc" />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="client.protocolType"
                     message="Protocol Type is required"
+                  />
+                </div>
+
+                <div className="client__container__field">
+                  <label className="client__label">Client claims prefix</label>
+                  <input
+                    ref={register({ required: true })}
+                    type="text"
+                    name="client.clientClaimsPrefix"
+                    defaultValue={
+                      client.clientClaimsPrefix
+                        ? client.clientClaimsPrefix
+                        : 'client__'
+                    }
+                    className="client__input"
+                  />
+                  <HelpBox helpText="If set, the prefix client claim types will be prefixed with. Defaults to client_. The intent is to make sure they don’t accidentally collide with user claims." />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="client.clientClaimsPrefix"
+                    message="Client claims prefix is required"
                   />
                 </div>
 
