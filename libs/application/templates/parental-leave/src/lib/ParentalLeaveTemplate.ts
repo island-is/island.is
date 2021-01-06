@@ -15,6 +15,7 @@ import {
   generateAssignReviewerTemplate,
 } from '../emailTemplateGenerators'
 import { dataSchema, SchemaFormValues } from './dataSchema'
+import { YES } from '../constants'
 
 interface ApiTemplateUtilActions {
   [key: string]: ApplicationAPITemplateAction
@@ -59,7 +60,7 @@ enum States {
 function needsOtherParentApproval(context: ApplicationContext) {
   const currentApplicationAnswers = context.application
     .answers as SchemaFormValues
-  return currentApplicationAnswers.requestRights.isRequestingRights === 'yes'
+  return currentApplicationAnswers.requestRights.isRequestingRights === YES
 }
 
 const ParentalLeaveTemplate: ApplicationTemplate<
