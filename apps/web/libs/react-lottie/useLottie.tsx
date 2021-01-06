@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-expressions */
+
 import React, {
   CSSProperties,
   useEffect,
@@ -50,66 +52,34 @@ const useLottie = (
   const animationInstanceRef = useRef<AnimationItem>()
   const animationContainer = useRef<HTMLDivElement>(null)
 
-  /**
-   * Play
-   */
   const play = (): void => {
     animationInstanceRef.current?.play()
   }
 
-  /**
-   * Stop
-   */
   const stop = (): void => {
     animationInstanceRef.current?.stop()
   }
 
-  /**
-   * Pause
-   */
   const pause = (): void => {
     animationInstanceRef.current?.pause()
   }
 
-  /**
-   * Set animation speed
-   * @param speed
-   */
   const setSpeed = (speed: number): void => {
     animationInstanceRef.current?.setSpeed(speed)
   }
 
-  /**
-   * Got to frame and play
-   * @param value
-   * @param isFrame
-   */
   const goToAndPlay = (value: number, isFrame?: boolean): void => {
     animationInstanceRef.current?.goToAndPlay(value, isFrame)
   }
 
-  /**
-   * Got to frame and stop
-   * @param value
-   * @param isFrame
-   */
   const goToAndStop = (value: number, isFrame?: boolean): void => {
     animationInstanceRef.current?.goToAndStop(value, isFrame)
   }
 
-  /**
-   * Set animation direction
-   * @param direction
-   */
   const setDirection = (direction: AnimationDirection): void => {
     animationInstanceRef.current?.setDirection(direction)
   }
 
-  /**
-   * Play animation segments
-   * @param segments
-   * @param forceFlag
-   */
   const playSegments = (
     segments: AnimationSegment | AnimationSegment[],
     forceFlag?: boolean,
@@ -117,17 +87,12 @@ const useLottie = (
     animationInstanceRef.current?.playSegments(segments, forceFlag)
   }
 
-  /**
-   * Set sub frames
-   * @param useSubFrames
-   */
   const setSubframe = (useSubFrames: boolean): void => {
     animationInstanceRef.current?.setSubframe(useSubFrames)
   }
 
   /**
    * Get animation duration
-   * @param inFrames
    */
   const getDuration = (inFrames?: boolean): number | undefined => {
     return animationInstanceRef.current?.getDuration(inFrames)
@@ -142,7 +107,6 @@ const useLottie = (
 
   /**
    * Load a new animation, and if it's the case, destroy the previous one
-   * @param {Object} forcedConfigs
    */
   const loadAnimation = (forcedConfigs = {}) => {
     // Return if the container ref is null
