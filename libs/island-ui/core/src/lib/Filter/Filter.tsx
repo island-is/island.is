@@ -13,6 +13,9 @@ export interface FilterProps {
   /** Lable for open filter button when in mobile version. */
   labelOpen: string
 
+  /** Label for close icon to add title to button for screen readers. */
+  labelClose: string
+
   /** Label for filter title when expanded in mobile version. */
   labelTitle: string
 
@@ -32,6 +35,7 @@ export interface FilterProps {
 export const Filter: React.FC<FilterProps> = ({
   labelClear = '',
   labelOpen = '',
+  labelClose = '',
   labelTitle = '',
   labelResult = '',
   resultCount = 0,
@@ -62,6 +66,7 @@ export const Filter: React.FC<FilterProps> = ({
                 colorScheme="light"
                 icon="menu"
                 iconType="outline"
+                title={labelOpen}
               ></Button>
             </Box>
           </DialogDisclosure>
@@ -92,6 +97,7 @@ export const Filter: React.FC<FilterProps> = ({
                     icon="close"
                     iconType="outline"
                     onClick={dialog.hide}
+                    title={labelClose}
                   ></Button>
                 </Box>
                 {children}
@@ -111,7 +117,7 @@ export const Filter: React.FC<FilterProps> = ({
                     icon="reload"
                     size="small"
                     variant="text"
-                    onClick={() => onFilterClear()}
+                    onClick={onFilterClear}
                   >
                     {labelClear}
                   </Button>
@@ -130,7 +136,7 @@ export const Filter: React.FC<FilterProps> = ({
               icon="reload"
               size="small"
               variant="text"
-              onClick={() => onFilterClear()}
+              onClick={onFilterClear}
             >
               {labelClear}
             </Button>
