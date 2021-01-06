@@ -1,6 +1,6 @@
 import React from 'react'
 
-function InitialSlide() {
+function SlideBackgroundGrid() {
   return (
     <svg
       id="static-slide"
@@ -8,11 +8,13 @@ function InitialSlide() {
       viewBox="0 0 470 520"
       height="520"
       width="470"
-      preserveAspectRatio="xMidYMid meet"
       style={{
         width: '100%',
         height: '100%',
         transform: 'translate3d(0px, 0px, 0px)',
+        position: 'absolute',
+        top: 0,
+        zIndex: -1,
       }}
     >
       <defs>
@@ -401,4 +403,4 @@ function InitialSlide() {
   )
 }
 
-export default InitialSlide
+export default SlideBackgroundGrid
