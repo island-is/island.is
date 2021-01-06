@@ -2,6 +2,7 @@ import React, { FC, ReactNode } from 'react'
 import { Text } from '../Text/Text'
 import { Tag } from '../Tag/Tag'
 import { TagVariant } from '../Tag/Tag'
+import { Box } from '../Box/Box'
 import { Colors } from '@island.is/island-ui/theme'
 import cn from 'classnames'
 import * as styles from './Breadcrumbs.treat'
@@ -31,7 +32,7 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
   renderLink = (link) => link,
 }) => {
   return (
-    <div aria-label={label} className={styles.wrapper}>
+    <Box aria-label={label} display={'inlineFlex'} alignItems={'center'}>
       {items.map((item, index) => {
         const isLink: boolean = !!item.href || !!item.slug
         const renderCrumb = item.isTag ? (
@@ -49,19 +50,16 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
         )
 
         return (
-          <span key={index} className={styles.wrapper}>
+          <Box key={index} display={'inlineFlex'} alignItems={'center'}>
             {isLink
               ? renderLink(
                   <a
                     href={item?.href}
                     tabIndex={item.isTag ? -1 : undefined}
-                    style={{
-                      textDecoration: item.isTag ? 'none' : undefined,
-                      display: 'inline-flex',
-                    }}
                     className={cn(
                       styles.breadcrumb[color],
                       styles.focusable[color],
+                      { [styles.isTag]: item.isTag },
                     )}
                   >
                     {renderCrumb}
@@ -70,11 +68,17 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
                 )
               : renderCrumb}
             {items.length - 1 > index && (
-              <span className={cn(styles.bullet, styles.color[color])}></span>
+              <Box
+                borderRadius={'circle'}
+                display={'inlineBlock'}
+                marginY={0}
+                marginX={1}
+                className={cn(styles.bullet, styles.color[color])}
+              ></Box>
             )}
-          </span>
+          </Box>
         )
       })}
-    </div>
+    </Box>
   )
 }

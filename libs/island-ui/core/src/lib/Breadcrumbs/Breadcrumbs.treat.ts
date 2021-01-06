@@ -1,16 +1,8 @@
 import { style, styleMap } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-export const divider = style({
-  margin: '0 10px',
-})
-
-export const wrapper = style({
-  display: 'inline-flex',
-  alignItems: 'center',
-})
-
 const colorScheme = (text: string, hover: string) => ({
+  display: 'inline-flex',
   color: text,
   outline: 'none',
   transition: 'color 150ms ease-in-out',
@@ -48,12 +40,15 @@ export const focusable = styleMap({
   white: focusColors(theme.color.white),
 })
 
+export const isTag = style({
+  ':hover': {
+    textDecoration: 'none',
+  },
+})
+
 export const bullet = style({
   height: 4,
   width: 4,
-  borderRadius: '50%',
-  display: 'inline-block',
-  margin: '0 10px',
 })
 
 export const color = styleMap({
