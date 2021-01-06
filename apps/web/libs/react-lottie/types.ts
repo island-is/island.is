@@ -47,6 +47,7 @@ export type LottieOptions = {
     | CanvasRendererConfig
     | HTMLRendererConfig
   initialSegment?: AnimationSegment
+  quality?: number
 } & {
   lottieRef?: LottieRef
   onComplete?: AnimationEventHandler | null

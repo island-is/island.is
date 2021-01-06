@@ -42,6 +42,7 @@ const useLottie = (
     name,
     assetsPath,
     rendererSettings,
+    quality = 8,
     ...rest
   } = props
 
@@ -160,6 +161,7 @@ const useLottie = (
     }
 
     // Save the animation instance
+    lottie.setQuality(quality)
     animationInstanceRef.current = lottie.loadAnimation(config)
 
     setAnimationLoaded(!!animationInstanceRef.current)
