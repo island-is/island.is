@@ -23,7 +23,7 @@ import { DrivingLicense } from './drivingLicense.model'
 export class DrivingLicenseResolver {
   constructor(private readonly drivingLicenseService: DrivingLicenseService) {}
 
-  @Query(() => [DrivingLicense])
+  @Query(() => DrivingLicense)
   drivingLicense(@CurrentUser() user: User) {
     return this.drivingLicenseService.getDrivingLicense(user.nationalId)
   }

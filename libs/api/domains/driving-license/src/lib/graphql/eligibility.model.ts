@@ -1,9 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-import { Eligibility } from './eligibility.model'
-
 @ObjectType()
-export class DrivingLicense {
+export class Eligibility {
   @Field(() => ID)
   id!: string
 
@@ -13,6 +11,6 @@ export class DrivingLicense {
   @Field(() => String)
   expires!: string
 
-  @Field(() => [Eligibility])
-  eligibilities!: Eligibility[]
+  @Field(() => String)
+  comment!: string
 }
