@@ -90,18 +90,18 @@ const ClientForm: React.FC<Props> = (props: Props) => {
 
   const checkAvailability = async (clientId: string) => {
     setClientIdLength(clientId.length);
-    await api
-      .get(`clients/${clientId}`)
-      .then((response) => {
-        if (response.request.status !== 404) setAvailable(false);
-      })
-      .catch(function (error) {
-        if (error.response) {
-          if (error.response.status === 404) {
-            setAvailable(true);
-          }
-        }
-      });
+    if ( !clientId )
+    {
+      return;
+    }
+
+    const response = await ClientService.findClientById(clientId);
+    if ( response ){
+      setAvailable(false);
+    }
+    else {
+      setAvailable(true);
+    }
   };
 
   return (
