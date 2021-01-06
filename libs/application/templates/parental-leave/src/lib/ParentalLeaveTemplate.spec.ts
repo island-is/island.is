@@ -38,7 +38,9 @@ describe('Parental Leave Application Template', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
-            requestRights: 'yes',
+            requestRights: {
+              isRequestingRights: 'yes',
+            },
             otherParentId,
           },
         }),
@@ -60,7 +62,9 @@ describe('Parental Leave Application Template', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
-            requestRights: 'no',
+            requestRights: {
+              isRequestingRights: 'no',
+            },
             otherParentId,
             employer: {
               nationalRegistryId: employerId,
@@ -86,7 +90,9 @@ describe('Parental Leave Application Template', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
-            requestRights: 'yes',
+            requestRights: {
+              isRequestingRights: 'yes',
+            },
             otherParentId,
             employer: {
               nationalRegistryId: employerId,

@@ -79,22 +79,25 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
     paddingY: 2,
     paddingX: 5,
     className: styles.fixedContainer,
+    alignItems: 'center',
+    flexDirection: 'row',
   }
   const defaultProps: BoxProps = {
     borderRadius: 'large',
     paddingY: 4,
     paddingX: [3, 3, 3, 3, 4],
+    alignItems: ['flexStart', 'center'],
+    flexDirection: ['column', 'row'],
   }
   return (
     <Box
       width="full"
       background="blue100"
       display="flex"
-      alignItems="center"
       justifyContent="spaceBetween"
       {...(fixed ? fixedProps : defaultProps)}
     >
-      <Box marginRight={2}>
+      <Box marginRight={fixed ? 2 : [0, 2]} marginBottom={fixed ? 0 : [3, 0]}>
         <Text variant={fixed ? 'eyebrow' : 'h3'} as="h3" color="blue600">
           {processTitle}
         </Text>

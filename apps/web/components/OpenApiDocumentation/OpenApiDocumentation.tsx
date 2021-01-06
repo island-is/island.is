@@ -72,17 +72,6 @@ export const OpenApiDocumentation: FC<OpenApiDocumentationProps> = ({
         showExtensions: true,
       },
       document.getElementById('redoc-container'),
-      () => {
-        setTimeout(() => {
-          //Put select options in front of the redoc div.
-          const element: HTMLElement = document.querySelector(
-            '#redoc-container div.aczea.api-content',
-          )
-          if (element) {
-            element.style.zIndex = '0'
-          }
-        }, 200)
-      },
     )
   }, [spec])
 
