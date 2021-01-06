@@ -81,15 +81,20 @@ export const FilterMultiChoice: React.FC<FilterMultiChoiceProps> = ({
         >
           {categories.map((category) => (
             <AccordionItem
+              key={category.id}
               id={category.id}
               label={category.label}
               labelUse="h5"
               labelVariant="h5"
+              labelColor={
+                category.selected.length > 0 ? 'blue400' : 'currentColor'
+              }
               iconVariant="small"
             >
               <Stack space={1}>
                 {category.filters.map((filter) => (
                   <Checkbox
+                    key={`${category.id}-${filter.value}`}
                     name={`${category.id}-${filter.value}`}
                     label={filter.label}
                     value={filter.value}

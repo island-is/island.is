@@ -11,6 +11,7 @@ export type Icon =
   | 'call'
   | 'car'
   | 'caretDown'
+  | 'caretUp'
   | 'cellular'
   | 'chatbubble'
   | 'checkmark'
@@ -61,6 +62,7 @@ export default {
     call: 'Call',
     car: 'Car',
     caretDown: 'CaretDown',
+    caretUp: 'CaretUp',
     cellular: 'Cellular',
     chatbubble: 'Chatbubble',
     checkmark: 'Checkmark',
@@ -110,6 +112,7 @@ export default {
     call: 'CallOutline',
     car: 'CarOutline',
     caretDown: 'CaretDownOutline',
+    caretUp: 'CaretUpOutline',
     cellular: 'CellularOutline',
     chatbubble: 'ChatbubbleOutline',
     checkmark: 'Checkmark',

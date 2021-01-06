@@ -510,6 +510,48 @@ describe('formatPrisonRulingEmailNotification', () => {
       '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Ákærandi: Siggi Sakó<br />Verjandi: Skúli Skjöldur<br /><br /><strong>Úrskurðarorð</strong><br /><br />Kærði, Biggi Börgler, kt. 241101-8760 skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 6. apríl 2021 kl. 12:30. Kærði skal sæta einangrun meðan á gæsluvarðhaldi stendur.<br /><br /><strong>Ákvörðun um kæru</strong><br />Kærði kærir úrskurðinn.<br />Sækjandi unir úrskurðinum.<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />Sækjandi tekur fram að kærði skuli sæta einangrun meðan á gæsluvarðhaldi stendur og að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.<br /><br />Dalli Dómari aðal dómarinn',
     )
   })
+
+  test('should format prison ruling notification for a rejected case', () => {
+    // Arrange
+    const accusedNationalId = '2411018760'
+    const accusedName = 'Biggi Börgler'
+    const court = 'Héraðsdómur Vesturlands'
+    const prosecutorName = 'Siggi Sakó'
+    const courtDate = new Date('2020-12-20T13:32')
+    const defenderName = 'Skúli Skjöldur'
+    const decision = CaseDecision.REJECTING
+    const custodyEndDate = new Date('2021-04-06T12:30')
+    const custodyRestrictions = [
+      CaseCustodyRestrictions.ISOLATION,
+      CaseCustodyRestrictions.MEDIA,
+    ]
+    const accusedAppealDecision = CaseAppealDecision.APPEAL
+    const prosecutorAppealDecision = CaseAppealDecision.ACCEPT
+    const judgeName = 'Dalli Dómari'
+    const judgeTitle = 'aðal dómarinn'
+
+    // Act
+    const res = formatPrisonRulingEmailNotification(
+      accusedNationalId,
+      accusedName,
+      court,
+      prosecutorName,
+      courtDate,
+      defenderName,
+      decision,
+      custodyEndDate,
+      custodyRestrictions,
+      accusedAppealDecision,
+      prosecutorAppealDecision,
+      judgeName,
+      judgeTitle,
+    )
+
+    // Assert
+    expect(res).toBe(
+      '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Ákærandi: Siggi Sakó<br />Verjandi: Skúli Skjöldur<br /><br /><strong>Úrskurðarorð</strong><br /><br />Kröfu um gæsluvarðhald er hafnað.<br /><br /><strong>Ákvörðun um kæru</strong><br />Kærði kærir úrskurðinn.<br />Sækjandi unir úrskurðinum.<br /><br />Dalli Dómari aðal dómarinn',
+    )
+  })
 })
 
 describe('stripHtmlTags', () => {
