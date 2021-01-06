@@ -402,8 +402,9 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                 <GridContainer>
                   <ServiceList
                     baseUrl={
-                      activeLocale === 'en' ? 
-                        './webservices/' : './vefthjonustur/'
+                      activeLocale === 'en'
+                        ? './webservices/'
+                        : './vefthjonustur/'
                     }
                     services={data?.getApiCatalogue?.services}
                     tagDisplayNames={filterContent}
