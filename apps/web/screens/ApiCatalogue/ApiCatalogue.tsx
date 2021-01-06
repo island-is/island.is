@@ -211,16 +211,10 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
       active: true,
       href: nn('linkServices'),
       title: nn('linkServicesText'),
-      items: [
-        {
-          active: true,
-          title: nn('linkServiceListText'),
-        },
-        {
-          href: nn('linkDesignGuide'),
-          title: nn('linkDesignGuideText'),
-        },
-      ],
+    },
+    {
+      href: nn('linkDesignGuide'),
+      title: nn('linkDesignGuideText'),
     },
     {
       href: nn('linkIslandUI'),
@@ -247,7 +241,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
               items={navigationItems}
               title={nn('linkThrounText')}
               titleLink={{
-                active: true,
                 href: nn('linkThroun'),
               }}
             />
@@ -301,10 +294,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                       {
                         title: nn('linkThrounText'),
                         href: nn('linkThroun'),
-                      },
-                      {
-                        title: nn('linkServicesText'),
-                        href: nn('linkServices'),
                       },
                     ]}
                   />
@@ -413,7 +402,8 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                 <GridContainer>
                   <ServiceList
                     baseUrl={
-                      activeLocale === 'en' ? './catalogue/' : './vorulisti/'
+                      activeLocale === 'en' ? 
+                        './webservices/' : './vefthjonustur/'
                     }
                     services={data?.getApiCatalogue?.services}
                     tagDisplayNames={filterContent}

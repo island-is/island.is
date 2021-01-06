@@ -28,7 +28,7 @@ export interface ServiceListProps {
 }
 
 export const ServiceList: React.FC<ServiceListProps> = ({
-  baseUrl = './vorulisti/',
+  baseUrl = './vefthjonustur/',
   services = [],
   tagDisplayNames = {},
 }) => {

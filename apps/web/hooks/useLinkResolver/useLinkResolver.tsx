@@ -64,12 +64,12 @@ export const routesTemplate = {
     en: '/en/covid-operations',
   },
   webservicedetailpage: {
-    is: '/throun/vefthjonustur/vorulisti/[slug]',
-    en: '/en/developers/webservices/catalogue/[slug]',
+    is: '/throun/vefthjonustur/[slug]',
+    en: '/en/developers/webservices/[slug]',
   },
   webservicespage: {
-    is: '/throun/vefthjonustur/vorulisti',
-    en: '/en/developers/webservices/catalogue',
+    is: '/throun/vefthjonustur',
+    en: '/en/developers/webservices',
   },
   developerspage: {
     is: '/throun',
