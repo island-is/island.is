@@ -181,6 +181,16 @@ export const m = defineMessages({
     defaultMessage: 'Samtals: {months} mánuðir *',
     description: 'Total: {months} months *',
   },
+  rangeStartDate: {
+    id: 'pl.application:range.startDate',
+    defaultMessage: 'Upphafsdagur þinn er:',
+    description: 'Your start day is:',
+  },
+  rangeEndDate: {
+    id: 'pl.application:range.endDate',
+    defaultMessage: 'Lokadagur þinn er:',
+    description: 'Your end day is:',
+  },
   rightsTotalSmallPrint: {
     id: 'pl.application:months.total.smallprint',
     defaultMessage:

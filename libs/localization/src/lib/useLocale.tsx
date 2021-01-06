@@ -1,11 +1,16 @@
 import { useContext } from 'react'
-import { LocaleContext } from './LocaleContext'
 import { MessageDescriptor, useIntl } from 'react-intl'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
+import en from 'date-fns/locale/en-US'
+
+import { LocaleContext } from './LocaleContext'
 
 export function useLocale() {
   const intl = useIntl()
   const contextValue = useContext(LocaleContext)
   const lang = contextValue === null ? null : contextValue.lang
+
   function formatMessage(
     descriptor: MessageDescriptor | string,
     values?: any,
@@ -16,9 +21,16 @@ export function useLocale() {
     return intl.formatMessage(descriptor, values)
   }
 
+  function formatDateFns(date: string, str = 'dd MMM yyyy') {
+    const locale = lang === 'en' ? en : is
+
+    return format(new Date(date), str, { locale })
+  }
+
   return {
     ...intl,
     formatMessage,
+    formatDateFns,
     lang,
   }
 }
