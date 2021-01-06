@@ -16,14 +16,12 @@ const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   const currentAnswer = getValueViaPath(
     application.answers,
     field.id,
-    undefined,
+    1,
   ) as number
 
   const { clearErrors } = useFormContext()
 
-  const [chosenGiveDays, setChosenGiveDays] = useState<number>(
-    currentAnswer || 1,
-  )
+  const [chosenGiveDays, setChosenGiveDays] = useState<number>(currentAnswer)
 
   const daysStringKey = chosenGiveDays > 1 ? m.giveRightsDays : m.giveRightsDay
 
