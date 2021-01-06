@@ -1,20 +1,25 @@
 import { Injectable } from '@nestjs/common'
 
+import { User } from '@island.is/auth-nest-tools'
+
+import { DrivingLicense } from './drivingLicense.type'
 import { DrivingLicenseApi } from './client'
-import { DrivingLicense } from './drivingLicense.model'
 
 @Injectable()
 export class DrivingLicenseService {
   constructor(private readonly drivingLicenseApi: DrivingLicenseApi) {}
 
-  async getDrivingLicenses(nationalId: string): Promise<DrivingLicense[]> {
-    const drivingLicenses = await this.drivingLicenseApi.getDrivingLicenses(
+  async getDrivingLicense(
+    nationalId: User['nationalId'],
+  ): Promise<DrivingLicense> {
+    const drivingLicense = await this.drivingLicenseApi.getDrivingLicense(
       nationalId,
     )
-    return drivingLicenses.map((drivingLicense) => ({
+
+    return {
       id: drivingLicense.id,
-      name: drivingLicense.name,
-      nationalId: drivingLicense.nationalId,
-    }))
+      issued: drivingLicense.utgafuDagsetning,
+      expires: drivingLicense.gildirTil,
+    }
   }
 }
