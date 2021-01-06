@@ -1,7 +1,7 @@
 import { Module, DynamicModule } from '@nestjs/common'
 
-import { DrivingLicenseResolver } from './driving-license.resolver'
-import { DrivingLicenseService } from './driving-license.service'
+import { DrivingLicenseResolver } from './graphql'
+import { DrivingLicenseService } from './drivingLicense.service'
 import { DrivingLicenseApi } from './client'
 
 export interface Config {
