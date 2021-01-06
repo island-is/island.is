@@ -78,6 +78,7 @@ export const ServiceList: React.FC<ServiceListProps> = ({
                 heading={item.name}
                 text={item.owner}
                 tags={CategoriesToTags(item)}
+                truncateHeading={true}
               />
             </GridColumn>
           )

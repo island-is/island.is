@@ -234,13 +234,13 @@ export function formatPrisonRulingEmailNotification(
     accusedAppealDecision,
     'Kærði',
     false,
-  )}<br />${formatAppeal(
-    prosecutorAppealDecision,
-    'Sækjandi',
-    false,
-  )}<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${formatRestrictions(
-    custodyRestrictions,
-  )}<br /><br />${judgeName} ${judgeTitle}`
+  )}<br />${formatAppeal(prosecutorAppealDecision, 'Sækjandi', false)}${
+    decision !== CaseDecision.REJECTING
+      ? `<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${formatRestrictions(
+          custodyRestrictions,
+        )}`
+      : ''
+  }<br /><br />${judgeName} ${judgeTitle}`
 }
 
 export function stripHtmlTags(html: string): string {

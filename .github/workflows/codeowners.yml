@@ -1,8 +1,8 @@
 name: Lint codeowners
 
 on:
-  - push
-  - workflow_dispatch
+  pull_request: {}
+  workflow_dispatch: {}
 
 jobs:
   codeowners-check:
@@ -12,7 +12,18 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - name: Check if codeowners file changed
+        run: |
+          MERGE_BASE=$(git merge-base ${{github.event.pull_request.base.sha}} $GITHUB_SHA)
+          if ! git diff --exit-code --name-only $MERGE_BASE..$GITHUB_SHA .github/CODEOWNERS; then
+            echo "CHECK=true" >> $GITHUB_ENV
+            if [[ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]]; then
+              echo "Changes to codeowners are not allowed on forks!"
+              exit 1
+            fi
+          fi
       - name: Check indentation
+        if: env.CHECK
         run: |
           no_different_indentations=$(cat .github/CODEOWNERS | grep -v '^#' | awk NF | sed s/@.*//g | awk '{ print length }' | sort | uniq | wc -l)
           if [[ "$no_different_indentations" != "1" ]]; then
@@ -22,6 +33,7 @@ jobs:
             exit 1
           fi
       - uses: mszostok/codeowners-validator@v0.4.0
+        if: env.CHECK
         with:
           checks: 'files,owners,duppatterns'
           experimental_checks: 'notowned'

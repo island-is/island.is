@@ -157,7 +157,6 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                     <a href={n('linkServiceList')}>
                       {n('linkServiceListText')}
                     </a>
-                    <span>{n('linkDetailsLastText')}</span>
                   </Breadcrumbs>
                 </Box>
                 {!service ? (

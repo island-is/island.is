@@ -22,6 +22,9 @@ export interface FilterProps {
   /** Number of search results to display on the show result button. */
   resultCount: number
 
+  /** Controls if the Filter renders as desktop like sidenavbar or mobile dialog */
+  isDialog?: boolean
+
   /** Event handler for clear filter event. */
   onFilterClear: () => void
 }
@@ -32,6 +35,7 @@ export const Filter: React.FC<FilterProps> = ({
   labelTitle = '',
   labelResult = '',
   resultCount = 0,
+  isDialog = false,
   onFilterClear,
   children,
 }) => {
@@ -39,98 +43,100 @@ export const Filter: React.FC<FilterProps> = ({
 
   return (
     <>
-      <Box display={['block', 'block', 'none']}>
-        <DialogDisclosure {...dialog} className={styles.dialogDisclosure}>
-          <Box
-            display="flex"
-            justifyContent="spaceBetween"
-            background="white"
-            padding={2}
-            borderRadius="large"
-          >
-            <Text variant="h5" as="h5">
-              {labelOpen}
-            </Text>
-            <Button
-              circle
-              size="small"
-              colorScheme="light"
-              icon="menu"
-              iconType="outline"
-            ></Button>
-          </Box>
-        </DialogDisclosure>
-        <Dialog {...dialog}>
-          <Box
-            background="white"
-            position="fixed"
-            top={0}
-            bottom={0}
-            left={0}
-            right={0}
-            paddingX={3}
-            paddingY={3}
-            height="full"
-            display="flex"
-            justifyContent="spaceBetween"
-            flexDirection="column"
-            className={styles.dialogContainer}
-          >
-            <Stack space={2} dividers={false}>
-              <Box display="flex" justifyContent="spaceBetween">
-                <Text variant="h4" color="blue600">
-                  {labelTitle}
-                </Text>
-                <Button
-                  circle
-                  colorScheme="light"
-                  icon="close"
-                  iconType="outline"
-                  onClick={dialog.hide}
-                ></Button>
-              </Box>
-              {children}
-            </Stack>
-
+      {isDialog ? (
+        <>
+          <DialogDisclosure {...dialog} className={styles.dialogDisclosure}>
             <Box
-              background="blue100"
-              marginTop={2}
-              paddingTop={4}
-              paddingBottom={3}
+              display="flex"
+              justifyContent="spaceBetween"
+              background="white"
+              padding={2}
+              borderRadius="large"
             >
-              <Stack space={2} dividers={false} align="center">
-                <Button size="small" onClick={dialog.hide}>
-                  {labelResult} ({resultCount})
-                </Button>
-                <Button
-                  icon="reload"
-                  size="small"
-                  variant="text"
-                  onClick={() => onFilterClear()}
-                >
-                  {labelClear}
-                </Button>
-              </Stack>
+              <Text variant="h5" as="h5">
+                {labelOpen}
+              </Text>
+              <Button
+                circle
+                size="small"
+                colorScheme="light"
+                icon="menu"
+                iconType="outline"
+              ></Button>
             </Box>
-          </Box>
-        </Dialog>
-      </Box>
+          </DialogDisclosure>
+          <Dialog {...dialog}>
+            <Box
+              background="white"
+              position="fixed"
+              top={0}
+              bottom={0}
+              left={0}
+              right={0}
+              paddingX={3}
+              paddingY={3}
+              height="full"
+              display="flex"
+              justifyContent="spaceBetween"
+              flexDirection="column"
+              className={styles.dialogContainer}
+            >
+              <Stack space={2} dividers={false}>
+                <Box display="flex" justifyContent="spaceBetween">
+                  <Text variant="h4" color="blue600">
+                    {labelTitle}
+                  </Text>
+                  <Button
+                    circle
+                    colorScheme="light"
+                    icon="close"
+                    iconType="outline"
+                    onClick={dialog.hide}
+                  ></Button>
+                </Box>
+                {children}
+              </Stack>
 
-      <Box display={['none', 'none', 'block']}>
-        <Stack space={2} dividers={false}>
-          {children}
-        </Stack>
-        <Box textAlign="right">
-          <Button
-            icon="reload"
-            size="small"
-            variant="text"
-            onClick={() => onFilterClear()}
-          >
-            {labelClear}
-          </Button>
-        </Box>
-      </Box>
+              <Box
+                background="blue100"
+                marginTop={2}
+                paddingTop={4}
+                paddingBottom={3}
+              >
+                <Stack space={2} dividers={false} align="center">
+                  <Button size="small" onClick={dialog.hide}>
+                    {labelResult} ({resultCount})
+                  </Button>
+                  <Button
+                    icon="reload"
+                    size="small"
+                    variant="text"
+                    onClick={() => onFilterClear()}
+                  >
+                    {labelClear}
+                  </Button>
+                </Stack>
+              </Box>
+            </Box>
+          </Dialog>
+        </>
+      ) : (
+        <>
+          <Stack space={2} dividers={false}>
+            {children}
+          </Stack>
+          <Box textAlign="right" paddingTop={2}>
+            <Button
+              icon="reload"
+              size="small"
+              variant="text"
+              onClick={() => onFilterClear()}
+            >
+              {labelClear}
+            </Button>
+          </Box>
+        </>
+      )}
     </>
   )
 }

@@ -15,6 +15,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -22,11 +23,13 @@ import {
   ApiOkResponse,
   ApiQuery,
   ApiTags,
+  getSchemaPath,
 } from '@nestjs/swagger'
+import { IdsAuthGuard } from '@island.is/auth-nest-tools'
+import { NationalIdGuard } from '../access/national-id-guard'
 
-@ApiOAuth2(['@identityserver.api/read'])
-// TODO: ADD guards when functional
-// @UseGuards(AuthGuard('jwt'))
+// @ApiOAuth2(['@identityserver.api/read'])
+@UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('clients')
 @Controller('clients')
 export class ClientsController {
@@ -36,6 +39,24 @@ export class ClientsController {
   @Get()
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
+  @ApiOkResponse({
+    schema: {
+      allOf: [
+        {
+          properties: {
+            count: {
+              type: 'number',
+              example: 1,
+            },
+            rows: {
+              type: 'array',
+              items: { $ref: getSchemaPath(Client) },
+            },
+          },
+        },
+      ],
+    },
+  })
   async findAndCountAll(
     @Query('page') page: number,
     @Query('count') count: number,
@@ -82,7 +103,7 @@ export class ClientsController {
     return await this.clientsService.update(client, id)
   }
 
-  /** Deletes a client by Id */
+  /** Soft deleting a client by Id */
   @Delete(':id')
   @ApiCreatedResponse()
   async delete(@Param('id') id: string): Promise<number> {

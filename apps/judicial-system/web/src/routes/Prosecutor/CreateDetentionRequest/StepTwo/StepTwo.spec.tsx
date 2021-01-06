@@ -16,8 +16,11 @@ import { UserProvider } from '@island.is/judicial-system-web/src/shared-componen
 describe('Create detention request, step two', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
-    const todaysDate = new Date().getDate()
-    const formattedTodaysDate = todaysDate < 10 ? `0${todaysDate}` : todaysDate
+    const todaysDate = new Date()
+    const formattedTodaysDate = todaysDate.getDate().toString().padStart(2, '0')
+    const formattedTodaysMonth = (todaysDate.getMonth() + 1)
+      .toString()
+      .padStart(2, '0')
 
     render(
       <MockedProvider
@@ -37,9 +40,7 @@ describe('Create detention request, step two', () => {
             } as UpdateCase,
             {
               id: 'test_id_6',
-              requestedCourtDate: `2020-${
-                new Date().getMonth() + 1
-              }-${formattedTodaysDate}T13:37:00Z`,
+              requestedCourtDate: `${todaysDate.getFullYear()}-${formattedTodaysMonth}-${formattedTodaysDate}T13:37:00Z`,
             } as UpdateCase,
             {
               requestedCustodyEndDate: '2020-11-25',
@@ -67,7 +68,7 @@ describe('Create detention request, step two', () => {
     // Arrest date is optional
     userEvent.type(
       await waitFor(() => screen.getAllByLabelText(/Veldu dagsetningu/)[1]),
-      `${formattedTodaysDate}.${new Date().getMonth() + 1}.2020`,
+      `${formattedTodaysDate}.${formattedTodaysMonth}.${todaysDate.getFullYear()}`,
     )
 
     userEvent.type(screen.getByLabelText('Ósk um tíma (kk:mm) *'), '13:37')
@@ -79,7 +80,7 @@ describe('Create detention request, step two', () => {
 
     userEvent.type(
       screen.getByLabelText(/Gæsluvarðhald til/),
-      `${formattedTodaysDate}.${new Date().getMonth() + 1}.2020`,
+      `${formattedTodaysDate}.${formattedTodaysMonth}.${todaysDate.getFullYear()}`,
     )
     userEvent.type(screen.getByLabelText('Tímasetning (kk:mm) *'), '13:37')
 

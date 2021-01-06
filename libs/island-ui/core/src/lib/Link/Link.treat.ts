@@ -3,10 +3,13 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const link = style({
   textDecoration: 'none',
-  cursor: 'pointer',
   ':hover': {
     textDecoration: 'none',
   },
+})
+
+export const pointer = style({
+  cursor: 'pointer',
 })
 
 const mediumBoxShadow = `inset 0 -2px 0 0 currentColor`
