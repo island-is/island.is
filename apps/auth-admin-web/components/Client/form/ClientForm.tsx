@@ -468,6 +468,16 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                   </div>
 
                   <div className="client__container__field">
+                    <label className="client__label">Refresh Token Usage</label>
+                    <select name="client.refreshTokenUsage" className="client__select" defaultValue={client.refreshTokenUsage} ref={register({ required: true })}>
+                      <option value={0}>ReUse</option>
+                      <option value={1}>OneTime</option>
+                    </select>
+                    <HelpBox helpText='"ReUse" the refresh token handle will stay the same when refreshing tokens. 
+                    "OneTime" the refresh token handle will be updated when refreshing tokens. This is the default' />
+                  </div>
+
+                  <div className="client__container__field">
                     <label className="client__label">
                       Refresh token expiration
                     </label>
@@ -480,15 +490,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
 Sliding when refreshing the token, the lifetime of the refresh token will be renewed (by the amount specified in SlidingRefreshTokenLifetime). The lifetime will not exceed AbsoluteRefreshTokenLifetime." />
                   </div>
 
-                  <div className="client__container__field">
-                    <label className="client__label">Refresh Token Usage</label>
-                    <select name="client.refreshTokenUsage" className="client__select" defaultValue={client.refreshTokenUsage} ref={register({ required: true })}>
-                      <option value={0}>ReUse</option>
-                      <option value={1}>OneTime</option>
-                    </select>
-                    <HelpBox helpText="ReUse the refresh token handle will stay the same when refreshing tokens
-                    OneTime the refresh token handle will be updated when refreshing tokens. This is the default" />
-                  </div>
+                  
 
                   <div className="client__container__field">
                     <label className="client__label">
