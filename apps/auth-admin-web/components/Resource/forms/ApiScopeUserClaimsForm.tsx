@@ -60,7 +60,7 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
 
           <div className="api-scope-user-claims__container__form">
             <div className="api-scope-user-claims__help">
-              Select all user claims for this Identity Resource
+              If needed, select the user claims for this Api Scope
             </div>
             <div className="api-scope-user-claims__container__fields">
               {claims?.map((claim: string) => {
@@ -92,7 +92,7 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
             </div>
 
             
-            <NoActiveConnections title="No User Claims are defined" show={!props.claims || props.claims.length === 0} helpText="Check the appropriate claims">
+            <NoActiveConnections title="No User Claims are selected" show={!props.claims || props.claims.length === 0} helpText="If necessary, check user the user claims needed">
             </NoActiveConnections>
 
             <div className="api-scope-user-claims__buttons__container">
