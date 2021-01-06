@@ -116,6 +116,17 @@ export const loadingIcon = style({
   top: '50%',
   transform: 'translateY(-50%)',
   outline: 0,
+  '@keyframes': {
+    from: {
+      transform: 'translateY(-50%) rotate(0deg)',
+    },
+    to: {
+      transform: 'translateY(-50%) rotate(360deg)',
+    },
+  },
+  animationDuration: '1.5s',
+  animationIterationCount: 'infinate',
+  animationTimingFunction: 'linear',
 })
 
 export const loadingIconSizes = styleMap({
