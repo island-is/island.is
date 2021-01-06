@@ -425,12 +425,12 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildCustomField({
                   id: 'requestRights.requestDays',
                   title: '',
-                  condition: (formValue) => {
-                    const val = formValue.requestRights as {
-                      isRequestingRights: string
-                    }
-                    return val.isRequestingRights === YES
-                  },
+                  condition: (answers) =>
+                    (answers as {
+                      requestRights: {
+                        isRequestingRights: string
+                      }
+                    })?.requestRights?.isRequestingRights === YES,
                   component: 'RequestDaysSlider',
                 }),
               ],
@@ -439,12 +439,13 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'giveRights.isGivingRights',
               title: m.giveRightsName,
               description: m.giveRightsDescription,
-              condition: (formValue) => {
-                const val = formValue.requestRights as {
-                  isRequestingRights: string
-                }
-                return val.isRequestingRights === NO
-              },
+              condition: (answers) =>
+                (answers as {
+                  requestRights: {
+                    isRequestingRights: string
+                  }
+                })?.requestRights?.isRequestingRights === NO,
+
               children: [
                 buildCustomField({
                   id: 'giveRights.isGivingRights',
@@ -454,12 +455,12 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildCustomField({
                   id: 'giveRights.giveDays',
                   title: '',
-                  condition: (formValue) => {
-                    const val = formValue.giveRights as {
-                      isGivingRights: string
-                    }
-                    return val.isGivingRights === YES
-                  },
+                  condition: (answers) =>
+                    (answers as {
+                      giveRights: {
+                        isGivingRights: string
+                      }
+                    })?.giveRights?.isGivingRights === YES,
                   component: 'GiveDaysSlider',
                 }),
               ],
