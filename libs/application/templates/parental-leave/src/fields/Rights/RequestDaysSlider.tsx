@@ -16,13 +16,13 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   const currentAnswer = getValueViaPath(
     application.answers,
     field.id,
-    undefined,
+    1,
   ) as number
 
   const { clearErrors } = useFormContext()
 
   const [chosenRequestDays, setChosenRequestDays] = useState<number>(
-    currentAnswer || 1,
+    currentAnswer,
   )
 
   const daysStringKey =

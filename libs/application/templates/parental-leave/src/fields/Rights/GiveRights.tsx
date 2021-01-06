@@ -10,6 +10,7 @@ import { useLocale } from '@island.is/localization'
 import { RadioController } from '@island.is/shared/form-fields'
 import { m, mm } from '../../lib/messages'
 import config from '../../config'
+import { YES, NO } from '../../constants'
 
 type ValidAnswers = 'yes' | 'no' | undefined
 
@@ -47,11 +48,11 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
           options={[
             {
               label: formatText(m.giveRightsYes, application, formatMessage),
-              value: 'yes',
+              value: YES,
             },
             {
               label: formatText(m.giveRightsNo, application, formatMessage),
-              value: 'no',
+              value: NO,
             },
           ]}
           onSelect={(newAnswer) => setStatefulAnswer(newAnswer as ValidAnswers)}
@@ -65,7 +66,7 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
         </Box>
       )}
 
-      {statefulAnswer === 'no' && (
+      {statefulAnswer === NO && (
         <BoxChart
           application={application}
           boxes={config.defaultMonths}

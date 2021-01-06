@@ -6,6 +6,7 @@ import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m, mm } from '../../lib/messages'
 import config from '../../config'
+import { YES, NO } from '../../constants'
 
 type ValidAnswers = 'yes' | 'no' | undefined
 
@@ -22,7 +23,7 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
   )
 
   const numberOfBoxes =
-    statefulAnswer === 'no' ? config.defaultMonths : config.defaultMonths + 1
+    statefulAnswer === NO ? config.defaultMonths : config.defaultMonths + 1
 
   const boxChartKeys: BoxChartKey[] = [
     {
@@ -43,8 +44,8 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
             statefulAnswer !== undefined ? [statefulAnswer] : undefined
           }
           options={[
-            { label: formatMessage(m.requestRightsYes), value: 'yes' },
-            { label: formatMessage(m.requestRightsNo), value: 'no' },
+            { label: formatMessage(m.requestRightsYes), value: YES },
+            { label: formatMessage(m.requestRightsNo), value: NO },
           ]}
           onSelect={(newAnswer) => {
             setStatefulAnswer(newAnswer as ValidAnswers)
@@ -74,7 +75,7 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
       )}
 
       {/* They won't request time, so show all as blue */}
-      {statefulAnswer === 'no' && (
+      {statefulAnswer === NO && (
         <BoxChart
           application={application}
           boxes={numberOfBoxes}
