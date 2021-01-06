@@ -5,7 +5,9 @@ import { DrivingLicenseResponse } from './types'
 export class DrivingLicenseApi {
   constructor(private readonly baseApiUrl: string) {}
 
-  async getDrivingLicense(nationalId: User['nationalId']): Promise<DrivingLicenseResponse> {
+  async getDrivingLicense(
+    nationalId: User['nationalId'],
+  ): Promise<DrivingLicenseResponse> {
     const drivingLicense: DrivingLicenseResponse = await {
       id: 1337,
       nafn: 'Jón Ekki Til Jónsson ',
