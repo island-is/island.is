@@ -18,7 +18,7 @@ class MyDocument extends Document<Props> {
             <NextScript />
           </div>
           <footer>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur magnam fugit porro.
+            Identity Server Admin - <a href="">Help pages</a>
           </footer>
         </body>
       </Html>

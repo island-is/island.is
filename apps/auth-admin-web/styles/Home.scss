@@ -1,0 +1,26 @@
+.home {
+  max-width: $width-content;
+  &__info {
+    padding: 30px;
+    background-color: $color-bg-content;
+  }
+
+  &__shortcuts {
+    width: 70%;
+    margin-top: 40px;
+    padding: 0 30px;
+
+    &__item {
+      display: flex;
+      margin-bottom: 12px;
+
+      &__description {
+        flex: 1;
+      }
+
+      &__link {
+        flex: 1;
+      }
+    }
+  }
+}
