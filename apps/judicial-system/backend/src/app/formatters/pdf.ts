@@ -5,6 +5,7 @@ import fs from 'fs'
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
+  CaseDecision,
   User,
 } from '@island.is/judicial-system/types'
 import {
@@ -436,7 +437,7 @@ export async function generateRulingPdf(
       })
   }
 
-  if (!existingCase.decision) {
+  if (existingCase.decision === CaseDecision.ACCEPTING) {
     doc
       .text(' ')
       .font('Helvetica-Bold')

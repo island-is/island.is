@@ -286,9 +286,9 @@ export const DetentionRequests: React.FC = () => {
                       Krafa stofnuð
                       <Box
                         className={cn(styles.sortIcon, {
-                          [styles.sortAccusedNameAsc]:
+                          [styles.sortCreatedAsc]:
                             getClassNamesFor('created') === 'ascending',
-                          [styles.sortAccusedNameDes]:
+                          [styles.sortCreatedDes]:
                             getClassNamesFor('created') === 'descending',
                         })}
                         marginLeft={1}
@@ -296,7 +296,7 @@ export const DetentionRequests: React.FC = () => {
                         display="flex"
                         alignItems="center"
                       >
-                        <Icon icon="caretDown" size="small" />
+                        <Icon icon="caretUp" size="small" />
                       </Box>
                     </Box>
                   </Text>
