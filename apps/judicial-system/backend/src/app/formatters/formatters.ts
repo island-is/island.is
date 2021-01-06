@@ -237,7 +237,7 @@ export function formatPrisonRulingEmailNotification(
     'Kærði',
     false,
   )}<br />${formatAppeal(prosecutorAppealDecision, 'Sækjandi', false)}${
-    decision !== CaseDecision.REJECTING
+    decision === CaseDecision.ACCEPTING
       ? `<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${formatRestrictions(
           custodyRestrictions,
         )}`
