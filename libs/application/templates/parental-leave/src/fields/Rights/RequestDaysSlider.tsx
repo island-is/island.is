@@ -7,7 +7,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import Slider from '../components/Slider'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
-import { maxDaysToGiveOrReceive, defaultMonths } from '../../config'
+import { maxDaysToGiveOrReceive, defaultMonths, maxMonths } from '../../config'
 
 const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   const maxDays = maxDaysToGiveOrReceive
@@ -80,7 +80,7 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
       </Box>
       <BoxChart
         application={application}
-        boxes={defaultMonths + 1}
+        boxes={maxMonths}
         calculateBoxStyle={(index) => {
           if (index === defaultMonths) {
             return 'greenWithLines'
