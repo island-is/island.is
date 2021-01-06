@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import dynamic from 'next/dynamic'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
 import PlaceholderSlide from '../PlaceholderSlide'
 
 const LottiePlayer = dynamic(() => import('../LottiePlayer/LottiePlayer'), {
@@ -10,12 +8,6 @@ const LottiePlayer = dynamic(() => import('../LottiePlayer/LottiePlayer'), {
 
 const LottieIllustration = ({ animationData, selectedIndex }) => {
   const [loaded, set] = useState(false)
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
-
-  if (isMobile) {
-    return null
-  }
 
   return (
     <>

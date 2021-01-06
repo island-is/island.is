@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useLifecycles } from 'react-use'
-import { useLottie } from 'lottie-react'
+import useLottie from './react-lottie/useLottie'
 
 type Props = {
   animationData: any
