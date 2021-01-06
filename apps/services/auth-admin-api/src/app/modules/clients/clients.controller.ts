@@ -74,11 +74,6 @@ export class ClientsController {
     }
 
     const clientProfile = await this.clientsService.findClientById(id)
-
-    if (!clientProfile) {
-      throw new NotFoundException("This client doesn't exist")
-    }
-
     return clientProfile
   }
 

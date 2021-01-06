@@ -49,8 +49,14 @@ export const dataSchema = z.object({
     isSelfEmployed: z.enum([YES, NO]),
     email: z.string().email().nonempty(),
   }),
-  requestRights: z.enum([YES, NO]),
-  giveRights: z.enum([YES, NO]),
+  requestRights: z.object({
+    isRequestingRights: z.enum([YES, NO]),
+    requestDays: z.number().optional(),
+  }),
+  giveRights: z.object({
+    isGivingRights: z.enum([YES, NO]),
+    giveDays: z.number().optional(),
+  }),
   singlePeriod: z.enum([YES, NO]),
   firstPeriodStart: z.enum(['dateOfBirth', 'specificDate']),
   confirmLeaveDuration: z.enum(['duration', 'specificDate']),

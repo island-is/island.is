@@ -55,6 +55,7 @@
 
 - [External Contributions](handbook/repository/external-contribute.md)
 - [Generating a New Project](handbook/repository/generate.md)
+- [GitBook Contributions](handbook/repository/gitbook-contribute.md)
 - [Auto Generated Schemas](handbook/repository/schemas.md)
 
 ## Apps
