@@ -10,16 +10,20 @@ export default function Index() {
 
   const handleSave = (data: ApiScopesDTO) => {
     router.push(`/resource/api-scope/${encodeURIComponent(data.name)}?step=2`);
-  }
+  };
 
   const handleCancel = () => {
     router.back();
-  }
+  };
 
   return (
     <ContentWrapper>
-      <ResourcesTabsNav />         
-      <ApiScopeCreateForm handleSave={handleSave} handleCancel={handleCancel} apiScope={new ApiScopesDTO()} />
+      <ResourcesTabsNav />
+      <ApiScopeCreateForm
+        handleSave={handleSave}
+        handleCancel={handleCancel}
+        apiScope={new ApiScopesDTO()}
+      />
     </ContentWrapper>
   );
 }

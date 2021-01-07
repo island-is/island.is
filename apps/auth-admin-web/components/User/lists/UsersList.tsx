@@ -14,30 +14,28 @@ interface ClaimShow {
 
 const UsersList: React.FC = () => {
   const [users, setUsers] = useState<UserIdentityDTO[]>([]);
-  const [id, setId] = useState<string>("");
+  const [id, setId] = useState<string>('');
   const [claimShow, setClaimShow] = useState<ClaimShow[]>([]);
-  const [type, setType] = useState<string>("");
+  const [type, setType] = useState<string>('');
   const [showNotFound, setShowNotFound] = useState<boolean>(false);
   const { handleSubmit, register, errors, formState } = useForm();
   const { isSubmitting } = formState;
 
-  const getIndex = (subjectId: string) : number => {
-    for(let i = 0; i < claimShow.length; i++){
-      if ( claimShow[i].subjectId === subjectId)
-      {
+  const getIndex = (subjectId: string): number => {
+    for (let i = 0; i < claimShow.length; i++) {
+      if (claimShow[i].subjectId === subjectId) {
         return i;
       }
     }
     return -1;
-  }
+  };
 
   const getUser = async (data: any) => {
     setShowNotFound(false);
     const response = await UserService.findUser(data.id);
     if (response) {
       setUsers(response);
-    }
-    else{
+    } else {
       setShowNotFound(true);
       setUsers([]);
     }
@@ -51,31 +49,31 @@ const UsersList: React.FC = () => {
     getUser({ id: id, type: type });
   };
 
-  const handleShowClaimsClicked = (user: UserIdentityDTO, show = true) : ClaimShow => {
+  const handleShowClaimsClicked = (
+    user: UserIdentityDTO,
+    show = true
+  ): ClaimShow => {
     const index = getIndex(user.subjectId);
-    let ret = { subjectId: user.subjectId, show: show};
-    if ( index === -1)
-    {
+    let ret = { subjectId: user.subjectId, show: show };
+    if (index === -1) {
       claimShow.push(ret);
-    }
-    else {
+    } else {
       claimShow[index].show = !claimShow[index].show;
       ret = claimShow[index];
     }
 
-    setClaimShow([...claimShow]);    
+    setClaimShow([...claimShow]);
     return ret;
   };
 
-  const showClaims = (user: UserIdentityDTO) : boolean => {
+  const showClaims = (user: UserIdentityDTO): boolean => {
     const index = getIndex(user.subjectId);
-    if ( index === -1 ){
+    if (index === -1) {
       return false;
-    }
-    else {
+    } else {
       return claimShow[index].show;
     }
-  }
+  };
 
   return (
     <div className="users">
@@ -105,13 +103,13 @@ const UsersList: React.FC = () => {
                     name="id"
                     message="SubjectId or nationalId is required. NationalId must 10 numeric characters"
                   />
-                    <input
+                  <input
                     type="submit"
                     value="Search"
                     disabled={isSubmitting}
                     className="users__button__search"
                   />
-                  </div>
+                </div>
               </div>
             </form>
           </div>
@@ -124,13 +122,13 @@ const UsersList: React.FC = () => {
             <h3>Users found:</h3>
             <table className="users__table">
               <thead>
-              <tr>
-                <th>Subject Id</th>
-                <th>Name</th>
-                <th>Provider Name</th>
-                <th>Provider Subject Id</th>
-                <th colSpan={2}></th>
-              </tr>
+                <tr>
+                  <th>Subject Id</th>
+                  <th>Name</th>
+                  <th>Provider Name</th>
+                  <th>Provider Subject Id</th>
+                  <th colSpan={2}></th>
+                </tr>
               </thead>
               <tbody>
                 {users.map((user: UserIdentityDTO) => {
@@ -147,23 +145,29 @@ const UsersList: React.FC = () => {
                         >
                           View claims
                         </button>
-                        
-                        <div className={`users__claim__overlay users__container__list ${showClaims(user)  ? 'show' : 'hidden'}`}>
-                        <a className="users__container__button__close" onClick={() => handleShowClaimsClicked(user)}>&times;</a>
-                        {user.claims.map((claim: ClaimDTO) => {
-                          return (
-                            <div className="users__container__list__item" key={claim.type}>
-                              
-                              <div className="list-name">
-                                {claim.type}:
-                              </div>
-                              <div className="list-value">
-                                {claim.value}
-                              </div>
-                              </div>
-                          )
-                        })}
 
+                        <div
+                          className={`users__claim__overlay users__container__list ${
+                            showClaims(user) ? 'show' : 'hidden'
+                          }`}
+                        >
+                          <a
+                            className="users__container__button__close"
+                            onClick={() => handleShowClaimsClicked(user)}
+                          >
+                            &times;
+                          </a>
+                          {user.claims.map((claim: ClaimDTO) => {
+                            return (
+                              <div
+                                className="users__container__list__item"
+                                key={claim.type}
+                              >
+                                <div className="list-name">{claim.type}:</div>
+                                <div className="list-value">{claim.value}</div>
+                              </div>
+                            );
+                          })}
                         </div>
                       </td>
                       <td>
@@ -186,12 +190,14 @@ const UsersList: React.FC = () => {
                     </tr>
                   );
                 })}
-                
               </tbody>
             </table>
-           
           </div>
-          { showNotFound && (<NotFound title="User Identity not found">Nothing found for: {id}</NotFound>)}
+          {showNotFound && (
+            <NotFound title="User Identity not found">
+              Nothing found for: {id}
+            </NotFound>
+          )}
         </div>
       </div>
     </div>
@@ -199,4 +205,3 @@ const UsersList: React.FC = () => {
 };
 
 export default UsersList;
-

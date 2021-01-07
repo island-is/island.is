@@ -58,7 +58,11 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
           <h1>{isEditing ? 'Edit Api Scope' : 'Create Api Scope'}</h1>
           <div className="api-scope-form__container__form">
             <div className="api-scope-form__help">
-            Scope is a mechanism in OAuth 2.0 to limit an application's access to a user's account. An application can request one or more scopes, this information is then presented to the user in the consent screen, and the access token issued to the application will be limited to the scopes granted.
+              Scope is a mechanism in OAuth 2.0 to limit an application's access
+              to a user's account. An application can request one or more
+              scopes, this information is then presented to the user in the
+              consent screen, and the access token issued to the application
+              will be limited to the scopes granted.
             </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="api-scope-form__container__fields">

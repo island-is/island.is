@@ -17,7 +17,9 @@ export default function ApiResourcesList() {
   const [resourceToRemove, setResourceToRemove] = React.useState('');
 
   const edit = (apiResource: ApiResourcesDTO) => {
-    router.push(`/resource/api-resource/${encodeURIComponent(apiResource.name)}`);
+    router.push(
+      `/resource/api-resource/${encodeURIComponent(apiResource.name)}`
+    );
   };
 
   const handlePageChange = async (page: number, countPerPage: number) => {

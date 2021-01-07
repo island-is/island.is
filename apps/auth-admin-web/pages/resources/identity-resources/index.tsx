@@ -6,8 +6,8 @@ import IdentityResourcesList from '../../../components/Resource/lists/IdentityRe
 export default function Index() {
   return (
     <ContentWrapper>
-        <ResourcesTabsNav />         
-        <IdentityResourcesList />
+      <ResourcesTabsNav />
+      <IdentityResourcesList />
     </ContentWrapper>
   );
 }

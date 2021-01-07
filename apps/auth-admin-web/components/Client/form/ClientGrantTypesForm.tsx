@@ -23,7 +23,7 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
 
   const getGrantTypes = async () => {
     const response = await GrantService.findAll();
-    if (response){
+    if (response) {
       setGrantTypes(response);
     }
   };
@@ -35,21 +35,24 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
     };
 
     const response = await ClientService.addGrantType(createObj);
-    if (response){
+    if (response) {
       if (props.handleChanges) {
         props.handleChanges();
       }
     }
-  }
+  };
 
   const remove = async (grantType: string) => {
-    const response = await ClientService.removeGrantType(props.clientId, grantType);
-    if (response){
+    const response = await ClientService.removeGrantType(
+      props.clientId,
+      grantType
+    );
+    if (response) {
       if (props.handleChanges) {
         props.handleChanges();
       }
     }
-  }
+  };
 
   const setValue = (grantType: string, value: boolean) => {
     if (value) {
@@ -57,7 +60,7 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
     } else {
       remove(grantType);
     }
-  }
+  };
 
   return (
     <div className="client-grant-types">
@@ -101,9 +104,11 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
               })}
             </div>
 
-            
-            <NoActiveConnections title="No grant types are defined" show={!props.grantTypes || props.grantTypes.length === 0} helpText="Check the appropriate grant type(s) for the client">
-            </NoActiveConnections>
+            <NoActiveConnections
+              title="No grant types are defined"
+              show={!props.grantTypes || props.grantTypes.length === 0}
+              helpText="Check the appropriate grant type(s) for the client"
+            ></NoActiveConnections>
 
             <div className="client-grant-types__buttons__container">
               <div className="client-grant-types__button__container">

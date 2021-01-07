@@ -44,10 +44,10 @@ const Index = () => {
 
   const getClient = async (clientId: string) => {
     const response = await ClientService.findClientById(clientId);
-    if (response ){
+    if (response) {
       setClient(response);
     }
-  }
+  };
 
   const changesMade = () => {
     getClient(clientId as string);
@@ -215,11 +215,19 @@ const Index = () => {
       );
     }
     default: {
-     return <ContentWrapper>
-      <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
-        <StepEnd buttonText="Go back" title="Steps completed" handleButtonFinishedClick={() => setStep(1)}>The steps needed, to create a client, have been completed</StepEnd>
-      </ClientStepNav>
-    </ContentWrapper>
+      return (
+        <ContentWrapper>
+          <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+            <StepEnd
+              buttonText="Go back"
+              title="Steps completed"
+              handleButtonFinishedClick={() => setStep(1)}
+            >
+              The steps needed, to create a client, have been completed
+            </StepEnd>
+          </ClientStepNav>
+        </ContentWrapper>
+      );
     }
   }
 };

@@ -6,8 +6,8 @@ import React from 'react';
 export default function Index() {
   return (
     <ContentWrapper>
-        <ResourcesTabsNav />         
-        <ApiScopeList />
+      <ResourcesTabsNav />
+      <ApiScopeList />
     </ContentWrapper>
   );
 }

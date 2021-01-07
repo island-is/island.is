@@ -72,7 +72,7 @@ export default function Index() {
     case ApiScopeStep.ApiScope: {
       return (
         <ContentWrapper>
-          <ResourcesTabsNav />         
+          <ResourcesTabsNav />
           <ApiScopeStepNav
             activeStep={step}
             handleStepChange={handleStepChange}
@@ -90,14 +90,14 @@ export default function Index() {
     case ApiScopeStep.Claims: {
       return (
         <ContentWrapper>
-          <ResourcesTabsNav />         
+          <ResourcesTabsNav />
           <ApiScopeStepNav
             activeStep={step}
             handleStepChange={handleStepChange}
           >
             <ApiScopeUserClaimsForm
               apiScopeName={apiScope.name}
-              claims={apiScope.userClaims?.map(claim => claim.claimName)}
+              claims={apiScope.userClaims?.map((claim) => claim.claimName)}
               handleChanges={changesMade}
               handleNext={handleNext}
               handleBack={handleBack}
@@ -110,7 +110,7 @@ export default function Index() {
     default: {
       return (
         <ContentWrapper>
-          <ResourcesTabsNav />         
+          <ResourcesTabsNav />
           <ApiScopeStepNav
             activeStep={step}
             handleStepChange={handleStepChange}

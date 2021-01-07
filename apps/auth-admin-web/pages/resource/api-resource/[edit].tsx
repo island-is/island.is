@@ -27,7 +27,7 @@ export default function Index() {
   useEffect(() => {
     async function loadResource() {
       if (resourceId) {
-        const decoded = decodeURIComponent(resourceId as string)
+        const decoded = decodeURIComponent(resourceId as string);
         await getResource(decoded);
       }
       if (stepQuery) {
@@ -76,7 +76,7 @@ export default function Index() {
     case ApiResourceStep.ApiResourceBasics: {
       return (
         <ContentWrapper>
-          <ResourcesTabsNav />         
+          <ResourcesTabsNav />
           <ApiResourceStepNav
             activeStep={step}
             handleStepChange={handleStepChange}
@@ -93,7 +93,7 @@ export default function Index() {
     case ApiResourceStep.ApiResourceScopes: {
       return (
         <ContentWrapper>
-          <ResourcesTabsNav />         
+          <ResourcesTabsNav />
           <ApiResourceStepNav
             activeStep={step}
             handleStepChange={handleStepChange}
@@ -112,7 +112,7 @@ export default function Index() {
     case ApiResourceStep.ApiResourceSecrets: {
       return (
         <ContentWrapper>
-          <ResourcesTabsNav />         
+          <ResourcesTabsNav />
           <ApiResourceStepNav
             activeStep={step}
             handleStepChange={handleStepChange}
@@ -131,7 +131,7 @@ export default function Index() {
     case ApiResourceStep.ApiResourceUserClaims: {
       return (
         <ContentWrapper>
-          <ResourcesTabsNav />   
+          <ResourcesTabsNav />
           <ApiResourceStepNav
             activeStep={step}
             handleStepChange={handleStepChange}
@@ -151,7 +151,7 @@ export default function Index() {
     default: {
       return (
         <ContentWrapper>
-          <ResourcesTabsNav />   
+          <ResourcesTabsNav />
           <ApiResourceStepNav
             activeStep={step}
             handleStepChange={handleStepChange}

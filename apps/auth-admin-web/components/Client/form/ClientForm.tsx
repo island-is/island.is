@@ -156,35 +156,62 @@ const ClientForm: React.FC<Props> = (props: Props) => {
             </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="client__container__fields">
-
                 <div className="field-with-details">
-                <div className="client__container__field">
-                  <label className="client__label">Client Type</label>
-                  <select
-                    name="client.clientType"
-                    ref={register({ required: true })}
-                    title="Type of Client"
-                    onChange={(e) => setClientType(e.target.value)}
-                  >
-                    <option value="" selected={!client.clientType}>Select Client Type</option>
-                    <option value="spa" selected={client.clientType === 'spa'}>Single Page App</option>
-                    <option value="native" selected={client.clientType === 'native'}>Native</option>
-                    <option value="device" selected={client.clientType === 'device'}>Device</option>
-                    <option value="web" selected={client.clientType === 'web'}>Web App</option>
-                    <option value="machine" selected={client.clientType === 'machine'}>Machine</option>
-                  </select>
+                  <div className="client__container__field">
+                    <label className="client__label">Client Type</label>
+                    <select
+                      name="client.clientType"
+                      ref={register({ required: true })}
+                      title="Type of Client"
+                      onChange={(e) => setClientType(e.target.value)}
+                    >
+                      <option value="" selected={!client.clientType}>
+                        Select Client Type
+                      </option>
+                      <option
+                        value="spa"
+                        selected={client.clientType === 'spa'}
+                      >
+                        Single Page App
+                      </option>
+                      <option
+                        value="native"
+                        selected={client.clientType === 'native'}
+                      >
+                        Native
+                      </option>
+                      <option
+                        value="device"
+                        selected={client.clientType === 'device'}
+                      >
+                        Device
+                      </option>
+                      <option
+                        value="web"
+                        selected={client.clientType === 'web'}
+                      >
+                        Web App
+                      </option>
+                      <option
+                        value="machine"
+                        selected={client.clientType === 'machine'}
+                      >
+                        Machine
+                      </option>
+                    </select>
 
-                  <HelpBox helpText="Select the appropriate client Type" />
-                  <ErrorMessage
-                    as="span"
-                    errors={errors}
-                    name="client.clientType"
-                    message="Client Type is required"
-                  />
-                  <div className={`client__type__details`}>{clientTypeInfo}</div>
+                    <HelpBox helpText="Select the appropriate client Type" />
+                    <ErrorMessage
+                      as="span"
+                      errors={errors}
+                      name="client.clientType"
+                      message="Client Type is required"
+                    />
+                    <div className={`client__type__details`}>
+                      {clientTypeInfo}
+                    </div>
+                  </div>
                 </div>
-                </div>
-                
 
                 <div className={clientTypeSelected ? '' : 'hidden'}>
                   <div className="client__container__field">
@@ -376,8 +403,18 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                         className="client__select"
                         ref={register({ required: true })}
                       >
-                        <option value={0} selected={client.accessTokenType === 0}>JWT</option>
-                        <option value={1} selected={client.accessTokenType === 1}>Reference</option>
+                        <option
+                          value={0}
+                          selected={client.accessTokenType === 0}
+                        >
+                          JWT
+                        </option>
+                        <option
+                          value={1}
+                          selected={client.accessTokenType === 1}
+                        >
+                          Reference
+                        </option>
                       </select>
                       <HelpBox helpText="Specifies whether the access token is a reference token or a self contained JWT token (defaults to Jwt)." />
                       <ErrorMessage
@@ -479,8 +516,18 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                         className="client__select"
                         ref={register({ required: true })}
                       >
-                        <option value={0} selected={client.refreshTokenUsage === 0}>ReUse</option>
-                        <option value={1} selected={client.refreshTokenUsage === 1}>OneTime</option>
+                        <option
+                          value={0}
+                          selected={client.refreshTokenUsage === 0}
+                        >
+                          ReUse
+                        </option>
+                        <option
+                          value={1}
+                          selected={client.refreshTokenUsage === 1}
+                        >
+                          OneTime
+                        </option>
                       </select>
                       <HelpBox
                         helpText='"ReUse" the refresh token handle will stay the same when refreshing tokens. 
@@ -497,8 +544,18 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                         className="client__select"
                         ref={register({ required: true })}
                       >
-                        <option value={0} selected={client.refreshTokenExpiration === 0}>Sliding</option>
-                        <option value={1} selected={client.refreshTokenExpiration === 1}>Absolute</option>
+                        <option
+                          value={0}
+                          selected={client.refreshTokenExpiration === 0}
+                        >
+                          Sliding
+                        </option>
+                        <option
+                          value={1}
+                          selected={client.refreshTokenExpiration === 1}
+                        >
+                          Absolute
+                        </option>
                       </select>
                       <HelpBox
                         helpText="Absolute the refresh token will expire on a fixed point in time (specified by the AbsoluteRefreshTokenLifetime)

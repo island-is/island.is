@@ -18,9 +18,12 @@ interface Props {
 }
 
 const ClientSecretForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<
-    ClientSecretDTO
-  >();
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+  } = useForm<ClientSecretDTO>();
   const { isSubmitting } = formState;
   const defaultSecretLength = 25;
   const [defaultSecret, setDefaultSecret] = useState<string>('');
@@ -28,11 +31,9 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
   const [infoModalIsOpen, setInfoModalIsOpen] = useState(false);
   const [secretValue, setSecretValue] = useState<string>('');
 
-
   const [secretToRemove, setSecretToRemove] = useState<ClientSecret>(
     new ClientSecret()
   );
-
 
   const makeDefaultSecret = (length: number) => {
     let result = '';
@@ -86,8 +87,8 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
 
   const closeInfoModal = () => {
     setInfoModalIsOpen(false);
-  }
-  
+  };
+
   const remove = async () => {
     const secretDTO = new ClientSecretDTO();
     secretDTO.clientId = secretToRemove.clientId;
@@ -112,7 +113,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
 
   const closeConfirmModal = () => {
     setConfirmModalIsOpen(false);
-  }
+  };
 
   const setHeaderElement = () => {
     return (
@@ -284,13 +285,14 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
         confirmation={remove}
         confirmationText="Delete"
       ></ConfirmModal>
-      <InfoModal 
+      <InfoModal
         modalIsOpen={infoModalIsOpen}
         headerText="Your secret has been copied to your clipboard. Don't lose it, you won't be able to see it again:"
         closeModal={closeInfoModal}
         handleButtonClicked={closeInfoModal}
         infoText={secretValue}
-        buttonText="Ok"></InfoModal>
+        buttonText="Ok"
+      ></InfoModal>
     </div>
   );
 };
