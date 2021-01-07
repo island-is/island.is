@@ -18,7 +18,7 @@ import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 describe('/domari-krafa/urskurdur', () => {
-  test('should not allow users to continue unless every required field has been filled outt', async () => {
+  test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
 
     // Act and Assert
@@ -142,5 +142,93 @@ describe('/domari-krafa/urskurdur', () => {
           }) as HTMLButtonElement,
       ),
     ).not.toBeDisabled()
+  })
+
+  test('should not display the isolation checkbox if the case decision is REJECTING', async () => {
+    // Arrange
+
+    // Act
+    render(
+      <MockedProvider
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation([
+            {
+              id: 'test_id',
+              decision: CaseDecision.REJECTING,
+            } as UpdateCase,
+          ]),
+        ]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
+              <RulingStepOne />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    userEvent.click(
+      await waitFor(() =>
+        screen.getByRole('radio', { name: 'Kröfu um gæsluvarðhald hafnað' }),
+      ),
+    )
+    // Assert
+    expect(
+      screen.queryByRole('checkbox', {
+        name: 'Kærði skal sæta einangrun',
+      }),
+    ).not.toBeInTheDocument()
+  })
+
+  test('should not display the isolation checkbox if the case decision is ACCEPTING_ALTERNATIVE_TRAVEL_BAN', async () => {
+    // Arrange
+
+    // Act
+    render(
+      <MockedProvider
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation([
+            {
+              id: 'test_id',
+              decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+            } as UpdateCase,
+          ]),
+        ]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
+              <RulingStepOne />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    userEvent.click(
+      await waitFor(() =>
+        screen.getByRole('radio', {
+          name: 'Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann',
+        }),
+      ),
+    )
+    // Assert
+    expect(
+      screen.queryByRole('checkbox', {
+        name: 'Kærði skal sæta einangrun',
+      }),
+    ).not.toBeInTheDocument()
   })
 })
