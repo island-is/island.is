@@ -20,6 +20,7 @@ export class DrivingLicenseService {
       id: drivingLicense.id,
       issued: drivingLicense.utgafuDagsetning,
       expires: drivingLicense.gildirTil,
+      isProvisional: drivingLicense.erBradabirgda,
       eligibilities: drivingLicense.rettindi.map((eligibility) => ({
         id: eligibility.nr,
         issued: eligibility.utgafuDags,
