@@ -11,6 +11,7 @@ There are multiple requirements needed for a new template to be usable by the ap
 3. The default export of this library has to be an object that extends the `ApplicationTemplate` interface
 4. Add to `application/template-loader/src/lib/templateLoaders.ts` so that library knows how to import this new application template.
 5. Add a project reference to the `nx.json` [NX](https://github.com/island-is/island.is/blob/main/nx.json)
+
 ```json
 "application-templates-${template-directory-name}": {
   "tags": []
@@ -18,6 +19,7 @@ There are multiple requirements needed for a new template to be usable by the ap
 ```
 
 6. Add a path to the new directory to `tsconfig.base.json` [TSConfig](https://github.com/island-is/island.is/blob/main/tsconfig.base.json)
+
 ```json
 "@island.is/application/templates/${template-directory-name}": [
   "libs/application/templates/${template-directory-name}/src/index.ts"
@@ -25,6 +27,7 @@ There are multiple requirements needed for a new template to be usable by the ap
 ```
 
 7. Add template to `workspace.json` [Workspace]()
+
 ```json
 "application-templates-${template-directory-name}": {
   "root": "libs/application/templates/${template-directory-name}",
