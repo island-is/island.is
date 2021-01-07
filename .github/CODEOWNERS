@@ -37,11 +37,11 @@
 /libs/application/templates/parental-leave/               @island-is/aranja
 /libs/application/templates/reference-template/           @island-is/aranja
 
-/apps/judicial-system/                                    @island-is/kolibri
-/libs/judicial-system/                                    @island-is/kolibri
-/libs/nova-sms/                                           @island-is/kolibri
-/libs/dokobit-signing/                                    @island-is/kolibri
-/libs/email-service/                                      @island-is/kolibri
+/apps/judicial-system/                                    @island-is/kolibri-justice-league
+/libs/judicial-system/                                    @island-is/kolibri-justice-league
+/libs/nova-sms/                                           @island-is/kolibri-justice-league
+/libs/dokobit-signing/                                    @island-is/kolibri-justice-league
+/libs/email-service/                                      @island-is/kolibri-justice-league
 
 /*/service-portal*/                                       @island-is/sendiradid
 /libs/api/domains/documents/                              @island-is/sendiradid
