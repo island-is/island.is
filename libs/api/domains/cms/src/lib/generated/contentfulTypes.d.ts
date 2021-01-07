@@ -561,6 +561,9 @@ export interface IFrontpageSliderFields {
 
   /** Animation (JSON) */
   animationJson?: Record<string, any> | undefined
+
+  /** Animation JSON File */
+  animationJsonFile?: Asset | undefined
 }
 
 /** Efni í haus á forsíðu */
@@ -603,6 +606,35 @@ export interface IFrontpageSliderList
     contentType: {
       sys: {
         id: 'frontpageSliderList'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGenericOverviewPageFields {
+  /** Title */
+  title: string
+
+  /** Intro */
+  intro?: Document | undefined
+
+  /** Navigation */
+  navigation: IMenu
+}
+
+export interface IGenericOverviewPage
+  extends Entry<IGenericOverviewPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'genericOverviewPage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2620,6 +2652,7 @@ export type CONTENT_TYPE =
   | 'featured'
   | 'frontpageSlider'
   | 'frontpageSliderList'
+  | 'genericOverviewPage'
   | 'genericPage'
   | 'genericTag'
   | 'groupedMenu'
