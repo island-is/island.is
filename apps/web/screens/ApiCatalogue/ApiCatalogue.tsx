@@ -276,7 +276,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                       items={navigationItems}
                       title={nn('linkThrounText')}
                       titleLink={{
-                        active: true,
                         href: nn('linkThroun'),
                       }}
                     />
