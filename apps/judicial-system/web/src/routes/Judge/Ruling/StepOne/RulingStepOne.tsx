@@ -135,7 +135,7 @@ export const RulingStepOne: React.FC = () => {
     }
 
     if (workingCase) {
-      setIsStepIllegal(isNextDisabled(requiredFields))
+      setIsStepIllegal(isNextDisabled(requiredFields) || !workingCase.decision)
     }
   }, [workingCase, isStepIllegal])
 
@@ -165,7 +165,10 @@ export const RulingStepOne: React.FC = () => {
           <Box component="section" marginBottom={5}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                Úrskurðar
+                Úrskurðar{' '}
+                <Text as="span" fontWeight="semiBold" color="red600">
+                  *
+                </Text>
               </Text>
             </Box>
             <Box marginBottom={5}>

@@ -4,6 +4,7 @@ import { RulingStepOne } from './RulingStepOne'
 import * as Constants from '../../../../utils/constants'
 import {
   CaseCustodyRestrictions,
+  CaseDecision,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import userEvent from '@testing-library/user-event'
@@ -17,7 +18,7 @@ import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 describe('/domari-krafa/urskurdur', () => {
-  test('should not allow users to continue unless every required field has been filled out', async () => {
+  test('should not allow users to continue unless every required field has been filled outt', async () => {
     // Arrange
 
     // Act and Assert
@@ -43,6 +44,10 @@ describe('/domari-krafa/urskurdur', () => {
             {
               id: 'test_id_3',
               custodyEndDate: '2020-10-24T12:31:00Z',
+            } as UpdateCase,
+            {
+              id: 'test_id_3',
+              decision: CaseDecision.ACCEPTING,
             } as UpdateCase,
           ]),
         ]}
@@ -76,13 +81,14 @@ describe('/domari-krafa/urskurdur', () => {
       }) as HTMLButtonElement,
     ).toBeDisabled()
 
+    userEvent.click(
+      screen.getByRole('radio', { name: 'Krafa um gæsluvarðhald samþykkt' }),
+    )
+
     userEvent.type(
       screen.getByLabelText('Tímasetning *') as HTMLInputElement,
       '12:31',
     )
-
-    userEvent.tab()
-
     expect(
       screen.getByRole('button', {
         name: /Halda áfram/i,

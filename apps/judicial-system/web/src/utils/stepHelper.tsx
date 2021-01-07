@@ -45,10 +45,19 @@ export const constructConclusion = (workingCase: Case) => {
   if (workingCase.decision === CaseDecision.REJECTING) {
     return (
       <Text as="span" variant="intro">
-        Kröfu um gæsluvarðhald er hafnað.
+        Beiðni um gæslu á hendur,
+        <Text
+          as="span"
+          variant="intro"
+          color="blue400"
+          fontWeight="semiBold"
+        >{`${workingCase.accusedName} kt.${formatNationalId(
+          workingCase.accusedNationalId,
+        )}`}</Text>
+        , er hafnað.
       </Text>
     )
-  } else {
+  } else if (workingCase.decision === CaseDecision.ACCEPTING) {
     return (
       <>
         <Text as="span" variant="intro">{`Kærði, `}</Text>
@@ -140,6 +149,24 @@ export const constructConclusion = (workingCase: Case) => {
           </Text>
         )}
       </>
+    )
+  } else {
+    return (
+      <Text as="span" variant="intro">
+        Kærði,
+        <Text
+          as="span"
+          variant="intro"
+          color="blue400"
+          fontWeight="semiBold"
+        >{` ${workingCase.accusedName} kt.${formatNationalId(
+          workingCase.accusedNationalId,
+        )}`}</Text>
+        , skal sæta farbanni, þó ekki lengur en til
+        <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
+          {` ${formatDate(workingCase.custodyEndDate, 'PPPp')}.`}
+        </Text>
+      </Text>
     )
   }
 }
