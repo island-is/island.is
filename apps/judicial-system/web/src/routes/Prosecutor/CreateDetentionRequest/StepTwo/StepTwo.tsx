@@ -18,7 +18,6 @@ import {
 } from '@island.is/judicial-system/types'
 import { isNextDisabled } from '../../../../utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
-import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -57,7 +56,7 @@ export const StepTwo: React.FC = () => {
 
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [arrestTime, setArrestTime] = useState<string>()
+  const [arrestTime, setArrestTime] = useState<string | undefined>('')
   const [requestedCourtTime, setRequestedCourtTime] = useState<string>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
@@ -318,12 +317,13 @@ export const StepTwo: React.FC = () => {
                       ? new Date(workingCase.arrestDate)
                       : null
                   }
-                  handleChange={(date) =>
+                  handleCloseCalendar={(date) =>
                     setAndSendDateToServer(
                       'arrestDate',
                       workingCase.arrestDate,
                       date,
                       workingCase,
+                      false,
                       setWorkingCase,
                       updateCase,
                       setArrestDateErrorMessage,
@@ -387,6 +387,7 @@ export const StepTwo: React.FC = () => {
                   placeholderText="Veldu dagsetningu"
                   locale="is"
                   errorMessage={requestedCourtDateErrorMessage}
+                  hasError={requestedCourtDateErrorMessage !== ''}
                   icon={workingCase.courtDate ? 'lockClosed' : undefined}
                   minDate={new Date()}
                   selected={
@@ -395,23 +396,18 @@ export const StepTwo: React.FC = () => {
                       : null
                   }
                   disabled={Boolean(workingCase.courtDate)}
-                  handleChange={(date) =>
+                  handleChange={(date) => console.log('handleChange', date)}
+                  handleCloseCalendar={(date) => {
                     setAndSendDateToServer(
                       'requestedCourtDate',
                       workingCase.requestedCourtDate,
                       date,
                       workingCase,
+                      true,
                       setWorkingCase,
                       updateCase,
                       setRequestedCourtDateErrorMessage,
                     )
-                  }
-                  handleCloseCalendar={(date: Date | null) => {
-                    if (date === null || !isValid(date)) {
-                      setRequestedCourtDateErrorMessage(
-                        'Reitur má ekki vera tómur',
-                      )
-                    }
                   }}
                   required
                 />

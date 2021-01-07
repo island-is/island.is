@@ -244,12 +244,13 @@ export const RulingStepOne: React.FC = () => {
                       ? new Date(workingCase.requestedCustodyEndDate)
                       : null
                   }
-                  handleChange={(date) =>
+                  handleCloseCalendar={(date) =>
                     setAndSendDateToServer(
                       'custodyEndDate',
                       workingCase.custodyEndDate,
                       date,
                       workingCase,
+                      true,
                       setWorkingCase,
                       updateCase,
                     )
