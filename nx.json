@@ -150,6 +150,9 @@
     "application-templates-health-insurance": {
       "tags": []
     },
+    "application-templates-legal-domicile-transfer": {
+      "tags": []
+    },
     "application-templates-meta-application": {
       "tags": []
     },

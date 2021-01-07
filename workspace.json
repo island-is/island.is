@@ -1591,6 +1591,28 @@
         }
       }
     },
+    "application-templates-legal-domicile-transfer": {
+      "root": "libs/application/templates/legal-domicile-transfer",
+      "sourceRoot": "libs/application/templates/legal-domicile-transfer/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/legal-domicile-transfer/tsconfig.lib.json",
+              "libs/application/templates/legal-domicile-transfer/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/legal-domicile-transfer/**/*"
+            ]
+          }
+        }
+      }
+    },
     "application-templates-meta-application": {
       "root": "libs/application/templates/meta-application",
       "sourceRoot": "libs/application/templates/meta-application/src",
