@@ -85,6 +85,7 @@ class ClientsList extends Component {
                     <tr>
                       <th>Client Id</th>
                       <th>Description</th>
+                      <th>Type</th>
                       <th colSpan={2}></th>
                     </tr>
                   </thead>
@@ -97,6 +98,7 @@ class ClientsList extends Component {
                         >
                           <td>{client.clientId}</td>
                           <td>{client.description}</td>
+                          <td>{client.clientType}</td>
                           <td className="clients__table__button">
                             <Link href={`client/${encodeURIComponent(client.clientId)}`}>
                               <button

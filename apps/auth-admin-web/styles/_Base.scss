@@ -159,6 +159,7 @@ div[class$='container__field'] {
   label {
     flex-basis: 50%;
     text-align: right;
+    text-transform: capitalize;
   }
 
   input,
@@ -332,4 +333,8 @@ footer {
   background: $color-bg-content;
   padding: 24px 12px 12px 12px;
   text-align: center;
+}
+
+.with-details {
+  margin-bottom: 35px;
 }

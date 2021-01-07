@@ -23,8 +23,15 @@
     padding: 0 10px 20px 10px;
   }
 
+  &__type__details {
+    padding: 8px 30px;
+    position: absolute;
+    top: 70px;
+    left: 0px;
+  }
+
   &__wrapper {
-    max-width: 1024px;
+    max-width: $width-content;
   }
   &__container {
     h1 {
@@ -53,6 +60,7 @@
       left: 15px;
       z-index: 1;
       color: $color-link;
+      text-transform: capitalize;
     }
     input,
     select {
@@ -84,6 +92,10 @@
         color: $color-error;
       }
     }
+  }
+
+  .field-with-details {
+    margin-bottom: 35px;
   }
 
   &__selected__item {

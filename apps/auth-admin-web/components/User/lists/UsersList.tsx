@@ -142,7 +142,7 @@ const UsersList: React.FC = () => {
                       <td>{user.providerSubjectId}</td>
                       <td className="overlay-container">
                         <button
-                          className="clients__button__view"
+                          className="users__button__view"
                           onClick={() => handleShowClaimsClicked(user)}
                         >
                           View claims
@@ -168,7 +168,7 @@ const UsersList: React.FC = () => {
                       </td>
                       <td>
                         <button
-                          className={`clients__button__delete ${
+                          className={`users__button__delete ${
                             user.active === true
                               ? 'button__warning'
                               : 'button__ok'

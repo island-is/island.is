@@ -1,9 +1,7 @@
-import { IdpRestrictionDTO } from '../idp-restriction.dto';
-
 export abstract class ClientBaseDTO {
   constructor() {
     this.nationalId = '';
-    this.clientType = 'spa';
+    this.clientType = '';
     this.allowOfflineAccess = false;
     this.identityTokenLifetime = 3600;
     this.accessTokenLifetime = 3600;
@@ -40,7 +38,6 @@ export abstract class ClientBaseDTO {
     this.description = null;
     this.protocolType = '';
     this.requireClientSecret = true;
-    this.idpRestrictions = [];
   }
 
   nationalId: string;
