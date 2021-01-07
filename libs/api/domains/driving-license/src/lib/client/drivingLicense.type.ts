@@ -8,6 +8,7 @@ export interface DrivingLicenseResponse {
   gildirTil: string
   nrUtgafustadur: number
   nafnUtgafustadur: string
+  erBradabirgda: boolean
   rettindi: {
     id: number
     nr: string
