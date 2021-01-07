@@ -42,6 +42,7 @@ export const InstitutionPanel = ({
         >
           <Box
             component="img"
+            alt=""
             src={img ? img : '/assets/skjaldarmerki.svg'}
             width="full"
           />
