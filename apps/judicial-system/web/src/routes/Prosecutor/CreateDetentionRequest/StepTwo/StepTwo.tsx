@@ -279,6 +279,7 @@ export const StepTwo: React.FC = () => {
         }
       case CaseState.DRAFT:
       case CaseState.SUBMITTED:
+      case CaseState.RECEIVED:
         return true
       default:
         return false
