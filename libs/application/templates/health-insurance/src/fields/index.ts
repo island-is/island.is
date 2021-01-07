@@ -6,3 +6,4 @@ export { default as MissingInfoRemarks } from './MissingInfoRemarks/MissingInfoR
 export { default as InfoMessage } from './InfoMessage/InfoMessage'
 export { default as ConfirmationScreen } from './ConfirmationScreen/ConfirmationScreen'
 export { default as TextWithTooltip } from './TextWithTooltip/TextWithTooltip'
+export { default as ErrorModal } from './ErrorModal/ErrorModal'

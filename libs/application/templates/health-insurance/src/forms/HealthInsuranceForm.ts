@@ -21,6 +21,7 @@ import { m } from './messages'
 import { YES, NO } from '../constants'
 import { StatusTypes } from '../types'
 import Logo from '../assets/Logo'
+import { isValidCountry } from '../fields/healthInsuranceUtils'
 
 export const HealthInsuranceForm: Form = buildForm({
   id: 'HealthInsuranceDraft',
@@ -61,6 +62,17 @@ export const HealthInsuranceForm: Form = buildForm({
               subTitle: m.internalRevenueSubTitle,
             }),
           ],
+        }),
+        buildCustomField({
+          id: 'errorModal',
+          component: 'ErrorModal',
+          title: '',
+          condition: (answers, externalData) => {
+            const previousCountry = (externalData.nationalRegistry?.data as {
+              previousCountry?: string
+            })?.previousCountry
+            return previousCountry ? !isValidCountry(previousCountry) : false
+          },
         }),
         buildMultiField({
           id: 'confirmationOfResidency',
@@ -369,7 +381,7 @@ export const HealthInsuranceForm: Form = buildForm({
               condition: {
                 questionId: 'additionalInfo.hasAdditionalInfo',
                 isMultiCheck: false,
-                comparator: Comparators.GTE,
+                comparator: Comparators.EQUALS,
                 value: YES,
               },
             }),
