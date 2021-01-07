@@ -46,7 +46,7 @@ An access token allows access to an API resource. Clients request access tokens 
 4. ****The client forwards the access token to the API for validation.
 5. ****When the API has validated the access token then the client gets access to the user’s resources.
 
-![The%20authentication%20service%20provision%209ee0b33ed36c46c1adeacdd1baf7a4a4/Untitled.png](The%20authentication%20service%20provision%209ee0b33ed36c46c1adeacdd1baf7a4a4/Untitled.png)
+![authentication-service-provision/untitled.png](authentication-service-provision/untitled.png)
 
 ## Software development process
 
@@ -56,4 +56,4 @@ An access token allows access to an API resource. Clients request access tokens 
 4. ****When code is to be released, a release-branch is created by a third party from the main-branch. This triggers a GitHub-action which deploys it to the Staging-environment.
 5. ****When the deployment on Staging has been tested and approved then the code is deployed to the Production-environment by a third party.
 
-![The%20authentication%20service%20provision%209ee0b33ed36c46c1adeacdd1baf7a4a4/Untitled%201.png](The%20authentication%20service%20provision%209ee0b33ed36c46c1adeacdd1baf7a4a4/Untitled%201.png)
+![authentication-service-provision/untitled-1.png](authentication-service-provision/untitled-1.png)
