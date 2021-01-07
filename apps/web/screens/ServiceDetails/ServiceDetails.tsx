@@ -149,15 +149,16 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                 </Box>
                 <Box marginBottom={2} display={['none', 'none', 'inline']}>
                   {/* Show when NOT a device */}
-                  <Breadcrumbs>
-                    <Link href={n('linkIslandIs')}>
-                      {n('linkIslandIsText')}
-                    </Link>
-                    <a href={n('linkThroun')}>{n('linkThrounText')}</a>
-                    <a href={n('linkServiceList')}>
-                      {n('linkServiceListText')}
-                    </a>
-                  </Breadcrumbs>
+                  <Breadcrumbs
+                    items={[
+                      { title: n('linkIslandIsText'), href: n('linkIslandIs') },
+                      { title: n('linkThrounText'), href: n('linkThroun') },
+                      {
+                        title: n('linkServiceListText'),
+                        href: n('linkServiceList'),
+                      },
+                    ]}
+                  />
                 </Box>
                 {!service ? (
                   <Box>

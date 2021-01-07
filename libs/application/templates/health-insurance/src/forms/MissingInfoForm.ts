@@ -75,10 +75,10 @@ export const MissingInfoForm: Form = buildForm({
             }),
           ],
         }),
-        buildDescriptionField({
-          id: 'successfulSubmission',
-          title: m.succesfulSubmissionTitle,
-          description: m.succesfulSubmissionMessage,
+        buildCustomField({
+          id: 'successfulSubmissionMissingInfo',
+          title: '',
+          component: 'ConfirmationScreen',
         }),
       ],
     }),

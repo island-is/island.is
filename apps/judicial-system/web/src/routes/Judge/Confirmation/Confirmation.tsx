@@ -91,8 +91,8 @@ const SigningModal: React.FC<SigningModalProps> = ({
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
 
   const transitionCase = useCallback(async () => {
-    if (workingCase.state === CaseState.SUBMITTED) {
-      // Transition case from submitted state to either accepted or rejected
+    if (workingCase.state === CaseState.RECEIVED) {
+      // Transition case from received state to either accepted or rejected
       try {
         // Parse the transition request
         const transitionRequest = parseTransition(

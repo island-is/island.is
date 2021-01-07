@@ -8,7 +8,7 @@ import {
   Hidden,
   Stack,
   Typography,
-  Breadcrumbs,
+  BreadcrumbsDeprecated as Breadcrumbs,
   ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'
 

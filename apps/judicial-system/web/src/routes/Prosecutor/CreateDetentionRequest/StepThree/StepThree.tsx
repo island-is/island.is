@@ -423,7 +423,9 @@ export const StepThree: React.FC = () => {
                     minDate={new Date()}
                     hasError={requestedCustodyEndDateErrorMessage !== ''}
                     errorMessage={requestedCustodyEndDateErrorMessage}
+
                     handleCloseCalendar={(date) =>
+
                       setAndSendDateToServer(
                         'requestedCustodyEndDate',
                         workingCase.requestedCustodyEndDate,
