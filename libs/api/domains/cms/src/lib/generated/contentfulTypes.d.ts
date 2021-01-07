@@ -620,6 +620,9 @@ export interface IGenericOverviewPageFields {
   /** Intro */
   intro?: Document | undefined
 
+  /** Page Identifier */
+  pageIdentifier: string
+
   /** Navigation */
   navigation: IMenu
 }

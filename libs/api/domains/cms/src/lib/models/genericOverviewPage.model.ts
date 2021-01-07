@@ -11,6 +11,9 @@ export class GenericOverviewPage {
   @Field()
   title: string
 
+  @Field()
+  pageIdentifier: string
+
   @Field(() => Html, { nullable: true })
   intro: Html
 
@@ -24,6 +27,7 @@ export const mapGenericOverviewPage = ({
 }: IGenericOverviewPage): GenericOverviewPage => ({
   id: sys.id,
   title: fields.title ?? '',
+  pageIdentifier: fields.pageIdentifier ?? '',
   intro: (fields.intro && mapHtml(fields.intro, sys.id + ':intro')) ?? null,
   navigation: mapMenu(fields.navigation),
 })

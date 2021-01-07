@@ -5,7 +5,7 @@ import { IsString } from 'class-validator'
 export class GetGenericOverviewPageInput {
   @Field()
   @IsString()
-  slug: string
+  pageIdentifier: string
 
   @Field()
   @IsString()
