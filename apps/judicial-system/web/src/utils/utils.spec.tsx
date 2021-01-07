@@ -341,7 +341,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Beiðni um gæslu á hendur, Mikki Refur kt.1212121299, er hafnað.'
+            'Beiðni um gæslu á hendur, Mikki Refur kt.121212-1299, er hafnað.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(

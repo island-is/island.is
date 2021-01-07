@@ -44,7 +44,7 @@ import {
   validateAndSetTime,
   setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import BlueBox from 'apps/judicial-system/web/src/shared-components/BlueBox/BlueBox'
+import BlueBox from '@island.is/judicial-system-web/src/shared-components/BlueBox/BlueBox'
 
 interface CaseData {
   case?: Case
@@ -285,7 +285,11 @@ export const RulingStepOne: React.FC = () => {
                 <GridColumn span="6/12">
                   <DatePicker
                     id="custodyEndDate"
-                    label="Gæsluvarðhald til"
+                    label={
+                      workingCase.decision === CaseDecision.ACCEPTING
+                        ? 'Gæsluvarðhald til'
+                        : 'Farbann til'
+                    }
                     placeholderText="Veldu dagsetningu"
                     locale="is"
                     selected={

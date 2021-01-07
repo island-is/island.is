@@ -51,7 +51,7 @@ export const constructConclusion = (workingCase: Case) => {
           variant="intro"
           color="blue400"
           fontWeight="semiBold"
-        >{`${workingCase.accusedName} kt.${formatNationalId(
+        >{` ${workingCase.accusedName} kt.${formatNationalId(
           workingCase.accusedNationalId,
         )}`}</Text>
         , er hafnað.
@@ -177,10 +177,12 @@ export const constructProsecutorDemands = (workingCase: Case) => {
       Þess er krafist að
       <Text as="span" fontWeight="semiBold">
         {` ${workingCase.accusedName}, kt.
-        ${formatNationalId(workingCase.accusedNationalId)} `}
+        ${formatNationalId(workingCase.accusedNationalId)}`}
       </Text>
-      , verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi
-      til
+      {`, verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi ${
+        workingCase.alternativeTravelBan ? ', farbanni til vara,' : ''
+      }
+      til`}
       <Text as="span" fontWeight="semiBold">
         {` ${formatDate(workingCase.requestedCustodyEndDate, 'EEEE')?.replace(
           'dagur',
