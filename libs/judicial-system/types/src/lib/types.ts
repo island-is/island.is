@@ -22,6 +22,7 @@ export enum CaseState {
   NEW = 'NEW',
   DRAFT = 'DRAFT',
   SUBMITTED = 'SUBMITTED',
+  RECEIVED = 'RECEIVED',
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
   DELETED = 'DELETED',
@@ -30,6 +31,7 @@ export enum CaseState {
 export enum CaseTransition {
   OPEN = 'OPEN',
   SUBMIT = 'SUBMIT',
+  RECEIVE = 'RECEIVE',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
   DELETE = 'DELETE',
