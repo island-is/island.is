@@ -9,11 +9,11 @@ It supports different login-methods, customizable for each client.
 **Types of authentication**
 
 - **Mobile-authentication**
-It is possible to log in to [Digital Iceland](https://island.is/) with an electronic authentication on mobile phone.
+  It is possible to log in to [Digital Iceland](https://island.is/) with an electronic authentication on mobile phone.
 - **Card-authentication**
-It is also possible to log in to [Digital Iceland](https://island.is/) with an electronic authentication using a personal certificate card.
+  It is also possible to log in to [Digital Iceland](https://island.is/) with an electronic authentication using a personal certificate card.
 - **Smart-ID**
 
-    **Smart-ID** is an authentication service which is in development by **Auðkenni ehf**.
+  **Smart-ID** is an authentication service which is in development by **Auðkenni ehf**.
 
 ![introduction/41.png](introduction/41.png)

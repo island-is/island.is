@@ -32,7 +32,7 @@ Resources are something you want to protect with **IdentityServer** - either ide
 
 ### Identity token
 
-An identity token is created during the authentication procedure of **IdentityServer**. It contains at a bare minimum an identifier for the user (called the *sub* aka *subject claim*) and information about how and when the user authenticated.
+An identity token is created during the authentication procedure of **IdentityServer**. It contains at a bare minimum an identifier for the user (called the _sub_ aka _subject claim_) and information about how and when the user authenticated.
 
 ### Access token
 
@@ -40,20 +40,20 @@ An access token allows access to an API resource. Clients request access tokens 
 
 ### Authentication flow
 
-1. ****The service provider writes a code to connect with **[Identity server](https://identityserver.io/)**‘s authentication service. The user’s identity is defined as a *sub* (*subject claim*) in the code.
-2. ****When the users’ clients request authentication then **IdentityServer** receives the *sub*. Accordingly, **IdentityServer** includes the *sub* in the identity token which it creates to connect the clients with the resources. During the same procedure **IdentityServer** also creates the access token.
+1. \***\*The service provider writes a code to connect with **[Identity server](https://identityserver.io/)\**‘s authentication service. The user’s identity is defined as a *sub* (*subject claim\*) in the code.
+2. \***\*When the users’ clients request authentication then **IdentityServer** receives the _sub_. Accordingly, **IdentityServer** includes the _sub_ in the identity token which it creates to connect the clients with the resources. During the same procedure **IdentityServer\*\* also creates the access token.
 3. **IdentityServer** sends the identity token and the access token to the client.
-4. ****The client forwards the access token to the API for validation.
-5. ****When the API has validated the access token then the client gets access to the user’s resources.
+4. \*\*\*\*The client forwards the access token to the API for validation.
+5. \*\*\*\*When the API has validated the access token then the client gets access to the user’s resources.
 
 ![authentication-service-provision/untitled.png](authentication-service-provision/untitled.png)
 
 ## Software development process
 
-1. ****The service-provider’s code is source-controlled in **GitHub**.
-2. ****When there are code changes then the developer commits the new code and pushes to GitHub.
-3. ****The developer creates a ‘pull request’ for his code changes which another developer must accept in order for the code to be merged with the main development branch. This triggers a GitHub-action which builds the code and deploys to the Development-environment.
-4. ****When code is to be released, a release-branch is created by a third party from the main-branch. This triggers a GitHub-action which deploys it to the Staging-environment.
-5. ****When the deployment on Staging has been tested and approved then the code is deployed to the Production-environment by a third party.
+1. \***\*The service-provider’s code is source-controlled in **GitHub\*\*.
+2. \*\*\*\*When there are code changes then the developer commits the new code and pushes to GitHub.
+3. \*\*\*\*The developer creates a ‘pull request’ for his code changes which another developer must accept in order for the code to be merged with the main development branch. This triggers a GitHub-action which builds the code and deploys to the Development-environment.
+4. \*\*\*\*When code is to be released, a release-branch is created by a third party from the main-branch. This triggers a GitHub-action which deploys it to the Staging-environment.
+5. \*\*\*\*When the deployment on Staging has been tested and approved then the code is deployed to the Production-environment by a third party.
 
 ![authentication-service-provision/untitled-1.png](authentication-service-provision/untitled-1.png)
