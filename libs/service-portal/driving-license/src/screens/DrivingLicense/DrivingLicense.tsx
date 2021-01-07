@@ -1,22 +1,11 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
-import { MessageDescriptor, defineMessage } from 'react-intl'
+import { defineMessage } from 'react-intl'
+import { gql, useQuery } from '@apollo/client'
 
-import {
-  ServicePortalModuleComponent,
-  ServicePortalPath,
-} from '@island.is/service-portal/core'
+import { Query } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Inline,
-  Stack,
-  ArrowLink,
-  Tag,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
+import { Application, Eligibility } from './components'
 
 type Data = {
   heading: MessageDescriptor | string
@@ -24,60 +13,21 @@ type Data = {
   link: string
 }
 
-const data: Data[] = [
-  {
-    heading: defineMessage({
-      id: 'service.portal:driving-license-general-license-title',
-      defaultMessage: 'Almenn ökuréttindi',
-    }),
-    subtext: defineMessage({
-      id: 'sp.driving-license:general-license-subtext',
-      defaultMessage:
-        'Ökunám á fólksbifreið getur hafist við 16 ára aldur en ökuréttindi eru fyrst veitt við 17 ára aldur. Réttindi til að aka bifhjóli (skellinöðru) er hægt að fá 15 ára og dráttarvél 16 ára. Til að hefja ökunám þarf að hafa samband við löggiltan ökukennara. Hann hefur umsjón með bæði verklegum og bóklegum hluta námsins og vísar á ökuskóla þar sem bóklegt nám fer fram.',
-    }),
-    link: ServicePortalPath.ParentalLeave,
-  },
-  {
-    heading: defineMessage({
-      id: 'service.portal:driving-license-final-license-heading',
-      defaultMessage: 'Fullnaðarskírteini',
-    }),
-    subtext: defineMessage({
-      id: 'service.portal:driving-license-final-license-subtext',
-      defaultMessage:
-        'Ökumaður getur fengið fullnaðarskírteini, hafi hann haft bráðabirgðaskírteini samfellt í 12 mánuði og ekki á þeim tíma fengið punkta í punktakerfi vegna umferðarlagabrota og farið í akstursmat.',
-    }),
-    link: ServicePortalPath.DrivingLicense,
-  },
-  {
-    heading: defineMessage({
-      id: 'service.portal:driving-license-renewal-heading',
-      defaultMessage: 'Endurnýjun ökuskírteinis vegna aldurs',
-    }),
-    subtext: defineMessage({
-      id: 'service.portal:driving-license-renewal-subtext',
-      defaultMessage:
-        'Almenn ökuréttindi (B réttindi) þarf að endurnýja við 70 ára aldur. Nýja ökuskírteinið gildir í 4 ár. Eftir það þarf að endurnýja það þriðja og annað hvert ár en eftir 80 ára aldur á árs fresti.',
-    }),
-    link: ServicePortalPath.DrivingLicense,
-  },
-  {
-    heading: defineMessage({
-      id: 'service.portal:driving-license-trucks-heading',
-      defaultMessage: 'Dráttarvélar',
-    }),
-    subtext: defineMessage({
-      id: 'service.portal:driving-license-trucks-subtext',
-      defaultMessage:
-        'Almenn ökuréttindi (B réttindi) þarf að endurnýja við 70 ára aldur. Nýja ökuskírteinið gildir í 4 ár. Eftir það þarf að endurnýja það þriðja og annað hvert ár en eftir 80 ára aldur á árs fresti.',
-    }),
-    link: ServicePortalPath.DrivingLicense,
-  },
-]
+const NationalRegistryUserQuery = gql`
+  query NationalRegistryUserQuery {
+    nationalRegistryUser {
+      nationalId
+      age
+    }
+  }
+`
 
 function DrivingLicense(): JSX.Element {
   useNamespaces('sp.driving-license')
   const { formatMessage } = useLocale()
+
+  const { data } = useQuery<Query>(NationalRegistryUserQuery)
+  const { nationalRegistryUser } = data || {}
 
   return (
     <Box marginBottom={[6, 6, 10]}>
