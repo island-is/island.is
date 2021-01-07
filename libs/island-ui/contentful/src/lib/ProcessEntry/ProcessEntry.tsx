@@ -98,7 +98,7 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
       {...(fixed ? fixedProps : defaultProps)}
     >
       <Box marginRight={fixed ? 2 : [0, 2]} marginBottom={fixed ? 0 : [3, 0]}>
-        <Text variant={fixed ? 'eyebrow' : 'h3'} as="h3" color="blue600">
+        <Text variant={fixed ? 'eyebrow' : 'h3'} color="blue600">
           {processTitle}
         </Text>
       </Box>
