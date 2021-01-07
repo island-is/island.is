@@ -374,11 +374,10 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       <select
                         name="client.accessTokenType"
                         className="client__select"
-                        defaultValue={client.accessTokenType}
                         ref={register({ required: true })}
                       >
-                        <option value={0}>JWT</option>
-                        <option value={1}>Reference</option>
+                        <option value={0} selected={client.accessTokenType === 0}>JWT</option>
+                        <option value={1} selected={client.accessTokenType === 1}>Reference</option>
                       </select>
                       <HelpBox helpText="Specifies whether the access token is a reference token or a self contained JWT token (defaults to Jwt)." />
                       <ErrorMessage
@@ -478,11 +477,10 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       <select
                         name="client.refreshTokenUsage"
                         className="client__select"
-                        defaultValue={client.refreshTokenUsage}
                         ref={register({ required: true })}
                       >
-                        <option value={0}>ReUse</option>
-                        <option value={1}>OneTime</option>
+                        <option value={0} selected={client.refreshTokenUsage === 0}>ReUse</option>
+                        <option value={1} selected={client.refreshTokenUsage === 1}>OneTime</option>
                       </select>
                       <HelpBox
                         helpText='"ReUse" the refresh token handle will stay the same when refreshing tokens. 
@@ -497,11 +495,10 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       <select
                         name="client.refreshTokenExpiration"
                         className="client__select"
-                        defaultValue={client.refreshTokenExpiration}
                         ref={register({ required: true })}
                       >
-                        <option value={0}>Sliding</option>
-                        <option value={1}>Absolute</option>
+                        <option value={0} selected={client.refreshTokenExpiration === 0}>Sliding</option>
+                        <option value={1} selected={client.refreshTokenExpiration === 1}>Absolute</option>
                       </select>
                       <HelpBox
                         helpText="Absolute the refresh token will expire on a fixed point in time (specified by the AbsoluteRefreshTokenLifetime)
