@@ -16,4 +16,4 @@ It is also possible to log in to [Digital Iceland](https://island.is/) with an e
 
     **Smart-ID** is an authentication service which is in development by **Auðkenni ehf**.
 
-![Introduction%2097f1566c8417425c925d8a4173990448/41.png](Introduction%2097f1566c8417425c925d8a4173990448/41.png)
+![introduction/41.png](introduction/41.png)

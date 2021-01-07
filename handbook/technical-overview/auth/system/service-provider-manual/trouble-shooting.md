@@ -5,23 +5,23 @@ The [Datadog](https://app.datadoghq.eu/) webpage for Digital Iceland can be usef
 - In the search bar filters can be added, for instance a part of an URI or status errors like 403, 404, 500 etc.
 - Choose the time-period which the log-list is supposed to cover in the drop-down panel on the top-right. For best performance select short time span, for example **Past 15 minutes**. If **Live Tail** is selected then the service can be monitored in real time.
 
-![Trouble-shooting%2022039b2e276a4a76be080878f9694d88/Untitled.png](Trouble-shooting%2022039b2e276a4a76be080878f9694d88/Untitled.png)
+![Trouble-shooting/untitled.png](trouble-shooting/untitled.png)
 
-![Trouble-shooting%2022039b2e276a4a76be080878f9694d88/Untitled%201.png](Trouble-shooting%2022039b2e276a4a76be080878f9694d88/Untitled%201.png)
+![trouble-shooting/untitled-1.png](trouble-shooting/untitled-1.png)
 
 - Select **Logs** from the toolbar on the left when entering the page.
 - After that select the appropriate environment that you want to look at from the **Env**
 
-![Trouble-shooting%2022039b2e276a4a76be080878f9694d88/Untitled%202.png](Trouble-shooting%2022039b2e276a4a76be080878f9694d88/Untitled%202.png)
+![trouble-shooting/untitled-2.png](trouble-shooting/untitled-2.png)
 
 - Then choose **identity-server** and **services-auth-api** as a **Service**.
 - If the purpose is to follow the admin service then choose **services-auth-admin-api** as a **Service**.
 - Finally select the **Status** that the list is going to show. Check into the appropriate status. When looking for errors check into the following: **Emergency**, **Alert**, **Critical** and **Error**.
 
-![Trouble-shooting%2022039b2e276a4a76be080878f9694d88/Untitled%203.png](Trouble-shooting%2022039b2e276a4a76be080878f9694d88/Untitled%203.png)
+![trouble-shooting/untitled-3.png](trouble-shooting/untitled-3.png)
 
 - Now the list should show the faults which have been diagnosed in Datadog. Further information about the content of the chosen log will appear if a line from the list is selected. The selected log can be exported:
 
-![Trouble-shooting%2022039b2e276a4a76be080878f9694d88/Untitled%204.png](Trouble-shooting%2022039b2e276a4a76be080878f9694d88/Untitled%204.png)
+![trouble-shooting/untitled-4.png](trouble-shooting/untitled-4.png)
 
-![Trouble-shooting%2022039b2e276a4a76be080878f9694d88/Untitled%205.png](Trouble-shooting%2022039b2e276a4a76be080878f9694d88/Untitled%205.png)
+![trouble-shooting/untitled-5.png](trouble-shooting/untitled-5.png)
