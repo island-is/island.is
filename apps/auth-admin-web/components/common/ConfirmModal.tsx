@@ -29,10 +29,18 @@ const ConfirmModal: React.FC<Props> = (props: Props) => {
 
         <div className="confirm-modal__container__buttons">
           <div className="confirm-modal__container__button">
-            <button onClick={props.closeModal} className="confirm-modal__button__cancel">Cancel</button>
+            <button
+              onClick={props.closeModal}
+              className="confirm-modal__button__cancel"
+            >
+              Cancel
+            </button>
           </div>
           <div className="confirm-modal__container__button">
-            <button onClick={props.confirmation} className="confirm-modal__button__delete">
+            <button
+              onClick={props.confirmation}
+              className="confirm-modal__button__delete"
+            >
               {props.confirmationText}
             </button>
           </div>

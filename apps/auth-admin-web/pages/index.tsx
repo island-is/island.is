@@ -9,7 +9,10 @@ export default function Home() {
     <ContentWrapper>
       <div className="home">
         <div className="home__info">
-          Here comes a description about the site .. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Modi animi officiis ullam perferendis blanditiis rerum ex sapiente laborum facere eaque. Excepturi sunt tempore ex ducimus nulla repudiandae voluptatum, nam veniam.
+          Here comes a description about the site .. Lorem ipsum dolor sit amet,
+          consectetur adipisicing elit. Modi animi officiis ullam perferendis
+          blanditiis rerum ex sapiente laborum facere eaque. Excepturi sunt
+          tempore ex ducimus nulla repudiandae voluptatum, nam veniam.
         </div>
         <div className="home__shortcuts">
           <div className="home__shortcuts__item">
@@ -33,7 +36,9 @@ export default function Home() {
               Shortcut to create a client
             </div>
             <div className="home__shortcuts__item__link">
-              <Link href="/client"><a>Create a new client</a></Link>
+              <Link href="/client">
+                <a>Create a new client</a>
+              </Link>
             </div>
           </div>
 
@@ -42,12 +47,12 @@ export default function Home() {
               Shortcut to create an API Resource
             </div>
             <div className="home__shortcuts__item__link">
-              <Link href="/api-resource"><a>Create a new client</a></Link>
+              <Link href="/api-resource">
+                <a>Create a new client</a>
+              </Link>
             </div>
           </div>
-
         </div>
-
       </div>
     </ContentWrapper>
   );

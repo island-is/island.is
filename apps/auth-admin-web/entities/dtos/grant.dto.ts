@@ -1,17 +1,17 @@
 export class GrantDto {
   constructor() {
-    this.key = "";
-    this.type = "";
-    this.subjectId = "";
-    this.sessionId = "";
-    this.clientId = "";
+    this.key = '';
+    this.type = '';
+    this.subjectId = '';
+    this.sessionId = '';
+    this.clientId = '';
     this.description = null;
     this.creationTime = new Date();
     this.expiration = new Date(
       new Date().setTime(new Date().getTime() + 86400000)
     );
     this.consumedTime = null;
-    this.data = "";
+    this.data = '';
   }
 
   key: string;

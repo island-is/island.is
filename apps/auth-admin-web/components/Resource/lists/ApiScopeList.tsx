@@ -64,7 +64,8 @@ export default function ApiScopeList() {
   const setHeaderElement = () => {
     return (
       <p>
-        Are you sure want to archive this Api scope: <span>{scopeToRemove}</span>
+        Are you sure want to archive this Api scope:{' '}
+        <span>{scopeToRemove}</span>
       </p>
     );
   };

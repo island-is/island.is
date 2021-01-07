@@ -15,7 +15,9 @@ export default function IdentityResourcesList() {
   const [resourceToRemove, setResourceToRemove] = React.useState('');
 
   const edit = (resource: IdentityResourcesDTO) => {
-    router.push(`/resource/identity-resource/${encodeURIComponent(resource.name)}`);
+    router.push(
+      `/resource/identity-resource/${encodeURIComponent(resource.name)}`
+    );
   };
 
   const getResources = async (page: number, count: number) => {

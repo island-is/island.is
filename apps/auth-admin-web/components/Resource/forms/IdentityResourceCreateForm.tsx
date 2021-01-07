@@ -12,7 +12,12 @@ interface Props {
 }
 
 const IdentityResourceCreateForm: React.FC<Props> = (props) => {
-  const { register, handleSubmit, errors, formState } = useForm<IdentityResourcesDTO>();
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+  } = useForm<IdentityResourcesDTO>();
   const { isSubmitting } = formState;
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [available, setAvailable] = useState<boolean>(false);
@@ -55,10 +60,16 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
     <div className="api-scope-form">
       <div className="api-scope-form__wrapper">
         <div className="api-scope-form__container">
-          <h1>{isEditing ? 'Edit Identity Resource' : 'Create Identity Resource'}</h1>
+          <h1>
+            {isEditing ? 'Edit Identity Resource' : 'Create Identity Resource'}
+          </h1>
           <div className="api-scope-form__container__form">
             <div className="api-scope-form__help">
-            Identity resources are data like user ID, name, or email address of a user. An identity resource has a unique name, and you can assign arbitrary claim types to it. These claims will then be included in the identity token for the user. The client will use the scope parameter to request access to an identity resource.
+              Identity resources are data like user ID, name, or email address
+              of a user. An identity resource has a unique name, and you can
+              assign arbitrary claim types to it. These claims will then be
+              included in the identity token for the user. The client will use
+              the scope parameter to request access to an identity resource.
             </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="api-scope-form__container__fields">
@@ -159,7 +170,9 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     id="showInDiscoveryDocument"
                     name="showInDiscoveryDocument"
                     type="checkbox"
-                    defaultChecked={props.identityResource.showInDiscoveryDocument}
+                    defaultChecked={
+                      props.identityResource.showInDiscoveryDocument
+                    }
                     className="api-scope-form__checkbox"
                   />
                   <HelpBox helpText="Specifies whether this scope is shown in the discovery document." />

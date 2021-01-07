@@ -1,9 +1,9 @@
 export class ApiScopesDTO {
   constructor() {
     this.enabled = true;
-    this.name = "";
-    this.displayName = "";
-    this.description = "";
+    this.name = '';
+    this.displayName = '';
+    this.description = '';
     this.showInDiscoveryDocument = true;
     this.required = false;
     this.emphasize = false;

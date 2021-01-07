@@ -6,8 +6,8 @@ import ApiResourcesList from '../../../components/Resource/lists/ApiResourcesLis
 export default function Index() {
   return (
     <ContentWrapper>
-        <ResourcesTabsNav />         
-        <ApiResourcesList />
+      <ResourcesTabsNav />
+      <ApiResourcesList />
     </ContentWrapper>
   );
 }

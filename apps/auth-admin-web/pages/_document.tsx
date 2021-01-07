@@ -1,7 +1,7 @@
-import React from "react";
-import Document, { Html, Head, Main, NextScript } from "next/document";
-import Nav from "../components/Layout/Nav";
-import Header from "../components/Layout/Header";
+import React from 'react';
+import Document, { Html, Head, Main, NextScript } from 'next/document';
+import Nav from '../components/Layout/Nav';
+import Header from '../components/Layout/Header';
 
 interface Props {
   lang: string;

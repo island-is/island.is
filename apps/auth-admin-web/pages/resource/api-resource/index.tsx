@@ -7,19 +7,25 @@ import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
 
 export default function Index() {
   const router = useRouter();
-  
+
   const handleSave = (data: ApiResourcesDTO) => {
-    router.push(`/resource/api-resource/${encodeURIComponent(data.name)}?step=2`);
-  }
+    router.push(
+      `/resource/api-resource/${encodeURIComponent(data.name)}?step=2`
+    );
+  };
 
   const handleCancel = () => {
     router.back();
-  }
+  };
 
   return (
     <ContentWrapper>
-      <ResourcesTabsNav />         
-      <ApiResourceCreateForm apiResource={new ApiResourcesDTO()} handleSave={handleSave} handleCancel={handleCancel} />
+      <ResourcesTabsNav />
+      <ApiResourceCreateForm
+        apiResource={new ApiResourcesDTO()}
+        handleSave={handleSave}
+        handleCancel={handleCancel}
+      />
     </ContentWrapper>
   );
 }

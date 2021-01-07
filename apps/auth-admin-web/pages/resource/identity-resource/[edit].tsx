@@ -76,13 +76,16 @@ export default function Index() {
     case IdentityResourceStep.IdentityResource: {
       return (
         <ContentWrapper>
-          <ResourcesTabsNav />         
-          <IdentityResourceStepNav activeStep={step} handleStepChange={handleStepChange}>
-          <IdentityResourceCreateForm
-            identityResource={identityResource}
-            handleSave={handleIdentityResourceSaved}
-            handleCancel={handleCancel}
-          />
+          <ResourcesTabsNav />
+          <IdentityResourceStepNav
+            activeStep={step}
+            handleStepChange={handleStepChange}
+          >
+            <IdentityResourceCreateForm
+              identityResource={identityResource}
+              handleSave={handleIdentityResourceSaved}
+              handleCancel={handleCancel}
+            />
           </IdentityResourceStepNav>
         </ContentWrapper>
       );
@@ -90,9 +93,18 @@ export default function Index() {
     case IdentityResourceStep.Claims: {
       return (
         <ContentWrapper>
-          <ResourcesTabsNav />         
-          <IdentityResourceStepNav activeStep={step} handleStepChange={handleStepChange}>
-          <IdentityResourceUserClaimsForm identityResourceName={identityResource.name} handleBack={handleBack} handleNext={handleNext} claims={identityResource.userClaims?.map(x => x.claimName)} handleChanges={changesMade} />
+          <ResourcesTabsNav />
+          <IdentityResourceStepNav
+            activeStep={step}
+            handleStepChange={handleStepChange}
+          >
+            <IdentityResourceUserClaimsForm
+              identityResourceName={identityResource.name}
+              handleBack={handleBack}
+              handleNext={handleNext}
+              claims={identityResource.userClaims?.map((x) => x.claimName)}
+              handleChanges={changesMade}
+            />
           </IdentityResourceStepNav>
         </ContentWrapper>
       );
@@ -100,9 +112,19 @@ export default function Index() {
     default: {
       return (
         <ContentWrapper>
-          <ResourcesTabsNav />         
-          <IdentityResourceStepNav activeStep={step} handleStepChange={handleStepChange}>
-          <StepEnd buttonText="Go back" title="Steps completed" handleButtonFinishedClick={() => setStep(1)}>The steps needed, to create the Identity Resource, have been completed</StepEnd>
+          <ResourcesTabsNav />
+          <IdentityResourceStepNav
+            activeStep={step}
+            handleStepChange={handleStepChange}
+          >
+            <StepEnd
+              buttonText="Go back"
+              title="Steps completed"
+              handleButtonFinishedClick={() => setStep(1)}
+            >
+              The steps needed, to create the Identity Resource, have been
+              completed
+            </StepEnd>
           </IdentityResourceStepNav>
         </ContentWrapper>
       );

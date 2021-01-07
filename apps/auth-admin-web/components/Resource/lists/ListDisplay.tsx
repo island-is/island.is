@@ -52,12 +52,17 @@ const ResourceListDisplay: React.FC<Props> = ({
                 <tbody>
                   {list.map((resource: any) => {
                     return (
-                      <tr key={resource.name} className={resource.archived ? 'archived' : ''}>
+                      <tr
+                        key={resource.name}
+                        className={resource.archived ? 'archived' : ''}
+                      >
                         <td>{resource.name}</td>
                         <td>{resource.displayName}</td>
                         <td className="identity-resources__table__button">
                           <button
-                          className={`identity-resources__button__edit${resource.archived ? ' hidden' : ''}`}
+                            className={`identity-resources__button__edit${
+                              resource.archived ? ' hidden' : ''
+                            }`}
                             onClick={() => edit(resource)}
                             title="Edit"
                           >
@@ -67,7 +72,9 @@ const ResourceListDisplay: React.FC<Props> = ({
                         </td>
                         <td className="identity-resources__table__button">
                           <button
-                          className={`identity-resources__button__delete${resource.archived ? ' hidden' : ''}`}
+                            className={`identity-resources__button__delete${
+                              resource.archived ? ' hidden' : ''
+                            }`}
                             onClick={() => remove(resource.name)}
                             title="Delete"
                           >

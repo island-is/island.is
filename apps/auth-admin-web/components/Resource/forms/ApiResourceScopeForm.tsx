@@ -17,9 +17,12 @@ interface Props {
 }
 
 const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<
-    ApiResourceScopeDTO
-  >();
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+  } = useForm<ApiResourceScopeDTO>();
   const { isSubmitting } = formState;
   const [scopes, setScopes] = useState<any>([]);
   const [selectedScope, setSelectedScope] = useState<any>(null);
@@ -92,7 +95,8 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
           <h1>Allowed scopes</h1>
           <div className="api-resource-scope-form__container__form">
             <div className="api-resource-scope-form__help">
-              Decide which information you would like applications to be able to access on a user's behalf.
+              Decide which information you would like applications to be able to
+              access on a user's behalf.
             </div>
             <form onSubmit={handleSubmit(add)}>
               <div className="api-resource-scope-form__container__fields">

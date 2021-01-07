@@ -20,7 +20,11 @@ const IdentityResourceStepNav: React.FC<Props> = ({
               onClick={() =>
                 handleStepChange(IdentityResourceStep.IdentityResource)
               }
-              className={activeStep === IdentityResourceStep.IdentityResource ? 'active' : ''}
+              className={
+                activeStep === IdentityResourceStep.IdentityResource
+                  ? 'active'
+                  : ''
+              }
             >
               Identity Resource
             </a>

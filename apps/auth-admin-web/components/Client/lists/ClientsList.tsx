@@ -100,7 +100,11 @@ class ClientsList extends Component {
                           <td>{client.description}</td>
                           <td>{client.clientType}</td>
                           <td className="clients__table__button">
-                            <Link href={`client/${encodeURIComponent(client.clientId)}`}>
+                            <Link
+                              href={`client/${encodeURIComponent(
+                                client.clientId
+                              )}`}
+                            >
                               <button
                                 type="button"
                                 className={`clients__button__edit${

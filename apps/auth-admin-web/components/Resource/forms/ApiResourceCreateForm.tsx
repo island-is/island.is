@@ -13,9 +13,12 @@ interface Props {
 }
 
 const ResourceCreateForm: React.FC<Props> = (props) => {
-  const { register, handleSubmit, errors, formState } = useForm<
-    ApiResourcesDTO
-  >();
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+  } = useForm<ApiResourcesDTO>();
   const { isSubmitting } = formState;
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [available, setAvailable] = useState<boolean>(false);
@@ -46,13 +49,13 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
     } else {
       response = await ResourcesService.updateApiResource(data, data.name);
     }
-    
+
     if (response) {
       if (props.handleSave) {
         props.handleSave(data);
       }
     }
-  }
+  };
 
   return (
     <div className="api-resource-form">
@@ -61,11 +64,13 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
           <h1>{isEditing ? 'Edit Api Resource' : 'Create Api Resource'}</h1>
           <div className="api-resource-form__container__form">
             <div className="api-resource-form__help">
-            The server hosting the protected resources, and which is capable of accepting and responding to protected resource requests using access tokens.
+              The server hosting the protected resources, and which is capable
+              of accepting and responding to protected resource requests using
+              access tokens.
             </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="api-resource-form__container__fields">
-              <div className="api-resource-form__container__field">
+                <div className="api-resource-form__container__field">
                   <label className="api-resource-form__label">
                     National Id (Kennitala)
                   </label>
