@@ -18,7 +18,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
   const [clientIdLength, setClientIdLength] = useState<number>(0);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [clientTypeSelected, setClientTypeSelected] = useState<boolean>(false);
-  const [clientTypeInfo, setClientTypeInfo] = useState<string>("");
+  const [clientTypeInfo, setClientTypeInfo] = useState<string>('');
   const client = props.client;
 
   const castToNumbers = (obj: ClientDTO): ClientDTO => {
@@ -52,6 +52,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
       setIsEditing(true);
       setAvailable(true);
       setClientTypeSelected(true);
+      setClientType(props.client.clientType);
     }
   }, [props.client]);
 
@@ -100,47 +101,43 @@ const ClientForm: React.FC<Props> = (props: Props) => {
 
   const setClientType = async (clientType: string) => {
     if (clientType) {
-      if (isEditing) {
-        // We don't want to set defaults if the user is editing
-        return;
-      }
-
       if (clientType === 'spa') {
         client.requireClientSecret = false;
         client.requirePkce = true;
 
-        setClientTypeInfo("Authorization code flow + PKCE");
+        setClientTypeInfo('Authorization code flow + PKCE');
       }
 
       if (clientType === 'native') {
         client.requireClientSecret = false;
         client.requirePkce = true;
 
-        setClientTypeInfo("Authorization code flow + PKCE");
+        setClientTypeInfo('Authorization code flow + PKCE');
       }
 
       if (clientType === 'web') {
         client.requireClientSecret = true;
         client.requirePkce = false;
 
-        setClientTypeInfo("Hybrid flow with client authentication");
+        setClientTypeInfo('Hybrid flow with client authentication');
       }
 
       if (clientType === 'machine') {
         client.requireClientSecret = true;
         client.requirePkce = false;
 
-        setClientTypeInfo("Client credentials");
+        setClientTypeInfo('Client credentials');
       }
 
       if (clientType === 'device') {
         // What are the defaults?
 
-        setClientTypeInfo("Device flow using external browser");
+        setClientTypeInfo('Device flow using external browser');
       }
 
       setClientTypeSelected(true);
     } else {
+      setClientTypeInfo('Please select a client Type');
       setClientTypeSelected(false);
     }
   };
@@ -159,6 +156,8 @@ const ClientForm: React.FC<Props> = (props: Props) => {
             </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="client__container__fields">
+
+                <div className="field-with-details">
                 <div className="client__container__field">
                   <label className="client__label">Client Type</label>
                   <select
@@ -166,22 +165,13 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                     ref={register({ required: true })}
                     title="Type of Client"
                     onChange={(e) => setClientType(e.target.value)}
-                    defaultValue={client.clientType}
                   >
-                    <option value={undefined}>Select Client Type</option>
-                    <option value="spa">Single Page App</option>
-                    <option value="native">
-                      Native
-                    </option>
-                    <option value="device">
-                      Device
-                    </option>
-                    <option value="web">
-                      Web App
-                    </option>
-                    <option value="machine">
-                      Machine
-                    </option>
+                    <option value="" selected={!client.clientType}>Select Client Type</option>
+                    <option value="spa" selected={client.clientType === 'spa'}>Single Page App</option>
+                    <option value="native" selected={client.clientType === 'native'}>Native</option>
+                    <option value="device" selected={client.clientType === 'device'}>Device</option>
+                    <option value="web" selected={client.clientType === 'web'}>Web App</option>
+                    <option value="machine" selected={client.clientType === 'machine'}>Machine</option>
                   </select>
 
                   <HelpBox helpText="Select the appropriate client Type" />
@@ -191,13 +181,10 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                     name="client.clientType"
                     message="Client Type is required"
                   />
-
-
-                  <div className={`client__type__details${clientTypeSelected ? '' : 'hidden'}`}>
-                      {clientTypeInfo}            
-
-                  </div>
+                  <div className={`client__type__details`}>{clientTypeInfo}</div>
                 </div>
+                </div>
+                
 
                 <div className={clientTypeSelected ? '' : 'hidden'}>
                   <div className="client__container__field">

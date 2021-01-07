@@ -23,6 +23,13 @@
     padding: 0 10px 20px 10px;
   }
 
+  &__type__details {
+    padding: 8px 30px;
+    position: absolute;
+    top: 70px;
+    left: 0px;
+  }
+
   &__wrapper {
     max-width: $width-content;
   }
@@ -85,6 +92,10 @@
         color: $color-error;
       }
     }
+  }
+
+  .field-with-details {
+    margin-bottom: 35px;
   }
 
   &__selected__item {

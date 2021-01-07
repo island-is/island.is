@@ -33,7 +33,7 @@ export default function Home() {
               Shortcut to create a client
             </div>
             <div className="home__shortcuts__item__link">
-              <Link href="/client">Create a new client</Link>
+              <Link href="/client"><a>Create a new client</a></Link>
             </div>
           </div>
 
@@ -42,7 +42,7 @@ export default function Home() {
               Shortcut to create an API Resource
             </div>
             <div className="home__shortcuts__item__link">
-              <Link href="/api-resource">Create a new client</Link>
+              <Link href="/api-resource"><a>Create a new client</a></Link>
             </div>
           </div>
 
