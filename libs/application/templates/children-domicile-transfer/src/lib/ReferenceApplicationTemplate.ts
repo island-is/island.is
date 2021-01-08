@@ -63,8 +63,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ExampleForm').then((module) =>
-                  Promise.resolve(module.ExampleForm),
+                import('../forms/ChildrenDomicileTransferForm').then((module) =>
+                  Promise.resolve(module.ChildrenDomicileTransferForm),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },

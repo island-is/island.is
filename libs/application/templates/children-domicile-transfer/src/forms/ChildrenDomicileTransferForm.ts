@@ -1,16 +1,22 @@
 import {
+  buildCheckboxField,
   buildForm,
+  buildDescriptionField,
+  buildMultiField,
+  buildRadioField,
   buildSection,
+  buildSubmitField,
+  buildSubSection,
   buildTextField,
+  Comparators,
   Form,
   FormModes,
+  FormValue,
+  buildRepeater,
   buildDataProviderItem,
   buildExternalDataProvider,
-  buildCheckboxField,
-  buildMultiField,
 } from '@island.is/application/core'
-
-import { Parent } from '../dataProviders/APIDataTypes'
+import { m } from './messages'
 
 export const ChildrenDomicileTransferForm: Form = buildForm({
   id: 'ChildrenDomicileTransferFormDraft',
@@ -18,137 +24,112 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'externalData',
-      title: 'Gagnaöflun',
+      id: 'dataGathering',
+      title: "Gagnaöflun",
       children: [
-        buildExternalDataProvider({
-          title: 'Gagnaöflun',
-          id: 'approveExternalData',
-          dataProviders: [
-            buildDataProviderItem({
-              id: 'childrenNationalRegistry',
-              type: 'ChildrenNationalRegistryProvider',
-              title: 'Grunnupplýsingar um börn',
-              subTitle:
-                'Nöfn, kennitölur og núverandi lögheimili barna í þinni forsjá.',
-            }),
-            buildDataProviderItem({
-              id: 'parentNationalRegistry',
-              type: 'ParentNationalRegistryProvider',
-              title: 'Grunnupplýsingar um foreldra',
-              subTitle: 'Nöfn, kennitölur og lögheimili forelda barnanna.',
-            }),
-          ],
+        buildTextField({
+          id: 'person.name',
+          title: m.name,
         }),
+        // buildSubSection({
+        //   id: 'externalData',
+        //   title: m.introSection,
+        //   children: [
+        //     buildExternalDataProvider({
+        //       title: m.introSection,
+        //       id: 'approveExternalData',
+        //       dataProviders: [
+        //         buildDataProviderItem({
+        //           id: 'userProfile',
+        //           type: 'UserProfileProvider',
+        //           title: m.introSection,
+        //           subTitle: m.introSection,
+        //         }),
+        //         buildDataProviderItem({
+        //           id: 'pregnancyStatus',
+        //           type: 'PregnancyStatus',
+        //           title: m.introSection,
+        //           subTitle: m.introSection,
+        //         }),
+        //         buildDataProviderItem({
+        //           id: 'parentalLeaves',
+        //           type: 'ParentalLeaves',
+        //           title: m.introSection,
+        //           subTitle: m.introSection,
+        //         }),
+        //       ],
+        //     }),
+        //   ],
+        // }),
       ],
     }),
     buildSection({
-      id: 'selectChildInCustody',
-      title: 'Velja barn',
+      id: 'chooseChildren',
+      title: "Velja barn",
       children: [
-        buildCheckboxField({
-          id: 'selectChild',
-          title: 'Velja barn/börn til að flytja lögheimili fyrir',
-          description:
-            'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið hvaða börn á að flytja lögheimili fyrir.',
-          large: true,
-          options: [
-            { value: '1', label: 'Ólafur Helgi Eiríksson' },
-            { value: '2', label: 'Rósa Líf Eiríksdóttir' },
-          ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'otherParent',
-      title: 'Hitt foreldri',
-      children: [
-        buildMultiField({
-          id: 'informationAboutOtherParent',
-          title: 'Fylltu inn upplýsingar um hitt foreldrið',
-          description: (application) => {
-            const parent = (application.externalData.parentNationalRegistry
-              ?.data as {
-              parent?: object
-            })?.parent as Parent
-
-            return `Hitt foreldrið er ${parent.name} (${parent.ssn})`
-          },
-          children: [
-            buildTextField({
-              id: 'email',
-              description:
-                'Til að láta hitt foreldrið vita þurfum við að fá netfang og símanúmer viðkomandi.',
-              title: 'Netfang',
-              variant: 'email',
-            }),
-            buildTextField({
-              id: 'phoneNumber',
-              title: 'Símanúmer',
-              variant: 'tel',
-              format: '###-####',
-            }),
-          ],
+        buildTextField({
+          id: 'children',
+          title: "children",
         }),
       ],
     }),
     buildSection({
       id: 'changeDomicile',
-      title: 'Breyta lögheimili',
+      title: "Breyta lögheimili",
       children: [
         buildTextField({
           id: 'children',
-          title: 'children',
+          title: "children",
         }),
       ],
     }),
     buildSection({
       id: 'transferDate',
-      title: 'Flutningur',
+      title: "Flutningur",
       children: [
         buildTextField({
           id: 'children',
-          title: 'children',
+          title: "children",
         }),
       ],
     }),
     buildSection({
       id: 'transferPeriod',
-      title: 'Gildistími',
+      title: "Gildistími",
       children: [
         buildTextField({
           id: 'children',
-          title: 'children',
+          title: "children",
         }),
       ],
     }),
     buildSection({
       id: 'applicationEffect',
-      title: 'Áhrif umsóknar',
+      title: "Áhrif umsóknar",
       children: [
         buildTextField({
           id: 'children',
-          title: 'children',
+          title: "children",
         }),
       ],
     }),
     buildSection({
       id: 'overview',
-      title: 'Yfirlit og undirritun',
+      title: "Yfirlit og undirritun",
       children: [
         buildTextField({
           id: 'children',
-          title: 'children',
+          title: "children",
         }),
       ],
     }),
     buildSection({
       id: 'submitted',
-      title: 'Umsókn móttekin',
+      title: "Umsókn móttekin",
       children: [
         buildTextField({
           id: 'children',
-          title: 'children',
+          title: "children",
         }),
       ],
     }),
