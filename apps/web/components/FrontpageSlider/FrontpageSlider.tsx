@@ -27,8 +27,8 @@ import { useI18n } from '../../i18n'
 import { theme } from '@island.is/island-ui/theme'
 import LottieLoader from './LottiePlayer/LottieLoader'
 import * as styles from './FrontpageSlider.treat'
-import { GlobalContext } from 'apps/web/context'
-import { useNamespace } from 'apps/web/hooks'
+import { GlobalContext } from '@island.is/web/context'
+import { useNamespace } from '@island.is/web/hooks'
 
 type Slides = {
   subtitle?: string
