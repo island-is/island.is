@@ -41,8 +41,6 @@ export const getAppealDecisionText = (
   }
 }
 
-export const constructRestrictions = (workingCase: Case) => {}
-
 export const constructConclusion = (workingCase: Case) => {
   if (workingCase.decision === CaseDecision.REJECTING) {
     return (
@@ -72,17 +70,9 @@ export const constructConclusion = (workingCase: Case) => {
           skal sæta gæsluvarðhaldi, þó ekki lengur en til
         </Text>
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
-          {` ${formatDate(workingCase.requestedCustodyEndDate, 'EEEE')?.replace(
-            'dagur',
-            'dagsins',
-          )}
-    ${formatDate(workingCase.requestedCustodyEndDate, 'PPP')}, kl. ${formatDate(
-            workingCase.requestedCustodyEndDate,
-            TIME_FORMAT,
-          )}. `}
+          {` ${formatDate(workingCase.custodyEndDate, 'PPPp')}. `}
         </Text>
-        {workingCase.decision === CaseDecision.ACCEPTING &&
-        workingCase.custodyRestrictions?.includes(
+        {workingCase.custodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ) ? (
           <>
