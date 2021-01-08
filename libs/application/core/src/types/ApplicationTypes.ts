@@ -7,5 +7,5 @@ export enum ApplicationTypes {
   META_APPLICATION = 'MetaApplication',
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
   HEALTH_INSURANCE = 'HealthInsurance',
-  LEGAL_DOMICILE_TRANSFER = 'LegalDomicileTransfer',
+  CHILDREN_DOMICILE_TRANSFER = 'ChildrenDomicileTransfer',
 }
