@@ -24,8 +24,8 @@ module.exports = {
     return queryInterface.bulkDelete('idp_restrictions', {
       name: 'sim'
     },
-    {
-      name: 'card'
-    })
+      {
+        name: 'card'
+      })
   }
 };
