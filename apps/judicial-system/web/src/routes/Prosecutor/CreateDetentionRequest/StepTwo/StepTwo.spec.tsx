@@ -15,7 +15,7 @@ import { UserProvider } from '@island.is/judicial-system-web/src/shared-componen
 import formatISO from 'date-fns/formatISO'
 
 describe('Create detention request, step two', () => {
-  test('should not allow users to continue unless every required field has been filled out-rass', async () => {
+  test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     const todaysDate = new Date()
     const formattedTodaysDate = todaysDate.getDate().toString().padStart(2, '0')
