@@ -27,6 +27,14 @@ describe('Transition Case', () => {
     expect(act).toThrow(ForbiddenException)
   })
 
+  it('should not open a received case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.OPEN, CaseState.RECEIVED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
   it('should not open an accepted case', () => {
     // Arrange
     const act = () => transitionCase(CaseTransition.OPEN, CaseState.ACCEPTED)
@@ -38,6 +46,14 @@ describe('Transition Case', () => {
   it('should not open a rejected case', () => {
     // Arrange
     const act = () => transitionCase(CaseTransition.OPEN, CaseState.REJECTED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should not open a deleted case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.OPEN, CaseState.DELETED)
 
     // Act and assert
     expect(act).toThrow(ForbiddenException)
@@ -67,6 +83,14 @@ describe('Transition Case', () => {
     expect(act).toThrow(ForbiddenException)
   })
 
+  it('should not submit a received case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.SUBMIT, CaseState.RECEIVED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
   it('should not submit an accepted case', () => {
     // Arrange
     const act = () => transitionCase(CaseTransition.SUBMIT, CaseState.ACCEPTED)
@@ -78,6 +102,70 @@ describe('Transition Case', () => {
   it('should not submit a rejected case', () => {
     // Arrange
     const act = () => transitionCase(CaseTransition.SUBMIT, CaseState.REJECTED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should not submit a deleted case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.SUBMIT, CaseState.DELETED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should not receive a new case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.RECEIVE, CaseState.NEW)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should not receive an opened case', () => {
+    // Act
+    const act = () => transitionCase(CaseTransition.RECEIVE, CaseState.DRAFT)
+
+    // Assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should receive a submitted case', () => {
+    // Arrange
+    const res = transitionCase(CaseTransition.RECEIVE, CaseState.SUBMITTED)
+
+    // Act and assert
+    expect(res).toStrictEqual(CaseState.RECEIVED)
+  })
+
+  it('should not receive a received case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.RECEIVE, CaseState.RECEIVED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should not receive an accepted case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.RECEIVE, CaseState.ACCEPTED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should not receive a rejected case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.RECEIVE, CaseState.REJECTED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should not receive a deleted case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.RECEIVE, CaseState.DELETED)
 
     // Act and assert
     expect(act).toThrow(ForbiddenException)
@@ -99,9 +187,17 @@ describe('Transition Case', () => {
     expect(act).toThrow(ForbiddenException)
   })
 
-  it('should accept a submitted case', () => {
+  it('should not accept an submitted case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.ACCEPT, CaseState.SUBMITTED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should accept a received case', () => {
     // Act
-    const res = transitionCase(CaseTransition.ACCEPT, CaseState.SUBMITTED)
+    const res = transitionCase(CaseTransition.ACCEPT, CaseState.RECEIVED)
 
     // Assert
     expect(res).toStrictEqual(CaseState.ACCEPTED)
@@ -123,6 +219,14 @@ describe('Transition Case', () => {
     expect(act).toThrow(ForbiddenException)
   })
 
+  it('should not accept a deleted case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.ACCEPT, CaseState.DELETED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
   it('should not reject a new case', () => {
     // Arrange
     const act = () => transitionCase(CaseTransition.REJECT, CaseState.NEW)
@@ -139,9 +243,17 @@ describe('Transition Case', () => {
     expect(act).toThrow(ForbiddenException)
   })
 
-  it('should reject a submitted case', () => {
+  it('should not reject a submitted case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.REJECT, CaseState.SUBMITTED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should reject a received case', () => {
     // Act
-    const res = transitionCase(CaseTransition.REJECT, CaseState.SUBMITTED)
+    const res = transitionCase(CaseTransition.REJECT, CaseState.RECEIVED)
 
     // Assert
     expect(res).toStrictEqual(CaseState.REJECTED)
@@ -158,6 +270,14 @@ describe('Transition Case', () => {
   it('should not reject a rejected case', () => {
     // Arrange
     const act = () => transitionCase(CaseTransition.REJECT, CaseState.REJECTED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should not reject a deleted case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.REJECT, CaseState.DELETED)
 
     // Act and assert
     expect(act).toThrow(ForbiddenException)
@@ -187,6 +307,14 @@ describe('Transition Case', () => {
     expect(act).toThrow(ForbiddenException)
   })
 
+  it('should not delete a received case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.DELETE, CaseState.RECEIVED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
   it('should not delete an accepted case', () => {
     // Arrange
     const act = () => transitionCase(CaseTransition.DELETE, CaseState.ACCEPTED)
@@ -198,6 +326,14 @@ describe('Transition Case', () => {
   it('should not delete a rejected case', () => {
     // Arrange
     const act = () => transitionCase(CaseTransition.DELETE, CaseState.REJECTED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should not delete a deleted case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.DELETE, CaseState.DELETED)
 
     // Act and assert
     expect(act).toThrow(ForbiddenException)

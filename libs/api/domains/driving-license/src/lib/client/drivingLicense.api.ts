@@ -1,6 +1,6 @@
 import { User } from '@island.is/auth-nest-tools'
 
-import { DrivingLicenseResponse } from './types'
+import { DrivingLicenseResponse } from './drivingLicense.type'
 
 export class DrivingLicenseApi {
   constructor(private readonly baseApiUrl: string) {}
@@ -18,6 +18,7 @@ export class DrivingLicenseApi {
       gildirTil: '2045-11-06T23:59:59',
       nrUtgafustadur: 37,
       nafnUtgafustadur: 'Sýslumaðurinn á höfuðborgarsvæðinu - Kópavogi',
+      erBradabirgda: false,
       rettindi: [
         {
           id: 1337,
