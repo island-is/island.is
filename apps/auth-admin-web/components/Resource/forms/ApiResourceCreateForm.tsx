@@ -118,7 +118,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                   >
                     {available ? 'Available' : 'Unavailable'}
                   </div>
-                  <HelpBox helpText="The resource's unique name can't be changed" />
+                  <HelpBox helpText="The unique name of the API. This value is used for authentication with introspection and will be added to the audience of the outgoing access token." />
                   <ErrorMessage
                     as="span"
                     errors={errors}
@@ -141,7 +141,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     className="api-resource-form__input"
                     defaultValue={props.apiResource.displayName}
                   />
-                  <HelpBox helpText="The name that will be used to display the resource" />
+                  <HelpBox helpText="This value can be used e.g. on the consent screen." />
                   <ErrorMessage
                     as="span"
                     errors={errors}
@@ -164,7 +164,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     defaultValue={props.apiResource.description}
                     className="api-resource-form__input"
                   />
-                  <HelpBox helpText="Describe this Api resource" />
+                  <HelpBox helpText="This value can be used e.g. on the consent screen." />
                 </div>
 
                 <div className="api-resource-form__container__checkbox__field">
@@ -179,7 +179,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     defaultChecked={props.apiResource.enabled}
                     className="api-resource-form__checkbox"
                   />
-                  <HelpBox helpText="Specifies if the resource is enabled" />
+                  <HelpBox helpText="Indicates if this resource is enabled and can be requested." />
                 </div>
 
                 <div className="api-resource-form__container__checkbox__field">
