@@ -24,7 +24,6 @@ import {
   Box,
   Breadcrumbs,
   Button,
-  Link,
   Navigation,
   Text,
 } from '@island.is/island-ui/core'
