@@ -22,17 +22,18 @@ export type ErrorMessage = {
 }
 
 export interface ServiceListProps {
-  baseUrl?: string
+  baseUrl: string
   services: ApiService[]
   tagDisplayNames?: GetNamespaceQuery['getNamespace']
 }
 
 export const ServiceList: React.FC<ServiceListProps> = ({
-  baseUrl = './vefthjonustur/',
+  baseUrl,
   services = [],
   tagDisplayNames = {},
 }) => {
   const n = useNamespace(tagDisplayNames)
+
   const CategoriesToTags = (service: ApiService) => {
     const tags: Tag[] = []
     let value

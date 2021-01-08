@@ -55,6 +55,7 @@ import {
   PricingCategory,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const { publicRuntimeConfig } = getConfig()
 const LIMIT = 20
@@ -85,6 +86,8 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   const sn = useNamespace(staticContent)
   const fn = useNamespace(filterContent)
   const nn = useNamespace(navigationLinks)
+
+  const { linkResolver } = useLinkResolver()
 
   const onLoadMore = () => {
     if (data?.getApiCatalogue.pageInfo?.nextCursor === null) {
@@ -400,11 +403,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
               {data?.getApiCatalogue?.services.length > 0 && (
                 <GridContainer>
                   <ServiceList
-                    baseUrl={
-                      activeLocale === 'en'
-                        ? './webservices/'
-                        : './vefthjonustur/'
-                    }
+                    baseUrl={linkResolver('webservicespage').as + '/'}
                     services={data?.getApiCatalogue?.services}
                     tagDisplayNames={filterContent}
                   />
