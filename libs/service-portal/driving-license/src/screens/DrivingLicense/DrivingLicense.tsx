@@ -8,6 +8,7 @@ import { Box, GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { Application, Eligibility } from './components'
 
 const ELIGABLE_FOR_RENEWAL_AGE = 68
+const ELIGABLE_FOR_DRIVING_LICENSE_AGE = 16
 
 const NationalRegistryUserQuery = gql`
   query NationalRegistryUserQuery {
@@ -30,17 +31,20 @@ function DrivingLicense(): JSX.Element {
       <Stack space={[6, 6, 10]}>
         <Eligibility />
 
-        <Application
-          heading={defineMessage({
-            id: 'service.portal:driving-license-general-license-title',
-            defaultMessage: 'Almenn ökuréttindi',
-          })}
-          subText={defineMessage({
-            id: 'sp.driving-license:general-license-subtext',
-            defaultMessage:
-              'Ökunám á fólksbifreið getur hafist við 16 ára aldur en ökuréttindi eru fyrst veitt við 17 ára aldur. Réttindi til að aka bifhjóli (skellinöðru) er hægt að fá 15 ára og dráttarvél 16 ára. Til að hefja ökunám þarf að hafa samband við löggiltan ökukennara. Hann hefur umsjón með bæði verklegum og bóklegum hluta námsins og vísar á ökuskóla þar sem bóklegt nám fer fram.',
-          })}
-        />
+        {(nationalRegistryUser?.age || 0) >=
+          ELIGABLE_FOR_DRIVING_LICENSE_AGE && (
+          <Application
+            heading={defineMessage({
+              id: 'service.portal:driving-license-general-license-title',
+              defaultMessage: 'Almenn ökuréttindi',
+            })}
+            subText={defineMessage({
+              id: 'sp.driving-license:general-license-subtext',
+              defaultMessage:
+                'Ökunám á fólksbifreið getur hafist við 16 ára aldur en ökuréttindi eru fyrst veitt við 17 ára aldur. Réttindi til að aka bifhjóli (skellinöðru) er hægt að fá 15 ára og dráttarvél 16 ára. Til að hefja ökunám þarf að hafa samband við löggiltan ökukennara. Hann hefur umsjón með bæði verklegum og bóklegum hluta námsins og vísar á ökuskóla þar sem bóklegt nám fer fram.',
+            })}
+          />
+        )}
 
         {(nationalRegistryUser?.age || 0) >= ELIGABLE_FOR_RENEWAL_AGE && (
           <Application

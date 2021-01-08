@@ -1,4 +1,4 @@
-# Service provider’s role
+# Service Provider’s Role
 
 The word **Service provider** is used here for the Icelandic term **Rekstraraðili**.
 

@@ -1,4 +1,4 @@
-# Trouble-shooting
+# Trouble Shooting
 
 The [Datadog](https://app.datadoghq.eu/) webpage for Digital Iceland can be useful when diagnosing faults.
 
