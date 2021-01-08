@@ -329,7 +329,7 @@
         "docker-next": {}
       }
     },
-    "air-discount-scheme/web-e2e": {
+    "air-discount-scheme-web-e2e": {
       "root": "apps/air-discount-scheme/web-e2e",
       "sourceRoot": "apps/air-discount-scheme/web-e2e/src",
       "projectType": "application",
@@ -3429,7 +3429,7 @@
         "docker-static": {}
       }
     },
-    "judicial-system/web-e2e": {
+    "judicial-system-web-e2e": {
       "root": "apps/judicial-system/web-e2e",
       "sourceRoot": "apps/judicial-system/web-e2e/src",
       "projectType": "application",
@@ -5260,7 +5260,7 @@
         "docker-express": {}
       }
     },
-    "skilavottord/web-e2e": {
+    "skilavottord-web-e2e": {
       "root": "apps/skilavottord/web-e2e",
       "sourceRoot": "apps/skilavottord/web-e2e/src",
       "projectType": "application",
