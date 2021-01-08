@@ -165,7 +165,7 @@ export const RulingStepOne: React.FC = () => {
           <Box component="section" marginBottom={5}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                Úrskurðar{' '}
+                Úrskurður{' '}
                 <Text as="span" fontWeight="semiBold" color="red600">
                   *
                 </Text>
