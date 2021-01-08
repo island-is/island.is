@@ -57,6 +57,7 @@ export const SignedVerdictOverview: React.FC = () => {
       notFound={data?.case === undefined}
       isCustodyEndDateInThePast={workingCase?.isCustodyEndDateInThePast}
       rejectedCase={data?.case?.state === CaseState.REJECTED}
+      decision={data?.case?.decision}
     >
       {workingCase ? (
         <>
