@@ -114,8 +114,8 @@
       "@island.is/application/templates/health-insurance": [
         "libs/application/templates/health-insurance/src/index.ts"
       ],
-      "@island.is/application/templates/legal-domicile-transfer": [
-        "libs/application/templates/legal-domicile-transfer/src/index.ts"
+      "@island.is/application/templates/children-domicile-transfer": [
+        "libs/application/templates/children-domicile-transfer/src/index.ts"
       ],
       "@island.is/application/templates/meta-application": [
         "libs/application/templates/meta-application/src/index.ts"
