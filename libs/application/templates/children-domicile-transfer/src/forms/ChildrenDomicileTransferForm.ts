@@ -18,8 +18,8 @@ import {
 } from '@island.is/application/core'
 import { m } from './messages'
 
-export const ExampleForm: Form = buildForm({
-  id: 'ExampleFormDraft',
+export const ChildrenDomicileTransferForm: Form = buildForm({
+  id: 'ChildrenDomicileTransferFormDraft',
   title: 'Flutningur lögheimilis',
   mode: FormModes.APPLYING,
   children: [
