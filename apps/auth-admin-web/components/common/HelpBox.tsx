@@ -1,9 +1,31 @@
 import React, { Component } from 'react';
 
-class HelpBox extends Component<{ helpText: string }> {
+class HelpBox extends Component<{
+  helpText: string;
+  helpLink?: string;
+  helpLinkText?: string;
+}> {
   state = {
     show: false,
   };
+
+  getHelpLink() {
+    if (this.props.helpLink && this.props.helpLinkText) {
+      return (
+        <div className="helpLink">
+          <a href={this.props.helpLink} target="_blank">{this.props.helpLinkText}</a>
+        </div>
+      );
+    } else if (this.props.helpLink) {
+      return (
+        <div className="helpLink">
+          <a href={this.props.helpLink} target="_blank">More Info</a>.
+        </div>
+      );
+    }
+    return '';
+  }
+
   render() {
     return (
       <div className="helpbox">
@@ -27,6 +49,7 @@ class HelpBox extends Component<{ helpText: string }> {
             &times;
           </a>
           {this.props.helpText}
+          {this.getHelpLink()}
         </div>
       </div>
     );

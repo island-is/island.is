@@ -313,7 +313,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       title="Application description for use within AdminUI"
                       placeholder="Example description"
                     />
-                    <HelpBox helpText="Application description for use within IDS management" />
+                    <HelpBox helpText="Application description for use within the IDS management" />
                   </div>
 
                   <div className="client__container__checkbox__field">
@@ -367,6 +367,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                         className="client__input"
                         ref={register}
                       />
+                      <HelpBox helpText="Specifies logout URI at client for HTTP based front-channel logout." helpLinkText="See the OIDC Connect Session Management spec for more details." helpLink="https://openid.net/specs/openid-connect-session-1_0.html" />
                     </div>
 
                     <div className="client__container__field">
@@ -665,7 +666,7 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                     {/* Checkboxes */}
                     <div className="client__container__checkbox__field">
                       <label className="client__label">
-                        Allow access token via browser
+                        Allow access Token Via Browser
                       </label>
                       <input
                         type="checkbox"
@@ -687,6 +688,7 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         className="client__input"
                         ref={register}
                       />
+                      <HelpBox helpText="Specifies whether this client can request refresh tokens (be requesting the offline_access scope)" />
                     </div>
                     <div className="client__container__checkbox__field">
                       <label className="client__label">
@@ -799,7 +801,7 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
 
                     <div className="client__container__checkbox__field">
                       <label className="client__label">
-                        Require client secret
+                        Require Client Secret
                       </label>
                       <input
                         type="checkbox"
