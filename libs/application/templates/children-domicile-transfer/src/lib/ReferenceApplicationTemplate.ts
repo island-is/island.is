@@ -49,7 +49,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.LEGAL_DOMICILE_TRANSFER,
+  type: ApplicationTypes.CHILDREN_DOMICILE_TRANSFER,
   name: 'Reference application',
   dataSchema: ExampleSchema,
   stateMachineConfig: {
