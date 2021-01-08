@@ -34,6 +34,7 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import BlueBox from '@island.is/judicial-system-web/src/shared-components/BlueBox/BlueBox'
 
 export const RulingStepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -495,9 +496,21 @@ export const RulingStepTwo: React.FC = () => {
             )}
             {(!workingCase.decision ||
               workingCase.decision === CaseDecision.ACCEPTING) && (
+              <BlueBox>
+                <Checkbox></Checkbox>
+              </BlueBox>
+            )}
+            {(!workingCase.decision ||
+              workingCase.decision === CaseDecision.ACCEPTING ||
+              workingCase.decision ===
+                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) && (
               <Text variant="h4" fontWeight="light">
-                Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
-                atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
+                {`Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
+                atriði er lúta að framkvæmd ${
+                  workingCase.decision === CaseDecision.ACCEPTING
+                    ? 'gæsluvarðhaldsins'
+                    : 'farbannsins'
+                } undir dómara.`}
               </Text>
             )}
           </Box>
