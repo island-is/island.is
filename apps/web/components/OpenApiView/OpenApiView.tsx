@@ -148,7 +148,11 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
           />
         </GridColumn>
       </GridRow>
-      <Box>{loading && <LoadingIcon animate color="blue400" size={32} />}</Box>
+      {loading && (
+        <Box textAlign="center">
+          <LoadingIcon animate color="blue400" size={64} />
+        </Box>
+      )}
       {error && (
         <Box paddingY={2}>
           <AlertBanner
@@ -159,9 +163,11 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
         </Box>
       )}
 
-      <Box width="full">
-        {!loading && !error && ShowOpenApiDocumentation(data?.getOpenApi.spec)}
-      </Box>
+      {!loading && !error && (
+        <Box width="full">
+          {ShowOpenApiDocumentation(data?.getOpenApi.spec)}
+        </Box>
+      )}
     </Box>
   )
 }

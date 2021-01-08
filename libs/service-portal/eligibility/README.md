@@ -1,4 +1,4 @@
-# service-portal-eligibility
+# Service Portal Eligibility
 
 This library was generated with [Nx](https://nx.dev).
 

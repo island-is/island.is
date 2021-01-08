@@ -116,6 +116,8 @@ export const DetentionRequests: React.FC = () => {
         return { color: 'red', text: 'Drög' }
       case CaseState.SUBMITTED:
         return { color: 'purple', text: 'Krafa send' }
+      case CaseState.RECEIVED:
+        return { color: 'darkerMint', text: 'Krafa móttekin' }
       case CaseState.ACCEPTED:
         if (isCustodyEndDateInThePast) {
           return {

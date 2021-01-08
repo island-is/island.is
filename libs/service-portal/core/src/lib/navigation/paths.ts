@@ -10,6 +10,7 @@ export enum ServicePortalPath {
   ApplicationNewApplication = '/umsoknir/ny-umsokn',
   ApplicationOpenApplications = '/umsoknir/opnar-umsoknir',
   ApplicationPrescription = '/umsoknir/lyfsedlar',
+  ApplicationDrivingLicense = '/umsoknir/okuskirteini',
 
   // Settings
   SettingsRoot = '/stillingar',
