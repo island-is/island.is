@@ -4,6 +4,7 @@ import { RulingStepOne } from './RulingStepOne'
 import * as Constants from '../../../../utils/constants'
 import {
   CaseCustodyRestrictions,
+  CaseDecision,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import userEvent from '@testing-library/user-event'
@@ -44,6 +45,10 @@ describe('/domari-krafa/urskurdur', () => {
               id: 'test_id_3',
               custodyEndDate: '2020-10-24T12:31:00Z',
             } as UpdateCase,
+            {
+              id: 'test_id_3',
+              decision: CaseDecision.ACCEPTING,
+            } as UpdateCase,
           ]),
         ]}
         addTypename={false}
@@ -76,13 +81,14 @@ describe('/domari-krafa/urskurdur', () => {
       }) as HTMLButtonElement,
     ).toBeDisabled()
 
+    userEvent.click(
+      screen.getByRole('radio', { name: 'Krafa um gæsluvarðhald samþykkt' }),
+    )
+
     userEvent.type(
       screen.getByLabelText('Tímasetning *') as HTMLInputElement,
       '12:31',
     )
-
-    userEvent.tab()
-
     expect(
       screen.getByRole('button', {
         name: /Halda áfram/i,
@@ -136,5 +142,93 @@ describe('/domari-krafa/urskurdur', () => {
           }) as HTMLButtonElement,
       ),
     ).not.toBeDisabled()
+  })
+
+  test('should not display the isolation checkbox if the case decision is REJECTING', async () => {
+    // Arrange
+
+    // Act
+    render(
+      <MockedProvider
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation([
+            {
+              id: 'test_id',
+              decision: CaseDecision.REJECTING,
+            } as UpdateCase,
+          ]),
+        ]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
+              <RulingStepOne />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    userEvent.click(
+      await waitFor(() =>
+        screen.getByRole('radio', { name: 'Kröfu um gæsluvarðhald hafnað' }),
+      ),
+    )
+    // Assert
+    expect(
+      screen.queryByRole('checkbox', {
+        name: 'Kærði skal sæta einangrun',
+      }),
+    ).not.toBeInTheDocument()
+  })
+
+  test('should not display the isolation checkbox if the case decision is ACCEPTING_ALTERNATIVE_TRAVEL_BAN', async () => {
+    // Arrange
+
+    // Act
+    render(
+      <MockedProvider
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation([
+            {
+              id: 'test_id',
+              decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+            } as UpdateCase,
+          ]),
+        ]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
+              <RulingStepOne />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    userEvent.click(
+      await waitFor(() =>
+        screen.getByRole('radio', {
+          name: 'Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann',
+        }),
+      ),
+    )
+    // Assert
+    expect(
+      screen.queryByRole('checkbox', {
+        name: 'Kærði skal sæta einangrun',
+      }),
+    ).not.toBeInTheDocument()
   })
 })
