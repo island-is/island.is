@@ -218,13 +218,16 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
   activeSlug,
   n,
 }) => {
-  const { linkResolver } = useLinkResolver()
   const { activeLocale } = useI18n()
+  const { makePath } = routeNames(activeLocale)
   return (
     <Stack space={3}>
       {!!article.category && (
         <Box display={['none', 'none', 'block']} printHidden>
-          <Link {...linkResolver('articlecategory', [article.category.slug])}>
+          <Link
+            href={makePath('ArticleCategory', '/[slug]')}
+            as={makePath('ArticleCategory', article.category.slug)}
+          >
             <Button
               preTextIcon="arrowBack"
               preTextIconType="filled"
@@ -359,7 +362,10 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           printHidden
         >
           {!!article.category && (
-            <Link {...linkResolver('articlecategory', [article.category.slug])}>
+            <Link
+              href={makePath('ArticleCategory', '/[slug]')}
+              as={makePath('ArticleCategory', article.category.slug)}
+            >
               <Button
                 preTextIcon="arrowBack"
                 preTextIconType="filled"
