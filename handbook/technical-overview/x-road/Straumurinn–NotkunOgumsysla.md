@@ -1,4 +1,4 @@
-# Straumurinn – Notkun og umsýsla
+# Straumurinn – Notkun Og Umsýsla
 
 ## Straumurinn – Notkun og umsýsla
 

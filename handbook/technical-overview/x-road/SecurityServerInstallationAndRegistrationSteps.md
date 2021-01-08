@@ -1,4 +1,4 @@
-# Straumurinn - Security Server installation and registration steps
+# Straumurinn - Security Server Installation and Registration Steps
 
 ## Security Server installation and registration steps
 
