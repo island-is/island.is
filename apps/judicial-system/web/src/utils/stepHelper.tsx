@@ -15,7 +15,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
 
-export const getAppealDecitionText = (
+export const getAppealDecisionText = (
   role: AppealDecisionRole,
   appealDecition?: CaseAppealDecision,
 ) => {
@@ -40,6 +40,8 @@ export const getAppealDecitionText = (
     }
   }
 }
+
+export const constructRestrictions = (workingCase: Case) => {}
 
 export const constructConclusion = (workingCase: Case) => {
   if (workingCase.decision === CaseDecision.REJECTING) {
@@ -70,83 +72,38 @@ export const constructConclusion = (workingCase: Case) => {
           skal sæta gæsluvarðhaldi, þó ekki lengur en til
         </Text>
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
-          {` ${formatDate(workingCase.custodyEndDate, 'PPPp')}. `}
+          {` ${formatDate(workingCase.requestedCustodyEndDate, 'EEEE')?.replace(
+            'dagur',
+            'dagsins',
+          )}
+    ${formatDate(workingCase.requestedCustodyEndDate, 'PPP')}, kl. ${formatDate(
+            workingCase.requestedCustodyEndDate,
+            TIME_FORMAT,
+          )}. `}
         </Text>
-        {workingCase.custodyRestrictions?.length === 0 ? (
-          <Text as="span" variant="intro">
-            Engar takmarkanir skulu vera á gæslunni.
-          </Text>
-        ) : (
-          <Text as="span" variant="intro">
-            Kærði skal sæta
-            <Text as="span" color="blue400" fontWeight="semiBold">
-              {workingCase.custodyRestrictions?.map(
-                (custodyRestriction, index) => {
-                  const isNextLast =
-                    workingCase.custodyRestrictions &&
-                    index === workingCase.custodyRestrictions.length - 2
-                  const isLast =
-                    workingCase.custodyRestrictions &&
-                    index === workingCase.custodyRestrictions.length - 1
-                  const isOnly =
-                    workingCase.custodyRestrictions &&
-                    workingCase.custodyRestrictions.length === 1
-
-                  return custodyRestriction ===
-                    CaseCustodyRestrictions.ISOLATION ? (
-                    <Text
-                      as="span"
-                      variant="intro"
-                      fontWeight="semiBold"
-                      key={index}
-                    >
-                      {` einangrun${
-                        isLast ? '' : isNextLast && !isOnly ? ' og' : ', '
-                      }`}
-                    </Text>
-                  ) : custodyRestriction ===
-                    CaseCustodyRestrictions.COMMUNICATION ? (
-                    <Text
-                      as="span"
-                      variant="intro"
-                      fontWeight="semiBold"
-                      key={index}
-                    >
-                      {` bréfa, og símabanni${
-                        isLast ? '' : isNextLast && !isOnly ? ' og' : ','
-                      }`}
-                    </Text>
-                  ) : custodyRestriction === CaseCustodyRestrictions.MEDIA ? (
-                    <Text
-                      as="span"
-                      variant="intro"
-                      fontWeight="semiBold"
-                      key={index}
-                    >
-                      {` fjölmiðlabanni${
-                        isLast ? '' : isNextLast && !isOnly ? ' og' : ','
-                      }`}
-                    </Text>
-                  ) : custodyRestriction ===
-                    CaseCustodyRestrictions.VISITAION ? (
-                    <Text
-                      as="span"
-                      variant="intro"
-                      fontWeight="semiBold"
-                      key={index}
-                    >
-                      {` heimsóknarbanni${
-                        isLast ? '' : isNextLast && !isOnly ? ' og' : ','
-                      }`}
-                    </Text>
-                  ) : (
-                    ''
-                  )
-                },
-              )}
+        {workingCase.decision === CaseDecision.ACCEPTING &&
+        workingCase.custodyRestrictions?.includes(
+          CaseCustodyRestrictions.ISOLATION,
+        ) ? (
+          <>
+            <Text as="span" variant="intro">
+              Kærði skal{' '}
             </Text>
-            {` á meðan á gæsluvarðhaldinu stendur.`}
-          </Text>
+            <Text
+              as="span"
+              variant="intro"
+              color="blue400"
+              fontWeight="semiBold"
+            >
+              sæta einangrun
+            </Text>
+            <Text as="span" variant="intro">
+              {' '}
+              á meðan á gæsluvarðhaldinu stendur.
+            </Text>
+          </>
+        ) : (
+          <Text />
         )}
       </>
     )
@@ -201,7 +158,7 @@ export const constructProsecutorDemands = (workingCase: Case) => {
           <Text as="span" fontWeight="semiBold">
             sæta einangrun
           </Text>{' '}
-          meðan á gæsluvarðhaldinu stendur.
+          á meðan á gæsluvarðhaldinu stendur.
         </>
       ) : (
         '.'

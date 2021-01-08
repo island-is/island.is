@@ -31,7 +31,7 @@ export function formatProsecutorDemands(
     ?.replace('dagur,', 'dagsins')
     ?.replace(' kl.', ', kl.')}${
     isolation
-      ? ' og verði gert að sæta einangrun meðan á gæsluvarðhaldi stendur'
+      ? ' og verði gert að sæta einangrun á meðan á gæsluvarðhaldinu stendur'
       : ''
   }.`
 }
@@ -73,7 +73,7 @@ export function formatConclusion(
         'dagsins',
       )}.${
         decision === CaseDecision.ACCEPTING && isolation
-          ? ' Kærði skal sæta einangrun meðan á gæsluvarðhaldi stendur.'
+          ? ' Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
           : ''
       }`
 }
