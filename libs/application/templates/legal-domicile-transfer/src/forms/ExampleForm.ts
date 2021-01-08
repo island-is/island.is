@@ -13,134 +13,123 @@ import {
   FormModes,
   FormValue,
   buildRepeater,
+  buildDataProviderItem,
+  buildExternalDataProvider,
 } from '@island.is/application/core'
 import { m } from './messages'
 
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',
-  title: 'Atvinnuleysisbætur',
+  title: 'Flutningur lögheimilis',
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'intro',
-      title: m.introSection,
+      id: 'dataGathering',
+      title: "Gagnaöflun",
       children: [
         buildTextField({
           id: 'person.name',
           title: m.name,
         }),
-        buildDescriptionField({
-          id: 'field',
-          title: m.introField,
-          description: (application) => ({
-            ...m.introIntroduction,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-            // @ts-ignore
-            values: { name: application.answers.person?.name },
-          }),
-        }),
-        buildMultiField({
-          id: 'about',
-          title: m.about,
-          children: [
-            buildTextField({
-              id: 'person.nationalId',
-              title: m.nationalId,
-            }),
-            buildTextField({
-              id: 'person.age',
-              title: m.age,
-            }),
-            buildTextField({
-              id: 'person.email',
-              title: m.email,
-            }),
-            buildTextField({
-              id: 'person.phoneNumber',
-              title: m.phoneNumber,
-              condition: {
-                questionId: 'person.age',
-                isMultiCheck: false,
-                comparator: Comparators.GTE,
-                value: '18',
-              },
-            }),
-          ],
+        // buildSubSection({
+        //   id: 'externalData',
+        //   title: m.introSection,
+        //   children: [
+        //     buildExternalDataProvider({
+        //       title: m.introSection,
+        //       id: 'approveExternalData',
+        //       dataProviders: [
+        //         buildDataProviderItem({
+        //           id: 'userProfile',
+        //           type: 'UserProfileProvider',
+        //           title: m.introSection,
+        //           subTitle: m.introSection,
+        //         }),
+        //         buildDataProviderItem({
+        //           id: 'pregnancyStatus',
+        //           type: 'PregnancyStatus',
+        //           title: m.introSection,
+        //           subTitle: m.introSection,
+        //         }),
+        //         buildDataProviderItem({
+        //           id: 'parentalLeaves',
+        //           type: 'ParentalLeaves',
+        //           title: m.introSection,
+        //           subTitle: m.introSection,
+        //         }),
+        //       ],
+        //     }),
+        //   ],
+        // }),
+      ],
+    }),
+    buildSection({
+      id: 'chooseChildren',
+      title: "Velja barn",
+      children: [
+        buildTextField({
+          id: 'children',
+          title: "children",
         }),
       ],
     }),
     buildSection({
-      id: 'career',
-      title: m.career,
+      id: 'changeDomicile',
+      title: "Breyta lögheimili",
       children: [
-        buildSubSection({
-          id: 'history',
-          title: m.history,
-          children: [
-            buildRadioField({
-              id: 'careerHistory',
-              title: m.careerHistory,
-              options: [
-                { value: 'yes', label: m.yesOptionLabel },
-                { value: 'no', label: m.noOptionLabel },
-              ],
-              condition: (formValue: FormValue) => {
-                return (
-                  (formValue as { person: { age: string } })?.person?.age >=
-                  '18'
-                )
-              },
-            }),
-            buildCheckboxField({
-              id: 'careerHistoryCompanies',
-              title: m.careerHistoryCompanies,
-              options: [
-                { value: 'government', label: m.governmentOptionLabel },
-                { value: 'aranja', label: 'Aranja' },
-                { value: 'advania', label: 'Advania' },
-              ],
-            }),
-          ],
-        }),
-        buildSubSection({
-          id: 'future',
-          title: m.future,
-          children: [
-            buildTextField({
-              id: 'dreamJob',
-              title: m.dreamJob,
-            }),
-          ],
+        buildTextField({
+          id: 'children',
+          title: "children",
         }),
       ],
     }),
     buildSection({
-      id: 'confirmation',
-      title: 'Staðfesta',
+      id: 'transferDate',
+      title: "Flutningur",
       children: [
-        buildMultiField({
-          title: '',
-          children: [
-            buildSubmitField({
-              id: 'submit',
-              placement: 'footer',
-              title: 'Senda inn umsókn',
-              actions: [
-                { event: 'SUBMIT', name: 'Senda inn umsókn', type: 'primary' },
-              ],
-            }),
-            buildDescriptionField({
-              id: 'overview',
-              title: 'Takk fyrir að sækja um',
-              description:
-                'Með því að smella á "Senda" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
-            }),
-          ],
+        buildTextField({
+          id: 'children',
+          title: "children",
         }),
-        buildDescriptionField({
-          id: 'final',
-          title: 'Takk',
-          description: 'Umsókn þín er komin í vinnslu',
+      ],
+    }),
+    buildSection({
+      id: 'transferPeriod',
+      title: "Gildistími",
+      children: [
+        buildTextField({
+          id: 'children',
+          title: "children",
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'applicationEffect',
+      title: "Áhrif umsóknar",
+      children: [
+        buildTextField({
+          id: 'children',
+          title: "children",
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'overview',
+      title: "Yfirlit og undirritun",
+      children: [
+        buildTextField({
+          id: 'children',
+          title: "children",
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'submitted',
+      title: "Umsókn móttekin",
+      children: [
+        buildTextField({
+          id: 'children',
+          title: "children",
         }),
       ],
     }),
