@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -21,11 +21,14 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('idp_restrictions', {
-      name: 'sim'
-    },
+    return queryInterface.bulkDelete(
+      'idp_restrictions',
       {
-        name: 'card'
-      })
-  }
-};
+        name: 'sim',
+      },
+      {
+        name: 'card',
+      },
+    )
+  },
+}
