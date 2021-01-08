@@ -124,7 +124,12 @@ export class CaseService {
         [Op.or]: [
           {
             state: {
-              [Op.in]: [CaseState.NEW, CaseState.DRAFT, CaseState.SUBMITTED],
+              [Op.in]: [
+                CaseState.NEW,
+                CaseState.DRAFT,
+                CaseState.SUBMITTED,
+                CaseState.RECEIVED,
+              ],
             },
           },
           {

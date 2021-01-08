@@ -1,4 +1,5 @@
 import React, { FC, ReactNode, useMemo, forwardRef } from 'react'
+import NextLink from 'next/link'
 import {
   GET_ABOUT_PAGE_QUERY,
   GET_CATEGORIES_QUERY,
@@ -21,7 +22,6 @@ import {
   BoxProps,
   Breadcrumbs,
   Stack,
-  Link,
   ColorSchemeContext,
   GridContainer,
   GridColumn,
@@ -209,10 +209,22 @@ const PageHeader: FC<PageHeaderProps> = ({
               span={['12/12', '12/12', '12/12', '8/9']}
             >
               <Stack space={2}>
-                <Breadcrumbs color="blue300" separatorColor="blue300">
-                  <Link {...linkResolver('homepage')}>Ísland.is</Link>
-                  <span>{page.title}</span>
-                </Breadcrumbs>
+                <Breadcrumbs
+                  color="white"
+                  items={[
+                    {
+                      title: 'Ísland.is',
+                      href: '/',
+                    },
+                  ]}
+                  renderLink={(link) => {
+                    return (
+                      <NextLink {...linkResolver('homepage')} passHref>
+                        {link}
+                      </NextLink>
+                    )
+                  }}
+                />
                 <Box display={['block', 'block', 'block', 'none']}>
                   <Navigation
                     colorScheme={'darkBlue'}

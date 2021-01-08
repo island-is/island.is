@@ -15,16 +15,16 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 
-import { DrivingLicenseService } from './driving-license.service'
-import { DrivingLicense } from './driving-license.model'
+import { DrivingLicenseService } from '../drivingLicense.service'
+import { DrivingLicense } from './drivingLicense.model'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
-@Resolver()
+@Resolver(() => DrivingLicense)
 export class DrivingLicenseResolver {
   constructor(private readonly drivingLicenseService: DrivingLicenseService) {}
 
-  @Query(() => [DrivingLicense])
-  drivingLicenses(@CurrentUser() user: User) {
-    return this.drivingLicenseService.getDrivingLicenses(user.nationalId)
+  @Query(() => DrivingLicense)
+  drivingLicense(@CurrentUser() user: User) {
+    return this.drivingLicenseService.getDrivingLicense(user.nationalId)
   }
 }

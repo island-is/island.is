@@ -117,6 +117,7 @@ export const Overview: React.FC = () => {
         }
         break
       case CaseState.SUBMITTED:
+      case CaseState.RECEIVED:
         break
       default:
         return false

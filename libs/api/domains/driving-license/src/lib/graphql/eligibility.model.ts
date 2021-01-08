@@ -1,13 +1,16 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 @ObjectType()
-export class DrivingLicense {
+export class Eligibility {
   @Field(() => ID)
   id!: string
 
   @Field(() => String)
-  name!: string
+  issued!: string
 
   @Field(() => String)
-  nationalId!: string
+  expires!: string
+
+  @Field(() => String)
+  comment!: string
 }

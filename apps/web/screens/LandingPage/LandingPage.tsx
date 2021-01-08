@@ -14,7 +14,7 @@ import {
   Button,
   Text,
   Box,
-  Breadcrumbs,
+  BreadcrumbsDeprecated as Breadcrumbs,
   Link,
   GridRow,
   GridColumn,

@@ -1,4 +1,4 @@
-# service-portal-driving-license
+# Service Portal Driving License
 
 This library was generated with [Nx](https://nx.dev).
 
