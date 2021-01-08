@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { ExternalDataProviderScreen } from '../types'
+import { ExternalDataProviderScreen, SetBeforeSubmitCallback } from '../types'
 import {
   Box,
   Checkbox,
@@ -44,11 +44,13 @@ const ProviderItem: FC<{
 const FormExternalDataProvider: FC<{
   applicationId: string
   addExternalData(data: ExternalData): void
+  setBeforeSubmitCallback: SetBeforeSubmitCallback
   externalData: ExternalData
   externalDataProvider: ExternalDataProviderScreen
   formValue: FormValue
 }> = ({
   addExternalData,
+  setBeforeSubmitCallback,
   applicationId,
   externalData,
   externalDataProvider,
@@ -60,6 +62,33 @@ const FormExternalDataProvider: FC<{
       addExternalData(updateApplicationExternalData.externalData)
     },
   })
+
+  const activateBeforeSubmitCallback = (checked: boolean) => {
+    if (checked) {
+      setBeforeSubmitCallback(async () => {
+        const response = await updateExternalData({
+          variables: {
+            input: {
+              id: applicationId,
+              dataProviders: dataProviders.map(({ id, type }) => ({
+                id,
+                type,
+              })),
+            },
+          },
+        })
+
+        if (response.data) {
+          return [true, null]
+        }
+
+        // TODO: translated
+        return [false, 'Failed to update application']
+      })
+    } else {
+      setBeforeSubmitCallback(null)
+    }
+  }
 
   const { id, dataProviders } = externalDataProvider
   const label = 'Ég samþykki'
@@ -105,25 +134,10 @@ const FormExternalDataProvider: FC<{
               >
                 <Checkbox
                   onChange={(e) => {
-                    onChange(e.target.checked)
-                    setValue(id as string, e.target.checked)
-
-                    // TODO: Move this to the continue button click
-                    if (e.target.checked) {
-                      updateExternalData({
-                        variables: {
-                          input: {
-                            id: applicationId,
-                            dataProviders: dataProviders.map(
-                              ({ id, type }) => ({
-                                id,
-                                type,
-                              }),
-                            ),
-                          },
-                        },
-                      })
-                    }
+                    const isChecked = e.target.checked
+                    setValue(id as string, isChecked)
+                    onChange(isChecked)
+                    activateBeforeSubmitCallback(isChecked)
                   }}
                   checked={value}
                   name={`${id}`}

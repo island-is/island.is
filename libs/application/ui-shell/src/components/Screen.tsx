@@ -1,4 +1,11 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useMutation } from '@apollo/client'
 import {
   Application,
@@ -23,7 +30,7 @@ import {
 } from '@island.is/application/graphql'
 import deepmerge from 'deepmerge'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
-import { FormScreen, ResolverContext } from '../types'
+import { FormScreen, ResolverContext, BeforeSubmitCallback } from '../types'
 import FormMultiField from './FormMultiField'
 import FormField from './FormField'
 import { resolver } from '../validation/resolver'
@@ -106,14 +113,34 @@ const Screen: FC<ScreenProps> = ({
 
   const submitField = useMemo(() => findSubmitField(screen), [screen])
 
+  const beforeSubmitCallback = useRef<BeforeSubmitCallback | null>(null)
+
+  const setBeforeSubmitCallback = useCallback(
+    (callback: BeforeSubmitCallback | null) => {
+      beforeSubmitCallback.current = callback
+    },
+    [beforeSubmitCallback],
+  )
+
   const goBack = useCallback(() => {
     // using deepmerge to prevent some weird react-hook-form read-only bugs
     reset(deepmerge({}, formValue))
+    setBeforeSubmitCallback(null)
     prevScreen()
-  }, [formValue, prevScreen, reset])
+  }, [formValue, prevScreen, reset, setBeforeSubmitCallback])
 
   const onSubmit: SubmitHandler<FormValue> = async (data, e) => {
     let response
+
+    if (typeof beforeSubmitCallback.current === 'function') {
+      const [canContinue, errorMessage] = await beforeSubmitCallback.current()
+
+      if (!canContinue) {
+        // TODO set error message
+        return
+      }
+    }
+
     if (submitField !== undefined) {
       const finalAnswers = { ...formValue, ...data }
       let event: string
@@ -148,8 +175,10 @@ const Screen: FC<ScreenProps> = ({
         },
       })
     }
+
     if (response?.data) {
       answerAndGoToNextScreen(data)
+      setBeforeSubmitCallback(null)
     }
   }
 
@@ -230,6 +259,7 @@ const Screen: FC<ScreenProps> = ({
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
               <FormExternalDataProvider
                 addExternalData={addExternalData}
+                setBeforeSubmitCallback={setBeforeSubmitCallback}
                 applicationId={applicationId}
                 externalData={externalData}
                 externalDataProvider={screen}
