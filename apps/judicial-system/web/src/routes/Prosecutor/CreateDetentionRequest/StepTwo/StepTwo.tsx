@@ -397,7 +397,6 @@ export const StepTwo: React.FC = () => {
                       : null
                   }
                   disabled={Boolean(workingCase.courtDate)}
-                  handleChange={(date) => console.log('handleChange', date)}
                   handleCloseCalendar={(date) => {
                     setAndSendDateToServer(
                       'requestedCourtDate',
