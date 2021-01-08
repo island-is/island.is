@@ -36,9 +36,9 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       href,
       onClick,
       variant = 'blue',
-      active = false,
+      active,
       disabled,
-      outlined = false,
+      outlined,
       attention,
       ...props
     }: TagProps,
@@ -48,6 +48,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       [styles.active]: active,
       [styles.outlined]: outlined,
       [styles.attention]: attention,
+      [styles.focusable]: !disabled,
     })
 
     const isExternal = href && isLinkExternal(href)
@@ -67,7 +68,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       </Text>
     )
 
-    if (outlined) {
+    if (disabled) {
       return <span {...sharedProps}>{content}</span>
     }
 

@@ -6,8 +6,8 @@ import {
   GridRow,
   GridColumn,
   Breadcrumbs,
-  Link,
 } from '@island.is/island-ui/core'
+import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
 import { TellUsAStory } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -34,10 +34,24 @@ const TellUsAStoryPage: Screen<TellUsAStoryProps> = ({ data }) => {
         <GridRow>
           <GridColumn>
             <Box paddingX={[3, 3, 8]}>
-              <Breadcrumbs>
-                <Link {...linkResolver('homepage')}>Ísland.is</Link>
-                <span>{data.introTitle}</span>
-              </Breadcrumbs>
+              <Breadcrumbs
+                items={[
+                  {
+                    title: 'Ísland.is',
+                    href: '/',
+                  },
+                  {
+                    title: data.introTitle,
+                  },
+                ]}
+                renderLink={(link) => {
+                  return (
+                    <NextLink {...linkResolver('homepage')} passHref>
+                      {link}
+                    </NextLink>
+                  )
+                }}
+              />
             </Box>
           </GridColumn>
         </GridRow>

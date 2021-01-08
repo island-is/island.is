@@ -9,7 +9,7 @@ import {
   Hidden,
   Stack,
   Typography,
-  Breadcrumbs,
+  BreadcrumbsDeprecated as Breadcrumbs,
   BulletList,
   Bullet,
   VideoIframe,

@@ -1,5 +1,6 @@
 import { UseGuards } from '@nestjs/common'
 import { Resolver, Query, ResolveField, Parent } from '@nestjs/graphql'
+import * as kennitala from 'kennitala'
 
 import {
   IdsAuthGuard,
@@ -40,5 +41,15 @@ export class UserResolver {
   @ResolveField('birthPlace', () => String)
   resolveBirthPlace(@Parent() { birthPlace }: User): string {
     return birthPlace.city
+  }
+
+  @ResolveField('age', () => Number)
+  resolveAge(@Parent() { nationalId }: User): number {
+    return kennitala.info(nationalId).age
+  }
+
+  @ResolveField('birthday', () => Date)
+  resolveBirthday(@Parent() { nationalId }: User): Date {
+    return kennitala.info(nationalId).birthday
   }
 }

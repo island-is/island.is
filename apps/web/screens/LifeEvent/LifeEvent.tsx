@@ -2,13 +2,12 @@ import React, { useMemo } from 'react'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import slugify from '@sindresorhus/slugify'
+import NextLink from 'next/link'
 import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   GridRow,
   GridColumn,
   Breadcrumbs,
-  Link,
-  Tag,
   Text,
   Box,
   GridContainer,
@@ -87,12 +86,25 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                 span={['9/9', '9/9', '9/9', '9/9', '7/9']}
               >
                 <Box paddingBottom={[2, 2, 4]}>
-                  <Breadcrumbs>
-                    <Link {...linkResolver('homepage')}>Ísland.is</Link>
-                    <Tag variant="blue" outlined>
-                      {n('lifeEventTitle', 'Lífsviðburður')}
-                    </Tag>
-                  </Breadcrumbs>
+                  <Breadcrumbs
+                    items={[
+                      {
+                        title: 'Ísland.is',
+                        href: '/',
+                      },
+                      {
+                        isTag: true,
+                        title: n('lifeEventTitle', 'Lífsviðburður'),
+                      },
+                    ]}
+                    renderLink={(link) => {
+                      return (
+                        <NextLink {...linkResolver('homepage')} passHref>
+                          {link}
+                        </NextLink>
+                      )
+                    }}
+                  />
                 </Box>
                 <Text variant="h1" as="h1">
                   <span id={slugify(title)}>{title}</span>

@@ -31,4 +31,10 @@ export class NationalRegistryUser {
 
   @Field(() => BanMarking, { nullable: true })
   banMarking?: BanMarking
+
+  @Field(() => Number)
+  age!: number
+
+  @Field(() => Date)
+  birthday!: string
 }

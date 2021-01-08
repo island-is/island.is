@@ -13,6 +13,7 @@ import {
   Case,
   CaseAppealDecision,
   CaseCustodyRestrictions,
+  CaseDecision,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as Constants from '../../../../utils/constants'
@@ -407,87 +408,98 @@ export const RulingStepTwo: React.FC = () => {
                 rows={7}
               />
             </Box>
-            <Box component="section" marginBottom={3}>
-              <Box marginBottom={2}>
-                <Text as="h3" variant="h3">
-                  Tilhögun gæsluvarðhalds
-                </Text>
-              </Box>
-              <Box marginBottom={1}>
-                <GridRow>
-                  {restrictions.map((restriction, index) => {
-                    return (
-                      <GridColumn span="6/12" key={index}>
-                        <Box marginBottom={3}>
-                          <Checkbox
-                            name={restriction.restriction}
-                            label={restriction.restriction}
-                            value={restriction.value}
-                            checked={workingCase.custodyRestrictions?.includes(
-                              restriction.value,
-                            )}
-                            tooltip={restriction.explination}
-                            onChange={({ target }) => {
-                              // Create a copy of the state
-                              const copyOfState = Object.assign(workingCase, {})
+            {(!workingCase.decision ||
+              workingCase.decision === CaseDecision.ACCEPTING) && (
+              <Box component="section" marginBottom={3}>
+                <Box marginBottom={2}>
+                  <Text as="h3" variant="h3">
+                    Tilhögun gæsluvarðhalds
+                  </Text>
+                </Box>
+                <Box marginBottom={1}>
+                  <GridRow>
+                    {restrictions.map((restriction, index) => {
+                      return (
+                        <GridColumn span="6/12" key={index}>
+                          <Box marginBottom={3}>
+                            <Checkbox
+                              name={restriction.restriction}
+                              label={restriction.restriction}
+                              value={restriction.value}
+                              checked={workingCase.custodyRestrictions?.includes(
+                                restriction.value,
+                              )}
+                              tooltip={restriction.explination}
+                              onChange={({ target }) => {
+                                // Create a copy of the state
+                                const copyOfState = Object.assign(
+                                  workingCase,
+                                  {},
+                                )
 
-                              const restrictionIsSelected = copyOfState.custodyRestrictions?.includes(
-                                target.value as CaseCustodyRestrictions,
-                              )
+                                const restrictionIsSelected = copyOfState.custodyRestrictions?.includes(
+                                  target.value as CaseCustodyRestrictions,
+                                )
 
-                              // Toggle the checkbox on or off
-                              restriction.setCheckbox(!restrictionIsSelected)
+                                // Toggle the checkbox on or off
+                                restriction.setCheckbox(!restrictionIsSelected)
 
-                              // If the user is checking the box, add the restriction to the state
-                              if (!restrictionIsSelected) {
-                                if (copyOfState.custodyRestrictions === null) {
-                                  copyOfState.custodyRestrictions = []
+                                // If the user is checking the box, add the restriction to the state
+                                if (!restrictionIsSelected) {
+                                  if (
+                                    copyOfState.custodyRestrictions === null
+                                  ) {
+                                    copyOfState.custodyRestrictions = []
+                                  }
+
+                                  copyOfState.custodyRestrictions &&
+                                    copyOfState.custodyRestrictions.push(
+                                      target.value as CaseCustodyRestrictions,
+                                    )
+                                }
+                                // If the user is unchecking the box, remove the restriction from the state
+                                else {
+                                  copyOfState.custodyRestrictions &&
+                                    copyOfState.custodyRestrictions.splice(
+                                      copyOfState.custodyRestrictions.indexOf(
+                                        target.value as CaseCustodyRestrictions,
+                                      ),
+                                      1,
+                                    )
                                 }
 
-                                copyOfState.custodyRestrictions &&
-                                  copyOfState.custodyRestrictions.push(
-                                    target.value as CaseCustodyRestrictions,
-                                  )
-                              }
-                              // If the user is unchecking the box, remove the restriction from the state
-                              else {
-                                copyOfState.custodyRestrictions &&
-                                  copyOfState.custodyRestrictions.splice(
-                                    copyOfState.custodyRestrictions.indexOf(
-                                      target.value as CaseCustodyRestrictions,
-                                    ),
-                                    1,
-                                  )
-                              }
+                                setWorkingCase({
+                                  ...workingCase,
+                                  custodyRestrictions:
+                                    copyOfState.custodyRestrictions,
+                                })
 
-                              setWorkingCase({
-                                ...workingCase,
-                                custodyRestrictions:
-                                  copyOfState.custodyRestrictions,
-                              })
-
-                              // Save case
-                              updateCase(
-                                workingCase.id,
-                                parseArray(
-                                  'custodyRestrictions',
-                                  copyOfState.custodyRestrictions || [],
-                                ),
-                              )
-                            }}
-                            large
-                          />
-                        </Box>
-                      </GridColumn>
-                    )
-                  })}
-                </GridRow>
+                                // Save case
+                                updateCase(
+                                  workingCase.id,
+                                  parseArray(
+                                    'custodyRestrictions',
+                                    copyOfState.custodyRestrictions || [],
+                                  ),
+                                )
+                              }}
+                              large
+                            />
+                          </Box>
+                        </GridColumn>
+                      )
+                    })}
+                  </GridRow>
+                </Box>
               </Box>
-            </Box>
-            <Text variant="h4" fontWeight="light">
-              Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
-              atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
-            </Text>
+            )}
+            {(!workingCase.decision ||
+              workingCase.decision === CaseDecision.ACCEPTING) && (
+              <Text variant="h4" fontWeight="light">
+                Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
+                atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
+              </Text>
+            )}
           </Box>
           <FormFooter
             nextUrl={`${Constants.CONFIRMATION_ROUTE}/${id}`}
