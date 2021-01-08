@@ -112,8 +112,21 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
         </Box>
       </Stack>
       <Stack space={2}>
-        <TextWithTooltip application={application} field={field} />
-        <Box paddingBottom={1} />
+        <TextWithTooltip
+          application={application}
+          field={field}
+          title={formatText(
+            m.formerInsuranceEntitlement,
+            application,
+            formatMessage,
+          )}
+          description={formatText(
+            m.formerInsuranceEntitlementTooltip,
+            application,
+            formatMessage,
+          )}
+        />
+        <Box paddingBottom={0} />
         <RadioController
           id={'formerInsurance.entitlement'}
           name={'formerInsurance.entitlement'}

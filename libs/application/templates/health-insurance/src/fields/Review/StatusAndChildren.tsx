@@ -15,6 +15,7 @@ import {
 import { YES, NO } from '../../constants'
 import { ReviewFieldProps, StatusTypes } from '../../types'
 import InfoMessage from '../InfoMessage/InfoMessage'
+import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
 
 import { m } from '../../forms/messages'
 
@@ -97,13 +98,21 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
       {status === StatusTypes.STUDENT && (
         <Box paddingBottom={2}>
           <Stack space={2}>
-            <FieldDescription
-              description={formatText(
+            <TextWithTooltip
+              field={field}
+              application={application}
+              title={formatText(
                 m.confirmationOfStudies,
                 application,
                 formatMessage,
               )}
+              description={formatText(
+                m.confirmationOfStudiesTooltip,
+                application,
+                formatMessage,
+              )}
             />
+            <Box paddingBottom={0} />
             <InputFileUpload
               id="confirmationOfStudies"
               disabled={!isEditable}

@@ -6,17 +6,35 @@ import * as styles from './TextWithTooltip.treat'
 
 import { m } from '../../forms/messages'
 
-const TextWithTooltip: FC<FieldBaseProps> = ({ application }) => {
+export interface Props extends FieldBaseProps {
+  title?: string
+  description?: string
+}
+
+const TextWithTooltip: FC<Props> = ({
+  application,
+  field,
+  title,
+  description,
+}) => {
   const { formatMessage } = useLocale()
 
   return (
     <Box paddingTop={6} className={styles.MarginFix}>
       <Text as="span">
-        {formatText(m.formerInsuranceEntitlement, application, formatMessage)}{' '}
+        {formatText(
+          field.title ? field.title : title ? title : '',
+          application,
+          formatMessage,
+        )}{' '}
         <Tooltip
           placement="top"
           text={formatText(
-            m.formerInsuranceEntitlementTooltip,
+            field.description
+              ? field.description
+              : description
+              ? description
+              : '',
             application,
             formatMessage,
           )}
