@@ -57,14 +57,14 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
   };
 
   return (
-    <div className="api-scope-form">
-      <div className="api-scope-form__wrapper">
-        <div className="api-scope-form__container">
+    <div className="identity-resource-form">
+      <div className="identity-resource-form__wrapper">
+        <div className="identity-resource-form__container">
           <h1>
             {isEditing ? 'Edit Identity Resource' : 'Create Identity Resource'}
           </h1>
-          <div className="api-scope-form__container__form">
-            <div className="api-scope-form__help">
+          <div className="identity-resource-form__container__form">
+            <div className="identity-resource-form__help">
               Identity resources are data like user ID, name, or email address
               of a user. An identity resource has a unique name, and you can
               assign arbitrary claim types to it. These claims will then be
@@ -72,9 +72,9 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
               the scope parameter to request access to an identity resource.
             </div>
             <form onSubmit={handleSubmit(save)}>
-              <div className="api-scope-form__container__fields">
-                <div className="api-scope-form__container__field">
-                  <label htmlFor="name" className="api-scope-form__label">
+              <div className="identity-resource-form__container__fields">
+                <div className="identity-resource-form__container__field">
+                  <label htmlFor="name" className="identity-resource-form__label">
                     Name
                   </label>
                   <input
@@ -82,19 +82,19 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     id="name"
                     name="name"
                     type="text"
-                    className="api-scope-form__input"
+                    className="identity-resource-form__input"
                     defaultValue={props.identityResource.name}
                     readOnly={isEditing}
                     onChange={(e) => checkAvailability(e.target.value)}
                   />
                   <div
-                    className={`api-scope-form__container__field__available ${
+                    className={`identity-resource-form__container__field__available ${
                       available ? 'ok ' : 'taken '
                     } ${nameLength > 0 ? 'show' : 'hidden'}`}
                   >
                     {available ? 'Available' : 'Unavailable'}
                   </div>
-                  <HelpBox helpText="The scope's unique name" />
+                  <HelpBox helpText="The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request." />
                   <ErrorMessage
                     as="span"
                     errors={errors}
@@ -102,10 +102,10 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     message="Name is required"
                   />
                 </div>
-                <div className="api-scope-form__container__field">
+                <div className="identity-resource-form__container__field">
                   <label
                     htmlFor="displayName"
-                    className="api-scope-form__label"
+                    className="identity-resource-form__label"
                   >
                     Display Name
                   </label>
@@ -114,10 +114,10 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     id="displayName"
                     name="displayName"
                     type="text"
-                    className="api-scope-form__input"
+                    className="identity-resource-form__input"
                     defaultValue={props.identityResource.displayName}
                   />
-                  <HelpBox helpText="The name that will be used to display the scope" />
+                  <HelpBox helpText="This value will be used e.g. on the consent screen." />
                   <ErrorMessage
                     as="span"
                     errors={errors}
@@ -125,10 +125,10 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     message="Display name is required"
                   />
                 </div>
-                <div className="api-scope-form__container__field">
+                <div className="identity-resource-form__container__field">
                   <label
                     htmlFor="description"
-                    className="api-scope-form__label"
+                    className="identity-resource-form__label"
                   >
                     Description
                   </label>
@@ -138,13 +138,13 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     name="description"
                     type="text"
                     defaultValue={props.identityResource.description}
-                    className="api-scope-form__input"
+                    className="identity-resource-form__input"
                   />
-                  <HelpBox helpText="Describe this Api Scope" />
+                  <HelpBox helpText="This value will be used e.g. on the consent screen." />
                 </div>
 
-                <div className="api-scope-form__container__checkbox__field">
-                  <label htmlFor="enabled" className="api-scope-form__label">
+                <div className="identity-resource-form__container__checkbox__field">
+                  <label htmlFor="enabled" className="identity-resource-form__label">
                     Enabled
                   </label>
                   <input
@@ -153,15 +153,15 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     name="enabled"
                     type="checkbox"
                     defaultChecked={props.identityResource.enabled}
-                    className="api-scope-form__checkbox"
+                    className="identity-resource-form__checkbox"
                   />
-                  <HelpBox helpText="Specifies if the scope is enabled" />
+                  <HelpBox helpText="Specifies if the Identity Resource is enabled" />
                 </div>
 
-                <div className="api-scope-form__container__checkbox__field">
+                <div className="identity-resource-form__container__checkbox__field">
                   <label
                     htmlFor="showInDiscoveryDocument"
-                    className="api-scope-form__label"
+                    className="identity-resource-form__label"
                   >
                     Show In Discovery Document
                   </label>
@@ -173,13 +173,13 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     defaultChecked={
                       props.identityResource.showInDiscoveryDocument
                     }
-                    className="api-scope-form__checkbox"
+                    className="identity-resource-form__checkbox"
                   />
                   <HelpBox helpText="Specifies whether this scope is shown in the discovery document." />
                 </div>
 
-                <div className="api-scope-form__container__checkbox__field">
-                  <label htmlFor="emphasize" className="api-scope-form__label">
+                <div className="identity-resource-form__container__checkbox__field">
+                  <label htmlFor="emphasize" className="identity-resource-form__label">
                     Emphasize
                   </label>
                   <input
@@ -188,13 +188,13 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     name="emphasize"
                     defaultChecked={props.identityResource.emphasize}
                     type="checkbox"
-                    className="api-scope-form__checkbox"
+                    className="identity-resource-form__checkbox"
                   />
                   <HelpBox helpText="Specifies whether the consent screen will emphasize this scope (if the consent screen wants to implement such a feature). Use this setting for sensitive or important scopes." />
                 </div>
 
-                <div className="api-scope-form__container__checkbox__field">
-                  <label htmlFor="required" className="api-scope-form__label">
+                <div className="identity-resource-form__container__checkbox__field">
+                  <label htmlFor="required" className="identity-resource-form__label">
                     Required
                   </label>
                   <input
@@ -203,24 +203,24 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     name="required"
                     defaultChecked={props.identityResource.required}
                     type="checkbox"
-                    className="api-scope-form__checkbox"
+                    className="identity-resource-form__checkbox"
                   />
                   <HelpBox helpText="Specifies whether the user can de-select the scope on the consent screen (if the consent screen wants to implement such a feature)" />
                 </div>
 
-                <div className="api-scope-form__buttons__container">
-                  <div className="api-scope-form__button__container">
+                <div className="identity-resource-form__buttons__container">
+                  <div className="identity-resource-form__button__container">
                     <button
-                      className="api-scope-form__button__cancel"
+                      className="identity-resource-form__button__cancel"
                       onClick={props.handleCancel}
                     >
                       Cancel
                     </button>
                   </div>
-                  <div className="api-scope-form__button__container">
+                  <div className="identity-resource-form__button__container">
                     <input
                       type="submit"
-                      className="api-scope-form__button__save"
+                      className="identity-resource-form__button__save"
                       disabled={isSubmitting || !available}
                       value="Next"
                     />

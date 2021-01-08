@@ -47,8 +47,8 @@ export default function Home() {
               Shortcut to create an API Resource
             </div>
             <div className="home__shortcuts__item__link">
-              <Link href="/api-resource">
-                <a>Create a new client</a>
+              <Link href="/resource/api-resource">
+                <a>Create a new API Resource</a>
               </Link>
             </div>
           </div>
