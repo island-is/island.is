@@ -87,7 +87,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                   >
                     {available ? 'Available' : 'Unavailable'}
                   </div>
-                  <HelpBox helpText="The scope's unique name" />
+                  <HelpBox helpText="The unique name of the scope. This is the value a client will use for the scope parameter in the authorize/token request." />
                   <ErrorMessage
                     as="span"
                     errors={errors}
@@ -110,7 +110,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     className="api-scope-form__input"
                     defaultValue={props.apiScope.displayName}
                   />
-                  <HelpBox helpText="The name that will be used to display the scope" />
+                  <HelpBox helpText="This value can be used e.g. on the consent screen." />
                   <ErrorMessage
                     as="span"
                     errors={errors}
@@ -133,7 +133,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     defaultValue={props.apiScope.description}
                     className="api-scope-form__input"
                   />
-                  <HelpBox helpText="Describe this Api Scope" />
+                  <HelpBox helpText="This value can be used e.g. on the consent screen." />
                 </div>
 
                 <div className="api-scope-form__container__checkbox__field">
@@ -181,7 +181,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     type="checkbox"
                     className="api-scope-form__checkbox"
                   />
-                  <HelpBox helpText="Specifies whether the consent screen will emphasize this scope (if the consent screen wants to implement such a feature). Use this setting for sensitive or important scopes." />
+                  <HelpBox helpText="Specifies whether the consent screen will emphasize this scope (if the consent screen wants to implement such a feature). Use this setting for sensitive or important scopes" />
                 </div>
 
                 <div className="api-scope-form__container__checkbox__field">
