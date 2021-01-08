@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import HelpBox from '../../Common/HelpBox';
 import NoActiveConnections from '../../Common/NoActiveConnections';
 import { ClientService } from '../../../services/ClientService';
+import { IdpRestriction } from './../../../entities/models/idp-restriction.model';
 
 interface Props {
   clientId: string;
@@ -12,6 +13,17 @@ interface Props {
 }
 
 const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
+  const [idpRestrictions, setIdpRestrictions] = useState<IdpRestriction[]>([]);
+
+  useEffect(() => {
+    getIdpRestrictions();
+  }, []);
+
+  const getIdpRestrictions = async () => {
+    const restrictions = await ClientService.findAllIdpRestrictions();
+    if (restrictions) setIdpRestrictions(restrictions);
+  };
+
   const add = async (name: string) => {
     const createObj = {
       name: name,
@@ -38,19 +50,11 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
     }
   };
 
-  const setSim = (sim: boolean) => {
-    if (sim) {
-      add('audkenni_sim');
+  const setIdp = (name: string, value: boolean) => {
+    if (value) {
+      add(name);
     } else {
-      remove('audkenni_sim');
-    }
-  };
-
-  const setCard = (card: boolean) => {
-    if (card) {
-      add('audkenni_card');
-    } else {
-      remove('audkenni_card');
+      remove(name);
     }
   };
 
@@ -68,35 +72,31 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
               </p>
             </div>
             <div className="client-idp-restriction__container__fields">
-              <div className="client-idp-restriction__container__checkbox__field">
-                <label className="client-idp-restriction__label">
-                  Sim card
-                </label>
-                <input
-                  type="checkbox"
-                  name="sim"
-                  className="client__checkbox"
-                  defaultChecked={props.restrictions?.includes('audkenni_sim')}
-                  onChange={(e) => setSim(e.target.checked)}
-                  title="Allows users to login with sim cards"
-                />
-                <HelpBox helpText="Allows users to login with sim cards" />
-              </div>
-
-              <div className="client-idp-restriction__container__checkbox__field">
-                <label className="client-idp-restriction__label">
-                  Identity card
-                </label>
-                <input
-                  type="checkbox"
-                  name="card"
-                  className="client__checkbox"
-                  defaultChecked={props.restrictions?.includes('audkenni_card')}
-                  onChange={(e) => setCard(e.target.checked)}
-                  title="Allows users to login with identity cards"
-                />
-                <HelpBox helpText="Allows users to login with identity cards" />
-              </div>
+              {idpRestrictions?.map((idpRestriction: IdpRestriction) => {
+                return (
+                  <div
+                    key={idpRestriction.name}
+                    className="client-idp-restriction__container__checkbox__field"
+                  >
+                    <label className="client-idp-restriction__label">
+                      {idpRestriction.description}
+                    </label>
+                    <input
+                      type="checkbox"
+                      name={idpRestriction.name}
+                      className="client__checkbox"
+                      defaultChecked={props.restrictions?.includes(
+                        idpRestriction.name
+                      )}
+                      onChange={(e) =>
+                        setIdp(idpRestriction.name, e.target.checked)
+                      }
+                      title={idpRestriction.helptext}
+                    />
+                    <HelpBox helpText={idpRestriction.helptext} />
+                  </div>
+                );
+              })}
             </div>
 
             <NoActiveConnections

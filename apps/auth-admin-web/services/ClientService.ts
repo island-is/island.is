@@ -17,6 +17,7 @@ import { ClientPostLogoutRedirectUri } from '../entities/models/client-post-logo
 import { ClientRedirectUri } from '../entities/models/client-redirect-uri.model';
 import { ClientSecret } from '../entities/models/client-secret.model';
 import { Client } from '../entities/models/client.model';
+import { IdpRestriction } from '../entities/models/idp-restriction.model';
 import { BaseService } from './BaseService';
 
 export class ClientService extends BaseService {
@@ -192,5 +193,10 @@ export class ClientService extends BaseService {
         name
       )}`
     );
+  }
+
+  /** Get IDP restrictions  */
+  static async findAllIdpRestrictions(): Promise<IdpRestriction[] | null> {
+    return BaseService.GET(`idp-restriction`);
   }
 }
