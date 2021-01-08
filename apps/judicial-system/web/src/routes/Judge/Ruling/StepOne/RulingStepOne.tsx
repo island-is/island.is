@@ -278,7 +278,10 @@ export const RulingStepOne: React.FC = () => {
             <Box component="section" marginBottom={7}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  Gæsluvarðhaldstími
+                  {workingCase.decision ===
+                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                    ? 'Farbann'
+                    : 'Gæsluvarðhald'}
                 </Text>
               </Box>
               <GridRow>
