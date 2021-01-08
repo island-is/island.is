@@ -5,6 +5,7 @@ export default {
   },
   drivingLicense: {
     baseApiUrl: process.env.DRIVING_LICENSE_REGISTRY_URL,
+    secret: process.env.DRIVING_LICENSE_SECRET,
   },
   nationalRegistry: {
     baseSoapUrl: process.env.SOFFIA_SOAP_URL,
