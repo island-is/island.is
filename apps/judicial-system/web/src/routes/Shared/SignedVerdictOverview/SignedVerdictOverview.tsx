@@ -136,6 +136,7 @@ export const SignedVerdictOverview: React.FC = () => {
               </Box>
               <Box display="flex" flexDirection="column">
                 {workingCase.state === CaseState.ACCEPTED &&
+                  workingCase.decision === CaseDecision.ACCEPTING &&
                   workingCase.custodyRestrictions?.map(
                     (custodyRestriction, index) => (
                       <Box marginTop={index > 0 ? 1 : 0} key={index}>
