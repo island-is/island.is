@@ -60,10 +60,10 @@
 - [Personas](handbook/technical-overview/personas.md)
 - [Teamwork](handbook/technical-overview/teamwork.md)
 - [Technical Direction](handbook/technical-overview/technical-direction.md)
-- [X-Road / Straumurinn](handbook/technical-overview/x-road/SUMMARY.md)
+- [X-Road / Straumurinn](handbook/technical-overview/x-road/README.md)
   - [X-Road - Kerfisuppsetning](handbook/technical-overview/x-road/README.md)
   - [Straumurinn - Security Server Installation and Registration Steps](handbook/technical-overview/x-road/SecurityServerInstallationAndRegistrationSteps.md)
-  - [Straumurinn – Notkun Og Umsýsla](handbook/technical-overview/x-road/Straumurinn–NotkunOgumsýsla.md)
+  - [Straumurinn – Notkun Og Umsýsla](handbook/technical-overview/x-road/Straumurinn–NotkunOgUmsysla.md)
   - [Architecture Guidelines for Service Providers and Consumers](handbook/technical-overview/x-road/ArchitectureGuidelinesforServiceProvidersandConsumers.md)
 
 ## Repository

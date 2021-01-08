@@ -402,6 +402,24 @@ Til að eiga samskipti við vefþjónustur yfir Strauminn í þróunarumhverfi �
 
 AWS SSO aðgangsheimildir eru veittar af DevOps umsjónaraðila Stafræns Íslands:  [Andes](https://andes.is).
 
+Með ofangreindum aðgangi að X-Road þjóni Ísland.is er hægt að lista upp þau undirkerfi (subsystem) sem eru skráð í viðkomandi X-Road umhverfi (IS-DEV instance), með skipun eins og:
+```
+curl ‘http://localhost:8080/listClients’
+```
+
+Til að fá upplýsingar um vefþjónustur innan undirkerfis má gefa skipun eins og:
+```
+curl -H ‘X-Road-Client: IS-DEV/GOV/10000/island-is-client’ ‘http://localhost:8080/r1/IS-DEV/provider-member-class/provider-member-code/provider-subsystem-name/listMethods’ | json_pp
+```
+
+Ef vefþjónusta býður upp á OpenAPI 3 skil, þá er hægt að nálgast þau yfir X-Road með skipun eins og:
+```
+curl -H ‘X-Road-Client: IS-DEV/GOV/10000/island-is-client’ ‘http://localhost:8080/r1/IS-DEV/provider-member-class/provider-member-code/provider-subsystem-name/getOpenAPI?serviceCode=provider-service-code’
+```
+
+Þessar upplýsingar eru einnig aðgengilegar í vefviðmóti Viskuausunnar, _API Catalog_ Stafræns Íslands [TODO: hlekkur].
+
+
 ## Uppsetning og rekstur X-Road öryggisþjóna í Straumnum
 
 ### Uppsetning og uppfærsla
