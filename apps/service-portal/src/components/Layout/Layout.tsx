@@ -19,13 +19,14 @@ import { useScrollTopOnUpdate } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
 import MobileMenu from '../MobileMenu/MobileMenu'
 import { useFooterContent } from '@island.is/service-portal/graphql'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { useStore } from '../../store/stateProvider'
 import { RemoveScroll } from 'react-remove-scroll'
 
 const Layout: FC = ({ children }) => {
   useRoutes()
   const { locale, formatMessage } = useLocale()
+  useNamespaces('service.portal')
   const data = useFooterContent(locale)
   const { pathname } = useLocation()
   useScrollTopOnUpdate([pathname])

@@ -100,7 +100,7 @@ function Eligibility(): JSX.Element | null {
                       textAlign="right"
                     >
                       <Box>
-                        <Tag variant={category.color}>
+                        <Tag disabled variant={category.color}>
                           Flokkur {category.id}
                         </Tag>
                       </Box>

@@ -1,4 +1,4 @@
-name: Lint codeowners
+name: External checks
 
 on:
   pull_request: {}
@@ -6,6 +6,7 @@ on:
 
 jobs:
   codeowners-check:
+    name: Lint CODEOWNERS
     runs-on: ubuntu-20.04
 
     steps:
@@ -38,3 +39,32 @@ jobs:
           checks: 'files,owners,duppatterns'
           experimental_checks: 'notowned'
           github_access_token: '${{ secrets.OWNERS_VALIDATOR_GITHUB_SECRET }}'
+
+  gitbook-check:
+    name: Lint gitbook
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Run gitbook format
+        run: node ./scripts/gitbook.js
+      - name: Check if the git repo is dirty
+        id: changes
+        uses: UnicornGlobal/has-changes-action@v1.0.11
+      - name: Comment on PR
+        if: steps.changes.outputs.changed == 1
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Markdown formatting is invalid. Please run `node ./scripts/gitbook.js` from the repository root.'
+            })
+      - name: Exit if repo is dirty
+        if: steps.changes.outputs.changed == 1
+        run: exit 1
