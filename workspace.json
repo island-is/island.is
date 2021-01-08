@@ -5154,6 +5154,34 @@
         "docker-next": {}
       }
     },
+    "skilavottord-web-e2e": {
+      "root": "apps/skilavottord/web-e2e",
+      "sourceRoot": "apps/skilavottord/web-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/skilavottord/web-e2e/cypress.json",
+            "tsConfig": "apps/skilavottord/web-e2e/tsconfig.e2e.json",
+            "devServerTarget": "skilavottord-web:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "skilavottord-web:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["apps/skilavottord/web-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/skilavottord/web-e2e/**/*"]
+          }
+        }
+      }
+    },
     "skilavottord-ws": {
       "root": "apps/skilavottord/ws",
       "sourceRoot": "apps/skilavottord/ws/src",
@@ -5258,35 +5286,6 @@
           }
         },
         "docker-express": {}
-      }
-    },
-    "skilavottord-web-e2e": {
-      "root": "apps/skilavottord/web-e2e",
-      "sourceRoot": "apps/skilavottord/web-e2e/src",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@nrwl/cypress:cypress",
-          "options": {
-            "cypressConfig": "apps/skilavottord/web-e2e/cypress.json",
-            "tsConfig": "apps/skilavottord/web-e2e/tsconfig.e2e.json",
-            "baseUrl": "http://localhost:4200",
-            "devServerTarget": "skilavottord-web:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "skilavottord-web:serve:production"
-            }
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": ["apps/skilavottord/web-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/skilavottord/web-e2e/**/*"]
-          }
-        }
       }
     },
     "utils-api": {

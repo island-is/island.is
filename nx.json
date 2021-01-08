@@ -426,12 +426,12 @@
     "skilavottord-web": {
       "tags": []
     },
-    "skilavottord-ws": {
-      "tags": []
-    },
     "skilavottord-web-e2e": {
       "tags": [],
       "implicitDependencies": ["skilavottord-web"]
+    },
+    "skilavottord-ws": {
+      "tags": []
     },
     "utils-api": {
       "tags": []
