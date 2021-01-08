@@ -70,13 +70,14 @@ export const constructConclusion = (workingCase: Case) => {
           skal sæta gæsluvarðhaldi, þó ekki lengur en til
         </Text>
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
-          {` ${formatDate(workingCase.custodyEndDate, 'PPPp')}. `}
+          {` ${formatDate(workingCase.custodyEndDate, 'PPPp')}.`}
         </Text>
         {workingCase.custodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ) ? (
           <>
             <Text as="span" variant="intro">
+              {' '}
               Kærði skal{' '}
             </Text>
             <Text
