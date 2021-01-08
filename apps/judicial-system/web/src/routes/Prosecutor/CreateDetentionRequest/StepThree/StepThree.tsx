@@ -423,24 +423,18 @@ export const StepThree: React.FC = () => {
                     minDate={new Date()}
                     hasError={requestedCustodyEndDateErrorMessage !== ''}
                     errorMessage={requestedCustodyEndDateErrorMessage}
-                    handleChange={(date) =>
+                    handleCloseCalendar={(date) =>
                       setAndSendDateToServer(
                         'requestedCustodyEndDate',
                         workingCase.requestedCustodyEndDate,
                         date,
                         workingCase,
+                        true,
                         setWorkingCase,
                         updateCase,
                         setRequestedCustodyEndDateErrorMessage,
                       )
                     }
-                    handleCloseCalendar={(date: Date | null) => {
-                      if (isNull(date) || !isValid(date)) {
-                        setRequestedCustodyEndDateErrorMessage(
-                          'Reitur má ekki vera tómur',
-                        )
-                      }
-                    }}
                     required
                   />
                 </GridColumn>
