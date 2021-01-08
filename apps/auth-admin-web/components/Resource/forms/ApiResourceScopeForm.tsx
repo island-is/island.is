@@ -95,8 +95,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
           <h1>Allowed scopes</h1>
           <div className="api-resource-scope-form__container__form">
             <div className="api-resource-scope-form__help">
-              Decide which information you would like applications to be able to
-              access on a user's behalf.
+            An API must have at least one scope. Each scope can have different settings.
             </div>
             <form onSubmit={handleSubmit(add)}>
               <div className="api-resource-scope-form__container__fields">
