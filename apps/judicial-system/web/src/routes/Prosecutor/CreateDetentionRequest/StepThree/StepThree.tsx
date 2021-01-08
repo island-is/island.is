@@ -119,6 +119,12 @@ export const StepThree: React.FC = () => {
       explination:
         'Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum.',
     },
+    {
+      brokenLaw: '1. mgr. 100. gr. sml.',
+      value: CaseCustodyProvisions._100_1,
+      explination:
+        'Tilvísunin vægari úrræðin byggir á 1. mgr. 95. gr. sml. í grunninn. T.d. varðandi farbann yrði það b-liður 1. mgr. 95. gr., sbr. 1. mgr. 100. gr. sml.',
+    },
   ]
 
   const restrictions = [
