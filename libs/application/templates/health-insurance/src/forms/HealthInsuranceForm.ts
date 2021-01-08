@@ -258,10 +258,14 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'formerInsurance.institution',
               title: m.formerInsuranceInstitution,
             }),
+            buildCustomField({
+              id: 'formerInsurance.entitlementDescription',
+              title: '',
+              component: 'TextWithTooltip',
+            }),
             buildRadioField({
               id: 'formerInsurance.entitlement',
               title: '',
-              description: m.formerInsuranceEntitlement,
               width: 'half',
               largeButtons: true,
               options: [

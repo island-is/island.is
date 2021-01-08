@@ -234,6 +234,12 @@ export const m = defineMessages({
       'Are you entitled to continued insurance in your former country of residence while living in Iceland?',
     description: 'Former insurance entitlement',
   },
+  formerInsuranceEntitlementTooltip: {
+    id: 'hi.application:formerInsurance.entitlement',
+    defaultMessage:
+      'Most likely yes if you are still employed/receiving unemployment benefits, pension, benefits in cash or paternity/maternity benefits from your former country of insurance.',
+    description: 'Former insurance entitlement tooltip',
+  },
   formerInsuranceAdditionalInformation: {
     id: 'hi.application:formerInsurance.additionalInformation',
     defaultMessage: 'Please explain why',
