@@ -410,7 +410,7 @@ export const StepThree: React.FC = () => {
                 <GridColumn span="5/8">
                   <DatePicker
                     id="reqCustodyEndDate"
-                    label="Gæsluvarðhald til"
+                    label="Gæsluvarðhald / farbann til"
                     placeholderText="Veldu dagsetningu"
                     selected={
                       workingCase.requestedCustodyEndDate
