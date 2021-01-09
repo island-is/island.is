@@ -300,7 +300,7 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
           />
         </Box>
       )}
-
+      {/* Showing Api documentation with redoc */}
       <Box width="full">
         {!loading &&
           !error &&
