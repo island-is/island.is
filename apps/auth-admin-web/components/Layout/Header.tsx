@@ -1,4 +1,4 @@
-import React, { Component, useEffect } from 'react';
+import React from 'react';
 import { signIn, signOut, useSession } from 'next-auth/client';
 
 const Header: React.FC = () => {
@@ -11,19 +11,6 @@ const Header: React.FC = () => {
   const logout = () => {
     signOut({ callbackUrl: `${window.location.origin}/api/auth/logout` });
   };
-
-  const isExpired = (session: any): boolean => {
-    return (
-      (!session && !loading) ||
-      (session && new Date(session.expires) < new Date())
-    );
-  };
-
-  useEffect(() => {
-    if (isExpired(session)) {
-      logout();
-    }
-  }, [session]);
 
   return (
     <header className="header__container">
