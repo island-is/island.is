@@ -194,10 +194,17 @@ export const HealthInsuranceForm: Form = buildForm({
                 },
               ],
             }),
+            buildCustomField({
+              id: 'confirmationOfStudiesDescription',
+              title: m.confirmationOfStudies,
+              description: m.confirmationOfStudiesTooltip,
+              component: 'TextWithTooltip',
+              condition: (answers) => answers.status === StatusTypes.STUDENT,
+            }),
             buildFileUploadField({
               id: 'confirmationOfStudies',
               title: '',
-              introduction: m.confirmationOfStudies,
+              introduction: '',
               condition: (answers) => answers.status === StatusTypes.STUDENT,
             }),
             buildRadioField({
@@ -258,10 +265,15 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'formerInsurance.institution',
               title: m.formerInsuranceInstitution,
             }),
+            buildCustomField({
+              id: 'formerInsurance.entitlementDescription',
+              title: m.formerInsuranceEntitlement,
+              description: m.formerInsuranceEntitlementTooltip,
+              component: 'TextWithTooltip',
+            }),
             buildRadioField({
               id: 'formerInsurance.entitlement',
               title: '',
-              description: m.formerInsuranceEntitlement,
               width: 'half',
               largeButtons: true,
               options: [
