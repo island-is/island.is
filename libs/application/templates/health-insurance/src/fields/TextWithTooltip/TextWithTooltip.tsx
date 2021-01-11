@@ -28,9 +28,7 @@ const TextWithTooltip: FC<Props> = ({
         <Tooltip
           placement="top"
           text={formatText(
-            field.description
-              ? field.description
-              : description,
+            field.description ? field.description : description,
             application,
             formatMessage,
           )}
