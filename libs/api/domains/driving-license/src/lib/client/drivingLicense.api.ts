@@ -1,61 +1,36 @@
+import fetch from 'node-fetch'
+
 import { User } from '@island.is/auth-nest-tools'
 
 import { DrivingLicenseResponse } from './drivingLicense.type'
 
-export class DrivingLicenseApi {
-  constructor(private readonly baseApiUrl: string) {}
+const XROAD_PATH =
+  'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
+const XROAD_CLIENT = 'IS-DEV/GOV/10000/island-is-client'
 
-  async getDrivingLicense(
+export class DrivingLicenseApi {
+  private readonly baseApiUrl: string
+  private readonly secret: string
+
+  constructor(baseUrl: string, secret: string) {
+    this.baseApiUrl = `${baseUrl}/${XROAD_PATH}`
+    this.secret = secret
+  }
+
+  requestApi(url: string) {
+    return fetch(`${this.baseApiUrl}/${url}`, {
+      headers: {
+        'X-Road-Client': XROAD_CLIENT,
+        SECRET: this.secret,
+        Accept: 'application/json',
+      },
+    })
+  }
+
+  async getDrivingLicenses(
     nationalId: User['nationalId'],
-  ): Promise<DrivingLicenseResponse> {
-    const drivingLicense: DrivingLicenseResponse = await {
-      id: 1337,
-      nafn: 'Jón Ekki Til Jónsson ',
-      kennitala: '1234567890',
-      faedingarstadur: '8000',
-      faedingarStadurHeiti: 'Ísland',
-      utgafuDagsetning: '2013-05-28T00:00:00',
-      gildirTil: '2045-11-06T23:59:59',
-      nrUtgafustadur: 37,
-      nafnUtgafustadur: 'Sýslumaðurinn á höfuðborgarsvæðinu - Kópavogi',
-      erBradabirgda: false,
-      rettindi: [
-        {
-          id: 1337,
-          nr: 'A',
-          utgafuDags: '2010-08-30T00:00:00',
-          gildirTil: '2045-11-06T00:00:00',
-          aths: '',
-        },
-        {
-          id: 1337,
-          nr: 'B',
-          utgafuDags: '1993-07-26T00:00:00',
-          gildirTil: '2045-11-06T00:00:00',
-          aths: '',
-        },
-      ],
-      athugasemdir: [{ id: 1337, nr: '71', athugasemd: '1' }],
-      mynd: {
-        id: -1,
-        kennitala: '1234567890',
-        skrad: '1996-10-28T00:00:00',
-        mynd: '',
-        gaedi: 0,
-        forrit: 5,
-        tegund: 1,
-      },
-      undirskrift: null,
-      svipting: {
-        dagsFra: null,
-        dagsTil: null,
-        skirteiniGlatad: null,
-        tegundSviptingarHeiti: null,
-        tegundSviptingar: null,
-        skirteiniUrGildi: null,
-        endurupptakaSkirteinis: null,
-      },
-    }
-    return drivingLicense
+  ): Promise<DrivingLicenseResponse[]> {
+    const res = await this.requestApi(`api/Okuskirteini/${nationalId}`)
+    return res.json()
   }
 }
