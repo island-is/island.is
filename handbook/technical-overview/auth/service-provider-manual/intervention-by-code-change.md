@@ -1,6 +1,5 @@
 # Intervention by Code Change
 
-
 If a fault is diagnosed which needs code change then the software support should follow these guidelines:
 
 1. Retrieve the version of the system which is currently on _Prod_.

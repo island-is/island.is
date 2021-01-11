@@ -1,6 +1,5 @@
 # the Authentication Service Provision
 
-
 [GitHub](https://github.com/) is used for source code management while [Amazon Web Service](https://aws.amazon.com/) is the hosting provider.
 Further information regarding the development- and service provider-environments can be found following these links:
 
@@ -16,9 +15,11 @@ Further information regarding the development- and service provider-environments
 ### Terminology
 
 - ##### User
+
   A human that is using a registered client to access resources.
 
 - ##### Client
+
   A software that requests tokens from [IdentityServer](https://identityserver4.readthedocs.io/en/latest/) - either for authenticating a user or for accessing a resource. A client must be first registered with [IdentityServer](https://identityserver4.readthedocs.io/en/latest/) before it can request tokens. Clients can for example be web applications, native mobile or desktop applications.
 
 - ##### Resources
@@ -26,12 +27,11 @@ Further information regarding the development- and service provider-environments
   - Identity data to identify users, for example names or e-mail addresses.
   - API is an interface which the clients communicate with.
 
-
-- ##### Identity token
+* ##### Identity token
 
   An identity token is created during the authentication procedure of [IdentityServer](https://identityserver4.readthedocs.io/en/latest/). It contains at a bare minimum an identifier for the user (called the _sub_ aka _subject claim_) and information about how and when the user authenticated.
 
-- ##### Access token
+* ##### Access token
 
   An access token allows access to an API resource. Clients request access tokens and forward them to the API. Access tokens contain information about the client and the user which the API uses to authorize access to the resources.
 
