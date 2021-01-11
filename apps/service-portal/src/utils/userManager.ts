@@ -47,7 +47,7 @@ export class ExtendedUserManager extends UserManager {
   }
 
   async verifyAuthentication() {
-    let user = await this.getUser()
+    const user = await this.getUser()
     try {
       if (user === null || !userTokenIsValid(user)) {
         this.signinRedirect()
