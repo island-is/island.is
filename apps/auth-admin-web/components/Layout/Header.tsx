@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { signIn, signOut, useSession } from 'next-auth/client';
+import { useRouter } from 'next/router';
 
 const Header: React.FC = () => {
   const [session, loading] = useSession();
+  const router = useRouter();
 
   const login = async () => {
     signIn('identity-server');
@@ -12,13 +14,26 @@ const Header: React.FC = () => {
     signOut({ callbackUrl: `${window.location.origin}/api/auth/logout` });
   };
 
+  const isExpired = (session: any): boolean => {
+    return (
+      (!session && !loading) ||
+      (session && new Date(session.expires) < new Date())
+    );
+  };
+
+  useEffect(() => {
+    if (isExpired(session)) {
+      router.push('/');
+    }
+  }, [session]);
+
   return (
     <header className="header__container">
       <div className="header__container__logo">
         <h1>IDS management</h1>
       </div>
       <div className="header__container__options">
-        {session && (
+        {session && !isExpired(session) && (
           <div className="header__container__user">
             <div className="header__username">{session.user.name}</div>
             <div className="header__container__logout">
@@ -31,7 +46,7 @@ const Header: React.FC = () => {
             </div>
           </div>
         )}
-        {!session && (
+        {(!session || isExpired(session)) && (
           <div className="header__container__logout">
             <button className="header__button__logout" onClick={() => login()}>
               Login
