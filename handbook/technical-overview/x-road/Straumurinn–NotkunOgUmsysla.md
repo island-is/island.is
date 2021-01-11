@@ -8,13 +8,13 @@ Straumurinn byggir á X-Road, opinni útfærslu gagnaflutningslags sem gerir sto
 
 Meðan miðlæg stjórn er höfð með samskipan, skráning þjónusta og sannvottun, þá reka þjónustuveitendur og -neytendur sína eigin öryggisþjóna sem þola truflanir í rekstri miðlægu þjónustanna. X-Road tryggir leynd, heilleika og samvirkni milli aðilia sem eiga í gagnasamskiptum.
 
-![](../../../.gitbook/assets/x-road/0.png)
+![](./assets/0.png)
 
 ### Vistkerfi Straumsins
 
 Umhverfi Straumsins samanstendur af stofnunum og fyrirtækjum sem hafa sameinast um að nýta sömu X-Road uppsetninguna til að veita og þiggja þjónustu. Umsjónaraðilar Straumsins stýra því hverjum er heimilt að tengjasta þessu samfélagi, ásamt því að setja reglur og viðmið.
 
-![](../../../.gitbook/assets/x-road/1.png)
+![](./assets/1.png)
 
 ### Traust net
 
@@ -22,9 +22,9 @@ Umhverfi Straumsins samanstendur af stofnunum og fyrirtækjum sem hafa sameinast
 
 Beining samskipta byggir á auðkennum aðila og þjónusta, sem er varpað af X-Road yfir á raunverulega staðsetningu þjónustanna á neti. Öll skráning varðandi samskipti er geymd hjá hverjum aðila um sig og þriðju aðilar hafa ekki aðgang að þeim gögnum. Óhrekjanleiki samskipta yfir Strauminn er tryggður með tímastimplum og stafrænum undirskriftum. Samskiptaskrár X-Road er hægt að nota sem sönnunargagn fyrir rétti.
 
-![](../../../.gitbook/assets/x-road/2.png)
+![](./assets/2.png)
 
-![](../../../.gitbook/assets/x-road/3%20%281%29.png)
+![](./assets/3%20%281%29.png)
 
 ### Aðgangsheimildir
 
@@ -32,7 +32,7 @@ Með X-Road er hægt að stjórna aðgangi að þjónustum. Stjórn aðgangsheim
 
 Lykilatriði í Straumnum er að þjónustuveitandi eigi sín gögn og hafi stjórn á aðgangi að þeim. Þó þjónusta hafi verið gefin út á Straumnum er ekki þar með sagt að hún sé sjálfkrafa aðgengileg öllum meðlimum hans. Vanalega er aðgangur veittur á grundvelli upplýsingakerfis: Þjónustuveitandi heimilar tilteknu upplýsingakerfi aðgang að tiltekinni þjónustu.
 
-![](../../../.gitbook/assets/x-road/4.png)
+![](./assets/4.png)
 
 Hlutverk innan umhverfis Straumsins  
 - frá [https://www.niis.org/blog/2020/3/30/x-road-implementation-models](https://www.niis.org/blog/2020/3/30/x-road-implementation-models)
@@ -57,15 +57,15 @@ Skráning vefþjónustu í Strauminn felst í því að finna henni stað í und
 
 Skráning undirkerfis felst í því að velja að bæta við undirkerfi í umsjónarvefviðmótinu: Undir _Clients_ flipanum er smellt á _Add Subsystem_:
 
-![](../../../.gitbook/assets/x-road/5%20%281%29.png)
+![](./assets/5%20%281%29.png)
 
 Á skjánum sem þá birtist er undirkerfinu gefið nafn samkvæmt nafnavenju undirkerfa Straumsins, sem hefur áhrif á birtingu vefþjónusta undirkerfisins í Viskuausunni – sjá 2.2 _Nafnavenjur Straumsins og skráning vefþjónusta í Viskuausuna_.
 
-![](../../../.gitbook/assets/x-road/6%20%281%29.png)
+![](./assets/6%20%281%29.png)
 
 Þá er séð til þess að hakað sé við _Register subsystem_ og smellt á hnappinn _Add Subsystem_. Gluggi birtist til staðfestingar skráningu undirkerfisins í miðlæga hluta Straumsins:
 
-![](../../../.gitbook/assets/x-road/7%20%281%29.png)
+![](./assets/7%20%281%29.png)
 
 ### Nafnavenjur Straumsins og skráning vefþjónusta í Viskuausuna
 
@@ -93,51 +93,51 @@ Ef ekkert af ofangreindum viðskeytum eru í nafni undirkerfis, þá fara vefþj
 
 Vefþjónustur eru skráðar innan undirkerfis með því að velja _Services_ flipann undir _Clients_ flipanum. Þar undir eru hnappar til að skrá annað hvort REST eða SOAP \(WSDL\) vefþjónustur:
 
-![](../../../.gitbook/assets/x-road/8%20%281%29.png)
+![](./assets/8%20%281%29.png)
 
 Við skráningu á REST vefþjónustu þarf að gefa upp nafn vefþjónustunnar, eða endapunktsins, _Service Code_ \(nöfn endapunkta koma sjálfkrafa inn tilfelli SOAP þjónusta út frá WSDL skilgreiningu\). Nafnavenja er að Service Code endi á „-vN“ þar sem N er viðkomandi útgáfunúmer þjónustunnar, til dæmis: fasteignaskra-v1.
 
-![](../../../.gitbook/assets/x-road/9.png)
+![](./assets/9.png)
 
 **Virkjun vefþjónustu**
 
 Þegar vefþjónusta hefur verið skráð, þá þarf að virkja hana sérstaklega, með því að smella á rofa við skráningu vefþjónustunnar. Með þessum rofa er þá líka hægt að taka afvirkja vefþjónustur, t.d. vegna viðhalds, og þá svarar X-Road öryggisþjónnin með _Out of Order_ skilaboðum við beiðnum til vefþjónustunnar.
 
-![](../../../.gitbook/assets/x-road/10.png)
+![](./assets/10.png)
 
 ### Aðgangsheimildir að vefþjónustum eða stökum endapunktum
 
 Aðgangsstýringu einstakra vefþjónusta er hægt að nálgast með því að smella á nafn vefþjónustu, _Service Code,_ undir _Services_ flipa viðkomandi undirkerfis:
 
-![](../../../.gitbook/assets/x-road/11.png)
+![](./assets/11.png)
 
 Á skráningarskjá vefþjónustunnar er að finna hnappinn _Add Subjects_:
 
-![](../../../.gitbook/assets/x-road/12%20%281%29.png)
+![](./assets/12%20%281%29.png)
 
 _Add Subjects_ hnappurinn sprettir upp leitarglugga þar sem er hægt að finna þau undirkerfi sem skal veita aðgang að vefþjónustunni:
 
-![](../../../.gitbook/assets/x-road/13.png)
+![](./assets/13.png)
 
 Á skráningarsíðu vefþjónustunnar, undir _Access Rights_, má sjá lista þeirra undirkerfa sem hefur verið veittur aðgangur:
 
-![](../../../.gitbook/assets/x-road/14.png)
+![](./assets/14.png)
 
 Í tilfelli REST vefþjónusta sem hafa verið skráðar með OpenAPI 3 skilgreiningu, þá er að finna _Endpoints_ flipa á skráningarsíðu þeirra, þar sem má sjá yfirlit yfir allar aðgerðir vefþjónustunnar ásamt möguleika á að skilgreina aðgangsheimildir hverrar aðgerðar fyrir sig, með sambærilegum hætti og er gert fyrir vefþjónustur í heild:
 
-![](../../../.gitbook/assets/x-road/15%20%281%29.png)
+![](./assets/15%20%281%29.png)
 
-![](../../../.gitbook/assets/x-road/16.png)
+![](./assets/16.png)
 
 Yfirlit annarra undirkerfa sem hafa aðgang að vefþjónustum viðkomandi undirkerfis er hægt að sjá undir flipanum _Service Clients_ á upplýsingasíðu þess:
 
-![](../../../.gitbook/assets/x-road/17%20%281%29.png)
+![](./assets/17%20%281%29.png)
 
 Þar er einnig að finna _Add Subject_ hnapp, sem má nota til að veita öðrum undirkerfum aðgangsheimild að vefþjónustuendapunktum þessa undirkerfis:
 
-![](../../../.gitbook/assets/x-road/18%20%281%29.png)
+![](./assets/18%20%281%29.png)
 
-![](../../../.gitbook/assets/x-road/19.png)
+![](./assets/19.png)
 
 ### Local Groups
 
@@ -145,25 +145,25 @@ Yfirlit annarra undirkerfa sem hafa aðgang að vefþjónustum viðkomandi undir
 
 Þegar hópur hefur verið búinn til:
 
-![](../../../.gitbook/assets/x-road/20.png)
+![](./assets/20.png)
 
 Þá er hægt að smella á nafn hópsins:
 
-![](../../../.gitbook/assets/x-road/21.png)
+![](./assets/21.png)
 
 - til að opna skráningarskjá hópsins, þar er smellt á _Add Members_ hnappinn til að bæta við þeim undirkerfum sem skulu öðlast þær aðgangsheimildir sem verða veittar hópnum:
 
-![](../../../.gitbook/assets/x-road/22%20%281%29.png)
+![](./assets/22%20%281%29.png)
 
-![](../../../.gitbook/assets/x-road/23%20%281%29.png)
+![](./assets/23%20%281%29.png)
 
-![](../../../.gitbook/assets/x-road/24.png)
+![](./assets/24.png)
 
 Þegar aðgangsheimildir eru veittar að undirkerfi, þá er hægt að velja hóp, eins og stök undirkerfi væru annars valin:
 
-![](../../../.gitbook/assets/x-road/25%20%281%29.png)
+![](./assets/25%20%281%29.png)
 
-![](../../../.gitbook/assets/x-road/26.png)
+![](./assets/26.png)
 
 * Sjá nánar í [Local Access Right Groups](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/ug-ss_x-road_6_security_server_user_guide.md) kafla notendahandbókar X-Road.
 
@@ -196,7 +196,7 @@ Eitt umhverfi Straumsins samanstendur af miðlægum þjónustum X-Road – skilr
 
 Umhverfi Straumsins eru þrjú: „IS-DEV“, fyrir þróun, „IS-TEST“, fyrir prófanir með raungögnum, og raunumhverfið heitir „IS“.
 
-![](../../../.gitbook/assets/x-road/27%20%281%29.png)
+![](./assets/27%20%281%29.png)
 
 Innan hvers umhverfis er meðlimum skipt í flokka, eftir eðli stofnana:
 
@@ -208,7 +208,7 @@ Innan hvers flokks er meðlimum úthlutað kóða – _Member Code_ – sem í �
 
 Samsetning flokksheita, kóða meðlima og nafna undirkerfa mynda einskonar stigveldistré eða slóðir innan X-Road umhverfis Straumsins. Það má líta á þessar slóðir sem heimilisföng innan Straumsins, sem X-Road notar til að finna viðkomandi öryggisþjóna, upplýsingaveitur og biðlara.
 
-![](../../../.gitbook/assets/x-road/image%20%286%29.png)
+![](./assets/image%20%286%29.png)
 
 ### Hverskonar gögn eiga heima í hverju umhverfi
 
@@ -298,7 +298,7 @@ Til að komast hjá aðlögun fyrirliggjandi SOAP vefþjónusta að þeim kröfu
 
 Hýsingarvélar X-Road þjóna, sem hafa verið settar upp með aðstoð Stafræns Íslands / Origo, keyra eina útgáfu af slíku millistykki og með það til staðar er nóg að setja `„localhost:5443/“` fyrir framan nafn hýsils viðkomandi vefþjónustu, þegar um HTTPS samskipti er að ræða, og `„localhost:5080/“` fyrir framan _host_-nafn vefþjónustunnar í tilfelli ódulkóðaðra HTTP samskipta.
 
-![](../../../.gitbook/assets/x-road/29%20%281%29.png)
+![](./assets/29%20%281%29.png)
 
 **REST adaptor service**
 
@@ -320,7 +320,7 @@ Dæmi um samskiptaleið frá REST biðlara, til X-Road öryggisþjóns \(SS1\), 
 
 REST &lt;-&gt; REST-adaptor-service &lt;-&gt; X-Road SS1 &lt;-&gt; X-Road SS2 &lt;-&gt; universal-xroad-soap-proxy &lt;-&gt; legacy SOAP service
 
-![](../../../.gitbook/assets/x-road/image%20%282%29.png)
+![](./assets/image%20%282%29.png)
 
 Með þessari uppsetningu keyrir REST millistykkið á porti 6080 hýsingarvélarinnar og SOAP millistykkið handlangar HTTP beiðnir á 5080 og HTTPS á 5443.
 
@@ -334,11 +334,11 @@ Sé samskiptaleiðin yfir ótrygg net, þá er rétt að notast við HTTPS samsk
 
 Þessar stillingar er að finna í umsýsluviðmóti öryggisþjóns undir _Internal Servers_ flipa viðkomandi undirkerfis. Þar, undir _Information System TLS certificate_, er hægt að flytja inn opinberan skírteinishluta viðkomandi upplýsingakerfis. Undir _Security Server certificate_ er hægt að flytja út opinberan skírteinishluta X-Road öryggisþjónsins, til handa þeim upplýsingakerfum sem vilja eiga í gagnkvæmt auðkenndum samskiptum við þjóninn.
 
-![](../../../.gitbook/assets/x-road/31.png)
+![](./assets/31.png)
 
 TLS lykil öryggisþjónsins er einnig að finna í umsýsluviðmótinu undir _Keys and Certificates -&gt; Security Server TLS Key_.
 
-![](../../../.gitbook/assets/x-road/32.png)
+![](./assets/32.png)
 
 Eftirfarandi er dæmi um beiðni frá upplýsingakerfi til öryggisþjóns, í formu _curl_ skipunar:
 
@@ -450,7 +450,7 @@ Rekstur miðlægra þjónusta Straumsins – skilríkjamiðstöðvar og miðlæg
 
 Net-opnanir eru skjalaðar í uppsetningarleiðbeiningum og eftirfarandi mynd sýnir yfirlit þeirra til glöggvunar:
 
-![](../../../.gitbook/assets/x-road/image.png)
+![](./assets/image.png)
 
 ### Högun tiltækileika
 
@@ -464,7 +464,7 @@ Innbyggð álagsdreifing er eiginleiki byggður inn í X-Road öryggisþjóna. E
 
 Uppsetning innri álagsdreifingar er einfaldari en ytri álagsdreifing, þar sem öryggisþjónarnir sjá innan kerfis um beiningu beiðna og sannprófun skilríkja. Slík uppsetning krefst þó þess að þjónustur séu skráðar eins hjá hverjum öryggisþjóni um sig; þegar nýrri þjónustu er bætt við þarf að sjá til þess að hún sé skráð sérstaklega á alla þá öryggisþjóna sem er ætlað að svara fyrir hana. Hver öryggisþjónn í slíkri uppsetningu þarf að hafa farið í gegnum sjálfstætt skráningarferli í miðlæga þjónustu Straumsins.
 
-![](../../../.gitbook/assets/x-road/34.png)
+![](./assets/34.png)
 
 Fyrstur til svara vinnur: Sá öryggisþjónn sem nær fyrst að koma á TCP tengingu \(SS1, SS2 eða SS3\) verður fyrir vali öryggisþjóns biðlara \(SS\).
 
@@ -474,9 +474,9 @@ Hvort tveggja háan tiltækileika og aukin afköst er hægt að ná með því a
 
 Uppsetning klasa öryggisþjóna er flóknari í samanburði við nýtingu innri álagsdreifingar, sem er innbyggður eiginleiki og að sjálfgefnu virkur. Uppfærsla öryggisþjóna er flóknari með ytri álagsdreifingu, þar sem samræma þarf uppfærsluferlið innan klasans. Á hinn bóginn er auðveldara að bæta einingum við klasann, þar sem ekki þarf að fara í gegnum skráningarferlið gagnvart miðlægri þjónustu Straumsins fyrir hverja þeirra, því allar einingar klasans deila sama auðkenni. Til samanburðar, þá hefur hver öryggisþjónn sem tekur þátt í innri álagsdreifingu sitt eigið auðkenni, og þarf því að fara í gegnum sjálfstætt skráningarferli.
 
-![](../../../.gitbook/assets/x-road/35%20%281%29.png)
+![](./assets/35%20%281%29.png)
 
-Ytri álagsdreifingu er hægt að setja upp fyrir framan klasa af X-Road öryggisþjónum, þar sem er séð um að beina umferð milli eininga klasans.![](../../../.gitbook/assets/x-road/36.png)
+Ytri álagsdreifingu er hægt að setja upp fyrir framan klasa af X-Road öryggisþjónum, þar sem er séð um að beina umferð milli eininga klasans.![](./assets/36.png)
 
 Nánar má lesa í:
 
@@ -514,7 +514,7 @@ Undir _Settings -&gt; Backup and Restore_ má sjá yfirlit þau afrit sem eru sj
 
 Þessar aðgerðir er einnig hægt að framkvæma frá skipanalínu, eins og er vikið að í kafla 4.5.4 _Afrit_.
 
-![](../../../.gitbook/assets/x-road/37.png)
+![](./assets/37.png)
 
 ### Yfirlit kerfisstillinga
 
@@ -522,7 +522,7 @@ Yfirlit kerfisstillinga er að finna í umsýsluviðmótinu undir _Settings -&gt
 
 [https://github.com/digitaliceland/Straumurinn](https://github.com/digitaliceland/Straumurinn)
 
-![](../../../.gitbook/assets/x-road/38.png)
+![](./assets/38.png)
 
 ### Kerfisgreining
 
@@ -532,25 +532,25 @@ Undir _Diagnostics_ flipa umsýsluviðmóts er að finna yfirlit yfir stöðu ö
 * _Timestamping_ segir til um samband við miðlæga tímastimpil-þjónustu Straumsins.
 * Öryggisþjónar nota miðlægu _OCSP Responders_ þjónustuna til að sannprófa skilríki og hér má einnig sjá stöðu sambands við hana.
 
-![](../../../.gitbook/assets/x-road/39.png)
+![](./assets/39.png)
 
 ### Auðkenningar- og undirskriftarlyklar
 
 Lykla og skírteini fyrir auðkenningu í samskiptum milli öryggisþjóna og fyrir undirskrift skeyta er að finna í umsýsluviðmótinu undir _Keys and Certificates -&gt; Sign and Auth Keys_. Þar er hægt að útbúa beiðnir um undirskrift \(CSR\) frá miðlægri umsýslu Straumsins, ásamt því að flytja inn undirrituð skírteini.
 
-![](../../../.gitbook/assets/x-road/40.png)
+![](./assets/40.png)
 
 ### API lyklar
 
 Lykla sem veita aðgang að vélrænu umsýsluviðmóti öryggisþjóns – Management API – er hægt að útbúa undir _Keys and Certificates -&gt; API Keys_ í _Admin UI_ öryggisþjóns. Þegar er valið að búa til nýjan lykil, birtist gluggi með vali um notendahlutverk, sem er lýst í 4.4.1 - _Hlutverk notenda_.
 
-![](../../../.gitbook/assets/x-road/41.png)
+![](./assets/41.png)
 
 ### TLS lykill öryggisþjóns
 
 Undir flipanum _Keys and Certificates_ í umsýsluviðmóti öryggisþjóns er að finna upplýsingar um skírteini þjónsins, sem er hægt að nota í öruggum samskiptum við þau upplýsingakerfi sem hann svarar fyrir. Um þessi samskipti er fjallað í kafla 3.3 - _Samband öryggisþjóna við upplýsingakerfi_.
 
-![](../../../.gitbook/assets/x-road/42.png)
+![](./assets/42.png)
 
 ## Afritataka og vöktun
 

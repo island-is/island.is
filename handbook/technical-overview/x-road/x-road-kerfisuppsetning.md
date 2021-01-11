@@ -29,7 +29,7 @@ Fyrir uppsetningu á X-Road þarf stýrikerfisnotanda með “sudo” réttindi.
 
 ### **Net opnanir**
 
-![network diagram](../../../.gitbook/assets/x-road/0%20%281%29.png)
+![network diagram](./assets/0%20%281%29.png)
 
 * **Ytra net:**
   * Port opnanir inn að Security Server: TCP 5500  TCP 5577

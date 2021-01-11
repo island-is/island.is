@@ -6,7 +6,7 @@ _Straumurinn_ is based on X-Road, an open source data exchange layer solution th
 
 While configuration, service registration and certification is centrally managed, individual service providers and consumers manage or use their own Security Servers, which are resilient to disruptions in the operation of the central services. Availability is one of the main concerns for the operators of individual Security Services, and options in that regard are thus a focus of this document.
 
-![](../../../.gitbook/assets/x-road/image1%20%282%29.png)
+![](./assets/image1%20%282%29.png)
 
 Figure 1: [X-Road security architecture](https://github.com/nordic-institute/X-Road/blob/develop/doc/Architecture/arc-sec_x_road_security_architecture.md)
 
@@ -20,7 +20,7 @@ The exchange of information over the X-Road security layer is synchronous. There
 
 ## Availability <a id="2c8b484c-479c-4a28-9dc0-211bc028a9c9"></a>
 
-A benefit of the distributed design of X-Road is that no one component is a system-wide bottleneck or point of failure. The availability of security services for each service consumer and provider can be increased with redundant configurations. There are two possible approaches to increase the availability of X-Road security servers: Internal and external load balancing. Those two approaches entail a trade-off between simplicity and flexibility.
+A benefit of the distributed design of X-Road is that no single component is a system-wide bottleneck or point of failure. The availability of security services for each service consumer and provider can be increased with redundant configurations. There are two possible approaches to increase the availability of X-Road security servers: Internal and external load balancing. Those two approaches entail a trade-off between simplicity and flexibility.
 
 The Security Server has an internal client-side load balancer, and it also supports external load balancing. The client-side load balancer is a built-in feature, and it provides high availability. Instead, external load balancing provides both high availability and scalability from a performance point of view.
 
@@ -30,7 +30,7 @@ Internal load balancing is a feature built into the X-Road security servers. The
 
 The configuration of internal load balancing is simpler than external load balancing, as the Security Servers take care of routing the requests and verification of certificates internally. It does require the effort of configuring the services independently, though identically, on each Security Server; adding a new service requires adding it manually to each Security Server intended to handle requests to that service. The addition of each Security Server requires an independent registration process with the X-Road central to be completed.
 
-![](../../../.gitbook/assets/x-road/image2%20%283%29.png)
+![](./assets/image2%20%283%29.png)
 
 Figure 2: “The Fastest Wins” - the server that responds the fastest to TCP connection establishment request is used by a client Security Server. See [Balancing the Load in X-Road](https://www.niis.org/blog/2018/6/25/balancing-the-load).
 
@@ -40,7 +40,7 @@ Both high availability and scalability, from a performance point of view, can be
 
 Setting up a Security Server cluster is more complicated compared to the internal load balancing that is a built-in feature and enabled by default. Security Server version upgrades are more complex with an external load balancer, as the upgrade process must be coordinated within the cluster. On the other hand, adding new nodes to a cluster is easy, as the normal registration process is not required, because all the nodes in the cluster share the same identity. In contrast, when relying on the internal load balancing, each node is independent and has its own identity – adding a new Security Server means that full registration process must be completed.
 
-![](../../../.gitbook/assets/x-road/image3%20%281%29.png)
+![](./assets/image3%20%281%29.png)
 
 Figure 3: An external LB can be used in front of a Security Server cluster and the LB is responsible for routing incoming messages to different nodes. See [Balancing the Load in X-Road](https://www.niis.org/blog/2018/6/25/balancing-the-load).
 

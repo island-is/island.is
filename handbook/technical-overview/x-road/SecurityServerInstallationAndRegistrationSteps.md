@@ -29,13 +29,9 @@ The X-Road Security Servers mediate service calls and service responses between 
 * Add OS user to run the X-Road server: `sudo useradd --system --home /var/lib/xroad --no-create-home --shell /bin/bash --user-group --comment "X-Road system user" xroad`  If that user will be used for interactive SSH log-ins, then so the Security Server PIN won't be cleared \(even though auto-login is configured\), the following command can be entered: `loginctl enable-linger xroad`
 * During installation, dialog will appear asking for host and IP information for certificate generation. The latter set of the dialog will be for configuring certificates for the xroad-proxy-ui-api. Here it may be desirable to change the value from the auto-detected machine host name to a domain name used for accessing the Admin UI:
 
-  ![A screenshot of a cell phone
+  ![](./assets/0%20%282%29.png)
 
-  Description automatically generated](../../../.gitbook/assets/x-road/0%20%282%29.png)
-
-  ![A screenshot of a cell phone
-
-  Description automatically generated](../../../.gitbook/assets/x-road/1%20%281%29.png)
+  ![](./assets/1%20%281%29.png)
 
 * Once a Security Server has been successfully installed, the Admin UI can be opened in a web browser at [https://SECURITYSERVER:4000/](https://securityserver:4000/) . After logging in with the user credentials declared during the installation process, a prompt for importing a Configuration Anchor is displayed. The configuration anchors for each environment \(IS-DEV, IS-TEST, IS\) are linked to at: [https://github.com/digitaliceland/Straumurinn\#getting-started-installing-security-server-and-intial-configuration](https://github.com/digitaliceland/Straumurinn#getting-started-installing-security-server-and-intial-configuration)
 * Before being able to import a Configuration Anchor, the Security Server IP and FQDN must be whitelisted by the operator of the _Straumurinn_ X-Road central services. To start the _Straumurinn_ application process, the information \(IP, FQDN and the organization’s SSN \(should be obtained from the organization contact\)\) should be sent to [hjalp@ok.is](mailto:hjalp@ok.is)
@@ -48,7 +44,7 @@ curl ifconfig.me
 
 ### Registration Email for Security Server to Central \(example\)
 
-![](../../../.gitbook/assets/x-road/image%20%285%29.png)
+![](./assets/image%20%285%29.png)
 
 ### After the server has been registered in Central
 
@@ -60,7 +56,7 @@ curl ifconfig.me
 * For PIN to be entered automatically when starting X-Road services, follow this guide: [https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/Utils/ug-autologin\_x-road\_v6\_autologin\_user\_guide.md](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/Utils/ug-autologin_x-road_v6_autologin_user_guide.md)
 * Starting and stopping X-Road services to test the PIN entry functionality:
 
-```python
+```bash
 for i in xroad-confclient xroad-proxy xroad-signer xroad-monitor xroad-opmonitor xroad-proxy-ui-api ;do echo "stopping $i"; sudo service $i stop;done
 sudo systemctl list-units "xroad*"
 for i in xroad-confclient xroad-proxy xroad-signer xroad-monitor xroad-opmonitor xroad-proxy-ui-api ;do echo "starting $i"; sudo service $i start;done
@@ -76,15 +72,15 @@ sudo systemctl list-units "xroad*"
 
 ### Generate CSR certificates and import Anchors
 
-![](../../../.gitbook/assets/x-road/4%20%281%29.png)
+![](./assets/4%20%281%29.png)
 
 In the next screen a configuration anchor is requested. Upload the configuration anchor from the central server.
 
-![](../../../.gitbook/assets/x-road/5.png)
+![](./assets/5.png)
 
 Press UPLOAD to upload the anchor
 
-![](../../../.gitbook/assets/x-road/6.png)
+![](./assets/6.png)
 
 After anchor has been uploaded needs to be confirmed.
 
@@ -92,7 +88,7 @@ Check that the "Hash Generated" corresponds to the information on the Central Se
 
 Press CONFIRM.
 
-![](../../../.gitbook/assets/x-road/7.png)
+![](./assets/7.png)
 
 In the initial configuration screen input the values as follows.
 
@@ -117,19 +113,19 @@ In the initial configuration screen input the values as follows.
 * Repeat PIN - repeat the above PIN.
 * Press SUBMIT.
 
-![](../../../.gitbook/assets/x-road/8.png)
+![](./assets/8.png)
 
-![](../../../.gitbook/assets/x-road/9%20%281%29.png)
+![](./assets/9%20%281%29.png)
 
 The initial configuration was saved successfully.
 
-![](../../../.gitbook/assets/x-road/10%20%281%29.png)
+![](./assets/10%20%281%29.png)
 
 The security server asks for PIN code.
 
 Follow the link Please enter soft token PIN.
 
-![](../../../.gitbook/assets/x-road/11%20%281%29.png)
+![](./assets/11%20%281%29.png)
 
 Clicking the links navigates to Keys and Certificates page.
 
@@ -139,73 +135,73 @@ Press LOG IN.
 Enter PIN Code  
 Then Press LOG IN
 
-![](../../../.gitbook/assets/x-road/12.png)
+![](./assets/12.png)
 
 The red error message bar disappears
 
 Next is Time stamping.   
 Go to: Settings &gt; Timestamping Services &gt; ADD
 
-![](../../../.gitbook/assets/x-road/13%20%281%29.png)
+![](./assets/13%20%281%29.png)
 
 Pick time-stamping service from the list.
 
 Press OK.
 
-![](../../../.gitbook/assets/x-road/14%20%281%29.png)
+![](./assets/14%20%281%29.png)
 
 Timestamping message added will appears.
 
-![](../../../.gitbook/assets/x-road/15.png)
+![](./assets/15.png)
 
 Next step is to add Keys and Certificates  
 Open KEYS AND CERTIFICATES
 
-![](../../../.gitbook/assets/x-road/16%20%281%29.png)
+![](./assets/16%20%281%29.png)
 
 Press ADD KEY  
 Start making sign key
 
-![](../../../.gitbook/assets/x-road/17.png)
+![](./assets/17.png)
 
 Enter ”sign”  
 Choose SIGNING And Client  
 Change to PEM in CSR Format
 
-![](../../../.gitbook/assets/x-road/18.png)
+![](./assets/18.png)
 
 Press GENERATE CSR
 
-![](../../../.gitbook/assets/x-road/19%20%281%29.png)
+![](./assets/19%20%281%29.png)
 
 Press DONE
 
-![](../../../.gitbook/assets/x-road/20%20%281%29.png)
+![](./assets/20%20%281%29.png)
 
-![](../../../.gitbook/assets/x-road/21%20%281%29.png)
+![](./assets/21%20%281%29.png)
 
 The certificate request is downloaded to browser's download folder.
 
 Now make auth key  
 Enter “auth” and press NEXT
 
-![](../../../.gitbook/assets/x-road/22.png)
+![](./assets/22.png)
 
 Choose AUTHENTICATON and change CSR Format to PEM
 
-![](../../../.gitbook/assets/x-road/23.png)
+![](./assets/23.png)
 
 Enter your Server DNS name \(CN\)
 
-![](../../../.gitbook/assets/x-road/24%20%281%29.png)
+![](./assets/24%20%281%29.png)
 
 Press GENERATE CSR
 
-![](../../../.gitbook/assets/x-road/25.png)
+![](./assets/25.png)
 
 The certificate request is downloaded to browser's download folder.
 
-![](../../../.gitbook/assets/x-road/26%20%281%29.png)
+![](./assets/26%20%281%29.png)
 
 Now you can see that there are two keys in the overview, Sign and Auth.
 
@@ -216,32 +212,32 @@ VANTAR – Senda póst á Begga
 
 Open KEYS AND CERTIFICATIONS and press IMPORT CERT.
 
-![](../../../.gitbook/assets/x-road/27.png)
+![](./assets/27.png)
 
-![](../../../.gitbook/assets/x-road/28%20%281%29.png)
+![](./assets/28%20%281%29.png)
 
 Activate auth signed certificate, needs to click the name of the certificate \(test.xrd.island.is...\) and press Activate
 
 
 SCREENSHOT NEEDED
 
-![](../../../.gitbook/assets/x-road/29.png)
+![](./assets/29.png)
 
-![](../../../.gitbook/assets/x-road/30.png)
+![](./assets/30.png)
 
-![](../../../.gitbook/assets/x-road/31%20%281%29.png)
+![](./assets/31%20%281%29.png)
 
 Finally press **Register** on the auth certificate and enter inn the FQDN of the server and press ADD
 
-![](../../../.gitbook/assets/x-road/32%20%281%29.png)
+![](./assets/32%20%281%29.png)
 
-![](../../../.gitbook/assets/x-road/33.png)
+![](./assets/33.png)
 
-![](../../../.gitbook/assets/x-road/34%20%281%29.png)
+![](./assets/34%20%281%29.png)
 
 ### Confirm communication between two security servers
 
-```python
+```bash
 curl --insecure -H "X-Road-Client: IS-TEST/COM/5302922079/Origo-client" "
 https://origo-staging.xroad.coldcloudlab.com/r1/IS-TEST/GOV/7005942039/VMST-Protected/APIS/company?name=origo
 "
@@ -251,7 +247,7 @@ IS-**DEV**
 
 **Ísland.is to Skatturinn**:
 
-```python
+```bash
 curl -H "X-Road-Client: IS-DEV/GOV/10000/island-is-client" "http://localhost:8080/r1/IS-DEV/GOV/10006/Skatturinn-Protected/APIS-v1/company?name=skatturinn"
 ```
 
@@ -259,7 +255,7 @@ IS-**TEST**
 
 **Ísland.is to Skatturinn:**
 
-```python
+```bash
 curl -H "X-Road-Client: IS-TEST/GOV/5501692829/island-is-client" "http://localhost:8080/r1/IS-TEST/GOV/5402696029/Skatturinn-Protected/APIS-v1/company?name=skatturinn"
 ```
 
@@ -267,7 +263,7 @@ curl -H "X-Road-Client: IS-TEST/GOV/5501692829/island-is-client" "http://localho
 
 #### Ubuntu
 
-```python
+```bash
 #!/bin/bash
 
 set -x
@@ -296,7 +292,7 @@ sudo userdel -r postgres
 
 #### RHEL
 
-```python
+```bash
 #!/bin/bash
 
 set -x
