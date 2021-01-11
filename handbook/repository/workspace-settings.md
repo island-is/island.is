@@ -20,7 +20,7 @@ property of the `e2e` project.
   "builder": "@nrwl/workspace:run-commands",
   "options": {
     "args": "--targetName=skilavottord-web --targetHost=localhost:4200",
-    "commands":[
+    "commands": [
       "yarn start {args.targetName} &",
       "./scripts/ci/_wait-for.sh {args.targetHost} --timeout=0 -- curl -s http://{args.targetHost} > /dev/null",
       "yarn run e2e {args.targetName}-e2e --headless --production --record --group={args.targetName}-e2e --base-url http://{args.targetHost} --devServerTarget ''"
