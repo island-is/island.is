@@ -24,43 +24,27 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'dataGathering',
-      title: "Gagnaöflun",
+      id: 'externalData',
+      title: 'Gagnaöflun',
       children: [
-        buildTextField({
-          id: 'person.name',
-          title: m.name,
+        buildExternalDataProvider({
+          title: 'Gagnaöflun',
+          id: 'approveExternalData',
+          dataProviders: [
+            buildDataProviderItem({
+              id: 'childrenInformation',
+              type: 'NationalRegistryProvider',
+              title: 'Grunnupplýsingar um börn',
+              subTitle: 'Nöfn, kennitölur og núverandi lögheimili barna í þinni forsjá.',
+            }),
+            buildDataProviderItem({
+              id: 'parentInformation',
+              type: 'NationalRegistryProvider',
+              title: 'Grunnupplýsingar um foreldra',
+              subTitle: 'Nöfn, kennitölur og lögheimili foreldar barnanna.',
+            }),
+          ],
         }),
-        // buildSubSection({
-        //   id: 'externalData',
-        //   title: m.introSection,
-        //   children: [
-        //     buildExternalDataProvider({
-        //       title: m.introSection,
-        //       id: 'approveExternalData',
-        //       dataProviders: [
-        //         buildDataProviderItem({
-        //           id: 'userProfile',
-        //           type: 'UserProfileProvider',
-        //           title: m.introSection,
-        //           subTitle: m.introSection,
-        //         }),
-        //         buildDataProviderItem({
-        //           id: 'pregnancyStatus',
-        //           type: 'PregnancyStatus',
-        //           title: m.introSection,
-        //           subTitle: m.introSection,
-        //         }),
-        //         buildDataProviderItem({
-        //           id: 'parentalLeaves',
-        //           type: 'ParentalLeaves',
-        //           title: m.introSection,
-        //           subTitle: m.introSection,
-        //         }),
-        //       ],
-        //     }),
-        //   ],
-        // }),
       ],
     }),
     buildSection({
