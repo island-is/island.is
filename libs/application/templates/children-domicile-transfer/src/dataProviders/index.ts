@@ -1,3 +1,4 @@
 export {
-  ChildrenNationalRegistryProvider
+  ChildrenNationalRegistryProvider,
+  ParentNationalRegistryProvider
 } from '@island.is/application/data-providers'
