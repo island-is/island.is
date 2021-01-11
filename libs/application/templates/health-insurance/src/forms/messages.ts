@@ -163,6 +163,12 @@ export const m = defineMessages({
     defaultMessage: 'Confirmation of studies must be submitted',
     description: 'Confirmation of studies must be submitted',
   },
+  confirmationOfStudiesTooltip: {
+    id: 'hi.application:student.confirmationOfStudies',
+    defaultMessage:
+      'You need to submit a copy of your Graduation certificate or a confirmation of completed credits for each semester. Admission or enrollement letters are not sufficient.',
+    description: 'Confirmation of studies must be submitted, tooltip',
+  },
   childrenDescription: {
     id: 'hi.application:children.description',
     defaultMessage:
@@ -233,6 +239,12 @@ export const m = defineMessages({
     defaultMessage:
       'Are you entitled to continued insurance in your former country of residence while living in Iceland?',
     description: 'Former insurance entitlement',
+  },
+  formerInsuranceEntitlementTooltip: {
+    id: 'hi.application:formerInsurance.entitlement',
+    defaultMessage:
+      'Most likely yes if you are still employed/receiving unemployment benefits, pension, benefits in cash or paternity/maternity benefits from your former country of insurance.',
+    description: 'Former insurance entitlement tooltip',
   },
   formerInsuranceAdditionalInformation: {
     id: 'hi.application:formerInsurance.additionalInformation',

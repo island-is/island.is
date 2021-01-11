@@ -1,10 +1,11 @@
-import { Octokit } from '@octokit/action'
 import { findLastGoodBuild, WorkflowQueries } from './detection'
+import { Octokit } from '@octokit/action'
 
-const octokit = new Octokit()
-// const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
+const repository = process.env.GITHUB_REPOSITORY || '/'
+const [owner, repo] = repository.split('/')
 const workflow_file_name = 'push.yml'
+const octokit = new Octokit()
+
 class GitHubWorkflowQueries implements WorkflowQueries {
   async getData(branch: string) {
     return (
@@ -19,6 +20,10 @@ class GitHubWorkflowQueries implements WorkflowQueries {
         },
       )
     ).data
+  }
+
+  async getJobs(jobs_url: string) {
+    return (await octokit.request(jobs_url)).data
   }
 }
 
