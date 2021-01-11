@@ -1,4 +1,3 @@
 export {
-  ExampleFails,
-  ExampleSucceeds,
+  ChildrenNationalRegistryProvider
 } from '@island.is/application/data-providers'

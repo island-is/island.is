@@ -32,17 +32,17 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
           id: 'approveExternalData',
           dataProviders: [
             buildDataProviderItem({
-              id: 'childrenInformation',
-              type: 'NationalRegistryProvider',
+              id: 'childrenNationalRegistry',
+              type: 'ChildrenNationalRegistryProvider',
               title: 'Grunnupplýsingar um börn',
               subTitle: 'Nöfn, kennitölur og núverandi lögheimili barna í þinni forsjá.',
             }),
-            buildDataProviderItem({
-              id: 'parentInformation',
-              type: 'NationalRegistryProvider',
-              title: 'Grunnupplýsingar um foreldra',
-              subTitle: 'Nöfn, kennitölur og lögheimili foreldar barnanna.',
-            }),
+            // buildDataProviderItem({
+            //   id: 'childrenNationalRegistry',
+            //   type: 'ChildrenNationalRegistryProvider',
+            //   title: 'Grunnupplýsingar um foreldra',
+            //   subTitle: 'Nöfn, kennitölur og lögheimili foreldar barnanna.',
+            // }),
           ],
         }),
       ],
