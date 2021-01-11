@@ -1,4 +1,3 @@
-// Add when working with auth guards
 import { GrantDto, UserIdentityDto } from '@island.is/auth-api-lib'
 import { INestApplication } from '@nestjs/common'
 import { setup } from '../../../../../test/setup'
@@ -42,10 +41,6 @@ const grantObject: GrantDto = {
 
 // User identities
 describe('Users', () => {
-  // it('test', () => {
-  //   expect(5).toEqual(5)
-  // } )
-
   it('POST /user-identities should register userIdentity', async () => {
     // ACT
     const response = await request(app.getHttpServer())
