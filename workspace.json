@@ -1377,7 +1377,7 @@
             }
           }
         },
-        "e2e-ci":{
+        "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": ""
