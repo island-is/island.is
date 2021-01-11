@@ -40,21 +40,19 @@ export const PageLayout: FC<PageProps> = ({
 }) => {
   const { user } = useContext(UserContext)
 
-  const caseResult = () => {    
-    if(rejectedCase) {
+  const caseResult = () => {
+    if (rejectedCase) {
       return 'Kröfu hafnað'
     }
 
-    if(decision === CaseDecision.ACCEPTING) {
-      return isCustodyEndDateInThePast ? 
-        'Gæsluvarðhaldi lokið' : 
-        'Gæsluvarðhald virkt'
+    if (decision === CaseDecision.ACCEPTING) {
+      return isCustodyEndDateInThePast
+        ? 'Gæsluvarðhaldi lokið'
+        : 'Gæsluvarðhald virkt'
     }
 
-    if(decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) {
-      return isCustodyEndDateInThePast ? 
-        'Farbanni lokið' : 
-        'Farbann virkt'
+    if (decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) {
+      return isCustodyEndDateInThePast ? 'Farbanni lokið' : 'Farbann virkt'
     }
 
     return 'Niðustaða'
