@@ -17,6 +17,7 @@ import {
   FilterInput,
   FilterMultiChoice,
   Navigation,
+  Link,
 } from '@island.is/island-ui/core'
 
 import {
@@ -212,11 +213,11 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   const navigationItems = [
     {
       active: true,
-      href: nn('linkServices'),
+      href: linkResolver('webservicespage').as,
       title: nn('linkServicesText'),
     },
     {
-      href: nn('linkDesignGuide'),
+      href: linkResolver('handbookpage').as,
       title: nn('linkDesignGuideText'),
     },
     {
@@ -244,8 +245,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
               items={navigationItems}
               title={nn('linkThrounText')}
               titleLink={{
-                href: nn('linkThroun'),
-                active: false,
+                href: linkResolver('developerspage').as,
               }}
             />
           }
@@ -256,21 +256,16 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                 <Box display={['inline', 'inline', 'none']}>
                   {/* Show when a device */}
                   <Box paddingBottom="gutter">
-                    <NextLink passHref href={nn('linkServices')}>
-                      <a href={nn('linkServices')}>
-                        <Button
-                          colorScheme="default"
-                          iconType="filled"
-                          preTextIcon="arrowBack"
-                          preTextIconType="filled"
-                          size="small"
-                          type="button"
-                          variant="text"
-                        >
-                          {nn('linkServicesText')}
-                        </Button>
-                      </a>
-                    </NextLink>
+                    <Button
+                      colorScheme="default"
+                      preTextIcon="arrowBack"
+                      size="small"
+                      variant="text"
+                    >
+                      <Link href={linkResolver('developerspage').as}>
+                        {nn('linkThrounText')}
+                      </Link>
+                    </Button>
                   </Box>
                   <Box marginBottom="gutter">
                     <Navigation
@@ -280,7 +275,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                       items={navigationItems}
                       title={nn('linkThrounText')}
                       titleLink={{
-                        href: nn('linkThroun'),
+                        href: linkResolver('developerspage').as,
                       }}
                     />
                   </Box>
@@ -291,12 +286,12 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                     items={[
                       {
                         title: nn('linkIslandIsText'),
-                        href: nn('linkIslandIs'),
+                        href: linkResolver('homepage').as,
                       },
 
                       {
                         title: nn('linkThrounText'),
-                        href: nn('linkThroun'),
+                        href: linkResolver('developerspage').as,
                       },
                     ]}
                   />
