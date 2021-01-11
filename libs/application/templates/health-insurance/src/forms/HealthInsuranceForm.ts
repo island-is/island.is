@@ -15,6 +15,7 @@ import {
   FormModes,
   Comparators,
   Application,
+  FormValue,
 } from '@island.is/application/core'
 import { m } from './messages'
 import { YES, NO } from '../constants'
@@ -35,7 +36,12 @@ export const HealthInsuranceForm: Form = buildForm({
           title: m.externalDataTitle,
           id: 'approveExternalData',
           dataProviders: [
-            // TODO: Add UserProfilProvider for email and phone data
+            buildDataProviderItem({
+              id: 'userProfile',
+              type: 'UserProfileProvider',
+              title: '',
+              subTitle: '',
+            }),
             buildDataProviderItem({
               id: 'nationalRegistry',
               type: 'NationalRegistry',
@@ -55,6 +61,28 @@ export const HealthInsuranceForm: Form = buildForm({
               subTitle: m.internalRevenueSubTitle,
             }),
           ],
+        }),
+        buildMultiField({
+          id: 'confirmationOfResidency',
+          title: m.confirmationOfResidencyTitle,
+          description: m.confirmationOfResidencyDescription,
+          children: [
+            buildDividerField({
+              title: ' ',
+              color: 'transparent',
+            }),
+            buildFileUploadField({
+              id: 'confirmationOfResidencyDocument',
+              title: '',
+              introduction: m.confirmationOfResidencyFileUpload,
+              uploadHeader: m.fileUploadHeader.defaultMessage,
+              uploadDescription: m.fileUploadDescription.defaultMessage,
+            }),
+          ],
+          condition: (formValue: FormValue, externalData) => {
+            // TODO: when it is possible in NationalRegistry api, check if country is Greenland or Faroe Islands
+            return true
+          },
         }),
         buildMultiField({
           id: 'contactInfoSection',
@@ -194,10 +222,19 @@ export const HealthInsuranceForm: Form = buildForm({
                 },
               ],
             }),
+            buildCustomField({
+              id: 'confirmationOfStudiesDescription',
+              title: m.confirmationOfStudies,
+              description: m.confirmationOfStudiesTooltip,
+              component: 'TextWithTooltip',
+              condition: (answers) => answers.status === StatusTypes.STUDENT,
+            }),
             buildFileUploadField({
               id: 'confirmationOfStudies',
               title: '',
-              introduction: m.confirmationOfStudies,
+              introduction: '',
+              uploadHeader: m.fileUploadHeader.defaultMessage,
+              uploadDescription: m.fileUploadDescription.defaultMessage,
               condition: (answers) => answers.status === StatusTypes.STUDENT,
             }),
             buildRadioField({
@@ -258,10 +295,15 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'formerInsurance.institution',
               title: m.formerInsuranceInstitution,
             }),
+            buildCustomField({
+              id: 'formerInsurance.entitlementDescription',
+              title: m.formerInsuranceEntitlement,
+              description: m.formerInsuranceEntitlementTooltip,
+              component: 'TextWithTooltip',
+            }),
             buildRadioField({
               id: 'formerInsurance.entitlement',
               title: '',
-              description: m.formerInsuranceEntitlement,
               width: 'half',
               largeButtons: true,
               options: [
@@ -323,6 +365,8 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'additionalInfo.files',
               title: '',
               introduction: '',
+              uploadHeader: m.fileUploadHeader.defaultMessage,
+              uploadDescription: m.fileUploadDescription.defaultMessage,
               condition: {
                 questionId: 'additionalInfo.hasAdditionalInfo',
                 isMultiCheck: false,
