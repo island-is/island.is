@@ -1,10 +1,8 @@
 import React, { FC } from 'react'
 import { formatText, FieldBaseProps } from '@island.is/application/core'
-import { Box, Inline, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import * as styles from './TextWithTooltip.treat'
-
-import { m } from '../../forms/messages'
 
 export interface Props extends FieldBaseProps {
   title?: string
@@ -14,16 +12,16 @@ export interface Props extends FieldBaseProps {
 const TextWithTooltip: FC<Props> = ({
   application,
   field,
-  title,
-  description,
+  title = '',
+  description = '',
 }) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box paddingTop={6} className={styles.MarginFix}>
+    <Box paddingTop={6} className={styles.marginFix}>
       <Text as="span">
         {formatText(
-          field.title ? field.title : title ? title : '',
+          field.title ? field.title : title,
           application,
           formatMessage,
         )}{' '}
@@ -32,9 +30,7 @@ const TextWithTooltip: FC<Props> = ({
           text={formatText(
             field.description
               ? field.description
-              : description
-              ? description
-              : '',
+              : description,
             application,
             formatMessage,
           )}

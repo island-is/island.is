@@ -9,7 +9,7 @@ const InfoMessage: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box className={styles.MarginFix}>
+    <Box className={styles.marginFix}>
       <AlertMessage
         type="info"
         title={formatText(

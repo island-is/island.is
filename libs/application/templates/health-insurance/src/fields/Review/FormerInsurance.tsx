@@ -126,7 +126,6 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
             formatMessage,
           )}
         />
-        <Box paddingBottom={0} />
         <RadioController
           id={'formerInsurance.entitlement'}
           name={'formerInsurance.entitlement'}

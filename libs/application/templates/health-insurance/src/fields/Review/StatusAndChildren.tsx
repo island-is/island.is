@@ -112,7 +112,6 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
                 formatMessage,
               )}
             />
-            <Box paddingBottom={0} />
             <InputFileUpload
               id="confirmationOfStudies"
               disabled={!isEditable}

@@ -1,5 +1,5 @@
 import { style } from 'treat'
 
-export const MarginFix = style({
+export const marginFix = style({
   marginTop: '-24px',
 })
