@@ -495,10 +495,46 @@ export const RulingStepTwo: React.FC = () => {
               </Box>
             )}
             {(!workingCase.decision ||
-              workingCase.decision === CaseDecision.ACCEPTING) && (
-              <BlueBox>
-                <Checkbox></Checkbox>
-              </BlueBox>
+              workingCase.decision ===
+                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) && (
+              <Box component="section" marginBottom={3}>
+                <Box marginBottom={2}>
+                  <Text as="h3" variant="h3">
+                    Tilhögun farbanns
+                  </Text>
+                </Box>
+                <BlueBox>
+                  <Box marginBottom={2}>
+                    <GridRow>
+                      <GridColumn span="6/12">
+                        <Checkbox
+                          name="require-notification"
+                          label="Tilkynningarskylda"
+                          tooltip=""
+                          large
+                          filled
+                        />
+                      </GridColumn>
+                      <GridColumn span="6/12">
+                        <Checkbox
+                          name="confiscate-passport"
+                          label="Afhending vegabréfs"
+                          tooltip=""
+                          large
+                          filled
+                        />
+                      </GridColumn>
+                    </GridRow>
+                  </Box>
+                  <Input
+                    name="other-restrictions"
+                    placeholder="Til dæmis hvernig tilkynningarskyldu sé háttað..."
+                    label="Nánari útlistun eða aðrar takmarkanir"
+                    rows={10}
+                    textarea
+                  />
+                </BlueBox>
+              </Box>
             )}
             {(!workingCase.decision ||
               workingCase.decision === CaseDecision.ACCEPTING ||
