@@ -1,4 +1,4 @@
-import { NationalIdGuard } from './../../../../apps/services/auth-admin-api/src/app/modules/access/national-id-guard'
+// import { NationalIdGuard } from './../../../../apps/services/auth-admin-api/src/app/modules/access/national-id-guard'
 import { IdsAuthGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import { Type, ValidationPipe } from '@nestjs/common'
 import { InfraModule } from './infra/infra.module'
@@ -45,8 +45,6 @@ export const testServerActivateAuthGuards = async (
     .overrideGuard(IdsAuthGuard)
     .useValue({ canActivate: () => true })
     .overrideGuard(ScopesGuard)
-    .useValue({ canActivate: () => true })
-    .overrideGuard(NationalIdGuard)
     .useValue({ canActivate: () => true })
     .compile()
 
