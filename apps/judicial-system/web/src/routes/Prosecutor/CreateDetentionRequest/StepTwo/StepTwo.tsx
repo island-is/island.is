@@ -161,7 +161,7 @@ export const StepTwo: React.FC = () => {
   }
 
   useEffect(() => {
-    document.title = 'Dómkröfur - Réttarvörslugátt'
+    document.title = 'Óskir um fyrirtöku - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
@@ -264,7 +264,7 @@ export const StepTwo: React.FC = () => {
         <>
           <Box marginBottom={7}>
             <Text as="h1" variant="h1">
-              Dómkröfur
+              Óskir um fyrirtöku
             </Text>
           </Box>
           <Box component="section" marginBottom={5}>
