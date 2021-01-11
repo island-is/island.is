@@ -338,7 +338,7 @@ export const JudgeOverview: React.FC = () => {
               </AccordionItem>
               <AccordionItem
                 id="id_3"
-                label="Takmarkanir á gæslu"
+                label="Takmarkanir og tilhögun á gæslu"
                 startExpanded
                 labelVariant="h3"
               >
