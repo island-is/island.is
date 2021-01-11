@@ -219,7 +219,7 @@ export const StepThree: React.FC = () => {
         <>
           <Box marginBottom={7}>
             <Text as="h1" variant="h1">
-              Lagagrundvöllur og dómkröfur - Réttarvörslugátt
+              Lagagrundvöllur og dómkröfur
             </Text>
           </Box>
           <Box component="section" marginBottom={7}>
