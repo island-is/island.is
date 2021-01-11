@@ -81,6 +81,17 @@ export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
   }
 }
 
+export function formatAccusedByGender(accusedGender: CaseGender) {
+  switch (accusedGender) {
+    case CaseGender.MALE:
+      return 'kærði'
+    case CaseGender.FEMALE:
+      return 'kærða'
+    default:
+      return 'kærða'
+  }
+}
+
 export function formatRestrictions(
   accusedGender: CaseGender,
   custodyRestrictions: CaseCustodyRestrictions[],
@@ -156,16 +167,5 @@ export function formatGender(gender: CaseGender): string {
       return 'kona'
     case CaseGender.OTHER:
       return 'annað'
-  }
-}
-
-export function formatAccusedByGender(accusedGender: CaseGender) {
-  switch (accusedGender) {
-    case CaseGender.MALE:
-      return 'kærði'
-    case CaseGender.FEMALE:
-      return 'kærða'
-    default:
-      return 'kærða'
   }
 }
