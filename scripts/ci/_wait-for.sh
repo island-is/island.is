@@ -21,21 +21,33 @@ USAGE
   exit "$exitcode"
 }
 
+check_availability() {
+  nc -z "$HOST" "$PORT" > /dev/null 2>&1
+
+  result=$?
+  if [ $result -eq 0 ] ; then
+    if [ $# -gt 0 ] ; then
+      exec "$@"
+    fi
+    exit 0
+  fi
+  sleep 1
+}
+
 wait_for() {
   echo "Waiting for $HOST on $PORT to be ready"
-  for i in `seq $TIMEOUT` ; do
-    nc -z "$HOST" "$PORT" > /dev/null 2>&1
+  
+  if [ $TIMEOUT -gt 0 ] ; then
+    for i in `seq $TIMEOUT` ; do
+      check_availability "$@"
+    done
+    echo "Operation timed out" >&2
+  else
+    while true ; do
+      check_availability "$@"
+    done
+  fi  
 
-    result=$?
-    if [ $result -eq 0 ] ; then
-      if [ $# -gt 0 ] ; then
-        exec "$@"
-      fi
-      exit 0
-    fi
-    sleep 1
-  done
-  echo "Operation timed out" >&2
   exit 1
 }
 
