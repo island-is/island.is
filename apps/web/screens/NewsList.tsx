@@ -5,8 +5,7 @@ import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { Screen } from '../types'
-import NativeSelect from '../components/Select/Select'
-import Bullet from '../components/Bullet/Bullet'
+import { Select as NativeSelect, Bullet } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
   Box,

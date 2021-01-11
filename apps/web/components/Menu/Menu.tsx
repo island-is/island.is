@@ -8,7 +8,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
-import { SearchInput } from '..'
+import { SearchInput } from '@island.is/web/components'
 import { LanguageToggler } from '../LanguageToggler'
 
 interface MegaMenuLink {

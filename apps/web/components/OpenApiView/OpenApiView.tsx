@@ -18,7 +18,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import { OpenApi } from '@island.is/api-catalogue/types'
 import { GET_OPEN_API_QUERY } from '@island.is/web/screens/queries'
 import YamlParser from 'js-yaml'
-import { OpenApiDocumentation } from '..'
+import { OpenApiDocumentation } from '../OpenApiDocumentation'
 
 export interface OpenApiViewProps {
   service: ApiService
