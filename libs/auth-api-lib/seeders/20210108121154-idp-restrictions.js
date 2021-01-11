@@ -8,14 +8,12 @@ module.exports = {
         description: 'Sim Card',
         helptext: 'Allows users to login with sim cards',
         level: 4,
-        created: now(),
       },
       {
         name: 'card',
         description: 'Identity Card',
         helptext: 'Allows users to login with identity cards',
         level: 4,
-        created: now(),
       },
     ])
   },
