@@ -166,7 +166,8 @@ export const m = defineMessages({
   confirmationOfStudiesTooltip: {
     id: 'hi.application:student.confirmationOfStudies',
     defaultMessage:
-      'You need to submit a copy of your Graduation certificate or a confirmation of completed credits for each semester. Admission or enrollement letters are not sufficient.',
+      'You need to submit a copy of your Graduation certificate or a confirmation of completed credits for each semester. ' +
+      'Admission or enrollement letters are not sufficient.',
     description: 'Confirmation of studies must be submitted, tooltip',
   },
   childrenDescription: {
