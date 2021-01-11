@@ -69,10 +69,11 @@ describe('renderRestrictions', () => {
 describe('formatRestrictions', () => {
   test('should return formatted restrictions for no restrictions', () => {
     // Arrange
+    const accusedGender = CaseGender.MALE
     const custodyRestrictions: Array<CaseCustodyRestrictions> = []
 
     // Act
-    const res = formatRestrictions(custodyRestrictions)
+    const res = formatRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe('Sækjandi tekur fram að gæsluvarðhaldið sé án takmarkana.')
@@ -80,10 +81,11 @@ describe('formatRestrictions', () => {
 
   test('should return formatted restrictions for isolation only', () => {
     // Arrange
+    const accusedGender = CaseGender.MALE
     const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
 
     // Act
-    const res = formatRestrictions(custodyRestrictions)
+    const res = formatRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
@@ -93,13 +95,14 @@ describe('formatRestrictions', () => {
 
   test('should return formatted restrictions for isolation and one other restriction', () => {
     // Arrange
+    const accusedGender = CaseGender.MALE
     const custodyRestrictions = [
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
     ]
 
     // Act
-    const res = formatRestrictions(custodyRestrictions)
+    const res = formatRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
@@ -109,6 +112,7 @@ describe('formatRestrictions', () => {
 
   test('should return formatted restrictions for all but isolation', () => {
     // Arrange
+    const accusedGender = CaseGender.MALE
     const custodyRestrictions = [
       CaseCustodyRestrictions.COMMUNICATION,
       CaseCustodyRestrictions.MEDIA,
@@ -116,7 +120,7 @@ describe('formatRestrictions', () => {
     ]
 
     // Act
-    const res = formatRestrictions(custodyRestrictions)
+    const res = formatRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
@@ -126,6 +130,7 @@ describe('formatRestrictions', () => {
 
   test('should order non-isolation restrictions', () => {
     // Arrange
+    const accusedGender = CaseGender.MALE
     const custodyRestrictions = [
       CaseCustodyRestrictions.MEDIA,
       CaseCustodyRestrictions.VISITAION,
@@ -133,7 +138,7 @@ describe('formatRestrictions', () => {
     ]
 
     // Act
-    const res = formatRestrictions(custodyRestrictions)
+    const res = formatRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(

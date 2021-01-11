@@ -28,6 +28,7 @@ import {
   Case,
   CaseAppealDecision,
   CaseDecision,
+  CaseGender,
   CaseState,
   CaseTransition,
   NotificationType,
@@ -492,7 +493,10 @@ export const Confirmation: React.FC = () => {
               </Box>
               <Box marginBottom={2}>
                 <Text>
-                  {formatRestrictions(workingCase.custodyRestrictions || [])}
+                  {formatRestrictions(
+                    workingCase.accusedGender || CaseGender.OTHER,
+                    workingCase.custodyRestrictions || [],
+                  )}
                 </Text>
               </Box>
               <Text>

@@ -167,11 +167,14 @@ describe('formatCourtCaseNumber', () => {
 describe('formatConclusion', () => {
   test('should format conclusion for a rejected case', () => {
     // Arrange
+    const accusedNationalId = '0101010000'
+    const accusedName = 'Glanni Glæpur'
     const decision = CaseDecision.REJECTING
 
     // Act
     const res = formatConclusion(
-      undefined,
+      accusedNationalId,
+      accusedName,
       undefined,
       decision,
       undefined,
@@ -179,13 +182,16 @@ describe('formatConclusion', () => {
     )
 
     // Assert
-    expect(res).toBe('Kröfu um gæsluvarðhald er hafnað.')
+    expect(res).toBe(
+      'Beiðni um gæslu á hendur, Glanni Glæpur kt. 010101-0000, er hafnað.',
+    )
   })
 
   test('should format conclusion for an accepted case without isolation', () => {
     // Arrange
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
+    const accusedGender = CaseGender.MALE
     const decision = CaseDecision.ACCEPTING
     const custodyEndDate = new Date('2020-12-22T11:23')
     const isolation = false
@@ -194,6 +200,7 @@ describe('formatConclusion', () => {
     const res = formatConclusion(
       accusedNationalId,
       accusedName,
+      accusedGender,
       decision,
       custodyEndDate,
       isolation,
@@ -209,6 +216,7 @@ describe('formatConclusion', () => {
     // Arrange
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
+    const accusedGender = CaseGender.MALE
     const decision = CaseDecision.ACCEPTING
     const custodyEndDate = new Date('2020-12-22T11:23')
     const isolation = true
@@ -217,6 +225,7 @@ describe('formatConclusion', () => {
     const res = formatConclusion(
       accusedNationalId,
       accusedName,
+      accusedGender,
       decision,
       custodyEndDate,
       isolation,
@@ -232,6 +241,7 @@ describe('formatConclusion', () => {
     // Arrange
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
+    const accusedGender = CaseGender.MALE
     const decision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
     const custodyEndDate = new Date('2021-01-29T13:03')
     const isolation = false
@@ -240,6 +250,7 @@ describe('formatConclusion', () => {
     const res = formatConclusion(
       accusedNationalId,
       accusedName,
+      accusedGender,
       decision,
       custodyEndDate,
       isolation,
@@ -496,6 +507,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     // Arrange
     const accusedNationalId = '2411018760'
     const accusedName = 'Biggi Börgler'
+    const accusedGender = CaseGender.MALE
     const court = 'Héraðsdómur Vesturlands'
     const prosecutorName = 'Siggi Sakó'
     const courtDate = new Date('2020-12-20T13:32')
@@ -515,6 +527,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     const res = formatPrisonRulingEmailNotification(
       accusedNationalId,
       accusedName,
+      accusedGender,
       court,
       prosecutorName,
       courtDate,
@@ -538,6 +551,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     // Arrange
     const accusedNationalId = '2411018760'
     const accusedName = 'Biggi Börgler'
+    const accusedGender = CaseGender.MALE
     const court = 'Héraðsdómur Vesturlands'
     const prosecutorName = 'Siggi Sakó'
     const courtDate = new Date('2020-12-20T13:32')
@@ -557,6 +571,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     const res = formatPrisonRulingEmailNotification(
       accusedNationalId,
       accusedName,
+      accusedGender,
       court,
       prosecutorName,
       courtDate,
@@ -572,7 +587,7 @@ describe('formatPrisonRulingEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Ákærandi: Siggi Sakó<br />Verjandi: Skúli Skjöldur<br /><br /><strong>Úrskurðarorð</strong><br /><br />Kröfu um gæsluvarðhald er hafnað.<br /><br /><strong>Ákvörðun um kæru</strong><br />Kærði kærir úrskurðinn.<br />Sækjandi unir úrskurðinum.<br /><br />Dalli Dómari aðal dómarinn',
+      '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Ákærandi: Siggi Sakó<br />Verjandi: Skúli Skjöldur<br /><br /><strong>Úrskurðarorð</strong><br /><br />Beiðni um gæslu á hendur, Biggi Börgler kt. 241101-8760, er hafnað.<br /><br /><strong>Ákvörðun um kæru</strong><br />Kærði kærir úrskurðinn.<br />Sækjandi unir úrskurðinum.<br /><br />Dalli Dómari aðal dómarinn',
     )
   })
 })

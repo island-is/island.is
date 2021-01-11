@@ -1,4 +1,6 @@
 import {
+  capitalize,
+  formatAccusedByGender,
   formatDate,
   formatNationalId,
   formatRestrictions,
@@ -58,13 +60,18 @@ export function formatCourtCaseNumber(
 export function formatConclusion(
   accusedNationalId: string,
   accusedName: string,
+  accusedGender: CaseGender,
   decision: CaseDecision,
   custodyEndDate: Date,
   isolation: boolean,
 ): string {
   return decision === CaseDecision.REJECTING
-    ? 'Kröfu um gæsluvarðhald er hafnað.'
-    : `Kærði, ${accusedName}, kt. ${formatNationalId(
+    ? `Beiðni um gæslu á hendur, ${accusedName} kt. ${formatNationalId(
+        accusedNationalId,
+      )}, er hafnað.`
+    : `${capitalize(
+        formatAccusedByGender(accusedGender),
+      )}, ${accusedName}, kt. ${formatNationalId(
         accusedNationalId,
       )}, skal sæta ${
         decision === CaseDecision.ACCEPTING ? 'gæsluvarðhaldi' : 'farbanni'
@@ -73,7 +80,9 @@ export function formatConclusion(
         'dagsins',
       )}.${
         decision === CaseDecision.ACCEPTING && isolation
-          ? ' Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
+          ? ` ${capitalize(
+              formatAccusedByGender(accusedGender),
+            )} skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.`
           : ''
       }`
 }
@@ -211,6 +220,7 @@ export function formatCourtDateNotificationCondition(
 export function formatPrisonRulingEmailNotification(
   accusedNationalId: string,
   accusedName: string,
+  accusedGender: CaseGender,
   court: string,
   prosecutorName: string,
   courtDate: Date,
@@ -229,16 +239,18 @@ export function formatPrisonRulingEmailNotification(
   )}.<br /><br />Ákærandi: ${prosecutorName}<br />Verjandi: ${defenderName}<br /><br /><strong>Úrskurðarorð</strong><br /><br />${formatConclusion(
     accusedNationalId,
     accusedName,
+    accusedGender,
     decision,
     custodyEndDate,
     custodyRestrictions.includes(CaseCustodyRestrictions.ISOLATION),
   )}<br /><br /><strong>Ákvörðun um kæru</strong><br />${formatAppeal(
     accusedAppealDecision,
-    'Kærði',
+    capitalize(formatAccusedByGender(accusedGender)),
     false,
   )}<br />${formatAppeal(prosecutorAppealDecision, 'Sækjandi', false)}${
     decision === CaseDecision.ACCEPTING
       ? `<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${formatRestrictions(
+          accusedGender,
           custodyRestrictions,
         )}`
       : ''

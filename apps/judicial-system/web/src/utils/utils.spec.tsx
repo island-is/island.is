@@ -341,7 +341,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Beiðni um gæslu á hendur, Mikki Refur kt.121212-1299, er hafnað.'
+            'Beiðni um gæslu á hendur, Mikki Refur kt. 121212-1299, er hafnað.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(
@@ -365,6 +365,7 @@ describe('Step helper', () => {
         custodyRestrictions: [],
         accusedName: 'Doe',
         accusedNationalId: '0123456789',
+        accusedGender: CaseGender.MALE,
         custodyEndDate: '2020-10-22T12:31:00.000Z',
       }
 
@@ -375,12 +376,9 @@ describe('Step helper', () => {
       expect(
         getByText((_, node) => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-          const hasText = (node: Element) => {
-            return (
-              node.textContent ===
-              'Kærði, Doe kt. 012345-6789 skal sæta gæsluvarðhaldi, þó ekki lengur en til 22. október 2020 kl. 12:31.'
-            )
-          }
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Kærði, Doe kt. 012345-6789, skal sæta gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020 kl. 12:31.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(
@@ -399,6 +397,7 @@ describe('Step helper', () => {
         custodyRestrictions: [CaseCustodyRestrictions.ISOLATION],
         accusedName: 'Doe',
         accusedNationalId: '0123456789',
+        accusedGender: CaseGender.MALE,
         custodyEndDate: '2020-10-22T12:31:00.000Z',
       }
 
@@ -411,7 +410,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Kærði, Doe kt. 012345-6789 skal sæta gæsluvarðhaldi, þó ekki lengur en til 22. október 2020 kl. 12:31. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
+            'Kærði, Doe kt. 012345-6789, skal sæta gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020 kl. 12:31. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(
@@ -423,7 +422,7 @@ describe('Step helper', () => {
       ).toBeTruthy()
     })
 
-    /*
+    /* We probably want to format restrictions differently client side, so I am leaving these tests for future reference.
     test('should return the correct string if there are two restriction and the case is not being rejected', () => {
       // Arrange
       const wc = {
@@ -501,6 +500,7 @@ describe('Step helper', () => {
         accusedName: 'Doe',
         accusedNationalId: '0123456789',
         custodyEndDate: '2020-10-22T12:31:00.000Z',
+        accusedGender: CaseGender.MALE,
       }
 
       // Act
@@ -512,7 +512,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Kærði, Doe kt.012345-6789, skal sæta farbanni, þó ekki lengur en til 22. október 2020 kl. 12:31.'
+            'Kærði, Doe kt. 012345-6789, skal sæta farbanni, þó ekki lengur en til fimmtudagsins 22. október 2020 kl. 12:31.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(

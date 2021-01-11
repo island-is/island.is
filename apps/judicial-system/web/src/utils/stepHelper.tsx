@@ -2,6 +2,7 @@ import React from 'react'
 import { AppealDecisionRole, RequiredField } from '../types'
 import { TagVariant, Text } from '@island.is/island-ui/core'
 import {
+  formatAccusedByGender,
   formatDate,
   formatNationalId,
   TIME_FORMAT,
@@ -14,6 +15,7 @@ import {
   CaseGender,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
+import { capitalize } from 'lodash'
 
 export const getAppealDecisionText = (
   role: AppealDecisionRole,
@@ -51,7 +53,7 @@ export const constructConclusion = (workingCase: Case) => {
           variant="intro"
           color="blue400"
           fontWeight="semiBold"
-        >{` ${workingCase.accusedName} kt.${formatNationalId(
+        >{` ${workingCase.accusedName} kt. ${formatNationalId(
           workingCase.accusedNationalId,
         )}`}</Text>
         , er hafnað.
@@ -59,26 +61,35 @@ export const constructConclusion = (workingCase: Case) => {
     )
   } else if (workingCase.decision === CaseDecision.ACCEPTING) {
     return (
-      <>
-        <Text as="span" variant="intro">{`Kærði, `}</Text>
+      <Text as="span" variant="intro">
+        {capitalize(
+          formatAccusedByGender(workingCase.accusedGender || CaseGender.OTHER),
+        )}
+        ,
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
-          {`${workingCase.accusedName} kt. ${formatNationalId(
+          {` ${workingCase.accusedName} kt. ${formatNationalId(
             workingCase.accusedNationalId,
-          )} `}
+          )}`}
         </Text>
         <Text as="span" variant="intro">
-          skal sæta gæsluvarðhaldi, þó ekki lengur en til
+          , skal sæta gæsluvarðhaldi, þó ekki lengur en til
         </Text>
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
-          {` ${formatDate(workingCase.custodyEndDate, 'PPPp')}.`}
+          {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')?.replace(
+            'dagur,',
+            'dagsins',
+          )}.`}
         </Text>
         {workingCase.custodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ) ? (
           <>
             <Text as="span" variant="intro">
-              {' '}
-              Kærði skal{' '}
+              {` ${capitalize(
+                formatAccusedByGender(
+                  workingCase.accusedGender || CaseGender.OTHER,
+                ),
+              )} skal `}
             </Text>
             <Text
               as="span"
@@ -96,23 +107,29 @@ export const constructConclusion = (workingCase: Case) => {
         ) : (
           <Text />
         )}
-      </>
+      </Text>
     )
   } else {
     return (
       <Text as="span" variant="intro">
-        Kærði,
+        {capitalize(
+          formatAccusedByGender(workingCase.accusedGender || CaseGender.OTHER),
+        )}
+        ,
         <Text
           as="span"
           variant="intro"
           color="blue400"
           fontWeight="semiBold"
-        >{` ${workingCase.accusedName} kt.${formatNationalId(
+        >{` ${workingCase.accusedName} kt. ${formatNationalId(
           workingCase.accusedNationalId,
         )}`}</Text>
         , skal sæta farbanni, þó ekki lengur en til
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
-          {` ${formatDate(workingCase.custodyEndDate, 'PPPp')}.`}
+          {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')?.replace(
+            'dagur,',
+            'dagsins',
+          )}.`}
         </Text>
       </Text>
     )

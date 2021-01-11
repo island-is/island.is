@@ -4,6 +4,7 @@ import {
   Case,
   CaseAppealDecision,
   CaseDecision,
+  CaseGender,
 } from '@island.is/judicial-system/types'
 import * as style from './RulingAccordionItem.treat'
 import {
@@ -118,7 +119,10 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           </Box>
           <Box marginBottom={2}>
             <Text>
-              {formatRestrictions(workingCase.custodyRestrictions || [])}
+              {formatRestrictions(
+                workingCase.accusedGender || CaseGender.OTHER,
+                workingCase.custodyRestrictions || [],
+              )}
             </Text>
           </Box>
           <Text>
