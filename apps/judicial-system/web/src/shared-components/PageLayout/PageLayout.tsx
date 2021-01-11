@@ -81,10 +81,10 @@ export const PageLayout: FC<PageProps> = ({
                     name: 'Krafa um gæsluvarðhald',
                     children: [
                       { type: 'SUB_SECTION', name: 'Sakborningur' },
-                      { type: 'SUB_SECTION', name: 'Dómkröfur' },
+                      { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
                       {
                         type: 'SUB_SECTION',
-                        name: 'Lagagrundvöllur og takmarkanir',
+                        name: 'Lagagrundvöllur og dómkröfur',
                       },
                       {
                         type: 'SUB_SECTION',
