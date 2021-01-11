@@ -156,6 +156,6 @@ export class UserIdentitiesService {
       return sub.save()
     }
 
-    return null;
+    return null
   }
 }

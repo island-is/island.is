@@ -35,7 +35,9 @@ export const testServer = async (options: TestServerOptions) => {
 }
 
 // Sets up a test environment that ignores various Guards on controllers
-export const testServerActivateAuthGuards = async (options: TestServerOptions) => {
+export const testServerActivateAuthGuards = async (
+  options: TestServerOptions,
+) => {
   const moduleFixture = await Test.createTestingModule({
     imports: [InfraModule.forRoot(options.appModule)],
   })

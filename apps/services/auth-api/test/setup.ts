@@ -1,4 +1,7 @@
-import { testServerActivateAuthGuards, TestServerOptions } from '@island.is/infra-nest-server'
+import {
+  testServerActivateAuthGuards,
+  TestServerOptions,
+} from '@island.is/infra-nest-server'
 import { INestApplication } from '@nestjs/common'
 import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
