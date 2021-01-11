@@ -216,21 +216,17 @@ export const HearingArrangements: React.FC = () => {
                         ? parseISO(workingCase.courtDate.toString())
                         : null
                     }
-                    handleChange={(date) =>
+                    handleCloseCalendar={(date: Date | null) => {
                       setAndSendDateToServer(
                         'courtDate',
                         workingCase.courtDate,
                         date,
                         workingCase,
+                        true,
                         setWorkingCase,
                         updateCase,
                         setCourtDateErrorMessage,
                       )
-                    }
-                    handleCloseCalendar={(date: Date | null) => {
-                      if (date === null || !isValid(date)) {
-                        setCourtDateErrorMessage('Reitur má ekki vera tómur')
-                      }
                     }}
                     required
                   />
