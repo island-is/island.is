@@ -1,4 +1,3 @@
-import { SearchIndexes } from '@island.is/content-search-indexer/types'
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import * as types from '../generated/contentfulTypes'
 import { SystemMetadata } from '@island.is/shared/types'
@@ -9,6 +8,7 @@ import {
   SliceUnion,
 } from '../unions/slice.union'
 import { AboutPage } from './aboutPage.model'
+import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 
 @ObjectType()
 export class AboutSubPage {
@@ -40,7 +40,7 @@ export class AboutSubPage {
   bottomSlices: Array<typeof SliceUnion>
 
   @Field(() => AboutPage, { nullable: true })
-  parent?: { lang: keyof typeof SearchIndexes; id: string }
+  parent?: { lang: ElasticsearchIndexLocale; id: string }
 }
 
 export const mapAboutSubPage = ({
@@ -63,11 +63,11 @@ export const mapAboutSubPage = ({
     .filter(Boolean),
   parent: fields.parent
     ? {
-        lang:
-          sys.locale === 'is-IS'
-            ? 'is'
-            : (sys.locale as keyof typeof SearchIndexes),
-        id: fields.parent.sys.id,
-      }
+      lang:
+        sys.locale === 'is-IS'
+          ? 'is'
+          : (sys.locale as ElasticsearchIndexLocale),
+      id: fields.parent.sys.id,
+    }
     : null,
 })

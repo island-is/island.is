@@ -129,6 +129,9 @@
       "@island.is/auth-api-lib": ["libs/auth-api-lib/src/index.ts"],
       "@island.is/auth-nest-tools": ["libs/auth-nest-tools/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
+      "@island.is/content-search-index-manager": [
+        "libs/content-search-index-manager/src/index.ts"
+      ],
       "@island.is/content-search-indexer": [
         "libs/content-search-indexer/src/index.ts"
       ],

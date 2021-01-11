@@ -177,6 +177,9 @@
     "cache": {
       "tags": []
     },
+    "content-search-index-manager": {
+      "tags": []
+    },
     "content-search-indexer": {
       "tags": []
     },

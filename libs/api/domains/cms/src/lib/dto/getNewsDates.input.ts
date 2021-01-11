@@ -1,12 +1,13 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsEnum, IsOptional, IsString } from 'class-validator'
+import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 
 @InputType()
 export class GetNewsDatesInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  lang?: string = 'is'
+  lang?: ElasticsearchIndexLocale = 'is'
 
   @Field({ nullable: true })
   @IsEnum(['asc', 'desc'])

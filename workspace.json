@@ -1865,6 +1865,35 @@
         }
       }
     },
+    "content-search-index-manager": {
+      "root": "libs/content-search-index-manager",
+      "sourceRoot": "libs/content-search-index-manager/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/content-search-index-manager/tsconfig.lib.json",
+              "libs/content-search-index-manager/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/content-search-index-manager/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/content-search-index-manager/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "content-search-indexer": {
       "root": "libs/content-search-indexer",
       "sourceRoot": "libs/content-search-indexer/src",

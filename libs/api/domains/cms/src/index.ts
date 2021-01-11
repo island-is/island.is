@@ -8,3 +8,6 @@ export * from './lib/models/news.model'
 export * from './lib/models/aboutPage.model'
 export * from './lib/models/adgerdirPage.model'
 export * from './lib/cms.resolver'
+import { getElasticVersion } from '@island.is/content-search-index-manager'
+
+getElasticVersion()
