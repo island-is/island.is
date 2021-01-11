@@ -1,20 +1,66 @@
-import { ActionsListWorkflowRunsForRepoResponseData } from '@octokit/types'
+import {
+  ActionsListWorkflowRunsForRepoResponseData,
+  ActionsListJobsForWorkflowRunResponseData,
+} from '@octokit/types'
 
-const getSuccessWorkflowsForBranch = (
+interface SuccessWorkflowsForBranch {
+  run_number: number
+  sha: string
+  branch: string
+  jobs_url: string
+  workflowJobs?: ActionsListJobsForWorkflowRunResponseData
+}
+
+const getSuccessWorkflowsForBranch = async (
   response: ActionsListWorkflowRunsForRepoResponseData,
-) => {
-  return response.workflow_runs
-    .map((wr) => ({
-      run_number: wr.run_number,
-      sha: wr.head_sha,
-      branch: wr.head_branch,
+  isCurrentBranch: boolean,
+  workflowQueries: WorkflowQueries,
+): Promise<SuccessWorkflowsForBranch[]> => {
+  const runs = response.workflow_runs
+    .map(({ run_number, head_sha, head_branch, jobs_url }) => ({
+      run_number,
+      sha: head_sha,
+      branch: head_branch,
+      jobs_url,
     }))
     .sort((a, b) => b.run_number - a.run_number)
+  if (isCurrentBranch) {
+    return (
+      await Promise.all(runs.map(enrichWithJobs(workflowQueries)))
+    ).filter(filterSkippedSuccessBuilds)
+  }
+  return runs
+}
+
+const enrichWithJobs = (workflowQueries: WorkflowQueries) => async (
+  run,
+): Promise<SuccessWorkflowsForBranch> => {
+  const { jobs_url } = run
+  return {
+    ...run,
+    workflowJobs: await workflowQueries.getJobs(`GET ${jobs_url}`),
+  }
+}
+
+const filterSkippedSuccessBuilds = (
+  run: SuccessWorkflowsForBranch,
+): boolean => {
+  const {
+    workflowJobs: { jobs },
+  } = run
+  const successJob = jobs.find((job) => job.name === 'push-success')
+  if (successJob) {
+    const { steps } = successJob
+    const announceSuccessStep =
+      steps && steps.find((step) => step.name === 'Announce success')
+    return announceSuccessStep && announceSuccessStep.conclusion === 'success'
+  }
+  return false
 }
 
 const pickFirstMatchingSuccess = (
   shas: string[],
-  runsBranch: { run_number: number; sha: string }[],
+  runsBranch: SuccessWorkflowsForBranch[],
 ) => {
   for (const sha of shas) {
     const lastGoodRun = runsBranch.filter((runs) => runs.sha === sha)
@@ -26,6 +72,7 @@ const pickFirstMatchingSuccess = (
 
 export interface WorkflowQueries {
   getData(branch: string): Promise<ActionsListWorkflowRunsForRepoResponseData>
+  getJobs(jobs_url: string): Promise<ActionsListJobsForWorkflowRunResponseData>
 }
 
 export const findLastGoodBuild = async (
@@ -34,9 +81,13 @@ export const findLastGoodBuild = async (
   base,
   workflowQueries: WorkflowQueries,
 ) => {
-  const getGoodBuildOnBranch = async (branch) => {
+  const getGoodBuildOnBranch = async (branch, isCurrentBranch) => {
     const successWorkflows = await workflowQueries.getData(branch)
-    let successOnBranch = getSuccessWorkflowsForBranch(successWorkflows)
+    let successOnBranch = await getSuccessWorkflowsForBranch(
+      successWorkflows,
+      isCurrentBranch,
+      workflowQueries,
+    )
 
     return pickFirstMatchingSuccess(shas, successOnBranch)
   }
@@ -53,9 +104,13 @@ export const findLastGoodBuild = async (
   // simply consider all builds and walk down the list of shas.
   branchTargets.push('')
   for (const branchTarget of branchTargets) {
-    const goodBuild = await getGoodBuildOnBranch(branchTarget)
+    const goodBuild = await getGoodBuildOnBranch(
+      branchTarget,
+      branchTargets.indexOf(branchTarget) === 0,
+    )
     if (goodBuild) {
-      return goodBuild
+      const { jobs_url: omit, workflowJobs: omit2, ...rest } = goodBuild
+      return rest
     }
   }
   return {}
