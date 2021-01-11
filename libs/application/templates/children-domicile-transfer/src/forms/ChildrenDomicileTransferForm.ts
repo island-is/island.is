@@ -1,22 +1,12 @@
 import {
-  buildCheckboxField,
   buildForm,
-  buildDescriptionField,
-  buildMultiField,
-  buildRadioField,
   buildSection,
-  buildSubmitField,
-  buildSubSection,
   buildTextField,
-  Comparators,
   Form,
   FormModes,
-  FormValue,
-  buildRepeater,
   buildDataProviderItem,
   buildExternalDataProvider,
 } from '@island.is/application/core'
-import { m } from './messages'
 
 export const ChildrenDomicileTransferForm: Form = buildForm({
   id: 'ChildrenDomicileTransferFormDraft',

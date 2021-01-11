@@ -1,6 +1,5 @@
-import ReferenceApplicationTemplate from './lib/ReferenceApplicationTemplate'
+import ChildrenDomicileTransferTemplate from './lib/ChildrenDomicileTransferTemplate'
 
 export const getDataProviders = () => import('./dataProviders/')
-export const getFields = () => import('./fields/')
 
-export default ReferenceApplicationTemplate
+export default ChildrenDomicileTransferTemplate
