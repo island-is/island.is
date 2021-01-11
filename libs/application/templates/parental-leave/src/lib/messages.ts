@@ -290,7 +290,7 @@ export const m = defineMessages({
   giveRightsYes: {
     id: 'pl.application:give.rights.yes',
     defaultMessage:
-      'Já, ég vil yfirfæra allt að einn mánuð af mínum réttindum til hins foreldrisins',
+      'Já, ég vil yfirfæra allt að 45 dagar af mínum réttindum til hins foreldrisins',
     description: 'Yes, I wish to give one of my months to the other parent',
   },
   giveRightsNo: {

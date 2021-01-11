@@ -1,9 +1,9 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
+import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
   FieldBaseProps,
   getValueViaPath,
-  Option,
+  ValidAnswers,
 } from '@island.is/application/core'
 import {
   Accordion,
@@ -21,23 +21,19 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { useQuery } from '@apollo/client'
+
 import Timeline from '../components/Timeline'
-import {
-  formatPeriods,
-  getExpectedDateOfBirth,
-  getNameAndIdOfSpouse,
-} from '../../parentalLeaveUtils'
+import { formatPeriods, getExpectedDateOfBirth } from '../../parentalLeaveUtils'
 import { Period } from '../../types'
 import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 import YourRightsBoxChart from '../Rights/YourRightsBoxChart'
-import { useQuery } from '@apollo/client'
 import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 import { m, mm } from '../../lib/messages'
 import { YES, NO } from '../../constants'
 import useOtherParentOptions from '../../hooks/useOtherParentOptions'
 
 type ValidOtherParentAnswer = 'no' | 'manual' | undefined
-type ValidRadioAnswer = 'yes' | 'no' | undefined
 
 const Review: FC<FieldBaseProps> = ({
   application,
@@ -63,12 +59,12 @@ const Review: FC<FieldBaseProps> = ({
   )
 
   const [statefulPrivatePension, setStatefulPrivatePension] = useState<
-    ValidRadioAnswer
+    ValidAnswers
   >(
     getValueViaPath(
       application.answers,
       'usePrivatePensionFund',
-    ) as ValidRadioAnswer,
+    ) as ValidAnswers,
   )
 
   const dob = getExpectedDateOfBirth(application)
@@ -253,7 +249,7 @@ const Review: FC<FieldBaseProps> = ({
                       { label: formatMessage(m.noOptionLabel), value: NO },
                     ]}
                     onSelect={(s: string) => {
-                      setStatefulPrivatePension(s as ValidRadioAnswer)
+                      setStatefulPrivatePension(s as ValidAnswers)
                     }}
                   />
                 </GridColumn>

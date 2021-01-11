@@ -294,8 +294,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const currentApplicationAnswers = context.application
           .answers as SchemaFormValues
         if (
-          currentApplicationAnswers.requestRights.isRequestingRights ===
-          YES &&
+          currentApplicationAnswers.requestRights.isRequestingRights === YES &&
           currentApplicationAnswers.otherParentId !== undefined &&
           currentApplicationAnswers.otherParentId !== ''
         ) {
