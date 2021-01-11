@@ -8,7 +8,7 @@ export class GetSingleArticleInput {
   @IsString()
   slug: string
 
-  @Field()
+  @Field(() => String)
   @IsString()
   lang: ElasticsearchIndexLocale
 }

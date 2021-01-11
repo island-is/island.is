@@ -4,10 +4,10 @@ import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manage
 
 @InputType()
 export class GetNewsInput {
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
-  lang?: ElasticsearchIndexLocale
+  lang?: ElasticsearchIndexLocale = 'is'
 
   @Field(() => Int, { nullable: true })
   @IsInt()

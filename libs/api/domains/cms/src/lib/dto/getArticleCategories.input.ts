@@ -4,7 +4,7 @@ import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manage
 
 @InputType()
 export class GetArticleCategoriesInput {
-  @Field()
+  @Field(() => String)
   @IsString()
   lang: ElasticsearchIndexLocale
 

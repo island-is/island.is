@@ -11,12 +11,14 @@ import { TagCount } from './models/tagCount'
 import { SearcherInput } from './dto/searcher.input'
 import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
 import { TypeCount } from './models/typeCount'
-import { ElasticsearchIndexLocale, getElasticsearchIndex } from '@island.is/content-search-index-manager'
-
+import {
+  ElasticsearchIndexLocale,
+  getElasticsearchIndex,
+} from '@island.is/content-search-index-manager'
 
 @Injectable()
 export class ContentSearchService {
-  constructor(private elasticService: ElasticService) { }
+  constructor(private elasticService: ElasticService) {}
 
   private getIndex(lang: ElasticsearchIndexLocale = 'is') {
     return getElasticsearchIndex(lang)

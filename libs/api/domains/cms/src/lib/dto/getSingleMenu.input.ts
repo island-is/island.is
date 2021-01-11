@@ -8,7 +8,7 @@ export class GetSingleMenuInput {
   @IsString()
   id?: string
 
-  @Field()
+  @Field(() => String)
   @IsString()
   lang: ElasticsearchIndexLocale
 }

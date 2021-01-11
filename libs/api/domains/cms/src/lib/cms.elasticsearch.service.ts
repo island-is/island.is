@@ -18,7 +18,7 @@ import { GetSingleMenuInput } from './dto/getSingleMenu.input'
 
 @Injectable()
 export class CmsElasticsearchService {
-  constructor(private elasticService: ElasticService) { }
+  constructor(private elasticService: ElasticService) {}
 
   async getArticleCategories(
     index: string,
@@ -183,10 +183,7 @@ export class CmsElasticsearchService {
     return response ? JSON.parse(response) : null
   }
 
-  async getSingleAboutPage(
-    index: string,
-    id: string,
-  ): Promise<AboutPage> {
+  async getSingleAboutPage(index: string, id: string): Promise<AboutPage> {
     const aboutPageDocument = await this.elasticService.findById(index, id)
     return JSON.parse(aboutPageDocument.body?._source?.response)
   }

@@ -5,7 +5,10 @@ import * as aws from './aws'
 import * as dictionary from './dictionary'
 import * as elastic from './elastic'
 import * as kibana from './kibana'
-import { getElasticsearchIndex, getElasticVersion } from '@island.is/content-search-index-manager'
+import {
+  getElasticsearchIndex,
+  getElasticVersion,
+} from '@island.is/content-search-index-manager'
 
 const { locales } = environment
 
@@ -73,56 +76,53 @@ class App {
     return filteredAwsEsPackages // es config needs the package ids when generating the index template
   }
 
-  private async migrateES(
-    esPackages: aws.AwsEsPackage[],
-  ): Promise<boolean> {
+  private async migrateES(esPackages: aws.AwsEsPackage[]): Promise<boolean> {
     logger.info('Starting elasticsearch migration')
     await elastic.checkAccess() // this throws if there is no connection hence ensuring we don't continue
 
-    await Promise.all(locales.map(
-      async (locale): Promise<boolean> => {
-        const newIndexName = getElasticsearchIndex(locale)
-        const newIndexExists = await elastic.checkIfIndexExists(newIndexName)
+    await Promise.all(
+      locales.map(
+        async (locale): Promise<boolean> => {
+          const newIndexName = getElasticsearchIndex(locale)
+          const newIndexExists = await elastic.checkIfIndexExists(newIndexName)
 
-        if (!newIndexExists) {
-          logger.info(
-            'New index not found, updating elasticsearch config',
-            {
-              locale,
-              newIndexName
-            },
-          )
-
-          try {
-            await elastic.updateIndexTemplate(locale, esPackages)
-            await elastic.importContentToIndex(locale, newIndexName, 'full')
-          } catch (error) {
-            logger.error('Failed to migrate to new index', {
+          if (!newIndexExists) {
+            logger.info('New index not found, updating elasticsearch config', {
               locale,
               newIndexName,
-              error: error.message
             })
-            throw error
-          }
-        } else {
-          logger.info(
-            'Elasticsearch index version matches code index version, skipping index update',
-            {
+
+            try {
+              await elastic.updateIndexTemplate(locale, esPackages)
+              await elastic.importContentToIndex(locale, newIndexName, 'full')
+            } catch (error) {
+              logger.error('Failed to migrate to new index', {
+                locale,
+                newIndexName,
+                error: error.message,
+              })
+              throw error
+            }
+          } else {
+            logger.info(
+              'Elasticsearch index version matches code index version, skipping index update',
+              {
+                locale,
+                newIndexName,
+              },
+            )
+            logger.info('Initializing elastic data')
+            // index mappers might have new rules so we run a initialize sync to make sure all data is up to date with this new version
+            await elastic.importContentToIndex(
               locale,
-              newIndexName
-            },
-          )
-          logger.info('Initializing elastic data')
-          // index mappers might have new rules so we run a initialize sync to make sure all data is up to date with this new version
-          await elastic.importContentToIndex(
-            locale,
-            newIndexName,
-            'initialize'
-          )
-        }
-        return true
-      },
-    ))
+              newIndexName,
+              'initialize',
+            )
+          }
+          return true
+        },
+      ),
+    )
 
     // rank the search results so we can see if they change
     await elastic.rankSearchQueries(getElasticsearchIndex('is'))

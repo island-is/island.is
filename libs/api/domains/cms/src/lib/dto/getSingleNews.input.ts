@@ -8,7 +8,7 @@ export class GetSingleNewsInput {
   @IsString()
   slug: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   lang?: ElasticsearchIndexLocale

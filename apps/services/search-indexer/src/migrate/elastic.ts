@@ -3,7 +3,8 @@ import { ElasticService } from '@island.is/content-search-toolkit'
 import { AwsEsPackage } from './aws'
 import { SyncOptions } from '@island.is/content-search-indexer/types'
 import {
-  ElasticsearchIndexLocale, getIndexTemplate,
+  ElasticsearchIndexLocale,
+  getIndexTemplate,
 } from '@island.is/content-search-index-manager'
 import {
   IndexingModule,
@@ -25,9 +26,7 @@ export const checkAccess = () => {
   })
 }
 
-export const checkIfIndexExists = async (
-  index: string
-): Promise<boolean> => {
+export const checkIfIndexExists = async (index: string): Promise<boolean> => {
   logger.info('Checking if index exits', { index })
   const client = await esService.getClient()
   const result = await client.indices.exists({ index })

@@ -63,11 +63,11 @@ export const mapAboutSubPage = ({
     .filter(Boolean),
   parent: fields.parent
     ? {
-      lang:
-        sys.locale === 'is-IS'
-          ? 'is'
-          : (sys.locale as ElasticsearchIndexLocale),
-      id: fields.parent.sys.id,
-    }
+        lang:
+          sys.locale === 'is-IS'
+            ? 'is'
+            : (sys.locale as ElasticsearchIndexLocale),
+        id: fields.parent.sys.id,
+      }
     : null,
 })
