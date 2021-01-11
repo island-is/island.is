@@ -1377,6 +1377,12 @@
             }
           }
         },
+        "e2e-ci":{
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": ""
+          }
+        },
         "lint": {
           "builder": "@nrwl/linter:lint",
           "options": {
