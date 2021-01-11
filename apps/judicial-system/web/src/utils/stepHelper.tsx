@@ -2,6 +2,7 @@ import React from 'react'
 import { AppealDecisionRole, RequiredField } from '../types'
 import { TagVariant, Text } from '@island.is/island-ui/core'
 import {
+  capitalize,
   formatAccusedByGender,
   formatDate,
   formatNationalId,
@@ -15,7 +16,6 @@ import {
   CaseGender,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
-import { capitalize } from 'lodash'
 
 export const getAppealDecisionText = (
   role: AppealDecisionRole,
