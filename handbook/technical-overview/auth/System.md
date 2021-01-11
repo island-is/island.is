@@ -1,5 +1,5 @@
 # Kerfislýsingar
 
-[System Manual](system/system-manual.md)
+[System Manual](system-manual/README.md)
 
-[**Service Provider Manual**](system/service-provider-manual.md)
+[Service Provider Manual](service-provider-manual/README.md)
