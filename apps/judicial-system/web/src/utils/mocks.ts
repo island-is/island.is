@@ -302,7 +302,7 @@ const testCase6 = {
   accusedPlea: null,
   litigationPresentations: null,
   ruling: null,
-  decision: null,
+  decision: CaseDecision.ACCEPTING,
   custodyEndDate: '2020-09-24T19:50:08.033Z',
   custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
   accusedAppealDecision: null,
