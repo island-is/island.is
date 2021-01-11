@@ -49,6 +49,23 @@ export const m = defineMessages({
       'Handles the collection of taxes and duties as well as oversees the legitimacy of tax returns. The Directorate of Internal Revenue also plays a multifaceted customs role at the border and provides society with protection against illegal import and export of goods.',
     description: 'About Directorate of Internal Revenue data retrieval',
   },
+  confirmationOfResidencyTitle: {
+    id: 'hi.application:confirmationOfResidency.title',
+    defaultMessage: 'Confirmation of residency',
+    description: 'Confirmation of residency',
+  },
+  confirmationOfResidencyDescription: {
+    id: 'hi.application:confirmationOfResidency.description',
+    defaultMessage:
+      'According to Registers Iceland’s data it seems like you are moving to Iceland from Greenland or the Faroe Islands. To apply for the national health insurance, you need to provide a confirmation of residency from Greenland or the Faroe Islands.',
+    description:
+      'Instructions for when moving from Greenland or the Faroe Isalnds',
+  },
+  confirmationOfResidencyFileUpload: {
+    id: 'hi.application:confirmationOfResidency.fileUpload',
+    defaultMessage: 'Please add your confirmation of residency',
+    description: 'Please add your confirmation of residency',
+  },
   contactInfoTitle: {
     id: 'hi.application:contactInfo.title',
     defaultMessage: 'Confirm your contact information',
@@ -206,7 +223,7 @@ export const m = defineMessages({
   fileUploadDescription: {
     id: 'hi.application:fileUpload.description',
     defaultMessage: 'Accepted documents: .pdf, .docx, .rtf',
-    description: 'Accepted docuemnt types',
+    description: 'Accepted document types',
   },
   fileUploadButton: {
     id: 'hi.application:fileUpload.button',
