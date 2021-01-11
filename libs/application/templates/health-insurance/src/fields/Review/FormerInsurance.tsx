@@ -13,12 +13,17 @@ import {
   FieldDescription,
   RadioController,
 } from '@island.is/shared/form-fields'
+import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
 import { YES, NO } from '../../constants'
 
 import { m } from '../../forms/messages'
 import { ReviewFieldProps } from '../../types'
 
-const FormerInsurance: FC<ReviewFieldProps> = ({ application, isEditable }) => {
+const FormerInsurance: FC<ReviewFieldProps> = ({
+  application,
+  isEditable,
+  field,
+}) => {
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -107,9 +112,16 @@ const FormerInsurance: FC<ReviewFieldProps> = ({ application, isEditable }) => {
         </Box>
       </Stack>
       <Stack space={2}>
-        <FieldDescription
-          description={formatText(
+        <TextWithTooltip
+          application={application}
+          field={field}
+          title={formatText(
             m.formerInsuranceEntitlement,
+            application,
+            formatMessage,
+          )}
+          description={formatText(
+            m.formerInsuranceEntitlementTooltip,
             application,
             formatMessage,
           )}

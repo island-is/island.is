@@ -123,7 +123,7 @@ export const StepThree: React.FC = () => {
       brokenLaw: '1. mgr. 100. gr. sml.',
       value: CaseCustodyProvisions._100_1,
       explination:
-        'Tilvísunin vægari úrræðin byggir á 1. mgr. 95. gr. sml. í grunninn. T.d. varðandi farbann yrði það b-liður 1. mgr. 95. gr., sbr. 1. mgr. 100. gr. sml.',
+        'Nú eru skilyrði gæsluvarðhalds skv. 1. eða 2. mgr. 95. gr. fyrir hendi og getur dómari þá, í stað þess að úrskurða sakborning í gæsluvarðhald, mælt fyrir um vistun hans á sjúkrahúsi eða viðeigandi stofnun, bannað honum brottför af landinu ellegar lagt fyrir hann að halda sig á ákveðnum stað eða innan ákveðins svæðis.',
     },
   ]
 
@@ -155,7 +155,7 @@ export const StepThree: React.FC = () => {
   ]
 
   useEffect(() => {
-    document.title = 'Lagagrundvöllur og takmarkanir'
+    document.title = 'Lagagrundvöllur og dómkröfur - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
@@ -219,7 +219,7 @@ export const StepThree: React.FC = () => {
         <>
           <Box marginBottom={7}>
             <Text as="h1" variant="h1">
-              Lagagrundvöllur og takmarkanir
+              Lagagrundvöllur og dómkröfur
             </Text>
           </Box>
           <Box component="section" marginBottom={7}>
