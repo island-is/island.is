@@ -169,6 +169,18 @@ export const m = defineMessages({
       'Are there any children under the age of 18 moving with you?',
     description: 'To fill in for those with children moving with them.',
   },
+  childrenInfoMessageTitle: {
+    id: 'hi.application:children.infoMessageTitle',
+    defaultMessage: 'Health insurance for children',
+    description: 'Health insurance for children info title',
+  },
+  childrenInfoMessageText: {
+    id: 'hi.application:children.infoMessageText',
+    defaultMessage:
+      'Any children registered to you will automatically get health in surance once you get insured',
+    description:
+      'additional information for the people that bring children under 18 with them to iceland',
+  },
   yesOptionLabel: {
     id: 'hi.application:option.yes',
     defaultMessage: 'Yes',
@@ -222,6 +234,16 @@ export const m = defineMessages({
       'Are you entitled to continued insurance in your former country of residence while living in Iceland?',
     description: 'Former insurance entitlement',
   },
+  formerInsuranceAdditionalInformation: {
+    id: 'hi.application:formerInsurance.additionalInformation',
+    defaultMessage: 'Please explain why',
+    description: 'Former insurance additional information on entitlement',
+  },
+  formerInsuranceAdditionalInformationPlaceholder: {
+    id: 'hi.application:formerInsurance.additionalInformationPlaceholder',
+    defaultMessage: 'I´m still entitled to health insurance because...',
+    description: 'additional infromation placeholder',
+  },
   formerInsuranceNoOption: {
     id: 'hi.application:formerInsurance.noOption',
     defaultMessage: 'No, only private insurance or no insurance',
@@ -262,7 +284,7 @@ export const m = defineMessages({
     defaultMessage: 'Remarks or additional information',
     description: 'Remarks or additional information',
   },
-  additionalRemarksPlacehokder: {
+  additionalRemarksPlaceholder: {
     id: 'hi.application.additionalRemarks.placeholder',
     defaultMessage: 'Enter text here',
     description: 'Enter text here',
@@ -277,14 +299,63 @@ export const m = defineMessages({
     defaultMessage: 'Submit',
     description: 'Submit',
   },
-  succesfulSubmissionTitle: {
+  successfulSubmissionTitle: {
     id: 'hi.application:successfulSubmission.title',
     defaultMessage: 'We have received your application',
     description: 'We have received your application',
   },
-  succesfulSubmissionMessage: {
+  successfulSubmissionMissingInfoTitle: {
+    id: 'hi.application:successfulSubmission.missingInfoTitle',
+    defaultMessage: 'We have received your answer!',
+    description: 'We have received your answer!',
+  },
+  successfulSubmissionMessage: {
     id: 'hi.application:successfulSubmission.message',
-    defaultMessage: 'We have received your application',
-    description: 'We have received your application',
+    defaultMessage:
+      'Your application number is **{applicationNumber}**. A confirmation e-mail has also been sent. ',
+    description: 'Application number and confirmation',
+  },
+  nextStepReviewTime: {
+    id: 'hi.application:nextStep.duration',
+    defaultMessage:
+      'An application may take up to 2–6 weeks to process. Depending on how fast your former country of insurance to responds to our request, it could take a longer.',
+    description: 'Estimated review time of the application',
+  },
+  nextStepStatusCheck: {
+    id: 'hi.application:nextStep.currentStatus',
+    defaultMessage:
+      'You can always see the current status of your application in My Pages.',
+    description:
+      'You can always see the current status of your application in My Pages.',
+  },
+  missingInfoSection: {
+    id: 'hi.application:missingInfo.section',
+    defaultMessage: 'Missing information',
+    description: 'Missing information',
+  },
+  agentCommentsTitle: {
+    id: 'hi.application:agentComments.title',
+    defaultMessage: 'Comment from Health Insurance in Iceland',
+    description: 'Comment from Health Insurance in Iceland',
+  },
+  agentCommentsEmpty: {
+    id: 'hi.application:agentComments.empty',
+    defaultMessage: 'Agent did not leave any comments for you',
+    description: 'Agent did not leave any comments for you',
+  },
+  missingInfoAnswersTitle: {
+    id: 'hi.application:missingInfo.addInfo.title',
+    defaultMessage: 'Your answer',
+    description: 'Your answer',
+  },
+  previousAnswersTitle: {
+    id: 'hi.application:previousInfo.title',
+    defaultMessage: 'Previous answer',
+    description: 'Previous answer',
+  },
+  attachedFilesTitle: {
+    id: 'hi.application:attachedFiles.title',
+    defaultMessage: 'Attached files',
+    description: 'Attached files',
   },
 })

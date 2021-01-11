@@ -392,7 +392,7 @@ describe('Case', () => {
     let dbCase: CCase
     let apiCase: CCase
 
-    await Case.create({ ...getCaseData(), state: CaseState.SUBMITTED })
+    await Case.create({ ...getCaseData(), state: CaseState.RECEIVED })
       .then((value) => {
         dbCase = caseToCCase(value)
 

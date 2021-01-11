@@ -24,6 +24,7 @@ import { GetPensionFunds, GetUnions } from '../graphql/queries'
 import { NO, YES } from '../constants'
 
 import Logo from '../assets/Logo'
+import { defaultMonths } from '../config'
 
 interface SelectItem {
   id: string
@@ -396,14 +397,14 @@ export const ParentalLeaveForm: Form = buildForm({
                     component: 'BoxChart',
                   },
                   {
-                    boxes: 6,
+                    boxes: defaultMonths,
                     application: {},
                     calculateBoxStyle: () => 'blue',
                     keys: [
                       {
                         label: () => ({
                           ...m.yourRightsInMonths,
-                          values: { months: '6' },
+                          values: { months: defaultMonths },
                         }),
                         bulletStyle: 'blue',
                       },
@@ -413,27 +414,55 @@ export const ParentalLeaveForm: Form = buildForm({
               ],
             }),
             buildMultiField({
-              id: 'requestRights',
+              id: 'requestRights.isRequestingRights',
               title: m.requestRightsName,
               description: m.requestRightsDescription,
               children: [
                 buildCustomField({
-                  id: 'requestRights',
+                  id: 'requestRights.isRequestingRights',
                   title: '',
                   component: 'RequestRights',
+                }),
+                buildCustomField({
+                  id: 'requestRights.requestDays',
+                  title: '',
+                  condition: (answers) =>
+                    (answers as {
+                      requestRights: {
+                        isRequestingRights: string
+                      }
+                    })?.requestRights?.isRequestingRights === YES,
+                  component: 'RequestDaysSlider',
                 }),
               ],
             }),
             buildMultiField({
-              id: 'giveRights',
+              id: 'giveRights.isGivingRights',
               title: m.giveRightsName,
               description: m.giveRightsDescription,
-              condition: (formValue) => formValue.requestRights === NO,
+              condition: (answers) =>
+                (answers as {
+                  requestRights: {
+                    isRequestingRights: string
+                  }
+                })?.requestRights?.isRequestingRights === NO,
+
               children: [
                 buildCustomField({
-                  id: 'giveRights',
+                  id: 'giveRights.isGivingRights',
                   title: '',
                   component: 'GiveRights',
+                }),
+                buildCustomField({
+                  id: 'giveRights.giveDays',
+                  title: '',
+                  condition: (answers) =>
+                    (answers as {
+                      giveRights: {
+                        isGivingRights: string
+                      }
+                    })?.giveRights?.isGivingRights === YES,
+                  component: 'GiveDaysSlider',
                 }),
               ],
             }),

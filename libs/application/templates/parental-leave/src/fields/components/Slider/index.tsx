@@ -54,6 +54,13 @@ interface TrackProps {
     singular: string
     plural: string
   }
+  rangeDates?: {
+    start: {
+      date: string
+      message: string
+    }
+    end: { date: string; message: string }
+  }
   currentIndex: number
   onChange?: (index: number) => void
 }
@@ -71,6 +78,7 @@ const Slider = ({
   showProgressOverlay = true,
   showToolTip = false,
   label,
+  rangeDates,
   currentIndex,
   onChange,
 }: TrackProps) => {
@@ -243,6 +251,35 @@ const Slider = ({
           />
         )}
       </Box>
+
+      {rangeDates && (
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          width="full"
+          marginTop={9}
+        >
+          <Box>
+            <Text color="blue400" variant="eyebrow">
+              {rangeDates.start.message}
+            </Text>
+
+            <Text color="blue400" variant="eyebrow" fontWeight="semiBold">
+              {rangeDates.start.date}
+            </Text>
+          </Box>
+
+          <Box textAlign="right">
+            <Text color="blue400" variant="eyebrow">
+              {rangeDates.end.message}
+            </Text>
+
+            <Text color="blue400" variant="eyebrow" fontWeight="semiBold">
+              {rangeDates.end.date}
+            </Text>
+          </Box>
+        </Box>
+      )}
     </Box>
   )
 }

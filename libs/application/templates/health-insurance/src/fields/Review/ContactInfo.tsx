@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
   Box,
   GridColumn,
@@ -11,10 +11,33 @@ import {
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { m } from '../../forms/messages'
+import { ReviewFieldProps } from '../../types'
 
-const ContactInfo: FC<FieldBaseProps> = ({ application }) => {
+interface ExternalDataNationalRegistry {
+  data: NationalRegistryType
+}
+
+interface NationalRegistryType {
+  name: string
+  nationalId: string
+  address: string
+  postalCode: string
+  city: string
+  nationality: string
+  email: string
+  phoneNumber: string
+  mobilePhoneNumber: string
+}
+
+const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
+
+  const { data } =
+    (getValueViaPath(
+      application.externalData,
+      'nationalRegistry',
+    ) as ExternalDataNationalRegistry) || {}
 
   return (
     <Box paddingY={2}>
@@ -29,6 +52,7 @@ const ContactInfo: FC<FieldBaseProps> = ({ application }) => {
                   label={formatText(m.name, application, formatMessage)}
                   ref={register}
                   disabled
+                  defaultValue={data?.name}
                 />
               </GridColumn>
               <GridColumn span="6/12">
@@ -38,6 +62,7 @@ const ContactInfo: FC<FieldBaseProps> = ({ application }) => {
                   label={formatText(m.nationalId, application, formatMessage)}
                   ref={register}
                   disabled
+                  defaultValue={data?.nationalId}
                 />
               </GridColumn>
             </GridRow>
@@ -49,6 +74,7 @@ const ContactInfo: FC<FieldBaseProps> = ({ application }) => {
                   label={formatText(m.address, application, formatMessage)}
                   ref={register}
                   disabled
+                  defaultValue={data?.address}
                 />
               </GridColumn>
               <GridColumn span="6/12">
@@ -58,6 +84,7 @@ const ContactInfo: FC<FieldBaseProps> = ({ application }) => {
                   label={formatText(m.postalCode, application, formatMessage)}
                   ref={register}
                   disabled
+                  defaultValue={data?.postalCode}
                 />
               </GridColumn>
             </GridRow>
@@ -69,6 +96,7 @@ const ContactInfo: FC<FieldBaseProps> = ({ application }) => {
                   label={formatText(m.city, application, formatMessage)}
                   ref={register}
                   disabled
+                  defaultValue={data?.city}
                 />
               </GridColumn>
               <GridColumn span="6/12">
@@ -78,6 +106,7 @@ const ContactInfo: FC<FieldBaseProps> = ({ application }) => {
                   label={formatText(m.nationality, application, formatMessage)}
                   ref={register}
                   disabled
+                  defaultValue={data?.nationality}
                 />
               </GridColumn>
             </GridRow>
@@ -90,7 +119,6 @@ const ContactInfo: FC<FieldBaseProps> = ({ application }) => {
             )}
           />
         </Box>
-
         <Box>
           <GridRow>
             <GridColumn span="6/12">
@@ -99,6 +127,8 @@ const ContactInfo: FC<FieldBaseProps> = ({ application }) => {
                 name={'applicant.email'}
                 label={formatText(m.email, application, formatMessage)}
                 ref={register}
+                disabled={!isEditable}
+                defaultValue={data?.email}
               />
             </GridColumn>
             <GridColumn span="6/12">
@@ -107,6 +137,8 @@ const ContactInfo: FC<FieldBaseProps> = ({ application }) => {
                 name={'applicant.phoneNumber'}
                 label={formatText(m.phoneNumber, application, formatMessage)}
                 ref={register}
+                disabled={!isEditable}
+                defaultValue={data?.phoneNumber}
               />
             </GridColumn>
           </GridRow>

@@ -103,7 +103,7 @@
     "aws-elasticsearch-connector": "9.0.0",
     "aws-sdk": "2.678.0",
     "aws4": "1.11.0",
-    "axios": "0.20.0",
+    "axios": "0.21.1",
     "bottleneck": "2.19.5",
     "bull": "3.18.0",
     "cache-manager": "3.3.0",
@@ -155,6 +155,7 @@
     "kennitala": "1.2.4",
     "libphonenumber-js": "1.7.53",
     "lodash": "4.17.19",
+    "lottie-web": "5.7.5",
     "miragejs": "0.1.40",
     "msw": "0.21.3",
     "nest-winston": "1.4.0",
@@ -316,7 +317,7 @@
     "license-checker": "25.0.1",
     "next-transpile-modules": "4.1.0",
     "prettier": "2.0.4",
-    "quicktype": "15.0.245",
+    "quicktype": "15.0.258",
     "sequelize-cli": "5.5.1",
     "storybook-addon-designs": "5.4.2",
     "ts-dedent": "2.0.0",
@@ -330,6 +331,7 @@
     "serialize-javascript": "4.0.0",
     "node-forge": "0.10.0",
     "object-path": "0.11.5",
-    "xml-crypto": "2.0.0"
+    "xml-crypto": "2.0.0",
+    "axios": "0.21.1"
   }
 }

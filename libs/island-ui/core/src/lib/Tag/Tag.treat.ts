@@ -13,15 +13,6 @@ export const container = style({
   textDecoration: 'none',
   maxWidth: '100%',
   border: '1px solid transparent',
-  ':focus': {
-    backgroundColor: theme.color.mint400,
-    color: theme.color.dark400,
-  },
-  ':hover': {
-    textDecoration: 'none',
-    backgroundColor: theme.color.blue400,
-    color: theme.color.white,
-  },
 })
 
 export const variants = styleMap({
@@ -158,5 +149,17 @@ export const attention = style({
       top: -3,
       width: 8,
     },
+  },
+})
+
+export const focusable = style({
+  ':focus': {
+    backgroundColor: theme.color.mint400,
+    color: theme.color.dark400,
+  },
+  ':hover': {
+    textDecoration: 'none',
+    backgroundColor: theme.color.blue400,
+    color: theme.color.white,
   },
 })

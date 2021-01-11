@@ -1,6 +1,10 @@
 import React, { useContext } from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
-import { Case, CaseAppealDecision } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseAppealDecision,
+  CaseDecision,
+} from '@island.is/judicial-system/types'
 import * as style from './RulingAccordionItem.treat'
 import {
   constructConclusion,
@@ -105,22 +109,24 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             )}
         </Box>
       )}
-      <Box>
-        <Box marginBottom={1}>
-          <Text as="h3" variant="h3">
-            Tilhögun gæsluvarðhalds
-          </Text>
-        </Box>
-        <Box marginBottom={2}>
+      {workingCase.decision === CaseDecision.ACCEPTING && (
+        <Box>
+          <Box marginBottom={1}>
+            <Text as="h3" variant="h3">
+              Tilhögun gæsluvarðhalds
+            </Text>
+          </Box>
+          <Box marginBottom={2}>
+            <Text>
+              {formatRestrictions(workingCase.custodyRestrictions || [])}
+            </Text>
+          </Box>
           <Text>
-            {formatRestrictions(workingCase.custodyRestrictions || [])}
+            Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera atriði
+            er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
           </Text>
         </Box>
-        <Text>
-          Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera atriði
-          er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
-        </Text>
-      </Box>
+      )}
     </AccordionItem>
   )
 }

@@ -1,10 +1,7 @@
 import React, { FC, useState } from 'react'
+import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
-  FieldBaseProps,
-  formatText,
-  getValueViaPath,
-} from '@island.is/application/core'
-import {
+  AlertMessage,
   Box,
   InputFileUpload,
   Stack,
@@ -16,15 +13,24 @@ import {
   RadioController,
 } from '@island.is/shared/form-fields'
 import { YES, NO } from '../../constants'
-import { StatusTypes } from '../../types'
+import { ReviewFieldProps, StatusTypes } from '../../types'
+import InfoMessage from '../InfoMessage/InfoMessage'
 
 import { m } from '../../forms/messages'
 
-const StatusAndChildren: FC<FieldBaseProps> = ({ application }) => {
+const StatusAndChildren: FC<ReviewFieldProps> = ({
+  application,
+  isEditable,
+  field,
+}) => {
   const { formatMessage } = useLocale()
 
   const [status, setStatus] = useState(
     getValueViaPath(application.answers, 'status') as StatusTypes,
+  )
+
+  const [children, setChildren] = useState(
+    getValueViaPath(application.answers, 'children') as string,
   )
 
   const [fileList, setFileList] = useState(
@@ -43,17 +49,17 @@ const StatusAndChildren: FC<FieldBaseProps> = ({ application }) => {
         />
         <RadioController
           id={'status'}
-          disabled={false}
           name={'status'}
+          disabled={!isEditable}
           largeButtons={true}
           split={'1/2'}
           onSelect={(value) => setStatus(value as StatusTypes)}
           options={[
             {
-              label: formatText(m.statusPensioner, application, formatMessage),
-              value: StatusTypes.PENSIONER,
+              label: m.statusEmployed.defaultMessage,
+              value: StatusTypes.EMPLOYED,
               tooltip: formatText(
-                m.statusPensionerInformation,
+                m.statusEmployedInformation,
                 application,
                 formatMessage,
               ),
@@ -63,6 +69,15 @@ const StatusAndChildren: FC<FieldBaseProps> = ({ application }) => {
               value: StatusTypes.STUDENT,
               tooltip: formatText(
                 m.statusStudentInformation,
+                application,
+                formatMessage,
+              ),
+            },
+            {
+              label: formatText(m.statusPensioner, application, formatMessage),
+              value: StatusTypes.PENSIONER,
+              tooltip: formatText(
+                m.statusPensionerInformation,
                 application,
                 formatMessage,
               ),
@@ -91,6 +106,7 @@ const StatusAndChildren: FC<FieldBaseProps> = ({ application }) => {
             />
             <InputFileUpload
               id="confirmationOfStudies"
+              disabled={!isEditable}
               header={formatText(
                 m.fileUploadHeader,
                 application,
@@ -126,24 +142,28 @@ const StatusAndChildren: FC<FieldBaseProps> = ({ application }) => {
         />
         <RadioController
           id={'children'}
-          disabled={false}
           name={'children'}
+          disabled={!isEditable}
           defaultValue={
             getValueViaPath(application.answers, 'children') as string[]
           }
+          onSelect={(value) => setChildren(value as string)}
           largeButtons={true}
           split={'1/2'}
           options={[
             {
-              label: formatText(m.yesOptionLabel, application, formatMessage),
-              value: YES,
-            },
-            {
               label: formatText(m.noOptionLabel, application, formatMessage),
               value: NO,
             },
+            {
+              label: formatText(m.yesOptionLabel, application, formatMessage),
+              value: YES,
+            },
           ]}
         />
+        {children === YES && (
+          <InfoMessage application={application} field={field} />
+        )}
       </Stack>
     </Stack>
   )

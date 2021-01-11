@@ -19,6 +19,7 @@ import { OpenApi } from '@island.is/api-catalogue/types'
 import { GET_OPEN_API_QUERY } from '@island.is/web/screens/queries'
 import YamlParser from 'js-yaml'
 import { OpenApiDocumentation } from '..'
+import * as styles from './OpenApiView.treat'
 
 export interface OpenApiViewProps {
   service: ApiService
@@ -56,6 +57,9 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
           },
         },
       ]
+
+  //sort in descending order, highest version first
+  options.sort((a, b) => (a.value.serviceCode < b.value.serviceCode ? 1 : -1))
 
   const selectOptionValueToGetOpenApiInput = (
     option: SelectOption,
@@ -131,6 +135,7 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
           span={['8/8', '4/8', '4/8', '2/8']}
           paddingTop="containerGutter"
           paddingBottom="containerGutter"
+          className={styles.bringFront}
         >
           <Select
             label="Version"
@@ -143,7 +148,11 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
           />
         </GridColumn>
       </GridRow>
-      <Box>{loading && <LoadingIcon animate color="blue400" size={32} />}</Box>
+      {loading && (
+        <Box textAlign="center">
+          <LoadingIcon animate color="blue400" size={64} />
+        </Box>
+      )}
       {error && (
         <Box paddingY={2}>
           <AlertBanner
@@ -154,9 +163,11 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
         </Box>
       )}
 
-      <Box width="full">
-        {!loading && !error && ShowOpenApiDocumentation(data?.getOpenApi.spec)}
-      </Box>
+      {!loading && !error && (
+        <Box width="full">
+          {ShowOpenApiDocumentation(data?.getOpenApi.spec)}
+        </Box>
+      )}
     </Box>
   )
 }

@@ -4,6 +4,7 @@ import { ApolloError } from 'apollo-server-express'
 import {
   ConfirmationDtoResponse,
   CreateUserProfileDto,
+  EmailVerification,
   UpdateUserProfileDto,
   UserProfileApi,
   UserProfileControllerCreateRequest,
@@ -15,6 +16,7 @@ import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
 import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
 import { UserProfile } from './userProfile.model'
+import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
 
 // eslint-disable-next-line
 const handleError = (error: any) => {
@@ -83,6 +85,14 @@ export class UserProfileService {
     const createSmsVerificationDto = { nationalId, ...input }
     await this.userProfileApi
       .userProfileControllerCreateSmsVerification({ createSmsVerificationDto })
+      .catch(handleError)
+  }
+
+  async resendEmailVerification(
+    nationalId: string,
+  ): Promise<EmailVerification> {
+    return await this.userProfileApi
+      .userProfileControllerRecreateVerification({ nationalId })
       .catch(handleError)
   }
 

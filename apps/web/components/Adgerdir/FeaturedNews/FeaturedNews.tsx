@@ -10,20 +10,18 @@ import {
   Button,
   Link,
 } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/web/i18n'
-import routeNames from '@island.is/web/i18n/routeNames'
 import { News } from '@island.is/api/schema'
 import { BackgroundImage, AdgerdirHeading } from '@island.is/web/components'
 
 import * as styles from './FeaturedNews.treat'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface FeaturedNewsProps {
   items: Array<News>
 }
 
 export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
-  const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
 
   if (!items.length) {
     return null
@@ -63,11 +61,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
                     title={first.title}
                     intro={first.intro}
                   />
-                  <Link
-                    href={makePath('news', '[slug]')}
-                    as={makePath('news', first.slug)}
-                    pureChildren
-                  >
+                  <Link {...linkResolver('news', [first.slug])} pureChildren>
                     <Button variant="text" icon="arrowForward">
                       Lesa meira
                     </Button>
@@ -105,8 +99,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
                           as="h3"
                         />
                         <Link
-                          href={makePath('news', '[slug]')}
-                          as={makePath('news', second.slug)}
+                          {...linkResolver('news', [second.slug])}
                           pureChildren
                         >
                           <Button variant="text" icon="arrowForward">
@@ -133,8 +126,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
                           as="h3"
                         />
                         <Link
-                          href={makePath('news', '[slug]')}
-                          as={makePath('news', third.slug)}
+                          {...linkResolver('news', [third.slug])}
                           pureChildren
                         >
                           <Button variant="text" icon="arrowForward">
@@ -155,7 +147,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
             alignItems="center"
             justifyContent="center"
           >
-            <Link href={makePath('news')} as={makePath('news')} pureChildren>
+            <Link {...linkResolver('newsoverview')} pureChildren>
               <Button variant="ghost" icon="arrowForward">
                 Sjá allar fréttir
               </Button>

@@ -66,7 +66,7 @@ export interface MenuProps {
    */
   renderLanguageSwitch?: (
     languageSwitch: ReactNode,
-    closeModal?: () => void,
+    isMobile?: boolean,
   ) => ReactNode
   /**
    * Logo title for accessibility
@@ -187,14 +187,16 @@ export const Menu = ({
 }: MenuProps) => {
   const [mainLinksCollapsed, setMainLinksCollapsed] = useState(true)
   const fullHeight = useBoxStyles({ component: 'div', height: 'full' })
+  const gridContainerStyles = useBoxStyles({
+    component: 'div',
+    background: 'white',
+    height: 'full',
+  })
 
   const myPages = renderMyPagesButton(
     <Button variant="utility" icon="person">
       {myPagesText}
     </Button>,
-  )
-  const languageSwitch = renderLanguageSwitch(
-    <Button variant="utility">{languageSwitchText}</Button>,
   )
   const mainLinksRender = (closeModal: () => void) =>
     mainLinks.map(({ text, href }, index) => (
@@ -217,14 +219,15 @@ export const Menu = ({
       aria-label="Menu"
       onVisibilityChange={onVisibilityChange}
       renderDisclosure={renderDisclosure}
+      backdropWhite
     >
       {({ closeModal }: { closeModal: () => void }) => (
-        <GridContainer>
+        <GridContainer className={gridContainerStyles}>
           <GridRow className={fullHeight}>
-            <GridColumn span={['12/12', '12/12', '12/12', '7/12', '8/12']}>
+            <GridColumn span={['12/12', '12/12', '6/12', '7/12', '8/12']}>
               <Box
                 paddingTop={4}
-                paddingRight={[0, 0, 0, 6, 15]}
+                paddingRight={[0, 0, 6, 6, 15]}
                 paddingBottom={[4, 4, 4, 4, 20]}
                 display="flex"
                 justifyContent="flexEnd"
@@ -235,7 +238,7 @@ export const Menu = ({
                     display="flex"
                     justifyContent="spaceBetween"
                     alignItems="center"
-                    flexWrap={['wrap', 'wrap', 'wrap', 'nowrap']}
+                    flexWrap={['wrap', 'wrap', 'nowrap']}
                   >
                     {renderLogo(
                       <>
@@ -254,13 +257,20 @@ export const Menu = ({
                       </>,
                     )}
                     <Box
-                      display={['flex', 'flex', 'flex', 'none']}
+                      display={['flex', 'flex', 'none']}
                       justifyContent="flexEnd"
                       alignItems="center"
                     >
                       <Box display="flex">
                         <Box marginRight={[1, 2]}>{myPages}</Box>
-                        <Box marginRight={[2, 3]}>{languageSwitch}</Box>
+                        <Box marginRight={[2, 3]}>
+                          {renderLanguageSwitch(
+                            <Button variant="utility">
+                              {languageSwitchText}
+                            </Button>,
+                            true,
+                          )}
+                        </Box>
                       </Box>
                       <Button
                         onClick={closeModal}
@@ -270,7 +280,7 @@ export const Menu = ({
                       />
                     </Box>
                     <Box
-                      marginTop={[5, 5, 5, 0]}
+                      marginTop={[5, 5, 0]}
                       className={styles.searchContainer}
                     >
                       {renderSearch(
@@ -286,10 +296,7 @@ export const Menu = ({
                       )}
                     </Box>
                   </Box>
-                  <Box
-                    marginTop={9}
-                    display={['none', 'none', 'none', 'block']}
-                  >
+                  <Box marginTop={9} display={['none', 'none', 'block']}>
                     <Text variant="h3" marginBottom={2}>
                       {mainTitle}
                     </Text>
@@ -297,10 +304,7 @@ export const Menu = ({
                       {mainLinksRender(closeModal)}
                     </div>
                   </Box>
-                  <Box
-                    marginTop={7}
-                    display={['block', 'block', 'block', 'none']}
-                  >
+                  <Box marginTop={7} display={['block', 'block', 'none']}>
                     <Box
                       display="flex"
                       justifyContent="spaceBetween"
@@ -338,7 +342,7 @@ export const Menu = ({
                 </Box>
               </Box>
             </GridColumn>
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12', '4/12']}>
+            <GridColumn span={['12/12', '12/12', '6/12', '5/12', '4/12']}>
               <Box
                 flexGrow={1}
                 display="flex"
@@ -348,17 +352,19 @@ export const Menu = ({
                 <Box
                   paddingTop={4}
                   paddingBottom={6}
-                  paddingLeft={[0, 0, 0, 6, 12]}
+                  paddingLeft={[0, 0, 6, 6, 12]}
                   className={styles.asideTop}
                   flexGrow={1}
                 >
                   <Box
-                    display={['none', 'none', 'none', 'flex']}
+                    display={['none', 'none', 'flex']}
                     justifyContent="spaceBetween"
                   >
                     <Box display="flex">
                       <Box marginRight={2}>{myPages}</Box>
-                      {languageSwitch}
+                      {renderLanguageSwitch(
+                        <Button variant="utility">{languageSwitchText}</Button>,
+                      )}
                     </Box>
                     <Button
                       onClick={closeModal}
@@ -367,7 +373,7 @@ export const Menu = ({
                       colorScheme="negative"
                     />
                   </Box>
-                  <Box marginTop={[0, 0, 0, 9]}>
+                  <Box marginTop={[0, 0, 9]}>
                     {asideTopLinks.map(({ text, href, sub }, index) =>
                       sub && sub.length > 0 ? (
                         <AsideTopLinkWithSub
@@ -404,7 +410,7 @@ export const Menu = ({
                           )}
                         />
                       ) : (
-                        <Box key={index} marginBottom={[5, 5, 5, 3]}>
+                        <Box key={index} marginBottom={[5, 5, 3]}>
                           {renderLink(
                             {
                               className: cn(
@@ -427,7 +433,7 @@ export const Menu = ({
                 <Box
                   paddingTop={5}
                   paddingBottom={6}
-                  paddingLeft={[0, 0, 0, 6, 12]}
+                  paddingLeft={[0, 0, 6, 6, 12]}
                   className={styles.asideBottom}
                   flexGrow={1}
                 >

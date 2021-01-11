@@ -10,7 +10,7 @@ import {
   Box,
   Stack,
   Text,
-  Breadcrumbs,
+  BreadcrumbsDeprecated as Breadcrumbs,
   Button,
   GridColumn,
 } from '@island.is/island-ui/core'

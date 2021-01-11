@@ -4,9 +4,7 @@ import { Box, Stack, Inline, Tag } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { Screen } from '@island.is/web/types'
 import { useNamespace } from '@island.is/web/hooks'
-import pathNames, { ContentType } from '@island.is/web/i18n/routes'
 import Link from 'next/link'
-
 import {
   QueryGetFrontpageSliderListArgs,
   ContentLanguage,
@@ -35,12 +33,13 @@ import {
   Section,
   Categories,
   SearchInput,
-  FrontpageTabs,
+  FrontpageSlider,
   LatestNewsSection,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GlobalContext } from '@island.is/web/context'
 import { QueryGetNewsArgs } from '@island.is/api/schema'
+import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
@@ -63,6 +62,7 @@ const Home: Screen<HomeProps> = ({
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)
   const gn = useNamespace(globalNamespace)
+  const { linkResolver } = useLinkResolver()
 
   if (!lifeEvents || !lifeEvents.length) {
     return null
@@ -73,11 +73,7 @@ const Home: Screen<HomeProps> = ({
   }
 
   const cards = categories.map(({ __typename, title, slug, description }) => {
-    const cardUrl = pathNames(
-      activeLocale,
-      __typename.toLowerCase() as ContentType,
-      [slug],
-    )
+    const cardUrl = linkResolver(__typename as LinkType, [slug])
     return {
       title,
       description,
@@ -101,11 +97,9 @@ const Home: Screen<HomeProps> = ({
         </Box>
         <Inline space={2}>
           {page.featuredThings.map(({ title, attention, thing }) => {
-            const cardUrl = pathNames(
-              activeLocale,
-              thing.__typename.toLowerCase() as ContentType,
-              [thing.slug],
-            )
+            const cardUrl = linkResolver(thing.__typename as LinkType, [
+              thing.slug,
+            ])
 
             return cardUrl.href && cardUrl.href.length > 0 ? (
               <Link key={title} href={cardUrl.href} as={cardUrl.as}>
@@ -132,7 +126,10 @@ const Home: Screen<HomeProps> = ({
   return (
     <>
       <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
-        <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
+        <FrontpageSlider
+          slides={frontpageSlides}
+          searchContent={searchContent}
+        />
       </Section>
       <Section
         aria-labelledby="lifeEventsTitle"

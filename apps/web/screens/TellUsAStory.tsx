@@ -6,19 +6,19 @@ import {
   GridRow,
   GridColumn,
   Breadcrumbs,
-  Link,
 } from '@island.is/island-ui/core'
+import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
 import { TellUsAStory } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useI18n } from '@island.is/web/i18n'
-import routeNames from '@island.is/web/i18n/routeNames'
 import {
   GetTellUsAStoryQuery,
   QueryGetTellUsAStoryArgs,
 } from '../graphql/schema'
 import { GET_TELL_US_A_STORY_DATA } from './queries'
 import { CustomNextError } from '../units/errors'
+import { useLinkResolver } from '../hooks/useLinkResolver'
 
 interface TellUsAStoryProps {
   data: GetTellUsAStoryQuery['getTellUsAStory']
@@ -26,7 +26,7 @@ interface TellUsAStoryProps {
 
 const TellUsAStoryPage: Screen<TellUsAStoryProps> = ({ data }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
 
   return (
     <Box paddingY={[2, 2, 10]}>
@@ -34,10 +34,24 @@ const TellUsAStoryPage: Screen<TellUsAStoryProps> = ({ data }) => {
         <GridRow>
           <GridColumn>
             <Box paddingX={[3, 3, 8]}>
-              <Breadcrumbs>
-                <Link href={makePath()}>Ísland.is</Link>
-                <span>{data.introTitle}</span>
-              </Breadcrumbs>
+              <Breadcrumbs
+                items={[
+                  {
+                    title: 'Ísland.is',
+                    href: '/',
+                  },
+                  {
+                    title: data.introTitle,
+                  },
+                ]}
+                renderLink={(link) => {
+                  return (
+                    <NextLink {...linkResolver('homepage')} passHref>
+                      {link}
+                    </NextLink>
+                  )
+                }}
+              />
             </Box>
           </GridColumn>
         </GridRow>
