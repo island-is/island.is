@@ -76,7 +76,7 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
               baseId="handbook-navigation"
               colorScheme="blue"
               items={navigationItems}
-              title= {n('linkThrounText')}
+              title={n('linkThrounText')}
               titleLink={{
                 href: linkResolver('developerspage').as,
               }}
@@ -89,16 +89,16 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
                 <Box display={['inline', 'inline', 'none']}>
                   {/* Show when a device */}
                   <Box paddingBottom="gutter">
-                  <Button
-                    colorScheme="default"
-                    preTextIcon="arrowBack"
-                    size="small"
-                    variant="text"
-                  >
-                    <Link href={linkResolver('developerspage').as}>
-                      {n('linkThrounText')}
-                    </Link>
-                  </Button>
+                    <Button
+                      colorScheme="default"
+                      preTextIcon="arrowBack"
+                      size="small"
+                      variant="text"
+                    >
+                      <Link href={linkResolver('developerspage').as}>
+                        {n('linkThrounText')}
+                      </Link>
+                    </Button>
                   </Box>
                   <Box marginBottom="gutter">
                     <Navigation
@@ -140,7 +140,7 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
                         locale={activeLocale}
                       />
                     ) : null}
-                    <Button variant='text' icon='arrowForward'>
+                    <Button variant="text" icon="arrowForward">
                       <Link href={n('linkDesignGuide')}>
                         Þróunarhandbók á GitBook
                       </Link>

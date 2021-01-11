@@ -144,12 +144,12 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                   {/* Show when NOT a device */}
                   <Breadcrumbs
                     items={[
-                      { 
-                        title: n('linkIslandIsText'), 
+                      {
+                        title: n('linkIslandIsText'),
                         href: linkResolver('homepage').as,
                       },
-                      { 
-                        title: n('linkThrounText'), 
+                      {
+                        title: n('linkThrounText'),
                         href: linkResolver('developerspage').as,
                       },
                       {
