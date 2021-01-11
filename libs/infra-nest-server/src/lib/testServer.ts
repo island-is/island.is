@@ -1,4 +1,3 @@
-// import { NationalIdGuard } from './../../../../apps/services/auth-admin-api/src/app/modules/access/national-id-guard'
 import { IdsAuthGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import { Type, ValidationPipe } from '@nestjs/common'
 import { InfraModule } from './infra/infra.module'
