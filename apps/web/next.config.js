@@ -2,6 +2,7 @@ const path = require('path')
 const withTreat = require('next-treat')()
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+const StatoscopeWebpackPlugin = require('@statoscope/ui-webpack')
 const { DuplicatesPlugin } = require('inspectpack/plugin')
 
 // These modules need to be transpiled for IE11 support. This is not ideal,
@@ -26,13 +27,15 @@ module.exports = withTreat(
           config.resolve.alias['@sentry/node'] = '@sentry/browser'
         }
 
-        if (process.env.ANALYZE === 'true') {
+        if (process.env.ANALYZE === 'true' && !isServer) {
           config.plugins.push(
             new DuplicatesPlugin({
               emitErrors: false,
               verbose: true,
             }),
           )
+
+          config.plugins.push(new StatoscopeWebpackPlugin())
 
           config.plugins.push(
             new BundleAnalyzerPlugin({
