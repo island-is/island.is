@@ -223,7 +223,7 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
 
   return (
     <Box>
-      {/* First Line */}
+      {/* Top Line */}
       <Box
         display="flex"
         flexDirection={['column', 'column', 'column', 'row', 'row']}
