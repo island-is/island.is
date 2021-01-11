@@ -1,7 +1,5 @@
-# **System Manual**
+# System Manual
 
-#
+[Introduction](introduction.md)
 
-[Introduction](system-manual/introduction.md)
-
-[Service provider’s role](system-manual/service-provider-role.md)
+[Service provider’s role](service-provider-role.md)
