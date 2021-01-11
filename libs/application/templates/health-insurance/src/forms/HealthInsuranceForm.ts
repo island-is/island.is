@@ -205,6 +205,8 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'confirmationOfStudies',
               title: '',
               introduction: '',
+              uploadHeader: m.fileUploadHeader.defaultMessage,
+              uploadDescription: m.fileUploadDescription.defaultMessage,
               condition: (answers) => answers.status === StatusTypes.STUDENT,
             }),
             buildRadioField({
@@ -335,6 +337,8 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'additionalInfo.files',
               title: '',
               introduction: '',
+              uploadHeader: m.fileUploadHeader.defaultMessage,
+              uploadDescription: m.fileUploadDescription.defaultMessage,
               condition: {
                 questionId: 'additionalInfo.hasAdditionalInfo',
                 isMultiCheck: false,
