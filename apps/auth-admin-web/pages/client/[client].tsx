@@ -17,6 +17,8 @@ import ClientGrantTypesForm from '../../components/Client/form/ClientGrantTypesF
 import ContentWrapper from './../../components/Layout/ContentWrapper';
 import StepEnd from './../../components/Common/StepEnd';
 import { ClientService } from './../../services/ClientService';
+import { GetServerSideProps } from 'next';
+import { withAuthentication } from 'apps/auth-admin-web/utils/auth.utils';
 
 const Index = () => {
   const { query } = useRouter();
@@ -231,5 +233,13 @@ const Index = () => {
     }
   }
 };
+
+export const getServerSideProps: GetServerSideProps = withAuthentication(
+  async (context: any) => {
+    return {
+      props: {},
+    };
+  }
+);
 
 export default Index;

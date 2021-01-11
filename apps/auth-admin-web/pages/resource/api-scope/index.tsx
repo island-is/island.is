@@ -4,6 +4,8 @@ import ApiScopeCreateForm from '../../../components/Resource/forms/ApiScopeCreat
 import { ApiScopesDTO } from './../../../entities/dtos/api-scopes-dto';
 import { useRouter } from 'next/router';
 import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav';
+import { GetServerSideProps } from 'next';
+import { withAuthentication } from 'apps/auth-admin-web/utils/auth.utils';
 
 export default function Index() {
   const router = useRouter();
@@ -27,3 +29,11 @@ export default function Index() {
     </ContentWrapper>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = withAuthentication(
+  async (context: any) => {
+    return {
+      props: {},
+    };
+  }
+);

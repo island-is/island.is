@@ -12,6 +12,8 @@ import ApiResourceSecretForm from '../../../components/Resource/forms/ApiResourc
 import ApiResourceScopeForm from '../../../components/Resource/forms/ApiResourceScopeForm';
 import ApiResourceUserClaimForm from '../../../components/Resource/forms/ApiResourceUserClaimForm';
 import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav';
+import { GetServerSideProps } from 'next';
+import { withAuthentication } from 'apps/auth-admin-web/utils/auth.utils';
 
 export default function Index() {
   const { query } = useRouter();
@@ -169,3 +171,11 @@ export default function Index() {
     }
   }
 }
+
+export const getServerSideProps: GetServerSideProps = withAuthentication(
+  async (context: any) => {
+    return {
+      props: {},
+    };
+  }
+);
