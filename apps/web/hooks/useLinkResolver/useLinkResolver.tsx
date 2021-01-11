@@ -35,6 +35,10 @@ export const routesTemplate = {
     is: '/stafraent-island',
     en: '',
   },
+  throun: {
+    is: '/throun',
+    en: '/en/development',
+  },
   search: {
     is: '/leit',
     en: '/en/search',
@@ -74,6 +78,10 @@ export const routesTemplate = {
   homepage: {
     is: '/',
     en: '/en',
+  },
+  subpageheader: {
+    is: '/throun/vefthjonustur/vorulisti',
+    en: '/en/developers/webservices/catalogue',
   },
 }
 
