@@ -150,7 +150,12 @@ export class UserIdentitiesService {
     }
 
     const sub = await this.userIdentityModel.findByPk(subjectId)
-    sub.active = active
-    return sub.save()
+    if (sub) {
+      sub.active = active
+
+      return sub.save()
+    }
+
+    return null;
   }
 }
