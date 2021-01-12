@@ -1,4 +1,8 @@
-import { getElasticsearchIndex, getElasticVersion, getIndexTemplate } from './content-search-index-manager'
+import {
+  getElasticsearchIndex,
+  getElasticVersion,
+  getIndexTemplate,
+} from './content-search-index-manager'
 
 describe('Get index template', () => {
   it('should return template for all locales', () => {
@@ -18,7 +22,7 @@ describe('Get elastic index version', () => {
 })
 
 describe('Get elasticsearch index', () => {
-  it('should return a valid index for locale', () => {
+  it('should return a unique index for each locale', () => {
     const isIndex = getElasticsearchIndex('is').split('-')
     expect(isIndex[1]).toEqual('is')
 
