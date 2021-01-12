@@ -139,6 +139,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              read: 'all',
             },
           ],
         },
@@ -160,6 +161,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              read: 'all',
             },
           ],
         },
@@ -182,6 +184,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              read: 'all',
             },
           ],
         },
@@ -217,10 +220,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
-              read: {
-                answers: ['spread', 'periods'],
-                externalData: ['pregnancyStatus', 'parentalLeaves'],
-              },
+              read: 'all',
             },
           ],
         },
