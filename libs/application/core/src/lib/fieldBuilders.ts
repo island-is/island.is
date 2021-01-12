@@ -1,9 +1,12 @@
+import { FormatInputValueFunction } from 'react-number-format'
+
 import { Condition } from '../types/Condition'
 import {
   CheckboxField,
   CustomField,
   DateField,
   DividerField,
+  KeyValueField,
   FieldComponents,
   FieldTypes,
   FieldWidth,
@@ -368,6 +371,20 @@ export function buildDividerField(data: {
     component: FieldComponents.DIVIDER,
     title: title ?? '',
     color,
+  }
+}
+
+export function buildKeyValueField(data: {
+  label: React.ReactNode
+  value: MaybeWithApplication<React.ReactNode>
+}): KeyValueField {
+  const { label, value } = data
+  return {
+    id: '',
+    label,
+    value,
+    type: FieldTypes.KEY_VALUE,
+    component: FieldComponents.KEY_VALUE,
   }
 }
 

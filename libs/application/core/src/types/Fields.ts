@@ -61,6 +61,7 @@ export enum FieldTypes {
   FILEUPLOAD = 'FILEUPLOAD',
   SUBMIT = 'SUBMIT',
   DIVIDER = 'DIVIDER',
+  KEY_VALUE = 'KEY_VALUE',
   ASYNC_SELECT = 'ASYNC_SELECT',
 }
 
@@ -73,6 +74,7 @@ export enum FieldComponents {
   SELECT = 'SelectFormField',
   FILEUPLOAD = 'FileUploadFormField',
   DIVIDER = 'DividerFormField',
+  KEY_VALUE = 'KeyValueFormField',
   SUBMIT = 'SubmitFormField',
   ASYNC_SELECT = 'AsyncSelectFormField',
 }
@@ -158,6 +160,13 @@ export interface DividerField extends BaseField {
   component: FieldComponents.DIVIDER
 }
 
+export interface KeyValueField extends BaseField {
+  readonly type: FieldTypes.KEY_VALUE
+  label: React.ReactNode
+  value: React.ReactNode
+  component: FieldComponents.KEY_VALUE
+}
+
 export interface CustomField extends BaseField {
   readonly type: FieldTypes.CUSTOM
   readonly component: string
@@ -173,6 +182,7 @@ export type Field =
   | SelectField
   | TextField
   | FileUploadField
+  | KeyValueField
   | DividerField
   | SubmitField
   | AsyncSelectField
