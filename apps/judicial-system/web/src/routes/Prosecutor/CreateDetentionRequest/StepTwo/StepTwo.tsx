@@ -185,7 +185,7 @@ export const StepTwo: React.FC = () => {
       },
     ]
 
-    if(workingCase?.arrestDate) {
+    if (workingCase?.arrestDate) {
       requiredFields.push({
         value: arrestTime || '',
         validations: ['empty', 'time-format'],
