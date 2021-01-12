@@ -10,6 +10,22 @@ The documentation works in two different ways:
 
 - `README.md` which are all the readmes from the `apps` and `libs` directories contained in the sub folders. The same goes for the README.md. Simply add your content using markdown. We only recommend one thing, is to use [this template](../misc/gitbook-template.md) when you create a new app in the `apps` directory.
 
+### Root `README.md` withing `handbook` directory
+
+`README.md` files from each directories inside the `handbook` directory are used to create the navigation structure when running the `yarn gitbook` command.
+
+{% hint style="warning" %}
+Don't forget to create it, and add a [heading to it](https://github.com/island-is/island.is/blob/main/handbook/technical-overview/auth/README.md). Apart from the required heading, you can leave it empty and GitBook will automatically display the [sub files](https://docs.devland.is/handbook/technical-overview/auth) structure.
+{% endhint %}
+
+### Links
+
+You need to use [relative paths](https://raw.githubusercontent.com/island-is/island.is/main/handbook/technical-overview/code-standards.md) based on the current file location, might need a couple of `../../../` before finding the file you want to link to.
+
+### Assets
+
+We recommend adding an `assets` folder inside the directory where you need it. You can then access your assets from your markdown file by doing `./assets/my-image.png`.
+
 ## Publishing
 
 Once you are done with your changes, you will need to run the following command:
@@ -25,11 +41,5 @@ The script will also format the README.md's title to follow the [APA style conve
 After your commit get merged into `main`, it will take a few minutes before your changes appears on [docs.devland.is](https://docs.devland.is).
 
 {% hint style="info" %}
-For some reason, if you don't want your markdown file to be part of the `SUMMARY.md` file and included inside the GitBook, you can add a html comment as the first line of the file `<!-- gitbook-ignore -->` to ignore.
-{% endhint %}
-
-{% hint style="warning" %}
-We have an open issue to run this script automatically on our CI pipeline, so you won't have to do it manually.
-
-Since the command is not run automatically at the moment, when running it manually, you might have a lot of new markdown files changed by the formatting script and added to the `SUMMARY.md` file. In this case, simply keep the changes related to your changes and checkout the rest.
+For some reason, if you don't want your markdown file to be part of the `SUMMARY.md` file and included inside the GitBook, you can add the following html comment `<!-- gitbook-ignore -->` at the first line of the file.
 {% endhint %}
