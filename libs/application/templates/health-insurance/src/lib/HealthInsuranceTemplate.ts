@@ -20,6 +20,7 @@ type Events =
 
 const HealthInsuranceSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
+  confirmationOfResidencyDocument: z.array(z.string()).optional(),
   applicant: z.object({
     name: z.string().nonempty(),
     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),

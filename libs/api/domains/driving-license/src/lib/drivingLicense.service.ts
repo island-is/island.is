@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 
 import { DrivingLicense } from './drivingLicense.type'
-import { DrivingLicenseApi } from './client'
+import { DrivingLicenseApi, DrivingLicenseResponse } from './client'
 
 @Injectable()
 export class DrivingLicenseService {
@@ -12,16 +12,30 @@ export class DrivingLicenseService {
   async getDrivingLicense(
     nationalId: User['nationalId'],
   ): Promise<DrivingLicense> {
-    const drivingLicense = await this.drivingLicenseApi.getDrivingLicense(
+    const drivingLicenses = await this.drivingLicenseApi.getDrivingLicenses(
       nationalId,
     )
 
+    if (drivingLicenses.length <= 0) {
+      return null
+    }
+
+    drivingLicenses.sort(
+      (a: DrivingLicenseResponse, b: DrivingLicenseResponse) =>
+        new Date(b.utgafuDagsetning).getTime() -
+        new Date(a.utgafuDagsetning).getTime(),
+    )
+    const activeDrivingLicense = {
+      erBradabirgda: false, // TODO this should be removed
+      ...drivingLicenses[0],
+    }
+
     return {
-      id: drivingLicense.id,
-      issued: drivingLicense.utgafuDagsetning,
-      expires: drivingLicense.gildirTil,
-      isProvisional: drivingLicense.erBradabirgda,
-      eligibilities: drivingLicense.rettindi.map((eligibility) => ({
+      id: activeDrivingLicense.id,
+      issued: activeDrivingLicense.utgafuDagsetning,
+      expires: activeDrivingLicense.gildirTil,
+      isProvisional: activeDrivingLicense.erBradabirgda,
+      eligibilities: activeDrivingLicense.rettindi.map((eligibility) => ({
         id: eligibility.nr,
         issued: eligibility.utgafuDags,
         expires: eligibility.gildirTil,

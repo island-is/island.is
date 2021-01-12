@@ -355,8 +355,8 @@ export const Confirmation: React.FC = () => {
 
   return (
     <PageLayout
-      activeSubSection={Sections.JUDGE}
-      activeSection={JudgeSubsections.CONFIRMATION}
+      activeSection={Sections.JUDGE}
+      activeSubSection={JudgeSubsections.CONFIRMATION}
       isLoading={loading}
       notFound={data?.case === undefined}
     >
