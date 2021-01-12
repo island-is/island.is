@@ -301,15 +301,13 @@ export const RulingStepOne: React.FC = () => {
                     locale="is"
                     selected={
                       workingCase.custodyEndDate
-                        ? parseISO(
-                            workingCase.custodyEndDate?.toString(),
-                          )
+                        ? parseISO(workingCase.custodyEndDate?.toString())
                         : null
                     }
                     errorMessage={custodyEndDateErrorMessage}
-                    hasError={custodyEndDateErrorMessage !== ""}
+                    hasError={custodyEndDateErrorMessage !== ''}
                     handleCloseCalendar={(date) =>
-                        setAndSendDateToServer(
+                      setAndSendDateToServer(
                         'custodyEndDate',
                         workingCase.custodyEndDate,
                         date,
@@ -317,7 +315,7 @@ export const RulingStepOne: React.FC = () => {
                         true,
                         setWorkingCase,
                         updateCase,
-                        setCustodyEndDateErrorMessage
+                        setCustodyEndDateErrorMessage,
                       )
                     }
                     required

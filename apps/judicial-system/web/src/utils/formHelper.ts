@@ -115,7 +115,7 @@ export const setAndSendDateToServer = async (
   let formattedDate = null
 
   if (date !== null) {
-    if(setErrorMessage) {
+    if (setErrorMessage) {
       setErrorMessage('')
     }
 
