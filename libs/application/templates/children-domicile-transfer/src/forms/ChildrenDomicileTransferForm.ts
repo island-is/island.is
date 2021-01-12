@@ -6,6 +6,7 @@ import {
   FormModes,
   buildDataProviderItem,
   buildExternalDataProvider,
+  buildCheckboxField,
 } from '@island.is/application/core'
 
 export const ChildrenDomicileTransferForm: Form = buildForm({
@@ -39,12 +40,16 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'chooseChildren',
+      id: 'selectChildInCustody',
       title: 'Velja barn',
       children: [
-        buildTextField({
-          id: 'children',
-          title: 'children',
+        buildCheckboxField({
+          id: 'selectChild',
+          title: 'Börn í þinni forsjá',
+          options: [
+            { value: '1', label: 'Ólafur Helgi Eiríksson' },
+            { value: '2', label: 'Rósa Líf Eiríksdóttir' },
+          ],
         }),
       ],
     }),
