@@ -19,7 +19,6 @@ export type TextVariants =
   | 'h5'
   | 'intro'
   | 'eyebrow'
-  | 'tag'
 
 export const Table: FC = ({ children }) => {
   return (
