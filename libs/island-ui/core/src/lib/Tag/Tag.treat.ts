@@ -74,7 +74,7 @@ export const variants = styleMap({
 })
 
 export const outlined = style({
-  backgroundColor: theme.color.white,
+  backgroundColor: 'transparent',
   selectors: {
     [`&${variants.blue}`]: {
       borderColor: theme.color.blue200,
@@ -114,9 +114,6 @@ export const outlined = style({
     },
   },
 
-  [':hover']: {
-    backgroundColor: theme.color.white,
-  },
 })
 
 export const active = style({
