@@ -76,12 +76,8 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
                   label={option.label}
                   value={option.value}
                   hasError={error !== undefined}
+                  tooltip={option.tooltip}
                 />
-                {option.tooltip && (
-                  <Box marginLeft={1}>
-                    <Tooltip placement="top" text={option.tooltip} />
-                  </Box>
-                )}
               </Box>
             ))}
             {error !== undefined && <InputError errorMessage={error} />}
