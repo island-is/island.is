@@ -6,6 +6,8 @@ import {
   Text,
   Breadcrumbs,
   ColorSchemeContext,
+  Navigation,
+  NavigationItem,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { HeadWithSocialSharing, Header, Main } from '@island.is/web/components'
@@ -38,6 +40,7 @@ import {
 } from '@island.is/web/utils/processMenuData'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { useRouter } from 'next/router'
 
 interface HomeProps {
   organization: Query['getOrganization']
@@ -48,11 +51,28 @@ interface HomeProps {
 const Home: Screen<HomeProps> = ({ organization, namespace, megaMenuData }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
+  const { asPath } = useRouter()
   const { linkResolver } = useLinkResolver()
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
   }
+
+  const parentPageLink: NavigationItem = {
+    title: organization.organizationPage.title,
+    href: `/stofnanir/${organization.slug}`,
+    active: false,
+  }
+
+  const items: NavigationItem[] = organization.organizationPage.menuLinks.map(
+    ({ text, url }) => ({
+      title: text,
+      href: url,
+      active: asPath === url,
+    }),
+  )
+
+  const navList = [parentPageLink, ...items]
 
   return (
     <>
@@ -69,7 +89,47 @@ const Home: Screen<HomeProps> = ({ organization, namespace, megaMenuData }) => {
         <Box className={styles.headerBg}>
           <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
             <Header buttonColorScheme="negative" megaMenuData={megaMenuData}>
-              <SidebarLayout fullWidthContent sidebarContent="">
+              <SidebarLayout
+                fullWidthContent
+                sidebarContent={
+                  <Box
+                    className={styles.headerSidebar}
+                    position={'relative'}
+                    style={{ zIndex: 10 }}
+                  >
+                    <Box marginBottom={5}>
+                      <Breadcrumbs
+                        color="white"
+                        items={[
+                          {
+                            title: 'Ísland.is',
+                            href: '/',
+                          },
+                          {
+                            title: organization.title,
+                          },
+                        ]}
+                        renderLink={(link) => {
+                          return (
+                            <NextLink {...linkResolver('homepage')} passHref>
+                              {link}
+                            </NextLink>
+                          )
+                        }}
+                      />
+                    </Box>
+                    <Navigation
+                      baseId="pageNav"
+                      items={navList}
+                      title="Efnisyfirlit"
+                      titleLink={{
+                        href: `/${organization.slug}`,
+                        active: false,
+                      }}
+                    />
+                  </Box>
+                }
+              >
                 <Box paddingTop={[2, 2, 10]} paddingBottom={[4, 4, 4, 10]}>
                   <Text variant="h1" as="h1" color="white">
                     {organization.title}
@@ -81,32 +141,10 @@ const Home: Screen<HomeProps> = ({ organization, namespace, megaMenuData }) => {
         </Box>
       </Box>
       <Main>
-        <SidebarLayout
-          fullWidthContent
-          isSticky={false}
-          sidebarContent={
-            <Breadcrumbs
-              color="white"
-              items={[
-                {
-                  title: 'Ísland.is',
-                  href: '/',
-                },
-                {
-                  title: organization.title,
-                },
-              ]}
-              renderLink={(link) => {
-                return (
-                  <NextLink {...linkResolver('homepage')} passHref>
-                    {link}
-                  </NextLink>
-                )
-              }}
-            />
-          }
-        >
-          {organization.description}
+        <SidebarLayout fullWidthContent isSticky={false} sidebarContent="">
+          <Box className={styles.intro}>
+            {organization.organizationPage.description}
+          </Box>
         </SidebarLayout>
       </Main>
     </>
