@@ -98,6 +98,9 @@
     "api-domains-file-upload": {
       "tags": []
     },
+    "api-domains-health-insurance": {
+      "tags": []
+    },
     "api-domains-national-registry": {
       "tags": []
     },
