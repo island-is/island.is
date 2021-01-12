@@ -113,7 +113,7 @@ jobs:
         env:
           CHUNK_SIZE: 1
         run: |
-          CHUNKS=$(./scripts/ci/generate-chunks.sh e2e)
+          CHUNKS=$(./scripts/ci/generate-chunks.sh e2e-ci)
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
           fi

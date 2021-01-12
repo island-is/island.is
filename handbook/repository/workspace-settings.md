@@ -3,7 +3,7 @@
 Various project settings can be controlled from the `workspace.json`
 file, located in the root of the repository.
 
-## E2E Testing configuration
+## E2E Testing configuration for timeouts
 
 We are experiencing timeouts during some of our `Cypress` end-to-end
 tests. This is due to long build and compile time of `NextJS` apps.
@@ -19,19 +19,14 @@ property of the `e2e` project.
 "e2e-ci": {
   "builder": "@nrwl/workspace:run-commands",
   "options": {
-    "args": "--targetName=skilavottord-web --targetHost=localhost:4200",
-    "commands": [
-      "yarn start {args.targetName} &",
-      "./scripts/ci/_wait-for.sh {args.targetHost} --timeout=0 -- curl -s http://{args.targetHost} > /dev/null",
-      "yarn run e2e {args.targetName}-e2e --headless --production --record --group={args.targetName}-e2e --base-url http://{args.targetHost} --devServerTarget ''"
-    ],
-    "parallel": false
+    "args": "--targetName=web --targetHost=http://localhost:4200",
+    "command": "yarn start-test 'yarn start {args.targetName}' {args.targetHost} \"yarn run e2e  {args.targetName}-e2e --headless --production --base-url {args.targetHost} --devServerTarget ''\""
   }
 },
 ```
 
-Then we need to update only the `targetName` and `targetHost`
-variables in the `args` property for each project:
+Then we need to set the `targetName` and `targetHost`
+in the `args` property for each project:
 
 - `targetName`: The name of the web app that this `e2e` app is
   testing. Usually this is the same name as the `e2e` app name
@@ -39,9 +34,21 @@ variables in the `args` property for each project:
 - `targetHost`: The host and port configuration which the target
   app listens on.
 
-> This is executed as part of our GitHub CI pipeline via the `40_e2e.sh`  
-> For example to run for `web-e2e`:
 >
-> ```shell
-> ./scripts/ci/40_e2e.sh web-e2e
-> ```
+
+### E2E in CI
+
+This task is executed as part of our GitHub CI pipeline via the `40_e2e.sh`  
+For example to run for `web-e2e`:
+
+```shell
+./scripts/ci/40_e2e.sh web-e2e
+```
+
+### E2E test locally
+
+As before we use the `e2e` task to test locally
+
+```shell
+yarn e2e web-e2e
+```
