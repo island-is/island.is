@@ -9,7 +9,7 @@ import { IconProps } from '@island.is/island-ui/core'
  * A navigational item used by the service portal
  */
 export interface ServicePortalNavigationItem {
-  name: MessageDescriptor | string
+  name?: MessageDescriptor | string
   path?: ServicePortalPath
   external?: boolean
   // System routes are always rendered in the navigation
@@ -110,18 +110,18 @@ export interface ServicePortalModule {
   /**
    * The title of this module
    */
-  name: MessageDescriptor | string
+  name?: MessageDescriptor | string
   /**
    * An optional render value of widgets that should
    * be displayed on the dashboard
    */
-  widgets: (props: ServicePortalModuleProps) => ServicePortalWidget[]
+  widgets?: (props: ServicePortalModuleProps) => ServicePortalWidget[]
   /**
    * The routes defined by this module.
    * The service portal shell will define these as routes
    * within itself and use the provided render function to render out the component
    */
-  routes: (props: ServicePortalModuleProps) => Promise<ServicePortalRoute[]>
+  routes?: (props: ServicePortalModuleProps) => Promise<ServicePortalRoute[]>
   /**
    * Global components will always be rendered by default
    * These are usually utility components that prompt the user about certain
