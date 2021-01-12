@@ -150,264 +150,277 @@ export const RulingStepTwo: React.FC = () => {
               </Text>
             </Box>
             <Box marginBottom={3}>
-              <Box marginBottom={2}>
-                <Text as="h4" variant="h4">
-                  Kærði{' '}
-                  <Text as="span" color="red600" fontWeight="semiBold">
-                    *
+              <BlueBox>
+                <Box marginBottom={2}>
+                  <Text as="h4" variant="h4">
+                    Kærði{' '}
+                    <Text as="span" color="red600" fontWeight="semiBold">
+                      *
+                    </Text>
                   </Text>
-                </Text>
-              </Box>
-              <Box marginBottom={3}>
-                <GridRow>
-                  <GridColumn span="6/12">
-                    <RadioButton
-                      name="accused-appeal-decition"
-                      id="accused-appeal"
-                      label="Kærði kærir úrskurðinn"
-                      value={CaseAppealDecision.APPEAL}
-                      checked={
-                        workingCase.accusedAppealDecision ===
-                        CaseAppealDecision.APPEAL
-                      }
-                      onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          accusedAppealDecision: CaseAppealDecision.APPEAL,
-                        })
+                </Box>
+                <Box marginBottom={2}>
+                  <GridRow>
+                    <GridColumn span="6/12">
+                      <RadioButton
+                        name="accused-appeal-decition"
+                        id="accused-appeal"
+                        label="Kærði kærir úrskurðinn"
+                        value={CaseAppealDecision.APPEAL}
+                        checked={
+                          workingCase.accusedAppealDecision ===
+                          CaseAppealDecision.APPEAL
+                        }
+                        onChange={() => {
+                          setWorkingCase({
+                            ...workingCase,
+                            accusedAppealDecision: CaseAppealDecision.APPEAL,
+                          })
 
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'accusedAppealDecision',
-                            CaseAppealDecision.APPEAL,
-                          ),
-                        )
-                      }}
-                      large
-                    />
-                  </GridColumn>
-                  <GridColumn span="6/12">
-                    <RadioButton
-                      name="accused-appeal-decition"
-                      id="accused-accept"
-                      label="Kærði unir úrskurðinum"
-                      value={CaseAppealDecision.ACCEPT}
-                      checked={
-                        workingCase.accusedAppealDecision ===
-                        CaseAppealDecision.ACCEPT
-                      }
-                      onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          accusedAppealDecision: CaseAppealDecision.ACCEPT,
-                        })
+                          updateCase(
+                            workingCase.id,
+                            parseString(
+                              'accusedAppealDecision',
+                              CaseAppealDecision.APPEAL,
+                            ),
+                          )
+                        }}
+                        large
+                        filled
+                      />
+                    </GridColumn>
+                    <GridColumn span="6/12">
+                      <RadioButton
+                        name="accused-appeal-decition"
+                        id="accused-accept"
+                        label="Kærði unir úrskurðinum"
+                        value={CaseAppealDecision.ACCEPT}
+                        checked={
+                          workingCase.accusedAppealDecision ===
+                          CaseAppealDecision.ACCEPT
+                        }
+                        onChange={() => {
+                          setWorkingCase({
+                            ...workingCase,
+                            accusedAppealDecision: CaseAppealDecision.ACCEPT,
+                          })
 
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'accusedAppealDecision',
-                            CaseAppealDecision.ACCEPT,
-                          ),
-                        )
-                      }}
-                      large
-                    />
-                  </GridColumn>
-                </GridRow>
-              </Box>
-              <Box marginBottom={4}>
-                <GridRow>
-                  <GridColumn span="7/12">
-                    <RadioButton
-                      name="accused-appeal-decition"
-                      id="accused-postpone"
-                      label="Kærði tekur sér lögboðinn frest"
-                      value={CaseAppealDecision.POSTPONE}
-                      checked={
-                        workingCase.accusedAppealDecision ===
-                        CaseAppealDecision.POSTPONE
-                      }
-                      onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          accusedAppealDecision: CaseAppealDecision.POSTPONE,
-                        })
+                          updateCase(
+                            workingCase.id,
+                            parseString(
+                              'accusedAppealDecision',
+                              CaseAppealDecision.ACCEPT,
+                            ),
+                          )
+                        }}
+                        large
+                        filled
+                      />
+                    </GridColumn>
+                  </GridRow>
+                </Box>
+                <Box marginBottom={2}>
+                  <GridRow>
+                    <GridColumn span="7/12">
+                      <RadioButton
+                        name="accused-appeal-decition"
+                        id="accused-postpone"
+                        label="Kærði tekur sér lögboðinn frest"
+                        value={CaseAppealDecision.POSTPONE}
+                        checked={
+                          workingCase.accusedAppealDecision ===
+                          CaseAppealDecision.POSTPONE
+                        }
+                        onChange={() => {
+                          setWorkingCase({
+                            ...workingCase,
+                            accusedAppealDecision: CaseAppealDecision.POSTPONE,
+                          })
 
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'accusedAppealDecision',
-                            CaseAppealDecision.POSTPONE,
-                          ),
-                        )
-                      }}
-                      large
-                    />
-                  </GridColumn>
-                </GridRow>
-              </Box>
-              <Input
-                name="accusedAppealAnnouncement"
-                data-testid="accusedAppealAnnouncement"
-                label="Yfirlýsing um kæru kærða"
-                defaultValue={workingCase.accusedAppealAnnouncement}
-                disabled={
-                  workingCase.accusedAppealDecision !==
-                  CaseAppealDecision.APPEAL
-                }
-                placeholder="Í hvaða skyni er kært?"
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'accusedAppealAnnouncement',
-                    event,
-                    [],
-                    workingCase,
-                    setWorkingCase,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'accusedAppealAnnouncement',
-                    event.target.value,
-                    [],
-                    workingCase,
-                    updateCase,
-                  )
-                }
-                textarea
-                rows={7}
-              />
+                          updateCase(
+                            workingCase.id,
+                            parseString(
+                              'accusedAppealDecision',
+                              CaseAppealDecision.POSTPONE,
+                            ),
+                          )
+                        }}
+                        large
+                        filled
+                      />
+                    </GridColumn>
+                  </GridRow>
+                </Box>
+                <Input
+                  name="accusedAppealAnnouncement"
+                  data-testid="accusedAppealAnnouncement"
+                  label="Yfirlýsing um kæru kærða"
+                  defaultValue={workingCase.accusedAppealAnnouncement}
+                  disabled={
+                    workingCase.accusedAppealDecision !==
+                    CaseAppealDecision.APPEAL
+                  }
+                  placeholder="Í hvaða skyni er kært?"
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'accusedAppealAnnouncement',
+                      event,
+                      [],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'accusedAppealAnnouncement',
+                      event.target.value,
+                      [],
+                      workingCase,
+                      updateCase,
+                    )
+                  }
+                  textarea
+                  rows={7}
+                />
+              </BlueBox>
             </Box>
-            <Box marginBottom={2}>
-              <Text as="h4" variant="h4">
-                Sækjandi{' '}
-                <Text as="span" color="red400" fontWeight="semiBold">
-                  *
-                </Text>
-              </Text>
-            </Box>
-            <Box marginBottom={3}>
-              <GridRow>
-                <GridColumn span="6/12">
-                  <RadioButton
-                    name="prosecutor-appeal-decition"
-                    id="prosecutor-appeal"
-                    label="Sækjandi kærir úrskurðinn"
-                    value={CaseAppealDecision.APPEAL}
-                    checked={
-                      workingCase.prosecutorAppealDecision ===
+            <Box marginBottom={5}>
+              <BlueBox>
+                <Box marginBottom={2}>
+                  <Text as="h4" variant="h4">
+                    Sækjandi{' '}
+                    <Text as="span" color="red400" fontWeight="semiBold">
+                      *
+                    </Text>
+                  </Text>
+                </Box>
+                <Box marginBottom={2}>
+                  <GridRow>
+                    <GridColumn span="6/12">
+                      <RadioButton
+                        name="prosecutor-appeal-decition"
+                        id="prosecutor-appeal"
+                        label="Sækjandi kærir úrskurðinn"
+                        value={CaseAppealDecision.APPEAL}
+                        checked={
+                          workingCase.prosecutorAppealDecision ===
+                          CaseAppealDecision.APPEAL
+                        }
+                        onChange={() => {
+                          setWorkingCase({
+                            ...workingCase,
+                            prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+                          })
+
+                          updateCase(
+                            workingCase.id,
+                            parseString(
+                              'prosecutorAppealDecision',
+                              CaseAppealDecision.APPEAL,
+                            ),
+                          )
+                        }}
+                        large
+                        filled
+                      />
+                    </GridColumn>
+                    <GridColumn span="6/12">
+                      <RadioButton
+                        name="prosecutor-appeal-decition"
+                        id="prosecutor-accept"
+                        label="Sækjandi unir úrskurðinum"
+                        value={CaseAppealDecision.ACCEPT}
+                        checked={
+                          workingCase.prosecutorAppealDecision ===
+                          CaseAppealDecision.ACCEPT
+                        }
+                        onChange={() => {
+                          setWorkingCase({
+                            ...workingCase,
+                            prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+                          })
+
+                          updateCase(
+                            workingCase.id,
+                            parseString(
+                              'prosecutorAppealDecision',
+                              CaseAppealDecision.ACCEPT,
+                            ),
+                          )
+                        }}
+                        large
+                        filled
+                      />
+                    </GridColumn>
+                  </GridRow>
+                </Box>
+                <Box marginBottom={2}>
+                  <GridRow>
+                    <GridColumn span="7/12">
+                      <RadioButton
+                        name="prosecutor-appeal-decition"
+                        id="prosecutor-postpone"
+                        label="Sækjandi tekur sér lögboðinn frest"
+                        value={CaseAppealDecision.POSTPONE}
+                        checked={
+                          workingCase.prosecutorAppealDecision ===
+                          CaseAppealDecision.POSTPONE
+                        }
+                        onChange={() => {
+                          setWorkingCase({
+                            ...workingCase,
+                            prosecutorAppealDecision:
+                              CaseAppealDecision.POSTPONE,
+                          })
+
+                          updateCase(
+                            workingCase.id,
+                            parseString(
+                              'prosecutorAppealDecision',
+                              CaseAppealDecision.POSTPONE,
+                            ),
+                          )
+                        }}
+                        large
+                        filled
+                      />
+                    </GridColumn>
+                  </GridRow>
+                </Box>
+                <Box>
+                  <Input
+                    name="prosecutorAppealAnnouncement"
+                    data-testid="prosecutorAppealAnnouncement"
+                    label="Yfirlýsing um kæru sækjanda"
+                    defaultValue={workingCase.prosecutorAppealAnnouncement}
+                    disabled={
+                      workingCase.prosecutorAppealDecision !==
                       CaseAppealDecision.APPEAL
                     }
-                    onChange={() => {
-                      setWorkingCase({
-                        ...workingCase,
-                        prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-                      })
-
-                      updateCase(
-                        workingCase.id,
-                        parseString(
-                          'prosecutorAppealDecision',
-                          CaseAppealDecision.APPEAL,
-                        ),
+                    placeholder="Í hvaða skyni er kært?"
+                    onChange={(event) =>
+                      removeTabsValidateAndSet(
+                        'prosecutorAppealAnnouncement',
+                        event,
+                        ['email-format'],
+                        workingCase,
+                        setWorkingCase,
                       )
-                    }}
-                    large
-                  />
-                </GridColumn>
-                <GridColumn span="6/12">
-                  <RadioButton
-                    name="prosecutor-appeal-decition"
-                    id="prosecutor-accept"
-                    label="Sækjandi unir úrskurðinum"
-                    value={CaseAppealDecision.ACCEPT}
-                    checked={
-                      workingCase.prosecutorAppealDecision ===
-                      CaseAppealDecision.ACCEPT
                     }
-                    onChange={() => {
-                      setWorkingCase({
-                        ...workingCase,
-                        prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
-                      })
-
-                      updateCase(
-                        workingCase.id,
-                        parseString(
-                          'prosecutorAppealDecision',
-                          CaseAppealDecision.ACCEPT,
-                        ),
+                    onBlur={(event) =>
+                      validateAndSendToServer(
+                        'prosecutorAppealAnnouncement',
+                        event.target.value,
+                        ['email-format'],
+                        workingCase,
+                        updateCase,
                       )
-                    }}
-                    large
-                  />
-                </GridColumn>
-              </GridRow>
-            </Box>
-            <Box marginBottom={4}>
-              <GridRow>
-                <GridColumn span="7/12">
-                  <RadioButton
-                    name="prosecutor-appeal-decition"
-                    id="prosecutor-postpone"
-                    label="Sækjandi tekur sér lögboðinn frest"
-                    value={CaseAppealDecision.POSTPONE}
-                    checked={
-                      workingCase.prosecutorAppealDecision ===
-                      CaseAppealDecision.POSTPONE
                     }
-                    onChange={() => {
-                      setWorkingCase({
-                        ...workingCase,
-                        prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-                      })
-
-                      updateCase(
-                        workingCase.id,
-                        parseString(
-                          'prosecutorAppealDecision',
-                          CaseAppealDecision.POSTPONE,
-                        ),
-                      )
-                    }}
-                    large
+                    textarea
+                    rows={7}
                   />
-                </GridColumn>
-              </GridRow>
-            </Box>
-            <Box marginBottom={7}>
-              <Input
-                name="prosecutorAppealAnnouncement"
-                data-testid="prosecutorAppealAnnouncement"
-                label="Yfirlýsing um kæru sækjanda"
-                defaultValue={workingCase.prosecutorAppealAnnouncement}
-                disabled={
-                  workingCase.prosecutorAppealDecision !==
-                  CaseAppealDecision.APPEAL
-                }
-                placeholder="Í hvaða skyni er kært?"
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'prosecutorAppealAnnouncement',
-                    event,
-                    ['email-format'],
-                    workingCase,
-                    setWorkingCase,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'prosecutorAppealAnnouncement',
-                    event.target.value,
-                    ['email-format'],
-                    workingCase,
-                    updateCase,
-                  )
-                }
-                textarea
-                rows={7}
-              />
+                </Box>
+              </BlueBox>
             </Box>
             {(!workingCase.decision ||
               workingCase.decision === CaseDecision.ACCEPTING) && (
@@ -497,8 +510,8 @@ export const RulingStepTwo: React.FC = () => {
             {(!workingCase.decision ||
               workingCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) && (
-              <Box component="section" marginBottom={3}>
-                <Box marginBottom={2}>
+              <Box component="section" marginBottom={4}>
+                <Box marginBottom={3}>
                   <Text as="h3" variant="h3">
                     Tilhögun farbanns
                   </Text>
