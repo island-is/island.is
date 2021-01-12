@@ -3,12 +3,14 @@ import {
     FailedDataProviderResult,
     SuccessfulDataProviderResult,
   } from '@island.is/application/core'
-  
+
+import { Parent } from './APIDataTypes'
+
   /** This is a temporary mock provider for children domicile transfer. National registry team are setting up real provider which we will connect to once it is up. **/
   export class ParentNationalRegistryProvider extends BasicDataProvider {
     readonly type = 'ParentNationalRegistry'
-  
-    async provide(): Promise<unknown> {
+
+    async provide(): Promise<Parent> {
       const query = `query GetNationalRegistry {
         parent {[
             id
@@ -47,8 +49,7 @@ import {
         data: result,
       }
     }
-    onProvideSuccess(result: object): SuccessfulDataProviderResult {
+    onProvideSuccess(result: Parent): SuccessfulDataProviderResult {
       return { date: new Date(), status: 'success', data: result }
     }
   }
-  
