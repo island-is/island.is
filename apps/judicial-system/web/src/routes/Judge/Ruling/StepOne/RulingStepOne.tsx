@@ -45,6 +45,7 @@ import {
   setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import BlueBox from '@island.is/judicial-system-web/src/shared-components/BlueBox/BlueBox'
+import parseISO from 'date-fns/parseISO'
 
 interface CaseData {
   case?: Case
@@ -56,6 +57,9 @@ export const RulingStepOne: React.FC = () => {
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [, setIsolationCheckbox] = useState<boolean>()
   const [rulingErrorMessage, setRulingErrorMessage] = useState('')
+  const [custodyEndDateErrorMessage, setCustodyEndDateErrorMessage] = useState(
+    '',
+  )
   const [custodyEndTimeErrorMessage, setCustodyEndTimeErrorMessage] = useState(
     '',
   )
@@ -297,19 +301,21 @@ export const RulingStepOne: React.FC = () => {
                     locale="is"
                     selected={
                       workingCase.custodyEndDate
-                        ? new Date(workingCase.custodyEndDate)
-                        : workingCase.requestedCustodyEndDate
-                        ? new Date(workingCase.requestedCustodyEndDate)
+                        ? parseISO(workingCase.custodyEndDate?.toString())
                         : null
                     }
-                    handleChange={(date) =>
+                    errorMessage={custodyEndDateErrorMessage}
+                    hasError={custodyEndDateErrorMessage !== ''}
+                    handleCloseCalendar={(date) =>
                       setAndSendDateToServer(
                         'custodyEndDate',
                         workingCase.custodyEndDate,
                         date,
                         workingCase,
+                        true,
                         setWorkingCase,
                         updateCase,
+                        setCustodyEndDateErrorMessage,
                       )
                     }
                     required

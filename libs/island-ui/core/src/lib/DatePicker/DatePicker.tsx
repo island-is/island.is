@@ -108,6 +108,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       registerLocale('pl', pl)
     }
   }, [locale])
+
+  useEffect(() => {
+    setStartDate(selected ?? null)
+  }, [selected])
+
   return (
     <div className={coreStyles.root} data-testid="datepicker">
       <div
@@ -147,6 +152,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           }}
           startDate={startDate}
           required={required}
+          autoComplete="off"
           calendarClassName={cn({
             [styles.backgroundBlue]: backgroundColor === 'blue',
           })}

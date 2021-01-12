@@ -42,7 +42,7 @@ describe('formatProsecutorDemands', () => {
 
     // Assert
     expect(res).toBe(
-      'Þess er krafist að Glanni Glæpur kt. 010101-0000 verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi til mánudagsins 16. nóvember 2020, kl. 19:30 og verði gert að sæta einangrun meðan á gæsluvarðhaldi stendur.',
+      'Þess er krafist að Glanni Glæpur kt. 010101-0000 verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi til mánudagsins 16. nóvember 2020, kl. 19:30 og verði gert að sæta einangrun á meðan á gæsluvarðhaldinu stendur.',
     )
   })
 
@@ -92,7 +92,7 @@ describe('formatProsecutorDemands', () => {
 
     // Assert
     expect(res).toBe(
-      'Þess er krafist að Glanni Glæpur kt. 010101-0000 verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi, farbanni til vara, til mánudagsins 16. nóvember 2020, kl. 19:30 og verði gert að sæta einangrun meðan á gæsluvarðhaldi stendur.',
+      'Þess er krafist að Glanni Glæpur kt. 010101-0000 verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi, farbanni til vara, til mánudagsins 16. nóvember 2020, kl. 19:30 og verði gert að sæta einangrun á meðan á gæsluvarðhaldinu stendur.',
     )
   })
 })
@@ -118,6 +118,7 @@ describe('formatCustodyProvisions', () => {
       CaseCustodyProvisions._95_1_D,
       CaseCustodyProvisions._95_2,
       CaseCustodyProvisions._99_1_B,
+      CaseCustodyProvisions._100_1,
     ]
 
     // Act
@@ -125,7 +126,7 @@ describe('formatCustodyProvisions', () => {
 
     // Assert
     expect(res).toBe(
-      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.',
+      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.\n1. mgr. 100. gr. sml.',
     )
   })
 
@@ -138,6 +139,7 @@ describe('formatCustodyProvisions', () => {
       CaseCustodyProvisions._95_2,
       CaseCustodyProvisions._99_1_B,
       CaseCustodyProvisions._95_1_B,
+      CaseCustodyProvisions._100_1,
     ]
 
     // Act
@@ -145,7 +147,7 @@ describe('formatCustodyProvisions', () => {
 
     // Assert
     expect(res).toBe(
-      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.',
+      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.\n1. mgr. 100. gr. sml.',
     )
   })
 })
@@ -167,11 +169,14 @@ describe('formatCourtCaseNumber', () => {
 describe('formatConclusion', () => {
   test('should format conclusion for a rejected case', () => {
     // Arrange
+    const accusedNationalId = '0101010000'
+    const accusedName = 'Glanni Glæpur'
     const decision = CaseDecision.REJECTING
 
     // Act
     const res = formatConclusion(
-      undefined,
+      accusedNationalId,
+      accusedName,
       undefined,
       decision,
       undefined,
@@ -179,13 +184,16 @@ describe('formatConclusion', () => {
     )
 
     // Assert
-    expect(res).toBe('Kröfu um gæsluvarðhald er hafnað.')
+    expect(res).toBe(
+      'Beiðni um gæslu á hendur, Glanni Glæpur kt. 010101-0000, er hafnað.',
+    )
   })
 
   test('should format conclusion for an accepted case without isolation', () => {
     // Arrange
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
+    const accusedGender = CaseGender.MALE
     const decision = CaseDecision.ACCEPTING
     const custodyEndDate = new Date('2020-12-22T11:23')
     const isolation = false
@@ -194,6 +202,7 @@ describe('formatConclusion', () => {
     const res = formatConclusion(
       accusedNationalId,
       accusedName,
+      accusedGender,
       decision,
       custodyEndDate,
       isolation,
@@ -209,6 +218,7 @@ describe('formatConclusion', () => {
     // Arrange
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
+    const accusedGender = CaseGender.MALE
     const decision = CaseDecision.ACCEPTING
     const custodyEndDate = new Date('2020-12-22T11:23')
     const isolation = true
@@ -217,6 +227,7 @@ describe('formatConclusion', () => {
     const res = formatConclusion(
       accusedNationalId,
       accusedName,
+      accusedGender,
       decision,
       custodyEndDate,
       isolation,
@@ -224,7 +235,7 @@ describe('formatConclusion', () => {
 
     // Assert
     expect(res).toBe(
-      'Kærði, Glanni Glæpur, kt. 010101-0000, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 22. desember 2020 kl. 11:23. Kærði skal sæta einangrun meðan á gæsluvarðhaldi stendur.',
+      'Kærði, Glanni Glæpur, kt. 010101-0000, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 22. desember 2020 kl. 11:23. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.',
     )
   })
 
@@ -232,6 +243,7 @@ describe('formatConclusion', () => {
     // Arrange
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
+    const accusedGender = CaseGender.MALE
     const decision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
     const custodyEndDate = new Date('2021-01-29T13:03')
     const isolation = false
@@ -240,6 +252,7 @@ describe('formatConclusion', () => {
     const res = formatConclusion(
       accusedNationalId,
       accusedName,
+      accusedGender,
       decision,
       custodyEndDate,
       isolation,
@@ -496,6 +509,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     // Arrange
     const accusedNationalId = '2411018760'
     const accusedName = 'Biggi Börgler'
+    const accusedGender = CaseGender.MALE
     const court = 'Héraðsdómur Vesturlands'
     const prosecutorName = 'Siggi Sakó'
     const courtDate = new Date('2020-12-20T13:32')
@@ -515,6 +529,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     const res = formatPrisonRulingEmailNotification(
       accusedNationalId,
       accusedName,
+      accusedGender,
       court,
       prosecutorName,
       courtDate,
@@ -530,7 +545,7 @@ describe('formatPrisonRulingEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Ákærandi: Siggi Sakó<br />Verjandi: Skúli Skjöldur<br /><br /><strong>Úrskurðarorð</strong><br /><br />Kærði, Biggi Börgler, kt. 241101-8760, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 6. apríl 2021 kl. 12:30. Kærði skal sæta einangrun meðan á gæsluvarðhaldi stendur.<br /><br /><strong>Ákvörðun um kæru</strong><br />Kærði kærir úrskurðinn.<br />Sækjandi unir úrskurðinum.<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />Sækjandi tekur fram að kærði skuli sæta einangrun meðan á gæsluvarðhaldi stendur og að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.<br /><br />Dalli Dómari aðal dómarinn',
+      '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Ákærandi: Siggi Sakó<br />Verjandi: Skúli Skjöldur<br /><br /><strong>Úrskurðarorð</strong><br /><br />Kærði, Biggi Börgler, kt. 241101-8760, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 6. apríl 2021 kl. 12:30. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.<br /><br /><strong>Ákvörðun um kæru</strong><br />Kærði kærir úrskurðinn.<br />Sækjandi unir úrskurðinum.<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />Sækjandi tekur fram að kærði skuli sæta einangrun á meðan á gæsluvarðhaldinu stendur og að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.<br /><br />Dalli Dómari aðal dómarinn',
     )
   })
 
@@ -538,6 +553,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     // Arrange
     const accusedNationalId = '2411018760'
     const accusedName = 'Biggi Börgler'
+    const accusedGender = CaseGender.MALE
     const court = 'Héraðsdómur Vesturlands'
     const prosecutorName = 'Siggi Sakó'
     const courtDate = new Date('2020-12-20T13:32')
@@ -557,6 +573,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     const res = formatPrisonRulingEmailNotification(
       accusedNationalId,
       accusedName,
+      accusedGender,
       court,
       prosecutorName,
       courtDate,
@@ -572,7 +589,7 @@ describe('formatPrisonRulingEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Ákærandi: Siggi Sakó<br />Verjandi: Skúli Skjöldur<br /><br /><strong>Úrskurðarorð</strong><br /><br />Kröfu um gæsluvarðhald er hafnað.<br /><br /><strong>Ákvörðun um kæru</strong><br />Kærði kærir úrskurðinn.<br />Sækjandi unir úrskurðinum.<br /><br />Dalli Dómari aðal dómarinn',
+      '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Ákærandi: Siggi Sakó<br />Verjandi: Skúli Skjöldur<br /><br /><strong>Úrskurðarorð</strong><br /><br />Beiðni um gæslu á hendur, Biggi Börgler kt. 241101-8760, er hafnað.<br /><br /><strong>Ákvörðun um kæru</strong><br />Kærði kærir úrskurðinn.<br />Sækjandi unir úrskurðinum.<br /><br />Dalli Dómari aðal dómarinn',
     )
   })
 })

@@ -24,6 +24,7 @@ import sha256 from 'crypto-js/sha256'
 import Base64 from 'crypto-js/enc-base64'
 import { IdentityResource } from '../entities/models/identity-resource.model'
 import { ApiScope } from '../entities/models/api-scope.model'
+import { IdpRestriction } from '../entities/models/idp-restriction.model'
 
 @Injectable()
 export class ClientsService {
@@ -44,6 +45,8 @@ export class ClientsService {
     private clientAllowedScope: typeof ClientAllowedScope,
     @InjectModel(ClientClaim)
     private clientClaim: typeof ClientClaim,
+    @InjectModel(IdpRestriction)
+    private idpRestriction: typeof IdpRestriction,
     @InjectModel(ClientPostLogoutRedirectUri)
     private clientPostLogoutUri: typeof ClientPostLogoutRedirectUri,
     @InjectModel(ApiScope)
@@ -479,5 +482,11 @@ export class ClientsService {
     arrJoined.push(...apiScopes)
     arrJoined.push(...(identityResources as ApiScope[]))
     return arrJoined.sort((a, b) => a.name.localeCompare(b.name))
+  }
+
+  /** Finds available idp restrictions */
+  async findAllIdpRestrictions(): Promise<IdpRestriction[] | null> {
+    const idpRestrictions = await this.idpRestriction.findAll()
+    return idpRestrictions
   }
 }
