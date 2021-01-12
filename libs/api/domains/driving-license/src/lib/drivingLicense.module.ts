@@ -6,6 +6,7 @@ import { DrivingLicenseApi } from './client'
 
 export interface Config {
   baseApiUrl: string
+  secret: string
 }
 
 @Module({})
@@ -18,7 +19,8 @@ export class DrivingLicenseModule {
         DrivingLicenseService,
         {
           provide: DrivingLicenseApi,
-          useFactory: async () => new DrivingLicenseApi(config.baseApiUrl),
+          useFactory: async () =>
+            new DrivingLicenseApi(config.baseApiUrl, config.secret),
         },
       ],
       exports: [],
