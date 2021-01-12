@@ -41,17 +41,17 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       },
 
       // Umsoknir
-      {
-        name: defineMessage({
-          id: 'service.portal:applications',
-          defaultMessage: 'Umsóknir',
-        }),
-        path: ServicePortalPath.ApplicationIntroduction,
-        icon: {
-          type: 'outline',
-          icon: 'fileTrayFull',
-        },
-      },
+      // {
+      //   name: defineMessage({
+      //     id: 'service.portal:applications',
+      //     defaultMessage: 'Umsóknir',
+      //   }),
+      //   path: ServicePortalPath.ApplicationIntroduction,
+      //   icon: {
+      //     type: 'outline',
+      //     icon: 'fileTrayFull',
+      //   },
+      // },
 
       // Min Gogn
       {
