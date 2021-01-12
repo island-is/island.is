@@ -26,7 +26,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import RichText from '@island.is/web/components/RichText/RichText'
 import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import { GET_NAMESPACE_QUERY, GET_SUBPAGE_HEADER_QUERY } from '../queries'
-import { withMainLayout } from 'apps/web/layouts/main'
+import { withMainLayout } from '@island.is/web/layouts/main'
 
 interface DeveloperHandbookProps {
   subpageHeader: GetSubpageHeaderQuery['getSubpageHeader']
