@@ -360,6 +360,7 @@ export async function generateRulingPdf(
       formatConclusion(
         existingCase.accusedNationalId,
         existingCase.accusedName,
+        existingCase.accusedGender,
         existingCase.decision,
         existingCase.custodyEndDate,
         existingCase.custodyRestrictions?.includes(
@@ -446,10 +447,16 @@ export async function generateRulingPdf(
       .text('Tilhögun gæsluvarðhalds')
       .font('Helvetica')
       .fontSize(12)
-      .text(formatRestrictions(existingCase.custodyRestrictions), {
-        lineGap: 6,
-        paragraphGap: 0,
-      })
+      .text(
+        formatRestrictions(
+          existingCase.accusedGender,
+          existingCase.custodyRestrictions,
+        ),
+        {
+          lineGap: 6,
+          paragraphGap: 0,
+        },
+      )
       .text(' ')
       .text(
         'Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.',
