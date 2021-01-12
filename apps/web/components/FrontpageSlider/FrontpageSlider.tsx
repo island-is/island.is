@@ -5,6 +5,7 @@ import React, {
   useState,
   useCallback,
   useEffect,
+  useContext,
 } from 'react'
 import Link from 'next/link'
 import cn from 'classnames'
@@ -26,6 +27,8 @@ import { useI18n } from '../../i18n'
 import { theme } from '@island.is/island-ui/theme'
 import LottieLoader from './LottiePlayer/LottieLoader'
 import * as styles from './FrontpageSlider.treat'
+import { GlobalContext } from '@island.is/web/context'
+import { useNamespace } from '@island.is/web/hooks'
 
 type Slides = {
   subtitle?: string
@@ -63,6 +66,9 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
   slides,
   searchContent,
 }) => {
+  const { globalNamespace } = useContext(GlobalContext)
+  const gn = useNamespace(globalNamespace)
+
   const contentRef = useRef(null)
   const [minHeight, setMinHeight] = useState<number>(0)
   const itemRefs = useRef<Array<HTMLElement | null>>([])
@@ -252,7 +258,7 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
                                 icon="arrowForward"
                                 aria-labelledby={tabTitleId}
                               >
-                                Sjá nánar
+                                {gn('seeMore')}
                               </Button>
                             </Link>
                           </span>

@@ -10663,19 +10663,35 @@ __webpack_require__.r(__webpack_exports__);
 // EXTERNAL MODULE: ./node_modules/tslib/tslib.js
 var tslib = __webpack_require__(422);
 
-// EXTERNAL MODULE: ./node_modules/@octokit/action/dist-node/index.js
-var dist_node = __webpack_require__(725);
-
 // CONCATENATED MODULE: ./detection.ts
 
-const getSuccessWorkflowsForBranch = (response) => {
-    return response.workflow_runs
-        .map((wr) => ({
-        run_number: wr.run_number,
-        sha: wr.head_sha,
-        branch: wr.head_branch,
+const getSuccessWorkflowsForBranch = (response, isCurrentBranch, workflowQueries) => Object(tslib.__awaiter)(void 0, void 0, void 0, function* () {
+    const runs = response.workflow_runs
+        .map(({ run_number, head_sha, head_branch, jobs_url }) => ({
+        run_number,
+        sha: head_sha,
+        branch: head_branch,
+        jobs_url,
     }))
         .sort((a, b) => b.run_number - a.run_number);
+    if (isCurrentBranch) {
+        return (yield Promise.all(runs.map(enrichWithJobs(workflowQueries)))).filter(filterSkippedSuccessBuilds);
+    }
+    return runs;
+});
+const enrichWithJobs = (workflowQueries) => (run) => Object(tslib.__awaiter)(void 0, void 0, void 0, function* () {
+    const { jobs_url } = run;
+    return Object.assign(Object.assign({}, run), { workflowJobs: yield workflowQueries.getJobs(`GET ${jobs_url}`) });
+});
+const filterSkippedSuccessBuilds = (run) => {
+    const { workflowJobs: { jobs }, } = run;
+    const successJob = jobs.find((job) => job.name === 'push-success');
+    if (successJob) {
+        const { steps } = successJob;
+        const announceSuccessStep = steps && steps.find((step) => step.name === 'Announce success');
+        return announceSuccessStep && announceSuccessStep.conclusion === 'success';
+    }
+    return false;
 };
 const pickFirstMatchingSuccess = (shas, runsBranch) => {
     for (const sha of shas) {
@@ -10686,9 +10702,9 @@ const pickFirstMatchingSuccess = (shas, runsBranch) => {
     }
 };
 const findLastGoodBuild = (shas, branch, base, workflowQueries) => Object(tslib.__awaiter)(void 0, void 0, void 0, function* () {
-    const getGoodBuildOnBranch = (branch) => Object(tslib.__awaiter)(void 0, void 0, void 0, function* () {
+    const getGoodBuildOnBranch = (branch, isCurrentBranch) => Object(tslib.__awaiter)(void 0, void 0, void 0, function* () {
         const successWorkflows = yield workflowQueries.getData(branch);
-        let successOnBranch = getSuccessWorkflowsForBranch(successWorkflows);
+        let successOnBranch = yield getSuccessWorkflowsForBranch(successWorkflows, isCurrentBranch, workflowQueries);
         return pickFirstMatchingSuccess(shas, successOnBranch);
     });
     // First we try to find the last successful workflow build on our branch
@@ -10704,22 +10720,26 @@ const findLastGoodBuild = (shas, branch, base, workflowQueries) => Object(tslib.
     // simply consider all builds and walk down the list of shas.
     branchTargets.push('');
     for (const branchTarget of branchTargets) {
-        const goodBuild = yield getGoodBuildOnBranch(branchTarget);
+        const goodBuild = yield getGoodBuildOnBranch(branchTarget, branchTargets.indexOf(branchTarget) === 0);
         if (goodBuild) {
-            return goodBuild;
+            const { jobs_url: omit, workflowJobs: omit2 } = goodBuild, rest = Object(tslib.__rest)(goodBuild, ["jobs_url", "workflowJobs"]);
+            return rest;
         }
     }
     return {};
 });
 
+// EXTERNAL MODULE: ./node_modules/@octokit/action/dist-node/index.js
+var dist_node = __webpack_require__(725);
+
 // CONCATENATED MODULE: ./main.ts
 
 
 
-const octokit = new dist_node.Octokit();
-// const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+const repository = process.env.GITHUB_REPOSITORY || '/';
+const [owner, repo] = repository.split('/');
 const workflow_file_name = 'push.yml';
+const octokit = new dist_node.Octokit();
 class main_GitHubWorkflowQueries {
     getData(branch) {
         return Object(tslib.__awaiter)(this, void 0, void 0, function* () {
@@ -10730,6 +10750,11 @@ class main_GitHubWorkflowQueries {
                 workflow_file_name,
                 status: 'success',
             })).data;
+        });
+    }
+    getJobs(jobs_url) {
+        return Object(tslib.__awaiter)(this, void 0, void 0, function* () {
+            return (yield octokit.request(jobs_url)).data;
         });
     }
 }

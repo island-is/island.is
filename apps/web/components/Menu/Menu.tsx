@@ -75,7 +75,6 @@ export const Menu: FC<Props> = ({
           href={activeLocale === 'en' ? '/en' : '/'}
           as={activeLocale === 'en' ? '/en' : '/'}
           onClick={() => {
-            console.log('click')
             closeModal()
           }}
         >
@@ -97,7 +96,13 @@ export const Menu: FC<Props> = ({
       renderMyPagesButton={(button) => {
         return <Link href="//minarsidur.island.is/">{button}</Link>
       }}
-      renderLanguageSwitch={() => <LanguageToggler />}
+      renderLanguageSwitch={(languageSwitch, isMobile) => (
+        <LanguageToggler
+          dialogId={
+            isMobile ? 'menu-language-toggle-mobile' : 'menu-language-toggle'
+          }
+        />
+      )}
       renderSearch={(input, closeModal) => (
         <SearchInput
           id="search_input_menu"

@@ -16,9 +16,15 @@ import { ContentLanguage } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 
 export const LanguageToggler: FC<{
+  dialogId?: string
   hideWhenMobile?: boolean
   buttonColorScheme?: ButtonTypes['colorScheme']
-}> = ({ hideWhenMobile, buttonColorScheme = 'default' }) => {
+}> = ({
+  hideWhenMobile,
+  buttonColorScheme = 'default',
+  dialogId = 'confirm-language-switch-dialog' +
+    (!hideWhenMobile ? '-mobile' : ''),
+}) => {
   const client = useApolloClient()
   const Router = useRouter()
   const { contentfulId, globalNamespace } = useContext(GlobalContext)
@@ -86,13 +92,11 @@ export const LanguageToggler: FC<{
     </Button>
   )
 
-  const LanguageButtonId =
-    'confirm-language-switch-dialog' + (!hideWhenMobile ? '-mobile' : '')
   const LanguageButton = (
     <>
       {otherLanguage === 'en' ? (
         <DialogPrompt
-          baseId={LanguageButtonId}
+          baseId={dialogId}
           title={gn('switchToEnglishModalTitle')}
           description={gn('switchToEnglishModalText')}
           ariaLabel="Confirm switching to english"
