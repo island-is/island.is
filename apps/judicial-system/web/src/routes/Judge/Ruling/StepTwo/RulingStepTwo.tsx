@@ -124,7 +124,7 @@ export const RulingStepTwo: React.FC = () => {
           <Box component="section" marginBottom={8}>
             <Box marginBottom={10}>
               <Box marginBottom={2}>
-                <Text as="h4" variant="h4">
+                <Text as="h3" variant="h3">
                   Úrskurðarorð
                 </Text>
               </Box>
@@ -408,7 +408,8 @@ export const RulingStepTwo: React.FC = () => {
                 rows={7}
               />
             </Box>
-            {workingCase.decision !== CaseDecision.REJECTING && (
+            {(!workingCase.decision ||
+              workingCase.decision === CaseDecision.ACCEPTING) && (
               <Box component="section" marginBottom={3}>
                 <Box marginBottom={2}>
                   <Text as="h3" variant="h3">
@@ -492,7 +493,8 @@ export const RulingStepTwo: React.FC = () => {
                 </Box>
               </Box>
             )}
-            {workingCase.decision !== CaseDecision.REJECTING && (
+            {(!workingCase.decision ||
+              workingCase.decision === CaseDecision.ACCEPTING) && (
               <Text variant="h4" fontWeight="light">
                 Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
                 atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.

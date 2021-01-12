@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import {
   AlertBanner,
   Box,
   Text,
-  GridColumn,
-  GridRow,
   LoadingIcon,
   Select,
+  Stack,
+  Link,
+  Button,
 } from '@island.is/island-ui/core'
 import {
   ApiService,
@@ -15,7 +16,7 @@ import {
   GetNamespaceQuery,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { OpenApi } from '@island.is/api-catalogue/types'
+import { OpenApi, LinksObject } from '@island.is/api-catalogue/types'
 import { GET_OPEN_API_QUERY } from '@island.is/web/screens/queries'
 import YamlParser from 'js-yaml'
 import { OpenApiDocumentation } from '..'
@@ -81,78 +82,215 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
     if (!option.value) return
 
     setSelectedOption(option)
-    setOpenApi(selectOptionValueToGetOpenApiInput(option))
+    setOpenApiInput(selectOptionValueToGetOpenApiInput(option))
   }
 
-  const [openApi, setOpenApi] = useState<GetOpenApiInput>(
+  const [documentation, setDocumentation] = useState<OpenApi>(null)
+  const [openApiInput, setOpenApiInput] = useState<GetOpenApiInput>(
     selectOptionValueToGetOpenApiInput(selectedOption),
   )
   const { data, loading, error } = useQuery(GET_OPEN_API_QUERY, {
     variables: {
-      input: openApi,
+      input: openApiInput,
     },
   })
 
-  const ShowOpenApiDocumentation = (theSpec: any) => {
-    const converted = YamlParser.safeLoad(theSpec)
-    if (typeof converted === 'undefined') {
-      return (
-        <Box paddingY={2}>
-          <AlertBanner
-            title={n('queryErrorTitle')}
-            description={n('queryErrorText')}
-            variant="error"
-          />
+  useEffect(() => {
+    const onCompleted = (data) => {
+      const converted = YamlParser.safeLoad(data.getOpenApi.spec)
+
+      setDocumentation(converted as OpenApi)
+    }
+    if (onCompleted) {
+      if (onCompleted && !loading && !error) {
+        onCompleted(data)
+      } else {
+        setDocumentation(null)
+      }
+    }
+  }, [loading, data, error])
+
+  const showTextLinks = (links: LinksObject) => {
+    return (
+      (links.documentation || links.responsibleParty) && (
+        <Box
+          display="flex"
+          marginRight={[0, 0, 0, 0, 2]}
+          justifyContent={[
+            'spaceBetween',
+            'spaceBetween',
+            'flexStart',
+            'flexEnd',
+          ]}
+          marginTop={['gutter', 'gutter', 'none']}
+          marginBottom={['gutter', 'gutter', 'none']}
+        >
+          {links.documentation && (
+            <Box
+              display="flex"
+              marginRight={[0, 0, 1, 1, 2]}
+              alignItems="center"
+            >
+              <Link href={links.documentation}>
+                <Button
+                  fluid
+                  iconType="outline"
+                  icon="open"
+                  colorScheme="light"
+                  size="small"
+                  variant="text"
+                >
+                  {n('linkDocumentation')}
+                </Button>
+              </Link>
+            </Box>
+          )}
+          {links.responsibleParty && (
+            <Box
+              display="flex"
+              marginRight={[0, 0, 1, 1, 2]}
+              alignItems="center"
+            >
+              <Link href={links.responsibleParty}>
+                <Button
+                  fluid
+                  iconType="outline"
+                  icon="open"
+                  colorScheme="light"
+                  size="small"
+                  variant="text"
+                >
+                  {n('linkResponsible')}
+                </Button>
+              </Link>
+            </Box>
+          )}
         </Box>
       )
-    }
+    )
+  }
 
+  const showButtonLinks = (links: LinksObject) => {
     return (
-      <OpenApiDocumentation
-        spec={converted as OpenApi}
-        linkTitle={n('linkTitle')}
-        documentationLinkText={n('linkDocumentation')}
-        responsiblePartyLinkText={n('linkResponsible')}
-        bugReportLinkText={n('linkBugReport')}
-        featureRequestLinkText={n('linkFeatureRequest')}
-      />
+      (links.bugReport || links.featureRequest) && (
+        <Box
+          display="flex"
+          marginRight={[0, 0, 0, 0, 2]}
+          alignItems="center"
+          justifyContent={[
+            'spaceBetween',
+            'spaceBetween',
+            'flexStart',
+            'flexEnd',
+          ]}
+          marginBottom={['gutter', 'gutter', 'none']}
+        >
+          {links.bugReport && (
+            <Box display="flex" marginRight={[0, 0, 1, 1, 2]}>
+              <Link href={links.bugReport}>
+                <Button
+                  colorScheme="light"
+                  iconType="filled"
+                  size="small"
+                  type="button"
+                  variant="utility"
+                  fluid
+                >
+                  {n('linkBugReport')}
+                </Button>
+              </Link>
+            </Box>
+          )}
+          {links.featureRequest && (
+            <Box display="flex" marginRight={[0, 0, 1, 1, 2]}>
+              <Link href={links.featureRequest}>
+                <Button
+                  colorScheme="light"
+                  iconType="filled"
+                  size="small"
+                  type="button"
+                  variant="utility"
+                >
+                  {n('linkFeatureRequest')}
+                </Button>
+              </Link>
+            </Box>
+          )}
+        </Box>
+      )
     )
   }
 
   return (
     <Box>
-      <GridRow align="spaceBetween">
-        <GridColumn
-          span={['8/8', '4/8', '4/8', '2/8']}
-          paddingTop="containerGutter"
-          paddingBottom="containerGutter"
-        >
-          <Text color="blue600" variant="h4" as="h4">
+      {/* Top Line */}
+      <Box
+        display="flex"
+        flexDirection={['column', 'column', 'column', 'row', 'row']}
+        justifyContent={[
+          'flexStart',
+          'flexStart',
+          'spaceBetween',
+          'spaceBetween',
+        ]}
+      >
+        <Box display="flex" alignItems="center">
+          <Text color="blue600" variant="h4" as="h4" truncate>
             {n('title')}
           </Text>
-        </GridColumn>
-        <GridColumn
-          span={['8/8', '4/8', '4/8', '2/8']}
-          paddingTop="containerGutter"
-          paddingBottom="containerGutter"
-          className={styles.bringFront}
-        >
-          <Select
-            label="Version"
-            name="version"
-            disabled={options.length < 2}
-            isSearchable={false}
-            defaultValue={selectedOption}
-            options={options}
-            onChange={onSelectChange}
-          />
-        </GridColumn>
-      </GridRow>
-      {loading && (
-        <Box textAlign="center">
-          <LoadingIcon animate color="blue400" size={64} />
         </Box>
-      )}
+        {/* Links and Select box */}
+        <Box
+          display="flex"
+          flexDirection={['column', 'column', 'row', 'row']}
+          justifyContent={[
+            'flexStart',
+            'spaceBetween',
+            'spaceBetween',
+            'flexEnd',
+          ]}
+        >
+          {/* Links */}
+          {documentation && documentation?.info['x-links'] && (
+            <Box
+              display="flex"
+              flexDirection={['column', 'column', 'row']}
+              justifyContent={[
+                'flexStart',
+                'flexStart',
+                'flexStart',
+                'flexStart',
+                'flexEnd',
+              ]}
+            >
+              {showTextLinks(documentation.info['x-links'])}
+              {showButtonLinks(documentation.info['x-links'])}
+            </Box>
+          )}
+          <Box className={styles.selectDesktop}>
+            <Select
+              size="sm"
+              label="Version"
+              name="version"
+              disabled={options.length < 2}
+              isSearchable={false}
+              defaultValue={selectedOption}
+              options={options}
+              onChange={onSelectChange}
+            />
+          </Box>
+        </Box>
+      </Box>
+      <Box>
+        {loading && (
+          <Stack space={3} align="center">
+            <LoadingIcon animate size={40} color="blue400" />
+            <Text variant="h4" color="blue600">
+              {n('gettingDocumentation')}
+            </Text>
+          </Stack>
+        )}
+      </Box>
       {error && (
         <Box paddingY={2}>
           <AlertBanner
@@ -162,12 +300,23 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
           />
         </Box>
       )}
-
-      {!loading && !error && (
-        <Box width="full">
-          {ShowOpenApiDocumentation(data?.getOpenApi.spec)}
-        </Box>
-      )}
+      {/* Showing Api documentation with redoc */}
+      <Box width="full">
+        {!loading &&
+          !error &&
+          (documentation ? (
+            <OpenApiDocumentation spec={documentation} />
+          ) : (
+            // documentation missing
+            <Box paddingY={2}>
+              <AlertBanner
+                title={n('queryErrorTitle')}
+                description={n('queryErrorText')}
+                variant="error"
+              />
+            </Box>
+          ))}
+      </Box>
     </Box>
   )
 }

@@ -6,6 +6,7 @@ import {
   GridColumn,
   GridRow,
   Input,
+  RadioButton,
   Text,
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -41,7 +42,9 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
   validateAndSetTime,
+  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import BlueBox from '@island.is/judicial-system-web/src/shared-components/BlueBox/BlueBox'
 
 interface CaseData {
   case?: Case
@@ -132,7 +135,7 @@ export const RulingStepOne: React.FC = () => {
     }
 
     if (workingCase) {
-      setIsStepIllegal(isNextDisabled(requiredFields))
+      setIsStepIllegal(isNextDisabled(requiredFields) || !workingCase.decision)
     }
   }, [workingCase, isStepIllegal])
 
@@ -145,101 +148,151 @@ export const RulingStepOne: React.FC = () => {
     >
       {workingCase ? (
         <>
-          <Box marginBottom={10}>
+          <Box marginBottom={7}>
             <Text as="h1" variant="h1">
               Úrskurður
             </Text>
           </Box>
-          <Box component="section" marginBottom={7}>
+          <Box component="section" marginBottom={5}>
             <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
             <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
           </Box>
-          <Box component="section" marginBottom={7}>
+          <Box component="section" marginBottom={5}>
             <Accordion>
               <PoliceRequestAccordionItem workingCase={workingCase} />
             </Accordion>
           </Box>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={3}>
+              <Text as="h3" variant="h3">
+                Úrskurður{' '}
+                <Text as="span" fontWeight="semiBold" color="red600">
+                  *
+                </Text>
+              </Text>
+            </Box>
+            <Box marginBottom={5}>
+              <BlueBox>
+                <Box marginBottom={2}>
+                  <RadioButton
+                    name="case-decision"
+                    id="case-decision-accepting"
+                    label="Krafa um gæsluvarðhald samþykkt"
+                    checked={workingCase.decision === CaseDecision.ACCEPTING}
+                    onChange={() => {
+                      setAndSendToServer(
+                        'decision',
+                        CaseDecision.ACCEPTING,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    }}
+                    large
+                    filled
+                  />
+                </Box>
+                <Box marginBottom={2}>
+                  <RadioButton
+                    name="case-decision"
+                    id="case-decision-rejecting"
+                    label="Kröfu um gæsluvarðhald hafnað"
+                    checked={workingCase.decision === CaseDecision.REJECTING}
+                    onChange={() => {
+                      setAndSendToServer(
+                        'decision',
+                        CaseDecision.REJECTING,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    }}
+                    large
+                    filled
+                  />
+                </Box>
+                <RadioButton
+                  name="case-decision"
+                  id="case-decision-accepting-alternative-travel-ban"
+                  label="Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann"
+                  checked={
+                    workingCase.decision ===
+                    CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                  }
+                  onChange={() => {
+                    setAndSendToServer(
+                      'decision',
+                      CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }}
+                  large
+                  filled
+                />
+              </BlueBox>
+            </Box>
+          </Box>
           <Box component="section" marginBottom={8}>
-            <Box marginBottom={2}>
+            <Box marginBottom={3}>
               <Text as="h3" variant="h3">
                 Niðurstaða úrskurðar
               </Text>
             </Box>
-            <Box marginBottom={2}>
-              <Input
-                data-testid="ruling"
-                name="ruling"
-                label="Niðurstaða úrskurðar"
-                placeholder="Hver er niðurstaðan að mati dómara?"
-                defaultValue={workingCase.ruling}
-                rows={16}
-                errorMessage={rulingErrorMessage}
-                hasError={rulingErrorMessage !== ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'ruling',
-                    event,
-                    ['empty'],
-                    workingCase,
-                    setWorkingCase,
-                    rulingErrorMessage,
-                    setRulingErrorMessage,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'ruling',
-                    event.target.value,
-                    ['empty'],
-                    workingCase,
-                    updateCase,
-                    setRulingErrorMessage,
-                  )
-                }
-                textarea
-                required
-              />
-            </Box>
-            <GridRow>
-              <GridColumn span="6/12">
-                <Checkbox
-                  name="rejectRequest"
-                  label="Hafna kröfu"
-                  onChange={({ target }) => {
-                    setWorkingCase({
-                      ...workingCase,
-                      decision: target.checked
-                        ? CaseDecision.REJECTING
-                        : CaseDecision.ACCEPTING,
-                    })
-                    updateCase(
-                      workingCase.id,
-                      parseString(
-                        'decision',
-                        target.checked
-                          ? CaseDecision.REJECTING
-                          : CaseDecision.ACCEPTING,
-                      ),
-                    )
-                  }}
-                  checked={workingCase.decision === CaseDecision.REJECTING}
-                  large
-                />
-              </GridColumn>
-            </GridRow>
+            <Input
+              data-testid="ruling"
+              name="ruling"
+              label="Niðurstaða úrskurðar"
+              placeholder="Hver er niðurstaðan að mati dómara?"
+              defaultValue={workingCase.ruling}
+              rows={16}
+              errorMessage={rulingErrorMessage}
+              hasError={rulingErrorMessage !== ''}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'ruling',
+                  event,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                  rulingErrorMessage,
+                  setRulingErrorMessage,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'ruling',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setRulingErrorMessage,
+                )
+              }
+              textarea
+              required
+            />
           </Box>
           {workingCase.decision !== CaseDecision.REJECTING && (
-            <Box component="section" marginBottom={8}>
+            <Box component="section" marginBottom={7}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  Gæsluvarðhaldstími
+                  {workingCase.decision ===
+                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                    ? 'Farbann'
+                    : 'Gæsluvarðhald'}
                 </Text>
               </Box>
               <GridRow>
                 <GridColumn span="6/12">
                   <DatePicker
                     id="custodyEndDate"
-                    label="Gæsluvarðhald til"
+                    label={
+                      workingCase.decision === CaseDecision.ACCEPTING
+                        ? 'Gæsluvarðhald til'
+                        : 'Farbann til'
+                    }
                     placeholderText="Veldu dagsetningu"
                     locale="is"
                     selected={
@@ -249,12 +302,13 @@ export const RulingStepOne: React.FC = () => {
                         ? new Date(workingCase.requestedCustodyEndDate)
                         : null
                     }
-                    handleChange={(date) =>
+                    handleCloseCalendar={(date) =>
                       setAndSendDateToServer(
                         'custodyEndDate',
                         workingCase.custodyEndDate,
                         date,
                         workingCase,
+                        true,
                         setWorkingCase,
                         updateCase,
                       )
@@ -312,7 +366,7 @@ export const RulingStepOne: React.FC = () => {
               </GridRow>
             </Box>
           )}
-          {workingCase.decision !== CaseDecision.REJECTING && (
+          {workingCase.decision === CaseDecision.ACCEPTING && (
             <Box component="section" marginBottom={8}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
