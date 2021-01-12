@@ -17,7 +17,7 @@ import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 describe('Create detention request, step three', () => {
-  test('should not allow users to continue unless every required field has been filled outt', async () => {
+  test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     const todaysDate = new Date()
     const formattedTodaysDate = todaysDate.getDate().toString().padStart(2, '0')
@@ -93,7 +93,7 @@ describe('Create detention request, step three', () => {
         name: /Halda áfram/i,
       }) as HTMLButtonElement,
     ).not.toBeDisabled()
-  })
+  }, 10000)
 
   test('should display the correct requestedCustodyEndTime from api', async () => {
     // Arrange

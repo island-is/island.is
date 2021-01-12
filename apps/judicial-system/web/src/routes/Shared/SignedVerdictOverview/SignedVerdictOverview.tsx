@@ -5,8 +5,13 @@ import {
   formatDate,
   getShortRestrictionByValue,
 } from '@island.is/judicial-system/formatters'
-import { Case, CaseDecision, CaseState } from '@island.is/judicial-system/types'
-import React, { useEffect, useState } from 'react'
+import {
+  Case,
+  CaseDecision,
+  CaseState,
+  UserRole,
+} from '@island.is/judicial-system/types'
+import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CaseQuery } from '../../../graphql'
 import CourtRecordAccordionItem from '../../../shared-components/CourtRecordAccordionItem/CourtRecordAccordionItem'
@@ -18,6 +23,7 @@ import RulingAccordionItem from '../../../shared-components/RulingAccordionItem/
 import { getRestrictionTagVariant } from '../../../utils/stepHelper'
 import { useHistory } from 'react-router-dom'
 import * as Constants from '../../../utils/constants'
+import { UserContext } from '../../../shared-components/UserProvider/UserProvider'
 interface CaseData {
   case?: Case
 }
@@ -27,6 +33,7 @@ export const SignedVerdictOverview: React.FC = () => {
 
   const history = useHistory()
   const { id } = useParams<{ id: string }>()
+  const { user } = useContext(UserContext)
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -199,7 +206,16 @@ export const SignedVerdictOverview: React.FC = () => {
               <RulingAccordionItem workingCase={workingCase} />
             </Accordion>
           </Box>
-          <FormFooter hideNextButton />
+          <FormFooter
+            hideNextButton={
+              workingCase.decision === CaseDecision.REJECTING ||
+              user?.role !== UserRole.PROSECUTOR
+            }
+            nextButtonText="Framlengja gæslu"
+            onNextButtonClick={() =>
+              history.push(Constants.SINGLE_REQUEST_BASE_ROUTE)
+            }
+          />
         </>
       ) : null}
     </PageLayout>
