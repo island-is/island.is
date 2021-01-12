@@ -510,7 +510,7 @@ export const RulingStepTwo: React.FC = () => {
                         <Checkbox
                           name="require-notification"
                           label="Tilkynningarskylda"
-                          tooltip=""
+                          tooltip="Sé sakborningi gert að tilkynna sig reglulega á meðan á farbanni stendur er hægt að haka hér í þennan reit og skrifa nánari upplýsingar um tilkynningarskyldu í textareitinn fyrir neðan."
                           large
                           filled
                         />
@@ -519,7 +519,7 @@ export const RulingStepTwo: React.FC = () => {
                         <Checkbox
                           name="confiscate-passport"
                           label="Afhending vegabréfs"
-                          tooltip=""
+                          tooltip="Sé krafist þess að sakborningur afhendi vegabréf sitt, er hægt að haka í þennan reit og skrifa nánari upplýsingar um hvenær og hvert sakborningur skal afhenda vegabréfið í textareitinn fyrir neðan."
                           large
                           filled
                         />
