@@ -842,15 +842,54 @@ export const mm: MessageDir = {
       defaultMessage: 'Below are the steps that will happen next.',
       description: 'Below are the steps that will happen next.',
     },
+    descReview: {
+      id: 'pl.application:review.desc',
+      defaultMessage: 'Below is your submitted application.',
+      description: 'Below is your submitted application.',
+    },
     buttonsView: {
       id: 'pl.application:review.desc',
       defaultMessage: 'View application',
       description: 'View application',
     },
+    buttonsViewProgress: {
+      id: 'pl.application:review.desc',
+      defaultMessage: 'View progress',
+      description: 'View progress',
+    },
     buttonsEdit: {
       id: 'pl.application:review.desc',
       defaultMessage: 'Edit application',
       description: 'Edit application',
+    },
+    editApplicationModalTitle: {
+      id: 'pl.application:review.edit.modal.title',
+      defaultMessage: 'Edit application?',
+      description: 'Edit application?',
+    },
+    editApplicationModalDesc: {
+      id: 'pl.application:review.edit.modal.desc',
+      defaultMessage:
+        'If you continue to edit your submitted application, then some or all of the approvals will have to be repeated.',
+      description:
+        'If you continue to edit your submitted application, then some or all of the approvals will have to be repeated.',
+    },
+    editApplicationModalAria: {
+      id: 'pl.application:review.edit.modal.aria',
+      defaultMessage:
+        'A modal dialog to confrim if you want to edit your application.',
+      description:
+        'A modal dialog to confrim if you want to edit your application.',
+    },
+    editApplicationModalConfirmButton: {
+      id: 'pl.application:review.edit.modal.confirmButton',
+      defaultMessage: 'Continue',
+      description: 'Continue',
+    },
+    editApplicationModalCancelButton: {
+      id: 'pl.application:review.edit.modal.cancelButton',
+      defaultMessage: 'Cancel',
+      description: 'Cancel',
     },
     otherParentTitle: {
       id: 'pl.application:review.otherParent.title',
