@@ -55,7 +55,7 @@ export const PageLayout: FC<PageProps> = ({
       return isCustodyEndDateInThePast ? 'Farbanni lokið' : 'Farbann virkt'
     }
 
-    return 'Niðustaða'
+    return 'Niðurstaða'
   }
 
   return children ? (

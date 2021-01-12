@@ -1,4 +1,4 @@
-# Api Domains Driving License
+# API Domains Driving License
 
 ## How to connect to xroad
 
