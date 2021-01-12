@@ -14,65 +14,71 @@ import {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { SidebarLayout } from '../Layouts/SidebarLayout'
 import { Document } from '@contentful/rich-text-types'
-import { renderHtml } from '@island.is/island-ui/contentful'
 import { GET_GENERIC_OVERVIEW_PAGE_QUERY } from '@island.is/web/screens/queries'
 import {
   GetGenericOverviewPageQuery,
   QueryGetGenericOverviewPageArgs,
+  IntroLinkImage,
 } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '../../hooks/useLinkResolver'
 import NextLink from 'next/link'
-import { Image } from '@island.is/island-ui/contentful'
+import { Image, renderHtml } from '@island.is/island-ui/contentful'
 
 interface GenericOverviewProps {
   genericOverviewPage: GetGenericOverviewPageQuery['getGenericOverviewPage']
 }
 
 export const GenericOverview: Screen<GenericOverviewProps> = ({
-  genericOverviewPage,
+  genericOverviewPage: { title, intro, navigation, overviewLinks },
 }) => {
   const { linkResolver } = useLinkResolver()
 
- // console.log(overviewLinks)
-console.log(genericOverviewPage)
-  const introLink = (
-    leftImage: boolean,
-    imageUrl: string,
-    title: string,
-    text: string,
-    link: string,
-  ) => {
+  console.log(overviewLinks)
+  const introLink = (leftImage: boolean, introLink: IntroLinkImage) => {
+    const url =
+      introLink.link.type === 'linkUrl'
+        ? { href: introLink.link.slug }
+        : {
+            href: linkResolver(introLink.link.type as LinkType).href,
+            as: linkResolver(introLink.link.type as LinkType).as,
+          }
     return (
       <GridRow direction={leftImage ? 'row' : 'rowReverse'}>
-        <GridColumn span={['8/8', '3/8', '2/8', '3/8']}>
-          <Box
-            paddingLeft={leftImage ? undefined : [0, 0, 0, 0, 6]}
-            paddingRight={leftImage ? [30, 0, 0, 0, 6] : [30, 0, 0, 0, 0]}
-            width="full"
-            position="relative"
-          >
+        <GridColumn span={['8/8', '3/8', '4/8', '3/8']}>
+          <Box width="full" position="relative">
             <Image
-              url={imageUrl}
-              title="smu"
-              thumbnail={imageUrl}
-              width={150}
-              height={150}
+              url={introLink.image.url + '?w=774&fm=webp&q=80'}
+              thumbnail={introLink.image.url + '?w=50&fm=webp&q=80'}
+              {...introLink.image}
             />
           </Box>
         </GridColumn>
-        <GridColumn span={['8/8', '5/8', '6/8', '5/8']}>
-          <Box display="flex" flexDirection="column" flexGrow={1} height="full">
-            <Text variant="h2">{title}</Text>
-            <Text paddingTop={2}>{text}</Text>
-            <Box marginTop="auto">
-              <NextLink href={'/'}>
+        <GridColumn span={['8/8', '5/8', '4/8', '5/8']}>
+          <Box
+            display="flex"
+            flexDirection="column"
+            flexGrow={1}
+            height="full"
+            justifyContent={'center'}
+            paddingLeft={leftImage ? 6 : 0}
+          >
+            <Box>
+              <Text variant="h2" marginBottom={2}>
+                {introLink.title}
+              </Text>
+              {Boolean(introLink.intro) && (
+                <Box marginBottom={4} style={{fontSize: '16px'}}>
+                  {renderHtml(introLink.intro.document as Document)}
+                </Box>
+              )}
+              <NextLink href={url.href} as={url.as}>
                 <Button
                   icon="arrowForward"
                   iconType="filled"
                   type="button"
                   variant="text"
                 >
-                  {link}
+                  {introLink.linkTitle}
                 </Button>
               </NextLink>
             </Box>
@@ -88,15 +94,17 @@ console.log(genericOverviewPage)
         <Navigation
           baseId="desktopNav"
           items={[
-            ...genericOverviewPage.navigation.menuLinks.map((item) => ({
+            ...navigation.menuLinks.map((item) => ({
               title: item.title,
               typename: item.link.type,
-              slug: [],
+              slug: [item.link.slug],
             })),
           ]}
-          title={genericOverviewPage.navigation.title}
-          renderLink={(link, { typename }) => {
-            return (
+          title={navigation.title}
+          renderLink={(link, { typename, slug }) => {
+            return typename === 'linkUrl' ? (
+              <a href={slug[0]}>{link}</a>
+            ) : (
               <NextLink {...linkResolver(typename as LinkType)} passHref>
                 {link}
               </NextLink>
@@ -118,32 +126,27 @@ console.log(genericOverviewPage)
                   href: '/',
                 },
                 {
-                  title: genericOverviewPage.navigation.title,
+                  title: navigation.title,
                 },
               ]}
-              renderLink={(link) => {
-                return (
-                  <NextLink {...linkResolver('homepage')} passHref>
-                    {link}
-                  </NextLink>
-                )
-              }}
             />
             <Box display={['block', 'block', 'none']}>
               <Navigation
                 baseId={'mobileNav'}
                 isMenuDialog
-                activeItemTitle={genericOverviewPage.navigation.title}
-                title={genericOverviewPage.navigation.title}
+                activeItemTitle={navigation.title}
+                title={navigation.title}
                 items={[
-                  ...genericOverviewPage.navigation.menuLinks.map((item) => ({
+                  ...navigation.menuLinks.map((item) => ({
                     title: item.title,
                     typename: item.link.type,
                     slug: [],
                   })),
                 ]}
-                renderLink={(link, { typename }) => {
-                  return (
+                renderLink={(link, { typename, slug }) => {
+                  return typename === 'linkUrl' ? (
+                    <a href={slug[0]}>{link}</a>
+                  ) : (
                     <NextLink {...linkResolver(typename as LinkType)} passHref>
                       {link}
                     </NextLink>
@@ -153,44 +156,19 @@ console.log(genericOverviewPage)
             </Box>
 
             <Text variant="h1" as="h1">
-              {genericOverviewPage.title}
+              {title}
             </Text>
 
-            {Boolean(genericOverviewPage.intro) && (
+            {Boolean(intro) && (
               <Box marginBottom={10}>
-                {renderHtml(genericOverviewPage.intro.document as Document)}
+                {renderHtml(intro.document as Document)}
               </Box>
             )}
           </Stack>
-          <Stack space={12}>
-            {introLink(
-              true,
-              'https://images.ctfassets.net/8k0h54kbe6bj/UCq23qJNBTd9MFZEaoLIM/a756c96f12e6a4beb48323cbc095eb9c/T__lvuskj__r__epli_og_penni.svg?w=600',
-              'Vefþjónustur',
-              'Í Viskuausunni getur þú skoðað og leitað í fjölda vefþjónusta og gagnaskilgreininga hjá hinu opinbera.',
-              'Skoða Viskuausuna',
-            )}
-            {introLink(
-              false,
-              'https://images.ctfassets.net/8k0h54kbe6bj/6nX6tp86HqnWgXEbV2IeZZ/b50a5260044c00529e3e0e5f19737301/T__lvuskj__r_og_kaffibolli.svg?w=600',
-              'Ísland UI',
-              'Fyrir forvitna forritara og þá sem vilja taka þátt í að þróa vörur fyrir Stafrænt Ísland.',
-              'Skoða Ísland UI',
-            )}
-            {introLink(
-              true,
-              'https://images.ctfassets.net/8k0h54kbe6bj/1q0ebpAuKjbNwRIVMcsBPE/b6077fffac39fd7920b15fafbab9ad1c/Laufbl____.svg?w=600',
-              'Hönnunarkerfi',
-              'Hönnunarkerfi Ísland.is auðveldar okkur að setja nýja þjónustu í loftið á stuttum tíma, og einfaldar rekstur og viðhald stafrænnar þjónustu hins opinbera til muna. Kerfið er opið öllum sem vilja skoða.',
-              'Nánar um Hönnunarkerfið',
-            )}
-            {introLink(
-              false,
-              'https://images.ctfassets.net/8k0h54kbe6bj/73hf7fNRsfx4eOKuBIu9KF/6f89b513d23480c184e77077f162f625/Spjald_og_penni.svg?w=600',
-              'Efnisstefna',
-              'Textinn er uppistaðan í stafrænni þjónustu hins opinbera og hér eru leiðbeiningar um það hvernig við skrifum fyrir þjónustu Ísland.is',
-              'Lesa Efnisstefnuna',
-            )}
+          <Stack space={6}>
+            {overviewLinks.map((link, index) => {
+              return introLink(index % 2 === 1, link as IntroLinkImage)
+            })}
           </Stack>
         </GridColumn>
       </GridRow>

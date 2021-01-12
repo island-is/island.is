@@ -25,6 +25,9 @@ export const GET_GENERIC_OVERVIEW_PAGE_QUERY = gql`
       }
       overviewLinks {
         title
+        intro {
+          ...HtmlFields
+        }
         linkTitle
         link {
           type
