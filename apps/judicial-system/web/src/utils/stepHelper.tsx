@@ -179,10 +179,9 @@ export const constructProsecutorDemands = (workingCase: Case) => {
         {` ${workingCase.accusedName}, kt.
         ${formatNationalId(workingCase.accusedNationalId)}`}
       </Text>
-      {`, verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi ${
+      {`, verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi${
         workingCase.alternativeTravelBan ? ', farbanni til vara,' : ''
-      }
-      til`}
+      } til`}
       <Text as="span" fontWeight="semiBold">
         {` ${formatDate(workingCase.requestedCustodyEndDate, 'EEEE')?.replace(
           'dagur',
