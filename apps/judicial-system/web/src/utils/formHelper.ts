@@ -114,8 +114,10 @@ export const setAndSendDateToServer = async (
 
   let formattedDate = null
 
-  if (date !== null && setErrorMessage) {
-    setErrorMessage('')
+  if (date !== null) {
+    if(setErrorMessage) {
+      setErrorMessage('')
+    }
 
     const currentRepresentation = currentValue?.includes('T')
       ? 'complete'
