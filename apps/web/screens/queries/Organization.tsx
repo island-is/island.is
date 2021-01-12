@@ -24,12 +24,41 @@ export const GET_ORGANIZATION_QUERY = gql`
       id
       slug
       title
+      shortTitle
+      internalSite
+      logo {
+        title
+        url
+      }
       link
       tag {
         id
         title
       }
       description
+      organizationPage {
+        id
+        title
+        description
+        slices {
+          ... on HeadingSlice {
+            title
+            body
+          }
+          ... on Districts {
+            title
+            description
+            districtLinks {
+              text
+              url
+            }
+          }
+        }
+        menuLinks {
+          text
+          url
+        }
+      }
     }
   }
 `
