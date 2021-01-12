@@ -25,7 +25,8 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
               id: 'childrenNationalRegistry',
               type: 'ChildrenNationalRegistryProvider',
               title: 'Grunnupplýsingar um börn',
-              subTitle: 'Nöfn, kennitölur og núverandi lögheimili barna í þinni forsjá.',
+              subTitle:
+                'Nöfn, kennitölur og núverandi lögheimili barna í þinni forsjá.',
             }),
             buildDataProviderItem({
               id: 'parentNationalRegistry',
@@ -39,71 +40,71 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
     }),
     buildSection({
       id: 'chooseChildren',
-      title: "Velja barn",
+      title: 'Velja barn',
       children: [
         buildTextField({
           id: 'children',
-          title: "children",
+          title: 'children',
         }),
       ],
     }),
     buildSection({
       id: 'changeDomicile',
-      title: "Breyta lögheimili",
+      title: 'Breyta lögheimili',
       children: [
         buildTextField({
           id: 'children',
-          title: "children",
+          title: 'children',
         }),
       ],
     }),
     buildSection({
       id: 'transferDate',
-      title: "Flutningur",
+      title: 'Flutningur',
       children: [
         buildTextField({
           id: 'children',
-          title: "children",
+          title: 'children',
         }),
       ],
     }),
     buildSection({
       id: 'transferPeriod',
-      title: "Gildistími",
+      title: 'Gildistími',
       children: [
         buildTextField({
           id: 'children',
-          title: "children",
+          title: 'children',
         }),
       ],
     }),
     buildSection({
       id: 'applicationEffect',
-      title: "Áhrif umsóknar",
+      title: 'Áhrif umsóknar',
       children: [
         buildTextField({
           id: 'children',
-          title: "children",
+          title: 'children',
         }),
       ],
     }),
     buildSection({
       id: 'overview',
-      title: "Yfirlit og undirritun",
+      title: 'Yfirlit og undirritun',
       children: [
         buildTextField({
           id: 'children',
-          title: "children",
+          title: 'children',
         }),
       ],
     }),
     buildSection({
       id: 'submitted',
-      title: "Umsókn móttekin",
+      title: 'Umsókn móttekin',
       children: [
         buildTextField({
           id: 'children',
-          title: "children",
+          title: 'children',
         }),
       ],
     }),
