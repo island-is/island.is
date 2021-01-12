@@ -1,5 +1,3 @@
 declare module 'shorthash' {
-  export default {
-    unique: (input: string): string => '',
-  }
+  export const unique = (input: string): string => String
 }

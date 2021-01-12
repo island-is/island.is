@@ -1,4 +1,4 @@
-import shorthash from 'shorthash'
+import { unique } from 'shorthash'
 import { template as isIndexTemplate } from './index-templates/template-is'
 import { template as enIndexTemplate } from './index-templates/template-en'
 
@@ -13,7 +13,7 @@ export const getIndexTemplate = (locale: ElasticsearchIndexLocale) =>
   indexTemplateMap[locale]
 
 const configAsString = indexTemplateMap['is'] + indexTemplateMap['en']
-const indexTemplateHash = shorthash.unique(configAsString).toLowerCase()
+const indexTemplateHash = unique(configAsString).toLowerCase()
 
 export const getElasticVersion = (): string => {
   return indexTemplateHash
