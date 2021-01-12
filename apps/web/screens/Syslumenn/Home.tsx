@@ -90,7 +90,6 @@ const Home: Screen<HomeProps> = ({ organization, namespace, megaMenuData }) => {
           <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
             <Header buttonColorScheme="negative" megaMenuData={megaMenuData}>
               <SidebarLayout
-                fullWidthContent
                 sidebarContent={
                   <Box
                     className={styles.headerSidebar}
@@ -130,10 +129,17 @@ const Home: Screen<HomeProps> = ({ organization, namespace, megaMenuData }) => {
                   </Box>
                 }
               >
-                <Box paddingTop={[2, 2, 10]} paddingBottom={[4, 4, 4, 10]}>
-                  <Text variant="h1" as="h1" color="white">
-                    {organization.title}
-                  </Text>
+                <Box paddingTop={[2, 2, 4]} paddingBottom={[4, 4, 4, 4]}>
+                  <Box display="flex" flexDirection="row" alignItems="center">
+                    <img
+                      src={organization.logo.url}
+                      className={styles.headerLogo}
+                      alt=""
+                    />
+                    <Text variant="h1" as="h1" color="white">
+                      {organization.title}
+                    </Text>
+                  </Box>
                 </Box>
               </SidebarLayout>
             </Header>
@@ -141,8 +147,8 @@ const Home: Screen<HomeProps> = ({ organization, namespace, megaMenuData }) => {
         </Box>
       </Box>
       <Main>
-        <SidebarLayout fullWidthContent isSticky={false} sidebarContent="">
-          <Box className={styles.intro}>
+        <SidebarLayout isSticky={false} sidebarContent="">
+          <Box className={styles.intro} paddingTop={[4, 4, 0]} >
             {organization.organizationPage.description}
           </Box>
         </SidebarLayout>

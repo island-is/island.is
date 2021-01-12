@@ -20,3 +20,8 @@ export const intro = style({
   lineHeight: 34 / 24,
   fontWeight: 300,
 })
+
+export const headerLogo = style({
+  width: 111,
+  marginRight: 40,
+})
