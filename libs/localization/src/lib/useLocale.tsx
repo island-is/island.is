@@ -9,7 +9,7 @@ import { LocaleContext } from './LocaleContext'
 export function useLocale() {
   const intl = useIntl()
   const contextValue = useContext(LocaleContext)
-  const lang = contextValue === null ? null : contextValue.lang
+  const lang = contextValue === null ? undefined : contextValue.lang
 
   function formatMessage(
     descriptor: MessageDescriptor | string,

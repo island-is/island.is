@@ -10,6 +10,7 @@ interface Props {
   id: string
   disabled?: boolean
   name?: string
+  locale?: 'en' | 'is'
   label: string
   placeholder?: string
 }
@@ -20,6 +21,7 @@ export const DatePickerController: FC<Props> = ({
   disabled = false,
   id,
   name = id,
+  locale,
   label,
   placeholder,
 }) => {
@@ -34,6 +36,7 @@ export const DatePickerController: FC<Props> = ({
           disabled={disabled}
           id={id}
           errorMessage={error}
+          locale={locale}
           label={label}
           placeholderText={placeholder}
           selected={value ? parseISO(value) : undefined}
