@@ -202,6 +202,7 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                   <button
                     type="button"
                     className="client-allowed-scopes__button__cancel"
+                    onClick={props.handleBack}
                   >
                     Back
                   </button>

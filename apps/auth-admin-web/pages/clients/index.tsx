@@ -2,7 +2,7 @@ import React from 'react';
 import ContentWrapper from './../../components/Layout/ContentWrapper';
 import ClientsList from '../../components/Client/lists/ClientsList';
 import { GetServerSideProps } from 'next';
-import { withAuthentication } from 'apps/auth-admin-web/utils/auth.utils';
+import { withAuthentication } from './../../utils/auth.utils';
 
 function Index() {
   return (

@@ -5,7 +5,7 @@ import { ApiResourcesDTO } from './../../../entities/dtos/api-resources-dto';
 import { useRouter } from 'next/router';
 import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav';
 import { GetServerSideProps } from 'next';
-import { withAuthentication } from 'apps/auth-admin-web/utils/auth.utils';
+import { withAuthentication } from './../../../utils/auth.utils';
 
 export default function Index() {
   const router = useRouter();

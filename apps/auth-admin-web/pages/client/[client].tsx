@@ -18,7 +18,7 @@ import ContentWrapper from './../../components/Layout/ContentWrapper';
 import StepEnd from './../../components/Common/StepEnd';
 import { ClientService } from './../../services/ClientService';
 import { GetServerSideProps } from 'next';
-import { withAuthentication } from 'apps/auth-admin-web/utils/auth.utils';
+import { withAuthentication } from './../../utils/auth.utils';
 
 const Index = () => {
   const { query } = useRouter();

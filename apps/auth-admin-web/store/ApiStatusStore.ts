@@ -8,11 +8,11 @@ export class ApiStatusStore {
 
   public status: BehaviorSubject<APIResponse>;
 
-  public setStatus(response: APIResponse) {
+  public setStatus(response: APIResponse): void {
     this.status.next(response);
   }
 
-  public clearStatus() {
+  public clearStatus(): void {
     this.status.next(new APIResponse());
   }
 

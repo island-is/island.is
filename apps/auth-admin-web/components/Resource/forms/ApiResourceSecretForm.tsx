@@ -257,6 +257,7 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                   <button
                     type="button"
                     className="api-resource-secret-form__button__cancel"
+                    onClick={props.handleBack}
                   >
                     Back
                   </button>

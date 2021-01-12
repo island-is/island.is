@@ -259,6 +259,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                     <button
                       type="button"
                       className="client-secret__button__cancel"
+                      onClick={props.handleBack}
                     >
                       Back
                     </button>
