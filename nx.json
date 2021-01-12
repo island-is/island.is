@@ -138,6 +138,9 @@
     "application-template-loader": {
       "tags": []
     },
+    "application-templates-children-domicile-transfer": {
+      "tags": []
+    },
     "application-templates-document-provider-onboarding": {
       "tags": []
     },
@@ -148,9 +151,6 @@
       "tags": []
     },
     "application-templates-health-insurance": {
-      "tags": []
-    },
-    "application-templates-children-domicile-transfer": {
       "tags": []
     },
     "application-templates-meta-application": {
