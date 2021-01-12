@@ -1,4 +1,5 @@
 import { Colors } from '@island.is/island-ui/theme'
+import { InputBackgroundColor } from '@island.is/island-ui/core'
 import { ApolloClient } from '@apollo/client'
 import { FormText, FormItem } from './Form'
 import { Condition } from './Condition'
@@ -132,6 +133,7 @@ export interface TextField extends BaseField {
   maxLength?: number
   placeholder?: FormText
   variant?: TextFieldVariant
+  backgroundColor?: InputBackgroundColor
   format?: string | FormatInputValueFunction
   suffix?: string
 }

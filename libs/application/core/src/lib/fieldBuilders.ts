@@ -25,7 +25,7 @@ import {
 import { CallToAction } from '../types/StateMachine'
 import { FormText } from '../types/Form'
 import { Colors } from '@island.is/island-ui/theme'
-import { FormatInputValueFunction } from 'react-number-format'
+import { InputBackgroundColor } from '@island.is/island-ui/core'
 
 interface SelectOption {
   label: string
@@ -262,6 +262,7 @@ export function buildTextField(data: {
   variant?: TextFieldVariant
   placeholder?: FormText
   format?: string | FormatInputValueFunction
+  backgroundColor?: InputBackgroundColor
   suffix?: string
   defaultValue?: MaybeWithApplication<unknown>
 }): TextField {
@@ -271,6 +272,7 @@ export function buildTextField(data: {
     id,
     title,
     description,
+    backgroundColor,
     placeholder,
     disabled = false,
     width = 'full',
@@ -285,6 +287,7 @@ export function buildTextField(data: {
     disabled,
     width,
     condition,
+    backgroundColor,
     id,
     title,
     description,
