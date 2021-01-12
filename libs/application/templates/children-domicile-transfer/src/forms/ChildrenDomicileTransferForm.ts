@@ -46,7 +46,8 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
         buildCheckboxField({
           id: 'selectChild',
           title: 'Velja barn/börn til að flytja lögheimili fyrir',
-          description: 'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið hvaða börn á að flytja lögheimili fyrir.',
+          description:
+            'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið hvaða börn á að flytja lögheimili fyrir.',
           large: true,
           options: [
             { value: '1', label: 'Ólafur Helgi Eiríksson' },
