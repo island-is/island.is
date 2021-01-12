@@ -6,8 +6,13 @@ import {
   Inline,
   Tag,
   Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
-import { Service, GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import {
+  Service,
+  GetNamespaceQuery,
+  XroadInfo,
+} from '@island.is/web/graphql/schema'
 import { useNamespace } from '../../hooks'
 
 const capitalize = (s: string) => {
@@ -24,6 +29,24 @@ export const ServiceInformation = ({
   strings,
 }: ServiceInformationProps) => {
   const n = useNamespace(strings)
+
+  const XroadIdentifierText = (info: XroadInfo): string => {
+    let ret = ''
+
+    if (info.instance && info.instance.length > 0)
+      ret += `${n('XroadIdentifierInstance')}: "${info.instance}".  `
+
+    if (info.memberCode && info.memberCode.length > 0)
+      ret += `${n('XroadIdentifierMemberCode')}: "${info.memberCode}".  `
+
+    if (info.memberClass && info.memberClass.length > 0)
+      ret += `${n('XroadIdentifierMemberClass')}: "${info.memberClass}".  `
+
+    if (info.serviceCode && info.serviceCode.length > 0)
+      ret += `${n('XroadIdentifierServiceCode')}: "${info.serviceCode}".  `
+
+    return ret
+  }
 
   return (
     <Box>
@@ -42,6 +65,17 @@ export const ServiceInformation = ({
       <Text variant="eyebrow" as="span" paddingTop="gutter">
         {`${n('serviceOwner')}: ${service.owner}`}
       </Text>
+      <Inline space={1}>
+        <Text variant="eyebrow" as="span" paddingTop="gutter">
+          {service &&
+            service.xroadIdentifier &&
+            service.xroadIdentifier.length > 0 &&
+            `${n('XroadIdentifierSubsystemCode')}: ${
+              service.xroadIdentifier[0].subsystemCode
+            } `}
+        </Text>
+        <Tooltip text={XroadIdentifierText(service.xroadIdentifier[0])} />
+      </Inline>
       <Text variant="intro" paddingTop="smallGutter">
         {service.description}
       </Text>
