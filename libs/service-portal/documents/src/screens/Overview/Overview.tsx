@@ -56,16 +56,14 @@ const getFilteredDocuments = (
   filterValues: FilterValues,
 ): Document[] => {
   const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
-  let filteredDocuments = documents.filter((document) =>
-  {
+  let filteredDocuments = documents.filter((document) => {
     const minDate = dateFrom || new Date('1900-01-01')
     const maxDate = dateTo || startOfTomorrow()
-    return   isWithinInterval(new Date(document.date), {
+    return isWithinInterval(new Date(document.date), {
       start: isBefore(maxDate, minDate) ? maxDate : minDate,
       end: isAfter(minDate, maxDate) ? minDate : maxDate,
     })
-  }
-  )
+  })
 
   if (activeCategory.value) {
     filteredDocuments = filteredDocuments.filter(
