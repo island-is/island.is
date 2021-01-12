@@ -4,11 +4,12 @@ import {
   Case,
   CaseAppealDecision,
   CaseDecision,
+  CaseGender,
 } from '@island.is/judicial-system/types'
 import * as style from './RulingAccordionItem.treat'
 import {
   constructConclusion,
-  getAppealDecitionText,
+  getAppealDecisionText,
 } from '../../utils/stepHelper'
 import { AppealDecisionRole } from '../../types'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -72,14 +73,14 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         </Box>
         <Box marginBottom={1}>
           <Text variant="h4">
-            {getAppealDecitionText(
+            {getAppealDecisionText(
               AppealDecisionRole.ACCUSED,
               workingCase.accusedAppealDecision,
             )}
           </Text>
         </Box>
         <Text variant="h4">
-          {getAppealDecitionText(
+          {getAppealDecisionText(
             AppealDecisionRole.PROSECUTOR,
             workingCase.prosecutorAppealDecision,
           )}
@@ -118,7 +119,10 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           </Box>
           <Box marginBottom={2}>
             <Text>
-              {formatRestrictions(workingCase.custodyRestrictions || [])}
+              {formatRestrictions(
+                workingCase.accusedGender || CaseGender.OTHER,
+                workingCase.custodyRestrictions || [],
+              )}
             </Text>
           </Box>
           <Text>

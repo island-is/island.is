@@ -16,4 +16,4 @@ It supports different login-methods, customizable for each client.
 
   **Smart-ID** is an authentication service which is in development by **Auðkenni ehf**.
 
-![introduction/41.png](introduction/41.png)
+![introduction.png](./assets/introduction.png)

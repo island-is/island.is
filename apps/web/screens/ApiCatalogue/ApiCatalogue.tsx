@@ -245,6 +245,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
               title={nn('linkThrounText')}
               titleLink={{
                 href: nn('linkThroun'),
+                active: false,
               }}
             />
           }

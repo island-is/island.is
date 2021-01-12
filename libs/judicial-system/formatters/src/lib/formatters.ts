@@ -81,7 +81,19 @@ export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
   }
 }
 
+export function formatAccusedByGender(accusedGender: CaseGender) {
+  switch (accusedGender) {
+    case CaseGender.MALE:
+      return 'kærði'
+    case CaseGender.FEMALE:
+      return 'kærða'
+    default:
+      return 'kærða'
+  }
+}
+
 export function formatRestrictions(
+  accusedGender: CaseGender,
   custodyRestrictions: CaseCustodyRestrictions[],
 ): string {
   if (!(custodyRestrictions?.length > 0)) {
@@ -91,7 +103,9 @@ export function formatRestrictions(
   let res = 'Sækjandi tekur fram að '
 
   if (custodyRestrictions.includes(CaseCustodyRestrictions.ISOLATION)) {
-    res += 'kærði skuli sæta einangrun meðan á gæsluvarðhaldi stendur'
+    res += `${formatAccusedByGender(
+      accusedGender,
+    )} skuli sæta einangrun á meðan á gæsluvarðhaldinu stendur`
 
     if (custodyRestrictions.length === 1) {
       return res + '.'
