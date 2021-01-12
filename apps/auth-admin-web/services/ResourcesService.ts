@@ -67,11 +67,6 @@ export class ResourcesService extends BaseService {
     );
   }
 
-  /** Gets user claims for a resource */
-  static async getResourceUserClaims(name: string): Promise<any | null> {
-    return BaseService.GET(`user-claims/${encodeURIComponent(name)}`);
-  }
-
   /** Add User Claim to Identity Resource */
   static async addIdentityResourceUserClaim(
     identityResourceName: string,

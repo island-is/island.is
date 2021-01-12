@@ -1,25 +1,65 @@
 {
-    "env": {
-        "browser": true,
-        "es2021": true,
-        "node": true
-    },
-    "extends": [
-        "plugin:react/recommended",
-        "standard"
-    ],
+    "root": true,
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": 12,
-        "sourceType": "module"
+      "ecmaVersion": 2018,
+      "sourceType": "module",
+      "project": "./tsconfig.*?.json"
     },
-    "plugins": [
-        "react",
-        "@typescript-eslint"
+    "ignorePatterns": ["**/*"],
+    "plugins": ["@typescript-eslint", "@nrwl/nx"],
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended",
+      "prettier",
+      "prettier/@typescript-eslint"
     ],
     "rules": {
-    }
-}
+      "@typescript-eslint/explicit-member-accessibility": "off",
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/no-parameter-properties": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          "ignoreRestSiblings": true,
+          "argsIgnorePattern": "^_([0-9])?$",
+          "varsIgnorePattern": "^_([0-9])?$"
+        }
+      ],
+      "@nrwl/nx/enforce-module-boundaries": [
+        "error",
+        {
+          "enforceBuildableLibDependency": true,
+          "allow": [],
+          "depConstraints": [
+            {
+              "sourceTag": "*",
+              "onlyDependOnLibsWithTags": ["*"]
+            }
+          ]
+        }
+      ],
+      "no-restricted-imports": [
+        "error",
+        {
+          "paths": ["lodash", "date-fns", "date-fns/locale", "."]
+        }
+      ]
+    },
+    "overrides": [
+      {
+        "files": ["*.tsx"],
+        "rules": {
+          "@typescript-eslint/no-unused-vars": "off"
+        }
+      },
+      {
+        "files": ["schema.d.ts"],
+        "rules": {
+          "@typescript-eslint/no-explicit-any": "off"
+        }
+      }
+    ]
+  }
+  

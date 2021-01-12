@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import ContentWrapper from './../../components/Layout/ContentWrapper';
 import { GetServerSideProps } from 'next';
-import { withAuthentication } from 'apps/auth-admin-web/utils/auth.utils';
+import { withAuthentication } from './../../utils/auth.utils';
 
 export default function Index() {
   const router = useRouter();

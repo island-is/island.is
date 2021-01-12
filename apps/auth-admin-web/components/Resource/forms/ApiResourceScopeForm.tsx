@@ -204,6 +204,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                   <button
                     type="button"
                     className="api-resource-scope-form__button__cancel"
+                    onClick={props.handleBack}
                   >
                     Back
                   </button>

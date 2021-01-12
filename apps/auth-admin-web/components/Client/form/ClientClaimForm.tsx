@@ -17,12 +17,9 @@ interface Props {
 }
 
 const ClientClaimForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ClientClaimDTO>();
+  const { register, handleSubmit, errors, formState } = useForm<
+    ClientClaimDTO
+  >();
   const { isSubmitting } = formState;
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [claimToRemove, setClaimToRemove] = React.useState<ClientClaimDTO>(
@@ -82,12 +79,12 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
       <div className="client-claim__wrapper">
         <div className="client-claim__container">
           <h1>Add claims for the Client</h1>
-          <div className="client-claim__help">
-            Allows settings claims for the client (will be included in the
-            access token).
-          </div>
           <form id="claimForm" onSubmit={handleSubmit(add)}>
             <div className="client-claim__container__form">
+              <div className="client-claim__help">
+                Allows settings claims for the client (will be included in the
+                access token).
+              </div>
               <div className="client-claim__container__fields">
                 <div className="client-claim__container__field">
                   <label className="client-claim__label">

@@ -87,7 +87,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
             <h1>Enter allowed cors origins</h1>
             <div className="client-allowed-cors-origin__container__form">
               <div className="client-allowed-cors-origin__help">
-                <p>Allowed cors origins</p>
+              Cross-Origin Resource Sharing (CORS) is an HTTP-header based mechanism that allows a server to indicate any other origins (domain, scheme, or port) than its own from which a browser should permit loading of resources. 
               </div>
               <form id="corsForm" onSubmit={handleSubmit(add)}>
                 <div className="client-allowed-cors-origin__container__fields">
@@ -102,14 +102,14 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
                       defaultValue={defaultOrigin}
                       className="client-allowed-cors-origin__input"
                       placeholder="https://localhost:4200"
-                      title="Users can be returned to this URL after logging out. These protocols rely upon TLS in production"
+                      title="Enter an allowed cors origin"
                     />
-                    <HelpBox helpText="Users can be returned to this URL after logging out. These protocols rely upon TLS in production" />
+                    <HelpBox helpText="Enter an allowed cors origin" />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="origin"
-                      message="Path is required"
+                      message="Cors origin is required"
                     />
                     <input
                       type="submit"
@@ -162,6 +162,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
                     <button
                       type="button"
                       className="client-allowed-cors-origin__button__cancel"
+                      onClick={props.handleBack}
                     >
                       Back
                     </button>

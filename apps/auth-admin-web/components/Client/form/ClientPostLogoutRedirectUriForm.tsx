@@ -166,6 +166,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                     <button
                       type="button"
                       className="client-post-logout__button__cancel"
+                      onClick={props.handleBack}
                     >
                       Back
                     </button>
