@@ -113,7 +113,6 @@ export const outlined = style({
       color: theme.color.blueberry400,
     },
   },
-
 })
 
 export const active = style({

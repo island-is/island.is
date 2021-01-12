@@ -97,7 +97,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
               title={n('linkThrounText')}
               titleLink={{
                 href: n('linkThroun'),
-                active: false
+                active: false,
               }}
             />
           }
