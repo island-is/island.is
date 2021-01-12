@@ -46,6 +46,7 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
         buildCheckboxField({
           id: 'selectChild',
           title: 'Börn í þinni forsjá',
+          large: true,
           options: [
             { value: '1', label: 'Ólafur Helgi Eiríksson' },
             { value: '2', label: 'Rósa Líf Eiríksdóttir' },
