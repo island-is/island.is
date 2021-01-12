@@ -351,7 +351,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "args": "--targetName=air-discount-scheme-web --targetHost=localhost:4200",
+            "args": "--targetName=air-discount-scheme-web --targetHost=http://localhost:4200",
             "command": "yarn start-test 'yarn start {args.targetName}' {args.targetHost} \"yarn run e2e  {args.targetName}-e2e --headless --production --base-url {args.targetHost} --devServerTarget ''\""
           }
         },
@@ -1423,7 +1423,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "args": "--targetName=application-system-form --targetHost=localhost:4200",
+            "args": "--targetName=application-system-form --targetHost=http://localhost:4200",
             "command": "yarn start-test 'yarn start {args.targetName}' {args.targetHost} \"yarn run e2e  {args.targetName}-e2e --headless --production --base-url {args.targetHost} --devServerTarget ''\""
           }
         },
@@ -2712,7 +2712,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "args": "--targetName=gjafakort-web --targetHost=localhost:4200",
+            "args": "--targetName=gjafakort-web --targetHost=http://localhost:4200",
             "command": "yarn start-test 'yarn start {args.targetName}' {args.targetHost} \"yarn run e2e  {args.targetName}-e2e --headless --production --base-url {args.targetHost} --devServerTarget ''\""
           }
         },
@@ -3432,7 +3432,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "args": "--targetName=judicial-system-web --targetHost=localhost:4200",
+            "args": "--targetName=judicial-system-web --targetHost=http://localhost:4200",
             "command": "yarn start-test 'yarn start {args.targetName}' {args.targetHost} \"yarn run e2e  {args.targetName}-e2e --headless --production --base-url {args.targetHost} --devServerTarget ''\""
           }
         },
@@ -3853,7 +3853,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "args": "--targetName=service-portal --targetHost=localhost:4200",
+            "args": "--targetName=service-portal --targetHost=http://localhost:4200",
             "command": "yarn start-test 'yarn start {args.targetName}' {args.targetHost} \"yarn run e2e  {args.targetName}-e2e --headless --production --base-url {args.targetHost} --devServerTarget ''\""
           }
         },
@@ -5210,7 +5210,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "args": "--targetName=skilavottord-web --targetHost=localhost:4200",
+            "args": "--targetName=skilavottord-web --targetHost=http://localhost:4200",
             "command": "yarn start-test 'yarn start {args.targetName}' {args.targetHost} \"yarn run e2e  {args.targetName}-e2e --headless --production --base-url {args.targetHost} --devServerTarget ''\""
           }
         },
@@ -5498,7 +5498,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "args": "--targetName=web --targetHost=http://localhost:4200",
+            "args": "--targetName=web --targetHost=http://http://localhost:4200",
             "command": "yarn start-test 'yarn start {args.targetName}' {args.targetHost} \"yarn run e2e  {args.targetName}-e2e --headless --production --base-url {args.targetHost} --devServerTarget ''\""
           }
         },
