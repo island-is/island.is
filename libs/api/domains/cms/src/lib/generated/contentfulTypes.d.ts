@@ -1238,7 +1238,6 @@ export interface IMenuLinkWithChildrenFields {
     | ILinkUrl
     | INews
     | IPage
-    | ISubpageHeader
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
     | undefined
