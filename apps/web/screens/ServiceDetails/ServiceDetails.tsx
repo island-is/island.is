@@ -2,7 +2,6 @@ import React from 'react'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import getConfig from 'next/config'
-import { default as NextLink } from 'next/link'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
@@ -77,7 +76,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
     },
     {
       href: linkResolver('handbookpage').as,
-      title: n('linkDesignGuideText'),
+      title: n('linkHandbookNavText'),
     },
     {
       href: n('linkIslandUI'),

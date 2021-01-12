@@ -3,7 +3,6 @@ import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { default as NextLink } from 'next/link'
 
 import {
   Text,
@@ -218,7 +217,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
     },
     {
       href: linkResolver('handbookpage').as,
-      title: nn('linkDesignGuideText'),
+      title: nn('linkHandbookNavText'),
     },
     {
       href: nn('linkIslandUI'),

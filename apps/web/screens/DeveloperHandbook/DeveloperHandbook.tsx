@@ -10,7 +10,6 @@ import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SubpageMainContent } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
-import { default as NextLink } from 'next/link'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 import {
@@ -51,7 +50,7 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
     {
       active: true,
       href: linkResolver('handbookpage').as,
-      title: n('linkDesignGuideText'),
+      title: n('linkHandbookNavText'),
     },
     {
       href: n('linkIslandUI'),
@@ -140,8 +139,8 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
                       />
                     ) : null}
                     <Button variant="text" icon="arrowForward">
-                      <Link href={n('linkDesignGuide')}>
-                        Þróunarhandbók á GitBook
+                      <Link href={n('linkHandbook')}>
+                        {n('linkHandbookText')}
                       </Link>
                     </Button>
                   </Stack>
