@@ -37,6 +37,7 @@
   - [Security](handbook/technical-overview/api-design-guide/security.md)
   - [Versioning](handbook/technical-overview/api-design-guide/versioning.md)
 - [Kerfislýsingar](handbook/technical-overview/auth/README.md)
+  - [System](handbook/technical-overview/auth/system/README.md)
     - [Service Provider Manual](handbook/technical-overview/auth/system/service-provider-manual/README.md)
       - [Audience](handbook/technical-overview/auth/system/service-provider-manual/audience.md)
       - [The Authentication Service Provision](handbook/technical-overview/auth/system/service-provider-manual/authentication-service-provision.md)
