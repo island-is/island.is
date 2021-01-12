@@ -32,7 +32,7 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
               id: 'parentNationalRegistry',
               type: 'ParentNationalRegistryProvider',
               title: 'Grunnupplýsingar um foreldra',
-              subTitle: 'Nöfn, kennitölur og lögheimili foreldar barnanna.',
+              subTitle: 'Nöfn, kennitölur og lögheimili forelda barnanna.',
             }),
           ],
         }),
