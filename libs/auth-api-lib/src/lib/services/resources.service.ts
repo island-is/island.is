@@ -109,9 +109,20 @@ export class ResourcesService {
       throw new BadRequestException('Name must be provided')
     }
 
-    return this.identityResourceModel.findByPk(name, {
-      include: [IdentityResourceUserClaim],
+    const identityResource = await this.identityResourceModel.findByPk(name, {
+      raw: true,
     })
+
+    if (identityResource) {
+      identityResource.userClaims = await this.identityResourceUserClaimModel.findAll(
+        {
+          where: { identityResourceName: identityResource.name },
+          raw: true,
+        },
+      )
+    }
+
+    return identityResource
   }
 
   /** Gets API scope by name */
@@ -122,7 +133,18 @@ export class ResourcesService {
       throw new BadRequestException('Name must be provided')
     }
 
-    return this.apiScopeModel.findByPk(name, { include: [ApiScopeUserClaim] })
+    const apiScope = await this.apiScopeModel.findByPk(name, {
+      raw: true,
+    })
+
+    if (apiScope) {
+      apiScope.userClaims = await this.apiScopeUserClaimModel.findAll({
+        where: { apiScopeName: apiScope.name },
+        raw: true,
+      })
+    }
+
+    return apiScope
   }
 
   /** Gets API scope by name */
@@ -133,9 +155,40 @@ export class ResourcesService {
       throw new BadRequestException('Name must be provided')
     }
 
-    return this.apiResourceModel.findByPk(name, {
-      include: [ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret],
+    const apiResource = await this.apiResourceModel.findByPk(name, {
+      raw: true,
     })
+
+    if (apiResource) {
+      await this.findApiResourceAssociations(apiResource)
+        .then<any, never>((result: any) => {
+          apiResource.userClaims = result[0]
+          apiResource.scopes = result[1]
+          apiResource.apiSecrets = result[2]
+        })
+        .catch((error) =>
+          this.logger.error(`Error in findAssociations: ${error}`),
+        )
+    }
+
+    return apiResource
+  }
+
+  private findApiResourceAssociations(apiResource: ApiResource): Promise<any> {
+    return Promise.all([
+      this.apiResourceUserClaim.findAll({
+        where: { apiResourceName: apiResource.name },
+        raw: true,
+      }), // 0
+      this.apiResourceScope.findAll({
+        where: { apiResourceName: apiResource.name },
+        raw: true,
+      }), // 1
+      this.apiResourceSecret.findAll({
+        where: { apiResourceName: apiResource.name },
+        raw: true,
+      }), // 2
+    ])
   }
 
   /** Get identity resources by scope names */
@@ -346,36 +399,6 @@ export class ResourcesService {
     )
 
     return result[0]
-  }
-
-  async getResourceUserClaims(name: string): Promise<any> {
-    this.logger.debug('Getting user claims with name: ', name)
-
-    if (!name) {
-      throw new BadRequestException('Name must be provided')
-    }
-
-    /* 
-    TODO: Create a table with all the claim names and get that list instead of distinct I.claim_name 
-    TODO: Find out how to return an interface instead of any. 
-          'sequelize.query' seems to support it with sequelize.query<T> but having difficulties implementing it error free
-    */
-    const [results, metadata] = await this.sequelize.query(
-      `select distinct I.claim_name, (
-        SELECT CAST(
-           CASE WHEN EXISTS(
-             SELECT * FROM identity_resource_user_claim where identity_resource_name like '${name}' and claim_name = I.claim_name
-            ) THEN True 
-           ELSE False
-           END 
-        AS BOOLEAN)
-      ) as exists, 'Lorem ipsum' as claim_description
-      from identity_resource_user_claim I
-      order by exists desc
-      LIMIT 8`,
-    )
-
-    return results
   }
 
   async addResourceUserClaim(
