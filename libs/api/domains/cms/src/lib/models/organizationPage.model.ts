@@ -17,6 +17,9 @@ export class OrganizationPage {
   @Field()
   title: string
 
+  @Field()
+  description: string
+
   @Field(() => [OrganizationSliceUnion])
   slices: Array<typeof OrganizationSliceUnion>
 
@@ -30,6 +33,7 @@ export const mapOrganizationPage = ({
 }: IOrganizationPage): OrganizationPage => ({
   id: sys.id,
   title: fields.title,
+  description: fields.description,
   slices: fields.slices.map(mapOrganizationSliceUnion),
   menuLinks: (fields.menuLinks ?? []).map(mapLink),
 })
