@@ -330,12 +330,12 @@ export class CmsContentfulService {
 
   async getGenericOverviewPage({
     lang,
-    slug,
+    pageIdentifier,
   }: GetGenericOverviewPageInput): Promise<GenericOverviewPage> {
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.IGenericOverviewPageFields>(lang, {
         ['content_type']: 'genericOverviewPage',
-        'fields.slug': slug,
+        'fields.pageIdentifier': pageIdentifier,
         include: 10,
       })
       .catch(errorHandler('getGenericOverviewPage'))

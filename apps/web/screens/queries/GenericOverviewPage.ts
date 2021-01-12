@@ -23,6 +23,20 @@ export const GET_GENERIC_OVERVIEW_PAGE_QUERY = gql`
           }
         }
       }
+      overviewLinks {
+        title
+        linkTitle
+        link {
+          type
+          slug
+        }
+        image {
+          title
+          url
+          width
+          height
+        }
+      }
     }
   }
 `

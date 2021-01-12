@@ -22,7 +22,6 @@ import {
 } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '../../hooks/useLinkResolver'
 import NextLink from 'next/link'
-import { BackgroundImage } from '@island.is/web/components'
 import { Image } from '@island.is/island-ui/contentful'
 
 interface GenericOverviewProps {
@@ -30,10 +29,12 @@ interface GenericOverviewProps {
 }
 
 export const GenericOverview: Screen<GenericOverviewProps> = ({
-  genericOverviewPage: { title, intro, navigation },
+  genericOverviewPage,
 }) => {
   const { linkResolver } = useLinkResolver()
 
+ // console.log(overviewLinks)
+console.log(genericOverviewPage)
   const introLink = (
     leftImage: boolean,
     imageUrl: string,
@@ -87,13 +88,13 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
         <Navigation
           baseId="desktopNav"
           items={[
-            ...navigation.menuLinks.map((item) => ({
+            ...genericOverviewPage.navigation.menuLinks.map((item) => ({
               title: item.title,
               typename: item.link.type,
               slug: [],
             })),
           ]}
-          title={navigation.title}
+          title={genericOverviewPage.navigation.title}
           renderLink={(link, { typename }) => {
             return (
               <NextLink {...linkResolver(typename as LinkType)} passHref>
@@ -117,7 +118,7 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
                   href: '/',
                 },
                 {
-                  title: navigation.title,
+                  title: genericOverviewPage.navigation.title,
                 },
               ]}
               renderLink={(link) => {
@@ -132,10 +133,10 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
               <Navigation
                 baseId={'mobileNav'}
                 isMenuDialog
-                activeItemTitle={navigation.title}
-                title={navigation.title}
+                activeItemTitle={genericOverviewPage.navigation.title}
+                title={genericOverviewPage.navigation.title}
                 items={[
-                  ...navigation.menuLinks.map((item) => ({
+                  ...genericOverviewPage.navigation.menuLinks.map((item) => ({
                     title: item.title,
                     typename: item.link.type,
                     slug: [],
@@ -152,12 +153,12 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
             </Box>
 
             <Text variant="h1" as="h1">
-              {title}
+              {genericOverviewPage.title}
             </Text>
 
-            {Boolean(intro) && (
+            {Boolean(genericOverviewPage.intro) && (
               <Box marginBottom={10}>
-                {renderHtml(intro.document as Document)}
+                {renderHtml(genericOverviewPage.intro.document as Document)}
               </Box>
             )}
           </Stack>

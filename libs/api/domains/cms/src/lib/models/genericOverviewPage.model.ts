@@ -2,6 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { IGenericOverviewPage } from '../generated/contentfulTypes'
 import { Html, mapHtml } from './html.model'
 import { Menu, mapMenu } from './menu.model'
+import { IntroLinkImage, mapIntroLinkImage } from './introLinkImage.model'
 
 @ObjectType()
 export class GenericOverviewPage {
@@ -19,6 +20,9 @@ export class GenericOverviewPage {
 
   @Field(() => Menu)
   navigation: Menu
+
+  @Field(() => [IntroLinkImage])
+  overviewLinks: IntroLinkImage[]
 }
 
 export const mapGenericOverviewPage = ({
@@ -30,4 +34,5 @@ export const mapGenericOverviewPage = ({
   pageIdentifier: fields.pageIdentifier ?? '',
   intro: (fields.intro && mapHtml(fields.intro, sys.id + ':intro')) ?? null,
   navigation: mapMenu(fields.navigation),
+  overviewLinks: (fields.overviewLinks ?? []).map(mapIntroLinkImage),
 })

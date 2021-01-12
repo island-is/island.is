@@ -515,7 +515,7 @@ export interface IFeaturedFields {
   attention?: boolean | undefined
 
   /** Featured article */
-  thing?: IArticle | IVidspyrnaFrontpage | undefined
+  thing?: IArticle | IVidspyrnaFrontpage | IVidspyrnaPage | undefined
 }
 
 export interface IFeatured extends Entry<IFeaturedFields> {
@@ -625,6 +625,9 @@ export interface IGenericOverviewPageFields {
 
   /** Navigation */
   navigation: IMenu
+
+  /** Overview Links */
+  overviewLinks?: IIntroLinkImage[] | undefined
 }
 
 export interface IGenericOverviewPage
@@ -787,6 +790,50 @@ export interface IIconBullet extends Entry<IIconBulletFields> {
     contentType: {
       sys: {
         id: 'iconBullet'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IIntroLinkImageFields {
+  /** Title */
+  title: string
+
+  /** Intro */
+  intro: Document
+
+  /** Image */
+  image: Asset
+
+  /** Link Title */
+  linkTitle: string
+
+  /** Link */
+  link:
+    | IAboutSubPage
+    | IArticle
+    | IArticleCategory
+    | ISubArticle
+    | ILifeEventPage
+    | ILinkUrl
+    | INews
+    | IPage
+    | IVidspyrnaFrontpage
+    | IVidspyrnaPage
+}
+
+export interface IIntroLinkImage extends Entry<IIntroLinkImageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'introLinkImage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1191,6 +1238,7 @@ export interface IMenuLinkWithChildrenFields {
     | ILinkUrl
     | INews
     | IPage
+    | ISubpageHeader
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
     | undefined
@@ -2661,6 +2709,7 @@ export type CONTENT_TYPE =
   | 'groupedMenu'
   | 'homepage'
   | 'iconBullet'
+  | 'introLinkImage'
   | 'landingPage'
   | 'latestNewsSlice'
   | 'lifeEventPage'
