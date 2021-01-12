@@ -121,7 +121,6 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
                         title: n('linkIslandIsText'),
                         href: linkResolver('homepage').as,
                       },
-
                       {
                         title: n('linkThrounText'),
                         href: linkResolver('developerspage').as,
