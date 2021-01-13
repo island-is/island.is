@@ -18,7 +18,7 @@ Top three reasons:
 
 ## Process overview
 
-![cd-overview](../../../.gitbook/assets/cd-overview.svg)
+![cd-overview](./assets/cd-overview.svg)
 
 ## Continuous Integration(CI)
 

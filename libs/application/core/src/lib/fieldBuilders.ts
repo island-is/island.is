@@ -37,6 +37,7 @@ export function buildCheckboxField(data: {
   options: MaybeWithApplication<Option[]>
   disabled?: boolean
   width?: FieldWidth
+  large?: boolean
   defaultValue?: MaybeWithApplication<unknown>
 }): CheckboxField {
   const {
@@ -47,6 +48,7 @@ export function buildCheckboxField(data: {
     options,
     disabled = false,
     width = 'full',
+    large,
     defaultValue,
   } = data
   return {
@@ -54,6 +56,7 @@ export function buildCheckboxField(data: {
     defaultValue,
     disabled,
     width,
+    large,
     condition,
     id,
     title,
