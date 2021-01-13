@@ -185,7 +185,7 @@ describe('formatConclusion', () => {
 
     // Assert
     expect(res).toBe(
-      'Beiðni um gæslu á hendur, Glanni Glæpur kt. 010101-0000, er hafnað.',
+      'Kröfu um gæsluvarðhald á hendur Glanni Glæpur, kt. 010101-0000, er hafnað.',
     )
   })
 
@@ -589,7 +589,7 @@ describe('formatPrisonRulingEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Ákærandi: Siggi Sakó<br />Verjandi: Skúli Skjöldur<br /><br /><strong>Úrskurðarorð</strong><br /><br />Beiðni um gæslu á hendur, Biggi Börgler kt. 241101-8760, er hafnað.<br /><br /><strong>Ákvörðun um kæru</strong><br />Kærði kærir úrskurðinn.<br />Sækjandi unir úrskurðinum.<br /><br />Dalli Dómari aðal dómarinn',
+      '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Ákærandi: Siggi Sakó<br />Verjandi: Skúli Skjöldur<br /><br /><strong>Úrskurðarorð</strong><br /><br />Kröfu um gæsluvarðhald á hendur Biggi Börgler, kt. 241101-8760, er hafnað.<br /><br /><strong>Ákvörðun um kæru</strong><br />Kærði kærir úrskurðinn.<br />Sækjandi unir úrskurðinum.<br /><br />Dalli Dómari aðal dómarinn',
     )
   })
 })
