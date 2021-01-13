@@ -15,6 +15,7 @@ import {
   FormModes,
   FormText,
 } from '../types/Form'
+import { BoxProps } from '@island.is/island-ui/core'
 import { MessageDescriptor } from 'react-intl'
 
 export function buildForm(data: {
@@ -33,6 +34,7 @@ export function buildMultiField(data: {
   condition?: Condition
   title: MessageDescriptor | string
   description?: FormText
+  space?: BoxProps['paddingTop']
   children: Field[]
 }): MultiField {
   return { ...data, type: FormItemTypes.MULTI_FIELD }
