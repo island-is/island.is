@@ -6,6 +6,7 @@ import {
   FormModes,
   buildDataProviderItem,
   buildExternalDataProvider,
+  buildCheckboxField,
 } from '@island.is/application/core'
 
 export const ChildrenDomicileTransferForm: Form = buildForm({
@@ -39,12 +40,19 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'chooseChildren',
+      id: 'selectChildInCustody',
       title: 'Velja barn',
       children: [
-        buildTextField({
-          id: 'children',
-          title: 'children',
+        buildCheckboxField({
+          id: 'selectChild',
+          title: 'Velja barn/börn til að flytja lögheimili fyrir',
+          description:
+            'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið hvaða börn á að flytja lögheimili fyrir.',
+          large: true,
+          options: [
+            { value: '1', label: 'Ólafur Helgi Eiríksson' },
+            { value: '2', label: 'Rósa Líf Eiríksdóttir' },
+          ],
         }),
       ],
     }),
