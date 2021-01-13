@@ -18,7 +18,7 @@ import { TellUsAStoryFormProps } from '../TellUsAStoryForm/TellUsAStoryForm'
 import { defaultRenderNode } from './defaultRenderNode'
 import { defaultRenderMark } from './defaultRenderMark'
 import { defaultRenderComponent } from './defaultRenderComponents'
-import { Box } from 'libs/island-ui/core/src'
+import { Box } from '@island.is/island-ui/core'
 
 type HtmlSlice = { __typename: 'Html'; id: string; document: Document }
 type FaqListSlice = { __typename: 'FaqList'; id: string } & FaqListProps
