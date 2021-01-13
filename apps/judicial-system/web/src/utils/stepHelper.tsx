@@ -75,10 +75,9 @@ export const constructConclusion = (workingCase: Case) => {
           , skal sæta gæsluvarðhaldi, þó ekki lengur en til
         </Text>
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
-          {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')?.replace(
-            'dagur,',
-            'dagsins',
-          )}.`}
+          {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')
+            ?.replace('dagur,', 'dagsins')
+            ?.replace(' kl.', ', kl.')}.`}
         </Text>
         {workingCase.custodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
@@ -126,10 +125,9 @@ export const constructConclusion = (workingCase: Case) => {
         )}`}</Text>
         , skal sæta farbanni, þó ekki lengur en til
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
-          {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')?.replace(
-            'dagur,',
-            'dagsins',
-          )}.`}
+          {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')
+            ?.replace('dagur,', 'dagsins')
+            ?.replace(' kl.', ', kl.')}.`}
         </Text>
       </Text>
     )
