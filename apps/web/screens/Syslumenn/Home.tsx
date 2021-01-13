@@ -8,6 +8,7 @@ import {
   ColorSchemeContext,
   Navigation,
   NavigationItem,
+  GridContainer,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { HeadWithSocialSharing, Header, Main } from '@island.is/web/components'
@@ -89,36 +90,54 @@ const Home: Screen<HomeProps> = ({ organization, namespace, megaMenuData }) => {
         <Box className={styles.headerBg}>
           <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
             <Header buttonColorScheme="negative" megaMenuData={megaMenuData}>
-              <SidebarLayout
-                sidebarContent={
-                  <Box
-                    className={styles.headerSidebar}
-                    position={'relative'}
-                    style={{ zIndex: 10 }}
-                  >
-                    <Box marginBottom={5}>
-                      <Breadcrumbs
-                        color="white"
-                        items={[
-                          {
-                            title: 'Ísland.is',
-                            href: '/',
-                          },
-                          {
-                            title: organization.title,
-                          },
-                        ]}
-                        renderLink={(link) => {
-                          return (
-                            <NextLink {...linkResolver('homepage')} passHref>
-                              {link}
-                            </NextLink>
-                          )
-                        }}
+              <GridContainer>
+                <Box marginTop={[1, 1, 3]} marginBottom={5}>
+                  <Breadcrumbs
+                    color="white"
+                    items={[
+                      {
+                        title: 'Ísland.is',
+                        href: '/',
+                      },
+                      {
+                        title: organization.title,
+                      },
+                    ]}
+                    renderLink={(link) => {
+                      return (
+                        <NextLink {...linkResolver('homepage')} passHref>
+                          {link}
+                        </NextLink>
+                      )
+                    }}
+                  />
+                </Box>
+              </GridContainer>
+              <Box className={styles.headerWrapper}>
+                <SidebarLayout sidebarContent="">
+                  <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4, 4]}>
+                    <Box display="flex" flexDirection="row" alignItems="center">
+                      <img
+                        src={organization.logo.url}
+                        className={styles.headerLogo}
+                        alt=""
                       />
+                      <Text variant="h1" as="h1" color="white">
+                        {organization.title}
+                      </Text>
                     </Box>
+                  </Box>
+                </SidebarLayout>
+                <GridContainer>
+                  <Box
+                    display={['block', 'block', 'none']}
+                    paddingBottom={4}
+                    className={styles.mobileNav}
+                  >
                     <Navigation
-                      baseId="pageNav"
+                      baseId={'mobileNav'}
+                      isMenuDialog
+                      activeItemTitle={organization.title}
                       items={navList}
                       title="Efnisyfirlit"
                       titleLink={{
@@ -127,28 +146,30 @@ const Home: Screen<HomeProps> = ({ organization, namespace, megaMenuData }) => {
                       }}
                     />
                   </Box>
-                }
-              >
-                <Box paddingTop={[2, 2, 4]} paddingBottom={[4, 4, 4, 4]}>
-                  <Box display="flex" flexDirection="row" alignItems="center">
-                    <img
-                      src={organization.logo.url}
-                      className={styles.headerLogo}
-                      alt=""
-                    />
-                    <Text variant="h1" as="h1" color="white">
-                      {organization.title}
-                    </Text>
-                  </Box>
-                </Box>
-              </SidebarLayout>
+                </GridContainer>
+              </Box>
             </Header>
           </ColorSchemeContext.Provider>
         </Box>
       </Box>
       <Main>
-        <SidebarLayout isSticky={false} sidebarContent="">
-          <Box className={styles.intro} paddingTop={[4, 4, 0]} >
+        <SidebarLayout
+          isSticky={false}
+          sidebarContent={
+            <Box className={styles.desktopNav}>
+              <Navigation
+                baseId="desktopNav"
+                items={navList}
+                title="Efnisyfirlit"
+                titleLink={{
+                  href: `/${organization.slug}`,
+                  active: false,
+                }}
+              />
+            </Box>
+          }
+        >
+          <Box className={styles.intro} paddingTop={[4, 4, 0]}>
             {organization.organizationPage.description}
           </Box>
         </SidebarLayout>
