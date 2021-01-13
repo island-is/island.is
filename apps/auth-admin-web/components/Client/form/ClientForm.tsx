@@ -347,7 +347,8 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                   </div>
 
                   <div className="client__container__button" id="advanced">
-                    <button type="button"
+                    <button
+                      type="button"
                       className="client__button__show"
                       onClick={() => setShow(!show)}
                     >

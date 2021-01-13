@@ -17,6 +17,7 @@ const ApiResourceStepNav: React.FC<Props> = ({
         <ul>
           <li>
             <button
+              type="button"
               onClick={() =>
                 handleStepChange(ApiResourceStep.ApiResourceBasics)
               }

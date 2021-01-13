@@ -13,7 +13,11 @@ const ErrorPage: React.FC = () => {
     <ContentWrapper>
       <div className="error404">
         <h1>Page not found</h1>
-        <button onClick={toMainPage} className="error404__button__back">
+        <button
+          type="button"
+          onClick={toMainPage}
+          className="error404__button__back"
+        >
           Back to main page
         </button>
       </div>

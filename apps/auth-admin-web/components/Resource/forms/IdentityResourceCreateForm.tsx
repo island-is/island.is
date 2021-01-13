@@ -223,6 +223,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                 <div className="identity-resource-form__buttons__container">
                   <div className="identity-resource-form__button__container">
                     <button
+                      type="button"
                       className="identity-resource-form__button__cancel"
                       onClick={props.handleCancel}
                     >

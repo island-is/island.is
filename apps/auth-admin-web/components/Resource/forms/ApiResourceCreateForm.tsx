@@ -202,6 +202,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                 <div className="api-resource-form__buttons__container">
                   <div className="api-resource-form__button__container">
                     <button
+                      type="button"
                       className="api-resource-form__button__cancel"
                       onClick={props.handleCancel}
                     >

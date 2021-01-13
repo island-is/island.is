@@ -62,6 +62,7 @@ const ResourceListDisplay: React.FC<Props> = ({
                         <td>{resource.displayName}</td>
                         <td className="identity-resources__table__button">
                           <button
+                            type="button"
                             className={`identity-resources__button__edit${
                               resource.archived ? ' hidden' : ''
                             }`}
@@ -74,6 +75,7 @@ const ResourceListDisplay: React.FC<Props> = ({
                         </td>
                         <td className="identity-resources__table__button">
                           <button
+                            type="button"
                             className={`identity-resources__button__delete${
                               resource.archived ? ' hidden' : ''
                             }`}

@@ -60,7 +60,7 @@ const ClientStepNav: React.FC<Props> = ({
             >
               Post Logout Uris
             </button>
-          </  li>
+          </li>
           <li>
             <button
               type="button"
