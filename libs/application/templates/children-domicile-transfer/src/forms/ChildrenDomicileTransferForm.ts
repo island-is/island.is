@@ -67,7 +67,7 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
           id: 'informationAboutOtherParent',
           title: 'Fylltu inn upplýsingar um hitt foreldrið',
           description: (application) => {
-            let parent = (application.externalData.parentNationalRegistry
+            const parent = (application.externalData.parentNationalRegistry
               ?.data as {
               parent?: object
             })?.parent as Parent
