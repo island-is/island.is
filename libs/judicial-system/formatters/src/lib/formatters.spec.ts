@@ -6,7 +6,7 @@ import {
 import * as Constants from './constants'
 import {
   formatDate,
-  formatCustodyRestrictions,
+  formatRequestedCustodyRestrictions,
   capitalize,
   formatGender,
   formatRestrictions,
@@ -39,7 +39,7 @@ describe('formatDate', () => {
   })
 })
 
-describe('renderRestrictions', () => {
+describe('formatRequestedCustodyRestrictions', () => {
   test('should return a comma separated list of restrictions', () => {
     // Arrange
     const restrictions: CaseCustodyRestrictions[] = [
@@ -48,7 +48,7 @@ describe('renderRestrictions', () => {
     ]
 
     // Act
-    const r = formatCustodyRestrictions(restrictions)
+    const r = formatRequestedCustodyRestrictions(restrictions)
 
     // Assert
     expect(r).toEqual('B - Einangrun, D - Bréfskoðun, símabann')
@@ -59,7 +59,7 @@ describe('renderRestrictions', () => {
     const restrictions: CaseCustodyRestrictions[] = []
 
     // Act
-    const r = formatCustodyRestrictions(restrictions)
+    const r = formatRequestedCustodyRestrictions(restrictions)
 
     // Assert
     expect(r).toEqual('Ekki er farið fram á takmarkanir á gæslu')

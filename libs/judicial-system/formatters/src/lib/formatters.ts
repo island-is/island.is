@@ -148,7 +148,7 @@ export function formatRestrictions(
   return `${res}gæsluvarðhaldið verði með ${filteredCustodyRestrictionsAsString}skv. 99. gr. laga nr. 88/2008.`
 }
 
-export const formatCustodyRestrictions = (
+export const formatRequestedCustodyRestrictions = (
   restrictions?: CaseCustodyRestrictions[],
 ) => {
   return restrictions && restrictions.length > 0

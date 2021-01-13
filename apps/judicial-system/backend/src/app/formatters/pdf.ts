@@ -10,7 +10,7 @@ import {
 } from '@island.is/judicial-system/types'
 import {
   capitalize,
-  formatCustodyRestrictions,
+  formatRequestedCustodyRestrictions,
   formatDate,
   formatGender,
   formatNationalId,
@@ -125,7 +125,7 @@ export async function generateRequestPdf(
     .font('Helvetica')
     .fontSize(12)
     .text(
-      `${formatCustodyRestrictions(
+      `${formatRequestedCustodyRestrictions(
         existingCase.requestedCustodyRestrictions,
       )}.`,
       {

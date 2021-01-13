@@ -9,7 +9,7 @@ import {
 import {
   formatDate,
   capitalize,
-  formatCustodyRestrictions,
+  formatRequestedCustodyRestrictions,
   laws,
   formatNationalId,
   formatGender,
@@ -343,7 +343,7 @@ export const JudgeOverview: React.FC = () => {
                 labelVariant="h3"
               >
                 <Text>
-                  {formatCustodyRestrictions(
+                  {formatRequestedCustodyRestrictions(
                     workingCase.requestedCustodyRestrictions,
                   )}
                 </Text>
