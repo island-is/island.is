@@ -807,6 +807,9 @@ export interface IIntroLinkImageFields {
   /** Image */
   image: Asset
 
+  /** Left Image */
+  leftImage?: boolean | undefined
+
   /** Link Title */
   linkTitle: string
 

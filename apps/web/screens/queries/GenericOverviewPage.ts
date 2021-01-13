@@ -33,6 +33,7 @@ export const GET_GENERIC_OVERVIEW_PAGE_QUERY = gql`
           type
           slug
         }
+        leftImage
         image {
           title
           url

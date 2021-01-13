@@ -15,6 +15,9 @@ export class IntroLinkImage {
   @Field(() => Image, { nullable: true })
   image?: Image
 
+  @Field(() => Boolean)
+  leftImage: boolean
+
   @Field()
   linkTitle: string
 
@@ -29,6 +32,7 @@ export const mapIntroLinkImage = ({
   title: fields.title ?? '',
   intro: (fields.intro && mapHtml(fields.intro, sys.id + ':intro')) ?? null,
   image: mapImage(fields.image),
+  leftImage: fields.leftImage ?? false,
   linkTitle: fields.linkTitle ?? '',
   link: fields.link ? mapReferenceLink(fields.link) : null,
 })

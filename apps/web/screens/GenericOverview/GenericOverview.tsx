@@ -18,7 +18,6 @@ import { GET_GENERIC_OVERVIEW_PAGE_QUERY } from '@island.is/web/screens/queries'
 import {
   GetGenericOverviewPageQuery,
   QueryGetGenericOverviewPageArgs,
-  IntroLinkImage,
 } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '../../hooks/useLinkResolver'
 import NextLink from 'next/link'
@@ -33,90 +32,50 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
 }) => {
   const { linkResolver } = useLinkResolver()
 
-  console.log(overviewLinks)
-  const introLink = (leftImage: boolean, introLink: IntroLinkImage) => {
-    const url =
-      introLink.link.type === 'linkUrl'
-        ? { href: introLink.link.slug }
-        : {
-            href: linkResolver(introLink.link.type as LinkType).href,
-            as: linkResolver(introLink.link.type as LinkType).as,
-          }
+  const generateUrl = (typename: LinkType, slug: Array<string>) => {
+    return typename.toLowerCase() === 'linkurl'
+      ? { href: slug[0] }
+      : {
+          href: linkResolver(typename, slug).href,
+          as: linkResolver(typename, slug).as,
+        }
+  }
+
+  const renderNavigation = (isMobile: boolean) => {
     return (
-      <GridRow direction={leftImage ? 'row' : 'rowReverse'}>
-        <GridColumn span={['8/8', '3/8', '4/8', '3/8']}>
-          <Box width="full" position="relative">
-            <Image
-              url={introLink.image.url + '?w=774&fm=webp&q=80'}
-              thumbnail={introLink.image.url + '?w=50&fm=webp&q=80'}
-              {...introLink.image}
-            />
-          </Box>
-        </GridColumn>
-        <GridColumn span={['8/8', '5/8', '4/8', '5/8']}>
-          <Box
-            display="flex"
-            flexDirection="column"
-            flexGrow={1}
-            height="full"
-            justifyContent={'center'}
-            paddingLeft={leftImage ? 6 : 0}
-          >
-            <Box>
-              <Text variant="h2" marginBottom={2}>
-                {introLink.title}
-              </Text>
-              {Boolean(introLink.intro) && (
-                <Box marginBottom={4} style={{fontSize: '16px'}}>
-                  {renderHtml(introLink.intro.document as Document)}
-                </Box>
-              )}
-              <NextLink href={url.href} as={url.as}>
-                <Button
-                  icon="arrowForward"
-                  iconType="filled"
-                  type="button"
-                  variant="text"
-                >
-                  {introLink.linkTitle}
-                </Button>
-              </NextLink>
-            </Box>
-          </Box>
-        </GridColumn>
-      </GridRow>
+      <Navigation
+        baseId={isMobile ? 'mobileNav' : 'desktopNav'}
+        isMenuDialog={isMobile}
+        activeItemTitle={navigation.title}
+        title={navigation.title}
+        items={[
+          ...navigation.menuLinks.map((item) => ({
+            title: item.title,
+            typename: item.link.type,
+            slug: [item.link.slug],
+            href: item.link.slug,
+          })),
+        ]}
+        renderLink={(link, { typename, slug }) => {
+          return (
+            <NextLink {...generateUrl(typename as LinkType, slug)} passHref>
+              {link}
+            </NextLink>
+          )
+        }}
+      />
     )
   }
+
   return (
     <SidebarLayout
       fullWidthContent={true}
-      sidebarContent={
-        <Navigation
-          baseId="desktopNav"
-          items={[
-            ...navigation.menuLinks.map((item) => ({
-              title: item.title,
-              typename: item.link.type,
-              slug: [item.link.slug],
-            })),
-          ]}
-          title={navigation.title}
-          renderLink={(link, { typename, slug }) => {
-            return typename === 'linkUrl' ? (
-              <a href={slug[0]}>{link}</a>
-            ) : (
-              <NextLink {...linkResolver(typename as LinkType)} passHref>
-                {link}
-              </NextLink>
-            )
-          }}
-        />
-      }
+      sidebarContent={renderNavigation(false)}
     >
       <GridRow>
         <GridColumn
-          offset={[null, null, null, null, '1/9']}
-          span={['12/12', '12/12', '12/12', '12/12', '7/9']}
+          offset={[null, null, null, '1/12', '1/9']}
+          span={['12/12', '12/12', '12/12', '11/12', '7/9']}
         >
           <Stack space={2}>
             <Breadcrumbs
@@ -131,28 +90,7 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
               ]}
             />
             <Box display={['block', 'block', 'none']}>
-              <Navigation
-                baseId={'mobileNav'}
-                isMenuDialog
-                activeItemTitle={navigation.title}
-                title={navigation.title}
-                items={[
-                  ...navigation.menuLinks.map((item) => ({
-                    title: item.title,
-                    typename: item.link.type,
-                    slug: [],
-                  })),
-                ]}
-                renderLink={(link, { typename, slug }) => {
-                  return typename === 'linkUrl' ? (
-                    <a href={slug[0]}>{link}</a>
-                  ) : (
-                    <NextLink {...linkResolver(typename as LinkType)} passHref>
-                      {link}
-                    </NextLink>
-                  )
-                }}
-              />
+              {renderNavigation(true)}
             </Box>
 
             <Text variant="h1" as="h1">
@@ -166,9 +104,64 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
             )}
           </Stack>
           <Stack space={6}>
-            {overviewLinks.map((link, index) => {
-              return introLink(index % 2 === 1, link as IntroLinkImage)
-            })}
+            {overviewLinks.map(
+              ({ title, linkTitle, link, image, leftImage }, index) => {
+                return (
+                  <GridRow
+                    key={index}
+                    direction={leftImage ? 'row' : 'rowReverse'}
+                  >
+                    <GridColumn span={['8/8', '3/8', '4/8', '3/8']}>
+                      <Box
+                        width="full"
+                        position="relative"
+                        paddingLeft={leftImage ? undefined : [0, 0, 0, 0, 6]}
+                        paddingRight={
+                          leftImage ? [10, 0, 0, 0, 6] : [10, 0, 0, 0, 0]
+                        }
+                      >
+                        <Image
+                          url={image.url + '?w=774&fm=webp&q=80'}
+                          thumbnail={image.url + '?w=50&fm=webp&q=80'}
+                          {...image}
+                        />
+                      </Box>
+                    </GridColumn>
+                    <GridColumn span={['8/8', '5/8', '4/8', '5/8']}>
+                      <Box
+                        display="flex"
+                        flexDirection="column"
+                        justifyContent="center"
+                        height="full"
+                      >
+                        <Box>
+                          <Text variant="h2" marginBottom={2}>
+                            {title}
+                          </Text>
+                          {Boolean(intro) && (
+                            <Box marginBottom={4}>
+                              {renderHtml(intro.document as Document)}
+                            </Box>
+                          )}
+                          <NextLink
+                            {...generateUrl(link.type as LinkType, [link.slug])}
+                          >
+                            <Button
+                              icon="arrowForward"
+                              iconType="filled"
+                              type="button"
+                              variant="text"
+                            >
+                              {linkTitle}
+                            </Button>
+                          </NextLink>
+                        </Box>
+                      </Box>
+                    </GridColumn>
+                  </GridRow>
+                )
+              },
+            )}
           </Stack>
         </GridColumn>
       </GridRow>

@@ -79,10 +79,6 @@ export const routesTemplate = {
     is: '/',
     en: '/en',
   },
-  subpageheader: {
-    is: '/throun/vefthjonustur/vorulisti',
-    en: '/en/developers/webservices/catalogue',
-  },
 }
 
 // This considers one block ("[someVar]") to be one variable and ignores the path variables name
