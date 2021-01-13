@@ -1,60 +1,57 @@
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import HelpBox from '../../Common/HelpBox';
-import { ErrorMessage } from '@hookform/error-message';
-import { ResourcesService } from '../../../services/ResourcesService';
-import IdentityResourcesDTO from '../../../entities/dtos/identity-resources.dto';
+import React, { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import HelpBox from '../../common/HelpBox'
+import { ErrorMessage } from '@hookform/error-message'
+import { ResourcesService } from '../../../services/ResourcesService'
+import IdentityResourcesDTO from '../../../entities/dtos/identity-resources.dto'
 
 interface Props {
-  handleSave?: (object: IdentityResourcesDTO) => void;
-  handleCancel?: () => void;
-  identityResource: IdentityResourcesDTO;
+  handleSave?: (object: IdentityResourcesDTO) => void
+  handleCancel?: () => void
+  identityResource: IdentityResourcesDTO
 }
 
 const IdentityResourceCreateForm: React.FC<Props> = (props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<IdentityResourcesDTO>();
-  const { isSubmitting } = formState;
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [available, setAvailable] = useState<boolean>(false);
-  const [nameLength, setNameLength] = useState(0);
+  const { register, handleSubmit, errors, formState } = useForm<
+    IdentityResourcesDTO
+  >()
+  const { isSubmitting } = formState
+  const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [available, setAvailable] = useState<boolean>(false)
+  const [nameLength, setNameLength] = useState(0)
 
   useEffect(() => {
     if (props.identityResource && props.identityResource.name) {
-      setIsEditing(true);
-      setAvailable(true);
+      setIsEditing(true)
+      setAvailable(true)
     }
-  }, [props.identityResource]);
+  }, [props.identityResource])
 
   const checkAvailability = async (name: string) => {
-    setNameLength(name.length);
-    const response = await ResourcesService.getIdentityResourceByName(name);
+    setNameLength(name.length)
+    const response = await ResourcesService.getIdentityResourceByName(name)
     if (response) {
-      setAvailable(false);
+      setAvailable(false)
     } else {
-      setAvailable(true);
+      setAvailable(true)
     }
-  };
+  }
 
   const save = async (data: IdentityResourcesDTO) => {
-    let response = null;
+    let response = null
 
     if (!isEditing) {
-      response = await ResourcesService.createIdentityResource(data);
+      response = await ResourcesService.createIdentityResource(data)
     } else {
-      response = await ResourcesService.updateIdentityResource(data, data.name);
+      response = await ResourcesService.updateIdentityResource(data, data.name)
     }
 
     if (response) {
       if (props.handleSave) {
-        props.handleSave(data);
+        props.handleSave(data)
       }
     }
-  };
+  }
 
   return (
     <div className="identity-resource-form">
@@ -245,7 +242,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default IdentityResourceCreateForm;
+export default IdentityResourceCreateForm

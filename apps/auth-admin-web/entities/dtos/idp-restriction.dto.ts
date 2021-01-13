@@ -1,8 +1,8 @@
 export class IdpRestrictionDTO {
   constructor() {
-    this.name = null;
-    this.clientId = null;
+    this.name = null
+    this.clientId = null
   }
-  name?: string;
-  clientId?: string;
+  name?: string
+  clientId?: string
 }

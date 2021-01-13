@@ -1,97 +1,94 @@
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { ErrorMessage } from '@hookform/error-message';
-import HelpBox from './../../Common/HelpBox';
-import NoActiveConnections from './../../Common/NoActiveConnections';
-import { ClientService } from './../../../services/ClientService';
-import { ApiResourceScopeDTO } from './../../../entities/dtos/api-resource-allowed-scope.dto';
-import { ResourcesService } from './../../../services/ResourcesService';
-import ConfirmModal from '../../Common/ConfirmModal';
-import { ApiScope } from './../../../entities/models/api-scope.model';
+import React, { useState, useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { ErrorMessage } from '@hookform/error-message'
+import HelpBox from './../../common/HelpBox'
+import NoActiveConnections from './../../common/NoActiveConnections'
+import { ClientService } from './../../../services/ClientService'
+import { ApiResourceScopeDTO } from './../../../entities/dtos/api-resource-allowed-scope.dto'
+import { ResourcesService } from './../../../services/ResourcesService'
+import ConfirmModal from '../../common/ConfirmModal'
+import { ApiScope } from './../../../entities/models/api-scope.model'
 
 interface Props {
-  apiResourceName: string;
-  scopes?: string[];
-  handleNext?: () => void;
-  handleBack?: () => void;
-  handleChanges?: () => void;
+  apiResourceName: string
+  scopes?: string[]
+  handleNext?: () => void
+  handleBack?: () => void
+  handleChanges?: () => void
 }
 
 const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ApiResourceScopeDTO>();
-  const { isSubmitting } = formState;
-  const [scopes, setScopes] = useState<ApiScope[]>([]);
-  const [selectedScope, setSelectedScope] = useState<ApiScope>(new ApiScope());
-  const [scopeForDelete, setScopeForDelete] = useState<string>('');
-  const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false);
+  const { register, handleSubmit, errors, formState } = useForm<
+    ApiResourceScopeDTO
+  >()
+  const { isSubmitting } = formState
+  const [scopes, setScopes] = useState<ApiScope[]>([])
+  const [selectedScope, setSelectedScope] = useState<ApiScope>(new ApiScope())
+  const [scopeForDelete, setScopeForDelete] = useState<string>('')
+  const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false)
 
   const add = async (data: ApiResourceScopeDTO) => {
-    const allowedScope = new ApiResourceScopeDTO();
-    allowedScope.apiResourceName = props.apiResourceName;
-    allowedScope.scopeName = data.scopeName;
+    const allowedScope = new ApiResourceScopeDTO()
+    allowedScope.apiResourceName = props.apiResourceName
+    allowedScope.scopeName = data.scopeName
 
     const response = await ResourcesService.addApiResourceAllowedScope(
-      allowedScope
-    );
+      allowedScope,
+    )
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
     }
-  };
+  }
 
   useEffect(() => {
-    getAvailableScopes();
-  }, []);
+    getAvailableScopes()
+  }, [])
 
   const getAvailableScopes = async () => {
-    const response = await ClientService.FindAvailabeScopes();
+    const response = await ClientService.FindAvailabeScopes()
     if (response) {
-      setScopes(response);
+      setScopes(response)
     }
-  };
+  }
 
   const setSelectedItem = (scopeName: string) => {
-    const selected = scopes.find((e) => e.name === scopeName);
+    const selected = scopes.find((e) => e.name === scopeName)
     if (selected) {
-      setSelectedScope(selected);
+      setSelectedScope(selected)
     }
-  };
+  }
 
   const remove = async () => {
     const response = await ResourcesService.removeApiResourceAllowedScope(
       props.apiResourceName,
-      scopeForDelete
-    );
+      scopeForDelete,
+    )
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
     }
-    closeConfirmModal();
-  };
+    closeConfirmModal()
+  }
 
   const closeConfirmModal = () => {
-    setConfirmModalIsOpen(false);
-  };
+    setConfirmModalIsOpen(false)
+  }
 
   const confirmRemove = async (scope: string) => {
-    setScopeForDelete(scope);
-    setConfirmModalIsOpen(true);
-  };
+    setScopeForDelete(scope)
+    setConfirmModalIsOpen(true)
+  }
 
   const setHeaderElement = () => {
     return (
       <p>
         Are you sure want to delete this scope: <span>{scopeForDelete}</span>
       </p>
-    );
-  };
+    )
+  }
 
   return (
     <div className="api-resource-scope-form">
@@ -120,7 +117,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                     onChange={(e) => setSelectedItem(e.target.value)}
                   >
                     {scopes.map((scope: ApiScope) => {
-                      return <option value={scope.name}>{scope.name}</option>;
+                      return <option value={scope.name}>{scope.name}</option>
                     })}
                   </select>
                   <HelpBox helpText="Select an allowed scope" />
@@ -201,7 +198,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                         </button>
                       </div>
                     </div>
-                  );
+                  )
                 })}
               </div>
 
@@ -237,6 +234,6 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
         confirmationText="Delete"
       ></ConfirmModal>
     </div>
-  );
-};
-export default ApiResourceScopeForm;
+  )
+}
+export default ApiResourceScopeForm

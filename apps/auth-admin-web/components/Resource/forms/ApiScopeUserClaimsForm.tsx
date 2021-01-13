@@ -1,62 +1,62 @@
-import { ClaimService } from '../../../services/ClaimService';
-import React, { useEffect, useState } from 'react';
-import HelpBox from '../../Common/HelpBox';
-import NoActiveConnections from '../../Common/NoActiveConnections';
-import { ResourcesService } from '../../../services/ResourcesService';
+import { ClaimService } from '../../../services/ClaimService'
+import React, { useEffect, useState } from 'react'
+import HelpBox from '../../common/HelpBox'
+import NoActiveConnections from '../../common/NoActiveConnections'
+import { ResourcesService } from '../../../services/ResourcesService'
 
 interface Props {
-  apiScopeName: string;
-  claims?: string[];
-  handleNext?: () => void;
-  handleBack?: () => void;
-  handleChanges?: () => void;
+  apiScopeName: string
+  claims?: string[]
+  handleNext?: () => void
+  handleBack?: () => void
+  handleChanges?: () => void
 }
 
 const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
-  const [claims, setClaims] = useState<string[]>([]);
+  const [claims, setClaims] = useState<string[]>([])
 
   useEffect(() => {
-    getAllAvailableClaims();
-  }, []);
+    getAllAvailableClaims()
+  }, [])
 
   const getAllAvailableClaims = async () => {
-    const response = await ClaimService.findAll();
+    const response = await ClaimService.findAll()
     if (response) {
-      setClaims(response.map((x) => x.type));
+      setClaims(response.map((x) => x.type))
     }
-  };
+  }
 
   const add = async (claimName: string) => {
     const response = await ResourcesService.addApiScopeUserClaim(
       props.apiScopeName,
-      claimName
-    );
+      claimName,
+    )
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
     }
-  };
+  }
 
   const remove = async (claimName: string) => {
     const response = await ResourcesService.removeApiScopeUserClaim(
       props.apiScopeName,
-      claimName
-    );
+      claimName,
+    )
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
     }
-  };
+  }
 
   const setValue = (claimName: string, value: boolean) => {
     if (value) {
-      add(claimName);
+      add(claimName)
     } else {
-      remove(claimName);
+      remove(claimName)
     }
-  };
+  }
 
   return (
     <div className="api-scope-user-claims">
@@ -91,7 +91,7 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
                     />
                     <HelpBox helpText={claim} />
                   </div>
-                );
+                )
               })}
             </div>
 
@@ -126,6 +126,6 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
         </div>
       </div>
     </div>
-  );
-};
-export default ApiScopeUserClaimsForm;
+  )
+}
+export default ApiScopeUserClaimsForm

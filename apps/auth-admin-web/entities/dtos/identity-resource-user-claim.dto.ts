@@ -1,4 +1,4 @@
 export class IdentityResourceUserClaimDTO {
-  identityResourceName!: string;
-  claimName!: string;
+  identityResourceName!: string
+  claimName!: string
 }

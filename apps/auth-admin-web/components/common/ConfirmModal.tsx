@@ -1,5 +1,5 @@
-import React from 'react';
-import Modal from 'react-modal';
+import React from 'react'
+import Modal from 'react-modal'
 
 const customStyles = {
   content: {
@@ -11,14 +11,14 @@ const customStyles = {
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
   },
-};
+}
 
 interface Props {
-  modalIsOpen: boolean;
-  headerElement: JSX.Element;
-  closeModal: () => void;
-  confirmation: () => void;
-  confirmationText: string;
+  modalIsOpen: boolean
+  headerElement: JSX.Element
+  closeModal: () => void
+  confirmation: () => void
+  confirmationText: string
 }
 
 const ConfirmModal: React.FC<Props> = (props: Props) => {
@@ -49,7 +49,7 @@ const ConfirmModal: React.FC<Props> = (props: Props) => {
         </div>
       </div>
     </Modal>
-  );
-};
+  )
+}
 
-export default ConfirmModal;
+export default ConfirmModal

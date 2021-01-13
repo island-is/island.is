@@ -1,13 +1,13 @@
-import React from 'react';
-import { useRouter } from 'next/router';
-import ContentWrapper from '../components/Layout/ContentWrapper';
+import React from 'react'
+import { useRouter } from 'next/router'
+import ContentWrapper from '../components/Layout/ContentWrapper'
 
 const ErrorPage: React.FC = () => {
-  const router = useRouter();
+  const router = useRouter()
 
   const toMainPage = () => {
-    router.replace('/');
-  };
+    router.replace('/')
+  }
 
   return (
     <ContentWrapper>
@@ -22,6 +22,6 @@ const ErrorPage: React.FC = () => {
         </button>
       </div>
     </ContentWrapper>
-  );
-};
-export default ErrorPage;
+  )
+}
+export default ErrorPage

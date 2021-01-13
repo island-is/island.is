@@ -1,9 +1,9 @@
-import React from 'react';
-import { ApiResourceStep } from '../../../entities/common/ApiResourceStep';
+import React from 'react'
+import { ApiResourceStep } from '../../../entities/common/ApiResourceStep'
 
 interface Props {
-  handleStepChange: (step: ApiResourceStep) => void;
-  activeStep: ApiResourceStep;
+  handleStepChange: (step: ApiResourceStep) => void
+  activeStep: ApiResourceStep
 }
 
 const ApiResourceStepNav: React.FC<Props> = ({
@@ -75,7 +75,7 @@ const ApiResourceStepNav: React.FC<Props> = ({
       </nav>
       <div className="api-resource__container__content">{children}</div>
     </div>
-  );
-};
+  )
+}
 
-export default ApiResourceStepNav;
+export default ApiResourceStepNav

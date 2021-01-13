@@ -1,7 +1,7 @@
-import React from 'react';
+import React from 'react'
 
 interface Props {
-  title: string;
+  title: string
 }
 
 const NotFound: React.FC<Props> = ({ title, children }) => {
@@ -12,7 +12,7 @@ const NotFound: React.FC<Props> = ({ title, children }) => {
         <div className="not-found__content">{children}</div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default NotFound;
+export default NotFound

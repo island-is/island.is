@@ -1,78 +1,76 @@
-import React, { useEffect, useState } from 'react';
-import ContentWrapper from '../../../components/Layout/ContentWrapper';
-import { useRouter } from 'next/router';
-import { ApiResource } from '../../../entities/models/api-resource.model';
-import { ResourcesService } from '../../../services/ResourcesService';
-import ApiResourceCreateForm from '../../../components/Resource/forms/ApiResourceCreateForm';
-import { ApiResourcesDTO } from '../../../entities/dtos/api-resources-dto';
-import ApiResourceStepNav from '../../../components/Resource/nav/ApiResourceStepNav';
-import { ApiResourceStep } from '../../../entities/common/ApiResourceStep';
-import StepEnd from '../../../components/Common/StepEnd';
-import ApiResourceSecretForm from '../../../components/Resource/forms/ApiResourceSecretForm';
-import ApiResourceScopeForm from '../../../components/Resource/forms/ApiResourceScopeForm';
-import ApiResourceUserClaimForm from '../../../components/Resource/forms/ApiResourceUserClaimForm';
-import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav';
-import { GetServerSideProps, NextPageContext } from 'next';
-import { withAuthentication } from './../../../utils/auth.utils';
+import React, { useEffect, useState } from 'react'
+import ContentWrapper from '../../../components/Layout/ContentWrapper'
+import { useRouter } from 'next/router'
+import { ApiResource } from '../../../entities/models/api-resource.model'
+import { ResourcesService } from '../../../services/ResourcesService'
+import ApiResourceCreateForm from '../../../components/Resource/forms/ApiResourceCreateForm'
+import { ApiResourcesDTO } from '../../../entities/dtos/api-resources-dto'
+import ApiResourceStepNav from '../../../components/Resource/nav/ApiResourceStepNav'
+import { ApiResourceStep } from '../../../entities/common/ApiResourceStep'
+import StepEnd from '../../../components/common/StepEnd'
+import ApiResourceSecretForm from '../../../components/Resource/forms/ApiResourceSecretForm'
+import ApiResourceScopeForm from '../../../components/Resource/forms/ApiResourceScopeForm'
+import ApiResourceUserClaimForm from '../../../components/Resource/forms/ApiResourceUserClaimForm'
+import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
+import { GetServerSideProps, NextPageContext } from 'next'
+import { withAuthentication } from './../../../utils/auth.utils'
 
 const Index: React.FC = () => {
-  const { query } = useRouter();
-  const stepQuery = query.step;
-  const resourceId = query.edit;
-  const [step, setStep] = useState(1);
-  const [apiResource, setApiResource] = useState<ApiResource>(
-    new ApiResource()
-  );
-  const router = useRouter();
+  const { query } = useRouter()
+  const stepQuery = query.step
+  const resourceId = query.edit
+  const [step, setStep] = useState(1)
+  const [apiResource, setApiResource] = useState<ApiResource>(new ApiResource())
+  const router = useRouter()
 
   /** Load the api resource and set the step from query if there is one */
   useEffect(() => {
     async function loadResource() {
       if (resourceId) {
-        const decoded = decodeURIComponent(resourceId as string);
-        await getResource(decoded);
+        const decoded = decodeURIComponent(resourceId as string)
+        await getResource(decoded)
       }
       if (stepQuery) {
-        setStep(+stepQuery);
+        setStep(+stepQuery)
       }
     }
-    loadResource();
-    setStep(1);
-  }, [resourceId]);
+    loadResource()
+    setStep(1)
+  }, [resourceId])
 
   const getResource = async (resourceId: string) => {
-    const response = await ResourcesService.getApiResourceByName(resourceId);
+    const response = await ResourcesService.getApiResourceByName(resourceId)
     if (response) {
-      setApiResource(response);
+      setApiResource(response)
     }
-  };
+  }
 
   const changesMade = () => {
-    getResource(resourceId as string);
-  };
+    getResource(resourceId as string)
+  }
 
   const handleNext = () => {
-    setStep(step + 1);
-  };
+    setStep(step + 1)
+  }
 
   const handleStepChange = (step: number) => {
-    setStep(step);
-  };
+    setStep(step)
+  }
 
   const handleBack = () => {
-    setStep(step - 1);
-  };
+    setStep(step - 1)
+  }
 
   const handleCancel = () => {
-    router.back();
-  };
+    router.back()
+  }
 
   const handleApiResourceSaved = (resourceSaved: ApiResourcesDTO) => {
     if (resourceSaved) {
-      getResource(resourceId as string);
-      handleNext();
+      getResource(resourceId as string)
+      handleNext()
     }
-  };
+  }
 
   switch (step) {
     case ApiResourceStep.ApiResourceBasics: {
@@ -90,7 +88,7 @@ const Index: React.FC = () => {
             />
           </ApiResourceStepNav>
         </ContentWrapper>
-      );
+      )
     }
     case ApiResourceStep.ApiResourceScopes: {
       return (
@@ -109,7 +107,7 @@ const Index: React.FC = () => {
             ></ApiResourceScopeForm>
           </ApiResourceStepNav>
         </ContentWrapper>
-      );
+      )
     }
     case ApiResourceStep.ApiResourceSecrets: {
       return (
@@ -128,7 +126,7 @@ const Index: React.FC = () => {
             />
           </ApiResourceStepNav>
         </ContentWrapper>
-      );
+      )
     }
     case ApiResourceStep.ApiResourceUserClaims: {
       return (
@@ -147,7 +145,7 @@ const Index: React.FC = () => {
             ></ApiResourceUserClaimForm>
           </ApiResourceStepNav>
         </ContentWrapper>
-      );
+      )
     }
 
     default: {
@@ -167,16 +165,16 @@ const Index: React.FC = () => {
             </StepEnd>
           </ApiResourceStepNav>
         </ContentWrapper>
-      );
+      )
     }
   }
-};
-export default Index;
+}
+export default Index
 
 export const getServerSideProps: GetServerSideProps = withAuthentication(
   async (context: NextPageContext) => {
     return {
       props: {},
-    };
-  }
-);
+    }
+  },
+)

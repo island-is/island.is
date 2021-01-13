@@ -1,64 +1,64 @@
-import React from 'react';
-import { ApiScopesDTO } from '../../../entities/dtos/api-scopes-dto';
-import { useRouter } from 'next/router';
-import { useState } from 'react';
-import ResourceListDisplay from './ListDisplay';
-import { ResourcesService } from '../../../services/ResourcesService';
-import { ApiScope } from '../../../entities/models/api-scope.model';
-import ConfirmModal from '../../Common/ConfirmModal';
+import React from 'react'
+import { ApiScopesDTO } from '../../../entities/dtos/api-scopes-dto'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
+import ResourceListDisplay from './ListDisplay'
+import { ResourcesService } from '../../../services/ResourcesService'
+import { ApiScope } from '../../../entities/models/api-scope.model'
+import ConfirmModal from '../../common/ConfirmModal'
 
 const ApiScopeList: React.FC = () => {
-  const [count, setCount] = useState(0);
-  const [page, setPage] = useState(1);
-  const [apiScopes, setApiScopes] = useState<ApiScope[]>([]);
-  const [lastPage, setLastPage] = useState(1);
-  const router = useRouter();
-  const [modalIsOpen, setIsOpen] = React.useState(false);
-  const [scopeToRemove, setScopeToRemove] = React.useState('');
+  const [count, setCount] = useState(0)
+  const [page, setPage] = useState(1)
+  const [apiScopes, setApiScopes] = useState<ApiScope[]>([])
+  const [lastPage, setLastPage] = useState(1)
+  const router = useRouter()
+  const [modalIsOpen, setIsOpen] = React.useState(false)
+  const [scopeToRemove, setScopeToRemove] = React.useState('')
 
   const edit = (apiScope: ApiScopesDTO) => {
-    router.push(`/resource/api-scope/${encodeURIComponent(apiScope.name)}`);
-  };
+    router.push(`/resource/api-scope/${encodeURIComponent(apiScope.name)}`)
+  }
 
   const getResources = async (page: number, count: number) => {
     const response = await ResourcesService.findAndCountAllApiScopes(
       page,
-      count
-    );
+      count,
+    )
     if (response) {
       const resourceArr = response.rows.sort((c1, c2) => {
-        if (!c1.archived && !c2.archived) return 0;
-        if (!c1.archived && c2.archived) return 1;
-        if (c1.archived && !c2.archived) return -1;
-        return 0;
-      });
-      setApiScopes(resourceArr.reverse());
-      setLastPage(Math.ceil(response.count / count));
+        if (!c1.archived && !c2.archived) return 0
+        if (!c1.archived && c2.archived) return 1
+        if (c1.archived && !c2.archived) return -1
+        return 0
+      })
+      setApiScopes(resourceArr.reverse())
+      setLastPage(Math.ceil(response.count / count))
     }
-  };
+  }
 
   const handlePageChange = async (page: number, countPerPage: number) => {
-    getResources(page, countPerPage);
-    setPage(page);
-    setCount(countPerPage);
-  };
+    getResources(page, countPerPage)
+    setPage(page)
+    setCount(countPerPage)
+  }
 
   const remove = async () => {
-    const response = await ResourcesService.deleteApiScope(scopeToRemove);
+    const response = await ResourcesService.deleteApiScope(scopeToRemove)
     if (response) {
-      getResources(page, count);
+      getResources(page, count)
     }
 
-    closeModal();
-  };
+    closeModal()
+  }
 
   const confirmRemove = async (name: string) => {
-    setScopeToRemove(name);
-    setIsOpen(true);
-  };
+    setScopeToRemove(name)
+    setIsOpen(true)
+  }
 
   function closeModal() {
-    setIsOpen(false);
+    setIsOpen(false)
   }
 
   const setHeaderElement = () => {
@@ -67,8 +67,8 @@ const ApiScopeList: React.FC = () => {
         Are you sure want to archive this Api scope:{' '}
         <span>{scopeToRemove}</span>
       </p>
-    );
-  };
+    )
+  }
 
   return (
     <div>
@@ -90,7 +90,7 @@ const ApiScopeList: React.FC = () => {
         confirmationText="Archive"
       ></ConfirmModal>
     </div>
-  );
-};
+  )
+}
 
-export default ApiScopeList;
+export default ApiScopeList

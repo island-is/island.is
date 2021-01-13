@@ -1,78 +1,78 @@
-import React, { useEffect, useState } from 'react';
-import IdentityResourceCreateForm from '../../../components/Resource/forms/IdentityResourceCreateForm';
-import IdentityResourcesDTO from '../../../entities/dtos/identity-resources.dto';
-import ContentWrapper from '../../../components/Layout/ContentWrapper';
-import { useRouter } from 'next/router';
-import { ResourcesService } from '../../../services/ResourcesService';
-import { IdentityResource } from '../../../entities/models/identity-resource.model';
-import IdentityResourceStepNav from '../../../components/Resource/nav/IdentityResourceStepNav';
-import { IdentityResourceStep } from '../../../entities/common/IdentityResourcesStep';
-import IdentityResourceUserClaimsForm from '../../../components/Resource/forms/IdentityResourceUserClaimsForm';
-import StepEnd from '../../../components/Common/StepEnd';
-import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav';
-import { GetServerSideProps, NextPageContext } from 'next';
-import { withAuthentication } from './../../../utils/auth.utils';
+import React, { useEffect, useState } from 'react'
+import IdentityResourceCreateForm from '../../../components/Resource/forms/IdentityResourceCreateForm'
+import IdentityResourcesDTO from '../../../entities/dtos/identity-resources.dto'
+import ContentWrapper from '../../../components/Layout/ContentWrapper'
+import { useRouter } from 'next/router'
+import { ResourcesService } from '../../../services/ResourcesService'
+import { IdentityResource } from '../../../entities/models/identity-resource.model'
+import IdentityResourceStepNav from '../../../components/Resource/nav/IdentityResourceStepNav'
+import { IdentityResourceStep } from '../../../entities/common/IdentityResourcesStep'
+import IdentityResourceUserClaimsForm from '../../../components/Resource/forms/IdentityResourceUserClaimsForm'
+import StepEnd from '../../../components/common/StepEnd'
+import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
+import { GetServerSideProps, NextPageContext } from 'next'
+import { withAuthentication } from './../../../utils/auth.utils'
 
 const Index: React.FC = () => {
-  const { query } = useRouter();
-  const stepQuery = query.step;
-  const resourceId = query.edit;
-  const [step, setStep] = useState(1);
+  const { query } = useRouter()
+  const stepQuery = query.step
+  const resourceId = query.edit
+  const [step, setStep] = useState(1)
   const [identityResource, setIdentityResource] = useState<IdentityResource>(
-    new IdentityResource()
-  );
-  const router = useRouter();
+    new IdentityResource(),
+  )
+  const router = useRouter()
 
   /** Load the resource from query if there is one */
   useEffect(() => {
     async function loadResource() {
       if (resourceId) {
-        const decoded = decodeURIComponent(resourceId as string);
-        await getResource(decoded);
+        const decoded = decodeURIComponent(resourceId as string)
+        await getResource(decoded)
       }
       if (stepQuery) {
-        setStep(+stepQuery);
+        setStep(+stepQuery)
       }
     }
-    loadResource();
-    setStep(1);
-  }, [resourceId]);
+    loadResource()
+    setStep(1)
+  }, [resourceId])
 
   const getResource = async (resourceId: string) => {
     const response = await ResourcesService.getIdentityResourceByName(
-      resourceId
-    );
+      resourceId,
+    )
     if (response) {
-      setIdentityResource(response);
+      setIdentityResource(response)
     }
-  };
+  }
 
   const changesMade = () => {
-    getResource(resourceId as string);
-  };
+    getResource(resourceId as string)
+  }
 
   const handleNext = () => {
-    setStep(step + 1);
-  };
+    setStep(step + 1)
+  }
 
   const handleStepChange = (step: number) => {
-    setStep(step);
-  };
+    setStep(step)
+  }
 
   const handleBack = () => {
-    setStep(step - 1);
-  };
+    setStep(step - 1)
+  }
 
   const handleCancel = () => {
-    router.back();
-  };
+    router.back()
+  }
 
   const handleIdentityResourceSaved = (resourceSaved: IdentityResourcesDTO) => {
     if (resourceSaved) {
-      getResource(resourceId as string);
-      handleNext();
+      getResource(resourceId as string)
+      handleNext()
     }
-  };
+  }
 
   switch (step) {
     case IdentityResourceStep.IdentityResource: {
@@ -90,7 +90,7 @@ const Index: React.FC = () => {
             />
           </IdentityResourceStepNav>
         </ContentWrapper>
-      );
+      )
     }
     case IdentityResourceStep.Claims: {
       return (
@@ -109,7 +109,7 @@ const Index: React.FC = () => {
             />
           </IdentityResourceStepNav>
         </ContentWrapper>
-      );
+      )
     }
     default: {
       return (
@@ -129,16 +129,16 @@ const Index: React.FC = () => {
             </StepEnd>
           </IdentityResourceStepNav>
         </ContentWrapper>
-      );
+      )
     }
   }
-};
-export default Index;
+}
+export default Index
 
 export const getServerSideProps: GetServerSideProps = withAuthentication(
   async (context: NextPageContext) => {
     return {
       props: {},
-    };
-  }
-);
+    }
+  },
+)

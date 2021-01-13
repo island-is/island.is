@@ -1,9 +1,9 @@
 export class ClientPostLogoutRedirectUriDTO {
   constructor() {
-    this.clientId = null;
-    this.redirectUri = null;
+    this.clientId = null
+    this.redirectUri = null
   }
 
-  clientId?: string;
-  redirectUri?: string;
+  clientId?: string
+  redirectUri?: string
 }

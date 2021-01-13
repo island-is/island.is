@@ -1,23 +1,23 @@
-import React from 'react';
-import ContentWrapper from './../../../components/Layout/ContentWrapper';
-import IdentityResourceCreateForm from '../../../components/Resource/forms/IdentityResourceCreateForm';
-import IdentityResourcesDTO from './../../../entities/dtos/identity-resources.dto';
-import { useRouter } from 'next/router';
-import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav';
-import { GetServerSideProps, NextPageContext } from 'next';
-import { withAuthentication } from './../../../utils/auth.utils';
+import React from 'react'
+import ContentWrapper from './../../../components/Layout/ContentWrapper'
+import IdentityResourceCreateForm from '../../../components/Resource/forms/IdentityResourceCreateForm'
+import IdentityResourcesDTO from './../../../entities/dtos/identity-resources.dto'
+import { useRouter } from 'next/router'
+import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
+import { GetServerSideProps, NextPageContext } from 'next'
+import { withAuthentication } from './../../../utils/auth.utils'
 
 const Index: React.FC = () => {
-  const router = useRouter();
+  const router = useRouter()
   const handleSave = (data: IdentityResourcesDTO) => {
     router.push(
-      `/resource/identity-resource/${encodeURIComponent(data.name)}?step=2`
-    );
-  };
+      `/resource/identity-resource/${encodeURIComponent(data.name)}?step=2`,
+    )
+  }
 
   const handleCancel = () => {
-    router.back();
-  };
+    router.back()
+  }
 
   return (
     <ContentWrapper>
@@ -28,14 +28,14 @@ const Index: React.FC = () => {
         handleCancel={handleCancel}
       />
     </ContentWrapper>
-  );
-};
-export default Index;
+  )
+}
+export default Index
 
 export const getServerSideProps: GetServerSideProps = withAuthentication(
   async (context: NextPageContext) => {
     return {
       props: {},
-    };
-  }
-);
+    }
+  },
+)

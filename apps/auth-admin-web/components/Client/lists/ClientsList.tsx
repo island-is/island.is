@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { Component } from 'react';
-import Paginator from '../../Common/Paginator';
-import Link from 'next/link';
-import { ClientService } from '../../../services/ClientService';
-import ConfirmModal from '../../Common/ConfirmModal';
-import { Client } from './../../../entities/models/client.model';
+import React, { Component } from 'react'
+import Paginator from '../../common/Paginator'
+import Link from 'next/link'
+import { ClientService } from '../../../services/ClientService'
+import ConfirmModal from '../../common/ConfirmModal'
+import { Client } from './../../../entities/models/client.model'
 
 class ClientsList extends Component {
   state = {
@@ -14,46 +14,46 @@ class ClientsList extends Component {
     page: 1,
     modalIsOpen: false,
     clientToRemove: '',
-  };
+  }
 
   getClients = async (page: number, count: number): Promise<void> => {
-    const response = await ClientService.findAndCountAll(page, count);
+    const response = await ClientService.findAndCountAll(page, count)
     if (response) {
       const clientsArr = response.rows.sort((c1, c2) => {
-        if (!c1.archived && !c2.archived) return 0;
-        if (!c1.archived && c2.archived) return 1;
-        if (c1.archived && !c2.archived) return -1;
-        return 0;
-      });
+        if (!c1.archived && !c2.archived) return 0
+        if (!c1.archived && c2.archived) return 1
+        if (c1.archived && !c2.archived) return -1
+        return 0
+      })
 
       this.setState({
         clients: clientsArr.reverse(),
         rowCount: response.count,
-      });
+      })
     }
-  };
+  }
 
   handlePageChange = async (page: number, count: number): Promise<void> => {
-    this.getClients(page, count);
-    this.setState({ page: page, count: count });
-  };
+    this.getClients(page, count)
+    this.setState({ page: page, count: count })
+  }
 
   archive = async (): Promise<void> => {
-    await ClientService.delete(this.state.clientToRemove);
-    this.getClients(this.state.page, this.state.count);
+    await ClientService.delete(this.state.clientToRemove)
+    this.getClients(this.state.page, this.state.count)
 
-    this.closeModal();
-  };
+    this.closeModal()
+  }
 
   confirmArchive = async (clientId: string): Promise<void> => {
-    this.setState({ clientToRemove: clientId });
+    this.setState({ clientToRemove: clientId })
 
-    this.setState({ modalIsOpen: true });
-  };
+    this.setState({ modalIsOpen: true })
+  }
 
   closeModal = (): void => {
-    this.setState({ modalIsOpen: false });
-  };
+    this.setState({ modalIsOpen: false })
+  }
 
   setHeaderElement = (): JSX.Element => {
     return (
@@ -61,8 +61,8 @@ class ClientsList extends Component {
         Are you sure want to archive this client:{' '}
         <span>{this.state.clientToRemove}</span>
       </p>
-    );
-  };
+    )
+  }
 
   render(): JSX.Element {
     return (
@@ -103,7 +103,7 @@ class ClientsList extends Component {
                           <td className="clients__table__button">
                             <Link
                               href={`client/${encodeURIComponent(
-                                client.clientId
+                                client.clientId,
                               )}`}
                             >
                               <button
@@ -134,7 +134,7 @@ class ClientsList extends Component {
                             </button>
                           </td>
                         </tr>
-                      );
+                      )
                     })}
                   </tbody>
                 </table>
@@ -154,8 +154,8 @@ class ClientsList extends Component {
           confirmationText="Archive"
         ></ConfirmModal>
       </div>
-    );
+    )
   }
 }
 
-export default ClientsList;
+export default ClientsList

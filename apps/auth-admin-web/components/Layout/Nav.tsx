@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+import React from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 const Nav: React.FC = () => {
-  const router = useRouter();
+  const router = useRouter()
   return (
     <nav className="nav">
       <ul>
@@ -45,7 +45,7 @@ const Nav: React.FC = () => {
         </li>
       </ul>
     </nav>
-  );
-};
+  )
+}
 
-export default Nav;
+export default Nav

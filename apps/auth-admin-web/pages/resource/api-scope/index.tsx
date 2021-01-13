@@ -1,22 +1,22 @@
-import ContentWrapper from './../../../components/Layout/ContentWrapper';
-import React from 'react';
-import ApiScopeCreateForm from '../../../components/Resource/forms/ApiScopeCreateForm';
-import { ApiScopesDTO } from './../../../entities/dtos/api-scopes-dto';
-import { useRouter } from 'next/router';
-import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav';
-import { GetServerSideProps, NextPageContext } from 'next';
-import { withAuthentication } from './../../../utils/auth.utils';
+import ContentWrapper from './../../../components/Layout/ContentWrapper'
+import React from 'react'
+import ApiScopeCreateForm from '../../../components/Resource/forms/ApiScopeCreateForm'
+import { ApiScopesDTO } from './../../../entities/dtos/api-scopes-dto'
+import { useRouter } from 'next/router'
+import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
+import { GetServerSideProps, NextPageContext } from 'next'
+import { withAuthentication } from './../../../utils/auth.utils'
 
 const Index: React.FC = () => {
-  const router = useRouter();
+  const router = useRouter()
 
   const handleSave = (data: ApiScopesDTO) => {
-    router.push(`/resource/api-scope/${encodeURIComponent(data.name)}?step=2`);
-  };
+    router.push(`/resource/api-scope/${encodeURIComponent(data.name)}?step=2`)
+  }
 
   const handleCancel = () => {
-    router.back();
-  };
+    router.back()
+  }
 
   return (
     <ContentWrapper>
@@ -27,14 +27,14 @@ const Index: React.FC = () => {
         apiScope={new ApiScopesDTO()}
       />
     </ContentWrapper>
-  );
-};
-export default Index;
+  )
+}
+export default Index
 
 export const getServerSideProps: GetServerSideProps = withAuthentication(
   async (context: NextPageContext) => {
     return {
       props: {},
-    };
-  }
-);
+    }
+  },
+)

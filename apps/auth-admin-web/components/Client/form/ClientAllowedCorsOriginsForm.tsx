@@ -1,77 +1,72 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { ErrorMessage } from '@hookform/error-message';
-import HelpBox from '../../Common/HelpBox';
-import { ClientAllowedCorsOriginDTO } from '../../../entities/dtos/client-allowed-cors-origin.dto';
-import NoActiveConnections from '../../Common/NoActiveConnections';
-import { ClientService } from '../../../services/ClientService';
-import ConfirmModal from '../../Common/ConfirmModal';
+import React, { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { ErrorMessage } from '@hookform/error-message'
+import HelpBox from '../../common/HelpBox'
+import { ClientAllowedCorsOriginDTO } from '../../../entities/dtos/client-allowed-cors-origin.dto'
+import NoActiveConnections from '../../common/NoActiveConnections'
+import { ClientService } from '../../../services/ClientService'
+import ConfirmModal from '../../common/ConfirmModal'
 
 interface Props {
-  clientId: string;
-  defaultOrigin?: string;
-  origins?: string[];
-  handleNext?: () => void;
-  handleBack?: () => void;
-  handleChanges?: () => void;
+  clientId: string
+  defaultOrigin?: string
+  origins?: string[]
+  handleNext?: () => void
+  handleBack?: () => void
+  handleChanges?: () => void
 }
 
 interface FormOutput {
-  origin: string;
+  origin: string
 }
 
 const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ClientAllowedCorsOriginDTO>();
-  const { isSubmitting } = formState;
+  const { register, handleSubmit, errors, formState } = useForm<
+    ClientAllowedCorsOriginDTO
+  >()
+  const { isSubmitting } = formState
   const [defaultOrigin, setDefaultOrigin] = useState(
-    !props.origins || props.origins.length === 0 ? props.defaultOrigin : ''
-  );
-  const [modalIsOpen, setIsOpen] = React.useState(false);
-  const [corsOriginToRemove, setCorsOriginToRemove] = React.useState('');
+    !props.origins || props.origins.length === 0 ? props.defaultOrigin : '',
+  )
+  const [modalIsOpen, setIsOpen] = React.useState(false)
+  const [corsOriginToRemove, setCorsOriginToRemove] = React.useState('')
 
   const add = async (data: FormOutput) => {
-    const allowedCorsOrigin = new ClientAllowedCorsOriginDTO();
-    allowedCorsOrigin.clientId = props.clientId;
-    allowedCorsOrigin.origin = data.origin;
+    const allowedCorsOrigin = new ClientAllowedCorsOriginDTO()
+    allowedCorsOrigin.clientId = props.clientId
+    allowedCorsOrigin.origin = data.origin
 
-    const response = await ClientService.addAllowedCorsOrigin(
-      allowedCorsOrigin
-    );
+    const response = await ClientService.addAllowedCorsOrigin(allowedCorsOrigin)
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
-      setDefaultOrigin('');
-      document.getElementById('corsForm').reset();
+      setDefaultOrigin('')
+      document.getElementById('corsForm').reset()
     }
-  };
+  }
 
   const remove = async () => {
     const response = await ClientService.removeAllowedCorsOrigin(
       props.clientId,
-      corsOriginToRemove
-    );
+      corsOriginToRemove,
+    )
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
     }
 
-    closeModal();
-  };
+    closeModal()
+  }
 
   const confirmRemove = async (name: string) => {
-    setCorsOriginToRemove(name);
-    setIsOpen(true);
-  };
+    setCorsOriginToRemove(name)
+    setIsOpen(true)
+  }
 
   function closeModal() {
-    setIsOpen(false);
+    setIsOpen(false)
   }
 
   const setHeaderElement = () => {
@@ -80,8 +75,8 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
         Are you sure want to delete this cors origin:{' '}
         <span>{corsOriginToRemove}</span>
       </p>
-    );
-  };
+    )
+  }
 
   return (
     <div>
@@ -160,7 +155,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
                           </button>
                         </div>
                       </div>
-                    );
+                    )
                   })}
                 </div>
 
@@ -197,6 +192,6 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
         confirmationText="Delete"
       ></ConfirmModal>
     </div>
-  );
-};
-export default ClientAllowedCorsOriginsForm;
+  )
+}
+export default ClientAllowedCorsOriginsForm

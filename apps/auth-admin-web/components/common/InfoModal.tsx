@@ -1,5 +1,5 @@
-import React from 'react';
-import Modal from 'react-modal';
+import React from 'react'
+import Modal from 'react-modal'
 
 const customStyles = {
   content: {
@@ -11,15 +11,15 @@ const customStyles = {
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
   },
-};
+}
 
 interface Props {
-  modalIsOpen: boolean;
-  headerText: string;
-  closeModal: () => void;
-  handleButtonClicked: () => void;
-  buttonText: string;
-  infoText: string;
+  modalIsOpen: boolean
+  headerText: string
+  closeModal: () => void
+  handleButtonClicked: () => void
+  buttonText: string
+  infoText: string
 }
 
 const InfoModal: React.FC<Props> = (props: Props) => {
@@ -42,7 +42,7 @@ const InfoModal: React.FC<Props> = (props: Props) => {
         </div>
       </div>
     </Modal>
-  );
-};
+  )
+}
 
-export default InfoModal;
+export default InfoModal

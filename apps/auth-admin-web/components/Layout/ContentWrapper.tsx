@@ -1,7 +1,7 @@
-import React from 'react';
-import Header from './Header';
-import Nav from './Nav';
-import StatusBar from './StatusBar';
+import React from 'react'
+import Header from './Header'
+import Nav from './Nav'
+import StatusBar from './StatusBar'
 
 const ContentWrapper: React.FC = ({ children }) => {
   return (
@@ -11,6 +11,6 @@ const ContentWrapper: React.FC = ({ children }) => {
       <StatusBar></StatusBar>
       {children}
     </div>
-  );
-};
-export default ContentWrapper;
+  )
+}
+export default ContentWrapper

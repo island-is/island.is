@@ -1,9 +1,9 @@
-import React from 'react';
+import React from 'react'
 
 interface Props {
-  handleButtonFinishedClick?: () => void;
-  buttonText: string;
-  title: string;
+  handleButtonFinishedClick?: () => void
+  buttonText: string
+  title: string
 }
 
 const StepEnd: React.FC<Props> = ({
@@ -31,7 +31,7 @@ const StepEnd: React.FC<Props> = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default StepEnd;
+export default StepEnd

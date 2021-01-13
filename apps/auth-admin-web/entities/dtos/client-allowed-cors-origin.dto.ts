@@ -1,4 +1,4 @@
 export class ClientAllowedCorsOriginDTO {
-  origin!: string;
-  clientId!: string;
+  origin!: string
+  clientId!: string
 }

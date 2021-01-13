@@ -1,5 +1,5 @@
 export class ClientClaimDTO {
-  clientId!: string;
-  type!: string;
-  value!: string;
+  clientId!: string
+  type!: string
+  value!: string
 }

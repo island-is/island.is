@@ -1,6 +1,6 @@
-import NextAuth from 'next-auth';
-import Providers from 'next-auth/providers';
-import { TokenService } from '../../../services/TokenService';
+import NextAuth from 'next-auth'
+import Providers from 'next-auth/providers'
+import { TokenService } from '../../../services/TokenService'
 
 const providers = [
   Providers.IdentityServer4({
@@ -11,21 +11,21 @@ const providers = [
     clientId: process.env.IDENTITYSERVER_CLIENT_ID,
     clientSecret: process.env.IDENTITYSERVER_SECRET,
   }),
-];
+]
 
-const callbacks = {};
+const callbacks = {}
 
 callbacks.signIn = async function signIn(user, account, profile) {
   if (account.provider === 'identity-server') {
-    user.nationalId = profile.nationalId;
-    user.accessToken = account.accessToken;
-    user.refreshToken = account.refreshToken;
-    user.idToken = profile.idToken;
-    return true;
+    user.nationalId = profile.nationalId
+    user.accessToken = account.accessToken
+    user.refreshToken = account.refreshToken
+    user.idToken = profile.idToken
+    return true
   }
 
-  return false;
-};
+  return false
+}
 
 callbacks.jwt = async function jwt(token, user) {
   if (user) {
@@ -35,45 +35,43 @@ callbacks.jwt = async function jwt(token, user) {
       accessToken: user.accessToken,
       refreshToken: user.refreshToken,
       idToken: user.idToken,
-    };
-  }
-
-  const decoded = parseJwt(token.accessToken);
-
-  if (decoded?.exp && new Date() > new Date(decoded.exp * 1000)) {
-    try {
-      [
-        token.accessToken,
-        token.refreshToken,
-      ] = await TokenService.refreshAccessToken(token.refreshToken);
-    } catch (error) {
-      console.error(error, 'Error refreshing access token.');
     }
   }
 
-  return token;
-};
+  const decoded = parseJwt(token.accessToken)
 
-callbacks.session = async function session(session, token) {
-  session.accessToken = token.accessToken;
-  session.refreshToken = token.refreshToken;
-  session.idToken = token.idToken;
-  const decoded = parseJwt(session.accessToken);
-  session.expires = new Date(decoded.exp * 1000);
-  return session;
-};
+  if (decoded?.exp && new Date() > new Date(decoded.exp * 1000)) {
+    try {
+      ;[
+        token.accessToken,
+        token.refreshToken,
+      ] = await TokenService.refreshAccessToken(token.refreshToken)
+    } catch (error) {
+      console.error(error, 'Error refreshing access token.')
+    }
+  }
 
-function parseJwt(token) {
-  let base64Url = token.split('.')[1];
-  let base64 = base64Url.replace('-', '+').replace('_', '/');
-  let decodedData = JSON.parse(
-    Buffer.from(base64, 'base64').toString('binary')
-  );
-
-  return decodedData;
+  return token
 }
 
-const options = { providers, callbacks };
+callbacks.session = async function session(session, token) {
+  session.accessToken = token.accessToken
+  session.refreshToken = token.refreshToken
+  session.idToken = token.idToken
+  const decoded = parseJwt(session.accessToken)
+  session.expires = new Date(decoded.exp * 1000)
+  return session
+}
+
+function parseJwt(token) {
+  let base64Url = token.split('.')[1]
+  let base64 = base64Url.replace('-', '+').replace('_', '/')
+  let decodedData = JSON.parse(Buffer.from(base64, 'base64').toString('binary'))
+
+  return decodedData
+}
+
+const options = { providers, callbacks }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default (req, res) => NextAuth(req, res, options);
+export default (req, res) => NextAuth(req, res, options)

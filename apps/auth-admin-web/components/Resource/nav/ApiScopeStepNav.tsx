@@ -1,9 +1,9 @@
-import React from 'react';
-import { ApiScopeStep } from '../../../entities/common/ApiScopeStep';
+import React from 'react'
+import { ApiScopeStep } from '../../../entities/common/ApiScopeStep'
 
 interface Props {
-  handleStepChange: (step: ApiScopeStep) => void;
-  activeStep?: ApiScopeStep;
+  handleStepChange: (step: ApiScopeStep) => void
+  activeStep?: ApiScopeStep
 }
 
 const IdentityResourceStepNav: React.FC<Props> = ({
@@ -37,7 +37,7 @@ const IdentityResourceStepNav: React.FC<Props> = ({
       </nav>
       <div className="api-scope__container__content">{children}</div>
     </div>
-  );
-};
+  )
+}
 
-export default IdentityResourceStepNav;
+export default IdentityResourceStepNav

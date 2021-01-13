@@ -1,4 +1,4 @@
 export class ClientAllowedScopeDTO {
-  clientId!: string;
-  scopeName!: string;
+  clientId!: string
+  scopeName!: string
 }

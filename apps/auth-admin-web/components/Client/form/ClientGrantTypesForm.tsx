@@ -1,66 +1,66 @@
-import React, { useEffect, useState } from 'react';
-import HelpBox from '../../Common/HelpBox';
-import { GrantType } from '../../../entities/models/grant-type.model';
-import { ClientGrantTypeDTO } from '../../../entities/dtos/client-grant-type.dto';
-import NoActiveConnections from '../../Common/NoActiveConnections';
-import { ClientService } from '../../../services/ClientService';
-import { GrantService } from '../../../services/GrantService';
+import React, { useEffect, useState } from 'react'
+import HelpBox from '../../common/HelpBox'
+import { GrantType } from '../../../entities/models/grant-type.model'
+import { ClientGrantTypeDTO } from '../../../entities/dtos/client-grant-type.dto'
+import NoActiveConnections from '../../common/NoActiveConnections'
+import { ClientService } from '../../../services/ClientService'
+import { GrantService } from '../../../services/GrantService'
 
 interface Props {
-  clientId: string;
-  grantTypes?: string[]; // What is currently valid for updating existing Clients
-  handleNext?: () => void;
-  handleBack?: () => void;
-  handleChanges?: () => void;
+  clientId: string
+  grantTypes?: string[] // What is currently valid for updating existing Clients
+  handleNext?: () => void
+  handleBack?: () => void
+  handleChanges?: () => void
 }
 
 const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
-  const [grantTypes, setGrantTypes] = useState<GrantType[]>([]);
+  const [grantTypes, setGrantTypes] = useState<GrantType[]>([])
 
   useEffect(() => {
-    getGrantTypes();
-  }, []);
+    getGrantTypes()
+  }, [])
 
   const getGrantTypes = async () => {
-    const response = await GrantService.findAll();
+    const response = await GrantService.findAll()
     if (response) {
-      setGrantTypes(response);
+      setGrantTypes(response)
     }
-  };
+  }
 
   const add = async (grantType: string) => {
     const createObj: ClientGrantTypeDTO = {
       grantType: grantType,
       clientId: props.clientId,
-    };
+    }
 
-    const response = await ClientService.addGrantType(createObj);
+    const response = await ClientService.addGrantType(createObj)
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
     }
-  };
+  }
 
   const remove = async (grantType: string) => {
     const response = await ClientService.removeGrantType(
       props.clientId,
-      grantType
-    );
+      grantType,
+    )
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
     }
-  };
+  }
 
   const setValue = (grantType: string, value: boolean) => {
     if (value) {
-      add(grantType);
+      add(grantType)
     } else {
-      remove(grantType);
+      remove(grantType)
     }
-  };
+  }
 
   return (
     <div className="client-grant-types">
@@ -91,7 +91,7 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
                       name={grantType.name}
                       className="client__checkbox"
                       defaultChecked={props.grantTypes?.includes(
-                        grantType.name
+                        grantType.name,
                       )}
                       onChange={(e) =>
                         setValue(grantType.name, e.target.checked)
@@ -100,7 +100,7 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
                     />
                     <HelpBox helpText={grantType.description} />
                   </div>
-                );
+                )
               })}
             </div>
 
@@ -135,6 +135,6 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
         </div>
       </div>
     </div>
-  );
-};
-export default ClientGrantTypesForm;
+  )
+}
+export default ClientGrantTypesForm

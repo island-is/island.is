@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import Link from 'next/link';
-import React from 'react';
-import { useRouter } from 'next/router';
+import Link from 'next/link'
+import React from 'react'
+import { useRouter } from 'next/router'
 
 const ResourcesTabsNav: React.FC = () => {
-  const router = useRouter();
+  const router = useRouter()
   return (
     <nav className="resource-tab-nav">
       <ul>
@@ -53,7 +53,7 @@ const ResourcesTabsNav: React.FC = () => {
         </li>
       </ul>
     </nav>
-  );
-};
+  )
+}
 
-export default ResourcesTabsNav;
+export default ResourcesTabsNav

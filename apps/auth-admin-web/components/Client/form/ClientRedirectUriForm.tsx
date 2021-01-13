@@ -1,73 +1,70 @@
-import React, { useState } from 'react';
-import { ClientRedirectUriDTO } from '../../../entities/dtos/client-redirect-uri.dto';
-import { useForm } from 'react-hook-form';
-import { ErrorMessage } from '@hookform/error-message';
-import HelpBox from '../../Common/HelpBox';
-import NoActiveConnections from '../../Common/NoActiveConnections';
-import { ClientService } from '../../../services/ClientService';
-import ConfirmModal from '../../Common/ConfirmModal';
+import React, { useState } from 'react'
+import { ClientRedirectUriDTO } from '../../../entities/dtos/client-redirect-uri.dto'
+import { useForm } from 'react-hook-form'
+import { ErrorMessage } from '@hookform/error-message'
+import HelpBox from '../../common/HelpBox'
+import NoActiveConnections from '../../common/NoActiveConnections'
+import { ClientService } from '../../../services/ClientService'
+import ConfirmModal from '../../common/ConfirmModal'
 
 interface Props {
-  clientId: string;
-  defaultUrl?: string;
-  uris?: string[];
-  handleNext?: () => void;
-  handleBack?: () => void;
-  handleChanges?: () => void;
+  clientId: string
+  defaultUrl?: string
+  uris?: string[]
+  handleNext?: () => void
+  handleBack?: () => void
+  handleChanges?: () => void
 }
 
 const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ClientRedirectUriDTO>();
-  const { isSubmitting } = formState;
+  const { register, handleSubmit, errors, formState } = useForm<
+    ClientRedirectUriDTO
+  >()
+  const { isSubmitting } = formState
   const [defaultUrl, setDefaultUrl] = useState(
-    !props.uris || props.uris.length === 0 ? props.defaultUrl : ''
-  );
-  const [modalIsOpen, setIsOpen] = React.useState(false);
-  const [uriToRemove, setUriToRemove] = React.useState('');
+    !props.uris || props.uris.length === 0 ? props.defaultUrl : '',
+  )
+  const [modalIsOpen, setIsOpen] = React.useState(false)
+  const [uriToRemove, setUriToRemove] = React.useState('')
 
   const add = async (data: ClientRedirectUriDTO) => {
-    const clientRedirect = new ClientRedirectUriDTO();
-    clientRedirect.clientId = props.clientId;
-    clientRedirect.redirectUri = data.redirectUri;
+    const clientRedirect = new ClientRedirectUriDTO()
+    clientRedirect.clientId = props.clientId
+    clientRedirect.redirectUri = data.redirectUri
 
-    const response = await ClientService.addRedirectUri(clientRedirect);
+    const response = await ClientService.addRedirectUri(clientRedirect)
 
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
 
-      document.getElementById('redirectForm').reset();
-      setDefaultUrl('');
+      document.getElementById('redirectForm').reset()
+      setDefaultUrl('')
     }
-  };
+  }
 
   const remove = async () => {
     const response = await ClientService.removeRedirectUri(
       props.clientId,
-      uriToRemove
-    );
+      uriToRemove,
+    )
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
     }
 
-    closeModal();
-  };
+    closeModal()
+  }
 
   const confirmRemove = async (name: string) => {
-    setUriToRemove(name);
-    setIsOpen(true);
-  };
+    setUriToRemove(name)
+    setIsOpen(true)
+  }
 
   function closeModal() {
-    setIsOpen(false);
+    setIsOpen(false)
   }
 
   const setHeaderElement = () => {
@@ -76,8 +73,8 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
         Are you sure want to delete this redirect uri:{' '}
         <span>{uriToRemove}</span>
       </p>
-    );
-  };
+    )
+  }
 
   return (
     <div>
@@ -153,7 +150,7 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                         </button>
                       </div>
                     </div>
-                  );
+                  )
                 })}
               </div>
 
@@ -191,6 +188,6 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
         confirmationText="Delete"
       ></ConfirmModal>
     </div>
-  );
-};
-export default ClientRedirectUriForm;
+  )
+}
+export default ClientRedirectUriForm

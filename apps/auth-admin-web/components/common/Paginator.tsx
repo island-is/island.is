@@ -1,41 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 
 interface Props {
-  lastPage: number;
-  handlePageChange: (page: number, count: number) => void;
+  lastPage: number
+  handlePageChange: (page: number, count: number) => void
 }
 
 const Paginator: React.FC<Props> = (props: Props) => {
-  const [page, setPage] = useState<number>(1);
-  const [count, setCount] = useState<number>(30);
+  const [page, setPage] = useState<number>(1)
+  const [count, setCount] = useState<number>(30)
 
   // Runs only once and trickers initial page change of parent
   useEffect(() => {
-    props.handlePageChange(page, count);
-  }, []);
+    props.handlePageChange(page, count)
+  }, [])
 
   const changeCount = (count: string) => {
-    setPage(1);
-    setCount(+count);
-    props.handlePageChange(1, +count);
-  };
+    setPage(1)
+    setCount(+count)
+    props.handlePageChange(1, +count)
+  }
 
   const next = async () => {
     if (page === props.lastPage) {
-      return;
+      return
     }
 
-    setPage(page + 1);
-    props.handlePageChange(page + 1, count);
-  };
+    setPage(page + 1)
+    props.handlePageChange(page + 1, count)
+  }
 
   const previous = async () => {
     if (page === 1) {
-      return;
+      return
     }
-    setPage(page - 1);
-    props.handlePageChange(page - 1, count);
-  };
+    setPage(page - 1)
+    props.handlePageChange(page - 1, count)
+  }
 
   return (
     <div className="paginator">
@@ -79,7 +79,7 @@ const Paginator: React.FC<Props> = (props: Props) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Paginator;
+export default Paginator

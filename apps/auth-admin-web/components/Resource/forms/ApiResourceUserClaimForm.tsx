@@ -1,62 +1,62 @@
-import { ClaimService } from '../../../services/ClaimService';
-import React, { useEffect, useState } from 'react';
-import HelpBox from '../../Common/HelpBox';
-import NoActiveConnections from '../../Common/NoActiveConnections';
-import { ResourcesService } from '../../../services/ResourcesService';
+import { ClaimService } from '../../../services/ClaimService'
+import React, { useEffect, useState } from 'react'
+import HelpBox from '../../common/HelpBox'
+import NoActiveConnections from '../../common/NoActiveConnections'
+import { ResourcesService } from '../../../services/ResourcesService'
 
 interface Props {
-  apiResourceName: string;
-  claims?: string[];
-  handleNext?: () => void;
-  handleBack?: () => void;
-  handleChanges?: () => void;
+  apiResourceName: string
+  claims?: string[]
+  handleNext?: () => void
+  handleBack?: () => void
+  handleChanges?: () => void
 }
 
 const ApiResourceUserClaimsForm: React.FC<Props> = (props: Props) => {
-  const [claims, setClaims] = useState<string[]>([]);
+  const [claims, setClaims] = useState<string[]>([])
 
   useEffect(() => {
-    getAllAvailableClaims();
-  }, []);
+    getAllAvailableClaims()
+  }, [])
 
   const getAllAvailableClaims = async () => {
-    const response = await ClaimService.findAll();
+    const response = await ClaimService.findAll()
     if (response) {
-      setClaims(response.map((x) => x.type));
+      setClaims(response.map((x) => x.type))
     }
-  };
+  }
 
   const add = async (claimName: string) => {
     const response = await ResourcesService.addApiResourceUserClaim(
       props.apiResourceName,
-      claimName
-    );
+      claimName,
+    )
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
     }
-  };
+  }
 
   const remove = async (claimName: string) => {
     const response = await ResourcesService.removeApiResourceUserClaim(
       props.apiResourceName,
-      claimName
-    );
+      claimName,
+    )
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
     }
-  };
+  }
 
   const setValue = (claimName: string, value: boolean) => {
     if (value) {
-      add(claimName);
+      add(claimName)
     } else {
-      remove(claimName);
+      remove(claimName)
     }
-  };
+  }
 
   return (
     <div className="api-resource-user-claims">
@@ -93,7 +93,7 @@ const ApiResourceUserClaimsForm: React.FC<Props> = (props: Props) => {
                     />
                     <HelpBox helpText={claim} />
                   </div>
-                );
+                )
               })}
             </div>
 
@@ -128,6 +128,6 @@ const ApiResourceUserClaimsForm: React.FC<Props> = (props: Props) => {
         </div>
       </div>
     </div>
-  );
-};
-export default ApiResourceUserClaimsForm;
+  )
+}
+export default ApiResourceUserClaimsForm

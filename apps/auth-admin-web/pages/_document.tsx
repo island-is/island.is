@@ -1,8 +1,8 @@
-import React from 'react';
-import Document, { Html, Head, Main, NextScript } from 'next/document';
+import React from 'react'
+import Document, { Html, Head, Main, NextScript } from 'next/document'
 
 interface Props {
-  lang: string;
+  lang: string
 }
 
 class MyDocument extends Document<Props> {
@@ -20,8 +20,8 @@ class MyDocument extends Document<Props> {
           </footer>
         </body>
       </Html>
-    );
+    )
   }
 }
 
-export default MyDocument;
+export default MyDocument

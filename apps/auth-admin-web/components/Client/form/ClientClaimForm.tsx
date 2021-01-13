@@ -1,71 +1,68 @@
-import { ErrorMessage } from '@hookform/error-message';
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { ClientClaim } from '../../../entities/models/client-claim.model';
-import { ClientClaimDTO } from '../../../entities/dtos/client-claim.dto';
-import HelpBox from '../../Common/HelpBox';
-import NoActiveConnections from '../../Common/NoActiveConnections';
-import { ClientService } from '../../../services/ClientService';
-import ConfirmModal from '../../Common/ConfirmModal';
+import { ErrorMessage } from '@hookform/error-message'
+import React from 'react'
+import { useForm } from 'react-hook-form'
+import { ClientClaim } from '../../../entities/models/client-claim.model'
+import { ClientClaimDTO } from '../../../entities/dtos/client-claim.dto'
+import HelpBox from '../../common/HelpBox'
+import NoActiveConnections from '../../common/NoActiveConnections'
+import { ClientService } from '../../../services/ClientService'
+import ConfirmModal from '../../common/ConfirmModal'
 
 interface Props {
-  clientId: string;
-  claims?: ClientClaim[];
-  handleNext?: () => void;
-  handleBack?: () => void;
-  handleChanges?: () => void;
+  clientId: string
+  claims?: ClientClaim[]
+  handleNext?: () => void
+  handleBack?: () => void
+  handleChanges?: () => void
 }
 
 const ClientClaimForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ClientClaimDTO>();
-  const { isSubmitting } = formState;
-  const [modalIsOpen, setIsOpen] = React.useState(false);
+  const { register, handleSubmit, errors, formState } = useForm<
+    ClientClaimDTO
+  >()
+  const { isSubmitting } = formState
+  const [modalIsOpen, setIsOpen] = React.useState(false)
   const [claimToRemove, setClaimToRemove] = React.useState<ClientClaimDTO>(
-    new ClientClaimDTO()
-  );
+    new ClientClaimDTO(),
+  )
 
   const add = async (data: ClientClaimDTO) => {
-    const clientClaim = new ClientClaimDTO();
-    clientClaim.clientId = props.clientId;
-    clientClaim.type = data.type;
-    clientClaim.value = data.value;
+    const clientClaim = new ClientClaimDTO()
+    clientClaim.clientId = props.clientId
+    clientClaim.type = data.type
+    clientClaim.value = data.value
 
-    const response = ClientService.addClaim(clientClaim);
+    const response = ClientService.addClaim(clientClaim)
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
-      document.getElementById('claimForm').reset();
+      document.getElementById('claimForm').reset()
     }
-  };
+  }
 
   const remove = async () => {
     const response = await ClientService.removeClaim(
       claimToRemove.clientId,
       claimToRemove.type,
-      claimToRemove.value
-    );
+      claimToRemove.value,
+    )
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
     }
 
-    closeModal();
-  };
+    closeModal()
+  }
 
   const confirmRemove = async (claim: ClientClaimDTO) => {
-    setClaimToRemove(claim);
-    setIsOpen(true);
-  };
+    setClaimToRemove(claim)
+    setIsOpen(true)
+  }
 
   function closeModal() {
-    setIsOpen(false);
+    setIsOpen(false)
   }
 
   const setHeaderElement = () => {
@@ -74,8 +71,8 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
         Are you sure want to delete this claim:{' '}
         <span>{claimToRemove.type}</span> - <span>{claimToRemove.value}</span>
       </p>
-    );
-  };
+    )
+  }
 
   return (
     <div className="client-claim">
@@ -169,7 +166,7 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                         </button>
                       </div>
                     </div>
-                  );
+                  )
                 })}
               </div>
               <div className="client-claim__buttons__container">
@@ -205,6 +202,6 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
         confirmationText="Delete"
       ></ConfirmModal>
     </div>
-  );
-};
-export default ClientClaimForm;
+  )
+}
+export default ClientClaimForm

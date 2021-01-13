@@ -1,60 +1,57 @@
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import HelpBox from '../../Common/HelpBox';
-import { ErrorMessage } from '@hookform/error-message';
-import { ApiResourcesDTO } from '../../../entities/dtos/api-resources-dto';
-import { ResourcesService } from '../../../services/ResourcesService';
+import React, { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import HelpBox from '../../common/HelpBox'
+import { ErrorMessage } from '@hookform/error-message'
+import { ApiResourcesDTO } from '../../../entities/dtos/api-resources-dto'
+import { ResourcesService } from '../../../services/ResourcesService'
 
 interface Props {
-  handleSave?: (object: ApiResourcesDTO) => void;
-  handleCancel?: () => void;
-  apiResource: ApiResourcesDTO;
+  handleSave?: (object: ApiResourcesDTO) => void
+  handleCancel?: () => void
+  apiResource: ApiResourcesDTO
 }
 
 const ResourceCreateForm: React.FC<Props> = (props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ApiResourcesDTO>();
-  const { isSubmitting } = formState;
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [available, setAvailable] = useState<boolean>(false);
-  const [nameLength, setNameLength] = useState(0);
+  const { register, handleSubmit, errors, formState } = useForm<
+    ApiResourcesDTO
+  >()
+  const { isSubmitting } = formState
+  const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [available, setAvailable] = useState<boolean>(false)
+  const [nameLength, setNameLength] = useState(0)
 
   useEffect(() => {
     if (props.apiResource && props.apiResource.name) {
-      setIsEditing(true);
-      setAvailable(true);
+      setIsEditing(true)
+      setAvailable(true)
     }
-  }, [props.apiResource]);
+  }, [props.apiResource])
 
   const checkAvailability = async (name: string) => {
-    setNameLength(name.length);
-    const response = await ResourcesService.getApiResourceByName(name);
+    setNameLength(name.length)
+    const response = await ResourcesService.getApiResourceByName(name)
     if (response) {
-      setAvailable(false);
+      setAvailable(false)
     } else {
-      setAvailable(true);
+      setAvailable(true)
     }
-  };
+  }
 
   const save = async (data: ApiResourcesDTO) => {
-    let response = null;
+    let response = null
 
     if (!isEditing) {
-      response = await ResourcesService.createApiResource(data);
+      response = await ResourcesService.createApiResource(data)
     } else {
-      response = await ResourcesService.updateApiResource(data, data.name);
+      response = await ResourcesService.updateApiResource(data, data.name)
     }
 
     if (response) {
       if (props.handleSave) {
-        props.handleSave(data);
+        props.handleSave(data)
       }
     }
-  };
+  }
 
   return (
     <div className="api-resource-form">
@@ -224,7 +221,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ResourceCreateForm;
+export default ResourceCreateForm

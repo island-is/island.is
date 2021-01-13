@@ -1,14 +1,14 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
 class HelpBox extends Component<{
-  helpText: string;
-  helpLink?: string;
-  helpLinkText?: string;
+  helpText: string
+  helpLink?: string
+  helpLinkText?: string
 }> {
   state = {
     show: false,
-  };
+  }
 
   getHelpLink(): JSX.Element {
     if (this.props.helpLink && this.props.helpLinkText) {
@@ -18,7 +18,7 @@ class HelpBox extends Component<{
             {this.props.helpLinkText}
           </a>
         </div>
-      );
+      )
     } else if (this.props.helpLink) {
       return (
         <div className="helpLink">
@@ -27,9 +27,9 @@ class HelpBox extends Component<{
           </a>
           .
         </div>
-      );
+      )
     }
-    return <div></div>;
+    return <div></div>
   }
 
   render(): JSX.Element {
@@ -58,7 +58,7 @@ class HelpBox extends Component<{
           {this.getHelpLink()}
         </div>
       </div>
-    );
+    )
   }
 }
-export default HelpBox;
+export default HelpBox

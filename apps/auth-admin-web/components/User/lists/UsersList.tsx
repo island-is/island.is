@@ -1,82 +1,82 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { ErrorMessage } from '@hookform/error-message';
-import HelpBox from '../../Common/HelpBox';
-import NotFound from '../../Common/NotFound';
-import { UserService } from '../../../services/UserService';
-import UserIdentity from './../../../entities/models/user-identity.model';
-import { Claim } from './../../../entities/models/claim.model';
+import React, { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { ErrorMessage } from '@hookform/error-message'
+import HelpBox from '../../common/HelpBox'
+import NotFound from '../../common/NotFound'
+import { UserService } from '../../../services/UserService'
+import UserIdentity from './../../../entities/models/user-identity.model'
+import { Claim } from './../../../entities/models/claim.model'
 
 interface ClaimShow {
-  subjectId: string;
-  show: boolean;
+  subjectId: string
+  show: boolean
 }
 
 interface FormOutput {
-  id: string;
+  id: string
 }
 
 const UsersList: React.FC = () => {
-  const [users, setUsers] = useState<UserIdentity[]>([]);
-  const [id, setId] = useState<string>('');
-  const [claimShow, setClaimShow] = useState<ClaimShow[]>([]);
-  const [showNotFound, setShowNotFound] = useState<boolean>(false);
-  const { handleSubmit, register, errors, formState } = useForm();
-  const { isSubmitting } = formState;
+  const [users, setUsers] = useState<UserIdentity[]>([])
+  const [id, setId] = useState<string>('')
+  const [claimShow, setClaimShow] = useState<ClaimShow[]>([])
+  const [showNotFound, setShowNotFound] = useState<boolean>(false)
+  const { handleSubmit, register, errors, formState } = useForm()
+  const { isSubmitting } = formState
 
   const getIndex = (subjectId: string): number => {
     for (let i = 0; i < claimShow.length; i++) {
       if (claimShow[i].subjectId === subjectId) {
-        return i;
+        return i
       }
     }
-    return -1;
-  };
+    return -1
+  }
 
   const getUser = async (data: FormOutput) => {
-    setShowNotFound(false);
-    const response = await UserService.findUser(data.id);
+    setShowNotFound(false)
+    const response = await UserService.findUser(data.id)
     if (response) {
-      setUsers(response);
+      setUsers(response)
     } else {
-      setShowNotFound(true);
-      setUsers([]);
+      setShowNotFound(true)
+      setUsers([])
     }
 
-    setId(data.id);
-  };
+    setId(data.id)
+  }
 
   const toggleActive = async (user: UserIdentity) => {
-    await UserService.toggleActive(user.subjectId, !user.active);
-    getUser({ id: id });
-  };
+    await UserService.toggleActive(user.subjectId, !user.active)
+    getUser({ id: id })
+  }
 
   const handleShowClaimsClicked = (
     user: UserIdentity,
-    show = true
+    show = true,
   ): ClaimShow => {
-    const index = getIndex(user.subjectId);
-    let ret = { subjectId: user.subjectId, show: show };
+    const index = getIndex(user.subjectId)
+    let ret = { subjectId: user.subjectId, show: show }
     if (index === -1) {
-      claimShow.push(ret);
+      claimShow.push(ret)
     } else {
-      claimShow[index].show = !claimShow[index].show;
-      ret = claimShow[index];
+      claimShow[index].show = !claimShow[index].show
+      ret = claimShow[index]
     }
 
-    setClaimShow([...claimShow]);
-    return ret;
-  };
+    setClaimShow([...claimShow])
+    return ret
+  }
 
   const showClaims = (user: UserIdentity): boolean => {
-    const index = getIndex(user.subjectId);
+    const index = getIndex(user.subjectId)
     if (index === -1) {
-      return false;
+      return false
     } else {
-      return claimShow[index].show;
+      return claimShow[index].show
     }
-  };
+  }
 
   return (
     <div className="users">
@@ -170,7 +170,7 @@ const UsersList: React.FC = () => {
                                 <div className="list-name">{claim.type}:</div>
                                 <div className="list-value">{claim.value}</div>
                               </div>
-                            );
+                            )
                           })}
                         </div>
                       </td>
@@ -193,7 +193,7 @@ const UsersList: React.FC = () => {
                         </button>
                       </td>
                     </tr>
-                  );
+                  )
                 })}
               </tbody>
             </table>
@@ -206,7 +206,7 @@ const UsersList: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default UsersList;
+export default UsersList

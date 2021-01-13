@@ -1,22 +1,22 @@
-import ClientDTO from './../../entities/dtos/client-dto';
-import ClientForm from '../../components/Client/form/ClientForm';
-import React from 'react';
-import { useRouter } from 'next/router';
-import ContentWrapper from './../../components/Layout/ContentWrapper';
-import { GetServerSideProps, NextPageContext } from 'next';
-import { withAuthentication } from './../../utils/auth.utils';
+import ClientDTO from './../../entities/dtos/client-dto'
+import ClientForm from '../../components/Client/form/ClientForm'
+import React from 'react'
+import { useRouter } from 'next/router'
+import ContentWrapper from './../../components/Layout/ContentWrapper'
+import { GetServerSideProps, NextPageContext } from 'next'
+import { withAuthentication } from './../../utils/auth.utils'
 
 const Index: React.FC = () => {
-  const router = useRouter();
+  const router = useRouter()
   const handleCancel = () => {
-    router.back();
-  };
+    router.back()
+  }
 
   const handleClientSaved = (clientSaved: ClientDTO) => {
     if (clientSaved.clientId) {
-      router.push(`/client/${clientSaved.clientId}?step=2`);
+      router.push(`/client/${clientSaved.clientId}?step=2`)
     }
-  };
+  }
 
   return (
     <ContentWrapper>
@@ -26,14 +26,14 @@ const Index: React.FC = () => {
         onNextButtonClick={handleClientSaved}
       />
     </ContentWrapper>
-  );
-};
-export default Index;
+  )
+}
+export default Index
 
 export const getServerSideProps: GetServerSideProps = withAuthentication(
   async (context: NextPageContext) => {
     return {
       props: {},
-    };
-  }
-);
+    }
+  },
+)

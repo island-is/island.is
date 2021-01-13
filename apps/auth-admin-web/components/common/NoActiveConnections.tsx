@@ -1,9 +1,9 @@
-import React from 'react';
+import React from 'react'
 
 interface Props {
-  show: boolean;
-  title?: string;
-  helpText: string;
+  show: boolean
+  title?: string
+  helpText: string
 }
 
 const NoActiveConnections: React.FC<Props> = ({
@@ -13,7 +13,7 @@ const NoActiveConnections: React.FC<Props> = ({
   children,
 }) => {
   if (!show) {
-    return null;
+    return null
   }
 
   return (
@@ -25,6 +25,6 @@ const NoActiveConnections: React.FC<Props> = ({
       </div>
       {children}
     </div>
-  );
-};
-export default NoActiveConnections;
+  )
+}
+export default NoActiveConnections

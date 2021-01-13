@@ -1,151 +1,151 @@
-import React, { useEffect, useState } from 'react';
-import ClientDTO from '../../../entities/dtos/client-dto';
-import { useForm } from 'react-hook-form';
-import { ErrorMessage } from '@hookform/error-message';
-import HelpBox from '../../Common/HelpBox';
-import { ClientService } from '../../../services/ClientService';
+import React, { useEffect, useState } from 'react'
+import ClientDTO from '../../../entities/dtos/client-dto'
+import { useForm } from 'react-hook-form'
+import { ErrorMessage } from '@hookform/error-message'
+import HelpBox from '../../common/HelpBox'
+import { ClientService } from '../../../services/ClientService'
 interface Props {
-  client: ClientDTO;
-  onNextButtonClick?: (client: ClientDTO) => void;
-  handleCancel?: () => void;
+  client: ClientDTO
+  onNextButtonClick?: (client: ClientDTO) => void
+  handleCancel?: () => void
 }
 
 interface FormOutput {
-  client: ClientDTO;
+  client: ClientDTO
 }
 
 const ClientForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<ClientDTO>();
-  const { isSubmitting } = formState;
-  const [show, setShow] = useState(false);
-  const [available, setAvailable] = useState<boolean>(false);
-  const [clientIdLength, setClientIdLength] = useState<number>(0);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [clientTypeSelected, setClientTypeSelected] = useState<boolean>(false);
-  const [clientTypeInfo, setClientTypeInfo] = useState<string>('');
-  const client = props.client;
+  const { register, handleSubmit, errors, formState } = useForm<ClientDTO>()
+  const { isSubmitting } = formState
+  const [show, setShow] = useState(false)
+  const [available, setAvailable] = useState<boolean>(false)
+  const [clientIdLength, setClientIdLength] = useState<number>(0)
+  const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [clientTypeSelected, setClientTypeSelected] = useState<boolean>(false)
+  const [clientTypeInfo, setClientTypeInfo] = useState<string>('')
+  const client = props.client
 
   const castToNumbers = (obj: ClientDTO): ClientDTO => {
-    obj.absoluteRefreshTokenLifetime = +obj.absoluteRefreshTokenLifetime;
-    obj.accessTokenLifetime = +obj.accessTokenLifetime;
-    obj.authorizationCodeLifetime = +obj.authorizationCodeLifetime;
-    obj.deviceCodeLifetime = +obj.deviceCodeLifetime;
-    obj.refreshTokenExpiration = +obj.refreshTokenExpiration;
-    obj.refreshTokenUsage = +obj.refreshTokenUsage;
-    obj.slidingRefreshTokenLifetime = +obj.slidingRefreshTokenLifetime;
-    obj.identityTokenLifetime = +obj.identityTokenLifetime;
-    obj.accessTokenType = +obj.accessTokenType;
+    obj.absoluteRefreshTokenLifetime = +obj.absoluteRefreshTokenLifetime
+    obj.accessTokenLifetime = +obj.accessTokenLifetime
+    obj.authorizationCodeLifetime = +obj.authorizationCodeLifetime
+    obj.deviceCodeLifetime = +obj.deviceCodeLifetime
+    obj.refreshTokenExpiration = +obj.refreshTokenExpiration
+    obj.refreshTokenUsage = +obj.refreshTokenUsage
+    obj.slidingRefreshTokenLifetime = +obj.slidingRefreshTokenLifetime
+    obj.identityTokenLifetime = +obj.identityTokenLifetime
+    obj.accessTokenType = +obj.accessTokenType
 
     if (obj.consentLifetime === '') {
-      obj.consentLifetime = null;
+      obj.consentLifetime = null
     } else {
-      obj.consentLifetime = +obj.consentLifetime;
+      obj.consentLifetime = +obj.consentLifetime
     }
 
     if (obj.userSsoLifetime === '') {
-      obj.userSsoLifetime = null;
+      obj.userSsoLifetime = null
     } else {
-      obj.userSsoLifetime = +obj.userSsoLifetime;
+      obj.userSsoLifetime = +obj.userSsoLifetime
     }
 
-    return obj;
-  };
+    return obj
+  }
 
   useEffect(() => {
     if (props.client && props.client.clientId) {
-      setIsEditing(true);
-      setAvailable(true);
-      setClientTypeSelected(true);
-      setClientType(props.client.clientType);
+      setIsEditing(true)
+      setAvailable(true)
+      setClientTypeSelected(true)
+      setClientType(props.client.clientType)
     }
-  }, [props.client]);
+  }, [props.client])
 
   const create = async (data: ClientDTO) => {
-    const response = await ClientService.create(data);
+    const response = await ClientService.create(data)
     if (response) {
       if (props.onNextButtonClick) {
-        props.onNextButtonClick(data);
+        props.onNextButtonClick(data)
       }
     }
-  };
+  }
 
   const edit = async (data: ClientDTO) => {
     // We delete the client id in the service. That's why we do a deep copy
-    const handleObject = { ...data };
-    const response = await ClientService.update(data, props.client.clientId);
+    const handleObject = { ...data }
+    const response = await ClientService.update(data, props.client.clientId)
 
     if (response) {
       if (props.onNextButtonClick) {
-        props.onNextButtonClick(handleObject);
+        props.onNextButtonClick(handleObject)
       }
     }
-  };
+  }
 
   const save = (data: FormOutput) => {
-    const clientObject = castToNumbers(data.client);
+    const clientObject = castToNumbers(data.client)
     if (!isEditing) {
-      create(clientObject);
+      create(clientObject)
     } else {
-      edit(clientObject);
+      edit(clientObject)
     }
-  };
+  }
 
   const checkAvailability = async (clientId: string) => {
-    setClientIdLength(clientId.length);
+    setClientIdLength(clientId.length)
     if (!clientId) {
-      return;
+      return
     }
 
-    const response = await ClientService.findClientById(clientId);
+    const response = await ClientService.findClientById(clientId)
     if (response) {
-      setAvailable(false);
+      setAvailable(false)
     } else {
-      setAvailable(true);
+      setAvailable(true)
     }
-  };
+  }
 
   const setClientType = async (clientType: string) => {
     if (clientType) {
       if (clientType === 'spa') {
-        client.requireClientSecret = false;
-        client.requirePkce = true;
+        client.requireClientSecret = false
+        client.requirePkce = true
 
-        setClientTypeInfo('Authorization code flow + PKCE');
+        setClientTypeInfo('Authorization code flow + PKCE')
       }
 
       if (clientType === 'native') {
-        client.requireClientSecret = false;
-        client.requirePkce = true;
+        client.requireClientSecret = false
+        client.requirePkce = true
 
-        setClientTypeInfo('Authorization code flow + PKCE');
+        setClientTypeInfo('Authorization code flow + PKCE')
       }
 
       if (clientType === 'web') {
-        client.requireClientSecret = true;
-        client.requirePkce = false;
+        client.requireClientSecret = true
+        client.requirePkce = false
 
-        setClientTypeInfo('Hybrid flow with client authentication');
+        setClientTypeInfo('Hybrid flow with client authentication')
       }
 
       if (clientType === 'machine') {
-        client.requireClientSecret = true;
-        client.requirePkce = false;
+        client.requireClientSecret = true
+        client.requirePkce = false
 
-        setClientTypeInfo('Client credentials');
+        setClientTypeInfo('Client credentials')
       }
 
       if (clientType === 'device') {
         // What are the defaults?
 
-        setClientTypeInfo('Device flow using external browser');
+        setClientTypeInfo('Device flow using external browser')
       }
 
-      setClientTypeSelected(true);
+      setClientTypeSelected(true)
     } else {
-      setClientTypeInfo('Please select a client Type');
-      setClientTypeSelected(false);
+      setClientTypeInfo('Please select a client Type')
+      setClientTypeSelected(false)
     }
-  };
+  }
 
   return (
     <div className="client">
@@ -406,7 +406,6 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       <HelpBox helpText="Specifies the type of user code to use for the client. Otherwise falls back to default" />
                     </div>
 
-                    
                     <div className="client__container__field">
                       <label className="client__label">Access Token Type</label>
                       <select
@@ -483,7 +482,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                         name="client.consentLifetime"
                         defaultValue={client.consentLifetime ?? ''}
                         className="client__input"
-                        ref={register({min: 0})}
+                        ref={register({ min: 0 })}
                       />
                       <HelpBox helpText="Lifetime of a user consent in seconds. Defaults to null (no expiration)." />
                       <ErrorMessage
@@ -520,7 +519,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                         defaultValue={client.userSsoLifetime ?? ''}
                         name="client.userSsoLifetime"
                         className="client__input"
-                        ref={register({min: 0})}
+                        ref={register({ min: 0 })}
                       />
                       <HelpBox helpText="The maximum duration (in seconds) since the last time the user authenticated. (Default null)" />
                       <ErrorMessage
@@ -597,7 +596,7 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         defaultValue={client.slidingRefreshTokenLifetime}
                         name="client.slidingRefreshTokenLifetime"
                         className="client__input"
-                        ref={register({min: 0})}
+                        ref={register({ min: 0 })}
                       />
                       <HelpBox helpText="Sliding lifetime of a refresh token in seconds. Defaults to 1296000 seconds / 15 days" />
                       <ErrorMessage
@@ -894,6 +893,6 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
         </div>
       </div>
     </div>
-  );
-};
-export default ClientForm;
+  )
+}
+export default ClientForm

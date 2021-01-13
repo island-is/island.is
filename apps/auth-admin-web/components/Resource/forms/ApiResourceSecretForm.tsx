@@ -1,119 +1,116 @@
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { ErrorMessage } from '@hookform/error-message';
-import HelpBox from './../../Common/HelpBox';
-import NoActiveConnections from './../../Common/NoActiveConnections';
-import { ApiResourceSecret } from './../../../entities/models/api-resource-secret.model';
-import { ApiResourceSecretDTO } from './../../../entities/dtos/api-resource-secret.dto';
-import { ResourcesService } from './../../../services/ResourcesService';
-import ConfirmModal from './../../Common/ConfirmModal';
-import InfoModal from './../../Common/InfoModal';
+import React, { useState, useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { ErrorMessage } from '@hookform/error-message'
+import HelpBox from './../../common/HelpBox'
+import NoActiveConnections from './../../common/NoActiveConnections'
+import { ApiResourceSecret } from './../../../entities/models/api-resource-secret.model'
+import { ApiResourceSecretDTO } from './../../../entities/dtos/api-resource-secret.dto'
+import { ResourcesService } from './../../../services/ResourcesService'
+import ConfirmModal from './../../common/ConfirmModal'
+import InfoModal from './../../common/InfoModal'
 
 interface Props {
-  apiResourceName: string;
-  secrets: ApiResourceSecret[];
-  handleNext?: () => void;
-  handleBack?: () => void;
-  handleChanges?: () => void;
+  apiResourceName: string
+  secrets: ApiResourceSecret[]
+  handleNext?: () => void
+  handleBack?: () => void
+  handleChanges?: () => void
 }
 
 const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ApiResourceSecretDTO>();
-  const { isSubmitting } = formState;
-  const defaultSecretLength = 25;
-  const [defaultSecret, setDefaultSecret] = useState<string>('');
-  const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false);
-  const [infoModalIsOpen, setInfoModalIsOpen] = useState(false);
-  const [secretValue, setSecretValue] = useState<string>('');
+  const { register, handleSubmit, errors, formState } = useForm<
+    ApiResourceSecretDTO
+  >()
+  const { isSubmitting } = formState
+  const defaultSecretLength = 25
+  const [defaultSecret, setDefaultSecret] = useState<string>('')
+  const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false)
+  const [infoModalIsOpen, setInfoModalIsOpen] = useState(false)
+  const [secretValue, setSecretValue] = useState<string>('')
   const [secretToRemove, setSecretToRemove] = useState<ApiResourceSecret>(
-    new ApiResourceSecret()
-  );
+    new ApiResourceSecret(),
+  )
 
   const makeDefaultSecret = (length: number) => {
-    let result = '';
+    let result = ''
     const characters =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersLength = characters.length;
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    const charactersLength = characters.length
     for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      result += characters.charAt(Math.floor(Math.random() * charactersLength))
     }
-    return result;
-  };
+    return result
+  }
 
   useEffect(() => {
-    setDefaultSecret(makeDefaultSecret(defaultSecretLength));
-  }, []);
+    setDefaultSecret(makeDefaultSecret(defaultSecretLength))
+  }, [])
 
   const copyToClipboard = (val: string) => {
-    const selBox = document.createElement('textarea');
-    selBox.style.position = 'fixed';
-    selBox.style.left = '0';
-    selBox.style.top = '0';
-    selBox.style.opacity = '0';
-    selBox.value = val;
-    document.body.appendChild(selBox);
-    selBox.focus();
-    selBox.select();
-    document.execCommand('copy');
-    document.body.removeChild(selBox);
-  };
+    const selBox = document.createElement('textarea')
+    selBox.style.position = 'fixed'
+    selBox.style.left = '0'
+    selBox.style.top = '0'
+    selBox.style.opacity = '0'
+    selBox.value = val
+    document.body.appendChild(selBox)
+    selBox.focus()
+    selBox.select()
+    document.execCommand('copy')
+    document.body.removeChild(selBox)
+  }
 
   const add = async (data: ApiResourceSecret) => {
-    const secretObj = new ApiResourceSecretDTO();
-    secretObj.apiResourceName = props.apiResourceName;
-    secretObj.description = data.description;
-    secretObj.type = data.type;
-    secretObj.value = data.value;
+    const secretObj = new ApiResourceSecretDTO()
+    secretObj.apiResourceName = props.apiResourceName
+    secretObj.description = data.description
+    secretObj.type = data.type
+    secretObj.value = data.value
 
-    const response = await ResourcesService.addApiResourceSecret(secretObj);
+    const response = await ResourcesService.addApiResourceSecret(secretObj)
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
 
-      copyToClipboard(data.value);
-      setSecretValue(data.value);
-      setInfoModalIsOpen(true);
+      copyToClipboard(data.value)
+      setSecretValue(data.value)
+      setInfoModalIsOpen(true)
 
-      document.getElementById('secretForm').reset();
-      setDefaultSecret(makeDefaultSecret(defaultSecretLength));
+      document.getElementById('secretForm').reset()
+      setDefaultSecret(makeDefaultSecret(defaultSecretLength))
     }
-  };
+  }
 
   const closeInfoModal = () => {
-    setInfoModalIsOpen(false);
-  };
+    setInfoModalIsOpen(false)
+  }
 
   const remove = async () => {
-    const secretDTO = new ApiResourceSecretDTO();
-    secretDTO.apiResourceName = secretToRemove.apiResourceName;
-    secretDTO.value = secretToRemove.value;
-    secretDTO.type = secretToRemove.type;
-    secretDTO.description = secretToRemove.description;
+    const secretDTO = new ApiResourceSecretDTO()
+    secretDTO.apiResourceName = secretToRemove.apiResourceName
+    secretDTO.value = secretToRemove.value
+    secretDTO.type = secretToRemove.type
+    secretDTO.description = secretToRemove.description
 
-    const response = await ResourcesService.removeApiResourceSecret(secretDTO);
+    const response = await ResourcesService.removeApiResourceSecret(secretDTO)
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
     }
 
-    closeConfirmModal();
-  };
+    closeConfirmModal()
+  }
 
   const closeConfirmModal = () => {
-    setConfirmModalIsOpen(false);
-  };
+    setConfirmModalIsOpen(false)
+  }
 
   const confirmRemove = async (secret: ApiResourceSecret) => {
-    setSecretToRemove(secret);
-    setConfirmModalIsOpen(true);
-  };
+    setSecretToRemove(secret)
+    setConfirmModalIsOpen(true)
+  }
 
   const setHeaderElement = () => {
     return (
@@ -122,8 +119,8 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
         <span>{secretToRemove.type}</span> -{' '}
         <span>{secretToRemove.description}</span>
       </p>
-    );
-  };
+    )
+  }
 
   return (
     <div className="api-resource-secret-form">
@@ -249,7 +246,7 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                         </button>
                       </div>
                     </div>
-                  );
+                  )
                 })}
               </div>
 
@@ -293,6 +290,6 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
         buttonText="Ok"
       ></InfoModal>
     </div>
-  );
-};
-export default ApiResourceSecretForm;
+  )
+}
+export default ApiResourceSecretForm

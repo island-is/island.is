@@ -1,62 +1,62 @@
-import React, { useState, useEffect } from 'react';
-import HelpBox from '../../Common/HelpBox';
-import NoActiveConnections from '../../Common/NoActiveConnections';
-import { ClientService } from '../../../services/ClientService';
-import { IdpRestriction } from './../../../entities/models/idp-restriction.model';
+import React, { useState, useEffect } from 'react'
+import HelpBox from '../../common/HelpBox'
+import NoActiveConnections from '../../common/NoActiveConnections'
+import { ClientService } from '../../../services/ClientService'
+import { IdpRestriction } from './../../../entities/models/idp-restriction.model'
 
 interface Props {
-  clientId: string;
-  restrictions?: string[]; // What is currently valid for updating existing Clients
-  handleNext?: () => void;
-  handleBack?: () => void;
-  handleChanges?: () => void;
+  clientId: string
+  restrictions?: string[] // What is currently valid for updating existing Clients
+  handleNext?: () => void
+  handleBack?: () => void
+  handleChanges?: () => void
 }
 
 const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
-  const [idpRestrictions, setIdpRestrictions] = useState<IdpRestriction[]>([]);
+  const [idpRestrictions, setIdpRestrictions] = useState<IdpRestriction[]>([])
 
   useEffect(() => {
-    getIdpRestrictions();
-  }, []);
+    getIdpRestrictions()
+  }, [])
 
   const getIdpRestrictions = async () => {
-    const restrictions = await ClientService.findAllIdpRestrictions();
-    if (restrictions) setIdpRestrictions(restrictions);
-  };
+    const restrictions = await ClientService.findAllIdpRestrictions()
+    if (restrictions) setIdpRestrictions(restrictions)
+  }
 
   const add = async (name: string) => {
     const createObj = {
       name: name,
       clientId: props.clientId,
-    };
+    }
 
-    const response = await ClientService.addIdpRestriction(createObj);
+    const response = await ClientService.addIdpRestriction(createObj)
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
     }
-  };
+  }
 
   const remove = async (name: string) => {
     const response = await ClientService.removeIdpRestriction(
       props.clientId,
-      name
-    );
+      name,
+    )
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
     }
-  };
+  }
 
   const setIdp = (name: string, value: boolean) => {
     if (value) {
-      add(name);
+      add(name)
     } else {
-      remove(name);
+      remove(name)
     }
-  };
+  }
 
   return (
     <div className="client-idp-restriction">
@@ -86,7 +86,7 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
                       name={idpRestriction.name}
                       className="client__checkbox"
                       defaultChecked={props.restrictions?.includes(
-                        idpRestriction.name
+                        idpRestriction.name,
                       )}
                       onChange={(e) =>
                         setIdp(idpRestriction.name, e.target.checked)
@@ -95,7 +95,7 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
                     />
                     <HelpBox helpText={idpRestriction.helptext} />
                   </div>
-                );
+                )
               })}
             </div>
 
@@ -130,6 +130,6 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
         </div>
       </div>
     </div>
-  );
-};
-export default ClientIdpRestrictionsForm;
+  )
+}
+export default ClientIdpRestrictionsForm

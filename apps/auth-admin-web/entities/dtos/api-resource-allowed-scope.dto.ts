@@ -1,4 +1,4 @@
 export class ApiResourceScopeDTO {
-  apiResourceName!: string;
-  scopeName!: string;
+  apiResourceName!: string
+  scopeName!: string
 }

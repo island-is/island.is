@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
-import Paginator from '../../Common/Paginator';
-import Link from 'next/link';
+import React from 'react'
+import Paginator from '../../common/Paginator'
+import Link from 'next/link'
 
 interface Props {
-  list: any;
-  header: string;
-  linkHeader: string;
-  createUri: string;
-  lastPage: number;
-  handlePageChange: (page: number, count: number) => void;
-  edit: (object: any) => void;
-  remove: (name: string) => void;
+  list: any
+  header: string
+  linkHeader: string
+  createUri: string
+  lastPage: number
+  handlePageChange: (page: number, count: number) => void
+  edit: (object: any) => void
+  remove: (name: string) => void
 }
 
 const ResourceListDisplay: React.FC<Props> = ({
@@ -87,7 +87,7 @@ const ResourceListDisplay: React.FC<Props> = ({
                           </button>
                         </td>
                       </tr>
-                    );
+                    )
                   })}
                 </tbody>
               </table>
@@ -100,7 +100,7 @@ const ResourceListDisplay: React.FC<Props> = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ResourceListDisplay;
+export default ResourceListDisplay

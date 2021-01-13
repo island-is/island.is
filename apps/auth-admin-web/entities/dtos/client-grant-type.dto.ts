@@ -1,4 +1,4 @@
 export class ClientGrantTypeDTO {
-  clientId!: string;
-  grantType!: string;
+  clientId!: string
+  grantType!: string
 }

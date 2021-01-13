@@ -1,12 +1,12 @@
-import { ClientBaseDTO } from './base/client-base.dto';
+import { ClientBaseDTO } from './base/client-base.dto'
 
 class ClientDTO extends ClientBaseDTO {
   constructor() {
-    super();
-    this.clientId = '';
+    super()
+    this.clientId = ''
   }
 
-  clientId: string;
+  clientId: string
 }
 
-export default ClientDTO;
+export default ClientDTO

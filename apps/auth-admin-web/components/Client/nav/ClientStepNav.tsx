@@ -1,9 +1,9 @@
-import React from 'react';
-import { ClientStep } from '../../../entities/common/ClientStep';
+import React from 'react'
+import { ClientStep } from '../../../entities/common/ClientStep'
 
 interface Props {
-  handleStepChange: (step: ClientStep) => void;
-  activeStep?: ClientStep;
+  handleStepChange: (step: ClientStep) => void
+  activeStep?: ClientStep
 }
 
 const ClientStepNav: React.FC<Props> = ({
@@ -120,7 +120,7 @@ const ClientStepNav: React.FC<Props> = ({
       </nav>
       <div className="client-step-nav__container__content">{children}</div>
     </div>
-  );
-};
+  )
+}
 
-export default ClientStepNav;
+export default ClientStepNav

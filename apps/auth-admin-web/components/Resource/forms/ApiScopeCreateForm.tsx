@@ -1,55 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import HelpBox from '../../Common/HelpBox';
-import { ErrorMessage } from '@hookform/error-message';
-import { ApiScopesDTO } from '../../../entities/dtos/api-scopes-dto';
-import { ResourcesService } from '../../../services/ResourcesService';
+import React, { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import HelpBox from '../../common/HelpBox'
+import { ErrorMessage } from '@hookform/error-message'
+import { ApiScopesDTO } from '../../../entities/dtos/api-scopes-dto'
+import { ResourcesService } from '../../../services/ResourcesService'
 
 interface Props {
-  handleSave?: (object: ApiScopesDTO) => void;
-  handleCancel?: () => void;
-  apiScope: ApiScopesDTO;
+  handleSave?: (object: ApiScopesDTO) => void
+  handleCancel?: () => void
+  apiScope: ApiScopesDTO
 }
 
 const ApiScopeCreateForm: React.FC<Props> = (props) => {
-  const { register, handleSubmit, errors, formState } = useForm<ApiScopesDTO>();
-  const { isSubmitting } = formState;
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [available, setAvailable] = useState<boolean>(false);
-  const [nameLength, setNameLength] = useState(0);
+  const { register, handleSubmit, errors, formState } = useForm<ApiScopesDTO>()
+  const { isSubmitting } = formState
+  const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [available, setAvailable] = useState<boolean>(false)
+  const [nameLength, setNameLength] = useState(0)
 
   useEffect(() => {
     if (props.apiScope && props.apiScope.name) {
-      setIsEditing(true);
-      setAvailable(true);
+      setIsEditing(true)
+      setAvailable(true)
     }
-  }, [props.apiScope]);
+  }, [props.apiScope])
 
   const checkAvailability = async (name: string) => {
-    setNameLength(name.length);
-    const response = await ResourcesService.getApiScopeByName(name);
+    setNameLength(name.length)
+    const response = await ResourcesService.getApiScopeByName(name)
     if (response) {
-      setAvailable(false);
+      setAvailable(false)
     } else {
-      setAvailable(true);
+      setAvailable(true)
     }
-  };
+  }
 
   const save = async (data: ApiScopesDTO) => {
-    let response = null;
+    let response = null
 
     if (!isEditing) {
-      response = await ResourcesService.createApiScope(data);
+      response = await ResourcesService.createApiScope(data)
     } else {
-      response = await ResourcesService.updateApiScope(data);
+      response = await ResourcesService.updateApiScope(data)
     }
 
     if (response) {
       if (props.handleSave) {
-        props.handleSave(data);
+        props.handleSave(data)
       }
     }
-  };
+  }
 
   return (
     <div className="api-scope-form">
@@ -224,7 +224,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ApiScopeCreateForm;
+export default ApiScopeCreateForm

@@ -1,72 +1,69 @@
-import React, { useState } from 'react';
-import { ClientPostLogoutRedirectUriDTO } from '../../../entities/dtos/client-post-logout-redirect-uri.dto';
-import { useForm } from 'react-hook-form';
-import { ErrorMessage } from '@hookform/error-message';
-import HelpBox from '../../Common/HelpBox';
-import NoActiveConnections from '../../Common/NoActiveConnections';
-import { ClientService } from '../../../services/ClientService';
-import ConfirmModal from '../../Common/ConfirmModal';
+import React, { useState } from 'react'
+import { ClientPostLogoutRedirectUriDTO } from '../../../entities/dtos/client-post-logout-redirect-uri.dto'
+import { useForm } from 'react-hook-form'
+import { ErrorMessage } from '@hookform/error-message'
+import HelpBox from '../../common/HelpBox'
+import NoActiveConnections from '../../common/NoActiveConnections'
+import { ClientService } from '../../../services/ClientService'
+import ConfirmModal from '../../common/ConfirmModal'
 
 interface Props {
-  clientId: string;
-  defaultUrl?: string;
-  uris?: string[];
-  handleNext?: () => void;
-  handleBack?: () => void;
-  handleChanges?: () => void;
+  clientId: string
+  defaultUrl?: string
+  uris?: string[]
+  handleNext?: () => void
+  handleBack?: () => void
+  handleChanges?: () => void
 }
 
 const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ClientPostLogoutRedirectUriDTO>();
-  const { isSubmitting } = formState;
+  const { register, handleSubmit, errors, formState } = useForm<
+    ClientPostLogoutRedirectUriDTO
+  >()
+  const { isSubmitting } = formState
   const [defaultUrl, setDefaultUrl] = useState(
-    !props.uris || props.uris.length === 0 ? props.defaultUrl : ''
-  );
-  const [modalIsOpen, setIsOpen] = React.useState(false);
-  const [uriToRemove, setUriToRemove] = React.useState('');
+    !props.uris || props.uris.length === 0 ? props.defaultUrl : '',
+  )
+  const [modalIsOpen, setIsOpen] = React.useState(false)
+  const [uriToRemove, setUriToRemove] = React.useState('')
 
   const add = async (data: ClientPostLogoutRedirectUriDTO) => {
-    const postLogoutUri = new ClientPostLogoutRedirectUriDTO();
-    postLogoutUri.clientId = props.clientId;
-    postLogoutUri.redirectUri = data.redirectUri;
+    const postLogoutUri = new ClientPostLogoutRedirectUriDTO()
+    postLogoutUri.clientId = props.clientId
+    postLogoutUri.redirectUri = data.redirectUri
 
-    const response = ClientService.addPostLogoutRedirectUri(postLogoutUri);
+    const response = ClientService.addPostLogoutRedirectUri(postLogoutUri)
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
-      document.getElementById('postLogoutForm').reset();
-      setDefaultUrl('');
+      document.getElementById('postLogoutForm').reset()
+      setDefaultUrl('')
     }
-  };
+  }
 
   const remove = async () => {
     const response = ClientService.removePostLogoutRedirectUri(
       props.clientId,
-      uriToRemove
-    );
+      uriToRemove,
+    )
 
     if (response) {
       if (props.handleChanges) {
-        props.handleChanges();
+        props.handleChanges()
       }
     }
 
-    closeModal();
-  };
+    closeModal()
+  }
 
   const confirmRemove = async (name: string) => {
-    setUriToRemove(name);
-    setIsOpen(true);
-  };
+    setUriToRemove(name)
+    setIsOpen(true)
+  }
 
   function closeModal() {
-    setIsOpen(false);
+    setIsOpen(false)
   }
 
   const setHeaderElement = () => {
@@ -75,8 +72,8 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
         Are you sure want to delete this post logout uri:{' '}
         <span>{uriToRemove}</span>
       </p>
-    );
-  };
+    )
+  }
 
   return (
     <div>
@@ -158,7 +155,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                           </button>
                         </div>
                       </div>
-                    );
+                    )
                   })}
                 </div>
 
@@ -195,6 +192,6 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
         confirmationText="Delete"
       ></ConfirmModal>
     </div>
-  );
-};
-export default ClientPostLogoutRedirectUriForm;
+  )
+}
+export default ClientPostLogoutRedirectUriForm

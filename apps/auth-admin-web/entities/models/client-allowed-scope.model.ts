@@ -1,6 +1,6 @@
 export class ClientAllowedScope {
-  scopeName!: string;
-  clientId!: string;
-  readonly created!: Date;
-  readonly modified?: Date;
+  scopeName!: string
+  clientId!: string
+  readonly created!: Date
+  readonly modified?: Date
 }
