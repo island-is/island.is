@@ -93,5 +93,5 @@ const ApiResourcesList: React.FC = () => {
       ></ConfirmModal>
     </div>
   );
-}
+};
 export default ApiResourcesList;

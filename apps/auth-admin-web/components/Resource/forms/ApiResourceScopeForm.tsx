@@ -51,14 +51,14 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
 
   const getAvailableScopes = async () => {
     const response = await ClientService.FindAvailabeScopes();
-    if ( response ){
+    if (response) {
       setScopes(response);
     }
   };
 
   const setSelectedItem = (scopeName: string) => {
     const selected = scopes.find((e) => e.name === scopeName);
-    if (selected){
+    if (selected) {
       setSelectedScope(selected);
     }
   };
@@ -100,7 +100,8 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
           <h1>Allowed scopes</h1>
           <div className="api-resource-scope-form__container__form">
             <div className="api-resource-scope-form__help">
-            An API must have at least one scope. Each scope can have different settings.
+              An API must have at least one scope. Each scope can have different
+              settings.
             </div>
             <form onSubmit={handleSubmit(add)}>
               <div className="api-resource-scope-form__container__fields">

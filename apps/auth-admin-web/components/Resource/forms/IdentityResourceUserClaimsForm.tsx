@@ -66,7 +66,8 @@ const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
 
           <div className="identity-resource-user-claims__container__form">
             <div className="identity-resource-user-claims__help">
-              List of associated user claim types that should be included in the identity token.
+              List of associated user claim types that should be included in the
+              identity token.
             </div>
             <div className="identity-resource-user-claims__container__fields">
               {claims?.map((claim: string) => {

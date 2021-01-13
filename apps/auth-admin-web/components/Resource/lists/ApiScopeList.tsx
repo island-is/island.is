@@ -91,6 +91,6 @@ const ApiScopeList: React.FC = () => {
       ></ConfirmModal>
     </div>
   );
-}
+};
 
 export default ApiScopeList;

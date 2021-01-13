@@ -10,24 +10,29 @@ class HelpBox extends Component<{
     show: false,
   };
 
-  getHelpLink() : JSX.Element {
+  getHelpLink(): JSX.Element {
     if (this.props.helpLink && this.props.helpLinkText) {
       return (
         <div className="helpLink">
-          <a href={this.props.helpLink} target="_blank" rel="noreferrer">{this.props.helpLinkText}</a>
+          <a href={this.props.helpLink} target="_blank" rel="noreferrer">
+            {this.props.helpLinkText}
+          </a>
         </div>
       );
     } else if (this.props.helpLink) {
       return (
         <div className="helpLink">
-          <a href={this.props.helpLink} target="_blank" rel="noreferrer">More Info</a>.
+          <a href={this.props.helpLink} target="_blank" rel="noreferrer">
+            More Info
+          </a>
+          .
         </div>
       );
     }
     return <div></div>;
   }
 
-  render() : JSX.Element {
+  render(): JSX.Element {
     return (
       <div className="helpbox">
         <a

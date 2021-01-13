@@ -93,5 +93,5 @@ const IdentityResourcesList: React.FC = () => {
       ></ConfirmModal>
     </div>
   );
-}
+};
 export default IdentityResourcesList;

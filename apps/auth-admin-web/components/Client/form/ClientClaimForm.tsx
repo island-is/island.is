@@ -17,9 +17,12 @@ interface Props {
 }
 
 const ClientClaimForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<
-    ClientClaimDTO
-  >();
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+  } = useForm<ClientClaimDTO>();
   const { isSubmitting } = formState;
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [claimToRemove, setClaimToRemove] = React.useState<ClientClaimDTO>(

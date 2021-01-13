@@ -3,7 +3,7 @@ import Link from 'next/link';
 import React from 'react';
 import ContentWrapper from '../components/Layout/ContentWrapper';
 
-const Home : React.FC = () => {
+const Home: React.FC = () => {
   return (
     <ContentWrapper>
       <div className="home">
@@ -55,5 +55,5 @@ const Home : React.FC = () => {
       </div>
     </ContentWrapper>
   );
-}
+};
 export default Home;

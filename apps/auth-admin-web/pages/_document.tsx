@@ -6,7 +6,7 @@ interface Props {
 }
 
 class MyDocument extends Document<Props> {
-  render() : JSX.Element {
+  render(): JSX.Element {
     return (
       <Html lang="en">
         <Head></Head>

@@ -29,7 +29,7 @@ const Index: React.FC = () => {
       />
     </ContentWrapper>
   );
-}
+};
 export default Index;
 
 export const getServerSideProps: GetServerSideProps = withAuthentication(

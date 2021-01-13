@@ -372,7 +372,11 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                         className="client__input"
                         ref={register}
                       />
-                      <HelpBox helpText="Specifies logout URI at client for HTTP based front-channel logout." helpLinkText="See the OIDC Connect Session Management spec for more details." helpLink="https://openid.net/specs/openid-connect-session-1_0.html" />
+                      <HelpBox
+                        helpText="Specifies logout URI at client for HTTP based front-channel logout."
+                        helpLinkText="See the OIDC Connect Session Management spec for more details."
+                        helpLink="https://openid.net/specs/openid-connect-session-1_0.html"
+                      />
                     </div>
 
                     <div className="client__container__field">

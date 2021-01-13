@@ -132,7 +132,8 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
           <h1>Api Resource Secrets</h1>
           <div className="api-resource-secret-form__container__form">
             <div className="api-resource-secret-form__help">
-            The API secret is used for the introspection endpoint. The API can authenticate with introspection using the API name and secret.
+              The API secret is used for the introspection endpoint. The API can
+              authenticate with introspection using the API name and secret.
             </div>
             <form id="secretForm" onSubmit={handleSubmit(add)}>
               <div className="api-resource-secret-form__container__fields">

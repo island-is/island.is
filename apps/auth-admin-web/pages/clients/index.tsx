@@ -10,8 +10,7 @@ const Index: React.FC = () => {
       <ClientsList />
     </ContentWrapper>
   );
-}
-
+};
 
 export const getServerSideProps: GetServerSideProps = withAuthentication(
   async (context: NextPageContext) => {

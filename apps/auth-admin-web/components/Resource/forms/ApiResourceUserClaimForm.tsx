@@ -66,7 +66,9 @@ const ApiResourceUserClaimsForm: React.FC<Props> = (props: Props) => {
 
           <div className="api-resource-user-claims__container__form">
             <div className="api-resource-user-claims__help">
-            List of associated user claim types that should be included in the access token. The claims specified here will be added to the list of claims specified for the API.
+              List of associated user claim types that should be included in the
+              access token. The claims specified here will be added to the list
+              of claims specified for the API.
             </div>
             <div className="api-resource-user-claims__container__fields">
               {claims?.map((claim: string) => {
