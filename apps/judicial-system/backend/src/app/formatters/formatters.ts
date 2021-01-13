@@ -97,7 +97,7 @@ export function formatConclusion(
   isolation: boolean,
 ): string {
   return decision === CaseDecision.REJECTING
-    ? `Beiðni um gæslu á hendur, ${accusedName} kt. ${formatNationalId(
+    ? `Kröfu um gæsluvarðhald á hendur ${accusedName}, kt. ${formatNationalId(
         accusedNationalId,
       )}, er hafnað.`
     : `${capitalize(
