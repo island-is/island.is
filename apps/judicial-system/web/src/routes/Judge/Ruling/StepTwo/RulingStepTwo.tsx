@@ -42,6 +42,12 @@ export const RulingStepTwo: React.FC = () => {
   const [, setVisitationCheckbox] = useState<boolean>()
   const [, setCommunicationCheckbox] = useState<boolean>()
   const [, setMediaCheckbox] = useState<boolean>()
+  const [, setAlternativeTravelBanRequireNotificationCheckbox] = useState<
+    boolean
+  >()
+  const [, setAlternativeTravelBanConfiscatePassportCheckbox] = useState<
+    boolean
+  >()
   const { id } = useParams<{ id: string }>()
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
   const { data } = useQuery(CaseQuery, {
@@ -80,27 +86,45 @@ export const RulingStepTwo: React.FC = () => {
     }
   }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
 
-  const restrictions = [
+  const custodyRestrictions = [
     {
       restriction: 'C - Heimsóknarbann',
       value: CaseCustodyRestrictions.VISITAION,
       setCheckbox: setVisitationCheckbox,
-      explination:
+      explanation:
         'Gæslufangar eiga rétt á heimsóknum. Þó getur sá sem rannsókn stýrir bannað heimsóknir ef nauðsyn ber til í þágu hennar en skylt er að verða við óskum gæslufanga um að hafa samband við verjanda og ræða við hann einslega, sbr. 1. mgr. 36. gr., og rétt að verða við óskum hans um að hafa samband við lækni eða prest, ef þess er kostur.',
     },
     {
       restriction: 'D - Bréfskoðun, símabann',
       value: CaseCustodyRestrictions.COMMUNICATION,
       setCheckbox: setCommunicationCheckbox,
-      explination:
+      explanation:
         'Gæslufangar mega nota síma eða önnur fjarskiptatæki og senda og taka við bréfum og öðrum skjölum. Þó getur sá sem rannsókn stýrir bannað notkun síma eða annarra fjarskiptatækja og látið athuga efni bréfa eða annarra skjala og kyrrsett þau ef nauðsyn ber til í þágu hennar en gera skal sendanda viðvart um kyrrsetningu, ef því er að skipta.',
     },
     {
       restriction: 'E - Fjölmiðlabann',
       value: CaseCustodyRestrictions.MEDIA,
       setCheckbox: setMediaCheckbox,
-      explination:
+      explanation:
         'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
+    },
+  ]
+
+  const alternativeTravelBanRestrictions = [
+    {
+      restriction: 'Tilkynningarskylda',
+      value:
+        CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
+      setCheckbox: setAlternativeTravelBanRequireNotificationCheckbox,
+      explanation:
+        'Sé sakborningi gert að tilkynna sig reglulega á meðan á farbanni stendur er hægt að haka hér í þennan reit og skrifa nánari upplýsingar um tilkynningarskyldu í textareitinn fyrir neðan.',
+    },
+    {
+      restriction: 'Afhending vegabréfs',
+      value: CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
+      setCheckbox: setAlternativeTravelBanConfiscatePassportCheckbox,
+      explanation:
+        'Sé krafist þess að sakborningur afhendi vegabréf sitt, er hægt að haka í þennan reit og skrifa nánari upplýsingar um hvenær og hvert sakborningur skal afhenda vegabréfið í textareitinn fyrir neðan.',
     },
   ]
 
@@ -402,7 +426,7 @@ export const RulingStepTwo: React.FC = () => {
                       removeTabsValidateAndSet(
                         'prosecutorAppealAnnouncement',
                         event,
-                        ['email-format'],
+                        [],
                         workingCase,
                         setWorkingCase,
                       )
@@ -411,7 +435,7 @@ export const RulingStepTwo: React.FC = () => {
                       validateAndSendToServer(
                         'prosecutorAppealAnnouncement',
                         event.target.value,
-                        ['email-format'],
+                        [],
                         workingCase,
                         updateCase,
                       )
@@ -432,7 +456,7 @@ export const RulingStepTwo: React.FC = () => {
                 </Box>
                 <Box marginBottom={1}>
                   <GridRow>
-                    {restrictions.map((restriction, index) => {
+                    {custodyRestrictions.map((restriction, index) => {
                       return (
                         <GridColumn span="6/12" key={index}>
                           <Box marginBottom={3}>
@@ -443,7 +467,7 @@ export const RulingStepTwo: React.FC = () => {
                               checked={workingCase.custodyRestrictions?.includes(
                                 restriction.value,
                               )}
-                              tooltip={restriction.explination}
+                              tooltip={restriction.explanation}
                               onChange={({ target }) => {
                                 // Create a copy of the state
                                 const copyOfState = Object.assign(
@@ -519,30 +543,108 @@ export const RulingStepTwo: React.FC = () => {
                 <BlueBox>
                   <Box marginBottom={2}>
                     <GridRow>
-                      <GridColumn span="6/12">
-                        <Checkbox
-                          name="require-notification"
-                          label="Tilkynningarskylda"
-                          tooltip="Sé sakborningi gert að tilkynna sig reglulega á meðan á farbanni stendur er hægt að haka hér í þennan reit og skrifa nánari upplýsingar um tilkynningarskyldu í textareitinn fyrir neðan."
-                          large
-                          filled
-                        />
-                      </GridColumn>
-                      <GridColumn span="6/12">
-                        <Checkbox
-                          name="confiscate-passport"
-                          label="Afhending vegabréfs"
-                          tooltip="Sé krafist þess að sakborningur afhendi vegabréf sitt, er hægt að haka í þennan reit og skrifa nánari upplýsingar um hvenær og hvert sakborningur skal afhenda vegabréfið í textareitinn fyrir neðan."
-                          large
-                          filled
-                        />
-                      </GridColumn>
+                      {alternativeTravelBanRestrictions.map(
+                        (restriction, index) => {
+                          return (
+                            <GridColumn span="6/12" key={index}>
+                              <Box marginBottom={3}>
+                                <Checkbox
+                                  name={restriction.restriction}
+                                  label={restriction.restriction}
+                                  value={restriction.value}
+                                  checked={workingCase.custodyRestrictions?.includes(
+                                    restriction.value,
+                                  )}
+                                  tooltip={restriction.explanation}
+                                  onChange={({ target }) => {
+                                    // Create a copy of the state
+                                    const copyOfState = Object.assign(
+                                      workingCase,
+                                      {},
+                                    )
+
+                                    const restrictionIsSelected = copyOfState.custodyRestrictions?.includes(
+                                      target.value as CaseCustodyRestrictions,
+                                    )
+
+                                    // Toggle the checkbox on or off
+                                    restriction.setCheckbox(
+                                      !restrictionIsSelected,
+                                    )
+
+                                    // If the user is checking the box, add the restriction to the state
+                                    if (!restrictionIsSelected) {
+                                      if (
+                                        copyOfState.custodyRestrictions === null
+                                      ) {
+                                        copyOfState.custodyRestrictions = []
+                                      }
+
+                                      copyOfState.custodyRestrictions &&
+                                        copyOfState.custodyRestrictions.push(
+                                          target.value as CaseCustodyRestrictions,
+                                        )
+                                    }
+                                    // If the user is unchecking the box, remove the restriction from the state
+                                    else {
+                                      copyOfState.custodyRestrictions &&
+                                        copyOfState.custodyRestrictions.splice(
+                                          copyOfState.custodyRestrictions.indexOf(
+                                            target.value as CaseCustodyRestrictions,
+                                          ),
+                                          1,
+                                        )
+                                    }
+
+                                    setWorkingCase({
+                                      ...workingCase,
+                                      custodyRestrictions:
+                                        copyOfState.custodyRestrictions,
+                                    })
+
+                                    // Save case
+                                    updateCase(
+                                      workingCase.id,
+                                      parseArray(
+                                        'custodyRestrictions',
+                                        copyOfState.custodyRestrictions || [],
+                                      ),
+                                    )
+                                  }}
+                                  large
+                                  filled
+                                />
+                              </Box>
+                            </GridColumn>
+                          )
+                        },
+                      )}
                     </GridRow>
                   </Box>
                   <Input
-                    name="other-restrictions"
-                    placeholder="Til dæmis hvernig tilkynningarskyldu sé háttað..."
+                    name="otherRestrictions"
+                    data-testid="otherRestrictions"
                     label="Nánari útlistun eða aðrar takmarkanir"
+                    defaultValue={workingCase.otherRestrictions}
+                    placeholder="Til dæmis hvernig tilkynningarskyldu sé háttað..."
+                    onChange={(event) =>
+                      removeTabsValidateAndSet(
+                        'otherRestrictions',
+                        event,
+                        [],
+                        workingCase,
+                        setWorkingCase,
+                      )
+                    }
+                    onBlur={(event) =>
+                      validateAndSendToServer(
+                        'otherRestrictions',
+                        event.target.value,
+                        [],
+                        workingCase,
+                        updateCase,
+                      )
+                    }
                     rows={10}
                     textarea
                   />

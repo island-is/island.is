@@ -177,6 +177,11 @@ export class UpdateCaseDto {
   readonly custodyRestrictions?: CaseCustodyRestrictions[]
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly otherRestrictions?: string
+
+  @IsOptional()
   @IsEnum(CaseAppealDecision)
   @ApiPropertyOptional({ enum: CaseAppealDecision })
   readonly accusedAppealDecision?: CaseAppealDecision
