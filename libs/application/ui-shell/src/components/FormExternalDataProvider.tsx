@@ -18,6 +18,7 @@ import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
+import { verifyExternalData } from '../utils'
 
 const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
@@ -41,6 +42,16 @@ const ProviderItem: FC<{
   )
 }
 
+interface UpdateApplicationExternalDataResponse {
+  updateApplicationExternalData: {
+    externalData: ExternalData
+  }
+}
+
+const getExternalDataFromResponse = (
+  responseData: UpdateApplicationExternalDataResponse,
+) => responseData?.updateApplicationExternalData?.externalData
+
 const FormExternalDataProvider: FC<{
   applicationId: string
   addExternalData(data: ExternalData): void
@@ -58,10 +69,12 @@ const FormExternalDataProvider: FC<{
 }) => {
   const { setValue } = useFormContext()
   const [updateExternalData] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA, {
-    onCompleted({ updateApplicationExternalData }) {
-      addExternalData(updateApplicationExternalData.externalData)
+    onCompleted(responseData: UpdateApplicationExternalDataResponse) {
+      addExternalData(getExternalDataFromResponse(responseData))
     },
   })
+
+  const { id, dataProviders } = externalDataProvider
 
   const activateBeforeSubmitCallback = (checked: boolean) => {
     if (checked) {
@@ -78,7 +91,13 @@ const FormExternalDataProvider: FC<{
           },
         })
 
-        if (response.data) {
+        if (
+          response.data &&
+          verifyExternalData(
+            getExternalDataFromResponse(response.data),
+            dataProviders,
+          )
+        ) {
           return [true, null]
         }
 
@@ -90,7 +109,6 @@ const FormExternalDataProvider: FC<{
     }
   }
 
-  const { id, dataProviders } = externalDataProvider
   const label = 'Ég samþykki'
   return (
     <Box>

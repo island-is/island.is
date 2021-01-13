@@ -36,11 +36,7 @@ import FormField from './FormField'
 import { resolver } from '../validation/resolver'
 import FormRepeater from './FormRepeater'
 import FormExternalDataProvider from './FormExternalDataProvider'
-import {
-  extractAnswersToSubmitFromScreen,
-  findSubmitField,
-  verifyExternalData,
-} from '../utils'
+import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
 import { useLocale } from '@island.is/localization'
 import ScreenFooter from './ScreenFooter'
 import { useWindowSize } from 'react-use'
@@ -184,12 +180,7 @@ const Screen: FC<ScreenProps> = ({
 
   function canProceed(): boolean {
     const isLoadingOrPending = loading || loadingSubmit
-    if (screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER) {
-      return (
-        !isLoadingOrPending &&
-        verifyExternalData(externalData, screen.dataProviders)
-      )
-    }
+
     return !isLoadingOrPending
   }
 
