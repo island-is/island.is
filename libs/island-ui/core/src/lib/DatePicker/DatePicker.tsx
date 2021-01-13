@@ -37,6 +37,8 @@ const languageConfig = {
 
 type LocaleKeys = keyof typeof languageConfig
 
+export type DatePickerBackgroundColor = 'white' | 'blue'
+
 interface DatePickerProps {
   label: string
   placeholderText: ReactDatePickerProps['placeholderText']
@@ -54,7 +56,7 @@ interface DatePickerProps {
   required?: boolean
   inputName?: string
   size?: 'md' | 'sm'
-  backgroundColor?: 'white' | 'blue'
+  backgroundColor?: DatePickerBackgroundColor
   icon?: IconType
   iconType?: Type
 }

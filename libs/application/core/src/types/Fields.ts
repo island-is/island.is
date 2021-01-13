@@ -1,4 +1,5 @@
 import { Colors } from '@island.is/island-ui/theme'
+import { DatePickerBackgroundColor } from '@island.is/island-ui/core'
 import { ApolloClient } from '@apollo/client'
 import { FormText, FormItem } from './Form'
 import { Condition } from './Condition'
@@ -90,7 +91,7 @@ export interface DateField extends BaseField {
   component: FieldComponents.DATE
   maxDate?: Date
   minDate?: Date
-  backgroundColor?: 'white' | 'blue'
+  backgroundColor?: DatePickerBackgroundColor
 }
 
 export interface DescriptionField extends BaseField {
