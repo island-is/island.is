@@ -391,7 +391,11 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           )}
           {article.organization.length > 0 && (
             <Box minWidth={0}>
-              <Tag variant="purple" truncate>
+              <Tag
+                variant="purple"
+                truncate
+                href={article.organization[0].link}
+              >
                 {article.organization[0].title}
               </Tag>
             </Box>
