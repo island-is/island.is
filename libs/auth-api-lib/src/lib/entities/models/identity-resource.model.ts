@@ -61,7 +61,7 @@ export class IdentityResource extends Model<IdentityResource> {
 
   @HasMany(() => IdentityResourceUserClaim)
   @ApiProperty()
-  public userClaims?: IdentityResourceUserClaim[]
+  userClaims?: IdentityResourceUserClaim[]
 
   // Common properties end
 

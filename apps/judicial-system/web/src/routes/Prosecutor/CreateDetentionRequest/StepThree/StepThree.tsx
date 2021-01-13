@@ -463,7 +463,7 @@ export const StepThree: React.FC = () => {
                     onBlur={(evt) =>
                       validateAndSendTimeToServer(
                         'requestedCustodyEndDate',
-                        workingCase.arrestDate,
+                        workingCase.requestedCustodyEndDate,
                         evt.target.value,
                         ['empty', 'time-format'],
                         workingCase,

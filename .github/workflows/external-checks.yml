@@ -63,7 +63,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Markdown formatting is invalid. Please run `node ./scripts/gitbook.js` from the repository root.'
+              body: 'Markdown formatting is invalid. Please run `yarn gitbook` from the repository root.'
             })
       - name: Exit if repo is dirty
         if: steps.changes.outputs.changed == 1
