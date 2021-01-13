@@ -24,7 +24,6 @@ import {
   Box,
   Breadcrumbs,
   Button,
-  Link,
   Navigation,
   Text,
 } from '@island.is/island-ui/core'
@@ -67,16 +66,8 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
       title: n('linkServicesText'),
       items: [
         {
-          href: n('linkServiceList'),
-          title: n('linkServiceListText'),
-        },
-        {
-          href: n('linkDesignGuide'),
-          title: n('linkDesignGuideText'),
-        },
-        {
           active: true,
-          title: n('linkDetailsLastText'),
+          title: service?.name,
         },
       ],
     },
@@ -105,8 +96,8 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
               items={navigationItems}
               title={n('linkThrounText')}
               titleLink={{
-                active: true,
                 href: n('linkThroun'),
+                active: false,
               }}
             />
           }
@@ -154,8 +145,8 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                       { title: n('linkIslandIsText'), href: n('linkIslandIs') },
                       { title: n('linkThrounText'), href: n('linkThroun') },
                       {
-                        title: n('linkServiceListText'),
-                        href: n('linkServiceList'),
+                        title: n('linkServicesText'),
+                        href: n('linkServices'),
                       },
                     ]}
                   />

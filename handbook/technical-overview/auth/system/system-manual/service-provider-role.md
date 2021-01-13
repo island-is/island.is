@@ -1,4 +1,4 @@
-# Service provider’s role
+# Service Provider’s Role
 
 The word **Service provider** is used here for the Icelandic term **Rekstraraðili**.
 
@@ -15,4 +15,4 @@ The service provider’s role is to ensure that these components are functioning
 - While developing the authentication the service provider uses **IdentityServer** as a middleware.
 - **IdentityServer** is a standardized software solution which takes care of the authentication, cooperating with the service provider’s solution in connecting users’ data through their clients with the resources’ data through APIs.
 
-![service-provider-role/untitled.png](service-provider-role/untitled.png)
+![service-provider-role.png](./assets/service-provider-role.png)

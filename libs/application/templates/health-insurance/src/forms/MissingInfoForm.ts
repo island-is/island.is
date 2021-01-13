@@ -3,7 +3,6 @@ import {
   buildDividerField,
   buildFileUploadField,
   buildForm,
-  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -60,7 +59,7 @@ export const MissingInfoForm: Form = buildForm({
               component: 'Review',
             }),
             buildCustomField({
-              id: 'confirmCorrectInfo',
+              id: 'confirmMissingInfo',
               title: '',
               component: 'ConfirmCheckbox',
             }),

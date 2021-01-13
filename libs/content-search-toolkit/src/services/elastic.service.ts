@@ -321,9 +321,9 @@ export class ElasticService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static handleError(message: string, context: any, error: any): never {
+  static handleError(message: string, context: any, error: Error): never {
     ElasticService.logError(message, context, error)
-    throw new Error(message)
+    throw error
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

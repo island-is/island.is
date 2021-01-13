@@ -52,6 +52,7 @@ export const laws = {
   _95_1_D: 'd-lið 1. mgr. 95. gr.',
   _95_2: '2. mgr. 95. gr.',
   _99_1_B: 'b-lið 1. mgr. 99. gr.',
+  _100_1: '1. mgr. 100. gr. sml.',
 }
 
 const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
@@ -80,7 +81,19 @@ export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
   }
 }
 
+export function formatAccusedByGender(accusedGender: CaseGender) {
+  switch (accusedGender) {
+    case CaseGender.MALE:
+      return 'kærði'
+    case CaseGender.FEMALE:
+      return 'kærða'
+    default:
+      return 'kærða'
+  }
+}
+
 export function formatRestrictions(
+  accusedGender: CaseGender,
   custodyRestrictions: CaseCustodyRestrictions[],
 ): string {
   if (!(custodyRestrictions?.length > 0)) {
@@ -90,7 +103,9 @@ export function formatRestrictions(
   let res = 'Sækjandi tekur fram að '
 
   if (custodyRestrictions.includes(CaseCustodyRestrictions.ISOLATION)) {
-    res += 'kærði skuli sæta einangrun meðan á gæsluvarðhaldi stendur'
+    res += `${formatAccusedByGender(
+      accusedGender,
+    )} skuli sæta einangrun á meðan á gæsluvarðhaldinu stendur`
 
     if (custodyRestrictions.length === 1) {
       return res + '.'
