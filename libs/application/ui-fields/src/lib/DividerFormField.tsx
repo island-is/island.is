@@ -15,7 +15,7 @@ const DividerFormField: FC<{
   if (field.title) {
     return (
       <Box marginTop={5} marginBottom={1}>
-        <Text variant="h5" color={field.color ?? 'blue400'}>
+        <Text variant="h3" color={field.color ?? 'blue400'}>
           {formatText(field.title, application, formatMessage)}
         </Text>
       </Box>

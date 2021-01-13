@@ -10,8 +10,8 @@ import {
 
 interface Option {
   value: string
-  label: React.ReactNode
-  tooltip?: React.ReactNode
+  label: string
+  tooltip?: string
   excludeOthers?: boolean
 }
 interface CheckboxControllerProps {

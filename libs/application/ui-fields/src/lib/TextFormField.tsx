@@ -29,7 +29,6 @@ const TextFormField: FC<Props> = ({
     title,
     description,
     placeholder,
-    backgroundColor,
     format,
     variant = 'text',
     suffix,
@@ -74,7 +73,6 @@ const TextFormField: FC<Props> = ({
           format={format}
           suffix={suffix}
           defaultValue={useDefaultValue(field, application)}
-          backgroundColor={backgroundColor}
         />
       </Box>
     </div>
