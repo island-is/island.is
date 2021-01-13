@@ -36,14 +36,12 @@ export class ParentNationalRegistryProvider extends BasicDataProvider {
   handleError() {
     if (process.env.NODE_ENV === 'development') {
       return Promise.resolve({
-        parent: {
           id: '1',
           name: 'Eiríkur Jónsson',
           ssn: '120486-7899',
           address: 'Vesturgata 22',
           postalCode: '101',
           city: 'Reykjavík',
-        },
       })
     }
     return Promise.resolve({})

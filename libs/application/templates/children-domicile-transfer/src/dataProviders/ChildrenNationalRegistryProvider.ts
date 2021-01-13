@@ -35,8 +35,7 @@ export class ChildrenNationalRegistryProvider extends BasicDataProvider {
   }
   handleError() {
     if (process.env.NODE_ENV === 'development') {
-      return Promise.resolve({
-        registeredChildren: [
+      return Promise.resolve([
           {
             id: '1',
             name: 'Ólafur Helgi Eiríksson',
@@ -52,7 +51,7 @@ export class ChildrenNationalRegistryProvider extends BasicDataProvider {
             city: 'Reykjavík',
           },
         ],
-      })
+      )
     }
     return Promise.resolve({})
   }

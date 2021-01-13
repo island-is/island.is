@@ -7,7 +7,10 @@ import {
   buildDataProviderItem,
   buildExternalDataProvider,
   buildCheckboxField,
+  buildMultiField,
+  buildDescriptionField,
 } from '@island.is/application/core'
+import { Parent } from '../dataProviders/APIDataTypes'
 
 export const ChildrenDomicileTransferForm: Form = buildForm({
   id: 'ChildrenDomicileTransferFormDraft',
@@ -53,6 +56,32 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
             { value: '1', label: 'Ólafur Helgi Eiríksson' },
             { value: '2', label: 'Rósa Líf Eiríksdóttir' },
           ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'otherParent',
+      title: 'Hitt foreldri',
+      children: [
+        buildMultiField({
+          id: 'informationAboutOtherParent',
+          title: 'Fylltu inn upplýsingar um hitt foreldrið',
+          description:  (application) => {
+            let parent = (application.externalData.parentNationalRegistry?.data as {
+              parent?: object
+            })?.parent as Parent
+
+            return `Hitt foreldrið er ${parent.name} (${parent.ssn})`},
+          children: [
+            buildTextField({
+            id: 'email',
+            title: 'Netfang',
+          }),
+          buildTextField({
+            id: 'phoneNumber',
+            title: 'Símanúmer',
+          }),
+        ]
         }),
       ],
     }),
