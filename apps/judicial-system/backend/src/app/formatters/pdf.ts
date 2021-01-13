@@ -487,6 +487,15 @@ export async function generateRulingPdf(
           paragraphGap: 0,
         },
       )
+
+    if (existingCase.otherRestrictions) {
+      doc.text(' ').text(existingCase.otherRestrictions, {
+        lineGap: 6,
+        paragraphGap: 0,
+      })
+    }
+
+    doc
       .text(' ')
       .text(
         'Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd farbannsins undir dómara.',
