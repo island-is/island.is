@@ -75,10 +75,9 @@ export const constructConclusion = (workingCase: Case) => {
           , skal sæta gæsluvarðhaldi, þó ekki lengur en til
         </Text>
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
-          {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')?.replace(
-            'dagur,',
-            'dagsins',
-          )}.`}
+          {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')
+            ?.replace('dagur,', 'dagsins')
+            ?.replace(' kl.', ', kl.')}.`}
         </Text>
         {workingCase.custodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
@@ -126,10 +125,9 @@ export const constructConclusion = (workingCase: Case) => {
         )}`}</Text>
         , skal sæta farbanni, þó ekki lengur en til
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
-          {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')?.replace(
-            'dagur,',
-            'dagsins',
-          )}.`}
+          {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')
+            ?.replace('dagur,', 'dagsins')
+            ?.replace(' kl.', ', kl.')}.`}
         </Text>
       </Text>
     )
@@ -222,13 +220,15 @@ export const getRestrictionTagVariant = (
   restriction: CaseCustodyRestrictions,
 ): TagVariant => {
   switch (restriction) {
-    case CaseCustodyRestrictions.COMMUNICATION: {
+    case CaseCustodyRestrictions.COMMUNICATION:
+    case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT: {
       return 'rose'
     }
     case CaseCustodyRestrictions.ISOLATION: {
       return 'red'
     }
-    case CaseCustodyRestrictions.MEDIA: {
+    case CaseCustodyRestrictions.MEDIA:
+    case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION: {
       return 'blueberry'
     }
     case CaseCustodyRestrictions.VISITAION: {

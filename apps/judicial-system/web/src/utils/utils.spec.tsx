@@ -378,7 +378,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Kærði, Doe kt. 012345-6789, skal sæta gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020 kl. 12:31.'
+            'Kærði, Doe kt. 012345-6789, skal sæta gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(
@@ -410,7 +410,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Kærði, Doe kt. 012345-6789, skal sæta gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020 kl. 12:31. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
+            'Kærði, Doe kt. 012345-6789, skal sæta gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(
@@ -441,7 +441,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Kærði, Doe kt. 012345-6789, skal sæta farbanni, þó ekki lengur en til fimmtudagsins 22. október 2020 kl. 12:31.'
+            'Kærði, Doe kt. 012345-6789, skal sæta farbanni, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(
