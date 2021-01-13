@@ -16,6 +16,8 @@ yarn nx run api:contentful-types
 We keep this file in the repository because in case contentful is down, the whole pipeline would fail and we won’t be able to build island.is. By keeping it in the repo, we ensure we can still build and we don't have to rely on an external service.
 {% endhint %}
 
+The `CONTENTFUL_ENVIRONMENT` environment variable is used to determine which Contentful environment is used to generate types.
+
 ## Generate models for a new content type
 
 When creating a new content type in [contentful](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types), you can run a script that will generate models based on the content type's JSON from contentful.
