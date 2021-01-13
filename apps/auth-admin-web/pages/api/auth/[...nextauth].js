@@ -21,6 +21,7 @@ callbacks.signIn = async function signIn(user, account, profile) {
     user.nationalId = profile.nationalId;
     user.accessToken = account.accessToken;
     user.refreshToken = account.refreshToken;
+    user.idToken = profile.idToken;
     return true;
   }
 
@@ -34,6 +35,7 @@ callbacks.jwt = async function jwt(token, user) {
       name: user.name,
       accessToken: user.accessToken,
       refreshToken: user.refreshToken,
+      idToken: user.idToken,
     };
   }
 
@@ -56,6 +58,7 @@ callbacks.jwt = async function jwt(token, user) {
 callbacks.session = async function session(session, token) {
   session.accessToken = token.accessToken;
   session.refreshToken = token.refreshToken;
+  session.idToken = token.idToken;
   const decoded = parseJwt(session.accessToken);
   session.expires = new Date(decoded.exp * 1000);
   return session;

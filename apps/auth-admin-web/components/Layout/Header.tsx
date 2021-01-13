@@ -11,7 +11,9 @@ const Header: React.FC = () => {
   };
 
   const logout = () => {
-    signOut({ callbackUrl: `${window.location.origin}/api/auth/logout` });
+    signOut({
+      callbackUrl: `${window.location.origin}/api/auth/logout?id_token=${session.idToken}`,
+    });
   };
 
   const isExpired = (session: any): boolean => {
