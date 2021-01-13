@@ -55,7 +55,7 @@ export class FlightLegsInput implements TFlightLegsInput {
   age: Range
 
   @Field((_) => String, { nullable: true })
-  gender: 'kk' | 'kvk'
+  gender: 'kk' | 'kvk' | 'hvk'
 
   @Field((_) => Int, { nullable: true })
   postalCode: number

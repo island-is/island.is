@@ -70,6 +70,15 @@ export class PublicFlightController {
       throw new NotFoundException(`User not found`)
     }
 
+    if (
+      new Date(flight.bookingDate).getFullYear().toString() !==
+      new Date(Date.now()).getFullYear().toString()
+    ) {
+      throw new BadRequestException(
+        'Flight cannot be booked outside the current year',
+      )
+    }
+
     const meetsADSRequirements = this.flightService.isADSPostalCode(
       user.postalcode,
     )
@@ -79,7 +88,7 @@ export class PublicFlightController {
 
     const {
       unused: flightLegsLeft,
-    } = await this.flightService.countFlightLegsByNationalId(
+    } = await this.flightService.countThisYearsFlightLegsByNationalId(
       discount.nationalId,
     )
     if (flightLegsLeft < flight.flightLegs.length) {
@@ -188,6 +197,8 @@ export class PrivateFlightController {
   @Get('users/:nationalId/flights')
   @ApiExcludeEndpoint()
   getUserFlights(@Param() params: GetUserFlightsParams): Promise<Flight[]> {
-    return this.flightService.findAllByNationalId(params.nationalId)
+    return this.flightService.findThisYearsFlightsByNationalId(
+      params.nationalId,
+    )
   }
 }
