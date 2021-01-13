@@ -109,9 +109,20 @@ export class ResourcesService {
       throw new BadRequestException('Name must be provided')
     }
 
-    return this.identityResourceModel.findByPk(name, {
-      include: [IdentityResourceUserClaim],
+    const identityResource = await this.identityResourceModel.findByPk(name, {
+      raw: true,
     })
+
+    if (identityResource) {
+      identityResource.userClaims = await this.identityResourceUserClaimModel.findAll(
+        {
+          where: { identityResourceName: identityResource.name },
+          raw: true,
+        },
+      )
+    }
+
+    return identityResource
   }
 
   /** Gets API scope by name */
@@ -122,7 +133,18 @@ export class ResourcesService {
       throw new BadRequestException('Name must be provided')
     }
 
-    return this.apiScopeModel.findByPk(name, { include: [ApiScopeUserClaim] })
+    const apiScope = await this.apiScopeModel.findByPk(name, {
+      raw: true,
+    })
+
+    if (apiScope) {
+      apiScope.userClaims = await this.apiScopeUserClaimModel.findAll({
+        where: { apiScopeName: apiScope.name },
+        raw: true,
+      })
+    }
+
+    return apiScope
   }
 
   /** Gets API scope by name */
@@ -133,9 +155,40 @@ export class ResourcesService {
       throw new BadRequestException('Name must be provided')
     }
 
-    return this.apiResourceModel.findByPk(name, {
-      include: [ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret],
+    const apiResource = await this.apiResourceModel.findByPk(name, {
+      raw: true,
     })
+
+    if (apiResource) {
+      await this.findApiResourceAssociations(apiResource)
+        .then<any, never>((result: any) => {
+          apiResource.userClaims = result[0]
+          apiResource.scopes = result[1]
+          apiResource.apiSecrets = result[2]
+        })
+        .catch((error) =>
+          this.logger.error(`Error in findAssociations: ${error}`),
+        )
+    }
+
+    return apiResource
+  }
+
+  private findApiResourceAssociations(apiResource: ApiResource): Promise<any> {
+    return Promise.all([
+      this.apiResourceUserClaim.findAll({
+        where: { apiResourceName: apiResource.name },
+        raw: true,
+      }), // 0
+      this.apiResourceScope.findAll({
+        where: { apiResourceName: apiResource.name },
+        raw: true,
+      }), // 1
+      this.apiResourceSecret.findAll({
+        where: { apiResourceName: apiResource.name },
+        raw: true,
+      }), // 2
+    ])
   }
 
   /** Get identity resources by scope names */

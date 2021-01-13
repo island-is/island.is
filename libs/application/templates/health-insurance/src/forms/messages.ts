@@ -272,7 +272,7 @@ export const m = defineMessages({
   formerInsuranceAdditionalInformationPlaceholder: {
     id: 'hi.application:formerInsurance.additionalInformationPlaceholder',
     defaultMessage: 'I´m still entitled to health insurance because...',
-    description: 'additional infromation placeholder',
+    description: 'Additional information placeholder',
   },
   formerInsuranceNoOption: {
     id: 'hi.application:formerInsurance.noOption',
