@@ -80,10 +80,13 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
               description:
                 'Til að láta hitt foreldrið vita þurfum við að fá netfang og símanúmer viðkomandi.',
               title: 'Netfang',
+              variant: 'email',
             }),
             buildTextField({
               id: 'phoneNumber',
               title: 'Símanúmer',
+              variant: 'tel',
+              format: '###-####',
             }),
           ],
         }),
