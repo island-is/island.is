@@ -15,6 +15,7 @@ import * as Constants from '../../utils/constants'
 import { CaseDecision, UserRole } from '@island.is/judicial-system/types'
 import { Link } from 'react-router-dom'
 import { UserContext } from '../UserProvider/UserProvider'
+import { Sections } from '../../types'
 
 interface PageProps {
   children: ReactNode
@@ -40,7 +41,6 @@ export const PageLayout: FC<PageProps> = ({
   const { user } = useContext(UserContext)
 
   const caseResult = () => {
-    console.log(decision)
     if (decision === CaseDecision.REJECTING) {
       return 'Kröfu hafnað'
     } else if (decision === CaseDecision.ACCEPTING) {
@@ -53,6 +53,61 @@ export const PageLayout: FC<PageProps> = ({
       return 'Niðurstaða'
     }
   }
+
+  const sections = [
+    {
+      name: 'Krafa um gæsluvarðhald',
+      children: [
+        { type: 'SUB_SECTION', name: 'Sakborningur' },
+        { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
+        {
+          type: 'SUB_SECTION',
+          name: 'Lagagrundvöllur og dómkröfur',
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Greinargerð',
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Yfirlit kröfu',
+        },
+      ],
+    },
+    {
+      name: 'Úrskurður Héraðsdóms',
+      children: [
+        { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
+        { type: 'SUB_SECTION', name: 'Fyrirtökutími' },
+        { type: 'SUB_SECTION', name: 'Þingbók' },
+        { type: 'SUB_SECTION', name: 'Úrskurður' },
+        { type: 'SUB_SECTION', name: 'Úrskurðarorð' },
+        { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
+      ],
+    },
+    {
+      name: caseResult(),
+    },
+    {
+      name: 'Krafa um framlengingu',
+      children: [
+        { type: 'SUB_SECTION', name: 'Sakborningur' },
+        { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
+        {
+          type: 'SUB_SECTION',
+          name: 'Lagagrundvöllur og dómkröfur',
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Greinargerð',
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Yfirlit kröfu',
+        },
+      ],
+    },
+  ]
 
   return children ? (
     <Box
@@ -90,60 +145,14 @@ export const PageLayout: FC<PageProps> = ({
                 </Box>
               ) : null}
               <FormStepper
-                sections={[
-                  {
-                    name: 'Krafa um gæsluvarðhald',
-                    children: [
-                      { type: 'SUB_SECTION', name: 'Sakborningur' },
-                      { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
-                      {
-                        type: 'SUB_SECTION',
-                        name: 'Lagagrundvöllur og dómkröfur',
-                      },
-                      {
-                        type: 'SUB_SECTION',
-                        name: 'Greinargerð',
-                      },
-                      {
-                        type: 'SUB_SECTION',
-                        name: 'Yfirlit kröfu',
-                      },
-                    ],
-                  },
-                  {
-                    name: 'Úrskurður Héraðsdóms',
-                    children: [
-                      { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
-                      { type: 'SUB_SECTION', name: 'Fyrirtökutími' },
-                      { type: 'SUB_SECTION', name: 'Þingbók' },
-                      { type: 'SUB_SECTION', name: 'Úrskurður' },
-                      { type: 'SUB_SECTION', name: 'Úrskurðarorð' },
-                      { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
-                    ],
-                  },
-                  {
-                    name: caseResult(),
-                  },
-                  {
-                    name: 'Krafa um framlengingu',
-                    children: [
-                      { type: 'SUB_SECTION', name: 'Sakborningur' },
-                      { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
-                      {
-                        type: 'SUB_SECTION',
-                        name: 'Lagagrundvöllur og dómkröfur',
-                      },
-                      {
-                        type: 'SUB_SECTION',
-                        name: 'Greinargerð',
-                      },
-                      {
-                        type: 'SUB_SECTION',
-                        name: 'Yfirlit kröfu',
-                      },
-                    ],
-                  },
-                ]}
+                // Remove the extension part of the formstepper if the user is not applying for an extension
+                sections={
+                  activeSection === Sections.EXTENSION
+                    ? sections
+                    : sections.filter(
+                        (_, index) => index + 1 !== sections.length,
+                      )
+                }
                 formName="Gæsluvarðhald"
                 activeSection={activeSection}
                 activeSubSection={activeSubSection}

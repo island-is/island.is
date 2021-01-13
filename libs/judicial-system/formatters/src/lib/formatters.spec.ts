@@ -37,6 +37,17 @@ describe('formatDate', () => {
     expect(time).toEqual('09:36')
     expect(time2).toEqual('23:36')
   })
+
+  test('should shorten the day name if shortenDayName is set to true', () => {
+    // Arrange
+    const date = '2020-09-10T09:36:57.287Z'
+
+    // Act
+    const time = formatDate(date, 'PPP', true)
+
+    // Assert
+    expect(time).toEqual('09:36')
+  })
 })
 
 describe('renderRestrictions', () => {

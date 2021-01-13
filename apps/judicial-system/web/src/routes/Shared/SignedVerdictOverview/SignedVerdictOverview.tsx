@@ -166,6 +166,7 @@ export const SignedVerdictOverview: React.FC = () => {
                               custodyRestriction,
                             )}
                             outlined
+                            disabled
                           >
                             {getShortRestrictionByValue(custodyRestriction)}
                           </Tag>

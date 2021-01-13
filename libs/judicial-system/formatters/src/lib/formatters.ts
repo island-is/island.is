@@ -18,11 +18,20 @@ const getAsDate = (date: Date | string | undefined | null): Date => {
 export function formatDate(
   date: Date | string | undefined,
   formatPattern: string,
+  shortenDayName?: boolean,
 ): string | undefined {
   const theDate: Date = getAsDate(date)
 
   if (isValid(theDate)) {
-    return format(theDate, formatPattern, { locale: is })
+    const formattedDate = format(theDate, formatPattern, {
+      locale: is,
+    })
+
+    if (shortenDayName) {
+      return formattedDate.replace('dagur,', 'd.')
+    } else {
+      return formattedDate
+    }
   } else {
     return undefined
   }

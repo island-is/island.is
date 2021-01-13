@@ -431,7 +431,7 @@ export const testCaseExtension = {
   accusedGender: CaseGender.MALE,
   court: 'string',
   arrestDate: '2020-09-16T19:50:08.033Z',
-  requestedCourtDate: undefined,
+  requestedCourtDate: '2020-09-16T19:50:08.033Z',
   alternativeTravelBan: false,
   // TODO: FIX
   requestedCustodyEndDate: undefined, // '2020-09-16T19:50:08.033Z',
