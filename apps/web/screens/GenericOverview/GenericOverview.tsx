@@ -68,25 +68,27 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
   return (
     <SidebarLayout sidebarContent={renderNavigation(false)}>
       <Stack space={2}>
-        <Breadcrumbs
-          items={[
-            {
-              title: 'Ísland.is',
-              href: '/',
-            },
-            {
-              title: navigation.title,
-            },
-          ]}
-        />
+        <Box display={['none', 'none', 'inlineBlock']}>
+          <Breadcrumbs
+            items={[
+              {
+                title: 'Ísland.is',
+                href: '/',
+              },
+              {
+                title: navigation.title,
+              },
+            ]}
+          />
+        </Box>
         <Box display={['block', 'block', 'none']}>{renderNavigation(true)}</Box>
-
         <Text variant="h1" as="h1">
           {title}
         </Text>
-
         {Boolean(intro) && (
-          <Box marginBottom={10}>{renderHtml(intro.document as Document)}</Box>
+          <Box marginBottom={[4, 6, 10]}>
+            {renderHtml(intro.document as Document)}
+          </Box>
         )}
       </Stack>
       <Stack space={6}>
