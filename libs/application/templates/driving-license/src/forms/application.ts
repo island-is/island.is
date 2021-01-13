@@ -141,7 +141,7 @@ Veitir ökuréttindi til að stjórna bifhjóli:
             buildKeyValueField({
               label: 'Umsækjandi',
               value: ({ externalData: { nationalRegistry } }) =>
-                nationalRegistry.data.fullName,
+                (nationalRegistry.data as { fullName: string }).fullName,
             }),
             buildDividerField({
               title: 'Ökukennari',

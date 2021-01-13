@@ -1,3 +1,5 @@
+import { MessageDescriptor } from 'react-intl'
+
 import { Field } from '../types/Fields'
 import { Condition } from '../types/Condition'
 import {
@@ -16,7 +18,6 @@ import {
   FormText,
 } from '../types/Form'
 import { BoxProps } from '@island.is/island-ui/core'
-import { MessageDescriptor } from 'react-intl'
 
 export function buildForm(data: {
   id: string
