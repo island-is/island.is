@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common'
 
 import { User } from '@island.is/auth-nest-tools'
 
-import { DrivingLicense, DrivingLicenseType } from './drivingLicense.type'
+import {
+  DrivingLicense,
+  DrivingLicenseType,
+  PenaltyPointStatus,
+} from './drivingLicense.type'
 import { DrivingLicenseApi, DrivingLicenseResponse } from './client'
 
 @Injectable()
@@ -66,5 +70,17 @@ export class DrivingLicenseService {
       id: type.nr,
       name: type.heiti,
     }))
+  }
+
+  async getPenaltyPointStatus(
+    nationalId: User['nationalId'],
+  ): Promise<PenaltyPointStatus> {
+    const status = await this.drivingLicenseApi.getPenaltyPointStatus(
+      nationalId,
+    )
+    return {
+      nationalId,
+      isPenaltyPointsOk: status.iLagi,
+    }
   }
 }
