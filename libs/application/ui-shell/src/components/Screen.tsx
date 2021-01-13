@@ -133,7 +133,7 @@ const Screen: FC<ScreenProps> = ({
     let response
 
     if (typeof beforeSubmitCallback.current === 'function') {
-      const [canContinue, errorMessage] = await beforeSubmitCallback.current()
+      const [canContinue] = await beforeSubmitCallback.current()
 
       if (!canContinue) {
         // TODO set error message
