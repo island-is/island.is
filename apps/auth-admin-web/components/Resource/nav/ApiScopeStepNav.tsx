@@ -16,20 +16,20 @@ const IdentityResourceStepNav: React.FC<Props> = ({
       <nav className="api-scope-step-nav">
         <ul>
           <li>
-            <a
+            <button
               onClick={() => handleStepChange(ApiScopeStep.ApiScope)}
               className={activeStep === ApiScopeStep.ApiScope ? 'active' : ''}
             >
               Api Scope
-            </a>
+            </button>
           </li>
           <li>
-            <a
+            <button
               onClick={() => handleStepChange(ApiScopeStep.Claims)}
               className={activeStep === ApiScopeStep.Claims ? 'active' : ''}
             >
               Claims
-            </a>
+            </button>
           </li>
         </ul>
       </nav>

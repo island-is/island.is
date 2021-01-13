@@ -16,6 +16,10 @@ interface Props {
   handleChanges?: () => void;
 }
 
+interface FormOutput {
+  origin: string;
+}
+
 const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
   const {
     register,
@@ -30,7 +34,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [corsOriginToRemove, setCorsOriginToRemove] = React.useState('');
 
-  const add = async (data: any) => {
+  const add = async (data: FormOutput) => {
     const allowedCorsOrigin = new ClientAllowedCorsOriginDTO();
     allowedCorsOrigin.clientId = props.clientId;
     allowedCorsOrigin.origin = data.origin;

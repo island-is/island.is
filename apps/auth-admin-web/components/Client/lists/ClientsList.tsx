@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
 import Paginator from '../../Common/Paginator';
 import Link from 'next/link';
@@ -15,7 +16,7 @@ class ClientsList extends Component {
     clientToRemove: '',
   };
 
-  getClients = async (page: number, count: number) => {
+  getClients = async (page: number, count: number): Promise<void> => {
     const response = await ClientService.findAndCountAll(page, count);
     if (response) {
       const clientsArr = response.rows.sort((c1, c2) => {
@@ -32,29 +33,29 @@ class ClientsList extends Component {
     }
   };
 
-  handlePageChange = async (page: number, count: number) => {
+  handlePageChange = async (page: number, count: number): Promise<void> => {
     this.getClients(page, count);
     this.setState({ page: page, count: count });
   };
 
-  archive = async () => {
+  archive = async (): Promise<void> => {
     await ClientService.delete(this.state.clientToRemove);
     this.getClients(this.state.page, this.state.count);
 
     this.closeModal();
   };
 
-  confirmArchive = async (clientId: string) => {
+  confirmArchive = async (clientId: string): Promise<void> => {
     this.setState({ clientToRemove: clientId });
 
     this.setState({ modalIsOpen: true });
   };
 
-  closeModal = () => {
+  closeModal = (): void => {
     this.setState({ modalIsOpen: false });
   };
 
-  setHeaderElement = () => {
+  setHeaderElement = (): JSX.Element => {
     return (
       <p>
         Are you sure want to archive this client:{' '}
@@ -63,7 +64,7 @@ class ClientsList extends Component {
     );
   };
 
-  render() {
+  render(): JSX.Element {
     return (
       <div>
         <div className="clients">

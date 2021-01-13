@@ -75,4 +75,4 @@ function parseJwt(token) {
 
 const options = { providers, callbacks };
 
-export default (req: any, res: any) => NextAuth(req, res, options);
+export default (req, res) => NextAuth(req, res, options);

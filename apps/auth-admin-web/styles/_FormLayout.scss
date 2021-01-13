@@ -185,6 +185,10 @@
       @extend .fa-caret-square-o-down;
       margin-right: 12px;
     }
+
+    &:focus {
+      outline: none;
+    }
   }
 
   &__button__add {

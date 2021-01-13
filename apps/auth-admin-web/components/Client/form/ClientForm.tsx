@@ -10,6 +10,10 @@ interface Props {
   handleCancel?: () => void;
 }
 
+interface FormOutput {
+  client: ClientDTO;
+}
+
 const ClientForm: React.FC<Props> = (props: Props) => {
   const { register, handleSubmit, errors, formState } = useForm<ClientDTO>();
   const { isSubmitting } = formState;
@@ -56,7 +60,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
     }
   }, [props.client]);
 
-  const create = async (data: any) => {
+  const create = async (data: ClientDTO) => {
     const response = await ClientService.create(data);
     if (response) {
       if (props.onNextButtonClick) {
@@ -65,7 +69,8 @@ const ClientForm: React.FC<Props> = (props: Props) => {
     }
   };
 
-  const edit = async (data: any) => {
+  const edit = async (data: ClientDTO) => {
+    // We delete the client id in the service. That's why we do a deep copy
     const handleObject = { ...data };
     const response = await ClientService.update(data, props.client.clientId);
 
@@ -76,7 +81,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
     }
   };
 
-  const save = (data: any) => {
+  const save = (data: FormOutput) => {
     const clientObject = castToNumbers(data.client);
     if (!isEditing) {
       create(clientObject);
@@ -266,7 +271,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       as="span"
                       errors={errors}
                       name="client.clientId"
-                      message="°Client Id is required"
+                      message="Client Id is required"
                     />
                   </div>
                   <div className="client__container__field">
@@ -342,13 +347,13 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                   </div>
 
                   <div className="client__container__button" id="advanced">
-                    <a
+                    <button
                       className="client__button__show"
                       onClick={() => setShow(!show)}
                     >
                       <i className="client__button__show__icon"></i>
                       Advanced
-                    </a>
+                    </button>
                   </div>
 
                   <div

@@ -1,13 +1,13 @@
 import React from 'react';
 import { ApiScopesDTO } from '../../../entities/dtos/api-scopes-dto';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ResourceListDisplay from './ListDisplay';
 import { ResourcesService } from '../../../services/ResourcesService';
 import { ApiScope } from '../../../entities/models/api-scope.model';
 import ConfirmModal from '../../Common/ConfirmModal';
 
-export default function ApiScopeList() {
+const ApiScopeList: React.FC = () => {
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(1);
   const [apiScopes, setApiScopes] = useState<ApiScope[]>([]);
@@ -92,3 +92,5 @@ export default function ApiScopeList() {
     </div>
   );
 }
+
+export default ApiScopeList;

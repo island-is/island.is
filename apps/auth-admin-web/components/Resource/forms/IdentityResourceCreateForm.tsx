@@ -6,7 +6,7 @@ import { ResourcesService } from '../../../services/ResourcesService';
 import IdentityResourcesDTO from '../../../entities/dtos/identity-resources.dto';
 
 interface Props {
-  handleSave?: (object: any) => void;
+  handleSave?: (object: IdentityResourcesDTO) => void;
   handleCancel?: () => void;
   identityResource: IdentityResourcesDTO;
 }
@@ -40,7 +40,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
     }
   };
 
-  const save = async (data: any) => {
+  const save = async (data: IdentityResourcesDTO) => {
     let response = null;
 
     if (!isEditing) {

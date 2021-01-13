@@ -1,13 +1,13 @@
 import React from 'react';
 import { ApiResourcesDTO } from '../../../entities/dtos/api-resources-dto';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ResourceListDisplay from './ListDisplay';
 import { ResourcesService } from '../../../services/ResourcesService';
 import { ApiResource } from '../../../entities/models/api-resource.model';
 import ConfirmModal from '../../Common/ConfirmModal';
 
-export default function ApiResourcesList() {
+const ApiResourcesList: React.FC = () => {
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(1);
   const [apiResources, setApiResources] = useState<ApiResource[]>([]);
@@ -94,3 +94,4 @@ export default function ApiResourcesList() {
     </div>
   );
 }
+export default ApiResourcesList;

@@ -63,7 +63,7 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
     document.body.removeChild(selBox);
   };
 
-  const add = async (data: any) => {
+  const add = async (data: ApiResourceSecret) => {
     const secretObj = new ApiResourceSecretDTO();
     secretObj.apiResourceName = props.apiResourceName;
     secretObj.description = data.description;

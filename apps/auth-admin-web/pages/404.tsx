@@ -14,7 +14,7 @@ const ErrorPage: React.FC = () => {
       <div className="error404">
         <h1>Page not found</h1>
         <button onClick={toMainPage} className="error404__button__back">
-          <a>Back to main page</a>
+          Back to main page
         </button>
       </div>
     </ContentWrapper>

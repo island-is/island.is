@@ -26,7 +26,7 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
     new ClientClaimDTO()
   );
 
-  const add = async (data: any) => {
+  const add = async (data: ClientClaimDTO) => {
     const clientClaim = new ClientClaimDTO();
     clientClaim.clientId = props.clientId;
     clientClaim.type = data.type;

@@ -30,7 +30,7 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [uriToRemove, setUriToRemove] = React.useState('');
 
-  const add = async (data: any) => {
+  const add = async (data: ClientRedirectUriDTO) => {
     const clientRedirect = new ClientRedirectUriDTO();
     clientRedirect.clientId = props.clientId;
     clientRedirect.redirectUri = data.redirectUri;

@@ -7,6 +7,7 @@ import { ClientService } from './../../../services/ClientService';
 import { ApiResourceScopeDTO } from './../../../entities/dtos/api-resource-allowed-scope.dto';
 import { ResourcesService } from './../../../services/ResourcesService';
 import ConfirmModal from '../../Common/ConfirmModal';
+import { ApiScope } from './../../../entities/models/api-scope.model';
 
 interface Props {
   apiResourceName: string;
@@ -24,12 +25,12 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
     formState,
   } = useForm<ApiResourceScopeDTO>();
   const { isSubmitting } = formState;
-  const [scopes, setScopes] = useState<any>([]);
-  const [selectedScope, setSelectedScope] = useState<any>(null);
+  const [scopes, setScopes] = useState<ApiScope[]>([]);
+  const [selectedScope, setSelectedScope] = useState<ApiScope>(new ApiScope());
   const [scopeForDelete, setScopeForDelete] = useState<string>('');
   const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false);
 
-  const add = async (data: any) => {
+  const add = async (data: ApiResourceScopeDTO) => {
     const allowedScope = new ApiResourceScopeDTO();
     allowedScope.apiResourceName = props.apiResourceName;
     allowedScope.scopeName = data.scopeName;
@@ -50,12 +51,16 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
 
   const getAvailableScopes = async () => {
     const response = await ClientService.FindAvailabeScopes();
-    setScopes(response);
+    if ( response ){
+      setScopes(response);
+    }
   };
 
   const setSelectedItem = (scopeName: string) => {
     const selected = scopes.find((e) => e.name === scopeName);
-    setSelectedScope(selected);
+    if (selected){
+      setSelectedScope(selected);
+    }
   };
 
   const remove = async () => {
@@ -113,7 +118,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                     ref={register({ required: true })}
                     onChange={(e) => setSelectedItem(e.target.value)}
                   >
-                    {scopes.map((scope: any) => {
+                    {scopes.map((scope: ApiScope) => {
                       return <option value={scope.name}>{scope.name}</option>;
                     })}
                   </select>

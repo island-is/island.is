@@ -4,13 +4,14 @@ import ClientsList from '../../components/Client/lists/ClientsList';
 import { GetServerSideProps } from 'next';
 import { withAuthentication } from './../../utils/auth.utils';
 
-function Index() {
+const Index: React.FC = () => {
   return (
     <ContentWrapper>
       <ClientsList />
     </ContentWrapper>
   );
 }
+
 
 export const getServerSideProps: GetServerSideProps = withAuthentication(
   async (context: any) => {

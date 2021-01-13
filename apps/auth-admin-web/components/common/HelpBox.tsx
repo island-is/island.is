@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
 
 class HelpBox extends Component<{
@@ -9,7 +10,7 @@ class HelpBox extends Component<{
     show: false,
   };
 
-  getHelpLink() {
+  getHelpLink() : JSX.Element {
     if (this.props.helpLink && this.props.helpLinkText) {
       return (
         <div className="helpLink">
@@ -23,10 +24,10 @@ class HelpBox extends Component<{
         </div>
       );
     }
-    return '';
+    return <div></div>;
   }
 
-  render() {
+  render() : JSX.Element {
     return (
       <div className="helpbox">
         <a
