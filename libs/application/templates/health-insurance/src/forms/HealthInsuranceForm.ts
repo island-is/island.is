@@ -63,17 +63,6 @@ export const HealthInsuranceForm: Form = buildForm({
             }),
           ],
         }),
-        buildCustomField({
-          id: 'errorModal',
-          component: 'ErrorModal',
-          title: '',
-          condition: (answers, externalData) => {
-            const previousCountry = (externalData.nationalRegistry?.data as {
-              previousCountry?: string
-            })?.previousCountry
-            return previousCountry ? !isValidCountry(previousCountry) : false
-          },
-        }),
         buildMultiField({
           id: 'confirmationOfResidency',
           title: m.confirmationOfResidencyTitle,
