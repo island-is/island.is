@@ -48,10 +48,6 @@ export const GET_ORGANIZATION_QUERY = gql`
           ... on Districts {
             title
             description
-            districtLinks {
-              text
-              url
-            }
             image {
               url
             }
@@ -61,6 +57,10 @@ export const GET_ORGANIZATION_QUERY = gql`
           text
           url
         }
+      }
+      suborganizations {
+        shortTitle
+        link
       }
     }
   }

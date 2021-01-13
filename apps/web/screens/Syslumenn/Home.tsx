@@ -33,7 +33,7 @@ import {
   AllSlicesEmbeddedVideoFragment,
   AllSlicesFragment, AllSlicesImageFragment, Districts,
   GetArticleCategoriesQuery,
-  GetGroupedMenuQuery, GetNamespaceQuery, HeadingSlice,
+  GetGroupedMenuQuery, GetNamespaceQuery, HeadingSlice, Organization,
   QueryGetArticleCategoriesArgs,
   QueryGetOrganizationArgs,
 } from '@island.is/web/graphql/schema'
@@ -184,7 +184,7 @@ const Home: Screen<HomeProps> = ({ organization, namespace, megaMenuData }) => {
           </Box>
         </SidebarLayout>
         {organization.organizationPage.slices.map((slice) => (
-          <Section key={slice.id} slice={slice} />
+          <Section key={slice.id} slice={slice} organization={organization}/>
         ))}
       </Main>
     </>
@@ -193,10 +193,11 @@ const Home: Screen<HomeProps> = ({ organization, namespace, megaMenuData }) => {
 
 interface SectionProps {
   slice: HeadingSlice | Districts
+  organization: Organization
   namespace?: GetNamespaceQuery['getNamespace']
 }
 
-const Section: FC<SectionProps> = ({ slice, namespace }) => {
+const Section: FC<SectionProps> = ({ slice, organization, namespace}) => {
   console.log({slice})
   switch (slice.__typename) {
     case 'HeadingSlice':
@@ -213,14 +214,14 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <div key={slice.id} id={slice.id}>
           <Box paddingTop={[8, 6, 15]} paddingBottom={[4, 5, 10]}>
-            <SidebarLayout fullWidthContent={true}>
+            <SidebarLayout fullWidthContent={true} sidebarContent={null}>
               <h2>{slice.title}</h2>
               <GridContainer>
                 <GridRow>
                   <GridColumn span='6/12'>
-                    {slice.districtLinks.map(link => (
+                    {organization.suborganizations.map(link => (
                       <div>
-                        <a href={link.url}>{link.text}</a>
+                        <a href={link.link}>{link.shortTitle}</a>
                       </div>
                     ))}
                   </GridColumn>
