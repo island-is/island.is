@@ -3,10 +3,10 @@ import ClientForm from '../../components/Client/form/ClientForm';
 import React from 'react';
 import { useRouter } from 'next/router';
 import ContentWrapper from './../../components/Layout/ContentWrapper';
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, NextPageContext } from 'next';
 import { withAuthentication } from './../../utils/auth.utils';
 
-export default function Index() {
+const Index: React.FC = () => {
   const router = useRouter();
   const handleCancel = () => {
     router.back();
@@ -27,10 +27,11 @@ export default function Index() {
       />
     </ContentWrapper>
   );
-}
+};
+export default Index;
 
 export const getServerSideProps: GetServerSideProps = withAuthentication(
-  async (context: any) => {
+  async (context: NextPageContext) => {
     return {
       props: {},
     };

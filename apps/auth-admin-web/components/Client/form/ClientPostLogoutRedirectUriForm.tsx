@@ -30,7 +30,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [uriToRemove, setUriToRemove] = React.useState('');
 
-  const add = async (data: any) => {
+  const add = async (data: ClientPostLogoutRedirectUriDTO) => {
     const postLogoutUri = new ClientPostLogoutRedirectUriDTO();
     postLogoutUri.clientId = props.clientId;
     postLogoutUri.redirectUri = data.redirectUri;
@@ -90,6 +90,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                 <a
                   href="https://openid.net/specs/openid-connect-session-1_0.html"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   OIDC Connect Session Management spec
                 </a>{' '}

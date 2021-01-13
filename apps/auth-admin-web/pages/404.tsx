@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import ContentWrapper from '../components/Layout/ContentWrapper';
 
-export default function ErrorPage() {
+const ErrorPage: React.FC = () => {
   const router = useRouter();
 
   const toMainPage = () => {
@@ -14,9 +14,10 @@ export default function ErrorPage() {
       <div className="error404">
         <h1>Page not found</h1>
         <button onClick={toMainPage} className="error404__button__back">
-          <a>Back to main page</a>
+          Back to main page
         </button>
       </div>
     </ContentWrapper>
   );
-}
+};
+export default ErrorPage;

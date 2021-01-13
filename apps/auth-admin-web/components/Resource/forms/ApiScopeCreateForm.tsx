@@ -6,7 +6,7 @@ import { ApiScopesDTO } from '../../../entities/dtos/api-scopes-dto';
 import { ResourcesService } from '../../../services/ResourcesService';
 
 interface Props {
-  handleSave?: (object: any) => void;
+  handleSave?: (object: ApiScopesDTO) => void;
   handleCancel?: () => void;
   apiScope: ApiScopesDTO;
 }
@@ -35,7 +35,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
     }
   };
 
-  const save = async (data: any) => {
+  const save = async (data: ApiScopesDTO) => {
     let response = null;
 
     if (!isEditing) {

@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import APIResponse from '../entities/common/APIResponse';
 import api from './api';
 import { ApiStatusStore } from '../store/ApiStatusStore';
 import { getSession } from 'next-auth/client';
 
 export class BaseService {
-  protected static async GET(path: string) {
+  protected static async GET(path: string): Promise<unknown | null> {
     ApiStatusStore.getInstance().clearStatus();
     const session = await getSession();
 
@@ -18,7 +20,10 @@ export class BaseService {
     }
   }
 
-  protected static async DELETE(path: string, body: any = null) {
+  protected static async DELETE(
+    path: string,
+    body: unknown = null
+  ): Promise<unknown | null> {
     ApiStatusStore.getInstance().clearStatus();
     const session = await getSession();
 
@@ -44,7 +49,10 @@ export class BaseService {
     }
   }
 
-  protected static async POST(path: string, body: any = null) {
+  protected static async POST(
+    path: string,
+    body: unknown = null
+  ): Promise<unknown | null> {
     ApiStatusStore.getInstance().clearStatus();
     const session = await getSession();
 
@@ -75,7 +83,10 @@ export class BaseService {
     }
   }
 
-  protected static async PUT(path: string, body: any) {
+  protected static async PUT(
+    path: string,
+    body: unknown
+  ): Promise<unknown | null> {
     ApiStatusStore.getInstance().clearStatus();
     const session = await getSession();
 
@@ -93,7 +104,10 @@ export class BaseService {
     }
   }
 
-  protected static async PATCH(path: string, body: any) {
+  protected static async PATCH(
+    path: string,
+    body: unknown
+  ): Promise<unknown | null> {
     ApiStatusStore.getInstance().clearStatus();
     const session = await getSession();
 
@@ -111,7 +125,7 @@ export class BaseService {
     }
   }
 
-  protected static handleResponse(response: any) {
+  protected static handleResponse(response: any): Promise<unknown | null> {
     const res = new APIResponse();
     res.statusCode = response.request.status;
     res.message = response.request.statusText;
@@ -141,7 +155,6 @@ export class BaseService {
         statusCode: 1000, // TODO: What should the status code be? (at least nonzero)
       });
     }
-    return null;
   }
 
   private static handleNoSession() {

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import IdentityResourcesDTO from '../../../entities/dtos/identity-resources.dto';
 import { useRouter } from 'next/router';
 import ResourceListDisplay from './ListDisplay';
 import { ResourcesService } from '../../../services/ResourcesService';
 import ConfirmModal from '../../Common/ConfirmModal';
 
-export default function IdentityResourcesList() {
+const IdentityResourcesList: React.FC = () => {
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(1);
   const [resources, setResources] = useState<IdentityResourcesDTO[]>([]);
@@ -93,4 +93,5 @@ export default function IdentityResourcesList() {
       ></ConfirmModal>
     </div>
   );
-}
+};
+export default IdentityResourcesList;

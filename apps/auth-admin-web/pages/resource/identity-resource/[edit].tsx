@@ -10,10 +10,10 @@ import { IdentityResourceStep } from '../../../entities/common/IdentityResources
 import IdentityResourceUserClaimsForm from '../../../components/Resource/forms/IdentityResourceUserClaimsForm';
 import StepEnd from '../../../components/Common/StepEnd';
 import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav';
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, NextPageContext } from 'next';
 import { withAuthentication } from './../../../utils/auth.utils';
 
-export default function Index() {
+const Index: React.FC = () => {
   const { query } = useRouter();
   const stepQuery = query.step;
   const resourceId = query.edit;
@@ -132,10 +132,11 @@ export default function Index() {
       );
     }
   }
-}
+};
+export default Index;
 
 export const getServerSideProps: GetServerSideProps = withAuthentication(
-  async (context: any) => {
+  async (context: NextPageContext) => {
     return {
       props: {},
     };

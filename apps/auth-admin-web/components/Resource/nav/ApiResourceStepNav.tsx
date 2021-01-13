@@ -16,7 +16,7 @@ const ApiResourceStepNav: React.FC<Props> = ({
       <nav className="api-resource-step-nav">
         <ul>
           <li>
-            <a
+            <button
               onClick={() =>
                 handleStepChange(ApiResourceStep.ApiResourceBasics)
               }
@@ -25,10 +25,10 @@ const ApiResourceStepNav: React.FC<Props> = ({
               }
             >
               Api resource basics
-            </a>
+            </button>
           </li>
           <li>
-            <a
+            <button
               onClick={() =>
                 handleStepChange(ApiResourceStep.ApiResourceScopes)
               }
@@ -37,10 +37,10 @@ const ApiResourceStepNav: React.FC<Props> = ({
               }
             >
               Api resource scopes
-            </a>
+            </button>
           </li>
           <li>
-            <a
+            <button
               onClick={() =>
                 handleStepChange(ApiResourceStep.ApiResourceSecrets)
               }
@@ -51,10 +51,10 @@ const ApiResourceStepNav: React.FC<Props> = ({
               }
             >
               Api resource secrets
-            </a>
+            </button>
           </li>
           <li>
-            <a
+            <button
               onClick={() =>
                 handleStepChange(ApiResourceStep.ApiResourceUserClaims)
               }
@@ -65,7 +65,7 @@ const ApiResourceStepNav: React.FC<Props> = ({
               }
             >
               Api resource user claims
-            </a>
+            </button>
           </li>
         </ul>
       </nav>

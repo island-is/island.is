@@ -1,10 +1,9 @@
-import Head from 'next/head';
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import Link from 'next/link';
 import React from 'react';
 import ContentWrapper from '../components/Layout/ContentWrapper';
-import Nav from '../components/Layout/Nav';
 
-export default function Home() {
+const Home: React.FC = () => {
   return (
     <ContentWrapper>
       <div className="home">
@@ -56,4 +55,5 @@ export default function Home() {
       </div>
     </ContentWrapper>
   );
-}
+};
+export default Home;

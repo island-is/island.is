@@ -3,13 +3,8 @@ import React, { useEffect, useState } from 'react';
 import APIResponse from './../../entities/common/APIResponse';
 import { BehaviorSubject } from 'rxjs';
 
-const StatusBar = ({ status = null }) => {
-  const status$ = React.useRef(new BehaviorSubject(status));
-
-  useEffect(() => {
-    status$.current.next(status);
-  }, [status]);
-
+const StatusBar: React.FC = () => {
+  const status$ = React.useRef(new BehaviorSubject(null));
   const [state, setState] = useState(new APIResponse());
 
   useEffect(() => {

@@ -17,10 +17,10 @@ import ClientGrantTypesForm from '../../components/Client/form/ClientGrantTypesF
 import ContentWrapper from './../../components/Layout/ContentWrapper';
 import StepEnd from './../../components/Common/StepEnd';
 import { ClientService } from './../../services/ClientService';
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, NextPageContext } from 'next';
 import { withAuthentication } from './../../utils/auth.utils';
 
-const Index = () => {
+const Index: React.FC = () => {
   const { query } = useRouter();
   const clientId = query.client;
   const stepQuery = query.step;
@@ -235,7 +235,7 @@ const Index = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = withAuthentication(
-  async (context: any) => {
+  async (context: NextPageContext) => {
     return {
       props: {},
     };

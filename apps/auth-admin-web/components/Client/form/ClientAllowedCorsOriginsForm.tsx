@@ -16,6 +16,10 @@ interface Props {
   handleChanges?: () => void;
 }
 
+interface FormOutput {
+  origin: string;
+}
+
 const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
   const {
     register,
@@ -30,7 +34,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [corsOriginToRemove, setCorsOriginToRemove] = React.useState('');
 
-  const add = async (data: any) => {
+  const add = async (data: FormOutput) => {
     const allowedCorsOrigin = new ClientAllowedCorsOriginDTO();
     allowedCorsOrigin.clientId = props.clientId;
     allowedCorsOrigin.origin = data.origin;
@@ -87,7 +91,10 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
             <h1>Enter allowed cors origins</h1>
             <div className="client-allowed-cors-origin__container__form">
               <div className="client-allowed-cors-origin__help">
-              Cross-Origin Resource Sharing (CORS) is an HTTP-header based mechanism that allows a server to indicate any other origins (domain, scheme, or port) than its own from which a browser should permit loading of resources. 
+                Cross-Origin Resource Sharing (CORS) is an HTTP-header based
+                mechanism that allows a server to indicate any other origins
+                (domain, scheme, or port) than its own from which a browser
+                should permit loading of resources.
               </div>
               <form id="corsForm" onSubmit={handleSubmit(add)}>
                 <div className="client-allowed-cors-origin__container__fields">

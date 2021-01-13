@@ -16,35 +16,35 @@ const ClientStepNav: React.FC<Props> = ({
       <nav className="client-step-nav">
         <ul>
           <li>
-            <a
+            <button
               onClick={() => handleStepChange(ClientStep.Client)}
               className={activeStep === ClientStep.Client ? 'active' : ''}
             >
               Client Basics
-            </a>
+            </button>
           </li>
           <li>
-            <a
+            <button
               onClick={() => handleStepChange(ClientStep.ClientRedirectUri)}
               className={
                 activeStep === ClientStep.ClientRedirectUri ? 'active' : ''
               }
             >
               Redirect Uri
-            </a>
+            </button>
           </li>
           <li>
-            <a
+            <button
               onClick={() => handleStepChange(ClientStep.ClientIdpRestrictions)}
               className={
                 activeStep === ClientStep.ClientIdpRestrictions ? 'active' : ''
               }
             >
               Idp Restricions
-            </a>
+            </button>
           </li>
           <li>
-            <a
+            <button
               onClick={() =>
                 handleStepChange(ClientStep.ClientPostLogoutRedirectUri)
               }
@@ -55,10 +55,10 @@ const ClientStepNav: React.FC<Props> = ({
               }
             >
               Post Logout Uris
-            </a>
+            </button>
           </li>
           <li>
-            <a
+            <button
               onClick={() =>
                 handleStepChange(ClientStep.ClientAllowedCorsOrigin)
               }
@@ -69,43 +69,43 @@ const ClientStepNav: React.FC<Props> = ({
               }
             >
               Allowed Cors Origins
-            </a>
+            </button>
           </li>
           <li>
-            <a
+            <button
               onClick={() => handleStepChange(ClientStep.ClientGrantTypes)}
               className={
                 activeStep === ClientStep.ClientGrantTypes ? 'active' : ''
               }
             >
               Grant types
-            </a>
+            </button>
           </li>
           <li>
-            <a
+            <button
               onClick={() => handleStepChange(ClientStep.ClientAllowedScopes)}
               className={
                 activeStep === ClientStep.ClientAllowedScopes ? 'active' : ''
               }
             >
               Allowed Scopes
-            </a>
+            </button>
           </li>
           <li>
-            <a
+            <button
               onClick={() => handleStepChange(ClientStep.ClientClaims)}
               className={activeStep === ClientStep.ClientClaims ? 'active' : ''}
             >
               Client claims
-            </a>
+            </button>
           </li>
           <li>
-            <a
+            <button
               onClick={() => handleStepChange(ClientStep.ClientSecret)}
               className={activeStep === ClientStep.ClientSecret ? 'active' : ''}
             >
               Client secret
-            </a>
+            </button>
           </li>
         </ul>
       </nav>

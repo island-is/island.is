@@ -63,7 +63,7 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
     document.body.removeChild(selBox);
   };
 
-  const add = async (data: any) => {
+  const add = async (data: ApiResourceSecret) => {
     const secretObj = new ApiResourceSecretDTO();
     secretObj.apiResourceName = props.apiResourceName;
     secretObj.description = data.description;
@@ -132,7 +132,8 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
           <h1>Api Resource Secrets</h1>
           <div className="api-resource-secret-form__container__form">
             <div className="api-resource-secret-form__help">
-            The API secret is used for the introspection endpoint. The API can authenticate with introspection using the API name and secret.
+              The API secret is used for the introspection endpoint. The API can
+              authenticate with introspection using the API name and secret.
             </div>
             <form id="secretForm" onSubmit={handleSubmit(add)}>
               <div className="api-resource-secret-form__container__fields">

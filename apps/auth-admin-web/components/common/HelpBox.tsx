@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
 
 class HelpBox extends Component<{
@@ -9,24 +10,29 @@ class HelpBox extends Component<{
     show: false,
   };
 
-  getHelpLink() {
+  getHelpLink(): JSX.Element {
     if (this.props.helpLink && this.props.helpLinkText) {
       return (
         <div className="helpLink">
-          <a href={this.props.helpLink} target="_blank">{this.props.helpLinkText}</a>
+          <a href={this.props.helpLink} target="_blank" rel="noreferrer">
+            {this.props.helpLinkText}
+          </a>
         </div>
       );
     } else if (this.props.helpLink) {
       return (
         <div className="helpLink">
-          <a href={this.props.helpLink} target="_blank">More Info</a>.
+          <a href={this.props.helpLink} target="_blank" rel="noreferrer">
+            More Info
+          </a>
+          .
         </div>
       );
     }
-    return '';
+    return <div></div>;
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <div className="helpbox">
         <a

@@ -17,16 +17,19 @@ interface Props {
 }
 
 const ClientClaimForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<
-    ClientClaimDTO
-  >();
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+  } = useForm<ClientClaimDTO>();
   const { isSubmitting } = formState;
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [claimToRemove, setClaimToRemove] = React.useState<ClientClaimDTO>(
     new ClientClaimDTO()
   );
 
-  const add = async (data: any) => {
+  const add = async (data: ClientClaimDTO) => {
     const clientClaim = new ClientClaimDTO();
     clientClaim.clientId = props.clientId;
     clientClaim.type = data.type;

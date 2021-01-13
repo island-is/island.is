@@ -64,7 +64,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
     document.body.removeChild(selBox);
   };
 
-  const add = async (data: any) => {
+  const add = async (data: ClientSecretDTO) => {
     const secretObj = new ClientSecretDTO();
     secretObj.clientId = props.clientId;
     secretObj.description = data.description;

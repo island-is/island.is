@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import HelpBox from '../../Common/HelpBox';
@@ -7,7 +6,7 @@ import { ApiResourcesDTO } from '../../../entities/dtos/api-resources-dto';
 import { ResourcesService } from '../../../services/ResourcesService';
 
 interface Props {
-  handleSave?: (object: any) => void;
+  handleSave?: (object: ApiResourcesDTO) => void;
   handleCancel?: () => void;
   apiResource: ApiResourcesDTO;
 }
@@ -41,7 +40,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
     }
   };
 
-  const save = async (data: any) => {
+  const save = async (data: ApiResourcesDTO) => {
     let response = null;
 
     if (!isEditing) {

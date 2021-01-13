@@ -1,22 +1,26 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from 'react';
-import { UserIdentityDTO } from '../../../entities/dtos/user-identity.dto';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import HelpBox from '../../Common/HelpBox';
-import { ClaimDTO } from '../../../entities/dtos/claim.dto';
 import NotFound from '../../Common/NotFound';
 import { UserService } from '../../../services/UserService';
+import UserIdentity from './../../../entities/models/user-identity.model';
+import { Claim } from './../../../entities/models/claim.model';
 
 interface ClaimShow {
   subjectId: string;
   show: boolean;
 }
 
+interface FormOutput {
+  id: string;
+}
+
 const UsersList: React.FC = () => {
-  const [users, setUsers] = useState<UserIdentityDTO[]>([]);
+  const [users, setUsers] = useState<UserIdentity[]>([]);
   const [id, setId] = useState<string>('');
   const [claimShow, setClaimShow] = useState<ClaimShow[]>([]);
-  const [type, setType] = useState<string>('');
   const [showNotFound, setShowNotFound] = useState<boolean>(false);
   const { handleSubmit, register, errors, formState } = useForm();
   const { isSubmitting } = formState;
@@ -30,7 +34,7 @@ const UsersList: React.FC = () => {
     return -1;
   };
 
-  const getUser = async (data: any) => {
+  const getUser = async (data: FormOutput) => {
     setShowNotFound(false);
     const response = await UserService.findUser(data.id);
     if (response) {
@@ -41,16 +45,15 @@ const UsersList: React.FC = () => {
     }
 
     setId(data.id);
-    setType(data.type);
   };
 
-  const toggleActive = async (user: UserIdentityDTO) => {
+  const toggleActive = async (user: UserIdentity) => {
     await UserService.toggleActive(user.subjectId, !user.active);
-    getUser({ id: id, type: type });
+    getUser({ id: id });
   };
 
   const handleShowClaimsClicked = (
-    user: UserIdentityDTO,
+    user: UserIdentity,
     show = true
   ): ClaimShow => {
     const index = getIndex(user.subjectId);
@@ -66,7 +69,7 @@ const UsersList: React.FC = () => {
     return ret;
   };
 
-  const showClaims = (user: UserIdentityDTO): boolean => {
+  const showClaims = (user: UserIdentity): boolean => {
     const index = getIndex(user.subjectId);
     if (index === -1) {
       return false;
@@ -131,7 +134,7 @@ const UsersList: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user: UserIdentityDTO) => {
+                {users.map((user: UserIdentity) => {
                   return (
                     <tr key={user.subjectId}>
                       <td>{user.subjectId}</td>
@@ -157,7 +160,7 @@ const UsersList: React.FC = () => {
                           >
                             &times;
                           </a>
-                          {user.claims.map((claim: ClaimDTO) => {
+                          {user.claims?.map((claim: Claim) => {
                             return (
                               <div
                                 className="users__container__list__item"

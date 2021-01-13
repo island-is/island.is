@@ -6,7 +6,7 @@ import { ResourcesService } from '../../../services/ResourcesService';
 import IdentityResourcesDTO from '../../../entities/dtos/identity-resources.dto';
 
 interface Props {
-  handleSave?: (object: any) => void;
+  handleSave?: (object: IdentityResourcesDTO) => void;
   handleCancel?: () => void;
   identityResource: IdentityResourcesDTO;
 }
@@ -40,7 +40,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
     }
   };
 
-  const save = async (data: any) => {
+  const save = async (data: IdentityResourcesDTO) => {
     let response = null;
 
     if (!isEditing) {
@@ -74,7 +74,10 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
             <form onSubmit={handleSubmit(save)}>
               <div className="identity-resource-form__container__fields">
                 <div className="identity-resource-form__container__field">
-                  <label htmlFor="name" className="identity-resource-form__label">
+                  <label
+                    htmlFor="name"
+                    className="identity-resource-form__label"
+                  >
                     Name
                   </label>
                   <input
@@ -144,7 +147,10 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                 </div>
 
                 <div className="identity-resource-form__container__checkbox__field">
-                  <label htmlFor="enabled" className="identity-resource-form__label">
+                  <label
+                    htmlFor="enabled"
+                    className="identity-resource-form__label"
+                  >
                     Enabled
                   </label>
                   <input
@@ -179,7 +185,10 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                 </div>
 
                 <div className="identity-resource-form__container__checkbox__field">
-                  <label htmlFor="emphasize" className="identity-resource-form__label">
+                  <label
+                    htmlFor="emphasize"
+                    className="identity-resource-form__label"
+                  >
                     Emphasize
                   </label>
                   <input
@@ -194,7 +203,10 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                 </div>
 
                 <div className="identity-resource-form__container__checkbox__field">
-                  <label htmlFor="required" className="identity-resource-form__label">
+                  <label
+                    htmlFor="required"
+                    className="identity-resource-form__label"
+                  >
                     Required
                   </label>
                   <input
