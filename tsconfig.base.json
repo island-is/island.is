@@ -99,6 +99,9 @@
       "@island.is/application/template-loader": [
         "libs/application/template-loader/src/index.ts"
       ],
+      "@island.is/application/templates/children-domicile-transfer": [
+        "libs/application/templates/children-domicile-transfer/src/index.ts"
+      ],
       "@island.is/application/templates/document-provider-onboarding": [
         "libs/application/templates/document-provider-onboarding/src/index.ts"
       ],

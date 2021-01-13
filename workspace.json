@@ -1492,6 +1492,28 @@
         }
       }
     },
+    "application-templates-children-domicile-transfer": {
+      "root": "libs/application/templates/children-domicile-transfer",
+      "sourceRoot": "libs/application/templates/children-domicile-transfer/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/children-domicile-transfer/tsconfig.lib.json",
+              "libs/application/templates/children-domicile-transfer/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/children-domicile-transfer/**/*"
+            ]
+          }
+        }
+      }
+    },
     "application-templates-document-provider-onboarding": {
       "root": "libs/application/templates/document-provider-onboarding",
       "sourceRoot": "libs/application/templates/document-provider-onboarding/src",
