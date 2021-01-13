@@ -4,7 +4,7 @@ import ApiResourceCreateForm from '../../../components/Resource/forms/ApiResourc
 import { ApiResourcesDTO } from './../../../entities/dtos/api-resources-dto';
 import { useRouter } from 'next/router';
 import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav';
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, NextPageContext } from 'next';
 import { withAuthentication } from './../../../utils/auth.utils';
 
 const Index: React.FC = () => {
@@ -34,7 +34,7 @@ const Index: React.FC = () => {
 export default Index;
 
 export const getServerSideProps: GetServerSideProps = withAuthentication(
-  async (context: any) => {
+  async (context: NextPageContext) => {
     return {
       props: {},
     };

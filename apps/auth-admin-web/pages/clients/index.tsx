@@ -1,7 +1,7 @@
 import React from 'react';
 import ContentWrapper from './../../components/Layout/ContentWrapper';
 import ClientsList from '../../components/Client/lists/ClientsList';
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, NextPageContext } from 'next';
 import { withAuthentication } from './../../utils/auth.utils';
 
 const Index: React.FC = () => {
@@ -14,7 +14,7 @@ const Index: React.FC = () => {
 
 
 export const getServerSideProps: GetServerSideProps = withAuthentication(
-  async (context: any) => {
+  async (context: NextPageContext) => {
     return {
       props: {},
     };
