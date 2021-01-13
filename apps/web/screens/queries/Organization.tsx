@@ -52,6 +52,9 @@ export const GET_ORGANIZATION_QUERY = gql`
               text
               url
             }
+            image {
+              url
+            }
           }
         }
         menuLinks {

@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
+import React, {FC} from 'react'
 import NextLink from 'next/link'
 import {
   Box,
@@ -9,9 +9,11 @@ import {
   Navigation,
   NavigationItem,
   GridContainer,
+  GridColumn,
+  GridRow,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { HeadWithSocialSharing, Header, Main } from '@island.is/web/components'
+import {HeadWithSocialSharing, Header, Main, Heading} from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import {
   Query,
@@ -28,8 +30,10 @@ import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import * as styles from './Home.treat'
 import {
+  AllSlicesEmbeddedVideoFragment,
+  AllSlicesFragment, AllSlicesImageFragment, Districts,
   GetArticleCategoriesQuery,
-  GetGroupedMenuQuery,
+  GetGroupedMenuQuery, GetNamespaceQuery, HeadingSlice,
   QueryGetArticleCategoriesArgs,
   QueryGetOrganizationArgs,
 } from '@island.is/web/graphql/schema'
@@ -42,12 +46,18 @@ import {
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useRouter } from 'next/router'
+import {renderSlices, Slice as SliceType} from "@island.is/island-ui/contentful";
 
 interface HomeProps {
   organization: Query['getOrganization']
   namespace: Query['getNamespace']
   megaMenuData
 }
+
+type AvailableSlices = Exclude<
+  AllSlicesFragment,
+  AllSlicesEmbeddedVideoFragment | AllSlicesImageFragment
+  >
 
 const Home: Screen<HomeProps> = ({ organization, namespace, megaMenuData }) => {
   const { activeLocale } = useI18n()
@@ -173,9 +183,59 @@ const Home: Screen<HomeProps> = ({ organization, namespace, megaMenuData }) => {
             {organization.organizationPage.description}
           </Box>
         </SidebarLayout>
+        {organization.organizationPage.slices.map((slice) => (
+          <Section key={slice.id} slice={slice} />
+        ))}
       </Main>
     </>
   )
+}
+
+interface SectionProps {
+  slice: HeadingSlice | Districts
+  namespace?: GetNamespaceQuery['getNamespace']
+}
+
+const Section: FC<SectionProps> = ({ slice, namespace }) => {
+  console.log({slice})
+  switch (slice.__typename) {
+    case 'HeadingSlice':
+      return (
+        <div key={slice.id} id={slice.id}>
+          <Box paddingTop={[8, 6, 15]} paddingBottom={[4, 5, 10]}>
+            <SidebarLayout isSticky={false} sidebarContent="">
+              <Heading {...slice} />
+            </SidebarLayout>
+          </Box>
+        </div>
+      )
+    case 'Districts':
+      return (
+        <div key={slice.id} id={slice.id}>
+          <Box paddingTop={[8, 6, 15]} paddingBottom={[4, 5, 10]}>
+            <SidebarLayout fullWidthContent={true}>
+              <h2>{slice.title}</h2>
+              <GridContainer>
+                <GridRow>
+                  <GridColumn span='6/12'>
+                    {slice.districtLinks.map(link => (
+                      <div>
+                        <a href={link.url}>{link.text}</a>
+                      </div>
+                    ))}
+                  </GridColumn>
+                  <GridColumn span='6/12'>
+                    <img src={slice.image.url} />
+                  </GridColumn>
+                </GridRow>
+              </GridContainer>
+            </SidebarLayout>
+          </Box>
+        </div>
+      )
+    default:
+      return <div>no section match</div>
+  }
 }
 
 Home.getInitialProps = async ({ apolloClient, locale }) => {
