@@ -78,6 +78,10 @@ export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
       return 'Fjölmiðlabann'
     case CaseCustodyRestrictions.VISITAION:
       return 'Heimsóknarbann'
+    case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION:
+      return 'Tilkynningarskylda'
+    case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT:
+      return 'Afhending vegabréfs'
   }
 }
 
@@ -106,13 +110,14 @@ export function formatCustodyRestrictions(
   accusedGender: CaseGender,
   custodyRestrictions: CaseCustodyRestrictions[],
 ): string {
-  const relevantCustodyRestrictions = custodyRestrictions.filter(
-    (restriction) => [
-      CaseCustodyRestrictions.ISOLATION,
-      CaseCustodyRestrictions.VISITAION,
-      CaseCustodyRestrictions.COMMUNICATION,
-      CaseCustodyRestrictions.MEDIA,
-    ],
+  const relevantCustodyRestrictions = custodyRestrictions?.filter(
+    (restriction) =>
+      [
+        CaseCustodyRestrictions.ISOLATION,
+        CaseCustodyRestrictions.VISITAION,
+        CaseCustodyRestrictions.COMMUNICATION,
+        CaseCustodyRestrictions.MEDIA,
+      ].includes(restriction),
   )
 
   if (!(relevantCustodyRestrictions?.length > 0)) {
@@ -171,11 +176,12 @@ export const formatAlternativeTravelBanRestrictions = (
   accusedGender: CaseGender,
   custodyRestrictions: CaseCustodyRestrictions[],
 ): string => {
-  const relevantCustodyRestrictions = custodyRestrictions.filter(
-    (restriction) => [
-      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
-      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
-    ],
+  const relevantCustodyRestrictions = custodyRestrictions?.filter(
+    (restriction) =>
+      [
+        CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
+        CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
+      ].includes(restriction),
   )
 
   if (!(relevantCustodyRestrictions?.length > 0)) {
