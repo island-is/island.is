@@ -4,7 +4,7 @@ import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 import AccordionListItem from '../AccordionListItem/AccordionListItem'
 import {
   capitalize,
-  formatCustodyRestrictions,
+  formatRequestedCustodyRestrictions,
   formatDate,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
@@ -70,7 +70,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       </Box>
       <Box marginBottom={4}>
         <Text>
-          {formatCustodyRestrictions(workingCase.custodyRestrictions)}
+          {formatRequestedCustodyRestrictions(workingCase.custodyRestrictions)}
         </Text>
       </Box>
       <Box marginBottom={2}>
