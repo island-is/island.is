@@ -17,6 +17,7 @@ const IdentityResourceStepNav: React.FC<Props> = ({
         <ul>
           <li>
             <button
+              type="button"
               onClick={() => handleStepChange(ApiScopeStep.ApiScope)}
               className={activeStep === ApiScopeStep.ApiScope ? 'active' : ''}
             >
@@ -25,6 +26,7 @@ const IdentityResourceStepNav: React.FC<Props> = ({
           </li>
           <li>
             <button
+              type="button"
               onClick={() => handleStepChange(ApiScopeStep.Claims)}
               className={activeStep === ApiScopeStep.Claims ? 'active' : ''}
             >

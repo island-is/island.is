@@ -29,6 +29,7 @@ const ApiResourceStepNav: React.FC<Props> = ({
           </li>
           <li>
             <button
+              type="button"
               onClick={() =>
                 handleStepChange(ApiResourceStep.ApiResourceScopes)
               }
@@ -41,6 +42,7 @@ const ApiResourceStepNav: React.FC<Props> = ({
           </li>
           <li>
             <button
+              type="button"
               onClick={() =>
                 handleStepChange(ApiResourceStep.ApiResourceSecrets)
               }
@@ -55,6 +57,7 @@ const ApiResourceStepNav: React.FC<Props> = ({
           </li>
           <li>
             <button
+              type="button"
               onClick={() =>
                 handleStepChange(ApiResourceStep.ApiResourceUserClaims)
               }

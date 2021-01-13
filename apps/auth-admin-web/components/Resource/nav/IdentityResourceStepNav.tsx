@@ -17,6 +17,7 @@ const IdentityResourceStepNav: React.FC<Props> = ({
         <ul>
           <li>
             <button
+              type="button"
               onClick={() =>
                 handleStepChange(IdentityResourceStep.IdentityResource)
               }
@@ -31,6 +32,7 @@ const IdentityResourceStepNav: React.FC<Props> = ({
           </li>
           <li>
             <button
+              type="button"
               onClick={() => handleStepChange(IdentityResourceStep.Claims)}
               className={
                 activeStep === IdentityResourceStep.Claims ? 'active' : ''
