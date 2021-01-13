@@ -77,7 +77,10 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
       setSecretValue(data.value)
       setInfoModalIsOpen(true)
 
-      document.getElementById('secretForm').reset()
+      const form = document.getElementById('secretForm') as HTMLFormElement
+      if (form) {
+        form.reset()
+      }
       setDefaultSecret(makeDefaultSecret(defaultSecretLength))
     }
   }

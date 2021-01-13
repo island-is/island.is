@@ -36,13 +36,13 @@ const ClientForm: React.FC<Props> = (props: Props) => {
     obj.identityTokenLifetime = +obj.identityTokenLifetime
     obj.accessTokenType = +obj.accessTokenType
 
-    if (obj.consentLifetime === '') {
+    if (!obj.consentLifetime) {
       obj.consentLifetime = null
     } else {
       obj.consentLifetime = +obj.consentLifetime
     }
 
-    if (obj.userSsoLifetime === '') {
+    if (!obj.userSsoLifetime) {
       obj.userSsoLifetime = null
     } else {
       obj.userSsoLifetime = +obj.userSsoLifetime

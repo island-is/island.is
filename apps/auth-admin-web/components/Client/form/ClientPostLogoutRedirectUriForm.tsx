@@ -37,7 +37,10 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
       if (props.handleChanges) {
         props.handleChanges()
       }
-      document.getElementById('postLogoutForm').reset()
+      const form = document.getElementById('postLogoutForm') as HTMLFormElement
+      if (form) {
+        form.reset()
+      }
       setDefaultUrl('')
     }
   }

@@ -234,7 +234,7 @@ const Index: React.FC = () => {
   }
 }
 
-export const getServerSideProps: GetServerSideProps = withAuthentication(
+export const getServerSideProps = withAuthentication(
   async (context: NextPageContext) => {
     return {
       props: {},

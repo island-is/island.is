@@ -12,5 +12,5 @@ export class ApiResourcesDTO {
   displayName: string
   description: string
   showInDiscoveryDocument: boolean
-  nationalId!: number
+  nationalId!: string
 }

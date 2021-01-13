@@ -6,7 +6,7 @@ import { ApiStatusStore } from '../store/ApiStatusStore'
 import { getSession } from 'next-auth/client'
 
 export class BaseService {
-  protected static async GET(path: string): Promise<unknown | null> {
+  protected static async GET(path: string): Promise<any | null> {
     ApiStatusStore.getInstance().clearStatus()
     const session = await getSession()
 
@@ -23,7 +23,7 @@ export class BaseService {
   protected static async DELETE(
     path: string,
     body: unknown = null,
-  ): Promise<unknown | null> {
+  ): Promise<any | null> {
     ApiStatusStore.getInstance().clearStatus()
     const session = await getSession()
 
@@ -52,7 +52,7 @@ export class BaseService {
   protected static async POST(
     path: string,
     body: unknown = null,
-  ): Promise<unknown | null> {
+  ): Promise<any | null> {
     ApiStatusStore.getInstance().clearStatus()
     const session = await getSession()
 
@@ -83,10 +83,7 @@ export class BaseService {
     }
   }
 
-  protected static async PUT(
-    path: string,
-    body: unknown,
-  ): Promise<unknown | null> {
+  protected static async PUT(path: string, body: unknown): Promise<any | null> {
     ApiStatusStore.getInstance().clearStatus()
     const session = await getSession()
 
@@ -103,7 +100,7 @@ export class BaseService {
   protected static async PATCH(
     path: string,
     body: unknown,
-  ): Promise<unknown | null> {
+  ): Promise<any | null> {
     ApiStatusStore.getInstance().clearStatus()
     const session = await getSession()
 
@@ -121,7 +118,7 @@ export class BaseService {
     }
   }
 
-  protected static handleResponse(response: any): Promise<unknown | null> {
+  protected static handleResponse(response: any): Promise<any | null> {
     const res = new APIResponse()
     res.statusCode = response.request.status
     res.message = response.request.statusText

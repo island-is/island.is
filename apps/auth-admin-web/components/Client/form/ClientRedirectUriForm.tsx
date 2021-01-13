@@ -39,7 +39,10 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
         props.handleChanges()
       }
 
-      document.getElementById('redirectForm').reset()
+      const form = document.getElementById('redirectForm') as HTMLFormElement
+      if (form) {
+        form.reset()
+      }
       setDefaultUrl('')
     }
   }

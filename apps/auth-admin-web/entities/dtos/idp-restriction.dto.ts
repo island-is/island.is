@@ -1,7 +1,7 @@
 export class IdpRestrictionDTO {
   constructor() {
-    this.name = null
-    this.clientId = null
+    this.name = undefined
+    this.clientId = undefined
   }
   name?: string
   clientId?: string

@@ -37,7 +37,10 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
       if (props.handleChanges) {
         props.handleChanges()
       }
-      document.getElementById('claimForm').reset()
+      const form = document.getElementById('claimForm') as HTMLFormElement
+      if (form) {
+        form.reset()
+      }
     }
   }
 

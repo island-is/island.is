@@ -42,7 +42,10 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
         props.handleChanges()
       }
       setDefaultOrigin('')
-      document.getElementById('corsForm').reset()
+      const form = document.getElementById('corsForm') as HTMLFormElement
+      if (form) {
+        form.reset()
+      }
     }
   }
 

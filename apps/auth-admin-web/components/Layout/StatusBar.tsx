@@ -25,7 +25,7 @@ const StatusBar: React.FC = () => {
     }
   }
 
-  if (state.statusCode === 0) return ''
+  if (state.statusCode === 0) return null
 
   return (
     <div className={`statusbar ${state?.statusCode > 399 ? 'error' : ''}`}>
