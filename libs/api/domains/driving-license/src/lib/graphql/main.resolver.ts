@@ -20,8 +20,8 @@ import { DrivingLicense } from './drivingLicense.model'
 import { DrivingLicenseType } from './drivingLicenseType.model'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
-@Resolver(() => DrivingLicense)
-export class DrivingLicenseResolver {
+@Resolver()
+export class MainResolver {
   constructor(private readonly drivingLicenseService: DrivingLicenseService) {}
 
   @Query(() => DrivingLicense)
