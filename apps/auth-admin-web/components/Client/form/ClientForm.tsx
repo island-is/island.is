@@ -406,7 +406,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       <HelpBox helpText="Specifies the type of user code to use for the client. Otherwise falls back to default" />
                     </div>
 
-                    {/* Number inputs */}
+                    
                     <div className="client__container__field">
                       <label className="client__label">Access Token Type</label>
                       <select
@@ -436,13 +436,14 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       />
                     </div>
 
+                    {/* Number inputs */}
                     <div className="client__container__field">
                       <label className="client__label">
                         Access Token Lifetime
                       </label>
 
                       <input
-                        ref={register({ required: true })}
+                        ref={register({ required: true, min: 0 })}
                         type="number"
                         name="client.accessTokenLifetime"
                         defaultValue={client.accessTokenLifetime}
@@ -464,7 +465,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                         type="number"
                         name="client.authorizationCodeLifetime"
                         defaultValue={client.authorizationCodeLifetime}
-                        ref={register({ required: true })}
+                        ref={register({ required: true, min: 0 })}
                         className="client__input"
                       />
                       <HelpBox helpText="Lifetime of authorization code in seconds (defaults to 300 seconds / 5 minutes)" />
@@ -480,11 +481,17 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       <input
                         type="number"
                         name="client.consentLifetime"
-                        defaultValue={client.consentLifetime ?? null}
+                        defaultValue={client.consentLifetime ?? ''}
                         className="client__input"
-                        ref={register}
+                        ref={register({min: 0})}
                       />
                       <HelpBox helpText="Lifetime of a user consent in seconds. Defaults to null (no expiration)." />
+                      <ErrorMessage
+                        as="span"
+                        errors={errors}
+                        name="client.consentLifetime"
+                        message="Value can not be negative"
+                      />
                     </div>
                     <div className="client__container__field">
                       <label className="client__label">
@@ -492,7 +499,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       </label>
                       <input
                         type="number"
-                        ref={register({ required: true })}
+                        ref={register({ required: true, min: 0 })}
                         name="client.deviceCodeLifetime"
                         defaultValue={client.deviceCodeLifetime}
                         className="client__input"
@@ -510,12 +517,18 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       <label className="client__label">User Sso Lifetime</label>
                       <input
                         type="number"
-                        defaultValue={client.userSsoLifetime}
+                        defaultValue={client.userSsoLifetime ?? ''}
                         name="client.userSsoLifetime"
                         className="client__input"
-                        ref={register}
+                        ref={register({min: 0})}
                       />
                       <HelpBox helpText="The maximum duration (in seconds) since the last time the user authenticated. (Default null)" />
+                      <ErrorMessage
+                        as="span"
+                        errors={errors}
+                        name="client.userSsoLifetime"
+                        message="Value can not be negative"
+                      />
                     </div>
 
                     <div className="client__container__field">
@@ -584,9 +597,15 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         defaultValue={client.slidingRefreshTokenLifetime}
                         name="client.slidingRefreshTokenLifetime"
                         className="client__input"
-                        ref={register}
+                        ref={register({min: 0})}
                       />
                       <HelpBox helpText="Sliding lifetime of a refresh token in seconds. Defaults to 1296000 seconds / 15 days" />
+                      <ErrorMessage
+                        as="span"
+                        errors={errors}
+                        name="client.slidingRefreshTokenLifetime"
+                        message="Value can not be negative"
+                      />
                     </div>
 
                     <div className="client__container__field">
@@ -595,7 +614,7 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                       </label>
                       <input
                         type="number"
-                        ref={register({ required: true })}
+                        ref={register({ required: true, min: 0 })}
                         name="client.absoluteRefreshTokenLifetime"
                         defaultValue={client.absoluteRefreshTokenLifetime}
                         className="client__input"
@@ -617,7 +636,7 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         type="number"
                         name="client.identityTokenLifetime"
                         defaultValue={client.identityTokenLifetime}
-                        ref={register({ required: true })}
+                        ref={register({ required: true, min: 0 })}
                         className="client__input"
                       />
                       <HelpBox helpText="Lifetime to identity token in seconds (defaults to 300 seconds / 5 minutes)" />
@@ -632,7 +651,7 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                     <div className="client__container__field">
                       <label className="client__label">Protocol Type</label>
                       <input
-                        ref={register({ required: true })}
+                        ref={register({ required: true, min: 0 })}
                         type="text"
                         name="client.protocolType"
                         defaultValue={
@@ -654,7 +673,7 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         Client claims prefix
                       </label>
                       <input
-                        ref={register({ required: true })}
+                        ref={register({ required: true, min: 0 })}
                         type="text"
                         name="client.clientClaimsPrefix"
                         defaultValue={
