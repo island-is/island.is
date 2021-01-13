@@ -1,3 +1,4 @@
+import fetch from 'isomorphic-fetch'
 import { EmailService } from '@island.is/email-service'
 import { Application } from '@island.is/application/core'
 
@@ -6,6 +7,7 @@ import {
   ApplicationAPITemplateAction,
   AssignApplicationThroughEmail,
   SendEmail,
+  CallAPI,
 } from './types'
 
 type GenericEmailService = Pick<EmailService, 'sendEmail'>
@@ -14,6 +16,7 @@ interface ApplicationAPITemplateUtilsConfig {
   jwtSecret: string
   emailService: GenericEmailService
   clientLocationOrigin: string
+  authorization: string
 }
 
 interface EmailTemplateGeneratorProps {
@@ -25,6 +28,7 @@ class ApplicationAPITemplateUtils {
   private readonly application: Application
   private readonly emailService: GenericEmailService
   private readonly jwtSecret: string
+  private readonly authorization: string
   private readonly clientLocationOrigin: string
 
   constructor(
@@ -34,6 +38,7 @@ class ApplicationAPITemplateUtils {
     this.application = application
     this.emailService = config.emailService
     this.jwtSecret = config.jwtSecret
+    this.authorization = config.authorization
     this.clientLocationOrigin = config.clientLocationOrigin
   }
 
@@ -60,12 +65,25 @@ class ApplicationAPITemplateUtils {
     return this.performAction({ type: 'sendEmail', template })
   }
 
-  async performAction(action: ApplicationAPITemplateAction): Promise<string> {
+  async callAPI({ url, generateRequestOptions }: CallAPI) {
+    const requestOptions = generateRequestOptions(
+      this.application,
+      this.authorization,
+    )
+
+    return fetch(url, requestOptions)
+  }
+
+  async performAction(
+    action: ApplicationAPITemplateAction,
+  ): Promise<string | Response> {
     switch (action.type) {
       case 'assignThroughEmail':
         return this.assignApplicationThroughEmail(action)
       case 'sendEmail':
         return this.sendEmail(action)
+      case 'callAPI':
+        return this.callAPI(action)
       default:
         throw new Error('Invalid action')
     }

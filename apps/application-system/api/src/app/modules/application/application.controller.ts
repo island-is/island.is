@@ -198,6 +198,7 @@ export class ApplicationController {
   async assignApplication(
     @Body() assignApplicationDto: AssignApplicationDto,
     @NationalId() nationalId: string,
+    @Req() req: Request,
   ): Promise<ApplicationResponseDto> {
     const decodedToken = verifyToken<DecodedToken>(assignApplicationDto.token)
 
@@ -231,6 +232,7 @@ export class ApplicationController {
     }
 
     const helper = new ApplicationTemplateHelper(mergedApplication, template)
+    const headers = (req.headers as unknown) as { authorization: string }
 
     const apiTemplateUtils = new ApplicationAPITemplateUtils(
       mergedApplication,
@@ -238,6 +240,7 @@ export class ApplicationController {
         jwtSecret: environment.auth.jwtSecret,
         emailService: this.emailService,
         clientLocationOrigin: environment.clientLocationOrigin,
+        authorization: headers.authorization,
       },
     )
 
@@ -370,6 +373,7 @@ export class ApplicationController {
     existingApplication: Application,
     @Body() updateApplicationStateDto: UpdateApplicationStateDto,
     @NationalId() nationalId: string,
+    @Req() req: Request,
   ): Promise<ApplicationResponseDto> {
     const template = await getApplicationTemplateByTypeId(
       existingApplication.typeId as ApplicationTypes,
@@ -405,6 +409,7 @@ export class ApplicationController {
     }
 
     const helper = new ApplicationTemplateHelper(mergedApplication, template)
+    const headers = (req.headers as unknown) as { authorization: string }
 
     const apiTemplateUtils = new ApplicationAPITemplateUtils(
       mergedApplication,
@@ -412,6 +417,7 @@ export class ApplicationController {
         jwtSecret: environment.auth.jwtSecret,
         emailService: this.emailService,
         clientLocationOrigin: environment.clientLocationOrigin,
+        authorization: headers.authorization,
       },
     )
 

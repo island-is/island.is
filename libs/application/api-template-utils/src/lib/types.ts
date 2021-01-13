@@ -16,6 +16,24 @@ export type AssignApplicationThroughEmail = {
 }
 export type SendEmail = { type: 'sendEmail'; template: SendMailOptions }
 
+interface RequestOptions {
+  method: 'GET' | 'PUT' | 'POST'
+  headers?: { [header: string]: string }
+  body?: any
+}
+
+type GenerateRequestOptions = (
+  application: Application,
+  authorization: string,
+) => RequestOptions
+
+export type CallAPI = {
+  type: 'callAPI'
+  url: string
+  generateRequestOptions: GenerateRequestOptions
+}
+
 export type ApplicationAPITemplateAction =
   | SendEmail
   | AssignApplicationThroughEmail
+  | CallAPI
