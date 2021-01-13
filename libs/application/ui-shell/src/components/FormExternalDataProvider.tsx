@@ -42,6 +42,7 @@ const ProviderItem: FC<{
   )
 }
 
+// TODO: generate these interfaces with graphql codegen
 interface UpdateApplicationExternalDataResponse {
   updateApplicationExternalData: {
     externalData: ExternalData
