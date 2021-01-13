@@ -9,6 +9,7 @@ import {
   Navigation,
   GridColumn,
   GridRow,
+  Link,
   Button,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -32,14 +33,6 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
 }) => {
   const { linkResolver } = useLinkResolver()
 
-  const generateUrl = (typename: LinkType, slug: Array<string>) => {
-    return typename.toLowerCase() === 'linkurl'
-      ? { href: slug[0] }
-      : {
-          ...linkResolver(typename, slug),
-        }
-  }
-
   const renderNavigation = (isMobile: boolean) => {
     return (
       <Navigation
@@ -56,7 +49,7 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
         ]}
         renderLink={(link, { typename, slug }) => {
           return (
-            <NextLink {...generateUrl(typename as LinkType, slug)} passHref>
+            <NextLink {...linkResolver(typename as LinkType, slug)} passHref>
               {link}
             </NextLink>
           )
@@ -129,7 +122,7 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
                         </Box>
                       )}
                       <NextLink
-                        {...generateUrl(link.type as LinkType, [link.slug])}
+                        {...linkResolver(link.type as LinkType, [link.slug])}
                       >
                         <Button
                           icon="arrowForward"

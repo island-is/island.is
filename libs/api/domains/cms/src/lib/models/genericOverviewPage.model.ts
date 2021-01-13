@@ -33,6 +33,6 @@ export const mapGenericOverviewPage = ({
   title: fields.title ?? '',
   pageIdentifier: fields.pageIdentifier ?? '',
   intro: (fields.intro && mapHtml(fields.intro, sys.id + ':intro')) ?? null,
-  navigation: mapMenu(fields.navigation),
+  navigation: fields.navigation ? mapMenu(fields.navigation) : null,
   overviewLinks: (fields.overviewLinks ?? []).map(mapIntroLinkImage),
 })
