@@ -66,23 +66,26 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
         buildMultiField({
           id: 'informationAboutOtherParent',
           title: 'Fylltu inn upplýsingar um hitt foreldrið',
-          description:  (application) => {
-            let parent = (application.externalData.parentNationalRegistry?.data as {
+          description: (application) => {
+            let parent = (application.externalData.parentNationalRegistry
+              ?.data as {
               parent?: object
             })?.parent as Parent
 
-            return `Hitt foreldrið er ${parent.name} (${parent.ssn})`},
+            return `Hitt foreldrið er ${parent.name} (${parent.ssn})`
+          },
           children: [
             buildTextField({
-            id: 'email',
-            description: 'Til að láta hitt foreldrið vita þurfum við að fá netfang og símanúmer viðkomandi.',
-            title: 'Netfang',
-          }),
-          buildTextField({
-            id: 'phoneNumber',
-            title: 'Símanúmer',
-          }),
-        ]
+              id: 'email',
+              description:
+                'Til að láta hitt foreldrið vita þurfum við að fá netfang og símanúmer viðkomandi.',
+              title: 'Netfang',
+            }),
+            buildTextField({
+              id: 'phoneNumber',
+              title: 'Símanúmer',
+            }),
+          ],
         }),
       ],
     }),
