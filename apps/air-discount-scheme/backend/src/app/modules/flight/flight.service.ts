@@ -62,7 +62,7 @@ export class FlightService {
     return false
   }
 
-  async countFlightLegsByNationalId(
+  async countThisYearsFlightLegsByNationalId(
     nationalId: string,
   ): Promise<FlightLegSummary> {
     const currentYear = new Date(Date.now()).getFullYear().toString()
@@ -72,7 +72,17 @@ export class FlightService {
     }
 
     const noFlightLegs = await this.flightModel.count({
-      where: { nationalId },
+      where: Sequelize.and(
+        Sequelize.where(
+          Sequelize.fn(
+            'date_part',
+            'year',
+            Sequelize.fn('date', Sequelize.col('booking_date')),
+          ),
+          currentYear,
+        ),
+        { nationalId },
+      ),
       include: [
         {
           model: this.flightLegModel,
@@ -165,9 +175,20 @@ export class FlightService {
     })
   }
 
-  findAllByNationalId(nationalId: string): Promise<Flight[]> {
+  findThisYearsFlightsByNationalId(nationalId: string): Promise<Flight[]> {
+    const currentYear = new Date(Date.now()).getFullYear().toString()
     return this.flightModel.findAll({
-      where: { nationalId },
+      where: Sequelize.and(
+        Sequelize.where(
+          Sequelize.fn(
+            'date_part',
+            'year',
+            Sequelize.fn('date', Sequelize.col('booking_date')),
+          ),
+          currentYear,
+        ),
+        { nationalId },
+      ),
       include: [
         {
           model: this.flightLegModel,
