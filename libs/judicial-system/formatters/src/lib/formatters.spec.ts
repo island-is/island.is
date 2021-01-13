@@ -10,6 +10,7 @@ import {
   capitalize,
   formatGender,
   formatCustodyRestrictions,
+  formatAlternativeTravelBanRestrictions,
 } from './formatters'
 
 describe('formatDate', () => {
@@ -143,6 +144,62 @@ describe('formatCustodyRestrictions', () => {
     // Assert
     expect(res).toBe(
       'Sækjandi tekur fram að gæsluvarðhaldið verði með bréfaskoðun og símabanni, fjölmiðlabanni og heimsóknarbanni skv. 99. gr. laga nr. 88/2008.',
+    )
+  })
+})
+
+describe('formatAlternativeTravelBanRestrictions', () => {
+  test('should return formatted restrictions for no restrictions', () => {
+    // Arrange
+    const accusedGender = CaseGender.MALE
+    const custodyRestrictions: Array<CaseCustodyRestrictions> = []
+
+    // Act
+    const res = formatAlternativeTravelBanRestrictions(
+      accusedGender,
+      custodyRestrictions,
+    )
+
+    // Assert
+    expect(res).toBe('Sækjandi tekur fram að farbannið sé án takmarkana.')
+  })
+
+  test('should return formatted restrictions for one restriction', () => {
+    // Arrange
+    const accusedGender = CaseGender.FEMALE
+    const custodyRestrictions = [
+      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
+    ]
+
+    // Act
+    const res = formatAlternativeTravelBanRestrictions(
+      accusedGender,
+      custodyRestrictions,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi tekur fram að farbannið verði með takmörkunum. Að kærðu verði gert að afhenda vegabréfið sitt.',
+    )
+  })
+
+  test('should return formatted restrictions for all restrictions', () => {
+    // Arrange
+    const accusedGender = CaseGender.OTHER
+    const custodyRestrictions = [
+      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
+      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
+    ]
+
+    // Act
+    const res = formatAlternativeTravelBanRestrictions(
+      accusedGender,
+      custodyRestrictions,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi tekur fram að farbannið verði með takmörkunum. Að kærða verði gert að tilkynna sig. Að kærða verði gert að afhenda vegabréfið sitt.',
     )
   })
 })
