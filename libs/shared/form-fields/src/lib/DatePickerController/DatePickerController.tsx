@@ -12,6 +12,7 @@ interface Props {
   name?: string
   label: string
   placeholder?: string
+  backgroundColor?: 'white' | 'blue'
 }
 const df = 'yyyy-MM-dd'
 export const DatePickerController: FC<Props> = ({
@@ -22,6 +23,7 @@ export const DatePickerController: FC<Props> = ({
   name = id,
   label,
   placeholder,
+  backgroundColor,
 }) => {
   const { clearErrors, setValue } = useFormContext()
   return (
@@ -36,6 +38,7 @@ export const DatePickerController: FC<Props> = ({
           errorMessage={error}
           label={label}
           placeholderText={placeholder}
+          backgroundColor={backgroundColor}
           selected={value ? parseISO(value) : undefined}
           handleChange={(date) => {
             clearErrors(id)

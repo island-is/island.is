@@ -77,6 +77,7 @@ export function buildDateField(data: {
   minDate?: Date
   disabled?: boolean
   width?: FieldWidth
+  backgroundColor?: 'white' | 'blue'
   defaultValue?: MaybeWithApplication<unknown>
 }): DateField {
   const {
@@ -90,6 +91,7 @@ export function buildDateField(data: {
     disabled = false,
     width = 'full',
     placeholder,
+    backgroundColor,
   } = data
   return {
     children: undefined,
@@ -105,6 +107,7 @@ export function buildDateField(data: {
     minDate,
     type: FieldTypes.DATE,
     component: FieldComponents.DATE,
+    backgroundColor,
   }
 }
 
