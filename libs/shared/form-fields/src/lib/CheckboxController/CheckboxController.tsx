@@ -20,6 +20,7 @@ interface CheckboxControllerProps {
   error?: string
   id: string
   name?: string
+  large?: boolean
   options?: Option[]
 }
 export const CheckboxController: FC<CheckboxControllerProps> = ({
@@ -28,6 +29,7 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
   error,
   id,
   name = id,
+  large,
   options = [],
 }) => {
   const { clearErrors, setValue } = useFormContext()
@@ -59,9 +61,10 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
         return (
           <Stack space={2}>
             {options.map((option, index) => (
-              <Box display="flex" key={`${id}-${index}`}>
+              <Box display="block" key={`${id}-${index}`}>
                 <Checkbox
                   disabled={disabled}
+                  large={large}
                   onChange={() => {
                     clearErrors(id)
                     const newChoices = handleSelect(option, value || [])
@@ -73,12 +76,8 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
                   label={option.label}
                   value={option.value}
                   hasError={error !== undefined}
+                  tooltip={option.tooltip}
                 />
-                {option.tooltip && (
-                  <Box marginLeft={1}>
-                    <Tooltip placement="top" text={option.tooltip} />
-                  </Box>
-                )}
               </Box>
             ))}
             {error !== undefined && <InputError errorMessage={error} />}

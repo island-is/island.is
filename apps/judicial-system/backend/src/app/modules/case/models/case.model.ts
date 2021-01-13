@@ -301,6 +301,13 @@ export class Case extends Model<Case> {
   custodyRestrictions: CaseCustodyRestrictions[]
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  otherRestrictions: string
+
+  @Column({
     type: DataType.ENUM,
     allowNull: true,
     values: Object.values(CaseAppealDecision),

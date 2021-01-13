@@ -24,7 +24,7 @@ export const m = defineMessages({
   nationalRegistrySubTitle: {
     id: 'hi.application:externalData.nationalRegistry.subtitle',
     defaultMessage:
-      'Registers Iceland is the Icelandic State’s base registry. It records certain basic information on all persons who are or have been domiciled in Iceland and Icelandic citizens residing abroad, as well as changes to their status.',
+      'Registers Iceland is the Icelandic State’s base registry. It records certain basic information on all persons who are or have been domiciled in Iceland and Icelandic citizens residing abroad, as well as any changes to their status.',
     description: 'About Registers Iceland data retrieval',
   },
   directorateOfLaborTitle: {
@@ -36,18 +36,35 @@ export const m = defineMessages({
     id: 'hi.application:externalData.directorateOfLabor.subtitle',
     defaultMessage:
       'The Directorate of Labour bears overall responsibility for public labour exchanges and handles day-to-day operations of the Unemployment Insurance Fund, the Maternity and Paternity Leave Fund and the Wage Guarantee Fund.',
-    description: 'Aboout Directorate of Labor data retrieval',
+    description: 'About Directorate of Labor data retrieval',
   },
   internalRevenueTitle: {
     id: 'hi.application:externalData.internalRevenue.title',
-    defaultMessage: 'RSK Directorate of Internal Revenue',
-    description: 'RSK Directorate of Internal Revenue',
+    defaultMessage: 'Directorate of Internal Revenue',
+    description: 'Directorate of Internal Revenue',
   },
   internalRevenueSubTitle: {
     id: 'hi.application:externalData.internalRevenue.subtitle',
     defaultMessage:
       'Handles the collection of taxes and duties as well as oversees the legitimacy of tax returns. The Directorate of Internal Revenue also plays a multifaceted customs role at the border and provides society with protection against illegal import and export of goods.',
-    description: 'About RSK Directorate of Internal Revenue data retrieval',
+    description: 'About Directorate of Internal Revenue data retrieval',
+  },
+  confirmationOfResidencyTitle: {
+    id: 'hi.application:confirmationOfResidency.title',
+    defaultMessage: 'Confirmation of residency',
+    description: 'Confirmation of residency',
+  },
+  confirmationOfResidencyDescription: {
+    id: 'hi.application:confirmationOfResidency.description',
+    defaultMessage:
+      'According to Registers Iceland’s data it seems like you are moving to Iceland from Greenland or the Faroe Islands. To apply for the national health insurance, you need to provide a confirmation of residency from Greenland or the Faroe Islands.',
+    description:
+      'Instructions for when moving from Greenland or the Faroe Isalnds',
+  },
+  confirmationOfResidencyFileUpload: {
+    id: 'hi.application:confirmationOfResidency.fileUpload',
+    defaultMessage: 'Please add your confirmation of residency',
+    description: 'Please add your confirmation of residency',
   },
   contactInfoTitle: {
     id: 'hi.application:contactInfo.title',
@@ -103,7 +120,7 @@ export const m = defineMessages({
   editDigitalIslandData: {
     id: 'hi.application:digitalIslandData.edit',
     defaultMessage:
-      'Please edit if not correct. This will update your contact info for all of island.is ',
+      'Please edit if not correct. Updating your contact info will change it for all of island.is',
     description: 'About changing digital island data',
   },
   statusAndChildren: {
@@ -113,8 +130,8 @@ export const m = defineMessages({
   },
   statusDescription: {
     id: 'hi.application:status.description',
-    defaultMessage: 'What is you current status?',
-    description: 'What is you current status?',
+    defaultMessage: 'Status in former country of insurance?',
+    description: 'Status in former country of insurance?',
   },
   statusEmployed: {
     id: 'hi.application:status.employed',
@@ -133,7 +150,7 @@ export const m = defineMessages({
   },
   statusOtherInformation: {
     id: 'hi.application:other.information',
-    defaultMessage: 'All other statuses.',
+    defaultMessage: 'All other statuses',
     description: 'All other statuses',
   },
   statusPensioner: {
@@ -144,7 +161,7 @@ export const m = defineMessages({
   statusPensionerInformation: {
     id: 'hi.application:pensioner.information',
     defaultMessage:
-      'You are receiving old age pension or disability pension from Iceland.',
+      'You are receiving old age pension or disability pension from Iceland',
     description: 'Receiving old age pension or disability pension',
   },
   statusStudent: {
@@ -155,7 +172,7 @@ export const m = defineMessages({
   statusStudentInformation: {
     id: 'hi.application:student.information',
     defaultMessage:
-      'You moved away from Iceland for the purpose of studying abroad and are moving back to Iceland withing six months of the end of studies.',
+      'You moved away from Iceland for the purpose of studying abroad and are moving back to Iceland within six months of the end of studies',
     description: 'For the people that have studied abroad and are coming back',
   },
   confirmationOfStudies: {
@@ -166,13 +183,14 @@ export const m = defineMessages({
   confirmationOfStudiesTooltip: {
     id: 'hi.application:student.confirmationOfStudies',
     defaultMessage:
-      'You need to submit a copy of your Graduation certificate or a confirmation of completed credits for each semester. Admission or enrollement letters are not sufficient.',
+      'You need to submit a copy of your Graduation certificate or a confirmation of completed credits for each semester. ' +
+      'Admission or enrollement letters are not sufficient.',
     description: 'Confirmation of studies must be submitted, tooltip',
   },
   childrenDescription: {
     id: 'hi.application:children.description',
     defaultMessage:
-      'Are there any children under the age of 18 moving with you?',
+      'Are there any children under the age of 18 moving to Iceland with you?',
     description: 'To fill in for those with children moving with them.',
   },
   childrenInfoMessageTitle: {
@@ -183,7 +201,7 @@ export const m = defineMessages({
   childrenInfoMessageText: {
     id: 'hi.application:children.infoMessageText',
     defaultMessage:
-      'Any children registered to you will automatically get health in surance once you get insured',
+      'Any children registered to you will automatically get health insurance once you get insured.',
     description:
       'additional information for the people that bring children under 18 with them to iceland',
   },
@@ -199,13 +217,13 @@ export const m = defineMessages({
   },
   fileUploadHeader: {
     id: 'hi.application:fileUpload.header',
-    defaultMessage: 'Drag documents here to upload',
-    description: 'Drag documents here to upload',
+    defaultMessage: 'Drag & drop your files here',
+    description: 'Drag & drop your files here',
   },
   fileUploadDescription: {
     id: 'hi.application:fileUpload.description',
-    defaultMessage: 'Documents accepted with extension: .pdf, .docx, .rtf',
-    description: 'Documents accepted with extension: .pdf, .docx, .rtf',
+    defaultMessage: 'Accepted documents: .pdf, .docx, .rtf',
+    description: 'Accepted document types',
   },
   fileUploadButton: {
     id: 'hi.application:fileUpload.button',
@@ -225,7 +243,7 @@ export const m = defineMessages({
   formerInsuranceRegistration: {
     id: 'hi.application:formerInsurance.registration',
     defaultMessage:
-      'Were you registerd with a national health insurance insitution in your former country  of insurance?',
+      'Were you registered with a national health insurance institution in your former country of insurance?',
     description: 'Former country insurance registration',
   },
   formerInsuranceDetails: {
@@ -254,7 +272,7 @@ export const m = defineMessages({
   formerInsuranceAdditionalInformationPlaceholder: {
     id: 'hi.application:formerInsurance.additionalInformationPlaceholder',
     defaultMessage: 'I´m still entitled to health insurance because...',
-    description: 'additional infromation placeholder',
+    description: 'Additional information placeholder',
   },
   formerInsuranceNoOption: {
     id: 'hi.application:formerInsurance.noOption',
@@ -293,13 +311,13 @@ export const m = defineMessages({
   },
   additionalRemarks: {
     id: 'hi.application.additionalRemarks',
-    defaultMessage: 'Remarks or additional information',
+    defaultMessage: 'Additional information or remarks',
     description: 'Remarks or additional information',
   },
   additionalRemarksPlaceholder: {
     id: 'hi.application.additionalRemarks.placeholder',
-    defaultMessage: 'Enter text here',
-    description: 'Enter text here',
+    defaultMessage: 'Enter your text here',
+    description: 'Enter your text here',
   },
   confirmCorrectInfo: {
     id: 'hi.application:confirmCorrectInfo',
@@ -347,8 +365,8 @@ export const m = defineMessages({
   },
   agentCommentsTitle: {
     id: 'hi.application:agentComments.title',
-    defaultMessage: 'Comment from Health Insurance in Iceland',
-    description: 'Comment from Health Insurance in Iceland',
+    defaultMessage: 'Comment from the Icelandic Health Insurance',
+    description: 'Comment from the Icelandic Health Insurance',
   },
   agentCommentsEmpty: {
     id: 'hi.application:agentComments.empty',

@@ -7,6 +7,12 @@ export enum StatusTypes {
   EMPLOYED = 'employed',
 }
 
+export interface AdditionalInfoType {
+  remarks: string
+  files?: string[]
+  hasAdditionalInfo?: string
+}
+
 export interface MissingInfoType {
   date: string
   remarks: string
@@ -16,5 +22,4 @@ export interface MissingInfoType {
 export interface ReviewFieldProps extends FieldBaseProps {
   isEditable: boolean
   index?: number
-  missingInfo?: MissingInfoType
 }

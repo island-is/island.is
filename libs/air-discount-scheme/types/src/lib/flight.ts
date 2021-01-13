@@ -15,7 +15,7 @@ export type FlightLeg = {
 
 export type UserInfo = {
   age: number
-  gender: 'kk' | 'kvk'
+  gender: 'kk' | 'kvk' | 'hvk'
   postalCode: number
 }
 
@@ -50,6 +50,6 @@ export type FlightLegsInput = {
   period?: PeriodInput
   state?: string[]
   age?: RangeInput
-  gender?: 'kk' | 'kvk'
+  gender?: 'kk' | 'kvk' | 'hvk'
   postalCode?: number
 }

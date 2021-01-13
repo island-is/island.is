@@ -24,7 +24,6 @@ import {
   Box,
   Breadcrumbs,
   Button,
-  Link,
   Navigation,
   Text,
 } from '@island.is/island-ui/core'
@@ -68,7 +67,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
       items: [
         {
           active: true,
-          title: service.name,
+          title: service?.name,
         },
       ],
     },
@@ -98,6 +97,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
               title={n('linkThrounText')}
               titleLink={{
                 href: n('linkThroun'),
+                active: false,
               }}
             />
           }

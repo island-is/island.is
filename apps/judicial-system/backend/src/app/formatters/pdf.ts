@@ -10,11 +10,12 @@ import {
 } from '@island.is/judicial-system/types'
 import {
   capitalize,
-  formatCustodyRestrictions,
+  formatRequestedCustodyRestrictions,
   formatDate,
   formatGender,
   formatNationalId,
-  formatRestrictions,
+  formatCustodyRestrictions,
+  formatAlternativeTravelBanRestrictions,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -125,7 +126,7 @@ export async function generateRequestPdf(
     .font('Helvetica')
     .fontSize(12)
     .text(
-      `${formatCustodyRestrictions(
+      `${formatRequestedCustodyRestrictions(
         existingCase.requestedCustodyRestrictions,
       )}.`,
       {
@@ -360,6 +361,7 @@ export async function generateRulingPdf(
       formatConclusion(
         existingCase.accusedNationalId,
         existingCase.accusedName,
+        existingCase.accusedGender,
         existingCase.decision,
         existingCase.custodyEndDate,
         existingCase.custodyRestrictions?.includes(
@@ -446,13 +448,57 @@ export async function generateRulingPdf(
       .text('Tilhögun gæsluvarðhalds')
       .font('Helvetica')
       .fontSize(12)
-      .text(formatRestrictions(existingCase.custodyRestrictions), {
-        lineGap: 6,
-        paragraphGap: 0,
-      })
+      .text(
+        formatCustodyRestrictions(
+          existingCase.accusedGender,
+          existingCase.custodyRestrictions,
+        ),
+        {
+          lineGap: 6,
+          paragraphGap: 0,
+        },
+      )
       .text(' ')
       .text(
         'Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.',
+        {
+          lineGap: 6,
+          paragraphGap: 0,
+        },
+      )
+  }
+
+  if (existingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) {
+    doc
+      .text(' ')
+      .font('Helvetica-Bold')
+      .fontSize(14)
+      .lineGap(8)
+      .text('Tilhögun farbanns')
+      .font('Helvetica')
+      .fontSize(12)
+      .text(
+        formatAlternativeTravelBanRestrictions(
+          existingCase.accusedGender,
+          existingCase.custodyRestrictions,
+        ),
+        {
+          lineGap: 6,
+          paragraphGap: 0,
+        },
+      )
+
+    if (existingCase.otherRestrictions) {
+      doc.text(' ').text(existingCase.otherRestrictions, {
+        lineGap: 6,
+        paragraphGap: 0,
+      })
+    }
+
+    doc
+      .text(' ')
+      .text(
+        'Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd farbannsins undir dómara.',
         {
           lineGap: 6,
           paragraphGap: 0,
