@@ -20,7 +20,7 @@ import { ClientService } from './../../services/ClientService';
 import { GetServerSideProps } from 'next';
 import { withAuthentication } from './../../utils/auth.utils';
 
-const Index = () => {
+const Index: React.FC = () => {
   const { query } = useRouter();
   const clientId = query.client;
   const stepQuery = query.step;

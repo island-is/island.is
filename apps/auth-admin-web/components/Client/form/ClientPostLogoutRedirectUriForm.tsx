@@ -90,6 +90,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                 <a
                   href="https://openid.net/specs/openid-connect-session-1_0.html"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   OIDC Connect Session Management spec
                 </a>{' '}

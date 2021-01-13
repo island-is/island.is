@@ -15,7 +15,7 @@ import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
 import { GetServerSideProps } from 'next';
 import { withAuthentication } from './../../../utils/auth.utils';
 
-export default function Index() {
+const Index: React.FC = () => {
   const { query } = useRouter();
   const stepQuery = query.step;
   const resourceId = query.edit;
@@ -86,7 +86,7 @@ export default function Index() {
             <ApiResourceCreateForm
               apiResource={apiResource}
               handleSave={handleApiResourceSaved}
-              handleCancel={handleBack}
+              handleCancel={handleCancel}
             />
           </ApiResourceStepNav>
         </ContentWrapper>
@@ -171,6 +171,7 @@ export default function Index() {
     }
   }
 }
+export default Index;
 
 export const getServerSideProps: GetServerSideProps = withAuthentication(
   async (context: any) => {

@@ -51,7 +51,7 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
   };
 
   const setSelectedItem = (scopeName: string) => {
-    const selected = scopes.find((e) => e.name == scopeName);
+    const selected = scopes.find((e) => e.name === scopeName);
     setSelectedScope(selected);
   };
 

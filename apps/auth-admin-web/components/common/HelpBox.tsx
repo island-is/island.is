@@ -13,13 +13,13 @@ class HelpBox extends Component<{
     if (this.props.helpLink && this.props.helpLinkText) {
       return (
         <div className="helpLink">
-          <a href={this.props.helpLink} target="_blank">{this.props.helpLinkText}</a>
+          <a href={this.props.helpLink} target="_blank" rel="noreferrer">{this.props.helpLinkText}</a>
         </div>
       );
     } else if (this.props.helpLink) {
       return (
         <div className="helpLink">
-          <a href={this.props.helpLink} target="_blank">More Info</a>.
+          <a href={this.props.helpLink} target="_blank" rel="noreferrer">More Info</a>.
         </div>
       );
     }

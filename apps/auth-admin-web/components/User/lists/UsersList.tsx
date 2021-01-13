@@ -6,6 +6,7 @@ import HelpBox from '../../Common/HelpBox';
 import { ClaimDTO } from '../../../entities/dtos/claim.dto';
 import NotFound from '../../Common/NotFound';
 import { UserService } from '../../../services/UserService';
+import UserIdentity from './../../../entities/models/user-identity.model';
 
 interface ClaimShow {
   subjectId: string;
@@ -13,7 +14,7 @@ interface ClaimShow {
 }
 
 const UsersList: React.FC = () => {
-  const [users, setUsers] = useState<UserIdentityDTO[]>([]);
+  const [users, setUsers] = useState<UserIdentity[]>([]);
   const [id, setId] = useState<string>('');
   const [claimShow, setClaimShow] = useState<ClaimShow[]>([]);
   const [type, setType] = useState<string>('');

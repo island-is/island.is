@@ -1,14 +1,12 @@
 import React from 'react';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
-import Nav from '../components/Layout/Nav';
-import Header from '../components/Layout/Header';
 
 interface Props {
   lang: string;
 }
 
 class MyDocument extends Document<Props> {
-  render() {
+  render() : JSX.Element {
     return (
       <Html lang="en">
         <Head></Head>
@@ -18,7 +16,7 @@ class MyDocument extends Document<Props> {
             <NextScript />
           </div>
           <footer>
-            Identity Server Admin - <a href="">Help pages</a>
+            Identity Server Admin - <a href="#todo">Help pages</a>
           </footer>
         </body>
       </Html>

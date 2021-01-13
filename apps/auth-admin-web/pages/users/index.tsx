@@ -4,13 +4,14 @@ import ContentWrapper from './../../components/Layout/ContentWrapper';
 import { GetServerSideProps } from 'next';
 import { withAuthentication } from './../../utils/auth.utils';
 
-export default function Index() {
+const Index: React.FC = () => {
   return (
     <ContentWrapper>
       <UsersList></UsersList>
     </ContentWrapper>
   );
-}
+};
+export default Index;
 
 export const getServerSideProps: GetServerSideProps = withAuthentication(
   async (context: any) => {

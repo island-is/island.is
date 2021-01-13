@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import ContentWrapper from '../components/Layout/ContentWrapper';
 
-export default function ErrorPage() {
+const ErrorPage: React.FC = () => {
   const router = useRouter();
 
   const toMainPage = () => {
@@ -20,3 +20,4 @@ export default function ErrorPage() {
     </ContentWrapper>
   );
 }
+export default ErrorPage;

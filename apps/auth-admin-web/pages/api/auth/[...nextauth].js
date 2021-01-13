@@ -1,6 +1,5 @@
 import NextAuth from 'next-auth';
 import Providers from 'next-auth/providers';
-import jwt from 'next-auth/jwt';
 import { TokenService } from '../../../services/TokenService';
 
 const providers = [
@@ -76,4 +75,4 @@ function parseJwt(token) {
 
 const options = { providers, callbacks };
 
-export default (req, res) => NextAuth(req, res, options);
+export default (req: any, res: any) => NextAuth(req, res, options);
