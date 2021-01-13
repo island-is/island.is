@@ -29,7 +29,6 @@ export class ChildrenNationalRegistryProvider extends BasicDataProvider {
         return Promise.resolve(response.data.getNationalRegistry)
       })
       .catch(() => {
-        console.log('Error')
         return this.handleError()
       })
   }

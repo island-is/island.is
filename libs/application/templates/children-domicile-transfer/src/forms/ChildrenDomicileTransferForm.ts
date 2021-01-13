@@ -8,8 +8,8 @@ import {
   buildExternalDataProvider,
   buildCheckboxField,
   buildMultiField,
-  buildDescriptionField,
 } from '@island.is/application/core'
+
 import { Parent } from '../dataProviders/APIDataTypes'
 
 export const ChildrenDomicileTransferForm: Form = buildForm({

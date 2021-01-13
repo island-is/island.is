@@ -7,7 +7,7 @@ import { FlightLeg } from '../flightLeg'
 @ObjectType()
 export class UserInfo implements TUserInfo {
   @Field()
-  gender: 'kk' | 'kvk'
+  gender: 'kk' | 'kvk' | 'hvk'
 
   @Field()
   age: number

@@ -37,3 +37,8 @@ export type ResolverContext = {
   formNode: FormNode
   dataSchema: Schema
 }
+
+export type BeforeSubmitCallback = () => Promise<[true, null] | [false, string]>
+export type SetBeforeSubmitCallback = (
+  callback: BeforeSubmitCallback | null,
+) => void
