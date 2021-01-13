@@ -25,6 +25,21 @@ export const close = style({
 })
 
 export const dialog = style({
-  margin: '32px auto',
+  margin: '0 auto',
+  padding: '0 24px',
   maxWidth: 888,
+})
+
+export const center = style({
+  transform: 'translateY(45%)',
+})
+
+export const gridFix = style({
+  gridGap: '16px',
+
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
+      flexDirection: 'column-reverse',
+    },
+  },
 })
