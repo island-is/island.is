@@ -9,52 +9,29 @@ import { educationModule } from '@island.is/service-portal/education'
 import { assetsModule } from '@island.is/service-portal/assets'
 import { eligibilityModule } from '@island.is/service-portal/eligibility'
 import { drivingLicenseModule } from '@island.is/service-portal/driving-license'
-import { environment } from '../environments'
+import { environment as env } from '../environments'
 
-const {
-  applications,
-  documents,
-  settings,
-  finance,
-  family,
-  health,
-  education,
-  delegation,
-  assets,
-  drivingLicense,
-} = environment.featureFlags
+type ModuleFeatureFlag = keyof typeof env.featureFlags
+
+const mapper: Record<ModuleFeatureFlag, ServicePortalModule> = {
+  applications: applicationsModule,
+  documents: documentsModule,
+  settings: settingsModule,
+  finance: financeModule,
+  family: familyModule,
+  health: healthModule,
+  education: educationModule,
+  delegation: eligibilityModule,
+  assets: assetsModule,
+  drivingLicense: drivingLicenseModule,
+}
 
 export const modules = () => {
   const arr: ServicePortalModule[] = []
-  if (applications) {
-    arr.push(applicationsModule)
-  }
-  if (documents) {
-    arr.push(documentsModule)
-  }
-  if (settings) {
-    arr.push(settingsModule)
-  }
-  if (finance) {
-    arr.push(financeModule)
-  }
-  if (family) {
-    arr.push(familyModule)
-  }
-  if (health) {
-    arr.push(healthModule)
-  }
-  if (education) {
-    arr.push(educationModule)
-  }
-  if (delegation) {
-    arr.push(eligibilityModule)
-  }
-  if (assets) {
-    arr.push(assetsModule)
-  }
-  if (drivingLicense) {
-    arr.push(drivingLicenseModule)
-  }
+  Object.keys(env.featureFlags).forEach((k) => {
+    const key = k as ModuleFeatureFlag
+    if (env.featureFlags[key]) arr.push(mapper[key])
+  })
+
   return arr
 }

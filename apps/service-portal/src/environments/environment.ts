@@ -15,11 +15,11 @@ export default {
     documents: true,
     settings: false,
     finance: true,
-    family: true,
+    family: false,
     health: false,
     education: true,
     delegation: true,
-    assets: true,
+    assets: false,
     drivingLicense: false,
   },
 }

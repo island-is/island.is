@@ -19,9 +19,9 @@ export default {
     finance: true,
     family: true,
     health: false,
-    education: true,
+    education: false,
     delegation: true,
-    assets: true,
+    assets: false,
     drivingLicense: false,
   },
 }
