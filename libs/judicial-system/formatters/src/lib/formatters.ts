@@ -92,7 +92,7 @@ export function formatAccusedByGender(accusedGender: CaseGender) {
   }
 }
 
-export function formatRestrictions(
+export function formatCustodyRestrictions(
   accusedGender: CaseGender,
   custodyRestrictions: CaseCustodyRestrictions[],
 ): string {

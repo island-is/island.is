@@ -3,7 +3,7 @@ import {
   formatAccusedByGender,
   formatDate,
   formatNationalId,
-  formatRestrictions,
+  formatCustodyRestrictions,
   laws,
 } from '@island.is/judicial-system/formatters'
 import {
@@ -282,7 +282,7 @@ export function formatPrisonRulingEmailNotification(
     false,
   )}<br />${formatAppeal(prosecutorAppealDecision, 'Sækjandi', false)}${
     decision === CaseDecision.ACCEPTING
-      ? `<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${formatRestrictions(
+      ? `<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${formatCustodyRestrictions(
           accusedGender,
           custodyRestrictions,
         )}`

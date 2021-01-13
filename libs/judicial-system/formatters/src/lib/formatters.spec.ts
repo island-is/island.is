@@ -9,7 +9,7 @@ import {
   formatRequestedCustodyRestrictions,
   capitalize,
   formatGender,
-  formatRestrictions,
+  formatCustodyRestrictions,
 } from './formatters'
 
 describe('formatDate', () => {
@@ -66,14 +66,14 @@ describe('formatRequestedCustodyRestrictions', () => {
   })
 })
 
-describe('formatRestrictions', () => {
+describe('formatCustodyRestrictions', () => {
   test('should return formatted restrictions for no restrictions', () => {
     // Arrange
     const accusedGender = CaseGender.MALE
     const custodyRestrictions: Array<CaseCustodyRestrictions> = []
 
     // Act
-    const res = formatRestrictions(accusedGender, custodyRestrictions)
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe('Sækjandi tekur fram að gæsluvarðhaldið sé án takmarkana.')
@@ -85,7 +85,7 @@ describe('formatRestrictions', () => {
     const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
 
     // Act
-    const res = formatRestrictions(accusedGender, custodyRestrictions)
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
@@ -102,7 +102,7 @@ describe('formatRestrictions', () => {
     ]
 
     // Act
-    const res = formatRestrictions(accusedGender, custodyRestrictions)
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
@@ -120,7 +120,7 @@ describe('formatRestrictions', () => {
     ]
 
     // Act
-    const res = formatRestrictions(accusedGender, custodyRestrictions)
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
@@ -138,7 +138,7 @@ describe('formatRestrictions', () => {
     ]
 
     // Act
-    const res = formatRestrictions(accusedGender, custodyRestrictions)
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(

@@ -13,7 +13,7 @@ import {
 } from '../../utils/stepHelper'
 import { AppealDecisionRole } from '../../types'
 import { UserContext } from '../UserProvider/UserProvider'
-import { formatRestrictions } from '@island.is/judicial-system/formatters'
+import { formatCustodyRestrictions } from '@island.is/judicial-system/formatters'
 
 interface Props {
   workingCase: Case
@@ -119,7 +119,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           </Box>
           <Box marginBottom={2}>
             <Text>
-              {formatRestrictions(
+              {formatCustodyRestrictions(
                 workingCase.accusedGender || CaseGender.OTHER,
                 workingCase.custodyRestrictions || [],
               )}

@@ -14,7 +14,7 @@ import {
   formatDate,
   formatGender,
   formatNationalId,
-  formatRestrictions,
+  formatCustodyRestrictions,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -448,7 +448,7 @@ export async function generateRulingPdf(
       .font('Helvetica')
       .fontSize(12)
       .text(
-        formatRestrictions(
+        formatCustodyRestrictions(
           existingCase.accusedGender,
           existingCase.custodyRestrictions,
         ),

@@ -19,7 +19,7 @@ import {
 import * as Constants from '../../../utils/constants'
 import {
   formatDate,
-  formatRestrictions,
+  formatCustodyRestrictions,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { parseTransition } from '../../../utils/formatters'
@@ -493,7 +493,7 @@ export const Confirmation: React.FC = () => {
               </Box>
               <Box marginBottom={2}>
                 <Text>
-                  {formatRestrictions(
+                  {formatCustodyRestrictions(
                     workingCase.accusedGender || CaseGender.OTHER,
                     workingCase.custodyRestrictions || [],
                   )}
