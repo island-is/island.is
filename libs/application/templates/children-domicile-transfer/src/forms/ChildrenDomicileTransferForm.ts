@@ -75,6 +75,7 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
           children: [
             buildTextField({
             id: 'email',
+            description: 'Til að láta hitt foreldrið vita þurfum við að fá netfang og símanúmer viðkomandi.',
             title: 'Netfang',
           }),
           buildTextField({
