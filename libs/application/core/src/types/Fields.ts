@@ -90,7 +90,7 @@ export interface DateField extends BaseField {
   component: FieldComponents.DATE
   maxDate?: Date
   minDate?: Date
-  backgroundColor?: 'white' | 'blue'
+  backgroundColor?: 'white' | 'blue'
 }
 
 export interface DescriptionField extends BaseField {

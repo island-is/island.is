@@ -76,7 +76,8 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
         buildMultiField({
           id: 'duration',
           title: 'Í hve langan tíma á samningurinn að gilda?',
-          description: 'Veldu í hversu langan tíma samningurinn á að gilda. Hægt er að gera tímabundna lögheimilisbreytingu til a.m.k. 6 mánaða eða lengur eða velja að samningur gildi til frambúðar.d',
+          description:
+            'Veldu í hversu langan tíma samningurinn á að gilda. Hægt er að gera tímabundna lögheimilisbreytingu til a.m.k. 6 mánaða eða lengur eða velja að samningur gildi til frambúðar.d',
           children: [
             buildRadioField({
               id: 'selectDuration',
