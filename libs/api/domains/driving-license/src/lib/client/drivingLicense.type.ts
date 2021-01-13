@@ -8,6 +8,7 @@ export interface DrivingLicenseResponse {
   gildirTil: string
   nrUtgafustadur: number
   nafnUtgafustadur: string
+  erBradabirgda: boolean
   rettindi: {
     id: number
     nr: string
@@ -49,4 +50,22 @@ export interface DrivingLicenseResponse {
     skirteiniUrGildi: number | null
     endurupptakaSkirteinis: number | null
   }
+}
+
+export interface DeprivationTypesResponse {
+  id: number
+  heiti: string
+}
+
+export interface EntitlementTypesResponse {
+  nr: string
+  heiti: string
+}
+
+export interface RemarkTypesResponse {
+  nr: string
+  heiti: string
+  giltFyrir: string
+  athugasemd: boolean
+  lysing: string
 }

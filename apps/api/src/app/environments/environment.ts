@@ -4,7 +4,8 @@ export default {
     baseApiUrl: 'http://localhost:3333',
   },
   drivingLicense: {
-    baseApiUrl: 'https://staging-okuskirteini-api.tmd.is',
+    baseApiUrl: 'http://localhost:8081',
+    secret: process.env.DRIVING_LICENSE_SECRET,
   },
   nationalRegistry: {
     baseSoapUrl: 'https://localhost:8443',
