@@ -22,11 +22,13 @@ const capitalize = (s: string) => {
 export interface ServiceInformationProps {
   service: ApiService
   strings: GetNamespaceQuery['getNamespace']
+  selectedInfo?: XroadInfo
 }
 
 export const ServiceInformation = ({
   service,
   strings,
+  selectedInfo,
 }: ServiceInformationProps) => {
   const n = useNamespace(strings)
 
@@ -65,17 +67,16 @@ export const ServiceInformation = ({
       <Text variant="eyebrow" as="span" paddingTop="gutter">
         {`${n('serviceOwner')}: ${service.owner}`}
       </Text>
-      <Inline space={1}>
-        <Text variant="eyebrow" as="span" paddingTop="gutter">
-          {service &&
-            service.xroadIdentifier &&
-            service.xroadIdentifier.length > 0 &&
-            `${n('XroadIdentifierSubsystemCode')}: ${
-              service.xroadIdentifier[0].subsystemCode
+      {selectedInfo && (
+        <Inline space={1}>
+          <Text variant="eyebrow" as="span" paddingTop="gutter">
+            {`${n('XroadIdentifierSubsystemCode')}: ${
+              selectedInfo.subsystemCode
             } `}
-        </Text>
-        <Tooltip text={XroadIdentifierText(service.xroadIdentifier[0])} />
-      </Inline>
+          </Text>
+          <Tooltip text={XroadIdentifierText(selectedInfo)} />
+        </Inline>
+      )}
       <Text variant="intro" paddingTop="smallGutter">
         {service.description}
       </Text>

@@ -14,6 +14,7 @@ import {
   ApiService,
   GetOpenApiInput,
   GetNamespaceQuery,
+  XroadInfo,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { OpenApi, LinksObject } from '@island.is/api-catalogue/types'
@@ -25,6 +26,7 @@ import * as styles from './OpenApiView.treat'
 export interface OpenApiViewProps {
   service: ApiService
   strings: GetNamespaceQuery['getNamespace']
+  onSelectChange?: (selected: XroadInfo) => void
 }
 
 type SelectOption = {
@@ -32,7 +34,11 @@ type SelectOption = {
   value: any
 }
 
-export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
+export const OpenApiView = ({
+  service,
+  strings,
+  onSelectChange,
+}: OpenApiViewProps) => {
   const n = useNamespace(strings)
 
   const options: Array<SelectOption> = service
@@ -78,11 +84,16 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
 
   const [selectedOption, setSelectedOption] = useState<SelectOption>(options[0])
 
-  const onSelectChange = (option: SelectOption) => {
+  const onInnerSelectChange = (option: SelectOption) => {
     if (!option.value) return
 
     setSelectedOption(option)
-    setOpenApiInput(selectOptionValueToGetOpenApiInput(option))
+    const input = selectOptionValueToGetOpenApiInput(option)
+    setOpenApiInput(input)
+
+    if (onSelectChange) {
+      onSelectChange(input)
+    }
   }
 
   const [documentation, setDocumentation] = useState<OpenApi>(null)
@@ -276,7 +287,7 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
               isSearchable={false}
               defaultValue={selectedOption}
               options={options}
-              onChange={onSelectChange}
+              onChange={onInnerSelectChange}
             />
           </Box>
         </Box>

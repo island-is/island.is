@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import getConfig from 'next/config'
@@ -11,6 +11,7 @@ import {
   QueryGetApiServiceByIdArgs,
   QueryGetNamespaceArgs,
   ApiService,
+  XroadInfo,
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY, GET_API_SERVICE_QUERY } from '../queries'
 import {
@@ -58,6 +59,12 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
   }
+
+  const [selectedInfo, setSelectedInfo] = useState<XroadInfo>(
+    service !== null && service?.xroadIdentifier.length > 0
+      ? service.xroadIdentifier[0]
+      : null,
+  )
 
   const navigationItems = [
     {
@@ -161,6 +168,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                   <ServiceInformation
                     strings={filterContent}
                     service={service}
+                    selectedInfo={selectedInfo}
                   />
                 )}
               </Box>
@@ -172,7 +180,13 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
         !service ? (
           <></>
         ) : (
-          <OpenApiView strings={openApiContent} service={service} />
+          <OpenApiView
+            strings={openApiContent}
+            service={service}
+            onSelectChange={(value) => {
+              setSelectedInfo(value)
+            }}
+          />
         )
       }
     />
