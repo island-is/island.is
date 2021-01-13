@@ -1,7 +1,5 @@
-export default function handler(req, res) {
+export default async function handler(req, res) {
   res.redirect(
-    `https://${process.env.IDENTITYSERVER_DOMAIN}/connect/endsession`
+    `https://${process.env.IDENTITYSERVER_DOMAIN}/connect/endsession?id_token_hint=${req.query.id_token}&post_logout_redirect_uri=${process.env.NEXTAUTH_URL}`
   );
 }
-// TODO: Ideally we would send post_logout_redirect_uri which requires id_token_hint also. But currently the
-// id token is not available when using next-auth. See https://github.com/nextauthjs/next-auth/pull/837
