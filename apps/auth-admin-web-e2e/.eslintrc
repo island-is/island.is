@@ -1,6 +1,6 @@
 {
-  "extends": ["plugin:cypress/recommended", "../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*"],
+  "extends": ["../../.eslintrc", "plugin:cypress/recommended"],
+  "rules": {},
   "overrides": [
     {
       "files": ["src/plugins/index.js"],
@@ -9,5 +9,6 @@
         "no-undef": "off"
       }
     }
-  ]
+  ],
+  "ignorePatterns": ["!**/*"]
 }

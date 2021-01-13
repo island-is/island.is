@@ -1874,9 +1874,14 @@
           }
         },
         "lint": {
-          "builder": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:lint",
           "options": {
-            "lintFilePatterns": ["apps/auth-admin-web/**/*.{ts,tsx}"]
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/auth-admin-web/tsconfig.app.json",
+              "apps/auth-admin-web/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
@@ -1907,9 +1912,11 @@
           }
         },
         "lint": {
-          "builder": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:lint",
           "options": {
-            "lintFilePatterns": ["apps/auth-admin-web-e2e/**/*.{js,ts}"]
+            "linter": "eslint",
+            "tsConfig": ["apps/auth-admin-web-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
