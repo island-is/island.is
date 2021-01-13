@@ -384,6 +384,8 @@ export function buildKeyValueField(data: {
   const { label, value } = data
   return {
     id: '',
+    title: '',
+    children: undefined,
     label,
     value,
     type: FieldTypes.KEY_VALUE,
