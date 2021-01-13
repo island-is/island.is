@@ -17,6 +17,7 @@ const ClientStepNav: React.FC<Props> = ({
         <ul>
           <li>
             <button
+              type="button"
               onClick={() => handleStepChange(ClientStep.Client)}
               className={activeStep === ClientStep.Client ? 'active' : ''}
             >
@@ -25,6 +26,7 @@ const ClientStepNav: React.FC<Props> = ({
           </li>
           <li>
             <button
+              type="button"
               onClick={() => handleStepChange(ClientStep.ClientRedirectUri)}
               className={
                 activeStep === ClientStep.ClientRedirectUri ? 'active' : ''
@@ -35,6 +37,7 @@ const ClientStepNav: React.FC<Props> = ({
           </li>
           <li>
             <button
+              type="button"
               onClick={() => handleStepChange(ClientStep.ClientIdpRestrictions)}
               className={
                 activeStep === ClientStep.ClientIdpRestrictions ? 'active' : ''
@@ -45,6 +48,7 @@ const ClientStepNav: React.FC<Props> = ({
           </li>
           <li>
             <button
+              type="button"
               onClick={() =>
                 handleStepChange(ClientStep.ClientPostLogoutRedirectUri)
               }
@@ -56,9 +60,10 @@ const ClientStepNav: React.FC<Props> = ({
             >
               Post Logout Uris
             </button>
-          </li>
+          </  li>
           <li>
             <button
+              type="button"
               onClick={() =>
                 handleStepChange(ClientStep.ClientAllowedCorsOrigin)
               }
@@ -73,6 +78,7 @@ const ClientStepNav: React.FC<Props> = ({
           </li>
           <li>
             <button
+              type="button"
               onClick={() => handleStepChange(ClientStep.ClientGrantTypes)}
               className={
                 activeStep === ClientStep.ClientGrantTypes ? 'active' : ''
@@ -83,6 +89,7 @@ const ClientStepNav: React.FC<Props> = ({
           </li>
           <li>
             <button
+              type="button"
               onClick={() => handleStepChange(ClientStep.ClientAllowedScopes)}
               className={
                 activeStep === ClientStep.ClientAllowedScopes ? 'active' : ''
@@ -93,6 +100,7 @@ const ClientStepNav: React.FC<Props> = ({
           </li>
           <li>
             <button
+              type="button"
               onClick={() => handleStepChange(ClientStep.ClientClaims)}
               className={activeStep === ClientStep.ClientClaims ? 'active' : ''}
             >
@@ -101,6 +109,7 @@ const ClientStepNav: React.FC<Props> = ({
           </li>
           <li>
             <button
+              type="button"
               onClick={() => handleStepChange(ClientStep.ClientSecret)}
               className={activeStep === ClientStep.ClientSecret ? 'active' : ''}
             >
