@@ -52,12 +52,12 @@ export * from './lib/Checkbox/Checkbox'
 export * from './lib/RadioButton/RadioButton'
 export * from './lib/DatePicker/DatePicker'
 export * from './lib/Select/Select'
-export { Input, InputProps, InputBackgroundColor } from './lib/Input/Input'
+export * from './lib/Input/Input'
 export * from './lib/InputFileUpload/InputFileUpload'
 export * from './lib/InputError/InputError'
 
 // Layout
-export { Box, BoxProps } from './lib/Box/Box'
+export * from './lib/Box/Box'
 export * from './lib/Box/useBoxStyles'
 export * from './lib/Inline/Inline'
 export * from './lib/Stack/Stack'
@@ -88,3 +88,14 @@ export * from './lib/context'
 
 // Treat
 export * from './treat/global.treat'
+
+// Types
+import { BoxProps as TBoxProps } from './lib/Box/Box'
+import {
+  InputProps as TInputProps,
+  InputBackgroundColor as TInputBackgroundColor,
+} from './lib/Input/Input'
+
+export type BoxProps = TBoxProps
+export type InputProps = TInputProps
+export type InputBackgroundColor = TInputBackgroundColor
