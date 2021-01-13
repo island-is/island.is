@@ -35,10 +35,6 @@ export const routesTemplate = {
     is: '/stafraent-island',
     en: '',
   },
-  throun: {
-    is: '/throun',
-    en: '/en/development',
-  },
   search: {
     is: '/leit',
     en: '/en/search',

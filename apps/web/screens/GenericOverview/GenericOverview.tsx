@@ -36,8 +36,7 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
     return typename.toLowerCase() === 'linkurl'
       ? { href: slug[0] }
       : {
-          href: linkResolver(typename, slug).href,
-          as: linkResolver(typename, slug).as,
+          ...linkResolver(typename, slug),
         }
   }
 
@@ -53,7 +52,6 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
             title: item.title,
             typename: item.link.type,
             slug: [item.link.slug],
-            href: item.link.slug,
           })),
         ]}
         renderLink={(link, { typename, slug }) => {
@@ -68,103 +66,86 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
   }
 
   return (
-    <SidebarLayout
-      fullWidthContent={true}
-      sidebarContent={renderNavigation(false)}
-    >
-      <GridRow>
-        <GridColumn
-          offset={[null, null, null, '1/12', '1/9']}
-          span={['12/12', '12/12', '12/12', '11/12', '7/9']}
-        >
-          <Stack space={2}>
-            <Breadcrumbs
-              items={[
-                {
-                  title: 'Ísland.is',
-                  href: '/',
-                },
-                {
-                  title: navigation.title,
-                },
-              ]}
-            />
-            <Box display={['block', 'block', 'none']}>
-              {renderNavigation(true)}
-            </Box>
+    <SidebarLayout sidebarContent={renderNavigation(false)}>
+      <Stack space={2}>
+        <Breadcrumbs
+          items={[
+            {
+              title: 'Ísland.is',
+              href: '/',
+            },
+            {
+              title: navigation.title,
+            },
+          ]}
+        />
+        <Box display={['block', 'block', 'none']}>{renderNavigation(true)}</Box>
 
-            <Text variant="h1" as="h1">
-              {title}
-            </Text>
+        <Text variant="h1" as="h1">
+          {title}
+        </Text>
 
-            {Boolean(intro) && (
-              <Box marginBottom={10}>
-                {renderHtml(intro.document as Document)}
-              </Box>
-            )}
-          </Stack>
-          <Stack space={6}>
-            {overviewLinks.map(
-              ({ title, linkTitle, link, image, leftImage }, index) => {
-                return (
-                  <GridRow
-                    key={index}
-                    direction={leftImage ? 'row' : 'rowReverse'}
+        {Boolean(intro) && (
+          <Box marginBottom={10}>{renderHtml(intro.document as Document)}</Box>
+        )}
+      </Stack>
+      <Stack space={6}>
+        {overviewLinks.map(
+          ({ title, linkTitle, link, image, leftImage }, index) => {
+            return (
+              <GridRow key={index} direction={leftImage ? 'row' : 'rowReverse'}>
+                <GridColumn span={['8/8', '3/8', '4/8', '3/8']}>
+                  <Box
+                    width="full"
+                    position="relative"
+                    paddingLeft={leftImage ? undefined : [0, 0, 0, 0, 6]}
+                    paddingRight={
+                      leftImage ? [10, 0, 0, 0, 6] : [10, 0, 0, 0, 0]
+                    }
                   >
-                    <GridColumn span={['8/8', '3/8', '4/8', '3/8']}>
-                      <Box
-                        width="full"
-                        position="relative"
-                        paddingLeft={leftImage ? undefined : [0, 0, 0, 0, 6]}
-                        paddingRight={
-                          leftImage ? [10, 0, 0, 0, 6] : [10, 0, 0, 0, 0]
-                        }
-                      >
-                        <Image
-                          url={image.url + '?w=774&fm=webp&q=80'}
-                          thumbnail={image.url + '?w=50&fm=webp&q=80'}
-                          {...image}
-                        />
-                      </Box>
-                    </GridColumn>
-                    <GridColumn span={['8/8', '5/8', '4/8', '5/8']}>
-                      <Box
-                        display="flex"
-                        flexDirection="column"
-                        justifyContent="center"
-                        height="full"
-                      >
-                        <Box>
-                          <Text variant="h2" marginBottom={2}>
-                            {title}
-                          </Text>
-                          {Boolean(intro) && (
-                            <Box marginBottom={4}>
-                              {renderHtml(intro.document as Document)}
-                            </Box>
-                          )}
-                          <NextLink
-                            {...generateUrl(link.type as LinkType, [link.slug])}
-                          >
-                            <Button
-                              icon="arrowForward"
-                              iconType="filled"
-                              type="button"
-                              variant="text"
-                            >
-                              {linkTitle}
-                            </Button>
-                          </NextLink>
+                    <Image
+                      url={image.url + '?w=774&fm=webp&q=80'}
+                      thumbnail={image.url + '?w=50&fm=webp&q=80'}
+                      {...image}
+                    />
+                  </Box>
+                </GridColumn>
+                <GridColumn span={['8/8', '5/8', '4/8', '5/8']}>
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    height="full"
+                  >
+                    <Box>
+                      <Text variant="h2" marginBottom={2}>
+                        {title}
+                      </Text>
+                      {Boolean(intro) && (
+                        <Box marginBottom={4}>
+                          {renderHtml(intro.document as Document)}
                         </Box>
-                      </Box>
-                    </GridColumn>
-                  </GridRow>
-                )
-              },
-            )}
-          </Stack>
-        </GridColumn>
-      </GridRow>
+                      )}
+                      <NextLink
+                        {...generateUrl(link.type as LinkType, [link.slug])}
+                      >
+                        <Button
+                          icon="arrowForward"
+                          iconType="filled"
+                          type="button"
+                          variant="text"
+                        >
+                          {linkTitle}
+                        </Button>
+                      </NextLink>
+                    </Box>
+                  </Box>
+                </GridColumn>
+              </GridRow>
+            )
+          },
+        )}
+      </Stack>
     </SidebarLayout>
   )
 }
