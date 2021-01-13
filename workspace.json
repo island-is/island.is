@@ -5211,7 +5211,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "args": "--targetName=skilavottord-web --targetHost=http://localhost:4200",
-            "command": "yarn start-test 'yarn start {args.targetName}' {args.targetHost} \"yarn run e2e  {args.targetName}-e2e --headless --production --base-url {args.targetHost} --devServerTarget ''\""
+            "command": "yarn start-test 'yarn start {args.targetName}' {args.targetHost}/skilavottord/my-cars \"yarn run e2e  {args.targetName}-e2e --headless --production --base-url {args.targetHost} --devServerTarget ''\""
           }
         },
         "lint": {
