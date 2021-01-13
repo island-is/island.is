@@ -47,6 +47,7 @@ import parseISO from 'date-fns/parseISO'
 import isNull from 'lodash/isNull'
 import isValid from 'date-fns/isValid'
 import TimeInputField from '../../../../shared-components/TimeInputField/TimeInputField'
+import { testCaseExtension } from 'apps/judicial-system/web/src/utils/mocks'
 
 interface CaseData {
   case?: Case
@@ -159,6 +160,10 @@ export const StepThree: React.FC = () => {
   }, [])
 
   useEffect(() => {
+    // TODO: REMOVE
+    if (id === 'TEST_EXTEND') {
+      setWorkingCase(testCaseExtension)
+    }
     if (!workingCase && resCase) {
       setRequestedCustodyEndTime(
         getTimeFromDate(resCase.requestedCustodyEndDate),
@@ -208,12 +213,15 @@ export const StepThree: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.PROSECUTOR}
+      activeSection={
+        workingCase?.parentCaseId ? Sections.EXTENSION : Sections.PROSECUTOR
+      }
       activeSubSection={
         ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_THREE
       }
       isLoading={loading}
       notFound={data?.case === undefined}
+      decision={workingCase?.decision}
     >
       {workingCase ? (
         <>
@@ -368,6 +376,17 @@ export const StepThree: React.FC = () => {
                 Tegund og gildistími{' '}
                 <Tooltip text="Hér er hægt að velja um gæsluvarðhald eða gæsluvarðhald með farbanni til vara. Sé farbann til vara valið, endurspeglar valið dómkröfurnar á næstu síðu." />
               </Text>
+              {workingCase.parentCaseId && (
+                <Box marginTop={1}>
+                  <Text>
+                    Fyrri gæsla var/er til{' '}
+                    <Text as="span" fontWeight="semiBold">
+                      {/** TODO: REPLACE WITH CUSTODY_END_DATE FROM PARENT CASE */}
+                      þriðjudagsins 16. október 2020, kl. 16:00.
+                    </Text>
+                  </Text>
+                </Box>
+              )}
             </Box>
             <BlueBox>
               <Box marginBottom={2}>
@@ -490,7 +509,8 @@ export const StepThree: React.FC = () => {
           <FormFooter
             nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
             nextIsDisabled={
-              isStepIllegal || workingCase.custodyProvisions?.length === 0
+              // TODO: UNCOMMENT
+              false //isStepIllegal || workingCase.custodyProvisions?.length === 0
             }
           />
         </>

@@ -40,6 +40,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { testCaseExtension } from '../../../utils/mocks'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -131,6 +132,11 @@ export const Overview: React.FC = () => {
   }, [])
 
   useEffect(() => {
+    // TODO: REMOVE
+    if (id === 'TEST_EXTEND') {
+      setWorkingCase(testCaseExtension)
+    }
+
     if (!workingCase && data?.case) {
       setWorkingCase(data.case)
     }
@@ -138,16 +144,23 @@ export const Overview: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.PROSECUTOR}
+      activeSection={
+        workingCase?.parentCaseId ? Sections.EXTENSION : Sections.PROSECUTOR
+      }
       activeSubSection={ProsecutorSubsections.PROSECUTOR_OVERVIEW}
-      isLoading={loading}
-      notFound={data?.case === undefined}
+      // TODO: UNCOMMENT
+      isLoading={false} // {loading}
+      // TODO: UNCOMMENT
+      notFound={false} // {data?.case === undefined}
+      decision={workingCase?.decision}
     >
       {workingCase ? (
         <>
           <Box marginBottom={10}>
             <Text as="h1" variant="h1">
-              Krafa um gæsluvarðhald
+              {workingCase.parentCaseId
+                ? 'Yfirlit kröfu um framlengingu á gæslu'
+                : 'Krafa um gæsluvarðhald'}
             </Text>
           </Box>
           <Box component="section">

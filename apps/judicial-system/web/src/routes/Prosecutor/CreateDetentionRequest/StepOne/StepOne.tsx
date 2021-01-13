@@ -36,6 +36,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import BlueBox from '../../../../shared-components/BlueBox/BlueBox'
 import { CreateCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
+import { testCaseExtension } from 'apps/judicial-system/web/src/utils/mocks'
 
 interface CaseData {
   case?: Case
@@ -141,6 +142,10 @@ export const StepOne: React.FC = () => {
 
   // Run this if id is in url, i.e. if user is opening an existing request.
   useEffect(() => {
+    // TODO: REMOVE
+    if (id === 'TEST_EXTEND') {
+      setWorkingCase(testCaseExtension)
+    }
     if (id && !workingCase && data?.case) {
       setWorkingCase(data?.case)
     } else if (!id && !workingCase) {
@@ -160,12 +165,7 @@ export const StepOne: React.FC = () => {
     }
   }, [id, workingCase, setWorkingCase, data])
 
-  /**
-   * Run this to validate form after each change
-   *
-   * This can't be done in the render function because the time refs will always be null
-   * until the user clicks the time inputs and then the continue button becomes enabled.
-   *  */
+  // Validate step
   useEffect(() => {
     if (workingCase) {
       setIsStepIllegal(
@@ -197,10 +197,15 @@ export const StepOne: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.PROSECUTOR}
+      activeSection={
+        workingCase?.parentCaseId ? Sections.EXTENSION : Sections.PROSECUTOR
+      }
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_ONE}
       isLoading={loading}
-      notFound={id !== undefined && data?.case === undefined}
+      // TODO: UNCOMMENT
+      notFound={false} //{id !== undefined && data?.case === undefined}
+      isExtension={!!workingCase?.parentCaseId}
+      decision={workingCase?.decision}
     >
       {workingCase ? (
         <>

@@ -22,10 +22,9 @@ interface PageProps {
   isLoading: boolean
   notFound: boolean
   activeSubSection?: number
-  // Only needed for the SignedVerdictOverview screen
-  rejectedCase?: boolean
   decision?: CaseDecision
   isCustodyEndDateInThePast?: boolean
+  isExtension?: boolean
 }
 
 export const PageLayout: FC<PageProps> = ({
@@ -34,28 +33,25 @@ export const PageLayout: FC<PageProps> = ({
   activeSubSection,
   isLoading,
   notFound,
-  rejectedCase,
   decision,
   isCustodyEndDateInThePast,
+  isExtension,
 }) => {
   const { user } = useContext(UserContext)
 
   const caseResult = () => {
-    if (rejectedCase) {
+    console.log(decision)
+    if (decision === CaseDecision.REJECTING) {
       return 'Kröfu hafnað'
-    }
-
-    if (decision === CaseDecision.ACCEPTING) {
+    } else if (decision === CaseDecision.ACCEPTING) {
       return isCustodyEndDateInThePast
         ? 'Gæsluvarðhaldi lokið'
         : 'Gæsluvarðhald virkt'
-    }
-
-    if (decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) {
+    } else if (decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) {
       return isCustodyEndDateInThePast ? 'Farbanni lokið' : 'Farbann virkt'
+    } else {
+      return 'Niðurstaða'
     }
-
-    return 'Niðurstaða'
   }
 
   return children ? (
@@ -127,6 +123,25 @@ export const PageLayout: FC<PageProps> = ({
                   },
                   {
                     name: caseResult(),
+                  },
+                  {
+                    name: 'Krafa um framlengingu',
+                    children: [
+                      { type: 'SUB_SECTION', name: 'Sakborningur' },
+                      { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
+                      {
+                        type: 'SUB_SECTION',
+                        name: 'Lagagrundvöllur og dómkröfur',
+                      },
+                      {
+                        type: 'SUB_SECTION',
+                        name: 'Greinargerð',
+                      },
+                      {
+                        type: 'SUB_SECTION',
+                        name: 'Yfirlit kröfu',
+                      },
+                    ],
                   },
                 ]}
                 formName="Gæsluvarðhald"

@@ -74,7 +74,6 @@ export const SignedVerdictOverview: React.FC = () => {
       isLoading={loading}
       notFound={data?.case === undefined}
       isCustodyEndDateInThePast={workingCase?.isCustodyEndDateInThePast}
-      rejectedCase={data?.case?.decision === CaseDecision.REJECTING}
       decision={data?.case?.decision}
     >
       {workingCase ? (
@@ -213,7 +212,7 @@ export const SignedVerdictOverview: React.FC = () => {
             }
             nextButtonText="Framlengja gæslu"
             onNextButtonClick={() =>
-              history.push(Constants.SINGLE_REQUEST_BASE_ROUTE)
+              history.push(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/TEST_EXTEND`)
             }
           />
         </>

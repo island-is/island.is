@@ -21,11 +21,11 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { testCaseExtension } from 'apps/judicial-system/web/src/utils/mocks'
 
 export const StepFour: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const { id } = useParams<{ id: string }>()
 
@@ -35,7 +35,7 @@ export const StepFour: React.FC = () => {
     string
   >('')
 
-  const { data } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
@@ -47,15 +47,14 @@ export const StepFour: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setIsLoading(true)
-      setWorkingCase(resCase)
-      setIsLoading(false)
+    // TODO: REMOVE
+    if (id === 'TEST_EXTEND') {
+      setWorkingCase(testCaseExtension)
     }
     if (id && !workingCase && resCase) {
-      getCurrentCase()
+      setWorkingCase(resCase)
     }
-  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
+  }, [id, workingCase, setWorkingCase, resCase])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
@@ -93,12 +92,17 @@ export const StepFour: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.PROSECUTOR}
+      activeSection={
+        workingCase?.parentCaseId ? Sections.EXTENSION : Sections.PROSECUTOR
+      }
       activeSubSection={
         ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_FOUR
       }
-      isLoading={isLoading}
-      notFound={data?.case === undefined}
+      // TODO: UNCOMMENT
+      isLoading={false} // {loading}
+      // TODO: UNCOMMENT
+      notFound={false} // {data?.case === undefined}
+      decision={workingCase?.decision}
     >
       {workingCase ? (
         <>
