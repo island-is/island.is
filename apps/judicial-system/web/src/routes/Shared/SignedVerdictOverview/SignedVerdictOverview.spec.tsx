@@ -340,12 +340,7 @@ describe('Signed Verdict Overview route', () => {
 
     expect(
       await waitFor(() =>
-        screen.getByText(
-          `Gæsla rann út ${formatDate(dateInPast, 'PPP')} kl. ${formatDate(
-            dateInPast,
-            TIME_FORMAT,
-          )}`,
-        ),
+        screen.getByText(`Gæsla rann út 24. september 2020 kl. 19:50`),
       ),
     ).toBeInTheDocument()
   })
