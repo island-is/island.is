@@ -32,6 +32,7 @@ const InfoModal: React.FC<Props> = (props: Props) => {
         <div className="info-modal__container__buttons">
           <div className="info-modal__container__button">
             <button
+              type="button"
               onClick={props.handleButtonClicked}
               className="info-modal__button__ok"
             >

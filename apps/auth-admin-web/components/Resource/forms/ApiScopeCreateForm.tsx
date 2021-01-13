@@ -202,6 +202,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                 <div className="api-scope-form__buttons__container">
                   <div className="api-scope-form__button__container">
                     <button
+                      type="button"
                       className="api-scope-form__button__cancel"
                       onClick={props.handleCancel}
                     >

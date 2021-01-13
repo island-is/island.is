@@ -42,6 +42,7 @@ const Paginator: React.FC<Props> = (props: Props) => {
       <nav className="paginator__pagination">
         <li className="paginator__page-item">
           <button
+            type="button"
             onClick={previous}
             className="paginator__pagination-previous"
             disabled={page === 1}
@@ -51,6 +52,7 @@ const Paginator: React.FC<Props> = (props: Props) => {
         </li>
         <li className="paginator__page-item">
           <button
+            type="button"
             onClick={next}
             className="paginator__pagination-next"
             disabled={page === props.lastPage}

@@ -40,6 +40,7 @@ const Header: React.FC = () => {
             <div className="header__username">{session.user.name}</div>
             <div className="header__container__logout">
               <button
+                type="button"
                 className="header__button__logout"
                 onClick={() => logout()}
               >
@@ -50,7 +51,11 @@ const Header: React.FC = () => {
         )}
         {(!session || isExpired(session)) && (
           <div className="header__container__logout">
-            <button className="header__button__logout" onClick={() => login()}>
+            <button
+              type="button"
+              className="header__button__logout"
+              onClick={() => login()}
+            >
               Login
             </button>
           </div>
