@@ -117,7 +117,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     className="identity-resource-form__input"
                     defaultValue={props.identityResource.displayName}
                   />
-                  <HelpBox helpText="This value will be used e.g. on the consent screen." />
+                  <HelpBox helpText="The display name value will be used e.g. on the consent screen." />
                   <ErrorMessage
                     as="span"
                     errors={errors}
@@ -140,7 +140,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     defaultValue={props.identityResource.description}
                     className="identity-resource-form__input"
                   />
-                  <HelpBox helpText="This value will be used e.g. on the consent screen." />
+                  <HelpBox helpText="The description value will be used e.g. on the consent screen." />
                 </div>
 
                 <div className="identity-resource-form__container__checkbox__field">

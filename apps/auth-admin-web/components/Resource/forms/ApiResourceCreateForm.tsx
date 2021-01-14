@@ -137,7 +137,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     className="api-resource-form__input"
                     defaultValue={props.apiResource.displayName}
                   />
-                  <HelpBox helpText="This value can be used e.g. on the consent screen." />
+                  <HelpBox helpText="The Display Name value can be used e.g. on the consent screen." />
                   <ErrorMessage
                     as="span"
                     errors={errors}
@@ -160,7 +160,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     defaultValue={props.apiResource.description}
                     className="api-resource-form__input"
                   />
-                  <HelpBox helpText="This value can be used e.g. on the consent screen." />
+                  <HelpBox helpText="The Description value can be used e.g. on the consent screen." />
                 </div>
 
                 <div className="api-resource-form__container__checkbox__field">

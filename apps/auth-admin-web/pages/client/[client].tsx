@@ -68,7 +68,7 @@ const Index: React.FC = () => {
   }
 
   const handleCancel = () => {
-    router.back()
+    router.push('/client')
   }
 
   const handleClientSaved = (clientSaved: ClientDTO) => {

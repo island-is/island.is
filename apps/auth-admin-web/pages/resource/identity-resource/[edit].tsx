@@ -64,7 +64,7 @@ const Index: React.FC = () => {
   }
 
   const handleCancel = () => {
-    router.back()
+    router.push('/resources/identity-resources')
   }
 
   const handleIdentityResourceSaved = (resourceSaved: IdentityResourcesDTO) => {

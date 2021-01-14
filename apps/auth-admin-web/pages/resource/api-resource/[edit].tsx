@@ -62,7 +62,7 @@ const Index: React.FC = () => {
   }
 
   const handleCancel = () => {
-    router.back()
+    router.push('/resources/api-resources')
   }
 
   const handleApiResourceSaved = (resourceSaved: ApiResourcesDTO) => {

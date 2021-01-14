@@ -60,7 +60,7 @@ const Index: React.FC = () => {
   }
 
   const handleCancel = () => {
-    router.back()
+    router.push('/resources/api-scopes')
   }
 
   const handleApiScopeSaved = (apiScopeSaved: ApiScopesDTO) => {

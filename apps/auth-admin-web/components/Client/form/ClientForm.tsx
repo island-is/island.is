@@ -205,7 +205,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       </option>
                     </select>
 
-                    <HelpBox helpText="Select the appropriate client Type" />
+                    <HelpBox helpText="Select the appropriate Client Type" />
                     <ErrorMessage
                       as="span"
                       errors={errors}
