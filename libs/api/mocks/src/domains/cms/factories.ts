@@ -16,7 +16,7 @@ import {
   Link,
   Menu,
   News,
-  Page,
+  ReferenceLink,
   SectionWithImage,
   Slice,
   SubArticle,
@@ -172,16 +172,14 @@ export const frontPageSlider = factory<FrontpageSlider>({
   content: () => faker.lorem.paragraph(),
 })
 
-export const page = simpleFactory(
-  (): Page => {
-    const factory = faker.random.arrayElement([article, subArticle])
-    return factory()
-  },
-)
+export const referenceLink = factory<ReferenceLink>({
+  slug: () => faker.lorem.slug(),
+  type: () => 'article',
+})
 
 export const featured = factory<Featured>({
-  thing: () => page(),
-  title: ({ thing }) => thing.title,
+  thing: () => referenceLink(),
+  title: ({ thing }) => title(),
   attention: () => faker.random.boolean(),
 })
 
