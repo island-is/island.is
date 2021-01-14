@@ -3,7 +3,7 @@ import ClientForm from '../../components/Client/form/ClientForm'
 import React from 'react'
 import { useRouter } from 'next/router'
 import ContentWrapper from './../../components/Layout/ContentWrapper'
-import { GetServerSideProps, NextPageContext } from 'next'
+import { NextPageContext } from 'next'
 import { withAuthentication } from './../../utils/auth.utils'
 
 const Index: React.FC = () => {
