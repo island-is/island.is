@@ -22,6 +22,9 @@ enum Roles {
 const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   selectChild: z.array(z.string()).nonempty(),
+  email: z.string().email(),
+  phoneNumber: z.string().min(7),
+  approveTerms: z.array(z.enum(['approveTerms'])),
 })
 
 const ChildrenDomicileTransferTemplate: ApplicationTemplate<
