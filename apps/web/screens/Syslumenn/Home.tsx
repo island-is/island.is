@@ -11,6 +11,10 @@ import {
   GridContainer,
   GridColumn,
   GridRow,
+  Button,
+  FocusableBox,
+  LinkCard,
+  Stack,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -54,13 +58,14 @@ import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '@island.is/web/utils/processMenuData'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useRouter } from 'next/router'
 import {
   renderSlices,
   Slice as SliceType,
 } from '@island.is/island-ui/contentful'
+import Link from 'next/link'
 
 interface HomeProps {
   organization: Query['getOrganization']
@@ -212,7 +217,9 @@ interface SectionProps {
 }
 
 const Section: FC<SectionProps> = ({ slice, organization, namespace }) => {
-  console.log({ slice })
+  const n = useNamespace(namespace)
+  const { linkResolver } = useLinkResolver()
+
   switch (slice.__typename) {
     case 'HeadingSlice':
       return (
@@ -252,12 +259,45 @@ const Section: FC<SectionProps> = ({ slice, organization, namespace }) => {
       return (
         <div key={slice.id} id={slice.id}>
           <Box paddingTop={[8, 6, 15]} paddingBottom={[4, 5, 10]}>
-            <SidebarLayout fullWidthContent={true} sidebarContent={null}>
-              <h2>{slice.title}</h2>
-              {slice.articles.map((article) => (
-                <div>{article.title}</div>
-              ))}
-            </SidebarLayout>
+            <GridContainer>
+              <GridRow>
+                <GridColumn span={['12/12', '12/12', '5/12']}>
+                  <Box className={styles.popularTitleWrap}>
+                    <h2 className={styles.popularTitle}>{slice.title}</h2>
+                    <Box display={['none', 'none', 'block']}>
+                      <img src={slice.image.url} alt="" />
+                    </Box>
+                  </Box>
+                </GridColumn>
+                <GridColumn span={['12/12', '12/12', '7/12']}>
+                  <Stack space={2}>
+                    {slice.articles.map(({ title, slug, isApplication }) => {
+                      const url = linkResolver('Article' as LinkType, [slug])
+                      return (
+                        <FocusableBox
+                          key={slug}
+                          href={url.href}
+                          as={url.as}
+                          borderRadius="large"
+                        >
+                          {({ isFocused }) => (
+                            <LinkCard
+                              isFocused={isFocused}
+                              tag={
+                                !!isApplication &&
+                                n('applicationProcess', 'Umsókn')
+                              }
+                            >
+                              {title}
+                            </LinkCard>
+                          )}
+                        </FocusableBox>
+                      )
+                    })}
+                  </Stack>
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
           </Box>
         </div>
       )
