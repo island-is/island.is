@@ -2,10 +2,7 @@ import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
-import {
-  DatePicker,
-  DatePickerTypes,
-} from '@island.is/island-ui/core'
+import { DatePicker, DatePickerTypes } from '@island.is/island-ui/core'
 
 interface Props {
   defaultValue?: string

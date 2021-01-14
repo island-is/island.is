@@ -1,4 +1,4 @@
-import { ReactDatePickerProps } from "react-datepicker"
+import { ReactDatePickerProps } from 'react-datepicker'
 import { Icon as IconType, Type } from '../IconRC/iconMap'
 
 import pl from 'date-fns/locale/pl'
