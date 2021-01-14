@@ -4,11 +4,12 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
+import { NationalRegistryUser } from '@island.is/api/schema'
 
 export class NationalRegistryProvider extends BasicDataProvider {
   type = 'NationalRegistryProvider'
 
-  async provide(application: Application): Promise<unknown> {
+  async provide(application: Application): Promise<NationalRegistryUser> {
     const query = `
       query NationalRegistryUserQuery {
         nationalRegistryUser {

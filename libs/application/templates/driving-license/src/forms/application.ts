@@ -16,6 +16,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+import { NationalRegistryUser } from '@island.is/api/schema'
 import { m } from '../lib/messages'
 
 export const application: Form = buildForm({
@@ -141,7 +142,7 @@ Veitir ökuréttindi til að stjórna bifhjóli:
             buildKeyValueField({
               label: 'Umsækjandi',
               value: ({ externalData: { nationalRegistry } }) =>
-                (nationalRegistry.data as { fullName: string }).fullName,
+                (nationalRegistry.data as NationalRegistryUser).fullName,
             }),
             buildDividerField({
               title: 'Ökukennari',
