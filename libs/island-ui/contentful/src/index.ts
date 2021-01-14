@@ -3,6 +3,7 @@ export * from './lib/BorderedContent/BorderedContent'
 export * from './lib/EmbeddedVideo/EmbeddedVideo'
 export * from './lib/Hyperlink/Hyperlink'
 export * from './lib/RichText/RichText'
+export * from './lib/RichTextRC/RichText'
 export * from './lib/Paragraph/Paragraph'
 export {
   ProcessEntryLinkButton,
