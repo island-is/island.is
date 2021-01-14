@@ -18,9 +18,6 @@ export class Districts {
 
   @Field({ nullable: true })
   image?: Image
-
-  @Field(() => [Link])
-  districtLinks?: Array<Link>
 }
 
 export const mapDistricts = ({
@@ -32,5 +29,4 @@ export const mapDistricts = ({
   title: fields.title,
   description: fields.description,
   image: mapImage(fields.image),
-  districtLinks: (fields.districtLinks ?? []).map(mapLink),
 })
