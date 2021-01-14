@@ -44,7 +44,7 @@ export const HealthInsuranceForm: Form = buildForm({
             }),
             buildDataProviderItem({
               id: 'nationalRegistry',
-              type: 'UserNationalRegistryProvider',
+              type: 'NationalRegistryProvider',
               title: m.nationalRegistryTitle,
               subTitle: m.nationalRegistrySubTitle,
             }),
@@ -116,7 +116,8 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   streetAddress?: string
-                })?.streetAddress,
+                  // TODO: Remove the hardcoded
+                })?.streetAddress || 'street',
             }),
             buildTextField({
               id: 'applicant.postalCode',
@@ -126,7 +127,8 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   postalCode?: string
-                })?.postalCode,
+                  // TODO: Remove the hardcoded
+                })?.postalCode || '000',
             }),
             buildTextField({
               id: 'applicant.city',
@@ -136,7 +138,8 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   city?: string
-                })?.city,
+                  // TODO: Remove the hardcoded
+                })?.city || 'city',
             }),
             buildTextField({
               id: 'applicant.nationality',
