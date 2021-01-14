@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { themeUtils } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const modalButtonWrapper = style({
   ...themeUtils.responsiveStyle({
@@ -10,4 +10,15 @@ export const modalButtonWrapper = style({
       width: 'fit-content',
     },
   }),
+})
+
+export const documentLine = style({
+  borderBottom: `1px solid ${theme.color.blue200}`,
+})
+
+export const button = style({
+  color: theme.color.blue400,
+  ':hover': {
+    textDecoration: 'underline',
+  },
 })
