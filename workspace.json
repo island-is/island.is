@@ -4227,7 +4227,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "docker-express": {}
     },
     "services-auth-api": {
       "root": "apps/services/auth-api",
