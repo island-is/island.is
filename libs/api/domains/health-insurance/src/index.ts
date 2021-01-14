@@ -1,1 +1,1 @@
-export * from './lib/api-domains-health-insurance'
+export { HealthTestModule } from './lib/healthTest.module'
