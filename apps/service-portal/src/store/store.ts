@@ -26,7 +26,7 @@ const userObject = JSON.parse(
 export const initialState: StoreState = {
   userInfo: MOCK_SIGN_IN ? userObject : null,
   userInfoState: 'passive',
-  modules: modules,
+  modules: modules(),
   navigationState: 'passive',
   notificationMenuState: 'closed',
   mobileMenuState: 'closed',

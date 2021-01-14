@@ -111,7 +111,7 @@ export class SmsService extends RESTDataSource {
 
       const code = error?.extensions?.response?.body?.Code
       const message =
-        error?.extensions?.response?.body?.Message || error.message
+        error?.extensions?.response?.body?.Message || error?.message
 
       throw new NovaError(code, message)
     }
