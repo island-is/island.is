@@ -7,10 +7,7 @@ export class HealthTestModule {
   static register(): DynamicModule {
     return {
       module: HealthTestModule,
-      providers: [
-        HealthTestService,
-        HealthTestResolver,
-      ],
+      providers: [HealthTestService, HealthTestResolver],
       exports: [],
     }
   }

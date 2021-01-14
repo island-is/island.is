@@ -5,9 +5,7 @@ import { HealthTestService } from '../healthTest.service'
 
 @Resolver(() => HealthTest)
 export class HealthTestResolver {
-  constructor(
-    private readonly healthTestService: HealthTestService,
-  ) {}
+  constructor(private readonly healthTestService: HealthTestService) {}
 
   @Query(() => HealthTest, {
     name: 'healthTest',
