@@ -859,7 +859,7 @@ export const mm: MessageDir = {
     },
     buttonsEdit: {
       id: 'pl.application:review.desc',
-      defaultMessage: 'Edit/Add periods',
+      defaultMessage: 'Edit / Add periods',
       description: 'Edit or add periods to the application',
     },
     editApplicationModalTitle: {
@@ -959,17 +959,29 @@ export const mm: MessageDir = {
   finalScreen: defineMessages({
     title: {
       id: 'pl.application:finalscreen.title',
-      defaultMessage: 'Næstu skref:',
-      description: 'All done, here are the next steps:',
+      defaultMessage: 'Til hamingju, hér að neðan eru næstu skref',
+      description: 'Congratulations, below are the next steps',
     },
-    description: {
-      id: 'pl.application:finalscreen.description',
+    step1: {
+      id: 'pl.application:finalscreen.step1',
       defaultMessage:
-        'Hitt foreldrið þarf að samþykkja umsókn þína ef þú óskaðir eftir yfirfærslu á hluta réttinda þess til þín, eða nýtingu á persónuafslætti þess. Síðan þarf vinnuveitandinn þinn að samþykkja tilhögun þína til fæðingarorlofs. Að lokum fer umsóknin á borð Fæðingarorlofssjóðs þar sem lokaúrvinnsla hennar fer fram.',
+        'Hitt foreldrið þarf að samþykkja umsókn þína ef þú óskaðir eftir yfirfærslu á hluta réttinda þess til þín, eða nýtingu á persónuafslætti þess.',
       description:
-        'The other parent will need to approve your request to use their shared month (if you did so). Then, ' +
-        'your employer will approve your parental leave dates.' +
-        'And finally Vinnumálastofnun will review your application.',
+        'The other parent must approve your application if you requested the transfer of part of their rights to you, or the use of their personal allowance.',
+    },
+    step2: {
+      id: 'pl.application:finalscreen.step2',
+      defaultMessage:
+        'Síðan þarf vinnuveitandinn þinn að samþykkja tilhögun þína til fæðingarorlofs.',
+      description:
+        'Then your employer has to approve your maternity leave arrangements.',
+    },
+    step3: {
+      id: 'pl.application:finalscreen.step3',
+      defaultMessage:
+        'Að lokum fer umsóknin á borð Fæðingarorlofssjóðs þar sem lokaúrvinnsla hennar fer fram.',
+      description:
+        'Finally, the application goes to the Maternity / Paternity Leave Fund, where its final processing takes place.',
     },
   }),
 }
