@@ -1,3 +1,4 @@
+import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 type tag = {
   key: string
   value?: string
@@ -21,13 +22,8 @@ export interface MappedData {
   dateCreated: string
 }
 
-export enum SearchIndexes {
-  'is' = 'island-is',
-  'en' = 'island-en',
-}
-
 export interface SyncOptions {
-  locale: keyof typeof SearchIndexes
+  locale: ElasticsearchIndexLocale
   syncType: 'full' | 'fromLast' | 'initialize'
   elasticIndex?: string
 }
