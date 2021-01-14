@@ -3,6 +3,7 @@ import { environment } from '../environments/environment'
 import { logger } from '@island.is/logging'
 import flatten from 'lodash/flatten'
 import { AwsEsPackage } from './aws'
+import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 
 // Analyzers name must not exceed 20 in length and must satisfy this pattern [a-z][a-z0-9\\-]+
 const analyzers = [
@@ -37,7 +38,7 @@ export const getDictionaryVersion = async (): Promise<string> => {
 
 export interface Dictionary {
   analyzerType: string
-  locale: string
+  locale: ElasticsearchIndexLocale
   file: NodeJS.ReadableStream
 }
 export const getDictionaryFiles = async (): Promise<Dictionary[]> => {
