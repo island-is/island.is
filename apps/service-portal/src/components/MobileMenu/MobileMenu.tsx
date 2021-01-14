@@ -87,14 +87,21 @@ const MobileMenu: FC<{}> = () => {
                   />
                 ),
             )}
-     {rootIndex === 0 &&     <Box>
-              <Button onClick={handleLogoutClick} fluid icon="logOut" iconType="outline">
-                {formatMessage({
-                  id: 'global:logout',
-                  defaultMessage: 'Útskrá',
-                })}
-              </Button>
-            </Box>}
+            {rootIndex === 0 && (
+              <Box>
+                <Button
+                  onClick={handleLogoutClick}
+                  fluid
+                  icon="logOut"
+                  iconType="outline"
+                >
+                  {formatMessage({
+                    id: 'global:logout',
+                    defaultMessage: 'Útskrá',
+                  })}
+                </Button>
+              </Box>
+            )}
           </Stack>
           {rootIndex === 1 && (
             <Text variant="small" color="blueberry600" marginTop={3}>
