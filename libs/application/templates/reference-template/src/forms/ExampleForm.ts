@@ -12,7 +12,6 @@ import {
   Form,
   FormModes,
   FormValue,
-  buildRepeater,
 } from '@island.is/application/core'
 import { m } from './messages'
 

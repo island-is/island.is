@@ -12,7 +12,7 @@ import {
   BadRequestException,
   UseInterceptors,
   Optional,
-  UseGuards,
+  // UseGuards,
   Req,
 } from '@nestjs/common'
 
@@ -38,6 +38,7 @@ import {
   ExternalData,
   ApplicationTemplateAPIModule,
 } from '@island.is/application/core'
+import { Unwrap } from '@island.is/shared/types'
 // import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-nest-tools'
 import {
   getApplicationDataProviders,
@@ -77,8 +78,6 @@ import { verifyToken } from './utils/tokenUtils'
 interface DecodedToken {
   applicationId: string
 }
-
-type ValueType<T> = T extends Promise<infer U> ? U : T
 
 @ApiTags('applications')
 @ApiHeader({
@@ -237,7 +236,7 @@ export class ApplicationController {
     const templateAPIModule = await getApplicationAPIModule(templateId)
     const headers = (req.headers as unknown) as { authorization: string }
 
-    const [hasChanged, newState, updatedApplication] = await this.changeState(
+    const [hasChanged, , updatedApplication] = await this.changeState(
       mergedApplication,
       template,
       templateAPIModule,
@@ -397,15 +396,13 @@ export class ApplicationController {
     const templateAPIModule = await getApplicationAPIModule(templateId)
     const headers = (req.headers as unknown) as { authorization: string }
 
-    const [hasChanged, newState, updatedApplication] = await this.changeState(
+    const [hasChanged, , updatedApplication] = await this.changeState(
       mergedApplication,
       template,
       templateAPIModule,
       updateApplicationStateDto.event,
       headers.authorization,
     )
-
-    console.log('Submit done changing state, ended up in:', newState)
 
     // TODO: should not have to specificially check for updatedApplication
     // because of return type on this.changeState
@@ -418,7 +415,7 @@ export class ApplicationController {
 
   async changeState(
     application: BaseApplication,
-    template: ValueType<ReturnType<typeof getApplicationTemplateByTypeId>>,
+    template: Unwrap<typeof getApplicationTemplateByTypeId>,
     templateAPIModule: ApplicationTemplateAPIModule,
     event: string,
     authorization?: string,

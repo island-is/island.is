@@ -350,7 +350,7 @@ describe('Application system API', () => {
 
   it('GET /applicants/:nationalRegistryId/applications should return a list of applications for applicant', async () => {
     const server = request(app.getHttpServer())
-    const postResponse = await server.post('/applications').send({
+    await server.post('/applications').send({
       applicant: nationalId,
       state: 'draft',
       attachments: {},
@@ -375,7 +375,7 @@ describe('Application system API', () => {
 
   it('GET /assignees/:nationalRegistryId/applications should return a list of applications for assignee', async () => {
     const server = request(app.getHttpServer())
-    const postResponse = await server.post('/applications').send({
+    await server.post('/applications').send({
       applicant: nationalId,
       state: 'draft',
       attachments: {},
