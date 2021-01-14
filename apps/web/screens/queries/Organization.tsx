@@ -54,6 +54,9 @@ export const GET_ORGANIZATION_QUERY = gql`
           }
           ... on FeaturedArticles {
             title
+            image {
+              url
+            }
             articles {
               title
               slug
