@@ -69,3 +69,7 @@ export interface RemarkTypesResponse {
   athugasemd: boolean
   lysing: string
 }
+
+export interface PenaltyPointStatusResponse {
+  iLagi: boolean
+}
