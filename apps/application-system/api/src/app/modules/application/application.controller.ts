@@ -236,7 +236,7 @@ export class ApplicationController {
     const templateAPIModule = await getApplicationAPIModule(templateId)
     const headers = (req.headers as unknown) as { authorization: string }
 
-    const [hasChanged, , updatedApplication] = await this.changeState(
+    const [hasChanged, updatedApplication] = await this.changeState(
       mergedApplication,
       template,
       templateAPIModule,
@@ -396,7 +396,7 @@ export class ApplicationController {
     const templateAPIModule = await getApplicationAPIModule(templateId)
     const headers = (req.headers as unknown) as { authorization: string }
 
-    const [hasChanged, , updatedApplication] = await this.changeState(
+    const [hasChanged, updatedApplication] = await this.changeState(
       mergedApplication,
       template,
       templateAPIModule,
@@ -419,7 +419,7 @@ export class ApplicationController {
     templateAPIModule: ApplicationTemplateAPIModule,
     event: string,
     authorization: string,
-  ): Promise<[false] | [true, string, BaseApplication]> {
+  ): Promise<[false] | [true, BaseApplication]> {
     const helper = new ApplicationTemplateHelper(application, template)
 
     const apiTemplateUtils = new ApplicationAPITemplateUtils(application, {
@@ -439,7 +439,7 @@ export class ApplicationController {
         updatedApplication,
       } = await this.applicationService.updateApplicationState(
         application.id,
-        newState, // TODO maybe ban more complicated states....
+        newState,
         newApplication.answers,
         newApplication.assignees,
       )
@@ -482,7 +482,7 @@ export class ApplicationController {
         }
       }
 
-      return [true, newState, updatedApplication as BaseApplication]
+      return [true, updatedApplication as BaseApplication]
     }
 
     return [false]
