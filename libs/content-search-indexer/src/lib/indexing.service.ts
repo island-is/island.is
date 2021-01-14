@@ -4,9 +4,9 @@ import { logger } from '@island.is/logging'
 import { CmsSyncService } from '@island.is/api/domains/cms'
 import {
   ContentSearchImporter,
-  SearchIndexes,
   SyncOptions,
 } from '@island.is/content-search-indexer/types'
+import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 
 @Injectable()
 export class IndexingService {
@@ -26,7 +26,7 @@ export class IndexingService {
   async doSync(options: SyncOptions) {
     const {
       syncType = 'fromLast',
-      elasticIndex = SearchIndexes[options.locale],
+      elasticIndex = getElasticsearchIndex(options.locale),
     } = options
 
     let allImportedIds = [] // se we can delete orphans after full sync
