@@ -859,8 +859,8 @@ export const mm: MessageDir = {
     },
     buttonsEdit: {
       id: 'pl.application:review.desc',
-      defaultMessage: 'Edit application',
-      description: 'Edit application',
+      defaultMessage: 'Edit/Add periods',
+      description: 'Edit or add periods to the application',
     },
     editApplicationModalTitle: {
       id: 'pl.application:review.edit.modal.title',

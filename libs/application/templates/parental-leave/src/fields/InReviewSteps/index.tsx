@@ -112,20 +112,27 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application }) => {
                   type="button"
                   variant="text"
                   icon="pencil"
+                  loading={loadingSubmit}
+                  disabled={loadingSubmit}
                 >
                   {formatMessage(mm.reviewScreen.buttonsEdit)}
                 </Button>
               }
               onConfirm={async () => {
-                const response = await submitApplication({
+                const res = await submitApplication({
                   variables: {
                     input: {
                       id: application.id,
-                      event: { state: 'draft' },
+                      event: 'EDIT',
                       answers: application.answers,
                     },
                   },
                 })
+
+                if (res?.data) {
+                  // Takes them back to the editable Review screen
+                  window.location.reload()
+                }
               }}
               buttonTextConfirm={formatMessage(
                 mm.reviewScreen.editApplicationModalConfirmButton,
