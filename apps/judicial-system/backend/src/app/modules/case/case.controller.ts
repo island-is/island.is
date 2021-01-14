@@ -313,4 +313,16 @@ export class CaseController {
       documentToken,
     )
   }
+
+  @RolesRules(prosecutorRule)
+  @Post('case/:id/extend')
+  @ApiCreatedResponse({
+    type: Case,
+    description: 'Clones a new case based on an existing case',
+  })
+  async extend(@Param('id') id: string): Promise<Case> {
+    const existingCase = await this.findCaseById(id)
+
+    return this.caseService.extend(existingCase)
+  }
 }
