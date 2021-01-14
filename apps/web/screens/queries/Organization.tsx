@@ -60,6 +60,7 @@ export const GET_ORGANIZATION_QUERY = gql`
             articles {
               title
               slug
+              isApplication
             }
           }
         }

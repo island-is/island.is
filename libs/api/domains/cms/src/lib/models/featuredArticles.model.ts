@@ -15,6 +15,9 @@ export class FeaturedArticle {
 
   @Field()
   slug: string
+
+  @Field()
+  isApplication: boolean
 }
 
 export const mapFeaturedArticle = ({
@@ -24,6 +27,7 @@ export const mapFeaturedArticle = ({
   id: sys.id,
   title: fields.title ?? '',
   slug: fields.slug ?? '',
+  isApplication: fields.processEntry ? true : false
 })
 
 @ObjectType()
