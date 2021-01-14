@@ -1890,7 +1890,8 @@
             "jestConfig": "apps/auth-admin-web/jest.config.js",
             "passWithNoTests": true
           }
-        }
+        },
+        "docker-next": {}
       }
     },
     "auth-admin-web-e2e": {
