@@ -155,6 +155,7 @@ function convertRepeaterToScreens(
 ): FormScreen[] {
   const { id, children } = repeater
   const newScreens: FormScreen[] = []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function recursiveMap(field: FormLeaf, fn: (l: FormLeaf) => FormLeaf): any {
     if (Array.isArray(field.children)) {
       return (field.children as FormLeaf[]).map((c) => recursiveMap(c, fn))

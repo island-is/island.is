@@ -6,10 +6,11 @@ import {
 import * as Constants from './constants'
 import {
   formatDate,
-  formatCustodyRestrictions,
+  formatRequestedCustodyRestrictions,
   capitalize,
   formatGender,
-  formatRestrictions,
+  formatCustodyRestrictions,
+  formatAlternativeTravelBanRestrictions,
 } from './formatters'
 
 describe('formatDate', () => {
@@ -39,7 +40,7 @@ describe('formatDate', () => {
   })
 })
 
-describe('renderRestrictions', () => {
+describe('formatRequestedCustodyRestrictions', () => {
   test('should return a comma separated list of restrictions', () => {
     // Arrange
     const restrictions: CaseCustodyRestrictions[] = [
@@ -48,7 +49,7 @@ describe('renderRestrictions', () => {
     ]
 
     // Act
-    const r = formatCustodyRestrictions(restrictions)
+    const r = formatRequestedCustodyRestrictions(restrictions)
 
     // Assert
     expect(r).toEqual('B - Einangrun, D - Bréfskoðun, símabann')
@@ -59,20 +60,21 @@ describe('renderRestrictions', () => {
     const restrictions: CaseCustodyRestrictions[] = []
 
     // Act
-    const r = formatCustodyRestrictions(restrictions)
+    const r = formatRequestedCustodyRestrictions(restrictions)
 
     // Assert
     expect(r).toEqual('Ekki er farið fram á takmarkanir á gæslu')
   })
 })
 
-describe('formatRestrictions', () => {
+describe('formatCustodyRestrictions', () => {
   test('should return formatted restrictions for no restrictions', () => {
     // Arrange
+    const accusedGender = CaseGender.MALE
     const custodyRestrictions: Array<CaseCustodyRestrictions> = []
 
     // Act
-    const res = formatRestrictions(custodyRestrictions)
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe('Sækjandi tekur fram að gæsluvarðhaldið sé án takmarkana.')
@@ -80,35 +82,38 @@ describe('formatRestrictions', () => {
 
   test('should return formatted restrictions for isolation only', () => {
     // Arrange
+    const accusedGender = CaseGender.MALE
     const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
 
     // Act
-    const res = formatRestrictions(custodyRestrictions)
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
-      'Sækjandi tekur fram að kærði skuli sæta einangrun meðan á gæsluvarðhaldi stendur.',
+      'Sækjandi tekur fram að kærði skuli sæta einangrun á meðan á gæsluvarðhaldinu stendur.',
     )
   })
 
   test('should return formatted restrictions for isolation and one other restriction', () => {
     // Arrange
+    const accusedGender = CaseGender.MALE
     const custodyRestrictions = [
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
     ]
 
     // Act
-    const res = formatRestrictions(custodyRestrictions)
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
-      'Sækjandi tekur fram að kærði skuli sæta einangrun meðan á gæsluvarðhaldi stendur og að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
+      'Sækjandi tekur fram að kærði skuli sæta einangrun á meðan á gæsluvarðhaldinu stendur og að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
     )
   })
 
   test('should return formatted restrictions for all but isolation', () => {
     // Arrange
+    const accusedGender = CaseGender.MALE
     const custodyRestrictions = [
       CaseCustodyRestrictions.COMMUNICATION,
       CaseCustodyRestrictions.MEDIA,
@@ -116,7 +121,7 @@ describe('formatRestrictions', () => {
     ]
 
     // Act
-    const res = formatRestrictions(custodyRestrictions)
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
@@ -126,6 +131,7 @@ describe('formatRestrictions', () => {
 
   test('should order non-isolation restrictions', () => {
     // Arrange
+    const accusedGender = CaseGender.MALE
     const custodyRestrictions = [
       CaseCustodyRestrictions.MEDIA,
       CaseCustodyRestrictions.VISITAION,
@@ -133,11 +139,67 @@ describe('formatRestrictions', () => {
     ]
 
     // Act
-    const res = formatRestrictions(custodyRestrictions)
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
       'Sækjandi tekur fram að gæsluvarðhaldið verði með bréfaskoðun og símabanni, fjölmiðlabanni og heimsóknarbanni skv. 99. gr. laga nr. 88/2008.',
+    )
+  })
+})
+
+describe('formatAlternativeTravelBanRestrictions', () => {
+  test('should return formatted restrictions for no restrictions', () => {
+    // Arrange
+    const accusedGender = CaseGender.MALE
+    const custodyRestrictions: Array<CaseCustodyRestrictions> = []
+
+    // Act
+    const res = formatAlternativeTravelBanRestrictions(
+      accusedGender,
+      custodyRestrictions,
+    )
+
+    // Assert
+    expect(res).toBe('Sækjandi tekur fram að farbannið sé án takmarkana.')
+  })
+
+  test('should return formatted restrictions for one restriction', () => {
+    // Arrange
+    const accusedGender = CaseGender.FEMALE
+    const custodyRestrictions = [
+      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
+    ]
+
+    // Act
+    const res = formatAlternativeTravelBanRestrictions(
+      accusedGender,
+      custodyRestrictions,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi tekur fram að farbannið verði með takmörkunum. Að kærðu verði gert að afhenda vegabréfið sitt.',
+    )
+  })
+
+  test('should return formatted restrictions for all restrictions', () => {
+    // Arrange
+    const accusedGender = CaseGender.OTHER
+    const custodyRestrictions = [
+      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
+      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
+    ]
+
+    // Act
+    const res = formatAlternativeTravelBanRestrictions(
+      accusedGender,
+      custodyRestrictions,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi tekur fram að farbannið verði með takmörkunum. Að kærða verði gert að tilkynna sig. Að kærða verði gert að afhenda vegabréfið sitt.',
     )
   })
 })

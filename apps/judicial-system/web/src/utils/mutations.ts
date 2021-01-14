@@ -67,6 +67,7 @@ export const CreateCaseMutation = gql`
       custodyEndDate
       isCustodyEndDateInThePast
       custodyRestrictions
+      otherRestrictions
       accusedAppealDecision
       accusedAppealAnnouncement
       prosecutorAppealDecision
