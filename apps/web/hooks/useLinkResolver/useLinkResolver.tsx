@@ -71,6 +71,10 @@ export const routesTemplate = {
     is: '/throun/vefthjonustur',
     en: '/en/developers/webservices',
   },
+  handbookpage: {
+    is: '/throun/handbok',
+    en: '/en/developers/handbook',
+  },
   developerspage: {
     is: '/throun',
     en: '/en/developers',

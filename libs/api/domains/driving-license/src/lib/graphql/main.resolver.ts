@@ -18,6 +18,7 @@ import {
 import { DrivingLicenseService } from '../drivingLicense.service'
 import { DrivingLicense } from './drivingLicense.model'
 import { DrivingLicenseType } from './drivingLicenseType.model'
+import { PenaltyPointStatus } from './penaltyPointStatus.model'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
@@ -42,5 +43,10 @@ export class MainResolver {
   @Query(() => [DrivingLicenseType])
   drivingLicenseRemarkTypes() {
     return this.drivingLicenseService.getRemarkTypes()
+  }
+
+  @Query(() => PenaltyPointStatus)
+  drivingLicensePenaltyPointStatus(@CurrentUser() user: User) {
+    return this.drivingLicenseService.getPenaltyPointStatus(user.nationalId)
   }
 }
