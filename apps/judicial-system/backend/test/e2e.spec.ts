@@ -16,9 +16,9 @@ import {
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 
-import { setup } from '../../../../../test/setup'
-import { User } from '../../user'
-import { Case } from '../models'
+import { setup } from './setup'
+import { User } from '../src/app/modules/user'
+import { Case } from '../src/app/modules/case/models'
 
 jest.setTimeout(10000)
 
@@ -238,6 +238,38 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.judgeId || null).toStrictEqual(caseTwo.judgeId || null)
   expect(caseOne.judge || null).toStrictEqual(caseTwo.judge || null)
 }
+
+describe('User', () => {
+  it('GET /api/user/:nationalId should get the  user', async () => {
+    const nationalId = '1112902539'
+    let dbUser: User
+
+    await User.findOne({
+      where: { nationalId },
+    })
+      .then((value) => {
+        dbUser = value
+
+        return request(app.getHttpServer())
+          .get(`/api/user/${nationalId}`)
+          .send()
+          .expect(200)
+      })
+      .then((response) => {
+        const apiUser = response.body
+
+        expect(apiUser.id).toBe(dbUser.id)
+        expect(apiUser.nationalId).toBe(dbUser.nationalId)
+        expect(apiUser.name).toBe(dbUser.name)
+        expect(apiUser.title).toBe(dbUser.title)
+        expect(apiUser.mobileNumber).toBe(dbUser.mobileNumber)
+        expect(apiUser.email).toBe(dbUser.email)
+        expect(apiUser.role).toBe(dbUser.role)
+        expect(apiUser.institution).toBe(dbUser.institution)
+        expect(apiUser.active).toBe(dbUser.active)
+      })
+  })
+})
 
 describe('Case', () => {
   it('POST /api/case should create a case', async () => {
