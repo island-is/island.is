@@ -13,7 +13,6 @@ import {
   UseInterceptors,
   Optional,
   // UseGuards,
-  Req,
 } from '@nestjs/common'
 
 import omit from 'lodash/omit'
@@ -71,6 +70,7 @@ import { EmailService } from '@island.is/email-service'
 import { environment } from '../../../environments'
 import { ApplicationAPITemplateUtils } from '@island.is/application/api-template-utils'
 import { NationalId } from './tools/nationalId.decorator'
+import { AuthorizationHeader } from './tools/authorizationHeader.decorator'
 import { verifyToken } from './utils/tokenUtils'
 
 // @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
@@ -133,13 +133,9 @@ export class ApplicationController {
   @UseInterceptors(ApplicationSerializer)
   async findApplicantApplications(
     @Param('nationalRegistryId') nationalRegistryId: string,
-    // @Req() request: Request,
     @Query('typeId') typeId?: string,
   ): Promise<ApplicationResponseDto[]> {
-    // const user = request.user as User
-
     const whereOptions: WhereOptions = {
-      // applicant: user.nationalId, TODO use this when user is in the request
       applicant: nationalRegistryId,
     }
 
@@ -201,7 +197,7 @@ export class ApplicationController {
   async assignApplication(
     @Body() assignApplicationDto: AssignApplicationDto,
     @NationalId() nationalId: string,
-    @Req() req: Request,
+    @AuthorizationHeader() authorization: string,
   ): Promise<ApplicationResponseDto> {
     const decodedToken = verifyToken<DecodedToken>(assignApplicationDto.token)
 
@@ -234,14 +230,13 @@ export class ApplicationController {
     }
 
     const templateAPIModule = await getApplicationAPIModule(templateId)
-    const headers = (req.headers as unknown) as { authorization: string }
 
     const [hasChanged, updatedApplication] = await this.changeState(
       mergedApplication,
       template,
       templateAPIModule,
       DefaultEvents.ASSIGN,
-      headers.authorization,
+      authorization,
     )
 
     if (hasChanged && updatedApplication) {
@@ -307,7 +302,7 @@ export class ApplicationController {
     existingApplication: Application,
     @Body()
     externalDataDto: PopulateExternalDataDto,
-    @Req() req: Request,
+    @AuthorizationHeader() authorization: string,
     @NationalId() nationalId: string,
   ): Promise<ApplicationResponseDto> {
     await validateIncomingExternalDataProviders(
@@ -318,13 +313,12 @@ export class ApplicationController {
     const templateDataProviders = await getApplicationDataProviders(
       (existingApplication as BaseApplication).typeId,
     )
-    const headers = (req.headers as unknown) as { authorization?: string }
 
     const results = await callDataProviders(
       buildDataProviders(
         externalDataDto,
         templateDataProviders,
-        headers.authorization ?? '',
+        authorization ?? '',
       ),
       existingApplication as BaseApplication,
     )
@@ -359,7 +353,7 @@ export class ApplicationController {
     existingApplication: Application,
     @Body() updateApplicationStateDto: UpdateApplicationStateDto,
     @NationalId() nationalId: string,
-    @Req() req: Request,
+    @AuthorizationHeader() authorization: string,
   ): Promise<ApplicationResponseDto> {
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
@@ -394,14 +388,13 @@ export class ApplicationController {
     }
 
     const templateAPIModule = await getApplicationAPIModule(templateId)
-    const headers = (req.headers as unknown) as { authorization: string }
 
     const [hasChanged, updatedApplication] = await this.changeState(
       mergedApplication,
       template,
       templateAPIModule,
       updateApplicationStateDto.event,
-      headers.authorization,
+      authorization,
     )
 
     // TODO: should not have to specificially check for updatedApplication

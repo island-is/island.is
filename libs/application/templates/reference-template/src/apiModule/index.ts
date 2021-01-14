@@ -9,6 +9,8 @@ const apiModule: ApplicationTemplateAPIModule = {
     console.log(
       `access to authorization header: ${authorization.slice(0, 20)}...`,
     )
+
+    await new Promise((resolve) => setTimeout(resolve, 400))
   },
 }
 
