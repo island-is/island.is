@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, {FC} from 'react'
+import React, { FC } from 'react'
 import NextLink from 'next/link'
 import {
   Box,
@@ -13,7 +13,12 @@ import {
   GridRow,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import {HeadWithSocialSharing, Header, Main, Heading} from '@island.is/web/components'
+import {
+  HeadWithSocialSharing,
+  Header,
+  Main,
+  Heading,
+} from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import {
   Query,
@@ -31,9 +36,15 @@ import { useNamespace } from '@island.is/web/hooks'
 import * as styles from './Home.treat'
 import {
   AllSlicesEmbeddedVideoFragment,
-  AllSlicesFragment, AllSlicesImageFragment, Districts,
+  AllSlicesFragment,
+  AllSlicesImageFragment,
+  Districts,
+  FeaturedArticles,
   GetArticleCategoriesQuery,
-  GetGroupedMenuQuery, GetNamespaceQuery, HeadingSlice, Organization,
+  GetGroupedMenuQuery,
+  GetNamespaceQuery,
+  HeadingSlice,
+  Organization,
   QueryGetArticleCategoriesArgs,
   QueryGetOrganizationArgs,
 } from '@island.is/web/graphql/schema'
@@ -46,7 +57,10 @@ import {
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useRouter } from 'next/router'
-import {renderSlices, Slice as SliceType} from "@island.is/island-ui/contentful";
+import {
+  renderSlices,
+  Slice as SliceType,
+} from '@island.is/island-ui/contentful'
 
 interface HomeProps {
   organization: Query['getOrganization']
@@ -57,7 +71,7 @@ interface HomeProps {
 type AvailableSlices = Exclude<
   AllSlicesFragment,
   AllSlicesEmbeddedVideoFragment | AllSlicesImageFragment
-  >
+>
 
 const Home: Screen<HomeProps> = ({ organization, namespace, megaMenuData }) => {
   const { activeLocale } = useI18n()
@@ -184,7 +198,7 @@ const Home: Screen<HomeProps> = ({ organization, namespace, megaMenuData }) => {
           </Box>
         </SidebarLayout>
         {organization.organizationPage.slices.map((slice) => (
-          <Section key={slice.id} slice={slice} organization={organization}/>
+          <Section key={slice.id} slice={slice} organization={organization} />
         ))}
       </Main>
     </>
@@ -192,13 +206,13 @@ const Home: Screen<HomeProps> = ({ organization, namespace, megaMenuData }) => {
 }
 
 interface SectionProps {
-  slice: HeadingSlice | Districts
+  slice: HeadingSlice | Districts | FeaturedArticles
   organization: Organization
   namespace?: GetNamespaceQuery['getNamespace']
 }
 
-const Section: FC<SectionProps> = ({ slice, organization, namespace}) => {
-  console.log({slice})
+const Section: FC<SectionProps> = ({ slice, organization, namespace }) => {
+  console.log({ slice })
   switch (slice.__typename) {
     case 'HeadingSlice':
       return (
@@ -218,18 +232,31 @@ const Section: FC<SectionProps> = ({ slice, organization, namespace}) => {
               <h2>{slice.title}</h2>
               <GridContainer>
                 <GridRow>
-                  <GridColumn span='6/12'>
-                    {organization.suborganizations.map(link => (
+                  <GridColumn span="6/12">
+                    {organization.suborganizations.map((link) => (
                       <div>
                         <a href={link.link}>{link.shortTitle}</a>
                       </div>
                     ))}
                   </GridColumn>
-                  <GridColumn span='6/12'>
+                  <GridColumn span="6/12">
                     <img src={slice.image.url} />
                   </GridColumn>
                 </GridRow>
               </GridContainer>
+            </SidebarLayout>
+          </Box>
+        </div>
+      )
+    case 'FeaturedArticles':
+      return (
+        <div key={slice.id} id={slice.id}>
+          <Box paddingTop={[8, 6, 15]} paddingBottom={[4, 5, 10]}>
+            <SidebarLayout fullWidthContent={true} sidebarContent={null}>
+              <h2>{slice.title}</h2>
+              {slice.articles.map((article) => (
+                <div>{article.title}</div>
+              ))}
             </SidebarLayout>
           </Box>
         </div>

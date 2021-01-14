@@ -52,6 +52,13 @@ export const GET_ORGANIZATION_QUERY = gql`
               url
             }
           }
+          ... on FeaturedArticles {
+            title
+            articles {
+              title
+              slug
+            }
+          }
         }
         menuLinks {
           text
