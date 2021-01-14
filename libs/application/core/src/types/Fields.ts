@@ -81,6 +81,7 @@ export interface CheckboxField extends BaseField {
   readonly type: FieldTypes.CHECKBOX
   component: FieldComponents.CHECKBOX
   options: MaybeWithApplication<Option[]>
+  large?: boolean
 }
 
 export interface DateField extends BaseField {

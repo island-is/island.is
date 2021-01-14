@@ -34,24 +34,22 @@ export class ChildrenNationalRegistryProvider extends BasicDataProvider {
   }
   handleError() {
     if (process.env.NODE_ENV === 'development') {
-      return Promise.resolve({
-        registeredChildren: [
-          {
-            id: '1',
-            name: 'Ólafur Helgi Eiríksson',
-            address: 'Vesturgata 22',
-            postalCode: '101',
-            city: 'Reykjavík',
-          },
-          {
-            id: '2',
-            name: 'Rósa Líf Eiríksdóttir',
-            address: 'Vesturgata 22',
-            postalCode: '101',
-            city: 'Reykjavík',
-          },
-        ],
-      })
+      return Promise.resolve([
+        {
+          id: '1',
+          name: 'Ólafur Helgi Eiríksson',
+          address: 'Vesturgata 22',
+          postalCode: '101',
+          city: 'Reykjavík',
+        },
+        {
+          id: '2',
+          name: 'Rósa Líf Eiríksdóttir',
+          address: 'Vesturgata 22',
+          postalCode: '101',
+          city: 'Reykjavík',
+        },
+      ])
     }
     return Promise.resolve({})
   }

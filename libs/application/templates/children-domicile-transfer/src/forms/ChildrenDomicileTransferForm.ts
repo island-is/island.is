@@ -6,7 +6,11 @@ import {
   FormModes,
   buildDataProviderItem,
   buildExternalDataProvider,
+  buildCheckboxField,
+  buildMultiField,
 } from '@island.is/application/core'
+
+import { Parent } from '../dataProviders/APIDataTypes'
 
 export const ChildrenDomicileTransferForm: Form = buildForm({
   id: 'ChildrenDomicileTransferFormDraft',
@@ -39,12 +43,52 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'chooseChildren',
+      id: 'selectChildInCustody',
       title: 'Velja barn',
       children: [
-        buildTextField({
-          id: 'children',
-          title: 'children',
+        buildCheckboxField({
+          id: 'selectChild',
+          title: 'Velja barn/börn til að flytja lögheimili fyrir',
+          description:
+            'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið hvaða börn á að flytja lögheimili fyrir.',
+          large: true,
+          options: [
+            { value: '1', label: 'Ólafur Helgi Eiríksson' },
+            { value: '2', label: 'Rósa Líf Eiríksdóttir' },
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'otherParent',
+      title: 'Hitt foreldri',
+      children: [
+        buildMultiField({
+          id: 'informationAboutOtherParent',
+          title: 'Fylltu inn upplýsingar um hitt foreldrið',
+          description: (application) => {
+            const parent = (application.externalData.parentNationalRegistry
+              ?.data as {
+              parent?: object
+            })?.parent as Parent
+
+            return `Hitt foreldrið er ${parent.name} (${parent.ssn})`
+          },
+          children: [
+            buildTextField({
+              id: 'email',
+              description:
+                'Til að láta hitt foreldrið vita þurfum við að fá netfang og símanúmer viðkomandi.',
+              title: 'Netfang',
+              variant: 'email',
+            }),
+            buildTextField({
+              id: 'phoneNumber',
+              title: 'Símanúmer',
+              variant: 'tel',
+              format: '###-####',
+            }),
+          ],
         }),
       ],
     }),
