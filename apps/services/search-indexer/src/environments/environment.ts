@@ -1,3 +1,4 @@
+import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 import path from 'path'
 
 export interface Environment {
@@ -7,7 +8,7 @@ export interface Environment {
   s3Folder: string
   awsRegion: string
   dictRepo: string
-  locales: string[]
+  locales: ElasticsearchIndexLocale[]
   configPath: string
 }
 

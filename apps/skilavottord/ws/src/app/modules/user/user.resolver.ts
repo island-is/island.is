@@ -46,6 +46,11 @@ export class UserResolver {
     ) {
       currUser.partnerId = '104' // This is parter Id for Hringras, to be fixed later
     } else if (
+      currUser.nationalId === '2211692989' ||
+      currUser.nationalId === '2808714009'
+    ) {
+      currUser.partnerId = '221' // This is parter Id for Fura, to be fixed later
+    } else if (
       currUser.role === 'recyclingCompany' ||
       currUser.role === 'developer'
     ) {

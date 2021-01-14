@@ -10,3 +10,8 @@ export interface DrivingLicense {
     comment: string
   }[]
 }
+
+export interface DrivingLicenseType {
+  id: string
+  name: string
+}
