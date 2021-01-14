@@ -6,6 +6,7 @@ import slugify from '@sindresorhus/slugify'
 import {
   Slice as SliceType,
   ProcessEntry,
+  richText,
 } from '@island.is/island-ui/contentful'
 import {
   Box,
@@ -18,10 +19,9 @@ import {
   Navigation,
   TableOfContents,
   Button,
-  Hyphen,
+  Tag,
 } from '@island.is/island-ui/core'
 import {
-  RichText,
   HeadWithSocialSharing,
   InstitutionPanel,
 } from '@island.is/web/components'
@@ -277,7 +277,6 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   useContentfulId(article.id)
   const n = useNamespace(namespace)
   const { query } = useRouter()
-  const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
 
   const subArticle = article.subArticles.find((sub) => {
@@ -366,21 +365,38 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         </Box>
         <Box
           paddingBottom={[2, 2, 4]}
-          display={['block', 'block', 'none']}
+          display={['flex', 'flex', 'none']}
+          justifyContent="spaceBetween"
+          alignItems="center"
           printHidden
         >
           {!!article.category && (
-            <Link {...linkResolver('articlecategory', [article.category.slug])}>
-              <Button
-                preTextIcon="arrowBack"
-                preTextIconType="filled"
-                size="small"
-                type="button"
-                variant="text"
+            <Box flexGrow={1} flexShrink={0} marginRight={2}>
+              <Link
+                {...linkResolver('articlecategory', [article.category.slug])}
               >
-                {article.category.title}
-              </Button>
-            </Link>
+                <Button
+                  preTextIcon="arrowBack"
+                  preTextIconType="filled"
+                  size="small"
+                  type="button"
+                  variant="text"
+                >
+                  {article.category.title}
+                </Button>
+              </Link>
+            </Box>
+          )}
+          {article.organization.length > 0 && (
+            <Box minWidth={0}>
+              <Tag
+                variant="purple"
+                truncate
+                href={article.organization[0].link}
+              >
+                {article.organization[0].title}
+              </Tag>
+            </Box>
           )}
         </Box>
         <Box>
@@ -419,11 +435,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           )}
         </Box>
         <Box paddingTop={subArticle ? 2 : 4}>
-          <RichText
-            body={(subArticle ?? article).body as SliceType[]}
-            config={{ defaultPadding: [2, 2, 4] }}
-            locale={activeLocale}
-          />
+          {richText((subArticle ?? article).body as SliceType[])}
           <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
             {!!processEntry && <ProcessEntry {...processEntry} />}
             <Box marginTop={3}>

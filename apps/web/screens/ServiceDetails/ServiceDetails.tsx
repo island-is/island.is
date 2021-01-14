@@ -2,7 +2,6 @@ import React from 'react'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import getConfig from 'next/config'
-import { default as NextLink } from 'next/link'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
@@ -24,11 +23,13 @@ import {
   Box,
   Breadcrumbs,
   Button,
+  Link,
   Navigation,
   Text,
 } from '@island.is/island-ui/core'
 import { useNamespace } from '../../hooks'
 import { useScript } from '../../hooks/useScript'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -55,6 +56,8 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   const nfc = useNamespace(filterContent)
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
 
+  const { linkResolver } = useLinkResolver()
+
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
   }
@@ -62,7 +65,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   const navigationItems = [
     {
       active: true,
-      href: n('linkServices'),
+      href: linkResolver('webservicespage').as,
       title: n('linkServicesText'),
       items: [
         {
@@ -70,6 +73,10 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
           title: service?.name,
         },
       ],
+    },
+    {
+      href: linkResolver('handbookpage').as,
+      title: n('linkHandbookNavText'),
     },
     {
       href: n('linkIslandUI'),
@@ -96,7 +103,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
               items={navigationItems}
               title={n('linkThrounText')}
               titleLink={{
-                href: n('linkThroun'),
+                href: linkResolver('developerspage').as,
               }}
             />
           }
@@ -107,21 +114,16 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                 <Box display={['inline', 'inline', 'none']}>
                   {/* Show when a device */}
                   <Box paddingBottom="gutter">
-                    <NextLink passHref href={n('linkServiceList')}>
-                      <a href={n('linkServiceList')}>
-                        <Button
-                          colorScheme="default"
-                          iconType="filled"
-                          preTextIcon="arrowBack"
-                          preTextIconType="filled"
-                          size="small"
-                          type="button"
-                          variant="text"
-                        >
-                          {n('linkServiceListText')}
-                        </Button>
-                      </a>
-                    </NextLink>
+                    <Button
+                      colorScheme="default"
+                      preTextIcon="arrowBack"
+                      size="small"
+                      variant="text"
+                    >
+                      <Link href={linkResolver('webservicespage').as}>
+                        {n('linkServicesText')}
+                      </Link>
+                    </Button>
                   </Box>
                   <Box marginBottom="gutter">
                     <Navigation
@@ -132,7 +134,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                       title={n('linkThrounText')}
                       titleLink={{
                         active: true,
-                        href: n('linkThroun'),
+                        href: linkResolver('developerspage').as,
                       }}
                     />
                   </Box>
@@ -141,11 +143,17 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                   {/* Show when NOT a device */}
                   <Breadcrumbs
                     items={[
-                      { title: n('linkIslandIsText'), href: n('linkIslandIs') },
-                      { title: n('linkThrounText'), href: n('linkThroun') },
+                      {
+                        title: n('linkIslandIsText'),
+                        href: linkResolver('homepage').as,
+                      },
+                      {
+                        title: n('linkThrounText'),
+                        href: linkResolver('developerspage').as,
+                      },
                       {
                         title: n('linkServicesText'),
-                        href: n('linkServices'),
+                        href: linkResolver('webservicespage').as,
                       },
                     ]}
                   />

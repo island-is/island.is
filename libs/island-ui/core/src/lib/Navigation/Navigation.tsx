@@ -157,7 +157,7 @@ export const Navigation: FC<NavigationProps> = ({
         <Text
           as="span"
           variant="h4"
-          color={someActiveLinks ? activeColor : color}
+          color={titleLink?.active ? activeColor : color}
         >
           {title}
         </Text>

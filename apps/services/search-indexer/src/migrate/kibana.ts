@@ -3,8 +3,6 @@ import path from 'path'
 import util from 'util'
 import get from 'lodash/get'
 import set from 'lodash/set'
-
-import { logger } from '@island.is/logging'
 import { KibanaService } from '@island.is/content-search-toolkit'
 import {
   KibanaSavedObject,
@@ -110,12 +108,12 @@ const parseSavedObject = (
   return parsed
 }
 
-export const importObjects = async (version: number) => {
+export const importObjects = async (version: string) => {
   const objects = await getObjects()
   const savedObjects = objects.map(({ content }) => {
     const object = JSON.parse(content) as LocalKibanaSavedObject
     if (object.type === 'index-pattern') {
-      object.attributes.title = `island-*-v${version}`
+      object.attributes.title = `island-*-${version}`
     }
     return stringifySavedObject(object)
   })

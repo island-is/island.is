@@ -11,14 +11,14 @@ const useAuth = () => {
       type: ActionType.SetUserPending,
     })
 
-    const user = await userManager.getUser()
+    const user = await userManager.verifyAuthentication()
 
     if (user) {
+      setClientAuthToken(user.access_token)
       dispatch({
         type: ActionType.SetUserFulfilled,
         payload: user,
       })
-      setClientAuthToken(user.access_token)
     } else {
       userManager.signinRedirect({
         state: window.location.pathname,
@@ -27,11 +27,10 @@ const useAuth = () => {
   }
 
   async function signOutUser() {
+    await userManager.signoutRedirect()
     dispatch({
       type: ActionType.SetUserLoggingOut,
     })
-
-    userManager.signoutRedirect()
   }
 
   return {

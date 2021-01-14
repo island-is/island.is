@@ -29,7 +29,9 @@ interface ApiParams {
 @Injectable()
 export class KibanaService {
   constructor() {
-    logger.debug('Created Kibana Service')
+    logger.info(
+      `Created Kibana Service using the url: ${kibana.url} and ${process.env.ELASTIC_NODE}`,
+    )
   }
 
   private async fetchSignedHeaders({

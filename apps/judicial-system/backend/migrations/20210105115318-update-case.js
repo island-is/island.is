@@ -8,7 +8,7 @@ module.exports = {
         'ALTER TYPE "enum_case_custody_provisions" ADD VALUE \'_100_1\';',
       )
     } catch (e) {
-      if (e.message != 'enum label "_100_1" already exists') {
+      if (e.message !== 'enum label "_100_1" already exists') {
         throw e
       }
     }

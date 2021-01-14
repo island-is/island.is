@@ -39,10 +39,24 @@ export class UserResolver {
     RoleForUser = authService.getRole(RoleUser)
 
     currUser.role = RoleForUser
-    if (currUser.role === 'recyclingCompany' || currUser.role === 'developer') {
+    if (
+      currUser.nationalId === '1811673949' ||
+      currUser.nationalId === '2405843609' ||
+      currUser.nationalId === '2811638099'
+    ) {
+      currUser.partnerId = '104' // This is parter Id for Hringras, to be fixed later
+    } else if (
+      currUser.nationalId === '2211692989' ||
+      currUser.nationalId === '2808714009'
+    ) {
+      currUser.partnerId = '221' // This is parter Id for Fura, to be fixed later
+    } else if (
+      currUser.role === 'recyclingCompany' ||
+      currUser.role === 'developer'
+    ) {
       currUser.partnerId = '110' // This is parter Id for Vaka, to be fixed later
     } else {
-      currUser.partnerId = null // This is parter Id for Vaka, to be fixed later
+      currUser.partnerId = null // Normal citizen user
     }
     this.logger.info(
       `  - skilavottordUser returning  ${currUser.name} - ${currUser.nationalId} - ${currUser.mobile} - ${currUser.role} - ${currUser.partnerId}`,

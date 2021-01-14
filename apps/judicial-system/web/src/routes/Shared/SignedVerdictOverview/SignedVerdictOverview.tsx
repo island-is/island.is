@@ -7,8 +7,8 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   Case,
+  CaseCustodyRestrictions,
   CaseDecision,
-  CaseState,
   UserRole,
 } from '@island.is/judicial-system/types'
 import React, { useContext, useEffect, useState } from 'react'
@@ -158,8 +158,16 @@ export const SignedVerdictOverview: React.FC = () => {
                 {
                   // Custody restrictions
                   workingCase.decision === CaseDecision.ACCEPTING &&
-                    workingCase.custodyRestrictions?.map(
-                      (custodyRestriction, index) => (
+                    workingCase.custodyRestrictions
+                      ?.filter((restriction) =>
+                        [
+                          CaseCustodyRestrictions.ISOLATION,
+                          CaseCustodyRestrictions.VISITAION,
+                          CaseCustodyRestrictions.COMMUNICATION,
+                          CaseCustodyRestrictions.MEDIA,
+                        ].includes(restriction),
+                      )
+                      ?.map((custodyRestriction, index) => (
                         <Box marginTop={index > 0 ? 1 : 0} key={index}>
                           <Tag
                             variant={getRestrictionTagVariant(
@@ -171,8 +179,32 @@ export const SignedVerdictOverview: React.FC = () => {
                             {getShortRestrictionByValue(custodyRestriction)}
                           </Tag>
                         </Box>
-                      ),
-                    )
+                      ))
+                }
+                {
+                  // Alternative travel ban restrictions
+                  workingCase.decision ===
+                    CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&
+                    workingCase.custodyRestrictions
+                      ?.filter((restriction) =>
+                        [
+                          CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
+                          CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
+                        ].includes(restriction),
+                      )
+                      ?.map((custodyRestriction, index) => (
+                        <Box marginTop={index > 0 ? 1 : 0} key={index}>
+                          <Tag
+                            variant={getRestrictionTagVariant(
+                              custodyRestriction,
+                            )}
+                            outlined
+                            disabled
+                          >
+                            {getShortRestrictionByValue(custodyRestriction)}
+                          </Tag>
+                        </Box>
+                      ))
                 }
               </Box>
             </Box>
