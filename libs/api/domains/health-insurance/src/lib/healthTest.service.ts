@@ -4,7 +4,6 @@ import { HealthTest } from './graphql/models'
 
 @Injectable()
 export class HealthTestService {
-  constructor() {}
 
   async getTest(nationalId: string): Promise<HealthTest> {
     const healthTest = new HealthTest()
