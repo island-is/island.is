@@ -98,6 +98,7 @@
     - [CMS API](libs/api/domains/cms/README.md)
     - [Document Provider API](libs/api/domains/document-provider/README.md)
     - [API Domains Driving License](libs/api/domains/driving-license/README.md)
+    - [API Domains Health Insurance](libs/api/domains/health-insurance/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
