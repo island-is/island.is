@@ -7,6 +7,7 @@ import {
   DeprivationTypesResponse,
   EntitlementTypesResponse,
   RemarkTypesResponse,
+  PenaltyPointStatusResponse,
 } from './drivingLicense.type'
 
 const XROAD_PATH =
@@ -49,5 +50,11 @@ export class DrivingLicenseApi {
 
   getRemarkTypes(): Promise<RemarkTypesResponse[]> {
     return this.requestApi('api/Okuskirteini/tegundirathugasemda')
+  }
+
+  async getPenaltyPointStatus(
+    nationalId: User['nationalId'],
+  ): Promise<PenaltyPointStatusResponse> {
+    return this.requestApi(`api/Okuskirteini/punktastada/${nationalId}`)
   }
 }
