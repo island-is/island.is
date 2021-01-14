@@ -418,7 +418,7 @@ export class ApplicationController {
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
     templateAPIModule: ApplicationTemplateAPIModule,
     event: string,
-    authorization?: string,
+    authorization: string,
   ): Promise<[false] | [true, string, BaseApplication]> {
     const helper = new ApplicationTemplateHelper(application, template)
 
@@ -446,9 +446,6 @@ export class ApplicationController {
 
       const newStateOnEntry = helper.getStateOnEntry(newState)
 
-      console.log('new state on entry:')
-      console.log(newStateOnEntry)
-
       if (newStateOnEntry !== null) {
         const {
           apiModuleAction,
@@ -460,6 +457,7 @@ export class ApplicationController {
           try {
             await templateAPIModule[apiModuleAction](
               updatedApplication as BaseApplication,
+              authorization,
             )
             if (onSuccessEvent) {
               return this.changeState(
