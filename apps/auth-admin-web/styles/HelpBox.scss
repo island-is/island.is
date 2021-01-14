@@ -1,0 +1,32 @@
+.helpbox {
+  position: relative;
+  &__button__show {
+    min-width: 20px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: $weight-semi-bold;
+    padding: 6px;
+    color: $color-link;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    margin: 0 10px;
+
+    span {
+      visibility: hidden;
+    }
+  }
+
+  &__content {
+    position: absolute;
+    background: $color-body-bg;
+    border: 1px solid $color-border;
+    width: 200px;
+    font-size: 0.8rem;
+    z-index: 2;
+    top: 30px;
+    left: 10px;
+    border-radius: 8px;
+    padding: 12px 24px 12px 16px;
+  }
+}
