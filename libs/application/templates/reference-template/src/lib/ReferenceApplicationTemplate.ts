@@ -79,34 +79,13 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: 'doImportantValidating',
-          },
-        },
-      },
-      doImportantValidating: {
-        meta: {
-          name: 'Doing stuff',
-          onEntry: {
-            apiModuleAction: API_MODULE.validateSomethingImportant,
-            onSuccessEvent: 'SUCCESS',
-            onErrorEvent: 'REJECT',
-          },
-        },
-        on: {
-          SUCCESS: {
             target: 'inReview',
-          },
-          REJECT: {
-            target: 'draft',
           },
         },
       },
       inReview: {
         meta: {
           name: 'In Review',
-          onEntry: {
-            apiModuleAction: API_MODULE.performSomeAPIAction,
-          },
           progress: 0.66,
           roles: [
             {
