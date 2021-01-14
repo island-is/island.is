@@ -169,20 +169,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
           defaultMessage: 'skjöl fundust',
         })
 
-  const dateRangeButton = (
-    <Button
-      variant="ghost"
-      fluid
-      icon={isDateRangeOpen ? 'close' : 'chevronDown'}
-      iconType="outline"
-      onClick={handleDateRangeButtonClick}
-    >
-      {formatMessage({
-        id: 'sp.documents:select-range',
-        defaultMessage: 'Tímabil',
-      })}
-    </Button>
-  )
+  // TODO: Pages should be 10
 
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
@@ -238,7 +225,20 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               />
             </GridColumn>
             <GridColumn span="2/8">
-              <Hidden below="sm">{dateRangeButton}</Hidden>
+              <Hidden below="sm">
+                <Button
+                  variant="ghost"
+                  fluid
+                  icon={isDateRangeOpen ? 'close' : 'filter'}
+                  iconType="outline"
+                  onClick={handleDateRangeButtonClick}
+                >
+                  {formatMessage({
+                    id: 'sp.documents:select-range',
+                    defaultMessage: 'Tímabil',
+                  })}
+                </Button>
+              </Hidden>
             </GridColumn>
           </GridRow>
           <AnimateHeight duration={400} height={isDateRangeOpen ? 'auto' : 0}>
@@ -285,7 +285,17 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
 
           <Hidden above="xs">
             <Box display="flex" justifyContent="flexEnd" marginTop={1}>
-              {dateRangeButton}
+              <Button
+                variant="ghost"
+                icon={isDateRangeOpen ? 'close' : 'filter'}
+                iconType="outline"
+                onClick={handleDateRangeButtonClick}
+              >
+                {formatMessage({
+                  id: 'sp.documents:select-range',
+                  defaultMessage: 'Tímabil',
+                })}
+              </Button>
             </Box>
           </Hidden>
 
@@ -312,28 +322,28 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
           )}
 
           <Box marginTop={4}>
-            <Hidden below="md">
+            <Hidden below="sm">
               <Box
                 className={styles.tableHeading}
                 paddingY={2}
                 background="blue100"
               >
                 <GridRow>
-                  <GridColumn span="2/12">
+                  <GridColumn span={['1/1', '2/12']}>
                     <Box paddingX={2}>
                       <Text variant="eyebrow" fontWeight="semiBold">
                         Dagsetning
                       </Text>
                     </Box>
                   </GridColumn>
-                  <GridColumn span="7/12">
+                  <GridColumn span={['1/1', '6/12', '7/12', '6/12', '7/12']}>
                     <Box paddingX={2}>
                       <Text variant="eyebrow" fontWeight="semiBold">
                         Upplýsingar
                       </Text>
                     </Box>
                   </GridColumn>
-                  <GridColumn span="3/12">
+                  <GridColumn span={['1/1', '4/12', '3/12', '4/12', '3/12']}>
                     <Box paddingX={2}>
                       <Text variant="eyebrow" fontWeight="semiBold">
                         Stofnun
@@ -370,7 +380,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 </Text>
               </Box>
             )}
-            <Box className={styles.documentLineWrapper}>
+            <Box>
               {filteredDocuments
                 ?.slice(pagedDocuments.from, pagedDocuments.to)
                 .map((document, index) => (

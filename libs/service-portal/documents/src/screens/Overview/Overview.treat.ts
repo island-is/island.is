@@ -16,12 +16,3 @@ export const selectWrapper = style({
 export const tableHeading = style({
   boxShadow: `inset 0px -1px 0px ${theme.color.blue200}`,
 })
-
-export const documentLineWrapper = style({
-  borderTop: `1px solid ${theme.color.blue200}`,
-  ...themeUtils.responsiveStyle({
-    sm: {
-      borderTop: 'none',
-    },
-  }),
-})

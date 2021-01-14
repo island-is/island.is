@@ -13,7 +13,11 @@ export const modalButtonWrapper = style({
 })
 
 export const line = style({
-  borderBottom: `1px solid ${theme.color.blue200}`,
+  ...themeUtils.responsiveStyle({
+    sm: {
+      borderBottom: `1px solid ${theme.color.blue200}`,
+    },
+  }),
 })
 
 export const button = style({
@@ -42,8 +46,7 @@ export const sender = style({
 })
 
 export const date = style({
-  paddingBottom: 4,
-  fontWeight: theme.typography.semiBold,
+  fontWeight: theme.typography.regular,
   fontSize: 12,
   color: theme.color.dark300,
   ...themeUtils.responsiveStyle({

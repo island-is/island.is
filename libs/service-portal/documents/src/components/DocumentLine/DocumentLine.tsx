@@ -154,23 +154,35 @@ const DocumentLine: FC<Props> = ({ document }) => {
     <>
       <Box className={styles.line} paddingY={2}>
         <GridRow>
-          <GridColumn span={['1/1', '2/12']}>
+          <GridColumn span={['1/2', '2/12']} order={[2, 1]}>
             <Box
               className={styles.date}
               display="flex"
               alignItems="center"
+              justifyContent={['flexEnd', 'flexStart']}
               height="full"
-              paddingX={2}
+              paddingX={[0, 2]}
+              marginBottom={1}
             >
-              {format(new Date(document.date), 'dd.MM.yyyy')}
+              <Hidden above="xs">
+                <Text variant="small" color="dark300">
+                  {format(new Date(document.date), 'dd.MM.yyyy')}
+                </Text>
+              </Hidden>
+              <Hidden below="sm">
+                <Text>{format(new Date(document.date), 'dd.MM.yyyy')}</Text>
+              </Hidden>
             </Box>
           </GridColumn>
-          <GridColumn span={['1/1', '7/12']}>
+          <GridColumn
+            span={['1/1', '6/12', '7/12', '6/12', '7/12']}
+            order={[2, 3]}
+          >
             <Box
               display="flex"
               alignItems="center"
               height="full"
-              paddingX={2}
+              paddingX={[0, 2]}
               paddingBottom={[1, 0]}
             >
               {externalUrl ? (
@@ -184,15 +196,22 @@ const DocumentLine: FC<Props> = ({ document }) => {
               )}
             </Box>
           </GridColumn>
-          <GridColumn span={['1/1', '3/12']}>
+          <GridColumn
+            span={['1/2', '4/12', '3/12', '4/12', '3/12']}
+            order={[1, 3]}
+          >
             <Box
-              className={styles.sender}
               display="flex"
               alignItems="center"
               height="full"
-              paddingX={2}
+              paddingX={[0, 2]}
             >
-              {document.senderName}
+              <Hidden above="xs">
+                <Text variant="small">{document.senderName}</Text>
+              </Hidden>
+              <Hidden below="sm">
+                <Text>{document.senderName}</Text>
+              </Hidden>
             </Box>
           </GridColumn>
         </GridRow>
