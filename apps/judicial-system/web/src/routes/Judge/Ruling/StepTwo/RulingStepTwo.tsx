@@ -34,16 +34,16 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { testCaseExtension } from 'apps/judicial-system/web/src/utils/mocks'
 
 export const RulingStepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [, setVisitationCheckbox] = useState<boolean>()
   const [, setCommunicationCheckbox] = useState<boolean>()
   const [, setMediaCheckbox] = useState<boolean>()
   const { id } = useParams<{ id: string }>()
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-  const { data } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
@@ -69,15 +69,14 @@ export const RulingStepTwo: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setIsLoading(true)
-      setWorkingCase(resCase)
-      setIsLoading(false)
+    // TODO: REMOVE
+    if (id === 'TEST_EXTEND') {
+      setWorkingCase(testCaseExtension)
     }
     if (id && !workingCase && resCase) {
-      getCurrentCase()
+      setWorkingCase(resCase)
     }
-  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
+  }, [id, workingCase, setWorkingCase, resCase])
 
   const restrictions = [
     {
@@ -105,10 +104,14 @@ export const RulingStepTwo: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.JUDGE}
+      activeSection={
+        workingCase?.parentCaseId ? Sections.JUDGE_EXTENSION : Sections.JUDGE
+      }
       activeSubSection={JudgeSubsections.RULING_STEP_TWO}
-      isLoading={isLoading}
-      notFound={data?.case === undefined}
+      // TODO: UNCOMMENT
+      isLoading={false} // {loading}
+      // TODO: UNCOMMENT
+      notFound={false} // {data?.case === undefined}
     >
       {workingCase ? (
         <>

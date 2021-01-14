@@ -72,7 +72,9 @@ export const constructConclusion = (workingCase: Case) => {
           )}`}
         </Text>
         <Text as="span" variant="intro">
-          , skal sæta gæsluvarðhaldi, þó ekki lengur en til
+          {`, skal${
+            workingCase.parentCaseId ? ' áfram' : ''
+          } sæta gæsluvarðhaldi, þó ekki lengur en til`}
         </Text>
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
           {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')?.replace(
@@ -124,7 +126,9 @@ export const constructConclusion = (workingCase: Case) => {
         >{` ${workingCase.accusedName} kt. ${formatNationalId(
           workingCase.accusedNationalId,
         )}`}</Text>
-        , skal sæta farbanni, þó ekki lengur en til
+        {`, skal${
+          workingCase.parentCaseId ? ' áfram' : ''
+        } sæta farbanni, þó ekki lengur en til`}
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
           {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')?.replace(
             'dagur,',

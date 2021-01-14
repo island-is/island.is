@@ -46,6 +46,7 @@ import {
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseTransition } from '../../../utils/formatters'
+import { testCaseExtension } from '../../../utils/mocks'
 
 interface CaseData {
   case?: Case
@@ -120,6 +121,10 @@ export const JudgeOverview: React.FC = () => {
   }, [])
 
   useEffect(() => {
+    // TODO: REMOVE
+    if (id === 'TEST_EXTEND') {
+      setWorkingCase(testCaseExtension)
+    }
     if (!workingCase && data?.case) {
       setWorkingCase(data.case)
     }

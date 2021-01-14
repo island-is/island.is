@@ -107,6 +107,17 @@ export const PageLayout: FC<PageProps> = ({
         },
       ],
     },
+    {
+      name: 'Úrskurður Héraðsdóms',
+      children: [
+        { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
+        { type: 'SUB_SECTION', name: 'Fyrirtökutími' },
+        { type: 'SUB_SECTION', name: 'Þingbók' },
+        { type: 'SUB_SECTION', name: 'Úrskurður' },
+        { type: 'SUB_SECTION', name: 'Úrskurðarorð' },
+        { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
+      ],
+    },
   ]
 
   return children ? (
@@ -145,12 +156,13 @@ export const PageLayout: FC<PageProps> = ({
                 </Box>
               ) : null}
               <FormStepper
-                // Remove the extension part of the formstepper if the user is not applying for an extension
+                // Remove the extension parts of the formstepper if the user is not applying for an extension
                 sections={
-                  activeSection === Sections.EXTENSION
+                  activeSection === Sections.EXTENSION ||
+                  activeSection === Sections.JUDGE_EXTENSION
                     ? sections
                     : sections.filter(
-                        (_, index) => index + 1 !== sections.length,
+                        (_, index) => index + 2 !== sections.length,
                       )
                 }
                 formName="Gæsluvarðhald"

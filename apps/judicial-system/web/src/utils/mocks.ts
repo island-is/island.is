@@ -434,7 +434,7 @@ export const testCaseExtension = {
   requestedCourtDate: '2020-09-16T19:50:08.033Z',
   alternativeTravelBan: false,
   // TODO: FIX
-  requestedCustodyEndDate: undefined, // '2020-09-16T19:50:08.033Z',
+  requestedCustodyEndDate: '2020-09-16T19:50:08.033Z',
   lawsBroken:
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cupit enim dícere nihil posse ad beatam vitam deesse sapienti. Num igitur eum postea censes anxio animo aut sollicito fuisse? Unum est sine dolore esse, alterum cum voluptate.',
   custodyProvisions: [CaseCustodyProvisions._100_1],
@@ -459,7 +459,7 @@ export const testCaseExtension = {
     institution: 'HR',
     active: true,
   },
-  courtCaseNumber: undefined,
+  courtCaseNumber: 'X-2020-22',
   courtDate: undefined,
   courtStartTime: undefined,
   courtEndTime: '2020-09-16T19:51:28.224Z',
