@@ -42,10 +42,12 @@ export const GET_ORGANIZATION_QUERY = gql`
         description
         slices {
           ... on HeadingSlice {
+            id
             title
             body
           }
           ... on Districts {
+            id
             title
             description
             image {
@@ -53,6 +55,7 @@ export const GET_ORGANIZATION_QUERY = gql`
             }
           }
           ... on FeaturedArticles {
+            id
             title
             image {
               url

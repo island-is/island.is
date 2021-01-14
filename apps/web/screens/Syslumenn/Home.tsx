@@ -223,20 +223,25 @@ const Section: FC<SectionProps> = ({ slice, organization, namespace }) => {
   switch (slice.__typename) {
     case 'HeadingSlice':
       return (
-        <div key={slice.id} id={slice.id}>
+        <section>
           <Box paddingTop={[8, 6, 15]} paddingBottom={[4, 5, 10]}>
             <SidebarLayout isSticky={false} sidebarContent="">
               <Heading {...slice} />
             </SidebarLayout>
           </Box>
-        </div>
+        </section>
       )
     case 'Districts':
       return (
-        <div key={slice.id} id={slice.id}>
-          <Box paddingTop={[8, 6, 15]} paddingBottom={[4, 5, 10]}>
-            <GridContainer>
-              <h2>{slice.title}</h2>
+        <section aria-labelledby={'sliceTitle-' + slice.id}>
+          <GridContainer>
+            <Box
+              borderTopWidth="standard"
+              borderColor="standard"
+              paddingTop={[8, 6, 15]}
+              paddingBottom={[4, 5, 10]}
+            >
+              <h2 id={'sliceTitle-' + slice.id}>{slice.title}</h2>
               <GridRow>
                 <GridColumn span="7/12">
                   {organization.suborganizations.map((link) => (
@@ -251,19 +256,29 @@ const Section: FC<SectionProps> = ({ slice, organization, namespace }) => {
                   <img src={slice.image.url} alt="" />
                 </GridColumn>
               </GridRow>
-            </GridContainer>
-          </Box>
-        </div>
+            </Box>
+          </GridContainer>
+        </section>
       )
     case 'FeaturedArticles':
       return (
-        <div key={slice.id} id={slice.id}>
-          <Box paddingTop={[8, 6, 15]} paddingBottom={[4, 5, 10]}>
-            <GridContainer>
+        <section aria-labelledby={'sliceTitle-' + slice.id}>
+          <GridContainer>
+            <Box
+              borderTopWidth="standard"
+              borderColor="standard"
+              paddingTop={[8, 6, 10]}
+              paddingBottom={[4, 5, 10]}
+            >
               <GridRow>
                 <GridColumn span={['12/12', '12/12', '5/12']}>
                   <Box className={styles.popularTitleWrap}>
-                    <h2 className={styles.popularTitle}>{slice.title}</h2>
+                    <h2
+                      className={styles.popularTitle}
+                      id={'sliceTitle-' + slice.id}
+                    >
+                      {slice.title}
+                    </h2>
                     <Box display={['none', 'none', 'block']}>
                       <img src={slice.image.url} alt="" />
                     </Box>
@@ -297,9 +312,9 @@ const Section: FC<SectionProps> = ({ slice, organization, namespace }) => {
                   </Stack>
                 </GridColumn>
               </GridRow>
-            </GridContainer>
-          </Box>
-        </div>
+            </Box>
+          </GridContainer>
+        </section>
       )
     default:
       return <div>no section match</div>
