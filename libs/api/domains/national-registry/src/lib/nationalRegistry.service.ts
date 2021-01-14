@@ -36,7 +36,7 @@ export class NationalRegistryService {
       },
       address: {
         code: user.LoghHusk,
-        lastUpdated: '26.5.2017 00:00:00',
+        lastUpdated: user.LoghHuskBreytt,
         streetAddress: user.Logheimili,
         city: user.LogheimiliSveitarfelag,
         postalCode: user.Postnr,

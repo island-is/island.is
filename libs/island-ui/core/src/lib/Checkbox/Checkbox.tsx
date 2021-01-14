@@ -8,11 +8,11 @@ import * as styles from './Checkbox.treat'
 export interface CheckboxProps {
   name?: string
   id?: string
-  label?: string
+  label?: React.ReactNode
   checked?: boolean
   disabled?: boolean
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
-  tooltip?: string
+  tooltip?: React.ReactNode
   hasError?: boolean
   errorMessage?: string
   value?: string

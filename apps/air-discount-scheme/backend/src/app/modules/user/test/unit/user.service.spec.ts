@@ -33,7 +33,7 @@ describe('UserService', () => {
         {
           provide: FlightService,
           useClass: jest.fn(() => ({
-            countFlightLegsByNationalId: () => ({}),
+            countThisYearsFlightLegsByNationalId: () => ({}),
             isADSPostalCode: () => ({}),
           })),
         },
@@ -65,8 +65,8 @@ describe('UserService', () => {
       const getUserSpy = jest
         .spyOn(nationalRegistryService, 'getUser')
         .mockImplementation(() => Promise.resolve(user))
-      const countFlightLegsByNationalIdSpy = jest
-        .spyOn(flightService, 'countFlightLegsByNationalId')
+      const countThisYearsFlightLegsByNationalIdSpy = jest
+        .spyOn(flightService, 'countThisYearsFlightLegsByNationalId')
         .mockImplementation(() => Promise.resolve(flightLegs))
       const isADSPostalCodeSpy = jest
         .spyOn(flightService, 'isADSPostalCode')
@@ -77,7 +77,7 @@ describe('UserService', () => {
       )
 
       expect(getUserSpy).toHaveBeenCalledWith(user.nationalId)
-      expect(countFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
+      expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
         user.nationalId,
       )
       expect(isADSPostalCodeSpy).toHaveBeenCalledWith(user.postalcode)
@@ -104,8 +104,8 @@ describe('UserService', () => {
       const getUserSpy = jest
         .spyOn(nationalRegistryService, 'getUser')
         .mockImplementation(() => Promise.resolve(user))
-      const countFlightLegsByNationalIdSpy = jest
-        .spyOn(flightService, 'countFlightLegsByNationalId')
+      const countThisYearsFlightLegsByNationalIdSpy = jest
+        .spyOn(flightService, 'countThisYearsFlightLegsByNationalId')
         .mockImplementation(() => Promise.resolve(flightLegs))
       const isADSPostalCodeSpy = jest
         .spyOn(flightService, 'isADSPostalCode')
@@ -114,7 +114,7 @@ describe('UserService', () => {
       const result = await userService.getUserInfoByNationalId(user.nationalId)
 
       expect(getUserSpy).toHaveBeenCalledWith(user.nationalId)
-      expect(countFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
+      expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
         user.nationalId,
       )
       expect(isADSPostalCodeSpy).toHaveBeenCalledWith(user.postalcode)
@@ -132,8 +132,8 @@ describe('UserService', () => {
       const getUserSpy = jest
         .spyOn(nationalRegistryService, 'getUser')
         .mockImplementation(() => Promise.resolve(user))
-      const countFlightLegsByNationalIdSpy = jest
-        .spyOn(flightService, 'countFlightLegsByNationalId')
+      const countThisYearsFlightLegsByNationalIdSpy = jest
+        .spyOn(flightService, 'countThisYearsFlightLegsByNationalId')
         .mockImplementation(() => Promise.resolve(flightLegs))
       const isADSPostalCodeSpy = jest
         .spyOn(flightService, 'isADSPostalCode')
@@ -142,7 +142,7 @@ describe('UserService', () => {
       const result = await userService.getUserInfoByNationalId(user.nationalId)
 
       expect(getUserSpy).toHaveBeenCalledWith(user.nationalId)
-      expect(countFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
+      expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
         user.nationalId,
       )
       expect(isADSPostalCodeSpy).toHaveBeenCalledWith(user.postalcode)
