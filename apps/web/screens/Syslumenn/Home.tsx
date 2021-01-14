@@ -235,23 +235,23 @@ const Section: FC<SectionProps> = ({ slice, organization, namespace }) => {
       return (
         <div key={slice.id} id={slice.id}>
           <Box paddingTop={[8, 6, 15]} paddingBottom={[4, 5, 10]}>
-            <SidebarLayout fullWidthContent={true} sidebarContent={null}>
+            <GridContainer>
               <h2>{slice.title}</h2>
-              <GridContainer>
-                <GridRow>
-                  <GridColumn span="6/12">
-                    {organization.suborganizations.map((link) => (
-                      <div>
-                        <a href={link.link}>{link.shortTitle}</a>
-                      </div>
-                    ))}
-                  </GridColumn>
-                  <GridColumn span="6/12">
-                    <img src={slice.image.url} />
-                  </GridColumn>
-                </GridRow>
-              </GridContainer>
-            </SidebarLayout>
+              <GridRow>
+                <GridColumn span="7/12">
+                  {organization.suborganizations.map((link) => (
+                    <div>
+                      <Link href={link.link}>
+                        <Button variant="text">{link.shortTitle}</Button>
+                      </Link>
+                    </div>
+                  ))}
+                </GridColumn>
+                <GridColumn span="5/12">
+                  <img src={slice.image.url} alt="" />
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
           </Box>
         </div>
       )
