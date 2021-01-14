@@ -3,7 +3,7 @@ import {
   formatAccusedByGender,
   formatDate,
   formatNationalId,
-  formatRestrictions,
+  formatCustodyRestrictions,
   laws,
 } from '@island.is/judicial-system/formatters'
 import {
@@ -108,10 +108,9 @@ export function formatConclusion(
         accusedNationalId,
       )}, skal sæta ${
         decision === CaseDecision.ACCEPTING ? 'gæsluvarðhaldi' : 'farbanni'
-      }, þó ekki lengur en til ${formatDate(custodyEndDate, 'PPPPp')?.replace(
-        'dagur,',
-        'dagsins',
-      )}.${
+      }, þó ekki lengur en til ${formatDate(custodyEndDate, 'PPPPp')
+        ?.replace('dagur,', 'dagsins')
+        ?.replace(' kl.', ', kl.')}.${
         decision === CaseDecision.ACCEPTING && isolation
           ? ` ${capitalize(
               formatAccusedByGender(accusedGender),
@@ -153,7 +152,7 @@ export function formatHeadsUpSmsNotification(
   const arrestDateText = arrestDate
     ? ` Viðkomandi handtekinn ${formatDate(arrestDate, 'Pp').replace(
         ' ',
-        ' kl. ',
+        ', kl. ',
       )}.`
     : ''
 
@@ -187,7 +186,7 @@ export function formatProsecutorCourtDateEmailNotification(
   courtRoom: string,
   defenderName: string,
 ): string {
-  const courtDateText = formatDate(courtDate, 'PPPp')
+  const courtDateText = formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
   const defenderText = defenderName
     ? `Verjandi sakbornings: ${defenderName}`
     : 'Verjandi sakbornings hefur ekki verið skráður'
@@ -204,11 +203,11 @@ export function formatPrisonCourtDateEmailNotification(
   defenderName: string,
 ): string {
   const courtText = court?.replace('dómur', 'dóms')
-  const courtDateText = formatDate(courtDate, 'PPPp')
+  const courtDateText = formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
   const requestedCustodyEndDateText = formatDate(
     requestedCustodyEndDate,
     'PPPp',
-  )
+  )?.replace(' kl.', ', kl.')
   const requestText =
     accusedGender === CaseGender.OTHER
       ? `Krafist er gæsluvarðhalds til ${requestedCustodyEndDateText}.`
@@ -235,6 +234,9 @@ export function formatDefenderCourtDateEmailNotification(
   return `${court} hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram ${formatDate(
     courtDate,
     'PPPp',
+  )?.replace(
+    ' kl.',
+    ', kl.',
   )}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />Sakborningur: ${accusedName} ${formatNationalId(
     accusedNationalId,
   )}.<br /><br />Dómstóllinn hefur skráð þig sem verjanda sakbornings.`
@@ -282,7 +284,7 @@ export function formatPrisonRulingEmailNotification(
     false,
   )}<br />${formatAppeal(prosecutorAppealDecision, 'Sækjandi', false)}${
     decision === CaseDecision.ACCEPTING
-      ? `<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${formatRestrictions(
+      ? `<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${formatCustodyRestrictions(
           accusedGender,
           custodyRestrictions,
         )}`
