@@ -7,10 +7,16 @@ import { ClientsModule } from './modules/clients/clients.module'
 import { ResourcesModule } from './modules/resources/resources.module'
 import { SequelizeConfigService } from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
+import { ClaimsModule } from './modules/claims/claims.module'
+import { environment } from '../environments/environment'
 
 @Module({
   imports: [
-    AuthModule,
+    AuthModule.register({
+      audience: 'auth-admin-api',
+      issuer: environment.auth.issuer,
+      jwksUri: environment.auth.jwksUri,
+    }),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
@@ -18,6 +24,7 @@ import { AuthModule } from '@island.is/auth-nest-tools'
     ClientsModule,
     ResourcesModule,
     GrantTypesModule,
+    ClaimsModule,
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.secret'],
     }),

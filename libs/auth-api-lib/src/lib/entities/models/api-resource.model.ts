@@ -28,6 +28,15 @@ export class ApiResource extends Model<ApiResource> {
   name!: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty({
+    example: '1234567890',
+  })
+  nationalId!: string
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: true,
@@ -57,9 +66,19 @@ export class ApiResource extends Model<ApiResource> {
   @ApiProperty()
   showInDiscoveryDocument!: boolean
 
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: null,
+  })
+  @ApiProperty({
+    example: null,
+  })
+  archived!: Date
+
   @HasMany(() => ApiResourceUserClaim)
   @ApiProperty()
-  public userClaims?: ApiResourceUserClaim[]
+  userClaims?: ApiResourceUserClaim[]
 
   // Common properties end
 
@@ -73,11 +92,11 @@ export class ApiResource extends Model<ApiResource> {
 
   @HasMany(() => ApiResourceScope)
   @ApiProperty()
-  public scopes?: ApiResourceScope[]
+  scopes?: ApiResourceScope[]
 
   @HasMany(() => ApiResourceSecret)
   @ApiProperty()
-  readonly apiSecrets?: ApiResourceSecret[]
+  apiSecrets?: ApiResourceSecret[]
 
   // Signing algorithm for access token. If empty, will use the server default signing algorithm.
   // public allowedAccessTokenSigningAlgorithms

@@ -21,17 +21,21 @@ import { ActionCardLoader } from '@island.is/service-portal/core'
 import { Document } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import isAfter from 'date-fns/isAfter'
+import isBefore from 'date-fns/isBefore'
 import startOfTomorrow from 'date-fns/startOfTomorrow'
 import isWithinInterval from 'date-fns/isWithinInterval'
 import isEqual from 'lodash/isEqual'
 import { ValueType } from 'react-select'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { defineMessage } from 'react-intl'
+import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
+import { useLocation } from 'react-router-dom'
+import * as Sentry from '@sentry/react'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 6
-const defaultStartDate = new Date('2000-01-01')
-const defaultEndDate = startOfTomorrow()
+const defaultStartDate = null
+const defaultEndDate = null
 
 const defaultFilterValues = {
   dateFrom: defaultStartDate,
@@ -41,8 +45,8 @@ const defaultFilterValues = {
 }
 
 type FilterValues = {
-  dateFrom: Date
-  dateTo: Date
+  dateFrom: Date | null
+  dateTo: Date | null
   activeCategory: Option
   searchQuery: string
 }
@@ -52,12 +56,14 @@ const getFilteredDocuments = (
   filterValues: FilterValues,
 ): Document[] => {
   const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
-  let filteredDocuments = documents.filter((document) =>
-    isWithinInterval(new Date(document.date), {
-      start: dateFrom || defaultStartDate,
-      end: dateTo || defaultEndDate,
-    }),
-  )
+  let filteredDocuments = documents.filter((document) => {
+    const minDate = dateFrom || new Date('1900-01-01')
+    const maxDate = dateTo || startOfTomorrow()
+    return isWithinInterval(new Date(document.date), {
+      start: isBefore(maxDate, minDate) ? maxDate : minDate,
+      end: isAfter(minDate, maxDate) ? minDate : maxDate,
+    })
+  })
 
   if (activeCategory.value) {
     filteredDocuments = filteredDocuments.filter(
@@ -78,15 +84,22 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
 }) => {
   useNamespaces('sp.documents')
+  Sentry.configureScope((scope) =>
+    scope.setTransactionName('Electronic-Documents'),
+  )
+
   const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
+  const [searchInteractionEventSent, setSearchInteractionEventSent] = useState(
+    false,
+  )
   const { scrollToRef } = useScrollToRefOnUpdate([page])
+  const { pathname } = useLocation()
 
   const [filterValue, setFilterValue] = useState<FilterValues>(
     defaultFilterValues,
   )
   const { data, loading, error } = useListDocuments(userInfo.profile.nationalId)
-
   const categories = [defaultCategory, ...data.categories]
   const filteredDocuments = getFilteredDocuments(data.documents, filterValue)
   const pagedDocuments = {
@@ -126,6 +139,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const handleSearchChange = useCallback((value: string) => {
     setPage(1)
     setFilterValue({ ...defaultFilterValues, searchQuery: value })
+    if (!searchInteractionEventSent) {
+      documentsSearchDocumentsInitialized(pathname)
+      setSearchInteractionEventSent(true)
+    }
   }, [])
 
   const handleClearFilters = useCallback(() => {

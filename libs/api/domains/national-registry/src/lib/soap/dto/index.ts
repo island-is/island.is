@@ -1,6 +1,8 @@
-export { Fjolskyldan, GetViewFamilyDto } from './getViewFamilyDto'
-export { GetViewBanmarkingDto } from './getViewBanmarkingDto'
-export { GetViewHomeDto } from './getViewHomeDto'
-export { GetViewMunicipalityDto } from './getViewMunicipalityDto'
-export { GetViewRegistryDto } from './getViewRegistryDto'
-export { GetViewReligionDto } from './getViewReligionDto'
+export {
+  GetViewISLEinstaklingurDto,
+  ISLEinstaklingur,
+} from './getViewISLEinstaklingur.dto'
+export {
+  GetViewISLFjolskyldanDto,
+  ISLFjolskyldan,
+} from './getViewISLFjolskyldan.dto'

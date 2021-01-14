@@ -45,30 +45,30 @@ const dataSchema = z.object({
 type SchemaFormValues = z.infer<typeof dataSchema>
 const form: Form = buildForm({
   id: 'ExampleForm',
-  name: 'Family and pets',
+  title: 'Family and pets',
   children: [
     buildSection({
       id: 'family',
-      name: 'Family',
+      title: 'Family',
       children: [
         buildRepeater({
           id: 'person',
-          name: 'Family Member',
+          title: 'Family Member',
           component: 'SomeComponent',
           children: [
             buildTextField({
               id: 'name',
-              name: 'Name',
+              title: 'Name',
             }),
             buildTextField({
               id: 'age',
-              name: 'Age',
+              title: 'Age',
             }),
           ],
         }),
         buildTextField({
           id: 'familyName',
-          name: 'What is the family name?',
+          title: 'What is the family name?',
           condition: (formValue: FormValue) => {
             return (formValue as SchemaFormValues).person?.length
               ? (formValue as SchemaFormValues).person[0].name !== 'bad name'
@@ -79,12 +79,12 @@ const form: Form = buildForm({
     }),
     buildSection({
       id: 'houses',
-      name: 'Houses',
+      title: 'Houses',
       children: [
-        buildTextField({ id: 'house', name: 'House' }),
+        buildTextField({ id: 'house', title: 'House' }),
         buildTextField({
           id: 'garden',
-          name: 'Do you have a garden?',
+          title: 'Do you have a garden?',
         }),
       ],
     }),
@@ -347,7 +347,7 @@ describe('ApplicationFormReducer', () => {
         dataSchema: z.object({ text: z.string() }),
         form: buildForm({
           id: 'ExampleForm',
-          name: 'Test',
+          title: 'Test',
           children: [],
         }),
         application: {

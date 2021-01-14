@@ -242,4 +242,68 @@ describe('/domari-krafa/urskurdarord', () => {
       ),
     ).toBeChecked()
   })
+
+  test('should not display the alternative travel ban retstirction section if the decision is not ACCEPTING_ALTERATIVE_TRAVEL_BAN', async () => {
+    // Arrange
+
+    // Act
+    render(
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
+              <RulingStepTwo />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    // Assert
+    expect(
+      await waitFor(
+        () =>
+          screen.queryByRole('checkbox', {
+            name: 'Tilkynningarskylda',
+          }) as HTMLInputElement,
+      ),
+    ).not.toBeInTheDocument()
+  }, 10000)
+
+  test('should display the alternative travel ban retstirction section if the decision is ACCEPTING_ALTERATIVE_TRAVEL_BAN', async () => {
+    // Arrange
+
+    // Act
+    render(
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id_7`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
+              <RulingStepTwo />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    // Assert
+    expect(
+      await waitFor(
+        () =>
+          screen.getByRole('checkbox', {
+            name: 'Tilkynningarskylda',
+          }) as HTMLInputElement,
+      ),
+    ).toBeInTheDocument()
+  }, 10000)
 })

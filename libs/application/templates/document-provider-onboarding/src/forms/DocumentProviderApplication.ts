@@ -14,17 +14,17 @@ import { m } from './messages'
 
 export const DocumentProviderOnboarding: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
-  name: m.formName,
+  title: m.formName,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'termsOfAgreement',
-      name: m.termsSection,
+      title: m.termsSection,
       children: [
         buildCustomField(
           {
             id: 'termsOfAgreement',
-            name: m.termsTitle,
+            title: m.termsTitle,
             description: m.termsSubTitle,
             component: 'TermsOfAgreement',
           },
@@ -34,42 +34,46 @@ export const DocumentProviderOnboarding: Form = buildForm({
     }),
     buildSection({
       id: 'applicant',
-      name: m.applicantSection,
+      title: m.applicantSection,
       children: [
         buildMultiField({
           id: 'applicant',
-          name: m.applicantTitle,
+          title: m.applicantTitle,
           description: m.applicantSubTitle,
           children: [
             buildTextField({
               id: 'applicant.nationalId',
-              name: m.applicantNationalId,
+              title: m.applicantNationalId,
               format: '######-####',
-              placeholder: '000000-0000',
+              placeholder: m.applicantNationalIdPlaceholder,
             }),
             buildTextField({
               id: 'applicant.name',
-              name: m.applicantName,
+              title: m.applicantName,
+              placeholder: m.applicantNamePlaceholder,
             }),
             buildTextField({
               id: 'applicant.address',
-              name: m.applicantAddress,
+              title: m.applicantAddress,
+              placeholder: m.applicantAddressPlaceholder,
             }),
             buildTextField({
               id: 'applicant.zipCode',
-              name: m.applicantZipCode,
+              title: m.applicantZipCode,
+              placeholder: m.applicantZipCodePlaceholder,
             }),
             buildTextField({
               id: 'applicant.email',
-              name: m.applicantEmail,
+              title: m.applicantEmail,
               variant: 'email',
+              placeholder: m.applicantEmailPlaceholder,
             }),
             buildTextField({
               id: 'applicant.phoneNumber',
-              name: m.applicantPhoneNumber,
+              title: m.applicantPhoneNumber,
               variant: 'tel',
               format: '###-####',
-              placeholder: '000-0000',
+              placeholder: m.applicantPhoneNumberPlaceholder,
             }),
           ],
         }),
@@ -77,28 +81,30 @@ export const DocumentProviderOnboarding: Form = buildForm({
     }),
     buildSection({
       id: 'administrativeContact',
-      name: m.administrativeContactSection,
+      title: m.administrativeContactSection,
       children: [
         buildMultiField({
           id: 'administrativeContact',
-          name: m.administrativeContactTitle,
+          title: m.administrativeContactTitle,
           description: m.administrativeContactSubTitle,
           children: [
             buildTextField({
               id: 'administrativeContact.name',
-              name: m.administrativeContactName,
+              title: m.administrativeContactName,
+              placeholder: m.administrativeContactNamePlaceholder,
             }),
             buildTextField({
               id: 'administrativeContact.email',
-              name: m.administrativeContactEmail,
+              title: m.administrativeContactEmail,
               variant: 'email',
+              placeholder: m.administrativeContactEmailPlaceholder,
             }),
             buildTextField({
               id: 'administrativeContact.phoneNumber',
-              name: m.administrativeContactPhoneNumber,
+              title: m.administrativeContactPhoneNumber,
               variant: 'tel',
               format: '###-####',
-              placeholder: '000-0000',
+              placeholder: m.administrativeContactPhoneNumberPlaceholder,
             }),
           ],
         }),
@@ -106,28 +112,30 @@ export const DocumentProviderOnboarding: Form = buildForm({
     }),
     buildSection({
       id: 'technicalContact',
-      name: m.technicalContactSection,
+      title: m.technicalContactSection,
       children: [
         buildMultiField({
           id: 'technicalContact',
-          name: m.technicalContactTitle,
+          title: m.technicalContactTitle,
           description: m.technicalContactSubTitle,
           children: [
             buildTextField({
               id: 'technicalContact.name',
-              name: m.technicalContactName,
+              title: m.technicalContactName,
+              placeholder: m.technicalContactNamePlaceHolder,
             }),
             buildTextField({
               id: 'technicalContact.email',
-              name: m.technicalContactEmail,
+              title: m.technicalContactEmail,
               variant: 'email',
+              placeholder: m.technicalContactEmailPlaceHolder,
             }),
             buildTextField({
               id: 'technicalContact.phoneNumber',
-              name: m.technicalContactPhoneNumber,
+              title: m.technicalContactPhoneNumber,
               variant: 'tel',
               format: '###-####',
-              placeholder: '000-0000',
+              placeholder: m.technicalContactPhoneNumberPlaceHolder,
             }),
           ],
         }),
@@ -135,24 +143,25 @@ export const DocumentProviderOnboarding: Form = buildForm({
     }),
     buildSection({
       id: 'helpDesk',
-      name: m.helpDeskSection,
+      title: m.helpDeskSection,
       children: [
         buildMultiField({
           id: 'helpDesk',
-          name: m.helpDeskTitle,
+          title: m.helpDeskTitle,
           description: m.helpDeskSubTitle,
           children: [
             buildTextField({
               id: 'helpDesk.email',
-              name: m.helpDeskEmail,
+              title: m.helpDeskEmail,
               variant: 'email',
+              placeholder: m.helpDeskEmailPlaceholder,
             }),
             buildTextField({
               id: 'helpDesk.phoneNumber',
-              name: m.helpDeskPhoneNumber,
+              title: m.helpDeskPhoneNumber,
               variant: 'tel',
               format: '###-####',
-              placeholder: '000-0000',
+              placeholder: m.helpDeskPhoneNumberPlaceholder,
             }),
           ],
         }),
@@ -160,106 +169,114 @@ export const DocumentProviderOnboarding: Form = buildForm({
     }),
     buildSection({
       id: 'confirmation',
-      name: m.confirmationSection,
+      title: m.confirmationSection,
       children: [
         buildMultiField({
           id: 'confirmation',
-          name: m.confirmationTitle,
+          title: m.confirmationTitle,
           description: m.confirmationSubTitle,
           children: [
             //Error in dev tools, missing keys on divider fields...
             buildDividerField({
-              name: m.applicantSection,
+              title: m.applicantSection,
               color: 'currentColor',
             }),
             buildTextField({
               id: 'applicant.nationalId',
-              name: m.applicantNationalId,
+              title: m.applicantNationalId,
               format: '######-####',
-              placeholder: '000000-0000',
+              placeholder: m.applicantNationalIdPlaceholder,
             }),
             buildTextField({
               id: 'applicant.name',
-              name: m.applicantName,
+              title: m.applicantName,
+              placeholder: m.applicantNamePlaceholder,
             }),
             buildTextField({
               id: 'applicant.address',
-              name: m.applicantAddress,
+              title: m.applicantAddress,
+              placeholder: m.applicantAddressPlaceholder,
             }),
             buildTextField({
               id: 'applicant.zipCode',
-              name: m.applicantZipCode,
+              title: m.applicantZipCode,
+              placeholder: m.applicantZipCodePlaceholder,
             }),
             buildTextField({
               id: 'applicant.email',
-              name: m.applicantEmail,
+              title: m.applicantEmail,
               variant: 'email',
+              placeholder: m.applicantEmailPlaceholder,
             }),
             buildTextField({
               id: 'applicant.phoneNumber',
-              name: m.applicantPhoneNumber,
+              title: m.applicantPhoneNumber,
               variant: 'tel',
               format: '###-####',
-              placeholder: '000-0000',
+              placeholder: m.applicantPhoneNumberPlaceholder,
             }),
             //Error in dev tools, missing keys on divider fields...
             buildDividerField({
-              name: m.administrativeContactSection,
+              title: m.administrativeContactSection,
               color: 'currentColor',
             }),
             buildTextField({
               id: 'administrativeContact.name',
-              name: m.administrativeContactName,
+              title: m.administrativeContactName,
+              placeholder: m.administrativeContactNamePlaceholder,
             }),
             buildTextField({
               id: 'administrativeContact.email',
-              name: m.administrativeContactEmail,
+              title: m.administrativeContactEmail,
               variant: 'email',
+              placeholder: m.administrativeContactEmailPlaceholder,
             }),
             buildTextField({
               id: 'administrativeContact.phoneNumber',
-              name: m.administrativeContactPhoneNumber,
+              title: m.administrativeContactPhoneNumber,
               variant: 'tel',
               format: '###-####',
-              placeholder: '000-0000',
+              placeholder: m.administrativeContactPhoneNumberPlaceholder,
             }),
             //Error in dev tools, missing keys on divider fields...
             buildDividerField({
-              name: m.technicalContactSection,
+              title: m.technicalContactSection,
               color: 'currentColor',
             }),
             buildTextField({
               id: 'technicalContact.name',
-              name: m.technicalContactName,
+              title: m.technicalContactName,
+              placeholder: m.technicalContactNamePlaceHolder,
             }),
             buildTextField({
               id: 'technicalContact.email',
-              name: m.technicalContactEmail,
+              title: m.technicalContactEmail,
               variant: 'email',
+              placeholder: m.technicalContactEmailPlaceHolder,
             }),
             buildTextField({
               id: 'technicalContact.phoneNumber',
-              name: m.technicalContactPhoneNumber,
+              title: m.technicalContactPhoneNumber,
               variant: 'tel',
               format: '###-####',
-              placeholder: '000-0000',
+              placeholder: m.technicalContactPhoneNumberPlaceHolder,
             }),
             //Error in dev tools, missing keys on divider fields...
             buildDividerField({
-              name: m.helpDeskSection,
+              title: m.helpDeskSection,
               color: 'currentColor',
             }),
             //CustomField is a workaround because of a bug in react-hook-form
             buildCustomField({
               id: 'helpDeskConfirmation',
-              name: 'helpDeskConfirmation',
+              title: 'helpDeskConfirmation',
               component: 'Review',
             }),
 
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              name: m.confirmationSubmitButton,
+              title: m.confirmationSubmitButton,
 
               actions: [
                 {
@@ -274,7 +291,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
         buildCustomField(
           {
             id: 'thankYouScreen',
-            name: m.thankYouScreenTitle,
+            title: m.thankYouScreenTitle,
             component: 'ThankYouScreen',
           },
           {},

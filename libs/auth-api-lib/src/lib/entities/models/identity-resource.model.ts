@@ -61,7 +61,7 @@ export class IdentityResource extends Model<IdentityResource> {
 
   @HasMany(() => IdentityResourceUserClaim)
   @ApiProperty()
-  public userClaims?: IdentityResourceUserClaim[]
+  userClaims?: IdentityResourceUserClaim[]
 
   // Common properties end
 
@@ -84,6 +84,16 @@ export class IdentityResource extends Model<IdentityResource> {
     example: false,
   })
   emphasize!: boolean
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: null,
+  })
+  @ApiProperty({
+    example: null,
+  })
+  archived!: Date
 
   @CreatedAt
   @ApiProperty()

@@ -1,14 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-// import cn from 'classnames'
 import Head from 'next/head'
+import NextLink from 'next/link'
 import {
   ContentBlock,
   Box,
   Text,
   Breadcrumbs,
   ColorSchemeContext,
-  Link,
 } from '@island.is/island-ui/core'
 import {
   Query,
@@ -26,10 +25,9 @@ import {
 } from '../queries'
 import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useNamespace } from '@island.is/web/hooks'
-import routeNames from '@island.is/web/i18n/routeNames'
 import { Screen } from '@island.is/web/types'
-import { useI18n } from '@island.is/web/i18n'
 import { CustomNextError } from '../../units/errors'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface OrganizationProps {
   organizations: Query['getOrganizations']
@@ -42,9 +40,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   tags,
   namespace,
 }) => {
-  const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
 
   const { items: organizationsItems } = organizations
   const { items: tagsItems } = tags
@@ -58,10 +55,24 @@ const OrganizationPage: Screen<OrganizationProps> = ({
       </Head>
       <SidebarLayout fullWidthContent sidebarContent={null}>
         <Box paddingBottom={[2, 2, 4]}>
-          <Breadcrumbs>
-            <Link href={makePath()}>Ísland.is</Link>
-            <span>{n('organizations', 'Stofnanir')}</span>
-          </Breadcrumbs>
+          <Breadcrumbs
+            items={[
+              {
+                title: 'Ísland.is',
+                href: '/',
+              },
+              {
+                title: n('organizations', 'Stofnanir'),
+              },
+            ]}
+            renderLink={(link) => {
+              return (
+                <NextLink {...linkResolver('homepage')} passHref>
+                  {link}
+                </NextLink>
+              )
+            }}
+          />
         </Box>
 
         <Text variant="h1" as="h1" paddingBottom={2}>

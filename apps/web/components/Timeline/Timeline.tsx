@@ -139,7 +139,10 @@ export const Timeline = ({ events, getMonthByIndex }: TimelineProps) => {
       )
       // padding based on mobile gutter
       const leftPadding = 24
-      frameRef.current.scrollLeft = currentMonth.offsetLeft - leftPadding
+      frameRef.current.scrollLeft =
+        currentMonth && currentMonth.offsetLeft
+          ? currentMonth.offsetLeft - leftPadding
+          : undefined
       moveTimeline(currentMonthIndex)
     }
   }, [])

@@ -1,3 +1,9 @@
+import { BoxProps as TBoxProps } from './lib/Box/Box'
+import {
+  InputProps as TInputProps,
+  InputBackgroundColor as TInputBackgroundColor,
+} from './lib/Input/Input'
+
 // Alerts
 export * from './lib/AlertMessage/AlertMessage'
 export * from './lib/AlertBanner/AlertBanner'
@@ -73,6 +79,7 @@ export * from './lib/Sleeve/Sleeve'
 export * from './lib/Divider/Divider'
 
 // Navigation
+export { Breadcrumbs as BreadcrumbsDeprecated } from './lib/BreadcrumbsDeprecated/Breadcrumbs'
 export * from './lib/Breadcrumbs/Breadcrumbs'
 export * from './lib/Navigation/Navigation'
 export * from './lib/FormStepper/FormStepper'
@@ -87,3 +94,8 @@ export * from './lib/context'
 
 // Treat
 export * from './treat/global.treat'
+
+// Types
+export type BoxProps = TBoxProps
+export type InputProps = TInputProps
+export type InputBackgroundColor = TInputBackgroundColor

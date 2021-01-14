@@ -1,7 +1,10 @@
-import React, { FC, useState, useEffect } from 'react'
-import { useParams, useHistory } from 'react-router-dom'
-import { Box, Text, Input, ActionCard } from '@island.is/island-ui/core'
+import React, { FC } from 'react'
+import { Link } from 'react-router-dom'
 import { ServicePortalPath } from '@island.is/service-portal/core'
+import { Box, Text, Input, Button } from '@island.is/island-ui/core'
+import { useForm, Controller } from 'react-hook-form'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
 //Interface will be deleted, when graphql is ready.
 interface Applicant {
@@ -30,7 +33,7 @@ interface HelpDeskContact {
   phoneNumber: string
 }
 
-interface Data {
+export interface FormData {
   applicant: Applicant
   administrativeContact: AdministrativeContact
   technicalContact: TechnicalContact
@@ -39,14 +42,17 @@ interface Data {
 }
 
 interface Props {
-  data: Data | undefined
+  data: FormData
+  onSubmit: (data: FormData) => void
 }
 
-export const DocumentProviderBasicInfo: FC<Props> = ({ data }) => {
+export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
+  const { formatMessage } = useLocale()
+  const { handleSubmit, control, errors } = useForm()
   return (
     <Box marginY={3}>
       {/* skoda betur a morgun */}
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Box marginBottom={4}>
           <Box marginBottom={4}>
             <Text variant="h3" as="h3">
@@ -54,45 +60,99 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data }) => {
             </Text>
           </Box>
           <Box marginBottom={2}>
-            <Input
-              name={'applicant.name'}
-              label="Nafn á stofnun"
-              value={data?.applicant?.name}
+            <Controller
+              control={control}
+              name="applicant.name"
+              defaultValue={data?.applicant?.name}
+              render={({ onChange, value, name }) => (
+                <Input
+                  name={name}
+                  value={value}
+                  onChange={onChange}
+                  label="Nafn á stofnun"
+                  placeholder="Nafn a stofnun"
+                />
+              )}
             />
           </Box>
           <Box marginBottom={2}>
-            <Input
-              name={'applicant.nationalId'}
-              label="Kennitala stofnunar"
-              value={data?.applicant?.nationalId}
+            <Controller
+              control={control}
+              name="applicant.nationalId"
+              defaultValue={data?.applicant?.nationalId}
+              render={({ onChange, value, name }) => (
+                <Input
+                  name={name}
+                  value={value}
+                  onChange={onChange}
+                  label="Kennitala stofnunar"
+                  placeholder="Kennitala stofnunar"
+                />
+              )}
             />
           </Box>
           <Box marginBottom={2}>
-            <Input
-              name={'applicant.email'}
-              label="Netfang"
-              value={data?.applicant?.email}
+            <Controller
+              control={control}
+              name="applicant.email"
+              defaultValue={data?.applicant?.email}
+              render={({ onChange, value, name }) => (
+                <Input
+                  name={name}
+                  value={value}
+                  onChange={onChange}
+                  label="Netfang"
+                  placeholder="Netfang"
+                />
+              )}
             />
           </Box>
           <Box marginBottom={2}>
-            <Input
-              name={'applicant.phoneNumber'}
-              label="Símanúmer"
-              value={data?.applicant?.phoneNumber}
+            <Controller
+              control={control}
+              name="applicant.phoneNumber"
+              defaultValue={data?.applicant?.phoneNumber}
+              render={({ onChange, value, name }) => (
+                <Input
+                  name={name}
+                  value={value}
+                  onChange={onChange}
+                  label="Símanúmer"
+                  placeholder="Símanúmer"
+                />
+              )}
             />
           </Box>
           <Box marginBottom={2}>
-            <Input
-              name={'applicant.address'}
-              label="Heimilsfang"
-              value={data?.applicant?.address}
+            <Controller
+              control={control}
+              name="applicant.address"
+              defaultValue={data?.applicant?.address}
+              render={({ onChange, value, name }) => (
+                <Input
+                  name={name}
+                  value={value}
+                  onChange={onChange}
+                  label="Heimilsfang"
+                  placeholder="Heimilsfang"
+                />
+              )}
             />
           </Box>
           <Box marginBottom={2}>
-            <Input
-              name={'applicant.zipCode'}
-              label="Póstnúmer"
-              value={data?.applicant?.zipCode}
+            <Controller
+              control={control}
+              name="applicant.zipCode"
+              defaultValue={data?.applicant?.zipCode}
+              render={({ onChange, value, name }) => (
+                <Input
+                  name={name}
+                  value={value}
+                  onChange={onChange}
+                  label="Póstnúmer"
+                  placeholder="Póstnúmer"
+                />
+              )}
             />
           </Box>
         </Box>
@@ -103,24 +163,51 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data }) => {
             </Text>
           </Box>
           <Box marginBottom={2}>
-            <Input
-              name={'administrativeContact.name'}
-              label="Nafn"
-              value={data?.administrativeContact?.name}
+            <Controller
+              control={control}
+              name="administrativeContact.name"
+              defaultValue={data?.administrativeContact?.name}
+              render={({ onChange, value, name }) => (
+                <Input
+                  name={name}
+                  value={value}
+                  onChange={onChange}
+                  label="Nafn"
+                  placeholder="Nafn"
+                />
+              )}
             />
           </Box>
           <Box marginBottom={2}>
-            <Input
-              name={'administrativeContact.email'}
-              label="Netfang"
-              value={data?.administrativeContact?.email}
+            <Controller
+              control={control}
+              name="administrativeContact.email"
+              defaultValue={data?.administrativeContact?.email}
+              render={({ onChange, value, name }) => (
+                <Input
+                  name={name}
+                  value={value}
+                  onChange={onChange}
+                  label="Netfang"
+                  placeholder="Netfang"
+                />
+              )}
             />
           </Box>
           <Box marginBottom={2}>
-            <Input
-              name={'administrativeContact.phoneNumber'}
-              label="Símanúmer"
-              value={data?.administrativeContact?.phoneNumber}
+            <Controller
+              control={control}
+              name="administrativeContact.phoneNumber"
+              defaultValue={data?.administrativeContact?.phoneNumber}
+              render={({ onChange, value, name }) => (
+                <Input
+                  name={name}
+                  value={value}
+                  onChange={onChange}
+                  label="Símanúmer"
+                  placeholder="Símanúmer"
+                />
+              )}
             />
           </Box>
         </Box>
@@ -131,24 +218,51 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data }) => {
             </Text>
           </Box>
           <Box marginBottom={2}>
-            <Input
-              name={'technicalContact.name'}
-              label="Nafn"
-              value={data?.technicalContact?.name}
+            <Controller
+              control={control}
+              name="technicalContact.name"
+              defaultValue={data?.technicalContact?.name}
+              render={({ onChange, value, name }) => (
+                <Input
+                  name={name}
+                  value={value}
+                  onChange={onChange}
+                  label="Nafn"
+                  placeholder="Nafn"
+                />
+              )}
             />
           </Box>
           <Box marginBottom={2}>
-            <Input
-              name={'technicalContact.email'}
-              label="Netfang"
-              value={data?.technicalContact?.email}
+            <Controller
+              control={control}
+              name="technicalContact.email"
+              defaultValue={data?.technicalContact?.email}
+              render={({ onChange, value, name }) => (
+                <Input
+                  name={name}
+                  value={value}
+                  onChange={onChange}
+                  label="Netfang"
+                  placeholder="Netfang"
+                />
+              )}
             />
           </Box>
           <Box marginBottom={2}>
-            <Input
-              name={'technicalContact.phoneNumber'}
-              label="Símanúmer"
-              value={data?.technicalContact?.phoneNumber}
+            <Controller
+              control={control}
+              name="technicalContact.phoneNumber"
+              defaultValue={data?.technicalContact?.phoneNumber}
+              render={({ onChange, value, name }) => (
+                <Input
+                  name={name}
+                  value={value}
+                  onChange={onChange}
+                  label="Símanúmer"
+                  placeholder="Símanúmer"
+                />
+              )}
             />
           </Box>
         </Box>
@@ -159,19 +273,55 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data }) => {
             </Text>
           </Box>
           <Box marginBottom={2}>
-            <Input
-              name={'helpDeskContact.email'}
-              label="Netfang"
-              value={data?.helpDeskContact?.email}
+            <Controller
+              control={control}
+              name="helpDeskContact.email"
+              defaultValue={data?.helpDeskContact?.email}
+              render={({ onChange, value, name }) => (
+                <Input
+                  name={name}
+                  value={value}
+                  onChange={onChange}
+                  label="Netfang"
+                  placeholder="Netfang"
+                />
+              )}
             />
           </Box>
           <Box marginBottom={2}>
-            <Input
-              name={'helpDeskContact.phoneNumber'}
-              label="Símanúmer"
-              value={data?.helpDeskContact?.phoneNumber}
+            <Controller
+              control={control}
+              name="helpDeskContact.phoneNumber"
+              defaultValue={data?.helpDeskContact?.phoneNumber}
+              render={({ onChange, value, name }) => (
+                <Input
+                  name={name}
+                  value={value}
+                  onChange={onChange}
+                  label="Símanúmer"
+                  placeholder="Símanúmer"
+                />
+              )}
             />
           </Box>
+        </Box>
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems="center"
+          flexDirection={['columnReverse', 'row']}
+          marginTop={4}
+        >
+          <Box marginTop={[1, 0]}>
+            <Link to={ServicePortalPath.DocumentProviderDocumentProviders}>
+              <Button variant="ghost">
+                {formatMessage(m.SettingsEditEndPointsBackButton)}
+              </Button>
+            </Link>
+          </Box>
+          <Button type="submit" variant="primary" icon="arrowForward">
+            {formatMessage(m.SettingsEditEndPointsSaveButton)}
+          </Button>
         </Box>
       </form>
     </Box>

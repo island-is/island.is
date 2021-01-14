@@ -9,7 +9,7 @@ export interface BaseUser {
   firstName: string
   middleName: string
   lastName: string
-  gender: 'kk' | 'kvk'
+  gender: 'kk' | 'kvk' | 'hvk'
   fund: Fund
 }
 

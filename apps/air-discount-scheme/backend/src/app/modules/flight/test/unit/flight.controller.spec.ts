@@ -43,7 +43,7 @@ describe('PublicFlightController', () => {
           provide: FlightService,
           useClass: jest.fn(() => ({
             isADSPostalCode: () => ({}),
-            countFlightLegsByNationalId: () => ({}),
+            countThisYearsFlightLegsByNationalId: () => ({}),
             create: () => ({}),
             findOne: () => ({}),
             delete: () => ({}),
@@ -79,6 +79,8 @@ describe('PublicFlightController', () => {
     nationalRegistryService = moduleRef.get<NationalRegistryService>(
       NationalRegistryService,
     )
+
+    Date.now = jest.fn(() => 1597760782018)
   })
 
   describe('create', () => {
@@ -126,7 +128,7 @@ describe('PublicFlightController', () => {
         .spyOn(flightService, 'isADSPostalCode')
         .mockImplementation(() => true)
       jest
-        .spyOn(flightService, 'countFlightLegsByNationalId')
+        .spyOn(flightService, 'countThisYearsFlightLegsByNationalId')
         .mockImplementation(() => Promise.resolve(flightLegs))
       const useDiscountSpy = jest.spyOn(discountService, 'useDiscount')
       jest
@@ -234,7 +236,7 @@ describe('PublicFlightController', () => {
         .spyOn(flightService, 'isADSPostalCode')
         .mockImplementation(() => true)
       jest
-        .spyOn(flightService, 'countFlightLegsByNationalId')
+        .spyOn(flightService, 'countThisYearsFlightLegsByNationalId')
         .mockImplementation(() => Promise.resolve({ ...flightLegs, unused: 0 }))
 
       try {

@@ -1,13 +1,13 @@
 import React, { FC } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Breadcrumbs, Box, Hidden, Tag } from '@island.is/island-ui/core'
 import {
-  ServicePortalPath,
-  ServicePortalNavigationItem,
-} from '@island.is/service-portal/core'
+  BreadcrumbsDeprecated as Breadcrumbs,
+  Box,
+  Tag,
+} from '@island.is/island-ui/core'
+import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { useLocale } from '@island.is/localization'
-import { defineMessage } from 'react-intl'
 
 const reduce = (
   f: (

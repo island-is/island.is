@@ -3,7 +3,7 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
-  buildIntroductionField,
+  buildDescriptionField,
   buildTextField,
   Form,
   ApplicationTypes,
@@ -15,102 +15,101 @@ import { m } from './messages'
 
 export const ReviewApplication: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
-  name: m.reviewTitle,
+  title: m.reviewTitle,
   mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'applicant',
-      name: m.reviewSection,
+      title: m.reviewSection,
       children: [
         buildMultiField({
           id: 'review',
-          name: m.reviewTitle,
-          description: m.reviewSubTitle,
+          title: m.reviewTitle,
           children: [
             //Error in dev tools, missing keys on divider fields...
-            buildDividerField({ name: m.applicantTitle }),
+            buildDividerField({ title: m.applicantTitle }),
             buildTextField({
               id: 'applicant.nationalId',
-              name: m.applicantNationalId,
+              title: m.applicantNationalId,
               disabled: true,
             }),
             buildTextField({
               id: 'applicant.name',
-              name: m.applicantName,
+              title: m.applicantName,
               disabled: true,
             }),
             buildTextField({
               id: 'applicant.email',
-              name: m.applicantEmail,
+              title: m.applicantEmail,
               disabled: true,
             }),
             buildTextField({
               id: 'applicant.phoneNumber',
-              name: m.applicantPhoneNumber,
+              title: m.applicantPhoneNumber,
               disabled: true,
               format: '###-####',
               placeholder: '000-0000',
             }),
             buildTextField({
               id: 'applicant.address',
-              name: m.applicantAddress,
+              title: m.applicantAddress,
               disabled: true,
             }),
             buildTextField({
               id: 'applicant.zipCode',
-              name: m.applicantZipCode,
+              title: m.applicantZipCode,
               disabled: true,
             }),
             //Error in dev tools, missing keys on divider fields...
             buildDividerField({
-              name: m.administrativeContactTitle,
+              title: m.administrativeContactTitle,
             }),
             buildTextField({
               id: 'administrativeContact.name',
-              name: m.administrativeContactName,
+              title: m.administrativeContactName,
               disabled: true,
             }),
             buildTextField({
               id: 'administrativeContact.email',
-              name: m.administrativeContactEmail,
+              title: m.administrativeContactEmail,
               disabled: true,
             }),
             buildTextField({
               id: 'administrativeContact.phoneNumber',
-              name: m.administrativeContactPhoneNumber,
+              title: m.administrativeContactPhoneNumber,
               disabled: true,
               format: '###-####',
               placeholder: '000-0000',
             }),
             //Error in dev tools, missing keys on divider fields...
-            buildDividerField({ name: m.technicalContactTitle }),
+            buildDividerField({ title: m.technicalContactTitle }),
             buildTextField({
               id: 'technicalContact.name',
-              name: m.technicalContactName,
+              title: m.technicalContactName,
               disabled: true,
             }),
             buildTextField({
               id: 'technicalContact.email',
-              name: m.technicalContactEmail,
+              title: m.technicalContactEmail,
               disabled: true,
             }),
             buildTextField({
               id: 'technicalContact.phoneNumber',
-              name: m.technicalContactPhoneNumber,
+              title: m.technicalContactPhoneNumber,
               disabled: true,
               format: '###-####',
               placeholder: '000-0000',
             }),
             //Error in dev tools, missing keys on divider fields...
-            buildDividerField({ name: m.helpDeskTitle }),
+            buildDividerField({ title: m.helpDeskTitle }),
             buildTextField({
               id: 'helpDesk.email',
-              name: m.helpDeskEmail,
+              title: m.helpDeskEmail,
               disabled: true,
             }),
             buildTextField({
               id: 'helpDesk.phoneNumber',
-              name: m.helpDeskPhoneNumber,
+              title: m.helpDeskPhoneNumber,
               disabled: true,
               format: '###-####',
               placeholder: '000-0000',
@@ -118,7 +117,7 @@ export const ReviewApplication: Form = buildForm({
             //Error in dev tools, missing keys on radio controller...
             buildSubmitField({
               id: 'approvedByReviewer',
-              name: m.reviewQuestion,
+              title: m.reviewQuestion,
               placement: 'screen',
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
@@ -128,7 +127,7 @@ export const ReviewApplication: Form = buildForm({
             }),
             buildTextField({
               id: 'rejectionReason',
-              name: m.reviewRejectReasonLabel,
+              title: m.reviewRejectReasonLabel,
               condition: {
                 questionId: 'approvedByReviewer',
                 isMultiCheck: false,
@@ -138,10 +137,10 @@ export const ReviewApplication: Form = buildForm({
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'reviewProcessed',
-          name: m.reviewProcessedTitle,
-          introduction: m.reviewProcessedIntroduction,
+          title: m.reviewProcessedTitle,
+          description: m.reviewProcessedIntroduction,
         }),
       ],
     }),
