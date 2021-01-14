@@ -13,17 +13,23 @@ import { FormFooter } from '../../../shared-components/FormFooter'
 import Modal from '../../../shared-components/Modal/Modal'
 import {
   constructConclusion,
-  getAppealDecitionText,
+  getAppealDecisionText,
   isNextDisabled,
 } from '../../../utils/stepHelper'
 import * as Constants from '../../../utils/constants'
-import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatCustodyRestrictions,
+  TIME_FORMAT,
+  formatAlternativeTravelBanRestrictions,
+} from '@island.is/judicial-system/formatters'
 import { parseTransition } from '../../../utils/formatters'
 import { AppealDecisionRole, JudgeSubsections, Sections } from '../../../types'
 import {
   Case,
   CaseAppealDecision,
   CaseDecision,
+  CaseGender,
   CaseState,
   CaseTransition,
   NotificationType,
@@ -355,8 +361,8 @@ export const Confirmation: React.FC = () => {
 
   return (
     <PageLayout
-      activeSubSection={Sections.JUDGE}
-      activeSection={JudgeSubsections.CONFIRMATION}
+      activeSection={Sections.JUDGE}
+      activeSubSection={JudgeSubsections.CONFIRMATION}
       isLoading={loading}
       notFound={data?.case === undefined}
     >
@@ -394,7 +400,7 @@ export const Confirmation: React.FC = () => {
           </Box>
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
-              <Text as="h4" variant="h4">
+              <Text as="h3" variant="h3">
                 Úrskurður Héraðsdóms
               </Text>
             </Box>
@@ -407,78 +413,126 @@ export const Confirmation: React.FC = () => {
               </Text>
             </Box>
           </Box>
-          <Box component="section" marginBottom={7}>
+          <Box component="section" marginBottom={10}>
             <Box marginBottom={2}>
-              <Text as="h4" variant="h4">
+              <Text as="h3" variant="h3">
                 Úrskurðarorð
               </Text>
             </Box>
             <Box marginBottom={3}>{constructConclusion(workingCase)}</Box>
+          </Box>
+          <Box component="section" marginBottom={7}>
+            <Box marginBottom={1}>
+              <Text variant="h3">
+                {workingCase.judge
+                  ? `${workingCase.judge.name} ${workingCase.judge.title}`
+                  : `${user?.name} ${user?.title}`}
+              </Text>
+            </Box>
             <Text>
               Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.
             </Text>
           </Box>
-          <Box component="section" marginBottom={3}>
+          <Box component="section" marginBottom={7}>
             <Box marginBottom={1}>
-              <Text as="h4" variant="h4">
+              <Text as="h3" variant="h3">
                 Ákvörðun um kæru
               </Text>
             </Box>
             <Box marginBottom={1}>
               <Text>
                 Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð
-                þennan til Landsréttar innan þriggja sólarhringa. Dómari bendir
-                kærða á að honum sé heimilt að bera atriði er lúta að framkvæmd
-                gæsluvarðhaldsins undir dómara.
+                þennan til Landsréttar innan þriggja sólarhringa.
               </Text>
             </Box>
             <Box marginBottom={1}>
               <Text variant="h4">
-                {getAppealDecitionText(
+                {getAppealDecisionText(
                   AppealDecisionRole.ACCUSED,
                   workingCase.accusedAppealDecision,
                 )}
               </Text>
             </Box>
             <Text variant="h4">
-              {getAppealDecitionText(
+              {getAppealDecisionText(
                 AppealDecisionRole.PROSECUTOR,
                 workingCase.prosecutorAppealDecision,
               )}
             </Text>
+            {(workingCase.accusedAppealAnnouncement ||
+              workingCase.prosecutorAppealAnnouncement) && (
+              <Box component="section" marginTop={3}>
+                {workingCase.accusedAppealAnnouncement &&
+                  workingCase.accusedAppealDecision ===
+                    CaseAppealDecision.APPEAL && (
+                    <Box>
+                      <Text variant="eyebrow" color="blue400">
+                        Yfirlýsing um kæru kærða
+                      </Text>
+                      <Text>{workingCase.accusedAppealAnnouncement}</Text>
+                    </Box>
+                  )}
+                {workingCase.prosecutorAppealAnnouncement &&
+                  workingCase.prosecutorAppealDecision ===
+                    CaseAppealDecision.APPEAL && (
+                    <Box marginTop={2}>
+                      <Text variant="eyebrow" color="blue400">
+                        Yfirlýsing um kæru sækjanda
+                      </Text>
+                      <Text>{workingCase.prosecutorAppealAnnouncement}</Text>
+                    </Box>
+                  )}
+              </Box>
+            )}
           </Box>
-          {(workingCase.accusedAppealAnnouncement ||
-            workingCase.prosecutorAppealAnnouncement) && (
-            <Box component="section" marginBottom={6}>
-              {workingCase.accusedAppealAnnouncement &&
-                workingCase.accusedAppealDecision ===
-                  CaseAppealDecision.APPEAL && (
-                  <Box marginBottom={2}>
-                    <Text variant="eyebrow" color="blue400">
-                      Yfirlýsing um kæru kærða
-                    </Text>
-                    <Text>{workingCase.accusedAppealAnnouncement}</Text>
-                  </Box>
-                )}
-              {workingCase.prosecutorAppealAnnouncement &&
-                workingCase.prosecutorAppealDecision ===
-                  CaseAppealDecision.APPEAL && (
-                  <Box marginBottom={2}>
-                    <Text variant="eyebrow" color="blue400">
-                      Yfirlýsing um kæru sækjanda
-                    </Text>
-                    <Text>{workingCase.prosecutorAppealAnnouncement}</Text>
-                  </Box>
-                )}
+          {workingCase.decision === CaseDecision.ACCEPTING && (
+            <Box marginBottom={7}>
+              <Box marginBottom={1}>
+                <Text as="h3" variant="h3">
+                  Tilhögun gæsluvarðhalds
+                </Text>
+              </Box>
+              <Box marginBottom={2}>
+                <Text>
+                  {formatCustodyRestrictions(
+                    workingCase.accusedGender || CaseGender.OTHER,
+                    workingCase.custodyRestrictions || [],
+                  )}
+                </Text>
+              </Box>
+              <Text>
+                Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
+                atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
+              </Text>
             </Box>
           )}
-          <Box marginBottom={10}>
-            <Text variant="h3">
-              {workingCase.judge
-                ? `${workingCase.judge.name} ${workingCase.judge.title}`
-                : `${user?.name} ${user?.title}`}
-            </Text>
-          </Box>
+          {workingCase.decision ===
+            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN && (
+            <Box marginBottom={7}>
+              <Box marginBottom={1}>
+                <Text as="h3" variant="h3">
+                  Tilhögun farbanns
+                </Text>
+              </Box>
+              <Box marginBottom={2}>
+                <Text>
+                  {formatAlternativeTravelBanRestrictions(
+                    workingCase.accusedGender || CaseGender.OTHER,
+                    workingCase.custodyRestrictions || [],
+                  )}
+                </Text>
+              </Box>
+              {workingCase.otherRestrictions && (
+                <Box marginBottom={2}>
+                  <Text>{workingCase.otherRestrictions}</Text>
+                </Box>
+              )}
+              <Text>
+                Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
+                atriði er lúta að framkvæmd farbannsins undir dómara.
+              </Text>
+            </Box>
+          )}
           <Box className={style.courtEndTimeContainer}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">

@@ -378,7 +378,7 @@ const Search: Screen<CategoryProps> = ({
                   {n('inCategory', 'í flokki')}
                   {
                     <>
-                      :
+                      {': '}
                       <strong>
                         {sidebarData.tags[filters.category]?.title ??
                           sidebarData.types[filters.type]?.title}

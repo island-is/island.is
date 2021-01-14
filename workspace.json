@@ -942,6 +942,35 @@
         }
       }
     },
+    "api-domains-health-insurance": {
+      "root": "libs/api/domains/health-insurance",
+      "sourceRoot": "libs/api/domains/health-insurance/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/health-insurance/tsconfig.lib.json",
+              "libs/api/domains/health-insurance/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/health-insurance/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/health-insurance/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-national-registry": {
       "root": "libs/api/domains/national-registry",
       "sourceRoot": "libs/api/domains/national-registry/src",
@@ -1463,6 +1492,28 @@
         }
       }
     },
+    "application-templates-children-domicile-transfer": {
+      "root": "libs/application/templates/children-domicile-transfer",
+      "sourceRoot": "libs/application/templates/children-domicile-transfer/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/children-domicile-transfer/tsconfig.lib.json",
+              "libs/application/templates/children-domicile-transfer/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/children-domicile-transfer/**/*"
+            ]
+          }
+        }
+      }
+    },
     "application-templates-document-provider-onboarding": {
       "root": "libs/application/templates/document-provider-onboarding",
       "sourceRoot": "libs/application/templates/document-provider-onboarding/src",
@@ -1782,6 +1833,90 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/ui-shell/src/{lib,components}/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "auth-admin-web": {
+      "root": "apps/auth-admin-web",
+      "sourceRoot": "apps/auth-admin-web",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/auth-admin-web",
+            "outputPath": "dist/apps/auth-admin-web"
+          },
+          "configurations": {
+            "production": {}
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/next:server",
+          "options": {
+            "buildTarget": "auth-admin-web:build",
+            "dev": true,
+            "proxyConfig": "apps/auth-admin-web/proxy.config.json"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "auth-admin-web:build:production",
+              "dev": false
+            }
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "auth-admin-web:build:production"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/auth-admin-web/tsconfig.app.json",
+              "apps/auth-admin-web/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/auth-admin-web/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "auth-admin-web-e2e": {
+      "root": "apps/auth-admin-web-e2e",
+      "sourceRoot": "apps/auth-admin-web-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/auth-admin-web-e2e/cypress.json",
+            "tsConfig": "apps/auth-admin-web-e2e/tsconfig.e2e.json",
+            "devServerTarget": "auth-admin-web:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "auth-admin-web:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["apps/auth-admin-web-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**"]
           }
         }
       }

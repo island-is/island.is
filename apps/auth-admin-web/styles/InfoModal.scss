@@ -1,0 +1,21 @@
+.info-modal {
+  z-index: 3;
+  &__header {
+    font-weight: $weight-semi-bold;
+    padding: 10px;
+  }
+
+  &__info-text {
+    padding: 15px;
+  }
+
+  &__container__buttons {
+    display: flex;
+  }
+
+  &__container__button {
+    margin-top: 25px;
+    flex: 1;
+    text-align: center;
+  }
+}
