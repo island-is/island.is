@@ -24,7 +24,7 @@ import { FormFooter } from '../../../shared-components/FormFooter'
 import * as Constants from '../../../utils/constants'
 import {
   TIME_FORMAT,
-  formatCustodyRestrictions,
+  formatRequestedCustodyRestrictions,
 } from '@island.is/judicial-system/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import * as styles from './Overview.treat'
@@ -117,6 +117,7 @@ export const Overview: React.FC = () => {
         }
         break
       case CaseState.SUBMITTED:
+      case CaseState.RECEIVED:
         break
       default:
         return false
@@ -298,7 +299,7 @@ export const Overview: React.FC = () => {
                 label="Takmarkanir á gæslu"
               >
                 <Text>
-                  {formatCustodyRestrictions(
+                  {formatRequestedCustodyRestrictions(
                     workingCase.requestedCustodyRestrictions,
                   )}
                 </Text>

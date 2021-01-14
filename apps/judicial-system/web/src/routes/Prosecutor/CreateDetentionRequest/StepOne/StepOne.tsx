@@ -136,7 +136,7 @@ export const StepOne: React.FC = () => {
   }
 
   useEffect(() => {
-    document.title = 'Grunnupplýsingar - Réttarvörslugátt'
+    document.title = 'Sakborningur - Réttarvörslugátt'
   }, [])
 
   // Run this if id is in url, i.e. if user is opening an existing request.
@@ -206,7 +206,7 @@ export const StepOne: React.FC = () => {
         <>
           <Box marginBottom={7}>
             <Text as="h1" variant="h1">
-              Krafa um gæsluvarðhald
+              Sakborningur
             </Text>
           </Box>
           <Box component="section" marginBottom={5}>

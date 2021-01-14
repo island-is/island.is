@@ -942,6 +942,35 @@
         }
       }
     },
+    "api-domains-health-insurance": {
+      "root": "libs/api/domains/health-insurance",
+      "sourceRoot": "libs/api/domains/health-insurance/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/health-insurance/tsconfig.lib.json",
+              "libs/api/domains/health-insurance/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/health-insurance/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/health-insurance/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-national-registry": {
       "root": "libs/api/domains/national-registry",
       "sourceRoot": "libs/api/domains/national-registry/src",
@@ -1459,6 +1488,28 @@
           "options": {
             "jestConfig": "libs/application/template-loader/jest.config.js",
             "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "application-templates-children-domicile-transfer": {
+      "root": "libs/application/templates/children-domicile-transfer",
+      "sourceRoot": "libs/application/templates/children-domicile-transfer/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/children-domicile-transfer/tsconfig.lib.json",
+              "libs/application/templates/children-domicile-transfer/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/children-domicile-transfer/**/*"
+            ]
           }
         }
       }
