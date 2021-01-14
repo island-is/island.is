@@ -11,10 +11,11 @@ import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { ElasticService } from '@island.is/content-search-toolkit'
 import flatten from 'lodash/flatten'
+import { SyncOptions } from '@island.is/content-search-indexer/types'
 import {
-  SearchIndexes,
-  SyncOptions,
-} from '@island.is/content-search-indexer/types'
+  ElasticsearchIndexLocale,
+  getElasticsearchIndex,
+} from '@island.is/content-search-index-manager'
 
 interface SyncerResult {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -74,7 +75,7 @@ export class ContentfulService {
 
   private async getContentfulData(
     chunkIds: string,
-    locale: keyof typeof SearchIndexes,
+    locale: ElasticsearchIndexLocale,
   ) {
     const data = await this.contentfulClient.getEntries({
       include: this.defaultIncludeDepth,
@@ -152,7 +153,7 @@ export class ContentfulService {
 
   private async getAllEntriesFromContentful(
     entries: Entry<any>[],
-    locale: keyof typeof SearchIndexes,
+    locale: ElasticsearchIndexLocale,
   ): Promise<Entry<any>[]> {
     // contentful has a limit of 1000 entries per request but we get "414 Request URI Too Large" so we do a 500 per request
     const chunkSize = 100
@@ -189,7 +190,7 @@ export class ContentfulService {
    */
   private async linksToEntry(
     linkId: string,
-    locale: keyof typeof SearchIndexes,
+    locale: ElasticsearchIndexLocale,
   ): Promise<Entry<any>[]> {
     const data = await this.contentfulClient.getEntries({
       include: this.defaultIncludeDepth,
@@ -204,7 +205,7 @@ export class ContentfulService {
     const {
       syncType,
       locale,
-      elasticIndex = SearchIndexes[options.locale],
+      elasticIndex = getElasticsearchIndex(options.locale),
     } = options
     const typeOfSync = await this.getTypeOfSync({ syncType, elasticIndex })
 

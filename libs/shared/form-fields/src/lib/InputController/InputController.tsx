@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Input } from '@island.is/island-ui/core'
+import { Input, InputBackgroundColor } from '@island.is/island-ui/core'
 import { Controller } from 'react-hook-form'
 import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
 
@@ -16,6 +16,7 @@ interface Props {
   ) => void
   placeholder?: string
   textarea?: boolean
+  backgroundColor?: InputBackgroundColor
   currency?: boolean
   type?: 'text' | 'email' | 'number' | 'tel'
   suffix?: string
@@ -38,6 +39,7 @@ export const InputController: FC<Props> = ({
   label,
   name = id,
   placeholder,
+  backgroundColor,
   textarea,
   currency,
   type = 'text',
@@ -57,6 +59,7 @@ export const InputController: FC<Props> = ({
           label={label}
           type="text"
           decimalSeparator=","
+          backgroundColor={backgroundColor}
           thousandSeparator="."
           suffix=" kr."
           value={value}
@@ -75,6 +78,7 @@ export const InputController: FC<Props> = ({
           customInput={Input}
           id={id}
           disabled={disabled}
+          backgroundColor={backgroundColor}
           placeholder={placeholder}
           label={label}
           suffix={suffix}
@@ -94,6 +98,7 @@ export const InputController: FC<Props> = ({
           customInput={Input}
           id={id}
           disabled={disabled}
+          backgroundColor={backgroundColor}
           placeholder={placeholder}
           label={label}
           type={type as 'text' | 'tel'}
@@ -115,6 +120,7 @@ export const InputController: FC<Props> = ({
           disabled={disabled}
           placeholder={placeholder}
           label={label}
+          backgroundColor={backgroundColor}
           autoFocus={autoFocus}
           hasError={error !== undefined}
           errorMessage={error}
