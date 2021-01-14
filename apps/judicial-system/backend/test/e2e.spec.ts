@@ -501,7 +501,7 @@ describe('Case', () => {
   it('GET /api/case/:id should get a case by id', async () => {
     let dbCase: CCase
 
-    await Case.create(getCaseData(true, true))
+    await Case.create(getCaseData(true, true, true))
       .then((value) => {
         dbCase = caseToCCase(value)
 
@@ -519,7 +519,7 @@ describe('Case', () => {
 
   it('POST /api/case/:id/signature should request a signature for a case', async () => {
     await Case.create({
-      ...getCaseData(true, true),
+      ...getCaseData(true, true, true),
       state: CaseState.REJECTED,
       judgeId: judge.id,
     })
@@ -538,7 +538,7 @@ describe('Case', () => {
 
   it('GET /api/case/:id/signature should confirm a signature for a case', async () => {
     await Case.create({
-      ...getCaseData(),
+      ...getCaseData(true, true, true),
       state: CaseState.ACCEPTED,
       judgeId: judge.id,
     })
@@ -555,6 +555,44 @@ describe('Case', () => {
         expect(response.body.documentSigned).toBe(true)
         expect(response.body.code).toBeUndefined()
         expect(response.body.message).toBeUndefined()
+      })
+  })
+
+  it('POST /api/case/:id/extend should extend case', async () => {
+    let dbCase: CCase
+
+    await Case.create(getCaseData(true, true, true))
+      .then((value) => {
+        dbCase = caseToCCase(value)
+
+        return request(app.getHttpServer())
+          .post(`/api/case/${dbCase.id}/extend`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
+          .expect(201)
+      })
+      .then(async (response) => {
+        // Check the response
+        const apiCase = response.body
+
+        // Check the response
+        expectCasesToMatch(apiCase, {
+          id: apiCase.id || 'FAILURE',
+          created: apiCase.created || 'FAILURE',
+          modified: apiCase.modified || 'FAILURE',
+          state: CaseState.NEW,
+          policeCaseNumber: dbCase.policeCaseNumber,
+          accusedNationalId: dbCase.accusedNationalId,
+          accusedName: dbCase.accusedName,
+          accusedAddress: dbCase.accusedAddress,
+          accusedGender: dbCase.accusedGender,
+          court: dbCase.court,
+          lawsBroken: dbCase.lawsBroken,
+          custodyProvisions: dbCase.custodyProvisions,
+          requestedCustodyRestrictions: dbCase.requestedCustodyRestrictions,
+          caseFacts: dbCase.caseFacts,
+          legalArguments: dbCase.legalArguments,
+          parentCaseId: dbCase.id,
+        } as CCase)
       })
   })
 })
