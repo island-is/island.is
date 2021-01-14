@@ -88,3 +88,6 @@ export * from './lib/context'
 
 // Treat
 export * from './treat/global.treat'
+
+// Types
+export * from './lib/DatePicker/types'

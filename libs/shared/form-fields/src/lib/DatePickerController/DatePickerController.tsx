@@ -4,7 +4,7 @@ import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import {
   DatePicker,
-  DatePickerBackgroundColor,
+  DatePickerTypes,
 } from '@island.is/island-ui/core'
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
   name?: string
   label: string
   placeholder?: string
-  backgroundColor?: DatePickerBackgroundColor
+  backgroundColor?: DatePickerTypes.BackgroundColor
 }
 const df = 'yyyy-MM-dd'
 export const DatePickerController: FC<Props> = ({
