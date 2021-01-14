@@ -95,7 +95,7 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
                     position="relative"
                     paddingLeft={leftImage ? undefined : [0, 0, 0, 0, 6]}
                     paddingRight={
-                      leftImage ? [10, 0, 0, 0, 6] : [10, 0, 0, 0, 0]
+                      leftImage ? [10, 0, 0, 0, 6] : [10, 0]
                     }
                   >
                     <Image
@@ -126,8 +126,6 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
                       >
                         <Button
                           icon="arrowForward"
-                          iconType="filled"
-                          type="button"
                           variant="text"
                         >
                           {linkTitle}
