@@ -60,11 +60,9 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
     throw new CustomNextError(404, 'Not found')
   }
 
-  const [selectedInfo, setSelectedInfo] = useState<XroadInfo>(
-    service !== null && service?.xroadIdentifier.length > 0
-      ? service.xroadIdentifier[0]
-      : null,
-  )
+     
+  const [selectedInfo, setSelectedInfo] = useState<XroadInfo>(null)
+  const [documentationInfo, setDocumentationInfo] = useState(null)
 
   const navigationItems = [
     {
@@ -169,6 +167,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                     strings={filterContent}
                     service={service}
                     selectedInfo={selectedInfo}
+                    documentationInfo={documentationInfo}
                   />
                 )}
               </Box>
@@ -183,8 +182,13 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
           <OpenApiView
             strings={openApiContent}
             service={service}
-            onSelectChange={(value) => {
+            onSelected={(value) => {
               setSelectedInfo(value)
+            }}
+            onDocumentLoaded={(docObject) => {
+              if (docObject && docObject.info) {
+                setDocumentationInfo(docObject.info)
+              }
             }}
           />
         )

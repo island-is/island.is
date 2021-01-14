@@ -1,6 +1,7 @@
 import React from 'react'
 import {
   Box,
+  DialogPrompt,
   GridColumn,
   GridRow,
   Inline,
@@ -23,12 +24,14 @@ export interface ServiceInformationProps {
   service: ApiService
   strings: GetNamespaceQuery['getNamespace']
   selectedInfo?: XroadInfo
+  documentationInfo?: any
 }
 
 export const ServiceInformation = ({
   service,
   strings,
   selectedInfo,
+  documentationInfo,
 }: ServiceInformationProps) => {
   const n = useNamespace(strings)
 
@@ -58,9 +61,19 @@ export const ServiceInformation = ({
         </Text>
         {service.pricing.length > 0 && (
           <Box>
-            <Tag variant="white" outlined>
-              {n(`pricing${capitalize(service.pricing[0])}`)}
-            </Tag>
+            <DialogPrompt
+              baseId={`dialog-pricing${capitalize(service.pricing[0])}`}
+              title={n(`pricing${capitalize(service.pricing[0])}`)}
+              description={n(
+                `pricing${capitalize(service.pricing[0])}Description`,
+              )}
+              ariaLabel={`Description for data${capitalize(service.pricing[0])}`}
+              disclosureElement={
+                <Tag variant="white" outlined>
+                  {n(`pricing${capitalize(service.pricing[0])}`)}
+                </Tag>
+              }
+            />
           </Box>
         )}
       </Inline>
@@ -92,14 +105,23 @@ export const ServiceInformation = ({
               width="full"
             >
               <Text variant="eyebrow" as="span">
-                {n('data')}
+                {n('data')}{' '}
               </Text>
+              <Tooltip text="Merkingar í þessum lið segja til um eðli gagna sem þjónustan vinnur með. Þú getur smellt á hvert merki fyrir sig til að fá nánari upplýsingar um það." />
             </Box>
             <Inline space={1}>
               {service.data?.map((item) => (
-                <Tag variant="white" outlined key={item}>
-                  {n(`data${capitalize(item)}`)}
-                </Tag>
+                <DialogPrompt
+                  baseId={`dialog-data${capitalize(item)}`}
+                  title={n(`data${capitalize(item)}`)}
+                  description={n(`data${capitalize(item)}Description`)}
+                  ariaLabel={`Description for data${capitalize(item)}`}
+                  disclosureElement={
+                    <Tag variant="white" outlined>
+                      {n(`data${capitalize(item)}`)}
+                    </Tag>
+                  }
+                />
               ))}
             </Inline>
           </GridColumn>
@@ -113,14 +135,23 @@ export const ServiceInformation = ({
               width="full"
             >
               <Text variant="eyebrow" as="span">
-                {n('type')}
+                {n('type')}{' '}
               </Text>
+              <Tooltip text="Merkingar í þessum lið segja til um tækni sem nota þarf í samskiptum við þjónustuna.  Þú getur smellt á hvert merki fyrir sig til að fá nánari upplýsingar um það." />
             </Box>
             <Inline space={1}>
               {service.type?.map((item) => (
-                <Tag variant="white" outlined key={item}>
-                  {n(`type${capitalize(item)}`)}
-                </Tag>
+                <DialogPrompt
+                  baseId={`dialog-type${capitalize(item)}`}
+                  title={n(`type${capitalize(item)}`)}
+                  description={n(`type${capitalize(item)}Description`)}
+                  ariaLabel={`Description for type${capitalize(item)}`}
+                  disclosureElement={
+                    <Tag variant="white" outlined key={item}>
+                      {n(`type${capitalize(item)}`)}
+                    </Tag>
+                  }
+                />
               ))}
             </Inline>
           </GridColumn>
@@ -134,14 +165,23 @@ export const ServiceInformation = ({
               width="full"
             >
               <Text variant="eyebrow" as="span">
-                {n('access')}
+                {n('access')}{' '}
               </Text>
+              <Tooltip text="Merkingar í þessum lið segja til um hvaðan þjónustan er aðgengileg.  Þú getur smellt á hvert merki fyrir sig til að fá nánari upplýsingar um það." />
             </Box>
             <Inline space={1}>
               {service.access?.map((item) => (
-                <Tag variant="white" outlined key={item}>
-                  {n(`access${capitalize(item)}`)}
-                </Tag>
+                <DialogPrompt
+                  baseId={`dialog-access${capitalize(item)}`}
+                  title={n(`access${capitalize(item)}`)}
+                  description={n(`access${capitalize(item)}Description`)}
+                  ariaLabel={`Description for access${capitalize(item)}`}
+                  disclosureElement={
+                    <Tag variant="white" outlined key={item}>
+                      {n(`access${capitalize(item)}`)}
+                    </Tag>
+                  }
+                />
               ))}
             </Inline>
           </GridColumn>

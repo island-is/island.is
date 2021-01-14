@@ -26,7 +26,13 @@ import * as styles from './OpenApiView.treat'
 export interface OpenApiViewProps {
   service: ApiService
   strings: GetNamespaceQuery['getNamespace']
-  onSelectChange?: (selected: XroadInfo) => void
+
+  // Fires first time the component loads and
+  // then, on every version selectChange.
+  onSelected?: (selected: XroadInfo) => void
+
+  // Fires after the whole OpenApi has been loaded and converted to object.
+  onDocumentLoaded?: (documentation: OpenApi) => void
 }
 
 type SelectOption = {
@@ -37,7 +43,8 @@ type SelectOption = {
 export const OpenApiView = ({
   service,
   strings,
-  onSelectChange,
+  onSelected: onSelected,
+  onDocumentLoaded,
 }: OpenApiViewProps) => {
   const n = useNamespace(strings)
 
@@ -91,8 +98,8 @@ export const OpenApiView = ({
     const input = selectOptionValueToGetOpenApiInput(option)
     setOpenApiInput(input)
 
-    if (onSelectChange) {
-      onSelectChange(input)
+    if (onSelected) {
+      onSelected(input)
     }
   }
 
@@ -107,10 +114,20 @@ export const OpenApiView = ({
   })
 
   useEffect(() => {
-    const onCompleted = (data) => {
-      const converted = YamlParser.safeLoad(data.getOpenApi.spec)
+    if (onSelected) {
+      onSelected(selectOptionValueToGetOpenApiInput(selectedOption))
+    }
+  }, [])
 
-      setDocumentation(converted as OpenApi)
+  useEffect(() => {
+    const onCompleted = (data) => {
+      const converted = YamlParser.safeLoad(data.getOpenApi.spec) as OpenApi
+
+      setDocumentation(converted)
+      
+      if (onDocumentLoaded) {
+        onDocumentLoaded(converted)
+      }
     }
     if (onCompleted) {
       if (onCompleted && !loading && !error) {
