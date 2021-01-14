@@ -8,6 +8,8 @@ import {
 } from '@island.is/application/core'
 import * as z from 'zod'
 
+import { API_ACTIONS } from '../shared'
+
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 
 type Events =
@@ -15,6 +17,8 @@ type Events =
   | { type: 'REJECT' }
   | { type: 'SUBMIT' }
   | { type: 'ABORT' }
+  | { type: 'SUCCESS' }
+  | { type: 'FAILURE' }
 
 enum Roles {
   APPLICANT = 'applicant',
@@ -75,13 +79,34 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
+            target: 'doStuffBeforeHeadingIntoReview',
+          },
+        },
+      },
+      doStuffBeforeHeadingIntoReview: {
+        meta: {
+          name: 'Doing stuff',
+          onEntry: {
+            apiAction: API_ACTIONS.doStuff,
+            onDoneEvent: 'SUCCESS',
+            onErrorEvent: 'REJECT',
+          },
+        },
+        on: {
+          SUCCESS: {
             target: 'inReview',
+          },
+          FAILURE: {
+            target: 'draft',
           },
         },
       },
       inReview: {
         meta: {
           name: 'In Review',
+          onEntry: {
+            apiAction: API_ACTIONS.performSomeAPIAction,
+          },
           progress: 0.66,
           roles: [
             {

@@ -30,6 +30,28 @@ const TEMPLATE_API_ACTIONS: ApiTemplateUtilActions = {
     type: 'assignThroughEmail',
     generateTemplate: generateAssignReviewerTemplate,
   },
+  sendApplication: {
+    type: 'callAPI',
+    // TODO: replace with correct API url
+    url: 'http://localhost:8080/test',
+    generateRequestOptions: (application, authorization) => ({
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        auth: authorization,
+      },
+      body: JSON.stringify({
+        query: `
+          mutation ExampleCreateApplication(answers: ${JSON.stringify(
+            application.answers,
+          )}, applicant: ${application.applicant}) {
+            success
+          }
+        `,
+      }),
+    }),
+  },
 }
 
 type Events =
@@ -245,6 +267,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
+        invoke: {
+          src: {
+            type: 'apiTemplateUtils',
+            action: TEMPLATE_API_ACTIONS.sendApplication,
+          },
+        },
         meta: {
           name: 'Vinnumálastofnun Approval',
           progress: 0.75,

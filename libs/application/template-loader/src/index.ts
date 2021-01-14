@@ -19,6 +19,8 @@ type TemplateLibraryModule = {
   default: unknown
   getDataProviders?: () => Promise<Record<string, new () => BasicDataProvider>>
   getFields?: () => Promise<UIFields>
+  // TODO generic APIAction type
+  getAPIActions?: () => Promise<any>
 }
 const loadedTemplateLibs: Record<string, TemplateLibraryModule> = {}
 
@@ -85,3 +87,22 @@ export async function getApplicationStateInformation(
   const helper = new ApplicationTemplateHelper(application, template)
   return helper.getApplicationStateInformation() || null
 }
+
+// TODO return generic APIAction type
+export async function getApplicationAPIActions(
+  templateId: ApplicationTypes,
+): Promise<any> {
+  const templateLib = await loadTemplateLib(templateId)
+  if (templateLib.getAPIActions) {
+    const apiActionModule = await templateLib.getAPIActions()
+
+    if (apiActionModule.default) {
+      return apiActionModule.default
+    }
+  }
+  return Promise.resolve({})
+}
+
+// Object [Module] {
+//   default: { performSomeAPIAction: [Function: performSomeAPIAction] }
+// }

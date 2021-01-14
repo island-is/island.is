@@ -41,6 +41,7 @@ import {
 import {
   getApplicationDataProviders,
   getApplicationTemplateByTypeId,
+  getApplicationAPIActions,
 } from '@island.is/application/template-loader'
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
@@ -75,6 +76,8 @@ import { verifyToken } from './utils/tokenUtils'
 interface DecodedToken {
   applicationId: string
 }
+
+type ValueType<T> = T extends Promise<infer U> ? U : T
 
 @ApiTags('applications')
 @ApiHeader({
@@ -375,9 +378,8 @@ export class ApplicationController {
     @NationalId() nationalId: string,
     @Req() req: Request,
   ): Promise<ApplicationResponseDto> {
-    const template = await getApplicationTemplateByTypeId(
-      existingApplication.typeId as ApplicationTypes,
-    )
+    const templateId = existingApplication.typeId as ApplicationTypes
+    const template = await getApplicationTemplateByTypeId(templateId)
     // TODO
     if (template === null) {
       throw new BadRequestException(
@@ -408,8 +410,10 @@ export class ApplicationController {
       answers: mergedAnswers,
     }
 
-    const helper = new ApplicationTemplateHelper(mergedApplication, template)
+    const templateAPIActions = await getApplicationAPIActions(templateId)
     const headers = (req.headers as unknown) as { authorization: string }
+
+    const helper = new ApplicationTemplateHelper(mergedApplication, template)
 
     const apiTemplateUtils = new ApplicationAPITemplateUtils(
       mergedApplication,
@@ -421,8 +425,44 @@ export class ApplicationController {
       },
     )
 
-    const [hasChanged, newState, newApplication] = helper.changeState(
+    const [hasChanged, newState, updatedApplication] = await this.changeState(
+      mergedApplication,
+      template,
+      templateAPIActions,
       updateApplicationStateDto.event,
+      headers.authorization,
+    )
+
+    console.log('Submit done changing state, ended up in:', newState)
+
+    // TODO: should not have to specificially check for updatedApplication
+    // because of return type on this.changeState
+    if (hasChanged === true && updatedApplication) {
+      return updatedApplication
+    }
+
+    return existingApplication
+  }
+
+  async changeState(
+    application: BaseApplication,
+    template: ValueType<ReturnType<typeof getApplicationTemplateByTypeId>>,
+    // TODO:
+    templateAPIActions: any,
+    event: string,
+    authorization?: string,
+  ): Promise<[false] | [true, string, BaseApplication]> {
+    const helper = new ApplicationTemplateHelper(application, template)
+
+    const apiTemplateUtils = new ApplicationAPITemplateUtils(application, {
+      jwtSecret: environment.auth.jwtSecret,
+      emailService: this.emailService,
+      clientLocationOrigin: environment.clientLocationOrigin,
+      authorization: authorization || '',
+    })
+
+    const [hasChanged, newState, newApplication] = helper.changeState(
+      event,
       apiTemplateUtils,
     )
 
@@ -430,16 +470,47 @@ export class ApplicationController {
       const {
         updatedApplication,
       } = await this.applicationService.updateApplicationState(
-        existingApplication.id,
+        application.id,
         newState, // TODO maybe ban more complicated states....
         newApplication.answers,
         newApplication.assignees,
       )
 
-      return updatedApplication
+      const newStateOnEntry = helper.getStateOnEntry(newState)
+
+      if (newStateOnEntry !== null) {
+        const { apiAction, onDoneEvent, onErrorEvent } = newStateOnEntry
+
+        if (templateAPIActions && templateAPIActions[apiAction]) {
+          try {
+            await templateAPIActions[apiAction]()
+            if (onDoneEvent) {
+              return this.changeState(
+                updatedApplication as BaseApplication,
+                template,
+                templateAPIActions,
+                onDoneEvent,
+                authorization,
+              )
+            }
+          } catch (e) {
+            if (onErrorEvent) {
+              return this.changeState(
+                updatedApplication as BaseApplication,
+                template,
+                templateAPIActions,
+                onErrorEvent,
+                authorization,
+              )
+            }
+          }
+        }
+      }
+
+      return [true, newState, updatedApplication as BaseApplication]
     }
 
-    return existingApplication
+    return [false]
   }
 
   @Put('applications/:id/attachments')

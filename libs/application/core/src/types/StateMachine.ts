@@ -48,6 +48,14 @@ export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
   name: string
   progress?: number
   roles?: RoleInState<T>[]
+  onEntry?: {
+    // Name of the action that will be run on the API
+    // these actions are exported from template source as:
+    // export const getAPIActions = () => import('./apiActions/')
+    apiAction: string
+    onDoneEvent?: T[keyof T]
+    onErrorEvent?: T[keyof T]
+  }
 }
 
 export interface ApplicationStateSchema<T extends EventObject = AnyEventObject>

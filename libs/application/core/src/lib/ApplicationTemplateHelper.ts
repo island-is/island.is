@@ -67,9 +67,15 @@ export class ApplicationTemplateHelper<
     )
   }
 
+  getStateOnEntry(stateKey: string = this.application.state): any | null {
+    return (
+      this.template.stateMachineConfig.states[stateKey]?.meta?.onEntry ?? null
+    )
+  }
+
   getApplicationStateInformation(
     stateKey: string = this.application.state,
-  ): ApplicationStateMeta | undefined {
+  ): ApplicationStateMeta<TEvents> | undefined {
     return this.template.stateMachineConfig.states[stateKey]?.meta
   }
 
