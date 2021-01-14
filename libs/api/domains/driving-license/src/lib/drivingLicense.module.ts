@@ -1,11 +1,12 @@
 import { Module, DynamicModule } from '@nestjs/common'
 
-import { DrivingLicenseResolver } from './graphql'
+import { MainResolver } from './graphql'
 import { DrivingLicenseService } from './drivingLicense.service'
 import { DrivingLicenseApi } from './client'
 
 export interface Config {
   baseApiUrl: string
+  secret: string
 }
 
 @Module({})
@@ -14,11 +15,12 @@ export class DrivingLicenseModule {
     return {
       module: DrivingLicenseModule,
       providers: [
-        DrivingLicenseResolver,
+        MainResolver,
         DrivingLicenseService,
         {
           provide: DrivingLicenseApi,
-          useFactory: async () => new DrivingLicenseApi(config.baseApiUrl),
+          useFactory: async () =>
+            new DrivingLicenseApi(config.baseApiUrl, config.secret),
         },
       ],
       exports: [],

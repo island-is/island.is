@@ -55,6 +55,7 @@ import {
   PricingCategory,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const { publicRuntimeConfig } = getConfig()
 const LIMIT = 20
@@ -85,6 +86,8 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   const sn = useNamespace(staticContent)
   const fn = useNamespace(filterContent)
   const nn = useNamespace(navigationLinks)
+
+  const { linkResolver } = useLinkResolver()
 
   const onLoadMore = () => {
     if (data?.getApiCatalogue.pageInfo?.nextCursor === null) {
@@ -211,16 +214,10 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
       active: true,
       href: nn('linkServices'),
       title: nn('linkServicesText'),
-      items: [
-        {
-          active: true,
-          title: nn('linkServiceListText'),
-        },
-        {
-          href: nn('linkDesignGuide'),
-          title: nn('linkDesignGuideText'),
-        },
-      ],
+    },
+    {
+      href: nn('linkDesignGuide'),
+      title: nn('linkDesignGuideText'),
     },
     {
       href: nn('linkIslandUI'),
@@ -247,8 +244,8 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
               items={navigationItems}
               title={nn('linkThrounText')}
               titleLink={{
-                active: true,
                 href: nn('linkThroun'),
+                active: false,
               }}
             />
           }
@@ -283,7 +280,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                       items={navigationItems}
                       title={nn('linkThrounText')}
                       titleLink={{
-                        active: true,
                         href: nn('linkThroun'),
                       }}
                     />
@@ -301,10 +297,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                       {
                         title: nn('linkThrounText'),
                         href: nn('linkThroun'),
-                      },
-                      {
-                        title: nn('linkServicesText'),
-                        href: nn('linkServices'),
                       },
                     ]}
                   />
@@ -412,6 +404,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
               {data?.getApiCatalogue?.services.length > 0 && (
                 <GridContainer>
                   <ServiceList
+                    baseUrl={linkResolver('webservicespage').as + '/'}
                     services={data?.getApiCatalogue?.services}
                     tagDisplayNames={filterContent}
                   />
@@ -460,7 +453,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
         variables: {
           input: {
             namespace: 'ApiCatalog',
-            lang: locale,
+            lang: locale as ContentLanguage,
           },
         },
       })
@@ -471,7 +464,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
         variables: {
           input: {
             namespace: 'ApiCatalogFilter',
-            lang: locale,
+            lang: locale as ContentLanguage,
           },
         },
       })
@@ -482,7 +475,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
         variables: {
           input: {
             namespace: 'ApiCatalogueLinks',
-            lang: locale,
+            lang: locale as ContentLanguage,
           },
         },
       })

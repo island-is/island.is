@@ -1,5 +1,8 @@
 import { findLastGoodBuild, WorkflowQueries } from './detection'
-import { ActionsListWorkflowRunsForRepoResponseData } from '@octokit/types'
+import {
+  ActionsListWorkflowRunsForRepoResponseData,
+  ActionsListJobsForWorkflowRunResponseData,
+} from '@octokit/types'
 import { Substitute, Arg } from '@fluffy-spoon/substitute'
 
 describe('Discovering last successful build', () => {
@@ -10,6 +13,11 @@ describe('Discovering last successful build', () => {
       .resolves(
         (workflowsBranch as unknown) as ActionsListWorkflowRunsForRepoResponseData,
       )
+    workflowQueried
+      .getJobs(
+        'GET https://api.github.com/repos/andesorg/actions-tests/actions/runs/136263499/jobs',
+      )
+      .resolves(workflowsBranchJobsCompleted)
     const lastGoodBuild = await findLastGoodBuild(
       shasBranch,
       'new-br',
@@ -21,6 +29,26 @@ describe('Discovering last successful build', () => {
       branch: 'new-br',
       run_number: 43,
     })
+  })
+  it('should not find it on the same branch if success was skipped', async () => {
+    const workflowQueried = Substitute.for<WorkflowQueries>()
+    workflowQueried
+      .getData('new-br')
+      .resolves(
+        (workflowsBranch as unknown) as ActionsListWorkflowRunsForRepoResponseData,
+      )
+    workflowQueried
+      .getJobs(
+        'GET https://api.github.com/repos/andesorg/actions-tests/actions/runs/136263499/jobs',
+      )
+      .resolves(workflowsBranchJobsSkipped)
+    const lastGoodBuild = await findLastGoodBuild(
+      shasBranch,
+      'new-br',
+      'baseBranch',
+      workflowQueried,
+    )
+    expect(lastGoodBuild).toStrictEqual({})
   })
 
   it('should find it on baseBranch if branch has no successful runs', async () => {
@@ -112,4 +140,6 @@ const shasBranch = [
 
 import * as workflowsBase from './baseWorkflows.json'
 import * as workflowsBranch from './branchWorkflows.json'
+import * as workflowsBranchJobsCompleted from './branchWorkflowJobsCompleted.json'
+import * as workflowsBranchJobsSkipped from './branchWorkflowJobsSkipped.json'
 import * as workflowsMain from './mainWorkflows.json'

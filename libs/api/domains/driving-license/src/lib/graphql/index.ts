@@ -1,1 +1,1 @@
-export { DrivingLicenseResolver } from './drivingLicense.resolver'
+export { MainResolver } from './main.resolver'

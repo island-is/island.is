@@ -40,6 +40,24 @@ export const PageLayout: FC<PageProps> = ({
 }) => {
   const { user } = useContext(UserContext)
 
+  const caseResult = () => {
+    if (rejectedCase) {
+      return 'Kröfu hafnað'
+    }
+
+    if (decision === CaseDecision.ACCEPTING) {
+      return isCustodyEndDateInThePast
+        ? 'Gæsluvarðhaldi lokið'
+        : 'Gæsluvarðhald virkt'
+    }
+
+    if (decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) {
+      return isCustodyEndDateInThePast ? 'Farbanni lokið' : 'Farbann virkt'
+    }
+
+    return 'Niðurstaða'
+  }
+
   return children ? (
     <Box
       paddingY={[3, 3, 3, 6]}
@@ -81,10 +99,10 @@ export const PageLayout: FC<PageProps> = ({
                     name: 'Krafa um gæsluvarðhald',
                     children: [
                       { type: 'SUB_SECTION', name: 'Sakborningur' },
-                      { type: 'SUB_SECTION', name: 'Dómkröfur' },
+                      { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
                       {
                         type: 'SUB_SECTION',
-                        name: 'Lagagrundvöllur og takmarkanir',
+                        name: 'Lagagrundvöllur og dómkröfur',
                       },
                       {
                         type: 'SUB_SECTION',
@@ -108,17 +126,7 @@ export const PageLayout: FC<PageProps> = ({
                     ],
                   },
                   {
-                    name: rejectedCase
-                      ? 'Kröfu hafnað'
-                      : isCustodyEndDateInThePast
-                      ? decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                        ? 'Farbanni lokið'
-                        : 'Gæsluvarðhaldi lokið'
-                      : decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                      ? 'Farbann virkt'
-                      : 'Gæsluvarðhald virkt',
+                    name: caseResult(),
                   },
                 ]}
                 formName="Gæsluvarðhald"
