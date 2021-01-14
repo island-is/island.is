@@ -36,12 +36,13 @@ import {
   FormValue,
   ApplicationTemplateHelper,
   ExternalData,
+  ApplicationTemplateAPIModule,
 } from '@island.is/application/core'
 // import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-nest-tools'
 import {
   getApplicationDataProviders,
   getApplicationTemplateByTypeId,
-  getApplicationAPIActions,
+  getApplicationAPIModule,
 } from '@island.is/application/template-loader'
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
@@ -217,9 +218,8 @@ export class ApplicationController {
       throw new NotFoundException('No application found')
     }
 
-    const template = await getApplicationTemplateByTypeId(
-      existingApplication.typeId as ApplicationTypes,
-    )
+    const templateId = existingApplication.typeId as ApplicationTypes
+    const template = await getApplicationTemplateByTypeId(templateId)
     // TODO
     if (template === null) {
       throw new BadRequestException(
@@ -234,34 +234,18 @@ export class ApplicationController {
       assignees,
     }
 
-    const helper = new ApplicationTemplateHelper(mergedApplication, template)
+    const templateAPIModule = await getApplicationAPIModule(templateId)
     const headers = (req.headers as unknown) as { authorization: string }
 
-    const apiTemplateUtils = new ApplicationAPITemplateUtils(
+    const [hasChanged, newState, updatedApplication] = await this.changeState(
       mergedApplication,
-      {
-        jwtSecret: environment.auth.jwtSecret,
-        emailService: this.emailService,
-        clientLocationOrigin: environment.clientLocationOrigin,
-        authorization: headers.authorization,
-      },
-    )
-
-    const [hasChanged, newState, newApplication] = helper.changeState(
+      template,
+      templateAPIModule,
       DefaultEvents.ASSIGN,
-      apiTemplateUtils,
+      headers.authorization,
     )
 
-    if (hasChanged) {
-      const {
-        updatedApplication,
-      } = await this.applicationService.updateApplicationState(
-        existingApplication.id,
-        newState, // TODO maybe ban more complicated states....
-        newApplication.answers,
-        newApplication.assignees,
-      )
-
+    if (hasChanged && updatedApplication) {
       return updatedApplication
     }
 
@@ -410,25 +394,13 @@ export class ApplicationController {
       answers: mergedAnswers,
     }
 
-    const templateAPIActions = await getApplicationAPIActions(templateId)
+    const templateAPIModule = await getApplicationAPIModule(templateId)
     const headers = (req.headers as unknown) as { authorization: string }
-
-    const helper = new ApplicationTemplateHelper(mergedApplication, template)
-
-    const apiTemplateUtils = new ApplicationAPITemplateUtils(
-      mergedApplication,
-      {
-        jwtSecret: environment.auth.jwtSecret,
-        emailService: this.emailService,
-        clientLocationOrigin: environment.clientLocationOrigin,
-        authorization: headers.authorization,
-      },
-    )
 
     const [hasChanged, newState, updatedApplication] = await this.changeState(
       mergedApplication,
       template,
-      templateAPIActions,
+      templateAPIModule,
       updateApplicationStateDto.event,
       headers.authorization,
     )
@@ -447,8 +419,7 @@ export class ApplicationController {
   async changeState(
     application: BaseApplication,
     template: ValueType<ReturnType<typeof getApplicationTemplateByTypeId>>,
-    // TODO:
-    templateAPIActions: any,
+    templateAPIModule: ApplicationTemplateAPIModule,
     event: string,
     authorization?: string,
   ): Promise<[false] | [true, string, BaseApplication]> {
@@ -478,18 +449,27 @@ export class ApplicationController {
 
       const newStateOnEntry = helper.getStateOnEntry(newState)
 
-      if (newStateOnEntry !== null) {
-        const { apiAction, onDoneEvent, onErrorEvent } = newStateOnEntry
+      console.log('new state on entry:')
+      console.log(newStateOnEntry)
 
-        if (templateAPIActions && templateAPIActions[apiAction]) {
+      if (newStateOnEntry !== null) {
+        const {
+          apiModuleAction,
+          onSuccessEvent,
+          onErrorEvent,
+        } = newStateOnEntry
+
+        if (templateAPIModule && templateAPIModule[apiModuleAction]) {
           try {
-            await templateAPIActions[apiAction]()
-            if (onDoneEvent) {
+            await templateAPIModule[apiModuleAction](
+              updatedApplication as BaseApplication,
+            )
+            if (onSuccessEvent) {
               return this.changeState(
                 updatedApplication as BaseApplication,
                 template,
-                templateAPIActions,
-                onDoneEvent,
+                templateAPIModule,
+                onSuccessEvent,
                 authorization,
               )
             }
@@ -498,7 +478,7 @@ export class ApplicationController {
               return this.changeState(
                 updatedApplication as BaseApplication,
                 template,
-                templateAPIActions,
+                templateAPIModule,
                 onErrorEvent,
                 authorization,
               )

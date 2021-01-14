@@ -20,7 +20,7 @@ type TemplateLibraryModule = {
   getDataProviders?: () => Promise<Record<string, new () => BasicDataProvider>>
   getFields?: () => Promise<UIFields>
   // TODO generic APIAction type
-  getAPIActions?: () => Promise<any>
+  getAPIModule?: () => Promise<any>
 }
 const loadedTemplateLibs: Record<string, TemplateLibraryModule> = {}
 
@@ -89,12 +89,12 @@ export async function getApplicationStateInformation(
 }
 
 // TODO return generic APIAction type
-export async function getApplicationAPIActions(
+export async function getApplicationAPIModule(
   templateId: ApplicationTypes,
 ): Promise<any> {
   const templateLib = await loadTemplateLib(templateId)
-  if (templateLib.getAPIActions) {
-    const apiActionModule = await templateLib.getAPIActions()
+  if (templateLib.getAPIModule) {
+    const apiActionModule = await templateLib.getAPIModule()
 
     if (apiActionModule.default) {
       return apiActionModule.default

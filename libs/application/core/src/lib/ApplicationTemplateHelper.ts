@@ -7,8 +7,10 @@ import {
   InvokeSourceDefinition,
   ActionTypes,
 } from 'xstate'
-import { Application, ExternalData, FormValue } from '../types/Application'
 import merge from 'lodash/merge'
+
+import { ApplicationStateMetaOnEntry } from '@island.is/application/core'
+import { Application, ExternalData, FormValue } from '../types/Application'
 
 import {
   ApplicationContext,
@@ -67,7 +69,9 @@ export class ApplicationTemplateHelper<
     )
   }
 
-  getStateOnEntry(stateKey: string = this.application.state): any | null {
+  getStateOnEntry(
+    stateKey: string = this.application.state,
+  ): ApplicationStateMetaOnEntry<TEvents> | null {
     return (
       this.template.stateMachineConfig.states[stateKey]?.meta?.onEntry ?? null
     )

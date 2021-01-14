@@ -8,7 +8,7 @@ import {
 } from '@island.is/application/core'
 import * as z from 'zod'
 
-import { API_ACTIONS } from '../shared'
+import { API_MODULE } from '../shared'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 
@@ -79,16 +79,16 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: 'doStuffBeforeHeadingIntoReview',
+            target: 'doImportantValidating',
           },
         },
       },
-      doStuffBeforeHeadingIntoReview: {
+      doImportantValidating: {
         meta: {
           name: 'Doing stuff',
           onEntry: {
-            apiAction: API_ACTIONS.doStuff,
-            onDoneEvent: 'SUCCESS',
+            apiModuleAction: API_MODULE.validateSomethingImportant,
+            onSuccessEvent: 'SUCCESS',
             onErrorEvent: 'REJECT',
           },
         },
@@ -96,7 +96,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           SUCCESS: {
             target: 'inReview',
           },
-          FAILURE: {
+          REJECT: {
             target: 'draft',
           },
         },
@@ -105,7 +105,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'In Review',
           onEntry: {
-            apiAction: API_ACTIONS.performSomeAPIAction,
+            apiModuleAction: API_MODULE.performSomeAPIAction,
           },
           progress: 0.66,
           roles: [
@@ -140,6 +140,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       approved: {
         meta: {
           name: 'Approved',
+          onEntry: {
+            apiModuleAction: API_MODULE.sendApplication,
+          },
           progress: 1,
           roles: [
             {
