@@ -17,14 +17,30 @@ import {
 
 import { DrivingLicenseService } from '../drivingLicense.service'
 import { DrivingLicense } from './drivingLicense.model'
+import { DrivingLicenseType } from './drivingLicenseType.model'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
-@Resolver(() => DrivingLicense)
-export class DrivingLicenseResolver {
+@Resolver()
+export class MainResolver {
   constructor(private readonly drivingLicenseService: DrivingLicenseService) {}
 
   @Query(() => DrivingLicense)
   drivingLicense(@CurrentUser() user: User) {
     return this.drivingLicenseService.getDrivingLicense(user.nationalId)
+  }
+
+  @Query(() => [DrivingLicenseType])
+  drivingLicenseDeprivationTypes() {
+    return this.drivingLicenseService.getDeprivationTypes()
+  }
+
+  @Query(() => [DrivingLicenseType])
+  drivingLicenseEntitlementTypes() {
+    return this.drivingLicenseService.getEntitlementTypes()
+  }
+
+  @Query(() => [DrivingLicenseType])
+  drivingLicenseRemarkTypes() {
+    return this.drivingLicenseService.getRemarkTypes()
   }
 }

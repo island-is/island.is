@@ -185,6 +185,13 @@ export const StepTwo: React.FC = () => {
       },
     ]
 
+    if (workingCase?.arrestDate) {
+      requiredFields.push({
+        value: arrestTime || '',
+        validations: ['empty', 'time-format'],
+      })
+    }
+
     if (workingCase) {
       setIsStepIllegal(isNextDisabled(requiredFields))
     }
@@ -366,7 +373,10 @@ export const StepTwo: React.FC = () => {
                     label="Tímasetning (kk:mm)"
                     placeholder="Veldu tíma"
                     errorMessage={arrestTimeErrorMessage}
-                    hasError={arrestTimeErrorMessage !== ''}
+                    hasError={
+                      arrestTimeErrorMessage !== '' &&
+                      workingCase.arrestDate !== null
+                    }
                     defaultValue={arrestTime}
                   />
                 </TimeInputField>

@@ -26,7 +26,7 @@ export const ServiceInformation = ({
   const n = useNamespace(strings)
 
   return (
-    <Box>
+    <Box paddingTop="gutter">
       <Inline space={1}>
         <Text variant="h1" as="h1">
           {service.name}

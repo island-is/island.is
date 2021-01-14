@@ -160,6 +160,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
                 options={[
                   { value: 'kk', label: 'kk' },
                   { value: 'kvk', label: 'kvk' },
+                  { value: 'hvk', label: 'hvk' },
                 ]}
               />
             </Stack>
