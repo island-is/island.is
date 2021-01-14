@@ -37,7 +37,7 @@ import * as styles from './Overview.treat'
 import DocumentLine from '../../components/DocumentLine/DocumentLine'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
-const pageSize = 6
+const pageSize = 15
 const defaultStartDate = new Date('2000-01-01')
 const defaultEndDate = startOfTomorrow()
 
@@ -168,8 +168,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
           id: 'sp.documents:found',
           defaultMessage: 'skjöl fundust',
         })
-
-  // TODO: Pages should be 10
 
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
