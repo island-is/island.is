@@ -330,6 +330,7 @@ describe('Step helper', () => {
         decision: CaseDecision.REJECTING,
         accusedName: 'Mikki Refur',
         accusedNationalId: '1212121299',
+        accusedGender: CaseGender.MALE,
       }
 
       // Act
@@ -341,7 +342,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Kröfu um gæsluvarðhald á hendur Mikki Refur kt. 121212-1299, er hafnað.'
+            'Kröfu um að kærði, Mikki Refur, kt. 121212-1299, sæti gæsluvarðhaldi er hafnað.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(

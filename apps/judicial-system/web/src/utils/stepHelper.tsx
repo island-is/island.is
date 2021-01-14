@@ -47,16 +47,18 @@ export const constructConclusion = (workingCase: Case) => {
   if (workingCase.decision === CaseDecision.REJECTING) {
     return (
       <Text as="span" variant="intro">
-        Kröfu um gæsluvarðhald á hendur
+        {`Kröfu um að ${formatAccusedByGender(
+          workingCase.accusedGender || CaseGender.OTHER,
+        )}, `}
         <Text
           as="span"
           variant="intro"
           color="blue400"
           fontWeight="semiBold"
-        >{` ${workingCase.accusedName} kt. ${formatNationalId(
+        >{`${workingCase.accusedName}, kt. ${formatNationalId(
           workingCase.accusedNationalId,
         )}`}</Text>
-        , er hafnað.
+        , sæti gæsluvarðhaldi er hafnað.
       </Text>
     )
   } else if (workingCase.decision === CaseDecision.ACCEPTING) {
