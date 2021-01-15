@@ -10,7 +10,32 @@ import {
   buildMultiField,
 } from '@island.is/application/core'
 
-import { Parent } from '../dataProviders/APIDataTypes'
+import { Parent, RegisteredChildren } from '../dataProviders/APIDataTypes'
+
+// This is a temporary handler until we create a custom component for this
+const handleDomicileChangeInfo = (data: {
+  parent: Parent
+  children: RegisteredChildren[]
+  selectedChildren: string[]
+}) => {
+  const { parent, children, selectedChildren } = data
+  const filterChildren = children.filter((child) =>
+    selectedChildren.includes(child.id),
+  )
+  const childrenCurrentHome = filterChildren.map((child) => {
+    const address = `${child.address}, ${child.postalCode} ${child.city}`
+    return `${child.name}<br />${address}<br />`
+  })
+
+  const childrenFutureHome = filterChildren.map((child) => {
+    const futureDomicile = `${parent.address}, ${parent.postalCode} ${parent.city}`
+    return `${child.name}<br />${futureDomicile}<br />`
+  })
+
+  return `<strong>Núverandi lögheimili:</strong><br />${childrenCurrentHome.join(
+    '',
+  )}<br /><strong>Nýtt lögheimili:</strong><br />${childrenFutureHome.join('')}`
+}
 
 export const ChildrenDomicileTransferForm: Form = buildForm({
   id: 'ChildrenDomicileTransferFormDraft',
@@ -70,8 +95,7 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
             const parent = (application.externalData.parentNationalRegistry
               ?.data as {
               parent?: object
-            })?.parent as Parent
-
+            }) as Parent
             return `Hitt foreldrið er ${parent.name} (${parent.ssn})`
           },
           children: [
@@ -80,13 +104,10 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
               description:
                 'Til að láta hitt foreldrið vita þurfum við að fá netfang og símanúmer viðkomandi.',
               title: 'Netfang',
-              variant: 'email',
             }),
             buildTextField({
               id: 'phoneNumber',
               title: 'Símanúmer',
-              variant: 'tel',
-              format: '###-####',
             }),
           ],
         }),
@@ -96,9 +117,41 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
       id: 'changeDomicile',
       title: 'Breyta lögheimili',
       children: [
-        buildTextField({
-          id: 'children',
-          title: 'children',
+        buildMultiField({
+          id: 'informationAboutDomicileChange',
+          title: 'Hvert á að flytja lögheimilið?',
+          description:
+            'Sem foreldrar með sameiginlega forsjá getið þið óskað eftir því að flytja lögheimili barns frá foreldri A til foreldri B eða öfugt. <br /><br /> Vinsamlegast staðfestu að lögheimili barns sé að flytjast til hins foreldris eins og skráð er hér fyrir neðan.',
+          children: [
+            buildCheckboxField({
+              id: 'confirmInformationAboutDomicileChange',
+              title: 'Breytingar á lögheimili',
+              description: (application) => {
+                const parent = (application.externalData.parentNationalRegistry
+                  ?.data as {
+                  parent?: object
+                }) as Parent
+                const children = (application.externalData
+                  .childrenNationalRegistry?.data as {
+                  registeredChildren?: object
+                }) as RegisteredChildren[]
+                const selectedChildrenIds = application.answers
+                  .selectChild as string[]
+                return handleDomicileChangeInfo({
+                  parent,
+                  children,
+                  selectedChildren: selectedChildrenIds,
+                })
+              },
+              large: true,
+              options: [
+                {
+                  value: 'confirmDomicileChangeInfo',
+                  label: 'Ég samþykki breytingu',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),
@@ -123,12 +176,28 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'applicationEffect',
+      id: 'applicationTerms',
       title: 'Áhrif umsóknar',
       children: [
-        buildTextField({
-          id: 'children',
-          title: 'children',
+        buildMultiField({
+          id: 'applicationTermsTitle',
+          title: 'Hvaða áhrif hefur breytingin?',
+          description:
+            'Hér væri texti á mannamáli sem útskýrir hvaða áhrif þessi breyting hefur.',
+          children: [
+            buildCheckboxField({
+              id: 'approveTerms',
+              title:
+                'Litið er svo á að barn hafi fasta búsetu hjá því foreldri sem það á lögheimili hjá. Barn á rétt til að umgangast með reglubundnum hætti það foreldri sem það býr ekki hjá og bera foreldrarnir sameiginlega þá skyldu að tryggja rétt barns til umgengni.',
+              large: true,
+              options: [
+                {
+                  value: 'approveTerms',
+                  label: 'Ég skil hvaða áhrif lögheimilisbreyting hefur',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),
