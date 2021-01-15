@@ -29,7 +29,6 @@ export class IndexingService {
       elasticIndex = getElasticsearchIndex(options.locale),
     } = options
 
-    let allImportedIds = [] // se we can delete orphans after full sync
     let didImportAll = true
     const importPromises = this.importers.map(async (importer) => {
       logger.info('Starting importer', {
@@ -81,7 +80,10 @@ export class IndexingService {
       const response = await this.elasticService.deleteAllDocumentsNotVeryRecentlyUpdated(
         elasticIndex,
       )
-      logger.info('Removed stale documents', { count: response.body.deleted, index: elasticIndex })
+      logger.info('Removed stale documents', {
+        count: response.body.deleted,
+        index: elasticIndex,
+      })
     }
 
     logger.info('Indexing service finished sync', { index: elasticIndex })
