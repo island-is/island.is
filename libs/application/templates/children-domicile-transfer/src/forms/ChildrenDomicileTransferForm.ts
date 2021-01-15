@@ -96,8 +96,6 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
               ?.data as {
               parent?: object
             })?.parent as Parent
-            console.log('parent', parent)
-
             return `Hitt foreldrið er ${parent.name} (${parent.ssn})`
           },
           children: [
