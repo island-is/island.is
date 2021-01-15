@@ -15,6 +15,7 @@ export enum AuditedAction {
   REQUEST_SIGNATURE = 'REQUEST_SIGNATURE',
   CONFIRM_SIGNATURE = 'CONFIRM_SIGNATURE',
   SEND_NOTIFICATION = 'SEND_NOTIFICATION',
+  EXTEND = 'EXTEND',
 }
 
 export interface AuditTrailOptions {
