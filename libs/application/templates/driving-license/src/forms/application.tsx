@@ -18,8 +18,13 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { NationalRegistryUser, UserProfile } from '@island.is/api/schema'
+import {
+  NationalRegistryUser,
+  DrivingLicenseType,
+  UserProfile,
+} from '@island.is/api/schema'
 import { m } from '../lib/messages'
+import { buildEntitlementOption } from '../utils'
 
 export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
@@ -62,6 +67,12 @@ export const application: Form = buildForm({
               subTitle:
                 'Ég hef fasta búsetu hér á landi eins og hún er skilgreind í VIII. viðauka reglugerðar um ökuskírteini eða tel mig fullnægja skilyrðum um búsetu hér á landi til að fá gefið út ökuskírteini.',
             }),
+            buildDataProviderItem({
+              id: 'entitlementTypes',
+              type: 'EntitlementTypesProvider',
+              title: '',
+              subTitle: '',
+            }),
           ],
         }),
         buildMultiField({
@@ -97,45 +108,42 @@ export const application: Form = buildForm({
                 (type as string[])?.includes('general') ||
                 (type as string[])?.includes('trailer'),
               options: (app) => {
+                const entitlementTypes = app.externalData.entitlementTypes
+                  .data as DrivingLicenseType[]
                 if ((app.answers.type as string[])?.includes('trailer')) {
-                  return [
-                    {
-                      value: 'BE',
-                      label:
-                        '<span><b>BE</b> Fólksbifreið með eftirvagn</span>',
-                    },
-                  ]
+                  return [buildEntitlementOption(entitlementTypes, 'BE')]
                 }
 
-                return [
-                  { value: 'B', label: '<span><b>B</b> Fólksbifreið</span>' },
-                ]
+                return [buildEntitlementOption(entitlementTypes, 'B')]
               },
             }),
             buildCheckboxField({
               id: 'subType',
               title: 'Bifhjólaflokkar',
               condition: ({ type }) => (type as string[])?.includes('bike'),
-              options: [
-                { value: 'A', label: '<span><b>A</b> Bifhjól</span>' },
-                { value: 'A1', label: '<span><b>A1</b> Bifhjól</span>' },
-                {
-                  value: 'A2',
-                  label: m.testing,
-                  tooltip: `<h2>A2 flokkur</h2>
-<br />
-Veitir ökuréttindi til að stjórna bifhjóli:
-<br /><br />
-1. á tveimur hjólum með eða án hliðarvagns, með afl sem er ekki yfir 35 kw, með afl/þyngdarhlutfall sem er ekki yfir 0,2 kw/kg, svo og   bifhjóli sem hefur ekki verið breytt frá því að hafa áður meira en tvöfalt afl.
-<br /><br />
-2. bifhjóli í flokki A1.
-<br /><br />
-3. léttu bifhjóli í flokki AM.
-<br /><br />
-Ökuskírteini fyrir A2 flokk fyrir bifhjólaréttindi geta þeir fengið sem náð hafa 19 ára aldri. Taka þarf bóklegt námskeið fyrir A réttindi og 11 stundir í verklegri kennslu, ath að 5 stundir fást metnar ef viðkomandi aðili hefur fyrir A1 réttindi`,
-                },
-                { value: 'AM', label: '<span><b>AM</b> Létt bifhjól</span>' },
-              ],
+              options: (app) => {
+                const entitlementTypes = app.externalData.entitlementTypes
+                  .data as DrivingLicenseType[]
+                return [
+                  buildEntitlementOption(entitlementTypes, 'A'),
+                  buildEntitlementOption(entitlementTypes, 'A1'),
+                  {
+                    ...buildEntitlementOption(entitlementTypes, 'A2'),
+                    tooltip: `<h2>A2 flokkur</h2>
+  <br />
+  Veitir ökuréttindi til að stjórna bifhjóli:
+  <br /><br />
+  1. á tveimur hjólum með eða án hliðarvagns, með afl sem er ekki yfir 35 kw, með afl/þyngdarhlutfall sem er ekki yfir 0,2 kw/kg, svo og   bifhjóli sem hefur ekki verið breytt frá því að hafa áður meira en tvöfalt afl.
+  <br /><br />
+  2. bifhjóli í flokki A1.
+  <br /><br />
+  3. léttu bifhjóli í flokki AM.
+  <br /><br />
+  Ökuskírteini fyrir A2 flokk fyrir bifhjólaréttindi geta þeir fengið sem náð hafa 19 ára aldri. Taka þarf bóklegt námskeið fyrir A réttindi og 11 stundir í verklegri kennslu, ath að 5 stundir fást metnar ef viðkomandi aðili hefur fyrir A1 réttindi`,
+                  },
+                  buildEntitlementOption(entitlementTypes, 'AM'),
+                ]
+              },
             }),
           ],
         }),
