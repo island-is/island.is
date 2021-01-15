@@ -18,6 +18,7 @@ import {
   QueryGetLifeEventsArgs,
   QueryGetHomepageArgs,
   GetNewsQuery,
+  FrontpageSlider as FrontpageSliderType,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -125,7 +126,7 @@ const Home: Screen<HomeProps> = ({
     <>
       <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
         <FrontpageSlider
-          slides={frontpageSlides}
+          slides={frontpageSlides as FrontpageSliderType[]}
           searchContent={searchContent}
         />
       </Section>
