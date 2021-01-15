@@ -1,0 +1,27 @@
+.ReactModal__Overlay {
+  z-index: 2;
+}
+
+.confirm-modal {
+  z-index: 3;
+
+  p {
+    font-size: 0.95rem;
+
+    span {
+      font-weight: $weight-semi-bold;
+    }
+  }
+
+  &__container__buttons {
+    display: flex;
+
+    .confirm-modal__container__button:last-child {
+      text-align: right;
+    }
+  }
+
+  &__container__button {
+    flex: 1;
+  }
+}

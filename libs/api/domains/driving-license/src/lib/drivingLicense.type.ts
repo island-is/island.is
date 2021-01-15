@@ -15,3 +15,8 @@ export interface DrivingLicenseType {
   id: string
   name: string
 }
+
+export interface PenaltyPointStatus {
+  nationalId: string
+  isPenaltyPointsOk: boolean
+}

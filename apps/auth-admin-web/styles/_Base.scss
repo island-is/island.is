@@ -1,0 +1,340 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: $color-body-bg;
+  box-sizing: border-box;
+  font-family: $font-family-primary;
+  margin: 0;
+}
+
+.document__wrapper {
+  min-height: calc(100vh - 80px);
+  margin: 0 40px 25px 40px;
+}
+
+input,
+select {
+  box-sizing: border-box;
+  background: $color-body-bg;
+  border: 1px solid $color-border;
+  border-radius: 8px;
+
+  &:focus {
+    border-color: $color-link;
+    outline: none;
+  }
+}
+
+input:read-only {
+  background-color: $color-disabled;
+}
+
+input[type='text'],
+input[type='number'],
+select {
+  padding: 30px 16px 10px 20px;
+  height: 60px;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: $color-border;
+  line-height: 28px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+
+input[type='checkbox'] {
+  width: 30px;
+  height: 30px;
+}
+
+input[type='submit'] {
+  @extend button;
+}
+
+button {
+  padding: 10px 0px;
+  min-width: 100px;
+  background: $color-link;
+  border-radius: 8px;
+  font-style: normal;
+  font-weight: $weight-semi-bold;
+  font-size: 18px;
+  line-height: 28px;
+  align-items: center;
+  text-align: center;
+  color: $color-body-bg;
+  border: none;
+  cursor: pointer;
+
+  &:disabled,
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &[class$='cancel'] {
+    background: $color-cancel;
+    color: $color-text-primary;
+  }
+
+  &[class$='save'] {
+    margin-left: auto;
+  }
+
+  &[class$='edit'] {
+    span {
+      visibility: hidden;
+    }
+  }
+
+  &[class$='delete'] {
+    span {
+      visibility: hidden;
+    }
+  }
+
+  &[class$='remove'] {
+    background-color: $color-border;
+    span {
+      display: none;
+    }
+    height: 30px;
+    font-size: 12px;
+    padding: 10px;
+    min-width: 20px;
+    font-weight: $color-border;
+    line-height: 0;
+    background: $color-border;
+    color: $color-text-primary;
+  }
+}
+
+ul {
+  display: inline-block;
+
+  li {
+    display: inline-block;
+    list-style: none;
+    margin: 0 10px 0 0;
+  }
+}
+
+h1 {
+  color: $color-text-secondary;
+  font-size: 40px;
+  font-style: normal;
+  font-weight: $weight-semi-bold;
+  line-height: 44px;
+  letter-spacing: 0em;
+}
+
+h2 {
+  color: $color-text-secondary;
+  font-family: IBM Plex Sans;
+  font-size: 34px;
+  font-style: normal;
+  font-weight: $weight-semi-bold;
+  line-height: 44px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+
+h3 {
+  font-size: 24px;
+  font-style: normal;
+  font-weight: $weight-semi-bold;
+  line-height: 34px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+
+div[class$='container__field'] {
+  display: flex;
+  width: 100%;
+  padding: 8px;
+  align-items: center;
+
+  label {
+    flex-basis: 50%;
+    text-align: right;
+    text-transform: capitalize;
+  }
+
+  input,
+  select {
+    flex-basis: 50%;
+    justify-self: flex-end;
+  }
+}
+
+div[class$='buttons__container'] {
+  display: flex;
+  width: 100%;
+  padding: 12px 8px;
+  align-items: center;
+  margin-top: 24px;
+
+  div[class$='button__container'] {
+    flex: 1;
+    display: flex;
+  }
+}
+
+table {
+  border-spacing: 0;
+  width: 100%;
+  tr {
+    th {
+      padding: 0 9px;
+      height: 48px;
+      background: $color-bg-content;
+      box-shadow: inset 0px -1px 0px $color-border;
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 18px;
+      line-height: 28px;
+      color: $color-text-primary;
+      text-align: left;
+      border: none;
+      margin: 0;
+    }
+    td {
+      padding: 0 9px;
+      height: 48px;
+      background: $color-body-bg;
+      box-shadow: inset 0px -1px 0px $color-border;
+      font-style: normal;
+      font-weight: $color-border;
+      font-size: 18px;
+      line-height: 28px;
+      color: $color-text-primary;
+      text-align: left;
+
+      &[class$='table__button'] {
+        width: 40px;
+      }
+
+      button {
+        height: 30px;
+        font-size: 12px;
+        padding: 10px;
+        min-width: 20px;
+        font-weight: $color-border;
+        line-height: 0;
+        background: $color-border;
+        color: $color-text-primary;
+      }
+    }
+  }
+}
+
+nav[class$='pagination'] {
+  padding: 10px;
+
+  li {
+    display: inline-block;
+    list-style: none;
+    margin-right: 50px;
+    button {
+      font-style: normal;
+      font-weight: $color-border;
+      font-size: 18px;
+      line-height: 28px;
+      color: $color-link;
+      cursor: pointer;
+      background: none;
+      border: none;
+      border-bottom: solid 2px $color-link;
+      border-radius: 0;
+
+      &:disabled {
+        color: $color-disabled;
+        border-bottom: solid 2px $color-disabled;
+      }
+
+      &:focus {
+        outline: 0;
+      }
+    }
+  }
+}
+
+.show {
+  display: block;
+}
+
+.hidden {
+  display: none !important;
+}
+
+a {
+  &[class$='new'] {
+    display: block;
+    padding: 20px 0px;
+    color: $color-link;
+    text-decoration: none;
+    font-size: 1.1rem;
+  }
+
+  &[class$='button__close'] {
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    padding: 3px;
+    font-weight: $weight-semi-bold;
+    font-size: 1rem;
+    top: 1px;
+  }
+}
+
+// Icons
+.icon__new {
+  @extend .fa;
+  @extend .fa-plus;
+  margin-right: 10px;
+}
+
+.icon__info {
+  @extend .fa;
+  @extend .fa-info;
+  margin-right: 10px;
+}
+
+.icon__edit {
+  @extend .fa;
+  @extend .fa-pencil;
+}
+
+.icon__delete {
+  @extend .fa;
+  @extend .fa-trash-o;
+}
+
+// Buttons
+.button__warning {
+  background: $color-error;
+  color: $color-body-bg;
+}
+
+.button__ok {
+  background: $color-ok;
+  color: $color-body-bg;
+}
+
+.overlay-container {
+  position: relative;
+}
+
+footer {
+  height: 50px;
+  background: $color-bg-content;
+  padding: 24px 12px 12px 12px;
+  text-align: center;
+}
+
+.with-details {
+  margin-bottom: 35px;
+}
