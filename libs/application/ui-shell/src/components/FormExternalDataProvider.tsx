@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { ExternalDataProviderScreen } from '../types'
+import { ExternalDataProviderScreen, SetBeforeSubmitCallback } from '../types'
 import {
   Box,
   Checkbox,
@@ -18,6 +18,7 @@ import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
+import { verifyExternalData } from '../utils'
 
 const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
@@ -41,14 +42,27 @@ const ProviderItem: FC<{
   )
 }
 
+// TODO: generate these interfaces with graphql codegen
+interface UpdateApplicationExternalDataResponse {
+  updateApplicationExternalData: {
+    externalData: ExternalData
+  }
+}
+
+const getExternalDataFromResponse = (
+  responseData: UpdateApplicationExternalDataResponse,
+) => responseData?.updateApplicationExternalData?.externalData
+
 const FormExternalDataProvider: FC<{
   applicationId: string
   addExternalData(data: ExternalData): void
+  setBeforeSubmitCallback: SetBeforeSubmitCallback
   externalData: ExternalData
   externalDataProvider: ExternalDataProviderScreen
   formValue: FormValue
 }> = ({
   addExternalData,
+  setBeforeSubmitCallback,
   applicationId,
   externalData,
   externalDataProvider,
@@ -56,12 +70,46 @@ const FormExternalDataProvider: FC<{
 }) => {
   const { setValue } = useFormContext()
   const [updateExternalData] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA, {
-    onCompleted({ updateApplicationExternalData }) {
-      addExternalData(updateApplicationExternalData.externalData)
+    onCompleted(responseData: UpdateApplicationExternalDataResponse) {
+      addExternalData(getExternalDataFromResponse(responseData))
     },
   })
 
   const { id, dataProviders } = externalDataProvider
+
+  const activateBeforeSubmitCallback = (checked: boolean) => {
+    if (checked) {
+      setBeforeSubmitCallback(async () => {
+        const response = await updateExternalData({
+          variables: {
+            input: {
+              id: applicationId,
+              dataProviders: dataProviders.map(({ id, type }) => ({
+                id,
+                type,
+              })),
+            },
+          },
+        })
+
+        if (
+          response.data &&
+          verifyExternalData(
+            getExternalDataFromResponse(response.data),
+            dataProviders,
+          )
+        ) {
+          return [true, null]
+        }
+
+        // TODO: translated
+        return [false, 'Failed to update application']
+      })
+    } else {
+      setBeforeSubmitCallback(null)
+    }
+  }
+
   const label = 'Ég samþykki'
   return (
     <Box>
@@ -105,25 +153,10 @@ const FormExternalDataProvider: FC<{
               >
                 <Checkbox
                   onChange={(e) => {
-                    onChange(e.target.checked)
-                    setValue(id as string, e.target.checked)
-
-                    // TODO: Move this to the continue button click
-                    if (e.target.checked) {
-                      updateExternalData({
-                        variables: {
-                          input: {
-                            id: applicationId,
-                            dataProviders: dataProviders.map(
-                              ({ id, type }) => ({
-                                id,
-                                type,
-                              }),
-                            ),
-                          },
-                        },
-                      })
-                    }
+                    const isChecked = e.target.checked
+                    setValue(id as string, isChecked)
+                    onChange(isChecked)
+                    activateBeforeSubmitCallback(isChecked)
                   }}
                   checked={value}
                   name={`${id}`}
