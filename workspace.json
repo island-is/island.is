@@ -3602,6 +3602,7 @@
         "build": {
           "builder": "@nrwl/web:build",
           "options": {
+            "baseHref": "/minarsidur",
             "outputPath": "dist/apps/service-portal",
             "index": "apps/service-portal/src/index.html",
             "main": "apps/service-portal/src/Main.tsx",
@@ -3619,7 +3620,7 @@
           "configurations": {
             "production": {
               "build": {
-                "deployUrl": "/minarsidur/"
+                "deployUrl": "/minarsidur"
               },
               "fileReplacements": [
                 {
