@@ -47,7 +47,7 @@
   &__container__form {
     padding: 44px 40px;
     background: $color-bg-content;
-    border-radius: 5px;
+    border-radius: $border-radius;
   }
 
   &__container__field,

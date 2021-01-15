@@ -16,7 +16,7 @@ const Header: React.FC = () => {
   }, [session, loading])
 
   return (
-    <header className="header__container">
+    <header className="header">
       <div className="header__container__logo">
         <h1>IDS management</h1>
       </div>
@@ -36,10 +36,10 @@ const Header: React.FC = () => {
           </div>
         )}
         {!isLoggedIn(session, loading) && (
-          <div className="header__container__logout">
+          <div className="header__container__login">
             <button
               type="button"
-              className="header__button__logout"
+              className="header__button__login"
               onClick={() => login()}
             >
               Login
