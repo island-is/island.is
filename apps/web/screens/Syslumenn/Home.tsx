@@ -219,14 +219,18 @@ const Home: Screen<HomeProps> = ({
         {organization.organizationPage.slices.map((slice) => (
           <Section key={slice.id} slice={slice} organization={organization} />
         ))}
-        <Box className={styles.newsBg} paddingTop={[4, 5, 10]} paddingBottom={[4, 5, 10]}>
-        <LatestOrganizationNewsSection
-          label={gn('newsAndAnnouncements')}
-          labelId="latestNewsTitle"
-          items={news}
-          subtitle={organization.title}
-          organizationSlug={organization.slug}
-        />
+        <Box
+          className={styles.newsBg}
+          paddingTop={[4, 5, 10]}
+          paddingBottom={[4, 5, 10]}
+        >
+          <LatestOrganizationNewsSection
+            label={gn('newsAndAnnouncements')}
+            labelId="latestNewsTitle"
+            items={news}
+            subtitle={organization.title}
+            organizationSlug={organization.slug}
+          />
         </Box>
       </Main>
     </>
