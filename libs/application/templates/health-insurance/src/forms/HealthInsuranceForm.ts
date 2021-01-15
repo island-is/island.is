@@ -44,7 +44,7 @@ export const HealthInsuranceForm: Form = buildForm({
             }),
             buildDataProviderItem({
               id: 'nationalRegistry',
-              type: 'NationalRegistry',
+              type: 'NationalRegistryProvider',
               title: m.nationalRegistryTitle,
               subTitle: m.nationalRegistrySubTitle,
             }),
@@ -95,8 +95,8 @@ export const HealthInsuranceForm: Form = buildForm({
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
-                  name?: string
-                })?.name,
+                  fullName?: string
+                })?.fullName,
             }),
             buildTextField({
               id: 'applicant.nationalId',
@@ -115,8 +115,9 @@ export const HealthInsuranceForm: Form = buildForm({
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
-                  address?: string
-                })?.address,
+                  streetAddress?: string
+                  // TODO: Remove the hardcoded
+                })?.streetAddress || 'street',
             }),
             buildTextField({
               id: 'applicant.postalCode',
@@ -126,7 +127,8 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   postalCode?: string
-                })?.postalCode,
+                  // TODO: Remove the hardcoded
+                })?.postalCode || '000',
             }),
             buildTextField({
               id: 'applicant.city',
@@ -136,7 +138,8 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   city?: string
-                })?.city,
+                  // TODO: Remove the hardcoded
+                })?.city || 'city',
             }),
             buildTextField({
               id: 'applicant.nationality',
@@ -145,8 +148,8 @@ export const HealthInsuranceForm: Form = buildForm({
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
-                  nationality?: string
-                })?.nationality,
+                  citizenship?: string
+                })?.citizenship,
             }),
             buildDescriptionField({
               id: 'editNationalRegistryData',

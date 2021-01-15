@@ -514,8 +514,14 @@ export interface IFeaturedFields {
   /** Special attention */
   attention?: boolean | undefined
 
-  /** Featured article */
-  thing?: IArticle | ILinkUrl | IVidspyrnaFrontpage | IVidspyrnaPage | undefined
+  /** Link */
+  thing?:
+    | IAboutSubPage
+    | IArticle
+    | ILinkUrl
+    | IVidspyrnaFrontpage
+    | IVidspyrnaPage
+    | undefined
 }
 
 export interface IFeatured extends Entry<IFeaturedFields> {

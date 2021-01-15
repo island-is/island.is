@@ -98,9 +98,7 @@ const Home: Screen<HomeProps> = ({
         </Box>
         <Inline space={2}>
           {page.featuredThings.map(({ title, attention, thing }) => {
-            const cardUrl = linkResolver(thing.__typename as LinkType, [
-              thing.slug,
-            ])
+            const cardUrl = linkResolver(thing?.type as LinkType, [thing?.slug])
 
             return cardUrl.href && cardUrl.href.length > 0 ? (
               <Link key={title} href={cardUrl.href} as={cardUrl.as}>
