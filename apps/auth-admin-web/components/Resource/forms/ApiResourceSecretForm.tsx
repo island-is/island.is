@@ -18,12 +18,9 @@ interface Props {
 }
 
 const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ApiResourceSecretDTO>()
+  const { register, handleSubmit, errors, formState } = useForm<
+    ApiResourceSecretDTO
+  >()
   const { isSubmitting } = formState
   const defaultSecretLength = 25
   const [defaultSecret, setDefaultSecret] = useState<string>('')
