@@ -8,8 +8,8 @@ import {
 } from '@island.is/island-ui/contentful'
 import { LinkContext, Link } from '@island.is/island-ui/core'
 
-const TellUsAStory = dynamic(() => import( '../TellUsAStory/TellUsAStory'))
-const ContactUs = dynamic(() => import( '../ContactUs/ContactUs'))
+const TellUsAStory = dynamic(() => import('../TellUsAStory/TellUsAStory'))
+const ContactUs = dynamic(() => import('../ContactUs/ContactUs'))
 
 const renderComponent = (
   slice: SliceType,

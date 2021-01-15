@@ -27,7 +27,13 @@ import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
 } from '@island.is/web/graphql/schema'
-import { SidebarBox, Sticky, HeadWithSocialSharing, Main, RichText } from '@island.is/web/components'
+import {
+  SidebarBox,
+  Sticky,
+  HeadWithSocialSharing,
+  Main,
+  RichText,
+} from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 import NextLink from 'next/link'

@@ -158,7 +158,9 @@ const Layout: NextComponentType<
     },
   ]
 
-  const alertBannerId = `alert-${stringHash(JSON.stringify(alertBannerContent))}`
+  const alertBannerId = `alert-${stringHash(
+    JSON.stringify(alertBannerContent),
+  )}`
 
   return (
     <GlobalContextProvider namespace={namespace}>

@@ -11,7 +11,7 @@ import { readFileSync } from 'fs'
 import * as path from 'path'
 
 const barf = (msg: string) => {
-  throw new Error('exportFinder: ' + msg);
+  throw new Error('exportFinder: ' + msg)
 }
 
 const resolve = (importPath: string, source: string) => {
@@ -208,7 +208,9 @@ const visitModule = (
 
     // Did not find something we were looking for.
     if (exportItem.name && !exportMap[exportItem.name]) {
-      barf(`Could not find ${exportItem.name} exported from ${exportItem.source}.`)
+      barf(
+        `Could not find ${exportItem.name} exported from ${exportItem.source}.`,
+      )
     }
   }
 
