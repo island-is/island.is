@@ -514,8 +514,14 @@ export interface IFeaturedFields {
   /** Special attention */
   attention?: boolean | undefined
 
-  /** Featured article */
-  thing?: IArticle | IVidspyrnaFrontpage | IVidspyrnaPage | undefined
+  /** Link */
+  thing?:
+    | IAboutSubPage
+    | IArticle
+    | ILinkUrl
+    | IVidspyrnaFrontpage
+    | IVidspyrnaPage
+    | undefined
 }
 
 export interface IFeatured extends Entry<IFeaturedFields> {
@@ -541,6 +547,9 @@ export interface IFrontpageSliderFields {
 
   /** Undirtitill */
   subtitle: string
+
+  /** Intro */
+  intro?: Document | undefined
 
   /** Texti */
   content: string

@@ -24,6 +24,9 @@ const RECYCLINGCOMPANY = [
   /* Hringrás   */
   '1811673949', // Tryggvi Daníel Sigurðsson admin later
   '2405843609', // Þórdís Jónsdóttir
+  /* Fura   */
+  '2211692989', // Úlfar Haraldsson admin later
+  '2808714009', // Dagný Michelle Jónsdóttir
 ]
 
 const RECYCLINGFUND = [

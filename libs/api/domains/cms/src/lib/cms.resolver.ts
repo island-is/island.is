@@ -64,11 +64,11 @@ import { GetNewsDatesInput } from './dto/getNewsDates.input'
 import { NewsList } from './models/newsList.model'
 import { GetTellUsAStoryInput } from './dto/getTellUsAStory.input'
 import { TellUsAStory } from './models/tellUsAStory.model'
-import { SearchIndexes } from '@island.is/content-search-indexer/types'
 import { GroupedMenu } from './models/groupedMenu.model'
 import { GetSingleMenuInput } from './dto/getSingleMenu.input'
 import { SubpageHeader } from './models/subpageHeader.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
+import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 
 const { cacheTime } = environment
 
@@ -280,7 +280,7 @@ export class CmsResolver {
     @Args('input') input: GetArticleCategoriesInput,
   ): Promise<ArticleCategory[]> {
     return this.cmsElasticsearchService.getArticleCategories(
-      SearchIndexes[input.lang],
+      getElasticsearchIndex(input.lang),
       input,
     )
   }
@@ -291,7 +291,7 @@ export class CmsResolver {
     @Args('input') { lang, slug }: GetSingleArticleInput,
   ): Promise<Article | null> {
     return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<Article>(
-      SearchIndexes[lang],
+      getElasticsearchIndex(lang),
       { type: 'webArticle', slug },
     )
   }
@@ -300,7 +300,7 @@ export class CmsResolver {
   @Query(() => [Article])
   getArticles(@Args('input') input: GetArticlesInput): Promise<Article[]> {
     return this.cmsElasticsearchService.getArticles(
-      SearchIndexes[input.lang],
+      getElasticsearchIndex(input.lang),
       input,
     )
   }
@@ -311,7 +311,7 @@ export class CmsResolver {
     @Args('input') { lang, slug }: GetSingleNewsInput,
   ): Promise<News | null> {
     return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<News>(
-      SearchIndexes[lang],
+      getElasticsearchIndex(lang),
       { type: 'webNews', slug },
     )
   }
@@ -320,7 +320,7 @@ export class CmsResolver {
   @Query(() => [String])
   getNewsDates(@Args('input') input: GetNewsDatesInput): Promise<string[]> {
     return this.cmsElasticsearchService.getNewsDates(
-      SearchIndexes[input.lang],
+      getElasticsearchIndex(input.lang),
       input,
     )
   }
@@ -329,7 +329,7 @@ export class CmsResolver {
   @Query(() => NewsList)
   getNews(@Args('input') input: GetNewsInput): Promise<NewsList> {
     return this.cmsElasticsearchService.getNews(
-      SearchIndexes[input.lang],
+      getElasticsearchIndex(input.lang),
       input,
     )
   }
@@ -338,7 +338,7 @@ export class CmsResolver {
   @Query(() => Menu, { nullable: true })
   getMenu(@Args('input') input: GetMenuInput): Promise<Menu | null> {
     return this.cmsElasticsearchService.getSingleMenuByName(
-      SearchIndexes[input.lang],
+      getElasticsearchIndex(input.lang),
       { ...input },
     )
   }
@@ -349,7 +349,7 @@ export class CmsResolver {
     @Args('input') input: GetSingleMenuInput,
   ): Promise<GroupedMenu | null> {
     return this.cmsElasticsearchService.getSingleMenu<GroupedMenu>(
-      SearchIndexes[input.lang],
+      getElasticsearchIndex(input.lang),
       input,
     )
   }
@@ -370,7 +370,7 @@ export class LatestNewsSliceResolver {
   @ResolveField(() => [News])
   async news(@Parent() { news: input }: LatestNewsSlice): Promise<News[]> {
     const newsList = await this.cmsElasticsearchService.getNews(
-      SearchIndexes[input.lang],
+      getElasticsearchIndex(input.lang),
       input,
     )
     return newsList.items
@@ -396,7 +396,7 @@ export class AboutSubPageResolver {
     if (parent) {
       const { lang, id } = parent
       return this.cmsElasticsearchService.getSingleAboutPage(
-        SearchIndexes[lang],
+        getElasticsearchIndex(lang),
         id,
       )
     } else {

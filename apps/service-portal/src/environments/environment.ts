@@ -10,4 +10,16 @@ export default {
     dsn:
       'https://3c45a55273774b91a897b85e0a1243d1@o406638.ingest.sentry.io/5501494',
   },
+  featureFlags: {
+    applications: false,
+    documents: true,
+    settings: false,
+    finance: true,
+    family: false,
+    health: false,
+    education: true,
+    delegation: true,
+    assets: false,
+    drivingLicense: false,
+  },
 }
