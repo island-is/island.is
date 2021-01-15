@@ -80,9 +80,9 @@ class App {
     logger.info('Starting elasticsearch migration')
     await elastic.checkAccess() // this throws if there is no connection hence ensuring we don't continue
 
-    await Promise.all(
+    const results = await Promise.all(
       locales.map(
-        async (locale): Promise<boolean> => {
+        async (locale): Promise<true | Error> => {
           const newIndexName = getElasticsearchIndex(locale)
           const newIndexExists = await elastic.checkIfIndexExists(newIndexName)
 
@@ -101,7 +101,10 @@ class App {
                 newIndexName,
                 error: error.message,
               })
-              throw error
+              // remove the index so we try and migrate this index again on next migration
+              await elastic.removeIndexIfExists(newIndexName)
+              // resolve the promise to let migrations for other indices finish
+              return error
             }
           } else {
             logger.info(
@@ -123,6 +126,19 @@ class App {
         },
       ),
     )
+
+    // make sure we throw an error to stop deployment of this version if any index migration is faulty
+    results.forEach((result) => {
+      if (result !== true) {
+        logger.error(
+          'Failed to migrate all indices, terminating process to prevent deployment of faulty indices',
+          {
+            error: result.message,
+          },
+        )
+        throw result
+      }
+    })
 
     // rank the search results so we can see if they change
     await elastic.rankSearchQueries(getElasticsearchIndex('is'))

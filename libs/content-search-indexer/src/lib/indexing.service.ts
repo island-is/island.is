@@ -46,20 +46,19 @@ export class IndexingService {
       const { postSyncOptions, ...elasticData } = importerResponse
       await this.elasticService.bulk(elasticIndex, elasticData)
 
-      // clear index of stale data by deleting all ids but those added on full sync
-      if (syncType === 'full') {
-        const allAddedIds = elasticData.add.map(({ _id }) => _id)
-        allImportedIds = [...allImportedIds, ...allAddedIds]
-      }
-
       if (importer.postSync) {
-        // allow importers to clean up after import
-        await importer.postSync(postSyncOptions)
-        logger.info('Importer finished sync', {
+        logger.info('Importer started post sync', {
           importer: importer.constructor.name,
           index: elasticIndex,
         })
+        // allow importers to clean up after import
+        await importer.postSync(postSyncOptions)
       }
+
+      logger.info('Importer finished sync', {
+        importer: importer.constructor.name,
+        index: elasticIndex,
+      })
       return true
     })
 
@@ -72,9 +71,17 @@ export class IndexingService {
       didImportAll = false
     })
 
+    /*
+    the sync method should manage all housekeeping tasks such as removing outdated documents
+    this is here to ensure old data is cleared from the index incase sync fails to remove documents
+    currently this happens in cms sync in the development environment due to limitations in the Contentful sync API
+    */
     if (syncType === 'full' && didImportAll) {
       logger.info('Removing stale data from index', { index: elasticIndex })
-      await this.elasticService.deleteAllExcept(elasticIndex, allImportedIds)
+      const response = await this.elasticService.deleteAllDocumentsNotVeryRecentlyUpdated(
+        elasticIndex,
+      )
+      logger.info('Removed stale documents', { count: response.body.deleted })
     }
 
     logger.info('Indexing service finished sync', { index: elasticIndex })
@@ -82,3 +89,5 @@ export class IndexingService {
     return didImportAll
   }
 }
+
+// TODO: Add a check in migrate that deletes all new indexes on failure to prevent index exist and wont migrate issue
