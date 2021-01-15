@@ -62,6 +62,7 @@ import {
   validateAndSendTimeToServer,
   validateAndSetTime,
 } from '../../../utils/formHelper'
+import PdfButton from '../../../shared-components/PdfButton/PdfButton'
 
 interface SigningModalProps {
   workingCase: Case
@@ -586,21 +587,7 @@ export const Confirmation: React.FC = () => {
             </GridContainer>
           </Box>
           <Box marginBottom={15}>
-            <a
-              className={style.pdfLink}
-              href={`${api.apiUrl}/api/case/${workingCase.id}/ruling`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                variant="ghost"
-                size="small"
-                icon="open"
-                iconType="outline"
-              >
-                Sjá PDF af þingbók og úrskurði
-              </Button>
-            </a>
+            <PdfButton caseId={workingCase.id} />
           </Box>
           <FormFooter
             nextUrl={Constants.DETENTION_REQUESTS_ROUTE}
