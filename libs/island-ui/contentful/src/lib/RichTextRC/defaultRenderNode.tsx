@@ -72,6 +72,16 @@ export const defaultRenderNode: RenderNode = {
       {children}
     </Box>
   ),
+  [BLOCKS.HEADING_6]: (_node, children) => (
+    <Box
+      component="p"
+      className={getTextStyles({ variant: 'intro' }) + ' ' + styles.heading}
+      marginTop={4}
+      marginBottom={2}
+    >
+      {children}
+    </Box>
+  ),
   [BLOCKS.PARAGRAPH]: (_node, children) => (
     <Box component="p" className={getTextStyles({}) + ' ' + styles.paragraph}>
       {children}
