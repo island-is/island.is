@@ -346,6 +346,25 @@ const Section: FC<SectionProps> = ({ slice, organization, namespace }) => {
                   </Stack>
                 </GridColumn>
               </GridRow>
+              <Box
+                display="flex"
+                justifyContent="flexEnd"
+                paddingTop={4}
+                paddingBottom={1}
+              >
+                <Text variant="h5" as="p">
+                  <Link href="#">
+                    <Button
+                      icon="arrowForward"
+                      iconType="filled"
+                      type="button"
+                      variant="text"
+                    >
+                      {n('seeAllServices', 'Sjá allt efni')}
+                    </Button>
+                  </Link>
+                </Text>
+              </Box>
             </Box>
           </GridContainer>
         </section>
