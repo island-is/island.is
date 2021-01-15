@@ -11,7 +11,7 @@ const Header: React.FC = () => {
     if (!isLoggedIn(session, loading)) {
       router.push('/')
     }
-  }, [session])
+  }, [session, loading, router])
 
   return (
     <header className="header__container">
