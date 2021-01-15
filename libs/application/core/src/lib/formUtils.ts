@@ -18,7 +18,7 @@ const containsArray = (obj: Record<string, any>) => {
   let contains = false
 
   for (const key in obj) {
-    if (obj.hasOwnProperty(key) && isArray(obj[key])) {
+    if (Object.prototype.hasOwnProperty.call(obj, key) && isArray(obj[key])) {
       contains = true
     }
   }

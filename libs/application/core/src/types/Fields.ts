@@ -10,7 +10,6 @@ import { CallToAction } from './StateMachine'
 import { Application } from './Application'
 import { FormatInputValueFunction } from 'react-number-format'
 
-type Object = Record<string, any>
 export type MaybeWithApplication<T> = T | ((a: Application) => T)
 export type ValidAnswers = 'yes' | 'no' | undefined
 export type FieldWidth = 'full' | 'half'
@@ -24,7 +23,7 @@ export type TextFieldVariant =
 
 export type Context = {
   application: Application
-  apolloClient: ApolloClient<Object>
+  apolloClient: ApolloClient<Record<string, any>>
 }
 
 export interface Option {
@@ -51,7 +50,7 @@ export interface BaseField extends FormItem {
   isPartOfRepeater?: boolean
   defaultValue?: MaybeWithApplication<unknown>
   // TODO use something like this for non-schema validation?
-  // validate?: (formValue: FormValue, context?: Object) => boolean
+  // validate?: (formValue: FormValue, context?: Record<string, any>) => boolean
 }
 
 export enum FieldTypes {
@@ -179,7 +178,7 @@ export interface KeyValueField extends BaseField {
 export interface CustomField extends BaseField {
   readonly type: FieldTypes.CUSTOM
   readonly component: string
-  props?: Object
+  props?: Record<string, any>
 }
 
 export type Field =

@@ -14,8 +14,16 @@ import { useLocale } from '@island.is/localization'
 interface Props extends FieldBaseProps {
   field: DateField
 }
+
 const DateFormField: FC<Props> = ({ application, error, field }) => {
-  const { id, disabled, title, description, placeholder, backgroundColor } = field
+  const {
+    id,
+    disabled,
+    title,
+    description,
+    placeholder,
+    backgroundColor,
+  } = field
   const { formatMessage, lang } = useLocale()
 
   return (
