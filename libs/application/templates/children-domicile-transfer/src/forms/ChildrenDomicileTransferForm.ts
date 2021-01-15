@@ -95,7 +95,7 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
             const parent = (application.externalData.parentNationalRegistry
               ?.data as {
               parent?: object
-            })?.parent as Parent
+            }) as Parent
             return `Hitt foreldrið er ${parent.name} (${parent.ssn})`
           },
           children: [
@@ -130,11 +130,11 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
                 const parent = (application.externalData.parentNationalRegistry
                   ?.data as {
                   parent?: object
-                })?.parent as Parent
+                }) as Parent
                 const children = (application.externalData
                   .childrenNationalRegistry?.data as {
                   registeredChildren?: object
-                })?.registeredChildren as RegisteredChildren[]
+                }) as RegisteredChildren[]
                 const selectedChildrenIds = application.answers
                   .selectChild as string[]
                 return handleDomicileChangeInfo({
