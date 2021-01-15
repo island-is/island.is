@@ -1,5 +1,4 @@
 import gql from 'graphql-tag'
-import { pages } from './fragments'
 
 export const GET_HOMEPAGE_QUERY = gql`
   query GetHomepage($input: GetHomepageInput!) {
@@ -8,10 +7,10 @@ export const GET_HOMEPAGE_QUERY = gql`
         title
         attention
         thing {
-          ...AllPages
+          slug
+          type
         }
       }
     }
   }
-  ${pages}
 `

@@ -1,4 +1,8 @@
 import { Colors } from '@island.is/island-ui/theme'
+import {
+  DatePickerBackgroundColor,
+  InputBackgroundColor,
+} from '@island.is/island-ui/core'
 import { ApolloClient } from '@apollo/client'
 import { FormText, FormItem } from './Form'
 import { Condition } from './Condition'
@@ -61,6 +65,7 @@ export enum FieldTypes {
   FILEUPLOAD = 'FILEUPLOAD',
   SUBMIT = 'SUBMIT',
   DIVIDER = 'DIVIDER',
+  KEY_VALUE = 'KEY_VALUE',
   ASYNC_SELECT = 'ASYNC_SELECT',
 }
 
@@ -73,6 +78,7 @@ export enum FieldComponents {
   SELECT = 'SelectFormField',
   FILEUPLOAD = 'FileUploadFormField',
   DIVIDER = 'DividerFormField',
+  KEY_VALUE = 'KeyValueFormField',
   SUBMIT = 'SubmitFormField',
   ASYNC_SELECT = 'AsyncSelectFormField',
 }
@@ -90,6 +96,7 @@ export interface DateField extends BaseField {
   component: FieldComponents.DATE
   maxDate?: Date
   minDate?: Date
+  backgroundColor?: DatePickerBackgroundColor
 }
 
 export interface DescriptionField extends BaseField {
@@ -131,6 +138,7 @@ export interface TextField extends BaseField {
   maxLength?: number
   placeholder?: FormText
   variant?: TextFieldVariant
+  backgroundColor?: InputBackgroundColor
   format?: string | FormatInputValueFunction
   suffix?: string
 }
@@ -144,6 +152,7 @@ export interface FileUploadField extends BaseField {
   readonly uploadButtonLabel?: string
   readonly uploadMultiple?: boolean
   readonly uploadAccept?: string
+  readonly maxSize?: number
 }
 
 export interface SubmitField extends BaseField {
@@ -157,6 +166,13 @@ export interface DividerField extends BaseField {
   readonly type: FieldTypes.DIVIDER
   readonly color?: Colors
   component: FieldComponents.DIVIDER
+}
+
+export interface KeyValueField extends BaseField {
+  readonly type: FieldTypes.KEY_VALUE
+  label: React.ReactNode
+  value: React.ReactNode
+  component: FieldComponents.KEY_VALUE
 }
 
 export interface CustomField extends BaseField {
@@ -174,6 +190,7 @@ export type Field =
   | SelectField
   | TextField
   | FileUploadField
+  | KeyValueField
   | DividerField
   | SubmitField
   | AsyncSelectField
