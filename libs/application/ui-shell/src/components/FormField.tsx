@@ -17,6 +17,7 @@ const FormField: FC<{
   goToScreen: (id: string) => void
 }> = ({ application, autoFocus, errors, field, goToScreen, showFieldName }) => {
   const [allFields] = useFields()
+
   if (!field.isNavigable) {
     return null
   }
@@ -24,6 +25,7 @@ const FormField: FC<{
   const error = getValueViaPath(errors, field.id, undefined) as
     | string
     | undefined
+
   const fieldProps: FieldBaseProps = {
     application,
     autoFocus,
@@ -32,7 +34,9 @@ const FormField: FC<{
     goToScreen,
     showFieldName,
   }
+
   const Component = allFields[field.component]
+
   if (!Component) {
     return <p>We have not implemented this field yet {field.type}</p>
   }

@@ -26,6 +26,7 @@ export function getExpectedDateOfBirth(
   // applicant is not a mother giving birth
   const parentalLeavesResult = application.externalData
     .parentalLeaves as DataProviderResult
+
   if (parentalLeavesResult.status === 'success') {
     const parentalLeaves = parentalLeavesResult.data as ParentalLeave[]
     if (parentalLeaves.length) {

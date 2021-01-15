@@ -55,18 +55,23 @@ export async function validateIncomingAnswers(
   if (!newAnswers) {
     return {}
   }
+
   const template = await getApplicationTemplateByTypeId(application.typeId)
   const role = template.mapUserToRole(nationalId, application)
+
   if (!role) {
     throw new UnauthorizedException(
       'Current user does not have a role in this application state',
     )
   }
+
   const helper = new ApplicationTemplateHelper(application, template)
   const writableAnswersAndExternalData = helper.getWritableAnswersAndExternalData(
     role,
   )
+
   let trimmedAnswers: FormValue
+
   if (writableAnswersAndExternalData === 'all') {
     trimmedAnswers = newAnswers
   } else {
@@ -80,6 +85,7 @@ export async function validateIncomingAnswers(
         403,
       )
     }
+
     const permittedAnswers = writableAnswersAndExternalData?.answers ?? []
     trimmedAnswers = {}
     const illegalAnswers: string[] = []
@@ -91,6 +97,7 @@ export async function validateIncomingAnswers(
         trimmedAnswers[key] = newAnswers[key]
       }
     })
+
     if (isStrict && illegalAnswers.length > 0) {
       throw new HttpException(
         `Current user is not permitted to update the following answers: ${illegalAnswers.toString()}`,
@@ -98,10 +105,13 @@ export async function validateIncomingAnswers(
       )
     }
   }
-  const validationErrors = await helper.applyAnswerValidators(newAnswers)
-  if (validationErrors !== undefined) {
-    throw new HttpException(validationErrors, 403)
+
+  try {
+    await helper.applyAnswerValidators(newAnswers)
+  } catch (error) {
+    throw new HttpException(error, 403)
   }
+
   return trimmedAnswers
 }
 

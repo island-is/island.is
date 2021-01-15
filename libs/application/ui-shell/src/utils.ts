@@ -69,3 +69,23 @@ export function extractAnswersToSubmitFromScreen(
       return pick(data, [screenId])
   }
 }
+
+export function isJSONObject(message?: string) {
+  if (!message) {
+    return undefined
+  }
+
+  return Boolean(message.match(/^\{.*\}/g))
+}
+
+export function parseMessage(message?: string) {
+  if (!message) {
+    return undefined
+  }
+
+  if (isJSONObject(message)) {
+    return JSON.parse(message)
+  }
+
+  return message
+}

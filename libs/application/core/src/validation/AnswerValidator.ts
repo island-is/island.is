@@ -1,9 +1,8 @@
 import { Application } from '../types/Application'
 
-export type AnswerValidationError = {
-  message: string
-  path: string
-}
+export type AnswerValidationError =
+  | { message: string; path: string }
+  | undefined
 
 export type AnswerValidator = (
   newAnswer: unknown,

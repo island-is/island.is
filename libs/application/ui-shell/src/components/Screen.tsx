@@ -24,6 +24,10 @@ import {
 } from '@island.is/application/graphql'
 import deepmerge from 'deepmerge'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
+import { useLocale } from '@island.is/localization'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
+
 import { FormScreen, ResolverContext } from '../types'
 import FormMultiField from './FormMultiField'
 import FormField from './FormField'
@@ -33,12 +37,11 @@ import FormExternalDataProvider from './FormExternalDataProvider'
 import {
   extractAnswersToSubmitFromScreen,
   findSubmitField,
+  isJSONObject,
+  parseMessage,
   verifyExternalData,
 } from '../utils'
-import { useLocale } from '@island.is/localization'
 import ScreenFooter from './ScreenFooter'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -94,9 +97,18 @@ const Screen: FC<ScreenProps> = ({
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION, {
-    onError: (e) => handleError(e.message, formatMessage),
-  })
+  const [updateApplication, { loading, error }] = useMutation(
+    UPDATE_APPLICATION,
+    {
+      onError: (e) => {
+        // We only show the error message if it doesn't contains a json data object
+        if (!isJSONObject(e.message)) {
+          return handleError(e.message, formatMessage)
+        }
+      },
+    },
+  )
+
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -104,8 +116,10 @@ const Screen: FC<ScreenProps> = ({
     },
   )
   const { handleSubmit, errors, reset } = hookFormData
-
   const submitField = useMemo(() => findSubmitField(screen), [screen])
+  const dataSchemaOrApiErrors = isJSONObject(error?.message)
+    ? parseMessage(error?.message)
+    : errors ?? {}
 
   const goBack = useCallback(() => {
     // using deepmerge to prevent some weird react-hook-form read-only bugs
@@ -130,6 +144,7 @@ const Screen: FC<ScreenProps> = ({
           event = nativeEvent?.submitter?.id ?? 'SUBMIT'
         }
       }
+
       response = await submitApplication({
         variables: {
           input: {
@@ -152,6 +167,7 @@ const Screen: FC<ScreenProps> = ({
         },
       })
     }
+
     if (response?.data) {
       answerAndGoToNextScreen(data)
     }
@@ -206,7 +222,7 @@ const Screen: FC<ScreenProps> = ({
             {screen.type === FormItemTypes.REPEATER ? (
               <FormRepeater
                 application={application}
-                errors={errors}
+                errors={dataSchemaOrApiErrors}
                 expandRepeater={expandRepeater}
                 repeater={screen}
                 onRemoveRepeaterItem={async (newRepeaterItems) => {
@@ -226,7 +242,7 @@ const Screen: FC<ScreenProps> = ({
             ) : screen.type === FormItemTypes.MULTI_FIELD ? (
               <FormMultiField
                 answerQuestions={answerQuestions}
-                errors={errors}
+                errors={dataSchemaOrApiErrors}
                 multiField={screen}
                 application={application}
                 goToScreen={goToScreen}
@@ -242,7 +258,7 @@ const Screen: FC<ScreenProps> = ({
             ) : (
               <FormField
                 autoFocus
-                errors={errors}
+                errors={dataSchemaOrApiErrors}
                 field={screen}
                 application={application}
                 goToScreen={goToScreen}

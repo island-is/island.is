@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
-const merge = require('deepmerge')
+import deepmerge from 'deepmerge'
+import isArray from 'lodash/isArray'
 
 import { Field } from '../types/Fields'
 import { Application, FormValue } from '../types/Application'
@@ -16,11 +14,29 @@ import {
   SubSection,
 } from '../types/Form'
 
+const containsArray = (obj: Record<string, any>) => {
+  let contains = false
+
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key) && isArray(obj[key])) {
+      contains = true
+    }
+  }
+
+  return contains
+}
+
 export function getValueViaPath(
-  obj: {},
+  obj: Record<string, any>,
   path: string,
   defaultValue: unknown = undefined,
 ): unknown | undefined {
+  // Errors from dataSchema with array of object looks like e.g. `{ 'periods[1].startDate': 'error message' }`
+  if (path.match(/.\[\d\]\../g) && !containsArray(obj)) {
+    return obj?.[path]
+  }
+
+  // For the rest of the case, we are into e.g. `personalAllowance.usePersonalAllowance`
   try {
     const travel = (regexp: RegExp) =>
       String.prototype.split
@@ -32,7 +48,9 @@ export function getValueViaPath(
           (res, key) => (res !== null && res !== undefined ? res[key] : res),
           obj,
         )
+
     const result = travel(/[,[\]]+?/) || travel(/[,[\].]+?/)
+
     return result === undefined || result === obj ? defaultValue : result
   } catch (e) {
     return undefined
@@ -130,38 +148,50 @@ export function findSubSectionIndex(
   return -1
 }
 
+type DeepmergeOptions = deepmerge.Options & {
+  cloneUnlessOtherwiseSpecified(
+    key: Record<string, any>,
+    options?: DeepmergeOptions,
+  ): any | undefined
+  isMergeableObject(item: Record<string, any>): boolean
+}
+
 const overwriteArrayMerge = (
-  destinationArray: unknown[],
-  sourceArray: unknown[],
+  destinationArray: Record<string, any>[],
+  sourceArray: Record<string, any>[],
+  options: DeepmergeOptions,
 ) => {
+  const destination = destinationArray.slice()
+
   if (
     typeof sourceArray[sourceArray.length - 1] !== 'object' ||
     sourceArray.length < destinationArray.length // an element was removed
   ) {
     return sourceArray
   }
-  const result = []
-  for (
-    let i = 0;
-    i < Math.max(destinationArray.length, sourceArray.length);
-    i++
-  ) {
-    result[i] = merge(sourceArray[i] ?? {}, destinationArray[i] ?? {}, {
-      arrayMerge: overwriteArrayMerge,
-    })
-  }
 
-  return result
+  sourceArray.forEach((item: Record<string, any>, index: number) => {
+    if (typeof destination[index] === 'undefined') {
+      destination[index] = options.cloneUnlessOtherwiseSpecified(item, options)
+    } else if (options.isMergeableObject(item)) {
+      destination[index] = deepmerge(destinationArray[index], item, options)
+    } else if (destinationArray.indexOf(item) === -1) {
+      destination.push(item)
+    }
+  })
+
+  return destination
 }
 
 export function mergeAnswers(
-  currentAnswers: object,
-  newAnswers: object,
+  currentAnswers: Record<string, any>,
+  newAnswers: Record<string, any>,
 ): FormValue {
-  return merge(currentAnswers, newAnswers, {
+  return deepmerge(currentAnswers, newAnswers, {
     arrayMerge: overwriteArrayMerge,
   })
 }
+
 export type MessageFormatter = (descriptor: StaticText, values?: any) => string
 
 export function formatText(

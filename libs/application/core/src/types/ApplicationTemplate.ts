@@ -31,7 +31,5 @@ export interface ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined
-  answerValidators?: {
-    [path: string]: AnswerValidator
-  }
+  answerValidators?: Record<string, AnswerValidator>
 }

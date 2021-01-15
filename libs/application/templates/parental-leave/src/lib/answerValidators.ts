@@ -1,99 +1,155 @@
 import differenceInDays from 'date-fns/differenceInDays'
 import parseISO from 'date-fns/parseISO'
 import isValid from 'date-fns/isValid'
+import differenceInMonths from 'date-fns/differenceInMonths'
+import isNumber from 'lodash/isNumber'
 import {
   Application,
   AnswerValidator,
   AnswerValidationError,
-  Answer,
 } from '@island.is/application/core'
+
 import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
 import { Period } from '../types'
-import { minPeriodDays } from '../config'
+import { minPeriodDays, usageMaxMonths } from '../config'
 
 function buildValidationError(
   path: string,
-): (message: string) => AnswerValidationError {
-  return (message) => ({
-    message,
-    path,
-  })
+  index?: number,
+): (message: string, field?: string) => AnswerValidationError {
+  return (message, field) => {
+    if (field && isNumber(index)) {
+      return {
+        message,
+        path: `${path}[${index}].${field}`,
+      }
+    }
+
+    return {
+      message,
+      path,
+    }
+  }
 }
 
-const FIRST_PERIOD_START = 'periods[0].startDate'
-const FIRST_PERIOD_END = 'periods[0].endDate'
-const FIRST_PERIOD_RATIO = 'periods[0].ratio'
+const FIRST_PERIOD_START = 'firstPeriodStart'
+const PERIODS = 'periods'
 
-/**
- * TODO
- * Maybe it is enough to have a single 'periods' answer validator to handle all answers for periods?
- * loop through all periods?
- */
+// TODO: Add translation messages here
 export const answerValidators: Record<string, AnswerValidator> = {
-  [FIRST_PERIOD_START]: (newAnswer: unknown, application: Application) => {
+  [FIRST_PERIOD_START]: (_, application: Application) => {
     const buildError = buildValidationError(FIRST_PERIOD_START)
     const expectedDateOfBirth = getExpectedDateOfBirth(application)
 
     if (!expectedDateOfBirth) {
-      return buildError('There is no expected date of birth')
-    }
-
-    const firstStartDate = newAnswer as string
-
-    if (typeof newAnswer !== 'string' || !isValid(parseISO(firstStartDate))) {
-      return buildError('Answer is not a valid date')
-    }
-
-    if (firstStartDate < expectedDateOfBirth) {
-      return buildError('Start date cannot be before expected date of birth')
-    }
-
-    if (
-      differenceInDays(parseISO(firstStartDate), new Date()) < minPeriodDays
-    ) {
       return buildError(
-        'You cannot apply for a period so close into the future',
+        'We haven’t been able to fetch automatically the date of birth for your baby. Please try again later.',
       )
     }
 
     return undefined
   },
-  [FIRST_PERIOD_END]: (newAnswer: unknown, application: Application) => {
-    const buildError = buildValidationError(FIRST_PERIOD_END)
+  [PERIODS]: (newAnswer: unknown, application: Application) => {
+    const newPeriods = newAnswer as Period[]
+    const newPeriodIndex = newPeriods.length - 1
+    const buildError = buildValidationError(PERIODS, newPeriodIndex)
+    const period = newPeriods[newPeriodIndex]
     const expectedDateOfBirth = getExpectedDateOfBirth(application)
+    const dob = expectedDateOfBirth!
 
-    if (!expectedDateOfBirth) {
-      return buildError('There is no expected date of birth')
+    if (period?.startDate !== undefined) {
+      const field = 'startDate'
+      const { startDate } = period
+
+      // We need a valid start date
+      if (typeof startDate !== 'string' || !isValid(parseISO(startDate))) {
+        return buildError('The start date is not valid.', field)
+      }
+
+      // Start date needs to be after or equal to the expectedDateOfBirth
+      if (startDate < dob) {
+        return buildError(
+          'Start date cannot be before expected date of birth.',
+          field,
+        )
+      }
+
+      // We check if the start date is within the allowed period
+      if (
+        differenceInMonths(parseISO(startDate), parseISO(dob)) > usageMaxMonths
+      ) {
+        return buildError(
+          `You can't apply for a period beyond ${usageMaxMonths} months from the DOB.`,
+          field,
+        )
+      }
     }
 
-    const firstEndDate = newAnswer as string
+    if (period?.endDate !== undefined) {
+      const field = 'endDate'
+      const { startDate, endDate } = period
 
-    if (typeof newAnswer !== 'string' || !isValid(parseISO(firstEndDate))) {
-      return buildError('Answer is not a valid date')
+      // We need a valid end date
+      if (typeof endDate !== 'string' || !isValid(parseISO(endDate))) {
+        return buildError('The end date is not valid.', field)
+      }
+
+      // We check if endDate is after startDate
+      if (endDate < startDate) {
+        return buildError('End date cannot be before the start date.', field)
+      }
+
+      // We check if the user selected at least the minimum period required
+      if (
+        differenceInDays(parseISO(endDate), parseISO(startDate)) < minPeriodDays
+      ) {
+        return buildError(
+          `You cannot apply for a period shorter than ${minPeriodDays} days.`,
+          field,
+        )
+      }
+
+      // We check if the start date is within the allowed period
+      if (
+        differenceInMonths(parseISO(endDate), parseISO(dob)) > usageMaxMonths
+      ) {
+        return buildError(
+          `You can't apply for a period beyond ${usageMaxMonths} months from the DOB.`,
+          field,
+        )
+      }
+
+      // We check if the period already exists in the others periods
+      if (
+        newPeriods
+          .filter((_, index) => index !== newPeriodIndex)
+          .some(
+            (period) =>
+              period.startDate === startDate && period.endDate === endDate,
+          )
+      ) {
+        return buildError(
+          `You can't apply for the same period as you already submitted previously`,
+          field,
+        )
+      }
     }
 
-    if (firstEndDate < expectedDateOfBirth) {
-      return buildError('Start date cannot be before expected date of birth')
+    if (period?.ratio !== undefined) {
+      const field = 'ratio'
+      const { startDate, endDate, ratio } = period
+      const diff = differenceInDays(parseISO(endDate), parseISO(startDate))
+      const diffWithRatio = (diff * ratio) / 100
+
+      // We want to make sure the ratio doesn't affect the minimum number of days selected
+      if (diffWithRatio < minPeriodDays) {
+        return buildError(
+          `The minimum is ${minPeriodDays} days of leave, you've chosen ${diff} days at ${ratio}% which ends up as only ${diffWithRatio} days leave.`,
+          field,
+        )
+      }
     }
 
-    if (differenceInDays(parseISO(firstEndDate), new Date()) < 14) {
-      return buildError(
-        'You cannot apply for a period so close into the future',
-      )
-    }
-
-    const firstStartDate = (application.answers.periods as Period[])[0]
-      .startDate
-
-    if (
-      differenceInDays(parseISO(firstEndDate), parseISO(firstStartDate)) < 14
-    ) {
-      return buildError('You cannot apply for a period shorter than 14 days')
-    }
-
-    return undefined
-  },
-  [FIRST_PERIOD_RATIO]: (newAnswer: unknown, application: Application) => {
     return undefined
   },
 }

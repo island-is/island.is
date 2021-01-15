@@ -44,12 +44,15 @@ function partialSchemaValidation(
     const trimmedSchema = originalSchema.pick
       ? originalSchema.pick({ [key]: true })
       : originalSchema
+
     if (typeof answer === 'object') {
       if (answer.length) {
         // answer is array
         const arrayElements = answer as Answer[]
+
         arrayElements.forEach((el, index) => {
           const elementPath = `${newPath}[${index}]`
+
           if (typeof el === 'object') {
             if (!isStrict && el !== null) {
               error = partialSchemaValidation(
