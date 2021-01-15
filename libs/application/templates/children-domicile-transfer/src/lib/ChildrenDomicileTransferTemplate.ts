@@ -24,7 +24,7 @@ const dataSchema = z.object({
   selectChild: z.array(z.string()).nonempty(),
   email: z.string().email(),
   phoneNumber: z.string().min(7),
-  approveTerms: z.array(z.enum(['approveTerms'])),
+  approveTerms: z.array(z.string()).nonempty(),
 })
 
 const ChildrenDomicileTransferTemplate: ApplicationTemplate<
