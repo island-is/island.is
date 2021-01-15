@@ -8,7 +8,6 @@ import {
   buildExternalDataProvider,
   buildCheckboxField,
   buildMultiField,
-  buildDescriptionField,
 } from '@island.is/application/core'
 import { Parent } from '../dataProviders/APIDataTypes'
 
