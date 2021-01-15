@@ -75,5 +75,6 @@ ENV GIT_SHA=${GIT_SHA}
 ENV APP=${APP}
 ENV BASEHREF=/
 
+RUN mkdir -p /etc/nginx/templates
 ADD scripts/ci/dockerfile-config/nginx/* /etc/nginx/templates
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
