@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useSession } from 'next-auth/client'
 import { useRouter } from 'next/router'
-import { isLoggedIn, login, logout } from 'apps/auth-admin-web/utils/auth.utils'
+import { isLoggedIn, login, logout } from '../../utils/auth.utils'
 
 const Header: React.FC = () => {
   const [session, loading] = useSession()
