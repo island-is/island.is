@@ -16,7 +16,7 @@ export default {
     settings: true,
     finance: true,
     family: true,
-    health: true,
+    health: false,
     education: true,
     delegation: true,
     assets: false,
