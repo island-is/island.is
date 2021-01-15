@@ -1,7 +1,6 @@
 import {
   Accordion,
   Box,
-  Button,
   GridColumn,
   GridContainer,
   GridRow,
@@ -49,7 +48,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql'
 import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { api } from '../../../services'
 import CourtRecordAccordionItem from '../../../shared-components/CourtRecordAccordionItem/CourtRecordAccordionItem'
 import {
   RequestSignatureMutation,

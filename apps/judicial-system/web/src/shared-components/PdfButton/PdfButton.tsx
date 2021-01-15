@@ -1,4 +1,4 @@
-import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
+import { Button } from '@island.is/island-ui/core'
 import React from 'react'
 import { api } from '../../services'
 import * as styles from './PdfButton.treat'
