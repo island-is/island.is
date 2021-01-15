@@ -69,6 +69,9 @@ import { SubpageHeader } from './models/subpageHeader.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 import { ErrorPage } from './models/errorPage.model'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
+import {GetOrganizationNewsInput} from "./dto/getOrganizationNews.input";
+import {OrganizationNews} from "./models/organizationNews.model";
+import {GetSingleOrganizationNewsInput} from "./dto/getSingleOrganizationNews.input";
 
 const { cacheTime } = environment
 
@@ -167,6 +170,29 @@ export class CmsResolver {
     @Args('input') input: GetOrganizationInput,
   ): Promise<Organization | null> {
     return this.cmsContentfulService.getOrganization(
+      input?.slug ?? '',
+      input?.lang ?? 'is-IS',
+    )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [OrganizationNews], { nullable: true })
+  getOrganizationNews(
+    @Args('input') input: GetOrganizationNewsInput,
+  ): Promise<OrganizationNews[] | null> {
+    return this.cmsContentfulService.getOrganizationNews(
+      input?.organizationSlug ?? '',
+      input?.lang ?? 'is-IS',
+      input?.size ?? 10
+    )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => OrganizationNews, { nullable: true })
+  getSingleOrganizationNews(
+    @Args('input') input: GetSingleOrganizationNewsInput,
+  ): Promise<OrganizationNews | null> {
+    return this.cmsContentfulService.getSingleOrganizationNews(
       input?.slug ?? '',
       input?.lang ?? 'is-IS',
     )
