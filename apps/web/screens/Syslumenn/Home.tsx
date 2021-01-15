@@ -268,18 +268,25 @@ const Section: FC<SectionProps> = ({ slice, organization, namespace }) => {
               paddingTop={[8, 6, 15]}
               paddingBottom={[4, 5, 10]}
             >
-              <h2 id={'sliceTitle-' + slice.id}>{slice.title}</h2>
+              <h2
+                id={'sliceTitle-' + slice.id}
+                className={styles.districtsTitle}
+              >
+                {slice.title}
+              </h2>
               <GridRow>
-                <GridColumn span="7/12">
-                  {organization.suborganizations.map((link) => (
-                    <div>
-                      <Link href={link.link}>
-                        <Button variant="text">{link.shortTitle}</Button>
-                      </Link>
-                    </div>
-                  ))}
+                <GridColumn span={['12/12', '12/12', '7/12']}>
+                  <ul className={styles.districtsList}>
+                    {organization.suborganizations.map((link) => (
+                      <li className={styles.districtsListItem}>
+                        <Link href={link.link}>
+                          <Button variant="text">{link.shortTitle}</Button>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
                 </GridColumn>
-                <GridColumn span="5/12">
+                <GridColumn span={['12/12', '12/12', '5/12']}>
                   <img src={slice.image.url} alt="" />
                 </GridColumn>
               </GridRow>
