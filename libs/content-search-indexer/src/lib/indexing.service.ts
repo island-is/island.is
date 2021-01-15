@@ -89,5 +89,3 @@ export class IndexingService {
     return didImportAll
   }
 }
-
-// TODO: Add a check in migrate that deletes all new indexes on failure to prevent index exist and wont migrate issue
