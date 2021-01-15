@@ -44,8 +44,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import BlueBox from '../../../../shared-components/BlueBox/BlueBox'
 import parseISO from 'date-fns/parseISO'
-import isNull from 'lodash/isNull'
-import isValid from 'date-fns/isValid'
 import TimeInputField from '../../../../shared-components/TimeInputField/TimeInputField'
 
 interface CaseData {

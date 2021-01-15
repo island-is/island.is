@@ -36,10 +36,7 @@ export const Sidebar: FC<{}> = () => {
             <Text variant="small" color="blueberry600" marginTop={3}>
               {formatMessage({
                 id: 'service.portal:incoming-services-footer',
-                defaultMessage: `
-                  Þessi virkni er enn í boði á eldri Mínum síðum.
-                  Unnið er að því að færa þessar þjónustur.
-                `,
+                defaultMessage: `Þessi virkni er í boði á minarsidur.island.is en verður flutt hingað innan tíðar.`,
               })}
             </Text>
           )}

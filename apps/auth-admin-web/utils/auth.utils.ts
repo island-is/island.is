@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getSession } from 'next-auth/client'
+import { getSession, signIn, signOut } from 'next-auth/client'
 import { NextPageContext } from 'next'
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -24,4 +24,19 @@ export const withAuthentication = (next: any) => async (
 
 const isExpired = (session: any): boolean => {
   return !session || new Date() > new Date(session.expires)
+}
+
+export const isLoggedIn = (session: any, loading: boolean): boolean => {
+  return !isExpired(session) && !loading
+}
+
+export const login = async () => {
+  signIn('identity-server')
+}
+
+export const logout = (session: any) => {
+  session &&
+    signOut({
+      callbackUrl: `${window.location.origin}/api/auth/logout?id_token=${session.idToken}`,
+    })
 }
