@@ -19,8 +19,9 @@ import {
 import * as Constants from '../../../utils/constants'
 import {
   formatDate,
-  formatRestrictions,
+  formatCustodyRestrictions,
   TIME_FORMAT,
+  formatAlternativeTravelBanRestrictions,
 } from '@island.is/judicial-system/formatters'
 import { parseTransition } from '../../../utils/formatters'
 import { AppealDecisionRole, JudgeSubsections, Sections } from '../../../types'
@@ -493,7 +494,7 @@ export const Confirmation: React.FC = () => {
               </Box>
               <Box marginBottom={2}>
                 <Text>
-                  {formatRestrictions(
+                  {formatCustodyRestrictions(
                     workingCase.accusedGender || CaseGender.OTHER,
                     workingCase.custodyRestrictions || [],
                   )}
@@ -502,6 +503,33 @@ export const Confirmation: React.FC = () => {
               <Text>
                 Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
                 atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
+              </Text>
+            </Box>
+          )}
+          {workingCase.decision ===
+            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN && (
+            <Box marginBottom={7}>
+              <Box marginBottom={1}>
+                <Text as="h3" variant="h3">
+                  Tilhögun farbanns
+                </Text>
+              </Box>
+              <Box marginBottom={2}>
+                <Text>
+                  {formatAlternativeTravelBanRestrictions(
+                    workingCase.accusedGender || CaseGender.OTHER,
+                    workingCase.custodyRestrictions || [],
+                  )}
+                </Text>
+              </Box>
+              {workingCase.otherRestrictions && (
+                <Box marginBottom={2}>
+                  <Text>{workingCase.otherRestrictions}</Text>
+                </Box>
+              )}
+              <Text>
+                Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
+                atriði er lúta að framkvæmd farbannsins undir dómara.
               </Text>
             </Box>
           )}

@@ -2,7 +2,13 @@ import fetch from 'node-fetch'
 
 import { User } from '@island.is/auth-nest-tools'
 
-import { DrivingLicenseResponse } from './drivingLicense.type'
+import {
+  DrivingLicenseResponse,
+  DeprivationTypesResponse,
+  EntitlementTypesResponse,
+  RemarkTypesResponse,
+  PenaltyPointStatusResponse,
+} from './drivingLicense.type'
 
 const XROAD_PATH =
   'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
@@ -17,20 +23,38 @@ export class DrivingLicenseApi {
     this.secret = secret
   }
 
-  requestApi(url: string) {
-    return fetch(`${this.baseApiUrl}/${url}`, {
+  async requestApi(url: string) {
+    const res = await fetch(`${this.baseApiUrl}/${url}`, {
       headers: {
         'X-Road-Client': XROAD_CLIENT,
         SECRET: this.secret,
         Accept: 'application/json',
       },
     })
+    return res.json()
   }
 
-  async getDrivingLicenses(
+  getDrivingLicenses(
     nationalId: User['nationalId'],
   ): Promise<DrivingLicenseResponse[]> {
-    const res = await this.requestApi(`api/Okuskirteini/${nationalId}`)
-    return res.json()
+    return this.requestApi(`api/Okuskirteini/${nationalId}`)
+  }
+
+  getDeprivationTypes(): Promise<DeprivationTypesResponse[]> {
+    return this.requestApi('api/Okuskirteini/tegundirsviptinga')
+  }
+
+  getEntitlementTypes(): Promise<EntitlementTypesResponse[]> {
+    return this.requestApi('api/Okuskirteini/tegundirrettinda')
+  }
+
+  getRemarkTypes(): Promise<RemarkTypesResponse[]> {
+    return this.requestApi('api/Okuskirteini/tegundirathugasemda')
+  }
+
+  async getPenaltyPointStatus(
+    nationalId: User['nationalId'],
+  ): Promise<PenaltyPointStatusResponse> {
+    return this.requestApi(`api/Okuskirteini/punktastada/${nationalId}`)
   }
 }

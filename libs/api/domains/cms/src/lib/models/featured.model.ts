@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { IFeatured } from '../generated/contentfulTypes'
-import { PageUnion, mapPageUnion } from '../unions/page.union'
+import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
 
 @ObjectType()
 export class Featured {
@@ -10,12 +10,12 @@ export class Featured {
   @Field(() => Boolean)
   attention: boolean
 
-  @Field(() => PageUnion)
-  thing: typeof PageUnion
+  @Field(() => ReferenceLink, { nullable: true })
+  thing: ReferenceLink
 }
 
 export const mapFeatured = ({ fields }: IFeatured): Featured => ({
   title: fields.title ?? '',
   attention: fields.attention ?? false,
-  thing: fields.thing && mapPageUnion(fields.thing),
+  thing: (fields.thing && mapReferenceLink(fields.thing)) ?? null,
 })
