@@ -23,7 +23,7 @@ const handleDomicileChangeInfo = (data: {
 }) => {
   const { parent, children, selectedChildren } = data
   const filterChildren = children.filter((child) =>
-    selectedChildren.includes(child.id),
+    selectedChildren.includes(child.name),
   )
   const childrenCurrentHome = filterChildren.map((child) => {
     const address = `${child.address}, ${child.postalCode} ${child.city}`
