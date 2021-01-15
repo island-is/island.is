@@ -19642,6 +19642,11 @@ next-i18next@6.0.2:
     react-i18next "^11.7.0"
     url "^0.11.0"
 
+next-secure-headers@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/next-secure-headers/-/next-secure-headers-2.1.0.tgz#fca2b83f9f30ccec17443f8ca0fab79433edec5f"
+  integrity sha512-52hskKwZ9s8K4ZGQglOdpSPtrVVRLKHGbxjQ2McnvJl0Iv7iQAFG9D42aWuRdueE0EEpdkuSNiQcJR0fIMSgTw==
+
 next-tick@1:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/next-tick/-/next-tick-1.1.0.tgz#1836ee30ad56d67ef281b22bd199f709449b35eb"
@@ -22051,7 +22056,7 @@ pretty-hrtime@^1.0.3:
   resolved "https://registry.yarnpkg.com/pretty-hrtime/-/pretty-hrtime-1.0.3.tgz#b7e3ea42435a4c9b2759d99e0f201eb195802ee1"
   integrity sha1-t+PqQkNaTJsnWdmeDyAesZWALuE=
 
-prismjs@1.23.0, prismjs@^1.8.4, prismjs@~1.17.0:
+prismjs@1.23.0, prismjs@^1.22.0, prismjs@^1.8.4, prismjs@~1.17.0:
   version "1.23.0"
   resolved "https://registry.yarnpkg.com/prismjs/-/prismjs-1.23.0.tgz#d3b3967f7d72440690497652a9d40ff046067f33"
   integrity sha512-c29LVsqOaLbBHuIbsTxaKENh1N2EQBOHaWv7gkHN4dgRbxSREqDnDbtFJYdpPauS4YCplMSNCABQ6Eeor69bAA==
