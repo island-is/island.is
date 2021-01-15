@@ -274,7 +274,7 @@ export const StepTwo: React.FC = () => {
   return (
     <PageLayout
       activeSection={
-        workingCase?.parentCaseId ? Sections.EXTENSION : Sections.PROSECUTOR
+        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_TWO}
       isLoading={loading}
@@ -320,7 +320,7 @@ export const StepTwo: React.FC = () => {
               }
             />
           </Box>
-          {!workingCase.parentCaseId && (
+          {!workingCase.parentCase && (
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">

@@ -57,6 +57,9 @@ export const CaseQuery = gql`
         name
         title
       }
+      parentCase {
+        id
+      }
       notifications {
         type
       }

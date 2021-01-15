@@ -130,7 +130,7 @@ export const RulingStepTwo: React.FC = () => {
   return (
     <PageLayout
       activeSection={
-        workingCase?.parentCaseId ? Sections.JUDGE_EXTENSION : Sections.JUDGE
+        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.RULING_STEP_TWO}
       // TODO: UNCOMMENT

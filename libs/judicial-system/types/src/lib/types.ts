@@ -125,8 +125,8 @@ export interface Case {
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
   judge?: User
+  parentCase?: Case
   notifications?: Notification[]
-  parentCaseId?: string
 }
 
 export enum NotificationType {

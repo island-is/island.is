@@ -93,7 +93,7 @@ export const StepFour: React.FC = () => {
   return (
     <PageLayout
       activeSection={
-        workingCase?.parentCaseId ? Sections.EXTENSION : Sections.PROSECUTOR
+        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={
         ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_FOUR

@@ -481,8 +481,7 @@ export const testCaseExtension = {
   defenderEmail: undefined,
   requestedDefenderName: 'Saul Goodman',
   requestedDefenderEmail: 'saul@goodman.com',
-  // TODO: change
-  parentCaseId: 'TEST_PARENT_ID',
+  parentCase: { id: 'TEST_PARENT_ID' },
 }
 
 export const mockJudgeQuery = [

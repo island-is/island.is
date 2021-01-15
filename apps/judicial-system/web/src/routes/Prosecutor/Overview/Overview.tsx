@@ -146,7 +146,7 @@ export const Overview: React.FC = () => {
   return (
     <PageLayout
       activeSection={
-        workingCase?.parentCaseId ? Sections.EXTENSION : Sections.PROSECUTOR
+        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.PROSECUTOR_OVERVIEW}
       // TODO: UNCOMMENT
@@ -159,7 +159,7 @@ export const Overview: React.FC = () => {
         <>
           <Box marginBottom={10}>
             <Text as="h1" variant="h1">
-              {workingCase.parentCaseId
+              {workingCase.parentCase
                 ? 'Yfirlit kröfu um framlengingu á gæslu'
                 : 'Krafa um gæsluvarðhald'}
             </Text>
@@ -191,7 +191,7 @@ export const Overview: React.FC = () => {
                 },
                 { title: 'Ákærandi', value: workingCase.prosecutor?.name },
                 {
-                  title: workingCase.parentCaseId
+                  title: workingCase.parentCase
                     ? 'Fyrri gæsla'
                     : 'Tími handtöku',
                   // TODO: IF EXTENSION, REPLACE ARRESTDATE WITH CUSTODYENDDATE IN PARENT CASE

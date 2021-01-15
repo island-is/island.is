@@ -76,6 +76,9 @@ export const CreateCaseMutation = gql`
         name
         title
       }
+      parentCase {
+        id
+      }
     }
   }
 `

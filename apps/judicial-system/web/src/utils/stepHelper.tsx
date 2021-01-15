@@ -75,7 +75,7 @@ export const constructConclusion = (workingCase: Case) => {
         </Text>
         <Text as="span" variant="intro">
           {`, skal${
-            workingCase.parentCaseId ? ' áfram' : ''
+            workingCase.parentCase ? ' áfram' : ''
           } sæta gæsluvarðhaldi, þó ekki lengur en til`}
         </Text>
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
@@ -128,7 +128,7 @@ export const constructConclusion = (workingCase: Case) => {
           workingCase.accusedNationalId,
         )}`}</Text>
         {`, skal${
-          workingCase.parentCaseId ? ' áfram' : ''
+          workingCase.parentCase ? ' áfram' : ''
         } sæta farbanni, þó ekki lengur en til`}
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
           {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')
@@ -150,7 +150,7 @@ export const constructProsecutorDemands = (workingCase: Case) => {
         )}`}
       </Text>
       {`, verði með úrskurði Héraðsdóms Reykjavíkur ${
-        workingCase.parentCaseId ? 'áfram ' : ''
+        workingCase.parentCase ? 'áfram ' : ''
       }gert að sæta gæsluvarðhaldi${
         workingCase.alternativeTravelBan ? ', farbanni til vara,' : ''
       } til`}

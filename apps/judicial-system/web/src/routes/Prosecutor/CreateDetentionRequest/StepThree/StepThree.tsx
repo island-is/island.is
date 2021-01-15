@@ -214,7 +214,7 @@ export const StepThree: React.FC = () => {
   return (
     <PageLayout
       activeSection={
-        workingCase?.parentCaseId ? Sections.EXTENSION : Sections.PROSECUTOR
+        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={
         ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_THREE
@@ -376,7 +376,7 @@ export const StepThree: React.FC = () => {
                 Tegund og gildistími{' '}
                 <Tooltip text="Hér er hægt að velja um gæsluvarðhald eða gæsluvarðhald með farbanni til vara. Sé farbann til vara valið, endurspeglar valið dómkröfurnar á næstu síðu." />
               </Text>
-              {workingCase.parentCaseId && (
+              {workingCase.parentCase && (
                 <Box marginTop={1}>
                   <Text>
                     Fyrri gæsla var/er til{' '}

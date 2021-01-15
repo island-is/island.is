@@ -462,7 +462,7 @@ describe('Step helper', () => {
         accusedNationalId: '0123456789',
         custodyEndDate: '2020-10-22T12:31:00.000Z',
         accusedGender: CaseGender.MALE,
-        parentCaseId: 'TEST_EXTENSION',
+        parentCase: { id: 'TEST_EXTENSION' },
       }
 
       // Act
@@ -494,7 +494,7 @@ describe('Step helper', () => {
         accusedNationalId: '0123456789',
         custodyEndDate: '2020-10-22T12:31:00.000Z',
         accusedGender: CaseGender.MALE,
-        parentCaseId: 'TEST_EXTENSION',
+        parentCase: { id: 'TEST_EXTENSION' },
       }
 
       // Act
@@ -568,7 +568,7 @@ describe('Step helper', () => {
         accusedNationalId: '0123456789',
         custodyEndDate: '2020-11-26T12:31:00.000Z',
         requestedCustodyEndDate: '2020-11-26T12:31:00.000Z',
-        parentCaseId: 'TEST_EXTENSION',
+        parentCase: { id: 'TEST_EXTENSION' },
       }
 
       // Act

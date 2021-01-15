@@ -198,13 +198,13 @@ export const StepOne: React.FC = () => {
   return (
     <PageLayout
       activeSection={
-        workingCase?.parentCaseId ? Sections.EXTENSION : Sections.PROSECUTOR
+        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_ONE}
       isLoading={loading}
       // TODO: UNCOMMENT
       notFound={false} //{id !== undefined && data?.case === undefined}
-      isExtension={!!workingCase?.parentCaseId}
+      isExtension={!!workingCase?.parentCase}
       decision={workingCase?.decision}
     >
       {workingCase ? (
