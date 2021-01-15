@@ -101,9 +101,9 @@ class App {
                 newIndexName,
                 error: error.message,
               })
-              // remove the index so we try and migrate this index again on next migration
+              // remove the index to make migration run again for this index
               await elastic.removeIndexIfExists(newIndexName)
-              // resolve the promise to let migrations for other indices finish
+              // resolve the promise instead of throw to let migrations for other indices finish
               return error
             }
           } else {
