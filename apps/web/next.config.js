@@ -35,7 +35,13 @@ module.exports = withTreat(
             }),
           )
 
-          config.plugins.push(new StatoscopeWebpackPlugin())
+          config.plugins.push(
+            new StatoscopeWebpackPlugin({
+              saveTo: 'dist/apps/web/statoscope.html',
+              saveStatsTo: 'dist/apps/web/stats.json',
+              statsOptions: { all: true, source: false },
+            }),
+          )
 
           config.plugins.push(
             new BundleAnalyzerPlugin({

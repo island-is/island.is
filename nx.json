@@ -187,9 +187,6 @@
     "auth-nest-tools": {
       "tags": []
     },
-    "babel": {
-      "tags": []
-    },
     "cache": {
       "tags": []
     },
@@ -386,6 +383,9 @@
     },
     "services-xroad-collector": {
       "tags": ["api-catalogue-services"]
+    },
+    "shared-babel": {
+      "tags": []
     },
     "shared-connected": {
       "tags": []

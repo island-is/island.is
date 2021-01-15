@@ -1,3 +1,4 @@
+/* eslint-disable */
 // Taken here: https://developer.mozilla.org/en-US/docs/web/javascript/reference/statements/export#syntax
 
 // Exporting individual features
@@ -23,7 +24,7 @@ export { o as default }
 
 // Aggregating modules
 export * from './a' // does not set the default export
-export * as name11 from './a' // Draft ECMAScript® 2O21 - Not supported atm.
+// export * as name11 from './a' // Draft ECMAScript® 2O21 - Not supported atm.
 export { name12, name13 } from './b'
 export { a as name14, b as name15, b as default } from './c'
 export { default } from './d'

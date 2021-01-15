@@ -25,7 +25,7 @@ import {
 import { CallToAction } from '../types/StateMachine'
 import { FormText } from '../types/Form'
 import { Colors } from '@island.is/island-ui/theme'
-import { InputBackgroundColor } from '@island.is/island-ui/core'
+import type { InputBackgroundColor } from '@island.is/island-ui/core'
 
 interface SelectOption {
   label: string

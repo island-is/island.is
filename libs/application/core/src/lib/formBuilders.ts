@@ -17,7 +17,7 @@ import {
   FormModes,
   FormText,
 } from '../types/Form'
-import { BoxProps } from '@island.is/island-ui/core'
+import type { BoxProps } from '@island.is/island-ui/core'
 
 export function buildForm(data: {
   id: string

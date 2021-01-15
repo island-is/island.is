@@ -6,8 +6,8 @@ export default function (api: ConfigAPI): TransformOptions {
     plugins: [],
   } as TransformOptions
 
-  if (api.env('production')) {
-    config.plugins!.push([
+  if (api.env('production') && config.plugins) {
+    config.plugins.push([
       'transform-imports',
       {
         ...transformLib('@island.is/island-ui/core'),

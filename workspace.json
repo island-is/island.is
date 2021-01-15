@@ -1975,32 +1975,6 @@
         }
       }
     },
-    "babel": {
-      "root": "libs/babel",
-      "sourceRoot": "libs/babel/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/babel/tsconfig.lib.json",
-              "libs/babel/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/babel/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/babel/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "cache": {
       "root": "libs/cache",
       "sourceRoot": "libs/cache/src",
@@ -4617,6 +4591,32 @@
           }
         },
         "docker-express": {}
+      }
+    },
+    "shared-babel": {
+      "root": "libs/shared/babel",
+      "sourceRoot": "libs/shared/babel/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/shared/babel/tsconfig.lib.json",
+              "libs/shared/babel/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/shared/babel/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/shared/babel/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
       }
     },
     "shared-connected": {
