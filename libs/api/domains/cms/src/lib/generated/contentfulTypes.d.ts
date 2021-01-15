@@ -514,8 +514,14 @@ export interface IFeaturedFields {
   /** Special attention */
   attention?: boolean | undefined
 
-  /** Featured article */
-  thing?: IArticle | IVidspyrnaFrontpage | undefined
+  /** Link */
+  thing?:
+    | IAboutSubPage
+    | IArticle
+    | ILinkUrl
+    | IVidspyrnaFrontpage
+    | IVidspyrnaPage
+    | undefined
 }
 
 export interface IFeatured extends Entry<IFeaturedFields> {
@@ -542,6 +548,9 @@ export interface IFrontpageSliderFields {
   /** Undirtitill */
   subtitle: string
 
+  /** Intro */
+  intro?: Document | undefined
+
   /** Texti */
   content: string
 
@@ -561,6 +570,9 @@ export interface IFrontpageSliderFields {
 
   /** Animation (JSON) */
   animationJson?: Record<string, any> | undefined
+
+  /** Animation JSON File */
+  animationJsonFile?: Asset | undefined
 }
 
 /** Efni í haus á forsíðu */
@@ -603,6 +615,41 @@ export interface IFrontpageSliderList
     contentType: {
       sys: {
         id: 'frontpageSliderList'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGenericOverviewPageFields {
+  /** Title */
+  title: string
+
+  /** Intro */
+  intro?: Document | undefined
+
+  /** Page Identifier */
+  pageIdentifier: string
+
+  /** Navigation */
+  navigation: IMenu
+
+  /** Overview Links */
+  overviewLinks?: IIntroLinkImage[] | undefined
+}
+
+export interface IGenericOverviewPage
+  extends Entry<IGenericOverviewPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'genericOverviewPage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -752,6 +799,53 @@ export interface IIconBullet extends Entry<IIconBulletFields> {
     contentType: {
       sys: {
         id: 'iconBullet'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IIntroLinkImageFields {
+  /** Title */
+  title: string
+
+  /** Intro */
+  intro: Document
+
+  /** Image */
+  image: Asset
+
+  /** Left Image */
+  leftImage?: boolean | undefined
+
+  /** Link Title */
+  linkTitle: string
+
+  /** Link */
+  link:
+    | IAboutSubPage
+    | IArticle
+    | IArticleCategory
+    | ISubArticle
+    | ILifeEventPage
+    | ILinkUrl
+    | INews
+    | IPage
+    | IVidspyrnaFrontpage
+    | IVidspyrnaPage
+}
+
+export interface IIntroLinkImage extends Entry<IIntroLinkImageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'introLinkImage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2620,11 +2714,13 @@ export type CONTENT_TYPE =
   | 'featured'
   | 'frontpageSlider'
   | 'frontpageSliderList'
+  | 'genericOverviewPage'
   | 'genericPage'
   | 'genericTag'
   | 'groupedMenu'
   | 'homepage'
   | 'iconBullet'
+  | 'introLinkImage'
   | 'landingPage'
   | 'latestNewsSlice'
   | 'lifeEventPage'
