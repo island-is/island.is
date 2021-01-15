@@ -7,14 +7,15 @@ import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
 import { Button } from '../Button/Button'
 import { theme, Colors } from '@island.is/island-ui/theme'
-import { Icon, IconTypes } from '../Icon/Icon'
+import { Icon } from '../IconRC/Icon'
+import { Icon as IconTypes } from '../IconRC/iconMap'
 
 export type UploadFileStatus = 'error' | 'done' | 'uploading'
 
 export interface UploadFile {
   name: string
   url?: string
-  key?: string
+  uploadKey?: string
   status?: UploadFileStatus
   percent?: number
   originalFileObj?: File | Blob
@@ -79,7 +80,7 @@ const UploadedFile = ({ file, onRemoveClick }: UploadedFileProps) => {
       case 'done':
         return 'close'
       default:
-        return 'loading'
+        return 'reload'
     }
   }
 
@@ -111,7 +112,7 @@ const UploadedFile = ({ file, onRemoveClick }: UploadedFileProps) => {
         }}
       >
         <Box className={isUploading ? styles.progressIconAnimation : undefined}>
-          <Icon type={statusIcon(file.status)} />
+          <Icon color="blue400" icon={statusIcon(file.status)} />
         </Box>
       </Box>
       <UploadingIndicator percent={file.percent} />
