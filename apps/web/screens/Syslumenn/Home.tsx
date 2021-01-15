@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 import NextLink from 'next/link'
 import {
   Box,
@@ -22,6 +22,7 @@ import {
   Header,
   Main,
   Heading,
+  LatestNewsSection,
 } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import {
@@ -34,6 +35,7 @@ import {
   GET_NAMESPACE_QUERY,
   GET_CATEGORIES_QUERY,
   GET_ORGANIZATION_QUERY,
+  GET_ORGANIZATION_NEWS_QUERY,
 } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
@@ -48,9 +50,11 @@ import {
   GetGroupedMenuQuery,
   GetNamespaceQuery,
   HeadingSlice,
+  News,
   Organization,
   QueryGetArticleCategoriesArgs,
   QueryGetOrganizationArgs,
+  QueryGetOrganizationNewsArgs,
 } from '@island.is/web/graphql/schema'
 import { GET_GROUPED_MENU_QUERY } from '../queries/Menu'
 import { Locale } from '../../i18n/I18n'
@@ -66,10 +70,13 @@ import {
   Slice as SliceType,
 } from '@island.is/island-ui/contentful'
 import Link from 'next/link'
+import LatestOrganizationNewsSection from '@island.is/web/components/LatestOrganizationNewsSection/LatestOrganizationNewsSection'
+import { GlobalContext } from '../../context/GlobalContext/GlobalContext'
 
 interface HomeProps {
   organization: Query['getOrganization']
   namespace: Query['getNamespace']
+  news: Query['getOrganizationNews']
   megaMenuData
 }
 
@@ -78,9 +85,16 @@ type AvailableSlices = Exclude<
   AllSlicesEmbeddedVideoFragment | AllSlicesImageFragment
 >
 
-const Home: Screen<HomeProps> = ({ organization, namespace, megaMenuData }) => {
+const Home: Screen<HomeProps> = ({
+  organization,
+  namespace,
+  megaMenuData,
+  news,
+}) => {
   const { activeLocale } = useI18n()
+  const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)
+  const gn = useNamespace(globalNamespace)
   const { asPath } = useRouter()
   const { linkResolver } = useLinkResolver()
 
@@ -205,6 +219,13 @@ const Home: Screen<HomeProps> = ({ organization, namespace, megaMenuData }) => {
         {organization.organizationPage.slices.map((slice) => (
           <Section key={slice.id} slice={slice} organization={organization} />
         ))}
+        <LatestOrganizationNewsSection
+          label={gn('newsAndAnnouncements')}
+          labelId="latestNewsTitle"
+          items={news}
+          subtitle={organization.title}
+          organizationSlug={organization.slug}
+        />
       </Main>
     </>
   )
@@ -329,6 +350,9 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
     namespace,
     megaMenuData,
     categories,
+    {
+      data: { getOrganizationNews },
+    },
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationArgs>({
       query: GET_ORGANIZATION_QUERY,
@@ -368,6 +392,15 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         },
       })
       .then((res) => res.data.getArticleCategories),
+    apolloClient.query<Query, QueryGetOrganizationNewsArgs>({
+      query: GET_ORGANIZATION_NEWS_QUERY,
+      variables: {
+        input: {
+          organizationSlug: 'syslumenn',
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
   ])
 
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
@@ -375,6 +408,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   return {
     organization: getOrganization,
     namespace,
+    news: getOrganizationNews,
     showSearchInHeader: false,
     megaMenuData: {
       asideTopLinks: formatMegaMenuLinks(
