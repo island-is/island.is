@@ -24,6 +24,7 @@ import {
 import { Document } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import isAfter from 'date-fns/isAfter'
+import isBefore from 'date-fns/isBefore'
 import startOfTomorrow from 'date-fns/startOfTomorrow'
 import isWithinInterval from 'date-fns/isWithinInterval'
 import isEqual from 'lodash/isEqual'
@@ -38,8 +39,8 @@ import DocumentLine from '../../components/DocumentLine/DocumentLine'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 15
-const defaultStartDate = new Date('2000-01-01')
-const defaultEndDate = startOfTomorrow()
+const defaultStartDate = null
+const defaultEndDate = null
 
 const defaultFilterValues = {
   dateFrom: defaultStartDate,
@@ -49,8 +50,8 @@ const defaultFilterValues = {
 }
 
 type FilterValues = {
-  dateFrom: Date
-  dateTo: Date
+  dateFrom: Date | null
+  dateTo: Date | null
   activeCategory: Option
   searchQuery: string
 }
@@ -60,12 +61,14 @@ const getFilteredDocuments = (
   filterValues: FilterValues,
 ): Document[] => {
   const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
-  let filteredDocuments = documents.filter((document) =>
-    isWithinInterval(new Date(document.date), {
-      start: dateFrom || defaultStartDate,
-      end: dateTo || defaultEndDate,
-    }),
-  )
+  let filteredDocuments = documents.filter((document) => {
+    const minDate = dateFrom || new Date('1900-01-01')
+    const maxDate = dateTo || startOfTomorrow()
+    return isWithinInterval(new Date(document.date), {
+      start: isBefore(maxDate, minDate) ? maxDate : minDate,
+      end: isAfter(minDate, maxDate) ? minDate : maxDate,
+    })
+  })
 
   if (activeCategory.value) {
     filteredDocuments = filteredDocuments.filter(

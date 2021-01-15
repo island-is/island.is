@@ -8,17 +8,20 @@ import { logger } from '@island.is/logging'
 import { SearchResult } from './models/searchResult.model'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
 import { TagCount } from './models/tagCount'
-import { SearchIndexes } from '@island.is/content-search-indexer/types'
 import { SearcherInput } from './dto/searcher.input'
 import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
 import { TypeCount } from './models/typeCount'
+import {
+  ElasticsearchIndexLocale,
+  getElasticsearchIndex,
+} from '@island.is/content-search-index-manager'
 
 @Injectable()
 export class ContentSearchService {
   constructor(private elasticService: ElasticService) {}
 
-  private getIndex(lang: keyof typeof SearchIndexes) {
-    return SearchIndexes[lang] ?? SearchIndexes.is
+  private getIndex(lang: ElasticsearchIndexLocale = 'is') {
+    return getElasticsearchIndex(lang)
   }
 
   mapTagAggregations(aggregations: TagAggregationResponse): TagCount[] {

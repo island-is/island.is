@@ -1,4 +1,6 @@
 import React, { FC, useMemo } from 'react'
+import HtmlParser from 'react-html-parser'
+
 import {
   CheckboxField,
   FieldBaseProps,
@@ -34,7 +36,9 @@ const CheckboxFormField: FC<Props> = ({
   return (
     <div>
       {showFieldName && (
-        <Text>{formatText(title, application, formatMessage)}</Text>
+        <Text variant="h5">
+          {formatText(title, application, formatMessage)}
+        </Text>
       )}
 
       {description && (
@@ -56,13 +60,11 @@ const CheckboxFormField: FC<Props> = ({
           error={error}
           options={finalOptions.map(({ label, tooltip, ...o }) => ({
             ...o,
-            label: formatText(label, application, formatMessage),
+            label: HtmlParser(formatText(label, application, formatMessage)),
             ...(tooltip && {
-              tooltip: formatText(
-                tooltip,
-                application,
-                formatMessage,
-              ) as string,
+              tooltip: HtmlParser(
+                formatText(tooltip, application, formatMessage) as string,
+              ),
             }),
           }))}
         />
