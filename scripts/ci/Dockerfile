@@ -73,6 +73,7 @@ LABEL commit=${GIT_SHA}
 ENV GIT_BRANCH=${GIT_BRANCH}
 ENV GIT_SHA=${GIT_SHA}
 ENV APP=${APP}
+ENV BASEHREF=/
 
-ADD scripts/ci/dockerfile-config/static-nginx.conf /etc/nginx/conf.d/default.conf
+ADD scripts/ci/dockerfile-config/nginx/* /etc/nginx/templates
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
