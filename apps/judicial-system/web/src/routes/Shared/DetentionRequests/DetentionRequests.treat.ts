@@ -77,6 +77,17 @@ export const tableRowContainer = style({
   },
 })
 
+export const largeColumn = style({
+  // The width needed to make sure a 33 character name doesn't wrap
+  minWidth: 334,
+  whiteSpace: 'nowrap',
+})
+
+export const accusedName = style({
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+})
+
 export const tr = style({
   display: 'flex',
   flex: 1,

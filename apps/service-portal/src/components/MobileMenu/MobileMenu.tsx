@@ -15,6 +15,7 @@ import { ActionType } from '../../store/actions'
 import { useStore } from '../../store/stateProvider'
 import ModuleNavigation from '../Sidebar/ModuleNavigation'
 import * as styles from './MobileMenu.treat'
+import useAuth from '../../hooks/useAuth/useAuth'
 
 const MobileMenu: FC<{}> = () => {
   const ref = useRef(null)
@@ -22,8 +23,10 @@ const MobileMenu: FC<{}> = () => {
   const { lang, formatMessage } = useLocale()
   const navigation = useNavigation()
   const { changeLanguage } = useNamespaces()
+  const { signOutUser } = useAuth()
 
   const handleLangClick = (value: Locale) => changeLanguage(value)
+  const handleLogoutClick = () => signOutUser()
 
   const handleLinkClick = () =>
     dispatch({
@@ -83,6 +86,21 @@ const MobileMenu: FC<{}> = () => {
                     onItemClick={handleLinkClick}
                   />
                 ),
+            )}
+            {rootIndex === 0 && (
+              <Box>
+                <Button
+                  onClick={handleLogoutClick}
+                  fluid
+                  icon="logOut"
+                  iconType="outline"
+                >
+                  {formatMessage({
+                    id: 'global:logout',
+                    defaultMessage: 'Útskrá',
+                  })}
+                </Button>
+              </Box>
             )}
           </Stack>
           {rootIndex === 1 && (

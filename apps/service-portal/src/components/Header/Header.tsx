@@ -52,7 +52,9 @@ export const Header: FC<{}> = () => {
                 </FocusableBox>
               </Link>
               <Box display="flex" alignItems="center" flexWrap="nowrap">
-                <UserMenuTrigger />
+                <Hidden below="lg">
+                  <UserMenuTrigger />
+                </Hidden>
                 <Hidden above="md">
                   <Box marginLeft={[1, 1, 1, 2]}>
                     <Button
