@@ -24,6 +24,7 @@ export const button = style({
   color: theme.color.blue400,
   fontWeight: theme.typography.semiBold,
   lineHeight: theme.typography.baseLineHeight,
+  textAlign: 'left',
   ...themeUtils.responsiveStyle({
     sm: {
       fontWeight: theme.typography.regular,

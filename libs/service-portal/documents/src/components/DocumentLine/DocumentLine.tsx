@@ -184,6 +184,7 @@ const DocumentLine: FC<Props> = ({ document }) => {
               height="full"
               paddingX={[0, 2]}
               paddingBottom={[1, 0]}
+              overflow="hidden"
             >
               {externalUrl ? (
                 <Link href={externalUrl}>
@@ -205,6 +206,7 @@ const DocumentLine: FC<Props> = ({ document }) => {
               alignItems="center"
               height="full"
               paddingX={[0, 2]}
+              overflow="hidden"
             >
               <Hidden above="xs">
                 <Text variant="small">{document.senderName}</Text>
