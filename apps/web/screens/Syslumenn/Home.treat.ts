@@ -76,3 +76,7 @@ export const popularTitle = style({
   fontWeight: 600,
   marginBottom: 30,
 })
+
+export const newsBg = style({
+  background: '#F8F5FA',
+})
