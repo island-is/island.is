@@ -94,9 +94,7 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
                     width="full"
                     position="relative"
                     paddingLeft={leftImage ? undefined : [0, 0, 0, 0, 6]}
-                    paddingRight={
-                      leftImage ? [10, 0, 0, 0, 6] : [10, 0]
-                    }
+                    paddingRight={leftImage ? [10, 0, 0, 0, 6] : [10, 0]}
                   >
                     <Image
                       url={image.url + '?w=774&fm=webp&q=80'}
@@ -124,10 +122,7 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
                       <NextLink
                         {...linkResolver(link.type as LinkType, [link.slug])}
                       >
-                        <Button
-                          icon="arrowForward"
-                          variant="text"
-                        >
+                        <Button icon="arrowForward" variant="text">
                           {linkTitle}
                         </Button>
                       </NextLink>
