@@ -28,11 +28,13 @@ import { AboutPage } from './models/aboutPage.model'
 import { LandingPage } from './models/landingPage.model'
 import { AlertBanner } from './models/alertBanner.model'
 import { GenericPage } from './models/genericPage.model'
+import { GenericOverviewPage } from './models/genericOverviewPage.model'
 import { GetNamespaceInput } from './dto/getNamespace.input'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
+import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
 import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
 import { GetLifeEventsInput } from './dto/getLifeEvents.input'
 import { Menu } from './models/menu.model'
@@ -138,6 +140,14 @@ export class CmsResolver {
     @Args('input') input: GetGenericPageInput,
   ): Promise<GenericPage | null> {
     return this.cmsContentfulService.getGenericPage(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => GenericOverviewPage, { nullable: true })
+  getGenericOverviewPage(
+    @Args('input') input: GetGenericOverviewPageInput,
+  ): Promise<GenericOverviewPage | null> {
+    return this.cmsContentfulService.getGenericOverviewPage(input)
   }
 
   @Directive(cacheControlDirective())
