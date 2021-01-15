@@ -9,7 +9,6 @@ import {
   buildCheckboxField,
   buildMultiField,
 } from '@island.is/application/core'
-
 import { Parent } from '../dataProviders/APIDataTypes'
 
 export const ChildrenDomicileTransferForm: Form = buildForm({
@@ -80,13 +79,10 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
               description:
                 'Til að láta hitt foreldrið vita þurfum við að fá netfang og símanúmer viðkomandi.',
               title: 'Netfang',
-              variant: 'email',
             }),
             buildTextField({
               id: 'phoneNumber',
               title: 'Símanúmer',
-              variant: 'tel',
-              format: '###-####',
             }),
           ],
         }),
@@ -123,12 +119,28 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'applicationEffect',
+      id: 'applicationTerms',
       title: 'Áhrif umsóknar',
       children: [
-        buildTextField({
-          id: 'children',
-          title: 'children',
+        buildMultiField({
+          id: 'applicationTermsTitle',
+          title: 'Hvaða áhrif hefur breytingin?',
+          description:
+            'Hér væri texti á mannamáli sem útskýrir hvaða áhrif þessi breyting hefur.',
+          children: [
+            buildCheckboxField({
+              id: 'approveTerms',
+              title:
+                'Litið er svo á að barn hafi fasta búsetu hjá því foreldri sem það á lögheimili hjá. Barn á rétt til að umgangast með reglubundnum hætti það foreldri sem það býr ekki hjá og bera foreldrarnir sameiginlega þá skyldu að tryggja rétt barns til umgengni.',
+              large: true,
+              options: [
+                {
+                  value: 'approveTerms',
+                  label: 'Ég skil hvaða áhrif lögheimilisbreyting hefur',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),
