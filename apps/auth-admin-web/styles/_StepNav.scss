@@ -1,0 +1,44 @@
+.client-step-nav,
+.identity-resource-step-nav,
+.api-scope-step-nav,
+.api-resource-step-nav {
+  ul {
+    padding-inline-start: 0;
+
+    li {
+      padding: 0;
+      display: inline-block;
+
+      &:not(:last-child)::after {
+        padding-left: 20px;
+        font-family: FontAwesome;
+        content: '\f178';
+      }
+
+      button {
+        font-size: 0.8rem;
+        cursor: pointer;
+        padding: 5px;
+        border: none;
+        border-radius: 0;
+        background: none;
+        color: $color-text-primary;
+        font-weight: $weight-light;
+
+        &:hover {
+          color: $color-link;
+        }
+
+        &.active {
+          color: $color-link;
+          font-weight: $weight-semi-bold;
+          border-bottom: solid 2px $color-link;
+        }
+
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+  }
+}

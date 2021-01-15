@@ -46,8 +46,11 @@ export const ReviewApplication: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'successfulSubmission',
-          title: m.succesfulSubmissionTitle,
-          description: m.succesfulSubmissionMessage,
+          title: m.successfulSubmissionTitle,
+          description: (application) => ({
+            ...m.successfulSubmissionMessage,
+            values: { applicationNumber: application.id },
+          }),
         }),
       ],
     }),

@@ -5,7 +5,6 @@ import { hashElement } from 'folder-hash'
 import {
   ContentSearchImporter,
   MappedData,
-  SearchIndexes,
   SyncOptions,
   SyncResponse,
 } from '@island.is/content-search-indexer/types'
@@ -20,6 +19,7 @@ import { ElasticService } from '@island.is/content-search-toolkit'
 import { AdgerdirPageSyncService } from './importers/adgerdirPage'
 import { MenuSyncService } from './importers/menu.service'
 import { GroupedMenuSyncService } from './importers/groupedMenu.service'
+import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -126,7 +126,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
      */
     let folderHash
     if (options.syncType === 'initialize') {
-      const { elasticIndex = SearchIndexes[options.locale] } = options
+      const { elasticIndex = getElasticsearchIndex(options.locale) } = options
 
       folderHash = await this.getModelsFolderHash()
       const lastFolderHash = await this.getLastFolderHash(elasticIndex)

@@ -4,7 +4,7 @@ import {
   ContentBlock,
   Box,
   Stack,
-  Breadcrumbs,
+  BreadcrumbsDeprecated as Breadcrumbs,
   Link,
   Inline,
   GridRow,
@@ -92,7 +92,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
             <Stack space={3}>
               {renderButton}
               <Stack space={1}>
-                <Text variant="tag">
+                <Text variant="eyebrow">
                   <span className={covidStyles.text}>
                     {n('malefni', 'Málefni')}:
                   </span>

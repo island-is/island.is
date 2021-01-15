@@ -15,6 +15,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -24,10 +25,11 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger'
+import { IdsAuthGuard } from '@island.is/auth-nest-tools'
+import { NationalIdGuard } from '../access/national-id-guard'
 
-@ApiOAuth2(['@identityserver.api/read'])
-// TODO: ADD guards when functional
-// @UseGuards(AuthGuard('jwt'))
+// @ApiOAuth2(['@identityserver.api/read'])
+@UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('clients')
 @Controller('clients')
 export class ClientsController {
@@ -72,11 +74,6 @@ export class ClientsController {
     }
 
     const clientProfile = await this.clientsService.findClientById(id)
-
-    if (!clientProfile) {
-      throw new NotFoundException("This client doesn't exist")
-    }
-
     return clientProfile
   }
 

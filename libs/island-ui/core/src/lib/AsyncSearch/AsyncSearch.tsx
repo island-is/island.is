@@ -15,7 +15,7 @@ import { Input, InputProps } from './shared/Input/Input'
 import { Label } from './shared/Label/Label'
 import { Menu, MenuProps } from './shared/Menu/Menu'
 import { Item } from './shared/Item/Item'
-import { Icon } from '../Icon/Icon'
+import { Icon } from '../IconRC/Icon'
 import { ColorSchemeContext } from '../context'
 
 import * as styles from './AsyncSearch.treat'
@@ -299,8 +299,7 @@ export const AsyncSearchInput = forwardRef<
             {...buttonProps}
           >
             <Icon
-              type="search"
-              width={20}
+              icon="search"
               color={whiteColorScheme ? 'white' : 'blue400'}
             />
           </button>
@@ -311,9 +310,7 @@ export const AsyncSearchInput = forwardRef<
             aria-label="Loading"
           >
             <Icon
-              spin
-              type="loading"
-              width={24}
+              icon="reload"
               color={whiteColorScheme ? 'white' : 'blue400'}
             />
           </span>

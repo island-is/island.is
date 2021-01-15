@@ -13,6 +13,7 @@ import { CommunicationsModule } from '@island.is/api/domains/communications'
 import { TranslationsModule } from '@island.is/api/domains/translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
+import { HealthTestModule } from '@island.is/api/domains/health-insurance'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { HealthController } from './health.controller'
 import { environment } from './environments'
@@ -50,6 +51,7 @@ const autoSchemaFile = environment.production
     CmsModule,
     DrivingLicenseModule.register({
       baseApiUrl: environment.drivingLicense.baseApiUrl,
+      secret: environment.drivingLicense.secret,
     }),
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl,
@@ -84,6 +86,7 @@ const autoSchemaFile = environment.production
       password: environment.nationalRegistry.password,
       host: environment.nationalRegistry.host,
     }),
+    HealthTestModule.register(),
     UserProfileModule.register({
       userProfileServiceBasePath:
         environment.userProfile.userProfileServiceBasePath,

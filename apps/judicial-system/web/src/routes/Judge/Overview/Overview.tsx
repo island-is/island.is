@@ -9,7 +9,7 @@ import {
 import {
   formatDate,
   capitalize,
-  formatCustodyRestrictions,
+  formatRequestedCustodyRestrictions,
   laws,
   formatNationalId,
   formatGender,
@@ -25,6 +25,8 @@ import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import {
   Case,
   CaseCustodyProvisions,
+  CaseState,
+  CaseTransition,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
@@ -32,6 +34,7 @@ import * as styles from './Overview.treat'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
+  TransitionCaseMutation,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import {
@@ -42,6 +45,7 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { parseTransition } from '../../../utils/formatters'
 
 interface CaseData {
   case?: Case
@@ -75,6 +79,41 @@ export const JudgeOverview: React.FC = () => {
     },
     [updateCaseMutation],
   )
+
+  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+
+  useEffect(() => {
+    const transitionCase = async (theCase: Case) => {
+      try {
+        // Parse the transition request
+        const transitionRequest = parseTransition(
+          theCase.modified,
+          CaseTransition.RECEIVE,
+        )
+
+        const { data } = await transitionCaseMutation({
+          variables: {
+            input: { id: theCase.id, ...transitionRequest },
+          },
+        })
+
+        if (!data) {
+          return false
+        }
+
+        setWorkingCase({
+          ...workingCase,
+          state: data.transitionCase.state,
+        } as Case)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+
+    if (workingCase?.state === CaseState.SUBMITTED) {
+      transitionCase(workingCase)
+    }
+  }, [workingCase, setWorkingCase, transitionCaseMutation])
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
@@ -299,12 +338,12 @@ export const JudgeOverview: React.FC = () => {
               </AccordionItem>
               <AccordionItem
                 id="id_3"
-                label="Takmarkanir á gæslu"
+                label="Takmarkanir og tilhögun á gæslu"
                 startExpanded
                 labelVariant="h3"
               >
                 <Text>
-                  {formatCustodyRestrictions(
+                  {formatRequestedCustodyRestrictions(
                     workingCase.requestedCustodyRestrictions,
                   )}
                 </Text>

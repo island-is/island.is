@@ -150,6 +150,10 @@ export class UpdateCaseInput implements UpdateCase {
   readonly custodyRestrictions?: CaseCustodyRestrictions[]
 
   @Allow()
+  @Field({ nullable: true })
+  readonly otherRestrictions?: string
+
+  @Allow()
   @Field(() => String, { nullable: true })
   readonly accusedAppealDecision?: CaseAppealDecision
 

@@ -20,6 +20,7 @@ type Events =
 
 const HealthInsuranceSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
+  confirmationOfResidencyDocument: z.array(z.string()).optional(),
   applicant: z.object({
     name: z.string().nonempty(),
     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
@@ -39,6 +40,7 @@ const HealthInsuranceSchema = z.object({
     remarks: z.string(),
   }),
   confirmCorrectInfo: z.boolean().refine((v) => v),
+  confirmMissingInfo: z.boolean().refine((y) => y),
   agentComments: z.array(z.string().nonempty()),
   formerInsurance: z.object({
     country: z.string().nonempty(),
@@ -46,6 +48,7 @@ const HealthInsuranceSchema = z.object({
     personalId: z.string().nonempty(),
     institution: z.string().nonempty(),
     entitlement: z.enum([YES, NO]),
+    additionalInformation: z.string().nonempty(),
   }),
   missingInfo: z.array(
     z.object({

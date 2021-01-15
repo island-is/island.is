@@ -10,17 +10,25 @@ import { m } from '../../forms/messages'
 import FormerInsurance from './FormerInsurance'
 import StatusAndChildren from './StatusAndChildren'
 import ContactInfo from './ContactInfo'
+import ReviewAdditionalInfo from './ReviewAdditionalInfo'
 import ReviewMissingInfo from './ReviewMissingInfo'
-import { MissingInfoType } from '../../types'
+import { AdditionalInfoType, MissingInfoType } from '../../types'
+import { YES } from '../../constants'
 
 const Review: FC<FieldBaseProps> = ({ field, application }) => {
   const { formatMessage } = useLocale()
 
   const isEditable = field.id !== 'submittedData'
-  const previousMissingInfo = getValueViaPath(
+  const previousMissingInfo =
+    (getValueViaPath(
+      application.answers,
+      'missingInfo',
+    ) as MissingInfoType[]) || []
+
+  const additionalInfo = getValueViaPath(
     application.answers,
-    'missingInfo',
-  ) as MissingInfoType[]
+    'additionalInfo',
+  ) as AdditionalInfoType
 
   return (
     <Box marginBottom={[1, 1, 3]}>
@@ -56,11 +64,28 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
           />
         </AccordionItem>
         {field.id === 'submittedData' &&
-          previousMissingInfo.length > 0 &&
+          additionalInfo.hasAdditionalInfo === YES && (
+            <AccordionItem
+              id="id_4"
+              label={formatText(
+                m.additionalRemarks,
+                application,
+                formatMessage,
+              )}
+            >
+              <ReviewAdditionalInfo
+                application={application}
+                field={field}
+                isEditable={isEditable}
+                additionalInfo={additionalInfo}
+              />
+            </AccordionItem>
+          )}
+        {previousMissingInfo.length > 0 &&
           previousMissingInfo.map((missingInfo, index) => (
             <AccordionItem
-              id={`id_${4 + index}`}
-              key={`id_${4 + index}`}
+              id={`id_${5 + index}`}
+              key={`id_${5 + index}`}
               label={`${formatText(
                 m.missingInfoSection,
                 application,

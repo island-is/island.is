@@ -11,6 +11,11 @@ export class ReferenceLink {
   type: string
 }
 
+// this is here cause page content types names don't match in API and Contentful
+const typeMap = {
+  vidspyrnaPage: 'adgerdirpage',
+}
+
 export const mapReferenceLink = ({
   sys,
   fields,
@@ -19,5 +24,5 @@ export const mapReferenceLink = ({
     (fields as PageTypes['fields']).slug ??
     (fields as ILinkUrl['fields']).url ??
     '',
-  type: sys.contentType.sys.id,
+  type: typeMap[sys.contentType.sys.id] ?? sys.contentType.sys.id,
 })

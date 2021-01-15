@@ -6,6 +6,7 @@ import slugify from '@sindresorhus/slugify'
 import {
   Slice as SliceType,
   ProcessEntry,
+  richText,
 } from '@island.is/island-ui/contentful'
 import {
   Box,
@@ -14,12 +15,16 @@ import {
   Breadcrumbs,
   GridColumn,
   GridRow,
-  Tag,
   Link,
   Navigation,
   TableOfContents,
+  Button,
+  Tag,
 } from '@island.is/island-ui/core'
-import { RichText, HeadWithSocialSharing } from '@island.is/web/components'
+import {
+  HeadWithSocialSharing,
+  InstitutionPanel,
+} from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { Screen } from '@island.is/web/types'
@@ -175,7 +180,7 @@ const ArticleNavigation: FC<
         title={n('sidebarHeader')}
         activeItemTitle={
           !activeSlug
-            ? article.shortTitle ?? article.title
+            ? article.shortTitle || article.title
             : article.subArticles.find((sub) => activeSlug === sub.slug).title
         }
         isMenuDialog={isMenuDialog}
@@ -188,7 +193,7 @@ const ArticleNavigation: FC<
         }}
         items={[
           {
-            title: article.shortTitle ?? article.title,
+            title: article.shortTitle || article.title,
             typename: article.__typename,
             slug: [article.slug],
             active: !activeSlug,
@@ -204,7 +209,6 @@ const ArticleNavigation: FC<
     )
   )
 }
-
 interface ArticleSidebarProps {
   article: Article
   activeSlug?: string | string[]
@@ -216,13 +220,44 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
   activeSlug,
   n,
 }) => {
+  const { linkResolver } = useLinkResolver()
+  const { activeLocale } = useI18n()
   return (
     <Stack space={3}>
-      <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
-      <RelatedArticles
-        title={n('relatedMaterial')}
-        articles={article.relatedArticles}
-      />
+      {!!article.category && (
+        <Box display={['none', 'none', 'block']} printHidden>
+          <Link {...linkResolver('articlecategory', [article.category.slug])}>
+            <Button
+              preTextIcon="arrowBack"
+              preTextIconType="filled"
+              size="small"
+              type="button"
+              variant="text"
+            >
+              {article.category.title}
+            </Button>
+          </Link>
+        </Box>
+      )}
+      {article.organization.length > 0 && (
+        <InstitutionPanel
+          img={article.organization[0].logo?.url}
+          institutionTitle={'Stofnun'}
+          institution={article.organization[0].title}
+          locale={activeLocale}
+          linkProps={{ href: article.organization[0].link }}
+          imgContainerDisplay={['block', 'block', 'none', 'block']}
+        />
+      )}
+      {article.subArticles.length > 0 && (
+        <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
+      )}
+      {article.relatedArticles.length > 0 && (
+        <RelatedArticles
+          title={n('relatedMaterial')}
+          articles={article.relatedArticles}
+        />
+      )}
     </Stack>
   )
 }
@@ -242,7 +277,6 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   useContentfulId(article.id)
   const n = useNamespace(namespace)
   const { query } = useRouter()
-  const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
 
   const subArticle = article.subArticles.find((sub) => {
@@ -290,31 +324,80 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           <ArticleSidebar article={article} n={n} activeSlug={query.subSlug} />
         }
       >
-        <Box paddingBottom={[2, 2, 4]}>
-          <Breadcrumbs>
-            <Link {...linkResolver('homepage')}>Ísland.is</Link>
-            {!!article.category && (
+        <Box
+          paddingBottom={[2, 2, 4]}
+          display={['none', 'none', 'block']}
+          printHidden
+        >
+          <Breadcrumbs
+            items={[
+              {
+                title: 'Ísland.is',
+                typename: 'homepage',
+                href: '/',
+              },
+              !!article.category && {
+                title: article.category.title,
+                typename: 'articlecategory',
+                slug: [article.category.slug],
+              },
+              !!article.group && {
+                isTag: true,
+                title: article.group.title,
+                typename: 'articlecategory',
+                slug: [
+                  article.category.slug +
+                    (article.group?.slug ? `#${article.group.slug}` : ''),
+                ],
+              },
+            ]}
+            renderLink={(link, { typename, slug }) => {
+              return (
+                <NextLink
+                  {...linkResolver(typename as LinkType, slug)}
+                  passHref
+                >
+                  {link}
+                </NextLink>
+              )
+            }}
+          />
+        </Box>
+        <Box
+          paddingBottom={[2, 2, 4]}
+          display={['flex', 'flex', 'none']}
+          justifyContent="spaceBetween"
+          alignItems="center"
+          printHidden
+        >
+          {!!article.category && (
+            <Box flexGrow={1} flexShrink={0} marginRight={2}>
               <Link
                 {...linkResolver('articlecategory', [article.category.slug])}
               >
-                {article.category.title}
+                <Button
+                  preTextIcon="arrowBack"
+                  preTextIconType="filled"
+                  size="small"
+                  type="button"
+                  variant="text"
+                >
+                  {article.category.title}
+                </Button>
               </Link>
-            )}
-            {!!article.group && (
-              <Link
-                href={
-                  linkResolver('articlecategory', [article.category.slug]).href
-                }
-                as={
-                  linkResolver('articlecategory', [article.category.slug]).as +
-                  (article.group?.slug ? `#${article.group.slug}` : '')
-                }
-                pureChildren
+            </Box>
+          )}
+          {article.organization.length > 0 && (
+            <Box minWidth={0}>
+              <Tag
+                variant="purple"
+                truncate
+                href={article.organization[0].link}
               >
-                <Tag variant="blue">{article.group.title}</Tag>
-              </Link>
-            )}
-          </Breadcrumbs>
+                {article.organization[0].title}
+              </Tag>
+            </Box>
+          )}
         </Box>
         <Box>
           <Text variant="h1" as="h1">
@@ -352,11 +435,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           )}
         </Box>
         <Box paddingTop={subArticle ? 2 : 4}>
-          <RichText
-            body={(subArticle ?? article).body as SliceType[]}
-            config={{ defaultPadding: [2, 2, 4] }}
-            locale={activeLocale}
-          />
+          {richText((subArticle ?? article).body as SliceType[])}
           <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
             {!!processEntry && <ProcessEntry {...processEntry} />}
             <Box marginTop={3}>

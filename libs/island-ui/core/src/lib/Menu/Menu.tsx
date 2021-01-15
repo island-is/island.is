@@ -66,7 +66,7 @@ export interface MenuProps {
    */
   renderLanguageSwitch?: (
     languageSwitch: ReactNode,
-    closeModal?: () => void,
+    isMobile?: boolean,
   ) => ReactNode
   /**
    * Logo title for accessibility
@@ -198,9 +198,6 @@ export const Menu = ({
       {myPagesText}
     </Button>,
   )
-  const languageSwitch = renderLanguageSwitch(
-    <Button variant="utility">{languageSwitchText}</Button>,
-  )
   const mainLinksRender = (closeModal: () => void) =>
     mainLinks.map(({ text, href }, index) => (
       <div className={styles.mainLinkOuter} key={index}>
@@ -266,7 +263,14 @@ export const Menu = ({
                     >
                       <Box display="flex">
                         <Box marginRight={[1, 2]}>{myPages}</Box>
-                        <Box marginRight={[2, 3]}>{languageSwitch}</Box>
+                        <Box marginRight={[2, 3]}>
+                          {renderLanguageSwitch(
+                            <Button variant="utility">
+                              {languageSwitchText}
+                            </Button>,
+                            true,
+                          )}
+                        </Box>
                       </Box>
                       <Button
                         onClick={closeModal}
@@ -358,7 +362,9 @@ export const Menu = ({
                   >
                     <Box display="flex">
                       <Box marginRight={2}>{myPages}</Box>
-                      {languageSwitch}
+                      {renderLanguageSwitch(
+                        <Button variant="utility">{languageSwitchText}</Button>,
+                      )}
                     </Box>
                     <Button
                       onClick={closeModal}

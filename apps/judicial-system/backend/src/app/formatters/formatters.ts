@@ -1,7 +1,9 @@
 import {
+  capitalize,
+  formatAccusedByGender,
   formatDate,
   formatNationalId,
-  formatRestrictions,
+  formatCustodyRestrictions,
   laws,
 } from '@island.is/judicial-system/formatters'
 import {
@@ -31,16 +33,47 @@ export function formatProsecutorDemands(
     ?.replace('dagur,', 'dagsins')
     ?.replace(' kl.', ', kl.')}${
     isolation
-      ? ' og verði gert að sæta einangrun meðan á gæsluvarðhaldi stendur'
+      ? ' og verði gert að sæta einangrun á meðan á gæsluvarðhaldinu stendur'
       : ''
   }.`
+}
+
+function custodyProvisionsOrder(p: CaseCustodyProvisions) {
+  switch (p) {
+    case CaseCustodyProvisions._95_1_A:
+      return 0
+    case CaseCustodyProvisions._95_1_B:
+      return 1
+    case CaseCustodyProvisions._95_1_C:
+      return 2
+    case CaseCustodyProvisions._95_1_D:
+      return 3
+    case CaseCustodyProvisions._95_2:
+      return 4
+    case CaseCustodyProvisions._99_1_B:
+      return 5
+    case CaseCustodyProvisions._100_1:
+      return 6
+    default:
+      return 999
+  }
+}
+
+function custodyProvisionsCompare(
+  p1: CaseCustodyProvisions,
+  p2: CaseCustodyProvisions,
+) {
+  const o1 = custodyProvisionsOrder(p1)
+  const o2 = custodyProvisionsOrder(p2)
+
+  return o1 < o2 ? -1 : o1 > o2 ? 1 : 0
 }
 
 export function formatCustodyProvisions(
   custodyProvisions: CaseCustodyProvisions[],
 ): string {
   return custodyProvisions
-    ?.sort()
+    ?.sort((p1, p2) => custodyProvisionsCompare(p1, p2))
     .reduce((s, l) => `${s}${laws[l]}\n`, '')
     .slice(0, -1)
 }
@@ -58,20 +91,30 @@ export function formatCourtCaseNumber(
 export function formatConclusion(
   accusedNationalId: string,
   accusedName: string,
+  accusedGender: CaseGender,
   decision: CaseDecision,
   custodyEndDate: Date,
   isolation: boolean,
 ): string {
   return decision === CaseDecision.REJECTING
-    ? 'Kröfu um gæsluvarðhald er hafnað.'
-    : `Kærði, ${accusedName}, kt. ${formatNationalId(
+    ? `Kröfu um að ${formatAccusedByGender(
+        accusedGender,
+      )}, ${accusedName}, kt. ${formatNationalId(
         accusedNationalId,
-      )} skal sæta gæsluvarðhaldi, þó ekki lengur en til ${formatDate(
-        custodyEndDate,
-        'PPPPp',
-      )?.replace('dagur,', 'dagsins')}.${
-        isolation
-          ? ' Kærði skal sæta einangrun meðan á gæsluvarðhaldi stendur.'
+      )}, sæti gæsluvarðhaldi er hafnað.`
+    : `${capitalize(
+        formatAccusedByGender(accusedGender),
+      )}, ${accusedName}, kt. ${formatNationalId(
+        accusedNationalId,
+      )}, skal sæta ${
+        decision === CaseDecision.ACCEPTING ? 'gæsluvarðhaldi' : 'farbanni'
+      }, þó ekki lengur en til ${formatDate(custodyEndDate, 'PPPPp')
+        ?.replace('dagur,', 'dagsins')
+        ?.replace(' kl.', ', kl.')}.${
+        decision === CaseDecision.ACCEPTING && isolation
+          ? ` ${capitalize(
+              formatAccusedByGender(accusedGender),
+            )} skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.`
           : ''
       }`
 }
@@ -109,7 +152,7 @@ export function formatHeadsUpSmsNotification(
   const arrestDateText = arrestDate
     ? ` Viðkomandi handtekinn ${formatDate(arrestDate, 'Pp').replace(
         ' ',
-        ' kl. ',
+        ', kl. ',
       )}.`
     : ''
 
@@ -143,7 +186,7 @@ export function formatProsecutorCourtDateEmailNotification(
   courtRoom: string,
   defenderName: string,
 ): string {
-  const courtDateText = formatDate(courtDate, 'PPPp')
+  const courtDateText = formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
   const defenderText = defenderName
     ? `Verjandi sakbornings: ${defenderName}`
     : 'Verjandi sakbornings hefur ekki verið skráður'
@@ -160,11 +203,11 @@ export function formatPrisonCourtDateEmailNotification(
   defenderName: string,
 ): string {
   const courtText = court?.replace('dómur', 'dóms')
-  const courtDateText = formatDate(courtDate, 'PPPp')
+  const courtDateText = formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
   const requestedCustodyEndDateText = formatDate(
     requestedCustodyEndDate,
     'PPPp',
-  )
+  )?.replace(' kl.', ', kl.')
   const requestText =
     accusedGender === CaseGender.OTHER
       ? `Krafist er gæsluvarðhalds til ${requestedCustodyEndDateText}.`
@@ -191,6 +234,9 @@ export function formatDefenderCourtDateEmailNotification(
   return `${court} hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram ${formatDate(
     courtDate,
     'PPPp',
+  )?.replace(
+    ' kl.',
+    ', kl.',
   )}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />Sakborningur: ${accusedName} ${formatNationalId(
     accusedNationalId,
   )}.<br /><br />Dómstóllinn hefur skráð þig sem verjanda sakbornings.`
@@ -209,6 +255,7 @@ export function formatCourtDateNotificationCondition(
 export function formatPrisonRulingEmailNotification(
   accusedNationalId: string,
   accusedName: string,
+  accusedGender: CaseGender,
   court: string,
   prosecutorName: string,
   courtDate: Date,
@@ -227,20 +274,22 @@ export function formatPrisonRulingEmailNotification(
   )}.<br /><br />Ákærandi: ${prosecutorName}<br />Verjandi: ${defenderName}<br /><br /><strong>Úrskurðarorð</strong><br /><br />${formatConclusion(
     accusedNationalId,
     accusedName,
+    accusedGender,
     decision,
     custodyEndDate,
     custodyRestrictions.includes(CaseCustodyRestrictions.ISOLATION),
   )}<br /><br /><strong>Ákvörðun um kæru</strong><br />${formatAppeal(
     accusedAppealDecision,
-    'Kærði',
+    capitalize(formatAccusedByGender(accusedGender)),
     false,
-  )}<br />${formatAppeal(
-    prosecutorAppealDecision,
-    'Sækjandi',
-    false,
-  )}<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${formatRestrictions(
-    custodyRestrictions,
-  )}<br /><br />${judgeName} ${judgeTitle}`
+  )}<br />${formatAppeal(prosecutorAppealDecision, 'Sækjandi', false)}${
+    decision === CaseDecision.ACCEPTING
+      ? `<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${formatCustodyRestrictions(
+          accusedGender,
+          custodyRestrictions,
+        )}`
+      : ''
+  }<br /><br />${judgeName} ${judgeTitle}`
 }
 
 export function stripHtmlTags(html: string): string {

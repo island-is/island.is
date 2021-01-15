@@ -101,31 +101,42 @@ export const validateAndSetTime = (
 export const setAndSendDateToServer = async (
   field: string,
   currentValue: string | undefined,
-  date: Date,
+  date: Date | null,
   theCase: Case,
+  required: boolean,
   setCase: (value: React.SetStateAction<Case | undefined>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
-  if (setErrorMessage) {
-    setErrorMessage('')
+  if (required && date === null && setErrorMessage) {
+    setErrorMessage('Reitur má ekki vera tómur')
   }
 
-  const currentRepresentation = currentValue?.includes('T')
-    ? 'complete'
-    : 'date'
+  let formattedDate = null
 
-  const formattedDate = formatISO(date, {
-    representation: currentRepresentation,
-  })
+  if (date !== null) {
+    if (setErrorMessage) {
+      setErrorMessage('')
+    }
+
+    const currentRepresentation = currentValue?.includes('T')
+      ? 'complete'
+      : 'date'
+
+    formattedDate = formatISO(date, {
+      representation: currentRepresentation,
+    })
+  }
 
   setCase({
     ...theCase,
     [field]: formattedDate,
   })
 
-  if (theCase.id !== '' && currentRepresentation === 'complete') {
-    updateCase(theCase.id, parseString(field, formattedDate))
+  if (theCase.id !== '') {
+    updateCase(theCase.id, {
+      [field]: formattedDate,
+    })
   }
 }
 
@@ -182,7 +193,7 @@ export const validateAndSendTimeToServer = async (
 
 export const setAndSendToServer = (
   field: string,
-  value: string,
+  value: string | boolean,
   theCase: Case,
   setCase: (value: React.SetStateAction<Case | undefined>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,

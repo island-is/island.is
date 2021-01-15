@@ -14,14 +14,18 @@ import {
   Form,
   FormModes,
   Comparators,
+  Application,
+  FormValue,
 } from '@island.is/application/core'
 import { m } from './messages'
 import { YES, NO } from '../constants'
 import { StatusTypes } from '../types'
+import Logo from '../assets/Logo'
 
 export const HealthInsuranceForm: Form = buildForm({
   id: 'HealthInsuranceDraft',
   title: m.formTitle,
+  logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
@@ -33,8 +37,14 @@ export const HealthInsuranceForm: Form = buildForm({
           id: 'approveExternalData',
           dataProviders: [
             buildDataProviderItem({
+              id: 'userProfile',
+              type: 'UserProfileProvider',
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
               id: 'nationalRegistry',
-              type: 'NationalRegistry',
+              type: 'NationalRegistryProvider',
               title: m.nationalRegistryTitle,
               subTitle: m.nationalRegistrySubTitle,
             }),
@@ -53,6 +63,28 @@ export const HealthInsuranceForm: Form = buildForm({
           ],
         }),
         buildMultiField({
+          id: 'confirmationOfResidency',
+          title: m.confirmationOfResidencyTitle,
+          description: m.confirmationOfResidencyDescription,
+          children: [
+            buildDividerField({
+              title: ' ',
+              color: 'transparent',
+            }),
+            buildFileUploadField({
+              id: 'confirmationOfResidencyDocument',
+              title: '',
+              introduction: m.confirmationOfResidencyFileUpload,
+              uploadHeader: m.fileUploadHeader.defaultMessage,
+              uploadDescription: m.fileUploadDescription.defaultMessage,
+            }),
+          ],
+          condition: (formValue: FormValue, externalData) => {
+            // TODO: when it is possible in NationalRegistry api, check if country is Greenland or Faroe Islands
+            return true
+          },
+        }),
+        buildMultiField({
           id: 'contactInfoSection',
           title: m.contactInfoTitle,
           children: [
@@ -61,36 +93,63 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.name,
               width: 'half',
               disabled: true,
+              defaultValue: (application: Application) =>
+                (application.externalData.nationalRegistry?.data as {
+                  fullName?: string
+                })?.fullName,
             }),
             buildTextField({
               id: 'applicant.nationalId',
               title: m.nationalId,
               width: 'half',
               disabled: true,
+              defaultValue: (application: Application) =>
+                (application.externalData.nationalRegistry?.data as {
+                  nationalId?: string
+                })?.nationalId,
             }),
             buildTextField({
               id: 'applicant.address',
               title: m.address,
               width: 'half',
               disabled: true,
+              defaultValue: (application: Application) =>
+                (application.externalData.nationalRegistry?.data as {
+                  streetAddress?: string
+                  // TODO: Remove the hardcoded
+                })?.streetAddress || 'street',
             }),
             buildTextField({
               id: 'applicant.postalCode',
               title: m.postalCode,
               width: 'half',
               disabled: true,
+              defaultValue: (application: Application) =>
+                (application.externalData.nationalRegistry?.data as {
+                  postalCode?: string
+                  // TODO: Remove the hardcoded
+                })?.postalCode || '000',
             }),
             buildTextField({
               id: 'applicant.city',
               title: m.city,
               width: 'half',
               disabled: true,
+              defaultValue: (application: Application) =>
+                (application.externalData.nationalRegistry?.data as {
+                  city?: string
+                  // TODO: Remove the hardcoded
+                })?.city || 'city',
             }),
             buildTextField({
               id: 'applicant.nationality',
               title: m.nationality,
               width: 'half',
               disabled: true,
+              defaultValue: (application: Application) =>
+                (application.externalData.nationalRegistry?.data as {
+                  citizenship?: string
+                })?.citizenship,
             }),
             buildDescriptionField({
               id: 'editNationalRegistryData',
@@ -103,6 +162,10 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.email,
               width: 'half',
               variant: 'email',
+              defaultValue: (application: Application) =>
+                (application.externalData.userProfile?.data as {
+                  email?: string
+                })?.email,
             }),
             buildTextField({
               id: 'applicant.phoneNumber',
@@ -111,6 +174,10 @@ export const HealthInsuranceForm: Form = buildForm({
               variant: 'tel',
               format: '###-####',
               placeholder: '000-0000',
+              defaultValue: (application: Application) =>
+                (application.externalData.userProfile?.data as {
+                  mobilePhoneNumber?: string
+                })?.mobilePhoneNumber,
             }),
             buildDescriptionField({
               id: 'editDigitalIslandData',
@@ -158,10 +225,19 @@ export const HealthInsuranceForm: Form = buildForm({
                 },
               ],
             }),
+            buildCustomField({
+              id: 'confirmationOfStudiesDescription',
+              title: m.confirmationOfStudies,
+              description: m.confirmationOfStudiesTooltip,
+              component: 'TextWithTooltip',
+              condition: (answers) => answers.status === StatusTypes.STUDENT,
+            }),
             buildFileUploadField({
               id: 'confirmationOfStudies',
               title: '',
-              introduction: m.confirmationOfStudies,
+              introduction: '',
+              uploadHeader: m.fileUploadHeader.defaultMessage,
+              uploadDescription: m.fileUploadDescription.defaultMessage,
               condition: (answers) => answers.status === StatusTypes.STUDENT,
             }),
             buildRadioField({
@@ -171,9 +247,15 @@ export const HealthInsuranceForm: Form = buildForm({
               width: 'half',
               largeButtons: true,
               options: [
-                { label: m.yesOptionLabel, value: YES },
                 { label: m.noOptionLabel, value: NO },
+                { label: m.yesOptionLabel, value: YES },
               ],
+            }),
+            buildCustomField({
+              id: 'childrenInfo',
+              title: '',
+              component: 'InfoMessage',
+              condition: (answers) => answers.children === YES,
             }),
           ],
         }),
@@ -216,16 +298,31 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'formerInsurance.institution',
               title: m.formerInsuranceInstitution,
             }),
+            buildCustomField({
+              id: 'formerInsurance.entitlementDescription',
+              title: m.formerInsuranceEntitlement,
+              description: m.formerInsuranceEntitlementTooltip,
+              component: 'TextWithTooltip',
+            }),
             buildRadioField({
               id: 'formerInsurance.entitlement',
               title: '',
-              description: m.formerInsuranceEntitlement,
               width: 'half',
               largeButtons: true,
               options: [
                 { label: m.noOptionLabel, value: NO },
                 { label: m.yesOptionLabel, value: YES },
               ],
+            }),
+            buildTextField({
+              id: 'formerInsurance.additionalInformation',
+              title: m.formerInsuranceAdditionalInformation,
+              placeholder: m.formerInsuranceAdditionalInformationPlaceholder,
+              variant: 'textarea',
+              condition: (answers) =>
+                (answers as {
+                  formerInsurance: { entitlement: string }
+                })?.formerInsurance?.entitlement === YES,
             }),
           ],
         }),
@@ -271,6 +368,8 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'additionalInfo.files',
               title: '',
               introduction: '',
+              uploadHeader: m.fileUploadHeader.defaultMessage,
+              uploadDescription: m.fileUploadDescription.defaultMessage,
               condition: {
                 questionId: 'additionalInfo.hasAdditionalInfo',
                 isMultiCheck: false,
@@ -293,10 +392,10 @@ export const HealthInsuranceForm: Form = buildForm({
             }),
           ],
         }),
-        buildDescriptionField({
+        buildCustomField({
           id: 'successfulSubmission',
-          title: m.succesfulSubmissionTitle,
-          description: m.succesfulSubmissionMessage,
+          title: '',
+          component: 'ConfirmationScreen',
         }),
       ],
     }),

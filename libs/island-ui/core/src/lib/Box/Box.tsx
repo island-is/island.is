@@ -12,6 +12,8 @@ export interface BoxProps
   component?: ElementType
 }
 
+export type TBoxProps = BoxProps
+
 export const Box = forwardRef<HTMLElement, BoxProps>(
   (
     {
