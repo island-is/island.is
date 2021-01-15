@@ -3605,7 +3605,6 @@
             "outputPath": "dist/apps/service-portal",
             "index": "apps/service-portal/src/index.html",
             "baseHref": "/minarsidur",
-            "deployUrl": "/minarsidur",
             "main": "apps/service-portal/src/Main.tsx",
             "polyfills": "apps/service-portal/src/polyfills.ts",
             "tsConfig": "apps/service-portal/tsconfig.app.json",
@@ -3620,6 +3619,9 @@
           },
           "configurations": {
             "production": {
+              "build": {
+                "deployUrl": "/minarsidur/"
+              },
               "fileReplacements": [
                 {
                   "replace": "apps/service-portal/src/environments/environment.ts",
