@@ -61,7 +61,7 @@ export class ApiScope extends Model<ApiScope> {
 
   @HasMany(() => ApiScopeUserClaim)
   @ApiProperty()
-  public userClaims?: ApiScopeUserClaim[]
+  userClaims?: ApiScopeUserClaim[]
 
   // Common properties end
 

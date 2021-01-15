@@ -1,12 +1,12 @@
-# the Authentication Service Provision
+# The Authentication Service Provision
 
 **[GitHub](https://github.com/)** is used for source code management while **[Amazon Web Service](https://aws.amazon.com/)** is the hosting provider.
 
 Further information regarding the development- and service provider-environments can be found following these links:
 
-- [https://docs.devland.is/handbook/technical-overview/devops](https://docs.devland.is/handbook/technical-overview/devops)
-- [https://docs.devland.is/handbook/projects/services/auth-api](https://docs.devland.is/handbook/projects/services/auth-api)
-- [https://docs.devland.is/handbook/projects/services/auth-admin-api](https://docs.devland.is/handbook/projects/services/auth-admin-api)
+- [https://docs.devland.is/handbook/technical-overview/devops](../../../devops)
+- [https://docs.devland.is/handbook/projects/services/auth-api](../../../../../apps/services/auth-api)
+- [https://docs.devland.is/handbook/projects/services/auth-admin-api](../../../../../apps/services/auth-admin-api)
 - [https://github.com/island-is/identity-server.web](https://github.com/island-is/identity-server.web)
 
 ## IdentityServer
@@ -46,7 +46,7 @@ An access token allows access to an API resource. Clients request access tokens 
 4. \*\*\*\*The client forwards the access token to the API for validation.
 5. \*\*\*\*When the API has validated the access token then the client gets access to the user’s resources.
 
-![authentication-service-provision/untitled.png](authentication-service-provision/untitled.png)
+![authentication-service-provision-2.png](./assets/authentication-service-provision-2.png)
 
 ## Software development process
 
@@ -56,4 +56,4 @@ An access token allows access to an API resource. Clients request access tokens 
 4. \*\*\*\*When code is to be released, a release-branch is created by a third party from the main-branch. This triggers a GitHub-action which deploys it to the Staging-environment.
 5. \*\*\*\*When the deployment on Staging has been tested and approved then the code is deployed to the Production-environment by a third party.
 
-![authentication-service-provision/untitled-1.png](authentication-service-provision/untitled-1.png)
+![authentication-service-provision-1.png](./assets/authentication-service-provision-1.png)

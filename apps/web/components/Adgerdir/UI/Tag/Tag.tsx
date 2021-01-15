@@ -56,7 +56,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
     }
 
     const content = (
-      <Text variant="tag" as="span">
+      <Text variant="eyebrow" as="span">
         {children}
       </Text>
     )

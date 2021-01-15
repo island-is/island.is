@@ -37,6 +37,8 @@
 /libs/application/templates/parental-leave/               @island-is/aranja
 /libs/application/templates/reference-template/           @island-is/aranja
 
+/libs/application/templates/children-domicile-transfer/   @island-is/kolibri-modern-family
+
 /apps/judicial-system/                                    @island-is/kolibri-justice-league
 /libs/judicial-system/                                    @island-is/kolibri-justice-league
 /libs/nova-sms/                                           @island-is/kolibri-justice-league
@@ -85,5 +87,8 @@
 /apps/skilavottord/                                       @island-is/deloitte
 /libs/skilavottord/                                       @island-is/deloitte
 
-# /libs/auth-api-lib/                                     @island-is/fuglar
-# /libs/auth-nest-tools/                                  @island-is/fuglar
+/apps/auth-admin-web/                                     @island-is/fuglar
+/apps/auth-admin-web-e2e/                                 @island-is/fuglar
+/libs/auth-api-lib/                                       @island-is/fuglar
+/libs/auth-nest-tools/                                    @island-is/fuglar
+

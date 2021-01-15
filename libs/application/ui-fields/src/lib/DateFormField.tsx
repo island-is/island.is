@@ -15,7 +15,7 @@ interface Props extends FieldBaseProps {
   field: DateField
 }
 const DateFormField: FC<Props> = ({ application, error, field }) => {
-  const { id, disabled, title, description, placeholder } = field
+  const { id, disabled, title, description, placeholder, backgroundColor } = field
   const { formatMessage, lang } = useLocale()
 
   return (
@@ -32,6 +32,7 @@ const DateFormField: FC<Props> = ({ application, error, field }) => {
           id={id}
           name={`${id}`}
           locale={lang}
+          backgroundColor={backgroundColor}
           label={formatText(title, application, formatMessage)}
           placeholder={
             placeholder

@@ -76,7 +76,7 @@ export const size = styleMap({
     }),
   },
   small: {
-    fontSize: 16,
+    fontSize: 14,
     lineHeight: 1.25,
     minHeight: 40,
     ...themeUtils.responsiveStyle({

@@ -148,8 +148,8 @@ export const DetentionRequests: React.FC = () => {
       history.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${c.id}`)
     } else if (isJudge) {
       history.push(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
-    } else if (c.isCourtDateInThePast) {
-      history.push(`${Constants.STEP_THREE_ROUTE}/${c.id}`)
+    } else if (c.state === CaseState.RECEIVED && c.isCourtDateInThePast) {
+      history.push(`${Constants.STEP_FIVE_ROUTE}/${c.id}`)
     } else {
       history.push(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
     }

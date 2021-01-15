@@ -18,6 +18,7 @@ import {
   QueryGetLifeEventsArgs,
   QueryGetHomepageArgs,
   GetNewsQuery,
+  FrontpageSlider as FrontpageSliderType,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -97,9 +98,7 @@ const Home: Screen<HomeProps> = ({
         </Box>
         <Inline space={2}>
           {page.featuredThings.map(({ title, attention, thing }) => {
-            const cardUrl = linkResolver(thing.__typename as LinkType, [
-              thing.slug,
-            ])
+            const cardUrl = linkResolver(thing?.type as LinkType, [thing?.slug])
 
             return cardUrl.href && cardUrl.href.length > 0 ? (
               <Link key={title} href={cardUrl.href} as={cardUrl.as}>
@@ -127,7 +126,7 @@ const Home: Screen<HomeProps> = ({
     <>
       <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
         <FrontpageSlider
-          slides={frontpageSlides}
+          slides={frontpageSlides as FrontpageSliderType[]}
           searchContent={searchContent}
         />
       </Section>
