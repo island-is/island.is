@@ -51,7 +51,7 @@ import {
 import { Image } from '@island.is/web/graphql/schema'
 import * as styles from './Search.treat'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { typenameResolver } from 'apps/web/utils/typenameResolver'
+import { typenameResolver } from '@island.is/web/utils/typenameResolver'
 
 const PERPAGE = 10
 
