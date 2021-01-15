@@ -4,7 +4,7 @@ import { useDropzone } from 'react-dropzone'
 import * as styles from './InputFileUpload.treat'
 
 import { Box } from '../Box/Box'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 import { Button } from '../Button/Button'
 import { theme, Colors } from '@island.is/island-ui/theme'
 import { Icon, IconTypes } from '../Icon/Icon'
@@ -102,7 +102,7 @@ const UploadedFile = ({ file, onRemoveClick }: UploadedFileProps) => {
       className={styles.uploadedFile}
       onClick={(e) => e.stopPropagation()}
     >
-      <Typography variant="pSmall">{file.name}</Typography>
+      <Text variant="small">{file.name}</Text>
       <Box
         cursor={!isUploading ? 'pointer' : undefined}
         onClick={(e) => {
@@ -194,8 +194,8 @@ export const InputFileUpload = ({
       className={styles.container}
       {...getRootProps({ style })}
     >
-      <Typography variant="h4">{header}</Typography>
-      <Typography variant="p">{description}</Typography>
+      <Text variant="h4">{header}</Text>
+      <Text>{description}</Text>
       <Box marginY={4}>
         <Button variant="ghost" icon="attach">
           {buttonLabel}
