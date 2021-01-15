@@ -72,8 +72,8 @@ export class IndexingService {
     })
 
     /*
-    the sync method should manage all housekeeping tasks such as removing outdated documents
-    this is here to ensure old data is cleared from the index incase sync fails to remove documents
+    calling the sync endpoint should manage all housekeeping tasks such as removing outdated documents
+    we need this check to ensure old data is cleared from the index incase sync fails to remove documents
     currently this happens in cms sync in the development environment due to limitations in the Contentful sync API
     */
     if (syncType === 'full' && didImportAll) {
@@ -81,7 +81,7 @@ export class IndexingService {
       const response = await this.elasticService.deleteAllDocumentsNotVeryRecentlyUpdated(
         elasticIndex,
       )
-      logger.info('Removed stale documents', { count: response.body.deleted })
+      logger.info('Removed stale documents', { count: response.body.deleted, index: elasticIndex })
     }
 
     logger.info('Indexing service finished sync', { index: elasticIndex })
