@@ -1454,6 +1454,46 @@ export interface IOrganization extends Entry<IOrganizationFields> {
   }
 }
 
+export interface IOrganizationNewsFields {
+  /** Organization */
+  organization: Entry<{ [fieldId: string]: unknown }>
+
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Date */
+  date: string
+
+  /** Featured Image */
+  featuredImage: Asset
+
+  /** Introduction */
+  introduction: string
+
+  /** Content */
+  content?: Document | undefined
+}
+
+export interface IOrganizationNews extends Entry<IOrganizationNewsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'organizationNews'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IOrganizationTagFields {
   /** Title */
   title: string
@@ -2739,6 +2779,7 @@ export type CONTENT_TYPE =
   | 'numberBullet'
   | 'numberBulletSection'
   | 'organization'
+  | 'organizationNews'
   | 'organizationTag'
   | 'page'
   | 'pageHeader'
