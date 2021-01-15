@@ -18,7 +18,7 @@ import * as styles from './DatePicker.treat'
 import * as coreStyles from './react-datepicker.treat'
 import { Input, InputProps } from '../Input/Input'
 import { VisuallyHidden } from 'reakit'
-import { DatePickerTypes } from './types'
+import * as DatePickerTypes from './types'
 
 const languageConfig = {
   is: {
