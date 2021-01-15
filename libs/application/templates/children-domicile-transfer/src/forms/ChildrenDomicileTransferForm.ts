@@ -93,8 +93,8 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
             'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið hvaða börn á að flytja lögheimili fyrir.',
           large: true,
           options: (application) =>
-            extractChildrenFromApplication(application).map((c, i) => ({
-              value: i.toString(),
+            extractChildrenFromApplication(application).map((c) => ({
+              value: c.name,
               label: c.name,
             })),
         }),
