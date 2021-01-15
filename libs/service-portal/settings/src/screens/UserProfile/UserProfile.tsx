@@ -21,8 +21,8 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
       <Box marginBottom={6}>
         <Text variant="h1" as="h1">
           {formatMessage({
-            id: 'service.portal:profile-info',
-            defaultMessage: 'Minn aðgangur',
+            id: 'service.portal:settings',
+            defaultMessage: 'Stillingar',
           })}
         </Text>
       </Box>
