@@ -18,7 +18,7 @@ export const environment: Environment = {
   awsRegion: process.env.AWS_REGION,
   esDomain: 'search',
   s3Folder: '',
-  dictRepo: 'https://api.github.com/repos/island-is/elasticsearch-dictionaries',
+  dictRepo: 'island-is/elasticsearch-dictionaries',
   locales: ['is', 'en'],
   configPath: path.resolve(__dirname, '../../config'),
 }

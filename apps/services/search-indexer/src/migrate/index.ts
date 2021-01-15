@@ -5,10 +5,7 @@ import * as aws from './aws'
 import * as dictionary from './dictionary'
 import * as elastic from './elastic'
 import * as kibana from './kibana'
-import {
-  getElasticsearchIndex,
-  getElasticVersion,
-} from '@island.is/content-search-index-manager'
+import * as indexManager from '@island.is/content-search-index-manager'
 
 const { locales } = environment
 
@@ -18,16 +15,11 @@ class App {
 
     const hasAwsAccess = await aws.checkAWSAccess()
 
-    let esPackages: aws.AwsEsPackage[]
     if (hasAwsAccess) {
-      esPackages = await this.migrateAws()
-    } else {
-      logger.info('No aws access found running in local development mode')
-      // get packageId list for local development packages have package ids matching filenames in the dictionary repo
-      esPackages = dictionary.getFakeEsPackages() // TODO: Make ES migration get it's own aws packages?
+      await this.migrateAws()
     }
 
-    await this.migrateES(esPackages)
+    await this.migrateES(hasAwsAccess)
 
     try {
       await this.migrateKibana()
@@ -38,52 +30,61 @@ class App {
     logger.info('Done!')
   }
 
-  private async migrateAws(): Promise<aws.AwsEsPackage[]> {
+  private async migrateAws(): Promise<boolean> {
     logger.info('Starting aws migration')
-    const repoDictionaryVersion = await dictionary.getDictionaryVersion()
-    const awsDictionaryVersion = await aws.getDictionaryVersion()
-
-    // we only try to update the dictionary files if we find a mismatch in version numbers
-    if (repoDictionaryVersion !== awsDictionaryVersion) {
-      logger.info('Dictionary version mismatch, updating dictionary', {
-        repoVersion: repoDictionaryVersion,
-        awsVersion: awsDictionaryVersion,
-      })
-      const dictionaries = await dictionary.getDictionaryFiles() // get files form dictionary repo
-      const uploadedS3Files = await aws.updateS3DictionaryFiles(dictionaries) // upload repo files to s3
-      const newEsPackages = await aws.createAwsEsPackages(
-        uploadedS3Files,
-        repoDictionaryVersion,
-      ) // create packages for the new files in AWS ES
-      await aws.associatePackagesWithAwsEs(newEsPackages) // attach the new packages to our AWS ES instance
-      await aws.updateDictionaryVersion(repoDictionaryVersion) // update version file last to ensure process runs again on failure
-    }
-
-    // we get the associated packages from AWS ES and return them
-    // this returns packages two versions back in time to support rollbacks
-    const esPackages = await aws.getAllDomainEsPackages()
 
     /*
-    we only want to return packages of current version
-    else if dictionary is missing packages we might not see an error until old packages are deleted
+    we want to get packages after a given version (github sha)
+    this allows us to upload all versions since last sync
     */
-    const filteredAwsEsPackages = esPackages.filter((esPackage) => {
-      const { version } = aws.parsePackageName(esPackage.packageName)
-      return version === repoDictionaryVersion
-    })
+    const dictionaryVersions = dictionary.getDictionaryVersions() // returns versions of the dictionary in order with the newest version first
+    const latestAwsDictionaryVersion = await aws.getFirstFoundAwsEsPackageVersion(dictionaryVersions)
+    const newDictionaryFiles = await dictionary.getDictionaryFilesAfterVersion(latestAwsDictionaryVersion)
+
+    // if we have packages we should add them (s3 -> AWS ES -> AWS ES search domain)
+    if (newDictionaryFiles.length) {
+      logger.info('Found new dictionary packages, uploading to AWS', {
+        packages: newDictionaryFiles
+      })
+      const s3Files = await aws.uploadS3DictionaryFiles(newDictionaryFiles) // upload repo files to s3
+      const newEsPackages = await aws.createAwsEsPackages(s3Files) // create the dictionary packages files in AWS ES
+      await aws.associatePackagesWithAwsEsSearchDomain(newEsPackages) // attach the new packages to our AWS ES search domain
+    }
 
     logger.info('Aws migration completed')
-    return filteredAwsEsPackages // es config needs the package ids when generating the index template
+    return true
   }
 
-  private async migrateES(esPackages: aws.AwsEsPackage[]): Promise<boolean> {
+  private async migrateES(hasAwsAccess: boolean): Promise<boolean> {
     logger.info('Starting elasticsearch migration')
+
+    // get dictionary AWS ES packages
+    let esPackages: aws.AwsEsPackage[]
+    if (hasAwsAccess) {
+      // get all packages for this version associated to the AWS ES search domain
+      const dictionaryVersion = indexManager.getDictionaryVersion()
+      esPackages = await aws.getAssociatedEsPackages(dictionaryVersion)
+
+      // we should always have some packages here
+      if (!esPackages.length) {
+        new Error(`Failed to get dictionary packages from AWS ES search domain for the given version: ${dictionaryVersion}`)
+      }
+    } else {
+      logger.info('No aws access found running in local development mode')
+      /*
+      get packageId list for local development
+      packages have package ids matching filenames in the dictionary repo
+      this references local package names shipped with our development ES cluster
+      */
+      esPackages = dictionary.getFakeEsPackages()
+    }
+
     await elastic.checkAccess() // this throws if there is no connection hence ensuring we don't continue
 
     const results = await Promise.all(
       locales.map(
         async (locale): Promise<true | Error> => {
-          const newIndexName = getElasticsearchIndex(locale)
+          const newIndexName = indexManager.getElasticsearchIndex(locale)
           const newIndexExists = await elastic.checkIfIndexExists(newIndexName)
 
           if (!newIndexExists) {
@@ -141,7 +142,7 @@ class App {
     })
 
     // rank the search results so we can see if they change
-    await elastic.rankSearchQueries(getElasticsearchIndex('is'))
+    await elastic.rankSearchQueries(indexManager.getElasticsearchIndex('is'))
 
     logger.info('Elasticsearch migration completed')
     return true
@@ -149,7 +150,7 @@ class App {
 
   private async migrateKibana() {
     logger.info('Starting kibana migration')
-    const version = getElasticVersion()
+    const version = indexManager.getElasticVersion()
     await kibana.importObjects(version)
     logger.info('Done')
   }
