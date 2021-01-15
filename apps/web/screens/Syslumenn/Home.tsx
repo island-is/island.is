@@ -250,7 +250,7 @@ const Section: FC<SectionProps> = ({ slice, organization, namespace }) => {
   switch (slice.__typename) {
     case 'HeadingSlice':
       return (
-        <section>
+        <section key={slice.id}>
           <Box paddingTop={[8, 6, 15]} paddingBottom={[4, 5, 10]}>
             <SidebarLayout isSticky={false} sidebarContent="">
               <Heading {...slice} />
@@ -260,7 +260,7 @@ const Section: FC<SectionProps> = ({ slice, organization, namespace }) => {
       )
     case 'Districts':
       return (
-        <section aria-labelledby={'sliceTitle-' + slice.id}>
+        <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
           <GridContainer>
             <Box
               borderTopWidth="standard"
@@ -289,7 +289,7 @@ const Section: FC<SectionProps> = ({ slice, organization, namespace }) => {
       )
     case 'FeaturedArticles':
       return (
-        <section aria-labelledby={'sliceTitle-' + slice.id}>
+        <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
           <GridContainer>
             <Box
               borderTopWidth="standard"
