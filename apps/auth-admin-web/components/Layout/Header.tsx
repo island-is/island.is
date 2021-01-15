@@ -9,7 +9,7 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     if (!isLoggedIn(session, loading)) {
-      router.push('/')
+      router?.push('/')
     }
   }, [session, loading, router])
 
