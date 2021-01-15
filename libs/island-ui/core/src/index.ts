@@ -96,7 +96,7 @@ export * from './lib/context'
 export * from './treat/global.treat'
 
 // Types
-export * as DatePickerTypes from './lib/DatePicker/types'
+export * from './lib/DatePicker/types'
 export type BoxProps = TBoxProps
 export type InputProps = TInputProps
 export type InputBackgroundColor = TInputBackgroundColor

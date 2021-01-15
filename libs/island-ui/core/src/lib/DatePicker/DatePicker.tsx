@@ -18,7 +18,7 @@ import * as styles from './DatePicker.treat'
 import * as coreStyles from './react-datepicker.treat'
 import { Input, InputProps } from '../Input/Input'
 import { VisuallyHidden } from 'reakit'
-import * as DatePickerTypes from './types'
+import { DatePickerProps, DatePickerCustomHeaderProps} from './types'
 
 const languageConfig = {
   is: {
@@ -35,7 +35,7 @@ const languageConfig = {
   },
 }
 
-export const DatePicker: React.FC<DatePickerTypes.Props> = ({
+export const DatePicker: React.FC<DatePickerProps> = ({
   id,
   label,
   placeholderText,
@@ -179,7 +179,7 @@ const CustomHeader = ({
   increaseMonth,
   changeMonth,
   locale,
-}: DatePickerTypes.CustomHeaderProps) => {
+}: DatePickerCustomHeaderProps) => {
   const monthRef = useRef<HTMLSpanElement>(null)
   const month = locale.localize ? locale.localize.month(date.getMonth()) : ''
   const months = monthsIndex.map((i) => {

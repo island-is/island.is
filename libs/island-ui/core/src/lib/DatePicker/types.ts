@@ -22,10 +22,10 @@ const languageConfig = {
 
 type LocaleKeys = keyof typeof languageConfig
 
-export type BackgroundColor = 'white' | 'blue'
-export type Size = 'md' | 'sm'
+export type DatePickerBackgroundColor = 'white' | 'blue'
+export type DatePickerSize = 'md' | 'sm'
 
-export interface Props {
+export interface DatePickerProps {
   label: string
   placeholderText: ReactDatePickerProps['placeholderText']
   locale?: LocaleKeys
@@ -42,13 +42,13 @@ export interface Props {
   handleOpenCalendar?: () => void
   required?: boolean
   inputName?: string
-  size?: Size
-  backgroundColor?: BackgroundColor
+  size?: DatePickerSize
+  backgroundColor?: DatePickerBackgroundColor
   icon?: IconType
   iconType?: Type
 }
 
-export interface CustomHeaderProps {
+export interface DatePickerCustomHeaderProps {
   date: Date
   changeYear(year: number): void
   changeMonth(month: number): void
