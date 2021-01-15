@@ -9,8 +9,9 @@ const Home: React.FC = () => {
   const [session, loading] = useSession()
 
   if (!isLoggedIn(session, loading)) {
-    return <ContentWrapper>
-      <div className="home__logged-out">
+    return (
+      <ContentWrapper>
+        <div className="home__logged-out">
           You are logged out. Click login in the header of the page to login.
           <div className="home__shortcuts">
             <div className="home__shortcuts__item">
@@ -23,7 +24,8 @@ const Home: React.FC = () => {
             </div>
           </div>
         </div>
-    </ContentWrapper>
+      </ContentWrapper>
+    )
   }
 
   return (

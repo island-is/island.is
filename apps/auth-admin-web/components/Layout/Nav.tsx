@@ -10,7 +10,7 @@ const Nav: React.FC = () => {
   const router = useRouter()
 
   if (!isLoggedIn(session, loading)) {
-    return <div className="nav-logged-out"></div>;
+    return <div className="nav-logged-out"></div>
   }
 
   return (
