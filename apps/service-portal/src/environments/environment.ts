@@ -13,10 +13,10 @@ export default {
   featureFlags: {
     applications: false,
     documents: true,
-    settings: false,
+    settings: true,
     finance: true,
-    family: false,
-    health: false,
+    family: true,
+    health: true,
     education: true,
     delegation: true,
     assets: false,
