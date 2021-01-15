@@ -152,6 +152,7 @@ export interface FileUploadField extends BaseField {
   readonly uploadButtonLabel?: string
   readonly uploadMultiple?: boolean
   readonly uploadAccept?: string
+  readonly maxSize?: number
 }
 
 export interface SubmitField extends BaseField {

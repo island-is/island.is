@@ -343,6 +343,7 @@ export function buildFileUploadField(data: {
   uploadButtonLabel?: string
   uploadMultiple?: boolean
   uploadAccept?: string
+  maxSize?: number
 }): FileUploadField {
   const {
     condition,
@@ -354,6 +355,7 @@ export function buildFileUploadField(data: {
     uploadButtonLabel,
     uploadMultiple,
     uploadAccept,
+    maxSize,
   } = data
   return {
     children: undefined,
@@ -366,6 +368,7 @@ export function buildFileUploadField(data: {
     uploadButtonLabel,
     uploadMultiple,
     uploadAccept,
+    maxSize,
     type: FieldTypes.FILEUPLOAD,
     component: FieldComponents.FILEUPLOAD,
   }
