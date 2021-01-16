@@ -2,7 +2,7 @@
 
 # babel
 
-Shared babel presets for our projects.
+Shared babel presets.
 
 ## @island.is/shared/babel/web
 
