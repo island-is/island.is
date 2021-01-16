@@ -52,15 +52,12 @@ export * from './lib/Checkbox/Checkbox'
 export * from './lib/RadioButton/RadioButton'
 export * from './lib/DatePicker/DatePicker'
 export * from './lib/Select/Select'
-// NOTE: See below.
-export { Input, InputProps, InputBackgroundColor } from './lib/Input/Input'
+export * from './lib/Input/Input'
 export * from './lib/InputFileUpload/InputFileUpload'
 export * from './lib/InputError/InputError'
-export * from './lib/DatePicker/types'
 
 // Layout
-// NOTE: See below.
-export { Box, BoxProps } from './lib/Box/Box'
+export * from './lib/Box/Box'
 export * from './lib/Box/useBoxStyles'
 export * from './lib/Inline/Inline'
 export * from './lib/Stack/Stack'
@@ -92,8 +89,10 @@ export * from './lib/context'
 // Treat
 export * from './treat/global.treat'
 
-// NOTE:
-// In some cases, we need to explicitly list typescript interfaces/types when
-// re-exporting. Some ts projects can't find them otherwise (eg see
-// application/core jest tests).
-// This might be a typescript bug, a tsconfig issue or a ts-jest issue.
+// Type exports:
+export type { BoxProps } from './lib/Box/Box'
+export type { InputBackgroundColor, InputProps } from './lib/Input/Input'
+export type {
+  DatePickerBackgroundColor,
+  DatePickerProps,
+} from './lib/DatePicker/types'
