@@ -3625,7 +3625,7 @@
                   "with": "apps/service-portal/src/environments/environment.prod.ts"
                 }
               ],
-              "deployUrl": "/minarsidur",
+              "deployUrl": "/minarsidur/",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
