@@ -46,6 +46,13 @@ export const application: Form = buildForm({
               subTitle:
                 'Til þess að auðvelda umsóknarferlið er gott að hafa stillt netfang og símanúmer á mínum síðum',
             }),
+            buildDataProviderItem({
+              id: 'penaltyPoints',
+              type: 'PenaltyPointsProvider',
+              title: 'Punktastaða úr Ökuskírteinaskrá',
+              subTitle:
+                'Til þess að tryggja að notandi hafi heimild til þess að sækja um ökuskírteini út frá punktastöðu',
+            }),
           ],
         }),
       ],

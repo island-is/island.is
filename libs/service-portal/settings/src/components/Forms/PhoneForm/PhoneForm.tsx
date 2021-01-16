@@ -56,6 +56,13 @@ export const PhoneForm: FC<Props> = ({
       })
 
       if (response.data?.createSmsVerification?.created) {
+        toast.success(
+          formatMessage({
+            id: 'sp.settings:tel-confirm-form-message-toast',
+            defaultMessage: `
+              Staðfestingarkóði hefur verið sendur á símanúmerið þitt.`,
+          }),
+        )
         gotoStep('confirmation')
         setTelInternal(data.tel)
       } else {

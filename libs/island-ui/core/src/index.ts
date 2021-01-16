@@ -56,6 +56,7 @@ export * from './lib/Select/Select'
 export { Input, InputProps, InputBackgroundColor } from './lib/Input/Input'
 export * from './lib/InputFileUpload/InputFileUpload'
 export * from './lib/InputError/InputError'
+export * from './lib/DatePicker/types'
 
 // Layout
 // NOTE: See below.

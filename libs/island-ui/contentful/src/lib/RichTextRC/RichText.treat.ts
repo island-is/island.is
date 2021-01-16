@@ -3,14 +3,8 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const orderedList = style({
   counterReset: 'section',
-  marginTop: 12,
-  marginBottom: 12,
-  ...themeUtils.responsiveStyle({
-    md: {
-      marginTop: 14,
-      marginBottom: 14,
-    },
-  }),
+  marginTop: 16,
+  marginBottom: 16,
   selectors: {
     'ol &': {
       marginTop: 0,
@@ -21,14 +15,8 @@ export const orderedList = style({
 
 export const unorderedList = style({
   listStyle: 'none',
-  marginTop: 12,
-  marginBottom: 12,
-  ...themeUtils.responsiveStyle({
-    md: {
-      marginTop: 14,
-      marginBottom: 14,
-    },
-  }),
+  marginTop: 16,
+  marginBottom: 16,
   selectors: {
     'ul &': {
       marginTop: 0,
@@ -101,6 +89,7 @@ export const paragraph = style({
   selectors: {
     [`${listItem} &`]: {
       marginBottom: 0,
+      marginTop: 0,
     },
   },
 })
