@@ -3619,15 +3619,13 @@
           },
           "configurations": {
             "production": {
-              "build": {
-                "deployUrl": "/minarsidur"
-              },
               "fileReplacements": [
                 {
                   "replace": "apps/service-portal/src/environments/environment.ts",
                   "with": "apps/service-portal/src/environments/environment.prod.ts"
                 }
               ],
+              "deployUrl": "/minarsidur",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
