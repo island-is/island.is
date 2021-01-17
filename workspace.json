@@ -3614,6 +3614,7 @@
               "apps/service-portal/src/assets"
             ],
             "scripts": [],
+            "deployUrl": "/minarsidur/",
             "webpackConfig": "apps/service-portal/webpack.config.js",
             "maxWorkers": 2
           },
@@ -3625,7 +3626,6 @@
                   "with": "apps/service-portal/src/environments/environment.prod.ts"
                 }
               ],
-              "deployUrl": "/minarsidur/",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
