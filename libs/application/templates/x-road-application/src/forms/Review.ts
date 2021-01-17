@@ -85,15 +85,15 @@ export const Review: Form = buildForm({
                 },
               ],
             }),
-            buildDividerField({ name: 'Tengiliðir' }),
+            buildDividerField({ name: 'Upplýsingar fyrir vegþjón' }),
             buildCustomField({
-              id: 'technicalContact',
-              name: m.technicalContact,
+              id: 'information.ipAddress',
+              name: m.ipAddress,
               component: 'ContactTable',
             }),
             buildCustomField({
-              id: 'businessContact',
-              name: m.businessContact,
+              id: 'information.domainName',
+              name: m.domainName,
               component: 'ContactTable',
             }),
             buildCheckboxField({

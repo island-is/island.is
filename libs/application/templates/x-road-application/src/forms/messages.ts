@@ -62,9 +62,24 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala stofnunar',
     description: 'Some description',
   },
-  ministry: {
-    id: 'meta.application:general.ministry',
-    defaultMessage: 'Ráðuneyti',
+  contactName: {
+    id: 'meta.application:contactName',
+    defaultMessage: 'Nafn',
+    description: 'Some description',
+  },
+  contactSsn: {
+    id: 'meta.application:contactSsn',
+    defaultMessage: 'Kennitala',
+    description: 'Some description',
+  },
+  contactEmail: {
+    id: 'meta.application:contactEmail',
+    defaultMessage: 'Netfang',
+    description: 'Some description',
+  },
+  contactPhone: {
+    id: 'meta.application:contactPhone',
+    defaultMessage: 'Símanúmer',
     description: 'Some description',
   },
   information: {
