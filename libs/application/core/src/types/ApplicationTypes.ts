@@ -8,4 +8,5 @@ export enum ApplicationTypes {
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
   HEALTH_INSURANCE = 'HealthInsurance',
   STRAUMURINN = 'StraumurinnApplication',
+  X_ROAD = 'XRoad',
 }

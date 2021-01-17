@@ -26,41 +26,29 @@ const Schema = z.object({
     phone: z.string().min(7),
     isValidApplicant: z.array(z.enum(['isValidApplicant'])),
   }),
-  technicalContact: z.array(
-    z.object({
-      name: z.string(),
-      ssn: z.string(),
-      email: z.string(),
-      phone: z.string(),
-    }),
-  ),
-  businessContact: z.array(
-    z.object({
-      name: z.string(),
-      ssn: z.string(),
-      email: z.string(),
-      phone: z.string(),
-    }),
-  ),
+  information: z.object({
+    ipAddress: z.string().nonempty().max(256),
+    domainName: z.string().nonempty().max(256),
+  }),
   confirmation: z.object({
     isTermsAccepted: z.array(z.enum(['isTermsAccepted'])),
   }),
 })
 
-const StraumurinnApplicationTemplate: ApplicationTemplate<
+const XRoadApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.STRAUMURINN,
-  name: 'Umsókn um aðild að Straumnum',
+  type: ApplicationTypes.X_ROAD,
+  name: 'Sækja um skráningu á nýjum X-Road þjóni',
   dataSchema: Schema,
   stateMachineConfig: {
     initial: 'draft',
     states: {
       draft: {
         meta: {
-          name: 'Sækja um aðild að straumnum',
+          name: 'Sækja um skráningu á nýjum X-Road þjóni',
           progress: 0.33,
           roles: [
             {
@@ -155,4 +143,4 @@ const StraumurinnApplicationTemplate: ApplicationTemplate<
   },
 }
 
-export default StraumurinnApplicationTemplate
+export default XRoadApplicationTemplate

@@ -117,6 +117,9 @@
       "@island.is/application/templates/straumurinn-application": [
         "libs/application/templates/straumurinn-application/src/index.ts"
       ],
+      "@island.is/application/templates/x-road-application": [
+        "libs/application/templates/x-road-application/src/index.ts"
+      ],
       "@island.is/application/ui-fields": [
         "libs/application/ui-fields/src/index.ts"
       ],

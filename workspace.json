@@ -1696,6 +1696,35 @@
         }
       }
     },
+    "application-templates-x-road-application": {
+      "root": "libs/application/templates/x-road-application",
+      "sourceRoot": "libs/application/templates/x-road-application/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/x-road-application/tsconfig.lib.json",
+              "libs/application/templates/x-road-application/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/x-road-application/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/x-road-application/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "application-ui-fields": {
       "root": "libs/application/ui-fields",
       "sourceRoot": "libs/application/ui-fields/src",

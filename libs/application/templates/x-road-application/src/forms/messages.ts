@@ -14,7 +14,7 @@ export const m = defineMessages({
   applicantDescription: {
     id: 'meta.application:applicant.description',
     defaultMessage:
-      'Umsækjandi þarf að vera rétthafi stofnunar. Rétthafi hefur full yfirráð yfir aðild stofnunar að Straumnum. ',
+      'Umsækjandi þarf að vera rétthafi eða einn af tæknilegum tengiliðum stofnunar sem sótt er um fyrir.',
     description: 'Some description',
   },
   applicantEmail: {
@@ -67,71 +67,24 @@ export const m = defineMessages({
     defaultMessage: 'Ráðuneyti',
     description: 'Some description',
   },
-  contacts: {
-    id: 'meta.application:contacts',
-    defaultMessage: 'Tengiliðir',
+  information: {
+    id: 'meta.application:information',
+    defaultMessage: 'Upplýsingar fyrir vefþjón',
     description: 'Some description',
   },
-  technicalContact: {
-    id: 'meta.application:businessContact',
-    defaultMessage: 'Tæknilegir tengiliðir',
+  ipAddress: {
+    id: 'meta.application:information.ipAddress',
+    defaultMessage: 'IP tala netþjóns IPv4/IPv6',
     description: 'Some description',
   },
-  technicalContactDescription: {
-    id: 'meta.application:technicalContact.description',
-    defaultMessage:
-      'Stofnun getur haft fleiri en einn tæknilegan tengilið.  Hann sér um tæknileg málefni X-Road, daglegan rekstur, tengja inn nýjar vefþjónustur o.s.frv. Tæknilegur tengiliður getur sótt um að skrá inn nýjan X-Road þjón fyrir hönd stofnunar. Hann þarf ekki að vera starfsmaður stofnunar.',
+  domainName: {
+    id: 'meta.application:information.domainName',
+    defaultMessage: '',
     description: 'Some description',
   },
-  technicalContactAdd: {
-    id: 'meta.application:technicalContact.add',
-    defaultMessage: 'Bæta við tæknilegum tengilið',
-    description: 'Some description',
-  },
-  businessContact: {
-    id: 'meta.application:businessContact',
-    defaultMessage: 'Viðskiptalegir tengiliðir',
-    description: 'Some description',
-  },
-  businessContactDescription: {
-    id: 'meta.application:businessContact.description',
-    defaultMessage:
-      'Viðskiptalegur tengiliður er sá aðili sem sér um allt sem lítur að fjármálum sem geta komið til vegna reksturs á X-Road.',
-    description: 'Some description',
-  },
-  businessContactAdd: {
-    id: 'meta.application:businessContact.add',
-    defaultMessage: 'Bæta við viðskiptalegum tengilið',
-    description: 'Some description',
-  },
-  contactName: {
-    id: 'meta.application:contactName',
-    defaultMessage: 'Nafn',
-    description: 'Some description',
-  },
-  contactSsn: {
-    id: 'meta.application:contactSsn',
-    defaultMessage: 'Kennitala',
-    description: 'Some description',
-  },
-  contactEmail: {
-    id: 'meta.application:contactEmail',
-    defaultMessage: 'Netfang',
-    description: 'Some description',
-  },
-  contactPhone: {
-    id: 'meta.application:contactPhone',
-    defaultMessage: 'Símanúmer',
-    description: 'Some description',
-  },
-  dataEmptyTechnicalContact: {
-    id: 'meta.application:data.empty',
-    defaultMessage: 'Það eru engir tæknilegir tengiliðir skráðir',
-    description: 'Some description',
-  },
-  dataEmptyBusinessContact: {
-    id: 'meta.application:data.empty',
-    defaultMessage: 'Það eru engir viðskiptalegir tengiliðir skráðir',
+  onApprovalOptionLabel: {
+    id: 'meta.application:on.approval.option.label',
+    defaultMessage: 'Við samþykki',
     description: 'Some description',
   },
   confirmation: {

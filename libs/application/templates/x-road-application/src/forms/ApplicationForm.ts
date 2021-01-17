@@ -18,7 +18,7 @@ import {
 import { m } from './messages'
 
 export const ApplicationForm: Form = buildForm({
-  id: ApplicationTypes.STRAUMURINN,
+  id: ApplicationTypes.X_ROAD,
   name: 'Sækja um aðild að straumnum',
   mode: FormModes.APPLYING,
   children: [
@@ -102,96 +102,18 @@ export const ApplicationForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'contacts',
-      name: m.contacts,
+      id: 'information',
+      name: m.information,
       children: [
-        buildSubSection({
-          id: 'contacts.technicalContactCollection',
-          name: m.technicalContact,
-          children: [
-            buildRepeater({
-              id: 'technicalContact',
-              name: m.technicalContact,
-              component: 'DataRepeater',
-              children: [
-                buildMultiField({
-                  id: 'technicalContact.fields',
-                  name: m.technicalContactAdd,
-                  description: '',
-                  children: [
-                    buildTextField({
-                      id: 'name',
-                      name: m.contactName,
-                      width: 'full',
-                    }),
-                    buildTextField({
-                      id: 'ssn',
-                      name: m.contactSsn,
-                      width: 'full',
-                      format: '######-####',
-                      placeholder: '000000-0000',
-                    }),
-                    buildTextField({
-                      id: 'email',
-                      name: m.contactEmail,
-                      width: 'full',
-                      variant: 'email',
-                    }),
-                    buildTextField({
-                      id: 'phone',
-                      name: m.contactPhone,
-                      width: 'full',
-                      variant: 'tel',
-                    }),
-                  ],
-                }),
-              ],
-            }),
-          ],
+        buildTextField({
+          id: 'information.ipAddress',
+          name: m.ipAddress,
+          width: 'full',
         }),
-        buildSubSection({
-          id: 'contacts.businessContact',
-          name: m.businessContact,
-          children: [
-            buildRepeater({
-              id: 'businessContact',
-              name: m.businessContact,
-              component: 'DataRepeater',
-              children: [
-                buildMultiField({
-                  id: 'businessContact.fields',
-                  name: m.businessContactAdd,
-                  description: '',
-                  children: [
-                    buildTextField({
-                      id: 'name',
-                      name: m.contactName,
-                      width: 'full',
-                    }),
-                    buildTextField({
-                      id: 'ssn',
-                      name: m.contactSsn,
-                      width: 'full',
-                      format: '######-####',
-                      placeholder: '000000-0000',
-                    }),
-                    buildTextField({
-                      id: 'email',
-                      name: m.contactEmail,
-                      width: 'full',
-                      variant: 'email',
-                    }),
-                    buildTextField({
-                      id: 'phone',
-                      name: m.contactPhone,
-                      width: 'full',
-                      variant: 'tel',
-                    }),
-                  ],
-                }),
-              ],
-            }),
-          ],
+        buildTextField({
+          id: 'information.domainName',
+          name: m.domainName,
+          width: 'full',
         }),
       ],
     }),
@@ -205,7 +127,6 @@ export const ApplicationForm: Form = buildForm({
           description: (application) => ({
             ...m.acceptTermsIntro,
           }),
-          // TODO: add price table link and text
           children: [
             buildCheckboxField({
               id: 'confirmation.isTermsAccepted',
