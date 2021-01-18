@@ -14,7 +14,10 @@ import {
   buildDescriptionField,
   buildCustomField,
 } from '@island.is/application/core'
-import { extractParentFromApplication, extractChildrenFromApplication } from '../lib/utils'
+import {
+  extractParentFromApplication,
+  extractChildrenFromApplication,
+} from '../lib/utils'
 
 const extractAnswersFromApplication = (application: Application) => {
   return {
@@ -108,13 +111,11 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
           description:
             'Sem foreldrar með sameiginlega forsjá getið þið óskað eftir því að flytja lögheimili barns frá foreldri A til foreldri B eða öfugt. <br /><br /> Vinsamlegast staðfestu að lögheimili barns sé að flytjast til hins foreldris eins og skráð er hér fyrir neðan.',
           children: [
-            buildCustomField(
-              {
-                id: 'domicileChangeInformation',
-                title: '',
-                component: 'DomicileChangeInformation',
-              }
-            ),
+            buildCustomField({
+              id: 'domicileChangeInformation',
+              title: '',
+              component: 'DomicileChangeInformation',
+            }),
             buildCheckboxField({
               id: 'confirmInformationAboutDomicileChange',
               title: '',

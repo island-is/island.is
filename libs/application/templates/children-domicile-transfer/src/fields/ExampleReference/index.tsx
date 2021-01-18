@@ -1,7 +1,5 @@
 import React from 'react'
-import {
-  FieldBaseProps, /* Field */
-} from '@island.is/application/core'
+import { FieldBaseProps /* Field */ } from '@island.is/application/core'
 
 // Only needed if using additional props other than FieldBaseProps
 // interface AdditionalProps {
@@ -34,9 +32,7 @@ import {
 // }),
 
 const ExampleReference = ({ application }: FieldBaseProps) => {
-  return (
-    <div>{JSON.stringify(application)}</div>
-  )
+  return <div>{JSON.stringify(application)}</div>
 }
 
 export default ExampleReference
