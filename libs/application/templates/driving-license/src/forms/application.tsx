@@ -1,3 +1,5 @@
+import React from 'react'
+
 import {
   buildForm,
   buildDescriptionField,
@@ -16,7 +18,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { NationalRegistryUser } from '@island.is/api/schema'
+import { NationalRegistryUser, UserProfile } from '@island.is/api/schema'
 import { m } from '../lib/messages'
 
 export const application: Form = buildForm({
@@ -25,11 +27,11 @@ export const application: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'externalData',
-      title: 'Sækja gögn',
+      id: 'type',
+      title: 'Ökuréttindi',
       children: [
         buildExternalDataProvider({
-          title: 'Sækja gögn',
+          title: 'Upplýsingasöfnun og skilyrði',
           id: 'approveExternalData',
           dataProviders: [
             buildDataProviderItem({
@@ -46,14 +48,22 @@ export const application: Form = buildForm({
               subTitle:
                 'Til þess að auðvelda umsóknarferlið er gott að hafa stillt netfang og símanúmer á mínum síðum',
             }),
+            buildDataProviderItem({
+              id: 'penaltyPoints',
+              type: 'PenaltyPointsProvider',
+              title: 'Punktastaða úr Ökuskírteinaskrá',
+              subTitle:
+                'Til þess að tryggja að notandi hafi heimild til þess að sækja um ökuskírteini út frá punktastöðu',
+            }),
+            buildDataProviderItem({
+              id: 'residence',
+              type: undefined,
+              title: 'Búseta',
+              subTitle:
+                'Ég hef fasta búsetu hér á landi eins og hún er skilgreind í VIII. viðauka reglugerðar um ökuskírteini eða tel mig fullnægja skilyrðum um búsetu hér á landi til að fá gefið út ökuskírteini.',
+            }),
           ],
         }),
-      ],
-    }),
-    buildSection({
-      id: 'type',
-      title: 'Ökuréttindi',
-      children: [
         buildMultiField({
           id: 'user',
           title: 'Ég er að sækja um:',
@@ -170,13 +180,89 @@ Veitir ökuréttindi til að stjórna bifhjóli:
       ],
     }),
     buildSection({
-      id: 'confirmation',
-      title: 'Staðfesta',
+      id: 'overview',
+      title: 'Staðfesting',
       children: [
         buildMultiField({
-          id: 'submit',
-          title: 'Takk fyrir að sækja um',
+          id: 'overview',
+          title: 'Yfirlit',
+          space: 1,
+          description:
+            'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp.',
           children: [
+            buildKeyValueField({
+              label: 'Tegund ökuréttinda',
+              value: ({ answers: { subType } }) =>
+                (subType as string[]).reduce(
+                  (acc, type) => `${acc}\n${type}`,
+                  '',
+                ),
+            }),
+            buildDividerField({}),
+            buildKeyValueField({
+              label: 'Nafn',
+              width: 'half',
+              value: ({ externalData: { nationalRegistry } }) =>
+                (nationalRegistry.data as NationalRegistryUser).fullName,
+            }),
+            buildKeyValueField({
+              label: 'Sími',
+              width: 'half',
+              value: ({ externalData: { userProfile } }) =>
+                (userProfile.data as UserProfile).mobilePhoneNumber,
+            }),
+            buildKeyValueField({
+              label: 'Heimili',
+              width: 'half',
+              value: ({ externalData: { nationalRegistry } }) =>
+                (nationalRegistry.data as NationalRegistryUser).address
+                  .streetAddress,
+            }),
+            buildKeyValueField({
+              label: 'Kennitala',
+              width: 'half',
+              value: ({ externalData: { nationalRegistry } }) =>
+                (nationalRegistry.data as NationalRegistryUser).nationalId,
+            }),
+            buildKeyValueField({
+              label: 'Póstnúmer',
+              width: 'half',
+              value: ({ externalData: { nationalRegistry } }) =>
+                (nationalRegistry.data as NationalRegistryUser).address
+                  .postalCode,
+            }),
+            buildKeyValueField({
+              label: 'Netfang',
+              width: 'half',
+              value: ({ externalData: { userProfile } }) =>
+                (userProfile.data as UserProfile).email,
+            }),
+            buildKeyValueField({
+              label: 'Staður',
+              width: 'half',
+              value: ({ externalData: { nationalRegistry } }) =>
+                (nationalRegistry.data as NationalRegistryUser).address.city,
+            }),
+            buildDividerField({}),
+            buildKeyValueField({
+              label: 'Ökukennari',
+              value: ({ answers: { teacher } }) => teacher,
+            }),
+            buildDividerField({}),
+            buildCheckboxField({
+              id: 'bringAlong',
+              title: 'Gögn höfð meðferðis til sýslumanns',
+              options: [
+                {
+                  value: 'certificate',
+                  label: 'Ég kem með vottorð frá lækni meðferðis',
+                },
+                {
+                  value: 'photo',
+                  label: 'Ég kem með mynd og rithandarsýni til sýslumanns',
+                },
+              ],
+            }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
@@ -189,18 +275,13 @@ Veitir ökuréttindi til að stjórna bifhjóli:
                 },
               ],
             }),
-            buildDescriptionField({
-              id: 'overview',
-              title: '',
-              description:
-                'Með því að smella á "Senda" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
-            }),
           ],
         }),
         buildDescriptionField({
-          id: 'final',
-          title: 'Takk',
-          description: 'Umsókn þín er komin í vinnslu',
+          id: 'overview',
+          title: 'Til hamingju',
+          description:
+            'Með því að smella á "Senda" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
         }),
       ],
     }),

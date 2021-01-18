@@ -2,8 +2,32 @@
 import Link from 'next/link'
 import React from 'react'
 import ContentWrapper from '../components/Layout/ContentWrapper'
+import { isLoggedIn } from './../utils/auth.utils'
+import { useSession } from 'next-auth/client'
 
 const Home: React.FC = () => {
+  const [session, loading] = useSession()
+
+  if (!isLoggedIn(session, loading)) {
+    return (
+      <ContentWrapper>
+        <div className="home__logged-out">
+          You are logged out. Click login in the header of the page to login.
+          <div className="home__shortcuts">
+            <div className="home__shortcuts__item">
+              <div className="home__shortcuts__item__description">
+                Do you need access?
+              </div>
+              <div className="home__shortcuts__item__link">
+                <a href="TODO:">Get access</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ContentWrapper>
+    )
+  }
+
   return (
     <ContentWrapper>
       <div className="home">

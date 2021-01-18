@@ -20,6 +20,8 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
+import { renderHtml } from '@island.is/island-ui/contentful'
+import { Document } from '@contentful/rich-text-types'
 import { deorphanize } from '@island.is/island-ui/utils'
 import { useI18n } from '../../i18n'
 import { theme } from '@island.is/island-ui/theme'
@@ -28,14 +30,7 @@ import { GlobalContext } from '@island.is/web/context'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import * as styles from './FrontpageSlider.treat'
-
-type Slides = {
-  subtitle?: string
-  title?: string
-  content?: string
-  link?: string
-  animationJson?: any
-}
+import { FrontpageSlider as FrontpageSliderType } from '@island.is/web/graphql/schema'
 
 export const LEFT = 'Left'
 export const RIGHT = 'Right'
@@ -43,7 +38,7 @@ export const UP = 'Up'
 export const DOWN = 'Down'
 
 export interface FrontpageSliderProps {
-  slides: Slides[]
+  slides: FrontpageSliderType[]
   searchContent: ReactNode
 }
 
@@ -187,88 +182,93 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
               })}
             </TabList>
             <Box className={styles.tabPanelWrapper}>
-              {slides.map(({ title, subtitle, content, link }, index) => {
-                const linkUrls = generateUrls(link)
+              {slides.map(
+                ({ title, subtitle, content, intro, link }, index) => {
+                  const linkUrls = generateUrls(link)
 
-                // If none are found (during SSR) findIndex returns -1. We want 0 instead.
-                const currentIndex = Math.max(
-                  tab.items.findIndex((x) => x.id === tab.currentId),
-                  0,
-                )
+                  // If none are found (during SSR) findIndex returns -1. We want 0 instead.
+                  const currentIndex = Math.max(
+                    tab.items.findIndex((x) => x.id === tab.currentId),
+                    0,
+                  )
 
-                const visible = currentIndex === index
-                const tabTitleId = 'frontpageTabTitle' + index
-                return (
-                  <TabPanel
-                    key={index}
-                    {...tab}
-                    style={{
-                      display: 'block',
-                    }}
-                    tabIndex={visible ? 0 : -1}
-                    className={cn(styles.tabPanel, {
-                      [styles.tabPanelVisible]: visible,
-                    })}
-                  >
-                    <Box
-                      marginY={3}
-                      ref={(el) => (itemRefs.current[index] = el)}
-                      style={{ minHeight: `${minHeight}px` }}
+                  const visible = currentIndex === index
+                  const tabTitleId = 'frontpageTabTitle' + index
+                  return (
+                    <TabPanel
+                      key={index}
+                      {...tab}
+                      style={{
+                        display: 'block',
+                      }}
+                      tabIndex={visible ? 0 : -1}
+                      className={cn(styles.tabPanel, {
+                        [styles.tabPanelVisible]: visible,
+                      })}
                     >
-                      <Stack space={3}>
-                        <Text variant="eyebrow" color="purple400">
-                          <span
-                            className={cn(styles.textItem, {
-                              [styles.textItemVisible]: visible,
-                            })}
-                          >
-                            {subtitle}
-                          </span>
-                        </Text>
-                        <Text variant="h1" as="h1" id={tabTitleId}>
-                          <span
-                            className={cn(styles.textItem, {
-                              [styles.textItemVisible]: visible,
-                            })}
-                          >
-                            {deorphanize(title)}
-                          </span>
-                        </Text>
-                        <Text>
-                          <span
-                            className={cn(styles.textItem, {
-                              [styles.textItemVisible]: visible,
-                            })}
-                          >
-                            {content}
-                          </span>
-                        </Text>
-                        {linkUrls?.href && visible ? (
-                          <span
-                            className={cn(styles.textItem, {
-                              [styles.textItemVisible]: visible,
-                            })}
-                          >
-                            <Link
-                              as={linkUrls.as}
-                              href={linkUrls.href}
-                              passHref
+                      <Box
+                        marginY={3}
+                        ref={(el) => (itemRefs.current[index] = el)}
+                        style={{ minHeight: `${minHeight}px` }}
+                      >
+                        <Stack space={3}>
+                          <Text variant="eyebrow" color="purple400">
+                            <span
+                              className={cn(styles.textItem, {
+                                [styles.textItemVisible]: visible,
+                              })}
                             >
-                              <Button
-                                variant="text"
-                                icon="arrowForward"
-                                aria-labelledby={tabTitleId}
+                              {subtitle}
+                            </span>
+                          </Text>
+                          <Text variant="h1" as="h1" id={tabTitleId}>
+                            <span
+                              className={cn(styles.textItem, {
+                                [styles.textItemVisible]: visible,
+                              })}
+                            >
+                              {deorphanize(title)}
+                            </span>
+                          </Text>
+
+                          {intro ? (
+                            <Box marginBottom={4}>
+                              {renderHtml(intro.document as Document)}
+                            </Box>
+                          ) : (
+                            <Text>
+                              <span
+                                className={cn(styles.textItem, {
+                                  [styles.textItemVisible]: visible,
+                                })}
                               >
-                                {gn('seeMore')}
-                              </Button>
-                            </Link>
-                          </span>
-                        ) : null}
-                      </Stack>
-                    </Box>
-                  </TabPanel>
-                )
-              })}
+                                {content}
+                              </span>
+                            </Text>
+                          )}
+                          {linkUrls?.href && visible ? (
+                            <span
+                              className={cn(styles.textItem, {
+                                [styles.textItemVisible]: visible,
+                              })}
+                            >
+                              <Link {...linkUrls} passHref>
+                                <Button
+                                  variant="text"
+                                  icon="arrowForward"
+                                  aria-labelledby={tabTitleId}
+                                >
+                                  {gn('seeMore')}
+                                </Button>
+                              </Link>
+                            </span>
+                          ) : null}
+                        </Stack>
+                      </Box>
+                    </TabPanel>
+                  )
+                },
+              )}
             </Box>
           </Box>
           <GridColumn hiddenBelow="lg" position="static">

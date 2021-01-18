@@ -9,7 +9,6 @@ import {
   Case,
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseState,
 } from '@island.is/judicial-system/types'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -23,6 +22,8 @@ import RulingAccordionItem from '../../../shared-components/RulingAccordionItem/
 import { getRestrictionTagVariant } from '../../../utils/stepHelper'
 import { useHistory } from 'react-router-dom'
 import * as Constants from '../../../utils/constants'
+import PdfButton from '../../../shared-components/PdfButton/PdfButton'
+
 interface CaseData {
   case?: Case
 }
@@ -230,12 +231,15 @@ export const SignedVerdictOverview: React.FC = () => {
               accusedAddress={workingCase.accusedAddress}
             />
           </Box>
-          <Box marginBottom={15}>
+          <Box marginBottom={5}>
             <Accordion>
               <PoliceRequestAccordionItem workingCase={workingCase} />
               <CourtRecordAccordionItem workingCase={workingCase} />
               <RulingAccordionItem workingCase={workingCase} />
             </Accordion>
+          </Box>
+          <Box marginBottom={15}>
+            <PdfButton caseId={workingCase.id} />
           </Box>
           <FormFooter hideNextButton />
         </>
