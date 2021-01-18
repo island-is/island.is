@@ -8,6 +8,8 @@ server {
         index  index.html index.htm;
         # The following is necessary for React router based apps
         try_files $uri $uri/ /index.html =404;
+        # We don't want to redirect to localhost:3333
+        absolute_redirect off;
     }
 
     error_page   500 502 503 504  /50x.html;
