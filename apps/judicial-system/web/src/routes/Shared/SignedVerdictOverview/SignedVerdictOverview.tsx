@@ -41,7 +41,7 @@ export const SignedVerdictOverview: React.FC = () => {
     fetchPolicy: 'no-cache',
   })
 
-  const [extendCaseMutation, { loading: creatingExtension }] = useMutation(
+  const [extendCaseMutation, { loading: isCreatingExtension }] = useMutation(
     ExtendCaseMutation,
   )
 
@@ -55,14 +55,22 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }, [workingCase, setWorkingCase, data])
 
-  const handleNextButtonClick = () => {
-    extendCaseMutation({
+  const handleNextButtonClick = async () => {
+    // TODO: figure out if this case has been extended and only extend if not
+    // Route to extension if the case has been extended.
+    const { data } = await extendCaseMutation({
       variables: {
         input: {
           id: workingCase?.id,
         },
       },
     })
+
+    if (data) {
+      history.push(
+        `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${data.extendCase.id}`,
+      )
+    }
   }
 
   /**
@@ -260,6 +268,7 @@ export const SignedVerdictOverview: React.FC = () => {
             }
             nextButtonText="Framlengja gæslu"
             onNextButtonClick={() => handleNextButtonClick()}
+            nextIsLoading={isCreatingExtension}
           />
         </>
       ) : null}

@@ -194,13 +194,23 @@ export const Overview: React.FC = () => {
                   title: workingCase.parentCase
                     ? 'Fyrri gæsla'
                     : 'Tími handtöku',
-                  // TODO: IF EXTENSION, REPLACE ARRESTDATE WITH CUSTODYENDDATE IN PARENT CASE
-                  value: `${capitalize(
-                    formatDate(workingCase.arrestDate, 'PPPP', true) || '',
-                  )} kl. ${formatDate(
-                    workingCase.requestedCourtDate,
-                    TIME_FORMAT,
-                  )}`,
+                  value: workingCase.parentCase
+                    ? `${capitalize(
+                        formatDate(
+                          workingCase.parentCase.custodyEndDate,
+                          'PPPP',
+                          true,
+                        ) || '',
+                      )} kl. ${formatDate(
+                        workingCase.parentCase.custodyEndDate,
+                        TIME_FORMAT,
+                      )}`
+                    : `${capitalize(
+                        formatDate(workingCase.arrestDate, 'PPPP', true) || '',
+                      )} kl. ${formatDate(
+                        workingCase.arrestDate,
+                        TIME_FORMAT,
+                      )}`,
                 },
               ]}
               accusedName={workingCase.accusedName}
