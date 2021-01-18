@@ -1,7 +1,7 @@
 import React from 'react'
 import { FieldBaseProps /* Field */ } from '@island.is/application/core'
 
-// Only needed if using additional props other than FieldBaseProps
+// Only needed when using additional props other than FieldBaseProps
 // interface AdditionalProps {
 //   someProp: string
 // }
