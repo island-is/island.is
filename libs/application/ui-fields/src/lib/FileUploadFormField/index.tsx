@@ -77,6 +77,9 @@ const FileUploadFormField: FC<Props> = ({ application, error, field }) => {
     uploadDescription = 'Documents accepted with extension: .pdf, .docx, .rtf',
     uploadHeader = 'Drag documents here to upload',
     uploadButtonLabel = 'Select documents to upload',
+    uploadMultiple,
+    uploadAccept,
+    maxSize,
   } = field
   const { clearErrors, setValue } = useFormContext()
   const { formatMessage } = useLocale()
@@ -237,6 +240,9 @@ const FileUploadFormField: FC<Props> = ({ application, error, field }) => {
                 onChange={onFileChange}
                 onRemove={onRemoveFile}
                 errorMessage={error || uploadError}
+                multiple={uploadMultiple}
+                accept={uploadAccept}
+                maxSize={maxSize}
               />
             </Box>
           )

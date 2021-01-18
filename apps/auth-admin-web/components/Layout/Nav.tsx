@@ -2,9 +2,18 @@
 import React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { isLoggedIn } from '../../utils/auth.utils'
+import { useSession } from 'next-auth/client'
+import { SessionInfo } from './../../entities/common/SessionInfo'
 
 const Nav: React.FC = () => {
+  const [session, loading] = useSession()
   const router = useRouter()
+
+  if (!isLoggedIn((session as unknown) as SessionInfo, loading)) {
+    return <div className="nav-logged-out"></div>
+  }
+
   return (
     <nav className="nav">
       <ul>

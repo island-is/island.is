@@ -7,7 +7,7 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { Link, Redirect } from 'react-router-dom'
+import { Link, Redirect, useHistory } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ServicePortalModuleComponent,
@@ -33,6 +33,7 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
   const { createUserProfile } = useCreateUserProfile()
   const { resendEmailVerification } = useResendEmailVerification()
   const { updateUserProfile } = useUpdateUserProfile()
+  const history = useHistory()
 
   useEffect(() => {
     if (!userProfile || !userProfile.email) return
@@ -49,6 +50,7 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
             defaultMessage: 'Þú hefur fengið sendan nýjan staðfestingarpóst',
           }),
         )
+        history.push(ServicePortalPath.UserProfileRoot)
       } catch (err) {
         toast.error(
           formatMessage({

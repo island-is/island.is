@@ -6,7 +6,8 @@ import { logger } from '@island.is/logging'
 
 const targetFileName =
   'libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts'
-const apiUrl = 'https://contentful-type-generator.shared.devland.is/'
+const environment = process.env.CONTENTFUL_ENVIRONMENT || 'master'
+const apiUrl = `https://contentful-type-generator.shared.devland.is/?env=${environment}`
 
 export async function codegenContentful() {
   try {
