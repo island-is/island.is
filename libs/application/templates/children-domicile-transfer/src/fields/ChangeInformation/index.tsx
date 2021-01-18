@@ -3,7 +3,7 @@ import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { extractParentFromApplication } from '../../lib/utils'
 
-const DomicileChangeInformation = ({ application }: FieldBaseProps) => {
+const ChangeInformation = ({ application }: FieldBaseProps) => {
   const parent = extractParentFromApplication(application)
   const parentAddress = `${parent?.address}, ${parent?.postalCode} ${parent?.city}`
   return (
@@ -38,4 +38,4 @@ const DomicileChangeInformation = ({ application }: FieldBaseProps) => {
   )
 }
 
-export default DomicileChangeInformation
+export default ChangeInformation
