@@ -53,7 +53,7 @@ export class VerificationService {
     private readonly smsService: SmsService,
     @Inject(EmailService)
     private readonly emailService: EmailService,
-  ) {}
+  ) { }
 
   async createEmailVerification(
     nationalId: string,
@@ -163,6 +163,7 @@ export class VerificationService {
   }
 
   async sendConfirmationEmail(verification: EmailVerification) {
+    //rerun build
     const resetLink = `${environment.email.servicePortalBaseUrl}/stillingar/stadfesta-netfang/${verification.hash}`
     try {
       await this.emailService.sendEmail({
