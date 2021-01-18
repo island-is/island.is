@@ -6,5 +6,5 @@ import { Field, InputType } from '@nestjs/graphql'
 export class ExtendCaseInput {
   @Allow()
   @Field()
-  readonly caseId!: string
+  readonly id!: string
 }

@@ -202,12 +202,12 @@ export class CaseResolver {
     @CurrentGraphQlUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Case> {
-    this.logger.debug(`Extending case ${input.caseId}`)
+    this.logger.debug(`Extending case ${input.id}`)
 
     return this.caseAuditService.audit(
       user.id,
       AuditedAction.EXTEND,
-      backendApi.extendCase(input.caseId),
+      backendApi.extendCase(input.id),
       (theCase) => theCase.id,
     )
   }
