@@ -3,7 +3,7 @@ server {
     listen       3333;
     server_name  localhost;
 
-    location $BASEHREF {
+    location $BASEPATH {
         alias   /usr/share/nginx/html;
         index  index.html index.htm;
         # The following is necessary for React router based apps

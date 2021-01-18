@@ -73,7 +73,7 @@ LABEL commit=${GIT_SHA}
 ENV GIT_BRANCH=${GIT_BRANCH}
 ENV GIT_SHA=${GIT_SHA}
 ENV APP=${APP}
-ENV BASEHREF=/
+ENV BASEPATH=/
 
 RUN mkdir -p /etc/nginx/templates
 ADD scripts/ci/dockerfile-config/nginx/* /etc/nginx/templates
