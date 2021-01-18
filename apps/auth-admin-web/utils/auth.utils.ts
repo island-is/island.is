@@ -3,9 +3,9 @@ import { NextPageContext } from 'next'
 import { SessionInfo } from '../entities/common/SessionInfo'
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const withAuthentication = (next: any) => async (
-  context: NextPageContext,
-) => {
+export const withAuthentication = (
+  next: (context: NextPageContext) => Promise<any>,
+) => async (context: NextPageContext) => {
   const session = ((await getSession(context)) as unknown) as SessionInfo
   if (isExpired(session)) {
     const { res } = context
