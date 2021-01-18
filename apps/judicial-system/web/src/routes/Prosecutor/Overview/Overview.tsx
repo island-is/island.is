@@ -40,7 +40,6 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { testCaseExtension } from '../../../utils/mocks'
 import InfoCard from '../../../shared-components/InfoCard/InfoCard'
 
 export const Overview: React.FC = () => {
@@ -133,11 +132,6 @@ export const Overview: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    // TODO: REMOVE
-    if (id === 'TEST_EXTEND') {
-      setWorkingCase(testCaseExtension)
-    }
-
     if (!workingCase && data?.case) {
       setWorkingCase(data.case)
     }
@@ -149,11 +143,10 @@ export const Overview: React.FC = () => {
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.PROSECUTOR_OVERVIEW}
-      // TODO: UNCOMMENT
-      isLoading={false} // {loading}
-      // TODO: UNCOMMENT
-      notFound={false} // {data?.case === undefined}
+      isLoading={loading}
+      notFound={data?.case === undefined}
       decision={workingCase?.decision}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>

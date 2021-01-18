@@ -44,10 +44,8 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import BlueBox from '../../../../shared-components/BlueBox/BlueBox'
 import parseISO from 'date-fns/parseISO'
-import isNull from 'lodash/isNull'
-import isValid from 'date-fns/isValid'
 import TimeInputField from '../../../../shared-components/TimeInputField/TimeInputField'
-import { testCaseExtension } from 'apps/judicial-system/web/src/utils/mocks'
+import { formatDate } from 'libs/judicial-system/formatters/src'
 
 interface CaseData {
   case?: Case
@@ -160,10 +158,6 @@ export const StepThree: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    // TODO: REMOVE
-    if (id === 'TEST_EXTEND') {
-      setWorkingCase(testCaseExtension)
-    }
     if (!workingCase && resCase) {
       setRequestedCustodyEndTime(
         getTimeFromDate(resCase.requestedCustodyEndDate),
@@ -222,6 +216,7 @@ export const StepThree: React.FC = () => {
       isLoading={loading}
       notFound={data?.case === undefined}
       decision={workingCase?.decision}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>
@@ -381,8 +376,10 @@ export const StepThree: React.FC = () => {
                   <Text>
                     Fyrri gæsla var/er til{' '}
                     <Text as="span" fontWeight="semiBold">
-                      {/** TODO: REPLACE WITH CUSTODY_END_DATE FROM PARENT CASE */}
-                      þriðjudagsins 16. október 2020, kl. 16:00.
+                      {formatDate(
+                        workingCase.parentCase.custodyEndDate,
+                        'PPPPp',
+                      )?.replace('dagur,', 'dagsins')}
                     </Text>
                   </Text>
                 </Box>
@@ -509,8 +506,7 @@ export const StepThree: React.FC = () => {
           <FormFooter
             nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
             nextIsDisabled={
-              // TODO: UNCOMMENT
-              false //isStepIllegal || workingCase.custodyProvisions?.length === 0
+              isStepIllegal || workingCase.custodyProvisions?.length === 0
             }
           />
         </>

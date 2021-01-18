@@ -36,7 +36,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import BlueBox from '../../../../shared-components/BlueBox/BlueBox'
 import { CreateCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
-import { testCaseExtension } from 'apps/judicial-system/web/src/utils/mocks'
 
 interface CaseData {
   case?: Case
@@ -142,10 +141,6 @@ export const StepOne: React.FC = () => {
 
   // Run this if id is in url, i.e. if user is opening an existing request.
   useEffect(() => {
-    // TODO: REMOVE
-    if (id === 'TEST_EXTEND') {
-      setWorkingCase(testCaseExtension)
-    }
     if (id && !workingCase && data?.case) {
       setWorkingCase(data?.case)
     } else if (!id && !workingCase) {
@@ -202,10 +197,10 @@ export const StepOne: React.FC = () => {
       }
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_ONE}
       isLoading={loading}
-      // TODO: UNCOMMENT
-      notFound={false} //{id !== undefined && data?.case === undefined}
+      notFound={id !== undefined && data?.case === undefined}
       isExtension={!!workingCase?.parentCase}
       decision={workingCase?.decision}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>

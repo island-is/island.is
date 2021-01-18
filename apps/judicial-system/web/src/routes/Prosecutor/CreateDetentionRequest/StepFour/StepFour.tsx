@@ -21,7 +21,6 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { testCaseExtension } from 'apps/judicial-system/web/src/utils/mocks'
 
 export const StepFour: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -47,10 +46,6 @@ export const StepFour: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    // TODO: REMOVE
-    if (id === 'TEST_EXTEND') {
-      setWorkingCase(testCaseExtension)
-    }
     if (id && !workingCase && resCase) {
       setWorkingCase(resCase)
     }
@@ -98,11 +93,10 @@ export const StepFour: React.FC = () => {
       activeSubSection={
         ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_FOUR
       }
-      // TODO: UNCOMMENT
-      isLoading={false} // {loading}
-      // TODO: UNCOMMENT
-      notFound={false} // {data?.case === undefined}
+      isLoading={loading}
+      notFound={data?.case === undefined}
       decision={workingCase?.decision}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>

@@ -46,7 +46,6 @@ import {
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseTransition } from '../../../utils/formatters'
-import { testCaseExtension } from '../../../utils/mocks'
 
 interface CaseData {
   case?: Case
@@ -121,10 +120,6 @@ export const JudgeOverview: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    // TODO: REMOVE
-    if (id === 'TEST_EXTEND') {
-      setWorkingCase(testCaseExtension)
-    }
     if (!workingCase && data?.case) {
       setWorkingCase(data.case)
     }
@@ -132,10 +127,13 @@ export const JudgeOverview: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.JUDGE}
+      activeSection={
+        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
+      }
       activeSubSection={JudgeSubsections.JUDGE_OVERVIEW}
       isLoading={loading}
       notFound={data?.case === undefined}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>

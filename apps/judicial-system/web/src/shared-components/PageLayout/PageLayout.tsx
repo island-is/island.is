@@ -24,6 +24,7 @@ interface PageProps {
   notFound: boolean
   activeSubSection?: number
   decision?: CaseDecision
+  parentCaseDecision?: CaseDecision
   isCustodyEndDateInThePast?: boolean
   isExtension?: boolean
 }
@@ -35,19 +36,28 @@ export const PageLayout: FC<PageProps> = ({
   isLoading,
   notFound,
   decision,
+  parentCaseDecision,
   isCustodyEndDateInThePast,
-  isExtension,
 }) => {
   const { user } = useContext(UserContext)
 
   const caseResult = () => {
-    if (decision === CaseDecision.REJECTING) {
+    if (
+      decision === CaseDecision.REJECTING ||
+      parentCaseDecision === CaseDecision.REJECTING
+    ) {
       return 'Kröfu hafnað'
-    } else if (decision === CaseDecision.ACCEPTING) {
+    } else if (
+      decision === CaseDecision.ACCEPTING ||
+      parentCaseDecision === CaseDecision.ACCEPTING
+    ) {
       return isCustodyEndDateInThePast
         ? 'Gæsluvarðhaldi lokið'
         : 'Gæsluvarðhald virkt'
-    } else if (decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) {
+    } else if (
+      decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+      parentCaseDecision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+    ) {
       return isCustodyEndDateInThePast ? 'Farbanni lokið' : 'Farbann virkt'
     } else {
       return 'Niðurstaða'
@@ -161,9 +171,11 @@ export const PageLayout: FC<PageProps> = ({
                   activeSection === Sections.EXTENSION ||
                   activeSection === Sections.JUDGE_EXTENSION
                     ? sections
-                    : sections.filter(
-                        (_, index) => index + 2 !== sections.length,
-                      )
+                    : sections.filter((item, index) => {
+                        if (index <= 2) {
+                          return item
+                        }
+                      })
                 }
                 formName="Gæsluvarðhald"
                 activeSection={activeSection}

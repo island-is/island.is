@@ -46,7 +46,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ValueType } from 'react-select/src/types'
 import Modal from '../../../../shared-components/Modal/Modal'
-import { testCaseExtension } from 'apps/judicial-system/web/src/utils/mocks'
 
 interface CaseData {
   case?: Case
@@ -140,11 +139,6 @@ export const StepTwo: React.FC = () => {
   )
 
   const handleNextButtonClick = async () => {
-    // TODO: REMOVE
-    if (workingCase?.id === 'TEST_EXTEND') {
-      history.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
-      return
-    }
     if (!workingCase) {
       return
     }
@@ -171,11 +165,6 @@ export const StepTwo: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    // TODO: REMOVE
-    if (id === 'TEST_EXTEND') {
-      setWorkingCase(testCaseExtension)
-    }
-
     if (!workingCase && data) {
       setArrestTime(getTimeFromDate(data.case?.arrestDate))
       setRequestedCourtTime(getTimeFromDate(data.case?.requestedCourtDate))
@@ -278,9 +267,9 @@ export const StepTwo: React.FC = () => {
       }
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_TWO}
       isLoading={loading}
-      // TODO: UNCOMMENT
-      notFound={false} //{data?.case === undefined}
+      notFound={data?.case === undefined}
       decision={workingCase?.decision}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>
@@ -495,8 +484,7 @@ export const StepTwo: React.FC = () => {
           </Box>
           <FormFooter
             onNextButtonClick={async () => await handleNextButtonClick()}
-            // TODO: UNCOMMENT
-            nextIsDisabled={false} // {isStepIllegal || transitionLoading}
+            nextIsDisabled={isStepIllegal || transitionLoading}
             nextIsLoading={transitionLoading}
           />
           {modalVisible && (

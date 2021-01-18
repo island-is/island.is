@@ -34,7 +34,6 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { testCaseExtension } from 'apps/judicial-system/web/src/utils/mocks'
 import BlueBox from '@island.is/judicial-system-web/src/shared-components/BlueBox/BlueBox'
 
 export const RulingStepTwo: React.FC = () => {
@@ -76,10 +75,6 @@ export const RulingStepTwo: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    // TODO: REMOVE
-    if (id === 'TEST_EXTEND') {
-      setWorkingCase(testCaseExtension)
-    }
     if (id && !workingCase && resCase) {
       setWorkingCase(resCase)
     }
@@ -133,10 +128,8 @@ export const RulingStepTwo: React.FC = () => {
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.RULING_STEP_TWO}
-      // TODO: UNCOMMENT
-      isLoading={false} // {loading}
-      // TODO: UNCOMMENT
-      notFound={false} // {data?.case === undefined}
+      isLoading={loading}
+      notFound={data?.case === undefined}
     >
       {workingCase ? (
         <>
