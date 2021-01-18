@@ -177,13 +177,15 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
         buildMultiField({
           id: 'applicationTermsTitle',
           title: 'Hvaða áhrif hefur breytingin?',
-          description:
-            'Hér væri texti á mannamáli sem útskýrir hvaða áhrif þessi breyting hefur.',
           children: [
+            buildCustomField({
+              id: 'domicileChangeTerms',
+              title: '',
+              component: 'Terms',
+            }),
             buildCheckboxField({
               id: 'approveTerms',
-              title:
-                'Litið er svo á að barn hafi fasta búsetu hjá því foreldri sem það á lögheimili hjá. Barn á rétt til að umgangast með reglubundnum hætti það foreldri sem það býr ekki hjá og bera foreldrarnir sameiginlega þá skyldu að tryggja rétt barns til umgengni.',
+              title: '',
               large: true,
               options: [
                 {
