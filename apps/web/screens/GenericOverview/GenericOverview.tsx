@@ -22,7 +22,6 @@ import {
 } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '../../hooks/useLinkResolver'
 import { Image, renderHtml } from '@island.is/island-ui/contentful'
-import { underlines } from 'libs/island-ui/core/src/lib/Link/Link.treat'
 
 interface GenericOverviewProps {
   genericOverviewPage: GetGenericOverviewPageQuery['getGenericOverviewPage']
