@@ -1,3 +1,4 @@
+import { DevTestController } from './dev-test.controller'
 import { Module } from '@nestjs/common'
 import { ClientsController } from './clients.controller'
 import {
@@ -56,6 +57,7 @@ import { ClientSecretController } from './client-secret.controller'
     ClientClaimController,
     ClientPostLogoutRedirectUriController,
     ClientSecretController,
+    DevTestController,
   ],
   providers: [ClientsService, AccessService],
 })
