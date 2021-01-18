@@ -3,6 +3,8 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
   background: '#252973',
+  marginTop: -130,
+  paddingTop: 130,
   ...themeUtils.responsiveStyle({
     md: {
       marginBottom: '2px',

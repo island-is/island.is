@@ -5,7 +5,6 @@ import {
   Box,
   Text,
   Breadcrumbs,
-  ColorSchemeContext,
   Navigation,
   NavigationItem,
   GridContainer,
@@ -17,23 +16,15 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import {
-  HeadWithSocialSharing,
-  Header,
-  Main,
-  Heading,
-  LatestNewsSection,
-} from '@island.is/web/components'
+import { HeadWithSocialSharing, Main, Heading } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import {
   Query,
   QueryGetNamespaceArgs,
   ContentLanguage,
-  QueryGetGroupedMenuArgs,
 } from '@island.is/api/schema'
 import {
   GET_NAMESPACE_QUERY,
-  GET_CATEGORIES_QUERY,
   GET_ORGANIZATION_QUERY,
   GET_ORGANIZATION_NEWS_QUERY,
 } from '../queries'
@@ -46,22 +37,13 @@ import {
   AllSlicesImageFragment,
   Districts,
   FeaturedArticles,
-  GetArticleCategoriesQuery,
-  GetGroupedMenuQuery,
   GetNamespaceQuery,
   HeadingSlice,
   News,
   Organization,
-  QueryGetArticleCategoriesArgs,
   QueryGetOrganizationArgs,
   QueryGetOrganizationNewsArgs,
 } from '@island.is/web/graphql/schema'
-import { GET_GROUPED_MENU_QUERY } from '../queries/Menu'
-import { Locale } from '../../i18n/I18n'
-import {
-  formatMegaMenuCategoryLinks,
-  formatMegaMenuLinks,
-} from '@island.is/web/utils/processMenuData'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useRouter } from 'next/router'
@@ -77,7 +59,6 @@ interface HomeProps {
   organization: Query['getOrganization']
   namespace: Query['getNamespace']
   news: Query['getOrganizationNews']
-  megaMenuData
 }
 
 type AvailableSlices = Exclude<
@@ -85,12 +66,7 @@ type AvailableSlices = Exclude<
   AllSlicesEmbeddedVideoFragment | AllSlicesImageFragment
 >
 
-const Home: Screen<HomeProps> = ({
-  organization,
-  namespace,
-  megaMenuData,
-  news,
-}) => {
+const Home: Screen<HomeProps> = ({ organization, namespace, news }) => {
   const { activeLocale } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)
@@ -131,68 +107,64 @@ const Home: Screen<HomeProps> = ({
       />
       <Box className={styles.headerBorder}>
         <Box className={styles.headerBg}>
-          <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
-            <Header buttonColorScheme="negative" megaMenuData={megaMenuData}>
-              <GridContainer>
-                <Box marginTop={[1, 1, 3]} marginBottom={5}>
-                  <Breadcrumbs
-                    color="white"
-                    items={[
-                      {
-                        title: 'Ísland.is',
-                        href: '/',
-                      },
-                      {
-                        title: organization.title,
-                      },
-                    ]}
-                    renderLink={(link) => {
-                      return (
-                        <NextLink {...linkResolver('homepage')} passHref>
-                          {link}
-                        </NextLink>
-                      )
-                    }}
+          <GridContainer>
+            <Box marginTop={[1, 1, 3]} marginBottom={5}>
+              <Breadcrumbs
+                color="white"
+                items={[
+                  {
+                    title: 'Ísland.is',
+                    href: '/',
+                  },
+                  {
+                    title: organization.title,
+                  },
+                ]}
+                renderLink={(link) => {
+                  return (
+                    <NextLink {...linkResolver('homepage')} passHref>
+                      {link}
+                    </NextLink>
+                  )
+                }}
+              />
+            </Box>
+          </GridContainer>
+          <Box className={styles.headerWrapper}>
+            <SidebarLayout sidebarContent="">
+              <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4, 4]}>
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <img
+                    src={organization.logo.url}
+                    className={styles.headerLogo}
+                    alt=""
                   />
+                  <Text variant="h1" as="h1" color="white">
+                    {organization.title}
+                  </Text>
                 </Box>
-              </GridContainer>
-              <Box className={styles.headerWrapper}>
-                <SidebarLayout sidebarContent="">
-                  <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4, 4]}>
-                    <Box display="flex" flexDirection="row" alignItems="center">
-                      <img
-                        src={organization.logo.url}
-                        className={styles.headerLogo}
-                        alt=""
-                      />
-                      <Text variant="h1" as="h1" color="white">
-                        {organization.title}
-                      </Text>
-                    </Box>
-                  </Box>
-                </SidebarLayout>
-                <GridContainer>
-                  <Box
-                    display={['block', 'block', 'none']}
-                    paddingBottom={4}
-                    className={styles.mobileNav}
-                  >
-                    <Navigation
-                      baseId={'mobileNav'}
-                      isMenuDialog
-                      activeItemTitle={organization.title}
-                      items={navList}
-                      title="Efnisyfirlit"
-                      titleLink={{
-                        href: `/${organization.slug}`,
-                        active: false,
-                      }}
-                    />
-                  </Box>
-                </GridContainer>
               </Box>
-            </Header>
-          </ColorSchemeContext.Provider>
+            </SidebarLayout>
+            <GridContainer>
+              <Box
+                display={['block', 'block', 'none']}
+                paddingBottom={4}
+                className={styles.mobileNav}
+              >
+                <Navigation
+                  baseId={'mobileNav'}
+                  isMenuDialog
+                  activeItemTitle={organization.title}
+                  items={navList}
+                  title="Efnisyfirlit"
+                  titleLink={{
+                    href: `/${organization.slug}`,
+                    active: false,
+                  }}
+                />
+              </Box>
+            </GridContainer>
+          </Box>
         </Box>
       </Box>
       <Main>
@@ -380,8 +352,6 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       data: { getOrganization },
     },
     namespace,
-    megaMenuData,
-    categories,
     {
       data: { getOrganizationNews },
     },
@@ -406,24 +376,6 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         },
       })
       .then((variables) => JSON.parse(variables.data.getNamespace.fields)),
-    apolloClient
-      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
-        query: GET_GROUPED_MENU_QUERY,
-        variables: {
-          input: { id: '5prHB8HLyh4Y35LI4bnhh2', lang: locale },
-        },
-      })
-      .then((res) => res.data.getGroupedMenu),
-    apolloClient
-      .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
-        query: GET_CATEGORIES_QUERY,
-        variables: {
-          input: {
-            lang: locale,
-          },
-        },
-      })
-      .then((res) => res.data.getArticleCategories),
     apolloClient.query<Query, QueryGetOrganizationNewsArgs>({
       query: GET_ORGANIZATION_NEWS_QUERY,
       variables: {
@@ -435,28 +387,15 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
     }),
   ])
 
-  const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
-
   return {
     organization: getOrganization,
     namespace,
     news: getOrganizationNews,
     showSearchInHeader: false,
-    megaMenuData: {
-      asideTopLinks: formatMegaMenuLinks(
-        locale as Locale,
-        asideTopLinksData.menuLinks,
-      ),
-      asideBottomTitle: asideBottomLinksData.title,
-      asideBottomLinks: formatMegaMenuLinks(
-        locale as Locale,
-        asideBottomLinksData.menuLinks,
-      ),
-      mainLinks: formatMegaMenuCategoryLinks(locale as Locale, categories),
-    },
   }
 }
 
 export default withMainLayout(Home, {
-  showHeader: false,
+  headerButtonColorScheme: 'negative',
+  headerColorScheme: 'white',
 })
