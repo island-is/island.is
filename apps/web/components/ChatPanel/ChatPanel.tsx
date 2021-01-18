@@ -16,11 +16,11 @@ declare global {
 
 export const ChatPanel = () => {
   const { width } = useWindowSize()
-  const [showButton, setShowButton] = useState(Boolean(window.boost))
+  const [showButton, setShowButton] = useState(Boolean(window.boost)) // we show button when chat already loaded
 
   useEffect(() => {
     // init the chat panel if it does not exist
-    if (!window?.boost) {
+    if (!window.boost) {
       const el = document.createElement('script')
       el.addEventListener('load', () => {
         const settings = {
