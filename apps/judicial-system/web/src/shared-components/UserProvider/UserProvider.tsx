@@ -25,8 +25,7 @@ export const CurrentUserQuery = gql`
   }
 `
 
-const USER_MOCKED =
-  process.env.NODE_ENV === 'development' && process.env.NX_API_MOCKS === 'true'
+const USER_MOCKED = process.env.API_MOCKS === 'true'
 
 const UserProvider: React.FC = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
