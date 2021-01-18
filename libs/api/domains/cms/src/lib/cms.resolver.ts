@@ -23,6 +23,7 @@ import { GetOrganizationsInput } from './dto/getOrganizations.input'
 import { GetOrganizationInput } from './dto/getOrganization.input'
 import { GetAdgerdirFrontpageInput } from './dto/getAdgerdirFrontpage.input'
 import { GetFrontpageSliderListInput } from './dto/getFrontpageSliderList.input'
+import { GetErrorPageInput } from './dto/getErrorPage.input'
 import { Namespace } from './models/namespace.model'
 import { AboutPage } from './models/aboutPage.model'
 import { LandingPage } from './models/landingPage.model'
@@ -66,6 +67,7 @@ import { GroupedMenu } from './models/groupedMenu.model'
 import { GetSingleMenuInput } from './dto/getSingleMenu.input'
 import { SubpageHeader } from './models/subpageHeader.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
+import { ErrorPage } from './models/ErrorPage.model'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 
 const { cacheTime } = environment
@@ -149,6 +151,14 @@ export class CmsResolver {
       input?.slug ?? '',
       input?.lang ?? 'is-IS',
     )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => ErrorPage, { nullable: true })
+  getErrorPage(
+    @Args('input') input: GetErrorPageInput,
+  ): Promise<ErrorPage | null> {
+    return this.cmsContentfulService.getErrorPage(input)
   }
 
   @Directive(cacheControlDirective())
@@ -351,6 +361,7 @@ export class CmsResolver {
   ): Promise<SubpageHeader | null> {
     return this.cmsContentfulService.getSubpageHeader(input)
   }
+
 }
 
 @Resolver(() => LatestNewsSlice)
