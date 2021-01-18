@@ -1,0 +1,41 @@
+.home {
+  max-width: $width-content;
+  &__info {
+    margin-top: 30px;
+    padding: 30px;
+    background-color: $color-bg-content;
+  }
+
+  &__logged-out {
+    padding: 30px;
+    background-color: $color-cancel;
+    font-size: 1rem;
+    font-weight: $weight-semi-bold;
+    margin: 40px 0;
+    border-radius: $border-radius;
+
+    .home__shortcuts {
+      padding: 0;
+      font-weight: normal;
+    }
+  }
+
+  &__shortcuts {
+    width: 70%;
+    margin-top: 40px;
+    padding: 0 30px;
+
+    &__item {
+      display: flex;
+      margin-bottom: 12px;
+
+      &__description {
+        flex: 1;
+      }
+
+      &__link {
+        flex: 1;
+      }
+    }
+  }
+}

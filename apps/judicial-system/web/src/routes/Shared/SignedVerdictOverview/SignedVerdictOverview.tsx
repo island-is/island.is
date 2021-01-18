@@ -5,7 +5,11 @@ import {
   formatDate,
   getShortRestrictionByValue,
 } from '@island.is/judicial-system/formatters'
-import { Case, CaseDecision, CaseState } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseCustodyRestrictions,
+  CaseDecision,
+} from '@island.is/judicial-system/types'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CaseQuery } from '../../../graphql'
@@ -18,6 +22,8 @@ import RulingAccordionItem from '../../../shared-components/RulingAccordionItem/
 import { getRestrictionTagVariant } from '../../../utils/stepHelper'
 import { useHistory } from 'react-router-dom'
 import * as Constants from '../../../utils/constants'
+import PdfButton from '../../../shared-components/PdfButton/PdfButton'
+
 interface CaseData {
   case?: Case
 }
@@ -152,20 +158,53 @@ export const SignedVerdictOverview: React.FC = () => {
                 {
                   // Custody restrictions
                   workingCase.decision === CaseDecision.ACCEPTING &&
-                    workingCase.custodyRestrictions?.map(
-                      (custodyRestriction, index) => (
+                    workingCase.custodyRestrictions
+                      ?.filter((restriction) =>
+                        [
+                          CaseCustodyRestrictions.ISOLATION,
+                          CaseCustodyRestrictions.VISITAION,
+                          CaseCustodyRestrictions.COMMUNICATION,
+                          CaseCustodyRestrictions.MEDIA,
+                        ].includes(restriction),
+                      )
+                      ?.map((custodyRestriction, index) => (
                         <Box marginTop={index > 0 ? 1 : 0} key={index}>
                           <Tag
                             variant={getRestrictionTagVariant(
                               custodyRestriction,
                             )}
                             outlined
+                            disabled
                           >
                             {getShortRestrictionByValue(custodyRestriction)}
                           </Tag>
                         </Box>
-                      ),
-                    )
+                      ))
+                }
+                {
+                  // Alternative travel ban restrictions
+                  workingCase.decision ===
+                    CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&
+                    workingCase.custodyRestrictions
+                      ?.filter((restriction) =>
+                        [
+                          CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
+                          CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
+                        ].includes(restriction),
+                      )
+                      ?.map((custodyRestriction, index) => (
+                        <Box marginTop={index > 0 ? 1 : 0} key={index}>
+                          <Tag
+                            variant={getRestrictionTagVariant(
+                              custodyRestriction,
+                            )}
+                            outlined
+                            disabled
+                          >
+                            {getShortRestrictionByValue(custodyRestriction)}
+                          </Tag>
+                        </Box>
+                      ))
                 }
               </Box>
             </Box>
@@ -192,12 +231,15 @@ export const SignedVerdictOverview: React.FC = () => {
               accusedAddress={workingCase.accusedAddress}
             />
           </Box>
-          <Box marginBottom={15}>
+          <Box marginBottom={5}>
             <Accordion>
               <PoliceRequestAccordionItem workingCase={workingCase} />
               <CourtRecordAccordionItem workingCase={workingCase} />
               <RulingAccordionItem workingCase={workingCase} />
             </Accordion>
+          </Box>
+          <Box marginBottom={15}>
+            <PdfButton caseId={workingCase.id} />
           </Box>
           <FormFooter hideNextButton />
         </>

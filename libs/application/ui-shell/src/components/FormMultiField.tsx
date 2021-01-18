@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import {
   Application,
   formatText,
@@ -23,7 +23,7 @@ const FormMultiField: FC<{
   answerQuestions(answers: FormValue): void
   goToScreen: (id: string) => void
 }> = ({ application, answerQuestions, errors, goToScreen, multiField }) => {
-  const { description, children } = multiField
+  const { description, children, space = 0 } = multiField
   const { formatMessage } = useLocale()
   return (
     <GridRow>
@@ -46,7 +46,12 @@ const FormMultiField: FC<{
         const span = isHalfColumn ? '1/2' : '1/1'
 
         return (
-          <GridColumn key={field.id} span={['1/1', '1/1', span]}>
+          <GridColumn
+            key={field.id || index}
+            span={['1/1', '1/1', span]}
+            paddingTop={index === 0 ? 4 : 0}
+            paddingBottom={index === children.length - 1 ? 0 : space}
+          >
             <Box paddingTop={1}>
               <FormField
                 application={application}

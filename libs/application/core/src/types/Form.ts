@@ -2,6 +2,7 @@ import { ZodObject } from 'zod'
 import { Condition } from './Condition'
 import { Field } from './Fields'
 import { MessageDescriptor } from 'react-intl'
+import { BoxProps } from '@island.is/island-ui/core'
 import { Application } from './Application'
 
 export type StaticText = (MessageDescriptor & { values?: object }) | string
@@ -74,6 +75,7 @@ export interface MultiField extends FormItem {
   children: Field[]
   isPartOfRepeater?: boolean
   readonly description?: FormText
+  space?: BoxProps['paddingTop']
 }
 
 export interface ExternalDataProvider extends FormItem {
@@ -85,7 +87,7 @@ export interface ExternalDataProvider extends FormItem {
 
 export interface DataProviderItem {
   readonly id: string
-  readonly type: string
+  readonly type: string | undefined
   readonly title: StaticText
   readonly subTitle?: StaticText
   readonly source?: string

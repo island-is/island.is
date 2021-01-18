@@ -1,7 +1,6 @@
 import {
   Accordion,
   Box,
-  Button,
   GridColumn,
   GridContainer,
   GridRow,
@@ -19,8 +18,9 @@ import {
 import * as Constants from '../../../utils/constants'
 import {
   formatDate,
-  formatRestrictions,
+  formatCustodyRestrictions,
   TIME_FORMAT,
+  formatAlternativeTravelBanRestrictions,
 } from '@island.is/judicial-system/formatters'
 import { parseTransition } from '../../../utils/formatters'
 import { AppealDecisionRole, JudgeSubsections, Sections } from '../../../types'
@@ -48,7 +48,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql'
 import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { api } from '../../../services'
 import CourtRecordAccordionItem from '../../../shared-components/CourtRecordAccordionItem/CourtRecordAccordionItem'
 import {
   RequestSignatureMutation,
@@ -61,6 +60,7 @@ import {
   validateAndSendTimeToServer,
   validateAndSetTime,
 } from '../../../utils/formHelper'
+import PdfButton from '../../../shared-components/PdfButton/PdfButton'
 
 interface SigningModalProps {
   workingCase: Case
@@ -493,7 +493,7 @@ export const Confirmation: React.FC = () => {
               </Box>
               <Box marginBottom={2}>
                 <Text>
-                  {formatRestrictions(
+                  {formatCustodyRestrictions(
                     workingCase.accusedGender || CaseGender.OTHER,
                     workingCase.custodyRestrictions || [],
                   )}
@@ -502,6 +502,33 @@ export const Confirmation: React.FC = () => {
               <Text>
                 Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
                 atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
+              </Text>
+            </Box>
+          )}
+          {workingCase.decision ===
+            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN && (
+            <Box marginBottom={7}>
+              <Box marginBottom={1}>
+                <Text as="h3" variant="h3">
+                  Tilhögun farbanns
+                </Text>
+              </Box>
+              <Box marginBottom={2}>
+                <Text>
+                  {formatAlternativeTravelBanRestrictions(
+                    workingCase.accusedGender || CaseGender.OTHER,
+                    workingCase.custodyRestrictions || [],
+                  )}
+                </Text>
+              </Box>
+              {workingCase.otherRestrictions && (
+                <Box marginBottom={2}>
+                  <Text>{workingCase.otherRestrictions}</Text>
+                </Box>
+              )}
+              <Text>
+                Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
+                atriði er lúta að framkvæmd farbannsins undir dómara.
               </Text>
             </Box>
           )}
@@ -558,21 +585,7 @@ export const Confirmation: React.FC = () => {
             </GridContainer>
           </Box>
           <Box marginBottom={15}>
-            <a
-              className={style.pdfLink}
-              href={`${api.apiUrl}/api/case/${workingCase.id}/ruling`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                variant="ghost"
-                size="small"
-                icon="open"
-                iconType="outline"
-              >
-                Sjá PDF af þingbók og úrskurði
-              </Button>
-            </a>
+            <PdfButton caseId={workingCase.id} />
           </Box>
           <FormFooter
             nextUrl={Constants.DETENTION_REQUESTS_ROUTE}
