@@ -105,7 +105,7 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
             buildCustomField({
               id: 'domicileChangeInformation',
               title: '',
-              component: 'DomicileChangeInformation',
+              component: 'ChangeInformation',
             }),
             buildCheckboxField({
               id: 'confirmInformationAboutDomicileChange',
@@ -204,9 +204,10 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
       id: 'submitted',
       title: 'Umsókn móttekin',
       children: [
-        buildTextField({
-          id: 'children',
-          title: 'children',
+        buildCustomField({
+          id: 'domicileChangeConfirmation',
+          title: 'Umsókn um breytt lögheimili móttekin',
+          component: 'Confirmation',
         }),
       ],
     }),
