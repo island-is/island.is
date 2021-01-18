@@ -11,68 +11,70 @@ import {
   buildSubmitField,
   FormModes,
   buildCustomField,
-  buildIntroductionField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { m } from './messages'
 
 export const Review: Form = buildForm({
   id: ApplicationTypes.META_APPLICATION,
-  name: FormModes.REVIEW,
+  title: 'Úrvinnsla',
+  mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'intro',
-      name: m.generalInfo,
+      title: m.generalInfo,
       children: [
         buildMultiField({
           id: 'general',
-          name: '',
+          title: 'Umsókn um aðild að umsóknarkerfinu',
           children: [
-            buildDividerField({ name: 'Grunnuppplýingar' }),
+            buildDividerField({ title: 'Grunnuppplýingar' }),
             buildCustomField(
               {
                 id: 'applicant.institution',
-                name: m.institution,
+                title: m.institution,
                 component: 'OrganizationField',
               },
               { disabled: true },
             ),
             buildTextField({
               id: 'applicant.contact',
-              name: m.contact,
+              title: m.contact,
               disabled: true,
-              width: 'half',
             }),
             buildTextField({
               id: 'applicant.email',
-              name: m.email,
+              title: m.email,
               disabled: true,
               width: 'half',
               variant: 'email',
             }),
             buildTextField({
               id: 'applicant.phoneNumber',
-              name: m.phoneNumber,
+              title: m.phoneNumber,
               disabled: true,
               width: 'half',
               variant: 'tel',
             }),
-            buildDividerField({ name: 'Þjónusta' }),
+            buildDividerField({ title: 'Þjónusta' }),
             buildTextField({
               id: 'service.name',
-              name: m.serviceName,
+              title: m.serviceName,
               disabled: true,
               width: 'half',
             }),
             buildTextField({
-              id: 'service.countPerYEar',
-              name: m.serviceCount,
+              id: 'service.countPerYear',
+              title: m.serviceCount,
               disabled: true,
               width: 'half',
               variant: 'number',
             }),
             buildRadioField({
               id: 'service.users',
-              name: m.serviceUsers,
+              title: m.serviceUsers,
+              largeButtons: true,
+              width: 'half',
               disabled: true,
               options: [
                 { value: 'companies', label: m.companiesOptionLabel },
@@ -82,7 +84,9 @@ export const Review: Form = buildForm({
             }),
             buildRadioField({
               id: 'service.digital',
-              name: m.serviceDigital,
+              title: m.serviceDigital,
+              largeButtons: true,
+              width: 'half',
               disabled: true,
               options: [
                 { value: 'yes', label: m.yesOptionLabel },
@@ -91,8 +95,8 @@ export const Review: Form = buildForm({
             }),
             buildTextField({
               id: 'service.link',
-              name: m.serviceLink,
-              width: 'half',
+              title: m.serviceLink,
+              disabled: true,
               condition: (formValue: FormValue) => {
                 return (
                   (formValue as { service: { digital: string } })?.service
@@ -100,17 +104,19 @@ export const Review: Form = buildForm({
                 )
               },
             }),
-            buildDividerField({ name: 'Gögn' }),
+            buildDividerField({ title: 'Gögn' }),
             buildCustomField({
               id: 'dataTable',
-              name: '',
+              title: '',
               component: 'DataTable',
             }),
-            buildDividerField({ name: 'Greiðlur' }),
+            buildDividerField({ title: 'Greiðlur' }),
             buildRadioField({
               id: 'payment.radio',
-              name: m.paymentRadio,
+              title: m.paymentRadio,
               disabled: true,
+              largeButtons: true,
+              width: 'half',
               options: [
                 { value: 'yes', label: m.yesOptionLabel },
                 { value: 'no', label: m.noOptionLabel },
@@ -118,7 +124,7 @@ export const Review: Form = buildForm({
             }),
             buildTextField({
               id: 'payment.tbr',
-              name: m.paymentTBR,
+              title: m.paymentTBR,
               disabled: true,
               condition: (formValue: FormValue) => {
                 return (
@@ -129,7 +135,7 @@ export const Review: Form = buildForm({
             }),
             buildTextField({
               id: 'payment.amount',
-              name: m.paymentAmount,
+              title: m.paymentAmount,
               variant: 'number',
               disabled: true,
               condition: (formValue: FormValue) => {
@@ -141,11 +147,13 @@ export const Review: Form = buildForm({
             }),
             buildRadioField({
               id: 'payment.charge',
-              name: m.paymentCharge,
+              title: m.paymentCharge,
               disabled: true,
+              largeButtons: true,
+              width: 'half',
               options: [
-                { value: 'in advance', label: m.inAdvanceOptionLabel },
-                { value: 'on approval', label: m.onApprovalOptionLabel },
+                { value: 'inAdvance', label: m.inAdvanceOptionLabel },
+                { value: 'onApproval', label: m.onApprovalOptionLabel },
               ],
               condition: (formValue: FormValue) => {
                 return (
@@ -154,28 +162,28 @@ export const Review: Form = buildForm({
                 )
               },
             }),
-            buildDividerField({ name: 'Annað' }),
+            buildDividerField({ title: 'Annað' }),
             buildTextField({
               id: 'info',
-              name: m.otherInfo,
+              title: m.otherInfo,
               variant: 'textarea',
               disabled: true,
             }),
             buildSubmitField({
               id: 'approvedByReviewer',
-              name: m.reviewQuestion,
-              placement: 'screen',
+              title: m.reviewQuestion,
+              placement: 'footer',
               actions: [
-                { event: 'APPROVE', name: m.approveOption, type: 'primary' },
                 { event: 'REJECT', name: m.declineOption, type: 'reject' },
+                { event: 'APPROVE', name: m.approveOption, type: 'primary' },
               ],
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'final',
-          name: 'Takk fyrir',
-          introduction:
+          title: 'Takk fyrir',
+          description:
             'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
         }),
       ],

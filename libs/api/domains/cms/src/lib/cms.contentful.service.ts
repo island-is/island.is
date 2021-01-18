@@ -9,6 +9,10 @@ import { ContentSlug, mapContentSlug } from './models/contentSlug.model'
 import { AboutPage, mapAboutPage } from './models/aboutPage.model'
 import { LandingPage, mapLandingPage } from './models/landingPage.model'
 import { GenericPage, mapGenericPage } from './models/genericPage.model'
+import {
+  GenericOverviewPage,
+  mapGenericOverviewPage,
+} from './models/genericOverviewPage.model'
 import { News, mapNews } from './models/news.model'
 import { Pagination } from './models/pagination.model'
 import {
@@ -21,6 +25,7 @@ import { GetContentSlugInput } from './dto/getContentSlug.input'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
+import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
 import { Namespace, mapNamespace } from './models/namespace.model'
 import { Menu, mapMenu } from './models/menu.model'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
@@ -42,6 +47,8 @@ import { mapUrl, Url } from './models/url.model'
 import { AboutSubPage, mapAboutSubPage } from './models/aboutSubPage.model'
 import { Homepage, mapHomepage } from './models/homepage.model'
 import { mapTellUsAStory, TellUsAStory } from './models/tellUsAStory.model'
+import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
+import { mapSubpageHeader, SubpageHeader } from './models/subpageHeader.model'
 
 const makePage = (
   page: number,
@@ -321,6 +328,21 @@ export class CmsContentfulService {
     return result.items.map(mapGenericPage)[0] ?? null
   }
 
+  async getGenericOverviewPage({
+    lang,
+    pageIdentifier,
+  }: GetGenericOverviewPageInput): Promise<GenericOverviewPage> {
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IGenericOverviewPageFields>(lang, {
+        ['content_type']: 'genericOverviewPage',
+        'fields.pageIdentifier': pageIdentifier,
+        include: 10,
+      })
+      .catch(errorHandler('getGenericOverviewPage'))
+
+    return result.items.map(mapGenericOverviewPage)[0] ?? null
+  }
+
   async getNamespace(
     namespace: string,
     lang: string,
@@ -433,5 +455,19 @@ export class CmsContentfulService {
       .catch(errorHandler('getTellUsAStory'))
 
     return result.items.map(mapTellUsAStory)[0]
+  }
+
+  async getSubpageHeader({
+    lang,
+    id,
+  }: GetSubpageHeaderInput): Promise<SubpageHeader> {
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.ISubpageHeaderFields>(lang, {
+        ['content_type']: 'subpageHeader',
+        'fields.subpageId': id,
+      })
+      .catch(errorHandler('getSubpageHeader'))
+
+    return result.items.map(mapSubpageHeader)[0]
   }
 }

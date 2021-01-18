@@ -195,7 +195,7 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
           <Box display="flex" alignItems="center" marginRight={[0, 0, 0, 3]}>
             <Stack space={2}>
               <Inline space={2} alignY="center" collapseBelow="sm">
-                <Text variant="tag" color="blue400">
+                <Text variant="eyebrow" color="blue400">
                   {n('tag', 'Sía')}:
                 </Text>
                 <Inline space={2} alignY="center">

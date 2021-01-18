@@ -1,0 +1,34 @@
+.statusbar {
+  background: $color-bg-content;
+  border: 1px solid $color-border;
+  box-sizing: border-box;
+  border-radius: $border-radius;
+  padding: 15px;
+  padding: 12px 12px 12px 55px;
+  display: flex;
+  margin: 20px 0px;
+
+  &.error {
+    background: url('icons/warning.svg') #fff2f6;
+    background-repeat: no-repeat;
+    background-position: 10px 10px;
+    border: 1px solid #ffccdc;
+  }
+
+  &__message {
+    font-weight: 600;
+    margin-right: 15px;
+
+    span {
+      margin-right: 10px;
+      text-transform: capitalize;
+    }
+    span:not(:last-child):after {
+      content: ',';
+    }
+  }
+
+  &__error {
+    margin-left: 15px;
+  }
+}

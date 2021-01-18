@@ -3,6 +3,7 @@ import Router from 'next/router'
 import { NextComponentType } from 'next'
 
 import { AUTH_URL, isAuthenticated } from './utils'
+import { BASE_PATH } from '@island.is/skilavottord/consts'
 
 type AuthType = 'citizen' | 'recyclingPartner'
 
@@ -13,15 +14,16 @@ const withAuth = (WrappedComponent: NextComponentType, authType: AuthType) =>
   class extends Component {
     static async getInitialProps(ctx: any) {
       if (!isAuthenticated(ctx) && !USER_MOCKED) {
-        const authUrl = `${AUTH_URL[authType]}/login?returnUrl=${ctx.asPath}`
         const { res } = ctx
         if (res) {
+          const authUrl = `${BASE_PATH}${AUTH_URL[authType]}/login?returnUrl=${BASE_PATH}${ctx.asPath}`
           res.writeHead(302, {
             Location: authUrl,
             withCrendentials: true,
           })
           res.end()
         } else {
+          const authUrl = `${AUTH_URL[authType]}/login?returnUrl=${ctx.asPath}`
           Router.push(authUrl)
           return {}
         }

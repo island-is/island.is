@@ -2,6 +2,44 @@ import { Case } from '../models'
 import { transformCase } from './case.transformer'
 
 describe('transformCase', () => {
+  describe('alternativeTravelBan', () => {
+    it('should not change a true value', () => {
+      // Arrange
+      const theCase = {
+        alternativeTravelBan: true,
+      } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.alternativeTravelBan).toBe(true)
+    })
+
+    it('should not change a false value', () => {
+      // Arrange
+      const theCase = {
+        alternativeTravelBan: false,
+      } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.alternativeTravelBan).toBe(false)
+    })
+
+    it('should should change a null value to false', () => {
+      // Arrange
+      const theCase = {} as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.alternativeTravelBan).toBe(false)
+    })
+  })
   describe('isCourtDateInThePast', () => {
     it('should not set court date in the past if no court date', () => {
       // Arrange

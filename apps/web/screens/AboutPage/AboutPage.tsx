@@ -1,5 +1,5 @@
 import React, { FC, ReactNode, useMemo, forwardRef } from 'react'
-import pathNames from '@island.is/web/i18n/routes'
+import NextLink from 'next/link'
 import {
   GET_ABOUT_PAGE_QUERY,
   GET_CATEGORIES_QUERY,
@@ -22,7 +22,6 @@ import {
   BoxProps,
   Breadcrumbs,
   Stack,
-  Link,
   ColorSchemeContext,
   GridContainer,
   GridColumn,
@@ -64,6 +63,7 @@ import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '@island.is/web/utils/processMenuData'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 /**
  * TODO: Both fragments Image and EmbeddedVideo aren't used inside
@@ -82,16 +82,9 @@ interface SliceItem {
 
 const sidebarContent = (
   navigation: SliceItem[],
-  currentSliceId: string,
   sliceLinks: SliceItem[],
 ): NavigationItem[] => {
   const [navigationTitle, ...navigationList] = navigation
-
-  const items: NavigationItem[] = navigationList.map(({ id, text }) => ({
-    href: `#${id}`,
-    title: text,
-    active: id === currentSliceId,
-  }))
 
   const subPages: NavigationItem[] = sliceLinks.map(({ url, text }) => ({
     href: url,
@@ -103,7 +96,6 @@ const sidebarContent = (
     href: `#${navigationTitle.id}`,
     title: navigationTitle.text,
     active: true,
-    items: items,
   }
 
   return [currentPage].concat(subPages)
@@ -180,6 +172,7 @@ const PageHeader: FC<PageHeaderProps> = ({
   const slice = page.pageHeader
 
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
+  const { linkResolver } = useLinkResolver()
   const [currentSliceId] = useScrollSpy(ids, { marginTop: 220 })
 
   return (
@@ -203,7 +196,7 @@ const PageHeader: FC<PageHeaderProps> = ({
               }
               baseId="LeftNavigation"
               isMenuDialog={false}
-              items={sidebarContent(navigation, currentSliceId, slice.links)}
+              items={sidebarContent(navigation, slice.links)}
               title={page.title}
             />
           </Sidebar>
@@ -216,21 +209,29 @@ const PageHeader: FC<PageHeaderProps> = ({
               span={['12/12', '12/12', '12/12', '8/9']}
             >
               <Stack space={2}>
-                <Breadcrumbs color="blue300" separatorColor="blue300">
-                  <Link href={pathNames().href}>Ísland.is</Link>
-                  <span>{page.title}</span>
-                </Breadcrumbs>
+                <Breadcrumbs
+                  color="white"
+                  items={[
+                    {
+                      title: 'Ísland.is',
+                      href: '/',
+                    },
+                  ]}
+                  renderLink={(link) => {
+                    return (
+                      <NextLink {...linkResolver('homepage')} passHref>
+                        {link}
+                      </NextLink>
+                    )
+                  }}
+                />
                 <Box display={['block', 'block', 'block', 'none']}>
                   <Navigation
                     colorScheme={'darkBlue'}
                     baseId="MobileMenuNavigation"
                     isMenuDialog={true}
                     activeItemTitle={slice.navigationText}
-                    items={sidebarContent(
-                      navigation,
-                      currentSliceId,
-                      slice.links,
-                    )}
+                    items={sidebarContent(navigation, slice.links)}
                     title={page.title}
                   />
                 </Box>
@@ -453,7 +454,6 @@ const AboutPageScreen: Screen<AboutPageProps> = ({
               isMenuDialog={false}
               items={sidebarContent(
                 navigation as SliceItem[],
-                page.pageHeader.id,
                 page.pageHeader.links,
               )}
               title={page.title}

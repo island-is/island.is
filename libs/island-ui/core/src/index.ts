@@ -1,3 +1,9 @@
+import { BoxProps as TBoxProps } from './lib/Box/Box'
+import {
+  InputProps as TInputProps,
+  InputBackgroundColor as TInputBackgroundColor,
+} from './lib/Input/Input'
+
 // Alerts
 export * from './lib/AlertMessage/AlertMessage'
 export * from './lib/AlertBanner/AlertBanner'
@@ -23,6 +29,9 @@ export * from './lib/Header/Header'
 export * from './lib/Footer/Footer'
 export * from './lib/DialogPrompt/DialogPrompt'
 export * from './lib/ModalBase/ModalBase'
+export * from './lib/Filter/Filter'
+export * from './lib/Filter/FilterMultiChoice/FilterMultiChoice'
+export * from './lib/Filter/FilterInput/FilterInput'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'
@@ -42,6 +51,7 @@ export * from './lib/Icon/IconTypes'
 export * from './lib/IconRC/Icon'
 export * from './lib/Typography/Typography'
 export * from './lib/Text/Text'
+export * from './lib/Hyphen/Hyphen'
 
 // Form
 export * from './lib/Checkbox/Checkbox'
@@ -69,6 +79,7 @@ export * from './lib/Sleeve/Sleeve'
 export * from './lib/Divider/Divider'
 
 // Navigation
+export { Breadcrumbs as BreadcrumbsDeprecated } from './lib/BreadcrumbsDeprecated/Breadcrumbs'
 export * from './lib/Breadcrumbs/Breadcrumbs'
 export * from './lib/Navigation/Navigation'
 export * from './lib/FormStepper/FormStepper'
@@ -83,3 +94,9 @@ export * from './lib/context'
 
 // Treat
 export * from './treat/global.treat'
+
+// Types
+export * from './lib/DatePicker/types'
+export type BoxProps = TBoxProps
+export type InputProps = TInputProps
+export type InputBackgroundColor = TInputBackgroundColor

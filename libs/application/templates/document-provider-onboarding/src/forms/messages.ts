@@ -20,7 +20,7 @@ export const m = defineMessages({
   },
   termsSubTitle: {
     id: 'dpo.application:terms.subTitle',
-    defaultMessage: 'Skilmálar vegna notkunar á pósthólfi Island.is',
+    defaultMessage: 'Skilmálar vegna notkunar á pósthólfi Stafræns Íslands',
     description: 'Some description',
   },
   termsUserAgreementTitle: {
@@ -34,6 +34,11 @@ export const m = defineMessages({
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nibh metus, ornare sed neque id, efficitur mollis mauris. Proin eget metus cursus, eleifend sapien ut, consectetur ex. Sed vel ante ac magna pretium scelerisque faucibus sodales diam. Donec id leo posuere, tincidunt erat quis, venenatis purus. Ut sollicitudin mauris vitae ipsum mattis, vel iaculis ante pellentesque. Nam sed facilisis sapien. Proin facilisis porta blandit. Nunc ac dictum nisl, sit amet varius tortor. Suspendisse a lacinia lacus, non lobortis purus. Nullam eget nisi vitae augue iaculis euismod. Nulla rhoncus est vitae mi condimentum, nec convallis diam ullamcorper. Mun koma ur messages ? Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nibh metus, ornare sed neque id, efficitur mollis mauris. Proin eget metus cursus, eleifend sapien ut, consectetur ex. Sed vel ante ac magna pretium scelerisque faucibus sodales diam. Donec id leo posuere, tincidunt erat quis, venenatis purus. Ut sollicitudin mauris vitae ipsum mattis, vel iaculis ante pellentesque. Nam sed facilisis sapien. Proin facilisis porta blandit. Nunc ac dictum nisl, sit amet varius tortor. Suspendisse a lacinia lacus, non lobortis purus. Nullam eget nisi vitae augue iaculis euismod. Nulla rhoncus est vitae mi condimentum, nec convallis diam ullamcorper. Mun koma ur messages ? Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nibh metus, ornare sed neque id, efficitur mollis mauris. Proin eget metus cursus, eleifend sapien ut, consectetur ex. Sed vel ante ac magna pretium scelerisque faucibus sodales diam. Donec id leo posuere, tincidunt erat quis, venenatis purus. Ut sollicitudin mauris vitae ipsum mattis, vel iaculis ante pellentesque. Nam sed facilisis sapien. Proin facilisis porta blandit. Nunc ac dictum nisl, sit amet varius tortor. Suspendisse a lacinia lacus, non lobortis purus. Nullam eget nisi vitae augue iaculis euismod. Nulla rhoncus est vitae mi condimentum, nec convallis diam ullamcorper.',
     description: 'Some description',
   },
+  termsUserAgreementRequiredMessage: {
+    id: 'dpo.application:terms.userAgreementRequiredMessage',
+    defaultMessage: 'Þú verður að samþykkja notendaskilmála',
+    description: 'Some description',
+  },
   termsSafetyAgreementTitle: {
     id: 'dpo.application:terms.safetyAgreementLabel',
     defaultMessage: 'Öryggisskilmálar',
@@ -43,6 +48,11 @@ export const m = defineMessages({
     id: 'dpo.application:terms.safetyAgreementLabel',
     defaultMessage:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nibh metus, ornare sed neque id, efficitur mollis mauris. Proin eget metus cursus, eleifend sapien ut, consectetur ex. Sed vel ante ac magna pretium scelerisque faucibus sodales diam. Donec id leo posuere, tincidunt erat quis, venenatis purus. Ut sollicitudin mauris vitae ipsum mattis, vel iaculis ante pellentesque. Nam sed facilisis sapien. Proin facilisis porta blandit. Nunc ac dictum nisl, sit amet varius tortor. Suspendisse a lacinia lacus, non lobortis purus. Nullam eget nisi vitae augue iaculis euismod. Nulla rhoncus est vitae mi condimentum, nec convallis diam ullamcorper.',
+    description: 'Some description',
+  },
+  termsSafetyAgreementRequiredMessage: {
+    id: 'dpo.application:terms.safetyAgreementLabel',
+    defaultMessage: 'Þú verður að samþykkja öryggisskilmála',
     description: 'Some description',
   },
   userAgreementOptionLabel: {
@@ -69,7 +79,7 @@ export const m = defineMessages({
   },
   applicantSubTitle: {
     id: 'dpo.application:applicant.subtitle',
-    defaultMessage: 'Stofnun eða fyrirtæki sem sótt er um fyrir.',
+    defaultMessage: 'Stofnun sem sótt er um fyrir.',
     description: '',
   },
   applicantNationalId: {
@@ -77,9 +87,19 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala stofnunar',
     description: '',
   },
+  applicantNationalIdPlaceholder: {
+    id: 'dpo.application:applicant.nationalid-placeholder',
+    defaultMessage: 'Skráðu inn kennitölu stofnunar',
+    description: '',
+  },
   applicantName: {
     id: 'dpo.application:applicant.name',
     defaultMessage: 'Nafn stofnunar',
+    description: '',
+  },
+  applicantNamePlaceholder: {
+    id: 'dpo.application:applicant.name-placeholder',
+    defaultMessage: 'Skráðu inn nafn stofnunar',
     description: '',
   },
   applicantEmail: {
@@ -87,9 +107,19 @@ export const m = defineMessages({
     defaultMessage: 'Netfang',
     description: '',
   },
+  applicantEmailPlaceholder: {
+    id: 'dpo.application:applicant.email-placeholder',
+    defaultMessage: 'Skráðu inn netfang',
+    description: '',
+  },
   applicantPhoneNumber: {
     id: 'dpo.application:applicant.phoneNumber',
     defaultMessage: 'Símanúmer',
+    description: '',
+  },
+  applicantPhoneNumberPlaceholder: {
+    id: 'dpo.application:applicant.phoneNumber-placeholder',
+    defaultMessage: 'Skráðu inn símanúmer',
     description: '',
   },
   applicantAddress: {
@@ -97,9 +127,19 @@ export const m = defineMessages({
     defaultMessage: 'Heimilisfang',
     description: '',
   },
+  applicantAddressPlaceholder: {
+    id: 'dpo.application:applicant.address-placeholder',
+    defaultMessage: 'Skráðu inn heimilisfang',
+    description: '',
+  },
   applicantZipCode: {
     id: 'dpo.application:applicant.zipCode',
     defaultMessage: 'Póstnúmer og staður',
+    description: '',
+  },
+  applicantZipCodePlaceholder: {
+    id: 'dpo.application:applicant.zipCode-placeholder',
+    defaultMessage: 'Skráðu inn póstnúmer og stað',
     description: '',
   },
 
@@ -124,14 +164,29 @@ export const m = defineMessages({
     defaultMessage: 'Nafn',
     description: '',
   },
+  administrativeContactNamePlaceholder: {
+    id: 'dpo.application:administrativeContact.name-placeholder',
+    defaultMessage: 'Skráðu inn nafn',
+    description: '',
+  },
   administrativeContactEmail: {
     id: 'dpo.application:administrativeContact.email',
     defaultMessage: 'Netfang',
     description: '',
   },
+  administrativeContactEmailPlaceholder: {
+    id: 'dpo.application:administrativeContact.email-placeholder',
+    defaultMessage: 'Skráðu inn netfang',
+    description: '',
+  },
   administrativeContactPhoneNumber: {
     id: 'dpo.application:administrativeContact.phoneNumber',
     defaultMessage: 'Símanúmer',
+    description: '',
+  },
+  administrativeContactPhoneNumberPlaceholder: {
+    id: 'dpo.application:administrativeContact.phoneNumber-placeholder',
+    defaultMessage: 'Skráðu inn símanúmer',
     description: '',
   },
 
@@ -149,7 +204,7 @@ export const m = defineMessages({
   technicalContactSubTitle: {
     id: 'dpo.application:technicalContact.subtitle',
     defaultMessage:
-      'Einstaklingur eða þjónustuaðili stofnunar sem tekur á móti tæknilegum vandamálum.',
+      'Starfsmaður stofnunar eða starfsmaður þjónustuaðila gagnvart stofnun sem tekur á móti tæknilegum vandamálum',
     description: '',
   },
   technicalContactName: {
@@ -157,14 +212,29 @@ export const m = defineMessages({
     defaultMessage: 'Nafn',
     description: '',
   },
+  technicalContactNamePlaceHolder: {
+    id: 'dpo.application:technicalContact.name-placeholder',
+    defaultMessage: 'Skráðu inn nafn',
+    description: '',
+  },
   technicalContactEmail: {
     id: 'dpo.application:technicalContact.email',
     defaultMessage: 'Netfang',
     description: '',
   },
+  technicalContactEmailPlaceHolder: {
+    id: 'dpo.application:technicalContact.email-placeholder',
+    defaultMessage: 'Skráðu inn netfang',
+    description: '',
+  },
   technicalContactPhoneNumber: {
     id: 'dpo.application:technicalContact.phoneNumber',
     defaultMessage: 'Símanúmer',
+    description: '',
+  },
+  technicalContactPhoneNumberPlaceHolder: {
+    id: 'dpo.application:technicalContact.phoneNumber-placeholder',
+    defaultMessage: 'Skráðu inn símanúmer',
     description: '',
   },
 
@@ -182,7 +252,7 @@ export const m = defineMessages({
   helpDeskSubTitle: {
     id: 'dpo.application:helpDesk.subtitle',
     defaultMessage:
-      'Leiðir viðskiptavina til að koma athugasemdum til skjalaveitanda.',
+      'Netfang og símanúmer sem tekur við athugasemdum frá notendum pósthólfs',
     description: '',
   },
   helpDeskEmail: {
@@ -190,9 +260,19 @@ export const m = defineMessages({
     defaultMessage: 'Netfang',
     description: '',
   },
+  helpDeskEmailPlaceholder: {
+    id: 'dpo.application:helpDesk.email-placeholder',
+    defaultMessage: 'Skráðu inn netfang',
+    description: '',
+  },
   helpDeskPhoneNumber: {
     id: 'dpo.application:helpDesk.phoneNumber',
     defaultMessage: 'Símanúmer',
+    description: '',
+  },
+  helpDeskPhoneNumberPlaceholder: {
+    id: 'dpo.application:helpDesk.phoneNumber-placeholder',
+    defaultMessage: 'Skráðu inn símanúmer',
     description: '',
   },
 
@@ -226,19 +306,25 @@ export const m = defineMessages({
   },
   thankYouScreenSubTitle: {
     id: 'dpo.application:thankYouScreen.subTitle',
-    defaultMessage: 'Nú bíður umsókn þín samþykkis island.is.',
+    defaultMessage: 'Nú bíður umsókn þín samþykkis hjá Stafrænu Íslandi.',
     description: '',
   },
   thankYouScreenFirstMessage: {
     id: 'dpo.application:thankYouScreen.firstMessage',
     defaultMessage:
-      'Þegar og ef hún verður samþykkt, þarf að koma aftur inn í þetta ferli og klára umsóknina. Sá hluti er tæknilegur og krefst tæknilegrar útfærslu. Hér að neðan er að finna upplýsingar sem nauðsynlegt er að búið sé að kynna sér áður en farið er af stað í það ferli.',
+      'Þegar hún hefur verið samþykkt, þarf að koma aftur inn í þetta ferli og halda áfram með umsóknina. Næsti hluti er tæknilegur og krefst tæknilegrar útfærslu. ',
     description: '',
   },
   thankYouScreenSecondMessage: {
+    id: 'dpo.application:thankYouScreen.firstMessage',
+    defaultMessage:
+      'Hér að neðan er að finna upplýsingar sem nauðsynlegt er að kynna sér áður en farið er af stað í það ferli.',
+    description: '',
+  },
+  thankYouScreenThirdMessage: {
     id: 'dpo.application:thankYouScreen.secondMessage',
     defaultMessage:
-      'Til að gerast skjalaveitandi þarf að útfæra tvenn forritunarskil. Annarsvegar eru það skil til að senda skjalatilvísun í pósthólf og hinsvegar eru það skil til að hægt sé að nálgast skjal hjá skjalaveitu. Hér að neðan finnur þú upplýsingar um tæknilegar útfærslur á þessum skilum.Í þessu ferli færð þú aðgang að prófunarumhverfi til að útfæra þjónustuna.Þegar þjónustan og prófanir eru búnar, er hægt að framkvæma sjálfvirkar prófanir til að staðfesta virkni.',
+      'Til að gerast skjalaveitandi þarf að útfæra tvenn forritunarskil. Annarsvegar eru það skil til að senda skjalatilvísun í pósthólf og hinsvegar eru það skil til að hægt sé að nálgast skjal hjá skjalaveitu. Hlekkirnir hér undir innihalda upplýsingar um tæknilegar útfærslur á þessum skilum. Í þessu ferli færð þú aðgang að prófunarumhverfi til þess að útfæra þjónustuna. Þegar þjónustan er tilbúin og prófunum er lokið, er hægt að framkvæma sjálfvirkar prófanir til að staðfesta virkni.',
     description: '',
   },
   thankYouScreenLinkUrl1: {
@@ -276,7 +362,8 @@ export const m = defineMessages({
   },
   thankYouScreenFooterMessage: {
     id: 'dpo.application:thankYouScreen.footerMessage',
-    defaultMessage: 'Skjöl þurfa að vera á PDF formi',
+    defaultMessage:
+      'Skjöl sem senda á inn í pósthólf, þurfa að vera á PDF formi',
     description: '',
   },
 
@@ -340,7 +427,7 @@ export const m = defineMessages({
   reviewProcessedIntroduction: {
     id: 'dpo.application:reviewProcessed.Introduction',
     defaultMessage:
-      'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
+      'Umsókn er komin áfram í ferlinu. Staðfesting hefur verið send á umsækjanda',
     description: '',
   },
 
@@ -358,7 +445,7 @@ export const m = defineMessages({
   testPhaseInfoMessage: {
     id: 'dpo.application:testPhaseInfo.message',
     defaultMessage:
-      'Til að gerast skjalaveitandi þarf að útfæra tvenn forritunarskil. Annarsvegar eru það skil til að senda skjalatilvísun í pósthólf og hinsvegar eru það skil til að hægt sé að nálgast skjal hjá skjalaveitu. Hér að neðan finnur þú upplýsingar um tæknilegar útfærslur á þessum skilum.Í þessu ferli færð þú aðgang að prófunarumhverfi til að útfæra þjónustuna.Þegar þjónustan og prófanir eru búnar, er hægt að framkvæma sjálfvirkar prófanir til að staðfesta virkni.',
+      'Til að gerast skjalaveitandi þarf að útfæra tvenn forritunarskil. Annarsvegar eru það skil til að senda skjalatilvísun í pósthólf og hinsvegar eru það skil til að hægt sé að nálgast skjal hjá skjalaveitu. Hlekkirnir hér undir innihalda upplýsingar um tæknilegar útfærslur á þessum skilum. Í þessu ferli færð þú aðgang að prófunarumhverfi til þess að útfæra þjónustuna. Þegar þjónustan er tilbúin og prófunum er lokið, er hægt að framkvæma sjálfvirkar prófanir til að staðfesta virkni.',
     description: '',
   },
   testPhaseInfoLinkUrl1: {
@@ -420,7 +507,7 @@ export const m = defineMessages({
   testEnviromentStrongText: {
     id: 'dpo.application:testEnviroment.strongText',
     defaultMessage:
-      'Þessar upplýsingar eru bara aðgengilegar einu sinni, ef þær glatast þarftu að hafa samband við island.is ',
+      'Þessar upplýsingar eru bara aðgengilegar einu sinni, ef þær glatast þarftu að hafa samband við Stafrænt Ísland',
     description: '',
   },
   testEnviromentErrorMessage: {
@@ -451,6 +538,21 @@ export const m = defineMessages({
     defaultMessage: 'Eitthvað fór úrskeiðis. Ekki tókst að vista endapunkt.',
     description: '',
   },
+  testEndpointLabel: {
+    id: 'dpo.application:testEnviroment.endPointLabel',
+    defaultMessage: 'Endapunktur',
+    description: '',
+  },
+  testEndpointPlaceholder: {
+    id: 'dpo.application:testEnviroment.endPointPlaceholder',
+    defaultMessage: 'https://....',
+    description: '',
+  },
+  testEndpointInputErrorMessage: {
+    id: 'dpo.application:testEnviroment.subMessage',
+    defaultMessage: '"Þú verður að skrá inn endapunkt"',
+    description: '',
+  },
 
   //Technical implementation
   testTechnicalImplementationSection: {
@@ -466,7 +568,7 @@ export const m = defineMessages({
   testTechnicalImplementationSubTitle: {
     id: 'dpo.application:technicalImplementation.subTitle',
     defaultMessage:
-      'Nú er komið að því að þú klárir forritunarskilin hjá þér áður en þú heldur áfram í umsóknarferlinu.',
+      'Nú er komið að því að klára forritunarskilin hjá þér áður en þú heldur áfram í umsóknarferlinu.',
     description: '',
   },
   testTechnicalImplementationMessage1: {
@@ -478,7 +580,7 @@ export const m = defineMessages({
   testTechnicalImplementationMessage2: {
     id: 'dpo.application:technicalImplementation.message2',
     defaultMessage:
-      'Það er einnig á ábyrgð útfærsluaðila að prófa þjónustuna vel hjá sér áður en farið er á raun umhverfi. Til aðstoðar verða sjálfvirk próf þegar eigin prófunum er lokið. Sjálfvirku prófin eru ekki tæmandi, því er mikilvægt að útfærsluaðili prófi allt einnig í þaula.',
+      'Það er einnig á ábyrgð útfærsluaðila að prófa þjónustuna vel hjá sér áður en farið er í raun umhverfi. Í næsta skrefi eru sjálfvirk próf. Sjálfvirku prófin eru ekki tæmandi, því er mikilvægt að útfærsluaðili prófi allt einnig í þaula.',
     description: '',
   },
   technicalImplementationOptionLabel: {
@@ -512,7 +614,7 @@ export const m = defineMessages({
   automatedTestsMessage: {
     id: 'dpo.application:automatedTests.subHeading',
     defaultMessage:
-      'Sendu skjal á einhverja kennitölu í pósthólfið á prófunarumhverfinu. Því næst skal slá inn kennitölu þess sem skjalið var sent á í reitinn hér að neðan og velja að keyra próf. Prófið athugar hvort skjal hafi borist þessari kennitölu á síðustu 5 mínútum. Einnig er sannreynt að hægt sé að sækja skjalið til skjalaveitu.',
+      'Sendu skjal á einhverja kennitölu í pósthólfið í prófunarumhverfinu. Því næst skal slá inn kennitölu þess sem skjalið var sent á í reitinn hér að neðan og velja að keyra próf. Prófið athugar hvort skjal hafi borist þessari kennitölu á síðustu 5 mínútum. Einnig er sannreynt að hægt sé að sækja skjalið til skjalaveitu.',
     description: '',
   },
   automatedTestsNationalIdLabel: {
@@ -520,9 +622,19 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala móttakanda',
     description: '',
   },
+  automatedTestsNationalIdPlaceholder: {
+    id: 'dpo.application:automatedTests.nationalIdPlaceholder',
+    defaultMessage: 'Skráðu inn kennitölu',
+    description: '',
+  },
   automatedTestsDocIdLabel: {
     id: 'dpo.application:automatedTests.docIdLabel',
     defaultMessage: 'Id skjals',
+    description: '',
+  },
+  automatedTestsDocIdPlaceholder: {
+    id: 'dpo.application:automatedTests.docIdPlaceholder',
+    defaultMessage: 'Skráðu inn Id skjals',
     description: '',
   },
   automatedTestsNationalIdErrorMessage: {
@@ -555,7 +667,7 @@ export const m = defineMessages({
   },
   prodEnviromentTitle: {
     id: 'dpo.application:prodEnviroment.stitle',
-    defaultMessage: 'Aðgangur að raun umhverfi',
+    defaultMessage: 'Aðgangur að raunumhverfi',
     description: '',
   },
   prodEnviromentsubTitle: {
@@ -567,7 +679,7 @@ export const m = defineMessages({
   prodEnviromentStrongText: {
     id: 'dpo.application:testEnviroment.strongText',
     defaultMessage:
-      'Þessar upplýsingar eru bara aðgengilegar einu sinni, ef þær glatast þarftu að hafa samband við island.is ',
+      'Þessar upplýsingar eru bara aðgengilegar einu sinni, ef þær glatast þarftu að hafa samband við Stafrænt Ísland ',
     description: '',
   },
   prodEnviromentButton: {
@@ -603,6 +715,21 @@ export const m = defineMessages({
     defaultMessage: 'Eitthvað fór úrskeiðis. Ekki tókst að vista endapunkt.',
     description: '',
   },
+  prodEndpointLabel: {
+    id: 'dpo.application:testEnviroment.endPointLabel',
+    defaultMessage: 'Endapunktur',
+    description: '',
+  },
+  prodEndpointPlaceholder: {
+    id: 'dpo.application:testEnviroment.endPointPlaceholder',
+    defaultMessage: 'https://....',
+    description: '',
+  },
+  prodEndpointInputErrorMessage: {
+    id: 'dpo.application:testEnviroment.subMessage',
+    defaultMessage: '"Þú verður að skrá inn endapunkt"',
+    description: '',
+  },
 
   //Thank you Image screen
   thankYouImageScreenTitle: {
@@ -613,7 +740,7 @@ export const m = defineMessages({
   thankYouImageScreenScreenSubTitle: {
     id: 'dpo.application:seconadThankYouScreen.subTitle',
     defaultMessage:
-      'Þú hefur nú fengið aðgang að umsjónarkerfi skajalveitenda. Það má finna á þínum síðum á ísland.is',
+      'Ef það eru einhverjar frekari spurningar, vinsamlegast hafið samband við Stafrænt Ísland.',
     description: '',
   },
 })

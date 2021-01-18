@@ -14,6 +14,7 @@ import {
   FieldDescription,
 } from '@island.is/shared/form-fields'
 import { buildOptions } from '../utils'
+import { useDefaultValue } from '../useDefaultValue'
 
 interface Props extends FieldBaseProps {
   field: RadioField
@@ -27,7 +28,7 @@ const RadioFormField: FC<Props> = ({
   const {
     disabled,
     id,
-    name,
+    title,
     description,
     options,
     width,
@@ -45,7 +46,7 @@ const RadioFormField: FC<Props> = ({
     <div>
       {showFieldName && (
         <Text variant={'h4'}>
-          {formatText(name, application, formatMessage)}
+          {formatText(title, application, formatMessage)}
         </Text>
       )}
 
@@ -68,7 +69,10 @@ const RadioFormField: FC<Props> = ({
           error={error}
           split={width === 'half' ? '1/2' : '1/1'}
           name={`${id}`}
-          defaultValue={getValueViaPath(application.answers, id) as string[]}
+          defaultValue={
+            (getValueViaPath(application.answers, id) as string[]) ??
+            useDefaultValue(field, application)
+          }
           options={finalOptions.map(({ label, tooltip, ...o }) => ({
             ...o,
             label: HtmlParser(formatText(label, application, formatMessage)),

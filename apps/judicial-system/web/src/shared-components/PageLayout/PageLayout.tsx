@@ -12,7 +12,7 @@ import * as styles from './PageLayout.treat'
 import { JudgeLogo, ProsecutorLogo } from '../Logos'
 import Loading from '../Loading/Loading'
 import * as Constants from '../../utils/constants'
-import { UserRole } from '@island.is/judicial-system/types'
+import { CaseDecision, UserRole } from '@island.is/judicial-system/types'
 import { Link } from 'react-router-dom'
 import { UserContext } from '../UserProvider/UserProvider'
 
@@ -24,6 +24,7 @@ interface PageProps {
   activeSubSection?: number
   // Only needed for the SignedVerdictOverview screen
   rejectedCase?: boolean
+  decision?: CaseDecision
   isCustodyEndDateInThePast?: boolean
 }
 
@@ -34,9 +35,28 @@ export const PageLayout: FC<PageProps> = ({
   isLoading,
   notFound,
   rejectedCase,
+  decision,
   isCustodyEndDateInThePast,
 }) => {
   const { user } = useContext(UserContext)
+
+  const caseResult = () => {
+    if (rejectedCase) {
+      return 'Kröfu hafnað'
+    }
+
+    if (decision === CaseDecision.ACCEPTING) {
+      return isCustodyEndDateInThePast
+        ? 'Gæsluvarðhaldi lokið'
+        : 'Gæsluvarðhald virkt'
+    }
+
+    if (decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) {
+      return isCustodyEndDateInThePast ? 'Farbanni lokið' : 'Farbann virkt'
+    }
+
+    return 'Niðurstaða'
+  }
 
   return children ? (
     <Box
@@ -79,10 +99,10 @@ export const PageLayout: FC<PageProps> = ({
                     name: 'Krafa um gæsluvarðhald',
                     children: [
                       { type: 'SUB_SECTION', name: 'Sakborningur' },
-                      { type: 'SUB_SECTION', name: 'Dómkröfur' },
+                      { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
                       {
                         type: 'SUB_SECTION',
-                        name: 'Lagagrundvöllur og takmarkanir',
+                        name: 'Lagagrundvöllur og dómkröfur',
                       },
                       {
                         type: 'SUB_SECTION',
@@ -106,11 +126,7 @@ export const PageLayout: FC<PageProps> = ({
                     ],
                   },
                   {
-                    name: rejectedCase
-                      ? 'Gæsluvarðhaldi hafnað'
-                      : isCustodyEndDateInThePast
-                      ? 'Gæsluvarðhaldi lokið'
-                      : 'Gæsluvarðhald virkt',
+                    name: caseResult(),
                   },
                 ]}
                 formName="Gæsluvarðhald"

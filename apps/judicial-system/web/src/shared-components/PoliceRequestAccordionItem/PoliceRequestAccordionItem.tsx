@@ -4,7 +4,7 @@ import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 import AccordionListItem from '../AccordionListItem/AccordionListItem'
 import {
   capitalize,
-  formatCustodyRestrictions,
+  formatRequestedCustodyRestrictions,
   formatDate,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
@@ -38,23 +38,27 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       <Box marginBottom={3}>
         <Text>Lögheimili: {workingCase.accusedAddress}</Text>
       </Box>
-      <AccordionListItem title="Tími handtöku">
-        <Text>
-          {`${capitalize(
-            formatDate(workingCase.arrestDate, 'PPPP') || '',
-          )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
-        </Text>
-      </AccordionListItem>
-      <AccordionListItem title="Ósk um fyrirtökudag og tíma">
-        <Text>
-          {`${capitalize(
-            formatDate(workingCase.requestedCourtDate, 'PPPP') || '',
-          )} eftir kl. ${formatDate(
-            workingCase.requestedCourtDate,
-            TIME_FORMAT,
-          )}`}
-        </Text>
-      </AccordionListItem>
+      {workingCase.arrestDate && (
+        <AccordionListItem title="Tími handtöku">
+          <Text>
+            {`${capitalize(
+              formatDate(workingCase.arrestDate, 'PPPP') || '',
+            )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
+          </Text>
+        </AccordionListItem>
+      )}
+      {workingCase.requestedCourtDate && (
+        <AccordionListItem title="Ósk um fyrirtökudag og tíma">
+          <Text>
+            {`${capitalize(
+              formatDate(workingCase.requestedCourtDate, 'PPPP') || '',
+            )} eftir kl. ${formatDate(
+              workingCase.requestedCourtDate,
+              TIME_FORMAT,
+            )}`}
+          </Text>
+        </AccordionListItem>
+      )}
       <AccordionListItem title="Dómkröfur">
         {constructProsecutorDemands(workingCase)}
       </AccordionListItem>
@@ -66,7 +70,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       </Box>
       <Box marginBottom={4}>
         <Text>
-          {formatCustodyRestrictions(workingCase.custodyRestrictions)}
+          {formatRequestedCustodyRestrictions(workingCase.custodyRestrictions)}
         </Text>
       </Box>
       <Box marginBottom={2}>

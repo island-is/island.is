@@ -25,7 +25,7 @@ const autoSchemaFile = environment.production
       debug,
       playground,
       autoSchemaFile,
-      path: '/api/graphql',
+      path: '/skilavottord/api/graphql',
     }),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,

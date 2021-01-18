@@ -17,6 +17,7 @@ export const CaseQuery = gql`
       court
       arrestDate
       requestedCourtDate
+      alternativeTravelBan
       requestedCustodyEndDate
       lawsBroken
       custodyProvisions
@@ -43,10 +44,11 @@ export const CaseQuery = gql`
       accusedPlea
       litigationPresentations
       ruling
-      rejecting
+      decision
       custodyEndDate
       isCustodyEndDateInThePast
       custodyRestrictions
+      otherRestrictions
       accusedAppealDecision
       accusedAppealAnnouncement
       prosecutorAppealDecision

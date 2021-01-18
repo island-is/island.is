@@ -1,36 +1,38 @@
 import {
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
   Form,
   FormModes,
 } from '@island.is/application/core'
+import Logo from '../assets/Logo'
 
 export const OtherParentApproval: Form = buildForm({
   id: 'OtherParentApprovalForParentalLeave',
-  name: 'Other parent approval for parental leave application',
+  title: 'Other parent approval for parental leave application',
+  logo: Logo,
   mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'review',
-      name: 'Other parent approval',
+      title: 'Other parent approval',
       children: [
         buildMultiField({
           id: 'multi',
-          name:
+          title:
             'Do you want to give away one month of your parental leave rights?',
           children: [
-            buildIntroductionField({
+            buildDescriptionField({
               id: 'intro',
-              name: '',
-              introduction:
+              title: '',
+              description:
                 'You are apparently expecting a baby with some person that wishes to use one month of your rights. That means your rights will be 5 months at most. Do you agree?',
             }),
             buildSubmitField({
               id: 'submit',
-              name: 'submit',
+              title: 'submit',
               placement: 'footer',
               actions: [
                 { name: 'Reject', type: 'reject', event: 'REJECT' },
@@ -39,10 +41,10 @@ export const OtherParentApproval: Form = buildForm({
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'final',
-          name: 'Takk fyrir',
-          introduction:
+          title: 'Takk fyrir',
+          description:
             'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
         }),
       ],

@@ -12,6 +12,9 @@ import {
   ClientGrantType,
   ClientsService,
   ClientClaim,
+  IdpRestriction,
+  ApiScope,
+  IdentityResource,
 } from '@island.is/auth-api-lib'
 import { SequelizeModule } from '@nestjs/sequelize'
 
@@ -28,6 +31,9 @@ import { SequelizeModule } from '@nestjs/sequelize'
       ClientPostLogoutRedirectUri,
       ClientGrantType,
       ClientClaim,
+      IdpRestriction,
+      ApiScope,
+      IdentityResource,
     ]),
   ],
   controllers: [ClientsController, OriginsController],

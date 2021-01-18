@@ -6,11 +6,10 @@ import {
   GridColumn,
   Swiper,
 } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/web/i18n'
-import routeNames from '@island.is/web/i18n/routeNames'
 import { GetLifeEventsQuery } from '@island.is/web/graphql/schema'
 import { Sleeve } from '@island.is/island-ui/core'
 import { Card } from '@island.is/web/components'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface LifeEventsSectionProps {
   title?: string
@@ -25,8 +24,7 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
   lifeEvents = [],
   showSleeve = false,
 }) => {
-  const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
   const titleProps = titleId ? { id: titleId } : {}
 
   const renderLifeEventCard = (lifeEvent, key) => (
@@ -34,8 +32,7 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
       key={key}
       title={lifeEvent.title}
       description={lifeEvent.intro}
-      href={makePath('lifeEvent', '[slug]')}
-      as={makePath('lifeEvent', lifeEvent.slug)}
+      {...linkResolver('lifeeventpage', [lifeEvent.slug])}
       image={lifeEvent.thumbnail ? lifeEvent.thumbnail : lifeEvent.image}
     />
   )

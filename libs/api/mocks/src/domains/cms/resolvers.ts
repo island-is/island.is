@@ -11,12 +11,6 @@ export const resolvers: Resolvers = {
     },
   },
 
-  Page: {
-    __resolveType: (parent) => {
-      return (parent as SystemMetadata<typeof parent>).typename as never
-    },
-  },
-
   Query: {
     getArticleCategories: () => store.articleCategories,
 

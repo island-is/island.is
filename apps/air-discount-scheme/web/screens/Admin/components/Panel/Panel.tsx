@@ -25,6 +25,8 @@ function Panel({ flightLegs }: PropTypes) {
       return 'karlmaður'
     } else if (gender === 'kvk') {
       return 'kvenmaður'
+    } else if (gender === 'hvk') {
+      return 'kynsegin/annað'
     }
     return 'manneskja'
   }

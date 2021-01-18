@@ -143,6 +143,9 @@ export interface IArticleFields {
   /** Content */
   content?: Document | undefined
 
+  /** Show Table Of Contents */
+  showTableOfContents?: boolean | undefined
+
   /** Process Entry */
   processEntry?: IProcessEntry | undefined
 
@@ -511,8 +514,14 @@ export interface IFeaturedFields {
   /** Special attention */
   attention?: boolean | undefined
 
-  /** Featured article */
-  thing?: IArticle | IVidspyrnaFrontpage | undefined
+  /** Link */
+  thing?:
+    | IAboutSubPage
+    | IArticle
+    | ILinkUrl
+    | IVidspyrnaFrontpage
+    | IVidspyrnaPage
+    | undefined
 }
 
 export interface IFeatured extends Entry<IFeaturedFields> {
@@ -539,6 +548,9 @@ export interface IFrontpageSliderFields {
   /** Undirtitill */
   subtitle: string
 
+  /** Intro */
+  intro?: Document | undefined
+
   /** Texti */
   content: string
 
@@ -558,6 +570,9 @@ export interface IFrontpageSliderFields {
 
   /** Animation (JSON) */
   animationJson?: Record<string, any> | undefined
+
+  /** Animation JSON File */
+  animationJsonFile?: Asset | undefined
 }
 
 /** Efni í haus á forsíðu */
@@ -600,6 +615,41 @@ export interface IFrontpageSliderList
     contentType: {
       sys: {
         id: 'frontpageSliderList'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGenericOverviewPageFields {
+  /** Title */
+  title: string
+
+  /** Intro */
+  intro?: Document | undefined
+
+  /** Page Identifier */
+  pageIdentifier: string
+
+  /** Navigation */
+  navigation: IMenu
+
+  /** Overview Links */
+  overviewLinks?: IIntroLinkImage[] | undefined
+}
+
+export interface IGenericOverviewPage
+  extends Entry<IGenericOverviewPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'genericOverviewPage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -698,7 +748,10 @@ export interface IGroupedMenu extends Entry<IGroupedMenuFields> {
 }
 
 export interface IHomepageFields {
-  /** Featured articles */
+  /** Title */
+  title?: string | undefined
+
+  /** Featured */
   featured?: IFeatured[] | undefined
 }
 
@@ -746,6 +799,53 @@ export interface IIconBullet extends Entry<IIconBulletFields> {
     contentType: {
       sys: {
         id: 'iconBullet'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IIntroLinkImageFields {
+  /** Title */
+  title: string
+
+  /** Intro */
+  intro: Document
+
+  /** Image */
+  image: Asset
+
+  /** Left Image */
+  leftImage?: boolean | undefined
+
+  /** Link Title */
+  linkTitle: string
+
+  /** Link */
+  link:
+    | IAboutSubPage
+    | IArticle
+    | IArticleCategory
+    | ISubArticle
+    | ILifeEventPage
+    | ILinkUrl
+    | INews
+    | IPage
+    | IVidspyrnaFrontpage
+    | IVidspyrnaPage
+}
+
+export interface IIntroLinkImage extends Entry<IIntroLinkImageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'introLinkImage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1354,6 +1454,46 @@ export interface IOrganization extends Entry<IOrganizationFields> {
   }
 }
 
+export interface IOrganizationNewsFields {
+  /** Organization */
+  organization: Entry<{ [fieldId: string]: unknown }>
+
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Date */
+  date: string
+
+  /** Featured Image */
+  featuredImage: Asset
+
+  /** Introduction */
+  introduction: string
+
+  /** Content */
+  content?: Document | undefined
+}
+
+export interface IOrganizationNews extends Entry<IOrganizationNewsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'organizationNews'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IOrganizationTagFields {
   /** Title */
   title: string
@@ -1931,6 +2071,9 @@ export interface ISubArticleFields {
 
   /** Content */
   content: Document
+
+  /** Show Table Of Contents */
+  showTableOfContents?: boolean | undefined
 }
 
 /** A sub article that's a part of another main article */
@@ -1965,8 +2108,8 @@ export interface ISubpageHeaderFields {
   /** Featured Image */
   featuredImage?: Asset | undefined
 
-  /** Content */
-  content?: Record<string, any> | undefined
+  /** Body */
+  body?: Document | undefined
 }
 
 export interface ISubpageHeader extends Entry<ISubpageHeaderFields> {
@@ -2611,11 +2754,13 @@ export type CONTENT_TYPE =
   | 'featured'
   | 'frontpageSlider'
   | 'frontpageSliderList'
+  | 'genericOverviewPage'
   | 'genericPage'
   | 'genericTag'
   | 'groupedMenu'
   | 'homepage'
   | 'iconBullet'
+  | 'introLinkImage'
   | 'landingPage'
   | 'latestNewsSlice'
   | 'lifeEventPage'
@@ -2634,6 +2779,7 @@ export type CONTENT_TYPE =
   | 'numberBullet'
   | 'numberBulletSection'
   | 'organization'
+  | 'organizationNews'
   | 'organizationTag'
   | 'page'
   | 'pageHeader'

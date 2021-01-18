@@ -7,14 +7,31 @@ import { familyModule } from '@island.is/service-portal/family'
 import { healthModule } from '@island.is/service-portal/health'
 import { educationModule } from '@island.is/service-portal/education'
 import { assetsModule } from '@island.is/service-portal/assets'
+import { eligibilityModule } from '@island.is/service-portal/eligibility'
+import { drivingLicenseModule } from '@island.is/service-portal/driving-license'
+import { environment as env } from '../environments'
 
-export const modules: ServicePortalModule[] = [
-  applicationsModule,
-  documentsModule,
-  settingsModule,
-  financeModule,
-  familyModule,
-  healthModule,
-  educationModule,
-  assetsModule,
-]
+type ModuleFeatureFlag = keyof typeof env.featureFlags
+
+const mapper: Record<ModuleFeatureFlag, ServicePortalModule> = {
+  applications: applicationsModule,
+  documents: documentsModule,
+  settings: settingsModule,
+  finance: financeModule,
+  family: familyModule,
+  health: healthModule,
+  education: educationModule,
+  delegation: eligibilityModule,
+  assets: assetsModule,
+  drivingLicense: drivingLicenseModule,
+}
+
+export const modules = () => {
+  const arr: ServicePortalModule[] = []
+  Object.keys(env.featureFlags).forEach((k) => {
+    const key = k as ModuleFeatureFlag
+    if (env.featureFlags[key]) arr.push(mapper[key])
+  })
+
+  return arr
+}

@@ -11,6 +11,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
+import { useDefaultValue } from '../useDefaultValue'
 
 interface Props extends FieldBaseProps {
   field: TextField
@@ -25,11 +26,13 @@ const TextFormField: FC<Props> = ({
   const {
     id,
     disabled,
-    name,
+    title,
     description,
     placeholder,
+    backgroundColor,
     format,
     variant = 'text',
+    suffix,
   } = field
   const { clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
@@ -53,7 +56,7 @@ const TextFormField: FC<Props> = ({
           )}
           label={
             showFieldName
-              ? formatText(name, application, formatMessage)
+              ? formatText(title, application, formatMessage)
               : undefined
           }
           autoFocus={autoFocus}
@@ -69,6 +72,9 @@ const TextFormField: FC<Props> = ({
             variant !== 'textarea' && variant !== 'currency' ? variant : 'text'
           }
           format={format}
+          suffix={suffix}
+          defaultValue={useDefaultValue(field, application)}
+          backgroundColor={backgroundColor}
         />
       </Box>
     </div>

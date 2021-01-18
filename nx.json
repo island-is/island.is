@@ -92,7 +92,13 @@
     "api-domains-documents": {
       "tags": []
     },
+    "api-domains-driving-license": {
+      "tags": []
+    },
     "api-domains-file-upload": {
+      "tags": []
+    },
+    "api-domains-health-insurance": {
       "tags": []
     },
     "api-domains-national-registry": {
@@ -108,6 +114,9 @@
       "tags": []
     },
     "api-schema": {
+      "tags": []
+    },
+    "application-api-template-utils": {
       "tags": []
     },
     "application-core": {
@@ -130,6 +139,9 @@
       "implicitDependencies": ["application-system-form"]
     },
     "application-template-loader": {
+      "tags": []
+    },
+    "application-templates-children-domicile-transfer": {
       "tags": []
     },
     "application-templates-document-provider-onboarding": {
@@ -168,6 +180,13 @@
     "application-ui-shell": {
       "tags": []
     },
+    "auth-admin-web": {
+      "tags": []
+    },
+    "auth-admin-web-e2e": {
+      "tags": [],
+      "implicitDependencies": ["auth-admin-web"]
+    },
     "auth-api-lib": {
       "tags": []
     },
@@ -175,6 +194,9 @@
       "tags": []
     },
     "cache": {
+      "tags": []
+    },
+    "content-search-index-manager": {
       "tags": []
     },
     "content-search-indexer": {
@@ -295,6 +317,9 @@
     "nova-sms": {
       "tags": []
     },
+    "plausible": {
+      "tags": []
+    },
     "reference-backend": {
       "tags": []
     },
@@ -322,11 +347,17 @@
     "service-portal-documents": {
       "tags": []
     },
+    "service-portal-driving-license": {
+      "tags": []
+    },
     "service-portal-e2e": {
       "tags": [],
       "implicitDependencies": ["service-portal"]
     },
     "service-portal-education": {
+      "tags": []
+    },
+    "service-portal-eligibility": {
       "tags": []
     },
     "service-portal-family": {

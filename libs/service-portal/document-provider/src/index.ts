@@ -8,7 +8,7 @@ import { m } from './lib/messages'
 export const documentProviderModule: ServicePortalModule = {
   name: m.rootName,
   widgets: () => [],
-  routes: () => [
+  routes: async () => [
     {
       name: m.rootName,
       path: ServicePortalPath.DocumentProviderRoot,
@@ -19,6 +19,14 @@ export const documentProviderModule: ServicePortalModule = {
       path: ServicePortalPath.DocumentProviderDocumentProviders,
       render: () =>
         lazy(() => import('./screens/DocumentProviders/DocumentProviders')),
+    },
+    {
+      name: m.documentProviderSingle,
+      path: ServicePortalPath.DocumentProviderDocumentProvidersSingle,
+      render: () =>
+        lazy(() =>
+          import('./screens/SingleDocumentProvider/SingleDocumentProvider'),
+        ),
     },
     {
       name: m.MyCategories,
@@ -77,6 +85,11 @@ export const documentProviderModule: ServicePortalModule = {
         lazy(() =>
           import('./screens/TechnicalInformation/TechnicalInformation'),
         ),
+    },
+    {
+      name: m.Statistics,
+      path: ServicePortalPath.DocumentProviderStatistics,
+      render: () => lazy(() => import('./screens/Statistics/Statistics')),
     },
   ],
 }

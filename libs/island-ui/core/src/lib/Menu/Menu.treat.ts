@@ -3,35 +3,39 @@ import { style } from 'treat'
 
 export const container = style({
   width: '100%',
-  minHeight: '100%',
+  height: '100%',
   background: theme.color.white,
   ...themeUtils.responsiveStyle({
-    md: {
+    lg: {
       display: 'flex',
-    },
-  }),
-})
-
-export const main = style({
-  position: 'relative',
-  ...themeUtils.responsiveStyle({
-    md: {
-      flexBasis: '66.66666%',
-      flexGrow: 1,
     },
   }),
 })
 export const bg = style({
   display: 'none',
-  ...themeUtils.responsiveStyle({
-    xl: {
+  '@media': {
+    [`screen and (min-width: 1169px)`]: {
+      display: 'block',
+      position: 'absolute',
+      width: 384,
+      top: 571,
+      right: 0,
+    },
+    [`screen and (min-width: 1310px)`]: {
+      display: 'block',
+      position: 'absolute',
+      width: 444,
+      top: 552,
+      right: 0,
+    },
+    [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
       display: 'block',
       position: 'absolute',
       width: 546,
       top: 579,
       right: theme.spacing[15],
     },
-  }),
+  },
 })
 
 export const mainContainer = style({
@@ -39,7 +43,7 @@ export const mainContainer = style({
   zIndex: 1,
   width: '100%',
   ...themeUtils.responsiveStyle({
-    md: {
+    lg: {
       maxWidth: 829,
     },
   }),
@@ -47,42 +51,75 @@ export const mainContainer = style({
 export const searchContainer = style({
   width: '100%',
   ...themeUtils.responsiveStyle({
-    md: {
+    lg: {
       maxWidth: 342,
-    },
-  }),
-})
-
-export const aside = style({
-  ...themeUtils.responsiveStyle({
-    md: {
-      flexBasis: '33.33333%',
-      display: 'flex',
-      flexDirection: 'column',
-      flexGrow: 1,
     },
   }),
 })
 
 export const asideTop = style({
-  backgroundColor: theme.color.blue100,
+  position: 'relative',
+  zIndex: 0,
+  selectors: {
+    '&:before': {
+      content: '""',
+      backgroundColor: theme.color.blue100,
+      transform: 'translateX(-50%)',
+      position: 'absolute',
+      zIndex: -1,
+      top: 0,
+      bottom: 0,
+      left: '50%',
+      right: 0,
+      width: '100vw',
+    },
+  },
+  ...themeUtils.responsiveStyle({
+    md: {
+      selectors: {
+        '&:before': {
+          left: 0,
+          transform: 'none',
+          width: '100vw',
+        },
+      },
+    },
+  }),
 })
 
 export const asideBottom = style({
-  backgroundColor: theme.color.blue200,
-  flexGrow: 1,
-})
-export const asideContainer = style({
+  position: 'relative',
+  zIndex: 0,
+  selectors: {
+    '&:before': {
+      content: '""',
+      backgroundColor: theme.color.blue200,
+      transform: 'translateX(-50%)',
+      position: 'absolute',
+      zIndex: -1,
+      top: 0,
+      bottom: 0,
+      left: '50%',
+      right: 0,
+      width: '100vw',
+    },
+  },
   ...themeUtils.responsiveStyle({
     md: {
-      maxWidth: 342,
+      selectors: {
+        '&:before': {
+          left: 0,
+          transform: 'none',
+          width: '100vw',
+        },
+      },
     },
   }),
 })
 
 export const mainLinkContainer = style({
   ...themeUtils.responsiveStyle({
-    md: {
+    lg: {
       columnCount: 2,
       columnGap: theme.spacing[2],
       height: 520,

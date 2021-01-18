@@ -1,32 +1,34 @@
 import {
   buildCustomField,
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
   Form,
   FormModes,
 } from '@island.is/application/core'
+import Logo from '../assets/Logo'
 
 export const EmployerApproval: Form = buildForm({
   id: 'EmployerApprovalForParentalLeave',
-  name: 'Employer approval for parental leave application',
+  title: 'Employer approval for parental leave application',
+  logo: Logo,
   mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'review',
-      name: 'Employer approval',
+      title: 'Employer approval',
       children: [
         buildMultiField({
           id: 'multi',
-          name:
+          title:
             'Your employee has applied for parental leave. Do you approve of his/her selected periods?',
           children: [
             buildCustomField(
               {
                 id: 'intro',
-                name: '',
+                title: '',
                 component: 'PeriodsRepeater',
               },
               {
@@ -35,7 +37,7 @@ export const EmployerApproval: Form = buildForm({
             ),
             buildSubmitField({
               id: 'submit',
-              name: 'submit',
+              title: 'submit',
               placement: 'footer',
               actions: [
                 { name: 'Reject', type: 'reject', event: 'REJECT' },
@@ -44,10 +46,10 @@ export const EmployerApproval: Form = buildForm({
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'final',
-          name: 'Takk fyrir',
-          introduction:
+          title: 'Takk fyrir',
+          description:
             'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
         }),
       ],

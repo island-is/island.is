@@ -17,9 +17,12 @@
 /libs/api/domains/cms/                                    @island-is/kosmos-kaos @island-is/aranja
 
 /*/air-discount-scheme/                                   @island-is/vice-versa
-/*/gjafakort/                                             @island-is/vice-versa
+/*/gjafakort/                                             @island-is/vice-versa @island-is/kosmos-kaos
 /libs/application/templates/driving-license/              @island-is/vice-versa
 /libs/application/templates/passport/                     @island-is/vice-versa
+/libs/api/domains/driving-license/                        @island-is/vice-versa
+/libs/service-portal/driving-license/                     @island-is/vice-versa
+/libs/service-portal/eligibility/                         @island-is/vice-versa
 
 /apps/application-system/                                 @island-is/aranja
 /apps/reference-next-app/                                 @island-is/aranja
@@ -34,16 +37,29 @@
 /libs/application/templates/parental-leave/               @island-is/aranja
 /libs/application/templates/reference-template/           @island-is/aranja
 
-/apps/judicial-system/                                    @island-is/kolibri
-/libs/judicial-system/                                    @island-is/kolibri
-/libs/nova-sms/                                           @island-is/kolibri
-/libs/dokobit-signing/                                    @island-is/kolibri
-/libs/email-service/                                      @island-is/kolibri
+/libs/application/templates/children-domicile-transfer/   @island-is/kolibri-modern-family
 
-/*/service-portal*/                                       @island-is/sendiradid
+/apps/judicial-system/                                    @island-is/kolibri-justice-league
+/libs/judicial-system/                                    @island-is/kolibri-justice-league
+/libs/nova-sms/                                           @island-is/kolibri-justice-league
+/libs/dokobit-signing/                                    @island-is/kolibri-justice-league
+/libs/email-service/                                      @island-is/kolibri-justice-league
+
+/apps/service-portal*/                                    @island-is/sendiradid
+/apps/services/user-profile/                              @island-is/sendiradid
 /libs/api/domains/documents/                              @island-is/sendiradid
 /libs/api/domains/national-registry/                      @island-is/sendiradid
-/apps/services/user-profile/                              @island-is/sendiradid
+/libs/service-portal/applications/                        @island-is/sendiradid
+/libs/service-portal/assets/                              @island-is/sendiradid
+/libs/service-portal/constants/                           @island-is/sendiradid
+/libs/service-portal/core/                                @island-is/sendiradid
+/libs/service-portal/documents/                           @island-is/sendiradid
+/libs/service-portal/education/                           @island-is/sendiradid
+/libs/service-portal/family/                              @island-is/sendiradid
+/libs/service-portal/finance/                             @island-is/sendiradid
+/libs/service-portal/graphql/                             @island-is/sendiradid
+/libs/service-portal/health/                              @island-is/sendiradid
+/libs/service-portal/settings/                            @island-is/sendiradid
 
 /apps/services/search-indexer/                            @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 /libs/content-search-toolkit/                             @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
@@ -71,5 +87,8 @@
 /apps/skilavottord/                                       @island-is/deloitte
 /libs/skilavottord/                                       @island-is/deloitte
 
-# /libs/auth-api-lib/                                     @island-is/fuglar
-# /libs/auth-nest-tools/                                  @island-is/fuglar
+/apps/auth-admin-web/                                     @island-is/fuglar
+/apps/auth-admin-web-e2e/                                 @island-is/fuglar
+/libs/auth-api-lib/                                       @island-is/fuglar
+/libs/auth-nest-tools/                                    @island-is/fuglar
+

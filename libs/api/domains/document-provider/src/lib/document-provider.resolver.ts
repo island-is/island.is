@@ -1,37 +1,100 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
-import { ClientCredentials } from './models/clientCredentials.model'
-import { AudienceAndScope } from './models/audienceAndScope.model'
-import { DocumentProviderService } from './document-provider.service'
-import { TestResult } from './models/testResult.model'
-import { RunEndpointTestsInput } from './dto/runEndpointTests.input'
-import { RegisterEndpointInput } from './dto/registerEndpoint.input'
-import { RegisterProviderInput } from './dto/registerProvider.input'
+import { UseGuards } from '@nestjs/common'
 
+import {
+  IdsAuthGuard,
+  ScopesGuard,
+  CurrentUser,
+  User,
+} from '@island.is/auth-nest-tools'
+import { logger } from '@island.is/logging'
+
+import { DocumentProviderService } from './document-provider.service'
+import { ClientCredentials, AudienceAndScope, TestResult } from './models'
+import {
+  RunEndpointTestsInput,
+  UpdateEndpointInput,
+  CreateProviderInput,
+} from './dto'
+
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
 export class DocumentProviderResolver {
   constructor(private documentProviderService: DocumentProviderService) {}
 
   @Mutation(() => ClientCredentials)
-  async registerProvider(
-    @Args('input') input: RegisterProviderInput,
+  async createTestProvider(
+    @Args('input') input: CreateProviderInput,
+    @CurrentUser() user: User,
   ): Promise<ClientCredentials> {
-    return this.documentProviderService.registerProvider(input.nationalId)
+    logger.info(
+      `createTestProvider: user: ${user.nationalId}, organisation: ${input.nationalId}, clientName: ${input.clientName}`,
+    )
+
+    return this.documentProviderService.createProviderOnTest(
+      input.nationalId,
+      input.clientName,
+    )
   }
 
   @Mutation(() => AudienceAndScope)
-  async registerEndpoint(
-    @Args('input') input: RegisterEndpointInput,
+  async updateTestEndpoint(
+    @Args('input') input: UpdateEndpointInput,
+    @CurrentUser() user: User,
   ): Promise<AudienceAndScope> {
-    return this.documentProviderService.registerEndpoint(input.endpoint)
+    logger.info(
+      `updateTestEndpoint: user: ${user.nationalId}, organisation: ${input.nationalId}, endpoint: ${input.endpoint}`,
+    )
+
+    return this.documentProviderService.updateEndpointOnTest(
+      input.endpoint,
+      input.providerId,
+    )
   }
 
   @Mutation(() => [TestResult])
   async runEndpointTests(
     @Args('input') input: RunEndpointTestsInput,
+    @CurrentUser() user: User,
   ): Promise<TestResult[]> {
+    logger.info(
+      `runEndpointTests: user: ${user.nationalId}, organisation: ${input.nationalId}, recipient: ${input.recipient}, documentId: ${input.recipient}, providerId: ${input.providerId}`,
+    )
+
     return this.documentProviderService.runEndpointTests(
       input.recipient,
       input.documentId,
+      input.providerId,
+    )
+  }
+
+  @Mutation(() => ClientCredentials)
+  async createProvider(
+    @Args('input') input: CreateProviderInput,
+    @CurrentUser() user: User,
+  ): Promise<ClientCredentials> {
+    logger.info(
+      `createTestProvider: user: ${user.nationalId}, organisation: ${input.nationalId}, clientName: ${input.clientName}`,
+    )
+
+    return this.documentProviderService.createProvider(
+      input.nationalId,
+      input.clientName,
+    )
+  }
+
+  @Mutation(() => AudienceAndScope)
+  async updateEndpoint(
+    @Args('input') input: UpdateEndpointInput,
+    @CurrentUser() user: User,
+  ): Promise<AudienceAndScope> {
+    logger.info(
+      `updateTestEndpoint: user: ${user.nationalId}, organisation: ${input.nationalId}, endpoint: ${input.endpoint}`,
+    )
+
+    return this.documentProviderService.updateEndpoint(
+      input.endpoint,
+      input.providerId,
     )
   }
 }

@@ -1,4 +1,11 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useMutation } from '@apollo/client'
 import {
   Application,
@@ -23,17 +30,13 @@ import {
 } from '@island.is/application/graphql'
 import deepmerge from 'deepmerge'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
-import { FormScreen, ResolverContext } from '../types'
+import { FormScreen, ResolverContext, BeforeSubmitCallback } from '../types'
 import FormMultiField from './FormMultiField'
 import FormField from './FormField'
 import { resolver } from '../validation/resolver'
 import FormRepeater from './FormRepeater'
 import FormExternalDataProvider from './FormExternalDataProvider'
-import {
-  extractAnswersToSubmitFromScreen,
-  findSubmitField,
-  verifyExternalData,
-} from '../utils'
+import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
 import { useLocale } from '@island.is/localization'
 import ScreenFooter from './ScreenFooter'
 import { useWindowSize } from 'react-use'
@@ -106,14 +109,34 @@ const Screen: FC<ScreenProps> = ({
 
   const submitField = useMemo(() => findSubmitField(screen), [screen])
 
+  const beforeSubmitCallback = useRef<BeforeSubmitCallback | null>(null)
+
+  const setBeforeSubmitCallback = useCallback(
+    (callback: BeforeSubmitCallback | null) => {
+      beforeSubmitCallback.current = callback
+    },
+    [beforeSubmitCallback],
+  )
+
   const goBack = useCallback(() => {
     // using deepmerge to prevent some weird react-hook-form read-only bugs
     reset(deepmerge({}, formValue))
+    setBeforeSubmitCallback(null)
     prevScreen()
-  }, [formValue, prevScreen, reset])
+  }, [formValue, prevScreen, reset, setBeforeSubmitCallback])
 
   const onSubmit: SubmitHandler<FormValue> = async (data, e) => {
     let response
+
+    if (typeof beforeSubmitCallback.current === 'function') {
+      const [canContinue] = await beforeSubmitCallback.current()
+
+      if (!canContinue) {
+        // TODO set error message
+        return
+      }
+    }
+
     if (submitField !== undefined) {
       const finalAnswers = { ...formValue, ...data }
       let event: string
@@ -148,19 +171,16 @@ const Screen: FC<ScreenProps> = ({
         },
       })
     }
+
     if (response?.data) {
       answerAndGoToNextScreen(data)
+      setBeforeSubmitCallback(null)
     }
   }
 
   function canProceed(): boolean {
     const isLoadingOrPending = loading || loadingSubmit
-    if (screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER) {
-      return (
-        !isLoadingOrPending &&
-        verifyExternalData(externalData, screen.dataProviders)
-      )
-    }
+
     return !isLoadingOrPending
   }
 
@@ -195,8 +215,8 @@ const Screen: FC<ScreenProps> = ({
           span={['12/12', '12/12', '7/9', '7/9']}
           offset={['0', '0', '1/9']}
         >
-          <Text variant="h2" marginBottom={2}>
-            {formatText(screen.name, application, formatMessage)}
+          <Text variant="h2" marginBottom={1}>
+            {formatText(screen.title, application, formatMessage)}
           </Text>
           <Box>
             {screen.type === FormItemTypes.REPEATER ? (
@@ -230,6 +250,7 @@ const Screen: FC<ScreenProps> = ({
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
               <FormExternalDataProvider
                 addExternalData={addExternalData}
+                setBeforeSubmitCallback={setBeforeSubmitCallback}
                 applicationId={applicationId}
                 externalData={externalData}
                 externalDataProvider={screen}

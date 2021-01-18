@@ -15,11 +15,13 @@ export const SubpageMainContent: FC<SubpageMainProps> = ({ main, image }) => {
   return (
     <GridContainer>
       <GridRow>
-        <GridColumn span={image ? ['12/12', '12/12', '9/12'] : '12/12'}>
+        <GridColumn
+          span={image ? ['12/12', '12/12', '12/12', '8/12'] : '12/12'}
+        >
           {main}
         </GridColumn>
         {image && (
-          <GridColumn span="3/12" hiddenBelow="md">
+          <GridColumn span="4/12" hiddenBelow="lg">
             {image}
           </GridColumn>
         )}

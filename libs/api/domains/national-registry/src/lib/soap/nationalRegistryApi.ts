@@ -1,31 +1,20 @@
 import { InternalServerErrorException, NotFoundException } from '@nestjs/common'
-import * as kennitala from 'kennitala'
 import Soap from 'soap'
 
+import { User } from '@island.is/auth-nest-tools'
 import { logger } from '@island.is/logging'
 import {
-  GetViewBanmarkingDto,
-  GetViewHomeDto,
-  GetViewReligionDto,
-  GetViewMunicipalityDto,
-  GetViewRegistryDto,
-  Fjolskyldan,
-  GetViewFamilyDto,
+  GetViewISLFjolskyldanDto,
+  GetViewISLEinstaklingurDto,
+  ISLFjolskyldan,
+  ISLEinstaklingur,
 } from './dto'
-import {
-  FamilyMember,
-  User,
-  FamilyRelation,
-  Gender,
-  MaritalStatus,
-  BanMarking,
-} from '../types'
 
 export class NationalRegistryApi {
   private readonly client: Soap.Client | null
   private readonly clientUser: string
   private readonly clientPassword: string
-  private readonly ADULT_AGE_LIMIT = 18
+
   constructor(
     private soapClient: Soap.Client | null,
     clientPassword: string,
@@ -46,401 +35,79 @@ export class NationalRegistryApi {
     this.clientPassword = clientPassword
   }
 
-  public async getReligion(nationalId: User['nationalId']): Promise<string> {
-    const response = await this.getViewKennitalaOgTrufelag(nationalId)
-    if (!response) {
-      return ''
-    }
-
-    return response.table.diffgram.DocumentElement.KennitalaOgTrufelag.Trufelag
-  }
-
-  public async getBirthPlace(
-    municipalCode: User['municipalCode'],
-  ): Promise<string> {
-    const response = await this.getViewSveitarfelag(municipalCode)
-
-    if (!response) {
-      return ''
-    }
-    return response.table.diffgram.DocumentElement.Sveitarfelag.Sokn
-  }
-
-  public async getBanMarking(
+  public async getUser(
     nationalId: User['nationalId'],
-  ): Promise<BanMarking | null> {
-    const response = await this.getViewKennitalaOgBannmerking(nationalId)
+  ): Promise<ISLEinstaklingur> {
+    const response: GetViewISLEinstaklingurDto = await this.signal(
+      'GetViewISLEinstaklingur',
+      {
+        Kennitala: nationalId,
+      },
+    )
 
     if (!response) {
-      return null
-    }
-
-    const banMarking =
-      response.table.diffgram.DocumentElement.KennitalaOgBannmerking
-
-    return {
-      banMarked: banMarking.Bannmerking === '1',
-      startDate: banMarking.Brdagur ?? '',
-    }
-  }
-
-  public async getLegalResidence(
-    houseCode: User['houseCode'],
-  ): Promise<string> {
-    const response = await this.getViewHusaskra(houseCode)
-    if (!response) {
-      return ''
-    }
-    const houseInfo = response.table.diffgram.DocumentElement.Husaskra
-    return `${houseInfo.HusHeiti}, ${houseInfo.PostNr} ${houseInfo.Nafn}`
-  }
-
-  public async getMyInfo(nationalId: User['nationalId']): Promise<User> {
-    const response = await this.getViewThjodskra(nationalId)
-
-    if (!response)
       throw new NotFoundException(
         `user with nationalId ${nationalId} not found in national Registry`,
       )
-
-    const userInfo = response.table.diffgram.DocumentElement.Thjodskra
-    return {
-      nationalId,
-      fullName: userInfo.Nafn,
-      citizenship: userInfo.Rikisfang,
-      gender: this.formatGender(userInfo.Kyn),
-      maritalStatus: this.formatMaritalStatus(userInfo.Hju),
-      houseCode: userInfo.LoghHusk,
-      municipalCode: userInfo.Faedsvfnr,
     }
+    return response.table.diffgram.DocumentElement.ISLEinstaklingur
   }
 
-  public async getMyFamily(nationalId: string): Promise<FamilyMember[]> {
-    const response = await this.getViewFjolskyldan(nationalId)
+  public async getMyFamily(nationalId: string): Promise<ISLFjolskyldan[]> {
+    const response: GetViewISLFjolskyldanDto = await this.signal(
+      'GetViewISLFjolskyldan',
+      {
+        Kennitala: nationalId,
+      },
+    )
 
-    if (!response)
+    if (!response) {
       throw new NotFoundException(
         `family for nationalId ${nationalId} not found`,
       )
-
-    const family = Array.isArray(
-      response?.table.diffgram.DocumentElement.Fjolskyldan,
-    )
-      ? response?.table.diffgram.DocumentElement.Fjolskyldan
-      : [response?.table.diffgram.DocumentElement.Fjolskyldan]
-
-    if (!family)
-      throw new NotFoundException(
-        `family for nationalId ${nationalId} not found`,
-      )
-
-    const members = family
-      .filter((familyMember) => {
-        return familyMember.Kennitala !== nationalId
-      })
-      .map(
-        (familyMember) =>
-          ({
-            fullName: familyMember.Nafn,
-            nationalId: familyMember.Kennitala,
-            gender: this.formatGender(familyMember.Kyn),
-            maritalStatus: this.formatMaritalStatus(familyMember.Hjuskapur),
-            familyRelation: this.getFamilyRelation(familyMember),
-            address: `${familyMember.Husheiti}, ${familyMember.Pnr} ${familyMember.Sveitarfelag}`,
-          } as FamilyMember),
-      )
-      .sort((a, b) => {
-        return (
-          kennitala.info(b.nationalId).age - kennitala.info(a.nationalId).age
-        )
-      })
-
-    return members
-  }
-
-  private getFamilyRelation(person: Fjolskyldan): FamilyRelation {
-    if (this.isChild(person)) return FamilyRelation.CHILD
-    return FamilyRelation.SPOUSE
-  }
-
-  private isParent(person: Fjolskyldan): boolean {
-    return ['1', '2'].includes(person.Kyn)
-  }
-
-  private isChild(person: Fjolskyldan): boolean {
-    return (
-      !this.isParent(person) &&
-      kennitala.info(person.Kennitala).age < this.ADULT_AGE_LIMIT
-    )
-  }
-
-  private formatMaritalStatus(maritalCode: string): MaritalStatus {
-    switch (maritalCode) {
-      case '1':
-        return MaritalStatus.UNMARRIED
-      case '3':
-        return MaritalStatus.MARRIED
-      case '4':
-        return MaritalStatus.WIDOWED
-      case '5':
-        return MaritalStatus.SEPARATED
-      case '6':
-        return MaritalStatus.DIVORCED
-      case '7':
-        return MaritalStatus.MARRIED_LIVING_SEPARATELY
-      case '8':
-        return MaritalStatus.MARRIED_TO_FOREIGN_LAW_PERSON
-      case '9':
-        return MaritalStatus.UNKNOWN
-      case '0':
-        return MaritalStatus.FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON
-      case 'L':
-        return MaritalStatus.ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON
-      default:
-        return MaritalStatus.UNKNOWN
     }
+    return Array.isArray(response.table.diffgram.DocumentElement.ISLFjolskyldan)
+      ? response.table.diffgram.DocumentElement.ISLFjolskyldan
+      : [response.table.diffgram.DocumentElement.ISLFjolskyldan]
   }
 
-  private formatGender(genderIndex: string): Gender {
-    switch (genderIndex) {
-      case '1':
-        return Gender.MALE
-      case '2':
-        return Gender.FEMALE
-      case '3':
-        return Gender.MALE_MINOR
-      case '4':
-        return Gender.FEMALE_MINOR
-      case '7':
-        return Gender.TRANSGENDER
-      case '8':
-        return Gender.TRANSGENDER_MINOR
-      default:
-        return Gender.UNKNOWN
-    }
-  }
-
-  public async getViewThjodskra(
-    nationalId: string,
-  ): Promise<GetViewRegistryDto | null> {
-    return await new Promise((resolve, _reject) => {
-      if (!this.client)
+  private async signal(
+    functionName: string,
+    args: Record<string, string>,
+  ): Promise<any> {
+    return new Promise((resolve, reject) => {
+      if (!this.client) {
         throw new InternalServerErrorException('Client not initialized')
-      this.client.GetViewThjodskra(
+      }
+
+      this.client[functionName](
         {
           ':SortColumn': 1,
           ':SortAscending': true,
           ':S5Username': this.clientUser,
           ':S5Password': this.clientPassword,
-          ':Kennitala': nationalId,
+          ...Object.keys(args).reduce(
+            (acc: Record<string, string>, key: string) => ({
+              ...acc,
+              [`:${key}`]: args[key],
+            }),
+            {},
+          ),
         },
         (
           // eslint-disable-next-line
           error: any,
-          {
-            GetViewThjodskraResult: result,
-          }: { GetViewThjodskraResult: GetViewRegistryDto },
+          response: any,
         ) => {
+          const result = response[`${functionName}Result`]
           if (result != null) {
             if (!result.success) {
               logger.error(result.message)
-              _reject(result)
+              reject(result)
             }
             if (error) {
               logger.error(error)
-              _reject(error)
-            }
-            resolve(result.table.diffgram ? result : null)
-          }
-          resolve(null)
-        },
-      )
-    })
-  }
-
-  public async getViewHusaskra(
-    houseCode: string,
-  ): Promise<GetViewHomeDto | null> {
-    return await new Promise((resolve, _reject) => {
-      if (!this.client)
-        throw new InternalServerErrorException('Client not initialized')
-      this.client.GetViewHusaskra(
-        {
-          ':SortColumn': 1,
-          ':SortAscending': true,
-          ':S5Username': this.clientUser,
-          ':S5Password': this.clientPassword,
-          ':HusKodi': houseCode,
-        },
-        (
-          // eslint-disable-next-line
-          error: any,
-          {
-            GetViewHusaskraResult: result,
-          }: { GetViewHusaskraResult: GetViewHomeDto },
-        ) => {
-          if (result != null) {
-            if (!result.success) {
-              logger.error(result.message)
-              _reject(result)
-            }
-            if (error) {
-              logger.error(error)
-              _reject(error)
-            }
-            resolve(result.table.diffgram ? result : null)
-          }
-          resolve(null)
-        },
-      )
-    })
-  }
-
-  public async getViewKennitalaOgTrufelag(
-    nationalId: string,
-  ): Promise<GetViewReligionDto | null> {
-    return await new Promise((resolve, _reject) => {
-      if (!this.client)
-        throw new InternalServerErrorException('Client not initialized')
-      this.client.GetViewKennitalaOgTrufelag(
-        {
-          ':SortColumn': 1,
-          ':SortAscending': true,
-          ':S5Username': this.clientUser,
-          ':S5Password': this.clientPassword,
-          ':Kennitala': nationalId,
-        },
-        (
-          // eslint-disable-next-line
-          error: any,
-          {
-            GetViewKennitalaOgTrufelagResult: result,
-          }: { GetViewKennitalaOgTrufelagResult: GetViewReligionDto },
-        ) => {
-          if (result != null) {
-            if (!result.success) {
-              logger.error(result.message)
-              _reject(result)
-            }
-            if (error) {
-              logger.error(error)
-              _reject(error)
-            }
-            resolve(result.table.diffgram ? result : null)
-          }
-          resolve(null)
-        },
-      )
-    })
-  }
-
-  public async getViewSveitarfelag(
-    municipalCode: string,
-  ): Promise<GetViewMunicipalityDto | null> {
-    return await new Promise((resolve, _reject) => {
-      if (!this.client)
-        throw new InternalServerErrorException('Client not initialized')
-      this.client.GetViewSveitarfelag(
-        {
-          ':SortColumn': 1,
-          ':SortAscending': true,
-          ':S5Username': this.clientUser,
-          ':S5Password': this.clientPassword,
-          ':SvfNr': municipalCode,
-        },
-        (
-          // eslint-disable-next-line
-          error: any,
-          {
-            GetViewSveitarfelagResult: result,
-          }: { GetViewSveitarfelagResult: GetViewMunicipalityDto },
-        ) => {
-          if (result != null) {
-            if (!result.success) {
-              logger.error(result.message)
-              _reject(result)
-            }
-            if (error) {
-              logger.error(error)
-              _reject(error)
-            }
-            resolve(result.table.diffgram ? result : null)
-          }
-          resolve(null)
-        },
-      )
-    })
-  }
-
-  public async getViewFjolskyldan(
-    nationalId: string,
-  ): Promise<GetViewFamilyDto | null> {
-    return await new Promise((resolve, _reject) => {
-      if (!this.client)
-        throw new InternalServerErrorException('Client not initialized')
-      this.client.GetViewFjolskyldan(
-        {
-          ':SortColumn': 1,
-          ':SortAscending': true,
-          ':S5Username': this.clientUser,
-          ':S5Password': this.clientPassword,
-          ':Kennitala': nationalId,
-        },
-        (
-          // eslint-disable-next-line
-          error: any,
-          {
-            GetViewFjolskyldanResult: result,
-          }: { GetViewFjolskyldanResult: GetViewFamilyDto },
-        ) => {
-          if (result != null) {
-            if (!result.success) {
-              logger.error(result.message)
-              _reject(result)
-            }
-            if (error) {
-              logger.error(error)
-              _reject(error)
-            }
-            resolve(result.table.diffgram ? result : null)
-          }
-          resolve(null)
-        },
-      )
-    })
-  }
-
-  public async getViewKennitalaOgBannmerking(
-    nationalId: string,
-  ): Promise<GetViewBanmarkingDto | null> {
-    return await new Promise((resolve, _reject) => {
-      if (!this.client)
-        throw new InternalServerErrorException('Client not initialized')
-      this.client.GetViewKennitalaOgBannmerking(
-        {
-          ':SortColumn': 1,
-          ':SortAscending': true,
-          ':S5Username': this.clientUser,
-          ':S5Password': this.clientPassword,
-          ':Kennitala': nationalId,
-        },
-        (
-          // eslint-disable-next-line
-          error: any,
-          {
-            GetViewKennitalaOgBannmerkingResult: result,
-          }: {
-            GetViewKennitalaOgBannmerkingResult: GetViewBanmarkingDto
-          },
-        ) => {
-          if (result != null) {
-            if (!result.success) {
-              logger.error(result.message)
-              _reject(result)
-            }
-            if (error) {
-              logger.error(error)
-              _reject(error)
+              reject(error)
             }
             resolve(result.table.diffgram ? result : null)
           }

@@ -19,6 +19,12 @@ import { ClientGrantTypeDTO } from '../entities/dto/client-grant-type.dto'
 import { ClientAllowedScopeDTO } from '../entities/dto/client-allowed-scope.dto'
 import { ClientClaimDTO } from '../entities/dto/client-claim.dto'
 import { ClientPostLogoutRedirectUriDTO } from '../entities/dto/client-post-logout-redirect-uri.dto'
+import { ClientSecretDTO } from '../entities/dto/client-secret.dto'
+import sha256 from 'crypto-js/sha256'
+import Base64 from 'crypto-js/enc-base64'
+import { IdentityResource } from '../entities/models/identity-resource.model'
+import { ApiScope } from '../entities/models/api-scope.model'
+import { IdpRestriction } from '../entities/models/idp-restriction.model'
 
 @Injectable()
 export class ClientsService {
@@ -39,8 +45,14 @@ export class ClientsService {
     private clientAllowedScope: typeof ClientAllowedScope,
     @InjectModel(ClientClaim)
     private clientClaim: typeof ClientClaim,
+    @InjectModel(IdpRestriction)
+    private idpRestriction: typeof IdpRestriction,
     @InjectModel(ClientPostLogoutRedirectUri)
     private clientPostLogoutUri: typeof ClientPostLogoutRedirectUri,
+    @InjectModel(ApiScope)
+    private apiScopeModel: typeof ApiScope,
+    @InjectModel(IdentityResource)
+    private identityResourceModel: typeof IdentityResource,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -168,43 +180,22 @@ export class ClientsService {
     return await this.findClientById(id)
   }
 
-  /** Deletes a client by id */
+  /** Soft delete on a client by id */
   async delete(id: string): Promise<number> {
-    this.logger.debug('Deleting client with id: ', id)
+    this.logger.debug('Soft deleting a client with id: ', id)
 
     if (!id) {
       throw new BadRequestException('id must be provided')
     }
 
-    // Delete associations
-    await this.clientAllowedCorsOrigin.destroy({
-      where: { clientId: id },
-    })
+    const result = await this.clientModel.update(
+      { archived: new Date(), enabled: false },
+      {
+        where: { clientId: id },
+      },
+    )
 
-    await this.clientIdpRestriction.destroy({
-      where: { clientId: id },
-    })
-
-    await this.clientRedirectUri.destroy({
-      where: { clientId: id },
-    })
-
-    await this.clientSecret.destroy({
-      where: { clientId: id },
-    })
-
-    await this.clientPostLogoutUri.destroy({
-      where: { clientId: id },
-    })
-
-    await this.clientGrantType.destroy({
-      where: { clientId: id },
-    })
-
-    // Delete Client
-    return await this.clientModel.destroy({
-      where: { clientId: id },
-    })
+    return result[0]
   }
 
   /** Finds allowed cors origins by origin */
@@ -452,5 +443,50 @@ export class ClientsService {
     return await this.clientPostLogoutUri.destroy({
       where: { clientId: clientId, redirectUri: redirectUri },
     })
+  }
+
+  /** Add secret to Client */
+  async addClientSecret(clientSecret: ClientSecretDTO): Promise<ClientSecret> {
+    const words = sha256(clientSecret.value)
+    const secret = Base64.stringify(words)
+
+    return this.clientSecret.create({
+      clientId: clientSecret.clientId,
+      value: secret,
+      description: clientSecret.description,
+      type: clientSecret.type,
+    })
+  }
+
+  /** Remove a secret from Client */
+  async removeClientSecret(clientSecret: ClientSecretDTO): Promise<number> {
+    return this.clientSecret.destroy({
+      where: {
+        clientId: clientSecret.clientId,
+        value: clientSecret.value,
+      },
+    })
+  }
+
+  /** Finds available scopes for AdminUI to select allowed scopes */
+  async FindAvailabeScopes(): Promise<ApiScope[]> {
+    const identityResources = (await this.identityResourceModel.findAll({
+      where: { archived: null },
+    })) as unknown
+    const apiScopes = await this.apiScopeModel.findAll({
+      where: {
+        archived: null,
+      },
+    })
+    const arrJoined: ApiScope[] = []
+    arrJoined.push(...apiScopes)
+    arrJoined.push(...(identityResources as ApiScope[]))
+    return arrJoined.sort((a, b) => a.name.localeCompare(b.name))
+  }
+
+  /** Finds available idp restrictions */
+  async findAllIdpRestrictions(): Promise<IdpRestriction[] | null> {
+    const idpRestrictions = await this.idpRestriction.findAll()
+    return idpRestrictions
   }
 }

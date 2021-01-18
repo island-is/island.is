@@ -9,7 +9,7 @@ import {
 } from '@island.is/api/schema'
 import {
   Box,
-  Breadcrumbs,
+  BreadcrumbsDeprecated as Breadcrumbs,
   Stack,
   Typography,
   GridRow,

@@ -9,4 +9,5 @@ export enum ApplicationTypes {
   HEALTH_INSURANCE = 'HealthInsurance',
   STRAUMURINN = 'StraumurinnApplication',
   X_ROAD = 'XRoad',
+  CHILDREN_DOMICILE_TRANSFER = 'ChildrenDomicileTransfer',
 }

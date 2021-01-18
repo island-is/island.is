@@ -62,6 +62,7 @@ export const shellContainer = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       order: 1,
+      minHeight: '800px',
     },
   },
 })

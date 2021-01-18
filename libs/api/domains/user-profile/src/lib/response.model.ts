@@ -12,5 +12,5 @@ export class ConfirmResponse {
 @ObjectType()
 export class Response {
   @Field(() => Boolean)
-  created!: true
+  created!: boolean
 }

@@ -85,65 +85,10 @@ export const m = defineMessages({
     defaultMessage: 'Banki',
     description: 'Bank',
   },
-  paymentInformationPersonalAllowance: {
-    id: 'pl.application:payment.information.personal.allowance',
-    defaultMessage: 'Hlutfall nýtingar á persónuafslætti',
-    description: 'Personal discount',
-  },
   pensionFund: {
     id: 'pl.application:payment.information.pensionfund',
     defaultMessage: 'Lífeyrissjóður',
     description: 'Pension fund (optional)',
-  },
-  usePersonalAllowance: {
-    id: 'pl.application:use.personal.allowance',
-    defaultMessage: 'Viltu nýta persónuafsláttinn þinn?',
-    description: 'Do you wish to use your personal allowance',
-  },
-  usePersonalAllowanceFromSpouse: {
-    id: 'pl.application:use.personal.allowance.spouse',
-    defaultMessage: 'Viltu nýta persónuafsláttinn maka þíns?',
-    description: 'Do you wish to use the personal allowance from your spouse?',
-  },
-  personalAllowanceName: {
-    id: 'pl.application:personal.allowance.name',
-    defaultMessage: 'Persónuafsláttur',
-    description: 'Personal Discount',
-  },
-  personalAllowanceFromSpouseName: {
-    id: 'pl.application:personal.allowance.from.spouse.name',
-    defaultMessage: 'Beiðni um persónuafslátt frá maka',
-    description: 'Personal Discount from spouse',
-  },
-  personalAllowancePeriodFrom: {
-    id: 'pl.application:personal.allowance.period.from',
-    defaultMessage: 'Upphaf tímabils',
-    description: 'Start of period',
-  },
-  personalAllowancePeriodTo: {
-    id: 'pl.application:personal.allowance.period.to',
-    defaultMessage: 'Lok tímabils',
-    description: 'End of period',
-  },
-  personalAllowanceUsedAmount: {
-    id: 'pl.application:personal.allowance.used.amount',
-    defaultMessage: 'Nýttur persónuafsláttur á árinu',
-    description: 'Personal allowance already used this year',
-  },
-  personalAllowanceDescription: {
-    id: 'pl.application:personal.allowance.description',
-    defaultMessage:
-      'Mikilvægt er að foreldri sendi sem nýjastar upplýsingar um stöðu persónuafsláttar svo forðast megi að til ofnýtingar á persónuafslætti komi. Eru foreldrar því hvattir til að senda eyðublaðið eftir síðustu launakeyrslu hjá vinnuveitanda fyrir fæðingarorlof og að þær upplýsingar hafi komið fram á *[þjónustusíðu RSK](www.skattur.is)*. ',
-    description: 'Translation needed',
-  },
-  personalAllowanceFromSpouseDescription: {
-    id: 'pl.application:personal.allowance.from.spouse.description',
-    defaultMessage:
-      'Mikilvægt er að foreldri sendi sem nýjastar upplýsingar um stöðu persónuafsláttar maka\n' +
-      'svo forðast megi að til ofnýtingar komi. Eru foreldrar því hvattir til að senda eyðublaðið\n' +
-      'eftir síðustu launakeyrslu hjá vinnuveitanda fyrir fæðingarorlof og að þær upplýsingar hafi\n' +
-      'komið fram á *[þjónustusíðu RSK](www.skattur.is)*.',
-    description: 'Translation needed',
   },
   union: {
     id: 'pl.application:payment.information.union',
@@ -182,26 +127,7 @@ export const m = defineMessages({
     defaultMessage: 'Nei',
     description: 'No',
   },
-  employerSubSection: {
-    id: 'pl.application:employer.subsection',
-    defaultMessage: 'Vinnuveitandi',
-    description: 'Employer',
-  },
-  employerTitle: {
-    id: 'pl.application:employerTitle',
-    defaultMessage: 'Hver er vinnuveitandi þinn?',
-    description: 'Who is your employer?',
-  },
-  employerName: {
-    id: 'pl.application:employerName',
-    defaultMessage: 'Nafn vinnuveitanda',
-    description: 'Employer name',
-  },
-  employerId: {
-    id: 'pl.application:employerId',
-    defaultMessage: 'Kennitala vinnuveitanda',
-    description: 'Employer national registry id',
-  },
+
   rightsSection: {
     id: 'pl.application:rights.section',
     defaultMessage: 'Réttindi til fæðingarorlofs',
@@ -216,6 +142,16 @@ export const m = defineMessages({
     id: 'pl.application:rights.months',
     defaultMessage: '{months} mánuðir sjálfstæður réttur',
     description: '{months} months individual rights',
+  },
+  yourRightsInMonthsAndDay: {
+    id: 'pl.application:rights.months',
+    defaultMessage: '{months} mánuðir og {day} dagur sjálfstæður réttur',
+    description: '{months} months and {day} day individual rights',
+  },
+  yourRightsInMonthsAndDays: {
+    id: 'pl.application:rights.months',
+    defaultMessage: '{months} mánuðir og {day} dagar sjálfstæður réttur',
+    description: '{months} months {day} days individual rights',
   },
   theseAreYourRights: {
     id: 'pl.application:these.are.your.rights',
@@ -235,10 +171,15 @@ export const m = defineMessages({
       'Óskarðu eftir að fá allt að einn mánuð af réttindum hins foreldrisins yfirfært yfir á þig?',
     description: 'Do you want to request extra time from the other parent?',
   },
-  requestRightsMonths: {
-    id: 'pl.application:request.rights.months',
-    defaultMessage: '1 mánuður óskað eftir af rétti hins foreldrisins',
-    description: "1 month requested from the other parent's rights",
+  day: {
+    id: 'pl.application:day',
+    defaultMessage: 'dagur',
+    description: 'day',
+  },
+  days: {
+    id: 'pl.application:days',
+    defaultMessage: 'dagar',
+    description: 'days',
   },
   month: {
     id: 'pl.application:month',
@@ -250,10 +191,40 @@ export const m = defineMessages({
     defaultMessage: 'mánuðir',
     description: 'months',
   },
+  requestRightsDaysTitle: {
+    id: 'pl.application:request.rights.daysTitle',
+    defaultMessage: 'Hversu marga daga viltu biðja um?',
+    description: 'How many days would you like to request?',
+  },
+  requestRightsDay: {
+    id: 'pl.application:request.rights.months',
+    defaultMessage: '{day} dagur óskað eftir af rétti hins foreldrisins',
+    description: "{day} day requested from the other parent's rights",
+  },
+  requestRightsDays: {
+    id: 'pl.application:request.rights.months',
+    defaultMessage: '{day} dagar óskað eftir af rétti hins foreldrisins',
+    description: "{day} days requested from the other parent's rights",
+  },
+  requestRightsMonths: {
+    id: 'pl.application:request.rights.months',
+    defaultMessage: 'óskað eftir af rétti hins foreldrisins',
+    description: "1 month requested from the other parent's rights",
+  },
   monthsTotal: {
     id: 'pl.application:months.total',
     defaultMessage: 'Samtals: {months} mánuðir *',
     description: 'Total: {months} months *',
+  },
+  rangeStartDate: {
+    id: 'pl.application:range.startDate',
+    defaultMessage: 'Upphafsdagur þinn er:',
+    description: 'Your start day is:',
+  },
+  rangeEndDate: {
+    id: 'pl.application:range.endDate',
+    defaultMessage: 'Lokadagur þinn er:',
+    description: 'Your end day is:',
   },
   rightsTotalSmallPrint: {
     id: 'pl.application:months.total.smallprint',
@@ -269,8 +240,8 @@ export const m = defineMessages({
   requestRightsDescription: {
     id: 'pl.application:request.rights.description',
     defaultMessage:
-      'Hitt foreldrið má yfirfæra allt að einn mánuð af réttindum þess yfir á þig. Kjósir þú að óska eftir þessu, þá þarf hitt foreldrið að samþykkja beiðni þína.',
-    description: 'The other parent can transfer to 1 month of their rights',
+      'Hitt foreldrið má yfirfæra allt að 45 dagar af réttindum þess yfir á þig. Kjósir þú að óska eftir þessu, þá þarf hitt foreldrið að samþykkja beiðni þína.',
+    description: 'The other parent can transfer up to 45 days of their rights',
   },
   requestRightsYes: {
     id: 'pl.application:request.rights.yes',
@@ -290,11 +261,26 @@ export const m = defineMessages({
     description:
       'Do you want to transfer up to one month of your parental leave rights to the other parent?',
   },
+  giveRightsDaysTitle: {
+    id: 'pl.application:request.rights.daysTitle',
+    defaultMessage: 'Hve marga daga viltu gefa?',
+    description: 'How many days would you like to give?',
+  },
   giveRightsDescription: {
     id: 'pl.application:give.rights.description',
     defaultMessage:
-      'Þú getur yfirfært allt að einn mánuð af þínum réttindum yfir á hitt foreldrið',
-    description: 'You can give the other parent one month of your rights',
+      'Þú getur yfirfært allt að 45 dagar af þínum réttindum yfir á hitt foreldrið',
+    description: 'You can give the other parent up to 45 days of your rights',
+  },
+  giveRightsDay: {
+    id: 'pl.application:request.rights.months',
+    defaultMessage: '{day} dagur yfirfærður til hins foreldrisins',
+    description: '{day} day given to the other parent',
+  },
+  giveRightsDays: {
+    id: 'pl.application:request.rights.months',
+    defaultMessage: '{day} dagar yfirfærður til hins foreldrisins',
+    description: '{day} days given to the other parent',
   },
   giveRightsMonths: {
     id: 'pl.application:give.rights.months',
@@ -340,7 +326,7 @@ export const m = defineMessages({
   userProfileInformationSubTitle: {
     id: 'pl.application:userprofile.subtitle',
     defaultMessage:
-      'Til þess að sækja um fæðingarorlof þarftu að vera búin að stilla netfang og símanúmer á mínum síðum',
+      'Til þess að auðvelda umsóknarferlið er gott að hafa stillt netfang og símanúmer á mínum síðum',
     description:
       'In order to apply for this application we need your email and phone number',
   },
@@ -453,21 +439,102 @@ export const m = defineMessages({
     description:
       'I want to customize my leave into multiple periods and/or to stretch it out over time at less than 100% time off.',
   },
-  loadingError: {
-    id: 'pl.application:loading.error',
-    defaultMessage: 'Úps! Eitthvað fór úrskeiðis',
-    description: 'Oops! Something went wrong',
-  },
-  requiredAnswerError: {
-    id: 'pl.application:required.answer.error',
-    defaultMessage: 'Þú verður að svara þessari spurningu til að halda áfram.',
-    description: 'You need to answer this question to continue.',
-  },
 })
 
 type MessageDir = Record<string, Record<string, MessageDescriptor>>
 
 export const mm: MessageDir = {
+  applicant: defineMessages({
+    subSection: {
+      id: 'pl.application:applicant.subSection',
+      defaultMessage: 'Netfang og símanúmer',
+      description: 'Email and phone number',
+    },
+    title: {
+      id: 'pl.application:applicant.title',
+      defaultMessage: 'Er þetta réttur sími og netfang?',
+      description: 'What is your email and phone number?',
+    },
+    description: {
+      id: 'pl.application:applicant.description',
+      defaultMessage: 'Vinsamlegast breyttu ef þetta er ekki rétt.',
+      description: 'Please make changes if this is invalid.',
+    },
+    email: {
+      id: 'pl.application:applicant.email',
+      defaultMessage: 'Netfang',
+      description: 'Email',
+    },
+    phoneNumber: {
+      id: 'pl.application:applicant.phoneNumber',
+      defaultMessage: 'Símanúmer',
+      description: 'Phone number',
+    },
+  }),
+  errors: defineMessages({
+    loading: {
+      id: 'pl.application:errors.loading',
+      defaultMessage: 'Úps! Eitthvað fór úrskeiðis',
+      description: 'Oops! Something went wrong',
+    },
+    requiredAnswer: {
+      id: 'pl.application:errors.required.answer',
+      defaultMessage:
+        'Þú verður að svara þessari spurningu til að halda áfram.',
+      description: 'You need to answer this question to continue.',
+    },
+  }),
+  personalAllowance: defineMessages({
+    useYours: {
+      id: 'pl.application:use.personal.allowance',
+      defaultMessage: 'Viltu nýta persónuafsláttinn þinn?',
+      description: 'Do you wish to use your personal allowance',
+    },
+    useFromSpouse: {
+      id: 'pl.application:use.personal.allowance.spouse',
+      defaultMessage: 'Viltu nýta persónuafsláttinn maka þíns?',
+      description:
+        'Do you wish to use the personal allowance from your spouse?',
+    },
+    title: {
+      id: 'pl.application:personal.allowance.title',
+      defaultMessage: 'Persónuafsláttur',
+      description: 'Personal Discount',
+    },
+    description: {
+      id: 'pl.application:personal.allowance.description',
+      defaultMessage:
+        'Hægt er að biðja um að nýta eins mikinn persónuafslátt og þú mögulega átt rétt á, eða stimpla inn ákveðið hlutfall.',
+      description: 'Translation needed',
+    },
+    spouseTitle: {
+      id: 'pl.application:personal.allowance.from.spouse.title',
+      defaultMessage: 'Beiðni um persónuafslátt frá maka',
+      description: 'Personal Discount from spouse',
+    },
+    spouseDescription: {
+      id: 'pl.application:personal.allowance.from.spouse.description',
+      defaultMessage:
+        'Makinn þinn fær tilkynningu og þarf að samþykkja þessa beiðni. Hægt er að biðja um að nýta eins mikinn persónuafslátt og þú mögulega átt rétt á, eða stimpla inn ákveðið hlutfall.',
+      description: 'Translation needed',
+    },
+    useAsMuchAsPossible: {
+      id: 'pl.application:personal.allowance.useAsMuchAsPossible',
+      defaultMessage:
+        'Viltu nota eins mikið af persónuafslættinum og þú hefur rétt á?',
+      description: 'Do you wish to use as much personal allowance as possible?',
+    },
+    manual: {
+      id: 'pl.application:personal.allowance.manual',
+      defaultMessage: 'Hvað viltu nota hátt hlutfall af persónuafslættinum?',
+      description: 'What percentage do you want to use?',
+    },
+    zeroToHundred: {
+      id: 'pl.application:personal.allowance.zeroToHundred',
+      defaultMessage: 'Stimplaðu inn tölu á bilinu 0-100',
+      description: 'Type a number from 0 to 100',
+    },
+  }),
   leavePlan: defineMessages({
     subSection: {
       id: 'pl.application:periods.subsection',
@@ -618,6 +685,50 @@ export const mm: MessageDir = {
       description: 'For this length of time you will get payments up to',
     },
   }),
+  employer: defineMessages({
+    subSection: {
+      id: 'pl.application:employer.subsection',
+      defaultMessage: 'Vinnuveitandi',
+      description: 'Employer',
+    },
+    title: {
+      id: 'pl.application:employer.title',
+      defaultMessage: 'Hver er vinnuveitandi þinn?',
+      description: 'Who is your employer?',
+    },
+    description: {
+      id: 'pl.application:employer.description',
+      defaultMessage:
+        'Vinnuveitandinn þinn þarf að samþykkja tilhögun fæðingarorlofsins þíns. ' +
+        'Þegar þú hefur sent umsóknina inn mun verða sendur vefpóstur á þetta netfang hér fyrir neðan. ' +
+        'Viðtakandi vefpóstsins mun fá aðgang að umsókninni, en einungis sjá upplýsingar sem varða tilhögun fæðingarorlofs.' +
+        'Ef vinnuveitandinn þinn hafnar umsókninni, þá fer umsóknin aftur á ákveðinn byrjunarreit, þar sem þú getur sótt um aftur.',
+      description: 'Add translation',
+    },
+    email: {
+      id: 'pl.application:employer.email',
+      defaultMessage: 'Netfang vinnuveitanda',
+      description: 'Employer email',
+    },
+    emailConfirm: {
+      id: 'pl.application:employer.email.confirm',
+      defaultMessage: 'Staðfestu netfang vinnuveitanda',
+      description: 'Confirm employer email',
+    },
+  }),
+  selfEmployed: defineMessages({
+    title: {
+      id: 'pl.application:selfEmployed.title',
+      defaultMessage: 'Ertu sjálfstætt starfandi?',
+      description: 'Are you self employed?',
+    },
+    description: {
+      id: 'pl.application:selfEmployed.description',
+      defaultMessage:
+        'Sjáflstætt starfandi einstaklingar þurfa að skila staðfestingu á lækkun á reiknuðu endurgjaldi ef við á.',
+      description: 'Add translation',
+    },
+  }),
   ratio: defineMessages({
     title: {
       id: 'pl.application:ratio.title',
@@ -696,6 +807,25 @@ export const mm: MessageDir = {
       description: 'No, I do not want to share my information',
     },
   }),
+  rightOfAccess: defineMessages({
+    title: {
+      id: 'pl.application:rightOfAccess.title',
+      defaultMessage: 'Staðfesting á umgengnisrétti forsjárlauss foreldris',
+      description: 'Add translation',
+    },
+    description: {
+      id: 'pl.application:rightOfAccess.description',
+      defaultMessage:
+        'Þar sem valið foreldri er ekki skráð/ur í sambúð með þér þá þarf að staðfesta umgengnisrétt þess sem forsjárlaust foreldri.',
+      description: 'Add translation',
+    },
+    yesOption: {
+      id: 'pl.application:rightOfAccess.yesOption',
+      defaultMessage:
+        'Ég innsrkáður umsækjandi veiti forsjárlausu foreldri samþykki mitt fyrir umgengni í þessu fæðingarorlofi',
+      description: 'Add translation',
+    },
+  }),
   reviewScreen: defineMessages({
     titleInReview: {
       id: 'pl.application:review.titleInReview',
@@ -759,6 +889,16 @@ export const mm: MessageDir = {
     },
   }),
   confirmation: defineMessages({
+    epxandAll: {
+      id: 'pl.application:confirmation.buttons.expandAll',
+      defaultMessage: 'Sýna allt',
+      description: 'Expand all',
+    },
+    collapseAll: {
+      id: 'pl.application:confirmation.buttons.collapseAll',
+      defaultMessage: 'Fela allt',
+      description: 'Collapse all',
+    },
     section: {
       id: 'pl.application:confirmation.section',
       defaultMessage: 'Samþykkja',

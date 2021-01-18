@@ -14,7 +14,7 @@ export interface User {
   mobileNumber: string
   email: string
   role: UserRole
-  institution?: string
+  institution: string
   active: boolean
 }
 
@@ -22,6 +22,7 @@ export enum CaseState {
   NEW = 'NEW',
   DRAFT = 'DRAFT',
   SUBMITTED = 'SUBMITTED',
+  RECEIVED = 'RECEIVED',
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
   DELETED = 'DELETED',
@@ -30,6 +31,7 @@ export enum CaseState {
 export enum CaseTransition {
   OPEN = 'OPEN',
   SUBMIT = 'SUBMIT',
+  RECEIVE = 'RECEIVE',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
   DELETE = 'DELETE',
@@ -42,6 +44,7 @@ export enum CaseCustodyProvisions {
   _95_1_D = '_95_1_D', // d-lið 1. mgr. 95. gr.
   _95_2 = '_95_2', // 2. mgr. 95. gr.
   _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
+  _100_1 = '_100_1', // 1. mgr. 100. gr. sml.
 }
 
 export enum CaseCustodyRestrictions {
@@ -49,6 +52,8 @@ export enum CaseCustodyRestrictions {
   VISITAION = 'VISITAION',
   COMMUNICATION = 'COMMUNICATION',
   MEDIA = 'MEDIA',
+  ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION = 'ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION',
+  ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT = 'ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT',
 }
 
 export enum CaseAppealDecision {
@@ -61,6 +66,12 @@ export enum CaseGender {
   MALE = 'MALE',
   FEMALE = 'FEMALE',
   OTHER = 'OTHER',
+}
+
+export enum CaseDecision {
+  ACCEPTING = 'ACCEPTING',
+  REJECTING = 'REJECTING',
+  ACCEPTING_ALTERNATIVE_TRAVEL_BAN = 'ACCEPTING_ALTERNATIVE_TRAVEL_BAN',
 }
 
 export type Gender = 'karl' | 'kona' | 'annað'
@@ -80,6 +91,7 @@ export interface Case {
   court?: string
   arrestDate?: string
   requestedCourtDate?: string
+  alternativeTravelBan?: boolean
   requestedCustodyEndDate?: string
   lawsBroken?: string
   custodyProvisions?: CaseCustodyProvisions[]
@@ -103,10 +115,11 @@ export interface Case {
   accusedPlea?: string
   litigationPresentations?: string
   ruling?: string
-  rejecting?: boolean
+  decision?: CaseDecision
   custodyEndDate?: string
   isCustodyEndDateInThePast?: boolean
   custodyRestrictions?: CaseCustodyRestrictions[]
+  otherRestrictions?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
@@ -137,9 +150,9 @@ export interface CreateCase {
   accusedName?: string
   accusedAddress?: string
   accusedGender?: CaseGender
+  requestedDefenderName?: string
+  requestedDefenderEmail?: string
   court?: string
-  arrestDate?: string
-  requestedCourtDate?: string
 }
 
 export interface UpdateCase {
@@ -153,6 +166,7 @@ export interface UpdateCase {
   court?: string
   arrestDate?: string
   requestedCourtDate?: string
+  alternativeTravelBan?: boolean
   requestedCustodyEndDate?: string
   lawsBroken?: string
   custodyProvisions?: CaseCustodyProvisions[]
@@ -172,9 +186,10 @@ export interface UpdateCase {
   accusedPlea?: string
   litigationPresentations?: string
   ruling?: string
-  rejecting?: boolean
+  decision?: CaseDecision
   custodyEndDate?: string
   custodyRestrictions?: CaseCustodyRestrictions[]
+  otherRestrictions?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision

@@ -1,4 +1,6 @@
 import React, { FC, useMemo } from 'react'
+import HtmlParser from 'react-html-parser'
+
 import {
   CheckboxField,
   FieldBaseProps,
@@ -12,6 +14,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { buildOptions } from '../utils'
+import { useDefaultValue } from '../useDefaultValue'
 
 interface Props extends FieldBaseProps {
   field: CheckboxField
@@ -22,7 +25,7 @@ const CheckboxFormField: FC<Props> = ({
   field,
   application,
 }) => {
-  const { id, name, description, options, disabled } = field
+  const { id, title, description, options, disabled, large } = field
   const { formatMessage } = useLocale()
 
   const finalOptions = useMemo(() => buildOptions(options, application), [
@@ -33,7 +36,9 @@ const CheckboxFormField: FC<Props> = ({
   return (
     <div>
       {showFieldName && (
-        <Text>{formatText(name, application, formatMessage)}</Text>
+        <Text variant="h5">
+          {formatText(title, application, formatMessage)}
+        </Text>
       )}
 
       {description && (
@@ -46,20 +51,20 @@ const CheckboxFormField: FC<Props> = ({
         <CheckboxController
           id={id}
           disabled={disabled}
+          large={large}
           name={`${id}`}
           defaultValue={
-            getValueViaPath(application.answers, id, []) as string[]
+            (getValueViaPath(application.answers, id) as string[]) ??
+            useDefaultValue(field, application)
           }
           error={error}
           options={finalOptions.map(({ label, tooltip, ...o }) => ({
             ...o,
-            label: formatText(label, application, formatMessage),
+            label: HtmlParser(formatText(label, application, formatMessage)),
             ...(tooltip && {
-              tooltip: formatText(
-                tooltip,
-                application,
-                formatMessage,
-              ) as string,
+              tooltip: HtmlParser(
+                formatText(tooltip, application, formatMessage) as string,
+              ),
             }),
           }))}
         />

@@ -13,25 +13,20 @@ import * as Sentry from '@sentry/react'
 export const settingsModule: ServicePortalModule = {
   name: 'Stillingar',
   widgets: () => [],
-  routes: () => {
+  routes: async ({ client }) => {
+    const res = await client.query<Query>({
+      query: USER_PROFILE,
+    })
+
+    const userProfile = res.data?.getUserProfile
+
     const routes: ServicePortalRoute[] = [
       {
-        name: 'Stillingar',
-        path: ServicePortalPath.SettingsRoot,
-        render: () =>
-          lazy(() => import('./screens/NavigationScreen/NavigationScreen')),
-      },
-      {
-        name: 'Mín réttindi',
-        path: ServicePortalPath.MyLicensesRoot,
-        render: () =>
-          lazy(() => import('./screens/DelegationGreeting/DelegationGreeting')),
-      },
-      {
         name: defineMessage({
-          id: 'service.portal:profile-info',
-          defaultMessage: 'Minn aðgangur',
+          id: 'service.portal:settings',
+          defaultMessage: 'Stillingar',
         }),
+        notifications: userProfile?.emailVerified === false ? 1 : 0,
         path: ServicePortalPath.UserProfileRoot,
         render: () => lazy(() => import('./screens/UserProfile/UserProfile')),
       },

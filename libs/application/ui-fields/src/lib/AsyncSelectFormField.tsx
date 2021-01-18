@@ -12,6 +12,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useApolloClient } from '@apollo/client/react'
 import { Option } from '@island.is/application/core'
+import { useDefaultValue } from '../useDefaultValue'
 
 interface Props extends FieldBaseProps {
   field: AsyncSelectField
@@ -19,12 +20,13 @@ interface Props extends FieldBaseProps {
 const AsyncSelectFormField: FC<Props> = ({ application, error, field }) => {
   const {
     id,
-    name,
+    title,
     description,
     loadOptions,
     loadingError,
     placeholder,
     disabled,
+    onSelect,
   } = field
   const { formatMessage } = useLocale()
   const apolloClient = useApolloClient()
@@ -55,7 +57,8 @@ const AsyncSelectFormField: FC<Props> = ({ application, error, field }) => {
 
       <Box paddingTop={2}>
         <SelectController
-          label={formatText(name, application, formatMessage)}
+          defaultValue={useDefaultValue(field, application)}
+          label={formatText(title, application, formatMessage)}
           name={id}
           disabled={disabled}
           error={
@@ -77,6 +80,7 @@ const AsyncSelectFormField: FC<Props> = ({ application, error, field }) => {
               ? formatText(placeholder as string, application, formatMessage)
               : undefined
           }
+          onSelect={onSelect}
         />
       </Box>
     </div>

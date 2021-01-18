@@ -62,8 +62,14 @@
       "@island.is/api/domains/documents": [
         "libs/api/domains/documents/src/index.ts"
       ],
+      "@island.is/api/domains/driving-license": [
+        "libs/api/domains/driving-license/src/index.ts"
+      ],
       "@island.is/api/domains/file-upload": [
         "libs/api/domains/file-upload/src/index.ts"
+      ],
+      "@island.is/api/domains/health-insurance": [
+        "libs/api/domains/health-insurance/src/index.ts"
       ],
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
@@ -80,6 +86,9 @@
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
+      "@island.is/application/api-template-utils": [
+        "libs/application/api-template-utils/src/index.ts"
+      ],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/data-providers": [
         "libs/application/data-providers/src/index.ts"
@@ -89,6 +98,9 @@
       ],
       "@island.is/application/template-loader": [
         "libs/application/template-loader/src/index.ts"
+      ],
+      "@island.is/application/templates/children-domicile-transfer": [
+        "libs/application/templates/children-domicile-transfer/src/index.ts"
       ],
       "@island.is/application/templates/document-provider-onboarding": [
         "libs/application/templates/document-provider-onboarding/src/index.ts"
@@ -129,6 +141,9 @@
       "@island.is/auth-api-lib": ["libs/auth-api-lib/src/index.ts"],
       "@island.is/auth-nest-tools": ["libs/auth-nest-tools/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
+      "@island.is/content-search-index-manager": [
+        "libs/content-search-index-manager/src/index.ts"
+      ],
       "@island.is/content-search-indexer": [
         "libs/content-search-indexer/src/index.ts"
       ],
@@ -182,6 +197,7 @@
       "@island.is/logging": ["libs/logging/src/index.ts"],
       "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
+      "@island.is/plausible": ["libs/plausible/src/index.ts"],
       "@island.is/service-portal/applications": [
         "libs/service-portal/applications/src/index.ts"
       ],
@@ -200,8 +216,14 @@
       "@island.is/service-portal/documents": [
         "libs/service-portal/documents/src/index.ts"
       ],
+      "@island.is/service-portal/driving-license": [
+        "libs/service-portal/driving-license/src/index.ts"
+      ],
       "@island.is/service-portal/education": [
         "libs/service-portal/education/src/index.ts"
+      ],
+      "@island.is/service-portal/eligibility": [
+        "libs/service-portal/eligibility/src/index.ts"
       ],
       "@island.is/service-portal/family": [
         "libs/service-portal/family/src/index.ts"

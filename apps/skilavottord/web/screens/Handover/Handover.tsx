@@ -2,6 +2,7 @@ import React, { FC, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useMutation, useQuery } from '@apollo/client'
+import gql from 'graphql-tag'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import {
   Box,
@@ -17,8 +18,6 @@ import {
   OutlinedError,
 } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { CREATE_RECYCLING_REQUEST_CITIZEN } from '@island.is/skilavottord-web/graphql/mutations'
-import { VEHICLES_BY_NATIONAL_ID } from '@island.is/skilavottord-web/graphql/queries'
 import CompanyList from './components/CompanyList'
 import * as styles from './Handover.treat'
 import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
@@ -27,6 +26,37 @@ import {
   RecyclingRequestMutation,
   RecyclingRequestTypes,
 } from '@island.is/skilavottord-web/types'
+
+const skilavottordVehiclesQuery = gql`
+  query skilavottordVehiclesQuery($nationalId: String!) {
+    skilavottordVehicles(nationalId: $nationalId) {
+      permno
+      status
+    }
+  }
+`
+
+const skilavottordRecyclingRequestMutation = gql`
+  mutation skilavottordRecyclingRequestMutation(
+    $nameOfRequestor: String
+    $permno: String!
+    $requestType: String!
+  ) {
+    createSkilavottordRecyclingRequest(
+      nameOfRequestor: $nameOfRequestor
+      permno: $permno
+      requestType: $requestType
+    ) {
+      ... on RequestErrors {
+        message
+        operation
+      }
+      ... on RequestStatus {
+        status
+      }
+    }
+  }
+`
 
 const Handover: FC = () => {
   const { user } = useContext(UserContext)
@@ -44,7 +74,7 @@ const Handover: FC = () => {
   const { id } = router.query
 
   const nationalId = user?.nationalId
-  const { data, loading, error } = useQuery(VEHICLES_BY_NATIONAL_ID, {
+  const { data, loading, error } = useQuery(skilavottordVehiclesQuery, {
     variables: { nationalId },
     skip: !nationalId,
   })
@@ -55,17 +85,14 @@ const Handover: FC = () => {
   const [
     setRecyclingRequest,
     { data: mutationData, error: mutationError, loading: mutationLoading },
-  ] = useMutation<RecyclingRequestMutation>(CREATE_RECYCLING_REQUEST_CITIZEN, {
-    onCompleted() {
-      if (requestType === 'cancelled') {
-        setModal(false)
-        routeHome()
-      }
+  ] = useMutation<RecyclingRequestMutation>(
+    skilavottordRecyclingRequestMutation,
+    {
+      onError() {
+        return mutationError
+      },
     },
-    onError() {
-      return mutationError
-    },
-  })
+  )
 
   const mutationResponse = mutationData?.createSkilavottordRecyclingRequest
 
@@ -110,7 +137,7 @@ const Handover: FC = () => {
 
   const routeHome = () => {
     localStorage.clear()
-    router.push(routes.myCars).then(() => window.scrollTo(0, 0))
+    router.push(`${routes.myCars}`).then(() => window.scrollTo(0, 0))
   }
 
   const onCancelRecycling = () => {
@@ -125,6 +152,14 @@ const Handover: FC = () => {
         nameOfRequestor: user?.name,
         requestType: 'cancelled',
       },
+    }).then(({ data }) => {
+      // setRecyclingRequest is completed with no mutationErrors
+      // errors are returned in mutationResponse.message,
+      // we must therefore double check for errors in this way before closing modal and routing home
+      if (!data?.createSkilavottordRecyclingRequest?.message) {
+        setModal(false)
+        routeHome()
+      }
     })
   }
 
@@ -133,10 +168,10 @@ const Handover: FC = () => {
   }
 
   if (
-    (requestType !== 'cancelled' && (mutationError || mutationLoading)) ||
+    (requestType !== 'cancelled' &&
+      (mutationError || mutationLoading || mutationResponse?.message)) ||
     error ||
     isInvalidCar ||
-    mutationResponse?.message ||
     (loading && !data)
   ) {
     return (
@@ -228,7 +263,7 @@ const Handover: FC = () => {
         continueButtonText={t.cancelModal.buttons.continue}
         cancelButtonText={t.cancelModal.buttons.cancel}
         loading={mutationLoading}
-        error={mutationError}
+        error={mutationResponse?.message || mutationError}
         errorText={t.cancelModal.error}
       />
     </ProcessPageLayout>

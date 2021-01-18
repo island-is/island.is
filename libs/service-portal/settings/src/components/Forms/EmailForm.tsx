@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import { Box, Input } from '@island.is/island-ui/core'
+import { Box, Button, Input, Text, toast } from '@island.is/island-ui/core'
 import { useForm, Controller } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 
@@ -11,6 +11,7 @@ interface Props {
   email: string
   renderBackButton?: () => JSX.Element
   renderSubmitButton?: () => JSX.Element
+  onResendEmail?: () => void
   onSubmit: (data: EmailFormData) => void
 }
 
@@ -18,6 +19,7 @@ export const EmailForm: FC<Props> = ({
   email,
   renderBackButton,
   renderSubmitButton,
+  onResendEmail,
   onSubmit,
 }) => {
   const { formatMessage } = useLocale()
@@ -54,30 +56,48 @@ export const EmailForm: FC<Props> = ({
           }}
           defaultValue={email}
           render={({ onChange, value, name }) => (
-            <Input
-              name={name}
-              label={formatMessage({
-                id: 'global:email',
-                defaultMessage: 'Netfang',
-              })}
-              placeholder={formatMessage({
-                id: 'global:email',
-                defaultMessage: 'Netfang',
-              })}
-              value={value}
-              hasError={errors.email}
-              errorMessage={errors.email?.message}
-              onChange={onChange}
-            />
+            <>
+              <Input
+                name={name}
+                label={formatMessage({
+                  id: 'global:email',
+                  defaultMessage: 'Netfang',
+                })}
+                placeholder={formatMessage({
+                  id: 'global:email',
+                  defaultMessage: 'Netfang',
+                })}
+                value={value}
+                hasError={errors.email}
+                errorMessage={errors.email?.message}
+                onChange={onChange}
+              />
+              {value === email && email.length > 0 && onResendEmail && (
+                <Box
+                  display="flex"
+                  justifyContent="flexEnd"
+                  alignItems="center"
+                  marginTop={1}
+                >
+                  <Box marginRight={1}>
+                    <Text>
+                      {formatMessage({
+                        id: 'sp.settings:did-you-not-receive-an-email',
+                        defaultMessage: 'Fékkstu ekki staðfestingarpóst?',
+                      })}
+                    </Text>
+                  </Box>
+                  <Button variant="text" size="small" onClick={onResendEmail}>
+                    {formatMessage({
+                      id: 'sp.settings:resend',
+                      defaultMessage: 'Endursenda',
+                    })}
+                  </Button>
+                </Box>
+              )}
+            </>
           )}
         />
-      </Box>
-      <Box marginTop={3}>
-        {formatMessage({
-          id: 'sp.settings:email-form-confirmation-instructions',
-          defaultMessage:
-            'Þú færð sendan tölvupóst á þetta netfang sem þú þarft að staðfesta við fyrsta tækifæri.',
-        })}
       </Box>
       {(renderBackButton || renderSubmitButton) && (
         <Box

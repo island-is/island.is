@@ -333,11 +333,12 @@ export class NotificationService {
     const html = formatPrisonRulingEmailNotification(
       existingCase.accusedNationalId,
       existingCase.accusedName,
+      existingCase.accusedGender,
       existingCase.court,
       existingCase.prosecutor?.name,
       existingCase.courtDate,
       existingCase.defenderName,
-      existingCase.rejecting,
+      existingCase.decision,
       existingCase.custodyEndDate,
       existingCase.custodyRestrictions,
       existingCase.accusedAppealDecision,

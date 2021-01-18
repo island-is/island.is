@@ -17,18 +17,23 @@ const RECYCLINGCOMPANY = [
   '0905665129', // Friðbjörn Hólm Ólafsson
   /* Vaka */
   '0706765599', // Sigríður Björk Þórisdóttir
-  '1310734109', // Reynir Þór Guðmundsson
+  '1310734109', // Reynir Þór Guðmundsson admin later
+  '1110892489', // Ari Halldór Hjaltason
+  '0409842919', // Gísli Rúnar Svanbergsson
+  '3108002360', // Viktoría Sól Reynisdóttir
+  /* Hringrás   */
+  '1811673949', // Tryggvi Daníel Sigurðsson admin later
+  '2405843609', // Þórdís Jónsdóttir
+  /* Fura   */
+  '2211692989', // Úlfar Haraldsson admin later
+  '2808714009', // Dagný Michelle Jónsdóttir
 ]
 
 const RECYCLINGFUND = [
-  /* Deloitte test */
-  //'1505664449', // Rúnar Sigurður Guðlaugsson
-  //'0301665909', // Sigurgeir Guðmundsson
-  //'2311862559', //   Quan Dong
-  // Urvinnslusjodur test
-  '3005594339', // Ólafur Kjartansson
-  '0202614989', // Guðlaugur Gylfi Sverrisson
-  '0305695639', // Ása Hauksdóttir
+  /* Urvinnslusjodur test  */
+  '3005594339', // Ólafur Kjartansson admin later
+  '0202614989', // Guðlaugur Gylfi Sverrisson normal
+  '0305695639', // Ása Hauksdóttir  admin later
 ]
 
 @Injectable()

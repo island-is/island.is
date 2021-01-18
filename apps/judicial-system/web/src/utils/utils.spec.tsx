@@ -22,6 +22,7 @@ import {
   CaseCustodyRestrictions,
   Case,
   CaseGender,
+  CaseDecision,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
 import { render, screen } from '@testing-library/react'
@@ -325,16 +326,35 @@ describe('Step helper', () => {
   describe('constructConclution', () => {
     test('should return rejected message if the case is being rejected', () => {
       // Arrange
-      const wc = { rejecting: true }
+      const wc = {
+        decision: CaseDecision.REJECTING,
+        accusedName: 'Mikki Refur',
+        accusedNationalId: '1212121299',
+        accusedGender: CaseGender.MALE,
+      }
 
       // Act
       const { getByText } = render(constructConclusion(wc as Case))
 
       // Assert
-      expect(getByText('Beiðni um gæsluvarðhald hafnað')).toBeTruthy()
+      expect(
+        getByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Kröfu um að kærði, Mikki Refur, kt. 121212-1299, sæti gæsluvarðhaldi er hafnað.'
+
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
+
+          return nodeHasText && childrenDontHaveText
+        }),
+      ).toBeTruthy()
     })
 
-    test('should return the correct string if there are no restrictions and the case is not being rejected', () => {
+    test('should return the correct string if there is no isolation and the case is not being rejected', () => {
       // Arrange
       const wc = {
         id: 'testid',
@@ -342,10 +362,11 @@ describe('Step helper', () => {
         modified: 'test',
         state: 'DRAFT',
         policeCaseNumber: 'test',
-        rejecting: false,
+        decision: CaseDecision.ACCEPTING,
         custodyRestrictions: [],
         accusedName: 'Doe',
         accusedNationalId: '0123456789',
+        accusedGender: CaseGender.MALE,
         custodyEndDate: '2020-10-22T12:31:00.000Z',
       }
 
@@ -358,7 +379,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Kærði, Doe kt. 012345-6789 skal sæta gæsluvarðhaldi, þó ekki lengur en til 22. október 2020 kl. 12:31. Engar takmarkanir skulu vera á gæslunni.'
+            'Kærði, Doe kt. 012345-6789, skal sæta gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(
@@ -370,13 +391,14 @@ describe('Step helper', () => {
       ).toBeTruthy()
     })
 
-    test('should return the correct string if there is one restriction and the case is not being rejected', () => {
+    test('should return the correct string if there is isolation and the case is not being rejected', () => {
       // Arrange
       const wc = {
-        rejecting: false,
-        custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
+        decision: CaseDecision.ACCEPTING,
+        custodyRestrictions: [CaseCustodyRestrictions.ISOLATION],
         accusedName: 'Doe',
         accusedNationalId: '0123456789',
+        accusedGender: CaseGender.MALE,
         custodyEndDate: '2020-10-22T12:31:00.000Z',
       }
 
@@ -389,7 +411,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Kærði, Doe kt. 012345-6789 skal sæta gæsluvarðhaldi, þó ekki lengur en til 22. október 2020 kl. 12:31. Kærði skal sæta fjölmiðlabanni á meðan á gæsluvarðhaldinu stendur.'
+            'Kærði, Doe kt. 012345-6789, skal sæta gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(
@@ -401,17 +423,14 @@ describe('Step helper', () => {
       ).toBeTruthy()
     })
 
-    test('should return the correct string if there are two restriction and the case is not being rejected', () => {
+    test('should return the correct string if the case is accepted with travel ban', () => {
       // Arrange
       const wc = {
-        rejecting: false,
-        custodyRestrictions: [
-          CaseCustodyRestrictions.MEDIA,
-          CaseCustodyRestrictions.VISITAION,
-        ],
+        decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
         accusedName: 'Doe',
         accusedNationalId: '0123456789',
         custodyEndDate: '2020-10-22T12:31:00.000Z',
+        accusedGender: CaseGender.MALE,
       }
 
       // Act
@@ -423,42 +442,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            `Kærði, Doe kt. 012345-6789 skal sæta gæsluvarðhaldi, þó ekki lengur en til 22. október 2020 kl. 12:31. Kærði skal sæta fjölmiðlabanni og heimsóknarbanni á meðan á gæsluvarðhaldinu stendur.`
-
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
-
-          return nodeHasText && childrenDontHaveText
-        }),
-      ).toBeTruthy()
-    })
-
-    test('should return the correct string if there are more than two restriction and the case is not being rejected', () => {
-      // Arrange
-      const wc = {
-        rejecting: false,
-        custodyRestrictions: [
-          CaseCustodyRestrictions.MEDIA,
-          CaseCustodyRestrictions.VISITAION,
-          CaseCustodyRestrictions.ISOLATION,
-        ],
-        accusedName: 'Doe',
-        accusedNationalId: '0123456789',
-        custodyEndDate: '2020-10-22T12:31:00.000Z',
-      }
-
-      // Act
-      const { getByText } = render(constructConclusion(wc as Case))
-
-      // Assert
-      expect(
-        getByText((_, node) => {
-          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-          const hasText = (node: Element) =>
-            node.textContent ===
-            'Kærði, Doe kt. 012345-6789 skal sæta gæsluvarðhaldi, þó ekki lengur en til 22. október 2020 kl. 12:31. Kærði skal sæta fjölmiðlabanni, heimsóknarbanni og einangrun á meðan á gæsluvarðhaldinu stendur.'
+            'Kærði, Doe kt. 012345-6789, skal sæta farbanni, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(
@@ -475,7 +459,7 @@ describe('Step helper', () => {
     test('should render a message if requestedCustodyEndDate is not set', () => {
       // Arrange
       const wc = {
-        rejecting: false,
+        decision: CaseDecision.ACCEPTING,
         custodyRestrictions: [
           CaseCustodyRestrictions.MEDIA,
           CaseCustodyRestrictions.VISITAION,

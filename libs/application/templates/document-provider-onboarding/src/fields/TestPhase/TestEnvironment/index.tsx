@@ -1,7 +1,11 @@
 import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { useMutation } from '@apollo/client'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { gql, useMutation } from '@apollo/client'
+import {
+  FieldBaseProps,
+  formatText,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -9,7 +13,16 @@ import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { m } from '../../../forms/messages'
-import { registerProviderMutation } from '../../../graphql/mutations/registerProviderMutation'
+
+export const createTestProviderMutation = gql`
+  mutation CreateTestProvider($input: CreateProviderInput!) {
+    createTestProvider(input: $input) {
+      clientId
+      clientSecret
+      providerId
+    }
+  }
+`
 
 const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
   const { formatMessage } = useLocale()
@@ -24,17 +37,29 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
   const [currentAnswer, setCurrentAnswer] = useState(
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
-    (formValue.testUserExists as string) || '',
+    (formValue.testProviderId as string) || '',
   )
   const [environmentError, setEnvironmentError] = useState<string | null>(null)
-  const [registerProvider] = useMutation(registerProviderMutation)
+  const [createTestProvider] = useMutation(createTestProviderMutation)
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
+
+  const nationalId = getValueViaPath(
+    application.answers,
+    'applicant.nationalId',
+    undefined,
+  ) as string
+
+  const clientName = getValueViaPath(
+    application.answers,
+    'applicant.name',
+    undefined,
+  ) as string
 
   const onRegister = async () => {
     setEnvironmentError(null)
-    const credentials = await registerProvider({
+    const credentials = await createTestProvider({
       variables: {
-        input: { nationalId: '2404805659', clientName: 'Nafn stofnunar' }, //TODO setja gögn úr umsókn
+        input: { nationalId: nationalId, clientName: clientName },
       },
     })
 
@@ -45,22 +70,22 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
     setKeys([
       {
         name: 'Client ID',
-        value: credentials.data.registerProvider.clientId,
+        value: credentials.data.createTestProvider.clientId,
       },
       {
         name: 'Secret key',
-        value: credentials.data.registerProvider.clientSecret,
+        value: credentials.data.createTestProvider.clientSecret,
       },
     ])
 
-    setCurrentAnswer('true')
+    setCurrentAnswer(credentials.data.createTestProvider.providerId)
 
     await updateApplication({
       variables: {
         input: {
           id: application.id,
           answers: {
-            testUserExists: 'true',
+            testProviderId: credentials.data.createTestProvider.providerId,
             ...application.answers,
           },
         },
@@ -69,7 +94,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
       application.answers = response.data?.updateApplication?.answers
     })
 
-    clearErrors('testUserExists')
+    clearErrors('testProviderId')
   }
 
   return (
@@ -116,7 +141,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
           type="hidden"
           value={currentAnswer}
           ref={register({ required: true })}
-          name={'testUserExists'}
+          name={'testProviderId'}
         />
         {error && (
           <Box color="red600" paddingY={2}>

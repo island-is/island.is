@@ -30,7 +30,6 @@ import {
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import parseISO from 'date-fns/parseISO'
-import isValid from 'date-fns/isValid'
 import {
   JudgeSubsections,
   Sections,
@@ -104,7 +103,7 @@ export const HearingArrangements: React.FC = () => {
   }
 
   useEffect(() => {
-    document.title = 'Fyrirtökutími - Réttarvörslugátt'
+    document.title = 'Fyrirtaka - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
@@ -178,7 +177,7 @@ export const HearingArrangements: React.FC = () => {
         <>
           <Box marginBottom={10}>
             <Text as="h1" variant="h1">
-              Fyrirtökutími
+              Fyrirtaka
             </Text>
           </Box>
           {workingCase.state === CaseState.DRAFT && (
@@ -216,21 +215,17 @@ export const HearingArrangements: React.FC = () => {
                         ? parseISO(workingCase.courtDate.toString())
                         : null
                     }
-                    handleChange={(date) =>
+                    handleCloseCalendar={(date: Date | null) => {
                       setAndSendDateToServer(
                         'courtDate',
                         workingCase.courtDate,
                         date,
                         workingCase,
+                        true,
                         setWorkingCase,
                         updateCase,
                         setCourtDateErrorMessage,
                       )
-                    }
-                    handleCloseCalendar={(date: Date | null) => {
-                      if (date === null || !isValid(date)) {
-                        setCourtDateErrorMessage('Reitur má ekki vera tómur')
-                      }
                     }}
                     required
                   />

@@ -1,4 +1,4 @@
-import { IsString, IsBoolean, IsNotEmpty } from 'class-validator'
+import { IsString, IsBoolean, IsNotEmpty, IsDate } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class ApiScopesDTO {
@@ -24,7 +24,6 @@ export class ApiScopesDTO {
   readonly displayName!: string
 
   @IsString()
-  @IsNotEmpty()
   @ApiProperty({
     example: 'set_description',
   })
@@ -36,8 +35,6 @@ export class ApiScopesDTO {
     example: true,
   })
   readonly showInDiscoveryDocument!: boolean
-
-  // Common properties end
 
   @IsBoolean()
   @ApiProperty({
