@@ -32,14 +32,10 @@ import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import * as styles from './Home.treat'
 import {
-  AllSlicesEmbeddedVideoFragment,
-  AllSlicesFragment,
-  AllSlicesImageFragment,
   Districts,
   FeaturedArticles,
   GetNamespaceQuery,
   HeadingSlice,
-  News,
   Organization,
   QueryGetOrganizationArgs,
   QueryGetOrganizationNewsArgs,
@@ -47,10 +43,6 @@ import {
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useRouter } from 'next/router'
-import {
-  renderSlices,
-  Slice as SliceType,
-} from '@island.is/island-ui/contentful'
 import Link from 'next/link'
 import LatestOrganizationNewsSection from '@island.is/web/components/LatestOrganizationNewsSection/LatestOrganizationNewsSection'
 import { GlobalContext } from '../../context/GlobalContext/GlobalContext'
@@ -60,11 +52,6 @@ interface HomeProps {
   namespace: Query['getNamespace']
   news: Query['getOrganizationNews']
 }
-
-type AvailableSlices = Exclude<
-  AllSlicesFragment,
-  AllSlicesEmbeddedVideoFragment | AllSlicesImageFragment
->
 
 const Home: Screen<HomeProps> = ({ organization, namespace, news }) => {
   const { activeLocale } = useI18n()
