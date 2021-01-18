@@ -18,7 +18,7 @@ type Events =
 const dataSchema = z.object({
   type: z.array(z.enum(['general', 'trailer', 'bike'])).nonempty(),
   subType: z.array(z.string()).nonempty(),
-  acceptsPolicy: z.boolean(),
+  approveExternalData: z.boolean().refine((v) => v),
   address: z.object({
     home: z.string().nonempty(),
     postcode: z.string(),
@@ -30,6 +30,17 @@ const dataSchema = z.object({
     nationalId: z.string().refine((x) => kennitala.isPerson(x)),
     email: z.string().email().nonempty(),
     country: z.string().nonempty(),
+  }),
+  healthDeclaration: z.object({
+    usesContactGlasses: z.boolean(),
+    hasEpilepsy: z.boolean(),
+    hasHeartDisease: z.boolean(),
+    hasMentalIllness: z.boolean(),
+    usesMedicalDrugs: z.boolean(),
+    isAlcoholic: z.boolean(),
+    hasDiabetes: z.boolean(),
+    isDisabled: z.boolean(),
+    hasOtherDiseases: z.boolean(),
   }),
   teacher: z.string().nonempty(),
 })
