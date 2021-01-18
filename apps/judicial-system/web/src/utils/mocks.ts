@@ -481,7 +481,14 @@ export const testCaseExtension = {
   defenderEmail: undefined,
   requestedDefenderName: 'Saul Goodman',
   requestedDefenderEmail: 'saul@goodman.com',
-  parentCase: { id: 'TEST_PARENT_ID' },
+  parentCase: {
+    id: 'TEST_PARENT_ID',
+    created: '2020-09-16T19:50:08.033Z',
+    modified: '2020-09-16T19:51:39.466Z',
+    state: CaseState.ACCEPTED,
+    policeCaseNumber: '109-2020-19',
+    accusedNationalId: '000000-9999',
+  },
 }
 
 export const mockJudgeQuery = [

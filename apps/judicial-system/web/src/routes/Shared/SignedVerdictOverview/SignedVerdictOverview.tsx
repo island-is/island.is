@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { Accordion, Box, Button, Tag, Text } from '@island.is/island-ui/core'
 import {
   TIME_FORMAT,
@@ -24,6 +24,7 @@ import { getRestrictionTagVariant } from '../../../utils/stepHelper'
 import { useHistory } from 'react-router-dom'
 import * as Constants from '../../../utils/constants'
 import { UserContext } from '../../../shared-components/UserProvider/UserProvider'
+import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 interface CaseData {
   case?: Case
 }
@@ -40,6 +41,10 @@ export const SignedVerdictOverview: React.FC = () => {
     fetchPolicy: 'no-cache',
   })
 
+  const [extendCaseMutation, { loading: creatingExtension }] = useMutation(
+    ExtendCaseMutation,
+  )
+
   useEffect(() => {
     document.title = 'Yfirlit staðfestrar kröfu - Réttarvörslugátt'
   }, [])
@@ -49,6 +54,16 @@ export const SignedVerdictOverview: React.FC = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
+
+  const handleNextButtonClick = () => {
+    extendCaseMutation({
+      variables: {
+        input: {
+          id: workingCase?.id,
+        },
+      },
+    })
+  }
 
   /**
    * We assume that the signed verdict page is only opened for
@@ -244,9 +259,7 @@ export const SignedVerdictOverview: React.FC = () => {
               user?.role !== UserRole.PROSECUTOR
             }
             nextButtonText="Framlengja gæslu"
-            onNextButtonClick={() =>
-              history.push(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/TEST_EXTEND`)
-            }
+            onNextButtonClick={() => handleNextButtonClick()}
           />
         </>
       ) : null}

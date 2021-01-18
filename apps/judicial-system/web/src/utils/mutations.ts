@@ -102,7 +102,7 @@ export const CasesQuery = gql`
 
 export const ExtendCaseMutation = gql`
   mutation ExtendCaseMutation($input: ExtendCaseInput!) {
-    createCase(input: $input) {
+    extendCase(input: $input) {
       id
       created
       modified
