@@ -21,7 +21,6 @@ import { m } from './messages'
 import { YES, NO } from '../constants'
 import { StatusTypes } from '../types'
 import Logo from '../assets/Logo'
-import { isValidCountry } from '../fields/healthInsuranceUtils'
 
 export const HealthInsuranceForm: Form = buildForm({
   id: 'HealthInsuranceDraft',
@@ -72,13 +71,6 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'errorModal',
               component: 'ErrorModal',
               title: '',
-              condition: (answers, externalData) => {
-                const previousCountry = (externalData.nationalRegistry
-                  ?.data as {
-                  previousCountry?: string
-                })?.previousCountry
-                return previousCountry ? !isValidCountry(previousCountry) : true
-              },
             }),
             buildFileUploadField({
               id: 'confirmationOfResidencyDocument',

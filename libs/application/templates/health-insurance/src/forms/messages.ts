@@ -388,6 +388,11 @@ export const m = defineMessages({
     defaultMessage: 'Attached files',
     description: 'Attached files',
   },
+  modalCloseButtonText: {
+    id: 'hi.application:modalCloseButtonText',
+    defaultMessage: 'Close',
+    description: 'Close',
+  },
   waitingPeriodTitle: {
     id: 'hi.application:waitingPeriod.title',
     defaultMessage: 'Waiting period',
@@ -419,17 +424,17 @@ export const m = defineMessages({
     description: 'How to register'
   },
   activeApplicationTitle: {
-    id: 'hi.application.activeApplication.title',
+    id: 'hi.application:activeApplication.title',
     defaultMessage: 'Active application',
     description: 'Active application',
   },
   activeApplicationDescription: {
-    id: 'hi.application.activeApplication.description',
+    id: 'hi.application:activeApplication.description',
     defaultMessage: 'You have already submitted an application for health insurance. We will notify you on the e-mail address you provided in the application when the status changes. You can always see your application status in My Pages.',
     description: 'Active application description',
   },
   activeApplicationButtonText: {
-    id: 'hi.application.activeApplication.buttonText',
+    id: 'hi.application:activeApplication.buttonText',
     defaultMessage: 'See status',
     description: 'See status',
   },
