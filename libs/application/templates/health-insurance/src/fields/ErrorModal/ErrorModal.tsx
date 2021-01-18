@@ -10,13 +10,14 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { useLocale } from '@island.is/localization'
 import * as styles from './ErrorModal.treat'
-import { isValidCountry } from '../healthInsuranceUtils'
 
 import { useQuery } from '@apollo/client'
 import { useParams } from 'react-router-dom'
 import { APPLICANT_APPLICATIONS } from '@island.is/application/graphql'
+import { m } from '../../forms/messages'
 
 export interface ContentType {
   title?: string
@@ -26,11 +27,9 @@ export interface ContentType {
 }
 
 const ErrorModal: FC<FieldBaseProps> = ({ field, application }) => {
+  const { formatMessage } = useLocale()
   const { type } = useParams()
   const [shouldRender, setShouldRender] = useState<boolean>()
-  const previousCountry = (application.externalData.nationalRegistry?.data as {
-    previousCountry?: string
-  })?.previousCountry
   let content: ContentType = {}
 
   const { data, loading, error: applicationsError } = useQuery(
@@ -43,27 +42,20 @@ const ErrorModal: FC<FieldBaseProps> = ({ field, application }) => {
   )
 
   // TODO: Add conditions. if application is active and if not registred in island
-  if (data && data.getApplicationsByApplicant.length > 1) {
+  if (data && data.getApplicationsByApplicant.length >= 1) {
     content = {
-      title: 'Active application',
-      description:
-        'You have already submitted an application for health insurance. We will notify you on the e-mail address you provided in the application when the status changes. You can always see your application status in My Pages.',
-      buttonText: 'See status',
-    }
-  } else if (previousCountry && !isValidCountry(previousCountry)) {
-    content = {
-      title: 'Waiting period',
-      description:
-        'According to Registers Iceland data it seems like you are not moving to Iceland from an EU/EEA country, Switzerland, Greenland or the Faroe Islands. There is a six-month waiting period before qualifying. We advise you to buy private health insurance until you are covered by the national health insurance. There are some Medical exceptions.',
-      buttonText: 'Read more',
+      title: formatText(
+        m.activeApplicationTitle,
+        application,
+        formatMessage,
+      ),
+      description: formatText(m.activeApplicationDescription, application, formatMessage),
+      buttonText: formatText(m.activeApplicationButtonText, application, formatMessage),
     }
   }
 
   useEffect(() => {
-    if (
-      (data && data.getApplicationsByApplicant.length > 1) ||
-      (previousCountry && !isValidCountry(previousCountry))
-    ) {
+    if (data && data.getApplicationsByApplicant.length > 1) {
       setShouldRender(true)
       console.table(application.externalData.nationalRegistry?.data)
     } else setShouldRender(false)
