@@ -11,9 +11,16 @@ import {
   buildMultiField,
   buildDateField,
   Application,
+  buildDescriptionField,
 } from '@island.is/application/core'
 
 import { Parent, RegisteredChildren } from '../dataProviders/APIDataTypes'
+
+type answers = {
+  selectedChildren: string[]
+  selectedDuration: string
+  durationDate?: string
+}
 
 // This is a temporary handler until we create a custom component for this
 const handleDomicileChangeInfo = (data: {
@@ -22,6 +29,7 @@ const handleDomicileChangeInfo = (data: {
   selectedChildren: string[]
 }) => {
   const { parent, children, selectedChildren } = data
+
   const filterChildren = children.filter((child) =>
     selectedChildren.includes(child.name),
   )
@@ -50,6 +58,14 @@ const extractChildrenFromApplication = (application: Application) => {
   return (application.externalData.childrenNationalRegistry?.data as {
     registeredChildren?: object
   }) as RegisteredChildren[]
+}
+
+const extractAnswersFromApplication = (application: Application) => {
+  return {
+    selectedChildren: application.answers.selectChild as string[],
+    selectedDuration: application.answers.selectDuration as string,
+    durationDate: application.answers.durationDate as string,
+  }
 }
 
 export const ChildrenDomicileTransferForm: Form = buildForm({
@@ -232,9 +248,37 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
       id: 'overview',
       title: 'Yfirlit og undirritun',
       children: [
-        buildTextField({
-          id: 'children',
-          title: 'children',
+        buildDescriptionField({
+          id: 'applicationOverview',
+          title: 'Yfirlit umsóknar',
+          description: (application) => {
+            const parent = extractParentFromApplication(application)
+            const children = extractChildrenFromApplication(application)
+            const answers = extractAnswersFromApplication(application)
+
+            // This is a temp solution, we are going to create custom field to do this
+            return `Hér er yfirlit yfir samning um breytt lögheimili. Þú og ${
+              parent.name
+            } þurfa að staðfesta og undirrita áður en málið fer í afgreiðslu hjá sýslumanni. <br /> <br />
+            <strong>Nöfn barn:</strong> <br />
+            ${answers.selectedChildren
+              .map((c) => c)
+              .join('<br />')} <br /> <br />
+            <strong>Núverandi lögheimili barna:</strong> <br />
+            ${children[0].address}, ${children[0].postalCode} ${
+              children[0].city
+            } <br /> <br />
+            <strong>Nýtt lögheimili barna:</strong> <br />
+            ${parent.name} <br />
+            ${parent.address}, ${parent.postalCode} ${parent.city} <br /> <br />
+            <strong>Gildistími </strong> <br />
+            ${
+              answers.durationDate ? answers.durationDate : 'Til frambúðar'
+            } <br /> <br />
+            <strong>Áhrif umsóknar</strong> <br />
+            Ég skil hvaða áhrif lögheimilsbreyting hefur.
+            `
+          },
         }),
       ],
     }),
