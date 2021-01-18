@@ -373,7 +373,7 @@ const Search: Screen<CategoryProps> = ({
               {totalSearchResults}{' '}
               {totalSearchResults === 1
                 ? n('searchResult', 'leitarniðurstaða')
-                : n('searchResults', 'leitarniðurstöður')}
+                : n('searchResults', 'leitarniðurstöður')}{' '}
               {(filters.category || filters.type) && (
                 <>
                   {n('inCategory', 'í flokki')}
