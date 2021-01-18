@@ -22,15 +22,9 @@ export const settingsModule: ServicePortalModule = {
 
     const routes: ServicePortalRoute[] = [
       {
-        name: 'Stillingar',
-        path: ServicePortalPath.SettingsRoot,
-        render: () =>
-          lazy(() => import('./screens/NavigationScreen/NavigationScreen')),
-      },
-      {
         name: defineMessage({
-          id: 'service.portal:profile-info',
-          defaultMessage: 'Minn aðgangur',
+          id: 'service.portal:settings',
+          defaultMessage: 'Stillingar',
         }),
         notifications: userProfile?.emailVerified === false ? 1 : 0,
         path: ServicePortalPath.UserProfileRoot,

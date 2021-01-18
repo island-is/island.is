@@ -17,6 +17,7 @@ export class NationalRegistryProvider extends BasicDataProvider {
           age
           fullName
           citizenship
+          legalResidence
           address {
             code
             postalCode

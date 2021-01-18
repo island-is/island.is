@@ -13,9 +13,9 @@ export default {
   featureFlags: {
     applications: false,
     documents: true,
-    settings: false,
+    settings: true,
     finance: true,
-    family: false,
+    family: true,
     health: false,
     education: true,
     delegation: true,
