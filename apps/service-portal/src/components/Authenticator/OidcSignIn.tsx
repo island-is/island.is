@@ -25,6 +25,7 @@ export const OidcSignIn: FC = () => {
       .catch(function (error) {
         // TODO: Handle error
         console.log('error', error)
+        window.location.replace(window.location.origin)
       })
   }, [])
 
