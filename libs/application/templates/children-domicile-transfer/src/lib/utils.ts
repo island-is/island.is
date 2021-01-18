@@ -12,3 +12,11 @@ export const extractChildrenFromApplication = (application: Application) => {
     registeredChildren?: object
   }) as RegisteredChildren[]
 }
+
+export const extractAnswersFromApplication = (application: Application) => {
+  return {
+    selectedChildren: application.answers.selectChild as string[],
+    selectedDuration: application.answers.selectDuration as string,
+    durationDate: application.answers.durationDate as string,
+  }
+}

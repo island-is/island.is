@@ -17,15 +17,8 @@ import {
 import {
   extractParentFromApplication,
   extractChildrenFromApplication,
+  extractAnswersFromApplication,
 } from '../lib/utils'
-
-const extractAnswersFromApplication = (application: Application) => {
-  return {
-    selectedChildren: application.answers.selectChild as string[],
-    selectedDuration: application.answers.selectDuration as string,
-    durationDate: application.answers.durationDate as string,
-  }
-}
 
 export const ChildrenDomicileTransferForm: Form = buildForm({
   id: 'ChildrenDomicileTransferFormDraft',
@@ -200,37 +193,10 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
       id: 'overview',
       title: 'Yfirlit og undirritun',
       children: [
-        buildDescriptionField({
-          id: 'applicationOverview',
+        buildCustomField({
+          id: 'domicileChangeReview',
           title: 'Yfirlit umsóknar',
-          description: (application) => {
-            const parent = extractParentFromApplication(application)
-            const children = extractChildrenFromApplication(application)
-            const answers = extractAnswersFromApplication(application)
-
-            // This is a temp solution, we are going to create custom field to do this
-            return `Hér er yfirlit yfir samning um breytt lögheimili. Þú og ${
-              parent.name
-            } þurfa að staðfesta og undirrita áður en málið fer í afgreiðslu hjá sýslumanni. <br /> <br />
-            <strong>Nöfn barn:</strong> <br />
-            ${answers.selectedChildren
-              .map((c) => c)
-              .join('<br />')} <br /> <br />
-            <strong>Núverandi lögheimili barna:</strong> <br />
-            ${children[0].address}, ${children[0].postalCode} ${
-              children[0].city
-            } <br /> <br />
-            <strong>Nýtt lögheimili barna:</strong> <br />
-            ${parent.name} <br />
-            ${parent.address}, ${parent.postalCode} ${parent.city} <br /> <br />
-            <strong>Gildistími </strong> <br />
-            ${
-              answers.durationDate ? answers.durationDate : 'Til frambúðar'
-            } <br /> <br />
-            <strong>Áhrif umsóknar</strong> <br />
-            Ég skil hvaða áhrif lögheimilsbreyting hefur.
-            `
-          },
+          component: 'Overview',
         }),
       ],
     }),
