@@ -24,6 +24,7 @@ const dataSchema = z.object({
   selectChild: z.array(z.string()).nonempty(),
   email: z.string().email(),
   phoneNumber: z.string().min(7),
+  confirmInformationAboutDomicileChange: z.array(z.string()).nonempty(),
   approveTerms: z.array(z.string()).nonempty(),
 })
 

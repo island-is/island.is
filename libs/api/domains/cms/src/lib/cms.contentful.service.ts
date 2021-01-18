@@ -9,6 +9,10 @@ import { ContentSlug, mapContentSlug } from './models/contentSlug.model'
 import { AboutPage, mapAboutPage } from './models/aboutPage.model'
 import { LandingPage, mapLandingPage } from './models/landingPage.model'
 import { GenericPage, mapGenericPage } from './models/genericPage.model'
+import {
+  GenericOverviewPage,
+  mapGenericOverviewPage,
+} from './models/genericOverviewPage.model'
 import { News, mapNews } from './models/news.model'
 import { Pagination } from './models/pagination.model'
 import {
@@ -21,7 +25,7 @@ import { GetContentSlugInput } from './dto/getContentSlug.input'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
-import { GetErrorPageInput } from './dto/getErrorPage.input'
+import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
 import { Namespace, mapNamespace } from './models/namespace.model'
 import { Menu, mapMenu } from './models/menu.model'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
@@ -45,6 +49,7 @@ import { Homepage, mapHomepage } from './models/homepage.model'
 import { mapTellUsAStory, TellUsAStory } from './models/tellUsAStory.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 import { mapSubpageHeader, SubpageHeader } from './models/subpageHeader.model'
+import { GetErrorPageInput } from './dto/getErrorPage.input'
 import { ErrorPage, mapErrorPage } from './models/errorPage.model'
 
 const makePage = (
@@ -338,6 +343,21 @@ export class CmsContentfulService {
       .catch(errorHandler('getGenericPage'))
 
     return result.items.map(mapGenericPage)[0] ?? null
+  }
+
+  async getGenericOverviewPage({
+    lang,
+    pageIdentifier,
+  }: GetGenericOverviewPageInput): Promise<GenericOverviewPage> {
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IGenericOverviewPageFields>(lang, {
+        ['content_type']: 'genericOverviewPage',
+        'fields.pageIdentifier': pageIdentifier,
+        include: 10,
+      })
+      .catch(errorHandler('getGenericOverviewPage'))
+
+    return result.items.map(mapGenericOverviewPage)[0] ?? null
   }
 
   async getNamespace(

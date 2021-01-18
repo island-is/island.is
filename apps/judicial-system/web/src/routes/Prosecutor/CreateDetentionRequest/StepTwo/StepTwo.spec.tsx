@@ -18,11 +18,6 @@ describe('Create detention request, step two', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     const todaysDate = new Date()
-    const formattedTodaysDate = todaysDate.getDate().toString().padStart(2, '0')
-    const formattedTodaysMonth = (todaysDate.getMonth() + 1)
-      .toString()
-      .padStart(2, '0')
-
     const lastDateOfTheMonth = new Date(
       todaysDate.getFullYear(),
       todaysDate.getMonth() + 1,

@@ -25,7 +25,10 @@ import {
 import { CallToAction } from '../types/StateMachine'
 import { FormText } from '../types/Form'
 import { Colors } from '@island.is/island-ui/theme'
-import { InputBackgroundColor } from '@island.is/island-ui/core'
+import {
+  DatePickerBackgroundColor,
+  InputBackgroundColor,
+} from '@island.is/island-ui/core'
 
 interface SelectOption {
   label: string
@@ -80,6 +83,7 @@ export function buildDateField(data: {
   minDate?: Date
   disabled?: boolean
   width?: FieldWidth
+  backgroundColor?: DatePickerBackgroundColor
   defaultValue?: MaybeWithApplication<unknown>
 }): DateField {
   const {
@@ -93,6 +97,7 @@ export function buildDateField(data: {
     disabled = false,
     width = 'full',
     placeholder,
+    backgroundColor,
   } = data
   return {
     children: undefined,
@@ -108,6 +113,7 @@ export function buildDateField(data: {
     minDate,
     type: FieldTypes.DATE,
     component: FieldComponents.DATE,
+    backgroundColor,
   }
 }
 
@@ -337,6 +343,7 @@ export function buildFileUploadField(data: {
   uploadButtonLabel?: string
   uploadMultiple?: boolean
   uploadAccept?: string
+  maxSize?: number
 }): FileUploadField {
   const {
     condition,
@@ -348,6 +355,7 @@ export function buildFileUploadField(data: {
     uploadButtonLabel,
     uploadMultiple,
     uploadAccept,
+    maxSize,
   } = data
   return {
     children: undefined,
@@ -360,6 +368,7 @@ export function buildFileUploadField(data: {
     uploadButtonLabel,
     uploadMultiple,
     uploadAccept,
+    maxSize,
     type: FieldTypes.FILEUPLOAD,
     component: FieldComponents.FILEUPLOAD,
   }

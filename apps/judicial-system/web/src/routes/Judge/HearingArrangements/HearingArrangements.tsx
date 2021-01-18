@@ -30,7 +30,6 @@ import {
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import parseISO from 'date-fns/parseISO'
-import isValid from 'date-fns/isValid'
 import {
   JudgeSubsections,
   Sections,

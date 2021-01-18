@@ -6,7 +6,7 @@
       padding: 10px;
       display: inline-block;
       border: solid 1px $color-border;
-      border-radius: 5px;
+      border-radius: $border-radius;
 
       &.active {
         background: $color-bg-content;

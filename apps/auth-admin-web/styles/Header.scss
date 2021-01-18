@@ -1,4 +1,4 @@
-header {
+.header {
   width: 100%;
   max-height: 112px;
   padding: 24px 0px;
@@ -7,12 +7,21 @@ header {
   flex-wrap: no-wrap;
   box-sizing: border-box;
 
-  .header__container__logo {
+  &__container__logo {
     flex: 1;
     align-content: flex-start;
     h1 {
       font-size: 26px;
       margin: 0;
+    }
+  }
+
+  &__container__login {
+    button {
+      background-color: $color-cancel;
+      font-size: 0.8rem;
+      color: $color-text-primary;
+      font-weight: $weight-semi-bold;
     }
   }
 
@@ -39,7 +48,7 @@ header {
       button {
         border: 1px solid $color-border;
         box-sizing: border-box;
-        border-radius: 5px;
+        border-radius: $border-radius;
         background: $color-body-bg;
         font-size: 15px;
         font-style: normal;

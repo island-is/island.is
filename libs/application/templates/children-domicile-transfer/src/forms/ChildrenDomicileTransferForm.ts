@@ -7,9 +7,50 @@ import {
   buildDataProviderItem,
   buildExternalDataProvider,
   buildCheckboxField,
+  buildRadioField,
   buildMultiField,
+  buildDateField,
+  Application,
 } from '@island.is/application/core'
-import { Parent } from '../dataProviders/APIDataTypes'
+
+import { Parent, RegisteredChildren } from '../dataProviders/APIDataTypes'
+
+// This is a temporary handler until we create a custom component for this
+const handleDomicileChangeInfo = (data: {
+  parent: Parent
+  children: RegisteredChildren[]
+  selectedChildren: string[]
+}) => {
+  const { parent, children, selectedChildren } = data
+  const filterChildren = children.filter((child) =>
+    selectedChildren.includes(child.name),
+  )
+  const childrenCurrentHome = filterChildren.map((child) => {
+    const address = `${child.address}, ${child.postalCode} ${child.city}`
+    return `${child.name}<br />${address}<br />`
+  })
+
+  const childrenFutureHome = filterChildren.map((child) => {
+    const futureDomicile = `${parent.address}, ${parent.postalCode} ${parent.city}`
+    return `${child.name}<br />${futureDomicile}<br />`
+  })
+
+  return `<strong>Núverandi lögheimili:</strong><br />${childrenCurrentHome.join(
+    '',
+  )}<br /><strong>Nýtt lögheimili:</strong><br />${childrenFutureHome.join('')}`
+}
+
+const extractParentFromApplication = (application: Application) => {
+  return (application.externalData.parentNationalRegistry?.data as {
+    parent?: object
+  }) as Parent
+}
+
+const extractChildrenFromApplication = (application: Application) => {
+  return (application.externalData.childrenNationalRegistry?.data as {
+    registeredChildren?: object
+  }) as RegisteredChildren[]
+}
 
 export const ChildrenDomicileTransferForm: Form = buildForm({
   id: 'ChildrenDomicileTransferFormDraft',
@@ -51,10 +92,11 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
           description:
             'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið hvaða börn á að flytja lögheimili fyrir.',
           large: true,
-          options: [
-            { value: '1', label: 'Ólafur Helgi Eiríksson' },
-            { value: '2', label: 'Rósa Líf Eiríksdóttir' },
-          ],
+          options: (application) =>
+            extractChildrenFromApplication(application).map((c) => ({
+              value: c.name,
+              label: c.name,
+            })),
         }),
       ],
     }),
@@ -66,11 +108,7 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
           id: 'informationAboutOtherParent',
           title: 'Fylltu inn upplýsingar um hitt foreldrið',
           description: (application) => {
-            const parent = (application.externalData.parentNationalRegistry
-              ?.data as {
-              parent?: object
-            })?.parent as Parent
-
+            const parent = extractParentFromApplication(application)
             return `Hitt foreldrið er ${parent.name} (${parent.ssn})`
           },
           children: [
@@ -92,29 +130,75 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
       id: 'changeDomicile',
       title: 'Breyta lögheimili',
       children: [
-        buildTextField({
-          id: 'children',
-          title: 'children',
+        buildMultiField({
+          id: 'informationAboutDomicileChange',
+          title: 'Hvert á að flytja lögheimilið?',
+          description:
+            'Sem foreldrar með sameiginlega forsjá getið þið óskað eftir því að flytja lögheimili barns frá foreldri A til foreldri B eða öfugt. <br /><br /> Vinsamlegast staðfestu að lögheimili barns sé að flytjast til hins foreldris eins og skráð er hér fyrir neðan.',
+          children: [
+            buildCheckboxField({
+              id: 'confirmInformationAboutDomicileChange',
+              title: 'Breytingar á lögheimili',
+              description: (application) => {
+                const parent = extractParentFromApplication(application)
+                const children = extractChildrenFromApplication(application)
+                const selectedChildrenIds = application.answers
+                  .selectChild as string[]
+
+                return handleDomicileChangeInfo({
+                  parent,
+                  children,
+                  selectedChildren: selectedChildrenIds,
+                })
+              },
+              large: true,
+              options: [
+                {
+                  value: 'confirmDomicileChangeInfo',
+                  label: 'Ég samþykki breytingu',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),
     buildSection({
-      id: 'transferDate',
-      title: 'Flutningur',
-      children: [
-        buildTextField({
-          id: 'children',
-          title: 'children',
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'transferPeriod',
+      id: 'transferDuration',
       title: 'Gildistími',
       children: [
-        buildTextField({
-          id: 'children',
-          title: 'children',
+        buildMultiField({
+          id: 'duration',
+          title: 'Í hve langan tíma á samningurinn að gilda?',
+          description:
+            'Veldu í hversu langan tíma samningurinn á að gilda. Hægt er að gera tímabundna lögheimilisbreytingu til a.m.k. 6 mánaða eða lengur eða velja að samningur gildi til frambúðar.',
+          children: [
+            buildRadioField({
+              id: 'selectDuration',
+              title: 'Veldu gildistíma',
+              largeButtons: true,
+              options: [
+                {
+                  value: 'temporary',
+                  label: 'Tímabundið',
+                  tooltip: '6 mánuðir eða lengur',
+                },
+                {
+                  value: 'permanent',
+                  label: 'Til frambúðar',
+                  tooltip: 'Samningurinn gildir til 18 ára aldurs barns',
+                },
+              ],
+            }),
+            buildDateField({
+              condition: (formData) => formData.selectDuration === 'temporary',
+              id: 'durationDate',
+              width: 'full',
+              title: 'Dagsetning',
+              placeholder: 'Veldu dagsetningu',
+              backgroundColor: 'blue',
+            }),
+          ],
         }),
       ],
     }),
