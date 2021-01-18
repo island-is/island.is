@@ -20,7 +20,7 @@ import { setup } from './setup'
 import { User } from '../src/app/modules/user'
 import { Case } from '../src/app/modules/case/models'
 
-jest.setTimeout(10000)
+jest.setTimeout(20000)
 
 let app: INestApplication
 let prosecutor: TUser
