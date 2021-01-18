@@ -177,7 +177,7 @@ export class VerificationService {
           },
         ],
         subject: `Staðfesting netfangs á Ísland.is`,
-        html: `Þú hefur skráð ${verification.email} á Mínum síðum á Ísland.is. Vinsamlegast staðfestu skráninguna með því að smella á hlekkinn hér fyrir neðan:
+        html: `Þú hefur skráð netfangið þitt á Mínum síðum á Ísland.is. Vinsamlegast staðfestu skráninguna með því að smella á hlekkinn hér fyrir neðan:
         <br><br><a href="${resetLink}" target="_blank">${resetLink}</a><br>
         <br>Ef hlekkurinn er ekki lengur í gildi biðjum við þig að endurtaka skráninguna á Ísland.is.
         <br><br>Ef þú kannast ekki við að hafa sett inn þetta netfang, vinsamlegast hunsaðu þennan póst.`,
