@@ -8,6 +8,12 @@ const DomicileChangeInformation = ({ application }: FieldBaseProps) => {
   const parentAddress = `${parent?.address}, ${parent?.postalCode} ${parent?.city}`
   return (
     <>
+      <Text marginBottom={2}>
+        Sem foreldrar með sameiginlega forsjá getið þið óskað eftir því að flytja lögheimili barns frá foreldri A til foreldri B eða öfugt.
+      </Text>
+      <Text marginBottom={4}>
+Vinsamlegast staðfestu að lögheimili barns sé að flytjast til hins foreldris eins og skráð hér fyrir neðan.
+      </Text>
       <Box marginBottom={4}>
         <Text variant="h4">Núverandi lögheimili barna:</Text>
         <Text variant="h4" color="blue400">
