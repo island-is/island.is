@@ -592,6 +592,8 @@ describe('Case', () => {
           caseFacts: dbCase.caseFacts,
           legalArguments: dbCase.legalArguments,
           parentCaseId: dbCase.id,
+          judgeId: dbCase.judgeId,
+          prosecutorId: dbCase.prosecutorId,
         } as CCase)
       })
   })
