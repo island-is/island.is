@@ -117,6 +117,49 @@ export class ClientsService {
     return client
   }
 
+  /** Find client by searh string */
+  async findClient(searchString: string, page: number, count: number) {
+    if (!searchString) {
+      throw new BadRequestException('Search String must be provided')
+    }
+
+    searchString = searchString.trim()
+
+    if (isNaN(+searchString)) {
+      return this.findAllClientsById(searchString, page, count)
+    } else {
+      return this.findAllClientsByNationalId(searchString, page, count)
+    }
+  }
+
+  /** Find clients by National Id */
+  async findAllClientsByNationalId(
+    searchString: string,
+    page: number,
+    count: number,
+  ) {
+    page--
+    const offset = page * count
+    return this.clientModel.findAndCountAll({
+      limit: count,
+      where: { nationalId: searchString },
+      offset: offset,
+      distinct: true,
+    })
+  }
+
+  /** Finds client by client Id with paging return type */
+  async findAllClientsById(searchString: string, page: number, count: number) {
+    page--
+    const offset = page * count
+    return this.clientModel.findAndCountAll({
+      limit: count,
+      where: { clientId: searchString },
+      offset: offset,
+      distinct: true,
+    })
+  }
+
   /** Gets all associations for Client */
   private findAssociations(client: Client): Promise<any> {
     return Promise.all([
