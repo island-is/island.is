@@ -26,8 +26,14 @@ interface Commit {
   sha: string
 }
 
-const getDictionaryFile = (sha: string, locale: ElasticsearchIndexLocale, analyzer: string) => {
-  return fetch(`https://github.com/${environment.dictRepo}/blob/${sha}/${locale}/${analyzer}.txt?raw=true`).then((response) => {
+const getDictionaryFile = (
+  sha: string,
+  locale: ElasticsearchIndexLocale,
+  analyzer: string,
+) => {
+  return fetch(
+    `https://github.com/${environment.dictRepo}/blob/${sha}/${locale}/${analyzer}.txt?raw=true`,
+  ).then((response) => {
     if (response.ok) {
       return response.body
     } else {
@@ -41,7 +47,7 @@ const mockCommits: Commit[] = [
   { sha: '9d3a04eee314d4940a23fe46092c0365d2493ff8' },
   { sha: 'd4171f9c87909d269f6149c9fead5e51937b0709' },
   { sha: '5d2c6703ea8de3115b39cd314c34f20c4f46e65d' },
-  { sha: '4cc984082460b81263b09124598f504d6e3f5db3' }
+  { sha: '4cc984082460b81263b09124598f504d6e3f5db3' },
 ]
 
 // get a list of all latest commits for this repo
@@ -55,13 +61,18 @@ export const getDictionaryVersions = () => {
   return getCommits().map((commit) => commit.substring(0, 7))
 }
 
-export const getDictionaryFilesAfterVersion = async (currentVersion: string): Promise<Dictionary[]> => {
+export const getDictionaryFilesAfterVersion = async (
+  currentVersion: string,
+): Promise<Dictionary[]> => {
   const commits = getCommits()
 
   // find what versions are missing given the current found version
-  const currentVersionIndex = commits.findIndex((commit) => commit.startsWith(currentVersion))
+  const currentVersionIndex = commits.findIndex((commit) =>
+    commit.startsWith(currentVersion),
+  )
   // if we don't find the index location we assume we should import all found versions
-  const newCommits = currentVersionIndex === -1 ? commits : commits.slice(0, currentVersionIndex)
+  const newCommits =
+    currentVersionIndex === -1 ? commits : commits.slice(0, currentVersionIndex)
 
   logger.info('Trying to get dictionary packages', { commits: newCommits })
 
@@ -70,7 +81,6 @@ export const getDictionaryFilesAfterVersion = async (currentVersion: string): Pr
   for (const commit of newCommits) {
     for (const locale of environment.locales) {
       for (const analyzer of analyzers) {
-
         const version = commit.substring(0, 7)
         const file = await getDictionaryFile(commit, locale, analyzer)
         // all versions don't have all files
@@ -79,10 +89,9 @@ export const getDictionaryFilesAfterVersion = async (currentVersion: string): Pr
             analyzerType: analyzer,
             version,
             file,
-            locale
+            locale,
           })
         }
-
       }
     }
   }

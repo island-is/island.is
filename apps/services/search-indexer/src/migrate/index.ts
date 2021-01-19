@@ -38,13 +38,17 @@ class App {
     this allows us to upload all versions since last sync
     */
     const dictionaryVersions = dictionary.getDictionaryVersions() // returns versions of the dictionary in order with the newest version first
-    const latestAwsDictionaryVersion = await aws.getFirstFoundAwsEsPackageVersion(dictionaryVersions)
-    const newDictionaryFiles = await dictionary.getDictionaryFilesAfterVersion(latestAwsDictionaryVersion)
+    const latestAwsDictionaryVersion = await aws.getFirstFoundAwsEsPackageVersion(
+      dictionaryVersions,
+    )
+    const newDictionaryFiles = await dictionary.getDictionaryFilesAfterVersion(
+      latestAwsDictionaryVersion,
+    )
 
     // if we have packages we should add them (s3 -> AWS ES -> AWS ES search domain)
     if (newDictionaryFiles.length) {
       logger.info('Found new dictionary packages, uploading to AWS', {
-        packages: newDictionaryFiles
+        packages: newDictionaryFiles,
       })
       const s3Files = await aws.uploadS3DictionaryFiles(newDictionaryFiles) // upload repo files to s3
       const newEsPackages = await aws.createAwsEsPackages(s3Files) // create the dictionary packages files in AWS ES
@@ -67,7 +71,9 @@ class App {
 
       // we should always have some packages here
       if (!esPackages.length) {
-        new Error(`Failed to get dictionary packages from AWS ES search domain for the given version: ${dictionaryVersion}`)
+        new Error(
+          `Failed to get dictionary packages from AWS ES search domain for the given version: ${dictionaryVersion}`,
+        )
       }
     } else {
       logger.info('No aws access found running in local development mode')

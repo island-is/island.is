@@ -69,28 +69,32 @@ const getPackageStatuses = async (
   }
 }
 
-export const getAssociatedEsPackages = async (requestedVersion: string): Promise<AwsEsPackage[]> => {
+export const getAssociatedEsPackages = async (
+  requestedVersion: string,
+): Promise<AwsEsPackage[]> => {
   const domainPackageList = await awsEs
     .listPackagesForDomain({
       DomainName: environment.esDomain,
     })
     .promise()
 
-  return domainPackageList.DomainPackageDetailsList
-    // we only want to return packages for current version
-    .filter((esPackage) => {
-      const { version } = parsePackageName(esPackage.PackageName)
-      return requestedVersion === version
-    })
-    .map((esPackage) => {
-      const { locale, analyzerType } = parsePackageName(esPackage.PackageName)
-      return {
-        packageName: esPackage.PackageName,
-        packageId: esPackage.PackageID,
-        locale: locale as ElasticsearchIndexLocale,
-        analyzerType,
-      }
-    })
+  return (
+    domainPackageList.DomainPackageDetailsList
+      // we only want to return packages for current version
+      .filter((esPackage) => {
+        const { version } = parsePackageName(esPackage.PackageName)
+        return requestedVersion === version
+      })
+      .map((esPackage) => {
+        const { locale, analyzerType } = parsePackageName(esPackage.PackageName)
+        return {
+          packageName: esPackage.PackageName,
+          packageId: esPackage.PackageID,
+          locale: locale as ElasticsearchIndexLocale,
+          analyzerType,
+        }
+      })
+  )
 }
 
 // AWS ES wont let us make multiple requests at once so we wait
@@ -157,8 +161,14 @@ interface CreateS3KeyInput {
   locale?: ElasticsearchIndexLocale
   version?: string
 }
-const createS3Key = ({ filename, locale, version }: CreateS3KeyInput): string => {
-  const prefix = [locale, version, ''].filter((parameter) => parameter !== undefined).join('/') // creates folder prefix e.g. is/4cc9840/
+const createS3Key = ({
+  filename,
+  locale,
+  version,
+}: CreateS3KeyInput): string => {
+  const prefix = [locale, version, '']
+    .filter((parameter) => parameter !== undefined)
+    .join('/') // creates folder prefix e.g. is/4cc9840/
   return `${environment.s3Folder}${prefix}${filename}.txt`
 }
 
@@ -199,7 +209,7 @@ export const uploadS3DictionaryFiles = async (
     return {
       locale,
       analyzerType,
-      version
+      version,
     }
   })
 
@@ -214,7 +224,7 @@ const getAwsEsPackagesDetails = async () => {
 }
 
 const removePackagesIfExist = async (
-  uploadedDictionaryFiles: S3DictionaryFile[]
+  uploadedDictionaryFiles: S3DictionaryFile[],
 ) => {
   const esPackages = await getAwsEsPackagesDetails()
 
@@ -266,7 +276,7 @@ export interface AwsEsPackage {
   analyzerType: string
 }
 export const createAwsEsPackages = async (
-  uploadedDictionaryFiles: S3DictionaryFile[]
+  uploadedDictionaryFiles: S3DictionaryFile[],
 ): Promise<AwsEsPackage[]> => {
   // this handles failed updates, if everything works this should never remove packages
   await removePackagesIfExist(uploadedDictionaryFiles)
@@ -303,7 +313,9 @@ export const createAwsEsPackages = async (
   return Promise.all(createdPackages)
 }
 
-export const associatePackagesWithAwsEsSearchDomain = async (packages: AwsEsPackage[]) => {
+export const associatePackagesWithAwsEsSearchDomain = async (
+  packages: AwsEsPackage[],
+) => {
   // we have to do one at a time due to limitations in AWS API
   for (const awsEsPackage of packages) {
     const params = {
@@ -325,7 +337,9 @@ export const associatePackagesWithAwsEsSearchDomain = async (packages: AwsEsPack
   return true
 }
 
-export const getFirstFoundAwsEsPackageVersion = async (dictionaryVersions: string[]) => {
+export const getFirstFoundAwsEsPackageVersion = async (
+  dictionaryVersions: string[],
+) => {
   const domainPackageList = await awsEs
     .listPackagesForDomain({
       DomainName: environment.esDomain,
@@ -333,10 +347,12 @@ export const getFirstFoundAwsEsPackageVersion = async (dictionaryVersions: strin
     .promise()
 
   // create an array containing all found es package versions
-  const domainPackageVersions = domainPackageList.DomainPackageDetailsList.map((esPackage) => {
-    const { version } = parsePackageName(esPackage.PackageName)
-    return version
-  })
+  const domainPackageVersions = domainPackageList.DomainPackageDetailsList.map(
+    (esPackage) => {
+      const { version } = parsePackageName(esPackage.PackageName)
+      return version
+    },
+  )
 
   // find the highest version in AWS ES search domain if any exists
   for (const dictionaryVersion of dictionaryVersions) {

@@ -15,7 +15,8 @@ export const getIndexTemplate = (locale: ElasticsearchIndexLocale) =>
 
 export const getDictionaryVersion = () => config.dictionaryVersion
 
-const configAsString = getIndexTemplate('is') + getIndexTemplate('en') + getDictionaryVersion()
+const configAsString =
+  getIndexTemplate('is') + getIndexTemplate('en') + getDictionaryVersion()
 const indexTemplateHash = unique(configAsString).toLowerCase()
 
 export const getElasticVersion = (): string => {
