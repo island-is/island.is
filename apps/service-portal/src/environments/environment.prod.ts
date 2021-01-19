@@ -20,7 +20,7 @@ export default {
     family: true,
     health: false,
     education: false,
-    delegation: true,
+    delegation: false,
     assets: false,
     drivingLicense: false,
   },
