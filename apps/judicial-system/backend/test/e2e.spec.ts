@@ -25,7 +25,7 @@ import {
   SendNotificationResponse,
 } from '../src/app/modules/notification/models'
 
-jest.setTimeout(10000)
+jest.setTimeout(20000)
 
 let app: INestApplication
 let prosecutor: TUser
