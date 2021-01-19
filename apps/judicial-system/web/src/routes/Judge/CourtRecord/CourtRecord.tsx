@@ -16,11 +16,16 @@ import {
 } from '@island.is/judicial-system-web/src/shared-components'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  formatAccusedByGender,
+  NounCases,
+  TIME_FORMAT,
+} from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useParams } from 'react-router-dom'
-import { Case, UpdateCase } from '@island.is/judicial-system/types'
+import { Case, CaseGender, UpdateCase } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
@@ -84,11 +89,20 @@ export const CourtRecord: React.FC = () => {
     let attendees = ''
 
     if (wc.prosecutor && wc.accusedName) {
-      attendees += `${wc.prosecutor?.name} ${wc.prosecutor?.title}\n${wc.accusedName} kærði`
+      attendees += `${wc.prosecutor?.name} ${wc.prosecutor?.title}\n${
+        wc.accusedName
+      } ${formatAccusedByGender(
+        workingCase?.accusedGender || CaseGender.OTHER,
+      )}`
     }
 
     if (wc.defenderName) {
-      attendees += `\n${wc.defenderName} skipaður verjandi kærða`
+      attendees += `\n${
+        wc.defenderName
+      } skipaður verjandi ${formatAccusedByGender(
+        workingCase?.accusedGender || CaseGender.OTHER,
+        NounCases.DATIVE,
+      )}`
     }
 
     return attendees
@@ -276,18 +290,32 @@ export const CourtRecord: React.FC = () => {
             </Box>
             <Box marginBottom={2}>
               <Text>
-                Kærða er bent á að honum sé óskylt að svara spurningum er varða
+                {`${capitalize(
+                  formatAccusedByGender(
+                    workingCase.accusedGender || CaseGender.OTHER,
+                    NounCases.DATIVE,
+                  ),
+                )} er bent á að honum sé óskylt að svara spurningum er varða
                 brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga
-                nr. 88/2008. Kærði er enn fremur áminntur um sannsögli kjósi
-                hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga
+                nr. 88/2008. ${capitalize(
+                  formatAccusedByGender(
+                    workingCase.accusedGender || CaseGender.OTHER,
+                  ),
+                )} er enn fremur áminntur um sannsögli kjósi
+                hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga`}
               </Text>
             </Box>
             <Input
               data-testid="accusedPlea"
               name="accusedPlea"
-              label="Afstaða kærða"
+              label={`Afstaða ${formatAccusedByGender(
+                workingCase.accusedGender || CaseGender.OTHER,
+                NounCases.DATIVE,
+              )}`}
               defaultValue={workingCase.accusedPlea}
-              placeholder="Hvað hafði kærði að segja um kröfuna? Mótmælti eða samþykkti?"
+              placeholder={`Hvað hafði ${formatAccusedByGender(
+                workingCase.accusedGender || CaseGender.OTHER,
+              )} að segja um kröfuna? Mótmælti eða samþykkti?`}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'accusedPlea',
