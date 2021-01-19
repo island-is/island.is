@@ -154,7 +154,7 @@ export const StepThree: React.FC = () => {
   ]
 
   useEffect(() => {
-    document.title = 'Lagagrundvöllur og dómkröfur - Réttarvörslugátt'
+    document.title = 'Dómkröfur og lagagrundvöllur - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
@@ -222,7 +222,7 @@ export const StepThree: React.FC = () => {
         <>
           <Box marginBottom={7}>
             <Text as="h1" variant="h1">
-              Lagagrundvöllur og dómkröfur
+              Dómkröfur og lagagrundvöllur
             </Text>
           </Box>
           <Box component="section" marginBottom={5}>
