@@ -111,8 +111,8 @@ const ErrorModal: FC<FieldBaseProps> = ({ field, application }) => {
           </FocusableBox>
           <Stack space={[5, 5, 5, 7]}>
             <Stack space={2}>
-              <Text variant={'h2'}>{content?.title}</Text>
-              <Text>{content?.description}</Text>
+              <Text variant={'h1'}>{content?.title}</Text>
+              <Text variant={'intro'}>{content?.description}</Text>
             </Stack>
             <GridRow align="spaceBetween" className={styles.gridFix}>
               <GridColumn span={['12/12', '12/12', '1/3']}>
