@@ -6,7 +6,6 @@ import {
   buildDateField,
   buildExternalDataProvider,
   buildForm,
-  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildRepeater,

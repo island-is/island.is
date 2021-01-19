@@ -1,9 +1,5 @@
 import React, { FC, useState } from 'react'
-import {
-  Application,
-  FieldBaseProps,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { Application, getValueViaPath } from '@island.is/application/core'
 import {
   Accordion,
   AccordionItem,
@@ -11,42 +7,26 @@ import {
   Button,
   GridColumn,
   GridRow,
-  SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
 
 import { useLocale } from '@island.is/localization'
 import Timeline from '../components/Timeline'
-import {
-  formatPeriods,
-  getExpectedDateOfBirth,
-  getNameAndIdOfSpouse,
-} from '../parentalLeaveUtils'
+import { formatPeriods, getExpectedDateOfBirth } from '../parentalLeaveUtils'
 import { Period } from '../../types'
 import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 import YourRightsBoxChart from '../Rights/YourRightsBoxChart'
 import { useQuery } from '@apollo/client'
 import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 import { m, mm } from '../../lib/messages'
-import { YES, NO } from '../../constants'
-import useOtherParentOptions from '../../hooks/useOtherParentOptions'
+import { YES } from '../../constants'
 
 type ValidOtherParentAnswer = 'no' | 'manual' | undefined
 type ValidRadioAnswer = 'yes' | 'no' | undefined
 
 const ReadOnlyReview: FC<{ application: Application }> = ({ application }) => {
-  const dob = getExpectedDateOfBirth(application)
-  if (!dob) {
-    return null
-  }
-  const dobDate = new Date(dob)
-
   const [allItemsExpanded, toggleAllItemsExpanded] = useState(true)
   const { formatMessage } = useLocale()
-  const {
-    options: otherParentOptions,
-    loading: loadingSpouseName,
-  } = useOtherParentOptions()
 
   const statefulOtherParentConfirmed = getValueViaPath(
     application.answers,
@@ -58,6 +38,7 @@ const ReadOnlyReview: FC<{ application: Application }> = ({ application }) => {
     'usePrivatePensionFund',
   ) as ValidRadioAnswer
 
+  const dob = getExpectedDateOfBirth(application)
   const { data, error, loading } = useQuery(getEstimatedPayments, {
     variables: {
       input: {
@@ -74,6 +55,10 @@ const ReadOnlyReview: FC<{ application: Application }> = ({ application }) => {
       },
     },
   })
+  if (!dob) {
+    return null
+  }
+  const dobDate = new Date(dob)
 
   // TODO: This will also come from somewhere in the external data
   const otherParentPeriods: Period[] = [

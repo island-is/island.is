@@ -1,9 +1,8 @@
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Bullet, BulletList } from '@island.is/island-ui/core'
-import { useLocale } from 'libs/localization/src'
+import { useLocale } from '@island.is/localization'
 import { mm } from '../../lib/messages'
-import { escapeGrid } from '@island.is/island-ui/utils'
 
 const ConclusionSectionImage: FC<FieldBaseProps> = () => {
   const { formatMessage } = useLocale()
