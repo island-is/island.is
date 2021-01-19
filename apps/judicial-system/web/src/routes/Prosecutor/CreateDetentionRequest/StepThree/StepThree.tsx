@@ -17,10 +17,10 @@ import {
   CaseCustodyRestrictions,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import { isNextDisabled } from '../../../../utils/stepHelper'
+import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
-import { FormFooter } from '../../../../shared-components/FormFooter'
-import * as Constants from '../../../../utils/constants'
+import { FormFooter } from '@island.is/judicial-system-web/src/shared-components/FormFooter'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
@@ -42,9 +42,10 @@ import {
   getTimeFromDate,
   setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import BlueBox from '../../../../shared-components/BlueBox/BlueBox'
+import BlueBox from '@island.is/judicial-system-web/src/shared-components/BlueBox/BlueBox'
 import parseISO from 'date-fns/parseISO'
-import TimeInputField from '../../../../shared-components/TimeInputField/TimeInputField'
+import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
+import { formatDate } from '@island.is/judicial-system/formatters'
 
 interface CaseData {
   case?: Case
@@ -206,12 +207,16 @@ export const StepThree: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.PROSECUTOR}
+      activeSection={
+        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
+      }
       activeSubSection={
         ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_THREE
       }
       isLoading={loading}
       notFound={data?.case === undefined}
+      decision={workingCase?.decision}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>
@@ -366,6 +371,19 @@ export const StepThree: React.FC = () => {
                 Tegund og gildistími{' '}
                 <Tooltip text="Hér er hægt að velja um gæsluvarðhald eða gæsluvarðhald með farbanni til vara. Sé farbann til vara valið, endurspeglar valið dómkröfurnar á næstu síðu." />
               </Text>
+              {workingCase.parentCase && (
+                <Box marginTop={1}>
+                  <Text>
+                    Fyrri gæsla var/er til{' '}
+                    <Text as="span" fontWeight="semiBold">
+                      {formatDate(
+                        workingCase.parentCase.custodyEndDate,
+                        'PPPPp',
+                      )?.replace('dagur,', 'dagsins')}
+                    </Text>
+                  </Text>
+                </Box>
+              )}
             </Box>
             <BlueBox>
               <Box marginBottom={2}>
