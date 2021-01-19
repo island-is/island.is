@@ -126,6 +126,7 @@ export interface Case {
   prosecutorAppealAnnouncement?: string
   judge?: User
   parentCase?: Case
+  childCase?: Case
   notifications?: Notification[]
 }
 
