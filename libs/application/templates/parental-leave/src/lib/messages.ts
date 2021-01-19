@@ -829,101 +829,101 @@ export const mm: MessageDir = {
   reviewScreen: defineMessages({
     titleInReview: {
       id: 'pl.application:review.titleInReview',
-      defaultMessage: 'Your application is in review',
+      defaultMessage: 'Umsókn þín er í skoðun',
       description: 'Your application is in review',
     },
     titleApproved: {
       id: 'pl.application:review.titleApproved',
-      defaultMessage: 'Your application is in approved',
+      defaultMessage: 'Umsókn þín er samþykkt',
       description: 'Your application is in approved',
     },
     desc: {
       id: 'pl.application:review.desc',
-      defaultMessage: 'Below are the steps that will happen next.',
+      defaultMessage: 'Hér að neðan eru skrefin sem gerast næst.',
       description: 'Below are the steps that will happen next.',
     },
     descReview: {
       id: 'pl.application:review.desc',
-      defaultMessage: 'Below is your submitted application.',
+      defaultMessage: 'Hér að neðan er umsókn þín sem þú sendir inn.',
       description: 'Below is your submitted application.',
     },
     buttonsView: {
       id: 'pl.application:review.desc',
-      defaultMessage: 'View application',
+      defaultMessage: 'Skoða forrit',
       description: 'View application',
     },
     buttonsViewProgress: {
       id: 'pl.application:review.desc',
-      defaultMessage: 'View progress',
+      defaultMessage: 'Skoða framfarir',
       description: 'View progress',
     },
     buttonsEdit: {
       id: 'pl.application:review.desc',
-      defaultMessage: 'Edit / Add periods',
+      defaultMessage: 'Breyta / bæta við tímabilum',
       description: 'Edit or add periods to the application',
     },
     editApplicationModalTitle: {
       id: 'pl.application:review.edit.modal.title',
-      defaultMessage: 'Edit application?',
+      defaultMessage: 'Breyta umsókn?',
       description: 'Edit application?',
     },
     editApplicationModalDesc: {
       id: 'pl.application:review.edit.modal.desc',
       defaultMessage:
-        'If you continue to edit your submitted application, then some or all of the approvals will have to be repeated.',
+        'Ef þú heldur áfram að breyta umsókn þinni, þá verður að endurtaka sumar eða allar samþykktirnar.',
       description:
         'If you continue to edit your submitted application, then some or all of the approvals will have to be repeated.',
     },
     editApplicationModalAria: {
       id: 'pl.application:review.edit.modal.aria',
       defaultMessage:
-        'A modal dialog to confrim if you want to edit your application.',
+        'Venjulegur valmynd til að staðfesta hvort þú viljir breyta forritinu.',
       description:
-        'A modal dialog to confrim if you want to edit your application.',
+        'A modal dialog to confirm if you want to edit your application.',
     },
     editApplicationModalConfirmButton: {
       id: 'pl.application:review.edit.modal.confirmButton',
-      defaultMessage: 'Continue',
+      defaultMessage: 'Haltu áfram',
       description: 'Continue',
     },
     editApplicationModalCancelButton: {
       id: 'pl.application:review.edit.modal.cancelButton',
-      defaultMessage: 'Cancel',
+      defaultMessage: 'Hætta við',
       description: 'Cancel',
     },
     otherParentTitle: {
       id: 'pl.application:review.otherParent.title',
-      defaultMessage: 'Other parent approves extra time',
+      defaultMessage: 'Annað foreldri samþykkir framlengingu',
       description: 'Other parent approves extra time',
     },
     otherParentDesc: {
       id: 'pl.application:review.otherParent.description',
       defaultMessage:
-        'The other parent will need to approve the extra days you’ve requested.',
+        'Hitt foreldrið þarf að samþykkja aukadagana sem þú hefur beðið um.',
       description:
         'The other parent will need to approve the extra days you’ve requested.',
     },
     employerTitle: {
       id: 'pl.application:review.employer.title',
-      defaultMessage: 'Employer approves your leave',
+      defaultMessage: 'Vinnuveitandi samþykkir leyfi þitt',
       description: 'Employer approves your leave',
     },
     employerDesc: {
       id: 'pl.application:review.employer.description',
       defaultMessage:
-        'Your employer will confirm the dates of your parental leave.',
+        'Vinnuveitandi þinn mun staðfesta dagsetningar foreldraorlofs þíns.',
       description:
         'Your employer will confirm the dates of your parental leave.',
     },
     deptTitle: {
       id: 'pl.application:review.employer.title',
-      defaultMessage: 'Vinnumálastofnun approves application',
+      defaultMessage: 'Vinnumálastofnun samþykkir umsókn',
       description: 'Vinnumálastofnun approves application',
     },
     deptDesc: {
       id: 'pl.application:review.employer.description',
       defaultMessage:
-        'Vinnumálastofnun will review and approve your application.',
+        'Vinnumálastofnun mun fara yfir og samþykkja umsókn þína.',
       description: 'Vinnumálastofnun will review and approve your application.',
     },
   }),
