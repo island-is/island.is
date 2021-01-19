@@ -35,7 +35,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
   )
 
   return (
-    <Box>
+    <Box marginTop={[0, 0, 1]}>
       <Stack space={2}>
         <FieldDescription
           description={formatText(
@@ -145,23 +145,25 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
           ]}
         />
         {entitlement === YES && (
-          <Input
-            id={'formerInsurance.additionalInformation'}
-            name={'formerInsurance.additionalInformation'}
-            label={formatText(
-              m.formerInsuranceAdditionalInformation,
-              application,
-              formatMessage,
-            )}
-            placeholder={formatText(
-              m.formerInsuranceAdditionalInformationPlaceholder,
-              application,
-              formatMessage,
-            )}
-            ref={register}
-            disabled={!isEditable}
-            textarea={true}
-          />
+          <Box marginBottom={[2, 2, 4]}>
+            <Input
+              id={'formerInsurance.additionalInformation'}
+              name={'formerInsurance.additionalInformation'}
+              label={formatText(
+                m.formerInsuranceAdditionalInformation,
+                application,
+                formatMessage,
+              )}
+              placeholder={formatText(
+                m.formerInsuranceAdditionalInformationPlaceholder,
+                application,
+                formatMessage,
+              )}
+              ref={register}
+              disabled={!isEditable}
+              textarea={true}
+            />
+          </Box>
         )}
       </Stack>
     </Box>
