@@ -4,11 +4,12 @@ import React from 'react'
 import ContentWrapper from '../components/Layout/ContentWrapper'
 import { isLoggedIn } from './../utils/auth.utils'
 import { useSession } from 'next-auth/client'
+import { SessionInfo } from '../entities/common/SessionInfo'
 
 const Home: React.FC = () => {
   const [session, loading] = useSession()
 
-  if (!isLoggedIn(session, loading)) {
+  if (!isLoggedIn((session as unknown) as SessionInfo, loading)) {
     return (
       <ContentWrapper>
         <div className="home__logged-out">
