@@ -37,6 +37,7 @@ interface CCase extends TCase {
   state: CaseState
   prosecutorId: string
   judgeId: string
+  parentCaseId: string
 }
 
 beforeAll(async () => {
@@ -202,9 +203,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.caseFacts || null).toBe(caseTwo.caseFacts || null)
   expect(caseOne.legalArguments || null).toBe(caseTwo.legalArguments || null)
   expect(caseOne.comments || null).toBe(caseTwo.comments || null)
-  expect(caseOne.prosecutorId || null).toStrictEqual(
-    caseTwo.prosecutorId || null,
-  )
+  expect(caseOne.prosecutorId || null).toBe(caseTwo.prosecutorId || null)
   expect(caseOne.prosecutor || null).toStrictEqual(caseTwo.prosecutor || null)
   expect(caseOne.courtCaseNumber || null).toBe(caseTwo.courtCaseNumber || null)
   expect(caseOne.courtDate || null).toBe(caseTwo.courtDate || null)
@@ -240,8 +239,10 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.prosecutorAppealAnnouncement || null).toBe(
     caseTwo.prosecutorAppealAnnouncement || null,
   )
-  expect(caseOne.judgeId || null).toStrictEqual(caseTwo.judgeId || null)
+  expect(caseOne.judgeId || null).toBe(caseTwo.judgeId || null)
   expect(caseOne.judge || null).toStrictEqual(caseTwo.judge || null)
+  expect(caseOne.parentCaseId || null).toBe(caseTwo.parentCaseId || null)
+  expect(caseOne.parentCase || null).toStrictEqual(caseTwo.parentCase || null)
 }
 
 describe('User', () => {
@@ -592,8 +593,6 @@ describe('Case', () => {
           caseFacts: dbCase.caseFacts,
           legalArguments: dbCase.legalArguments,
           parentCaseId: dbCase.id,
-          judgeId: dbCase.judgeId,
-          prosecutorId: dbCase.prosecutorId,
         } as CCase)
       })
   })
