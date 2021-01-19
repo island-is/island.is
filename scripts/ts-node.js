@@ -9,7 +9,17 @@
 //
 //      yarn ts-node
 
+const tsconfig = require('../tsconfig.base.json')
+
 require('ts-node').register({
-  compilerOptions: { module: 'commonjs', esModuleInterop: true },
+  compilerOptions: {
+    ...tsconfig.compilerOptions,
+    module: 'commonjs',
+    esModuleInterop: true,
+  },
+  transpileOnly: true,
 })
-require('tsconfig-paths').register()
+require('tsconfig-paths').register({
+  baseUrl: tsconfig.compilerOptions.baseUrl,
+  paths: tsconfig.compilerOptions.paths,
+})

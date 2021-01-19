@@ -16,8 +16,7 @@ import {
   ButtonTypes,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
-import { FixedNav } from '@island.is/web/components'
-import { SearchInput } from '../'
+import { FixedNav, SearchInput } from '@island.is/web/components'
 import { LanguageToggler } from '../LanguageToggler'
 import { Menu } from '../Menu/Menu'
 

@@ -11,7 +11,6 @@ import {
 } from '@island.is/island-ui/core'
 import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
-import { MD5 } from 'crypto-js'
 import Cookies from 'js-cookie'
 import * as Sentry from '@sentry/node'
 import { RewriteFrames } from '@sentry/integrations'
@@ -44,6 +43,7 @@ import {
 } from '../utils/processMenuData'
 import { Locale } from '../i18n/I18n'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
+import { stringHash } from '@island.is/web/utils/stringHash'
 
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
@@ -158,7 +158,9 @@ const Layout: NextComponentType<
     },
   ]
 
-  const alertBannerId = MD5(JSON.stringify(alertBannerContent)).toString()
+  const alertBannerId = `alert-${stringHash(
+    JSON.stringify(alertBannerContent),
+  )}`
 
   return (
     <GlobalContextProvider namespace={namespace}>
@@ -254,7 +256,6 @@ const Layout: NextComponentType<
             }}
           />
         )}
-
         <PageLoader />
         <MenuTabsContext.Provider
           value={{

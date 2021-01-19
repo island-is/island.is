@@ -40,7 +40,7 @@ import { NationalIdGuard } from '../access/national-id-guard'
 // @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('resources')
-@Controller()
+@Controller('backend')
 export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 

@@ -13,6 +13,9 @@ export interface RequiredField {
 export enum Sections {
   PROSECUTOR = 0,
   JUDGE = 1,
+  // We skip 2 because that step has the ruling, i.e. the SignedVerdictPage, which has no subsections.
+  EXTENSION = 3,
+  JUDGE_EXTENSION = 4,
 }
 
 export enum ProsecutorSubsections {
