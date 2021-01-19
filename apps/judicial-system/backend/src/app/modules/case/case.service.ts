@@ -150,6 +150,7 @@ export class CaseService {
         { model: User, as: 'prosecutor' },
         { model: User, as: 'judge' },
         { model: Case, as: 'parentCase' },
+        { model: Case, as: 'childCase' },
       ],
     })
   }
@@ -163,6 +164,7 @@ export class CaseService {
         { model: User, as: 'prosecutor' },
         { model: User, as: 'judge' },
         { model: Case, as: 'parentCase' },
+        { model: Case, as: 'childCase' },
       ],
     })
   }

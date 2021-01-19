@@ -4,6 +4,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasOne,
   Model,
   Table,
   UpdatedAt,
@@ -360,4 +361,8 @@ export class Case extends Model<Case> {
   @BelongsTo(() => Case, 'parentCaseId')
   @ApiProperty({ type: Case })
   parentCase: Case
+
+  @HasOne(() => Case, 'parentCaseId')
+  @ApiProperty({ type: Case })
+  childCase: Case
 }
