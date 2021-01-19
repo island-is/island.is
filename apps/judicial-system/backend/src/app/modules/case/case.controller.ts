@@ -323,6 +323,10 @@ export class CaseController {
   async extend(@Param('id') id: string): Promise<Case> {
     const existingCase = await this.findCaseById(id)
 
+    if (existingCase.parentCaseId) {
+      return this.findCaseById(existingCase.parentCaseId)
+    }
+
     return this.caseService.extend(existingCase)
   }
 }
