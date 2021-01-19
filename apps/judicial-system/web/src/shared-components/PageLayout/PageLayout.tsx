@@ -171,11 +171,7 @@ export const PageLayout: FC<PageProps> = ({
                   activeSection === Sections.EXTENSION ||
                   activeSection === Sections.JUDGE_EXTENSION
                     ? sections
-                    : sections.filter((item, index) => {
-                        if (index <= 2) {
-                          return item
-                        }
-                      })
+                    : sections.filter((_, index) => index <= 2)
                 }
                 formName="Gæsluvarðhald"
                 activeSection={activeSection}

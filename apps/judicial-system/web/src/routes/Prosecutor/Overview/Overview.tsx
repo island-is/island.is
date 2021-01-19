@@ -15,9 +15,7 @@ import Modal from '../../../shared-components/Modal/Modal'
 import {
   formatDate,
   capitalize,
-  formatNationalId,
   laws,
-  formatGender,
 } from '@island.is/judicial-system/formatters'
 import { parseTransition } from '../../../utils/formatters'
 import { FormFooter } from '../../../shared-components/FormFooter'
