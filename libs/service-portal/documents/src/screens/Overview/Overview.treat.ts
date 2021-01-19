@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { themeUtils } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const selectWrapper = style({
   width: '100%',
@@ -11,4 +11,8 @@ export const selectWrapper = style({
       width: '35%',
     },
   }),
+})
+
+export const tableHeading = style({
+  boxShadow: `inset 0px -1px 0px ${theme.color.blue200}`,
 })

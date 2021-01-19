@@ -85,7 +85,7 @@ export function buildExternalDataProvider(data: {
 
 export function buildDataProviderItem(data: {
   id: string
-  type: string
+  type: string | undefined
   title: MessageDescriptor | string
   subTitle?: MessageDescriptor | string
   source?: string

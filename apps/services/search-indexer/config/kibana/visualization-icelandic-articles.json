@@ -33,7 +33,7 @@
               {
                 "input": {
                   "language": "kuery",
-                  "query": "type:\"webArticle\" AND _index: \"island-is-v*\" "
+                  "query": "type:\"webArticle\" AND _index: \"island-is-*\" "
                 },
                 "label": "Icelandic articles"
               }
