@@ -42,7 +42,7 @@ const FormMultiField: FC<{
       )}
       <Box width="full" marginTop={4}>
         <Stack space={space}>
-          {children.map((field, index) => {
+          {children.map((field) => {
             const isHalfColumn =
               !IGNORED_HALF_TYPES.includes(field.type) &&
               field?.width === 'half'

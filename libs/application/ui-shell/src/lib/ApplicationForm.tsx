@@ -7,13 +7,16 @@ import {
   Form,
   Schema,
 } from '@island.is/application/core'
-import { FormShell } from './FormShell'
 import {
   getApplicationTemplateByTypeId,
   getApplicationUIFields,
 } from '@island.is/application/template-loader'
+import { useLocale } from '@island.is/localization'
+
+import { FormShell } from './FormShell'
 import { FieldProvider, useFields } from '../components/FieldContext'
 import { NotFound } from './NotFound'
+import { m } from '../lib/messages'
 
 function isOnProduction(): boolean {
   // TODO detect better when the application system is on production
@@ -32,16 +35,17 @@ const ApplicationLoader: FC<{
     },
     skip: !applicationId,
   })
-
   const application = data?.getApplication
 
   if (!applicationId || error) {
     return <NotFound />
   }
+
   // TODO we need better loading states
   if (loading) {
     return null
   }
+
   return (
     <ShellWrapper
       application={application}
@@ -57,6 +61,7 @@ const ShellWrapper: FC<{
   const [dataSchema, setDataSchema] = useState<Schema>()
   const [form, setForm] = useState<Form>()
   const [, fieldsDispatch] = useFields()
+  const { formatMessage } = useLocale()
 
   useEffect(() => {
     async function populateForm() {
@@ -77,9 +82,7 @@ const ShellWrapper: FC<{
             )
             const role = template.mapUserToRole(nationalRegistryId, application)
             if (!role) {
-              throw new Error(
-                'Logged in user does not have a role in this application state',
-              )
+              throw new Error(formatMessage(m.userRoleError))
             }
             const currentRole = stateInformation.roles.find(
               (r) => r.id === role,

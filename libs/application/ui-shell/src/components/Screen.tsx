@@ -30,6 +30,11 @@ import {
 } from '@island.is/application/graphql'
 import deepmerge from 'deepmerge'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
+import { useLocale } from '@island.is/localization'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
+
+import ScreenFooter from './ScreenFooter'
 import { FormScreen, ResolverContext, BeforeSubmitCallback } from '../types'
 import FormMultiField from './FormMultiField'
 import FormField from './FormField'
@@ -37,10 +42,7 @@ import { resolver } from '../validation/resolver'
 import FormRepeater from './FormRepeater'
 import FormExternalDataProvider from './FormExternalDataProvider'
 import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
-import { useLocale } from '@island.is/localization'
-import ScreenFooter from './ScreenFooter'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
+import { m } from '../lib/messages'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -58,16 +60,7 @@ type ScreenProps = {
 }
 
 function handleError(error: string, formatMessage: MessageFormatter): void {
-  toast.error(
-    formatMessage(
-      {
-        id: 'application.system:submit.error',
-        defaultMessage: 'Eitthvað fór úrskeiðis: {error}',
-        description: 'Error message on submit',
-      },
-      { error },
-    ),
-  )
+  toast.error(formatMessage(m.updateOrSubmitError, { error }))
 }
 
 const Screen: FC<ScreenProps> = ({

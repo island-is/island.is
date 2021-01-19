@@ -7,6 +7,7 @@ import useAuth from '../hooks/useAuth'
 export const Application = () => {
   const { id } = useParams()
   const { userInfo } = useAuth()
+
   useNamespaces([
     'dl.application',
     'pl.application',

@@ -232,7 +232,7 @@ const Review: FC<FieldBaseProps> = ({
               <Box marginTop={3} />
               <GridRow>
                 <GridColumn span="12/12">
-                  <Box marginTop={1} marginBottom={2} marginLeft={4}>
+                  <Box marginTop={1} marginBottom={2}>
                     <Text variant="h5">
                       {formatMessage(m.privatePensionFundName)}
                     </Text>

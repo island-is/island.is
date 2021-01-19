@@ -18,7 +18,9 @@ import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
+
 import { verifyExternalData } from '../utils'
+import { m } from '../lib/messages'
 
 const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
@@ -68,6 +70,7 @@ const FormExternalDataProvider: FC<{
   externalDataProvider,
   formValue,
 }) => {
+  const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const [updateExternalData] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA, {
     onCompleted(responseData: UpdateApplicationExternalDataResponse) {
@@ -110,7 +113,6 @@ const FormExternalDataProvider: FC<{
     }
   }
 
-  const label = 'Ég samþykki'
   return (
     <Box>
       <Box
@@ -123,9 +125,7 @@ const FormExternalDataProvider: FC<{
         <Box marginRight={1}>
           <Icon icon="download" size="medium" color="blue400" type="outline" />
         </Box>
-        <Text variant="h4">
-          Eftirfarandi gögn verða sótt rafrænt með þínu samþykki
-        </Text>
+        <Text variant="h4">{formatMessage(m.externalDataTitle)}</Text>
       </Box>
       <Box marginBottom={5}>
         {dataProviders.map((provider) => (
@@ -160,7 +160,7 @@ const FormExternalDataProvider: FC<{
                   }}
                   checked={value}
                   name={`${id}`}
-                  label={label}
+                  label={formatMessage(m.externalDataAgreement)}
                   value={id}
                 />
               </Box>

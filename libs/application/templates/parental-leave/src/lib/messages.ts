@@ -4,7 +4,7 @@ export const m = defineMessages({
   applicationName: {
     id: 'pl.application:application.name',
     defaultMessage: 'Umsókn um fæðingarorlof',
-    description: 'Some description',
+    description: 'Application for maternity leave',
   },
   applicantSection: {
     id: 'pl.application:applicant.section',
@@ -311,7 +311,7 @@ export const m = defineMessages({
   introductionProvider: {
     id: 'pl.application:introduction.provider',
     defaultMessage: 'Sækja gögn',
-    description: 'Some description',
+    description: 'External Data',
   },
   dateOfBirthTitle: {
     id: 'pl.application:dateOfBirth.title',
@@ -338,12 +338,12 @@ export const m = defineMessages({
   expectedDateOfBirthSubtitle: {
     id: 'pl.application:expectedDateOfBirth.subtitle',
     defaultMessage: 'Staðfesting á að það sé yfir höfuð barn á leiðinni',
-    description: 'Some description',
+    description: 'Confirmation on date of birth',
   },
   salaryTitle: {
     id: 'pl.application:salary.title',
-    defaultMessage: 'Laungreiðendaskrá',
-    description: 'Some description',
+    defaultMessage: 'Áætlaður fæðingardagur barns',
+    description: 'Estimated date of birth of a child',
   },
   salaryLabelYear: {
     id: 'pl.application:salary.label.year',
@@ -383,22 +383,22 @@ export const m = defineMessages({
   usageSubsection: {
     id: 'pl.application:usage.subsection',
     defaultMessage: 'Ráðstöfun',
-    description: 'Some description',
+    description: 'Usage',
   },
   usage: {
     id: 'pl.application:usage',
     defaultMessage: 'Hvað ætlar þú að nýta þér marga mánuði í fæðingarorlof?',
-    description: 'Some description',
+    description: 'How many months are you going to take maternity leave?',
   },
   calculationsSubsection: {
     id: 'pl.application:calculations.subsection',
     defaultMessage: 'Útreikningur',
-    description: 'Some description',
+    description: 'Calculation',
   },
   periods: {
     id: 'pl.application:periods',
     defaultMessage: 'Viltu breyta eða skipta upp tímabilinu?',
-    description: 'Some description',
+    description: 'Do you want to change or split the period?',
   },
   periodsSection: {
     id: 'pl.application:periods.section',
@@ -505,7 +505,8 @@ export const mm: MessageDir = {
       id: 'pl.application:personal.allowance.description',
       defaultMessage:
         'Hægt er að biðja um að nýta eins mikinn persónuafslátt og þú mögulega átt rétt á, eða stimpla inn ákveðið hlutfall.',
-      description: 'Translation needed',
+      description:
+        'You can ask to take advantage as much personal allowance as you may be entitled to, or stamp a rate.',
     },
     spouseTitle: {
       id: 'pl.application:personal.allowance.from.spouse.title',
@@ -798,13 +799,13 @@ export const mm: MessageDir = {
       defaultMessage:
         'Já, ég vil deila þessum upplýsingum með hinu foreldrinu.',
       description:
-        'Yes, I want to share my leave information with the other parent',
+        'Yes, I want to share my leave information with the other parent.',
     },
     noOption: {
       id: 'pl.application:shareInformation.no',
       defaultMessage:
         'Nei, ég vil ekki deila þessum upplýsingum að svo stöddu.',
-      description: 'No, I do not want to share my information',
+      description: 'No, I do not want to share my information.',
     },
   }),
   rightOfAccess: defineMessages({
@@ -860,7 +861,7 @@ export const mm: MessageDir = {
     otherParentDesc: {
       id: 'pl.application:review.otherParent.description',
       defaultMessage:
-        'The other parent will need to approve the extra days you’ve requested.',
+        'Hitt foreldrið þarf að samþykkja aukadagana sem þú hefur beðið um.',
       description:
         'The other parent will need to approve the extra days you’ve requested.',
     },
@@ -925,12 +926,13 @@ export const mm: MessageDir = {
     },
     description: {
       id: 'pl.application:finalscreen.description',
-      defaultMessage:
-        'Hitt foreldrið þarf að samþykkja umsókn þína ef þú óskaðir eftir yfirfærslu á hluta réttinda þess til þín, eða nýtingu á persónuafslætti þess. Síðan þarf vinnuveitandinn þinn að samþykkja tilhögun þína til fæðingarorlofs. Að lokum fer umsóknin á borð Fæðingarorlofssjóðs þar sem lokaúrvinnsla hennar fer fram.',
-      description:
-        'The other parent will need to approve your request to use their shared month (if you did so). Then, ' +
-        'your employer will approve your parental leave dates.' +
-        'And finally Vinnumálastofnun will review your application.',
+      defaultMessage: `Hitt foreldrið þarf að samþykkja umsókn þína ef þú óskaðir eftir yfirfærslu á
+        hluta réttinda þess til þín, eða nýtingu á persónuafslætti þess. Síðan þarf
+        vinnuveitandinn þinn að samþykkja tilhögun þína til fæðingarorlofs. Að lokum
+        fer umsóknin á borð Fæðingarorlofssjóðs þar sem lokaúrvinnsla hennar fer fram.`,
+      description: `The other parent will need to approve your request to use their shared month
+        (if you did so). Then, your employer will approve your parental leave dates.
+        And finally Vinnumálastofnun will review your application.`,
     },
   }),
 }

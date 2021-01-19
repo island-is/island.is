@@ -54,6 +54,7 @@ function createNamespace(
     }),
     {},
   )
+
   return client
     .getSpace(space)
     .then((space) => space.getEnvironment('master'))

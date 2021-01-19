@@ -51,7 +51,6 @@ export const FormShell: FC<{
 
   const { mode = FormModes.APPLYING } = state.form
   const showProgressTag = mode !== FormModes.APPLYING
-
   const currentScreen = screens[activeScreen]
   const FormLogo = form.logo
 
