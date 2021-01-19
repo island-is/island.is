@@ -31,6 +31,8 @@ beforeAll(async () => {
   jest
     .spyOn(nationalRegistryService, 'getUser')
     .mockImplementation(() => Promise.resolve(user))
+
+  Date.now = jest.fn(() => 1597760782018)
 })
 
 describe('Create Flight', () => {

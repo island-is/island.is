@@ -29,10 +29,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:documents',
           defaultMessage: 'Rafræn skjöl',
         }),
-        heading: defineMessage({
-          id: 'service.portal:services',
-          defaultMessage: 'Þjónusta',
-        }),
         path: ServicePortalPath.ElectronicDocumentsRoot,
         icon: {
           type: 'outline',
@@ -47,6 +43,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           defaultMessage: 'Umsóknir',
         }),
         path: ServicePortalPath.ApplicationIntroduction,
+
         icon: {
           type: 'outline',
           icon: 'fileTrayFull',
@@ -59,11 +56,8 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:user-info',
           defaultMessage: 'Mínar upplýsingar',
         }),
-        heading: defineMessage({
-          id: 'service.portal:my-info',
-          defaultMessage: 'Mín gögn',
-        }),
         path: ServicePortalPath.UserInfo,
+        divider: true,
         icon: {
           type: 'outline',
           icon: 'person',

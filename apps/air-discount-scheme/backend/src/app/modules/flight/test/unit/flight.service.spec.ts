@@ -112,7 +112,7 @@ describe('PublicFlightController', () => {
     })
   })
 
-  describe('countFlightLegsByNationalId', () => {
+  describe('countThisYearsFlightLegsByNationalId', () => {
     const nationalId = '1234567890'
 
     it('should return 2 unused flights for 2020', async () => {
@@ -121,7 +121,9 @@ describe('PublicFlightController', () => {
         .spyOn(flightModel as any, 'count')
         .mockImplementation(() => Promise.resolve(0))
 
-      const result = await flightService.countFlightLegsByNationalId(nationalId)
+      const result = await flightService.countThisYearsFlightLegsByNationalId(
+        nationalId,
+      )
 
       expect(result).toEqual({
         used: 0,
@@ -136,7 +138,9 @@ describe('PublicFlightController', () => {
         .spyOn(flightModel as any, 'count')
         .mockImplementation(() => Promise.resolve(0))
 
-      const result = await flightService.countFlightLegsByNationalId(nationalId)
+      const result = await flightService.countThisYearsFlightLegsByNationalId(
+        nationalId,
+      )
 
       expect(result).toEqual({
         used: 0,
@@ -151,7 +155,9 @@ describe('PublicFlightController', () => {
         .spyOn(flightModel as any, 'count')
         .mockImplementation(() => Promise.resolve(4))
 
-      const result = await flightService.countFlightLegsByNationalId(nationalId)
+      const result = await flightService.countThisYearsFlightLegsByNationalId(
+        nationalId,
+      )
 
       expect(result).toEqual({
         used: 4,

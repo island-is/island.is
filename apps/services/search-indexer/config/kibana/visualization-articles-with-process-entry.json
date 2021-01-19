@@ -31,14 +31,14 @@
               {
                 "input": {
                   "language": "kuery",
-                  "query": "type : \"webArticle\" and _index : \"island-is-v*\" "
+                  "query": "type : \"webArticle\" and _index : \"island-is-*\" "
                 },
                 "label": "Icelandic articles"
               },
               {
                 "input": {
                   "language": "kuery",
-                  "query": "type : \"webArticle\" and _index : \"island-en-v*\"  "
+                  "query": "type : \"webArticle\" and _index : \"island-en-*\"  "
                 },
                 "label": "English articles"
               }

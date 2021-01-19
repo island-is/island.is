@@ -2,8 +2,12 @@ import { Injectable } from '@nestjs/common'
 
 import { User } from '@island.is/auth-nest-tools'
 
-import { DrivingLicense } from './drivingLicense.type'
-import { DrivingLicenseApi } from './client'
+import {
+  DrivingLicense,
+  DrivingLicenseType,
+  PenaltyPointStatus,
+} from './drivingLicense.type'
+import { DrivingLicenseApi, DrivingLicenseResponse } from './client'
 
 @Injectable()
 export class DrivingLicenseService {
@@ -12,21 +16,71 @@ export class DrivingLicenseService {
   async getDrivingLicense(
     nationalId: User['nationalId'],
   ): Promise<DrivingLicense> {
-    const drivingLicense = await this.drivingLicenseApi.getDrivingLicense(
+    const drivingLicenses = await this.drivingLicenseApi.getDrivingLicenses(
       nationalId,
     )
 
+    if (drivingLicenses.length <= 0) {
+      return null
+    }
+
+    drivingLicenses.sort(
+      (a: DrivingLicenseResponse, b: DrivingLicenseResponse) =>
+        new Date(b.utgafuDagsetning).getTime() -
+        new Date(a.utgafuDagsetning).getTime(),
+    )
+    const activeDrivingLicense = {
+      erBradabirgda: false, // TODO this should be removed
+      ...drivingLicenses[0],
+    }
+
     return {
-      id: drivingLicense.id,
-      issued: drivingLicense.utgafuDagsetning,
-      expires: drivingLicense.gildirTil,
-      isProvisional: drivingLicense.erBradabirgda,
-      eligibilities: drivingLicense.rettindi.map((eligibility) => ({
-        id: eligibility.nr,
+      id: activeDrivingLicense.id,
+      issued: activeDrivingLicense.utgafuDagsetning,
+      expires: activeDrivingLicense.gildirTil,
+      isProvisional: activeDrivingLicense.erBradabirgda,
+      eligibilities: activeDrivingLicense.rettindi.map((eligibility) => ({
+        id: eligibility.nr.trim(),
         issued: eligibility.utgafuDags,
         expires: eligibility.gildirTil,
         comment: eligibility.aths,
       })),
+    }
+  }
+
+  async getDeprivationTypes(): Promise<DrivingLicenseType[]> {
+    const types = await this.drivingLicenseApi.getDeprivationTypes()
+    return types.map((type) => ({
+      id: type.id.toString(),
+      name: type.heiti,
+    }))
+  }
+
+  async getEntitlementTypes(): Promise<DrivingLicenseType[]> {
+    const types = await this.drivingLicenseApi.getEntitlementTypes()
+    return types.map((type) => ({
+      id: type.nr.trim(),
+      name: type.heiti || '',
+    }))
+  }
+
+  async getRemarkTypes(): Promise<DrivingLicenseType[]> {
+    const types = await this.drivingLicenseApi.getRemarkTypes()
+    return types.map((type) => ({
+      id: type.nr,
+      name: type.heiti,
+    }))
+  }
+
+  async getPenaltyPointStatus(
+    nationalId: User['nationalId'],
+  ): Promise<PenaltyPointStatus> {
+    const status = await this.drivingLicenseApi.getPenaltyPointStatus(
+      nationalId,
+    )
+    return {
+      nationalId,
+      isPenaltyPointsOk: status.iLagi,
     }
   }
 }

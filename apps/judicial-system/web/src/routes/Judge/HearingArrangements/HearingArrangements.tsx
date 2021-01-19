@@ -30,7 +30,6 @@ import {
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import parseISO from 'date-fns/parseISO'
-import isValid from 'date-fns/isValid'
 import {
   JudgeSubsections,
   Sections,
@@ -104,7 +103,7 @@ export const HearingArrangements: React.FC = () => {
   }
 
   useEffect(() => {
-    document.title = 'Fyrirtökutími - Réttarvörslugátt'
+    document.title = 'Fyrirtaka - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
@@ -178,7 +177,7 @@ export const HearingArrangements: React.FC = () => {
         <>
           <Box marginBottom={10}>
             <Text as="h1" variant="h1">
-              Fyrirtökutími
+              Fyrirtaka
             </Text>
           </Box>
           {workingCase.state === CaseState.DRAFT && (

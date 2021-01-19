@@ -19,7 +19,7 @@ import { NationalIdGuard } from '../access/national-id-guard'
 // @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('client-grant-type')
-@Controller('client-grant-type')
+@Controller('backend/client-grant-type')
 export class ClientGrantTypeController {
   constructor(private readonly clientsService: ClientsService) {}
 

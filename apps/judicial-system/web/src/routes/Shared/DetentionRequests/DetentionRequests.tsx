@@ -148,8 +148,8 @@ export const DetentionRequests: React.FC = () => {
       history.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${c.id}`)
     } else if (isJudge) {
       history.push(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
-    } else if (c.isCourtDateInThePast) {
-      history.push(`${Constants.STEP_THREE_ROUTE}/${c.id}`)
+    } else if (c.state === CaseState.RECEIVED && c.isCourtDateInThePast) {
+      history.push(`${Constants.STEP_FIVE_ROUTE}/${c.id}`)
     } else {
       history.push(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
     }
@@ -249,7 +249,7 @@ export const DetentionRequests: React.FC = () => {
                     LÖKE málsnr.
                   </Text>
                 </th>
-                <th className={styles.th}>
+                <th className={cn(styles.th, styles.largeColumn)}>
                   <Text as="span" fontWeight="regular">
                     <Box
                       component="button"
@@ -335,8 +335,18 @@ export const DetentionRequests: React.FC = () => {
                   <td className={styles.td}>
                     <Text as="span">{c.policeCaseNumber || '-'}</Text>
                   </td>
-                  <td className={cn(styles.td, 'flexDirectionCol')}>
-                    <Text>{c.accusedName || '-'}</Text>
+                  <td
+                    className={cn(
+                      styles.td,
+                      styles.largeColumn,
+                      'flexDirectionCol',
+                    )}
+                  >
+                    <Text>
+                      <Box as="span" className={styles.accusedName}>
+                        {c.accusedName || '-'}
+                      </Box>
+                    </Text>
                     <Text>
                       {c.accusedNationalId && (
                         <Text as="span" variant="small" color="dark400">

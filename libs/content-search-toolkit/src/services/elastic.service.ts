@@ -23,6 +23,7 @@ import {
   GroupedRankEvaluationResponse,
 } from '../types'
 import {
+  DeleteByQueryResponse,
   GetByIdResponse,
   RankEvaluationResponse,
   SearchResponse,
@@ -267,16 +268,18 @@ export class ElasticService {
     })
   }
 
-  async deleteAllExcept(index: string, excludeIds: Array<string>) {
+  // remove all documents that have not been updated in the last X minutes
+  async deleteAllDocumentsNotVeryRecentlyUpdated(index: string) {
     const client = await this.getClient()
 
-    return client.delete_by_query({
+    return client.delete_by_query<DeleteByQueryResponse>({
       index: index,
       body: {
         query: {
-          bool: {
-            // eslint-disable-next-line @typescript-eslint/camelcase
-            must_not: excludeIds.map((id) => ({ match: { _id: id } })),
+          range: {
+            dateUpdated: {
+              lt: 'now-30m', // older than 30 minutes from now
+            },
           },
         },
       },
@@ -321,9 +324,9 @@ export class ElasticService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static handleError(message: string, context: any, error: any): never {
+  static handleError(message: string, context: any, error: Error): never {
     ElasticService.logError(message, context, error)
-    throw new Error(message)
+    throw error
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

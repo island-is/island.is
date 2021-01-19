@@ -12,6 +12,7 @@ import {
   articleSubgroup,
   featured,
   genericPage,
+  referenceLink,
 } from './factories'
 import orderBy from 'lodash/orderBy'
 import { Article } from '../../types'
@@ -59,7 +60,7 @@ export const store = createStore(() => {
 
   const homepage = createHomepage({
     featuredThings: featured.list(3, {
-      thing: () => faker.random.arrayElement(articles),
+      thing: () => referenceLink(),
     }),
   })
 

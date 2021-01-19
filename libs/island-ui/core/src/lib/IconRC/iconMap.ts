@@ -27,6 +27,7 @@ export type Icon =
   | 'download'
   | 'ellipse'
   | 'fileTrayFull'
+  | 'filter'
   | 'heart'
   | 'home'
   | 'informationCircle'
@@ -79,6 +80,7 @@ export default {
     download: 'Download',
     ellipse: 'Ellipse',
     fileTrayFull: 'FileTrayFull',
+    filter: 'Filter',
     heart: 'Heart',
     home: 'Home',
     informationCircle: 'InformationCircle',
@@ -130,6 +132,7 @@ export default {
     download: 'DownloadOutline',
     ellipse: 'EllipseOutline',
     fileTrayFull: 'FileTrayFullOutline',
+    filter: 'FilterOutline',
     heart: 'HeartOutline',
     home: 'HomeOutline',
     informationCircle: 'InformationCircleOutline',

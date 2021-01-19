@@ -52,6 +52,8 @@ export enum CaseCustodyRestrictions {
   VISITAION = 'VISITAION',
   COMMUNICATION = 'COMMUNICATION',
   MEDIA = 'MEDIA',
+  ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION = 'ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION',
+  ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT = 'ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT',
 }
 
 export enum CaseAppealDecision {
@@ -117,6 +119,7 @@ export interface Case {
   custodyEndDate?: string
   isCustodyEndDateInThePast?: boolean
   custodyRestrictions?: CaseCustodyRestrictions[]
+  otherRestrictions?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
@@ -186,6 +189,7 @@ export interface UpdateCase {
   decision?: CaseDecision
   custodyEndDate?: string
   custodyRestrictions?: CaseCustodyRestrictions[]
+  otherRestrictions?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision

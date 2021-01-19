@@ -5,7 +5,6 @@ import { hashElement } from 'folder-hash'
 import {
   ContentSearchImporter,
   MappedData,
-  SearchIndexes,
   SyncOptions,
   SyncResponse,
 } from '@island.is/content-search-indexer/types'
@@ -20,6 +19,7 @@ import { ElasticService } from '@island.is/content-search-toolkit'
 import { AdgerdirPageSyncService } from './importers/adgerdirPage'
 import { MenuSyncService } from './importers/menu.service'
 import { GroupedMenuSyncService } from './importers/groupedMenu.service'
+import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -122,17 +122,17 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     /**
      * We don't want full sync to run every time we start a new pod
      * We want full sync to run once when the first pod initializes the first container
-     * and the never again until a new build is deployed
+     * and then never again until a new index is deployed
      */
     let folderHash
     if (options.syncType === 'initialize') {
-      const { elasticIndex = SearchIndexes[options.locale] } = options
+      const { elasticIndex = getElasticsearchIndex(options.locale) } = options
 
       folderHash = await this.getModelsFolderHash()
       const lastFolderHash = await this.getLastFolderHash(elasticIndex)
       if (folderHash !== lastFolderHash) {
         logger.info(
-          'Folder and index folder hash dont match, running full sync',
+          'Folder and index folder hash do not match, running full sync',
           { locale: options.locale },
         )
         cmsSyncOptions = { ...options, syncType: 'full' }
@@ -143,9 +143,12 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
         // we skip import if it is not needed
         return null
       }
+    } else if (options.syncType === 'full') {
+      cmsSyncOptions = options
+      folderHash = await this.getModelsFolderHash() // we know full will update all models so we can set the folder hash here
     } else {
       cmsSyncOptions = options
-      folderHash = ''
+      folderHash = '' // this will always be a partial update so we don't want to update folder hash
     }
 
     // gets all data that needs importing

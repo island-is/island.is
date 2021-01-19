@@ -94,6 +94,7 @@ const judgeUpdateRule = {
     'decision',
     'custodyEndDate',
     'custodyRestrictions',
+    'otherRestrictions',
     'accusedAppealDecision',
     'accusedAppealAnnouncement',
     'prosecutorAppealDecision',
