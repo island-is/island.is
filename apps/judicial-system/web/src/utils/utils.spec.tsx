@@ -568,6 +568,7 @@ describe('Step helper', () => {
         accusedNationalId: '0123456789',
         custodyEndDate: '2020-11-26T12:31:00.000Z',
         requestedCustodyEndDate: '2020-11-26T12:31:00.000Z',
+        court: 'Héraðsdómur Reykjavíkur',
         parentCase: { id: 'TEST_EXTENSION' },
       }
 
@@ -580,7 +581,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Þess er krafist að Doe, kt.012345-6789, verði með úrskurði Héraðsdóms Reykjavíkur áfram gert að sæta gæsluvarðhaldi til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
+            'Þess er krafist að Doe, kt.012345-6789, sæti áfram gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(
