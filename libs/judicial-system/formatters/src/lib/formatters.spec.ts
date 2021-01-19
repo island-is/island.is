@@ -45,7 +45,7 @@ describe('formatDate', () => {
 
     // Act
     const formattedDate = formatDate(date, 'PPPP', true)
-    console.log(formattedDate)
+
     // Assert
     expect(formattedDate).toEqual('fimmtud. 10. september 2020')
   })
