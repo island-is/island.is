@@ -28,6 +28,7 @@ import {
   RequestSignatureInput,
   SignatureConfirmationQueryInput,
   CaseQueryInput,
+  ExtendCaseInput,
 } from './dto'
 import {
   Case,
@@ -191,6 +192,23 @@ export class CaseResolver {
       AuditedAction.SEND_NOTIFICATION,
       backendApi.sendNotification(caseId, sendNotification),
       caseId,
+    )
+  }
+
+  @Mutation(() => Case, { nullable: true })
+  extendCase(
+    @Args('input', { type: () => ExtendCaseInput })
+    input: ExtendCaseInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Case> {
+    this.logger.debug(`Extending case ${input.id}`)
+
+    return this.caseAuditService.audit(
+      user.id,
+      AuditedAction.EXTEND,
+      backendApi.extendCase(input.id),
+      (theCase) => theCase.id,
     )
   }
 

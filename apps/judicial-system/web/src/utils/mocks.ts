@@ -411,12 +411,14 @@ const testCase8 = {
   prosecutorAppealDecision: null,
   prosecutorAppealAnnouncement: null,
   isCustodyEndDateInThePast: true,
-
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
   requestedDefenderName: 'Saul Goodman',
   requestedDefenderEmail: 'saul@goodman.com',
+  parentCase: {
+    custodyEndDate: '2021-01-18T19:50:08.033Z',
+  },
 }
 
 export const mockJudgeQuery = [
