@@ -67,10 +67,6 @@ export const HealthInsuranceForm: Form = buildForm({
           title: m.confirmationOfResidencyTitle,
           description: m.confirmationOfResidencyDescription,
           children: [
-            buildDividerField({
-              title: ' ',
-              color: 'transparent',
-            }),
             buildFileUploadField({
               id: 'confirmationOfResidencyDocument',
               title: '',
