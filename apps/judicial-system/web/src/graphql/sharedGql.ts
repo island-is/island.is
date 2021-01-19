@@ -62,6 +62,9 @@ export const CaseQuery = gql`
         custodyEndDate
         decision
       }
+      childCase {
+        id
+      }
       notifications {
         type
       }

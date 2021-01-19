@@ -56,20 +56,24 @@ export const SignedVerdictOverview: React.FC = () => {
   }, [workingCase, setWorkingCase, data])
 
   const handleNextButtonClick = async () => {
-    // TODO: figure out if this case has been extended and only extend if not
-    // Route to extension if the case has been extended.
-    const { data } = await extendCaseMutation({
-      variables: {
-        input: {
-          id: workingCase?.id,
-        },
-      },
-    })
-
-    if (data) {
+    if (workingCase?.childCase) {
       history.push(
-        `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${data.extendCase.id}`,
+        `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${workingCase.childCase.id}`,
       )
+    } else {
+      const { data } = await extendCaseMutation({
+        variables: {
+          input: {
+            id: workingCase?.id,
+          },
+        },
+      })
+
+      if (data) {
+        history.push(
+          `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${data.extendCase.id}`,
+        )
+      }
     }
   }
 
