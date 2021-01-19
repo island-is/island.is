@@ -30,24 +30,6 @@ export const ServiceInformation = ({
 }: ServiceInformationProps) => {
   const n = useNamespace(strings)
 
-  const XroadIdentifierText = (info: XroadInfo): string => {
-    let ret = ''
-
-    if (info.instance && info.instance.length > 0)
-      ret += `${n('XroadIdentifierInstance')}: "${info.instance}".  `
-
-    if (info.memberCode && info.memberCode.length > 0)
-      ret += `${n('XroadIdentifierMemberCode')}: "${info.memberCode}".  `
-
-    if (info.memberClass && info.memberClass.length > 0)
-      ret += `${n('XroadIdentifierMemberClass')}: "${info.memberClass}".  `
-
-    if (info.serviceCode && info.serviceCode.length > 0)
-      ret += `${n('XroadIdentifierServiceCode')}: "${info.serviceCode}".  `
-
-    return ret
-  }
-
   return (
     <Box>
       <Inline space={1}>
@@ -65,86 +47,131 @@ export const ServiceInformation = ({
       <Text variant="eyebrow" as="span" paddingTop="gutter">
         {`${n('serviceOwner')}: ${service.owner}`}
       </Text>
-      <Inline space={1}>
-        <Text variant="eyebrow" as="span" paddingTop="gutter">
-          {service &&
-            service.xroadIdentifier &&
-            service.xroadIdentifier.length > 0 &&
-            `${n('XroadIdentifierSubsystemCode')}: ${
-              service.xroadIdentifier[0].subsystemCode
-            } `}
-        </Text>
-        <Tooltip text={XroadIdentifierText(service.xroadIdentifier[0])} />
-      </Inline>
       <Text variant="intro" paddingTop="smallGutter">
         {service.description}
       </Text>
-      <Box>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/12']} paddingTop="gutter">
-            <Box
-              paddingBottom="gutter"
-              borderBottomWidth="standard"
-              borderStyle="solid"
-              borderColor="blue200"
-              marginBottom={3}
-              width="full"
-            >
-              <Text variant="eyebrow" as="span">
-                {n('data')}
-              </Text>
+      <Box
+        marginY={3}
+        borderTopWidth="standard"
+        borderStyle="solid"
+        borderColor="blue200"
+        width="full"
+      ></Box>
+      <Box background="blue100" paddingY={3} borderRadius="large">
+        {/* Xroad values */}
+        {service &&
+          service.xroadIdentifier &&
+          service.xroadIdentifier.length > 0 && (
+            <Box>
+              <Box paddingX={3}>
+                <Inline space={1}>
+                  <Text paddingTop="gutter" color="blue600">
+                    {`${n('XroadIdentifierSubsystemCode')}:`}
+                  </Text>
+                  <Text
+                    paddingTop="gutter"
+                    color="blue600"
+                    fontWeight="semiBold"
+                  >
+                    {service.xroadIdentifier[0].subsystemCode}
+                  </Text>
+                </Inline>
+              </Box>
+              <Box
+                paddingTop="smallGutter"
+                borderBottomWidth="standard"
+                borderColor="blue200"
+                paddingX={3}
+                paddingBottom="gutter"
+              >
+                <Inline space={1}>
+                  {/* instance */}
+                  <Text variant="small" color="blue600">
+                    {`${n('XroadIdentifierInstance')}:`}
+                  </Text>
+                  <Text variant="small" color="blue600" fontWeight="semiBold">
+                    {service.xroadIdentifier[0].instance}
+                  </Text>
+                  <Text variant="small" color="blue600">
+                    |
+                  </Text>
+                  {/* memberCode */}
+                  <Text variant="small" color="blue600">
+                    {`${n('XroadIdentifierMemberCode')}:`}
+                  </Text>
+                  <Text variant="small" color="blue600" fontWeight="semiBold">
+                    {service.xroadIdentifier[0].memberCode}
+                  </Text>
+                  <Text variant="small" color="blue600">
+                    |
+                  </Text>
+                  {/* memberClass */}
+                  <Text variant="small" color="blue600">
+                    {`${n('XroadIdentifierMemberClass')}:`}
+                  </Text>
+                  <Text variant="small" color="blue600" fontWeight="semiBold">
+                    {service.xroadIdentifier[0].memberClass}
+                  </Text>
+                  <Text variant="small" color="blue600">
+                    |
+                  </Text>
+                  {/* serviceCode */}
+                  <Text variant="small" color="blue600">
+                    {`${n('XroadIdentifierServiceCode')}:`}
+                  </Text>
+                  <Text variant="small" color="blue600" fontWeight="semiBold">
+                    {service.xroadIdentifier[0].serviceCode}
+                  </Text>
+                </Inline>
+              </Box>
             </Box>
-            <Inline space={1}>
-              {service.data?.map((item) => (
-                <Tag variant="white" outlined key={item}>
-                  {n(`data${capitalize(item)}`)}
-                </Tag>
-              ))}
-            </Inline>
-          </GridColumn>
-          <GridColumn span={['6/12', '6/12', '3/12']} paddingTop="gutter">
-            <Box
-              paddingBottom="gutter"
-              borderBottomWidth="standard"
-              borderStyle="solid"
-              borderColor="blue200"
-              marginBottom={3}
-              width="full"
-            >
-              <Text variant="eyebrow" as="span">
-                {n('type')}
-              </Text>
-            </Box>
-            <Inline space={1}>
-              {service.type?.map((item) => (
-                <Tag variant="white" outlined key={item}>
-                  {n(`type${capitalize(item)}`)}
-                </Tag>
-              ))}
-            </Inline>
-          </GridColumn>
-          <GridColumn span={['6/12', '6/12', '3/12']} paddingTop="gutter">
-            <Box
-              paddingBottom="gutter"
-              borderBottomWidth="standard"
-              borderStyle="solid"
-              borderColor="blue200"
-              marginBottom={3}
-              width="full"
-            >
-              <Text variant="eyebrow" as="span">
-                {n('access')}
-              </Text>
-            </Box>
-            <Inline space={1}>
-              {service.access?.map((item) => (
-                <Tag variant="white" outlined key={item}>
-                  {n(`access${capitalize(item)}`)}
-                </Tag>
-              ))}
-            </Inline>
-          </GridColumn>
-        </GridRow>
+          )}
+        <Box paddingX={3}>
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '6/12']} paddingTop="gutter">
+              <Box paddingBottom="gutter" width="full">
+                <Text variant="eyebrow" as="span" color="blue600">
+                  {n('data')}
+                </Text>
+              </Box>
+              <Inline space={1}>
+                {service.data?.map((item) => (
+                  <Tag variant="white" outlined key={item}>
+                    {n(`data${capitalize(item)}`)}
+                  </Tag>
+                ))}
+              </Inline>
+            </GridColumn>
+            <GridColumn span={['6/12', '6/12', '3/12']} paddingTop="gutter">
+              <Box paddingBottom="gutter" width="full">
+                <Text variant="eyebrow" as="span" color="blue600">
+                  {n('type')}
+                </Text>
+              </Box>
+              <Inline space={1}>
+                {service.type?.map((item) => (
+                  <Tag variant="white" outlined key={item}>
+                    {n(`type${capitalize(item)}`)}
+                  </Tag>
+                ))}
+              </Inline>
+            </GridColumn>
+            <GridColumn span={['6/12', '6/12', '3/12']} paddingTop="gutter">
+              <Box paddingBottom="gutter" width="full">
+                <Text variant="eyebrow" as="span" color="blue600">
+                  {n('access')}
+                </Text>
+              </Box>
+              <Inline space={1}>
+                {service.access?.map((item) => (
+                  <Tag variant="white" outlined key={item}>
+                    {n(`access${capitalize(item)}`)}
+                  </Tag>
+                ))}
+              </Inline>
+            </GridColumn>
+          </GridRow>
+        </Box>
       </Box>
     </Box>
   )
