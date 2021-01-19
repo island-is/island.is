@@ -44,10 +44,10 @@ describe('formatDate', () => {
     const date = '2020-09-10T09:36:57.287Z'
 
     // Act
-    const time = formatDate(date, 'PPP', true)
-
+    const formattedDate = formatDate(date, 'PPPP', true)
+    console.log(formattedDate)
     // Assert
-    expect(time).toEqual('09:36')
+    expect(formattedDate).toEqual('fimmtud. 10. september 2020')
   })
 })
 
