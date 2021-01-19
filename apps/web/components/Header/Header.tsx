@@ -16,11 +16,7 @@ import {
   ButtonTypes,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
-import {
-  FixedNav,
-  SkipToMainContent,
-  SearchInput,
-} from '@island.is/web/components'
+import { FixedNav, SearchInput } from '@island.is/web/components'
 import { LanguageToggler } from '../LanguageToggler'
 import { Menu } from '../Menu/Menu'
 
@@ -48,7 +44,6 @@ export const Header: FC<HeaderProps> = ({
   return (
     <header>
       <Hidden print={true}>
-        <SkipToMainContent />
         <FixedNav />
         <GridContainer>
           <GridRow>

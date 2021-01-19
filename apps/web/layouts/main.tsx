@@ -15,7 +15,7 @@ import Cookies from 'js-cookie'
 import * as Sentry from '@sentry/node'
 import { RewriteFrames } from '@sentry/integrations'
 import { useRouter } from 'next/router'
-import { Header, Main, PageLoader } from '@island.is/web/components'
+import { Header, Main, PageLoader, SkipToMainContent } from '../components'
 import { GET_GROUPED_MENU_QUERY, GET_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import {
@@ -234,6 +234,9 @@ const Layout: NextComponentType<
             key="twitterImage"
           />
         </Head>
+        <SkipToMainContent
+          title={n('skipToMainContent', 'Fara beint í efnið')}
+        />
         {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
           <AlertBanner
             title={alertBannerContent.title}
