@@ -76,6 +76,9 @@ export const CreateCaseMutation = gql`
         name
         title
       }
+      parentCase {
+        id
+      }
     }
   }
 `
@@ -93,6 +96,70 @@ export const CasesQuery = gql`
       custodyEndDate
       decision
       isCustodyEndDateInThePast
+    }
+  }
+`
+
+export const ExtendCaseMutation = gql`
+  mutation ExtendCaseMutation($input: ExtendCaseInput!) {
+    extendCase(input: $input) {
+      id
+      created
+      modified
+      state
+      policeCaseNumber
+      accusedNationalId
+      accusedName
+      accusedAddress
+      accusedGender
+      requestedDefenderName
+      requestedDefenderEmail
+      court
+      arrestDate
+      requestedCourtDate
+      alternativeTravelBan
+      requestedCustodyEndDate
+      lawsBroken
+      custodyProvisions
+      requestedCustodyRestrictions
+      caseFacts
+      witnessAccounts
+      investigationProgress
+      legalArguments
+      comments
+      prosecutor {
+        name
+        title
+      }
+      courtCaseNumber
+      courtDate
+      isCourtDateInThePast
+      courtRoom
+      defenderName
+      defenderEmail
+      courtStartTime
+      courtEndTime
+      courtAttendees
+      policeDemands
+      accusedPlea
+      litigationPresentations
+      ruling
+      decision
+      custodyEndDate
+      isCustodyEndDateInThePast
+      custodyRestrictions
+      otherRestrictions
+      accusedAppealDecision
+      accusedAppealAnnouncement
+      prosecutorAppealDecision
+      prosecutorAppealAnnouncement
+      judge {
+        name
+        title
+      }
+      parentCase {
+        id
+      }
     }
   }
 `

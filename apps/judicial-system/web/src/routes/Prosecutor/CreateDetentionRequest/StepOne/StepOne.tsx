@@ -160,12 +160,7 @@ export const StepOne: React.FC = () => {
     }
   }, [id, workingCase, setWorkingCase, data])
 
-  /**
-   * Run this to validate form after each change
-   *
-   * This can't be done in the render function because the time refs will always be null
-   * until the user clicks the time inputs and then the continue button becomes enabled.
-   *  */
+  // Validate step
   useEffect(() => {
     if (workingCase) {
       setIsStepIllegal(
@@ -197,10 +192,15 @@ export const StepOne: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.PROSECUTOR}
+      activeSection={
+        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
+      }
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_ONE}
       isLoading={loading}
       notFound={id !== undefined && data?.case === undefined}
+      isExtension={!!workingCase?.parentCase}
+      decision={workingCase?.decision}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>
