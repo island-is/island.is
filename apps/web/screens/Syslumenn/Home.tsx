@@ -1,10 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, useContext } from 'react'
-import NextLink from 'next/link'
 import {
   Box,
   Text,
-  Breadcrumbs,
   Navigation,
   NavigationItem,
   GridContainer,
@@ -16,7 +14,7 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { HeadWithSocialSharing, Main, Heading } from '@island.is/web/components'
+import { Main, Heading, HeadWithSocialSharing } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import {
   Query,
@@ -45,7 +43,8 @@ import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import LatestOrganizationNewsSection from '@island.is/web/components/LatestOrganizationNewsSection/LatestOrganizationNewsSection'
-import { GlobalContext } from '../../context/GlobalContext/GlobalContext'
+import { GlobalContext } from '@island.is/web/context'
+import OrganizationHeader from '@island.is/web/components/Organization/Header/OrganizationHeader'
 
 interface HomeProps {
   organization: Query['getOrganization']
@@ -59,7 +58,6 @@ const Home: Screen<HomeProps> = ({ organization, namespace, news }) => {
   const n = useNamespace(namespace)
   const gn = useNamespace(globalNamespace)
   const { asPath } = useRouter()
-  const { linkResolver } = useLinkResolver()
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
@@ -92,68 +90,22 @@ const Home: Screen<HomeProps> = ({ organization, namespace, news }) => {
         imageHeight={organization.featuredImage?.height?.toString()}
         */
       />
-      <Box className={styles.headerBorder}>
-        <Box className={styles.headerBg}>
-          <GridContainer>
-            <Box marginTop={[1, 1, 3]} marginBottom={5}>
-              <Breadcrumbs
-                color="white"
-                items={[
-                  {
-                    title: 'Ísland.is',
-                    href: '/',
-                  },
-                  {
-                    title: organization.title,
-                  },
-                ]}
-                renderLink={(link) => {
-                  return (
-                    <NextLink {...linkResolver('homepage')} passHref>
-                      {link}
-                    </NextLink>
-                  )
-                }}
-              />
-            </Box>
-          </GridContainer>
-          <Box className={styles.headerWrapper}>
-            <SidebarLayout sidebarContent="">
-              <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4, 4]}>
-                <Box display="flex" flexDirection="row" alignItems="center">
-                  <img
-                    src={organization.logo.url}
-                    className={styles.headerLogo}
-                    alt=""
-                  />
-                  <Text variant="h1" as="h1" color="white">
-                    {organization.title}
-                  </Text>
-                </Box>
-              </Box>
-            </SidebarLayout>
-            <GridContainer>
-              <Box
-                display={['block', 'block', 'none']}
-                paddingBottom={4}
-                className={styles.mobileNav}
-              >
-                <Navigation
-                  baseId={'mobileNav'}
-                  isMenuDialog
-                  activeItemTitle={organization.title}
-                  items={navList}
-                  title="Efnisyfirlit"
-                  titleLink={{
-                    href: `/${organization.slug}`,
-                    active: false,
-                  }}
-                />
-              </Box>
-            </GridContainer>
-          </Box>
-        </Box>
-      </Box>
+      <OrganizationHeader
+        organization={organization}
+        mobileNav={
+          <Navigation
+            baseId={'mobileNav'}
+            isMenuDialog
+            activeItemTitle={organization.title}
+            items={navList}
+            title="Efnisyfirlit"
+            titleLink={{
+              href: `/${organization.slug}`,
+              active: false,
+            }}
+          />
+        }
+      />
       <Main>
         <SidebarLayout
           isSticky={false}
