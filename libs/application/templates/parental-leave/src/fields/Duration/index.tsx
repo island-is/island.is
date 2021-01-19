@@ -18,7 +18,7 @@ import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
 import { m, mm } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
-const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
+const Duration: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field
   const { clearErrors } = useFormContext()
   const { formatMessage, formatDateFns } = useLocale()
@@ -161,4 +161,4 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
   )
 }
 
-export default ParentalLeaveUsage
+export default Duration

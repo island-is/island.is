@@ -1,10 +1,6 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
+import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import {
-  FieldBaseProps,
-  getValueViaPath,
-  Option,
-} from '@island.is/application/core'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import {
   Accordion,
   AccordionItem,
@@ -22,11 +18,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import Timeline from '../components/Timeline'
-import {
-  formatPeriods,
-  getExpectedDateOfBirth,
-  getNameAndIdOfSpouse,
-} from '../parentalLeaveUtils'
+import { formatPeriods, getExpectedDateOfBirth } from '../parentalLeaveUtils'
 import { Period } from '../../types'
 import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 import YourRightsBoxChart from '../Rights/YourRightsBoxChart'
@@ -373,7 +365,7 @@ const Review: FC<FieldBaseProps> = ({
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="12/12">
-                  <Box marginTop={1} marginBottom={2} marginLeft={4}>
+                  <Box marginTop={1} marginBottom={2}>
                     <Text variant="h5">
                       {formatMessage(mm.shareInformation.title)}
                     </Text>

@@ -20,9 +20,7 @@ const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   ) as number
 
   const { clearErrors } = useFormContext()
-
   const [chosenGiveDays, setChosenGiveDays] = useState<number>(currentAnswer)
-
   const daysStringKey = chosenGiveDays > 1 ? m.giveRightsDays : m.giveRightsDay
 
   const yourRightsWithGivenDaysStringKey =

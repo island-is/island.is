@@ -8,22 +8,24 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+import { m as mm } from '@island.is/application/ui-shell'
+
 import Logo from '../assets/Logo'
+import { employerForm as m } from '../lib/messages'
 
 export const EmployerApproval: Form = buildForm({
   id: 'EmployerApprovalForParentalLeave',
-  title: 'Employer approval for parental leave application',
+  title: m.formTitle,
   logo: Logo,
   mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'review',
-      title: 'Employer approval',
+      title: m.reviewSection,
       children: [
         buildMultiField({
           id: 'multi',
-          title:
-            'Your employee has applied for parental leave. Do you approve of his/her selected periods?',
+          title: m.reviewMultiTitle,
           children: [
             buildCustomField(
               {
@@ -37,7 +39,7 @@ export const EmployerApproval: Form = buildForm({
             ),
             buildSubmitField({
               id: 'submit',
-              title: 'submit',
+              title: mm.buttonSubmit,
               placement: 'footer',
               actions: [
                 { name: 'Reject', type: 'reject', event: 'REJECT' },
@@ -48,9 +50,8 @@ export const EmployerApproval: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'final',
-          title: 'Takk fyrir',
-          description:
-            'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
+          title: mm.thanks,
+          description: mm.thanksDescription,
         }),
       ],
     }),

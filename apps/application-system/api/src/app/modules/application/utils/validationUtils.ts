@@ -5,7 +5,6 @@ import {
   validateAnswers,
 } from '@island.is/application/core'
 import { BadRequestException, UnauthorizedException } from '@nestjs/common'
-
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
@@ -18,6 +17,7 @@ export async function validateApplicationSchema(
   const applicationTemplate = await getApplicationTemplateByTypeId(
     application.typeId,
   )
+
   if (applicationTemplate === null) {
     throw new BadRequestException(
       `No template exists for type: ${application.typeId}`,
@@ -30,6 +30,7 @@ export async function validateApplicationSchema(
       `Template ${application.typeId} is not ready for production`,
     )
   }
+
   const schemaFormValidationError = validateAnswers(
     applicationTemplate.dataSchema,
     newAnswers,

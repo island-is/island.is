@@ -18,11 +18,11 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+
 import { m, mm } from '../lib/messages'
 import { formatIsk, getEstimatedMonthlyPay } from '../fields/parentalLeaveUtils'
 import { GetPensionFunds, GetUnions } from '../graphql/queries'
 import { NO, YES } from '../constants'
-
 import Logo from '../assets/Logo'
 import { defaultMonths } from '../config'
 
@@ -41,7 +41,7 @@ type PensionFundsQuery = {
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
-  title: 'Fæðingarorlof',
+  title: m.formTitle,
   logo: Logo,
   mode: FormModes.APPLYING,
   children: [
@@ -574,7 +574,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 condition: (formValue) =>
                   formValue.confirmLeaveDuration === 'duration',
                 title: mm.duration.title,
-                component: 'ParentalLeaveDuration',
+                component: 'Duration',
               },
               {},
             ),
@@ -632,7 +632,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 //     id: 'endDate',
                 //     name: m.duration,
                 //     description: mm.duration.description,
-                //     component: 'ParentalLeaveDuration',
+                //     component: 'Duration',
                 //   },
                 //   {
                 //     showTimeline: true,

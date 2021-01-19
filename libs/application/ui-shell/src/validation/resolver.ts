@@ -1,5 +1,6 @@
 import { FormValue, validateAnswers } from '@island.is/application/core'
 import { Resolver } from 'react-hook-form'
+
 import { ResolverContext } from '../types'
 
 // TODO type this properly
@@ -15,8 +16,10 @@ export const resolver: Resolver<FormValue, ResolverContext> = (
       errors: {},
     }
   }
+
   const { dataSchema } = context
   const validationError = validateAnswers(dataSchema, formValue, false)
+
   if (validationError) {
     return { values: {}, errors: validationError }
   }

@@ -4,17 +4,17 @@ export const m = defineMessages({
   buttonNext: {
     id: 'application.system:button.next',
     defaultMessage: 'Halda áfram',
-    description: 'Next button text',
+    description: 'Next',
   },
   buttonBack: {
     id: 'application.system:button.back',
     defaultMessage: 'Til baka',
-    description: 'Back button text',
+    description: 'Back',
   },
   buttonSubmit: {
     id: 'application.system:button.submit',
     defaultMessage: 'Senda',
-    description: 'Submit button text',
+    description: 'Submit',
   },
   externalDataTitle: {
     id: 'application.system:externalData.title',
@@ -60,5 +60,27 @@ export const m = defineMessages({
     id: 'application.system:not-found-message',
     defaultMessage: 'Engin umsókn fannst á þessari slóð.',
     description: 'No application was found at this URL.',
+  },
+  tagsInProgress: {
+    id: 'application.system:tags.inProgress',
+    defaultMessage: 'Í vinnslu',
+    description: 'In progress',
+  },
+  tagsRequiresAction: {
+    id: 'application.system:tags.inProgress',
+    defaultMessage: 'Krefst aðgerða',
+    description: 'Requires action',
+  },
+  thanks: {
+    id: 'application.system:thanks',
+    defaultMessage: 'Takk fyrir',
+    description: 'Thank you',
+  },
+  thanksDescription: {
+    id: 'application.system:thanks.description',
+    defaultMessage:
+      'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
+    description:
+      'Your application is complete. The application has progressed in the process.',
   },
 })

@@ -5,12 +5,13 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+
 import Logo from '../assets/Logo'
-import { mm } from '../lib/messages'
+import { inReviewForm as m, mm } from '../lib/messages'
 
 export const InReview: Form = buildForm({
   id: 'ParentalLeaveInReview',
-  title: 'Parental Leave',
+  title: m.formTitle,
   logo: Logo,
   mode: FormModes.REVIEW,
   children: [

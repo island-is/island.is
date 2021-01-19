@@ -1,10 +1,21 @@
 import { defineMessages, MessageDescriptor } from 'react-intl'
 
+// TODO: rename to parentalLeaveForm and use `parentalLeaveForm as m` for the imports?
 export const m = defineMessages({
+  name: {
+    id: 'pl.application:name',
+    defaultMessage: 'Umsókn um fæðingarorlof',
+    description: 'Application for parental leave',
+  },
+  formTitle: {
+    id: 'pl.application:form.title',
+    defaultMessage: 'Fæðingarorlof',
+    description: 'Parental Leave',
+  },
   applicationName: {
     id: 'pl.application:application.name',
     defaultMessage: 'Umsókn um fæðingarorlof',
-    description: 'Application for maternity leave',
+    description: 'Application for parental leave',
   },
   applicantSection: {
     id: 'pl.application:applicant.section',
@@ -388,7 +399,7 @@ export const m = defineMessages({
   usage: {
     id: 'pl.application:usage',
     defaultMessage: 'Hvað ætlar þú að nýta þér marga mánuði í fæðingarorlof?',
-    description: 'How many months are you going to take maternity leave?',
+    description: 'How many months are you going to take paternity leave?',
   },
   calculationsSubsection: {
     id: 'pl.application:calculations.subsection',
@@ -438,6 +449,78 @@ export const m = defineMessages({
       'Nei, ég vil skipta fæðingarorlofinu mínu upp í fleiri tímabil og/eða teygja það yfir lengra tímabil.',
     description:
       'I want to customize my leave into multiple periods and/or to stretch it out over time at less than 100% time off.',
+  },
+})
+
+export const employerForm = defineMessages({
+  formTitle: {
+    id: 'pl.application:form.title',
+    defaultMessage: 'Samþykki vinnuveitanda fyrir umsókn um foreldraorlof',
+    description: 'Employer approval for parental leave application',
+  },
+  reviewSection: {
+    id: 'pl.application:review.section',
+    defaultMessage: 'Samþykki vinnuveitanda',
+    description: 'Employer approval',
+  },
+  reviewMultiTitle: {
+    id: 'pl.application:review.multi.title',
+    defaultMessage:
+      'Starfsmaður þinn hefur sótt um foreldraorlof. Samþykkir þú valin tímabil hans?',
+    description:
+      'Your employee has applied for parental leave. Do you approve of his/her selected periods?',
+  },
+})
+
+export const inReviewForm = defineMessages({
+  formTitle: {
+    id: 'pl.application:form.title',
+    defaultMessage: 'Fæðingarorlof',
+    description: 'Parental Leave',
+  },
+})
+
+export const otherParentApprovalForm = defineMessages({
+  formTitle: {
+    id: 'pl.application:form.title',
+    defaultMessage: 'Annað foreldra samþykki fyrir umsókn um foreldraorlof',
+    description: 'Other parent approval for parental leave application',
+  },
+  reviewSection: {
+    id: 'pl.application:review.section',
+    defaultMessage: 'Annað samþykki foreldra',
+    description: 'Other parent approval',
+  },
+  multiTitle: {
+    id: 'pl.application:multi.title',
+    defaultMessage: 'Viltu láta einn mánuð af foreldraorlofsrétti þínum?',
+    description:
+      'Do you want to give away one month of your parental leave rights?',
+  },
+  introDescription: {
+    id: 'pl.application:intro.description',
+    defaultMessage:
+      'Þú ert greinilega að búast við barni með einhverjum einstaklingi sem vill nota einn mánuð af réttindum þínum. Það þýðir að réttindi þín verða í mesta lagi 5 mánuðir. Ertu sammála?',
+    description:
+      'You are apparently expecting a baby with some person that wishes to use one month of your rights. That means your rights will be 5 months at most. Do you agree?',
+  },
+  finalTitle: {
+    id: 'pl.application:final.title',
+    defaultMessage: 'Takk fyrir',
+    description: 'Thank you',
+  },
+})
+
+export const dataSchema = defineMessages({
+  phoneNumber: {
+    id: 'pl.application:phoneNumber',
+    defaultMessage: 'Símanúmerið þarf að vera gilt.',
+    description: 'The phone number must be valid.',
+  },
+  otherParentId: {
+    id: 'pl.application:otherParentDd',
+    defaultMessage: 'Kennitala þarf að vera gild.',
+    description: 'ID number must be valid.',
   },
 })
 
