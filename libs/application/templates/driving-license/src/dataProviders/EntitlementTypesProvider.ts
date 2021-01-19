@@ -4,26 +4,17 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import { NationalRegistryUser } from '@island.is/api/schema'
+import { DrivingLicenseType } from '@island.is/api/schema'
 
-export class NationalRegistryProvider extends BasicDataProvider {
-  type = 'NationalRegistryProvider'
+export class EntitlementTypesProvider extends BasicDataProvider {
+  type = 'EntitlementTypesProvider'
 
-  async provide(application: Application): Promise<NationalRegistryUser> {
+  async provide(application: Application): Promise<DrivingLicenseType> {
     const query = `
-      query NationalRegistryUserQuery {
-        nationalRegistryUser {
-          nationalId
-          age
-          fullName
-          citizenship
-          legalResidence
-          address {
-            code
-            postalCode
-            city
-            streetAddress
-          }
+      query DrivingLicenseEntitlementTypes {
+        drivingLicenseEntitlementTypes {
+          id
+          name
         }
       }
     `
@@ -35,7 +26,7 @@ export class NationalRegistryProvider extends BasicDataProvider {
           return this.handleError()
         }
 
-        return Promise.resolve(response.data.nationalRegistryUser)
+        return Promise.resolve(response.data.drivingLicenseEntitlementTypes)
       })
       .catch(() => {
         return this.handleError()

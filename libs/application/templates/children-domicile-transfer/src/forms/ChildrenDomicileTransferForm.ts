@@ -10,9 +10,17 @@ import {
   buildRadioField,
   buildMultiField,
   buildDateField,
+  Application,
+  buildDescriptionField,
 } from '@island.is/application/core'
 
 import { Parent, RegisteredChildren } from '../dataProviders/APIDataTypes'
+
+type answers = {
+  selectedChildren: string[]
+  selectedDuration: string
+  durationDate?: string
+}
 
 // This is a temporary handler until we create a custom component for this
 const handleDomicileChangeInfo = (data: {
@@ -21,8 +29,9 @@ const handleDomicileChangeInfo = (data: {
   selectedChildren: string[]
 }) => {
   const { parent, children, selectedChildren } = data
+
   const filterChildren = children.filter((child) =>
-    selectedChildren.includes(child.id),
+    selectedChildren.includes(child.name),
   )
   const childrenCurrentHome = filterChildren.map((child) => {
     const address = `${child.address}, ${child.postalCode} ${child.city}`
@@ -37,6 +46,26 @@ const handleDomicileChangeInfo = (data: {
   return `<strong>Núverandi lögheimili:</strong><br />${childrenCurrentHome.join(
     '',
   )}<br /><strong>Nýtt lögheimili:</strong><br />${childrenFutureHome.join('')}`
+}
+
+const extractParentFromApplication = (application: Application) => {
+  return (application.externalData.parentNationalRegistry?.data as {
+    parent?: object
+  }) as Parent
+}
+
+const extractChildrenFromApplication = (application: Application) => {
+  return (application.externalData.childrenNationalRegistry?.data as {
+    registeredChildren?: object
+  }) as RegisteredChildren[]
+}
+
+const extractAnswersFromApplication = (application: Application) => {
+  return {
+    selectedChildren: application.answers.selectChild as string[],
+    selectedDuration: application.answers.selectDuration as string,
+    durationDate: application.answers.durationDate as string,
+  }
 }
 
 export const ChildrenDomicileTransferForm: Form = buildForm({
@@ -79,10 +108,11 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
           description:
             'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið hvaða börn á að flytja lögheimili fyrir.',
           large: true,
-          options: [
-            { value: '1', label: 'Ólafur Helgi Eiríksson' },
-            { value: '2', label: 'Rósa Líf Eiríksdóttir' },
-          ],
+          options: (application) =>
+            extractChildrenFromApplication(application).map((c) => ({
+              value: c.name,
+              label: c.name,
+            })),
         }),
       ],
     }),
@@ -94,10 +124,7 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
           id: 'informationAboutOtherParent',
           title: 'Fylltu inn upplýsingar um hitt foreldrið',
           description: (application) => {
-            const parent = (application.externalData.parentNationalRegistry
-              ?.data as {
-              parent?: object
-            }) as Parent
+            const parent = extractParentFromApplication(application)
             return `Hitt foreldrið er ${parent.name} (${parent.ssn})`
           },
           children: [
@@ -129,16 +156,11 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
               id: 'confirmInformationAboutDomicileChange',
               title: 'Breytingar á lögheimili',
               description: (application) => {
-                const parent = (application.externalData.parentNationalRegistry
-                  ?.data as {
-                  parent?: object
-                }) as Parent
-                const children = (application.externalData
-                  .childrenNationalRegistry?.data as {
-                  registeredChildren?: object
-                }) as RegisteredChildren[]
+                const parent = extractParentFromApplication(application)
+                const children = extractChildrenFromApplication(application)
                 const selectedChildrenIds = application.answers
                   .selectChild as string[]
+
                 return handleDomicileChangeInfo({
                   parent,
                   children,
@@ -226,9 +248,37 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
       id: 'overview',
       title: 'Yfirlit og undirritun',
       children: [
-        buildTextField({
-          id: 'children',
-          title: 'children',
+        buildDescriptionField({
+          id: 'applicationOverview',
+          title: 'Yfirlit umsóknar',
+          description: (application) => {
+            const parent = extractParentFromApplication(application)
+            const children = extractChildrenFromApplication(application)
+            const answers = extractAnswersFromApplication(application)
+
+            // This is a temp solution, we are going to create custom field to do this
+            return `Hér er yfirlit yfir samning um breytt lögheimili. Þú og ${
+              parent.name
+            } þurfa að staðfesta og undirrita áður en málið fer í afgreiðslu hjá sýslumanni. <br /> <br />
+            <strong>Nöfn barn:</strong> <br />
+            ${answers.selectedChildren
+              .map((c) => c)
+              .join('<br />')} <br /> <br />
+            <strong>Núverandi lögheimili barna:</strong> <br />
+            ${children[0].address}, ${children[0].postalCode} ${
+              children[0].city
+            } <br /> <br />
+            <strong>Nýtt lögheimili barna:</strong> <br />
+            ${parent.name} <br />
+            ${parent.address}, ${parent.postalCode} ${parent.city} <br /> <br />
+            <strong>Gildistími </strong> <br />
+            ${
+              answers.durationDate ? answers.durationDate : 'Til frambúðar'
+            } <br /> <br />
+            <strong>Áhrif umsóknar</strong> <br />
+            Ég skil hvaða áhrif lögheimilsbreyting hefur.
+            `
+          },
         }),
       ],
     }),

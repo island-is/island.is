@@ -392,12 +392,15 @@ export function buildDividerField(data: {
 export function buildKeyValueField(data: {
   label: React.ReactNode
   value: MaybeWithApplication<React.ReactNode>
+  width?: FieldWidth
 }): KeyValueField {
-  const { label, value } = data
+  const { label, value, width = 'full' } = data
+
   return {
     id: '',
     title: '',
     children: undefined,
+    width,
     label,
     value,
     type: FieldTypes.KEY_VALUE,

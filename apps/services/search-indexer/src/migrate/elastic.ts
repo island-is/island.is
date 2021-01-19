@@ -143,3 +143,17 @@ export const rankSearchQueries = async (index: string) => {
   })
   logger.info('Content search query quality metrics', metrics)
 }
+
+export const removeIndexIfExists = async (indexName: string) => {
+  const indexExists = await checkIfIndexExists(indexName)
+
+  if (indexExists) {
+    const client = await esService.getClient()
+    await client.indices.delete({
+      index: indexName,
+    })
+    return indexName
+  }
+
+  return false
+}
