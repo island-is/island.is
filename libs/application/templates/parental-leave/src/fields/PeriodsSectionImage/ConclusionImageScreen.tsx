@@ -24,7 +24,6 @@ const ConclusionSectionImage: FC<FieldBaseProps> = () => {
         alignItems="flexEnd"
         height="full"
         marginTop={10}
-        style={{ marginRight: escapeGrid(60).marginRight }}
       >
         <svg
           width="100%"
