@@ -52,12 +52,12 @@ export const routesTemplate = {
     en: '/en/news',
   },
   organizationnews: {
-    is: '/[organizationSlug]/frett/[slug]',
-    en: '/en/[organizationSlug]/news/[slug]',
+    is: '/stofnanir/[organizationSlug]/frett/[slug]',
+    en: '/en/organizations/[organizationSlug]/news/[slug]',
   },
   organizationnewsoverview: {
-    is: '/[organizationSlug]/frett',
-    en: '/en/[organizationSlug]/news',
+    is: '/stofnanir/[organizationSlug]/frett',
+    en: '/en/organizations/[organizationSlug]/news',
   },
   lifeeventpage: {
     is: '/lifsvidburdur/[slug]',
