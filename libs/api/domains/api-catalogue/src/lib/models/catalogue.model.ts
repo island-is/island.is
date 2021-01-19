@@ -5,10 +5,11 @@ import {
   DataCategory,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
-import { Service } from '@island.is/api-catalogue/types'
+import { Service, XroadIdentifier } from '@island.is/api-catalogue/types'
 import { IsEnum, IsOptional, IsString, IsArray } from 'class-validator'
 import { PageInfo } from './pageInfo.model'
 import { XroadInfo } from './xroadIdentifier.model'
+import { ServiceVersion } from 'libs/api-catalogue/types/src/lib/service-version.model'
 
 registerEnumType(AccessCategory, {
   name: 'AccessCategory',
@@ -27,6 +28,37 @@ registerEnumType(TypeCategory, {
 })
 
 @ObjectType()
+export class ApiServiceVersion implements ServiceVersion {
+  @Field((type) => ID)
+  @IsString()
+  versionId!: string
+
+  @Field((type) => String)
+  @IsString()
+  title!: string
+
+  @Field((type) => String)
+  @IsString()
+  summary!: string
+
+  @Field((type) => String)
+  @IsString()
+  description!: string
+
+  @Field((type) => [PricingCategory])
+  @IsString()
+  pricing!: PricingCategory[]
+
+  @Field((type) => [DataCategory])
+  @IsString()
+  data!: DataCategory[]
+
+  @Field((type) => [XroadInfo])
+  @IsString()
+  xroadIdentifier!: XroadIdentifier[]
+}
+
+@ObjectType()
 export class ApiService implements Service {
   @Field((type) => ID)
   @IsString()
@@ -38,7 +70,11 @@ export class ApiService implements Service {
 
   @Field((type) => String)
   @IsString()
-  name!: string
+  title!: string
+
+  @Field((type) => String)
+  @IsString()
+  summary!: string
 
   @Field((type) => String)
   @IsString()
@@ -54,15 +90,15 @@ export class ApiService implements Service {
 
   @Field((type) => [TypeCategory])
   @IsEnum(TypeCategory)
-  type!: Array<TypeCategory>
+  type!: TypeCategory
 
   @Field((type) => [AccessCategory])
   @IsEnum(AccessCategory)
   access!: Array<AccessCategory>
 
-  @Field((type) => [XroadInfo])
+  @Field((type) => [ApiServiceVersion])
   @IsArray()
-  xroadIdentifier!: Array<XroadInfo>
+  versions!: Array<ServiceVersion>
 }
 
 @ObjectType()

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { ApiCatalogue, ApiService } from './models/catalogue.model'
 import { GetApiCatalogueInput } from './dto/catalogue.input'
 import { ElasticService } from '@island.is/api-catalogue/elastic'
