@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { Text, Input, Box, RadioButton } from '@island.is/island-ui/core'
-import { isDirty, isNextDisabled } from '../../../../utils/stepHelper'
+import { isNextDisabled } from '../../../../utils/stepHelper'
 
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
