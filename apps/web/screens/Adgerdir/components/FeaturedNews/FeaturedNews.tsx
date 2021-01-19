@@ -11,7 +11,8 @@ import {
   Link,
 } from '@island.is/island-ui/core'
 import { News } from '@island.is/api/schema'
-import { BackgroundImage, AdgerdirHeading } from '@island.is/web/components'
+import { BackgroundImage } from '@island.is/web/components'
+import AdgerdirHeading from '../AdgerdirHeading/AdgerdirHeading'
 
 import * as styles from './FeaturedNews.treat'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'

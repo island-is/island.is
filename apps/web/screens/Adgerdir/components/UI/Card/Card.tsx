@@ -6,11 +6,11 @@ import Link, { LinkProps } from 'next/link'
 import { Box, Stack, Text, Inline } from '@island.is/island-ui/core'
 import { Image } from '@island.is/web/graphql/schema'
 import { BackgroundImage } from '@island.is/web/components'
-import { ColorSchemeContext } from '@island.is/web/components/Adgerdir/UI/ColorSchemeContext/ColorSchemeContext'
-import { Tag, TagProps } from '@island.is/web/components/Adgerdir/UI/Tag/Tag'
-import { FocusableBox } from '@island.is/web/components/Adgerdir/UI/FocusableBox/FocusableBox'
+import { ColorSchemeContext } from '../ColorSchemeContext/ColorSchemeContext'
+import { Tag, TagProps } from '../Tag/Tag'
+import { FocusableBox } from '../FocusableBox/FocusableBox'
 
-import * as covidStyles from '@island.is/web/components/Adgerdir/UI/styles/styles.treat'
+import * as covidStyles from '../styles/styles.treat'
 import * as styles from './Card.treat'
 
 export type CardTagsProps = {
