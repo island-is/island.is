@@ -25,6 +25,8 @@ import { useHistory } from 'react-router-dom'
 import * as Constants from '../../../utils/constants'
 import { UserContext } from '../../../shared-components/UserProvider/UserProvider'
 import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
+import PdfButton from '../../../shared-components/PdfButton/PdfButton'
+
 interface CaseData {
   case?: Case
 }
@@ -258,12 +260,15 @@ export const SignedVerdictOverview: React.FC = () => {
               accusedAddress={workingCase.accusedAddress}
             />
           </Box>
-          <Box marginBottom={15}>
+          <Box marginBottom={5}>
             <Accordion>
               <PoliceRequestAccordionItem workingCase={workingCase} />
               <CourtRecordAccordionItem workingCase={workingCase} />
               <RulingAccordionItem workingCase={workingCase} />
             </Accordion>
+          </Box>
+          <Box marginBottom={15}>
+            <PdfButton caseId={workingCase.id} />
           </Box>
           <FormFooter
             hideNextButton={

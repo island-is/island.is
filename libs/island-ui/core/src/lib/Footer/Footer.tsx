@@ -230,11 +230,16 @@ export const Footer = ({
                       key={href}
                       span={['12/12', '6/12', '4/12', '3/12']}
                     >
-                      <Text variant="h5" fontWeight="light" paddingBottom={2}>
-                        <Link href={href} color="blue600" underline="normal">
+                      <Link href={href} underline="normal">
+                        <Text
+                          variant="h5"
+                          fontWeight="light"
+                          color="blue600"
+                          paddingBottom={2}
+                        >
                           {title}
-                        </Link>
-                      </Text>
+                        </Text>
+                      </Link>
                     </GridColumn>
                   )
                 }),

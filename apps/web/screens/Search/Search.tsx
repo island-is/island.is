@@ -51,6 +51,7 @@ import {
 import { Image } from '@island.is/web/graphql/schema'
 import * as styles from './Search.treat'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { typenameResolver } from '@island.is/web/utils/typenameResolver'
 
 const PERPAGE = 10
 
@@ -190,7 +191,7 @@ const Search: Screen<CategoryProps> = ({
   >).map((item) => ({
     title: item.title,
     description: item.intro ?? item.seoDescription ?? item.description,
-    ...linkResolver(item.__typename, [item.slug]),
+    ...linkResolver(typenameResolver(item.__typename), [item.slug]),
     categorySlug: item.category?.slug,
     category: item.category,
     group: item.group,
@@ -372,7 +373,7 @@ const Search: Screen<CategoryProps> = ({
               {totalSearchResults}{' '}
               {totalSearchResults === 1
                 ? n('searchResult', 'leitarniðurstaða')
-                : n('searchResults', 'leitarniðurstöður')}
+                : n('searchResults', 'leitarniðurstöður')}{' '}
               {(filters.category || filters.type) && (
                 <>
                   {n('inCategory', 'í flokki')}

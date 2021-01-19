@@ -18,6 +18,7 @@ export interface LinkProps extends NextLinkProps {
   className?: string
   underline?: UnderlineVariants
   underlineVisibility?: UnderlineVisibility
+  skipTab?: boolean
   onClick?: () => void
   pureChildren?: boolean
 }
@@ -33,6 +34,7 @@ export const Link: React.FC<LinkProps> = ({
   passHref,
   prefetch,
   color,
+  skipTab,
   className,
   underline,
   underlineVisibility = 'hover',
@@ -78,7 +80,11 @@ export const Link: React.FC<LinkProps> = ({
         {pureChildren ? (
           children
         ) : (
-          <a className={classNames} {...linkProps}>
+          <a
+            className={classNames}
+            {...linkProps}
+            tabIndex={skipTab ? -1 : undefined}
+          >
             {children}
           </a>
         )}
@@ -92,6 +98,7 @@ export const Link: React.FC<LinkProps> = ({
         rel="noopener noreferrer"
         className={classNames}
         {...linkProps}
+        tabIndex={skipTab ? -1 : undefined}
       >
         {children}
       </a>
