@@ -74,7 +74,9 @@ export const constructConclusion = (workingCase: Case) => {
           )}`}
         </Text>
         <Text as="span" variant="intro">
-          , skal sæta gæsluvarðhaldi, þó ekki lengur en til
+          {`, skal${
+            workingCase.parentCase ? ' áfram' : ''
+          } sæta gæsluvarðhaldi, þó ekki lengur en til`}
         </Text>
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
           {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')
@@ -125,7 +127,9 @@ export const constructConclusion = (workingCase: Case) => {
         >{` ${workingCase.accusedName} kt. ${formatNationalId(
           workingCase.accusedNationalId,
         )}`}</Text>
-        , skal sæta farbanni, þó ekki lengur en til
+        {`, skal${
+          workingCase.parentCase ? ' áfram' : ''
+        } sæta farbanni, þó ekki lengur en til`}
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
           {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')
             ?.replace('dagur,', 'dagsins')
@@ -141,10 +145,11 @@ export const constructProsecutorDemands = (workingCase: Case) => {
     <Text>
       Þess er krafist að
       <Text as="span" fontWeight="semiBold">
-        {` ${workingCase.accusedName}, kt.
-        ${formatNationalId(workingCase.accusedNationalId)}`}
+        {` ${workingCase.accusedName}, kt.${formatNationalId(
+          workingCase.accusedNationalId,
+        )}`}
       </Text>
-      {`, sæti gæsluvarðhaldi${
+      {`, sæti${workingCase.parentCase ? ' áfram' : ''} gæsluvarðhaldi${
         workingCase.alternativeTravelBan ? ', farbanni til vara,' : ''
       } með úrskurði ${workingCase.court?.replace(
         'Héraðsdómur',
@@ -154,8 +159,10 @@ export const constructProsecutorDemands = (workingCase: Case) => {
         {` ${formatDate(workingCase.requestedCustodyEndDate, 'EEEE')?.replace(
           'dagur',
           'dagsins',
-        )}
-    ${formatDate(workingCase.requestedCustodyEndDate, 'PPP')}, kl. ${formatDate(
+        )} ${formatDate(
+          workingCase.requestedCustodyEndDate,
+          'PPP',
+        )}, kl. ${formatDate(
           workingCase.requestedCustodyEndDate,
           TIME_FORMAT,
         )}`}

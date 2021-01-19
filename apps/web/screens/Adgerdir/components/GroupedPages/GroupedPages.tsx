@@ -9,7 +9,7 @@ import {
 import {
   ColorSchemeContext,
   ColorSchemes,
-} from '@island.is/web/components/Adgerdir/UI/ColorSchemeContext/ColorSchemeContext'
+} from '../UI/ColorSchemeContext/ColorSchemeContext'
 
 import * as styles from './GroupedPages.treat'
 
