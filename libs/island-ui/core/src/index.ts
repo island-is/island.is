@@ -1,9 +1,3 @@
-import { BoxProps as TBoxProps } from './lib/Box/Box'
-import {
-  InputProps as TInputProps,
-  InputBackgroundColor as TInputBackgroundColor,
-} from './lib/Input/Input'
-
 // Alerts
 export * from './lib/AlertMessage/AlertMessage'
 export * from './lib/AlertBanner/AlertBanner'
@@ -41,12 +35,12 @@ export { TopicCard } from './lib/TopicCard/TopicCard'
 export { CategoryCard } from './lib/CategoryCard/CategoryCard'
 
 // Core
-export { Button as ButtonDeprecated } from './lib/ButtonDeprecated/Button'
+export { ButtonDeprecated } from './lib/ButtonDeprecated/Button'
 export * from './lib/Button/Button'
 export * from './lib/FocusableBox/FocusableBox'
 export * from './lib/Link/Link'
 export * from './lib/Link/ArrowLink/ArrowLink'
-export { Icon as IconDeprecated } from './lib/Icon/Icon'
+export { IconDeprecated } from './lib/Icon/Icon'
 export * from './lib/Icon/IconTypes'
 export * from './lib/IconRC/Icon'
 export * from './lib/Typography/Typography'
@@ -79,7 +73,7 @@ export * from './lib/Sleeve/Sleeve'
 export * from './lib/Divider/Divider'
 
 // Navigation
-export { Breadcrumbs as BreadcrumbsDeprecated } from './lib/BreadcrumbsDeprecated/Breadcrumbs'
+export { BreadcrumbsDeprecated } from './lib/BreadcrumbsDeprecated/Breadcrumbs'
 export * from './lib/Breadcrumbs/Breadcrumbs'
 export * from './lib/Navigation/Navigation'
 export * from './lib/FormStepper/FormStepper'
@@ -95,8 +89,10 @@ export * from './lib/context'
 // Treat
 export * from './treat/global.treat'
 
-// Types
-export * from './lib/DatePicker/types'
-export type BoxProps = TBoxProps
-export type InputProps = TInputProps
-export type InputBackgroundColor = TInputBackgroundColor
+// Type exports:
+export type { BoxProps } from './lib/Box/Box'
+export type { InputBackgroundColor, InputProps } from './lib/Input/Input'
+export type {
+  DatePickerBackgroundColor,
+  DatePickerProps,
+} from './lib/DatePicker/types'
