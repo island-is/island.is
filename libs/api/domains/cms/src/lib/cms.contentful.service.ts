@@ -47,6 +47,7 @@ import { Homepage, mapHomepage } from './models/homepage.model'
 import { mapTellUsAStory, TellUsAStory } from './models/tellUsAStory.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 import { mapSubpageHeader, SubpageHeader } from './models/subpageHeader.model'
+import { mapOrganizationSubpage, OrganizationSubpage } from './models/organizationSubpage.model'
 import { GetErrorPageInput } from './dto/getErrorPage.input'
 import { ErrorPage, mapErrorPage } from './models/errorPage.model'
 
@@ -206,6 +207,24 @@ export class CmsContentfulService {
       .catch(errorHandler('getOrganization'))
 
     return result.items.map(mapOrganization)[0] ?? null
+  }
+
+  async getOrganizationSubpage(
+    organizationSlug: string,
+    slug: string,
+    lang: string,
+  ): Promise<OrganizationSubpage> {
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationSubpageFields>(lang, {
+        ['content_type']: 'organizationSubpage',
+        include: 10,
+        'fields.slug': slug,
+        'fields.organization.sys.contentType.sys.id': 'organization',
+        'fields.organization.fields.slug': organizationSlug,
+      })
+      .catch(errorHandler('getOrganization'))
+
+    return result.items.map(mapOrganizationSubpage)[0] ?? null
   }
 
   async getArticle(slug: string, lang: string): Promise<Article | null> {

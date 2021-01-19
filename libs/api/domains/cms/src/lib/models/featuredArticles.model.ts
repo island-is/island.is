@@ -3,7 +3,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { IArticle, IFeaturedArticles } from '../generated/contentfulTypes'
 
 import { SystemMetadata } from 'api-cms-domain'
-import {Image, mapImage} from "./image.model";
+import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class FeaturedArticle {
@@ -27,7 +27,7 @@ export const mapFeaturedArticle = ({
   id: sys.id,
   title: fields.title ?? '',
   slug: fields.slug ?? '',
-  isApplication: fields.processEntry ? true : false
+  isApplication: fields.processEntry ? true : false,
 })
 
 @ObjectType()
