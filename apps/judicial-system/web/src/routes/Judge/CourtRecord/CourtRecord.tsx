@@ -262,7 +262,7 @@ export const CourtRecord: React.FC = () => {
                 <CourtDocument
                   title="Krafa lögreglu"
                   tagText="Þingmerkt nr. 1"
-                  tagVariant="blue"
+                  tagVariant="darkerBlue"
                   text="Rannsóknargögn málsins liggja frammi."
                 />
               </GridColumn>
