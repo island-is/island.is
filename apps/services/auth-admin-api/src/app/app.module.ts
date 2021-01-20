@@ -9,6 +9,7 @@ import { SequelizeConfigService } from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { ClaimsModule } from './modules/claims/claims.module'
 import { environment } from '../environments/environment'
+import { AccessModule } from './modules/access/access.module'
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { environment } from '../environments/environment'
     ResourcesModule,
     GrantTypesModule,
     ClaimsModule,
+    AccessModule,
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.secret'],
     }),
