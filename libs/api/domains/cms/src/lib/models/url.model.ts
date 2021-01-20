@@ -5,10 +5,10 @@ import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
 @ObjectType()
 export class Url {
   @Field(() => ID)
-  id: string = ''
+  id: string
 
   @Field({ nullable: true })
-  title: string = ''
+  title: string
 
   @Field(() => ReferenceLink, { nullable: true })
   page: ReferenceLink | null
