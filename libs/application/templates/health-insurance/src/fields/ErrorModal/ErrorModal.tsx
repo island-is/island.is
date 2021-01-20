@@ -27,7 +27,7 @@ export interface ContentType {
   buttonAction?: () => {}
 }
 
-const ErrorModal: FC<FieldBaseProps> = ({ field, application }) => {
+const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { type } = useParams()
   const [shouldRender, setShouldRender] = useState<boolean>(true)
@@ -44,7 +44,6 @@ const ErrorModal: FC<FieldBaseProps> = ({ field, application }) => {
 
   // TODO: Add conditions if former country is outside EU and if paper application is active
   useEffect(() => {
-    console.table(application.externalData.nationalRegistry?.data)
     const address = (application.externalData?.nationalRegistry?.data as {
       address?: Address
     })?.address
@@ -95,7 +94,7 @@ const ErrorModal: FC<FieldBaseProps> = ({ field, application }) => {
       initialVisibility={true}
       className={`${styles.dialog} ${styles.background} ${styles.center}`}
     >
-      {({ closeModal }) => (
+      {({ closeModal }: { closeModal: () => void }) => (
         <Box
           background="white"
           paddingX={[3, 3, 3, 15]}

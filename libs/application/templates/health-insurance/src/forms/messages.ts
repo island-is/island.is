@@ -400,7 +400,8 @@ export const m = defineMessages({
   },
   waitingPeriodDescription: {
     id: 'hi.application:waitingPeriod.description',
-    defaultMessage: 'According to Registers Iceland data it seems like you are not moving to Iceland from an EU/EEA country, Switzerland, Greenland or the Faroe Islands. There is a six-month waiting period before qualifying. We advise you to buy private health insurance until you are covered by the national health insurance. There are some Medical exceptions.',
+    defaultMessage:
+      'According to Registers Iceland data it seems like you are not moving to Iceland from an EU/EEA country, Switzerland, Greenland or the Faroe Islands. There is a six-month waiting period before qualifying. We advise you to buy private health insurance until you are covered by the national health insurance. There are some Medical exceptions.',
     description: 'Waiting period description',
   },
   waitingPeriodButtonText: {
@@ -411,17 +412,18 @@ export const m = defineMessages({
   registerYourselfTitle: {
     id: 'hi.application:registerYourself.title',
     defaultMessage: 'Register yourself in Iceland',
-    description: 'Register yourself in Iceland'
+    description: 'Register yourself in Iceland',
   },
   registerYourselfDescription: {
     id: 'hi.application:registerYourself.description',
-    defaultMessage: 'You don’t seem to be registered with Registers Iceland. You need to register your legal residence in Iceland before applying for national health insurance.',
-    description: 'Register yourself description'
+    defaultMessage:
+      'You don’t seem to be registered with Registers Iceland. You need to register your legal residence in Iceland before applying for national health insurance.',
+    description: 'Register yourself description',
   },
   registerYourselfButtonText: {
     id: 'hi.application:registerYourself.buttonText',
     defaultMessage: 'How to register',
-    description: 'How to register'
+    description: 'How to register',
   },
   activeApplicationTitle: {
     id: 'hi.application:activeApplication.title',
@@ -430,7 +432,8 @@ export const m = defineMessages({
   },
   activeApplicationDescription: {
     id: 'hi.application:activeApplication.description',
-    defaultMessage: 'You have already submitted an application for health insurance. We will notify you on the e-mail address you provided in the application when the status changes. You can always see your application status in My Pages.',
+    defaultMessage:
+      'You have already submitted an application for health insurance. We will notify you on the e-mail address you provided in the application when the status changes. You can always see your application status in My Pages.',
     description: 'Active application description',
   },
   activeApplicationButtonText: {

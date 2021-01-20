@@ -94,10 +94,10 @@ export const HealthInsuranceForm: Form = buildForm({
               component: 'ErrorModal',
               title: '',
               condition: (formValue: FormValue, externalData) => {
-              // TODO: when it is possible in NationalRegistry api, check if country is Greenland or Faroe Islands
-              // It should return true if confirmation of residency condition is returned as false...
-              return false
-              }
+                // TODO: when it is possible in NationalRegistry api, check if country is Greenland or Faroe Islands
+                // It should return true if confirmation of residency condition is returned as false...
+                return false
+              },
             }),
             buildTextField({
               id: 'applicant.name',

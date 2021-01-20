@@ -26,7 +26,7 @@ export const dialog = style({
   margin: '0 auto',
   padding: '0 24px',
   maxWidth: 888,
-  position: 'relative'
+  position: 'relative',
 })
 
 export const center = style({
@@ -34,7 +34,7 @@ export const center = style({
 
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
-      top: '15%'
+      top: '15%',
     },
   },
 })
