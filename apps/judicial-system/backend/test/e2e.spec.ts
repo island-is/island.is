@@ -72,6 +72,7 @@ const remainingProsecutorCaseData = {
   requestedCourtDate: '2020-09-08T11:30:00.000Z',
   alternativeTravelBan: false,
   requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
+  otherDemands: 'Other Demands',
   lawsBroken: 'Broken Laws',
   custodyProvisions: [
     CaseCustodyProvisions._95_1_A,
@@ -193,6 +194,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.requestedCustodyEndDate || null).toBe(
     caseTwo.requestedCustodyEndDate || null,
   )
+  expect(caseOne.otherDemands || null).toBe(caseTwo.otherDemands || null)
   expect(caseOne.lawsBroken || null).toBe(caseTwo.lawsBroken || null)
   expect(caseOne.custodyProvisions || null).toStrictEqual(
     caseTwo.custodyProvisions || null,

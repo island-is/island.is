@@ -65,6 +65,7 @@ const prosecutorUpdateRule = {
     'requestedCourtDate',
     'alternativeTravelBan',
     'requestedCustodyEndDate',
+    'otherDemands',
     'lawsBroken',
     'custodyProvisions',
     'requestedCustodyRestrictions',
