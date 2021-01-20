@@ -371,6 +371,8 @@ export async function generateRulingPdf(
         existingCase.custodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ),
+        existingCase.parentCase !== null,
+        existingCase.parentCase?.decision,
       ),
       {
         lineGap: 6,

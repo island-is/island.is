@@ -298,6 +298,8 @@ describe('formatConclusion', () => {
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
     const decision = CaseDecision.REJECTING
+    const isolation = false
+    const isExtension = false
 
     // Act
     const res = formatConclusion(
@@ -306,6 +308,8 @@ describe('formatConclusion', () => {
       accusedGender,
       decision,
       undefined,
+      isolation,
+      isExtension,
       undefined,
     )
 
@@ -323,6 +327,7 @@ describe('formatConclusion', () => {
     const decision = CaseDecision.ACCEPTING
     const custodyEndDate = new Date('2020-12-22T11:23')
     const isolation = false
+    const isExtension = false
 
     // Act
     const res = formatConclusion(
@@ -332,6 +337,8 @@ describe('formatConclusion', () => {
       decision,
       custodyEndDate,
       isolation,
+      isExtension,
+      undefined,
     )
 
     // Assert
@@ -348,6 +355,7 @@ describe('formatConclusion', () => {
     const decision = CaseDecision.ACCEPTING
     const custodyEndDate = new Date('2020-12-22T11:23')
     const isolation = true
+    const isExtension = false
 
     // Act
     const res = formatConclusion(
@@ -357,6 +365,8 @@ describe('formatConclusion', () => {
       decision,
       custodyEndDate,
       isolation,
+      isExtension,
+      undefined,
     )
 
     // Assert
@@ -373,6 +383,7 @@ describe('formatConclusion', () => {
     const decision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
     const custodyEndDate = new Date('2021-01-29T13:03')
     const isolation = false
+    const isExtension = false
 
     // Act
     const res = formatConclusion(
@@ -382,11 +393,185 @@ describe('formatConclusion', () => {
       decision,
       custodyEndDate,
       isolation,
+      isExtension,
+      undefined,
     )
 
     // Assert
     expect(res).toBe(
       'Kærði, Glanni Glæpur, kt. 010101-0000, skal sæta farbanni, þó ekki lengur en til föstudagsins 29. janúar 2021, kl. 13:03.',
+    )
+  })
+
+  test('should format conclusion for rejected extension', () => {
+    // Arrange
+    const accusedNationalId = '0101010000'
+    const accusedName = 'Glanni Glæpur'
+    const accusedGender = CaseGender.MALE
+    const decision = CaseDecision.REJECTING
+    const isolation = false
+    const isExtension = true
+    const previousDecision = CaseDecision.ACCEPTING
+
+    // Act
+    const res = formatConclusion(
+      accusedNationalId,
+      accusedName,
+      accusedGender,
+      decision,
+      undefined,
+      isolation,
+      isExtension,
+      previousDecision,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Kröfu um að kærði, Glanni Glæpur, kt. 010101-0000, sæti áframhaldandi gæsluvarðhaldi er hafnað.',
+    )
+  })
+
+  test('should format conclusion for rejected extension when previous ruling was travel ban', () => {
+    // Arrange
+    const accusedNationalId = '0101010000'
+    const accusedName = 'Glanni Glæpur'
+    const accusedGender = CaseGender.MALE
+    const decision = CaseDecision.REJECTING
+    const isolation = false
+    const isExtension = true
+    const previousDecision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+
+    // Act
+    const res = formatConclusion(
+      accusedNationalId,
+      accusedName,
+      accusedGender,
+      decision,
+      undefined,
+      isolation,
+      isExtension,
+      previousDecision,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Kröfu um að kærði, Glanni Glæpur, kt. 010101-0000, sæti gæsluvarðhaldi er hafnað.',
+    )
+  })
+
+  test('should format conclusion for accepted extension', () => {
+    // Arrange
+    const accusedNationalId = '0101010000'
+    const accusedName = 'Glanni Glæpur'
+    const accusedGender = CaseGender.MALE
+    const decision = CaseDecision.ACCEPTING
+    const custodyEndDate = new Date('2020-12-22T11:23')
+    const isolation = false
+    const isExtension = true
+    const previousDecision = CaseDecision.ACCEPTING
+
+    // Act
+    const res = formatConclusion(
+      accusedNationalId,
+      accusedName,
+      accusedGender,
+      decision,
+      custodyEndDate,
+      isolation,
+      isExtension,
+      previousDecision,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Kærði, Glanni Glæpur, kt. 010101-0000, skal sæta áframhaldandi gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 22. desember 2020, kl. 11:23.',
+    )
+  })
+
+  test('should format conclusion for accepted extension when previous ruling was travel ban', () => {
+    // Arrange
+    const accusedNationalId = '0101010000'
+    const accusedName = 'Glanni Glæpur'
+    const accusedGender = CaseGender.MALE
+    const decision = CaseDecision.ACCEPTING
+    const custodyEndDate = new Date('2020-12-22T11:23')
+    const isolation = false
+    const isExtension = true
+    const previousDecision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+
+    // Act
+    const res = formatConclusion(
+      accusedNationalId,
+      accusedName,
+      accusedGender,
+      decision,
+      custodyEndDate,
+      isolation,
+      isExtension,
+      previousDecision,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Kærði, Glanni Glæpur, kt. 010101-0000, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 22. desember 2020, kl. 11:23.',
+    )
+  })
+
+  test('should format conclusion for rejected extension when alternative travel ban accepted', () => {
+    // Arrange
+    const accusedNationalId = '0101010000'
+    const accusedName = 'Glanni Glæpur'
+    const accusedGender = CaseGender.MALE
+    const decision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+    const custodyEndDate = new Date('2020-12-22T11:23')
+    const isolation = false
+    const isExtension = true
+    const previousDecision = CaseDecision.ACCEPTING
+
+    // Act
+    const res = formatConclusion(
+      accusedNationalId,
+      accusedName,
+      accusedGender,
+      decision,
+      custodyEndDate,
+      isolation,
+      isExtension,
+      previousDecision,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Kærði, Glanni Glæpur, kt. 010101-0000, skal sæta farbanni, þó ekki lengur en til þriðjudagsins 22. desember 2020, kl. 11:23.',
+    )
+  })
+
+  test('should format conclusion for rejected extension when alternative travel ban accepted and previous ruling was travel ban', () => {
+    // Arrange
+    const accusedNationalId = '0101010000'
+    const accusedName = 'Glanni Glæpur'
+    const accusedGender = CaseGender.MALE
+    const decision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+    const custodyEndDate = new Date('2020-12-22T11:23')
+    const isolation = false
+    const isExtension = true
+    const previousDecision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+
+    // Act
+    const res = formatConclusion(
+      accusedNationalId,
+      accusedName,
+      accusedGender,
+      decision,
+      custodyEndDate,
+      isolation,
+      isExtension,
+      previousDecision,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Kærði, Glanni Glæpur, kt. 010101-0000, skal sæta áframhaldandi farbanni, þó ekki lengur en til þriðjudagsins 22. desember 2020, kl. 11:23.',
     )
   })
 })
@@ -650,6 +835,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     const prosecutorAppealDecision = CaseAppealDecision.ACCEPT
     const judgeName = 'Dalli Dómari'
     const judgeTitle = 'aðal dómarinn'
+    const isExtension = false
 
     // Act
     const res = formatPrisonRulingEmailNotification(
@@ -667,6 +853,8 @@ describe('formatPrisonRulingEmailNotification', () => {
       prosecutorAppealDecision,
       judgeName,
       judgeTitle,
+      isExtension,
+      undefined,
     )
 
     // Assert
@@ -694,6 +882,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     const prosecutorAppealDecision = CaseAppealDecision.ACCEPT
     const judgeName = 'Dalli Dómari'
     const judgeTitle = 'aðal dómarinn'
+    const isExtension = false
 
     // Act
     const res = formatPrisonRulingEmailNotification(
@@ -711,6 +900,8 @@ describe('formatPrisonRulingEmailNotification', () => {
       prosecutorAppealDecision,
       judgeName,
       judgeTitle,
+      isExtension,
+      undefined,
     )
 
     // Assert

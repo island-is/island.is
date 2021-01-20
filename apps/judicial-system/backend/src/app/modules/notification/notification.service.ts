@@ -345,6 +345,8 @@ export class NotificationService {
       existingCase.prosecutorAppealDecision,
       existingCase.judge?.name,
       existingCase.judge?.title,
+      existingCase.parentCase !== null,
+      existingCase.parentCase?.decision,
     )
 
     return this.sendEmail(

@@ -108,19 +108,34 @@ export function formatConclusion(
   decision: CaseDecision,
   custodyEndDate: Date,
   isolation: boolean,
+  isExtension: boolean,
+  previousDecision: CaseDecision,
 ): string {
   return decision === CaseDecision.REJECTING
     ? `Kröfu um að ${formatAccusedByGender(
         accusedGender,
-      )}, ${accusedName}, kt. ${formatNationalId(
-        accusedNationalId,
-      )}, sæti gæsluvarðhaldi er hafnað.`
+      )}, ${accusedName}, kt. ${formatNationalId(accusedNationalId)}, sæti${
+        isExtension && previousDecision === CaseDecision.ACCEPTING
+          ? ' áframhaldandi'
+          : ''
+      } gæsluvarðhaldi er hafnað.`
     : `${capitalize(
         formatAccusedByGender(accusedGender),
       )}, ${accusedName}, kt. ${formatNationalId(
         accusedNationalId,
       )}, skal sæta ${
-        decision === CaseDecision.ACCEPTING ? 'gæsluvarðhaldi' : 'farbanni'
+        decision === CaseDecision.ACCEPTING
+          ? `${
+              isExtension && previousDecision === CaseDecision.ACCEPTING
+                ? 'áframhaldandi '
+                : ''
+            }gæsluvarðhaldi`
+          : `${
+              isExtension &&
+              previousDecision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                ? 'áframhaldandi '
+                : ''
+            }farbanni`
       }, þó ekki lengur en til ${formatDate(custodyEndDate, 'PPPPp')
         ?.replace('dagur,', 'dagsins')
         ?.replace(' kl.', ', kl.')}.${
@@ -280,6 +295,8 @@ export function formatPrisonRulingEmailNotification(
   prosecutorAppealDecision: CaseAppealDecision,
   judgeName: string,
   judgeTitle: string,
+  isExtension: boolean,
+  previousDecision: CaseDecision,
 ): string {
   return `<strong>Úrskurður um gæsluvarðhald</strong><br /><br />${court}, ${formatDate(
     courtDate,
@@ -291,6 +308,8 @@ export function formatPrisonRulingEmailNotification(
     decision,
     custodyEndDate,
     custodyRestrictions.includes(CaseCustodyRestrictions.ISOLATION),
+    isExtension,
+    previousDecision,
   )}<br /><br /><strong>Ákvörðun um kæru</strong><br />${formatAppeal(
     accusedAppealDecision,
     capitalize(formatAccusedByGender(accusedGender)),
