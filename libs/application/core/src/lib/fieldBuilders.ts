@@ -391,7 +391,7 @@ export function buildDividerField(data: {
 
 export function buildKeyValueField(data: {
   label: React.ReactNode
-  value: MaybeWithApplication<React.ReactNode>
+  value: MaybeWithApplication<React.ReactNode | React.ReactNode[]>
   width?: FieldWidth
 }): KeyValueField {
   const { label, value, width = 'full' } = data

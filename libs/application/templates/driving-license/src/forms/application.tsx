@@ -293,11 +293,7 @@ Veitir ökuréttindi til að stjórna bifhjóli:
           children: [
             buildKeyValueField({
               label: 'Tegund ökuréttinda',
-              value: ({ answers: { subType } }) =>
-                (subType as string[]).reduce(
-                  (acc, type) => `${acc}\n${type}`,
-                  '',
-                ),
+              value: ({ answers: { subType } }) => subType,
             }),
             buildDividerField({}),
             buildKeyValueField({
