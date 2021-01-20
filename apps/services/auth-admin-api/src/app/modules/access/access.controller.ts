@@ -48,7 +48,7 @@ export class AccessController {
     return admin
   }
 
-  /** Gets all admins and count of rows */
+  /** Gets x many admins based on pagenumber and count variable */
   @Get()
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
