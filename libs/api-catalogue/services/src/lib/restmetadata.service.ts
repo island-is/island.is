@@ -46,7 +46,8 @@ export class RestMetadataService {
         pricing: [],
         data: [],
         access: [AccessCategory.XROAD],
-        type: TypeCategory.REST,
+        type: [TypeCategory.REST],
+        instances: [],
         versions: [],
       }
 
@@ -72,6 +73,7 @@ export class RestMetadataService {
             title: spec.info.title,
             summary: '', // TODO: We should have a short summary
             description: spec.info.description ?? '',
+            type: TypeCategory.REST,
             data: spec.info['x-category'],
             pricing: spec.info['x-pricing'],
             xroadIdentifier: [sorted[i]],

@@ -4,6 +4,7 @@ import {
   PricingCategory,
   DataCategory,
   TypeCategory,
+  Environment,
 } from '@island.is/api-catalogue/consts'
 import { Service, XroadIdentifier } from '@island.is/api-catalogue/types'
 import { IsEnum, IsOptional, IsString, IsArray } from 'class-validator'
@@ -27,6 +28,10 @@ registerEnumType(TypeCategory, {
   name: 'TypeCategory',
 })
 
+registerEnumType(Environment, {
+  name: 'Environment',
+})
+
 @ObjectType()
 export class ApiServiceVersion implements ServiceVersion {
   @Field((type) => ID)
@@ -45,16 +50,20 @@ export class ApiServiceVersion implements ServiceVersion {
   @IsString()
   description!: string
 
+  @Field((type) => TypeCategory)
+  @IsEnum(TypeCategory)
+  type!: TypeCategory
+
   @Field((type) => [PricingCategory])
-  @IsString()
+  @IsEnum(PricingCategory)
   pricing!: PricingCategory[]
 
   @Field((type) => [DataCategory])
-  @IsString()
+  @IsEnum(DataCategory)
   data!: DataCategory[]
 
   @Field((type) => [XroadInfo])
-  @IsString()
+  @IsArray()
   xroadIdentifier!: XroadIdentifier[]
 }
 
@@ -90,11 +99,15 @@ export class ApiService implements Service {
 
   @Field((type) => [TypeCategory])
   @IsEnum(TypeCategory)
-  type!: TypeCategory
+  type!: Array<TypeCategory>
 
   @Field((type) => [AccessCategory])
   @IsEnum(AccessCategory)
   access!: Array<AccessCategory>
+
+  @Field((type) => [Environment])
+  @IsEnum(Environment)
+  instances!: Array<Environment>
 
   @Field((type) => [ApiServiceVersion])
   @IsArray()

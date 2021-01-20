@@ -29,7 +29,7 @@ export const ServiceInformation = ({
     <Box>
       <Inline space={1}>
         <Text variant="h1" as="h1">
-          {service.name}
+          {service.title}
         </Text>
         {service.pricing.length > 0 && (
           <Box>

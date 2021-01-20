@@ -60,11 +60,11 @@ export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
       <Breadcrumbs>
         <a href="/">Viskuausan</a>
         <a href="/services">API Vörulisti</a>
-        <span>{service.name}</span>
+        <span>{service.title}</span>
       </Breadcrumbs>
       <div className={cn(styles.topSection)}>
         <h1 className="name" data-id={service.id}>
-          {service.name}
+          {service.title}
         </h1>
         <div className={cn(styles.description)}>{service.description}</div>
         <Box>

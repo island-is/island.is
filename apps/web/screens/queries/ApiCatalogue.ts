@@ -5,7 +5,7 @@ export const GET_CATALOGUE_QUERY = gql`
     getApiCatalogue(input: $input) {
       services {
         id
-        name
+        title
         owner
         pricing
         type
@@ -24,18 +24,26 @@ export const GET_API_SERVICE_QUERY = gql`
     getApiServiceById(input: $input) {
       id
       owner
-      name
+      title
       description
       data
       pricing
       access
       type
-      xroadIdentifier {
-        instance
-        memberCode
-        memberClass
-        subsystemCode
-        serviceCode
+      versions {
+        versionId
+        title
+        description
+        type
+        pricing
+        data
+        xroadIdentifier {
+          instance
+          memberCode
+          memberClass
+          subsystemCode
+          serviceCode
+        }
       }
     }
   }

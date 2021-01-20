@@ -2,6 +2,7 @@ import {
   AccessCategory,
   DataCategory,
   PricingCategory,
+  TypeCategory,
 } from '@island.is/api-catalogue/consts'
 import { XroadIdentifier } from './xroadIdentifier.model'
 
@@ -28,6 +29,12 @@ export interface ServiceVersion {
    * From OAS3.info.description
    */
   description: string
+
+  /**
+   * Specifies which type of web service this version is implemented in.
+   * i.e. REST, SOAP ...
+   */
+  type: TypeCategory
 
   /**
    * Pricing details of the service. From OAS3.info.x-pricing

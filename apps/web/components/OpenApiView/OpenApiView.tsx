@@ -36,15 +36,9 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
   const n = useNamespace(strings)
 
   const options: Array<SelectOption> = service
-    ? service.xroadIdentifier.map((x) => ({
-        label: x.serviceCode.split('-').pop(),
-        value: {
-          instance: x.instance,
-          memberClass: x.memberClass,
-          memberCode: x.memberCode,
-          serviceCode: x.serviceCode,
-          subsystemCode: x.subsystemCode,
-        },
+    ? service.versions.map((x) => ({
+        label: x.versionId.split('-').pop(),
+        value: x.xroadIdentifier[0],
       }))
     : [
         {

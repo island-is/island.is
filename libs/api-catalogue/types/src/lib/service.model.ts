@@ -1,11 +1,11 @@
 import {
   AccessCategory,
   DataCategory,
+  Environment,
   PricingCategory,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
 import { ServiceVersion } from './service-version.model'
-import { XroadIdentifier } from './xroadIdentifier.model'
 
 export interface Service {
   /**
@@ -39,7 +39,7 @@ export interface Service {
    * Type of the service. Provided from the nature
    * of where the service data is collected.
    */
-  type: TypeCategory
+  type: Array<TypeCategory>
 
   /**
    * Aggregated pricing details for all versions
@@ -58,6 +58,12 @@ export interface Service {
    * From all version of the service. i.e. X-Road and/or API GW
    */
   access: Array<AccessCategory>
+
+  /**
+   * Aggregated info of what environment instances this services
+   * is deploy to: dev, staging, prod
+   */
+  instances: Array<Environment>
 
   /**
    * Array of all versions of the service.

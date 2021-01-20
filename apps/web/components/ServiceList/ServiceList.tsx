@@ -73,7 +73,7 @@ export const ServiceList: React.FC<ServiceListProps> = ({
             >
               <CategoryCard
                 href={`${baseUrl}${item.id}`}
-                heading={item.name}
+                heading={item.title}
                 text={item.owner}
                 tags={CategoriesToTags(item)}
                 truncateHeading={true}

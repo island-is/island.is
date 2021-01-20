@@ -70,7 +70,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
       items: [
         {
           active: true,
-          title: service?.name,
+          title: service?.title,
         },
       ],
     },
