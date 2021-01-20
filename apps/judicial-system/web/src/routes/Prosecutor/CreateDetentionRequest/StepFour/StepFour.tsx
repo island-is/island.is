@@ -117,12 +117,31 @@ export const StepFour: React.FC = () => {
             </Box>
             <BlueBox>
               <Box marginBottom={3}>
-                {constructProsecutorDemands(workingCase)}
+                {constructProsecutorDemands(workingCase, true)}
               </Box>
               <Input
                 name="prosecutorDemands"
                 label="Bæta texta við dómkröfur"
                 placeholder="Hér er hægt að bæta texta við dómkröfurnar eftir þörfum..."
+                defaultValue={workingCase?.otherDemands}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'otherDemands',
+                    event,
+                    [],
+                    workingCase,
+                    setWorkingCase,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'otherDemands',
+                    event.target.value,
+                    [],
+                    workingCase,
+                    updateCase,
+                  )
+                }
                 rows={7}
                 textarea
               />

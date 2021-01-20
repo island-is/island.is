@@ -27,7 +27,7 @@ interface LatestNewsProps {
   items: GetNewsQuery['getNews']['items']
 }
 
-const LatestNewsSection: React.FC<LatestNewsProps> = ({
+export const LatestNewsSection: React.FC<LatestNewsProps> = ({
   items = [],
   label,
   labelId = '',

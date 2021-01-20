@@ -73,6 +73,10 @@ export type ModalBaseProps = {
     disclosureProps?: DisclosureProps,
   ) => ReactElement
   backdropWhite?: boolean
+  /**
+   * Aria label for the modal
+   */
+  modalLabel?: string
 }
 
 export const ModalBase: FC<ModalBaseProps> = ({
@@ -85,6 +89,7 @@ export const ModalBase: FC<ModalBaseProps> = ({
   onVisibilityChange,
   renderDisclosure = (disclosure) => disclosure,
   backdropWhite,
+  modalLabel,
 }) => {
   const modal = useDialogState({
     animated: true,
@@ -115,7 +120,11 @@ export const ModalBase: FC<ModalBaseProps> = ({
         </DialogDisclosure>
       ) : null}
       <DialogBackdrop {...modal} as={BackdropDiv} backdropWhite={backdropWhite}>
-        <BaseDialog {...modal} className={cn(styles.modal, className)}>
+        <BaseDialog
+          {...modal}
+          className={cn(styles.modal, className)}
+          aria-label={modalLabel}
+        >
           {typeof children === 'function' ? children({ closeModal }) : children}
         </BaseDialog>
       </DialogBackdrop>

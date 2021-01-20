@@ -190,7 +190,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
     ).toBeInTheDocument()
   })
 
-  test('should have a prefilled court date and dedender info with requested  date and dedender info', async () => {
+  test('should have a prefilled court date and defender info with requested date and defender info', async () => {
     // Arrange
     render(
       <MockedProvider
