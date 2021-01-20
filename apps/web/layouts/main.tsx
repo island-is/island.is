@@ -11,12 +11,11 @@ import {
 } from '@island.is/island-ui/core'
 import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
-import { MD5 } from 'crypto-js'
 import Cookies from 'js-cookie'
 import * as Sentry from '@sentry/node'
 import { RewriteFrames } from '@sentry/integrations'
 import { useRouter } from 'next/router'
-import { Header, Main, PageLoader } from '../components'
+import { Header, Main, PageLoader, SkipToMainContent } from '../components'
 import { GET_GROUPED_MENU_QUERY, GET_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import {
@@ -44,6 +43,7 @@ import {
 } from '../utils/processMenuData'
 import { Locale } from '../i18n/I18n'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
+import { stringHash } from '@island.is/web/utils/stringHash'
 
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
@@ -158,7 +158,9 @@ const Layout: NextComponentType<
     },
   ]
 
-  const alertBannerId = MD5(JSON.stringify(alertBannerContent)).toString()
+  const alertBannerId = `alert-${stringHash(
+    JSON.stringify(alertBannerContent),
+  )}`
 
   return (
     <GlobalContextProvider namespace={namespace}>
@@ -232,6 +234,9 @@ const Layout: NextComponentType<
             key="twitterImage"
           />
         </Head>
+        <SkipToMainContent
+          title={n('skipToMainContent', 'Fara beint í efnið')}
+        />
         {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
           <AlertBanner
             title={alertBannerContent.title}

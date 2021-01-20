@@ -1,7 +1,9 @@
 import axios from 'axios'
 
+console.log('NEXT_PUBLIC_BACKEND_URL', process.env.NEXT_PUBLIC_BACKEND_URL)
+
 const instance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
+  baseURL: '/backend',
   responseType: 'json',
 })
 
