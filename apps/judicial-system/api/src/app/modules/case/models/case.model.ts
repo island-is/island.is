@@ -64,6 +64,9 @@ export class Case implements TCase {
   readonly requestedCustodyEndDate?: string
 
   @Field({ nullable: true })
+  readonly otherDemands?: string
+
+  @Field({ nullable: true })
   readonly lawsBroken?: string
 
   @Field(() => [String], { nullable: true })

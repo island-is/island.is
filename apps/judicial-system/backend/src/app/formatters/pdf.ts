@@ -95,7 +95,20 @@ export async function generateRequestPdf(
           CaseCustodyRestrictions.ISOLATION,
         ),
       ),
+      {
+        lineGap: 6,
+        paragraphGap: 0,
+      },
     )
+
+  if (existingCase.otherDemands) {
+    doc.text(' ').text(existingCase.otherDemands, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+  }
+
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -316,6 +329,15 @@ export async function generateRulingPdf(
         paragraphGap: 0,
       },
     )
+
+  if (existingCase.otherDemands) {
+    doc.text(' ').text(existingCase.otherDemands, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+  }
+
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
