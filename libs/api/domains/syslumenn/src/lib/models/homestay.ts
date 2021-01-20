@@ -1,4 +1,5 @@
 import {Field, ObjectType} from "@nestjs/graphql";
+import {IHomestay} from "../client/models/homestay";
 
 @ObjectType()
 export class Homestay {
@@ -17,6 +18,15 @@ export class Homestay {
   @Field()
   year: number
 
-  @Field()
-  city: string
+  @Field({nullable: true})
+  city?: string
 }
+
+export const mapHomestay = (homestay: IHomestay) : Homestay => ({
+  registrationNumber: homestay.skraningarnumer,
+  name: homestay.heitiHeimagistingar,
+  address: homestay.heimilisfang,
+  manager: homestay.abyrgdarmadur,
+  year: homestay.umsoknarAr,
+  city: homestay.sveitarfelag ?? ""
+})

@@ -1,14 +1,18 @@
 import {Args, Query, Resolver} from "@nestjs/graphql";
 import {GetHomestaysInput} from "./dto/getHomestays.input";
 import {Homestay} from "./models/homestay"
+import {SyslumennService} from "./syslumenn.service";
 
 @Resolver()
 export class SyslumennResolver {
+  constructor(private syslumennService: SyslumennService) {}
+
   @Query(() => [Homestay])
   getHomestays(
     @Args('input') input: GetHomestaysInput
-  ):Homestay[] {
-    return [
+  ): Promise<Homestay[]> {
+    return this.syslumennService.getHomestays(input.year)
+    /*return [
       {
         registrationNumber: "H222",
         address: "Hello",
@@ -25,6 +29,6 @@ export class SyslumennResolver {
         city: "Reykjavík",
         manager: "ok"
       }
-    ]
+    ]*/
   }
 }

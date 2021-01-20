@@ -1,6 +1,6 @@
 
 import {DynamicModule, HttpModule} from "@nestjs/common";
-import {SYSLUMENN_CLIENT_CONFIG, SyslumennClient, SyslumennClientConfig} from "./syslumenn.client";
+import {SYSLUMENN_CLIENT_CONFIG, SyslumennClient, SyslumennClientConfig} from "./client/syslumenn.client";
 import {SyslumennResolver} from "./syslumenn.resolver";
 import {SyslumennService} from "./syslumenn.service";
 

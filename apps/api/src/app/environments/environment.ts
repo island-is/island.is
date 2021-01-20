@@ -56,8 +56,8 @@ export default {
     },
   },
   syslumennService: {
-    url: process.env.SYSLUMENN_HOST,
-    username: process.env.SYSLUMENN_USERNAME,
-    password: process.env.SYSLUMENN_PASSWORD
+    url: process.env.SYSLUMENN_HOST ?? '',
+    username: process.env.SYSLUMENN_USERNAME ?? '',
+    password: process.env.SYSLUMENN_PASSWORD ?? ''
   }
 }
