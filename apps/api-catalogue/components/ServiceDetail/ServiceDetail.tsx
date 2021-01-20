@@ -34,16 +34,14 @@ export interface ServiceDetailProps {
 export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
   const n = useNamespace(strings)
 
-  const options: Array<SelectOption> = service.xroadIdentifier.map((x) => ({
-    label: x.serviceCode.split('-').pop(),
-    value: {
-      instance: x.instance,
-      memberClass: x.memberClass,
-      memberCode: x.memberCode,
-      serviceCode: x.serviceCode,
-      subsystemCode: x.subsystemCode,
-    },
-  }))
+  const options: Array<SelectOption> = service.versions.map((x) => {
+    // TODO: Handle multiple identifiers for environments
+    const { __typename, ...identifier } = x.xroadIdentifier[0]
+    return {
+      label: x.versionId.split('-').pop(),
+      value: identifier,
+    }
+  })
   const [openApi, setOpenApi] = useState<GetOpenApiInput>(options[0].value)
   const { data, loading } = useQuery(GET_OPEN_API_QUERY, {
     variables: {

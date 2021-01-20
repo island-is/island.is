@@ -45,7 +45,7 @@ export const ServiceCard = ({ service, strings }: ServiceCardProps) => {
             <Box className={cn(styles.cardTexts)}>
               <Stack space={1}>
                 <h1 className={cn(isMobile ? styles.nameMobile : styles.name)}>
-                  {service.name}
+                  {service.title}
                 </h1>
                 <p className={cn(isMobile ? styles.ownerMobile : styles.owner)}>
                   {service.owner}
