@@ -119,7 +119,20 @@ export const HearingArrangements: React.FC = () => {
         theCase = { ...theCase, courtDate: theCase.requestedCourtDate }
       }
 
-      if (!theCase.defenderName && theCase.requestedDefenderName) {
+      /**
+       * Ideally we'd want the do something like
+       *
+       * if(theCase.requestedDefenderName && theCase...)
+       *
+       * but we want the update the case if requestedDefenderName is
+       * an empty string and therefore we need to check for null and
+       * undefined respectively.
+       */
+      if (
+        theCase.requestedDefenderName !== null &&
+        theCase.requestedDefenderName !== undefined &&
+        theCase.requestedDefenderName !== theCase.defenderName
+      ) {
         updateCase(
           theCase.id,
           parseString('defenderName', theCase.requestedDefenderName),
@@ -128,7 +141,11 @@ export const HearingArrangements: React.FC = () => {
         theCase = { ...theCase, defenderName: theCase.requestedDefenderName }
       }
 
-      if (!theCase.defenderEmail && theCase.requestedDefenderEmail) {
+      if (
+        theCase.requestedDefenderEmail !== null &&
+        theCase.requestedDefenderEmail !== undefined &&
+        theCase.requestedDefenderEmail !== theCase.defenderEmail
+      ) {
         updateCase(
           theCase.id,
           parseString('defenderEmail', theCase.requestedDefenderEmail),
@@ -168,10 +185,13 @@ export const HearingArrangements: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.JUDGE}
+      activeSection={
+        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
+      }
       activeSubSection={JudgeSubsections.HEARING_ARRANGEMENTS}
       isLoading={loading}
       notFound={data?.case === undefined}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>

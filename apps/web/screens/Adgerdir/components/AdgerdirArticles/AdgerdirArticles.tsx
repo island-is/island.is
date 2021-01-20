@@ -20,17 +20,17 @@ import {
 } from '@island.is/island-ui/core'
 import { AdgerdirPage, AdgerdirTag } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { Card } from '@island.is/web/components/Adgerdir/UI/Card/Card'
-import { Button } from '@island.is/web/components/Adgerdir/UI/Button/Button'
-import { Tag } from '@island.is/web/components/Adgerdir/UI/Tag/Tag'
-import { ColorSchemeContext } from '@island.is/web/components/Adgerdir/UI/ColorSchemeContext/ColorSchemeContext'
+import { Card } from '../UI/Card/Card'
+import { Button } from '../UI/Button/Button'
+import { Tag } from '../UI/Tag/Tag'
+import { ColorSchemeContext } from '../UI/ColorSchemeContext/ColorSchemeContext'
 import {
   ADGERDIR_INDIVIDUALS_TAG_ID,
   ADGERDIR_COMPANIES_TAG_ID,
 } from '@island.is/web/constants'
 
 import * as styles from './AdgerdirArticles.treat'
-import * as covidStyles from '@island.is/web/components/Adgerdir/UI/styles/styles.treat'
+import * as covidStyles from '../UI/styles/styles.treat'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const FILTER_TIMER = 300

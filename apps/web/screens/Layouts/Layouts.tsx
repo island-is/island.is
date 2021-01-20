@@ -5,7 +5,7 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import { Main, Sticky } from '../../components'
+import { Main, Sticky } from '@island.is/web/components'
 
 interface ArticleProps {
   sidebar: ReactNode

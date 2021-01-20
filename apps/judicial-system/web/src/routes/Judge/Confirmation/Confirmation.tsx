@@ -181,13 +181,15 @@ const SigningModal: React.FC<SigningModalProps> = ({
 
   useEffect(() => {
     const completeSigning = async (
-      resSignatureResponse: SignatureConfirmationResponse,
+      resSignatureConfirmationResponse: SignatureConfirmationResponse,
     ) => {
-      await transitionCase()
+      if (resSignatureConfirmationResponse.documentSigned) {
+        await transitionCase()
 
-      await sendNotification()
+        await sendNotification()
+      }
 
-      setSignatureConfirmationResponse(resSignatureResponse)
+      setSignatureConfirmationResponse(resSignatureConfirmationResponse)
     }
 
     if (resSignatureConfirmationResponse) {
@@ -360,10 +362,13 @@ export const Confirmation: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.JUDGE}
+      activeSection={
+        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
+      }
       activeSubSection={JudgeSubsections.CONFIRMATION}
       isLoading={loading}
       notFound={data?.case === undefined}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>
