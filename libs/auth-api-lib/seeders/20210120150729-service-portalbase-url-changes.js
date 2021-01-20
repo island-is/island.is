@@ -5,7 +5,8 @@ const client_id = 'island-is-1'
 const client_redirect_uri = [
   {
     client_id: client_id,
-    redirect_uri: 'https://service-portalbase-url-changes-beta.dev01.devland.is/minarsidur/signin-oidc',
+    redirect_uri:
+      'https://service-portalbase-url-changes-beta.dev01.devland.is/minarsidur/signin-oidc',
   },
   {
     client_id: client_id,
@@ -24,7 +25,8 @@ const client_allowed_cors_origin = [
 const client_post_logout_redirect_uri = [
   {
     client_id: client_id,
-    redirect_uri: 'https://service-portalbase-url-changes-beta.dev01.devland.is/minarsidur',
+    redirect_uri:
+      'https://service-portalbase-url-changes-beta.dev01.devland.is/minarsidur',
   },
 ]
 
