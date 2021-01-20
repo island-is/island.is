@@ -3,17 +3,17 @@ import { useForm } from 'react-hook-form'
 import HelpBox from '../../common/HelpBox'
 import { ErrorMessage } from '@hookform/error-message'
 import { ResourcesService } from '../../../services/ResourcesService'
-import IdentityResourcesDTO from '../../../entities/dtos/identity-resources.dto'
+import IdentityResourceDTO from '../../../entities/dtos/identity-resource.dto'
 
 interface Props {
-  handleSave?: (object: IdentityResourcesDTO) => void
+  handleSave?: (object: IdentityResourceDTO) => void
   handleCancel?: () => void
-  identityResource: IdentityResourcesDTO
+  identityResource: IdentityResourceDTO
 }
 
 const IdentityResourceCreateForm: React.FC<Props> = (props) => {
   const { register, handleSubmit, errors, formState } = useForm<
-    IdentityResourcesDTO
+    IdentityResourceDTO
   >()
   const { isSubmitting } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
@@ -37,7 +37,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
     setAvailable(response)
   }
 
-  const save = async (data: IdentityResourcesDTO) => {
+  const save = async (data: IdentityResourceDTO) => {
     let response = null
 
     if (!isEditing) {

@@ -1,4 +1,4 @@
-export class ApiScopesDTO {
+export class ApiScopeDTO {
   constructor() {
     this.enabled = true
     this.name = ''
