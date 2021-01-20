@@ -1,1 +1,1 @@
-export * from './useLinkResolver'
+export { linkResolver, typeResolver, useLinkResolver } from './useLinkResolver'

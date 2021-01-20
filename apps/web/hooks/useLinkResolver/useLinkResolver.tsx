@@ -95,19 +95,22 @@ export const routesTemplate = {
 }
 
 // This considers one block ("[someVar]") to be one variable and ignores the path variables name
-const replaceVariableInPath = (path: string, replacement: string): string => {
+export const replaceVariableInPath = (
+  path: string,
+  replacement: string,
+): string => {
   return path.replace(/\[\w+\]/, replacement)
 }
 
 // converts a path template to a regex query for matching
-const convertToRegex = (routeTemplate: string) =>
+export const convertToRegex = (routeTemplate: string) =>
   routeTemplate
     .replace(/\//g, '\\/') // escape slashes to match literal "/" in route template
     .replace(/\[\w+\]/g, '\\w+') // make path variables be regex word matches
     .concat('$') // to prevent partial matches
 
 // extracts slugs from given path
-const extractSlugsByRouteTemplate = (
+export const extractSlugsByRouteTemplate = (
   path: string,
   template: string,
 ): string[] => {
@@ -115,7 +118,7 @@ const extractSlugsByRouteTemplate = (
   const templateParts = template.split('/')
 
   return pathParts.filter((_, index) => {
-    return templateParts[index]?.startsWith('[') ?? ''
+    return templateParts[index]?.startsWith('[') ?? false
   })
 }
 
@@ -188,7 +191,7 @@ export const typeResolver = (
 
       // handle homepage en path
       if (path === '/en') {
-        return { type: 'homepage', locale: 'en' }
+        return { type: 'homepage', locale: 'en', slug: [] }
       }
 
       // convert the route template string into a regex query
@@ -199,7 +202,6 @@ export const typeResolver = (
         (!skipDynamic && path?.match(regex)) ||
         (skipDynamic && path?.startsWith(routeTemplate))
       ) {
-        console.log('Found type!', type, locale)
         return {
           slug: extractSlugsByRouteTemplate(path, routeTemplate),
           type,
