@@ -193,8 +193,13 @@ export const typeResolver = (
 
       // convert the route template string into a regex query
       const regex = convertToRegex(routeTemplate)
-      // if this path matches query return route info else continue
-      if (path?.match(regex)) {
+
+      // if the path starts with the routeTemplate string or matches dynamic route regex we have found the type
+      if (
+        (!skipDynamic && path?.match(regex)) ||
+        (skipDynamic && path?.startsWith(routeTemplate))
+      ) {
+        console.log('Found type!', type, locale)
         return {
           slug: extractSlugsByRouteTemplate(path, routeTemplate),
           type,

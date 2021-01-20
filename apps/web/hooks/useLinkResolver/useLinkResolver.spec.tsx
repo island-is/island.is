@@ -121,6 +121,7 @@ describe('Type resolver', () => {
     expect(types).toEqual({
       type: 'articlecategory',
       locale: 'is',
+      slug: ['mycustomcategory'],
     })
   })
 
@@ -129,6 +130,7 @@ describe('Type resolver', () => {
     expect(types).toEqual({
       type: 'newsoverview',
       locale: 'is',
+      slug: [],
     })
   })
 
@@ -137,12 +139,14 @@ describe('Type resolver', () => {
     expect(typesIs).toEqual({
       type: 'news',
       locale: 'is',
+      slug: ['mycustomnews'],
     })
 
     const typesEn = typeResolver('/en/news/mycustomnews')
     expect(typesEn).toEqual({
       type: 'news',
       locale: 'en',
+      slug: ['mycustomnews'],
     })
   })
 
@@ -161,6 +165,7 @@ describe('Type resolver', () => {
     expect(types).toEqual({
       type: 'newsoverview',
       locale: 'is',
+      slug: [],
     })
   })
 })
