@@ -8,7 +8,7 @@ export interface SyslumennClientConfig {
   password: string
 }
 
-@Injectable
+@Injectable()
 export class SyslumennClient {
   private accessToken: string
 
