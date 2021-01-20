@@ -39,6 +39,6 @@ export class NationalRegistryUser {
   @Field(() => Date)
   birthday!: string
 
-  @Field(() => Address)
-  address!: Address
+  @Field(() => Address, { nullable: true })
+  address?: Address
 }
