@@ -74,6 +74,11 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly otherDemands?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly lawsBroken?: string
 
   @IsOptional()

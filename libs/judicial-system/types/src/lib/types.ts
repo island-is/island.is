@@ -93,6 +93,7 @@ export interface Case {
   requestedCourtDate?: string
   alternativeTravelBan?: boolean
   requestedCustodyEndDate?: string
+  otherDemands?: string
   lawsBroken?: string
   custodyProvisions?: CaseCustodyProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
