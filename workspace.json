@@ -907,6 +907,35 @@
         }
       }
     },
+    "api-domains-syslumenn": {
+      "root": "libs/api/domains/syslumenn",
+      "sourceRoot": "libs/api/domains/syslumenn/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/syslumenn/tsconfig.lib.json",
+              "libs/api/domains/syslumenn/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/syslumenn/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/syslumenn/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-translations": {
       "root": "libs/api/domains/translations",
       "sourceRoot": "libs/api/domains/translations/src",
