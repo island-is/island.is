@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { Text, Input, Box, RadioButton } from '@island.is/island-ui/core'
-import { isDirty, isNextDisabled } from '../../../../utils/stepHelper'
+import { isNextDisabled } from '../../../../utils/stepHelper'
 
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
@@ -441,12 +441,6 @@ export const StepOne: React.FC = () => {
               <Text as="h3" variant="h3">
                 Verjandi sakbornings
               </Text>
-              {(isDirty(workingCase.defenderName) ||
-                isDirty(workingCase.defenderEmail)) && (
-                <Text variant="eyebrow" color="blue400">
-                  (Verjanda hefur verið úthlutað)
-                </Text>
-              )}
             </Box>
             <Box marginBottom={2}>
               <Input
@@ -454,11 +448,6 @@ export const StepOne: React.FC = () => {
                 label="Nafn verjanda"
                 placeholder="Fullt nafn"
                 defaultValue={workingCase.requestedDefenderName}
-                disabled={isDirty(workingCase.defenderName)}
-                icon={
-                  isDirty(workingCase.defenderName) ? 'lockClosed' : undefined
-                }
-                iconType="outline"
                 onBlur={(evt) => {
                   if (workingCase.requestedDefenderName !== evt.target.value) {
                     setWorkingCase({
@@ -479,11 +468,6 @@ export const StepOne: React.FC = () => {
               name="requestedDefenderEmail"
               label="Netfang verjanda"
               placeholder="Netfang"
-              disabled={isDirty(workingCase.defenderEmail)}
-              icon={
-                isDirty(workingCase.defenderEmail) ? 'lockClosed' : undefined
-              }
-              iconType="outline"
               defaultValue={workingCase.requestedDefenderEmail}
               errorMessage={requestedDefenderEmailErrorMessage}
               hasError={requestedDefenderEmailErrorMessage !== ''}

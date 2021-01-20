@@ -13,8 +13,8 @@ import { AdgerdirPage } from '@island.is/api/schema'
 import {
   ColorSchemeContext,
   ColorSchemes,
-} from '@island.is/web/components/Adgerdir/UI/ColorSchemeContext/ColorSchemeContext'
-import { Card } from '@island.is/web/components/Adgerdir/UI/Card/Card'
+} from '../UI/ColorSchemeContext/ColorSchemeContext'
+import { Card } from '../UI/Card/Card'
 import 'react-alice-carousel/lib/alice-carousel.css'
 import * as styles from './CardsSlider.treat'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
