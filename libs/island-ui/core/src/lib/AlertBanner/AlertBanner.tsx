@@ -93,17 +93,18 @@ export const AlertBanner: FC<AlertBannerProps> = ({
     <Box
       background={variant.background}
       borderColor={variant.borderColor}
-      paddingLeft={[5, 5, 7]}
-      paddingRight={[5, 5, 9]}
+      paddingLeft={[5, 5, 6]}
+      paddingRight={[5, 5, 6]}
       paddingY={2}
       borderBottomWidth="standard"
       display="flex"
+      alignItems="center"
       position="relative"
       flexDirection={['column', 'column', 'row']}
       textAlign={['center', 'center', 'left']}
     >
       {variant.icon && (
-        <Box marginRight={2} marginBottom={[2, 2, 0]}>
+        <Box display="flex" marginRight={2} marginBottom={[2, 2, 0]}>
           <Icon type={variant.icon} color={variant.iconColor} />
         </Box>
       )}

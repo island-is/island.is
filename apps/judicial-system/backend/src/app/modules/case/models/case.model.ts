@@ -4,6 +4,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasOne,
   Model,
   Table,
   UpdatedAt,
@@ -136,6 +137,13 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   requestedCustodyEndDate: Date
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  otherDemands: string
 
   @Column({
     type: DataType.STRING,
@@ -348,4 +356,20 @@ export class Case extends Model<Case> {
   @BelongsTo(() => User, 'judgeId')
   @ApiProperty({ type: User })
   judge: User
+
+  @ForeignKey(() => Case)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  parentCaseId: string
+
+  @BelongsTo(() => Case, 'parentCaseId')
+  @ApiProperty({ type: Case })
+  parentCase: Case
+
+  @HasOne(() => Case, 'parentCaseId')
+  @ApiProperty({ type: Case })
+  childCase: Case
 }

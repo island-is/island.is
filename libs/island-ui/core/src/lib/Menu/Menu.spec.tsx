@@ -62,7 +62,7 @@ describe('Menu', () => {
   it('should render successfully', () => {
     const { baseElement } = render(
       <Menu
-        baseId="menu"
+        baseId="menu-test"
         myPagesText="Mínar síður"
         languageSwitchText="EN"
         mainLinks={mainLinks}

@@ -10,7 +10,11 @@ import {
   Stack,
   GridContainer,
 } from '@island.is/island-ui/core'
-import { Image, Slice as SliceType } from '@island.is/island-ui/contentful'
+import {
+  Image,
+  richText,
+  Slice as SliceType,
+} from '@island.is/island-ui/contentful'
 import { Screen } from '@island.is/web/types'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -27,8 +31,12 @@ import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
 } from '@island.is/web/graphql/schema'
-import { RichText } from '../components/RichText/RichText'
-import { SidebarBox, Sticky, HeadWithSocialSharing, Main } from '../components'
+import {
+  SidebarBox,
+  Sticky,
+  HeadWithSocialSharing,
+  Main,
+} from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 import NextLink from 'next/link'
@@ -123,10 +131,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
                       </Box>
                     )}
                     <Box paddingBottom={4} width="full">
-                      <RichText
-                        body={newsItem.content as SliceType[]}
-                        config={{ defaultPadding: [2, 2, 4] }}
-                      />
+                      {richText(newsItem.content as SliceType[])}
                     </Box>
                   </GridColumn>
                 </GridRow>
