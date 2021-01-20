@@ -23,6 +23,13 @@ export class ResourcesService extends BaseService {
     return BaseService.GET(`api-scope/${encodeURIComponent(name)}`)
   }
 
+  /** Gets if scope name or identity resource name is availabe */
+  static async isScopeNameAvailable(name): Promise<boolean> {
+    return BaseService.GET(
+      `is-scope-name-available/${encodeURIComponent(name)}`,
+    )
+  }
+
   /** Updates an existing Api Scope */
   static async updateApiResource(
     apiResource: ApiResourcesDTO,

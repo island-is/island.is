@@ -202,6 +202,27 @@ export class ResourcesService {
     return apiScope
   }
 
+  /** Gets API scope or IdentityResource by name */
+  async isScopeNameAvailable(name: string): Promise<boolean> {
+    this.logger.debug('Getting data about api scope with name: ', name)
+
+    if (!name) {
+      return false
+    }
+
+    const apiScope = await this.apiScopeModel.findByPk(name)
+    if (apiScope) {
+      return false
+    }
+
+    const idr = await this.identityResourceModel.findByPk(name)
+    if (idr) {
+      return false
+    }
+
+    return true
+  }
+
   /** Gets API scope by name */
   async getApiResourceByName(name: string): Promise<ApiResource | null> {
     this.logger.debug('Getting data about api scope with name: ', name)

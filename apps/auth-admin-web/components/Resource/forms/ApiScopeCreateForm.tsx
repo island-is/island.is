@@ -27,12 +27,12 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
 
   const checkAvailability = async (name: string) => {
     setNameLength(name.length)
-    const response = await ResourcesService.getApiScopeByName(name)
-    if (response) {
+    if (name.length === 0) {
       setAvailable(false)
-    } else {
-      setAvailable(true)
+      return
     }
+    const response = await ResourcesService.isScopeNameAvailable(name)
+    setAvailable(response)
   }
 
   const save = async (data: ApiScopesDTO) => {
