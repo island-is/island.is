@@ -21,10 +21,11 @@ export function formatProsecutorDemands(
   alternativeTravelBan: boolean,
   requestedCustodyEndDate: Date,
   isolation: boolean,
+  isExtension: boolean = false,
 ): string {
-  return `Þess er krafist að ${accusedName} kt. ${formatNationalId(
+  return `Þess er krafist að ${accusedName}, kt. ${formatNationalId(
     accusedNationalId,
-  )}, sæti gæsluvarðhaldi${
+  )}, sæti${isExtension ? ' áframhaldandi' : ''} gæsluvarðhaldi${
     alternativeTravelBan ? ', farbanni til vara,' : ''
   } með úrskurði ${court?.replace(
     'Héraðsdómur',

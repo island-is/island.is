@@ -149,7 +149,7 @@ export const constructProsecutorDemands = (workingCase: Case) => {
           workingCase.accusedNationalId,
         )}`}
       </Text>
-      {`, sæti${workingCase.parentCase ? ' áfram' : ''} gæsluvarðhaldi${
+      {`, sæti${workingCase.parentCase ? ' áframhaldandi' : ''} gæsluvarðhaldi${
         workingCase.alternativeTravelBan ? ', farbanni til vara,' : ''
       } með úrskurði ${workingCase.court?.replace(
         'Héraðsdómur',

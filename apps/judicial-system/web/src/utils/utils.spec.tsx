@@ -581,7 +581,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Þess er krafist að Doe, kt.012345-6789, sæti áfram gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
+            'Þess er krafist að Doe, kt.012345-6789, sæti áframhaldandi gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(

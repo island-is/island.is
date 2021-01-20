@@ -42,7 +42,7 @@ describe('formatProsecutorDemands', () => {
 
     // Assert
     expect(res).toBe(
-      'Þess er krafist að Glanni Glæpur kt. 010101-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til mánudagsins 16. nóvember 2020, kl. 19:30, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
+      'Þess er krafist að Glanni Glæpur, kt. 010101-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til mánudagsins 16. nóvember 2020, kl. 19:30, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
     )
   })
 
@@ -67,7 +67,7 @@ describe('formatProsecutorDemands', () => {
 
     // Assert
     expect(res).toBe(
-      'Þess er krafist að Glanni Glæpur kt. 010101-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til mánudagsins 16. nóvember 2020, kl. 19:30.',
+      'Þess er krafist að Glanni Glæpur, kt. 010101-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til mánudagsins 16. nóvember 2020, kl. 19:30.',
     )
   })
 
@@ -92,7 +92,34 @@ describe('formatProsecutorDemands', () => {
 
     // Assert
     expect(res).toBe(
-      'Þess er krafist að Glanni Glæpur kt. 010101-0000, sæti gæsluvarðhaldi, farbanni til vara, með úrskurði Héraðsdóms Reykjavíkur, til mánudagsins 16. nóvember 2020, kl. 19:30, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
+      'Þess er krafist að Glanni Glæpur, kt. 010101-0000, sæti gæsluvarðhaldi, farbanni til vara, með úrskurði Héraðsdóms Reykjavíkur, til mánudagsins 16. nóvember 2020, kl. 19:30, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
+    )
+  })
+
+  test('should format extended prosecutor', () => {
+    // Arrange
+    const accusedNationalId = '011101-0000'
+    const accusedName = 'Siggi Sýra'
+    const court = 'Héraðsdómur Kjósarskarðs'
+    const alternativeTravelBan = false
+    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
+    const isolation = false
+    const isExtension = true
+
+    // Act
+    const res = formatProsecutorDemands(
+      accusedNationalId,
+      accusedName,
+      court,
+      alternativeTravelBan,
+      requestedCustodyEndDate,
+      isolation,
+      isExtension,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Þess er krafist að Siggi Sýra, kt. 011101-0000, sæti áframhaldandi gæsluvarðhaldi með úrskurði Héraðsdóms Kjósarskarðs, til mánudagsins 16. nóvember 2020, kl. 19:30.',
     )
   })
 })
