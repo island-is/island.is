@@ -102,7 +102,7 @@ export const application: Form = buildForm({
           space: 6,
           children: [
             buildCheckboxField({
-              id: 'general',
+              id: 'subType',
               title: 'Fólksbílaflokkar',
               condition: ({ type }) =>
                 (type as string[])?.includes('general') ||

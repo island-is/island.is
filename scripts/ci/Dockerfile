@@ -19,6 +19,7 @@ ADD . .
 FROM src as builder
 ARG APP
 ENV APP=${APP}
+ENV NODE_ENV=production
 
 RUN yarn nx run ${APP}:build:production
 

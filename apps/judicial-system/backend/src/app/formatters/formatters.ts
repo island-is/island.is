@@ -24,16 +24,16 @@ export function formatProsecutorDemands(
 ): string {
   return `Þess er krafist að ${accusedName} kt. ${formatNationalId(
     accusedNationalId,
-  )} verði með úrskurði ${court?.replace(
+  )}, sæti gæsluvarðhaldi${
+    alternativeTravelBan ? ', farbanni til vara,' : ''
+  } með úrskurði ${court?.replace(
     'Héraðsdómur',
     'Héraðsdóms',
-  )} gert að sæta gæsluvarðhaldi${
-    alternativeTravelBan ? ', farbanni til vara,' : ''
-  } til ${formatDate(requestedCustodyEndDate, 'PPPPp')
+  )}, til ${formatDate(requestedCustodyEndDate, 'PPPPp')
     ?.replace('dagur,', 'dagsins')
     ?.replace(' kl.', ', kl.')}${
     isolation
-      ? ' og verði gert að sæta einangrun á meðan á gæsluvarðhaldinu stendur'
+      ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
       : ''
   }.`
 }

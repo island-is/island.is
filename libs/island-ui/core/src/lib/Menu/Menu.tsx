@@ -216,7 +216,7 @@ export const Menu = ({
       baseId={baseId}
       className={styles.container}
       disclosure={menuButton}
-      aria-label="Menu"
+      modalLabel="Menu"
       onVisibilityChange={onVisibilityChange}
       renderDisclosure={renderDisclosure}
       backdropWhite

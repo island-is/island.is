@@ -38,6 +38,17 @@ describe('formatDate', () => {
     expect(time).toEqual('09:36')
     expect(time2).toEqual('23:36')
   })
+
+  test('should shorten the day name if shortenDayName is set to true', () => {
+    // Arrange
+    const date = '2020-09-10T09:36:57.287Z'
+
+    // Act
+    const formattedDate = formatDate(date, 'PPPP', true)
+
+    // Assert
+    expect(formattedDate).toEqual('fimmtud. 10. september 2020')
+  })
 })
 
 describe('formatRequestedCustodyRestrictions', () => {

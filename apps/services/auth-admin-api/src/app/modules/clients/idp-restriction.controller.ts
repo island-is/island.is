@@ -26,7 +26,7 @@ import { NationalIdGuard } from '../access/national-id-guard'
 // @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('idp-restriction')
-@Controller('idp-restriction')
+@Controller('backend/idp-restriction')
 export class IdpRestrictionController {
   constructor(private readonly clientsService: ClientsService) {}
 

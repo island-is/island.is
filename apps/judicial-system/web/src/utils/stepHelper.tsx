@@ -74,7 +74,9 @@ export const constructConclusion = (workingCase: Case) => {
           )}`}
         </Text>
         <Text as="span" variant="intro">
-          , skal sæta gæsluvarðhaldi, þó ekki lengur en til
+          {`, skal${
+            workingCase.parentCase ? ' áfram' : ''
+          } sæta gæsluvarðhaldi, þó ekki lengur en til`}
         </Text>
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
           {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')
@@ -125,7 +127,9 @@ export const constructConclusion = (workingCase: Case) => {
         >{` ${workingCase.accusedName} kt. ${formatNationalId(
           workingCase.accusedNationalId,
         )}`}</Text>
-        , skal sæta farbanni, þó ekki lengur en til
+        {`, skal${
+          workingCase.parentCase ? ' áfram' : ''
+        } sæta farbanni, þó ekki lengur en til`}
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
           {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')
             ?.replace('dagur,', 'dagsins')
@@ -136,23 +140,32 @@ export const constructConclusion = (workingCase: Case) => {
   }
 }
 
-export const constructProsecutorDemands = (workingCase: Case) => {
+export const constructProsecutorDemands = (
+  workingCase: Case,
+  skipOtherDemands?: boolean,
+) => {
   return workingCase.requestedCustodyEndDate ? (
     <Text>
       Þess er krafist að
       <Text as="span" fontWeight="semiBold">
-        {` ${workingCase.accusedName}, kt.
-        ${formatNationalId(workingCase.accusedNationalId)}`}
+        {` ${workingCase.accusedName}, kt.${formatNationalId(
+          workingCase.accusedNationalId,
+        )}`}
       </Text>
-      {`, verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi${
+      {`, sæti${workingCase.parentCase ? ' áfram' : ''} gæsluvarðhaldi${
         workingCase.alternativeTravelBan ? ', farbanni til vara,' : ''
-      } til`}
+      } með úrskurði ${workingCase.court?.replace(
+        'Héraðsdómur',
+        'Héraðsdóms',
+      )}, til`}
       <Text as="span" fontWeight="semiBold">
         {` ${formatDate(workingCase.requestedCustodyEndDate, 'EEEE')?.replace(
           'dagur',
           'dagsins',
-        )}
-    ${formatDate(workingCase.requestedCustodyEndDate, 'PPP')}, kl. ${formatDate(
+        )} ${formatDate(
+          workingCase.requestedCustodyEndDate,
+          'PPP',
+        )}, kl. ${formatDate(
           workingCase.requestedCustodyEndDate,
           TIME_FORMAT,
         )}`}
@@ -165,10 +178,17 @@ export const constructProsecutorDemands = (workingCase: Case) => {
           <Text as="span" fontWeight="semiBold">
             sæta einangrun
           </Text>{' '}
-          á meðan á gæsluvarðhaldinu stendur.
+          á meðan á varðhaldi stendur.
         </>
       ) : (
         '.'
+      )}
+      {workingCase.otherDemands && !skipOtherDemands && (
+        <>
+          <br />
+          <br />
+          {` ${capitalize(workingCase.otherDemands || '')}`}
+        </>
       )}
     </Text>
   ) : (
