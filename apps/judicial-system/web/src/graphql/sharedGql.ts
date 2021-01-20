@@ -19,6 +19,7 @@ export const CaseQuery = gql`
       requestedCourtDate
       alternativeTravelBan
       requestedCustodyEndDate
+      otherDemands
       lawsBroken
       custodyProvisions
       requestedCustodyRestrictions
@@ -56,6 +57,14 @@ export const CaseQuery = gql`
       judge {
         name
         title
+      }
+      parentCase {
+        id
+        custodyEndDate
+        decision
+      }
+      childCase {
+        id
       }
       notifications {
         type

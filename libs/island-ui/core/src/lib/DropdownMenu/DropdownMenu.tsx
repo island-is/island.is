@@ -1,0 +1,102 @@
+import React from 'react'
+import { useMenuState, Menu, MenuItem, MenuButton } from 'reakit/Menu'
+import { useBoxStyles } from '../Box/useBoxStyles'
+import { Button, ButtonProps } from '../Button/Button'
+import { getTextStyles } from '../Text/Text'
+
+import * as styles from './DropdownMenu.treat'
+
+export interface DropdownMenuProps {
+  /**
+   * Aria label for menu
+   */
+  menuLabel?: string
+  items: {
+    href?: string
+    onClick?: () => void
+    title: string
+  }[]
+  /**
+   * Utility button text
+   */
+  title?: string
+  /**
+   * Utility button icon
+   */
+  icon?: ButtonProps['icon']
+}
+
+export const DropdownMenu = ({
+  menuLabel,
+  items,
+  title,
+  icon,
+}: DropdownMenuProps) => {
+  const menu = useMenuState({ placement: 'bottom' })
+  const menuBoxStyle = useBoxStyles({
+    component: 'div',
+    background: 'white',
+    display: 'flex',
+    flexDirection: 'column',
+    borderRadius: 'large',
+    marginTop: 1,
+  })
+  const menuItemBoxStyle = useBoxStyles({
+    component: 'button',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 2,
+    paddingBottom: 2,
+    cursor: 'pointer',
+  })
+  const menuItemTextStyle = getTextStyles({
+    variant: 'eyebrow',
+  })
+  return (
+    <>
+      <MenuButton as={Button} variant="utility" icon={icon} {...menu}>
+        {title}
+      </MenuButton>
+      <Menu
+        {...menu}
+        aria-label={menuLabel}
+        className={styles.menu + ' ' + menuBoxStyle}
+      >
+        {items.map((item, index) => {
+          let anchorProps = {}
+          if (item.href) {
+            anchorProps = {
+              href: item.href,
+              as: 'a',
+            }
+          }
+          return (
+            <MenuItem
+              {...menu}
+              {...anchorProps}
+              key={index}
+              onClick={() => {
+                menu.hide()
+                if (item.onClick) {
+                  item.onClick()
+                }
+              }}
+              className={
+                menuItemBoxStyle +
+                ' ' +
+                menuItemTextStyle +
+                ' ' +
+                styles.menuItem
+              }
+            >
+              {item.title}
+            </MenuItem>
+          )
+        })}
+      </Menu>
+    </>
+  )
+}
+
+export default DropdownMenu

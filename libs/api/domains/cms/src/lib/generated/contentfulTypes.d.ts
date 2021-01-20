@@ -482,6 +482,34 @@ export interface IEmbeddedVideo extends Entry<IEmbeddedVideoFields> {
   }
 }
 
+export interface IErrorPageFields {
+  /** Error Code */
+  errorCode: string
+
+  /** Title */
+  title?: string | undefined
+
+  /** Description */
+  description?: Document | undefined
+}
+
+export interface IErrorPage extends Entry<IErrorPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'errorPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFaqListFields {
   /** Title */
   title: string
@@ -1447,46 +1475,6 @@ export interface IOrganization extends Entry<IOrganizationFields> {
     contentType: {
       sys: {
         id: 'organization'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IOrganizationNewsFields {
-  /** Organization */
-  organization: Entry<{ [fieldId: string]: unknown }>
-
-  /** Title */
-  title: string
-
-  /** Slug */
-  slug: string
-
-  /** Date */
-  date: string
-
-  /** Featured Image */
-  featuredImage: Asset
-
-  /** Introduction */
-  introduction: string
-
-  /** Content */
-  content?: Document | undefined
-}
-
-export interface IOrganizationNews extends Entry<IOrganizationNewsFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'organizationNews'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2750,6 +2738,7 @@ export type CONTENT_TYPE =
   | 'cardSection'
   | 'contactUs'
   | 'embeddedVideo'
+  | 'errorPage'
   | 'faqList'
   | 'featured'
   | 'frontpageSlider'
@@ -2779,7 +2768,6 @@ export type CONTENT_TYPE =
   | 'numberBullet'
   | 'numberBulletSection'
   | 'organization'
-  | 'organizationNews'
   | 'organizationTag'
   | 'page'
   | 'pageHeader'
