@@ -92,6 +92,15 @@ const Home: Screen<HomeProps> = ({ organization, namespace, news }) => {
       />
       <OrganizationHeader
         organization={organization}
+        breadcrumbItems={[
+          {
+            title: 'Ísland.is',
+            href: '/',
+          },
+          {
+            title: organization.title,
+          },
+        ]}
         mobileNav={
           <Navigation
             baseId={'mobileNav'}

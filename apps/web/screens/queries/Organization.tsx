@@ -75,7 +75,17 @@ export const GET_ORGANIZATION_QUERY = gql`
       suborganizations {
         shortTitle
         link
+        description
       }
+    }
+  }
+`
+
+export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
+  query GetOrganizationSubpage($input: GetOrganizationSubpageInput!) {
+    getOrganizationSubpage(input: $input) {
+      title
+      slug
     }
   }
 `
