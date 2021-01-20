@@ -23,6 +23,13 @@ export class ResourcesService extends BaseService {
     return BaseService.GET(`api-scope/${encodeURIComponent(name)}`)
   }
 
+  /** Gets if scope name or identity resource name is availabe */
+  static async isScopeNameAvailable(name): Promise<boolean> {
+    return BaseService.GET(
+      `is-scope-name-available/${encodeURIComponent(name)}`,
+    )
+  }
+
   /** Updates an existing Api Scope */
   static async updateApiResource(
     apiResource: ApiResourcesDTO,
@@ -129,13 +136,16 @@ export class ResourcesService extends BaseService {
 
   /** Get's all Api resources and total count of rows */
   static async findAndCountAllApiResources(
+    searchString: string,
     page: number,
     count: number,
   ): Promise<{
     rows: ApiResource[]
     count: number
   } | null> {
-    return BaseService.GET(`api-resources?page=${page}&count=${count}`)
+    return BaseService.GET(
+      `api-resources?searchString=${searchString}&page=${page}&count=${count}`,
+    )
   }
 
   /** Creates a new Api Scope */

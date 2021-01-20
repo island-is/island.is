@@ -123,7 +123,7 @@ const Home: Screen<HomeProps> = ({
   const showSleeve = lifeEvents.length > LIFE_EVENTS_THRESHOLD
 
   return (
-    <>
+    <div id="main-content">
       <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
         <FrontpageSlider
           slides={frontpageSlides as FrontpageSliderType[]}
@@ -181,7 +181,7 @@ const Home: Screen<HomeProps> = ({
           linkUrl={n('ourGoalsLink')}
         />
       </Section>
-    </>
+    </div>
   )
 }
 
