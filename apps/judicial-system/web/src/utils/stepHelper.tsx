@@ -180,6 +180,13 @@ export const constructProsecutorDemands = (workingCase: Case) => {
       ) : (
         '.'
       )}
+      {workingCase.otherDemands && (
+        <>
+          <br />
+          <br />
+          {` ${capitalize(workingCase.otherDemands || '')}`}
+        </>
+      )}
     </Text>
   ) : (
     <Text>Saksóknari hefur ekki fyllt út dómkröfur.</Text>
