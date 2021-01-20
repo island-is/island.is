@@ -31,6 +31,7 @@ const dataSchema = z.object({
     hasOtherDiseases: z.enum(['yes', 'no']),
   }),
   teacher: z.string().nonempty(),
+  willBringAlongData: z.array(z.enum(['certificate', 'picture'])).nonempty(),
 })
 
 const template: ApplicationTemplate<

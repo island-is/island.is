@@ -347,18 +347,28 @@ Veitir ökuréttindi til að stjórna bifhjóli:
             }),
             buildDividerField({}),
             buildCheckboxField({
-              id: 'bringAlong',
+              id: 'willBringAlongData',
               title: 'Gögn höfð meðferðis til sýslumanns',
-              options: [
-                {
-                  value: 'certificate',
-                  label: 'Ég kem með vottorð frá lækni meðferðis',
-                },
-                {
-                  value: 'photo',
-                  label: 'Ég kem með mynd og rithandarsýni til sýslumanns',
-                },
-              ],
+              options: (app) => {
+                const options = [
+                  {
+                    value: 'picture',
+                    label: 'Ég kem með mynd og rithandarsýni til sýslumanns',
+                  },
+                ]
+                if (
+                  Object.values(app.answers.healthDeclaration).includes('yes')
+                ) {
+                  return [
+                    {
+                      value: 'certificate',
+                      label: 'Ég kem með vottorð frá lækni meðferðis',
+                    },
+                    ...options,
+                  ]
+                }
+                return options
+              },
             }),
             buildSubmitField({
               id: 'submit',
