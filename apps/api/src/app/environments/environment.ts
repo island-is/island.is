@@ -55,4 +55,9 @@ export default {
       tokenUrl: process.env.DOCUMENT_PROVIDER_TOKEN_URL ?? '',
     },
   },
+  syslumennService: {
+    url: process.env.SYSLUMENN_HOST,
+    username: process.env.SYSLUMENN_USERNAME,
+    password: process.env.SYSLUMENN_PASSWORD
+  }
 }
