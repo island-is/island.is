@@ -1,7 +1,6 @@
 import React, { FC, useState } from 'react'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
-  AlertMessage,
   Box,
   InputFileUpload,
   Stack,
@@ -43,7 +42,7 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
     <Box>
       <Stack space={2}>
         <Stack space={2}>
-          <Text paddingBottom={1}>
+          <Text marginBottom={1}>
             {formatText(m.statusDescription, application, formatMessage)}
           </Text>
           <RadioController
@@ -98,7 +97,7 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
           />
         </Stack>
         {status === StatusTypes.STUDENT && (
-          <Box paddingBottom={2}>
+          <Box marginBottom={2}>
             <Stack space={4}>
               <TextWithTooltip
                 field={field}

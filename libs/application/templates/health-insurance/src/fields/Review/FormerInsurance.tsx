@@ -38,7 +38,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
   return (
     <Box>
       <Stack space={2}>
-        <Text paddingBottom={1}>
+        <Text marginBottom={1}>
           {formatText(
             m.formerInsuranceRegistration,
             application,
@@ -98,7 +98,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
             />
           </GridColumn>
         </GridRow>
-        <Box paddingBottom={4}>
+        <Box marginBottom={4}>
           <Input
             id={'formerInsurance.institution'}
             name={'formerInsurance.institution'}
@@ -112,7 +112,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
           />
         </Box>
       </Stack>
-      <Box paddingBottom={4}>
+      <Box marginBottom={4}>
         <TextWithTooltip
           application={application}
           field={field}
