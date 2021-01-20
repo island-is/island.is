@@ -1,7 +1,7 @@
 import React from 'react'
 import ContentWrapper from './../../../components/Layout/ContentWrapper'
 import IdentityResourceCreateForm from '../../../components/Resource/forms/IdentityResourceCreateForm'
-import IdentityResourcesDTO from './../../../entities/dtos/identity-resources.dto'
+import IdentityResourceDTO from '../../../entities/dtos/identity-resource.dto'
 import { useRouter } from 'next/router'
 import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
 import { GetServerSideProps, NextPageContext } from 'next'
@@ -9,7 +9,7 @@ import { withAuthentication } from './../../../utils/auth.utils'
 
 const Index: React.FC = () => {
   const router = useRouter()
-  const handleSave = (data: IdentityResourcesDTO) => {
+  const handleSave = (data: IdentityResourceDTO) => {
     router.push(
       `/resource/identity-resource/${encodeURIComponent(data.name)}?step=2`,
     )
@@ -23,7 +23,7 @@ const Index: React.FC = () => {
     <ContentWrapper>
       <ResourcesTabsNav />
       <IdentityResourceCreateForm
-        identityResource={new IdentityResourcesDTO()}
+        identityResource={new IdentityResourceDTO()}
         handleSave={handleSave}
         handleCancel={handleCancel}
       />
