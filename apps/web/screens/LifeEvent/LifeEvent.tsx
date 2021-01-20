@@ -14,7 +14,6 @@ import {
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
-  RichText,
   AnchorNavigation,
   BackgroundImage,
   HeadWithSocialSharing,
