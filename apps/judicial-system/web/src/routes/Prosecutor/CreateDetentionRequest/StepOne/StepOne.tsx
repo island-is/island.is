@@ -311,7 +311,7 @@ export const StepOne: React.FC = () => {
                   <RadioButton
                     name="accused-gender"
                     id="genderOther"
-                    label="Annað"
+                    label="Kynsegin/Annað"
                     checked={workingCase.accusedGender === CaseGender.OTHER}
                     onChange={() =>
                       setAndSendToServer(

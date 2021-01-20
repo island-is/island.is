@@ -233,6 +233,6 @@ export function formatGender(gender: CaseGender): string {
     case CaseGender.FEMALE:
       return 'kona'
     case CaseGender.OTHER:
-      return 'annað'
+      return 'Kynsegin/Annað'
   }
 }
