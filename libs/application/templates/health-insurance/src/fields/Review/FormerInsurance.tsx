@@ -7,6 +7,7 @@ import {
   Input,
   Stack,
   Box,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -35,15 +36,15 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
   )
 
   return (
-    <Box marginTop={[0, 0, 1]}>
+    <Box>
       <Stack space={2}>
-        <FieldDescription
-          description={formatText(
+        <Text paddingBottom={1}>
+          {formatText(
             m.formerInsuranceRegistration,
             application,
             formatMessage,
           )}
-        />
+        </Text>
         <RadioController
           id={'formerInsurance.registration'}
           name={'formerInsurance.registration'}
@@ -111,7 +112,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
           />
         </Box>
       </Stack>
-      <Stack space={2}>
+      <Box paddingBottom={4}>
         <TextWithTooltip
           application={application}
           field={field}
@@ -126,46 +127,46 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
             formatMessage,
           )}
         />
-        <RadioController
-          id={'formerInsurance.entitlement'}
-          name={'formerInsurance.entitlement'}
-          onSelect={(value) => setEntitlement(value as string)}
-          disabled={!isEditable}
-          largeButtons={true}
-          split={'1/2'}
-          options={[
-            {
-              label: formatText(m.noOptionLabel, application, formatMessage),
-              value: NO,
-            },
-            {
-              label: formatText(m.yesOptionLabel, application, formatMessage),
-              value: YES,
-            },
-          ]}
-        />
-        {entitlement === YES && (
-          <Box marginBottom={[2, 2, 4]}>
-            <Input
-              id={'formerInsurance.additionalInformation'}
-              name={'formerInsurance.additionalInformation'}
-              label={formatText(
-                m.formerInsuranceAdditionalInformation,
-                application,
-                formatMessage,
-              )}
-              placeholder={formatText(
-                m.formerInsuranceAdditionalInformationPlaceholder,
-                application,
-                formatMessage,
-              )}
-              ref={register}
-              disabled={!isEditable}
-              textarea={true}
-            />
-          </Box>
-        )}
-      </Stack>
+      </Box>
+      <RadioController
+        id={'formerInsurance.entitlement'}
+        name={'formerInsurance.entitlement'}
+        onSelect={(value) => setEntitlement(value as string)}
+        disabled={!isEditable}
+        largeButtons={true}
+        split={'1/2'}
+        options={[
+          {
+            label: formatText(m.noOptionLabel, application, formatMessage),
+            value: NO,
+          },
+          {
+            label: formatText(m.yesOptionLabel, application, formatMessage),
+            value: YES,
+          },
+        ]}
+      />
+      {entitlement === YES && (
+        <Box marginBottom={[2, 2, 4]}>
+          <Input
+            id={'formerInsurance.additionalInformation'}
+            name={'formerInsurance.additionalInformation'}
+            label={formatText(
+              m.formerInsuranceAdditionalInformation,
+              application,
+              formatMessage,
+            )}
+            placeholder={formatText(
+              m.formerInsuranceAdditionalInformationPlaceholder,
+              application,
+              formatMessage,
+            )}
+            ref={register}
+            disabled={!isEditable}
+            textarea={true}
+          />
+        </Box>
+      )}
     </Box>
   )
 }

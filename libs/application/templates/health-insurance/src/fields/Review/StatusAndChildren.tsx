@@ -6,6 +6,7 @@ import {
   InputFileUpload,
   Stack,
   UploadFile,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -39,16 +40,12 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
   )
 
   return (
-    <Box marginTop={[0, 0, 0]} marginBottom={0}>
+    <Box>
       <Stack space={2}>
         <Stack space={2}>
-          <FieldDescription
-            description={formatText(
-              m.statusDescription,
-              application,
-              formatMessage,
-            )}
-          />
+          <Text paddingBottom={1}>
+            {formatText(m.statusDescription, application, formatMessage)}
+          </Text>
           <RadioController
             id={'status'}
             name={'status'}
@@ -102,7 +99,7 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
         </Stack>
         {status === StatusTypes.STUDENT && (
           <Box paddingBottom={2}>
-            <Stack space={2}>
+            <Stack space={4}>
               <TextWithTooltip
                 field={field}
                 application={application}
