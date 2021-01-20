@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react'
 import { Organization } from '@island.is/web/graphql/schema'
 import {
   Box,
+  BreadCrumbItem,
   Breadcrumbs,
   GridContainer,
   Text,
@@ -15,11 +16,13 @@ import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 interface HeaderProps {
   organization?: Organization
   mobileNav: ReactNode
+  breadcrumbItems?: BreadCrumbItem[]
 }
 
 const OrganizationHeader: React.FC<HeaderProps> = ({
   organization,
   mobileNav,
+  breadcrumbItems,
 }) => {
   const { linkResolver } = useLinkResolver()
   return (
@@ -30,15 +33,7 @@ const OrganizationHeader: React.FC<HeaderProps> = ({
             <Box marginTop={[1, 1, 3]} marginBottom={5}>
               <Breadcrumbs
                 color="white"
-                items={[
-                  {
-                    title: 'Ísland.is',
-                    href: '/',
-                  },
-                  {
-                    title: organization.title,
-                  },
-                ]}
+                items={breadcrumbItems ?? []}
                 renderLink={(link) => {
                   return (
                     <NextLink {...linkResolver('homepage')} passHref>
