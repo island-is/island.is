@@ -380,7 +380,7 @@ export class ResourcesController {
   }
 
   @Get('is-scope-name-available/:name')
-  async getApiScopeByName(@Param('name') name: string): Promise<boolean> {
+  async isScopeNameAvailable(@Param('name') name: string): Promise<boolean> {
     return await this.resourcesService.isScopeNameAvailable(name)
   }
 
