@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import ContentWrapper from '../../../components/Layout/ContentWrapper'
 import { ApiScope } from '../../../entities/models/api-scope.model'
-import { ApiScopesDTO } from '../../../entities/dtos/api-scopes-dto'
+import { ApiScopeDTO } from '../../../entities/dtos/api-scope-dto'
 import { ResourcesService } from '../../../services/ResourcesService'
 import ApiScopeCreateForm from '../../../components/Resource/forms/ApiScopeCreateForm'
 import ApiScopeStepNav from '../../../components/Resource/nav/ApiScopeStepNav'
@@ -63,7 +63,7 @@ const Index: React.FC = () => {
     router.push('/resources/api-scopes')
   }
 
-  const handleApiScopeSaved = (apiScopeSaved: ApiScopesDTO) => {
+  const handleApiScopeSaved = (apiScopeSaved: ApiScopeDTO) => {
     if (apiScopeSaved) {
       getApiScope(apiScopeName as string)
       handleNext()

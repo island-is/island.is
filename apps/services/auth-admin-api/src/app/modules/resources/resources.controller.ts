@@ -112,6 +112,7 @@ export class ResourcesController {
 
   /** Get's all Api resources and total count of rows */
   @Get('api-resources')
+  @ApiQuery({ name: 'searchString', required: false })
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
   @ApiOkResponse({
@@ -133,9 +134,19 @@ export class ResourcesController {
     },
   })
   async findAndCountAllApiResources(
+    @Query('searchString') searchString: string,
     @Query('page') page: number,
     @Query('count') count: number,
   ): Promise<{ rows: ApiResource[]; count: number }> {
+    if (searchString) {
+      const apiResources = await this.resourcesService.findApiResources(
+        searchString,
+        page,
+        count,
+      )
+      return apiResources
+    }
+
     const apiResources = await this.resourcesService.findAndCountAllApiResources(
       page,
       count,
@@ -366,6 +377,11 @@ export class ResourcesController {
     @Param('name') name: string,
   ): Promise<ApiScope | null> {
     return await this.resourcesService.getApiScopeByName(name)
+  }
+
+  @Get('is-scope-name-available/:name')
+  async isScopeNameAvailable(@Param('name') name: string): Promise<boolean> {
+    return await this.resourcesService.isScopeNameAvailable(name)
   }
 
   @Get('api-resource/:name')
