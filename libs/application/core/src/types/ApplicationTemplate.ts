@@ -1,3 +1,6 @@
+import { EventObject, MachineConfig } from 'xstate'
+import { MachineOptions, StatesConfig } from 'xstate/lib/types'
+
 import { Application } from './Application'
 import {
   ApplicationContext,
@@ -6,8 +9,6 @@ import {
 } from './StateMachine'
 import { ApplicationTypes } from './ApplicationTypes'
 import { Schema } from './Form'
-import { EventObject, MachineConfig } from 'xstate'
-import { MachineOptions, StatesConfig } from 'xstate/lib/types'
 
 export interface ApplicationTemplate<
   TContext extends ApplicationContext,

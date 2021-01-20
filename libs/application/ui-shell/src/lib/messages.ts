@@ -52,14 +52,44 @@ export const m = defineMessages({
       'Logged in user does not have a role in this application state',
   },
   notFoundTitle: {
-    id: 'application.system:not-found',
+    id: 'application.system:notFound',
     defaultMessage: 'Umsókn finnst ekki',
     description: 'Application not found',
   },
   notFoundSubTitle: {
-    id: 'application.system:not-found-message',
+    id: 'application.system:notFound.message',
     defaultMessage: 'Engin umsókn fannst á þessari slóð.',
     description: 'No application was found at this URL.',
+  },
+  notFoundApplicationType: {
+    id: 'application.system:notFound.application.type',
+    defaultMessage: 'Þessi gerð umsókna er ekki til',
+    description: 'This type of application does not exist',
+  },
+  notFoundApplicationTypeMessage: {
+    id: 'application.system:notFound.application.message',
+    defaultMessage: 'Engin umsókn er til af gerðinni: {type}',
+    description: 'There is no application of the type: {type}',
+  },
+  createErrorApplication: {
+    id: 'application.system:create.error.application',
+    defaultMessage: 'Eitthvað fór úrskeiðis',
+    description: 'Something went wrong',
+  },
+  createErrorApplicationMessage: {
+    id: 'application.system:create.error.application.message',
+    defaultMessage: 'Ekki tókst að búa til umsókn af gerðinni: {type}',
+    description: 'Failed to create application of type: {type}',
+  },
+  applications: {
+    id: 'application.system:applications',
+    defaultMessage: 'Þínar umsóknir',
+    description: 'Your applications',
+  },
+  newApplication: {
+    id: 'application.system:new.application',
+    defaultMessage: 'Ný umsókn',
+    description: 'New application',
   },
   tagsInProgress: {
     id: 'application.system:tags.inProgress',
@@ -82,5 +112,16 @@ export const m = defineMessages({
       'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
     description:
       'Your application is complete. The application has progressed in the process.',
+  },
+  notLoggedIn: {
+    id: 'application.system:not.logged.id',
+    defaultMessage: 'Þú þarft að vera skrá þig inn.',
+    description: 'You need to be logged in.',
+  },
+  notLoggedInDescription: {
+    id: 'application.system:not.logged.id.description',
+    defaultMessage: 'Til að halda áfram umsóknarferli þarftu að skrá þig inn.',
+    description:
+      'To continue the application process, you will need to sign in.',
   },
 })

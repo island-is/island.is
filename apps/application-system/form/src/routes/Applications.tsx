@@ -7,7 +7,6 @@ import {
   CREATE_APPLICATION,
   APPLICANT_APPLICATIONS,
 } from '@island.is/application/graphql'
-import useAuth from '../hooks/useAuth'
 import {
   Text,
   Box,
@@ -18,11 +17,16 @@ import {
 } from '@island.is/island-ui/core'
 import { Application } from '@island.is/application/core'
 import { NotFound } from '@island.is/application/ui-shell'
+import { useLocale } from '@island.is/localization'
+import { m } from '@island.is/application/ui-shell'
+
+import useAuth from '../hooks/useAuth'
 
 export const Applications: FC = () => {
   const { type } = useParams()
   const history = useHistory()
   const { userInfo } = useAuth()
+  const { formatMessage } = useLocale()
   const nationalRegistryId = userInfo?.profile?.nationalId
 
   const { data, loading, error: applicationsError } = useQuery(
@@ -67,15 +71,16 @@ export const Applications: FC = () => {
   if (applicationsError)
     return (
       <NotFound
-        title="Þessi gerð umsókna er ekki til"
-        subTitle={`Engin umsókn er til af gerðinni: ${type}`}
+        title={formatMessage(m.notFoundApplicationType)}
+        subTitle={formatMessage(m.notFoundApplicationTypeMessage, { type })}
       />
     )
+
   if (createError)
     return (
       <NotFound
-        title="Eitthvað fór úrskeiðis"
-        subTitle={`Ekki tókst að búa til umsókn af gerðinni: ${type}`}
+        title={formatMessage(m.createErrorApplication)}
+        subTitle={formatMessage(m.createErrorApplicationMessage, { type })}
       />
     )
 
@@ -84,8 +89,9 @@ export const Applications: FC = () => {
       {!loading && !isEmpty(data?.getApplicationsByApplicant) && (
         <Box padding="containerGutter">
           <Box marginTop={5} marginBottom={5}>
-            <Text variant="h1">Þínar umsóknir</Text>
+            <Text variant="h1">{formatMessage(m.applications)}</Text>
           </Box>
+
           <Stack space={2}>
             {data?.getApplicationsByApplicant?.map(
               (application: Application) => (
@@ -94,7 +100,7 @@ export const Applications: FC = () => {
                   heading={application.name || application.typeId}
                   text={format(new Date(application.modified), 'do MMMM yyyy')}
                   cta={{
-                    label: 'Halda áfram',
+                    label: formatMessage(m.buttonNext),
                     variant: 'secondary',
                     onClick: () => history.push(`../umsokn/${application.id}`),
                   }}
@@ -112,7 +118,9 @@ export const Applications: FC = () => {
             display="flex"
             justifyContent="flexEnd"
           >
-            <Button onClick={createApplication}>Ný umsókn</Button>
+            <Button onClick={createApplication}>
+              {formatMessage(m.newApplication)}
+            </Button>
           </Box>
         </Box>
       )}
