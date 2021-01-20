@@ -117,7 +117,7 @@ export const StepFour: React.FC = () => {
             </Box>
             <BlueBox>
               <Box marginBottom={3}>
-                {constructProsecutorDemands(workingCase)}
+                {constructProsecutorDemands(workingCase, true)}
               </Box>
               <Input
                 name="prosecutorDemands"

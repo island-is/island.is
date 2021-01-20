@@ -630,6 +630,44 @@ describe('Step helper', () => {
         }),
       ).toBeTruthy()
     })
+
+    test('should not render the other demands if skipOtherDemands parameter is set to true', () => {
+      // Arrange
+      const wc = {
+        decision: CaseDecision.ACCEPTING,
+        custodyRestrictions: [
+          CaseCustodyRestrictions.MEDIA,
+          CaseCustodyRestrictions.VISITAION,
+          CaseCustodyRestrictions.ISOLATION,
+        ],
+        accusedName: 'Doe',
+        accusedNationalId: '0123456789',
+        custodyEndDate: '2020-11-26T12:31:00.000Z',
+        requestedCustodyEndDate: '2020-11-26T12:31:00.000Z',
+        court: 'Héraðsdómur Reykjavíkur',
+        otherDemands: 'Lorem ipsum.',
+      }
+
+      // Act
+      const { getByText } = render(constructProsecutorDemands(wc as Case, true))
+
+      // Assert
+      expect(
+        getByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Þess er krafist að Doe, kt.012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
+
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
+
+          return nodeHasText && childrenDontHaveText
+        }),
+      ).toBeTruthy()
+    })
   })
 
   describe('isNextDisabled', () => {
