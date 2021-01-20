@@ -237,7 +237,7 @@ const Layout: NextComponentType<
         <SkipToMainContent
           title={n('skipToMainContent', 'Fara beint í efnið')}
         />
-        {alertBannerContent.showAlertBanner && (
+        {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
           <AlertBanner
             title={alertBannerContent.title}
             description={alertBannerContent.description}
@@ -450,7 +450,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
       ...alertBanner,
       showAlertBanner:
         alertBanner.showAlertBanner &&
-        (!req.headers.cookie ||
+        (!req?.headers.cookie ||
           req.headers.cookie?.indexOf(alertBannerId) === -1),
     },
     footerUpperInfo: (upperMenuInfo.links ?? []).map(({ text, url }) => ({
