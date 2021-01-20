@@ -21,12 +21,24 @@ export function formatProsecutorDemands(
   alternativeTravelBan: boolean,
   requestedCustodyEndDate: Date,
   isolation: boolean,
-  isExtension: boolean = false,
+  isExtension: boolean,
+  previousDecision: CaseDecision,
 ): string {
   return `Þess er krafist að ${accusedName}, kt. ${formatNationalId(
     accusedNationalId,
-  )}, sæti${isExtension ? ' áframhaldandi' : ''} gæsluvarðhaldi${
-    alternativeTravelBan ? ', farbanni til vara,' : ''
+  )}, sæti${
+    isExtension && previousDecision === CaseDecision.ACCEPTING
+      ? ' áframhaldandi'
+      : ''
+  } gæsluvarðhaldi${
+    alternativeTravelBan
+      ? `,${
+          isExtension &&
+          previousDecision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+            ? ' áframhaldandi'
+            : ''
+        } farbanni til vara,`
+      : ''
   } með úrskurði ${court?.replace(
     'Héraðsdómur',
     'Héraðsdóms',

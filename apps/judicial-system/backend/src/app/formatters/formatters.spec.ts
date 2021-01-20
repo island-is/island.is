@@ -29,6 +29,7 @@ describe('formatProsecutorDemands', () => {
     const alternativeTravelBan = false
     const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = true
+    const isExtension = false
 
     // Act
     const res = formatProsecutorDemands(
@@ -38,6 +39,8 @@ describe('formatProsecutorDemands', () => {
       alternativeTravelBan,
       requestedCustodyEndDate,
       isolation,
+      isExtension,
+      undefined,
     )
 
     // Assert
@@ -54,6 +57,7 @@ describe('formatProsecutorDemands', () => {
     const alternativeTravelBan = false
     const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = false
+    const isExtension = false
 
     // Act
     const res = formatProsecutorDemands(
@@ -63,6 +67,8 @@ describe('formatProsecutorDemands', () => {
       alternativeTravelBan,
       requestedCustodyEndDate,
       isolation,
+      isExtension,
+      undefined,
     )
 
     // Assert
@@ -79,32 +85,7 @@ describe('formatProsecutorDemands', () => {
     const alternativeTravelBan = true
     const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = true
-
-    // Act
-    const res = formatProsecutorDemands(
-      accusedNationalId,
-      accusedName,
-      court,
-      alternativeTravelBan,
-      requestedCustodyEndDate,
-      isolation,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Þess er krafist að Glanni Glæpur, kt. 010101-0000, sæti gæsluvarðhaldi, farbanni til vara, með úrskurði Héraðsdóms Reykjavíkur, til mánudagsins 16. nóvember 2020, kl. 19:30, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
-    )
-  })
-
-  test('should format extended prosecutor', () => {
-    // Arrange
-    const accusedNationalId = '011101-0000'
-    const accusedName = 'Siggi Sýra'
-    const court = 'Héraðsdómur Kjósarskarðs'
-    const alternativeTravelBan = false
-    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
-    const isolation = false
-    const isExtension = true
+    const isExtension = false
 
     // Act
     const res = formatProsecutorDemands(
@@ -115,11 +96,128 @@ describe('formatProsecutorDemands', () => {
       requestedCustodyEndDate,
       isolation,
       isExtension,
+      undefined,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Þess er krafist að Glanni Glæpur, kt. 010101-0000, sæti gæsluvarðhaldi, farbanni til vara, með úrskurði Héraðsdóms Reykjavíkur, til mánudagsins 16. nóvember 2020, kl. 19:30, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
+    )
+  })
+
+  test('should format extended prosecutor demands', () => {
+    // Arrange
+    const accusedNationalId = '011101-0000'
+    const accusedName = 'Siggi Sýra'
+    const court = 'Héraðsdómur Kjósarskarðs'
+    const alternativeTravelBan = false
+    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
+    const isolation = false
+    const isExtension = true
+    const previousDecision = CaseDecision.ACCEPTING
+
+    // Act
+    const res = formatProsecutorDemands(
+      accusedNationalId,
+      accusedName,
+      court,
+      alternativeTravelBan,
+      requestedCustodyEndDate,
+      isolation,
+      isExtension,
+      previousDecision,
     )
 
     // Assert
     expect(res).toBe(
       'Þess er krafist að Siggi Sýra, kt. 011101-0000, sæti áframhaldandi gæsluvarðhaldi með úrskurði Héraðsdóms Kjósarskarðs, til mánudagsins 16. nóvember 2020, kl. 19:30.',
+    )
+  })
+
+  test('should format extended prosecutor demands when alternative travel ban requested', () => {
+    // Arrange
+    const accusedNationalId = '011101-0000'
+    const accusedName = 'Siggi Sýra'
+    const court = 'Héraðsdómur Kjósarskarðs'
+    const alternativeTravelBan = true
+    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
+    const isolation = false
+    const isExtension = true
+    const previousDecision = CaseDecision.ACCEPTING
+
+    // Act
+    const res = formatProsecutorDemands(
+      accusedNationalId,
+      accusedName,
+      court,
+      alternativeTravelBan,
+      requestedCustodyEndDate,
+      isolation,
+      isExtension,
+      previousDecision,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Þess er krafist að Siggi Sýra, kt. 011101-0000, sæti áframhaldandi gæsluvarðhaldi, farbanni til vara, með úrskurði Héraðsdóms Kjósarskarðs, til mánudagsins 16. nóvember 2020, kl. 19:30.',
+    )
+  })
+
+  test('should format extended prosecutor demands when previous travel ban', () => {
+    // Arrange
+    const accusedNationalId = '011101-0000'
+    const accusedName = 'Siggi Sýra'
+    const court = 'Héraðsdómur Kjósarskarðs'
+    const alternativeTravelBan = false
+    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
+    const isolation = false
+    const isExtension = true
+    const previousDecision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+
+    // Act
+    const res = formatProsecutorDemands(
+      accusedNationalId,
+      accusedName,
+      court,
+      alternativeTravelBan,
+      requestedCustodyEndDate,
+      isolation,
+      isExtension,
+      previousDecision,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Þess er krafist að Siggi Sýra, kt. 011101-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Kjósarskarðs, til mánudagsins 16. nóvember 2020, kl. 19:30.',
+    )
+  })
+
+  test('should format extended prosecutor demands when previous travel ban and alternative travel ban requested', () => {
+    // Arrange
+    const accusedNationalId = '011101-0000'
+    const accusedName = 'Siggi Sýra'
+    const court = 'Héraðsdómur Kjósarskarðs'
+    const alternativeTravelBan = true
+    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
+    const isolation = false
+    const isExtension = true
+    const previousDecision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+
+    // Act
+    const res = formatProsecutorDemands(
+      accusedNationalId,
+      accusedName,
+      court,
+      alternativeTravelBan,
+      requestedCustodyEndDate,
+      isolation,
+      isExtension,
+      previousDecision,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Þess er krafist að Siggi Sýra, kt. 011101-0000, sæti gæsluvarðhaldi, áframhaldandi farbanni til vara, með úrskurði Héraðsdóms Kjósarskarðs, til mánudagsins 16. nóvember 2020, kl. 19:30.',
     )
   })
 })
