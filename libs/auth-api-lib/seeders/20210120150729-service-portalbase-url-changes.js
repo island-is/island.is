@@ -11,7 +11,7 @@ const client_redirect_uri = [
   {
     client_id: client_id,
     redirect_uri:
-      'https://service-portalbase-url-changes-beta.dev01.devland.is/silent/minarsidur/signin-oidc',
+      'https://service-portalbase-url-changes-beta.dev01.devland.is//minarsidur/silent/signin-oidc',
   },
 ]
 
