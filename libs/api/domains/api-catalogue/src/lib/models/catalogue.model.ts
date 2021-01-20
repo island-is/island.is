@@ -6,11 +6,14 @@ import {
   TypeCategory,
   Environment,
 } from '@island.is/api-catalogue/consts'
-import { Service, XroadIdentifier } from '@island.is/api-catalogue/types'
+import {
+  Service,
+  ServiceVersion,
+  XroadIdentifier,
+} from '@island.is/api-catalogue/types'
 import { IsEnum, IsOptional, IsString, IsArray } from 'class-validator'
 import { PageInfo } from './pageInfo.model'
 import { XroadInfo } from './xroadIdentifier.model'
-import { ServiceVersion } from 'libs/api-catalogue/types/src/lib/service-version.model'
 
 registerEnumType(AccessCategory, {
   name: 'AccessCategory',
