@@ -10,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './ServiceDetail.treat'
 import cn from 'classnames'
-import { ApiService, GetOpenApiInput } from '@island.is/api/schema'
+import { Service, GetOpenApiInput } from '@island.is/api/schema'
 import { useQuery } from 'react-apollo'
 import { GET_OPEN_API_QUERY } from '../../screens/Queries'
 import { OpenApi } from '@island.is/api-catalogue/types'
@@ -27,7 +27,7 @@ type SelectOption = {
 }
 
 export interface ServiceDetailProps {
-  service: ApiService
+  service: Service
   strings: GetNamespaceQuery['getNamespace']
 }
 
@@ -36,7 +36,7 @@ export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
 
   const options: Array<SelectOption> = service.versions.map((x) => {
     // TODO: Handle multiple identifiers for environments
-    const { __typename, ...identifier } = x.xroadIdentifier[0]
+    const { __typename, ...identifier } = x.details[0].xroadIdentifier
     return {
       label: x.versionId.split('-').pop(),
       value: identifier,

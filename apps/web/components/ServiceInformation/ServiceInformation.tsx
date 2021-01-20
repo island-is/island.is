@@ -7,7 +7,7 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { ApiService, GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import { Service, GetNamespaceQuery } from '@island.is/web/graphql/schema'
 import { useNamespace } from '../../hooks'
 
 const capitalize = (s: string) => {
@@ -15,7 +15,7 @@ const capitalize = (s: string) => {
 }
 
 export interface ServiceInformationProps {
-  service: ApiService
+  service: Service
   strings: GetNamespaceQuery['getNamespace']
 }
 

@@ -63,7 +63,7 @@ export interface Service {
    * Aggregated info of what environment instances this services
    * is deploy to: dev, staging, prod
    */
-  instances: Array<Environment>
+  environments: Array<Environment>
 
   /**
    * Array of all versions of the service.

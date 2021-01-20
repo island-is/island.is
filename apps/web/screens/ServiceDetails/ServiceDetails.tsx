@@ -9,7 +9,7 @@ import {
   Query,
   QueryGetApiServiceByIdArgs,
   QueryGetNamespaceArgs,
-  ApiService,
+  Service,
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY, GET_API_SERVICE_QUERY } from '../queries'
 import {
@@ -37,7 +37,7 @@ interface ServiceDetailsProps {
   strings: GetNamespaceQuery['getNamespace']
   filterContent: GetNamespaceQuery['getNamespace']
   openApiContent: GetNamespaceQuery['getNamespace']
-  service: ApiService
+  service: Service
 }
 
 const ServiceDetails: Screen<ServiceDetailsProps> = ({

@@ -3,7 +3,7 @@ import { Box, Link, Stack } from '@island.is/island-ui/core'
 import * as styles from './ServiceCard.treat'
 import cn from 'classnames'
 import { useHorizontalDragScroll } from '..'
-import { ApiService } from '@island.is/api/schema'
+import { Service } from '@island.is/api/schema'
 import { useIsomorphicLayoutEffect, useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize } from '../../utils'
@@ -12,7 +12,7 @@ import { GetNamespaceQuery } from '../../types'
 import { useNamespace } from '../../hooks'
 
 export interface ServiceCardProps {
-  service: ApiService
+  service: Service
   strings: GetNamespaceQuery['getNamespace']
 }
 

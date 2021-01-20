@@ -32,17 +32,19 @@ export const GET_API_SERVICE_QUERY = gql`
       type
       versions {
         versionId
-        title
-        description
-        type
-        pricing
-        data
-        xroadIdentifier {
-          instance
-          memberCode
-          memberClass
-          subsystemCode
-          serviceCode
+        details {
+          title
+          description
+          type
+          pricing
+          data
+          xroadIdentifier {
+            instance
+            memberCode
+            memberClass
+            subsystemCode
+            serviceCode
+          }
         }
       }
     }

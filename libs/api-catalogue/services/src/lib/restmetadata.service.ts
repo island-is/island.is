@@ -4,6 +4,8 @@ import {
   Service,
   OpenApi,
   XroadIdentifier,
+  ServiceDetail,
+  ServiceVersion,
 } from '@island.is/api-catalogue/types'
 import { Injectable } from '@nestjs/common'
 import { RestMetaservicesApi } from '../../gen/fetch/xrd-rest'
@@ -13,6 +15,7 @@ import union from 'lodash/union'
 import {
   AccessCategory,
   DataCategory,
+  Environment,
   PricingCategory,
   ProviderType,
   TypeCategory,
@@ -47,7 +50,7 @@ export class RestMetadataService {
         data: [],
         access: [AccessCategory.XROAD],
         type: [TypeCategory.REST],
-        instances: [],
+        environments: [Environment.DEV],
         versions: [],
       }
 
@@ -70,13 +73,24 @@ export class RestMetadataService {
           service.pricing = union(service.pricing, spec.info['x-pricing'])
           service.versions.push({
             versionId: sorted[i].serviceCode!,
-            title: spec.info.title,
-            summary: '', // TODO: We should have a short summary
-            description: spec.info.description ?? '',
-            type: TypeCategory.REST,
-            data: spec.info['x-category'] ?? [],
-            pricing: spec.info['x-pricing'] ?? [],
-            xroadIdentifier: [sorted[i]],
+            details: [
+              {
+                title: spec.info.title,
+                summary: '', // TODO: We should have a short summary
+                description: spec.info.description ?? '',
+                type: TypeCategory.REST,
+                data: spec.info['x-category'] ?? [],
+                pricing: spec.info['x-pricing'] ?? [],
+                links: {
+                  responsibleParty:
+                    spec.info['x-links']?.responsibleParty ?? '',
+                  bugReport: spec.info['x-links']?.bugReport ?? '',
+                  documentation: spec.info['x-links']?.documentation ?? '',
+                  featureRequest: spec.info['x-links']?.featureRequest ?? '',
+                },
+                xroadIdentifier: sorted[i],
+              },
+            ],
           })
         } else {
           logger.error(
