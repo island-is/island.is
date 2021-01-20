@@ -43,7 +43,7 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
         >
           {sidebarContent}
         </Box>
-        <GridContainer>
+        <GridContainer id="main-content">
           <GridRow>
             <GridColumn
               offset={fullWidthContent ? '0' : ['0', '0', '0', '0', '1/9']}
