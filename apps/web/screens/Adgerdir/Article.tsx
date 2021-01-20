@@ -30,6 +30,7 @@ import Intro from './components/Intro/Intro'
 import AdgerdirArticles from './components/AdgerdirArticles/AdgerdirArticles'
 import { Tag } from './components/UI/Tag/Tag'
 import { Button } from './components/UI/Button/Button'
+import { ProcessEntry } from './components/UI/ProcessEntry/ProcessEntry'
 import { Breadcrumbs } from './components/UI/Breadcrumbs/Breadcrumbs'
 import { ColorSchemeContext } from './components/UI/ColorSchemeContext/ColorSchemeContext'
 import {
@@ -68,6 +69,8 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
 
   const description = article.longDescription || article.description
 
+  const processEntry = article.processEntry
+
   const renderButton =
     article.link && article.link.trim().length > 0 ? (
       <Link href={article.link}>
@@ -91,7 +94,6 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
         sidebarContent={
           <Box marginBottom={10}>
             <Stack space={3}>
-              {renderButton}
               <Stack space={1}>
                 <Text variant="eyebrow">
                   <span className={covidStyles.text}>
@@ -145,6 +147,11 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
           <Text variant="h1" as="h1">
             {article.title}
           </Text>
+          {!!processEntry && (
+            <Box marginTop={3} display={['none', 'none', 'block']} printHidden>
+              <ProcessEntry {...processEntry} />
+            </Box>
+          )}
           {description ? <Intro>{description}</Intro> : null}
         </Stack>
         <RichText
