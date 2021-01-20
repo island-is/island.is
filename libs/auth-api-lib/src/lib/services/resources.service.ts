@@ -204,7 +204,10 @@ export class ResourcesService {
 
   /** Gets API scope or IdentityResource by name */
   async isScopeNameAvailable(name: string): Promise<boolean> {
-    this.logger.debug('Getting data about api scope with name: ', name)
+    this.logger.debug(
+      'Checking if api scope or identity resource is available with name: ',
+      name,
+    )
 
     if (!name) {
       return false
