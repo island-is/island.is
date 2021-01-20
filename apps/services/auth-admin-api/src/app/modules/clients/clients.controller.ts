@@ -64,7 +64,7 @@ export class ClientsController {
     @Query('count') count: number,
   ): Promise<{ rows: Client[]; count: number } | null> {
     if (searchString) {
-      const clients = await this.clientsService.findClient(
+      const clients = await this.clientsService.findClients(
         searchString,
         page,
         count,
