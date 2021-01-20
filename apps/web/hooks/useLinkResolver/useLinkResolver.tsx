@@ -15,6 +15,7 @@ interface LinkResolverInput {
 interface TypeResolverResponse {
   type: LinkType
   locale: Locale
+  slug?: string[]
 }
 
 export type LinkType = keyof typeof routesTemplate | 'linkurl'
@@ -103,6 +104,20 @@ const convertToRegex = (routeTemplate: string) =>
   routeTemplate
     .replace(/\//g, '\\/') // escape slashes to match literal "/" in route template
     .replace(/\[\w+\]/g, '\\w+') // make path variables be regex word matches
+    .concat('$') // to prevent partial matches
+
+// extracts slugs from given path
+const extractSlugsByRouteTemplate = (
+  path: string,
+  template: string,
+): string[] => {
+  const pathParts = path.split('/')
+  const templateParts = template.split('/')
+
+  return pathParts.filter((_, index) => {
+    return templateParts[index]?.startsWith('[') ?? ''
+  })
+}
 
 /*
 Finds the correct path for a given type and locale.
@@ -180,7 +195,11 @@ export const typeResolver = (
       const regex = convertToRegex(routeTemplate)
       // if this path matches query return route info else continue
       if (path?.match(regex)) {
-        return { type, locale } as TypeResolverResponse
+        return {
+          slug: extractSlugsByRouteTemplate(path, routeTemplate),
+          type,
+          locale,
+        } as TypeResolverResponse
       }
     }
   }
