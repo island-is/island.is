@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import IdentityResourceCreateForm from '../../../components/Resource/forms/IdentityResourceCreateForm'
-import IdentityResourcesDTO from '../../../entities/dtos/identity-resources.dto'
+import IdentityResourceDTO from '../../../entities/dtos/identity-resource.dto'
 import ContentWrapper from '../../../components/Layout/ContentWrapper'
 import { useRouter } from 'next/router'
 import { ResourcesService } from '../../../services/ResourcesService'
@@ -67,7 +67,7 @@ const Index: React.FC = () => {
     router.push('/resources/identity-resources')
   }
 
-  const handleIdentityResourceSaved = (resourceSaved: IdentityResourcesDTO) => {
+  const handleIdentityResourceSaved = (resourceSaved: IdentityResourceDTO) => {
     if (resourceSaved) {
       getResource(resourceId as string)
       handleNext()

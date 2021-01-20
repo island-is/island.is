@@ -154,7 +154,7 @@ export const StepThree: React.FC = () => {
   ]
 
   useEffect(() => {
-    document.title = 'Lagagrundvöllur og dómkröfur - Réttarvörslugátt'
+    document.title = 'Dómkröfur og lagagrundvöllur - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
@@ -222,153 +222,13 @@ export const StepThree: React.FC = () => {
         <>
           <Box marginBottom={7}>
             <Text as="h1" variant="h1">
-              Lagagrundvöllur og dómkröfur
+              Dómkröfur og lagagrundvöllur
             </Text>
-          </Box>
-          <Box component="section" marginBottom={7}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                Lagaákvæði sem brot varða við
-              </Text>
-            </Box>
-            <Input
-              data-testid="lawsBroken"
-              name="lawsBroken"
-              label="Lagaákvæði sem ætluð brot kærða þykja varða við"
-              placeholder="Skrá inn þau lagaákvæði sem brotið varðar við, til dæmis 1. mgr. 244 gr. almennra hegningarlaga nr. 19/1940..."
-              defaultValue={workingCase?.lawsBroken}
-              errorMessage={lawsBrokenErrorMessage}
-              hasError={lawsBrokenErrorMessage !== ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'lawsBroken',
-                  event,
-                  ['empty'],
-                  workingCase,
-                  setWorkingCase,
-                  lawsBrokenErrorMessage,
-                  setLawsBrokenErrorMessage,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'lawsBroken',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setLawsBrokenErrorMessage,
-                )
-              }
-              required
-              textarea
-              rows={7}
-            />
           </Box>
           <Box component="section" marginBottom={5}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                Lagaákvæði sem krafan er byggð á{' '}
-                <Text as="span" color={'red600'} fontWeight="semiBold">
-                  *
-                </Text>
-              </Text>
-            </Box>
-            <BlueBox>
-              <GridContainer>
-                <GridRow>
-                  {caseCustodyProvisions.map((provision, index) => {
-                    return (
-                      <GridColumn span="6/12" key={index}>
-                        <Box
-                          marginBottom={
-                            // Do not add margins to the last two items
-                            index < caseCustodyProvisions.length - 2 ? 3 : 0
-                          }
-                        >
-                          <Checkbox
-                            name={provision.brokenLaw}
-                            label={provision.brokenLaw}
-                            value={provision.value}
-                            checked={
-                              workingCase.custodyProvisions &&
-                              workingCase.custodyProvisions.indexOf(
-                                provision.value,
-                              ) > -1
-                            }
-                            tooltip={provision.explination}
-                            onChange={({ target }) =>
-                              setCheckboxAndSendToServer(
-                                'custodyProvisions',
-                                target.value,
-                                workingCase,
-                                setWorkingCase,
-                                updateCase,
-                              )
-                            }
-                            large
-                            filled
-                          />
-                        </Box>
-                      </GridColumn>
-                    )
-                  })}
-                </GridRow>
-              </GridContainer>
-            </BlueBox>
-          </Box>
-          <Box component="section" marginBottom={7}>
-            <Box marginBottom={3}>
-              <Box marginBottom={1}>
-                <Text as="h3" variant="h3">
-                  Takmarkanir á gæslu
-                </Text>
-              </Box>
-              <Text>Ef ekkert er valið er gæsla án takmarkana</Text>
-            </Box>
-            <BlueBox>
-              <GridContainer>
-                <GridRow>
-                  {restrictions.map((restriction, index) => (
-                    <GridColumn span="6/12" key={index}>
-                      <Box
-                        // Do not add margins to the last two checkboxes
-                        marginBottom={index < restrictions.length - 2 ? 3 : 0}
-                      >
-                        <Checkbox
-                          name={restriction.restriction}
-                          label={restriction.restriction}
-                          value={restriction.value}
-                          checked={
-                            workingCase.requestedCustodyRestrictions &&
-                            workingCase.requestedCustodyRestrictions.indexOf(
-                              restriction.value,
-                            ) > -1
-                          }
-                          tooltip={restriction.explination}
-                          onChange={({ target }) =>
-                            setCheckboxAndSendToServer(
-                              'requestedCustodyRestrictions',
-                              target.value,
-                              workingCase,
-                              setWorkingCase,
-                              updateCase,
-                            )
-                          }
-                          large
-                          filled
-                        />
-                      </Box>
-                    </GridColumn>
-                  ))}
-                </GridRow>
-              </GridContainer>
-            </BlueBox>
-          </Box>
-          <Box component="section" marginBottom={10}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                Tegund og gildistími{' '}
+                Dómkröfur{' '}
                 <Tooltip text="Hér er hægt að velja um gæsluvarðhald eða gæsluvarðhald með farbanni til vara. Sé farbann til vara valið, endurspeglar valið dómkröfurnar á næstu síðu." />
               </Text>
               {workingCase.parentCase && (
@@ -501,6 +361,146 @@ export const StepThree: React.FC = () => {
                   </TimeInputField>
                 </GridColumn>
               </GridRow>
+            </BlueBox>
+          </Box>
+          <Box component="section" marginBottom={7}>
+            <Box marginBottom={3}>
+              <Text as="h3" variant="h3">
+                Lagaákvæði sem brot varða við
+              </Text>
+            </Box>
+            <Input
+              data-testid="lawsBroken"
+              name="lawsBroken"
+              label="Lagaákvæði sem ætluð brot kærða þykja varða við"
+              placeholder="Skrá inn þau lagaákvæði sem brotið varðar við, til dæmis 1. mgr. 244 gr. almennra hegningarlaga nr. 19/1940..."
+              defaultValue={workingCase?.lawsBroken}
+              errorMessage={lawsBrokenErrorMessage}
+              hasError={lawsBrokenErrorMessage !== ''}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'lawsBroken',
+                  event,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                  lawsBrokenErrorMessage,
+                  setLawsBrokenErrorMessage,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'lawsBroken',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setLawsBrokenErrorMessage,
+                )
+              }
+              required
+              textarea
+              rows={7}
+            />
+          </Box>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={3}>
+              <Text as="h3" variant="h3">
+                Lagaákvæði sem krafan er byggð á{' '}
+                <Text as="span" color={'red600'} fontWeight="semiBold">
+                  *
+                </Text>
+              </Text>
+            </Box>
+            <BlueBox>
+              <GridContainer>
+                <GridRow>
+                  {caseCustodyProvisions.map((provision, index) => {
+                    return (
+                      <GridColumn span="6/12" key={index}>
+                        <Box
+                          marginBottom={
+                            // Do not add margins to the last two items
+                            index < caseCustodyProvisions.length - 2 ? 3 : 0
+                          }
+                        >
+                          <Checkbox
+                            name={provision.brokenLaw}
+                            label={provision.brokenLaw}
+                            value={provision.value}
+                            checked={
+                              workingCase.custodyProvisions &&
+                              workingCase.custodyProvisions.indexOf(
+                                provision.value,
+                              ) > -1
+                            }
+                            tooltip={provision.explination}
+                            onChange={({ target }) =>
+                              setCheckboxAndSendToServer(
+                                'custodyProvisions',
+                                target.value,
+                                workingCase,
+                                setWorkingCase,
+                                updateCase,
+                              )
+                            }
+                            large
+                            filled
+                          />
+                        </Box>
+                      </GridColumn>
+                    )
+                  })}
+                </GridRow>
+              </GridContainer>
+            </BlueBox>
+          </Box>
+          <Box component="section" marginBottom={10}>
+            <Box marginBottom={3}>
+              <Box marginBottom={1}>
+                <Text as="h3" variant="h3">
+                  Takmarkanir á gæslu
+                </Text>
+              </Box>
+              <Text>Ef ekkert er valið er gæsla án takmarkana</Text>
+            </Box>
+            <BlueBox>
+              <GridContainer>
+                <GridRow>
+                  {restrictions.map((restriction, index) => (
+                    <GridColumn span="6/12" key={index}>
+                      <Box
+                        // Do not add margins to the last two checkboxes
+                        marginBottom={index < restrictions.length - 2 ? 3 : 0}
+                      >
+                        <Checkbox
+                          name={restriction.restriction}
+                          label={restriction.restriction}
+                          value={restriction.value}
+                          checked={
+                            workingCase.requestedCustodyRestrictions &&
+                            workingCase.requestedCustodyRestrictions.indexOf(
+                              restriction.value,
+                            ) > -1
+                          }
+                          tooltip={restriction.explination}
+                          onChange={({ target }) =>
+                            setCheckboxAndSendToServer(
+                              'requestedCustodyRestrictions',
+                              target.value,
+                              workingCase,
+                              setWorkingCase,
+                              updateCase,
+                            )
+                          }
+                          large
+                          filled
+                        />
+                      </Box>
+                    </GridColumn>
+                  ))}
+                </GridRow>
+              </GridContainer>
             </BlueBox>
           </Box>
           <FormFooter

@@ -10,7 +10,11 @@ import {
   Stack,
   GridContainer,
 } from '@island.is/island-ui/core'
-import { Image, Slice as SliceType } from '@island.is/island-ui/contentful'
+import {
+  Image,
+  richText,
+  Slice as SliceType,
+} from '@island.is/island-ui/contentful'
 import { Screen } from '@island.is/web/types'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -32,7 +36,6 @@ import {
   Sticky,
   HeadWithSocialSharing,
   Main,
-  RichText,
 } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
@@ -84,7 +87,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
         imageWidth={newsItem.image?.width.toString()}
         imageHeight={newsItem.image?.height.toString()}
       />
-      <GridContainer>
+      <GridContainer id="main-content">
         <Box paddingTop={[2, 2, 10]} paddingBottom={[0, 0, 10]}>
           <GridRow>
             <GridColumn span={['12/12', '12/12', '8/12', '8/12', '9/12']}>
@@ -128,10 +131,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
                       </Box>
                     )}
                     <Box paddingBottom={4} width="full">
-                      <RichText
-                        body={newsItem.content as SliceType[]}
-                        config={{ defaultPadding: [2, 2, 4] }}
-                      />
+                      {richText(newsItem.content as SliceType[])}
                     </Box>
                   </GridColumn>
                 </GridRow>
