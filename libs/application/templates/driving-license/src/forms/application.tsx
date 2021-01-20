@@ -224,7 +224,7 @@ export const application: Form = buildForm({
               width: 'half',
               value: ({ externalData: { nationalRegistry } }) =>
                 (nationalRegistry.data as NationalRegistryUser).address
-                  .streetAddress,
+                  ?.streetAddress,
             }),
             buildKeyValueField({
               label: 'Kennitala',
@@ -237,7 +237,7 @@ export const application: Form = buildForm({
               width: 'half',
               value: ({ externalData: { nationalRegistry } }) =>
                 (nationalRegistry.data as NationalRegistryUser).address
-                  .postalCode,
+                  ?.postalCode,
             }),
             buildKeyValueField({
               label: 'Netfang',
@@ -249,7 +249,7 @@ export const application: Form = buildForm({
               label: 'Staður',
               width: 'half',
               value: ({ externalData: { nationalRegistry } }) =>
-                (nationalRegistry.data as NationalRegistryUser).address.city,
+                (nationalRegistry.data as NationalRegistryUser).address?.city,
             }),
             buildDividerField({}),
             buildKeyValueField({
