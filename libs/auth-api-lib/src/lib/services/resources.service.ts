@@ -63,6 +63,61 @@ export class ResourcesService {
     })
   }
 
+  /** Finds Api resources with searchString and returns with paging */
+  async findApiResources(searchString: string, page: number, count: number) {
+    if (!searchString) {
+      throw new BadRequestException('Search String must be provided')
+    }
+
+    searchString = searchString.trim()
+
+    if (isNaN(+searchString)) {
+      return this.findApiResourcesByName(searchString, page, count)
+    } else {
+      return this.findApiResourcesByNationalId(searchString, page, count)
+    }
+  }
+
+  /** Finds Api resources with by national Id and returns with paging */
+  async findApiResourcesByNationalId(
+    searchString: string,
+    page: number,
+    count: number,
+  ) {
+    if (!searchString) {
+      throw new BadRequestException('Search String must be provided')
+    }
+    page--
+    const offset = page * count
+    return this.apiResourceModel.findAndCountAll({
+      where: { nationalId: searchString },
+      limit: count,
+      offset: offset,
+      include: [ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret],
+      distinct: true,
+    })
+  }
+
+  /** Finds Api resources with by name */
+  async findApiResourcesByName(
+    searchString: string,
+    page: number,
+    count: number,
+  ) {
+    if (!searchString) {
+      throw new BadRequestException('Search String must be provided')
+    }
+    page--
+    const offset = page * count
+    return this.apiResourceModel.findAndCountAll({
+      where: { name: searchString },
+      limit: count,
+      offset: offset,
+      include: [ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret],
+      distinct: true,
+    })
+  }
+
   /** Get's all Api resources and total count of rows */
   async findAndCountAllApiResources(
     page: number,

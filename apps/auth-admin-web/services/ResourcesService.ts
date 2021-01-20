@@ -129,13 +129,16 @@ export class ResourcesService extends BaseService {
 
   /** Get's all Api resources and total count of rows */
   static async findAndCountAllApiResources(
+    searchString: string,
     page: number,
     count: number,
   ): Promise<{
     rows: ApiResource[]
     count: number
   } | null> {
-    return BaseService.GET(`api-resources?page=${page}&count=${count}`)
+    return BaseService.GET(
+      `api-resources?searchString=${searchString}&page=${page}&count=${count}`,
+    )
   }
 
   /** Creates a new Api Scope */

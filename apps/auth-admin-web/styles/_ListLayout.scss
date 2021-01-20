@@ -1,6 +1,7 @@
 .clients,
 .users,
-.identity-resources {
+.identity-resources,
+.api-resources-list {
   &__wrapper {
     max-width: 1024px;
   }
@@ -22,6 +23,7 @@
       }
 
       &__search {
+        padding-top: 20px;
         input {
           height: 25px;
           border-radius: $border-radius;

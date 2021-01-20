@@ -117,8 +117,8 @@ export class ClientsService {
     return client
   }
 
-  /** Find client by searh string */
-  async findClient(searchString: string, page: number, count: number) {
+  /** Find clients by searh string and returns with paging */
+  async findClients(searchString: string, page: number, count: number) {
     if (!searchString) {
       throw new BadRequestException('Search String must be provided')
     }
