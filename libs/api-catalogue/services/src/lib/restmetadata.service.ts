@@ -74,8 +74,8 @@ export class RestMetadataService {
             summary: '', // TODO: We should have a short summary
             description: spec.info.description ?? '',
             type: TypeCategory.REST,
-            data: spec.info['x-category'],
-            pricing: spec.info['x-pricing'],
+            data: spec.info['x-category'] ?? [],
+            pricing: spec.info['x-pricing'] ?? [],
             xroadIdentifier: [sorted[i]],
           })
         } else {

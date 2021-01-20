@@ -36,10 +36,14 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
   const n = useNamespace(strings)
 
   const options: Array<SelectOption> = service
-    ? service.versions.map((x) => ({
-        label: x.versionId.split('-').pop(),
-        value: x.xroadIdentifier[0],
-      }))
+    ? service.versions.map((x) => {
+        // TODO: Change this when we add environmental aware services
+        const { __typename, ...identifier } = x.xroadIdentifier[0]
+        return {
+          label: x.versionId.split('-').pop(),
+          value: identifier,
+        }
+      })
     : [
         {
           label: n('noVersion'),
