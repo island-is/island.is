@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
+import NextLink from 'next/link'
 import {
   ContentBlock,
   Box,
   Stack,
-  BreadcrumbsDeprecated as Breadcrumbs,
   Link,
   Inline,
   GridRow,
@@ -30,6 +30,7 @@ import Intro from './components/Intro/Intro'
 import AdgerdirArticles from './components/AdgerdirArticles/AdgerdirArticles'
 import { Tag } from './components/UI/Tag/Tag'
 import { Button } from './components/UI/Button/Button'
+import { Breadcrumbs } from './components/UI/Breadcrumbs/Breadcrumbs'
 import { ColorSchemeContext } from './components/UI/ColorSchemeContext/ColorSchemeContext'
 import {
   GET_ADGERDIR_PAGE_QUERY,
@@ -43,7 +44,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useNamespace } from '@island.is/web/hooks'
 import * as covidStyles from './components/UI/styles/styles.treat'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { LinkType, useLinkResolver } from '../../hooks/useLinkResolver'
 
 interface AdgerdirArticleProps {
   article: Query['getAdgerdirPage']
@@ -112,19 +113,32 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
         }
       >
         <Box paddingBottom={[2, 2, 4]}>
-          <Breadcrumbs>
-            <span className={covidStyles.text}>
-              <Link {...linkResolver('homepage')}>
-                <a>Ísland.is</a>
-              </Link>
-            </span>
-            <span className={covidStyles.text}>
-              <Link {...linkResolver('adgerdirfrontpage')}>
-                <a>{n('covidAdgerdir', 'Covid aðgerðir')}</a>
-              </Link>
-            </span>
-            <Tag>{n('adgerdir', 'Aðgerðir')}</Tag>
-          </Breadcrumbs>
+          <Breadcrumbs
+            tagVariant="green"
+            items={[
+              {
+                title: 'Ísland.is',
+                typename: 'homepage',
+                href: '/',
+              },
+              {
+                title: n('covidAdgerdir', 'Covid aðgerðir'),
+                typename: 'adgerdirfrontpage',
+                href: '/covid-adgerdir',
+              },
+              { title: n('adgerdir', 'Aðgerðir'), isTag: true },
+            ]}
+            renderLink={(link, { typename, slug }) => {
+              return (
+                <NextLink
+                  {...linkResolver(typename as LinkType, slug)}
+                  passHref
+                >
+                  {link}
+                </NextLink>
+              )
+            }}
+          />
         </Box>
 
         <Stack space={2}>
