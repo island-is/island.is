@@ -244,9 +244,7 @@ export function formatPrisonCourtDateEmailNotification(
   )
     ?.replace('dagur', 'dagsins')
     ?.replace(' kl.', ', kl.')
-  const requestText = `${
-    isExtension ? `Nafn sakbornings: ${accusedName}<br /><br />` : ''
-  }Kyn sakbornings: ${formatGender(
+  const requestText = `Nafn sakbornings: ${accusedName}<br /><br />Kyn sakbornings: ${formatGender(
     accusedGender,
   )}<br /><br />Krafist er gæsluvarðhalds til ${requestedCustodyEndDateText}.`
   const isolationText = isolation
