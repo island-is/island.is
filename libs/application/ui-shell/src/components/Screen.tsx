@@ -97,7 +97,7 @@ const Screen: FC<ScreenProps> = ({
     context: { dataSchema, formNode: screen },
   })
 
-  const refetch = useContext(RefetchContext)
+  const refetch = useContext<() => void>(RefetchContext)
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION, {
@@ -250,6 +250,7 @@ const Screen: FC<ScreenProps> = ({
                 multiField={screen}
                 application={application}
                 goToScreen={goToScreen}
+                refetch={refetch}
               />
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
               <FormExternalDataProvider
