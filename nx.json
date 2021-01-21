@@ -418,6 +418,9 @@
       "tags": [],
       "implicitDependencies": ["skilavottord-web"]
     },
+    "vmst-client": {
+      "tags": []
+    },
     "web": {
       "tags": []
     },

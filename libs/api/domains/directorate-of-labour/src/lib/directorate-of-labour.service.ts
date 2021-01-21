@@ -2,9 +2,13 @@ import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { DirectorateOfLabourRepository } from './directorate-of-labour.repository'
 import { ApolloError } from 'apollo-server-express'
+import {
+  UnionApi,
+  Union,
+  PensionApi,
+  PensionFund,
+} from '@island.is/vmst-client'
 import { ParentalLeavePeriod } from './parentalLeavePeriod.model'
-import { Union } from './union.model'
-import { PensionFund } from './pensionFund.model'
 import { ParentalLeaveEntitlement } from './parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from './parentalLeavePaymentPlan.model'
 
@@ -18,18 +22,28 @@ const handleError = (error: any) => {
 export class DirectorateOfLabourService {
   constructor(
     private directorateOfLabourRepository: DirectorateOfLabourRepository,
+    private unionApi: UnionApi,
+    private pensionApi: PensionApi,
   ) {}
 
   async getUnions(): Promise<Union[]> {
-    return await this.directorateOfLabourRepository
-      .getUnions()
-      .catch(handleError)
+    const { unions } = await this.unionApi.unionGetUnions()
+
+    if (unions) {
+      return unions
+    }
+
+    throw new Error('Could not fetch unions')
   }
 
   async getPensionFunds(): Promise<PensionFund[]> {
-    return await this.directorateOfLabourRepository
-      .getPensionFunds()
-      .catch(handleError)
+    const { pensionFunds } = await this.pensionApi.pensionGetPensionFunds()
+
+    if (pensionFunds) {
+      return pensionFunds
+    }
+
+    throw new Error('Could not fetch unions')
   }
 
   async getParentalLeavesEntitlements(

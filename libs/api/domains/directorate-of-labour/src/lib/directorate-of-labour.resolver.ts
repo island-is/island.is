@@ -56,11 +56,17 @@ export class DirectorateOfLabourResolver {
 
   @Query(() => [Union], { nullable: true })
   async getUnions(): Promise<Union[] | null> {
+    // Generated API types have nullables which our types do not have, ignore
+    // until that has been fixed in the source config that is used to generate API code
+    // @ts-ignore
     return this.directorateOfLabourService.getUnions()
   }
 
   @Query(() => [PensionFund], { nullable: true })
   async getPensionFunds(): Promise<PensionFund[] | null> {
+    // Generated API types have nullables which our types do not have, ignore
+    // until that has been fixed in the source config that is used to generate API code
+    // @ts-ignore
     return this.directorateOfLabourService.getPensionFunds()
   }
 }

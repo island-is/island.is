@@ -36,6 +36,7 @@
 /libs/application/templates/meta-application/             @island-is/aranja
 /libs/application/templates/parental-leave/               @island-is/aranja
 /libs/application/templates/reference-template/           @island-is/aranja
+/libs/vmst-client/                                        @island-is/aranja
 
 /libs/application/templates/children-domicile-transfer/   @island-is/kolibri-modern-family
 
@@ -91,4 +92,3 @@
 /apps/auth-admin-web-e2e/                                 @island-is/fuglar
 /libs/auth-api-lib/                                       @island-is/fuglar
 /libs/auth-nest-tools/                                    @island-is/fuglar
-
