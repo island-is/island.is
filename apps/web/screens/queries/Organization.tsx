@@ -25,7 +25,6 @@ export const GET_ORGANIZATION_QUERY = gql`
       slug
       title
       shortTitle
-      internalSite
       logo {
         title
         url
@@ -36,46 +35,58 @@ export const GET_ORGANIZATION_QUERY = gql`
         title
       }
       description
-      organizationPage {
-        id
-        title
-        description
-        slices {
-          ... on HeadingSlice {
-            id
-            title
-            body
-          }
-          ... on Districts {
-            id
-            title
-            description
-            image {
-              url
-            }
-          }
-          ... on FeaturedArticles {
-            id
-            title
-            image {
-              url
-            }
-            articles {
-              title
-              slug
-              isApplication
-            }
-          }
+    }
+  }
+`
+
+export const GET_ORGANIZATION_PAGE_QUERY = gql`
+  query GetOrganizationPage($input: GetOrganizationPageInput!) {
+    getOrganizationPage(input: $input) {
+      id
+      slug
+      title
+      description
+      menuLinks {
+        primaryLink {
+          text
+          url
         }
-        menuLinks {
+        childrenLinks {
           text
           url
         }
       }
-      suborganizations {
-        shortTitle
-        link
-        description
+      organization {
+        logo {
+          url
+        }
+      }
+      slices {
+        ... on HeadingSlice {
+          id
+          title
+          body
+        }
+        ... on Districts {
+          id
+          title
+          description
+          image {
+            url
+          }
+        }
+        ... on FeaturedArticles {
+          id
+          title
+          image {
+            url
+          }
+          articles {
+            title
+            slug
+            isApplication
+          }
+        }
       }
     }
   }

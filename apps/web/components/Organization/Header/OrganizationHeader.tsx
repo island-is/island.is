@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { Organization } from '@island.is/web/graphql/schema'
+import {OrganizationPage} from '@island.is/web/graphql/schema'
 import {
   Box,
   BreadCrumbItem,
@@ -14,13 +14,13 @@ import NextLink from 'next/link'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 
 interface HeaderProps {
-  organization?: Organization
+  organizationPage?: OrganizationPage
   mobileNav: ReactNode
   breadcrumbItems?: BreadCrumbItem[]
 }
 
 const OrganizationHeader: React.FC<HeaderProps> = ({
-  organization,
+  organizationPage,
   mobileNav,
   breadcrumbItems,
 }) => {
@@ -49,12 +49,12 @@ const OrganizationHeader: React.FC<HeaderProps> = ({
               <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4, 4]}>
                 <Box display="flex" flexDirection="row" alignItems="center">
                   <img
-                    src={organization.logo.url}
+                    src={organizationPage.organization.logo.url}
                     className={styles.headerLogo}
                     alt=""
                   />
                   <Text variant="h1" as="h1" color="white">
-                    {organization.title}
+                    {organizationPage.title}
                   </Text>
                 </Box>
               </Box>

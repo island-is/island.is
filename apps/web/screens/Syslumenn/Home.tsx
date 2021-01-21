@@ -24,7 +24,7 @@ import {
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_QUERY,
-  GET_ORGANIZATION_NEWS_QUERY,
+  GET_ORGANIZATION_NEWS_QUERY, GET_ORGANIZATION_PAGE_QUERY,
 } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
@@ -47,12 +47,12 @@ import { GlobalContext } from '@island.is/web/context'
 import OrganizationHeader from '@island.is/web/components/Organization/Header/OrganizationHeader'
 
 interface HomeProps {
-  organization: Query['getOrganization']
+  organizationPage: Query['getOrganizationPage']
   namespace: Query['getNamespace']
   news: Query['getOrganizationNews']
 }
 
-const Home: Screen<HomeProps> = ({ organization, namespace, news }) => {
+const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
   const { activeLocale } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)
@@ -64,26 +64,33 @@ const Home: Screen<HomeProps> = ({ organization, namespace, news }) => {
   }
 
   const parentPageLink: NavigationItem = {
-    title: organization.organizationPage.title,
-    href: `/stofnanir/${organization.slug}`,
+    title: organizationPage.title,
+    href: `/stofnanir/${organizationPage.slug}`,
     active: false,
   }
 
-  const items: NavigationItem[] = organization.organizationPage.menuLinks.map(
-    ({ text, url }) => ({
-      title: text,
-      href: url,
-      active: asPath === url,
+  const items: NavigationItem[] = organizationPage.menuLinks.map(
+    ({ primaryLink, childrenLinks }) => ({
+      title: primaryLink.text,
+      href: primaryLink.url,
+      active: primaryLink.text === "Embættin",
+      items: childrenLinks.map(({ text, url }) => ({
+        title: text,
+        href: url,
+      })
+      )
     }),
   )
 
   const navList = [parentPageLink, ...items]
 
+  console.log(navList)
+
   return (
     <>
       <HeadWithSocialSharing
-        title={organization.title}
-        description={organization.description}
+        title={organizationPage.title}
+        description={organizationPage.description}
         /*
         imageUrl={organization.featuredImage?.url}
         imageWidth={organization.featuredImage?.width?.toString()}
@@ -91,25 +98,25 @@ const Home: Screen<HomeProps> = ({ organization, namespace, news }) => {
         */
       />
       <OrganizationHeader
-        organization={organization}
+        organizationPage={organizationPage}
         breadcrumbItems={[
           {
             title: 'Ísland.is',
             href: '/',
           },
           {
-            title: organization.title,
+            title: organizationPage.title,
           },
         ]}
         mobileNav={
           <Navigation
             baseId={'mobileNav'}
             isMenuDialog
-            activeItemTitle={organization.title}
+            activeItemTitle={organizationPage.title}
             items={navList}
             title="Efnisyfirlit"
             titleLink={{
-              href: `/${organization.slug}`,
+              href: `/${organizationPage.slug}`,
               active: false,
             }}
           />
@@ -125,7 +132,7 @@ const Home: Screen<HomeProps> = ({ organization, namespace, news }) => {
                 items={navList}
                 title="Efnisyfirlit"
                 titleLink={{
-                  href: `/${organization.slug}`,
+                  href: `/${organizationPage.slug}`,
                   active: false,
                 }}
               />
@@ -133,11 +140,11 @@ const Home: Screen<HomeProps> = ({ organization, namespace, news }) => {
           }
         >
           <Box className={styles.intro} paddingTop={[4, 4, 0]}>
-            {organization.organizationPage.description}
+            {organizationPage.description}
           </Box>
         </SidebarLayout>
-        {organization.organizationPage.slices.map((slice) => (
-          <Section key={slice.id} slice={slice} organization={organization} />
+        {organizationPage.slices.map((slice) => (
+          <Section key={slice.id} slice={slice} organization={organizationPage} />
         ))}
         <Box
           className={styles.newsBg}
@@ -148,8 +155,8 @@ const Home: Screen<HomeProps> = ({ organization, namespace, news }) => {
             label={gn('newsAndAnnouncements')}
             labelId="latestNewsTitle"
             items={news}
-            subtitle={organization.title}
-            organizationSlug={organization.slug}
+            subtitle={organizationPage.title}
+            organizationSlug={organizationPage.slug}
           />
         </Box>
       </Main>
@@ -197,13 +204,6 @@ const Section: FC<SectionProps> = ({ slice, organization, namespace }) => {
               <GridRow>
                 <GridColumn span={['12/12', '12/12', '7/12']}>
                   <ul className={styles.districtsList}>
-                    {organization.suborganizations.map((link) => (
-                      <li className={styles.districtsListItem}>
-                        <Link href={link.link}>
-                          <Button variant="text">{link.shortTitle}</Button>
-                        </Link>
-                      </li>
-                    ))}
                   </ul>
                 </GridColumn>
                 <GridColumn span={['12/12', '12/12', '5/12']}>
@@ -297,15 +297,15 @@ const Section: FC<SectionProps> = ({ slice, organization, namespace }) => {
 Home.getInitialProps = async ({ apolloClient, locale }) => {
   const [
     {
-      data: { getOrganization },
+      data: { getOrganizationPage },
     },
     namespace,
     {
       data: { getOrganizationNews },
     },
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetOrganizationArgs>({
-      query: GET_ORGANIZATION_QUERY,
+    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+      query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
           slug: 'syslumenn',
@@ -336,7 +336,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   ])
 
   return {
-    organization: getOrganization,
+    organizationPage: getOrganizationPage,
     namespace,
     news: getOrganizationNews,
     showSearchInHeader: false,
