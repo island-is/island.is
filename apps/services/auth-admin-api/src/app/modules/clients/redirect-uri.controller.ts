@@ -19,7 +19,7 @@ import { NationalIdGuard } from '../access/national-id-guard'
 // @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('redirect-uri')
-@Controller('redirect-uri')
+@Controller('backend/redirect-uri')
 export class RedirectUriController {
   constructor(private readonly clientsService: ClientsService) {}
 

@@ -16,17 +16,17 @@ import {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
-  AdgerdirArticles,
-  GroupedPages,
-  CardsSlider,
-  FeaturedNews,
   RichText,
   HeadWithSocialSharing,
   ChatPanel,
   Header,
   Main,
 } from '@island.is/web/components'
-import { ColorSchemeContext as CovidColorSchemeContext } from '@island.is/web/components/Adgerdir/UI/ColorSchemeContext/ColorSchemeContext'
+import AdgerdirArticles from './components/AdgerdirArticles/AdgerdirArticles'
+import GroupedPages from './components/GroupedPages/GroupedPages'
+import CardsSlider from './components/CardsSlider/CardsSlider'
+import FeaturedNews from './components/FeaturedNews/FeaturedNews'
+import { ColorSchemeContext as CovidColorSchemeContext } from './components/UI/ColorSchemeContext/ColorSchemeContext'
 import { useI18n } from '@island.is/web/i18n'
 import {
   Query,
@@ -45,7 +45,7 @@ import {
 } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
-import * as covidStyles from '@island.is/web/components/Adgerdir/UI/styles/styles.treat'
+import * as covidStyles from './components/UI/styles/styles.treat'
 import {
   GetArticleCategoriesQuery,
   GetGroupedMenuQuery,
@@ -96,7 +96,7 @@ const Home: Screen<HomeProps> = ({
         imageWidth={frontpage.featuredImage?.width?.toString()}
         imageHeight={frontpage.featuredImage?.height?.toString()}
       />
-      <Box className={covidStyles.frontpageBg}>
+      <Box className={covidStyles.frontpageBg} id="main-content">
         <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
           <Header buttonColorScheme="negative" megaMenuData={megaMenuData}>
             <GridContainer>

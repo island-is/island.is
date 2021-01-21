@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
 import { RulingStepOne } from './RulingStepOne'
-import * as Constants from '../../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
@@ -15,7 +15,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MemoryRouter, Route } from 'react-router-dom'
 import { MockedProvider } from '@apollo/client/testing'
-import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 
 describe('/domari-krafa/urskurdur', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {

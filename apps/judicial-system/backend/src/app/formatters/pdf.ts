@@ -72,7 +72,7 @@ export async function generateRequestPdf(
     .lineGap(4)
     .text(`Kennitala: ${formatNationalId(existingCase.accusedNationalId)}`)
     .text(`Fullt nafn: ${existingCase.accusedName}`)
-    .text(`Kyn: ${capitalize(formatGender(existingCase.accusedGender))}`)
+    .text(`Kyn: ${formatGender(existingCase.accusedGender)}`)
     .text(`Lögheimili: ${existingCase.accusedAddress}`)
     .text(' ')
     .font('Helvetica-Bold')
@@ -94,8 +94,23 @@ export async function generateRequestPdf(
         existingCase.requestedCustodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ),
+        existingCase.parentCase !== null,
+        existingCase.parentCase?.decision,
       ),
+      {
+        lineGap: 6,
+        paragraphGap: 0,
+      },
     )
+
+  if (existingCase.otherDemands) {
+    doc.text(' ').text(existingCase.otherDemands, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+  }
+
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -310,12 +325,23 @@ export async function generateRulingPdf(
         existingCase.requestedCustodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ),
+        existingCase.parentCase !== null,
+        existingCase.parentCase?.decision,
       ),
       {
         lineGap: 6,
         paragraphGap: 0,
       },
     )
+
+  if (existingCase.otherDemands) {
+    doc.text(' ').text(existingCase.otherDemands, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+  }
+
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -367,6 +393,8 @@ export async function generateRulingPdf(
         existingCase.custodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ),
+        existingCase.parentCase !== null,
+        existingCase.parentCase?.decision,
       ),
       {
         lineGap: 6,

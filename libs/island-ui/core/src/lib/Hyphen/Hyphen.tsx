@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react'
-import ReactHtmlParser from 'react-html-parser'
 import Hypher from 'hypher'
 import is from './patterns/is'
 import en from './patterns/en'
@@ -23,8 +22,9 @@ const hyphenateText: HyphenateText = (
     is.leftmin = minRight
   }
   const h = new Hypher(locale === 'is' ? is : en)
+  const softHyphen = '\u00AD'
   return content.split(' ').reduce((text, word) => {
-    const hyphenedWord = h.hyphenate(word).join('&shy;')
+    const hyphenedWord = h.hyphenate(word).join(softHyphen)
     text += ' ' + hyphenedWord
     return text
   }, '')
@@ -47,7 +47,7 @@ export const Hyphen = ({
     () => hyphenateText(children, { minRight, minLeft, locale }),
     [minRight, minLeft, children],
   )
-  return <>{ReactHtmlParser(text)}</>
+  return <>{text}</>
 }
 
 export default Hyphen

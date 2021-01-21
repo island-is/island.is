@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import IdentityResourcesDTO from '../../../entities/dtos/identity-resources.dto'
+import IdentityResourceDTO from '../../../entities/dtos/identity-resource.dto'
 import { useRouter } from 'next/router'
 import ResourceListDisplay from './ListDisplay'
 import { ResourcesService } from '../../../services/ResourcesService'
@@ -8,13 +8,13 @@ import ConfirmModal from '../../common/ConfirmModal'
 const IdentityResourcesList: React.FC = () => {
   const [count, setCount] = useState(0)
   const [page, setPage] = useState(1)
-  const [resources, setResources] = useState<IdentityResourcesDTO[]>([])
+  const [resources, setResources] = useState<IdentityResourceDTO[]>([])
   const [lastPage, setLastPage] = useState(1)
   const router = useRouter()
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [resourceToRemove, setResourceToRemove] = React.useState('')
 
-  const edit = (resource: IdentityResourcesDTO) => {
+  const edit = (resource: IdentityResourceDTO) => {
     router.push(
       `/resource/identity-resource/${encodeURIComponent(resource.name)}`,
     )
