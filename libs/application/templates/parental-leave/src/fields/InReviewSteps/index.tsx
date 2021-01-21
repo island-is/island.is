@@ -1,6 +1,7 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useContext } from 'react'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
+import { RefetchContext } from '@island.is/application/ui-shell'
 
 import {
   FieldBaseProps,
@@ -62,6 +63,8 @@ const statesMap: statesMap = {
 }
 
 const InReviewSteps: FC<FieldBaseProps> = ({ application }) => {
+  const refetch = useContext(RefetchContext)
+
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -163,7 +166,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application }) => {
 
                 if (res?.data) {
                   // Takes them back to the editable Review screen
-                  window.location.reload()
+                  refetch && refetch()
                 }
               }}
               buttonTextConfirm={formatMessage(
@@ -182,6 +185,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application }) => {
           {steps.map((step, index) => {
             return (
               <ReviewSection
+                key={index}
                 application={application}
                 index={index + 1}
                 {...step}

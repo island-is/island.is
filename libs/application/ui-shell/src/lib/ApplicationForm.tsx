@@ -1,6 +1,8 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { GET_APPLICATION } from '@island.is/application/graphql'
+import { RefetchProvider } from '../context/RefetchContext'
+
 import {
   Application,
   ApplicationTemplateHelper,
@@ -24,12 +26,17 @@ const ApplicationLoader: FC<{
   applicationId: string
   nationalRegistryId: string
 }> = ({ applicationId, nationalRegistryId }) => {
-  const { data, error, loading } = useQuery(GET_APPLICATION, {
+  const { data, error, loading, refetch } = useQuery(GET_APPLICATION, {
     variables: {
       input: {
         id: applicationId,
       },
     },
+    // Setting this so that refetch causes a re-render
+    // https://github.com/apollographql/react-apollo/issues/321#issuecomment-599087392
+    // We want to refetch after setting the application back to 'draft', so that
+    // it loads the correct form for the 'draft' state.
+    notifyOnNetworkStatusChange: true,
     skip: !applicationId,
   })
 
@@ -42,11 +49,18 @@ const ApplicationLoader: FC<{
   if (loading) {
     return null
   }
+
   return (
-    <ShellWrapper
-      application={application}
-      nationalRegistryId={nationalRegistryId}
-    />
+    <RefetchProvider
+      value={() => {
+        refetch()
+      }}
+    >
+      <ShellWrapper
+        application={application}
+        nationalRegistryId={nationalRegistryId}
+      />
+    </RefetchProvider>
   )
 }
 
