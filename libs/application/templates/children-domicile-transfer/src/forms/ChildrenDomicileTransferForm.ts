@@ -10,14 +10,11 @@ import {
   buildRadioField,
   buildMultiField,
   buildDateField,
-  Application,
-  buildDescriptionField,
   buildCustomField,
 } from '@island.is/application/core'
 import {
   extractParentFromApplication,
   extractChildrenFromApplication,
-  extractAnswersFromApplication,
 } from '../lib/utils'
 
 export const ChildrenDomicileTransferForm: Form = buildForm({
