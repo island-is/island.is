@@ -21,7 +21,3 @@ export const infoCardDataContainer = style({
 export const infoCardData = style({
   flex: '50%',
 })
-
-export const link = style({
-  textDecoration: 'underline',
-})

@@ -4,7 +4,6 @@ import cn from 'classnames'
 import * as styles from './Link.treat'
 
 const isLinkInternal = (href: string) => {
-  console.log('njdsfksdfkjsdnf ')
   if (typeof href === 'string' && href.indexOf('://') !== -1) return false
 
   return true
@@ -67,6 +66,7 @@ export const Link: React.FC<LinkProps> = ({
       </span>
     )
   }
+
   if (isInternal) {
     return (
       <NextLink
