@@ -30,6 +30,7 @@ export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
   title: 'Ökuskilríki',
   mode: FormModes.APPLYING,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'type',
