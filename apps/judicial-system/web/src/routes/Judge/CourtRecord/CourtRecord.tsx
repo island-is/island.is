@@ -7,10 +7,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import React, { useCallback, useEffect, useState } from 'react'
-import CourtDocument from '../../../shared-components/CourtDocument/CourtDocument'
-import { FormFooter } from '../../../shared-components/FormFooter'
-import { isNextDisabled } from '../../../utils/stepHelper'
-import * as Constants from '../../../utils/constants'
+import CourtDocument from '@island.is/judicial-system-web/src/shared-components/CourtDocument/CourtDocument'
+import { FormFooter } from '@island.is/judicial-system-web/src/shared-components/FormFooter'
+import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -33,7 +33,7 @@ import {
   removeTabsValidateAndSet,
   validateAndSetTime,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import CaseNumbers from '../../../shared-components/CaseNumbers/CaseNumbers'
+import CaseNumbers from '@island.is/judicial-system-web/src/shared-components/CaseNumbers/CaseNumbers'
 
 interface CaseData {
   case?: Case

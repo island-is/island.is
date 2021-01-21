@@ -16,7 +16,7 @@ import {
   Box,
   Icon,
 } from '@island.is/island-ui/core'
-import Loading from '../../../shared-components/Loading/Loading'
+import Loading from '@island.is/judicial-system-web/src/shared-components/Loading/Loading'
 import {
   Case,
   CaseDecision,
@@ -25,15 +25,18 @@ import {
 } from '@island.is/judicial-system/types'
 import * as styles from './DetentionRequests.treat'
 import { UserRole } from '@island.is/judicial-system/types'
-import * as Constants from '../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { Link } from 'react-router-dom'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { insertAt, parseTransition } from '../../../utils/formatters'
+import {
+  insertAt,
+  parseTransition,
+} from '@island.is/judicial-system-web/src/utils/formatters'
 import { useMutation, useQuery } from '@apollo/client'
-import { UserContext } from '../../../shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { useHistory } from 'react-router-dom'
-import { TransitionCaseMutation } from '../../../graphql'
-import { CasesQuery } from '../../../utils/mutations'
+import { TransitionCaseMutation } from '@island.is/judicial-system-web/src/graphql'
+import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 type directionType = 'ascending' | 'descending'
 interface SortConfig {

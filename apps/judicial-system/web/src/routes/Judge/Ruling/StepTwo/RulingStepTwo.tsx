@@ -8,7 +8,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
-import { FormFooter } from '../../../../shared-components/FormFooter'
+import { FormFooter } from '@island.is/judicial-system-web/src/shared-components/FormFooter'
 import {
   Case,
   CaseAppealDecision,
@@ -16,9 +16,12 @@ import {
   CaseDecision,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import * as Constants from '../../../../utils/constants'
-import { parseArray, parseString } from '../../../../utils/formatters'
-import { constructConclusion } from '../../../../utils/stepHelper'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import {
+  parseArray,
+  parseString,
+} from '@island.is/judicial-system-web/src/utils/formatters'
+import { constructConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'

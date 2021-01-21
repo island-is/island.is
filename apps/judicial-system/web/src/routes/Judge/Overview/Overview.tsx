@@ -9,10 +9,10 @@ import {
 import {
   constructProsecutorDemands,
   isNextDisabled,
-} from '../../../utils/stepHelper'
-import { FormFooter } from '../../../shared-components/FormFooter'
+} from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { FormFooter } from '@island.is/judicial-system-web/src/shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
-import * as Constants from '../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import {
   Case,
@@ -37,9 +37,9 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { parseTransition } from '../../../utils/formatters'
-import CaseNumbers from '../../../shared-components/CaseNumbers/CaseNumbers'
-import InfoCard from '../../../shared-components/InfoCard/InfoCard'
+import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
+import CaseNumbers from '@island.is/judicial-system-web/src/shared-components/CaseNumbers/CaseNumbers'
+import InfoCard from '@island.is/judicial-system-web/src/shared-components/InfoCard/InfoCard'
 
 interface CaseData {
   case?: Case

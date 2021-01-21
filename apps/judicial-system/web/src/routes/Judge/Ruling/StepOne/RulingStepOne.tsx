@@ -11,17 +11,20 @@ import {
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import React, { useEffect, useState, useRef, useCallback } from 'react'
-import { FormFooter } from '../../../../shared-components/FormFooter'
+import { FormFooter } from '@island.is/judicial-system-web/src/shared-components/FormFooter'
 import {
   Case,
   CaseCustodyRestrictions,
   CaseDecision,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import * as Constants from '../../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
-import { parseArray, parseString } from '../../../../utils/formatters'
-import { isNextDisabled } from '../../../../utils/stepHelper'
+import {
+  parseArray,
+  parseString,
+} from '@island.is/judicial-system-web/src/utils/formatters'
+import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'

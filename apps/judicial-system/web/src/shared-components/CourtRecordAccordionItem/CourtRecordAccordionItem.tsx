@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 
-import AccordionListItem from '../AccordionListItem/AccordionListItem'
+import AccordionListItem from '@island.is/judicial-system-web/src/shared-components/AccordionListItem/AccordionListItem'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { Case } from '@island.is/judicial-system/types'
 

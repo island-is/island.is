@@ -16,12 +16,12 @@ import {
   NotificationType,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import { isNextDisabled } from '../../../../utils/stepHelper'
+import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import parseISO from 'date-fns/parseISO'
-import { FormFooter } from '../../../../shared-components/FormFooter'
+import { FormFooter } from '@island.is/judicial-system-web/src/shared-components/FormFooter'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
-import * as Constants from '../../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useHistory, useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
@@ -45,7 +45,7 @@ import {
   getTimeFromDate,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ValueType } from 'react-select/src/types'
-import Modal from '../../../../shared-components/Modal/Modal'
+import Modal from '@island.is/judicial-system-web/src/shared-components/Modal/Modal'
 
 interface CaseData {
   case?: Case

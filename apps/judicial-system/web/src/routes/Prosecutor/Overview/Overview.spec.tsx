@@ -1,9 +1,12 @@
 import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
 import Overview from './Overview'
-import * as Constants from '../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { MemoryRouter, Route } from 'react-router-dom'
-import { mockCaseQueries, mockProsecutorQuery } from '../../../utils/mocks'
+import {
+  mockCaseQueries,
+  mockProsecutorQuery,
+} from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 

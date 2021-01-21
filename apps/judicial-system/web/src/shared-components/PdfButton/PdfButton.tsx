@@ -1,7 +1,7 @@
 import { Button } from '@island.is/island-ui/core'
 import React from 'react'
-import { api } from '../../services'
-import * as styles from './PdfButton.treat'
+import { api } from '@island.is/judicial-system-web/src/services'
+import * as styles from '@island.is/judicial-system-web/src/shared-components/PdfButton/PdfButton.treat'
 interface Props {
   caseId: string
 }
