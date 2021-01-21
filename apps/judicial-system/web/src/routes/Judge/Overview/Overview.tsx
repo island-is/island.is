@@ -223,7 +223,7 @@ export const JudgeOverview: React.FC = () => {
                   </Text>
                 </Box>
                 <Text variant="h3">
-                  {capitalize(formatGender(workingCase.accusedGender))}
+                  {formatGender(workingCase.accusedGender)}
                 </Text>
               </Box>
             )}
