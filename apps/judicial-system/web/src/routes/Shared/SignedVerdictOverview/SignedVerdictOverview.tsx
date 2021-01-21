@@ -258,6 +258,10 @@ export const SignedVerdictOverview: React.FC = () => {
               accusedGender={workingCase.accusedGender}
               accusedNationalId={workingCase.accusedNationalId}
               accusedAddress={workingCase.accusedAddress}
+              defender={{
+                name: workingCase.defenderName || '',
+                email: workingCase.defenderEmail,
+              }}
             />
           </Box>
           <Box marginBottom={5}>

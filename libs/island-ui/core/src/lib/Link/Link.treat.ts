@@ -1,19 +1,23 @@
 import { style, styleMap } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
+const mediumBoxShadow = `inset 0 -2px 0 0 currentColor`
+const smallBoxShadow = `inset 0 -1px 0 0 currentColor`
+
 export const link = style({
   textDecoration: 'none',
   ':hover': {
     textDecoration: 'none',
+    boxShadow: mediumBoxShadow,
+  },
+  ':focus': {
+    backgroundColor: theme.color.mint400,
   },
 })
 
 export const pointer = style({
   cursor: 'pointer',
 })
-
-const mediumBoxShadow = `inset 0 -2px 0 0 currentColor`
-const smallBoxShadow = `inset 0 -1px 0 0 currentColor`
 
 const underline = {
   textDecoration: 'none',
@@ -38,7 +42,7 @@ export const underlineVisibilities = styleMap({
       [`&${underlines.normal}`]: {
         boxShadow: mediumBoxShadow,
       },
-      [`&${underlines.small}`]: {
+      [`&${underlines.small}:not(:hover)`]: {
         boxShadow: smallBoxShadow,
       },
     },
