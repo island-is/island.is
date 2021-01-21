@@ -446,86 +446,95 @@ export const RulingStepTwo: React.FC = () => {
             {(!workingCase.decision ||
               workingCase.decision === CaseDecision.ACCEPTING) && (
               <Box component="section" marginBottom={3}>
-                <Box marginBottom={2}>
+                <Box marginBottom={3}>
                   <Text as="h3" variant="h3">
                     Tilhögun gæsluvarðhalds
                   </Text>
                 </Box>
-                <Box marginBottom={1}>
-                  <GridRow>
-                    {custodyRestrictions.map((restriction, index) => {
-                      return (
-                        <GridColumn span="6/12" key={index}>
-                          <Box marginBottom={3}>
-                            <Checkbox
-                              name={restriction.restriction}
-                              label={restriction.restriction}
-                              value={restriction.value}
-                              checked={workingCase.custodyRestrictions?.includes(
-                                restriction.value,
-                              )}
-                              tooltip={restriction.explanation}
-                              onChange={({ target }) => {
-                                // Create a copy of the state
-                                const copyOfState = Object.assign(
-                                  workingCase,
-                                  {},
-                                )
+                <BlueBox>
+                  <Box marginBottom={1}>
+                    <GridRow>
+                      {custodyRestrictions.map((restriction, index) => {
+                        return (
+                          <GridColumn span="6/12" key={index}>
+                            <Box
+                              marginBottom={
+                                index + 2 <= custodyRestrictions.length ? 3 : 0
+                              }
+                            >
+                              <Checkbox
+                                name={restriction.restriction}
+                                label={restriction.restriction}
+                                value={restriction.value}
+                                checked={workingCase.custodyRestrictions?.includes(
+                                  restriction.value,
+                                )}
+                                tooltip={restriction.explanation}
+                                onChange={({ target }) => {
+                                  // Create a copy of the state
+                                  const copyOfState = Object.assign(
+                                    workingCase,
+                                    {},
+                                  )
 
-                                const restrictionIsSelected = copyOfState.custodyRestrictions?.includes(
-                                  target.value as CaseCustodyRestrictions,
-                                )
+                                  const restrictionIsSelected = copyOfState.custodyRestrictions?.includes(
+                                    target.value as CaseCustodyRestrictions,
+                                  )
 
-                                // Toggle the checkbox on or off
-                                restriction.setCheckbox(!restrictionIsSelected)
+                                  // Toggle the checkbox on or off
+                                  restriction.setCheckbox(
+                                    !restrictionIsSelected,
+                                  )
 
-                                // If the user is checking the box, add the restriction to the state
-                                if (!restrictionIsSelected) {
-                                  if (
-                                    copyOfState.custodyRestrictions === null
-                                  ) {
-                                    copyOfState.custodyRestrictions = []
+                                  // If the user is checking the box, add the restriction to the state
+                                  if (!restrictionIsSelected) {
+                                    if (
+                                      copyOfState.custodyRestrictions === null
+                                    ) {
+                                      copyOfState.custodyRestrictions = []
+                                    }
+
+                                    copyOfState.custodyRestrictions &&
+                                      copyOfState.custodyRestrictions.push(
+                                        target.value as CaseCustodyRestrictions,
+                                      )
+                                  }
+                                  // If the user is unchecking the box, remove the restriction from the state
+                                  else {
+                                    copyOfState.custodyRestrictions &&
+                                      copyOfState.custodyRestrictions.splice(
+                                        copyOfState.custodyRestrictions.indexOf(
+                                          target.value as CaseCustodyRestrictions,
+                                        ),
+                                        1,
+                                      )
                                   }
 
-                                  copyOfState.custodyRestrictions &&
-                                    copyOfState.custodyRestrictions.push(
-                                      target.value as CaseCustodyRestrictions,
-                                    )
-                                }
-                                // If the user is unchecking the box, remove the restriction from the state
-                                else {
-                                  copyOfState.custodyRestrictions &&
-                                    copyOfState.custodyRestrictions.splice(
-                                      copyOfState.custodyRestrictions.indexOf(
-                                        target.value as CaseCustodyRestrictions,
-                                      ),
-                                      1,
-                                    )
-                                }
+                                  setWorkingCase({
+                                    ...workingCase,
+                                    custodyRestrictions:
+                                      copyOfState.custodyRestrictions,
+                                  })
 
-                                setWorkingCase({
-                                  ...workingCase,
-                                  custodyRestrictions:
-                                    copyOfState.custodyRestrictions,
-                                })
-
-                                // Save case
-                                updateCase(
-                                  workingCase.id,
-                                  parseArray(
-                                    'custodyRestrictions',
-                                    copyOfState.custodyRestrictions || [],
-                                  ),
-                                )
-                              }}
-                              large
-                            />
-                          </Box>
-                        </GridColumn>
-                      )
-                    })}
-                  </GridRow>
-                </Box>
+                                  // Save case
+                                  updateCase(
+                                    workingCase.id,
+                                    parseArray(
+                                      'custodyRestrictions',
+                                      copyOfState.custodyRestrictions || [],
+                                    ),
+                                  )
+                                }}
+                                large
+                                filled
+                              />
+                            </Box>
+                          </GridColumn>
+                        )
+                      })}
+                    </GridRow>
+                  </Box>
+                </BlueBox>
               </Box>
             )}
             {(!workingCase.decision ||

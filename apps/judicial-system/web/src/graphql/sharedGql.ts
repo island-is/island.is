@@ -19,6 +19,7 @@ export const CaseQuery = gql`
       requestedCourtDate
       alternativeTravelBan
       requestedCustodyEndDate
+      otherDemands
       lawsBroken
       custodyProvisions
       requestedCustodyRestrictions

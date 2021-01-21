@@ -72,7 +72,7 @@ export const PageLayout: FC<PageProps> = ({
         { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
         {
           type: 'SUB_SECTION',
-          name: 'Lagagrundvöllur og dómkröfur',
+          name: 'Dómkröfur og lagagrundvöllur',
         },
         {
           type: 'SUB_SECTION',
@@ -105,7 +105,7 @@ export const PageLayout: FC<PageProps> = ({
         { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
         {
           type: 'SUB_SECTION',
-          name: 'Lagagrundvöllur og dómkröfur',
+          name: 'Dómkröfur og lagagrundvöllur',
         },
         {
           type: 'SUB_SECTION',

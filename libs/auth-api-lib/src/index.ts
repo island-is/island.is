@@ -43,6 +43,8 @@ export * from './lib/entities/dto/client-secret.dto'
 export * from './lib/entities/dto/api-resources.dto'
 export * from './lib/entities/dto/api-resource-secret.dto'
 export * from './lib/entities/dto/api-resource-allowed-scope.dto'
+export * from './lib/entities/dto/admin-access.dto'
+export * from './lib/entities/dto/admin-access-update.dto'
 
 // Services
 export * from './lib/services/clients.service'

@@ -205,7 +205,6 @@ export const Overview: React.FC = () => {
                 },
               ]}
               accusedName={workingCase.accusedName}
-              accusedGender={workingCase.accusedGender}
               accusedNationalId={workingCase.accusedNationalId}
               accusedAddress={workingCase.accusedAddress}
             />

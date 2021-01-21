@@ -143,6 +143,13 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
+  otherDemands: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
   lawsBroken: string
 
   @Column({

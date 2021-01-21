@@ -96,7 +96,7 @@ const Home: Screen<HomeProps> = ({
         imageWidth={frontpage.featuredImage?.width?.toString()}
         imageHeight={frontpage.featuredImage?.height?.toString()}
       />
-      <Box className={covidStyles.frontpageBg}>
+      <Box className={covidStyles.frontpageBg} id="main-content">
         <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
           <Header buttonColorScheme="negative" megaMenuData={megaMenuData}>
             <GridContainer>

@@ -152,7 +152,10 @@ export const constructConclusion = (workingCase: Case) => {
   }
 }
 
-export const constructProsecutorDemands = (workingCase: Case) => {
+export const constructProsecutorDemands = (
+  workingCase: Case,
+  skipOtherDemands?: boolean,
+) => {
   return workingCase.requestedCustodyEndDate ? (
     <Text>
       Þess er krafist að
@@ -204,6 +207,13 @@ export const constructProsecutorDemands = (workingCase: Case) => {
         </>
       ) : (
         '.'
+      )}
+      {workingCase.otherDemands && !skipOtherDemands && (
+        <>
+          <br />
+          <br />
+          {` ${capitalize(workingCase.otherDemands || '')}`}
+        </>
       )}
     </Text>
   ) : (

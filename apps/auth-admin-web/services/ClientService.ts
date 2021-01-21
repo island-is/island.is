@@ -23,10 +23,15 @@ import { BaseService } from './BaseService'
 export class ClientService extends BaseService {
   /** Gets all clients with paging */
   static async findAndCountAll(
+    searchString: string,
     page: number,
     count: number,
   ): Promise<{ rows: Client[]; count: number } | null> {
-    return BaseService.GET(`clients/?page=${page}&count=${count}`)
+    return BaseService.GET(
+      `clients/?searchString=${encodeURIComponent(
+        searchString,
+      )}&page=${page}&count=${count}`,
+    )
   }
 
   /** Gets a client by it's id */
