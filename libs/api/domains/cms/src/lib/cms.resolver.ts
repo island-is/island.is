@@ -71,6 +71,8 @@ import { ErrorPage } from './models/errorPage.model'
 import { OrganizationSubpage } from './models/organizationSubpage.model'
 import { GetOrganizationSubpageInput } from './dto/getOrganizationSubpage.input'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
+import { OrganizationPage } from "./models/organizationPage.model";
+import { GetOrganizationPageInput } from "./dto/getOrganizationPage.input";
 
 const { cacheTime } = environment
 
@@ -169,6 +171,17 @@ export class CmsResolver {
     @Args('input') input: GetOrganizationInput,
   ): Promise<Organization | null> {
     return this.cmsContentfulService.getOrganization(
+      input?.slug ?? '',
+      input?.lang ?? 'is-IS',
+    )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => OrganizationPage, { nullable: true })
+  getOrganizationPage(
+    @Args('input') input: GetOrganizationPageInput,
+  ): Promise<OrganizationPage | null> {
+    return this.cmsContentfulService.getOrganizationPage(
       input?.slug ?? '',
       input?.lang ?? 'is-IS',
     )

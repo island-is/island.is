@@ -50,6 +50,7 @@ import { mapSubpageHeader, SubpageHeader } from './models/subpageHeader.model'
 import { mapOrganizationSubpage, OrganizationSubpage } from './models/organizationSubpage.model'
 import { GetErrorPageInput } from './dto/getErrorPage.input'
 import { ErrorPage, mapErrorPage } from './models/errorPage.model'
+import { OrganizationPage, mapOrganizationPage } from "./models/organizationPage.model";
 
 const makePage = (
   page: number,
@@ -209,6 +210,21 @@ export class CmsContentfulService {
     return result.items.map(mapOrganization)[0] ?? null
   }
 
+  async getOrganizationPage(
+    slug: string,
+    lang: string,
+  ): Promise<OrganizationPage> {
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationPageFields>(lang, {
+        ['content_type']: 'organizationPage',
+        include: 10,
+        'fields.slug': slug,
+      })
+      .catch(errorHandler('getOrganizationPage'))
+
+    return result.items.map(mapOrganizationPage)[0] ?? null
+  }
+
   async getOrganizationSubpage(
     organizationSlug: string,
     slug: string,
@@ -219,10 +235,10 @@ export class CmsContentfulService {
         ['content_type']: 'organizationSubpage',
         include: 10,
         'fields.slug': slug,
-        'fields.organization.sys.contentType.sys.id': 'organization',
-        'fields.organization.fields.slug': organizationSlug,
+        'fields.organizationPage.sys.contentType.sys.id': 'organizationPage',
+        'fields.organizationPage.fields.slug': organizationSlug,
       })
-      .catch(errorHandler('getOrganization'))
+      .catch(errorHandler('getOrganizationSubpage'))
 
     return result.items.map(mapOrganizationSubpage)[0] ?? null
   }

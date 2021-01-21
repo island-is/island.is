@@ -2,12 +2,12 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 import { IOrganizationPage } from '../generated/contentfulTypes'
 
-import { Link, mapLink } from './link.model'
-
 import {
   mapOrganizationSliceUnion,
   OrganizationSliceUnion,
 } from '../unions/organizationSlice.union'
+import {mapOrganization, Organization} from "./organization.model";
+import {LinkGroup, mapLinkGroup} from "./linkGroup.model";
 
 @ObjectType()
 export class OrganizationPage {
@@ -18,13 +18,19 @@ export class OrganizationPage {
   title: string
 
   @Field()
+  slug: string
+
+  @Field()
   description: string
 
   @Field(() => [OrganizationSliceUnion])
   slices: Array<typeof OrganizationSliceUnion>
 
-  @Field(() => [Link])
-  menuLinks?: Array<Link>
+  @Field(() => [LinkGroup])
+  menuLinks?: Array<LinkGroup>
+
+  @Field(() => Organization)
+  organization: Organization
 }
 
 export const mapOrganizationPage = ({
@@ -33,7 +39,9 @@ export const mapOrganizationPage = ({
 }: IOrganizationPage): OrganizationPage => ({
   id: sys.id,
   title: fields.title,
+  slug: fields.slug,
   description: fields.description,
   slices: fields.slices.map(mapOrganizationSliceUnion),
-  menuLinks: (fields.menuLinks ?? []).map(mapLink),
+  menuLinks: (fields.menuLinks ?? []).map(mapLinkGroup),
+  organization: mapOrganization(fields.organization)
 })

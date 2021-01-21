@@ -3,16 +3,22 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { IOrganizationSubpage } from '../generated/contentfulTypes'
 
 import { Link } from './link.model'
-import { mapOrganization, Organization } from './organization.model'
 import {
   mapOrganizationSliceUnion,
   OrganizationSliceUnion,
 } from '../unions/organizationSlice.union'
+import {mapOrganizationPage, OrganizationPage} from "./organizationPage.model";
 
 @ObjectType()
 export class OrganizationSubpage {
   @Field()
   title: string
+
+  @Field()
+  slug: string
+
+  @Field({ nullable: true })
+  description?: string
 
   @Field(() => [OrganizationSliceUnion])
   slices: Array<typeof OrganizationSliceUnion>
@@ -20,23 +26,21 @@ export class OrganizationSubpage {
   @Field(() => Link, { nullable: true })
   menuItem?: Link
 
-  @Field()
-  slug: string
-
   @Field({ nullable: true })
   parentSubpage?: string
 
-  @Field(() => Organization)
-  organization: Organization
+  @Field(() => OrganizationPage)
+  organizationPage: OrganizationPage
 }
 
 export const mapOrganizationSubpage = ({
   fields,
 }: IOrganizationSubpage): OrganizationSubpage => ({
   title: fields.title,
+  slug: fields.slug,
+  description: fields.description ?? "",
   slices: (fields.slices ?? []).map(mapOrganizationSliceUnion),
   menuItem: fields.menuItem?.fields,
-  slug: fields.slug,
   parentSubpage: fields.parentSubpage?.fields.slug,
-  organization: mapOrganization(fields.organization),
+  organizationPage: mapOrganizationPage(fields.organizationPage),
 })
