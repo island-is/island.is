@@ -1,4 +1,4 @@
-import {Args, Query, Resolver} from "@nestjs/graphql";
+import {Args, Directive, Query, Resolver} from "@nestjs/graphql";
 import {GetHomestaysInput} from "./dto/getHomestays.input";
 import {Homestay} from "./models/homestay"
 import {SyslumennService} from "./syslumenn.service";
