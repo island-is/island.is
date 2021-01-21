@@ -40,6 +40,7 @@ import {
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 import NextLink from 'next/link'
+import { CustomNextError } from '../units/errors'
 
 interface NewsItemProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
@@ -177,7 +178,6 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
     {
       data: { getSingleNews: newsItem },
     },
-
     namespace,
   ] = await Promise.all([
     apolloClient.query<GetSingleNewsItemQuery, QueryGetSingleNewsArgs>({
@@ -205,6 +205,10 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
         return JSON.parse(variables.data.getNamespace.fields)
       }),
   ])
+
+  if (!newsItem) {
+    throw new CustomNextError(404, 'News not found')
+  }
 
   return {
     newsItem,
