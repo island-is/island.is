@@ -124,6 +124,9 @@ export class Case implements TCase {
   readonly policeDemands?: string
 
   @Field({ nullable: true })
+  readonly courtDocuments?: string[]
+
+  @Field({ nullable: true })
   readonly accusedPlea?: string
 
   @Field({ nullable: true })

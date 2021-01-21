@@ -268,6 +268,15 @@ export async function generateRulingPdf(
         paragraphGap: 0,
       },
     )
+
+  existingCase.courtDocuments?.forEach((courttDocument, index) =>
+    doc.text(`${courttDocument}. Þingmerkt nr. ${index + 1}`, {
+      lineGap: 6,
+      paragraphGap: 0,
+    }),
+  )
+
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
