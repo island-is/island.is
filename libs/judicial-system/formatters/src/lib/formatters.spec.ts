@@ -237,7 +237,7 @@ describe('formatGender', () => {
     const r = formatGender(gender)
 
     // Assert
-    expect(r).toBe('karl')
+    expect(r).toBe('Karl')
   })
 
   test('should format female', () => {
@@ -248,7 +248,7 @@ describe('formatGender', () => {
     const r = formatGender(gender)
 
     // Assert
-    expect(r).toBe('kona')
+    expect(r).toBe('Kona')
   })
 
   test('should format other', () => {
@@ -259,6 +259,6 @@ describe('formatGender', () => {
     const r = formatGender(gender)
 
     // Assert
-    expect(r).toBe('annað')
+    expect(r).toBe('Kynsegin/Annað')
   })
 })

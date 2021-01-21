@@ -89,6 +89,7 @@ export * from './lib/context'
 
 // Treat
 export * from './treat/global.treat'
+export * from './utils/globalStyles'
 
 // Type exports:
 export type { BoxProps } from './lib/Box/Box'

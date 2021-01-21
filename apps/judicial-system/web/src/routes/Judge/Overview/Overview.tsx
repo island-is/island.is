@@ -9,10 +9,15 @@ import {
 import {
   constructProsecutorDemands,
   isNextDisabled,
-} from '../../../utils/stepHelper'
-import { FormFooter } from '../../../shared-components/FormFooter'
+} from '@island.is/judicial-system-web/src/utils/stepHelper'
+import {
+  FormFooter,
+  PageLayout,
+  CaseNumbers,
+  InfoCard,
+} from '@island.is/judicial-system-web/src/shared-components'
 import { useParams } from 'react-router-dom'
-import * as Constants from '../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import {
   Case,
@@ -21,7 +26,6 @@ import {
   CaseTransition,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import * as styles from './Overview.treat'
 import { useMutation, useQuery } from '@apollo/client'
 import {
@@ -37,8 +41,7 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { parseTransition } from '../../../utils/formatters'
-import InfoCard from '../../../shared-components/InfoCard/InfoCard'
+import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 
 interface CaseData {
   case?: Case
@@ -174,12 +177,7 @@ export const JudgeOverview: React.FC = () => {
                 required
               />
             </Box>
-            <Box>
-              <Text
-                variant="small"
-                fontWeight="semiBold"
-              >{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
-            </Box>
+            <CaseNumbers workingCase={workingCase} />
           </Box>
           <Box component="section" marginBottom={5}>
             <InfoCard
