@@ -7,7 +7,7 @@ import {
   mapOrganizationSliceUnion,
   OrganizationSliceUnion,
 } from '../unions/organizationSlice.union'
-import {mapOrganizationPage, OrganizationPage} from "./organizationPage.model";
+import { mapOrganizationPage, OrganizationPage } from './organizationPage.model'
 
 @ObjectType()
 export class OrganizationSubpage {
@@ -38,7 +38,7 @@ export const mapOrganizationSubpage = ({
 }: IOrganizationSubpage): OrganizationSubpage => ({
   title: fields.title,
   slug: fields.slug,
-  description: fields.description ?? "",
+  description: fields.description ?? '',
   slices: (fields.slices ?? []).map(mapOrganizationSliceUnion),
   menuItem: fields.menuItem?.fields,
   parentSubpage: fields.parentSubpage?.fields.slug,

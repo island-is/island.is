@@ -6,8 +6,8 @@ import {
   mapOrganizationSliceUnion,
   OrganizationSliceUnion,
 } from '../unions/organizationSlice.union'
-import {mapOrganization, Organization} from "./organization.model";
-import {LinkGroup, mapLinkGroup} from "./linkGroup.model";
+import { mapOrganization, Organization } from './organization.model'
+import { LinkGroup, mapLinkGroup } from './linkGroup.model'
 
 @ObjectType()
 export class OrganizationPage {
@@ -43,5 +43,5 @@ export const mapOrganizationPage = ({
   description: fields.description,
   slices: fields.slices.map(mapOrganizationSliceUnion),
   menuLinks: (fields.menuLinks ?? []).map(mapLinkGroup),
-  organization: mapOrganization(fields.organization)
+  organization: mapOrganization(fields.organization),
 })

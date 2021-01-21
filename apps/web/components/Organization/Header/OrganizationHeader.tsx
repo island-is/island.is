@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import {OrganizationPage} from '@island.is/web/graphql/schema'
+import { OrganizationPage } from '@island.is/web/graphql/schema'
 import {
   Box,
   BreadCrumbItem,

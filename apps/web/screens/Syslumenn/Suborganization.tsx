@@ -37,7 +37,8 @@ import {
   GET_CATEGORIES_QUERY,
   GET_ORGANIZATION_QUERY,
   GET_ORGANIZATION_NEWS_QUERY,
-  GET_ORGANIZATION_SUBPAGE_QUERY, GET_ORGANIZATION_PAGE_QUERY,
+  GET_ORGANIZATION_SUBPAGE_QUERY,
+  GET_ORGANIZATION_PAGE_QUERY,
 } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
@@ -56,7 +57,8 @@ import {
   Organization,
   QueryGetArticleCategoriesArgs,
   QueryGetOrganizationArgs,
-  QueryGetOrganizationNewsArgs, QueryGetOrganizationPageArgs,
+  QueryGetOrganizationNewsArgs,
+  QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { GET_GROUPED_MENU_QUERY } from '../queries/Menu'
 import { Locale } from '../../i18n/I18n'
@@ -108,13 +110,14 @@ const Suborganization: Screen<HomeProps> = ({
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active: subpage.menuItem.url === primaryLink.url || childrenLinks.some(link => link.url === subpage.menuItem.url),
+      active:
+        subpage.menuItem.url === primaryLink.url ||
+        childrenLinks.some((link) => link.url === subpage.menuItem.url),
       items: childrenLinks.map(({ text, url }) => ({
-          title: text,
-          href: url,
-          active: url === subpage.menuItem.url
-        })
-      )
+        title: text,
+        href: url,
+        active: url === subpage.menuItem.url,
+      })),
     }),
   )
 
