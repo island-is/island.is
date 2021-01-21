@@ -38,6 +38,7 @@ import {
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseTransition } from '../../../utils/formatters'
+import CaseNumbers from '../../../shared-components/CaseNumbers/CaseNumbers'
 import InfoCard from '../../../shared-components/InfoCard/InfoCard'
 
 interface CaseData {
@@ -174,12 +175,7 @@ export const JudgeOverview: React.FC = () => {
                 required
               />
             </Box>
-            <Box>
-              <Text
-                variant="small"
-                fontWeight="semiBold"
-              >{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
-            </Box>
+            <CaseNumbers workingCase={workingCase} />
           </Box>
           <Box component="section" marginBottom={5}>
             <InfoCard
