@@ -27,6 +27,10 @@ export const GET_API_SERVICE_QUERY = gql`
       owner
       title
       description
+      data
+      pricing
+      access
+      type
       versions {
         versionId
         details {
