@@ -5,6 +5,7 @@ import {
   formatNationalId,
   formatCustodyRestrictions,
   laws,
+  formatGender,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
@@ -223,25 +224,31 @@ export function formatProsecutorCourtDateEmailNotification(
 }
 
 export function formatPrisonCourtDateEmailNotification(
+  prosecutorOffice: string,
   court: string,
   courtDate: Date,
+  accusedName: string,
   accusedGender: CaseGender,
   requestedCustodyEndDate: Date,
   isolation: boolean,
   defenderName: string,
+  isExtension: boolean,
 ): string {
   const courtText = court?.replace('dómur', 'dóms')
-  const courtDateText = formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
+  const courtDateText = formatDate(courtDate, 'PPPPp')
+    ?.replace('dagur', 'daginn')
+    ?.replace(' kl.', ', kl.')
   const requestedCustodyEndDateText = formatDate(
     requestedCustodyEndDate,
-    'PPPp',
-  )?.replace(' kl.', ', kl.')
-  const requestText =
-    accusedGender === CaseGender.OTHER
-      ? `Krafist er gæsluvarðhalds til ${requestedCustodyEndDateText}.`
-      : `Sakborningur er ${
-          accusedGender === CaseGender.MALE ? 'karl' : 'kona'
-        } og krafist er gæsluvarðhalds til ${requestedCustodyEndDateText}.`
+    'PPPPp',
+  )
+    ?.replace('dagur', 'dagsins')
+    ?.replace(' kl.', ', kl.')
+  const requestText = `${
+    isExtension ? `Nafn sakbornings: ${accusedName}<br /><br />` : ''
+  }Kyn sakbornings: ${formatGender(
+    accusedGender,
+  )}<br /><br />Krafist er gæsluvarðhalds til ${requestedCustodyEndDateText}.`
   const isolationText = isolation
     ? 'Farið er fram á einangrun.'
     : 'Ekki er farið fram á einangrun.'
@@ -249,7 +256,9 @@ export function formatPrisonCourtDateEmailNotification(
     ? `Verjandi sakbornings: ${defenderName}`
     : 'Verjandi sakbornings hefur ekki verið skráður'
 
-  return `Krafa um gæsluvarðhald hefur verið send til ${courtText} og verður málið tekið fyrir ${courtDateText}.<br /><br />${requestText}<br /><br />${isolationText}<br /><br />${defenderText}.`
+  return `${prosecutorOffice} hefur sent kröfu um ${
+    isExtension ? 'áframhaldandi ' : ''
+  }gæsluvarðhald til ${courtText} og verður málið tekið fyrir ${courtDateText}.<br /><br />${requestText}<br /><br />${isolationText}<br /><br />${defenderText}.`
 }
 
 export function formatDefenderCourtDateEmailNotification(
@@ -261,11 +270,13 @@ export function formatDefenderCourtDateEmailNotification(
 ): string {
   return `${court} hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram ${formatDate(
     courtDate,
-    'PPPp',
-  )?.replace(
-    ' kl.',
-    ', kl.',
-  )}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />Sakborningur: ${accusedName} ${formatNationalId(
+    'PPPPp',
+  )
+    ?.replace('dagur', 'daginn')
+    ?.replace(
+      ' kl.',
+      ', kl.',
+    )}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />Sakborningur: ${accusedName} ${formatNationalId(
     accusedNationalId,
   )}.<br /><br />Dómstóllinn hefur skráð þig sem verjanda sakbornings.`
 }

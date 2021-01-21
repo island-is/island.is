@@ -6,6 +6,7 @@ import { SmsService } from '@island.is/nova-sms'
 import { EmailService } from '@island.is/email-service'
 import {
   CaseCustodyRestrictions,
+  CaseDecision,
   NotificationType,
   User,
 } from '@island.is/judicial-system/types'
@@ -245,14 +246,18 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = 'Krafa um gæsluvarðhald í vinnslu'
     const html = formatPrisonCourtDateEmailNotification(
+      existingCase.prosecutor?.institution,
       existingCase.court,
       existingCase.courtDate,
+      existingCase.accusedName,
       existingCase.accusedGender,
       existingCase.requestedCustodyEndDate,
       existingCase.requestedCustodyRestrictions?.includes(
         CaseCustodyRestrictions.ISOLATION,
       ),
       existingCase.defenderName,
+      existingCase.parentCase &&
+        existingCase.parentCase?.decision === CaseDecision.ACCEPTING,
     )
 
     return this.sendEmail(
