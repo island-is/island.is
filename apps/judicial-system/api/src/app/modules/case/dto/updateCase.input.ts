@@ -130,7 +130,7 @@ export class UpdateCaseInput implements UpdateCase {
   readonly policeDemands?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => [String], { nullable: true })
   readonly courtDocuments?: string[]
 
   @Allow()
