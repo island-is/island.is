@@ -101,7 +101,7 @@ const ApiResourcesList: React.FC = () => {
       <div className="api-resources-list">
         <div className="api-resources-list__wrapper">
           <div className="api-resources-list__container">
-            <h1>Api resource</h1>
+            <h1>Api resources</h1>
             <div className="api-resources-list__container__options">
               <div className="api-resources-list__container__options__button">
                 <Link href={'/resource/api-resource'}>
@@ -113,7 +113,11 @@ const ApiResourcesList: React.FC = () => {
               </div>
               <form onSubmit={search}>
                 <div className="api-resources-list__container__options__search">
+                <label htmlFor='search' className="api-resources-list__label">
+                      National Id or Resource name
+                    </label>
                   <input
+                    id="search"
                     className="api-resources-list__input__search"
                     value={searchString}
                     onChange={handleSearchChange}

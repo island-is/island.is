@@ -99,7 +99,11 @@ class ClientsList extends Component {
                 </div>
                 <form onSubmit={this.search}>
                   <div className="clients__container__options__search">
+                    <label htmlFor='search' className="clients__label">
+                      National Id or Client Id
+                    </label>
                     <input
+                      id="search"
                       className="clients__input__search"
                       value={this.state.searchString}
                       onChange={this.handleSearchChange}
