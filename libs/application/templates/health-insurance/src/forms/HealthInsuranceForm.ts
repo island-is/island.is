@@ -67,9 +67,10 @@ export const HealthInsuranceForm: Form = buildForm({
           title: m.confirmationOfResidencyTitle,
           description: m.confirmationOfResidencyDescription,
           children: [
-            buildDividerField({
-              title: ' ',
-              color: 'transparent',
+            buildCustomField({
+              id: 'errorModal',
+              component: 'ErrorModal',
+              title: '',
             }),
             buildFileUploadField({
               id: 'confirmationOfResidencyDocument',
@@ -88,6 +89,16 @@ export const HealthInsuranceForm: Form = buildForm({
           id: 'contactInfoSection',
           title: m.contactInfoTitle,
           children: [
+            buildCustomField({
+              id: 'errorModal',
+              component: 'ErrorModal',
+              title: '',
+              condition: (formValue: FormValue, externalData) => {
+                // TODO: when it is possible in NationalRegistry api, check if country is Greenland or Faroe Islands
+                // It should return true if confirmation of residency condition is returned as false...
+                return false
+              },
+            }),
             buildTextField({
               id: 'applicant.name',
               title: m.name,
@@ -116,8 +127,7 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   streetAddress?: string
-                  // TODO: Remove the hardcoded
-                })?.streetAddress || 'street',
+                })?.streetAddress,
             }),
             buildTextField({
               id: 'applicant.postalCode',
@@ -127,8 +137,7 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   postalCode?: string
-                  // TODO: Remove the hardcoded
-                })?.postalCode || '000',
+                })?.postalCode,
             }),
             buildTextField({
               id: 'applicant.city',
@@ -138,8 +147,7 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   city?: string
-                  // TODO: Remove the hardcoded
-                })?.city || 'city',
+                })?.city,
             }),
             buildTextField({
               id: 'applicant.nationality',
@@ -373,7 +381,7 @@ export const HealthInsuranceForm: Form = buildForm({
               condition: {
                 questionId: 'additionalInfo.hasAdditionalInfo',
                 isMultiCheck: false,
-                comparator: Comparators.GTE,
+                comparator: Comparators.EQUALS,
                 value: YES,
               },
             }),

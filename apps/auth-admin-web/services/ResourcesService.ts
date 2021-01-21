@@ -1,8 +1,8 @@
 import { ApiResourceScopeDTO } from '../entities/dtos/api-resource-allowed-scope.dto'
 import { ApiResourceSecretDTO } from '../entities/dtos/api-resource-secret.dto'
 import { ApiResourcesDTO } from '../entities/dtos/api-resources-dto'
-import { ApiScopesDTO } from '../entities/dtos/api-scopes-dto'
-import IdentityResourcesDTO from '../entities/dtos/identity-resources.dto'
+import { ApiScopeDTO } from '../entities/dtos/api-scope-dto'
+import IdentityResourceDTO from '../entities/dtos/identity-resource.dto'
 import { ApiResourceScope } from '../entities/models/api-resource-scope.model'
 import { ApiResourceSecret } from '../entities/models/api-resource-secret.model'
 import { ApiResourceUserClaim } from '../entities/models/api-resource-user-claim.model'
@@ -23,6 +23,13 @@ export class ResourcesService extends BaseService {
     return BaseService.GET(`api-scope/${encodeURIComponent(name)}`)
   }
 
+  /** Gets if scope name or identity resource name is availabe */
+  static async isScopeNameAvailable(name): Promise<boolean> {
+    return BaseService.GET(
+      `is-scope-name-available/${encodeURIComponent(name)}`,
+    )
+  }
+
   /** Updates an existing Api Scope */
   static async updateApiResource(
     apiResource: ApiResourcesDTO,
@@ -35,7 +42,7 @@ export class ResourcesService extends BaseService {
   }
 
   /** Update an Api Scope */
-  static async updateApiScope(apiScope: ApiScopesDTO): Promise<ApiScope> {
+  static async updateApiScope(apiScope: ApiScopeDTO): Promise<ApiScope> {
     return BaseService.PUT(
       `api-scope/${encodeURIComponent(apiScope.name)}`,
       apiScope,
@@ -51,14 +58,14 @@ export class ResourcesService extends BaseService {
 
   /** Creates a new identity resource */
   static async createIdentityResource(
-    identityResource: IdentityResourcesDTO,
+    identityResource: IdentityResourceDTO,
   ): Promise<IdentityResource | null> {
     return BaseService.POST(`identity-resource`, identityResource)
   }
 
   /** Updates an existing Identity resource */
   static async updateIdentityResource(
-    identityResource: IdentityResourcesDTO,
+    identityResource: IdentityResourceDTO,
     name: string,
   ): Promise<IdentityResource | null> {
     return BaseService.PUT(
@@ -129,19 +136,20 @@ export class ResourcesService extends BaseService {
 
   /** Get's all Api resources and total count of rows */
   static async findAndCountAllApiResources(
+    searchString: string,
     page: number,
     count: number,
   ): Promise<{
     rows: ApiResource[]
     count: number
   } | null> {
-    return BaseService.GET(`api-resources?page=${page}&count=${count}`)
+    return BaseService.GET(
+      `api-resources?searchString=${searchString}&page=${page}&count=${count}`,
+    )
   }
 
   /** Creates a new Api Scope */
-  static async createApiScope(
-    apiScope: ApiScopesDTO,
-  ): Promise<ApiScope | null> {
+  static async createApiScope(apiScope: ApiScopeDTO): Promise<ApiScope | null> {
     return BaseService.POST('api-scope', apiScope)
   }
 
