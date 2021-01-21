@@ -35,6 +35,7 @@ import {
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import BlueBox from '@island.is/judicial-system-web/src/shared-components/BlueBox/BlueBox'
+import CaseNumbers from '@island.is/judicial-system-web/src/shared-components/CaseNumbers/CaseNumbers'
 
 export const RulingStepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -140,7 +141,7 @@ export const RulingStepTwo: React.FC = () => {
           </Box>
           <Box component="section" marginBottom={7}>
             <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
-            <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
+            <CaseNumbers workingCase={workingCase} />
           </Box>
           <Box component="section" marginBottom={8}>
             <Box marginBottom={10}>
