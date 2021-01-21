@@ -1,7 +1,6 @@
-import React, { FC, useState, useContext } from 'react'
+import React, { FC, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
-import { RefetchContext } from '@island.is/application/ui-shell'
 
 import {
   FieldBaseProps,
@@ -62,9 +61,7 @@ const statesMap: statesMap = {
   },
 }
 
-const InReviewSteps: FC<FieldBaseProps> = ({ application }) => {
-  const refetch = useContext(RefetchContext)
-
+const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {

@@ -1,10 +1,6 @@
 import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import {
-  Application,
-  FieldBaseProps,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { Application, getValueViaPath } from '@island.is/application/core'
 import {
   Accordion,
   AccordionItem,
