@@ -314,6 +314,9 @@ export class ElasticService {
     if (!hasAWS) {
       return new Client({
         node: elastic.node,
+        compression: 'gzip',
+        suggestCompression: true,
+        requestTimeout: 50000,
       })
     }
 
