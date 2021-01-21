@@ -17,7 +17,7 @@ import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 describe('Create detention request, step three', () => {
-  test('should not allow users to continue unless every required field has been filled outt', async () => {
+  test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     const todaysDate = new Date()
     const formattedTodaysDate = todaysDate.getDate().toString().padStart(2, '0')
@@ -93,7 +93,7 @@ describe('Create detention request, step three', () => {
         name: /Halda áfram/i,
       }) as HTMLButtonElement,
     ).not.toBeDisabled()
-  })
+  }, 10000)
 
   test('should display the correct requestedCustodyEndTime from api', async () => {
     // Arrange
@@ -156,4 +156,35 @@ describe('Create detention request, step three', () => {
       ),
     ).not.toBeDisabled()
   }, 10000)
+
+  test('should display the custody end date of the parent case when the case is an extension', async () => {
+    // Arrange
+
+    // Act
+    render(
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.STEP_THREE_ROUTE}/test_id_8`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.STEP_THREE_ROUTE}/:id`}>
+              <StepThree />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    // Assert
+    expect(
+      await waitFor(() => screen.getByText('Fyrri gæsla var/er til')),
+    ).toBeTruthy()
+
+    expect(
+      screen.getByText('mánudagsins 18. janúar 2021 kl. 19:50'),
+    ).toBeTruthy()
+  })
 })

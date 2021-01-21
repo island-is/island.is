@@ -26,7 +26,7 @@ export class PenaltyPointsProvider extends BasicDataProvider {
       }
 
       const penaltyPointsStatus = response.data.drivingLicensePenaltyPointStatus
-      if (!penaltyPointsStatus.isPenaltyPointsOk) {
+      if (penaltyPointsStatus.isPenaltyPointsOk) {
         return Promise.resolve(penaltyPointsStatus)
       } else {
         return Promise.reject(penaltyPointsStatus)

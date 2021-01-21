@@ -22,15 +22,15 @@ import {
 } from '@island.is/api/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
-  AdgerdirArticles,
   HeadWithSocialSharing,
   RichText,
-  Intro,
   ChatPanel,
 } from '@island.is/web/components'
-import { Tag } from '@island.is/web/components/Adgerdir/UI/Tag/Tag'
-import { Button } from '@island.is/web/components/Adgerdir/UI/Button/Button'
-import { ColorSchemeContext } from '@island.is/web/components/Adgerdir/UI/ColorSchemeContext/ColorSchemeContext'
+import Intro from './components/Intro/Intro'
+import AdgerdirArticles from './components/AdgerdirArticles/AdgerdirArticles'
+import { Tag } from './components/UI/Tag/Tag'
+import { Button } from './components/UI/Button/Button'
+import { ColorSchemeContext } from './components/UI/ColorSchemeContext/ColorSchemeContext'
 import {
   GET_ADGERDIR_PAGE_QUERY,
   GET_NAMESPACE_QUERY,
@@ -42,7 +42,7 @@ import { Screen } from '@island.is/web/types'
 import { useI18n } from '@island.is/web/i18n'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useNamespace } from '@island.is/web/hooks'
-import * as covidStyles from '@island.is/web/components/Adgerdir/UI/styles/styles.treat'
+import * as covidStyles from './components/UI/styles/styles.treat'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface AdgerdirArticleProps {
