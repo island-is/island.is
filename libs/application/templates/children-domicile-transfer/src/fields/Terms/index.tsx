@@ -1,7 +1,10 @@
 import React from 'react'
 import { Text } from '@island.is/island-ui/core'
+import { FieldBaseProps } from '@island.is/application/core'
+import { CheckboxController } from '@island.is/shared/form-fields'
 
-const Terms = () => {
+const Terms = ({ field, error }: FieldBaseProps) => {
+  const { id, disabled } = field
   return (
     <>
       <Text variant="intro" marginBottom={2}>
@@ -29,12 +32,25 @@ const Terms = () => {
         er því mjög þýðingarmikið atriði að ákveða hjá hvoru foreldri barn skuli
         eiga lögheimili.
       </Text>
-      <Text marginBottom={2}>
+      <Text marginBottom={4}>
         Litið er svo á að barn hafi fasta búsetu hjá því foreldri sem það á
         lögheimili hjá. Barn á rétt til að umgangast með reglubundnum hætti það
         foreldri sem það býr ekki hjá og bera foreldrarnir sameiginlega þá
         skyldu að tryggja rétt barns til umgengni.
       </Text>
+      <CheckboxController
+        id={id}
+        disabled={disabled}
+        name={`${id}`}
+        error={error}
+        large={true}
+        options={[
+          {
+            value: 'yes',
+            label: 'Ég skil hvaða áhrif lögheimilisbreyting hefur',
+          },
+        ]}
+      />
     </>
   )
 }

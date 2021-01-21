@@ -1,14 +1,16 @@
 import React from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { extractParentFromApplication } from '../../lib/utils'
+import { CheckboxController } from '@island.is/shared/form-fields'
 
-const ChangeInformation = ({ application }: FieldBaseProps) => {
+const ChangeInformation = ({ field, application, error }: FieldBaseProps) => {
+  const { id, disabled } = field
   const parent = extractParentFromApplication(application)
   const parentAddress = `${parent?.address}, ${parent?.postalCode} ${parent?.city}`
   return (
     <>
-      <Text marginBottom={2}>
+      <Text marginBottom={2} marginTop={3}>
         Sem foreldrar með sameiginlega forsjá getið þið óskað eftir því að
         flytja lögheimili barns frá foreldri A til foreldri B eða öfugt.
       </Text>
@@ -27,13 +29,26 @@ const ChangeInformation = ({ application }: FieldBaseProps) => {
           Missing address
         </Text>
       </Box>
-      <Box marginBottom={2}>
+      <Box marginBottom={6}>
         <Text variant="h4">Nýtt lögheimili barna:</Text>
         <Text variant="h4" color="blue400">
           {parent?.name}
         </Text>
         <Text fontWeight="light">{parentAddress}</Text>
       </Box>
+      <CheckboxController
+        id={id}
+        disabled={disabled}
+        name={`${id}`}
+        error={error}
+        large={true}
+        options={[
+          {
+            value: 'yes',
+            label: 'Ég samþykki breytingu',
+          },
+        ]}
+      />
     </>
   )
 }

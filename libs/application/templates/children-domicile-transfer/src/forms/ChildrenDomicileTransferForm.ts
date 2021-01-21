@@ -95,30 +95,13 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'changeDomicile',
+      id: 'confirmResidenceChangeInfo',
       title: 'Breyta lögheimili',
       children: [
-        buildMultiField({
-          id: 'informationAboutDomicileChange',
+        buildCustomField({
+          id: 'confirmResidenceChangeInfo',
           title: 'Hvert á að flytja lögheimilið?',
-          children: [
-            buildCustomField({
-              id: 'domicileChangeInformation',
-              title: '',
-              component: 'ChangeInformation',
-            }),
-            buildCheckboxField({
-              id: 'confirmInformationAboutDomicileChange',
-              title: '',
-              large: true,
-              options: [
-                {
-                  value: 'confirmDomicileChangeInfo',
-                  label: 'Ég samþykki breytingu',
-                },
-              ],
-            }),
-          ],
+          component: 'ChangeInformation',
         }),
       ],
     }),
@@ -162,30 +145,13 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'applicationTerms',
+      id: 'approveTerms',
       title: 'Áhrif umsóknar',
       children: [
-        buildMultiField({
-          id: 'applicationTermsTitle',
+        buildCustomField({
+          id: 'approveTerms',
           title: 'Hvaða áhrif hefur breytingin?',
-          children: [
-            buildCustomField({
-              id: 'domicileChangeTerms',
-              title: '',
-              component: 'Terms',
-            }),
-            buildCheckboxField({
-              id: 'approveTerms',
-              title: '',
-              large: true,
-              options: [
-                {
-                  value: 'approveTerms',
-                  label: 'Ég skil hvaða áhrif lögheimilisbreyting hefur',
-                },
-              ],
-            }),
-          ],
+          component: 'Terms',
         }),
       ],
     }),
