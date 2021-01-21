@@ -1,15 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
+import React, { useRef, useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import NextLink from 'next/link'
 import {
   ContentBlock,
   Box,
   Stack,
-  Link,
   Inline,
-  GridRow,
   Text,
-  GridColumn,
 } from '@island.is/island-ui/core'
 import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
@@ -29,7 +27,6 @@ import {
 import Intro from './components/Intro/Intro'
 import AdgerdirArticles from './components/AdgerdirArticles/AdgerdirArticles'
 import { Tag } from './components/UI/Tag/Tag'
-import { Button } from './components/UI/Button/Button'
 import { ProcessEntry } from './components/UI/ProcessEntry/ProcessEntry'
 import { Breadcrumbs } from './components/UI/Breadcrumbs/Breadcrumbs'
 import { ColorSchemeContext } from './components/UI/ColorSchemeContext/ColorSchemeContext'
@@ -44,8 +41,9 @@ import { Screen } from '@island.is/web/types'
 import { useI18n } from '@island.is/web/i18n'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useNamespace } from '@island.is/web/hooks'
-import * as covidStyles from './components/UI/styles/styles.treat'
 import { LinkType, useLinkResolver } from '../../hooks/useLinkResolver'
+
+import * as covidStyles from './components/UI/styles/styles.treat'
 
 interface AdgerdirArticleProps {
   article: Query['getAdgerdirPage']
@@ -60,9 +58,17 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
   tags,
   namespace,
 }) => {
+  const portalRef = useRef()
+  const [mounted, setMounted] = useState(false)
+
   const n = useNamespace(namespace)
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
+
+  useEffect(() => {
+    portalRef.current = document.querySelector('#__next')
+    setMounted(true)
+  }, [])
 
   const { items: pagesItems } = pages
   const { items: tagsItems } = tags
@@ -70,19 +76,6 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
   const description = article.longDescription || article.description
 
   const processEntry = article.processEntry
-
-  const renderButton =
-    article.link && article.link.trim().length > 0 ? (
-      <Link href={article.link}>
-        <Button iconType="outline" icon="open" fluid>
-          {article.linkButtonText ?? n('seeMoreDetails')}
-        </Button>
-      </Link>
-    ) : article.linkButtonText && article.linkButtonText.trim().length > 0 ? (
-      <Button iconType="outline" icon="open" disabled fluid>
-        {article.linkButtonText ?? n('seeMoreDetails')}
-      </Button>
-    ) : null
 
   return (
     <>
@@ -159,14 +152,20 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
           config={{ defaultPadding: [2, 2, 4], skipGrid: true }}
           locale={activeLocale}
         />
-        <GridRow>
-          <GridColumn
-            paddingTop={4}
-            span={['12/12', '6/12', '6/12', '5/12', '4/12']}
-          >
-            {renderButton}
-          </GridColumn>
-        </GridRow>
+        <Box>
+          {!!processEntry &&
+            mounted &&
+            createPortal(
+              <Box
+                marginTop={5}
+                display={['block', 'block', 'none']}
+                printHidden
+              >
+                <ProcessEntry fixed {...processEntry} />
+              </Box>,
+              portalRef.current,
+            )}
+        </Box>
       </SidebarLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'green' }}>
         <Box className={covidStyles.bg}>

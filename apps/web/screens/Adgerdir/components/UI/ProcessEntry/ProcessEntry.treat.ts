@@ -21,5 +21,6 @@ export const column = style({})
 
 export const fixedContainer = style({
   zIndex: 100,
-  boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.25)',
+  background: covidColors.green100,
+  boxShadow: '0px 4px 30px rgb(170, 225, 224)',
 })
