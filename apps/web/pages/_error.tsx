@@ -1,10 +1,16 @@
 import React from 'react'
 import * as Sentry from '@sentry/node'
-import { GetUrlQuery, QueryGetUrlArgs } from '@island.is/web/graphql/schema'
-import { GET_URL_QUERY } from '@island.is/web/screens/queries'
+import {
+  GetUrlQuery,
+  QueryGetUrlArgs,
+  ErrorPageQuery,
+  QueryGetErrorPageArgs,
+} from '@island.is/web/graphql/schema'
+import { GET_URL_QUERY, GET_ERROR_PAGE } from '@island.is/web/screens/queries'
 import { ApolloClient } from '@apollo/client/core'
 import { NormalizedCacheObject } from '@apollo/client/cache'
 import ErrorScreen from '../screens/Error/Error'
+import ErrPage from '../screens/ErrorPage/ErrorPage'
 import { getLocaleFromPath } from '../i18n/withLocale'
 import Layout, { LayoutProps } from '../layouts/main'
 import I18n, { Locale } from '../i18n/I18n'
@@ -15,6 +21,7 @@ type ErrorPageProps = {
   statusCode: number
   locale: Locale
   layoutProps: LayoutProps
+  errpage: ErrorPageQuery['getErrorPage']
 }
 
 class ErrorPage extends React.Component<ErrorPageProps> {
@@ -27,8 +34,9 @@ class ErrorPage extends React.Component<ErrorPageProps> {
   }
 
   render() {
-    const { layoutProps, locale, statusCode } = this.props
+    const { layoutProps, locale, statusCode, errpage } = this.props
     const { renderError } = this.state
+    console.log('SMA', errpage)
 
     if (layoutProps && !renderError) {
       // getDerivedStateFromError catches client-side render errors, but we need
@@ -37,7 +45,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
         return (
           <I18n locale={locale} translations={layoutProps.namespace}>
             <Layout {...layoutProps}>
-              <ErrorScreen statusCode={statusCode} />
+              <ErrPage errPage={errpage} />
             </Layout>
           </I18n>
         )
@@ -45,7 +53,10 @@ class ErrorPage extends React.Component<ErrorPageProps> {
       } catch {}
     }
 
+    console.log('smu')
+
     // fallback to simpler version if we're unable to use the Layout for any reason
+
     return <ErrorScreen statusCode={statusCode} />
   }
 
@@ -147,22 +158,33 @@ const getRedirectProps = async ({
   path,
   apolloClient,
   locale,
-}: GetRedirectPropsProps): Promise<RedirectProps | null> => {
-  const {
-    data: { getUrl },
-  } = await apolloClient
-    .query<GetUrlQuery, QueryGetUrlArgs>({
-      query: GET_URL_QUERY,
-      variables: {
-        input: {
-          slug: path,
-          lang: locale as string,
+}: GetRedirectPropsProps) => {
+  const [url, errpage] = await Promise.all([
+    apolloClient
+      .query<GetUrlQuery, QueryGetUrlArgs>({
+        query: GET_URL_QUERY,
+        variables: {
+          input: {
+            slug: path,
+            lang: locale as string,
+          },
         },
-      },
-    })
-    .then((r) => r)
+      })
+      .then((response) => response.data.getUrl),
+    apolloClient
+      .query<ErrorPage, QueryGetErrorPageArgs>({
+        query: GET_ERROR_PAGE,
+        variables: {
+          input: {
+            lang: locale,
+            errorCode: '404',
+          },
+        },
+      })
+      .then((response) => response.data),
+  ])
 
-  const pageType = getUrl?.page?.contentType ?? null
+  const pageType = url?.page?.contentType ?? null
 
   if (!pageType) {
     return null
@@ -170,6 +192,7 @@ const getRedirectProps = async ({
 
   return {
     pageType,
-    page: getUrl.page,
+    page: url.page,
+    errpage,
   }
 }
