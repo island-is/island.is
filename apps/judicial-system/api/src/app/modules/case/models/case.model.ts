@@ -123,7 +123,7 @@ export class Case implements TCase {
   @Field({ nullable: true })
   readonly policeDemands?: string
 
-  @Field({ nullable: true })
+  @Field(() => [String], { nullable: true })
   readonly courtDocuments?: string[]
 
   @Field({ nullable: true })
