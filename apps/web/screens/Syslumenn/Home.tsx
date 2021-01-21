@@ -66,14 +66,14 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
   const parentPageLink: NavigationItem = {
     title: organizationPage.title,
     href: `/stofnanir/${organizationPage.slug}`,
-    active: false,
+    active: true,
   }
 
   const items: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active: primaryLink.text === "Embættin",
+      active: false,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,

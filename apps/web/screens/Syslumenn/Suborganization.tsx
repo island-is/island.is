@@ -37,7 +37,7 @@ import {
   GET_CATEGORIES_QUERY,
   GET_ORGANIZATION_QUERY,
   GET_ORGANIZATION_NEWS_QUERY,
-  GET_ORGANIZATION_SUBPAGE_QUERY,
+  GET_ORGANIZATION_SUBPAGE_QUERY, GET_ORGANIZATION_PAGE_QUERY,
 } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
@@ -56,7 +56,7 @@ import {
   Organization,
   QueryGetArticleCategoriesArgs,
   QueryGetOrganizationArgs,
-  QueryGetOrganizationNewsArgs,
+  QueryGetOrganizationNewsArgs, QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { GET_GROUPED_MENU_QUERY } from '../queries/Menu'
 import { Locale } from '../../i18n/I18n'
@@ -77,13 +77,13 @@ import { GlobalContext } from '../../context/GlobalContext/GlobalContext'
 import OrganizationHeader from '@island.is/web/components/Organization/Header/OrganizationHeader'
 
 interface HomeProps {
-  organization: Query['getOrganization']
+  organizationPage: Query['getOrganizationPage']
   subpage: Query['getOrganizationSubpage']
   namespace: Query['getNamespace']
 }
 
 const Suborganization: Screen<HomeProps> = ({
-  organization,
+  organizationPage,
   subpage,
   namespace,
 }) => {
@@ -99,16 +99,22 @@ const Suborganization: Screen<HomeProps> = ({
   }
 
   const parentPageLink: NavigationItem = {
-    title: organization.organizationPage.title,
-    href: `/stofnanir/${organization.slug}`,
+    title: organizationPage.title,
+    href: `/stofnanir/${organizationPage.slug}`,
     active: false,
   }
 
-  const items: NavigationItem[] = organization.organizationPage.menuLinks.map(
-    ({ text, url }) => ({
-      title: text,
-      href: url,
-      active: asPath === url,
+  const items: NavigationItem[] = organizationPage.menuLinks.map(
+    ({ primaryLink, childrenLinks }) => ({
+      title: primaryLink.text,
+      href: primaryLink.url,
+      active: subpage.menuItem.url === primaryLink.url || childrenLinks.some(link => link.url === subpage.menuItem.url),
+      items: childrenLinks.map(({ text, url }) => ({
+          title: text,
+          href: url,
+          active: url === subpage.menuItem.url
+        })
+      )
     }),
   )
 
@@ -117,8 +123,8 @@ const Suborganization: Screen<HomeProps> = ({
   return (
     <>
       <HeadWithSocialSharing
-        title={organization.title}
-        description={organization.description}
+        title={organizationPage.title}
+        description={organizationPage.description}
         /*
         imageUrl={organization.featuredImage?.url}
         imageWidth={organization.featuredImage?.width?.toString()}
@@ -126,14 +132,14 @@ const Suborganization: Screen<HomeProps> = ({
         */
       />
       <OrganizationHeader
-        organization={organization}
+        organizationPage={organizationPage}
         breadcrumbItems={[
           {
             title: 'Ísland.is',
             href: '/',
           },
           {
-            title: organization.title,
+            title: organizationPage.title,
           },
           {
             title: subpage.title,
@@ -144,11 +150,11 @@ const Suborganization: Screen<HomeProps> = ({
           <Navigation
             baseId={'mobileNav'}
             isMenuDialog
-            activeItemTitle={organization.title}
+            activeItemTitle={organizationPage.title}
             items={navList}
             title="Efnisyfirlit"
             titleLink={{
-              href: `/${organization.slug}`,
+              href: `/${organizationPage.slug}`,
               active: false,
             }}
           />
@@ -164,7 +170,7 @@ const Suborganization: Screen<HomeProps> = ({
                 items={navList}
                 title="Efnisyfirlit"
                 titleLink={{
-                  href: `/${organization.slug}`,
+                  href: `/${organizationPage.slug}`,
                   active: false,
                 }}
               />
@@ -175,7 +181,7 @@ const Suborganization: Screen<HomeProps> = ({
             <Text variant="h2" as="h2">
               {subpage.title}
             </Text>
-            {organization.organizationPage.description}
+            {subpage.description}
           </Box>
         </SidebarLayout>
       </Main>
@@ -186,15 +192,15 @@ const Suborganization: Screen<HomeProps> = ({
 Suborganization.getInitialProps = async ({ apolloClient, locale, query }) => {
   const [
     {
-      data: { getOrganization },
+      data: { getOrganizationPage },
     },
     {
       data: { getOrganizationSubpage },
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetOrganizationArgs>({
-      query: GET_ORGANIZATION_QUERY,
+    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+      query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
           slug: 'syslumenn',
@@ -226,7 +232,7 @@ Suborganization.getInitialProps = async ({ apolloClient, locale, query }) => {
   ])
 
   return {
-    organization: getOrganization,
+    organizationPage: getOrganizationPage,
     subpage: getOrganizationSubpage,
     namespace,
     showSearchInHeader: false,

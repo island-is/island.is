@@ -97,6 +97,10 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
     getOrganizationSubpage(input: $input) {
       title
       slug
+      description
+      menuItem {
+        url
+      }
     }
   }
 `
