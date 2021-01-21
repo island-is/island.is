@@ -1,20 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useContext } from 'react'
-import {
-  Box,
-  Text,
-  Navigation,
-  NavigationItem,
-  GridContainer,
-  GridColumn,
-  GridRow,
-  Button,
-  FocusableBox,
-  LinkCard,
-  Stack,
-} from '@island.is/island-ui/core'
+import React, { useContext } from 'react'
+import { Box, Navigation, NavigationItem } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { Main, Heading, HeadWithSocialSharing } from '@island.is/web/components'
+import { Main, HeadWithSocialSharing } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import {
   Query,
@@ -23,28 +11,21 @@ import {
 } from '@island.is/api/schema'
 import {
   GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_QUERY,
-  GET_ORGANIZATION_NEWS_QUERY, GET_ORGANIZATION_PAGE_QUERY,
+  GET_ORGANIZATION_PAGE_QUERY,
+  GET_ORGANIZATION_NEWS_QUERY,
 } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import * as styles from './Home.treat'
 import {
-  Districts,
-  FeaturedArticles,
-  GetNamespaceQuery,
-  HeadingSlice,
-  Organization,
-  QueryGetOrganizationArgs,
+  QueryGetOrganizationPageArgs,
   QueryGetOrganizationNewsArgs,
 } from '@island.is/web/graphql/schema'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
 import LatestOrganizationNewsSection from '@island.is/web/components/LatestOrganizationNewsSection/LatestOrganizationNewsSection'
 import { GlobalContext } from '@island.is/web/context'
 import OrganizationHeader from '@island.is/web/components/Organization/Header/OrganizationHeader'
+import OrganizationSlice from '@island.is/web/components/Organization/Slice/OrganizationSlice'
 
 interface HomeProps {
   organizationPage: Query['getOrganizationPage']
@@ -53,23 +34,11 @@ interface HomeProps {
 }
 
 const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
-  const { activeLocale } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)
   const gn = useNamespace(globalNamespace)
-  const { asPath } = useRouter()
 
-  if (typeof document === 'object') {
-    document.documentElement.lang = activeLocale
-  }
-
-  const parentPageLink: NavigationItem = {
-    title: organizationPage.title,
-    href: `/stofnanir/${organizationPage.slug}`,
-    active: true,
-  }
-
-  const items: NavigationItem[] = organizationPage.menuLinks.map(
+  const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
@@ -77,14 +46,9 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
-      })
-      )
+      })),
     }),
   )
-
-  const navList = [parentPageLink, ...items]
-
-  console.log(navList)
 
   return (
     <>
@@ -144,7 +108,12 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
           </Box>
         </SidebarLayout>
         {organizationPage.slices.map((slice) => (
-          <Section key={slice.id} slice={slice} organization={organizationPage} />
+          <OrganizationSlice
+            key={slice.id}
+            slice={slice}
+            organization={organizationPage.organization}
+            namespace={namespace}
+          />
         ))}
         <Box
           className={styles.newsBg}
@@ -162,136 +131,6 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
       </Main>
     </>
   )
-}
-
-interface SectionProps {
-  slice: HeadingSlice | Districts | FeaturedArticles
-  organization: Organization
-  namespace?: GetNamespaceQuery['getNamespace']
-}
-
-const Section: FC<SectionProps> = ({ slice, organization, namespace }) => {
-  const n = useNamespace(namespace)
-  const { linkResolver } = useLinkResolver()
-
-  switch (slice.__typename) {
-    case 'HeadingSlice':
-      return (
-        <section key={slice.id}>
-          <Box paddingTop={[8, 6, 15]} paddingBottom={[4, 5, 10]}>
-            <SidebarLayout isSticky={false} sidebarContent="">
-              <Heading {...slice} />
-            </SidebarLayout>
-          </Box>
-        </section>
-      )
-    case 'Districts':
-      return (
-        <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
-          <GridContainer>
-            <Box
-              borderTopWidth="standard"
-              borderColor="standard"
-              paddingTop={[8, 6, 15]}
-              paddingBottom={[4, 5, 10]}
-            >
-              <h2
-                id={'sliceTitle-' + slice.id}
-                className={styles.districtsTitle}
-              >
-                {slice.title}
-              </h2>
-              <GridRow>
-                <GridColumn span={['12/12', '12/12', '7/12']}>
-                  <ul className={styles.districtsList}>
-                  </ul>
-                </GridColumn>
-                <GridColumn span={['12/12', '12/12', '5/12']}>
-                  <img src={slice.image.url} alt="" />
-                </GridColumn>
-              </GridRow>
-            </Box>
-          </GridContainer>
-        </section>
-      )
-    case 'FeaturedArticles':
-      return (
-        <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
-          <GridContainer>
-            <Box
-              borderTopWidth="standard"
-              borderColor="standard"
-              paddingTop={[8, 6, 10]}
-              paddingBottom={[4, 5, 10]}
-            >
-              <GridRow>
-                <GridColumn span={['12/12', '12/12', '5/12']}>
-                  <Box className={styles.popularTitleWrap}>
-                    <h2
-                      className={styles.popularTitle}
-                      id={'sliceTitle-' + slice.id}
-                    >
-                      {slice.title}
-                    </h2>
-                    <Box display={['none', 'none', 'block']}>
-                      <img src={slice.image.url} alt="" />
-                    </Box>
-                  </Box>
-                </GridColumn>
-                <GridColumn span={['12/12', '12/12', '7/12']}>
-                  <Stack space={2}>
-                    {slice.articles.map(({ title, slug, isApplication }) => {
-                      const url = linkResolver('Article' as LinkType, [slug])
-                      return (
-                        <FocusableBox
-                          key={slug}
-                          href={url.href}
-                          as={url.as}
-                          borderRadius="large"
-                        >
-                          {({ isFocused }) => (
-                            <LinkCard
-                              isFocused={isFocused}
-                              tag={
-                                !!isApplication &&
-                                n('applicationProcess', 'Umsókn')
-                              }
-                            >
-                              {title}
-                            </LinkCard>
-                          )}
-                        </FocusableBox>
-                      )
-                    })}
-                  </Stack>
-                </GridColumn>
-              </GridRow>
-              <Box
-                display="flex"
-                justifyContent="flexEnd"
-                paddingTop={4}
-                paddingBottom={1}
-              >
-                <Text variant="h5" as="p">
-                  <Link href="#">
-                    <Button
-                      icon="arrowForward"
-                      iconType="filled"
-                      type="button"
-                      variant="text"
-                    >
-                      {n('seeAllServices', 'Sjá allt efni')}
-                    </Button>
-                  </Link>
-                </Text>
-              </Box>
-            </Box>
-          </GridContainer>
-        </section>
-      )
-    default:
-      return <div>no section match</div>
-  }
 }
 
 Home.getInitialProps = async ({ apolloClient, locale }) => {
