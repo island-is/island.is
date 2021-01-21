@@ -26,6 +26,7 @@ import LatestOrganizationNewsSection from '@island.is/web/components/LatestOrgan
 import { GlobalContext } from '@island.is/web/context'
 import OrganizationHeader from '@island.is/web/components/Organization/Header/OrganizationHeader'
 import OrganizationSlice from '@island.is/web/components/Organization/Slice/OrganizationSlice'
+import NextLink from "next/link";
 
 interface HomeProps {
   organizationPage: Query['getOrganizationPage']
@@ -83,6 +84,15 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
               href: `/${organizationPage.slug}`,
               active: false,
             }}
+            renderLink={(link, item) => {
+              return (
+                <NextLink
+                  href={item?.href ?? "/hello"}
+                >
+                  {link}
+                </NextLink>
+              )
+            }}
           />
         }
       />
@@ -98,6 +108,15 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
                 titleLink={{
                   href: `/${organizationPage.slug}`,
                   active: false,
+                }}
+                renderLink={(link, item) => {
+                  return (
+                    <NextLink
+                      href={item?.href ?? "/hello"}
+                    >
+                      {link}
+                    </NextLink>
+                  )
                 }}
               />
             </Box>

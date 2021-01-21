@@ -160,6 +160,15 @@ const Suborganization: Screen<HomeProps> = ({
               href: `/${organizationPage.slug}`,
               active: false,
             }}
+            renderLink={(link, item) => {
+              return (
+                <NextLink
+                  href={item?.href ?? "/hello"}
+                >
+                  {link}
+                </NextLink>
+              )
+            }}
           />
         }
       />
@@ -175,6 +184,15 @@ const Suborganization: Screen<HomeProps> = ({
                 titleLink={{
                   href: `/${organizationPage.slug}`,
                   active: false,
+                }}
+                renderLink={(link, item) => {
+                  return (
+                    <NextLink
+                      href={item?.href ?? "/hello"}
+                    >
+                      {link}
+                    </NextLink>
+                  )
                 }}
               />
             </Box>
