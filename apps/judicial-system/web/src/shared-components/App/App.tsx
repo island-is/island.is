@@ -1,7 +1,6 @@
 import React from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { ApolloProvider } from '@apollo/client'
-import { Header } from '@island.is/judicial-system-web/src/shared-components/Header'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { Overview } from '@island.is/judicial-system-web/src/routes/Prosecutor/Overview'
 import {
@@ -21,7 +20,10 @@ import {
 import Confirmation from '@island.is/judicial-system-web/src/routes/Judge/Confirmation/Confirmation'
 import { client } from '@island.is/judicial-system-web/src/graphql'
 import HearingArrangements from '@island.is/judicial-system-web/src/routes/Judge/HearingArrangements/HearingArrangements'
-import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import {
+  UserProvider,
+  Header,
+} from '@island.is/judicial-system-web/src/shared-components'
 import SignedVerdictOverview from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/SignedVerdictOverview'
 
 const App: React.FC = () => {

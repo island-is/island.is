@@ -10,7 +10,12 @@ import {
   constructProsecutorDemands,
   isNextDisabled,
 } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { FormFooter } from '@island.is/judicial-system-web/src/shared-components/FormFooter'
+import {
+  FormFooter,
+  PageLayout,
+  CaseNumbers,
+  InfoCard,
+} from '@island.is/judicial-system-web/src/shared-components'
 import { useParams } from 'react-router-dom'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
@@ -21,7 +26,6 @@ import {
   CaseTransition,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import * as styles from './Overview.treat'
 import { useMutation, useQuery } from '@apollo/client'
 import {
@@ -38,8 +42,6 @@ import {
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
-import CaseNumbers from '@island.is/judicial-system-web/src/shared-components/CaseNumbers/CaseNumbers'
-import InfoCard from '@island.is/judicial-system-web/src/shared-components/InfoCard/InfoCard'
 
 interface CaseData {
   case?: Case

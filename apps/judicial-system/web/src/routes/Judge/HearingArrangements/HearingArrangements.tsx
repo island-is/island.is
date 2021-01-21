@@ -8,14 +8,19 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { FormFooter } from '@island.is/judicial-system-web/src/shared-components/FormFooter'
+import {
+  FormFooter,
+  PageLayout,
+  Modal,
+  TimeInputField,
+  CaseNumbers,
+} from '@island.is/judicial-system-web/src/shared-components'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useHistory, useParams } from 'react-router-dom'
 import {
   Case,
@@ -34,8 +39,6 @@ import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import Modal from '@island.is/judicial-system-web/src/shared-components/Modal/Modal'
-import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
 import {
   setAndSendDateToServer,
   validateAndSendTimeToServer,
@@ -43,7 +46,6 @@ import {
   removeTabsValidateAndSet,
   validateAndSetTime,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import CaseNumbers from '@island.is/judicial-system-web/src/shared-components/CaseNumbers/CaseNumbers'
 
 interface CaseData {
   case?: Case

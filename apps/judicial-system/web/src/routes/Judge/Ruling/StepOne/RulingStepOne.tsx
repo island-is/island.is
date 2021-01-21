@@ -11,7 +11,14 @@ import {
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import React, { useEffect, useState, useRef, useCallback } from 'react'
-import { FormFooter } from '@island.is/judicial-system-web/src/shared-components/FormFooter'
+import {
+  FormFooter,
+  PageLayout,
+  PoliceRequestAccordionItem,
+  TimeInputField,
+  BlueBox,
+  CaseNumbers,
+} from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
   CaseCustodyRestrictions,
@@ -26,8 +33,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
-import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
 import { useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 import {
@@ -38,7 +43,6 @@ import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
 import {
   setAndSendDateToServer,
   validateAndSendTimeToServer,
@@ -47,9 +51,7 @@ import {
   validateAndSetTime,
   setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import BlueBox from '@island.is/judicial-system-web/src/shared-components/BlueBox/BlueBox'
 import parseISO from 'date-fns/parseISO'
-import CaseNumbers from '@island.is/judicial-system-web/src/shared-components/CaseNumbers/CaseNumbers'
 
 interface CaseData {
   case?: Case

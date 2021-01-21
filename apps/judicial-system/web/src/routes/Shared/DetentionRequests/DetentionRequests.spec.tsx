@@ -10,7 +10,7 @@ import {
 import { MockedProvider } from '@apollo/client/testing'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import '@testing-library/jest-dom'
-import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import userEvent from '@testing-library/user-event'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 

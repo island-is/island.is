@@ -8,7 +8,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
-import { FormFooter } from '@island.is/judicial-system-web/src/shared-components/FormFooter'
+import {
+  FormFooter,
+  PageLayout,
+  BlueBox,
+  CaseNumbers,
+} from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
   CaseAppealDecision,
@@ -22,7 +27,6 @@ import {
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { constructConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 import {
@@ -37,8 +41,6 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import BlueBox from '@island.is/judicial-system-web/src/shared-components/BlueBox/BlueBox'
-import CaseNumbers from '@island.is/judicial-system-web/src/shared-components/CaseNumbers/CaseNumbers'
 
 export const RulingStepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()

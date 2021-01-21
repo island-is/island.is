@@ -16,7 +16,7 @@ import {
   Box,
   Icon,
 } from '@island.is/island-ui/core'
-import Loading from '@island.is/judicial-system-web/src/shared-components/Loading/Loading'
+import { Loading } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
   CaseDecision,

@@ -13,7 +13,7 @@ import {
   JudgeLogo,
   ProsecutorLogo,
 } from '@island.is/judicial-system-web/src/shared-components/Logos'
-import Loading from '@island.is/judicial-system-web/src/shared-components/Loading/Loading'
+import { Loading } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { CaseDecision, UserRole } from '@island.is/judicial-system/types'
 import { Link } from 'react-router-dom'
@@ -32,7 +32,7 @@ interface PageProps {
   isExtension?: boolean
 }
 
-export const PageLayout: FC<PageProps> = ({
+const PageLayout: FC<PageProps> = ({
   children,
   activeSection,
   activeSubSection,
@@ -213,3 +213,5 @@ export const PageLayout: FC<PageProps> = ({
     </LinkContext.Provider>
   )
 }
+
+export default PageLayout

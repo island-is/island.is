@@ -14,18 +14,20 @@ import {
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CaseQuery } from '@island.is/judicial-system-web/src/graphql'
-import CourtRecordAccordionItem from '@island.is/judicial-system-web/src/shared-components/CourtRecordAccordionItem/CourtRecordAccordionItem'
-import { FormFooter } from '@island.is/judicial-system-web/src/shared-components/FormFooter'
-import InfoCard from '@island.is/judicial-system-web/src/shared-components/InfoCard/InfoCard'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
-import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
-import RulingAccordionItem from '@island.is/judicial-system-web/src/shared-components/RulingAccordionItem/RulingAccordionItem'
+import {
+  FormFooter,
+  PdfButton,
+  PageLayout,
+  InfoCard,
+  PoliceRequestAccordionItem,
+  RulingAccordionItem,
+  CourtRecordAccordionItem,
+} from '@island.is/judicial-system-web/src/shared-components'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { useHistory } from 'react-router-dom'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
-import PdfButton from '@island.is/judicial-system-web/src/shared-components/PdfButton/PdfButton'
 
 interface CaseData {
   case?: Case

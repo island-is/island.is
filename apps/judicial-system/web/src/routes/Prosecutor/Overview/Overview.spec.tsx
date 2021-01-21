@@ -8,7 +8,7 @@ import {
   mockProsecutorQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
-import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 
 describe('/stofna-krofu/yfirlit', () => {
   test('should display the approprieate custody provisions', async () => {

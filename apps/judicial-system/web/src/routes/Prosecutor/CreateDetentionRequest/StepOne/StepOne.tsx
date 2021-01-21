@@ -7,6 +7,7 @@ import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHel
 import {
   FormFooter,
   BlueBox,
+  PageLayout,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { useParams } from 'react-router-dom'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -14,7 +15,6 @@ import {
   parseString,
   replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import {
   Case,
   UpdateCase,
