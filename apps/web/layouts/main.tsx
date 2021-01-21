@@ -446,12 +446,18 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
       })
       .then((res) => res.data.getGroupedMenu),
   ])
-
+  const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
   return {
     categories,
-    alertBannerContent: alertBanner,
+    alertBannerContent: {
+      ...alertBanner,
+      showAlertBanner:
+        alertBanner.showAlertBanner &&
+        (!req?.headers.cookie ||
+          req.headers.cookie?.indexOf(alertBannerId) === -1),
+    },
     footerUpperInfo: (upperMenuInfo.links ?? []).map(({ text, url }) => ({
       title: text,
       href: url,
