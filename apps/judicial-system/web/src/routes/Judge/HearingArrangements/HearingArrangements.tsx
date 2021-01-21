@@ -43,6 +43,7 @@ import {
   removeTabsValidateAndSet,
   validateAndSetTime,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import CaseNumbers from '../../../shared-components/CaseNumbers/CaseNumbers'
 
 interface CaseData {
   case?: Case
@@ -211,7 +212,7 @@ export const HearingArrangements: React.FC = () => {
           )}
           <Box component="section" marginBottom={7}>
             <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
-            <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
+            <CaseNumbers workingCase={workingCase} />
           </Box>
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>

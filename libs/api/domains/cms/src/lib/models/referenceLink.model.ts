@@ -14,6 +14,7 @@ export class ReferenceLink {
 // this is here cause page content types names don't match in API and Contentful
 const typeMap = {
   vidspyrnaPage: 'adgerdirpage',
+  'vidspyrna-frontpage': 'adgerdirfrontpage',
 }
 
 export const mapReferenceLink = ({

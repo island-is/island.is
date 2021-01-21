@@ -61,6 +61,7 @@ import {
   validateAndSetTime,
 } from '../../../utils/formHelper'
 import PdfButton from '../../../shared-components/PdfButton/PdfButton'
+import CaseNumbers from '../../../shared-components/CaseNumbers/CaseNumbers'
 
 interface SigningModalProps {
   workingCase: Case
@@ -394,7 +395,7 @@ export const Confirmation: React.FC = () => {
               variant="h2"
               as="h2"
             >{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
-            <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
+            <CaseNumbers workingCase={workingCase} />
           </Box>
           <Box marginBottom={9}>
             <Accordion>
