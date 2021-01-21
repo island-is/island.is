@@ -209,6 +209,10 @@ export const Overview: React.FC = () => {
               accusedName={workingCase.accusedName}
               accusedNationalId={workingCase.accusedNationalId}
               accusedAddress={workingCase.accusedAddress}
+              defender={{
+                name: workingCase.defenderName || '',
+                email: workingCase.defenderEmail,
+              }}
             />
           </Box>
           <Box component="section" marginBottom={5}>

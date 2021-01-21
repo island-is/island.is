@@ -163,7 +163,7 @@ describe('/krafa without ID', () => {
       screen.getByRole('radio', { name: 'Kona' }) as HTMLInputElement,
     ).not.toBeChecked()
     expect(
-      screen.getByRole('radio', { name: 'Annað' }) as HTMLInputElement,
+      screen.getByRole('radio', { name: 'Kynsegin/Annað' }) as HTMLInputElement,
     ).not.toBeChecked()
     expect(
       screen.getByRole('button', {
