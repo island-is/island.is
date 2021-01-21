@@ -701,7 +701,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn, 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder<br /><br />Kyn sakbornings: kona<br /><br />Krafist er gæsluvarðhalds til mánudagsins, 12. ágúst 2030, kl. 08:25.<br /><br />Farið er fram á einangrun.<br /><br />Verjandi sakbornings: Varði Varnari.',
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn, 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder<br /><br />Kyn sakbornings: Kona<br /><br />Krafist er gæsluvarðhalds til mánudagsins, 12. ágúst 2030, kl. 08:25.<br /><br />Farið er fram á einangrun.<br /><br />Verjandi sakbornings: Varði Varnari.',
     )
   })
 
@@ -732,7 +732,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn, 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder<br /><br />Kyn sakbornings: annað<br /><br />Krafist er gæsluvarðhalds til mánudagsins, 12. ágúst 2030, kl. 08:25.<br /><br />Farið er fram á einangrun.<br /><br />Verjandi sakbornings: Vala Verja.',
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn, 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder<br /><br />Kyn sakbornings: Kynsegin/Annað<br /><br />Krafist er gæsluvarðhalds til mánudagsins, 12. ágúst 2030, kl. 08:25.<br /><br />Farið er fram á einangrun.<br /><br />Verjandi sakbornings: Vala Verja.',
     )
   })
 
@@ -763,7 +763,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn, 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder<br /><br />Kyn sakbornings: karl<br /><br />Krafist er gæsluvarðhalds til mánudagsins, 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Verjandi sakbornings: Vala Verja.',
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn, 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder<br /><br />Kyn sakbornings: Karl<br /><br />Krafist er gæsluvarðhalds til mánudagsins, 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Verjandi sakbornings: Vala Verja.',
     )
   })
 
@@ -793,7 +793,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn, 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder<br /><br />Kyn sakbornings: karl<br /><br />Krafist er gæsluvarðhalds til mánudagsins, 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Verjandi sakbornings hefur ekki verið skráður.',
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn, 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder<br /><br />Kyn sakbornings: Karl<br /><br />Krafist er gæsluvarðhalds til mánudagsins, 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Verjandi sakbornings hefur ekki verið skráður.',
     )
   })
 
@@ -824,7 +824,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um áframhaldandi gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn, 11. febrúar 2021, kl. 12:02.<br /><br />Nafn sakbornings: Maggi Murder<br /><br />Kyn sakbornings: karl<br /><br />Krafist er gæsluvarðhalds til mánudagsins, 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Verjandi sakbornings: Vala Verja.',
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um áframhaldandi gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn, 11. febrúar 2021, kl. 12:02.<br /><br />Nafn sakbornings: Maggi Murder<br /><br />Kyn sakbornings: Karl<br /><br />Krafist er gæsluvarðhalds til mánudagsins, 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Verjandi sakbornings: Vala Verja.',
     )
   })
 })
