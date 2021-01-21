@@ -9,8 +9,11 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
-import { CaseQuery, UpdateCaseMutation } from '../graphql'
-import { UserQuery } from '../shared-components/UserProvider/UserProvider'
+import {
+  CaseQuery,
+  UpdateCaseMutation,
+} from '@island.is/judicial-system-web/src/graphql'
+import { UserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 export const mockProsecutor = {
   role: UserRole.PROSECUTOR,
