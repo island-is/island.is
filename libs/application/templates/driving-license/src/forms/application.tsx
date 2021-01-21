@@ -180,10 +180,111 @@ export const application: Form = buildForm({
       id: 'healthDeclaration',
       title: 'Heilbrigðisyfirlýsing',
       children: [
-        buildCustomField({
-          id: 'healthDeclaration',
+        buildMultiField({
+          id: 'overview',
           title: 'Heilbrigðisyfirlýsing',
-          component: 'HealthDeclaration',
+          space: 1,
+          children: [
+            buildCustomField(
+              {
+                id: 'healthDeclaration.usesContactGlasses',
+                title: '',
+                component: 'HealthDeclaration',
+              },
+              {
+                title: 'Yfirlýsing um líkamlegt og andlegt heilbrigði',
+                label:
+                  '1. Notar þú gleraugu, snertilinsur eða hefur skerta sjón?',
+              },
+            ),
+            buildCustomField(
+              {
+                id: 'healthDeclaration.hasEpilepsy',
+                title: '',
+                component: 'HealthDeclaration',
+              },
+              {
+                label:
+                  '2. Hefur þú verið flogaveik(ur) eða orðið fyrir alvarlegri truflun á meðvitund og stjórn hreyfinga?',
+              },
+            ),
+            buildCustomField(
+              {
+                id: 'healthDeclaration.hasHeartDisease',
+                title: '',
+                component: 'HealthDeclaration',
+              },
+              {
+                label:
+                  '3. Hefur þú nú eða hefur þú haft alvarlegan hjartasjúkdóm?',
+              },
+            ),
+            buildCustomField(
+              {
+                id: 'healthDeclaration.hasMentalIllness',
+                title: '',
+                component: 'HealthDeclaration',
+              },
+              {
+                label:
+                  '4. Hefur þú nú eða hefur þú haft alvarlegan geðsjúkdóm?',
+              },
+            ),
+            buildCustomField(
+              {
+                id: 'healthDeclaration.usesMedicalDrugs',
+                title: '',
+                component: 'HealthDeclaration',
+              },
+              {
+                label:
+                  '5. Notar þú að staðaldri læknislyf eða lyfjablöndur sem geta haft áhrif á meðvitund?',
+              },
+            ),
+            buildCustomField(
+              {
+                id: 'healthDeclaration.isAlcoholic',
+                title: '',
+                component: 'HealthDeclaration',
+              },
+              {
+                label:
+                  '6. Ert þú háð(ur) áfengi, ávana- og/eða fíkniefnum eða misnotar þú geðræn lyf sem verkað gætu á meðvitund?',
+              },
+            ),
+            buildCustomField(
+              {
+                id: 'healthDeclaration.hasDiabetes',
+                title: '',
+                component: 'HealthDeclaration',
+              },
+              {
+                label: '7. Notar þú insúlín og/eða töflur við sykursýki?',
+              },
+            ),
+            buildCustomField(
+              {
+                id: 'healthDeclaration.isDisabled',
+                title: '',
+                component: 'HealthDeclaration',
+              },
+              {
+                label:
+                  '8. Hefur þú nú eða hefur þú haft hömlur í hreyfikerfi líkamans?',
+              },
+            ),
+            buildCustomField(
+              {
+                id: 'healthDeclaration.hasOtherDiseases',
+                title: '',
+                component: 'HealthDeclaration',
+              },
+              {
+                label:
+                  '9. Átt þú við einhvern annan sjúkdóm að stríða sem þú telur að geti haft áhrif á öryggi þitt í akstri í framtíðinni?',
+              },
+            ),
+          ],
         }),
       ],
     }),
@@ -200,11 +301,7 @@ export const application: Form = buildForm({
           children: [
             buildKeyValueField({
               label: 'Tegund ökuréttinda',
-              value: ({ answers: { subType } }) =>
-                (subType as string[]).reduce(
-                  (acc, type) => `${acc}\n${type}`,
-                  '',
-                ),
+              value: ({ answers: { subType } }) => subType,
             }),
             buildDividerField({}),
             buildKeyValueField({
@@ -224,7 +321,7 @@ export const application: Form = buildForm({
               width: 'half',
               value: ({ externalData: { nationalRegistry } }) =>
                 (nationalRegistry.data as NationalRegistryUser).address
-                  .streetAddress,
+                  ?.streetAddress,
             }),
             buildKeyValueField({
               label: 'Kennitala',
@@ -237,7 +334,7 @@ export const application: Form = buildForm({
               width: 'half',
               value: ({ externalData: { nationalRegistry } }) =>
                 (nationalRegistry.data as NationalRegistryUser).address
-                  .postalCode,
+                  ?.postalCode,
             }),
             buildKeyValueField({
               label: 'Netfang',
@@ -249,7 +346,7 @@ export const application: Form = buildForm({
               label: 'Staður',
               width: 'half',
               value: ({ externalData: { nationalRegistry } }) =>
-                (nationalRegistry.data as NationalRegistryUser).address.city,
+                (nationalRegistry.data as NationalRegistryUser).address?.city,
             }),
             buildDividerField({}),
             buildKeyValueField({
@@ -258,18 +355,28 @@ export const application: Form = buildForm({
             }),
             buildDividerField({}),
             buildCheckboxField({
-              id: 'bringAlong',
+              id: 'willBringAlongData',
               title: 'Gögn höfð meðferðis til sýslumanns',
-              options: [
-                {
-                  value: 'certificate',
-                  label: 'Ég kem með vottorð frá lækni meðferðis',
-                },
-                {
-                  value: 'photo',
-                  label: 'Ég kem með mynd og rithandarsýni til sýslumanns',
-                },
-              ],
+              options: (app) => {
+                const options = [
+                  {
+                    value: 'picture',
+                    label: 'Ég kem með mynd og rithandarsýni til sýslumanns',
+                  },
+                ]
+                if (
+                  Object.values(app.answers.healthDeclaration).includes('yes')
+                ) {
+                  return [
+                    {
+                      value: 'certificate',
+                      label: 'Ég kem með vottorð frá lækni meðferðis',
+                    },
+                    ...options,
+                  ]
+                }
+                return options
+              },
             }),
             buildSubmitField({
               id: 'submit',

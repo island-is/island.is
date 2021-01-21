@@ -72,7 +72,7 @@ export async function generateRequestPdf(
     .lineGap(4)
     .text(`Kennitala: ${formatNationalId(existingCase.accusedNationalId)}`)
     .text(`Fullt nafn: ${existingCase.accusedName}`)
-    .text(`Kyn: ${capitalize(formatGender(existingCase.accusedGender))}`)
+    .text(`Kyn: ${formatGender(existingCase.accusedGender)}`)
     .text(`Lögheimili: ${existingCase.accusedAddress}`)
     .text(' ')
     .font('Helvetica-Bold')
