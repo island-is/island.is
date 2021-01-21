@@ -4,7 +4,10 @@ import { useHistory } from 'react-router-dom'
 import { Text, Input, Box, RadioButton } from '@island.is/island-ui/core'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
-import { FormFooter } from '@island.is/judicial-system-web/src/shared-components/FormFooter'
+import {
+  FormFooter,
+  BlueBox,
+} from '@island.is/judicial-system-web/src/shared-components'
 import { useParams } from 'react-router-dom'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -34,7 +37,6 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import BlueBox from '@island.is/judicial-system-web/src/shared-components/BlueBox/BlueBox'
 import { CreateCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 
 interface CaseData {
