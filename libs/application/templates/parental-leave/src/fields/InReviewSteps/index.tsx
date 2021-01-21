@@ -2,7 +2,11 @@ import React, { FC, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 
-import { FieldBaseProps, MessageFormatter } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  getValueViaPath,
+  MessageFormatter,
+} from '@island.is/application/core'
 import {
   Box,
   Button,
@@ -11,9 +15,10 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import ReviewSection, { reviewSectionState } from './ReviewSection'
-import ReadOnlyReview from '../Review/ReadOnlyReview'
+import Review from '../Review'
 
 import { mm } from '../../lib/messages'
+import { YES } from '../../constants'
 
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 
@@ -44,6 +49,7 @@ const statesMap: statesMap = {
     vinnumalastofnunApproval: reviewSectionState.complete,
   },
   employer: {
+    employerWaitingToAssign: reviewSectionState.inProgress,
     employerApproval: reviewSectionState.inProgress,
     employerRequiresAction: reviewSectionState.requiresAction,
     vinnumalastofnunApproval: reviewSectionState.complete,
@@ -67,6 +73,32 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application }) => {
   const [screenState, setScreenState] = useState<'steps' | 'viewApplication'>(
     'steps',
   )
+
+  const isRequestingRights =
+    (getValueViaPath(
+      application.answers,
+      'requestRights.isRequestingRights',
+    ) as string) === YES
+
+  const steps = [
+    {
+      state: statesMap['otherParent'][application.state],
+      title: formatMessage(mm.reviewScreen.otherParentTitle),
+      description: formatMessage(mm.reviewScreen.otherParentDesc),
+    },
+    {
+      state: statesMap['employer'][application.state],
+      title: formatMessage(mm.reviewScreen.employerTitle),
+      description: formatMessage(mm.reviewScreen.employerDesc),
+    },
+    {
+      state: statesMap['vinnumalastofnun'][application.state],
+      title: formatMessage(mm.reviewScreen.deptTitle),
+      description: formatMessage(mm.reviewScreen.deptDesc),
+    },
+  ]
+
+  if (!isRequestingRights) steps.shift()
 
   return (
     <Box marginBottom={10}>
@@ -147,31 +179,19 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application }) => {
 
       {(screenState === 'steps' && (
         <Box marginTop={7} marginBottom={8}>
-          <ReviewSection
-            application={application}
-            index={1}
-            state={statesMap['otherParent'][application.state]}
-            title={formatMessage(mm.reviewScreen.otherParentTitle)}
-            description={formatMessage(mm.reviewScreen.otherParentDesc)}
-          />
-          <ReviewSection
-            application={application}
-            index={2}
-            state={statesMap['employer'][application.state]}
-            title={formatMessage(mm.reviewScreen.employerTitle)}
-            description={formatMessage(mm.reviewScreen.employerDesc)}
-          />
-          <ReviewSection
-            application={application}
-            index={3}
-            state={statesMap['vinnumalastofnun'][application.state]}
-            title={formatMessage(mm.reviewScreen.deptTitle)}
-            description={formatMessage(mm.reviewScreen.deptDesc)}
-          />
+          {steps.map((step, index) => {
+            return (
+              <ReviewSection
+                application={application}
+                index={index + 1}
+                {...step}
+              />
+            )
+          })}
         </Box>
       )) || (
         <Box marginTop={7} marginBottom={8}>
-          <ReadOnlyReview application={application} />
+          <Review application={application} editable={false} />
         </Box>
       )}
     </Box>
