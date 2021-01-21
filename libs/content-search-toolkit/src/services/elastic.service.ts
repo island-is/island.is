@@ -94,7 +94,7 @@ export class ElasticService {
     }
 
     try {
-      // elasticsearch does not like big requests (above 5mb) so we limit the size to 200 entries just in case
+      // elasticsearch does not like big requests (above 5mb) so we limit the size to X entries just in case
       const chunkSize = 100 // this has to be an even number
       const client = await this.getClient()
       let requestChunk = requests.splice(-chunkSize, chunkSize)
