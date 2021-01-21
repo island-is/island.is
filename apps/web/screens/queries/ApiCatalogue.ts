@@ -11,6 +11,7 @@ export const GET_CATALOGUE_QUERY = gql`
         type
         access
         data
+        environments
       }
       pageInfo {
         nextCursor
@@ -26,10 +27,6 @@ export const GET_API_SERVICE_QUERY = gql`
       owner
       title
       description
-      data
-      pricing
-      access
-      type
       versions {
         versionId
         details {
@@ -38,6 +35,12 @@ export const GET_API_SERVICE_QUERY = gql`
           type
           pricing
           data
+          links {
+            responsibleParty
+            documentation
+            bugReport
+            featureRequest
+          }
           xroadIdentifier {
             instance
             memberCode
