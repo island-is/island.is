@@ -12,8 +12,9 @@ import {
   BadRequestException,
   UseInterceptors,
   Optional,
-  UseGuards,
   Req,
+  Header,
+  Res
 } from '@nestjs/common'
 
 import omit from 'lodash/omit'
@@ -44,6 +45,7 @@ import {
 } from '@island.is/application/template-loader'
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
+import { FileService } from './file.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
@@ -69,6 +71,7 @@ import { environment } from '../../../environments'
 import { ApplicationAPITemplateUtils } from '@island.is/application/api-template-utils'
 import { NationalId } from './tools/nationalId.decorator'
 import { verifyToken } from './utils/tokenUtils'
+import { ReadableStreamBuffer } from 'stream-buffers'
 
 // @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
 
@@ -86,6 +89,7 @@ export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly emailService: EmailService,
+    private readonly fileService: FileService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
   ) {}
 
@@ -498,5 +502,34 @@ export class ApplicationController {
     )
 
     return updatedApplication
+  }
+
+  @Get('residenceChangePdf')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets children residence change pdf',
+  })
+  async getResidenceChangePdf(
+    @Body() input: {
+      childrenAppliedFor: [{name: string, ssn: string}],
+      parentA: {name: string, ssn: string, phoneNumber: string, email:string, homeAddress: string, postalCode: string, city: string},
+      parentB: {name: string, ssn: string, phoneNumber: string, email:string, homeAddress: string, postalCode: string, city: string},
+      expiry: string
+    },
+    @Res() res: any,
+  ): Promise<string> {
+    const { childrenAppliedFor, parentA, parentB, expiry }  = input
+    const pdf = await this.fileService.createResidenceChangePdf(childrenAppliedFor, parentA, parentB, expiry)
+
+    const stream = new ReadableStreamBuffer({
+      frequency: 10,
+      chunkSize: 2048,
+    })
+    stream.put(pdf, 'binary')
+
+    res.header('Content-length', pdf.length.toString())
+
+    return stream.pipe(res)
   }
 }
