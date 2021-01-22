@@ -13,7 +13,7 @@ import {
   FocusableBox,
   Navigation,
 } from '@island.is/island-ui/core'
-import { Card } from '@island.is/web/components'
+import { Card, Sticky } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
@@ -250,24 +250,26 @@ const Category: Screen<CategoryProps> = ({
         <title>{category.title} | Ísland.is</title>
       </Head>
       <SidebarLayout
-        isSticky
+        isSticky={false}
         sidebarContent={
-          <Navigation
-            baseId="desktopNav"
-            colorScheme="purple"
-            items={sidebarCategoryLinks}
-            title={n('sidebarHeader')}
-            renderLink={(link, { typename, slug }) => {
-              return (
-                <NextLink
-                  {...linkResolver(typename as LinkType, slug)}
-                  passHref
-                >
-                  {link}
-                </NextLink>
-              )
-            }}
-          />
+          <Sticky>
+            <Navigation
+              baseId="desktopNav"
+              colorScheme="purple"
+              items={sidebarCategoryLinks}
+              title={n('sidebarHeader')}
+              renderLink={(link, { typename, slug }) => {
+                return (
+                  <NextLink
+                    {...linkResolver(typename as LinkType, slug)}
+                    passHref
+                  >
+                    {link}
+                  </NextLink>
+                )
+              }}
+            />
+          </Sticky>
         }
       >
         <Box paddingBottom={[2, 2, 4]}>
