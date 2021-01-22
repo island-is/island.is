@@ -148,7 +148,6 @@ export const Input = forwardRef(
           className={cn(styles.container, styles.containerSizes[size], {
             [styles.hasError]: hasError,
             [styles.hasFocus]: hasFocus,
-            [styles.containerDisabled]: disabled,
             [styles.fixedFocusState]: fixedFocusState,
             [styles.noLabel]: !label,
           })}
