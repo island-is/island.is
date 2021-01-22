@@ -64,12 +64,10 @@ const OrganizationWrapper: React.FC<WrapperProps> = ({
               <Breadcrumbs
                 color="white"
                 items={breadcrumbItems ?? []}
-                renderLink={(link) => {
-                  return (
-                    <NextLink {...linkResolver('homepage')} passHref>
-                      {link}
-                    </NextLink>
-                  )
+                renderLink={(link, item) => {
+                  return item?.href ? (
+                    <NextLink href={item?.href}>{link}</NextLink>
+                  ) : link
                 }}
               />
             </Box>
@@ -105,9 +103,9 @@ const OrganizationWrapper: React.FC<WrapperProps> = ({
                   activeItemTitle={navigationData.activeItemTitle}
                   titleLink={navigationData.titleLink}
                   renderLink={(link, item) => {
-                    return (
-                      <NextLink href={item?.href ?? '/hello'}>{link}</NextLink>
-                    )
+                    return item?.href ? (
+                      <NextLink href={item?.href}>{link}</NextLink>
+                    ) : link
                   }}
                 />
               </Box>

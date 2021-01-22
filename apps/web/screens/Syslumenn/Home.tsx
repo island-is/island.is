@@ -23,6 +23,7 @@ import LatestOrganizationNewsSection from '@island.is/web/components/LatestOrgan
 import OrganizationWrapper from '@island.is/web/components/Organization/Wrapper/OrganizationWrapper'
 import OrganizationSlice from '@island.is/web/components/Organization/Slice/OrganizationSlice'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface HomeProps {
   organizationPage: Query['getOrganizationPage']
@@ -32,6 +33,7 @@ interface HomeProps {
 
 const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
   const n = useNamespace(namespace)
+  const { linkResolver } = useLinkResolver()
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
@@ -55,17 +57,18 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
         breadcrumbItems={[
           {
             title: 'Ísland.is',
-            href: '/',
+            href: linkResolver('homepage').as,
           },
           {
             title: n('organizations', 'Stofnanir'),
+            href: linkResolver('organizations').as,
           },
         ]}
         navigationData={{
           title: n('navigationTitle', 'Efnisyfirlit'),
           items: navList,
           titleLink: {
-            href: `/stofnanir/${organizationPage.slug}`,
+            href: linkResolver('organizationpage', [organizationPage.slug]).as,
             active: false,
           },
         }}

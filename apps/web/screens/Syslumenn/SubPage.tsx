@@ -15,6 +15,7 @@ import {
 } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver } from "@island.is/web/hooks/useLinkResolver";
 import * as styles from './Home.treat'
 import { QueryGetOrganizationPageArgs } from '@island.is/web/graphql/schema'
 import OrganizationWrapper from '@island.is/web/components/Organization/Wrapper/OrganizationWrapper'
@@ -34,6 +35,7 @@ const SubPage: Screen<SubPageProps> = ({
   namespace,
 }) => {
   const n = useNamespace(namespace)
+  const { linkResolver } = useLinkResolver()
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
@@ -60,20 +62,22 @@ const SubPage: Screen<SubPageProps> = ({
         breadcrumbItems={[
           {
             title: 'Ísland.is',
-            href: '/',
+            href: linkResolver('homepage').as,
           },
           {
             title: n('organizations', 'Stofnanir'),
+            href: linkResolver('organizations').as,
           },
           {
             title: organizationPage.title,
+            href: linkResolver('organizationpage', [organizationPage.slug]).as,
           },
         ]}
         navigationData={{
           title: n('navigationTitle', 'Efnisyfirlit'),
           items: navList,
           titleLink: {
-            href: `/${organizationPage.slug}`,
+            href: linkResolver('organizationpage', [organizationPage.slug]).as,
             active: false,
           },
         }}
