@@ -1,25 +1,30 @@
 import React from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { ApolloProvider } from '@apollo/client'
-import { Header } from '../Header'
-import * as Constants from '../../utils/constants'
-import { Overview } from '../../routes/Prosecutor/Overview'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { Overview } from '@island.is/judicial-system-web/src/routes/Prosecutor/Overview'
 import {
   StepOne,
   StepTwo,
   StepThree,
   StepFour,
-} from '../../routes/Prosecutor/CreateDetentionRequest'
-import { DetentionRequests } from '../../routes/Shared/DetentionRequests/DetentionRequests'
-import { Login } from '../../routes/Shared/Login/Login'
-import JudgeOverview from '../../routes/Judge/Overview/Overview'
-import CourtRecord from '../../routes/Judge/CourtRecord/CourtRecord'
-import { RulingStepOne, RulingStepTwo } from '../../routes/Judge/Ruling'
-import Confirmation from '../../routes/Judge/Confirmation/Confirmation'
-import { client } from '../../graphql'
-import HearingArrangements from '../../routes/Judge/HearingArrangements/HearingArrangements'
-import { UserProvider } from '../UserProvider/UserProvider'
-import SignedVerdictOverview from '../../routes/Shared/SignedVerdictOverview/SignedVerdictOverview'
+} from '@island.is/judicial-system-web/src/routes/Prosecutor/CreateDetentionRequest'
+import { DetentionRequests } from '@island.is/judicial-system-web/src/routes/Shared/DetentionRequests/DetentionRequests'
+import { Login } from '@island.is/judicial-system-web/src/routes/Shared/Login/Login'
+import JudgeOverview from '@island.is/judicial-system-web/src/routes/Judge/Overview/Overview'
+import CourtRecord from '@island.is/judicial-system-web/src/routes/Judge/CourtRecord/CourtRecord'
+import {
+  RulingStepOne,
+  RulingStepTwo,
+} from '@island.is/judicial-system-web/src/routes/Judge/Ruling'
+import Confirmation from '@island.is/judicial-system-web/src/routes/Judge/Confirmation/Confirmation'
+import { client } from '@island.is/judicial-system-web/src/graphql'
+import HearingArrangements from '@island.is/judicial-system-web/src/routes/Judge/HearingArrangements/HearingArrangements'
+import {
+  UserProvider,
+  Header,
+} from '@island.is/judicial-system-web/src/shared-components'
+import SignedVerdictOverview from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/SignedVerdictOverview'
 
 const App: React.FC = () => {
   return (

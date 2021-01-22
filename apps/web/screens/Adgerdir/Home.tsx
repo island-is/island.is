@@ -6,7 +6,6 @@ import {
   ContentBlock,
   Text,
   Stack,
-  Breadcrumbs,
   GridColumn,
   Hidden,
   GridRow,
@@ -45,7 +44,7 @@ import {
 } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
-import * as covidStyles from './components/UI/styles/styles.treat'
+import { Breadcrumbs } from './components/UI/Breadcrumbs/Breadcrumbs'
 import {
   GetArticleCategoriesQuery,
   GetGroupedMenuQuery,
@@ -58,6 +57,8 @@ import {
   formatMegaMenuLinks,
 } from '@island.is/web/utils/processMenuData'
 import { useLinkResolver, LinkType } from '@island.is/web/hooks/useLinkResolver'
+
+import * as covidStyles from './components/UI/styles/styles.treat'
 
 interface HomeProps {
   frontpage: Query['getAdgerdirFrontpage']
@@ -124,10 +125,13 @@ const Home: Screen<HomeProps> = ({
                                   href: '/',
                                 },
                               ]}
-                              renderLink={(link, { typename }) => {
+                              renderLink={(link, { typename, slug }) => {
                                 return (
                                   <NextLink
-                                    {...linkResolver(typename as LinkType)}
+                                    {...linkResolver(
+                                      typename as LinkType,
+                                      slug,
+                                    )}
                                     passHref
                                   >
                                     {link}

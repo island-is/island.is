@@ -6,11 +6,11 @@ import {
   mockCaseQueries,
   mockJudgeQuery,
   mockProsecutorQuery,
-} from '../../../utils/mocks'
+} from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
-import * as Constants from '../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import '@testing-library/jest-dom'
-import { UserProvider } from '../../../shared-components/UserProvider/UserProvider'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 
 describe('Signed Verdict Overview route', () => {
