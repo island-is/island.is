@@ -31,12 +31,13 @@ import { NationalIdGuard } from '../access/national-id-guard'
 // @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('clients')
-@Controller('clients')
+@Controller('backend/clients')
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
   /** Gets all clients and count of rows */
   @Get()
+  @ApiQuery({ name: 'searchString', required: false })
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
   @ApiOkResponse({
@@ -58,9 +59,19 @@ export class ClientsController {
     },
   })
   async findAndCountAll(
+    @Query('searchString') searchString: string,
     @Query('page') page: number,
     @Query('count') count: number,
   ): Promise<{ rows: Client[]; count: number } | null> {
+    if (searchString) {
+      const clients = await this.clientsService.findClients(
+        searchString,
+        page,
+        count,
+      )
+      return clients
+    }
+
     const clients = await this.clientsService.findAndCountAll(page, count)
     return clients
   }

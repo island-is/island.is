@@ -9,14 +9,14 @@ import {
   Query,
   QueryGetApiServiceByIdArgs,
   QueryGetNamespaceArgs,
-  ApiService,
+  Service,
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY, GET_API_SERVICE_QUERY } from '../queries'
 import {
   SubpageMainContent,
   ServiceInformation,
   OpenApiView,
-} from '../../components'
+} from '@island.is/web/components'
 import { SubpageLayout } from '../Layouts/Layouts'
 import SidebarLayout from '../Layouts/SidebarLayout'
 import {
@@ -37,7 +37,7 @@ interface ServiceDetailsProps {
   strings: GetNamespaceQuery['getNamespace']
   filterContent: GetNamespaceQuery['getNamespace']
   openApiContent: GetNamespaceQuery['getNamespace']
-  service: ApiService
+  service: Service
 }
 
 const ServiceDetails: Screen<ServiceDetailsProps> = ({
@@ -70,7 +70,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
       items: [
         {
           active: true,
-          title: service?.name,
+          title: service?.title,
         },
       ],
     },

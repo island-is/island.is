@@ -17,7 +17,7 @@ import {
   FormModes,
   FormText,
 } from '../types/Form'
-import { BoxProps } from '@island.is/island-ui/core'
+import type { BoxProps } from '@island.is/island-ui/core'
 
 export function buildForm(data: {
   id: string
@@ -25,6 +25,7 @@ export function buildForm(data: {
   logo?: React.FC
   mode?: FormModes
   children: FormChildren[]
+  renderLastScreenButton?: boolean
   icon?: string
 }): Form {
   return { ...data, type: FormItemTypes.FORM }

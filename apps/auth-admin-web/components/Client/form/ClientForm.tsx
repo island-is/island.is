@@ -279,19 +279,13 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                     <input
                       type="text"
                       name="client.clientName"
-                      ref={register({ required: true })}
-                      defaultValue={client.clientName}
+                      ref={register}
+                      defaultValue={client.clientName ?? ''}
                       className="client__input"
                       title="Application name that will be seen on consent screens"
                       placeholder="Example name"
                     />
                     <HelpBox helpText="Application name that will be seen on consent screens" />
-                    <ErrorMessage
-                      as="span"
-                      errors={errors}
-                      name="client.clientName"
-                      message="Display Name is required"
-                    />
                   </div>
 
                   <div className="client__container__field">

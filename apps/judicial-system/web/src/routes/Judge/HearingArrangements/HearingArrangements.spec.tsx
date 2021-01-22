@@ -10,8 +10,8 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MemoryRouter, Route } from 'react-router-dom'
 import { MockedProvider } from '@apollo/client/testing'
-import * as Constants from '../../../utils/constants'
-import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 
 describe('/domari-krafa/fyrirtokutimi', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
@@ -190,7 +190,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
     ).toBeInTheDocument()
   })
 
-  test('should have a prefilled court date and dedender info with requested  date and dedender info', async () => {
+  test('should have a prefilled court date and defender info with requested date and defender info', async () => {
     // Arrange
     render(
       <MockedProvider

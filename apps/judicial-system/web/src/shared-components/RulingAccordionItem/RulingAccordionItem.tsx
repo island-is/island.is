@@ -10,9 +10,9 @@ import * as style from './RulingAccordionItem.treat'
 import {
   constructConclusion,
   getAppealDecisionText,
-} from '../../utils/stepHelper'
-import { AppealDecisionRole } from '../../types'
-import { UserContext } from '../UserProvider/UserProvider'
+} from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
   formatAlternativeTravelBanRestrictions,
   formatCustodyRestrictions,

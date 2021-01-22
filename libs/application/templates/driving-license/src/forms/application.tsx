@@ -18,13 +18,19 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { NationalRegistryUser, UserProfile } from '@island.is/api/schema'
+import {
+  NationalRegistryUser,
+  DrivingLicenseType,
+  UserProfile,
+} from '@island.is/api/schema'
 import { m } from '../lib/messages'
+import { buildEntitlementOption } from '../utils'
 
 export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
   title: 'Ökuskilríki',
   mode: FormModes.APPLYING,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'type',
@@ -62,6 +68,12 @@ export const application: Form = buildForm({
               subTitle:
                 'Ég hef fasta búsetu hér á landi eins og hún er skilgreind í VIII. viðauka reglugerðar um ökuskírteini eða tel mig fullnægja skilyrðum um búsetu hér á landi til að fá gefið út ökuskírteini.',
             }),
+            buildDataProviderItem({
+              id: 'entitlementTypes',
+              type: 'EntitlementTypesProvider',
+              title: '',
+              subTitle: '',
+            }),
           ],
         }),
         buildMultiField({
@@ -91,51 +103,48 @@ export const application: Form = buildForm({
           space: 6,
           children: [
             buildCheckboxField({
-              id: 'general',
+              id: 'subType',
               title: 'Fólksbílaflokkar',
               condition: ({ type }) =>
                 (type as string[])?.includes('general') ||
                 (type as string[])?.includes('trailer'),
               options: (app) => {
+                const entitlementTypes = app.externalData.entitlementTypes
+                  .data as DrivingLicenseType[]
                 if ((app.answers.type as string[])?.includes('trailer')) {
-                  return [
-                    {
-                      value: 'BE',
-                      label:
-                        '<span><b>BE</b> Fólksbifreið með eftirvagn</span>',
-                    },
-                  ]
+                  return [buildEntitlementOption(entitlementTypes, 'BE')]
                 }
 
-                return [
-                  { value: 'B', label: '<span><b>B</b> Fólksbifreið</span>' },
-                ]
+                return [buildEntitlementOption(entitlementTypes, 'B')]
               },
             }),
             buildCheckboxField({
               id: 'subType',
               title: 'Bifhjólaflokkar',
               condition: ({ type }) => (type as string[])?.includes('bike'),
-              options: [
-                { value: 'A', label: '<span><b>A</b> Bifhjól</span>' },
-                { value: 'A1', label: '<span><b>A1</b> Bifhjól</span>' },
-                {
-                  value: 'A2',
-                  label: m.testing,
-                  tooltip: `<h2>A2 flokkur</h2>
-<br />
-Veitir ökuréttindi til að stjórna bifhjóli:
-<br /><br />
-1. á tveimur hjólum með eða án hliðarvagns, með afl sem er ekki yfir 35 kw, með afl/þyngdarhlutfall sem er ekki yfir 0,2 kw/kg, svo og   bifhjóli sem hefur ekki verið breytt frá því að hafa áður meira en tvöfalt afl.
-<br /><br />
-2. bifhjóli í flokki A1.
-<br /><br />
-3. léttu bifhjóli í flokki AM.
-<br /><br />
-Ökuskírteini fyrir A2 flokk fyrir bifhjólaréttindi geta þeir fengið sem náð hafa 19 ára aldri. Taka þarf bóklegt námskeið fyrir A réttindi og 11 stundir í verklegri kennslu, ath að 5 stundir fást metnar ef viðkomandi aðili hefur fyrir A1 réttindi`,
-                },
-                { value: 'AM', label: '<span><b>AM</b> Létt bifhjól</span>' },
-              ],
+              options: (app) => {
+                const entitlementTypes = app.externalData.entitlementTypes
+                  .data as DrivingLicenseType[]
+                return [
+                  buildEntitlementOption(entitlementTypes, 'A'),
+                  buildEntitlementOption(entitlementTypes, 'A1'),
+                  {
+                    ...buildEntitlementOption(entitlementTypes, 'A2'),
+                    tooltip: `<h2>A2 flokkur</h2>
+  <br />
+  Veitir ökuréttindi til að stjórna bifhjóli:
+  <br /><br />
+  1. á tveimur hjólum með eða án hliðarvagns, með afl sem er ekki yfir 35 kw, með afl/þyngdarhlutfall sem er ekki yfir 0,2 kw/kg, svo og   bifhjóli sem hefur ekki verið breytt frá því að hafa áður meira en tvöfalt afl.
+  <br /><br />
+  2. bifhjóli í flokki A1.
+  <br /><br />
+  3. léttu bifhjóli í flokki AM.
+  <br /><br />
+  Ökuskírteini fyrir A2 flokk fyrir bifhjólaréttindi geta þeir fengið sem náð hafa 19 ára aldri. Taka þarf bóklegt námskeið fyrir A réttindi og 11 stundir í verklegri kennslu, ath að 5 stundir fást metnar ef viðkomandi aðili hefur fyrir A1 réttindi`,
+                  },
+                  buildEntitlementOption(entitlementTypes, 'AM'),
+                ]
+              },
             }),
           ],
         }),
@@ -172,10 +181,111 @@ Veitir ökuréttindi til að stjórna bifhjóli:
       id: 'healthDeclaration',
       title: 'Heilbrigðisyfirlýsing',
       children: [
-        buildCustomField({
-          id: 'healthDeclaration',
+        buildMultiField({
+          id: 'overview',
           title: 'Heilbrigðisyfirlýsing',
-          component: 'HealthDeclaration',
+          space: 1,
+          children: [
+            buildCustomField(
+              {
+                id: 'healthDeclaration.usesContactGlasses',
+                title: '',
+                component: 'HealthDeclaration',
+              },
+              {
+                title: 'Yfirlýsing um líkamlegt og andlegt heilbrigði',
+                label:
+                  '1. Notar þú gleraugu, snertilinsur eða hefur skerta sjón?',
+              },
+            ),
+            buildCustomField(
+              {
+                id: 'healthDeclaration.hasEpilepsy',
+                title: '',
+                component: 'HealthDeclaration',
+              },
+              {
+                label:
+                  '2. Hefur þú verið flogaveik(ur) eða orðið fyrir alvarlegri truflun á meðvitund og stjórn hreyfinga?',
+              },
+            ),
+            buildCustomField(
+              {
+                id: 'healthDeclaration.hasHeartDisease',
+                title: '',
+                component: 'HealthDeclaration',
+              },
+              {
+                label:
+                  '3. Hefur þú nú eða hefur þú haft alvarlegan hjartasjúkdóm?',
+              },
+            ),
+            buildCustomField(
+              {
+                id: 'healthDeclaration.hasMentalIllness',
+                title: '',
+                component: 'HealthDeclaration',
+              },
+              {
+                label:
+                  '4. Hefur þú nú eða hefur þú haft alvarlegan geðsjúkdóm?',
+              },
+            ),
+            buildCustomField(
+              {
+                id: 'healthDeclaration.usesMedicalDrugs',
+                title: '',
+                component: 'HealthDeclaration',
+              },
+              {
+                label:
+                  '5. Notar þú að staðaldri læknislyf eða lyfjablöndur sem geta haft áhrif á meðvitund?',
+              },
+            ),
+            buildCustomField(
+              {
+                id: 'healthDeclaration.isAlcoholic',
+                title: '',
+                component: 'HealthDeclaration',
+              },
+              {
+                label:
+                  '6. Ert þú háð(ur) áfengi, ávana- og/eða fíkniefnum eða misnotar þú geðræn lyf sem verkað gætu á meðvitund?',
+              },
+            ),
+            buildCustomField(
+              {
+                id: 'healthDeclaration.hasDiabetes',
+                title: '',
+                component: 'HealthDeclaration',
+              },
+              {
+                label: '7. Notar þú insúlín og/eða töflur við sykursýki?',
+              },
+            ),
+            buildCustomField(
+              {
+                id: 'healthDeclaration.isDisabled',
+                title: '',
+                component: 'HealthDeclaration',
+              },
+              {
+                label:
+                  '8. Hefur þú nú eða hefur þú haft hömlur í hreyfikerfi líkamans?',
+              },
+            ),
+            buildCustomField(
+              {
+                id: 'healthDeclaration.hasOtherDiseases',
+                title: '',
+                component: 'HealthDeclaration',
+              },
+              {
+                label:
+                  '9. Átt þú við einhvern annan sjúkdóm að stríða sem þú telur að geti haft áhrif á öryggi þitt í akstri í framtíðinni?',
+              },
+            ),
+          ],
         }),
       ],
     }),
@@ -192,11 +302,7 @@ Veitir ökuréttindi til að stjórna bifhjóli:
           children: [
             buildKeyValueField({
               label: 'Tegund ökuréttinda',
-              value: ({ answers: { subType } }) =>
-                (subType as string[]).reduce(
-                  (acc, type) => `${acc}\n${type}`,
-                  '',
-                ),
+              value: ({ answers: { subType } }) => subType,
             }),
             buildDividerField({}),
             buildKeyValueField({
@@ -216,7 +322,7 @@ Veitir ökuréttindi til að stjórna bifhjóli:
               width: 'half',
               value: ({ externalData: { nationalRegistry } }) =>
                 (nationalRegistry.data as NationalRegistryUser).address
-                  .streetAddress,
+                  ?.streetAddress,
             }),
             buildKeyValueField({
               label: 'Kennitala',
@@ -229,7 +335,7 @@ Veitir ökuréttindi til að stjórna bifhjóli:
               width: 'half',
               value: ({ externalData: { nationalRegistry } }) =>
                 (nationalRegistry.data as NationalRegistryUser).address
-                  .postalCode,
+                  ?.postalCode,
             }),
             buildKeyValueField({
               label: 'Netfang',
@@ -241,7 +347,7 @@ Veitir ökuréttindi til að stjórna bifhjóli:
               label: 'Staður',
               width: 'half',
               value: ({ externalData: { nationalRegistry } }) =>
-                (nationalRegistry.data as NationalRegistryUser).address.city,
+                (nationalRegistry.data as NationalRegistryUser).address?.city,
             }),
             buildDividerField({}),
             buildKeyValueField({
@@ -250,18 +356,28 @@ Veitir ökuréttindi til að stjórna bifhjóli:
             }),
             buildDividerField({}),
             buildCheckboxField({
-              id: 'bringAlong',
+              id: 'willBringAlongData',
               title: 'Gögn höfð meðferðis til sýslumanns',
-              options: [
-                {
-                  value: 'certificate',
-                  label: 'Ég kem með vottorð frá lækni meðferðis',
-                },
-                {
-                  value: 'photo',
-                  label: 'Ég kem með mynd og rithandarsýni til sýslumanns',
-                },
-              ],
+              options: (app) => {
+                const options = [
+                  {
+                    value: 'picture',
+                    label: 'Ég kem með mynd og rithandarsýni til sýslumanns',
+                  },
+                ]
+                if (
+                  Object.values(app.answers.healthDeclaration).includes('yes')
+                ) {
+                  return [
+                    {
+                      value: 'certificate',
+                      label: 'Ég kem með vottorð frá lækni meðferðis',
+                    },
+                    ...options,
+                  ]
+                }
+                return options
+              },
             }),
             buildSubmitField({
               id: 'submit',
@@ -277,11 +393,15 @@ Veitir ökuréttindi til að stjórna bifhjóli:
             }),
           ],
         }),
-        buildDescriptionField({
+        buildCustomField({
           id: 'overview',
-          title: 'Til hamingju',
-          description:
-            'Með því að smella á "Senda" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
+          component: 'Congratulations',
+          title: ({ externalData: { nationalRegistry } }) =>
+            `Til hamingju ${
+              (nationalRegistry.data as NationalRegistryUser).fullName.split(
+                ' ',
+              )[0]
+            }`,
         }),
       ],
     }),

@@ -17,7 +17,6 @@ export const searchQuery = ({
   type = [],
   access = [],
 }: SearchInput) => {
-  console.log(pricing)
   const should = []
   //minimum_should_match makes sure that we match all available categories in the should part
   let minimum_should_match = 0
@@ -65,7 +64,7 @@ export const searchQuery = ({
           {
             simple_query_string: {
               query: query + '*',
-              fields: ['name', 'owner', 'description'],
+              fields: ['title', 'owner', 'description'],
               analyze_wildcard: true,
             },
           },
@@ -80,7 +79,7 @@ export const searchQuery = ({
     },
     sort: [
       { 'owner.keyword': { order: 'asc' } },
-      { 'name.keyword': { order: 'asc' } },
+      { 'title.keyword': { order: 'asc' } },
     ],
     size: limit + 1, // if we have a page number add it as offset for pagination
   }

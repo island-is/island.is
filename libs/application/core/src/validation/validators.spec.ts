@@ -146,6 +146,28 @@ describe('validateAnswers', () => {
     })
   })
   describe('arrays', () => {
+    it('should validate empty arrays', () => {
+      const schemaWithArray = z.object({
+        anArray: z.array(z.string()).nonempty(),
+        somethingElse: z.number(),
+      })
+      const okFormValue = {
+        anArray: ['o', 'k'],
+        somethingElse: 4,
+      }
+      expect(validateAnswers(schemaWithArray, okFormValue)).toBeUndefined()
+
+      const badFormValue = {
+        anArray: [],
+      }
+      const schemaValidationError = validateAnswers(
+        schemaWithArray,
+        badFormValue,
+      )
+      expect(schemaValidationError).toEqual({
+        anArray: expect.anything(),
+      })
+    })
     it('should validate primitive array elements', () => {
       const schemaWithArray = z.object({
         anArray: z.array(z.string()),
