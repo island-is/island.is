@@ -94,8 +94,23 @@ export async function generateRequestPdf(
         existingCase.requestedCustodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ),
+        existingCase.parentCase !== null,
+        existingCase.parentCase?.decision,
       ),
+      {
+        lineGap: 6,
+        paragraphGap: 0,
+      },
     )
+
+  if (existingCase.otherDemands) {
+    doc.text(' ').text(existingCase.otherDemands, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+  }
+
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -310,12 +325,23 @@ export async function generateRulingPdf(
         existingCase.requestedCustodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ),
+        existingCase.parentCase !== null,
+        existingCase.parentCase?.decision,
       ),
       {
         lineGap: 6,
         paragraphGap: 0,
       },
     )
+
+  if (existingCase.otherDemands) {
+    doc.text(' ').text(existingCase.otherDemands, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+  }
+
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -367,6 +393,8 @@ export async function generateRulingPdf(
         existingCase.custodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ),
+        existingCase.parentCase !== null,
+        existingCase.parentCase?.decision,
       ),
       {
         lineGap: 6,

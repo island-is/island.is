@@ -195,7 +195,7 @@ describe('Detention requests route', () => {
         () => screen.getAllByLabelText('Viltu eyða drögum?').length,
       ),
     ).toEqual(3)
-  })
+  }, 10000)
 
   test('should not show deleted requests', async () => {
     render(

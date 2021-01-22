@@ -46,6 +46,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import BlueBox from '@island.is/judicial-system-web/src/shared-components/BlueBox/BlueBox'
 import parseISO from 'date-fns/parseISO'
+import CaseNumbers from '@island.is/judicial-system-web/src/shared-components/CaseNumbers/CaseNumbers'
 
 interface CaseData {
   case?: Case
@@ -145,10 +146,13 @@ export const RulingStepOne: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.JUDGE}
+      activeSection={
+        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
+      }
       activeSubSection={JudgeSubsections.RULING_STEP_ONE}
       isLoading={loading}
       notFound={data?.case === undefined}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>
@@ -159,7 +163,7 @@ export const RulingStepOne: React.FC = () => {
           </Box>
           <Box component="section" marginBottom={5}>
             <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
-            <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
+            <CaseNumbers workingCase={workingCase} />
           </Box>
           <Box component="section" marginBottom={5}>
             <Accordion>

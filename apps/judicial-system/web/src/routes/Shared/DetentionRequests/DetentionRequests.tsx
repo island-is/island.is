@@ -378,6 +378,7 @@ export const DetentionRequests: React.FC = () => {
                         ).color
                       }
                       outlined
+                      disabled
                     >
                       {
                         mapCaseStateToTagVariant(

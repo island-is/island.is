@@ -43,6 +43,7 @@ import {
   removeTabsValidateAndSet,
   validateAndSetTime,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import CaseNumbers from '../../../shared-components/CaseNumbers/CaseNumbers'
 
 interface CaseData {
   case?: Case
@@ -119,7 +120,20 @@ export const HearingArrangements: React.FC = () => {
         theCase = { ...theCase, courtDate: theCase.requestedCourtDate }
       }
 
-      if (!theCase.defenderName && theCase.requestedDefenderName) {
+      /**
+       * Ideally we'd want the do something like
+       *
+       * if(theCase.requestedDefenderName && theCase...)
+       *
+       * but we want the update the case if requestedDefenderName is
+       * an empty string and therefore we need to check for null and
+       * undefined respectively.
+       */
+      if (
+        theCase.requestedDefenderName !== null &&
+        theCase.requestedDefenderName !== undefined &&
+        theCase.requestedDefenderName !== theCase.defenderName
+      ) {
         updateCase(
           theCase.id,
           parseString('defenderName', theCase.requestedDefenderName),
@@ -128,7 +142,11 @@ export const HearingArrangements: React.FC = () => {
         theCase = { ...theCase, defenderName: theCase.requestedDefenderName }
       }
 
-      if (!theCase.defenderEmail && theCase.requestedDefenderEmail) {
+      if (
+        theCase.requestedDefenderEmail !== null &&
+        theCase.requestedDefenderEmail !== undefined &&
+        theCase.requestedDefenderEmail !== theCase.defenderEmail
+      ) {
         updateCase(
           theCase.id,
           parseString('defenderEmail', theCase.requestedDefenderEmail),
@@ -168,10 +186,13 @@ export const HearingArrangements: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.JUDGE}
+      activeSection={
+        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
+      }
       activeSubSection={JudgeSubsections.HEARING_ARRANGEMENTS}
       isLoading={loading}
       notFound={data?.case === undefined}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>
@@ -191,7 +212,7 @@ export const HearingArrangements: React.FC = () => {
           )}
           <Box component="section" marginBottom={7}>
             <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
-            <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
+            <CaseNumbers workingCase={workingCase} />
           </Box>
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
