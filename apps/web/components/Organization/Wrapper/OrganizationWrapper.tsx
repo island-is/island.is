@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { Image, Organization } from '@island.is/web/graphql/schema'
+import { Image, OrganizationPage } from '@island.is/web/graphql/schema'
 import {
   Box,
   BreadCrumbItem,
@@ -29,7 +29,7 @@ interface WrapperProps {
   pageTitle: string
   pageDescription?: string
   pageFeaturedImage?: Image
-  organization?: Organization
+  organizationPage?: OrganizationPage
   breadcrumbItems?: BreadCrumbItem[]
   mainContent?: ReactNode
   navigationData: NavigationData
@@ -39,7 +39,7 @@ const OrganizationWrapper: React.FC<WrapperProps> = ({
   pageTitle,
   pageDescription,
   pageFeaturedImage,
-  organization,
+  organizationPage,
   breadcrumbItems,
   mainContent,
   navigationData,
@@ -79,12 +79,12 @@ const OrganizationWrapper: React.FC<WrapperProps> = ({
               <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4, 4]}>
                 <Box display="flex" flexDirection="row" alignItems="center">
                   <img
-                    src={organization.logo.url}
+                    src={organizationPage.organization.logo.url}
                     className={styles.headerLogo}
                     alt=""
                   />
                   <Text variant="h1" as="h1" color="white">
-                    {organization.title}
+                    {organizationPage.title}
                   </Text>
                 </Box>
               </Box>

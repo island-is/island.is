@@ -55,7 +55,7 @@ const SubPage: Screen<SubPageProps> = ({
       <OrganizationWrapper
         pageTitle={subpage.title}
         pageDescription={subpage.description}
-        organization={organizationPage.organization}
+        organizationPage={organizationPage}
         pageFeaturedImage={subpage.featuredImage}
         breadcrumbItems={[
           {

@@ -50,7 +50,7 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
       <OrganizationWrapper
         pageTitle={organizationPage.title}
         pageDescription={organizationPage.description}
-        organization={organizationPage.organization}
+        organizationPage={organizationPage}
         pageFeaturedImage={organizationPage.featuredImage}
         breadcrumbItems={[
           {
