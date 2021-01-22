@@ -37,7 +37,7 @@
 /libs/application/templates/parental-leave/               @island-is/aranja
 /libs/application/templates/reference-template/           @island-is/aranja
 
-/libs/application/templates/children-domicile-transfer/   @island-is/kolibri-modern-family
+/libs/application/templates/children-residence-change/   @island-is/kolibri-modern-family
 
 /apps/judicial-system/                                    @island-is/kolibri-justice-league
 /libs/judicial-system/                                    @island-is/kolibri-justice-league

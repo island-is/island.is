@@ -15,17 +15,17 @@ import { FieldBaseProps /* Field */ } from '@island.is/application/core'
 // Usage:
 // buildCustomField(
 // {
-//   id: 'domicileChangeInformation',
+//   id: 'ResidenceChangeInformation',
 //   title: '',
-//   component: 'DomicileChangeInformation',
+//   component: 'ResidenceChangeInformation',
 // }),
 
 // With custom props that will be accessible from props.field.props.${propName}
 // buildCustomField(
 // {
-//   id: 'domicileChangeInformation',
+//   id: 'ResidenceChangeInformation',
 //   title: '',
-//   component: 'DomicileChangeInformation',
+//   component: 'ResidenceChangeInformation',
 // },
 // {
 //   someProp: 'Hello there string'
