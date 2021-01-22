@@ -77,6 +77,7 @@ import Link from 'next/link'
 import LatestOrganizationNewsSection from '@island.is/web/components/LatestOrganizationNewsSection/LatestOrganizationNewsSection'
 import { GlobalContext } from '../../context/GlobalContext/GlobalContext'
 import OrganizationHeader from '@island.is/web/components/Organization/Header/OrganizationHeader'
+import {CustomNextError} from "@island.is/web/units/errors";
 
 interface HomeProps {
   organizationPage: Query['getOrganizationPage']
@@ -251,6 +252,10 @@ Suborganization.getInitialProps = async ({ apolloClient, locale, query }) => {
       })
       .then((variables) => JSON.parse(variables.data.getNamespace.fields)),
   ])
+
+  if (!getOrganizationSubpage) {
+    throw new CustomNextError(404, 'Organization subpage not found')
+  }
 
   return {
     organizationPage: getOrganizationPage,

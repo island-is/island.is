@@ -27,6 +27,7 @@ import { GlobalContext } from '@island.is/web/context'
 import OrganizationHeader from '@island.is/web/components/Organization/Header/OrganizationHeader'
 import OrganizationSlice from '@island.is/web/components/Organization/Slice/OrganizationSlice'
 import NextLink from "next/link";
+import {CustomNextError} from "@island.is/web/units/errors";
 
 interface HomeProps {
   organizationPage: Query['getOrganizationPage']
@@ -192,6 +193,10 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       },
     }),
   ])
+
+  if (!getOrganizationPage) {
+    throw new CustomNextError(404, 'Organization not found')
+  }
 
   return {
     organizationPage: getOrganizationPage,
