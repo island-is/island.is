@@ -108,7 +108,7 @@
   - [Core](libs/application/core/README.md)
   - [Data Providers](libs/application/data-providers/README.md)
   - [Template Loader](libs/application/template-loader/README.md)
-    - [Children Domicile Transfer Template](libs/application/templates/children-residence-change/README.md)
+    - [Children Residence Change Template](libs/application/templates/children-residence-change/README.md)
     - [Document Provider Onboarding](libs/application/templates/document-provider-onboarding/README.md)
     - [Reference Template](libs/application/templates/reference-template/README.md)
   - [UI Fields](libs/application/ui-fields/README.md)
