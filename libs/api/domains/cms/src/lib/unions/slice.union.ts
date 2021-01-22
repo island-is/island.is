@@ -21,7 +21,7 @@ import {
   ITeamList,
   IContactUs,
   ILocation,
-  ITellUsAStory,
+  ITellUsAStory, IDistricts, IFeaturedArticles,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -60,6 +60,13 @@ import { mapTeamList, TeamList } from '../models/teamList.model'
 import { ContactUs, mapContactUs } from '../models/contactUs.model'
 import { Location, mapLocation } from '../models/location.model'
 import { mapTellUsAStory, TellUsAStory } from '../models/tellUsAStory.model'
+import {Districts, mapDistricts} from "../models/districts.model";
+import {
+  FeaturedArticle,
+  FeaturedArticles,
+  mapFeaturedArticle,
+  mapFeaturedArticles
+} from "../models/featuredArticles.model";
 
 type SliceTypes =
   | ITimeline
@@ -81,6 +88,8 @@ type SliceTypes =
   | IContactUs
   | ILocation
   | ITellUsAStory
+  | IDistricts
+  | IFeaturedArticles
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
@@ -107,6 +116,8 @@ export const SliceUnion = createUnionType({
     Html,
     Image,
     Asset,
+    Districts,
+    FeaturedArticles
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -152,6 +163,10 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapLocation(slice as ILocation)
     case 'tellUsAStory':
       return mapTellUsAStory(slice as ITellUsAStory)
+    case 'districts':
+      return mapDistricts(slice as IDistricts)
+    case 'featuredArticles':
+      return mapFeaturedArticles(slice as IFeaturedArticles)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }
