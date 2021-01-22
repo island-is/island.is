@@ -32,12 +32,13 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
   useEffect(() => {
     if (allowAll) {
       props.restrictions.map((r) => remove(r))
-    } else {
+    } else if (props.restrictions.length === 0) {
       add('sim')
     }
   }, [allowAll])
 
   const add = async (name: string) => {
+    console.log('add')
     const createObj = {
       name: name,
       clientId: props.clientId,
@@ -52,6 +53,7 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
   }
 
   const remove = async (name: string) => {
+    console.log('remove')
     const response = await ClientService.removeIdpRestriction(
       props.clientId,
       name,
@@ -145,13 +147,6 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
                 )
               })}
             </div>
-
-            {/* Do we need this? */}
-            {/* <NoActiveConnections
-              title="All external IdPs are enabled"
-              show={!props.restrictions || props.restrictions.length === 0}
-              helpText="Check the appropriate external IdPs for the client. If nothing is selected then all methods are allowed"
-            ></NoActiveConnections> */}
 
             <div className="client-idp-restriction__buttons__container">
               <div className="client-idp-restriction__button__container">
