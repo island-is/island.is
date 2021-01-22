@@ -298,7 +298,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     <label className="client__label">Display URL</label>
                     <input
                       name="client.clientUri"
-                      ref={register}
+                      ref={register({ required: true })}
                       type="text"
                       defaultValue={client.clientUri ?? ''}
                       className="client__input"
@@ -306,6 +306,12 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       title="Application URL that will be seen on consent screens"
                     />
                     <HelpBox helpText="URI to further information about client (used on consent screen)" />
+                    <ErrorMessage
+                      as="span"
+                      errors={errors}
+                      name="client.clientUri"
+                      message="Display url is required"
+                    />
                   </div>
                   <div className="client__container__field">
                     <label className="client__label">Description</label>
