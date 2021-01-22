@@ -111,10 +111,10 @@ const OrganizationWrapper: React.FC<WrapperProps> = ({
               </Box>
             }
           >
-            {mainContent}
+            {mainContent ?? children}
           </SidebarWrapper>
         </Box>
-        {children}
+        {mainContent ? children : ''}
       </Main>
     </>
   )

@@ -81,15 +81,13 @@ const SubPage: Screen<SubPageProps> = ({
             active: false,
           },
         }}
-        mainContent={
-          <Box className={styles.intro} paddingTop={[4, 4, 0]}>
-            <Text variant="h2" as="h2">
-              {subpage.title}
-            </Text>
-            <Markdown>{subpage.description}</Markdown>
-          </Box>
-        }
       >
+        <Box className={styles.intro} paddingTop={[4, 4, 0]}>
+          <Text variant="h2" as="h2">
+            {subpage.title}
+          </Text>
+          <Markdown>{subpage.description}</Markdown>
+        </Box>
         {subpage.slices.map((slice) => (
           <OrganizationSlice
             key={slice.id}
