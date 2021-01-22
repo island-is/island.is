@@ -7,14 +7,18 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import React, { useCallback, useEffect, useState } from 'react'
-import CourtDocument from '../../../shared-components/CourtDocument/CourtDocument'
-import { FormFooter } from '../../../shared-components/FormFooter'
-import { isNextDisabled } from '../../../utils/stepHelper'
-import * as Constants from '../../../utils/constants'
+import {
+  FormFooter,
+  CourtDocument,
+  PageLayout,
+  TimeInputField,
+  CaseNumbers,
+} from '@island.is/judicial-system-web/src/shared-components'
+import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useParams } from 'react-router-dom'
 import { Case, UpdateCase } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
@@ -26,7 +30,6 @@ import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
 import {
   validateAndSendTimeToServer,
   validateAndSendToServer,
@@ -129,7 +132,7 @@ export const CourtRecord: React.FC = () => {
           </Box>
           <Box component="section" marginBottom={7}>
             <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
-            <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
+            <CaseNumbers workingCase={workingCase} />
           </Box>
           <Box component="section" marginBottom={8}>
             <Box marginBottom={3}>

@@ -23,6 +23,7 @@ import {
   ServiceList,
   SubpageDetailsContent,
   SubpageMainContent,
+  RichText,
 } from '@island.is/web/components'
 
 import getConfig from 'next/config'
@@ -46,7 +47,6 @@ import {
   GET_SUBPAGE_HEADER_QUERY,
 } from '../queries'
 import { useNamespace } from '@island.is/web/hooks'
-import RichText from '@island.is/web/components/RichText/RichText'
 import { useI18n } from '@island.is/web/i18n'
 import { useQuery } from '@apollo/client'
 import {
