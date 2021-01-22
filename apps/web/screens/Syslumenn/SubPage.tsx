@@ -19,6 +19,8 @@ import * as styles from './Home.treat'
 import { QueryGetOrganizationPageArgs } from '@island.is/web/graphql/schema'
 import OrganizationWrapper from '@island.is/web/components/Organization/Wrapper/OrganizationWrapper'
 import { CustomNextError } from '@island.is/web/units/errors'
+import OrganizationSlice from '@island.is/web/components/Organization/Slice/OrganizationSlice'
+import Markdown from 'markdown-to-jsx'
 
 interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
@@ -80,10 +82,19 @@ const SubPage: Screen<SubPageProps> = ({
             <Text variant="h2" as="h2">
               {subpage.title}
             </Text>
-            {subpage.description}
+            <Markdown>{subpage.description}</Markdown>
           </Box>
         }
-      />
+      >
+        {subpage.slices.map((slice) => (
+          <OrganizationSlice
+            key={slice.id}
+            slice={slice}
+            organization={organizationPage.organization}
+            namespace={namespace}
+          />
+        ))}
+      </OrganizationWrapper>
     </>
   )
 }
