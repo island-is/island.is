@@ -20,7 +20,10 @@ interface CourtDocumentProps {
   tagVariant: TagVariant
   caseId: string
   selectedCourtDocuments: Array<string>
-  onUpdateCase: (id: string, updatedCase: any) => void
+  onUpdateCase: (
+    id: string,
+    updatedCase: { courtDocuments: Array<string> },
+  ) => void
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   workingCase: Case
 }
@@ -52,7 +55,9 @@ const CourtDocument: React.FC<CourtDocumentProps> = ({
       setCourtDocuments(updatedCourtDocuments)
       setNextDocumentToUpload('')
 
-      additionalCourtDocumentRef.current?.focus()
+      if (additionalCourtDocumentRef.current) {
+        additionalCourtDocumentRef.current.focus()
+      }
     }
   }
 
