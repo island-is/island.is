@@ -4,16 +4,15 @@ import {
   FeaturedArticles,
   HeadingSlice as HeadingSliceSchema,
   Organization,
+  Slice,
 } from '@island.is/web/graphql/schema'
 import { Namespace } from '@island.is/api/schema'
 import DistrictsSlice from '@island.is/web/components/Organization/Slice/Districts/DistrictsSlice'
 import HeadingSlice from '@island.is/web/components/Organization/Slice/Heading/HeadingSlice'
 import FeaturedArticlesSlice from '@island.is/web/components/Organization/Slice/FeaturedArticles/FeaturedArticlesSlice'
 
-type AvailableSlices = HeadingSliceSchema | Districts | FeaturedArticles
-
 interface OrganizationSliceProps {
-  slice: AvailableSlices
+  slice: Slice
   organization: Organization
   namespace?: Namespace
 }

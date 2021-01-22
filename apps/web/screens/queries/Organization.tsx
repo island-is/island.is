@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { slices } from './fragments'
 
 export const GET_ORGANIZATIONS_QUERY = gql`
   query GetOrganizations($input: GetOrganizationsInput!) {
@@ -111,6 +112,9 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       menuItem {
         url
       }
+      slices {
+        ...AllSlices
+      }
       sidebarCards {
         intro
         name
@@ -127,6 +131,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       }
     }
   }
+  ${slices}
 `
 
 export const GET_ORGANIZATION_TAGS_QUERY = gql`
