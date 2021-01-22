@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
 import { MemoryRouter, Route } from 'react-router-dom'
-import * as Constants from '../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import CourtRecord from './CourtRecord'
 import userEvent from '@testing-library/user-event'
 import {
@@ -13,7 +13,7 @@ import { MockedProvider } from '@apollo/client/testing'
 import { UpdateCase } from '@island.is/judicial-system/types'
 import formatISO from 'date-fns/formatISO'
 import { parseTime } from '@island.is/judicial-system-web/src/utils/formatters'
-import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 
 describe('/domari-krafa/thingbok', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {

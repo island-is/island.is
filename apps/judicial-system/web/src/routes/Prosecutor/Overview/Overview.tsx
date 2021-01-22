@@ -11,20 +11,23 @@ import {
   CaseState,
 } from '@island.is/judicial-system/types'
 
-import Modal from '../../../shared-components/Modal/Modal'
 import {
   formatDate,
   capitalize,
   laws,
 } from '@island.is/judicial-system/formatters'
-import { parseTransition } from '../../../utils/formatters'
-import { FormFooter } from '../../../shared-components/FormFooter'
-import * as Constants from '../../../utils/constants'
+import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
+import {
+  FormFooter,
+  Modal,
+  InfoCard,
+  PageLayout,
+} from '@island.is/judicial-system-web/src/shared-components'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   TIME_FORMAT,
   formatRequestedCustodyRestrictions,
 } from '@island.is/judicial-system/formatters'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import * as styles from './Overview.treat'
 import { useMutation, useQuery } from '@apollo/client'
 import {
@@ -38,7 +41,6 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import InfoCard from '../../../shared-components/InfoCard/InfoCard'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)

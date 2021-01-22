@@ -1,5 +1,8 @@
 import React from 'react'
-import { AppealDecisionRole, RequiredField } from '../types'
+import {
+  AppealDecisionRole,
+  RequiredField,
+} from '@island.is/judicial-system-web/src/types'
 import { TagVariant, Text } from '@island.is/island-ui/core'
 import {
   capitalize,

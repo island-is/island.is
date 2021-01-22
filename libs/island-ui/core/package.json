@@ -1,4 +1,6 @@
 {
   "name": "@island.is/island-ui-core",
-  "sideEffects": false
+  "sideEffects": [
+    "src/index.ts"
+  ]
 }
