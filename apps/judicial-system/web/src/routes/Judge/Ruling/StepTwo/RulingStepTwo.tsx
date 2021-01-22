@@ -667,7 +667,7 @@ export const RulingStepTwo: React.FC = () => {
               workingCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) && (
               <Text variant="h4" fontWeight="light">
-                {`Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
+                {`Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera
                 atriði er lúta að framkvæmd ${
                   workingCase.decision === CaseDecision.ACCEPTING
                     ? 'gæsluvarðhaldsins'

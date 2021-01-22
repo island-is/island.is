@@ -17,7 +17,6 @@ import {
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
-  capitalize,
   formatAccusedByGender,
   NounCases,
   TIME_FORMAT,
@@ -285,24 +284,19 @@ export const CourtRecord: React.FC = () => {
           <Box component="section" marginBottom={8}>
             <Box marginBottom={1}>
               <Text as="h3" variant="h3">
-                Réttindi kærða
+                {`Réttindi ${formatAccusedByGender(
+                  workingCase.accusedGender || CaseGender.OTHER,
+                  NounCases.DATIVE,
+                )}`}
               </Text>
             </Box>
             <Box marginBottom={2}>
               <Text>
-                {`${capitalize(
-                  formatAccusedByGender(
-                    workingCase.accusedGender || CaseGender.OTHER,
-                    NounCases.DATIVE,
-                  ),
-                )} er bent á að honum sé óskylt að svara spurningum er varða
-                brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga
-                nr. 88/2008. ${capitalize(
-                  formatAccusedByGender(
-                    workingCase.accusedGender || CaseGender.OTHER,
-                  ),
-                )} er enn fremur áminntur um sannsögli kjósi
-                hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga`}
+                Sakborningi er bent á að honum sé óskylt að svara spurningum er
+                varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr.
+                laga nr. 88/2008. Sakborningur er enn fremur áminntur um
+                sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114.
+                gr. sömu laga
               </Text>
             </Box>
             <Input
