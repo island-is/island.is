@@ -5161,6 +5161,15 @@
       "schematics": {},
       "architect": {
         "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run web:build-next:production",
+              "yarn nx run web:build-server:production"
+            ]
+          }
+        },
+        "build-next": {
           "builder": "@nrwl/next:build",
           "options": {
             "root": "apps/web",
@@ -5177,16 +5186,32 @@
             }
           }
         },
+        "build-server": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/web",
+            "main": "apps/web/server.ts",
+            "tsConfig": "apps/web/tsconfig.json",
+            "maxWorkers": 2
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
         "serve": {
           "builder": "@nrwl/next:server",
           "options": {
-            "buildTarget": "web:build",
+            "buildTarget": "web:build-next",
             "dev": true,
             "proxyConfig": "apps/web/proxy.config.json"
           },
           "configurations": {
             "production": {
-              "buildTarget": "web:build:production",
+              "buildTarget": "web:build-next:production",
               "dev": false
             }
           }
