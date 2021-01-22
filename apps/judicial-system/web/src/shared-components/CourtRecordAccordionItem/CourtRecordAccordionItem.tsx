@@ -39,12 +39,24 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         <Text>{workingCase.courtAttendees}</Text>
       </AccordionListItem>
       <AccordionListItem title="Dómskjöl">
+        <Text>Krafa lögreglu þingmerkt nr. 1.</Text>
         <Text>
-          {`Rannsóknargögn málsins liggja frammi. Krafa lögreglu þingmerkt nr. 1. ${workingCase.courtDocuments?.map(
-            (courtDocument, index) => {
-              return `${capitalize(courtDocument)} þingmerkt nr. ${index + 2}`
-            },
-          )}.`.replace(/,/g, '. ')}
+          Rannsóknargögn málsins liggja frammi.
+          <br />
+          <br />
+          {workingCase.courtDocuments?.map((courtDocument, index) => {
+            return (
+              <>
+                {`${capitalize(courtDocument)} þingmerkt nr. ${index + 2}.`}
+                {index <= (workingCase.courtDocuments || []).length && (
+                  <>
+                    <br />
+                    <br />
+                  </>
+                )}
+              </>
+            )
+          })}
         </Text>
       </AccordionListItem>
       <AccordionListItem title="Réttindi kærða">
