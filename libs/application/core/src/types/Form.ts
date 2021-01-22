@@ -38,6 +38,7 @@ export interface Form {
   logo?: React.FC
   type: FormItemTypes.FORM
   mode?: FormModes
+  renderLastScreenButton?: boolean
   icon?: string
   children: FormChildren[]
 }
@@ -103,6 +104,7 @@ export interface FieldBaseProps {
   application: Application
   showFieldName?: boolean
   goToScreen?: (id: string) => void
+  refetch?: () => void
 }
 
 export type RepeaterProps = {

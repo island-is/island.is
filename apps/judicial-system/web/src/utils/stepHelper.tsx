@@ -1,5 +1,8 @@
 import React from 'react'
-import { AppealDecisionRole, RequiredField } from '../types'
+import {
+  AppealDecisionRole,
+  RequiredField,
+} from '@island.is/judicial-system-web/src/types'
 import { TagVariant, Text } from '@island.is/island-ui/core'
 import {
   capitalize,
@@ -20,21 +23,28 @@ import { validate } from './validate'
 export const getAppealDecisionText = (
   role: AppealDecisionRole,
   appealDecition?: CaseAppealDecision,
+  accusedGender?: CaseGender,
 ) => {
   switch (appealDecition) {
     case CaseAppealDecision.APPEAL: {
       return `${
-        role === AppealDecisionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
+        role === AppealDecisionRole.ACCUSED
+          ? capitalize(formatAccusedByGender(accusedGender || CaseGender.OTHER))
+          : 'Sækjandi'
       } kærir úrskurðinn`
     }
     case CaseAppealDecision.ACCEPT: {
       return `${
-        role === AppealDecisionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
+        role === AppealDecisionRole.ACCUSED
+          ? capitalize(formatAccusedByGender(accusedGender || CaseGender.OTHER))
+          : 'Sækjandi'
       } unir úrskurðinum`
     }
     case CaseAppealDecision.POSTPONE: {
       return `${
-        role === AppealDecisionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
+        role === AppealDecisionRole.ACCUSED
+          ? capitalize(formatAccusedByGender(accusedGender || CaseGender.OTHER))
+          : 'Sækjandi'
       } tekur sér lögboðinn frest`
     }
     default: {

@@ -16,7 +16,7 @@ import {
   isDirty,
   isNextDisabled,
 } from './stepHelper'
-import { RequiredField } from '../types'
+import { RequiredField } from '@island.is/judicial-system-web/src/types'
 import {
   CaseTransition,
   CaseCustodyRestrictions,

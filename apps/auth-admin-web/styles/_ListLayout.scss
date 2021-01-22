@@ -24,6 +24,12 @@
 
       &__search {
         padding-top: 20px;
+        position: relative;
+        label {
+          position: absolute;
+          top: 0;
+          font-size: 0.8rem;
+        }
         input {
           height: 25px;
           border-radius: $border-radius;
