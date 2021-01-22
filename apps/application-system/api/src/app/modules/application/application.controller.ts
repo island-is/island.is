@@ -505,31 +505,15 @@ export class ApplicationController {
   }
 
   @Get('residenceChangePdf')
-  @Header('Content-Type', 'application/pdf')
-  @ApiOkResponse({
-    content: { 'application/pdf': {} },
-    description: 'Gets children residence change pdf',
-  })
   async getResidenceChangePdf(
     @Body() input: {
       childrenAppliedFor: [{name: string, ssn: string}],
       parentA: {name: string, ssn: string, phoneNumber: string, email:string, homeAddress: string, postalCode: string, city: string},
       parentB: {name: string, ssn: string, phoneNumber: string, email:string, homeAddress: string, postalCode: string, city: string},
       expiry: string
-    },
-    @Res() res: any,
+    }
   ): Promise<string> {
-    const { childrenAppliedFor, parentA, parentB, expiry }  = input
-    const pdf = await this.fileService.createResidenceChangePdf(childrenAppliedFor, parentA, parentB, expiry)
-
-    const stream = new ReadableStreamBuffer({
-      frequency: 10,
-      chunkSize: 2048,
-    })
-    stream.put(pdf, 'binary')
-
-    res.header('Content-length', pdf.length.toString())
-
-    return stream.pipe(res)
+    const { childrenAppliedFor, parentA, parentB, expiry } = input
+    return await this.fileService.createResidenceChangePdf(childrenAppliedFor, parentA, parentB, expiry)
   }
 }
