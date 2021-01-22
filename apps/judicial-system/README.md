@@ -6,8 +6,8 @@ TODO
 
 ## URLs
 
-- Dev: N/A
-- Staging: N/A
+- [Dev](https://judicial-system.dev01.devland.is)
+- [Staging](https://judicial-system.staging01.devland.is)
 - [Production](https://rettarvorslugatt.island.is)
 
 ## API
