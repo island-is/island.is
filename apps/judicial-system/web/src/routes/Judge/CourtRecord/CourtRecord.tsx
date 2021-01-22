@@ -84,30 +84,29 @@ export const CourtRecord: React.FC = () => {
     document.title = 'Þingbók - Réttarvörslugátt'
   }, [])
 
-  const defaultCourtAttendees = (wc: Case): string => {
-    let attendees = ''
-
-    if (wc.prosecutor && wc.accusedName) {
-      attendees += `${wc.prosecutor?.name} ${wc.prosecutor?.title}\n${
-        wc.accusedName
-      } ${formatAccusedByGender(
-        workingCase?.accusedGender || CaseGender.OTHER,
-      )}`
-    }
-
-    if (wc.defenderName) {
-      attendees += `\n${
-        wc.defenderName
-      } skipaður verjandi ${formatAccusedByGender(
-        workingCase?.accusedGender || CaseGender.OTHER,
-        NounCases.DATIVE,
-      )}`
-    }
-
-    return attendees
-  }
-
   useEffect(() => {
+    const defaultCourtAttendees = (wc: Case): string => {
+      let attendees = ''
+
+      if (wc.prosecutor && wc.accusedName) {
+        attendees += `${wc.prosecutor?.name} ${wc.prosecutor?.title}\n${
+          wc.accusedName
+        } ${formatAccusedByGender(
+          workingCase?.accusedGender || CaseGender.OTHER,
+        )}`
+      }
+
+      if (wc.defenderName) {
+        attendees += `\n${
+          wc.defenderName
+        } skipaður verjandi ${formatAccusedByGender(
+          workingCase?.accusedGender || CaseGender.OTHER,
+          NounCases.DATIVE,
+        )}`
+      }
+
+      return attendees
+    }
     if (!workingCase && data?.case) {
       let theCase = data.case
 
