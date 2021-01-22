@@ -5,7 +5,7 @@ import { Link, mapLink } from './link.model'
 import { mapOrganizationPage, OrganizationPage } from './organizationPage.model'
 import { Image, mapImage } from './image.model'
 import { mapStaffCard, StaffCard } from './staffCard.model'
-import {safelyMapSliceUnion, SliceUnion} from "../unions/slice.union";
+import { safelyMapSliceUnion, SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
 export class OrganizationSubpage {

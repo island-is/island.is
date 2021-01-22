@@ -21,7 +21,9 @@ import {
   ITeamList,
   IContactUs,
   ILocation,
-  ITellUsAStory, IDistricts, IFeaturedArticles,
+  ITellUsAStory,
+  IDistricts,
+  IFeaturedArticles,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -60,13 +62,13 @@ import { mapTeamList, TeamList } from '../models/teamList.model'
 import { ContactUs, mapContactUs } from '../models/contactUs.model'
 import { Location, mapLocation } from '../models/location.model'
 import { mapTellUsAStory, TellUsAStory } from '../models/tellUsAStory.model'
-import {Districts, mapDistricts} from "../models/districts.model";
+import { Districts, mapDistricts } from '../models/districts.model'
 import {
   FeaturedArticle,
   FeaturedArticles,
   mapFeaturedArticle,
-  mapFeaturedArticles
-} from "../models/featuredArticles.model";
+  mapFeaturedArticles,
+} from '../models/featuredArticles.model'
 
 type SliceTypes =
   | ITimeline
@@ -117,7 +119,7 @@ export const SliceUnion = createUnionType({
     Image,
     Asset,
     Districts,
-    FeaturedArticles
+    FeaturedArticles,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })

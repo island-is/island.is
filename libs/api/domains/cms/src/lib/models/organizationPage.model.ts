@@ -4,7 +4,7 @@ import { IOrganizationPage } from '../generated/contentfulTypes'
 import { mapOrganization, Organization } from './organization.model'
 import { LinkGroup, mapLinkGroup } from './linkGroup.model'
 import { Image, mapImage } from './image.model'
-import {safelyMapSliceUnion, SliceUnion} from "../unions/slice.union";
+import { safelyMapSliceUnion, SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
 export class OrganizationPage {
