@@ -27,6 +27,14 @@ export const GET_ADGERDIR_PAGE_QUERY = gql`
       title
       description
       longDescription
+      processEntry {
+        id
+        type
+        processTitle
+        processLink
+        openLinkInModal
+        buttonText
+      }
       content {
         ... on Html {
           __typename
