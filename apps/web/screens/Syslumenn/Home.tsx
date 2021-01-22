@@ -54,6 +54,7 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
         pageTitle={organizationPage.title}
         pageDescription={organizationPage.description}
         organization={organizationPage.organization}
+        pageFeaturedImage={organizationPage.featuredImage}
         breadcrumbItems={[
           {
             title: 'Ísland.is',
