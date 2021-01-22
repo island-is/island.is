@@ -1,0 +1,6 @@
+{
+  "id": "translation-jeremy-dev",
+  "name": "translation-jeremy-dev",
+  "srcdoc": "./build/index.html",
+  "fieldTypes": ["Object"]
+}

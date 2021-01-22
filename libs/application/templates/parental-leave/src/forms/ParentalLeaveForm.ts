@@ -720,7 +720,6 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'submit',
               placement: 'footer',
               title: mm.confirmation.title,
-
               actions: [
                 {
                   event: 'SUBMIT',

@@ -1,0 +1,12 @@
+{
+  "application.system.dev.2": {
+    "application.system:applications": {
+      "defaultMessage": "Þínar umsóknir",
+      "description": "this is a useless description"
+    },
+    "application.system:thanks": {
+      "defaultMessage": "Takk",
+      "description": "Thanks"
+    }
+  }
+}

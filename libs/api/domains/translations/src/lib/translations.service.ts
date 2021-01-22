@@ -3,7 +3,17 @@ import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { ContentfulRepository, localeMap } from '@island.is/api/domains/cms'
 import isEmpty from 'lodash/isEmpty'
-import mergeWith from 'lodash/mergeWith'
+
+interface DictArray {
+  id: string
+  defaultMessage: string
+  'is-IS': string
+  en: string
+}
+
+export interface TranslationsDict {
+  [key: string]: string
+}
 
 // Declare fallbacks for locales here since they are not set in Contentful for various reasons,
 // this can be replaced by fetching contentful locales if fallback is set in the future, same format.
@@ -12,14 +22,10 @@ const locales = [
   { code: 'en', fallbackCode: 'is-IS' },
 ]
 
-export interface TranslationsDict {
-  [key: string]: string
-}
-
 const errorHandler = (name: string) => {
   return (error: Error) => {
     logger.error(error)
-    throw new ApolloError('Failed to resolve request in ' + name)
+    throw new ApolloError(`Failed to resolve request in ${name}`)
   }
 }
 
@@ -35,21 +41,24 @@ export class TranslationsService {
 
     const result = await this.contentfulRepository
       .getLocalizedEntries<any>('*', {
-        ['content_type']: 'namespace',
-        select: 'fields.strings,fields.fallback',
+        ['content_type']: 'namespaceJeremyDev', // TODO: replace after review
+        select: 'fields.strings',
         'fields.namespace[in]': namespaces.join(','),
       })
       .catch(errorHandler('getNamespace'))
 
-    const withFallbacks = result?.items?.map(({ fields }) =>
-      mergeWith(
-        {},
-        locale.fallbackCode ? fields.strings[locale.fallbackCode] : {},
-        fields.strings[locale.code],
-        (o, s) => (isEmpty(s) ? o : s),
-      ),
+    return (
+      result?.items?.map(({ fields }) =>
+        fields.strings['is-IS'].reduce(
+          (acc: Record<string, string>, cur: DictArray) => ({
+            ...acc,
+            [cur.id]: isEmpty(cur[locale.code])
+              ? cur?.[locale.fallbackCode]
+              : cur?.[locale.code],
+          }),
+          {},
+        ),
+      )?.[0] ?? null
     )
-
-    return withFallbacks.reduce((obj, cur) => Object.assign(obj, cur), {})
   }
 }

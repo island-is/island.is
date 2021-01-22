@@ -36,6 +36,8 @@
 /libs/application/templates/meta-application/             @island-is/aranja
 /libs/application/templates/parental-leave/               @island-is/aranja
 /libs/application/templates/reference-template/           @island-is/aranja
+/libs/contentful-translation-extension                    @island-is/aranja
+/libs/localization                                        @island-is/aranja
 
 /libs/application/templates/children-domicile-transfer/   @island-is/kolibri-modern-family
 
