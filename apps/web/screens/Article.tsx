@@ -24,6 +24,7 @@ import {
 import {
   HeadWithSocialSharing,
   InstitutionPanel,
+  Sticky,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
@@ -320,8 +321,15 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         imageHeight={article.featuredImage?.height.toString()}
       />
       <SidebarLayout
+        isSticky={false}
         sidebarContent={
-          <ArticleSidebar article={article} n={n} activeSlug={query.subSlug} />
+          <Sticky>
+            <ArticleSidebar
+              article={article}
+              n={n}
+              activeSlug={query.subSlug}
+            />
+          </Sticky>
         }
       >
         <Box

@@ -11,7 +11,7 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import {
-  ApiService,
+  Service,
   GetOpenApiInput,
   GetNamespaceQuery,
 } from '@island.is/web/graphql/schema'
@@ -23,7 +23,7 @@ import { OpenApiDocumentation } from '../OpenApiDocumentation'
 import * as styles from './OpenApiView.treat'
 
 export interface OpenApiViewProps {
-  service: ApiService
+  service: Service
   strings: GetNamespaceQuery['getNamespace']
 }
 
@@ -36,16 +36,14 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
   const n = useNamespace(strings)
 
   const options: Array<SelectOption> = service
-    ? service.xroadIdentifier.map((x) => ({
-        label: x.serviceCode.split('-').pop(),
-        value: {
-          instance: x.instance,
-          memberClass: x.memberClass,
-          memberCode: x.memberCode,
-          serviceCode: x.serviceCode,
-          subsystemCode: x.subsystemCode,
-        },
-      }))
+    ? service.versions.map((x) => {
+        // TODO: Change this when we add environmental aware services
+        const { __typename, ...identifier } = x.details[0].xroadIdentifier
+        return {
+          label: x.versionId.split('-').pop(),
+          value: identifier,
+        }
+      })
     : [
         {
           label: n('noVersion'),
