@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { Module, DynamicModule } from '@nestjs/common'
 import fetch from 'isomorphic-fetch'
 import {
   Configuration,
@@ -8,64 +8,35 @@ import {
   UnionApi,
 } from '../../gen/fetch'
 
-// TODO
-const XROAD_BASE_PATH = process.env.XROAD_BASE_PATH ?? ''
-const XROAD_CLIENT = process.env.XROAD_CLIENT_ID ?? ''
-const VMST_API_KEY = process.env.VMST_API_KEY ?? ''
-
-const headers = {
-  'api-key': VMST_API_KEY,
-  'X-Road-Client': XROAD_CLIENT,
+export interface VMSTClientModuleConfig {
+  apiKey: string
+  xRoadBasePath: string
+  xRoadClient: string
 }
 
-@Module({
-  controllers: [],
-  providers: [
-    {
-      provide: ParentalLeaveApi,
-      useFactory: () =>
-        new ParentalLeaveApi(
-          new Configuration({
-            fetchApi: fetch,
-            basePath: XROAD_BASE_PATH,
-            headers,
-          }),
-        ),
-    },
-    {
-      provide: PensionApi,
-      useFactory: () =>
-        new PensionApi(
-          new Configuration({
-            fetchApi: fetch,
-            basePath: XROAD_BASE_PATH,
-            headers,
-          }),
-        ),
-    },
-    {
-      provide: PregnancyApi,
-      useFactory: () =>
-        new PregnancyApi(
-          new Configuration({
-            fetchApi: fetch,
-            basePath: XROAD_BASE_PATH,
-            headers,
-          }),
-        ),
-    },
-    {
-      provide: UnionApi,
-      useFactory: () =>
-        new UnionApi(
-          new Configuration({
-            fetchApi: fetch,
-            basePath: XROAD_BASE_PATH,
-            headers,
-          }),
-        ),
-    },
-  ],
-  exports: [ParentalLeaveApi, PensionApi, PregnancyApi, UnionApi],
-})
-export class VMSTClientModule {}
+@Module({})
+export class VMSTClientModule {
+  static register(config: VMSTClientModuleConfig): DynamicModule {
+    const headers = {
+      'api-key': config.apiKey,
+      'X-Road-Client': config.xRoadClient,
+    }
+
+    const providerConfiguration = new Configuration({
+      fetchApi: fetch,
+      basePath: config.xRoadBasePath,
+      headers,
+    })
+
+    const exportedApis = [ParentalLeaveApi, PensionApi, PregnancyApi, UnionApi]
+
+    return {
+      module: VMSTClientModule,
+      providers: exportedApis.map((Api) => ({
+        provide: Api,
+        useFactory: () => new Api(providerConfiguration),
+      })),
+      exports: exportedApis,
+    }
+  }
+}
