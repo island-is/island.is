@@ -88,6 +88,12 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
           }
         }
       }
+      featuredImage {
+        url
+        title
+        width
+        height
+      }
     }
   }
 `
@@ -98,8 +104,26 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       title
       slug
       description
+      links {
+        text
+        url
+      }
       menuItem {
         url
+      }
+      sidebarCards {
+        intro
+        name
+        email
+        logo {
+          url
+        }
+      }
+      featuredImage {
+        url
+        title
+        width
+        height
       }
     }
   }
