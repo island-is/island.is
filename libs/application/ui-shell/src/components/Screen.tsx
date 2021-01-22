@@ -56,6 +56,7 @@ type ScreenProps = {
   numberOfScreens: number
   prevScreen(): void
   screen: FormScreen
+  renderLastScreenButton?: boolean
   goToScreen: (id: string) => void
 }
 
@@ -84,6 +85,7 @@ const Screen: FC<ScreenProps> = ({
   mode,
   numberOfScreens,
   prevScreen,
+  renderLastScreenButton,
   screen,
 }) => {
   const { answers: formValue, externalData, id: applicationId } = application
@@ -276,6 +278,7 @@ const Screen: FC<ScreenProps> = ({
         <ToastContainer hideProgressBar closeButton useKeyframeStyles={false} />
         <ScreenFooter
           application={application}
+          renderLastScreenButton={renderLastScreenButton}
           activeScreenIndex={activeScreenIndex}
           numberOfScreens={numberOfScreens}
           mode={mode}

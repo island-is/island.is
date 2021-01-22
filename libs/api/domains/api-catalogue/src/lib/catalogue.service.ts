@@ -1,11 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
-import { ApiCatalogue, ApiService } from './models/catalogue.model'
+import { Injectable } from '@nestjs/common'
+import { ApiCatalogue } from './models/catalogue.model'
 import { GetApiCatalogueInput } from './dto/catalogue.input'
 import { ElasticService } from '@island.is/api-catalogue/elastic'
 import { RestMetadataService } from '@island.is/api-catalogue/services'
 import { GetOpenApiInput } from './dto/openapi.input'
 import { OpenApi } from './models/openapi.model'
 import { logger } from '@island.is/logging'
+import { Service } from './models/service.model'
 
 @Injectable()
 export class ApiCatalogueService {
@@ -57,7 +58,7 @@ export class ApiCatalogueService {
         }
       }
 
-      body?.hits?.hits.forEach((x: { _source: ApiService }) =>
+      body?.hits?.hits.forEach((x: { _source: Service }) =>
         res.services.push(x._source),
       )
 
@@ -68,7 +69,7 @@ export class ApiCatalogueService {
     }
   }
 
-  async getApiServiceById(id: string): Promise<ApiService | null> {
+  async getApiServiceById(id: string): Promise<Service | null> {
     try {
       const { body } = await this.elastic.fetchById(id)
       if (body?.hits?.total.value > 0) {
