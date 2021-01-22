@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useContext } from 'react'
+import React  from 'react'
 import { Box, NavigationItem } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -20,7 +20,6 @@ import {
   QueryGetOrganizationNewsArgs,
 } from '@island.is/web/graphql/schema'
 import LatestOrganizationNewsSection from '@island.is/web/components/LatestOrganizationNewsSection/LatestOrganizationNewsSection'
-import { GlobalContext } from '@island.is/web/context'
 import OrganizationWrapper from '@island.is/web/components/Organization/Wrapper/OrganizationWrapper'
 import OrganizationSlice from '@island.is/web/components/Organization/Slice/OrganizationSlice'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -32,9 +31,7 @@ interface HomeProps {
 }
 
 const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
-  const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)
-  const gn = useNamespace(globalNamespace)
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
@@ -90,7 +87,7 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
           paddingBottom={[4, 5, 10]}
         >
           <LatestOrganizationNewsSection
-            label={gn('newsAndAnnouncements')}
+            label={n('newsAndAnnouncements')}
             labelId="latestNewsTitle"
             items={news}
             subtitle={organizationPage.title}
@@ -126,12 +123,12 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Vidspyrna',
+            namespace: 'Syslumenn',
             lang: locale,
           },
         },
       })
-      .then((variables) => JSON.parse(variables.data.getNamespace.fields)),
+      .then((variables) => variables.data.getNamespace.fields ? JSON.parse(variables.data.getNamespace.fields) : {}),
     apolloClient.query<Query, QueryGetOrganizationNewsArgs>({
       query: GET_ORGANIZATION_NEWS_QUERY,
       variables: {

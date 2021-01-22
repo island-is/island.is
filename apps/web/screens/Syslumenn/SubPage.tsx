@@ -133,12 +133,12 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Vidspyrna',
+            namespace: 'Syslumenn',
             lang: locale,
           },
         },
       })
-      .then((variables) => JSON.parse(variables.data.getNamespace.fields)),
+      .then((variables) => variables.data.getNamespace.fields ? JSON.parse(variables.data.getNamespace.fields) : {}),
   ])
 
   if (!getOrganizationSubpage) {
