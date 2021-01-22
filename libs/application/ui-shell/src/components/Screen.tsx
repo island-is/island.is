@@ -1,6 +1,7 @@
 import React, {
   FC,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -41,6 +42,7 @@ import { useLocale } from '@island.is/localization'
 import ScreenFooter from './ScreenFooter'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import RefetchContext from '../context/RefetchContext'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -96,6 +98,8 @@ const Screen: FC<ScreenProps> = ({
     resolver,
     context: { dataSchema, formNode: screen },
   })
+
+  const refetch = useContext<() => void>(RefetchContext)
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION, {
@@ -248,6 +252,7 @@ const Screen: FC<ScreenProps> = ({
                 multiField={screen}
                 application={application}
                 goToScreen={goToScreen}
+                refetch={refetch}
               />
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
               <FormExternalDataProvider
@@ -265,6 +270,7 @@ const Screen: FC<ScreenProps> = ({
                 field={screen}
                 application={application}
                 goToScreen={goToScreen}
+                refetch={refetch}
               />
             )}
           </Box>
