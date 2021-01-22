@@ -10,7 +10,7 @@ import {
 
 export interface VMSTClientModuleConfig {
   apiKey: string
-  xRoadBasePath: string
+  xRoadPath: string
   xRoadClient: string
 }
 
@@ -24,7 +24,7 @@ export class VMSTClientModule {
 
     const providerConfiguration = new Configuration({
       fetchApi: fetch,
-      basePath: config.xRoadBasePath,
+      basePath: config.xRoadPath,
       headers,
     })
 

@@ -242,12 +242,13 @@
       "@island.is/shared/mocking": ["libs/shared/mocking/src/index.ts"],
       "@island.is/shared/table": ["libs/shared/table/src/index.ts"],
       "@island.is/shared/types": ["libs/shared/types/src/index.ts"],
-      "@island.is/vmst-client": ["libs/vmst-client/src/index.ts"],
       "@island.is/skilavottord-web/*": ["apps/skilavottord/web/*"],
       "@island.is/skilavottord/consts": [
         "libs/skilavottord/consts/src/index.ts"
       ],
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
+      "@island.is/utils-api": ["libs/utils/api/src/index.ts"],
+      "@island.is/vmst-client": ["libs/vmst-client/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/web/component*": ["apps/web/component*/real.ts"]
     }

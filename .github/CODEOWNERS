@@ -37,6 +37,7 @@
 /libs/application/templates/parental-leave/               @island-is/aranja
 /libs/application/templates/reference-template/           @island-is/aranja
 /libs/vmst-client/                                        @island-is/aranja
+/libs/api-utils/                                          @island-is/aranja
 
 /libs/application/templates/children-domicile-transfer/   @island-is/kolibri-modern-family
 
