@@ -51,6 +51,14 @@ export const routesTemplate = {
     is: '/frett',
     en: '/en/news',
   },
+  organizations: {
+    is: '/stofnanir',
+    en: '/en/organizations',
+  },
+  organizationpage: {
+    is: '/stofnanir/[slug]',
+    en: '/en/organizations/[slug]',
+  },
   organizationnews: {
     is: '/stofnanir/[organizationSlug]/frett/[slug]',
     en: '/en/organizations/[organizationSlug]/news/[slug]',
