@@ -11,6 +11,7 @@ import InfoModal from '../../common/InfoModal'
 
 interface Props {
   clientId: string
+  clientType: string
   secrets?: ClientSecret[]
   handleNext?: () => void
   handleBack?: () => void
@@ -133,7 +134,15 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
             <h1>Client Secrets</h1>
             <div className="client-secret__container__form">
               <div className="client-secret__help">
-                List of client secrets - credentials to access the token
+                <div
+                  className={`client-secret__help__note ${
+                    props.clientType === 'spa' ? 'show' : 'hidden'
+                  }`}
+                >
+                  Your client type doesn't support a Client Secret. You don't
+                  need to add anything here.
+                </div>
+                List of Client Secrets - credentials to access the token
                 endpoint.
               </div>
               <form id="secretForm" onSubmit={handleSubmit(add)}>

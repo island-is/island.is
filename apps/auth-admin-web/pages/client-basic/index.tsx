@@ -1,10 +1,11 @@
-import ClientDTO from './../../entities/dtos/client-dto'
-import ClientCreateForm from '../../components/Client/form/ClientCreateForm'
 import React from 'react'
-import { useRouter } from 'next/router'
 import ContentWrapper from './../../components/Layout/ContentWrapper'
-import { NextPageContext } from 'next'
+import { GetServerSideProps, NextPageContext } from 'next'
 import { withAuthentication } from './../../utils/auth.utils'
+import ClientBasicCreateForm from './../../components/Client/form/ClientBasicCreateForm'
+import { Client } from './../../entities/models/client.model'
+import { useRouter } from 'next/router'
+import ClientDTO from './../../entities/dtos/client-dto'
 
 const Index: React.FC = () => {
   const router = useRouter()
@@ -12,15 +13,19 @@ const Index: React.FC = () => {
     router.back()
   }
 
-  const handleClientSaved = (clientSaved: ClientDTO) => {
+  const handleClientSaved = (clientSaved: Client) => {
     if (clientSaved.clientId) {
-      router.push(`/client/${clientSaved.clientId}?step=2`)
+      if (clientSaved.clientType !== 'spa') {
+        router.push(`/client/${clientSaved.clientId}?step=9`)
+      } else {
+        router.push(`/client/${clientSaved.clientId}?step=10`)
+      }
     }
   }
 
   return (
     <ContentWrapper>
-      <ClientCreateForm
+      <ClientBasicCreateForm
         handleCancel={handleCancel}
         client={new ClientDTO()}
         onNextButtonClick={handleClientSaved}
@@ -28,7 +33,6 @@ const Index: React.FC = () => {
     </ContentWrapper>
   )
 }
-export default Index
 
 export const getServerSideProps = withAuthentication(
   async (context: NextPageContext) => {
@@ -37,3 +41,5 @@ export const getServerSideProps = withAuthentication(
     }
   },
 )
+
+export default Index
