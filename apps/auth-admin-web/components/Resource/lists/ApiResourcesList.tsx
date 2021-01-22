@@ -113,9 +113,9 @@ const ApiResourcesList: React.FC = () => {
               </div>
               <form onSubmit={search}>
                 <div className="api-resources-list__container__options__search">
-                <label htmlFor='search' className="api-resources-list__label">
-                      National Id or Resource name
-                    </label>
+                  <label htmlFor="search" className="api-resources-list__label">
+                    National Id or Resource name
+                  </label>
                   <input
                     id="search"
                     className="api-resources-list__input__search"
