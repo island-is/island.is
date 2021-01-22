@@ -1,7 +1,7 @@
 import { Box, Text } from '@island.is/island-ui/core'
 import { CaseGender } from '@island.is/judicial-system/types'
 import React, { PropsWithChildren } from 'react'
-import { getShortGender } from '../../utils/stepHelper'
+import { getShortGender } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as styles from './InfoCard.treat'
 
 interface Props {

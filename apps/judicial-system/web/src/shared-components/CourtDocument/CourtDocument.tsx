@@ -9,7 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import React, { useState, useRef } from 'react'
 import { useKey } from 'react-use'
-import BlueBox from '../BlueBox/BlueBox'
+import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
 import * as styles from './CourtDocument.treat'
 import { Case } from '@island.is/judicial-system/types'
 import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
