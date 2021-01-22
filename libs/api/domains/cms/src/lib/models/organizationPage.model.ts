@@ -8,6 +8,7 @@ import {
 } from '../unions/organizationSlice.union'
 import { mapOrganization, Organization } from './organization.model'
 import { LinkGroup, mapLinkGroup } from './linkGroup.model'
+import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class OrganizationPage {
@@ -31,6 +32,9 @@ export class OrganizationPage {
 
   @Field(() => Organization)
   organization: Organization
+
+  @Field({ nullable: true })
+  featuredImage?: Image
 }
 
 export const mapOrganizationPage = ({
@@ -44,4 +48,5 @@ export const mapOrganizationPage = ({
   slices: fields.slices.map(mapOrganizationSliceUnion),
   menuLinks: (fields.menuLinks ?? []).map(mapLinkGroup),
   organization: mapOrganization(fields.organization),
+  featuredImage: mapImage(fields.featuredImage),
 })

@@ -2,12 +2,14 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 import { IOrganizationSubpage } from '../generated/contentfulTypes'
 
-import { Link } from './link.model'
+import { Link, mapLink } from './link.model'
 import {
   mapOrganizationSliceUnion,
   OrganizationSliceUnion,
 } from '../unions/organizationSlice.union'
 import { mapOrganizationPage, OrganizationPage } from './organizationPage.model'
+import { Image, mapImage } from './image.model'
+import { mapStaffCard, StaffCard } from './staffCard.model'
 
 @ObjectType()
 export class OrganizationSubpage {
@@ -20,6 +22,12 @@ export class OrganizationSubpage {
   @Field({ nullable: true })
   description?: string
 
+  @Field(() => [Link], { nullable: true })
+  links?: Array<Link>
+
+  @Field(() => [StaffCard], { nullable: true })
+  sidebarCards: Array<StaffCard>
+
   @Field(() => [OrganizationSliceUnion])
   slices: Array<typeof OrganizationSliceUnion>
 
@@ -31,6 +39,9 @@ export class OrganizationSubpage {
 
   @Field(() => OrganizationPage)
   organizationPage: OrganizationPage
+
+  @Field({ nullable: true })
+  featuredImage?: Image
 }
 
 export const mapOrganizationSubpage = ({
@@ -39,8 +50,11 @@ export const mapOrganizationSubpage = ({
   title: fields.title,
   slug: fields.slug,
   description: fields.description ?? '',
+  links: (fields.links ?? []).map(mapLink),
+  sidebarCards: (fields.sidebarCards ?? []).map(mapStaffCard),
   slices: (fields.slices ?? []).map(mapOrganizationSliceUnion),
   menuItem: fields.menuItem?.fields,
   parentSubpage: fields.parentSubpage?.fields.slug,
   organizationPage: mapOrganizationPage(fields.organizationPage),
+  featuredImage: mapImage(fields.featuredImage),
 })
