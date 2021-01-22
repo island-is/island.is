@@ -46,35 +46,19 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
     return null
   }
 
-  // TODO: Not supported. Should it be supported? Commented out for now
-  //   const edit = async (data: ClientDTO) => {
-  //     // We delete the client id in the service. That's why we do a deep copy
-  //     const handleObject = { ...data }
-  //     const response = await ClientService.update(data, props.client.clientId)
-
-  //     if (response) {
-  //       if (props.onNextButtonClick) {
-  //         props.onNextButtonClick(handleObject)
-  //       }
-  //     }
-  //   }
-
   const save = async (data: FormOutput) => {
     if (!isEditing) {
       const dto = new ClientDTO()
       dto.clientType = data.client.clientType
       dto.clientId = data.client.clientId
-      dto.clientUri = data.client.clientUri;
+      dto.clientUri = data.client.clientUri
       dto.nationalId = data.client.nationalId
       dto.protocolType = 'oidc'
 
       const clientSaved = await create(dto)
-      if (clientSaved){
+      if (clientSaved) {
         ClientService.setDefaults(clientSaved)
       }
-    } else {
-      // TODO: Not supported. Should it be supported? Commented out for now
-      // edit(data.client)
     }
   }
 
@@ -123,8 +107,6 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
       }
 
       if (clientType === 'device') {
-        // What are the defaults?
-
         setClientTypeInfo('Device flow using external browser')
       }
 
