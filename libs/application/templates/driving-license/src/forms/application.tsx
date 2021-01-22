@@ -30,6 +30,7 @@ export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
   title: 'Ökuskilríki',
   mode: FormModes.APPLYING,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'type',
@@ -392,11 +393,15 @@ export const application: Form = buildForm({
             }),
           ],
         }),
-        buildDescriptionField({
+        buildCustomField({
           id: 'overview',
-          title: 'Til hamingju',
-          description:
-            'Með því að smella á "Senda" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
+          component: 'Congratulations',
+          title: ({ externalData: { nationalRegistry } }) =>
+            `Til hamingju ${
+              (nationalRegistry.data as NationalRegistryUser).fullName.split(
+                ' ',
+              )[0]
+            }`,
         }),
       ],
     }),

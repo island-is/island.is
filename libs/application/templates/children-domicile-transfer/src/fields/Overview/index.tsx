@@ -5,11 +5,12 @@ import {
   extractParentFromApplication,
   extractChildrenFromApplication,
   extractAnswersFromApplication,
+  constructParentAddressString,
 } from '../../lib/utils'
 
 const Overview = ({ application }: FieldBaseProps) => {
   const parent = extractParentFromApplication(application)
-  const parentAddress = `${parent?.address}, ${parent?.postalCode} ${parent?.city}`
+  const parentAddress = constructParentAddressString(parent)
   const children = extractChildrenFromApplication(application)
   const usePluralForChildren = children.length > 1
   const answers = extractAnswersFromApplication(application)

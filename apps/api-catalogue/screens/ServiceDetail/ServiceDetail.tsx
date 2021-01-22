@@ -43,7 +43,7 @@ export const ServiceDetail: Screen<ServiceDetailProps> = ({
         <div className={cn(styles.messageContainer)}>Þjónusta fannst ekki</div>
       )}
 
-      {data?.getApiServiceById?.name && (
+      {data?.getApiServiceById?.title && (
         <ServiceDetails
           service={data.getApiServiceById}
           strings={filterContent}
