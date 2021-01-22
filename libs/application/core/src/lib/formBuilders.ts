@@ -25,6 +25,7 @@ export function buildForm(data: {
   logo?: React.FC
   mode?: FormModes
   children: FormChildren[]
+  renderLastScreenButton?: boolean
   icon?: string
 }): Form {
   return { ...data, type: FormItemTypes.FORM }

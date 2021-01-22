@@ -38,6 +38,7 @@ export interface Form {
   logo?: React.FC
   type: FormItemTypes.FORM
   mode?: FormModes
+  renderLastScreenButton?: boolean
   icon?: string
   children: FormChildren[]
 }
