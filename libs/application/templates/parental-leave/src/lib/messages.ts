@@ -981,7 +981,7 @@ export const mm: MessageDir = {
       defaultMessage:
         'Að lokum fer umsóknin á borð Fæðingarorlofssjóðs þar sem lokaúrvinnsla hennar fer fram.',
       description:
-        'Finally, the application goes to the Maternity / Paternity Leave Fund, where its final processing takes place.',
+        'Finally, the application goes to the Parental Leave Fund, where its final processing takes place.',
     },
   }),
 }
