@@ -2,9 +2,9 @@ export default {
   production: true,
   identityServer: {
     IDENTITY_SERVER_ISSUER_URL:
-      window.location.origin === 'https://beta.minarsidur.staging01.devland.is'
-        ? 'https://beta.minarsidur.dev01.devland.is'
-        : window.location.origin === 'https://beta.minarsidur.island.is'
+      window.location.origin === 'https://beta.staging01.devland.is/minarsidur'
+        ? 'https://beta.dev01.devland.is/minarsidur'
+        : window.location.origin === 'https://beta.island.is/minarsidur'
         ? 'https://innskra.island.is'
         : 'https://identity-server.dev01.devland.is',
   },
