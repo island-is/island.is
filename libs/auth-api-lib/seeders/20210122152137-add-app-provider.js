@@ -13,10 +13,8 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete(
-      'idp_restrictions',
-      {
-        name: 'app',
-    )
+    return queryInterface.bulkDelete('idp_restrictions', {
+      name: 'app',
+    })
   },
 }
