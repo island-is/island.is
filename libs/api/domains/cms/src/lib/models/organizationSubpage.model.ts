@@ -24,7 +24,7 @@ export class OrganizationSubpage {
   @Field(() => [StaffCard], { nullable: true })
   sidebarCards: Array<StaffCard>
 
-  @Field(() => [SliceUnion])
+  @Field(() => [SliceUnion], { nullable: true })
   slices: Array<typeof SliceUnion>
 
   @Field(() => Link, { nullable: true })

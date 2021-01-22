@@ -29,9 +29,6 @@ export class OrganizationOffice {
 
   @Field({ nullable: true })
   openingHours?: string
-
-  @Field(() => [OrganizationEmployee])
-  employees?: Array<OrganizationEmployee>
 }
 
 export const mapOrganizationOffice = ({

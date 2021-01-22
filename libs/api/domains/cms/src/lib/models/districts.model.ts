@@ -18,6 +18,9 @@ export class Districts {
 
   @Field({ nullable: true })
   image?: Image
+
+  @Field(() => [Link])
+  links?: Array<Link>
 }
 
 export const mapDistricts = ({
@@ -29,4 +32,5 @@ export const mapDistricts = ({
   title: fields.title,
   description: fields.description,
   image: mapImage(fields.image),
+  links: fields.links.map(mapLink)
 })

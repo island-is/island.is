@@ -23,7 +23,7 @@ import {
   ILocation,
   ITellUsAStory,
   IDistricts,
-  IFeaturedArticles,
+  IFeaturedArticles, ISingleColumnText, ITwoColumnText, IOffices,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -69,6 +69,9 @@ import {
   mapFeaturedArticle,
   mapFeaturedArticles,
 } from '../models/featuredArticles.model'
+import {mapSingleColumnText, SingleColumnText} from "../models/singleColumnText.model";
+import {mapTwoColumnText, TwoColumnText} from "../models/twoColumnText.model";
+import {mapOffices, Offices} from "../models/offices.model";
 
 type SliceTypes =
   | ITimeline
@@ -92,6 +95,9 @@ type SliceTypes =
   | ITellUsAStory
   | IDistricts
   | IFeaturedArticles
+  | ISingleColumnText
+  | ITwoColumnText
+  | IOffices
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
@@ -120,6 +126,9 @@ export const SliceUnion = createUnionType({
     Asset,
     Districts,
     FeaturedArticles,
+    SingleColumnText,
+    TwoColumnText,
+    Offices
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -169,6 +178,12 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapDistricts(slice as IDistricts)
     case 'featuredArticles':
       return mapFeaturedArticles(slice as IFeaturedArticles)
+    case 'singleColumnText':
+      return mapSingleColumnText(slice as ISingleColumnText)
+    case 'twoColumnText':
+      return mapTwoColumnText(slice as ITwoColumnText)
+    case 'offices':
+      return mapOffices(slice as IOffices)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }
