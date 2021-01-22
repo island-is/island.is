@@ -66,6 +66,7 @@ export const CourtRecord: React.FC = () => {
       const { data } = await updateCaseMutation({
         variables: { input: { id, ...updateCase } },
       })
+
       const resCase = data?.updateCase
       if (resCase) {
         // Do something with the result. In particular, we want th modified timestamp passed between
@@ -262,8 +263,13 @@ export const CourtRecord: React.FC = () => {
                 <CourtDocument
                   title="Krafa lögreglu"
                   tagText="Þingmerkt nr. 1"
-                  tagVariant="blue"
+                  tagVariant="darkerBlue"
                   text="Rannsóknargögn málsins liggja frammi."
+                  caseId={workingCase.id}
+                  selectedCourtDocuments={workingCase.courtDocuments || []}
+                  onUpdateCase={updateCase}
+                  setWorkingCase={setWorkingCase}
+                  workingCase={workingCase}
                 />
               </GridColumn>
             </GridRow>
