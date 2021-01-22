@@ -1,4 +1,3 @@
-import { useMutation } from '@apollo/client'
 import {
   Box,
   Button,
@@ -10,10 +9,9 @@ import {
 } from '@island.is/island-ui/core'
 import React, { useState, useRef } from 'react'
 import { useKey } from 'react-use'
-import { UpdateCaseMutation } from '@island.is/judicial-system-web/src/graphql'
 import BlueBox from '../BlueBox/BlueBox'
 import * as styles from './CourtDocument.treat'
-import { UpdateCase } from '@island.is/judicial-system/types'
+import { Case } from '@island.is/judicial-system/types'
 import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
 interface CourtDocumentProps {
   title: string
@@ -22,6 +20,9 @@ interface CourtDocumentProps {
   tagVariant: TagVariant
   caseId: string
   selectedCourtDocuments: Array<string>
+  onUpdateCase: (id: string, updatedCase: any) => void
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  workingCase: Case
 }
 
 const CourtDocument: React.FC<CourtDocumentProps> = ({
@@ -31,6 +32,9 @@ const CourtDocument: React.FC<CourtDocumentProps> = ({
   tagVariant,
   caseId,
   selectedCourtDocuments,
+  onUpdateCase,
+  setWorkingCase,
+  workingCase,
 }: CourtDocumentProps) => {
   const [courtDocuments, setCourtDocuments] = useState<Array<string>>(
     selectedCourtDocuments,
@@ -38,39 +42,16 @@ const CourtDocument: React.FC<CourtDocumentProps> = ({
   const [nextDocumentToUpload, setNextDocumentToUpload] = useState<string>('')
   const additionalCourtDocumentRef = useRef<HTMLInputElement>(null)
 
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
-    console.log(id)
-    // Only update if id has been set
-    if (!id) {
-      return null
-    }
-    const { data } = await updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
-    })
-
-    const resCase = data?.updateCase
-
-    if (resCase) {
-      // Do smoething with the result. In particular, we want th modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-
-    return resCase
-  }
-
-  const handleAddDocument = async () => {
+  const handleAddDocument = () => {
     if (nextDocumentToUpload) {
       const updatedCourtDocuments = [...courtDocuments, nextDocumentToUpload]
 
-      // Start by updating the case with the new document to avoid a race condition.
-      await updateCase(
-        caseId,
-        parseArray('courtDocuments', updatedCourtDocuments),
-      )
+      onUpdateCase(caseId, parseArray('courtDocuments', updatedCourtDocuments))
+
+      setWorkingCase({ ...workingCase, courtDocuments: updatedCourtDocuments })
       setCourtDocuments(updatedCourtDocuments)
       setNextDocumentToUpload('')
+
       additionalCourtDocumentRef.current?.focus()
     }
   }
@@ -80,16 +61,13 @@ const CourtDocument: React.FC<CourtDocumentProps> = ({
       (_, documentIndex) => documentIndex !== index,
     )
 
-    await updateCase(
-      caseId,
-      parseArray('courtDocuments', updatedCourtDocuments),
-    )
+    onUpdateCase(caseId, parseArray('courtDocuments', updatedCourtDocuments))
     setCourtDocuments(updatedCourtDocuments)
   }
 
   // Add document on enter press
   useKey('Enter', handleAddDocument, undefined, [nextDocumentToUpload])
-  console.log(selectedCourtDocuments)
+
   return (
     <BlueBox>
       <Box marginBottom={1}>
