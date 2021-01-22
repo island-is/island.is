@@ -89,6 +89,7 @@ const judgeUpdateRule = {
     'courtEndTime',
     'courtAttendees',
     'policeDemands',
+    'courtDocuments',
     'accusedPlea',
     'litigationPresentations',
     'ruling',

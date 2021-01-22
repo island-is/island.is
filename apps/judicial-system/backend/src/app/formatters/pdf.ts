@@ -261,13 +261,23 @@ export async function generateRulingPdf(
     .text('Dómskjöl')
     .font('Helvetica')
     .fontSize(12)
-    .text(
-      'Rannsóknargögn málsins liggja frammi. Krafa lögreglu þingmerkt nr. 1.',
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
+    .text('Krafa lögreglu þingmerkt nr. 1.', {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text('Rannsóknargögn málsins liggja frammi.', {
+      lineGap: 6,
+      paragraphGap: 4,
+    })
+
+  existingCase.courtDocuments?.forEach((courttDocument, index) =>
+    doc.text(`${courttDocument} þingmerkt nr. ${index + 1}.`, {
+      lineGap: 6,
+      paragraphGap: 4,
+    }),
+  )
+
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
