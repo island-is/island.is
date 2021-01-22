@@ -91,16 +91,14 @@ export const CourtRecord: React.FC = () => {
       if (wc.prosecutor && wc.accusedName) {
         attendees += `${wc.prosecutor?.name} ${wc.prosecutor?.title}\n${
           wc.accusedName
-        } ${formatAccusedByGender(
-          workingCase?.accusedGender || CaseGender.OTHER,
-        )}`
+        } ${formatAccusedByGender(wc?.accusedGender || CaseGender.OTHER)}`
       }
 
       if (wc.defenderName) {
         attendees += `\n${
           wc.defenderName
         } skipaður verjandi ${formatAccusedByGender(
-          workingCase?.accusedGender || CaseGender.OTHER,
+          wc?.accusedGender || CaseGender.OTHER,
           NounCases.DATIVE,
         )}`
       }
