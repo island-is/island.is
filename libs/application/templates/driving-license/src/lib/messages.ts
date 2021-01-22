@@ -13,7 +13,7 @@ export const m = defineMessages({
   },
   applicationName: {
     id: 'dl.application:application.name',
-    defaultMessage: 'Ökuskilríki',
+    defaultMessage: 'Ökuskírteini',
     description: 'Driving license',
   },
   externalDataSection: {
@@ -28,13 +28,13 @@ export const m = defineMessages({
   },
   nationalRegistryTitle: {
     id: 'dl.application:nationalRegistry.title',
-    defaultMessage: 'Persónuuplýsingar úr Þjóðskrá',
+    defaultMessage: 'Persónuupplýsingar úr Þjóðskrá',
     description: 'Personal information from the National Registry',
   },
   nationalRegistrySubTitle: {
     id: 'dl.application:nationalRegistry.subTitle',
     defaultMessage:
-      'Til þess að auðvelda fyrir sækjum við persónuuplýsingar úr Þjóðskrá til þess að fylla út í umsóknina',
+      'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út í umsóknina',
     description:
       'Information from the National Registry will be used to prefill the data in the application',
   },
