@@ -61,7 +61,7 @@ COPY --from=builder /build/${APP_HOME}/next-modules/ /webapp/next-modules/
 COPY --from=builder /build/${APP_HOME}/public /webapp/public
 COPY --from=builder /build/${APP_DIST_HOME}/.next /webapp/.next
 
-ENTRYPOINT [ "npx", "next", "start", "-p", "4200" ]
+ENTRYPOINT [ "node", "main.js" ]
 
 FROM nginx:1.19.2-alpine as output-static
 
