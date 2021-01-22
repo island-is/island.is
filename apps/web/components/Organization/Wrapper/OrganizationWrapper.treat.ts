@@ -26,7 +26,7 @@ export const headerWrapper = style({
 
   ...themeUtils.responsiveStyle({
     md: {
-      marginTop: -60,
+      marginTop: -20,
     },
   }),
 })
@@ -42,6 +42,21 @@ export const headerLogo = style({
   }),
 })
 
-export const mobileNav = style({
-  marginTop: -20,
+export const navigation = style({
+  ...themeUtils.responsiveStyle({
+    md: {
+      marginTop: -230,
+      background: 'none',
+      paddingBottom: 0,
+    },
+    xs: {
+      marginTop: 0,
+      marginLeft: -24,
+      marginRight: -24,
+      paddingLeft: 24,
+      paddingRight: 24,
+      background: '#252973',
+      paddingBottom: 32,
+    },
+  }),
 })

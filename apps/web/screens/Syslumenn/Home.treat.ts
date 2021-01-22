@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { themeUtils } from '@island.is/island-ui/theme'
 
 export const intro = style({
   fontWeight: 300,
@@ -11,10 +11,6 @@ export const intro = style({
       lineHeight: 34 / 24,
     },
   }),
-})
-
-export const desktopNav = style({
-  marginTop: -230,
 })
 
 export const newsBg = style({

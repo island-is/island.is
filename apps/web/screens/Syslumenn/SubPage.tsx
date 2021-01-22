@@ -1,49 +1,49 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useContext } from 'react'
-import { Box, NavigationItem } from '@island.is/island-ui/core'
+import React from 'react'
+import { Box, Text, NavigationItem } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   Query,
   QueryGetNamespaceArgs,
   ContentLanguage,
+  QueryGetOrganizationSubpageArgs,
 } from '@island.is/api/schema'
 import {
   GET_NAMESPACE_QUERY,
+  GET_ORGANIZATION_SUBPAGE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
-  GET_ORGANIZATION_NEWS_QUERY,
 } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import * as styles from './Home.treat'
-import {
-  QueryGetOrganizationPageArgs,
-  QueryGetOrganizationNewsArgs,
-} from '@island.is/web/graphql/schema'
-import LatestOrganizationNewsSection from '@island.is/web/components/LatestOrganizationNewsSection/LatestOrganizationNewsSection'
-import { GlobalContext } from '@island.is/web/context'
+import { QueryGetOrganizationPageArgs } from '@island.is/web/graphql/schema'
 import OrganizationWrapper from '@island.is/web/components/Organization/Wrapper/OrganizationWrapper'
-import OrganizationSlice from '@island.is/web/components/Organization/Slice/OrganizationSlice'
 import { CustomNextError } from '@island.is/web/units/errors'
 
-interface HomeProps {
+interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
+  subpage: Query['getOrganizationSubpage']
   namespace: Query['getNamespace']
-  news: Query['getOrganizationNews']
 }
 
-const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
-  const { globalNamespace } = useContext(GlobalContext)
+const SubPage: Screen<SubPageProps> = ({
+  organizationPage,
+  subpage,
+  namespace,
+}) => {
   const n = useNamespace(namespace)
-  const gn = useNamespace(globalNamespace)
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active: false,
+      active:
+        subpage.menuItem.url === primaryLink.url ||
+        childrenLinks.some((link) => link.url === subpage.menuItem.url),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
+        active: url === subpage.menuItem.url,
       })),
     }),
   )
@@ -51,8 +51,8 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
   return (
     <>
       <OrganizationWrapper
-        pageTitle={organizationPage.title}
-        pageDescription={organizationPage.description}
+        pageTitle={subpage.title}
+        pageDescription={subpage.description}
         organization={organizationPage.organization}
         breadcrumbItems={[
           {
@@ -62,60 +62,56 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
           {
             title: n('organizations', 'Stofnanir'),
           },
+          {
+            title: organizationPage.title,
+          },
         ]}
         navigationData={{
           title: n('navigationTitle', 'Efnisyfirlit'),
           items: navList,
           titleLink: {
-            href: `/stofnanir/${organizationPage.slug}`,
+            href: `/${organizationPage.slug}`,
             active: false,
           },
         }}
         mainContent={
-          <Box className={styles.intro}>{organizationPage.description}</Box>
+          <Box className={styles.intro} paddingTop={[4, 4, 0]}>
+            <Text variant="h2" as="h2">
+              {subpage.title}
+            </Text>
+            {subpage.description}
+          </Box>
         }
-      >
-        {organizationPage.slices.map((slice) => (
-          <OrganizationSlice
-            key={slice.id}
-            slice={slice}
-            organization={organizationPage.organization}
-            namespace={namespace}
-          />
-        ))}
-        <Box
-          className={styles.newsBg}
-          paddingTop={[4, 5, 10]}
-          paddingBottom={[4, 5, 10]}
-        >
-          <LatestOrganizationNewsSection
-            label={gn('newsAndAnnouncements')}
-            labelId="latestNewsTitle"
-            items={news}
-            subtitle={organizationPage.title}
-            organizationSlug={organizationPage.slug}
-          />
-        </Box>
-      </OrganizationWrapper>
+      />
     </>
   )
 }
 
-Home.getInitialProps = async ({ apolloClient, locale }) => {
+SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getOrganizationPage },
     },
-    namespace,
     {
-      data: { getOrganizationNews },
+      data: { getOrganizationSubpage },
     },
+    namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
           slug: 'syslumenn',
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetOrganizationSubpageArgs>({
+      query: GET_ORGANIZATION_SUBPAGE_QUERY,
+      variables: {
+        input: {
+          organizationSlug: 'syslumenn',
+          slug: query.slug as string,
           lang: locale as ContentLanguage,
         },
       },
@@ -131,30 +127,21 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         },
       })
       .then((variables) => JSON.parse(variables.data.getNamespace.fields)),
-    apolloClient.query<Query, QueryGetOrganizationNewsArgs>({
-      query: GET_ORGANIZATION_NEWS_QUERY,
-      variables: {
-        input: {
-          organizationSlug: 'syslumenn',
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
   ])
 
-  if (!getOrganizationPage) {
-    throw new CustomNextError(404, 'Organization not found')
+  if (!getOrganizationSubpage) {
+    throw new CustomNextError(404, 'Organization subpage not found')
   }
 
   return {
     organizationPage: getOrganizationPage,
+    subpage: getOrganizationSubpage,
     namespace,
-    news: getOrganizationNews,
     showSearchInHeader: false,
   }
 }
 
-export default withMainLayout(Home, {
+export default withMainLayout(SubPage, {
   headerButtonColorScheme: 'negative',
   headerColorScheme: 'white',
 })
