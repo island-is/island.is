@@ -229,10 +229,10 @@ export const formatRequestedCustodyRestrictions = (
 export function formatGender(gender: CaseGender): string {
   switch (gender) {
     case CaseGender.MALE:
-      return 'karl'
+      return 'Karl'
     case CaseGender.FEMALE:
-      return 'kona'
+      return 'Kona'
     case CaseGender.OTHER:
-      return 'annað'
+      return 'Kynsegin/Annað'
   }
 }

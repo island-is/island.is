@@ -26,7 +26,7 @@ export const UserQuery = gql`
 const USER_MOCKED =
   process.env.NODE_ENV === 'development' && process.env.NX_API_MOCKS === 'true'
 
-export const UserProvider: React.FC = ({ children }) => {
+const UserProvider: React.FC = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     Boolean(Cookies.get(CSRF_COOKIE_NAME)),
   )
@@ -52,3 +52,5 @@ export const UserProvider: React.FC = ({ children }) => {
     </UserContext.Provider>
   )
 }
+
+export default UserProvider

@@ -13,19 +13,21 @@ import {
 } from '@island.is/judicial-system/types'
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { CaseQuery } from '../../../graphql'
-import CourtRecordAccordionItem from '../../../shared-components/CourtRecordAccordionItem/CourtRecordAccordionItem'
-import { FormFooter } from '../../../shared-components/FormFooter'
-import InfoCard from '../../../shared-components/InfoCard/InfoCard'
-import { PageLayout } from '../../../shared-components/PageLayout/PageLayout'
-import PoliceRequestAccordionItem from '../../../shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
-import RulingAccordionItem from '../../../shared-components/RulingAccordionItem/RulingAccordionItem'
-import { getRestrictionTagVariant } from '../../../utils/stepHelper'
+import { CaseQuery } from '@island.is/judicial-system-web/src/graphql'
+import {
+  FormFooter,
+  PdfButton,
+  PageLayout,
+  InfoCard,
+  PoliceRequestAccordionItem,
+  RulingAccordionItem,
+  CourtRecordAccordionItem,
+} from '@island.is/judicial-system-web/src/shared-components'
+import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { useHistory } from 'react-router-dom'
-import * as Constants from '../../../utils/constants'
-import { UserContext } from '../../../shared-components/UserProvider/UserProvider'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
-import PdfButton from '../../../shared-components/PdfButton/PdfButton'
 
 interface CaseData {
   case?: Case
@@ -257,6 +259,10 @@ export const SignedVerdictOverview: React.FC = () => {
               accusedName={workingCase.accusedName}
               accusedNationalId={workingCase.accusedNationalId}
               accusedAddress={workingCase.accusedAddress}
+              defender={{
+                name: workingCase.defenderName || '',
+                email: workingCase.defenderEmail,
+              }}
             />
           </Box>
           <Box marginBottom={5}>

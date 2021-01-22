@@ -8,22 +8,34 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { FormFooter } from '../../../shared-components/FormFooter'
-import Modal from '../../../shared-components/Modal/Modal'
+import {
+  FormFooter,
+  Modal,
+  PoliceRequestAccordionItem,
+  CourtRecordAccordionItem,
+  TimeInputField,
+  PdfButton,
+  CaseNumbers,
+  PageLayout,
+} from '@island.is/judicial-system-web/src/shared-components'
 import {
   constructConclusion,
   getAppealDecisionText,
   isNextDisabled,
-} from '../../../utils/stepHelper'
-import * as Constants from '../../../utils/constants'
+} from '@island.is/judicial-system-web/src/utils/stepHelper'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   formatDate,
   formatCustodyRestrictions,
   TIME_FORMAT,
   formatAlternativeTravelBanRestrictions,
 } from '@island.is/judicial-system/formatters'
-import { parseTransition } from '../../../utils/formatters'
-import { AppealDecisionRole, JudgeSubsections, Sections } from '../../../types'
+import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
+import {
+  AppealDecisionRole,
+  JudgeSubsections,
+  Sections,
+} from '@island.is/judicial-system-web/src/types'
 import {
   Case,
   CaseAppealDecision,
@@ -37,8 +49,6 @@ import {
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import { useHistory, useParams } from 'react-router-dom'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
-import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
 import * as style from './Confirmation.treat'
 import {
   CaseQuery,
@@ -48,19 +58,16 @@ import {
 } from '@island.is/judicial-system-web/src/graphql'
 import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import CourtRecordAccordionItem from '../../../shared-components/CourtRecordAccordionItem/CourtRecordAccordionItem'
 import {
   RequestSignatureMutation,
   SignatureConfirmationQuery,
-} from '../../../utils/mutations'
-import { Validation } from '../../../utils/validate'
-import TimeInputField from '../../../shared-components/TimeInputField/TimeInputField'
+} from '@island.is/judicial-system-web/src/utils/mutations'
+import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   getTimeFromDate,
   validateAndSendTimeToServer,
   validateAndSetTime,
-} from '../../../utils/formHelper'
-import PdfButton from '../../../shared-components/PdfButton/PdfButton'
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 
 interface SigningModalProps {
   workingCase: Case
@@ -394,7 +401,7 @@ export const Confirmation: React.FC = () => {
               variant="h2"
               as="h2"
             >{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
-            <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
+            <CaseNumbers workingCase={workingCase} />
           </Box>
           <Box marginBottom={9}>
             <Accordion>

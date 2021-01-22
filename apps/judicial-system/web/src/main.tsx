@@ -1,6 +1,7 @@
 import '@island.is/api/mocks'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { globalStyles } from '@island.is/island-ui/core'
 
 import App from './shared-components/App/App'
 // import * as Sentry from '@sentry/react'
@@ -12,5 +13,5 @@ import App from './shared-components/App/App'
 //   integrations: [new Integrations.BrowserTracing()],
 //   tracesSampleRate: 1.0,
 // })
-
+globalStyles()
 ReactDOM.render(<App />, document.getElementById('root'))

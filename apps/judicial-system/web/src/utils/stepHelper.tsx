@@ -1,5 +1,8 @@
 import React from 'react'
-import { AppealDecisionRole, RequiredField } from '../types'
+import {
+  AppealDecisionRole,
+  RequiredField,
+} from '@island.is/judicial-system-web/src/types'
 import { TagVariant, Text } from '@island.is/island-ui/core'
 import {
   capitalize,
@@ -58,7 +61,12 @@ export const constructConclusion = (workingCase: Case) => {
         >{`${workingCase.accusedName}, kt. ${formatNationalId(
           workingCase.accusedNationalId,
         )}`}</Text>
-        , sæti gæsluvarðhaldi er hafnað.
+        {`, sæti${
+          workingCase.parentCase &&
+          workingCase.parentCase?.decision === CaseDecision.ACCEPTING
+            ? ' áframhaldandi'
+            : ''
+        } gæsluvarðhaldi er hafnað.`}
       </Text>
     )
   } else if (workingCase.decision === CaseDecision.ACCEPTING) {
@@ -74,9 +82,12 @@ export const constructConclusion = (workingCase: Case) => {
           )}`}
         </Text>
         <Text as="span" variant="intro">
-          {`, skal${
-            workingCase.parentCase ? ' áfram' : ''
-          } sæta gæsluvarðhaldi, þó ekki lengur en til`}
+          {`, skal sæta${
+            workingCase.parentCase &&
+            workingCase.parentCase?.decision === CaseDecision.ACCEPTING
+              ? ' áframhaldandi'
+              : ''
+          } gæsluvarðhaldi, þó ekki lengur en til`}
         </Text>
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
           {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')
@@ -127,9 +138,13 @@ export const constructConclusion = (workingCase: Case) => {
         >{` ${workingCase.accusedName} kt. ${formatNationalId(
           workingCase.accusedNationalId,
         )}`}</Text>
-        {`, skal${
-          workingCase.parentCase ? ' áfram' : ''
-        } sæta farbanni, þó ekki lengur en til`}
+        {`, skal sæta${
+          workingCase.parentCase &&
+          workingCase.parentCase?.decision ===
+            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+            ? ' áframhaldandi'
+            : ''
+        } farbanni, þó ekki lengur en til`}
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
           {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')
             ?.replace('dagur,', 'dagsins')
@@ -152,8 +167,21 @@ export const constructProsecutorDemands = (
           workingCase.accusedNationalId,
         )}`}
       </Text>
-      {`, sæti${workingCase.parentCase ? ' áfram' : ''} gæsluvarðhaldi${
-        workingCase.alternativeTravelBan ? ', farbanni til vara,' : ''
+      {`, sæti${
+        workingCase.parentCase &&
+        workingCase.parentCase?.decision === CaseDecision.ACCEPTING
+          ? ' áframhaldandi'
+          : ''
+      } gæsluvarðhaldi${
+        workingCase.alternativeTravelBan
+          ? `,${
+              workingCase.parentCase &&
+              workingCase.parentCase?.decision ===
+                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                ? ' áframhaldandi'
+                : ''
+            } farbanni til vara,`
+          : ''
       } með úrskurði ${workingCase.court?.replace(
         'Héraðsdómur',
         'Héraðsdóms',
