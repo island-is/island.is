@@ -33,17 +33,14 @@ export class ParentNationalRegistryProvider extends BasicDataProvider {
       })
   }
   handleError() {
-    if (process.env.NODE_ENV === 'development') {
-      return Promise.resolve({
-        id: '1',
-        name: 'Eiríkur Jónsson',
-        ssn: '120486-7899',
-        address: 'Suðurgata 35, íbúð 2',
-        postalCode: '105',
-        city: 'Reykjavík',
-      })
-    }
-    return Promise.resolve({})
+    return Promise.resolve({
+      id: '1',
+      name: 'Eiríkur Jónsson',
+      ssn: '120486-7899',
+      address: 'Suðurgata 35, íbúð 2',
+      postalCode: '105',
+      city: 'Reykjavík',
+    })
   }
   onProvideError(result: string): FailedDataProviderResult {
     return {
