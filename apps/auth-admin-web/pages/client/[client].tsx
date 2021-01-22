@@ -226,7 +226,8 @@ const Index: React.FC = () => {
               title="Steps completed"
               handleButtonFinishedClick={() => setStep(1)}
             >
-              The steps needed, to create a client, have been completed
+              <p>The steps needed, to create a client, have been completed</p>
+              <p>You can review your settings by clicking on the steps above</p>
             </StepEnd>
           </ClientStepNav>
         </ContentWrapper>
