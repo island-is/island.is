@@ -1,7 +1,10 @@
 import React from 'react'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
-import { extractParentFromApplication, constructParentAddressString } from '../../lib/utils'
+import {
+  extractParentFromApplication,
+  constructParentAddressString,
+} from '../../lib/utils'
 import { CheckboxController } from '@island.is/shared/form-fields'
 
 const ChangeInformation = ({ field, application, error }: FieldBaseProps) => {
