@@ -14,9 +14,9 @@ The exchange of information over the X-Road security layer is synchronous. There
 
 ### Further reading <a id="d33a23fc-c9ce-497f-9957-61de4700f10a"></a>
 
-* [X-Road Architecture](https://x-road.global/architecture)
-* [X-Road Security Architecture](https://github.com/nordic-institute/X-Road/blob/develop/doc/Architecture/arc-sec_x_road_security_architecture.md)
-* [X-Road Architecture - Technical Specification](https://github.com/nordic-institute/X-Road/blob/develop/doc/Architecture/arc-g_x-road_arhitecture.md)
+- [X-Road Architecture](https://x-road.global/architecture)
+- [X-Road Security Architecture](https://github.com/nordic-institute/X-Road/blob/develop/doc/Architecture/arc-sec_x_road_security_architecture.md)
+- [X-Road Architecture - Technical Specification](https://github.com/nordic-institute/X-Road/blob/develop/doc/Architecture/arc-g_x-road_arhitecture.md)
 
 ## Availability <a id="2c8b484c-479c-4a28-9dc0-211bc028a9c9"></a>
 
@@ -46,21 +46,21 @@ Figure 3: An external LB can be used in front of a Security Server cluster and t
 
 ### Further reading <a id="89cf0edb-da88-4faf-b0aa-3d490642dcf3"></a>
 
-* [X-Road Architecture](https://x-road.global/architecture)
-* [Balancing the Load in X-Road](https://www.niis.org/blog/2018/6/25/balancing-the-load)
-* [X-Road Security Architecture: Availability](https://github.com/nordic-institute/X-Road/blob/develop/doc/Architecture/arc-sec_x_road_security_architecture.md#5-availability)
-* [X-Road: Security Server Architecture: Redundant Deployment](https://github.com/nordic-institute/X-Road/blob/develop/doc/Architecture/arc-ss_x-road_security_server_architecture.md#52-redundant-deployment)
-* [X-Road: External Load Balancer Installation Guide](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/LoadBalancing/ig-xlb_x-road_external_load_balancer_installation_guide.md)
+- [X-Road Architecture](https://x-road.global/architecture)
+- [Balancing the Load in X-Road](https://www.niis.org/blog/2018/6/25/balancing-the-load)
+- [X-Road Security Architecture: Availability](https://github.com/nordic-institute/X-Road/blob/develop/doc/Architecture/arc-sec_x_road_security_architecture.md#5-availability)
+- [X-Road: Security Server Architecture: Redundant Deployment](https://github.com/nordic-institute/X-Road/blob/develop/doc/Architecture/arc-ss_x-road_security_server_architecture.md#52-redundant-deployment)
+- [X-Road: External Load Balancer Installation Guide](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/LoadBalancing/ig-xlb_x-road_external_load_balancer_installation_guide.md)
 
 The following table summarizes the Availability and Performance configuration options discussed above:
 
 ## Availability and performance configuration options.
 
-| Architecture | Pros | Cons |
-| :--- | :--- | :--- |
-| [Single Server](https://www.notion.so/Single-Server-966858d704f84db28fc10938c52ecbf4) | Simple Set up | Low resiliency, Best Effort |
-| [Internal Load Balancing](https://www.notion.so/Internal-Load-Balancing-3717244103c2428ba10cb6c2d9dd7746) | High Availability, Feature built into X-Road | Requires independent configuration and registration for each node |
-| [External Load Balancing](https://www.notion.so/External-Load-Balancing-90e87293ccba4f61938402bdb47a03ea) | Offers both High Availability and High Performance \(with e.g. auto-scaling\). One-time configuration and registration for all nodes. | Initial configuration more complex. |
+| Architecture                                                                                              | Pros                                                                                                                                  | Cons                                                              |
+| :-------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ | :---------------------------------------------------------------- |
+| [Single Server](https://www.notion.so/Single-Server-966858d704f84db28fc10938c52ecbf4)                     | Simple Set up                                                                                                                         | Low resiliency, Best Effort                                       |
+| [Internal Load Balancing](https://www.notion.so/Internal-Load-Balancing-3717244103c2428ba10cb6c2d9dd7746) | High Availability, Feature built into X-Road                                                                                          | Requires independent configuration and registration for each node |
+| [External Load Balancing](https://www.notion.so/External-Load-Balancing-90e87293ccba4f61938402bdb47a03ea) | Offers both High Availability and High Performance \(with e.g. auto-scaling\). One-time configuration and registration for all nodes. | Initial configuration more complex.                               |
 
 ## Monitoring <a id="a2a0b91e-4ee9-49d3-a38b-66ca387aaf86"></a>
 
@@ -70,8 +70,8 @@ The load balancing support includes a health check service that can be used to p
 
 ### Further reading <a id="3c283098-20da-47fe-b8b8-f001c663cecc"></a>
 
-* [X-Road: Operational Monitoring Daemon Architecture](https://github.com/nordic-institute/X-Road/blob/develop/doc/OperationalMonitoring/Architecture/arc-opmond_x-road_operational_monitoring_daemon_architecture_Y-1096-1.md)
-* [X-Road: External Load Balancer Installation Guide - Health check service configuration](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/LoadBalancing/ig-xlb_x-road_external_load_balancer_installation_guide.md#34-health-check-service-configuration)
+- [X-Road: Operational Monitoring Daemon Architecture](https://github.com/nordic-institute/X-Road/blob/develop/doc/OperationalMonitoring/Architecture/arc-opmond_x-road_operational_monitoring_daemon_architecture_Y-1096-1.md)
+- [X-Road: External Load Balancer Installation Guide - Health check service configuration](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/LoadBalancing/ig-xlb_x-road_external_load_balancer_installation_guide.md#34-health-check-service-configuration)
 
 ## Data Exchange <a id="d0595987-2ecb-4275-89aa-d07d62de59d2"></a>
 
@@ -81,9 +81,9 @@ The X-Road metaservices can be used to retrieve lists of Service Providers, Cent
 
 ### Further reading <a id="4daaf8f9-8206-4efa-bb23-a84c6405e6b1"></a>
 
-* [X-Road Message Protocol for REST](https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-rest_x-road_message_protocol_for_rest.md)
-* [X-Road Message Protocol for SOAP](https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-mess_x-road_message_protocol.md)
-* [X-Road: Service Metadata Protocol for REST](https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-mrest_x-road_service_metadata_protocol_for_rest.md)
+- [X-Road Message Protocol for REST](https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-rest_x-road_message_protocol_for_rest.md)
+- [X-Road Message Protocol for SOAP](https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-mess_x-road_message_protocol.md)
+- [X-Road: Service Metadata Protocol for REST](https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-mrest_x-road_service_metadata_protocol_for_rest.md)
 
 ## Installation and Upgrading <a id="950b9f07-4e8e-4ab9-a8f3-eefc1b860e06"></a>
 
@@ -95,13 +95,12 @@ In the currently recommended \(non-containerized\) production ready configuratio
 
 ### Further reading <a id="4b148a7d-2554-45fc-a1dc-823bae02adbb"></a>
 
-* [How to Set Up a Security Server?](https://confluence.niis.org/pages/viewpage.action?pageId=4292920)
-  * see specifically the example upgrade commands in that parent document
-* [X-Road Knowledge Base](https://confluence.niis.org/display/XRDKB/X-Road+Knowledge+Base)
-* [Steps needed to install and participate in](https://github.com/digitaliceland/Straumurinn) [_Straumurinn_](https://github.com/digitaliceland/Straumurinn) [\(Icelandic X-Road environment\)](https://github.com/digitaliceland/Straumurinn)
-
+- [How to Set Up a Security Server?](https://confluence.niis.org/pages/viewpage.action?pageId=4292920)
+  - see specifically the example upgrade commands in that parent document
+- [X-Road Knowledge Base](https://confluence.niis.org/display/XRDKB/X-Road+Knowledge+Base)
+- [Steps needed to install and participate in](https://github.com/digitaliceland/Straumurinn) [_Straumurinn_](https://github.com/digitaliceland/Straumurinn) [\(Icelandic X-Road environment\)](https://github.com/digitaliceland/Straumurinn)
 
 ### Further Reading <a id="d9df2a4e-368b-42d5-a7fb-d1e460848eca"></a>
 
-* X-Road Logs Explained – [Part 1](https://www.niis.org/blog/2018/5/27/x-road-logs-basics), [Part 2](https://www.niis.org/blog/2018/6/3/x-road-logs-explained-part-2) and [Part 3](https://www.niis.org/blog/2018/6/12/x-road-logs-explained-part-3)
-* [Signed Document Download and Verification Manual](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/ug-sigdoc_x-road_signed_document_download_and_verification_manual.md)
+- X-Road Logs Explained – [Part 1](https://www.niis.org/blog/2018/5/27/x-road-logs-basics), [Part 2](https://www.niis.org/blog/2018/6/3/x-road-logs-explained-part-2) and [Part 3](https://www.niis.org/blog/2018/6/12/x-road-logs-explained-part-3)
+- [Signed Document Download and Verification Manual](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/ug-sigdoc_x-road_signed_document_download_and_verification_manual.md)

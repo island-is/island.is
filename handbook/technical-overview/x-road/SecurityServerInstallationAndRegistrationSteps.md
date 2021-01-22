@@ -4,37 +4,37 @@
 
 ### Hardware requirements
 
-* 64-bit dual-core Intel, AMD or compatible CPU; AES instruction set support is highly recommended
-* 2 CPU
-* 4 GB RAM
-* 10 GB free disk space \(OS partition\) and 20-40 GB free disk space on the “/var” partition
-* 100 Mbps network interface card
+- 64-bit dual-core Intel, AMD or compatible CPU; AES instruction set support is highly recommended
+- 2 CPU
+- 4 GB RAM
+- 10 GB free disk space \(OS partition\) and 20-40 GB free disk space on the “/var” partition
+- 100 Mbps network interface card
 
 ### Operating System, choice of either
 
-* Red Hat Enterprise Linux 7.3 \(RHEL7\) or newer.
-* Ubuntu 18.04 Long-Term Support \(LTS\).
-* Ubuntu 20.04 Long-Term Support \(LTS\).
+- Red Hat Enterprise Linux 7.3 \(RHEL7\) or newer.
+- Ubuntu 18.04 Long-Term Support \(LTS\).
+- Ubuntu 20.04 Long-Term Support \(LTS\).
 
 ### Network configuration
 
 The X-Road Security Servers mediate service calls and service responses between Information Systems. They can be placed in a DMZ between the Information Systems they serve and the Internet. Port openings can be configured like so:
 
-* **External network:**
-  * Inbound: TCP 5500  TCP 5577
-  * Outbound: TCP 5500 TCP 5577 TCP 4001 TCP 80 TCP 443
-* **Internal network:**
-  * Inbound and outbound: TCP 4000 TCP 80 TCP 443
-* On a RedHat 7 / CentOS 7 or Ubuntu 18.04 LTS machine, consult the X-Road Knowledge Base how-to article [How to Set Up a Security Server?](https://confluence.niis.org/pages/viewpage.action?pageId=4292920) while taking care to override the official documentation with specific steps for the Icelandic environment \(_Straumurinn_\), outlined at: [https://github.com/digitaliceland/Straumurinn](https://github.com/digitaliceland/Straumurinn#getting-started-installing-security-server-and-intial-configuration)
-* Add OS user to run the X-Road server: `sudo useradd --system --home /var/lib/xroad --no-create-home --shell /bin/bash --user-group --comment "X-Road system user" xroad`  If that user will be used for interactive SSH log-ins, then so the Security Server PIN won't be cleared \(even though auto-login is configured\), the following command can be entered: `loginctl enable-linger xroad`
-* During installation, dialog will appear asking for host and IP information for certificate generation. The latter set of the dialog will be for configuring certificates for the xroad-proxy-ui-api. Here it may be desirable to change the value from the auto-detected machine host name to a domain name used for accessing the Admin UI:
+- **External network:**
+  - Inbound: TCP 5500 TCP 5577
+  - Outbound: TCP 5500 TCP 5577 TCP 4001 TCP 80 TCP 443
+- **Internal network:**
+  - Inbound and outbound: TCP 4000 TCP 80 TCP 443
+- On a RedHat 7 / CentOS 7 or Ubuntu 18.04 LTS machine, consult the X-Road Knowledge Base how-to article [How to Set Up a Security Server?](https://confluence.niis.org/pages/viewpage.action?pageId=4292920) while taking care to override the official documentation with specific steps for the Icelandic environment \(_Straumurinn_\), outlined at: [https://github.com/digitaliceland/Straumurinn](https://github.com/digitaliceland/Straumurinn#getting-started-installing-security-server-and-intial-configuration)
+- Add OS user to run the X-Road server: `sudo useradd --system --home /var/lib/xroad --no-create-home --shell /bin/bash --user-group --comment "X-Road system user" xroad` If that user will be used for interactive SSH log-ins, then so the Security Server PIN won't be cleared \(even though auto-login is configured\), the following command can be entered: `loginctl enable-linger xroad`
+- During installation, dialog will appear asking for host and IP information for certificate generation. The latter set of the dialog will be for configuring certificates for the xroad-proxy-ui-api. Here it may be desirable to change the value from the auto-detected machine host name to a domain name used for accessing the Admin UI:
 
   ![](./assets/0%20%282%29.png)
 
   ![](./assets/1%20%281%29.png)
 
-* Once a Security Server has been successfully installed, the Admin UI can be opened in a web browser at [https://SECURITYSERVER:4000/](https://securityserver:4000/) . After logging in with the user credentials declared during the installation process, a prompt for importing a Configuration Anchor is displayed. The configuration anchors for each environment \(IS-DEV, IS-TEST, IS\) are linked to at: [https://github.com/digitaliceland/Straumurinn\#getting-started-installing-security-server-and-intial-configuration](https://github.com/digitaliceland/Straumurinn#getting-started-installing-security-server-and-intial-configuration)
-* Before being able to import a Configuration Anchor, the Security Server IP and FQDN must be whitelisted by the operator of the _Straumurinn_ X-Road central services. To start the _Straumurinn_ application process, the information \(IP, FQDN and the organization’s SSN \(should be obtained from the organization contact\)\) should be sent to [hjalp@ok.is](mailto:hjalp@ok.is)
+- Once a Security Server has been successfully installed, the Admin UI can be opened in a web browser at [https://SECURITYSERVER:4000/](https://securityserver:4000/) . After logging in with the user credentials declared during the installation process, a prompt for importing a Configuration Anchor is displayed. The configuration anchors for each environment \(IS-DEV, IS-TEST, IS\) are linked to at: [https://github.com/digitaliceland/Straumurinn\#getting-started-installing-security-server-and-intial-configuration](https://github.com/digitaliceland/Straumurinn#getting-started-installing-security-server-and-intial-configuration)
+- Before being able to import a Configuration Anchor, the Security Server IP and FQDN must be whitelisted by the operator of the _Straumurinn_ X-Road central services. To start the _Straumurinn_ application process, the information \(IP, FQDN and the organization’s SSN \(should be obtained from the organization contact\)\) should be sent to [hjalp@ok.is](mailto:hjalp@ok.is)
 
 The public IP address of requests originating within the server can be found with with the following command
 
@@ -48,13 +48,13 @@ curl ifconfig.me
 
 ### After the server has been registered in Central
 
-* During a [Security Server initial configuration](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/ig-ss_x-road_v6_security_server_installation_guide.md#3-security-server-initial-configuration), a PIN is required to be set, which should be a 12 digit, alpha-numeric password: [https://en.wikipedia.org/wiki/Personal\_identification\_number](https://en.wikipedia.org/wiki/Personal_identification_number) [https://en.wikipedia.org/wiki/ISO\_9564\#PIN\_length](https://en.wikipedia.org/wiki/ISO_9564#PIN_length)
-* Disable message payload logging \(for now, due to GDPR\).
+- During a [Security Server initial configuration](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/ig-ss_x-road_v6_security_server_installation_guide.md#3-security-server-initial-configuration), a PIN is required to be set, which should be a 12 digit, alpha-numeric password: [https://en.wikipedia.org/wiki/Personal_identification_number](https://en.wikipedia.org/wiki/Personal_identification_number) [https://en.wikipedia.org/wiki/ISO_9564\#PIN_length](https://en.wikipedia.org/wiki/ISO_9564#PIN_length)
+- Disable message payload logging \(for now, due to GDPR\).
 
-  The xroad-securityserver-is variant has the message logging disabled by default, from X-Road version 6.24.0 onwards.  
+  The xroad-securityserver-is variant has the message logging disabled by default, from X-Road version 6.24.0 onwards.
 
-* For PIN to be entered automatically when starting X-Road services, follow this guide: [https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/Utils/ug-autologin\_x-road\_v6\_autologin\_user\_guide.md](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/Utils/ug-autologin_x-road_v6_autologin_user_guide.md)
-* Starting and stopping X-Road services to test the PIN entry functionality:
+- For PIN to be entered automatically when starting X-Road services, follow this guide: [https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/Utils/ug-autologin_x-road_v6_autologin_user_guide.md](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/Utils/ug-autologin_x-road_v6_autologin_user_guide.md)
+- Starting and stopping X-Road services to test the PIN entry functionality:
 
 ```bash
 for i in xroad-confclient xroad-proxy xroad-signer xroad-monitor xroad-opmonitor xroad-proxy-ui-api ;do echo "stopping $i"; sudo service $i stop;done
@@ -62,13 +62,13 @@ sudo systemctl list-units "xroad*"
 for i in xroad-confclient xroad-proxy xroad-signer xroad-monitor xroad-opmonitor xroad-proxy-ui-api ;do echo "starting $i"; sudo service $i start;done
 ```
 
-* Check if all services are up and running
+- Check if all services are up and running
 
 ```bash
 sudo systemctl list-units "xroad*"
 ```
 
-* Enable health check endpoint: [https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/LoadBalancing/ig-xlb\_x-road\_external\_load\_balancer\_installation\_guide.md\#34-health-check-service-configuration](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/LoadBalancing/ig-xlb_x-road_external_load_balancer_installation_guide.md#34-health-check-service-configuration)
+- Enable health check endpoint: [https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/LoadBalancing/ig-xlb_x-road_external_load_balancer_installation_guide.md\#34-health-check-service-configuration](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/LoadBalancing/ig-xlb_x-road_external_load_balancer_installation_guide.md#34-health-check-service-configuration)
 
 ### Generate CSR certificates and import Anchors
 
@@ -92,26 +92,26 @@ Press CONFIRM.
 
 In the initial configuration screen input the values as follows.
 
-* Member Class - the Member Class of the organization that maintains the central server.
-* Member Code - the Member Code of the organization that maintains the central server.
-* Member Name - is auto completed when Member Code is added.
-* Security Server Code - unique code identifying the Security Server.
-  * Use short-name for Server Code
-  * Do not use FQDN, ".", "/" or "\".
-    * Some extensions use dots as separators, e.g. REST Adapter Service.
-  * X-Road Message Protocol imposes some restrictions on the characters that can be used in X-Road identifiers. The following characters SHALL NOT be used in the identifier values:
-    * Colon
-    * Semicolon
-    * Slash
-    * Backslash
-    * Percent
-    * Path identifiers \(such as /../\)
-    * Non-printable characters \(tab, newline etc.\)
-  * [https://github.com/nordic-institute/X-Road/blob/6d60774c0b4e5368e70943c17a2ae6dfaa513259/doc/Protocols/pr-mess\_x-road\_message\_protocol.md\#27-identifier-character-restrictions](https://github.com/nordic-institute/X-Road/blob/6d60774c0b4e5368e70943c17a2ae6dfaa513259/doc/Protocols/pr-mess_x-road_message_protocol.md#27-identifier-character-restrictions)
-  * [https://github.com/nordic-institute/X-Road/blob/6d60774c0b4e5368e70943c17a2ae6dfaa513259/doc/Protocols/pr-rest\_x-road\_message\_protocol\_for\_rest.md\#48-identifier-character-restrictions](https://github.com/nordic-institute/X-Road/blob/6d60774c0b4e5368e70943c17a2ae6dfaa513259/doc/Protocols/pr-rest_x-road_message_protocol_for_rest.md#48-identifier-character-restrictions)
-* PIN - the password that protects the security server's secret keys.
-* Repeat PIN - repeat the above PIN.
-* Press SUBMIT.
+- Member Class - the Member Class of the organization that maintains the central server.
+- Member Code - the Member Code of the organization that maintains the central server.
+- Member Name - is auto completed when Member Code is added.
+- Security Server Code - unique code identifying the Security Server.
+  - Use short-name for Server Code
+  - Do not use FQDN, ".", "/" or "\".
+    - Some extensions use dots as separators, e.g. REST Adapter Service.
+  - X-Road Message Protocol imposes some restrictions on the characters that can be used in X-Road identifiers. The following characters SHALL NOT be used in the identifier values:
+    - Colon
+    - Semicolon
+    - Slash
+    - Backslash
+    - Percent
+    - Path identifiers \(such as /../\)
+    - Non-printable characters \(tab, newline etc.\)
+  - [https://github.com/nordic-institute/X-Road/blob/6d60774c0b4e5368e70943c17a2ae6dfaa513259/doc/Protocols/pr-mess_x-road_message_protocol.md\#27-identifier-character-restrictions](https://github.com/nordic-institute/X-Road/blob/6d60774c0b4e5368e70943c17a2ae6dfaa513259/doc/Protocols/pr-mess_x-road_message_protocol.md#27-identifier-character-restrictions)
+  - [https://github.com/nordic-institute/X-Road/blob/6d60774c0b4e5368e70943c17a2ae6dfaa513259/doc/Protocols/pr-rest_x-road_message_protocol_for_rest.md\#48-identifier-character-restrictions](https://github.com/nordic-institute/X-Road/blob/6d60774c0b4e5368e70943c17a2ae6dfaa513259/doc/Protocols/pr-rest_x-road_message_protocol_for_rest.md#48-identifier-character-restrictions)
+- PIN - the password that protects the security server's secret keys.
+- Repeat PIN - repeat the above PIN.
+- Press SUBMIT.
 
 ![](./assets/8.png)
 
@@ -131,7 +131,6 @@ Clicking the links navigates to Keys and Certificates page.
 
 Press LOG IN.
 
-
 Enter PIN Code  
 Then Press LOG IN
 
@@ -139,7 +138,7 @@ Then Press LOG IN
 
 The red error message bar disappears
 
-Next is Time stamping.   
+Next is Time stamping.  
 Go to: Settings &gt; Timestamping Services &gt; ADD
 
 ![](./assets/13%20%281%29.png)
@@ -209,7 +208,6 @@ VANTAR – Senda póst á Begga
 
 ### Importing signed certifications
 
-
 Open KEYS AND CERTIFICATIONS and press IMPORT CERT.
 
 ![](./assets/27.png)
@@ -217,7 +215,6 @@ Open KEYS AND CERTIFICATIONS and press IMPORT CERT.
 ![](./assets/28%20%281%29.png)
 
 Activate auth signed certificate, needs to click the name of the certificate \(test.xrd.island.is...\) and press Activate
-
 
 SCREENSHOT NEEDED
 
