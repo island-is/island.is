@@ -22,7 +22,15 @@ const FormMultiField: FC<{
   multiField: MultiFieldScreen
   answerQuestions(answers: FormValue): void
   goToScreen: (id: string) => void
-}> = ({ application, answerQuestions, errors, goToScreen, multiField }) => {
+  refetch: () => void
+}> = ({
+  application,
+  answerQuestions,
+  errors,
+  goToScreen,
+  multiField,
+  refetch,
+}) => {
   const { description, children, space = 0 } = multiField
   const { formatMessage } = useLocale()
   return (
@@ -60,6 +68,7 @@ const FormMultiField: FC<{
                 key={field.id}
                 errors={errors}
                 goToScreen={goToScreen}
+                refetch={refetch}
               />
             </Box>
           </GridColumn>

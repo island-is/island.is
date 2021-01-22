@@ -6,7 +6,6 @@ import {
   buildDateField,
   buildExternalDataProvider,
   buildForm,
-  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildRepeater,
@@ -731,10 +730,10 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
           ],
         }),
-        buildDescriptionField({
+        buildCustomField({
           id: 'thankYou',
           title: mm.finalScreen.title,
-          description: mm.finalScreen.description,
+          component: 'Conclusion',
         }),
       ],
     }),

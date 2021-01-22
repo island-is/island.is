@@ -37,6 +37,7 @@ export type Icon =
   | 'menu'
   | 'notifications'
   | 'open'
+  | 'pencil'
   | 'people'
   | 'person'
   | 'reader'
@@ -89,6 +90,7 @@ export default {
     menu: 'Menu',
     notifications: 'Notifications',
     open: 'Open',
+    pencil: 'Pencil',
     people: 'People',
     person: 'Person',
     reader: 'Reader',
@@ -140,6 +142,7 @@ export default {
     menu: 'MenuOutline',
     notifications: 'NotificationsOutline',
     open: 'OpenOutline',
+    pencil: 'PencilOutline',
     people: 'PeopleOutline',
     person: 'PersonOutline',
     reader: 'ReaderOutline',

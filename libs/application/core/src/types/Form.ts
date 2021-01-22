@@ -104,6 +104,7 @@ export interface FieldBaseProps {
   application: Application
   showFieldName?: boolean
   goToScreen?: (id: string) => void
+  refetch?: () => void
 }
 
 export type RepeaterProps = {
