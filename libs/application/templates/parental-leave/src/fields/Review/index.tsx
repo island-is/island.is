@@ -432,10 +432,7 @@ const Review: FC<ReviewScreenProps> = ({
               />
               {editable && (
                 <Box paddingTop={3}>
-                  <Button
-                    size="small"
-                    onClick={() => goToScreen && goToScreen('periods')}
-                  >
+                  <Button size="small" onClick={() => goToScreen?.('periods')}>
                     {formatMessage(mm.leavePlan.change)}
                   </Button>
                 </Box>

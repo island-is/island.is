@@ -163,7 +163,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
 
                 if (res?.data) {
                   // Takes them back to the editable Review screen
-                  refetch && refetch()
+                  refetch?.()
                 }
               }}
               buttonTextConfirm={formatMessage(
