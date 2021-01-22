@@ -1,13 +1,13 @@
 import React from 'react'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
-import { extractParentFromApplication } from '../../lib/utils'
+import { extractParentFromApplication, constructParentAddressString } from '../../lib/utils'
 import { CheckboxController } from '@island.is/shared/form-fields'
 
 const ChangeInformation = ({ field, application, error }: FieldBaseProps) => {
   const { id, disabled } = field
   const parent = extractParentFromApplication(application)
-  const parentAddress = `${parent?.address}, ${parent?.postalCode} ${parent?.city}`
+  const parentAddress = constructParentAddressString(parent)
   return (
     <>
       <Text marginBottom={2} marginTop={3}>

@@ -20,3 +20,10 @@ export const extractAnswersFromApplication = (application: Application) => {
     durationDate: application.answers.durationDate as string,
   }
 }
+
+export const constructParentAddressString = (parent: Parent) => {
+  if (!parent) {
+    return null
+  }
+  return `${parent?.address}, ${parent?.postalCode} ${parent?.city}`
+}
