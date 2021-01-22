@@ -264,6 +264,8 @@ export const CourtRecord: React.FC = () => {
                   tagText="Þingmerkt nr. 1"
                   tagVariant="darkerBlue"
                   text="Rannsóknargögn málsins liggja frammi."
+                  caseId={workingCase.id}
+                  selectedCourtDocuments={workingCase.courtDocuments || []}
                 />
               </GridColumn>
             </GridRow>

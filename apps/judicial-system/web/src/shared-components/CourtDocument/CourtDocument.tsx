@@ -1,3 +1,4 @@
+import { useMutation } from '@apollo/client'
 import {
   Box,
   Button,
@@ -9,14 +10,18 @@ import {
 } from '@island.is/island-ui/core'
 import React, { useState, useRef } from 'react'
 import { useKey } from 'react-use'
-import UseKey from 'react-use/lib/comps/UseKey'
+import { UpdateCaseMutation } from '@island.is/judicial-system-web/src/graphql'
 import BlueBox from '../BlueBox/BlueBox'
 import * as styles from './CourtDocument.treat'
+import { UpdateCase } from '@island.is/judicial-system/types'
+import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
 interface CourtDocumentProps {
   title: string
   text: string
   tagText: string
   tagVariant: TagVariant
+  caseId: string
+  selectedCourtDocuments: Array<string>
 }
 
 const CourtDocument: React.FC<CourtDocumentProps> = ({
@@ -24,28 +29,67 @@ const CourtDocument: React.FC<CourtDocumentProps> = ({
   text,
   tagText,
   tagVariant,
+  caseId,
+  selectedCourtDocuments,
 }: CourtDocumentProps) => {
-  const [courtDocuments, setCourtDocuments] = useState<Array<string>>([])
+  const [courtDocuments, setCourtDocuments] = useState<Array<string>>(
+    selectedCourtDocuments,
+  )
   const [nextDocumentToUpload, setNextDocumentToUpload] = useState<string>('')
   const additionalCourtDocumentRef = useRef<HTMLInputElement>(null)
 
-  const handleAddDocument = () => {
+  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
+
+  const updateCase = async (id: string, updateCase: UpdateCase) => {
+    console.log(id)
+    // Only update if id has been set
+    if (!id) {
+      return null
+    }
+    const { data } = await updateCaseMutation({
+      variables: { input: { id, ...updateCase } },
+    })
+
+    const resCase = data?.updateCase
+
+    if (resCase) {
+      // Do smoething with the result. In particular, we want th modified timestamp passed between
+      // the client and the backend so that we can handle multiple simultanious updates.
+    }
+
+    return resCase
+  }
+
+  const handleAddDocument = async () => {
     if (nextDocumentToUpload) {
-      setCourtDocuments([...courtDocuments, nextDocumentToUpload])
+      const updatedCourtDocuments = [...courtDocuments, nextDocumentToUpload]
+
+      // Start by updating the case with the new document to avoid a race condition.
+      await updateCase(
+        caseId,
+        parseArray('courtDocuments', updatedCourtDocuments),
+      )
+      setCourtDocuments(updatedCourtDocuments)
       setNextDocumentToUpload('')
       additionalCourtDocumentRef.current?.focus()
     }
   }
 
-  const handleRemoveDocument = (index: number) => {
-    setCourtDocuments(
-      courtDocuments.filter((_, documentIndex) => documentIndex !== index),
+  const handleRemoveDocument = async (index: number) => {
+    const updatedCourtDocuments = courtDocuments.filter(
+      (_, documentIndex) => documentIndex !== index,
     )
+
+    await updateCase(
+      caseId,
+      parseArray('courtDocuments', updatedCourtDocuments),
+    )
+    setCourtDocuments(updatedCourtDocuments)
   }
 
   // Add document on enter press
   useKey('Enter', handleAddDocument, undefined, [nextDocumentToUpload])
-
+  console.log(selectedCourtDocuments)
   return (
     <BlueBox>
       <Box marginBottom={1}>
