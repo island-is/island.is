@@ -275,4 +275,10 @@ export abstract class ClientBaseDTO {
     example: true,
   })
   readonly requireClientSecret!: boolean
+
+  @IsOptional()
+  @ApiProperty({
+    example: null,
+  })
+  contactEmail!: string
 }
