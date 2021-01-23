@@ -134,8 +134,9 @@
   - [Shared Form Fields](libs/shared/form-fields/README.md)
   - [Shared Mocking](libs/shared/mocking/README.md)
   - [Shared Types](libs/shared/types/README.md)
+- [Utils](libs/utils/README.md)
+  - [API Utils](libs/utils/api/README.md)
 - [VMST Client](libs/vmst-client/README.md)
-- [API Utils](libs/utils/api/README.md)
 
 ## Misc
 
