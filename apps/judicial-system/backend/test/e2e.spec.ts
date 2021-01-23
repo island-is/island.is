@@ -67,24 +67,27 @@ const remainingCreateCaseData = {
   court: 'Court',
 }
 
-const remainingProsecutorCaseData = {
-  arrestDate: '2020-09-08T08:00:00.000Z',
-  requestedCourtDate: '2020-09-08T11:30:00.000Z',
-  alternativeTravelBan: false,
-  requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
-  otherDemands: 'Other Demands',
-  lawsBroken: 'Broken Laws',
-  custodyProvisions: [
-    CaseCustodyProvisions._95_1_A,
-    CaseCustodyProvisions._99_1_B,
-  ],
-  requestedCustodyRestrictions: [
-    CaseCustodyRestrictions.ISOLATION,
-    CaseCustodyRestrictions.MEDIA,
-  ],
-  caseFacts: 'Case Facts',
-  legalArguments: 'Legal Arguments',
-  comments: 'Comments',
+function remainingProsecutorCaseData() {
+  return {
+    arrestDate: '2020-09-08T08:00:00.000Z',
+    requestedCourtDate: '2020-09-08T11:30:00.000Z',
+    alternativeTravelBan: false,
+    requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
+    otherDemands: 'Other Demands',
+    lawsBroken: 'Broken Laws',
+    custodyProvisions: [
+      CaseCustodyProvisions._95_1_A,
+      CaseCustodyProvisions._99_1_B,
+    ],
+    requestedCustodyRestrictions: [
+      CaseCustodyRestrictions.ISOLATION,
+      CaseCustodyRestrictions.MEDIA,
+    ],
+    caseFacts: 'Case Facts',
+    legalArguments: 'Legal Arguments',
+    comments: 'Comments',
+    prosecutorId: prosecutor.id,
+  }
 }
 
 const remainingJudgeCaseData = {
@@ -120,7 +123,7 @@ function getProsecutorCaseData(
     data = { ...data, ...remainingCreateCaseData }
   }
   if (otherProsecutorCaseData) {
-    data = { ...data, ...remainingProsecutorCaseData }
+    data = { ...data, ...remainingProsecutorCaseData() }
   }
   return data
 }
@@ -308,10 +311,6 @@ describe('Case', () => {
         // Check the data in the database
         return Case.findOne({
           where: { id: apiCase.id },
-          include: [
-            { model: User, as: 'prosecutor' },
-            { model: User, as: 'judge' },
-          ],
         })
       })
       .then((value) => {
@@ -343,10 +342,6 @@ describe('Case', () => {
         // Check the data in the database
         return Case.findOne({
           where: { id: apiCase.id },
-          include: [
-            { model: User, as: 'prosecutor' },
-            { model: User, as: 'judge' },
-          ],
         })
       })
       .then((value) => {
@@ -385,10 +380,6 @@ describe('Case', () => {
         // Check the data in the database
         return Case.findOne({
           where: { id: apiCase.id },
-          include: [
-            { model: User, as: 'prosecutor' },
-            { model: User, as: 'judge' },
-          ],
         })
       })
       .then((newValue) => {
@@ -425,10 +416,6 @@ describe('Case', () => {
         // Check the data in the database
         return Case.findOne({
           where: { id: apiCase.id },
-          include: [
-            { model: User, as: 'prosecutor' },
-            { model: User, as: 'judge' },
-          ],
         })
       })
       .then((newValue) => {
@@ -520,7 +507,7 @@ describe('Case', () => {
       })
       .then((response) => {
         // Check the response
-        expectCasesToMatch(response.body, dbCase)
+        expectCasesToMatch(response.body, { ...dbCase, prosecutor: prosecutor })
       })
   })
 

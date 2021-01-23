@@ -72,6 +72,7 @@ const prosecutorUpdateRule = {
     'caseFacts',
     'legalArguments',
     'comments',
+    'prosecutorId',
   ],
 } as RolesRule
 
@@ -196,8 +197,10 @@ export class CaseController {
       state: transitionCase(transition.transition, existingCase.state),
     } as UpdateCaseDto
 
-    update[user.role === UserRole.PROSECUTOR ? 'prosecutorId' : 'judgeId'] =
-      user.id
+    // Remove when client has started assigned a judge to each csae
+    if (user.role === UserRole.JUDGE) {
+      update['judgeId'] = user.id
+    }
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,
