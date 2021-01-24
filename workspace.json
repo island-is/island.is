@@ -5561,7 +5561,7 @@
             "args": "--targetName=web",
             "commands": [
               "yarn nx run {args.targetName}:build:production",
-              "yarn nx run {args.targetName}-e2e:e2e:production --headless --production --base-url http://localhost:4200 --record --group={args.targetName}-e2e"
+              "yarn nx run {args.targetName}-e2e:e2e:production --headless --production --base-url http://localhost:4200"
             ],
             "parallel": false
           }

@@ -14,8 +14,8 @@ const nrwlConfig = require('@nrwl/react/plugins/webpack.js')
  */
 const setApiMocks = (config) => {
   config.plugins.forEach((plugin) => {
-    // Find the DefinePlugin
-    if (plugin instanceof DefinePlugin) {
+    // Find the DefinePlugin and check if it has 'process.env' key
+    if (plugin instanceof DefinePlugin && plugin.definitions['process.env']) {
       // Set API_MOCKS so it's always set before webpack does its things
       plugin.definitions['process.env'].API_MOCKS = JSON.stringify(
         process.env.API_MOCKS,
