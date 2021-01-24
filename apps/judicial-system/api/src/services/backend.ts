@@ -43,16 +43,7 @@ class BackendAPI extends RESTDataSource {
   }
 
   updateCase(id: string, updateCase: UpdateCase): Promise<Case> {
-    const { prosecutor, ...updates } = updateCase
-
-    if (prosecutor?.id) {
-      return this.put(`case/${id}`, {
-        ...updates,
-        prosecutorId: prosecutor.id,
-      })
-    }
-
-    return this.put(`case/${id}`, updates)
+    return this.put(`case/${id}`, updateCase)
   }
 
   transitionCase(id: string, transitionCase: TransitionCase): Promise<Case> {
