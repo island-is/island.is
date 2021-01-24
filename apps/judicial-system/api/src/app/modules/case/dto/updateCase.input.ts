@@ -11,6 +11,8 @@ import {
   UpdateCase,
 } from '@island.is/judicial-system/types'
 
+import { User } from '../../user'
+
 @InputType()
 export class UpdateCaseInput implements UpdateCase {
   @Allow()
@@ -92,6 +94,10 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly comments?: string
+
+  @Allow()
+  @Field(() => User, { nullable: true })
+  readonly prosecutor?: User
 
   @Allow()
   @Field({ nullable: true })
