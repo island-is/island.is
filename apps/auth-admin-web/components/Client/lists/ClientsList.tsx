@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
 import { Client } from './../../../entities/models/client.model'
+import CsvExport from '../../common/CsvExport'
 
 class ClientsList extends Component {
   state = {
@@ -175,10 +176,19 @@ class ClientsList extends Component {
                   </tbody>
                 </table>
               </div>
-              <Paginator
-                lastPage={Math.ceil(this.state.rowCount / this.state.count)}
-                handlePageChange={this.handlePageChange}
-              />
+              <div>
+                <Paginator
+                  lastPage={Math.ceil(this.state.rowCount / this.state.count)}
+                  handlePageChange={this.handlePageChange}
+                />
+                <CsvExport
+                  label="Export"
+                  filename={`Clients, ${
+                    new Date().toISOString().split('T')[0]
+                  }.csv`}
+                  exportMethod={ClientService.getClientsCsv}
+                />
+              </div>
             </div>
           </div>
         </div>

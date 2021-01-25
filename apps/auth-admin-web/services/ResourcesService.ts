@@ -3,6 +3,7 @@ import { ApiResourceSecretDTO } from '../entities/dtos/api-resource-secret.dto'
 import { ApiResourcesDTO } from '../entities/dtos/api-resources-dto'
 import { ApiScopeDTO } from '../entities/dtos/api-scope-dto'
 import IdentityResourceDTO from '../entities/dtos/identity-resource.dto'
+import { ApiResourceCsv } from '../entities/models/api-resource-csv'
 import { ApiResourceScope } from '../entities/models/api-resource-scope.model'
 import { ApiResourceSecret } from '../entities/models/api-resource-secret.model'
 import { ApiResourceUserClaim } from '../entities/models/api-resource-user-claim.model'
@@ -240,5 +241,23 @@ export class ResourcesService extends BaseService {
         apiResourceName,
       )}/${encodeURIComponent(scopeName)}`,
     )
+  }
+
+  static async getApiResourcesCsv(): Promise<ApiResourceCsv[] | null> {
+    const result = await BaseService.GET(
+      `api-resources?page=${1}&count=${Number.MAX_SAFE_INTEGER}`,
+    )
+    return result.rows.map((r) => ResourcesService.toApiResourceCsv(r))
+  }
+
+  static toApiResourceCsv = (apiResource: ApiResource): ApiResourceCsv => {
+    const csv = new ApiResourceCsv()
+    csv.name = apiResource.name
+    csv.displayName = apiResource.displayName
+    csv.nationalId = apiResource.nationalId
+    csv.created = apiResource.created
+    csv.modified = apiResource.modified
+
+    return csv
   }
 }
