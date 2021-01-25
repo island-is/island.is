@@ -21,19 +21,19 @@ import { documentsOpenDocument } from '@island.is/plausible'
 import * as Sentry from '@sentry/react'
 import format from 'date-fns/format'
 
-
-
 const isIosDevice = () => {
-  return [
-    'iPad Simulator',
-    'iPhone Simulator',
-    'iPod Simulator',
-    'iPad',
-    'iPhone',
-    'iPod'
-  ].includes(navigator.platform)
-  // iPad on iOS 13 detection
-  || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+  return (
+    [
+      'iPad Simulator',
+      'iPhone Simulator',
+      'iPod Simulator',
+      'iPad',
+      'iPhone',
+      'iPod',
+    ].includes(navigator.platform) ||
+    // iPad on iOS 13 detection
+    (navigator.userAgent.includes('Mac') && 'ontouchend' in document)
+  )
 }
 
 // Only used for none ios devices
@@ -54,8 +54,6 @@ const openPdfInNewTab = (url: string, fileName: string) => {
   fakeLink.addEventListener('click', clickHandler, false)
   fakeLink.click()
 }
-
-
 
 const base64ToArrayBuffer = (base64Pdf: string) => {
   const binaryString = window.atob(base64Pdf)
@@ -134,7 +132,7 @@ const DocumentLine: FC<Props> = ({ document }) => {
       level: Sentry.Severity.Info,
     })
     // Note: opening window before fetching data, only used for ios devices
-    const windowRef = isIosDevice() ? window.open() : null;
+    const windowRef = isIosDevice() ? window.open() : null
     try {
       const { data } = await client.query({
         query: GET_DOCUMENT,
@@ -160,9 +158,11 @@ const DocumentLine: FC<Props> = ({ document }) => {
       })
       setDocumentDetails({ documentDetails: doc })
       documentsOpenDocument(pathname, document.subject)
-      if(documentIsPdf(doc)) {
-          (isIosDevice() && windowRef) ? windowRef.location.assign(getPdfURL(doc.content)) : openPdfInNewTab(getPdfURL(doc.content), document.subject)
-        return;
+      if (documentIsPdf(doc)) {
+        isIosDevice() && windowRef
+          ? windowRef.location.assign(getPdfURL(doc.content))
+          : openPdfInNewTab(getPdfURL(doc.content), document.subject)
+        return
       }
 
       windowRef && windowRef.close()
@@ -256,22 +256,22 @@ const DocumentLine: FC<Props> = ({ document }) => {
           </GridColumn>
         </GridRow>
         {loading && (
-        <Box
-          className={styles.isLoadingContainer}
-          position="absolute"
-          left={0}
-          right={0}
-          top={0}
-          bottom={0}
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          borderRadius="large"
-          background="white"
-        >
-          <LoadingIcon animate size={30} />
-        </Box>
-      )}
+          <Box
+            className={styles.isLoadingContainer}
+            position="absolute"
+            left={0}
+            right={0}
+            top={0}
+            bottom={0}
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            borderRadius="large"
+            background="white"
+          >
+            <LoadingIcon animate size={30} />
+          </Box>
+        )}
       </Box>
       {isModalOpen && (
         <>
