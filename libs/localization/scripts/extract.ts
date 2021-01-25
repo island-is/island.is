@@ -31,15 +31,20 @@ const client = createClient({
   accessToken,
 })
 
-spawn.sync('npx', [
-  'formatjs',
-  'extract',
-  '--out-file',
-  'libs/localization/messages.json',
-  '--format',
-  'libs/localization/scripts/formatter.js',
-  process.argv[2],
-])
+try {
+  spawn.sync('npx', [
+    'formatjs',
+    'extract',
+    '--out-file',
+    'libs/localization/messages.json',
+    '--format',
+    'libs/localization/scripts/formatter.js',
+    process.argv[2],
+  ])
+} catch (e) {
+  console.error(`Error while trying to extract strings ${e}`)
+  process.exit(1);
+}
 
 function createNamespace(
   id: string,
