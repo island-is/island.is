@@ -14,10 +14,8 @@ export default {
     host: process.env.SOFFIA_HOST_URL,
   },
   healthInsurance: {
-    wsdlUrl:
-      process.env.HEALTH_INSURANCE_XROAD_WSDLURL,
-    baseUrl:
-      process.env.XROAD_BASE_PATH,
+    wsdlUrl: process.env.HEALTH_INSURANCE_XROAD_WSDLURL,
+    baseUrl: process.env.XROAD_BASE_PATH,
     username: process.env.HEALTH_INSURANCE_XROAD_USERNAME,
     password: process.env.HEALTH_INSURANCE_XROAD_PASSWORD,
   },
