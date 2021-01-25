@@ -7,10 +7,12 @@ import { Application } from './Application'
 
 export type StaticText = (MessageDescriptor & { values?: object }) | string
 
-export type FormText = StaticText | ((application: Application) => StaticText)
+export type FormText =
+  | StaticText
+  | ((application: Application) => StaticText | null | undefined)
 export type FormTextArray =
   | StaticText[]
-  | ((application: Application) => StaticText[])
+  | ((application: Application) => (StaticText | null | undefined)[])
 
 export enum FormItemTypes {
   FORM = 'FORM',

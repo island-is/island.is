@@ -5,10 +5,10 @@ export const addCourtDocumentContainer = style({
   display: 'grid',
   gridTemplateColumns: '2fr 1fr',
   columnGap: theme.spacing[2],
-  marginBottom: theme.spacing[2],
+  marginBottom: theme.spacing[3],
 })
 
-export const additionalCordDocumentContainer = style({
+export const additionalCourtDocumentContainer = style({
   display: 'flex',
   justifyContent: 'space-between',
   borderTop: `1px solid ${theme.color.blue200}`,

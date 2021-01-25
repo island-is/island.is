@@ -21,7 +21,7 @@ const ClientStepNav: React.FC<Props> = ({
               onClick={() => handleStepChange(ClientStep.Client)}
               className={activeStep === ClientStep.Client ? 'active' : ''}
             >
-              Client Basics
+              Client Settings
             </button>
           </li>
           <li>
