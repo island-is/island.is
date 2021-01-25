@@ -9,7 +9,7 @@ import {
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   FormFooter,
-  CourtDocument,
+  CourtDocuments,
   PageLayout,
   TimeInputField,
   CaseNumbers,
@@ -270,7 +270,7 @@ export const CourtRecord: React.FC = () => {
             </Box>
             <GridRow>
               <GridColumn span="6/7">
-                <CourtDocument
+                <CourtDocuments
                   title="Krafa lögreglu"
                   tagText="Þingmerkt nr. 1"
                   tagVariant="darkerBlue"
