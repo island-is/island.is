@@ -10,6 +10,9 @@ import { Namespace } from '@island.is/api/schema'
 import DistrictsSlice from '@island.is/web/components/Organization/Slice/Districts/DistrictsSlice'
 import HeadingSlice from '@island.is/web/components/Organization/Slice/Heading/HeadingSlice'
 import FeaturedArticlesSlice from '@island.is/web/components/Organization/Slice/FeaturedArticles/FeaturedArticlesSlice'
+import TwoColumnTextSlice from '@island.is/web/components/Organization/Slice/TwoColumnText/TwoColumnTextSlice'
+import OfficesSlice from '@island.is/web/components/Organization/Slice/Offices/OfficesSlice'
+import SingleColumnTextSlice from "@island.is/web/components/Organization/Slice/SingleColumnText/SingleColumnTextSlice";
 
 interface OrganizationSliceProps {
   slice: Slice
@@ -29,7 +32,14 @@ const OrganizationSlice: FC<OrganizationSliceProps> = ({
       return <DistrictsSlice slice={slice} organization={organization} />
     case 'FeaturedArticles':
       return <FeaturedArticlesSlice slice={slice} namespace={namespace} />
+    case 'TwoColumnText':
+      return <TwoColumnTextSlice slice={slice} />
+    case 'Offices':
+      return <OfficesSlice slice={slice} />
+    case 'SingleColumnText':
+      return <SingleColumnTextSlice slice={slice} />
     default:
+      console.log(slice.__typename)
       return <></>
   }
 }
