@@ -1,0 +1,44 @@
+import React from 'react'
+import { Box } from '@island.is/island-ui/core'
+import * as styles from './OfficeCard.treat'
+import { blue400 } from '@island.is/island-ui/theme'
+
+interface OfficeCardProps {
+  name: string
+  address: string
+  city: string
+  openingHours: string
+}
+
+export const OfficeCard: React.FC<OfficeCardProps> = ({
+  name,
+  address,
+  city,
+  openingHours,
+}) => {
+  return (
+    <>
+      <Box
+        borderRadius="large"
+        overflow="hidden"
+        background="blue100"
+        boxShadow="subtle"
+        border="standard"
+        borderColor="blue200"
+        marginBottom={[1, 1, 1]}
+        marginTop={[1, 1, 1]}
+        paddingX={[4, 4, 4]}
+        paddingY={[3, 3, 3]}
+      >
+        <h1 className={styles.title}>{name}</h1>
+        <p style={{fontWeight: 300, marginTop: 14}}>
+          {address}
+        </p>
+        <br/><b>Opnunartími</b><br/>
+        <p>
+          {openingHours.split("\n").map(line => <p style={{fontWeight: 300, marginTop: 14}}>{line}</p>)}
+        </p>
+      </Box>
+    </>
+  )
+}
