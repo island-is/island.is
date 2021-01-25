@@ -16,7 +16,7 @@ import {
   QueryGetNamespaceArgs,
   ContentLanguage,
   QueryGetOrganizationSubpageArgs,
-} from '@island.is/api/schema'
+} from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_SUBPAGE_QUERY,

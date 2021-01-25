@@ -12,7 +12,7 @@ import {
   Query,
   QueryGetNamespaceArgs,
   ContentLanguage,
-} from '@island.is/api/schema'
+} from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
