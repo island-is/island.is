@@ -1,5 +1,5 @@
 import ClientDTO from './../../entities/dtos/client-dto'
-import ClientForm from '../../components/Client/form/ClientForm'
+import ClientCreateForm from '../../components/Client/form/ClientCreateForm'
 import ClientRedirectUriForm from '../../components/Client/form/ClientRedirectUriForm'
 import ClientIdpRestrictionsForm from '../../components/Client/form/ClientIdpRestrictionsForm'
 import ClientPostLogoutRedirectUriForm from '../../components/Client/form/ClientPostLogoutRedirectUriForm'
@@ -83,7 +83,7 @@ const Index: React.FC = () => {
       return (
         <ContentWrapper>
           <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
-            <ClientForm
+            <ClientCreateForm
               handleCancel={handleCancel}
               client={client as ClientDTO}
               onNextButtonClick={handleClientSaved}
@@ -208,6 +208,7 @@ const Index: React.FC = () => {
             <ClientSecretForm
               secrets={client.clientSecrets}
               clientId={client.clientId}
+              clientType={client.clientType}
               handleBack={handleBack}
               handleNext={handleNext}
               handleChanges={changesMade}
@@ -225,7 +226,8 @@ const Index: React.FC = () => {
               title="Steps completed"
               handleButtonFinishedClick={() => setStep(1)}
             >
-              The steps needed, to create a client, have been completed
+              <p>The steps needed, to create a client, have been completed</p>
+              <p>You can review your settings by clicking on the steps above</p>
             </StepEnd>
           </ClientStepNav>
         </ContentWrapper>

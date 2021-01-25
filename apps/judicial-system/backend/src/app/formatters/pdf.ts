@@ -271,7 +271,7 @@ export async function generateRulingPdf(
     })
 
   existingCase.courtDocuments?.forEach((courttDocument, index) =>
-    doc.text(`${courttDocument} þingmerkt nr. ${index + 1}.`, {
+    doc.text(`${courttDocument} þingmerkt nr. ${index + 2}.`, {
       lineGap: 6,
       paragraphGap: 4,
     }),
