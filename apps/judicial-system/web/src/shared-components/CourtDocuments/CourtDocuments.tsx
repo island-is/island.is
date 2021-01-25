@@ -10,10 +10,10 @@ import {
 import React, { useState, useRef } from 'react'
 import { useKey } from 'react-use'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
-import * as styles from './CourtDocument.treat'
+import * as styles from './CourtDocuments.treat'
 import { Case } from '@island.is/judicial-system/types'
 import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
-interface CourtDocumentProps {
+interface CourtDocumentsProps {
   title: string
   text: string
   tagText: string
@@ -28,7 +28,7 @@ interface CourtDocumentProps {
   workingCase: Case
 }
 
-const CourtDocument: React.FC<CourtDocumentProps> = ({
+const CourtDocuments: React.FC<CourtDocumentsProps> = ({
   title,
   text,
   tagText,
@@ -38,7 +38,7 @@ const CourtDocument: React.FC<CourtDocumentProps> = ({
   onUpdateCase,
   setWorkingCase,
   workingCase,
-}: CourtDocumentProps) => {
+}: CourtDocumentsProps) => {
   const [courtDocuments, setCourtDocuments] = useState<Array<string>>(
     selectedCourtDocuments,
   )
@@ -75,20 +75,6 @@ const CourtDocument: React.FC<CourtDocumentProps> = ({
 
   return (
     <BlueBox>
-      <Box marginBottom={1}>
-        <Text variant="h4">{title}</Text>
-      </Box>
-      <Box
-        display="flex"
-        justifyContent="spaceBetween"
-        alignItems="flexEnd"
-        marginBottom={5}
-      >
-        <Text>{text}</Text>
-        <Tag variant={tagVariant} outlined disabled>
-          {tagText}
-        </Tag>
-      </Box>
       <div className={styles.addCourtDocumentContainer}>
         <Input
           name="add-court-document"
@@ -108,9 +94,23 @@ const CourtDocument: React.FC<CourtDocumentProps> = ({
           Bæta við skjali
         </Button>
       </div>
+      <Box marginBottom={1}>
+        <Text variant="h4">{title}</Text>
+      </Box>
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        alignItems="flexEnd"
+        marginBottom={3}
+      >
+        <Text>{text}</Text>
+        <Tag variant={tagVariant} outlined disabled>
+          {tagText}
+        </Tag>
+      </Box>
       {courtDocuments.map((courtDocument, index) => {
         return (
-          <div className={styles.additionalCordDocumentContainer} key={index}>
+          <div className={styles.additionalCourtDocumentContainer} key={index}>
             <Text variant="h4">{courtDocument}</Text>
             <Box display="flex" alignItems="center">
               <Box marginRight={2}>
@@ -130,4 +130,4 @@ const CourtDocument: React.FC<CourtDocumentProps> = ({
   )
 }
 
-export default CourtDocument
+export default CourtDocuments
