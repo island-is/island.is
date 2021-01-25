@@ -9,12 +9,12 @@ import {
 import { GET_URL_QUERY, GET_ERROR_PAGE } from '@island.is/web/screens/queries'
 import { ApolloClient } from '@apollo/client/core'
 import { NormalizedCacheObject } from '@apollo/client/cache'
-import ErrorComponent from '../screens/Error/Error'
-import { getLocaleFromPath } from '../i18n/withLocale'
+import ErrorScreen from '../screens/Error/Error'
 import Layout, { LayoutProps } from '../layouts/main'
 import I18n, { Locale } from '../i18n/I18n'
 import { withApollo } from '../graphql/withApollo'
-import { linkResolver, LinkType } from '../hooks/useLinkResolver'
+import { linkResolver, LinkType, typeResolver } from '../hooks/useLinkResolver'
+import { NextPageContext } from 'next'
 
 type ErrorPageProps = {
   statusCode: number
@@ -22,6 +22,11 @@ type ErrorPageProps = {
   layoutProps: LayoutProps
   errpage: ErrorPageQuery['getErrorPage']
 }
+
+type ErrorPageInitialProps = {
+  apolloClient: ApolloClient<NormalizedCacheObject>
+  locale: string
+} & NextPageContext
 
 class ErrorPage extends React.Component<ErrorPageProps> {
   state = { renderError: false }
@@ -43,7 +48,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
         return (
           <I18n locale={locale} translations={layoutProps.namespace}>
             <Layout {...layoutProps}>
-              <ErrorComponent errPage={errpage} statusCode={statusCode} />
+              <ErrorScreen errPage={errpage} statusCode={statusCode} />
             </Layout>
           </I18n>
         )
@@ -52,15 +57,16 @@ class ErrorPage extends React.Component<ErrorPageProps> {
     }
 
     // fallback to simpler version if we're unable to use the Layout for any reason
-    return <ErrorComponent errPage={errpage} statusCode={statusCode} />
+    return <ErrorScreen errPage={errpage} statusCode={statusCode} />
   }
 
-  static async getInitialProps(props /*: NextPageContext*/) {
+  static async getInitialProps(props: ErrorPageInitialProps) {
     const { err, res, asPath = '' } = props
     const statusCode = err?.statusCode ?? res?.statusCode ?? 500
-    const locale = getLocaleFromPath(asPath)
+    const { locale } = typeResolver(asPath)
 
-    if (!asPath.startsWith('/_next') && statusCode === 404) {
+    // check if we have a redirect condition
+    if (statusCode === 404) {
       const path = asPath
         .trim()
         .replace(/\/\/+/g, '/')
@@ -68,33 +74,23 @@ class ErrorPage extends React.Component<ErrorPageProps> {
         .toLowerCase()
 
       const redirectProps = await getRedirectProps({
-        path,
+        path: path,
         apolloClient: props.apolloClient,
         locale,
         statusCode,
       })
 
       if (redirectProps) {
-        const { pageType, page } = redirectProps
+        const { type, slug } = redirectProps.pageType
 
         // Found an URL content type that contained this
         // path (which has a page assigned to it) so we redirect to that page
-        if (pageType && page) {
-          let type: string
-          if (pageType === 'vidspyrna-frontpage') {
-            type = 'adgerdirfrontpage'
-          } else {
-            type = pageType
-          }
-
-          const url = linkResolver(type as LinkType, [page.slug], locale).as
-
-          if (!process.browser) {
-            res.writeHead(302, { Location: url })
-            res.end()
-          } else {
-            return (window.location.href = url)
-          }
+        const url = linkResolver(type as LinkType, [slug], locale).as
+        if (!process.browser) {
+          res.writeHead(302, { Location: url })
+          res.end()
+        } else {
+          return (window.location.href = url)
         }
       }
     }
@@ -137,11 +133,8 @@ class ErrorPage extends React.Component<ErrorPageProps> {
 export default withApollo(ErrorPage)
 
 export interface RedirectProps {
-  pageType: string
-  page: {
-    slug: string
-    contentType: string
-  }
+  slug: string
+  type: string
 }
 
 interface GetRedirectPropsProps {
@@ -179,10 +172,10 @@ const getRedirectProps = async ({
           },
         },
       })
-      .then((response) => response.data),
+      .then((response) => response.data.getErrorPage),
   ])
 
-  const pageType = url?.page?.contentType ?? null
+  const pageType = url?.page ?? null
 
   if (!pageType) {
     return null
@@ -190,7 +183,7 @@ const getRedirectProps = async ({
 
   return {
     pageType,
-    page: url.page,
-    errpage,
+    url: url,
+    errpage: errpage,
   }
 }

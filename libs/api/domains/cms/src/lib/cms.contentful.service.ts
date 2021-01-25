@@ -7,7 +7,6 @@ import * as types from './generated/contentfulTypes'
 import { Article, mapArticle } from './models/article.model'
 import { ContentSlug, mapContentSlug } from './models/contentSlug.model'
 import { AboutPage, mapAboutPage } from './models/aboutPage.model'
-import { LandingPage, mapLandingPage } from './models/landingPage.model'
 import { GenericPage, mapGenericPage } from './models/genericPage.model'
 import {
   GenericOverviewPage,
@@ -23,7 +22,6 @@ import { AdgerdirPages } from './models/adgerdirPages.model'
 import { AdgerdirPage, mapAdgerdirPage } from './models/adgerdirPage.model'
 import { GetContentSlugInput } from './dto/getContentSlug.input'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
-import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
 import { Namespace, mapNamespace } from './models/namespace.model'
@@ -299,21 +297,6 @@ export class CmsContentfulService {
       .catch(errorHandler('getAboutSubPage'))
 
     return result.items.map(mapAboutSubPage)[0] ?? null
-  }
-
-  async getLandingPage({
-    lang,
-    slug,
-  }: GetLandingPageInput): Promise<LandingPage | null> {
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.ILandingPageFields>(lang, {
-        ['content_type']: 'landingPage',
-        'fields.slug': slug,
-        include: 10,
-      })
-      .catch(errorHandler('getLandingPage'))
-
-    return result.items.map(mapLandingPage)[0] ?? null
   }
 
   async getContentSlug({

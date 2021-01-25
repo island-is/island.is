@@ -93,6 +93,7 @@ export interface Case {
   requestedCourtDate?: string
   alternativeTravelBan?: boolean
   requestedCustodyEndDate?: string
+  otherDemands?: string
   lawsBroken?: string
   custodyProvisions?: CaseCustodyProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
@@ -112,6 +113,7 @@ export interface Case {
   courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
+  courtDocuments?: string[]
   accusedPlea?: string
   litigationPresentations?: string
   ruling?: string
@@ -125,6 +127,8 @@ export interface Case {
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
   judge?: User
+  parentCase?: Case
+  childCase?: Case
   notifications?: Notification[]
 }
 
@@ -183,6 +187,7 @@ export interface UpdateCase {
   courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
+  courtDocuments?: string[]
   accusedPlea?: string
   litigationPresentations?: string
   ruling?: string

@@ -130,8 +130,12 @@ async function main() {
   })
 
   // 1. Create contentful management client
-  const space = await client.getSpace('8k0h54kbe6bj')
-  const environment = await space.getEnvironment('master')
+  const space = await client.getSpace(
+    process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj',
+  )
+  const environment = await space.getEnvironment(
+    process.env.CONTENTFUL_ENVIRONMENT || 'master',
+  )
 
   // 2. We generate new contentful types
   await codegenContentful()

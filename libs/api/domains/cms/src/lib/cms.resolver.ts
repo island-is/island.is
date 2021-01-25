@@ -26,13 +26,11 @@ import { GetFrontpageSliderListInput } from './dto/getFrontpageSliderList.input'
 import { GetErrorPageInput } from './dto/getErrorPage.input'
 import { Namespace } from './models/namespace.model'
 import { AboutPage } from './models/aboutPage.model'
-import { LandingPage } from './models/landingPage.model'
 import { AlertBanner } from './models/alertBanner.model'
 import { GenericPage } from './models/genericPage.model'
 import { GenericOverviewPage } from './models/genericOverviewPage.model'
 import { GetNamespaceInput } from './dto/getNamespace.input'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
-import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
@@ -109,14 +107,6 @@ export class CmsResolver {
     @Args('input') input: GetAboutSubPageInput,
   ): Promise<AboutSubPage | null> {
     return this.cmsContentfulService.getAboutSubPage(input)
-  }
-
-  @Directive(cacheControlDirective())
-  @Query(() => LandingPage, { nullable: true })
-  getLandingPage(
-    @Args('input') input: GetLandingPageInput,
-  ): Promise<LandingPage | null> {
-    return this.cmsContentfulService.getLandingPage(input)
   }
 
   // TODO: Change this so this won't link to non existing entries e.g. articles

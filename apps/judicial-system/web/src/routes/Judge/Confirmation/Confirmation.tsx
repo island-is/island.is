@@ -8,22 +8,34 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { FormFooter } from '../../../shared-components/FormFooter'
-import Modal from '../../../shared-components/Modal/Modal'
+import {
+  FormFooter,
+  Modal,
+  PoliceRequestAccordionItem,
+  CourtRecordAccordionItem,
+  TimeInputField,
+  PdfButton,
+  CaseNumbers,
+  PageLayout,
+} from '@island.is/judicial-system-web/src/shared-components'
 import {
   constructConclusion,
   getAppealDecisionText,
   isNextDisabled,
-} from '../../../utils/stepHelper'
-import * as Constants from '../../../utils/constants'
+} from '@island.is/judicial-system-web/src/utils/stepHelper'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   formatDate,
   formatCustodyRestrictions,
   TIME_FORMAT,
   formatAlternativeTravelBanRestrictions,
 } from '@island.is/judicial-system/formatters'
-import { parseTransition } from '../../../utils/formatters'
-import { AppealDecisionRole, JudgeSubsections, Sections } from '../../../types'
+import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
+import {
+  AppealDecisionRole,
+  JudgeSubsections,
+  Sections,
+} from '@island.is/judicial-system-web/src/types'
 import {
   Case,
   CaseAppealDecision,
@@ -37,8 +49,6 @@ import {
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import { useHistory, useParams } from 'react-router-dom'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
-import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
 import * as style from './Confirmation.treat'
 import {
   CaseQuery,
@@ -48,19 +58,16 @@ import {
 } from '@island.is/judicial-system-web/src/graphql'
 import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import CourtRecordAccordionItem from '../../../shared-components/CourtRecordAccordionItem/CourtRecordAccordionItem'
 import {
   RequestSignatureMutation,
   SignatureConfirmationQuery,
-} from '../../../utils/mutations'
-import { Validation } from '../../../utils/validate'
-import TimeInputField from '../../../shared-components/TimeInputField/TimeInputField'
+} from '@island.is/judicial-system-web/src/utils/mutations'
+import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   getTimeFromDate,
   validateAndSendTimeToServer,
   validateAndSetTime,
-} from '../../../utils/formHelper'
-import PdfButton from '../../../shared-components/PdfButton/PdfButton'
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 
 interface SigningModalProps {
   workingCase: Case
@@ -181,13 +188,15 @@ const SigningModal: React.FC<SigningModalProps> = ({
 
   useEffect(() => {
     const completeSigning = async (
-      resSignatureResponse: SignatureConfirmationResponse,
+      resSignatureConfirmationResponse: SignatureConfirmationResponse,
     ) => {
-      await transitionCase()
+      if (resSignatureConfirmationResponse.documentSigned) {
+        await transitionCase()
 
-      await sendNotification()
+        await sendNotification()
+      }
 
-      setSignatureConfirmationResponse(resSignatureResponse)
+      setSignatureConfirmationResponse(resSignatureConfirmationResponse)
     }
 
     if (resSignatureConfirmationResponse) {
@@ -360,10 +369,13 @@ export const Confirmation: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.JUDGE}
+      activeSection={
+        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
+      }
       activeSubSection={JudgeSubsections.CONFIRMATION}
       isLoading={loading}
       notFound={data?.case === undefined}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>
@@ -389,7 +401,7 @@ export const Confirmation: React.FC = () => {
               variant="h2"
               as="h2"
             >{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
-            <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
+            <CaseNumbers workingCase={workingCase} />
           </Box>
           <Box marginBottom={9}>
             <Accordion>
@@ -449,6 +461,7 @@ export const Confirmation: React.FC = () => {
                 {getAppealDecisionText(
                   AppealDecisionRole.ACCUSED,
                   workingCase.accusedAppealDecision,
+                  workingCase.accusedGender,
                 )}
               </Text>
             </Box>
@@ -456,6 +469,7 @@ export const Confirmation: React.FC = () => {
               {getAppealDecisionText(
                 AppealDecisionRole.PROSECUTOR,
                 workingCase.prosecutorAppealDecision,
+                workingCase.accusedGender,
               )}
             </Text>
             {(workingCase.accusedAppealAnnouncement ||
@@ -500,8 +514,8 @@ export const Confirmation: React.FC = () => {
                 </Text>
               </Box>
               <Text>
-                Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
-                atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
+                Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
+                bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
               </Text>
             </Box>
           )}
@@ -527,8 +541,8 @@ export const Confirmation: React.FC = () => {
                 </Box>
               )}
               <Text>
-                Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
-                atriði er lúta að framkvæmd farbannsins undir dómara.
+                Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
+                bera atriði er lúta að framkvæmd farbannsins undir dómara.
               </Text>
             </Box>
           )}

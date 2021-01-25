@@ -14,10 +14,19 @@ class ClientsList extends Component {
     page: 1,
     modalIsOpen: false,
     clientToRemove: '',
+    searchString: '',
   }
 
-  getClients = async (page: number, count: number): Promise<void> => {
-    const response = await ClientService.findAndCountAll(page, count)
+  getClients = async (
+    searchString: string,
+    page: number,
+    count: number,
+  ): Promise<void> => {
+    const response = await ClientService.findAndCountAll(
+      searchString,
+      page,
+      count,
+    )
     if (response) {
       const clientsArr = response.rows.sort((c1, c2) => {
         if (!c1.archived && !c2.archived) return 0
@@ -34,13 +43,13 @@ class ClientsList extends Component {
   }
 
   handlePageChange = async (page: number, count: number): Promise<void> => {
-    this.getClients(page, count)
+    this.getClients(this.state.searchString, page, count)
     this.setState({ page: page, count: count })
   }
 
   archive = async (): Promise<void> => {
     await ClientService.delete(this.state.clientToRemove)
-    this.getClients(this.state.page, this.state.count)
+    this.getClients(this.state.searchString, this.state.page, this.state.count)
 
     this.closeModal()
   }
@@ -64,6 +73,15 @@ class ClientsList extends Component {
     )
   }
 
+  search = (event) => {
+    this.getClients(this.state.searchString, this.state.page, this.state.count)
+    event.preventDefault()
+  }
+
+  handleSearchChange = (event) => {
+    this.setState({ searchString: event.target.value })
+  }
+
   render(): JSX.Element {
     return (
       <div>
@@ -72,19 +90,36 @@ class ClientsList extends Component {
             <div className="clients__container">
               <h1>Clients</h1>
               <div className="clients__container__options">
-                <div className="clients__container__button">
+                <div className="clients__container__options__button">
                   <Link href={'/client'}>
                     <a className="clients__button__new">
                       <i className="icon__new"></i>Create new client
                     </a>
                   </Link>
                 </div>
+                <form onSubmit={this.search}>
+                  <div className="clients__container__options__search">
+                    <label htmlFor="search" className="clients__label">
+                      National Id or Client Id
+                    </label>
+                    <input
+                      id="search"
+                      className="clients__input__search"
+                      value={this.state.searchString}
+                      onChange={this.handleSearchChange}
+                    ></input>
+                    <button type="submit" className="clients__button__search">
+                      Search
+                    </button>
+                  </div>
+                </form>
               </div>
               <div className="client__container__table">
                 <table className="clients__table">
                   <thead>
                     <tr>
                       <th>Client Id</th>
+                      <th>National Id</th>
                       <th>Description</th>
                       <th>Type</th>
                       <th colSpan={2}></th>
@@ -98,6 +133,7 @@ class ClientsList extends Component {
                           className={client.archived ? 'archived' : ''}
                         >
                           <td>{client.clientId}</td>
+                          <td>{client.nationalId}</td>
                           <td>{client.description}</td>
                           <td>{client.clientType}</td>
                           <td className="clients__table__button">

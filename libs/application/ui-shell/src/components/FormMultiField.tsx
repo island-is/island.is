@@ -22,7 +22,15 @@ const FormMultiField: FC<{
   multiField: MultiFieldScreen
   answerQuestions(answers: FormValue): void
   goToScreen: (id: string) => void
-}> = ({ application, answerQuestions, errors, goToScreen, multiField }) => {
+  refetch: () => void
+}> = ({
+  application,
+  answerQuestions,
+  errors,
+  goToScreen,
+  multiField,
+  refetch,
+}) => {
   const { description, children, space = 0 } = multiField
   const { formatMessage } = useLocale()
   return (
@@ -40,31 +48,32 @@ const FormMultiField: FC<{
           />
         </GridColumn>
       )}
-      <Box width="full" marginTop={4}>
-        <Stack space={space}>
-          {children.map((field, index) => {
-            const isHalfColumn =
-              !IGNORED_HALF_TYPES.includes(field.type) &&
-              field?.width === 'half'
-            const span = isHalfColumn ? '1/2' : '1/1'
+      {children.map((field, index) => {
+        const isHalfColumn =
+          !IGNORED_HALF_TYPES.includes(field.type) && field?.width === 'half'
+        const span = isHalfColumn ? '1/2' : '1/1'
 
-            return (
-              <GridColumn key={field.id} span={['1/1', '1/1', span]}>
-                <Box paddingTop={1}>
-                  <FormField
-                    application={application}
-                    showFieldName
-                    field={field as FieldDef}
-                    key={field.id}
-                    errors={errors}
-                    goToScreen={goToScreen}
-                  />
-                </Box>
-              </GridColumn>
-            )
-          })}
-        </Stack>
-      </Box>
+        return (
+          <GridColumn
+            key={field.id || index}
+            span={['1/1', '1/1', span]}
+            paddingTop={index === 0 ? 4 : 0}
+            paddingBottom={index === children.length - 1 ? 0 : space}
+          >
+            <Box paddingTop={1}>
+              <FormField
+                application={application}
+                showFieldName
+                field={field as FieldDef}
+                key={field.id}
+                errors={errors}
+                goToScreen={goToScreen}
+                refetch={refetch}
+              />
+            </Box>
+          </GridColumn>
+        )
+      })}
     </GridRow>
   )
 }

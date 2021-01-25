@@ -3,7 +3,7 @@ import { render, waitFor, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Route, MemoryRouter } from 'react-router-dom'
 import StepOne from './StepOne'
-import * as Constants from '../../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   mockCaseQueries,
   mockProsecutorQuery,
@@ -11,7 +11,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
 import { CaseGender, UpdateCase } from '@island.is/judicial-system/types'
-import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 
 describe('/krafa with an id', () => {
   test('should prefill the inputs with the correct data if id is in the url', async () => {
@@ -99,73 +99,6 @@ describe('/krafa with an id', () => {
       ),
     ).not.toBeDisabled()
   })
-
-  test('should have a disabled defender name and email if judge has set a defender', async () => {
-    // Arrange
-
-    // Act
-    render(
-      <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
-        addTypename={false}
-      >
-        <MemoryRouter
-          initialEntries={[`${Constants.SINGLE_REQUEST_BASE_ROUTE}/test_id_2`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-              <StepOne />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
-      </MockedProvider>,
-    )
-
-    // Assert
-    expect(
-      await waitFor(
-        () => screen.getByLabelText('Nafn verjanda') as HTMLInputElement,
-      ),
-    ).toBeDisabled()
-
-    expect(
-      screen.getByLabelText('Netfang verjanda') as HTMLInputElement,
-    ).toBeDisabled()
-  })
-
-  test('should have a disabled defender name and email even if a judge erases that info from the hearing arrangement screen', async () => {
-    // Arrange
-
-    // Act
-    render(
-      <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
-        addTypename={false}
-      >
-        <MemoryRouter
-          initialEntries={[`${Constants.SINGLE_REQUEST_BASE_ROUTE}/test_id_3`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-              <StepOne />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
-      </MockedProvider>,
-    )
-
-    // Assert
-    // A value is considered dirty if it's a string, even an empty one.
-    expect(
-      await waitFor(
-        () => screen.getByLabelText('Nafn verjanda') as HTMLInputElement,
-      ),
-    ).toBeDisabled()
-
-    expect(
-      screen.getByLabelText('Netfang verjanda') as HTMLInputElement,
-    ).toBeDisabled()
-  })
 })
 
 describe('/krafa without ID', () => {
@@ -230,7 +163,7 @@ describe('/krafa without ID', () => {
       screen.getByRole('radio', { name: 'Kona' }) as HTMLInputElement,
     ).not.toBeChecked()
     expect(
-      screen.getByRole('radio', { name: 'Annað' }) as HTMLInputElement,
+      screen.getByRole('radio', { name: 'Kynsegin/Annað' }) as HTMLInputElement,
     ).not.toBeChecked()
     expect(
       screen.getByRole('button', {

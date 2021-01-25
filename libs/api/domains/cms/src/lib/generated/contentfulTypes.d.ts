@@ -1339,6 +1339,33 @@ export interface INamespace extends Entry<INamespaceFields> {
   }
 }
 
+export interface INamespaceJeremyDevFields {
+  /** Namespace */
+  namespace?: string | undefined
+
+  /** Strings */
+  strings?: Record<string, any> | undefined
+}
+
+/** Namespace containing translations */
+
+export interface INamespaceJeremyDev extends Entry<INamespaceJeremyDevFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'namespaceJeremyDev'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface INewsFields {
   /** Content status */
   contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
@@ -2452,11 +2479,14 @@ export interface IUrlFields {
 
   /** Page */
   page:
+    | IAboutSubPage
     | IArticle
     | IArticleCategory
     | ILifeEventPage
     | INews
+    | IPage
     | IVidspyrnaFrontpage
+    | IVidspyrnaPage
 
   /** Urls list */
   urlsList: string[]
@@ -2679,6 +2709,9 @@ export interface IVidspyrnaPageFields {
 
   /** Tags */
   tags: IVidspyrnaTag[]
+
+  /** Process Entry */
+  processEntry?: IProcessEntry | undefined
 }
 
 /** A "covid" article, seen on /covid-adgerdir */
@@ -2764,6 +2797,7 @@ export type CONTENT_TYPE =
   | 'menuLink'
   | 'menuLinkWithChildren'
   | 'namespace'
+  | 'namespaceJeremyDev'
   | 'news'
   | 'numberBullet'
   | 'numberBulletSection'

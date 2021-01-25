@@ -35,12 +35,17 @@ callbacks.jwt = async function jwt(token, user) {
       accessToken: user.accessToken,
       refreshToken: user.refreshToken,
       idToken: user.idToken,
+      isRefreshTokenExpired: false,
     }
   }
 
   const decoded = parseJwt(token.accessToken)
 
-  if (decoded?.exp && new Date() > new Date(decoded.exp * 1000)) {
+  if (
+    decoded?.exp &&
+    new Date() > new Date(decoded.exp * 1000) &&
+    !token.isRefreshTokenExpired
+  ) {
     try {
       ;[
         token.accessToken,
@@ -48,6 +53,11 @@ callbacks.jwt = async function jwt(token, user) {
       ] = await TokenService.refreshAccessToken(token.refreshToken)
     } catch (error) {
       console.error(error, 'Error refreshing access token.')
+      // We don't know the refresh token lifetime, so we use the error response to check if it had expired
+      const errorMessage = error?.response?.data?.error
+      if (errorMessage && errorMessage === 'invalid_grant') {
+        token.isRefreshTokenExpired = true
+      }
     }
   }
 
