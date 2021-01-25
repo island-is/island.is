@@ -72,6 +72,10 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
           id
           title
           description
+          links {
+            text
+            url
+          }
           image {
             url
           }

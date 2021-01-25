@@ -30,7 +30,7 @@ const OrganizationSlice: FC<OrganizationSliceProps> = ({
     case 'FeaturedArticles':
       return <FeaturedArticlesSlice slice={slice} namespace={namespace} />
     default:
-      return
+      return <></>
   }
 }
 

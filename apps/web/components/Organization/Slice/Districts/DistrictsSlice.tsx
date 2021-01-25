@@ -31,7 +31,15 @@ const DistrictsSlice: React.FC<SliceProps> = ({ organization, slice }) => {
             </h2>
             <GridRow>
               <GridColumn span={['12/12', '12/12', '7/12']}>
-                <ul className={styles.districtsList}></ul>
+                <ul className={styles.districtsList}>
+                  {slice.links.map(link =>
+                    <li className={styles.districtsListItem}>
+                      <Link href={link.url}>
+                        <Button variant="text">{link.text}</Button>
+                      </Link>
+                    </li>
+                  )}
+                </ul>
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '5/12']}>
                 <img src={slice.image.url} alt="" />
