@@ -23,7 +23,10 @@ import {
   ILocation,
   ITellUsAStory,
   IDistricts,
-  IFeaturedArticles, ISingleColumnText, ITwoColumnText, IOffices,
+  IFeaturedArticles,
+  ISingleColumnText,
+  ITwoColumnText,
+  IOffices,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -69,9 +72,12 @@ import {
   mapFeaturedArticle,
   mapFeaturedArticles,
 } from '../models/featuredArticles.model'
-import {mapSingleColumnText, SingleColumnText} from "../models/singleColumnText.model";
-import {mapTwoColumnText, TwoColumnText} from "../models/twoColumnText.model";
-import {mapOffices, Offices} from "../models/offices.model";
+import {
+  mapSingleColumnText,
+  SingleColumnText,
+} from '../models/singleColumnText.model'
+import { mapTwoColumnText, TwoColumnText } from '../models/twoColumnText.model'
+import { mapOffices, Offices } from '../models/offices.model'
 
 type SliceTypes =
   | ITimeline
@@ -128,7 +134,7 @@ export const SliceUnion = createUnionType({
     FeaturedArticles,
     SingleColumnText,
     TwoColumnText,
-    Offices
+    Offices,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })

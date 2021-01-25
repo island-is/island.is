@@ -1,9 +1,9 @@
-import {Field, ID, ObjectType} from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { ITwoColumnText } from '../generated/contentfulTypes'
 
-import {Link, mapLink} from './link.model'
-import {SystemMetadata} from "api-cms-domain";
+import { Link, mapLink } from './link.model'
+import { SystemMetadata } from 'api-cms-domain'
 
 @ObjectType()
 export class TwoColumnText {
@@ -30,7 +30,8 @@ export class TwoColumnText {
 }
 
 export const mapTwoColumnText = ({
-  sys, fields,
+  sys,
+  fields,
 }: ITwoColumnText): SystemMetadata<TwoColumnText> => ({
   typename: 'TwoColumnText',
   id: sys.id,

@@ -32,5 +32,5 @@ export const mapDistricts = ({
   title: fields.title,
   description: fields.description,
   image: mapImage(fields.image),
-  links: fields.links.map(mapLink)
+  links: fields.links.map(mapLink),
 })
