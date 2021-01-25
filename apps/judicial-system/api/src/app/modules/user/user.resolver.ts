@@ -1,4 +1,4 @@
-import { Query, Resolver } from '@nestjs/graphql'
+import { Context, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -8,6 +8,7 @@ import {
   JwtGraphQlAuthGuard,
 } from '@island.is/judicial-system/auth'
 
+import { BackendAPI } from '../../../services'
 import { User } from './user.model'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -17,6 +18,15 @@ export class UserResolver {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
+
+  @Query(() => [User], { nullable: true })
+  cases(
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<User[]> {
+    this.logger.debug('Getting all users')
+
+    return backendApi.getUsers()
+  }
 
   @Query(() => User, { nullable: true })
   async user(@CurrentGraphQlUser() user: TUser): Promise<User | undefined> {
