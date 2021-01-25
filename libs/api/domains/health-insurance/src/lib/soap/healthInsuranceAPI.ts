@@ -57,9 +57,11 @@ export class HealthInsuranceAPI {
     })
   }
 
+  // check whether the person is health insured
   public async isHealthInsured(
     nationalId: string,
   ): Promise<GetSjukratryggdurTypeDto> {
+    // create 'soap' client
     const client = await SoapClient.generateClient(
       this.clientConfig.wsdlUrl,
       this.clientConfig.baseUrl,
@@ -75,6 +77,7 @@ export class HealthInsuranceAPI {
     }
 
     return new Promise((resolve, reject) => {
+      // call 'sjukratryggdur' function/endpoint
       client.sjukratryggdur(
         {
           sendandi: '',

@@ -1,6 +1,11 @@
 import { logger } from '@island.is/logging'
 import * as Soap from 'soap'
 
+/*
+ * Because we could not read xroad .wsdl
+ * So we have to ready original .wsdl then manual added xroad headers
+ * This way we could use 'soap' library to connect to xroad
+ */
 export class SoapClient {
   static xn = 'xmlns:xrd="http://x-road.eu/xsd/xroad.xsd"'
   static xi = 'xmlns:id="http://x-road.eu/xsd/identifiers"'
@@ -12,6 +17,7 @@ export class SoapClient {
     password: string,
     functionName: string,
   ): Promise<Soap.Client | null> {
+    // xroad headers
     const xh = `<xrd:protocolVersion ${SoapClient.xn}>4.0</xrd:protocolVersion>
     <xrd:id ${SoapClient.xn}>3903d152-1d2c-11eb-adc1-0242ac120002</xrd:id>
     <xrd:userId ${SoapClient.xn}>anonymous</xrd:userId>
@@ -39,7 +45,7 @@ export class SoapClient {
         if (client) {
           const wsSecurity = new Soap.WSSecurity(username, password, options)
           client.setSecurity(wsSecurity)
-          client.addSoapHeader(xh)
+          client.addSoapHeader(xh) // have to add xroad headers for it to work
           client.setEndpoint(baseUrl)
           resolve(client)
         } else {

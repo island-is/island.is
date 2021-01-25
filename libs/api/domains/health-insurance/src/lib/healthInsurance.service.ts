@@ -19,6 +19,7 @@ export class HealthInsuranceService {
     return this.healthInsuranceAPI.getProfun()
   }
 
+  // return true or false when asked if person is health insured?
   async isHealthInsured(nationalId: string): Promise<boolean> {
     const res = await this.healthInsuranceAPI.isHealthInsured(nationalId)
     return Promise.resolve(res['SjukratryggdurType']['sjukratryggdur'] == 1)
