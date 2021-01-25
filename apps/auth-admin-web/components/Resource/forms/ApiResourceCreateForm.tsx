@@ -162,6 +162,24 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                   />
                   <HelpBox helpText="The Description value can be used e.g. on the consent screen." />
                 </div>
+                <div className="api-resource-form__container__field">
+                  <label
+                    htmlFor="contactEmail"
+                    className="api-resource-form__label"
+                  >
+                    Contact email
+                  </label>
+                  <input
+                    ref={register({ required: false })}
+                    id="contactEmail"
+                    name="contactEmail"
+                    type="text"
+                    defaultValue={props.apiResource.contactEmail}
+                    className="api-resource-form__input"
+                    placeholder="island@island.is"
+                  />
+                  <HelpBox helpText="Set the contact email for this api resource." />
+                </div>
 
                 <div className="api-resource-form__container__checkbox__field">
                   <label htmlFor="enabled" className="api-resource-form__label">

@@ -461,6 +461,7 @@ export const Confirmation: React.FC = () => {
                 {getAppealDecisionText(
                   AppealDecisionRole.ACCUSED,
                   workingCase.accusedAppealDecision,
+                  workingCase.accusedGender,
                 )}
               </Text>
             </Box>
@@ -468,6 +469,7 @@ export const Confirmation: React.FC = () => {
               {getAppealDecisionText(
                 AppealDecisionRole.PROSECUTOR,
                 workingCase.prosecutorAppealDecision,
+                workingCase.accusedGender,
               )}
             </Text>
             {(workingCase.accusedAppealAnnouncement ||
@@ -512,8 +514,8 @@ export const Confirmation: React.FC = () => {
                 </Text>
               </Box>
               <Text>
-                Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
-                atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
+                Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
+                bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
               </Text>
             </Box>
           )}
@@ -539,8 +541,8 @@ export const Confirmation: React.FC = () => {
                 </Box>
               )}
               <Text>
-                Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
-                atriði er lúta að framkvæmd farbannsins undir dómara.
+                Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
+                bera atriði er lúta að framkvæmd farbannsins undir dómara.
               </Text>
             </Box>
           )}
