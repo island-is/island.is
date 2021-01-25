@@ -1,4 +1,4 @@
-import { B3Propagator } from '@opentelemetry/core'
+import { B3Propagator } from '@opentelemetry/propagator-b3'
 import { NodeTracerProvider } from '@opentelemetry/node'
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger'
 import { SimpleSpanProcessor } from '@opentelemetry/tracing'
