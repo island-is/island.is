@@ -1,10 +1,9 @@
-export interface getViewSjukraTryggdurDto{
-    SjukratryggdurType: SjukratryggdurType
+export interface GetSjukratryggdurTypeDto {
+  SjukratryggdurType: SjukratryggdurType
 }
-
-export interface SjukratryggdurType {
-    radnumer_si: number,
-    sjukratryggdur: number,
-    dags?: Date,
-    a_bidtima: number,
+interface SjukratryggdurType {
+  radnumer_si: number
+  sjukratryggdur: number
+  dags?: Date
+  a_bidtima?: number
 }

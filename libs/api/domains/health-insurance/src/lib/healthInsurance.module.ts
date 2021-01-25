@@ -2,7 +2,12 @@ import { DynamicModule } from '@nestjs/common'
 
 import { HealthInsuranceResolver } from './graphql'
 import { HealthInsuranceService } from './healthInsurance.service'
-import { HealthInsuranceAPI, HealthInsuranceConfig, HEALTH_INSURANCE_CONFIG, SoapClient } from './soap'
+import {
+  HealthInsuranceAPI,
+  HealthInsuranceConfig,
+  HEALTH_INSURANCE_CONFIG,
+  SoapClient,
+} from './soap'
 
 export class HealthInsuranceModule {
   static register(config: HealthInsuranceConfig): DynamicModule {

@@ -5,7 +5,9 @@ import { HealthInsuranceService } from '../healthInsurance.service'
 
 @Resolver(() => HealthTest)
 export class HealthInsuranceResolver {
-  constructor(private readonly healthInsuranceService: HealthInsuranceService) {}
+  constructor(
+    private readonly healthInsuranceService: HealthInsuranceService,
+  ) {}
 
   @Query(() => HealthTest, {
     name: 'healthTest',
@@ -16,18 +18,18 @@ export class HealthInsuranceResolver {
   }
 
   @Query(() => String, {
-    name: 'healthInsuranceGetProfun'
+    name: 'healthInsuranceGetProfun',
   })
   healthInsuranceGetProfun(): Promise<string> {
     return this.healthInsuranceService.getProfun()
   }
-  
+
   @Query(() => String, {
-    name: 'healthInsuranceIsHealthInsured'
+    name: 'healthInsuranceIsHealthInsured',
   })
   healthInsuranceIsHealthInsured(
     @Args('nationalId') nationalId: string,
-  ): Promise<boolean>{
+  ): Promise<boolean> {
     return this.healthInsuranceService.isHealthInsured(nationalId)
   }
 }

@@ -2,7 +2,7 @@ import { logger } from '@island.is/logging'
 import * as Soap from 'soap'
 
 export class SoapClient {
-  static xn = 'xmlns:xrd="http://x-road.eu/xsd/xroad.xsd"' 
+  static xn = 'xmlns:xrd="http://x-road.eu/xsd/xroad.xsd"'
   static xi = 'xmlns:id="http://x-road.eu/xsd/identifiers"'
 
   static async generateClient(
@@ -30,24 +30,23 @@ export class SoapClient {
     </xrd:client>`
 
     const promise = new Promise<Soap.Client>((resolve) => {
-        Soap.createClient(wsdlUrl, (error, client) => {
-            const options = {
-                hasTimeStamp: false,
-                hasNonce: true,
-                mustUnderstand: true,
-            };
-            if (client) {
-                const wsSecurity = new Soap.WSSecurity(username, password, options);
-                client.setSecurity(wsSecurity);
-                client.addSoapHeader(xh)
-                client.setEndpoint(baseUrl);
-                resolve(client);
-            }
-            else {
-                logger.error('healthInsurance connection failed : ', error);
-                resolve(client);
-            }
-        });
+      Soap.createClient(wsdlUrl, (error, client) => {
+        const options = {
+          hasTimeStamp: false,
+          hasNonce: true,
+          mustUnderstand: true,
+        }
+        if (client) {
+          const wsSecurity = new Soap.WSSecurity(username, password, options)
+          client.setSecurity(wsSecurity)
+          client.addSoapHeader(xh)
+          client.setEndpoint(baseUrl)
+          resolve(client)
+        } else {
+          logger.error('healthInsurance connection failed : ', error)
+          resolve(client)
+        }
+      })
     })
     return promise
   }

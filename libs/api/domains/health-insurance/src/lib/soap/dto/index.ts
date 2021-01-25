@@ -1,1 +1,1 @@
-export { getViewSjukraTryggdurDto, SjukratryggdurType } from './getSjukraTryggdurType.dto'
+export { GetSjukratryggdurTypeDto } from './getSjukraTryggdurType.dto'

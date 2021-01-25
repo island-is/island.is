@@ -17,7 +17,7 @@ export default {
     wsdlUrl: 'https://test-huld.sjukra.is/islandrg?wsdl',
     baseUrl: 'http://localhost:8080',
     username: '',
-    password: ''
+    password: '',
   },
   userProfile: {
     userProfileServiceBasePath: 'http://localhost:3366',
