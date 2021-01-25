@@ -42,6 +42,7 @@ export const CaseQuery = gql`
       courtEndTime
       courtAttendees
       policeDemands
+      courtDocuments
       accusedPlea
       litigationPresentations
       ruling
