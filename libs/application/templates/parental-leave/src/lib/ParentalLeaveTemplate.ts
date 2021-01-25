@@ -38,6 +38,7 @@ type Events =
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.ABORT }
+  | { type: DefaultEvents.EDIT }
 
 enum Roles {
   APPLICANT = 'applicant',
@@ -139,6 +140,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              read: 'all',
+              write: 'all',
             },
           ],
         },
@@ -147,6 +150,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             target: States.EMPLOYER_WAITING_TO_ASSIGN,
           },
           [DefaultEvents.REJECT]: { target: States.OTHER_PARENT_ACTION },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.OTHER_PARENT_ACTION]: {
@@ -160,8 +164,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              read: 'all',
+              write: 'all',
             },
           ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN]: {
@@ -182,12 +191,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              read: 'all',
+              write: 'all',
             },
           ],
         },
         on: {
           [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVAL },
           [DefaultEvents.REJECT]: { target: States.DRAFT },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.EMPLOYER_APPROVAL]: {
@@ -217,16 +229,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
-              read: {
-                answers: ['spread', 'periods'],
-                externalData: ['pregnancyStatus', 'parentalLeaves'],
-              },
+              read: 'all',
+              write: 'all',
             },
           ],
         },
         on: {
           [DefaultEvents.APPROVE]: { target: States.VINNUMALASTOFNUN_APPROVAL },
           ABORT: { target: States.EMPLOYER_ACTION },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.EMPLOYER_ACTION]: {
@@ -240,8 +251,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              read: 'all',
+              write: 'all',
             },
           ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
@@ -255,12 +271,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              read: 'all',
+              write: 'all',
             },
           ],
         },
         on: {
           [DefaultEvents.APPROVE]: { target: States.APPROVED },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.VINNUMALASTOFNUN_ACTION]: {
@@ -274,16 +293,35 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              read: 'all',
+              write: 'all',
             },
           ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.APPROVED]: {
         meta: {
           name: 'Approved',
           progress: 1,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
         },
         type: 'final' as const,
+        on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
+        },
       },
     },
   },

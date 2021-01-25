@@ -72,7 +72,7 @@ export async function generateRequestPdf(
     .lineGap(4)
     .text(`Kennitala: ${formatNationalId(existingCase.accusedNationalId)}`)
     .text(`Fullt nafn: ${existingCase.accusedName}`)
-    .text(`Kyn: ${capitalize(formatGender(existingCase.accusedGender))}`)
+    .text(`Kyn: ${formatGender(existingCase.accusedGender)}`)
     .text(`Lögheimili: ${existingCase.accusedAddress}`)
     .text(' ')
     .font('Helvetica-Bold')
@@ -94,6 +94,8 @@ export async function generateRequestPdf(
         existingCase.requestedCustodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ),
+        existingCase.parentCase !== null,
+        existingCase.parentCase?.decision,
       ),
       {
         lineGap: 6,
@@ -259,13 +261,23 @@ export async function generateRulingPdf(
     .text('Dómskjöl')
     .font('Helvetica')
     .fontSize(12)
-    .text(
-      'Rannsóknargögn málsins liggja frammi. Krafa lögreglu þingmerkt nr. 1.',
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
+    .text('Krafa lögreglu þingmerkt nr. 1.', {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text('Rannsóknargögn málsins liggja frammi.', {
+      lineGap: 6,
+      paragraphGap: 4,
+    })
+
+  existingCase.courtDocuments?.forEach((courttDocument, index) =>
+    doc.text(`${courttDocument} þingmerkt nr. ${index + 2}.`, {
+      lineGap: 6,
+      paragraphGap: 4,
+    }),
+  )
+
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -323,6 +335,8 @@ export async function generateRulingPdf(
         existingCase.requestedCustodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ),
+        existingCase.parentCase !== null,
+        existingCase.parentCase?.decision,
       ),
       {
         lineGap: 6,
@@ -389,6 +403,8 @@ export async function generateRulingPdf(
         existingCase.custodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ),
+        existingCase.parentCase !== null,
+        existingCase.parentCase?.decision,
       ),
       {
         lineGap: 6,
@@ -482,7 +498,7 @@ export async function generateRulingPdf(
       )
       .text(' ')
       .text(
-        'Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.',
+        'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.',
         {
           lineGap: 6,
           paragraphGap: 0,
@@ -520,7 +536,7 @@ export async function generateRulingPdf(
     doc
       .text(' ')
       .text(
-        'Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd farbannsins undir dómara.',
+        'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd farbannsins undir dómara.',
         {
           lineGap: 6,
           paragraphGap: 0,

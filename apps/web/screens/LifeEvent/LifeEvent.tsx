@@ -76,7 +76,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
         </Box>
       </GridRow>
 
-      <GridContainer>
+      <GridContainer id="main-content">
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '8/12', '9/12']}>
             <GridRow>
