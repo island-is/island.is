@@ -11,6 +11,7 @@ import {
   NotFoundException,
   Param,
   Patch,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -18,11 +19,13 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger'
+import { IdsAuthGuard } from '@island.is/auth-nest-tools'
+import { NationalIdGuard } from '../access/national-id-guard'
 
-@ApiOAuth2(['@identityserver.api/read'])
-// @UseGuards(AuthGuard('jwt'))
+// @ApiOAuth2(['@identityserver.api/read'])
+@UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('user-identities')
-@Controller('user-identities')
+@Controller('backend/user-identities')
 export class UserIdentitiesController {
   constructor(private readonly userIdentityService: UserIdentitiesService) {}
 

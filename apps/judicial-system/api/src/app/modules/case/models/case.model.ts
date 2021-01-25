@@ -58,10 +58,13 @@ export class Case implements TCase {
   readonly requestedCourtDate?: string
 
   @Field({ nullable: true })
-  readonly alternativeTravelBan?: boolean
+  alternativeTravelBan?: boolean
 
   @Field({ nullable: true })
   readonly requestedCustodyEndDate?: string
+
+  @Field({ nullable: true })
+  readonly otherDemands?: string
 
   @Field({ nullable: true })
   readonly lawsBroken?: string
@@ -120,6 +123,9 @@ export class Case implements TCase {
   @Field({ nullable: true })
   readonly policeDemands?: string
 
+  @Field(() => [String], { nullable: true })
+  readonly courtDocuments?: string[]
+
   @Field({ nullable: true })
   readonly accusedPlea?: string
 
@@ -141,6 +147,9 @@ export class Case implements TCase {
   @Field(() => [String], { nullable: true })
   readonly custodyRestrictions?: CaseCustodyRestrictions[]
 
+  @Field({ nullable: true })
+  readonly otherRestrictions?: string
+
   @Field(() => String, { nullable: true })
   readonly accusedAppealDecision?: CaseAppealDecision
 
@@ -155,6 +164,12 @@ export class Case implements TCase {
 
   @Field(() => User, { nullable: true })
   readonly judge?: User
+
+  @Field(() => Case, { nullable: true })
+  readonly parentCase?: Case
+
+  @Field(() => Case, { nullable: true })
+  readonly childCase?: Case
 
   @Field(() => [Notification], { nullable: true })
   readonly notifications?: Notification[]

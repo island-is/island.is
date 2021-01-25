@@ -10,14 +10,16 @@ import {
   Delete,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOAuth2, ApiTags } from '@nestjs/swagger'
+import { IdsAuthGuard } from '@island.is/auth-nest-tools'
+import { NationalIdGuard } from '../access/national-id-guard'
 
-@ApiOAuth2(['@identityserver.api/read'])
-// TODO: ADD guards when functional
-// @UseGuards(AuthGuard('jwt'))
+// @ApiOAuth2(['@identityserver.api/read'])
+@UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('redirect-uri')
-@Controller('redirect-uri')
+@Controller('backend/redirect-uri')
 export class RedirectUriController {
   constructor(private readonly clientsService: ClientsService) {}
 

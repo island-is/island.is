@@ -11,6 +11,7 @@ export type Icon =
   | 'call'
   | 'car'
   | 'caretDown'
+  | 'caretUp'
   | 'cellular'
   | 'chatbubble'
   | 'checkmark'
@@ -26,6 +27,7 @@ export type Icon =
   | 'download'
   | 'ellipse'
   | 'fileTrayFull'
+  | 'filter'
   | 'heart'
   | 'home'
   | 'informationCircle'
@@ -35,6 +37,7 @@ export type Icon =
   | 'menu'
   | 'notifications'
   | 'open'
+  | 'pencil'
   | 'people'
   | 'person'
   | 'reader'
@@ -61,6 +64,7 @@ export default {
     call: 'Call',
     car: 'Car',
     caretDown: 'CaretDown',
+    caretUp: 'CaretUp',
     cellular: 'Cellular',
     chatbubble: 'Chatbubble',
     checkmark: 'Checkmark',
@@ -76,6 +80,7 @@ export default {
     download: 'Download',
     ellipse: 'Ellipse',
     fileTrayFull: 'FileTrayFull',
+    filter: 'Filter',
     heart: 'Heart',
     home: 'Home',
     informationCircle: 'InformationCircle',
@@ -85,6 +90,7 @@ export default {
     menu: 'Menu',
     notifications: 'Notifications',
     open: 'Open',
+    pencil: 'Pencil',
     people: 'People',
     person: 'Person',
     reader: 'Reader',
@@ -110,6 +116,7 @@ export default {
     call: 'CallOutline',
     car: 'CarOutline',
     caretDown: 'CaretDownOutline',
+    caretUp: 'CaretUpOutline',
     cellular: 'CellularOutline',
     chatbubble: 'ChatbubbleOutline',
     checkmark: 'Checkmark',
@@ -125,6 +132,7 @@ export default {
     download: 'DownloadOutline',
     ellipse: 'EllipseOutline',
     fileTrayFull: 'FileTrayFullOutline',
+    filter: 'FilterOutline',
     heart: 'HeartOutline',
     home: 'HomeOutline',
     informationCircle: 'InformationCircleOutline',
@@ -134,6 +142,7 @@ export default {
     menu: 'MenuOutline',
     notifications: 'NotificationsOutline',
     open: 'OpenOutline',
+    pencil: 'PencilOutline',
     people: 'PeopleOutline',
     person: 'PersonOutline',
     reader: 'ReaderOutline',

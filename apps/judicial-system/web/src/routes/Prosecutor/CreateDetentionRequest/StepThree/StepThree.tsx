@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Text,
   GridContainer,
@@ -7,6 +7,9 @@ import {
   Box,
   Input,
   Checkbox,
+  DatePicker,
+  RadioButton,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import {
   Case,
@@ -14,11 +17,15 @@ import {
   CaseCustodyRestrictions,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import { isNextDisabled } from '../../../../utils/stepHelper'
+import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
-import { FormFooter } from '../../../../shared-components/FormFooter'
-import * as Constants from '../../../../utils/constants'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
+import {
+  FormFooter,
+  PageLayout,
+  BlueBox,
+  TimeInputField,
+} from '@island.is/judicial-system-web/src/shared-components'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 import {
@@ -33,21 +40,43 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
+  setAndSendDateToServer,
+  validateAndSetTime,
+  validateAndSendTimeToServer,
+  getTimeFromDate,
+  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import BlueBox from '../../../../shared-components/BlueBox/BlueBox'
+import parseISO from 'date-fns/parseISO'
+import { formatDate } from '@island.is/judicial-system/formatters'
+
+interface CaseData {
+  case?: Case
+}
 
 export const StepThree: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
-  const requestedCustodyEndTimeRef = useRef<HTMLInputElement>(null)
   const { id } = useParams<{ id: string }>()
 
   const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
     '',
   )
 
-  const { data } = useQuery(CaseQuery, {
+  const [requestedCustodyEndTime, setRequestedCustodyEndTime] = useState<
+    string
+  >()
+
+  const [
+    requestedCustodyEndDateErrorMessage,
+    setRequestedCustodyEndDateErrorMessage,
+  ] = useState<string>('')
+
+  const [
+    requestedCustodyEndTimeErrorMessage,
+    setRequestedCustodyEndTimeErrorMessage,
+  ] = useState<string>('')
+
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
@@ -91,6 +120,12 @@ export const StepThree: React.FC = () => {
       explination:
         'Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum.',
     },
+    {
+      brokenLaw: '1. mgr. 100. gr. sml.',
+      value: CaseCustodyProvisions._100_1,
+      explination:
+        'Nú eru skilyrði gæsluvarðhalds skv. 1. eða 2. mgr. 95. gr. fyrir hendi og getur dómari þá, í stað þess að úrskurða sakborning í gæsluvarðhald, mælt fyrir um vistun hans á sjúkrahúsi eða viðeigandi stofnun, bannað honum brottför af landinu ellegar lagt fyrir hann að halda sig á ákveðnum stað eða innan ákveðins svæðis.',
+    },
   ]
 
   const restrictions = [
@@ -121,19 +156,18 @@ export const StepThree: React.FC = () => {
   ]
 
   useEffect(() => {
-    document.title = 'Lagagrundvöllur og takmarkanir'
+    document.title = 'Dómkröfur og lagagrundvöllur - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setIsLoading(true)
+    if (!workingCase && resCase) {
+      setRequestedCustodyEndTime(
+        getTimeFromDate(resCase.requestedCustodyEndDate),
+      )
+
       setWorkingCase(resCase)
-      setIsLoading(false)
     }
-    if (id && !workingCase && resCase) {
-      getCurrentCase()
-    }
-  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
+  }, [workingCase, setWorkingCase, resCase])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
@@ -141,12 +175,20 @@ export const StepThree: React.FC = () => {
         value: workingCase?.lawsBroken || '',
         validations: ['empty'],
       },
+      {
+        value: workingCase?.requestedCustodyEndDate || '',
+        validations: ['empty'],
+      },
+      {
+        value: requestedCustodyEndTime || '',
+        validations: ['empty', 'time-format'],
+      },
     ]
 
     if (workingCase) {
       setIsStepIllegal(isNextDisabled(requiredFields))
     }
-  }, [workingCase, setIsStepIllegal, requestedCustodyEndTimeRef.current?.value])
+  }, [workingCase, setIsStepIllegal, requestedCustodyEndTime])
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
 
@@ -167,19 +209,161 @@ export const StepThree: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.PROSECUTOR}
+      activeSection={
+        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
+      }
       activeSubSection={
         ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_THREE
       }
-      isLoading={isLoading}
+      isLoading={loading}
       notFound={data?.case === undefined}
+      decision={workingCase?.decision}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>
           <Box marginBottom={7}>
             <Text as="h1" variant="h1">
-              Lagagrundvöllur og takmarkanir
+              Dómkröfur og lagagrundvöllur
             </Text>
+          </Box>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={3}>
+              <Text as="h3" variant="h3">
+                Dómkröfur{' '}
+                <Tooltip text="Hér er hægt að velja um gæsluvarðhald eða gæsluvarðhald með farbanni til vara. Sé farbann til vara valið, endurspeglar valið dómkröfurnar á næstu síðu." />
+              </Text>
+              {workingCase.parentCase && (
+                <Box marginTop={1}>
+                  <Text>
+                    Fyrri gæsla var/er til{' '}
+                    <Text as="span" fontWeight="semiBold">
+                      {formatDate(
+                        workingCase.parentCase.custodyEndDate,
+                        'PPPPp',
+                      )?.replace('dagur,', 'dagsins')}
+                    </Text>
+                  </Text>
+                </Box>
+              )}
+            </Box>
+            <BlueBox>
+              <Box marginBottom={2}>
+                <GridRow>
+                  <GridColumn span="5/12">
+                    <RadioButton
+                      name="alternativeTravelBan"
+                      id="alternativeTravelBanOff"
+                      label="Gæsluvarðhald"
+                      checked={!workingCase.alternativeTravelBan}
+                      onChange={() =>
+                        setAndSendToServer(
+                          'alternativeTravelBan',
+                          false,
+                          workingCase,
+                          setWorkingCase,
+                          updateCase,
+                        )
+                      }
+                      large
+                      filled
+                    />
+                  </GridColumn>
+                  <GridColumn span="7/12">
+                    <RadioButton
+                      name="alternativeTravelBan"
+                      id="alternativeTravelBanOn"
+                      label="Gæsluvarðhald, farbann til vara"
+                      checked={workingCase.alternativeTravelBan}
+                      onChange={() =>
+                        setAndSendToServer(
+                          'alternativeTravelBan',
+                          true,
+                          workingCase,
+                          setWorkingCase,
+                          updateCase,
+                        )
+                      }
+                      large
+                      filled
+                    />
+                  </GridColumn>
+                </GridRow>
+              </Box>
+              <GridRow>
+                <GridColumn span="5/8">
+                  <DatePicker
+                    id="reqCustodyEndDate"
+                    label="Gæsluvarðhald / farbann til"
+                    placeholderText="Veldu dagsetningu"
+                    selected={
+                      workingCase.requestedCustodyEndDate
+                        ? parseISO(
+                            workingCase.requestedCustodyEndDate?.toString(),
+                          )
+                        : null
+                    }
+                    locale="is"
+                    minDate={new Date()}
+                    hasError={requestedCustodyEndDateErrorMessage !== ''}
+                    errorMessage={requestedCustodyEndDateErrorMessage}
+                    handleCloseCalendar={(date) =>
+                      setAndSendDateToServer(
+                        'requestedCustodyEndDate',
+                        workingCase.requestedCustodyEndDate,
+                        date,
+                        workingCase,
+                        true,
+                        setWorkingCase,
+                        updateCase,
+                        setRequestedCustodyEndDateErrorMessage,
+                      )
+                    }
+                    required
+                  />
+                </GridColumn>
+                <GridColumn span="3/8">
+                  <TimeInputField
+                    disabled={!workingCase?.requestedCustodyEndDate}
+                    onChange={(evt) =>
+                      validateAndSetTime(
+                        'requestedCustodyEndDate',
+                        workingCase.requestedCustodyEndDate,
+                        evt.target.value,
+                        ['empty', 'time-format'],
+                        workingCase,
+                        setWorkingCase,
+                        requestedCustodyEndTimeErrorMessage,
+                        setRequestedCustodyEndTimeErrorMessage,
+                        setRequestedCustodyEndTime,
+                      )
+                    }
+                    onBlur={(evt) =>
+                      validateAndSendTimeToServer(
+                        'requestedCustodyEndDate',
+                        workingCase.requestedCustodyEndDate,
+                        evt.target.value,
+                        ['empty', 'time-format'],
+                        workingCase,
+                        updateCase,
+                        setRequestedCustodyEndTimeErrorMessage,
+                      )
+                    }
+                  >
+                    <Input
+                      data-testid="requestedCustodyEndTime"
+                      name="requestedCustodyEndTime"
+                      label="Tímasetning (kk:mm)"
+                      placeholder="Settu inn tíma"
+                      defaultValue={requestedCustodyEndTime}
+                      errorMessage={requestedCustodyEndTimeErrorMessage}
+                      hasError={requestedCustodyEndTimeErrorMessage !== ''}
+                      required
+                    />
+                  </TimeInputField>
+                </GridColumn>
+              </GridRow>
+            </BlueBox>
           </Box>
           <Box component="section" marginBottom={7}>
             <Box marginBottom={3}>
@@ -273,7 +457,7 @@ export const StepThree: React.FC = () => {
               </GridContainer>
             </BlueBox>
           </Box>
-          <Box component="section" marginBottom={7}>
+          <Box component="section" marginBottom={10}>
             <Box marginBottom={3}>
               <Box marginBottom={1}>
                 <Text as="h3" variant="h3">

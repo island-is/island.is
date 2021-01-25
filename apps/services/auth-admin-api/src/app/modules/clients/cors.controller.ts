@@ -10,14 +10,16 @@ import {
   Delete,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOAuth2, ApiTags } from '@nestjs/swagger'
+import { IdsAuthGuard } from '@island.is/auth-nest-tools'
+import { NationalIdGuard } from '../access/national-id-guard'
 
 @ApiOAuth2(['@identityserver.api/read'])
-// TODO: ADD guards when functional
-// @UseGuards(AuthGuard('jwt'))
+@UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('cors')
-@Controller('cors')
+@Controller('backend/cors')
 export class CorsController {
   constructor(private readonly clientsService: ClientsService) {}
 

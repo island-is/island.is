@@ -12,6 +12,7 @@ import {
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
+import { servicePortalOutboundLink } from '@island.is/plausible'
 
 interface Props {
   title: MessageDescriptor
@@ -39,7 +40,9 @@ export const InfoScreen: FC<Props> = ({
   figure,
 }) => {
   const { formatMessage } = useLocale()
-
+  const trackExternalLinkClick = () => {
+    servicePortalOutboundLink()
+  }
   return (
     <>
       <Box marginBottom={[4, 6, 9]}>
@@ -78,7 +81,10 @@ export const InfoScreen: FC<Props> = ({
               )}
               {externalHref && externalLinkTitle && (
                 <Box marginTop={[3, 4]}>
-                  <ArrowLink href={externalHref}>
+                  <ArrowLink
+                    href={externalHref}
+                    onClick={trackExternalLinkClick}
+                  >
                     {formatMessage(externalLinkTitle)}
                   </ArrowLink>
                 </Box>

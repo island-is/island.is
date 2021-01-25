@@ -1,0 +1,29 @@
+.nav {
+  $c: &;
+  ul {
+    padding: 0;
+  }
+
+  &__container {
+    padding-bottom: 10px;
+    box-sizing: border-box;
+
+    a {
+      display: flex;
+      justify-content: center;
+      font-weight: $weight-light;
+      font-size: 18px;
+      line-height: 28px;
+      color: #00003c;
+      min-width: 200px;
+      text-decoration: none;
+      padding-bottom: 10px;
+
+      &.active {
+        color: $color-link;
+        font-weight: $weight-semi-bold;
+        border-bottom: solid 2px $color-link;
+      }
+    }
+  }
+}

@@ -942,6 +942,35 @@
         }
       }
     },
+    "api-domains-health-insurance": {
+      "root": "libs/api/domains/health-insurance",
+      "sourceRoot": "libs/api/domains/health-insurance/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/health-insurance/tsconfig.lib.json",
+              "libs/api/domains/health-insurance/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/health-insurance/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/health-insurance/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-national-registry": {
       "root": "libs/api/domains/national-registry",
       "sourceRoot": "libs/api/domains/national-registry/src",
@@ -1463,6 +1492,28 @@
         }
       }
     },
+    "application-templates-children-domicile-transfer": {
+      "root": "libs/application/templates/children-domicile-transfer",
+      "sourceRoot": "libs/application/templates/children-domicile-transfer/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/children-domicile-transfer/tsconfig.lib.json",
+              "libs/application/templates/children-domicile-transfer/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/children-domicile-transfer/**/*"
+            ]
+          }
+        }
+      }
+    },
     "application-templates-document-provider-onboarding": {
       "root": "libs/application/templates/document-provider-onboarding",
       "sourceRoot": "libs/application/templates/document-provider-onboarding/src",
@@ -1786,6 +1837,91 @@
         }
       }
     },
+    "auth-admin-web": {
+      "root": "apps/auth-admin-web",
+      "sourceRoot": "apps/auth-admin-web",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/auth-admin-web",
+            "outputPath": "dist/apps/auth-admin-web"
+          },
+          "configurations": {
+            "production": {}
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/next:server",
+          "options": {
+            "buildTarget": "auth-admin-web:build",
+            "dev": true,
+            "proxyConfig": "apps/auth-admin-web/proxy.config.json"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "auth-admin-web:build:production",
+              "dev": false
+            }
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "auth-admin-web:build:production"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/auth-admin-web/tsconfig.app.json",
+              "apps/auth-admin-web/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/auth-admin-web/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "docker-next": {}
+      }
+    },
+    "auth-admin-web-e2e": {
+      "root": "apps/auth-admin-web-e2e",
+      "sourceRoot": "apps/auth-admin-web-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/auth-admin-web-e2e/cypress.json",
+            "tsConfig": "apps/auth-admin-web-e2e/tsconfig.e2e.json",
+            "devServerTarget": "auth-admin-web:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "auth-admin-web:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["apps/auth-admin-web-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**"]
+          }
+        }
+      }
+    },
     "auth-api-lib": {
       "root": "libs/auth-api-lib",
       "sourceRoot": "libs/auth-api-lib/src",
@@ -1860,6 +1996,35 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/cache/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "content-search-index-manager": {
+      "root": "libs/content-search-index-manager",
+      "sourceRoot": "libs/content-search-index-manager/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/content-search-index-manager/tsconfig.lib.json",
+              "libs/content-search-index-manager/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/content-search-index-manager/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/content-search-index-manager/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -3249,6 +3414,32 @@
         }
       }
     },
+    "plausible": {
+      "root": "libs/plausible",
+      "sourceRoot": "libs/plausible/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/plausible/tsconfig.lib.json",
+              "libs/plausible/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/plausible/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/plausible/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "reference-backend": {
       "root": "apps/reference-backend",
       "sourceRoot": "apps/reference-backend/src",
@@ -4035,7 +4226,8 @@
             "jestConfig": "apps/services/auth-admin-api/jest.config.js",
             "passWithNoTests": true
           }
-        }
+        },
+        "docker-express": {}
       }
     },
     "services-auth-api": {
@@ -4501,6 +4693,32 @@
           }
         },
         "docker-express": {}
+      }
+    },
+    "shared-babel": {
+      "root": "libs/shared/babel",
+      "sourceRoot": "libs/shared/babel/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/shared/babel/tsconfig.lib.json",
+              "libs/shared/babel/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/shared/babel/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/shared/babel/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
       }
     },
     "shared-connected": {

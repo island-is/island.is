@@ -65,6 +65,7 @@ const prosecutorUpdateRule = {
     'requestedCourtDate',
     'alternativeTravelBan',
     'requestedCustodyEndDate',
+    'otherDemands',
     'lawsBroken',
     'custodyProvisions',
     'requestedCustodyRestrictions',
@@ -88,12 +89,14 @@ const judgeUpdateRule = {
     'courtEndTime',
     'courtAttendees',
     'policeDemands',
+    'courtDocuments',
     'accusedPlea',
     'litigationPresentations',
     'ruling',
     'decision',
     'custodyEndDate',
     'custodyRestrictions',
+    'otherRestrictions',
     'accusedAppealDecision',
     'accusedAppealAnnouncement',
     'prosecutorAppealDecision',
@@ -113,12 +116,16 @@ const prosecutorTransitionRule = {
   ],
 } as RolesRule
 
-// Allows judges to accept and reject cases
+// Allows judges to receive, accept and reject cases
 const judgeTransitionRule = {
   role: UserRole.JUDGE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
-  dtoFieldValues: [CaseTransition.ACCEPT, CaseTransition.REJECT],
+  dtoFieldValues: [
+    CaseTransition.RECEIVE,
+    CaseTransition.ACCEPT,
+    CaseTransition.REJECT,
+  ],
 } as RolesRule
 
 @UseGuards(RolesGuard)
@@ -307,5 +314,21 @@ export class CaseController {
       user,
       documentToken,
     )
+  }
+
+  @RolesRules(prosecutorRule)
+  @Post('case/:id/extend')
+  @ApiCreatedResponse({
+    type: Case,
+    description: 'Clones a new case based on an existing case',
+  })
+  async extend(@Param('id') id: string): Promise<Case> {
+    const existingCase = await this.findCaseById(id)
+
+    if (existingCase.childCase) {
+      return existingCase.childCase
+    }
+
+    return this.caseService.extend(existingCase)
   }
 }

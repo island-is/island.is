@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
 import { RulingStepTwo } from './RulingStepTwo'
-import * as Constants from '../../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
@@ -15,7 +15,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MemoryRouter, Route } from 'react-router-dom'
 import { MockedProvider } from '@apollo/client/testing'
-import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 
 describe('/domari-krafa/urskurdarord', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
@@ -242,4 +242,68 @@ describe('/domari-krafa/urskurdarord', () => {
       ),
     ).toBeChecked()
   })
+
+  test('should not display the alternative travel ban retstirction section if the decision is not ACCEPTING_ALTERATIVE_TRAVEL_BAN', async () => {
+    // Arrange
+
+    // Act
+    render(
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
+              <RulingStepTwo />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    // Assert
+    expect(
+      await waitFor(
+        () =>
+          screen.queryByRole('checkbox', {
+            name: 'Tilkynningarskylda',
+          }) as HTMLInputElement,
+      ),
+    ).not.toBeInTheDocument()
+  }, 10000)
+
+  test('should display the alternative travel ban retstirction section if the decision is ACCEPTING_ALTERATIVE_TRAVEL_BAN', async () => {
+    // Arrange
+
+    // Act
+    render(
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id_7`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
+              <RulingStepTwo />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    // Assert
+    expect(
+      await waitFor(
+        () =>
+          screen.getByRole('checkbox', {
+            name: 'Tilkynningarskylda',
+          }) as HTMLInputElement,
+      ),
+    ).toBeInTheDocument()
+  }, 10000)
 })

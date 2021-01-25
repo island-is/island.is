@@ -1,7 +1,18 @@
 import React from 'react'
 
-import { Box } from '@island.is/island-ui/core'
-import { CustomField, FieldBaseProps } from '@island.is/application/core'
+import { RadioController } from '@island.is/shared/form-fields'
+import {
+  Box,
+  Stack,
+  Text,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
+import {
+  CustomField,
+  FieldBaseProps,
+  getValueViaPath,
+} from '@island.is/application/core'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
@@ -12,42 +23,35 @@ function HealthDeclaration({
   field,
   application,
 }: PropTypes): JSX.Element {
+  const { props } = field as { props: { title?: string; label: string } }
   return (
-    <Box>
-      Ég lýsi því hér með yfir að ég hef ekki undir höndum ökuskírteini gefið út
-      af öðru ríki sem er aðili að Evrópska efnahagssvæðinu né hef ég sætt
-      takmörkunum á ökurétti eða verið svipt(ur) ökuréttindum í þeim ríkjum. Ég
-      hef fasta búsetu hér á landi eins og hún er skilgreind í VIII. viðauka
-      reglugerðar um ökuskírteini eða tel mig fullnægja skilyrðum um búsetu hér
-      á landi til að fá gefið út ökuskírteini.
-    </Box>
+    <>
+      {props.title && (
+        <Box marginBottom={4}>
+          <Text variant="h5">{props.title}</Text>
+        </Box>
+      )}
+      <GridRow>
+        <GridColumn span="9/12">
+          <Text>{props.label}</Text>
+        </GridColumn>
+        <GridColumn span="3/12">
+          <RadioController
+            id={field.id}
+            split="1/2"
+            defaultValue={
+              (getValueViaPath(application.answers, field.id) as string[]) ??
+              undefined
+            }
+            options={[
+              { label: 'Já', value: 'yes' },
+              { label: 'Nei', value: 'no' },
+            ]}
+          />
+        </GridColumn>
+      </GridRow>
+    </>
   )
 }
-
-/*
-buildMultiField({
-  id: 'healthDeclaration',
-  name: 'Heilbrigðisyfirlýsing',
-  children: [
-    buildIntroductionField({
-      id: 'intro',
-      name: '',
-      introduction:
-        'Ef sótt er um réttindi í flokkum <b>AM</b>, <b>A1</b>, <b>A2</b>, <b>A</b>, <b>B</b>, <b>BE</b> eða <b>T</b> nægir heilbrigðisyfirlýsing ein og sér, nema sýslumaður telji þörf á læknisvottorði eða ef umsækjandi hefur náð 65 ára aldri eða hann vilji heldur skila læknisvottorði. Með umsókn um aðra flokka ökuréttinda (aukin ökuréttindi) er krafist læknisvottorðs á sérstöku eyðublaði.',
-    }),
-    buildCheckboxField({
-      id: 'useMedicalCertification',
-      name: '',
-      options: [
-        {
-          value: 'useMedicalCertification',
-          label:
-            'Umsækjandi óskar eftir að skila inn læknisvottorði í stað heilbrigðisyfirlýsingu',
-        },
-      ],
-    }),
-  ]
-})
-*/
 
 export default HealthDeclaration

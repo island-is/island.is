@@ -9,8 +9,11 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
-import { CaseQuery, UpdateCaseMutation } from '../graphql'
-import { UserQuery } from '../shared-components/UserProvider/UserProvider'
+import {
+  CaseQuery,
+  UpdateCaseMutation,
+} from '@island.is/judicial-system-web/src/graphql'
+import { UserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 export const mockProsecutor = {
   role: UserRole.PROSECUTOR,
@@ -60,7 +63,7 @@ const testCase1 = {
   litigationPresentations: null,
   ruling:
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Prioris generis est docilitas, memoria; Quod quidem nobis non saepe contingit. Quae qui non vident, nihil umquam magnum ac cognitione dignum amaverunt. Quasi vero, inquit, perpetua oratio rhetorum solum, non etiam philosophorum sit. Duo Reges: constructio interrete. Non est ista, inquam, Piso, magna dissensio. Quantum Aristoxeni ingenium consumptum videmus in musicis? ',
-  decision: null,
+  decision: CaseDecision.ACCEPTING,
   custodyEndDate: '2020-09-16T19:50:08.033Z',
   custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
   accusedAppealDecision: CaseAppealDecision.APPEAL,
@@ -106,7 +109,7 @@ const testCase2 = {
   accusedPlea: null,
   litigationPresentations: null,
   ruling: null,
-  decision: null,
+  decision: CaseDecision.REJECTING,
   custodyEndDate: '2020-10-24',
   custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
   accusedAppealDecision: null,
@@ -202,7 +205,7 @@ const testCase4 = {
   accusedPlea: null,
   litigationPresentations: null,
   ruling: null,
-  decision: null,
+  decision: CaseDecision.REJECTING,
   custodyEndDate: '2020-10-24',
   custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
   accusedAppealDecision: null,
@@ -252,7 +255,7 @@ const testCase5 = {
   accusedPlea: null,
   litigationPresentations: null,
   ruling: null,
-  decision: null,
+  decision: CaseDecision.ACCEPTING,
   custodyEndDate: '2020-09-25T19:50:08.033Z',
   custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
   accusedAppealDecision: null,
@@ -302,7 +305,7 @@ const testCase6 = {
   accusedPlea: null,
   litigationPresentations: null,
   ruling: null,
-  decision: null,
+  decision: CaseDecision.ACCEPTING,
   custodyEndDate: '2020-09-24T19:50:08.033Z',
   custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
   accusedAppealDecision: null,
@@ -310,7 +313,6 @@ const testCase6 = {
   prosecutorAppealDecision: null,
   prosecutorAppealAnnouncement: null,
   isCustodyEndDateInThePast: true,
-
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
@@ -412,12 +414,14 @@ const testCase8 = {
   prosecutorAppealDecision: null,
   prosecutorAppealAnnouncement: null,
   isCustodyEndDateInThePast: true,
-
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
   requestedDefenderName: 'Saul Goodman',
   requestedDefenderEmail: 'saul@goodman.com',
+  parentCase: {
+    custodyEndDate: '2021-01-18T19:50:08.033Z',
+  },
 }
 
 export const mockJudgeQuery = [

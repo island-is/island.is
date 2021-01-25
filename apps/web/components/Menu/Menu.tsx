@@ -1,3 +1,4 @@
+import React, { FC, useRef } from 'react'
 import {
   Button,
   Menu as MenuUI,
@@ -6,13 +7,12 @@ import {
   Box,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
-import React, { FC, useRef } from 'react'
-import { SearchInput } from '..'
+import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
+import { SearchInput } from '@island.is/web/components'
 import { LanguageToggler } from '../LanguageToggler'
-import { AnchorAttributes } from '@island.is/web/i18n/routes'
 
 interface MegaMenuLink {
-  href: AnchorAttributes
+  href: LinkResolverResponse
   text: string
   sub?: [MegaMenuLink]
 }
@@ -75,7 +75,6 @@ export const Menu: FC<Props> = ({
           href={activeLocale === 'en' ? '/en' : '/'}
           as={activeLocale === 'en' ? '/en' : '/'}
           onClick={() => {
-            console.log('click')
             closeModal()
           }}
         >
@@ -97,7 +96,13 @@ export const Menu: FC<Props> = ({
       renderMyPagesButton={(button) => {
         return <Link href="//minarsidur.island.is/">{button}</Link>
       }}
-      renderLanguageSwitch={() => <LanguageToggler />}
+      renderLanguageSwitch={(languageSwitch, isMobile) => (
+        <LanguageToggler
+          dialogId={
+            isMobile ? 'menu-language-toggle-mobile' : 'menu-language-toggle'
+          }
+        />
+      )}
       renderSearch={(input, closeModal) => (
         <SearchInput
           id="search_input_menu"

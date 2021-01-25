@@ -26,6 +26,7 @@ export const LinkCard = forwardRef<HTMLAnchorElement, LinkCardProps>(
       tag,
       tagVariant = 'darkerBlue',
       tagProps = {
+        disabled: true,
         outlined: true,
       },
       isFocused,

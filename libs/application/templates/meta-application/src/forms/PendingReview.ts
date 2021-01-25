@@ -1,7 +1,7 @@
 import {
   ApplicationTypes,
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -9,13 +9,13 @@ import { m } from './messages'
 
 export const PendingReview: Form = buildForm({
   id: ApplicationTypes.META_APPLICATION,
-  name: m.pendingReview,
+  title: m.pendingReview,
   mode: FormModes.PENDING,
   children: [
-    buildIntroductionField({
+    buildDescriptionField({
       id: 'inReview',
-      name: m.pendingReviewName,
-      introduction: m.pendingReviewIntroduction,
+      title: m.pendingReviewName,
+      description: m.pendingReviewIntroduction,
     }),
   ],
 })

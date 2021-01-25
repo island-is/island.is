@@ -124,7 +124,12 @@ export class CaseService {
         [Op.or]: [
           {
             state: {
-              [Op.in]: [CaseState.NEW, CaseState.DRAFT, CaseState.SUBMITTED],
+              [Op.in]: [
+                CaseState.NEW,
+                CaseState.DRAFT,
+                CaseState.SUBMITTED,
+                CaseState.RECEIVED,
+              ],
             },
           },
           {
@@ -144,6 +149,8 @@ export class CaseService {
       include: [
         { model: User, as: 'prosecutor' },
         { model: User, as: 'judge' },
+        { model: Case, as: 'parentCase' },
+        { model: Case, as: 'childCase' },
       ],
     })
   }
@@ -156,6 +163,8 @@ export class CaseService {
       include: [
         { model: User, as: 'prosecutor' },
         { model: User, as: 'judge' },
+        { model: Case, as: 'parentCase' },
+        { model: Case, as: 'childCase' },
       ],
     })
   }
@@ -256,5 +265,24 @@ export class CaseService {
     return {
       documentSigned: true,
     }
+  }
+
+  extend(existingCase: Case): Promise<Case> {
+    this.logger.debug(`Extending case ${existingCase.id}`)
+
+    return this.caseModel.create({
+      policeCaseNumber: existingCase.policeCaseNumber,
+      accusedNationalId: existingCase.accusedNationalId,
+      accusedName: existingCase.accusedName,
+      accusedAddress: existingCase.accusedAddress,
+      accusedGender: existingCase.accusedGender,
+      court: existingCase.court,
+      lawsBroken: existingCase.lawsBroken,
+      custodyProvisions: existingCase.custodyProvisions,
+      requestedCustodyRestrictions: existingCase.requestedCustodyRestrictions,
+      caseFacts: existingCase.caseFacts,
+      legalArguments: existingCase.legalArguments,
+      parentCaseId: existingCase.id,
+    })
   }
 }

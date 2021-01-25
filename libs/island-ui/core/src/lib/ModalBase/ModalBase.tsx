@@ -18,15 +18,29 @@ import {
 import * as styles from './ModalBase.treat'
 import { DisclosureProps } from 'reakit/ts'
 
+interface BackdropDivProps {
+  backdropWhite?: ModalBaseProps['backdropWhite']
+}
+
 export const BackdropDiv = forwardRef(
-  (props: DialogProps, ref: Ref<HTMLDivElement>) => {
+  (
+    { backdropWhite, ...props }: DialogProps & BackdropDivProps,
+    ref: Ref<HTMLDivElement>,
+  ) => {
     const [mounted, setMounted] = useState(false)
     useLayoutEffect(function () {
       setMounted(true)
     }, [])
 
     return mounted ? (
-      <div className={styles.backdrop} {...props} ref={ref} />
+      <div
+        className={cn(
+          styles.backdrop,
+          styles.backdropColor[backdropWhite ? 'white' : 'default'],
+        )}
+        {...props}
+        ref={ref}
+      />
     ) : null
   },
 )
@@ -34,7 +48,7 @@ export const BackdropDiv = forwardRef(
 export type ModalBaseProps = {
   /**
    * Element that opens the dialog.
-   * It will be forwarded neccessery props for a11y and event handling.
+   * It will be forwarded necessary props for a11y and event handling.
    */
   disclosure?: ReactElement
   /**
@@ -58,6 +72,11 @@ export type ModalBaseProps = {
     disclosure: ReactElement,
     disclosureProps?: DisclosureProps,
   ) => ReactElement
+  backdropWhite?: boolean
+  /**
+   * Aria label for the modal
+   */
+  modalLabel?: string
 }
 
 export const ModalBase: FC<ModalBaseProps> = ({
@@ -69,6 +88,8 @@ export const ModalBase: FC<ModalBaseProps> = ({
   className,
   onVisibilityChange,
   renderDisclosure = (disclosure) => disclosure,
+  backdropWhite,
+  modalLabel,
 }) => {
   const modal = useDialogState({
     animated: true,
@@ -98,8 +119,12 @@ export const ModalBase: FC<ModalBaseProps> = ({
           }
         </DialogDisclosure>
       ) : null}
-      <DialogBackdrop {...modal} as={BackdropDiv}>
-        <BaseDialog {...modal} className={cn(styles.modal, className)}>
+      <DialogBackdrop {...modal} as={BackdropDiv} backdropWhite={backdropWhite}>
+        <BaseDialog
+          {...modal}
+          className={cn(styles.modal, className)}
+          aria-label={modalLabel}
+        >
           {typeof children === 'function' ? children({ closeModal }) : children}
         </BaseDialog>
       </DialogBackdrop>

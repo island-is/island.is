@@ -1,0 +1,40 @@
+name: Destroy feature deployment
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  cleanup:
+    name: Clean up feature deployment
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Get git branch
+        run: |
+          GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
+          echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
+      - name: Generate deployment branch name
+        id: git-branch-deploy
+        run: |
+          GIT_BRANCH_DEPLOY=$GIT_BRANCH
+          if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
+            # If event is pull request but branch is not prefixed with feature/
+            GIT_BRANCH_DEPLOY=feature/$GIT_BRANCH_DEPLOY
+          fi
+          # Avoid too long resource names
+          GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY:0:50}
+          echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
+      - name: Clean up feature
+        env:
+          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
+          SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
+        run: |
+          curl $SPINNAKER_URL/webhooks/webhook/feature-cleanup -H "content-type: application/json" --data-binary @- <<BODY
+          {
+            "token": "$SPINNAKER_WEBHOOK_TOKEN",
+            "parameters": {
+              "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]._-')"
+            }
+          }
+          BODY

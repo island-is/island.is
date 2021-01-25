@@ -1,7 +1,10 @@
 import { ApolloError, ServerError } from '@apollo/client'
 import { onError, ErrorResponse } from '@apollo/client/link/error'
 
-import { NotificationService, api } from '../services'
+import {
+  NotificationService,
+  api,
+} from '@island.is/judicial-system-web/src/services'
 
 export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   if (networkError) {

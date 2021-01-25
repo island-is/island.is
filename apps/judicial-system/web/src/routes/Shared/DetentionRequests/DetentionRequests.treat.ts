@@ -53,6 +53,8 @@ export const deleteButtonContainer = style({
 })
 
 export const thButton = style({
+  outline: 'none',
+
   ':active': {
     color: theme.color.dark400,
   },
@@ -73,6 +75,17 @@ export const tableRowContainer = style({
       minWidth: 'calc(100% + 100px)',
     },
   },
+})
+
+export const largeColumn = style({
+  // The width needed to make sure a 33 character name doesn't wrap
+  minWidth: 334,
+  whiteSpace: 'nowrap',
+})
+
+export const accusedName = style({
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
 })
 
 export const tr = style({
@@ -137,18 +150,24 @@ export const deleteButtonText = style({
 })
 
 export const sortIcon = style({
-  opacity: 0,
-  transition: 'opacity .5s ease-in-out, transform .5s ease-in-out .2s',
+  opacity: 0.4,
+  transition: 'opacity .2s ease-in-out',
+
+  selectors: {
+    [`${thButton}:hover &`]: {
+      opacity: 1,
+    },
+  },
 })
 
 export const sortCreatedAsc = style({
   opacity: 1,
-  transform: 'rotate(0deg)',
+  transform: 'rotate(180deg)',
 })
 
 export const sortCreatedDes = style({
   opacity: 1,
-  transform: 'rotate(180deg)',
+  transform: 'rotate(0deg)',
 })
 
 export const sortAccusedNameAsc = style({

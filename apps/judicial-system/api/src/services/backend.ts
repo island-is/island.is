@@ -68,6 +68,10 @@ class BackendAPI extends RESTDataSource {
     return this.post(`case/${id}/notification`, sendNotification)
   }
 
+  extendCase(id: string): Promise<Case> {
+    return this.post(`case/${id}/extend`)
+  }
+
   getCaseNotifications(id: string): Promise<Notification[]> {
     return this.get(`case/${id}/notifications`)
   }

@@ -18,7 +18,7 @@ import * as styles from './DatePicker.treat'
 import * as coreStyles from './react-datepicker.treat'
 import { Input, InputProps } from '../Input/Input'
 import { VisuallyHidden } from 'reakit'
-import { Icon as IconType, Type } from '../IconRC/iconMap'
+import { DatePickerProps, DatePickerCustomHeaderProps } from './types'
 
 const languageConfig = {
   is: {
@@ -33,45 +33,6 @@ const languageConfig = {
     format: 'dd.MM.yyyy',
     locale: pl,
   },
-}
-
-type LocaleKeys = keyof typeof languageConfig
-
-interface DatePickerProps {
-  label: string
-  placeholderText: ReactDatePickerProps['placeholderText']
-  locale?: LocaleKeys
-  minDate?: ReactDatePickerProps['minDate']
-  selected?: ReactDatePickerProps['selected']
-  disabled?: boolean
-  hasError?: boolean
-  errorMessage?: string
-  id?: string
-  handleChange?: (startDate: Date) => void
-  onInputClick?: ReactDatePickerProps['onInputClick']
-  handleCloseCalendar?: (date: Date | null) => void
-  handleOpenCalendar?: () => void
-  required?: boolean
-  inputName?: string
-  size?: 'md' | 'sm'
-  backgroundColor?: 'white' | 'blue'
-  icon?: IconType
-  iconType?: Type
-}
-
-interface CustomHeaderProps {
-  date: Date
-  changeYear(year: number): void
-  changeMonth(month: number): void
-  decreaseMonth(): void
-  increaseMonth(): void
-  prevMonthButtonDisabled: boolean
-  nextMonthButtonDisabled: boolean
-  decreaseYear(): void
-  increaseYear(): void
-  prevYearButtonDisabled: boolean
-  nextYearButtonDisabled: boolean
-  locale: Locale
 }
 
 export const DatePicker: React.FC<DatePickerProps> = ({
@@ -108,6 +69,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       registerLocale('pl', pl)
     }
   }, [locale])
+
+  useEffect(() => {
+    setStartDate(selected ?? null)
+  }, [selected])
+
   return (
     <div className={coreStyles.root} data-testid="datepicker">
       <div
@@ -147,6 +113,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           }}
           startDate={startDate}
           required={required}
+          autoComplete="off"
           calendarClassName={cn({
             [styles.backgroundBlue]: backgroundColor === 'blue',
           })}
@@ -212,7 +179,7 @@ const CustomHeader = ({
   increaseMonth,
   changeMonth,
   locale,
-}: CustomHeaderProps) => {
+}: DatePickerCustomHeaderProps) => {
   const monthRef = useRef<HTMLSpanElement>(null)
   const month = locale.localize ? locale.localize.month(date.getMonth()) : ''
   const months = monthsIndex.map((i) => {

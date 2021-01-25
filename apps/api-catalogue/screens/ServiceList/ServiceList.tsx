@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import {
   Box,
-  Breadcrumbs,
+  BreadcrumbsDeprecated as Breadcrumbs,
   Text,
   AccordionItem,
   LoadingIcon,

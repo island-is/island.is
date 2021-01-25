@@ -98,6 +98,9 @@
     "api-domains-file-upload": {
       "tags": []
     },
+    "api-domains-health-insurance": {
+      "tags": []
+    },
     "api-domains-national-registry": {
       "tags": []
     },
@@ -138,6 +141,9 @@
     "application-template-loader": {
       "tags": []
     },
+    "application-templates-children-domicile-transfer": {
+      "tags": []
+    },
     "application-templates-document-provider-onboarding": {
       "tags": []
     },
@@ -168,6 +174,13 @@
     "application-ui-shell": {
       "tags": []
     },
+    "auth-admin-web": {
+      "tags": []
+    },
+    "auth-admin-web-e2e": {
+      "tags": [],
+      "implicitDependencies": ["auth-admin-web"]
+    },
     "auth-api-lib": {
       "tags": []
     },
@@ -175,6 +188,9 @@
       "tags": []
     },
     "cache": {
+      "tags": []
+    },
+    "content-search-index-manager": {
       "tags": []
     },
     "content-search-indexer": {
@@ -295,6 +311,9 @@
     "nova-sms": {
       "tags": []
     },
+    "plausible": {
+      "tags": []
+    },
     "reference-backend": {
       "tags": []
     },
@@ -367,6 +386,9 @@
     },
     "services-xroad-collector": {
       "tags": ["api-catalogue-services"]
+    },
+    "shared-babel": {
+      "tags": []
     },
     "shared-connected": {
       "tags": []

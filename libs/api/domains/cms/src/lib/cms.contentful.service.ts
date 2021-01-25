@@ -7,8 +7,11 @@ import * as types from './generated/contentfulTypes'
 import { Article, mapArticle } from './models/article.model'
 import { ContentSlug, mapContentSlug } from './models/contentSlug.model'
 import { AboutPage, mapAboutPage } from './models/aboutPage.model'
-import { LandingPage, mapLandingPage } from './models/landingPage.model'
 import { GenericPage, mapGenericPage } from './models/genericPage.model'
+import {
+  GenericOverviewPage,
+  mapGenericOverviewPage,
+} from './models/genericOverviewPage.model'
 import { News, mapNews } from './models/news.model'
 import { Pagination } from './models/pagination.model'
 import {
@@ -19,8 +22,8 @@ import { AdgerdirPages } from './models/adgerdirPages.model'
 import { AdgerdirPage, mapAdgerdirPage } from './models/adgerdirPage.model'
 import { GetContentSlugInput } from './dto/getContentSlug.input'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
-import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
+import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
 import { Namespace, mapNamespace } from './models/namespace.model'
 import { Menu, mapMenu } from './models/menu.model'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
@@ -279,21 +282,6 @@ export class CmsContentfulService {
     return result.items.map(mapAboutSubPage)[0] ?? null
   }
 
-  async getLandingPage({
-    lang,
-    slug,
-  }: GetLandingPageInput): Promise<LandingPage | null> {
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.ILandingPageFields>(lang, {
-        ['content_type']: 'landingPage',
-        'fields.slug': slug,
-        include: 10,
-      })
-      .catch(errorHandler('getLandingPage'))
-
-    return result.items.map(mapLandingPage)[0] ?? null
-  }
-
   async getContentSlug({
     id,
     lang,
@@ -321,6 +309,21 @@ export class CmsContentfulService {
       .catch(errorHandler('getGenericPage'))
 
     return result.items.map(mapGenericPage)[0] ?? null
+  }
+
+  async getGenericOverviewPage({
+    lang,
+    pageIdentifier,
+  }: GetGenericOverviewPageInput): Promise<GenericOverviewPage> {
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IGenericOverviewPageFields>(lang, {
+        ['content_type']: 'genericOverviewPage',
+        'fields.pageIdentifier': pageIdentifier,
+        include: 10,
+      })
+      .catch(errorHandler('getGenericOverviewPage'))
+
+    return result.items.map(mapGenericOverviewPage)[0] ?? null
   }
 
   async getNamespace(

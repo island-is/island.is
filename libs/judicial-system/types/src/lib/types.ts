@@ -22,6 +22,7 @@ export enum CaseState {
   NEW = 'NEW',
   DRAFT = 'DRAFT',
   SUBMITTED = 'SUBMITTED',
+  RECEIVED = 'RECEIVED',
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
   DELETED = 'DELETED',
@@ -30,6 +31,7 @@ export enum CaseState {
 export enum CaseTransition {
   OPEN = 'OPEN',
   SUBMIT = 'SUBMIT',
+  RECEIVE = 'RECEIVE',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
   DELETE = 'DELETE',
@@ -42,6 +44,7 @@ export enum CaseCustodyProvisions {
   _95_1_D = '_95_1_D', // d-lið 1. mgr. 95. gr.
   _95_2 = '_95_2', // 2. mgr. 95. gr.
   _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
+  _100_1 = '_100_1', // 1. mgr. 100. gr. sml.
 }
 
 export enum CaseCustodyRestrictions {
@@ -49,6 +52,8 @@ export enum CaseCustodyRestrictions {
   VISITAION = 'VISITAION',
   COMMUNICATION = 'COMMUNICATION',
   MEDIA = 'MEDIA',
+  ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION = 'ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION',
+  ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT = 'ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT',
 }
 
 export enum CaseAppealDecision {
@@ -88,6 +93,7 @@ export interface Case {
   requestedCourtDate?: string
   alternativeTravelBan?: boolean
   requestedCustodyEndDate?: string
+  otherDemands?: string
   lawsBroken?: string
   custodyProvisions?: CaseCustodyProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
@@ -107,6 +113,7 @@ export interface Case {
   courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
+  courtDocuments?: string[]
   accusedPlea?: string
   litigationPresentations?: string
   ruling?: string
@@ -114,11 +121,14 @@ export interface Case {
   custodyEndDate?: string
   isCustodyEndDateInThePast?: boolean
   custodyRestrictions?: CaseCustodyRestrictions[]
+  otherRestrictions?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
   judge?: User
+  parentCase?: Case
+  childCase?: Case
   notifications?: Notification[]
 }
 
@@ -177,12 +187,14 @@ export interface UpdateCase {
   courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
+  courtDocuments?: string[]
   accusedPlea?: string
   litigationPresentations?: string
   ruling?: string
   decision?: CaseDecision
   custodyEndDate?: string
   custodyRestrictions?: CaseCustodyRestrictions[]
+  otherRestrictions?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision

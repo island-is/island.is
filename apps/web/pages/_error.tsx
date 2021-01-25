@@ -4,19 +4,23 @@ import { GetUrlQuery, QueryGetUrlArgs } from '@island.is/web/graphql/schema'
 import { GET_URL_QUERY } from '@island.is/web/screens/queries'
 import { ApolloClient } from '@apollo/client/core'
 import { NormalizedCacheObject } from '@apollo/client/cache'
-
 import ErrorScreen from '../screens/Error/Error'
-import { getLocaleFromPath } from '../i18n/withLocale'
 import Layout, { LayoutProps } from '../layouts/main'
 import I18n, { Locale } from '../i18n/I18n'
 import { withApollo } from '../graphql/withApollo'
-import routeNames, { PathTypes } from '../i18n/routeNames'
+import { linkResolver, LinkType, typeResolver } from '../hooks/useLinkResolver'
+import { NextPageContext } from 'next'
 
 type ErrorPageProps = {
   statusCode: number
   locale: Locale
   layoutProps: LayoutProps
 }
+
+type ErrorPageInitialProps = {
+  apolloClient: ApolloClient<NormalizedCacheObject>
+  locale: string
+} & NextPageContext
 
 class ErrorPage extends React.Component<ErrorPageProps> {
   state = { renderError: false }
@@ -50,12 +54,13 @@ class ErrorPage extends React.Component<ErrorPageProps> {
     return <ErrorScreen statusCode={statusCode} />
   }
 
-  static async getInitialProps(props /*: NextPageContext*/) {
+  static async getInitialProps(props: ErrorPageInitialProps) {
     const { err, res, asPath = '' } = props
     const statusCode = err?.statusCode ?? res?.statusCode ?? 500
-    const locale = getLocaleFromPath(asPath)
+    const { locale } = typeResolver(asPath)
 
-    if (!asPath.startsWith('/_next') && statusCode === 404) {
+    // check if we have a redirect condition
+    if (statusCode === 404) {
       const path = asPath
         .trim()
         .replace(/\/\/+/g, '/')
@@ -63,27 +68,22 @@ class ErrorPage extends React.Component<ErrorPageProps> {
         .toLowerCase()
 
       const redirectProps = await getRedirectProps({
-        path,
+        path: path,
         apolloClient: props.apolloClient,
         locale,
       })
 
       if (redirectProps) {
-        const { makePath } = routeNames(locale)
-
-        const { pageType, page } = redirectProps
+        const { type, slug } = redirectProps
 
         // Found an URL content type that contained this
         // path (which has a page assigned to it) so we redirect to that page
-        if (pageType && page) {
-          const url = makePath(pageType as PathTypes, page.slug)
-
-          if (!process.browser) {
-            res.writeHead(302, { Location: url })
-            res.end()
-          } else {
-            return (window.location.href = url)
-          }
+        const url = linkResolver(type as LinkType, [slug], locale).as
+        if (!process.browser) {
+          res.writeHead(302, { Location: url })
+          res.end()
+        } else {
+          return (window.location.href = url)
         }
       }
     }
@@ -126,11 +126,8 @@ class ErrorPage extends React.Component<ErrorPageProps> {
 export default withApollo(ErrorPage)
 
 export interface RedirectProps {
-  pageType: string
-  page: {
-    slug: string
-    contentType: string
-  }
+  slug: string
+  type: string
 }
 
 interface GetRedirectPropsProps {
@@ -146,26 +143,15 @@ const getRedirectProps = async ({
 }: GetRedirectPropsProps): Promise<RedirectProps | null> => {
   const {
     data: { getUrl },
-  } = await apolloClient
-    .query<GetUrlQuery, QueryGetUrlArgs>({
-      query: GET_URL_QUERY,
-      variables: {
-        input: {
-          slug: path,
-          lang: locale as string,
-        },
+  } = await apolloClient.query<GetUrlQuery, QueryGetUrlArgs>({
+    query: GET_URL_QUERY,
+    variables: {
+      input: {
+        lang: locale as string,
+        slug: path,
       },
-    })
-    .then((r) => r)
+    },
+  })
 
-  const pageType = getUrl?.page?.contentType ?? null
-
-  if (!pageType) {
-    return null
-  }
-
-  return {
-    pageType,
-    page: getUrl.page,
-  }
+  return getUrl?.page ?? null
 }

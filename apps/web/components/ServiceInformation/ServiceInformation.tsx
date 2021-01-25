@@ -7,7 +7,7 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { ApiService, GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import { Service, GetNamespaceQuery } from '@island.is/web/graphql/schema'
 import { useNamespace } from '../../hooks'
 
 const capitalize = (s: string) => {
@@ -15,7 +15,7 @@ const capitalize = (s: string) => {
 }
 
 export interface ServiceInformationProps {
-  service: ApiService
+  service: Service
   strings: GetNamespaceQuery['getNamespace']
 }
 
@@ -29,7 +29,7 @@ export const ServiceInformation = ({
     <Box>
       <Inline space={1}>
         <Text variant="h1" as="h1">
-          {service.name}
+          {service.title}
         </Text>
         {service.pricing.length > 0 && (
           <Box>
@@ -39,10 +39,10 @@ export const ServiceInformation = ({
           </Box>
         )}
       </Inline>
-      <Text variant="h3" as="h3" paddingTop="gutter">
+      <Text variant="eyebrow" as="span" paddingTop="gutter">
         {`${n('serviceOwner')}: ${service.owner}`}
       </Text>
-      <Text variant="intro" paddingTop="gutter">
+      <Text variant="intro" paddingTop="smallGutter">
         {service.description}
       </Text>
       <Box>
@@ -56,7 +56,7 @@ export const ServiceInformation = ({
               marginBottom={3}
               width="full"
             >
-              <Text variant="h3" as="h3">
+              <Text variant="eyebrow" as="span">
                 {n('data')}
               </Text>
             </Box>
@@ -77,7 +77,7 @@ export const ServiceInformation = ({
               marginBottom={3}
               width="full"
             >
-              <Text variant="h3" as="h3">
+              <Text variant="eyebrow" as="span">
                 {n('type')}
               </Text>
             </Box>
@@ -98,7 +98,7 @@ export const ServiceInformation = ({
               marginBottom={3}
               width="full"
             >
-              <Text variant="h3" as="h3">
+              <Text variant="eyebrow" as="span">
                 {n('access')}
               </Text>
             </Box>

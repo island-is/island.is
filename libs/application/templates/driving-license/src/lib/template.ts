@@ -16,25 +16,22 @@ type Events =
   | { type: 'ABORT' }
 
 const dataSchema = z.object({
-  type: z.string().nonempty(),
-  bikeType: z.string().nonempty(),
-  truckType: z.string().nonempty(),
-  acceptsPolicy: z.boolean(),
-  address: z.object({
-    home: z.string().nonempty(),
-    postcode: z.string(),
-    city: z.string().nonempty(),
-  }),
-  user: z.object({
-    name: z.string().nonempty(),
-    phoneNumber: z.string().min(7),
-    nationalId: z.string().refine((x) => kennitala.isPerson(x)),
-    email: z.string().email().nonempty(),
-    country: z.string().nonempty(),
+  type: z.array(z.enum(['general', 'trailer', 'bike'])).nonempty(),
+  subType: z.array(z.string()).nonempty(),
+  approveExternalData: z.boolean().refine((v) => v),
+  healthDeclaration: z.object({
+    usesContactGlasses: z.enum(['yes', 'no']),
+    hasEpilepsy: z.enum(['yes', 'no']),
+    hasHeartDisease: z.enum(['yes', 'no']),
+    hasMentalIllness: z.enum(['yes', 'no']),
+    usesMedicalDrugs: z.enum(['yes', 'no']),
+    isAlcoholic: z.enum(['yes', 'no']),
+    hasDiabetes: z.enum(['yes', 'no']),
+    isDisabled: z.enum(['yes', 'no']),
+    hasOtherDiseases: z.enum(['yes', 'no']),
   }),
   teacher: z.string().nonempty(),
-  category: z.string().nonempty(),
-  isBusiness: z.array(z.enum(['isBusiness'])),
+  willBringAlongData: z.array(z.enum(['certificate', 'picture'])).nonempty(),
 })
 
 const template: ApplicationTemplate<

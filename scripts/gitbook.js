@@ -13,6 +13,8 @@ const ROOT_LEVEL = 3
  * Format names following https://en.wikipedia.org/wiki/AP_Stylebook and https://en.wikipedia.org/wiki/APA_style styles
  */
 const CONNECTIVES = 'a an and at but by for in nor of on or so the to up yet'
+const UPPERCASE_WHITELIST = 'api css cms adr http nova sms ui'
+
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1)
 
 const format = (str) => {
@@ -53,8 +55,13 @@ const format = (str) => {
         return word
       }
 
+      if (UPPERCASE_WHITELIST.split(' ').includes(word.toLowerCase())) {
+        return word.toUpperCase()
+      }
+
       if (
-        index !== 0 &&
+        // The first two indexes are the `#` and a whitespace, so the first meaningful word is indexed at index 2
+        index !== 2 &&
         index !== all.length - 1 &&
         CONNECTIVES.split(' ').includes(word.toLowerCase())
       ) {

@@ -3,14 +3,14 @@ import {
   Accordion,
   AccordionItem,
   Box,
-  Breadcrumbs,
+  BreadcrumbsDeprecated as Breadcrumbs,
   LoadingIcon,
   Select,
   Text,
 } from '@island.is/island-ui/core'
 import * as styles from './ServiceDetail.treat'
 import cn from 'classnames'
-import { ApiService, GetOpenApiInput } from '@island.is/api/schema'
+import { Service, GetOpenApiInput } from '@island.is/api/schema'
 import { useQuery } from 'react-apollo'
 import { GET_OPEN_API_QUERY } from '../../screens/Queries'
 import { OpenApi } from '@island.is/api-catalogue/types'
@@ -27,23 +27,21 @@ type SelectOption = {
 }
 
 export interface ServiceDetailProps {
-  service: ApiService
+  service: Service
   strings: GetNamespaceQuery['getNamespace']
 }
 
 export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
   const n = useNamespace(strings)
 
-  const options: Array<SelectOption> = service.xroadIdentifier.map((x) => ({
-    label: x.serviceCode.split('-').pop(),
-    value: {
-      instance: x.instance,
-      memberClass: x.memberClass,
-      memberCode: x.memberCode,
-      serviceCode: x.serviceCode,
-      subsystemCode: x.subsystemCode,
-    },
-  }))
+  const options: Array<SelectOption> = service.versions.map((x) => {
+    // TODO: Handle multiple identifiers for environments
+    const { __typename, ...identifier } = x.details[0].xroadIdentifier
+    return {
+      label: x.versionId.split('-').pop(),
+      value: identifier,
+    }
+  })
   const [openApi, setOpenApi] = useState<GetOpenApiInput>(options[0].value)
   const { data, loading } = useQuery(GET_OPEN_API_QUERY, {
     variables: {
@@ -60,11 +58,11 @@ export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
       <Breadcrumbs>
         <a href="/">Viskuausan</a>
         <a href="/services">API Vörulisti</a>
-        <span>{service.name}</span>
+        <span>{service.title}</span>
       </Breadcrumbs>
       <div className={cn(styles.topSection)}>
         <h1 className="name" data-id={service.id}>
-          {service.name}
+          {service.title}
         </h1>
         <div className={cn(styles.description)}>{service.description}</div>
         <Box>

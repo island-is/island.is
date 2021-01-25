@@ -74,6 +74,11 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly otherDemands?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly lawsBroken?: string
 
   @IsOptional()
@@ -147,6 +152,11 @@ export class UpdateCaseDto {
   readonly policeDemands?: string
 
   @IsOptional()
+  @IsString({ each: true })
+  @ApiPropertyOptional({ isArray: true })
+  readonly courtDocuments?: string
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly accusedPlea?: string
@@ -175,6 +185,11 @@ export class UpdateCaseDto {
   @IsEnum(CaseCustodyRestrictions, { each: true })
   @ApiPropertyOptional({ enum: CaseCustodyRestrictions, isArray: true })
   readonly custodyRestrictions?: CaseCustodyRestrictions[]
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly otherRestrictions?: string
 
   @IsOptional()
   @IsEnum(CaseAppealDecision)

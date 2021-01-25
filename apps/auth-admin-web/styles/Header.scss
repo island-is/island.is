@@ -1,0 +1,72 @@
+.header {
+  width: 100%;
+  max-height: 112px;
+  padding: 24px 0px;
+  background: $color-body-bg;
+  display: flex;
+  flex-wrap: no-wrap;
+  box-sizing: border-box;
+
+  &__container__logo {
+    flex: 1;
+    align-content: flex-start;
+    h1 {
+      font-size: 26px;
+      margin: 0;
+    }
+  }
+
+  &__container__login {
+    button {
+      background-color: $color-cancel;
+      font-size: 0.8rem;
+      color: $color-text-primary;
+      font-weight: $weight-semi-bold;
+    }
+  }
+
+  .header__container__options {
+    .header__container__user {
+      padding: 12px 16px;
+      border: 1px solid $color-border;
+      box-sizing: border-box;
+      border-radius: 8px;
+      display: flex;
+      justify-content: flex-start;
+      justify-self: flex-end;
+      align-content: center;
+
+      .header__username {
+        font-size: 15px;
+        font-style: normal;
+        font-weight: $weight-semi-bold;
+        line-height: 25px;
+        letter-spacing: 0em;
+        text-align: left;
+      }
+
+      button {
+        border: 1px solid $color-border;
+        box-sizing: border-box;
+        border-radius: $border-radius;
+        background: $color-body-bg;
+        font-size: 15px;
+        font-style: normal;
+        font-weight: $weight-semi-bold;
+        line-height: 25px;
+        letter-spacing: 0em;
+        text-align: center;
+        color: $color-text-primary;
+        width: 51px;
+        height: 25px;
+        padding: 0;
+        margin-left: 15px;
+        cursor: pointer;
+
+        &:hover {
+          background: $color-border;
+        }
+      }
+    }
+  }
+}

@@ -5,15 +5,17 @@ import fs from 'fs'
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
+  CaseDecision,
   User,
 } from '@island.is/judicial-system/types'
 import {
   capitalize,
-  formatCustodyRestrictions,
+  formatRequestedCustodyRestrictions,
   formatDate,
   formatGender,
   formatNationalId,
-  formatRestrictions,
+  formatCustodyRestrictions,
+  formatAlternativeTravelBanRestrictions,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -70,7 +72,7 @@ export async function generateRequestPdf(
     .lineGap(4)
     .text(`Kennitala: ${formatNationalId(existingCase.accusedNationalId)}`)
     .text(`Fullt nafn: ${existingCase.accusedName}`)
-    .text(`Kyn: ${capitalize(formatGender(existingCase.accusedGender))}`)
+    .text(`Kyn: ${formatGender(existingCase.accusedGender)}`)
     .text(`Lögheimili: ${existingCase.accusedAddress}`)
     .text(' ')
     .font('Helvetica-Bold')
@@ -92,8 +94,23 @@ export async function generateRequestPdf(
         existingCase.requestedCustodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ),
+        existingCase.parentCase !== null,
+        existingCase.parentCase?.decision,
       ),
+      {
+        lineGap: 6,
+        paragraphGap: 0,
+      },
     )
+
+  if (existingCase.otherDemands) {
+    doc.text(' ').text(existingCase.otherDemands, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+  }
+
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -124,7 +141,7 @@ export async function generateRequestPdf(
     .font('Helvetica')
     .fontSize(12)
     .text(
-      `${formatCustodyRestrictions(
+      `${formatRequestedCustodyRestrictions(
         existingCase.requestedCustodyRestrictions,
       )}.`,
       {
@@ -244,13 +261,23 @@ export async function generateRulingPdf(
     .text('Dómskjöl')
     .font('Helvetica')
     .fontSize(12)
-    .text(
-      'Rannsóknargögn málsins liggja frammi. Krafa lögreglu þingmerkt nr. 1.',
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
+    .text('Krafa lögreglu þingmerkt nr. 1.', {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text('Rannsóknargögn málsins liggja frammi.', {
+      lineGap: 6,
+      paragraphGap: 4,
+    })
+
+  existingCase.courtDocuments?.forEach((courttDocument, index) =>
+    doc.text(`${courttDocument} þingmerkt nr. ${index + 2}.`, {
+      lineGap: 6,
+      paragraphGap: 4,
+    }),
+  )
+
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -308,12 +335,23 @@ export async function generateRulingPdf(
         existingCase.requestedCustodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ),
+        existingCase.parentCase !== null,
+        existingCase.parentCase?.decision,
       ),
       {
         lineGap: 6,
         paragraphGap: 0,
       },
     )
+
+  if (existingCase.otherDemands) {
+    doc.text(' ').text(existingCase.otherDemands, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+  }
+
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -359,11 +397,14 @@ export async function generateRulingPdf(
       formatConclusion(
         existingCase.accusedNationalId,
         existingCase.accusedName,
+        existingCase.accusedGender,
         existingCase.decision,
         existingCase.custodyEndDate,
         existingCase.custodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ),
+        existingCase.parentCase !== null,
+        existingCase.parentCase?.decision,
       ),
       {
         lineGap: 6,
@@ -436,7 +477,7 @@ export async function generateRulingPdf(
       })
   }
 
-  if (!existingCase.decision) {
+  if (existingCase.decision === CaseDecision.ACCEPTING) {
     doc
       .text(' ')
       .font('Helvetica-Bold')
@@ -445,13 +486,57 @@ export async function generateRulingPdf(
       .text('Tilhögun gæsluvarðhalds')
       .font('Helvetica')
       .fontSize(12)
-      .text(formatRestrictions(existingCase.custodyRestrictions), {
+      .text(
+        formatCustodyRestrictions(
+          existingCase.accusedGender,
+          existingCase.custodyRestrictions,
+        ),
+        {
+          lineGap: 6,
+          paragraphGap: 0,
+        },
+      )
+      .text(' ')
+      .text(
+        'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.',
+        {
+          lineGap: 6,
+          paragraphGap: 0,
+        },
+      )
+  }
+
+  if (existingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) {
+    doc
+      .text(' ')
+      .font('Helvetica-Bold')
+      .fontSize(14)
+      .lineGap(8)
+      .text('Tilhögun farbanns')
+      .font('Helvetica')
+      .fontSize(12)
+      .text(
+        formatAlternativeTravelBanRestrictions(
+          existingCase.accusedGender,
+          existingCase.custodyRestrictions,
+        ),
+        {
+          lineGap: 6,
+          paragraphGap: 0,
+        },
+      )
+
+    if (existingCase.otherRestrictions) {
+      doc.text(' ').text(existingCase.otherRestrictions, {
         lineGap: 6,
         paragraphGap: 0,
       })
+    }
+
+    doc
       .text(' ')
       .text(
-        'Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.',
+        'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd farbannsins undir dómara.',
         {
           lineGap: 6,
           paragraphGap: 0,
