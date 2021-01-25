@@ -56,13 +56,13 @@ export const HealthInsuranceForm: Form = buildForm({
             }),
             buildDataProviderItem({
               id: 'directorateOfLabor',
-              type: 'DirectorateOfLabor',
+              type: undefined,
               title: m.directorateOfLaborTitle,
               subTitle: m.directorateOfLaborSubTitle,
             }),
             buildDataProviderItem({
               id: 'internalRevenue',
-              type: 'InternalRevenue',
+              type: undefined,
               title: m.internalRevenueTitle,
               subTitle: m.internalRevenueSubTitle,
             }),
