@@ -173,7 +173,7 @@ export function formatText<T extends FormTextArray | FormText>(
   formatMessage: MessageFormatter,
 ): T extends FormTextArray ? string[] : string {
   const handleMessageFormatting = (message: StaticText) => {
-    if (typeof message === 'string') {
+    if (typeof message === 'string' || !message) {
       return formatMessage(message)
     }
 
