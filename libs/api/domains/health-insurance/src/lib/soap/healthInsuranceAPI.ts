@@ -99,14 +99,14 @@ export class HealthInsuranceAPI {
             reject(result)
           } else {
             logger.info(
-            `Successful get sjukratryggdur information for ${nationalId} with result: ${JSON.stringify(
+              `Successful get sjukratryggdur information for ${nationalId} with result: ${JSON.stringify(
                 result,
                 null,
                 2,
-            )}`,
+              )}`,
             )
             resolve(result)
-        }
+          }
         },
       )
     })
