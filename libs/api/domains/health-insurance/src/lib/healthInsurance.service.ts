@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
+import { logger } from '@island.is/logging'
 
 import { HealthTest } from './graphql/models'
-
 import { HealthInsuranceAPI } from './soap'
 
 @Injectable()
@@ -22,6 +22,7 @@ export class HealthInsuranceService {
   // return true or false when asked if person is health insured?
   async isHealthInsured(nationalId: string): Promise<boolean> {
     const res = await this.healthInsuranceAPI.isHealthInsured(nationalId)
-    return Promise.resolve(res['SjukratryggdurType']['sjukratryggdur'] == 1)
+    logger.info('--- Finished isHealthInsured api call ---')
+    return res['SjukratryggdurType']['sjukratryggdur'] == 1
   }
 }
