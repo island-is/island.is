@@ -266,6 +266,27 @@ describe('mergeAnswers', () => {
       },
     ])
   })
+
+  it('should return the deleted object from the array', () => {
+    expect(
+      mergeAnswers(
+        [
+          {
+            periods: [{ startDate: '2023-12-12', ratio: 100 }],
+          },
+        ],
+        [
+          {
+            periods: [], // They deleted the period
+          },
+        ],
+      ),
+    ).toStrictEqual([
+      {
+        periods: [],
+      },
+    ])
+  })
 })
 
 describe('getValueViaPath', () => {
