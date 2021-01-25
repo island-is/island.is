@@ -16,9 +16,9 @@ export class HealthInsuranceResolver {
   }
 
   @Query(() => String, {
-    name: 'healthProfun'
+    name: 'healthInsuranceGetProfun'
   })
-  healthProfun(): Promise<string> {
+  healthInsuranceGetProfun(): Promise<string> {
     return this.healthInsuranceService.getProfun()
   }
   

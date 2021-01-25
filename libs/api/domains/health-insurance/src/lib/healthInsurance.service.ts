@@ -21,8 +21,12 @@ export class HealthInsuranceService {
     return this.healthInsuranceAPI.getProfun()
   }
 
-  isHealthInsured(nationalId: string): Promise<boolean>{
-    return this.healthInsuranceAPI.isHealthInsured(nationalId)
+  async isHealthInsured(nationalId: string): Promise<boolean>{
+    const res = await this.healthInsuranceAPI.isHealthInsured(nationalId)
+    console.log(res)
+    console.log(`sjukratryggdur: ${res.sjukratryggdur}`)
+    console.log(`radnumer: ${res.radnumer_si}`)
+    console.log(`bidTima: ${res.a_bidtima}`)
+    return Promise.resolve(res['sjukratryggdur'] == 1)
   }
-  
 }

@@ -1,0 +1,1 @@
+export { getViewSjukraTryggdurDto, SjukratryggdurType } from './getSjukraTryggdurType.dto'

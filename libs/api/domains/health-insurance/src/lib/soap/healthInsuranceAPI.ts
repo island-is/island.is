@@ -1,5 +1,5 @@
 import { InternalServerErrorException, Inject, Injectable } from '@nestjs/common'
-import Soap from 'soap'
+import { getViewSjukraTryggdurDto, SjukratryggdurType } from './dto'
 
 import { SoapClient } from './soapClient'
 
@@ -16,43 +16,36 @@ export interface HealthInsuranceConfig {
 
 @Injectable()
 export class HealthInsuranceAPI {
-    // private client: Soap.Client | null
     constructor(
-        // private soapClient: Soap.Client | null,
         @Inject(HEALTH_INSURANCE_CONFIG)
         private clientConfig: HealthInsuranceConfig,
-    ) {
-        // soapClient = await SoapClient.generateClient('https://test-huld.sjukra.is/islandrg?wsdl', 'http://localhost:8080', 'deloittetest', 'xroadtest123', '')
-        // if (!soapClient) {
-        //     logger.error('HealthInsurance Soap client not initialized')
-        // }
-        // this.client = soapClient
-    }
+    ) {}
 
     public async getProfun(): Promise<string> {
-        return '';
-        // return new Promise((resolve, reject) => {
-        //     if (!this.client) {
-        //         throw new InternalServerErrorException('HealthInsurance Soap Client not initialized')
-        //     }
-        //     return this.client.profun({
-        //         sendandi: '',
-        //     }, function (err: any, result: any) {
-        //         if(err){
-        //             reject(err)
-        //         }
-        //         resolve(result['ProfunType']['radnumer_si'] ? result['ProfunType']['radnumer_si'] : null)
-        //     });
-        // });
+        const client = await SoapClient.generateClient(this.clientConfig.wsdlUrl, this.clientConfig.baseUrl, this.clientConfig.username, this.clientConfig.password, 'profun')
+        return new Promise((resolve, reject) => {
+            if (!client) {
+                throw new InternalServerErrorException('HealthInsurance Soap Client not initialized')
+            }
+            return client.profun({
+                sendandi: '',
+            }, function (err: any, result: any) {
+                if(err){
+                    reject(err)
+                }
+                resolve(result['ProfunType']['radnumer_si'] ? result['ProfunType']['radnumer_si'] : null)
+            });
+        });
     }
 
-    public async isHealthInsured(nationalId: string): Promise<boolean>{
+    public async isHealthInsured(nationalId: string): Promise<SjukratryggdurType>{
         const client = await SoapClient.generateClient(this.clientConfig.wsdlUrl, this.clientConfig.baseUrl, this.clientConfig.username, this.clientConfig.password, 'sjukratryggdur')
         return new Promise((resolve, reject) => {
             if (!client) {
                 logger.error('HealthInsurance Soap Client not initialized')
                 throw new InternalServerErrorException('HealthInsurance Soap Client not initialized')
             }
+            console.log(JSON.stringify(client.describe(), null, 2))
             client.sjukratryggdur({
                 sendandi: '',
                 kennitala: nationalId,
@@ -72,8 +65,9 @@ export class HealthInsuranceAPI {
                         reject(result)
                     }
                     else{
+                        console.log(JSON.stringify(result, null, 2))
                         logger.info(`Successful get sjukratryggdur information for ${nationalId} with result: ${JSON.stringify(result, null, 2)}`)
-                        resolve(result['SjukratryggdurType']['sjukratryggdur'] == 1 ? true: false)
+                        resolve(result)
                     }
                 }
             });
