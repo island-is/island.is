@@ -1,5 +1,5 @@
 import ClientDTO from './../../entities/dtos/client-dto'
-import ClientForm from '../../components/Client/form/ClientForm'
+import ClientCreateForm from '../../components/Client/form/ClientCreateForm'
 import React from 'react'
 import { useRouter } from 'next/router'
 import ContentWrapper from './../../components/Layout/ContentWrapper'
@@ -20,7 +20,7 @@ const Index: React.FC = () => {
 
   return (
     <ContentWrapper>
-      <ClientForm
+      <ClientCreateForm
         handleCancel={handleCancel}
         client={new ClientDTO()}
         onNextButtonClick={handleClientSaved}
