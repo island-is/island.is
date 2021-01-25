@@ -43,6 +43,12 @@ export const HealthInsuranceForm: Form = buildForm({
               subTitle: '',
             }),
             buildDataProviderItem({
+              id: 'sjukratryggingar',
+              type: 'SjukratryggingarProvider',
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
               id: 'nationalRegistry',
               type: 'NationalRegistryProvider',
               title: m.nationalRegistryTitle,
