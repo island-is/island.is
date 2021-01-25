@@ -20,7 +20,7 @@ type ErrorPageProps = {
   statusCode: number
   locale: Locale
   layoutProps: LayoutProps
-  errpage: ErrorPageQuery['getErrorPage']
+  errorPage: ErrorPageQuery['getErrorPage']
 }
 
 type ErrorPageInitialProps = {
@@ -38,7 +38,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
   }
 
   render() {
-    const { layoutProps, locale, statusCode, errpage } = this.props
+    const { layoutProps, locale, statusCode, errorPage } = this.props
     const { renderError } = this.state
 
     if (layoutProps && !renderError) {
@@ -48,7 +48,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
         return (
           <I18n locale={locale} translations={layoutProps.namespace}>
             <Layout {...layoutProps}>
-              <ErrorScreen errPage={errpage} statusCode={statusCode} />
+              <ErrorScreen errPage={errorPage} statusCode={statusCode} />
             </Layout>
           </I18n>
         )
@@ -57,7 +57,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
     }
 
     // fallback to simpler version if we're unable to use the Layout for any reason
-    return <ErrorScreen errPage={errpage} statusCode={statusCode} />
+    return <ErrorScreen errPage={errorPage} statusCode={statusCode} />
   }
 
   static async getInitialProps(props: ErrorPageInitialProps) {
@@ -150,7 +150,7 @@ const getRedirectProps = async ({
   locale,
   statusCode,
 }: GetRedirectPropsProps) => {
-  const [url, errpage] = await Promise.all([
+  const [url, errorPage] = await Promise.all([
     apolloClient
       .query<GetUrlQuery, QueryGetUrlArgs>({
         query: GET_URL_QUERY,
@@ -175,15 +175,8 @@ const getRedirectProps = async ({
       .then((response) => response.data.getErrorPage),
   ])
 
-  const pageType = url?.page ?? null
-
-  if (!pageType) {
-    return null
-  }
-
   return {
-    pageType,
-    url: url,
-    errpage: errpage,
+    pageType: url?.page ?? null,
+    errorPage: errorPage,
   }
 }
