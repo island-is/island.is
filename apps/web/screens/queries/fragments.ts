@@ -316,6 +316,47 @@ export const slices = gql`
     }
   }
 
+  fragment TwoColumnTextFields on TwoColumnText {
+    __typename
+    id
+    rightTitle
+    rightContent
+    rightLink {
+      text
+      url
+    }
+    leftTitle
+    leftContent
+    leftLink {
+      text
+      url
+    }
+  }
+
+  fragment OfficesSlice on Offices {
+    __typename
+    id
+    title
+    offices {
+      name
+      city
+      address
+      email
+      openingHours
+    }
+  }
+
+  fragment SingleColumnTextFields on SingleColumnText {
+    __typename
+    id
+    title
+    content
+    link {
+      text
+      url
+    }
+  }
+
   fragment AllSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -339,5 +380,8 @@ export const slices = gql`
     ...LocationFields
     ...TellUsAStoryFields
     ...ConnectedComponentFields
+    ...TwoColumnTextFields
+    ...OfficesSlice
+    ...SingleColumnTextFields
   }
 `
