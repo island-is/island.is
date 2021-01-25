@@ -360,7 +360,6 @@ export class Client extends Model<Client> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
     defaultValue: 'client_',
   })
   @ApiProperty({
