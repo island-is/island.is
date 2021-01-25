@@ -6,7 +6,7 @@ import {
 
 import { RegisteredChildren } from './APIDataTypes'
 
-/** This is a temporary mock provider for children domicile transfer. National registry team are setting up real provider which we will connect to once it is up. **/
+/** This is a temporary mock provider for children residence change. National registry team are setting up real provider which we will connect to once it is up. **/
 export class ChildrenNationalRegistryProvider extends BasicDataProvider {
   readonly type = 'ChildrenNationalRegistry'
 
