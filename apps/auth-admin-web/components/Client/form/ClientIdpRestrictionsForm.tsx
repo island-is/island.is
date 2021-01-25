@@ -89,37 +89,47 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
             </div>
             <div className="client-idp-restriction__container__fields">
               <div className="client-idp-restriction__container__radio__field">
-                <label>
-                  <input
-                    type="radio"
-                    name="all"
-                    className="client__checkbox"
-                    checked={allowAll}
-                    onChange={(e) => {
-                      setAllowAll(true)
-                    }}
-                    title={'Allow all identity providers'}
-                  />
+                <label htmlFor="all" className="client-idp-restriction__label">
                   Allow All
                 </label>
+                <input
+                  type="radio"
+                  id="all"
+                  name="all"
+                  className="client__checkbox"
+                  checked={allowAll}
+                  onChange={(e) => {
+                    setAllowAll(true)
+                  }}
+                  title={'Allow all identity providers'}
+                />
               </div>
               <div className="client-idp-restriction__container__radio__field">
-                <label>
-                  <input
-                    type="radio"
-                    name="restricted"
-                    className="client__checkbox"
-                    checked={!allowAll}
-                    onChange={(e) => {
-                      setAllowAll(false)
-                    }}
-                    title={'Allow only selected identity providers'}
-                  />
+                <label
+                  className="client-idp-restriction__label"
+                  htmlFor="restricted"
+                >
                   Allow Only:
                 </label>
+                <input
+                  id="restricted"
+                  type="radio"
+                  name="restricted"
+                  className="client__checkbox"
+                  checked={!allowAll}
+                  onChange={(e) => {
+                    setAllowAll(false)
+                  }}
+                  title={'Allow only selected identity providers'}
+                />
               </div>
             </div>
-            <div className="client-idp-restriction__container__fields">
+
+            <div
+              className={`client-idp-restriction__container__fields indent${
+                !allowAll ? ' show' : ' hidden'
+              }`}
+            >
               {idpRestrictions?.map((idpRestriction: IdpRestriction) => {
                 return (
                   <div
