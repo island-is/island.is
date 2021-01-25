@@ -73,7 +73,7 @@ export abstract class ClientBaseDTO {
   frontChannelLogoutSessionRequired: boolean
   backChannelLogoutUri: string | null
   allowRememberConsent: boolean
-  clientClaimsPrefix: string
+  clientClaimsPrefix?: string
   clientName?: string
   clientUri: string | null
   description: string | null

@@ -42,7 +42,7 @@ export class Client {
   frontChannelLogoutSessionRequired!: boolean
   backChannelLogoutUri?: string
   allowRememberConsent!: boolean
-  clientClaimsPrefix!: string
+  clientClaimsPrefix?: string
   clientName?: string
   clientUri?: string
   description?: string

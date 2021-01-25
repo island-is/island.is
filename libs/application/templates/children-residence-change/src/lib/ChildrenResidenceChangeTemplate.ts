@@ -28,13 +28,13 @@ const dataSchema = z.object({
   approveTerms: z.array(z.string()).nonempty(),
 })
 
-const ChildrenDomicileTransferTemplate: ApplicationTemplate<
+const ChildrenResidenceChangeTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.CHILDREN_DOMICILE_TRANSFER,
-  name: 'Children domicile transfer application',
+  type: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
+  name: 'Children residence change application',
   dataSchema: dataSchema,
   stateMachineConfig: {
     initial: 'draft',
@@ -47,8 +47,8 @@ const ChildrenDomicileTransferTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ChildrenDomicileTransferForm').then((module) =>
-                  Promise.resolve(module.ChildrenDomicileTransferForm),
+                import('../forms/ChildrenResidenceChangeForm').then((module) =>
+                  Promise.resolve(module.ChildrenResidenceChangeForm),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
@@ -74,4 +74,4 @@ const ChildrenDomicileTransferTemplate: ApplicationTemplate<
   },
 }
 
-export default ChildrenDomicileTransferTemplate
+export default ChildrenResidenceChangeTemplate
