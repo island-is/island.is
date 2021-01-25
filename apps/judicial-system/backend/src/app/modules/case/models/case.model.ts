@@ -265,6 +265,13 @@ export class Case extends Model<Case> {
   policeDemands: string
 
   @Column({
+    type: DataType.ARRAY(DataType.STRING),
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtDocuments: string[]
+
+  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
