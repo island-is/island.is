@@ -39,7 +39,6 @@ const OrganizationSlice: FC<OrganizationSliceProps> = ({
     case 'SingleColumnText':
       return <SingleColumnTextSlice slice={slice} />
     default:
-      console.log(slice.__typename)
       return <></>
   }
 }

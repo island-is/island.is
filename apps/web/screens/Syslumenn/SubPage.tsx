@@ -60,7 +60,7 @@ const SubPage: Screen<SubPageProps> = ({
       })),
     }),
   )
-  console.log(subpage.slices)
+
   return (
     <>
       <OrganizationWrapper
