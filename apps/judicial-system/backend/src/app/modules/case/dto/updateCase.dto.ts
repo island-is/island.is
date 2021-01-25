@@ -152,6 +152,11 @@ export class UpdateCaseDto {
   readonly policeDemands?: string
 
   @IsOptional()
+  @IsString({ each: true })
+  @ApiPropertyOptional({ isArray: true })
+  readonly courtDocuments?: string
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly accusedPlea?: string
