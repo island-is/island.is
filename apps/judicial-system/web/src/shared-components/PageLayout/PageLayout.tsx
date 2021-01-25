@@ -205,7 +205,7 @@ const PageLayout: FC<PageProps> = ({
           description="Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni"
           variant="error"
           link={{
-            href: Constants.DETENTION_REQUESTS_ROUTE,
+            href: Constants.REQUEST_LIST_ROUTE,
             title: 'Fara á yfirlitssíðu',
           }}
         />

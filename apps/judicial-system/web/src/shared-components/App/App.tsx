@@ -25,6 +25,7 @@ import {
   Header,
 } from '@island.is/judicial-system-web/src/shared-components'
 import SignedVerdictOverview from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/SignedVerdictOverview'
+import { CaseType } from 'libs/judicial-system/types/src/lib/types'
 
 const App: React.FC = () => {
   return (
@@ -78,10 +79,16 @@ const App: React.FC = () => {
               <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
                 <JudgeOverview />
               </Route>
-              <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id?`}>
+              <Route path={`${Constants.STEP_ONE_NEW_DETENTION_ROUTE}/:id?`}>
+                <StepOne type={CaseType.DETENTION} />
+              </Route>
+              <Route path={`${Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE}/:id?`}>
+                <StepOne type={CaseType.TRAVEL_BAN} />
+              </Route>
+              <Route path={`${Constants.STEP_ONE_ROUTE}/:id?`}>
                 <StepOne />
               </Route>
-              <Route path={Constants.DETENTION_REQUESTS_ROUTE}>
+              <Route path={Constants.REQUEST_LIST_ROUTE}>
                 <DetentionRequests />
               </Route>
               <Route path="/">

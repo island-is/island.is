@@ -338,14 +338,12 @@ export const Overview: React.FC = () => {
             <Modal
               title="Krafa um gæsluvarðhald hefur verið staðfest"
               text="Tilkynning hefur verið send á dómara og dómritara á vakt."
-              handleClose={() =>
-                history.push(Constants.DETENTION_REQUESTS_ROUTE)
-              }
+              handleClose={() => history.push(Constants.REQUEST_LIST_ROUTE)}
               handlePrimaryButtonClick={() => {
                 history.push(Constants.FEEDBACK_FORM_ROUTE)
               }}
               handleSecondaryButtonClick={() => {
-                history.push(Constants.DETENTION_REQUESTS_ROUTE)
+                history.push(Constants.REQUEST_LIST_ROUTE)
               }}
               primaryButtonText="Gefa endurgjöf á gáttina"
               secondaryButtonText="Loka glugga"

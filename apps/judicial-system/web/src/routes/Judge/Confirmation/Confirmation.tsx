@@ -258,7 +258,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
       }}
       handleSecondaryButtonClick={async () => {
         if (signatureConfirmationResponse?.documentSigned === true) {
-          history.push(Constants.DETENTION_REQUESTS_ROUTE)
+          history.push(Constants.REQUEST_LIST_ROUTE)
         } else {
           setModalVisible(false)
         }
@@ -602,7 +602,7 @@ export const Confirmation: React.FC = () => {
             <PdfButton caseId={workingCase.id} />
           </Box>
           <FormFooter
-            nextUrl={Constants.DETENTION_REQUESTS_ROUTE}
+            nextUrl={Constants.REQUEST_LIST_ROUTE}
             nextButtonText="Staðfesta og hefja undirritun"
             nextIsDisabled={isStepIllegal}
             onNextButtonClick={handleNextButtonClick}

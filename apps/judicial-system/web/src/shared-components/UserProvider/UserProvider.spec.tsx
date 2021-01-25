@@ -25,10 +25,10 @@ describe('UserProvider', () => {
   test('should load the user', async () => {
     render(
       <MockedProvider mocks={[mockJudgeQuery]} addTypename={false}>
-        <MemoryRouter initialEntries={[Constants.DETENTION_REQUESTS_ROUTE]}>
-          <Route path={Constants.DETENTION_REQUESTS_ROUTE}>
+        <MemoryRouter initialEntries={[Constants.REQUEST_LIST_ROUTE]}>
+          <Route path={Constants.REQUEST_LIST_ROUTE}>
             <UserProvider>
-              <Header pathname={Constants.DETENTION_REQUESTS_ROUTE} />
+              <Header pathname={Constants.REQUEST_LIST_ROUTE} />
             </UserProvider>
           </Route>
         </MemoryRouter>

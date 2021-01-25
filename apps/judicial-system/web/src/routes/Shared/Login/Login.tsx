@@ -50,7 +50,7 @@ export const Login = () => {
       </div>
       <div className={styles.buttonContainer}>
         <a
-          href={`${api.apiUrl}/api/auth/login?returnUrl=/gaesluvardhaldskrofur`}
+          href={`${api.apiUrl}/api/auth/login?returnUrl=/krofur`}
           role="button"
           rel="noreferrer noopener"
           className={styles.btn}

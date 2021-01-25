@@ -154,7 +154,7 @@ export const DetentionRequests: React.FC = () => {
     } else if (c.state === CaseState.RECEIVED && c.isCourtDateInThePast) {
       history.push(`${Constants.STEP_FIVE_ROUTE}/${c.id}`)
     } else {
-      history.push(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
+      history.push(`${Constants.STEP_ONE_ROUTE}/${c.id}`)
     }
   }
 
@@ -220,7 +220,7 @@ export const DetentionRequests: React.FC = () => {
           {isJudge ? <JudgeLogo /> : <ProsecutorLogo />}
           {!isJudge && (
             <Link
-              to={Constants.SINGLE_REQUEST_BASE_ROUTE}
+              to={Constants.STEP_ONE_ROUTE}
               style={{ textDecoration: 'none' }}
             >
               <Button icon="add">Stofna nýja kröfu</Button>

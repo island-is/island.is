@@ -17,7 +17,7 @@ const Header: React.FC<Props> = (props: Props) => {
   return (
     <header className={`${styles.header}`}>
       <Link
-        to={Constants.DETENTION_REQUESTS_ROUTE}
+        to={Constants.REQUEST_LIST_ROUTE}
         style={{ textDecoration: 'none' }}
         data-testid="link-to-home"
       >

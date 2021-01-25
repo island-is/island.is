@@ -20,6 +20,7 @@ import {
   UpdateCase,
   CaseState,
   CaseGender,
+  CaseType,
 } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import {
@@ -43,7 +44,11 @@ interface CaseData {
   case?: Case
 }
 
-export const StepOne: React.FC = () => {
+interface Props {
+  type?: CaseType
+}
+
+export const StepOne: React.FC<Props> = ({ type }: Props) => {
   const history = useHistory()
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
@@ -145,11 +150,12 @@ export const StepOne: React.FC = () => {
   useEffect(() => {
     if (id && !workingCase && data?.case) {
       setWorkingCase(data?.case)
-    } else if (!id && !workingCase) {
+    } else if (!id && !workingCase && type !== undefined) {
       setWorkingCase({
         id: '',
         created: '',
         modified: '',
+        type: type,
         state: CaseState.DRAFT,
         policeCaseNumber: '',
         accusedNationalId: '',

@@ -61,9 +61,7 @@ export const SignedVerdictOverview: React.FC = () => {
 
   const handleNextButtonClick = async () => {
     if (workingCase?.childCase) {
-      history.push(
-        `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${workingCase.childCase.id}`,
-      )
+      history.push(`${Constants.STEP_ONE_ROUTE}/${workingCase.childCase.id}`)
     } else {
       const { data } = await extendCaseMutation({
         variables: {
@@ -74,9 +72,7 @@ export const SignedVerdictOverview: React.FC = () => {
       })
 
       if (data) {
-        history.push(
-          `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${data.extendCase.id}`,
-        )
+        history.push(`${Constants.STEP_ONE_ROUTE}/${data.extendCase.id}`)
       }
     }
   }
@@ -114,7 +110,7 @@ export const SignedVerdictOverview: React.FC = () => {
               <Button
                 variant="text"
                 preTextIcon="arrowBack"
-                onClick={() => history.push(Constants.DETENTION_REQUESTS_ROUTE)}
+                onClick={() => history.push(Constants.REQUEST_LIST_ROUTE)}
               >
                 Til baka
               </Button>

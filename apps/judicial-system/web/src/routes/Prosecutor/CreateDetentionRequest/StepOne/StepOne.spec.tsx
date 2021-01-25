@@ -25,7 +25,7 @@ describe('/krafa with an id', () => {
       >
         <MemoryRouter initialEntries={['/krafa/test_id_2']}>
           <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+            <Route path={`${Constants.STEP_ONE_ROUTE}/:id`}>
               <StepOne />
             </Route>
           </UserProvider>
@@ -80,7 +80,7 @@ describe('/krafa with an id', () => {
       >
         <MemoryRouter initialEntries={['/krafa/test_id_3']}>
           <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+            <Route path={`${Constants.STEP_ONE_ROUTE}/:id`}>
               <StepOne />
             </Route>
           </UserProvider>
@@ -111,9 +111,9 @@ describe('/krafa without ID', () => {
         mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter initialEntries={[Constants.SINGLE_REQUEST_BASE_ROUTE]}>
+        <MemoryRouter initialEntries={[Constants.STEP_ONE_ROUTE]}>
           <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id?`}>
+            <Route path={`${Constants.STEP_ONE_ROUTE}/:id?`}>
               <StepOne />
             </Route>
           </UserProvider>
@@ -134,9 +134,9 @@ describe('/krafa without ID', () => {
         mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter initialEntries={[Constants.SINGLE_REQUEST_BASE_ROUTE]}>
+        <MemoryRouter initialEntries={[Constants.STEP_ONE_ROUTE]}>
           <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id?`}>
+            <Route path={`${Constants.STEP_ONE_ROUTE}/:id?`}>
               <StepOne />
             </Route>
           </UserProvider>
@@ -198,7 +198,7 @@ describe('/krafa without ID', () => {
       >
         <MemoryRouter initialEntries={['/krafa']}>
           <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}`}>
+            <Route path={`${Constants.STEP_ONE_ROUTE}`}>
               <StepOne />
             </Route>
           </UserProvider>
