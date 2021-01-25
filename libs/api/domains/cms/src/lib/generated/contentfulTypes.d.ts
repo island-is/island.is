@@ -482,6 +482,34 @@ export interface IEmbeddedVideo extends Entry<IEmbeddedVideoFields> {
   }
 }
 
+export interface IErrorPageFields {
+  /** Error Code */
+  errorCode: string
+
+  /** Title */
+  title?: string | undefined
+
+  /** Description */
+  description?: Document | undefined
+}
+
+export interface IErrorPage extends Entry<IErrorPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'errorPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFaqListFields {
   /** Title */
   title: string
@@ -1311,6 +1339,39 @@ export interface INamespace extends Entry<INamespaceFields> {
   }
 }
 
+export interface INamespaceJeremyDevFields {
+  /** Namespace */
+  namespace?: string | undefined
+
+  /** Strings */
+  strings?: Record<string, any> | undefined
+
+  /** Defaults */
+  defaults?: Record<string, any> | undefined
+
+  /** Fallback */
+  fallback?: Record<string, any> | undefined
+}
+
+/** Namespace containing translations */
+
+export interface INamespaceJeremyDev extends Entry<INamespaceJeremyDevFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'namespaceJeremyDev'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface INewsFields {
   /** Content status */
   contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
@@ -1447,46 +1508,6 @@ export interface IOrganization extends Entry<IOrganizationFields> {
     contentType: {
       sys: {
         id: 'organization'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IOrganizationNewsFields {
-  /** Organization */
-  organization: Entry<{ [fieldId: string]: unknown }>
-
-  /** Title */
-  title: string
-
-  /** Slug */
-  slug: string
-
-  /** Date */
-  date: string
-
-  /** Featured Image */
-  featuredImage: Asset
-
-  /** Introduction */
-  introduction: string
-
-  /** Content */
-  content?: Document | undefined
-}
-
-export interface IOrganizationNews extends Entry<IOrganizationNewsFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'organizationNews'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2691,6 +2712,9 @@ export interface IVidspyrnaPageFields {
 
   /** Tags */
   tags: IVidspyrnaTag[]
+
+  /** Process Entry */
+  processEntry?: IProcessEntry | undefined
 }
 
 /** A "covid" article, seen on /covid-adgerdir */
@@ -2750,6 +2774,7 @@ export type CONTENT_TYPE =
   | 'cardSection'
   | 'contactUs'
   | 'embeddedVideo'
+  | 'errorPage'
   | 'faqList'
   | 'featured'
   | 'frontpageSlider'
@@ -2775,11 +2800,11 @@ export type CONTENT_TYPE =
   | 'menuLink'
   | 'menuLinkWithChildren'
   | 'namespace'
+  | 'namespaceJeremyDev'
   | 'news'
   | 'numberBullet'
   | 'numberBulletSection'
   | 'organization'
-  | 'organizationNews'
   | 'organizationTag'
   | 'page'
   | 'pageHeader'

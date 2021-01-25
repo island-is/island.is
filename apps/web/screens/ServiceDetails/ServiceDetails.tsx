@@ -16,7 +16,7 @@ import {
   SubpageMainContent,
   ServiceInformation,
   OpenApiView,
-} from '../../components'
+} from '@island.is/web/components'
 import { SubpageLayout } from '../Layouts/Layouts'
 import SidebarLayout from '../Layouts/SidebarLayout'
 import {
