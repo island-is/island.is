@@ -34,7 +34,7 @@ export const m = defineMessages({
   nationalRegistrySubTitle: {
     id: 'dl.application:nationalRegistry.subTitle',
     defaultMessage:
-      'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út í umsóknina',
+      'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
     description:
       'Information from the National Registry will be used to prefill the data in the application',
   },
@@ -46,7 +46,7 @@ export const m = defineMessages({
   userProfileInformationSubTitle: {
     id: 'pl.application:userprofile.subTitle',
     defaultMessage:
-      'Til þess að auðvelda umsóknarferlið er gott að hafa stillt netfang og símanúmer á mínum síðum',
+      'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
     description:
       'In order to apply for this application we need your email and phone number',
   },
@@ -60,12 +60,12 @@ export const m = defineMessages({
     defaultMessage:
       'Til þess að tryggja að notandi hafi heimild til þess að sækja um ökuskírteini út frá punktastöðu',
     description:
-      'In order to ensure the user has permission to apply for driving license',
+      "In order to ensure the user's penalty points do not prohibit him from applying for a driving license",
   },
   residenceTitle: {
     id: 'pl.application:residence.title',
     defaultMessage: 'Búseta',
-    description: 'Recidence',
+    description: 'Residence',
   },
   residenceSubTitle: {
     id: 'pl.application:residence.subtitle',
@@ -87,7 +87,7 @@ export const m = defineMessages({
   typeFieldCar: {
     id: 'pl.application:typeField.car',
     defaultMessage: 'Almenn ökuréttindi',
-    description: 'General car license',
+    description: 'General driving license',
   },
   typeFieldMotorcycle: {
     id: 'pl.application:typeField.motorcycle',
@@ -191,12 +191,12 @@ export const m = defineMessages({
     defaultMessage:
       '6. Ert þú háð(ur) áfengi, ávana- og/eða fíkniefnum eða misnotar þú geðræn lyf sem verkað gætu á meðvitund?',
     description:
-      '6. Are you addicted to alcohol, drugs and / or drugs or are you abusing psychotropic drugs that could affect your consciousness?',
+      '6. Are you addicted to alcohol, drugs and/or drugs or are you abusing psychotropic drugs that could affect your consciousness?',
   },
   healthDeclaration7: {
     id: 'pl.application:healthDeclaration.7',
     defaultMessage: '7. Notar þú insúlín og/eða töflur við sykursýki?',
-    description: '7. Do you use insulin and / or tablets for diabetes?',
+    description: '7. Do you use insulin and/or tablets for diabetes?',
   },
   healthDeclaration8: {
     id: 'pl.application:healthDeclaration.8',
@@ -275,12 +275,12 @@ export const m = defineMessages({
   },
   overviewBringData: {
     id: 'pl.application:overview.bringData',
-    defaultMessage: 'Gögn höfð meðferðis til sýslumanns',
-    description: 'Will bring along data',
+    defaultMessage: 'Gögn höfð meðferðis til Sýslumanns',
+    description: 'Will bring along data to the sheriff',
   },
   overviewBringPhoneData: {
     id: 'pl.application:overview.bringPhoneData',
-    defaultMessage: 'Ég kem með mynd og rithandarsýni til sýslumanns',
+    defaultMessage: 'Ég kem með mynd og rithandarsýni til Sýslumanns',
     description: 'I bring a picture and a handwriting sample to the sheriff',
   },
   overviewBringCertificateData: {
