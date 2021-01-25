@@ -28,7 +28,7 @@ Be careful, once you are running this command with your extensionId, it will rep
 
 ### Build
 
-Will only bundles the extension's files.
+Bundles the extension's files.
 
 ```bash
 yarn cte build
