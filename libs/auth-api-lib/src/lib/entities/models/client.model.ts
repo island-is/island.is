@@ -424,6 +424,16 @@ export class Client extends Model<Client> {
   })
   archived!: Date
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    defaultValue: null,
+  })
+  @ApiProperty({
+    example: null,
+  })
+  contactEmail!: string
+
   @CreatedAt
   @ApiProperty()
   readonly created!: Date

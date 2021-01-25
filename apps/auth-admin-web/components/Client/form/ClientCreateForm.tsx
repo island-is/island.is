@@ -326,6 +326,19 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     />
                     <HelpBox helpText="Application description for use within the IDS management" />
                   </div>
+                  <div className="client__container__field">
+                    <label className="client__label">Contact email</label>
+                    <input
+                      type="text"
+                      ref={register}
+                      name="client.contactEmail"
+                      defaultValue={client.contactEmail ?? ''}
+                      className="client__input"
+                      title="Contact email for client"
+                      placeholder="island@island.is"
+                    />
+                    <HelpBox helpText="Set the contact email for the client" />
+                  </div>
 
                   <div className="client__container__checkbox__field">
                     <label className="client__label">Require consent</label>
