@@ -63,7 +63,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
   static async getInitialProps(props: ErrorPageInitialProps) {
     const { err, res, asPath = '' } = props
     const statusCode = err?.statusCode ?? res?.statusCode ?? 500
-    const { locale } = typeResolver(asPath)
+    const  locale  = typeResolver(asPath) ? typeResolver(asPath).locale : 'is'
 
     // check if we have a redirect condition
     if (statusCode === 404) {
@@ -80,7 +80,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
         statusCode,
       })
 
-      if (redirectProps) {
+      if (redirectProps && redirectProps.pageType) {
         const { type, slug } = redirectProps.pageType
 
         // Found an URL content type that contained this
@@ -167,7 +167,7 @@ const getRedirectProps = async ({
         query: GET_ERROR_PAGE,
         variables: {
           input: {
-            lang: locale,
+            lang: locale as string,
             errorCode: statusCode.toString(),
           },
         },
