@@ -7,7 +7,13 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import { CustomField, FieldBaseProps } from '@island.is/application/core'
+import { useLocale } from '@island.is/localization'
+import {
+  CustomField,
+  FieldBaseProps,
+  formatText,
+} from '@island.is/application/core'
+import { m } from '../lib/messages'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
@@ -18,14 +24,20 @@ function Congratulations({
   field,
   application,
 }: PropTypes): JSX.Element {
+  const { formatMessage } = useLocale()
+
   return (
     <Box paddingTop={4}>
       <BulletList type="ul">
-        <Bullet>Umsókn þín um almenn ökuréttindi hefur verið staðfest</Bullet>
         <Bullet>
-          Þú munt fá póst á skráð netfang þegar ökuskírteini er gefið út
+          {formatText(m.congratulationsBullet1, application, formatMessage)}
         </Bullet>
-        <Bullet>Hægt er að fylgjast með virkum umsóknum á Mínum síðum</Bullet>
+        <Bullet>
+          {formatText(m.congratulationsBullet2, application, formatMessage)}
+        </Bullet>
+        <Bullet>
+          {formatText(m.congratulationsBullet3, application, formatMessage)}
+        </Bullet>
       </BulletList>
       <Box marginTop={8}>
         <img src="/assets/images/movingTruck.svg" alt="Skrautmynd" />
