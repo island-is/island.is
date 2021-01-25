@@ -43,7 +43,7 @@ try {
   ])
 } catch (e) {
   console.error(`Error while trying to extract strings ${e}`)
-  process.exit(1);
+  process.exit(1)
 }
 
 function createNamespace(
@@ -62,8 +62,8 @@ function createNamespace(
   return client
     .getSpace(space)
     .then((space) => space.getEnvironment('master'))
-    .then((environment) =>
-      environment.createEntryWithId('namespace', id, {
+    .then(async (environment) => {
+      const entry = await environment.createEntryWithId('namespace', id, {
         fields: {
           namespace: {
             'is-IS': id,
@@ -74,9 +74,11 @@ function createNamespace(
           fallback: emptyObjForEachLocale,
           strings: emptyObjForEachLocale,
         },
-      }),
-    )
-    .catch((err) => console.log(err))
+      })
+
+      console.log('Namespace created!', entry)
+    })
+    .catch((err) => console.error(err))
 }
 
 function updateNamespace(namespace: Entry, messages: MessageDict) {
@@ -101,8 +103,8 @@ function updateNamespace(namespace: Entry, messages: MessageDict) {
 
   return namespace
     .update()
-    .then((namespace) => console.log('update namespace', namespace))
-    .catch((err) => console.log(err))
+    .then((namespace) => console.log('Namespace updated!', namespace))
+    .catch((err) => console.error(err))
 }
 
 function getNamespace(id: string, space: string) {
