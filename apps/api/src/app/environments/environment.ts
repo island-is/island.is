@@ -14,10 +14,10 @@ export default {
     host: 'soffiaprufa.skra.is',
   },
   healthInsurance: {
-    wsdlUrl: 'https://test-huld.sjukra.is/islandrg?wsdl',
-    baseUrl: 'http://localhost:8080',
-    username: '',
-    password: '',
+    wsdlUrl: process.env.HEALTH_INSURANCE_XROAD_WSDLURL ?? 'https://test-huld.sjukra.is/islandrg?wsdl',
+    baseUrl: process.env.HEALTH_INSURANCE_XROAD_BASEURL ?? 'http://localhost:8080',
+    username: process.env.HEALTH_INSURANCE_XROAD_USERNAME ?? '',
+    password: process.env.HEALTH_INSURANCE_XROAD_PASSWORD ?? '',
   },
   userProfile: {
     userProfileServiceBasePath: 'http://localhost:3366',
