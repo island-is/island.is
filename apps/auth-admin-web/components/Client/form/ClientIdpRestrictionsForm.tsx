@@ -14,6 +14,9 @@ interface Props {
 
 const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
   const [idpRestrictions, setIdpRestrictions] = useState<IdpRestriction[]>([])
+  const [allowAll, setAllowAll] = useState<boolean>(
+    props.restrictions.length === 0,
+  )
 
   useEffect(() => {
     getIdpRestrictions()
@@ -21,10 +24,21 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
 
   const getIdpRestrictions = async () => {
     const restrictions = await ClientService.findAllIdpRestrictions()
-    if (restrictions) setIdpRestrictions(restrictions)
+    if (restrictions) {
+      setIdpRestrictions(restrictions)
+    }
   }
 
+  useEffect(() => {
+    if (allowAll) {
+      props.restrictions.map((r) => remove(r))
+    } else if (props.restrictions.length === 0) {
+      add('sim')
+    }
+  }, [allowAll])
+
   const add = async (name: string) => {
+    console.log('add')
     const createObj = {
       name: name,
       clientId: props.clientId,
@@ -39,6 +53,7 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
   }
 
   const remove = async (name: string) => {
+    console.log('remove')
     const response = await ClientService.removeIdpRestriction(
       props.clientId,
       name,
@@ -66,10 +81,43 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
 
           <div className="client-idp-restriction__container__form">
             <div className="client-idp-restriction__help">
-              Specifies which external IdPs can be used with this client.
               <p>
-                <strong>If selection is empty all IdPs are allowed</strong>
+                Specifies which external identity providers (IdPs) can be used
+                when authenticating.
               </p>
+              <p>Note that Sim Card login is always allowed.</p>
+            </div>
+            <div className="client-idp-restriction__container__fields">
+              <div className="client-idp-restriction__container__radio__field">
+                <label>
+                  <input
+                    type="radio"
+                    name="all"
+                    className="client__checkbox"
+                    checked={allowAll}
+                    onChange={(e) => {
+                      setAllowAll(true)
+                    }}
+                    title={'Allow all identity providers'}
+                  />
+                  Allow All
+                </label>
+              </div>
+              <div className="client-idp-restriction__container__radio__field">
+                <label>
+                  <input
+                    type="radio"
+                    name="restricted"
+                    className="client__checkbox"
+                    checked={!allowAll}
+                    onChange={(e) => {
+                      setAllowAll(false)
+                    }}
+                    title={'Allow only selected identity providers'}
+                  />
+                  Allow Only:
+                </label>
+              </div>
             </div>
             <div className="client-idp-restriction__container__fields">
               {idpRestrictions?.map((idpRestriction: IdpRestriction) => {
@@ -85,25 +133,20 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
                       type="checkbox"
                       name={idpRestriction.name}
                       className="client__checkbox"
-                      defaultChecked={props.restrictions?.includes(
+                      checked={props.restrictions?.includes(
                         idpRestriction.name,
                       )}
                       onChange={(e) =>
                         setIdp(idpRestriction.name, e.target.checked)
                       }
                       title={idpRestriction.helptext}
+                      disabled={idpRestriction.name === 'sim' || allowAll}
                     />
                     <HelpBox helpText={idpRestriction.helptext} />
                   </div>
                 )
               })}
             </div>
-
-            <NoActiveConnections
-              title="All external IdPs are enabled"
-              show={!props.restrictions || props.restrictions.length === 0}
-              helpText="Check the appropriate external IdPs for the client. If nothing is selected then all methods are allowed"
-            ></NoActiveConnections>
 
             <div className="client-idp-restriction__buttons__container">
               <div className="client-idp-restriction__button__container">
