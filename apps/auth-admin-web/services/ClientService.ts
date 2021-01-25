@@ -71,28 +71,37 @@ export class ClientService extends BaseService {
       })
       if (!grantResponse) response = false
     }
-    const callBackUri = ClientService.addRedirectUri({
-      clientId: client.clientId,
-      redirectUri: client.clientUri + '/signin-oidc',
-    })
-    if (!callBackUri) {
-      response = false
-    }
 
-    const postLogOutUri = ClientService.addPostLogoutRedirectUri({
-      clientId: client.clientId,
-      redirectUri: client.clientUri,
-    })
-    if (!postLogOutUri) {
-      response = false
-    }
+    if (client.clientUri) {
+      if (client.clientUri.endsWith('/')) {
+        client.clientUri = client.clientUri.substr(
+          0,
+          client.clientUri.length - 2,
+        )
+      }
+      const callBackUri = ClientService.addRedirectUri({
+        clientId: client.clientId,
+        redirectUri: client.clientUri + '/signin-oidc',
+      })
+      if (!callBackUri) {
+        response = false
+      }
 
-    const corsOrigin = ClientService.addAllowedCorsOrigin({
-      clientId: client.clientId,
-      origin: client.clientUri,
-    })
-    if (!corsOrigin) {
-      response = false
+      const postLogOutUri = ClientService.addPostLogoutRedirectUri({
+        clientId: client.clientId,
+        redirectUri: client.clientUri,
+      })
+      if (!postLogOutUri) {
+        response = false
+      }
+
+      const corsOrigin = ClientService.addAllowedCorsOrigin({
+        clientId: client.clientId,
+        origin: client.clientUri,
+      })
+      if (!corsOrigin) {
+        response = false
+      }
     }
 
     return response

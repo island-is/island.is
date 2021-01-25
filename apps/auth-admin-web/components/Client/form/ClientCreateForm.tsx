@@ -298,7 +298,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     <label className="client__label">Display URL</label>
                     <input
                       name="client.clientUri"
-                      ref={register({ required: true })}
+                      ref={register}
                       type="text"
                       defaultValue={client.clientUri ?? ''}
                       className="client__input"
