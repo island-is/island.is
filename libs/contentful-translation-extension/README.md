@@ -6,24 +6,22 @@ This is the Contentful extension responsible of translations for namespaces for 
 
 ## Usage
 
-Contentful's extensions are using their own bundler and configurations. That's the reason why it's not part of the normal NX workflow.
-
-The following commands are handle inside the `contentful-translation-extension.sh` using contentful's [`contentful-extension-scripts`](https://github.com/jeremybarbet/create-contentful-extension).
+The following commands are handle using contentful's [`contentful-extension-scripts`](https://github.com/jeremybarbet/create-contentful-extension). It uses a custom `tsconfig.json` and not the shared one from the root project.
 
 {% hint style="warning" %}
-To be able to run the `start` and `deploy` commands you will need to pass an `extensionId`, a `managementToken` and the `path` to the extension's folder.
+To be able to run the `start` and `deploy` commands you will need to pass a `managementToken`.
 {% endhint %}
 
 ### Start
 
-Will start the local development server. You are then able to go to Contentful to do your changes.
+Will start the local development server. You are then able to go to Contentful to see your changes.
 
 ```bash
-yarn cte start <extensionId> <managementToken> <path>
+yarn start contentful-translation-extension --token managementToken
 ```
 
 {% hint style="warning" %}
-Be careful, once you are running this command with your extensionId, it will replaces the production's extension and only the local extension will be accessible. In short, others users trying to display the extension in their contentful dashboard will get an error message.
+Be careful, once you are running this command, it will replaces the production's extension and only the local extension will be accessible. In short, others users trying to display the extension in their contentful dashboard will get an error message.
 {% endhint %}
 
 ### Build
@@ -31,7 +29,7 @@ Be careful, once you are running this command with your extensionId, it will rep
 Bundles the extension's files.
 
 ```bash
-yarn cte build
+yarn build contentful-translation-extension
 ```
 
 ### Deploy
@@ -39,5 +37,5 @@ yarn cte build
 Will build and deploy the changes to Contentful. If you want your extension to be hosted by contentful it has to be under 512KB.
 
 ```bash
-yarn cte deploy <extensionId> <managementToken> <path>
+yarn deploy contentful-translation-extension --token managementToken
 ```

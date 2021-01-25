@@ -208,6 +208,9 @@
     "contentful-importer": {
       "tags": []
     },
+    "contentful-translation-extension": {
+      "tags": []
+    },
     "dokobit-signing": {
       "tags": []
     },

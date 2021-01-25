@@ -6,6 +6,7 @@
     "nx": "nx",
     "start": "nx serve",
     "build": "nx build",
+    "deploy": "nx deploy",
     "test": "nx test",
     "lint": "nx workspace-lint && nx lint",
     "dev-services": "nx dev-services",
@@ -36,8 +37,7 @@
     "openapi-generator": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true",
     "schemas": "node ./scripts/schemas.js",
     "postinstall": "node ./scripts/postinstall.js",
-    "gitbook": "node ./scripts/gitbook.js",
-    "cte": "./scripts/contentful-translation-extension.sh"
+    "gitbook": "node ./scripts/gitbook.js"
   },
   "dependencies": {
     "@apollo/client": "3.1.3",

@@ -2172,6 +2172,32 @@
         }
       }
     },
+    "contentful-translation-extension": {
+      "root": "libs/contentful-translation-extension",
+      "sourceRoot": "libs/contentful-translation-extension/src",
+      "projectType": "",
+      "schematics": {},
+      "architect": {
+        "serve": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "contentful-extension-scripts start --basePath libs/contentful-translation-extension --id translation-jeremy-dev --name translation-jeremy-dev --space-id 8k0h54kbe6bj --mt {args.token}"
+          }
+        },
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "contentful-extension-scripts build --basePath libs/contentful-translation-extension"
+          }
+        },
+        "deploy": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "contentful-extension-scripts build --basePath libs/contentful-translation-extension && contentful extension update --id translation-jeremy-dev --name translation-jeremy-dev --space-id 8k0h54kbe6bj --srcdoc libs/contentful-translation-extension/build/index.html --mt {args.token} --force"
+          }
+        }
+      }
+    },
     "dokobit-signing": {
       "root": "libs/dokobit-signing",
       "sourceRoot": "libs/dokobit-signing/src",
