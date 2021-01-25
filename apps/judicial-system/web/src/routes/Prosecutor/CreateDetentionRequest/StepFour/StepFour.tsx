@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
 import { Case, UpdateCase } from '@island.is/judicial-system/types'
-import { isNextDisabled } from '../../../../utils/stepHelper'
+import {
+  constructProsecutorDemands,
+  isNextDisabled,
+} from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
-import { FormFooter } from '../../../../shared-components/FormFooter'
-import * as Constants from '../../../../utils/constants'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
+import {
+  FormFooter,
+  PageLayout,
+  BlueBox,
+} from '@island.is/judicial-system-web/src/shared-components'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 import {
@@ -25,7 +31,6 @@ import {
 export const StepFour: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const { id } = useParams<{ id: string }>()
 
@@ -35,7 +40,7 @@ export const StepFour: React.FC = () => {
     string
   >('')
 
-  const { data } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
@@ -47,15 +52,10 @@ export const StepFour: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setIsLoading(true)
-      setWorkingCase(resCase)
-      setIsLoading(false)
-    }
     if (id && !workingCase && resCase) {
-      getCurrentCase()
+      setWorkingCase(resCase)
     }
-  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
+  }, [id, workingCase, setWorkingCase, resCase])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
@@ -93,12 +93,16 @@ export const StepFour: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.PROSECUTOR}
+      activeSection={
+        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
+      }
       activeSubSection={
         ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_FOUR
       }
-      isLoading={isLoading}
+      isLoading={loading}
       notFound={data?.case === undefined}
+      decision={workingCase?.decision}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>
@@ -107,7 +111,44 @@ export const StepFour: React.FC = () => {
               Greinargerð
             </Text>
           </Box>
-
+          <Box component="section" marginBottom={7}>
+            <Box marginBottom={4}>
+              <Text as="h3" variant="h3">
+                Dómkröfutexti
+              </Text>
+            </Box>
+            <BlueBox>
+              <Box marginBottom={3}>
+                {constructProsecutorDemands(workingCase, true)}
+              </Box>
+              <Input
+                name="prosecutorDemands"
+                label="Bæta texta við dómkröfur"
+                placeholder="Hér er hægt að bæta texta við dómkröfurnar eftir þörfum..."
+                defaultValue={workingCase?.otherDemands}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'otherDemands',
+                    event,
+                    [],
+                    workingCase,
+                    setWorkingCase,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'otherDemands',
+                    event.target.value,
+                    [],
+                    workingCase,
+                    updateCase,
+                  )
+                }
+                rows={7}
+                textarea
+              />
+            </BlueBox>
+          </Box>
           <Box component="section" marginBottom={7}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">

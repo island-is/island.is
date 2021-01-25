@@ -15,7 +15,16 @@ const FormField: FC<{
   showFieldName?: boolean
   errors: object
   goToScreen: (id: string) => void
-}> = ({ application, autoFocus, errors, field, goToScreen, showFieldName }) => {
+  refetch: () => void
+}> = ({
+  application,
+  autoFocus,
+  errors,
+  field,
+  goToScreen,
+  showFieldName,
+  refetch,
+}) => {
   const [allFields] = useFields()
 
   if (!field.isNavigable) {
@@ -33,6 +42,7 @@ const FormField: FC<{
     field: field as Field,
     goToScreen,
     showFieldName,
+    refetch,
   }
 
   const Component = allFields[field.component]

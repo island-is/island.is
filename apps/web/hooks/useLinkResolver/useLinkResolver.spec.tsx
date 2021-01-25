@@ -3,6 +3,9 @@ import {
   typeResolver,
   LinkType,
   routesTemplate,
+  extractSlugsByRouteTemplate,
+  replaceVariableInPath,
+  convertToRegex,
 } from './useLinkResolver'
 
 describe('Link resolver', () => {
@@ -121,6 +124,7 @@ describe('Type resolver', () => {
     expect(types).toEqual({
       type: 'articlecategory',
       locale: 'is',
+      slug: ['mycustomcategory'],
     })
   })
 
@@ -129,6 +133,7 @@ describe('Type resolver', () => {
     expect(types).toEqual({
       type: 'newsoverview',
       locale: 'is',
+      slug: [],
     })
   })
 
@@ -137,12 +142,14 @@ describe('Type resolver', () => {
     expect(typesIs).toEqual({
       type: 'news',
       locale: 'is',
+      slug: ['mycustomnews'],
     })
 
     const typesEn = typeResolver('/en/news/mycustomnews')
     expect(typesEn).toEqual({
       type: 'news',
       locale: 'en',
+      slug: ['mycustomnews'],
     })
   })
 
@@ -161,6 +168,54 @@ describe('Type resolver', () => {
     expect(types).toEqual({
       type: 'newsoverview',
       locale: 'is',
+      slug: [],
     })
+  })
+})
+
+describe('Extract slugs by route template', () => {
+  it('Should handle short static paths', () => {
+    const slug = extractSlugsByRouteTemplate('/en', '/en')
+    expect(slug).toEqual([])
+  })
+
+  it('Should handle short dynamic paths', () => {
+    const slug = extractSlugsByRouteTemplate('/theslug', '/[slug]')
+    expect(slug).toEqual(['theslug'])
+  })
+
+  it('Should handle long static paths', () => {
+    const slug = extractSlugsByRouteTemplate(
+      '/mega/long/path',
+      '/mega/long/path',
+    )
+    expect(slug).toEqual([])
+  })
+
+  it('Should handle long dynamic paths', () => {
+    const slug = extractSlugsByRouteTemplate(
+      '/mega/long/path',
+      '/[slug]/[subSlug]/[subSubSlug]',
+    )
+    expect(slug).toEqual(['mega', 'long', 'path'])
+  })
+})
+
+describe('Replace variable in path', () => {
+  it('Should replace variable ins string', () => {
+    const path = replaceVariableInPath('/test/[replaceme]', 'case')
+    expect(path).toEqual('/test/case')
+  })
+})
+
+describe('Convert to regex', () => {
+  it('Should convert dynamic template string to regex', () => {
+    const regex = convertToRegex('/test/[replaceme]')
+    expect(regex).toEqual('\\/test\\/\\w+$')
+  })
+
+  it('Should convert static template string to regex', () => {
+    const regex = convertToRegex('/test')
+    expect(regex).toEqual('\\/test$')
   })
 })

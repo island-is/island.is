@@ -15,7 +15,7 @@ describe(' ServiceCard ', () => {
   const service: any = {
     id: '0',
     owner: 'Þjóðskrá',
-    name: 'Fasteignaskrá',
+    title: 'Fasteignaskrá',
     description: 'OK',
     pricing: [PricingCategory.FREE, PricingCategory.PAID],
     data: [DataCategory.PUBLIC],
@@ -66,11 +66,11 @@ describe(' ServiceCard ', () => {
   })
 
   describe('Card values should contain', () => {
-    it('should contain service name', () => {
+    it('should contain service title', () => {
       const { getByText } = render(
         <ServiceCard service={service} strings={filterContent} />,
       )
-      expect(getByText(service.name)).toBeTruthy()
+      expect(getByText(service.title)).toBeTruthy()
     })
 
     it('should contain owner name', () => {

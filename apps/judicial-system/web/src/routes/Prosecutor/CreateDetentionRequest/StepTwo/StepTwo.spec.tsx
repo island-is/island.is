@@ -4,25 +4,20 @@ import StepTwo from './StepTwo'
 import { MemoryRouter, Route } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
 import { UpdateCase } from '@island.is/judicial-system/types'
-import * as Constants from '../../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   mockCaseQueries,
   mockProsecutorQuery,
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
-import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import formatISO from 'date-fns/formatISO'
 
 describe('Create detention request, step two', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     const todaysDate = new Date()
-    const formattedTodaysDate = todaysDate.getDate().toString().padStart(2, '0')
-    const formattedTodaysMonth = (todaysDate.getMonth() + 1)
-      .toString()
-      .padStart(2, '0')
-
     const lastDateOfTheMonth = new Date(
       todaysDate.getFullYear(),
       todaysDate.getMonth() + 1,

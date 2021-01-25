@@ -1,6 +1,7 @@
 import React, {
   FC,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -48,6 +49,7 @@ import {
   parseMessage,
 } from '../utils'
 import ScreenFooter from './ScreenFooter'
+import RefetchContext from '../context/RefetchContext'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -61,6 +63,7 @@ type ScreenProps = {
   numberOfScreens: number
   prevScreen(): void
   screen: FormScreen
+  renderLastScreenButton?: boolean
   goToScreen: (id: string) => void
 }
 
@@ -89,6 +92,7 @@ const Screen: FC<ScreenProps> = ({
   mode,
   numberOfScreens,
   prevScreen,
+  renderLastScreenButton,
   screen,
 }) => {
   const { answers: formValue, externalData, id: applicationId } = application
@@ -101,6 +105,8 @@ const Screen: FC<ScreenProps> = ({
     resolver,
     context: { dataSchema, formNode: screen },
   })
+
+  const refetch = useContext<() => void>(RefetchContext)
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [updateApplication, { loading, error }] = useMutation(
@@ -268,6 +274,7 @@ const Screen: FC<ScreenProps> = ({
                 multiField={screen}
                 application={application}
                 goToScreen={goToScreen}
+                refetch={refetch}
               />
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
               <FormExternalDataProvider
@@ -285,6 +292,7 @@ const Screen: FC<ScreenProps> = ({
                 field={screen}
                 application={application}
                 goToScreen={goToScreen}
+                refetch={refetch}
               />
             )}
           </Box>
@@ -292,6 +300,7 @@ const Screen: FC<ScreenProps> = ({
         <ToastContainer hideProgressBar closeButton useKeyframeStyles={false} />
         <ScreenFooter
           application={application}
+          renderLastScreenButton={renderLastScreenButton}
           activeScreenIndex={activeScreenIndex}
           numberOfScreens={numberOfScreens}
           mode={mode}

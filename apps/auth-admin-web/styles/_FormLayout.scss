@@ -19,16 +19,15 @@
 .api-scope-user-claims,
 .api-resource-secret-form,
 .api-resource-scope-form,
-.api-resource-user-claims {
+.api-resource-user-claims,
+.client-basic {
   &__help {
     padding: 0 10px 20px 10px;
-  }
 
-  &__type__details {
-    padding: 8px 30px;
-    position: absolute;
-    top: 70px;
-    left: 0px;
+    &__note {
+      font-weight: $weight-semi-bold;
+      margin-bottom: 30px;
+    }
   }
 
   &__wrapper {
@@ -47,7 +46,7 @@
   &__container__form {
     padding: 44px 40px;
     background: $color-bg-content;
-    border-radius: 5px;
+    border-radius: $border-radius;
   }
 
   &__container__field,
@@ -93,10 +92,17 @@
         color: $color-error;
       }
     }
+
+    &__details {
+      padding: 8px 30px;
+      position: absolute;
+      top: 70px;
+      left: 0px;
+    }
   }
 
   .field-with-details {
-    margin-bottom: 35px;
+    margin-bottom: 45px;
   }
 
   &__selected__item {

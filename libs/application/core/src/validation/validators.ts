@@ -45,49 +45,49 @@ function partialSchemaValidation(
       ? originalSchema.pick({ [key]: true })
       : originalSchema
 
-    if (typeof answer === 'object') {
-      if (answer.length) {
-        // answer is array
-        const arrayElements = answer as Answer[]
+    const answerIsArray = Array.isArray(answer)
+    const answerIsEmptyArray = Array.isArray(answer) && answer.length === 0
+    const answerIsObject = typeof answer === 'object' && !answerIsArray
+    const answerIsPrimitive = !answerIsArray && !answerIsObject
 
-        arrayElements.forEach((el, index) => {
-          const elementPath = `${newPath}[${index}]`
-
-          if (typeof el === 'object') {
-            if (!isStrict && el !== null) {
-              error = partialSchemaValidation(
-                el as FormValue,
-                trimmedSchema?.shape[key]?._def?.type,
-                error,
-                isStrict,
-                elementPath,
-              )
-            }
-          } else {
-            try {
-              trimmedSchema.parse({ [key]: [el] })
-            } catch (e) {
-              error = populateError(error, e, elementPath)
-            }
-          }
-        })
-      } else {
-        // answer is normal object
-        error = partialSchemaValidation(
-          answer as FormValue,
-          originalSchema.shape[key],
-          error,
-          isStrict,
-          newPath,
-        )
-      }
-    } else {
-      // answer is primitive
+    if (answerIsPrimitive || answerIsEmptyArray) {
       try {
         trimmedSchema.parse({ [key]: answer })
       } catch (e) {
         error = populateError(error, e, newPath)
       }
+    } else if (answerIsArray) {
+      const arrayElements = answer as Answer[]
+
+      arrayElements.forEach((el, index) => {
+        const elementPath = `${newPath}[${index}]`
+
+        if (typeof el === 'object') {
+          if (!isStrict && el !== null) {
+            error = partialSchemaValidation(
+              el as FormValue,
+              trimmedSchema?.shape[key]?._def?.type,
+              error,
+              isStrict,
+              elementPath,
+            )
+          }
+        } else {
+          try {
+            trimmedSchema.parse({ [key]: [el] })
+          } catch (e) {
+            error = populateError(error, e, elementPath)
+          }
+        }
+      })
+    } else if (answerIsObject) {
+      error = partialSchemaValidation(
+        answer as FormValue,
+        originalSchema.shape[key],
+        error,
+        isStrict,
+        newPath,
+      )
     }
   })
 

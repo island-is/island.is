@@ -171,7 +171,7 @@ export interface DividerField extends BaseField {
 export interface KeyValueField extends BaseField {
   readonly type: FieldTypes.KEY_VALUE
   label: React.ReactNode
-  value: React.ReactNode
+  value: React.ReactNode | React.ReactNode[]
   component: FieldComponents.KEY_VALUE
 }
 

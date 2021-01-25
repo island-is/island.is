@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { Accordion, Box, Button, Tag, Text } from '@island.is/island-ui/core'
 import {
   TIME_FORMAT,
@@ -9,20 +9,26 @@ import {
   Case,
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseState,
+  UserRole,
 } from '@island.is/judicial-system/types'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { CaseQuery } from '../../../graphql'
-import CourtRecordAccordionItem from '../../../shared-components/CourtRecordAccordionItem/CourtRecordAccordionItem'
-import { FormFooter } from '../../../shared-components/FormFooter'
-import InfoCard from '../../../shared-components/InfoCard/InfoCard'
-import { PageLayout } from '../../../shared-components/PageLayout/PageLayout'
-import PoliceRequestAccordionItem from '../../../shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
-import RulingAccordionItem from '../../../shared-components/RulingAccordionItem/RulingAccordionItem'
-import { getRestrictionTagVariant } from '../../../utils/stepHelper'
+import { CaseQuery } from '@island.is/judicial-system-web/src/graphql'
+import {
+  FormFooter,
+  PdfButton,
+  PageLayout,
+  InfoCard,
+  PoliceRequestAccordionItem,
+  RulingAccordionItem,
+  CourtRecordAccordionItem,
+} from '@island.is/judicial-system-web/src/shared-components'
+import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { useHistory } from 'react-router-dom'
-import * as Constants from '../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
+
 interface CaseData {
   case?: Case
 }
@@ -32,11 +38,16 @@ export const SignedVerdictOverview: React.FC = () => {
 
   const history = useHistory()
   const { id } = useParams<{ id: string }>()
+  const { user } = useContext(UserContext)
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
+
+  const [extendCaseMutation, { loading: isCreatingExtension }] = useMutation(
+    ExtendCaseMutation,
+  )
 
   useEffect(() => {
     document.title = 'Yfirlit staðfestrar kröfu - Réttarvörslugátt'
@@ -47,6 +58,28 @@ export const SignedVerdictOverview: React.FC = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
+
+  const handleNextButtonClick = async () => {
+    if (workingCase?.childCase) {
+      history.push(
+        `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${workingCase.childCase.id}`,
+      )
+    } else {
+      const { data } = await extendCaseMutation({
+        variables: {
+          input: {
+            id: workingCase?.id,
+          },
+        },
+      })
+
+      if (data) {
+        history.push(
+          `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${data.extendCase.id}`,
+        )
+      }
+    }
+  }
 
   /**
    * We assume that the signed verdict page is only opened for
@@ -72,7 +105,6 @@ export const SignedVerdictOverview: React.FC = () => {
       isLoading={loading}
       notFound={data?.case === undefined}
       isCustodyEndDateInThePast={workingCase?.isCustodyEndDateInThePast}
-      rejectedCase={data?.case?.decision === CaseDecision.REJECTING}
       decision={data?.case?.decision}
     >
       {workingCase ? (
@@ -225,19 +257,33 @@ export const SignedVerdictOverview: React.FC = () => {
                 { title: 'Dómari', value: workingCase.judge?.name },
               ]}
               accusedName={workingCase.accusedName}
-              accusedGender={workingCase.accusedGender}
               accusedNationalId={workingCase.accusedNationalId}
               accusedAddress={workingCase.accusedAddress}
+              defender={{
+                name: workingCase.defenderName || '',
+                email: workingCase.defenderEmail,
+              }}
             />
           </Box>
-          <Box marginBottom={15}>
+          <Box marginBottom={5}>
             <Accordion>
               <PoliceRequestAccordionItem workingCase={workingCase} />
               <CourtRecordAccordionItem workingCase={workingCase} />
               <RulingAccordionItem workingCase={workingCase} />
             </Accordion>
           </Box>
-          <FormFooter hideNextButton />
+          <Box marginBottom={15}>
+            <PdfButton caseId={workingCase.id} />
+          </Box>
+          <FormFooter
+            hideNextButton={
+              workingCase.decision === CaseDecision.REJECTING ||
+              user?.role !== UserRole.PROSECUTOR
+            }
+            nextButtonText="Framlengja gæslu"
+            onNextButtonClick={() => handleNextButtonClick()}
+            nextIsLoading={isCreatingExtension}
+          />
         </>
       ) : null}
     </PageLayout>

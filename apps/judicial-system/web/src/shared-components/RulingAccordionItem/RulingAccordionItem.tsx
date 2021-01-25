@@ -10,9 +10,9 @@ import * as style from './RulingAccordionItem.treat'
 import {
   constructConclusion,
   getAppealDecisionText,
-} from '../../utils/stepHelper'
-import { AppealDecisionRole } from '../../types'
-import { UserContext } from '../UserProvider/UserProvider'
+} from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
   formatAlternativeTravelBanRestrictions,
   formatCustodyRestrictions,
@@ -79,6 +79,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             {getAppealDecisionText(
               AppealDecisionRole.ACCUSED,
               workingCase.accusedAppealDecision,
+              workingCase.accusedGender,
             )}
           </Text>
         </Box>
@@ -86,6 +87,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           {getAppealDecisionText(
             AppealDecisionRole.PROSECUTOR,
             workingCase.prosecutorAppealDecision,
+            workingCase.accusedGender,
           )}
         </Text>
       </Box>
@@ -129,8 +131,8 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             </Text>
           </Box>
           <Text>
-            Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera atriði
-            er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
+            Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera
+            atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
           </Text>
         </Box>
       )}
@@ -156,8 +158,8 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             </Box>
           )}
           <Text>
-            Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera atriði
-            er lúta að framkvæmd farbannsins undir dómara.
+            Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera
+            atriði er lúta að framkvæmd farbannsins undir dómara.
           </Text>
         </Box>
       )}

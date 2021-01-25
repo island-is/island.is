@@ -23,10 +23,15 @@ import { BaseService } from './BaseService'
 export class ClientService extends BaseService {
   /** Gets all clients with paging */
   static async findAndCountAll(
+    searchString: string,
     page: number,
     count: number,
   ): Promise<{ rows: Client[]; count: number } | null> {
-    return BaseService.GET(`clients/?page=${page}&count=${count}`)
+    return BaseService.GET(
+      `clients/?searchString=${encodeURIComponent(
+        searchString,
+      )}&page=${page}&count=${count}`,
+    )
   }
 
   /** Gets a client by it's id */
@@ -43,6 +48,54 @@ export class ClientService extends BaseService {
   static async update(client: ClientDTO, id: string): Promise<Client | null> {
     delete client.clientId
     return BaseService.PUT(`clients/${encodeURIComponent(id)}`, client)
+  }
+
+  /** Sets default grant type and allowed scope */
+  static async setDefaults(client: Client): Promise<boolean> {
+    let response = true
+    const scopeResponse = ClientService.addAllowedScope({
+      clientId: client.clientId,
+      scopeName: 'openid',
+    })
+    if (!scopeResponse) response = false
+    if (client.clientType === 'machine') {
+      const grantResponse = ClientService.addGrantType({
+        clientId: client.clientId,
+        grantType: 'client_credentials',
+      })
+      if (!grantResponse) response = false
+    } else {
+      const grantResponse = ClientService.addGrantType({
+        clientId: client.clientId,
+        grantType: 'authorization_code',
+      })
+      if (!grantResponse) response = false
+    }
+    const callBackUri = ClientService.addRedirectUri({
+      clientId: client.clientId,
+      redirectUri: client.clientUri + '/signin-oidc',
+    })
+    if (!callBackUri) {
+      response = false
+    }
+
+    const postLogOutUri = ClientService.addPostLogoutRedirectUri({
+      clientId: client.clientId,
+      redirectUri: client.clientUri,
+    })
+    if (!postLogOutUri) {
+      response = false
+    }
+
+    const corsOrigin = ClientService.addAllowedCorsOrigin({
+      clientId: client.clientId,
+      origin: client.clientUri,
+    })
+    if (!corsOrigin) {
+      response = false
+    }
+
+    return response
   }
 
   /** Deletes client */

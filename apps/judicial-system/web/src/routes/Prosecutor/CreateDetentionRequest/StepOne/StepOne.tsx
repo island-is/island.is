@@ -2,16 +2,19 @@ import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { Text, Input, Box, RadioButton } from '@island.is/island-ui/core'
-import { isDirty, isNextDisabled } from '../../../../utils/stepHelper'
+import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
-import { FormFooter } from '../../../../shared-components/FormFooter'
+import {
+  FormFooter,
+  BlueBox,
+  PageLayout,
+} from '@island.is/judicial-system-web/src/shared-components'
 import { useParams } from 'react-router-dom'
-import * as Constants from '../../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   parseString,
   replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import {
   Case,
   UpdateCase,
@@ -34,7 +37,6 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import BlueBox from '../../../../shared-components/BlueBox/BlueBox'
 import { CreateCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 
 interface CaseData {
@@ -160,12 +162,7 @@ export const StepOne: React.FC = () => {
     }
   }, [id, workingCase, setWorkingCase, data])
 
-  /**
-   * Run this to validate form after each change
-   *
-   * This can't be done in the render function because the time refs will always be null
-   * until the user clicks the time inputs and then the continue button becomes enabled.
-   *  */
+  // Validate step
   useEffect(() => {
     if (workingCase) {
       setIsStepIllegal(
@@ -197,10 +194,15 @@ export const StepOne: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.PROSECUTOR}
+      activeSection={
+        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
+      }
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_ONE}
       isLoading={loading}
       notFound={id !== undefined && data?.case === undefined}
+      isExtension={!!workingCase?.parentCase}
+      decision={workingCase?.decision}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>
@@ -311,7 +313,7 @@ export const StepOne: React.FC = () => {
                   <RadioButton
                     name="accused-gender"
                     id="genderOther"
-                    label="Annað"
+                    label="Kynsegin/Annað"
                     checked={workingCase.accusedGender === CaseGender.OTHER}
                     onChange={() =>
                       setAndSendToServer(
@@ -441,12 +443,6 @@ export const StepOne: React.FC = () => {
               <Text as="h3" variant="h3">
                 Verjandi sakbornings
               </Text>
-              {(isDirty(workingCase.defenderName) ||
-                isDirty(workingCase.defenderEmail)) && (
-                <Text variant="eyebrow" color="blue400">
-                  (Verjanda hefur verið úthlutað)
-                </Text>
-              )}
             </Box>
             <Box marginBottom={2}>
               <Input
@@ -454,11 +450,6 @@ export const StepOne: React.FC = () => {
                 label="Nafn verjanda"
                 placeholder="Fullt nafn"
                 defaultValue={workingCase.requestedDefenderName}
-                disabled={isDirty(workingCase.defenderName)}
-                icon={
-                  isDirty(workingCase.defenderName) ? 'lockClosed' : undefined
-                }
-                iconType="outline"
                 onBlur={(evt) => {
                   if (workingCase.requestedDefenderName !== evt.target.value) {
                     setWorkingCase({
@@ -479,11 +470,6 @@ export const StepOne: React.FC = () => {
               name="requestedDefenderEmail"
               label="Netfang verjanda"
               placeholder="Netfang"
-              disabled={isDirty(workingCase.defenderEmail)}
-              icon={
-                isDirty(workingCase.defenderEmail) ? 'lockClosed' : undefined
-              }
-              iconType="outline"
               defaultValue={workingCase.requestedDefenderEmail}
               errorMessage={requestedDefenderEmailErrorMessage}
               hasError={requestedDefenderEmailErrorMessage !== ''}

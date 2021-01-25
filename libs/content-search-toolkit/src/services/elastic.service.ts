@@ -23,6 +23,7 @@ import {
   GroupedRankEvaluationResponse,
 } from '../types'
 import {
+  DeleteByQueryResponse,
   GetByIdResponse,
   RankEvaluationResponse,
   SearchResponse,
@@ -93,8 +94,8 @@ export class ElasticService {
     }
 
     try {
-      // elasticsearch does not like big requests (above 5mb) so we limit the size to 200 entries just in case
-      const chunkSize = 200 // this has to be an even number
+      // elasticsearch does not like big requests (above 5mb) so we limit the size to X entries just in case
+      const chunkSize = 100 // this has to be an even number
       const client = await this.getClient()
       let requestChunk = requests.splice(-chunkSize, chunkSize)
       while (requestChunk.length) {
@@ -267,16 +268,18 @@ export class ElasticService {
     })
   }
 
-  async deleteAllExcept(index: string, excludeIds: Array<string>) {
+  // remove all documents that have not been updated in the last X minutes
+  async deleteAllDocumentsNotVeryRecentlyUpdated(index: string) {
     const client = await this.getClient()
 
-    return client.delete_by_query({
+    return client.delete_by_query<DeleteByQueryResponse>({
       index: index,
       body: {
         query: {
-          bool: {
-            // eslint-disable-next-line @typescript-eslint/camelcase
-            must_not: excludeIds.map((id) => ({ match: { _id: id } })),
+          range: {
+            dateUpdated: {
+              lt: 'now-30m', // older than 30 minutes from now
+            },
           },
         },
       },
@@ -311,6 +314,9 @@ export class ElasticService {
     if (!hasAWS) {
       return new Client({
         node: elastic.node,
+        compression: 'gzip',
+        suggestCompression: true,
+        requestTimeout: 30000,
       })
     }
 

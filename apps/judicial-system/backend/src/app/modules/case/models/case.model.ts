@@ -4,6 +4,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasOne,
   Model,
   Table,
   UpdatedAt,
@@ -142,6 +143,13 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
+  otherDemands: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
   lawsBroken: string
 
   @Column({
@@ -257,6 +265,13 @@ export class Case extends Model<Case> {
   policeDemands: string
 
   @Column({
+    type: DataType.ARRAY(DataType.STRING),
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtDocuments: string[]
+
+  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
@@ -348,4 +363,20 @@ export class Case extends Model<Case> {
   @BelongsTo(() => User, 'judgeId')
   @ApiProperty({ type: User })
   judge: User
+
+  @ForeignKey(() => Case)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  parentCaseId: string
+
+  @BelongsTo(() => Case, 'parentCaseId')
+  @ApiProperty({ type: Case })
+  parentCase: Case
+
+  @HasOne(() => Case, 'parentCaseId')
+  @ApiProperty({ type: Case })
+  childCase: Case
 }
