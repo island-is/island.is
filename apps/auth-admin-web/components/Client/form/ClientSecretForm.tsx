@@ -136,7 +136,9 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
               <div className="client-secret__help">
                 <div
                   className={`client-secret__help__note ${
-                    props.clientType === 'spa' ? 'show' : 'hidden'
+                    props.clientType === 'spa' || props.clientType === 'native'
+                      ? 'show'
+                      : 'hidden'
                   }`}
                 >
                   Your client type doesn't support a Client Secret. You don't

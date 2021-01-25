@@ -15,7 +15,10 @@ const Index: React.FC = () => {
 
   const handleClientSaved = (clientSaved: Client) => {
     if (clientSaved.clientId) {
-      if (clientSaved.clientType !== 'spa') {
+      if (
+        clientSaved.clientType !== 'spa' &&
+        clientSaved.clientType !== 'native'
+      ) {
         router.push(`/client/${clientSaved.clientId}?step=9`)
       } else {
         router.push(`/client/${clientSaved.clientId}?step=10`)
