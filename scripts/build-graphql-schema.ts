@@ -4,7 +4,7 @@ import { GraphQLDefinitionsFactory } from '@nestjs/graphql'
 import { createApp } from '@island.is/infra-nest-server'
 
 const argv = yargs(process.argv.slice(2))
-const args = argv.string('rootModule').string('_').help().argv
+const args = argv.string('_').help().argv
 
 const main = () => {
   const { AppModule } = require(args._[0])
