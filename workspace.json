@@ -1492,9 +1492,9 @@
         }
       }
     },
-    "application-templates-children-domicile-transfer": {
-      "root": "libs/application/templates/children-domicile-transfer",
-      "sourceRoot": "libs/application/templates/children-domicile-transfer/src",
+    "application-templates-children-residence-change": {
+      "root": "libs/application/templates/children-residence-change",
+      "sourceRoot": "libs/application/templates/children-residence-change/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -1503,12 +1503,12 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/application/templates/children-domicile-transfer/tsconfig.lib.json",
-              "libs/application/templates/children-domicile-transfer/tsconfig.spec.json"
+              "libs/application/templates/children-residence-change/tsconfig.lib.json",
+              "libs/application/templates/children-residence-change/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/application/templates/children-domicile-transfer/**/*"
+              "!libs/application/templates/children-residence-change/**/*"
             ]
           }
         }

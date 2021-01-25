@@ -18,8 +18,8 @@ import {
   extractChildrenFromApplication,
 } from '../lib/utils'
 
-export const ChildrenDomicileTransferForm: Form = buildForm({
-  id: 'ChildrenDomicileTransferFormDraft',
+export const ChildrenResidenceChangeForm: Form = buildForm({
+  id: 'ChildrenResidenceChangeFormDraft',
   title: 'Flutningur lögheimilis',
   mode: FormModes.APPLYING,
   children: [
@@ -171,7 +171,7 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
       title: 'Yfirlit og undirritun',
       children: [
         buildCustomField({
-          id: 'domicileChangeReview',
+          id: 'residenceChangeReview',
           title: 'Yfirlit umsóknar',
           component: 'Overview',
         }),
@@ -182,7 +182,7 @@ export const ChildrenDomicileTransferForm: Form = buildForm({
       title: 'Umsókn móttekin',
       children: [
         buildCustomField({
-          id: 'domicileChangeConfirmation',
+          id: 'residenceChangeConfirmation',
           title: 'Umsókn um breytt lögheimili móttekin',
           component: 'Confirmation',
         }),
