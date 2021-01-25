@@ -13,11 +13,13 @@ import { theme } from '@island.is/island-ui/theme'
 interface SidebarWrapperProps {
   sidebarContent: ReactNode
   hideSidebarInMobile?: boolean
+  fullWidthContent?: boolean
 }
 
 export const SidebarWrapper: FC<SidebarWrapperProps> = ({
   sidebarContent,
   hideSidebarInMobile = false,
+  fullWidthContent = false,
   children,
 }) => {
   const isMobile = useWindowSize().width < theme.breakpoints.md
@@ -43,7 +45,13 @@ export const SidebarWrapper: FC<SidebarWrapperProps> = ({
           <GridRow>
             <GridColumn
               offset={['0', '0', '0', '0', '1/9']}
-              span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+              span={[
+                '9/9',
+                '9/9',
+                '9/9',
+                '9/9',
+                fullWidthContent ? '9/9' : '7/9',
+              ]}
             >
               <Box
                 paddingLeft={[0, 0, 6, 6, 0]}

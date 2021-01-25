@@ -1,6 +1,15 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { Box, Text, NavigationItem } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  NavigationItem,
+  GridContainer,
+  GridRow,
+  GridColumn,
+  Link,
+  Button,
+} from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   Query,
@@ -15,8 +24,8 @@ import {
 } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
-import { useLinkResolver } from "@island.is/web/hooks/useLinkResolver";
-import * as styles from './Home.treat'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import * as styles from './SubPage.treat'
 import { QueryGetOrganizationPageArgs } from '@island.is/web/graphql/schema'
 import OrganizationWrapper from '@island.is/web/components/Organization/Wrapper/OrganizationWrapper'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -51,7 +60,7 @@ const SubPage: Screen<SubPageProps> = ({
       })),
     }),
   )
-
+  console.log(subpage.slices)
   return (
     <>
       <OrganizationWrapper
@@ -59,6 +68,7 @@ const SubPage: Screen<SubPageProps> = ({
         pageDescription={subpage.description}
         organizationPage={organizationPage}
         pageFeaturedImage={subpage.featuredImage}
+        fullWidthContent={true}
         breadcrumbItems={[
           {
             title: 'Ísland.is',
@@ -82,12 +92,44 @@ const SubPage: Screen<SubPageProps> = ({
           },
         }}
       >
-        <Box className={styles.intro} paddingTop={[4, 4, 0]}>
-          <Text variant="h2" as="h2">
-            {subpage.title}
-          </Text>
-          <Markdown>{subpage.description}</Markdown>
-        </Box>
+        <GridContainer>
+          <Box
+            className={styles.intro}
+            paddingTop={[4, 4, 0]}
+            paddingBottom={[4, 4, 6]}
+          >
+            <h2 className={styles.heading}>{subpage.title}</h2>
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '8/12']}>
+                <Markdown
+                  options={{
+                    overrides: {
+                      p: {
+                        component: 'p',
+                        props: { className: styles.description },
+                      },
+                    },
+                  }}
+                >
+                  {subpage.description}
+                </Markdown>
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '4/12']}>
+                <ul>
+                  {subpage.links.map((link) => (
+                    <li>
+                      <Link href={link.url}>
+                        <a className={styles.link} href={link.url}>
+                          {link.text}
+                        </a>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </GridColumn>
+            </GridRow>
+          </Box>
+        </GridContainer>
         {subpage.slices.map((slice) => (
           <OrganizationSlice
             key={slice.id}
@@ -140,7 +182,11 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((variables) => variables.data.getNamespace.fields ? JSON.parse(variables.data.getNamespace.fields) : {}),
+      .then((variables) =>
+        variables.data.getNamespace.fields
+          ? JSON.parse(variables.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   if (!getOrganizationSubpage) {

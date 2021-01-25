@@ -33,6 +33,7 @@ interface WrapperProps {
   breadcrumbItems?: BreadCrumbItem[]
   mainContent?: ReactNode
   navigationData: NavigationData
+  fullWidthContent?: boolean
 }
 
 const OrganizationWrapper: React.FC<WrapperProps> = ({
@@ -43,6 +44,7 @@ const OrganizationWrapper: React.FC<WrapperProps> = ({
   breadcrumbItems,
   mainContent,
   navigationData,
+  fullWidthContent = false,
   children,
 }) => {
   const { linkResolver } = useLinkResolver()
@@ -67,7 +69,9 @@ const OrganizationWrapper: React.FC<WrapperProps> = ({
                 renderLink={(link, item) => {
                   return item?.href ? (
                     <NextLink href={item?.href}>{link}</NextLink>
-                  ) : link
+                  ) : (
+                    link
+                  )
                 }}
               />
             </Box>
@@ -93,6 +97,7 @@ const OrganizationWrapper: React.FC<WrapperProps> = ({
       <Main>
         <Box paddingTop={[0, 0, 8]}>
           <SidebarWrapper
+            fullWidthContent={fullWidthContent}
             sidebarContent={
               <Box className={styles.navigation}>
                 <Navigation
@@ -105,7 +110,9 @@ const OrganizationWrapper: React.FC<WrapperProps> = ({
                   renderLink={(link, item) => {
                     return item?.href ? (
                       <NextLink href={item?.href}>{link}</NextLink>
-                    ) : link
+                    ) : (
+                      link
+                    )
                   }}
                 />
               </Box>
