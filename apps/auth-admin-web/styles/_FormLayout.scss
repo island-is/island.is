@@ -172,6 +172,29 @@
     }
   }
 
+  &__container__radio__field {
+    display: block;
+    position: relative;
+
+    label {
+      z-index: 1;
+    }
+
+    input[type='radio'] {
+      flex-basis: 50px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      margin-left: 15px;
+      margin-right: 10px;
+    }
+
+    .helpbox {
+      position: absolute;
+      left: 45px;
+      top: 44px;
+    }
+  }
+
   &__container__button {
     margin: 15px 0;
   }
