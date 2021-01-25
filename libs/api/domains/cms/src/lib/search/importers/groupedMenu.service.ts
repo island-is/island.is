@@ -5,10 +5,7 @@ import { Entry } from 'contentful'
 import { IGroupedMenu } from '../../generated/contentfulTypes'
 import { mapGroupedMenu } from '../../models/groupedMenu.model'
 
-import {
-  CmsSyncProvider,
-  processSyncDataInput,
-} from '../cmsSync.service'
+import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 
 @Injectable()
 export class GroupedMenuSyncService implements CmsSyncProvider<IGroupedMenu> {

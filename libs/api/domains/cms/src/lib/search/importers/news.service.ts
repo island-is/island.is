@@ -5,10 +5,7 @@ import { Entry } from 'contentful'
 import isCircular from 'is-circular'
 import { INews } from '../../generated/contentfulTypes'
 import { mapNews } from '../../models/news.model'
-import {
-  CmsSyncProvider,
-  processSyncDataInput,
-} from '../cmsSync.service'
+import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()

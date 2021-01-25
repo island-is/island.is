@@ -5,10 +5,7 @@ import { Entry } from 'contentful'
 import isCircular from 'is-circular'
 import { IVidspyrnaPage } from '../../generated/contentfulTypes'
 import { mapAdgerdirPage } from '../../models/adgerdirPage.model'
-import {
-  CmsSyncProvider,
-  processSyncDataInput,
-} from '../cmsSync.service'
+import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 
 import {
   createTerms,
@@ -37,8 +34,9 @@ export class AdgerdirPageSyncService
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapAdgerdirPage(entry)
-          const content = `${mapped.longDescription
-            } ${extractStringsFromObject({ ...mapped.content })}` // this function only accepts plain js objects
+          const content = `${
+            mapped.longDescription
+          } ${extractStringsFromObject({ ...mapped.content })}` // this function only accepts plain js objects
           return {
             _id: mapped.id,
             title: mapped.title,
@@ -68,5 +66,3 @@ export class AdgerdirPageSyncService
       .filter((value): value is MappedData => Boolean(value))
   }
 }
-
-// TODO: Find why this is not being imported correctly

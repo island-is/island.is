@@ -5,10 +5,7 @@ import { Entry } from 'contentful'
 import isCircular from 'is-circular'
 import { IArticle, IArticleFields } from '../../generated/contentfulTypes'
 import { mapArticle, Article } from '../../models/article.model'
-import {
-  CmsSyncProvider,
-  processSyncDataInput,
-} from '../cmsSync.service'
+import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import {
   createTerms,
   extractStringsFromObject,
@@ -75,7 +72,9 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
           // get the searchable content of this article
           const parentContent = extractStringsFromObject(mapped.body)
           // get searchable content of all sub articles
-          const searchableContent = mapped.subArticles.map((subArticle) => extractStringsFromObject(subArticle.body))
+          const searchableContent = mapped.subArticles.map((subArticle) =>
+            extractStringsFromObject(subArticle.body),
+          )
           searchableContent.push(parentContent)
           return {
             _id: mapped.id,
