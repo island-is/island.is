@@ -7,6 +7,7 @@ import { ApiResource } from '../../../entities/models/api-resource.model'
 import ConfirmModal from '../../common/ConfirmModal'
 import Link from 'next/link'
 import Paginator from '../../common/Paginator'
+import CsvExport from '../../common/CsvExport'
 
 const ApiResourcesList: React.FC = () => {
   const [count, setCount] = useState(0)
@@ -183,7 +184,16 @@ const ApiResourcesList: React.FC = () => {
                 </tbody>
               </table>
             </div>
-            <Paginator lastPage={lastPage} handlePageChange={handlePager} />
+            <div>
+              <Paginator lastPage={lastPage} handlePageChange={handlePager} />
+              <CsvExport
+                label="Export"
+                filename={`API Resources, ${
+                  new Date().toISOString().split('T')[0]
+                }.csv`}
+                exportMethod={ResourcesService.getApiResourcesCsv}
+              />
+            </div>
           </div>
         </div>
       </div>

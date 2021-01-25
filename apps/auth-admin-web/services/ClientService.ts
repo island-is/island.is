@@ -11,6 +11,7 @@ import { ApiScope } from '../entities/models/api-scope.model'
 import { ClientAllowedCorsOrigin } from '../entities/models/client-allowed-cors-origin.model'
 import { ClientAllowedScope } from '../entities/models/client-allowed-scope.model'
 import { ClientClaim } from '../entities/models/client-claim.model'
+import { ClientCsv } from '../entities/models/client-csv'
 import { ClientGrantType } from '../entities/models/client-grant-type.model'
 import { ClientIdpRestrictions } from '../entities/models/client-idp-restrictions.model'
 import { ClientPostLogoutRedirectUri } from '../entities/models/client-post-logout-redirect-uri.model'
@@ -260,5 +261,27 @@ export class ClientService extends BaseService {
   /** Get IDP restrictions  */
   static async findAllIdpRestrictions(): Promise<IdpRestriction[] | null> {
     return BaseService.GET(`idp-restriction`)
+  }
+
+  static async getClientsCsv(): Promise<ClientCsv[] | null> {
+    const result = await BaseService.GET(
+      `clients?page=${1}&count=${Number.MAX_SAFE_INTEGER}`,
+    )
+    return result.rows.map((r) => ClientService.toClientCsv(r))
+  }
+
+  static toClientCsv = (client: Client): ClientCsv => {
+    const csv = new ClientCsv()
+    csv.clientId = client.clientId
+    csv.clientType = client.clientType
+    csv.clientName = client.clientName
+    csv.description = client.description
+    csv.nationalId = client.nationalId
+    csv.created = client.created
+    csv.modified = client.modified
+    csv.enabled = client.enabled
+    csv.archived = client.archived
+
+    return csv
   }
 }
