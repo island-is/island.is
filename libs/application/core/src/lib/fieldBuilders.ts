@@ -23,7 +23,7 @@ import {
   Context,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
-import { FormText } from '../types/Form'
+import { FormText, FormTextArray } from '../types/Form'
 import { Colors } from '@island.is/island-ui/theme'
 import type {
   DatePickerBackgroundColor,
@@ -390,8 +390,8 @@ export function buildDividerField(data: {
 }
 
 export function buildKeyValueField(data: {
-  label: React.ReactNode
-  value: MaybeWithApplication<React.ReactNode | React.ReactNode[]>
+  label: FormText
+  value: FormText | FormTextArray
   width?: FieldWidth
 }): KeyValueField {
   const { label, value, width = 'full' } = data
