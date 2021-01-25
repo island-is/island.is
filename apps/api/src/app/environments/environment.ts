@@ -13,6 +13,12 @@ export default {
     password: process.env.SOFFIA_PASS ?? '',
     host: 'soffiaprufa.skra.is',
   },
+  healthInsurance: {
+    wsdlUrl: 'https://test-huld.sjukra.is/islandrg?wsdl',
+    baseUrl: 'http://localhost:8080',
+    username: '',
+    password: '',
+  },
   userProfile: {
     userProfileServiceBasePath: 'http://localhost:3366',
   },
