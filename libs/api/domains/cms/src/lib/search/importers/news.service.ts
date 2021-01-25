@@ -7,7 +7,6 @@ import { INews } from '../../generated/contentfulTypes'
 import { mapNews } from '../../models/news.model'
 import {
   CmsSyncProvider,
-  doMappingInput,
   processSyncDataInput,
 } from '../cmsSync.service'
 import { createTerms, extractStringsFromObject } from './utils'
@@ -26,7 +25,7 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
     )
   }
 
-  doMapping(entries: doMappingInput<INews>) {
+  doMapping(entries: INews[]) {
     logger.info('Mapping news', { count: entries.length })
     return entries
       .map<MappedData | boolean>((entry) => {

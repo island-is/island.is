@@ -33,10 +33,9 @@ interface UpdateLastHashOptions {
 }
 
 export type processSyncDataInput<T> = (Entry<any> | T)[]
-export type doMappingInput<T> = T[]
-export interface CmsSyncProvider<T> {
-  processSyncData: (entries: processSyncDataInput<T>) => T[]
-  doMapping: (entries: doMappingInput<T>) => MappedData[]
+export interface CmsSyncProvider<T, ProcessOutput = any> {
+  processSyncData: (entries: processSyncDataInput<T>) => ProcessOutput
+  doMapping: (entries: ProcessOutput) => MappedData[]
 }
 
 @Injectable()

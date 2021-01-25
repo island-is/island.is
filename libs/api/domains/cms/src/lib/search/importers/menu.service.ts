@@ -6,7 +6,6 @@ import { IMenu } from '../../generated/contentfulTypes'
 import { mapMenu } from '../../models/menu.model'
 import {
   CmsSyncProvider,
-  doMappingInput,
   processSyncDataInput,
 } from '../cmsSync.service'
 
@@ -19,7 +18,7 @@ export class MenuSyncService implements CmsSyncProvider<IMenu> {
     )
   }
 
-  doMapping(entries: doMappingInput<IMenu>) {
+  doMapping(entries: IMenu[]) {
     logger.info('Mapping menu', { count: entries.length })
 
     return entries

@@ -7,7 +7,6 @@ import { IArticle, IArticleFields } from '../../generated/contentfulTypes'
 import { mapArticle, Article } from '../../models/article.model'
 import {
   CmsSyncProvider,
-  doMappingInput,
   processSyncDataInput,
 } from '../cmsSync.service'
 import {
@@ -64,7 +63,7 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
     }, [])
   }
 
-  doMapping(entries: doMappingInput<IArticle>) {
+  doMapping(entries: IArticle[]) {
     logger.info('Mapping articles', { count: entries.length })
 
     return entries
@@ -73,12 +72,16 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
 
         try {
           mapped = mapArticle(entry)
-          const content = extractStringsFromObject(mapped.body)
+          // get the searchable content of this article
+          const parentContent = extractStringsFromObject(mapped.body)
+          // get searchable content of all sub articles
+          const searchableContent = mapped.subArticles.map((subArticle) => extractStringsFromObject(subArticle.body))
+          searchableContent.push(parentContent)
           return {
             _id: mapped.id,
             title: mapped.title,
-            content,
-            contentWordCount: content.split(/\s+/).length,
+            content: searchableContent.join(' '), // includes all searchable content in parent and children
+            contentWordCount: parentContent.split(/\s+/).length,
             processEntryCount: numberOfProcessEntries(mapped.body),
             ...numberOfLinks(mapped.body),
             type: 'webArticle',
