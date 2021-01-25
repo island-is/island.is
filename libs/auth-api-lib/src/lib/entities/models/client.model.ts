@@ -360,7 +360,6 @@ export class Client extends Model<Client> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
     defaultValue: 'client_',
   })
   @ApiProperty({
@@ -424,6 +423,16 @@ export class Client extends Model<Client> {
     example: null,
   })
   archived!: Date
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    defaultValue: null,
+  })
+  @ApiProperty({
+    example: null,
+  })
+  contactEmail!: string
 
   @CreatedAt
   @ApiProperty()

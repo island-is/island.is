@@ -17,8 +17,10 @@
 
     &__options {
       display: flex;
+      padding: 10px 0;
 
       &__button {
+        padding-top: 13px;
         flex: 1;
       }
 

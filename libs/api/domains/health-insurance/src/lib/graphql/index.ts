@@ -1,1 +1,1 @@
-export { HealthTestResolver } from './healthTest.resolver'
+export { HealthInsuranceResolver } from './healthInsurance.resolver'
