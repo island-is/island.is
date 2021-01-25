@@ -17,6 +17,7 @@ export class SoapClient {
     password: string,
     functionName: string,
   ): Promise<Soap.Client | null> {
+    logger.info('Starting create soapClient...')
     // xroad headers
     const xh = `<xrd:protocolVersion ${SoapClient.xn}>4.0</xrd:protocolVersion>
     <xrd:id ${SoapClient.xn}>3903d152-1d2c-11eb-adc1-0242ac120002</xrd:id>
@@ -54,6 +55,7 @@ export class SoapClient {
         }
       })
     })
+    logger.info('Finished create soapClient...')
     return promise
   }
 }
