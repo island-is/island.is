@@ -371,7 +371,6 @@ export class CmsResolver {
   ): Promise<SubpageHeader | null> {
     return this.cmsContentfulService.getSubpageHeader(input)
   }
-
 }
 
 @Resolver(() => LatestNewsSlice)
