@@ -13,6 +13,12 @@ export default {
     password: process.env.SOFFIA_PASS,
     host: process.env.SOFFIA_HOST_URL,
   },
+  healthInsurance: {
+    wsdlUrl: process.env.HEALTH_INSURANCE_XROAD_WSDLURL,
+    baseUrl: process.env.XROAD_BASE_PATH,
+    username: process.env.HEALTH_INSURANCE_XROAD_USERNAME,
+    password: process.env.HEALTH_INSURANCE_XROAD_PASSWORD,
+  },
   userProfile: {
     userProfileServiceBasePath: process.env.SERVICE_USER_PROFILE_URL,
   },
