@@ -16,7 +16,7 @@ type Events =
   | { type: 'ABORT' }
 
 const dataSchema = z.object({
-  type: z.array(z.enum(['general', 'trailer', 'bike'])).nonempty(),
+  type: z.array(z.enum(['car', 'trailer', 'motorcycle'])).nonempty(),
   subType: z.array(z.string()).nonempty(),
   approveExternalData: z.boolean().refine((v) => v),
   healthDeclaration: z.object({

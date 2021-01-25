@@ -234,8 +234,7 @@ export abstract class ClientBaseDTO {
   })
   readonly allowRememberConsent!: boolean
 
-  @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({
     example: 'set_client_claims_prefix',
   })

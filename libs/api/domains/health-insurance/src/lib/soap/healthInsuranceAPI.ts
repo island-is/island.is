@@ -3,11 +3,10 @@ import {
   Inject,
   Injectable,
 } from '@nestjs/common'
-import { GetSjukratryggdurTypeDto } from './dto'
-
-import { SoapClient } from './soapClient'
-
 import { logger } from '@island.is/logging'
+
+import { GetSjukratryggdurTypeDto } from './dto'
+import { SoapClient } from './soapClient'
 
 export const HEALTH_INSURANCE_CONFIG = 'HEALTH_INSURANCE_CONFIG'
 
@@ -61,6 +60,7 @@ export class HealthInsuranceAPI {
   public async isHealthInsured(
     nationalId: string,
   ): Promise<GetSjukratryggdurTypeDto> {
+    logger.info('--- Starting isHealthInsured api call ---')
     // create 'soap' client
     const client = await SoapClient.generateClient(
       this.clientConfig.wsdlUrl,
