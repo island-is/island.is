@@ -34,7 +34,7 @@ const ProviderItem: FC<{
         {formatMessage(title)}
       </Text>
       {subTitle && <Text>{formatMessage(subTitle)}</Text>}
-      {dataProviderResult?.status === 'failure' && (
+      {provider.type && dataProviderResult?.status === 'failure' && (
         <InputError
           errorMessage={dataProviderResult?.reason}
           id={provider.id}
@@ -79,6 +79,7 @@ const FormExternalDataProvider: FC<{
   })
 
   const { id, dataProviders } = externalDataProvider
+  const relevantDataProviders = dataProviders.filter((p) => p.type)
 
   const activateBeforeSubmitCallback = (checked: boolean) => {
     if (checked) {
@@ -87,7 +88,7 @@ const FormExternalDataProvider: FC<{
           variables: {
             input: {
               id: applicationId,
-              dataProviders: dataProviders.map(({ id, type }) => ({
+              dataProviders: relevantDataProviders.map(({ id, type }) => ({
                 id,
                 type,
               })),
@@ -99,7 +100,7 @@ const FormExternalDataProvider: FC<{
           response.data &&
           verifyExternalData(
             getExternalDataFromResponse(response.data),
-            dataProviders,
+            relevantDataProviders,
           )
         ) {
           return [true, null]

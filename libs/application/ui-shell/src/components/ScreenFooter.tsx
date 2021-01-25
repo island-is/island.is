@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import { useHistory } from 'react-router-dom'
 import { Box, Button, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -19,6 +20,7 @@ interface FooterProps {
   submitField?: SubmitField
   loading: boolean
   canProceed: boolean
+  renderLastScreenButton?: boolean
 }
 
 export const ScreenFooter: FC<FooterProps> = ({
@@ -30,13 +32,15 @@ export const ScreenFooter: FC<FooterProps> = ({
   mode,
   numberOfScreens,
   submitField,
+  renderLastScreenButton,
 }) => {
   const { formatMessage } = useLocale()
+  const history = useHistory()
   const hasSubmitField = submitField !== undefined
   const isLastScreen = activeScreenIndex === numberOfScreens - 1
-  const showGoBack = activeScreenIndex > 0
+  const showGoBack = activeScreenIndex > 0 && !isLastScreen
   if (
-    isLastScreen ||
+    (isLastScreen && !renderLastScreenButton) ||
     (mode !== FormModes.REVIEW && mode !== FormModes.APPLYING)
   ) {
     return null
@@ -103,6 +107,21 @@ export const ScreenFooter: FC<FooterProps> = ({
           <Box display="inlineFlex" padding={2} paddingRight="none">
             {hasSubmitField ? (
               renderSubmitButtons()
+            ) : isLastScreen ? (
+              <Box display="inlineFlex">
+                <Button
+                  disabled={loading}
+                  onClick={() => history.push('/minarsidur')}
+                  icon="arrowForward"
+                  type="button"
+                >
+                  {formatMessage({
+                    id: 'application.system:button.servicePortal',
+                    defaultMessage: 'Back to Service Portal',
+                    description: 'Service Portal button text',
+                  })}
+                </Button>
+              </Box>
             ) : (
               <Box display="inlineFlex">
                 <Button

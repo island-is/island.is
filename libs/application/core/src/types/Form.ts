@@ -8,6 +8,9 @@ import { Application } from './Application'
 export type StaticText = (MessageDescriptor & { values?: object }) | string
 
 export type FormText = StaticText | ((application: Application) => StaticText)
+export type FormTextArray =
+  | StaticText[]
+  | ((application: Application) => StaticText[])
 
 export enum FormItemTypes {
   FORM = 'FORM',
@@ -35,6 +38,7 @@ export interface Form {
   logo?: React.FC
   type: FormItemTypes.FORM
   mode?: FormModes
+  renderLastScreenButton?: boolean
   icon?: string
   children: FormChildren[]
 }
@@ -87,7 +91,7 @@ export interface ExternalDataProvider extends FormItem {
 
 export interface DataProviderItem {
   readonly id: string
-  readonly type: string
+  readonly type: string | undefined
   readonly title: StaticText
   readonly subTitle?: StaticText
   readonly source?: string
@@ -100,6 +104,7 @@ export interface FieldBaseProps {
   application: Application
   showFieldName?: boolean
   goToScreen?: (id: string) => void
+  refetch?: () => void
 }
 
 export type RepeaterProps = {

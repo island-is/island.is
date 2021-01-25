@@ -8,7 +8,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
-import { FormFooter } from '../../../../shared-components/FormFooter'
+import {
+  FormFooter,
+  PageLayout,
+  BlueBox,
+  CaseNumbers,
+} from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
   CaseAppealDecision,
@@ -16,10 +21,12 @@ import {
   CaseDecision,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import * as Constants from '../../../../utils/constants'
-import { parseArray, parseString } from '../../../../utils/formatters'
-import { constructConclusion } from '../../../../utils/stepHelper'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import {
+  parseArray,
+  parseString,
+} from '@island.is/judicial-system-web/src/utils/formatters'
+import { constructConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 import {
@@ -34,11 +41,9 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import BlueBox from '@island.is/judicial-system-web/src/shared-components/BlueBox/BlueBox'
 
 export const RulingStepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [, setVisitationCheckbox] = useState<boolean>()
   const [, setCommunicationCheckbox] = useState<boolean>()
   const [, setMediaCheckbox] = useState<boolean>()
@@ -50,7 +55,7 @@ export const RulingStepTwo: React.FC = () => {
   >()
   const { id } = useParams<{ id: string }>()
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-  const { data } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
@@ -76,15 +81,10 @@ export const RulingStepTwo: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setIsLoading(true)
-      setWorkingCase(resCase)
-      setIsLoading(false)
-    }
     if (id && !workingCase && resCase) {
-      getCurrentCase()
+      setWorkingCase(resCase)
     }
-  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
+  }, [id, workingCase, setWorkingCase, resCase])
 
   const custodyRestrictions = [
     {
@@ -130,9 +130,11 @@ export const RulingStepTwo: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.JUDGE}
+      activeSection={
+        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
+      }
       activeSubSection={JudgeSubsections.RULING_STEP_TWO}
-      isLoading={isLoading}
+      isLoading={loading}
       notFound={data?.case === undefined}
     >
       {workingCase ? (
@@ -144,7 +146,7 @@ export const RulingStepTwo: React.FC = () => {
           </Box>
           <Box component="section" marginBottom={7}>
             <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
-            <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
+            <CaseNumbers workingCase={workingCase} />
           </Box>
           <Box component="section" marginBottom={8}>
             <Box marginBottom={10}>
@@ -449,86 +451,95 @@ export const RulingStepTwo: React.FC = () => {
             {(!workingCase.decision ||
               workingCase.decision === CaseDecision.ACCEPTING) && (
               <Box component="section" marginBottom={3}>
-                <Box marginBottom={2}>
+                <Box marginBottom={3}>
                   <Text as="h3" variant="h3">
                     Tilhögun gæsluvarðhalds
                   </Text>
                 </Box>
-                <Box marginBottom={1}>
-                  <GridRow>
-                    {custodyRestrictions.map((restriction, index) => {
-                      return (
-                        <GridColumn span="6/12" key={index}>
-                          <Box marginBottom={3}>
-                            <Checkbox
-                              name={restriction.restriction}
-                              label={restriction.restriction}
-                              value={restriction.value}
-                              checked={workingCase.custodyRestrictions?.includes(
-                                restriction.value,
-                              )}
-                              tooltip={restriction.explanation}
-                              onChange={({ target }) => {
-                                // Create a copy of the state
-                                const copyOfState = Object.assign(
-                                  workingCase,
-                                  {},
-                                )
+                <BlueBox>
+                  <Box marginBottom={1}>
+                    <GridRow>
+                      {custodyRestrictions.map((restriction, index) => {
+                        return (
+                          <GridColumn span="6/12" key={index}>
+                            <Box
+                              marginBottom={
+                                index + 2 <= custodyRestrictions.length ? 3 : 0
+                              }
+                            >
+                              <Checkbox
+                                name={restriction.restriction}
+                                label={restriction.restriction}
+                                value={restriction.value}
+                                checked={workingCase.custodyRestrictions?.includes(
+                                  restriction.value,
+                                )}
+                                tooltip={restriction.explanation}
+                                onChange={({ target }) => {
+                                  // Create a copy of the state
+                                  const copyOfState = Object.assign(
+                                    workingCase,
+                                    {},
+                                  )
 
-                                const restrictionIsSelected = copyOfState.custodyRestrictions?.includes(
-                                  target.value as CaseCustodyRestrictions,
-                                )
+                                  const restrictionIsSelected = copyOfState.custodyRestrictions?.includes(
+                                    target.value as CaseCustodyRestrictions,
+                                  )
 
-                                // Toggle the checkbox on or off
-                                restriction.setCheckbox(!restrictionIsSelected)
+                                  // Toggle the checkbox on or off
+                                  restriction.setCheckbox(
+                                    !restrictionIsSelected,
+                                  )
 
-                                // If the user is checking the box, add the restriction to the state
-                                if (!restrictionIsSelected) {
-                                  if (
-                                    copyOfState.custodyRestrictions === null
-                                  ) {
-                                    copyOfState.custodyRestrictions = []
+                                  // If the user is checking the box, add the restriction to the state
+                                  if (!restrictionIsSelected) {
+                                    if (
+                                      copyOfState.custodyRestrictions === null
+                                    ) {
+                                      copyOfState.custodyRestrictions = []
+                                    }
+
+                                    copyOfState.custodyRestrictions &&
+                                      copyOfState.custodyRestrictions.push(
+                                        target.value as CaseCustodyRestrictions,
+                                      )
+                                  }
+                                  // If the user is unchecking the box, remove the restriction from the state
+                                  else {
+                                    copyOfState.custodyRestrictions &&
+                                      copyOfState.custodyRestrictions.splice(
+                                        copyOfState.custodyRestrictions.indexOf(
+                                          target.value as CaseCustodyRestrictions,
+                                        ),
+                                        1,
+                                      )
                                   }
 
-                                  copyOfState.custodyRestrictions &&
-                                    copyOfState.custodyRestrictions.push(
-                                      target.value as CaseCustodyRestrictions,
-                                    )
-                                }
-                                // If the user is unchecking the box, remove the restriction from the state
-                                else {
-                                  copyOfState.custodyRestrictions &&
-                                    copyOfState.custodyRestrictions.splice(
-                                      copyOfState.custodyRestrictions.indexOf(
-                                        target.value as CaseCustodyRestrictions,
-                                      ),
-                                      1,
-                                    )
-                                }
+                                  setWorkingCase({
+                                    ...workingCase,
+                                    custodyRestrictions:
+                                      copyOfState.custodyRestrictions,
+                                  })
 
-                                setWorkingCase({
-                                  ...workingCase,
-                                  custodyRestrictions:
-                                    copyOfState.custodyRestrictions,
-                                })
-
-                                // Save case
-                                updateCase(
-                                  workingCase.id,
-                                  parseArray(
-                                    'custodyRestrictions',
-                                    copyOfState.custodyRestrictions || [],
-                                  ),
-                                )
-                              }}
-                              large
-                            />
-                          </Box>
-                        </GridColumn>
-                      )
-                    })}
-                  </GridRow>
-                </Box>
+                                  // Save case
+                                  updateCase(
+                                    workingCase.id,
+                                    parseArray(
+                                      'custodyRestrictions',
+                                      copyOfState.custodyRestrictions || [],
+                                    ),
+                                  )
+                                }}
+                                large
+                                filled
+                              />
+                            </Box>
+                          </GridColumn>
+                        )
+                      })}
+                    </GridRow>
+                  </Box>
+                </BlueBox>
               </Box>
             )}
             {(!workingCase.decision ||
@@ -656,7 +667,7 @@ export const RulingStepTwo: React.FC = () => {
               workingCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) && (
               <Text variant="h4" fontWeight="light">
-                {`Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
+                {`Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera
                 atriði er lúta að framkvæmd ${
                   workingCase.decision === CaseDecision.ACCEPTING
                     ? 'gæsluvarðhaldsins'
