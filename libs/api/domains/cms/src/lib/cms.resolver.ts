@@ -67,7 +67,7 @@ import { GroupedMenu } from './models/groupedMenu.model'
 import { GetSingleMenuInput } from './dto/getSingleMenu.input'
 import { SubpageHeader } from './models/subpageHeader.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
-import { ErrorPage } from './models/ErrorPage.model'
+import { ErrorPage } from './models/errorPage.model'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 
 const { cacheTime } = environment

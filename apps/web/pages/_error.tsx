@@ -63,7 +63,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
   static async getInitialProps(props: ErrorPageInitialProps) {
     const { err, res, asPath = '' } = props
     const statusCode = err?.statusCode ?? res?.statusCode ?? 500
-    const  locale  = typeResolver(asPath) ? typeResolver(asPath).locale : 'is'
+    const locale = typeResolver(asPath) ? typeResolver(asPath).locale : 'is'
 
     // check if we have a redirect condition
     if (statusCode === 404) {
