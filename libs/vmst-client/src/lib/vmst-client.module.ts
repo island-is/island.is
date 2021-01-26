@@ -1,4 +1,4 @@
-import { Module, DynamicModule } from '@nestjs/common'
+import { DynamicModule } from '@nestjs/common'
 import fetch from 'isomorphic-fetch'
 import {
   Configuration,
@@ -14,7 +14,6 @@ export interface VMSTClientModuleConfig {
   xRoadClient: string
 }
 
-@Module({})
 export class VMSTClientModule {
   static register(config: VMSTClientModuleConfig): DynamicModule {
     const headers = {
