@@ -39,12 +39,12 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly requestedDefenderName?: string
+  readonly defenderName?: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly requestedDefenderEmail?: string
+  readonly defenderEmail?: string
 
   @IsOptional()
   @IsString()
@@ -124,16 +124,6 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly defenderName?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly defenderEmail?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
   readonly courtStartTime?: Date
 
   @IsOptional()
@@ -150,6 +140,11 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly policeDemands?: string
+
+  @IsOptional()
+  @IsString({ each: true })
+  @ApiPropertyOptional({ isArray: true })
+  readonly courtDocuments?: string
 
   @IsOptional()
   @IsString()

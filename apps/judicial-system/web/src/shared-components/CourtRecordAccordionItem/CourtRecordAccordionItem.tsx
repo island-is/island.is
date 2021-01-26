@@ -2,7 +2,11 @@ import React from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 
 import { AccordionListItem } from '@island.is/judicial-system-web/src/shared-components'
-import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  formatDate,
+  TIME_FORMAT,
+} from '@island.is/judicial-system/formatters'
 import { Case } from '@island.is/judicial-system/types'
 
 interface Props {
@@ -35,8 +39,24 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         <Text>{workingCase.courtAttendees}</Text>
       </AccordionListItem>
       <AccordionListItem title="Dómskjöl">
+        <Text>Krafa lögreglu þingmerkt nr. 1.</Text>
         <Text>
-          Rannsóknargögn málsins liggja frammi. Krafa lögreglu þingmerkt nr. 1.
+          Rannsóknargögn málsins liggja frammi.
+          <br />
+          <br />
+          {workingCase.courtDocuments?.map((courtDocument, index) => {
+            return (
+              <>
+                {`${capitalize(courtDocument)} þingmerkt nr. ${index + 2}.`}
+                {index <= (workingCase.courtDocuments || []).length && (
+                  <>
+                    <br />
+                    <br />
+                  </>
+                )}
+              </>
+            )
+          })}
         </Text>
       </AccordionListItem>
       <AccordionListItem title="Réttindi kærða">

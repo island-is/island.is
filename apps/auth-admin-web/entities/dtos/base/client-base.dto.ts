@@ -38,6 +38,7 @@ export abstract class ClientBaseDTO {
     this.description = null
     this.protocolType = ''
     this.requireClientSecret = true
+    this.contactEmail = ''
   }
 
   nationalId: string
@@ -72,10 +73,11 @@ export abstract class ClientBaseDTO {
   frontChannelLogoutSessionRequired: boolean
   backChannelLogoutUri: string | null
   allowRememberConsent: boolean
-  clientClaimsPrefix: string
+  clientClaimsPrefix?: string
   clientName?: string
   clientUri: string | null
   description: string | null
   protocolType: string
   requireClientSecret: boolean
+  contactEmail: string
 }

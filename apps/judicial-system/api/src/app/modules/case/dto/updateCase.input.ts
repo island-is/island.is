@@ -39,11 +39,11 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly requestedDefenderName?: string
+  readonly defenderName?: string
 
   @Allow()
   @Field({ nullable: true })
-  readonly requestedDefenderEmail?: string
+  readonly defenderEmail?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -107,14 +107,6 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly defenderName?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly defenderEmail?: string
-
-  @Allow()
-  @Field({ nullable: true })
   readonly courtStartTime?: string
 
   @Allow()
@@ -128,6 +120,10 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly policeDemands?: string
+
+  @Allow()
+  @Field(() => [String], { nullable: true })
+  readonly courtDocuments?: string[]
 
   @Allow()
   @Field({ nullable: true })

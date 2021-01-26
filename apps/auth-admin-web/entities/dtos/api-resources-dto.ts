@@ -5,6 +5,7 @@ export class ApiResourcesDTO {
     this.displayName = ''
     this.description = ''
     this.showInDiscoveryDocument = true
+    this.contactEmail = ''
   }
 
   enabled: boolean
@@ -13,4 +14,5 @@ export class ApiResourcesDTO {
   description: string
   showInDiscoveryDocument: boolean
   nationalId!: string
+  contactEmail: string
 }

@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { ErrorMessage } from '@hookform/error-message'
 import HelpBox from '../../common/HelpBox'
 import { ClientService } from '../../../services/ClientService'
+import { Client } from './../../../entities/models/client.model'
 interface Props {
   client: ClientDTO
   onNextButtonClick?: (client: ClientDTO) => void
@@ -14,7 +15,7 @@ interface FormOutput {
   client: ClientDTO
 }
 
-const ClientForm: React.FC<Props> = (props: Props) => {
+const ClientCreateForm: React.FC<Props> = (props: Props) => {
   const { register, handleSubmit, errors, formState } = useForm<ClientDTO>()
   const { isSubmitting } = formState
   const [show, setShow] = useState(false)
@@ -60,13 +61,15 @@ const ClientForm: React.FC<Props> = (props: Props) => {
     }
   }, [props.client])
 
-  const create = async (data: ClientDTO) => {
+  const create = async (data: ClientDTO): Promise<Client | null> => {
     const response = await ClientService.create(data)
     if (response) {
       if (props.onNextButtonClick) {
         props.onNextButtonClick(data)
       }
+      return response
     }
+    return null
   }
 
   const edit = async (data: ClientDTO) => {
@@ -81,10 +84,13 @@ const ClientForm: React.FC<Props> = (props: Props) => {
     }
   }
 
-  const save = (data: FormOutput) => {
+  const save = async (data: FormOutput) => {
     const clientObject = castToNumbers(data.client)
     if (!isEditing) {
-      create(clientObject)
+      const savedClient = await create(clientObject)
+      if (savedClient) {
+        ClientService.setDefaults(savedClient)
+      }
     } else {
       edit(clientObject)
     }
@@ -212,7 +218,7 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       name="client.clientType"
                       message="Client Type is required"
                     />
-                    <div className={`client__type__details`}>
+                    <div className={`client__container__field__details`}>
                       {clientTypeInfo}
                     </div>
                   </div>
@@ -300,6 +306,12 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       title="Application URL that will be seen on consent screens"
                     />
                     <HelpBox helpText="URI to further information about client (used on consent screen)" />
+                    <ErrorMessage
+                      as="span"
+                      errors={errors}
+                      name="client.clientUri"
+                      message="Display url is required"
+                    />
                   </div>
                   <div className="client__container__field">
                     <label className="client__label">Description</label>
@@ -313,6 +325,19 @@ const ClientForm: React.FC<Props> = (props: Props) => {
                       placeholder="Example description"
                     />
                     <HelpBox helpText="Application description for use within the IDS management" />
+                  </div>
+                  <div className="client__container__field">
+                    <label className="client__label">Contact email</label>
+                    <input
+                      type="text"
+                      ref={register}
+                      name="client.contactEmail"
+                      defaultValue={client.contactEmail ?? ''}
+                      className="client__input"
+                      title="Contact email for client"
+                      placeholder="island@island.is"
+                    />
+                    <HelpBox helpText="Set the contact email for the client" />
                   </div>
 
                   <div className="client__container__checkbox__field">
@@ -666,7 +691,7 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         Client claims prefix
                       </label>
                       <input
-                        ref={register({ required: true, min: 0 })}
+                        ref={register}
                         type="text"
                         name="client.clientClaimsPrefix"
                         defaultValue={
@@ -889,4 +914,4 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
     </div>
   )
 }
-export default ClientForm
+export default ClientCreateForm

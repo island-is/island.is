@@ -50,6 +50,63 @@ export class ClientService extends BaseService {
     return BaseService.PUT(`clients/${encodeURIComponent(id)}`, client)
   }
 
+  /** Sets default grant type and allowed scope */
+  static async setDefaults(client: Client): Promise<boolean> {
+    let response = true
+    const scopeResponse = ClientService.addAllowedScope({
+      clientId: client.clientId,
+      scopeName: 'openid',
+    })
+    if (!scopeResponse) response = false
+    if (client.clientType === 'machine') {
+      const grantResponse = ClientService.addGrantType({
+        clientId: client.clientId,
+        grantType: 'client_credentials',
+      })
+      if (!grantResponse) response = false
+    } else {
+      const grantResponse = ClientService.addGrantType({
+        clientId: client.clientId,
+        grantType: 'authorization_code',
+      })
+      if (!grantResponse) response = false
+    }
+
+    if (client.clientUri) {
+      if (client.clientUri.endsWith('/')) {
+        client.clientUri = client.clientUri.substr(
+          0,
+          client.clientUri.length - 2,
+        )
+      }
+      const callBackUri = ClientService.addRedirectUri({
+        clientId: client.clientId,
+        redirectUri: client.clientUri + '/signin-oidc',
+      })
+      if (!callBackUri) {
+        response = false
+      }
+
+      const postLogOutUri = ClientService.addPostLogoutRedirectUri({
+        clientId: client.clientId,
+        redirectUri: client.clientUri,
+      })
+      if (!postLogOutUri) {
+        response = false
+      }
+
+      const corsOrigin = ClientService.addAllowedCorsOrigin({
+        clientId: client.clientId,
+        origin: client.clientUri,
+      })
+      if (!corsOrigin) {
+        response = false
+      }
+    }
+
+    return response
+  }
+
   /** Deletes client */
   static async delete(clientId: string): Promise<number | null> {
     return BaseService.DELETE(`clients/${encodeURIComponent(clientId)}`)
