@@ -41,18 +41,16 @@ export class TranslationsService {
       })
       .catch(errorHandler('getNamespace'))
 
-    return (
-      result?.items?.map(({ fields }) =>
-        fields.strings.reduce(
-          (acc: Record<string, string>, cur: DictArray) => ({
-            ...acc,
-            [cur.id]: isEmpty(cur[locale.code])
-              ? cur?.[locale.fallbackCode]
-              : cur?.[locale.code],
-          }),
-          {},
-        ),
-      )?.[0] ?? null
-    )
+    const results = {}
+
+    for (const item of result.items) {
+      for (const message of item.fields.strings as DictArray[]) {
+        results[message.id] = isEmpty(message[locale.code])
+          ? message?.[locale.fallbackCode]
+          : message?.[locale.code]
+      }
+    }
+
+    return results
   }
 }
