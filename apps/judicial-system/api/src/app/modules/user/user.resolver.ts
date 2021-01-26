@@ -20,7 +20,7 @@ export class UserResolver {
   ) {}
 
   @Query(() => [User], { nullable: true })
-  cases(
+  users(
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<User[]> {
     this.logger.debug('Getting all users')
