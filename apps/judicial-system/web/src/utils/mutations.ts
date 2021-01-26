@@ -100,6 +100,16 @@ export const CasesQuery = gql`
   }
 `
 
+export const UsersQuery = gql`
+  query UsersQuery {
+    users {
+      id
+      name
+      role
+    }
+  }
+`
+
 export const ExtendCaseMutation = gql`
   mutation ExtendCaseMutation($input: ExtendCaseInput!) {
     extendCase(input: $input) {
