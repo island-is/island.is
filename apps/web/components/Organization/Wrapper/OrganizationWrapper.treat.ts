@@ -1,8 +1,8 @@
 import { style } from 'treat'
-import { themeUtils } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
-  background: '#252973',
+  background: theme.color.blueberry600,
   marginTop: -130,
   paddingTop: 130,
   ...themeUtils.responsiveStyle({
@@ -55,7 +55,7 @@ export const navigation = style({
       marginRight: -24,
       paddingLeft: 24,
       paddingRight: 24,
-      background: '#252973',
+      background: theme.color.blueberry600,
       paddingBottom: 32,
     },
   }),
