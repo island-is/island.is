@@ -57,7 +57,6 @@ const FormMultiField: FC<{
           <GridColumn
             key={field.id || index}
             span={['1/1', '1/1', span]}
-            paddingTop={index === 0 ? 4 : 0}
             paddingBottom={index === children.length - 1 ? 0 : space}
           >
             <Box paddingTop={1}>
