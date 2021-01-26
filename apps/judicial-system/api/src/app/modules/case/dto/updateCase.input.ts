@@ -122,6 +122,10 @@ export class UpdateCaseInput implements UpdateCase {
   readonly policeDemands?: string
 
   @Allow()
+  @Field(() => [String], { nullable: true })
+  readonly courtDocuments?: string[]
+
+  @Allow()
   @Field({ nullable: true })
   readonly accusedPlea?: string
 

@@ -95,6 +95,7 @@ const remainingJudgeCaseData = {
   courtEndTime: '2020-09-29T14:00:00.000Z',
   courtAttendees: 'Court Attendees',
   policeDemands: 'Police Demands',
+  courtDocuments: ['Þingskjal 1', 'Þingskjal 2'],
   accusedPlea: 'Accused Plea',
   litigationPresentations: 'Litigation Presentations',
   ruling: 'Ruling',
@@ -208,6 +209,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.courtEndTime || null).toBe(caseTwo.courtEndTime || null)
   expect(caseOne.courtAttendees || null).toBe(caseTwo.courtAttendees || null)
   expect(caseOne.policeDemands || null).toBe(caseTwo.policeDemands || null)
+  expect(caseOne.courtDocuments || null).toStrictEqual(
+    caseTwo.courtDocuments || null,
+  )
   expect(caseOne.accusedPlea || null).toBe(caseTwo.accusedPlea || null)
   expect(caseOne.litigationPresentations || null).toBe(
     caseTwo.litigationPresentations || null,

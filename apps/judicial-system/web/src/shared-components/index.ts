@@ -2,7 +2,7 @@ export { default as AccordionListItem } from './AccordionListItem/AccordionListI
 export { default as App } from './App/App'
 export { default as CaseNumbers } from './CaseNumbers/CaseNumbers'
 export { default as BlueBox } from './BlueBox/BlueBox'
-export { default as CourtDocument } from './CourtDocument/CourtDocument'
+export { default as CourtDocuments } from './CourtDocuments/CourtDocuments'
 export { default as CourtRecordAccordionItem } from './CourtRecordAccordionItem/CourtRecordAccordionItem'
 export { default as FormFooter } from './FormFooter/FormFooter'
 export { default as Header } from './Header/Header'
