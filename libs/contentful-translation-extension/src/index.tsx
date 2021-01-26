@@ -21,7 +21,8 @@ interface AppProps {
 }
 
 interface AppState {
-  activeLocales: string[]
+  spaceLocales: Record<string, string>
+  activeLocales: { id: string; name: string }[]
 }
 
 interface DictArray {
@@ -37,8 +38,15 @@ class App extends React.Component<AppProps, AppState> {
   constructor(props: AppProps) {
     super(props)
 
+    const { locales } = props.extension
+    const spaceLocales = locales.names
+
     this.state = {
-      activeLocales: props.extension.locales.available,
+      spaceLocales,
+      activeLocales: locales.available.map((locale) => ({
+        id: locale,
+        name: spaceLocales[locale],
+      })),
     }
   }
 
@@ -49,8 +57,15 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   onLocaleSettingsHandler = (data: EditorLocaleSettings) => {
+    const { spaceLocales } = this.state
+
     if (data?.mode === 'multi' && data.active) {
-      this.setState({ activeLocales: data.active })
+      this.setState({
+        activeLocales: data.active.map((locale) => ({
+          id: locale,
+          name: spaceLocales[locale],
+        })),
+      })
     }
   }
 
@@ -107,14 +122,14 @@ class App extends React.Component<AppProps, AppState> {
           </TableRow>
 
           {activeLocales
-            .sort((a, b) => b.localeCompare(a))
+            .sort((a, b) => b.id.localeCompare(a.id))
             .map((locale, ii) => {
-              const value = (item as any)?.[locale]
+              const value = (item as any)?.[locale.id]
 
               return (
                 <TableRow key={`${item.id}-${ii}`}>
                   <TableCell width="50%" style={{ verticalAlign: 'middle' }}>
-                    {locale === 'is-IS' ? 'Icelandic' : 'English'}
+                    {locale.name}
                   </TableCell>
 
                   <TableCell
@@ -127,7 +142,7 @@ class App extends React.Component<AppProps, AppState> {
                       labelText=""
                       value={value}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        this.onChange(locale, item.id, e.currentTarget.value)
+                        this.onChange(locale.id, item.id, e.currentTarget.value)
                       }
                     />
 
@@ -158,7 +173,7 @@ class App extends React.Component<AppProps, AppState> {
  * We instead create another object inside the default locale
  * from the space ("is-IS") and we create objects for each locales inside.
  * This is a bit hacky but by enabling localization for the field inside Contentful,
- * creates the following extension for both locales (or more in the future)
+ * it creates the following extension for both locales (or more in the future)
  * which mean duplicating the same fields over and over. Not nice neither.
  */
 init((extension: FieldExtensionSDK) => {
