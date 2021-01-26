@@ -152,7 +152,7 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
                 <Button
                   size="default"
                   onClick={() => {
-                    closeModal
+                    closeModal()
                     history.push(`../umsoknir/${typeId}`)
                   }}
                   fluid
