@@ -152,10 +152,6 @@ globalStyle(
   inputMixins.inputErrorState,
 )
 globalStyle(
-  `${wrapper} .island-select__control${container}${containerDisabled}`,
-  inputMixins.containerDisabled,
-)
-globalStyle(
   `${wrapper} .island-select__control${container}:hover:not(.island-select__control--is-focused):not(${containerDisabled})`,
   inputMixins.containerHover,
 )
