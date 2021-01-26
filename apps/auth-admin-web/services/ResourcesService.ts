@@ -242,7 +242,7 @@ export class ResourcesService extends BaseService {
     )
   }
 
-  static async getApiResourcesCsv(): Promise<ApiResourceCsv[] | null> {
+  static async getApiResourcesCsv(): Promise<any[] | null> {
     const result = await BaseService.GET(
       `api-resources?page=${1}&count=${Number.MAX_SAFE_INTEGER}`,
     )

@@ -262,7 +262,7 @@ export class ClientService extends BaseService {
     return BaseService.GET(`idp-restriction`)
   }
 
-  static async getClientsCsv(): Promise<ClientCsv[] | null> {
+  static async getClientsCsv(): Promise<any[] | null> {
     const result = await BaseService.GET(
       `clients?page=${1}&count=${Number.MAX_SAFE_INTEGER}`,
     )
