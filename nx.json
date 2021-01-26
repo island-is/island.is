@@ -375,6 +375,9 @@
     "services-auth-api": {
       "tags": []
     },
+    "services-documents": {
+      "tags": []
+    },
     "services-search-indexer": {
       "tags": []
     },
