@@ -15,7 +15,7 @@ class App {
 
     const hasAwsAccess = await aws.checkAWSAccess()
 
-    if (hasAwsAccess || true) {
+    if (hasAwsAccess) {
       await this.migrateAws()
     }
 
