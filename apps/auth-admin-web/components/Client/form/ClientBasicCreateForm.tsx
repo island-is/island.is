@@ -13,10 +13,11 @@ interface Props {
 
 interface FormOutput {
   client: ClientDTO
+  baseUrl: string
 }
 
 const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<ClientDTO>()
+  const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
   const { isSubmitting } = formState
   const [available, setAvailable] = useState<boolean>(false)
   const [clientIdLength, setClientIdLength] = useState<number>(0)
@@ -51,14 +52,13 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
       const dto = new ClientDTO()
       dto.clientType = data.client.clientType
       dto.clientId = data.client.clientId
-      dto.clientUri = data.client.clientUri
       dto.nationalId = data.client.nationalId
       dto.protocolType = 'oidc'
       dto.contactEmail = data.client.contactEmail
 
       const clientSaved = await create(dto)
       if (clientSaved) {
-        ClientService.setDefaults(clientSaved)
+        ClientService.setDefaults(clientSaved, data.baseUrl)
       }
     }
   }
@@ -268,7 +268,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                     <div className="client-basic__container__field">
                       <label className="client-basic__label">Base Url:</label>
                       <input
-                        name="client.clientUri"
+                        name="baseUrl"
                         type="text"
                         ref={register({ required: true })}
                         defaultValue={client.clientUri ?? ''}
@@ -277,11 +277,11 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         title="Base Url of the application. Used for Cors Origin and callback URI. The callback uri will be the specified Base Url /signin-oidc"
                         onChange={(e) => setCallbackUri(e.target.value)}
                       />
-                      <HelpBox helpText="Base Url of the application. Used for Cors Origin and callback URI. The callback uri will be the specified Base Url /signin-oidc" />
+                      <HelpBox helpText="Base Url of the application. Used for adding Cors Origin, Redirect (callback) URI and Post Logout URI. The Redirect (callback) URI will be the specified Base Url /signin-oidc" />
                       <ErrorMessage
                         as="span"
                         errors={errors}
-                        name="client.clientUri"
+                        name="baseUrl"
                         message="Base Url is required"
                       />
                       <div

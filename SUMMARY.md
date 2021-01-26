@@ -73,7 +73,6 @@
 
 - [Air Discount Scheme](apps/air-discount-scheme/README.md)
 - [API](apps/api/README.md)
-- [API Catalogue](apps/api-catalogue/README.md)
 - [Application System](apps/application-system/README.md)
 - [[DEPRECATED] Gjafakort](apps/gjafakort/README.md)
 - [Judicial System](apps/judicial-system/README.md)
