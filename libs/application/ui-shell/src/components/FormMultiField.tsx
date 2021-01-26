@@ -41,6 +41,7 @@ const FormMultiField: FC<{
         formValue={application.answers}
         screen={multiField}
       />
+
       {description && (
         <GridColumn span={['1/1', '1/1', '1/1']}>
           <FieldDescription
@@ -48,6 +49,16 @@ const FormMultiField: FC<{
           />
         </GridColumn>
       )}
+
+      {/* Todo: 
+          We need a better approach for overall field spacing and control of spacing.
+          For now I'm setting this based on the Parental Leave comps:
+          https://www.figma.com/file/xXSz5E9SRRs6Me0vtpgimH/F%C3%A6%C3%B0ingarorlof-Ums%C3%B3kn?node-id=465%3A0
+
+          FieldDescription already has a mb of 1 so set it to 3(+1) else 4.
+      */}
+      <Box width="full" marginTop={description ? 3 : 4} />
+
       {children.map((field, index) => {
         const isHalfColumn =
           !IGNORED_HALF_TYPES.includes(field.type) && field?.width === 'half'
@@ -57,7 +68,6 @@ const FormMultiField: FC<{
           <GridColumn
             key={field.id || index}
             span={['1/1', '1/1', span]}
-            paddingTop={index === 0 ? 4 : 0}
             paddingBottom={index === children.length - 1 ? 0 : space}
           >
             <Box paddingTop={1}>
