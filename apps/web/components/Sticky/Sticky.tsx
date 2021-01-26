@@ -16,12 +16,12 @@ export const Sticky: FC<Props> = ({
   const [usesSticky, setUsesSticky] = useState<boolean>(constantSticky)
 
   const onResize = useCallback(() => {
-    if (
-      ref?.current &&
-      !constantSticky &&
-      ref.current.offsetHeight < window.innerHeight - STICKY_NAV_HEIGHT
-    ) {
-      setUsesSticky(true)
+    if (ref?.current && !constantSticky) {
+      setUsesSticky(
+        Boolean(
+          ref.current.offsetHeight < window.innerHeight - STICKY_NAV_HEIGHT,
+        ),
+      )
     }
   }, [ref])
 

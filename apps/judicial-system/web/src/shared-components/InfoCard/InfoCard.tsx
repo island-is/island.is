@@ -1,13 +1,12 @@
 import { Box, Text } from '@island.is/island-ui/core'
 import { CaseGender } from '@island.is/judicial-system/types'
 import React, { PropsWithChildren } from 'react'
-import { getShortGender } from '../../utils/stepHelper'
+import { getShortGender } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as styles from './InfoCard.treat'
 
 interface Props {
   data: Array<{ title: string; value?: string }>
   accusedName?: string
-  accusedGender?: CaseGender
   accusedNationalId?: string
   accusedAddress?: string
   defender?: { name: string; email?: string }
@@ -20,12 +19,10 @@ const InfoCard: React.FC<Props> = (props: PropsWithChildren<Props>) => {
       <Box className={styles.infoCardTitleContainer}>
         <Box marginBottom={4}>
           <Text fontWeight="semiBold">
-            {`${props.accusedName} `}
-            <Text as="span">{`(${getShortGender(
-              props.accusedGender,
-            )}), `}</Text>
-            {`${props.accusedNationalId}, `}
-            <Text as="span">{props.accusedAddress}</Text>
+            {props.accusedName}
+            <Text as="span">{`, `}</Text>
+            {`kt. ${props.accusedNationalId}`}
+            <Text as="span">{`, ${props.accusedAddress}`}</Text>
           </Text>
         </Box>
         <Box>

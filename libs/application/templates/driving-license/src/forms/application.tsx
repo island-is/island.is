@@ -17,6 +17,7 @@ import {
   buildDividerField,
   Form,
   FormModes,
+  formatText,
 } from '@island.is/application/core'
 import {
   NationalRegistryUser,
@@ -28,44 +29,41 @@ import { buildEntitlementOption } from '../utils'
 
 export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
-  title: 'Ökuskilríki',
+  title: m.applicationName,
   mode: FormModes.APPLYING,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'type',
-      title: 'Ökuréttindi',
+      title: m.externalDataSection,
       children: [
         buildExternalDataProvider({
-          title: 'Upplýsingasöfnun og skilyrði',
+          title: m.externalDataTitle,
           id: 'approveExternalData',
           dataProviders: [
             buildDataProviderItem({
               id: 'nationalRegistry',
               type: 'NationalRegistryProvider',
-              title: 'Persónuuplýsingar úr Þjóðskrá',
-              subTitle:
-                'Til þess að auðvelda fyrir sækjum við persónuuplýsingar úr Þjóðskrá til þess að fylla út í umsóknina',
+              title: m.nationalRegistryTitle,
+              subTitle: m.nationalRegistrySubTitle,
             }),
             buildDataProviderItem({
               id: 'userProfile',
               type: 'UserProfileProvider',
-              title: 'Netfang og símanúmer úr þínum stillingum',
-              subTitle:
-                'Til þess að auðvelda umsóknarferlið er gott að hafa stillt netfang og símanúmer á mínum síðum',
+              title: m.userProfileInformationTitle,
+              subTitle: m.userProfileInformationSubTitle,
             }),
             buildDataProviderItem({
               id: 'penaltyPoints',
               type: 'PenaltyPointsProvider',
-              title: 'Punktastaða úr Ökuskírteinaskrá',
-              subTitle:
-                'Til þess að tryggja að notandi hafi heimild til þess að sækja um ökuskírteini út frá punktastöðu',
+              title: m.penaltyPointsTitle,
+              subTitle: m.penaltyPointsSubTitle,
             }),
             buildDataProviderItem({
               id: 'residence',
               type: undefined,
-              title: 'Búseta',
-              subTitle:
-                'Ég hef fasta búsetu hér á landi eins og hún er skilgreind í VIII. viðauka reglugerðar um ökuskírteini eða tel mig fullnægja skilyrðum um búsetu hér á landi til að fá gefið út ökuskírteini.',
+              title: m.residenceTitle,
+              subTitle: m.residenceSubTitle,
             }),
             buildDataProviderItem({
               id: 'entitlementTypes',
@@ -76,16 +74,16 @@ export const application: Form = buildForm({
           ],
         }),
         buildMultiField({
-          id: 'user',
-          title: 'Ég er að sækja um:',
+          id: 'type',
+          title: m.typeFieldMultiFieldTitle,
           children: [
             buildCheckboxField({
               id: 'type',
-              title: 'Tegund ökutækja',
+              title: m.typeFieldCheckbox,
               options: [
-                { value: 'general', label: 'Almenn ökuréttindi' },
-                { value: 'bike', label: 'Bifhjólaréttindi' },
-                { value: 'trailer', label: 'Kerrur og eftirvagnar' },
+                { value: 'car', label: m.typeFieldCar },
+                { value: 'motorcycle', label: m.typeFieldMotorcycle },
+                { value: 'trailer', label: m.typeFieldTrailer },
               ],
             }),
           ],
@@ -94,18 +92,18 @@ export const application: Form = buildForm({
     }),
     buildSection({
       id: 'subType',
-      title: 'Tegund',
+      title: m.subTypeFieldTitle,
       children: [
         buildMultiField({
           id: 'subType',
-          title: 'Ég er að sækja um:',
+          title: m.subTypeFieldMultiFieldTitle,
           space: 6,
           children: [
             buildCheckboxField({
               id: 'subType',
-              title: 'Fólksbílaflokkar',
+              title: m.subTypeFieldCar,
               condition: ({ type }) =>
-                (type as string[])?.includes('general') ||
+                (type as string[])?.includes('car') ||
                 (type as string[])?.includes('trailer'),
               options: (app) => {
                 const entitlementTypes = app.externalData.entitlementTypes
@@ -119,28 +117,16 @@ export const application: Form = buildForm({
             }),
             buildCheckboxField({
               id: 'subType',
-              title: 'Bifhjólaflokkar',
-              condition: ({ type }) => (type as string[])?.includes('bike'),
+              title: m.subTypeFieldMotorcycle,
+              condition: ({ type }) =>
+                (type as string[])?.includes('motorcycle'),
               options: (app) => {
                 const entitlementTypes = app.externalData.entitlementTypes
                   .data as DrivingLicenseType[]
                 return [
                   buildEntitlementOption(entitlementTypes, 'A'),
                   buildEntitlementOption(entitlementTypes, 'A1'),
-                  {
-                    ...buildEntitlementOption(entitlementTypes, 'A2'),
-                    tooltip: `<h2>A2 flokkur</h2>
-  <br />
-  Veitir ökuréttindi til að stjórna bifhjóli:
-  <br /><br />
-  1. á tveimur hjólum með eða án hliðarvagns, með afl sem er ekki yfir 35 kw, með afl/þyngdarhlutfall sem er ekki yfir 0,2 kw/kg, svo og   bifhjóli sem hefur ekki verið breytt frá því að hafa áður meira en tvöfalt afl.
-  <br /><br />
-  2. bifhjóli í flokki A1.
-  <br /><br />
-  3. léttu bifhjóli í flokki AM.
-  <br /><br />
-  Ökuskírteini fyrir A2 flokk fyrir bifhjólaréttindi geta þeir fengið sem náð hafa 19 ára aldri. Taka þarf bóklegt námskeið fyrir A réttindi og 11 stundir í verklegri kennslu, ath að 5 stundir fást metnar ef viðkomandi aðili hefur fyrir A1 réttindi`,
-                  },
+                  buildEntitlementOption(entitlementTypes, 'A2'),
                   buildEntitlementOption(entitlementTypes, 'AM'),
                 ]
               },
@@ -151,24 +137,24 @@ export const application: Form = buildForm({
     }),
     buildSection({
       id: 'user',
-      title: 'Upplýsingar',
+      title: m.informationSectionTitle,
       children: [
         buildMultiField({
           id: 'info',
-          title: 'Upplýsingar',
+          title: m.informationMultiFieldTitle,
           children: [
             buildKeyValueField({
-              label: 'Umsækjandi',
+              label: m.informationApplicant,
               value: ({ externalData: { nationalRegistry } }) =>
                 (nationalRegistry.data as NationalRegistryUser).fullName,
             }),
             buildDividerField({
-              title: 'Ökukennari',
+              title: m.informationTeacher,
               color: 'dark400',
             }),
             buildTextField({
               id: 'teacher',
-              title: 'Ökukennari',
+              title: m.informationTeacher,
               width: 'half',
               backgroundColor: 'blue',
             }),
@@ -178,11 +164,11 @@ export const application: Form = buildForm({
     }),
     buildSection({
       id: 'healthDeclaration',
-      title: 'Heilbrigðisyfirlýsing',
+      title: m.healthDeclarationSectionTitle,
       children: [
         buildMultiField({
           id: 'overview',
-          title: 'Heilbrigðisyfirlýsing',
+          title: m.healthDeclarationMultiFieldTitle,
           space: 1,
           children: [
             buildCustomField(
@@ -192,9 +178,8 @@ export const application: Form = buildForm({
                 component: 'HealthDeclaration',
               },
               {
-                title: 'Yfirlýsing um líkamlegt og andlegt heilbrigði',
-                label:
-                  '1. Notar þú gleraugu, snertilinsur eða hefur skerta sjón?',
+                title: m.healthDeclarationMultiFieldSubTitle,
+                label: m.healthDeclaration1,
               },
             ),
             buildCustomField(
@@ -204,8 +189,7 @@ export const application: Form = buildForm({
                 component: 'HealthDeclaration',
               },
               {
-                label:
-                  '2. Hefur þú verið flogaveik(ur) eða orðið fyrir alvarlegri truflun á meðvitund og stjórn hreyfinga?',
+                label: m.healthDeclaration2,
               },
             ),
             buildCustomField(
@@ -215,8 +199,7 @@ export const application: Form = buildForm({
                 component: 'HealthDeclaration',
               },
               {
-                label:
-                  '3. Hefur þú nú eða hefur þú haft alvarlegan hjartasjúkdóm?',
+                label: m.healthDeclaration3,
               },
             ),
             buildCustomField(
@@ -226,8 +209,7 @@ export const application: Form = buildForm({
                 component: 'HealthDeclaration',
               },
               {
-                label:
-                  '4. Hefur þú nú eða hefur þú haft alvarlegan geðsjúkdóm?',
+                label: m.healthDeclaration4,
               },
             ),
             buildCustomField(
@@ -237,8 +219,7 @@ export const application: Form = buildForm({
                 component: 'HealthDeclaration',
               },
               {
-                label:
-                  '5. Notar þú að staðaldri læknislyf eða lyfjablöndur sem geta haft áhrif á meðvitund?',
+                label: m.healthDeclaration5,
               },
             ),
             buildCustomField(
@@ -248,8 +229,7 @@ export const application: Form = buildForm({
                 component: 'HealthDeclaration',
               },
               {
-                label:
-                  '6. Ert þú háð(ur) áfengi, ávana- og/eða fíkniefnum eða misnotar þú geðræn lyf sem verkað gætu á meðvitund?',
+                label: m.healthDeclaration6,
               },
             ),
             buildCustomField(
@@ -259,7 +239,7 @@ export const application: Form = buildForm({
                 component: 'HealthDeclaration',
               },
               {
-                label: '7. Notar þú insúlín og/eða töflur við sykursýki?',
+                label: m.healthDeclaration7,
               },
             ),
             buildCustomField(
@@ -269,8 +249,7 @@ export const application: Form = buildForm({
                 component: 'HealthDeclaration',
               },
               {
-                label:
-                  '8. Hefur þú nú eða hefur þú haft hömlur í hreyfikerfi líkamans?',
+                label: m.healthDeclaration8,
               },
             ),
             buildCustomField(
@@ -280,8 +259,7 @@ export const application: Form = buildForm({
                 component: 'HealthDeclaration',
               },
               {
-                label:
-                  '9. Átt þú við einhvern annan sjúkdóm að stríða sem þú telur að geti haft áhrif á öryggi þitt í akstri í framtíðinni?',
+                label: m.healthDeclaration9,
               },
             ),
           ],
@@ -290,78 +268,77 @@ export const application: Form = buildForm({
     }),
     buildSection({
       id: 'overview',
-      title: 'Staðfesting',
+      title: m.overviewSectionTitle,
       children: [
         buildMultiField({
           id: 'overview',
-          title: 'Yfirlit',
+          title: m.overviewMultiFieldTitle,
           space: 1,
-          description:
-            'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp.',
+          description: m.overviewMultiFieldDescription,
           children: [
             buildKeyValueField({
-              label: 'Tegund ökuréttinda',
-              value: ({ answers: { subType } }) => subType,
+              label: m.overviewSubType,
+              value: ({ answers: { subType } }) => subType as string[],
             }),
             buildDividerField({}),
             buildKeyValueField({
-              label: 'Nafn',
+              label: m.overviewName,
               width: 'half',
               value: ({ externalData: { nationalRegistry } }) =>
                 (nationalRegistry.data as NationalRegistryUser).fullName,
             }),
             buildKeyValueField({
-              label: 'Sími',
+              label: m.overviewPhoneNumber,
               width: 'half',
               value: ({ externalData: { userProfile } }) =>
-                (userProfile.data as UserProfile).mobilePhoneNumber,
+                (userProfile.data as UserProfile).mobilePhoneNumber as string,
             }),
             buildKeyValueField({
-              label: 'Heimili',
+              label: m.overviewStreetAddress,
               width: 'half',
               value: ({ externalData: { nationalRegistry } }) =>
                 (nationalRegistry.data as NationalRegistryUser).address
                   ?.streetAddress,
             }),
             buildKeyValueField({
-              label: 'Kennitala',
+              label: m.overviewNationalId,
               width: 'half',
               value: ({ externalData: { nationalRegistry } }) =>
                 (nationalRegistry.data as NationalRegistryUser).nationalId,
             }),
             buildKeyValueField({
-              label: 'Póstnúmer',
+              label: m.overviewPostalCode,
               width: 'half',
               value: ({ externalData: { nationalRegistry } }) =>
                 (nationalRegistry.data as NationalRegistryUser).address
                   ?.postalCode,
             }),
             buildKeyValueField({
-              label: 'Netfang',
+              label: m.overviewEmail,
               width: 'half',
               value: ({ externalData: { userProfile } }) =>
-                (userProfile.data as UserProfile).email,
+                (userProfile.data as UserProfile).email as string,
             }),
             buildKeyValueField({
-              label: 'Staður',
+              label: m.overviewCity,
               width: 'half',
               value: ({ externalData: { nationalRegistry } }) =>
                 (nationalRegistry.data as NationalRegistryUser).address?.city,
             }),
             buildDividerField({}),
             buildKeyValueField({
-              label: 'Ökukennari',
-              value: ({ answers: { teacher } }) => teacher,
+              label: m.overviewTeacher,
+              value: ({ answers: { teacher } }) => teacher as string,
             }),
             buildDividerField({}),
             buildCheckboxField({
               id: 'willBringAlongData',
-              title: 'Gögn höfð meðferðis til sýslumanns',
+              title: m.overviewBringData,
               options: (app) => {
                 const options = [
                   {
                     value: 'picture',
-                    label: 'Ég kem með mynd og rithandarsýni til sýslumanns',
+                    label: m.overviewBringPhoneData,
                   },
                 ]
                 if (
@@ -370,7 +347,7 @@ export const application: Form = buildForm({
                   return [
                     {
                       value: 'certificate',
-                      label: 'Ég kem með vottorð frá lækni meðferðis',
+                      label: m.overviewBringCertificateData,
                     },
                     ...options,
                   ]
@@ -381,22 +358,27 @@ export const application: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: 'sick',
+              title: 'submit',
               actions: [
                 {
                   event: 'SUBMIT',
-                  name: 'Smelltu hér til að senda inn umsókn',
+                  name: m.overviewSubmit,
                   type: 'primary',
                 },
               ],
             }),
           ],
         }),
-        buildDescriptionField({
+        buildCustomField({
           id: 'overview',
-          title: 'Til hamingju',
-          description:
-            'Með því að smella á "Senda" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
+          component: 'Congratulations',
+          title: ({ externalData: { nationalRegistry } }) => [
+            m.overviewCongratulations,
+            ' ',
+            (nationalRegistry?.data as NationalRegistryUser)?.fullName.split(
+              ' ',
+            )[0],
+          ],
         }),
       ],
     }),

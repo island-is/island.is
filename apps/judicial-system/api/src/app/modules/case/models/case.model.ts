@@ -43,10 +43,10 @@ export class Case implements TCase {
   readonly accusedGender?: CaseGender
 
   @Field({ nullable: true })
-  readonly requestedDefenderName?: string
+  readonly defenderName?: string
 
   @Field({ nullable: true })
-  readonly requestedDefenderEmail?: string
+  readonly defenderEmail?: string
 
   @Field({ nullable: true })
   readonly court?: string
@@ -106,12 +106,6 @@ export class Case implements TCase {
   readonly courtRoom?: string
 
   @Field({ nullable: true })
-  readonly defenderName?: string
-
-  @Field({ nullable: true })
-  readonly defenderEmail?: string
-
-  @Field({ nullable: true })
   readonly courtStartTime?: string
 
   @Field({ nullable: true })
@@ -122,6 +116,9 @@ export class Case implements TCase {
 
   @Field({ nullable: true })
   readonly policeDemands?: string
+
+  @Field(() => [String], { nullable: true })
+  readonly courtDocuments?: string[]
 
   @Field({ nullable: true })
   readonly accusedPlea?: string

@@ -9,18 +9,22 @@ import {
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   FormFooter,
-  CourtDocument,
+  CourtDocuments,
   PageLayout,
   TimeInputField,
   CaseNumbers,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import {
+  formatAccusedByGender,
+  NounCases,
+  TIME_FORMAT,
+} from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useParams } from 'react-router-dom'
-import { Case, UpdateCase } from '@island.is/judicial-system/types'
+import { Case, CaseGender, UpdateCase } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
@@ -66,6 +70,7 @@ export const CourtRecord: React.FC = () => {
       const { data } = await updateCaseMutation({
         variables: { input: { id, ...updateCase } },
       })
+
       const resCase = data?.updateCase
       if (resCase) {
         // Do something with the result. In particular, we want th modified timestamp passed between
@@ -80,25 +85,31 @@ export const CourtRecord: React.FC = () => {
     document.title = 'Þingbók - Réttarvörslugátt'
   }, [])
 
-  const defaultCourtAttendees = (wc: Case): string => {
-    let attendees = ''
-
-    if (wc.prosecutor && wc.accusedName) {
-      attendees += `${wc.prosecutor?.name} ${wc.prosecutor?.title}\n${wc.accusedName} kærði`
-    }
-
-    if (wc.defenderName) {
-      attendees += `\n${wc.defenderName} skipaður verjandi kærða`
-    }
-
-    return attendees
-  }
-
   useEffect(() => {
+    const defaultCourtAttendees = (wc: Case): string => {
+      let attendees = ''
+
+      if (wc.prosecutor && wc.accusedName) {
+        attendees += `${wc.prosecutor?.name} ${wc.prosecutor?.title}\n${
+          wc.accusedName
+        } ${formatAccusedByGender(wc?.accusedGender || CaseGender.OTHER)}`
+      }
+
+      if (wc.defenderName) {
+        attendees += `\n${
+          wc.defenderName
+        } skipaður verjandi ${formatAccusedByGender(
+          wc?.accusedGender || CaseGender.OTHER,
+          NounCases.DATIVE,
+        )}`
+      }
+
+      return attendees
+    }
     if (!workingCase && data?.case) {
       let theCase = data.case
 
-      if (!theCase.courtAttendees) {
+      if (theCase.courtAttendees !== defaultCourtAttendees(theCase)) {
         theCase = { ...theCase, courtAttendees: defaultCourtAttendees(theCase) }
 
         if (theCase.courtAttendees) {
@@ -259,11 +270,16 @@ export const CourtRecord: React.FC = () => {
             </Box>
             <GridRow>
               <GridColumn span="6/7">
-                <CourtDocument
+                <CourtDocuments
                   title="Krafa lögreglu"
                   tagText="Þingmerkt nr. 1"
-                  tagVariant="blue"
+                  tagVariant="darkerBlue"
                   text="Rannsóknargögn málsins liggja frammi."
+                  caseId={workingCase.id}
+                  selectedCourtDocuments={workingCase.courtDocuments || []}
+                  onUpdateCase={updateCase}
+                  setWorkingCase={setWorkingCase}
+                  workingCase={workingCase}
                 />
               </GridColumn>
             </GridRow>
@@ -271,23 +287,32 @@ export const CourtRecord: React.FC = () => {
           <Box component="section" marginBottom={8}>
             <Box marginBottom={1}>
               <Text as="h3" variant="h3">
-                Réttindi kærða
+                {`Réttindi ${formatAccusedByGender(
+                  workingCase.accusedGender || CaseGender.OTHER,
+                  NounCases.DATIVE,
+                )}`}
               </Text>
             </Box>
             <Box marginBottom={2}>
               <Text>
-                Kærða er bent á að honum sé óskylt að svara spurningum er varða
-                brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga
-                nr. 88/2008. Kærði er enn fremur áminntur um sannsögli kjósi
-                hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga
+                Sakborningi er bent á að honum sé óskylt að svara spurningum er
+                varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr.
+                laga nr. 88/2008. Sakborningur er enn fremur áminntur um
+                sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114.
+                gr. sömu laga
               </Text>
             </Box>
             <Input
               data-testid="accusedPlea"
               name="accusedPlea"
-              label="Afstaða kærða"
+              label={`Afstaða ${formatAccusedByGender(
+                workingCase.accusedGender || CaseGender.OTHER,
+                NounCases.DATIVE,
+              )}`}
               defaultValue={workingCase.accusedPlea}
-              placeholder="Hvað hafði kærði að segja um kröfuna? Mótmælti eða samþykkti?"
+              placeholder={`Hvað hafði ${formatAccusedByGender(
+                workingCase.accusedGender || CaseGender.OTHER,
+              )} að segja um kröfuna? Mótmælti eða samþykkti?`}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'accusedPlea',

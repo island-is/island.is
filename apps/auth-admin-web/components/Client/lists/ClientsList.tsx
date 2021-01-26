@@ -99,7 +99,11 @@ class ClientsList extends Component {
                 </div>
                 <form onSubmit={this.search}>
                   <div className="clients__container__options__search">
+                    <label htmlFor="search" className="clients__label">
+                      National Id or Client Id
+                    </label>
                     <input
+                      id="search"
                       className="clients__input__search"
                       value={this.state.searchString}
                       onChange={this.handleSearchChange}
@@ -116,7 +120,7 @@ class ClientsList extends Component {
                     <tr>
                       <th>Client Id</th>
                       <th>National Id</th>
-                      <th>Description</th>
+                      <th>Contact</th>
                       <th>Type</th>
                       <th colSpan={2}></th>
                     </tr>
@@ -130,7 +134,7 @@ class ClientsList extends Component {
                         >
                           <td>{client.clientId}</td>
                           <td>{client.nationalId}</td>
-                          <td>{client.description}</td>
+                          <td>{client.contactEmail}</td>
                           <td>{client.clientType}</td>
                           <td className="clients__table__button">
                             <Link

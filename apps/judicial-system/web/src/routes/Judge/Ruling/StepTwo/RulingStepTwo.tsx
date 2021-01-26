@@ -19,6 +19,7 @@ import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseGender,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -41,6 +42,11 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  capitalize,
+  formatAccusedByGender,
+  NounCases,
+} from '@island.is/judicial-system/formatters'
 
 export const RulingStepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -179,7 +185,11 @@ export const RulingStepTwo: React.FC = () => {
               <BlueBox>
                 <Box marginBottom={2}>
                   <Text as="h4" variant="h4">
-                    Kærði{' '}
+                    {capitalize(
+                      formatAccusedByGender(
+                        workingCase.accusedGender || CaseGender.OTHER,
+                      ),
+                    )}{' '}
                     <Text as="span" color="red600" fontWeight="semiBold">
                       *
                     </Text>
@@ -191,7 +201,11 @@ export const RulingStepTwo: React.FC = () => {
                       <RadioButton
                         name="accused-appeal-decition"
                         id="accused-appeal"
-                        label="Kærði kærir úrskurðinn"
+                        label={`${capitalize(
+                          formatAccusedByGender(
+                            workingCase.accusedGender || CaseGender.OTHER,
+                          ),
+                        )} kærir úrskurðinn`}
                         value={CaseAppealDecision.APPEAL}
                         checked={
                           workingCase.accusedAppealDecision ===
@@ -219,7 +233,11 @@ export const RulingStepTwo: React.FC = () => {
                       <RadioButton
                         name="accused-appeal-decition"
                         id="accused-accept"
-                        label="Kærði unir úrskurðinum"
+                        label={`${capitalize(
+                          formatAccusedByGender(
+                            workingCase.accusedGender || CaseGender.OTHER,
+                          ),
+                        )} unir úrskurðinum`}
                         value={CaseAppealDecision.ACCEPT}
                         checked={
                           workingCase.accusedAppealDecision ===
@@ -251,7 +269,11 @@ export const RulingStepTwo: React.FC = () => {
                       <RadioButton
                         name="accused-appeal-decition"
                         id="accused-postpone"
-                        label="Kærði tekur sér lögboðinn frest"
+                        label={`${capitalize(
+                          formatAccusedByGender(
+                            workingCase.accusedGender || CaseGender.OTHER,
+                          ),
+                        )}  tekur sér lögboðinn frest`}
                         value={CaseAppealDecision.POSTPONE}
                         checked={
                           workingCase.accusedAppealDecision ===
@@ -280,7 +302,10 @@ export const RulingStepTwo: React.FC = () => {
                 <Input
                   name="accusedAppealAnnouncement"
                   data-testid="accusedAppealAnnouncement"
-                  label="Yfirlýsing um kæru kærða"
+                  label={`Yfirlýsing um kæru ${formatAccusedByGender(
+                    workingCase.accusedGender || CaseGender.OTHER,
+                    NounCases.DATIVE,
+                  )}`}
                   defaultValue={workingCase.accusedAppealAnnouncement}
                   disabled={
                     workingCase.accusedAppealDecision !==
@@ -667,7 +692,7 @@ export const RulingStepTwo: React.FC = () => {
               workingCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) && (
               <Text variant="h4" fontWeight="light">
-                {`Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
+                {`Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera
                 atriði er lúta að framkvæmd ${
                   workingCase.decision === CaseDecision.ACCEPTING
                     ? 'gæsluvarðhaldsins'

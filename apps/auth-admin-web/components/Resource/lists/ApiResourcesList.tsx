@@ -101,7 +101,7 @@ const ApiResourcesList: React.FC = () => {
       <div className="api-resources-list">
         <div className="api-resources-list__wrapper">
           <div className="api-resources-list__container">
-            <h1>Api resource</h1>
+            <h1>Api resources</h1>
             <div className="api-resources-list__container__options">
               <div className="api-resources-list__container__options__button">
                 <Link href={'/resource/api-resource'}>
@@ -113,7 +113,11 @@ const ApiResourcesList: React.FC = () => {
               </div>
               <form onSubmit={search}>
                 <div className="api-resources-list__container__options__search">
+                  <label htmlFor="search" className="api-resources-list__label">
+                    National Id or Resource name
+                  </label>
                   <input
+                    id="search"
                     className="api-resources-list__input__search"
                     value={searchString}
                     onChange={handleSearchChange}
@@ -132,8 +136,8 @@ const ApiResourcesList: React.FC = () => {
                 <thead>
                   <tr>
                     <th>Name</th>
-                    <th>Display Name</th>
                     <th>National Id</th>
+                    <th>Contact Email</th>
                     <th colSpan={2}></th>
                   </tr>
                 </thead>
@@ -145,8 +149,8 @@ const ApiResourcesList: React.FC = () => {
                         className={resource.archived ? 'archived' : ''}
                       >
                         <td>{resource.name}</td>
-                        <td>{resource.displayName}</td>
                         <td>{resource.nationalId}</td>
+                        <td>{resource.contactEmail}</td>
                         <td className="api-resources-list__table__button">
                           <button
                             type="button"

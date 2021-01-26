@@ -31,8 +31,8 @@ export const CreateCaseMutation = gql`
       accusedName
       accusedAddress
       accusedGender
-      requestedDefenderName
-      requestedDefenderEmail
+      defenderName
+      defenderEmail
       court
       arrestDate
       requestedCourtDate
@@ -55,12 +55,11 @@ export const CreateCaseMutation = gql`
       courtDate
       isCourtDateInThePast
       courtRoom
-      defenderName
-      defenderEmail
       courtStartTime
       courtEndTime
       courtAttendees
       policeDemands
+      courtDocuments
       accusedPlea
       litigationPresentations
       ruling
@@ -101,6 +100,16 @@ export const CasesQuery = gql`
   }
 `
 
+export const UsersQuery = gql`
+  query UsersQuery {
+    users {
+      id
+      name
+      role
+    }
+  }
+`
+
 export const ExtendCaseMutation = gql`
   mutation ExtendCaseMutation($input: ExtendCaseInput!) {
     extendCase(input: $input) {
@@ -113,8 +122,8 @@ export const ExtendCaseMutation = gql`
       accusedName
       accusedAddress
       accusedGender
-      requestedDefenderName
-      requestedDefenderEmail
+      defenderName
+      defenderEmail
       court
       arrestDate
       requestedCourtDate
@@ -137,12 +146,11 @@ export const ExtendCaseMutation = gql`
       courtDate
       isCourtDateInThePast
       courtRoom
-      defenderName
-      defenderEmail
       courtStartTime
       courtEndTime
       courtAttendees
       policeDemands
+      courtDocuments
       accusedPlea
       litigationPresentations
       ruling
