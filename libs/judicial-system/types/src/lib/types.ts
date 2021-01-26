@@ -176,6 +176,7 @@ export interface UpdateCase {
   caseFacts?: string
   legalArguments?: string
   comments?: string
+  prosecutorId?: string
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string

@@ -14,6 +14,14 @@ export class UserService {
     private readonly logger: Logger,
   ) {}
 
+  getAll(): Promise<User[]> {
+    return this.userModel.findAll({
+      where: {
+        active: true,
+      },
+    })
+  }
+
   findByNationalId(nationalId: string): Promise<User> {
     this.logger.debug(`Getting user with national id ${nationalId}`)
 
