@@ -9,7 +9,11 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  formatAccusedByGender,
+  formatDate,
+} from '@island.is/judicial-system/formatters'
 import React, { useEffect, useState, useRef, useCallback } from 'react'
 import {
   FormFooter,
@@ -23,6 +27,7 @@ import {
   Case,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseGender,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -392,7 +397,11 @@ export const RulingStepOne: React.FC = () => {
                   <GridColumn span="6/12">
                     <Checkbox
                       name="B - Einangrun"
-                      label="Kærði skal sæta einangrun"
+                      label={`${capitalize(
+                        formatAccusedByGender(
+                          workingCase.accusedGender || CaseGender.OTHER,
+                        ),
+                      )} skal sæta einangrun`}
                       tooltip="Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum."
                       value={CaseCustodyRestrictions.ISOLATION}
                       checked={workingCase.custodyRestrictions?.includes(
