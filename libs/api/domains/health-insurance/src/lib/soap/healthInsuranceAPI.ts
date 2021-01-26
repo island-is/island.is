@@ -88,7 +88,7 @@ export class HealthInsuranceAPI {
           if (err) {
             logger.error(JSON.stringify(err, null, 2))
             reject(err)
-          } else if (!result['SjukratryggdurType']) {
+          } else if (!result.SjukratryggdurType?.sjukratryggdur) {
             logger.error(
               `Something went totally wrong in 'Sjukratryggdur' call with result: ${JSON.stringify(
                 result,
@@ -98,25 +98,14 @@ export class HealthInsuranceAPI {
             )
             reject(result)
           } else {
-            if (!result['SjukratryggdurType']['sjukratryggdur']) {
-              logger.error(
-                `Something went totally wrong in 'Sjukratryggdur' call with result: ${JSON.stringify(
-                  result,
-                  null,
-                  2,
-                )}`,
-              )
-              reject(result)
-            } else {
-              logger.info(
-                `Successful get sjukratryggdur information for ${nationalId} with result: ${JSON.stringify(
-                  result,
-                  null,
-                  2,
-                )}`,
-              )
-              resolve(result)
-            }
+            logger.info(
+              `Successful get sjukratryggdur information for ${nationalId} with result: ${JSON.stringify(
+                result,
+                null,
+                2,
+              )}`,
+            )
+            resolve(result)
           }
         },
       )

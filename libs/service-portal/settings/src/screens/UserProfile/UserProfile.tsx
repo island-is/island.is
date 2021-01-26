@@ -18,7 +18,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
 
   return (
     <>
-      <Box marginBottom={6}>
+      <Box marginBottom={5}>
         <Text variant="h1" as="h1">
           {formatMessage({
             id: 'service.portal:settings',
