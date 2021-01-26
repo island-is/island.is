@@ -361,5 +361,5 @@ export const getFirstFoundAwsEsPackageVersion = async (
     }
   }
 
-  return '' // we found no version
+  return null // we found no version
 }

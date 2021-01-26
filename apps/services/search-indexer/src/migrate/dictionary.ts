@@ -65,16 +65,22 @@ export const getDictionaryFilesAfterVersion = async (
   currentVersion: string,
 ): Promise<Dictionary[]> => {
   const commits = getCommits()
+  let newCommits
+  if (currentVersion) {
+    // find what versions are missing given the current found version
+    const currentVersionIndex = commits.findIndex((commit) =>
+      commit.startsWith(currentVersion),
+    )
+    // we just want to import commits between last commit and current HEAD
+    newCommits = commits.slice(0, currentVersionIndex)
+  } else {
+    // if we don't have a version we will import all commits
+    newCommits = commits
+  }
 
-  // find what versions are missing given the current found version
-  const currentVersionIndex = commits.findIndex((commit) =>
-    commit.startsWith(currentVersion),
-  )
-  // if we don't find the index location we assume we should import all found versions
-  const newCommits =
-    currentVersionIndex === -1 ? commits : commits.slice(0, currentVersionIndex)
-
-  logger.info('Trying to get dictionary packages', { commits: newCommits })
+  logger.info('Trying to get dictionary files from dictionary repo', {
+    commits: newCommits,
+  })
 
   // fetch all missing dictionary files for each version
   const dictionaryFiles: Dictionary[] = []
@@ -96,7 +102,9 @@ export const getDictionaryFilesAfterVersion = async (
     }
   }
 
-  logger.info('Done getting packages', { fileCount: dictionaryFiles.length })
+  logger.info('Done getting dictionary files from dictionary repo', {
+    fileCount: dictionaryFiles.length,
+  })
 
   return dictionaryFiles
 }

@@ -15,7 +15,7 @@ class App {
 
     const hasAwsAccess = await aws.checkAWSAccess()
 
-    if (hasAwsAccess) {
+    if (hasAwsAccess || true) {
       await this.migrateAws()
     }
 
@@ -38,9 +38,15 @@ class App {
     this allows us to upload all versions since last sync
     */
     const dictionaryVersions = dictionary.getDictionaryVersions() // returns versions of the dictionary in order with the newest version first
+    logger.info('Found dictionary versions in dictionary repo', {
+      version: dictionaryVersions,
+    })
     const latestAwsDictionaryVersion = await aws.getFirstFoundAwsEsPackageVersion(
       dictionaryVersions,
     )
+    logger.info('Latest aws dictionary version', {
+      version: latestAwsDictionaryVersion,
+    })
     const newDictionaryFiles = await dictionary.getDictionaryFilesAfterVersion(
       latestAwsDictionaryVersion,
     )
