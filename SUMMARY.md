@@ -119,6 +119,7 @@
 - [Content Search Indexer](libs/content-search-indexer/README.md)
 - [Content Search Metrics](libs/content-search-metrics/README.md)
 - [Content Search Toolkit](libs/content-search-toolkit/README.md)
+- [Contentful Translation Extension](libs/contentful-translation-extension/README.md)
 - [Dokobit Signing](libs/dokobit-signing/README.md)
 - [Email Service](libs/email-service/README.md)
 - [Island UI](libs/island-ui/README.md)
