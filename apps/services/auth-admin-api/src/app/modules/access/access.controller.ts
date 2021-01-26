@@ -10,7 +10,6 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   Post,
   Put,
@@ -71,19 +70,24 @@ export class AccessController {
     },
   })
   async findAndCountAll(
+    @Query('searchString') searchString: string,
     @Query('page') page: number,
     @Query('count') count: number,
   ): Promise<{ rows: AdminAccess[]; count: number } | null> {
-    const clients = await this.accessService.findAndCountAll(page, count)
-    return clients
+    const admins = await this.accessService.findAndCountAll(
+      searchString,
+      page,
+      count,
+    )
+    return admins
   }
 
   /** Creates a new admin */
   @Post()
   @UseGuards(FullAdminAccessGuard)
   @ApiCreatedResponse({ type: AdminAccess })
-  async create(@Body() client: AdminAccessDTO): Promise<AdminAccess> {
-    return await this.accessService.create(client)
+  async create(@Body() admin: AdminAccessDTO): Promise<AdminAccess> {
+    return await this.accessService.create(admin)
   }
 
   /** Updates an existing admin */
