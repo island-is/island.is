@@ -1,4 +1,13 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import {
+  Button,
+  Box,
+  Stack,
+  Text,
+  LinkContext,
+  Checkbox,
+} from '@island.is/island-ui/core'
 
 import * as styles from './EmbeddedVideo.treat'
 
@@ -8,42 +17,136 @@ export interface EmbeddedVideoProps {
 }
 
 const EmbeddedVideo: FC<EmbeddedVideoProps> = ({ title, url }) => {
-  let embedUrl = null
+  const [allowed, setAllowed] = useState<boolean>(false)
+  const [embedUrl, setEmbedUrl] = useState<string | null>(null)
+  const [termsUrl, setTermsUrl] = useState<string>(null)
+  const [itemKey, setItemKey] = useState<string>('')
+  const [type, setType] = useState<'YOUTUBE' | 'VIMEO' | ''>('')
+  const methods = useForm()
 
-  if (url.includes('vimeo.com')) {
-    const match = /vimeo.*\/(\d+)/i.exec(url)
+  const { control } = methods
 
-    if (match) {
-      embedUrl = `https://player.vimeo.com/video/${match[1]}`
+  useEffect(() => {
+    if (url.includes('vimeo.com')) {
+      const match = /vimeo.*\/(\d+)/i.exec(url)
+
+      if (match) {
+        setEmbedUrl(`https://player.vimeo.com/video/${match[1]}`)
+        setTermsUrl(`https://vimeo.com/terms`)
+        setType('VIMEO')
+      }
     }
-  }
 
-  if (url.match(/(youtube.com|youtu.be)/g)) {
-    const regExp = /^.*((youtu.be|youtube.com\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/
-    const match = url.match(regExp)
+    if (url.match(/(youtube.com|youtu.be)/g)) {
+      const regExp = /^.*((youtu.be|youtube.com\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/
+      const match = url.match(regExp)
 
-    const youtubeId = match && match[7].length === 11 ? match[7] : false
+      const youtubeId = match && match[7].length === 11 ? match[7] : false
 
-    if (youtubeId) {
-      embedUrl = `https://www.youtube.com/embed/${youtubeId}`
+      if (youtubeId) {
+        setEmbedUrl(`https://www.youtube.com/embed/${youtubeId}`)
+        setTermsUrl(`https://www.youtube.com/t/terms`)
+        setType('YOUTUBE')
+      }
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    if (type) {
+      console.log('setting true...')
+      setItemKey(`ALLOW_EMBEDDED_VIDEO_${type}`)
+    }
+  }, [type])
+
+  useEffect(() => {
+    if (itemKey) {
+      const itemValue = localStorage.getItem(itemKey)
+      if (itemValue === 'true') {
+        setAllowed(true)
+      }
+    }
+  }, [itemKey])
 
   if (!embedUrl) {
     return null
   }
 
   return (
-    <span className={styles.container}>
-      <iframe
-        title={title}
-        src={embedUrl}
-        allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
-        frameBorder="0"
-        allowFullScreen
-        className={styles.iframe}
-      ></iframe>
-    </span>
+    <>
+      {allowed && (
+        <Box className={styles.container}>
+          <iframe
+            title={title}
+            src={embedUrl}
+            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+            frameBorder="0"
+            allowFullScreen
+            className={styles.content}
+          ></iframe>
+        </Box>
+      )}
+      {!allowed && (
+        <Box
+          padding={[3, 3, 6, 6, 10]}
+          display="inlineFlex"
+          justifyContent="center"
+          alignItems="center"
+          flexDirection="column"
+          background="blue100"
+        >
+          <Stack space={3}>
+            <Box>
+              <LinkContext.Provider
+                value={{
+                  linkRenderer: (href, children) => (
+                    <a
+                      className={styles.link}
+                      href={href}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      {children}
+                    </a>
+                  ),
+                }}
+              >
+                <Text variant="intro">
+                  Þetta myndband er hýst af þriðja aðila. Með því að birta þetta
+                  efni samþykkir þú <a href={termsUrl}>skilmála þeirra</a>.
+                </Text>
+              </LinkContext.Provider>
+            </Box>
+            <Box>
+              <Button
+                onClick={() => setAllowed(true)}
+                iconType="filled"
+                icon="arrowForward"
+              >
+                Birta
+              </Button>
+            </Box>
+            <Box>
+              <Controller
+                name="contentAllowed"
+                defaultValue={false}
+                control={control}
+                rules={{ required: false }}
+                render={({ value, onChange }) => (
+                  <Checkbox
+                    label="Muna þessa stillingu framvegis."
+                    checked={value}
+                    onChange={(e) => {
+                      onChange(e.target.checked)
+                      localStorage.setItem(itemKey, 'true')
+                    }}
+                  />
+                )}
+              />
+            </Box>
+          </Stack>
+        </Box>
+      )}
+    </>
   )
 }
 
