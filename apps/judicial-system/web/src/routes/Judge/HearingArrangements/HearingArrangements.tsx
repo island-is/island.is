@@ -25,6 +25,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import {
   Case,
   CaseState,
+  CaseType,
   NotificationType,
   UpdateCase,
 } from '@island.is/judicial-system/types'
@@ -195,6 +196,8 @@ export const HearingArrangements: React.FC = () => {
       isLoading={loading}
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      // TODO: UNCOMMENT
+      caseType={CaseType.TRAVEL_BAN} // {workingCase.caseType}
     >
       {workingCase ? (
         <>

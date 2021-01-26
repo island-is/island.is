@@ -13,6 +13,7 @@ import {
   Case,
   CaseState,
   CaseTransition,
+  CaseType,
   NotificationType,
   UpdateCase,
 } from '@island.is/judicial-system/types'
@@ -272,6 +273,8 @@ export const StepTwo: React.FC = () => {
       notFound={data?.case === undefined}
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      // TODO: UNCOMMENT
+      caseType={CaseType.TRAVEL_BAN} // {workingCase.caseType}
     >
       {workingCase ? (
         <>

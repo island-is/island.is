@@ -209,6 +209,8 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
       isExtension={!!workingCase?.parentCase}
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      // TODO: UNCOMMENT
+      caseType={CaseType.TRAVEL_BAN} // {workingCase.caseType}
     >
       {workingCase ? (
         <>

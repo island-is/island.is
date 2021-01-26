@@ -9,6 +9,7 @@ import {
   Case,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
 import React, { useContext, useEffect, useState } from 'react'
@@ -102,6 +103,8 @@ export const SignedVerdictOverview: React.FC = () => {
       notFound={data?.case === undefined}
       isCustodyEndDateInThePast={workingCase?.isCustodyEndDateInThePast}
       decision={data?.case?.decision}
+      // TODO: UNCOMMENT
+      caseType={CaseType.TRAVEL_BAN} // {workingCase.caseType}
     >
       {workingCase ? (
         <>

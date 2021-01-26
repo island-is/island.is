@@ -43,6 +43,7 @@ import {
   CaseGender,
   CaseState,
   CaseTransition,
+  CaseType,
   NotificationType,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
@@ -376,6 +377,8 @@ export const Confirmation: React.FC = () => {
       isLoading={loading}
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      // TODO: UNCOMMENT
+      caseType={CaseType.TRAVEL_BAN} // {workingCase.caseType}
     >
       {workingCase ? (
         <>

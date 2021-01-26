@@ -24,6 +24,7 @@ import {
   CaseCustodyProvisions,
   CaseState,
   CaseTransition,
+  CaseType,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as styles from './Overview.treat'
@@ -130,6 +131,8 @@ export const JudgeOverview: React.FC = () => {
       isLoading={loading}
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      // TODO: UNCOMMENT
+      caseType={CaseType.TRAVEL_BAN} // {workingCase.caseType}
     >
       {workingCase ? (
         <>

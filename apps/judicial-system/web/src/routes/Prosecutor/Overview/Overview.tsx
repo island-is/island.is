@@ -9,6 +9,7 @@ import {
   NotificationType,
   TransitionCase,
   CaseState,
+  CaseType,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -147,6 +148,8 @@ export const Overview: React.FC = () => {
       notFound={data?.case === undefined}
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      // TODO: UNCOMMENT
+      caseType={CaseType.TRAVEL_BAN} // {workingCase.caseType}
     >
       {workingCase ? (
         <>

@@ -15,7 +15,11 @@ import {
 } from '@island.is/judicial-system-web/src/shared-components/Logos'
 import { Loading } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { CaseDecision, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseDecision,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import { Link } from 'react-router-dom'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { Sections } from '@island.is/judicial-system-web/src/types'
@@ -25,6 +29,7 @@ interface PageProps {
   activeSection: number
   isLoading: boolean
   notFound: boolean
+  caseType: CaseType
   activeSubSection?: number
   decision?: CaseDecision
   parentCaseDecision?: CaseDecision
@@ -38,6 +43,7 @@ const PageLayout: FC<PageProps> = ({
   activeSubSection,
   isLoading,
   notFound,
+  caseType,
   decision,
   parentCaseDecision,
   isCustodyEndDateInThePast,
@@ -69,7 +75,10 @@ const PageLayout: FC<PageProps> = ({
 
   const sections = [
     {
-      name: 'Krafa um gæsluvarðhald',
+      name:
+        caseType === CaseType.DETENTION
+          ? 'Krafa um gæsluvarðhald'
+          : 'Krafa um farbann',
       children: [
         { type: 'SUB_SECTION', name: 'Sakborningur' },
         { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
@@ -176,7 +185,9 @@ const PageLayout: FC<PageProps> = ({
                     ? sections
                     : sections.filter((_, index) => index <= 2)
                 }
-                formName="Gæsluvarðhald"
+                formName={
+                  caseType === CaseType.DETENTION ? 'Gæsluvarðhald' : 'Farbann'
+                }
                 activeSection={activeSection}
                 activeSubSection={activeSubSection}
               />

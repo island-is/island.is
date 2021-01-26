@@ -19,6 +19,7 @@ import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseType,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -136,6 +137,8 @@ export const RulingStepTwo: React.FC = () => {
       activeSubSection={JudgeSubsections.RULING_STEP_TWO}
       isLoading={loading}
       notFound={data?.case === undefined}
+      // TODO: UNCOMMENT
+      caseType={CaseType.TRAVEL_BAN} // {workingCase.caseType}
     >
       {workingCase ? (
         <>
