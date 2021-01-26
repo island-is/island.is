@@ -33,12 +33,12 @@ export class CreateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly requestedDefenderName?: string
+  readonly defenderName?: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly requestedDefenderEmail?: string
+  readonly defenderEmail?: string
 
   @IsOptional()
   @IsString()
