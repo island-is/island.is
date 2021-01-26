@@ -21,7 +21,7 @@ ARG APP
 ENV APP=${APP}
 ENV NODE_ENV=production
 
-RUN yarn nx run ${APP}:build:production
+RUN yarn run build ${APP} --prod
 
 FROM node:12.19.0-alpine3.11 as output-base
 # this is base image for containers that are to be deployed
