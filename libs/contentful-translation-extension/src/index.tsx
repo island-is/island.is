@@ -122,7 +122,7 @@ class App extends React.Component<AppProps, AppState> {
           </TableRow>
 
           {activeLocales
-            .sort((a, b) => b.id.localeCompare(a.id))
+            .sort((a, b) => (a.id === 'is-IS' ? -1 : b.id === 'is-IS' ? 1 : 0))
             .map((locale, ii) => {
               const value = (item as any)?.[locale.id]
 
