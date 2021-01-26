@@ -78,7 +78,6 @@
 /scripts/postinstall.js                                   @island-is/devops @jeremybarbet
 /scripts/schemas.js                                       @island-is/devops @jeremybarbet
 
-/apps/api-catalogue/                                      @island-is/advania
 /libs/api/domains/api-catalogue/                          @island-is/advania
 /libs/api/domains/document-provider/                      @island-is/advania
 /libs/api-catalogue/                                      @island-is/advania
