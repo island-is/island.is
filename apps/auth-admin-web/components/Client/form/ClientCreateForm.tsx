@@ -5,8 +5,8 @@ import { ErrorMessage } from '@hookform/error-message'
 import HelpBox from '../../common/HelpBox'
 import { ClientService } from '../../../services/ClientService'
 import { Client } from './../../../entities/models/client.model'
-import { ClientTypeInfoService } from 'apps/auth-admin-web/services/ClientTypeInfoService'
-import { TimeUtils } from 'apps/auth-admin-web/utils/time.utils'
+import { ClientTypeInfoService } from './../../../services/ClientTypeInfoService'
+import { TimeUtils } from './../../../utils/time.utils'
 interface Props {
   client: ClientDTO
   onNextButtonClick?: (client: ClientDTO) => void
