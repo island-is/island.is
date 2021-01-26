@@ -5,7 +5,7 @@ export const downloadCSV = async (
   header: string[],
   getDataFunction: () => Promise<any[]>,
 ) => {
-  let data = await getDataFunction()
+  const data = await getDataFunction()
 
   data.unshift(header)
 
