@@ -120,8 +120,6 @@ const testCase2 = {
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase3 = {
@@ -167,8 +165,6 @@ const testCase3 = {
   judge: null,
   defenderName: '',
   defenderEmail: '',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase4 = {
@@ -216,8 +212,6 @@ const testCase4 = {
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase5 = {
@@ -266,8 +260,6 @@ const testCase5 = {
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase6 = {
@@ -317,8 +309,6 @@ const testCase6 = {
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase7 = {
@@ -367,8 +357,6 @@ const testCase7 = {
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase8 = {
@@ -418,8 +406,6 @@ const testCase8 = {
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
   parentCase: {
     custodyEndDate: '2021-01-18T19:50:08.033Z',
   },

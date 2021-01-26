@@ -141,7 +141,7 @@
     "application-template-loader": {
       "tags": []
     },
-    "application-templates-children-domicile-transfer": {
+    "application-templates-children-residence-change": {
       "tags": []
     },
     "application-templates-document-provider-onboarding": {
@@ -373,6 +373,9 @@
       "tags": []
     },
     "services-auth-api": {
+      "tags": []
+    },
+    "services-documents": {
       "tags": []
     },
     "services-search-indexer": {

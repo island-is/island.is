@@ -45,12 +45,12 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly requestedDefenderName?: string
+  readonly defenderName?: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly requestedDefenderEmail?: string
+  readonly defenderEmail?: string
 
   @IsOptional()
   @IsString()
@@ -131,16 +131,6 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly courtRoom?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly defenderName?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly defenderEmail?: string
 
   @IsOptional()
   @IsString()
