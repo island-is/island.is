@@ -256,8 +256,8 @@ nav[class$='pagination'] {
       border-radius: 0;
 
       &:disabled {
-        color: $color-disabled;
-        border-bottom: solid 2px $color-disabled;
+        color: $color-button-disabled;
+        border-bottom: solid 2px $color-button-disabled;
       }
 
       &:focus {
