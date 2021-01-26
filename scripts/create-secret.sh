@@ -1,37 +1,44 @@
 #!/bin/bash
 set -euo pipefail
 
+#---------------------------------------------------------------------------------------------------------------#
+#--- Script for creating secrets (SecureString) in the AWS parameter store using the path /k8s/[secret-name]----#
+#---------------------------------------------------------------------------------------------------------------#
 
-
-# Creates a secret (SecureString) in the parameter store using the path /k8s/[secret-name]
-
-## Colors
+#-------------------COLORS--------------------------#
 BLUE=$'\e[1;34m'
-LIGHT_BLUE=$'\e[1;96m'
 RED=$'\e[1;31m'
 GREEN=$'\e[1;32m'
 YELLOW=$'\e[1;33m'
 RESET=$'\x1b[0m'
 
-## Prompt user for secret name
-read -p $BLUE'Secret name: '$RESET SECRET_NAME
+#-------------------REGEX PATTERNS--------------------------#
+# Parameter store prefix
+SSM_PREFIX="/k8s/"
 
-## Minimum length
+# Minimum length
 MIN_LENGTH="{6,16}"
 
-## Secret name can only be alphanumeric and dash
+# Secret name can only be alphanumeric and dash
 ALPHANUMERIC_DASH="^[a-zA-Z0-9-]"
 
-## Atleast one valid char
+# Atleast one valid char
 ONE_OR_MORE="+$"
 
-## Exclude whitespaces
+# Exclude whitespaces
 ILLEGAL_CHARS="^[^\s]*$"
-## Complete pattern
+
+# Complete pattern
 PATTERN=$ALPHANUMERIC_DASH$MIN_LENGTH$ONE_OR_MORE
 
 
-# Main function
+
+# Prompt user for secret name
+read -p $BLUE"Secret name: $RESET$SSM_PREFIX" SECRET_NAME
+
+
+
+#-------------------CREATE SECRET--------------------------#
 create_secret () {
 
   # Blank secret name not allowed
@@ -63,7 +70,7 @@ create_secret () {
   fi
 
   # Prompt user for secret value
-  read -p $LIGHT_BLUE'Secret value: '$RESET SECRET_VALUE
+  read -p $BLUE'Secret value: '$RESET SECRET_VALUE
 
   # [DEBUG] Validate regex pattern
   if [[ $SECRET_VALUE =~ $ILLEGAL_CHARS ]]
@@ -71,7 +78,6 @@ create_secret () {
     echo $RED"Whitespaces in secret value is not allowed"$RESET
     exit 0
   fi
-
 
   read -p $YELLOW"Are you sure [y/n]? "$RESET -r
   if [[ $REPLY =~ ^[Yy]$ ]]
@@ -82,7 +88,6 @@ create_secret () {
   else
     echo $RED"Aborting..."$RESET
   fi
-
 }
 
 create_secret
