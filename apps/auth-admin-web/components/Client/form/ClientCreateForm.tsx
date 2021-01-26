@@ -124,35 +124,42 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
         client.requireClientSecret = false
         client.requirePkce = true
 
-        setClientTypeInfo('Authorization code flow + PKCE')
+        setClientTypeInfo(
+          `A single-page application (spa) is an application that doesn't need to reload the page during its use and works within a browser, f.x. Google and Facebook.
+          Since it is running in the users browswer, it cannot keep a secret.
+          `,
+        )
       }
 
       if (clientType === 'native') {
         client.requireClientSecret = false
         client.requirePkce = true
 
-        setClientTypeInfo('Authorization code flow + PKCE')
+        setClientTypeInfo(`A native application is an application designed specifically for use on a particular platform or device. 
+        Since it runs on user´s devices it cannot keep a secret.`)
       }
 
       if (clientType === 'web') {
         client.requireClientSecret = true
         client.requirePkce = false
 
-        setClientTypeInfo('Hybrid flow with client authentication')
+        setClientTypeInfo(`A web application runs on a web server and is accessed by a web browser. Examples of connom web applications are 
+        online banking and online retail sales. Is capable of keeping a secret.`)
       }
 
       if (clientType === 'machine') {
         client.requireClientSecret = true
         client.requirePkce = false
 
-        setClientTypeInfo('Client credentials')
+        setClientTypeInfo(
+          `An application or service running on a confidential server. Is capable of keeping a secret.`,
+        )
       }
 
-      if (clientType === 'device') {
-        // What are the defaults?
-
-        setClientTypeInfo('Device flow using external browser')
-      }
+      // Is not in the dropdown list as of now and is hence commented out
+      // if (clientType === 'device') {
+      //   setClientTypeInfo('Device flow using external browser')
+      // }
 
       setClientTypeSelected(true)
     } else {
@@ -199,12 +206,12 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       >
                         Native
                       </option>
-                      <option
+                      {/* <option
                         value="device"
                         selected={client.clientType === 'device'}
                       >
                         Device
-                      </option>
+                      </option> */}
                       <option
                         value="web"
                         selected={client.clientType === 'web'}
