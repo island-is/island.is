@@ -99,7 +99,13 @@ const SubPage: Screen<SubPageProps> = ({
             paddingBottom={[4, 4, 6]}
           >
             <GridRow>
-              <GridColumn span={['12/12', '12/12', subpage.links.length ? '7/12' : '12/12']}>
+              <GridColumn
+                span={[
+                  '12/12',
+                  '12/12',
+                  subpage.links.length ? '7/12' : '12/12',
+                ]}
+              >
                 <h2 className={styles.heading}>{subpage.title}</h2>
               </GridColumn>
             </GridRow>
@@ -118,7 +124,10 @@ const SubPage: Screen<SubPageProps> = ({
                   {subpage.description}
                 </Markdown>
               </GridColumn>
-              <GridColumn span={['12/12', '12/12', '4/12']} offset={[null, null, '1/12']}>
+              <GridColumn
+                span={['12/12', '12/12', '4/12']}
+                offset={[null, null, '1/12']}
+              >
                 <ul>
                   {subpage.links.map((link) => (
                     <li>
