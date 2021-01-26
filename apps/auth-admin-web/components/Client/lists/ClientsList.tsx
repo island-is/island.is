@@ -120,7 +120,7 @@ class ClientsList extends Component {
                     <tr>
                       <th>Client Id</th>
                       <th>National Id</th>
-                      <th>Description</th>
+                      <th>Contact</th>
                       <th>Type</th>
                       <th colSpan={2}></th>
                     </tr>
@@ -134,7 +134,7 @@ class ClientsList extends Component {
                         >
                           <td>{client.clientId}</td>
                           <td>{client.nationalId}</td>
-                          <td>{client.description}</td>
+                          <td>{client.contactEmail}</td>
                           <td>{client.clientType}</td>
                           <td className="clients__table__button">
                             <Link
