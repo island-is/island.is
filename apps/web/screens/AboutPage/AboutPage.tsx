@@ -219,7 +219,7 @@ const PageHeader: FC<PageHeaderProps> = ({
                   ]}
                   renderLink={(link) => {
                     return (
-                      <NextLink {...linkResolver('homepage')} passHref>
+                      <NextLink href={linkResolver('homepage')} passHref>
                         {link}
                       </NextLink>
                     )

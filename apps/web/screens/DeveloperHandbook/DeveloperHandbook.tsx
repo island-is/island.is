@@ -44,12 +44,12 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
 
   const navigationItems = [
     {
-      href: linkResolver('webservicespage').as,
+      href: linkResolver('webservicespage'),
       title: n('linkServicesText'),
     },
     {
       active: true,
-      href: linkResolver('handbookpage').as,
+      href: linkResolver('handbookpage'),
       title: n('linkHandbookNavText'),
     },
     {
@@ -77,7 +77,7 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
               items={navigationItems}
               title={n('linkThrounText')}
               titleLink={{
-                href: linkResolver('developerspage').as,
+                href: linkResolver('developerspage'),
               }}
             />
           }
@@ -94,7 +94,7 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
                       size="small"
                       variant="text"
                     >
-                      <Link href={linkResolver('developerspage').as}>
+                      <Link href={linkResolver('developerspage')}>
                         {n('linkThrounText')}
                       </Link>
                     </Button>
@@ -107,7 +107,7 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
                       items={navigationItems}
                       title={n('linkThrounText')}
                       titleLink={{
-                        href: linkResolver('developerspage').as,
+                        href: linkResolver('developerspage'),
                       }}
                     />
                   </Box>
@@ -118,11 +118,11 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
                     items={[
                       {
                         title: n('linkIslandIsText'),
-                        href: linkResolver('homepage').as,
+                        href: linkResolver('homepage'),
                       },
                       {
                         title: n('linkThrounText'),
-                        href: linkResolver('developerspage').as,
+                        href: linkResolver('developerspage'),
                       },
                     ]}
                   />

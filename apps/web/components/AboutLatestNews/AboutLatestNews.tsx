@@ -61,7 +61,7 @@ export const AboutLatestNews: FC<LatestNewsProps> = ({
         {first && (
           <BigNewsItem
             news={first}
-            {...linkResolver('news', [first.slug])}
+            href={linkResolver('news', [first.slug])}
             readMore={n('readMore', 'Lesa nánar')}
           />
         )}
@@ -80,8 +80,7 @@ export const AboutLatestNews: FC<LatestNewsProps> = ({
               introduction={newsItem.intro}
               slug={newsItem.slug}
               image={newsItem.image}
-              url={linkResolver('news', [newsItem.slug]).href}
-              as={linkResolver('news', [newsItem.slug]).as}
+              url={linkResolver('news', [newsItem.slug])}
               readMoreText={n('readMore', 'Lesa nánar')}
             />
           </GridColumn>
@@ -93,12 +92,10 @@ export const AboutLatestNews: FC<LatestNewsProps> = ({
 
 const BigNewsItem = ({
   news,
-  as,
   href,
   readMore,
 }: {
   news: LatestNewsItem
-  as: string
   href: string
   readMore: string
 }) => {
@@ -123,7 +120,7 @@ const BigNewsItem = ({
         {news.title}
       </Text>
       <Text variant="intro">{news.intro}</Text>
-      <Link as={as} href={href}>
+      <Link href={href} passHref>
         <Button
           icon="arrowForward"
           iconType="filled"

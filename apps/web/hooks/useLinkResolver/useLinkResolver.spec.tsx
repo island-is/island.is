@@ -11,48 +11,30 @@ import {
 describe('Link resolver', () => {
   it('should return correct path to type with out variable', () => {
     const nextLinks = linkResolver('adgerdirfrontpage', [], 'is')
-    expect(nextLinks).toEqual({
-      as: '/covid-adgerdir',
-      href: '/covid-adgerdir',
-    })
+    expect(nextLinks).toEqual('/covid-adgerdir')
   })
 
   it('should return correct path to type with variable', () => {
     const nextLinks = linkResolver('lifeeventpage', ['cat'], 'is')
-    expect(nextLinks).toEqual({
-      as: '/lifsvidburdur/cat',
-      href: '/lifsvidburdur/[slug]',
-    })
+    expect(nextLinks).toEqual('/lifsvidburdur/cat')
   })
 
   it('should return correct path for all locales', () => {
     const nextIsLinks = linkResolver('news', ['hundur'], 'is')
-    expect(nextIsLinks).toEqual({
-      as: '/frett/hundur',
-      href: '/frett/[slug]',
-    })
+    expect(nextIsLinks).toEqual('/frett/hundur')
 
     const nextEnLinks = linkResolver('news', ['dog'], 'en')
-    expect(nextEnLinks).toEqual({
-      as: '/en/news/dog',
-      href: '/en/news/[slug]',
-    })
+    expect(nextEnLinks).toEqual('/en/news/dog')
   })
 
   it('should direct unresolvable links to 404', () => {
     const nextEnLink = linkResolver('page', [], 'en')
-    expect(nextEnLink).toEqual({
-      as: '/404',
-      href: '/404',
-    })
+    expect(nextEnLink).toEqual('/404')
   })
 
   it('should handle content type with uppercase', () => {
     const nextLinks = linkResolver('lifeEventPage' as LinkType, ['cat'], 'is')
-    expect(nextLinks).toEqual({
-      as: '/lifsvidburdur/cat',
-      href: '/lifsvidburdur/[slug]',
-    })
+    expect(nextLinks).toEqual('/lifsvidburdur/cat')
   })
 
   it('should handle wrong content type ', () => {
@@ -61,27 +43,18 @@ describe('Link resolver', () => {
       linkResolver('dogPark' as LinkType, ['cat'], 'is'),
     ]
     nextLinks.map((link) => {
-      expect(link).toEqual({
-        as: '/404',
-        href: '/404',
-      })
+      expect(link).toEqual('/404')
     })
   })
 
   it('should handle content type as empty string', () => {
     const nextLinks = linkResolver('' as LinkType, [], 'is')
-    expect(nextLinks).toEqual({
-      as: '/404',
-      href: '/404',
-    })
+    expect(nextLinks).toEqual('/404')
   })
 
   it('should handle content type as undefined', () => {
     const nextLinks = linkResolver(undefined as LinkType, [], 'is')
-    expect(nextLinks).toEqual({
-      as: '/404',
-      href: '/404',
-    })
+    expect(nextLinks).toEqual('/404')
   })
 
   it('should return external urls as next links objects', () => {
@@ -90,10 +63,7 @@ describe('Link resolver', () => {
       ['https://example.com'],
       'is',
     )
-    expect(nextLinks).toEqual({
-      as: 'https://example.com',
-      href: 'https://example.com',
-    })
+    expect(nextLinks).toEqual('https://example.com')
   })
 
   it('should have no path repetition', () => {

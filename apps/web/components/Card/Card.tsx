@@ -23,7 +23,6 @@ import * as styles from './Card.treat'
 export type CardTagsProps = {
   tagProps?: Omit<TagProps, 'children'>
   href?: string
-  as?: string
   title: string
 }
 
@@ -38,7 +37,6 @@ interface CardProps {
   tags?: Array<CardTagsProps>
   linkProps?: LinkProps
   href?: string
-  as?: string
   status?: string
 }
 
@@ -48,7 +46,6 @@ export const Card: FC<CardProps> = ({
   description,
   tags = [],
   href,
-  as,
   status,
 }) => {
   const { colorScheme } = useContext(ColorSchemeContext)
@@ -101,25 +98,23 @@ export const Card: FC<CardProps> = ({
         {tags.length > 0 && (
           <Box paddingTop={3} flexGrow={0} position="relative">
             <Inline space={1}>
-              {tags.map(
-                ({ title, href, as, ...props }: CardTagsProps, index) => {
-                  const tagProps = {
-                    ...tagPropsDefaults,
-                    ...props.tagProps,
-                    variant: tagVariant,
-                  }
+              {tags.map(({ title, href, ...props }: CardTagsProps, index) => {
+                const tagProps = {
+                  ...tagPropsDefaults,
+                  ...props.tagProps,
+                  variant: tagVariant,
+                }
 
-                  return href ? (
-                    <Link key={index} href={href} as={as}>
-                      <Tag {...tagProps}>{title}</Tag>
-                    </Link>
-                  ) : (
-                    <Tag key={index} {...tagProps}>
-                      {title}
-                    </Tag>
-                  )
-                },
-              )}
+                return href ? (
+                  <Link key={index} href={href}>
+                    <Tag {...tagProps}>{title}</Tag>
+                  </Link>
+                ) : (
+                  <Tag key={index} {...tagProps}>
+                    {title}
+                  </Tag>
+                )
+              })}
             </Inline>
           </Box>
         )}
@@ -173,7 +168,6 @@ export const Card: FC<CardProps> = ({
     return (
       <FocusableBox
         href={href}
-        as={as}
         borderRadius="large"
         flexDirection="column"
         height="full"

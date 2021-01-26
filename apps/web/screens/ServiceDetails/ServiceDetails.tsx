@@ -65,7 +65,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   const navigationItems = [
     {
       active: true,
-      href: linkResolver('webservicespage').as,
+      href: linkResolver('webservicespage'),
       title: n('linkServicesText'),
       items: [
         {
@@ -75,7 +75,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
       ],
     },
     {
-      href: linkResolver('handbookpage').as,
+      href: linkResolver('handbookpage'),
       title: n('linkHandbookNavText'),
     },
     {
@@ -103,7 +103,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
               items={navigationItems}
               title={n('linkThrounText')}
               titleLink={{
-                href: linkResolver('developerspage').as,
+                href: linkResolver('developerspage'),
               }}
             />
           }
@@ -120,7 +120,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                       size="small"
                       variant="text"
                     >
-                      <Link href={linkResolver('webservicespage').as}>
+                      <Link href={linkResolver('webservicespage')}>
                         {n('linkServicesText')}
                       </Link>
                     </Button>
@@ -134,7 +134,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                       title={n('linkThrounText')}
                       titleLink={{
                         active: true,
-                        href: linkResolver('developerspage').as,
+                        href: linkResolver('developerspage'),
                       }}
                     />
                   </Box>
@@ -145,15 +145,15 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                     items={[
                       {
                         title: n('linkIslandIsText'),
-                        href: linkResolver('homepage').as,
+                        href: linkResolver('homepage'),
                       },
                       {
                         title: n('linkThrounText'),
-                        href: linkResolver('developerspage').as,
+                        href: linkResolver('developerspage'),
                       },
                       {
                         title: n('linkServicesText'),
-                        href: linkResolver('webservicespage').as,
+                        href: linkResolver('webservicespage'),
                       },
                     ]}
                   />

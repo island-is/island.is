@@ -49,7 +49,7 @@ export const ContentLink: FC<ContentLinkProps> = ({
   const linkProps = linkResolver(contentType, [slug])
 
   return (
-    <Link {...linkProps} passHref pureChildren>
+    <Link href={linkProps} passHref pureChildren>
       {children}
     </Link>
   )

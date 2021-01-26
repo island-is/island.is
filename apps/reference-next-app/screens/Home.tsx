@@ -68,12 +68,10 @@ const Home = () => {
         </Box>
         <Box padding="containerGutter">
           <p>
-            <Link href="/[lang]/about" as={`/${lang}/about`}>
-              About page
-            </Link>
+            <Link href={`/${lang}/about`}>About page</Link>
           </p>
           <p>
-            <Link href="/[lang]" as={`/${lang === 'en' ? 'is' : 'en'}`}>
+            <Link href={`/${lang === 'en' ? 'is' : 'en'}`}>
               {lang === 'en' ? 'Icelandic' : 'English'}
             </Link>
           </p>

@@ -107,7 +107,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
                       renderLink={(link, { typename, slug }) => {
                         return (
                           <NextLink
-                            {...linkResolver(typename as LinkType, slug)}
+                            href={linkResolver(typename as LinkType, slug)}
                             passHref
                           >
                             {link}

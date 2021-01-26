@@ -48,7 +48,7 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
         ]}
         renderLink={(link, { typename, slug }) => {
           return (
-            <Link {...linkResolver(typename as LinkType, slug)} passHref>
+            <Link href={linkResolver(typename as LinkType, slug)} passHref>
               {link}
             </Link>
           )
@@ -119,7 +119,7 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
                         </Box>
                       )}
                       <Link
-                        {...linkResolver(link.type as LinkType, [link.slug])}
+                        href={linkResolver(link.type as LinkType, [link.slug])}
                         skipTab
                       >
                         <Button icon="arrowForward" variant="text">

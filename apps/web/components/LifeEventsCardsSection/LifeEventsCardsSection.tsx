@@ -32,7 +32,7 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
       key={key}
       title={lifeEvent.title}
       description={lifeEvent.intro}
-      {...linkResolver('lifeeventpage', [lifeEvent.slug])}
+      href={linkResolver('lifeeventpage', [lifeEvent.slug])}
       image={lifeEvent.thumbnail ? lifeEvent.thumbnail : lifeEvent.image}
     />
   )

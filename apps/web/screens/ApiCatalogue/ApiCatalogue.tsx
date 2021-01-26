@@ -212,11 +212,11 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   const navigationItems = [
     {
       active: true,
-      href: linkResolver('webservicespage').as,
+      href: linkResolver('webservicespage'),
       title: nn('linkServicesText'),
     },
     {
-      href: linkResolver('handbookpage').as,
+      href: linkResolver('handbookpage'),
       title: nn('linkHandbookNavText'),
     },
     {
@@ -244,7 +244,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
               items={navigationItems}
               title={nn('linkThrounText')}
               titleLink={{
-                href: linkResolver('developerspage').as,
+                href: linkResolver('developerspage'),
               }}
             />
           }
@@ -261,7 +261,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                       size="small"
                       variant="text"
                     >
-                      <Link href={linkResolver('developerspage').as}>
+                      <Link href={linkResolver('developerspage')}>
                         {nn('linkThrounText')}
                       </Link>
                     </Button>
@@ -274,7 +274,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                       items={navigationItems}
                       title={nn('linkThrounText')}
                       titleLink={{
-                        href: linkResolver('developerspage').as,
+                        href: linkResolver('developerspage'),
                       }}
                     />
                   </Box>
@@ -285,12 +285,12 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                     items={[
                       {
                         title: nn('linkIslandIsText'),
-                        href: linkResolver('homepage').as,
+                        href: linkResolver('homepage'),
                       },
 
                       {
                         title: nn('linkThrounText'),
-                        href: linkResolver('developerspage').as,
+                        href: linkResolver('developerspage'),
                       },
                     ]}
                   />
@@ -398,7 +398,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
               {data?.getApiCatalogue?.services.length > 0 && (
                 <GridContainer>
                   <ServiceList
-                    baseUrl={linkResolver('webservicespage').as + '/'}
+                    baseUrl={linkResolver('webservicespage') + '/'}
                     services={data?.getApiCatalogue?.services}
                     tagDisplayNames={filterContent}
                   />

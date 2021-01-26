@@ -27,7 +27,6 @@ export interface LinkProps extends NextLinkProps {
 export const Link: React.FC<LinkProps> = ({
   children,
   href,
-  as,
   replace,
   scroll,
   shallow,
@@ -55,10 +54,6 @@ export const Link: React.FC<LinkProps> = ({
     },
   )
 
-  // In next 9.5.3 and later, this will be unnecessary, since the as parameter will be
-  // optiona - but as things stand, as is needed if you have a dynamic href
-  const prefetchDefault = !as ? false : prefetch
-
   if (!href) {
     return (
       <span className={classNames} {...linkProps}>
@@ -71,11 +66,10 @@ export const Link: React.FC<LinkProps> = ({
     return (
       <NextLink
         href={href}
-        as={as}
         shallow={shallow}
         scroll={scroll}
         passHref={passHref}
-        prefetch={prefetchDefault}
+        prefetch
       >
         {pureChildren ? (
           children

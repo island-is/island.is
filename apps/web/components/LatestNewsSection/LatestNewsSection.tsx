@@ -50,7 +50,7 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
         <GridColumn paddingBottom={0} span="6/12" hiddenBelow="md">
           <Box display="flex" justifyContent="flexEnd" paddingBottom={2}>
             <Text variant="h5" as="p" paddingBottom={2}>
-              <Link {...linkResolver('newsoverview')}>
+              <Link href={linkResolver('newsoverview')}>
                 <Button
                   icon="arrowForward"
                   iconType="filled"
@@ -80,8 +80,7 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
                   readMoreText={t.readMore}
                   image={newsItem.image}
                   tags={newsItem.genericTags.map(({ title }) => ({ title }))}
-                  as={linkResolver('news', [newsItem.slug]).as}
-                  url={linkResolver('news', [newsItem.slug]).href}
+                  href={linkResolver('news', [newsItem.slug])}
                 />
               </GridColumn>
             )
@@ -99,8 +98,7 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
               slug={newsItem.slug}
               image={newsItem.image}
               tags={newsItem.genericTags.map(({ title }) => ({ title }))}
-              as={linkResolver('news', [newsItem.slug]).as}
-              url={linkResolver('news', [newsItem.slug]).href}
+              href={linkResolver('news', [newsItem.slug])}
             />
           ))}
         </Swiper>

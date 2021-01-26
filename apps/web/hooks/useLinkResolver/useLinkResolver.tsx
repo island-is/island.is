@@ -1,11 +1,6 @@
 import { useContext } from 'react'
 import { Locale, I18nContext } from '../../i18n/I18n'
 
-export interface LinkResolverResponse {
-  href: string
-  as: string
-}
-
 interface LinkResolverInput {
   linkType: LinkType
   variables?: string[]
@@ -130,7 +125,7 @@ export const linkResolver = (
   linkType: LinkResolverInput['linkType'],
   variables: LinkResolverInput['variables'] = [],
   locale: LinkResolverInput['locale'],
-): LinkResolverResponse => {
+): string => {
   /*
   We lowercase here to allow components to pass unmodified __typename fields
   The __typename fields seem to have case issues, that will be addressed at a later time
@@ -139,10 +134,7 @@ export const linkResolver = (
 
   // special case for external url resolution
   if (type === 'linkurl') {
-    return {
-      as: variables[0],
-      href: variables[0],
-    }
+    return variables[0]
   }
 
   // We consider path not found if it has no entry in routesTemplate or if the found path is empty
@@ -151,26 +143,17 @@ export const linkResolver = (
 
     if (variables.length) {
       // populate path templates with variables
-      return {
-        href: typePath,
-        as: variables.reduce(
-          (asPath, slug) => replaceVariableInPath(asPath, slug),
-          typePath,
-        ),
-      }
+      return variables.reduce(
+        (path, slug) => replaceVariableInPath(path, slug),
+        typePath,
+      )
     } else {
       // there are no variables, return path template as path
-      return {
-        as: typePath,
-        href: typePath,
-      }
+      return typePath
     }
   } else {
     // we return to 404 page if no path is found, if this happens we have a bug
-    return {
-      as: '/404',
-      href: '/404',
-    }
+    return '/404'
   }
 }
 

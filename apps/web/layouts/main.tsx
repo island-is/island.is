@@ -151,7 +151,7 @@ const Layout: NextComponentType<
       links: categories.map((x) => {
         return {
           title: x.title,
-          ...linkResolver(x.__typename as LinkType, [x.slug]),
+          href: linkResolver(x.__typename as LinkType, [x.slug]),
         }
       }),
     },

@@ -36,12 +36,11 @@ export const StoryList: FC<StoryListProps> = ({
         <div className={styles.margin}>
           <Link
             href={{
-              pathname: linkResolver('newsoverview').href,
+              pathname: `${linkResolver(
+                'newsoverview',
+              )}?tag=${PROJECT_STORIES_TAG_ID}`,
               query: { tag: PROJECT_STORIES_TAG_ID },
             }}
-            as={`${
-              linkResolver('newsoverview').as
-            }?tag=${PROJECT_STORIES_TAG_ID}`}
             pureChildren
           >
             <Button variant="ghost" colorScheme="negative">

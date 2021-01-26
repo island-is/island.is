@@ -7,6 +7,7 @@ import {
   ButtonDeprecated as Button,
   FocusableBox,
   Logo,
+  Link,
 } from '@island.is/island-ui/core'
 import SearchInput from '../SearchInput/SearchInput'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
@@ -50,9 +51,12 @@ export const FixedNav: FC = () => {
           alignItems="center"
           justifyContent="spaceBetween"
         >
-          <FocusableBox {...linkResolver('homepage')} marginRight={2}>
-            <Logo iconOnly solid={true} />
-          </FocusableBox>
+          <Link href={linkResolver('homepage')} passHref>
+            <FocusableBox marginRight={2}>
+              <Logo iconOnly solid={true} />
+            </FocusableBox>
+          </Link>
+
           <Box
             display="flex"
             height="full"
