@@ -2,15 +2,18 @@ import React from 'react'
 import { ApiResourcesDTO } from '../../../entities/dtos/api-resources-dto'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import ResourceListDisplay from './ListDisplay'
 import { ResourcesService } from '../../../services/ResourcesService'
 import { ApiResource } from '../../../entities/models/api-resource.model'
 import ConfirmModal from '../../common/ConfirmModal'
+import Link from 'next/link'
+import Paginator from '../../common/Paginator'
+import { downloadCSV } from '../../../utils/csv.utils'
 
 const ApiResourcesList: React.FC = () => {
   const [count, setCount] = useState(0)
   const [page, setPage] = useState(1)
   const [apiResources, setApiResources] = useState<ApiResource[]>([])
+  const [searchString, setSearchString] = useState<string>('')
   const [lastPage, setLastPage] = useState(1)
   const router = useRouter()
   const [modalIsOpen, setIsOpen] = React.useState(false)
@@ -22,23 +25,40 @@ const ApiResourcesList: React.FC = () => {
     )
   }
 
-  const handlePageChange = async (page: number, countPerPage: number) => {
-    getResources(page, countPerPage)
+  const handlePageChange = async (
+    searchString: string,
+    page: number,
+    countPerPage: number,
+  ) => {
+    getResources(searchString, page, countPerPage)
     setPage(page)
     setCount(countPerPage)
+  }
+
+  const handlePager = async (page: number, count: number) => {
+    handlePageChange(searchString, page, count)
+  }
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchString(event.target.value)
   }
 
   const remove = async () => {
     const response = await ResourcesService.deleteApiResource(resourceToRemove)
     if (response) {
-      getResources(page, count)
+      getResources(searchString, page, count)
     }
 
     closeModal()
   }
 
-  const getResources = async (page: number, count: number) => {
+  const getResources = async (
+    searchString: string,
+    page: number,
+    count: number,
+  ) => {
     const response = await ResourcesService.findAndCountAllApiResources(
+      searchString,
       page,
       count,
     )
@@ -59,8 +79,13 @@ const ApiResourcesList: React.FC = () => {
     setIsOpen(true)
   }
 
-  function closeModal() {
+  const closeModal = () => {
     setIsOpen(false)
+  }
+
+  const search = (event) => {
+    handlePageChange(searchString, page, count)
+    event.preventDefault()
   }
 
   const setHeaderElement = () => {
@@ -72,18 +97,114 @@ const ApiResourcesList: React.FC = () => {
     )
   }
 
+  const exportCsv = async () => {
+    const filename = `API Resources, ${
+      new Date().toISOString().split('T')[0]
+    }.csv`
+
+    await downloadCSV(
+      filename,
+      ResourcesService.getApiResourcesCsvHeaders(),
+      ResourcesService.getApiResourcesCsv,
+    )
+  }
+
   return (
     <div>
-      <ResourceListDisplay
-        list={apiResources}
-        header={'Api resource'}
-        linkHeader={'Create new Api resource'}
-        createUri={'/resource/api-resource'}
-        lastPage={lastPage}
-        handlePageChange={handlePageChange}
-        edit={edit}
-        remove={confirmRemove}
-      ></ResourceListDisplay>
+      <div className="api-resources-list">
+        <div className="api-resources-list__wrapper">
+          <div className="api-resources-list__container">
+            <h1>Api resources</h1>
+            <div className="api-resources-list__container__options">
+              <div className="api-resources-list__container__options__button">
+                <Link href={'/resource/api-resource'}>
+                  <a className="api-resources-list__button__new">
+                    <i className="icon__new"></i>
+                    Create new Api resource
+                  </a>
+                </Link>
+              </div>
+              <form onSubmit={search}>
+                <div className="api-resources-list__container__options__search">
+                  <label htmlFor="search" className="api-resources-list__label">
+                    National Id or Resource name
+                  </label>
+                  <input
+                    id="search"
+                    className="api-resources-list__input__search"
+                    value={searchString}
+                    onChange={handleSearchChange}
+                  ></input>
+                  <button
+                    type="submit"
+                    className="api-resources-list__button__search"
+                  >
+                    Search
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div className="client__container__table">
+              <table className="api-resources-list__table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>National Id</th>
+                    <th>Contact Email</th>
+                    <th colSpan={2}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {apiResources.map((resource: ApiResource) => {
+                    return (
+                      <tr
+                        key={resource.name}
+                        className={resource.archived ? 'archived' : ''}
+                      >
+                        <td>{resource.name}</td>
+                        <td>{resource.nationalId}</td>
+                        <td>{resource.contactEmail}</td>
+                        <td className="api-resources-list__table__button">
+                          <button
+                            type="button"
+                            className={`api-resources-list__button__edit${
+                              resource.archived ? ' hidden' : ''
+                            }`}
+                            onClick={() => edit(resource)}
+                            title="Edit"
+                          >
+                            <i className="icon__edit"></i>
+                            <span>Edit</span>
+                          </button>
+                        </td>
+                        <td className="api-resources-list__table__button">
+                          <button
+                            type="button"
+                            className={`api-resources-list__button__delete${
+                              resource.archived ? ' hidden' : ''
+                            }`}
+                            onClick={() => confirmRemove(resource.name)}
+                            title="Delete"
+                          >
+                            <i className="icon__delete"></i>
+                            <span>Delete</span>
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <Paginator lastPage={lastPage} handlePageChange={handlePager} />
+              <button type="button" onClick={() => exportCsv()}>
+                <span>Export</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
       <ConfirmModal
         modalIsOpen={modalIsOpen}
         headerElement={setHeaderElement()}

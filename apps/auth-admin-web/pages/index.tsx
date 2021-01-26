@@ -33,10 +33,11 @@ const Home: React.FC = () => {
     <ContentWrapper>
       <div className="home">
         <div className="home__info">
-          Here comes a description about the site .. Lorem ipsum dolor sit amet,
-          consectetur adipisicing elit. Modi animi officiis ullam perferendis
-          blanditiis rerum ex sapiente laborum facere eaque. Excepturi sunt
-          tempore ex ducimus nulla repudiandae voluptatum, nam veniam.
+          The IDS-management system is an interface designed with the purpose of
+          allowing the Digital Iceland’s service desk to manage the Digital
+          Iceland’s login system’s customer registration on their own. The
+          IDS-management system allows its users to register the Clients,
+          Resources and Users of each customer.
         </div>
         <div className="home__shortcuts">
           <div className="home__shortcuts__item">
@@ -61,6 +62,16 @@ const Home: React.FC = () => {
             </div>
             <div className="home__shortcuts__item__link">
               <Link href="/client">
+                <a>Create a new client</a>
+              </Link>
+            </div>
+          </div>
+          <div className="home__shortcuts__item">
+            <div className="home__shortcuts__item__description">
+              Simplified new Client form
+            </div>
+            <div className="home__shortcuts__item__link">
+              <Link href="/client-basic">
                 <a>Create a new client</a>
               </Link>
             </div>

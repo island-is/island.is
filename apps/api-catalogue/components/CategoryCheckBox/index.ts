@@ -1,1 +1,0 @@
-export { CategoryCheckBox } from './CategoryCheckBox'

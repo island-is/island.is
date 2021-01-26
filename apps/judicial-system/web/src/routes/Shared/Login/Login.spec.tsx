@@ -2,10 +2,10 @@ import React from 'react'
 import { render, waitFor } from '@testing-library/react'
 import { BrowserRouter, MemoryRouter, Route } from 'react-router-dom'
 import Login from './Login'
-import { mockJudgeQuery } from '../../../utils/mocks'
-import { api } from '../../../services'
+import { mockJudgeQuery } from '@island.is/judicial-system-web/src/utils/mocks'
+import { api } from '@island.is/judicial-system-web/src/services'
 import fetchMock from 'fetch-mock'
-import { UserProvider } from '../../../shared-components/UserProvider/UserProvider'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import { MockedProvider } from '@apollo/client/testing'
 
 describe('Login route', () => {

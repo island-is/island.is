@@ -26,8 +26,8 @@ class BackendAPI extends RESTDataSource {
     req.headers.set('cookie', this.context.req.headers.cookie)
   }
 
-  getUser(nationalId: string): Promise<User> {
-    return this.get(`user/${nationalId}`)
+  getUsers(): Promise<User[]> {
+    return this.get(`users`)
   }
 
   getCases(): Promise<Case[]> {
@@ -66,6 +66,10 @@ class BackendAPI extends RESTDataSource {
     sendNotification: SendNotification,
   ): Promise<SendNotificationResponse> {
     return this.post(`case/${id}/notification`, sendNotification)
+  }
+
+  extendCase(id: string): Promise<Case> {
+    return this.post(`case/${id}/extend`)
   }
 
   getCaseNotifications(id: string): Promise<Notification[]> {

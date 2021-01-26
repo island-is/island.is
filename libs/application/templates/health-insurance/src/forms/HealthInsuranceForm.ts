@@ -43,6 +43,12 @@ export const HealthInsuranceForm: Form = buildForm({
               subTitle: '',
             }),
             buildDataProviderItem({
+              id: 'sjukratryggingar',
+              type: 'SjukratryggingarProvider',
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
               id: 'nationalRegistry',
               type: 'NationalRegistryProvider',
               title: m.nationalRegistryTitle,
@@ -50,13 +56,13 @@ export const HealthInsuranceForm: Form = buildForm({
             }),
             buildDataProviderItem({
               id: 'directorateOfLabor',
-              type: 'DirectorateOfLabor',
+              type: undefined,
               title: m.directorateOfLaborTitle,
               subTitle: m.directorateOfLaborSubTitle,
             }),
             buildDataProviderItem({
               id: 'internalRevenue',
-              type: 'InternalRevenue',
+              type: undefined,
               title: m.internalRevenueTitle,
               subTitle: m.internalRevenueSubTitle,
             }),
@@ -67,9 +73,10 @@ export const HealthInsuranceForm: Form = buildForm({
           title: m.confirmationOfResidencyTitle,
           description: m.confirmationOfResidencyDescription,
           children: [
-            buildDividerField({
-              title: ' ',
-              color: 'transparent',
+            buildCustomField({
+              id: 'errorModal',
+              component: 'ErrorModal',
+              title: '',
             }),
             buildFileUploadField({
               id: 'confirmationOfResidencyDocument',
@@ -88,6 +95,16 @@ export const HealthInsuranceForm: Form = buildForm({
           id: 'contactInfoSection',
           title: m.contactInfoTitle,
           children: [
+            buildCustomField({
+              id: 'errorModal',
+              component: 'ErrorModal',
+              title: '',
+              condition: (formValue: FormValue, externalData) => {
+                // TODO: when it is possible in NationalRegistry api, check if country is Greenland or Faroe Islands
+                // It should return true if confirmation of residency condition is returned as false...
+                return false
+              },
+            }),
             buildTextField({
               id: 'applicant.name',
               title: m.name,
@@ -116,8 +133,7 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   streetAddress?: string
-                  // TODO: Remove the hardcoded
-                })?.streetAddress || 'street',
+                })?.streetAddress,
             }),
             buildTextField({
               id: 'applicant.postalCode',
@@ -127,8 +143,7 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   postalCode?: string
-                  // TODO: Remove the hardcoded
-                })?.postalCode || '000',
+                })?.postalCode,
             }),
             buildTextField({
               id: 'applicant.city',
@@ -138,8 +153,7 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   city?: string
-                  // TODO: Remove the hardcoded
-                })?.city || 'city',
+                })?.city,
             }),
             buildTextField({
               id: 'applicant.nationality',
@@ -162,6 +176,7 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.email,
               width: 'half',
               variant: 'email',
+              disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData.userProfile?.data as {
                   email?: string
@@ -172,6 +187,7 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.phoneNumber,
               width: 'half',
               variant: 'tel',
+              disabled: true,
               format: '###-####',
               placeholder: '000-0000',
               defaultValue: (application: Application) =>
@@ -288,15 +304,18 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'formerInsurance.country',
               title: m.formerInsuranceCountry,
               width: 'half',
+              backgroundColor: 'blue',
             }),
             buildTextField({
               id: 'formerInsurance.personalId',
               title: m.formerPersonalId,
               width: 'half',
+              backgroundColor: 'blue',
             }),
             buildTextField({
               id: 'formerInsurance.institution',
               title: m.formerInsuranceInstitution,
+              backgroundColor: 'blue',
             }),
             buildCustomField({
               id: 'formerInsurance.entitlementDescription',
@@ -319,6 +338,7 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.formerInsuranceAdditionalInformation,
               placeholder: m.formerInsuranceAdditionalInformationPlaceholder,
               variant: 'textarea',
+              backgroundColor: 'blue',
               condition: (answers) =>
                 (answers as {
                   formerInsurance: { entitlement: string }
@@ -357,6 +377,7 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.additionalRemarks,
               variant: 'textarea',
               placeholder: m.additionalRemarksPlaceholder,
+              backgroundColor: 'blue',
               condition: {
                 questionId: 'additionalInfo.hasAdditionalInfo',
                 isMultiCheck: false,
@@ -373,7 +394,7 @@ export const HealthInsuranceForm: Form = buildForm({
               condition: {
                 questionId: 'additionalInfo.hasAdditionalInfo',
                 isMultiCheck: false,
-                comparator: Comparators.GTE,
+                comparator: Comparators.EQUALS,
                 value: YES,
               },
             }),

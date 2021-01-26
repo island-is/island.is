@@ -58,19 +58,21 @@ const prosecutorUpdateRule = {
     'accusedName',
     'accusedAddress',
     'accusedGender',
-    'requestedDefenderName',
-    'requestedDefenderEmail',
+    'defenderName',
+    'defenderEmail',
     'court',
     'arrestDate',
     'requestedCourtDate',
     'alternativeTravelBan',
     'requestedCustodyEndDate',
+    'otherDemands',
     'lawsBroken',
     'custodyProvisions',
     'requestedCustodyRestrictions',
     'caseFacts',
     'legalArguments',
     'comments',
+    'prosecutorId',
   ],
 } as RolesRule
 
@@ -79,15 +81,16 @@ const judgeUpdateRule = {
   role: UserRole.JUDGE,
   type: RulesType.FIELD,
   dtoFields: [
+    'defenderName',
+    'defenderEmail',
     'courtCaseNumber',
     'courtDate',
     'courtRoom',
-    'defenderName',
-    'defenderEmail',
     'courtStartTime',
     'courtEndTime',
     'courtAttendees',
     'policeDemands',
+    'courtDocuments',
     'accusedPlea',
     'litigationPresentations',
     'ruling',
@@ -194,8 +197,10 @@ export class CaseController {
       state: transitionCase(transition.transition, existingCase.state),
     } as UpdateCaseDto
 
-    update[user.role === UserRole.PROSECUTOR ? 'prosecutorId' : 'judgeId'] =
-      user.id
+    // Remove when client has started assigned a judge to each case
+    if (user.role === UserRole.JUDGE) {
+      update['judgeId'] = user.id
+    }
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,
@@ -312,5 +317,21 @@ export class CaseController {
       user,
       documentToken,
     )
+  }
+
+  @RolesRules(prosecutorRule)
+  @Post('case/:id/extend')
+  @ApiCreatedResponse({
+    type: Case,
+    description: 'Clones a new case based on an existing case',
+  })
+  async extend(@Param('id') id: string): Promise<Case> {
+    const existingCase = await this.findCaseById(id)
+
+    if (existingCase.childCase) {
+      return existingCase.childCase
+    }
+
+    return this.caseService.extend(existingCase)
   }
 }

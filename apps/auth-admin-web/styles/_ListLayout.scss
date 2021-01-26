@@ -1,6 +1,8 @@
 .clients,
 .users,
-.identity-resources {
+.identity-resources,
+.api-resources-list,
+.admin-users-list {
   &__wrapper {
     max-width: 1024px;
   }
@@ -12,6 +14,48 @@
       font-size: 42px;
       line-height: 52px;
       color: $color-text-primary;
+    }
+
+    &__options {
+      display: flex;
+      padding: 10px 0;
+
+      &__button {
+        padding-top: 13px;
+        flex: 1;
+      }
+
+      &__search {
+        padding-top: 20px;
+        position: relative;
+        label {
+          position: absolute;
+          top: 0;
+          font-size: 0.8rem;
+        }
+        input {
+          height: 25px;
+          border-radius: $border-radius;
+        }
+        button {
+          border: 1px solid $color-border;
+          box-sizing: border-box;
+          border-radius: $border-radius;
+          background: $color-body-bg;
+          font-size: 15px;
+          font-style: normal;
+          font-weight: 600;
+          line-height: 25px;
+          letter-spacing: 0em;
+          text-align: center;
+          color: $color-text-primary;
+          width: 51px;
+          height: 25px;
+          padding: 0;
+          margin-left: 15px;
+          cursor: pointer;
+        }
+      }
     }
   }
 

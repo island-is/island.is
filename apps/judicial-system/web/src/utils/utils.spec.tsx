@@ -16,7 +16,7 @@ import {
   isDirty,
   isNextDisabled,
 } from './stepHelper'
-import { RequiredField } from '../types'
+import { RequiredField } from '@island.is/judicial-system-web/src/types'
 import {
   CaseTransition,
   CaseCustodyRestrictions,
@@ -453,6 +453,76 @@ describe('Step helper', () => {
         }),
       ).toBeTruthy()
     })
+
+    test('should return the correct string if the case is an extension on alternative travel ban', () => {
+      // Arrange
+      const wc = {
+        decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+        accusedName: 'Doe',
+        accusedNationalId: '0123456789',
+        custodyEndDate: '2020-10-22T12:31:00.000Z',
+        accusedGender: CaseGender.MALE,
+        parentCase: {
+          id: 'TEST_EXTENSION',
+          decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+        },
+      }
+
+      // Act
+      const { getByText } = render(constructConclusion(wc as Case))
+
+      // Assert
+      expect(
+        getByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Kærði, Doe kt. 012345-6789, skal sæta áframhaldandi farbanni, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
+
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
+
+          return nodeHasText && childrenDontHaveText
+        }),
+      ).toBeTruthy()
+    })
+
+    test('should return the correct string if the case is an extension on accepted custody', () => {
+      // Arrange
+      const wc = {
+        decision: CaseDecision.ACCEPTING,
+        accusedName: 'Doe',
+        accusedNationalId: '0123456789',
+        custodyEndDate: '2020-10-22T12:31:00.000Z',
+        accusedGender: CaseGender.MALE,
+        parentCase: {
+          id: 'TEST_EXTENSION',
+          decision: CaseDecision.ACCEPTING,
+        },
+      }
+
+      // Act
+      const { getByText } = render(constructConclusion(wc as Case))
+
+      // Assert
+      expect(
+        getByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Kærði, Doe kt. 012345-6789, skal sæta áframhaldandi gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
+
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
+
+          return nodeHasText && childrenDontHaveText
+        }),
+      ).toBeTruthy()
+    })
   })
 
   describe('constructPoliceDemands', () => {
@@ -480,6 +550,123 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent === 'Saksóknari hefur ekki fyllt út dómkröfur.'
+
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
+
+          return nodeHasText && childrenDontHaveText
+        }),
+      ).toBeTruthy()
+    })
+
+    test('should render the corrent string if the case is an extension', () => {
+      // Arrange
+      const wc = {
+        decision: CaseDecision.ACCEPTING,
+        custodyRestrictions: [
+          CaseCustodyRestrictions.MEDIA,
+          CaseCustodyRestrictions.VISITAION,
+          CaseCustodyRestrictions.ISOLATION,
+        ],
+        accusedName: 'Doe',
+        accusedNationalId: '0123456789',
+        custodyEndDate: '2020-11-26T12:31:00.000Z',
+        requestedCustodyEndDate: '2020-11-26T12:31:00.000Z',
+        court: 'Héraðsdómur Reykjavíkur',
+        parentCase: {
+          id: 'TEST_EXTENSION',
+          decision: CaseDecision.ACCEPTING,
+        },
+      }
+
+      // Act
+      const { getByText } = render(constructProsecutorDemands(wc as Case))
+
+      // Assert
+      expect(
+        getByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Þess er krafist að Doe, kt.012345-6789, sæti áframhaldandi gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
+
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
+
+          return nodeHasText && childrenDontHaveText
+        }),
+      ).toBeTruthy()
+    })
+
+    test('should render the corrent string there are other demands', () => {
+      // Arrange
+      const wc = {
+        decision: CaseDecision.ACCEPTING,
+        custodyRestrictions: [
+          CaseCustodyRestrictions.MEDIA,
+          CaseCustodyRestrictions.VISITAION,
+          CaseCustodyRestrictions.ISOLATION,
+        ],
+        accusedName: 'Doe',
+        accusedNationalId: '0123456789',
+        custodyEndDate: '2020-11-26T12:31:00.000Z',
+        requestedCustodyEndDate: '2020-11-26T12:31:00.000Z',
+        court: 'Héraðsdómur Reykjavíkur',
+        otherDemands: 'Lorem ipsum.',
+      }
+
+      // Act
+      const { getByText } = render(constructProsecutorDemands(wc as Case))
+
+      // Assert
+      expect(
+        getByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Þess er krafist að Doe, kt.012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31. Lorem ipsum.'
+
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
+
+          return nodeHasText && childrenDontHaveText
+        }),
+      ).toBeTruthy()
+    })
+
+    test('should not render the other demands if skipOtherDemands parameter is set to true', () => {
+      // Arrange
+      const wc = {
+        decision: CaseDecision.ACCEPTING,
+        custodyRestrictions: [
+          CaseCustodyRestrictions.MEDIA,
+          CaseCustodyRestrictions.VISITAION,
+          CaseCustodyRestrictions.ISOLATION,
+        ],
+        accusedName: 'Doe',
+        accusedNationalId: '0123456789',
+        custodyEndDate: '2020-11-26T12:31:00.000Z',
+        requestedCustodyEndDate: '2020-11-26T12:31:00.000Z',
+        court: 'Héraðsdómur Reykjavíkur',
+        otherDemands: 'Lorem ipsum.',
+      }
+
+      // Act
+      const { getByText } = render(constructProsecutorDemands(wc as Case, true))
+
+      // Assert
+      expect(
+        getByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Þess er krafist að Doe, kt.012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(
