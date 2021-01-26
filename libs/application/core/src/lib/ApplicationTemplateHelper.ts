@@ -203,9 +203,7 @@ export class ApplicationTemplateHelper<
     const errorMap: Record<string, string> = {}
     const validatorPaths = Object.keys(validators)
 
-    for (let i = 0; i < validatorPaths.length; i++) {
-      const validatorPath = validatorPaths[i]
-
+    for (const validatorPath of validatorPaths) {
       if (has(newAnswers, validatorPath)) {
         const newAnswer = get(newAnswers, validatorPath)
         const result = await validators[validatorPath](
