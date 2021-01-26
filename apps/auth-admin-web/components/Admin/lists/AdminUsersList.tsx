@@ -40,10 +40,9 @@ class AdminUsersList extends Component {
     this.setState({ page: page, count: count })
   }
 
-  archive = async (): Promise<void> => {
+  deleteUser = async (): Promise<void> => {
     await AdminAccessService.delete(this.state.accessToRemove)
     this.getAdmins(this.state.searchString, this.state.page, this.state.count)
-
     this.closeModal()
   }
 
@@ -173,8 +172,8 @@ class AdminUsersList extends Component {
           modalIsOpen={this.state.modalIsOpen}
           headerElement={this.setHeaderElement()}
           closeModal={this.closeModal}
-          confirmation={this.archive}
-          confirmationText="Archive"
+          confirmation={this.deleteUser}
+          confirmationText="Delete"
         ></ConfirmModal>
       </div>
     )
