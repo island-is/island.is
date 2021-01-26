@@ -5,6 +5,7 @@ import { createClient } from 'contentful-management'
 import { Entry } from 'contentful-management/dist/typings/entities/entry'
 import isEmpty from 'lodash/isEmpty'
 import { DictArray } from '@island.is/shared/types'
+import { logger } from '@island.is/logging'
 
 type MessageDict = Record<string, Message>
 
@@ -39,7 +40,9 @@ const getNamespace = (id: string, space: string) =>
     .getSpace(space)
     .then((space) => space.getEnvironment('master'))
     .then((environment) => environment.getEntry(id))
-    .catch(() => null)
+    .catch((err) => {
+      logger.error('Error when running getNamespace', { message: err.message })
+    })
 
 const createNamespace = (id: string, messages: MessageDict, space: string) =>
   client
@@ -58,7 +61,11 @@ const createNamespace = (id: string, messages: MessageDict, space: string) =>
         },
       }),
     )
-    .catch((err) => console.log(err))
+    .catch((err) => {
+      logger.error('Error when running createNamespace', {
+        message: err.message,
+      })
+    })
 
 export const mergeArray = (local: DictArray[], distant: DictArray[]) =>
   local.map((localObj) => {
@@ -103,8 +110,16 @@ export const updateNamespace = (namespace: Entry, messages: MessageDict) => {
 
   return namespace
     .update()
-    .then((namespace) => console.log('Update namespace', namespace))
-    .catch((err) => console.log(err))
+    .then((namespace) =>
+      logger.info('Namespace updated', {
+        message: JSON.stringify(namespace, null, 2),
+      }),
+    )
+    .catch((err) => {
+      logger.error('Error when running updateNamespace', {
+        message: err.message,
+      })
+    })
 }
 
 glob
