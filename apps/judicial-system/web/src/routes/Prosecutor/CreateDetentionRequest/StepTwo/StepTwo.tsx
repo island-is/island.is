@@ -148,7 +148,7 @@ export const StepTwo: React.FC = () => {
 
   const prosecutors = userData?.users
     .filter((user: User, _: number) => user.role === UserRole.PROSECUTOR)
-    .map((prosecutor: User, index: number) => {
+    .map((prosecutor: User, _: number) => {
       return { label: prosecutor.name, value: prosecutor.id }
     })
 
