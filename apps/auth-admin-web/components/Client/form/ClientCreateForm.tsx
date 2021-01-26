@@ -124,35 +124,48 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
         client.requireClientSecret = false
         client.requirePkce = true
 
-        setClientTypeInfo('Authorization code flow + PKCE')
+        setClientTypeInfo(
+          `Authorization code flow + PKCE\n
+          A single-page application (spa) doesn't need to reload the page during its use and works within a browser, f.x. Google and Facebook.
+          Since it is running in the users browser, it cannot keep a secret.\n
+          <a href="todo#[spa]" target="_blank">more information</a>
+          `,
+        )
       }
 
       if (clientType === 'native') {
         client.requireClientSecret = false
         client.requirePkce = true
 
-        setClientTypeInfo('Authorization code flow + PKCE')
+        setClientTypeInfo(`Authorization code flow + PKCE\n
+        A native application is designed specifically for use on a particular platform or device. 
+        Since it runs on user´s devices it cannot keep a secret.\n
+        <a href="todo#[native]" target="_blank">more information</a>`)
       }
 
       if (clientType === 'web') {
         client.requireClientSecret = true
         client.requirePkce = false
 
-        setClientTypeInfo('Hybrid flow with client authentication')
+        setClientTypeInfo(`Hybrid flow with client authentication\n
+        A web application runs on a web server and is accessed by a web browser. Examples of common web applications are 
+        online banking and online retail sales. Is capable of keeping a secret.\n
+        <a href="todo#[web]" target="_blank">more information</a>`)
       }
 
       if (clientType === 'machine') {
         client.requireClientSecret = true
         client.requirePkce = false
 
-        setClientTypeInfo('Client credentials')
+        setClientTypeInfo(`Hybrid flow with client authentication\n
+        An application or service running on a confidential server. Is capable of keeping a secret.\n
+        <a href="todo#[machine]" target="_blank">more information</a>`)
       }
 
-      if (clientType === 'device') {
-        // What are the defaults?
-
-        setClientTypeInfo('Device flow using external browser')
-      }
+      // Is commented out in the dropdown list as of now and is hence commented out
+      // if (clientType === 'device') {
+      //   setClientTypeInfo('Device flow using external browser')
+      // }
 
       setClientTypeSelected(true)
     } else {
@@ -199,12 +212,12 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       >
                         Native
                       </option>
-                      <option
+                      {/* <option
                         value="device"
                         selected={client.clientType === 'device'}
                       >
                         Device
-                      </option>
+                      </option> */}
                       <option
                         value="web"
                         selected={client.clientType === 'web'}
