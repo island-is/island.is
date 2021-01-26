@@ -256,7 +256,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     <label className="client__label">Contact email</label>
                     <input
                       type="text"
-                      ref={register({required: true, pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/ })}
+                      ref={register({
+                        required: true,
+                        pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                      })}
                       name="client.contactEmail"
                       defaultValue={client.contactEmail ?? ''}
                       className="client__input"
@@ -345,7 +348,6 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     />
                     <HelpBox helpText="Application description for use within the IDS management" />
                   </div>
-                  
 
                   <div className="client__container__checkbox__field">
                     <label className="client__label">Require consent</label>

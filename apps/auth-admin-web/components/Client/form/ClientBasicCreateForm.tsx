@@ -218,7 +218,10 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                     <label className="client-basic__label">Contact email</label>
                     <input
                       type="text"
-                      ref={register({required: true, pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/ })}
+                      ref={register({
+                        required: true,
+                        pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                      })}
                       name="client.contactEmail"
                       defaultValue={client.contactEmail ?? ''}
                       className="client-basic__input"
