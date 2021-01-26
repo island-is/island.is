@@ -39,7 +39,7 @@ read -p $BLUE"Secret name: $RESET$SSM_PREFIX" SECRET_NAME
 
 
 #-------------------CREATE SECRET--------------------------#
-create_secret () {
+prepare_secret () {
 
   # Blank secret name not allowed
   if [ -z "$SECRET_NAME" ]
@@ -72,7 +72,7 @@ create_secret () {
   # Prompt user for secret value
   read -p $BLUE'Secret value: '$RESET SECRET_VALUE
 
-  # [DEBUG] Validate regex pattern
+  # Validate regex pattern
   if [[ $SECRET_VALUE =~ $ILLEGAL_CHARS ]]
   then
     echo $RED"Whitespaces in secret value is not allowed"$RESET
@@ -84,10 +84,15 @@ create_secret () {
   then
     echo # newline
     echo $GREEN"Creating secret...."$RESET
-    exit 0
+    create_secret
   else
     echo $RED"Aborting..."$RESET
   fi
 }
 
-create_secret
+create_secret () {
+  aws ssm put-parameter --name $SSM_PREFIX$SECRET_NAME --value $SECRET_VALUE --type SecureString
+  echo $GREEN"Done!"$RESET
+}
+
+prepare_secret
