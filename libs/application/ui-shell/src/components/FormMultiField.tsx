@@ -6,6 +6,7 @@ import {
   formatText,
   FormValue,
   FieldTypes,
+  RecordObject,
 } from '@island.is/application/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -18,7 +19,7 @@ const IGNORED_HALF_TYPES: FieldTypes[] = [FieldTypes.RADIO]
 
 const FormMultiField: FC<{
   application: Application
-  errors: object
+  errors: RecordObject
   multiField: MultiFieldScreen
   answerQuestions(answers: FormValue): void
   goToScreen: (id: string) => void

@@ -5,6 +5,7 @@ import {
   Field,
   FieldBaseProps,
   getValueViaPath,
+  RecordObject,
 } from '@island.is/application/core'
 import { useFields } from './FieldContext'
 
@@ -13,7 +14,7 @@ const FormField: FC<{
   autoFocus?: boolean
   field: FieldDef
   showFieldName?: boolean
-  errors: object
+  errors: RecordObject
   goToScreen: (id: string) => void
   refetch: () => void
 }> = ({

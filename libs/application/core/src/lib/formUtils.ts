@@ -1,7 +1,7 @@
 import deepmerge from 'deepmerge'
 import isArray from 'lodash/isArray'
 
-import { Field } from '../types/Fields'
+import { Field, RecordObject } from '../types/Fields'
 import { Application, FormValue } from '../types/Application'
 import {
   Form,
@@ -15,7 +15,7 @@ import {
   SubSection,
 } from '../types/Form'
 
-const containsArray = (obj: Record<string, any>) => {
+const containsArray = (obj: RecordObject) => {
   let contains = false
 
   for (const key in obj) {
@@ -28,7 +28,7 @@ const containsArray = (obj: Record<string, any>) => {
 }
 
 export function getValueViaPath(
-  obj: Record<string, any>,
+  obj: RecordObject,
   path: string,
   defaultValue: unknown = undefined,
 ): unknown | undefined {
@@ -48,7 +48,7 @@ export function getValueViaPath(
           // @ts-ignore
           (res, key) => (res !== null && res !== undefined ? res[key] : res),
           obj,
-        )
+        ) as RecordObject | string
 
     const result = travel(/[,[\]]+?/) || travel(/[,[\].]+?/)
 
@@ -151,15 +151,15 @@ export function findSubSectionIndex(
 
 type DeepmergeOptions = deepmerge.Options & {
   cloneUnlessOtherwiseSpecified(
-    key: Record<string, any>,
+    key: RecordObject,
     options?: DeepmergeOptions,
   ): any | undefined
-  isMergeableObject(item: Record<string, any>): boolean
+  isMergeableObject(item: RecordObject): boolean
 }
 
 const overwriteArrayMerge = (
-  destinationArray: Record<string, any>[],
-  sourceArray: Record<string, any>[],
+  destinationArray: RecordObject[],
+  sourceArray: RecordObject[],
   options: DeepmergeOptions,
 ) => {
   const destination = destinationArray.slice()
@@ -171,7 +171,7 @@ const overwriteArrayMerge = (
     return sourceArray
   }
 
-  sourceArray.forEach((item: Record<string, any>, index: number) => {
+  sourceArray.forEach((item: RecordObject, index: number) => {
     if (typeof destination[index] === 'undefined') {
       destination[index] = options.cloneUnlessOtherwiseSpecified(item, options)
     } else if (options.isMergeableObject(item)) {
@@ -185,8 +185,8 @@ const overwriteArrayMerge = (
 }
 
 export function mergeAnswers(
-  currentAnswers: Record<string, any>,
-  newAnswers: Record<string, any>,
+  currentAnswers: RecordObject<any>,
+  newAnswers: RecordObject<any>,
 ): FormValue {
   return deepmerge(currentAnswers, newAnswers, {
     arrayMerge: overwriteArrayMerge,
