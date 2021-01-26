@@ -50,7 +50,8 @@
   }
 
   &__container__field,
-  &__container__checkbox__field {
+  &__container__checkbox__field,
+  &__container__radio__field {
     display: block;
     position: relative;
 
@@ -103,6 +104,10 @@
 
   .field-with-details {
     margin-bottom: 45px;
+  }
+
+  .toggleable-fields {
+    margin-top: 20px;
   }
 
   &__selected__item {
@@ -158,8 +163,10 @@
     }
   }
 
-  &__container__checkbox__field {
-    input[type='checkbox'] {
+  &__container__checkbox__field,
+  &__container__radio__field {
+    input[type='checkbox'],
+    input[type='radio'] {
       flex-basis: 50px;
       margin-top: 40px;
       margin-left: 15px;

@@ -51,7 +51,7 @@ export class ClientService extends BaseService {
   }
 
   /** Sets default grant type and allowed scope */
-  static async setDefaults(client: Client): Promise<boolean> {
+  static async setDefaults(client: Client, baseUrl?: string): Promise<boolean> {
     let response = true
     const scopeResponse = ClientService.addAllowedScope({
       clientId: client.clientId,
@@ -71,28 +71,34 @@ export class ClientService extends BaseService {
       })
       if (!grantResponse) response = false
     }
-    const callBackUri = ClientService.addRedirectUri({
-      clientId: client.clientId,
-      redirectUri: client.clientUri + '/signin-oidc',
-    })
-    if (!callBackUri) {
-      response = false
-    }
 
-    const postLogOutUri = ClientService.addPostLogoutRedirectUri({
-      clientId: client.clientId,
-      redirectUri: client.clientUri,
-    })
-    if (!postLogOutUri) {
-      response = false
-    }
+    if (baseUrl) {
+      if (baseUrl.endsWith('/')) {
+        baseUrl = baseUrl.substr(0, baseUrl.length - 2)
+      }
+      const callBackUri = ClientService.addRedirectUri({
+        clientId: client.clientId,
+        redirectUri: baseUrl + '/signin-oidc',
+      })
+      if (!callBackUri) {
+        response = false
+      }
 
-    const corsOrigin = ClientService.addAllowedCorsOrigin({
-      clientId: client.clientId,
-      origin: client.clientUri,
-    })
-    if (!corsOrigin) {
-      response = false
+      const postLogOutUri = ClientService.addPostLogoutRedirectUri({
+        clientId: client.clientId,
+        redirectUri: baseUrl,
+      })
+      if (!postLogOutUri) {
+        response = false
+      }
+
+      const corsOrigin = ClientService.addAllowedCorsOrigin({
+        clientId: client.clientId,
+        origin: baseUrl,
+      })
+      if (!corsOrigin) {
+        response = false
+      }
     }
 
     return response

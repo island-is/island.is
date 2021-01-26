@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { RadioController } from '@island.is/shared/form-fields'
+import { useLocale } from '@island.is/localization'
 import {
   Box,
   Stack,
@@ -12,7 +13,9 @@ import {
   CustomField,
   FieldBaseProps,
   getValueViaPath,
+  formatText,
 } from '@island.is/application/core'
+import { m } from '../lib/messages'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
@@ -23,17 +26,21 @@ function HealthDeclaration({
   field,
   application,
 }: PropTypes): JSX.Element {
-  const { props } = field as { props: { title?: string; label: string } }
+  const { formatMessage } = useLocale()
+  const props = field.props as { title?: string; label: string }
+
   return (
     <>
       {props.title && (
         <Box marginBottom={4}>
-          <Text variant="h5">{props.title}</Text>
+          <Text variant="h5">
+            {formatText(props.title, application, formatMessage)}
+          </Text>
         </Box>
       )}
       <GridRow>
         <GridColumn span="9/12">
-          <Text>{props.label}</Text>
+          <Text>{formatText(props.label, application, formatMessage)}</Text>
         </GridColumn>
         <GridColumn span="3/12">
           <RadioController
@@ -44,8 +51,14 @@ function HealthDeclaration({
               undefined
             }
             options={[
-              { label: 'Já', value: 'yes' },
-              { label: 'Nei', value: 'no' },
+              {
+                label: formatText(m.yes, application, formatMessage),
+                value: 'yes',
+              },
+              {
+                label: formatText(m.no, application, formatMessage),
+                value: 'no',
+              },
             ]}
           />
         </GridColumn>
