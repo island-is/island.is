@@ -495,7 +495,13 @@ export const StepTwo: React.FC = () => {
           {modalVisible && (
             <Modal
               title="Viltu senda tilkynningu?"
-              text="Með því að senda tilkynningu á dómara á vakt um að krafa um gæsluvarðhald sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála."
+              text={`Með því að senda tilkynningu á dómara á vakt um að krafa um ${
+                // TODO: ADD CASE TYPE TO CASE AND UNCOMMENT
+                /*workingCase.caseType*/ CaseType.DETENTION ===
+                CaseType.DETENTION
+                  ? 'gæsluvarðhald'
+                  : 'farbann'
+              } sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála.`}
               primaryButtonText="Senda tilkynningu"
               secondaryButtonText="Halda áfram með kröfu"
               handleClose={() => setModalVisible(false)}
