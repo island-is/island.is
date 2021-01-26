@@ -36,7 +36,7 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
     }
   }
 
-  const create = async (data: AdminAccessDTO): void => {
+  const create = async (data: AdminAccessDTO): Promise<void> => {
     if (isEditing) {
       const response = await AdminAccessService.update(
         props.adminAccess.nationalId,
