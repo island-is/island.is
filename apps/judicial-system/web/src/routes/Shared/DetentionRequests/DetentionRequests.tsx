@@ -181,7 +181,9 @@ export const DetentionRequests: React.FC = () => {
   const deleteCase = async (caseToDelete: Case) => {
     if (
       caseToDelete.state === CaseState.NEW ||
-      caseToDelete.state === CaseState.DRAFT
+      caseToDelete.state === CaseState.DRAFT ||
+      caseToDelete.state === CaseState.SUBMITTED ||
+      caseToDelete.state === CaseState.RECEIVED
     ) {
       const transitionRequest = parseTransition(
         caseToDelete.modified,
@@ -401,11 +403,13 @@ export const DetentionRequests: React.FC = () => {
                   </td>
                   <td className={cn(styles.td, 'secondLast')}>
                     {!isJudge &&
-                      (c.state === CaseState.DRAFT ||
-                        c.state === CaseState.NEW) && (
+                      (c.state === CaseState.NEW ||
+                        c.state === CaseState.DRAFT ||
+                        c.state === CaseState.SUBMITTED ||
+                        c.state === CaseState.RECEIVED) && (
                         <Box
                           component="button"
-                          aria-label="Viltu eyða drögum?"
+                          aria-label="Viltu afturkalla kröfu?"
                           className={styles.deleteButton}
                           onClick={(evt) => {
                             evt.stopPropagation()
@@ -433,7 +437,7 @@ export const DetentionRequests: React.FC = () => {
                       }}
                     >
                       <Box as="span" className={styles.deleteButtonText}>
-                        Eyða drögum
+                        Afturkalla
                       </Box>
                     </Button>
                   </td>

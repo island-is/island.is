@@ -100,7 +100,7 @@ export const CourtRecord: React.FC = () => {
           wc.defenderName
         } skipaður verjandi ${formatAccusedByGender(
           wc?.accusedGender || CaseGender.OTHER,
-          NounCases.DATIVE,
+          NounCases.GENITIVE,
         )}`
       }
 
@@ -289,7 +289,7 @@ export const CourtRecord: React.FC = () => {
               <Text as="h3" variant="h3">
                 {`Réttindi ${formatAccusedByGender(
                   workingCase.accusedGender || CaseGender.OTHER,
-                  NounCases.DATIVE,
+                  NounCases.GENITIVE,
                 )}`}
               </Text>
             </Box>
@@ -307,7 +307,7 @@ export const CourtRecord: React.FC = () => {
               name="accusedPlea"
               label={`Afstaða ${formatAccusedByGender(
                 workingCase.accusedGender || CaseGender.OTHER,
-                NounCases.DATIVE,
+                NounCases.GENITIVE,
               )}`}
               defaultValue={workingCase.accusedPlea}
               placeholder={`Hvað hafði ${formatAccusedByGender(
