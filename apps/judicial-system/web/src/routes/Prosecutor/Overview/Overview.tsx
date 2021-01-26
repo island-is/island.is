@@ -155,9 +155,14 @@ export const Overview: React.FC = () => {
         <>
           <Box marginBottom={10}>
             <Text as="h1" variant="h1">
-              {workingCase.parentCase
-                ? 'Yfirlit kröfu um framlengingu á gæslu'
-                : 'Krafa um gæsluvarðhald'}
+              {`Yfirlit kröfu um ${
+                workingCase.parentCase ? 'framlengingu' : ''
+              } á ${
+                // TODO: REPLACE COMMENTS WITH CASETYPE
+                workingCase.comments === CaseType.DETENTION
+                  ? 'gæslu'
+                  : 'farbann'
+              }`}
             </Text>
           </Box>
           <Box component="section" marginBottom={5}>

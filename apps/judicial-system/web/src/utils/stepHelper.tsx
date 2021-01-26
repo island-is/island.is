@@ -17,6 +17,7 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseGender,
+  CaseType,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
 
@@ -179,7 +180,12 @@ export const constructProsecutorDemands = (
         workingCase.parentCase?.decision === CaseDecision.ACCEPTING
           ? ' áframhaldandi'
           : ''
-      } gæsluvarðhaldi${
+        //TODO: CHANGE workingCase.comments to workingCase.caseType
+      } ${
+        workingCase.comments === CaseType.DETENTION
+          ? 'gæsluvarðhaldi'
+          : 'farbanni'
+      }${
         workingCase.alternativeTravelBan
           ? `,${
               workingCase.parentCase &&
