@@ -39,7 +39,7 @@
 /libs/utils/api/                                          @island-is/aranja
 /libs/vmst-client/                                        @island-is/aranja
 
-/libs/application/templates/children-domicile-transfer/   @island-is/kolibri-modern-family
+/libs/application/templates/children-residence-change/    @island-is/kolibri-modern-family
 
 /apps/judicial-system/                                    @island-is/kolibri-justice-league
 /libs/judicial-system/                                    @island-is/kolibri-justice-league
@@ -85,6 +85,7 @@
 /libs/application/templates/document-provider-onboarding/ @island-is/advania
 /libs/service-portal/document-provider/                   @island-is/advania
 /apps/services/xroad-collector/                           @island-is/advania
+/apps/services/documents                                  @island-is/advania
 
 /apps/skilavottord/                                       @island-is/deloitte
 /libs/skilavottord/                                       @island-is/deloitte

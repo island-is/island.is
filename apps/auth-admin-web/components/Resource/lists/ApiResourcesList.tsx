@@ -136,8 +136,8 @@ const ApiResourcesList: React.FC = () => {
                 <thead>
                   <tr>
                     <th>Name</th>
-                    <th>Display Name</th>
                     <th>National Id</th>
+                    <th>Contact Email</th>
                     <th colSpan={2}></th>
                   </tr>
                 </thead>
@@ -149,8 +149,8 @@ const ApiResourcesList: React.FC = () => {
                         className={resource.archived ? 'archived' : ''}
                       >
                         <td>{resource.name}</td>
-                        <td>{resource.displayName}</td>
                         <td>{resource.nationalId}</td>
+                        <td>{resource.contactEmail}</td>
                         <td className="api-resources-list__table__button">
                           <button
                             type="button"

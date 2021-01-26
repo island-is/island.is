@@ -38,6 +38,7 @@ export abstract class ClientBaseDTO {
     this.description = null
     this.protocolType = ''
     this.requireClientSecret = true
+    this.contactEmail = ''
   }
 
   nationalId: string
@@ -78,4 +79,5 @@ export abstract class ClientBaseDTO {
   description: string | null
   protocolType: string
   requireClientSecret: boolean
+  contactEmail: string
 }

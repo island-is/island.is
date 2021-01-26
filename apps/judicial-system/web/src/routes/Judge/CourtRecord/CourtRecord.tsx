@@ -109,7 +109,7 @@ export const CourtRecord: React.FC = () => {
     if (!workingCase && data?.case) {
       let theCase = data.case
 
-      if (!theCase.courtAttendees) {
+      if (theCase.courtAttendees !== defaultCourtAttendees(theCase)) {
         theCase = { ...theCase, courtAttendees: defaultCourtAttendees(theCase) }
 
         if (theCase.courtAttendees) {
