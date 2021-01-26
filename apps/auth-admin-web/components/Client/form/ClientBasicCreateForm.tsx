@@ -102,7 +102,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
         client.requireClientSecret = true
         client.requirePkce = false
 
-        setClientTypeInfo(`A web application runs on a web server and is accessed by a web browser. Examples of connom web applications are 
+        setClientTypeInfo(`A web application runs on a web server and is accessed by a web browser. Examples of common web applications are 
         online banking and online retail sales. Is capable of keeping a secret.`)
       }
 
@@ -115,7 +115,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
         )
       }
 
-      // Is not in the dropdown list as of now and is hence commented out
+      // Is commented out in the dropdown list as of now and is hence commented out
       // if (clientType === 'device') {
       //   setClientTypeInfo('Device flow using external browser')
       // }
