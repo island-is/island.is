@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
 import { Client } from './../../../entities/models/client.model'
-import { downloadCSV } from '../../..//utils/csv.utils'
+import { downloadCSV } from '../../../utils/csv.utils'
 
 class ClientsList extends Component {
   state = {
