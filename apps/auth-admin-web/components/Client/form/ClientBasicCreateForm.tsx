@@ -85,7 +85,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
 
         setClientTypeInfo(
           `A single-page application (spa) is an application that doesn't need to reload the page during its use and works within a browser, f.x. Google and Facebook.
-          Since it is running in the users browswer, it cannot keep a secret.
+          Since it is running in the users browser, it cannot keep a secret.
           `,
         )
       }
