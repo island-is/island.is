@@ -5,6 +5,7 @@ import { createClient } from 'contentful-management'
 import { Entry } from 'contentful-management/dist/typings/entities/entry'
 import { DictArray } from '@island.is/shared/types'
 import { logger } from '@island.is/logging'
+import { isEmpty } from 'lodash'
 
 type MessageDict = Record<string, Message>
 
@@ -77,49 +78,49 @@ const createNamespace = (id: string, messages: MessageDict) =>
 
 // Local array doesn't contain all the locales translation. We just set the is-IS
 // translation using the defaultMessage, the rest has to be done through contentful
-export const mergeArray = async (
+export const mergeArray = (
   local: Partial<DictArray>[],
   contentful: DictArray[],
-) => {
-  const locales = await getLocales()
-  const localesArr = (locales as {
-    items: Record<string, any>[]
-  }).items.map((locale) => ({ id: locale.code }))
+  locales: { id: string }[],
+) => [
+  ...local.map((localObj) => {
+    const contentfulValue = contentful.find(
+      (contentfulObj) => contentfulObj.id === localObj.id,
+    )
 
-  return [
-    ...local.map((localObj) => {
-      const contentfulValue = contentful.find(
-        (contentfulObj) => contentfulObj.id === localObj.id,
-      )
+    return {
+      id: localObj.id,
+      defaultMessage: localObj.defaultMessage,
+      description: localObj.description,
+      ...locales.reduce((acc, cur) => {
+        const contentfulMessage = (contentfulValue as Record<string, any>)?.[
+          cur.id
+        ]
+        const localMessage = (localObj as Record<string, string>)?.[cur.id]
+        const message = !isEmpty(contentfulMessage)
+          ? contentfulMessage
+          : !isEmpty(localMessage)
+          ? localMessage
+          : ''
 
-      return {
-        id: localObj.id,
-        defaultMessage: localObj.defaultMessage,
-        description: localObj.description,
-        ...localesArr.reduce(
-          (acc, cur) => ({
-            ...acc,
-            [cur.id]:
-              (contentfulValue as Record<string, any>)?.[cur.id] ??
-              (localObj as Record<string, string>)?.[cur.id] ??
-              '',
-            deprecated: false,
-          }),
-          {},
-        ),
-      }
-    }),
-    ...contentful
-      .filter(
-        (contentfulObj) =>
-          !local.some((localObj) => localObj.id === contentfulObj.id),
-      )
-      .map((contentfulObj) => ({
-        ...contentfulObj,
-        deprecated: true,
-      })),
-  ]
-}
+        return {
+          ...acc,
+          [cur.id]: message,
+          deprecated: false,
+        }
+      }, {}),
+    }
+  }),
+  ...contentful
+    .filter(
+      (contentfulObj) =>
+        !local.some((localObj) => localObj.id === contentfulObj.id),
+    )
+    .map((contentfulObj) => ({
+      ...contentfulObj,
+      deprecated: true,
+    })),
+]
 
 export const translationsFromLocal = (messages: MessageDict) =>
   Object.keys(messages).map((item) => ({
@@ -136,9 +137,12 @@ export const updateNamespace = async (
   namespace: Entry,
   messages: MessageDict,
 ) => {
+  const locales = ((await getLocales()) as {
+    items: Record<string, any>[]
+  }).items.map((locale) => ({ id: locale.code }))
   const fromLocal = translationsFromLocal(messages)
   const fromContentful = translationsFromContentful(namespace)
-  const merged = await mergeArray(fromLocal, fromContentful)
+  const merged = mergeArray(fromLocal, fromContentful, locales)
 
   namespace.fields.strings[DEFAULT_LOCALE] = merged
 
