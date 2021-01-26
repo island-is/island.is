@@ -25,15 +25,20 @@ if (!CONTENTFUL_SPACE || !CONTENTFUL_MANAGEMENT_ACCESS_TOKEN) {
 
 const client = createClient({ accessToken: CONTENTFUL_MANAGEMENT_ACCESS_TOKEN })
 
-spawn.sync('npx', [
-  'formatjs',
-  'extract',
-  '--out-file',
-  'libs/localization/messages.json',
-  '--format',
-  'libs/localization/scripts/formatter.js',
-  process.argv[2],
-])
+try {
+  spawn.sync('npx', [
+    'formatjs',
+    'extract',
+    '--out-file',
+    'libs/localization/messages.json',
+    '--format',
+    'libs/localization/scripts/formatter.js',
+    process.argv[2],
+  ])
+} catch (e) {
+  console.error(`Error while trying to extract strings ${e}`)
+  process.exit(1)
+}
 
 const getLocales = () =>
   client
@@ -41,7 +46,7 @@ const getLocales = () =>
     .then((space) => space.getEnvironment('master'))
     .then((environment) => environment.getLocales())
     .catch((err) => {
-      logger.error('Error when running getLocales', { message: err.message })
+      logger.error('Error getting locales', { message: err.message })
     })
 
 const getNamespace = (id: string) =>
@@ -49,29 +54,33 @@ const getNamespace = (id: string) =>
     .getSpace(CONTENTFUL_SPACE)
     .then((space) => space.getEnvironment('master'))
     .then((environment) => environment.getEntry(id))
-    .catch((err) => {
-      logger.error('Error when running getNamespace', { message: err.message })
-    })
+    .catch(() => null)
 
 const createNamespace = (id: string, messages: MessageDict) =>
   client
     .getSpace(CONTENTFUL_SPACE)
     .then((space) => space.getEnvironment('master'))
-    .then((environment) =>
-      environment.createEntryWithId('namespaceJeremyDev', id, {
-        // TODO: put namespace back after review
-        fields: {
-          namespace: {
-            [DEFAULT_LOCALE]: id,
-          },
-          strings: {
-            [DEFAULT_LOCALE]: translationsFromLocal(messages),
+    .then(async (environment) => {
+      const entry = await environment.createEntryWithId(
+        'namespaceJeremyDev',
+        id,
+        {
+          // TODO: put namespace back after review
+          fields: {
+            namespace: {
+              [DEFAULT_LOCALE]: id,
+            },
+            strings: {
+              [DEFAULT_LOCALE]: translationsFromLocal(messages),
+            },
           },
         },
-      }),
-    )
+      )
+
+      logger.info(`New namespace created`, { message: entry.sys.id })
+    })
     .catch((err) => {
-      logger.error('Error when running createNamespace', {
+      logger.error('Error creating new namespace', {
         message: err.message,
       })
     })
@@ -150,11 +159,11 @@ export const updateNamespace = async (
     .update()
     .then((namespace) =>
       logger.info('Namespace updated', {
-        message: JSON.stringify(namespace, null, 2),
+        message: namespace.sys.id,
       }),
     )
     .catch((err) => {
-      logger.error('Error when running updateNamespace', {
+      logger.error('Error updating namespace', {
         message: err.message,
       })
     })
@@ -174,6 +183,9 @@ glob
         if (namespace) {
           updateNamespace(namespace, namespaceMessages)
         } else {
+          logger.warn(
+            `${namespaceId} doesn't exist, we are going to create it for you now`,
+          )
           createNamespace(namespaceId, namespaceMessages)
         }
       },
