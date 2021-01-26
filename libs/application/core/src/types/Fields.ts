@@ -4,7 +4,7 @@ import {
   InputBackgroundColor,
 } from '@island.is/island-ui/core'
 import { ApolloClient } from '@apollo/client'
-import { FormText, FormItem } from './Form'
+import { FormText, FormTextArray, FormItem } from './Form'
 import { Condition } from './Condition'
 import { CallToAction } from './StateMachine'
 import { Application } from './Application'
@@ -170,8 +170,8 @@ export interface DividerField extends BaseField {
 
 export interface KeyValueField extends BaseField {
   readonly type: FieldTypes.KEY_VALUE
-  label: React.ReactNode
-  value: React.ReactNode | React.ReactNode[]
+  label: FormText
+  value: FormText | FormTextArray
   component: FieldComponents.KEY_VALUE
 }
 
