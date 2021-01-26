@@ -62,8 +62,8 @@ const remainingCreateCaseData = {
   accusedName: 'Accused Name',
   accusedAddress: 'Accused Address',
   accusedGender: CaseGender.OTHER,
-  requestedDefenderName: 'Requested Defender Name',
-  requestedDefenderEmail: 'Requested Defender Email',
+  defenderName: 'Defender Name',
+  defenderEmail: 'Defender Email',
   court: 'Court',
 }
 
@@ -91,8 +91,6 @@ const remainingJudgeCaseData = {
   courtCaseNumber: 'Court Case Number',
   courtDate: '2020-09-29T13:00:00.000Z',
   courtRoom: '201',
-  defenderName: 'Defender Name',
-  defenderEmail: 'Defender Email',
   courtStartTime: '2020-09-29T13:00:00.000Z',
   courtEndTime: '2020-09-29T14:00:00.000Z',
   courtAttendees: 'Court Attendees',
@@ -177,12 +175,8 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.accusedName || null).toBe(caseTwo.accusedName || null)
   expect(caseOne.accusedAddress || null).toBe(caseTwo.accusedAddress || null)
   expect(caseOne.accusedGender || null).toBe(caseTwo.accusedGender || null)
-  expect(caseOne.requestedDefenderName || null).toBe(
-    caseTwo.requestedDefenderName || null,
-  )
-  expect(caseOne.requestedDefenderEmail || null).toBe(
-    caseTwo.requestedDefenderEmail || null,
-  )
+  expect(caseOne.defenderName || null).toBe(caseTwo.defenderName || null)
+  expect(caseOne.defenderEmail || null).toBe(caseTwo.defenderEmail || null)
   expect(caseOne.court || null).toBe(caseTwo.court || null)
   expect(caseOne.arrestDate || null).toBe(caseTwo.arrestDate || null)
   expect(caseOne.requestedCourtDate || null).toBe(
@@ -210,8 +204,6 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.courtCaseNumber || null).toBe(caseTwo.courtCaseNumber || null)
   expect(caseOne.courtDate || null).toBe(caseTwo.courtDate || null)
   expect(caseOne.courtRoom || null).toBe(caseTwo.courtRoom || null)
-  expect(caseOne.defenderName || null).toBe(caseTwo.defenderName || null)
-  expect(caseOne.defenderEmail || null).toBe(caseTwo.defenderEmail || null)
   expect(caseOne.courtStartTime || null).toBe(caseTwo.courtStartTime || null)
   expect(caseOne.courtEndTime || null).toBe(caseTwo.courtEndTime || null)
   expect(caseOne.courtAttendees || null).toBe(caseTwo.courtAttendees || null)

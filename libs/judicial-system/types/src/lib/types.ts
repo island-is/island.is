@@ -86,8 +86,8 @@ export interface Case {
   accusedName?: string
   accusedAddress?: string
   accusedGender?: CaseGender
-  requestedDefenderName?: string
-  requestedDefenderEmail?: string
+  defenderName?: string
+  defenderEmail?: string
   court?: string
   arrestDate?: string
   requestedCourtDate?: string
@@ -107,8 +107,6 @@ export interface Case {
   courtDate?: string
   isCourtDateInThePast?: boolean
   courtRoom?: string
-  defenderName?: string
-  defenderEmail?: string
   courtStartTime?: string
   courtEndTime?: string
   courtAttendees?: string
@@ -153,8 +151,8 @@ export interface CreateCase {
   accusedName?: string
   accusedAddress?: string
   accusedGender?: CaseGender
-  requestedDefenderName?: string
-  requestedDefenderEmail?: string
+  defenderName?: string
+  defenderEmail?: string
   court?: string
 }
 
@@ -164,8 +162,8 @@ export interface UpdateCase {
   accusedName?: string
   accusedAddress?: string
   accusedGender?: CaseGender
-  requestedDefenderName?: string
-  requestedDefenderEmail?: string
+  defenderName?: string
+  defenderEmail?: string
   court?: string
   arrestDate?: string
   requestedCourtDate?: string
@@ -180,8 +178,6 @@ export interface UpdateCase {
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
-  defenderName?: string
-  defenderEmail?: string
   courtStartTime?: string
   courtEndTime?: string
   courtAttendees?: string

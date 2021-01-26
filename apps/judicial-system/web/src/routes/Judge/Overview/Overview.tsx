@@ -223,15 +223,9 @@ export const JudgeOverview: React.FC = () => {
               accusedName={workingCase.accusedName}
               accusedNationalId={workingCase.accusedNationalId}
               accusedAddress={workingCase.accusedAddress}
-              // defender info set by the prosecutor has priority until the case has been ruled on
               defender={{
-                name:
-                  workingCase.requestedDefenderName ||
-                  workingCase.defenderName ||
-                  '',
-                email:
-                  workingCase.requestedDefenderEmail ||
-                  workingCase.defenderEmail,
+                name: workingCase.defenderName || '',
+                email: workingCase.defenderEmail,
               }}
             />
           </Box>
