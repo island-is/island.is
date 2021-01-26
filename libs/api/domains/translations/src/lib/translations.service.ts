@@ -40,7 +40,7 @@ export class TranslationsService {
     const locale = locales.find((l) => l.code === localeMap[lang])
 
     const result = await this.contentfulRepository
-      .getLocalizedEntries<any>('*', {
+      .getLocalizedEntries<any>('is-IS', {
         ['content_type']: 'namespaceJeremyDev', // TODO: replace after review
         select: 'fields.strings',
         'fields.namespace[in]': namespaces.join(','),
@@ -49,7 +49,7 @@ export class TranslationsService {
 
     return (
       result?.items?.map(({ fields }) =>
-        fields.strings['is-IS'].reduce(
+        fields.strings.reduce(
           (acc: Record<string, string>, cur: DictArray) => ({
             ...acc,
             [cur.id]: isEmpty(cur[locale.code])
