@@ -197,7 +197,7 @@ export class CaseController {
       state: transitionCase(transition.transition, existingCase.state),
     } as UpdateCaseDto
 
-    // Remove when client has started assigned a judge to each csae
+    // Remove when client has started assigned a judge to each case
     if (user.role === UserRole.JUDGE) {
       update['judgeId'] = user.id
     }
