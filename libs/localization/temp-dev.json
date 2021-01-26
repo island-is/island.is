@@ -1,12 +1,22 @@
 {
   "application.system.dev.2": {
-    "application.system:applications": {
+    "application.system.dev.2:application.heading": {
       "defaultMessage": "Þínar umsóknir",
       "description": "Applications heading copy"
     },
-    "application.system:thanks": {
+    "application.system.dev.2:application.thanks": {
       "defaultMessage": "Takk",
       "description": "Thank you message at the end of the process"
+    }
+  },
+  "application.system.dev": {
+    "application.system.dev:application.submit": {
+      "defaultMessage": "Senda",
+      "description": "Copy for submit button"
+    },
+    "application.system.dev:application.back": {
+      "defaultMessage": "Til baka",
+      "description": "Copy for back button"
     }
   }
 }

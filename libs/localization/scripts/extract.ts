@@ -3,7 +3,6 @@ import glob from 'glob'
 import spawn from 'cross-spawn'
 import { createClient } from 'contentful-management'
 import { Entry } from 'contentful-management/dist/typings/entities/entry'
-import isEmpty from 'lodash/isEmpty'
 import { DictArray } from '@island.is/shared/types'
 import { logger } from '@island.is/logging'
 
@@ -14,16 +13,16 @@ export interface Message {
   description: string
 }
 
-const accessToken = process.env.CONTENTFUL_MANAGEMENT_ACCESS_TOKEN
-const contentfulSpace = process.env.CONTENTFUL_SPACE
+const DEFAULT_LOCALE = 'is-IS'
+const { CONTENTFUL_MANAGEMENT_ACCESS_TOKEN, CONTENTFUL_SPACE } = process.env
 
-if (!contentfulSpace || !accessToken) {
+if (!CONTENTFUL_SPACE || !CONTENTFUL_MANAGEMENT_ACCESS_TOKEN) {
   throw new Error(
-    'Missing Contentful environment variables: CONTENTFUL_MANAGEMENT_ACCESS_TOKEN or CONTENTFUL_SPACE',
+    'Missing Contentful environment variables: CONTENTFUL_MANAGEMENT_ACCESS_TOKEN and/or CONTENTFUL_SPACE',
   )
 }
 
-const client = createClient({ accessToken })
+const client = createClient({ accessToken: CONTENTFUL_MANAGEMENT_ACCESS_TOKEN })
 
 spawn.sync('npx', [
   'formatjs',
@@ -35,28 +34,37 @@ spawn.sync('npx', [
   process.argv[2],
 ])
 
-const getNamespace = (id: string, space: string) =>
+const getLocales = () =>
   client
-    .getSpace(space)
+    .getSpace(CONTENTFUL_SPACE)
+    .then((space) => space.getEnvironment('master'))
+    .then((environment) => environment.getLocales())
+    .catch((err) => {
+      logger.error('Error when running getLocales', { message: err.message })
+    })
+
+const getNamespace = (id: string) =>
+  client
+    .getSpace(CONTENTFUL_SPACE)
     .then((space) => space.getEnvironment('master'))
     .then((environment) => environment.getEntry(id))
     .catch((err) => {
       logger.error('Error when running getNamespace', { message: err.message })
     })
 
-const createNamespace = (id: string, messages: MessageDict, space: string) =>
+const createNamespace = (id: string, messages: MessageDict) =>
   client
-    .getSpace(space)
+    .getSpace(CONTENTFUL_SPACE)
     .then((space) => space.getEnvironment('master'))
     .then((environment) =>
       environment.createEntryWithId('namespaceJeremyDev', id, {
         // TODO: put namespace back after review
         fields: {
           namespace: {
-            'is-IS': id,
+            [DEFAULT_LOCALE]: id,
           },
           strings: {
-            'is-IS': translationsFromLocal(messages),
+            [DEFAULT_LOCALE]: translationsFromLocal(messages),
           },
         },
       }),
@@ -67,46 +75,72 @@ const createNamespace = (id: string, messages: MessageDict, space: string) =>
       })
     })
 
-export const mergeArray = (local: DictArray[], distant: DictArray[]) =>
-  local.map((localObj) => {
-    const contentfulValue = distant.find(
-      (contentfulObj) => contentfulObj.id === localObj.id,
-    )
-    const hasIs = !isEmpty(contentfulValue?.['is-IS'])
-    const hasEn = !isEmpty(contentfulValue?.en)
+// Local array doesn't contain all the locales translation. We just set the is-IS
+// translation using the defaultMessage, the rest has to be done through contentful
+export const mergeArray = async (
+  local: Partial<DictArray>[],
+  contentful: DictArray[],
+) => {
+  const locales = await getLocales()
+  const localesArr = (locales as {
+    items: Record<string, any>[]
+  }).items.map((locale) => ({ id: locale.code }))
 
-    // We don't overwrite defaultMessage and description it always comes from the local messages.json
-    return {
-      ...localObj,
-      'is-IS': hasIs ? contentfulValue!['is-IS'] : localObj['is-IS'],
-      en: hasEn ? contentfulValue!.en : localObj.en,
-    }
-  })
+  return [
+    ...local.map((localObj) => {
+      const contentfulValue = contentful.find(
+        (contentfulObj) => contentfulObj.id === localObj.id,
+      )
+
+      return {
+        id: localObj.id,
+        defaultMessage: localObj.defaultMessage,
+        description: localObj.description,
+        ...localesArr.reduce(
+          (acc, cur) => ({
+            ...acc,
+            [cur.id]:
+              (contentfulValue as Record<string, any>)?.[cur.id] ??
+              (localObj as Record<string, string>)?.[cur.id] ??
+              '',
+            deprecated: false,
+          }),
+          {},
+        ),
+      }
+    }),
+    ...contentful
+      .filter(
+        (contentfulObj) =>
+          !local.some((localObj) => localObj.id === contentfulObj.id),
+      )
+      .map((contentfulObj) => ({
+        ...contentfulObj,
+        deprecated: true,
+      })),
+  ]
+}
 
 export const translationsFromLocal = (messages: MessageDict) =>
   Object.keys(messages).map((item) => ({
     id: item,
     defaultMessage: messages[item].defaultMessage,
     description: messages[item].description,
-    'is-IS': messages[item].defaultMessage,
-    en: '',
+    [DEFAULT_LOCALE]: messages[item].defaultMessage,
   }))
 
 export const translationsFromContentful = (namespace: Entry) =>
-  (namespace?.fields?.strings?.['is-IS'] ?? []).map((item: DictArray) => ({
-    id: item.id,
-    defaultMessage: item.defaultMessage,
-    description: item.description,
-    'is-IS': item['is-IS'],
-    en: item.en,
-  }))
+  namespace?.fields?.strings?.[DEFAULT_LOCALE] ?? []
 
-export const updateNamespace = (namespace: Entry, messages: MessageDict) => {
+export const updateNamespace = async (
+  namespace: Entry,
+  messages: MessageDict,
+) => {
   const fromLocal = translationsFromLocal(messages)
   const fromContentful = translationsFromContentful(namespace)
-  const merged = mergeArray(fromLocal, fromContentful)
+  const merged = await mergeArray(fromLocal, fromContentful)
 
-  namespace.fields.strings['is-IS'] = merged
+  namespace.fields.strings[DEFAULT_LOCALE] = merged
 
   return namespace
     .update()
@@ -125,18 +159,18 @@ export const updateNamespace = (namespace: Entry, messages: MessageDict) => {
 glob
   // .sync('libs/localization/messages.json')
   .sync('libs/localization/temp-dev.json') // TODO: put messages.json back after review
-  .map((filename) => readFileSync(filename, 'utf8'))
+  .map((filename) => readFileSync(filename, { encoding: 'utf-8' }))
   .map((file) => JSON.parse(file))
   .forEach((f) => {
     Object.entries<MessageDict>(f).forEach(
       async ([namespaceId, namespaceMessages]) => {
-        const namespace = await getNamespace(namespaceId, contentfulSpace)
+        const namespace = await getNamespace(namespaceId)
 
         // If namespace does exist we update it, else we create it
         if (namespace) {
           updateNamespace(namespace, namespaceMessages)
         } else {
-          createNamespace(namespaceId, namespaceMessages, contentfulSpace)
+          createNamespace(namespaceId, namespaceMessages)
         }
       },
     )

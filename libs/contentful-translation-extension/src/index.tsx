@@ -1,7 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
 import TextField from '@contentful/forma-36-react-components/dist/components/TextField'
-import HelpText from '@contentful/forma-36-react-components/dist/components/HelpText'
 import TableCell from '@contentful/forma-36-react-components/dist/components/Table/TableCell'
 import TableHead from '@contentful/forma-36-react-components/dist/components/Table/TableHead'
 import Table from '@contentful/forma-36-react-components/dist/components/Table/Table'
@@ -103,6 +102,22 @@ class App extends React.Component<AppProps, AppState> {
         </TableHead>
 
         <TableBody>
+          {item.deprecated && (
+            <TableRow>
+              <TableCell
+                colSpan={2}
+                style={{
+                  verticalAlign: 'middle',
+                  backgroundColor: '#ffd3d9',
+                  color: '#bf3045',
+                }}
+              >
+                This translation has been removed from the latest version of the
+                application.
+              </TableCell>
+            </TableRow>
+          )}
+
           <TableRow>
             <TableCell
               width="50%"
@@ -161,16 +176,13 @@ class App extends React.Component<AppProps, AppState> {
                       name=""
                       labelText=""
                       value={value}
+                      validationMessage={
+                        !value ? 'Translation missing' : undefined
+                      }
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         this.onChange(locale.id, item.id, e.currentTarget.value)
                       }
                     />
-
-                    {!value && (
-                      <HelpText style={{ color: '#ff0050' }}>
-                        Translation missing!
-                      </HelpText>
-                    )}
                   </TableCell>
                 </TableRow>
               )
