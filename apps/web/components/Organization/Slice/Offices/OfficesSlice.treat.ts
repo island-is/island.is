@@ -5,7 +5,7 @@ export const title = style({
   height: 34,
   fontWeight: 600,
   fontSize: 24,
-  lineHeight: "34px",
+  lineHeight: '34px',
   marginBottom: 14,
   ...themeUtils.responsiveStyle({
     sm: {

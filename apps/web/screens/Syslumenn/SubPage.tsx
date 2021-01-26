@@ -111,18 +111,9 @@ const SubPage: Screen<SubPageProps> = ({
             </GridRow>
             <GridRow>
               <GridColumn span={['12/12', '12/12', '7/12']}>
-                <Markdown
-                  options={{
-                    overrides: {
-                      p: {
-                        component: 'p',
-                        props: { className: styles.description },
-                      },
-                    },
-                  }}
-                >
-                  {subpage.description}
-                </Markdown>
+                <div className={styles.description}>
+                  <Markdown>{subpage.description}</Markdown>
+                </div>
               </GridColumn>
               <GridColumn
                 span={['12/12', '12/12', '4/12']}

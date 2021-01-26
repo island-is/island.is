@@ -1,4 +1,4 @@
-import { style } from 'treat'
+import { globalStyle, style } from 'treat'
 import { themeUtils } from '@island.is/island-ui/theme'
 
 export const twoColumnSliceTitle = style({
@@ -18,7 +18,7 @@ export const twoColumnSliceContent = style({
   marginTop: 18,
 })
 
-export const twoColumnSliceParagraph = style({
+globalStyle(`${twoColumnSliceContent} p`, {
   fontWeight: 300,
   fontSize: 18,
   lineHeight: '32px',

@@ -5,10 +5,12 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Text,
 } from '@island.is/island-ui/core'
 import * as styles from './SingleColumnTextSlice.treat'
 import Markdown from 'markdown-to-jsx'
-import {SingleColumnText} from "@island.is/web/graphql/schema";
+import { SingleColumnText } from '@island.is/web/graphql/schema'
+import Link from 'next/link'
 
 interface SliceProps {
   slice: SingleColumnText
@@ -27,22 +29,22 @@ export const SingleColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
           >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '12/12']}>
-                <h3 className={styles.singleColumnSliceTitle}>
-                  {slice.title}
-                </h3>
-                <Markdown
-                  className={styles.singleColumnSliceContent}
-                  options={{
-                    overrides: {
-                      p: {
-                        component: 'p',
-                        props: { className: styles.singleColumnSliceParagraph },
-                      },
-                    },
-                  }}
-                >
-                  {slice.content}
-                </Markdown>
+                <h3 className={styles.singleColumnSliceTitle}>{slice.title}</h3>
+                <div className={styles.singleColumnSliceContent}>
+                  <Markdown>{slice.content}</Markdown>
+                </div>
+                {slice.link && (
+                  <Link href="#">
+                    <Button
+                      icon="arrowForward"
+                      iconType="filled"
+                      type="button"
+                      variant="text"
+                    >
+                      {slice.link.text}
+                    </Button>
+                  </Link>
+                )}
               </GridColumn>
             </GridRow>
           </Box>

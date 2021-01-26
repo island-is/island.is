@@ -2,7 +2,8 @@ import React from 'react'
 import {
   Organization,
   Districts,
-  TwoColumnText, Offices,
+  TwoColumnText,
+  Offices,
 } from '@island.is/web/graphql/schema'
 import {
   Box,
@@ -35,8 +36,16 @@ const OfficesSlice: React.FC<SliceProps> = ({ slice }) => {
             <GridContainer>
               <GridRow>
                 {slice.offices.map((office) => (
-                  <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-                    <OfficeCard name={office.name} address={office.address} city={office.city} openingHours={office.openingHours}/>
+                  <GridColumn
+                    span={['12/12', '12/12', '12/12', '6/12']}
+                    paddingBottom={[1, 1, 1]}
+                  >
+                    <OfficeCard
+                      name={office.name}
+                      address={office.address}
+                      city={office.city}
+                      openingHours={office.openingHours}
+                    />
                   </GridColumn>
                 ))}
               </GridRow>

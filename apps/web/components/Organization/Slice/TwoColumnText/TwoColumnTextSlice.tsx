@@ -35,37 +35,17 @@ const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
                 <h3 className={styles.twoColumnSliceTitle}>
                   {slice.leftTitle}
                 </h3>
-                <Markdown
-                  className={styles.twoColumnSliceContent}
-                  options={{
-                    overrides: {
-                      p: {
-                        component: 'p',
-                        props: { className: styles.twoColumnSliceParagraph },
-                      },
-                    },
-                  }}
-                >
-                  {slice.leftContent}
-                </Markdown>
+                <div className={styles.twoColumnSliceContent}>
+                  <Markdown>{slice.leftContent}</Markdown>
+                </div>
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <h3 className={styles.twoColumnSliceTitle}>
                   {slice.rightTitle}
                 </h3>
-                <Markdown
-                  className={styles.twoColumnSliceContent}
-                  options={{
-                    overrides: {
-                      p: {
-                        component: 'p',
-                        props: { className: styles.twoColumnSliceParagraph },
-                      },
-                    },
-                  }}
-                >
-                  {slice.rightContent}
-                </Markdown>
+                <div className={styles.twoColumnSliceContent}>
+                  <Markdown>{slice.rightContent}</Markdown>
+                </div>
               </GridColumn>
             </GridRow>
           </Box>

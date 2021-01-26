@@ -1,4 +1,4 @@
-import { style } from 'treat'
+import { globalStyle, style } from 'treat'
 import { themeUtils } from '@island.is/island-ui/theme'
 
 export const singleColumnSliceTitle = style({
@@ -18,8 +18,13 @@ export const singleColumnSliceContent = style({
   marginTop: 18,
 })
 
-export const singleColumnSliceParagraph = style({
+globalStyle(`${singleColumnSliceContent} p, span, ul`, {
   fontWeight: 300,
   fontSize: 18,
   lineHeight: '32px',
+  marginBottom: 36,
+})
+
+globalStyle(`${singleColumnSliceContent} li`, {
+  listStyle: 'inside',
 })

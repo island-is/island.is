@@ -12,7 +12,7 @@ import HeadingSlice from '@island.is/web/components/Organization/Slice/Heading/H
 import FeaturedArticlesSlice from '@island.is/web/components/Organization/Slice/FeaturedArticles/FeaturedArticlesSlice'
 import TwoColumnTextSlice from '@island.is/web/components/Organization/Slice/TwoColumnText/TwoColumnTextSlice'
 import OfficesSlice from '@island.is/web/components/Organization/Slice/Offices/OfficesSlice'
-import SingleColumnTextSlice from "@island.is/web/components/Organization/Slice/SingleColumnText/SingleColumnTextSlice";
+import SingleColumnTextSlice from '@island.is/web/components/Organization/Slice/SingleColumnText/SingleColumnTextSlice'
 
 interface OrganizationSliceProps {
   slice: Slice

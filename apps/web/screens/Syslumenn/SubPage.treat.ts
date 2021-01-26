@@ -1,4 +1,4 @@
-import { style } from 'treat'
+import { globalStyle, style } from 'treat'
 import { themeUtils } from '@island.is/island-ui/theme'
 
 export const intro = style({
@@ -19,7 +19,9 @@ export const heading = style({
   marginBottom: 56,
 })
 
-export const description = style({
+export const description = style({})
+
+globalStyle(`${description} p`, {
   fontSize: 24,
   fontWeight: 300,
   lineHeight: '48px',
