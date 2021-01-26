@@ -1,1 +1,1 @@
-export { HealthTestModule } from './lib/healthTest.module'
+export { HealthInsuranceModule } from './lib/healthInsurance.module'

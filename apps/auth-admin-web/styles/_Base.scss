@@ -49,6 +49,11 @@ input[type='checkbox'] {
   height: 30px;
 }
 
+input[type='radio'] {
+  width: 30px;
+  height: 30px;
+}
+
 input[type='submit'] {
   @extend button;
 }
@@ -272,7 +277,6 @@ nav[class$='pagination'] {
 
 a {
   &[class$='new'] {
-    display: block;
     padding: 20px 0px;
     color: $color-link;
     text-decoration: none;
@@ -337,4 +341,8 @@ footer {
 
 .with-details {
   margin-bottom: 35px;
+}
+
+.indent {
+  padding-left: 35px !important;
 }

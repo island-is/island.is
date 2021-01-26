@@ -298,7 +298,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     <label className="client__label">Display URL</label>
                     <input
                       name="client.clientUri"
-                      ref={register({ required: true })}
+                      ref={register}
                       type="text"
                       defaultValue={client.clientUri ?? ''}
                       className="client__input"
@@ -325,6 +325,19 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       placeholder="Example description"
                     />
                     <HelpBox helpText="Application description for use within the IDS management" />
+                  </div>
+                  <div className="client__container__field">
+                    <label className="client__label">Contact email</label>
+                    <input
+                      type="text"
+                      ref={register}
+                      name="client.contactEmail"
+                      defaultValue={client.contactEmail ?? ''}
+                      className="client__input"
+                      title="Contact email for client"
+                      placeholder="island@island.is"
+                    />
+                    <HelpBox helpText="Set the contact email for the client" />
                   </div>
 
                   <div className="client__container__checkbox__field">
