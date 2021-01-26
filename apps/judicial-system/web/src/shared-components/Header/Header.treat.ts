@@ -16,7 +16,6 @@ export const headerTextWrapper = style({
 
 export const headerDiviter = style({
   display: 'inline-block',
-  alignSelf: 'center',
   height: '19px',
   width: '2px',
   backgroundColor: theme.color.dark200,
@@ -25,5 +24,4 @@ export const headerDiviter = style({
 
 export const islandIsApplicationLogoWrapper = style({
   display: 'flex',
-  alignSelf: 'center',
 })
