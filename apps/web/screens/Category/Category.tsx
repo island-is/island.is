@@ -262,7 +262,7 @@ const Category: Screen<CategoryProps> = ({
               renderLink={(link, { typename, slug }) => {
                 return (
                   <NextLink
-                    href={linkResolver(typename as LinkType, slug)}
+                    {...linkResolver(typename as LinkType, slug)}
                     passHref
                   >
                     {link}
@@ -283,7 +283,7 @@ const Category: Screen<CategoryProps> = ({
             ]}
             renderLink={(link) => {
               return (
-                <NextLink href={linkResolver('homepage')} passHref>
+                <NextLink {...linkResolver('homepage')} passHref>
                   {link}
                 </NextLink>
               )
@@ -307,7 +307,7 @@ const Category: Screen<CategoryProps> = ({
             renderLink={(link, { typename, slug }) => {
               return (
                 <NextLink
-                  href={linkResolver(typename as LinkType, slug)}
+                  {...linkResolver(typename as LinkType, slug)}
                   passHref
                 >
                   {link}
@@ -389,10 +389,12 @@ const Category: Screen<CategoryProps> = ({
                                 return (
                                   <FocusableBox
                                     key={slug}
-                                    href={linkResolver(
-                                      __typename.toLowerCase() as LinkType,
-                                      [slug],
-                                    )}
+                                    href={
+                                      linkResolver(
+                                        __typename.toLowerCase() as LinkType,
+                                        [slug],
+                                      ).href
+                                    }
                                     borderRadius="large"
                                   >
                                     {({ isFocused }) => (
@@ -424,7 +426,7 @@ const Category: Screen<CategoryProps> = ({
               return (
                 <Card
                   key={index}
-                  href={linkResolver(__typename as LinkType, [slug])}
+                  href={linkResolver(__typename as LinkType, [slug]).href}
                   description={intro}
                   title={title}
                   image={(thumbnail || image) as Image}
@@ -443,7 +445,7 @@ const Category: Screen<CategoryProps> = ({
                 key={index}
                 title={title}
                 description={content}
-                href={linkResolver(__typename as LinkType, [slug])}
+                href={linkResolver(__typename as LinkType, [slug]).href}
               />
             )
           })}

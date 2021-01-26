@@ -38,10 +38,10 @@ export const LanguageToggler: FC<{
 
     if (!contentfulId) {
       const { type } = typeResolver(Router.asPath.split('?')[0], true)
-      const pagePath = linkResolver(type, [], otherLanguage)
+      const pagePath = linkResolver(type, [], otherLanguage).href
       if (pagePath === '/404') {
         // if we can't resolve the path go to homepage
-        return Router.push(linkResolver('homepage'))
+        return Router.push(linkResolver('homepage').href)
       } else {
         // go to the resolved path if able
         return Router.push(pagePath)
@@ -52,10 +52,10 @@ export const LanguageToggler: FC<{
         const type = res.data?.getContentSlug?.type
 
         if (type && slug) {
-          return Router.push(linkResolver(type, [slug], otherLanguage))
+          return Router.push(linkResolver(type, [slug], otherLanguage).href)
         }
 
-        return Router.push(linkResolver('homepage'))
+        return Router.push(linkResolver('homepage').href)
       })
     }
   }

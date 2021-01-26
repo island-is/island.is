@@ -46,7 +46,7 @@ const TellUsAStoryPage: Screen<TellUsAStoryProps> = ({ data }) => {
                 ]}
                 renderLink={(link) => {
                   return (
-                    <NextLink href={linkResolver('homepage')} passHref>
+                    <NextLink {...linkResolver('homepage')} passHref>
                       {link}
                     </NextLink>
                   )

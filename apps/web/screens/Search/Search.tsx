@@ -191,7 +191,7 @@ const Search: Screen<CategoryProps> = ({
   >).map((item) => ({
     title: item.title,
     description: item.intro ?? item.seoDescription ?? item.description,
-    href: linkResolver(typenameResolver(item.__typename), [item.slug]),
+    href: linkResolver(typenameResolver(item.__typename), [item.slug]).href,
     categorySlug: item.category?.slug,
     category: item.category,
     group: item.group,
@@ -202,14 +202,14 @@ const Search: Screen<CategoryProps> = ({
 
   const onRemoveFilters = () => {
     Router.replace({
-      pathname: linkResolver('search'),
+      pathname: linkResolver('search').href,
       query: { q },
     })
   }
 
   const onSelectSidebarTag = (type: 'category' | 'type', key: string) => {
     Router.replace({
-      pathname: linkResolver('search'),
+      pathname: linkResolver('search').href,
       query: { q, [type]: key },
     })
   }
@@ -327,7 +327,7 @@ const Search: Screen<CategoryProps> = ({
             ]}
             renderLink={(link) => {
               return (
-                <NextLink href={linkResolver('homepage')} passHref>
+                <NextLink {...linkResolver('homepage')} passHref>
                   {link}
                 </NextLink>
               )
@@ -421,7 +421,7 @@ const Search: Screen<CategoryProps> = ({
                 renderLink={(page, className, children) => (
                   <Link
                     href={{
-                      pathname: linkResolver('search'),
+                      pathname: linkResolver('search').href,
                       query: { ...Router.query, page },
                     }}
                   >

@@ -128,7 +128,7 @@ const Home: Screen<HomeProps> = ({
                               renderLink={(link, { typename, slug }) => {
                                 return (
                                   <NextLink
-                                    href={linkResolver(
+                                    {...linkResolver(
                                       typename as LinkType,
                                       slug,
                                     )}

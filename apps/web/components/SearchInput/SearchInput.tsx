@@ -183,7 +183,7 @@ const useSubmit = (locale: Locale, onRouting?: () => void) => {
     (q: string) => {
       if (q) {
         Router.push({
-          pathname: linkResolver('search'),
+          pathname: linkResolver('search').href,
           query: { q },
         }).then(() => {
           window.scrollTo(0, 0)
@@ -431,7 +431,7 @@ const Results: FC<{
                         onRouting()
                       }}
                     >
-                      <Link href={linkResolver(__typename as LinkType, [slug])}>
+                      <Link {...linkResolver(__typename as LinkType, [slug])}>
                         <Text variant="h5" color="blue400">
                           {title}
                         </Text>

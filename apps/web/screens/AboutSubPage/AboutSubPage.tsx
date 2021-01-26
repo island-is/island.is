@@ -107,7 +107,7 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
                   renderLink={(link, { typename }) => {
                     return (
                       <NextLink
-                        href={linkResolver(typename as LinkType)}
+                        {...linkResolver(typename as LinkType)}
                         passHref
                       >
                         {link}

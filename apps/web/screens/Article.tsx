@@ -43,7 +43,11 @@ import { createNavigation } from '@island.is/web/utils/navigation'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { SidebarLayout } from './Layouts/SidebarLayout'
 import { createPortal } from 'react-dom'
-import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
+import {
+  LinkResolverResponse,
+  LinkType,
+  useLinkResolver,
+} from '../hooks/useLinkResolver'
 import { Locale } from '../i18n/I18n'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
@@ -67,7 +71,7 @@ const createArticleNavigation = (
     linkType: LinkType,
     slugs?: string[],
     locale?: Locale,
-  ) => string,
+  ) => LinkResolverResponse,
 ): Array<{ url: string; title: string }> => {
   if (article.subArticles.length === 0) {
     return createNavigation(article.body, {
@@ -82,13 +86,13 @@ const createArticleNavigation = (
 
   nav.push({
     title: article.title,
-    url: linkResolver('article', [article.slug]),
+    url: linkResolver('article', [article.slug]).href,
   })
 
   for (const subArticle of article.subArticles) {
     nav.push({
       title: subArticle.title,
-      url: linkResolver('article', [article.slug, subArticle.slug]),
+      url: linkResolver('article', [article.slug, subArticle.slug]).href,
     })
 
     // expand sub-article navigation for selected sub-article
@@ -123,7 +127,7 @@ const RelatedArticles: FC<{
         {articles.map((article) => (
           <Link
             key={article.slug}
-            href={linkResolver('article', [article.slug])}
+            {...linkResolver('article', [article.slug])}
             underline="normal"
           >
             <Text key={article.slug} as="span">
@@ -181,7 +185,7 @@ const ArticleNavigation: FC<
         isMenuDialog={isMenuDialog}
         renderLink={(link, { typename, slug }) => {
           return (
-            <NextLink href={linkResolver(typename as LinkType, slug)} passHref>
+            <NextLink {...linkResolver(typename as LinkType, slug)} passHref>
               {link}
             </NextLink>
           )
@@ -222,7 +226,7 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
       {!!article.category && (
         <Box display={['none', 'none', 'block']} printHidden>
           <Link
-            href={linkResolver('articlecategory', [article.category.slug])}
+            {...linkResolver('articlecategory', [article.category.slug])}
             passHref
           >
             <Button
@@ -287,7 +291,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
 
   const relatedLinks = (article.relatedArticles ?? []).map((article) => ({
     title: article.title,
-    url: linkResolver('article', [article.slug]),
+    url: linkResolver('article', [article.slug]).href,
   }))
 
   const combinedMobileNavigation = [
@@ -358,7 +362,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             renderLink={(link, { typename, slug }) => {
               return (
                 <NextLink
-                  href={linkResolver(typename as LinkType, slug)}
+                  {...linkResolver(typename as LinkType, slug)}
                   passHref
                 >
                   {link}

@@ -27,6 +27,7 @@ export interface LinkProps extends NextLinkProps {
 export const Link: React.FC<LinkProps> = ({
   children,
   href,
+  as,
   replace,
   scroll,
   shallow,
@@ -66,10 +67,11 @@ export const Link: React.FC<LinkProps> = ({
     return (
       <NextLink
         href={href}
+        as={as}
         shallow={shallow}
         scroll={scroll}
         passHref={passHref}
-        prefetch
+        prefetch={prefetch}
       >
         {pureChildren ? (
           children

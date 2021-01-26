@@ -77,7 +77,7 @@ const Home: Screen<HomeProps> = ({
     return {
       title,
       description,
-      href: linkResolver(__typename as LinkType, [slug]),
+      href: linkResolver(__typename as LinkType, [slug]).href,
     }
   })
 
@@ -97,6 +97,7 @@ const Home: Screen<HomeProps> = ({
         <Inline space={2}>
           {page.featuredThings.map(({ title, attention, thing }) => {
             const cardUrl = linkResolver(thing?.type as LinkType, [thing?.slug])
+              .href
             return cardUrl && cardUrl.length > 0 ? (
               <Link key={title} href={cardUrl} passHref>
                 <Tag variant="darkerBlue" attention={attention}>

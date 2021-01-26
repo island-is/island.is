@@ -126,7 +126,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
             renderLink={(link, { typename, slug }) => {
               return (
                 <NextLink
-                  href={linkResolver(typename as LinkType, slug)}
+                  {...linkResolver(typename as LinkType, slug)}
                   passHref
                 >
                   {link}

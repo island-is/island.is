@@ -62,7 +62,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
                     title={first.title}
                     intro={first.intro}
                   />
-                  <Link href={linkResolver('news', [first.slug])} pureChildren>
+                  <Link {...linkResolver('news', [first.slug])} pureChildren>
                     <Button variant="text" icon="arrowForward">
                       Lesa meira
                     </Button>
@@ -100,7 +100,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
                           as="h3"
                         />
                         <Link
-                          href={linkResolver('news', [second.slug])}
+                          {...linkResolver('news', [second.slug])}
                           pureChildren
                         >
                           <Button variant="text" icon="arrowForward">
@@ -127,7 +127,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
                           as="h3"
                         />
                         <Link
-                          href={linkResolver('news', [third.slug])}
+                          {...linkResolver('news', [third.slug])}
                           pureChildren
                         >
                           <Button variant="text" icon="arrowForward">
@@ -148,7 +148,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
             alignItems="center"
             justifyContent="center"
           >
-            <Link href={linkResolver('newsoverview')} pureChildren>
+            <Link {...linkResolver('newsoverview')} pureChildren>
               <Button variant="ghost" icon="arrowForward">
                 Sjá allar fréttir
               </Button>

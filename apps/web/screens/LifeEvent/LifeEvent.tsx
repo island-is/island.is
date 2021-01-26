@@ -98,7 +98,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                     ]}
                     renderLink={(link) => {
                       return (
-                        <NextLink href={linkResolver('homepage')} passHref>
+                        <NextLink {...linkResolver('homepage')} passHref>
                           {link}
                         </NextLink>
                       )
