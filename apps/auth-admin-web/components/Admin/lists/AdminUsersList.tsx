@@ -46,9 +46,8 @@ class AdminUsersList extends Component {
     this.closeModal()
   }
 
-  confirmArchive = async (nationalId: string): Promise<void> => {
+  confirmDelete = async (nationalId: string): Promise<void> => {
     this.setState({ accessToRemove: nationalId })
-
     this.setState({ modalIsOpen: true })
   }
 
@@ -148,7 +147,7 @@ class AdminUsersList extends Component {
                               className={`admin-users-list__button__delete`}
                               title="Delete"
                               onClick={() =>
-                                this.confirmArchive(admin.nationalId)
+                                this.confirmDelete(admin.nationalId)
                               }
                             >
                               <i className="icon__delete"></i>

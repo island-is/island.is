@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { ErrorMessage } from '@hookform/error-message'
 import HelpBox from '../../common/HelpBox'
-import { AdminAccessDTO } from 'apps/auth-admin-web/entities/dtos/admin-acess.dto'
+import { AdminAccessDTO } from './../../../entities/dtos/admin-acess.dto'
 import { AdminAccess } from './../../../entities/models/admin-access.model'
 import { AdminAccessService } from './../../../services/AdminAccessService'
 interface Props {
@@ -36,7 +36,7 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
     }
   }
 
-  const create = async (data: AdminAccessDTO): Promise<AdminAccess | null> => {
+  const create = async (data: AdminAccessDTO): void => {
     if (isEditing) {
       const response = await AdminAccessService.update(
         props.adminAccess.nationalId,
@@ -51,7 +51,6 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
         pushEvent(response)
       }
     }
-    return null
   }
 
   const save = async (data: FormOutput) => {
