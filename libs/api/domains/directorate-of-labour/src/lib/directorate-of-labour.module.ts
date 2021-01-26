@@ -1,6 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common'
 import { VMSTClientModule } from '@island.is/vmst-client'
-import { createXRoadAPIPath, XRoadMemberClass } from '@island.is/utils-api'
+import { createXRoadAPIPath, XRoadMemberClass } from '@island.is/utils/api'
 
 import { DirectorateOfLabourRepository } from './directorate-of-labour.repository'
 import { DirectorateOfLabourResolver } from './directorate-of-labour.resolver'
