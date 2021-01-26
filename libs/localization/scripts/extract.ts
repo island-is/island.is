@@ -59,7 +59,7 @@ const createNamespace = (id: string, messages: MessageDict, space: string) =>
             'is-IS': id,
           },
           strings: {
-            'is-IS': convertToLocalArray(messages),
+            'is-IS': translationsFromLocal(messages),
           },
         },
       }),
@@ -81,7 +81,7 @@ export const mergeArray = (local: DictArray[], distant: DictArray[]) =>
     }
   })
 
-export const convertToLocalArray = (messages: MessageDict) =>
+export const translationsFromLocal = (messages: MessageDict) =>
   Object.keys(messages).map((item) => ({
     id: item,
     defaultMessage: messages[item].defaultMessage,
@@ -89,7 +89,7 @@ export const convertToLocalArray = (messages: MessageDict) =>
     en: messages[item].description,
   }))
 
-export const convertToContentfulArray = (namespace: Entry) =>
+export const translationsFromContentful = (namespace: Entry) =>
   (namespace?.fields?.strings?.['is-IS'] ?? []).map((item: DictArray) => ({
     id: item.id,
     defaultMessage: item.defaultMessage,
@@ -98,8 +98,8 @@ export const convertToContentfulArray = (namespace: Entry) =>
   }))
 
 export const updateNamespace = (namespace: Entry, messages: MessageDict) => {
-  const fromLocal = convertToLocalArray(messages)
-  const fromContentful = convertToContentfulArray(namespace)
+  const fromLocal = translationsFromLocal(messages)
+  const fromContentful = translationsFromContentful(namespace)
   const merged = mergeArray(fromLocal, fromContentful)
 
   namespace.fields.strings['is-IS'] = merged
