@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 
-import { AccordionListItem } from '@island.is/judicial-system-web/src/shared-components'
+import AccordionListItem from '../AccordionListItem/AccordionListItem'
 import {
   capitalize,
   formatAccusedByGender,
