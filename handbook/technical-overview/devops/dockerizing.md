@@ -20,6 +20,20 @@ That's it.
 
 When you push this change to `main` your Docker image will get built and pushed to our private central Docker registry
 
+## Can I create a secret in the aws parameters store for services to consume?
+
+Yes you can!
+
+You can run the `create-secret` script and you will be prompted for input.
+
+```bash
+./scripts/create-secret
+```
+
+You will be prompted for a _secret name_ that will be added to the `/k8s/` secrets namespace and a _secret value_. The length of the _secret name_ should be from 6-16 characters long. Only alphanumeric characters and dash (-) is allowed.
+
+Make sure your credentials are set in your shell before you create a secret.
+
 ## Troubleshooting
 
 _Prerequisite_: Local Docker support
