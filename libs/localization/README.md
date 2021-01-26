@@ -157,7 +157,7 @@ Add the `extract-strings` script to `workspace.json`. Running this script will e
       "extract-strings": {
         "builder": "@nrwl/workspace:run-commands",
         "options": {
-          "command": "yarn ts-node libs/localization/scripts/extract '{pathToComponents}/*.{js,ts,tsx}'"
+          "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract '{pathToComponents}/*.{js,ts,tsx}'"
         }
       }
     }

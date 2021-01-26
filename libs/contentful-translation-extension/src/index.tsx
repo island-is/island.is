@@ -12,6 +12,7 @@ import {
   FieldExtensionSDK,
   EditorLocaleSettings,
 } from 'contentful-ui-extensions-sdk'
+import { DictArray } from '@island.is/shared/types'
 
 import '@contentful/forma-36-react-components/dist/styles.css'
 import './index.css'
@@ -23,13 +24,6 @@ interface AppProps {
 interface AppState {
   spaceLocales: Record<string, string>
   activeLocales: { id: string; name: string }[]
-}
-
-interface DictArray {
-  id: string
-  defaultMessage: string
-  'is-IS': string
-  en: string
 }
 
 class App extends React.Component<AppProps, AppState> {
@@ -94,7 +88,10 @@ class App extends React.Component<AppProps, AppState> {
     const values: DictArray[] = strings.getValue()
 
     return values.map((item) => (
-      <Table key={item.id} style={{ marginBottom: '20px' }}>
+      <Table
+        key={item.id}
+        style={{ marginBottom: '20px', border: '1px solid #e5ebed' }}
+      >
         <TableHead>
           <TableRow>
             <TableCell width="50%" style={{ backgroundColor: '#e5ebed' }}>
@@ -109,15 +106,38 @@ class App extends React.Component<AppProps, AppState> {
           <TableRow>
             <TableCell
               width="50%"
-              style={{ verticalAlign: 'middle', backgroundColor: '#f7f9fa' }}
+              style={{
+                fontWeight: 600,
+                verticalAlign: 'middle',
+                backgroundColor: '#f7f9fa',
+              }}
             >
               Default message
             </TableCell>
 
             <TableCell
-              style={{ verticalAlign: 'middle', backgroundColor: '#f7f9fa' }}
+              style={{
+                fontWeight: 600,
+                verticalAlign: 'middle',
+                backgroundColor: '#f7f9fa',
+              }}
             >
               {item.defaultMessage}
+            </TableCell>
+          </TableRow>
+
+          <TableRow>
+            <TableCell
+              width="50%"
+              style={{ verticalAlign: 'middle', backgroundColor: '#f7f9fa' }}
+            >
+              Description
+            </TableCell>
+
+            <TableCell
+              style={{ verticalAlign: 'middle', backgroundColor: '#f7f9fa' }}
+            >
+              {item.description}
             </TableCell>
           </TableRow>
 

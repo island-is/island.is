@@ -2,11 +2,11 @@
   "application.system.dev.2": {
     "application.system:applications": {
       "defaultMessage": "Þínar umsóknir",
-      "description": "this is a useless description"
+      "description": "Applications heading copy"
     },
     "application.system:thanks": {
       "defaultMessage": "Takk",
-      "description": "Thanks"
+      "description": "Thank you message at the end of the process"
     }
   }
 }

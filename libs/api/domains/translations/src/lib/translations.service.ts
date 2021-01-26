@@ -3,13 +3,7 @@ import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { ContentfulRepository, localeMap } from '@island.is/api/domains/cms'
 import isEmpty from 'lodash/isEmpty'
-
-interface DictArray {
-  id: string
-  defaultMessage: string
-  'is-IS': string
-  en: string
-}
+import { DictArray } from '@island.is/shared/types'
 
 export interface TranslationsDict {
   [key: string]: string

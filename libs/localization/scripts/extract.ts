@@ -4,15 +4,9 @@ import spawn from 'cross-spawn'
 import { createClient } from 'contentful-management'
 import { Entry } from 'contentful-management/dist/typings/entities/entry'
 import isEmpty from 'lodash/isEmpty'
+import { DictArray } from '@island.is/shared/types'
 
 type MessageDict = Record<string, Message>
-
-interface DictArray {
-  id: string
-  defaultMessage: string
-  'is-IS': string
-  en: string
-}
 
 export interface Message {
   defaultMessage: string
@@ -74,6 +68,7 @@ export const mergeArray = (local: DictArray[], distant: DictArray[]) =>
     const hasIs = !isEmpty(contentfulValue?.['is-IS'])
     const hasEn = !isEmpty(contentfulValue?.en)
 
+    // We don't overwrite defaultMessage and description it always comes from the local messages.json
     return {
       ...localObj,
       'is-IS': hasIs ? contentfulValue!['is-IS'] : localObj['is-IS'],
@@ -85,14 +80,16 @@ export const translationsFromLocal = (messages: MessageDict) =>
   Object.keys(messages).map((item) => ({
     id: item,
     defaultMessage: messages[item].defaultMessage,
+    description: messages[item].description,
     'is-IS': messages[item].defaultMessage,
-    en: messages[item].description,
+    en: '',
   }))
 
 export const translationsFromContentful = (namespace: Entry) =>
   (namespace?.fields?.strings?.['is-IS'] ?? []).map((item: DictArray) => ({
     id: item.id,
     defaultMessage: item.defaultMessage,
+    description: item.description,
     'is-IS': item['is-IS'],
     en: item.en,
   }))
