@@ -9,10 +9,10 @@ module.exports = {
     seederStorage: 'sequelize',
   },
   test: {
-    username: 'dev_db',
-    password: 'dev_db',
+    username: 'test_db',
+    password: 'test_db',
     database: 'test_db',
-    host: 'process.env.DB_HOST',
+    host: process.env.DB_HOST,
     dialect: 'postgres',
     seederStorage: 'sequelize',
   },
