@@ -125,7 +125,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
         client.requirePkce = true
 
         setClientTypeInfo(
-          `A single-page application (spa) is an application that doesn't need to reload the page during its use and works within a browser, f.x. Google and Facebook.
+          `A single-page application (spa) doesn't need to reload the page during its use and works within a browser, f.x. Google and Facebook.
           Since it is running in the users browser, it cannot keep a secret.
           `,
         )
@@ -135,7 +135,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
         client.requireClientSecret = false
         client.requirePkce = true
 
-        setClientTypeInfo(`A native application is an application designed specifically for use on a particular platform or device. 
+        setClientTypeInfo(`A native application is designed specifically for use on a particular platform or device. 
         Since it runs on user´s devices it cannot keep a secret.`)
       }
 
