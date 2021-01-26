@@ -7,7 +7,7 @@ import { ApiResource } from '../../../entities/models/api-resource.model'
 import ConfirmModal from '../../common/ConfirmModal'
 import Link from 'next/link'
 import Paginator from '../../common/Paginator'
-import CsvExport from '../../common/CsvExport'
+import { downloadCSV } from '../../../utils/csv.utils'
 
 const ApiResourcesList: React.FC = () => {
   const [count, setCount] = useState(0)
@@ -94,6 +94,18 @@ const ApiResourcesList: React.FC = () => {
         Are you sure want to archive this Api resource:{' '}
         <span>{resourceToRemove}</span>
       </p>
+    )
+  }
+
+  const exportCsv = async () => {
+    const filename = `API Resources, ${
+      new Date().toISOString().split('T')[0]
+    }.csv`
+
+    await downloadCSV(
+      filename,
+      ResourcesService.getApiResourcesCsvHeaders(),
+      ResourcesService.getApiResourcesCsv,
     )
   }
 
@@ -186,13 +198,9 @@ const ApiResourcesList: React.FC = () => {
             </div>
             <div>
               <Paginator lastPage={lastPage} handlePageChange={handlePager} />
-              <CsvExport
-                label="Export"
-                filename={`API Resources, ${
-                  new Date().toISOString().split('T')[0]
-                }.csv`}
-                exportMethod={ResourcesService.getApiResourcesCsv}
-              />
+              <button type="button" onClick={() => exportCsv()}>
+                <span>Export</span>
+              </button>
             </div>
           </div>
         </div>

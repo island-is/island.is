@@ -270,18 +270,31 @@ export class ClientService extends BaseService {
     return result.rows.map((r) => ClientService.toClientCsv(r))
   }
 
-  static toClientCsv = (client: Client): ClientCsv => {
-    const csv = new ClientCsv()
-    csv.clientId = client.clientId
-    csv.clientType = client.clientType
-    csv.clientName = client.clientName
-    csv.description = client.description
-    csv.nationalId = client.nationalId
-    csv.created = client.created
-    csv.modified = client.modified
-    csv.enabled = client.enabled
-    csv.archived = client.archived
+  static toClientCsv = (client: Client): any[] => {
+    return [
+      client.clientId,
+      client.clientType,
+      client.clientName,
+      client.description,
+      client.nationalId,
+      client.created,
+      client.modified,
+      client.enabled,
+      client.archived,
+    ]
+  }
 
-    return csv
+  static getClientsCsvHeaders(): string[] {
+    return [
+      'ClientId',
+      'ClientType',
+      'ClientName',
+      'Description',
+      'NationalId',
+      'Created',
+      'Modified',
+      'Enabled',
+      'Archived',
+    ]
   }
 }

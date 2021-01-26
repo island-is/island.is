@@ -250,14 +250,27 @@ export class ResourcesService extends BaseService {
     return result.rows.map((r) => ResourcesService.toApiResourceCsv(r))
   }
 
-  static toApiResourceCsv = (apiResource: ApiResource): ApiResourceCsv => {
-    const csv = new ApiResourceCsv()
-    csv.name = apiResource.name
-    csv.displayName = apiResource.displayName
-    csv.nationalId = apiResource.nationalId
-    csv.created = apiResource.created
-    csv.modified = apiResource.modified
+  static toApiResourceCsv = (apiResource: ApiResource): any[] => {
+    return [
+      apiResource.name,
+      apiResource.displayName,
+      apiResource.nationalId,
+      apiResource.created,
+      apiResource.modified,
+      apiResource.enabled,
+      apiResource.archived,
+    ]
+  }
 
-    return csv
+  static getApiResourcesCsvHeaders(): string[] {
+    return [
+      'Name',
+      'DisplayName',
+      'NationalId',
+      'Created',
+      'Modified',
+      'Enabled',
+      'Archived',
+    ]
   }
 }
