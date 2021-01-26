@@ -54,6 +54,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
       dto.clientUri = data.client.clientUri
       dto.nationalId = data.client.nationalId
       dto.protocolType = 'oidc'
+      dto.contactEmail = data.client.contactEmail
 
       const clientSaved = await create(dto)
       if (clientSaved) {
@@ -212,6 +213,25 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.nationalId"
                       message="NationalId must be 10 numeric characters"
                     />
+                  </div>
+                  <div className="client-basic__container__field">
+                    <label className="client-basic__label">Contact email</label>
+                    <input
+                      type="text"
+                      ref={register({required: true, pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/ })}
+                      name="client.contactEmail"
+                      defaultValue={client.contactEmail ?? ''}
+                      className="client-basic__input"
+                      title="The email of the person who can be contacted regarding this Client"
+                      placeholder="john@example.com"
+                    />
+                    <ErrorMessage
+                      as="span"
+                      errors={errors}
+                      name="client.contactEmail"
+                      message="Contact email must be set and must be a valid email address"
+                    />
+                    <HelpBox helpText="The email of the person who can be contacted regarding this Client" />
                   </div>
                   <div className="client-basic__container__field">
                     <label className="client-basic__label">Client Id</label>

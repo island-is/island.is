@@ -253,6 +253,25 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     />
                   </div>
                   <div className="client__container__field">
+                    <label className="client__label">Contact email</label>
+                    <input
+                      type="text"
+                      ref={register({required: true, pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/ })}
+                      name="client.contactEmail"
+                      defaultValue={client.contactEmail ?? ''}
+                      className="client__input"
+                      title="The email of the person who can be contacted regarding this Client"
+                      placeholder="john@example.com"
+                    />
+                    <ErrorMessage
+                      as="span"
+                      errors={errors}
+                      name="client.contactEmail"
+                      message="Contact email must be set and must be a valid email address"
+                    />
+                    <HelpBox helpText="The email of the person who can be contacted regarding this Client" />
+                  </div>
+                  <div className="client__container__field">
                     <label className="client__label">Client Id</label>
                     <input
                       type="text"
@@ -326,19 +345,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     />
                     <HelpBox helpText="Application description for use within the IDS management" />
                   </div>
-                  <div className="client__container__field">
-                    <label className="client__label">Contact email</label>
-                    <input
-                      type="text"
-                      ref={register}
-                      name="client.contactEmail"
-                      defaultValue={client.contactEmail ?? ''}
-                      className="client__input"
-                      title="Contact email for client"
-                      placeholder="island@island.is"
-                    />
-                    <HelpBox helpText="Set the contact email for the client" />
-                  </div>
+                  
 
                   <div className="client__container__checkbox__field">
                     <label className="client__label">Require consent</label>
