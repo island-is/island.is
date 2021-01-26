@@ -39,6 +39,29 @@ export const serviceIdSort = (
 }
 
 /**
+ * Checks if the serviceCode is a valid pattern.
+ * @param serviceCode Should be in the following formats:
+ *                    - petstore-v1
+ *                    - petstore-v2
+ *                    - amazing-petstore-v1
+ *                    - amazing-petstore-v2
+ * @returns true if it is valid, otherwise false.
+ */
+const isValidServiceCodeWithVersion = (serviceCode: string) => {
+  const regExp = new RegExp('^v[0-9]+(.[0-9]+){0,2}$')
+
+  if (serviceCode) {
+    const splits = serviceCode.split(SEPERATOR)
+
+    if (splits && splits.length > 1 && regExp.test(splits[splits.length - 1])) {
+      return true
+    }
+  }
+
+  return false
+}
+
+/**
  * Parses version number from the X-Road serviceCode.
  *
  * @param serviceCode Should be in the following formats:
@@ -74,20 +97,6 @@ export const parseServiceCode = (serviceCode: string) => {
     return splits.join(SEPERATOR)
   }
   return serviceCode
-}
-
-const isValidServiceCodeWithVersion = (serviceCode: string) => {
-  const regExp = new RegExp('^v[0-9]+(.[0-9]+){0,2}$')
-
-  if (serviceCode) {
-    const splits = serviceCode.split(SEPERATOR)
-
-    if (splits && splits.length > 1 && regExp.test(splits[splits.length - 1])) {
-      return true
-    }
-  }
-
-  return false
 }
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
