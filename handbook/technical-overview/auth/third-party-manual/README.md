@@ -20,11 +20,11 @@
 
 4. [Info links](#info-links)
 
-- 4.1 [Angular:](#angular-1)
+- 4.1 [Angular:](#angular-link)
 
-- 4.2 [React](#react -1)
+- 4.2 [React](#react-link)
 
-- 4.3 [NestJS:](#nestjs)
+- 4.3 [NestJS:](#nestjs-link)
 
 ## <a name="audience"></a>Audience
 
@@ -95,16 +95,16 @@ All the projects are setup so that to change the connection from the sandbox to 
 
 More information about how to connect with the authentication system in each developing environment can be found following these links:
 
-- ### <a name="angular -1"></a>Angular:
+- ### <a name="angular-link"></a>Angular:
 
   - <https://www.scottbrady91.com/Angular/SPA-Authentiction-using-OpenID-Connect-Angular-CLI-and-oidc-client>
 
-- ### <a name="react -1"></a>React:
+- ### <a name="react-link"></a>React:
 
   - <https://medium.com/@franciscopa91/how-to-implement-oidc-authentication-with-react-context-api-and-react-router-205e13f2d49>
 
   - <https://github.com/skoruba/react-oidc-client-js>
 
-- ### <a name="nestjs"></a>NestJS:
+- ### <a name="nestjs-link"></a>NestJS:
 
   - <https://auth0.com/blog/developing-a-secure-api-with-nestjs-adding-authorization/>
