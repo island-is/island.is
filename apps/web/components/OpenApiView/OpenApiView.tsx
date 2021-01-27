@@ -25,6 +25,7 @@ import * as styles from './OpenApiView.treat'
 export interface OpenApiViewProps {
   service: Service
   strings: GetNamespaceQuery['getNamespace']
+  getOpenApiInput?: GetOpenApiInput
 }
 
 type SelectOption = {
@@ -32,7 +33,12 @@ type SelectOption = {
   value: any
 }
 
-export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
+export const OpenApiView = ({
+  service,
+  strings,
+  getOpenApiInput,
+}: OpenApiViewProps) => {
+  console.log('getOpenApiInput: ', getOpenApiInput)
   const n = useNamespace(strings)
 
   const options: Array<SelectOption> = service
@@ -84,6 +90,8 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
   }
 
   const [documentation, setDocumentation] = useState<OpenApi>(null)
+  console.log('documentation: ', documentation)
+  //taka út
   const [openApiInput, setOpenApiInput] = useState<GetOpenApiInput>(
     selectOptionValueToGetOpenApiInput(selectedOption),
   )

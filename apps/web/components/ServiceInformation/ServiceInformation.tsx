@@ -1,9 +1,8 @@
-import React from 'react'
+import React, { FC, useState } from 'react'
 import { useNamespace } from '../../hooks'
+import { useQuery } from '@apollo/client'
 import {
   Box,
-  GridColumn,
-  GridRow,
   Inline,
   Tag,
   Text,
@@ -11,16 +10,13 @@ import {
   Link,
   Button,
   Select,
-  GridContainer,
 } from '@island.is/island-ui/core'
-import {
-  Service,
-  GetNamespaceQuery,
-  XroadInfo,
-} from '@island.is/web/graphql/schema'
+import { Service, GetNamespaceQuery } from '@island.is/web/graphql/schema'
 
 import TagList from './TagList'
 import XroadValue from './XroadValue'
+import ServiceInfoLink from './ServiceInfoLink'
+import * as styles from './ServiceInformation.treat'
 
 export const capitalize = (s: string) => {
   return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()
@@ -28,26 +24,99 @@ export const capitalize = (s: string) => {
 export interface ServiceInformationProps {
   service: Service
   strings: GetNamespaceQuery['getNamespace']
+  onSelectChange?: (value: SelectOption) => void
 }
 
-export const ServiceInformation = ({
+type SelectOption = {
+  label: string
+  value: any
+}
+
+export const ServiceInformation: FC<ServiceInformationProps> = ({
   service,
   strings,
+  onSelectChange,
 }: ServiceInformationProps) => {
   const n = useNamespace(strings)
+  //TODO : Set enviroment options
+  //When enviroment is chosen we need to set the version options, default is set to newest version.
+  //When enviroment is chosen we need to set the serviceDetails object
+
+  //Set version options
+  const versionOptions: Array<SelectOption> = service
+    ? service.versions.map((x) => {
+        // TODO: Change this when we add environmental aware services
+        return {
+          label: x.versionId.split('-').pop(),
+          value: x.details[0].xroadIdentifier,
+        }
+      })
+    : [
+        {
+          label: n('noVersion'),
+          value: {
+            instance: '',
+            memberClass: '',
+            memberCode: '',
+            serviceCode: '',
+            subsystemCode: '',
+          },
+        },
+      ]
+  //sort in descending order, highest version first
+  versionOptions.sort((a, b) =>
+    a.value.serviceCode < b.value.serviceCode ? 1 : -1,
+  )
+  // //Get enviroment options
+  // const enviromentOptions: Array<SelectOption> = service
+  // ? service.versions.map((x) => {
+  //     // TODO: Change this when we add environmental aware services
+  //     return {
+  //       label: x.versionId.split('-').pop(),
+  //       value: x.details[0].xroadIdentifier,
+  //     }
+  //   })
+  // : [
+  //     {
+  //       label: n('noVersion'),
+  //       value: {
+  //         instance: '',
+  //         memberClass: '',
+  //         memberCode: '',
+  //         serviceCode: '',
+  //         subsystemCode: '',
+  //       },
+  //     },
+  //   ]
+
+  // const selectOptionValueToGetOpenApiInput = (
+  //   option: SelectOption,
+  // ): GetOpenApiInput => {
+  //   return option.value
+  //     ? option.value
+  //     : {
+  //         instance: '',
+  //         memberClass: '',
+  //         memberCode: '',
+  //         serviceCode: '',
+  //         subsystemCode: '',
+  //       }
+  // }
+  const [selectedVersionOption, setSelectedVersionOption] = useState<
+    SelectOption
+  >(versionOptions[0])
+
+  const onSelectVersion = (option: SelectOption) => {
+    onSelectChange(option)
+  }
 
   return (
     // Heading
     <Box>
-<<<<<<< HEAD
-      <Inline space={1}>
-        <Text variant="h1" as="h1">
-          {service.title}
-=======
       <Box marginTop={1} marginBottom={3}>
         <Box display="flex" alignItems="flexStart">
           <Text variant="h1" as="h1">
-            {service.name}
+            {service.title}
           </Text>
           {service.pricing.length > 0 && (
             <Box marginLeft={1}>
@@ -57,7 +126,6 @@ export const ServiceInformation = ({
         </Box>
         <Text variant="intro" paddingTop={2}>
           {service.description}
->>>>>>> Ui of ServiceInfo
         </Text>
       </Box>
 
@@ -70,44 +138,34 @@ export const ServiceInformation = ({
         flexDirection={['column', 'row']}
         justifyContent={['flexStart', 'spaceBetween']}
       >
-        <GridContainer>
-          <GridRow>
-            <GridColumn span={['1/2', '1/3']}>
-              <Select
-                backgroundColor="blue"
-                size="sm"
-                label="Version"
-                name="version"
-                //disabled={options.length < 2}
-                isSearchable={false}
-                defaultValue={{ label: 'v1', value: 1 }}
-                options={[
-                  { label: 'v1', value: 1 },
-                  { label: 'v2', value: 2 },
-                  { label: 'v3', value: 2 },
-                ]}
-                //onChange={onSelectChange}
-              />
-            </GridColumn>
-            <GridColumn span={['1/2', '1/3']}>
-              <Select
-                backgroundColor="blue"
-                size="sm"
-                label="Version"
-                name="version"
-                //disabled={options.length < 2}
-                isSearchable={false}
-                defaultValue={{ label: 'dev', value: 1 }}
-                options={[
-                  { label: 'dev', value: 1 },
-                  { label: 'test', value: 2 },
-                  { label: 'prod', value: 2 },
-                ]}
-                //onChange={onSelectChange}
-              />
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
+        <Box display="flex">
+          <Box className={styles.selectDesktop}>
+            <Select
+              backgroundColor="blue"
+              size="sm"
+              label={n('XroadIdentifierInstance')}
+              name="Instance"
+              disabled={versionOptions.length < 2}
+              isSearchable={false}
+              defaultValue={selectedVersionOption}
+              options={versionOptions}
+              //onChange={onSelectInstance}
+            />
+          </Box>
+          <Box marginLeft={2} className={styles.selectDesktop}>
+            <Select
+              backgroundColor="blue"
+              size="sm"
+              label={n('version')}
+              name="version"
+              disabled={versionOptions.length < 2}
+              isSearchable={false}
+              defaultValue={selectedVersionOption}
+              options={versionOptions}
+              onChange={onSelectVersion}
+            />
+          </Box>
+        </Box>
 
         <Box
           paddingTop={[2, 0]}
@@ -116,7 +174,7 @@ export const ServiceInformation = ({
           justifyContent={['flexStart', 'flexEnd']}
         >
           <Box paddingRight={[3, 2]}>
-            <Link href={'test'}>
+            <Link href={service.versions[2].details[0].links.bugReport}>
               <Button
                 colorScheme="light"
                 iconType="filled"
@@ -130,7 +188,7 @@ export const ServiceInformation = ({
             </Link>
           </Box>
           <Box>
-            <Link href={'test'}>
+            <Link href={service.versions[2].details[0].links.featureRequest}>
               <Button
                 colorScheme="light"
                 iconType="filled"
@@ -148,54 +206,56 @@ export const ServiceInformation = ({
       <Box
         background="blue100"
         paddingY={3}
-        marginTop={3}
+        marginY={3}
         borderRadius="large"
         display="flex"
         flexDirection="column"
       >
         {/* Xroad values */}
-        {service &&
-          service.xroadIdentifier &&
-          service.xroadIdentifier.length > 0 && (
-            <Box paddingX={3} marginBottom={2}>
-              <Inline space={1}>
-                <Text color="blue600">
-                  {`${n('XroadIdentifierSubsystemCode')}:`}
-                </Text>
-                <Text color="blue600" fontWeight="semiBold">
-                  {service.xroadIdentifier[0].subsystemCode}
-                </Text>
-              </Inline>
-              <Box marginTop={1} display="flex">
-                <Inline space={1}>
-                  {/* IdentifierInstance */}
-                  <XroadValue
-                    label={`${n('XroadIdentifierInstance')}:`}
-                    value={service.xroadIdentifier[0].instance}
-                    showDivider
-                  />
-                  {/* memberCode */}
-                  <XroadValue
-                    label={`${n('XroadIdentifierMemberCode')}:`}
-                    value={service.xroadIdentifier[0].memberCode}
-                    showDivider
-                  />
-                  {/* memberClass */}
-                  <XroadValue
-                    label={`${n('XroadIdentifierMemberClass')}:`}
-                    value={service.xroadIdentifier[0].memberClass}
-                    showDivider
-                  />
-                  {/* serviceCode */}
-                  <XroadValue
-                    label={`${n('XroadIdentifierServiceCode')}:`}
-                    value={service.xroadIdentifier[0].serviceCode}
-                    showDivider={false}
-                  />
-                </Inline>
-              </Box>
-            </Box>
-          )}
+        {/* {service && service && service.xroadIdentifier.length > 0 && ( */}
+        <Box paddingX={3} marginBottom={2}>
+          <Inline space={1}>
+            <Text color="blue600">
+              {`${n('XroadIdentifierSubsystemCode')}:`}
+            </Text>
+            <Text color="blue600" fontWeight="semiBold">
+              {/* {service.xroadIdentifier[0].subsystemCode} */} test
+            </Text>
+          </Inline>
+          <Box marginTop={1} display="flex">
+            <Inline space={1}>
+              {/* IdentifierInstance */}
+              <XroadValue
+                value="test"
+                label={`${n('XroadIdentifierInstance')}:`}
+                // value={service.xroadIdentifier[0].instance}
+                showDivider
+              />
+              {/* memberCode */}
+              <XroadValue
+                label={`${n('XroadIdentifierMemberCode')}:`}
+                value="test"
+                // value={service.xroadIdentifier[0].memberCode}
+                showDivider
+              />
+              {/* memberClass */}
+              <XroadValue
+                label={`${n('XroadIdentifierMemberClass')}:`}
+                value="test"
+                // value={service.xroadIdentifier[0].memberClass}
+                showDivider
+              />
+              {/* serviceCode */}
+              <XroadValue
+                label={`${n('XroadIdentifierServiceCode')}:`}
+                value="test"
+                // value={service.xroadIdentifier[0].serviceCode}
+                showDivider={false}
+              />
+            </Inline>
+          </Box>
+        </Box>
+        {/* )} */}
         <Box paddingBottom={3}>
           <Divider />
         </Box>
@@ -206,37 +266,17 @@ export const ServiceInformation = ({
           namespace={strings}
         />
       </Box>
-      {/* Links */}
-      <Box display="flex" marginTop={3}>
-        <Box paddingRight={3}>
-          <Link href={'www.mbl.is'}>
-            <Button
-              fluid
-              iconType="outline"
-              icon="open"
-              colorScheme="light"
-              size="small"
-              variant="text"
-            >
-              {n('linkDocumentation')}
-            </Button>
-          </Link>
-        </Box>
-        <Box>
-          <Link href={'www.mbl.is'}>
-            <Button
-              fluid
-              iconType="outline"
-              icon="open"
-              colorScheme="light"
-              size="small"
-              variant="text"
-            >
-              {n('linkResponsible')}
-            </Button>
-          </Link>
-        </Box>
-      </Box>
+      <Inline space={3}>
+        {/* Links */}
+        <ServiceInfoLink
+          href={service.versions[2].details[0].links.documentation}
+          link={n('linkDocumentation')}
+        />
+        <ServiceInfoLink
+          href={service.versions[2].details[0].links.bugReport}
+          link={n('linkResponsible')}
+        />
+      </Inline>
     </Box>
   )
 }

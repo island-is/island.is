@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import getConfig from 'next/config'
@@ -38,6 +38,10 @@ interface ServiceDetailsProps {
   filterContent: GetNamespaceQuery['getNamespace']
   openApiContent: GetNamespaceQuery['getNamespace']
   service: Service
+}
+type SelectOption = {
+  label: string
+  value: any
 }
 
 const ServiceDetails: Screen<ServiceDetailsProps> = ({
@@ -91,6 +95,18 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
       title: n('linkContentPolicyText'),
     },
   ]
+
+  const [selectedVersionOption, setSelectedVersionOption] = useState<
+    SelectOption
+  >(null)
+  const [selectedInstanceOption, setSelectedInstanceOption] = useState<
+    SelectOption
+  >(null)
+
+  const setOpenApiContent = (option: any) => {
+    console.log('setApiContent: ', option)
+    setSelectedVersionOption(option)
+  }
 
   return (
     <SubpageLayout
@@ -168,6 +184,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                   <ServiceInformation
                     strings={filterContent}
                     service={service}
+                    onSelectChange={(option) => setOpenApiContent(option)}
                   />
                 )}
               </Box>
@@ -176,10 +193,14 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
         </SidebarLayout>
       }
       details={
-        !service ? (
+        !selectedVersionOption ? (
           <></>
         ) : (
-          <OpenApiView strings={openApiContent} service={service} />
+          <OpenApiView
+            service={service}
+            strings={openApiContent}
+            getOpenApiInput={selectedVersionOption.value}
+          />
         )
       }
     />
