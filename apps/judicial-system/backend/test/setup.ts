@@ -8,6 +8,7 @@ import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
 
 import { AppModule } from '../src/app'
 
+/*
 jest.mock('pdfkit', function () {
   class MockPDFDocument {
     pipe(stream) {
@@ -34,7 +35,9 @@ jest.mock('pdfkit', function () {
     default: MockPDFDocument,
   }
 })
+*/
 
+/*
 jest.mock('stream-buffers', function () {
   class MockWritableStreamBuffer {
     on(_, fn) {
@@ -51,6 +54,7 @@ jest.mock('stream-buffers', function () {
     },
   }
 })
+*/
 
 let app: INestApplication
 let sequelize: Sequelize

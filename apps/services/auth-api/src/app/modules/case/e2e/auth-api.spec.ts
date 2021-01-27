@@ -1,7 +1,7 @@
+const request = require('supertest')
 import { GrantDto, UserIdentityDto } from '@island.is/auth-api-lib'
 import { INestApplication } from '@nestjs/common'
 import { setup } from '../../../../../test/setup'
-import * as request from 'supertest'
 
 let app: INestApplication
 

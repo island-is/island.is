@@ -590,6 +590,5 @@ export async function generateRulingPdf(
   if (!environment.production) {
     writeFile(`${existingCase.id}-ruling.pdf`, pdf as string)
   }
-
   return pdf
 }

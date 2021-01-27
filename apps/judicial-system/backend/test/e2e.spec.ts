@@ -1,4 +1,4 @@
-import * as request from 'supertest'
+const request = require('supertest')
 
 import { INestApplication } from '@nestjs/common'
 

@@ -1,5 +1,5 @@
+const request = require('supertest')
 import { setup } from '../../../../test/setup'
-import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
 import { EmailVerification } from '../emailVerification.model'

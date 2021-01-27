@@ -1,5 +1,5 @@
+const request = require('supertest')
 import { setup } from '../../../../../test/setup'
-import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 import * as tokenUtils from '../utils/tokenUtils'
 import { environment } from '../../../../environments'
