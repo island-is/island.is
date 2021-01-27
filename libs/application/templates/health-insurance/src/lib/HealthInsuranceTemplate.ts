@@ -40,6 +40,7 @@ const HealthInsuranceSchema = z.object({
     remarks: z.string(),
   }),
   confirmCorrectInfo: z.boolean().refine((v) => v),
+  confirmMissingInfo: z.boolean().refine((y) => y),
   agentComments: z.array(z.string().nonempty()),
   formerInsurance: z.object({
     country: z.string().nonempty(),

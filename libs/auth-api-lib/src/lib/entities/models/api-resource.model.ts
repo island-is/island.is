@@ -76,9 +76,19 @@ export class ApiResource extends Model<ApiResource> {
   })
   archived!: Date
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    defaultValue: null,
+  })
+  @ApiProperty({
+    example: null,
+  })
+  contactEmail!: string
+
   @HasMany(() => ApiResourceUserClaim)
   @ApiProperty()
-  public userClaims?: ApiResourceUserClaim[]
+  userClaims?: ApiResourceUserClaim[]
 
   // Common properties end
 
@@ -92,11 +102,11 @@ export class ApiResource extends Model<ApiResource> {
 
   @HasMany(() => ApiResourceScope)
   @ApiProperty()
-  public scopes?: ApiResourceScope[]
+  scopes?: ApiResourceScope[]
 
   @HasMany(() => ApiResourceSecret)
   @ApiProperty()
-  readonly apiSecrets?: ApiResourceSecret[]
+  apiSecrets?: ApiResourceSecret[]
 
   // Signing algorithm for access token. If empty, will use the server default signing algorithm.
   // public allowedAccessTokenSigningAlgorithms

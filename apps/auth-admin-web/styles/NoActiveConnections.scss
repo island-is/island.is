@@ -1,0 +1,11 @@
+.no-active-connections {
+  padding: 8px 12px;
+
+  h3 {
+    font-size: 1.1rem;
+  }
+
+  &__help {
+    color: $color-link;
+  }
+}

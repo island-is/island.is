@@ -1,5 +1,8 @@
 import React from 'react'
-import { AppealDecisionRole, RequiredField } from '../types'
+import {
+  AppealDecisionRole,
+  RequiredField,
+} from '@island.is/judicial-system-web/src/types'
 import { TagVariant, Text } from '@island.is/island-ui/core'
 import {
   capitalize,
@@ -20,21 +23,28 @@ import { validate } from './validate'
 export const getAppealDecisionText = (
   role: AppealDecisionRole,
   appealDecition?: CaseAppealDecision,
+  accusedGender?: CaseGender,
 ) => {
   switch (appealDecition) {
     case CaseAppealDecision.APPEAL: {
       return `${
-        role === AppealDecisionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
+        role === AppealDecisionRole.ACCUSED
+          ? capitalize(formatAccusedByGender(accusedGender || CaseGender.OTHER))
+          : 'Sækjandi'
       } kærir úrskurðinn`
     }
     case CaseAppealDecision.ACCEPT: {
       return `${
-        role === AppealDecisionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
+        role === AppealDecisionRole.ACCUSED
+          ? capitalize(formatAccusedByGender(accusedGender || CaseGender.OTHER))
+          : 'Sækjandi'
       } unir úrskurðinum`
     }
     case CaseAppealDecision.POSTPONE: {
       return `${
-        role === AppealDecisionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
+        role === AppealDecisionRole.ACCUSED
+          ? capitalize(formatAccusedByGender(accusedGender || CaseGender.OTHER))
+          : 'Sækjandi'
       } tekur sér lögboðinn frest`
     }
     default: {
@@ -47,16 +57,23 @@ export const constructConclusion = (workingCase: Case) => {
   if (workingCase.decision === CaseDecision.REJECTING) {
     return (
       <Text as="span" variant="intro">
-        Beiðni um gæslu á hendur,
+        {`Kröfu um að ${formatAccusedByGender(
+          workingCase.accusedGender || CaseGender.OTHER,
+        )}, `}
         <Text
           as="span"
           variant="intro"
           color="blue400"
           fontWeight="semiBold"
-        >{` ${workingCase.accusedName} kt. ${formatNationalId(
+        >{`${workingCase.accusedName}, kt. ${formatNationalId(
           workingCase.accusedNationalId,
         )}`}</Text>
-        , er hafnað.
+        {`, sæti${
+          workingCase.parentCase &&
+          workingCase.parentCase?.decision === CaseDecision.ACCEPTING
+            ? ' áframhaldandi'
+            : ''
+        } gæsluvarðhaldi er hafnað.`}
       </Text>
     )
   } else if (workingCase.decision === CaseDecision.ACCEPTING) {
@@ -72,13 +89,17 @@ export const constructConclusion = (workingCase: Case) => {
           )}`}
         </Text>
         <Text as="span" variant="intro">
-          , skal sæta gæsluvarðhaldi, þó ekki lengur en til
+          {`, skal sæta${
+            workingCase.parentCase &&
+            workingCase.parentCase?.decision === CaseDecision.ACCEPTING
+              ? ' áframhaldandi'
+              : ''
+          } gæsluvarðhaldi, þó ekki lengur en til`}
         </Text>
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
-          {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')?.replace(
-            'dagur,',
-            'dagsins',
-          )}.`}
+          {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')
+            ?.replace('dagur,', 'dagsins')
+            ?.replace(' kl.', ', kl.')}.`}
         </Text>
         {workingCase.custodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
@@ -124,35 +145,62 @@ export const constructConclusion = (workingCase: Case) => {
         >{` ${workingCase.accusedName} kt. ${formatNationalId(
           workingCase.accusedNationalId,
         )}`}</Text>
-        , skal sæta farbanni, þó ekki lengur en til
+        {`, skal sæta${
+          workingCase.parentCase &&
+          workingCase.parentCase?.decision ===
+            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+            ? ' áframhaldandi'
+            : ''
+        } farbanni, þó ekki lengur en til`}
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
-          {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')?.replace(
-            'dagur,',
-            'dagsins',
-          )}.`}
+          {` ${formatDate(workingCase.custodyEndDate, 'PPPPp')
+            ?.replace('dagur,', 'dagsins')
+            ?.replace(' kl.', ', kl.')}.`}
         </Text>
       </Text>
     )
   }
 }
 
-export const constructProsecutorDemands = (workingCase: Case) => {
+export const constructProsecutorDemands = (
+  workingCase: Case,
+  skipOtherDemands?: boolean,
+) => {
   return workingCase.requestedCustodyEndDate ? (
     <Text>
       Þess er krafist að
       <Text as="span" fontWeight="semiBold">
-        {` ${workingCase.accusedName}, kt.
-        ${formatNationalId(workingCase.accusedNationalId)}`}
+        {` ${workingCase.accusedName}, kt.${formatNationalId(
+          workingCase.accusedNationalId,
+        )}`}
       </Text>
-      {`, verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi${
-        workingCase.alternativeTravelBan ? ', farbanni til vara,' : ''
-      } til`}
+      {`, sæti${
+        workingCase.parentCase &&
+        workingCase.parentCase?.decision === CaseDecision.ACCEPTING
+          ? ' áframhaldandi'
+          : ''
+      } gæsluvarðhaldi${
+        workingCase.alternativeTravelBan
+          ? `,${
+              workingCase.parentCase &&
+              workingCase.parentCase?.decision ===
+                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                ? ' áframhaldandi'
+                : ''
+            } farbanni til vara,`
+          : ''
+      } með úrskurði ${workingCase.court?.replace(
+        'Héraðsdómur',
+        'Héraðsdóms',
+      )}, til`}
       <Text as="span" fontWeight="semiBold">
         {` ${formatDate(workingCase.requestedCustodyEndDate, 'EEEE')?.replace(
           'dagur',
           'dagsins',
-        )}
-    ${formatDate(workingCase.requestedCustodyEndDate, 'PPP')}, kl. ${formatDate(
+        )} ${formatDate(
+          workingCase.requestedCustodyEndDate,
+          'PPP',
+        )}, kl. ${formatDate(
           workingCase.requestedCustodyEndDate,
           TIME_FORMAT,
         )}`}
@@ -165,10 +213,17 @@ export const constructProsecutorDemands = (workingCase: Case) => {
           <Text as="span" fontWeight="semiBold">
             sæta einangrun
           </Text>{' '}
-          á meðan á gæsluvarðhaldinu stendur.
+          á meðan á varðhaldi stendur.
         </>
       ) : (
         '.'
+      )}
+      {workingCase.otherDemands && !skipOtherDemands && (
+        <>
+          <br />
+          <br />
+          {` ${capitalize(workingCase.otherDemands || '')}`}
+        </>
       )}
     </Text>
   ) : (
@@ -222,13 +277,15 @@ export const getRestrictionTagVariant = (
   restriction: CaseCustodyRestrictions,
 ): TagVariant => {
   switch (restriction) {
-    case CaseCustodyRestrictions.COMMUNICATION: {
+    case CaseCustodyRestrictions.COMMUNICATION:
+    case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT: {
       return 'rose'
     }
     case CaseCustodyRestrictions.ISOLATION: {
       return 'red'
     }
-    case CaseCustodyRestrictions.MEDIA: {
+    case CaseCustodyRestrictions.MEDIA:
+    case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION: {
       return 'blueberry'
     }
     case CaseCustodyRestrictions.VISITAION: {

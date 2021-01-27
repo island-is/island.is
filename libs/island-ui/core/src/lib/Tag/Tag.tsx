@@ -25,6 +25,7 @@ export interface TagProps {
   outlined?: boolean
   attention?: boolean // Renders a red dot driving attention to the tag.
   children: string | ReactNode
+  truncate?: boolean
 }
 
 const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
@@ -40,6 +41,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       disabled,
       outlined,
       attention,
+      truncate,
       ...props
     }: TagProps,
     ref,
@@ -63,7 +65,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
     }
 
     const content = (
-      <Text variant="tag" as="span">
+      <Text variant="eyebrow" as="span" truncate={truncate}>
         {children}
       </Text>
     )

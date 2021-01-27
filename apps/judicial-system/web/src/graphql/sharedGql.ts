@@ -12,13 +12,14 @@ export const CaseQuery = gql`
       accusedName
       accusedAddress
       accusedGender
-      requestedDefenderName
-      requestedDefenderEmail
+      defenderName
+      defenderEmail
       court
       arrestDate
       requestedCourtDate
       alternativeTravelBan
       requestedCustodyEndDate
+      otherDemands
       lawsBroken
       custodyProvisions
       requestedCustodyRestrictions
@@ -35,12 +36,11 @@ export const CaseQuery = gql`
       courtDate
       isCourtDateInThePast
       courtRoom
-      defenderName
-      defenderEmail
       courtStartTime
       courtEndTime
       courtAttendees
       policeDemands
+      courtDocuments
       accusedPlea
       litigationPresentations
       ruling
@@ -48,6 +48,7 @@ export const CaseQuery = gql`
       custodyEndDate
       isCustodyEndDateInThePast
       custodyRestrictions
+      otherRestrictions
       accusedAppealDecision
       accusedAppealAnnouncement
       prosecutorAppealDecision
@@ -55,6 +56,15 @@ export const CaseQuery = gql`
       judge {
         name
         title
+      }
+      parentCase {
+        id
+        custodyEndDate
+        decision
+        courtCaseNumber
+      }
+      childCase {
+        id
       }
       notifications {
         type

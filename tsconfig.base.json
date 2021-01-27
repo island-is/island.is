@@ -68,6 +68,9 @@
       "@island.is/api/domains/file-upload": [
         "libs/api/domains/file-upload/src/index.ts"
       ],
+      "@island.is/api/domains/health-insurance": [
+        "libs/api/domains/health-insurance/src/index.ts"
+      ],
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
@@ -95,6 +98,9 @@
       ],
       "@island.is/application/template-loader": [
         "libs/application/template-loader/src/index.ts"
+      ],
+      "@island.is/application/templates/children-residence-change": [
+        "libs/application/templates/children-residence-change/src/index.ts"
       ],
       "@island.is/application/templates/document-provider-onboarding": [
         "libs/application/templates/document-provider-onboarding/src/index.ts"
@@ -129,6 +135,9 @@
       "@island.is/auth-api-lib": ["libs/auth-api-lib/src/index.ts"],
       "@island.is/auth-nest-tools": ["libs/auth-nest-tools/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
+      "@island.is/content-search-index-manager": [
+        "libs/content-search-index-manager/src/index.ts"
+      ],
       "@island.is/content-search-indexer": [
         "libs/content-search-indexer/src/index.ts"
       ],
@@ -238,7 +247,10 @@
         "libs/skilavottord/consts/src/index.ts"
       ],
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
-      "@island.is/web/*": ["apps/web/*"]
+      "@island.is/utils/api": ["libs/utils/api/src/index.ts"],
+      "@island.is/vmst-client": ["libs/vmst-client/src/index.ts"],
+      "@island.is/web/*": ["apps/web/*"],
+      "@island.is/web/component*": ["apps/web/component*/real.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

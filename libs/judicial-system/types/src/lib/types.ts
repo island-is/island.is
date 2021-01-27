@@ -52,6 +52,8 @@ export enum CaseCustodyRestrictions {
   VISITAION = 'VISITAION',
   COMMUNICATION = 'COMMUNICATION',
   MEDIA = 'MEDIA',
+  ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION = 'ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION',
+  ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT = 'ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT',
 }
 
 export enum CaseAppealDecision {
@@ -84,13 +86,14 @@ export interface Case {
   accusedName?: string
   accusedAddress?: string
   accusedGender?: CaseGender
-  requestedDefenderName?: string
-  requestedDefenderEmail?: string
+  defenderName?: string
+  defenderEmail?: string
   court?: string
   arrestDate?: string
   requestedCourtDate?: string
   alternativeTravelBan?: boolean
   requestedCustodyEndDate?: string
+  otherDemands?: string
   lawsBroken?: string
   custodyProvisions?: CaseCustodyProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
@@ -104,12 +107,11 @@ export interface Case {
   courtDate?: string
   isCourtDateInThePast?: boolean
   courtRoom?: string
-  defenderName?: string
-  defenderEmail?: string
   courtStartTime?: string
   courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
+  courtDocuments?: string[]
   accusedPlea?: string
   litigationPresentations?: string
   ruling?: string
@@ -117,11 +119,14 @@ export interface Case {
   custodyEndDate?: string
   isCustodyEndDateInThePast?: boolean
   custodyRestrictions?: CaseCustodyRestrictions[]
+  otherRestrictions?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
   judge?: User
+  parentCase?: Case
+  childCase?: Case
   notifications?: Notification[]
 }
 
@@ -147,8 +152,8 @@ export interface CreateCase {
   accusedName?: string
   accusedAddress?: string
   accusedGender?: CaseGender
-  requestedDefenderName?: string
-  requestedDefenderEmail?: string
+  defenderName?: string
+  defenderEmail?: string
   court?: string
 }
 
@@ -158,8 +163,8 @@ export interface UpdateCase {
   accusedName?: string
   accusedAddress?: string
   accusedGender?: CaseGender
-  requestedDefenderName?: string
-  requestedDefenderEmail?: string
+  defenderName?: string
+  defenderEmail?: string
   court?: string
   arrestDate?: string
   requestedCourtDate?: string
@@ -171,21 +176,22 @@ export interface UpdateCase {
   caseFacts?: string
   legalArguments?: string
   comments?: string
+  prosecutorId?: string
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
-  defenderName?: string
-  defenderEmail?: string
   courtStartTime?: string
   courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
+  courtDocuments?: string[]
   accusedPlea?: string
   litigationPresentations?: string
   ruling?: string
   decision?: CaseDecision
   custodyEndDate?: string
   custodyRestrictions?: CaseCustodyRestrictions[]
+  otherRestrictions?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision

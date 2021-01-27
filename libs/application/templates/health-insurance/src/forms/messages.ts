@@ -120,7 +120,7 @@ export const m = defineMessages({
   editDigitalIslandData: {
     id: 'hi.application:digitalIslandData.edit',
     defaultMessage:
-      'Please edit if not correct. Updating your contact info will change it for all of island.is',
+      'Please update your E-mail and Phone number on **[My Pages](https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/)** if not correct.',
     description: 'About changing digital island data',
   },
   statusAndChildren: {
@@ -183,7 +183,7 @@ export const m = defineMessages({
   confirmationOfStudiesTooltip: {
     id: 'hi.application:student.confirmationOfStudies',
     defaultMessage:
-      'You need to submit a copy of your Graduation certificate or a confirmation of completed credits for each semester. ' +
+      'You need to submit a copy of your Graduation certificate or a confirmation of completed credits for each semester.\n' +
       'Admission or enrollement letters are not sufficient.',
     description: 'Confirmation of studies must be submitted, tooltip',
   },
@@ -272,7 +272,7 @@ export const m = defineMessages({
   formerInsuranceAdditionalInformationPlaceholder: {
     id: 'hi.application:formerInsurance.additionalInformationPlaceholder',
     defaultMessage: 'I´m still entitled to health insurance because...',
-    description: 'additional infromation placeholder',
+    description: 'Additional information placeholder',
   },
   formerInsuranceNoOption: {
     id: 'hi.application:formerInsurance.noOption',
@@ -387,5 +387,58 @@ export const m = defineMessages({
     id: 'hi.application:attachedFiles.title',
     defaultMessage: 'Attached files',
     description: 'Attached files',
+  },
+  modalCloseButtonText: {
+    id: 'hi.application:modalCloseButtonText',
+    defaultMessage: 'Close',
+    description: 'Close',
+  },
+  waitingPeriodTitle: {
+    id: 'hi.application:waitingPeriod.title',
+    defaultMessage: 'Waiting period',
+    description: 'Waiting Period',
+  },
+  waitingPeriodDescription: {
+    id: 'hi.application:waitingPeriod.description',
+    defaultMessage:
+      'According to Registers Iceland data it seems like you are not moving to Iceland from an EU/EEA country, Switzerland, Greenland or the Faroe Islands. There is a six-month waiting period before qualifying. We advise you to buy private health insurance until you are covered by the national health insurance. There are some Medical exceptions.',
+    description: 'Waiting period description',
+  },
+  waitingPeriodButtonText: {
+    id: 'hi.application:waitingPeriod.buttonText',
+    defaultMessage: 'Read more',
+    description: 'Read More',
+  },
+  registerYourselfTitle: {
+    id: 'hi.application:registerYourself.title',
+    defaultMessage: 'Register yourself in Iceland',
+    description: 'Register yourself in Iceland',
+  },
+  registerYourselfDescription: {
+    id: 'hi.application:registerYourself.description',
+    defaultMessage:
+      'You don’t seem to be registered with Registers Iceland. You need to register your legal residence in Iceland before applying for national health insurance.',
+    description: 'Register yourself description',
+  },
+  registerYourselfButtonText: {
+    id: 'hi.application:registerYourself.buttonText',
+    defaultMessage: 'How to register',
+    description: 'How to register',
+  },
+  activeApplicationTitle: {
+    id: 'hi.application:activeApplication.title',
+    defaultMessage: 'Active application',
+    description: 'Active application',
+  },
+  activeApplicationDescription: {
+    id: 'hi.application:activeApplication.description',
+    defaultMessage:
+      'You have already submitted an application for health insurance. We will notify you on the e-mail address you provided in the application when the status changes. You can always see your application status in My Pages.',
+    description: 'Active application description',
+  },
+  activeApplicationButtonText: {
+    id: 'hi.application:activeApplication.buttonText',
+    defaultMessage: 'See status',
+    description: 'See status',
   },
 })

@@ -4,12 +4,12 @@ import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 import AccordionListItem from '../AccordionListItem/AccordionListItem'
 import {
   capitalize,
-  formatCustodyRestrictions,
+  formatRequestedCustodyRestrictions,
   formatDate,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { Case } from '@island.is/judicial-system/types'
-import { constructProsecutorDemands } from '../../utils/stepHelper'
+import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 interface Props {
   workingCase: Case
@@ -70,7 +70,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       </Box>
       <Box marginBottom={4}>
         <Text>
-          {formatCustodyRestrictions(workingCase.custodyRestrictions)}
+          {formatRequestedCustodyRestrictions(workingCase.custodyRestrictions)}
         </Text>
       </Box>
       <Box marginBottom={2}>

@@ -1,9 +1,12 @@
+import { FormatInputValueFunction } from 'react-number-format'
+
 import { Condition } from '../types/Condition'
 import {
   CheckboxField,
   CustomField,
   DateField,
   DividerField,
+  KeyValueField,
   FieldComponents,
   FieldTypes,
   FieldWidth,
@@ -20,9 +23,12 @@ import {
   Context,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
-import { FormText } from '../types/Form'
+import { FormText, FormTextArray } from '../types/Form'
 import { Colors } from '@island.is/island-ui/theme'
-import { FormatInputValueFunction } from 'react-number-format'
+import type {
+  DatePickerBackgroundColor,
+  InputBackgroundColor,
+} from '@island.is/island-ui/core'
 
 interface SelectOption {
   label: string
@@ -37,6 +43,7 @@ export function buildCheckboxField(data: {
   options: MaybeWithApplication<Option[]>
   disabled?: boolean
   width?: FieldWidth
+  large?: boolean
   defaultValue?: MaybeWithApplication<unknown>
 }): CheckboxField {
   const {
@@ -47,6 +54,7 @@ export function buildCheckboxField(data: {
     options,
     disabled = false,
     width = 'full',
+    large,
     defaultValue,
   } = data
   return {
@@ -54,6 +62,7 @@ export function buildCheckboxField(data: {
     defaultValue,
     disabled,
     width,
+    large,
     condition,
     id,
     title,
@@ -74,6 +83,7 @@ export function buildDateField(data: {
   minDate?: Date
   disabled?: boolean
   width?: FieldWidth
+  backgroundColor?: DatePickerBackgroundColor
   defaultValue?: MaybeWithApplication<unknown>
 }): DateField {
   const {
@@ -87,6 +97,7 @@ export function buildDateField(data: {
     disabled = false,
     width = 'full',
     placeholder,
+    backgroundColor,
   } = data
   return {
     children: undefined,
@@ -102,6 +113,7 @@ export function buildDateField(data: {
     minDate,
     type: FieldTypes.DATE,
     component: FieldComponents.DATE,
+    backgroundColor,
   }
 }
 
@@ -259,6 +271,7 @@ export function buildTextField(data: {
   variant?: TextFieldVariant
   placeholder?: FormText
   format?: string | FormatInputValueFunction
+  backgroundColor?: InputBackgroundColor
   suffix?: string
   defaultValue?: MaybeWithApplication<unknown>
 }): TextField {
@@ -268,6 +281,7 @@ export function buildTextField(data: {
     id,
     title,
     description,
+    backgroundColor,
     placeholder,
     disabled = false,
     width = 'full',
@@ -282,6 +296,7 @@ export function buildTextField(data: {
     disabled,
     width,
     condition,
+    backgroundColor,
     id,
     title,
     description,
@@ -328,6 +343,7 @@ export function buildFileUploadField(data: {
   uploadButtonLabel?: string
   uploadMultiple?: boolean
   uploadAccept?: string
+  maxSize?: number
 }): FileUploadField {
   const {
     condition,
@@ -339,6 +355,7 @@ export function buildFileUploadField(data: {
     uploadButtonLabel,
     uploadMultiple,
     uploadAccept,
+    maxSize,
   } = data
   return {
     children: undefined,
@@ -351,6 +368,7 @@ export function buildFileUploadField(data: {
     uploadButtonLabel,
     uploadMultiple,
     uploadAccept,
+    maxSize,
     type: FieldTypes.FILEUPLOAD,
     component: FieldComponents.FILEUPLOAD,
   }
@@ -368,6 +386,25 @@ export function buildDividerField(data: {
     component: FieldComponents.DIVIDER,
     title: title ?? '',
     color,
+  }
+}
+
+export function buildKeyValueField(data: {
+  label: FormText
+  value: FormText | FormTextArray
+  width?: FieldWidth
+}): KeyValueField {
+  const { label, value, width = 'full' } = data
+
+  return {
+    id: '',
+    title: '',
+    children: undefined,
+    width,
+    label,
+    value,
+    type: FieldTypes.KEY_VALUE,
+    component: FieldComponents.KEY_VALUE,
   }
 }
 

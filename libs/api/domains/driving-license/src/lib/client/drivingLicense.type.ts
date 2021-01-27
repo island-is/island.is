@@ -51,3 +51,25 @@ export interface DrivingLicenseResponse {
     endurupptakaSkirteinis: number | null
   }
 }
+
+export interface DeprivationTypesResponse {
+  id: number
+  heiti: string
+}
+
+export interface EntitlementTypesResponse {
+  nr: string
+  heiti: string
+}
+
+export interface RemarkTypesResponse {
+  nr: string
+  heiti: string
+  giltFyrir: string
+  athugasemd: boolean
+  lysing: string
+}
+
+export interface PenaltyPointStatusResponse {
+  iLagi: boolean
+}

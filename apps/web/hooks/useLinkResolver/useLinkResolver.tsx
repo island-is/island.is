@@ -15,6 +15,7 @@ interface LinkResolverInput {
 interface TypeResolverResponse {
   type: LinkType
   locale: Locale
+  slug?: string[]
 }
 
 export type LinkType = keyof typeof routesTemplate | 'linkurl'
@@ -71,6 +72,10 @@ export const routesTemplate = {
     is: '/throun/vefthjonustur',
     en: '/en/developers/webservices',
   },
+  handbookpage: {
+    is: '/throun/handbok',
+    en: '/en/developers/handbook',
+  },
   developerspage: {
     is: '/throun',
     en: '/en/developers',
@@ -90,15 +95,32 @@ export const routesTemplate = {
 }
 
 // This considers one block ("[someVar]") to be one variable and ignores the path variables name
-const replaceVariableInPath = (path: string, replacement: string): string => {
+export const replaceVariableInPath = (
+  path: string,
+  replacement: string,
+): string => {
   return path.replace(/\[\w+\]/, replacement)
 }
 
 // converts a path template to a regex query for matching
-const convertToRegex = (routeTemplate: string) =>
+export const convertToRegex = (routeTemplate: string) =>
   routeTemplate
     .replace(/\//g, '\\/') // escape slashes to match literal "/" in route template
     .replace(/\[\w+\]/g, '\\w+') // make path variables be regex word matches
+    .concat('$') // to prevent partial matches
+
+// extracts slugs from given path
+export const extractSlugsByRouteTemplate = (
+  path: string,
+  template: string,
+): string[] => {
+  const pathParts = path.split('/')
+  const templateParts = template.split('/')
+
+  return pathParts.filter((_, index) => {
+    return templateParts[index]?.startsWith('[') ?? false
+  })
+}
 
 /*
 Finds the correct path for a given type and locale.
@@ -169,14 +191,22 @@ export const typeResolver = (
 
       // handle homepage en path
       if (path === '/en') {
-        return { type: 'homepage', locale: 'en' }
+        return { type: 'homepage', locale: 'en', slug: [] }
       }
 
       // convert the route template string into a regex query
       const regex = convertToRegex(routeTemplate)
-      // if this path matches query return route info else continue
-      if (path?.match(regex)) {
-        return { type, locale } as TypeResolverResponse
+
+      // if the path starts with the routeTemplate string or matches dynamic route regex we have found the type
+      if (
+        (!skipDynamic && path?.match(regex)) ||
+        (skipDynamic && path?.startsWith(routeTemplate))
+      ) {
+        return {
+          slug: extractSlugsByRouteTemplate(path, routeTemplate),
+          type,
+          locale,
+        } as TypeResolverResponse
       }
     }
   }

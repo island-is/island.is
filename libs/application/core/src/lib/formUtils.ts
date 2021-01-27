@@ -11,6 +11,7 @@ import {
   FormLeaf,
   FormNode,
   FormText,
+  FormTextArray,
   Section,
   StaticText,
   SubSection,
@@ -164,15 +165,15 @@ export function mergeAnswers(
 }
 export type MessageFormatter = (descriptor: StaticText, values?: any) => string
 
-export function formatText(
-  text: FormText,
+type ValueOf<T> = T[keyof T]
+
+export function formatText<T extends FormTextArray | FormText>(
+  text: T,
   application: Application,
   formatMessage: MessageFormatter,
-): string {
-  if (typeof text === 'function') {
-    const message = text(application)
-
-    if (typeof message === 'string') {
+): T extends FormTextArray ? string[] : string {
+  const handleMessageFormatting = (message: StaticText) => {
+    if (typeof message === 'string' || !message) {
       return formatMessage(message)
     }
 
@@ -180,7 +181,21 @@ export function formatText(
 
     return formatMessage(descriptor, values)
   }
-  return formatMessage(text)
+
+  if (typeof text === 'function') {
+    const message = (text as (_: Application) => StaticText | StaticText[])(
+      application,
+    )
+    if (Array.isArray(message)) {
+      return message.map((m) =>
+        handleMessageFormatting(m),
+      ) as T extends FormTextArray ? string[] : string
+    }
+    return handleMessageFormatting(message) as T extends FormTextArray
+      ? string[]
+      : string
+  }
+  return formatMessage(text) as T extends FormTextArray ? string[] : string
 }
 
 // periods[3].startDate -> 3

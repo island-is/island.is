@@ -2,23 +2,42 @@ import { Test, TestingModule } from '@nestjs/testing'
 
 import { LoggingModule } from '@island.is/logging'
 
-import { SmsService, SMS_OPTIONS } from './sms.service'
+import { NovaError, SmsService, SMS_OPTIONS } from './sms.service'
 
 const testLogin = 'Login'
 const testToken = 'Test Token'
 const testSendSms = 'SendSms'
+const testNumber = '1111111'
+const failureTestNumber = '3333333'
+const failOnceTestNumber = '4444444'
 const testCode = '0'
+const a = jest
+  .fn(() => {
+    return { Code: testCode }
+  })
+  .mockImplementationOnce(() => {
+    throw { extensions: { response: { status: 401 } } }
+  })
 const postMock = jest.fn(function (
   path: string,
-  // The body and init arguments are needed for the mock to work
-  body?: Body, // eslint-disable-line @typescript-eslint/no-unused-vars
+  body: { request?: { Recipients?: string[] } },
+  // The init argument is needed for the mock to work
   init?: RequestInit, // eslint-disable-line @typescript-eslint/no-unused-vars
 ) {
   switch (path) {
     case testLogin:
       return { Token: testToken }
-    case testSendSms:
-      return { Code: testCode }
+    case testSendSms: {
+      if (body?.request?.Recipients?.includes(testNumber)) {
+        return { Code: testCode }
+      }
+
+      if (body?.request?.Recipients?.includes(failOnceTestNumber)) {
+        return a()
+      }
+
+      throw new Error()
+    }
     default:
       throw new Error()
   }
@@ -37,8 +56,8 @@ const testOptions = {
   username: 'Test User',
   password: 'Test Password',
 }
-const testNumber = '1111111'
 const testMessage = 'Test Message'
+const testFailingMessage = 'Failing Test Message'
 
 describe('SmsService', () => {
   let smsService: SmsService
@@ -80,6 +99,46 @@ describe('SmsService', () => {
       {
         request: {
           Recipients: [testNumber],
+          SenderName: 'Island.is',
+          SmsText: testMessage,
+          IsFlash: false,
+        },
+      },
+      {
+        headers: {
+          token: testToken,
+        },
+      },
+    )
+  })
+
+  it('should throw on failure to send sms', async () => {
+    // Verify throw
+    expect(smsService.sendSms(failureTestNumber, testMessage)).rejects.toThrow(
+      NovaError,
+    )
+  })
+
+  it('should attempt reconnect on unauthorized', async () => {
+    const res = await smsService.sendSms(failOnceTestNumber, testMessage)
+
+    // Verify response
+    expect(res.Code).toBe('0')
+
+    // Verify login
+    expect(postMock).toHaveBeenCalledWith(testLogin, undefined, {
+      headers: {
+        username: testOptions.username,
+        password: testOptions.password,
+      },
+    })
+
+    // Verfy send sms
+    expect(postMock).toHaveBeenCalledWith(
+      testSendSms,
+      {
+        request: {
+          Recipients: [failOnceTestNumber],
           SenderName: 'Island.is',
           SmsText: testMessage,
           IsFlash: false,

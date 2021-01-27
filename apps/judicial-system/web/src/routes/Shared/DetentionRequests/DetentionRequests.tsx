@@ -16,7 +16,7 @@ import {
   Box,
   Icon,
 } from '@island.is/island-ui/core'
-import Loading from '../../../shared-components/Loading/Loading'
+import { Loading } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
   CaseDecision,
@@ -25,15 +25,18 @@ import {
 } from '@island.is/judicial-system/types'
 import * as styles from './DetentionRequests.treat'
 import { UserRole } from '@island.is/judicial-system/types'
-import * as Constants from '../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { Link } from 'react-router-dom'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { insertAt, parseTransition } from '../../../utils/formatters'
+import {
+  insertAt,
+  parseTransition,
+} from '@island.is/judicial-system-web/src/utils/formatters'
 import { useMutation, useQuery } from '@apollo/client'
-import { UserContext } from '../../../shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { useHistory } from 'react-router-dom'
-import { TransitionCaseMutation } from '../../../graphql'
-import { CasesQuery } from '../../../utils/mutations'
+import { TransitionCaseMutation } from '@island.is/judicial-system-web/src/graphql'
+import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 type directionType = 'ascending' | 'descending'
 interface SortConfig {
@@ -148,7 +151,7 @@ export const DetentionRequests: React.FC = () => {
       history.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${c.id}`)
     } else if (isJudge) {
       history.push(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
-    } else if (c.isCourtDateInThePast) {
+    } else if (c.state === CaseState.RECEIVED && c.isCourtDateInThePast) {
       history.push(`${Constants.STEP_FIVE_ROUTE}/${c.id}`)
     } else {
       history.push(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
@@ -249,7 +252,7 @@ export const DetentionRequests: React.FC = () => {
                     LÖKE málsnr.
                   </Text>
                 </th>
-                <th className={styles.th}>
+                <th className={cn(styles.th, styles.largeColumn)}>
                   <Text as="span" fontWeight="regular">
                     <Box
                       component="button"
@@ -335,8 +338,18 @@ export const DetentionRequests: React.FC = () => {
                   <td className={styles.td}>
                     <Text as="span">{c.policeCaseNumber || '-'}</Text>
                   </td>
-                  <td className={cn(styles.td, 'flexDirectionCol')}>
-                    <Text>{c.accusedName || '-'}</Text>
+                  <td
+                    className={cn(
+                      styles.td,
+                      styles.largeColumn,
+                      'flexDirectionCol',
+                    )}
+                  >
+                    <Text>
+                      <Box as="span" className={styles.accusedName}>
+                        {c.accusedName || '-'}
+                      </Box>
+                    </Text>
                     <Text>
                       {c.accusedNationalId && (
                         <Text as="span" variant="small" color="dark400">
@@ -368,6 +381,7 @@ export const DetentionRequests: React.FC = () => {
                         ).color
                       }
                       outlined
+                      disabled
                     >
                       {
                         mapCaseStateToTagVariant(

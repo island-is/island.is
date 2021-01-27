@@ -10,11 +10,14 @@ import {
 } from '@island.is/judicial-system/types'
 import {
   capitalize,
-  formatCustodyRestrictions,
+  formatRequestedCustodyRestrictions,
   formatDate,
   formatGender,
   formatNationalId,
-  formatRestrictions,
+  formatCustodyRestrictions,
+  formatAlternativeTravelBanRestrictions,
+  NounCases,
+  formatAccusedByGender,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -71,7 +74,7 @@ export async function generateRequestPdf(
     .lineGap(4)
     .text(`Kennitala: ${formatNationalId(existingCase.accusedNationalId)}`)
     .text(`Fullt nafn: ${existingCase.accusedName}`)
-    .text(`Kyn: ${capitalize(formatGender(existingCase.accusedGender))}`)
+    .text(`Kyn: ${formatGender(existingCase.accusedGender)}`)
     .text(`Lögheimili: ${existingCase.accusedAddress}`)
     .text(' ')
     .font('Helvetica-Bold')
@@ -93,8 +96,23 @@ export async function generateRequestPdf(
         existingCase.requestedCustodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ),
+        existingCase.parentCase !== null,
+        existingCase.parentCase?.decision,
       ),
+      {
+        lineGap: 6,
+        paragraphGap: 0,
+      },
     )
+
+  if (existingCase.otherDemands) {
+    doc.text(' ').text(existingCase.otherDemands, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+  }
+
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -125,7 +143,7 @@ export async function generateRequestPdf(
     .font('Helvetica')
     .fontSize(12)
     .text(
-      `${formatCustodyRestrictions(
+      `${formatRequestedCustodyRestrictions(
         existingCase.requestedCustodyRestrictions,
       )}.`,
       {
@@ -209,7 +227,7 @@ export async function generateRulingPdf(
     .lineGap(30)
     .text(`LÖKE málsnr. ${existingCase.policeCaseNumber}`, { align: 'center' })
     .text(
-      `Þinghald hófst þann ${formatDate(existingCase.courtStartTime, 'PPPp')}`,
+      `Þinghald hófst þann ${formatDate(existingCase.courtStartTime, 'PPPp')}.`,
       {
         lineGap: 6,
         paragraphGap: 0,
@@ -245,22 +263,37 @@ export async function generateRulingPdf(
     .text('Dómskjöl')
     .font('Helvetica')
     .fontSize(12)
-    .text(
-      'Rannsóknargögn málsins liggja frammi. Krafa lögreglu þingmerkt nr. 1.',
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
+    .text('Krafa lögreglu þingmerkt nr. 1.', {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text('Rannsóknargögn málsins liggja frammi.', {
+      lineGap: 6,
+      paragraphGap: 4,
+    })
+
+  existingCase.courtDocuments?.forEach((courttDocument, index) =>
+    doc.text(`${courttDocument} þingmerkt nr. ${index + 2}.`, {
+      lineGap: 6,
+      paragraphGap: 4,
+    }),
+  )
+
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
-    .text('Réttindi kærða')
+    .text(
+      `Réttindi ${formatAccusedByGender(
+        existingCase.accusedGender,
+        NounCases.GENITIVE,
+      )}`,
+    )
     .font('Helvetica')
     .fontSize(12)
     .text(
-      'Kærða er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Kærði er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.',
+      'Sakborningi er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Sakborningur er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.',
       {
         lineGap: 6,
         paragraphGap: 0,
@@ -270,7 +303,12 @@ export async function generateRulingPdf(
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
-    .text('Afstaða kærða')
+    .text(
+      `Afstaða ${formatAccusedByGender(
+        existingCase.accusedGender,
+        NounCases.GENITIVE,
+      )}`,
+    )
     .font('Helvetica')
     .fontSize(12)
     .text(existingCase.accusedPlea, {
@@ -309,12 +347,23 @@ export async function generateRulingPdf(
         existingCase.requestedCustodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ),
+        existingCase.parentCase !== null,
+        existingCase.parentCase?.decision,
       ),
       {
         lineGap: 6,
         paragraphGap: 0,
       },
     )
+
+  if (existingCase.otherDemands) {
+    doc.text(' ').text(existingCase.otherDemands, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+  }
+
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -366,6 +415,8 @@ export async function generateRulingPdf(
         existingCase.custodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ),
+        existingCase.parentCase !== null,
+        existingCase.parentCase?.decision,
       ),
       {
         lineGap: 6,
@@ -405,7 +456,12 @@ export async function generateRulingPdf(
     )
     .font('Helvetica-Bold')
     .lineGap(6)
-    .text(formatAppeal(existingCase.accusedAppealDecision, 'Kærði'))
+    .text(
+      formatAppeal(
+        existingCase.accusedAppealDecision,
+        capitalize(formatAccusedByGender(existingCase.accusedGender)),
+      ),
+    )
     .text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'))
 
   if (existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL) {
@@ -414,7 +470,12 @@ export async function generateRulingPdf(
       .font('Helvetica-Bold')
       .fontSize(14)
       .lineGap(8)
-      .text('Yfirlýsing um kæru kærða')
+      .text(
+        `Yfirlýsing um kæru ${formatAccusedByGender(
+          existingCase.accusedGender,
+          NounCases.GENITIVE,
+        )}`,
+      )
       .font('Helvetica')
       .fontSize(12)
       .text(existingCase.accusedAppealAnnouncement, {
@@ -448,7 +509,7 @@ export async function generateRulingPdf(
       .font('Helvetica')
       .fontSize(12)
       .text(
-        formatRestrictions(
+        formatCustodyRestrictions(
           existingCase.accusedGender,
           existingCase.custodyRestrictions,
         ),
@@ -459,7 +520,45 @@ export async function generateRulingPdf(
       )
       .text(' ')
       .text(
-        'Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.',
+        'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.',
+        {
+          lineGap: 6,
+          paragraphGap: 0,
+        },
+      )
+  }
+
+  if (existingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) {
+    doc
+      .text(' ')
+      .font('Helvetica-Bold')
+      .fontSize(14)
+      .lineGap(8)
+      .text('Tilhögun farbanns')
+      .font('Helvetica')
+      .fontSize(12)
+      .text(
+        formatAlternativeTravelBanRestrictions(
+          existingCase.accusedGender,
+          existingCase.custodyRestrictions,
+        ),
+        {
+          lineGap: 6,
+          paragraphGap: 0,
+        },
+      )
+
+    if (existingCase.otherRestrictions) {
+      doc.text(' ').text(existingCase.otherRestrictions, {
+        lineGap: 6,
+        paragraphGap: 0,
+      })
+    }
+
+    doc
+      .text(' ')
+      .text(
+        'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd farbannsins undir dómara.',
         {
           lineGap: 6,
           paragraphGap: 0,
@@ -471,7 +570,12 @@ export async function generateRulingPdf(
     .lineGap(20)
     .text(' ')
     .text(
-      `Þinghaldi lauk þann ${formatDate(existingCase.courtEndTime, 'PPPp')}`,
+      existingCase.courtEndTime
+        ? `Þinghaldi lauk þann ${formatDate(
+            existingCase.courtEndTime,
+            'PPPp',
+          )}.`
+        : 'Þinghaldi er ekki lokið.',
     )
     .end()
 

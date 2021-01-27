@@ -10,10 +10,13 @@ import * as style from './RulingAccordionItem.treat'
 import {
   constructConclusion,
   getAppealDecisionText,
-} from '../../utils/stepHelper'
-import { AppealDecisionRole } from '../../types'
-import { UserContext } from '../UserProvider/UserProvider'
-import { formatRestrictions } from '@island.is/judicial-system/formatters'
+} from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import {
+  formatAlternativeTravelBanRestrictions,
+  formatCustodyRestrictions,
+} from '@island.is/judicial-system/formatters'
 
 interface Props {
   workingCase: Case
@@ -76,6 +79,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             {getAppealDecisionText(
               AppealDecisionRole.ACCUSED,
               workingCase.accusedAppealDecision,
+              workingCase.accusedGender,
             )}
           </Text>
         </Box>
@@ -83,6 +87,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           {getAppealDecisionText(
             AppealDecisionRole.PROSECUTOR,
             workingCase.prosecutorAppealDecision,
+            workingCase.accusedGender,
           )}
         </Text>
       </Box>
@@ -119,15 +124,42 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           </Box>
           <Box marginBottom={2}>
             <Text>
-              {formatRestrictions(
+              {formatCustodyRestrictions(
                 workingCase.accusedGender || CaseGender.OTHER,
                 workingCase.custodyRestrictions || [],
               )}
             </Text>
           </Box>
           <Text>
-            Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera atriði
-            er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
+            Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera
+            atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
+          </Text>
+        </Box>
+      )}
+      {workingCase.decision ===
+        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN && (
+        <Box>
+          <Box marginBottom={1}>
+            <Text as="h3" variant="h3">
+              Tilhögun farbanns
+            </Text>
+          </Box>
+          <Box marginBottom={2}>
+            <Text>
+              {formatAlternativeTravelBanRestrictions(
+                workingCase.accusedGender || CaseGender.OTHER,
+                workingCase.custodyRestrictions || [],
+              )}
+            </Text>
+          </Box>
+          {workingCase.otherRestrictions && (
+            <Box marginBottom={2}>
+              <Text>{workingCase.otherRestrictions}</Text>
+            </Box>
+          )}
+          <Text>
+            Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera
+            atriði er lúta að framkvæmd farbannsins undir dómara.
           </Text>
         </Box>
       )}

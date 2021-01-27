@@ -49,15 +49,8 @@
     "api": {
       "tags": []
     },
-    "api-catalogue": {
-      "tags": []
-    },
     "api-catalogue-consts": {
       "tags": []
-    },
-    "api-catalogue-e2e": {
-      "tags": [],
-      "implicitDependencies": ["api-catalogue"]
     },
     "api-catalogue-elastic": {
       "tags": []
@@ -96,6 +89,9 @@
       "tags": []
     },
     "api-domains-file-upload": {
+      "tags": []
+    },
+    "api-domains-health-insurance": {
       "tags": []
     },
     "api-domains-national-registry": {
@@ -138,6 +134,9 @@
     "application-template-loader": {
       "tags": []
     },
+    "application-templates-children-residence-change": {
+      "tags": []
+    },
     "application-templates-document-provider-onboarding": {
       "tags": []
     },
@@ -168,6 +167,13 @@
     "application-ui-shell": {
       "tags": []
     },
+    "auth-admin-web": {
+      "tags": []
+    },
+    "auth-admin-web-e2e": {
+      "tags": [],
+      "implicitDependencies": ["auth-admin-web"]
+    },
     "auth-api-lib": {
       "tags": []
     },
@@ -175,6 +181,9 @@
       "tags": []
     },
     "cache": {
+      "tags": []
+    },
+    "content-search-index-manager": {
       "tags": []
     },
     "content-search-indexer": {
@@ -359,6 +368,9 @@
     "services-auth-api": {
       "tags": []
     },
+    "services-documents": {
+      "tags": []
+    },
     "services-search-indexer": {
       "tags": []
     },
@@ -367,6 +379,9 @@
     },
     "services-xroad-collector": {
       "tags": ["api-catalogue-services"]
+    },
+    "shared-babel": {
+      "tags": []
     },
     "shared-connected": {
       "tags": []
@@ -398,6 +413,12 @@
     "skilavottord/web-e2e": {
       "tags": [],
       "implicitDependencies": ["skilavottord-web"]
+    },
+    "utils-api": {
+      "tags": []
+    },
+    "vmst-client": {
+      "tags": []
     },
     "web": {
       "tags": []

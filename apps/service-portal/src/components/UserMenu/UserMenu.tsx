@@ -122,10 +122,15 @@ const UserMenu: FC<Props> = ({ state, onClose, onRouteChange }) => {
               </Link>
             </Box>
             <Box>
-              <Button onClick={handleLogoutClick} fluid>
+              <Button
+                onClick={handleLogoutClick}
+                fluid
+                icon="logOut"
+                iconType="outline"
+              >
                 {formatMessage({
                   id: 'global:logout',
-                  defaultMessage: 'Útskráning',
+                  defaultMessage: 'Útskrá',
                 })}
               </Button>
             </Box>

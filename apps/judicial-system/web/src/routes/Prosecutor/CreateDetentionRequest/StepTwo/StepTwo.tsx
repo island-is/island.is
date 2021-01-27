@@ -1,4 +1,9 @@
 import React, { useEffect, useState } from 'react'
+import parseISO from 'date-fns/parseISO'
+import { ValueType } from 'react-select/src/types'
+import { useHistory, useParams } from 'react-router-dom'
+import { useMutation, useQuery } from '@apollo/client'
+
 import {
   Text,
   GridRow,
@@ -8,6 +13,7 @@ import {
   Input,
   Tooltip,
   Select,
+  Option,
 } from '@island.is/island-ui/core'
 import {
   Case,
@@ -15,28 +21,15 @@ import {
   CaseTransition,
   NotificationType,
   UpdateCase,
+  User,
+  UserRole,
 } from '@island.is/judicial-system/types'
-import { isNextDisabled } from '../../../../utils/stepHelper'
-import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
-import parseISO from 'date-fns/parseISO'
-import { FormFooter } from '../../../../shared-components/FormFooter'
-import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
-import * as Constants from '../../../../utils/constants'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
-import { useHistory, useParams } from 'react-router-dom'
-import { useMutation, useQuery } from '@apollo/client'
-import {
-  CaseQuery,
-  SendNotificationMutation,
-  TransitionCaseMutation,
-  UpdateCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
 import {
   ProsecutorSubsections,
   ReactSelectOption,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
+import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   setAndSendDateToServer,
   validateAndSendTimeToServer,
@@ -44,8 +37,22 @@ import {
   setAndSendToServer,
   getTimeFromDate,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { ValueType } from 'react-select/src/types'
-import Modal from '../../../../shared-components/Modal/Modal'
+import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
+import {
+  FormFooter,
+  PageLayout,
+  TimeInputField,
+  Modal,
+} from '@island.is/judicial-system-web/src/shared-components'
+import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import {
+  CaseQuery,
+  SendNotificationMutation,
+  TransitionCaseMutation,
+  UpdateCaseMutation,
+} from '@island.is/judicial-system-web/src/graphql'
+import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 interface CaseData {
   case?: Case
@@ -83,6 +90,11 @@ export const StepTwo: React.FC = () => {
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
+  })
+
+  const { data: userData } = useQuery(UsersQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
   })
 
   const [
@@ -134,8 +146,18 @@ export const StepTwo: React.FC = () => {
     },
   ]
 
+  const prosecutors = userData?.users
+    .filter((user: User, _: number) => user.role === UserRole.PROSECUTOR)
+    .map((prosecutor: User, _: number) => {
+      return { label: prosecutor.name, value: prosecutor.id }
+    })
+
   const defaultCourt = courts.filter(
     (court) => court.label === workingCase?.court,
+  )
+
+  const defaultProsecutor = prosecutors?.filter(
+    (prosecutor: Option) => prosecutor.label === workingCase?.prosecutor?.name,
   )
 
   const handleNextButtonClick = async () => {
@@ -184,6 +206,13 @@ export const StepTwo: React.FC = () => {
         validations: ['empty', 'time-format'],
       },
     ]
+
+    if (workingCase?.arrestDate) {
+      requiredFields.push({
+        value: arrestTime || '',
+        validations: ['empty', 'time-format'],
+      })
+    }
 
     if (workingCase) {
       setIsStepIllegal(isNextDisabled(requiredFields))
@@ -255,10 +284,14 @@ export const StepTwo: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.PROSECUTOR}
+      activeSection={
+        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
+      }
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_TWO}
       isLoading={loading}
       notFound={data?.case === undefined}
+      decision={workingCase?.decision}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>
@@ -266,6 +299,28 @@ export const StepTwo: React.FC = () => {
             <Text as="h1" variant="h1">
               Óskir um fyrirtöku
             </Text>
+          </Box>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={3}>
+              <Text as="h3" variant="h3">
+                Ákærandi
+              </Text>
+            </Box>
+            <Select
+              name="prosecutor"
+              label="Veldu saksóknara"
+              defaultValue={defaultProsecutor}
+              options={prosecutors}
+              onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                setAndSendToServer(
+                  'prosecutorId',
+                  (selectedOption as ReactSelectOption).value.toString(),
+                  workingCase,
+                  setWorkingCase,
+                  updateCase,
+                )
+              }
+            />
           </Box>
           <Box component="section" marginBottom={5}>
             <Box marginBottom={3}>
@@ -298,84 +353,86 @@ export const StepTwo: React.FC = () => {
               }
             />
           </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                Tími handtöku
-              </Text>
-            </Box>
-            <GridRow>
-              <GridColumn span="5/8">
-                <DatePicker
-                  id="arrestDate"
-                  label="Veldu dagsetningu"
-                  placeholderText="Veldu dagsetningu"
-                  locale="is"
-                  errorMessage={arrestDateErrorMessage}
-                  hasError={arrestDateErrorMessage !== ''}
-                  selected={
-                    workingCase.arrestDate
-                      ? new Date(workingCase.arrestDate)
-                      : null
-                  }
-                  handleCloseCalendar={(date) =>
-                    setAndSendDateToServer(
-                      'arrestDate',
-                      workingCase.arrestDate,
-                      date,
-                      workingCase,
-                      false,
-                      setWorkingCase,
-                      updateCase,
-                      setArrestDateErrorMessage,
-                    )
-                  }
-                />
-              </GridColumn>
-              <GridColumn span="3/8">
-                <TimeInputField
-                  disabled={!workingCase.arrestDate}
-                  onChange={(evt) =>
-                    validateAndSetTime(
-                      'arrestDate',
-                      workingCase.arrestDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
-                      workingCase,
-                      setWorkingCase,
-                      arrestTimeErrorMessage,
-                      setArrestTimeErrorMessage,
-                      setArrestTime,
-                    )
-                  }
-                  onBlur={(evt) =>
-                    validateAndSendTimeToServer(
-                      'arrestDate',
-                      workingCase.arrestDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
-                      workingCase,
-                      updateCase,
-                      setArrestTimeErrorMessage,
-                    )
-                  }
-                >
-                  <Input
-                    data-testid="arrestTime"
-                    name="arrestTime"
-                    label="Tímasetning (kk:mm)"
-                    placeholder="Veldu tíma"
-                    errorMessage={arrestTimeErrorMessage}
-                    hasError={
-                      arrestTimeErrorMessage !== '' &&
-                      workingCase.arrestDate !== null
+          {!workingCase.parentCase && (
+            <Box component="section" marginBottom={5}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  Tími handtöku
+                </Text>
+              </Box>
+              <GridRow>
+                <GridColumn span="5/8">
+                  <DatePicker
+                    id="arrestDate"
+                    label="Veldu dagsetningu"
+                    placeholderText="Veldu dagsetningu"
+                    locale="is"
+                    errorMessage={arrestDateErrorMessage}
+                    hasError={arrestDateErrorMessage !== ''}
+                    selected={
+                      workingCase.arrestDate
+                        ? new Date(workingCase.arrestDate)
+                        : null
                     }
-                    defaultValue={arrestTime}
+                    handleCloseCalendar={(date) =>
+                      setAndSendDateToServer(
+                        'arrestDate',
+                        workingCase.arrestDate,
+                        date,
+                        workingCase,
+                        false,
+                        setWorkingCase,
+                        updateCase,
+                        setArrestDateErrorMessage,
+                      )
+                    }
                   />
-                </TimeInputField>
-              </GridColumn>
-            </GridRow>
-          </Box>
+                </GridColumn>
+                <GridColumn span="3/8">
+                  <TimeInputField
+                    disabled={!workingCase.arrestDate}
+                    onChange={(evt) =>
+                      validateAndSetTime(
+                        'arrestDate',
+                        workingCase.arrestDate,
+                        evt.target.value,
+                        ['empty', 'time-format'],
+                        workingCase,
+                        setWorkingCase,
+                        arrestTimeErrorMessage,
+                        setArrestTimeErrorMessage,
+                        setArrestTime,
+                      )
+                    }
+                    onBlur={(evt) =>
+                      validateAndSendTimeToServer(
+                        'arrestDate',
+                        workingCase.arrestDate,
+                        evt.target.value,
+                        ['empty', 'time-format'],
+                        workingCase,
+                        updateCase,
+                        setArrestTimeErrorMessage,
+                      )
+                    }
+                  >
+                    <Input
+                      data-testid="arrestTime"
+                      name="arrestTime"
+                      label="Tímasetning (kk:mm)"
+                      placeholder="Veldu tíma"
+                      errorMessage={arrestTimeErrorMessage}
+                      hasError={
+                        arrestTimeErrorMessage !== '' &&
+                        workingCase.arrestDate !== null
+                      }
+                      defaultValue={arrestTime}
+                    />
+                  </TimeInputField>
+                </GridColumn>
+              </GridRow>
+            </Box>
+          )}
           <Box component="section" marginBottom={10}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">

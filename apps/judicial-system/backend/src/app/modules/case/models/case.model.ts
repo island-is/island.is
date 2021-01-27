@@ -4,6 +4,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasOne,
   Model,
   Table,
   UpdatedAt,
@@ -93,14 +94,14 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  requestedDefenderName: string
+  defenderName: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
-  requestedDefenderEmail: string
+  defenderEmail: string
 
   @Column({
     type: DataType.STRING,
@@ -136,6 +137,13 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   requestedCustodyEndDate: Date
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  otherDemands: string
 
   @Column({
     type: DataType.STRING,
@@ -215,20 +223,6 @@ export class Case extends Model<Case> {
   courtRoom: string
 
   @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  defenderName: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  defenderEmail: string
-
-  @Column({
     type: DataType.DATE,
     allowNull: true,
   })
@@ -255,6 +249,13 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   policeDemands: string
+
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtDocuments: string[]
 
   @Column({
     type: DataType.STRING,
@@ -301,6 +302,13 @@ export class Case extends Model<Case> {
   custodyRestrictions: CaseCustodyRestrictions[]
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  otherRestrictions: string
+
+  @Column({
     type: DataType.ENUM,
     allowNull: true,
     values: Object.values(CaseAppealDecision),
@@ -341,4 +349,20 @@ export class Case extends Model<Case> {
   @BelongsTo(() => User, 'judgeId')
   @ApiProperty({ type: User })
   judge: User
+
+  @ForeignKey(() => Case)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  parentCaseId: string
+
+  @BelongsTo(() => Case, 'parentCaseId')
+  @ApiProperty({ type: Case })
+  parentCase: Case
+
+  @HasOne(() => Case, 'parentCaseId')
+  @ApiProperty({ type: Case })
+  childCase: Case
 }

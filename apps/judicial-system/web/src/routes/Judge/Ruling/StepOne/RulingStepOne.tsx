@@ -9,22 +9,35 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  formatAccusedByGender,
+  formatDate,
+} from '@island.is/judicial-system/formatters'
 import React, { useEffect, useState, useRef, useCallback } from 'react'
-import { FormFooter } from '../../../../shared-components/FormFooter'
+import {
+  FormFooter,
+  PageLayout,
+  PoliceRequestAccordionItem,
+  TimeInputField,
+  BlueBox,
+  CaseNumbers,
+} from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseGender,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import * as Constants from '../../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
-import { parseArray, parseString } from '../../../../utils/formatters'
-import { isNextDisabled } from '../../../../utils/stepHelper'
+import {
+  parseArray,
+  parseString,
+} from '@island.is/judicial-system-web/src/utils/formatters'
+import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
-import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
 import { useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 import {
@@ -35,7 +48,6 @@ import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
 import {
   setAndSendDateToServer,
   validateAndSendTimeToServer,
@@ -44,7 +56,6 @@ import {
   validateAndSetTime,
   setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import BlueBox from '@island.is/judicial-system-web/src/shared-components/BlueBox/BlueBox'
 import parseISO from 'date-fns/parseISO'
 
 interface CaseData {
@@ -145,10 +156,13 @@ export const RulingStepOne: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.JUDGE}
+      activeSection={
+        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
+      }
       activeSubSection={JudgeSubsections.RULING_STEP_ONE}
       isLoading={loading}
       notFound={data?.case === undefined}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>
@@ -159,7 +173,7 @@ export const RulingStepOne: React.FC = () => {
           </Box>
           <Box component="section" marginBottom={5}>
             <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
-            <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
+            <CaseNumbers workingCase={workingCase} />
           </Box>
           <Box component="section" marginBottom={5}>
             <Accordion>
@@ -383,7 +397,11 @@ export const RulingStepOne: React.FC = () => {
                   <GridColumn span="6/12">
                     <Checkbox
                       name="B - Einangrun"
-                      label="Kærði skal sæta einangrun"
+                      label={`${capitalize(
+                        formatAccusedByGender(
+                          workingCase.accusedGender || CaseGender.OTHER,
+                        ),
+                      )} skal sæta einangrun`}
                       tooltip="Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum."
                       value={CaseCustodyRestrictions.ISOLATION}
                       checked={workingCase.custodyRestrictions?.includes(
