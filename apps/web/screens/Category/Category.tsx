@@ -427,7 +427,7 @@ const Category: Screen<CategoryProps> = ({
               return (
                 <Card
                   key={index}
-                  href={linkResolver(__typename as LinkType, [slug]).href}
+                  link={linkResolver(__typename as LinkType, [slug])}
                   description={intro}
                   title={title}
                   image={(thumbnail || image) as Image}
@@ -446,7 +446,7 @@ const Category: Screen<CategoryProps> = ({
                 key={index}
                 title={title}
                 description={content}
-                href={linkResolver(__typename as LinkType, [slug]).href}
+                link={linkResolver(__typename as LinkType, [slug])}
               />
             )
           })}
