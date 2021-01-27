@@ -13,7 +13,7 @@ export class Districts {
   @Field()
   title: string
 
-  @Field()
+  @Field({ nullable: true })
   description: string
 
   @Field({ nullable: true })
