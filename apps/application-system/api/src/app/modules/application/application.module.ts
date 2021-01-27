@@ -3,13 +3,24 @@ import { BullModule as NestBullModule } from '@nestjs/bull'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { FileStorageModule } from '@island.is/file-storage'
 import { createRedisCluster } from '@island.is/cache'
+import {
+  ParentalLeaveModule,
+  ReferenceTemplateModule,
+} from '@island.is/application/template-api-modules'
 
 import { Application } from './application.model'
 import { ApplicationController } from './application.controller'
 import { ApplicationService } from './application.service'
+import { ApplicationActionRunnerService } from './application-actionRunner.service'
 import { UploadProcessor } from './upload.processor'
 import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
 import { environment } from '../../../environments'
+
+const XROAD_BASE_PATH_WITH_ENV = process.env.XROAD_BASE_PATH_WITH_ENV ?? ''
+const XROAD_VMST_MEMBER_CODE = process.env.XROAD_VMST_MEMBER_CODE ?? ''
+const XROAD_VMST_API_PATH = process.env.XROAD_VMST_API_PATH ?? ''
+const VMST_API_KEY = process.env.VMST_API_KEY ?? ''
+const XROAD_VMST_CLIENT_ID = process.env.XROAD_VMST_CLIENT_ID ?? ''
 
 // import { AuthModule } from '@island.is/auth-nest-tools'
 
@@ -40,6 +51,16 @@ if (process.env.INIT_SCHEMA === 'true') {
     //   issuer: environment.identityServer.issuer,
     //   jwksUri: `${environment.identityServer.jwksUri}`,
     // }),
+    ParentalLeaveModule.register({
+      xRoadBasePathWithEnv: XROAD_BASE_PATH_WITH_ENV,
+      xRoadVmstMemberCode: XROAD_VMST_MEMBER_CODE,
+      xRoadVmstAPIPath: XROAD_VMST_API_PATH,
+      xRoadVmstClientId: XROAD_VMST_CLIENT_ID,
+      vmstApiKey: VMST_API_KEY,
+    }),
+    ReferenceTemplateModule.register({
+      sampleConfigProp: 'hello world',
+    }),
     SequelizeModule.forFeature([Application]),
     FileStorageModule,
     BullModule,
@@ -47,6 +68,7 @@ if (process.env.INIT_SCHEMA === 'true') {
   controllers: [ApplicationController],
   providers: [
     ApplicationService,
+    ApplicationActionRunnerService,
     UploadProcessor,
     {
       provide: EMAIL_OPTIONS,

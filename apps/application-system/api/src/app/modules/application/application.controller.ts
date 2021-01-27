@@ -35,7 +35,6 @@ import {
   FormValue,
   ApplicationTemplateHelper,
   ExternalData,
-  ApplicationTemplateAPIModule,
 } from '@island.is/application/core'
 import { Unwrap } from '@island.is/shared/types'
 // import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-nest-tools'
@@ -44,6 +43,8 @@ import {
   getApplicationTemplateByTypeId,
   getApplicationAPIModule,
 } from '@island.is/application/template-loader'
+import { ParentalLeaveService } from '@island.is/application/template-api-modules'
+
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'
@@ -72,6 +73,7 @@ import { ApplicationAPITemplateUtils } from '@island.is/application/api-template
 import { NationalId } from './tools/nationalId.decorator'
 import { AuthorizationHeader } from './tools/authorizationHeader.decorator'
 import { verifyToken } from './utils/tokenUtils'
+import { ApplicationActionRunnerService } from './application-actionRunner.service'
 
 // @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
 
@@ -89,6 +91,7 @@ export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly emailService: EmailService,
+    private readonly actionRunner: ApplicationActionRunnerService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
   ) {}
 
@@ -229,12 +232,9 @@ export class ApplicationController {
       assignees,
     }
 
-    const templateAPIModule = await getApplicationAPIModule(templateId)
-
     const [hasChanged, updatedApplication] = await this.changeState(
       mergedApplication,
       template,
-      templateAPIModule,
       DefaultEvents.ASSIGN,
       authorization,
     )
@@ -387,12 +387,9 @@ export class ApplicationController {
       answers: mergedAnswers,
     }
 
-    const templateAPIModule = await getApplicationAPIModule(templateId)
-
     const [hasChanged, updatedApplication] = await this.changeState(
       mergedApplication,
       template,
-      templateAPIModule,
       updateApplicationStateDto.event,
       authorization,
     )
@@ -409,18 +406,22 @@ export class ApplicationController {
   async changeState(
     application: BaseApplication,
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
-    templateAPIModule: ApplicationTemplateAPIModule,
     event: string,
     authorization: string,
   ): Promise<[false] | [true, BaseApplication]> {
     const helper = new ApplicationTemplateHelper(application, template)
 
-    const apiTemplateUtils = new ApplicationAPITemplateUtils(application, {
+    const apiActionProps = {
       jwtSecret: environment.auth.jwtSecret,
       emailService: this.emailService,
       clientLocationOrigin: environment.clientLocationOrigin,
       authorization: authorization || '',
-    })
+    }
+
+    const apiTemplateUtils = new ApplicationAPITemplateUtils(
+      application,
+      apiActionProps,
+    )
 
     const [hasChanged, newState, newApplication] = helper.changeState(
       event,
@@ -446,32 +447,34 @@ export class ApplicationController {
           onErrorEvent,
         } = newStateOnEntry
 
-        if (templateAPIModule && templateAPIModule[apiModuleAction]) {
-          try {
-            await templateAPIModule[apiModuleAction](
-              updatedApplication as BaseApplication,
-              authorization,
-            )
-            if (onSuccessEvent) {
-              return this.changeState(
-                updatedApplication as BaseApplication,
-                template,
-                templateAPIModule,
-                onSuccessEvent,
-                authorization,
-              )
-            }
-          } catch (e) {
-            if (onErrorEvent) {
-              return this.changeState(
-                updatedApplication as BaseApplication,
-                template,
-                templateAPIModule,
-                onErrorEvent,
-                authorization,
-              )
-            }
-          }
+        console.log('####')
+        console.log(
+          'there is an onEntry defined',
+          JSON.stringify(newStateOnEntry),
+        )
+        const [success] = await this.actionRunner.performAction({
+          templateId: template.type,
+          type: apiModuleAction,
+          props: {
+            ...apiActionProps,
+            application,
+          },
+        })
+
+        if (success && onSuccessEvent) {
+          return this.changeState(
+            updatedApplication as BaseApplication,
+            template,
+            onSuccessEvent,
+            authorization,
+          )
+        } else if (onErrorEvent) {
+          return this.changeState(
+            updatedApplication as BaseApplication,
+            template,
+            onErrorEvent,
+            authorization,
+          )
         }
       }
 

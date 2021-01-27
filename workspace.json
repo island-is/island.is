@@ -1370,6 +1370,35 @@
         }
       }
     },
+    "application-template-api-modules": {
+      "root": "libs/application/template-api-modules",
+      "sourceRoot": "libs/application/template-api-modules/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/template-api-modules/tsconfig.lib.json",
+              "libs/application/template-api-modules/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/template-api-modules/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/template-api-modules/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "application-template-loader": {
       "root": "libs/application/template-loader",
       "sourceRoot": "libs/application/template-loader/src",

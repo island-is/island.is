@@ -87,6 +87,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 0.66,
+          onEntry: {
+            apiModuleAction: API_MODULE.exampleAction,
+          },
           roles: [
             {
               id: Roles.ASSIGNEE,

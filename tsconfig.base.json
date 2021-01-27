@@ -96,6 +96,9 @@
       "@island.is/application/graphql": [
         "libs/application/graphql/src/index.ts"
       ],
+      "@island.is/application/template-api-modules": [
+        "libs/application/template-api-modules/src/index.ts"
+      ],
       "@island.is/application/template-loader": [
         "libs/application/template-loader/src/index.ts"
       ],

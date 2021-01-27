@@ -131,6 +131,9 @@
       "tags": [],
       "implicitDependencies": ["application-system-form"]
     },
+    "application-template-api-modules": {
+      "tags": []
+    },
     "application-template-loader": {
       "tags": []
     },
