@@ -1,28 +1,34 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { Component } from 'react'
+import React, { useEffect, useState } from 'react'
 
-class HelpBox extends Component<{
+interface Props {
   helpText: string
   helpLink?: string
   helpLinkText?: string
-}> {
-  state = {
-    show: false,
-  }
+}
 
-  getHelpLink(): JSX.Element {
-    if (this.props.helpLink && this.props.helpLinkText) {
+const HelpBox: React.FC<Props> = (props: Props) => {
+  const [show, setShow] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (show) {
+      document.getElementById(props.helpText).focus()
+    }
+  }, [show])
+
+  const getHelpLink = (): JSX.Element => {
+    if (props.helpLink && props.helpLinkText) {
       return (
         <div className="helpLink">
-          <a href={this.props.helpLink} target="_blank" rel="noreferrer">
-            {this.props.helpLinkText}
+          <a href={props.helpLink} target="_blank" rel="noreferrer">
+            {props.helpLinkText}
           </a>
         </div>
       )
-    } else if (this.props.helpLink) {
+    } else if (props.helpLink) {
       return (
         <div className="helpLink">
-          <a href={this.props.helpLink} target="_blank" rel="noreferrer">
+          <a href={props.helpLink} target="_blank" rel="noreferrer">
             More Info
           </a>
           .
@@ -32,33 +38,33 @@ class HelpBox extends Component<{
     return <div></div>
   }
 
-  render(): JSX.Element {
-    return (
-      <div className="helpbox">
+  return (
+    <div className="helpbox">
+      <a
+        className="helpbox__button__show"
+        onClick={() => setShow(true)}
+        title={props.helpText}
+      >
+        <i className="icon__info"></i>
+        <span>Info</span>
+      </a>
+      <div className={`helpbox__content ${show === true ? 'show' : 'hidden'}`}>
+        <input
+          id={props.helpText}
+          onBlur={() => setShow(false)}
+          className="fake-input"
+        />
+
         <a
-          className="helpbox__button__show"
-          onClick={() => this.setState({ show: !this.state.show })}
-          title={this.props.helpText}
+          className="helpbox__content__button__close"
+          onClick={() => setShow(false)}
         >
-          <i className="icon__info"></i>
-          <span>Info</span>
+          &times;
         </a>
-        <div
-          className={`helpbox__content ${
-            this.state.show === true ? 'show' : 'hidden'
-          }`}
-        >
-          <a
-            className="helpbox__content__button__close"
-            onClick={() => this.setState({ show: !this.state.show })}
-          >
-            &times;
-          </a>
-          {this.props.helpText}
-          {this.getHelpLink()}
-        </div>
+        {props.helpText}
+        {getHelpLink()}
       </div>
-    )
-  }
+    </div>
+  )
 }
 export default HelpBox
