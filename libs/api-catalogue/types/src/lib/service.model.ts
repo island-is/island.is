@@ -1,11 +1,10 @@
 import {
   AccessCategory,
   DataCategory,
-  Environment,
   PricingCategory,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
-import { ServiceVersion } from './service-version.model'
+import { ServiceEnvironment } from './serviceEnvironment.model'
 
 export interface Service {
   /**
@@ -60,13 +59,7 @@ export interface Service {
   access: Array<AccessCategory>
 
   /**
-   * Aggregated info of what environment instances this services
-   * is deploy to: dev, staging, prod
+   * Environment specific service details.
    */
-  environments: Array<Environment>
-
-  /**
-   * Array of all versions of the service.
-   */
-  versions: Array<ServiceVersion>
+  environments: Array<ServiceEnvironment>
 }

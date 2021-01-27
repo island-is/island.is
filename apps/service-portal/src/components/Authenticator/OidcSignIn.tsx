@@ -23,8 +23,7 @@ export const OidcSignIn: FC = () => {
         history.push(typeof user.state === 'string' ? user.state : '/')
       })
       .catch(function (error) {
-        // TODO: Handle error
-        console.log('error', error)
+        console.error(error)
         window.location.replace(window.location.origin)
       })
   }, [])
