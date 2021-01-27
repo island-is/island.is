@@ -40,7 +40,7 @@ export type Icon =
   | 'pencil'
   | 'people'
   | 'person'
-  | 'play'
+  | 'playCircle'
   | 'reader'
   | 'receipt'
   | 'removeCircle'
@@ -94,7 +94,7 @@ export default {
     pencil: 'Pencil',
     people: 'People',
     person: 'Person',
-    play: 'Play',
+    playCircle: 'PlayCircle',
     reader: 'Reader',
     receipt: 'Receipt',
     removeCircle: 'RemoveCircle',
@@ -147,7 +147,7 @@ export default {
     pencil: 'PencilOutline',
     people: 'PeopleOutline',
     person: 'PersonOutline',
-    play: 'PlayOutline',
+    playCircle: 'PlayCircleOutline',
     reader: 'ReaderOutline',
     receipt: 'ReceiptOutline',
     removeCircle: 'RemoveCircleOutline',
