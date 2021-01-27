@@ -346,3 +346,16 @@ footer {
 .indent {
   padding-left: 35px !important;
 }
+
+.fake-input {
+  height: 0;
+  width: 0;
+  position: absolute;
+  border: none;
+  margin: 0;
+  padding: 0;
+
+  &:focus {
+    outline: none;
+  }
+}

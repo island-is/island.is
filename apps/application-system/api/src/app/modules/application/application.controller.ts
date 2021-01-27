@@ -280,6 +280,7 @@ export class ApplicationController {
     @NationalId() nationalId: string,
   ): Promise<ApplicationResponseDto> {
     const newAnswers = application.answers as FormValue
+
     await validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
@@ -291,6 +292,7 @@ export class ApplicationController {
       existingApplication as BaseApplication,
       newAnswers,
     )
+
     const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
     const { updatedApplication } = await this.applicationService.update(
       existingApplication.id,

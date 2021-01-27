@@ -1,10 +1,16 @@
-import { Application, DataProviderResult } from '@island.is/application/core'
+import {
+  Application,
+  DataProviderResult,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { theme } from '@island.is/island-ui/theme'
-
-import { TimelinePeriod } from './components/Timeline'
-import { Period } from '../types'
-import { ParentalLeave, PregnancyStatus } from '../dataProviders/APIDataTypes'
 import { NationalRegistryFamilyMember } from '@island.is/api/schema'
+
+import { TimelinePeriod } from './fields/components/Timeline'
+import { Period } from './types'
+import { ParentalLeave, PregnancyStatus } from './dataProviders/APIDataTypes'
+import { daysInMonth, defaultMonths } from './config'
+import { YES } from './constants'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -20,6 +26,7 @@ export function getExpectedDateOfBirth(
   // applicant is not a mother giving birth
   const parentalLeavesResult = application.externalData
     .parentalLeaves as DataProviderResult
+
   if (parentalLeavesResult.status === 'success') {
     const parentalLeaves = parentalLeavesResult.data as ParentalLeave[]
     if (parentalLeaves.length) {
@@ -79,7 +86,44 @@ export function formatPeriods(
 
 /*
  *  Takes in a number (ex: 119000) and
- *  returns a formated ISK value "119.000 kr."
+ *  returns a formatted ISK value "119.000 kr."
  */
 export const formatIsk = (value: number): string =>
   value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
+
+/**
+ * Uses `daysInMonth`: 30 as the number of days in a month on average
+ */
+const daysToMonths = (n: number) => n / daysInMonth
+
+/**
+ * Returns the maximum number of months available for the applicant.
+ * Returns as well the days given or requested by the applicant.
+ */
+export const getAvailableRights = (application: Application) => {
+  const requestRights = getValueViaPath(
+    application.answers,
+    'requestRights',
+  ) as any
+  const giveRights = getValueViaPath(application.answers, 'giveRights') as any
+
+  let requestedDays = 0
+  let givenDays = 0
+  let months = defaultMonths
+
+  if (requestRights?.isRequestingRights === YES) {
+    requestedDays = requestRights.requestDays
+    months = months + daysToMonths(requestedDays)
+  }
+
+  if (giveRights?.isGivingRights === YES) {
+    givenDays = giveRights.giveDays
+    months = months + daysToMonths(givenDays)
+  }
+
+  return {
+    requestedDays,
+    givenDays,
+    months: Number(months.toFixed(1)), // TODO: do we want to truncate decimals?
+  }
+}
