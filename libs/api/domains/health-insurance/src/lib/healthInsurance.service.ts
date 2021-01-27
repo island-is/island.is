@@ -26,7 +26,7 @@ export class HealthInsuranceService {
     return res.SjukratryggdurType.sjukratryggdur == 1
   }
 
-  // return true or false when asked if person is health insured?
+  // return caseIds array with Pending status
   async getPendingApplication(nationalId: string): Promise<number[]> {
     const res = await this.healthInsuranceAPI.getApplication(nationalId)
     if (!res.FaUmsoknSjukratryggingType?.umsoknir) {
@@ -35,14 +35,7 @@ export class HealthInsuranceService {
     }
 
     logger.info(`Start filtering Pending status`)
-    /*
-     Application statuses:
-      0: Samþykkt/Accepted
-      1: Synjað/Refused
-      2: Í bið/Pending
-      3: Ógilt/Invalid
-     return all caseIds with Pending status
-    */
+    // Return all caseIds with Pending status
     const pendingCases: number[] = []
     // res.FaUmsoknSjukratryggingType.umsoknir[0].stada = 2
     res.FaUmsoknSjukratryggingType.umsoknir

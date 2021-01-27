@@ -91,7 +91,7 @@ export class HealthInsuranceAPI {
           if (err) {
             logger.error(JSON.stringify(err, null, 2))
             reject(err)
-          } else if (!result.SjukratryggdurType?.sjukratryggdur) {
+          } else if (!result.SjukratryggdurType) {
             logger.error(
               `Something went totally wrong in 'Sjukratryggdur' call for ${nationalId} with result: ${JSON.stringify(
                 result,
@@ -151,6 +151,12 @@ export class HealthInsuranceAPI {
              API returns null when there is no application in the system,
              but it returns also null when the nationalId is not correct,
              we return all reponses to developer to handle them
+
+             Application statuses:
+              0: Samþykkt/Accepted
+              1: Synjað/Refused
+              2: Í bið/Pending
+              3: Ógilt/Invalid
             */
             logger.info(
               `Successful get faumsoknirsjukratrygginga information for ${nationalId} with result: ${JSON.stringify(
