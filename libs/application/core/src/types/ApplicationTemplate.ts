@@ -15,7 +15,7 @@ export interface ApplicationTemplate<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
   TEvents extends EventObject
-  > {
+> {
   readonly readyForProduction?: boolean
   readonly type: ApplicationTypes
   readonly name: string
