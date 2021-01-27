@@ -23,6 +23,7 @@
   - [What Chart Library Should We Use Across Island.is?](handbook/technical-overview/adr/0012-chart-library.md)
   - [What Feature Flag Service/application Should We Use at Island.is?](handbook/technical-overview/adr/0013-feature-flags.md)
   - [Logging, Monitoring and APM Platform](handbook/technical-overview/adr/0013-logging-apm-monitoring.md)
+  - [Logging, Monitoring and APM Platform](handbook/technical-overview/adr/0014-logging-apm-monitoring.md)
   - [ADR Template](handbook/technical-overview/adr/template.md)
 - [API Design Guide](handbook/technical-overview/api-design-guide/README.md)
   - [Data Definitions and Standards](handbook/technical-overview/api-design-guide/data-definitions.md)
