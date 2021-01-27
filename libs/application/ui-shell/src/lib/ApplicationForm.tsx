@@ -8,6 +8,7 @@ import {
   ApplicationTemplateHelper,
   Form,
   Schema,
+  m,
 } from '@island.is/application/core'
 import {
   getApplicationTemplateByTypeId,
@@ -19,7 +20,6 @@ import { Box, LoadingIcon } from '@island.is/island-ui/core'
 import { FormShell } from './FormShell'
 import { FieldProvider, useFields } from '../components/FieldContext'
 import { NotFound } from './NotFound'
-import { m } from '../lib/messages'
 import * as styles from './FormShell.treat'
 
 function isOnProduction(): boolean {
@@ -122,7 +122,14 @@ const ShellWrapper: FC<{
       }
     }
     populateForm()
-  }, [fieldsDispatch, application, form, nationalRegistryId, dataSchema])
+  }, [
+    fieldsDispatch,
+    application,
+    form,
+    nationalRegistryId,
+    dataSchema,
+    formatMessage,
+  ])
 
   // TODO we need better loading states
   if (!form || !dataSchema) {

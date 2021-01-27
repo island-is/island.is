@@ -6,8 +6,8 @@ import {
   buildSubmitField,
   Form,
   FormModes,
+  m as mm,
 } from '@island.is/application/core'
-import { m as mm } from '@island.is/application/ui-shell'
 
 import Logo from '../assets/Logo'
 import { otherParentApprovalForm as m } from '../lib/messages'

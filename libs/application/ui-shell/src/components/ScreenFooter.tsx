@@ -7,9 +7,9 @@ import {
   formatText,
   FormModes,
   SubmitField,
+  m,
 } from '@island.is/application/core'
 
-import { m } from '../lib/messages'
 import * as styles from './ScreenFooter.treat'
 interface FooterProps {
   application: Application

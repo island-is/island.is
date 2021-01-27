@@ -18,6 +18,7 @@ import {
   formatText,
   MessageFormatter,
   mergeAnswers,
+  m,
 } from '@island.is/application/core'
 import {
   Box,
@@ -50,7 +51,6 @@ import {
 } from '../utils'
 import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
-import { m } from '../lib/messages'
 
 type ScreenProps = {
   activeScreenIndex: number

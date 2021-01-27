@@ -15,10 +15,9 @@ import {
   Page,
   Button,
 } from '@island.is/island-ui/core'
-import { Application } from '@island.is/application/core'
+import { Application, m } from '@island.is/application/core'
 import { NotFound } from '@island.is/application/ui-shell'
 import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/application/ui-shell'
 
 import useAuth from '../hooks/useAuth'
 
