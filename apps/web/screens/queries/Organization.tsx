@@ -101,7 +101,10 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       footerItems {
         title
         content
-        link
+        link {
+          text
+          url
+        }
       }
     }
   }

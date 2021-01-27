@@ -28,7 +28,7 @@ const OrganizationFooter: React.FC<FooterProps> = ({ organizationPage }) => {
               <GridColumn span={['12/12', '6/12', '4/12', '1/5']} className={styles.footerItem}>
                 <div className={styles.footerItemTitle}>
                   {item.link ? (
-                    <Link href={item.link}>
+                    <Link href={item.link.url}>
                       {item.title}
                     </Link>
                   ) : item.title}
