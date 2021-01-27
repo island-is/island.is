@@ -1,4 +1,4 @@
-# Trouble Shooting
+# Auth System Trouble Shooting
 
 The [Datadog](https://app.datadoghq.eu/) webpage for [Digital Iceland](https://island.is/) can be useful when diagnosing faults.
 

@@ -1,4 +1,4 @@
-# The Authentication Service Provision
+# Auth Service Provision
 
 [GitHub](https://github.com/) is used for source code management while [Amazon Web Service](https://aws.amazon.com/) is the hosting provider.
 Further information regarding the development- and service provider-environments can be found following these links:

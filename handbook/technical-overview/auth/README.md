@@ -1,4 +1,4 @@
-# Kerfislýsingar
+# Auth System Manual
 
 [System Manual](system-manual/README.md)
 
