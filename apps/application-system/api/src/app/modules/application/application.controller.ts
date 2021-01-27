@@ -13,8 +13,6 @@ import {
   UseInterceptors,
   Optional,
   Req,
-  Header,
-  Res
 } from '@nestjs/common'
 
 import omit from 'lodash/omit'
@@ -506,14 +504,32 @@ export class ApplicationController {
 
   @Get('residenceChangePdf')
   async getResidenceChangePdf(
-    @Body() input: {
-      childrenAppliedFor: [{name: string, ssn: string}],
-      parentA: {name: string, ssn: string, phoneNumber: string, email:string, homeAddress: string, postalCode: string, city: string},
-      parentB: {name: string, ssn: string, phoneNumber: string, email:string, homeAddress: string, postalCode: string, city: string},
+    @Body()
+    input: {
+      childrenAppliedFor: [{ name: string; ssn: string }]
+      parentA: {
+        name: string
+        ssn: string
+        phoneNumber: string
+        email: string
+        homeAddress: string
+        postalCode: string
+        city: string
+      }
+      parentB: {
+        name: string
+        ssn: string
+        phoneNumber: string
+        email: string
+        homeAddress: string
+        postalCode: string
+        city: string
+      }
       expiry: string
-    }
+    },
   ): Promise<string> {
     const { childrenAppliedFor, parentA, parentB, expiry } = input
+
     return await this.fileService.createResidenceChangePdf(childrenAppliedFor, parentA, parentB, expiry)
   }
 }
