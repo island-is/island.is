@@ -198,8 +198,14 @@ describe('ui-shell-utils', () => {
   })
 
   describe('isJSONObject', () => {
-    it('return true if the message is an object', () => {
-      expect(isJSONObject('{field:true}')).toBeTruthy()
+    it('return true if the message is a valid JSON object', () => {
+      expect(
+        isJSONObject('{"field":true,"otherField":"isAString"}'),
+      ).toBeTruthy()
+    })
+
+    it('return false if the message looks like a JSON but is not valid', () => {
+      expect(isJSONObject('{field:true,fake:"itsnot"}')).toBeFalsy()
     })
 
     it('return false if the message is a string', () => {
@@ -208,7 +214,7 @@ describe('ui-shell-utils', () => {
 
     it('return false if the message contains brackets in the middle of the message', () => {
       expect(
-        isJSONObject('error message with {bracker} in the middle'),
+        isJSONObject('error message with {brackets} in the middle'),
       ).toBeFalsy()
     })
   })
@@ -218,6 +224,10 @@ describe('ui-shell-utils', () => {
       expect(parseMessage('{"field":"value"}')).toMatchObject({
         field: 'value',
       })
+    })
+
+    it(`return an object if it's a stringified json object`, () => {
+      expect(parseMessage('{field:value}')).toStrictEqual('{field:value}')
     })
 
     it('return a string if the message is only a string', () => {

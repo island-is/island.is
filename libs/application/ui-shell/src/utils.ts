@@ -70,12 +70,17 @@ export function extractAnswersToSubmitFromScreen(
   }
 }
 
-export function isJSONObject(message?: string) {
+export const isJSONObject = (message?: string): boolean => {
   if (!message) {
-    return undefined
+    return false
   }
 
-  return Boolean(message.match(/^\{.*\}/g))
+  try {
+    JSON.parse(message)
+    return true
+  } catch {
+    return false
+  }
 }
 
 export function parseMessage(message?: string) {
