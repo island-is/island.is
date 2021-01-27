@@ -1,4 +1,4 @@
-# Auth Third Party's Development Manual
+# Third Party's Development Manual
 
 ## Table of Content
 

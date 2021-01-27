@@ -1,4 +1,4 @@
-# Auth System Incidents
+# System Incidents
 
 ## Incident review
 

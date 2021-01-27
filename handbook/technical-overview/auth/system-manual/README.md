@@ -1,4 +1,4 @@
-# Auth System Manual Introduction
+# System Manual Introduction
 
 ## General system description
 

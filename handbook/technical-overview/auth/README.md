@@ -1,4 +1,4 @@
-# Auth System Manual
+# Authentication System Overview
 
 [System Manual](system-manual/README.md)
 
