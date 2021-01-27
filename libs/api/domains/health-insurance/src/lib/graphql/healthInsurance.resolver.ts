@@ -1,8 +1,17 @@
-import { Resolver, Query, Args } from '@nestjs/graphql'
+import { UseGuards } from '@nestjs/common'
+import { Resolver, Query } from '@nestjs/graphql'
+
+import {
+  IdsAuthGuard,
+  ScopesGuard,
+  CurrentUser,
+  User as AuthUser,
+} from '@island.is/auth-nest-tools'
 
 import { HealthTest } from './models'
 import { HealthInsuranceService } from '../healthInsurance.service'
 
+@UseGuards(IdsAuthGuard, ScopesGuard) // TODO: enable when go to dev/prod
 @Resolver(() => HealthTest)
 export class HealthInsuranceResolver {
   constructor(
@@ -28,8 +37,19 @@ export class HealthInsuranceResolver {
     name: 'healthInsuranceIsHealthInsured',
   })
   healthInsuranceIsHealthInsured(
-    @Args('nationalId') nationalId: string,
+    @CurrentUser() user: AuthUser,
   ): Promise<boolean> {
-    return this.healthInsuranceService.isHealthInsured(nationalId)
+    return this.healthInsuranceService.isHealthInsured(user.nationalId)
+    // return this.healthInsuranceService.isHealthInsured('0101006070') // TODO cleanup
+  }
+
+  @Query(() => [Number], {
+    name: 'healthInsuranceGetApplication',
+  })
+  healthInsuranceGetPendingApplication(
+    @CurrentUser() user: AuthUser,
+  ): Promise<number[]> {
+    return this.healthInsuranceService.getPendingApplication(user.nationalId)
+    // return this.healthInsuranceService.getPendingApplication('0101006070') // TODO cleanup
   }
 }
