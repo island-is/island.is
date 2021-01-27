@@ -6,7 +6,6 @@ import {
   GridColumn,
   Box,
   Input,
-  Checkbox,
   DatePicker,
   RadioButton,
   Tooltip,
@@ -54,7 +53,10 @@ import {
   custodyProvisions,
   travelBanProvisions,
 } from 'apps/judicial-system/web/src/utils/laws'
-import { restrictions } from 'apps/judicial-system/web/src/utils/Restrictions'
+import {
+  alternativeTravelBanRestrictions,
+  restrictions,
+} from 'apps/judicial-system/web/src/utils/Restrictions'
 
 interface CaseData {
   case?: Case
@@ -458,31 +460,85 @@ export const StepThree: React.FC = () => {
               />
             </BlueBox>
           </Box>
-          <Box component="section" marginBottom={10}>
-            <Box marginBottom={3}>
-              <Box marginBottom={1}>
-                <Text as="h3" variant="h3">
-                  Takmarkanir á gæslu
-                </Text>
+          {workingCase.type === CaseType.TRAVEL_BAN && ( // TODO LAGA IF
+            <Box component="section" marginBottom={10}>
+              <Box marginBottom={3}>
+                <Box marginBottom={1}>
+                  <Text as="h3" variant="h3">
+                    Takmarkanir á gæslu
+                  </Text>
+                </Box>
+                <Text>Ef ekkert er valið er gæsla án takmarkana</Text>
               </Box>
-              <Text>Ef ekkert er valið er gæsla án takmarkana</Text>
+              <BlueBox>
+                <CheckboxList
+                  checkboxes={restrictions}
+                  selected={workingCase.requestedCustodyRestrictions}
+                  onChange={(id) =>
+                    setCheckboxAndSendToServer(
+                      'requestedCustodyRestrictions',
+                      id,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }
+                />
+              </BlueBox>
             </Box>
-            <BlueBox>
-              <CheckboxList
-                checkboxes={restrictions}
-                selected={workingCase.requestedCustodyRestrictions}
-                onChange={(id) =>
-                  setCheckboxAndSendToServer(
-                    'requestedCustodyRestrictions',
-                    id,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }
-              />
-            </BlueBox>
-          </Box>
+          )}
+          {workingCase.type !== CaseType.TRAVEL_BAN && ( // TODO LAGA IF
+            <Box component="section" marginBottom={4}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  Takmarkanir og tilhögun farbanns
+                </Text>
+                <Text>Ef ekkert er valið er farbann án takmarkana.</Text>
+              </Box>
+              <BlueBox>
+                <CheckboxList
+                  checkboxes={alternativeTravelBanRestrictions}
+                  selected={workingCase.custodyRestrictions} // REQUESTED !!!!
+                  onChange={(id) =>
+                    setCheckboxAndSendToServer(
+                      'custodyRestrictions', // REQUESTED !!!!
+                      id,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }
+                />
+                <Input
+                  name="otherRestrictions"
+                  data-testid="otherRestrictions"
+                  label="Nánari útlistun eða aðrar takmarkanir"
+                  defaultValue={workingCase.otherRestrictions} // REQUESTED !!!!
+                  placeholder="Til dæmis hvernig tilkynningarskyldu sé háttað..."
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'otherRestrictions', // REQUESTED !!!!
+                      event,
+                      [],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'otherRestrictions', // REQUESTED !!!!
+                      event.target.value,
+                      [],
+                      workingCase,
+                      updateCase,
+                    )
+                  }
+                  rows={10}
+                  textarea
+                />
+              </BlueBox>
+            </Box>
+          )}
           <FormFooter
             nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
             nextIsDisabled={

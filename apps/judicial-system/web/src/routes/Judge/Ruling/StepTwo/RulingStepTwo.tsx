@@ -1,6 +1,5 @@
 import {
   Box,
-  Checkbox,
   GridColumn,
   GridRow,
   Input,
@@ -17,16 +16,12 @@ import {
 import {
   Case,
   CaseAppealDecision,
-  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import {
-  parseArray,
-  parseString,
-} from '@island.is/judicial-system-web/src/utils/formatters'
+import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { constructConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
@@ -52,12 +47,6 @@ import {
 export const RulingStepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
 
-  const [, setAlternativeTravelBanRequireNotificationCheckbox] = useState<
-    boolean
-  >()
-  const [, setAlternativeTravelBanConfiscatePassportCheckbox] = useState<
-    boolean
-  >()
   const { id } = useParams<{ id: string }>()
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
   const { data, loading } = useQuery(CaseQuery, {

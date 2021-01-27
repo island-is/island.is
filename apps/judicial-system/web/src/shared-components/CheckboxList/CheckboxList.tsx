@@ -6,7 +6,6 @@ import {
   GridColumn,
   Checkbox,
 } from 'libs/island-ui/core/src'
-import BlueBox from '../BlueBox/BlueBox'
 
 interface CheckboxInfo {
   title: string
