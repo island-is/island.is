@@ -33,7 +33,7 @@ export class HealthInsuranceResolver {
     return this.healthInsuranceService.getProfun()
   }
 
-  @Query(() => String, {
+  @Query(() => Boolean, {
     name: 'healthInsuranceIsHealthInsured',
   })
   healthInsuranceIsHealthInsured(
@@ -44,7 +44,7 @@ export class HealthInsuranceResolver {
   }
 
   @Query(() => [Number], {
-    name: 'healthInsuranceGetApplication',
+    name: 'healthInsuranceGetPendingApplication',
   })
   healthInsuranceGetPendingApplication(
     @CurrentUser() user: AuthUser,
