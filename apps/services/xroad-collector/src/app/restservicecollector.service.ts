@@ -25,18 +25,21 @@ export class RestServiceCollector implements ServiceCollector {
   }
 
   private async indexProviders(providers: Array<Provider>): Promise<void> {
-    // Remove the index so we can recreate it
-    // with the latest state in X-Road
-    await this.elasticService.deleteIndex()
+    // Remove the worker index so we can re-create it
+    // with the latest state in X-Road in this environment
+    await this.elasticService.deleteWorkerIndex()
 
     for (const provider of providers) {
       try {
         // For each provider get list af all REST services
         // currently supporting those who were registered using OpenAPI
-        const services = await this.restMetadataService.getServices(provider)
+        const services = await this.restMetadataService.getServices(
+          provider,
+          this.elasticService.getEnvironment(),
+        )
 
-        // Insert into Elastic
-        await this.elasticService.bulk(services)
+        // Insert into Elastic worker index
+        await this.elasticService.bulkWorker(services)
       } catch (err) {
         logger.error(
           `Failed to index service metadata for provider ${providerToString(
@@ -46,5 +49,11 @@ export class RestServiceCollector implements ServiceCollector {
         )
       }
     }
+
+    logger.debug(
+      `Added all services to index "${this.elasticService.getIndexNameWorker()}" , so lets copy them to to index "${this.elasticService.getIndexName()}". time is: ${new Date().toISOString()}`,
+    )
+    await this.elasticService.moveWorkerValuesToIndex()
+    logger.debug(`Indexing done time is: ${new Date().toISOString()}`)
   }
 }
