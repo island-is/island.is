@@ -29,7 +29,7 @@ interface LatestOrganizationNewsProps {
   organizationSlug: string
 }
 
-const LatestOrganizationNewsSection: React.FC<LatestOrganizationNewsProps> = ({
+export const LatestOrganizationNewsSection: React.FC<LatestOrganizationNewsProps> = ({
   items = [],
   label,
   labelId = '',
@@ -136,5 +136,3 @@ const LatestOrganizationNewsSection: React.FC<LatestOrganizationNewsProps> = ({
     </GridContainer>
   )
 }
-
-export default LatestOrganizationNewsSection
