@@ -12,30 +12,30 @@ Further information regarding the development- and service provider-environments
 
 [IdentityServer](https://identityserver4.readthedocs.io/en/latest/) is an open source-solution in [.NetCore](https://en.wikipedia.org/wiki/.NET_Core). The system is an [OpenID Connect provider](https://openid.net/connect/), i.e. it implements the OpenID Connect and OAuth 2.0 protocols.
 
-### Terminology
+## Terminology
 
-- ##### User
+- ### User
 
   A human that is using a registered client to access resources.
 
-- ##### Client
+- ### Client
 
   A software that requests tokens from [IdentityServer](https://identityserver4.readthedocs.io/en/latest/) - either for authenticating a user or for accessing a resource. A client must be first registered with [IdentityServer](https://identityserver4.readthedocs.io/en/latest/) before it can request tokens. Clients can for example be web applications, native mobile or desktop applications.
 
-- ##### Resources
+- ### Resources
   Resources are something you want to protect with [IdentityServer](https://identityserver4.readthedocs.io/en/latest/) - either identity data of your users, or APIs:
   - Identity data to identify users, for example names or e-mail addresses.
   - API is an interface which the clients communicate with.
 
-* ##### Identity token
+- ### Identity token
 
   An identity token is created during the authentication procedure of [IdentityServer](https://identityserver4.readthedocs.io/en/latest/). It contains at a bare minimum an identifier for the user (called the _sub_ aka _subject claim_) and information about how and when the user authenticated.
 
-* ##### Access token
+- ### Access token
 
   An access token allows access to an API resource. Clients request access tokens and forward them to the API. Access tokens contain information about the client and the user which the API uses to authorize access to the resources.
 
-### Authentication flow
+## Authentication flow
 
 1.  The service provider writes a code to connect with [Identity server](https://identityserver.io/)\‘s authentication service. The user’s identity is defined as a sub (_subject claim_) in the code.
 2.  When the users’ clients request authentication then [IdentityServer](https://identityserver4.readthedocs.io/en/latest/) receives the _sub_. Accordingly, [IdentityServer](https://identityserver4.readthedocs.io/en/latest/) includes the _sub_ in the identity token which it creates to connect the clients with the resources. During the same procedure [IdentityServer](https://identityserver4.readthedocs.io/en/latest/) also creates the access token.

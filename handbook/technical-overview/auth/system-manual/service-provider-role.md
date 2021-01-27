@@ -2,13 +2,15 @@
 
 The word _Service provider_ is used here for the Icelandic term _Rekstraraðili_.
 
+## Authentication server
+
 The authentication server is divided into three components:
 
-- ##### Back-end
+- **Back-end**
   Database. Contains user-data, client-data, API-data and authorization-provider data.
-- ##### Identity provider
+- **Identity provider**
   The authentication-process. The authentication can be performed using various methods: with mobile, payment-card and Smart-ID amongst others.
-- ##### Front-end
+- **Front-end**
   The interface which the customer uses to connect to the system.
 
 The service provider’s role is to ensure that these components are functioning correctly and maintaining them.

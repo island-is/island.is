@@ -1,16 +1,16 @@
 # Incidents
 
-### Incident review
+## Incident review
 
 New incidents should be reviewed monthly.
 
-### Incident handling
+## Incident handling
 
 Incident handling is based on Fuglar's incident response version 6.
 All suspected incidents are reported in a service task and any response and documentation related to the incident should be documented on the service task.
 When responding to an incident these steps should be followed:
 
-- #### Collect evidence
+- ### Collect evidence
 
   Within 1 week of the incident evidence relating to the incident should be collected and documented.
   Evidence might include but are not limited to:
@@ -27,7 +27,7 @@ When responding to an incident these steps should be followed:
   All evidence should be documented on the service task created for the incident. If the evidence is physical it should be collected and stored securely by the CFO, e.g. hard drivers or computers.
   In the case of a suspected illegal activity related to the incident, the appropriate authorities should be contacted.
 
-- #### Escalate the incident
+- ### Escalate the incident
 
   If the asset owner responding to the incident believes the incident is severe or could have serious consequences to information security or business continuity they should escalate it to the CTO, CEO, and CFO respectively.
   Alert internal and/or external stakeholders if deemed appropriate by the asset owner or management.
