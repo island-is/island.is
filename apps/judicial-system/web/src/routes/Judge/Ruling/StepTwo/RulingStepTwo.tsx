@@ -437,6 +437,7 @@ export const RulingStepTwo: React.FC = () => {
                   </Text>
                 </Box>
                 <BlueBox>
+                <Box marginBottom={3}>
                   <CheckboxList
                     checkboxes={alternativeTravelBanRestrictions}
                     selected={workingCase.custodyRestrictions}
@@ -450,6 +451,7 @@ export const RulingStepTwo: React.FC = () => {
                       )
                     }
                   />
+                  </Box>
                   <Input
                     name="otherRestrictions"
                     data-testid="otherRestrictions"
