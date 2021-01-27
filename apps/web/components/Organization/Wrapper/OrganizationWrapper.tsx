@@ -17,6 +17,7 @@ import { HeadWithSocialSharing, Main } from '@island.is/web/components'
 import SidebarWrapper from '@island.is/web/components/Organization/Wrapper/SidebarWrapper'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import OrganizationFooter from "@island.is/web/components/Organization/Wrapper/OrganizationFooter";
 
 interface NavigationData {
   title: string
@@ -121,6 +122,7 @@ const OrganizationWrapper: React.FC<WrapperProps> = ({
         </Box>
         {mainContent ? children : ''}
       </Main>
+      <OrganizationFooter organizationPage={organizationPage}/>
     </>
   )
 }
