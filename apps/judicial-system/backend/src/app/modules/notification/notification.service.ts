@@ -48,7 +48,7 @@ export class NotificationService {
     private readonly logger: Logger,
   ) {}
 
-  private async existsCourtNotification(
+  private async existsRevokableNotification(
     caseId: string,
     recipientAddress: string,
   ): Promise<boolean> {
@@ -57,7 +57,11 @@ export class NotificationService {
         {
           where: {
             caseId,
-            type: [NotificationType.HEADS_UP, NotificationType.READY_FOR_COURT],
+            type: [
+              NotificationType.HEADS_UP,
+              NotificationType.READY_FOR_COURT,
+              NotificationType.COURT_DATE,
+            ],
           },
         },
       )
@@ -467,7 +471,7 @@ export class NotificationService {
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
 
-    const courtWasBeenNotified = await this.existsCourtNotification(
+    const courtWasBeenNotified = await this.existsRevokableNotification(
       existingCase.id,
       environment.notifications.judgeMobileNumber,
     )
@@ -476,22 +480,22 @@ export class NotificationService {
       promises.push(this.sendRevokedSmsNotificationToCourt(existingCase))
     }
 
-    const prisonWasNotified = await this.existsCourtNotification(
+    const prisonWasNotified = await this.existsRevokableNotification(
       existingCase.id,
       environment.notifications.prisonEmail,
     )
 
     if (prisonWasNotified) {
-      this.sendRevokedEmailNotificationToPrison(existingCase)
+      promises.push(this.sendRevokedEmailNotificationToPrison(existingCase))
     }
 
-    const defenderWasNotified = await this.existsCourtNotification(
+    const defenderWasNotified = await this.existsRevokableNotification(
       existingCase.id,
       existingCase.defenderEmail,
     )
 
     if (defenderWasNotified) {
-      this.sendRevokedEmailNotificationToDefender(existingCase)
+      promises.push(this.sendRevokedEmailNotificationToDefender(existingCase))
     }
 
     const recipients = await Promise.all(promises)

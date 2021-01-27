@@ -244,9 +244,9 @@ export function formatPrisonCourtDateEmailNotification(
   )
     ?.replace('dagur', 'dagsins')
     ?.replace(' kl.', ', kl.')
-  const requestText = `Nafn sakbornings: ${accusedName}<br /><br />Kyn sakbornings: ${formatGender(
+  const requestText = `Nafn sakbornings: ${accusedName}.<br /><br />Kyn sakbornings: ${formatGender(
     accusedGender,
-  )}<br /><br />Krafist er gæsluvarðhalds til ${requestedCustodyEndDateText}.`
+  )}.<br /><br />Krafist er gæsluvarðhalds til ${requestedCustodyEndDateText}.`
   const isolationText = isolation
     ? 'Farið er fram á einangrun.'
     : 'Ekki er farið fram á einangrun.'
@@ -310,7 +310,7 @@ export function formatPrisonRulingEmailNotification(
   return `<strong>Úrskurður um gæsluvarðhald</strong><br /><br />${court}, ${formatDate(
     courtDate,
     'PPP',
-  )}.<br /><br />Ákærandi: ${prosecutorName}<br />Verjandi: ${defenderName}<br /><br /><strong>Úrskurðarorð</strong><br /><br />${formatConclusion(
+  )}.<br /><br />Ákærandi: ${prosecutorName}.<br />Verjandi: ${defenderName}.<br /><br /><strong>Úrskurðarorð</strong><br /><br />${formatConclusion(
     accusedNationalId,
     accusedName,
     accusedGender,
@@ -366,7 +366,7 @@ export function formatPrisonRevokedEmailNotification(
   const courtDateText = formatDate(courtDate, 'PPPPp')
     ?.replace('dagur', 'daginn')
     ?.replace(' kl.', ', kl.')
-  const accusedNameText = `Nafn sakbornings: ${accusedName}`
+  const accusedNameText = `Nafn sakbornings: ${accusedName}.`
   const defenderText = defenderName
     ? `Verjandi sakbornings: ${defenderName}`
     : 'Verjandi sakbornings hefur ekki verið skráður'
