@@ -9,12 +9,13 @@ import {
 } from './StateMachine'
 import { ApplicationTypes } from './ApplicationTypes'
 import { Schema } from './Form'
+import { AnswerValidator } from '../validation/AnswerValidator'
 
 export interface ApplicationTemplate<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
   TEvents extends EventObject
-> {
+  > {
   readonly readyForProduction?: boolean
   readonly type: ApplicationTypes
   readonly name: string
@@ -31,4 +32,5 @@ export interface ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined
+  answerValidators?: Record<string, AnswerValidator>
 }

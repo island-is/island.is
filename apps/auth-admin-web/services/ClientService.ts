@@ -258,4 +258,41 @@ export class ClientService extends BaseService {
   static async findAllIdpRestrictions(): Promise<IdpRestriction[] | null> {
     return BaseService.GET(`idp-restriction`)
   }
+
+  static async getClientsCsv(): Promise<any[] | null> {
+    const result = await BaseService.GET(
+      `clients?page=${1}&count=${Number.MAX_SAFE_INTEGER}`,
+    )
+    return result.rows.map((r) => ClientService.toClientCsv(r))
+  }
+
+  static toClientCsv = (client: Client): any[] => {
+    return [
+      client.clientId,
+      client.clientType,
+      client.clientName,
+      client.description,
+      client.nationalId,
+      client.contactEmail,
+      client.created,
+      client.modified,
+      client.enabled,
+      client.archived,
+    ]
+  }
+
+  static getClientsCsvHeaders(): string[] {
+    return [
+      'ClientId',
+      'ClientType',
+      'ClientName',
+      'Description',
+      'NationalId',
+      'Contact',
+      'Created',
+      'Modified',
+      'Enabled',
+      'Archived',
+    ]
+  }
 }

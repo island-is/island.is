@@ -5,6 +5,10 @@ import * as kennitala from 'kennitala'
 import { NO, YES } from '../constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
+/**
+ * TODO: zod has a way to overwrite the default errors messages e.g. "Field is required" etc..
+ * We might want to define it for all primitives and add localization to it
+ */
 const PersonalAllowance = z
   .object({
     usage: z

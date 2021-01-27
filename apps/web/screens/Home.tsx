@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useContext } from 'react'
-import { Box, Stack, Inline, Tag } from '@island.is/island-ui/core'
+import { Box, Stack, Inline, Tag, Sleeve } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { Screen } from '@island.is/web/types'
 import { useNamespace } from '@island.is/web/hooks'
@@ -144,12 +144,21 @@ const Home: Screen<HomeProps> = ({
           }
         }
       >
-        <LifeEventsCardsSection
-          title={n('lifeEventsTitle')}
-          titleId="lifeEventsTitle"
-          lifeEvents={lifeEvents}
-          showSleeve={showSleeve}
-        />
+        {showSleeve ? (
+          <Sleeve sleeveShadow="purple">
+            <LifeEventsCardsSection
+              title={n('lifeEventsTitle')}
+              titleId="lifeEventsTitle"
+              lifeEvents={lifeEvents}
+            />
+          </Sleeve>
+        ) : (
+          <LifeEventsCardsSection
+            title={n('lifeEventsTitle')}
+            titleId="lifeEventsTitle"
+            lifeEvents={lifeEvents}
+          />
+        )}
       </Section>
       <Section
         paddingTop={[8, 8, 6]}

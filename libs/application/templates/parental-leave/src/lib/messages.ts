@@ -173,8 +173,7 @@ export const m = defineMessages({
     id: 'pl.application:rights.description',
     defaultMessage:
       'Sjálfstæður réttur hvers foreldris er sex mánuðir í fæðingarorlof, en annað foreldrið má yfirfæra allt að einn mánuð af sínum réttindum yfir á hitt foreldrið.',
-    description:
-      'Both parents have 6 months, but can transfer to 1 month to the other parent.',
+    description: `Both parents have 6 months, but can transfer up to 45 days to the other parent.`,
   },
   requestRightsName: {
     id: 'pl.application:request.rights.name',
@@ -250,9 +249,8 @@ export const m = defineMessages({
   },
   requestRightsDescription: {
     id: 'pl.application:request.rights.description',
-    defaultMessage:
-      'Hitt foreldrið má yfirfæra allt að 45 dagar af réttindum þess yfir á þig. Kjósir þú að óska eftir þessu, þá þarf hitt foreldrið að samþykkja beiðni þína.',
-    description: 'The other parent can transfer up to 45 days of their rights',
+    defaultMessage: `Hitt foreldrið má yfirfæra allt að 45 dagar af réttindum þess yfir á þig. Kjósir þú að óska eftir þessu, þá þarf hitt foreldrið að samþykkja beiðni þína.`,
+    description: `The other parent can transfer up to 45 days of their rights`,
   },
   requestRightsYes: {
     id: 'pl.application:request.rights.yes',
@@ -279,9 +277,8 @@ export const m = defineMessages({
   },
   giveRightsDescription: {
     id: 'pl.application:give.rights.description',
-    defaultMessage:
-      'Þú getur yfirfært allt að 45 dagar af þínum réttindum yfir á hitt foreldrið',
-    description: 'You can give the other parent up to 45 days of your rights',
+    defaultMessage: `Þú getur yfirfært allt að 45 dagar af þínum réttindum yfir á hitt foreldrið`,
+    description: `You can give the other parent up to 45 days of your rights`,
   },
   giveRightsDay: {
     id: 'pl.application:request.rights.months',
@@ -300,9 +297,8 @@ export const m = defineMessages({
   },
   giveRightsYes: {
     id: 'pl.application:give.rights.yes',
-    defaultMessage:
-      'Já, ég vil yfirfæra allt að einn mánuð af mínum réttindum til hins foreldrisins',
-    description: 'Yes, I wish to give one of my months to the other parent',
+    defaultMessage: `Já, ég vil yfirfæra allt að 45 dagar af mínum réttindum til hins foreldrisins`,
+    description: `Yes, I wish to give up to 45 days to the other parent`,
   },
   giveRightsNo: {
     id: 'pl.application:give.rights.no',
@@ -656,10 +652,8 @@ export const mm: MessageDir = {
     },
     description: {
       id: 'pl.application:periods.first.period.description',
-      defaultMessage:
-        'Þú mátt kjósa að byrja á áætluðum fæðingardegi, eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.',
-      description:
-        'You can choose to start on the date of birth, or on a specific date. Please note, that your rights end 18 months after the date of birth.',
+      defaultMessage: `Þú mátt kjósa að byrja á áætluðum fæðingardegi, eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.`,
+      description: `You can choose to start on the date of birth, or on a specific date. Please note, that your rights end 18 months after the date of birth.`,
     },
     dateOfBirthOption: {
       id: 'pl.application:periods.first.period.dateOfBirth',
@@ -694,10 +688,8 @@ export const mm: MessageDir = {
     },
     description: {
       id: 'pl.application:end.date.description',
-      defaultMessage:
-        'Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins. Fæðingarorlof getur styst verið tvær vikur.',
-      description:
-        'Please note, that your parental leave rights end 18 months after the date of birth. A parental leave period can be no shorter than two weeks.',
+      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins. Fæðingarorlof getur styst verið 14 dagar.`,
+      description: `Please note, that your parental leave rights end 18 months after the date of birth. A parental leave period can be no shorter than 14 days.`,
     },
     label: {
       id: 'pl.application:end.date.label',
@@ -718,10 +710,8 @@ export const mm: MessageDir = {
     },
     description: {
       id: 'pl.application:start.date.description',
-      defaultMessage:
-        'Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.',
-      description:
-        'Please note, that your parental leave rights end 18 months after the date of birth',
+      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.`,
+      description: `Please note, that your parental leave rights end 18 months after the date of birth`,
     },
     label: {
       id: 'pl.application:start.date.label',

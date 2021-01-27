@@ -120,7 +120,7 @@ export const m = defineMessages({
   editDigitalIslandData: {
     id: 'hi.application:digitalIslandData.edit',
     defaultMessage:
-      'Please edit if not correct. Updating your contact info will change it for all of island.is',
+      'Please update your E-mail and Phone number on **[My Pages](https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/)** if not correct.',
     description: 'About changing digital island data',
   },
   statusAndChildren: {
@@ -183,7 +183,7 @@ export const m = defineMessages({
   confirmationOfStudiesTooltip: {
     id: 'hi.application:student.confirmationOfStudies',
     defaultMessage:
-      'You need to submit a copy of your Graduation certificate or a confirmation of completed credits for each semester. ' +
+      'You need to submit a copy of your Graduation certificate or a confirmation of completed credits for each semester.\n' +
       'Admission or enrollement letters are not sufficient.',
     description: 'Confirmation of studies must be submitted, tooltip',
   },
