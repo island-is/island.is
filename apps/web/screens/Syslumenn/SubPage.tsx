@@ -110,27 +110,41 @@ const SubPage: Screen<SubPageProps> = ({
               </GridColumn>
             </GridRow>
             <GridRow>
-              <GridColumn span={['12/12', '12/12', '7/12']}>
-                <div className={styles.description}>
+              <GridColumn
+                span={[
+                  '12/12',
+                  '12/12',
+                  subpage.links.length ? '7/12' : '12/12',
+                ]}
+              >
+                <div
+                  className={
+                    subpage.slices.length
+                      ? styles.description
+                      : styles.smallDescription
+                  }
+                >
                   <Markdown>{subpage.description}</Markdown>
                 </div>
               </GridColumn>
-              <GridColumn
-                span={['12/12', '12/12', '4/12']}
-                offset={[null, null, '1/12']}
-              >
-                <ul>
-                  {subpage.links.map((link) => (
-                    <li>
-                      <Link href={link.url}>
-                        <a className={styles.link} href={link.url}>
-                          {link.text}
-                        </a>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </GridColumn>
+              {subpage.links.length > 0 && (
+                <GridColumn
+                  span={['12/12', '12/12', '4/12']}
+                  offset={[null, null, '1/12']}
+                >
+                  <ul>
+                    {subpage.links.map((link) => (
+                      <li>
+                        <Link href={link.url}>
+                          <a className={styles.link} href={link.url}>
+                            {link.text}
+                          </a>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </GridColumn>
+              )}
             </GridRow>
           </Box>
         </GridContainer>

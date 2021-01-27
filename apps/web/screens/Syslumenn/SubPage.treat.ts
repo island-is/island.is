@@ -27,6 +27,15 @@ globalStyle(`${description} p`, {
   lineHeight: '48px',
 })
 
+export const smallDescription = style({})
+
+globalStyle(`${smallDescription} p`, {
+  fontSize: 18,
+  fontWeight: 300,
+  lineHeight: '34px',
+  marginBottom: 32,
+})
+
 export const link = style({
   fontWeight: 300,
   textDecoration: 'none',
