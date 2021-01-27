@@ -1,7 +1,6 @@
 import { Box, Text } from '@island.is/island-ui/core'
-import { CaseGender } from '@island.is/judicial-system/types'
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import React, { PropsWithChildren } from 'react'
-import { getShortGender } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as styles from './InfoCard.treat'
 
 interface Props {
@@ -21,7 +20,7 @@ const InfoCard: React.FC<Props> = (props: PropsWithChildren<Props>) => {
           <Text fontWeight="semiBold">
             {props.accusedName}
             <Text as="span">{`, `}</Text>
-            {`kt. ${props.accusedNationalId}`}
+            {`kt. ${formatNationalId(props.accusedNationalId || '')}`}
             <Text as="span">{`, ${props.accusedAddress}`}</Text>
           </Text>
         </Box>

@@ -10,20 +10,9 @@ import { CallToAction } from './StateMachine'
 import { Application } from './Application'
 import { FormatInputValueFunction } from 'react-number-format'
 
-export interface Option {
-  value: string
-  label: FormText
-  tooltip?: FormText
-  excludeOthers?: boolean
-}
-
-interface SelectOption {
-  label: string
-  value: string | number
-}
-
+export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplication<T> = T | ((a: Application) => T)
-
+export type ValidAnswers = 'yes' | 'no' | undefined
 export type FieldWidth = 'full' | 'half'
 export type TextFieldVariant =
   | 'text'
@@ -36,6 +25,18 @@ export type TextFieldVariant =
 export type Context = {
   application: Application
   apolloClient: ApolloClient<object>
+}
+
+export interface Option {
+  value: string
+  label: FormText
+  tooltip?: FormText
+  excludeOthers?: boolean
+}
+
+interface SelectOption {
+  label: string
+  value: string | number
 }
 
 export interface BaseField extends FormItem {
