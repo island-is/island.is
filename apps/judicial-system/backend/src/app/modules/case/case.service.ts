@@ -116,35 +116,12 @@ export class CaseService {
   getAll(): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
-    const sevenDaysFromNow = this.sevenDaysFromNow()
-
     return this.caseModel.findAll({
       order: [['created', 'DESC']],
       where: {
-        [Op.or]: [
-          {
-            state: {
-              [Op.in]: [
-                CaseState.NEW,
-                CaseState.DRAFT,
-                CaseState.SUBMITTED,
-                CaseState.RECEIVED,
-              ],
-            },
-          },
-          {
-            [Op.and]: [
-              { state: CaseState.ACCEPTED },
-              { custodyEndDate: { [Op.gt]: sevenDaysFromNow } },
-            ],
-          },
-          {
-            [Op.and]: [
-              { state: CaseState.REJECTED },
-              { courtEndTime: { [Op.gt]: sevenDaysFromNow } },
-            ],
-          },
-        ],
+        state: {
+          [Op.not]: CaseState.DELETED,
+        },
       },
       include: [
         { model: User, as: 'prosecutor' },
