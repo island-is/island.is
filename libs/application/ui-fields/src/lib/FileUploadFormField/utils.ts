@@ -11,7 +11,6 @@ export const uploadFileToS3 = (
     const req = new XMLHttpRequest()
 
     const onError = (e) => {
-      console.log(e)
       dispatch({
         type: ActionTypes.UPDATE,
         payload: { file, status: 'error', percent: 0 },
