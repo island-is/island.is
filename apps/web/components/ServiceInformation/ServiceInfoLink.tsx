@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Box, Link, Button } from '@island.is/island-ui/core'
+import { Link, Button } from '@island.is/island-ui/core'
 
 interface ServiceInfoLinkProps {
   href: string

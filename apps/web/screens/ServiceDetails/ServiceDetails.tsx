@@ -203,11 +203,12 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
         </SidebarLayout>
       }
       details={
-        <OpenApiView
-          service={service}
-          strings={openApiContent}
-          openApiInput={selectedGetOpenApiInput}
-        />
+        selectedGetOpenApiInput && (
+          <OpenApiView
+            strings={openApiContent}
+            openApiInput={selectedGetOpenApiInput}
+          />
+        )
       }
     />
   )

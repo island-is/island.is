@@ -8,7 +8,6 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import {
-  Service,
   GetOpenApiInput,
   GetNamespaceQuery,
 } from '@island.is/web/graphql/schema'
@@ -19,7 +18,6 @@ import YamlParser from 'js-yaml'
 import { OpenApiDocumentation } from '../OpenApiDocumentation'
 
 export interface OpenApiViewProps {
-  service: Service
   strings: GetNamespaceQuery['getNamespace']
   openApiInput: GetOpenApiInput
 }
