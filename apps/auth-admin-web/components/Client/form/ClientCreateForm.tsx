@@ -226,13 +226,6 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         Native
                       </option>
                       <option
-                        value="device"
-                        selected={client.clientType === 'device'}
-                        disabled
-                      >
-                        Device
-                      </option>
-                      <option
                         value="web"
                         selected={client.clientType === 'web'}
                       >
@@ -243,6 +236,13 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         selected={client.clientType === 'machine'}
                       >
                         Machine
+                      </option>
+                      <option
+                        value="device"
+                        selected={client.clientType === 'device'}
+                        disabled
+                      >
+                        Device (not supported)
                       </option>
                     </select>
 
