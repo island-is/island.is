@@ -25,7 +25,6 @@ export const GET_ORGANIZATION_QUERY = gql`
       id
       slug
       title
-      shortTitle
       logo {
         title
         url
