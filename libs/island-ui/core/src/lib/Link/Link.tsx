@@ -31,7 +31,6 @@ export const Link: React.FC<LinkProps> = ({
   replace,
   scroll,
   shallow,
-  passHref,
   prefetch,
   color,
   skipTab,
@@ -70,7 +69,7 @@ export const Link: React.FC<LinkProps> = ({
         as={as}
         shallow={shallow}
         scroll={scroll}
-        passHref={passHref}
+        passHref
         prefetch={prefetch}
       >
         {pureChildren ? (

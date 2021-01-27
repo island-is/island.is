@@ -225,10 +225,7 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
     <Stack space={3}>
       {!!article.category && (
         <Box display={['none', 'none', 'block']} printHidden>
-          <Link
-            {...linkResolver('articlecategory', [article.category.slug])}
-            passHref
-          >
+          <Link {...linkResolver('articlecategory', [article.category.slug])}>
             <Button
               preTextIcon="arrowBack"
               preTextIconType="filled"
@@ -385,7 +382,6 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                   href={linkResolver('articlecategory', [
                     article.category.slug,
                   ])}
-                  passHref
                 >
                   <Button
                     preTextIcon="arrowBack"

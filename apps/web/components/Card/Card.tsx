@@ -16,6 +16,7 @@ import {
 import { ColorSchemeContext } from '@island.is/web/context'
 import { Image } from '@island.is/web/graphql/schema'
 import { BackgroundImage } from '@island.is/web/components'
+import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
 import * as styles from './Card.treat'
 
@@ -35,7 +36,7 @@ interface CardProps {
   description: string
   tags?: Array<CardTagsProps>
   linkProps?: LinkProps
-  href?: string
+  link?: LinkResolverResponse
   status?: string
 }
 
@@ -44,7 +45,7 @@ export const Card: FC<CardProps> = ({
   image,
   description,
   tags = [],
-  href,
+  link,
   status,
 }) => {
   const { colorScheme } = useContext(ColorSchemeContext)
@@ -105,7 +106,7 @@ export const Card: FC<CardProps> = ({
                 }
 
                 return href ? (
-                  <Link key={index} href={href}>
+                  <Link key={index} {...link}>
                     <Tag {...tagProps}>{title}</Tag>
                   </Link>
                 ) : (
@@ -163,10 +164,10 @@ export const Card: FC<CardProps> = ({
     </Box>
   )
 
-  if (href) {
+  if (link?.href) {
     return (
       <FocusableBox
-        href={href}
+        href={link.href}
         borderRadius="large"
         flexDirection="column"
         height="full"

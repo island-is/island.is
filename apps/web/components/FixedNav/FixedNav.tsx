@@ -51,7 +51,7 @@ export const FixedNav: FC = () => {
           alignItems="center"
           justifyContent="spaceBetween"
         >
-          <Link {...linkResolver('homepage')} passHref>
+          <Link {...linkResolver('homepage')}>
             <FocusableBox marginRight={2}>
               <Logo iconOnly solid={true} />
             </FocusableBox>

@@ -246,13 +246,13 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
                               </span>
                             </Text>
                           )}
-                          {linkUrls.href && visible ? (
+                          {linkUrls?.href && visible ? (
                             <span
                               className={cn(styles.textItem, {
                                 [styles.textItemVisible]: visible,
                               })}
                             >
-                              <Link {...linkUrls} passHref>
+                              <Link {...linkUrls}>
                                 <Button
                                   variant="text"
                                   icon="arrowForward"
