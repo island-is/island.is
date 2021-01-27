@@ -2,45 +2,156 @@ import { Injectable } from '@nestjs/common'
 import { Client, ApiResponse } from '@elastic/elasticsearch'
 import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
-import { environment } from '../environments/environments'
+import { environment as elasticEnvironment } from '../environments/environments'
 import { Service } from '@island.is/api-catalogue/types'
 import { SearchResponse } from '@island.is/shared/types'
 import { searchQuery } from './queries/search.model'
 import { logger } from '@island.is/logging'
+import { Environment } from 'libs/api-catalogue/consts/src/lib/environment'
 
-const { elastic } = environment
+const { elastic } = elasticEnvironment
 
 @Injectable()
 export class ElasticService {
   private client: Client
-  private indexName = 'apicatalogue'
+  private indexName: string
+  private indexNameWorker: string
+  private environment: Environment = Environment.DEV
 
   constructor() {
     this.client = this.createEsClient()
+    const indexName = process.env.API_CATALOGUE_INDEX_NAME
+    if (!indexName) {
+      throw new Error(
+        `Environment variable "API_CATALOGUE_INDEX_NAME" not set.`,
+      )
+    }
+    this.indexName = indexName as string
+    this.indexNameWorker = `${this.indexName}_work`
+
+    const environment = process.env.ENVIRONMENT
+    if (!environment) {
+      throw new Error(`Environment variable "ENVIRONMENT" not set.`)
+    }
+
+    this.setEnvironment(environment)
+  }
+
+  private setEnvironment(environment: string | undefined) {
+    console.log('setEnvironment -> ' + environment)
+    switch (environment) {
+      case Environment.PROD:
+        this.environment = Environment.PROD
+        break
+      case Environment.STAGING:
+        this.environment = Environment.STAGING
+        break
+      case Environment.DEV:
+        this.environment = Environment.DEV
+        break
+      default:
+        throw new Error(
+          `Invalid value in environment variable "ENVIRONMENT". Valid values:[${Environment.DEV}|${Environment.STAGING}|${Environment.PROD}]`,
+        )
+    }
   }
 
   /**
    * Tries to delete the index.
    * If the index does not exists it does nothing.
    */
-  async deleteIndex(): Promise<void> {
-    logger.info('Deleting index', this.indexName)
+  async deleteIndex(indexName: string = this.indexName): Promise<void> {
+    logger.info('Deleting index', indexName)
 
     const { body } = await this.client.indices.exists({
-      index: this.indexName,
+      index: indexName,
     })
     if (body) {
-      await this.client.indices.delete({ index: this.indexName })
-      logger.info(`Index ${this.indexName} deleted`)
+      await this.client.indices.delete({ index: indexName })
+      logger.info(`Index ${indexName} deleted`)
     } else {
-      logger.info('No index to delete', this.indexName)
+      logger.info('No index to delete', indexName)
+    }
+  }
+
+  async deleteWorkerIndex(): Promise<void> {
+    await this.deleteIndex(this.getIndexNameWorker())
+  }
+
+  getIndexName() {
+    return this.indexName
+  }
+  getIndexNameWorker() {
+    return this.indexNameWorker
+  }
+  getEnvironment(): Environment {
+    return this.environment
+  }
+
+  private async getMapping(indexName: string = this.indexName) {
+    const response = await this.client.indices.getMapping({
+      index: indexName,
+    })
+    return response
+  }
+
+  private async reIndex(src: string, dst: string) {
+    const opts: any = { body: { source: { index: src }, dest: { index: dst } } }
+
+    await this.client.reindex(opts)
+    //await this.putAlias(dst, src);
+    console.log(
+      'info',
+      `[REINDEX] successfully reindexed [${src}] to [${dst}]. Time is: ${new Date().toLocaleTimeString()}`,
+    )
+  }
+
+  /**
+   * Moves all values from worker index to the destinationIndex.
+   * @param {string} destinationIndex - if not specified the default value is getIndexName()
+   */
+  async moveWorkerValuesToIndex(destinationIndex: string = this.indexName) {
+    await this.deleteIndex(destinationIndex)
+    const res = await this.getMapping(this.getIndexNameWorker())
+    const mappingProperties =
+      res?.body[this.getIndexNameWorker()]?.mappings?.properties
+    await this.createIndexIfNotExists(
+      destinationIndex,
+      //copy mapping properties from worker index
+      mappingProperties,
+    )
+
+    await this.reIndex(this.getIndexNameWorker(), destinationIndex)
+    await this.deleteIndex(this.getIndexNameWorker())
+  }
+
+  async createIndexIfNotExists(indexName: string, mappingProperties: any) {
+    try {
+      await this.client.indices.get({
+        index: indexName,
+      })
+      logger.info(`index "${indexName}" already created`)
+    } catch (e) {
+      logger.warn(`index "${indexName}" is missing. creating...`)
+      await this.client.indices.create({
+        index: indexName,
+        body: {
+          mappings: {
+            properties: mappingProperties,
+          },
+        },
+      })
+      logger.info(`index "${indexName}" created`)
     }
   }
 
   /**
    * Accepts array of Services to bulk insert into elastic search.
    */
-  async bulk(services: Array<Service>): Promise<void> {
+  async bulk(
+    services: Array<Service>,
+    indexName: string = this.indexName,
+  ): Promise<void> {
     logger.info('Bulk insert', services)
 
     if (services.length) {
@@ -48,7 +159,7 @@ export class ElasticService {
       services.forEach((service) => {
         bulk.push({
           index: {
-            _index: this.indexName,
+            _index: indexName,
             _id: service.id,
           },
         })
@@ -57,11 +168,15 @@ export class ElasticService {
 
       await this.client.bulk({
         body: bulk,
-        index: this.indexName,
+        index: indexName,
       })
     }
 
     logger.debug('nothing to bulk insert')
+  }
+
+  async bulkWorker(services: Array<Service>) {
+    await this.bulk(services, this.getIndexNameWorker())
   }
 
   async fetchAll(
