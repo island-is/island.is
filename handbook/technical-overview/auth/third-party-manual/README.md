@@ -1,6 +1,6 @@
 # Auth Third Party's Development Manual
 
-# Table of Content
+## Table of Content
 
 1. [Audience](#audience)
 
