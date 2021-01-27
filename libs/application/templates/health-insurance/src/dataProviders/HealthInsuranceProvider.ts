@@ -5,26 +5,30 @@ import {
   FailedDataProviderResult,
 } from '@island.is/application/core'
 
-export class SjukratryggingarProvider extends BasicDataProvider {
-  type = 'SjukratryggingarProvider'
+export class HealthInsuranceProvider extends BasicDataProvider {
+  type = 'HealthInsuranceProvider'
 
   provide(application: Application): Promise<string> {
     const query = `query HealthInsuranceIsHealthInsured {
-      healthInsuranceIsHealthInsured(nationalId: "2811638099") 
+      healthInsuranceIsHealthInsured 
     }`
 
     return this.useGraphqlGateway(query)
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
-          return Promise.reject(response.errors)
+          return this.handleError()
         }
 
         return Promise.resolve(response.data?.healthInsuranceIsHealthInsured)
       })
-      .catch((e) => {
-        return Promise.reject(e)
+      .catch(() => {
+        return this.handleError()
       })
+  }
+
+  handleError() {
+    return Promise.resolve({})
   }
 
   onProvideError(result: string): FailedDataProviderResult {

@@ -181,7 +181,7 @@ export const m = defineMessages({
     description: 'Confirmation of studies must be submitted',
   },
   confirmationOfStudiesTooltip: {
-    id: 'hi.application:student.confirmationOfStudies',
+    id: 'hi.application:student.confirmationOfStudiesTooltip',
     defaultMessage:
       'You need to submit a copy of your Graduation certificate or a confirmation of completed credits for each semester.\n' +
       'Admission or enrollement letters are not sufficient.',
@@ -259,7 +259,7 @@ export const m = defineMessages({
     description: 'Former insurance entitlement',
   },
   formerInsuranceEntitlementTooltip: {
-    id: 'hi.application:formerInsurance.entitlement',
+    id: 'hi.application:formerInsurance.entitlementTooltip',
     defaultMessage:
       'Most likely yes if you are still employed/receiving unemployment benefits, pension, benefits in cash or paternity/maternity benefits from your former country of insurance.',
     description: 'Former insurance entitlement tooltip',
@@ -305,17 +305,17 @@ export const m = defineMessages({
     description: 'Confirm and submit your application',
   },
   additionalInfo: {
-    id: 'hi.application.hasAdditionalRemarks',
+    id: 'hi.application:hasAdditionalRemarks',
     defaultMessage: 'Do you have any additional information or remarks?',
     description: 'Do you have any additional information or remarks?',
   },
   additionalRemarks: {
-    id: 'hi.application.additionalRemarks',
+    id: 'hi.application:additionalRemarks',
     defaultMessage: 'Additional information or remarks',
     description: 'Remarks or additional information',
   },
   additionalRemarksPlaceholder: {
-    id: 'hi.application.additionalRemarks.placeholder',
+    id: 'hi.application:additionalRemarks.placeholder',
     defaultMessage: 'Enter your text here',
     description: 'Enter your text here',
   },
@@ -440,5 +440,16 @@ export const m = defineMessages({
     id: 'hi.application:activeApplication.buttonText',
     defaultMessage: 'See status',
     description: 'See status',
+  },
+  oldPendingApplicationDescription: {
+    id: 'hi.application:activeApplication.description',
+    defaultMessage:
+      'You have already submitted an application for health insurance. Your application number is **{applicationNumber}**. Please contact the Icelandic Health Insurance if you have any questions.',
+    description: 'Old active application description',
+  },
+  oldPendingApplicationButtonText: {
+    id: 'hi.application:activeApplication.buttonText',
+    defaultMessage: 'Contact info',
+    description: 'Contact info',
   },
 })
