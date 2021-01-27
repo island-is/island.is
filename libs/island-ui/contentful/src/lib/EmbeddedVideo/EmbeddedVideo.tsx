@@ -14,9 +14,35 @@ import * as styles from './EmbeddedVideo.treat'
 export interface EmbeddedVideoProps {
   title?: string
   url: string
+  locale?: string
 }
 
-const EmbeddedVideo: FC<EmbeddedVideoProps> = ({ title, url }) => {
+const Texts = ({ termsUrl = '#' }) => ({
+  is: {
+    message: (
+      <Text variant="intro">
+        Þetta efni er hýst af þriðja aðila. Með því að birta efnið samþykkir þú
+        {` `}
+        <a href={termsUrl}>skilmála</a> þeirra.
+      </Text>
+    ),
+    remember: `Muna þessa stillingu.`,
+    view: `Birta`,
+  },
+  en: {
+    message: (
+      <Text variant="intro">
+        This content is hosted by a third party. By viewing it you accept their
+        {` `}
+        <a href={termsUrl}>terms and conditions</a>.
+      </Text>
+    ),
+    remember: `Remember this choice.`,
+    view: `View`,
+  },
+})
+
+const EmbeddedVideo: FC<EmbeddedVideoProps> = ({ title, url, locale }) => {
   const [allowed, setAllowed] = useState<boolean>(false)
   const [embedUrl, setEmbedUrl] = useState<string | null>(null)
   const [termsUrl, setTermsUrl] = useState<string>(null)
@@ -53,7 +79,6 @@ const EmbeddedVideo: FC<EmbeddedVideoProps> = ({ title, url }) => {
 
   useEffect(() => {
     if (type) {
-      console.log('setting true...')
       setItemKey(`ALLOW_EMBEDDED_VIDEO_${type}`)
     }
   }, [type])
@@ -71,6 +96,14 @@ const EmbeddedVideo: FC<EmbeddedVideoProps> = ({ title, url }) => {
     return null
   }
 
+  let textSettings = { termsUrl }
+
+  const TextsData = Texts(textSettings)
+
+  const texts = Object.prototype.hasOwnProperty.call(TextsData, locale)
+    ? TextsData[locale]
+    : TextsData['is']
+
   return (
     <>
       {allowed && (
@@ -87,63 +120,60 @@ const EmbeddedVideo: FC<EmbeddedVideoProps> = ({ title, url }) => {
       )}
       {!allowed && (
         <Box
-          padding={[3, 3, 6, 6, 10]}
+          borderRadius="large"
+          paddingY={4}
+          paddingX={[3, 3, 3, 3, 4]}
           display="inlineFlex"
           justifyContent="center"
           alignItems="center"
           flexDirection="column"
           background="blue100"
         >
-          <Stack space={3}>
-            <Box>
-              <LinkContext.Provider
-                value={{
-                  linkRenderer: (href, children) => (
-                    <a
-                      className={styles.link}
-                      href={href}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    >
-                      {children}
-                    </a>
-                  ),
-                }}
-              >
-                <Text variant="intro">
-                  Þetta myndband er hýst af þriðja aðila. Með því að birta þetta
-                  efni samþykkir þú <a href={termsUrl}>skilmála þeirra</a>.
-                </Text>
-              </LinkContext.Provider>
-            </Box>
-            <Box>
-              <Button
-                onClick={() => setAllowed(true)}
-                iconType="filled"
-                icon="arrowForward"
-              >
-                Birta
-              </Button>
-            </Box>
-            <Box>
-              <Controller
-                name="contentAllowed"
-                defaultValue={false}
-                control={control}
-                rules={{ required: false }}
-                render={({ value, onChange }) => (
-                  <Checkbox
-                    label="Muna þessa stillingu framvegis."
-                    checked={value}
-                    onChange={(e) => {
-                      onChange(e.target.checked)
-                      localStorage.setItem(itemKey, 'true')
-                    }}
-                  />
-                )}
-              />
-            </Box>
-          </Stack>
+          <LinkContext.Provider
+            value={{
+              linkRenderer: (href, children) => (
+                <a
+                  className={styles.link}
+                  href={href}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  {children}
+                </a>
+              ),
+            }}
+          >
+            <Stack space={3}>
+              <Box>{texts.message}</Box>
+              <Box>
+                <Button
+                  onClick={() => setAllowed(true)}
+                  iconType="filled"
+                  icon="playCircle"
+                >
+                  {texts.view}
+                </Button>
+              </Box>
+              <Box>
+                <Controller
+                  name="contentAllowed"
+                  defaultValue={false}
+                  control={control}
+                  rules={{ required: false }}
+                  render={({ value, onChange }) => (
+                    <Checkbox
+                      label={texts.remember}
+                      checked={value}
+                      onChange={(e) => {
+                        onChange(e.target.checked)
+                        localStorage.setItem(itemKey, 'true')
+                      }}
+                    />
+                  )}
+                />
+              </Box>
+            </Stack>
+          </LinkContext.Provider>
         </Box>
       )}
     </>
