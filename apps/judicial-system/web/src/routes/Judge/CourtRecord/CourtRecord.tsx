@@ -268,21 +268,17 @@ export const CourtRecord: React.FC = () => {
                 Dómskjöl
               </Text>
             </Box>
-            <GridRow>
-              <GridColumn span="6/7">
-                <CourtDocuments
-                  title="Krafa lögreglu"
-                  tagText="Þingmerkt nr. 1"
-                  tagVariant="darkerBlue"
-                  text="Rannsóknargögn málsins liggja frammi."
-                  caseId={workingCase.id}
-                  selectedCourtDocuments={workingCase.courtDocuments || []}
-                  onUpdateCase={updateCase}
-                  setWorkingCase={setWorkingCase}
-                  workingCase={workingCase}
-                />
-              </GridColumn>
-            </GridRow>
+            <CourtDocuments
+              title="Krafa lögreglu"
+              tagText="Þingmerkt nr. 1"
+              tagVariant="darkerBlue"
+              text="Rannsóknargögn málsins liggja frammi."
+              caseId={workingCase.id}
+              selectedCourtDocuments={workingCase.courtDocuments || []}
+              onUpdateCase={updateCase}
+              setWorkingCase={setWorkingCase}
+              workingCase={workingCase}
+            />
           </Box>
           <Box component="section" marginBottom={8}>
             <Box marginBottom={1}>

@@ -31,20 +31,30 @@ export class AccessService {
 
   /** Gets all admins with paging */
   async findAndCountAll(
+    searchString: string,
     page: number,
     count: number,
   ): Promise<{ rows: AdminAccess[]; count: number } | null> {
     this.logger.debug(
-      `Geting admin list with page "${page}" and count "${count}"`,
+      `Geting admin list with page "${page}" and count "${count} with searchString "${searchString}""`,
     )
 
     page--
     const offset = page * count
-    return this.adminAccessModel.findAndCountAll({
-      limit: count,
-      offset: offset,
-      distinct: true,
-    })
+    if (searchString) {
+      return this.adminAccessModel.findAndCountAll({
+        limit: count,
+        offset: offset,
+        distinct: true,
+        where: { nationalId: searchString },
+      })
+    } else {
+      return this.adminAccessModel.findAndCountAll({
+        limit: count,
+        offset: offset,
+        distinct: true,
+      })
+    }
   }
 
   /** Creates a new admin */
