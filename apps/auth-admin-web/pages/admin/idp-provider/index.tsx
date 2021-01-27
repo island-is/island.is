@@ -9,25 +9,24 @@ import { IdpProviderDTO } from './../../../entities/dtos/idp-provider.dto'
 
 const Index: React.FC = () => {
   const router = useRouter()
-  
+
   const handleCancel = () => {
     router.back()
   }
 
   const handleIdpProviderSaved = (idpProviderSaved: IdpProvider) => {
-      if (idpProviderSaved.name)
-        router.back();    
+    if (idpProviderSaved.name) router.push('/admin/?tab=2')
   }
-  
-    return (
-      <ContentWrapper>
-          <IdpProviderCreateForm
-            handleCancel={handleCancel}
-            idpProvider={new IdpProviderDTO()}
-            handleSaveButtonClicked={handleIdpProviderSaved}
-          />
-      </ContentWrapper>
-    )
+
+  return (
+    <ContentWrapper>
+      <IdpProviderCreateForm
+        handleCancel={handleCancel}
+        idpProvider={new IdpProviderDTO()}
+        handleSaveButtonClicked={handleIdpProviderSaved}
+      />
+    </ContentWrapper>
+  )
 }
 export default Index
 

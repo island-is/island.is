@@ -32,7 +32,7 @@ export class IdpProviderService {
   }
 
   /** Gets Idp provider where name equals parameter */
-  async findByPk(
+  async find(
     searchString: string,
     page: number,
     count: number,

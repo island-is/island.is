@@ -12,6 +12,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common'
 import {
@@ -62,10 +63,10 @@ export class IdpProviderController {
     if (searchString) {
       const idps = await this.idpProviderService.find(searchString, page, count)
       return idps
+    } else {
+      const idps = await this.idpProviderService.findAndCountAll(page, count)
+      return idps
     }
-
-    const clients = await this.idpProviderService.findAndCountAll(page, count)
-    return clients
   }
 
   /** Finds available idp restrictions */

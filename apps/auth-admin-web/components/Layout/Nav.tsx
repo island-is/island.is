@@ -53,24 +53,9 @@ const Nav: React.FC = () => {
           </Link>
         </li>
         <li className="nav__container">
-          <Link href="/admin-users">
-            <a
-              className={
-                router?.pathname.includes('admin-users') ? 'active' : ''
-              }
-            >
-              Admin users
-            </a>
-          </Link>
-        </li>
-        <li className="nav__container">
-          <Link href="/admin/idp-provider">
-            <a
-              className={
-                router?.pathname.includes('admin-users') ? 'active' : ''
-              }
-            >
-              Idp providers
+          <Link href="/admin">
+            <a className={router?.pathname.includes('admin') ? 'active' : ''}>
+              Admin control
             </a>
           </Link>
         </li>

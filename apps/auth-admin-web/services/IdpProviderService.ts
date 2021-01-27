@@ -5,17 +5,18 @@ import { BaseService } from './BaseService'
 export class IdpProviderService extends BaseService {
   /** Gets all IDP Providers */
   static findAndCountAll(
-    searhString: string,
+    searchString: string,
     page: number,
     count: number,
   ): Promise<{ rows: IdpProvider[]; count: number } | null> {
+    console.log('ENTERING FUNCTION ----- ')
     return BaseService.GET(
-      `idp-provider?searchstring=${searhString}&page=${page}&count=${count}`,
+      `idp-provider/?searchString=${searchString}&page=${page}&count=${count}`,
     )
   }
 
   /** Gets an IDP Provider by name */
-  static findByName(name: string): Promise<IdpProvider[] | null> {
+  static findByName(name: string): Promise<IdpProvider | null> {
     return BaseService.GET(`idp-provider/${encodeURIComponent(name)}`)
   }
 
@@ -29,7 +30,7 @@ export class IdpProviderService extends BaseService {
     name: string,
     idpProvider: IdpProviderDTO,
   ): Promise<IdpProvider | null> {
-    return BaseService.POST(
+    return BaseService.PUT(
       `idp-provider/${encodeURIComponent(name)}`,
       idpProvider,
     )

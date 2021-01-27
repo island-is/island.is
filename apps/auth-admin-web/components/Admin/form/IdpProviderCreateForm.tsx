@@ -94,7 +94,7 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
 
                 <div className="idp-provider-create-form__container__field">
                   <label className="idp-provider-create-form__label">
-                    Description
+                    Label
                   </label>
                   <input
                     type="text"
@@ -104,8 +104,8 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     name="idp.description"
                     defaultValue={idp.description ?? ''}
                     className="idp-provider-create-form__input"
-                    title="Short description about this Identity Provider"
-                    placeholder="Login with an App from Example Firm"
+                    title="Short description about this Identity Provider. This will be used as an label in the IDP Restriction form"
+                    placeholder="App from Example Firm"
                   />
                   <ErrorMessage
                     as="span"
@@ -113,7 +113,7 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     name="idp.description"
                     message="Description is required"
                   />
-                  <HelpBox helpText="Login with an App from Example Firm" />
+                  <HelpBox helpText="Short description about this Identity Provider. This will be used as an label in the IDP Restriction form" />
                 </div>
 
                 <div className="idp-provider-create-form__container__field">
@@ -148,7 +148,7 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     className="idp-provider-create-form__input"
                     name="idp.level"
                     ref={register({ required: true, min: 1, max: 4 })}
-                    defaultValue={idp.helptext}
+                    defaultValue={idp.level}
                     placeholder="4"
                     title="The security level of this Identity Provider. Between 1 and 4. 4 meaning that this provider provides the highest security and 1 if this provider provides low security"
                   />

@@ -51,7 +51,8 @@ class IdpProvidersList extends Component {
   }
 
   confirmDelete = async (name: string): Promise<void> => {
-    this.setState({ idpToRemove: name })
+    console.log(name)
+    this.setState({ idpProviderToRemove: name })
     this.setState({ modalIsOpen: true })
   }
 
