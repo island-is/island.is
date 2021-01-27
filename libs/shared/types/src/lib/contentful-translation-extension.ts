@@ -5,3 +5,10 @@ export interface DictArray extends Record<string, any> {
   description: string
   deprecated: boolean
 }
+
+export interface Message {
+  defaultMessage: string
+  description: string
+}
+
+export type MessageDict = Record<string, Message>

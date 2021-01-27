@@ -3,18 +3,16 @@ import glob from 'glob'
 import spawn from 'cross-spawn'
 import { createClient } from 'contentful-management'
 import { Entry } from 'contentful-management/dist/typings/entities/entry'
-import { DictArray } from '@island.is/shared/types'
+import { MessageDict } from '@island.is/shared/types'
 import { logger } from '@island.is/logging'
-import { isEmpty } from 'lodash'
 
-type MessageDict = Record<string, Message>
+import {
+  DEFAULT_LOCALE,
+  translationsFromContentful,
+} from './translationsFromContentful'
+import { translationsFromLocal } from './translationsFromLocal'
+import { mergeArray } from './mergeArray'
 
-export interface Message {
-  defaultMessage: string
-  description: string
-}
-
-const DEFAULT_LOCALE = 'is-IS'
 const { CONTENTFUL_MANAGEMENT_ACCESS_TOKEN, CONTENTFUL_SPACE } = process.env
 
 if (!CONTENTFUL_SPACE || !CONTENTFUL_MANAGEMENT_ACCESS_TOKEN) {
@@ -84,63 +82,6 @@ const createNamespace = (id: string, messages: MessageDict) =>
         message: err.message,
       })
     })
-
-// Local array doesn't contain all the locales translation. We just set the is-IS
-// translation using the defaultMessage, the rest has to be done through contentful
-export const mergeArray = (
-  local: Partial<DictArray>[],
-  contentful: DictArray[],
-  locales: { id: string }[],
-) => [
-  ...local.map((localObj) => {
-    const contentfulValue = contentful.find(
-      (contentfulObj) => contentfulObj.id === localObj.id,
-    )
-
-    return {
-      id: localObj.id,
-      defaultMessage: localObj.defaultMessage,
-      description: localObj.description,
-      ...locales.reduce((acc, cur) => {
-        const contentfulMessage = (contentfulValue as Record<string, any>)?.[
-          cur.id
-        ]
-        const localMessage = (localObj as Record<string, string>)?.[cur.id]
-        const message = !isEmpty(contentfulMessage)
-          ? contentfulMessage
-          : !isEmpty(localMessage)
-          ? localMessage
-          : ''
-
-        return {
-          ...acc,
-          [cur.id]: message,
-          deprecated: false,
-        }
-      }, {}),
-    }
-  }),
-  ...contentful
-    .filter(
-      (contentfulObj) =>
-        !local.some((localObj) => localObj.id === contentfulObj.id),
-    )
-    .map((contentfulObj) => ({
-      ...contentfulObj,
-      deprecated: true,
-    })),
-]
-
-export const translationsFromLocal = (messages: MessageDict) =>
-  Object.keys(messages).map((item) => ({
-    id: item,
-    defaultMessage: messages[item].defaultMessage,
-    description: messages[item].description,
-    [DEFAULT_LOCALE]: messages[item].defaultMessage,
-  }))
-
-export const translationsFromContentful = (namespace: Entry) =>
-  namespace?.fields?.strings?.[DEFAULT_LOCALE] ?? []
 
 export const updateNamespace = async (
   namespace: Entry,

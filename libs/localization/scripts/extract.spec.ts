@@ -1,8 +1,6 @@
-import {
-  translationsFromLocal,
-  translationsFromContentful,
-  mergeArray,
-} from './extract'
+import { translationsFromContentful } from './translationsFromContentful'
+import { translationsFromLocal } from './translationsFromLocal'
+import { mergeArray } from './mergeArray'
 
 describe('extractFunctions', () => {
   const locales = [{ id: 'is-IS' }, { id: 'en' }]
