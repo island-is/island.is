@@ -33,7 +33,6 @@ export class IdpProviderService {
     idpProvider: IdpProviderDTO,
     name: string,
   ): Promise<[number, IdpRestriction[]] | null> {
-    delete idpProvider.name
     this.logger.debug('Updating a idp provider: ' + idpProvider)
     return this.idpRestriction.update(
       { ...idpProvider },

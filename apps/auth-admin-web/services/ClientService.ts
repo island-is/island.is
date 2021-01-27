@@ -254,11 +254,6 @@ export class ClientService extends BaseService {
     )
   }
 
-  /** Get IDP restrictions  */
-  static async findAllIdpRestrictions(): Promise<IdpRestriction[] | null> {
-    return BaseService.GET(`idp-restriction`)
-  }
-
   static async getClientsCsv(): Promise<any[] | null> {
     const result = await BaseService.GET(
       `clients?page=${1}&count=${Number.MAX_SAFE_INTEGER}`,

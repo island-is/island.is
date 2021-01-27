@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import HelpBox from '../../common/HelpBox'
-import NoActiveConnections from '../../common/NoActiveConnections'
 import { ClientService } from '../../../services/ClientService'
 import { IdpRestriction } from './../../../entities/models/idp-restriction.model'
+import { IdpProviderService } from 'apps/auth-admin-web/services/IdpProviderService'
+import { IdpProvider } from 'apps/auth-admin-web/entities/models/IdpProvider.model'
 
 interface Props {
   clientId: string
@@ -13,7 +14,7 @@ interface Props {
 }
 
 const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
-  const [idpRestrictions, setIdpRestrictions] = useState<IdpRestriction[]>([])
+  const [idpRestrictions, setIdpRestrictions] = useState<IdpProvider[]>([])
   const [allowAll, setAllowAll] = useState<boolean>(
     props.restrictions.length === 0,
   )
@@ -23,9 +24,9 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
   }, [])
 
   const getIdpRestrictions = async () => {
-    const restrictions = await ClientService.findAllIdpRestrictions()
-    if (restrictions) {
-      setIdpRestrictions(restrictions)
+    const idpProviders = await IdpProviderService.findAll()
+    if (idpProviders) {
+      setIdpRestrictions(idpProviders)
     }
   }
 
