@@ -346,7 +346,7 @@ export const slices = gql`
     }
   }
 
-  fragment SingleColumnTextFields on SingleColumnText {
+  fragment OneColumnTextFields on OneColumnText {
     __typename
     id
     title
@@ -382,6 +382,6 @@ export const slices = gql`
     ...ConnectedComponentFields
     ...TwoColumnTextFields
     ...OfficesSlice
-    ...SingleColumnTextFields
+    ...OneColumnTextFields
   }
 `

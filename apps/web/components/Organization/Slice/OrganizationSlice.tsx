@@ -12,7 +12,7 @@ import HeadingSlice from '@island.is/web/components/Organization/Slice/Heading/H
 import FeaturedArticlesSlice from '@island.is/web/components/Organization/Slice/FeaturedArticles/FeaturedArticlesSlice'
 import TwoColumnTextSlice from '@island.is/web/components/Organization/Slice/TwoColumnText/TwoColumnTextSlice'
 import OfficesSlice from '@island.is/web/components/Organization/Slice/Offices/OfficesSlice'
-import SingleColumnTextSlice from '@island.is/web/components/Organization/Slice/SingleColumnText/SingleColumnTextSlice'
+import OneColumnTextSlice from '@island.is/web/components/Organization/Slice/OneColumnText/OneColumnTextSlice'
 
 interface OrganizationSliceProps {
   slice: Slice
@@ -36,8 +36,8 @@ const OrganizationSlice: FC<OrganizationSliceProps> = ({
       return <TwoColumnTextSlice slice={slice} />
     case 'Offices':
       return <OfficesSlice slice={slice} />
-    case 'SingleColumnText':
-      return <SingleColumnTextSlice slice={slice} />
+    case 'OneColumnText':
+      return <OneColumnTextSlice slice={slice} />
     default:
       return <></>
   }

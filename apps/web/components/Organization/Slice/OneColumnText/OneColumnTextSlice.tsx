@@ -7,16 +7,16 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './SingleColumnTextSlice.treat'
+import * as styles from './OneColumnTextSlice.treat'
 import Markdown from 'markdown-to-jsx'
-import { SingleColumnText } from '@island.is/web/graphql/schema'
+import { OneColumnText } from '@island.is/web/graphql/schema'
 import Link from 'next/link'
 
 interface SliceProps {
-  slice: SingleColumnText
+  slice: OneColumnText
 }
 
-export const SingleColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
+export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
   return (
     <>
       <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
@@ -29,8 +29,8 @@ export const SingleColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
           >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '12/12']}>
-                <h3 className={styles.singleColumnSliceTitle}>{slice.title}</h3>
-                <div className={styles.singleColumnSliceContent}>
+                <h3 className={styles.oneColumnSliceTitle}>{slice.title}</h3>
+                <div className={styles.oneColumnSliceContent}>
                   <Markdown>{slice.content}</Markdown>
                 </div>
                 {slice.link && (
@@ -54,4 +54,4 @@ export const SingleColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
   )
 }
 
-export default SingleColumnTextSlice
+export default OneColumnTextSlice
