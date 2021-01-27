@@ -169,13 +169,13 @@ export function formatAppeal(
   }
 }
 
-export function formatHeadsUpSmsNotification(
+export function formatCourtHeadsUpSmsNotification(
   prosecutorName: string,
   arrestDate: Date,
   requestedCourtDate: Date,
 ): string {
   // Prosecutor
-  const prosecutorText = ` Ákærandi: ${prosecutorName}.`
+  const prosecutorText = ` Ákærandi: ${prosecutorName || 'Ekki skráður'}.`
 
   // Arrest date
   const arrestDateText = arrestDate
@@ -189,22 +189,22 @@ export function formatHeadsUpSmsNotification(
   const requestedCourtDateText = requestedCourtDate
     ? ` ÓE fyrirtöku ${formatDate(requestedCourtDate, 'Pp').replace(
         ' ',
-        ' eftir kl. ',
+        ', eftir kl. ',
       )}.`
     : ''
 
   return `Ný gæsluvarðhaldskrafa í vinnslu.${prosecutorText}${arrestDateText}${requestedCourtDateText}`
 }
 
-export function formatReadyForCourtSmsNotification(
+export function formatCourtReadyForCourtSmsNotification(
   prosecutorName: string,
   court: string,
 ) {
   // Prosecutor
-  const prosecutorText = ` Ákærandi: ${prosecutorName}.`
+  const prosecutorText = ` Ákærandi: ${prosecutorName || 'Ekki skráður'}.`
 
   // Court
-  const courtText = ` Dómstóll: ${court}.`
+  const courtText = ` Dómstóll: ${court || 'Ekki skráður'}.`
 
   return `Gæsluvarðhaldskrafa tilbúin til afgreiðslu.${prosecutorText}${courtText}`
 }
@@ -331,6 +331,27 @@ export function formatPrisonRulingEmailNotification(
         )}`
       : ''
   }<br /><br />${judgeName} ${judgeTitle}`
+}
+
+export function formatCourtRevokedSmsNotification(
+  prosecutorName: string,
+  requestedCourtDate: Date,
+  courtDate: Date,
+) {
+  // Prosecutor
+  const prosecutorText = ` Ákærandi: ${prosecutorName || 'Ekki skráður'}.`
+
+  // Court date
+  const courtDateText = courtDate
+    ? ` Fyrirtökutími: ${formatDate(courtDate, 'Pp').replace(' ', ', kl. ')}.`
+    : requestedCourtDate
+    ? ` ÓVE fyrirtöku ${formatDate(requestedCourtDate, 'Pp').replace(
+        ' ',
+        ', eftir kl. ',
+      )}.`
+    : ''
+
+  return `Gæsluvarðhaldskrafa afturkölluð.${prosecutorText}${courtDateText}`
 }
 
 export function stripHtmlTags(html: string): string {

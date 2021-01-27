@@ -15,13 +15,14 @@ import { environment } from '../../../environments'
 import {
   formatProsecutorCourtDateEmailNotification,
   formatCourtDateNotificationCondition,
-  formatHeadsUpSmsNotification,
+  formatCourtHeadsUpSmsNotification,
   formatPrisonCourtDateEmailNotification,
-  formatReadyForCourtSmsNotification,
+  formatCourtReadyForCourtSmsNotification,
   generateRequestPdf,
   formatDefenderCourtDateEmailNotification,
   stripHtmlTags,
   formatPrisonRulingEmailNotification,
+  formatCourtRevokedSmsNotification,
 } from '../../formatters'
 import { Case } from '../case'
 import { SendNotificationDto } from './dto'
@@ -44,6 +45,35 @@ export class NotificationService {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
+
+  private async existsCourtNotification(caseId: string): Promise<boolean> {
+    try {
+      const notifications: Notification[] = await this.notificationModel.findAll(
+        {
+          where: {
+            caseId,
+            type: [NotificationType.HEADS_UP, NotificationType.READY_FOR_COURT],
+          },
+        },
+      )
+
+      return notifications.some((notification) => {
+        if (!notification.recipients) {
+          return false
+        }
+
+        const recipients: Recipient[] = JSON.parse(notification.recipients)
+
+        return recipients.some(
+          (recipient) =>
+            recipient.address === environment.notifications.judgeMobileNumber &&
+            recipient.success,
+        )
+      })
+    } catch {
+      return false
+    }
+  }
 
   private async sendSms(smsText: string): Promise<Recipient> {
     // Production or local development with judge mobile number
@@ -141,12 +171,9 @@ export class NotificationService {
 
   /* HEADS_UP notifications */
 
-  private async sendHeadsUpSmsToCourt(
-    existingCase: Case,
-    user: User,
-  ): Promise<Recipient> {
-    const smsText = formatHeadsUpSmsNotification(
-      existingCase.prosecutor?.name || user?.name,
+  private async sendHeadsUpSmsToCourt(existingCase: Case): Promise<Recipient> {
+    const smsText = formatCourtHeadsUpSmsNotification(
+      existingCase.prosecutor?.name,
       existingCase.arrestDate,
       existingCase.requestedCourtDate,
     )
@@ -156,9 +183,8 @@ export class NotificationService {
 
   private async sendHeadsUpNotifications(
     existingCase: Case,
-    user: User,
   ): Promise<SendNotificationResponse> {
-    const recipient = await this.sendHeadsUpSmsToCourt(existingCase, user)
+    const recipient = await this.sendHeadsUpSmsToCourt(existingCase)
 
     return this.recordNotification(existingCase.id, NotificationType.HEADS_UP, [
       recipient,
@@ -167,12 +193,9 @@ export class NotificationService {
 
   /* READY_FOR_COURT notifications */
 
-  private sendReadyForCourtSmsToCourt(
-    existingCase: Case,
-    user: User,
-  ): Promise<Recipient> {
-    const smsText = formatReadyForCourtSmsNotification(
-      existingCase.prosecutor?.name || user?.name,
+  private sendReadyForCourtSmsToCourt(existingCase: Case): Promise<Recipient> {
+    const smsText = formatCourtReadyForCourtSmsNotification(
+      existingCase.prosecutor?.name,
       existingCase.court,
     )
 
@@ -181,9 +204,8 @@ export class NotificationService {
 
   private async sendReadyForCourtEmailToProsecutor(
     existingCase: Case,
-    user: User,
   ): Promise<Recipient> {
-    const pdf = await generateRequestPdf(existingCase, user)
+    const pdf = await generateRequestPdf(existingCase)
 
     const subject = `Krafa í máli ${existingCase.policeCaseNumber}`
     const html = 'Sjá viðhengi'
@@ -196,8 +218,8 @@ export class NotificationService {
     ]
 
     return this.sendEmail(
-      existingCase.prosecutor?.name || user?.name,
-      existingCase.prosecutor?.email || user?.email,
+      existingCase.prosecutor?.name,
+      existingCase.prosecutor?.email,
       subject,
       html,
       attachments,
@@ -206,11 +228,10 @@ export class NotificationService {
 
   private async sendReadyForCourtNotifications(
     existingCase: Case,
-    user: User,
   ): Promise<SendNotificationResponse> {
     const recipients = await Promise.all([
-      this.sendReadyForCourtEmailToProsecutor(existingCase, user),
-      this.sendReadyForCourtSmsToCourt(existingCase, user),
+      this.sendReadyForCourtEmailToProsecutor(existingCase),
+      this.sendReadyForCourtSmsToCourt(existingCase),
     ])
 
     return this.recordNotification(
@@ -374,6 +395,36 @@ export class NotificationService {
     ])
   }
 
+  /* REVOKED notifications */
+
+  private async sendRevokedSmsToCourt(existingCase: Case): Promise<Recipient> {
+    const smsText = formatCourtRevokedSmsNotification(
+      existingCase.prosecutor?.name,
+      existingCase.requestedCourtDate,
+      existingCase.courtDate,
+    )
+
+    return await this.sendSms(smsText)
+  }
+
+  private async sendRevokedNotifications(
+    existingCase: Case,
+  ): Promise<SendNotificationResponse> {
+    const promises: Promise<Recipient>[] = []
+
+    if (this.existsCourtNotification(existingCase.id)) {
+      promises.push(this.sendRevokedSmsToCourt(existingCase))
+    }
+
+    const recipients = await Promise.all(promises)
+
+    return this.recordNotification(
+      existingCase.id,
+      NotificationType.REVOKED,
+      recipients,
+    )
+  }
+
   /* API */
 
   getAllCaseNotifications(existingCase: Case): Promise<Notification[]> {
@@ -388,7 +439,6 @@ export class NotificationService {
   sendCaseNotification(
     notification: SendNotificationDto,
     existingCase: Case,
-    user: User,
   ): Promise<SendNotificationResponse> {
     this.logger.debug(
       `Sending ${notification.type} notification for case ${existingCase.id}`,
@@ -396,13 +446,15 @@ export class NotificationService {
 
     switch (notification.type) {
       case NotificationType.HEADS_UP:
-        return this.sendHeadsUpNotifications(existingCase, user)
+        return this.sendHeadsUpNotifications(existingCase)
       case NotificationType.READY_FOR_COURT:
-        return this.sendReadyForCourtNotifications(existingCase, user)
+        return this.sendReadyForCourtNotifications(existingCase)
       case NotificationType.COURT_DATE:
         return this.sendCourtDateNotifications(existingCase)
       case NotificationType.RULING:
         return this.sendRulingNotifications(existingCase)
+      case NotificationType.REVOKED:
+        return this.sendRevokedNotifications(existingCase)
     }
   }
 }

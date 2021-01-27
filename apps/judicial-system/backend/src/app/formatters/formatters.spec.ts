@@ -11,13 +11,14 @@ import {
   formatProsecutorCourtDateEmailNotification,
   formatCourtDateNotificationCondition,
   formatCustodyProvisions,
-  formatHeadsUpSmsNotification,
+  formatCourtHeadsUpSmsNotification,
   formatProsecutorDemands,
-  formatReadyForCourtSmsNotification,
+  formatCourtReadyForCourtSmsNotification,
   formatPrisonCourtDateEmailNotification,
   stripHtmlTags,
   formatDefenderCourtDateEmailNotification,
   formatPrisonRulingEmailNotification,
+  formatCourtRevokedSmsNotification,
 } from './formatters'
 
 describe('formatProsecutorDemands', () => {
@@ -584,7 +585,7 @@ describe('formatHeadsUpSmsNotification', () => {
     const requestedCourtDate = new Date('2020-11-25T09:15')
 
     // Act
-    const res = formatHeadsUpSmsNotification(
+    const res = formatCourtHeadsUpSmsNotification(
       prosecutorName,
       arrestDate,
       requestedCourtDate,
@@ -592,7 +593,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Ný gæsluvarðhaldskrafa í vinnslu. Ákærandi: Árni Ákærandi. Viðkomandi handtekinn 24.11.2020, kl. 13:22. ÓE fyrirtöku 25.11.2020 eftir kl. 09:15.',
+      'Ný gæsluvarðhaldskrafa í vinnslu. Ákærandi: Árni Ákærandi. Viðkomandi handtekinn 24.11.2020, kl. 13:22. ÓE fyrirtöku 25.11.2020, eftir kl. 09:15.',
     )
   })
 
@@ -601,7 +602,7 @@ describe('formatHeadsUpSmsNotification', () => {
     const prosecutorName = 'Árni Ákærandi'
 
     // Act
-    const res = formatHeadsUpSmsNotification(
+    const res = formatCourtHeadsUpSmsNotification(
       prosecutorName,
       undefined,
       undefined,
@@ -610,6 +611,20 @@ describe('formatHeadsUpSmsNotification', () => {
     // Assert
     expect(res).toBe(
       'Ný gæsluvarðhaldskrafa í vinnslu. Ákærandi: Árni Ákærandi.',
+    )
+  })
+
+  test('should format heads up notification with missing prosecutor', () => {
+    // Act
+    const res = formatCourtHeadsUpSmsNotification(
+      undefined,
+      undefined,
+      undefined,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Ný gæsluvarðhaldskrafa í vinnslu. Ákærandi: Ekki skráður.',
     )
   })
 })
@@ -621,11 +636,21 @@ describe('formatReadyForCourtSmsNotification', () => {
     const court = 'Héraðsdómur Reykjavíkur'
 
     // Act
-    const res = formatReadyForCourtSmsNotification(prosecutorName, court)
+    const res = formatCourtReadyForCourtSmsNotification(prosecutorName, court)
 
     // Assert
     expect(res).toBe(
       'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Reykjavíkur.',
+    )
+  })
+
+  test('should format ready for court SMS notification with missing prosecutor and court', () => {
+    // Act
+    const res = formatCourtReadyForCourtSmsNotification(undefined, undefined)
+
+    // Assert
+    expect(res).toBe(
+      'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Ákærandi: Ekki skráður. Dómstóll: Ekki skráður.',
     )
   })
 })
@@ -963,6 +988,57 @@ describe('formatPrisonRulingEmailNotification', () => {
     expect(res).toBe(
       '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Ákærandi: Siggi Sakó<br />Verjandi: Skúli Skjöldur<br /><br /><strong>Úrskurðarorð</strong><br /><br />Kröfu um að kærði, Biggi Börgler, kt. 241101-8760, sæti gæsluvarðhaldi er hafnað.<br /><br /><strong>Ákvörðun um kæru</strong><br />Kærði kærir úrskurðinn.<br />Sækjandi unir úrskurðinum.<br /><br />Dalli Dómari aðal dómarinn',
     )
+  })
+})
+
+describe('formatCourtRevokedSmsNotification', () => {
+  test('should format revoked sms with court date', () => {
+    // Arrange
+    const prosecutorName = 'Kiddi Kærari'
+    const requestedCourtDate = new Date('2021-01-20T11:10')
+    const courtDate = new Date('2021-12-20T11:30')
+
+    // Act
+    const res = formatCourtRevokedSmsNotification(
+      prosecutorName,
+      requestedCourtDate,
+      courtDate,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Gæsluvarðhaldskrafa afturkölluð. Ákærandi: Kiddi Kærari. Fyrirtökutími: 20.12.2021, kl. 11:30.',
+    )
+  })
+
+  test('should format revoked sms without court date', () => {
+    // Arrange
+    const prosecutorName = 'Kiddi Kærari'
+    const requestedCourtDate = new Date('2021-01-20T11:10')
+
+    // Act
+    const res = formatCourtRevokedSmsNotification(
+      prosecutorName,
+      requestedCourtDate,
+      undefined,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Gæsluvarðhaldskrafa afturkölluð. Ákærandi: Kiddi Kærari. ÓVE fyrirtöku 20.01.2021, eftir kl. 11:10.',
+    )
+  })
+
+  test('should format revoked sms without any info', () => {
+    // Act
+    const res = formatCourtRevokedSmsNotification(
+      undefined,
+      undefined,
+      undefined,
+    )
+
+    // Assert
+    expect(res).toBe('Gæsluvarðhaldskrafa afturkölluð. Ákærandi: Ekki skráður.')
   })
 })
 
