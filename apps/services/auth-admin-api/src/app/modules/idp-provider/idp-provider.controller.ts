@@ -16,9 +16,10 @@ import {
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
-  ApiOAuth2,
   ApiOkResponse,
+  ApiQuery,
   ApiTags,
+  getSchemaPath,
 } from '@nestjs/swagger'
 import { IdsAuthGuard } from '@island.is/auth-nest-tools'
 import { NationalIdGuard } from '../access/national-id-guard'
@@ -30,18 +31,48 @@ import { NationalIdGuard } from '../access/national-id-guard'
 export class IdpProviderController {
   constructor(private readonly idpProviderService: IdpProviderService) {}
 
-  /** Finds available idp providers */
+  /** Gets all idp restrictions and count of rows */
   @Get()
-  @ApiOkResponse({ type: [IdpRestriction] })
-  async findAll(): Promise<IdpRestriction[] | null> {
-    return await this.idpProviderService.findAll()
+  @ApiQuery({ name: 'searchString', required: false })
+  @ApiQuery({ name: 'page', required: true })
+  @ApiQuery({ name: 'count', required: true })
+  @ApiOkResponse({
+    schema: {
+      allOf: [
+        {
+          properties: {
+            count: {
+              type: 'number',
+              example: 1,
+            },
+            rows: {
+              type: 'array',
+              items: { $ref: getSchemaPath(IdpRestriction) },
+            },
+          },
+        },
+      ],
+    },
+  })
+  async findAndCountAll(
+    @Query('searchString') searchString: string,
+    @Query('page') page: number,
+    @Query('count') count: number,
+  ): Promise<{ rows: IdpRestriction[]; count: number } | null> {
+    if (searchString) {
+      const idps = await this.idpProviderService.find(searchString, page, count)
+      return idps
+    }
+
+    const clients = await this.idpProviderService.findAndCountAll(page, count)
+    return clients
   }
 
   /** Finds available idp restrictions */
   @Get(':name')
   @ApiOkResponse({ type: IdpRestriction })
-  async find(@Param('name') name: string): Promise<IdpRestriction | null> {
-    return await this.idpProviderService.find(name)
+  async findByPk(@Param('name') name: string): Promise<IdpRestriction | null> {
+    return await this.idpProviderService.findByPk(name)
   }
 
   /** Adds new IDP provider */

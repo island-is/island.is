@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { IdpProviderDTO } from '../entities/dto/idp-provider.dto'
 import { IdpRestriction } from '../entities/models/idp-restriction.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Op, Sequelize, WhereOptions } from 'sequelize'
+import { Sequelize } from 'sequelize'
 
 @Injectable()
 export class IdpProviderService {
@@ -17,13 +17,47 @@ export class IdpProviderService {
   ) {}
 
   /** Gets all Idp Providers Types */
+  async findAndCountAll(
+    page: number,
+    count: number,
+  ): Promise<{ rows: IdpRestriction[]; count: number } | null> {
+    page--
+    const offset = page * count
+    this.logger.debug('Getting all idp providers')
+    return this.idpRestriction.findAndCountAll({
+      limit: count,
+      offset: offset,
+      distinct: true,
+    })
+  }
+
+  /** Gets Idp provider where name equals parameter */
+  async findByPk(
+    searchString: string,
+    page: number,
+    count: number,
+  ): Promise<{ rows: IdpRestriction[]; count: number } | null> {
+    page--
+    const offset = page * count
+    this.logger.debug(
+      'Getting all idp providers with search string: ' + searchString,
+    )
+    return this.idpRestriction.findAndCountAll({
+      limit: count,
+      offset: offset,
+      distinct: true,
+      where: { name: searchString },
+    })
+  }
+
+  /** Gets all Idp Providers Types */
   async findAll(): Promise<IdpRestriction[] | null> {
     this.logger.debug('Getting all idp providers')
     return this.idpRestriction.findAll()
   }
 
   /** Gets Idp Provider by name */
-  async find(name: string): Promise<IdpRestriction | null> {
+  async findByPk(name: string): Promise<IdpRestriction | null> {
     this.logger.debug('Getting all idp providers')
     return this.idpRestriction.findByPk(name)
   }

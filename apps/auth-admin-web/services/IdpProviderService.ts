@@ -4,12 +4,18 @@ import { BaseService } from './BaseService'
 
 export class IdpProviderService extends BaseService {
   /** Gets all IDP Providers */
-  static findAll(): Promise<IdpProvider[] | null> {
-    return BaseService.GET(`idp-provider`)
+  static findAndCountAll(
+    searhString: string,
+    page: number,
+    count: number,
+  ): Promise<{ rows: IdpProvider[]; count: number } | null> {
+    return BaseService.GET(
+      `idp-provider?searchstring=${searhString}&page=${page}&count=${count}`,
+    )
   }
 
   /** Gets an IDP Provider by name */
-  static find(name: string): Promise<IdpProvider[] | null> {
+  static findByName(name: string): Promise<IdpProvider[] | null> {
     return BaseService.GET(`idp-provider/${encodeURIComponent(name)}`)
   }
 
