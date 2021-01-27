@@ -160,6 +160,7 @@
     "libphonenumber-js": "1.7.53",
     "lodash": "4.17.19",
     "lottie-web": "5.7.5",
+    "markdown-to-jsx": "7.1.1",
     "miragejs": "0.1.40",
     "msw": "0.21.3",
     "nest-winston": "1.4.0",
