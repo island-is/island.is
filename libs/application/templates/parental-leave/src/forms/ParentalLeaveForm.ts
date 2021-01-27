@@ -679,6 +679,7 @@ export const ParentalLeaveForm: Form = buildForm({
         buildSubSection({
           id: 'shareInformation',
           title: mm.shareInformation.subSection,
+          condition: (answers) => answers.otherParent !== NO,
           children: [
             buildRadioField({
               id: 'shareInformationWithOtherParent',

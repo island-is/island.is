@@ -1,14 +1,13 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { Service as IService } from '@island.is/api-catalogue/types'
-import { IsArray, IsEnum, IsString } from 'class-validator'
+import { IsArray, IsEnum, IsObject, IsString } from 'class-validator'
 import {
   AccessCategory,
   DataCategory,
-  Environment,
   PricingCategory,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
-import { ServiceVersion } from './serviceVersion.model'
+import { ServiceEnvironment } from './serviceEnvironment.model'
 
 @ObjectType()
 export class Service implements IService {
@@ -48,11 +47,7 @@ export class Service implements IService {
   @IsEnum(AccessCategory)
   access!: Array<AccessCategory>
 
-  @Field(() => [Environment])
-  @IsEnum(Environment)
-  environments!: Array<Environment>
-
-  @Field(() => [ServiceVersion])
+  @Field(() => [ServiceEnvironment])
   @IsArray()
-  versions!: Array<ServiceVersion>
+  environments!: Array<ServiceEnvironment>
 }

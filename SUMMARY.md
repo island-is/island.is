@@ -73,7 +73,6 @@
 
 - [Air Discount Scheme](apps/air-discount-scheme/README.md)
 - [API](apps/api/README.md)
-- [API Catalogue](apps/api-catalogue/README.md)
 - [Application System](apps/application-system/README.md)
 - [[DEPRECATED] Gjafakort](apps/gjafakort/README.md)
 - [Judicial System](apps/judicial-system/README.md)
@@ -135,6 +134,9 @@
   - [Shared Form Fields](libs/shared/form-fields/README.md)
   - [Shared Mocking](libs/shared/mocking/README.md)
   - [Shared Types](libs/shared/types/README.md)
+- [Utils](libs/utils/README.md)
+  - [API Utils](libs/utils/api/README.md)
+- [VMST Client](libs/vmst-client/README.md)
 
 ## Misc
 

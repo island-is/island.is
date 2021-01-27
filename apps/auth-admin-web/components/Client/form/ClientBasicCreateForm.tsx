@@ -13,10 +13,11 @@ interface Props {
 
 interface FormOutput {
   client: ClientDTO
+  baseUrl: string
 }
 
 const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<ClientDTO>()
+  const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
   const { isSubmitting } = formState
   const [available, setAvailable] = useState<boolean>(false)
   const [clientIdLength, setClientIdLength] = useState<number>(0)
@@ -51,14 +52,13 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
       const dto = new ClientDTO()
       dto.clientType = data.client.clientType
       dto.clientId = data.client.clientId
-      dto.clientUri = data.client.clientUri
       dto.nationalId = data.client.nationalId
       dto.protocolType = 'oidc'
       dto.contactEmail = data.client.contactEmail
 
       const clientSaved = await create(dto)
       if (clientSaved) {
-        ClientService.setDefaults(clientSaved)
+        ClientService.setDefaults(clientSaved, data.baseUrl)
       }
     }
   }
@@ -83,33 +83,48 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
         client.requireClientSecret = false
         client.requirePkce = true
 
-        setClientTypeInfo('Authorization code flow + PKCE')
+        setClientTypeInfo(
+          `Authorization code flow + PKCE\n
+          A single-page application (spa) doesn't need to reload the page during its use and works within a browser, f.x. Google and Facebook.
+          Since it is running in the users browser, it cannot keep a secret.\n
+          <a href="todo#[spa]" target="_blank">more information</a>
+          `,
+        )
       }
 
       if (clientType === 'native') {
         client.requireClientSecret = false
         client.requirePkce = true
 
-        setClientTypeInfo('Authorization code flow + PKCE')
+        setClientTypeInfo(`Authorization code flow + PKCE\n
+        A native application is designed specifically for use on a particular platform or device. 
+        Since it runs on user´s devices it cannot keep a secret.\n
+        <a href="todo#[native]" target="_blank">more information</a>`)
       }
 
       if (clientType === 'web') {
         client.requireClientSecret = true
         client.requirePkce = false
 
-        setClientTypeInfo('Hybrid flow with client authentication')
+        setClientTypeInfo(`Hybrid flow with client authentication\n
+        A web application runs on a web server and is accessed by a web browser. Examples of common web applications are 
+        online banking and online retail sales. Is capable of keeping a secret.\n
+        <a href="todo#[web]" target="_blank">more information</a>`)
       }
 
       if (clientType === 'machine') {
         client.requireClientSecret = true
         client.requirePkce = false
 
-        setClientTypeInfo('Client credentials')
+        setClientTypeInfo(`Hybrid flow with client authentication\n
+        An application or service running on a confidential server. Is capable of keeping a secret.\n
+        <a href="todo#[machine]" target="_blank">more information</a>`)
       }
 
-      if (clientType === 'device') {
-        setClientTypeInfo('Device flow using external browser')
-      }
+      // Is commented out in the dropdown list as of now and is hence commented out
+      // if (clientType === 'device') {
+      //   setClientTypeInfo('Device flow using external browser')
+      // }
 
       setClientTypeSelected(true)
     } else {
@@ -153,12 +168,12 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       >
                         Native
                       </option>
-                      <option
+                      {/* <option
                         value="device"
                         selected={client.clientType === 'device'}
                       >
                         Device
-                      </option>
+                      </option> */}
                       <option
                         value="web"
                         selected={client.clientType === 'web'}
@@ -268,7 +283,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                     <div className="client-basic__container__field">
                       <label className="client-basic__label">Base Url:</label>
                       <input
-                        name="client.clientUri"
+                        name="baseUrl"
                         type="text"
                         ref={register({ required: true })}
                         defaultValue={client.clientUri ?? ''}
@@ -277,11 +292,11 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         title="Base Url of the application. Used for Cors Origin and callback URI. The callback uri will be the specified Base Url /signin-oidc"
                         onChange={(e) => setCallbackUri(e.target.value)}
                       />
-                      <HelpBox helpText="Base Url of the application. Used for Cors Origin and callback URI. The callback uri will be the specified Base Url /signin-oidc" />
+                      <HelpBox helpText="Base Url of the application. Used for adding Cors Origin, Redirect (callback) URI and Post Logout URI. The Redirect (callback) URI will be the specified Base Url /signin-oidc" />
                       <ErrorMessage
                         as="span"
                         errors={errors}
-                        name="client.clientUri"
+                        name="baseUrl"
                         message="Base Url is required"
                       />
                       <div
