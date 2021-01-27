@@ -10,6 +10,14 @@ export const uploadFileToS3 = (
   return new Promise<S3UploadResponse>((resolve, reject) => {
     const req = new XMLHttpRequest()
 
+    const onError = () => {
+      dispatch({
+        type: ActionTypes.UPDATE,
+        payload: { file, status: 'error', percent: 0 },
+      })
+      reject(req.response)
+    }
+
     req.upload.addEventListener('progress', (event) => {
       if (event.lengthComputable) {
         const percent = Math.round((event.loaded / event.total) * 100)
@@ -21,22 +29,22 @@ export const uploadFileToS3 = (
       }
     })
 
-    req.upload.addEventListener('load', () => {
+    req.onload = (e) => {
+      if (req.status !== 200) {
+        onError()
+        return
+      }
+
       dispatch({
         type: ActionTypes.UPDATE,
         payload: { file, status: 'done', percent: 100 },
       })
 
       resolve({ url: uploadUrl })
-    })
+    }
 
-    req.upload.addEventListener('error', () => {
-      dispatch({
-        type: ActionTypes.UPDATE,
-        payload: { file, status: 'error', percent: 0 },
-      })
-      reject(req.response)
-    })
+    req.addEventListener('error', onError)
+    req.upload.addEventListener('error', onError)
 
     const form = new FormData()
     Object.keys(fields).forEach((key) => form.append(key, fields[key]))
