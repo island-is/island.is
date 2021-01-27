@@ -19,9 +19,7 @@ import {
   QueryGetOrganizationPageArgs,
   QueryGetOrganizationNewsArgs,
 } from '@island.is/web/graphql/schema'
-import LatestOrganizationNewsSection from '@island.is/web/components/LatestOrganizationNewsSection/LatestOrganizationNewsSection'
-import OrganizationWrapper from '@island.is/web/components/Organization/Wrapper/OrganizationWrapper'
-import OrganizationSlice from '@island.is/web/components/Organization/Slice/OrganizationSlice'
+import { LatestOrganizationNewsSection, OrganizationWrapper, OrganizationSlice } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 

@@ -19,7 +19,7 @@ interface SliceProps {
   slice: TwoColumnText
 }
 
-const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
+export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
   return (
     <>
       <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
@@ -54,5 +54,3 @@ const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
     </>
   )
 }
-
-export default TwoColumnTextSlice

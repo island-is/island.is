@@ -27,9 +27,8 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import * as styles from './SubPage.treat'
 import { QueryGetOrganizationPageArgs } from '@island.is/web/graphql/schema'
-import OrganizationWrapper from '@island.is/web/components/Organization/Wrapper/OrganizationWrapper'
+import { OrganizationWrapper, OrganizationSlice } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
-import OrganizationSlice from '@island.is/web/components/Organization/Slice/OrganizationSlice'
 import Markdown from 'markdown-to-jsx'
 
 interface SubPageProps {

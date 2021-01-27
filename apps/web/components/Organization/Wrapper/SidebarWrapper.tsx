@@ -66,5 +66,3 @@ export const SidebarWrapper: FC<SidebarWrapperProps> = ({
     </GridContainer>
   )
 }
-
-export default SidebarWrapper

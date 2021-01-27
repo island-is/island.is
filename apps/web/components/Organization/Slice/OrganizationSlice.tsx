@@ -7,12 +7,7 @@ import {
   Slice,
 } from '@island.is/web/graphql/schema'
 import { Namespace } from '@island.is/api/schema'
-import DistrictsSlice from '@island.is/web/components/Organization/Slice/Districts/DistrictsSlice'
-import HeadingSlice from '@island.is/web/components/Organization/Slice/Heading/HeadingSlice'
-import FeaturedArticlesSlice from '@island.is/web/components/Organization/Slice/FeaturedArticles/FeaturedArticlesSlice'
-import TwoColumnTextSlice from '@island.is/web/components/Organization/Slice/TwoColumnText/TwoColumnTextSlice'
-import OfficesSlice from '@island.is/web/components/Organization/Slice/Offices/OfficesSlice'
-import OneColumnTextSlice from '@island.is/web/components/Organization/Slice/OneColumnText/OneColumnTextSlice'
+import { DistrictsSlice, HeadingSlice, FeaturedArticlesSlice, OfficesSlice, OneColumnTextSlice, TwoColumnTextSlice } from '@island.is/web/components'
 
 interface OrganizationSliceProps {
   slice: Slice
@@ -20,7 +15,7 @@ interface OrganizationSliceProps {
   namespace?: Namespace
 }
 
-const OrganizationSlice: FC<OrganizationSliceProps> = ({
+export const OrganizationSlice: FC<OrganizationSliceProps> = ({
   slice,
   organization,
   namespace,
@@ -42,5 +37,3 @@ const OrganizationSlice: FC<OrganizationSliceProps> = ({
       return <></>
   }
 }
-
-export default OrganizationSlice

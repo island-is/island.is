@@ -15,7 +15,7 @@ interface SliceProps {
   organization?: Organization
 }
 
-const DistrictsSlice: React.FC<SliceProps> = ({ organization, slice }) => {
+export const DistrictsSlice: React.FC<SliceProps> = ({ organization, slice }) => {
   return (
     <>
       <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
@@ -53,5 +53,3 @@ const DistrictsSlice: React.FC<SliceProps> = ({ organization, slice }) => {
     </>
   )
 }
-
-export default DistrictsSlice

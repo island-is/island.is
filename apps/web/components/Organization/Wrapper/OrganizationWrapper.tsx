@@ -14,10 +14,9 @@ import * as styles from './OrganizationWrapper.treat'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import NextLink from 'next/link'
 import { HeadWithSocialSharing, Main } from '@island.is/web/components'
-import SidebarWrapper from '@island.is/web/components/Organization/Wrapper/SidebarWrapper'
+import  {SidebarWrapper, OrganizationFooter } from '@island.is/web/components'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
-import OrganizationFooter from '@island.is/web/components/Organization/Wrapper/OrganizationFooter'
 
 interface NavigationData {
   title: string
@@ -37,7 +36,7 @@ interface WrapperProps {
   fullWidthContent?: boolean
 }
 
-const OrganizationWrapper: React.FC<WrapperProps> = ({
+export const OrganizationWrapper: React.FC<WrapperProps> = ({
   pageTitle,
   pageDescription,
   pageFeaturedImage,
@@ -126,5 +125,3 @@ const OrganizationWrapper: React.FC<WrapperProps> = ({
     </>
   )
 }
-
-export default OrganizationWrapper

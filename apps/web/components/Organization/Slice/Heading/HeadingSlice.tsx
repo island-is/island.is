@@ -7,7 +7,7 @@ interface SliceProps {
   slice: HeadlingSliceSchema
 }
 
-const HeadingSlice: React.FC<SliceProps> = ({ slice }) => {
+export const HeadingSlice: React.FC<SliceProps> = ({ slice }) => {
   return (
     <>
       <section key={slice.id}>
@@ -18,5 +18,3 @@ const HeadingSlice: React.FC<SliceProps> = ({ slice }) => {
     </>
   )
 }
-
-export default HeadingSlice

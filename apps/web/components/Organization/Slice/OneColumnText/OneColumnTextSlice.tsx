@@ -53,5 +53,3 @@ export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
     </>
   )
 }
-
-export default OneColumnTextSlice

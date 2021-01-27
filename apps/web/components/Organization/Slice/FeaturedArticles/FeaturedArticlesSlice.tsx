@@ -22,7 +22,7 @@ interface SliceProps {
   namespace?: Namespace
 }
 
-const FeaturedArticlesSlice: React.FC<SliceProps> = ({ slice, namespace }) => {
+export const FeaturedArticlesSlice: React.FC<SliceProps> = ({ slice, namespace }) => {
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   return (
@@ -102,5 +102,3 @@ const FeaturedArticlesSlice: React.FC<SliceProps> = ({ slice, namespace }) => {
     </>
   )
 }
-
-export default FeaturedArticlesSlice

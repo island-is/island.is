@@ -16,7 +16,7 @@ interface FooterProps {
   organizationPage: OrganizationPage
 }
 
-const OrganizationFooter: React.FC<FooterProps> = ({ organizationPage }) => {
+export const OrganizationFooter: React.FC<FooterProps> = ({ organizationPage }) => {
   return (
     <footer aria-labelledby="organizationFooterTitle" className={styles.footer}>
       <GridContainer>
@@ -58,5 +58,3 @@ const OrganizationFooter: React.FC<FooterProps> = ({ organizationPage }) => {
     </footer>
   )
 }
-
-export default OrganizationFooter

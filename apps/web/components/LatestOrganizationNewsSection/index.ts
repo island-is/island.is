@@ -1,1 +1,1 @@
-export { default as LatestNewsSection } from './LatestOrganizationNewsSection'
+export { default as LatestOrganizationNewsSection } from './LatestOrganizationNewsSection'

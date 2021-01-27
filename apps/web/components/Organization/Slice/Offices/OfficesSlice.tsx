@@ -15,13 +15,13 @@ import {
 import * as styles from './OfficesSlice.treat'
 import Link from 'next/link'
 import Markdown from 'markdown-to-jsx'
-import { OfficeCard } from '@island.is/web/components/Organization/OfficeCard/OfficeCard'
+import { OfficeCard } from "@island.is/web/components";
 
 interface SliceProps {
   slice: Offices
 }
 
-const OfficesSlice: React.FC<SliceProps> = ({ slice }) => {
+export const OfficesSlice: React.FC<SliceProps> = ({ slice }) => {
   return (
     <>
       <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
@@ -56,5 +56,3 @@ const OfficesSlice: React.FC<SliceProps> = ({ slice }) => {
     </>
   )
 }
-
-export default OfficesSlice
