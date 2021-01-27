@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 import { IFooterItem } from '../generated/contentfulTypes'
-import {Link, mapLink} from "./link.model";
+import { Link, mapLink } from './link.model'
 
 @ObjectType()
 export class FooterItem {
