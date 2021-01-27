@@ -30,9 +30,9 @@ You can run the `create-secret` script and you will be prompted for input.
 ./scripts/create-secret
 ```
 
-You will be prompted for a _secret name_ that will be added to the `/k8s/` secrets namespace and a _secret value_. The length of the _secret name_ should be from 6-16 characters long. Only alphanumeric characters and dash (-) is allowed.
+You will be prompted for a _secret name_ that will be added to the `/k8s/` secrets namespace and a _secret value_. The length of the _secret name_ should be from 6-32 characters long. Only alphanumeric characters, `/` and `-` are allowed.
 
-Make sure your credentials are set in your shell before you create a secret.
+Make sure your AWS credentials are set up in your shell before you create a secret.
 
 ## Troubleshooting
 
