@@ -6,8 +6,6 @@ import {
   GridContainer,
   GridRow,
   Link,
-  Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import * as styles from './OrganizationFooter.treat'
 import Markdown from 'markdown-to-jsx'
@@ -16,7 +14,9 @@ interface FooterProps {
   organizationPage: OrganizationPage
 }
 
-export const OrganizationFooter: React.FC<FooterProps> = ({ organizationPage }) => {
+export const OrganizationFooter: React.FC<FooterProps> = ({
+  organizationPage,
+}) => {
   return (
     <footer aria-labelledby="organizationFooterTitle" className={styles.footer}>
       <GridContainer>

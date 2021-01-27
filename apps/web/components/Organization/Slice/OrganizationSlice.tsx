@@ -2,12 +2,18 @@ import React, { FC } from 'react'
 import {
   Districts,
   FeaturedArticles,
-  HeadingSlice as HeadingSliceSchema,
   Organization,
   Slice,
 } from '@island.is/web/graphql/schema'
 import { Namespace } from '@island.is/api/schema'
-import { DistrictsSlice, HeadingSlice, FeaturedArticlesSlice, OfficesSlice, OneColumnTextSlice, TwoColumnTextSlice } from '@island.is/web/components'
+import {
+  DistrictsSlice,
+  FeaturedArticlesSlice,
+  HeadingSlice,
+  OfficesSlice,
+  OneColumnTextSlice,
+  TwoColumnTextSlice,
+} from '@island.is/web/components'
 
 interface OrganizationSliceProps {
   slice: Slice

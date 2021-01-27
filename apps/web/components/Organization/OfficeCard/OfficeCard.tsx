@@ -1,7 +1,6 @@
 import React from 'react'
 import { Box } from '@island.is/island-ui/core'
 import * as styles from './OfficeCard.treat'
-import { blue400 } from '@island.is/island-ui/theme'
 
 interface OfficeCardProps {
   name: string

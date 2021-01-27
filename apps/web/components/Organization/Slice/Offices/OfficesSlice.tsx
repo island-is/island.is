@@ -1,21 +1,13 @@
 import React from 'react'
-import {
-  Organization,
-  Districts,
-  TwoColumnText,
-  Offices,
-} from '@island.is/web/graphql/schema'
+import { Offices } from '@island.is/web/graphql/schema'
 import {
   Box,
-  Button,
   GridColumn,
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
 import * as styles from './OfficesSlice.treat'
-import Link from 'next/link'
-import Markdown from 'markdown-to-jsx'
-import { OfficeCard } from "@island.is/web/components";
+import { OfficeCard } from '@island.is/web/components'
 
 interface SliceProps {
   slice: Offices

@@ -3,23 +3,25 @@ import React from 'react'
 import { Box, NavigationItem } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
+  ContentLanguage,
   Query,
   QueryGetNamespaceArgs,
-  ContentLanguage,
+  QueryGetOrganizationNewsArgs,
+  QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_NEWS_QUERY,
+  GET_ORGANIZATION_PAGE_QUERY,
 } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import * as styles from './Home.treat'
 import {
-  QueryGetOrganizationPageArgs,
-  QueryGetOrganizationNewsArgs,
-} from '@island.is/web/graphql/schema'
-import { LatestOrganizationNewsSection, OrganizationWrapper, OrganizationSlice } from '@island.is/web/components'
+  LatestOrganizationNewsSection,
+  OrganizationSlice,
+  OrganizationWrapper,
+} from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 

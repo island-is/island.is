@@ -1,9 +1,9 @@
 import React, { FC, ReactNode } from 'react'
 import {
   Box,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
 } from '@island.is/island-ui/core'
 
 import * as styles from './SidebarWrapper.treat'

@@ -13,8 +13,12 @@ import {
 import * as styles from './OrganizationWrapper.treat'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import NextLink from 'next/link'
-import { HeadWithSocialSharing, Main } from '@island.is/web/components'
-import  {SidebarWrapper, OrganizationFooter } from '@island.is/web/components'
+import {
+  HeadWithSocialSharing,
+  Main,
+  OrganizationFooter,
+  SidebarWrapper,
+} from '@island.is/web/components'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 

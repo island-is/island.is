@@ -2,32 +2,33 @@
 import React from 'react'
 import {
   Box,
-  Text,
-  NavigationItem,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
   Link,
-  Button,
+  NavigationItem,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
+  ContentLanguage,
   Query,
   QueryGetNamespaceArgs,
-  ContentLanguage,
+  QueryGetOrganizationPageArgs,
   QueryGetOrganizationSubpageArgs,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_SUBPAGE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
+  GET_ORGANIZATION_SUBPAGE_QUERY,
 } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import * as styles from './SubPage.treat'
-import { QueryGetOrganizationPageArgs } from '@island.is/web/graphql/schema'
-import { OrganizationWrapper, OrganizationSlice } from '@island.is/web/components'
+import {
+  OrganizationSlice,
+  OrganizationWrapper,
+} from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import Markdown from 'markdown-to-jsx'
 

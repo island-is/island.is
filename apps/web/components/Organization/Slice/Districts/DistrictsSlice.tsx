@@ -1,5 +1,5 @@
 import React from 'react'
-import { Organization, Districts } from '@island.is/web/graphql/schema'
+import { Districts, Organization } from '@island.is/web/graphql/schema'
 import {
   Box,
   Button,
@@ -15,7 +15,10 @@ interface SliceProps {
   organization?: Organization
 }
 
-export const DistrictsSlice: React.FC<SliceProps> = ({ organization, slice }) => {
+export const DistrictsSlice: React.FC<SliceProps> = ({
+  organization,
+  slice,
+}) => {
   return (
     <>
       <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>

@@ -5,7 +5,6 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Text,
 } from '@island.is/island-ui/core'
 import * as styles from './OneColumnTextSlice.treat'
 import Markdown from 'markdown-to-jsx'

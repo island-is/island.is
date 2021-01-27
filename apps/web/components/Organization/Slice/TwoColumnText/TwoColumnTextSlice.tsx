@@ -1,18 +1,12 @@
 import React from 'react'
-import {
-  Organization,
-  Districts,
-  TwoColumnText,
-} from '@island.is/web/graphql/schema'
+import { TwoColumnText } from '@island.is/web/graphql/schema'
 import {
   Box,
-  Button,
   GridColumn,
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
 import * as styles from './TwoColumnTextSlice.treat'
-import Link from 'next/link'
 import Markdown from 'markdown-to-jsx'
 
 interface SliceProps {

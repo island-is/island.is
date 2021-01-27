@@ -1,6 +1,5 @@
 import { globalStyle, style } from 'treat'
 import { themeUtils } from '@island.is/island-ui/theme'
-import { oneColumnSliceContent } from '@island.is/web/components/Organization/Slice/OneColumnText/OneColumnTextSlice.treat'
 
 export const twoColumnSliceTitle = style({
   height: 34,
