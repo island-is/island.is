@@ -3,10 +3,16 @@ import {
   PricingCategory,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
-import { ExternalLinks } from './external-links.model'
+import { ExternalLinks } from './externalLinks.model'
 import { XroadIdentifier } from './xroadIdentifier.model'
 
 export interface ServiceDetail {
+  /**
+   * Version label of the service.
+   * Should be in the format v1, v2, etc.
+   */
+  version: string
+
   /**
    * Title of the service. From OAS3.info.title
    */

@@ -60,7 +60,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               id: 'selectChild',
               title: 'Velja barn/börn til að flytja lögheimili fyrir',
               description:
-                'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið hvaða börn á að flytja lögheimili fyrir.',
+                'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið hvaða barn/börn á að flytja lögheimili fyrir.',
               large: true,
               options: (application) =>
                 extractChildrenFromApplication(application).map((c) => ({
@@ -72,7 +72,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'otherParent',
-          title: 'Hitt foreldri',
+          title: 'Staðfesta foreldri',
           children: [
             buildMultiField({
               id: 'informationAboutOtherParent',
