@@ -9,7 +9,6 @@ export class IdpProviderService extends BaseService {
     page: number,
     count: number,
   ): Promise<{ rows: IdpProvider[]; count: number } | null> {
-    console.log('ENTERING FUNCTION ----- ')
     return BaseService.GET(
       `idp-provider/?searchString=${searchString}&page=${page}&count=${count}`,
     )
