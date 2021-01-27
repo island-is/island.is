@@ -16,10 +16,16 @@ export class IdpProviderService {
     private sequelize: Sequelize,
   ) {}
 
-  /** Get's all Idp Providers Types */
+  /** Gets all Idp Providers Types */
   async findAll(): Promise<IdpRestriction[] | null> {
     this.logger.debug('Getting all idp providers')
     return this.idpRestriction.findAll()
+  }
+
+  /** Gets Idp Provider by name */
+  async find(name: string): Promise<IdpRestriction | null> {
+    this.logger.debug('Getting all idp providers')
+    return this.idpRestriction.findByPk(name)
   }
 
   /** Creates a new Idp Provider */

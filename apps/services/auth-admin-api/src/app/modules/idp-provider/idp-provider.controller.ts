@@ -30,6 +30,20 @@ import { NationalIdGuard } from '../access/national-id-guard'
 export class IdpProviderController {
   constructor(private readonly idpProviderService: IdpProviderService) {}
 
+  /** Finds available idp providers */
+  @Get()
+  @ApiOkResponse({ type: [IdpRestriction] })
+  async findAll(): Promise<IdpRestriction[] | null> {
+    return await this.idpProviderService.findAll()
+  }
+
+  /** Finds available idp restrictions */
+  @Get(':name')
+  @ApiOkResponse({ type: IdpRestriction })
+  async find(@Param('name') name: string): Promise<IdpRestriction | null> {
+    return await this.idpProviderService.find(name)
+  }
+
   /** Adds new IDP provider */
   @Post()
   @ApiCreatedResponse({ type: IdpRestriction })
@@ -63,12 +77,5 @@ export class IdpProviderController {
     }
 
     return await this.idpProviderService.update(idpProvider, name)
-  }
-
-  /** Finds available idp restrictions */
-  @Get()
-  @ApiOkResponse({ type: [IdpRestriction] })
-  async findAll(): Promise<IdpRestriction[] | null> {
-    return await this.idpProviderService.findAll()
   }
 }
