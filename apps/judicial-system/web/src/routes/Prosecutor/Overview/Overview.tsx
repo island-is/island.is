@@ -344,7 +344,13 @@ export const Overview: React.FC = () => {
 
           {modalVisible && (
             <Modal
-              title="Krafa um gæsluvarðhald hefur verið staðfest"
+              title={`Krafa um ${
+                // TODO: UNCOMMENT
+                /*workingCase.caseType*/ workingCase.comments ===
+                CaseType.DETENTION
+                  ? 'gæsluvarðhald'
+                  : 'Farbann'
+              }  hefur verið staðfest`}
               text="Tilkynning hefur verið send á dómara og dómritara á vakt."
               handleClose={() => history.push(Constants.REQUEST_LIST_ROUTE)}
               handlePrimaryButtonClick={() => {
