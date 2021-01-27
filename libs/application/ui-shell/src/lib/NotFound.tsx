@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { StaticText } from '@island.is/application/core'
+import { StaticText, m } from '@island.is/application/core'
 
 interface Props {
   title?: StaticText
