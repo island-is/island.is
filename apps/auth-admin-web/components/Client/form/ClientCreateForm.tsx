@@ -13,10 +13,11 @@ interface Props {
 
 interface FormOutput {
   client: ClientDTO
+  baseUrl: string
 }
 
 const ClientCreateForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<ClientDTO>()
+  const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
   const { isSubmitting } = formState
   const [show, setShow] = useState(false)
   const [available, setAvailable] = useState<boolean>(false)
@@ -25,6 +26,8 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
   const [clientTypeSelected, setClientTypeSelected] = useState<boolean>(false)
   const [clientTypeInfo, setClientTypeInfo] = useState<string>('')
   const client = props.client
+  const [requireConsent, setRequireConsent] = useState(false)
+  const [callbackUri, setCallbackUri] = useState('')
 
   const castToNumbers = (obj: ClientDTO): ClientDTO => {
     obj.absoluteRefreshTokenLifetime = +obj.absoluteRefreshTokenLifetime
@@ -58,6 +61,11 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
       setAvailable(true)
       setClientTypeSelected(true)
       setClientType(props.client.clientType)
+      if (props.client.requireConsent) {
+        setRequireConsent(true)
+      } else {
+        setRequireConsent(false)
+      }
     }
   }, [props.client])
 
@@ -89,7 +97,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
     if (!isEditing) {
       const savedClient = await create(clientObject)
       if (savedClient) {
-        ClientService.setDefaults(savedClient)
+        ClientService.setDefaults(savedClient, data.baseUrl)
       }
     } else {
       edit(clientObject)
@@ -116,35 +124,48 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
         client.requireClientSecret = false
         client.requirePkce = true
 
-        setClientTypeInfo('Authorization code flow + PKCE')
+        setClientTypeInfo(
+          `Authorization code flow + PKCE\n
+          A single-page application (spa) doesn't need to reload the page during its use and works within a browser, f.x. Google and Facebook.
+          Since it is running in the users browser, it cannot keep a secret.\n
+          <a href="todo#[spa]" target="_blank">more information</a>
+          `,
+        )
       }
 
       if (clientType === 'native') {
         client.requireClientSecret = false
         client.requirePkce = true
 
-        setClientTypeInfo('Authorization code flow + PKCE')
+        setClientTypeInfo(`Authorization code flow + PKCE\n
+        A native application is designed specifically for use on a particular platform or device. 
+        Since it runs on user´s devices it cannot keep a secret.\n
+        <a href="todo#[native]" target="_blank">more information</a>`)
       }
 
       if (clientType === 'web') {
         client.requireClientSecret = true
         client.requirePkce = false
 
-        setClientTypeInfo('Hybrid flow with client authentication')
+        setClientTypeInfo(`Hybrid flow with client authentication\n
+        A web application runs on a web server and is accessed by a web browser. Examples of common web applications are 
+        online banking and online retail sales. Is capable of keeping a secret.\n
+        <a href="todo#[web]" target="_blank">more information</a>`)
       }
 
       if (clientType === 'machine') {
         client.requireClientSecret = true
         client.requirePkce = false
 
-        setClientTypeInfo('Client credentials')
+        setClientTypeInfo(`Hybrid flow with client authentication\n
+        An application or service running on a confidential server. Is capable of keeping a secret.\n
+        <a href="todo#[machine]" target="_blank">more information</a>`)
       }
 
-      if (clientType === 'device') {
-        // What are the defaults?
-
-        setClientTypeInfo('Device flow using external browser')
-      }
+      // Is commented out in the dropdown list as of now and is hence commented out
+      // if (clientType === 'device') {
+      //   setClientTypeInfo('Device flow using external browser')
+      // }
 
       setClientTypeSelected(true)
     } else {
@@ -191,12 +212,12 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       >
                         Native
                       </option>
-                      <option
+                      {/* <option
                         value="device"
                         selected={client.clientType === 'device'}
                       >
                         Device
-                      </option>
+                      </option> */}
                       <option
                         value="web"
                         selected={client.clientType === 'web'}
@@ -253,6 +274,28 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     />
                   </div>
                   <div className="client__container__field">
+                    <label className="client__label">Contact email</label>
+                    <input
+                      type="text"
+                      ref={register({
+                        required: true,
+                        pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                      })}
+                      name="client.contactEmail"
+                      defaultValue={client.contactEmail ?? ''}
+                      className="client__input"
+                      title="The email of the person who can be contacted regarding this Client"
+                      placeholder="john@example.com"
+                    />
+                    <ErrorMessage
+                      as="span"
+                      errors={errors}
+                      name="client.contactEmail"
+                      message="Contact email must be set and must be a valid email address"
+                    />
+                    <HelpBox helpText="The email of the person who can be contacted regarding this Client" />
+                  </div>
+                  <div className="client__container__field">
                     <label className="client__label">Client Id</label>
                     <input
                       type="text"
@@ -280,39 +323,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       message="Client Id is required"
                     />
                   </div>
-                  <div className="client__container__field">
-                    <label className="client__label">Display Name</label>
-                    <input
-                      type="text"
-                      name="client.clientName"
-                      ref={register}
-                      defaultValue={client.clientName ?? ''}
-                      className="client__input"
-                      title="Application name that will be seen on consent screens"
-                      placeholder="Example name"
-                    />
-                    <HelpBox helpText="Application name that will be seen on consent screens" />
-                  </div>
 
-                  <div className="client__container__field">
-                    <label className="client__label">Display URL</label>
-                    <input
-                      name="client.clientUri"
-                      ref={register}
-                      type="text"
-                      defaultValue={client.clientUri ?? ''}
-                      className="client__input"
-                      placeholder="https://localhost:4200"
-                      title="Application URL that will be seen on consent screens"
-                    />
-                    <HelpBox helpText="URI to further information about client (used on consent screen)" />
-                    <ErrorMessage
-                      as="span"
-                      errors={errors}
-                      name="client.clientUri"
-                      message="Display url is required"
-                    />
-                  </div>
                   <div className="client__container__field">
                     <label className="client__label">Description</label>
                     <input
@@ -326,31 +337,37 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     />
                     <HelpBox helpText="Application description for use within the IDS management" />
                   </div>
-                  <div className="client__container__field">
-                    <label className="client__label">Contact email</label>
-                    <input
-                      type="text"
-                      ref={register}
-                      name="client.contactEmail"
-                      defaultValue={client.contactEmail ?? ''}
-                      className="client__input"
-                      title="Contact email for client"
-                      placeholder="island@island.is"
-                    />
-                    <HelpBox helpText="Set the contact email for the client" />
-                  </div>
 
-                  <div className="client__container__checkbox__field">
-                    <label className="client__label">Require consent</label>
-                    <input
-                      type="checkbox"
-                      defaultChecked={client.requireConsent}
-                      className="client__input"
-                      name="client.requireConsent"
-                      ref={register}
-                      title="Specifies whether a consent screen is required"
-                    />
-                    <HelpBox helpText="Specifies whether a consent screen is required" />
+                  <div className="field-with-details">
+                    <div className="client__container__field">
+                      <label className="client__label">Base Url:</label>
+                      <input
+                        name="baseUrl"
+                        type="text"
+                        ref={register({ required: true })}
+                        defaultValue={client.clientUri ?? ''}
+                        className="client__input"
+                        placeholder="https://localhost:4200"
+                        title="Base Url of the application. Used for Cors Origin and callback URI. The callback uri will be the specified Base Url /signin-oidc"
+                        onChange={(e) => setCallbackUri(e.target.value)}
+                      />
+                      <HelpBox helpText="Base Url of the application. Used for adding Cors Origin, Redirect (callback) URI and Post Logout URI. The Redirect (callback) URI will be the specified Base Url /signin-oidc" />
+                      <ErrorMessage
+                        as="span"
+                        errors={errors}
+                        name="baseUrl"
+                        message="Base Url is required"
+                      />
+                      <div
+                        className={`client__container__field__details${
+                          callbackUri !== '' ? ' show' : ' hidden'
+                        }`}
+                      >
+                        Callback Uri will be:{' '}
+                        <strong>{callbackUri}/signin-oidc</strong> <br />
+                        This can be changed later
+                      </div>
+                    </div>
                   </div>
 
                   <div className="client__container__checkbox__field">
@@ -363,6 +380,66 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       ref={register}
                     ></input>
                     <HelpBox helpText="Sets client enabled or disabled" />
+                  </div>
+
+                  <div className="client__container__checkbox__field">
+                    <label className="client__label">Require consent</label>
+                    <input
+                      type="checkbox"
+                      defaultChecked={client.requireConsent}
+                      className="client__input"
+                      name="client.requireConsent"
+                      ref={register}
+                      title="Specifies whether a consent screen is required"
+                      onChange={(e) => setRequireConsent(e.target.checked)}
+                    />
+                    <HelpBox helpText="Specifies whether a consent screen is required" />
+                  </div>
+
+                  <div
+                    className={`toggleable-fields${
+                      requireConsent ? ' show' : ' hidden'
+                    }`}
+                  >
+                    <div className="client__container__field">
+                      <label className="client__label">Display Name</label>
+                      <input
+                        type="text"
+                        name="client.clientName"
+                        ref={register({ required: requireConsent })}
+                        defaultValue={client.clientName ?? ''}
+                        className="client__input"
+                        title="Application name that will be seen on consent screens"
+                        placeholder="Example name"
+                      />
+                      <HelpBox helpText="Application name that will be seen on consent screens" />
+                      <ErrorMessage
+                        as="span"
+                        errors={errors}
+                        name="client.clientName"
+                        message="Display name is required since the client requires consent"
+                      />
+                    </div>
+
+                    <div className="client__container__field">
+                      <label className="client__label">Display URL</label>
+                      <input
+                        name="client.clientUri"
+                        ref={register({ required: requireConsent })}
+                        type="text"
+                        defaultValue={client.clientUri ?? ''}
+                        className="client__input"
+                        placeholder="https://example.com"
+                        title="Application URL that will be seen on consent screens"
+                      />
+                      <HelpBox helpText="URI to further information about client (used on consent screen)" />
+                      <ErrorMessage
+                        as="span"
+                        errors={errors}
+                        name="client.clientUri"
+                        message="Display url is required since the client requires consent"
+                      />
+                    </div>
                   </div>
 
                   <div className="client__container__button" id="advanced">

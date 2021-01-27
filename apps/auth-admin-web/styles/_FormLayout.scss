@@ -20,7 +20,8 @@
 .api-resource-secret-form,
 .api-resource-scope-form,
 .api-resource-user-claims,
-.client-basic {
+.client-basic,
+.admin-user-create-form {
   &__help {
     padding: 0 10px 20px 10px;
 
@@ -104,6 +105,10 @@
 
   .field-with-details {
     margin-bottom: 45px;
+  }
+
+  .toggleable-fields {
+    margin-top: 20px;
   }
 
   &__selected__item {

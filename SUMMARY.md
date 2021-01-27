@@ -73,7 +73,6 @@
 
 - [Air Discount Scheme](apps/air-discount-scheme/README.md)
 - [API](apps/api/README.md)
-- [API Catalogue](apps/api-catalogue/README.md)
 - [Application System](apps/application-system/README.md)
 - [[DEPRECATED] Gjafakort](apps/gjafakort/README.md)
 - [Judicial System](apps/judicial-system/README.md)
@@ -83,6 +82,7 @@
 - [Services](apps/services/README.md)
   - [Auth Admin API](apps/services/auth-admin-api/README.md)
   - [Auth API](apps/services/auth-api/README.md)
+  - [Documents](apps/services/documents/README.md)
   - [Search Indexer](apps/services/search-indexer/README.md)
     - [Elasticsearch Search Dev Server](apps/services/search-indexer/dev-services/README.md)
       - [Search Indexer Migration](apps/services/search-indexer/src/migrate/README.md)
@@ -134,6 +134,9 @@
   - [Shared Form Fields](libs/shared/form-fields/README.md)
   - [Shared Mocking](libs/shared/mocking/README.md)
   - [Shared Types](libs/shared/types/README.md)
+- [Utils](libs/utils/README.md)
+  - [API Utils](libs/utils/api/README.md)
+- [VMST Client](libs/vmst-client/README.md)
 
 ## Misc
 

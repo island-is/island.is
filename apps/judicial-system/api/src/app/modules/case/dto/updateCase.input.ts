@@ -95,6 +95,10 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly prosecutorId?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly courtCaseNumber?: string
 
   @Allow()

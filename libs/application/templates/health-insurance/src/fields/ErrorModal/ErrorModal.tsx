@@ -15,7 +15,7 @@ import { useLocale } from '@island.is/localization'
 import * as styles from './ErrorModal.treat'
 
 import { useQuery } from '@apollo/client'
-import { useParams } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { APPLICANT_APPLICATIONS } from '@island.is/application/graphql'
 import { m } from '../../forms/messages'
 import { Address } from '@island.is/api/schema'
@@ -24,31 +24,47 @@ export interface ContentType {
   title?: string
   description?: string
   buttonText?: string
-  buttonAction?: () => {}
+  buttonAction?: () => void
 }
 
 const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
+  const { typeId } = application
+
   const { formatMessage } = useLocale()
-  const { type } = useParams()
+  const history = useHistory()
+
   const [shouldRender, setShouldRender] = useState<boolean>(true)
   const [content, setContent] = useState<ContentType>()
 
-  const { data, loading, error: applicationsError } = useQuery(
+  const { data: applicationData, error: applicationsError } = useQuery(
     APPLICANT_APPLICATIONS,
     {
       variables: {
-        typeId: type,
+        typeId: typeId,
       },
     },
   )
 
   // TODO: Add conditions if former country is outside EU and if paper application is active
   useEffect(() => {
-    const address = (application.externalData?.nationalRegistry?.data as {
+    const { externalData } = application
+    const address = (externalData?.nationalRegistry?.data as {
       address?: Address
     })?.address
+    const isInsured = externalData?.sjukratryggingar?.data
 
-    if (data && data.getApplicationsByApplicant.length > 1) {
+    if (isInsured === 'true') {
+      setContent({
+        title: 'Already insured',
+        description:
+          'It seems like you already have a health insurance in Iceland',
+        buttonText: 'OK',
+        buttonAction: () => history.push(`../umsoknir/${typeId}`),
+      })
+    } else if (
+      applicationData &&
+      applicationData.getApplicationsByApplicant.length > 1
+    ) {
       setShouldRender(true)
       setContent({
         title: formatText(m.activeApplicationTitle, application, formatMessage),
@@ -86,7 +102,7 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
     } else {
       setShouldRender(false)
     }
-  }, [data])
+  }, [applicationData])
 
   return shouldRender ? (
     <ModalBase
@@ -119,7 +135,10 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
                   size="default"
                   variant="ghost"
                   colorScheme="destructive"
-                  onClick={closeModal}
+                  onClick={() => {
+                    closeModal()
+                    if (content?.buttonAction) content?.buttonAction()
+                  }}
                   fluid
                 >
                   {formatText(
@@ -130,7 +149,14 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
                 </Button>
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '1/3']}>
-                <Button size="default" onClick={closeModal} fluid>
+                <Button
+                  size="default"
+                  onClick={() => {
+                    closeModal()
+                    history.push(`../umsoknir/${typeId}`)
+                  }}
+                  fluid
+                >
                   {content?.buttonText}
                 </Button>
               </GridColumn>

@@ -11,7 +11,9 @@ export const GET_CATALOGUE_QUERY = gql`
         type
         access
         data
-        environments
+        environments {
+          environment
+        }
       }
       pageInfo {
         nextCursor
@@ -31,9 +33,10 @@ export const GET_API_SERVICE_QUERY = gql`
       pricing
       access
       type
-      versions {
-        versionId
+      environments {
+        environment
         details {
+          version
           title
           description
           type
