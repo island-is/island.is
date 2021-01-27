@@ -171,7 +171,9 @@ export class NotificationService {
 
   /* HEADS_UP notifications */
 
-  private async sendHeadsUpSmsToCourt(existingCase: Case): Promise<Recipient> {
+  private async sendHeadsUpSmsNotificationToCourt(
+    existingCase: Case,
+  ): Promise<Recipient> {
     const smsText = formatCourtHeadsUpSmsNotification(
       existingCase.prosecutor?.name,
       existingCase.arrestDate,
@@ -184,7 +186,7 @@ export class NotificationService {
   private async sendHeadsUpNotifications(
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
-    const recipient = await this.sendHeadsUpSmsToCourt(existingCase)
+    const recipient = await this.sendHeadsUpSmsNotificationToCourt(existingCase)
 
     return this.recordNotification(existingCase.id, NotificationType.HEADS_UP, [
       recipient,
@@ -193,7 +195,9 @@ export class NotificationService {
 
   /* READY_FOR_COURT notifications */
 
-  private sendReadyForCourtSmsToCourt(existingCase: Case): Promise<Recipient> {
+  private sendReadyForCourtSmsNotificationToCourt(
+    existingCase: Case,
+  ): Promise<Recipient> {
     const smsText = formatCourtReadyForCourtSmsNotification(
       existingCase.prosecutor?.name,
       existingCase.court,
@@ -202,7 +206,7 @@ export class NotificationService {
     return this.sendSms(smsText)
   }
 
-  private async sendReadyForCourtEmailToProsecutor(
+  private async sendReadyForCourtEmailNotificationToProsecutor(
     existingCase: Case,
   ): Promise<Recipient> {
     const pdf = await generateRequestPdf(existingCase)
@@ -230,8 +234,8 @@ export class NotificationService {
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
     const recipients = await Promise.all([
-      this.sendReadyForCourtEmailToProsecutor(existingCase),
-      this.sendReadyForCourtSmsToCourt(existingCase),
+      this.sendReadyForCourtEmailNotificationToProsecutor(existingCase),
+      this.sendReadyForCourtSmsNotificationToCourt(existingCase),
     ])
 
     return this.recordNotification(
@@ -397,7 +401,9 @@ export class NotificationService {
 
   /* REVOKED notifications */
 
-  private async sendRevokedSmsToCourt(existingCase: Case): Promise<Recipient> {
+  private async sendRevokedSmsNotificationToCourt(
+    existingCase: Case,
+  ): Promise<Recipient> {
     const smsText = formatCourtRevokedSmsNotification(
       existingCase.prosecutor?.name,
       existingCase.requestedCourtDate,
@@ -412,17 +418,21 @@ export class NotificationService {
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
 
-    if (this.existsCourtNotification(existingCase.id)) {
-      promises.push(this.sendRevokedSmsToCourt(existingCase))
+    const exists = await this.existsCourtNotification(existingCase.id)
+
+    if (exists) {
+      promises.push(this.sendRevokedSmsNotificationToCourt(existingCase))
     }
 
     const recipients = await Promise.all(promises)
 
-    return this.recordNotification(
-      existingCase.id,
-      NotificationType.REVOKED,
-      recipients,
-    )
+    if (recipients.length > 0) {
+      return this.recordNotification(
+        existingCase.id,
+        NotificationType.REVOKED,
+        recipients,
+      )
+    }
   }
 
   /* API */
