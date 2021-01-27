@@ -28,19 +28,21 @@ We need a central observability platform where we ingest all our logs, metrics a
 
 Special note about pricing comparison: This is a very high-level price comparison, which does not take into account the ever-growing consumption we will see but should give a rought idea of the balance of cost.
 
-| Self-Hosted             |                    |               |               |                       |                            |     |
+| **Self-Hosted**         |                    |               |               |                       |                            |     |
 | ----------------------- | ------------------ | ------------- | ------------- | --------------------- | -------------------------- | --- |
 | Factors                 | Fixed price, hours | Monthly hours | Monthly price | First year total cost | First two years total cost |     |
 | Development             | 160                | 0             | 0             | ISK3,200,000.00       | ISK3,200,000.00            |     |
 | Infrastructure          | 0                  | 0             | \$2,073.00    | ISK3,258,756.00       | ISK6,517,512.00            |     |
 | Monitoring              | 8                  | 0             | ISK10,000.00  | ISK280,000.00         | ISK400,000.00              |     |
 | Maintenance             | 0                  | 5             | 0             | ISK1,200,000.00       | ISK2,400,000.00            |     |
+| ----------------------- | ------------------ | ------------- | ------------- | --------------------- | -------------------------- | --- |
 | Total                   |                    |               |               | ISK7,938,756.00       | ISK12,517,512.00           |     |
+| ----------------------- | ------------------ | ------------- | ------------- | --------------------- | -------------------------- | --- |
 |                         |                    |               |               |                       |                            |     |
-| SaaS                    |                    |               |               |                       |                            |     |
+| **SaaS**                |                    |               |               |                       |                            |     |
+| ----------------------- | ------------------ | ------------- | ------------- | --------------------- | -------------------------- | --- |
 | DataDog                 | 0                  | 0             | \$1,800.00    | ISK2,829,600.00       | ISK5,659,200.00            |     |
-|                         |                    |               |               |                       |                            |     |
-|                         |                    |               |               |                       |                            |     |
+| ----------------------- | ------------------ | ------------- | ------------- | --------------------- | -------------------------- | --- |
 |                         |                    |               |               |                       |                            |     |
 |                         |                    |               |               |                       |                            |     |
 | Sample hourly rate, ISK | ISK20,000.00       |               |               |                       |                            |     |
@@ -74,7 +76,7 @@ Elastic Search + Grafana + Kibana + Logstash + Jagger + Prometheus
 - Bad, because we need to develop this package ourselves and it would be a while before we can use it
 - Bad, because we need to operate this ourselves - run, monitor, upgrade, integrate addons
 
-### [DataDog]
+### DataDog
 
 DataDog is a monitoring and APM platform that has a wide variety of integrations and continues to develop new ones
 
