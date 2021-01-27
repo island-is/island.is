@@ -23,7 +23,9 @@ Further information regarding the development- and service provider-environments
   A software that requests tokens from [IdentityServer](https://identityserver4.readthedocs.io/en/latest/) - either for authenticating a user or for accessing a resource. A client must be first registered with [IdentityServer](https://identityserver4.readthedocs.io/en/latest/) before it can request tokens. Clients can for example be web applications, native mobile or desktop applications.
 
 - ### Resources
+
   Resources are something you want to protect with [IdentityServer](https://identityserver4.readthedocs.io/en/latest/) - either identity data of your users, or APIs:
+
   - Identity data to identify users, for example names or e-mail addresses.
   - API is an interface which the clients communicate with.
 

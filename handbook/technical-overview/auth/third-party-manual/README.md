@@ -52,26 +52,26 @@ All the projects are setup so that to change the connection from the sandbox to 
   We implemented two different **NestJS** services that use [island.is](https://island.is/) authentication service.
 
   1.  A service with an implemented "Jwt" auth-guard with a registered audience to island.is authentication service that can be added as a guard to controllers or functions, meaning that it´s only possible for tokens issued by [island.is](https://island.is/) authentication service with a specific scope to call those controllers or functions.
-  It comes implemented with the OpenApi specification using _Swagger_ and the _Swagger Authorization_ functionality so that you can generate tokens from [island.is](https://island.is/) authentication service using _Swagger_ and call the functions in the service without getting a 401 code.
-  <https://github.com/island-is/identity-server.samples/tree/feature/adding-sample-projects/nestjs>
+      It comes implemented with the OpenApi specification using _Swagger_ and the _Swagger Authorization_ functionality so that you can generate tokens from [island.is](https://island.is/) authentication service using _Swagger_ and call the functions in the service without getting a 401 code.
+      <https://github.com/island-is/identity-server.samples/tree/feature/adding-sample-projects/nestjs>
 
   2.  A service that is not protected by an oidc-provider but implements a call to a demo service that uses [island.is](https://island.is/) authentication service as an oidc-provider. To do that the service needs to call the island.is authentication service to get a _client_credentials_ token. The purpose of this service is to show the implementation of how to get a _client_credentials_ token from the [island.is](https://island.is/) authentication service using _NestJS_.
-  It comes implemented with the _OpenApi_ specification using _Swagger_ but not the _Swagger Authorization_ functionality.
-  <https://github.com/island-is/identity-server.samples/tree/feature/adding-sample-projects/nestjs>
+      It comes implemented with the _OpenApi_ specification using _Swagger_ but not the _Swagger Authorization_ functionality.
+      <https://github.com/island-is/identity-server.samples/tree/feature/adding-sample-projects/nestjs>
 
 - ### <a name="netcore"></a>NetCore
 
   We implemented two different _.NetCore_ services that use [island.is](https://island.is/) authentication service.
 
   1.  A service that uses [island.is](https://island.is/) authentication service as an oidc-provider with a registered audience, meaning that it´s only possible for tokens issued by [island.is](https://island.is/) authentication service with a specific scope to call the controllers or functions in the service marked with the _Authorization_ flag.
-  It comes implemented with the _OpenApi_ specification using _Swagger_ and the _Swagger Authorization_ functionality so that you can generate tokens from [island.is](https://island.is/) authentication service using _Swagger_ and call the functions in the service without getting a 401 code.
-  <https://github.com/island-is/identity-server.samples/tree/feature/adding-sample-projects/demo-apis/NetCoreDemoApi>
+      It comes implemented with the _OpenApi_ specification using _Swagger_ and the _Swagger Authorization_ functionality so that you can generate tokens from [island.is](https://island.is/) authentication service using _Swagger_ and call the functions in the service without getting a 401 code.
+      <https://github.com/island-is/identity-server.samples/tree/feature/adding-sample-projects/demo-apis/NetCoreDemoApi>
 
   2.  A service that is not protected by an oidc-provider but implements a call to a demo service that uses island.is authentication service as an oidc-provider.
-  To do that the service needs to call the [island.is](https://island.is/) authentication service to get a _client_credentials_ token.
-  The purpose of this service is to show the implementation of how to get a _client_credentials_ token from the [island.is](https://island.is/) authentication service using _NestJS_.
-  It comes implemented with the _OpenApi_ specification using _Swagger_ but not the _Swagger Authorization_ functionality.
-  <https://github.com/island-is/identity-server.samples/tree/feature/adding-sample-projects/netCore>
+      To do that the service needs to call the [island.is](https://island.is/) authentication service to get a _client_credentials_ token.
+      The purpose of this service is to show the implementation of how to get a _client_credentials_ token from the [island.is](https://island.is/) authentication service using _NestJS_.
+      It comes implemented with the _OpenApi_ specification using _Swagger_ but not the _Swagger Authorization_ functionality.
+      <https://github.com/island-is/identity-server.samples/tree/feature/adding-sample-projects/netCore>
 
 - ### <a name="angular"></a>Angular
 
@@ -99,7 +99,7 @@ More information about how to connect with the authentication system in each dev
 
   - <https://www.scottbrady91.com/Angular/SPA-Authentiction-using-OpenID-Connect-Angular-CLI-and-oidc-client>
 
-- ## <a name="react -1"></a>React:
+- ### <a name="react -1"></a>React:
 
   - <https://medium.com/@franciscopa91/how-to-implement-oidc-authentication-with-react-context-api-and-react-router-205e13f2d49>
 
