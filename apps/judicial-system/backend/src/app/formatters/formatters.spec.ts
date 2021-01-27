@@ -19,6 +19,8 @@ import {
   formatDefenderCourtDateEmailNotification,
   formatPrisonRulingEmailNotification,
   formatCourtRevokedSmsNotification,
+  formatPrisonRevokedEmailNotification,
+  formatDefenderRevokedEmailNotification,
 } from './formatters'
 
 describe('formatProsecutorDemands', () => {
@@ -874,7 +876,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram laugardaginn, 19. desember 2020, kl. 10:19.<br /><br />Dómsalur: 101.<br /><br />Sakborningur: Robbi Ræningi 121212-9999.<br /><br />Dómstóllinn hefur skráð þig sem verjanda sakbornings.',
+      'Héraðsdómur Norðurlands hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram laugardaginn, 19. desember 2020, kl. 10:19.<br /><br />Dómsalur: 101.<br /><br />Sakborningur: Robbi Ræningi, kt. 121212-9999.<br /><br />Dómstóllinn hefur skráð þig sem verjanda sakbornings.',
     )
   })
 })
@@ -1039,6 +1041,56 @@ describe('formatCourtRevokedSmsNotification', () => {
 
     // Assert
     expect(res).toBe('Gæsluvarðhaldskrafa afturkölluð. Ákærandi: Ekki skráður.')
+  })
+})
+
+describe('formatPrisonRevokedEmailNotification', () => {
+  test('should format revoked notification', () => {
+    // Arrange
+    const prosecutorOffice = 'Aðalsaksóknari'
+    const court = 'Héraðsdómur Þingvalla'
+    const courtDate = new Date('2021-01-24T08:15')
+    const accusedName = 'Gaui Glæpon'
+    const defenderName = 'Dóri'
+    const isExtension = false
+
+    // Act
+    const res = formatPrisonRevokedEmailNotification(
+      prosecutorOffice,
+      court,
+      courtDate,
+      accusedName,
+      defenderName,
+      isExtension,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Aðalsaksóknari hefur afturkallað kröfu um gæsluvarðhald sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn, 24. janúar 2021, kl. 08:15.<br /><br />Nafn sakbornings: Gaui Glæpon<br /><br />Verjandi sakbornings: Dóri.',
+    )
+  })
+})
+
+describe('formatDefenderRevokedEmailNotification', () => {
+  test('should format revoked notification', () => {
+    // Arrange
+    const accusedNationalId = '1111111111'
+    const accusedName = 'Gaui Glæpon'
+    const court = 'Héraðsdómur Þingvalla'
+    const courtDate = new Date('2021-01-24T08:15')
+
+    // Act
+    const res = formatDefenderRevokedEmailNotification(
+      accusedNationalId,
+      accusedName,
+      court,
+      courtDate,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Gæsluvarðhaldskrafa sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn, 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111111-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+    )
   })
 })
 

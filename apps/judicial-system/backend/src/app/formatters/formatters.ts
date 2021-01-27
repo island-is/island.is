@@ -274,7 +274,7 @@ export function formatDefenderCourtDateEmailNotification(
     ?.replace(
       ' kl.',
       ', kl.',
-    )}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />Sakborningur: ${accusedName} ${formatNationalId(
+    )}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />Sakborningur: ${accusedName}, kt. ${formatNationalId(
     accusedNationalId,
   )}.<br /><br />Dómstóllinn hefur skráð þig sem verjanda sakbornings.`
 }
@@ -352,6 +352,44 @@ export function formatCourtRevokedSmsNotification(
     : ''
 
   return `Gæsluvarðhaldskrafa afturkölluð.${prosecutorText}${courtDateText}`
+}
+
+export function formatPrisonRevokedEmailNotification(
+  prosecutorOffice: string,
+  court: string,
+  courtDate: Date,
+  accusedName: string,
+  defenderName: string,
+  isExtension: boolean,
+): string {
+  const courtText = court?.replace('dómur', 'dóms')
+  const courtDateText = formatDate(courtDate, 'PPPPp')
+    ?.replace('dagur', 'daginn')
+    ?.replace(' kl.', ', kl.')
+  const accusedNameText = `Nafn sakbornings: ${accusedName}`
+  const defenderText = defenderName
+    ? `Verjandi sakbornings: ${defenderName}`
+    : 'Verjandi sakbornings hefur ekki verið skráður'
+
+  return `${prosecutorOffice} hefur afturkallað kröfu um ${
+    isExtension ? 'áframhaldandi ' : ''
+  }gæsluvarðhald sem send var til ${courtText} og taka átti fyrir ${courtDateText}.<br /><br />${accusedNameText}<br /><br />${defenderText}.`
+}
+
+export function formatDefenderRevokedEmailNotification(
+  accusedNationalId: string,
+  accusedName: string,
+  court: string,
+  courtDate: Date,
+): string {
+  const courtText = court?.replace('dómur', 'dómi')
+  const courtDateText = formatDate(courtDate, 'PPPPp')
+    ?.replace('dagur', 'daginn')
+    ?.replace(' kl.', ', kl.')
+
+  return `Gæsluvarðhaldskrafa sem taka átti fyrir hjá ${courtText} ${courtDateText}, hefur verið afturkölluð.<br /><br />Sakborningur: ${accusedName}, kt. ${formatNationalId(
+    accusedNationalId,
+  )}.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.`
 }
 
 export function stripHtmlTags(html: string): string {

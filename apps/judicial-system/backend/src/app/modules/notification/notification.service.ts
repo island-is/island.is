@@ -23,6 +23,8 @@ import {
   stripHtmlTags,
   formatPrisonRulingEmailNotification,
   formatCourtRevokedSmsNotification,
+  formatPrisonRevokedEmailNotification,
+  formatDefenderRevokedEmailNotification,
 } from '../../formatters'
 import { Case } from '../case'
 import { SendNotificationDto } from './dto'
@@ -46,7 +48,10 @@ export class NotificationService {
     private readonly logger: Logger,
   ) {}
 
-  private async existsCourtNotification(caseId: string): Promise<boolean> {
+  private async existsCourtNotification(
+    caseId: string,
+    recipientAddress: string,
+  ): Promise<boolean> {
     try {
       const notifications: Notification[] = await this.notificationModel.findAll(
         {
@@ -66,8 +71,7 @@ export class NotificationService {
 
         return recipients.some(
           (recipient) =>
-            recipient.address === environment.notifications.judgeMobileNumber &&
-            recipient.success,
+            recipient.address === recipientAddress && recipient.success,
         )
       })
     } catch {
@@ -413,15 +417,81 @@ export class NotificationService {
     return await this.sendSms(smsText)
   }
 
+  private sendRevokedEmailNotificationToPrison(
+    existingCase: Case,
+  ): Promise<Recipient> {
+    const subject = 'Gæsluvarðhaldskrafa afturkölluð'
+    const html = formatPrisonRevokedEmailNotification(
+      existingCase.prosecutor?.institution,
+      existingCase.court,
+      existingCase.courtDate,
+      existingCase.accusedName,
+      existingCase.defenderName,
+      existingCase.parentCase &&
+        existingCase.parentCase?.decision === CaseDecision.ACCEPTING,
+    )
+
+    return this.sendEmail(
+      'Gæsluvarðhaldsfangelsi',
+      environment.notifications.prisonEmail,
+      subject,
+      html,
+    )
+  }
+
+  private sendRevokedEmailNotificationToDefender(
+    existingCase: Case,
+  ): Promise<Recipient> {
+    if (!existingCase.defenderEmail) {
+      return
+    }
+
+    const subject = 'Gæsluvarðhaldskrafa afturkölluð'
+    const html = formatDefenderRevokedEmailNotification(
+      existingCase.accusedNationalId,
+      existingCase.accusedName,
+      existingCase.court,
+      existingCase.courtDate,
+    )
+
+    return this.sendEmail(
+      existingCase.defenderName,
+      existingCase.defenderEmail,
+      subject,
+      html,
+    )
+  }
+
   private async sendRevokedNotifications(
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
 
-    const exists = await this.existsCourtNotification(existingCase.id)
+    const courtWasBeenNotified = await this.existsCourtNotification(
+      existingCase.id,
+      environment.notifications.judgeMobileNumber,
+    )
 
-    if (exists) {
+    if (courtWasBeenNotified) {
       promises.push(this.sendRevokedSmsNotificationToCourt(existingCase))
+    }
+
+    const prisonWasNotified = await this.existsCourtNotification(
+      existingCase.id,
+      environment.notifications.prisonEmail,
+    )
+
+    if (prisonWasNotified) {
+      this.sendRevokedEmailNotificationToPrison(existingCase)
+    }
+
+    const defenderWasNotified = await this.existsCourtNotification(
+      existingCase.id,
+      existingCase.defenderEmail,
+    )
+
+    if (defenderWasNotified) {
+      this.sendRevokedEmailNotificationToDefender(existingCase)
     }
 
     const recipients = await Promise.all(promises)
