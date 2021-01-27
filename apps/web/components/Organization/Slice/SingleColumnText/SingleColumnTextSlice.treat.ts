@@ -18,12 +18,15 @@ export const singleColumnSliceContent = style({
   marginTop: 18,
 })
 
-globalStyle(`${singleColumnSliceContent} p, span, ul`, {
-  fontWeight: 300,
-  fontSize: 18,
-  lineHeight: '32px',
-  marginBottom: 36,
-})
+globalStyle(
+  `${singleColumnSliceContent} p, ${singleColumnSliceContent} span, ${singleColumnSliceContent} ul`,
+  {
+    fontWeight: 300,
+    fontSize: 18,
+    lineHeight: 32 / 18,
+    marginBottom: 36,
+  },
+)
 
 globalStyle(`${singleColumnSliceContent} li`, {
   listStyle: 'inside',

@@ -1,12 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import {
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  NavigationItem,
-} from '@island.is/island-ui/core'
+import { Box, NavigationItem } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   Query,
@@ -83,20 +77,14 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
           <Box className={styles.intro}>{organizationPage.description}</Box>
         }
       >
-        <GridContainer>
-          <GridRow>
-            <GridColumn span={'10/12'} offset={'1/12'}>
-              {organizationPage.slices.map((slice) => (
-                <OrganizationSlice
-                  key={slice.id}
-                  slice={slice}
-                  organization={organizationPage.organization}
-                  namespace={namespace}
-                />
-              ))}
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
+        {organizationPage.slices.map((slice) => (
+          <OrganizationSlice
+            key={slice.id}
+            slice={slice}
+            organization={organizationPage.organization}
+            namespace={namespace}
+          />
+        ))}
         <Box
           className={styles.newsBg}
           paddingTop={[4, 5, 10]}
