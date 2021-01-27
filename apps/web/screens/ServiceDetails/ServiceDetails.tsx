@@ -6,10 +6,13 @@ import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
   GetNamespaceQuery,
+  GetOpenApiInput,
   Query,
   QueryGetApiServiceByIdArgs,
   QueryGetNamespaceArgs,
   Service,
+  ServiceDetail,
+  XroadIdentifier,
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY, GET_API_SERVICE_QUERY } from '../queries'
 import {
@@ -39,10 +42,6 @@ interface ServiceDetailsProps {
   openApiContent: GetNamespaceQuery['getNamespace']
   service: Service
 }
-type SelectOption = {
-  label: string
-  value: any
-}
 
 const ServiceDetails: Screen<ServiceDetailsProps> = ({
   strings,
@@ -61,6 +60,28 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
 
   const { linkResolver } = useLinkResolver()
+  const [selectedServiceDetail, setselectedServiceDetail] = useState<
+    ServiceDetail
+  >(service.environments[0].details[0])
+  //TODO look into how to initialize
+
+  const xroadIdentifierToOpenApiInput = (xroadIdentifier: XroadIdentifier) => {
+    const { __typename, ...identifier } = xroadIdentifier
+    return identifier
+  }
+
+  const [selectedGetOpenApiInput, setSelectedGetOpenApiInput] = useState<
+    GetOpenApiInput
+  >(xroadIdentifierToOpenApiInput(selectedServiceDetail.xroadIdentifier))
+
+  const setApiContent = (serviceDetail: ServiceDetail) => {
+    console.log('SetAPIContentServiceDetail: ', serviceDetail)
+    setselectedServiceDetail(serviceDetail)
+
+    setSelectedGetOpenApiInput(
+      xroadIdentifierToOpenApiInput(serviceDetail.xroadIdentifier),
+    )
+  }
 
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
@@ -95,19 +116,6 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
       title: n('linkContentPolicyText'),
     },
   ]
-
-  const [selectedVersionOption, setSelectedVersionOption] = useState<
-    SelectOption
-  >(null)
-  const [selectedInstanceOption, setSelectedInstanceOption] = useState<
-    SelectOption
-  >(null)
-
-  const setOpenApiContent = (option: any) => {
-    console.log('setApiContent: ', option)
-    setSelectedVersionOption(option)
-  }
-
   return (
     <SubpageLayout
       main={
@@ -184,7 +192,9 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                   <ServiceInformation
                     strings={filterContent}
                     service={service}
-                    onSelectChange={(option) => setOpenApiContent(option)}
+                    onSelectChange={(selectedServiceDetail) =>
+                      setApiContent(selectedServiceDetail)
+                    }
                   />
                 )}
               </Box>
@@ -193,15 +203,11 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
         </SidebarLayout>
       }
       details={
-        !selectedVersionOption ? (
-          <></>
-        ) : (
-          <OpenApiView
-            service={service}
-            strings={openApiContent}
-            getOpenApiInput={selectedVersionOption.value}
-          />
-        )
+        <OpenApiView
+          service={service}
+          strings={openApiContent}
+          openApiInput={selectedGetOpenApiInput}
+        />
       }
     />
   )
