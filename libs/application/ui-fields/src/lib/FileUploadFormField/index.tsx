@@ -172,7 +172,7 @@ const FileUploadFormField: FC<Props> = ({ application, error, field }) => {
     })
 
     // Upload each file.
-    newFiles.forEach(async (f: UploadFile) => {
+    newUploadFiles.forEach(async (f: UploadFile) => {
       await uploadFileFlow(f)
         .then((answer) => {
           dispatch({
