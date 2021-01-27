@@ -12,9 +12,6 @@ export class Organization {
   @Field()
   title: string
 
-  @Field({ nullable: true })
-  shortTitle: string
-
   @Field()
   slug: string
 
@@ -37,7 +34,6 @@ export const mapOrganization = ({
 }: IOrganization): Organization => ({
   id: sys.id,
   title: fields.title,
-  shortTitle: fields.shortTitle ?? '',
   slug: fields.slug,
   description: fields.description ?? '',
   tag: (fields.tag ?? []).map(mapOrganizationTag),

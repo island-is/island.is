@@ -2,11 +2,6 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { IOrganizationOffice } from '../generated/contentfulTypes'
 
-import {
-  OrganizationEmployee,
-  mapOrganizationEmployee,
-} from './organizationEmployee.model'
-
 @ObjectType()
 export class OrganizationOffice {
   @Field(() => ID)

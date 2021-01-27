@@ -1,12 +1,12 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-import { ISingleColumnText } from '../generated/contentfulTypes'
+import { IOneColumnText } from '../generated/contentfulTypes'
 
 import { Link, mapLink } from './link.model'
 import { SystemMetadata } from 'api-cms-domain'
 
 @ObjectType()
-export class SingleColumnText {
+export class OneColumnText {
   @Field(() => ID)
   id: string
 
@@ -20,11 +20,11 @@ export class SingleColumnText {
   link?: Link
 }
 
-export const mapSingleColumnText = ({
+export const mapOneColumnText = ({
   sys,
   fields,
-}: ISingleColumnText): SystemMetadata<SingleColumnText> => ({
-  typename: 'SingleColumnText',
+}: IOneColumnText): SystemMetadata<OneColumnText> => ({
+  typename: 'OneColumnText',
   id: sys.id,
   title: fields.title ?? '',
   content: fields.content ?? '',

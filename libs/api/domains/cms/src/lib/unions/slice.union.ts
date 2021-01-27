@@ -24,7 +24,7 @@ import {
   ITellUsAStory,
   IDistricts,
   IFeaturedArticles,
-  ISingleColumnText,
+  IOneColumnText,
   ITwoColumnText,
   IOffices,
 } from '../generated/contentfulTypes'
@@ -72,12 +72,9 @@ import {
   mapFeaturedArticle,
   mapFeaturedArticles,
 } from '../models/featuredArticles.model'
-import {
-  mapSingleColumnText,
-  SingleColumnText,
-} from '../models/singleColumnText.model'
 import { mapTwoColumnText, TwoColumnText } from '../models/twoColumnText.model'
 import { mapOffices, Offices } from '../models/offices.model'
+import { mapOneColumnText, OneColumnText } from '../models/oneColumnText.model'
 
 type SliceTypes =
   | ITimeline
@@ -101,7 +98,7 @@ type SliceTypes =
   | ITellUsAStory
   | IDistricts
   | IFeaturedArticles
-  | ISingleColumnText
+  | IOneColumnText
   | ITwoColumnText
   | IOffices
 
@@ -132,7 +129,7 @@ export const SliceUnion = createUnionType({
     Asset,
     Districts,
     FeaturedArticles,
-    SingleColumnText,
+    OneColumnText,
     TwoColumnText,
     Offices,
   ],
@@ -184,8 +181,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapDistricts(slice as IDistricts)
     case 'featuredArticles':
       return mapFeaturedArticles(slice as IFeaturedArticles)
-    case 'singleColumnText':
-      return mapSingleColumnText(slice as ISingleColumnText)
+    case 'oneColumnText':
+      return mapOneColumnText(slice as IOneColumnText)
     case 'twoColumnText':
       return mapTwoColumnText(slice as ITwoColumnText)
     case 'offices':
