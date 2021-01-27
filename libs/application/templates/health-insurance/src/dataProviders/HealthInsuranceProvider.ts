@@ -5,8 +5,8 @@ import {
   FailedDataProviderResult,
 } from '@island.is/application/core'
 
-export class SjukratryggingarProvider extends BasicDataProvider {
-  type = 'SjukratryggingarProvider'
+export class HealthInsuranceProvider extends BasicDataProvider {
+  type = 'HealthInsuranceProvider'
 
   provide(application: Application): Promise<string> {
     const query = `query HealthInsuranceIsHealthInsured {

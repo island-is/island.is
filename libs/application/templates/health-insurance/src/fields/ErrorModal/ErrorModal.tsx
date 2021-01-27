@@ -1,4 +1,8 @@
 import React, { FC, useEffect, useState } from 'react'
+import { useQuery } from '@apollo/client'
+import { useHistory } from 'react-router-dom'
+import { useLocale } from '@island.is/localization'
+import Markdown from 'markdown-to-jsx'
 import {
   Button,
   Box,
@@ -11,16 +15,12 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
-import { useLocale } from '@island.is/localization'
-import * as styles from './ErrorModal.treat'
-
-import { useQuery } from '@apollo/client'
-import { useHistory } from 'react-router-dom'
 import { APPLICANT_APPLICATIONS } from '@island.is/application/graphql'
-import { m } from '../../forms/messages'
 import { Address } from '@island.is/api/schema'
+import * as styles from './ErrorModal.treat'
+import { m } from '../../forms/messages'
 
-export interface ContentType {
+interface ContentType {
   title?: string
   description?: string
   buttonText?: string
@@ -51,7 +51,9 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
     const address = (externalData?.nationalRegistry?.data as {
       address?: Address
     })?.address
-    const isInsured = externalData?.sjukratryggingar?.data
+    const isInsured = externalData?.healthInsurance?.data
+    const oldPendingApplications = externalData?.oldPendingApplications
+      ?.data as string[]
 
     if (isInsured) {
       setContent({
@@ -75,6 +77,24 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
         ),
         buttonText: formatText(
           m.activeApplicationButtonText,
+          application,
+          formatMessage,
+        ),
+      })
+    } else if (oldPendingApplications?.length > 0) {
+      setShouldRender(true)
+      setContent({
+        title: formatText(m.activeApplicationTitle, application, formatMessage),
+        description: formatText(
+          () => ({
+            ...m.oldPendingApplicationDescription,
+            values: { applicationNumber: oldPendingApplications[0] },
+          }),
+          application,
+          formatMessage,
+        ),
+        buttonText: formatText(
+          m.oldPendingApplicationButtonText,
           application,
           formatMessage,
         ),
@@ -127,7 +147,9 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
           <Stack space={[5, 5, 5, 7]}>
             <Stack space={2}>
               <Text variant={'h1'}>{content?.title}</Text>
-              <Text variant={'intro'}>{content?.description}</Text>
+              <Text variant={'intro'}>
+                <Markdown>{content?.description as string}</Markdown>
+              </Text>
             </Stack>
             <GridRow align="spaceBetween" className={styles.gridFix}>
               <GridColumn span={['12/12', '12/12', '1/3']}>
