@@ -7,11 +7,12 @@ import {
   Box,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
+import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 import { SearchInput } from '@island.is/web/components'
 import { LanguageToggler } from '../LanguageToggler'
 
 interface MegaMenuLink {
-  href: string
+  href: LinkResolverResponse
   text: string
   sub?: [MegaMenuLink]
 }
@@ -86,7 +87,7 @@ export const Menu: FC<Props> = ({
       }
       renderLink={({ className, text, href }, closeModal) => {
         return (
-          <Link href={href} onClick={closeModal}>
+          <Link {...href} onClick={closeModal}>
             <span className={className}>{text}</span>
           </Link>
         )

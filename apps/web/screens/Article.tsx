@@ -385,6 +385,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                   href={linkResolver('articlecategory', [
                     article.category.slug,
                   ])}
+                  passHref
                 >
                   <Button
                     preTextIcon="arrowBack"

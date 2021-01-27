@@ -10,7 +10,6 @@ import {
   Tag,
   Inline,
   TagProps,
-  Icon,
   FocusableBox,
   TagVariant,
 } from '@island.is/island-ui/core'

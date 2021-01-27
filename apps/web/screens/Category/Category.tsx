@@ -189,7 +189,8 @@ const Category: Screen<CategoryProps> = ({
     setHash(newHash)
 
     Router.replace(
-      linkResolver(category.__typename as LinkType, [slug]) + `#${newHash}`,
+      linkResolver(category.__typename as LinkType, [slug]).href +
+        `#${newHash}`,
     )
   }
 
