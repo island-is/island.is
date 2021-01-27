@@ -53,7 +53,7 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
     })?.address
     const isInsured = externalData?.sjukratryggingar?.data
 
-    if (isInsured === 'true') {
+    if (isInsured) {
       setContent({
         title: 'Already insured',
         description:
