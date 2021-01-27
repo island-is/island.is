@@ -20,7 +20,7 @@ SSM_PREFIX="/k8s/"
 MIN_LENGTH="{6,32}"
 
 # Secret name can only be alphanumeric and dash
-ALPHANUMERIC_DASH="^[a-zA-Z0-9\/-]"
+ALPHANUMERIC_DASH="^[a-zA-Z0-9\/-._]"
 
 # Atleast one valid char
 ONE_OR_MORE="+$"
@@ -46,61 +46,80 @@ function test_func() {
     done
 }
 
-#-------------------CREATE SECRET--------------------------#
-function prepare_secret () {
-  # Prompt user for secret name
-  read -p $BLUE"Secret name: $RESET$SSM_PREFIX" SECRET_NAME
-
-  # Blank secret name not allowed
-  if [ -z "$SECRET_NAME" ]
+function error_empty() {
+  echo $RED'No empty values'
+  exit 0
+}
+function validate_whitespace() {
+  if [ ! ${1+x} ]
   then
-    echo $RED'Secret name cannot be empty'
+    error_empty
+  fi
+  # No whitespace
+  if [[ $1 =~ $ILLEGAL_CHARS ]]
+  then
+    echo $RED"Whitespaces are not allowed"$RESET
     exit 0
   fi
+}
 
-  # Validate characters
-  if [[ ! $SECRET_NAME =~ $ALPHANUMERIC_DASH$ONE_OR_MORE ]]
+
+function validate_chars() {
+  if [ ! ${1+x} ]
+  then
+    error_empty
+  fi
+
+  if [[ ! $1 =~ $ALPHANUMERIC_DASH$ONE_OR_MORE ]]
   then
     echo $RED"Secret name can only contain letters, numbers and dash"$RESET
     exit 0
   fi
+}
+
+function validate_length() {
+  # Unset parameter is an empty user input
+  if [ ! ${1+x} ]
+  then
+    error_empty
+  fi
 
   # Validate minimum length
-  if [[ ! $SECRET_NAME =~ $ALPHANUMERIC_DASH$MIN_LENGTH ]]
+  if [[ ! $1 =~ $ALPHANUMERIC_DASH$MIN_LENGTH ]]
   then
-    echo $RED'Secret name should be 6-16 characters long.'
+    echo $RED'To short, should be 6-16 characters long.'
     exit 0
   fi
+}
 
-  # [DEBUG] Validate regex pattern
-  if [[ ! $SECRET_NAME =~ $PATTERN ]]
-  then
-    echo "This should not happen!"
-    exit 0
-  fi
+#-------------------CREATE SECRET--------------------------#
+function prepare_secret () {
+  # Prompt user for secret name
+  read -p $BLUE"Secret name: $RESET$SSM_PREFIX" SECRET_NAME
+  validate_whitespace $SECRET_NAME
+  validate_chars $SECRET_NAME
+  validate_length $SECRET_NAME
 
   # Prompt user for secret value
   read -p $BLUE'Secret value: '$RESET SECRET_VALUE
+  validate_whitespace $SECRET_VALUE
+  validate_length $SECRET_VALUE
 
-  # Validate regex pattern
-  if [[ $SECRET_VALUE =~ $ILLEGAL_CHARS ]]
-  then
-    echo $RED"Whitespaces in secret value is not allowed"$RESET
-    exit 0
-  fi
 
   read -p $YELLOW"Are you sure [y/n]? "$RESET -r
   if [[ $REPLY =~ ^[Yy]$ ]]
   then
     echo # newline
     echo $GREEN"Creating secret...."$RESET
-    create_secret
+    create_secret $SECRET_NAME $SECRET_VALUE
   else
     echo $RED"Aborting..."$RESET
   fi
 }
 
 function create_secret () {
+  SECRET_NAME=$1
+  SECRET_VALUE=$2
   aws ssm put-parameter --name $SSM_PREFIX$SECRET_NAME --value $SECRET_VALUE --type SecureString
   echo $GREEN"Done!"$RESET
 }
@@ -114,6 +133,8 @@ then
   TEST_ASSERT_PASS=(
     "some/path/to/secretname01"
     "some/path/to/secret-name-01"
+    "some/path/to/secret-name-01"
+    "some/path/to/secret-name-01.some-name_"
   )
   TEST_ASSERT_FAIL=(
     "" # no empty
