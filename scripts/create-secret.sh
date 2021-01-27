@@ -17,10 +17,10 @@ RESET=$'\x1b[0m'
 SSM_PREFIX="/k8s/"
 
 # Minimum length
-MIN_LENGTH="{6,16}"
+MIN_LENGTH="{6,32}"
 
 # Secret name can only be alphanumeric and dash
-ALPHANUMERIC_DASH="^[a-zA-Z0-9-]"
+ALPHANUMERIC_DASH="^[a-zA-Z0-9\/-]"
 
 # Atleast one valid char
 ONE_OR_MORE="+$"
@@ -32,14 +32,24 @@ ILLEGAL_CHARS="^[^\s]*$"
 PATTERN=$ALPHANUMERIC_DASH$MIN_LENGTH$ONE_OR_MORE
 
 
+function test_func() {
+  local -n _TEST_ASSERT_PASS=$1
+  local -n _TEST_ASSERT_FAIL=$2
 
-# Prompt user for secret name
-read -p $BLUE"Secret name: $RESET$SSM_PREFIX" SECRET_NAME
-
-
+  for TEST_PATTERN in "${_TEST_ASSERT_PASS[@]}";
+    do
+      [[ $TEST_PATTERN =~ $ALPHANUMERIC_DASH$PATTERN ]] && echo "TEST: FAILED -> "$TEST_PATTERN || echo "TEST: PASSED -> "$TEST_PATTERN
+    done
+  for TEST_PATTERN in "${_TEST_ASSERT_FAIL[@]}";
+    do
+      [[ ! $TEST_PATTERN =~ $ALPHANUMERIC_DASH$PATTERN ]] && echo "TEST: PASSED -> "$TEST_PATTERN || echo "TEST: FAILED -> "$TEST_PATTERN
+    done
+}
 
 #-------------------CREATE SECRET--------------------------#
-prepare_secret () {
+function prepare_secret () {
+  # Prompt user for secret name
+  read -p $BLUE"Secret name: $RESET$SSM_PREFIX" SECRET_NAME
 
   # Blank secret name not allowed
   if [ -z "$SECRET_NAME" ]
@@ -90,9 +100,30 @@ prepare_secret () {
   fi
 }
 
-create_secret () {
+function create_secret () {
   aws ssm put-parameter --name $SSM_PREFIX$SECRET_NAME --value $SECRET_VALUE --type SecureString
   echo $GREEN"Done!"$RESET
 }
 
+
+#-------------------TESTS--------------------------#
+# To enable tests set env ISLANDIS_CREATE_SECRET_TEST=true
+
+if [ "$ISLANDIS_CREATE_SECRET_TEST" = "true" ]
+then
+  TEST_ASSERT_PASS=(
+    "some/path/to/secretname01"
+    "some/path/to/secret-name-01"
+  )
+  TEST_ASSERT_FAIL=(
+    "" # no empty
+    " " # no whitespace
+    "toshrt" # too short
+    "this-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-long" # too short
+    "some/path/to/}#!%" # no symbols
+  )
+  test_func TEST_ASSERT_PASS TEST_ASSERT_FAIL
+fi
+
+#-------------------MAIN SCOPE--------------------------#
 prepare_secret
