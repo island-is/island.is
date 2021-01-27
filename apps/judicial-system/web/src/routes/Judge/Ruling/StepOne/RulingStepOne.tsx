@@ -1,7 +1,6 @@
 import {
   Accordion,
   Box,
-  Checkbox,
   DatePicker,
   GridColumn,
   GridRow,
@@ -21,7 +20,6 @@ import {
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
-  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
   UpdateCase,
@@ -51,8 +49,11 @@ import {
   removeTabsValidateAndSet,
   validateAndSetTime,
   setAndSendToServer,
+  setCheckboxAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import parseISO from 'date-fns/parseISO'
+import { isolation } from 'apps/judicial-system/web/src/utils/Restrictions'
+import CheckboxList from 'apps/judicial-system/web/src/shared-components/CheckboxList/CheckboxList'
 
 interface CaseData {
   case?: Case
@@ -62,7 +63,6 @@ export const RulingStepOne: React.FC = () => {
   const custodyEndTimeRef = useRef<HTMLInputElement>(null)
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [, setIsolationCheckbox] = useState<boolean>()
   const [rulingErrorMessage, setRulingErrorMessage] = useState('')
   const [custodyEndDateErrorMessage, setCustodyEndDateErrorMessage] = useState(
     '',
@@ -391,67 +391,19 @@ export const RulingStepOne: React.FC = () => {
                 </Text>
               </Box>
               <Box marginBottom={1}>
-                <GridRow>
-                  <GridColumn span="6/12">
-                    <Checkbox
-                      name="B - Einangrun"
-                      label="Kærði skal sæta einangrun"
-                      tooltip="Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum."
-                      value={CaseCustodyRestrictions.ISOLATION}
-                      checked={workingCase.custodyRestrictions?.includes(
-                        CaseCustodyRestrictions.ISOLATION,
-                      )}
-                      onChange={({ target }) => {
-                        // Create a copy of the state
-                        const copyOfState = Object.assign(workingCase, {})
-
-                        const restrictionIsSelected = copyOfState.custodyRestrictions?.includes(
-                          target.value as CaseCustodyRestrictions,
-                        )
-
-                        // Toggle the checkbox on or off
-                        setIsolationCheckbox(!restrictionIsSelected)
-
-                        // If the user is checking the box, add the restriction to the state
-                        if (!restrictionIsSelected) {
-                          if (copyOfState.custodyRestrictions === null) {
-                            copyOfState.custodyRestrictions = []
-                          }
-
-                          copyOfState.custodyRestrictions &&
-                            copyOfState.custodyRestrictions.push(
-                              target.value as CaseCustodyRestrictions,
-                            )
-                        }
-                        // If the user is unchecking the box, remove the restriction from the state
-                        else {
-                          copyOfState.custodyRestrictions &&
-                            copyOfState.custodyRestrictions.splice(
-                              copyOfState.custodyRestrictions.indexOf(
-                                target.value as CaseCustodyRestrictions,
-                              ),
-                              1,
-                            )
-                        }
-
-                        setWorkingCase({
-                          ...workingCase,
-                          custodyRestrictions: copyOfState.custodyRestrictions,
-                        })
-
-                        // Save case
-                        updateCase(
-                          workingCase.id,
-                          parseArray(
-                            'custodyRestrictions',
-                            copyOfState.custodyRestrictions || [],
-                          ),
-                        )
-                      }}
-                      large
-                    />
-                  </GridColumn>
-                </GridRow>
+                <CheckboxList
+                  checkboxes={isolation}
+                  selected={workingCase.custodyRestrictions}
+                  onChange={(id) =>
+                    setCheckboxAndSendToServer(
+                      'custodyRestrictions',
+                      id,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }
+                />
               </Box>
             </Box>
           )}

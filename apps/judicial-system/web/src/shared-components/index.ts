@@ -15,4 +15,3 @@ export { default as PoliceRequestAccordionItem } from './PoliceRequestAccordionI
 export { default as RulingAccordionItem } from './RulingAccordionItem/RulingAccordionItem'
 export { default as TimeInputField } from './TimeInputField/TimeInputField'
 export { default as UserProvider } from './UserProvider/UserProvider'
-export { default as CustodyProvisionsSection } from './Sections/CustodyProvisionsSection'

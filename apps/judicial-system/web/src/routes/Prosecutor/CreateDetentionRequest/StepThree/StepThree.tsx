@@ -25,7 +25,6 @@ import {
   PageLayout,
   BlueBox,
   TimeInputField,
-  CustodyProvisionsSection,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useParams } from 'react-router-dom'
@@ -50,6 +49,12 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import parseISO from 'date-fns/parseISO'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import CheckboxList from 'apps/judicial-system/web/src/shared-components/CheckboxList/CheckboxList'
+import {
+  custodyProvisions,
+  travelBanProvisions,
+} from 'apps/judicial-system/web/src/utils/laws'
+import { restrictions } from 'apps/judicial-system/web/src/utils/Restrictions'
 
 interface CaseData {
   case?: Case
@@ -84,33 +89,6 @@ export const StepThree: React.FC = () => {
   })
 
   const resCase = data?.case
-
-  const restrictions = [
-    {
-      restriction: 'B - Einangrun',
-      value: CaseCustodyRestrictions.ISOLATION,
-      explination:
-        'Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum.',
-    },
-    {
-      restriction: 'C - Heimsóknarbann',
-      value: CaseCustodyRestrictions.VISITAION,
-      explination:
-        'Gæslufangar eiga rétt á heimsóknum. Þó getur sá sem rannsókn stýrir bannað heimsóknir ef nauðsyn ber til í þágu hennar en skylt er að verða við óskum gæslufanga um að hafa samband við verjanda og ræða við hann einslega, sbr. 1. mgr. 36. gr., og rétt að verða við óskum hans um að hafa samband við lækni eða prest, ef þess er kostur.',
-    },
-    {
-      restriction: 'D - Bréfskoðun, símabann',
-      value: CaseCustodyRestrictions.COMMUNICATION,
-      explination:
-        'Gæslufangar mega nota síma eða önnur fjarskiptatæki og senda og taka við bréfum og öðrum skjölum. Þó getur sá sem rannsókn stýrir bannað notkun síma eða annarra fjarskiptatækja og látið athuga efni bréfa eða annarra skjala og kyrrsett þau ef nauðsyn ber til í þágu hennar en gera skal sendanda viðvart um kyrrsetningu, ef því er að skipta.',
-    },
-    {
-      restriction: 'E - Fjölmiðlabann',
-      value: CaseCustodyRestrictions.MEDIA,
-      explination:
-        'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
-    },
-  ]
 
   useEffect(() => {
     document.title = 'Dómkröfur og lagagrundvöllur - Réttarvörslugátt'
@@ -451,11 +429,35 @@ export const StepThree: React.FC = () => {
               rows={7}
             />
           </Box>
-          <CustodyProvisionsSection
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            updateCase={updateCase}
-          />
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={3}>
+              <Text as="h3" variant="h3">
+                Lagaákvæði sem krafan er byggð á{' '}
+                <Text as="span" color={'red600'} fontWeight="semiBold">
+                  *
+                </Text>
+              </Text>
+            </Box>
+            <BlueBox>
+              <CheckboxList
+                checkboxes={
+                  workingCase.comments === CaseType.DETENTION // TODO: PUT TYPE NOT COMMENT!!!
+                    ? custodyProvisions
+                    : travelBanProvisions
+                }
+                selected={workingCase.custodyProvisions}
+                onChange={(id) =>
+                  setCheckboxAndSendToServer(
+                    'custodyProvisions',
+                    id,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
+              />
+            </BlueBox>
+          </Box>
           <Box component="section" marginBottom={10}>
             <Box marginBottom={3}>
               <Box marginBottom={1}>
@@ -466,42 +468,19 @@ export const StepThree: React.FC = () => {
               <Text>Ef ekkert er valið er gæsla án takmarkana</Text>
             </Box>
             <BlueBox>
-              <GridContainer>
-                <GridRow>
-                  {restrictions.map((restriction, index) => (
-                    <GridColumn span="6/12" key={index}>
-                      <Box
-                        // Do not add margins to the last two checkboxes
-                        marginBottom={index < restrictions.length - 2 ? 3 : 0}
-                      >
-                        <Checkbox
-                          name={restriction.restriction}
-                          label={restriction.restriction}
-                          value={restriction.value}
-                          checked={
-                            workingCase.requestedCustodyRestrictions &&
-                            workingCase.requestedCustodyRestrictions.indexOf(
-                              restriction.value,
-                            ) > -1
-                          }
-                          tooltip={restriction.explination}
-                          onChange={({ target }) =>
-                            setCheckboxAndSendToServer(
-                              'requestedCustodyRestrictions',
-                              target.value,
-                              workingCase,
-                              setWorkingCase,
-                              updateCase,
-                            )
-                          }
-                          large
-                          filled
-                        />
-                      </Box>
-                    </GridColumn>
-                  ))}
-                </GridRow>
-              </GridContainer>
+              <CheckboxList
+                checkboxes={restrictions}
+                selected={workingCase.requestedCustodyRestrictions}
+                onChange={(id) =>
+                  setCheckboxAndSendToServer(
+                    'requestedCustodyRestrictions',
+                    id,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
+              />
             </BlueBox>
           </Box>
           <FormFooter
