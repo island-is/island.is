@@ -1,4 +1,4 @@
-# Logging, monitoring and APM platform
+# Logging, Monitoring and APM Platform
 
 - Status: proposed
 - Deciders: ops, devs, devops, managers
