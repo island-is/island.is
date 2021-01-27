@@ -344,7 +344,7 @@ describe('Step helper', () => {
             node.textContent ===
             'Kröfu um að kærði, Mikki Refur, kt. 121212-1299, sæti gæsluvarðhaldi er hafnað.'
 
-          const nodeHasText = hasText(node)
+          const nodeHasText = hasText(node || null)
           const childrenDontHaveText = Array.from(node.children).every(
             (child) => !hasText(child),
           )
