@@ -23,8 +23,8 @@ export const Signin = () => {
         history.push(user.state?.redirect ?? '/')
       })
       .catch(function (error) {
-        // TODO: Handle error
-        console.log('error in SIGNING', error)
+        console.error(error)
+        window.location.replace(window.location.origin)
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
