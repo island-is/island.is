@@ -69,3 +69,28 @@ export function extractAnswersToSubmitFromScreen(
       return pick(data, [screenId])
   }
 }
+
+export const isJSONObject = (message?: string): boolean => {
+  if (!message) {
+    return false
+  }
+
+  try {
+    JSON.parse(message)
+    return true
+  } catch {
+    return false
+  }
+}
+
+export function parseMessage(message?: string) {
+  if (!message) {
+    return undefined
+  }
+
+  if (isJSONObject(message)) {
+    return JSON.parse(message)
+  }
+
+  return message
+}
