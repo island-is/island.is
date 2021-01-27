@@ -34,7 +34,7 @@ export class RestMetadataService {
    * from an Service Provider (X-Road Subsystem)
    * @param provider
    */
-  async getServices(provider: Provider): Promise<Array<Service>> {
+  async getServices(provider: Provider, environment:Environment): Promise<Array<Service>> {
     logger.info(`Getting services for ${providerToString(provider)}`)
     const services: Array<Service> = []
     const serviceMap = await this.getServiceCodes(provider)
@@ -55,7 +55,7 @@ export class RestMetadataService {
         type: [TypeCategory.REST],
         environments: [
           {
-            environment: Environment.DEVELOPMENT, // TODO: Needs to be environment aware
+            environment: environment, 
             details: [],
           },
         ],
