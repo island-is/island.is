@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react'
 import { useNamespace } from '../../hooks'
+import capitalize from 'lodash/capitalize'
 import {
   Box,
   Inline,
@@ -9,6 +10,8 @@ import {
   Link,
   Button,
   Select,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import {
   Service,
@@ -18,11 +21,7 @@ import {
 import TagList from './TagList'
 import XroadValue from './XroadValue'
 import ServiceInfoLink from './ServiceInfoLink'
-import * as styles from './ServiceInformation.treat'
 
-export const capitalize = (s: string) => {
-  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()
-}
 export interface ServiceInformationProps {
   service: Service
   strings: GetNamespaceQuery['getNamespace']
@@ -57,7 +56,6 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
   const versionOptions: Array<SelectOption> = service
     ? service.environments[0].details.map((x) => {
         // TODO: Change this when we add environmental aware services
-        console.log(service)
         return {
           label: x.version,
           value: x.xroadIdentifier,
@@ -107,9 +105,7 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
     <Box>
       <Box marginTop={1} marginBottom={3}>
         <Box marginBottom={2} display="flex" alignItems="flexStart">
-          <Text variant="h1" as="h1">
-            {service.title}
-          </Text>
+          <Text variant="h1">{service.title}</Text>
           {service.pricing.length > 0 && (
             <Box marginLeft={1}>
               <Tag>{n(`pricing${capitalize(service.pricing[0])}`)}</Tag>
@@ -128,67 +124,64 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
         <Divider />
       </Box>
 
-      <Box
-        display="flex"
-        flexDirection={['column', 'column', 'row']}
-        justifyContent={['flexStart', 'flexStart', 'spaceBetween']}
-      >
-        <Box display="flex">
-          <Box className={styles.selectDesktop}>
-            <Select
-              backgroundColor="blue"
-              size="sm"
-              label={n('XroadIdentifierInstance')}
-              name="Instance"
-              disabled={enviromentOptions.length < 2}
-              isSearchable={false}
-              defaultValue={selectedEnviromentOption}
-              options={enviromentOptions}
-              onChange={onSelectEnviroment}
-            />
-          </Box>
-          <Box marginLeft={2} className={styles.selectDesktop}>
-            <Select
-              backgroundColor="blue"
-              size="sm"
-              label={n('version')}
-              name="version"
-              disabled={versionOptions.length < 2}
-              isSearchable={false}
-              defaultValue={selectedVersionOption}
-              options={versionOptions}
-              onChange={onSelectVersion}
-            />
-          </Box>
-        </Box>
+      <GridRow>
+        <GridColumn span={['6/12', '6/12', '6/12', '4/12']}>
+          <Select
+            backgroundColor="blue"
+            size="sm"
+            label={n('XroadIdentifierInstance')}
+            name="Instance"
+            disabled={enviromentOptions.length < 2}
+            isSearchable={false}
+            defaultValue={selectedEnviromentOption}
+            options={enviromentOptions}
+            onChange={onSelectEnviroment}
+          />
+        </GridColumn>
+        <GridColumn span={['6/12', '6/12', '6/12', '3/12']}>
+          <Select
+            backgroundColor="blue"
+            size="sm"
+            label={n('version')}
+            name="version"
+            disabled={versionOptions.length < 2}
+            isSearchable={false}
+            defaultValue={selectedVersionOption}
+            options={versionOptions}
+            onChange={onSelectVersion}
+          />
+        </GridColumn>
         {(serviceDetail.links.bugReport ||
           serviceDetail.links.featureRequest) && (
-          <Box
-            paddingTop={[3, 3, 0]}
-            paddingLeft={[0, 0, 2]}
-            display="flex"
-            alignItems="center"
-            justifyContent={['flexStart', 'flexStart', 'flexEnd']}
-          >
-            <Inline space={[3, 3, 2]}>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <Box
+              marginTop={[2, 2, 2, 0]}
+              display="flex"
+              alignItems="center"
+              height="full"
+              justifyContent={[
+                'flexStart',
+                'flexStart',
+                'flexStart',
+                'flexEnd',
+              ]}
+            >
               {serviceDetail.links.bugReport && (
-                <Box>
-                  <Link href={serviceDetail.links.bugReport}>
-                    <Button
-                      colorScheme="light"
-                      iconType="filled"
-                      size="small"
-                      type="button"
-                      variant="utility"
-                      fluid
-                    >
-                      {n('linkBugReport')}
-                    </Button>
-                  </Link>
-                </Box>
+                <Link href={serviceDetail.links.bugReport}>
+                  <Button
+                    colorScheme="light"
+                    iconType="filled"
+                    size="small"
+                    type="button"
+                    variant="utility"
+                    fluid
+                  >
+                    {n('linkBugReport')}
+                  </Button>
+                </Link>
               )}
               {serviceDetail.links.featureRequest && (
-                <Box>
+                <Box marginLeft={[3, 3, 3, 2]}>
                   <Link href={serviceDetail.links.featureRequest}>
                     <Button
                       colorScheme="light"
@@ -202,10 +195,10 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
                   </Link>
                 </Box>
               )}
-            </Inline>
-          </Box>
+            </Box>
+          </GridColumn>
         )}
-      </Box>
+      </GridRow>
 
       <Box
         background="blue100"

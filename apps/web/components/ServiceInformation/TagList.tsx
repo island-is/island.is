@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import capitalize from 'lodash/capitalize'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   Box,
@@ -14,7 +15,6 @@ import {
   TypeCategory,
   AccessCategory,
 } from '@island.is/web/graphql/schema'
-import { capitalize } from './ServiceInformation'
 
 interface TagListProps {
   data: Array<DataCategory>
@@ -38,11 +38,9 @@ export const TagList: FC<TagListProps> = ({
             paddingBottom={[3, 3, 0]}
             span={['12/12', '12/12', '6/12']}
           >
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" as="span" color="blue600">
-                {n('data')}
-              </Text>
-            </Box>
+            <Text variant="eyebrow" color="blue600" marginBottom={1}>
+              {n('data')}
+            </Text>
             <Inline space={1}>
               {data?.map((item) => (
                 <Tag variant="white" outlined key={item}>
@@ -55,11 +53,9 @@ export const TagList: FC<TagListProps> = ({
             paddingBottom={[3, 3, 0]}
             span={['12/12', '12/12', '3/12']}
           >
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" as="span" color="blue600">
-                {n('type')}
-              </Text>
-            </Box>
+            <Text variant="eyebrow" color="blue600" marginBottom={1}>
+              {n('type')}
+            </Text>
             <Inline space={1}>
               {type?.map((item) => (
                 <Tag variant="white" outlined key={item}>
@@ -69,11 +65,9 @@ export const TagList: FC<TagListProps> = ({
             </Inline>
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '3/12']}>
-            <Box marginBottom={1}>
-              <Text variant="eyebrow" as="span" color="blue600">
-                {n('access')}
-              </Text>
-            </Box>
+            <Text variant="eyebrow" color="blue600" marginBottom={1}>
+              {n('access')}
+            </Text>
             <Inline space={1}>
               {access?.map((item) => (
                 <Tag variant="white" outlined key={item}>
