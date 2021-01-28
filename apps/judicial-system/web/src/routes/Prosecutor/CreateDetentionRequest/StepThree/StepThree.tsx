@@ -157,7 +157,7 @@ export const StepThree: React.FC = () => {
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
       // TODO: UNCOMMENT
-      caseType={CaseType.TRAVEL_BAN} // {workingCase.caseType}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>
@@ -193,10 +193,8 @@ export const StepThree: React.FC = () => {
               )}
             </Box>
             {
-              // TODO: UNCOMMENT
               // TODO: THIS IS DUPLICATE CODE, REFACTOR!!
-              /*workingCase.caseType*/ workingCase.comments ===
-              CaseType.CUSTODY ? (
+              workingCase.type === CaseType.CUSTODY ? (
                 <BlueBox>
                   <Box marginBottom={2}>
                     <GridRow>
@@ -443,7 +441,7 @@ export const StepThree: React.FC = () => {
             <BlueBox>
               <CheckboxList
                 checkboxes={
-                  workingCase.comments === CaseType.CUSTODY // TODO: PUT TYPE NOT COMMENT!!!
+                  workingCase.type === CaseType.CUSTODY
                     ? custodyProvisions
                     : travelBanProvisions
                 }

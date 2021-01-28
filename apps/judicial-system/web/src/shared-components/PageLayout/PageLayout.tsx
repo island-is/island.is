@@ -27,7 +27,7 @@ interface PageProps {
   activeSection: number
   isLoading: boolean
   notFound: boolean
-  caseType: CaseType
+  caseType?: CaseType
   activeSubSection?: number
   decision?: CaseDecision
   parentCaseDecision?: CaseDecision

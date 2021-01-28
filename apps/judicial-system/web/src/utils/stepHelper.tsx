@@ -171,7 +171,7 @@ export const constructProsecutorDemands = (
     <Text>
       Þess er krafist að
       <Text as="span" fontWeight="semiBold">
-        {` ${workingCase.accusedName}, kt.${formatNationalId(
+        {` ${workingCase.accusedName}, kt. ${formatNationalId(
           workingCase.accusedNationalId,
         )}`}
       </Text>
@@ -182,9 +182,7 @@ export const constructProsecutorDemands = (
           : ''
         //TODO: CHANGE workingCase.comments to workingCase.caseType
       } ${
-        workingCase.comments === CaseType.CUSTODY
-          ? 'gæsluvarðhaldi'
-          : 'farbanni'
+        workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'
       }${
         workingCase.alternativeTravelBan
           ? `,${

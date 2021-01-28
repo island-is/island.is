@@ -159,7 +159,7 @@ export const Overview: React.FC = () => {
                 workingCase.parentCase ? 'framlengingu' : ''
               } á ${
                 // TODO: REPLACE COMMENTS WITH CASETYPE
-                workingCase.comments === CaseType.CUSTODY ? 'gæslu' : 'farbann'
+                workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbann'
               }`}
             </Text>
           </Box>

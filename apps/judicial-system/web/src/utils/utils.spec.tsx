@@ -563,9 +563,10 @@ describe('Step helper', () => {
       ).toBeTruthy()
     })
 
-    test('should render the corrent string if the case is an extension', () => {
+    test('should render the correct string if the case is an extension', () => {
       // Arrange
       const wc = {
+        type: CaseType.CUSTODY,
         decision: CaseDecision.ACCEPTING,
         custodyRestrictions: [
           CaseCustodyRestrictions.MEDIA,
@@ -592,7 +593,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Þess er krafist að Doe, kt.012345-6789, sæti áframhaldandi gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
+            'Þess er krafist að Doe, kt. 012345-6789, sæti áframhaldandi gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(
@@ -607,6 +608,7 @@ describe('Step helper', () => {
     test('should render the corrent string there are other demands', () => {
       // Arrange
       const wc = {
+        type: CaseType.CUSTODY,
         decision: CaseDecision.ACCEPTING,
         custodyRestrictions: [
           CaseCustodyRestrictions.MEDIA,
@@ -630,7 +632,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Þess er krafist að Doe, kt.012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31. Lorem ipsum.'
+            'Þess er krafist að Doe, kt. 012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31. Lorem ipsum.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(
@@ -645,6 +647,7 @@ describe('Step helper', () => {
     test('should not render the other demands if skipOtherDemands parameter is set to true', () => {
       // Arrange
       const wc = {
+        type: CaseType.CUSTODY,
         decision: CaseDecision.ACCEPTING,
         custodyRestrictions: [
           CaseCustodyRestrictions.MEDIA,
@@ -668,7 +671,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Þess er krafist að Doe, kt.012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
+            'Þess er krafist að Doe, kt. 012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(
