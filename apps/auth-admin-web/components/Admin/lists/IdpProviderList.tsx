@@ -3,51 +3,55 @@ import React, { Component } from 'react'
 import Paginator from '../../common/Paginator'
 import Link from 'next/link'
 import ConfirmModal from '../../common/ConfirmModal'
-import { AdminAccess } from './../../../entities/models/admin-access.model'
-import { AdminAccessService } from '../../../services/AdminAccessService'
+import { IdpProviderService } from './../../../services/IdpProviderService'
+import { IdpProvider } from './../../../entities/models/IdpProvider.model'
 
-class AdminUsersList extends Component {
+class IdpProvidersList extends Component {
   state = {
-    adminAccess: [],
+    idpProviders: [],
     rowCount: 0,
     count: 1,
     page: 1,
     modalIsOpen: false,
-    accessToRemove: '',
+    idpProviderToRemove: '',
     searchString: '',
   }
 
-  getAdmins = async (
+  getIdpProviders = async (
     searchString: string,
     page: number,
     count: number,
   ): Promise<void> => {
-    const response = await AdminAccessService.findAndCountAll(
+    const response = await IdpProviderService.findAndCountAll(
       searchString,
       page,
       count,
     )
     if (response) {
       this.setState({
-        adminAccess: response.rows,
+        idpProviders: response.rows,
         rowCount: response.count,
       })
     }
   }
 
   handlePageChange = async (page: number, count: number): Promise<void> => {
-    this.getAdmins(this.state.searchString, page, count)
+    this.getIdpProviders(this.state.searchString, page, count)
     this.setState({ page: page, count: count })
   }
 
-  deleteUser = async (): Promise<void> => {
-    await AdminAccessService.delete(this.state.accessToRemove)
-    this.getAdmins(this.state.searchString, this.state.page, this.state.count)
+  deleteIdpProvider = async (): Promise<void> => {
+    await IdpProviderService.delete(this.state.idpProviderToRemove)
+    this.getIdpProviders(
+      this.state.searchString,
+      this.state.page,
+      this.state.count,
+    )
     this.closeModal()
   }
 
-  confirmDelete = async (nationalId: string): Promise<void> => {
-    this.setState({ accessToRemove: nationalId })
+  confirmDelete = async (name: string): Promise<void> => {
+    this.setState({ idpProviderToRemove: name })
     this.setState({ modalIsOpen: true })
   }
 
@@ -58,14 +62,18 @@ class AdminUsersList extends Component {
   setHeaderElement = (): JSX.Element => {
     return (
       <p>
-        Are you sure want to delete this admin user:{' '}
-        <span>{this.state.accessToRemove}</span>
+        Are you sure want to delete this IDP Provider:{' '}
+        <span>{this.state.idpProviderToRemove}</span>
       </p>
     )
   }
 
   search = (event) => {
-    this.getAdmins(this.state.searchString, this.state.page, this.state.count)
+    this.getIdpProviders(
+      this.state.searchString,
+      this.state.page,
+      this.state.count,
+    )
     event.preventDefault()
   }
 
@@ -76,64 +84,67 @@ class AdminUsersList extends Component {
   render(): JSX.Element {
     return (
       <div>
-        <div className="admin-users-list">
-          <div className="admin-users-list__wrapper">
-            <div className="admin-users-list__container">
-              <h1>Admin UI users</h1>
-              <div className="admin-users-list__container__options">
-                <div className="admin-users-list__container__options__button">
-                  <Link href={'/admin/admin-user'}>
-                    <a className="admin-users-list__button__new">
-                      <i className="icon__new"></i>Create new Admin UI User
+        <div className="idp-providers-list">
+          <div className="idp-providers-list__wrapper">
+            <div className="idp-providers-list__container">
+              <h1>Identity Providers</h1>
+              <div className="idp-providers-list__container__options">
+                <div className="idp-providers-list__container__options__button">
+                  <Link href={'/admin/idp-provider'}>
+                    <a className="idp-providers-list__button__new">
+                      <i className="icon__new"></i>Create new Identity Provider
                     </a>
                   </Link>
                 </div>
                 <form onSubmit={this.search}>
-                  <div className="admin-users-list__container__options__search">
-                    <label htmlFor="search" className="admin-users-list__label">
-                      National Id
+                  <div className="idp-providers-list__container__options__search">
+                    <label
+                      htmlFor="search"
+                      className="idp-providers-list__label"
+                    >
+                      IDP name
                     </label>
                     <input
                       id="search"
-                      className="admin-users-list__input__search"
+                      className="idp-providers-list__input__search"
                       value={this.state.searchString}
                       onChange={this.handleSearchChange}
                     ></input>
                     <button
                       type="submit"
-                      className="admin-users-list__button__search"
+                      className="idp-providers-list__button__search"
                     >
                       Search
                     </button>
                   </div>
                 </form>
               </div>
-              <div className="admin-users-list__container__table">
-                <table className="admin-users-list__table">
+              <div className="idp-providers-list__container__table">
+                <table className="idp-providers-list__table">
                   <thead>
                     <tr>
-                      <th>National Id</th>
-                      <th>Email</th>
-                      <th>Scope</th>
+                      <th>Name</th>
+                      <th>Description</th>
+                      <th>Level</th>
                       <th colSpan={2}></th>
                     </tr>
                   </thead>
                   <tbody>
-                    {this.state.adminAccess.map((admin: AdminAccess) => {
+                    {this.state.idpProviders.map((idpItem: IdpProvider) => {
                       return (
-                        <tr key={admin.nationalId}>
-                          <td>{admin.nationalId}</td>
-                          <td>{admin.email}</td>
-                          <td>{admin.scope}</td>
-                          <td className="admin-users-list__table__button">
+                        <tr key={idpItem.name}>
+                          <td>{idpItem.name}</td>
+                          <td>{idpItem.description}</td>
+                          <td>{idpItem.level}</td>
+                          <td className="idp-providers-list__table__button">
                             <Link
-                              href={`/admin/admin-user/${encodeURIComponent(
-                                admin.nationalId,
+                              href={`admin/idp-provider/${encodeURIComponent(
+                                idpItem.name,
                               )}`}
                             >
                               <button
                                 type="button"
-                                className={`admin-users-list__button__edit`}
+                                className={`idp-providers-list__button__edit`}
                                 title="Edit"
                               >
                                 <i className="icon__edit"></i>
@@ -141,14 +152,12 @@ class AdminUsersList extends Component {
                               </button>
                             </Link>
                           </td>
-                          <td className="admin-users-list__table__button">
+                          <td className="idp-providers-list__table__button">
                             <button
                               type="button"
-                              className={`admin-users-list__button__delete`}
+                              className={`idp-providers-list__button__delete`}
                               title="Delete"
-                              onClick={() =>
-                                this.confirmDelete(admin.nationalId)
-                              }
+                              onClick={() => this.confirmDelete(idpItem.name)}
                             >
                               <i className="icon__delete"></i>
                               <span>Delete</span>
@@ -171,7 +180,7 @@ class AdminUsersList extends Component {
           modalIsOpen={this.state.modalIsOpen}
           headerElement={this.setHeaderElement()}
           closeModal={this.closeModal}
-          confirmation={this.deleteUser}
+          confirmation={this.deleteIdpProvider}
           confirmationText="Delete"
         ></ConfirmModal>
       </div>
@@ -179,4 +188,4 @@ class AdminUsersList extends Component {
   }
 }
 
-export default AdminUsersList
+export default IdpProvidersList

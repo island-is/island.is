@@ -254,8 +254,8 @@ export class ClientService extends BaseService {
     )
   }
 
-  /** Get IDP restrictions  */
-  static async findAllIdpRestrictions(): Promise<IdpRestriction[] | null> {
+  /** Get IDP providers that can be restricted by client */
+  static async findAllIdpProviders(): Promise<IdpRestriction[] | null> {
     return BaseService.GET(`idp-restriction`)
   }
 
