@@ -61,7 +61,7 @@ export class ElasticService {
    * If the index does not exists it does nothing.
    */
   async deleteIndex(indexName: string = this.indexName): Promise<void> {
-    logger.info('Deleting index', indexName)
+    logger.info('Deleting index')
 
     const { body } = await this.client.indices.exists({
       index: indexName,
@@ -70,7 +70,7 @@ export class ElasticService {
       await this.client.indices.delete({ index: indexName })
       logger.info(`Index ${indexName} deleted`)
     } else {
-      logger.info('No index to delete', indexName)
+      logger.info(`No need to delete Index ${indexName}, it does not exist`)
     }
   }
 
