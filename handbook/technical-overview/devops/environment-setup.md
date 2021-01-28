@@ -21,7 +21,7 @@ We provision all AWS resources in three Availability Zones so that failure in on
 
 ### Structure
 
-![Typical request handling](./assets/account_structure.png)
+![Typical request handling](./assets/account_structure.svg)
 
 This structure is based on the guidance coming from a service that helps us plan and control the AWS cloud structure - [AWS Control Tower](https://aws.amazon.com/controltower/).
 

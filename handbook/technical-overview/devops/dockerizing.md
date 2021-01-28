@@ -12,9 +12,13 @@ You need to ask the [DevOps](technical-overview/devops/personas.md#devops) team 
   "docker-next": {}
 ```
 
-means your service will be packaged as a NextJS Docker container image. We have support the following types of Docker containers: `docker-next`: suitable for [NextJS](https://nextjs.org/) services. `docker-express`, suitable for [ExpressJS](https://expressjs.com) as well as [NestJS](https://nestjs.com) services. `docker-static`, suitable for serving all types of static content. Suitable for pure HTML or React SPAs.
+means your service will be packaged as a NextJS Docker container image. We have support the following types of Docker containers:
 
-If you need help just search for "docker" in that file and you should find plenty of examples on how to do it.
+- `docker-next`: suitable for [NextJS](https://nextjs.org/) services.
+- `docker-express`, suitable for [ExpressJS](https://expressjs.com) as well as [NestJS](https://nestjs.com) services.
+- `docker-static`, suitable for serving all types of static content. Suitable for pure HTML or React SPAs.
+
+If you would like to see some examples, simply search for "docker" in that file and you should find plenty.
 
 That's it.
 
@@ -24,7 +28,7 @@ When you push this change to `main` your Docker image will get built and pushed 
 
 _Prerequisite_: Local Docker support
 
-If you are having problems with your application running inside a Docker container you need to download the Docker container and run it locally.
+If you are having problems with your application running inside a Docker container, you can troubleshoot that by downloading the Docker container and running it locally on your workstation.
 
 To do that you need to follow this process:
 
