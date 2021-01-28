@@ -256,8 +256,8 @@ nav[class$='pagination'] {
       border-radius: 0;
 
       &:disabled {
-        color: $color-disabled;
-        border-bottom: solid 2px $color-disabled;
+        color: $color-button-disabled;
+        border-bottom: solid 2px $color-button-disabled;
       }
 
       &:focus {
@@ -345,4 +345,21 @@ footer {
 
 .indent {
   padding-left: 35px !important;
+}
+
+.fake-input {
+  height: 0;
+  width: 0;
+  position: absolute;
+  border: none;
+  margin: 0;
+  padding: 0;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.temp-page {
+  padding: 30px 40px;
 }

@@ -51,7 +51,7 @@ export class ClientService extends BaseService {
   }
 
   /** Sets default grant type and allowed scope */
-  static async setDefaults(client: Client): Promise<boolean> {
+  static async setDefaults(client: Client, baseUrl?: string): Promise<boolean> {
     let response = true
     const scopeResponse = ClientService.addAllowedScope({
       clientId: client.clientId,
@@ -72,16 +72,13 @@ export class ClientService extends BaseService {
       if (!grantResponse) response = false
     }
 
-    if (client.clientUri) {
-      if (client.clientUri.endsWith('/')) {
-        client.clientUri = client.clientUri.substr(
-          0,
-          client.clientUri.length - 2,
-        )
+    if (baseUrl) {
+      if (baseUrl.endsWith('/')) {
+        baseUrl = baseUrl.substr(0, baseUrl.length - 2)
       }
       const callBackUri = ClientService.addRedirectUri({
         clientId: client.clientId,
-        redirectUri: client.clientUri + '/signin-oidc',
+        redirectUri: baseUrl + '/signin-oidc',
       })
       if (!callBackUri) {
         response = false
@@ -89,7 +86,7 @@ export class ClientService extends BaseService {
 
       const postLogOutUri = ClientService.addPostLogoutRedirectUri({
         clientId: client.clientId,
-        redirectUri: client.clientUri,
+        redirectUri: baseUrl,
       })
       if (!postLogOutUri) {
         response = false
@@ -97,7 +94,7 @@ export class ClientService extends BaseService {
 
       const corsOrigin = ClientService.addAllowedCorsOrigin({
         clientId: client.clientId,
-        origin: client.clientUri,
+        origin: baseUrl,
       })
       if (!corsOrigin) {
         response = false
@@ -257,8 +254,45 @@ export class ClientService extends BaseService {
     )
   }
 
-  /** Get IDP restrictions  */
-  static async findAllIdpRestrictions(): Promise<IdpRestriction[] | null> {
+  /** Get IDP providers that can be restricted by client */
+  static async findAllIdpProviders(): Promise<IdpRestriction[] | null> {
     return BaseService.GET(`idp-restriction`)
+  }
+
+  static async getClientsCsv(): Promise<any[] | null> {
+    const result = await BaseService.GET(
+      `clients?page=${1}&count=${Number.MAX_SAFE_INTEGER}`,
+    )
+    return result.rows.map((r) => ClientService.toClientCsv(r))
+  }
+
+  static toClientCsv = (client: Client): any[] => {
+    return [
+      client.clientId,
+      client.clientType,
+      client.clientName,
+      client.description,
+      client.nationalId,
+      client.contactEmail,
+      client.created,
+      client.modified,
+      client.enabled,
+      client.archived,
+    ]
+  }
+
+  static getClientsCsvHeaders(): string[] {
+    return [
+      'ClientId',
+      'ClientType',
+      'ClientName',
+      'Description',
+      'NationalId',
+      'Contact',
+      'Created',
+      'Modified',
+      'Enabled',
+      'Archived',
+    ]
   }
 }

@@ -27,7 +27,7 @@ function HealthDeclaration({
   application,
 }: PropTypes): JSX.Element {
   const { formatMessage } = useLocale()
-  const { props } = field as { props: { title?: string; label: string } }
+  const props = field.props as { title?: string; label: string }
 
   return (
     <>

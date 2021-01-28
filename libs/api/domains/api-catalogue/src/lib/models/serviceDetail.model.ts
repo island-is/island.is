@@ -1,47 +1,49 @@
 import { ServiceDetail as IServiceDetail } from '@island.is/api-catalogue/types'
 import {
-  AccessCategory,
   PricingCategory,
   DataCategory,
   TypeCategory,
-  Environment,
 } from '@island.is/api-catalogue/consts'
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { IsEnum, IsObject, IsString } from 'class-validator'
 import { ExternalLinks } from './externalLinks.model'
 import { XroadIdentifier } from './xroadIdentifier.model'
 
 @ObjectType()
 export class ServiceDetail implements IServiceDetail {
-  @Field((type) => String)
+  @Field(() => ID)
+  @IsString()
+  version!: string
+
+  @Field(() => String)
   @IsString()
   title!: string
 
-  @Field((type) => String)
+  @Field(() => String)
   @IsString()
   summary!: string
 
-  @Field((type) => String)
+  @Field(() => String)
   @IsString()
   description!: string
 
-  @Field((type) => TypeCategory)
+  @Field(() => TypeCategory)
   @IsEnum(TypeCategory)
   type!: TypeCategory
 
-  @Field((type) => [PricingCategory])
+  @Field(() => [PricingCategory])
   @IsEnum(PricingCategory)
   pricing!: PricingCategory[]
 
-  @Field((type) => [DataCategory])
+  @Field(() => [DataCategory])
   @IsEnum(DataCategory)
   data!: DataCategory[]
 
-  @Field((type) => ExternalLinks)
+  @Field(() => ExternalLinks)
   @IsObject()
   links!: ExternalLinks
 
-  @Field((type) => XroadIdentifier)
+  @Field(() => XroadIdentifier)
   @IsObject()
   xroadIdentifier!: XroadIdentifier
 }

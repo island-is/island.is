@@ -66,10 +66,9 @@ export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
       }
       setStatus('success')
       toast.success(
-        formatMessage({
-          id: 'sp.settings:language-confirmed-success-title',
-          defaultMessage: 'Nýtt tungumál hefur verið vistað',
-        }),
+        formData.language.value === 'is'
+          ? 'Nýtt tungumál hefur verið vistað'
+          : 'New language setting has been saved',
       )
     } catch (err) {
       setStatus('error')

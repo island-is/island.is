@@ -1,7 +1,7 @@
 import { useLocale } from '@island.is/localization'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
-import { getNameAndIdOfSpouse } from '../fields/parentalLeaveUtils'
+import { getNameAndIdOfSpouse } from '../parentalLeaveUtils'
 import { Option } from '@island.is/application/core'
 import { NO } from '../constants'
 import { m } from '../lib/messages'
