@@ -36,7 +36,11 @@ const prosecutorNotificationRule = {
   role: UserRole.PROSECUTOR,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
-  dtoFieldValues: [NotificationType.HEADS_UP, NotificationType.READY_FOR_COURT],
+  dtoFieldValues: [
+    NotificationType.HEADS_UP,
+    NotificationType.READY_FOR_COURT,
+    NotificationType.REVOKED,
+  ],
 } as RolesRule
 
 // Allows judges to send court-date and ruling notifiications
@@ -81,7 +85,6 @@ export class NotificationController {
   })
   async sendNotificationByCaseId(
     @Param('id') id: string,
-    @CurrentHttpUser() user: User,
     @Body() notification: SendNotificationDto,
   ): Promise<SendNotificationResponse> {
     const existingCase = await this.findCaseById(id)
@@ -89,7 +92,6 @@ export class NotificationController {
     return this.notificationService.sendCaseNotification(
       notification,
       existingCase,
-      user,
     )
   }
 
