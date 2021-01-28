@@ -34,7 +34,8 @@ Lykilatriði í Straumnum er að þjónustuveitandi eigi sín gögn og hafi stj�
 
 ![](./assets/4.png)
 
-Hlutverk innan umhverfis Straumsins  
+Hlutverk innan umhverfis Straumsins
+
 - frá [https://www.niis.org/blog/2020/3/30/x-road-implementation-models](https://www.niis.org/blog/2020/3/30/x-road-implementation-models)
 
 ### Vöktun og skýrslugjöf
@@ -71,13 +72,13 @@ Skráning undirkerfis felst í því að velja að bæta við undirkerfi í umsj
 
 Tæknilega er mögulegt að notast við eitt undirkerfi \(subsystem\) fyrir allar aðgerðir á vegum stofnunar – það gæti þjónað sem bæði biðlari \(client\) og veitandi \(provider\) upplýsinga – en til aðgeiningar og stuðnings við vélræna úrvinnslu Viskuausunnar, þá styðst Straumurinn við nafnavenju í formi viðskeyta í nöfnum undirkerfa, sem gefa til kynna tilgang þeirra:
 
-* &lt;stofnun / kerfisflokkur&gt;**-Protected** Almennar vefþjónustur sem er æskilegt að skráist inn í Viskuausuna, svo aðilar Straumsins geti flett upp á tilvist þeirra, ættu að vera skráðar í undirkerfi með heiti sem endar á „-Protected“.
-* &lt;stofnun / kerfisflokkur&gt;**-Client** Þegar upplýsingakerfi stofnunar framkvæma fyrirspurnir yfir Strauminn í vefþjónustur annarra stofnana, þá þurfa þau að tilgreina eigið undirkerfi sem sendir fyrirspurnina fyrir þeirra hönd. Nafn þessa undirkerfis ætti að hafa viðskeytið „-Client“. Þegar aðilar Straumsins veita aðgangsheimildir að sínum vefþjónustum, þá er gefin heimild fyrir undirkerfi viðkomandi stofnunar sem hefur þetta viðskeyti. Engar vefþjónustur eru skráðar í þetta undirkerfi.
+- &lt;stofnun / kerfisflokkur&gt;**-Protected** Almennar vefþjónustur sem er æskilegt að skráist inn í Viskuausuna, svo aðilar Straumsins geti flett upp á tilvist þeirra, ættu að vera skráðar í undirkerfi með heiti sem endar á „-Protected“.
+- &lt;stofnun / kerfisflokkur&gt;**-Client** Þegar upplýsingakerfi stofnunar framkvæma fyrirspurnir yfir Strauminn í vefþjónustur annarra stofnana, þá þurfa þau að tilgreina eigið undirkerfi sem sendir fyrirspurnina fyrir þeirra hönd. Nafn þessa undirkerfis ætti að hafa viðskeytið „-Client“. Þegar aðilar Straumsins veita aðgangsheimildir að sínum vefþjónustum, þá er gefin heimild fyrir undirkerfi viðkomandi stofnunar sem hefur þetta viðskeyti. Engar vefþjónustur eru skráðar í þetta undirkerfi.
 
 Fyrirsjáanlega mun vera algengast að sýsla með þau undirkerfi sem eru nefnd með viðskeytunum hér að ofan. Tvö önnur viðskeyti tilheyra nafnavenjum Straumsins:
 
-* &lt;stofnun / kerfisflokkur&gt;**-Private** Vefþjónustur sem ekki er æskilegt að birtist í leitar- og uppflettingarviðmóti Viskuausunnar er hægt að skrá í undirkerfi nefnd með viðskeytinu „-Private“. Upplýsingaöflun Viskuausunnar mun sniðganga vefþjónustur sem eru skráðar í undirkerfi með þessu viðskeyti.
-* &lt;stofnun / kerfisflokkur&gt;**-Public** Vefþjónustur sem hvort tveggja er æskilegt að birtist í uppflettingarviðmóti Viskuausunnar fyrir þjónustur aðgengilegar á Straumnum, sem og í lista yfir vefþjónustur aðgengilegar almenningi í vefþjónustugátt Stafræns Íslands, er hægt að skrá í undirkerfi með viðskeytið „-Public“ í nafni.
+- &lt;stofnun / kerfisflokkur&gt;**-Private** Vefþjónustur sem ekki er æskilegt að birtist í leitar- og uppflettingarviðmóti Viskuausunnar er hægt að skrá í undirkerfi nefnd með viðskeytinu „-Private“. Upplýsingaöflun Viskuausunnar mun sniðganga vefþjónustur sem eru skráðar í undirkerfi með þessu viðskeyti.
+- &lt;stofnun / kerfisflokkur&gt;**-Public** Vefþjónustur sem hvort tveggja er æskilegt að birtist í uppflettingarviðmóti Viskuausunnar fyrir þjónustur aðgengilegar á Straumnum, sem og í lista yfir vefþjónustur aðgengilegar almenningi í vefþjónustugátt Stafræns Íslands, er hægt að skrá í undirkerfi með viðskeytið „-Public“ í nafni.
 
 Stofnun getur haft fleiri en eitt undirkerfi með hverju viðskeyti: Ef til dæmis stofnun heldur utan um tvo ólíka flokka vefþjónusta, þá mætti velja að skrá vefþjónusturnar í tvö undirkerfi, hvort með viðskeytinu „-Protected“. Dæmi:
 
@@ -165,17 +166,17 @@ Yfirlit annarra undirkerfa sem hafa aðgang að vefþjónustum viðkomandi undir
 
 ![](./assets/26.png)
 
-* Sjá nánar í [Local Access Right Groups](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/ug-ss_x-road_6_security_server_user_guide.md) kafla notendahandbókar X-Road.
+- Sjá nánar í [Local Access Right Groups](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/ug-ss_x-road_6_security_server_user_guide.md) kafla notendahandbókar X-Road.
 
 ### Management API
 
 Allar aðgerðir sem er mögulegt að framkvæma í umsýsluviðmóti \(Admin UI\) X-Road öryggisþjóns er einnig hægt að framkvæma með köllum í umsýslu-vefþjónustuskil – X-Road Management REST APIs. Í raun nýtir umsýsluviðmótið sér þessi vefþjónustuskil.
 
-* Sjá nánar í [Management REST APIs](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/ug-ss_x-road_6_security_server_user_guide.md) kafla í notendahandbók X-Road.
+- Sjá nánar í [Management REST APIs](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/ug-ss_x-road_6_security_server_user_guide.md) kafla í notendahandbók X-Road.
 
 Hjá [Digital and Population Data Services Agency](https://dvv.fi/en) í Finnlandi er í þróun svokallað [X-Road toolkit](https://github.com/nordic-institute/X-Road-Security-Server-toolkit), sem er ætlað að auðvelda notkun þessara forritunar-skila við stillingu X-Road þjóna. Áætlað er að _X-Road toolkit_ verði aðgengilegt í janúar 2021.
 
-* Sjá [kynningu á X-Road toolkit](https://vimeo.com/461279848) \(4:27:31\).
+- Sjá [kynningu á X-Road toolkit](https://vimeo.com/461279848) \(4:27:31\).
 
 ### Kröfur til vefþjónusta sem tengjast Straumnum
 
@@ -183,8 +184,8 @@ Samskipti við vefþjónustur yfir Strauminn með X-Road fara að flestu leyti f
 
 Nánar má lesa um samskiptastaðla milli upplýsingakerfa og X-Road öryggisþjóna í X-Road skjölun:
 
-* X-Road: Message Protocol v4.0 [https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-mess\_x-road\_message\_protocol.md](https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-mess_x-road_message_protocol.md)
-* X-Road: Message Protocol for REST [https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-rest\_x-road\_message\_protocol\_for\_rest.md](https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-rest_x-road_message_protocol_for_rest.md)
+- X-Road: Message Protocol v4.0 [https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-mess_x-road_message_protocol.md](https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-mess_x-road_message_protocol.md)
+- X-Road: Message Protocol for REST [https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-rest_x-road_message_protocol_for_rest.md](https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-rest_x-road_message_protocol_for_rest.md)
 
 Nánar um þetta má lesa í kafla 3 - _Útfærsla og aðlögun vefþjónusta fyrir Strauminn_.
 
@@ -200,9 +201,9 @@ Umhverfi Straumsins eru þrjú: „IS-DEV“, fyrir þróun, „IS-TEST“, fyri
 
 Innan hvers umhverfis er meðlimum skipt í flokka, eftir eðli stofnana:
 
-* GOV fyrir opinberar stofnanir
-* EDU fyrir menntastofnanir
-* COM fyrir einkaaðila
+- GOV fyrir opinberar stofnanir
+- EDU fyrir menntastofnanir
+- COM fyrir einkaaðila
 
 Innan hvers flokks er meðlimum úthlutað kóða – _Member Code_ – sem í þróunarumhverfinu \(IS-DEV\) er raðtala en kennitala viðkomandi aðila í hinum umhverfunum tveimur \(IS-TEST og IS\). Hver meðlimur skráir svo sín undirkerfi – _Subsystem_ – eftir þörfum, fyrir biðlara \(\*-Client\) og upplýsingaveitur \(\*-Protected\), eins og áður hefur verið lýst \([2.2](https://app.gitbook.com/@origo/s/xroad-skjoelun/~/drafts/-MOk_6o9JK0bPAJLuFSB/untitled-2#nafnavenjur-straumsins-og-skraning-vefthjonusta-i-viskuausuna)\).
 
@@ -230,8 +231,8 @@ Auðveldast er að skrá REST vefþjónustur í Strauminn, til dæmis með því
 
 REST vefþjónustur nýtast óbreyttar í Straumnum yfir X-Road en tvær einfaldar breytingar blasa við kerfum, sem senda beiðnir til REST þjónusta yfir X-Road, t.d. öðrum vefþjónustum í formi biðlara. Þessar breytingar snúa að auðkenni undirkerfa biðlara og upplýsingaveitanda – _Instance Identifier, Member Class_ og _Member Code_ – sbr. stigveldistré sem er lýst í kafla 3.1 _Umhverfin þrjú: IS-DEV, IS-TEST og IS_:
 
-* Með beiðni þarf að senda HTTP hausinn _X-Road-Client_, með gildi sem inniheldur auðkenni undirkerfis biðlarans, t.d. „**IS/GOV/5501692829/island-is-client**“.
-* Framan við grunnslóð vefþjónustuveitunnar bætist auðkenni þess undirkerfis sem hýsir hana: Ef óbreytt kall í vefþjónustuna væri eftir slóðinni GET /api/SearchBySocialID/0304756079 og vefþjónustan er skráð í X-Road undirkerfi, þar sem _Instance Identifier_: **IS** _Member Class_: **COM** _Member Code_: **5302922079** _Subsystem_: **Origo-Protected** þá yrði slóðin yfir X-Road: GET /r1/**IS**/**COM**/**5302922079**/**Origo-Protected**/api/SearchBySocialID/0304756079
+- Með beiðni þarf að senda HTTP hausinn _X-Road-Client_, með gildi sem inniheldur auðkenni undirkerfis biðlarans, t.d. „**IS/GOV/5501692829/island-is-client**“.
+- Framan við grunnslóð vefþjónustuveitunnar bætist auðkenni þess undirkerfis sem hýsir hana: Ef óbreytt kall í vefþjónustuna væri eftir slóðinni GET /api/SearchBySocialID/0304756079 og vefþjónustan er skráð í X-Road undirkerfi, þar sem _Instance Identifier_: **IS** _Member Class_: **COM** _Member Code_: **5302922079** _Subsystem_: **Origo-Protected** þá yrði slóðin yfir X-Road: GET /r1/**IS**/**COM**/**5302922079**/**Origo-Protected**/api/SearchBySocialID/0304756079
 
 Sjá nánar í [X-Road: Message Protocol for REST](https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-rest_x-road_message_protocol_for_rest.md).
 
@@ -252,36 +253,36 @@ SOAP þjónustur beintengdar við X-Road þjón nýtast þó ekki óbreyttar, þ
 
 Haus í SOAP skeyti þarf að innihalda sambærilegar upplýsingar og var lýst fyrir REST samskipti í 3.2.1, um auðkenni undirkerfa biðlara og upplýsingaveitanda. Sömu upplýsingar og voru tilteknar í REST dæminu að ofan, kæmu fram með eftirfarandi hætti í haus SOAP skeytis:
 
-```markup
+```xml
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
- xmlns:xrd="http://x-road.eu/xsd/xroad.xsd"
- xmlns:id="http://x-road.eu/xsd/identifiers"
- >
- <SOAP-ENV:Header>
- <xrd:protocolVersion>4.0</xrd:protocolVersion>
- <xrd:id>3903d152-1d2c-11eb-adc1-0242ac120002</xrd:id>
- <xrd:userId>anonymous</xrd:userId>
- <xrd:service id:objectType="SERVICE" >
- <id:xRoadInstance>IS</id:xRoadInstance>
- <id:memberClass>COM</id:memberClass>
- <id:memberCode>5302922079</id:memberCode>
- <id:subsystemCode>Origo-Protected</id:subsystemCode>
- <id:serviceCode>sendMessage</id:serviceCode>
- <id:serviceVersion>1</id:serviceVersion>
- </xrd:service>
- <xrd:client id:objectType="SUBSYSTEM" >
- <id:xRoadInstance>IS</id:xRoadInstance>
- <id:memberClass>GOV</id:memberClass>
- <id:memberCode>5501692829</id:memberCode>
- <id:subsystemCode>island-is-client</id:subsystemCode>
- </xrd:client>
- </SOAP-ENV:Header>
- <SOAP-ENV:Body>
- <sendMessage ...>
- ...
- </sendMessage>
- </SOAP-ENV:Body>
- ...
+   xmlns:xrd="http://x-road.eu/xsd/xroad.xsd"
+   xmlns:id="http://x-road.eu/xsd/identifiers"
+>
+  <SOAP-ENV:Header>
+    <xrd:protocolVersion>4.0</xrd:protocolVersion>
+    <xrd:id>3903d152-1d2c-11eb-adc1-0242ac120002</xrd:id>
+    <xrd:userId>anonymous</xrd:userId>
+    <xrd:service id:objectType="SERVICE">
+      <id:xRoadInstance>IS</id:xRoadInstance>
+      <id:memberClass>COM</id:memberClass>
+      <id:memberCode>5302922079</id:memberCode>
+      <id:subsystemCode>Origo-Protected</id:subsystemCode>
+      <id:serviceCode>sendMessage</id:serviceCode>
+      <id:serviceVersion>1</id:serviceVersion>
+    </xrd:service>
+    <xrd:client id:objectType="SUBSYSTEM" >
+      <id:xRoadInstance>IS</id:xRoadInstance>
+      <id:memberClass>GOV</id:memberClass>
+      <id:memberCode>5501692829</id:memberCode>
+      <id:subsystemCode>island-is-client</id:subsystemCode>
+    </xrd:client>
+  </SOAP-ENV:Header>
+  <SOAP-ENV:Body>
+    <sendMessage ...>
+      ...
+    </sendMessage>
+  </SOAP-ENV:Body>
+...
 ```
 
 Gildi serviceCode í haus verður að vera það sama og heiti XML tags sem hjúpar [beiðnina](https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-mess_x-road_message_protocol.md) \(2.3 Message Body\).
@@ -380,11 +381,11 @@ Tökum sem dæmi tvö upplýsingakerfi, **A** og **B** \(t.d. tvö aðskilin Gra
 
 island-is-minar-sidur-client
 
-* sem hefur heimild til að framkvæma beiðnir til vefþjónusta hjá Þjóðskrá
+- sem hefur heimild til að framkvæma beiðnir til vefþjónusta hjá Þjóðskrá
 
 island-is-ytri-vefur-client
 
-* sem hefur ekki aðgangsheimild að vefþjónustum Þjóðskrár
+- sem hefur ekki aðgangsheimild að vefþjónustum Þjóðskrár
 
 Upplýsingakerfi **A** hefur það hlutverk að kalla til Þjóðskrár í gegnum island-is-minar-sidur-client undirkerfið en upplýsingakerfi **B** á ekki að hafa heimild til þess.
 
@@ -400,25 +401,104 @@ Til að eiga samskipti við vefþjónustur yfir Strauminn í þróunarumhverfi �
 2. Keyra `aws eks update-kubeconfig --name dev-cluster01 --region eu-west-1` ([skrifar að sjálfgefnu í ~/.kube/config](https://docs.aws.amazon.com/cli/latest/reference/eks/update-kubeconfig.html))
 3. Keyra `kubectl -n socat port-forward svc/socat-xroad 8080:80` svo umferð sé áframsend frá porti 8080 á þróunarvél (localhost:8080) að porti 80 á X-Road öryggisþjóni Ísland.is.
 
-AWS SSO aðgangsheimildir eru veittar af DevOps umsjónaraðila Stafræns Íslands:  [Andes](https://andes.is).
+AWS SSO aðgangsheimildir eru veittar af DevOps umsjónaraðila Stafræns Íslands: [Andes](https://andes.is).
 
 Með ofangreindum aðgangi að X-Road þjóni Ísland.is er hægt að lista upp þau undirkerfi (subsystem) sem eru skráð í viðkomandi X-Road umhverfi (IS-DEV instance), með skipun eins og:
+
 ```
 curl ‘http://localhost:8080/listClients’
 ```
 
-Til að fá upplýsingar um vefþjónustur innan undirkerfis má gefa skipun eins og:
-```
-curl -H ‘X-Road-Client: IS-DEV/GOV/10000/island-is-client’ ‘http://localhost:8080/r1/IS-DEV/provider-member-class/provider-member-code/provider-subsystem-name/listMethods’ | json_pp
-```
+#### Öflun upplýsinga um undirkerfi og vefþjónustur innan þeirra
 
-Ef vefþjónusta býður upp á OpenAPI 3 skil, þá er hægt að nálgast þau yfir X-Road með skipun eins og:
-```
-curl -H ‘X-Road-Client: IS-DEV/GOV/10000/island-is-client’ ‘http://localhost:8080/r1/IS-DEV/provider-member-class/provider-member-code/provider-subsystem-name/getOpenAPI?serviceCode=provider-service-code’
-```
+- REST
 
-Þessar upplýsingar eru einnig aðgengilegar í vefviðmóti Viskuausunnar, _API Catalog_ Stafræns Íslands [TODO: hlekkur].
+  Til að fá upplýsingar um vefþjónustur innan undirkerfis má gefa skipun eins og:
 
+  ```
+  curl -H ‘X-Road-Client: IS-DEV/GOV/10000/island-is-client’ ‘http://localhost:8080/r1/IS-DEV/provider-member-class/provider-member-code/provider-subsystem-name/listMethods’ | json_pp
+  ```
+
+  Ef vefþjónusta býður upp á OpenAPI 3 skil, þá er hægt að nálgast þau yfir X-Road með skipun eins og:
+
+  ```
+  curl -H ‘X-Road-Client: IS-DEV/GOV/10000/island-is-client’ ‘http://localhost:8080/r1/IS-DEV/provider-member-class/provider-member-code/provider-subsystem-name/getOpenAPI?serviceCode=provider-service-code’
+  ```
+
+- SOAP
+
+  Upplýsingar um SOAP endapunkta innan undirkerfis er hægt að sækja með skipun eins og:
+
+  ```
+  curl --location --request POST 'http://localhost:8080/' --header 'Content-Type: text/xml;charset=UTF-8' --data @SJUKRA-protected-allowedMethods-fra-island-is.xml
+  ```
+
+  þar sem skráin `SJUKRA-protected-allowedMethods-fra-island-is.xml` getur innihaldið:
+
+  ```xml
+  <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:isl="http://islandrg.service.mule.tr.is/" xmlns:xrd="http://x-road.eu/xsd/xroad.xsd" xmlns:id="http://x-road.eu/xsd/identifiers">
+     <soapenv:Header>
+        <xrd:protocolVersion>4.0</xrd:protocolVersion>
+        <xrd:id>3903d152-1d2c-11eb-adc1-0242ac120002</xrd:id>
+        <xrd:userId>anonymous</xrd:userId>
+        <xrd:service id:objectType="SERVICE">
+            <id:xRoadInstance>IS-DEV</id:xRoadInstance>
+            <id:memberClass>GOV</id:memberClass>
+            <id:memberCode>10007</id:memberCode>
+            <id:subsystemCode>SJUKRA-Protected</id:subsystemCode>
+            <id:serviceCode>allowedMethods</id:serviceCode>
+        </xrd:service>
+        <xrd:client id:objectType="SUBSYSTEM">
+            <id:xRoadInstance>IS-DEV</id:xRoadInstance>
+            <id:memberClass>GOV</id:memberClass>
+            <id:memberCode>10000</id:memberCode>
+            <id:subsystemCode>island-is-client</id:subsystemCode>
+        </xrd:client>
+     </soapenv:Header>
+     <soapenv:Body>
+        <xrd:allowedMethods/>
+     </soapenv:Body>
+  </soapenv:Envelope>
+  ```
+
+  WSDL skil SOAP þjónustu er hægt að sækja yfir X-Road með skipun eins og:
+
+  ```
+  curl --location --request POST 'http://localhost:8080/' --header 'Content-Type: text/xml;charset=UTF-8' --data @SJUKRA-protected-getWsdl-fra-island-is.xml
+  ```
+
+  þar sem skráin `SJUKRA-protected-getWsdl-fra-island-is.xml` getur innihaldið:
+
+  ```xml
+  <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:isl="http://islandrg.service.mule.tr.is/" xmlns:xrd="http://x-road.eu/xsd/xroad.xsd" xmlns:id="http://x-road.eu/xsd/identifiers">
+     <soapenv:Header>
+        <xrd:protocolVersion>4.0</xrd:protocolVersion>
+        <xrd:id>3903d152-1d2c-11eb-adc1-0242ac120002</xrd:id>
+        <xrd:userId>anonymous</xrd:userId>
+        <xrd:service id:objectType="SERVICE">
+            <id:xRoadInstance>IS-DEV</id:xRoadInstance>
+            <id:memberClass>GOV</id:memberClass>
+            <id:memberCode>10007</id:memberCode>
+            <id:subsystemCode>SJUKRA-Protected</id:subsystemCode>
+            <id:serviceCode>getWsdl</id:serviceCode>
+        </xrd:service>
+        <xrd:client id:objectType="SUBSYSTEM">
+            <id:xRoadInstance>IS-DEV</id:xRoadInstance>
+            <id:memberClass>GOV</id:memberClass>
+            <id:memberCode>10000</id:memberCode>
+            <id:subsystemCode>island-is-client</id:subsystemCode>
+        </xrd:client>
+     </soapenv:Header>
+     <soapenv:Body>
+       <xrd:getWsdl>
+           <xrd:serviceCode>profun</xrd:serviceCode>
+       </xrd:getWsdl>
+     </soapenv:Body>
+  </soapenv:Envelope>
+  ```
+
+- API Catalog  
+  Þessar upplýsingar eru einnig aðgengilegar í vefviðmóti Viskuausunnar, _API Catalog_ Stafræns Íslands [TODO: hlekkur].
 
 ## Uppsetning og rekstur X-Road öryggisþjóna í Straumnum
 
@@ -432,10 +512,10 @@ Uppsetning X-Road byggir á Linux hugbúnaðarpökkum, sem eru útbúnir fyrir U
 
 Nánara lesefni:
 
-* [How to Set Up a Security Server?](https://confluence.niis.org/pages/viewpage.action?pageId=4292920)
-  * sjá dæmi um uppfærsluskipanir í þessu yfirskjali
-* [X-Road Knowledge Base](https://confluence.niis.org/display/XRDKB/X-Road+Knowledge+Base)
-* [Sértæk skref við uppsetningu og þáttöku í Straumnum](https://github.com/digitaliceland/Straumurinn)
+- [How to Set Up a Security Server?](https://confluence.niis.org/pages/viewpage.action?pageId=4292920)
+  - sjá dæmi um uppfærsluskipanir í þessu yfirskjali
+- [X-Road Knowledge Base](https://confluence.niis.org/display/XRDKB/X-Road+Knowledge+Base)
+- [Sértæk skref við uppsetningu og þáttöku í Straumnum](https://github.com/digitaliceland/Straumurinn)
 
 ### Rekstur
 
@@ -443,10 +523,10 @@ X-Road er opinn hugbúnaður og án leyfisgjalda.
 
 Rekstur miðlægra þjónusta Straumsins – skilríkjamiðstöðvar og miðlægrar skráningar – er á vegum Stafræns Íslands meðan stofnanir sjá um rekstur sinna öryggisþjóna:
 
-* Hýsing, eftirlit og rekstur á Linux þjónum
-* Ef Red Hat stýrikerfið \(RHEL\) er valið, þá felur það í sér leyfisgjöld, meðan Ubuntu, sem einnig er stutt, er án þeirra
-* Rekstraraðili X-Road öryggisþjóns þarf að fylgjast með honum og uppfæra reglulega
-* Endurnýjun skilríkja, þar sem þarf að óska eftir nýjum frá skilríkjamiðstöð Straumsins
+- Hýsing, eftirlit og rekstur á Linux þjónum
+- Ef Red Hat stýrikerfið \(RHEL\) er valið, þá felur það í sér leyfisgjöld, meðan Ubuntu, sem einnig er stutt, er án þeirra
+- Rekstraraðili X-Road öryggisþjóns þarf að fylgjast með honum og uppfæra reglulega
+- Endurnýjun skilríkja, þar sem þarf að óska eftir nýjum frá skilríkjamiðstöð Straumsins
 
 Net-opnanir eru skjalaðar í uppsetningarleiðbeiningum og eftirfarandi mynd sýnir yfirlit þeirra til glöggvunar:
 
@@ -480,11 +560,11 @@ Ytri álagsdreifingu er hægt að setja upp fyrir framan klasa af X-Road öryggi
 
 Nánar má lesa í:
 
-* [X-Road Architecture](https://x-road.global/architecture)
-* [Balancing the Load in X-Road](https://www.niis.org/blog/2018/6/25/balancing-the-load)
-* [X-Road Security Architecture: Availability](https://github.com/nordic-institute/X-Road/blob/develop/doc/Architecture/arc-sec_x_road_security_architecture.md)
-* [X-Road: Security Server Architecture: Redundant Deployment](https://github.com/nordic-institute/X-Road/blob/develop/doc/Architecture/arc-ss_x-road_security_server_architecture.md)
-* [X-Road: External Load Balancer Installation Guide](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/LoadBalancing/ig-xlb_x-road_external_load_balancer_installation_guide.md)
+- [X-Road Architecture](https://x-road.global/architecture)
+- [Balancing the Load in X-Road](https://www.niis.org/blog/2018/6/25/balancing-the-load)
+- [X-Road Security Architecture: Availability](https://github.com/nordic-institute/X-Road/blob/develop/doc/Architecture/arc-sec_x_road_security_architecture.md)
+- [X-Road: Security Server Architecture: Redundant Deployment](https://github.com/nordic-institute/X-Road/blob/develop/doc/Architecture/arc-ss_x-road_security_server_architecture.md)
+- [X-Road: External Load Balancer Installation Guide](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/LoadBalancing/ig-xlb_x-road_external_load_balancer_installation_guide.md)
 
 ### Umsýsluviðmót X-Road öryggisþjóns
 
@@ -498,11 +578,11 @@ Umsýsluviðmót X-Road öryggisþjóns \(Security Server\) er hægt að nálgas
 
 Umsýsluviðmót \(e. admin UI\) X-Road öryggisþjóna veitir aðgang að helstu aðgerðum er lúta að daglegum rekstri þeirra, svo sem skráningu vefþjónusta, eins og var vikið að í kafla 2 - _Vefþjónustur í Straumnum_, og utanumhaldi skírteina. Hvaða aðgerðir eru sýnilegar notanda umsýsluviðmótsins er háð hvaða hlutverki henni hefur verið úthlutað. Hlutverkin eru skráð sem stýrikerfishópar og eru:
 
-* **Security Officer** \(xroad-security-officer\), sýslar með lykla og skírteini.
-* **Registration Officer** \(xroad-registration-officer\), heldur utan um skráningu undirkerfa.
-* **Service Administrator** \(xroad-service-administrator\), skráir vefþjónustur og stýrir aðgangi að þei.
-* **System Administrator** \(xroad-system-administrator\), ber ábyrg a uppsetningu, stillingum og viðhaldi öryggisþjóns.
-* **Security Server Observer** \(xroad-securityserver-observer\), hefur lesaðgang að umsýsluviðmóti öryggisþjóns.
+- **Security Officer** \(xroad-security-officer\), sýslar með lykla og skírteini.
+- **Registration Officer** \(xroad-registration-officer\), heldur utan um skráningu undirkerfa.
+- **Service Administrator** \(xroad-service-administrator\), skráir vefþjónustur og stýrir aðgangi að þeim.
+- **System Administrator** \(xroad-system-administrator\), ber ábyrgð a uppsetningu, stillingum og viðhaldi öryggisþjóns.
+- **Security Server Observer** \(xroad-securityserver-observer\), hefur lesaðgang að umsýsluviðmóti öryggisþjóns.
 
 Hver notandi getur haft fleiri en eitt hlutverk og fleiri en einn notandi getur haft hvert hlutverk.
 
@@ -528,9 +608,9 @@ Yfirlit kerfisstillinga er að finna í umsýsluviðmótinu undir _Settings -&gt
 
 Undir _Diagnostics_ flipa umsýsluviðmóts er að finna yfirlit yfir stöðu öryggisþjónsins gagnvart miðlægum þjónustum Straumsins:
 
-* _Global configuration_ sýnir hvort eintak öryggisþjónsins af víðværum stillingum Straumsins séu upp til dags, en í þeim er meðal annars að finna upplýsingar um aðra meðlimi Straumsins og þjónustur þeirra.
-* _Timestamping_ segir til um samband við miðlæga tímastimpil-þjónustu Straumsins.
-* Öryggisþjónar nota miðlægu _OCSP Responders_ þjónustuna til að sannprófa skilríki og hér má einnig sjá stöðu sambands við hana.
+- _Global configuration_ sýnir hvort eintak öryggisþjónsins af víðværum stillingum Straumsins séu upp til dags, en í þeim er meðal annars að finna upplýsingar um aðra meðlimi Straumsins og þjónustur þeirra.
+- _Timestamping_ segir til um samband við miðlæga tímastimpil-þjónustu Straumsins.
+- Öryggisþjónar nota miðlægu _OCSP Responders_ þjónustuna til að sannprófa skilríki og hér má einnig sjá stöðu sambands við hana.
 
 ![](./assets/39.png)
 
@@ -558,10 +638,10 @@ Undir flipanum _Keys and Certificates_ í umsýsluviðmóti öryggisþjóns er a
 
 Kerfishlutar X-Road skrifa í logga undir `/var/log/xroad/*` . Mikilvægustu kerfishlutarnir og loggar þeirra eru:
 
-* xroad-confclient, dreifir skráningarupplýsingum fyrir umhverfi Straumsins og skrifar í configuration\_client.log
-* xroad-proxy, miðlar skeytum og skrifar í proxy.log
-* xroad-signer, sýslar með lykla og skrifar í signer.log
-* xroad-proxy-ui-api, skil fyrir umsýsluviðmót sem skrifa í proxy\_ui\_api.log og proxy\_ui\_api\_access.log
+- xroad-confclient, dreifir skráningarupplýsingum fyrir umhverfi Straumsins og skrifar í configuration_client.log
+- xroad-proxy, miðlar skeytum og skrifar í proxy.log
+- xroad-signer, sýslar með lykla og skrifar í signer.log
+- xroad-proxy-ui-api, skil fyrir umsýsluviðmót sem skrifa í proxy_ui_api.log og proxy_ui_api_access.log
 
 ### Ræsing kerfishluta
 
@@ -580,7 +660,7 @@ Samskiptaskrárnar vistast í skráakerfi hýsingarvélarinnar, að sjálfgefnu 
 
 Nánar um samskiptaskrárnar og skoðun þeirra má lesa í skjalinu:
 
-* [Signed Document Download and Verification Manual](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/ug-sigdoc_x-road_signed_document_download_and_verification_manual.md)
+- [Signed Document Download and Verification Manual](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/ug-sigdoc_x-road_signed_document_download_and_verification_manual.md)
 
 Séríslensk útgáfa X-Road hugbúnaðarpakka [afvirkjar skráningu á innihaldi skeyta](https://github.com/nordic-institute/X-Road/blob/develop/src/packages/src/xroad/default-configuration/override-securityserver-is.ini) sem eru send á milli upplýsingakerfa með hjálp X-Road öryggisþjóna. Ef ákvörðun liggur fyrir um að innihald skeyta skuli skráð – sem felur í sér frekari möguleika á staðfestingu þess að tiltekin samskipti hafi átt sér stað, en gerir einnig frekari kröfur um úttektir m.t.t. persónuverndarlöggjafar – þá er hægt að virkja slíka skráningu með eftirfarandi í skránni `/etc/xroad/conf.d/local.in`:
 
@@ -591,7 +671,7 @@ message-body-logging=false
 
 Sjá einnig almenna umfjöllun um X-Road skráningu í:
 
-* X-Road Logs Explained – [Part 1](https://www.niis.org/blog/2018/5/27/x-road-logs-basics), [Part 2](https://www.niis.org/blog/2018/6/3/x-road-logs-explained-part-2) and [Part 3](https://www.niis.org/blog/2018/6/12/x-road-logs-explained-part-3)
+- X-Road Logs Explained – [Part 1](https://www.niis.org/blog/2018/5/27/x-road-logs-basics), [Part 2](https://www.niis.org/blog/2018/6/3/x-road-logs-explained-part-2) and [Part 3](https://www.niis.org/blog/2018/6/12/x-road-logs-explained-part-3)
 
 ### **Útflutningur samskiptaskráa af hýsingarvél**
 
@@ -607,7 +687,7 @@ Afrit af stillingum X-Road öryggisþjóns er tekið [einu sinni á dag að sjá
 
 Sjá nánar í:
 
-* [Back up and Restore](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/ug-ss_x-road_6_security_server_user_guide.md) kafla notendahandbókar
+- [Back up and Restore](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/ug-ss_x-road_6_security_server_user_guide.md) kafla notendahandbókar
 
 ### Vöktun
 
@@ -617,7 +697,7 @@ Einnig er hægt að fylgjast með heilsufari öryggisþjóns, hvort hann sé lí
 
 Nánara lesefni:
 
-* [Operational Monitoring](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/ug-ss_x-road_6_security_server_user_guide.md) í X-Road notendahandbók
-* [Environmental Monitoring](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/ug-ss_x-road_6_security_server_user_guide.md) í notendahandbók X-Road öryggisþjóna
-* [X-Road: Operational Monitoring Daemon Architecture](https://github.com/nordic-institute/X-Road/blob/develop/doc/OperationalMonitoring/Architecture/arc-opmond_x-road_operational_monitoring_daemon_architecture_Y-1096-1.md)
-* [X-Road: External Load Balancer Installation Guide - Health check service configuration](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/LoadBalancing/ig-xlb_x-road_external_load_balancer_installation_guide.md)
+- [Operational Monitoring](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/ug-ss_x-road_6_security_server_user_guide.md) í X-Road notendahandbók
+- [Environmental Monitoring](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/ug-ss_x-road_6_security_server_user_guide.md) í notendahandbók X-Road öryggisþjóna
+- [X-Road: Operational Monitoring Daemon Architecture](https://github.com/nordic-institute/X-Road/blob/develop/doc/OperationalMonitoring/Architecture/arc-opmond_x-road_operational_monitoring_daemon_architecture_Y-1096-1.md)
+- [X-Road: External Load Balancer Installation Guide - Health check service configuration](https://github.com/nordic-institute/X-Road/blob/develop/doc/Manuals/LoadBalancing/ig-xlb_x-road_external_load_balancer_installation_guide.md)
