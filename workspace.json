@@ -1442,7 +1442,7 @@
             "args": "--targetName=application-system-form",
             "commands": [
               "yarn nx run {args.targetName}:build:production",
-              "yarn nx run {args.targetName}-e2e:e2e:production --headless --production --base-url http://localhost:4200 --record --group={args.targetName}-e2e"
+              "yarn nx run {args.targetName}-e2e:e2e:production --headless --production --base-url http://localhost:4200 --record --group={args.targetName}-e2e || pkill -f 'serve -l'"
             ],
             "parallel": false
           }
@@ -1967,6 +1967,17 @@
             "production": {
               "devServerTarget": "auth-admin-web:serve:production"
             }
+          }
+        },
+        "e2e-ci": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "args": "--targetName=auth-admin-web",
+            "commands": [
+              "yarn nx run {args.targetName}:build:production",
+              "yarn nx run {args.targetName}-e2e:e2e:production --headless --production --base-url http://localhost:4200 --record --group={args.targetName}-e2e"
+            ],
+            "parallel": false
           }
         },
         "lint": {
@@ -3510,7 +3521,7 @@
             "args": "--targetName=judicial-system-web",
             "commands": [
               "yarn nx run {args.targetName}:build:production",
-              "yarn nx run {args.targetName}-e2e:e2e:production --headless --production --base-url http://localhost:4200 --record --group={args.targetName}-e2e"
+              "yarn nx run {args.targetName}-e2e:e2e:production --headless --production --base-url http://localhost:4200 --record --group={args.targetName}-e2e || pkill -f 'serve -l'"
             ],
             "parallel": false
           }
@@ -4182,7 +4193,7 @@
             "args": "--targetName=service-portal",
             "commands": [
               "yarn nx run {args.targetName}:build:production",
-              "yarn nx run {args.targetName}-e2e:e2e:production --headless --production --base-url http://localhost:4200 --record --group={args.targetName}-e2e"
+              "yarn nx run {args.targetName}-e2e:e2e:production --headless --production --base-url http://localhost:4200 --record --group={args.targetName}-e2e || pkill -f 'serve -l'"
             ],
             "parallel": false
           }

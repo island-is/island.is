@@ -60,6 +60,9 @@ built app.
 _Additionally_ you can change the `port` parameter by
 changing the value that comes after `-l` option.
 
+> :information*source: \_React* apps need additional cleanup
+> in their `e2e-ci` task. See [e2e-ci for React](#React)
+
 Next we change the `devServerTarget` for the `production` config of
 the `e2e` task in the `e2e` project to use this new `static-serve` task.
 
@@ -107,6 +110,8 @@ module.exports = (config, context) => {
 Finally we need to add a `e2e-ci` task to the `architect` property
 of the corrensponding `e2e` project.
 
+#### NextJS
+
 ```json
 "e2e-ci": {
   "builder": "@nrwl/workspace:run-commands",
@@ -121,7 +126,29 @@ of the corrensponding `e2e` project.
 },
 ```
 
-And configure the `targetName` in the `args` property for each project:
+#### React
+
+```json
+"e2e-ci": {
+  "builder": "@nrwl/workspace:run-commands",
+  "options": {
+    "args": "--targetName=web",
+    "commands": [
+      "yarn nx run {args.targetName}:build:production",
+      "yarn nx run {args.targetName}-e2e:e2e:production --headless --production --base-url http://localhost:4200 --record --group={args.targetName}-e2e || pkill -f 'serve -l'"
+    ],
+    "parallel": false
+  }
+},
+```
+
+#### Configure
+
+> :information*source: `pkill -f 'serve -l'` is only needed for \_React*
+> apps as they use the `serve` npm package to serve from the production
+> build, and on failure it leaves the process dangling.
+
+We need to configure the `targetName` in the `args` property for each project:
 
 - `targetName`: The name of the web app that this `e2e` app is
   testing. Usually this is the same name as the `e2e` app name
@@ -146,7 +173,8 @@ As before we use the `e2e` task to test locally
 yarn e2e web-e2e
 ```
 
-> **Note** Currently the `e2e-ci` task only works in the CI environment
-> as we are using `--record` and `--group` parameters for Cypress.  
-> To test the task locally you can temporarily remove those parameters
-> in `workspace.json` for the corresponding `e2e-ci` task you want to test.
+> :information_source: Currently the `e2e-ci` task only works in the
+> CI environment as we are using `--record` and `--group` parameters
+> for Cypress. To test the task locally you can temporarily remove
+> those parameters in `workspace.json` for the corresponding
+> `e2e-ci` task you want to test.
