@@ -34,7 +34,10 @@ export const TagList: FC<TagListProps> = ({
     <Box paddingX={3}>
       <GridContainer>
         <GridRow>
-          <GridColumn paddingBottom={[3, 0]} span={['12/12', '12/12', '6/12']}>
+          <GridColumn
+            paddingBottom={[3, 3, 0]}
+            span={['12/12', '12/12', '6/12']}
+          >
             <Box marginBottom={1}>
               <Text variant="eyebrow" as="span" color="blue600">
                 {n('data')}
@@ -48,7 +51,10 @@ export const TagList: FC<TagListProps> = ({
               ))}
             </Inline>
           </GridColumn>
-          <GridColumn paddingBottom={[3, 0]} span={['12/12', '12/12', '3/12']}>
+          <GridColumn
+            paddingBottom={[3, 3, 0]}
+            span={['12/12', '12/12', '3/12']}
+          >
             <Box marginBottom={1}>
               <Text variant="eyebrow" as="span" color="blue600">
                 {n('type')}

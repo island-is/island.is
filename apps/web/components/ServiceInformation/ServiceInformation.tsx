@@ -45,7 +45,7 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
   const enviromentOptions: Array<SelectOption> = service.environments.map(
     (x) => {
       return {
-        label: x.environment,
+        label: n(x.environment),
         value: x.environment,
       }
     },
@@ -57,8 +57,9 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
   const versionOptions: Array<SelectOption> = service
     ? service.environments[0].details.map((x) => {
         // TODO: Change this when we add environmental aware services
+        console.log(service)
         return {
-          label: x.version.split('-').pop(),
+          label: x.version,
           value: x.xroadIdentifier,
         }
       })
@@ -102,11 +103,10 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
     )
     setSelectedEnviromentOption(enviromentOption)
   }
-
   return (
     <Box>
       <Box marginTop={1} marginBottom={3}>
-        <Box display="flex" alignItems="flexStart">
+        <Box marginBottom={2} display="flex" alignItems="flexStart">
           <Text variant="h1" as="h1">
             {service.title}
           </Text>
@@ -116,9 +116,12 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
             </Box>
           )}
         </Box>
-        <Text variant="intro" paddingTop={2}>
-          {service.description}
-        </Text>
+        {service.summary && (
+          <Text variant="intro" paddingBottom={2}>
+            {service.summary}
+          </Text>
+        )}
+        {service.description && <Text> {service.description}</Text>}
       </Box>
 
       <Box paddingBottom={3}>
@@ -127,8 +130,8 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
 
       <Box
         display="flex"
-        flexDirection={['column', 'row']}
-        justifyContent={['flexStart', 'spaceBetween']}
+        flexDirection={['column', 'column', 'row']}
+        justifyContent={['flexStart', 'flexStart', 'spaceBetween']}
       >
         <Box display="flex">
           <Box className={styles.selectDesktop}>
@@ -161,12 +164,13 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
         {(serviceDetail.links.bugReport ||
           serviceDetail.links.featureRequest) && (
           <Box
-            paddingTop={[3, 0]}
+            paddingTop={[3, 3, 0]}
+            paddingLeft={[0, 0, 2]}
             display="flex"
             alignItems="center"
-            justifyContent={['flexStart', 'flexEnd']}
+            justifyContent={['flexStart', 'flexStart', 'flexEnd']}
           >
-            <Inline space={[3, 2]}>
+            <Inline space={[3, 3, 2]}>
               {serviceDetail.links.bugReport && (
                 <Box>
                   <Link href={serviceDetail.links.bugReport}>

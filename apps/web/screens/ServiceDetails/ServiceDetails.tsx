@@ -75,7 +75,6 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   >(xroadIdentifierToOpenApiInput(selectedServiceDetail.xroadIdentifier))
 
   const setApiContent = (serviceDetail: ServiceDetail) => {
-    console.log('SetAPIContentServiceDetail: ', serviceDetail)
     setselectedServiceDetail(serviceDetail)
 
     setSelectedGetOpenApiInput(
