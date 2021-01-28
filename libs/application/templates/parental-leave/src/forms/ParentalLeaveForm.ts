@@ -18,7 +18,7 @@ import {
   FormModes,
 } from '@island.is/application/core'
 import { m, mm } from '../lib/messages'
-import { formatIsk, getEstimatedMonthlyPay } from '../fields/parentalLeaveUtils'
+import { formatIsk, getEstimatedMonthlyPay } from '../parentalLeaveUtils'
 import { GetPensionFunds, GetUnions } from '../graphql/queries'
 import { NO, YES } from '../constants'
 
@@ -679,6 +679,7 @@ export const ParentalLeaveForm: Form = buildForm({
         buildSubSection({
           id: 'shareInformation',
           title: mm.shareInformation.subSection,
+          condition: (answers) => answers.otherParent !== NO,
           children: [
             buildRadioField({
               id: 'shareInformationWithOtherParent',
@@ -719,7 +720,6 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'submit',
               placement: 'footer',
               title: mm.confirmation.title,
-
               actions: [
                 {
                   event: 'SUBMIT',

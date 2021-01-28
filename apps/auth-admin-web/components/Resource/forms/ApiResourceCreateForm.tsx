@@ -94,6 +94,28 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                   />
                 </div>
                 <div className="api-resource-form__container__field">
+                  <label className="client-basic__label">Contact email</label>
+                  <input
+                    type="text"
+                    ref={register({
+                      required: true,
+                      pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                    })}
+                    name="contactEmail"
+                    defaultValue={props.apiResource.contactEmail ?? ''}
+                    className="api-resource-form__input"
+                    title="The email of the person who can be contacted regarding this API Resource"
+                    placeholder="john@example.com"
+                  />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="contactEmail"
+                    message="Contact email must be set and must be a valid email address"
+                  />
+                  <HelpBox helpText="The email of the person who can be contacted regarding this API Resource" />
+                </div>
+                <div className="api-resource-form__container__field">
                   <label htmlFor="name" className="api-resource-form__label">
                     Name
                   </label>

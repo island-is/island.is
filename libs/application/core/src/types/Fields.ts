@@ -4,26 +4,15 @@ import {
   InputBackgroundColor,
 } from '@island.is/island-ui/core'
 import { ApolloClient } from '@apollo/client'
-import { FormText, FormItem } from './Form'
+import { FormText, FormTextArray, FormItem } from './Form'
 import { Condition } from './Condition'
 import { CallToAction } from './StateMachine'
 import { Application } from './Application'
 import { FormatInputValueFunction } from 'react-number-format'
 
-export interface Option {
-  value: string
-  label: FormText
-  tooltip?: FormText
-  excludeOthers?: boolean
-}
-
-interface SelectOption {
-  label: string
-  value: string | number
-}
-
+export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplication<T> = T | ((a: Application) => T)
-
+export type ValidAnswers = 'yes' | 'no' | undefined
 export type FieldWidth = 'full' | 'half'
 export type TextFieldVariant =
   | 'text'
@@ -36,6 +25,18 @@ export type TextFieldVariant =
 export type Context = {
   application: Application
   apolloClient: ApolloClient<object>
+}
+
+export interface Option {
+  value: string
+  label: FormText
+  tooltip?: FormText
+  excludeOthers?: boolean
+}
+
+interface SelectOption {
+  label: string
+  value: string | number
 }
 
 export interface BaseField extends FormItem {
@@ -170,8 +171,8 @@ export interface DividerField extends BaseField {
 
 export interface KeyValueField extends BaseField {
   readonly type: FieldTypes.KEY_VALUE
-  label: React.ReactNode
-  value: React.ReactNode | React.ReactNode[]
+  label: FormText
+  value: FormText | FormTextArray
   component: FieldComponents.KEY_VALUE
 }
 

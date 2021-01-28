@@ -75,7 +75,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
         isTag: true,
         title: title,
         typename: 'newsoverview',
-        slug: [`?tag=${id}`],
+        href: id,
       }
     })
 
@@ -104,12 +104,17 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
                           ? breadCrumbs.concat(breadCrumbTags)
                           : breadCrumbs
                       }
-                      renderLink={(link, { typename, slug }) => {
+                      renderLink={(link, { isTag, typename, slug, href }) => {
+                        const linkProps = isTag
+                          ? {
+                              href: {
+                                pathname: linkResolver('newsoverview').href,
+                                query: { tag: href },
+                              },
+                            }
+                          : linkResolver(typename as LinkType, slug)
                         return (
-                          <NextLink
-                            {...linkResolver(typename as LinkType, slug)}
-                            passHref
-                          >
+                          <NextLink {...linkProps} passHref>
                             {link}
                           </NextLink>
                         )

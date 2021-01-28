@@ -53,7 +53,7 @@ export class IdpRestrictionController {
     return await this.clientsService.removeIdpRestriction(clientId, name)
   }
 
-  /** Finds available idp restrictions */
+  /** Finds available idp providers that can be restricted */
   @Get()
   @ApiOkResponse({ type: [IdpRestriction] })
   async findAllIdpRestrictions(): Promise<IdpRestriction[] | null> {

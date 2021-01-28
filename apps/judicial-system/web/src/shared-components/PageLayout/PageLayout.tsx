@@ -9,11 +9,9 @@ import {
   LinkContext,
 } from '@island.is/island-ui/core'
 import * as styles from './PageLayout.treat'
-import {
-  JudgeLogo,
-  ProsecutorLogo,
-} from '@island.is/judicial-system-web/src/shared-components/Logos'
-import { Loading } from '@island.is/judicial-system-web/src/shared-components'
+import { ProsecutorLogo } from '../Logos'
+import { JudgeLogo } from '../Logos'
+import Loading from '../Loading/Loading'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   CaseDecision,
@@ -21,7 +19,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 import { Link } from 'react-router-dom'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '../UserProvider/UserProvider'
 import { Sections } from '@island.is/judicial-system-web/src/types'
 
 interface PageProps {

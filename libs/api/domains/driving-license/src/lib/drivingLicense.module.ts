@@ -5,7 +5,8 @@ import { DrivingLicenseService } from './drivingLicense.service'
 import { DrivingLicenseApi } from './client'
 
 export interface Config {
-  baseApiUrl: string
+  xroadBaseUrl: string
+  xroadClientId: string
   secret: string
 }
 
@@ -20,7 +21,11 @@ export class DrivingLicenseModule {
         {
           provide: DrivingLicenseApi,
           useFactory: async () =>
-            new DrivingLicenseApi(config.baseApiUrl, config.secret),
+            new DrivingLicenseApi(
+              config.xroadBaseUrl,
+              config.xroadClientId,
+              config.secret,
+            ),
         },
       ],
       exports: [],
