@@ -135,6 +135,7 @@ export enum NotificationType {
   READY_FOR_COURT = 'READY_FOR_COURT',
   COURT_DATE = 'COURT_DATE',
   RULING = 'RULING',
+  REVOKED = 'REVOKED',
 }
 
 export interface Notification {
