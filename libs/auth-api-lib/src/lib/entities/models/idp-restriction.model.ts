@@ -10,7 +10,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 
 @Table({
-  tableName: 'idp_restrictions',
+  tableName: 'idp_providers',
   indexes: [
     {
       fields: ['name'],
