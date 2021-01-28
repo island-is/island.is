@@ -21,7 +21,7 @@ We need a central observability platform where we ingest all our logs, metrics a
 
 ## Considered Options
 
-- Self hosted: Elastic Search + Grafana + Kibana + Logstash + Jaeger
+- Self hosted: Elasticsearch + Grafana + Kibana + Logstash + Jaeger
 - SaaS: DataDog
 
 **Full disclosure: Andes ehf. is a DataDog partner. Andes ehf. would not be receiving any sort of kick-backs due to Stafrænt Ísland using DataDog services. Stafrænt Ísland would be in a direct relationship with DataDog.**
@@ -65,7 +65,7 @@ None.
 
 ### Self-hosted
 
-Elastic Search + Grafana + Kibana + Logstash + Jagger + Prometheus
+Elasticsearch + Grafana + Kibana + Logstash + Jagger + Prometheus
 
 - Good, because it consists of open-source components which we can use
 - Good, because it uses open protocols
