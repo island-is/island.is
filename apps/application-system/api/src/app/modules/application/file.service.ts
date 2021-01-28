@@ -82,8 +82,8 @@ export class FileService {
     await this.s3
       .upload(uploadParams)
       .promise()
-      .catch((error) => {
-        throw error
+      .catch(() => {
+        return null
       })
 
     const presignedUrlParams = {
