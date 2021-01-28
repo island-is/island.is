@@ -49,6 +49,7 @@ import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
 import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
+import { CreateResidenceChangePdfDto } from './dto/createResidenceChangePdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
 import {
   buildDataProviders,
@@ -64,12 +65,12 @@ import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
 import { AssignApplicationDto } from './dto/assignApplication.dto'
+import { CreatePdfSignedUrlResponseDto } from './dto/createPdfSignedUrlResponse.dto'
 import { EmailService } from '@island.is/email-service'
 import { environment } from '../../../environments'
 import { ApplicationAPITemplateUtils } from '@island.is/application/api-template-utils'
 import { NationalId } from './tools/nationalId.decorator'
 import { verifyToken } from './utils/tokenUtils'
-import { ReadableStreamBuffer } from 'stream-buffers'
 
 // @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
 
@@ -502,34 +503,13 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Get('residenceChangePdf')
-  async getResidenceChangePdf(
-    @Body()
-    input: {
-      childrenAppliedFor: [{ name: string; ssn: string }]
-      parentA: {
-        name: string
-        ssn: string
-        phoneNumber: string
-        email: string
-        homeAddress: string
-        postalCode: string
-        city: string
-      }
-      parentB: {
-        name: string
-        ssn: string
-        phoneNumber: string
-        email: string
-        homeAddress: string
-        postalCode: string
-        city: string
-      }
-      expiry: string
-    },
-  ): Promise<string> {
+  @Put('residenceChangePdf')
+  @ApiOkResponse({ type: CreatePdfSignedUrlResponseDto })
+  async createResidenceChangePdf(
+    @Body() input: CreateResidenceChangePdfDto,
+  ): Promise<CreatePdfSignedUrlResponseDto> {
     const { childrenAppliedFor, parentA, parentB, expiry } = input
-
-    return await this.fileService.createResidenceChangePdf(childrenAppliedFor, parentA, parentB, expiry)
+    let url = await this.fileService.createResidenceChangePdf(childrenAppliedFor, parentA, parentB, expiry)
+    return 
   }
 }

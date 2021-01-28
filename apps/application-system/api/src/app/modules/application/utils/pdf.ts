@@ -1,26 +1,11 @@
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
+import { ParentResidenceChange, ChildrenResidenceChange } from '@island.is/application/api-template-utils'
 
 export async function generateResidenceChangePdf(
-  childrenAppliedFor: [{ name: string; ssn: string }],
-  parentA: {
-    name: string
-    ssn: string
-    phoneNumber: string
-    email: string
-    homeAddress: string
-    postalCode: string
-    city: string
-  },
-  parentB: {
-    name: string
-    ssn: string
-    phoneNumber: string
-    email: string
-    homeAddress: string
-    postalCode: string
-    city: string
-  },
+  childrenAppliedFor: Array<ChildrenResidenceChange>,
+  parentA: ParentResidenceChange,
+  parentB: ParentResidenceChange,
   expiry: string,
 ): Promise<Buffer> {
   const boldFont = 'Helvetica-Bold'

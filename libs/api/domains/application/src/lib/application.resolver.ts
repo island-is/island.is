@@ -1,4 +1,4 @@
-import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
+import { Args, Query, Resolver, Mutation, ResolveField } from '@nestjs/graphql'
 import { ApplicationService } from './application.service'
 import { Application } from './application.model'
 import { GetApplicationsByTypeInput } from './dto/getApplicationsByType.input'
@@ -10,6 +10,7 @@ import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
+import { CreateResidenceChangePdfInput } from './dto/createResidenceChangePdf.input'
 import {
   IdsAuthGuard,
   ScopesGuard,
@@ -129,5 +130,14 @@ export class ApplicationResolver {
     @CurrentUser() user: User,
   ): Promise<Application> {
     return this.applicationService.assignApplication(input, user.authorization)
+  }
+
+  @Mutation(() => Application, { nullable: true })
+  @ResolveField('residenceChangePdfUrl')
+  async createResidenceChangePdfUrl(
+    @Args('input') input: CreateResidenceChangePdfInput,
+    @CurrentUser() user: User,
+  ): Promise<Application> {
+    return this.applicationService.createResidenceChangePdf(input, user.authorization)
   }
 }

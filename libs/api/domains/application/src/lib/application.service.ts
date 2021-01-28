@@ -10,6 +10,7 @@ import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExter
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
 import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch/models/ApplicationResponseDto'
+import { CreateResidenceChangePdfInput } from './dto/CreateResidenceChangePdf.input'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -152,6 +153,16 @@ export class ApplicationService {
     return this.applicationApi.applicationControllerAssignApplication({
       assignApplicationDto: input,
       authorization,
+    })
+  }
+
+  async createResidenceChangePdf(
+    input: CreateResidenceChangePdfInput,
+    authorization: string,
+  ) {
+    return await this.applicationApi.applicationControllerCreateResidenceChangePdf({
+      createResidenceChangePdfDto: input,
+      authorization
     })
   }
 }

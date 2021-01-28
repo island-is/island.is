@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { generateResidenceChangePdf } from './utils/pdf'
 import * as AWS from 'aws-sdk'
 import { uuid } from 'uuidv4'
+import { ParentResidenceChange, ChildrenResidenceChange } from '@island.is/application/api-template-utils'
 
 @Injectable()
 export class FileService {
@@ -10,25 +11,9 @@ export class FileService {
   constructor() {}
 
   async createResidenceChangePdf(
-    childrenAppliedFor: [{ name: string; ssn: string }],
-    parentA: {
-      name: string
-      ssn: string
-      phoneNumber: string
-      email: string
-      homeAddress: string
-      postalCode: string
-      city: string
-    },
-    parentB: {
-      name: string
-      ssn: string
-      phoneNumber: string
-      email: string
-      homeAddress: string
-      postalCode: string
-      city: string
-    },
+    childrenAppliedFor: Array<ChildrenResidenceChange>,
+    parentA: ParentResidenceChange,
+    parentB: ParentResidenceChange,
     expiry: string,
   ): Promise<string> {
     const pdfBuffer = await generateResidenceChangePdf(
@@ -45,7 +30,7 @@ export class FileService {
 
     await this.uploadFileToS3(pdfBuffer, bucket, fileName)
 
-    const presignedUrl =  await this.createPresignedUrl(bucket, fileName)
+    const presignedUrl = await this.createPresignedUrl(bucket, fileName)
 
     return presignedUrl
   }
