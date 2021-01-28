@@ -61,103 +61,95 @@ const SubPage: Screen<SubPageProps> = ({
     }),
   )
 
+  console.log(subpage.slices)
+
   return (
-    <>
-      <OrganizationWrapper
-        pageTitle={subpage.title}
-        pageDescription={subpage.description}
-        organizationPage={organizationPage}
-        pageFeaturedImage={subpage.featuredImage}
-        fullWidthContent={true}
-        breadcrumbItems={[
-          {
-            title: 'Ísland.is',
-            href: linkResolver('homepage').as,
-          },
-          {
-            title: n('organizations', 'Stofnanir'),
-            href: linkResolver('organizations').as,
-          },
-          {
-            title: organizationPage.title,
-            href: linkResolver('organizationpage', [organizationPage.slug]).as,
-          },
-        ]}
-        navigationData={{
-          title: n('navigationTitle', 'Efnisyfirlit'),
-          items: navList,
-          titleLink: {
-            href: linkResolver('organizationpage', [organizationPage.slug]).as,
-            active: false,
-          },
-        }}
-      >
-        <GridContainer>
-          <Box
-            className={styles.intro}
-            paddingTop={[4, 4, 0]}
-            paddingBottom={[4, 4, 6]}
-          >
-            <GridRow>
-              <GridColumn
-                span={[
-                  '12/12',
-                  '12/12',
-                  subpage.links.length ? '7/12' : '12/12',
-                ]}
+    <OrganizationWrapper
+      pageTitle={subpage.title}
+      pageDescription={subpage.description}
+      organizationPage={organizationPage}
+      pageFeaturedImage={subpage.featuredImage}
+      fullWidthContent={true}
+      breadcrumbItems={[
+        {
+          title: 'Ísland.is',
+          href: linkResolver('homepage').as,
+        },
+        {
+          title: n('organizations', 'Stofnanir'),
+          href: linkResolver('organizations').as,
+        },
+        {
+          title: organizationPage.title,
+          href: linkResolver('organizationpage', [organizationPage.slug]).as,
+        },
+      ]}
+      navigationData={{
+        title: n('navigationTitle', 'Efnisyfirlit'),
+        items: navList,
+        titleLink: {
+          href: linkResolver('organizationpage', [organizationPage.slug]).as,
+          active: false,
+        },
+      }}
+    >
+      <GridContainer>
+        <Box
+          className={styles.intro}
+          paddingTop={[4, 4, 0]}
+          paddingBottom={[4, 4, 6]}
+        >
+          <GridRow>
+            <GridColumn
+              span={['12/12', '12/12', subpage.links.length ? '7/12' : '12/12']}
+            >
+              <h2 className={styles.heading}>{subpage.title}</h2>
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn
+              span={['12/12', '12/12', subpage.links.length ? '7/12' : '12/12']}
+            >
+              <div
+                className={
+                  subpage.slices.length
+                    ? styles.description
+                    : styles.smallDescription
+                }
               >
-                <h2 className={styles.heading}>{subpage.title}</h2>
-              </GridColumn>
-            </GridRow>
-            <GridRow>
+                <Markdown>{subpage.description}</Markdown>
+              </div>
+            </GridColumn>
+            {subpage.links.length > 0 && (
               <GridColumn
-                span={[
-                  '12/12',
-                  '12/12',
-                  subpage.links.length ? '7/12' : '12/12',
-                ]}
+                span={['12/12', '12/12', '4/12']}
+                offset={[null, null, '1/12']}
               >
-                <div
-                  className={
-                    subpage.slices.length
-                      ? styles.description
-                      : styles.smallDescription
-                  }
-                >
-                  <Markdown>{subpage.description}</Markdown>
-                </div>
+                <ul>
+                  {subpage.links.map((link) => (
+                    <li>
+                      <Link href={link.url}>
+                        <a className={styles.link} href={link.url}>
+                          {link.text}
+                        </a>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </GridColumn>
-              {subpage.links.length > 0 && (
-                <GridColumn
-                  span={['12/12', '12/12', '4/12']}
-                  offset={[null, null, '1/12']}
-                >
-                  <ul>
-                    {subpage.links.map((link) => (
-                      <li>
-                        <Link href={link.url}>
-                          <a className={styles.link} href={link.url}>
-                            {link.text}
-                          </a>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </GridColumn>
-              )}
-            </GridRow>
-          </Box>
-        </GridContainer>
-        {subpage.slices.map((slice) => (
-          <OrganizationSlice
-            key={slice.id}
-            slice={slice}
-            organization={organizationPage.organization}
-            namespace={namespace}
-          />
-        ))}
-      </OrganizationWrapper>
-    </>
+            )}
+          </GridRow>
+        </Box>
+      </GridContainer>
+      {subpage.slices.map((slice) => (
+        <OrganizationSlice
+          key={slice.id}
+          slice={slice}
+          organization={organizationPage.organization}
+          namespace={namespace}
+        />
+      ))}
+    </OrganizationWrapper>
   )
 }
 

@@ -48,58 +48,56 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
   )
 
   return (
-    <>
-      <OrganizationWrapper
-        pageTitle={organizationPage.title}
-        pageDescription={organizationPage.description}
-        organizationPage={organizationPage}
-        pageFeaturedImage={organizationPage.featuredImage}
-        fullWidthContent={false}
-        breadcrumbItems={[
-          {
-            title: 'Ísland.is',
-            href: linkResolver('homepage').as,
-          },
-          {
-            title: n('organizations', 'Stofnanir'),
-            href: linkResolver('organizations').as,
-          },
-        ]}
-        navigationData={{
-          title: n('navigationTitle', 'Efnisyfirlit'),
-          items: navList,
-          titleLink: {
-            href: linkResolver('organizationpage', [organizationPage.slug]).as,
-            active: false,
-          },
-        }}
-        mainContent={
-          <Box className={styles.intro}>{organizationPage.description}</Box>
-        }
+    <OrganizationWrapper
+      pageTitle={organizationPage.title}
+      pageDescription={organizationPage.description}
+      organizationPage={organizationPage}
+      pageFeaturedImage={organizationPage.featuredImage}
+      fullWidthContent={false}
+      breadcrumbItems={[
+        {
+          title: 'Ísland.is',
+          href: linkResolver('homepage').as,
+        },
+        {
+          title: n('organizations', 'Stofnanir'),
+          href: linkResolver('organizations').as,
+        },
+      ]}
+      navigationData={{
+        title: n('navigationTitle', 'Efnisyfirlit'),
+        items: navList,
+        titleLink: {
+          href: linkResolver('organizationpage', [organizationPage.slug]).as,
+          active: false,
+        },
+      }}
+      mainContent={
+        <Box className={styles.intro}>{organizationPage.description}</Box>
+      }
+    >
+      {organizationPage.slices.map((slice) => (
+        <OrganizationSlice
+          key={slice.id}
+          slice={slice}
+          organization={organizationPage.organization}
+          namespace={namespace}
+        />
+      ))}
+      <Box
+        className={styles.newsBg}
+        paddingTop={[4, 5, 10]}
+        paddingBottom={[4, 5, 10]}
       >
-        {organizationPage.slices.map((slice) => (
-          <OrganizationSlice
-            key={slice.id}
-            slice={slice}
-            organization={organizationPage.organization}
-            namespace={namespace}
-          />
-        ))}
-        <Box
-          className={styles.newsBg}
-          paddingTop={[4, 5, 10]}
-          paddingBottom={[4, 5, 10]}
-        >
-          <LatestOrganizationNewsSection
-            label={n('newsAndAnnouncements')}
-            labelId="latestNewsTitle"
-            items={news}
-            subtitle={organizationPage.title}
-            organizationSlug={organizationPage.slug}
-          />
-        </Box>
-      </OrganizationWrapper>
-    </>
+        <LatestOrganizationNewsSection
+          label={n('newsAndAnnouncements')}
+          labelId="latestNewsTitle"
+          items={news}
+          subtitle={organizationPage.title}
+          organizationSlug={organizationPage.slug}
+        />
+      </Box>
+    </OrganizationWrapper>
   )
 }
 
