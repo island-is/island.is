@@ -153,10 +153,11 @@ export class CaseController {
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   create(
+    @CurrentHttpUser() user: User,
     @Body(new CaseValidationPipe())
     caseToCreate: CreateCaseDto,
   ): Promise<Case> {
-    return this.caseService.create(caseToCreate)
+    return this.caseService.create(caseToCreate, user)
   }
 
   @RolesRules(prosecutorUpdateRule, judgeUpdateRule)

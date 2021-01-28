@@ -20,6 +20,8 @@ import {
   ReadWriteValues,
 } from '../types/StateMachine'
 import { ApplicationTemplate } from '../types/ApplicationTemplate'
+import get from 'lodash/get'
+import has from 'lodash/has'
 
 interface APITemplateUtilsServiceInvokeSourceDefinition
   extends InvokeSourceDefinition {
@@ -186,5 +188,40 @@ export class ApplicationTemplateHelper<
       return undefined
     }
     return roleInState.write
+  }
+
+  async applyAnswerValidators(
+    newAnswers: FormValue,
+  ): Promise<undefined | Record<string, string>> {
+    const validators = this.template.answerValidators
+
+    if (!validators) {
+      return Promise.resolve(undefined)
+    }
+
+    let hasError = false
+    const errorMap: Record<string, string> = {}
+    const validatorPaths = Object.keys(validators)
+
+    for (const validatorPath of validatorPaths) {
+      if (has(newAnswers, validatorPath)) {
+        const newAnswer = get(newAnswers, validatorPath)
+        const result = await validators[validatorPath](
+          newAnswer,
+          this.application,
+        )
+
+        if (result) {
+          hasError = true
+          errorMap[result.path] = result.message
+        }
+      }
+    }
+
+    if (hasError) {
+      return Promise.reject(errorMap)
+    }
+
+    return Promise.resolve(undefined)
   }
 }

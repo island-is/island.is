@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
 import { Client } from './../../../entities/models/client.model'
+import { downloadCSV } from '../../../utils/csv.utils'
 
 class ClientsList extends Component {
   state = {
@@ -80,6 +81,16 @@ class ClientsList extends Component {
 
   handleSearchChange = (event) => {
     this.setState({ searchString: event.target.value })
+  }
+
+  exportCsv = async () => {
+    const filename = `Clients, ${new Date().toISOString().split('T')[0]}.csv`
+
+    await downloadCSV(
+      filename,
+      ClientService.getClientsCsvHeaders(),
+      ClientService.getClientsCsv,
+    )
   }
 
   render(): JSX.Element {
@@ -175,10 +186,15 @@ class ClientsList extends Component {
                   </tbody>
                 </table>
               </div>
-              <Paginator
-                lastPage={Math.ceil(this.state.rowCount / this.state.count)}
-                handlePageChange={this.handlePageChange}
-              />
+              <div>
+                <Paginator
+                  lastPage={Math.ceil(this.state.rowCount / this.state.count)}
+                  handlePageChange={this.handlePageChange}
+                />
+                <button type="button" onClick={() => this.exportCsv()}>
+                  <span>Export</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -7,7 +7,11 @@ export const withAuthentication = (
   next: (context: NextPageContext) => Promise<any>,
 ) => async (context: NextPageContext) => {
   const session = ((await getSession(context)) as unknown) as SessionInfo
+
+  console.info('withAuthentication -', session?.refreshToken)
+
   if (isExpired(session)) {
+    console.info('withAuthentication - isExpired -', session?.refreshToken)
     const { res } = context
     if (res) {
       res.statusCode = 302

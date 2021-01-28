@@ -20,7 +20,9 @@
 .api-resource-secret-form,
 .api-resource-scope-form,
 .api-resource-user-claims,
-.client-basic {
+.client-basic,
+.admin-user-create-form,
+.idp-provider-create-form {
   &__help {
     padding: 0 10px 20px 10px;
 
@@ -97,13 +99,38 @@
     &__details {
       padding: 8px 30px;
       position: absolute;
-      top: 70px;
+      top: 0%;
       left: 0px;
+      background: $color-body-bg;
+      width: 45%;
+      left: 55%;
+      border-radius: 5px;
+      border: solid 1px $color-border;
+
+      .detail-title {
+        font-weight: $weight-semi-bold;
+      }
+
+      .detail-flow {
+        font-style: italic;
+        margin: 5px 0;
+      }
+
+      .detail-uri {
+        font-size: 0.9rem;
+        margin: 5px 0;
+        font-weight: $weight-light;
+        text-decoration: underline;
+      }
+
+      .detail-link {
+        margin: 8px 0;
+      }
     }
   }
 
   .field-with-details {
-    margin-bottom: 45px;
+    margin-bottom: 90px;
   }
 
   .toggleable-fields {
