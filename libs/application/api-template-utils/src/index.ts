@@ -4,5 +4,5 @@ export {
   EmailTemplateGeneratorProps,
   PersonResidenceChange,
   ParentResidenceChange,
-  PDF_TYPES
+  PDF_TYPES,
 } from './lib/types'

@@ -1,8 +1,5 @@
 import { InputType, Field, registerEnumType } from '@nestjs/graphql'
-import {
-  IsEnum,
-  IsString
-} from 'class-validator'
+import { IsEnum, IsString } from 'class-validator'
 import { CreatePdfDtoTypeEnum } from '../../../gen/fetch'
 
 registerEnumType(CreatePdfDtoTypeEnum, {

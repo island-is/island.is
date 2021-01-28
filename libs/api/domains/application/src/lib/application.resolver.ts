@@ -137,6 +137,9 @@ export class ApplicationResolver {
     @Args('input') input: CreatePdfInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.createPdfPresignedUrl(input, user.authorization)
+    return this.applicationService.createPdfPresignedUrl(
+      input,
+      user.authorization,
+    )
   }
 }

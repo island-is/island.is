@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common'
 import { generateResidenceChangePdf } from './utils/pdf'
 import * as AWS from 'aws-sdk'
 import { uuid } from 'uuidv4'
-import { ParentResidenceChange, PersonResidenceChange, PDF_TYPES } from '@island.is/application/api-template-utils'
+import {
+  ParentResidenceChange,
+  PersonResidenceChange,
+  PDF_TYPES,
+} from '@island.is/application/api-template-utils'
 import { Application } from './application.model'
 import { FormValue } from 'libs/application/core/src/types/Application'
 
@@ -13,28 +17,26 @@ export class FileService {
 
   constructor() {}
 
-  async createPdf(
-    application: Application,
-    type: PDF_TYPES
-  ): Promise<string> {
+  async createPdf(application: Application, type: PDF_TYPES): Promise<string> {
     const answers = application.answers as FormValue
     const externalData = application.externalData as FormValue
 
-    switch(type) {
+    switch (type) {
       case PDF_TYPES.CHILDREN_RESIDENCE_CHANGE: {
-          return await this.createResidenceChangePdf(answers, externalData)
-        }
+        return await this.createResidenceChangePdf(answers, externalData)
       }
     }
-
+  }
 
   private async createResidenceChangePdf(
     answers: FormValue,
-    externalData: FormValue
+    externalData: FormValue,
   ): Promise<string> {
     const parentBNationalRegistry = externalData.parentNationalRegistry as FormValue
-    const childrenAppliedFor = answers.selectChild as unknown as Array<PersonResidenceChange>
-    let parentB = parentBNationalRegistry.data as unknown as ParentResidenceChange
+    const childrenAppliedFor = (answers.selectChild as unknown) as Array<
+      PersonResidenceChange
+    >
+    let parentB = (parentBNationalRegistry.data as unknown) as ParentResidenceChange
 
     parentB.email = answers.parentBEmail as string
     parentB.phoneNumber = answers.parentBPhoneNumber as string
@@ -46,7 +48,7 @@ export class FileService {
       email: answers.email as string,
       homeAddress: answers.homeAddress as string,
       postalCode: answers.postalCode as string,
-      city: answers.city as string
+      city: answers.city as string,
     }
 
     const expiry = answers.expiry as string

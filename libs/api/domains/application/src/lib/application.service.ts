@@ -156,15 +156,12 @@ export class ApplicationService {
     })
   }
 
-  async createPdfPresignedUrl(
-    input: CreatePdfInput,
-    authorization: string,
-  ) {
+  async createPdfPresignedUrl(input: CreatePdfInput, authorization: string) {
     const { id, ...createPdfDto } = input
     return await this.applicationApi.applicationControllerCreatePdf({
       id,
       createPdfDto,
-      authorization
+      authorization,
     })
   }
 }

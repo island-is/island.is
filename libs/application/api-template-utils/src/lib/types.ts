@@ -34,5 +34,5 @@ export interface ParentResidenceChange extends PersonResidenceChange {
 }
 
 export enum PDF_TYPES {
-  CHILDREN_RESIDENCE_CHANGE = 'CHILDREN_RESIDENCE_CHANGE'
+  CHILDREN_RESIDENCE_CHANGE = 'CHILDREN_RESIDENCE_CHANGE',
 }
