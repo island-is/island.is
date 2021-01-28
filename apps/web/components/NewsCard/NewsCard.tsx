@@ -25,8 +25,7 @@ interface NewsCardProps {
   slug: string
   image?: Partial<Image>
   readMoreText?: string
-  url: string
-  as: string
+  href: string
   date?: string
   imagePosition?: 'top' | 'right'
   titleAs?: 'h2' | 'h3' | 'h4'
@@ -39,8 +38,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
   introduction,
   image,
   readMoreText = 'Lesa nánar',
-  url,
-  as,
+  href,
   date,
   titleAs = 'h3',
   tags = [],
@@ -49,8 +47,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
   return (
     <Box
       component={Link}
-      href={url}
-      as={as}
+      href={href}
       className={styles.root}
       boxShadow="subtle"
       overflow="hidden"

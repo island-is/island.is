@@ -1,6 +1,6 @@
 import {
   IdpProviderService,
-  IdpRestriction,
+  IdpProvider,
   IdpProviderDTO,
 } from '@island.is/auth-api-lib'
 import {
@@ -48,7 +48,7 @@ export class IdpProviderController {
             },
             rows: {
               type: 'array',
-              items: { $ref: getSchemaPath(IdpRestriction) },
+              items: { $ref: getSchemaPath(IdpProvider) },
             },
           },
         },
@@ -59,7 +59,7 @@ export class IdpProviderController {
     @Query('searchString') searchString: string,
     @Query('page') page: number,
     @Query('count') count: number,
-  ): Promise<{ rows: IdpRestriction[]; count: number } | null> {
+  ): Promise<{ rows: IdpProvider[]; count: number } | null> {
     if (searchString) {
       const idps = await this.idpProviderService.find(searchString, page, count)
       return idps
@@ -71,15 +71,15 @@ export class IdpProviderController {
 
   /** Finds available idp restrictions */
   @Get(':name')
-  @ApiOkResponse({ type: IdpRestriction })
-  async findByPk(@Param('name') name: string): Promise<IdpRestriction | null> {
+  @ApiOkResponse({ type: IdpProvider })
+  async findByPk(@Param('name') name: string): Promise<IdpProvider | null> {
     return await this.idpProviderService.findByPk(name)
   }
 
   /** Adds new IDP provider */
   @Post()
-  @ApiCreatedResponse({ type: IdpRestriction })
-  async create(@Body() idpProvider: IdpProviderDTO): Promise<IdpRestriction> {
+  @ApiCreatedResponse({ type: IdpProvider })
+  async create(@Body() idpProvider: IdpProviderDTO): Promise<IdpProvider> {
     return await this.idpProviderService.create(idpProvider)
   }
 
@@ -100,7 +100,7 @@ export class IdpProviderController {
   async update(
     @Param('name') name: string,
     @Body() idpProvider: IdpProviderDTO,
-  ): Promise<[number, IdpRestriction[]] | null> {
+  ): Promise<[number, IdpProvider[]] | null> {
     if (!name) {
       throw new BadRequestException('name must be provided')
     }

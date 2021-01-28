@@ -35,7 +35,7 @@ const mockCasesQuery = [
           {
             id: 'test_id_2',
             created: '2020-12-16T19:50:08.033Z',
-            modified: '2020-09-16T19:51:39.466Z',
+            modified: '2020-12-16T19:51:39.466Z',
             state: CaseState.DRAFT,
             policeCaseNumber: 'string',
             accusedNationalId: 'string',
@@ -72,6 +72,26 @@ const mockCasesQuery = [
             accusedName: 'Erlingur L Kristinsson',
             custodyEndDate: '2020-11-11T12:31:00.000Z',
           },
+          {
+            id: 'test_id_6',
+            created: '2021-01-16T19:50:08.033Z',
+            modified: '2021-01-16T19:51:39.466Z',
+            state: CaseState.RECEIVED,
+            policeCaseNumber: '008-2020-X',
+            accusedNationalId: '012345-6789',
+            accusedName: 'D. M. Kil',
+            custodyEndDate: '2020-11-11T12:31:00.000Z',
+          },
+          {
+            id: 'test_id_7',
+            created: '2021-02-16T19:50:08.033Z',
+            modified: '2021-02-16T19:51:39.466Z',
+            state: CaseState.SUBMITTED,
+            policeCaseNumber: '008-2020-X',
+            accusedNationalId: '012345-6789',
+            accusedName: 'Moe',
+            custodyEndDate: '2020-11-11T12:31:00.000Z',
+          },
         ],
       },
     },
@@ -99,7 +119,7 @@ describe('Detention requests route', () => {
       await waitFor(
         () => screen.getAllByTestId('detention-requests-table-row').length,
       ),
-    ).toEqual(3)
+    ).toEqual(5)
   }, 10000)
 
   test('should display the judge logo if you are a judge', async () => {
@@ -167,7 +187,7 @@ describe('Detention requests route', () => {
     ).not.toBeInTheDocument()
   })
 
-  test('should not display a buttton to delete a request that do not have a DRAFT or NEW state', async () => {
+  test('should not display a buttton to delete a request that do not have a NEW or DRAFT or SUBMITTED or RECEIVED state', async () => {
     render(
       <MockedProvider
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
@@ -185,9 +205,9 @@ describe('Detention requests route', () => {
 
     expect(
       await waitFor(
-        () => screen.getAllByLabelText('Viltu eyða drögum?').length,
+        () => screen.getAllByLabelText('Viltu afturkalla kröfu?').length,
       ),
-    ).toEqual(3)
+    ).toEqual(5)
   })
 
   test('should not show deleted requests', async () => {
@@ -210,7 +230,7 @@ describe('Detention requests route', () => {
       await waitFor(
         () => screen.getAllByTestId('detention-requests-table-row').length,
       ),
-    ).toEqual(4)
+    ).toEqual(6)
   })
 
   test('should display the prosecutor logo if you are a prosecutor', async () => {
@@ -254,7 +274,7 @@ describe('Detention requests route', () => {
       await waitFor(
         () => screen.getAllByTestId('detention-requests-table-row').length,
       ),
-    ).toEqual(4)
+    ).toEqual(6)
   })
 
   test('should display custody end date if case has ACCEPTED status', async () => {
@@ -300,10 +320,12 @@ describe('Detention requests route', () => {
       screen.getAllByTestId('detention-requests-table-row'),
     )
 
-    expect(tableRows[0]).toHaveTextContent('Erlingur L Kristinsson')
-    expect(tableRows[1]).toHaveTextContent('Jon Harring')
-    expect(tableRows[2]).toHaveTextContent('Jon Harring Sr.')
-    expect(tableRows[3]).toHaveTextContent('Mikki Refur')
+    expect(tableRows[0]).toHaveTextContent('D. M. Kil')
+    expect(tableRows[1]).toHaveTextContent('Erlingur L Kristinsson')
+    expect(tableRows[2]).toHaveTextContent('Jon Harring')
+    expect(tableRows[3]).toHaveTextContent('Jon Harring Sr.')
+    expect(tableRows[4]).toHaveTextContent('Mikki Refur')
+    expect(tableRows[5]).toHaveTextContent('Moe')
   })
 
   test('should order the table data by accused name in descending order when the user clicks the accused name table header twice', async () => {
@@ -328,10 +350,12 @@ describe('Detention requests route', () => {
       screen.getAllByTestId('detention-requests-table-row'),
     )
 
-    expect(tableRows[3]).toHaveTextContent('Erlingur L Kristinsson')
-    expect(tableRows[2]).toHaveTextContent('Jon Harring')
-    expect(tableRows[1]).toHaveTextContent('Jon Harring Sr.')
-    expect(tableRows[0]).toHaveTextContent('Mikki Refur')
+    expect(tableRows[5]).toHaveTextContent('D. M. Kil')
+    expect(tableRows[4]).toHaveTextContent('Erlingur L Kristinsson')
+    expect(tableRows[3]).toHaveTextContent('Jon Harring')
+    expect(tableRows[2]).toHaveTextContent('Jon Harring Sr.')
+    expect(tableRows[1]).toHaveTextContent('Mikki Refur')
+    expect(tableRows[0]).toHaveTextContent('Moe')
   })
 
   test('should order the table data by created in ascending order when the user clicks the created table header', async () => {
@@ -360,6 +384,8 @@ describe('Detention requests route', () => {
     expect(tableRows[1]).toHaveTextContent('Erlingur L Kristinsson')
     expect(tableRows[2]).toHaveTextContent('Jon Harring Sr.')
     expect(tableRows[3]).toHaveTextContent('Jon Harring')
+    expect(tableRows[4]).toHaveTextContent('D. M. Kil')
+    expect(tableRows[5]).toHaveTextContent('Moe')
   })
 
   test('should order the table data by created in descending order when the user clicks the created table header twice', async () => {
@@ -384,10 +410,12 @@ describe('Detention requests route', () => {
       screen.getAllByTestId('detention-requests-table-row'),
     )
 
-    expect(tableRows[3]).toHaveTextContent('Mikki Refur')
-    expect(tableRows[2]).toHaveTextContent('Erlingur L Kristinsson')
-    expect(tableRows[1]).toHaveTextContent('Jon Harring Sr.')
-    expect(tableRows[0]).toHaveTextContent('Jon Harring')
+    expect(tableRows[5]).toHaveTextContent('Mikki Refur')
+    expect(tableRows[4]).toHaveTextContent('Erlingur L Kristinsson')
+    expect(tableRows[3]).toHaveTextContent('Jon Harring Sr.')
+    expect(tableRows[2]).toHaveTextContent('Jon Harring')
+    expect(tableRows[1]).toHaveTextContent('D. M. Kil')
+    expect(tableRows[0]).toHaveTextContent('Moe')
   })
 
   test('should display an error alert if the api call fails', async () => {
