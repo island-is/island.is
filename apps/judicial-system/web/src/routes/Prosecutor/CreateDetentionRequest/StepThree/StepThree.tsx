@@ -171,9 +171,7 @@ export const StepThree: React.FC = () => {
               <Text as="h3" variant="h3">
                 Dómkröfur{' '}
                 {
-                  // TODO: UNCOMMENT
-                  /*workingCase.caseType*/ workingCase.comments ===
-                  CaseType.CUSTODY ? (
+                  workingCase.type === CaseType.CUSTODY ? (
                     <Tooltip text="Hér er hægt að velja um gæsluvarðhald eða gæsluvarðhald með farbanni til vara. Sé farbann til vara valið, endurspeglar valið dómkröfurnar á næstu síðu." />
                   ) : null
                 }
@@ -195,7 +193,7 @@ export const StepThree: React.FC = () => {
             {
               // TODO: UNCOMMENT
               // TODO: THIS IS DUPLICATE CODE, REFACTOR!!
-              /*workingCase.caseType*/ workingCase.comments ===
+              workingCase.type ===
               CaseType.CUSTODY ? (
                 <BlueBox>
                   <Box marginBottom={2}>
@@ -443,7 +441,7 @@ export const StepThree: React.FC = () => {
             <BlueBox>
               <CheckboxList
                 checkboxes={
-                  workingCase.comments === CaseType.CUSTODY // TODO: PUT TYPE NOT COMMENT!!!
+                  workingCase.type === CaseType.CUSTODY
                     ? custodyProvisions
                     : travelBanProvisions
                 }
@@ -460,7 +458,7 @@ export const StepThree: React.FC = () => {
               />
             </BlueBox>
           </Box>
-          {workingCase.type === CaseType.TRAVEL_BAN && ( // TODO LAGA IF
+          {workingCase.type === CaseType.CUSTODY && (
             <Box component="section" marginBottom={10}>
               <Box marginBottom={3}>
                 <Box marginBottom={1}>
@@ -487,7 +485,7 @@ export const StepThree: React.FC = () => {
               </BlueBox>
             </Box>
           )}
-          {workingCase.type !== CaseType.TRAVEL_BAN && ( // TODO LAGA IF
+          {workingCase.type === CaseType.TRAVEL_BAN && (
             <Box component="section" marginBottom={4}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
@@ -499,10 +497,10 @@ export const StepThree: React.FC = () => {
                 <Box marginBottom={3}>
                   <CheckboxList
                     checkboxes={alternativeTravelBanRestrictions}
-                    selected={workingCase.custodyRestrictions} // REQUESTED !!!!
+                    selected={workingCase.requestedCustodyRestrictions}
                     onChange={(id) =>
                       setCheckboxAndSendToServer(
-                        'custodyRestrictions', // REQUESTED !!!!
+                        'requestedCustodyRestrictions',
                         id,
                         workingCase,
                         setWorkingCase,
