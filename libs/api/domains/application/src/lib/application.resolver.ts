@@ -1,4 +1,4 @@
-import { Args, Query, Resolver, Mutation, ResolveField } from '@nestjs/graphql'
+import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
 import { ApplicationService } from './application.service'
 import { Application } from './application.model'
 import { GetApplicationsByTypeInput } from './dto/getApplicationsByType.input'
@@ -21,7 +21,7 @@ import { UseGuards } from '@nestjs/common'
 import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
-@Resolver(() => Application)
+@Resolver()
 export class ApplicationResolver {
   constructor(private applicationService: ApplicationService) {}
 
@@ -133,7 +133,6 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => Application, { nullable: true })
-  @ResolveField('createPdfPresignedUrl', () => Application)
   async createPdfPresignedUrl(
     @Args('input') input: CreatePdfInput,
     @CurrentUser() user: User,

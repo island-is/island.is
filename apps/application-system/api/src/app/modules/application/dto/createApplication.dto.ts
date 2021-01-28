@@ -40,35 +40,3 @@ export class CreateApplicationDto {
   @ApiPropertyOptional()
   readonly attachments?: object
 }
-
-export class ParentDto {
-  @IsNotEmpty()
-  @IsEnum(ApplicationTypes)
-  @ApiProperty({ enum: ApplicationTypes })
-  readonly typeId!: ApplicationTypes
-
-  @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
-  readonly applicant!: string
-
-  @IsNotEmpty()
-  @IsArray()
-  @ApiProperty()
-  readonly assignees!: string[]
-
-  @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
-  readonly state!: string
-
-  @IsNotEmpty()
-  @IsObject()
-  @ApiProperty()
-  readonly answers!: object
-
-  @IsOptional()
-  @IsObject()
-  @ApiPropertyOptional()
-  readonly attachments?: object
-}

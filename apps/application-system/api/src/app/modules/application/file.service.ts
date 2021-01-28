@@ -5,7 +5,6 @@ import { uuid } from 'uuidv4'
 import { ParentResidenceChange, PersonResidenceChange, PDF_TYPES } from '@island.is/application/api-template-utils'
 import { Application } from './application.model'
 import { FormValue } from 'libs/application/core/src/types/Application'
-import { getJSDocReturnType } from 'typescript'
 
 @Injectable()
 export class FileService {
