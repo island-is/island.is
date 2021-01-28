@@ -21,7 +21,7 @@ import { UseGuards } from '@nestjs/common'
 import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
-@Resolver()
+@Resolver(() => Application)
 export class ApplicationResolver {
   constructor(private applicationService: ApplicationService) {}
 
@@ -133,7 +133,7 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => Application, { nullable: true })
-  @ResolveField('createPdfPresignedUrl')
+  @ResolveField('createPdfPresignedUrl', () => Application)
   async createPdfPresignedUrl(
     @Args('input') input: CreatePdfInput,
     @CurrentUser() user: User,

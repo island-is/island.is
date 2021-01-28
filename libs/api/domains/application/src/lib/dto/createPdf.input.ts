@@ -3,7 +3,7 @@ import {
   IsEnum,
   IsString
 } from 'class-validator'
-import { PDF_TYPES } from '@island.is/application/api-template-utils'
+import { CreatePdfDtoTypeEnum } from '../../../gen/fetch'
 
 @InputType()
 export class CreatePdfInput {
@@ -11,6 +11,6 @@ export class CreatePdfInput {
   @IsString()
   id!: string
 
-  @IsEnum(PDF_TYPES)
-  type!: PDF_TYPES
+  @IsEnum(CreatePdfDtoTypeEnum)
+  type!: CreatePdfDtoTypeEnum
 }

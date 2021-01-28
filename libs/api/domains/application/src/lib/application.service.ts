@@ -160,10 +160,10 @@ export class ApplicationService {
     input: CreatePdfInput,
     authorization: string,
   ) {
-    const { id, type } = input
+    const { id, ...createPdfDto } = input
     return await this.applicationApi.applicationControllerCreatePdf({
       id,
-      createPdfDto: type,
+      createPdfDto,
       authorization
     })
   }
