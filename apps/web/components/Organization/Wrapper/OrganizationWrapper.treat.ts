@@ -23,12 +23,6 @@ export const headerBorder = style({
 
 export const headerWrapper = style({
   marginTop: -20,
-
-  ...themeUtils.responsiveStyle({
-    md: {
-      marginTop: -20,
-    },
-  }),
 })
 
 export const headerLogo = style({
