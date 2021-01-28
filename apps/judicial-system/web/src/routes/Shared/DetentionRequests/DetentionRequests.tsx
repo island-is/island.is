@@ -22,6 +22,7 @@ import {
   CaseDecision,
   CaseState,
   CaseTransition,
+  NotificationType,
 } from '@island.is/judicial-system/types'
 import * as styles from './DetentionRequests.treat'
 import { UserRole } from '@island.is/judicial-system/types'
@@ -35,7 +36,10 @@ import {
 import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { useHistory } from 'react-router-dom'
-import { TransitionCaseMutation } from '@island.is/judicial-system-web/src/graphql'
+import {
+  SendNotificationMutation,
+  TransitionCaseMutation,
+} from '@island.is/judicial-system-web/src/graphql'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 type directionType = 'ascending' | 'descending'
@@ -63,6 +67,24 @@ export const DetentionRequests: React.FC = () => {
   })
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+
+  const [
+    sendNotificationMutation,
+    { loading: isSendingNotification },
+  ] = useMutation(SendNotificationMutation)
+
+  const sendNotification = async (id: string) => {
+    const { data } = await sendNotificationMutation({
+      variables: {
+        input: {
+          caseId: id,
+          type: NotificationType.REVOKED,
+        },
+      },
+    })
+
+    return data?.sendNotification?.notificationSent
+  }
 
   const resCases = data?.cases
 
@@ -181,7 +203,9 @@ export const DetentionRequests: React.FC = () => {
   const deleteCase = async (caseToDelete: Case) => {
     if (
       caseToDelete.state === CaseState.NEW ||
-      caseToDelete.state === CaseState.DRAFT
+      caseToDelete.state === CaseState.DRAFT ||
+      caseToDelete.state === CaseState.SUBMITTED ||
+      caseToDelete.state === CaseState.RECEIVED
     ) {
       const transitionRequest = parseTransition(
         caseToDelete.modified,
@@ -207,6 +231,12 @@ export const DetentionRequests: React.FC = () => {
         }, 800)
 
         clearTimeout()
+
+        const sent = await sendNotification(caseToDelete.id)
+
+        if (!sent) {
+          // TODO: Handle error
+        }
       } catch (e) {
         console.log(e)
       }
@@ -401,11 +431,13 @@ export const DetentionRequests: React.FC = () => {
                   </td>
                   <td className={cn(styles.td, 'secondLast')}>
                     {!isJudge &&
-                      (c.state === CaseState.DRAFT ||
-                        c.state === CaseState.NEW) && (
+                      (c.state === CaseState.NEW ||
+                        c.state === CaseState.DRAFT ||
+                        c.state === CaseState.SUBMITTED ||
+                        c.state === CaseState.RECEIVED) && (
                         <Box
                           component="button"
-                          aria-label="Viltu eyða drögum?"
+                          aria-label="Viltu afturkalla kröfu?"
                           className={styles.deleteButton}
                           onClick={(evt) => {
                             evt.stopPropagation()
@@ -433,7 +465,7 @@ export const DetentionRequests: React.FC = () => {
                       }}
                     >
                       <Box as="span" className={styles.deleteButtonText}>
-                        Eyða drögum
+                        Afturkalla
                       </Box>
                     </Button>
                   </td>
