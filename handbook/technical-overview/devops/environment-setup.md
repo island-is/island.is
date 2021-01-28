@@ -48,12 +48,13 @@ A few notes here:
 
 - Networking
   - public subnet - an Internet-facing network. There is very little that we provision here since this is a harsh place to be. Notably Load balancers and NAT Gateways are provisioned here.
-  - private subnet - only accessible from the public subnet. This is where we run our Kubernetes cluster. Workloads running here have access to the Internet by means of a NAT Gateway.
+  - private subnet - only accessible from the public subnet. This is where we run our Kubernetes cluster. Workloads running here have outbound access to the Internet by means of a NAT Gateway.
   - database subnet - only accessible from the private subnet. No Internet access in or out.
 - Security
   - AWS WAF
     - protection against [common web-based attacks](https://owasp.org/www-project-top-ten/)
     - IP-based filtering
+  - Security groups - each Kubernetes pod can be granted identity and permission set to access only the AWS resources it needs
 
 ## Databases
 
