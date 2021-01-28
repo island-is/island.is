@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useContext } from 'react'
-import { Box, Stack, Inline, Tag, Sleeve } from '@island.is/island-ui/core'
+import { Box, Stack, Inline, Tag } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { Screen } from '@island.is/web/types'
 import { useNamespace } from '@island.is/web/hooks'
@@ -116,12 +116,6 @@ const Home: Screen<HomeProps> = ({
       </Stack>
     </Box>
   )
-
-  const LIFE_EVENTS_THRESHOLD = 6
-  const includeLifeEventSectionBleed =
-    lifeEvents.length <= LIFE_EVENTS_THRESHOLD
-  const showSleeve = lifeEvents.length > LIFE_EVENTS_THRESHOLD
-
   return (
     <div id="main-content">
       <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
@@ -133,32 +127,20 @@ const Home: Screen<HomeProps> = ({
       <Section
         aria-labelledby="lifeEventsTitle"
         paddingTop={4}
-        backgroundBleed={
-          includeLifeEventSectionBleed && {
-            bleedAmount: 100,
-            mobileBleedAmount: 50,
-            bleedDirection: 'bottom',
-            fromColor: 'white',
-            toColor: 'purple100',
-            bleedInMobile: true,
-          }
-        }
+        backgroundBleed={{
+          bleedAmount: 100,
+          mobileBleedAmount: 50,
+          bleedDirection: 'bottom',
+          fromColor: 'white',
+          toColor: 'purple100',
+          bleedInMobile: true,
+        }}
       >
-        {showSleeve ? (
-          <Sleeve sleeveShadow="purple">
-            <LifeEventsCardsSection
-              title={n('lifeEventsTitle')}
-              titleId="lifeEventsTitle"
-              lifeEvents={lifeEvents}
-            />
-          </Sleeve>
-        ) : (
-          <LifeEventsCardsSection
-            title={n('lifeEventsTitle')}
-            titleId="lifeEventsTitle"
-            lifeEvents={lifeEvents}
-          />
-        )}
+        <LifeEventsCardsSection
+          title={n('lifeEventsTitle')}
+          titleId="lifeEventsTitle"
+          lifeEvents={lifeEvents}
+        />
       </Section>
       <Section
         paddingTop={[8, 8, 6]}
