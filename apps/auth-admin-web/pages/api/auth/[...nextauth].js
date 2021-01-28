@@ -16,6 +16,7 @@ const providers = [
 const callbacks = {}
 
 callbacks.signIn = async function signIn(user, account, profile) {
+  console.info('Calling next-auth signIn callback.')
   if (account.provider === 'identity-server') {
     user.nationalId = profile.nationalId
     user.accessToken = account.accessToken
@@ -28,6 +29,7 @@ callbacks.signIn = async function signIn(user, account, profile) {
 }
 
 callbacks.jwt = async function jwt(token, user) {
+  console.info('Calling next-auth jwt callback.')
   if (user) {
     token = {
       nationalId: user.nationalId,
@@ -39,6 +41,11 @@ callbacks.jwt = async function jwt(token, user) {
     }
   }
 
+  console.info(
+    'Seconds since last token update:',
+    (new Date().getTime() - new Date(token.updated).getTime()) / 1000,
+    token.refreshToken,
+  )
   const decoded = parseJwt(token.accessToken)
 
   if (
@@ -46,13 +53,15 @@ callbacks.jwt = async function jwt(token, user) {
     new Date() > new Date(decoded.exp * 1000) &&
     !token.isRefreshTokenExpired
   ) {
+    console.info('Old refresh token:', token.refreshToken)
     try {
       ;[
         token.accessToken,
         token.refreshToken,
       ] = await TokenService.refreshAccessToken(token.refreshToken)
+      console.info('New refresh token', token.refreshToken)
     } catch (error) {
-      console.error(error, 'Error refreshing access token.')
+      console.warn('Error refreshing access token.', error)
       // We don't know the refresh token lifetime, so we use the error response to check if it had expired
       const errorMessage = error?.response?.data?.error
       if (errorMessage && errorMessage === 'invalid_grant') {
@@ -65,8 +74,9 @@ callbacks.jwt = async function jwt(token, user) {
 }
 
 callbacks.session = async function session(session, token) {
+  console.info('Calling next-auth session callback.')
   session.accessToken = token.accessToken
-  session.refreshToken = token.refreshToken
+  session.refreshToken = token.refreshToken // TODO: Remove from session
   session.idToken = token.idToken
   const decoded = parseJwt(session.accessToken)
   session.expires = new Date(decoded.exp * 1000)
