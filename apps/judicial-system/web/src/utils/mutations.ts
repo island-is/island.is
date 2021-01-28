@@ -25,6 +25,7 @@ export const CreateCaseMutation = gql`
       id
       created
       modified
+      type
       state
       policeCaseNumber
       accusedNationalId
@@ -88,6 +89,7 @@ export const CasesQuery = gql`
     cases {
       id
       created
+      type
       state
       policeCaseNumber
       accusedNationalId
@@ -116,6 +118,7 @@ export const ExtendCaseMutation = gql`
       id
       created
       modified
+      type
       state
       policeCaseNumber
       accusedNationalId

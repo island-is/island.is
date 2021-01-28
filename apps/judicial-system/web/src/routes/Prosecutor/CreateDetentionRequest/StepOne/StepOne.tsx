@@ -90,6 +90,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
       const { data } = await createCaseMutation({
         variables: {
           input: {
+            type: workingCase?.type,
             policeCaseNumber: workingCase?.policeCaseNumber,
             accusedNationalId: workingCase?.accusedNationalId.replace('-', ''),
             accusedName: workingCase?.accusedName,

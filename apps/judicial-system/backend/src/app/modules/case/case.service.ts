@@ -251,6 +251,7 @@ export class CaseService {
     this.logger.debug(`Extending case ${existingCase.id}`)
 
     return this.caseModel.create({
+      type: existingCase.type,
       policeCaseNumber: existingCase.policeCaseNumber,
       accusedNationalId: existingCase.accusedNationalId,
       accusedName: existingCase.accusedName,

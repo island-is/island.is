@@ -80,7 +80,7 @@ const App: React.FC = () => {
                 <JudgeOverview />
               </Route>
               <Route path={`${Constants.STEP_ONE_NEW_DETENTION_ROUTE}/:id?`}>
-                <StepOne type={CaseType.DETENTION} />
+                <StepOne type={CaseType.CUSTODY} />
               </Route>
               <Route path={`${Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE}/:id?`}>
                 <StepOne type={CaseType.TRAVEL_BAN} />

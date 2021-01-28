@@ -6,6 +6,7 @@ export const CaseQuery = gql`
       id
       created
       modified
+      type
       state
       policeCaseNumber
       accusedNationalId

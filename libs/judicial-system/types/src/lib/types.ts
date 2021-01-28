@@ -4,11 +4,6 @@ export enum UserRole {
   JUDGE = 'JUDGE',
 }
 
-export enum CaseType {
-  DETENTION = 'DETENTION',
-  TRAVEL_BAN = 'TRAVEL_BAN',
-}
-
 export interface User {
   id: string
   created: string
@@ -21,6 +16,11 @@ export interface User {
   role: UserRole
   institution: string
   active: boolean
+}
+
+export enum CaseType {
+  CUSTODY = 'CUSTODY',
+  TRAVEL_BAN = 'TRAVEL_BAN',
 }
 
 export enum CaseState {
@@ -85,7 +85,7 @@ export interface Case {
   id: string
   created: string
   modified: string
-  type?: CaseType
+  type: CaseType
   state: CaseState
   policeCaseNumber: string
   accusedNationalId: string
@@ -153,6 +153,7 @@ export interface Notification {
 }
 
 export interface CreateCase {
+  type: CaseType
   policeCaseNumber: string
   accusedNationalId: string
   accusedName?: string

@@ -2,10 +2,18 @@ import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
 
-import { CaseGender, CreateCase } from '@island.is/judicial-system/types'
+import {
+  CaseGender,
+  CaseType,
+  CreateCase,
+} from '@island.is/judicial-system/types'
 
 @InputType()
 export class CreateCaseInput implements CreateCase {
+  @Allow()
+  @Field(() => String, { nullable: true })
+  readonly type!: CaseType
+
   @Allow()
   @Field()
   readonly policeCaseNumber!: string

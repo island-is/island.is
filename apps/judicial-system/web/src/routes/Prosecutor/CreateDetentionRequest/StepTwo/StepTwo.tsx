@@ -539,8 +539,7 @@ export const StepTwo: React.FC = () => {
               title="Viltu senda tilkynningu?"
               text={`Með því að senda tilkynningu á dómara á vakt um að krafa um ${
                 // TODO: ADD CASE TYPE TO CASE AND UNCOMMENT
-                /*workingCase.caseType*/ CaseType.DETENTION ===
-                CaseType.DETENTION
+                /*workingCase.caseType*/ CaseType.CUSTODY === CaseType.CUSTODY
                   ? 'gæsluvarðhald'
                   : 'farbann'
               } sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála.`}

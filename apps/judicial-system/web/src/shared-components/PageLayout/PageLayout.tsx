@@ -74,7 +74,7 @@ const PageLayout: FC<PageProps> = ({
   const sections = [
     {
       name:
-        caseType === CaseType.DETENTION
+        caseType === CaseType.CUSTODY
           ? 'Krafa um gæsluvarðhald'
           : 'Krafa um farbann',
       children: [
@@ -184,7 +184,7 @@ const PageLayout: FC<PageProps> = ({
                     : sections.filter((_, index) => index <= 2)
                 }
                 formName={
-                  caseType === CaseType.DETENTION ? 'Gæsluvarðhald' : 'Farbann'
+                  caseType === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'
                 }
                 activeSection={activeSection}
                 activeSubSection={activeSubSection}
