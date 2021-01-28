@@ -2,6 +2,7 @@ export { default as ApplicationAPITemplateUtils } from './lib/ApplicationAPITemp
 export {
   ApplicationAPITemplateAction,
   EmailTemplateGeneratorProps,
-  ChildrenResidenceChange,
-  ParentResidenceChange
+  PersonResidenceChange,
+  ParentResidenceChange,
+  PDF_TYPES
 } from './lib/types'

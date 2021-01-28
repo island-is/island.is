@@ -49,7 +49,7 @@ import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
 import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
-import { CreateResidenceChangePdfDto } from './dto/createResidenceChangePdf.dto'
+import { CreatePdfDto } from './dto/createPdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
 import {
   buildDataProviders,
@@ -65,7 +65,6 @@ import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
 import { AssignApplicationDto } from './dto/assignApplication.dto'
-import { CreatePdfSignedUrlResponseDto } from './dto/createPdfSignedUrlResponse.dto'
 import { EmailService } from '@island.is/email-service'
 import { environment } from '../../../environments'
 import { ApplicationAPITemplateUtils } from '@island.is/application/api-template-utils'
@@ -503,13 +502,32 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Put('residenceChangePdf')
-  @ApiOkResponse({ type: CreatePdfSignedUrlResponseDto })
-  async createResidenceChangePdf(
-    @Body() input: CreateResidenceChangePdfDto,
-  ): Promise<CreatePdfSignedUrlResponseDto> {
-    const { childrenAppliedFor, parentA, parentB, expiry } = input
-    let url = await this.fileService.createResidenceChangePdf(childrenAppliedFor, parentA, parentB, expiry)
-    return 
+  @Put('application/:id/createPdf')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the application to update the state for.',
+    allowEmptyValue: false,
+  })
+  @ApiOkResponse({ type: ApplicationResponseDto })
+  @UseInterceptors(ApplicationSerializer)
+  async createPdf(
+    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
+    application: Application,
+    @Body() input: CreatePdfDto,
+  ): Promise<ApplicationResponseDto> {
+    const { type } = input
+
+    const url = await this.fileService.createPdf(application, type)
+
+    const { updatedApplication } = await this.applicationService.update(
+      application.id,
+      {
+        attachments: omit(application.attachments, url),
+      },
+    )
+
+    return updatedApplication
   }
 }

@@ -1,9 +1,9 @@
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
-import { ParentResidenceChange, ChildrenResidenceChange } from '@island.is/application/api-template-utils'
+import { ParentResidenceChange, PersonResidenceChange } from '@island.is/application/api-template-utils'
 
 export async function generateResidenceChangePdf(
-  childrenAppliedFor: Array<ChildrenResidenceChange>,
+  childrenAppliedFor: Array<PersonResidenceChange>,
   parentA: ParentResidenceChange,
   parentB: ParentResidenceChange,
   expiry: string,

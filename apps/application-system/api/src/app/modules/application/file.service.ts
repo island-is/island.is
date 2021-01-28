@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common'
 import { generateResidenceChangePdf } from './utils/pdf'
 import * as AWS from 'aws-sdk'
 import { uuid } from 'uuidv4'
-import { ParentResidenceChange, ChildrenResidenceChange } from '@island.is/application/api-template-utils'
+import { ParentResidenceChange, PersonResidenceChange, PDF_TYPES } from '@island.is/application/api-template-utils'
+import { Application } from './application.model'
+import { FormValue } from 'libs/application/core/src/types/Application'
+import { getJSDocReturnType } from 'typescript'
 
 @Injectable()
 export class FileService {
@@ -10,12 +13,44 @@ export class FileService {
 
   constructor() {}
 
-  async createResidenceChangePdf(
-    childrenAppliedFor: Array<ChildrenResidenceChange>,
-    parentA: ParentResidenceChange,
-    parentB: ParentResidenceChange,
-    expiry: string,
+  async createPdf(
+    application: Application,
+    type: PDF_TYPES
   ): Promise<string> {
+    const answers = application.answers as FormValue
+    const externalData = application.externalData as FormValue
+
+    switch(type) {
+      case PDF_TYPES.CHILDREN_RESIDENCE_CHANGE: {
+          return await this.createResidenceChangePdf(answers, externalData)
+        }
+      }
+    }
+
+
+  private async createResidenceChangePdf(
+    answers: FormValue,
+    externalData: FormValue
+  ): Promise<string> {
+    const parentBNationalRegistry = externalData.parentNationalRegistry as FormValue
+    const childrenAppliedFor = answers.selectChild as unknown as Array<PersonResidenceChange>
+    let parentB = parentBNationalRegistry.data as unknown as ParentResidenceChange
+
+    parentB.email = answers.parentBEmail as string
+    parentB.phoneNumber = answers.parentBPhoneNumber as string
+
+    const parentA: ParentResidenceChange = {
+      name: answers.name as string,
+      ssn: answers.ssn as string,
+      phoneNumber: answers.phoneNumber as string,
+      email: answers.email as string,
+      homeAddress: answers.homeAddress as string,
+      postalCode: answers.postalCode as string,
+      city: answers.city as string
+    }
+
+    const expiry = answers.expiry as string
+
     const pdfBuffer = await generateResidenceChangePdf(
       childrenAppliedFor,
       parentA,
@@ -28,19 +63,15 @@ export class FileService {
     // TODO: Change local to environment
     const bucket = 'local-legal-residence-change'
 
-    await this.uploadFileToS3(pdfBuffer, bucket, fileName)
-
-    const presignedUrl = await this.createPresignedUrl(bucket, fileName)
-
-    return presignedUrl
+    return await this.getPresignedUrl(pdfBuffer, bucket, fileName)
   }
 
-  private async uploadFileToS3(
+  private async getPresignedUrl(
     buffer: Buffer,
     bucket: string,
     fileName: string,
-  ) {
-    const params = {
+  ): Promise<string> {
+    const uploadParams = {
       Bucket: bucket,
       Key: fileName,
       ContentEncoding: 'base64',
@@ -49,25 +80,20 @@ export class FileService {
     }
 
     await this.s3
-      .upload(params)
+      .upload(uploadParams)
       .promise()
       .catch((error) => {
         throw error
       })
-  }
 
-  private async createPresignedUrl(
-    bucket: string,
-    filename: string,
-  ): Promise<string> {
-    const params = {
+    const presignedUrlParams = {
       Bucket: bucket,
-      Key: filename,
+      Key: fileName,
       Expires: 60 * 20,
     }
 
     return await new Promise((resolve, reject) => {
-      this.s3.getSignedUrl('getObject', params, (err, url) => {
+      this.s3.getSignedUrl('getObject', presignedUrlParams, (err, url) => {
         err ? reject(err) : resolve(url)
       })
     })
