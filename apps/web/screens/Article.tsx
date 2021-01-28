@@ -24,6 +24,7 @@ import {
 import {
   HeadWithSocialSharing,
   InstitutionPanel,
+  InstitutionsPanel,
   Sticky,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -450,6 +451,30 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             undefined,
             activeLocale,
           )}
+          <Box marginTop={[7, 7, 7, 10]}>
+            <InstitutionsPanel
+              institution={{
+                title: 'Sýslumenn',
+                label: 'Þjónustuaðili',
+                href: '#',
+              }}
+              relatedInstitution={[
+                {
+                  title: 'Ríkislögreglustjóri',
+                  label: 'Ábyrgðaraðili',
+                  href: '#',
+                },
+              ]}
+              responsibleParty={[
+                {
+                  title: 'Samgöngustofa',
+                  label: 'Tengd stofnun',
+                  href: '#',
+                },
+              ]}
+              locale={activeLocale}
+            />
+          </Box>
           <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
             {!!processEntry && <ProcessEntry {...processEntry} />}
             <Box marginTop={3}>
