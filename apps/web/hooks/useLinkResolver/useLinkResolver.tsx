@@ -1,4 +1,3 @@
-import { getLocaleFromPath } from 'apps/web/i18n'
 import { useContext } from 'react'
 import { Locale, I18nContext } from '../../i18n/I18n'
 
