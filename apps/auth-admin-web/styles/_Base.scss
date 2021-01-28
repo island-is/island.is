@@ -317,6 +317,11 @@ a {
   @extend .fa-trash-o;
 }
 
+.icon__export__csv {
+  @extend .fa;
+  @extend .fa-file-excel-o;
+}
+
 // Buttons
 .button__warning {
   background: $color-error;
