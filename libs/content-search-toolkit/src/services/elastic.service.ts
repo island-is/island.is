@@ -1,7 +1,7 @@
 import { Client } from '@elastic/elasticsearch'
 import merge from 'lodash/merge'
 import * as AWS from 'aws-sdk'
-import * as AwsConnector from 'aws-elasticsearch-connector'
+import AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { autocompleteTermQuery } from '../queries/autocomplete'
