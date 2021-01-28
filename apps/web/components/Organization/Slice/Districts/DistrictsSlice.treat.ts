@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import {theme, themeUtils} from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const districtsList = style({
   columnGap: 30,
