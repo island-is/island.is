@@ -173,7 +173,7 @@ export const StepThree: React.FC = () => {
                 {
                   // TODO: UNCOMMENT
                   /*workingCase.caseType*/ workingCase.comments ===
-                  CaseType.DETENTION ? (
+                  CaseType.CUSTODY ? (
                     <Tooltip text="Hér er hægt að velja um gæsluvarðhald eða gæsluvarðhald með farbanni til vara. Sé farbann til vara valið, endurspeglar valið dómkröfurnar á næstu síðu." />
                   ) : null
                 }
@@ -196,7 +196,7 @@ export const StepThree: React.FC = () => {
               // TODO: UNCOMMENT
               // TODO: THIS IS DUPLICATE CODE, REFACTOR!!
               /*workingCase.caseType*/ workingCase.comments ===
-              CaseType.DETENTION ? (
+              CaseType.CUSTODY ? (
                 <BlueBox>
                   <Box marginBottom={2}>
                     <GridRow>
@@ -443,7 +443,7 @@ export const StepThree: React.FC = () => {
             <BlueBox>
               <CheckboxList
                 checkboxes={
-                  workingCase.comments === CaseType.DETENTION // TODO: PUT TYPE NOT COMMENT!!!
+                  workingCase.comments === CaseType.CUSTODY // TODO: PUT TYPE NOT COMMENT!!!
                     ? custodyProvisions
                     : travelBanProvisions
                 }

@@ -123,41 +123,6 @@ export const HearingArrangements: React.FC = () => {
         theCase = { ...theCase, courtDate: theCase.requestedCourtDate }
       }
 
-      /**
-       * Ideally we'd want the do something like
-       *
-       * if(theCase.requestedDefenderName && theCase...)
-       *
-       * but we want the update the case if requestedDefenderName is
-       * an empty string and therefore we need to check for null and
-       * undefined respectively.
-       */
-      if (
-        theCase.requestedDefenderName !== null &&
-        theCase.requestedDefenderName !== undefined &&
-        theCase.requestedDefenderName !== theCase.defenderName
-      ) {
-        updateCase(
-          theCase.id,
-          parseString('defenderName', theCase.requestedDefenderName),
-        )
-
-        theCase = { ...theCase, defenderName: theCase.requestedDefenderName }
-      }
-
-      if (
-        theCase.requestedDefenderEmail !== null &&
-        theCase.requestedDefenderEmail !== undefined &&
-        theCase.requestedDefenderEmail !== theCase.defenderEmail
-      ) {
-        updateCase(
-          theCase.id,
-          parseString('defenderEmail', theCase.requestedDefenderEmail),
-        )
-
-        theCase = { ...theCase, defenderEmail: theCase.requestedDefenderEmail }
-      }
-
       setWorkingCase(theCase)
     }
   }, [setWorkingCase, workingCase, updateCase, data])

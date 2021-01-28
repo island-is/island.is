@@ -4,11 +4,6 @@ export enum UserRole {
   JUDGE = 'JUDGE',
 }
 
-export enum CaseType {
-  DETENTION = 'DETENTION',
-  TRAVEL_BAN = 'TRAVEL_BAN',
-}
-
 export interface User {
   id: string
   created: string
@@ -21,6 +16,11 @@ export interface User {
   role: UserRole
   institution: string
   active: boolean
+}
+
+export enum CaseType {
+  CUSTODY = 'CUSTODY',
+  TRAVEL_BAN = 'TRAVEL_BAN',
 }
 
 export enum CaseState {
@@ -85,15 +85,15 @@ export interface Case {
   id: string
   created: string
   modified: string
-  type?: CaseType
+  type: CaseType
   state: CaseState
   policeCaseNumber: string
   accusedNationalId: string
   accusedName?: string
   accusedAddress?: string
   accusedGender?: CaseGender
-  requestedDefenderName?: string
-  requestedDefenderEmail?: string
+  defenderName?: string
+  defenderEmail?: string
   court?: string
   arrestDate?: string
   requestedCourtDate?: string
@@ -113,8 +113,6 @@ export interface Case {
   courtDate?: string
   isCourtDateInThePast?: boolean
   courtRoom?: string
-  defenderName?: string
-  defenderEmail?: string
   courtStartTime?: string
   courtEndTime?: string
   courtAttendees?: string
@@ -155,13 +153,14 @@ export interface Notification {
 }
 
 export interface CreateCase {
+  type: CaseType
   policeCaseNumber: string
   accusedNationalId: string
   accusedName?: string
   accusedAddress?: string
   accusedGender?: CaseGender
-  requestedDefenderName?: string
-  requestedDefenderEmail?: string
+  defenderName?: string
+  defenderEmail?: string
   court?: string
 }
 
@@ -171,8 +170,8 @@ export interface UpdateCase {
   accusedName?: string
   accusedAddress?: string
   accusedGender?: CaseGender
-  requestedDefenderName?: string
-  requestedDefenderEmail?: string
+  defenderName?: string
+  defenderEmail?: string
   court?: string
   arrestDate?: string
   requestedCourtDate?: string
@@ -184,11 +183,10 @@ export interface UpdateCase {
   caseFacts?: string
   legalArguments?: string
   comments?: string
+  prosecutorId?: string
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
-  defenderName?: string
-  defenderEmail?: string
   courtStartTime?: string
   courtEndTime?: string
   courtAttendees?: string

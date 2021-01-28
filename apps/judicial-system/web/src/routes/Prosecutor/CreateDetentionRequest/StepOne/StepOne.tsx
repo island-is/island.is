@@ -70,10 +70,9 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
     string
   >('')
 
-  const [
-    requestedDefenderEmailErrorMessage,
-    setRequestedDefenderEmailErrorMessage,
-  ] = useState<string>('')
+  const [defenderEmailErrorMessage, setDefenderEmailErrorMessage] = useState<
+    string
+  >('')
 
   const { id } = useParams<{ id: string }>()
 
@@ -91,13 +90,14 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
       const { data } = await createCaseMutation({
         variables: {
           input: {
+            type: workingCase?.type,
             policeCaseNumber: workingCase?.policeCaseNumber,
             accusedNationalId: workingCase?.accusedNationalId.replace('-', ''),
             accusedName: workingCase?.accusedName,
             accusedAddress: workingCase?.accusedAddress,
             accusedGender: workingCase?.accusedGender,
-            requestedDefenderName: workingCase?.requestedDefenderName,
-            requestedDefenderEmail: workingCase?.requestedDefenderEmail,
+            defenderName: workingCase?.defenderName,
+            defenderEmail: workingCase?.defenderEmail,
             court: 'Héraðsdómur Reykjavíkur',
           },
         },
@@ -161,8 +161,8 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
         accusedNationalId: '',
         accusedName: '',
         accusedAddress: '',
-        requestedDefenderName: '',
-        requestedDefenderEmail: '',
+        defenderName: '',
+        defenderEmail: '',
         accusedGender: undefined,
       })
     }
@@ -184,7 +184,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
           { value: workingCase.accusedName || '', validations: ['empty'] },
           { value: workingCase.accusedAddress || '', validations: ['empty'] },
           {
-            value: workingCase.requestedDefenderEmail || '',
+            value: workingCase.defenderEmail || '',
             validations: ['email-format'],
           },
           {
@@ -454,20 +454,20 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
             </Box>
             <Box marginBottom={2}>
               <Input
-                name="requestedDefenderName"
+                name="defenderName"
                 label="Nafn verjanda"
                 placeholder="Fullt nafn"
-                defaultValue={workingCase.requestedDefenderName}
+                defaultValue={workingCase.defenderName}
                 onBlur={(evt) => {
-                  if (workingCase.requestedDefenderName !== evt.target.value) {
+                  if (workingCase.defenderName !== evt.target.value) {
                     setWorkingCase({
                       ...workingCase,
-                      requestedDefenderName: evt.target.value,
+                      defenderName: evt.target.value,
                     })
 
                     updateCase(
                       workingCase.id,
-                      parseString('requestedDefenderName', evt.target.value),
+                      parseString('defenderName', evt.target.value),
                     )
                   }
                 }}
@@ -475,31 +475,31 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
               />
             </Box>
             <Input
-              name="requestedDefenderEmail"
+              name="defenderEmail"
               label="Netfang verjanda"
               placeholder="Netfang"
-              defaultValue={workingCase.requestedDefenderEmail}
-              errorMessage={requestedDefenderEmailErrorMessage}
-              hasError={requestedDefenderEmailErrorMessage !== ''}
+              defaultValue={workingCase.defenderEmail}
+              errorMessage={defenderEmailErrorMessage}
+              hasError={defenderEmailErrorMessage !== ''}
               onChange={(event) =>
                 removeTabsValidateAndSet(
-                  'requestedDefenderEmail',
+                  'defenderEmail',
                   event,
                   ['email-format'],
                   workingCase,
                   setWorkingCase,
-                  requestedDefenderEmailErrorMessage,
-                  setRequestedDefenderEmailErrorMessage,
+                  defenderEmailErrorMessage,
+                  setDefenderEmailErrorMessage,
                 )
               }
               onBlur={(event) =>
                 validateAndSendToServer(
-                  'requestedDefenderEmail',
+                  'defenderEmail',
                   event.target.value,
                   ['email-format'],
                   workingCase,
                   updateCase,
-                  setRequestedDefenderEmailErrorMessage,
+                  setDefenderEmailErrorMessage,
                 )
               }
             />

@@ -5,6 +5,7 @@ import {
   CaseDecision,
   CaseGender,
   CaseState,
+  CaseType,
   UpdateCase,
   User,
   UserRole,
@@ -14,6 +15,7 @@ import {
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import { UserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 export const mockProsecutor = {
   role: UserRole.PROSECUTOR,
@@ -31,6 +33,7 @@ const testCase1 = {
   id: 'test_id',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.CUSTODY,
   state: CaseState.ACCEPTED,
   policeCaseNumber: 'string',
   accusedNationalId: 'string',
@@ -77,6 +80,7 @@ const testCase2 = {
   id: 'test_id_2',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.CUSTODY,
   state: CaseState.REJECTED,
   policeCaseNumber: '000-0000-0000',
   accusedNationalId: '111111-1110',
@@ -119,14 +123,13 @@ const testCase2 = {
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase3 = {
   id: 'test_id_3',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.CUSTODY,
   state: CaseState.DRAFT,
   policeCaseNumber: '010-0000-0191',
   accusedNationalId: '1111110000',
@@ -166,14 +169,13 @@ const testCase3 = {
   judge: null,
   defenderName: '',
   defenderEmail: '',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase4 = {
   id: 'test_id_4',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.CUSTODY,
   state: CaseState.REJECTED,
   policeCaseNumber: 'string',
   accusedNationalId: 'string',
@@ -215,14 +217,13 @@ const testCase4 = {
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase5 = {
   id: 'test_id_5',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.CUSTODY,
   state: CaseState.ACCEPTED,
   policeCaseNumber: 'string',
   accusedNationalId: 'string',
@@ -265,14 +266,13 @@ const testCase5 = {
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase6 = {
   id: 'test_id_6',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.CUSTODY,
   state: CaseState.ACCEPTED,
   policeCaseNumber: 'string',
   accusedNationalId: 'string',
@@ -316,14 +316,13 @@ const testCase6 = {
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase7 = {
   id: 'test_id_7',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.CUSTODY,
   state: CaseState.ACCEPTED,
   policeCaseNumber: 'string',
   accusedNationalId: 'string',
@@ -366,14 +365,13 @@ const testCase7 = {
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase8 = {
   id: 'test_id_8',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.CUSTODY,
   state: CaseState.ACCEPTED,
   policeCaseNumber: 'string',
   accusedNationalId: 'string',
@@ -417,8 +415,6 @@ const testCase8 = {
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
   parentCase: {
     custodyEndDate: '2021-01-18T19:50:08.033Z',
   },
@@ -445,6 +441,19 @@ export const mockProsecutorQuery = [
     result: {
       data: {
         user: mockProsecutor,
+      },
+    },
+  },
+]
+
+export const mockUsersQuery = [
+  {
+    request: {
+      query: UsersQuery,
+    },
+    result: {
+      data: {
+        users: [mockProsecutor, mockJudge],
       },
     },
   },

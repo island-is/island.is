@@ -159,9 +159,7 @@ export const Overview: React.FC = () => {
                 workingCase.parentCase ? 'framlengingu' : ''
               } á ${
                 // TODO: REPLACE COMMENTS WITH CASETYPE
-                workingCase.comments === CaseType.DETENTION
-                  ? 'gæslu'
-                  : 'farbann'
+                workingCase.comments === CaseType.CUSTODY ? 'gæslu' : 'farbann'
               }`}
             </Text>
           </Box>
@@ -347,7 +345,7 @@ export const Overview: React.FC = () => {
               title={`Krafa um ${
                 // TODO: UNCOMMENT
                 /*workingCase.caseType*/ workingCase.comments ===
-                CaseType.DETENTION
+                CaseType.CUSTODY
                   ? 'gæsluvarðhald'
                   : 'Farbann'
               }  hefur verið staðfest`}

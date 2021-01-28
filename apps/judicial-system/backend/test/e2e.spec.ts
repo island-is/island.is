@@ -13,6 +13,7 @@ import {
   User as TUser,
   CaseDecision,
   NotificationType,
+  CaseType,
 } from '@island.is/judicial-system/types'
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
@@ -62,37 +63,38 @@ const remainingCreateCaseData = {
   accusedName: 'Accused Name',
   accusedAddress: 'Accused Address',
   accusedGender: CaseGender.OTHER,
-  requestedDefenderName: 'Requested Defender Name',
-  requestedDefenderEmail: 'Requested Defender Email',
+  defenderName: 'Defender Name',
+  defenderEmail: 'Defender Email',
   court: 'Court',
 }
 
-const remainingProsecutorCaseData = {
-  arrestDate: '2020-09-08T08:00:00.000Z',
-  requestedCourtDate: '2020-09-08T11:30:00.000Z',
-  alternativeTravelBan: false,
-  requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
-  otherDemands: 'Other Demands',
-  lawsBroken: 'Broken Laws',
-  custodyProvisions: [
-    CaseCustodyProvisions._95_1_A,
-    CaseCustodyProvisions._99_1_B,
-  ],
-  requestedCustodyRestrictions: [
-    CaseCustodyRestrictions.ISOLATION,
-    CaseCustodyRestrictions.MEDIA,
-  ],
-  caseFacts: 'Case Facts',
-  legalArguments: 'Legal Arguments',
-  comments: 'Comments',
+function remainingProsecutorCaseData() {
+  return {
+    arrestDate: '2020-09-08T08:00:00.000Z',
+    requestedCourtDate: '2020-09-08T11:30:00.000Z',
+    alternativeTravelBan: false,
+    requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
+    otherDemands: 'Other Demands',
+    lawsBroken: 'Broken Laws',
+    custodyProvisions: [
+      CaseCustodyProvisions._95_1_A,
+      CaseCustodyProvisions._99_1_B,
+    ],
+    requestedCustodyRestrictions: [
+      CaseCustodyRestrictions.ISOLATION,
+      CaseCustodyRestrictions.MEDIA,
+    ],
+    caseFacts: 'Case Facts',
+    legalArguments: 'Legal Arguments',
+    comments: 'Comments',
+    prosecutorId: prosecutor.id,
+  }
 }
 
 const remainingJudgeCaseData = {
   courtCaseNumber: 'Court Case Number',
   courtDate: '2020-09-29T13:00:00.000Z',
   courtRoom: '201',
-  defenderName: 'Defender Name',
-  defenderEmail: 'Defender Email',
   courtStartTime: '2020-09-29T13:00:00.000Z',
   courtEndTime: '2020-09-29T14:00:00.000Z',
   courtAttendees: 'Court Attendees',
@@ -120,7 +122,7 @@ function getProsecutorCaseData(
     data = { ...data, ...remainingCreateCaseData }
   }
   if (otherProsecutorCaseData) {
-    data = { ...data, ...remainingProsecutorCaseData }
+    data = { ...data, ...remainingProsecutorCaseData() }
   }
   return data
 }
@@ -172,18 +174,15 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.id).toBe(caseTwo.id)
   expect(caseOne.created).toBe(caseTwo.created)
   expect(caseOne.modified).toBe(caseTwo.modified)
+  expect(caseOne.type).toBe(caseTwo.type)
   expect(caseOne.state).toBe(caseTwo.state)
   expect(caseOne.policeCaseNumber).toBe(caseTwo.policeCaseNumber)
   expect(caseOne.accusedNationalId).toBe(caseTwo.accusedNationalId)
   expect(caseOne.accusedName || null).toBe(caseTwo.accusedName || null)
   expect(caseOne.accusedAddress || null).toBe(caseTwo.accusedAddress || null)
   expect(caseOne.accusedGender || null).toBe(caseTwo.accusedGender || null)
-  expect(caseOne.requestedDefenderName || null).toBe(
-    caseTwo.requestedDefenderName || null,
-  )
-  expect(caseOne.requestedDefenderEmail || null).toBe(
-    caseTwo.requestedDefenderEmail || null,
-  )
+  expect(caseOne.defenderName || null).toBe(caseTwo.defenderName || null)
+  expect(caseOne.defenderEmail || null).toBe(caseTwo.defenderEmail || null)
   expect(caseOne.court || null).toBe(caseTwo.court || null)
   expect(caseOne.arrestDate || null).toBe(caseTwo.arrestDate || null)
   expect(caseOne.requestedCourtDate || null).toBe(
@@ -211,8 +210,6 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.courtCaseNumber || null).toBe(caseTwo.courtCaseNumber || null)
   expect(caseOne.courtDate || null).toBe(caseTwo.courtDate || null)
   expect(caseOne.courtRoom || null).toBe(caseTwo.courtRoom || null)
-  expect(caseOne.defenderName || null).toBe(caseTwo.defenderName || null)
-  expect(caseOne.defenderEmail || null).toBe(caseTwo.defenderEmail || null)
   expect(caseOne.courtStartTime || null).toBe(caseTwo.courtStartTime || null)
   expect(caseOne.courtEndTime || null).toBe(caseTwo.courtEndTime || null)
   expect(caseOne.courtAttendees || null).toBe(caseTwo.courtAttendees || null)
@@ -285,7 +282,10 @@ describe('User', () => {
 
 describe('Case', () => {
   it('POST /api/case should create a case', async () => {
-    const data = getCaseData(true)
+    const data = {
+      ...getCaseData(true),
+      type: CaseType.CUSTODY,
+    }
     let apiCase: CCase
 
     await request(app.getHttpServer())
@@ -303,15 +303,12 @@ describe('Case', () => {
           created: apiCase.created || 'FAILURE',
           modified: apiCase.modified || 'FAILURE',
           state: CaseState.NEW,
+          prosecutorId: prosecutor.id,
         })
 
         // Check the data in the database
         return Case.findOne({
           where: { id: apiCase.id },
-          include: [
-            { model: User, as: 'prosecutor' },
-            { model: User, as: 'judge' },
-          ],
         })
       })
       .then((value) => {
@@ -320,7 +317,10 @@ describe('Case', () => {
   })
 
   it('POST /api/case with required fields should create a case', async () => {
-    const data = getCaseData()
+    const data = {
+      ...getCaseData(),
+      type: CaseType.CUSTODY,
+    }
     let apiCase: CCase
 
     await request(app.getHttpServer())
@@ -338,15 +338,12 @@ describe('Case', () => {
           created: apiCase.created || 'FAILURE',
           modified: apiCase.modified || 'FAILURE',
           state: CaseState.NEW,
+          prosecutorId: prosecutor.id,
         })
 
         // Check the data in the database
         return Case.findOne({
           where: { id: apiCase.id },
-          include: [
-            { model: User, as: 'prosecutor' },
-            { model: User, as: 'judge' },
-          ],
         })
       })
       .then((value) => {
@@ -379,16 +376,13 @@ describe('Case', () => {
           id: dbCase.id || 'FAILURE',
           created: dbCase.created || 'FAILURE',
           modified: apiCase.modified,
+          type: CaseType.CUSTODY,
           state: dbCase.state || 'FAILURE',
         } as CCase)
 
         // Check the data in the database
         return Case.findOne({
           where: { id: apiCase.id },
-          include: [
-            { model: User, as: 'prosecutor' },
-            { model: User, as: 'judge' },
-          ],
         })
       })
       .then((newValue) => {
@@ -425,10 +419,6 @@ describe('Case', () => {
         // Check the data in the database
         return Case.findOne({
           where: { id: apiCase.id },
-          include: [
-            { model: User, as: 'prosecutor' },
-            { model: User, as: 'judge' },
-          ],
         })
       })
       .then((newValue) => {
@@ -520,7 +510,7 @@ describe('Case', () => {
       })
       .then((response) => {
         // Check the response
-        expectCasesToMatch(response.body, dbCase)
+        expectCasesToMatch(response.body, { ...dbCase, prosecutor: prosecutor })
       })
   })
 
@@ -586,6 +576,7 @@ describe('Case', () => {
           id: apiCase.id || 'FAILURE',
           created: apiCase.created || 'FAILURE',
           modified: apiCase.modified || 'FAILURE',
+          type: dbCase.type,
           state: CaseState.NEW,
           policeCaseNumber: dbCase.policeCaseNumber,
           accusedNationalId: dbCase.accusedNationalId,
@@ -619,6 +610,7 @@ describe('Notification', () => {
     let apiSendNotificationResponse: SendNotificationResponse
 
     await Case.create({
+      type: CaseType.CUSTODY,
       policeCaseNumber: 'Case Number',
       accusedNationalId: '0101010000',
     })
@@ -672,6 +664,7 @@ describe('Notification', () => {
     let dbNotification: Notification
 
     await Case.create({
+      type: CaseType.CUSTODY,
       policeCaseNumber: 'Case Number',
       accusedNationalId: '0101010000',
     })

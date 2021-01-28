@@ -12,7 +12,6 @@ export const container = style({
   boxSizing: 'border-box',
   selectors: {
     [`&:hover:not(${containerDisabled})`]: mixins.containerHover,
-    [`&${containerDisabled}`]: mixins.containerDisabled,
   },
 })
 
@@ -22,7 +21,6 @@ export const input = style({
   ...mixins.input,
   '::placeholder': mixins.inputPlaceholder,
   ':focus': mixins.inputFocus,
-  ':disabled': mixins.inputDisabled,
   selectors: {
     [`${noLabel} &::placeholder`]: {
       color: theme.color.dark400,

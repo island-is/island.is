@@ -1,7 +1,9 @@
 .clients,
 .users,
 .identity-resources,
-.api-resources-list {
+.api-resources-list,
+.admin-users-list,
+.idp-providers-list {
   &__wrapper {
     max-width: 1024px;
   }
@@ -17,8 +19,10 @@
 
     &__options {
       display: flex;
+      padding: 10px 0;
 
       &__button {
+        padding-top: 13px;
         flex: 1;
       }
 

@@ -23,6 +23,7 @@ import {
   Case,
   CaseGender,
   CaseDecision,
+  CaseType,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
 import { render, screen } from '@testing-library/react'
@@ -360,6 +361,7 @@ describe('Step helper', () => {
         id: 'testid',
         created: 'test',
         modified: 'test',
+        type: CaseType.CUSTODY,
         state: 'DRAFT',
         policeCaseNumber: 'test',
         decision: CaseDecision.ACCEPTING,

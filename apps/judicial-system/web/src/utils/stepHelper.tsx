@@ -182,7 +182,7 @@ export const constructProsecutorDemands = (
           : ''
         //TODO: CHANGE workingCase.comments to workingCase.caseType
       } ${
-        workingCase.comments === CaseType.DETENTION
+        workingCase.comments === CaseType.CUSTODY
           ? 'gæsluvarðhaldi'
           : 'farbanni'
       }${
