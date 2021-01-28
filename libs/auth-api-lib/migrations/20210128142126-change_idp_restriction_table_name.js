@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -17,5 +17,5 @@ module.exports = {
       RENAME TO idp_restrictions;
     END;
     `)
-  }
-};
+  },
+}
