@@ -3,7 +3,6 @@ import { Locale, I18nContext } from '../../i18n/I18n'
 
 export interface LinkResolverResponse {
   href: string
-  as: string
 }
 
 interface LinkResolverInput {
@@ -140,7 +139,6 @@ export const linkResolver = (
   // special case for external url resolution
   if (type === 'linkurl') {
     return {
-      as: variables[0],
       href: variables[0],
     }
   }
@@ -152,23 +150,20 @@ export const linkResolver = (
     if (variables.length) {
       // populate path templates with variables
       return {
-        href: typePath,
-        as: variables.reduce(
-          (asPath, slug) => replaceVariableInPath(asPath, slug),
+        href: variables.reduce(
+          (path, slug) => replaceVariableInPath(path, slug),
           typePath,
         ),
       }
     } else {
       // there are no variables, return path template as path
       return {
-        as: typePath,
         href: typePath,
       }
     }
   } else {
     // we return to 404 page if no path is found, if this happens we have a bug
     return {
-      as: '/404',
       href: '/404',
     }
   }
