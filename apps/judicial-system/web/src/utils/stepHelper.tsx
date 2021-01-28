@@ -180,7 +180,6 @@ export const constructProsecutorDemands = (
         workingCase.parentCase?.decision === CaseDecision.ACCEPTING
           ? ' áframhaldandi'
           : ''
-        //TODO: CHANGE workingCase.comments to workingCase.caseType
       } ${
         workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'
       }${

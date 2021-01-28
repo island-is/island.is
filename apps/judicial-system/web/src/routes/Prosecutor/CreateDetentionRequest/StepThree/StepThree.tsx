@@ -170,13 +170,9 @@ export const StepThree: React.FC = () => {
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
                 Dómkröfur{' '}
-                {
-                  // TODO: UNCOMMENT
-                  /*workingCase.caseType*/ workingCase.comments ===
-                  CaseType.CUSTODY ? (
-                    <Tooltip text="Hér er hægt að velja um gæsluvarðhald eða gæsluvarðhald með farbanni til vara. Sé farbann til vara valið, endurspeglar valið dómkröfurnar á næstu síðu." />
-                  ) : null
-                }
+                {workingCase.type === CaseType.CUSTODY ? (
+                  <Tooltip text="Hér er hægt að velja um gæsluvarðhald eða gæsluvarðhald með farbanni til vara. Sé farbann til vara valið, endurspeglar valið dómkröfurnar á næstu síðu." />
+                ) : null}
               </Text>
               {workingCase.parentCase && (
                 <Box marginTop={1}>
@@ -458,7 +454,7 @@ export const StepThree: React.FC = () => {
               />
             </BlueBox>
           </Box>
-          {workingCase.type === CaseType.TRAVEL_BAN && ( // TODO LAGA IF
+          {workingCase.type === CaseType.CUSTODY && (
             <Box component="section" marginBottom={10}>
               <Box marginBottom={3}>
                 <Box marginBottom={1}>
@@ -485,7 +481,7 @@ export const StepThree: React.FC = () => {
               </BlueBox>
             </Box>
           )}
-          {workingCase.type !== CaseType.TRAVEL_BAN && ( // TODO LAGA IF
+          {workingCase.type === CaseType.TRAVEL_BAN && (
             <Box component="section" marginBottom={4}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
@@ -497,10 +493,10 @@ export const StepThree: React.FC = () => {
                 <Box marginBottom={3}>
                   <CheckboxList
                     checkboxes={alternativeTravelBanRestrictions}
-                    selected={workingCase.custodyRestrictions} // REQUESTED !!!!
+                    selected={workingCase.requestedCustodyRestrictions}
                     onChange={(id) =>
                       setCheckboxAndSendToServer(
-                        'custodyRestrictions', // REQUESTED !!!!
+                        'requestedCustodyRestrictions',
                         id,
                         workingCase,
                         setWorkingCase,

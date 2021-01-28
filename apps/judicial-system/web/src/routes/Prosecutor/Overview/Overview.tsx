@@ -343,8 +343,7 @@ export const Overview: React.FC = () => {
           {modalVisible && (
             <Modal
               title={`Krafa um ${
-                // TODO: UNCOMMENT
-                /*workingCase.caseType*/ workingCase.comments ===
+                workingCase.type ===
                 CaseType.CUSTODY
                   ? 'gæsluvarðhald'
                   : 'Farbann'
