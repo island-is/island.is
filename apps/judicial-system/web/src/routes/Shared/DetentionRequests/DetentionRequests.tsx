@@ -15,6 +15,7 @@ import {
   TagVariant,
   Box,
   Icon,
+  DropdownMenu,
 } from '@island.is/island-ui/core'
 import { Loading } from '@island.is/judicial-system-web/src/shared-components'
 import {
@@ -219,23 +220,20 @@ export const DetentionRequests: React.FC = () => {
         <div className={styles.logoContainer}>
           {isJudge ? <JudgeLogo /> : <ProsecutorLogo />}
           {!isJudge && (
-            <>
-              <Link
-                to={Constants.STEP_ONE_ROUTE}
-                style={{ textDecoration: 'none' }}
-              >
-                <Button icon="add">Stofna nýja kröfu</Button>
-              </Link>
-              {/**TODO: REMOVE */}
-              <Link
-                to={Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE}
-                style={{ textDecoration: 'none' }}
-              >
-                <Button icon="add" variant="ghost">
-                  Travel ban
-                </Button>
-              </Link>
-            </>
+            <DropdownMenu
+              icon="add"
+              items={[
+                {
+                  href: Constants.STEP_ONE_ROUTE,
+                  title: 'Gæsluvarðhald',
+                },
+                {
+                  href: Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
+                  title: 'Farbann',
+                },
+              ]}
+              title="Stofna nýja kröfu"
+            />
           )}
         </div>
       )}

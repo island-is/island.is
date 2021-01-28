@@ -496,20 +496,20 @@ export const StepThree: React.FC = () => {
                 <Text>Ef ekkert er valið er farbann án takmarkana.</Text>
               </Box>
               <BlueBox>
-              <Box marginBottom={3}>
-                <CheckboxList
-                  checkboxes={alternativeTravelBanRestrictions}
-                  selected={workingCase.custodyRestrictions} // REQUESTED !!!!
-                  onChange={(id) =>
-                    setCheckboxAndSendToServer(
-                      'custodyRestrictions', // REQUESTED !!!!
-                      id,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                    )
-                  }
-                />
+                <Box marginBottom={3}>
+                  <CheckboxList
+                    checkboxes={alternativeTravelBanRestrictions}
+                    selected={workingCase.custodyRestrictions} // REQUESTED !!!!
+                    onChange={(id) =>
+                      setCheckboxAndSendToServer(
+                        'custodyRestrictions', // REQUESTED !!!!
+                        id,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    }
+                  />
                 </Box>
                 <Input
                   name="otherRestrictions"

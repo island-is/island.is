@@ -437,20 +437,20 @@ export const RulingStepTwo: React.FC = () => {
                   </Text>
                 </Box>
                 <BlueBox>
-                <Box marginBottom={3}>
-                  <CheckboxList
-                    checkboxes={alternativeTravelBanRestrictions}
-                    selected={workingCase.custodyRestrictions}
-                    onChange={(id) =>
-                      setCheckboxAndSendToServer(
-                        'custodyRestrictions',
-                        id,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }
-                  />
+                  <Box marginBottom={3}>
+                    <CheckboxList
+                      checkboxes={alternativeTravelBanRestrictions}
+                      selected={workingCase.custodyRestrictions}
+                      onChange={(id) =>
+                        setCheckboxAndSendToServer(
+                          'custodyRestrictions',
+                          id,
+                          workingCase,
+                          setWorkingCase,
+                          updateCase,
+                        )
+                      }
+                    />
                   </Box>
                   <Input
                     name="otherRestrictions"
